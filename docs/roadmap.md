@@ -349,6 +349,12 @@ reimplementation.
       (`apply_renames_configur.py`).
 - [x] It's a **disk-drive** config tool (drive letters for the game
       floppies / "reduce disk swaps"), NOT graphics/sound.
+- [x] Map the `dseg` globals (2026-08-31, `apply_dsvars_configur.py`) --
+      there is **no application state**: `_main` works entirely on stack
+      locals, and every `dseg` global is stock MSC CRT (`_errno`,
+      `_doserrno`, `_osversion`, `_savedDS`, `_STKHQQ`, `_nfile` = 20,
+      the `_output`/printf format-state block, argc/argv, heap/stdio
+      state). Named the clear CRT ones.
 - [ ] `DRCONFIG.DAT` (1015 B) exact field layout — `_main` reads it into
       a stack buffer and checks bytes for `'0'`/`'1'`/`'2'` + drive
       letters near the start; the other ~1000 bytes are unexamined.

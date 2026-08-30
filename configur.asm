@@ -725,7 +725,7 @@ loc_10516:                              ; CODE XREF: setTextColor+A↑j
                 mov     [bp+var_4], 20h ; ' '
 
 loc_1051A:                              ; CODE XREF: setTextColor+14↑j
-                mov     byte_12B2B, 1
+                mov     byte ptr colorRegs, 1 ; static `union REGS` that setTextColor fills (AL / BL / BH bytes at 12B2B / 12B2E / 12B2F) and passes twice to _int86(0x10) to set the text colour.
                 mov     al, [bp+var_4]
                 mov     byte_12B2F, al
                 mov     al, [bp+var_2]
@@ -938,10 +938,10 @@ __dosret0:
 
 sub_10B06       proc near               ; CODE XREF: __dos_close-1237↑p
                                         ; _lseek:loc_10AF5↑p ...
-                mov     byte_12466, al
+                mov     byte ptr _doserrno, al ; raw DOS error code (low byte) saved on entry to _maperror before translation.
                 or      ah, ah
                 jnz     short loc_10B30
-                cmp     byte ptr word_12463, 3
+                cmp     byte ptr _osversion, 3 ; DOS version word (low byte = _osmajor). Set by __cinit; _maperror checks `>= 3` before using the extended errno mapping.
                 jb      short loc_10B21
                 cmp     al, 22h ; '"'
                 jnb     short loc_10B25
@@ -968,7 +968,7 @@ loc_10B27:                              ; CODE XREF: sub_10B06+18↑j
 
 loc_10B2B:                              ; CODE XREF: sub_10B06+2C↓j
                 cbw
-                mov     word_1245B, ax
+                mov     _errno, ax      ; C `errno` -- sub_10B06 (_maperror) xlat's the raw DOS error code through the 0x728 table and stores it here.
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -1174,17 +1174,22 @@ aCFileInfo      db ';C_FILE_INFO',0
 dword_1244F     dd 0                    ; DATA XREF: __cinit+C↑w
                                         ; __ctermsub+E↑r ...
                 db 8 dup(0)
-word_1245B      dw 0                    ; DATA XREF: sub_10B06+26↑w
+; volatile int errno
+_errno          dw 0                    ; DATA XREF: sub_10B06+26↑w
+                                        ; C `errno` -- sub_10B06 (_maperror) xlat's the raw DOS error code through the 0x728 table and stores it here.
                 db 4 dup(0)
-word_12461      dw 0                    ; DATA XREF: start+5E↑w
+_savedDS        dw 0                    ; DATA XREF: start+5E↑w
                                         ; __cinit+26↑r ...
-word_12463      dw 0                    ; DATA XREF: __cinit+4↑w
+                                        ; the DGROUP segment, stashed by `start` (`mov ss:[12461h], ds`) and reloaded into DS/ES by __setargv / __setenvp / __myalloc / __cinit.
+_osversion      dw 0                    ; DATA XREF: __cinit+4↑w
                                         ; __setargv+7↑r ...
+                                        ; DOS version word (low byte = _osmajor). Set by __cinit; _maperror checks `>= 3` before using the extended errno mapping.
                 align 2
-byte_12466      db 0                    ; DATA XREF: sub_10B06↑w
-                align 2
-word_12468      dw 14h                  ; DATA XREF: _lseek+9↑r
+_doserrno       dw 0                    ; DATA XREF: sub_10B06↑w
+                                        ; raw DOS error code (low byte) saved on entry to _maperror before translation.
+_nfile          dw 14h                  ; DATA XREF: _lseek+9↑r
                                         ; _write+9↑r ...
+                                        ; size of the file-handle table -- _lseek / _write / _isatty bounds-check the fd against it.
                 db 3 dup(81h), 2 dup(1), 0Fh dup(0)
 ; int argc
 argc            dw 0                    ; DATA XREF: start+89↑r
@@ -1203,8 +1208,9 @@ byte_1248D      db 0                    ; DATA XREF: __ctermsub+20↑r
 dword_1248E     dd 0                    ; DATA XREF: __ctermsub+23↑r
 word_12492      dw 0                    ; DATA XREF: __FF_MSGBANNER+A↑r
                                         ; __FF_MSGBANNER+11↑r
-word_12494      dw 10D0h                ; DATA XREF: __chkstk+7↑r
+_STKHQQ         dw 10D0h                ; DATA XREF: __chkstk+7↑r
                                         ; _stackavail+1↑r
+                                        ; Microsoft C stack-overflow limit -- __chkstk and _stackavail compare the prospective SP against it.
 word_12496      dw 0                    ; DATA XREF: __setargv↑w
                                         ; __setargv+18A↑r
                 db 0, 16h, 2 dup(2), 18h, 0Dh, 9, 3 dup(0Ch), 7, 8, 2 dup(16h)
@@ -1306,8 +1312,9 @@ word_1270E      dw ?                    ; DATA XREF: iprint:loc_11280↑w
 word_12710      dw ?                    ; DATA XREF: __output+5B↑w
                                         ; __output+68↑w ...
                 db 419h dup(?)
-byte_12B2B      db ?                    ; DATA XREF: setTextColor:loc_1051A↑w
-                db 2 dup(?)
+colorRegs       dw ?                    ; DATA XREF: setTextColor:loc_1051A↑w
+                                        ; static `union REGS` that setTextColor fills (AL / BL / BH bytes at 12B2B / 12B2E / 12B2F) and passes twice to _int86(0x10) to set the text colour.
+                db    ? ;
 byte_12B2E      db ?                    ; DATA XREF: setTextColor+28↑w
 byte_12B2F      db ?                    ; DATA XREF: setTextColor+22↑w
                 db 210h dup(?)
