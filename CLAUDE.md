@@ -2369,6 +2369,23 @@ disassembly work.
   performs genuine per-frame palette interpolation for the room-entry
   fade-in rather than delegating anywhere — another small confirmation
   that this build's whole rendering pipeline predates `gfxDriver`.
+- **The full `FadeOut` call chain closes, plus two more Allegro
+  public-API matches.** `sub_40A358` (`FadeOut`'s own helper, called
+  with the literal args `(speed,0,0xFF)` — the full palette range)
+  captures the current screen palette then hands it to `sub_40A21C`
+  (last round's fade-step helper) to interpolate down to `unk_553CC0` —
+  a 1024-byte buffer never written anywhere in the binary, i.e. an
+  implicitly BLACK palette purely from BSS zero-init, not an explicit
+  constant. Two more Allegro functions identified along the way:
+  `get_palette` (a thin wrapper calling `get_palette_range(p,0,255)`,
+  matching Allegro's own header) and `get_palette_range` itself (checks
+  a video-driver vsync callback, then copies from Allegro's own internal
+  current-palette global) — the latter also independently confirmed via
+  a second caller, `PlayFlic`, grabbing the screen palette before
+  switching to the FLIC's own. `sub_40A358` gets no 2011-derived name,
+  same reason as its own callee — `FadeOut` delegates to `gfxDriver`
+  entirely in 2011, leaving nothing to compare this build's manual
+  implementation against.
 
 ## Third-party library identification (Task #10)
 

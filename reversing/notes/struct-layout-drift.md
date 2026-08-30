@@ -8848,3 +8848,38 @@ inside `process_event` itself, not delegated to a separate helper or a
 hardware path -- one more small, concrete confirmation that this
 build's whole rendering pipeline predates `gfxDriver` from top to
 bottom.
+
+## The full `FadeOut` call chain closes, plus two more Allegro public-API matches
+
+The last unmatched piece of this session's fade cluster,
+`sub_40A358` (called from `FadeOut`, already matched, with the literal
+arguments `(speed, 0, 0xFF)` -- the full palette range), turned out to
+close the whole picture cleanly. It captures the CURRENT screen palette
+into a local buffer, then hands that off to `sub_40A21C` (the palette-
+fade-over-N-steps helper found last round) to interpolate down to
+`unk_553CC0` -- a 1024-byte buffer that's never written anywhere in the
+entire binary. Since BSS memory is guaranteed zero at program start,
+this is an all-zero -- i.e. BLACK -- `PALETTE` purely by virtue of never
+being touched, not an explicitly-populated "black palette" constant
+anywhere in source. `FadeOut(speed)`'s whole implementation, spelled
+out end to end: grab the current palette, interpolate it to black over
+`speed`-paced steps across the full palette range, done.
+
+Two more genuine Allegro library functions fell out along the way.
+`sub_43C840` is Allegro's public `get_palette(PALETTE p)` -- a thin
+convenience wrapper that just calls `get_palette_range(p,0,255)`,
+matching Allegro's own header exactly (the real library also implements
+`get_palette` as nothing more than a full-range call to
+`get_palette_range`). `sub_43C860` is that underlying
+`get_palette_range(PALETTE p,int from,int to)`: it checks a video-driver
+vtable slot for a vsync-wait callback, then copies from Allegro's own
+internal current-palette global (`dword_5538C0`, matching Allegro's
+`_current_palette`) into the caller's buffer for the given range.
+`get_palette_range` has a second, independent caller too --
+`PlayFlic` (already matched), grabbing the screen's palette before
+switching over to the FLIC's own, exactly the kind of role this
+function should have. Both recorded at the library boundary per this
+project's usual convention; `sub_40A358` itself gets no 2011-derived
+name for the same reason its own callee doesn't -- 2011's `FadeOut`
+delegates to `gfxDriver` entirely, leaving nothing to compare this
+build's manual palette-capture-and-interpolate implementation against.

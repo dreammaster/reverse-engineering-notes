@@ -5874,5 +5874,34 @@
     "source_line": null,
     "confidence": "medium-high",
     "evidence": "This build's own AGS-side palette-fade-over-N-steps helper, predating 2011's gfxDriver-based fade abstraction entirely (2011's my_fade_out/my_fade_in delegate to gfxDriver->FadeOut(), with no comparable manual palette loop left in the reference source to compare against). Copies a source palette into a local buffer, then loops \"for(step=0; step<0x40(64); step+=rate) { fade_interpolate(source,dest,&p,step,from,to); set_palette_range(&p,from,to,-1); check crossfading; }\" -- 64 total interpolation steps, matching fade_interpolate's own step-count convention (0-63) exactly. Also polls/continues the already-characterized MP3-crossfade cluster (sub_4084E0/sub_408392, see their own entries) once per fade step, and a generic plugin-hook-style function pointer (dword_52321C) -- matching a per-frame 'keep other systems alive during a blocking fade' pattern. Called from sub_40A358 (unmatched) and, at one specific point in its own body, from sub_40A6D8 (already matched to a different, high-color-depth-specific manual-darkening fade technique) -- plausibly sub_40A6D8's own low-color-depth (8-bit palette) code path calling into this function, not independently verified this round. Both callers are candidates for a future round. Left unnamed: no clean 2011 identifier exists for this build's own pre-gfxDriver fade implementation."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43C860",
+    "new_name": "get_palette_range",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43C840",
+    "new_name": "get_palette",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public get_palette(PALETTE p) convenience wrapper: \"return get_palette_range(p,0,255);\" -- matches exactly, calling the newly-matched get_palette_range (sub_43C860) with the full 0-255 range, the same relationship as Allegro's own header declares (get_palette is a macro/inline wrapper around get_palette_range in the real library). Called from sub_40A358 (FadeOut's own fade-to-black helper, see its own entry) and EndSkippingUntilCharStops (already matched). THIRD-PARTY LIBRARY BOUNDARY -- not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40A358",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "FadeOut's (already matched) own 'fade the screen to black' helper, called with (speed, 0, 0xFF) i.e. the full palette range. Captures the current screen palette via the newly-matched get_palette (sub_43C840) into a local buffer, then calls the already-characterized sub_40A21C (this build's own palette-fade-over-N-steps helper) to interpolate from that captured palette down to unk_553CC0 -- a 1024-byte, never-written BSS buffer, i.e. an implicitly all-zero/black PALETTE by virtue of C's zero-initialized-BSS guarantee, not an explicitly-populated 'black palette' constant. No clean 2011 counterpart exists, same as sub_40A21C -- 2011's FadeOut delegates to gfxDriver entirely. Left unnamed per the usual convention."
   }
 ]
