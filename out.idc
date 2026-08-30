@@ -202,29 +202,38 @@ static Bytes_0(void) {
 	create_insn	(x=0X109EA);
 	op_hex		(x,	1);
 	create_insn	(0X10A05);
+	set_name	(0X10A05,	"stageSfx_talk");
 	set_cmt	(0X10A0B,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_name	(0X10A1E,	"nullsub_1");
 	create_insn	(0X10A1F);
+	set_name	(0X10A1F,	"stageSfx_attack");
 	set_name	(0X10A38,	"nullsub_2");
 	create_insn	(0X10A39);
+	set_name	(0X10A39,	"stageSfx_event");
 	set_cmt	(0X10A3F,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_name	(0X10A52,	"nullsub_3");
 	create_insn	(0X10A53);
+	set_name	(0X10A53,	"stageSfx_alt1");
 	set_name	(0X10A6C,	"nullsub_4");
 	create_insn	(0X10A6D);
+	set_name	(0X10A6D,	"stageSfx_item");
 	set_cmt	(0X10A73,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_name	(0X10A86,	"nullsub_5");
 	create_insn	(0X10A87);
+	set_name	(0X10A87,	"stageSfx_alt2");
 	set_name	(0X10AA0,	"nullsub_6");
 	create_insn	(0X10AA1);
+	set_name	(0X10AA1,	"stageSfx_hit");
 	set_cmt	(0X10AA7,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_name	(0X10ABA,	"nullsub_7");
 	create_insn	(0X10ABB);
+	set_name	(0X10ABB,	"stageSfx_move");
 	set_cmt	(0X10AC1,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_name	(0X10AD4,	"nullsub_8");
 	create_insn	(0X10AD5);
 	set_name	(0X10AE4,	"j_rt_FE01_0");
 	create_insn	(0X10AEC);
+	set_name	(0X10AEC,	"stageSfx_bump");
 	set_name	(0X10B05,	"nullsub_9");
 	set_cmt	(0X10B06,	"MOVE ",	0);
 	create_insn	(0X10B06);
@@ -306,8 +315,11 @@ static Bytes_0(void) {
 	create_insn	(0X1138B);
 	create_insn	(0X113D5);
 	create_insn	(0X1140A);
+	set_name	(0X1140A,	"stageShopItem_1");
 	create_insn	(0X11411);
+	set_name	(0X11411,	"stageShopItem_2");
 	create_insn	(0X1141E);
+	set_name	(0X1141E,	"stageShopItem_3");
 	create_insn	(0X11441);
 	create_insn	(0X11454);
 	set_name	(0X11454,	"setupLocationDisplay");
@@ -451,13 +463,20 @@ static Bytes_0(void) {
 	create_insn	(0X12195);
 	set_cmt	(0X121CF,	" BEFORE YOU.",	0);
 	create_insn	(0X121F7);
+	set_name	(0X121F7,	"combatBeat_1");
 	set_cmt	(0X12204,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X12204);
+	set_name	(0X12204,	"combatBeat_2");
 	create_insn	(0X12211);
+	set_name	(0X12211,	"combatBeat_3");
 	create_insn	(0X1221E);
+	set_name	(0X1221E,	"combatBeat_4");
 	create_insn	(0X1222B);
+	set_name	(0X1222B,	"combatBeat_5");
 	create_insn	(0X12238);
+	set_name	(0X12238,	"combatBeat_6");
 	create_insn	(0X12245);
+	set_name	(0X12245,	"combatBeat_7");
 	set_cmt	(0X12252,	"\\n\\nYOU AVOID THE CREATURE",	0);
 	create_insn	(0X12252);
 	set_name	(0X12252,	"avoidCreature");
@@ -499,6 +518,7 @@ static Bytes_0(void) {
 	create_insn	(0X126E4);
 	create_insn	(0X12717);
 	create_insn	(0X12752);
+	set_name	(0X12752,	"enterFixedLocation");
 	create_insn	(x=0X12782);
 	op_hex		(x,	1);
 	create_insn	(x=0X12784);
@@ -670,6 +690,7 @@ static Bytes_0(void) {
 	set_name	(0X13591,	"j_rt_FF4C_3");
 	create_insn	(0X135AA);
 	create_insn	(0X135B1);
+	set_name	(0X135B1,	"showIndexedRemark");
 	create_insn	(x=0X135B9);
 	op_hex		(x,	1);
 	create_insn	(x=0X135BB);
@@ -682,6 +703,7 @@ static Bytes_0(void) {
 	create_insn	(0X136AC);
 	create_insn	(0X136B3);
 	create_insn	(0X136B8);
+	set_name	(0X136B8,	"useCompass");
 	create_insn	(0X136BB);
 	create_insn	(0X136C5);
 	create_insn	(0X136E5);
@@ -738,6 +760,7 @@ static Bytes_0(void) {
 	set_name	(0X13982,	"chainToDungeon");
 	set_cmt	(0X1398F,	"DUN.EXE",	0);
 	create_insn	(0X139B5);
+	set_name	(0X139B5,	"lookupSpellSlot");
 	create_insn	(0X139BB);
 	create_insn	(x=0X139BC);
 	op_hex		(x,	1);
@@ -928,6 +951,7 @@ static Bytes_0(void) {
 	create_insn	(0X14A51);
 	set_cmt	(0X14A5D,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X14A87);
+	set_name	(0X14A87,	"handleOverworldArrival");
 	set_cmt	(0X14A93,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X14A9B);
 	set_name	(0X14AA6,	"nullsub_20");
@@ -939,6 +963,7 @@ static Bytes_0(void) {
 	set_name	(0X14B89,	"nullsub_21");
 	create_insn	(0X14B8A);
 	create_insn	(0X14B8D);
+	set_name	(0X14B8D,	"setTileState");
 	create_insn	(0X14BA0);
 	set_cmt	(0X14BB0,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X14BB8);
@@ -1008,18 +1033,21 @@ static Bytes_0(void) {
 	set_name	(0X15012,	"nullsub_26");
 	create_insn	(0X15015);
 	create_insn	(0X15018);
+	set_name	(0X15018,	"initOverworldState");
 	create_insn	(0X15031);
 	create_insn	(0X15054);
 	set_name	(0X1506F,	"nullsub_27");
 	create_insn	(0X15072);
 	set_cmt	(0X15075,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X15075);
+	set_name	(0X15075,	"resolveLocationFromMap");
 	create_insn	(x=0X150C9);
 	op_hex		(x,	1);
 	set_name	(0X150D4,	"nullsub_28");
 	create_insn	(0X150D7);
 	set_cmt	(0X150DA,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X150DA);
+	set_name	(0X150DA,	"checkLocationEntry");
 	create_insn	(0X150F9);
 	create_insn	(0X15101);
 	create_insn	(x=0X1510C);
@@ -1030,6 +1058,7 @@ static Bytes_0(void) {
 	set_name	(0X1515E,	"nullsub_29");
 	create_insn	(0X15161);
 	create_insn	(0X15164);
+	set_name	(0X15164,	"clearLocationTarget");
 	create_insn	(0X15177);
 	create_insn	(x=0X15179);
 	op_hex		(x,	1);
@@ -1188,10 +1217,15 @@ static Bytes_0(void) {
 	create_insn	(0X15AFE);
 	create_insn	(0X15B16);
 	create_insn	(0X15B2E);
+	set_name	(0X15B2E,	"setScenePosY_1");
 	create_insn	(0X15B44);
+	set_name	(0X15B44,	"setScenePosY_2");
 	create_insn	(0X15B5A);
+	set_name	(0X15B5A,	"setScenePosY_3");
 	create_insn	(0X15B6B);
+	set_name	(0X15B6B,	"setScenePosY_4");
 	create_insn	(0X15B81);
+	set_name	(0X15B81,	"setScenePosY_5");
 	set_cmt	(0X15B8B,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_cmt	(0X15B97,	"@\\n\\n\\n\\nPEGASUS SETS YOU DOWN",	0);
 	create_insn	(0X15B97);
@@ -1213,6 +1247,7 @@ static Bytes_0(void) {
 	create_insn	(0X15DD5);
 	set_cmt	(0X15DD8,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X15DD8);
+	set_name	(0X15DD8,	"setupPromptScreen");
 	set_cmt	(0X15DE7,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_cmt	(0X15DFF,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	set_cmt	(0X15E69,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
@@ -1223,6 +1258,7 @@ static Bytes_0(void) {
 	create_insn	(0X15E7F);
 	set_cmt	(0X15E82,	"\\x161noGood\\x13 1Enter museum access\\xf4\\x1381code & hit <",	0);
 	create_insn	(0X15E82);
+	set_name	(0X15E82,	"classifyMapFeature");
 	create_insn	(0X15EA1);
 	create_insn	(0X15EA9);
 	create_insn	(x=0X15EB4);
@@ -1233,6 +1269,7 @@ static Bytes_0(void) {
 	set_name	(0X15F0A,	"nullsub_41");
 	create_insn	(0X15F0D);
 	create_insn	(0X15F10);
+	set_name	(0X15F10,	"computeLocationOffset");
 	create_insn	(0X15F23);
 	create_insn	(0X15F2B);
 	create_insn	(0X15F40);
@@ -2695,6 +2732,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X16B19);
 	op_hex		(x,	0);
 	set_name	(0X16B19,	"rt_0B");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X16B1B);
 	set_cmt	(0X16B1C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X16B1C,	"-> rtm_0D  (leglib seg003:0x1a255)",	1);
@@ -2730,15 +2776,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X16B2B);
 	op_hex		(x,	0);
 	set_name	(0X16B2B,	"rt_6D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X16B2D);
 	set_cmt	(0X16B2E,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X16B2E);
@@ -4652,24 +4689,33 @@ static Functions_0(void) {
 	set_func_flags(0X109D3,0x1401);
 	add_func    (0X10A05,0X10A1F);
 	set_func_flags(0X10A05,0x1401);
+	set_func_cmt(0X10A05,	"(ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage.", 1);
 	add_func    (0X10A1F,0X10A39);
 	set_func_flags(0X10A1F,0x1401);
+	set_func_cmt(0X10A1F,	"(ds:215A,215C) := (0x3C, 0xCA) -- resolvePlayerAttack.", 1);
 	add_func    (0X10A39,0X10A53);
 	set_func_flags(0X10A39,0x1401);
+	set_func_cmt(0X10A39,	"(ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.", 1);
 	add_func    (0X10A53,0X10A6D);
 	set_func_flags(0X10A53,0x1401);
+	set_func_cmt(0X10A53,	"(ds:2162,2164) := (0x1E, 0xCA).", 1);
 	add_func    (0X10A6D,0X10A87);
 	set_func_flags(0X10A6D,0x1401);
+	set_func_cmt(0X10A6D,	"(ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated.", 1);
 	add_func    (0X10A87,0X10AA1);
 	set_func_flags(0X10A87,0x1401);
+	set_func_cmt(0X10A87,	"(ds:216A,216C) := (0x32, 0xCA).", 1);
 	add_func    (0X10AA1,0X10ABB);
 	set_func_flags(0X10AA1,0x1401);
+	set_func_cmt(0X10AA1,	"(ds:216E,2170) := (0x64, 2)  -- creatureAttack.", 1);
 	add_func    (0X10ABB,0X10AD5);
 	set_func_flags(0X10ABB,0x1401);
+	set_func_cmt(0X10ABB,	"(ds:2172,2174) := (0x96, 2)  -- doMovement.", 1);
 	add_func    (0X10AD5,0X10AEC);
 	set_func_flags(0X10AD5,0x1401);
 	add_func    (0X10AEC,0X10B06);
 	set_func_flags(0X10AEC,0x1401);
+	set_func_cmt(0X10AEC,	"(ds:2178,217A) := (0x28, 0x69) -- creatureAttack / doMovement.", 1);
 	add_func    (0X10B06,0X110BF);
 	set_func_flags(0X10B06,0x1401);
 	set_func_cmt(0X10B06,	"walk / travel: \"MOVE \", terrain gates (\"THE RAFT MUST STAY IN THE WATER.\", \"YOU ARE NOT EQUIPPED TO / CROSS THE MOUNTAINS.\", \"THERE IS TOO MUCH WATER FOR TRAVEL.\"), the food/health tick (\"YOU GROW SICK FROM / SOMETHING YOU ATE!\", \"HIT POINTS:\"), \"RETURN TO MUSEUM?\". ~1.5 KB, called from outInit.", 1);
@@ -4681,12 +4727,15 @@ static Functions_0(void) {
 	set_func_cmt(0X111FC,	"board/enter a map location: \"ENTER \", \"RETURN TO \", \"ONLY RUBBLE IS LEFT.\"", 1);
 	add_func    (0X1140A,0X11411);
 	set_func_flags(0X1140A,0x5400);
+	set_func_cmt(0X1140A,	"stage (price, name) for a museum-shop item.", 1);
 	set_frame_size(0X1140A, 0, 0, 0);
 	add_func    (0X11411,0X1141E);
 	set_func_flags(0X11411,0x5400);
+	set_func_cmt(0X11411,	"stage (price, name) for a museum-shop item.", 1);
 	set_frame_size(0X11411, 0, 0, 0);
 	add_func    (0X1141E,0X11454);
 	set_func_flags(0X1141E,0x5400);
+	set_func_cmt(0X1141E,	"stage (price, name) for a museum-shop item.", 1);
 	set_frame_size(0X1141E, 0, 0, 0);
 	add_func    (0X11454,0X11638);
 	set_func_flags(0X11454,0x5400);
@@ -4734,24 +4783,31 @@ static Functions_0(void) {
 	set_func_cmt(0X12143,	"\" STANDS / STAND ... BEFORE YOU.\"", 1);
 	add_func    (0X121F7,0X12204);
 	set_func_flags(0X121F7,0x5400);
+	set_func_cmt(0X121F7,	"combatPhase := 4, subcode := 0x03.", 1);
 	set_frame_size(0X121F7, 0, 0, 0);
 	add_func    (0X12204,0X12211);
 	set_func_flags(0X12204,0x5400);
+	set_func_cmt(0X12204,	"combatPhase := 6, subcode := 0x0B.", 1);
 	set_frame_size(0X12204, 0, 0, 0);
 	add_func    (0X12211,0X1221E);
 	set_func_flags(0X12211,0x5400);
+	set_func_cmt(0X12211,	"combatPhase := 4, subcode := 0x11.", 1);
 	set_frame_size(0X12211, 0, 0, 0);
 	add_func    (0X1221E,0X1222B);
 	set_func_flags(0X1221E,0x5400);
+	set_func_cmt(0X1221E,	"combatPhase := 4, subcode := 0x15.", 1);
 	set_frame_size(0X1221E, 0, 0, 0);
 	add_func    (0X1222B,0X12238);
 	set_func_flags(0X1222B,0x5400);
+	set_func_cmt(0X1222B,	"combatPhase := 3, subcode := 0x19.", 1);
 	set_frame_size(0X1222B, 0, 0, 0);
 	add_func    (0X12238,0X12245);
 	set_func_flags(0X12238,0x5400);
+	set_func_cmt(0X12238,	"combatPhase := 4, subcode := 0x1C.", 1);
 	set_frame_size(0X12238, 0, 0, 0);
 	add_func    (0X12245,0X12252);
 	set_func_flags(0X12245,0x5400);
+	set_func_cmt(0X12245,	"combatPhase := 4, subcode := 0x07.", 1);
 	set_frame_size(0X12245, 0, 0, 0);
 	add_func    (0X12252,0X122CB);
 	set_func_flags(0X12252,0x1401);
@@ -4770,6 +4826,7 @@ static Functions_0(void) {
 	set_func_cmt(0X12641,	"the generic \"YOU CAN'T \" refusal.", 1);
 	add_func    (0X12752,0X127D2);
 	set_func_flags(0X12752,0x1401);
+	set_func_cmt(0X12752,	"enter a scripted / fixed map location -- stamps the game-record slot from ds:22CA, then setLocationField helpers. TENTATIVE.", 1);
 	add_func    (0X127D2,0X127DB);
 	set_func_flags(0X127D2,0x1401);
 	set_func_cmt(0X127D2,	"ds:2146h := 1, then jmp j_rt_FE4E.", 1);
@@ -4823,8 +4880,10 @@ static Functions_0(void) {
 	set_func_cmt(0X134A1,	"render the food/rations indicator. TENTATIVE.", 1);
 	add_func    (0X135B1,0X136B8);
 	set_func_flags(0X135B1,0x1401);
+	set_func_cmt(0X135B1,	"display the flavour string picked by ds:1ADC (x4 into a string array) -- shared \"random remark\" helper.", 1);
 	add_func    (0X136B8,0X136F2);
 	set_func_flags(0X136B8,0x1481);
+	set_func_cmt(0X136B8,	"\"YOUR COMPASS IS WORKING.\" / \"NOTHING HAPPENS\" -- the USE-compass result (keyed on ds:1ADC == 0x0B).", 1);
 	add_func    (0X136F2,0X13705);
 	set_func_flags(0X136F2,0x1401);
 	add_func    (0X13705,0X13896);
@@ -4846,6 +4905,7 @@ static Functions_0(void) {
 	set_func_cmt(0X13982,	"\"A DUNGEON\" -> chains to DUN.EXE.", 1);
 	add_func    (0X139B5,0X13A13);
 	set_func_flags(0X139B5,0x1401);
+	set_func_cmt(0X139B5,	"scan for a spell/item by id (loop comparing against ds:1E24). TENTATIVE.", 1);
 	add_func    (0X13A13,0X13BDE);
 	set_func_flags(0X13A13,0x5400);
 	set_func_cmt(0X13A13,	"\"ATTACK WITH \", \"ATTACK FIZZLES\", \"CAST SEEK SPELL.\"", 1);
@@ -4881,11 +4941,13 @@ static Functions_0(void) {
 	set_func_cmt(0X1486B,	"set up overworld play (called once from outInit): clears contextMode, sets playerX/playerY and turnActionFlag, and calls loadOverworldData + the sub-setup helpers (sub_12823 / sub_122CB / setupLocationDisplay). ~0.5 KB.", 1);
 	add_func    (0X14A87,0X14AA7);
 	set_func_flags(0X14A87,0x1401);
+	set_func_cmt(0X14A87,	"on arriving on the overworld (from enterOverworld): stamp the game-record state field, then enterLocationOrChain + pegasusOrAmbush.", 1);
 	add_func    (0X14AA7,0X14B8D);
 	set_func_flags(0X14AA7,0x1403);
 	set_func_cmt(0X14AA7,	"act on enteredLocationId: either handle the location inline or call chainExec to hand off to TWNDR / CASDR / MUS / DUN.", 1);
 	add_func    (0X14B8D,0X14BD0);
 	set_func_flags(0X14B8D,0x1403);
+	set_func_cmt(0X14B8D,	"set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.", 1);
 	add_func    (0X14BD0,0X14CDF);
 	set_func_flags(0X14BD0,0x1403);
 	set_func_cmt(0X14BD0,	"draw the HUD / status line (reads turnActionFlag). TENTATIVE.", 1);
@@ -4899,12 +4961,16 @@ static Functions_0(void) {
 	set_func_cmt(0X14EA4,	"repaint the map viewport region. TENTATIVE.", 1);
 	add_func    (0X15018,0X15075);
 	set_func_flags(0X15018,0x1403);
+	set_func_cmt(0X15018,	"one-time overworld state init (called from outInit and enterOverworld). TENTATIVE.", 1);
 	add_func    (0X15075,0X150DA);
 	set_func_flags(0X15075,0x1403);
+	set_func_cmt(0X15075,	"read the map-object type via the ds:101 far pointer and set enteredLocationId. Called from outInit. TENTATIVE.", 1);
 	add_func    (0X150DA,0X15164);
 	set_func_flags(0X150DA,0x1403);
+	set_func_cmt(0X150DA,	"validate whether the target location can be entered; enteredLocationId := 0xFF if not. TENTATIVE.", 1);
 	add_func    (0X15164,0X151B7);
 	set_func_flags(0X15164,0x1403);
+	set_func_cmt(0X15164,	"enteredLocationId := 0xFF, ds:1F04 := 0x7F (no pending location). TENTATIVE.", 1);
 	add_func    (0X151B7,0X155A3);
 	set_func_flags(0X151B7,0x1403);
 	set_func_cmt(0X151B7,	"per-move tile examination (~1 KB, BASIC SUB): given the trial coords from doMovement, work out what is on the destination tile -- sets enteredLocationId / targetSlot and dispatches to identifyLocationObject / refreshMapView / readTileObject.", 1);
@@ -4932,18 +4998,23 @@ static Functions_0(void) {
 	set_func_flags(0X15AE1,0x1401);
 	add_func    (0X15B2E,0X15B44);
 	set_func_flags(0X15B2E,0x5400);
+	set_func_cmt(0X15B2E,	"playerY := 5 (+ scene locals). Scripted-scene setup.", 1);
 	set_frame_size(0X15B2E, 0, 0, 0);
 	add_func    (0X15B44,0X15B5A);
 	set_func_flags(0X15B44,0x5400);
+	set_func_cmt(0X15B44,	"playerY := 7. Scripted-scene setup.", 1);
 	set_frame_size(0X15B44, 0, 0, 0);
 	add_func    (0X15B5A,0X15B6B);
 	set_func_flags(0X15B5A,0x5400);
+	set_func_cmt(0X15B5A,	"playerY := <const>. Scripted-scene setup.", 1);
 	set_frame_size(0X15B5A, 0, 0, 0);
 	add_func    (0X15B6B,0X15B81);
 	set_func_flags(0X15B6B,0x5400);
+	set_func_cmt(0X15B6B,	"playerY := <const>. Scripted-scene setup.", 1);
 	set_frame_size(0X15B6B, 0, 0, 0);
 	add_func    (0X15B81,0X15B97);
 	set_func_flags(0X15B81,0x5400);
+	set_func_cmt(0X15B81,	"playerY := <const>. Scripted-scene setup.", 1);
 	set_frame_size(0X15B81, 0, 0, 0);
 	add_func    (0X15B97,0X15BB7);
 	set_func_flags(0X15B97,0x1401);
@@ -4953,12 +5024,15 @@ static Functions_0(void) {
 	set_func_cmt(0X15BB7,	"the \"YOU ARE AMBUSHED BY BANDITS!\" travel event -> knockout (\"YOU FALL UNCONSCIOUS.\") -> the scripted Compendium theft (\"YOU AWAKE.  THE COMPENDIUM IS GONE.\", \"DO NOT BE DISCOURAGED ... KEEP TO YOUR QUEST.\"). Hits hitPoints, sets a questFlag. ~0.5 KB.", 1);
 	add_func    (0X15DD8,0X15E6F);
 	set_func_flags(0X15DD8,0x1403);
+	set_func_cmt(0X15DD8,	"reset the screen mode for a full-screen prompt (basScreenInit x2) -- enterLocation / museumAccessPrompt / quitOrTalk.", 1);
 	add_func    (0X15E6F,0X15E82);
 	set_func_flags(0X15E6F,0x1403);
 	add_func    (0X15E82,0X15F10);
 	set_func_flags(0X15E82,0x1403);
+	set_func_cmt(0X15E82,	"map a raw map-feature value to an enteredLocationId code. TENTATIVE.", 1);
 	add_func    (0X15F10,0X15FA2);
 	set_func_flags(0X15F10,0x1403);
+	set_func_cmt(0X15F10,	"enteredLocationId + ds:1F04 -> the resolved index. TENTATIVE.", 1);
 	add_func    (0X15FA2,0X16030);
 	set_func_flags(0X15FA2,0x1403);
 	set_func_cmt(0X15FA2,	"map the raw tile/object type under the player (copied to ds:2182h by doMovement) to a location code in enteredLocationId -- SELECT CASE 0..7 (0 -> 0x0A, ...).", 1);

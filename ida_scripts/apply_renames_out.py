@@ -210,6 +210,84 @@ RENAMES = [
     (0x15A78, "pegasusFlyStep",
      'advance the Pegasus one tile east: playerX++, re-run '
      'resolveMoveTarget, redraw (rtm_FE55).'),
+
+    # --- 3rd pass: the last helpers, off the fully-named ds: vars ---
+    (0x136B8, "useCompass",
+     '"YOUR COMPASS IS WORKING." / "NOTHING HAPPENS" -- the USE-compass '
+     'result (keyed on ds:1ADC == 0x0B).'),
+    (0x135B1, "showIndexedRemark",
+     'display the flavour string picked by ds:1ADC (x4 into a string '
+     'array) -- shared "random remark" helper.'),
+    (0x14B8D, "setTileState",
+     'set a map-tile state flag (1 or 2) via the pointer arg -- called '
+     'from applyGameFlag and the encounter code. TENTATIVE.'),
+    (0x14A87, "handleOverworldArrival",
+     'on arriving on the overworld (from enterOverworld): stamp the '
+     'game-record state field, then enterLocationOrChain + '
+     'pegasusOrAmbush.'),
+    (0x15DD8, "setupPromptScreen",
+     'reset the screen mode for a full-screen prompt (basScreenInit x2) '
+     '-- enterLocation / museumAccessPrompt / quitOrTalk.'),
+    (0x15018, "initOverworldState",
+     'one-time overworld state init (called from outInit and '
+     'enterOverworld). TENTATIVE.'),
+    (0x139B5, "lookupSpellSlot",
+     'scan for a spell/item by id (loop comparing against ds:1E24). '
+     'TENTATIVE.'),
+    (0x12752, "enterFixedLocation",
+     'enter a scripted / fixed map location -- stamps the game-record '
+     'slot from ds:22CA, then setLocationField helpers. TENTATIVE.'),
+
+    # --- combat "beat" stubs: (combatPhase, ds:1F04 subcode) pair
+    #     setters, runtime-dispatched from the encounter animation ---
+    (0x121F7, "combatBeat_1", "combatPhase := 4, subcode := 0x03."),
+    (0x12204, "combatBeat_2", "combatPhase := 6, subcode := 0x0B."),
+    (0x12211, "combatBeat_3", "combatPhase := 4, subcode := 0x11."),
+    (0x1221E, "combatBeat_4", "combatPhase := 4, subcode := 0x15."),
+    (0x1222B, "combatBeat_5", "combatPhase := 3, subcode := 0x19."),
+    (0x12238, "combatBeat_6", "combatPhase := 4, subcode := 0x1C."),
+    (0x12245, "combatBeat_7", "combatPhase := 4, subcode := 0x07."),
+
+    # --- scripted-scene player-Y position stubs (dispatch-called) ---
+    (0x15B2E, "setScenePosY_1", "playerY := 5 (+ scene locals). Scripted-scene setup."),
+    (0x15B44, "setScenePosY_2", "playerY := 7. Scripted-scene setup."),
+    (0x15B5A, "setScenePosY_3", "playerY := <const>. Scripted-scene setup."),
+    (0x15B6B, "setScenePosY_4", "playerY := <const>. Scripted-scene setup."),
+    (0x15B81, "setScenePosY_5", "playerY := <const>. Scripted-scene setup."),
+
+    # --- (price, name-ptr) stagers for the museum shop (ds:1F04/1F06) ---
+    (0x1140A, "stageShopItem_1", "stage (price, name) for a museum-shop item."),
+    (0x11411, "stageShopItem_2", "stage (price, name) for a museum-shop item."),
+    (0x1141E, "stageShopItem_3", "stage (price, name) for a museum-shop item."),
+
+    # --- sound-cue stagers: each writes a distinct (param1, param2) pair
+    #     at ds:215x before a tone. Named by the action that triggers it. ---
+    (0x10A05, "stageSfx_talk",   "(ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage."),
+    (0x10A1F, "stageSfx_attack", "(ds:215A,215C) := (0x3C, 0xCA) -- resolvePlayerAttack."),
+    (0x10A39, "stageSfx_event",  "(ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed."),
+    (0x10A53, "stageSfx_alt1",   "(ds:2162,2164) := (0x1E, 0xCA)."),
+    (0x10A6D, "stageSfx_item",   "(ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated."),
+    (0x10A87, "stageSfx_alt2",   "(ds:216A,216C) := (0x32, 0xCA)."),
+    (0x10AA1, "stageSfx_hit",    "(ds:216E,2170) := (0x64, 2)  -- creatureAttack."),
+    (0x10ABB, "stageSfx_move",   "(ds:2172,2174) := (0x96, 2)  -- doMovement."),
+    (0x10AEC, "stageSfx_bump",   "(ds:2178,217A) := (0x28, 0x69) -- creatureAttack / doMovement."),
+
+    # --- map-feature -> location-code resolvers (the resolveMoveTarget
+    #     sub-tree, all working on enteredLocationId = ds:1F02) ---
+    (0x15075, "resolveLocationFromMap",
+     'read the map-object type via the ds:101 far pointer and set '
+     'enteredLocationId. Called from outInit. TENTATIVE.'),
+    (0x150DA, "checkLocationEntry",
+     'validate whether the target location can be entered; '
+     'enteredLocationId := 0xFF if not. TENTATIVE.'),
+    (0x15164, "clearLocationTarget",
+     'enteredLocationId := 0xFF, ds:1F04 := 0x7F (no pending location). '
+     'TENTATIVE.'),
+    (0x15E82, "classifyMapFeature",
+     'map a raw map-feature value to an enteredLocationId code. '
+     'TENTATIVE.'),
+    (0x15F10, "computeLocationOffset",
+     'enteredLocationId + ds:1F04 -> the resolved index. TENTATIVE.'),
 ]
 
 

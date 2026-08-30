@@ -425,9 +425,12 @@ reimplementation.
       (`beginEncounterView`, `resolvePlayerAttack`, `creatureDefeated`,
       `awardFoundItem`), events (`pegasusFlightAnim` / `pegasusFlyStep` /
       `showPegasusLanding`, `banditAmbushEvent`), `redrawAfterAction`.
-      Several food/HUD helpers tentative. ~40 tiny runtime-dispatched
-      `(combatPhase, subcode)` / coord-preset stubs left `sub_` (not
-      worth speculative names).
+      3rd pass (2026-08-31, all state vars named): **104 / 121** --
+      `combatBeat_1..7`, `stageSfx_*` (named by trigger: hit / move /
+      bump / attack / item / talk / event), `stageShopItem_1..3`,
+      `setScenePosY_1..5`, `useCompass`, `showIndexedRemark`,
+      `handleOverworldArrival`, `setupPromptScreen`, the resolveMoveTarget
+      sub-tree. ~17 obscure sub-20-byte helpers left `sub_`.
 - [ ] Confirm the tentatives: `addFoodDays` / `spendFoodDays` /
       `drawFoodGauge` (1F04/231C usage), `identifyLocationObject` /
       `readTileObject` (the `resolveMoveTarget` sub-tree), `rollCreatureStats`.

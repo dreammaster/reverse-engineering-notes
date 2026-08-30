@@ -589,7 +589,7 @@ loc_10450:                              ; CODE XREF: outInit+2A4↑j
                 mov     ax, 2144h
                 push    ax
                 call    far ptr rt_FE56 ; -> rtm_FE56  (leglib seg007:0x27457)
-                call    sub_15018
+                call    initOverworldState ; one-time overworld state init (called from outInit and enterOverworld). TENTATIVE.
 
 loc_104A7:                              ; CODE XREF: outInit+18B↑j
                 call    redrawAfterAction ; redraw the status line + map view after any turn-consuming action (called from mainDispatch, creatureAttack, avoidCreature, shopBuy, tryDisengage, outInit, creatureDefeated, banditAmbushEvent).
@@ -917,7 +917,7 @@ loc_10798:
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    sub_15075
+                call    resolveLocationFromMap ; read the map-object type via the ds:101 far pointer and set enteredLocationId. Called from outInit. TENTATIVE.
 
 loc_107A8:
                 cmp     word ptr ds:1F02h, 0
@@ -1224,9 +1224,10 @@ sub_109D3       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage.
 ; Attributes: noreturn
 
-sub_10A05       proc near               ; CODE XREF: tryDisengage+107↓j
+stageSfx_talk   proc near               ; CODE XREF: tryDisengage+107↓j
                                         ; quitOrTalk:loc_129C9↓p ...
                 mov     word ptr ds:2156h, 0Fh
                 mov     word ptr ds:2158h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1238,14 +1239,15 @@ sub_10A05       proc near               ; CODE XREF: tryDisengage+107↓j
 
 nullsub_1:
                 retn
-sub_10A05       endp
+stageSfx_talk   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:215A,215C) := (0x3C, 0xCA) -- resolvePlayerAttack.
 ; Attributes: noreturn
 
-sub_10A1F       proc near               ; CODE XREF: resolvePlayerAttack+11F↓j
+stageSfx_attack proc near               ; CODE XREF: resolvePlayerAttack+11F↓j
                                         ; resolvePlayerAttack:loc_14002↓p
                 mov     word ptr ds:215Ah, 3Ch ; '<'
                 mov     word ptr ds:215Ch, 0CAh
@@ -1257,14 +1259,15 @@ sub_10A1F       proc near               ; CODE XREF: resolvePlayerAttack+11F↓j
 
 nullsub_2:
                 retn
-sub_10A1F       endp
+stageSfx_attack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
 ; Attributes: noreturn
 
-sub_10A39       proc near               ; CODE XREF: sub_10AD5:loc_10AE9↓j
+stageSfx_event  proc near               ; CODE XREF: sub_10AD5:loc_10AE9↓j
                                         ; creatureApproach:loc_11BC0↓p ...
                 mov     word ptr ds:215Eh, 1Eh
                 mov     word ptr ds:2160h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1276,14 +1279,15 @@ sub_10A39       proc near               ; CODE XREF: sub_10AD5:loc_10AE9↓j
 
 nullsub_3:
                 retn
-sub_10A39       endp
+stageSfx_event  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:2162,2164) := (0x1E, 0xCA).
 ; Attributes: noreturn
 
-sub_10A53       proc near
+stageSfx_alt1   proc near
                 mov     word ptr ds:2162h, 1Eh
                 mov     word ptr ds:2164h, 0CAh
                 mov     ax, 2162h
@@ -1294,14 +1298,15 @@ sub_10A53       proc near
 
 nullsub_4:
                 retn
-sub_10A53       endp
+stageSfx_alt1   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated.
 ; Attributes: noreturn
 
-sub_10A6D       proc near               ; CODE XREF: quitOrTalk+1C7↓j
+stageSfx_item   proc near               ; CODE XREF: quitOrTalk+1C7↓j
                                         ; creatureDefeated:loc_140A7↓p ...
                 mov     word ptr ds:2166h, 32h ; '2'
                 mov     word ptr ds:2168h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1313,14 +1318,15 @@ sub_10A6D       proc near               ; CODE XREF: quitOrTalk+1C7↓j
 
 nullsub_5:
                 retn
-sub_10A6D       endp
+stageSfx_item   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:216A,216C) := (0x32, 0xCA).
 ; Attributes: noreturn
 
-sub_10A87       proc near
+stageSfx_alt2   proc near
                 mov     word ptr ds:216Ah, 32h ; '2'
                 mov     word ptr ds:216Ch, 0CAh
                 mov     ax, 216Ah
@@ -1331,14 +1337,15 @@ sub_10A87       proc near
 
 nullsub_6:
                 retn
-sub_10A87       endp
+stageSfx_alt2   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:216E,2170) := (0x64, 2)  -- creatureAttack.
 ; Attributes: noreturn
 
-sub_10AA1       proc near               ; CODE XREF: creatureAttack+457↓p
+stageSfx_hit    proc near               ; CODE XREF: creatureAttack+457↓p
                                         ; creatureAttack+484↓j
                 mov     word ptr ds:216Eh, 64h ; 'd'
                 mov     word ptr ds:2170h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1350,14 +1357,15 @@ sub_10AA1       proc near               ; CODE XREF: creatureAttack+457↓p
 
 nullsub_7:
                 retn
-sub_10AA1       endp
+stageSfx_hit    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:2172,2174) := (0x96, 2)  -- doMovement.
 ; Attributes: noreturn
 
-sub_10ABB       proc near               ; CODE XREF: doMovement:loc_1106C↓p
+stageSfx_move   proc near               ; CODE XREF: doMovement:loc_1106C↓p
                                         ; doMovement+5A6↓p
                 mov     word ptr ds:2172h, 96h
                 mov     word ptr ds:2174h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -1369,7 +1377,7 @@ sub_10ABB       proc near               ; CODE XREF: doMovement:loc_1106C↓p
 
 nullsub_8:
                 retn
-sub_10ABB       endp
+stageSfx_move   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1386,16 +1394,17 @@ sub_10AD5       proc near               ; CODE XREF: creatureApproach+2A5↓j
 j_rt_FE01_0:                            ; -> rtm_FE01  (leglib seg008:0x27c25)
                 call    far ptr rt_FE01
 
-loc_10AE9:
-                jmp     sub_10A39
+loc_10AE9:                              ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
+                jmp     stageSfx_event
 sub_10AD5       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; (ds:2178,217A) := (0x28, 0x69) -- creatureAttack / doMovement.
 ; Attributes: noreturn
 
-sub_10AEC       proc near               ; CODE XREF: doMovement+261↓j
+stageSfx_bump   proc near               ; CODE XREF: doMovement+261↓j
                                         ; creatureAttack+284↓p
                 mov     word ptr ds:2178h, 28h ; '('
                 mov     word ptr ds:217Ah, 69h ; 'i'
@@ -1407,7 +1416,7 @@ sub_10AEC       proc near               ; CODE XREF: doMovement+261↓j
 
 nullsub_9:
                 retn
-sub_10AEC       endp
+stageSfx_bump   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1637,7 +1646,7 @@ loc_10C96:                              ; CODE XREF: doMovement+18C↑j
                 mov     ax, 219Ah
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
-                jmp     sub_10AEC
+                jmp     stageSfx_bump   ; (ds:2178,217A) := (0x28, 0x69) -- creatureAttack / doMovement.
 ; ---------------------------------------------------------------------------
 
 loc_10D6A:                              ; CODE XREF: doMovement+AE↑j
@@ -1926,7 +1935,7 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
 ; ---------------------------------------------------------------------------
 
 loc_1106C:                              ; CODE XREF: doMovement+561↑j
-                call    sub_10ABB
+                call    stageSfx_move   ; (ds:2172,2174) := (0x96, 2)  -- doMovement.
 ; ---------------------------------------------------------------------------
                 jmp     loc_10BB7
 ; ---------------------------------------------------------------------------
@@ -1952,7 +1961,7 @@ loc_1109D:                              ; CODE XREF: doMovement+46D↑j
                 mov     ax, 21F2h
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
-                call    sub_10ABB
+                call    stageSfx_move   ; (ds:2172,2174) := (0x96, 2)  -- doMovement.
 ; ---------------------------------------------------------------------------
                 jmp     loc_10BB7
 ; ---------------------------------------------------------------------------
@@ -2098,7 +2107,7 @@ loc_11194:                              ; CODE XREF: tryDisengage+D0↑j
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
                 inc     word ptr ds:2200h
-                jmp     sub_10A05
+                jmp     stageSfx_talk   ; (ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage.
 ; ---------------------------------------------------------------------------
 
 loc_111C9:                              ; CODE XREF: tryDisengage+D2↑j
@@ -2384,7 +2393,7 @@ loc_113EA:
 loc_113FF:
                 mov     ax, 2136h
                 push    ax
-                call    sub_15DD8
+                call    setupPromptScreen ; reset the screen mode for a full-screen prompt (basScreenInit x2) -- enterLocation / museumAccessPrompt / quitOrTalk.
 
 loc_11408:                              ; CODE XREF: enterLocation+14C↑j
                                         ; enterLocation:loc_11408↓j
@@ -2394,27 +2403,30 @@ enterLocation   endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; stage (price, name) for a museum-shop item.
 
-sub_1140A       proc near
+stageShopItem_1 proc near
                 mov     word ptr ds:1F04h, 1518h
                 retn
-sub_1140A       endp
+stageShopItem_1 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; stage (price, name) for a museum-shop item.
 
-sub_11411       proc near
+stageShopItem_2 proc near
                 mov     word ptr ds:1F04h, 27D8h
                 mov     word ptr ds:1F06h, 1068h
                 retn
-sub_11411       endp
+stageShopItem_2 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; stage (price, name) for a museum-shop item.
 
-sub_1141E       proc near
+stageShopItem_3 proc near
                 mov     word ptr ds:1F04h, 2C88h
                 mov     word ptr ds:1F06h, 1E78h
                 mov     si, 1BC4h
@@ -2427,14 +2439,14 @@ sub_1141E       proc near
                 jmp     loc_1144D
 ; ---------------------------------------------------------------------------
 
-loc_11441:                              ; CODE XREF: sub_1141E+1E↑j
+loc_11441:                              ; CODE XREF: stageShopItem_3+1E↑j
                 mov     word ptr ds:1F04h, 3390h
                 mov     word ptr ds:1F06h, 2C88h
 
-loc_1144D:                              ; CODE XREF: sub_1141E+20↑j
+loc_1144D:                              ; CODE XREF: stageShopItem_3+20↑j
                 mov     word ptr ds:1F06h, 3390h
                 retn
-sub_1141E       endp
+stageShopItem_3 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2901,7 +2913,7 @@ applyGameFlag   proc near               ; CODE XREF: setFlag_03+6↑p
                 push    ax
                 mov     ax, 223Ah
                 push    ax
-                call    sub_14B8D
+                call    setTileState    ; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
 
 loc_11789:
                 mov     si, 1B96h
@@ -3247,7 +3259,7 @@ loc_11AA2:                              ; CODE XREF: creatureApproach+2C3↑j
                 push    ax
                 mov     ax, 2250h
                 push    ax
-                call    sub_14B8D
+                call    setTileState    ; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
                 mov     ax, ds:223Ch
                 mov     ds:2192h, ax
                 cmp     ax, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -3354,7 +3366,7 @@ loc_11BB6:                              ; CODE XREF: creatureApproach+3FD↑j
 ; ---------------------------------------------------------------------------
 
 loc_11BC0:                              ; CODE XREF: creatureApproach+40B↑j
-                call    sub_10A39
+                call    stageSfx_event  ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
 ; ---------------------------------------------------------------------------
 
 loc_11BC3:                              ; CODE XREF: creatureApproach+40D↑j
@@ -3559,72 +3571,79 @@ describeCreature endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 4, subcode := 0x03.
 
-sub_121F7       proc near
+combatBeat_1    proc near
                 mov     word ptr ds:2192h, 4
                 mov     word ptr ds:1F04h, 3
                 retn
-sub_121F7       endp
+combatBeat_1    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 6, subcode := 0x0B.
 
-sub_12204       proc near
+combatBeat_2    proc near
                 mov     word ptr ds:2192h, 6 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:1F04h, 0Bh
                 retn
-sub_12204       endp
+combatBeat_2    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 4, subcode := 0x11.
 
-sub_12211       proc near
+combatBeat_3    proc near
                 mov     word ptr ds:2192h, 4
                 mov     word ptr ds:1F04h, 11h
                 retn
-sub_12211       endp
+combatBeat_3    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 4, subcode := 0x15.
 
-sub_1221E       proc near
+combatBeat_4    proc near
                 mov     word ptr ds:2192h, 4
                 mov     word ptr ds:1F04h, 15h
                 retn
-sub_1221E       endp
+combatBeat_4    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 3, subcode := 0x19.
 
-sub_1222B       proc near
+combatBeat_5    proc near
                 mov     word ptr ds:2192h, 3
                 mov     word ptr ds:1F04h, 19h
                 retn
-sub_1222B       endp
+combatBeat_5    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 4, subcode := 0x1C.
 
-sub_12238       proc near
+combatBeat_6    proc near
                 mov     word ptr ds:2192h, 4
                 mov     word ptr ds:1F04h, 1Ch
                 retn
-sub_12238       endp
+combatBeat_6    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; combatPhase := 4, subcode := 0x07.
 
-sub_12245       proc near
+combatBeat_7    proc near
                 mov     word ptr ds:2192h, 4
                 mov     word ptr ds:1F04h, 7
                 retn
-sub_12245       endp
+combatBeat_7    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3891,7 +3910,7 @@ loc_12437:
                 mov     ax, 22A4h
                 push    ax
                 mov     [bp-0Eh], dx
-                call    sub_14B8D
+                call    setTileState    ; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
 
 loc_1246F:
                 mov     si, 209Ah
@@ -3959,7 +3978,7 @@ loc_124DF:
                 mov     ax, 22ACh
                 push    ax
                 mov     [bp-0Ch], dx
-                call    sub_14B8D
+                call    setTileState    ; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
 
 loc_12519:
                 mov     si, 20ACh
@@ -4128,7 +4147,7 @@ loc_12677:
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    sub_15E82
+                call    classifyMapFeature ; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
 
 loc_1268D:
                 mov     word ptr ds:22C0h, 0
@@ -4208,9 +4227,10 @@ cantDoThat      endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; enter a scripted / fixed map location -- stamps the game-record slot from ds:22CA, then setLocationField helpers. TENTATIVE.
 ; Attributes: noreturn
 
-sub_12752       proc near
+enterFixedLocation proc near
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -4221,7 +4241,7 @@ sub_12752       proc near
                 push    ax
                 mov     ax, 1B06h
                 push    ax
-                call    sub_150DA
+                call    checkLocationEntry ; validate whether the target location can be entered; enteredLocationId := 0xFF if not. TENTATIVE.
 
 loc_12771:
                 mov     ax, 1F02h
@@ -4275,7 +4295,7 @@ loc_127C8:
 
 nullsub_11:
                 retn
-sub_12752       endp
+enterFixedLocation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4454,8 +4474,8 @@ loc_1295D:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-loc_12966:
-                jmp     sub_10A39
+loc_12966:                              ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
+                jmp     stageSfx_event
 changeGameSpeed endp
 
 
@@ -4501,7 +4521,7 @@ loc_1299A:
 loc_129AD:
                 mov     ax, 22F0h
                 push    ax
-                call    sub_15DD8
+                call    setupPromptScreen ; reset the screen mode for a full-screen prompt (basScreenInit x2) -- enterLocation / museumAccessPrompt / quitOrTalk.
 
 loc_129B6:
                 mov     ax, 22F0h
@@ -4514,8 +4534,8 @@ j_rt_FE5B_3:                            ; -> screenRefresh  (leglib seg008:0x288
 j_rt_FE5B_4:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 
-loc_129C9:
-                call    sub_10A05
+loc_129C9:                              ; (ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage.
+                call    stageSfx_talk
 ; ---------------------------------------------------------------------------
 
 loc_129CC:
@@ -4676,7 +4696,7 @@ loc_12B08:                              ; CODE XREF: quitOrTalk+18F↑j
                 mov     ax, 2304h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                jmp     sub_10A6D
+                jmp     stageSfx_item   ; (ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated.
 ; ---------------------------------------------------------------------------
 
 loc_12B33:                              ; CODE XREF: quitOrTalk+144↑j
@@ -5926,9 +5946,10 @@ drawFoodGauge   endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; display the flavour string picked by ds:1ADC (x4 into a string array) -- shared "random remark" helper.
 ; Attributes: noreturn
 
-sub_135B1       proc near
+showIndexedRemark proc near
                 mov     ax, 27DCh
                 push    ax
                 mov     bx, ds:1ADCh
@@ -5983,7 +6004,7 @@ loc_1360E:
                 jmp     loc_136B3
 ; ---------------------------------------------------------------------------
 
-loc_13618:                              ; CODE XREF: sub_135B1+62↑j
+loc_13618:                              ; CODE XREF: showIndexedRemark+62↑j
                 mov     si, 1B96h
                 mov     bx, 26h ; '&'
                 add     bx, [si+0Ah]
@@ -6004,11 +6025,11 @@ loc_13618:                              ; CODE XREF: sub_135B1+62↑j
                 jmp     loc_1365E
 ; ---------------------------------------------------------------------------
 
-loc_13658:                              ; CODE XREF: sub_135B1+A2↑j
+loc_13658:                              ; CODE XREF: showIndexedRemark+A2↑j
                 mov     ax, ds:2234h
                 mov     ds:1ADAh, ax
 
-loc_1365E:                              ; CODE XREF: sub_135B1+A4↑j
+loc_1365E:                              ; CODE XREF: showIndexedRemark+A4↑j
                 mov     word ptr ds:235Ah, 13h
                 mov     ax, 235Ah
                 push    ax
@@ -6036,24 +6057,25 @@ loc_1365E:                              ; CODE XREF: sub_135B1+A4↑j
                 jmp     locret_136B2
 ; ---------------------------------------------------------------------------
 
-loc_136AC:                              ; CODE XREF: sub_135B1+F6↑j
+loc_136AC:                              ; CODE XREF: showIndexedRemark+F6↑j
                 mov     word ptr ds:1ADCh, 0
 
-locret_136B2:                           ; CODE XREF: sub_135B1+F8↑j
+locret_136B2:                           ; CODE XREF: showIndexedRemark+F8↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_136B3:                              ; CODE XREF: sub_135B1+64↑j
+loc_136B3:                              ; CODE XREF: showIndexedRemark+64↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
-sub_135B1       endp
+showIndexedRemark endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; "YOUR COMPASS IS WORKING." / "NOTHING HAPPENS" -- the USE-compass result (keyed on ds:1ADC == 0x0B).
 ; Attributes: noreturn thunk
 
-sub_136B8       proc near
-                call    sub_10A39
+useCompass      proc near
+                call    stageSfx_event  ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
 ; ---------------------------------------------------------------------------
 
 loc_136BB:
@@ -6062,7 +6084,7 @@ loc_136BB:
                 jmp     loc_136E5
 ; ---------------------------------------------------------------------------
 
-loc_136C5:                              ; CODE XREF: sub_136B8+8↑j
+loc_136C5:                              ; CODE XREF: useCompass+8↑j
                 mov     ax, 2C36h
                 push    ax
                 mov     ax, 235Eh
@@ -6077,13 +6099,13 @@ loc_136C5:                              ; CODE XREF: sub_136B8+8↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_136E5:                              ; CODE XREF: sub_136B8+A↑j
+loc_136E5:                              ; CODE XREF: useCompass+A↑j
                 mov     ax, 2C4Ah
                 push    ax
                 mov     ax, 2362h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-sub_136B8       endp
+useCompass      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6287,15 +6309,16 @@ chainToDungeon  endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; scan for a spell/item by id (loop comparing against ds:1E24). TENTATIVE.
 ; Attributes: noreturn
 
-sub_139B5       proc near
+lookupSpellSlot proc near
                 mov     ax, 1Ah
                 jmp     loc_13A02
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_139BC:                              ; CODE XREF: sub_139B5+53↓j
+loc_139BC:                              ; CODE XREF: lookupSpellSlot+53↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 1BC4h
@@ -6319,20 +6342,20 @@ loc_139BC:                              ; CODE XREF: sub_139B5+53↓j
                 jmp     loc_139FE
 ; ---------------------------------------------------------------------------
 
-loc_139F8:                              ; CODE XREF: sub_139B5+3E↑j
+loc_139F8:                              ; CODE XREF: lookupSpellSlot+3E↑j
                 mov     word ptr ds:1E24h, 0
 
-loc_139FE:                              ; CODE XREF: sub_139B5+40↑j
+loc_139FE:                              ; CODE XREF: lookupSpellSlot+40↑j
                 mov     ax, ds:2146h
                 inc     ax
 
-loc_13A02:                              ; CODE XREF: sub_139B5+3↑j
+loc_13A02:                              ; CODE XREF: lookupSpellSlot+3↑j
                 mov     ds:2146h, ax
                 cmp     ax, 1Ch
                 jle     short loc_139BC
                 mov     word ptr ds:2146h, 4
                 call    j_rt_FE4E
-sub_139B5       endp
+lookupSpellSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6477,7 +6500,7 @@ loc_13B29:                              ; CODE XREF: doAttackOrCast+111↑j
                 mov     ax, 237Ch
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                jmp     sub_10A39
+                jmp     stageSfx_event  ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
 ; ---------------------------------------------------------------------------
 
 loc_13B69:                              ; CODE XREF: doAttackOrCast+113↑j
@@ -6801,7 +6824,7 @@ loc_13E89:                              ; CODE XREF: resolvePlayerAttack:loc_13E
                 mov     ax, 23A6h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                jmp     sub_10A1F
+                jmp     stageSfx_attack ; (ds:215A,215C) := (0x3C, 0xCA) -- resolvePlayerAttack.
 ; ---------------------------------------------------------------------------
 
 loc_13EBA:                              ; CODE XREF: resolvePlayerAttack+EE↑j
@@ -6949,8 +6972,8 @@ loc_13FF3:                              ; \x161noGood\x13 1Enter museum access\x
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
 
-loc_14002:
-                call    sub_10A1F
+loc_14002:                              ; (ds:215A,215C) := (0x3C, 0xCA) -- resolvePlayerAttack.
+                call    stageSfx_attack
 ; ---------------------------------------------------------------------------
 
 loc_14005:
@@ -7029,7 +7052,7 @@ loc_14089:
                 dec     word ptr ds:21FEh
                 cmp     word ptr ds:21FEh, 0
                 jle     short loc_14097
-                jmp     sub_10A39
+                jmp     stageSfx_event  ; (ds:215E,2160) := (0x1E, 2)  -- generic event / approach / speed.
 ; ---------------------------------------------------------------------------
 
 loc_14097:                              ; CODE XREF: creatureDefeated+3E↑j
@@ -7039,8 +7062,8 @@ loc_1409C:
                 mov     word ptr ds:1F2Ah, 0
                 call    redrawAfterAction ; redraw the status line + map view after any turn-consuming action (called from mainDispatch, creatureAttack, avoidCreature, shopBuy, tryDisengage, outInit, creatureDefeated, banditAmbushEvent).
 
-loc_140A7:
-                call    sub_10A6D
+loc_140A7:                              ; (ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated.
+                call    stageSfx_item
 ; ---------------------------------------------------------------------------
 
 loc_140AA:
@@ -7380,7 +7403,7 @@ loc_143B4:                              ; CODE XREF: creatureDefeated+35B↑j
                 mov     ax, 23D6h
                 push    ax
                 mov     [bp-0Ch], dx
-                call    sub_14B8D
+                call    setTileState    ; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
                 mov     si, 20BEh
                 mov     bx, [bp-0Ch]
                 add     bx, [si+0Ah]
@@ -7606,8 +7629,8 @@ loc_145A9:
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
 
-loc_145D8:
-                jmp     sub_10A6D
+loc_145D8:                              ; (ds:2166,2168) := (0x32, 2)  -- awardFoundItem / creatureDefeated.
+                jmp     stageSfx_item
 awardFoundItem  endp
 
 
@@ -8035,7 +8058,7 @@ loc_14918:                              ; CODE XREF: enterOverworld:loc_14913↑
                 call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
 loc_14928:                              ; CODE XREF: enterOverworld+AA↑j
-                call    sub_15018
+                call    initOverworldState ; one-time overworld state init (called from outInit and enterOverworld). TENTATIVE.
 
 loc_1492D:
                 mov     si, 1B96h
@@ -8074,7 +8097,7 @@ loc_1496B:
 loc_14982:                              ; CODE XREF: enterOverworld+112↑j
                 mov     word ptr ds:1B02h, 7
                 mov     word ptr ds:1B06h, 5
-                call    sub_14A87
+                call    handleOverworldArrival ; on arriving on the overworld (from enterOverworld): stamp the game-record state field, then enterLocationOrChain + pegasusOrAmbush.
 ; ---------------------------------------------------------------------------
 
 loc_14991:                              ; CODE XREF: enterOverworld+114↑j
@@ -8216,9 +8239,10 @@ enterOverworld  endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; on arriving on the overworld (from enterOverworld): stamp the game-record state field, then enterLocationOrChain + pegasusOrAmbush.
 ; Attributes: noreturn
 
-sub_14A87       proc near               ; CODE XREF: enterOverworld+123↑p
+handleOverworldArrival proc near        ; CODE XREF: enterOverworld+123↑p
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -8235,7 +8259,7 @@ loc_14AA1:                              ; CODE XREF: creatureApproach+10F↑j
 
 nullsub_20:
                 retn
-sub_14A87       endp
+handleOverworldArrival endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8342,9 +8366,10 @@ enterLocationOrChain endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; set a map-tile state flag (1 or 2) via the pointer arg -- called from applyGameFlag and the encounter code. TENTATIVE.
 ; Attributes: noreturn
 
-sub_14B8D       proc far                ; CODE XREF: applyGameFlag+24↑P
+setTileState    proc far                ; CODE XREF: applyGameFlag+24↑P
                                         ; creatureApproach+319↑P ...
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -8356,28 +8381,28 @@ loc_14B95:
                 jmp     loc_14BAD
 ; ---------------------------------------------------------------------------
 
-loc_14BA0:                              ; CODE XREF: sub_14B8D+E↑j
+loc_14BA0:                              ; CODE XREF: setTileState+E↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 mov     di, [bp+8]
                 and     ax, [di]
                 mov     ds:223Ch, ax
 
-loc_14BAD:                              ; CODE XREF: sub_14B8D+10↑j
+loc_14BAD:                              ; CODE XREF: setTileState+10↑j
                 mov     si, [bp+6]
                 cmp     word ptr [si], 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 jz      short loc_14BB8
                 jmp     loc_14BC5
 ; ---------------------------------------------------------------------------
 
-loc_14BB8:                              ; CODE XREF: sub_14B8D+26↑j
+loc_14BB8:                              ; CODE XREF: setTileState+26↑j
                 mov     si, [bp+0Ah]
                 mov     ax, [si]
                 mov     di, [bp+8]
                 or      ax, [di]
                 mov     ds:223Ch, ax
 
-loc_14BC5:                              ; CODE XREF: sub_14B8D+28↑j
+loc_14BC5:                              ; CODE XREF: setTileState+28↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_22:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
@@ -8386,7 +8411,7 @@ nullsub_22:                             ; \x161noGood\x13 1Enter museum access\x
 
 loc_14BCD:                              ; CODE XREF: enterLocationOrChain:loc_14B8A↑j
                 jmp     loc_14CDC
-sub_14B8D       endp
+setTileState    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8501,7 +8526,7 @@ nullsub_23:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_14CDC:                              ; CODE XREF: sub_14B8D:loc_14BCD↑j
+loc_14CDC:                              ; CODE XREF: setTileState:loc_14BCD↑j
                 jmp     loc_14E5F
 drawStatusBar   endp
 
@@ -8710,7 +8735,7 @@ identifyLocationObject endp
 ; Attributes: noreturn
 
 sub_14E62       proc far                ; CODE XREF: doMovement+3CF↑P
-                                        ; sub_12752+23↑P
+                                        ; enterFixedLocation+23↑P
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -8923,9 +8948,10 @@ refreshMapView  endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; one-time overworld state init (called from outInit and enterOverworld). TENTATIVE.
 ; Attributes: noreturn
 
-sub_15018       proc far                ; CODE XREF: outInit+309↑P
+initOverworldState proc far             ; CODE XREF: outInit+309↑P
                                         ; enterOverworld:loc_14928↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -8939,7 +8965,7 @@ loc_15020:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_15032:                              ; CODE XREF: sub_15018+30↓j
+loc_15032:                              ; CODE XREF: initOverworldState+30↓j
                 mov     ax, [bp-10h]
                 add     [bp-0Eh], ax
                 add     word ptr [bp-10h], 64h ; 'd'
@@ -8947,7 +8973,7 @@ loc_15032:                              ; CODE XREF: sub_15018+30↓j
                 inc     cx
                 mov     ax, cx
 
-loc_15042:                              ; CODE XREF: sub_15018+16↑j
+loc_15042:                              ; CODE XREF: initOverworldState+16↑j
                 mov     [bp-12h], ax
                 cmp     ax, [bp-0Ch]
                 jle     short loc_15032
@@ -8956,10 +8982,10 @@ loc_15042:                              ; CODE XREF: sub_15018+16↑j
                 jmp     loc_15058
 ; ---------------------------------------------------------------------------
 
-loc_15054:                              ; CODE XREF: sub_15018+37↑j
+loc_15054:                              ; CODE XREF: initOverworldState+37↑j
                 add     word ptr [bp-0Eh], 0FF9Ch
 
-loc_15058:                              ; CODE XREF: sub_15018+39↑j
+loc_15058:                              ; CODE XREF: initOverworldState+39↑j
                 mov     si, 1B96h
                 mov     bx, 26h ; '&'
                 add     bx, [si+0Ah]
@@ -8974,14 +9000,15 @@ nullsub_27:
 
 loc_15072:                              ; CODE XREF: refreshMapView:loc_15015↑j
                 jmp     loc_150D7
-sub_15018       endp
+initOverworldState endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; read the map-object type via the ds:101 far pointer and set enteredLocationId. Called from outInit. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15075       proc far                ; CODE XREF: outInit+60A↑P
+resolveLocationFromMap proc far         ; CODE XREF: outInit+60A↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9024,16 +9051,17 @@ nullsub_28:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-loc_150D7:                              ; CODE XREF: sub_15018:loc_15072↑j
+loc_150D7:                              ; CODE XREF: initOverworldState:loc_15072↑j
                 jmp     loc_15161
-sub_15075       endp
+resolveLocationFromMap endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; validate whether the target location can be entered; enteredLocationId := 0xFF if not. TENTATIVE.
 ; Attributes: noreturn
 
-sub_150DA       proc far                ; CODE XREF: sub_12752+1A↑P
+checkLocationEntry proc far             ; CODE XREF: enterFixedLocation+1A↑P
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9048,20 +9076,20 @@ loc_150E2:
                 jmp     loc_15101
 ; ---------------------------------------------------------------------------
 
-loc_150F9:                              ; CODE XREF: sub_150DA+1A↑j
+loc_150F9:                              ; CODE XREF: checkLocationEntry+1A↑j
                 mov     word ptr [bp-0Ch], 3
                 jmp     loc_15106
 ; ---------------------------------------------------------------------------
 
-loc_15101:                              ; CODE XREF: sub_150DA+1C↑j
+loc_15101:                              ; CODE XREF: checkLocationEntry+1C↑j
                 mov     word ptr [bp-0Ch], 0
 
-loc_15106:                              ; CODE XREF: sub_150DA+24↑j
+loc_15106:                              ; CODE XREF: checkLocationEntry+24↑j
                 mov     ax, [bp-0Ch]
                 jmp     loc_15142
 ; ---------------------------------------------------------------------------
 
-loc_1510C:                              ; CODE XREF: sub_150DA+6D↓j
+loc_1510C:                              ; CODE XREF: checkLocationEntry+6D↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 20F4h
@@ -9074,7 +9102,7 @@ loc_1510C:                              ; CODE XREF: sub_150DA+6D↓j
                 jmp     loc_1513E
 ; ---------------------------------------------------------------------------
 
-loc_15126:                              ; CODE XREF: sub_150DA+47↑j
+loc_15126:                              ; CODE XREF: checkLocationEntry+47↑j
                 add     ax, 0Ah
                 mov     bx, ax
                 add     bx, [si+0Ah]
@@ -9086,42 +9114,43 @@ loc_15126:                              ; CODE XREF: sub_150DA+47↑j
                 jmp     loc_15149
 ; ---------------------------------------------------------------------------
 
-loc_1513E:                              ; CODE XREF: sub_150DA+49↑j
-                                        ; sub_150DA+5F↑j
+loc_1513E:                              ; CODE XREF: checkLocationEntry+49↑j
+                                        ; checkLocationEntry+5F↑j
                 mov     ax, ds:1F02h
                 dec     ax
 
-loc_15142:                              ; CODE XREF: sub_150DA+2F↑j
+loc_15142:                              ; CODE XREF: checkLocationEntry+2F↑j
                 mov     ds:1F02h, ax
                 or      ax, ax
                 jge     short loc_1510C
 
-loc_15149:                              ; CODE XREF: sub_150DA+61↑j
+loc_15149:                              ; CODE XREF: checkLocationEntry+61↑j
                 cmp     word ptr ds:1F02h, 0
                 jl      short loc_15153
                 jmp     loc_15159
 ; ---------------------------------------------------------------------------
 
-loc_15153:                              ; CODE XREF: sub_150DA+74↑j
+loc_15153:                              ; CODE XREF: checkLocationEntry+74↑j
                 mov     word ptr ds:1F02h, 0FFh
 
-loc_15159:                              ; CODE XREF: sub_150DA+76↑j
+loc_15159:                              ; CODE XREF: checkLocationEntry+76↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_29:
                 retf    4
 ; ---------------------------------------------------------------------------
 
-loc_15161:                              ; CODE XREF: sub_15075:loc_150D7↑j
+loc_15161:                              ; CODE XREF: resolveLocationFromMap:loc_150D7↑j
                 jmp     loc_151B4
-sub_150DA       endp
+checkLocationEntry endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; enteredLocationId := 0xFF, ds:1F04 := 0x7F (no pending location). TENTATIVE.
 ; Attributes: noreturn
 
-sub_15164       proc far                ; CODE XREF: sub_15F10+50↓P
+clearLocationTarget proc far            ; CODE XREF: computeLocationOffset+50↓P
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -9132,7 +9161,7 @@ loc_1516C:
                 jmp     loc_151A0
 ; ---------------------------------------------------------------------------
 
-loc_15177:                              ; CODE XREF: sub_15164+E↑j
+loc_15177:                              ; CODE XREF: clearLocationTarget+E↑j
                 mov     bx, [si]
                 shl     bx, 1
                 mov     si, 20F4h
@@ -9150,20 +9179,20 @@ loc_15177:                              ; CODE XREF: sub_15164+E↑j
                 jmp     loc_151AC
 ; ---------------------------------------------------------------------------
 
-loc_151A0:                              ; CODE XREF: sub_15164+10↑j
+loc_151A0:                              ; CODE XREF: clearLocationTarget+10↑j
                 mov     word ptr ds:1F02h, 0FFh
                 mov     word ptr ds:1F04h, 7Fh
 
-loc_151AC:                              ; CODE XREF: sub_15164+39↑j
+loc_151AC:                              ; CODE XREF: clearLocationTarget+39↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_30:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_151B4:                              ; CODE XREF: sub_150DA:loc_15161↑j
+loc_151B4:                              ; CODE XREF: checkLocationEntry:loc_15161↑j
                 jmp     loc_155A0
-sub_15164       endp
+clearLocationTarget endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9656,7 +9685,7 @@ nullsub_31:
                 retf    0Ch
 ; ---------------------------------------------------------------------------
 
-loc_155A0:                              ; CODE XREF: sub_15164:loc_151B4↑j
+loc_155A0:                              ; CODE XREF: clearLocationTarget:loc_151B4↑j
                 jmp     loc_157AD
 resolveMoveTarget endp
 
@@ -10105,7 +10134,7 @@ chainExec       endp
 ; Attributes: noreturn
 
 pegasusOrAmbush proc far                ; CODE XREF: outInit:loc_103B3↑P
-                                        ; sub_14A87:loc_14AA1↑P
+                                        ; handleOverworldArrival:loc_14AA1↑P
                 mov     cx, 6Eh ; 'n'
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10187,7 +10216,7 @@ loc_15969:                              ; CODE XREF: pegasusOrAmbush+48↑j
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    sub_15E82
+                call    classifyMapFeature ; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
                 call    showPegasusLanding ; "PEGASUS SETS YOU DOWN" message.
 ; ---------------------------------------------------------------------------
                 call    sub_15A6C
@@ -10432,61 +10461,66 @@ sub_15AE1       endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; playerY := 5 (+ scene locals). Scripted-scene setup.
 
-sub_15B2E       proc near
+setScenePosY_1  proc near
                 mov     word ptr [bp-16h], 7
                 mov     word ptr [bp-14h], 2Ch ; ','
                 mov     word ptr ds:1B06h, 5
                 mov     word ptr [bp-38h], 0
                 retn
-sub_15B2E       endp
+setScenePosY_1  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; playerY := 7. Scripted-scene setup.
 
-sub_15B44       proc near
+setScenePosY_2  proc near
                 mov     word ptr [bp-16h], 1Bh
                 mov     word ptr [bp-14h], 2Ch ; ','
                 mov     word ptr ds:1B06h, 7
                 mov     word ptr [bp-38h], 1
                 retn
-sub_15B44       endp
+setScenePosY_2  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; playerY := <const>. Scripted-scene setup.
 
-sub_15B5A       proc near
+setScenePosY_3  proc near
                 mov     word ptr [bp-16h], 19h
                 mov     word ptr [bp-14h], 2Ah ; '*'
                 mov     word ptr ds:1B06h, 7
                 retn
-sub_15B5A       endp
+setScenePosY_3  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; playerY := <const>. Scripted-scene setup.
 
-sub_15B6B       proc near
+setScenePosY_4  proc near
                 mov     word ptr [bp-16h], 2Dh ; '-'
                 mov     word ptr [bp-14h], 3Dh ; '='
                 mov     word ptr ds:1B06h, 4
                 mov     word ptr [bp-38h], 1
                 retn
-sub_15B6B       endp
+setScenePosY_4  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; playerY := <const>. Scripted-scene setup.
 
-sub_15B81       proc near
+setScenePosY_5  proc near
                 mov     word ptr [bp-16h], 2Ch ; ','
                 mov     word ptr [bp-14h], 56h ; 'V'
                 mov     word ptr ds:1B06h, 6 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr [bp-38h], 0
                 retn
-sub_15B81       endp
+setScenePosY_5  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10777,9 +10811,10 @@ banditAmbushEvent endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; reset the screen mode for a full-screen prompt (basScreenInit x2) -- enterLocation / museumAccessPrompt / quitOrTalk.
 ; Attributes: noreturn
 
-sub_15DD8       proc far                ; CODE XREF: enterLocation+207↑P
+setupPromptScreen proc far              ; CODE XREF: enterLocation+207↑P
                                         ; quitOrTalk+48↑P ...
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -10824,7 +10859,7 @@ loc_15E10:
                 mov     [bp-0Ch], ax
                 lea     ax, [bp-0Ch]
                 push    ax
-                call    sub_15F10
+                call    computeLocationOffset ; enteredLocationId + ds:1F04 -> the resolved index. TENTATIVE.
 
 loc_15E3A:
                 mov     si, 1B96h
@@ -10854,7 +10889,7 @@ nullsub_39:                             ; \x161noGood\x13 1Enter museum access\x
 
 loc_15E6C:                              ; CODE XREF: banditAmbushEvent:loc_15DD5↑j
                 jmp     loc_15E7F
-sub_15DD8       endp
+setupPromptScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10872,16 +10907,17 @@ nullsub_40:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_15E7F:                              ; CODE XREF: sub_15DD8:loc_15E6C↑j
+loc_15E7F:                              ; CODE XREF: setupPromptScreen:loc_15E6C↑j
                 jmp     loc_15F0D
 sub_15E6F       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15E82       proc far                ; CODE XREF: cantDoThat+47↑P
+classifyMapFeature proc far             ; CODE XREF: cantDoThat+47↑P
                                         ; pegasusOrAmbush+9B↑P ...
                 mov     cx, 2           ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -10897,20 +10933,20 @@ loc_15E8A:
                 jmp     loc_15EA9
 ; ---------------------------------------------------------------------------
 
-loc_15EA1:                              ; CODE XREF: sub_15E82+1A↑j
+loc_15EA1:                              ; CODE XREF: classifyMapFeature+1A↑j
                 mov     word ptr [bp-0Ch], 3
                 jmp     loc_15EAE
 ; ---------------------------------------------------------------------------
 
-loc_15EA9:                              ; CODE XREF: sub_15E82+1C↑j
+loc_15EA9:                              ; CODE XREF: classifyMapFeature+1C↑j
                 mov     word ptr [bp-0Ch], 0
 
-loc_15EAE:                              ; CODE XREF: sub_15E82+24↑j
+loc_15EAE:                              ; CODE XREF: classifyMapFeature+24↑j
                 mov     ax, [bp-0Ch]
                 jmp     loc_15ED1
 ; ---------------------------------------------------------------------------
 
-loc_15EB4:                              ; CODE XREF: sub_15E82+55↓j
+loc_15EB4:                              ; CODE XREF: classifyMapFeature+55↓j
                 shl     ax, 1
                 mov     bx, ax
                 mov     si, 20F4h
@@ -10922,16 +10958,16 @@ loc_15EB4:                              ; CODE XREF: sub_15E82+55↓j
                 jmp     loc_15ED9
 ; ---------------------------------------------------------------------------
 
-loc_15ECD:                              ; CODE XREF: sub_15E82+46↑j
+loc_15ECD:                              ; CODE XREF: classifyMapFeature+46↑j
                 mov     ax, ds:1F02h
                 dec     ax
 
-loc_15ED1:                              ; CODE XREF: sub_15E82+2F↑j
+loc_15ED1:                              ; CODE XREF: classifyMapFeature+2F↑j
                 mov     ds:1F02h, ax
                 cmp     ax, 1
                 jge     short loc_15EB4
 
-loc_15ED9:                              ; CODE XREF: sub_15E82+48↑j
+loc_15ED9:                              ; CODE XREF: classifyMapFeature+48↑j
                 mov     si, [bp+8]
                 mov     ax, [si]
                 mov     bx, ds:1F02h
@@ -10956,14 +10992,15 @@ nullsub_41:
 
 loc_15F0D:                              ; CODE XREF: sub_15E6F:loc_15E7F↑j
                 jmp     loc_15F9F
-sub_15E82       endp
+classifyMapFeature endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; enteredLocationId + ds:1F04 -> the resolved index. TENTATIVE.
 ; Attributes: noreturn
 
-sub_15F10       proc far                ; CODE XREF: sub_15DD8+5D↑P
+computeLocationOffset proc far          ; CODE XREF: setupPromptScreen+5D↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -10974,40 +11011,40 @@ loc_15F18:
                 jmp     loc_15F97
 ; ---------------------------------------------------------------------------
 
-loc_15F23:                              ; CODE XREF: sub_15F10+E↑j
+loc_15F23:                              ; CODE XREF: computeLocationOffset+E↑j
                 cmp     word ptr [si], 0
                 jz      short loc_15F2B
                 jmp     loc_15F35
 ; ---------------------------------------------------------------------------
 
-loc_15F2B:                              ; CODE XREF: sub_15F10+16↑j
+loc_15F2B:                              ; CODE XREF: computeLocationOffset+16↑j
                 mov     word ptr [bp-0Ch], 1Ah
                 mov     word ptr [bp-0Eh], 1Dh
 
-loc_15F35:                              ; CODE XREF: sub_15F10+18↑j
+loc_15F35:                              ; CODE XREF: computeLocationOffset+18↑j
                 mov     si, [bp+6]
                 cmp     word ptr [si], 1
                 jz      short loc_15F40
                 jmp     loc_15F4A
 ; ---------------------------------------------------------------------------
 
-loc_15F40:                              ; CODE XREF: sub_15F10+2B↑j
+loc_15F40:                              ; CODE XREF: computeLocationOffset+2B↑j
                 mov     word ptr [bp-0Ch], 19h
                 mov     word ptr [bp-0Eh], 19h
 
-loc_15F4A:                              ; CODE XREF: sub_15F10+2D↑j
+loc_15F4A:                              ; CODE XREF: computeLocationOffset+2D↑j
                 mov     ax, [bp-0Eh]
                 mov     [bp-10h], ax
                 mov     ax, [bp-0Ch]
                 jmp     loc_15F8F
 ; ---------------------------------------------------------------------------
 
-loc_15F56:                              ; CODE XREF: sub_15F10+85↓j
+loc_15F56:                              ; CODE XREF: computeLocationOffset+85↓j
                 sub     ax, [bp-0Ch]
                 mov     [bp-12h], ax
                 lea     ax, [bp-12h]
                 push    ax
-                call    sub_15164
+                call    clearLocationTarget ; enteredLocationId := 0xFF, ds:1F04 := 0x7F (no pending location). TENTATIVE.
                 mov     ax, ds:1F02h
                 shl     ax, 1
                 shl     ax, 1
@@ -11026,21 +11063,21 @@ loc_15F56:                              ; CODE XREF: sub_15F10+85↓j
                 mov     ax, [bp-14h]
                 inc     ax
 
-loc_15F8F:                              ; CODE XREF: sub_15F10+43↑j
+loc_15F8F:                              ; CODE XREF: computeLocationOffset+43↑j
                 mov     [bp-14h], ax
                 cmp     ax, [bp-10h]
                 jle     short loc_15F56
 
-loc_15F97:                              ; CODE XREF: sub_15F10+10↑j
+loc_15F97:                              ; CODE XREF: computeLocationOffset+10↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 
 nullsub_42:                             ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_15F9F:                              ; CODE XREF: sub_15E82:loc_15F0D↑j
+loc_15F9F:                              ; CODE XREF: classifyMapFeature:loc_15F0D↑j
                 jmp     loc_1602D
-sub_15F10       endp
+computeLocationOffset endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11137,7 +11174,7 @@ nullsub_43:
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_1602D:                              ; CODE XREF: sub_15F10:loc_15F9F↑j
+loc_1602D:                              ; CODE XREF: computeLocationOffset:loc_15F9F↑j
                 jmp     loc_1608A
 classifyLocationTile endp
 
@@ -11290,7 +11327,7 @@ loc_16108:                              ; CODE XREF: drawOverworldViewport+B7↓
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    sub_15E82
+                call    classifyMapFeature ; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
                 mov     ax, [bp-10h]
                 inc     ax
 
@@ -11315,7 +11352,7 @@ loc_16154:                              ; CODE XREF: drawOverworldViewport+C2↑
                 push    ax
                 lea     ax, [bp-1Ch]
                 push    ax
-                call    sub_15E82
+                call    classifyMapFeature ; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
 
 loc_1616B:                              ; CODE XREF: drawOverworldViewport+B9↑j
                                         ; drawOverworldViewport+C4↑j
@@ -11345,7 +11382,7 @@ loc_1618B:                              ; CODE XREF: drawOverworldViewport+F9↑
                 push    ax
                 lea     ax, [bp-20h]
                 push    ax
-                call    sub_15E82
+                call    classifyMapFeature ; map a raw map-feature value to an enteredLocationId code. TENTATIVE.
 
 loc_161A2:                              ; CODE XREF: drawOverworldViewport+FB↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
@@ -12003,7 +12040,7 @@ loc_1676F:                              ; CODE XREF: museumAccessPrompt+5BD↑j
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
                 lea     ax, [bp-8Ch]
                 push    ax
-                call    sub_15DD8
+                call    setupPromptScreen ; reset the screen mode for a full-screen prompt (basScreenInit x2) -- enterLocation / museumAccessPrompt / quitOrTalk.
                 lea     ax, [bp-8Ch]
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
@@ -13010,7 +13047,7 @@ rt_EF:                                  ; Overlay manager interrupt
 ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; Attributes: noreturn
 
-rt_F0           proc near               ; CODE XREF: sub_14B8D+3↑P
+rt_F0           proc near               ; CODE XREF: setTileState+3↑P
                                         ; drawStatusBar+3↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -13042,7 +13079,7 @@ rt_F3:                                  ; Overlay manager interrupt
 ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; Attributes: noreturn
 
-rt_F4           proc near               ; CODE XREF: sub_14B8D:loc_14BC5↑P
+rt_F4           proc near               ; CODE XREF: setTileState:loc_14BC5↑P
                                         ; drawStatusBar+104↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -13144,7 +13181,7 @@ rt_FF06:                                ; Overlay manager interrupt
 ; -> rtm_FF08  (leglib seg003:0x13346)
 ; Attributes: noreturn
 
-rt_FF08         proc near               ; CODE XREF: sub_15DD8+87↑P
+rt_FF08         proc near               ; CODE XREF: setupPromptScreen+87↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -15240,8 +15277,8 @@ rt_FE49         endp
 ; -> rtm_FE4A  (leglib seg008:0x27d92)
 ; Attributes: noreturn
 
-rt_FE4A         proc near               ; CODE XREF: sub_10A05+14↑P
-                                        ; sub_10A1F+14↑P ...
+rt_FE4A         proc near               ; CODE XREF: stageSfx_talk+14↑P
+                                        ; stageSfx_attack+14↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
