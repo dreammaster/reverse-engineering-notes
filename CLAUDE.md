@@ -2451,7 +2451,17 @@ disassembly work.
   previously bare) checks `==2`, a second confirmation of `GOBJ_LABEL=2`
   and of `GUILabel.font`@+0xE8. `GOBJ_INVENTORY=3` remains the only
   constant with no individually-read confirmation site — left open
-  rather than guessed.
+  rather than guessed. A case-insensitive search for
+  `"inventory window"`/`"InvWindow"` (the kind of error-string wording a
+  dedicated validator would use) finds zero matches anywhere in the
+  disassembly — not conclusive, but consistent with `GUIInv`'s already-
+  established minimal footprint here (no `charId`/`itemWidth`/
+  `itemHeight`/`topIndex`, only the shared `GUIObject` base persisted).
+  Also retroactively documented in full: `SetActiveInventory` (bare
+  before, despite `CharacterInfo.activeinv`'s own comment already citing
+  its `-1` branch) — the general-case path validates `iit` against
+  `inv[iit]@+0x44>=1` (player must own the item) and writes
+  `activeinv@+0x34=iit` directly, a third confirmation route.
 
 ## Third-party library identification (Task #10)
 

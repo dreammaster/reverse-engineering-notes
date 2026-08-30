@@ -257,7 +257,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol; apply_structs.py's CharacterInfo.activeinv comment already cited this function's iit==-1 branch, but this matches.json entry itself was never updated with the full behavioral evidence until now). Body: if iit==-1 (deselect), sets playerchar->activeinv@+0x34=-1 and, if the current cursor mode is MODE_USE(4), resets it to MODE_WALK(0) via SetCursorMode -- matching source's \"player.activeinv=-1; if (GetCursorMode()==MODE_USE) SetCursorMode(0);\" (AC.CPP) exactly. Otherwise validates iit in [1,100) (quitting \"!SetActiveInventory: invalid inventory number\" otherwise, matching MAX_INV=100), validates playerchar->inv[iit]@+0x44 (a SHORT array, read via movsx) >=1 (quitting \"!SetActiveInventory: player doesn't have this item\" otherwise -- the player must actually own at least one of the item), calls the already-matched sub_40CF16 (applies the item's cursor graphic/hotspot to the MODE_USE cursor), sets playerchar->activeinv@+0x34=iit (the general case, not just -1), and switches to MODE_USE(4) via SetCursorMode. This is a THIRD confirmation route for CharacterInfo.activeinv@+0x34 (general-case write, not just the -1 special case already cited), and independently reconfirms CharacterInfo.inv[100]@+0x44's short-array element type and MAX_INV=100 capacity (already established via main's startup loop several sessions ago) from a new call site."
   },
   {
     "kind": "function",

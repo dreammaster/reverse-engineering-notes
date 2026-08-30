@@ -9067,3 +9067,38 @@ type perhaps being validated differently (e.g. via a dedicated
 `is_valid_...`-style helper not yet located) or not needing runtime
 validation at all in this build's own inventory-window script API. Left
 open rather than guessed.
+
+A quick exhaustive check strengthens that "left open" call into something
+closer to a real negative result: a case-insensitive search of the whole
+disassembly for `"inventory window"`/`"InvWindow"` (the kind of phrase a
+dedicated `GOBJ_INVENTORY`-checking validator's error string would use,
+by analogy with `"!ListBox: specified control is not a list box"`/
+`"!SetButtonPic: specified control is not..."`) finds zero matches
+anywhere. Not conclusive on its own (a validator could exist with
+differently-worded text), but consistent with `GUIInv`'s own already-
+established minimal footprint in this build (its `WriteToFile`/
+`ReadFromFile` touch only the shared `GUIObject` base fields, no
+`charId`/`itemWidth`/`itemHeight`/`topIndex` at all -- see that struct's
+own several-rounds-old entry) -- plausibly this build's inventory-window
+GUI control is simple enough that no script-API function ever needs to
+validate its type at runtime.
+
+### `SetActiveInventory` retroactively documented in full
+
+A quick side-check while scanning for `GOBJ_INVENTORY` leads: this
+function had been a bare linker-symbol match in `matches.json` despite
+`apply_structs.py`'s own `CharacterInfo.activeinv` comment already
+citing its `iit==-1` branch from a much earlier round -- the fuller
+evidence was recorded in the struct file but never carried back into the
+function's own entry. Reading the whole function closes that gap: the
+`iit==-1` (deselect) branch matches `"player.activeinv=-1; if
+(GetCursorMode()==MODE_USE) SetCursorMode(0);"` exactly; the general
+case validates `iit` in `[1,100)` (matching `MAX_INV=100`) and
+`playerchar->inv[iit]@+0x44>=1` (the player must actually own at least
+one, read via `movsx` confirming the SHORT element type) before calling
+the already-matched `sub_40CF16` (applies the item's cursor graphic to
+`MODE_USE`) and writing `playerchar->activeinv@+0x34=iit` directly. This
+gives `CharacterInfo.activeinv`@+0x34 a THIRD confirmation route (the
+general-case write, not just the already-cited `-1` special case) and
+reconfirms `inv[100]`@+0x44's short-array type/capacity from a new call
+site.

@@ -729,7 +729,10 @@ struct CharacterInfo {
                            // -- sets this field directly from its `basel` parameter. Matches
                            // 2011's declared field (`acroom.h:2611`) in position exactly.
   int activeinv;            // +0x34, high confidence: SetActiveInventory(-1) sets this to -1,
-                           // matching source's "player.activeinv = -1;" exactly.
+                           // matching source's "player.activeinv = -1;" exactly. Also confirmed
+                           // in the general case: the same function's non-deselect path
+                           // validates iit against inv[iit]@+0x44>=1 (player must own the item)
+                           // then writes playerchar->activeinv@+0x34=iit directly.
   short loop;               // +0x38, high confidence (UPGRADED from MEDIUM, found in a later
                            // round): `update_stuff`'s "turning around before walking" branch
                            // (gated on `walking>=0x3E8`/`TURNING_AROUND`, already-confirmed
