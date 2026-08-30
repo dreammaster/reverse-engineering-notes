@@ -8460,3 +8460,23 @@ own paraphrase of the function's return convention had the polarity
 backwards (claimed it returns 1 for an INVALID object; the code, like
 source, actually returns 1 for VALID and 0 for INVALID) -- fixed in
 place rather than left standing.
+
+## `GetTime` documented, confirming a later `TIME_YEAR` addition absent here
+
+The last item on this round's error-string sweep: `GetTime` was already
+correctly named (matching the script-facing symbol) but had no
+matches.json entry at all. This build's version is a genuinely simpler
+predecessor of 2011's `sc_GetTime` (`AC.CPP:15447-15462`) -- rather than
+going through a `ScriptDateTime` wrapper object, it calls `time()`/
+`localtime()` directly (both already matched) and reads the resulting
+`struct tm*` fields by raw offset: `tm_hour`@`+8`, `tm_min`@`+4`,
+`tm_sec`@`+0`, `tm_mday`@`+0xC`, `tm_mon`@`+0x10` (adjusted `+1` for a
+1-based month) -- matching source's `1=hour/2=minute/3=second/4=day/
+5=month` dispatch exactly, right down to the shared error string.
+
+2011 additionally handles `whatti==6` (year) -- this build's own
+dispatch only checks values 1 through 5, falling straight through to
+the error for 6 or anything else. `GetTime(eScriptTime.Year)`-equivalent
+support is confirmed absent, another instance of this project's
+recurring "later AGS addition, not yet present in 2002" pattern, closing
+out a small but clean function match.

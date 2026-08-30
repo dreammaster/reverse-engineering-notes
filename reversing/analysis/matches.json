@@ -5761,5 +5761,14 @@
     "source_line": 20911,
     "confidence": "high",
     "evidence": "void SetObjectIgnoreWalkbehinds(int cha,int clik) at AC.CPP:20911-20919. Exact match (minus a trailing cache-invalidation line this build predates): validates the object number via the newly-renamed is_valid_object (sub_4256E0, see its own entry), quitting with the function's own \"!SetObjectIgnoreWalkbehinds: Invalid object specified\" otherwise; unconditionally clears RoomObject.flags@+0x1D bit 1 (\"and al,0FDh\"), then sets it back if clik!=0 (\"or dl,2\") -- matching source's \"objs[cha].flags&=~OBJF_NOWALKBEHINDS; if(clik) objs[cha].flags|=OBJF_NOWALKBEHINDS;\" exactly, giving RoomObject.flags bit 1 (OBJF_NOWALKBEHINDS=2, already confirmed via prepare_characters_for_drawing) a third independent confirmation. DRIFT CONFIRMED ABSENT: source's trailing \"objcache[cha].ywas=-9999;\" (invalidating a hardware-acceleration drawing cache) has no counterpart here -- consistent with this build's established, repeated lack of the objcache/actsps drawing-cache abstraction found absent elsewhere (e.g. CharacterInfo.actx/.acty)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "GetTime",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 15447,
+    "confidence": "high",
+    "evidence": "int sc_GetTime(int whatti) at AC.CPP:15447-15462 (2011's C symbol for the script-facing GetTime -- this build's own IDA label already matches the script name). This build's simpler predecessor calls time()/localtime() (both already matched) directly and reads the resulting struct tm* fields by raw offset rather than going through a ScriptDateTime wrapper: whatToGet==1 -> tm_hour@+8, ==2 -> tm_min@+4, ==3 -> tm_sec@+0, ==4 -> tm_mday@+0xC, ==5 -> tm_mon@+0x10 (adjusted +1 for 1-based month) -- matching source's 1=hour/2=minute/3=second/4=day/5=month mapping exactly, and its own \"!GetTime: invalid parameter passed\" error string verbatim. DRIFT CONFIRMED ABSENT: 2011 additionally handles whatti==6 (year); this build's dispatch only checks 1-5, falling straight to the error for 6 or any other value -- GetTime(TIME_YEAR) is a later addition this build predates."
   }
 ]

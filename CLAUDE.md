@@ -2238,6 +2238,16 @@ disassembly work.
   be an exact match for 2011's `is_valid_object` — named accordingly,
   with a small self-correction: the earlier entry's paraphrase of its
   return polarity was backwards (it returns 1 for VALID, not invalid).
+- **`GetTime` documented, confirming a later `TIME_YEAR` addition
+  absent here.** Already correctly named, no matches.json entry. A
+  simpler predecessor of 2011's `sc_GetTime` (`AC.CPP:15447-15462`) —
+  calls `time()`/`localtime()` directly and reads `struct tm*` fields
+  by raw offset instead of going through a `ScriptDateTime` wrapper,
+  matching source's `1=hour/2=minute/3=second/4=day/5=month` dispatch
+  exactly. 2011 additionally handles `whatti==6` (year); this build's
+  dispatch only checks 1–5, confirming year support absent — the usual
+  "later AGS addition" pattern, closing out this round's error-string
+  sweep.
 
 ## Third-party library identification (Task #10)
 
