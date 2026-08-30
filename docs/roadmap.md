@@ -209,12 +209,21 @@ reimplementation.
       (reveal dice, win/lose, "YOUR INTELLIGENCE / INCREASES BY"),
       `formatBidText`. `dealerTurn` / `evalDiceOdds` = the dealer AI
       (no player text — **tentative**, confirm from the call graph).
-- [ ] The ~30 remaining `sub_` helpers: dice roll/RNG, the bid legality
-      check, per-die tallying, the score/gold bookkeeping.
+- [x] Map the STDRV state vars (2026-08-31, `apply_dsvars_stdrv.py`;
+      DGROUP `seg003`). `partyGold` (1AD2) / `menuChoice` (1E22) shared
+      slots; `intelligenceStat` (1AF0 -- what resolveChallenge adjusts),
+      `stdrvArrayPtr` (29CA far ptr), `diceCount` (28FE), `playerBid`
+      (2108) / `dealerBid` (2106), `gameScore` (1EF2 dword, role
+      unclear). Most of the other 30-odd DGROUP words are one-function
+      drawString layout params.
+- [ ] The ~30 remaining `sub_` helpers are all value-stack number
+      crunching for the dice math -- no distinguishing text. `diceCount`
+      / `stdrvArrayPtr` split them into "tally" and "table lookup"
+      groups; naming each precisely needs the dice ruleset traced.
 - [ ] Field-decode `STDRVSCR.DAT` (6192 bytes) — is it the same
       screen-string record pool as the in-EXE text, or a flat blob?
-- [ ] How the INTELLIGENCE delta is written back to the character record
-      (shared with `SAVER` / `CHAR.DAT`?).
+- [ ] How the INTELLIGENCE delta (`intelligenceStat`) is written back to
+      the character record (shared with `SAVER` / `CHAR.DAT`?).
 
 ## CELDRV.EXE — open questions
 

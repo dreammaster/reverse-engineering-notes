@@ -54,6 +54,14 @@ RENAMES = [
      'TENTATIVE.'),
     (0x12454, "evalDiceOdds",
      'dice / bid probability evaluation used by dealerTurn. TENTATIVE.'),
+
+    # --- 2nd pass: from the ds: vars (apply_dsvars_stdrv.py) ---
+    (0x12044, "scoreDiceHand",
+     'heavy value-stack computation over diceCount + stdrvArrayPtr -- '
+     'the per-hand dice score / bid-probability math (~1 KB). TENTATIVE.'),
+    (0x12C9D, "dealerEvaluateBid",
+     'dealer-side value-stack evaluation (reads instructionsSeenFlag), '
+     'called from dealerTurn. TENTATIVE.'),
 ]
 
 
