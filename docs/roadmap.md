@@ -66,7 +66,12 @@ cinematic**, not a general cel player: "AGAINST ALL ODDS!" + the
 scrolling victory-story recap (hero-name substitution, over music) + end
 credits. Loads `CEL0`–`CEL2`/`DIS9`/`CEL3.BSV`. Chained from `CASDR`.
 
-Still to build: `SAVER`, `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
+`saver.idb` built 2026-08-31 — **`SAVER.EXE` is the save-game handler**:
+"SAVE THE GAME NOW IN PROGRESS?", validates the character disk, writes
+`CHAR.DAT`, then ESC → DOS / else re-exec `OUT` / `DUN`. Confirms
+`CHAR.DAT` doubles as the in-progress save (no separate file).
+
+Still to build: `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
 `CONFIGUR` (standalone C, low priority).
 
 ## DUN.EXE — open questions
@@ -155,6 +160,27 @@ Still to build: `SAVER`, `SDEFENDR`, `GMB1`/`GMB2` (check packing first),
 - [ ] The 999-line victory-story text: is it in `STDRVSCR`-style records
       inside the EXE, or a `.BSV`? (`rt_46` array access on a DGROUP
       table at `ds:1E58h`.)
+
+## SAVER.EXE — open questions
+
+- [x] Build `saver.idb` (2026-08-31). Single code seg `seg000` "bmSAVER"
+      (5 funcs, 1.5 KB), thunk table `seg001` (373), DGROUP `seg003`.
+      99.8% coerced, 0 bad insns, 373 thunks resolved.
+- [~] Name `seg000` functions (`apply_renames_saver.py`): 3/5 —
+      `saver_entry` (the "SAVE THE GAME NOW IN PROGRESS?" flow +
+      character-disk validation + quit/continue prompt), `saveRosterToDisk`
+      (writes `CHAR.DAT` — `rt_73`/basStrBuild record build, `rt_FE35` /
+      `rt_FE39` file I/O), `chainBackOrQuit` (ESC → DOS, else re-exec
+      `OUT.EXE` / `DUN.EXE`). `sub_10411` is a 1-byte artifact.
+- [ ] Which module SAVER came from — how does it know to re-exec `OUT`
+      vs `DUN`? (a flag in `CHAR.DAT` / `LEGACY.DAT`, or an env var?)
+      Only `OUT.EXE` and `DUN.EXE` are named as chain targets — what
+      about saving from a town / castle / the museum?
+- [ ] `CHAR.DAT` field layout — `saveRosterToDisk` is the write side,
+      `readLegacyDat` / the menu's roster screens the read side.
+- [ ] The "character disk" checks ("is not on this / character disk",
+      "empty") imply a multi-disk / per-character-slot save scheme —
+      confirm.
 
 ## LEGLIB.EXE — open questions
 

@@ -1,21 +1,21 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\lota\celdrv.idb
-[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_celdrv.py']
-[*] reading apply_renames_celdrv.py
-[*] executing apply_renames_celdrv.py
+[*] idb = C:\dev\lota\saver.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_saver.py']
+[*] reading apply_renames_saver.py
+[*] executing apply_renames_saver.py
 [*] captured stdout from target script:
 ----- begin target script output -----
 
-applied 13, already-named 0
-seg000: 13/16 functions named
+applied 3, already-named 0
+seg000: 3/5 functions named
 ----- end target script output -----
-[*] finished executing apply_renames_celdrv.py
+[*] finished executing apply_renames_saver.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\lota\celdrv.asm
-[*] gen_file(OFILE_ASM) returned 4800
-[*] exporting IDC to C:\dev\lota\celdrv.idc
+[*] exporting ASM to C:\dev\lota\saver.asm
+[*] gen_file(OFILE_ASM) returned 4323
+[*] exporting IDC to C:\dev\lota\saver.idc
 [*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\lota\celdrv.idb
+[*] saving database to C:\dev\lota\saver.idb
 [*] done, exiting 0

@@ -65,7 +65,7 @@ notes on BRUN.
 | `GMB1.EXE` / `GMB2.EXE` | 13,285 / 21,079 | Gambling / casino minigames. |
 | `CELDRV.EXE` | 8,967 (17,024 unpacked) | **Endgame victory cinematic** ("cel" = the cel-animation image banks). Shows "AGAINST ALL ODDS!", the scrolling victory-story narration (hero-name substitution, over music) and the end credits. `CEL0.BSV`…`CEL3.BSV`, `DIS9.BSV`. Chained to from `CASDR` after the Warlord falls. |
 | `STDRV.EXE` | 24,923 | **"Stones of Wisdom" dice game** — a Liar's-Dice / Perudo variant played against the "DEALER" as the museum's *Stones of Wisdom* exhibit (`MUS` chains to it). Bid (quantity, value) pairs, challenge, loser drops a die, last with dice wins; the match result changes the character's INTELLIGENCE; each replay costs gold. NOT a "story driver" despite the name. `STDRVSCR.DAT` = the rules text. |
-| `SAVER.EXE` | 5,903 | Savegame handler. |
+| `SAVER.EXE` | 5,903 (13,888 unpacked) | **Save-game handler.** Chained to from `OUT` / `DUN` on a save-or-quit request: "DO YOU WANT TO SAVE THE GAME NOW IN PROGRESS?", validates the character disk, writes the roster to `CHAR.DAT`, then either exits to DOS or re-execs the calling module. |
 | `CONFIGUR.EXE` | 10,349 | Standalone config utility — plain Microsoft C, **no LEGLIB dependency**. `DRCONFIG.DAT`. |
 
 `LEGACY.BAT` is 4 bytes: `menu` — it just runs `MENU.EXE`.
@@ -91,6 +91,7 @@ one place that pays off across every module.
 | `twndr.idb` | `TWNDR.EXE` | 41 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (only **431** entries — TWNDR uses fewer runtime routines). Both ~100% coerced. 41 `seg000` functions named from the shop/NPC text (`foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `buyBackShop`, `townServiceDispatch` (~6 KB), …). |
 | `casdr.idb` | `CASDR.EXE` |  34 (+ 13 `bmTNCALB`) / 102 seg000 funcs (+ `rt_*` thunks) | 0 | Castle / fortress driver — **endgame** content (the Warlord, the Compendium, the king's quest). UNP-unpacked; `seg000` "bmCASDR" + `seg001` "bmTNCALB" (the **same** helper module TWNDR uses), thunk table `seg002` (431). Both ~100% coerced. 34 named from the story text (`warlordConfrontation`, `kingConfides` (the guardians-of-the-scroll / forearm-mark quest), `potionWizard`, `doFight`, `describeRoom`/`describeObjects`, `loadCastleLevel`, `exitCastle`, `gasRoomTrap`, …). |
 | `mus.idb` | `MUS.EXE` | 37 / 109 seg000 funcs (+ `rt_*` thunks) | 0 | **The MUSEUM driver** (the game's hub — display cases are portals). `seg000` "bmMUS" (109 funcs) + `seg001` "bmMUSDUNG" (8), thunk table `seg002` (431). Both ~100% coerced. 37 named: `enterExhibit`, `describeMuseumRoom`, `readPlaque`, `caretakerOffer`, `useCommand`, `chainToTown`/`Dungeon`/`Story`/`Cel`, ~15 `exhibitName_*`. |
+| `saver.idb` | `SAVER.EXE` | 3 / 5 seg000 funcs (+ `rt_*` thunks) | 0 | **The save-game handler.** Tiny — single code seg `seg000` "bmSAVER" (5 funcs, 1.5 KB), thunk table `seg001` (373), DGROUP `seg003`. 99.8% coerced, 0 bad insns, 373 thunks resolved, 19 string records. 3 named: `saver_entry` (the "SAVE THE GAME NOW IN PROGRESS?" flow), `saveRosterToDisk` (writes `CHAR.DAT`), `chainBackOrQuit` (ESC → DOS, else re-exec `OUT`/`DUN`). |
 | `celdrv.idb` | `CELDRV.EXE` | 13 / 16 seg000 funcs (+ `rt_*` thunks) | 0 | **The endgame victory cinematic.** Tiny — single code seg `seg000` "bmCELDRV" (16 funcs, 2 KB), thunk table `seg001` (373), DGROUP `seg003`. 99.5% coerced, 0 bad insns, 373 thunks resolved, 54 string records. 13 named: `celdrv_entry` (loads `CEL*`/`DIS9.BSV`, "AGAINST ALL ODDS!", story crawl), `scrollStoryText`, `runCreditsCrawl` + `showCredit*`, `serviceMusic`/`delayWithMusic`, `celAnimStep`/`blitCelFrame`. |
 | `stdrv.idb` | `STDRV.EXE` | 7 / 39 seg000 funcs (+ `rt_*` thunks) | 0 | **The "Stones of Wisdom" dice game** (a museum minigame, not a story driver). Single code seg `seg000` "bmSTDRV" (39 funcs), thunk table `seg001` (467), DGROUP `seg003`. 100% coerced, 0 bad insns, 467 thunks resolved. 7 named from the screen text: `stdrv_entry` (number-word table), `stonesOfWisdomMain` (loads `STDRVSCR.DAT`, match loop), `playerBidTurn`, `resolveChallenge` (win/lose → INTELLIGENCE change), `formatBidText`, `dealerTurn`/`evalDiceOdds` (dealer AI, tentative). |
 
@@ -400,9 +401,18 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   (`celdrv_entry`, `scrollStoryText`, `runCreditsCrawl` + four
   `showCredit*`, `serviceMusic` / `delayWithMusic` / `waitKeyWithMusic`,
   `celAnimStep` / `blitCelFrame`).
-- **Nine per-module IDBs now built** (menu, leglib, out, dun, twndr,
-  casdr, mus, stdrv, celdrv). Next: (a) map the `ds:` engine state vars to
-  name the remaining `sub_` helpers; (b) continue `rtm_*` → `B$…` in
-  `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster, and the
+- **2026-08-31** — Built `saver.idb`. **`SAVER.EXE` is the save-game
+  handler** — a small module `OUT` / `DUN` chain to on a save-or-quit
+  request: "DO YOU WANT TO SAVE / THE GAME NOW IN PROGRESS?", character-
+  disk validation ("`<name>` is not on this / character disk", "empty"),
+  writes the roster to `CHAR.DAT` ("SAVING TO DISK"), then "{TO QUIT} -
+  Hit the ESC key." → exit to DOS, else re-exec `OUT.EXE` / `DUN.EXE`.
+  5 funcs / 1.5 KB; 3 named (`saver_entry`, `saveRosterToDisk`,
+  `chainBackOrQuit`). Confirms `CHAR.DAT` is both the roster (menu edits)
+  **and** the in-progress save — there is no separate save file.
+- **Ten per-module IDBs now built** (menu, leglib, out, dun, twndr,
+  casdr, mus, stdrv, celdrv, saver). Next: (a) map the `ds:` engine state
+  vars to name the remaining `sub_` helpers; (b) continue `rtm_*` → `B$…`
+  in `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster, and the
   `rtm_FE1x` interior-graphics cluster); (c) build the last modules
-  (`SAVER`, `SDEFENDR`, `GMB1`/`GMB2`, `CONFIGUR`).
+  (`SDEFENDR`, `GMB1`/`GMB2`, `CONFIGUR`).
