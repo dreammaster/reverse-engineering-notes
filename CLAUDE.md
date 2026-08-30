@@ -2480,6 +2480,18 @@ disassembly work.
   already-matched Allegro functions) — a classic pre-hardware-
   acceleration checkerboard dissolve, documented at the level of
   confirmed existence/rough operation rather than pixel-exact fidelity.
+- **`SetTalkingColor` shows `CharacterInfo.talkcolor` isn't a standalone
+  field — it's packed into `flags`' top byte.** Validates its color arg
+  to `[0,0xFF]` then does `flags=(flags&0x00FFFFFF)|((ncol<<24)&
+  0xFF000000)`, a decisive match to `Common/acroom.h:3013`'s own
+  documented `OldCharacterInfo`→`CharacterInfo` upgrade code: `"ci->
+  talkcolor=(oci->flags&OCHF_SPEECHCOL)>>OCHF_SPEECHCOLSHIFT"`
+  (`OCHF_SPEECHCOL=0xff000000`, `acroom.h:2498-99`). 2011 itself
+  documents this packing as the OLD pre-refactor layout — this build's
+  `CharacterInfo` (already matching `OldCharacterInfo` with zero drift)
+  still uses it live, not as a save-compat artifact. No 33rd field to
+  find: the struct's already-known `0x140` total size was correct all
+  along, `talkcolor` was hiding inside an already-mapped field's byte.
 
 ## Third-party library identification (Task #10)
 

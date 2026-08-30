@@ -9149,3 +9149,34 @@ documented at the level of "confirmed this branch exists and roughly how
 it operates," not yet pixel-perfect fidelity, left as a candidate for a
 future round if exact ScummVM-side dissolve-pattern replication ever
 matters.
+
+### `SetTalkingColor` reveals `CharacterInfo.talkcolor` doesn't exist as its own field -- it's packed into `flags`' top byte
+
+Another bare-match sweep hit, and a genuinely satisfying one:
+`SetTalkingColor` validates its color argument to `[0,0xFF]`(255) -- an
+8-bit range, not a full int -- then does
+`chars[chaa].flags = (chars[chaa].flags & 0x00FFFFFF) | ((ncol<<24) &
+0xFF000000)`, clearing and replacing exactly the TOP BYTE of the
+already-confirmed `CharacterInfo.flags`@+0x20.
+
+This isn't a guess needing independent verification -- 2011's own source
+documents the exact mechanism directly, in the `OldCharacterInfo` ->
+`CharacterInfo` save-compat upgrade code this project has leaned on
+before for `CharacterInfo`'s other fields (`Common/acroom.h:3013`):
+`"ci->talkcolor = (oci->flags & OCHF_SPEECHCOL) >> OCHF_SPEECHCOLSHIFT;"`,
+with `OCHF_SPEECHCOL=0xff000000`/`OCHF_SPEECHCOLSHIFT=24`
+(`acroom.h:2498-2499`). In other words: 2011 itself documents that in
+the OLD `OldCharacterInfo` layout, `talkcolor` was never a standalone
+field at all -- it lived packed into the top byte of `flags`, alongside
+the `CHF_*` bit flags, only becoming its own dedicated `int talkcolor`
+field in the later `CharacterInfo` refactor. This build's own
+`SetTalkingColor` still reads/writes it in exactly that OLD packed
+form -- confirming the packing is genuinely LIVE here, not merely a
+historical save-compat artifact the way some other `OldCharacterInfo`-
+vs-`CharacterInfo` differences found earlier in this project turned out
+to be. `CharacterInfo` (already one of the most heavily-worked structs
+in the project, previously believed to have no remaining open fields)
+picks up one more piece of real information: there is no 33rd field to
+find for `talkcolor` -- the struct's already-known total size (`0x140`)
+was correct all along, and the "missing" field was hiding inside a byte
+of a field already fully mapped.

@@ -683,6 +683,16 @@ struct CharacterInfo {
   int flags;                // +0x20, high confidence: Character_UnlockView does
                            // "chaa->flags &= ~CHF_FIXVIEW;" where CHF_FIXVIEW=2 (Common/acroom.h:2480) --
                            // disasm matches exactly: `and al, 0FDh` (~2) on a 32-bit field read via `mov eax,[...]`.
+                           // Top byte doubles as a packed talkcolor/speech-color field (no
+                           // standalone talkcolor field exists in this build): SetTalkingColor
+                           // (already matched) does "flags=(flags&0x00FFFFFF)|((ncol<<24)&
+                           // 0xFF000000)", a decisive match to Common/acroom.h:3013's own
+                           // documented OldCharacterInfo->CharacterInfo upgrade path, "ci->
+                           // talkcolor=(oci->flags&OCHF_SPEECHCOL)>>OCHF_SPEECHCOLSHIFT" with
+                           // OCHF_SPEECHCOL=0xff000000/OCHF_SPEECHCOLSHIFT=24 (acroom.h:2498-99)
+                           // -- 2011 documents this packing as the OLD pre-refactor layout this
+                           // build's CharacterInfo already matches; talkcolor only became its
+                           // own standalone int field in the later CharacterInfo refactor.
                            //
                            // Everything from here through the end of the struct matches 2011's
                            // OLD `OldCharacterInfo` ancestor (`Common/acroom.h:2599-2621`) --
