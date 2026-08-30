@@ -82,8 +82,14 @@ reached from a town; raises ARMOR/WEAPON/ENDURANCE, 50 gold/session,
 win, 17+ dealer stop, bet 0 to quit, broke → 5-gold stake, break the
 bank → house closes). Loads `BJCHR.GLB`, chains back to `TWNDR`.
 
-Still to build: `GMB2` (the other casino game — shares `BJCHR.GLB`),
-`CONFIGUR` (standalone C, low priority).
+`gmb2.idb` built 2026-08-31 — **`GMB2.EXE` is "Flip-Flop Parlour"**, a
+Plinko / pachinko betting game (drop a ball, it bounces bumper-to-bumper
+into one of 6 buckets; bet the bucket number and/or colour; outer
+buckets pay even / double / 5×; the bumpers "flip-flop"). Uses
+`BIGNUM.DAT`, chains back to `TWNDR`. NOT a card game — it doesn't use
+`BJCHR.GLB`.
+
+Still to build: `CONFIGUR` only (standalone C, no LEGLIB — low priority).
 
 ## DUN.EXE — open questions
 
@@ -235,9 +241,23 @@ Still to build: `GMB2` (the other casino game — shares `BJCHR.GLB`),
       Identifying those `B$…` primitives would clarify `dealCardToHand`.
 - [ ] `gmb1` `ds:` vars: `ds:1F1Ah` (shoe pointer), `ds:1F04h`,
       `ds:21A4h`, the hand struct at `ds:1C7Ch`.
-- [ ] Build `gmb2.idb` — which casino game is it? (Shares `BJCHR.GLB`,
-      so also cards: poker? war? acey-deucey?)
 - [ ] `BJCHR.GLB` sprite-sheet layout (52 cards + backs).
+- [x] Build `gmb2.idb` (2026-08-31) — it's **"Flip-Flop Parlour"**, a
+      Plinko / pachinko game, *not* cards (doesn't touch `BJCHR.GLB`).
+      Single code seg `seg000` "bmGMB2" (20 funcs), 467 thunks, 100%
+      coerced, 0 bad insns.
+- [~] Name `gmb2` functions (`apply_renames_gmb2.py`): 14/20 —
+      `flipFlopMain`, `showInstructions`, `playRound`,
+      `playPracticeRound`, `dropBallAndBounce`, `computePayout`,
+      `drawBumpers`, `playTune`; `promptYesNo` / `playBounceSound` /
+      `playWinChime` / `drawBigNumberPanel` / `drawBallAnim` /
+      `stepBallPhysics` (tentative).
+- [ ] `gmb2`: the ball-physics / bumper model in `dropBallAndBounce` +
+      `stepBallPhysics` — how "flip-flop" bumper state biases the drop,
+      and how `computePayout` (struct at `ds:1B96h`) maps bucket → odds.
+- [ ] `gmb2`: does it read a data file for the bumper layout, or is the
+      whole board the hard-coded DRAW-macro set in `drawBumpers`?
+- [ ] Both games: how the gold delta is written back to `CHAR.DAT`.
 
 ## LEGLIB.EXE — open questions
 

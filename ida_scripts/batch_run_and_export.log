@@ -1,21 +1,21 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\lota\gmb1.idb
-[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gmb1.py']
-[*] reading apply_renames_gmb1.py
-[*] executing apply_renames_gmb1.py
+[*] idb = C:\dev\lota\gmb2.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_gmb2.py']
+[*] reading apply_renames_gmb2.py
+[*] executing apply_renames_gmb2.py
 [*] captured stdout from target script:
 ----- begin target script output -----
 
 applied 14, already-named 0
-seg000: 14/21 functions named
+seg000: 14/20 functions named
 ----- end target script output -----
-[*] finished executing apply_renames_gmb1.py
+[*] finished executing apply_renames_gmb2.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\lota\gmb1.asm
-[*] gen_file(OFILE_ASM) returned 7433
-[*] exporting IDC to C:\dev\lota\gmb1.idc
+[*] exporting ASM to C:\dev\lota\gmb2.asm
+[*] gen_file(OFILE_ASM) returned 10160
+[*] exporting IDC to C:\dev\lota\gmb2.idc
 [*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\lota\gmb1.idb
+[*] saving database to C:\dev\lota\gmb2.idb
 [*] done, exiting 0
