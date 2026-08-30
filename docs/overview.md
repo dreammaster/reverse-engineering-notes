@@ -380,6 +380,14 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `setViewport`, `drawActor`, `traceCombatLine`. These drive the
   `rtm_FE1x` graphics primitives in `leglib` `seg004` and read the
   interior map array (empty tile = `0xFF`).
+- **2026-08-31** — Mapped `bmDUNG` / `bmMUSDUNG`'s DGROUP state (the
+  view renderers barely touch it directly): `dgroupSeg` (`ds:0101`),
+  `viewDepthBand` (`ds:1F5A`, the depth-band loop counter), and the
+  BASIC array descriptors the renderer binds -- `dungeonMapArray` /
+  `exhibitMapArray` (`ds:1E2A`, the tile grid), `viewObjectArray`
+  (`ds:1C7C`, in-view monsters), `spriteBank` (`ds:1E58`),
+  `viewProjTable` (`ds:1C4E`). Everything else is registers, stack
+  locals, and the `seg004` playfield accessed through those descriptors.
 - **2026-08-31** — Mapped `bmTNCALB`'s DGROUP state (twndr/casdr
   `seg001`). It shares `dgroupSeg` (`ds:0101`), `playerX`/`playerY`
   (`ds:1B00`/`1B04`), `tileAhead` (`ds:1F02`), `mapStride`/`mapHeight`

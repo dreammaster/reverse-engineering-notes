@@ -11953,9 +11953,72 @@ word_141F0      dw 0                    ; DATA XREF: start+3E↑w
                 db 0A0h, 29h, 21h, 2Ah, 74h, 29h, 0F0h, 1Fh, 0F6h, 1Fh
                 db 0A0h, 29h, 25h, 2
                 dw seg seg003
-                db 80h, 29h, 80h, 29h, 80h, 29h, 80h, 29h, 0A0h, 29h, 0A0h
-                db 29h, 80h, 29h, 80h, 29h, 80h, 29h, 84h, 29h, 84h, 29h
-                db 84h, 29h, 80h, 29h, 94h, 29h, 18h dup(0), 0C4h, 5, 0Dh dup(0)
+                db  80h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db 0A0h
+                db  29h ; )
+                db 0A0h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  84h
+                db  29h ; )
+                db  84h
+                db  29h ; )
+                db  84h
+                db  29h ; )
+                db  80h
+                db  29h ; )
+                db  94h
+                db  29h ; )
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in renderExhibitView.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_1424B      dw 0                    ; DATA XREF: sub_13C7A+34↑w
 word_1424D      dw 0                    ; DATA XREF: sub_13C7A+3B↑w
 word_1424F      dw 0                    ; DATA XREF: sub_13C7A+42↑w
@@ -18927,6 +18990,7 @@ playerY         dw 0                    ; player row in the museum (paired with 
                 db    0
                 db    0
                 db    0
+viewProjTable   dw 0                    ; descriptor for the projection / wall-slice geometry table renderExhibitView loads after the map array. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -19401,6 +19465,7 @@ playerY         dw 0                    ; player row in the museum (paired with 
                 db    0
                 db    0
                 db    0
+exhibitMapArray dw 0                    ; BASIC array descriptor for the exhibit-room tile grid the view renderer reads (bound via rtm_11, walked by the drawViewWallBand* helpers).
                 db    0
                 db    0
                 db    0
@@ -19611,6 +19676,7 @@ playerY         dw 0                    ; player row in the museum (paired with 
                 db    0
                 db    0
                 db    0
+viewFrameDelay  dw 0                    ; renderExhibitView sets it to 0x78 (120) -- a frame / hold delay. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -19701,14 +19767,7 @@ playerY         dw 0                    ; player row in the museum (paired with 
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+viewDepthBand   dw 0                    ; the view-renderer's depth-band loop counter (renderExhibitView inits it to 0). Same slot as DUN.EXE's bmDUNG.
                 db    0
                 db    0
                 db    0

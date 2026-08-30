@@ -13868,7 +13868,43 @@ word_151E0      dw 0                    ; DATA XREF: start+3E↑w
                 db 60h, 2Ah, 25h, 2
                 dw seg seg003
 aDDDT           db '@*@*@*@*`*`*@*@*@*D*D*D*@*T*',0
-                db 17h dup(0), 0C4h, 5, 0Dh dup(0)
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in renderDungeonView.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_1523B      dw 0                    ; DATA XREF: sub_14C6A+34↑w
 word_1523D      dw 0                    ; DATA XREF: sub_14C6A+3B↑w
 word_1523F      dw 0                    ; DATA XREF: sub_14C6A+42↑w
@@ -20842,6 +20878,7 @@ levelProgressFlags dw 0                 ; per-level bit flags (openChest tests 0
                 db    0
                 db    0
                 db    0
+viewProjTable   dw 0                    ; descriptor for the projection / wall-slice geometry table renderDungeonView loads after the map array. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -20886,10 +20923,7 @@ levelProgressFlags dw 0                 ; per-level bit flags (openChest tests 0
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+viewObjectArray dw 0                    ; descriptor for the in-view monster / object list drawViewSprite iterates. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -21317,6 +21351,7 @@ selectedSpell   dw 0                    ; spell-menu selection index (0..0x19). 
                 db    0
                 db    0
                 db    0
+dungeonMapArray dw 0                    ; BASIC array descriptor for the dungeon tile grid the view renderer reads (renderDungeonView binds it via rtm_11; every drawViewWallBand* walks it via `[si+2]`/`[si+0Ah]`).
                 db    0
                 db    0
                 db    0
@@ -21361,10 +21396,7 @@ selectedSpell   dw 0                    ; spell-menu selection index (0..0x19). 
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+spriteBank      dw 0                    ; descriptor for the sprite / monster graphics bank drawViewSprite blits from. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -21620,8 +21652,7 @@ chainDestType   dw 0                    ; destination kind for the next executab
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+viewDepthBand   dw 0                    ; the view-renderer's depth-band loop counter -- renderDungeonView inits it to 0 and steps it over the wall bands.
                 db    0
                 db    0
                 db    0

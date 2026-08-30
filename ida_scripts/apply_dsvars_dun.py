@@ -85,6 +85,26 @@ VARS = [
      "NOT engine state -- a DGROUP scratch word the code stages a value "
      "in before a runtime call / the \"H.P.\" display (showHitPoints "
      "pushes it). Named so it is not mistaken for hitPoints (1ADA)."),
+
+    # --- seg001 "bmDUNG" (the first-person view renderer) ---
+    (0x0101, "dgroupSeg",
+     "the DGROUP self-segment -- `mov es, ds:101h` in renderDungeonView."),
+    (0x1F5A, "viewDepthBand",
+     "the view-renderer's depth-band loop counter -- renderDungeonView "
+     "inits it to 0 and steps it over the wall bands."),
+    (0x1E2A, "dungeonMapArray",
+     "BASIC array descriptor for the dungeon tile grid the view "
+     "renderer reads (renderDungeonView binds it via rtm_11; every "
+     "drawViewWallBand* walks it via `[si+2]`/`[si+0Ah]`)."),
+    (0x1C7C, "viewObjectArray",
+     "descriptor for the in-view monster / object list drawViewSprite "
+     "iterates. TENTATIVE."),
+    (0x1E58, "spriteBank",
+     "descriptor for the sprite / monster graphics bank drawViewSprite "
+     "blits from. TENTATIVE."),
+    (0x1C4E, "viewProjTable",
+     "descriptor for the projection / wall-slice geometry table "
+     "renderDungeonView loads after the map array. TENTATIVE."),
 ]
 
 # tiny runtime-dispatched stubs: actionPhase := N

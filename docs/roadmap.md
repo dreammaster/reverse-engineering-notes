@@ -124,6 +124,12 @@ reimplementation.
       `drawViewSprite`, all via the `blitViewCell` primitive (rtm_FE2A).
       Which band is which is a guess. MUS's `bmMUSDUNG` (6 funcs) is the
       same renderer for the dungeon-exhibit rooms — named identically.
+- [x] Map `bmDUNG` / `bmMUSDUNG` DGROUP state (2026-08-31) — minimal:
+      `dgroupSeg` (0101), `viewDepthBand` (1F5A), and the array
+      descriptors the renderer binds: `dungeonMapArray`/`exhibitMapArray`
+      (1E2A = tile grid), `viewObjectArray` (1C7C), `spriteBank` (1E58),
+      `viewProjTable` (1C4E). Rest is registers / stack / seg004
+      playfield via those descriptors.
 - [ ] Confirm the DUN tentatives; identify the ~28 remaining `sub_`
       (many are runtime-dispatched 6–26 byte stubs).
 

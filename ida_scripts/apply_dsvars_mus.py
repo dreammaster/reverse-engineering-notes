@@ -66,6 +66,23 @@ VARS = [
     (0x2106, "exhibitSubStep", False,
      "small counter (0..2, wraps) tracking a sub-step inside "
      "enterExhibit. TENTATIVE."),
+
+    # --- seg001 "bmMUSDUNG" (the same view renderer bmDUNG uses) ---
+    (0x0101, "dgroupSeg", False,
+     "the DGROUP self-segment -- `mov es, ds:101h` in renderExhibitView."),
+    (0x1F5A, "viewDepthBand", False,
+     "the view-renderer's depth-band loop counter (renderExhibitView "
+     "inits it to 0). Same slot as DUN.EXE's bmDUNG."),
+    (0x1EFE, "viewFrameDelay", False,
+     "renderExhibitView sets it to 0x78 (120) -- a frame / hold delay. "
+     "TENTATIVE."),
+    (0x1E2A, "exhibitMapArray", False,
+     "BASIC array descriptor for the exhibit-room tile grid the view "
+     "renderer reads (bound via rtm_11, walked by the drawViewWallBand* "
+     "helpers)."),
+    (0x1C4E, "viewProjTable", False,
+     "descriptor for the projection / wall-slice geometry table "
+     "renderExhibitView loads after the map array. TENTATIVE."),
 ]
 
 
