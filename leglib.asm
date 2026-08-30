@@ -8659,9 +8659,9 @@ loc_12CC1:                              ; CODE XREF: sub_16E0E-417E↑j
                 dd rtm_FE6B
                 dd rtm_FE6C
                 dd rtm_FE6D
-                dd loc_20639
-                dd sub_205F2
-                dd sub_20615
+                dd rtm_FE6E
+                dd rtm_FE6F
+                dd rtm_FE70
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -11993,7 +11993,7 @@ sub_13F76       endp
 
 
 sub_13FAD       proc near               ; CODE XREF: rtm_5A+7↓p
-                                        ; seg003:B11C↓p
+                                        ; rtm_05+8↓p
                 push    dx
                 mov     dx, [bx]
                 push    cx
@@ -26465,7 +26465,7 @@ sub_1A858       proc far                ; CODE XREF: rtm_7C+5↓j
                 pop     word ptr [bx+7]
                 pop     word ptr [bx+1]
 
-loc_1A860:                              ; CODE XREF: sub_1A87C+E↓j
+loc_1A860:                              ; CODE XREF: seg003:7DFA↓j
                 mov     [bx], cl
                 mov     byte ptr ds:27Dh, 0
                 push    dx
@@ -26495,15 +26495,17 @@ rtm_BE:                                 ; int 3Fh run-time entry BE
                 mov     cl, 0AAh
 ; ---------------------------------------------------------------------------
                 db  3Dh ; =
-rtm_7B          db 0B1h
-                db  22h ; "
-; ---------------------------------------------------------------------------
-                mov     bx, 6F2h
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A87C       proc far                ; CODE XREF: rtm_7D+5↓j
+rtm_7B          proc near
+                mov     cl, 22h ; '"'   ; int 3Fh run-time entry 7B
+                mov     bx, 6F2h
+rtm_7B          endp
+
+
+loc_1A87C:                              ; CODE XREF: rtm_7D+5↓j
                                         ; rtm_9D+21↓P
                 pop     ax
                 pop     dx
@@ -26512,8 +26514,6 @@ sub_1A87C       proc far                ; CODE XREF: rtm_7D+5↓j
                 pop     word ptr [bx+3]
                 pop     word ptr [bx+5]
                 jmp     short loc_1A860
-sub_1A87C       endp ; sp-analysis failed
-
 ; ---------------------------------------------------------------------------
 
 rtm_C0:                                 ; int 3Fh run-time entry C0
@@ -26527,7 +26527,7 @@ rtm_C0:                                 ; int 3Fh run-time entry C0
 rtm_7D          proc far
                 mov     cl, 22h ; '"'   ; int 3Fh run-time entry 7D
                 mov     bx, 6FFh
-                jmp     short near ptr sub_1A87C
+                jmp     short loc_1A87C
 rtm_7D          endp
 
 
@@ -33430,14 +33430,15 @@ rtm_FF11        proc far
                 retf
 rtm_FF11        endp
 
-; ---------------------------------------------------------------------------
-rtm_FF10        db  80h
-                db  26h ; &
-                db  11h
-                db    1
-                db 0FBh
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+rtm_FF10        proc far
+                and     byte ptr ds:111h, 0FBh ; int 3Fh run-time entry FF10
                 retf
+rtm_FF10        endp
+
 ; ---------------------------------------------------------------------------
                 db    0
                 db 0B0h
@@ -36348,12 +36349,19 @@ rtm_B0:                                 ; int 3Fh run-time entry B0
                 mov     ah, 3Ah ; ':'
 ; ---------------------------------------------------------------------------
                 db  3Dh ; =
-rtm_05          db 0B4h
-                db  3Bh ; ;
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+rtm_05          proc far
+
+arg_0           = word ptr  6
+
+                mov     ah, 3Bh ; ';'   ; int 3Fh run-time entry 05
                 push    bp
                 mov     bp, sp
-                mov     bx, [bp+6]
+                mov     bx, [bp+arg_0]
                 call    sub_13FAD
                 mov     dx, [bx+2]
                 int     21h             ; DOS -
@@ -36363,14 +36371,16 @@ rtm_05          db 0B4h
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_1DBBD:                              ; CODE XREF: seg003:B124↑j
+loc_1DBBD:                              ; CODE XREF: rtm_05+10↑j
                 cmp     al, 5
                 jz      short loc_1DBC4
                 jmp     near ptr loc_13886+1
 ; ---------------------------------------------------------------------------
 
-loc_1DBC4:                              ; CODE XREF: seg003:B12F↑j
+loc_1DBC4:                              ; CODE XREF: rtm_05+1B↑j
                 jmp     near ptr loc_13883+1
+rtm_05          endp
+
 ; ---------------------------------------------------------------------------
                 align 2
 
@@ -37135,7 +37145,7 @@ arg_6           = word ptr  0Ch
                 push    [bp+arg_4]
                 push    [bp+arg_2]
                 push    [bp+arg_0]
-                call    sub_1A87C
+                call    far ptr loc_1A87C
                 call    sub_1DFD6
                 mov     sp, bp
                 pop     bp
@@ -44101,9 +44111,9 @@ sub_205CE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_205F2       proc far                ; CODE XREF: rtm_FE02+8↓P
+rtm_FE6F        proc far                ; CODE XREF: rtm_FE02+8↓P
                                         ; DATA XREF: seg003:0318↑o
-                push    ds
+                push    ds              ; int 3Fh run-time entry FE6F
                 push    es
                 push    ds
                 pop     es
@@ -44123,15 +44133,15 @@ sub_205F2       proc far                ; CODE XREF: rtm_FE02+8↓P
                 pop     ds
                 assume ds:nothing
                 retf
-sub_205F2       endp
+rtm_FE6F        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20615       proc far                ; CODE XREF: rtm_FE02+88↓P
+rtm_FE70        proc far                ; CODE XREF: rtm_FE02+88↓P
                                         ; DATA XREF: seg003:031C↑o
-                push    es
+                push    es              ; int 3Fh run-time entry FE70
                 mov     ax, 0B800h
                 mov     es, ax
                 assume es:nothing
@@ -44147,7 +44157,7 @@ sub_20615       proc far                ; CODE XREF: rtm_FE02+88↓P
                 pop     es
                 assume es:nothing
                 retf
-sub_20615       endp
+rtm_FE70        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44161,12 +44171,16 @@ rtm_FE6D        proc far                ; DATA XREF: seg003:0310↑o
                 retf
 rtm_FE6D        endp
 
-; ---------------------------------------------------------------------------
 
-loc_20639:                              ; DATA XREF: seg003:0314↑o
-                pop     ax
+; =============== S U B R O U T I N E =======================================
+
+
+rtm_FE6E        proc far                ; DATA XREF: seg003:0314↑o
+                pop     ax              ; int 3Fh run-time entry FE6E
                 push    ax
                 retf
+rtm_FE6E        endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -64943,7 +64957,7 @@ rtm_FE02        proc far                ; CODE XREF: rtm_FE53:loc_28290↑P
                                         ; DATA XREF: seg003:0164↑o
                 mov     cx, 10h         ; int 3Fh run-time entry FE02
                 call    far ptr rtm_F0  ; int 3Fh run-time entry F0  [mid-func: verify]
-                call    sub_205F2
+                call    rtm_FE6F
                 mov     word ptr [bp-0Ch], 0Bh
                 mov     word ptr [bp-0Eh], 18h
                 lea     ax, [bp-0Ch]
@@ -64983,7 +64997,7 @@ rtm_FE02        proc far                ; CODE XREF: rtm_FE53:loc_28290↑P
                 push    ax
                 call    rtm_D1
                 call    rtm_FE40
-                call    sub_20615
+                call    rtm_FE70
                 call    far ptr rtm_F4
                 retf    0
 rtm_FE02        endp

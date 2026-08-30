@@ -3349,9 +3349,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1A874,	"int 3Fh run-time entry BE",	1);
 	create_insn	(0X1A874);
 	set_name	(0X1A874,	"rtm_BE");
+	set_cmt	(0X1A877,	"int 3Fh run-time entry 7B",	1);
+	create_insn	(0X1A877);
 	set_name	(0X1A877,	"rtm_7B");
-	create_insn	(0X1A879);
-	create_insn	(0X1A87C);
 	set_cmt	(0X1A88C,	"int 3Fh run-time entry C0",	1);
 	create_insn	(0X1A88C);
 	set_name	(0X1A88C,	"rtm_C0");
@@ -4453,8 +4453,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CCA9);
 	op_hex		(x,	1);
 	set_name	(0X1CCA9,	"rtm_FF11");
+	set_cmt	(0X1CCAF,	"int 3Fh run-time entry FF10",	1);
+	create_insn	(x=0X1CCAF);
+	op_hex		(x,	1);
 	set_name	(0X1CCAF,	"rtm_FF10");
-	create_insn	(0X1CCB4);
 	set_cmt	(0X1CCCA,	"int 3Fh run-time entry 2D",	1);
 	create_insn	(0X1CCCA);
 	set_name	(0X1CCCA,	"rtm_2D");
@@ -4483,9 +4485,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CD60,	"int 3Fh run-time entry F5",	1);
 	create_insn	(0X1CD60);
 	set_name	(0X1CD60,	"rtm_F5");
-	set_cmt	(0X1CD63,	"int 3Fh run-time entry 3C",	1);
-	create_insn	(0X1CD63);
-	set_name	(0X1CD63,	"rtm_3C");
 }
 
 //------------------------------------------------------------------------
@@ -4495,6 +4494,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1CD63,	"int 3Fh run-time entry 3C",	1);
+	create_insn	(0X1CD63);
+	set_name	(0X1CD63,	"rtm_3C");
 	set_cmt	(0X1CD68,	"int 3Fh run-time entry 4C  [mid-func: verify]",	1);
 	create_insn	(0X1CD68);
 	set_name	(0X1CD68,	"rtm_4C");
@@ -4808,8 +4810,11 @@ static Bytes_1(void) {
 	set_cmt	(0X1DBA1,	"int 3Fh run-time entry B0",	1);
 	create_insn	(0X1DBA1);
 	set_name	(0X1DBA1,	"rtm_B0");
+	set_cmt	(0X1DBA4,	"int 3Fh run-time entry 05",	1);
+	create_insn	(0X1DBA4);
 	set_name	(0X1DBA4,	"rtm_05");
-	create_insn	(0X1DBA6);
+	create_insn	(x=0X1DBA9);
+	op_stkvar	(x,	1);
 	set_cmt	(0X1DBB2,	"DOS - ",	0);
 	create_insn	(x=0X1DBB2);
 	op_hex		(x,	0);
@@ -6488,12 +6493,18 @@ static Bytes_1(void) {
 	set_cmt	(0X205EC,	"- VIDEO - SET COLOR PALETTE\nBH = 00h, BL = border color\nBH = 01h, BL = palette (0-3)",	0);
 	create_insn	(x=0X205EC);
 	op_hex		(x,	0);
+	set_cmt	(0X205F2,	"int 3Fh run-time entry FE6F",	1);
 	create_insn	(0X205F2);
+	set_name	(0X205F2,	"rtm_FE6F");
+	set_cmt	(0X20615,	"int 3Fh run-time entry FE70",	1);
 	create_insn	(0X20615);
+	set_name	(0X20615,	"rtm_FE70");
 	set_cmt	(0X20634,	"int 3Fh run-time entry FE6D",	1);
 	create_insn	(0X20634);
 	set_name	(0X20634,	"rtm_FE6D");
+	set_cmt	(0X20639,	"int 3Fh run-time entry FE6E",	1);
 	create_insn	(0X20639);
+	set_name	(0X20639,	"rtm_FE6E");
 	set_cmt	(0X2063C,	"int 3Fh run-time entry FE06",	1);
 	create_insn	(0X2063C);
 	set_name	(0X2063C,	"rtm_FE06");
@@ -7118,11 +7129,6 @@ static Bytes_1(void) {
 	set_cmt	(0X21079,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X21079);
 	op_hex		(x,	1);
-	create_insn	(x=0X2107B);
-	op_hex		(x,	1);
-	set_cmt	(0X2107D,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
-	create_insn	(x=0X2107D);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -7132,6 +7138,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2107B);
+	op_hex		(x,	1);
+	set_cmt	(0X2107D,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
+	create_insn	(x=0X2107D);
+	op_hex		(x,	0);
 	create_insn	(x=0X2108A);
 	op_hex		(x,	1);
 	create_insn	(x=0X2108C);
@@ -11403,9 +11414,8 @@ static Functions_0(void) {
 	add_func    (0X1A86D,0X1A874);
 	set_func_flags(0X1A86D,0x5402);
 	set_frame_size(0X1A86D, 0, 0, 0);
-	add_func    (0X1A87C,0X1A88C);
-	set_func_flags(0X1A87C,0x5402);
-	set_frame_size(0X1A87C, 0, 0, 0);
+	add_func    (0X1A877,0X1A87C);
+	set_func_flags(0X1A877,0x1400);
 	add_func    (0X1A88F,0X1A896);
 	set_func_flags(0X1A88F,0x5402);
 	set_frame_size(0X1A88F, 0, 0, 0);
@@ -11997,6 +12007,9 @@ static Functions_0(void) {
 	add_func    (0X1CCA9,0X1CCAF);
 	set_func_flags(0X1CCA9,0x5402);
 	set_frame_size(0X1CCA9, 0, 0, 0);
+	add_func    (0X1CCAF,0X1CCB5);
+	set_func_flags(0X1CCAF,0x5402);
+	set_frame_size(0X1CCAF, 0, 0, 0);
 	add_func    (0X1CCCA,0X1CCE1);
 	set_func_flags(0X1CCCA,0x5402);
 	set_frame_size(0X1CCCA, 0X2, 0, 0);
@@ -12203,6 +12216,9 @@ static Functions_0(void) {
 	add_func    (0X1DB90,0X1DB9E);
 	set_func_flags(0X1DB90,0x5402);
 	set_frame_size(0X1DB90, 0, 0, 0);
+	add_func    (0X1DBA4,0X1DBC7);
+	set_func_flags(0X1DBA4,0x5412);
+	set_frame_size(0X1DBA4, 0, 2, 0X2);
 	add_func    (0X1DBC8,0X1DC84);
 	set_func_flags(0X1DBC8,0x5412);
 	set_frame_size(0X1DBC8, 0X2, 2, 0X6);
@@ -12746,6 +12762,9 @@ static Functions_0(void) {
 	add_func    (0X20634,0X20639);
 	set_func_flags(0X20634,0x5402);
 	set_frame_size(0X20634, 0, 0, 0);
+	add_func    (0X20639,0X2063C);
+	set_func_flags(0X20639,0x5402);
+	set_frame_size(0X20639, 0, 0, 0);
 	add_func    (0X2063C,0X2066D);
 	set_func_flags(0X2063C,0x5402);
 	set_frame_size(0X2063C, 0, 0, 0);
@@ -13266,6 +13285,10 @@ static Functions_0(void) {
 	add_func    (0X23AA4,0X23B24);
 	set_func_flags(0X23AA4,0x5400);
 	set_frame_size(0X23AA4, 0, 0, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X23BB9,0X23BF8);
 	set_func_flags(0X23BB9,0x5400);
 	set_frame_size(0X23BB9, 0, 0, 0);
@@ -13275,10 +13298,6 @@ static Functions_0(void) {
 	add_func    (0X23BFE,0X23C0D);
 	set_func_flags(0X23BFE,0x5400);
 	set_frame_size(0X23BFE, 0, 0, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X23C0D,0X23C17);
 	set_func_flags(0X23C0D,0x5400);
 	set_frame_size(0X23C0D, 0, 0, 0);

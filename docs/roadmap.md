@@ -42,10 +42,12 @@ not BASIC).
 
 - [x] Map the `int 3Fh` thunk-table entry format and build a resolver
       (2026-08-30). `resolve_rtm_leglib.py` + `rtm_map.py`;
-      `resolve_thunks_menu.py` on the client side. Mechanism written up in
+      `resolve_thunks.py` on the client side. Mechanism written up in
       [overview.md](overview.md#int-3fh-run-time-dispatch-decoded-2026-08-30).
+- [x] Extended the FE table to `FE70` (2026-08-30) — `out.exe` uses
+      `FE6E`–`FE70`; `FE71`+ is past the table.
 - [ ] Attach real names to `rtm_*`. Rank by cross-module call frequency
-      (once `out`/`dun` IDBs exist), identify the Microsoft BASIC 6.0
+      (`out.idb` now exists), identify the Microsoft BASIC 6.0
       runtime routines (`B$…`) against QuickBASIC 4.5 / BASCOM 6 / BASIC
       PDS 7 references + QB reversing notes. Start with `rtm_C2` (171
       calls in `menu` alone), `rtm_D1`, `rtm_AF`, the `rtm_FE*` graphics
@@ -68,8 +70,8 @@ not BASIC).
 ## MENU.EXE — open questions
 
 - [x] Name all 467 `seg001` thunks + cross-reference to `leglib`
-      (2026-08-30, `resolve_thunks_menu.py`).
-- [x] Force `seg000` to code (2026-08-30, `coerce_seg000_menu.py`):
+      (2026-08-30, `resolve_thunks.py`).
+- [x] Force `seg000` to code (2026-08-30, `coerce_code.py`):
       99.5%, 0 bad insns, 25 functions, full call graph.
 - [x] Name the 25 `seg000` functions (2026-08-30, `apply_renames_menu.py`).
       6 CHAR.DAT-record helpers left `sub_` (hard to distinguish).
@@ -92,6 +94,22 @@ not BASIC).
       Program" is separable from the Quest menu program.
 - [ ] Trace the chain-out to `OUT.EXE` / `MUS.EXE` and how the selected
       character is handed over (`CHAR.DAT`? `LEGACY.DAT`?).
+
+## OUT.EXE — open questions
+
+- [x] Build `out.idb` (2026-08-30). `seg000` BASIC code coerced to
+      99.7%, 0 bad insns, ~97 functions, 1308 run-time calls resolved to
+      `rt_*`. Thunk table embedded mid-`seg000`; frame selector `0x67E`
+      registered (no segment carve).
+- [ ] Name the ~95 `seg000` functions. `sub_13C60` is a widely-called
+      central helper (dispatch?). OUT's DGROUP text is position-coded and
+      not readily readable — lean on `rtm_*` patterns + data-file /
+      chained-EXE (`MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`) references.
+- [ ] Tune the call-far fragmentation merge — a few functions look
+      over-merged (spanning >1 real proc).
+- [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
+      (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
+- [ ] Trace the `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` / `OUTOBJ.BSV`.
 
 ## Data formats
 

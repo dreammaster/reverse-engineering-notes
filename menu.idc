@@ -120,8 +120,10 @@ static Bytes_0(void) {
 	make_array	(0X1000C,	0X6);
 	create_word	(0X10012);
 	create_dword	(0X10014);
-	create_insn	(0X10032);
+	create_insn	(0X10030);
+	set_name	(0X10030,	"seg000_entry");
 	set_name	(0X10032,	"menu_main");
+	create_insn	(0X10150);
 	set_name	(0X1030E,	"j_rt_DE");
 	create_insn	(x=0X1031D);
 	op_hex		(x,	1);
@@ -191,7 +193,7 @@ static Bytes_0(void) {
 	create_insn	(0X1086C);
 	create_insn	(0X108A6);
 	create_insn	(0X108B6);
-	set_name	(0X108E1,	"nullsub_143");
+	set_name	(0X108E1,	"nullsub_206");
 	create_insn	(0X108E4);
 	set_name	(0X108E4,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X108E7);
@@ -201,20 +203,20 @@ static Bytes_0(void) {
 	create_insn	(0X10935);
 	create_insn	(0X10961);
 	set_name	(0X10A6B,	"j_rt_F4");
-	set_name	(0X10A70,	"nullsub_144");
+	set_name	(0X10A70,	"nullsub_207");
 	create_insn	(0X10A73);
 	set_name	(0X10A73,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X10A76);
 	set_name	(0X10A76,	"showGameCredits");
 	set_name	(0X10C66,	"j_rt_F4_0");
-	set_name	(0X10C6B,	"nullsub_145");
+	set_name	(0X10C6B,	"nullsub_208");
 	create_insn	(0X10C6E);
 	set_name	(0X10C6E,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X10C71);
 	set_name	(0X10C71,	"showCharacterRoster");
 	create_insn	(0X10D04);
 	set_name	(0X10D8C,	"j_rt_F4_1");
-	set_name	(0X10D91,	"nullsub_146");
+	set_name	(0X10D91,	"nullsub_209");
 	create_insn	(0X10D94);
 	set_name	(0X10D94,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X10D97);
@@ -242,7 +244,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1106E);
 	op_hex		(x,	1);
-	set_name	(0X110C7,	"nullsub_147");
+	set_name	(0X110C7,	"nullsub_210");
 	create_insn	(0X110CA);
 	set_name	(0X110CA,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X110CD);
@@ -258,7 +260,7 @@ static Bytes_0(void) {
 	create_insn	(0X11311);
 	create_insn	(0X11340);
 	set_name	(0X11382,	"j_rt_F4_2");
-	set_name	(0X11387,	"nullsub_148");
+	set_name	(0X11387,	"nullsub_211");
 	create_insn	(0X1138A);
 	set_name	(0X1138A,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X1138D);
@@ -270,7 +272,7 @@ static Bytes_0(void) {
 	set_name	(0X11959,	"j_j_rt_F4_3");
 	create_insn	(0X1195C);
 	set_name	(0X1195C,	"j_rt_F4_3");
-	set_name	(0X11961,	"nullsub_149");
+	set_name	(0X11961,	"nullsub_212");
 	create_insn	(0X11964);
 	set_name	(0X11964,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11967);
@@ -280,7 +282,7 @@ static Bytes_0(void) {
 	create_insn	(0X119E7);
 	create_insn	(0X119E9);
 	create_insn	(0X119FE);
-	set_name	(0X11A0F,	"nullsub_150");
+	set_name	(0X11A0F,	"nullsub_213");
 	create_insn	(0X11A12);
 	set_name	(0X11A12,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11A15);
@@ -291,14 +293,14 @@ static Bytes_0(void) {
 	create_insn	(0X11A76);
 	create_insn	(0X11AAC);
 	create_insn	(0X11AB4);
-	set_name	(0X11AE5,	"nullsub_151");
+	set_name	(0X11AE5,	"nullsub_214");
 	create_insn	(0X11AE8);
 	set_name	(0X11AE8,	"j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11AEB);
 	set_name	(0X11AEB,	"showEmptyCharacterSlots");
 	create_insn	(0X11BA2);
 	set_name	(0X11C24,	"j_rt_F4_4");
-	set_name	(0X11C29,	"nullsub_152");
+	set_name	(0X11C29,	"nullsub_215");
 	create_insn	(0X11C2C);
 	set_name	(0X11C2C,	"j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11C2F);
@@ -315,7 +317,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11CF8);
 	op_hex		(x,	1);
 	create_insn	(0X11D2F);
-	set_name	(0X11D34,	"nullsub_153");
+	set_name	(0X11D34,	"nullsub_216");
 	create_insn	(0X11D37);
 	set_name	(0X11D37,	"j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11D3A);
@@ -342,14 +344,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X1200B);
 	op_hex		(x,	1);
 	set_name	(0X1204A,	"j_rt_F4_5");
-	set_name	(0X1204F,	"nullsub_154");
+	set_name	(0X1204F,	"nullsub_217");
 	create_insn	(0X12052);
 	set_name	(0X12052,	"j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X12055);
 	create_insn	(0X1210E);
 	create_insn	(0X1214E);
 	set_name	(0X121D9,	"j_rt_F4_6");
-	set_name	(0X121DE,	"nullsub_155");
+	set_name	(0X121DE,	"nullsub_218");
 	create_insn	(0X121E1);
 	set_name	(0X121E1,	"j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X121E4);
@@ -367,14 +369,14 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X123D7);
 	op_hex		(x,	1);
-	set_name	(0X1240E,	"nullsub_156");
+	set_name	(0X1240E,	"nullsub_219");
 	create_insn	(0X12411);
 	set_name	(0X12411,	"j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X12414);
 	set_name	(0X12414,	"showStartupSplash");
 	set_name	(0X12579,	"j_rt_FE62");
 	set_name	(0X125A0,	"j_rt_F4_7");
-	set_name	(0X125A5,	"nullsub_157");
+	set_name	(0X125A5,	"nullsub_220");
 	create_insn	(0X125A8);
 	set_name	(0X125A8,	"j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X125AB);
@@ -386,7 +388,7 @@ static Bytes_0(void) {
 	create_insn	(0X126B8);
 	create_insn	(0X1275B);
 	set_name	(0X1276D,	"j_rt_F4_8");
-	set_name	(0X12772,	"nullsub_158");
+	set_name	(0X12772,	"nullsub_221");
 	create_insn	(0X12775);
 	set_name	(0X12775,	"j_j_j_j_j_j_rt_ED");
 	create_insn	(0X12778);
@@ -401,7 +403,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12885);
 	set_name	(0X1289E,	"j_rt_F4_9");
-	set_name	(0X128A3,	"nullsub_159");
+	set_name	(0X128A3,	"nullsub_222");
 	create_insn	(0X128A6);
 	set_name	(0X128A6,	"j_j_j_j_j_rt_ED");
 	create_insn	(0X128A9);
@@ -411,14 +413,14 @@ static Bytes_0(void) {
 	create_insn	(x=0X128F4);
 	op_hex		(x,	1);
 	set_name	(0X12943,	"j_rt_F4_10");
-	set_name	(0X12948,	"nullsub_160");
+	set_name	(0X12948,	"nullsub_223");
 	create_insn	(0X1294B);
 	set_name	(0X1294B,	"j_j_j_j_rt_ED");
 	create_insn	(0X1294E);
 	set_name	(0X1294E,	"drawCancelOption");
 	create_insn	(0X12964);
 	set_name	(0X1299D,	"j_rt_F4_11");
-	set_name	(0X129A2,	"nullsub_161");
+	set_name	(0X129A2,	"nullsub_224");
 	create_insn	(0X129A5);
 	set_name	(0X129A5,	"j_j_j_rt_ED");
 	create_insn	(0X129A8);
@@ -426,6 +428,17 @@ static Bytes_0(void) {
 	set_name	(0X129B0,	"j_rt_FE2C");
 	set_name	(0X129C5,	"j_rt_FF1F_0");
 	create_insn	(0X129CF);
+	create_insn	(0X12C67);
+	create_insn	(x=0X12C69);
+	op_seg		(x,	0);
+	op_seg		(x,	1);
+	op_seg		(x,	2);
+	op_seg		(x,	3);
+	op_seg		(x,	4);
+	op_seg		(x,	5);
+	op_seg		(x,	6);
+	op_seg		(x,	7);
+	create_insn	(0X12C6B);
 	create_insn	(0X12DC7);
 	create_insn	(0X12DF5);
 	create_insn	(x=0X12DF8);
@@ -443,7 +456,7 @@ static Bytes_0(void) {
 	create_insn	(0X12F7E);
 	create_insn	(0X12FB3);
 	set_name	(0X13009,	"j_rt_F4_12");
-	set_name	(0X1300E,	"nullsub_162");
+	set_name	(0X1300E,	"nullsub_225");
 	create_insn	(0X13011);
 	set_name	(0X13011,	"j_j_rt_ED");
 	create_insn	(0X13014);
@@ -457,7 +470,7 @@ static Bytes_0(void) {
 	create_insn	(0X13100);
 	create_insn	(0X1311B);
 	set_name	(0X1314D,	"j_rt_F4_13");
-	set_name	(0X13152,	"nullsub_163");
+	set_name	(0X13152,	"nullsub_226");
 	create_insn	(0X13155);
 	set_name	(0X13155,	"j_rt_ED");
 	create_insn	(0X13170);
@@ -487,13 +500,11 @@ static Bytes_0(void) {
 	create_insn	(0X13219);
 	set_name	(0X13219,	"scrollTitleImage");
 	set_cmt	(0X13260,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13260,	"-> rtm_EC  (leglib seg003:0x12dc7)",	1);
 	create_insn	(x=0X13260);
 	op_hex		(x,	0);
 	set_name	(0X13260,	"rt_EC");
 	create_byte	(0X13262);
 	set_cmt	(0X13263,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13263,	"-> rtm_ED  (leglib seg003:0x12db0)",	1);
 	create_insn	(x=0X13263);
 	op_hex		(x,	0);
 	set_name	(0X13263,	"rt_ED");
@@ -635,13 +646,11 @@ static Bytes_0(void) {
 	set_name	(0X132D6,	"rt_07");
 	create_byte	(0X132D8);
 	set_cmt	(0X132D9,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X132D9,	"-> rtm_09  (leglib seg003:0x14a31)",	1);
 	create_insn	(x=0X132D9);
 	op_hex		(x,	0);
 	set_name	(0X132D9,	"rt_09");
 	create_byte	(0X132DB);
 	set_cmt	(0X132DC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X132DC,	"-> rtm_0F  (leglib seg003:0x1360b)",	1);
 	create_insn	(x=0X132DC);
 	op_hex		(x,	0);
 	set_name	(0X132DC,	"rt_0F");
@@ -653,7 +662,6 @@ static Bytes_0(void) {
 	set_name	(0X132DF,	"rt_13");
 	create_byte	(0X132E1);
 	set_cmt	(0X132E2,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X132E2,	"-> rtm_14  (leglib seg003:0x1c9c9)",	1);
 	create_insn	(x=0X132E2);
 	op_hex		(x,	0);
 	set_name	(0X132E2,	"rt_14");
@@ -731,7 +739,6 @@ static Bytes_0(void) {
 	set_name	(0X13306,	"rt_41");
 	create_byte	(0X13308);
 	set_cmt	(0X13309,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13309,	"-> rtm_42  (leglib seg003:0x1b651)",	1);
 	create_insn	(x=0X13309);
 	op_hex		(x,	0);
 	set_name	(0X13309,	"rt_42");
@@ -779,7 +786,6 @@ static Bytes_0(void) {
 	set_name	(0X1331E,	"rt_4B");
 	create_byte	(0X13320);
 	set_cmt	(0X13321,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13321,	"-> rtm_4E  (leglib seg003:0x1edb0)",	1);
 	create_insn	(x=0X13321);
 	op_hex		(x,	0);
 	set_name	(0X13321,	"rt_4E");
@@ -833,7 +839,6 @@ static Bytes_0(void) {
 	set_name	(0X13339,	"rt_59");
 	create_byte	(0X1333B);
 	set_cmt	(0X1333C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1333C,	"-> rtm_5A  (leglib seg003:0x19a3c)",	1);
 	create_insn	(x=0X1333C);
 	op_hex		(x,	0);
 	set_name	(0X1333C,	"rt_5A");
@@ -845,7 +850,6 @@ static Bytes_0(void) {
 	set_name	(0X1333F,	"rt_5B");
 	create_byte	(0X13341);
 	set_cmt	(0X13342,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13342,	"-> rtm_62  (leglib seg003:0x1cbdc)",	1);
 	create_insn	(x=0X13342);
 	op_hex		(x,	0);
 	set_name	(0X13342,	"rt_62");
@@ -899,7 +903,6 @@ static Bytes_0(void) {
 	set_name	(0X1335A,	"rt_6B");
 	create_byte	(0X1335C);
 	set_cmt	(0X1335D,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1335D,	"-> rtm_6C  (leglib seg003:0x1b6fa)",	1);
 	create_insn	(x=0X1335D);
 	op_hex		(x,	0);
 	set_name	(0X1335D,	"rt_6C");
@@ -911,7 +914,6 @@ static Bytes_0(void) {
 	set_name	(0X13360,	"rt_6E");
 	create_byte	(0X13362);
 	set_cmt	(0X13363,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13363,	"-> rtm_70  (leglib seg003:0x1bc02)",	1);
 	create_insn	(x=0X13363);
 	op_hex		(x,	0);
 	set_name	(0X13363,	"rt_70");
@@ -929,7 +931,6 @@ static Bytes_0(void) {
 	set_name	(0X13369,	"rt_72");
 	create_byte	(0X1336B);
 	set_cmt	(0X1336C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1336C,	"-> rtm_73  (leglib seg003:0x1b4ed)",	1);
 	create_insn	(x=0X1336C);
 	op_hex		(x,	0);
 	set_name	(0X1336C,	"rt_73");
@@ -971,7 +972,6 @@ static Bytes_0(void) {
 	set_name	(0X1337E,	"rt_86");
 	create_byte	(0X13380);
 	set_cmt	(0X13381,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13381,	"-> rtm_87  (leglib seg003:0x148ea)",	1);
 	create_insn	(x=0X13381);
 	op_hex		(x,	0);
 	set_name	(0X13381,	"rt_87");
@@ -1037,7 +1037,6 @@ static Bytes_0(void) {
 	set_name	(0X1339F,	"rt_97");
 	create_byte	(0X133A1);
 	set_cmt	(0X133A2,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133A2,	"-> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]",	1);
 	create_insn	(x=0X133A2);
 	op_hex		(x,	0);
 	set_name	(0X133A2,	"rt_98");
@@ -1067,7 +1066,6 @@ static Bytes_0(void) {
 	set_name	(0X133AE,	"rt_A6");
 	create_byte	(0X133B0);
 	set_cmt	(0X133B1,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133B1,	"-> rtm_A7  (leglib seg003:0x1b0d3)  [mid-func]",	1);
 	create_insn	(x=0X133B1);
 	op_hex		(x,	0);
 	set_name	(0X133B1,	"rt_A7");
@@ -1109,7 +1107,6 @@ static Bytes_0(void) {
 	set_name	(0X133C3,	"rt_B4");
 	create_byte	(0X133C5);
 	set_cmt	(0X133C6,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133C6,	"-> rtm_B5  (leglib seg003:0x1b707)  [mid-func]",	1);
 	create_insn	(x=0X133C6);
 	op_hex		(x,	0);
 	set_name	(0X133C6,	"rt_B5");
@@ -1127,7 +1124,6 @@ static Bytes_0(void) {
 	set_name	(0X133CC,	"rt_BB");
 	create_byte	(0X133CE);
 	set_cmt	(0X133CF,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133CF,	"-> rtm_BC  (leglib seg003:0x1b82c)  [mid-func]",	1);
 	create_insn	(x=0X133CF);
 	op_hex		(x,	0);
 	set_name	(0X133CF,	"rt_BC");
@@ -1139,19 +1135,16 @@ static Bytes_0(void) {
 	set_name	(0X133D2,	"rt_C1");
 	create_byte	(0X133D4);
 	set_cmt	(0X133D5,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133D5,	"-> rtm_C2  (leglib seg003:0x1b572)",	1);
 	create_insn	(x=0X133D5);
 	op_hex		(x,	0);
 	set_name	(0X133D5,	"rt_C2");
 	create_byte	(0X133D7);
 	set_cmt	(0X133D8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133D8,	"-> rtm_C3  (leglib seg003:0x1b5ab)",	1);
 	create_insn	(x=0X133D8);
 	op_hex		(x,	0);
 	set_name	(0X133D8,	"rt_C3");
 	create_byte	(0X133DA);
 	set_cmt	(0X133DB,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133DB,	"-> rtm_C4  (leglib seg003:0x1bc75)",	1);
 	create_insn	(x=0X133DB);
 	op_hex		(x,	0);
 	set_name	(0X133DB,	"rt_C4");
@@ -1181,25 +1174,21 @@ static Bytes_0(void) {
 	set_name	(0X133E7,	"rt_CC");
 	create_byte	(0X133E9);
 	set_cmt	(0X133EA,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133EA,	"-> rtm_CD  (leglib seg003:0x1b774)",	1);
 	create_insn	(x=0X133EA);
 	op_hex		(x,	0);
 	set_name	(0X133EA,	"rt_CD");
 	create_byte	(0X133EC);
 	set_cmt	(0X133ED,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133ED,	"-> rtm_CE  (leglib seg003:0x1edba)",	1);
 	create_insn	(x=0X133ED);
 	op_hex		(x,	0);
 	set_name	(0X133ED,	"rt_CE");
 	create_byte	(0X133EF);
 	set_cmt	(0X133F0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133F0,	"-> rtm_D1  (leglib seg003:0x1b9b0)",	1);
 	create_insn	(x=0X133F0);
 	op_hex		(x,	0);
 	set_name	(0X133F0,	"rt_D1");
 	create_byte	(0X133F2);
 	set_cmt	(0X133F3,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X133F3,	"-> rtm_D2  (leglib seg003:0x1b870)",	1);
 	create_insn	(x=0X133F3);
 	op_hex		(x,	0);
 	set_name	(0X133F3,	"rt_D2");
@@ -1259,7 +1248,6 @@ static Bytes_0(void) {
 	set_name	(0X1340E,	"rt_DD");
 	create_byte	(0X13410);
 	set_cmt	(0X13411,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13411,	"-> rtm_DE  (leglib seg003:0x19d02)",	1);
 	create_insn	(x=0X13411);
 	op_hex		(x,	0);
 	set_name	(0X13411,	"rt_DE");
@@ -1271,7 +1259,6 @@ static Bytes_0(void) {
 	set_name	(0X13414,	"rt_DF");
 	create_byte	(0X13416);
 	set_cmt	(0X13417,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13417,	"-> rtm_E0  (leglib seg003:0x1b7eb)",	1);
 	create_insn	(x=0X13417);
 	op_hex		(x,	0);
 	set_name	(0X13417,	"rt_E0");
@@ -1313,7 +1300,6 @@ static Bytes_0(void) {
 	set_name	(0X13429,	"rt_EB");
 	create_byte	(0X1342B);
 	set_cmt	(0X1342C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1342C,	"-> rtm_EE  (leglib seg003:0x1c9d3)",	1);
 	create_insn	(x=0X1342C);
 	op_hex		(x,	0);
 	set_name	(0X1342C,	"rt_EE");
@@ -1325,7 +1311,6 @@ static Bytes_0(void) {
 	set_name	(0X1342F,	"rt_EF");
 	create_byte	(0X13431);
 	set_cmt	(0X13432,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13432,	"-> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]",	1);
 	create_insn	(x=0X13432);
 	op_hex		(x,	0);
 	set_name	(0X13432,	"rt_F0");
@@ -1349,7 +1334,6 @@ static Bytes_0(void) {
 	set_name	(0X1343B,	"rt_F3");
 	create_byte	(0X1343D);
 	set_cmt	(0X1343E,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1343E,	"-> rtm_F4  (leglib seg003:0x1bb7c)",	1);
 	create_insn	(x=0X1343E);
 	op_hex		(x,	0);
 	set_name	(0X1343E,	"rt_F4");
@@ -1430,35 +1414,30 @@ static Bytes_0(void) {
 	create_byte	(0X13466);
 	make_array	(0X13466,	0X2);
 	set_cmt	(0X13468,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13468,	"-> rtm_FF08  (leglib seg003:0x13346)",	1);
 	create_insn	(x=0X13468);
 	op_hex		(x,	0);
 	set_name	(0X13468,	"rt_FF08");
 	create_byte	(0X1346A);
 	make_array	(0X1346A,	0X2);
 	set_cmt	(0X1346C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1346C,	"-> rtm_FF09  (leglib seg003:0x1cb26)  [mid-func]",	1);
 	create_insn	(x=0X1346C);
 	op_hex		(x,	0);
 	set_name	(0X1346C,	"rt_FF09");
 	create_byte	(0X1346E);
 	make_array	(0X1346E,	0X2);
 	set_cmt	(0X13470,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13470,	"-> rtm_FF0A  (leglib seg003:0x1b5e8)",	1);
 	create_insn	(x=0X13470);
 	op_hex		(x,	0);
 	set_name	(0X13470,	"rt_FF0A");
 	create_byte	(0X13472);
 	make_array	(0X13472,	0X2);
 	set_cmt	(0X13474,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13474,	"-> rtm_FF0B  (leglib seg003:0x1b9c3)",	1);
 	create_insn	(x=0X13474);
 	op_hex		(x,	0);
 	set_name	(0X13474,	"rt_FF0B");
 	create_byte	(0X13476);
 	make_array	(0X13476,	0X2);
 	set_cmt	(0X13478,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13478,	"-> rtm_FF0D  (leglib seg003:0x151b6)",	1);
 	create_insn	(x=0X13478);
 	op_hex		(x,	0);
 	set_name	(0X13478,	"rt_FF0D");
@@ -1479,7 +1458,6 @@ static Bytes_0(void) {
 	create_byte	(0X13482);
 	make_array	(0X13482,	0X2);
 	set_cmt	(0X13484,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13484,	"-> rtm_FF1F  (leglib seg004:0x21b5e)",	1);
 	create_insn	(x=0X13484);
 	op_hex		(x,	0);
 	set_name	(0X13484,	"rt_FF1F");
@@ -1528,7 +1506,6 @@ static Bytes_0(void) {
 	create_byte	(0X134A6);
 	make_array	(0X134A6,	0X2);
 	set_cmt	(0X134A8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X134A8,	"-> rtm_FF20  (leglib seg004:0x21767)  [mid-func]",	1);
 	create_insn	(x=0X134A8);
 	op_hex		(x,	0);
 	set_name	(0X134A8,	"rt_FF20");
@@ -1542,14 +1519,12 @@ static Bytes_0(void) {
 	create_byte	(0X134AE);
 	make_array	(0X134AE,	0X2);
 	set_cmt	(0X134B0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X134B0,	"-> rtm_FF22  (leglib seg004:0x218e6)",	1);
 	create_insn	(x=0X134B0);
 	op_hex		(x,	0);
 	set_name	(0X134B0,	"rt_FF22");
 	create_byte	(0X134B2);
 	make_array	(0X134B2,	0X2);
 	set_cmt	(0X134B4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X134B4,	"-> rtm_FF23  (leglib seg004:0x218ee)",	1);
 	create_insn	(x=0X134B4);
 	op_hex		(x,	0);
 	set_name	(0X134B4,	"rt_FF23");
@@ -1780,7 +1755,6 @@ static Bytes_0(void) {
 	create_byte	(0X13536);
 	make_array	(0X13536,	0X2);
 	set_cmt	(0X13538,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13538,	"-> rtm_FF44  (leglib seg004:0x21a62)",	1);
 	create_insn	(x=0X13538);
 	op_hex		(x,	0);
 	set_name	(0X13538,	"rt_FF44");
@@ -1822,14 +1796,12 @@ static Bytes_0(void) {
 	create_byte	(0X1354E);
 	make_array	(0X1354E,	0X2);
 	set_cmt	(0X13550,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13550,	"-> rtm_FF4A  (leglib seg004:0x216de)",	1);
 	create_insn	(x=0X13550);
 	op_hex		(x,	0);
 	set_name	(0X13550,	"rt_FF4A");
 	create_byte	(0X13552);
 	make_array	(0X13552,	0X2);
 	set_cmt	(0X13554,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13554,	"-> rtm_FF4B  (leglib seg004:0x21690)",	1);
 	create_insn	(x=0X13554);
 	op_hex		(x,	0);
 	set_name	(0X13554,	"rt_FF4B");
@@ -1857,14 +1829,12 @@ static Bytes_0(void) {
 	create_byte	(0X13562);
 	make_array	(0X13562,	0X2);
 	set_cmt	(0X13564,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13564,	"-> rtm_FF4F  (leglib seg004:0x2187b)",	1);
 	create_insn	(x=0X13564);
 	op_hex		(x,	0);
 	set_name	(0X13564,	"rt_FF4F");
 	create_byte	(0X13566);
 	make_array	(0X13566,	0X2);
 	set_cmt	(0X13568,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13568,	"-> rtm_FF50  (leglib seg004:0x2182d)",	1);
 	create_insn	(x=0X13568);
 	op_hex		(x,	0);
 	set_name	(0X13568,	"rt_FF50");
@@ -1946,13 +1916,11 @@ static Bytes_0(void) {
 	set_name	(0X13598,	"rt_61");
 	create_byte	(0X1359A);
 	set_cmt	(0X1359B,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1359B,	"-> rtm_6D  (leglib seg003:0x1dd26)",	1);
 	create_insn	(x=0X1359B);
 	op_hex		(x,	0);
 	set_name	(0X1359B,	"rt_6D");
 	create_byte	(0X1359D);
 	set_cmt	(0X1359E,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1359E,	"-> rtm_7A  (leglib seg003:0x1a853)",	1);
 	create_insn	(x=0X1359E);
 	op_hex		(x,	0);
 	set_name	(0X1359E,	"rt_7A");
@@ -1964,7 +1932,6 @@ static Bytes_0(void) {
 	set_name	(0X135A1,	"rt_7B");
 	create_byte	(0X135A3);
 	set_cmt	(0X135A4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X135A4,	"-> rtm_7C  (leglib seg003:0x1a86d)",	1);
 	create_insn	(x=0X135A4);
 	op_hex		(x,	0);
 	set_name	(0X135A4,	"rt_7C");
@@ -2300,7 +2267,6 @@ static Bytes_0(void) {
 	set_name	(0X1364D,	"rt_2F");
 	create_byte	(0X1364F);
 	set_cmt	(0X13650,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13650,	"-> rtm_30  (leglib seg003:0x1b661)",	1);
 	create_insn	(x=0X13650);
 	op_hex		(x,	0);
 	set_name	(0X13650,	"rt_30");
@@ -2402,13 +2368,11 @@ static Bytes_0(void) {
 	set_name	(0X13680,	"rt_5D");
 	create_byte	(0X13682);
 	set_cmt	(0X13683,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13683,	"-> rtm_5E  (leglib seg003:0x14589)",	1);
 	create_insn	(x=0X13683);
 	op_hex		(x,	0);
 	set_name	(0X13683,	"rt_5E");
 	create_byte	(0X13685);
 	set_cmt	(0X13686,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13686,	"-> rtm_5F  (leglib seg003:0x145ab)",	1);
 	create_insn	(x=0X13686);
 	op_hex		(x,	0);
 	set_name	(0X13686,	"rt_5F");
@@ -2436,15 +2400,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X13692);
 	op_hex		(x,	0);
 	set_name	(0X13692,	"rt_7E");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X13694);
 	set_cmt	(0X13695,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X13695,	"-> rtm_7F  (leglib seg003:0x1e908)",	1);
@@ -2525,19 +2480,25 @@ static Bytes_1(void) {
 	set_name	(0X136B9,	"rt_AA");
 	create_byte	(0X136BB);
 	set_cmt	(0X136BC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136BC,	"-> rtm_AB  (leglib seg003:0x145a4)",	1);
 	create_insn	(x=0X136BC);
 	op_hex		(x,	0);
 	set_name	(0X136BC,	"rt_AB");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X136BE);
 	set_cmt	(0X136BF,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136BF,	"-> rtm_AC  (leglib seg003:0x145d6)",	1);
 	create_insn	(x=0X136BF);
 	op_hex		(x,	0);
 	set_name	(0X136BF,	"rt_AC");
 	create_byte	(0X136C1);
 	set_cmt	(0X136C2,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136C2,	"-> rtm_AF  (leglib seg003:0x13608)",	1);
 	create_insn	(x=0X136C2);
 	op_hex		(x,	0);
 	set_name	(0X136C2,	"rt_AF");
@@ -2555,7 +2516,6 @@ static Bytes_1(void) {
 	set_name	(0X136C8,	"rt_B7");
 	create_byte	(0X136CA);
 	set_cmt	(0X136CB,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136CB,	"-> rtm_B8  (leglib seg003:0x1a1ba)",	1);
 	create_insn	(x=0X136CB);
 	op_hex		(x,	0);
 	set_name	(0X136CB,	"rt_B8");
@@ -2567,7 +2527,6 @@ static Bytes_1(void) {
 	set_name	(0X136CE,	"rt_B9");
 	create_byte	(0X136D0);
 	set_cmt	(0X136D1,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136D1,	"-> rtm_BA  (leglib seg003:0x1a237)",	1);
 	create_insn	(x=0X136D1);
 	op_hex		(x,	0);
 	set_name	(0X136D1,	"rt_BA");
@@ -2579,7 +2538,6 @@ static Bytes_1(void) {
 	set_name	(0X136D4,	"rt_C7");
 	create_byte	(0X136D6);
 	set_cmt	(0X136D7,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136D7,	"-> rtm_C8  (leglib seg003:0x138e2)",	1);
 	create_insn	(x=0X136D7);
 	op_hex		(x,	0);
 	set_name	(0X136D7,	"rt_C8");
@@ -2597,7 +2555,6 @@ static Bytes_1(void) {
 	set_name	(0X136DD,	"rt_CA");
 	create_byte	(0X136DF);
 	set_cmt	(0X136E0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X136E0,	"-> rtm_CF  (leglib seg003:0x16168)  [mid-func]",	1);
 	create_insn	(x=0X136E0);
 	op_hex		(x,	0);
 	set_name	(0X136E0,	"rt_CF");
@@ -2754,14 +2711,12 @@ static Bytes_1(void) {
 	create_byte	(0X13736);
 	make_array	(0X13736,	0X2);
 	set_cmt	(0X13738,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13738,	"-> rtm_FE00  (leglib seg008:0x28e94)",	1);
 	create_insn	(x=0X13738);
 	op_hex		(x,	0);
 	set_name	(0X13738,	"rt_FE00");
 	create_byte	(0X1373A);
 	make_array	(0X1373A,	0X2);
 	set_cmt	(0X1373C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1373C,	"-> rtm_FE01  (leglib seg008:0x27c25)",	1);
 	create_insn	(x=0X1373C);
 	op_hex		(x,	0);
 	set_name	(0X1373C,	"rt_FE01");
@@ -2887,7 +2842,6 @@ static Bytes_1(void) {
 	create_byte	(0X13782);
 	make_array	(0X13782,	0X2);
 	set_cmt	(0X13784,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13784,	"-> rtm_FE13  (leglib seg004:0x200a1)",	1);
 	create_insn	(x=0X13784);
 	op_hex		(x,	0);
 	set_name	(0X13784,	"rt_FE13");
@@ -2964,7 +2918,6 @@ static Bytes_1(void) {
 	create_byte	(0X137AE);
 	make_array	(0X137AE,	0X2);
 	set_cmt	(0X137B0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X137B0,	"-> rtm_FE1E  (leglib seg008:0x28667)",	1);
 	create_insn	(x=0X137B0);
 	op_hex		(x,	0);
 	set_name	(0X137B0,	"rt_FE1E");
@@ -3013,14 +2966,12 @@ static Bytes_1(void) {
 	create_byte	(0X137CA);
 	make_array	(0X137CA,	0X2);
 	set_cmt	(0X137CC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X137CC,	"-> rtm_FE25  (leglib seg008:0x28bd2)",	1);
 	create_insn	(x=0X137CC);
 	op_hex		(x,	0);
 	set_name	(0X137CC,	"rt_FE25");
 	create_byte	(0X137CE);
 	make_array	(0X137CE,	0X2);
 	set_cmt	(0X137D0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X137D0,	"-> rtm_FE26  (leglib seg007:0x26967)",	1);
 	create_insn	(x=0X137D0);
 	op_hex		(x,	0);
 	set_name	(0X137D0,	"rt_FE26");
@@ -3041,7 +2992,6 @@ static Bytes_1(void) {
 	create_byte	(0X137DA);
 	make_array	(0X137DA,	0X2);
 	set_cmt	(0X137DC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X137DC,	"-> rtm_FE29  (leglib seg007:0x27391)",	1);
 	create_insn	(x=0X137DC);
 	op_hex		(x,	0);
 	set_name	(0X137DC,	"rt_FE29");
@@ -3062,7 +3012,6 @@ static Bytes_1(void) {
 	create_byte	(0X137E6);
 	make_array	(0X137E6,	0X2);
 	set_cmt	(0X137E8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X137E8,	"-> rtm_FE2C  (leglib seg007:0x24fe3)",	1);
 	create_insn	(x=0X137E8);
 	op_hex		(x,	0);
 	set_name	(0X137E8,	"rt_FE2C");
@@ -3125,21 +3074,18 @@ static Bytes_1(void) {
 	create_byte	(0X1380A);
 	make_array	(0X1380A,	0X2);
 	set_cmt	(0X1380C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1380C,	"-> rtm_FE35  (leglib seg004:0x1fefb)",	1);
 	create_insn	(x=0X1380C);
 	op_hex		(x,	0);
 	set_name	(0X1380C,	"rt_FE35");
 	create_byte	(0X1380E);
 	make_array	(0X1380E,	0X2);
 	set_cmt	(0X13810,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13810,	"-> rtm_FE36  (leglib seg004:0x1ff08)",	1);
 	create_insn	(x=0X13810);
 	op_hex		(x,	0);
 	set_name	(0X13810,	"rt_FE36");
 	create_byte	(0X13812);
 	make_array	(0X13812,	0X2);
 	set_cmt	(0X13814,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13814,	"-> rtm_FE37  (leglib seg007:0x2701b)",	1);
 	create_insn	(x=0X13814);
 	op_hex		(x,	0);
 	set_name	(0X13814,	"rt_FE37");
@@ -3153,7 +3099,6 @@ static Bytes_1(void) {
 	create_byte	(0X1381A);
 	make_array	(0X1381A,	0X2);
 	set_cmt	(0X1381C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1381C,	"-> rtm_FE39  (leglib seg007:0x277fb)",	1);
 	create_insn	(x=0X1381C);
 	op_hex		(x,	0);
 	set_name	(0X1381C,	"rt_FE39");
@@ -3188,14 +3133,12 @@ static Bytes_1(void) {
 	create_byte	(0X1382E);
 	make_array	(0X1382E,	0X2);
 	set_cmt	(0X13830,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13830,	"-> rtm_FE3E  (leglib seg007:0x2497a)",	1);
 	create_insn	(x=0X13830);
 	op_hex		(x,	0);
 	set_name	(0X13830,	"rt_FE3E");
 	create_byte	(0X13832);
 	make_array	(0X13832,	0X2);
 	set_cmt	(0X13834,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13834,	"-> rtm_FE3F  (leglib seg008:0x27d5a)",	1);
 	create_insn	(x=0X13834);
 	op_hex		(x,	0);
 	set_name	(0X13834,	"rt_FE3F");
@@ -3216,7 +3159,6 @@ static Bytes_1(void) {
 	create_byte	(0X1383E);
 	make_array	(0X1383E,	0X2);
 	set_cmt	(0X13840,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13840,	"-> rtm_FE42  (leglib seg007:0x2730c)",	1);
 	create_insn	(x=0X13840);
 	op_hex		(x,	0);
 	set_name	(0X13840,	"rt_FE42");
@@ -3237,7 +3179,6 @@ static Bytes_1(void) {
 	create_byte	(0X1384A);
 	make_array	(0X1384A,	0X2);
 	set_cmt	(0X1384C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1384C,	"-> rtm_FE45  (leglib seg008:0x27c6e)",	1);
 	create_insn	(x=0X1384C);
 	op_hex		(x,	0);
 	set_name	(0X1384C,	"rt_FE45");
@@ -3265,7 +3206,6 @@ static Bytes_1(void) {
 	create_byte	(0X1385A);
 	make_array	(0X1385A,	0X2);
 	set_cmt	(0X1385C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1385C,	"-> rtm_FE49  (leglib seg007:0x25248)",	1);
 	create_insn	(x=0X1385C);
 	op_hex		(x,	0);
 	set_name	(0X1385C,	"rt_FE49");
@@ -3335,7 +3275,6 @@ static Bytes_1(void) {
 	create_byte	(0X13882);
 	make_array	(0X13882,	0X2);
 	set_cmt	(0X13884,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13884,	"-> rtm_FE53  (leglib seg008:0x281cb)",	1);
 	create_insn	(x=0X13884);
 	op_hex		(x,	0);
 	set_name	(0X13884,	"rt_FE53");
@@ -3370,14 +3309,12 @@ static Bytes_1(void) {
 	create_byte	(0X13896);
 	make_array	(0X13896,	0X2);
 	set_cmt	(0X13898,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X13898,	"-> rtm_FE58  (leglib seg007:0x27509)",	1);
 	create_insn	(x=0X13898);
 	op_hex		(x,	0);
 	set_name	(0X13898,	"rt_FE58");
 	create_byte	(0X1389A);
 	make_array	(0X1389A,	0X2);
 	set_cmt	(0X1389C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X1389C,	"-> rtm_FE59  (leglib seg007:0x256b5)",	1);
 	create_insn	(x=0X1389C);
 	op_hex		(x,	0);
 	set_name	(0X1389C,	"rt_FE59");
@@ -3433,21 +3370,18 @@ static Bytes_1(void) {
 	create_byte	(0X138BA);
 	make_array	(0X138BA,	0X2);
 	set_cmt	(0X138BC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138BC,	"-> rtm_FE61  (leglib seg007:0x265dd)",	1);
 	create_insn	(x=0X138BC);
 	op_hex		(x,	0);
 	set_name	(0X138BC,	"rt_FE61");
 	create_byte	(0X138BE);
 	make_array	(0X138BE,	0X2);
 	set_cmt	(0X138C0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138C0,	"-> rtm_FE62  (leglib seg007:0x25981)",	1);
 	create_insn	(x=0X138C0);
 	op_hex		(x,	0);
 	set_name	(0X138C0,	"rt_FE62");
 	create_byte	(0X138C2);
 	make_array	(0X138C2,	0X2);
 	set_cmt	(0X138C4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138C4,	"-> rtm_FE63  (leglib seg007:0x24a83)",	1);
 	create_insn	(x=0X138C4);
 	op_hex		(x,	0);
 	set_name	(0X138C4,	"rt_FE63");
@@ -3461,7 +3395,6 @@ static Bytes_1(void) {
 	create_byte	(0X138CA);
 	make_array	(0X138CA,	0X2);
 	set_cmt	(0X138CC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138CC,	"-> rtm_FE65  (leglib seg004:0x206f6)",	1);
 	create_insn	(x=0X138CC);
 	op_hex		(x,	0);
 	set_name	(0X138CC,	"rt_FE65");
@@ -3475,14 +3408,12 @@ static Bytes_1(void) {
 	create_byte	(0X138D2);
 	make_array	(0X138D2,	0X2);
 	set_cmt	(0X138D4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138D4,	"-> rtm_FE67  (leglib seg004:0x20690)",	1);
 	create_insn	(x=0X138D4);
 	op_hex		(x,	0);
 	set_name	(0X138D4,	"rt_FE67");
 	create_byte	(0X138D6);
 	make_array	(0X138D6,	0X2);
 	set_cmt	(0X138D8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X138D8,	"-> rtm_FE68  (leglib seg007:0x2706c)",	1);
 	create_insn	(x=0X138D8);
 	op_hex		(x,	0);
 	set_name	(0X138D8,	"rt_FE68");
@@ -3908,9 +3839,11 @@ static Bytes_1(void) {
 
 static Functions_0(void) {
 
-	add_func    (0X10032,0X1057F);
-	set_func_flags(0X10032,0x1401);
-	set_func_cmt(0X10032,	"program entry (falls through into mainMenuLoop). BASIC module init: sets up the theme-music strings, YES/NO/\"empty\" literals, opens LEGACY.DAT.", 1);
+	add_func    (0X10030,0X10150);
+	set_func_flags(0X10030,0x1401);
+	set_func_cmt(0X10030,	"program entry (falls through into mainMenuLoop). BASIC module init: sets up the theme-music strings, YES/NO/\"empty\" literals, opens LEGACY.DAT.", 1);
+	add_func    (0X10150,0X1057F);
+	set_func_flags(0X10150,0x1401);
 	add_func    (0X10580,0X10738);
 	set_func_flags(0X10580,0x1401);
 	set_func_cmt(0X10580,	"the main menu SELECT CASE dispatch loop. Draws the menu (drawMainMenuScreen), reads a key, and branches to showQuestCopyright / showInstructions / showGameCredits / startNewGameMenu / restartGameMenu / eraseCharacterMenu / showTitleScreen / readLegacyDat. Tail-loops to itself.", 1);

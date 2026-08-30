@@ -84,8 +84,9 @@ one place that pays off across every module.
 
 | IDB | Root file | Functions named | Structs | Notes |
 |---|---|---|---|---|
-| `leglib.idb` | `LEGLIB.EXE` | 7 / 773 | 0 | Baseline 2026-08-30 via `identify.py`. 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code. Auto-analysis found 773 funcs but named almost none. |
-| `menu.idb` | `MENU.EXE` | 1 / 18 | 0 | Baseline 2026-08-30. Essentially raw: `seg000` (12 KB, the actual menu logic) is undisassembled `db`; only the `seg001`/`seg002` bootstrap got auto-analyzed. String block at `seg003:21D0h` = all on-screen text. |
+| `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (all `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved (`resolve_rtm_leglib.py`). |
+| `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
+| `out.idb` | `OUT.EXE` | ~2 / ~97 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. `seg000` coerced to 99.7% (2026-08-30), 1308 run-time calls resolved. Functions mostly still `sub_`; naming pending. Layout differs from menu — see below. |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -103,9 +104,23 @@ code. `menu.idb`:
 | `seg003` | `13F30`–`1A1B0` | DGROUP data. Text block (menu items, credits, instructions, "poor peasant on the world of Tarmalon…" intro, MML music strings, chained-EXE names) at offset `21D0h`+ (file `0x6ED2`–`0x7F10`). |
 | `seg004` | `1A1B0`–`1A9B0` | Stack. |
 
-Segment names are **not** renamed to `CODE`/`DATA` — see the sibling
-`ultima1` project's convention (Paul correlates segment names with the
-DOSBox debugger at runtime).
+`out.idb` merges more into fewer segments:
+
+| Seg | Range | Contents |
+|---|---|---|
+| `seg000` | `10000`–`181E0` | BASIC code (`10030`–`167F0`), then the `int 3Fh` **thunk table embedded mid-segment** (`167F0`–`16E8C`, 470 entries), then the RTM-loader stub + its `$`-terminated DOS message strings (`16E8C`–`181E0`). |
+| `seg001` | `181E0`–`1B3B0` | DGROUP — the (position-coded, not plain-text) screen strings. |
+| `seg002` | `1B3B0`–`1B430` | Stack. |
+
+Because `out.exe`'s thunk table isn't its own segment, its `call far`
+operands use a frame selector (`0x67E`) IDA has no mapping for and would
+render `call far ptr 67Eh:472h`. `resolve_thunks.py` registers the
+selector→paragraph mapping (**not** a carved segment — that renumbers
+every later segment) so they resolve to `call far ptr rt_<key>`.
+
+Segment names/numbers are **not** renamed or restructured — Paul
+correlates them with the DOSBox debugger at runtime (sibling `ultima1`
+convention).
 
 ## Headless IDA pipeline
 
@@ -129,11 +144,34 @@ Set up 2026-08-30, copied from `ultima1/ida_scripts` (IDA Pro 8.3,
   `ida_scripts/batch_run_and_export.log` (idat's own console output in
   `-A` mode isn't reliably flushed).
 - **`ida_scripts/identify.py`** — read-only report (root file, hash,
-  segments, naming progress, raw-vs-code byte coverage). Confirmed
-  working end-to-end against `menu.idb` and `leglib.idb` 2026-08-30.
+  segments, naming progress, raw-vs-code byte coverage).
 - **`ida_scripts/rank_unnamed_functions.py`** — read-only, ranks
-  `sub_XXXXX` functions by call-site count (highest-value naming
-  targets first).
+  `sub_XXXXX` functions by call-site count.
+
+### Per-module coercion pipeline (generic)
+
+For each client module, in this exact order (all idempotent):
+
+1. **`resolve_thunks.py`** — auto-locate the int-3Fh thunk table (own
+   segment or embedded), register the frame selector if embedded, itemise
+   + name each thunk `rt_<key>`, comment it with its `rtm_*` target from
+   `rtm_map.py`.
+2. **`coerce_code.py`** — auto-detect the BASIC code segment + header +
+   thunk hole; anchor every `call far`, sweep the gaps, protect
+   `$`/NUL-terminated strings, make called thunks returning functions,
+   carve + merge functions, fold epilogue stubs, and add a fall-through
+   cref past every `call far` (last, so the listing reads continuously).
+3. **`resolve_thunks.py`** again — non-destructive; re-asserts the
+   `-> rtm_*` comments now that step 2 promoted the hot thunks to
+   functions (needs `set_func_cmt` to propagate).
+4. **`apply_renames_<module>.py`** — names + repeatable comments only;
+   never triggers a reanalysis (that would drop the crefs).
+
+- **`ida_scripts/profile_module.py`** — read-only; per-function callers,
+  callees, `rtm_*` calls, and resolved string immediates, to support
+  naming.
+- `resolve_rtm_leglib.py` / `rtm_map.py` build the shared
+  `(prefix,ordinal) → leglib address` map once from `leglib.idb`.
 
 ## Conventions (from `ultima1`/`ultima2`)
 
@@ -200,12 +238,9 @@ far pointers.
   function heads, 65 land mid-function (shared-tail / multi-entry
   routines — normal for a compiled-BASIC runtime; commented
   `[mid-func: verify]`).
-- **`ida_scripts/resolve_thunks_menu.py`** — names every `seg001` thunk
-  `rt_<key>` and comments it with the `rtm_*` target from `rtm_map.py`,
-  so once `seg000` is disassembled each call site reads
-  `call far rt_C2  ; -> rtm_C2 (leglib seg003:…)`.
-- **`ida_scripts/dump_thunk_table.py`** / **`probe_rtm_tables.py`** —
-  read-only discovery helpers used to work this out.
+- **`ida_scripts/resolve_thunks.py`** (generic) — see the per-module
+  pipeline above. `probe_rtm_tables.py` is the read-only helper this was
+  worked out with.
 
 ### Provisional names → real BASIC runtime names
 
@@ -230,7 +265,7 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `leglib.idb`: 7 → ~440 named (all `rtm_*` provisional). `menu.idb`: all
   467 `seg001` thunks named + cross-referenced to `leglib`.
 - **2026-08-30** — `menu.idb` `seg000` coerced to code
-  (`coerce_seg000_menu.py`): 99.5% instruction coverage, 0 bad insns, 25
+  (`coerce_code.py`): 99.5% instruction coverage, 0 bad insns, 25
   functions. The `menu.idb` rebuild lost the original `.idb` (recreated
   via `idat -B` from a copy of `MENU.EXE` — input path in the DB now
   reads `C:\dev\lota\menu.exe`).
@@ -261,12 +296,23 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   listing reads continuously (IDA's `int 3Fh` overlay special-casing
   otherwise chops a block after each) — 1914 breaks down to 141.
 
-  **Pipeline order matters** (each idempotent, but run in this order):
-  `resolve_thunks_menu` → `coerce_seg000_menu` → `apply_renames_menu` →
-  `resolve_thunks_menu` again — the 2nd run is non-destructive and only
-  re-asserts the `-> rtm_*` call-site comments (a full re-itemise would
-  drop the flow-crefs).
-- Next: (a) rank/attach real `B$…` names to the hot `rtm_*` — `rtm_F0`
+- **2026-08-30** — Generalised the menu-specific scripts into
+  `resolve_thunks.py` / `coerce_code.py` / `profile_module.py` (deleted
+  `resolve_thunks.py`, `coerce_code.py`, `dump_thunk_table.py`,
+  `profile_seg000_menu.py`). Verified menu output unchanged.
+- **2026-08-30** — Built `out.idb` (OUT.EXE, overworld engine). `-B` from
+  a copy of `OUT.EXE`, then the generic pipeline. `seg000` BASIC code
+  coerced to **99.7%**, 0 bad insns, ~97 functions, 1308 run-time calls
+  resolved to `rt_*` (thunk table is embedded mid-`seg000`; frame
+  selector `0x67E` registered so they render as `call far ptr rt_C2`).
+  All 22 module `CALL` targets sit before the table; the post-table
+  RTM-loader stub is not swept. Functions still mostly `sub_` — naming
+  is the next task. A few large functions look over-merged by the
+  call-far fragmentation merge (`sub_13C60` is a widely-called central
+  helper) — worth a tuning pass.
+- Next: (a) name the `out.idb` functions (lean on `rtm_*` call patterns +
+  data-file / chained-EXE refs — OUT's DGROUP text is position-coded, not
+  plain); (b) rank/attach real `B$…` names to the hot `rtm_*` — `rtm_F0`
   is the BASIC SUB prologue, `rtm_EC`/`rtm_ED` the call/return pair,
   `rtm_C2` string assign, `rtm_FE26` text blit, `rtm_FE3E`/`3F`/`42`
   window/box; (b) mark up the `seg003:21D0h` text block as strings;

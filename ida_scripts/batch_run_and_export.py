@@ -58,7 +58,9 @@ LOG_PATH = os.path.join(SCRIPT_DIR, "batch_run_and_export.log")
 
 
 def log(fh, msg):
-    fh.write(msg + "\n")
+    # target-script stdout can contain arbitrary bytes; don't let the
+    # log's cp1252 encoder crash the run.
+    fh.write(msg.encode("ascii", "backslashreplace").decode("ascii") + "\n")
     fh.flush()
 
 

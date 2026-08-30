@@ -54,15 +54,16 @@ dword_10014     dd 0                    ; DATA XREF: start+65↓r
                 db 0FFh
                 db  88h
                 db    0
-                db  33h ; 3
-                db 0C0h
 
 ; =============== S U B R O U T I N E =======================================
 
 ; program entry (falls through into mainMenuLoop). BASIC module init: sets up the theme-music strings, YES/NO/"empty" literals, opens LEGACY.DAT.
 ; Attributes: noreturn
 
-menu_main       proc near
+seg000_entry    proc near
+                xor     ax, ax
+
+menu_main:
                 push    ax
                 push    ax
                 call    far ptr rt_FF09 ; -> rtm_FF09  (leglib seg003:0x1cb26)  [mid-func]
@@ -220,6 +221,14 @@ loc_10145:
                 push    ax
                 mov     ax, 4
                 push    ax
+seg000_entry    endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_10150       proc near
                 mov     ax, 8001h
                 push    ax
                 mov     ax, 1D38h
@@ -637,7 +646,7 @@ loc_10449:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1045E:                              ; CODE XREF: menu_main+455↓j
+loc_1045E:                              ; CODE XREF: sub_10150+337↓j
                 mov     ax, 1
                 push    ax
                 mov     bx, ds:2120h
@@ -653,7 +662,7 @@ loc_1045E:                              ; CODE XREF: menu_main+455↓j
                 mov     ax, ds:2120h
                 inc     ax
 
-loc_10480:                              ; CODE XREF: menu_main+428↑j
+loc_10480:                              ; CODE XREF: sub_10150+30A↑j
                 mov     ds:2120h, ax
                 cmp     ax, ds:211Eh
                 jle     short loc_1045E
@@ -671,13 +680,13 @@ loc_10498:
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_1049E:                              ; CODE XREF: menu_main+4AF↓j
+loc_1049E:                              ; CODE XREF: sub_10150+391↓j
                 xor     ax, ax
                 jmp     loc_104CF
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_104A4:                              ; CODE XREF: menu_main+4A3↓j
+loc_104A4:                              ; CODE XREF: sub_10150+385↓j
                 mov     ax, 1
                 push    ax
                 mov     ax, ds:1EA0h
@@ -696,14 +705,14 @@ loc_104A4:                              ; CODE XREF: menu_main+4A3↓j
                 mov     ax, ds:2122h
                 inc     ax
 
-loc_104CF:                              ; CODE XREF: menu_main+46E↑j
+loc_104CF:                              ; CODE XREF: sub_10150+350↑j
                 mov     ds:2122h, ax
                 cmp     ax, 5
                 jle     short loc_104A4
                 mov     ax, ds:2120h
                 inc     ax
 
-loc_104DB:                              ; CODE XREF: menu_main+468↑j
+loc_104DB:                              ; CODE XREF: sub_10150+34A↑j
                 mov     ds:2120h, ax
                 cmp     ax, 2
                 jle     short loc_1049E
@@ -711,13 +720,13 @@ loc_104DB:                              ; CODE XREF: menu_main+468↑j
                 jmp     loc_10525
 ; ---------------------------------------------------------------------------
 
-loc_104E8:                              ; CODE XREF: menu_main+4F9↓j
+loc_104E8:                              ; CODE XREF: sub_10150+3DB↓j
                 xor     ax, ax
                 jmp     loc_10519
 ; ---------------------------------------------------------------------------
                 nop
 
-loc_104EE:                              ; CODE XREF: menu_main+4ED↓j
+loc_104EE:                              ; CODE XREF: sub_10150+3CF↓j
                 mov     ax, 1
                 push    ax
                 mov     ax, ds:1C60h
@@ -736,14 +745,14 @@ loc_104EE:                              ; CODE XREF: menu_main+4ED↓j
                 mov     ax, ds:2122h
                 inc     ax
 
-loc_10519:                              ; CODE XREF: menu_main+4B8↑j
+loc_10519:                              ; CODE XREF: sub_10150+39A↑j
                 mov     ds:2122h, ax
                 cmp     ax, 3
                 jle     short loc_104EE
                 mov     ax, ds:2120h
                 inc     ax
 
-loc_10525:                              ; CODE XREF: menu_main+4B3↑j
+loc_10525:                              ; CODE XREF: sub_10150+395↑j
                 mov     ds:2120h, ax
                 cmp     ax, 3
                 jle     short loc_104E8
@@ -791,7 +800,7 @@ loc_10575:
                 push    ax
                 push    ax
                 call    far ptr rt_09   ; -> rtm_09  (leglib seg003:0x14a31)
-menu_main       endp
+sub_10150       endp
 
                 nop
 
@@ -1291,7 +1300,7 @@ loc_108D9:
                 mov     ax, [bp-1Eh]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_143:
+nullsub_206:
                 retf    6
 ; ---------------------------------------------------------------------------
 
@@ -1487,7 +1496,7 @@ loc_10A62:
 j_rt_F4:                                ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_144:
+nullsub_207:
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -1753,7 +1762,7 @@ loc_10C58:
 j_rt_F4_0:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_145:
+nullsub_208:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -1924,7 +1933,7 @@ loc_10D83:
 j_rt_F4_1:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_146:
+nullsub_209:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -2280,7 +2289,7 @@ loc_110C2:                              ; CODE XREF: eraseCharacterMenu+111↑j
                                         ; eraseCharacterMenu+1B9↑j ...
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_147:
+nullsub_210:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -2690,7 +2699,7 @@ loc_11379:
 j_rt_F4_2:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_148:
+nullsub_211:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -3547,7 +3556,7 @@ loc_11A07:
                 mov     ax, [bp-0Ch]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_150:
+nullsub_213:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -3691,7 +3700,7 @@ loc_11ADD:
                 mov     ax, [bp-22h]
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_151:
+nullsub_214:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -3879,7 +3888,7 @@ loc_11C1B:
 j_rt_F4_4:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_152:
+nullsub_215:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -4008,7 +4017,7 @@ loc_11D24:                              ; CODE XREF: promptCharacterNumber+21↑
 loc_11D2F:                              ; CODE XREF: promptCharacterNumber+FB↑j
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_153:
+nullsub_216:
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -4348,7 +4357,7 @@ loc_12041:
 j_rt_F4_5:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_154:
+nullsub_217:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -4584,7 +4593,7 @@ loc_121D0:
 j_rt_F4_6:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_155:
+nullsub_218:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -4839,7 +4848,7 @@ loc_12409:                              ; CODE XREF: restartGameMenu+111↑j
                                         ; restartGameMenu+1BA↑j
                 call    far ptr rt_F4   ; -> rtm_F4  (leglib seg003:0x1bb7c)
 
-nullsub_156:
+nullsub_219:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -4853,7 +4862,7 @@ restartGameMenu endp
 ; the startup splash: "Legacy of the Ancients / Game Program Copyright (c) 1987-1989 / Installation Program Copyright (c) 1989 Electronic Arts / Program Compiler Copyright (c) 1982-1988 Microsoft Corp.". Called once from menu_main.
 ; Attributes: noreturn
 
-showStartupSplash proc far              ; CODE XREF: menu_main:j_showStartupSplash↑P
+showStartupSplash proc far              ; CODE XREF: sub_10150:j_showStartupSplash↑P
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> rtm_F0  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -5066,7 +5075,7 @@ loc_12597:
 j_rt_F4_7:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_157:
+nullsub_220:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -5269,7 +5278,7 @@ loc_12764:                              ; CODE XREF: drawMainMenuScreen+101↑j
 j_rt_F4_8:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_158:
+nullsub_221:
                 retf    2
 ; ---------------------------------------------------------------------------
 
@@ -5448,7 +5457,7 @@ loc_1288D:                              ; CODE XREF: sub_12778+F3↑j
 j_rt_F4_9:                              ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_159:
+nullsub_222:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -5545,7 +5554,7 @@ loc_1293A:
 j_rt_F4_10:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_160:
+nullsub_223:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -5604,7 +5613,7 @@ loc_12994:
 j_rt_F4_11:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_161:
+nullsub_224:
                 retf    4
 ; ---------------------------------------------------------------------------
 
@@ -5874,9 +5883,18 @@ loc_129CF:                              ; CODE XREF: playIntroAndLaunchGame:loc_
                 call    far ptr rt_C2   ; -> rtm_C2  (leglib seg003:0x1b572)
                 lea     ax, [bp-66h]
                 push    ax
-                call    far ptr rt_FE26 ; -> rtm_FE26  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                db  9Ah
+; ---------------------------------------------------------------------------
+                jo      short loc_12C6F
+                push    ss
+; ---------------------------------------------------------------------------
+                db  13h
+; ---------------------------------------------------------------------------
                 lea     ax, [bp-66h]
                 push    ax
+
+loc_12C6F:                              ; CODE XREF: playIntroAndLaunchGame+2BF↑j
                 call    far ptr rt_D1   ; -> rtm_D1  (leglib seg003:0x1b9b0)
                 mov     ax, 2ECCh
                 push    ax
@@ -6238,7 +6256,7 @@ loc_13000:
 j_rt_F4_12:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_162:
+nullsub_225:
                 retf    0
 ; ---------------------------------------------------------------------------
 
@@ -6408,7 +6426,7 @@ loc_13144:
 j_rt_F4_13:                             ; -> rtm_F4  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
 
-nullsub_163:
+nullsub_226:
                 retf    0
 showTitleScreen endp
 
@@ -6793,7 +6811,7 @@ rt_07:                                  ; Overlay manager interrupt
 ; -> rtm_09  (leglib seg003:0x14a31)
 ; Attributes: noreturn
 
-rt_09           proc near               ; CODE XREF: menu_main+548↑P
+rt_09           proc near               ; CODE XREF: sub_10150+42A↑P
                                         ; showCharacterRoster+10D↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -6807,8 +6825,8 @@ rt_09           endp
 ; -> rtm_0F  (leglib seg003:0x1360b)
 ; Attributes: noreturn
 
-rt_0F           proc near               ; CODE XREF: menu_main+1ED↑P
-                                        ; menu_main+2AA↑P ...
+rt_0F           proc near               ; CODE XREF: sub_10150+CF↑P
+                                        ; sub_10150+18C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -7206,7 +7224,7 @@ rt_86:                                  ; Overlay manager interrupt
 ; -> rtm_87  (leglib seg003:0x148ea)
 ; Attributes: noreturn
 
-rt_87           proc near               ; CODE XREF: menu_main+3C7↑P
+rt_87           proc near               ; CODE XREF: sub_10150+2A9↑P
                                         ; showCharacterRoster+37↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -7412,8 +7430,8 @@ rt_C1:                                  ; Overlay manager interrupt
 ; -> rtm_C2  (leglib seg003:0x1b572)
 ; Attributes: noreturn
 
-rt_C2           proc near               ; CODE XREF: menu_main+31D↑P
-                                        ; menu_main+32A↑P ...
+rt_C2           proc near               ; CODE XREF: sub_10150+1FF↑P
+                                        ; sub_10150+20C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -7491,8 +7509,8 @@ rt_CD           endp
 ; -> rtm_CE  (leglib seg003:0x1edba)
 ; Attributes: noreturn
 
-rt_CE           proc near               ; CODE XREF: menu_main+333↑P
-                                        ; menu_main+33C↑P ...
+rt_CE           proc near               ; CODE XREF: sub_10150+215↑P
+                                        ; sub_10150+21E↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -7586,8 +7604,8 @@ rt_DD:                                  ; Overlay manager interrupt
 ; -> rtm_DE  (leglib seg003:0x19d02)
 ; Attributes: noreturn
 
-rt_DE           proc near               ; CODE XREF: menu_main:j_rt_DE↑P
-                                        ; menu_main+35E↑P ...
+rt_DE           proc near               ; CODE XREF: sub_10150:j_rt_DE↑P
+                                        ; sub_10150+240↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -7807,7 +7825,7 @@ rt_FF08         endp
 ; -> rtm_FF09  (leglib seg003:0x1cb26)  [mid-func]
 ; Attributes: noreturn
 
-rt_FF09         proc near               ; CODE XREF: menu_main+2↑P
+rt_FF09         proc near               ; CODE XREF: seg000_entry+4↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -8169,7 +8187,7 @@ rt_FF43:                                ; Overlay manager interrupt
 ; -> rtm_FF44  (leglib seg004:0x21a62)
 ; Attributes: noreturn
 
-rt_FF44         proc near               ; CODE XREF: menu_main+370↑P
+rt_FF44         proc near               ; CODE XREF: sub_10150+252↑P
                                         ; playMusicTick+51↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -8226,8 +8244,8 @@ rt_FF4A         endp
 ; -> rtm_FF4B  (leglib seg004:0x21690)
 ; Attributes: noreturn
 
-rt_FF4B         proc near               ; CODE XREF: menu_main+2E6↑P
-                                        ; menu_main+368↑P ...
+rt_FF4B         proc near               ; CODE XREF: sub_10150+1C8↑P
+                                        ; sub_10150+24A↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -8258,7 +8276,7 @@ rt_FF4E:                                ; Overlay manager interrupt
 ; -> rtm_FF4F  (leglib seg004:0x2187b)
 ; Attributes: noreturn
 
-rt_FF4F         proc near               ; CODE XREF: menu_main+2F0↑P
+rt_FF4F         proc near               ; CODE XREF: sub_10150+1D2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -8271,7 +8289,7 @@ rt_FF4F         endp
 ; -> rtm_FF50  (leglib seg004:0x2182d)
 ; Attributes: noreturn
 
-rt_FF50         proc near               ; CODE XREF: menu_main+378↑P
+rt_FF50         proc near               ; CODE XREF: sub_10150+25A↑P
                                         ; playMusicTick+59↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -8856,8 +8874,8 @@ rt_5D:                                  ; Overlay manager interrupt
 ; -> rtm_5E  (leglib seg003:0x14589)
 ; Attributes: noreturn
 
-rt_5E           proc near               ; CODE XREF: menu_main+3DB↑P
-                                        ; menu_main+3EF↑P ...
+rt_5E           proc near               ; CODE XREF: sub_10150+2BD↑P
+                                        ; sub_10150+2D1↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9013,8 +9031,8 @@ rt_AC           endp
 ; -> rtm_AF  (leglib seg003:0x13608)
 ; Attributes: noreturn
 
-rt_AF           proc near               ; CODE XREF: menu_main+21↑P
-                                        ; menu_main+39↑P ...
+rt_AF           proc near               ; CODE XREF: seg000_entry+23↑P
+                                        ; seg000_entry+3B↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9058,7 +9076,7 @@ rt_B9:                                  ; Overlay manager interrupt
 ; -> rtm_BA  (leglib seg003:0x1a237)
 ; Attributes: noreturn
 
-rt_BA           proc near               ; CODE XREF: menu_main:j_rt_BA↑P
+rt_BA           proc near               ; CODE XREF: sub_10150:j_rt_BA↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9103,8 +9121,8 @@ rt_CA:                                  ; Overlay manager interrupt
 ; -> rtm_CF  (leglib seg003:0x16168)  [mid-func]
 ; Attributes: noreturn
 
-rt_CF           proc near               ; CODE XREF: menu_main+412↑P
-                                        ; menu_main+461↑P ...
+rt_CF           proc near               ; CODE XREF: sub_10150+2F4↑P
+                                        ; sub_10150+343↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9249,7 +9267,7 @@ rt_FF67:                                ; Overlay manager interrupt
 ; -> rtm_FE00  (leglib seg008:0x28e94)
 ; Attributes: noreturn
 
-rt_FE00         proc near               ; CODE XREF: menu_main:j_rt_FE00↑P
+rt_FE00         proc near               ; CODE XREF: sub_10150:j_rt_FE00↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9985,7 +10003,7 @@ rt_FE60:                                ; Overlay manager interrupt
 ; -> rtm_FE61  (leglib seg007:0x265dd)
 ; Attributes: noreturn
 
-rt_FE61         proc near               ; CODE XREF: menu_main:j_rt_FE61↑P
+rt_FE61         proc near               ; CODE XREF: sub_10150:j_rt_FE61↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10031,7 +10049,7 @@ rt_FE64:                                ; Overlay manager interrupt
 ; -> rtm_FE65  (leglib seg004:0x206f6)
 ; Attributes: noreturn
 
-rt_FE65         proc near               ; CODE XREF: menu_main+310↑P
+rt_FE65         proc near               ; CODE XREF: sub_10150+1F2↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10050,7 +10068,7 @@ rt_FE66:                                ; Overlay manager interrupt
 ; -> rtm_FE67  (leglib seg004:0x20690)
 ; Attributes: noreturn
 
-rt_FE67         proc near               ; CODE XREF: menu_main:j_rt_FE67↑P
+rt_FE67         proc near               ; CODE XREF: sub_10150:j_rt_FE67↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10063,8 +10081,8 @@ rt_FE67         endp
 ; -> rtm_FE68  (leglib seg007:0x2706c)
 ; Attributes: noreturn
 
-rt_FE68         proc near               ; CODE XREF: menu_main+4FF↑P
-                                        ; menu_main+508↑P ...
+rt_FE68         proc near               ; CODE XREF: sub_10150+3E1↑P
+                                        ; sub_10150+3EA↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

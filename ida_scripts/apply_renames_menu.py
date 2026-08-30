@@ -7,21 +7,21 @@ whenever a seg000 function's role becomes clear enough to name, and
 re-run. Safe to re-run: each entry is checked against the current name
 and skipped if already applied.
 
-seg000 was coerced to code by coerce_seg000_menu.py; the call graph is
-menu_main -> mainMenuLoop -> per-option screen handlers. Names below are
-derived from the seg003 text each function prints (see
-docs/overview.md / file-formats.md) and its run-time (rtm_*) call
-pattern.
+Names-only: run last, after
+  resolve_thunks -> coerce_code -> resolve_thunks
+(coerce_code has already carved functions + added the fall-through
+crefs; this only sets names + repeatable comments so it must not trigger
+a reanalysis). The call graph is menu_main -> mainMenuLoop -> per-option
+screen handlers; names are derived from the seg003 text each function
+prints (see docs/overview.md / file-formats.md) and its rtm_* calls.
 
     .\run_ida_script.ps1 -Idb menu -ScriptName apply_renames_menu.py
 """
 
 import idc
 import idautils
-import ida_bytes
 import ida_funcs
 import ida_segment
-import ida_auto
 
 DRY_RUN = False
 
@@ -141,16 +141,14 @@ RENAMES = [
      "framebuffer at (row*320 + col*2)+offset. (name provisional)"),
 ]
 
-# 3-byte `jmp rt_ED` procedure-epilogue stubs that IDA split off between
-# functions and daisy-chain-named `j_j_..._rt_ED`; fold each into the
-# function that precedes it.
-MERGE_EPILOGUE_STUBS = True
-
-
 def main():
     seg = ida_segment.get_segm_by_name("seg000")
     S0, S0E = seg.start_ea, seg.end_ea
 
+    # names + repeatable comments only -- coerce_code.py has already done
+    # the structural work (function carving, epilogue folding, the
+    # fall-through crefs). No auto_wait / add_func / del_func here: a
+    # reanalysis would drop the crefs.
     done = skip = 0
     for ea, name, note in RENAMES:
         cur = idc.get_name(ea)
@@ -161,8 +159,6 @@ def main():
             else:
                 skip += 1
             continue
-        if not ida_funcs.get_func(ea):
-            ida_funcs.add_func(ea)
         if cur != name and not idc.set_name(ea, name, idc.SN_NOWARN):
             print(f"  [!] set_name failed at {ea:#x} -> {name}")
             continue
@@ -170,46 +166,11 @@ def main():
         done += 1 if cur != name else 0
         skip += 1 if cur == name else 0
 
-    merged = 0
-    crefs = 0
-    if not DRY_RUN and MERGE_EPILOGUE_STUBS:
-        for f in list(idautils.Functions(S0, S0E)):
-            fn = ida_funcs.get_func(f)
-            if not fn or (fn.end_ea - fn.start_ea) > 5:
-                continue
-            last = idc.prev_head(fn.end_ea, fn.start_ea)
-            if idc.print_insn_mnem(last) != "jmp":
-                continue
-            prev = ida_funcs.get_func(fn.start_ea - 1)
-            if not prev:
-                continue
-            new_end = fn.end_ea
-            ida_funcs.del_func(fn.start_ea)
-            ida_funcs.set_func_end(prev.start_ea, new_end)
-            merged += 1
-        ida_auto.auto_wait()
-
-        # Cosmetic, and the LAST thing to touch seg000: IDA's `int 3Fh`
-        # overlay special-casing renders a "; ---" block break + fresh
-        # label after every `call far <thunk>` (the 3-byte stub can't be
-        # proven to return). Add an explicit fall-through cref past each so
-        # the listing reads as continuous flow. No auto_wait after this --
-        # a reanalysis reconsiders the crefs away.
-        import ida_xref
-        for a in idautils.Heads(S0, S0E):
-            if not ida_bytes.is_code(ida_bytes.get_full_flags(a)):
-                continue
-            if idc.print_insn_mnem(a) == "call" and idc.get_operand_type(a, 0) == idc.o_far:
-                nxt = idc.get_item_end(a)
-                if nxt < S0E and ida_bytes.is_code(ida_bytes.get_full_flags(nxt)):
-                    ida_xref.add_cref(a, nxt, ida_xref.fl_F)
-                    crefs += 1
-
     named_funcs = sum(1 for f in idautils.Functions(S0, S0E)
                       if not idc.get_func_name(f).startswith(("sub_", "j_", "nullsub")))
     total = sum(1 for _ in idautils.Functions(S0, S0E))
-    print(f"\napplied {done}, already-named {skip}, epilogue stubs merged {merged}, "
-          f"fall-through crefs {crefs}" + ("   [DRY_RUN]" if DRY_RUN else ""))
+    print(f"\napplied {done}, already-named {skip}"
+          + ("   [DRY_RUN]" if DRY_RUN else ""))
     print(f"seg000: {named_funcs}/{total} functions named")
 
 
