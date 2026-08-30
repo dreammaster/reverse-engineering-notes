@@ -356,6 +356,7 @@ static Bytes_0(void) {
 	create_insn	(0X10B64);
 	set_cmt	(0X10B67,	"\\xe8# - EXHIBIT CLOSED - @\\x01\\x04$@\\xf4\\x1e$YOU H",	0);
 	create_insn	(0X10B7B);
+	set_name	(0X10B7B,	"checkFlag_03");
 	create_insn	(x=0X10B7D);
 	op_hex		(x,	1);
 	create_insn	(x=0X10B7F);
@@ -383,14 +384,19 @@ static Bytes_0(void) {
 	create_insn	(x=0X10C2E);
 	op_hex		(x,	1);
 	create_insn	(0X10C57);
+	set_name	(0X10C57,	"checkFlag_2B");
 	create_insn	(0X10C9C);
+	set_name	(0X10C9C,	"checkFlag_D0");
 	create_insn	(0X10CA5);
+	set_name	(0X10CA5,	"checkFlag_0300");
 	create_insn	(0X10CCE);
 	create_insn	(0X10CEA);
+	set_name	(0X10CEA,	"checkFlag_0800");
 	create_insn	(0X10CF3);
 	set_cmt	(0X10D0F,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(0X10D0F);
 	create_insn	(0X10D16);
+	set_name	(0X10D16,	"testExhibitFlag");
 	set_cmt	(0X10D39,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(0X10D39);
 	create_insn	(0X10D3F);
@@ -534,6 +540,7 @@ static Bytes_0(void) {
 	create_insn	(0X11421);
 	create_insn	(0X11430);
 	create_insn	(0X1143F);
+	set_name	(0X1143F,	"checkFlag_2000");
 	create_insn	(0X11452);
 	create_insn	(0X1145B);
 	create_insn	(0X1146A);
@@ -750,6 +757,7 @@ static Bytes_0(void) {
 	create_insn	(0X11FEA);
 	set_name	(0X1204A,	"nullsub_28");
 	create_insn	(0X1204B);
+	set_name	(0X1204B,	"showExhibitResult");
 	set_cmt	(0X1204F,	"B'\\n\\x01H'=\\x01N'#\\x16T'@\\nWOULD YOU LIKE TO GO\\x03n'TO \\xf4\\x11v'\\n\\nDO",	0);
 	create_insn	(x=0X1204F);
 	op_hex		(x,	1);
@@ -2499,6 +2507,15 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	set_name	(0X13815,	"rt_15");
 	create_byte	(0X13817);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X13818,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X13818,	"-> rtm_18  (leglib seg003:0x1e75b)",	1);
 	create_insn	(x=0X13818);
@@ -2510,15 +2527,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1381B);
 	op_hex		(x,	0);
 	set_name	(0X1381B,	"rt_19");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X1381D);
 	set_cmt	(0X1381E,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X1381E,	"-> rtm_1A  (leglib seg003:0x1e761)  [mid-func]",	1);
@@ -4094,8 +4102,38 @@ static Bytes_1(void) {
 	create_word	(0X1424B);
 	create_word	(0X1424D);
 	create_word	(0X1424F);
-	create_byte	(0X14251);
-	make_array	(0X14251,	0X22D6);
+	set_cmt	(0X15C12,	"party gold (32-bit; high word at 1AD4). caretakerOffer and showGold touch it. Same DGROUP slot as OUT / DUN / TWNDR / CASDR.",	1);
+	create_word	(0X15C12);
+	set_name	(0X15C12,	"partyGold");
+	set_cmt	(0X15C14,	"high word of partyGold (1AD2).",	1);
+	create_word	(0X15C14);
+	set_name	(0X15C14,	"partyGold_hi");
+	set_cmt	(0X15C1A,	"party hit points -- caretakerOffer sets it to 0xBB8 (3000, a full-heal / cap); sub_1204B adds and caps. Same slot as the other modules.",	1);
+	create_word	(0X15C1A);
+	set_name	(0X15C1A,	"hitPoints");
+	set_cmt	(0X15C42,	"player column in the museum. Teleported to fixed exhibit positions by useCommand / sub_1127E / sub_1134E.",	1);
+	create_word	(0X15C42);
+	set_name	(0X15C42,	"playerX");
+	set_cmt	(0X15C46,	"player row in the museum (paired with playerX).",	1);
+	create_word	(0X15C46);
+	set_name	(0X15C46,	"playerY");
+	set_cmt	(0X161F6,	"current plaque / message text index -- set (39..73) before a draw by doWalk / enterExhibit / the exhibitName_* setters. TENTATIVE.",	1);
+	create_word	(0X161F6);
+	set_name	(0X161F6,	"messageId");
+	set_cmt	(0X1623E,	"id of the display case the player is at. readPlaque sets it; enterExhibit is a big SELECT CASE on it (3 / 6 / 8 / 0x0A .. 0x0D -> the different exhibits -> chain to TWNDR / DUN / STDRV / CELDRV).",	1);
+	create_word	(0X1623E);
+	set_name	(0X1623E,	"exhibitId");
+	set_cmt	(0X16246,	"small counter (0..2, wraps) tracking a sub-step inside enterExhibit. TENTATIVE.",	1);
+	create_word	(0X16246);
+	set_name	(0X16246,	"exhibitSubStep");
+	set_cmt	(0X1624C,	"string buffer holding the name of the module to chain to -- chainToTown / chainToDungeon / chainToStory / chainToCel do basStrAssign(210C, \"TWNDR\" | \"DUN\" | \"STDRV\" | \"CELDRV\"). MUS uses this instead of a chainDestType code.",	1);
+	set_name	(0X1624C,	"chainExeName");
+	set_cmt	(0X16276,	"the bit mask staged before an exhibit / quest flag test (the checkFlag_* helpers set it, then call testExhibitFlag).",	1);
+	create_word	(0X16276);
+	set_name	(0X16276,	"flagTestMask");
+	set_cmt	(0X16278,	"scratch: result of `record_flags & flagTestMask` from testExhibitFlag (record flag words live at [ds:1B96 desc + 0x16] etc, not in DGROUP).",	1);
+	create_word	(0X16278);
+	set_name	(0X16278,	"flagTestResult");
 	create_strlit	(0X16527,	0X16);
 	set_name	(0X16527,	"aExhibitClosed");
 	create_byte	(0X1653D);
@@ -4207,24 +4245,29 @@ static Functions_0(void) {
 	set_frame_size(0X10B59, 0, 0, 0);
 	add_func    (0X10B7B,0X10C1F);
 	set_func_flags(0X10B7B,0x5400);
+	set_func_cmt(0X10B7B,	"flagTestMask := 0x03, then testExhibitFlag.", 1);
 	set_frame_size(0X10B7B, 0, 0, 0);
 	add_func    (0X10C1F,0X10C57);
 	set_func_flags(0X10C1F,0x5400);
 	set_frame_size(0X10C1F, 0, 0, 0);
 	add_func    (0X10C57,0X10C9C);
 	set_func_flags(0X10C57,0x5400);
+	set_func_cmt(0X10C57,	"flagTestMask := 0x2B, then testExhibitFlag.", 1);
 	set_frame_size(0X10C57, 0, 0, 0);
 	add_func    (0X10C9C,0X10CA5);
 	set_func_flags(0X10C9C,0x5400);
+	set_func_cmt(0X10C9C,	"flagTestMask := 0xD0, then testExhibitFlag.", 1);
 	set_frame_size(0X10C9C, 0, 0, 0);
 	add_func    (0X10CA5,0X10CCE);
 	set_func_flags(0X10CA5,0x5400);
+	set_func_cmt(0X10CA5,	"flagTestMask := 0x0300, then testExhibitFlag.", 1);
 	set_frame_size(0X10CA5, 0, 0, 0);
 	add_func    (0X10CCE,0X10CEA);
 	set_func_flags(0X10CCE,0x5400);
 	set_frame_size(0X10CCE, 0, 0, 0);
 	add_func    (0X10CEA,0X10CF3);
 	set_func_flags(0X10CEA,0x5400);
+	set_func_cmt(0X10CEA,	"flagTestMask := 0x0800, then testExhibitFlag.", 1);
 	set_frame_size(0X10CEA, 0, 0, 0);
 	add_func    (0X10CF3,0X10D0F);
 	set_func_flags(0X10CF3,0x5400);
@@ -4234,6 +4277,7 @@ static Functions_0(void) {
 	set_frame_size(0X10D0F, 0, 0, 0);
 	add_func    (0X10D16,0X10D39);
 	set_func_flags(0X10D16,0x5400);
+	set_func_cmt(0X10D16,	"test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.", 1);
 	set_frame_size(0X10D16, 0, 0, 0);
 	add_func    (0X10D39,0X10D3F);
 	set_func_flags(0X10D39,0x1400);
@@ -4312,6 +4356,7 @@ static Functions_0(void) {
 	set_func_flags(0X113ED,0x1401);
 	add_func    (0X1143F,0X11486);
 	set_func_flags(0X1143F,0x1401);
+	set_func_cmt(0X1143F,	"flagTestMask := 0x2000, then testExhibitFlag.", 1);
 	add_func    (0X11486,0X11775);
 	set_func_flags(0X11486,0x1401);
 	set_func_cmt(0X11486,	"\"DO YOU ACCEPT THE / CARETAKER'S OFFER?\". ~0.75 KB.", 1);
@@ -4381,6 +4426,7 @@ static Functions_0(void) {
 	set_func_flags(0X11FEA,0x1401);
 	add_func    (0X1204B,0X1212D);
 	set_func_flags(0X1204B,0x1401);
+	set_func_cmt(0X1204B,	"display the message string indexed by ds:1ADC (from the array at the ds:1D38 descriptor) and add to hitPoints. TENTATIVE.", 1);
 	add_func    (0X1212D,0X123A2);
 	set_func_flags(0X1212D,0x1401);
 	set_func_cmt(0X1212D,	"\"WORKING...\", \"NOTHING HAPPENS.\", \" HUMS SOFTLY.\", \"THE DOOR DOES NOT BUDGE.\", \"FORCE FIELD STOPS YOU.\", \"THERE IS NO REPLY.\".", 1);

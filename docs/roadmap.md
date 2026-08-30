@@ -177,7 +177,16 @@ reimplementation.
       `townServiceDispatch`).
 - [x] Map the CASDR state vars (2026-08-31, `apply_dsvars_casdr.py`) --
       done; see the CASDR section above.
-- [ ] Map the MUS.EXE state vars next (also `seg004`).
+- [x] Map the MUS.EXE state vars (2026-08-31, `apply_dsvars_mus.py`;
+      `seg004`). `exhibitId` (20FE), `chainExeName` (210C string),
+      `flagTestMask`/`flagTestResult` (2136/2138); shared slots as
+      usual. 45/109 named (added `testExhibitFlag`, `checkFlag_*`).
+- [x] **State-var mapping complete for all play modules.** `ds:1AD2` =
+      partyGold and `ds:1ADA` = hitPoints in every module; `ds:1F02`,
+      `ds:1F24`, `ds:1F2A`, `ds:212E`, `ds:1F16` are the other
+      LEGLIB-fixed slots. Remaining: use them to finish naming the
+      per-module `sub_` helpers, and name `seg001` (`bmDUNG`,
+      `bmMUSDUNG`, the other 13 `bmTNCALB`).
 
 ## STDRV.EXE — open questions
 

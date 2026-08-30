@@ -75,6 +75,21 @@ RENAMES = [
     (0x11189, "exhibitName_flightOfFancy", '"FLIGHT OF FANCY".'),
     (0x11A45, "exhibitName_fourJewelDungeon", '"THE FOUR JEWEL DUNGEON".'),
     (0x11310, "exhibitName_piratesLair", '"THE PIRATE\'S LAIR".'),
+
+    # --- 2nd pass: from the ds: engine state vars (apply_dsvars_mus.py) ---
+    (0x10D16, "testExhibitFlag",
+     'test whether the bits in flagTestMask are set in the museum flag '
+     'word ([ds:1B96 desc + 0x16]); leaves the result in '
+     'flagTestResult.'),
+    (0x10B7B, "checkFlag_03", "flagTestMask := 0x03, then testExhibitFlag."),
+    (0x10C57, "checkFlag_2B", "flagTestMask := 0x2B, then testExhibitFlag."),
+    (0x10C9C, "checkFlag_D0", "flagTestMask := 0xD0, then testExhibitFlag."),
+    (0x10CA5, "checkFlag_0300", "flagTestMask := 0x0300, then testExhibitFlag."),
+    (0x10CEA, "checkFlag_0800", "flagTestMask := 0x0800, then testExhibitFlag."),
+    (0x1143F, "checkFlag_2000", "flagTestMask := 0x2000, then testExhibitFlag."),
+    (0x1204B, "showExhibitResult",
+     'display the message string indexed by ds:1ADC (from the array at '
+     'the ds:1D38 descriptor) and add to hitPoints. TENTATIVE.'),
 ]
 
 
