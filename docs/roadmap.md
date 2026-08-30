@@ -40,11 +40,21 @@ not BASIC).
 
 ## LEGLIB.EXE — open questions
 
-- [ ] Map the `int 3Fh` thunk-table entry format and build a resolver
-      script (flatten thunk → real `LEGLIB` target so xrefs work).
-- [ ] Separate stock BASIC runtime (`B$…`) from game-specific engine
-      code. Identify `B$…` entry points against QuickBASIC 4.5 / BASCOM 6
-      / BASIC PDS 7 references + QB reversing notes.
+- [x] Map the `int 3Fh` thunk-table entry format and build a resolver
+      (2026-08-30). `resolve_rtm_leglib.py` + `rtm_map.py`;
+      `resolve_thunks_menu.py` on the client side. Mechanism written up in
+      [overview.md](overview.md#int-3fh-run-time-dispatch-decoded-2026-08-30).
+- [ ] Attach real names to `rtm_*`. Rank by cross-module call frequency
+      (once `out`/`dun` IDBs exist), identify the Microsoft BASIC 6.0
+      runtime routines (`B$…`) against QuickBASIC 4.5 / BASCOM 6 / BASIC
+      PDS 7 references + QB reversing notes. Start with `rtm_C2` (171
+      calls in `menu` alone), `rtm_D1`, `rtm_AF`, the `rtm_FE*` graphics
+      calls.
+- [ ] Verify the 65 `[mid-func: verify]` `rtm_*` entries — confirm
+      they're genuine shared-tail / multi-entry routines, not resolution
+      errors.
+- [ ] Separate stock BASIC runtime from LotA-specific engine code in
+      `seg007`/`seg008` (the `bm*` graphics — `bmCOMBLIB`, `bmTCASANIM`).
 - [ ] Find and name the `bmXXXX` bitmap/graphics primitives (the
       `bmMENU`, `bmREADY`, … names are already visible as strings).
 - [ ] Find the `BLOAD`/`BSAVE` implementation and the file-I/O layer —
@@ -57,8 +67,11 @@ not BASIC).
 
 ## MENU.EXE — open questions
 
+- [x] Name all 467 `seg001` thunks + cross-reference to `leglib`
+      (2026-08-30, `resolve_thunks_menu.py`).
 - [ ] Force `seg000` (12 KB) to code; it's the whole menu/intro program
-      and is currently raw `db`.
+      and is currently raw `db`. This is the immediate next step — the
+      thunk names only pay off once the call sites are disassembled.
 - [ ] Mark up the `seg003:21D0h`+ text block as strings.
 - [ ] Walk the menu state machine (main menu → play / instructions /
       credits / sound toggle; character management screens).

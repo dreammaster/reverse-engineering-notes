@@ -4,3 +4,6 @@
 *.id2
 *.nam
 *.til
+
+__pycache__/
+*.pyc

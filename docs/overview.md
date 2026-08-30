@@ -98,7 +98,7 @@ code. `menu.idb`:
 | Seg | Range | Contents |
 |---|---|---|
 | `seg000` | `10000`–`13160` | Root menu/intro code (compiled BASIC; ~890 `call far` sites, all routed through `seg001`). **Undisassembled** — needs forcing to code. |
-| `seg001` | `13160`–`138F0` | `int 3Fh` overlay/RTM thunk table — one 5-byte entry per cross-module call site. IDA mis-parses parts as instructions. |
+| `seg001` | `13160`–`138F0` | `int 3Fh` run-time thunk table (467 entries) + a few small resident helpers at the top. Decoded — see "int 3Fh run-time dispatch" below. |
 | `seg002` | `138F0`–`13F30` | BC 6.0 EXE bootstrap + RTM loader (`start` at `139CF`). "Error in loading RTM…" strings live here. |
 | `seg003` | `13F30`–`1A1B0` | DGROUP data. Text block (menu items, credits, instructions, "poor peasant on the world of Tarmalon…" intro, MML music strings, chained-EXE names) at offset `21D0h`+ (file `0x6ED2`–`0x7F10`). |
 | `seg004` | `1A1B0`–`1A9B0` | Stack. |
@@ -151,8 +151,85 @@ Set up 2026-08-30, copied from `ultima1/ida_scripts` (IDA Pro 8.3,
   formats) so the `note` field in a rename entry can stay short.
 - **Segments are never renamed** (see above).
 
+## int 3Fh run-time dispatch (decoded 2026-08-30)
+
+Every cross-module call in a client `.EXE` is a `call far` into that
+module's thunk segment (`menu.idb`: `seg001`), where each entry is a 3- or
+4-byte trampoline:
+
+```
+CD 3F nn        bare ordinal nn         (nn = 0x00..0xFD, 254 of them)
+CD 3F FF nn     FF-prefixed ordinal nn  (nn = 0x00..0x67)
+CD 3F FE nn     FE-prefixed ordinal nn  (nn = 0x00..0x6D)
+```
+
+`FE` / `FF` are always prefixes, never bare ordinals. `menu.exe` has 467
+thunks total; the `(prefix, ordinal)` namespace is **flat** (no ordinal
+reused across a prefix) and **identical across every client module** —
+they all link against the same `LEGLIB` — so a name learned in one module
+applies everywhere.
+
+`LEGLIB.EXE` installs the `int 3Fh` handler (`leglib.idb` `seg003:7383h`,
+set via DOS `int 21h`/`AX=253Fh` from `~seg003:734Bh`). On the **first**
+execution of each call site it:
+
+1. reads the ordinal byte(s) after `CD 3F` in the caller;
+2. resolves the target:
+   - **bare `nn`** → `seg003 : word[seg003:73F6h + 2·nn]`
+   - **`FF nn`** → `word[seg003:75F2h + 2·nn]`, in `seg004` when
+     `0x19 ≤ nn < 0x62`, else `seg003`
+   - **`FE nn`** → full `seg:off` far pointer from the 4-byte entry at
+     `seg003:15Ch + 4·nn` (lands in `seg004` / `seg007` / `seg008` — the
+     bitmap/graphics segments; `FE` ordinals are the `bm*` graphics calls)
+3. **rewrites the caller's `CALL FAR` operands in place** and `retf`s, so
+   every call site self-patches to a direct far call after first use.
+   Nothing in `LEGLIB`'s own image is modified.
+
+The bare/`FF` tables store offsets only; the handler supplies the segment
+as the constant `0x2A9` / `0xF9C` (file value; `+ 0x1000` = IDA
+paragraph of `seg003` / `seg004`). The `FE` table holds real relocated
+far pointers.
+
+### Tooling
+
+- **`ida_scripts/resolve_rtm_leglib.py`** — reads the three tables in
+  `leglib.idb`, turns each of the 468 targets into a named function
+  (`rtm_<key>`, e.g. `rtm_C2`, `rtm_FE26`), and writes
+  **`ida_scripts/rtm_map.py`** (`(prefix,ordinal) → {ea, seg, name}`).
+  First run 2026-08-30: 344 functions created, 434 names, 49 were already
+  function heads, 65 land mid-function (shared-tail / multi-entry
+  routines — normal for a compiled-BASIC runtime; commented
+  `[mid-func: verify]`).
+- **`ida_scripts/resolve_thunks_menu.py`** — names every `seg001` thunk
+  `rt_<key>` and comments it with the `rtm_*` target from `rtm_map.py`,
+  so once `seg000` is disassembled each call site reads
+  `call far rt_C2  ; -> rtm_C2 (leglib seg003:…)`.
+- **`ida_scripts/dump_thunk_table.py`** / **`probe_rtm_tables.py`** —
+  read-only discovery helpers used to work this out.
+
+### Provisional names → real BASIC runtime names
+
+`rtm_*` are placeholders. Next step is identifying the actual Microsoft
+BASIC 6.0 runtime routines (`B$…`) behind the hot ordinals. From
+`menu.idb` call counts:
+
+| key | calls | `leglib` addr | shape (first look) |
+|---|---|---|---|
+| `rtm_C2` | 171 | `seg003:1B572` | `push bp` frame, 2 stack args, copies a 4-byte descriptor (`[bx]`,`[bx+2]`) — string assignment / `LET`? |
+| `rtm_D1` | 149 | `seg003:1B9B0` | — |
+| `rtm_FE26` | 98 | graphics seg | bitmap blit (menu draws heavily) |
+| `rtm_AF` | 26 | `seg003:13608` | multi-entry (`xor al,al` / `mov al,0FFh` fall-through with `rtm_0F`) |
+| `rtm_F0` `rtm_F4` | 21 each | `seg003:1BBA7` / `1BB7C` | adjacent — paired variants |
+
 ## Findings log
 
-Nothing yet — analysis starts here. Decided 2026-08-30 (with Paul): work
-`LEGLIB.EXE` first (or alongside `menu`), since it's the shared payload
-and everything downstream depends on its entry table being mapped.
+Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
+`menu`), since it's the shared payload.
+
+- **2026-08-30** — Decoded the `int 3Fh` run-time dispatch (above).
+  `leglib.idb`: 7 → ~440 named (all `rtm_*` provisional). `menu.idb`: all
+  467 `seg001` thunks named + cross-referenced to `leglib`. Next:
+  (a) force `menu` `seg000` to code so the call sites resolve;
+  (b) rank `rtm_*` by cross-module call frequency and start attaching real
+  `B$…` names; (c) build `out.idb` / `dun.idb` and confirm the shared
+  namespace.

@@ -847,3 +847,201 @@ byte coverage : 27215 code, 75555 undefined (raw)
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'dump_thunk_table.py', 'noexport']
+[*] reading dump_thunk_table.py
+[*] executing dump_thunk_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 0x13160-0x138f0, 467 thunks
+
+prefix (bare): 254 ordinals  0x00..0xfd
+prefix 0xfe: 110 ordinals  0x00..0x6d
+prefix 0xff: 103 ordinals  0x00..0x67
+
+most-referenced thunks (top 40):
+  rt_C2     @ 0x133d5  refs=171  <- loc_10350, loc_1035D, loc_103C2, loc_103D2, loc_103E5
+  rt_D1     @ 0x133f0  refs=149  <- loc_108C3, loc_108CC, loc_108D5, loc_109C5, loc_109FB
+  rt_FE26   @ 0x137d0  refs= 98  <- loc_109BC, loc_109F2, loc_10A28, loc_10A5E, loc_10AF9
+  rt_FE3F   @ 0x13834  refs= 29  <- loc_109A6, loc_109DC, loc_10A12, loc_10A48, loc_10AE3
+  rt_AF     @ 0x136c2  refs= 26  <- loc_10054, loc_1006C, loc_10084, loc_1009C, loc_100B4
+  rt_FE45   @ 0x1384c  refs= 24  <- loc_10C62, loc_10E28, loc_10EA4, loc_10EAC, loc_10F54
+  rt_F0     @ 0x13432  refs= 21  <- loc_1073C, loc_108EB, loc_10A7A, loc_10C75, loc_10D9B
+  rt_F4     @ 0x1343e  refs= 21  <- loc_108DD, loc_10A6C, loc_10C67, loc_10D8D, loc_110C3
+  rt_C3     @ 0x133d8  refs= 16  <- loc_10F7D, loc_10F87, loc_1123E, loc_112B0, loc_1134F
+  rt_5E     @ 0x13683  refs= 16  <- loc_1040E, loc_10422, loc_10436, loc_10478, loc_104C7
+  rt_FE37   @ 0x13814  refs= 14  <- loc_11BD7, loc_11BE0, loc_11BE9, loc_11BF2, loc_11BFB
+  rt_FF0A   @ 0x13470  refs= 13  <- loc_10761, loc_1079A, loc_1120B, loc_1126A, loc_112FD
+  rt_70     @ 0x13363  refs= 12  <- loc_1122B, loc_1243A, loc_1245C, loc_1247E, loc_124A0
+  rt_FE25   @ 0x137cc  refs= 12  <- loc_10C46, loc_10E88, loc_115BA, loc_1178A, loc_11935
+  rt_98     @ 0x133a2  refs= 11  <- loc_1124E, loc_12443, loc_12465, loc_12487, loc_124A9
+  rt_FF4B   @ 0x13554  refs= 11  <- loc_10319, loc_1039B, loc_10584, loc_10593, loc_119B1
+  rt_CE     @ 0x133ed  refs=  9  <- loc_10366, loc_1036F, loc_1307E, loc_13099, loc_130B4
+  rt_FE3E   @ 0x13830  refs=  8  <- loc_10925, loc_1095A, loc_10AA3, loc_10DC4, loc_113BA
+  rt_FE42   @ 0x13840  refs=  8  <- loc_1098F, loc_10ACC, loc_10DED, loc_113E3, loc_11D90
+  rt_FE63   @ 0x138c4  refs=  8  <- loc_10C8B, loc_11B05, loc_1206F, loc_12792, loc_128C3
+  rt_FE68   @ 0x138d8  refs=  8  <- loc_10532, loc_1053B, loc_10544, loc_1054D, loc_10556
+  rt_30     @ 0x13650  refs=  7  <- loc_107A5, loc_10806, loc_11275, loc_112C3, loc_112E4
+  rt_FE39   @ 0x1381c  refs=  7  <- loc_10D3F, loc_10D48, loc_10D51, loc_10D5A, loc_10D63
+  rt_09     @ 0x132d9  refs=  6  <- loc_1057B, loc_10D7F, loc_11C17, loc_121C3, loc_12851
+  rt_87     @ 0x13381  refs=  6  <- loc_103FA, loc_10CA9, loc_11B23, loc_1208D, loc_127B0
+  rt_CD     @ 0x133ea  refs=  6  <- loc_10CC1, loc_11238, loc_11349, loc_11B63, loc_120D2
+  rt_DE     @ 0x13411  refs=  6  <- loc_1030F, loc_10391, loc_10589, loc_119A7, loc_119CF
+  rt_FE53   @ 0x13884  refs=  6  <- loc_1074A, loc_10776, loc_1197E, loc_11A28, loc_11A54
+  rt_42     @ 0x13309  refs=  5  <- loc_107EB, loc_10FED, loc_1128A, loc_1131A, loc_12E32
+  rt_CF     @ 0x136e0  refs=  5  <- loc_10445, loc_10494, loc_10CB8, loc_11B32, loc_12109
+  rt_0F     @ 0x132dc  refs=  4  <- loc_10220, loc_102DD, loc_102F2, loc_1030A
+  rt_6C     @ 0x1335d  refs=  4  <- loc_11248, loc_11321, loc_11359, loc_12E4B
+  rt_BC     @ 0x133cf  refs=  4  <- loc_10F77, loc_10FE7, loc_11F00, loc_11FB3
+  rt_6D     @ 0x1359b  refs=  4  <- loc_111A4, loc_111BE, loc_111D8, loc_111EF
+  rt_7C     @ 0x135a4  refs=  4  <- loc_11197, loc_111B1, loc_111CB, loc_111E2
+  rt_FF08   @ 0x13468  refs=  3  <- loc_12FA5, loc_12FDA, loc_13005
+  rt_FF1F   @ 0x13484  refs=  3  <- loc_10598, loc_119DE, loc_129C6
+  rt_FF50   @ 0x13568  refs=  3  <- loc_103AB, loc_119C1, loc_12ECD
+  rt_5F     @ 0x13686  refs=  3  <- loc_11B86, loc_12123, loc_1281F
+  rt_C8     @ 0x136d7  refs=  3  <- loc_10728, loc_10966, loc_12760
+
+total distinct run-time entries used by this module: 467
+never referenced (dead thunks): 382
+----- end target script output -----
+[*] finished executing dump_thunk_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\leglib.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'probe_rtm_tables.py', 'noexport']
+[*] reading probe_rtm_tables.py
+[*] executing probe_rtm_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg003 = 0x12a90..0x1f9c0
+seg004 = 0x1f9c0..0x241ad
+
+--- bare table @ seg003:73F6, first/again a few known-hot ordinals ---
+  rt_00  off=0x8e42  -> 0x1b8d2 FUNC_HEAD sub_1B8D2
+  rt_01  off=0x4547  -> 0x16fd7 code 
+  rt_02  off=0x2846  -> 0x152d6 code loc_152D6
+  rt_30  off=0x8bd1  -> 0x1b661 code loc_1B661
+  rt_5E  off=0x1af9  -> 0x14589 code loc_14589
+  rt_70  off=0x9172  -> 0x1bc02 code 
+  rt_87  off=0x1e5a  -> 0x148ea code 
+  rt_98  off=0x8648  -> 0x1b0d8 mid-func(+0x32 of sub_1B0A6) loc_1B0D8
+  rt_AF  off=0x0b78  -> 0x13608 code 
+  rt_BC  off=0x8d9c  -> 0x1b82c UNDEFINED 
+  rt_C2  off=0x8ae2  -> 0x1b572 FUNC_HEAD sub_1B572
+  rt_C3  off=0x8b1b  -> 0x1b5ab FUNC_HEAD sub_1B5AB
+  rt_CD  off=0x8ce4  -> 0x1b774 code loc_1B774
+  rt_CE  off=0xc32a  -> 0x1edba code 
+  rt_D1  off=0x8f20  -> 0x1b9b0 FUNC_HEAD sub_1B9B0
+  rt_DE  off=0x7272  -> 0x19d02 code loc_19D02
+  rt_F0  off=0x9117  -> 0x1bba7 code loc_1BBA7
+  rt_F4  off=0x90ec  -> 0x1bb7c FUNC_HEAD sub_1BB7C
+  rt_FD  off=0x9fda  -> 0x1ca6a UNDEFINED 
+
+--- FF table @ seg003:75F2 ---
+  rt_FF00  off=0x9f97 base=seg003 -> 0x1ca27 code 
+  rt_FF08  off=0x08b6 base=seg003 -> 0x13346 code loc_13346
+  rt_FF0A  off=0x8b58 base=seg003 -> 0x1b5e8 code loc_1B5E8
+  rt_FF19  off=0x2443 base=seg004 -> 0x21e03 code 
+  rt_FF1F  off=0x219e base=seg004 -> 0x21b5e FUNC_HEAD sub_21B5E
+  rt_FF30  off=0x2473 base=seg004 -> 0x21e33 code 
+  rt_FF4B  off=0x1cd0 base=seg004 -> 0x21690 FUNC_HEAD sub_21690
+  rt_FF50  off=0x1e6d base=seg004 -> 0x2182d FUNC_HEAD sub_2182D
+  rt_FF61  off=0x1a34 base=seg004 -> 0x213f4 code 
+  rt_FF62  off=0xa2a0 base=seg003 -> 0x1cd30 code 
+  rt_FF67  off=0xbc94 base=seg003 -> 0x1e724 code 
+
+--- FE table @ seg003:15C (4-byte off,seg entries) ---
+  rt_FE00  off=0x13e4 seg=0x27ab(?) -> unresolved base
+  rt_FE01  off=0x0175 seg=0x27ab(?) -> unresolved base
+  rt_FE25  off=0x1122 seg=0x27ab(?) -> unresolved base
+  rt_FE26  off=0x2547 seg=0x2442(?) -> unresolved base
+  rt_FE37  off=0x2bfb seg=0x2442(?) -> unresolved base
+  rt_FE3F  off=0x02aa seg=0x27ab(?) -> unresolved base
+  rt_FE45  off=0x01be seg=0x27ab(?) -> unresolved base
+  rt_FE53  off=0x071b seg=0x27ab(?) -> unresolved base
+  rt_FE63  off=0x0663 seg=0x2442(?) -> unresolved base
+  rt_FE68  off=0x2c4c seg=0x2442(?) -> unresolved base
+  rt_FE6D  off=0x0c74 seg=0x1f9c(?) -> unresolved base
+
+--- raw bytes of FE table head (seg003:15C..1A0) ---
+e4 13 ab 27 75 01 ab 27 48 10 ab 27 c5 24 42 24 ad 0c 9c 1f be 0c 9c 1f 7c 0c 9c 1f 9f 0b 42 24 40 06 42 24 0e 0a 9c 1f 40 0a 9c 1f 65 0a 9c 1f 8d 09 9c 1f f5 07 9c 1f 83 07 9c 1f 0e 06 9c 1f 6f 14 ab 27
+----- end target script output -----
+[*] finished executing probe_rtm_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\leglib.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_rtm_leglib.py', 'noexport']
+[*] reading resolve_rtm_leglib.py
+[*] executing resolve_rtm_leglib.py
+[*] captured stdout from target script:
+----- begin target script output -----
+entries: 468  (bare 254, FF 104, FE 110)
+target state: {'FUNC_HEAD': 43, 'mid-func': 29, 'code': 297, 'made': 0, 'bad': 0, 'undef': 98, 'data': 1}
+would make code: 0, functions: 0, names: 0   [DRY_RUN]
+
+hot ordinals (menu.idb call counts, for reference): C2=171 D1=149 FE26=98 FE3F=29 AF=26 FE45=24 F0=21 F4=21
+
+wrote C:\dev\lota\ida_scripts\rtm_map.py
+----- end target script output -----
+[*] finished executing resolve_rtm_leglib.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\leglib.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_rtm_leglib.py']
+[*] reading resolve_rtm_leglib.py
+[*] executing resolve_rtm_leglib.py
+[*] captured stdout from target script:
+----- begin target script output -----
+entries: 468  (bare 254, FF 104, FE 110)
+target state: {'FUNC_HEAD': 49, 'mid-func': 65, 'code': 7, 'made': 344, 'bad': 0, 'undef': 2, 'data': 1}
+made code: 79, functions: 344, names: 434
+
+hot ordinals (menu.idb call counts, for reference): C2=171 D1=149 FE26=98 FE3F=29 AF=26 FE45=24 F0=21 F4=21
+
+wrote C:\dev\lota\ida_scripts\rtm_map.py
+----- end target script output -----
+[*] finished executing resolve_rtm_leglib.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\leglib.asm
+[*] gen_file(OFILE_ASM) returned 67310
+[*] exporting IDC to C:\dev\lota\leglib.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\leglib.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\menu.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'resolve_thunks_menu.py']
+[*] reading resolve_thunks_menu.py
+[*] executing resolve_thunks_menu.py
+[*] captured stdout from target script:
+----- begin target script output -----
+seg001: 467 thunks  (bare 254, FF 103, FE 110)
+named 467, commented 467, itemized 467
+resolved via rtm_map: 467/467
+currently referenced from (partial) seg000 analysis: 85
+----- end target script output -----
+[*] finished executing resolve_thunks_menu.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\menu.asm
+[*] gen_file(OFILE_ASM) returned 39194
+[*] exporting IDC to C:\dev\lota\menu.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\menu.idb
+[*] done, exiting 0
