@@ -8689,3 +8689,41 @@ struct closed this session (after `process_event`'s own dispatch table)
 with no capacity reduction, no missing fields, nothing this build
 predates. A clean, complete result from a two-round thread that started
 as "what's this mystery 4th field for?"
+
+## `EventHappened.data3`'s full value space closes, plus a bonus `TS_KEYPRESS` event and a `RoomStruct` edge-boundary confirmation
+
+An immediate follow-up on `EventHappened`: `data3`'s role was only
+confirmed for ONE specific value (`5`, the "player enters screen"
+sentinel). `check_controls` (already matched) turned out to hold the
+rest of the picture -- its own room-edge-crossing detector.
+
+The code computes a 0-3 edge index by comparing `playerchar->x`/`y`
+against four boundary globals (`word_51FF4E`/`50`/`52`/`54`), gates on
+`IsInterfaceEnabled` and the already-confirmed `GameState.entered_edge`
+(to avoid re-triggering the same edge repeatedly), then calls
+`setevent(EV_RUNEVBLOCK, EVB_ROOM, 0, edge)` for whichever edge was
+crossed -- matching 2011's `"for(ii=0;ii<4;ii++) if(edgesActivated[ii])
+setevent(EV_RUNEVBLOCK,EVB_ROOM,0,ii);"` (`AC.CPP:5959-5962`) exactly in
+role. This closes `EventHappened.data3`'s full value space for
+`EVB_ROOM` events: `0-3` for the four edges (left/right/bottom/top, per
+the `whataction[]` documentation's own order from many rounds ago),
+`5` for the once-per-room "player enters screen" event -- 2011's own
+other call sites additionally use `4`/`6`/`7` for other room-entry-
+lifecycle triggers not individually confirmed in this build.
+
+The four boundary globals turned out to be a bonus confirmation of
+their own: matching the edge order against the comparison directions
+(`x<=` for left, `x>=` for right, `y>=` for bottom, `y<=` for top) shows
+`word_51FF4E`/`50`/`52`/`54` land in EXACTLY 2011's declared
+`RoomStruct.left,right,top,bottom` order with zero drift -- accessed via
+their absolute addresses rather than the `rstruc.field` symbolic form,
+the same "IDA doesn't recognize the struct" stale-label pattern already
+documented at length on `RoomStruct`'s own leading fields a few rounds
+back.
+
+One more event fell out of the same code region: right before the
+edge-crossing check, `check_controls` normalizes a keypress to
+uppercase (`if (key is a-z) key -= 0x20;`) and fires
+`setevent(EV_TEXTSCRIPT, TS_KEYPRESS, key, 0)` -- matching 2011's
+`TS_KEYPRESS=2` constant (`AC.CPP:653`) exactly, alongside the
+already-confirmed `TS_REPEAT=1`.

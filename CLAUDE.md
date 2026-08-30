@@ -2326,6 +2326,19 @@ disassembly work.
   drift: `setevent`'s own overflow check matches 2011's `MAXEVENTS=15`
   exactly — the second struct this session with no capacity reduction
   at all.
+- **`EventHappened.data3`'s full value space closes, plus a bonus
+  `TS_KEYPRESS` event and a `RoomStruct` edge-boundary confirmation.**
+  `check_controls`'s own room-edge-crossing detector computes a 0-3
+  edge index from `playerchar->x`/`y` vs. four boundary globals, then
+  calls `setevent(EV_RUNEVBLOCK,EVB_ROOM,0,edge)` — matching 2011's
+  `edgesActivated[]` loop exactly. This closes `data3`'s full value
+  space for `EVB_ROOM` events: 0-3=edge crossed, 5=player-enters-screen
+  (already confirmed). The four boundary globals turned out to be
+  `RoomStruct.left`/`right`/`top`/`bottom` accessed via absolute address
+  — the same stale-label pattern already found on `RoomStruct`'s
+  leading fields, now extending to these too, with zero drift. A bonus
+  `TS_KEYPRESS`(2) text-script event surfaced in the same code region,
+  alongside the already-confirmed `TS_REPEAT`(1).
 
 ## Third-party library identification (Task #10)
 

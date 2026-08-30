@@ -5124,6 +5124,21 @@ struct EventHappened {
                             // evh.data1=EVB_ROOM; evh.data2=0; evh.data3=5;", `AC.CPP:5327-5330`,
                             // right next to the source comment "run Player Enters Screen and
                             // on_event(ENTER_ROOM)") field for field, value for value.
+                            // FULL VALUE SPACE CLOSED (immediate follow-up, same round): for
+                            // EVB_ROOM(2) events specifically, `check_controls`'s own room-edge
+                            // detector (already matched) computes `data3` as a 0-3 edge index
+                            // (left/right/bottom/top, comparing `playerchar->x`/`y` against
+                            // `RoomStruct.left`/`right`/`top`/`bottom` -- accessed via absolute
+                            // address rather than the `rstruc.field` symbolic form, the same
+                            // stale-label pattern already documented on `RoomStruct`'s own
+                            // leading fields) before calling `setevent(EV_RUNEVBLOCK,EVB_ROOM,0,
+                            // edge)` -- matching 2011's "for(ii=0;ii<4;ii++) if(edgesActivated[
+                            // ii]) setevent(EV_RUNEVBLOCK,EVB_ROOM,0,ii);" (`AC.CPP:5959-5962`)
+                            // exactly. `data3` for `EVB_ROOM` is therefore 0-3 for edge crossings
+                            // or 5 for the once-per-room "player enters screen" event (2011's own
+                            // other `setevent(EV_RUNEVBLOCK,...)` call sites additionally use
+                            // 4/6/7 for other room-entry-lifecycle triggers, not individually
+                            // confirmed in this build).
   int player;                  // +0x10, high confidence: `setevent`'s own body sets this to
                             // `game_playercharacter` (the already-confirmed player-character-index
                             // global) rather than taking it as a caller-supplied argument --
