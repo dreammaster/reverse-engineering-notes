@@ -158,6 +158,7 @@ static Bytes_0(void) {
 	create_insn	(0X101D3);
 	set_name	(0X1021A,	"nullsub_5");
 	create_insn	(0X1021B);
+	set_name	(0X1021B,	"facePlayerDirection");
 	create_insn	(0X1022E);
 	create_insn	(0X1022F);
 	create_insn	(x=0X10232);
@@ -179,6 +180,7 @@ static Bytes_0(void) {
 	create_insn	(0X102C3);
 	create_insn	(0X102CC);
 	create_insn	(0X102D3);
+	set_name	(0X102D3,	"checkLineOfSight");
 	create_insn	(0X102F4);
 	create_insn	(0X102F5);
 	create_insn	(0X10301);
@@ -253,6 +255,7 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	op_hex		(x,	1);
 	create_insn	(0X1068D);
+	set_name	(0X1068D,	"castleTurnUpdate");
 	create_insn	(x=0X10697);
 	op_hex		(x,	1);
 	create_insn	(0X106D4);
@@ -697,6 +700,7 @@ static Bytes_0(void) {
 	create_insn	(0X11BAC);
 	create_insn	(0X11BB9);
 	create_insn	(0X11BC8);
+	set_name	(0X11BC8,	"fortressSelfDestruct");
 	create_insn	(0X11BD5);
 	create_insn	(0X11BDB);
 	create_insn	(0X11BE5);
@@ -816,6 +820,7 @@ static Bytes_0(void) {
 	set_cmt	(0X12188,	"@\\nTHE GUARD WALKS OVER.",	0);
 	create_insn	(0X12188);
 	create_insn	(0X12195);
+	set_name	(0X12195,	"jailPlayer");
 	create_insn	(0X1219E);
 	create_insn	(0X121A7);
 	create_insn	(0X121C4);
@@ -1037,8 +1042,10 @@ static Bytes_0(void) {
 	create_insn	(0X12EA3);
 	set_cmt	(0X12EAA,	"YOU SEE A TREASURE CHEST.",	0);
 	create_insn	(0X12EAA);
+	set_name	(0X12EAA,	"describeChest");
 	set_cmt	(0X12ECC,	"A MASSIVE DOOR LOOMS",	0);
 	create_insn	(0X12ECC);
+	set_name	(0X12ECC,	"describeLockedDoor");
 	set_cmt	(0X12EEB,	"BEFORE YOU.  IT IS LOCKED.",	0);
 	set_cmt	(0X12F0D,	"YOU SEE A STRANGE PLANT.",	0);
 	create_insn	(0X12F0D);
@@ -1049,10 +1056,12 @@ static Bytes_0(void) {
 	create_insn	(0X12F7A);
 	set_cmt	(0X12FA2,	"YOU'RE IN A BARREN ROOM.",	0);
 	create_insn	(0X12FA2);
+	set_name	(0X12FA2,	"describeGasRoom");
 	set_cmt	(0X12FC1,	"SOME OF THE AIR LOOKS CLOUDY.",	0);
 	create_insn	(0X12FF5);
 	set_cmt	(0X12FFC,	"A LOVELY YOUNG WOMAN STANDS BEHIND",	0);
 	create_insn	(0X12FFC);
+	set_name	(0X12FFC,	"describePotionShop");
 	set_cmt	(0X1301B,	"A COUNTER.  MAGIC FILLS THE AIR.",	0);
 	create_insn	(0X1303D);
 	set_name	(0X1303D,	"describeObjects");
@@ -1281,6 +1290,7 @@ static Bytes_0(void) {
 	create_insn	(0X13F18);
 	create_insn	(0X13F34);
 	create_insn	(0X13F37);
+	set_name	(0X13F37,	"applyHealing");
 	create_insn	(0X13F55);
 	create_insn	(0X13F5A);
 	create_insn	(0X13F5F);
@@ -1342,6 +1352,7 @@ static Bytes_0(void) {
 	create_insn	(0X14307);
 	create_insn	(0X143AE);
 	create_insn	(0X143B1);
+	set_name	(0X143B1,	"redrawCastleView");
 	create_insn	(0X143B9);
 	create_insn	(0X143DE);
 	create_insn	(0X14403);
@@ -1514,6 +1525,7 @@ static Bytes_0(void) {
 	create_insn	(0X14CA8);
 	create_insn	(0X14CAB);
 	create_insn	(0X14CAE);
+	set_name	(0X14CAE,	"resolveOpenDoor");
 	create_insn	(0X14CB6);
 	create_insn	(0X14CD9);
 	create_insn	(0X14CE0);
@@ -1556,6 +1568,7 @@ static Bytes_0(void) {
 	set_name	(0X14F64,	"j_rt_FE43");
 	create_insn	(0X14F71);
 	create_insn	(0X14F74);
+	set_name	(0X14F74,	"resolveUseKey");
 	create_insn	(0X14F7C);
 	create_insn	(0X14F87);
 	create_insn	(0X14F9D);
@@ -3251,6 +3264,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X169A4);
 	op_hex		(x,	0);
 	set_name	(0X169A4,	"rt_FF53");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X169A6);
 	make_array	(0X169A6,	0X2);
 	set_cmt	(0X169B0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -3264,15 +3286,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X169B3);
 	op_hex		(x,	0);
 	set_name	(0X169B3,	"rt_02");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X169B5);
 	set_cmt	(0X169B6,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X169B6,	"-> rtm_03  (leglib seg003:0x1527e)",	1);
@@ -4869,8 +4882,45 @@ static Bytes_1(void) {
 	create_word	(0X173FB);
 	create_word	(0X173FD);
 	create_word	(0X173FF);
-	create_byte	(0X17401);
-	make_array	(0X17401,	0X23C2);
+	set_cmt	(0X18DC2,	"party gold (32-bit; high word at 1AD4). Same DGROUP slot as OUT / DUN / TWNDR; in CASDR only potionWizard and kingConfides touch it (the castle has no shops).",	1);
+	create_word	(0X18DC2);
+	set_name	(0X18DC2,	"partyGold");
+	set_cmt	(0X18DC4,	"high word of partyGold (1AD2).",	1);
+	create_word	(0X18DC4);
+	set_name	(0X18DC4,	"partyGold_hi");
+	set_cmt	(0X18DCA,	"party hit points -- attackHit subtracts combat damage (`sub ds:1ADAh,ax`), sub_13F37 heals, warlordConfrontation resets it to 0x1C. Same slot as OUT / DUN / TWNDR.",	1);
+	create_word	(0X18DCA);
+	set_name	(0X18DCA,	"hitPoints");
+	set_cmt	(0X18DF0,	"player column in the castle / fort. loadCastleLevel and the scripted teleports (privateLevelWarn, gasRoomTrap, j_rt_FE4E_3, sub_12195) set it; movement inc's it; describeRoom / describeObjects branch on it.",	1);
+	create_word	(0X18DF0);
+	set_name	(0X18DF0,	"playerX");
+	set_cmt	(0X18DF4,	"player row in the castle / fort (paired with playerX).",	1);
+	create_word	(0X18DF4);
+	set_name	(0X18DF4,	"playerY");
+	set_cmt	(0X19112,	"current menu / Y-N answer (changeGameSpeed, doFight, kingConfides, potionWizard read it; never written from seg000). TENTATIVE.",	1);
+	create_word	(0X19112);
+	set_name	(0X19112,	"menuChoice");
+	set_cmt	(0X191F2,	"code for the tile / object in front of the player -- the #1 read in the module (doWalk, doFight, describeRoom, describeObjects, the gas-trap rooms, freezeWater all branch on it). Set by the bmTNCALB tile engine. Same slot as TWNDR.",	1);
+	create_word	(0X191F2);
+	set_name	(0X191F2,	"tileAhead");
+	set_cmt	(0X19214,	"reset to 0xFF (= none) by doWalk / gasRoomTrap / warlordConfrontation. The selected creature / target slot. Same slot as OUT.",	1);
+	create_word	(0X19214);
+	set_name	(0X19214,	"targetSlot");
+	set_cmt	(0X19216,	"per-level constant loadCastleLevel sets (0x70 / 0x5A) and sub_13E33 / sub_14CAE use as an imul / idiv factor -- probably the map row width for `y*stride+x` indexing. TENTATIVE.",	1);
+	create_word	(0X19216);
+	set_name	(0X19216,	"mapStride");
+	set_cmt	(0X1921A,	"1 after a turn-consuming action (doWalk, doFight, ambushGuard, gasTrap set it; cleared to 0 elsewhere). Same slot as TWNDR.",	1);
+	create_word	(0X1921A);
+	set_name	(0X1921A,	"turnFlag");
+	set_cmt	(0X19374,	"second 1 / 2 mode flag, often checked next to castleOrFort. TENTATIVE.",	1);
+	create_word	(0X19374);
+	set_name	(0X19374,	"viewLevel");
+	set_cmt	(0X193B0,	"a 1 / 2 selector read all over (doFight, exitCastle, privateLevelWarn, describeRoom) -- CASDR drives both the castle (CASTLE.BS1/2) and the fort (FORT.BS1/2). TENTATIVE.",	1);
+	create_word	(0X193B0);
+	set_name	(0X193B0,	"castleOrFort");
+	set_cmt	(0X19512,	"the current opponent's hit points during doFight / attackHit / enemyAttack / warlordAttack / gasDamage (accumulator: `mov ax,2222 / sub ax,2222 / mov 2222,ax`).",	1);
+	create_word	(0X19512);
+	set_name	(0X19512,	"enemyHitPoints");
 	create_strlit	(0X197C3,	0X15);
 	set_name	(0X197C3,	"aAFghiMopStuWx");
 	create_byte	(0X197D8);
@@ -4881,8 +4931,12 @@ static Bytes_1(void) {
 	make_array	(0X19812,	0X6D);
 	create_strlit	(0X1987F,	0X13);
 	set_name	(0X1987F,	"aPrivateLevel");
-	create_byte	(0X19892);
-	make_array	(0X19892,	0XDA);
+	set_cmt	(0X198A0,	"far pointer (offset @ 25B0, segment @ 25B2) to the main CASDR game-data array -- pushed (seg then off) to nearly every rtm_ call. Never written from seg000. Same role as OUT's overworldArrayPtr etc.",	1);
+	create_word	(0X198A0);
+	set_name	(0X198A0,	"castleArrayPtr");
+	set_cmt	(0X198A2,	"segment word of castleArrayPtr (25B0).",	1);
+	create_word	(0X198A2);
+	set_name	(0X198A2,	"castleArrayPtr_seg");
 	create_strlit	(0X1996C,	0X20);
 	set_name	(0X1996C,	"aTheGuardsEyeYo");
 	create_byte	(0X1998C);
@@ -5026,6 +5080,7 @@ static Functions_0(void) {
 	set_func_flags(0X101D3,0x1401);
 	add_func    (0X1021B,0X1022E);
 	set_func_flags(0X1021B,0x1401);
+	set_func_cmt(0X1021B,	"turn the player to face a direction (-> bmTNCALB viewFaceDirection). Same shape as TWNDR.", 1);
 	add_func    (0X1022F,0X10262);
 	set_func_flags(0X1022F,0x5400);
 	set_frame_size(0X1022F, 0, 0, 0);
@@ -5038,6 +5093,7 @@ static Functions_0(void) {
 	set_func_flags(0X102C3,0x1401);
 	add_func    (0X102D3,0X102F4);
 	set_func_flags(0X102D3,0x1401);
+	set_func_cmt(0X102D3,	"line-of-sight test to a target (-> bmTNCALB scanLineOfSight).", 1);
 	add_func    (0X102F5,0X10345);
 	set_func_flags(0X102F5,0x1400);
 	add_func    (0X10345,0X10396);
@@ -5050,6 +5106,7 @@ static Functions_0(void) {
 	set_func_cmt(0X103F0,	"\"WALK \" -- castle movement.", 1);
 	add_func    (0X1068D,0X10772);
 	set_func_flags(0X1068D,0x1401);
+	set_func_cmt(0X1068D,	"per-turn castle update: reads castleOrFort / turnFlag, moves the guards and calls warlordAttack (-> refreshView / scanLineOfSight). TENTATIVE.", 1);
 	add_func    (0X10773,0X107C5);
 	set_func_flags(0X10773,0x1401);
 	set_func_cmt(0X10773,	"\"-CHOOSE ABOVE\" menu helper.", 1);
@@ -5111,6 +5168,7 @@ static Functions_0(void) {
 	set_func_cmt(0X1140F,	"\"FIGHT WITH \", \"ENTER DIRECTION: \", \"YOUR ARROW DROPS.\", \"HIT DOOR.  IT HOLDS.\", \"ATTACK ON \", \" STRUCK \". ~2 KB.", 1);
 	add_func    (0X11BC8,0X11CBA);
 	set_func_flags(0X11BC8,0x1401);
+	set_func_cmt(0X11BC8,	"the post-Warlord sequence: \"OUR LEADER HAS BEEN KILLED.  BLOCK / ALL DOORS.  EXPLOSIVE CHARGES SET. / SELF-DESTRUCTION IN 5 MINUTES!\" -- the timed escape.", 1);
 	add_func    (0X11CBA,0X11D3D);
 	set_func_flags(0X11CBA,0x1401);
 	add_func    (0X11D3D,0X11D60);
@@ -5135,6 +5193,7 @@ static Functions_0(void) {
 	set_func_cmt(0X11FEE,	"\"SPEAK PASSWORD.\", \"NOBODY TO SPEAK TO.\", \"GREETINGS SOLDIER.\", \"THE GUARD WALKS OVER.\".", 1);
 	add_func    (0X12195,0X1222D);
 	set_func_flags(0X12195,0x1401);
+	set_func_cmt(0X12195,	"move the player into the cell and run jailerThreat (writes playerX/playerY). TENTATIVE.", 1);
 	add_func    (0X1222D,0X1225D);
 	set_func_flags(0X1222D,0x1401);
 	add_func    (0X12260,0X12286);
@@ -5170,15 +5229,19 @@ static Functions_0(void) {
 	set_frame_size(0X12DF6, 0, 0, 0);
 	add_func    (0X12EAA,0X12ECC);
 	set_func_flags(0X12EAA,0x1401);
+	set_func_cmt(0X12EAA,	"\"YOU SEE A TREASURE CHEST.\" (describeRoom case).", 1);
 	add_func    (0X12ECC,0X12F0D);
 	set_func_flags(0X12ECC,0x1401);
+	set_func_cmt(0X12ECC,	"\"A MASSIVE DOOR LOOMS / BEFORE YOU.  IT IS LOCKED.\" (describeRoom case).", 1);
 	add_func    (0X12F0D,0X12FA2);
 	set_func_flags(0X12F0D,0x1401);
 	set_func_cmt(0X12F0D,	"\"YOU SEE A STRANGE PLANT.\", \"IT BEARS SEVERAL SEEDS.\".", 1);
 	add_func    (0X12FA2,0X12FFC);
 	set_func_flags(0X12FA2,0x1401);
+	set_func_cmt(0X12FA2,	"\"YOU'RE IN A BARREN ROOM. / SOME OF THE AIR LOOKS CLOUDY.\" (describeRoom case -- the gas-trap rooms).", 1);
 	add_func    (0X12FFC,0X1303D);
 	set_func_flags(0X12FFC,0x1401);
+	set_func_cmt(0X12FFC,	"\"A LOVELY YOUNG WOMAN STANDS BEHIND / A COUNTER.  MAGIC FILLS THE AIR.\" (describeRoom case -- the potionWizard's room).", 1);
 	add_func    (0X1303D,0X132DB);
 	set_func_flags(0X1303D,0x1401);
 	set_func_cmt(0X1303D,	"room-object descriptions: \"A BOX IS OPEN.\", \"A GRATE BLOCKS THE WAY.\", \"YOU SEE A SCROLL STAND.\", \"THE COMPENDIUM IS THERE!\", \"YOU SEE CANNONS.\".", 1);
@@ -5208,6 +5271,7 @@ static Functions_0(void) {
 	set_func_cmt(0X13ED5,	"\"YOU'RE INVISIBLE\".", 1);
 	add_func    (0X13F37,0X13F93);
 	set_func_flags(0X13F37,0x1401);
+	set_func_cmt(0X13F37,	"add to hitPoints (`add ax,ds:1ADAh / mov ds:1ADAh,ax`) -- triggered via useKey. TENTATIVE.", 1);
 	add_func    (0X14001,0X1412A);
 	set_func_flags(0X14001,0x1401);
 	set_func_cmt(0X14001,	"\" WEAKENS.\", \"TOO FAR.\", \"THE ATTACK STOPS.\".", 1);
@@ -5219,6 +5283,7 @@ static Functions_0(void) {
 	set_func_cmt(0X142F4,	"loads TCASOBJ.BSV.", 1);
 	add_func    (0X143B1,0X14454);
 	set_func_flags(0X143B1,0x1403);
+	set_func_cmt(0X143B1,	"repaint the castle interior view -- called from the traps, moveBlocked, and the tile helpers. TENTATIVE.", 1);
 	add_func    (0X14454,0X1445C);
 	set_func_flags(0X14454,0x1403);
 	add_func    (0X14475,0X144C9);
@@ -5239,12 +5304,14 @@ static Functions_0(void) {
 	set_func_flags(0X14B60,0x1403);
 	add_func    (0X14CAE,0X14F0C);
 	set_func_flags(0X14CAE,0x1403);
+	set_func_cmt(0X14CAE,	"the OPEN-a-door logic (~0.6 KB, called from openDoor) -- reads mapStride + tileAhead, updates the tile. TENTATIVE.", 1);
 	add_func    (0X14F0C,0X14F1F);
 	set_func_flags(0X14F0C,0x1403);
 	add_func    (0X14F1F,0X14F74);
 	set_func_flags(0X14F1F,0x1403);
 	add_func    (0X14F74,0X15117);
 	set_func_flags(0X14F74,0x1403);
+	set_func_cmt(0X14F74,	"the USE-a-key logic (called from useKey; reads tileAhead). TENTATIVE.", 1);
 	add_func    (0X15117,0X15137);
 	set_func_flags(0X15117,0x1403);
 	add_func    (0X15137,0X1519E);

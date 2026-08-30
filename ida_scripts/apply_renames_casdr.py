@@ -92,6 +92,49 @@ RENAMES = [
      'THEY ARE IN MANY TOWNS", "TALK ONLY TO THOSE WITH A SPECIAL / '
      'SECRET MARK.", "I\'VE NOW PUT THIS MAGIC MARK [ON YOUR] / '
      'FOREARM.  ONLY GUARDIANS CAN". (IDA: j_rt_FE5B_11.) ~1.2 KB.'),
+
+    # --- 2nd pass: from the ds: engine state vars (apply_dsvars_casdr.py)
+    #     + call graph + screen text ---
+    (0x11BC8, "fortressSelfDestruct",
+     'the post-Warlord sequence: "OUR LEADER HAS BEEN KILLED.  BLOCK / '
+     'ALL DOORS.  EXPLOSIVE CHARGES SET. / SELF-DESTRUCTION IN 5 '
+     'MINUTES!" -- the timed escape.'),
+    (0x12EAA, "describeChest", '"YOU SEE A TREASURE CHEST." (describeRoom case).'),
+    (0x12ECC, "describeLockedDoor",
+     '"A MASSIVE DOOR LOOMS / BEFORE YOU.  IT IS LOCKED." (describeRoom '
+     'case).'),
+    (0x12FA2, "describeGasRoom",
+     '"YOU\'RE IN A BARREN ROOM. / SOME OF THE AIR LOOKS CLOUDY." '
+     '(describeRoom case -- the gas-trap rooms).'),
+    (0x12FFC, "describePotionShop",
+     '"A LOVELY YOUNG WOMAN STANDS BEHIND / A COUNTER.  MAGIC FILLS THE '
+     'AIR." (describeRoom case -- the potionWizard\'s room).'),
+
+    (0x1021B, "facePlayerDirection",
+     'turn the player to face a direction (-> bmTNCALB viewFaceDirection). '
+     'Same shape as TWNDR.'),
+    (0x102D3, "checkLineOfSight",
+     'line-of-sight test to a target (-> bmTNCALB scanLineOfSight).'),
+
+    (0x1068D, "castleTurnUpdate",
+     'per-turn castle update: reads castleOrFort / turnFlag, moves the '
+     'guards and calls warlordAttack (-> refreshView / scanLineOfSight). '
+     'TENTATIVE.'),
+    (0x143B1, "redrawCastleView",
+     'repaint the castle interior view -- called from the traps, '
+     'moveBlocked, and the tile helpers. TENTATIVE.'),
+    (0x14CAE, "resolveOpenDoor",
+     'the OPEN-a-door logic (~0.6 KB, called from openDoor) -- reads '
+     'mapStride + tileAhead, updates the tile. TENTATIVE.'),
+    (0x14F74, "resolveUseKey",
+     'the USE-a-key logic (called from useKey; reads tileAhead). '
+     'TENTATIVE.'),
+    (0x12195, "jailPlayer",
+     'move the player into the cell and run jailerThreat (writes '
+     'playerX/playerY). TENTATIVE.'),
+    (0x13F37, "applyHealing",
+     'add to hitPoints (`add ax,ds:1ADAh / mov ds:1ADAh,ax`) -- '
+     'triggered via useKey. TENTATIVE.'),
 ]
 
 

@@ -144,11 +144,25 @@ reimplementation.
       ENTER/USE command -> dispatch), `facePlayerDirection`,
       `checkLineOfSight`, `redrawTownView`; `offerGuardBribe` /
       `initGuardCombat` / `grabTileItem` / `computeSellValue` tentative.
-- [~] `casdr` names (endgame content): `warlordConfrontation`,
-      `kingConfides` (the guardians-of-the-scroll quest + forearm mark),
-      `potionWizard`, `doFight`, `describeRoom`/`describeObjects` (incl.
-      "THE COMPENDIUM IS THERE!"), `loadCastleLevel` (CASTLE.BS1/2,
-      FORT.BS1/2), `exitCastle`, `gasRoomTrap`, `useKey`, spell handlers.
+- [x] Map the CASDR engine state vars (2026-08-31,
+      `apply_dsvars_casdr.py`; DGROUP = **seg004**). `partyGold` (1AD2),
+      `hitPoints` (1ADA), `tileAhead` (1F02), `targetSlot` (1F24),
+      `turnFlag` (1F2A) are the **shared LEGLIB slots** (4th module to
+      confirm). Castle-specific: `playerX`/`playerY` (1B00/1B04),
+      `enemyHitPoints` (2222), `castleArrayPtr` (25B0 far ptr);
+      `castleOrFort` (20C0, 1/2) / `viewLevel` (2084) / `mapStride`
+      (1F26) tentative.
+- [~] `casdr` names (endgame content): **47 / 102** (2nd pass
+      2026-08-31). `warlordConfrontation`, `kingConfides` (the
+      guardians-of-the-scroll quest + forearm mark), `potionWizard`,
+      `doFight`, `describeRoom`/`describeObjects` (incl. "THE COMPENDIUM
+      IS THERE!"), `loadCastleLevel` (CASTLE.BS1/2, FORT.BS1/2),
+      `exitCastle`, `gasRoomTrap`, `useKey`, spell handlers,
+      `fortressSelfDestruct` ("SELF-DESTRUCTION IN 5 MINUTES!"), the
+      `describeRoom` cases (`describeChest`, `describeLockedDoor`,
+      `describeGasRoom`, `describePotionShop`), `facePlayerDirection`,
+      `checkLineOfSight`; `castleTurnUpdate` / `redrawCastleView` /
+      `resolveOpenDoor` / `resolveUseKey` / `jailPlayer` tentative.
 - [x] Name the shared `bmTNCALB` `seg001` module (2026-08-31,
       `apply_renames_tncalb.py` — keyed by seg001 offset, byte-identical
       structure in both, applied to each). 13/26: the town/castle
@@ -161,8 +175,9 @@ reimplementation.
 - [x] `twndr` `sub_11ED0` -> `enterTownService` (the ENTER/USE command
       that locates the adjacent service tile and jumps to
       `townServiceDispatch`).
-- [ ] Map the CASDR state vars the same way (also `seg004`; expect the
-      OUT/DUN/TWNDR shared slots + castle-specific ones).
+- [x] Map the CASDR state vars (2026-08-31, `apply_dsvars_casdr.py`) --
+      done; see the CASDR section above.
+- [ ] Map the MUS.EXE state vars next (also `seg004`).
 
 ## STDRV.EXE — open questions
 
