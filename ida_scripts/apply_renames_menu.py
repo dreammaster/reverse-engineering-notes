@@ -139,6 +139,29 @@ RENAMES = [
     (0x131E5, "blitCharCell",
      "resident helper (seg001): copies one 8x8-ish cell into the B800h "
      "framebuffer at (row*320 + col*2)+offset. (name provisional)"),
+
+    # --- 2nd pass: the 6 CHAR.DAT / startup helpers, now that the
+    #     roster vars are named (apply_dsvars_menu.py) ---
+    (0x10150, "menuStartup",
+     "module startup (~1 KB): plays the intro MML music, reads "
+     "LEGACY.DAT, shows the 3-copyright splash (-> showStartupSplash), "
+     "then enters the menu."),
+    (0x11A15, "pressAnyKey",
+     "the shared \"hit a key to continue\" wait -- called at the end of "
+     "showInstructions / showGameCredits / playIntroAndLaunchGame / the "
+     "character menus."),
+    (0x12055, "readCharDat",
+     "load a character record from CHAR.DAT (indexed by rosterIndex * "
+     "charRecordSize). Called from eraseCharacterMenu / restartGameMenu."),
+    (0x12778, "writeCharDat",
+     "write the roster back to CHAR.DAT (offers a \"CANCEL\" out). "
+     "Called from erase / restart / startNewGameMenu."),
+    (0x128A9, "updateCharDatEntry",
+     "rewrite one CHAR.DAT slot (erase / add). Called from "
+     "eraseCharacterMenu / startNewGameMenu. TENTATIVE."),
+    (0x1210E, "enumerateRoster",
+     "loop rosterIndex from 0..charCount over the roster (self-"
+     "recursive). TENTATIVE."),
 ]
 
 def main():

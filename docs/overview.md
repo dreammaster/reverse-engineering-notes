@@ -85,7 +85,7 @@ one place that pays off across every module.
 | IDB | Root file | Functions named | Structs | Notes |
 |---|---|---|---|---|
 | `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
-| `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
+| `menu.idb` | `MENU.EXE` | ~31 / ~34 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, **DGROUP `seg003`**, `seg004` stack. State vars (`apply_dsvars_menu.py` — MENU holds almost none, being a launcher): `menuHighlight`, `charCount` (0..8), `rosterIndex`, `charRecordSize` (CHAR.DAT stride), `menuChoice`. + the CHAR.DAT helpers `readCharDat` / `writeCharDat` / `menuStartup` / `pressAnyKey`. |
 | `out.idb` | `OUT.EXE` | 67 / 121 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. Functions named from the screen text (`dump_strings.py`) **and** the engine state vars (`apply_dsvars_out.py` — `partyGold`, `hitPoints`, `playerX/Y`, `combatPhase`, `questFlags`, …): `doMovement`, `resolveMoveTarget`, `enterOverworld`, `loadOverworldData`, `beginEncounterView`, `creatureDefeated`, `banditAmbushEvent`, `chainTo*`, …. ~40 tiny runtime-dispatched stubs left `sub_`. |
 | `dun.idb` | `DUN.EXE` | 38 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (the first-person **dungeon-view renderer**, 7 funcs, all named — `renderDungeonView`, `drawViewSprite`, `blitViewCell`, wall-band drawers), thunk table `seg002`, **DGROUP `seg004`**. Both coerced to ~100%. Named from the screen text + engine state vars (`apply_dsvars_dun.py` — `dungeonLevel`, `hitPoints`, `playerX/Y`, `tileAhead`, `selectedSpell`, `dungeonArrayPtr`, `turnActionFlag`/`chainDestType` [shared slots with OUT]): `dunMain`, `processTileFeature`, `moveMonsters`, `drawDungeonHud`, `doLookSearch`, `openChest`, `castSpell`, `loadDungeonLevel`, …. |
 | `twndr.idb` | `TWNDR.EXE` | 51 / 98 seg000 (+ 13 `bmTNCALB` seg001) funcs (+ `rt_*` thunks) | 0 | Town driver (entered from `OUT` board; chains back). UNP-unpacked; 6 segments — `seg000` "bmTWNDR" (98 funcs) + `seg001` "bmTNCALB" (town/castle anim, 26 funcs), thunk table `seg002` (**431**), **DGROUP `seg004`**. Both ~100% coerced. Named from the shop/NPC text + engine state vars (`apply_dsvars_twndr.py` — `partyGold`/`hitPoints` [OUT slots], `townServiceId`, `tileAhead`, `guardHitPoints`, `townArrayPtr`): `foodShop`, `weaponShopEntry`, `borrowMoney`, `loanRepayment`, `fortuneTeller`, `jailScene`/`jailRelease`, `townServiceDispatch` (~6 KB), `spendGold`, `enterTownService`, …. |
@@ -391,6 +391,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   calling `drawViewWallBand{Near,Mid,Far}` + `drawViewSprite`, all on
   the shared `blitViewCell` primitive (`rtm_FE2A`). Which wall band is
   which is still a guess (marked TENTATIVE).
+- **2026-08-31** — Mapped the MENU.EXE DGROUP vars
+  (`apply_dsvars_menu.py`, DGROUP `seg003`). MENU is a launcher so it
+  barely has state (30 words touched, most one-function scratch):
+  `menuHighlight` (`ds:1F5C`), `charCount` (`ds:2138`, 0..8),
+  `rosterIndex` (`ds:1B0A`), `charRecordSize` (`ds:211C`, the CHAR.DAT
+  `imul` stride), `menuChoice` (`ds:1E22`). Named the 6 CHAR.DAT /
+  startup helpers that were left `sub_`: `menuStartup` (intro music +
+  `LEGACY.DAT` + splash), `pressAnyKey`, `readCharDat`, `writeCharDat`,
+  `updateCharDatEntry`, `enumerateRoster`. `menu.idb` is now essentially
+  fully named -- **the state-var + helper mapping is complete for every
+  module.**
 - **2026-08-31** — Built `mus.idb` and discovered **`MUS.EXE` is the
   MUSEUM driver, not a music player** ("MUS" = Museum). The Tarmalon
   Museum is the game's hub: display cases are portals — `MUS` chains to

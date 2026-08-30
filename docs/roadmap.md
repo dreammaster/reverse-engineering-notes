@@ -378,9 +378,13 @@ reimplementation.
       6 CHAR.DAT-record helpers left `sub_` (hard to distinguish).
 - [x] Cosmetic block-chopping: post-process fixed via fall-through crefs
       past each `call far` (`apply_renames_menu.py`, final step). 1914 → 141.
-- [ ] Identify the 6 remaining `sub_` helpers (`sub_11A15` 8-byte shared
-      wrapper, `sub_11A1E`/`sub_1210E` self-callers, `sub_12055`/`12778`/
-      `128A9` near-clone CHAR.DAT enumerators).
+- [x] Map the MENU DGROUP vars + name the 6 helpers (2026-08-31,
+      `apply_dsvars_menu.py` + `apply_renames_menu.py`): `menuHighlight`
+      (1F5C), `charCount` (2138), `rosterIndex` (1B0A), `charRecordSize`
+      (211C, the CHAR.DAT `imul` stride); `sub_11A15` -> `pressAnyKey`,
+      `sub_12055` -> `readCharDat`, `sub_12778` -> `writeCharDat`,
+      `sub_10150` -> `menuStartup`, `sub_128A9` -> `updateCharDatEntry`,
+      `sub_1210E` -> `enumerateRoster`. Only `sub_11A1E` still `sub_`.
 - [ ] Confirm `playMusicTick` / `showTitleScreen` naming (the LEGACY.DAT
       touch in `playMusicTick` is unexplained).
 - [ ] `menu.idb` input path reads `C:\dev\lota\menu.exe` (a copy; the

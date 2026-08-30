@@ -124,6 +124,7 @@ static Bytes_0(void) {
 	set_name	(0X10030,	"seg000_entry");
 	set_name	(0X10032,	"menu_main");
 	create_insn	(0X10150);
+	set_name	(0X10150,	"menuStartup");
 	set_name	(0X1030E,	"j_rt_DE");
 	create_insn	(x=0X1031D);
 	op_hex		(x,	1);
@@ -286,6 +287,7 @@ static Bytes_0(void) {
 	create_insn	(0X11A12);
 	set_name	(0X11A12,	"j_j_j_j_j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X11A15);
+	set_name	(0X11A15,	"pressAnyKey");
 	create_insn	(0X11A1E);
 	create_insn	(0X11A48);
 	create_insn	(0X11A4A);
@@ -348,7 +350,9 @@ static Bytes_0(void) {
 	create_insn	(0X12052);
 	set_name	(0X12052,	"j_j_j_j_j_j_j_j_j_j_rt_ED");
 	create_insn	(0X12055);
+	set_name	(0X12055,	"readCharDat");
 	create_insn	(0X1210E);
+	set_name	(0X1210E,	"enumerateRoster");
 	create_insn	(0X1214E);
 	set_name	(0X121D9,	"j_rt_F4_6");
 	set_name	(0X121DE,	"nullsub_218");
@@ -392,6 +396,7 @@ static Bytes_0(void) {
 	create_insn	(0X12775);
 	set_name	(0X12775,	"j_j_j_j_j_j_rt_ED");
 	create_insn	(0X12778);
+	set_name	(0X12778,	"writeCharDat");
 	create_insn	(0X12809);
 	create_insn	(x=0X12831);
 	op_hex		(x,	1);
@@ -407,6 +412,7 @@ static Bytes_0(void) {
 	create_insn	(0X128A6);
 	set_name	(0X128A6,	"j_j_j_j_j_rt_ED");
 	create_insn	(0X128A9);
+	set_name	(0X128A9,	"updateCharDatEntry");
 	create_insn	(0X128F1);
 	create_insn	(x=0X128F2);
 	op_hex		(x,	1);
@@ -2478,11 +2484,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X136B9);
 	op_hex		(x,	0);
 	set_name	(0X136B9,	"rt_AA");
-	create_byte	(0X136BB);
-	set_cmt	(0X136BC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	create_insn	(x=0X136BC);
-	op_hex		(x,	0);
-	set_name	(0X136BC,	"rt_AB");
 }
 
 //------------------------------------------------------------------------
@@ -2492,6 +2493,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_byte	(0X136BB);
+	set_cmt	(0X136BC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	create_insn	(x=0X136BC);
+	op_hex		(x,	0);
+	set_name	(0X136BC,	"rt_AB");
 	create_byte	(0X136BE);
 	set_cmt	(0X136BF,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X136BF);
@@ -3707,8 +3713,27 @@ static Bytes_1(void) {
 	create_word	(0X1403B);
 	create_word	(0X1403D);
 	create_word	(0X1403F);
-	create_byte	(0X14041);
-	make_array	(0X14041,	0X2051);
+	set_cmt	(0X15A1E,	"intro-sequence step in playIntroAndLaunchGame (0 / 3 / 0xFF). TENTATIVE.",	1);
+	create_word	(0X15A1E);
+	set_name	(0X15A1E,	"introStep");
+	set_cmt	(0X15A3A,	"the roster slot currently being drawn / edited (0..7). Used with `imul charRecordSize` to index the CHAR.DAT record; the show*CharacterSlots loops accumulate into it.",	1);
+	create_word	(0X15A3A);
+	set_name	(0X15A3A,	"rosterIndex");
+	set_cmt	(0X15D52,	"current Y/N / menu answer (eraseCharacterMenu and sub_10150 read it). Same DGROUP slot the play modules use for menu answers.",	1);
+	create_word	(0X15D52);
+	set_name	(0X15D52,	"menuChoice");
+	set_cmt	(0X15E32,	"1 while the main-menu loop is running (mainMenuLoop sets it, drawCancelOption checks it). TENTATIVE.",	1);
+	create_word	(0X15E32);
+	set_name	(0X15E32,	"menuActive");
+	set_cmt	(0X15E8C,	"the highlighted main-menu item (mainMenuLoop inits it to -1 = none; drawMainMenuScreen reads it to draw the selection bar).",	1);
+	create_word	(0X15E8C);
+	set_name	(0X15E8C,	"menuHighlight");
+	set_cmt	(0X1604C,	"CHAR.DAT record stride -- the `imul` / `mov ax,` factor the character screens use to step through the loaded roster. Set by the roster loader, read-only in seg000.",	1);
+	create_word	(0X1604C);
+	set_name	(0X1604C,	"charRecordSize");
+	set_cmt	(0X16068,	"number of characters in the roster (0..8). startNewGameMenu increments it when a character is created; eraseCharacterMenu decrements it; restartGameMenu / the roster screens read it.",	1);
+	create_word	(0X16068);
+	set_name	(0X16068,	"charCount");
 	create_strlit	(0X16092,	0X49);
 	set_name	(0X16092,	"aDL4cl8gMll4cMn");
 	create_byte	(0X160DC);
@@ -3844,6 +3869,7 @@ static Functions_0(void) {
 	set_func_cmt(0X10030,	"program entry (falls through into mainMenuLoop). BASIC module init: sets up the theme-music strings, YES/NO/\"empty\" literals, opens LEGACY.DAT.", 1);
 	add_func    (0X10150,0X1057F);
 	set_func_flags(0X10150,0x1401);
+	set_func_cmt(0X10150,	"module startup (~1 KB): plays the intro MML music, reads LEGACY.DAT, shows the 3-copyright splash (-> showStartupSplash), then enters the menu.", 1);
 	add_func    (0X10580,0X10738);
 	set_func_flags(0X10580,0x1401);
 	set_func_cmt(0X10580,	"the main menu SELECT CASE dispatch loop. Draws the menu (drawMainMenuScreen), reads a key, and branches to showQuestCopyright / showInstructions / showGameCredits / startNewGameMenu / restartGameMenu / eraseCharacterMenu / showTitleScreen / readLegacyDat. Tail-loops to itself.", 1);
@@ -3875,6 +3901,7 @@ static Functions_0(void) {
 	set_func_cmt(0X11967,	"plays/advances a pushed MML music string and polls the keyboard; returns nonzero when a key is pressed (used to abort the title sequence). Called repeatedly by showTitleScreen. NB: also touches LEGACY.DAT -- confirm.", 1);
 	add_func    (0X11A15,0X11A1D);
 	set_func_flags(0X11A15,0x1401);
+	set_func_cmt(0X11A15,	"the shared \"hit a key to continue\" wait -- called at the end of showInstructions / showGameCredits / playIntroAndLaunchGame / the character menus.", 1);
 	add_func    (0X11A1E,0X11AEB);
 	set_func_flags(0X11A1E,0x1403);
 	add_func    (0X11AEB,0X11C2F);
@@ -3888,8 +3915,10 @@ static Functions_0(void) {
 	set_func_cmt(0X11D3A,	"START A NEW GAME: checks for a free slot (\"YOU MUST FIRST ERASE / AN OLD CHARACTER BEFORE / STARTING A NEW ONE\"), name-collision (\"ALREADY EXISTS / PICK A DIFFERENT NAME\"), DISK FULL. On success runs playIntroAndLaunchGame.", 1);
 	add_func    (0X12055,0X1210D);
 	set_func_flags(0X12055,0x1401);
+	set_func_cmt(0X12055,	"load a character record from CHAR.DAT (indexed by rosterIndex * charRecordSize). Called from eraseCharacterMenu / restartGameMenu.", 1);
 	add_func    (0X1210E,0X121E4);
 	set_func_flags(0X1210E,0x1403);
+	set_func_cmt(0X1210E,	"loop rosterIndex from 0..charCount over the roster (self-recursive). TENTATIVE.", 1);
 	add_func    (0X121E4,0X12414);
 	set_func_flags(0X121E4,0x1403);
 	set_func_cmt(0X121E4,	"RESTART A GAME: \"** NO CHARACTERS TO RESTART **\", \"RESTART WHICH CHARACTER?\", \"RESTARTING <name>\". Then playIntroAndLaunchGame.", 1);
@@ -3901,8 +3930,10 @@ static Functions_0(void) {
 	set_func_cmt(0X125AB,	"renders the menu screen: \"Loading...\", the numbered items (\"1. play a game\" / \"2. simple instructions\" / \"3. game credits\" / \"4. sound is currently on/off\"), and the second-menu variant (\"1. return to first menu\" ...). Calls drawCancelOption.", 1);
 	add_func    (0X12778,0X128A9);
 	set_func_flags(0X12778,0x1403);
+	set_func_cmt(0X12778,	"write the roster back to CHAR.DAT (offers a \"CANCEL\" out). Called from erase / restart / startNewGameMenu.", 1);
 	add_func    (0X128A9,0X1294E);
 	set_func_flags(0X128A9,0x1403);
+	set_func_cmt(0X128A9,	"rewrite one CHAR.DAT slot (erase / add). Called from eraseCharacterMenu / startNewGameMenu. TENTATIVE.", 1);
 	add_func    (0X1294E,0X129A8);
 	set_func_flags(0X1294E,0x1403);
 	set_func_cmt(0X1294E,	"draws the \"CANCEL\" menu entry. Called only by drawMainMenuScreen.", 1);
