@@ -5135,10 +5135,27 @@ struct EventHappened {
                             // edge)` -- matching 2011's "for(ii=0;ii<4;ii++) if(edgesActivated[
                             // ii]) setevent(EV_RUNEVBLOCK,EVB_ROOM,0,ii);" (`AC.CPP:5959-5962`)
                             // exactly. `data3` for `EVB_ROOM` is therefore 0-3 for edge crossings
-                            // or 5 for the once-per-room "player enters screen" event (2011's own
-                            // other `setevent(EV_RUNEVBLOCK,...)` call sites additionally use
-                            // 4/6/7 for other room-entry-lifecycle triggers, not individually
-                            // confirmed in this build).
+                            // or 5 for the once-per-room "player enters screen" event.
+                            //
+                            // EXHAUSTIVELY CLOSED (immediate follow-up, same round): `mainloop`
+                            // (already matched) supplies the two remaining `EVB_ROOM` values --
+                            // "setevent(EV_RUNEVBLOCK,EVB_ROOM,0,4)" when `new_room_was==2`, and
+                            // "setevent(EV_RUNEVBLOCK,EVB_ROOM,0,7)" when `new_room_was!=3` --
+                            // matching 2011's "if(new_room_was==2) setevent(EV_RUNEVBLOCK,
+                            // EVB_ROOM,0,4); if(new_room_was!=3) setevent(EV_RUNEVBLOCK,EVB_ROOM,
+                            // 0,7);" (`AC.CPP:25561-25564`) exactly -- `4`=before fadein on a
+                            // first-time room entry, `7`=after fadein on any room entry. A
+                            // `repeatedly_execute` trigger (`6`) is also confirmed, from the same
+                            // function, matching 2011's "setevent(EV_RUNEVBLOCK,EVB_ROOM,0,6);"
+                            // (`AC.CPP:25443`) exactly. Every `EVB_ROOM` `data3` value 2011
+                            // declares anywhere (`AC.CPP:5959-5964, 25443, 25561-25564`) is now
+                            // individually confirmed present in this build with ZERO drift: `0-3`
+                            // edges, `4` pre-fadein first entry, `5` player-enters-screen, `6`
+                            // repeatedly_execute, `7` post-fadein entry. `EVB_HOTSPOT`'s own
+                            // `data3` space is separately confirmed to include `0` ("stands on
+                            // hotspot", `mainloop`) and `6` ("mouse hovering over hotspot",
+                            // `__GetLocationType`) -- a different value space from `EVB_ROOM`'s,
+                            // since `data1` distinguishes the two families entirely.
   int player;                  // +0x10, high confidence: `setevent`'s own body sets this to
                             // `game_playercharacter` (the already-confirmed player-character-index
                             // global) rather than taking it as a caller-supplied argument --

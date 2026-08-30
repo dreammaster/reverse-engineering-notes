@@ -8727,3 +8727,50 @@ uppercase (`if (key is a-z) key -= 0x20;`) and fires
 `setevent(EV_TEXTSCRIPT, TS_KEYPRESS, key, 0)` -- matching 2011's
 `TS_KEYPRESS=2` constant (`AC.CPP:653`) exactly, alongside the
 already-confirmed `TS_REPEAT=1`.
+
+## A mislabeled function found and fixed, and `EventHappened.data3`'s value space closes exhaustively
+
+Chasing the remaining `setevent` call sites (14 total across the
+binary, only some of which had been read) turned up two results worth
+recording separately.
+
+The genuinely important one first: a function auto-named
+`_EVP_PBE_cleanup` in the live IDB. That name is a real OpenSSL library
+symbol -- there is no plausible reason an early-2000s AGS game engine
+would link against OpenSSL, and reading the function's actual body
+confirms it has nothing to do with cryptography at all. It's three
+instructions: pass the already-confirmed `numevents` and
+`EventHappened` array base to a helper, then reset `numevents` to 0 --
+matching 2011's entire `update_events()` body verbatim (`"void
+update_events() { processallevents(numevents,&event[0]); numevents=0;
+}"`, `AC.CPP:4981-4984`). This was almost certainly a coincidental
+byte-pattern collision picked up by an over-eager FLIRT signature,
+sitting uncaught in the IDB since before this project's own tracking
+began. Renamed to `update_events`, with the mismatch documented rather
+than silently corrected, in case the same signature misfires elsewhere.
+Its own helper (`sub_40CE8A`) is `processallevents(int,EventHappened*)`
+-- an exact role match to `AC.CPP:4954-4979`, including its
+`inside_processevent` re-entrancy guard (a newly-identified global) and
+its early-exit-on-room-change loop, though this build's version skips
+2011's defensive `copyOfList`/`memcpy` step (protecting against the
+live event array being overwritten mid-loop by a blocking script call)
+-- a later safety addition this build predates.
+
+The second result closes out `EventHappened.data3`'s value space
+completely. `check_controls` supplied `TS_MCLICK`(3) (the last of the
+three `TS_*` text-script-event constants, joining the already-confirmed
+`TS_REPEAT`/`TS_KEYPRESS`), and `mainloop` (already matched) supplied
+the two still-missing `EVB_ROOM` values: `4` (fired when
+`new_room_was==2`, "before fadein on a first-time room entry") and `7`
+(fired when `new_room_was!=3`, "after fadein on any room entry"),
+matching 2011's `"if(new_room_was==2) setevent(EV_RUNEVBLOCK,EVB_ROOM,
+0,4); if(new_room_was!=3) setevent(EV_RUNEVBLOCK,EVB_ROOM,0,7);"`
+(`AC.CPP:25561-25564`) exactly. Combined with the already-confirmed
+`0-3` (edges), `5` (player enters screen), and `6` (repeatedly_execute,
+also found in `mainloop`), every single `EVB_ROOM` `data3` value 2011
+declares anywhere in its source is now individually confirmed present
+in this build, with zero drift and zero gaps. A bonus data point on the
+`EVB_HOTSPOT` side too: its own `data3` space includes `0` ("stands on
+hotspot") and `6` ("mouse hovering over a hotspot") -- a genuinely
+separate value space from `EVB_ROOM`'s, since `data1` distinguishes the
+two families entirely.

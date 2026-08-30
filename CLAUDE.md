@@ -2339,6 +2339,22 @@ disassembly work.
   leading fields, now extending to these too, with zero drift. A bonus
   `TS_KEYPRESS`(2) text-script event surfaced in the same code region,
   alongside the already-confirmed `TS_REPEAT`(1).
+- **A mislabeled function found and fixed, and `EventHappened.data3`'s
+  value space closes exhaustively.** A function auto-named
+  `_EVP_PBE_cleanup` — a real OpenSSL symbol, no plausible reason to
+  exist in this codebase — turned out to be a FLIRT false positive: its
+  three-instruction body matches 2011's `update_events()` verbatim.
+  Renamed accordingly, with the mismatch documented in case the same
+  signature misfires elsewhere. Its own helper is `processallevents`,
+  an exact role match minus 2011's defensive `copyOfList`/`memcpy` step
+  (a later safety addition this build predates). Separately,
+  `check_controls` and `mainloop` supplied the last missing pieces of
+  `EventHappened.data3`'s value space — `TS_MCLICK`(3, completing all
+  three `TS_*` constants) and `EVB_ROOM` values `4`/`7` (pre/post-fadein
+  room-entry triggers). Every `EVB_ROOM` `data3` value 2011 declares
+  anywhere is now individually confirmed present with zero drift and
+  zero gaps: `0-3` edges, `4` pre-fadein entry, `5` enters-screen, `6`
+  repeatedly_execute, `7` post-fadein entry.
 
 ## Third-party library identification (Task #10)
 
