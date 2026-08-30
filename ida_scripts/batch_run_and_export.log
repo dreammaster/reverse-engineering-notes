@@ -1,0 +1,21 @@
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\lota\stdrv.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_stdrv.py']
+[*] reading apply_renames_stdrv.py
+[*] executing apply_renames_stdrv.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+applied 7, already-named 0
+seg000: 7/39 functions named
+----- end target script output -----
+[*] finished executing apply_renames_stdrv.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\lota\stdrv.asm
+[*] gen_file(OFILE_ASM) returned 11527
+[*] exporting IDC to C:\dev\lota\stdrv.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\lota\stdrv.idb
+[*] done, exiting 0

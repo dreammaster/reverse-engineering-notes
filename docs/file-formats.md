@@ -57,7 +57,7 @@ castle/fort layout banks.
 | `LEGACY.DAT` | 2945 | `MENU`/`OUT` | **no `0xFD` magic** — not BSAVE; format unknown (config / progress?) |
 | `OUTDAT.DAT` | 1012 | `OUT` | not checked yet |
 | `DRCONFIG.DAT` | 1015 | `CONFIGUR` | driver / hardware config written by `CONFIGUR.EXE` |
-| `STDRVSCR.DAT` | 6192 | `STDRV` | script text |
+| `STDRVSCR.DAT` | 6192 | `STDRV` | "Stones of Wisdom" rules / instruction text — the walk-through the dealer narrates ("YOU AND THE DEALER BOTH RECEIVE FIVE DICE…", "THE LOSER OF A GAME GIVES UP ONE DIE…"). Read by `stonesOfWisdomMain`; **not** a story/cut-scene script. |
 | `TWNMSG.TXT` / `MUSMSG.TXT` | 1911 / 11229 | `TWNDR` / `MUS` | plain-text message tables |
 
 `LEGACY.BAT` (4 bytes: `menu`), `manual.txt`, and

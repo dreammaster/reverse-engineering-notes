@@ -54,9 +54,16 @@ module on the next `resolve_thunks` pass.
 driver, not music** ("MUS" = Museum; the hub, exhibits = portals; chains
 to `TWNDR`/`DUN`/`STDRV`/`CELDRV`).
 
-Still to build: `SAVER`, `STDRV` (story sequences), `CELDRV` (cel
-animations), `SDEFENDR`, `GMB1`/`GMB2` (check packing first), `CONFIGUR`
-(standalone C, low priority).
+`stdrv.idb` built 2026-08-31 — and **`STDRV.EXE` turned out to be the
+"Stones of Wisdom" dice game** (a Liar's-Dice / Perudo variant vs. the
+"DEALER"), not a story driver. It's the museum's *Stones of Wisdom*
+exhibit minigame; the match result adjusts the character's INTELLIGENCE.
+`STDRVSCR.DAT` = the rules text it narrates. Single code segment, 467
+thunks, 100% coerced; 7/39 named.
+
+Still to build: `SAVER`, `CELDRV` (cel animations), `SDEFENDR`,
+`GMB1`/`GMB2` (check packing first), `CONFIGUR` (standalone C, low
+priority).
 
 ## DUN.EXE — open questions
 
@@ -102,6 +109,26 @@ animations), `SDEFENDR`, `GMB1`/`GMB2` (check packing first), `CONFIGUR`
       variants and small draw wrappers).
 - [ ] `twndr`: `sub_11ED0` (calls `townServiceDispatch`) — the town
       command loop.
+
+## STDRV.EXE — open questions
+
+- [x] Build `stdrv.idb` (2026-08-31). Single code seg `seg000` "bmSTDRV"
+      (39 funcs), thunk table `seg001` (467), DGROUP `seg003`. 100%
+      coerced, 0 bad insns, 467 thunks resolved.
+- [~] Name `seg000` functions (`apply_renames_stdrv.py`): 7/39 —
+      `stdrv_entry` (builds the "NO"/"ONE"…"NINE" number-word table),
+      `stonesOfWisdomMain` (loads `STDRVSCR.DAT`, "INSTRUCTIONS?", the
+      per-match / play-again-for-gold loop), `playerBidTurn` ("HOW MANY
+      DICE?", "OF WHAT VALUE?", "CHALLENGE!!"), `resolveChallenge`
+      (reveal dice, win/lose, "YOUR INTELLIGENCE / INCREASES BY"),
+      `formatBidText`. `dealerTurn` / `evalDiceOdds` = the dealer AI
+      (no player text — **tentative**, confirm from the call graph).
+- [ ] The ~30 remaining `sub_` helpers: dice roll/RNG, the bid legality
+      check, per-die tallying, the score/gold bookkeeping.
+- [ ] Field-decode `STDRVSCR.DAT` (6192 bytes) — is it the same
+      screen-string record pool as the in-EXE text, or a flat blob?
+- [ ] How the INTELLIGENCE delta is written back to the character record
+      (shared with `SAVER` / `CHAR.DAT`?).
 
 ## LEGLIB.EXE — open questions
 
