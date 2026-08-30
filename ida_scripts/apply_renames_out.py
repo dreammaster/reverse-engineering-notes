@@ -12,11 +12,13 @@ names + repeatable comments and must not trigger a reanalysis.)
 
 Most names below come from the screen text a function prints (see
 docs/file-formats.md for the string format). Structural names come from
-the call graph + the `ds:` state vars each function pokes:
-  * `mov word ds:21XXh, <const>` runs  -> engine-parameter presets
-  * `mov word ds:2234h, <mask> ; call applyGameFlag`  -> set a quest flag
-  * `mov word ds:2146h, 1|2|3`  -> mode select
-  ds:1F2Ah is the top-level mode var (overworld / town / dungeon / …).
+the call graph + the `ds:` state vars each function pokes. The engine
+state variables themselves are named in **apply_dsvars_out.py** (run
+after this): partyGold (1AD2), hitPoints (1ADA), playerX/playerY
+(1B02/1B06), contextMode (1F2A), subMode (2146), combatPhase (2192),
+encounterActive (21FE), questFlags (2234), chainDestType (1F16),
+turnActionFlag (212E), overworldArrayPtr (24E6), … -- see
+`ida_scripts/dsvars.py` for the profiler that found them.
 
     .\run_ida_script.ps1 -Idb out -ScriptName apply_renames_out.py
 """

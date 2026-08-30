@@ -368,8 +368,20 @@ reimplementation.
       [file-formats.md](file-formats.md#screen-string-pool-in-the-exe-not-a-file--decoded-2026-08-30).
       `dump_strings.py` recovers + annotates it; drove ~25 `out`
       function names.
-- [ ] Map the `ds:21XXh` / `ds:1F0Xh` / `ds:1F2Ah` / `ds:2234h` engine
-      state variables — the key to the remaining ~55 helpers.
+- [~] Map the OUT engine state variables (2026-08-31,
+      `dsvars.py` + `apply_dsvars_out.py`). 227 DGROUP words are touched
+      by the code; ~15 are real cross-function state and are now named:
+      `partyGold` (1AD2, 32-bit), `hitPoints` (1ADA), `playerX`/`playerY`
+      (1B02/1B06), `contextMode` (1F2A), `subMode` (2146), `combatPhase`
+      (2192), `encounterActive` (21FE), `questFlags` (2234),
+      `chainDestType` (1F16), `enteredLocationId` (1F02),
+      `turnActionFlag` (212E), `overworldArrayPtr` (24E6, far ptr);
+      `tileAhead` / `activeCreaturePtr` / `targetSlot` tentative. The
+      remaining ~200 are per-call BASIC scratch temps. Next: use these to
+      name the ~55 `sub_` helpers, and confirm the tentative three.
+- [ ] Combat helper cluster: `sub_1232F` / `sub_13D98` / `sub_14054`
+      (all poke `activeCreaturePtr` + `combatPhase`) — the encounter
+      resolution / talk / trade routines.
 - [ ] Pin down the trailing `! # $ &` control codes in `drawString`.
 - [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
       (`$`-terminated DOS strings + boilerplate) — disassemble if needed.

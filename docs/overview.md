@@ -197,6 +197,14 @@ For each client module, in this exact order (all idempotent):
 - **`ida_scripts/profile_module.py`** — read-only; per-function callers,
   callees, `rtm_*` calls, and resolved string immediates, to support
   naming.
+- **`ida_scripts/dsvars.py`** — read-only; profiles the DGROUP
+  (module-scope) variables the code touches — read/write counts, the
+  constants stored, the functions that use each. High-traffic
+  cross-function vars are the real engine state; write-once-by-one-func
+  vars are BASIC scratch temps. Feeds `apply_dsvars_<module>.py`
+  (`apply_dsvars_out.py` names ~15 OUT state vars: `partyGold`,
+  `hitPoints`, `playerX`/`playerY`, `contextMode`, `combatPhase`,
+  `questFlags`, `chainDestType`, `overworldArrayPtr`, …).
 - `resolve_rtm_leglib.py` / `rtm_map.py` build the shared
   `(prefix,ordinal) → leglib address` map once from `leglib.idb`.
 
@@ -470,3 +478,18 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   cluster); (c) decode the on-disk data formats
   ([file-formats.md](file-formats.md)); (d) then the C++ / ScummVM
   reimplementation.
+- **2026-08-31** — Mapped the OUT.EXE engine state variables
+  (`ida_scripts/dsvars.py` profiler → `apply_dsvars_out.py`). Of the 227
+  DGROUP words the code touches, ~15 are genuine cross-function engine
+  state and are now named + commented: `partyGold` (`ds:1AD2`, 32-bit —
+  shop/food deduct, rewards add), `hitPoints` (`ds:1ADA` — movement
+  starvation + combat damage, `<=1` → unconscious), `playerX`/`playerY`
+  (`ds:1B02`/`1B06` — trial coords staged in `ds:208C`/`208A`, validated
+  by `sub_151B7`), `contextMode` (`ds:1F2A`), `subMode` (`ds:2146`),
+  `combatPhase` (`ds:2192`), `encounterActive` (`ds:21FE`), `questFlags`
+  (`ds:2234`), `chainDestType` (`ds:1F16` — 2/3/4/6 = castle/town/
+  dungeon/museum), `enteredLocationId` (`ds:1F02`), `turnActionFlag`
+  (`ds:212E`), `overworldArrayPtr` (`ds:24E6` far ptr — the main
+  game-data array, pushed to almost every `rtm_` call). The other ~200
+  are per-call compiled-BASIC scratch temps. This is the lever for
+  naming OUT's ~55 remaining `sub_` helpers.

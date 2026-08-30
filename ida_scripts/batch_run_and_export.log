@@ -1,21 +1,20 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\lota\configur.idb
-[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_renames_configur.py']
-[*] reading apply_renames_configur.py
-[*] executing apply_renames_configur.py
+[*] idb = C:\dev\lota\out.idb
+[*] ARGV = ['C:\\dev\\lota\\ida_scripts\\batch_run_and_export.py', 'apply_dsvars_out.py']
+[*] reading apply_dsvars_out.py
+[*] executing apply_dsvars_out.py
 [*] captured stdout from target script:
 ----- begin target script output -----
 
-applied 6, already-named 0
-functions: 65 total, ~8 application
+named 0, already-named 18
 ----- end target script output -----
-[*] finished executing apply_renames_configur.py
+[*] finished executing apply_dsvars_out.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\lota\configur.asm
-[*] gen_file(OFILE_ASM) returned 1333
-[*] exporting IDC to C:\dev\lota\configur.idc
+[*] exporting ASM to C:\dev\lota\out.asm
+[*] gen_file(OFILE_ASM) returned 26093
+[*] exporting IDC to C:\dev\lota\out.idc
 [*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\lota\configur.idb
+[*] saving database to C:\dev\lota\out.idb
 [*] done, exiting 0
