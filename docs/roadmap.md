@@ -38,12 +38,30 @@ Rough size order of the rest (biggest engine payoff first): `OUT` (done,
 `GMB1`, `GMB2`) → drivers (`CELDRV`, `STDRV`, `SAVER`) → `CONFIGUR`
 (standalone, not BASIC).
 
-`DUN.EXE` / `TWNDR.EXE` / `CASDR.EXE` were UNP-unpacked in place
-(2026-08-30) and are ready to build — same pipeline as `out`
-(`idat -B` → `resolve_thunks` → `coerce_code` → `resolve_thunks` →
-`dump_strings` → `apply_renames_<m>`). Once `leglib.idb` gets more `B$…`
-names, re-run `resolve_rtm_leglib.py` to refresh `rtm_map.py` and the
-`-> name` comments propagate to every module.
+`TWNDR.EXE` / `CASDR.EXE` were UNP-unpacked in place (2026-08-30) and are
+ready to build — same pipeline as `out` (`idat -B` → `resolve_thunks` →
+`coerce_code` → `resolve_thunks` → `dump_strings` → `apply_renames_<m>`).
+`dun.idb` done 2026-08-30 (needed a 2nd `coerce_code` pass with
+`$env:COERCE_SEG='seg001'` for the `bmDUNG` graphics module). Once
+`leglib.idb` gets more `B$…` names, re-run `resolve_rtm_leglib.py` to
+refresh `rtm_map.py` — the `-> name` comments propagate to every module.
+
+## DUN.EXE — open questions
+
+- [x] Build `dun.idb` (2026-08-30). 6 segments, two compiled-BASIC code
+      segs (`seg000` "bmDUN" main + `seg001` "bmDUNG" graphics), thunk
+      table `seg002`. Both coerced ~100%, 0 bad insns.
+- [~] Name `seg000` functions (`apply_renames_dun.py`): 24/72 —
+      `dun_entry` → `dunMain`; movement (`doMovement`, `moveHazards`,
+      `climbUp`, `climbDownOrExit`); combat (`monsterAttack`, `doAttack`,
+      `checkAttackTarget`); magic (`useMagicMenu`, `castSpell`,
+      `spellResult`, `psychoStrengthSpell`); `openChest`, `findJewel`,
+      `describeSurroundings`, `lookOrSearch`, `loadDungeonLevel`,
+      `chainToMuseum`/`chainToOverworld`.
+- [ ] Name `seg001` "bmDUNG" (9 funcs, no screen text — graphics).
+- [ ] `sub_12536` (called first from `dunMain`, holds a char-class table
+      + the trap names "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOT")
+      — the command parser / per-tile handler.
 
 ## LEGLIB.EXE — open questions
 

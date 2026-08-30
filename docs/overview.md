@@ -86,7 +86,8 @@ one place that pays off across every module.
 |---|---|---|---|---|
 | `leglib.idb` | `LEGLIB.EXE` | ~445 / 773 (14 real, rest `rtm_*` provisional) | 0 | 10 segments; `seg003` (53 KB) + `seg004` (18 KB) are the code, `seg007`/`seg008` the `bm*` graphics. Every int-3Fh run-time entry resolved; the 14 hot BASIC-runtime primitives named (`apply_renames_leglib.py`). |
 | `menu.idb` | `MENU.EXE` | 25 / 25 seg000 funcs (+ 467 `rt_*` thunks) | 0 | `seg000` coerced + fully named. Layout: `seg000` code, `seg001` thunk table, `seg002` RTM bootstrap, `seg003` DGROUP text, `seg004` stack. |
-| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. Layout matches menu (5 segments) after unpacking. |
+| `out.idb` | `OUT.EXE` | ~40 / ~95 seg000 funcs (+ `rt_*` thunks) | 0 | Overworld/towns/dungeons engine; chains to `MUS`/`SAVER`/`TWNDR`/`CASDR`/`DUN`. Rebuilt from the UNP-unpacked OUT.EXE (5 clean segments like menu); `seg000` coerced to 100%, 1297 run-time calls resolved. ~40 functions named (`doMovement`, `creatureAttack`, `shopBuy`, `chainTo*`, …) from the decoded screen text (`dump_strings.py`); ~55 helpers still `sub_`. |
+| `dun.idb` | `DUN.EXE` | 24 / 72 seg000 funcs (+ `rt_*` thunks) | 0 | Dungeon engine; chains back to `OUT`/`MUS`/`SAVER`. UNP-unpacked; 6 segments — **two** compiled-BASIC code segs: `seg000` "bmDUN" (main) + `seg001` "bmDUNG" (graphics helpers, 9 funcs), thunk table in `seg002`. Both coerced to ~100%. 24 `seg000` functions named from the screen text (`dunMain`, `openChest`, `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …). |
 
 (Counts via `ida_scripts/identify.py -NoExport`; re-run any time as a
 sanity check.)
@@ -327,7 +328,13 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   primitives (`basProcEnter`/`Leave`, `basStrAssign`, …,
   `apply_renames_leglib.py`) and ~40 `out` functions (`doMovement`,
   `creatureAttack`, `shopBuy`, `chainTo*`, `museumAccessPrompt`, …).
-- Next: (a) build `dun.idb` / `twndr.idb` / `casdr.idb` (unpacked, ready
-  — same pipeline); (b) map `out`'s `ds:` engine state vars to name the
-  remaining ~55 helpers; (c) continue the `rtm_*` → `B$…` identification
-  in `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster next).
+- **2026-08-30** — Built `dun.idb` (DUN.EXE, dungeon engine) from the
+  unpacked exe. 6 segments — **two** compiled-BASIC code segs (`seg000`
+  "bmDUN" + `seg001` "bmDUNG"), so `coerce_code.py` gained a
+  `$env:COERCE_SEG` override for the 2nd pass. Both ~100% coerced; 24/72
+  `seg000` functions named from the screen text (`dunMain`, `openChest`,
+  `monsterAttack`, `useMagicMenu`, `castSpell`, `loadDungeonLevel`, …).
+- Next: (a) build `twndr.idb` / `casdr.idb` (unpacked, ready — same
+  pipeline); (b) map `out`/`dun` `ds:` engine state vars to name the
+  remaining helpers; (c) continue the `rtm_*` → `B$…` identification in
+  `leglib.idb` (the `FF4B`/`FF20`/… value-stack cluster next).

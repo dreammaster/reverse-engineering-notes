@@ -35,8 +35,14 @@ import ida_bytes
 import ida_funcs
 import ida_auto
 import ida_segment
+import os
 
 DRY_RUN = False
+
+# Some modules link more than one compiled-BASIC code segment (dun.exe:
+# seg000 "bmDUN" + seg001 "bmDUNG"). By default coerce the one with the
+# most thunk calls; set the env var to target another by name and re-run.
+CODE_SEG_OVERRIDE = os.environ.get("COERCE_SEG") or None
 
 
 def is_code(ea):
@@ -101,7 +107,8 @@ def pick_code_seg():
     return best
 
 
-CODE_SEG = pick_code_seg()
+CODE_SEG = (ida_segment.get_segm_by_name(CODE_SEG_OVERRIDE)
+            if CODE_SEG_OVERRIDE else pick_code_seg())
 S0, S0E = CODE_SEG.start_ea, CODE_SEG.end_ea
 SEGNAME = ida_segment.get_segm_name(CODE_SEG)
 
