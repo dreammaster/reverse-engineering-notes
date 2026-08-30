@@ -264,10 +264,17 @@ reimplementation.
       (writes `CHAR.DAT` — `rt_73`/basStrBuild record build, `rt_FE35` /
       `rt_FE39` file I/O), `chainBackOrQuit` (ESC → DOS, else re-exec
       `OUT.EXE` / `DUN.EXE`). `sub_10411` is a 1-byte artifact.
-- [ ] Which module SAVER came from — how does it know to re-exec `OUT`
-      vs `DUN`? (a flag in `CHAR.DAT` / `LEGACY.DAT`, or an env var?)
-      Only `OUT.EXE` and `DUN.EXE` are named as chain targets — what
-      about saving from a town / castle / the museum?
+- [x] Map the SAVER state vars (2026-08-31, `apply_dsvars_saver.py`;
+      DGROUP `seg003`). `rosterIndex` (1B0A, same slot as MENU),
+      `menuChoice` (1E22), and `returnTarget` (`ds:1ACA`) -- the last one
+      is how SAVER picks OUT vs DUN: `chainBackOrQuit` tests "OUT" then
+      "DUN" via `rtm_FF08` and folds the result through `sub ax,
+      ds:1ACAh` before `rtm_FE05` execs. Everything else in DGROUP is
+      one-function drawString layout scratch.
+- [ ] Still open: where `returnTarget` (`ds:1ACA`) gets its value in
+      `saver_entry` -- and whether saving from a town / castle / museum
+      is even possible (only `OUT.EXE` / `DUN.EXE` are chain targets).
+      `rtm_FF08` = ? (looks like a program-name / env test).
 - [ ] `CHAR.DAT` field layout — `saveRosterToDisk` is the write side,
       `readLegacyDat` / the menu's roster screens the read side.
 - [ ] The "character disk" checks ("is not on this / character disk",
