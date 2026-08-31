@@ -836,15 +836,19 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   what `sub_28156` points `drawTileRun` at: `srcSeg` = the `ds:1E2A`
   array segment, `srcBase` = array byte `0x2F22` = OUTDATA payload
   `0x400`, taken when `ds:2082h == 0x23CD`). So the terrain sub-cells
-  are in `OUTDATA`, not `OUTOBJ`. `0x1400`+/`0x1F00`+ = 124-byte
-  object/creature GET-array sprites (drawn via `basPutSprite`). **The
+  are in `OUTDATA`, not `OUTOBJ`. `0x1400`+/`0x1F5C`+ = **64 × 124-byte
+  object/creature sprite records** (`dw 40 ; dw 20` + a 40×12 CGA bitmap
+  = 2 side-by-side animation frames; 32 image+`AND`-mask pairs — pegasus,
+  mounted figures, monsters, wings — drawn by `chainExec`'s tail for the
+  "PEGASUS SETS YOU DOWN" / "AMBUSHED BY BANDITS!" events). **The
   overworld uses `drawTileRun` just like the dungeon**: `refreshMapView`
   builds a 26-wide tile-index buffer from the 4-byte records (BL/BR to
   row `+0x1A`) and `rtm_FE69` blits a `26 x 17` cell grid via
   `drawTileRun`; `readTileObject` clips edge tiles
   (`ds:2444h`-`ds:2452h`). The `imul ds:2444h, 0x5F` is the `OUTM` grid
-  width (95), not a record size. The overworld map graphics are now
-  **fully decoded**.
+  width (95), not a record size. The overworld graphics are now
+  **fully decoded** — terrain tiles, sub-cell bank, and the 32
+  creature/travel sprite pairs.
 - **2026-08-31** -- Mapped `TCASOBJ.BSV` (castle/town animated objects).
   `CASDR`'s `loadCastleObjects` BSAVE-loads it to `0x8537:0x0000` into
   `spriteBank` (`ds:1E58`) -- same array/role as `DUNOBJ`/`OUTOBJ`/

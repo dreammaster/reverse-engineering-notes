@@ -586,10 +586,13 @@ reimplementation.
       4-byte terrain records** (2×2 sub-cell indices; transitions in
       groups of 4), `0x400`-`~0xD1F` = **the ~146-cell 8×8 sub-cell
       bank** (`sub_28156` points `drawTileRun` here: `srcBase` = array
-      `0x2F22` = OUTDATA `0x400`), `0x1400`+/`0x1F00`+ = 124-byte
-      object/creature GET-array sprites. `refreshMapView` builds a
-      26-wide index buffer from the records; `rtm_FE69` blits it 26×17
-      via `drawTileRun`. Rendered clean (coasts, forest, mountains).
+      `0x2F22` = OUTDATA `0x400`), `0x1400`+/`0x1F5C`+ = **64 × 124-byte
+      object/creature sprite records** (`dw 40 ; dw 20` + a 40×12 bitmap
+      = 2 frames; 32 image+`AND`-mask pairs — pegasus, riders, monsters,
+      wings — `chainExec` draws them for the travel events).
+      `refreshMapView` builds a 26-wide index buffer from the terrain
+      records; `rtm_FE69` blits it 26×17 via `drawTileRun`. All rendered
+      clean.
 - [~] Dungeon data (2026-08-31) — **rendering model cracked**
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`

@@ -34,14 +34,29 @@ cells via **`drawTileRun`** (`rtm_FE2A`).  `sub_28156` supplies
 `drawTileRun`'s source: `srcSeg` = the `ds:1E2A` array segment (OUTM +
 OUTDATA), `srcBase` = array byte `0x2F22` = OUTDATA payload `0x400` (the
 override taken when `ds:2082h == 0x23CD`, the overworld tile-buffer
-base -- byte `0x479A`).  So the terrain sub-cells live in OUTDATA, not
-OUTOBJ; OUTOBJ is only the object / creature `basPutSprite` sprites.
+base -- byte `0x479A`).  So the terrain sub-cells live in OUTDATA.
 `readTileObject` clips partial edge tiles (`ds:2444h`-`ds:2452h`) with
 `rtm_FE1B` / `rtm_FE14`.
 
 Note: the `imul ds:2444h, 0x5F` in `resolveMoveTarget` is **not** a
 record size -- `0x5F` (95) is the `OUTM` base-terrain grid width, used to
 copy a 13x13 map window (`array[0x120 + Y*0x5F + X]`) for move logic.
+
+## The object / creature sprites (payload 0x1400 onward)
+
+A 2-byte prefix, then **64 records x 124 bytes** in two banks
+(`0x1402`-`~0x1A4E`, then `0x1F5C`-`0x3718`).  Each record:
+
+    dw 0x0028   -- width = 40 px
+    dw 0x0014   -- 20 (the sprite-cell height; only 12 rows are stored)
+    120 bytes   -- a 40 x 12 CGA 2 bpp bitmap, 10 bytes/row, linear
+
+The 40 px hold **two side-by-side 20-wide animation frames** (a walk
+cycle etc.).  Records **pair up**: an even record is the image
+(`basPutSprite` verb 0) and the odd record right after it is the
+`AND`-mask (verb 1) -- 32 sprite pairs.  `chainExec`'s tail draws them
+for the special-travel events ("PEGASUS SETS YOU DOWN", "AMBUSHED BY
+BANDITS!"): pegasus, mounted figures, monster creatures, wings.
 """
 import struct
 import sys
@@ -50,6 +65,8 @@ import os
 N_TILES = 256
 REC = 4
 BANK = 0x400
+SPRITE_HDR = b"\x28\x00\x14\x00"
+SPRITE_W, SPRITE_BPR, SPRITE_ROWS = 40, 10, 12
 PAL = [(0, 0, 0), (0x55, 0xFF, 0xFF), (0xFF, 0x55, 0xFF), (0xFF, 0xFF, 0xFF)]
 
 
@@ -78,6 +95,20 @@ def sub_cell(p, n):
     w = struct.unpack("<8H", p[o:o + 16])
     order = [w[0], w[4], w[1], w[5], w[2], w[6], w[3], w[7]]
     return [[(row >> (14 - 2 * x)) & 3 for x in range(8)] for row in order]
+
+
+def sprite_records(p):
+    """Byte offsets of every 124-byte object/creature sprite record."""
+    import re
+    return [m.start() for m in re.finditer(re.escape(SPRITE_HDR), p)]
+
+
+def sprite_pixels(p, off):
+    """One record -> SPRITE_ROWS rows of SPRITE_W palette indices
+    (the 40-px bitmap holds 2 side-by-side 20-wide frames)."""
+    data = p[off + 4:off + 4 + SPRITE_BPR * SPRITE_ROWS]
+    return [[(data[y * SPRITE_BPR + x // 4] >> (6 - 2 * (x % 4))) & 3
+             for x in range(SPRITE_W)] for y in range(SPRITE_ROWS)]
 
 
 def terrain_tile(p, T):
@@ -129,6 +160,14 @@ def main():
     print("\nsub-cell indices used (0x400 bank): %s"
           % " ".join("%02X(%d)" % (k, v) for k, v in sorted(c.items())))
 
+    sr = sprite_records(p)
+    strides = {sr[i + 1] - sr[i] for i in range(len(sr) - 1) if sr[i + 1] - sr[i] < 0x100}
+    print("\nobject/creature sprites: %d records of 124 B (%d pairs), strides %s"
+          % (len(sr), len(sr) // 2, strides))
+    print("  bank 1: 0x%X .. 0x%X    bank 2: 0x%X .. 0x%X"
+          % (sr[0], max(o for o in sr if o < 0x1B00),
+             min(o for o in sr if o > 0x1B00), sr[-1]))
+
     if outdir:
         os.makedirs(outdir, exist_ok=True)
         S, per = 6, 16
@@ -146,6 +185,26 @@ def main():
                         for dx in range(S):
                             cv[oy + y * S + dy][ox + x * S + dx] = v
         out = os.path.join(outdir, "outdata_terrain.bmp")
+        write_bmp(out, cv)
+        print("wrote", out)
+
+        # sprite sheet: image row on top, mask row below, per pair
+        S, per = 6, 8
+        cw = (SPRITE_W + 3) * S
+        chh = (SPRITE_ROWS * 2 + 4) * S
+        npair = len(sr) // 2
+        cv = [[0] * (cw * per) for _ in range(chh * ((npair + per - 1) // per))]
+        for k in range(npair):
+            img = sprite_pixels(p, sr[k * 2])
+            msk = sprite_pixels(p, sr[k * 2 + 1])
+            ox, oy = (k % per) * cw, (k // per) * chh
+            for band, cells in ((0, img), (SPRITE_ROWS + 1, msk)):
+                for y, row in enumerate(cells):
+                    for x, v in enumerate(row):
+                        for dy in range(S):
+                            for dx in range(S):
+                                cv[oy + (band + y) * S + dy][ox + x * S + dx] = v
+        out = os.path.join(outdir, "outdata_sprites.bmp")
         write_bmp(out, cv)
         print("wrote", out)
 
