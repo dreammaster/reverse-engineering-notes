@@ -814,18 +814,23 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   resolved statically for `DUNMON` -- see the 2026-08-31 `DUNMONA/B`
   entry above; `DUNOBJ` region-C mask cells + `MUSOBJ` bitmap bank still
   open.)
-- **2026-08-31** -- Mapped the overworld data (`OUTM*` + `OUTDATA.BSV`),
-  which mirrors the dungeon: `loadOverworldData` BLOADs
-  `OUTM0<combatPhase>.BSV` (map layers) to `0x86AE:0` and `OUTDATA.BSV`
-  to `0x86AE:0x2B22` -- one contiguous array bound at `ds:1E2A`. Map is
-  1 byte/tile, 128 wide (`idiv 0x80` / `and 0x7F`). `OUTDATA` =
-  terrain-type tables (`0x000`-`0x3FF`) + a run of **95-byte** terrain
-  tile records (`0x400`-`0xDFF`; `OUT` does `imul ds:2444h, 0x5Fh`) +
-  **124-byte** object-sprite records (`dw 0x28 ; dw 0x14` extent + 120 B
-  CGA data; `0x1400`+ and `0x1F00`+). `OUT` doesn't use `drawTileRun` --
-  it scrolls a 95-byte-tile / 13-stride working buffer with `rtm_FE1B`
-  (`rep stosb`) / `rtm_FE14` (`rep movsb`) and paints via `basPutSprite`.
-  Open: the 95-byte record layout + the terrain tables' fields.
+- **2026-08-31** -- Decoded `OUTDATA.BSV`'s terrain records
+  (`decoders/outdata.py`). `loadOverworldData` BLOADs
+  `OUTM0<combatPhase>.BSV` at `ds:1E2A` array byte 0 and `OUTDATA.BSV`
+  at `0x2B22` -- one array, parallel to the dungeon. `OUTDATA`
+  `0x000`-`0x3FF` = **256 records x 4 bytes** -- record `T` = the four
+  8x8 **sub-cell indices** for terrain-tile-type `T`, in a **2x2**
+  layout (TL, TR, BL, BR); values `0x10`-`0x6D` index the `OUTOBJ`
+  sub-cell bank; transitions come in groups of four. `0x400`-`0xDFF` =
+  a CGA pixel bank (consumer unconfirmed); `0x1400`+/`0x1F00`+ =
+  124-byte object/creature GET-array sprites. **The overworld uses
+  `drawTileRun` just like the dungeon** (my old "doesn't use
+  drawTileRun" note was wrong): `refreshMapView` builds a 26-wide
+  tile-index buffer from the 4-byte records (BL/BR to row `+0x1A`) and
+  `rtm_FE69` blits a `26 x 17` cell grid via `drawTileRun`;
+  `readTileObject` clips edge tiles (`ds:2444h`-`ds:2452h`). The
+  `imul ds:2444h, 0x5F` is the `OUTM` grid width (95), not a record
+  size. Open: the exact `OUTOBJ` sub-cell bank base.
 - **2026-08-31** -- Mapped `TCASOBJ.BSV` (castle/town animated objects).
   `CASDR`'s `loadCastleObjects` BSAVE-loads it to `0x8537:0x0000` into
   `spriteBank` (`ds:1E58`) -- same array/role as `DUNOBJ`/`OUTOBJ`/

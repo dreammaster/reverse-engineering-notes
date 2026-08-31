@@ -578,14 +578,18 @@ reimplementation.
       keyboard-command name list (`Armor`/`Climb`/`Disembark`/…) + small
       2 bpp CGA icons, same `05 06 xx xx 7E 01` header as `CHAR.DAT`.
       Field layout still open.
-- [~] Overworld data (2026-08-31) — architecture mapped (mirrors the
-      dungeon): `OUTM0/1/2.BSV` = map layers picked by `combatPhase`
-      (`OUTM0<phase>.BSV`), 8-byte header + 1 byte/tile, 128-wide
-      logical map; `OUTDATA.BSV` loads contiguously at `0x86AE:0x2B22` =
-      terrain tables (`0x000`-`0x3FF`) + 95-byte terrain-tile records
-      (`0x400`-`0xDFF`) + 124-byte object-sprite records
-      (`dw 0x28; dw 0x14` + 120 B; `0x1400`+ & `0x1F00`+). Open: the
-      95-byte tile record layout + terrain-table fields.
+- [~] Overworld data (2026-08-31, `decoders/outdata.py`) — mirrors the
+      dungeon. `OUTM0/1/2.BSV` = map layers picked by `combatPhase`, 8-B
+      header + 1 byte/tile, base grid **95 wide** (`0x5F` — the
+      `imul ds:2444h,0x5F` is this width, *not* a record size).
+      `OUTDATA.BSV` @ array `0x2B22`: `0x000`-`0x3FF` = **256 × 4-byte
+      terrain records** (2×2 sub-cell indices per terrain type;
+      transitions in groups of 4), `0x400`-`0xDFF` = a CGA pixel bank,
+      `0x1400`+/`0x1F00`+ = 124-byte object/creature GET-array sprites.
+      The overworld renders via `drawTileRun` (`rtm_FE69`) exactly like
+      the dungeon — `refreshMapView` builds a 26-wide index buffer from
+      the records. Open: the `OUTOBJ` sub-cell bank base; the
+      `0x400`-`0xDFF` region's consumer.
 - [~] Dungeon data (2026-08-31) — **rendering model cracked**
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`
