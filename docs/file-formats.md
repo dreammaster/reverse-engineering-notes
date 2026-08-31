@@ -255,10 +255,10 @@ array** `OUTOBJ.BSV` / `MUSOBJ.BSV` load into, plus `DUNMON*` at
 
 | region | span | contents |
 |---|---|---|
-| A | `0x000`–`0x18F` | **40 fixed 10-byte object-definition records** — `dw 0x0110` (constant tag on every record) `; dw fieldA ; dw fieldB ; dw fieldC ; dw fieldD`. `fieldA == fieldC` in ~34 records; the other ~6 are "group headers" with `fieldA ≠ fieldC` and a nonzero `fieldB` index (`0x24` / `0x1F` / `0x15` / `0x03` …). `fieldD` is a small count (0–`0x12`, usually 3–10). `fieldA` / `fieldC` (`0x0247`–`0x042F`) are `spriteBank` offsets (**not** relocated — `loadDungeonData` does no fix-up). Tentatively: one record = one dungeon object *type* (chest / altar / fountain / statue / door / lever …), `fieldA/C` = its sprite offset, `fieldD` = its frame count, `fieldB` links it into one of 6 category groups. |
-| — | `0x190`–`0x1A3` | **6 bank pointers** at stride `0x49A` (`0x1240 + k·0x49A`, `k=0..5`) — the 6 object-category sub-banks. |
-| B | `0x400`–`0x8F1` | ~316 four-byte records = the **`(maskSrcOffset, screenDestOffset)` pairs** fed to `andSpriteMaskCell` (first of each pair steps by `0x10` = one 8-word cell) |
-| C | `0x8F2`–`0x15FF` | the sprite data the pairs point at: field-interleaved 8×8 **mask cells** + `basPutSprite` **image arrays** (`[dw w][dw h]` + planar rows). Renders as noise only because it isn't a flat bitmap — it's these two indexed structures. |
+| A | `0x000`–`0x18F` | **5 per-depth sprite-mask descriptors** + the DUNMON bank table (see below). The `[0x0110]`-tagged 10-byte records here are `drawViewSprite`'s per-depth descriptors: for depth band `P` (0–4) it reads word `spriteBank[P_idx·2 + 6]` = **mask-cell count** and `spriteBank[P_idx·2 + 8]` = **list start** (word offset into region B), where `P_idx` ∈ `{0x23, 0x4B, 0x73, 0x9B, 0xC3}`. Counts: **36 / 31 / 21 / 14 / 8** (fewer cells at greater distance). |
+| — | `0x190`–`0x1A3` | **the DUNMON bank table** — 6 word pointers `0x1240 + k·0x49A`. `spriteBank[0x190]` = `0x1240` is where `loadDungeonMonsters` `BLOAD`s `DUNMONA/B.BSV` (word offset, right after this 9344-B file), and `0x1240 + k·0x49A` (`0x49A` words = `0x934` B = one `DUNMON` record) are the 6 monster records. |
+| B | `~0x59E`–`0x8F1` | **5 mask-cell lists**, one per depth band. Each entry is a pair `(videoDestOffset, maskSrcOffset)` fed to `andSpriteMaskCell` (`arg_0` = src, `arg_4` = dest). `videoDest` is a CGA even-field byte offset stepping by `0x140` (a field-interleaved 8-row band) down and `+2` (8 px) across; `maskSrc` steps by `0x10` (one 16-byte cell) and repeats. |
+| C | `~0x1212`–`0x15FF` | the **mask bitmaps** — 8 field-interleaved words (16 B) per 8×8 cell, `AND`-blitted into video. Assembled, each depth's mask is a **rounded-top rectangular arch/frame silhouette** (dithered top, straight sides, threshold bar) that shrinks P0→P4 — the corridor "opening" a creature is drawn into. The mask is generic (shared by every creature); the creature **image** is a separate `basPutSprite` blit from the `DUNMON` record. |
 | D | `0x1600`–end | zero padding |
 
 `DUN.EXE`'s loader is now disassembled — **`loadDungeonData`** (was
@@ -277,7 +277,14 @@ as-is against the array base.
 **Consumer chain** (traced — the loaders are decoded; a couple of
 helpers in this `DUN.EXE` region are still tangled):
 
-- The **6 bank pointers at `0x190`** are the confirmed use of region A.
+- **`drawViewSprite` (`bmDUNG`)** is region A/B/C's consumer: per depth
+  band `P` (0-4), region A's descriptor at `spriteBank[P_idx·2]` gives
+  `(count, listStart)`; it walks `count` `(videoDest, maskSrc)` pairs
+  from region B calling `andSpriteMaskCell` (the arch mask), then
+  `rtm_FE46` (clip), `rtm_7A` (position), and `basPutSprite` on the
+  `DUNMON` image. **The mask comes from `DUNOBJ`, the pixels from
+  `DUNMON`.**
+- The **DUNMON bank table at `0x190`**.
   `loadDungeonMonsters` (`DUN.EXE` `0x12F9F`, called from
   `processTileFeature` right after `loadDungeonData`) reads
   `spriteBank[0x190]` (= `0x1240` *words*) and `BLOAD`s
@@ -304,14 +311,11 @@ helpers in this `DUN.EXE` region are still tangled):
 - **`moveMonsters`** + `sub_139FC` relocate monsters on the map grid
   per turn (class in tile bits 4–6).
 
-The **40 `[0x0110]` records** in region A: only the trailing 6 bank
-pointers are provably consumed. `fieldA`/`fieldC` (`0x0247`…`0x042F`)
-look like packed positions (`(level<<8)|(y<<4)|x` — level-2…4 cells)
-and `fieldD` like a type, but no `DUN.EXE` code reads the 40-record
-table — the per-slot `viewObjectArray` data is populated from the
-`DUNM` map tiles (which already carry `(class<<4)|wall` for pre-placed
-objects), not from region A. The records may be level-editor metadata
-or feed something not yet located.
+So region A is **not** a 40-object placement table — it's the DUNMON
+bank pointers (`0x190`) plus the 5 per-depth mask descriptors (read at
+word indices `0x23`/`0x4B`/`0x73`/`0x9B`/`0xC3`). The per-slot
+`viewObjectArray` data (which objects are where) comes from the `DUNM`
+map tiles, which already carry `(class<<4)|wall` for pre-placed objects.
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
 

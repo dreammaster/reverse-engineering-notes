@@ -621,10 +621,13 @@ reimplementation.
         `viewObjectArray` (`ds:1C7C`) as 8 slots; `rebuildLevelView`
         stamps them into the map as `(slot<<4)|wall|0x10`;
         `renderDungeonView` → `drawViewSprite` draws them.
-        `clearViewObjects` / `removeViewObject` tear them down. The
-        40-record table itself: no `DUN.EXE` code reads it — the
-        per-slot data comes from the `DUNM` map tiles. Records may be
-        editor metadata.
+        `clearViewObjects` / `removeViewObject` tear them down.
+        **Region B/C decoded**: 5 per-depth mask-cell lists (pairs
+        `(videoDest, maskSrc)`) + the mask bitmaps — an arch/frame
+        silhouette that shrinks P0→P4, the corridor opening a creature
+        is drawn into; the creature pixels come from `DUNMON`
+        (`basPutSprite`). Region A = the DUNMON bank pointers + the 5
+        per-depth `(count, listStart)` descriptors, not an object table.
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.

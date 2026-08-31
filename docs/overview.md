@@ -924,5 +924,20 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   draws them; `clearViewObjects` / `removeViewObject` tear them down;
   `moveMonsters` + `sub_139FC` relocate them per turn. **No `DUN.EXE`
   code reads the 40-record table** -- the per-slot data comes from the
-  `DUNM` map tiles (already `(class<<4)|wall`), so the 40 records may be
-  level-editor metadata.
+  `DUNM` map tiles (already `(class<<4)|wall`).
+- **2026-08-31** -- Decoded `DUNOBJ.BSV` region B/C (the sprite masks).
+  `drawViewSprite`, per **depth band `P`** (0-4), reads region A's
+  descriptor at `spriteBank[P_idx·2]` (`P_idx` in
+  `{0x23,0x4B,0x73,0x9B,0xC3}`): word `+6` = mask-cell count
+  (36/31/21/14/8), word `+8` = list start. Region B = 5 lists of
+  `(videoDestOffset, maskSrcOffset)` pairs (arg order: `andSpriteMaskCell`
+  `arg_0` = src, `arg_4` = dest -- the pair is `(dest, src)`); `videoDest`
+  steps `0x140` down / `+2` across, `maskSrc` steps `0x10`. Region C
+  (`~0x1212`-`0x15FF`) = the 16-byte field-interleaved mask cells,
+  `AND`-blitted. Assembled, each depth's mask is a **rounded-top
+  rectangular arch/frame silhouette** (dithered top, straight sides,
+  threshold bar) that shrinks P0->P4 -- the corridor opening a creature
+  is drawn into. The creature **image** is a separate `basPutSprite`
+  from `DUNMON`. So `DUNOBJ` = the generic per-depth mask, `DUNMON` =
+  the per-monster pixels. Region A is thus the DUNMON bank table +
+  5 mask descriptors, *not* a 40-object placement table.
