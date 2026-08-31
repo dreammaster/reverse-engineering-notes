@@ -934,19 +934,25 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `moveMonsters` + `sub_139FC` relocate them per turn. **No `DUN.EXE`
   code reads the 40-record table** -- the per-slot data comes from the
   `DUNM` map tiles (already `(class<<4)|wall`).
-- **2026-08-31** -- Decoded `DUNOBJ.BSV` region B/C (the sprite masks).
-  `drawViewSprite`, per **depth band `P`** (0-4), reads region A's
-  descriptor at `spriteBank[P_idx·2]` (`P_idx` in
-  `{0x23,0x4B,0x73,0x9B,0xC3}`): word `+6` = mask-cell count
-  (36/31/21/14/8), word `+8` = list start. Region B = 5 lists of
-  `(videoDestOffset, maskSrcOffset)` pairs (arg order: `andSpriteMaskCell`
-  `arg_0` = src, `arg_4` = dest -- the pair is `(dest, src)`); `videoDest`
-  steps `0x140` down / `+2` across, `maskSrc` steps `0x10`. Region C
-  (`~0x1212`-`0x15FF`) = the 16-byte field-interleaved mask cells,
-  `AND`-blitted. Assembled, each depth's mask is a **rounded-top
-  rectangular arch/frame silhouette** (dithered top, straight sides,
-  threshold bar) that shrinks P0->P4 -- the corridor opening a creature
-  is drawn into. The creature **image** is a separate `basPutSprite`
-  from `DUNMON`. So `DUNOBJ` = the generic per-depth mask, `DUNMON` =
-  the per-monster pixels. Region A is thus the DUNMON bank table +
-  5 mask descriptors, *not* a 40-object placement table.
+- **2026-08-31** -- Fully decoded `DUNOBJ.BSV` regions B and C (the
+  per-depth sprite masks; `decoders/dunobj.py`). `loadDungeonData`
+  `BLOAD`s the payload into `spriteBank` at **offset 0** (the BSAVE
+  `0x0DB6` is ignored), so every file offset = its `spriteBank` offset,
+  no relocation, and `DUNMON*` loads right after at word `0x1240`.
+  `drawViewSprite`, per **depth band `P`** (0-4), reads the region-A
+  descriptor at word `P_idx` (`{0x23,0x4B,0x73,0x9B,0xC3}`,
+  `dw 0x0110 ; dw endWord ; dw count ; dw startWord ; dw K`): `+3` =
+  mask-cell count (`36/31/21/14/8`), `+4` = start word of that depth's
+  region-B list. Region B = per-depth `(videoDest, maskSrc)` word-pair
+  lists (`andSpriteMaskCell` `arg_4` = dest, `arg_0` = src). `maskSrc`
+  is a **direct byte offset `0x1212 + 16·n`** into region C -- **57
+  contiguous 16-byte cells** at `0x1212`-`0x15A1`. Each cell = a
+  field-interleaved 8×8 2 bpp `AND` stencil (scanline order 0,2,4,6,1,3,
+  5,7; pixel-pair `11` keeps the video pixel, `00` blacks it); the cells
+  are ordered-dither patterns, reused within a list (P0 = 36 blits, 13
+  unique) and shared across depths. Composited per depth: a **rectangular
+  aperture with a dithered top edge** that shrinks P0->P4 -- the lit
+  niche the `DUNMON` sprite is `PUT` into. Bytes `0x8F2`-`0x1211` are a
+  separate block of object/decoration bitmaps (consumer still open). So
+  region A = a small object table + 5 mask descriptors + the DUNMON bank
+  table, *not* a 40-object placement table.

@@ -249,17 +249,32 @@ AND-blitted) + an image (BASIC `PUT` array, `[dw w][dw h][rows]`).
 
 ### `DUNOBJ.BSV` — dungeon objects + sprites
 
-`BSAVE`s to `0x140D:0x0DB6` into `spriteBank` (`ds:1E58`) — the **same
-array** `OUTOBJ.BSV` / `MUSOBJ.BSV` load into, plus `DUNMON*` at
-`0x3236`. Payload 9344 bytes; only ~`0x1600` is real. Four regions:
+`BSAVE`s to `0x140D:0x0DB6`, but `loadDungeonData` **ignores that offset**
+and `BLOAD`s the payload into `spriteBank` (`ds:1E58`) at **offset 0** —
+so every file offset below **is** its `spriteBank` offset (no relocation),
+and `DUNMON*` loads immediately after at word `0x1240` (= byte `0x2480` =
+the payload length). Payload 9344 bytes; real data ends at `0x15A1`.
 
 | region | span | contents |
 |---|---|---|
-| A | `0x000`–`0x18F` | **5 per-depth sprite-mask descriptors** + the DUNMON bank table (see below). The `[0x0110]`-tagged 10-byte records here are `drawViewSprite`'s per-depth descriptors: for depth band `P` (0–4) it reads word `spriteBank[P_idx·2 + 6]` = **mask-cell count** and `spriteBank[P_idx·2 + 8]` = **list start** (word offset into region B), where `P_idx` ∈ `{0x23, 0x4B, 0x73, 0x9B, 0xC3}`. Counts: **36 / 31 / 21 / 14 / 8** (fewer cells at greater distance). |
-| — | `0x190`–`0x1A3` | **the DUNMON bank table** — 6 word pointers `0x1240 + k·0x49A`. `spriteBank[0x190]` = `0x1240` is where `loadDungeonMonsters` `BLOAD`s `DUNMONA/B.BSV` (word offset, right after this 9344-B file), and `0x1240 + k·0x49A` (`0x49A` words = `0x934` B = one `DUNMON` record) are the 6 monster records. |
-| B | `~0x59E`–`0x8F1` | **5 mask-cell lists**, one per depth band. Each entry is a pair `(videoDestOffset, maskSrcOffset)` fed to `andSpriteMaskCell` (`arg_0` = src, `arg_4` = dest). `videoDest` is a CGA even-field byte offset stepping by `0x140` (a field-interleaved 8-row band) down and `+2` (8 px) across; `maskSrc` steps by `0x10` (one 16-byte cell) and repeats. |
-| C | `~0x1212`–`0x15FF` | the **mask bitmaps** — 8 field-interleaved words (16 B) per 8×8 cell, `AND`-blitted into video. Assembled, each depth's mask is a **rounded-top rectangular arch/frame silhouette** (dithered top, straight sides, threshold bar) that shrinks P0→P4 — the corridor "opening" a creature is drawn into. The mask is generic (shared by every creature); the creature **image** is a separate `basPutSprite` blit from the `DUNMON` record. |
-| D | `0x1600`–end | zero padding |
+| A — object table | `0x000`–`0x045` | `dw 0x0005` then **7 × 10-byte object records** `dw 0x0110 ; dw spriteWord ; dw 0 ; dw spriteWord ; dw K`. `spriteWord` = `0x247/0x251/0x263/0x27B/0x28D/0x29B/0x2BF`, `K` (frame count) = `9/12/9/7/18/8/0`. Consumer not yet pinned (the object-sprite draw path). |
+| A — mask descriptors | `0x046`–`0x18F` | **5 per-depth mask descriptors**, one every `0x28` words at `P_idx` ∈ `{0x23,0x4B,0x73,0x9B,0xC3}`. Each: `dw 0x0110 ; dw endWord ; dw count ; dw startWord ; dw K` with `endWord = startWord + count·2`. `drawViewSprite` reads `spriteBank[P_idx + 3]` = **count** (`36/31/21/14/8`) and `spriteBank[P_idx + 4]` = **startWord** (word offset into region B). |
+| A — DUNMON bank table | `0x190`–`0x1A3` | **6 word pointers** `0x1240 + k·0x49A` (`= 0x1240,0x16DA,0x1B74,0x200E,0x24A8,0x2942`). `spriteBank[0x190]` = `0x1240` is where `loadDungeonMonsters` `BLOAD`s `DUNMONA/B.BSV`; the 6 pointers subdivide it into the 6 monster-type blocks (`0x49A` words each). |
+| — | `0x1A4`–`0x55D` | mostly zero; a stray `dw 0x0112 ; dw 0x0113 ; dw 1` micro-record at `0x214`. |
+| B — mask-cell lists | `~0x400`–`0x8F1` | the per-depth **`(videoDest, maskSrc)` word-pair lists** (the 5 that `drawViewSprite` uses start at words `0x2CF/0x36F/0x3EF/0x43F/0x469`; earlier bytes hold sibling lists). `videoDest` = a CGA **even-field byte offset** (`row·0x50 + colByte`), stepping `0x140` down / `+2` across; `maskSrc` = a **byte offset into region C**, `0x1212 + 16·n`. First word = `andSpriteMaskCell`'s `arg_4` (dest), second = `arg_0` (src). |
+| — object sprites | `0x8F2`–`0x1211` | ~2334 B of 4-colour CGA dither art (`0x66/0x99/0xAA/0xE6` bytes) — the **object/decoration bitmaps**. Separate from the mask pool; `drawViewSprite`'s mask loop and its `basPutSprite` (which pulls from the DUNMON bank) never touch it. Open: consumer + indexing. |
+| C — mask cells | `0x1212`–`0x15A1` | **57 contiguous 16-byte mask cells** (`0x1212 + 16·n`, n = 0–56). Each = one **field-interleaved 8×8 2 bpp `AND` stencil** (8 words, scanline order 0,2,4,6,1,3,5,7; bits 15-14 = leftmost pixel). `andSpriteMaskCell` `and`s each scanline into video: a pixel-pair of `11` keeps the video pixel, `00` forces it black. All nibbles are pair-aligned (`0x0/0x3/0xC/0xF`); the checkerboard mix (`0xF0`,`0x3C`,`0xC3`,…) is **ordered dither** → soft translucent edges. Composited per depth: a **rectangular aperture with a dithered top border** that shrinks P0→P4 — the lit niche the `DUNMON` sprite is `PUT` into. Shared pool: cells are reused within a list (P0 = 36 blits, 13 unique) and overlap across depths. |
+| D | `0x15A2`–end | zero padding |
+
+Per-depth region-C usage:
+
+| P | count | region-B list (words) | distinct cells | cell span |
+|---|---|---|---|---|
+| 0 | 36 | `0x2CF`–`0x316` | 13 | `0x1212`–`0x12E2` |
+| 1 | 31 | `0x36F`–`0x3AC` | 15 | `0x12A2`–`0x14A2` |
+| 2 | 21 | `0x3EF`–`0x418` | 13 | `0x13B2`–`0x14A2` |
+| 3 | 14 | `0x43F`–`0x45A` | 10 | `0x13B2`–`0x1512` |
+| 4 | 8  | `0x469`–`0x478` | 8  | `0x1522`–`0x1592` |
 
 `DUN.EXE`'s loader is now disassembled — **`loadDungeonData`** (was
 `sub_12E9B`, called from `processTileFeature` on level entry;
@@ -280,10 +295,10 @@ helpers in this `DUN.EXE` region are still tangled):
 - **`drawViewSprite` (`bmDUNG`)** is region A/B/C's consumer: per depth
   band `P` (0-4), region A's descriptor at `spriteBank[P_idx·2]` gives
   `(count, listStart)`; it walks `count` `(videoDest, maskSrc)` pairs
-  from region B calling `andSpriteMaskCell` (the arch mask), then
-  `rtm_FE46` (clip), `rtm_7A` (position), and `basPutSprite` on the
-  `DUNMON` image. **The mask comes from `DUNOBJ`, the pixels from
-  `DUNMON`.**
+  from region B calling `andSpriteMaskCell` (the dithered aperture
+  stencil), then `rtm_FE46` (clear the clip box), `rtm_7A` (position),
+  and `basPutSprite` on the `DUNMON` image. **The mask comes from
+  `DUNOBJ`, the pixels from `DUNMON`.**
 - The **DUNMON bank table at `0x190`**.
   `loadDungeonMonsters` (`DUN.EXE` `0x12F9F`, called from
   `processTileFeature` right after `loadDungeonData`) reads
@@ -311,11 +326,11 @@ helpers in this `DUN.EXE` region are still tangled):
 - **`moveMonsters`** + `sub_139FC` relocate monsters on the map grid
   per turn (class in tile bits 4–6).
 
-So region A is **not** a 40-object placement table — it's the DUNMON
-bank pointers (`0x190`) plus the 5 per-depth mask descriptors (read at
-word indices `0x23`/`0x4B`/`0x73`/`0x9B`/`0xC3`). The per-slot
-`viewObjectArray` data (which objects are where) comes from the `DUNM`
-map tiles, which already carry `(class<<4)|wall` for pre-placed objects.
+So region A is a small object table (`0x000`–`0x045`) + the 5 per-depth
+mask descriptors + the DUNMON bank pointers (`0x190`) — **not** a
+40-object placement table. The per-slot `viewObjectArray` data (which
+objects are where) comes from the `DUNM` map tiles, which already carry
+`(class<<4)|wall` for pre-placed objects.
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites — **fully decoded 2026-08-31**
 
