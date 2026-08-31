@@ -69,8 +69,8 @@ castle/fort layout banks.
 | `DUNDATA.BSV` | 5785 | `DUN` | **decoded** — the first-person view's wall/floor/ceiling graphics. BSAVE → `0x2C07:0x173C` = **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), one array. 5778-B payload: `word[0]` = the tile bank's array offset (`0x0E94` → payload `0x694`); `0x020`–`0x10F` = the projection record table (15 records = 5 depths × [10-word wall-band + 7-word left + 7-word right]); `0x110`–`0x693` = the flat `ncols×nbands` cell-index tile lists (incl. the 4×`0xCC` side-wall strip table at `0x1BC`); `0x694`–end = 255 × 16-B CGA cells. See the dungeon section. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
 | `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **fully decoded** — dungeon monster sprites (`A` = levels 0–3, `B` = 4–7). BSAVE → `spriteBank` word `0x1240`. 14136-B payload = **exactly 6 blocks × 2356 B** (one per monster-type slot). Each block = 6-word frame-offset table (`9/725/973/1083/1148/1178`) + 3 zero words + **5 back-to-back MS-BASIC `PUT` GET-arrays** for view-depths P0…P4 (82×68 / 48×41 / 32×27 / 24×21 / 16×14, linear 2 bpp). See the dungeon section below. |
-| `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | `MUS` (+ `CELDRV`) | **structure mapped** — the **museum exhibit "display" illustration screens** (~18). `MUS.EXE` builds the name `"DIS"+n+".BSV"` to show the picture of what's *on display in this museum* for an exhibit; `DIS9.BSV` doubles as frame 4 of `CELDRV`'s endgame cinematic. BSAVE → `0x13C2:0x0E4E`. **Byte-for-byte the same container as `CEL*.BSV`**: 8-word header `{id, 0x10, W_px, H_px, 0x20, 0x0A, 0x10/0x30, 0x220}` (the full-screen ones, incl. `DIS9`/`CEL0`, are `0x110`×`0x78` = 272×120), a relocatable strip-pointer table from `~0x100` (dest offset steps `0x140` per 4-scanline band, `+2` per 8-px column), then RLE-packed CGA 2 bpp strips. See the `CEL*.BSV` section. |
-| `CEL0.BSV` / `CEL2.BSV` (1573) · `CEL1.BSV` / `CEL3.BSV` (2597) | — | `CELDRV` | **structure mapped** — 4 of the 5 frames of the "AGAINST ALL ODDS!" endgame cinematic (the 5th is `DIS9.BSV`). Same container as the `DIS*.BSV` exhibit screens. `celdrv_entry` BLOADs each (`CEL0/1/2` built as `"CEL"+n+".BSV"`, then `dis9.bsv`, then `cel3.bsv`) into `spriteBank` at word-slot `bank·2000 + 1000`, then **relocates the file's pointer table** by `+2·(bank·2000+1000)`. Each file: an 8-word header (`{v, 0x10, W, H, 0x20, 0x0A, 0x10, 0x220}` — `CEL0` W=`0x110` H=`0x78`), a relocatable pointer table from `~0x100` (`(stripPtr, ?)` pairs; `stripPtr` steps by `0x140` = 320 = a 4-even-scanline band, and consecutive column-groups step `+2` = +8 px), then RLE-packed CGA bitmap strips from `~0x300` (798 B of data for `CEL0`'s ~272×120 area ⇒ ~10:1, so compressed). `celFrame` cycles the 5 as an animation. |
+| `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | `MUS` (+ `CELDRV`) | **decoded** — the **museum exhibit "display" illustration screens** (~18). `MUS.EXE` builds `"DIS"+n+".BSV"` to show the picture on display for an exhibit; `DIS9.BSV` doubles as frame 4 of `CELDRV`'s endgame cinematic. BSAVE → `0x13C2:0x0E4E`. Same container as `CEL*.BSV` (cell table + 8×8 cells; **no RLE**) — see the CEL section. |
+| `CEL0.BSV` / `CEL2.BSV` (1573) · `CEL1.BSV` / `CEL3.BSV` (2597) | — | `CELDRV` | **decoded** — 4 of the 5 frames of the "AGAINST ALL ODDS!" endgame cinematic (the 5th is `DIS9.BSV`). `celdrv_entry` BLOADs `CEL0/1/2`, `dis9.bsv`, `cel3.bsv` into `spriteBank` at word-slot `bank·2000 + 1000` and relocates each `stripPtr`. Format: 8-word header + cell table + field-interleaved 8×8 CGA cells; **not RLE-compressed** (sparse changed-cell grid with dedup). See the CEL section. |
 | `MUSDATA.BSV` | 8055 | `MUS` | **decoded** — the Tarmalon Museum data. BSAVE → `0x2C1C:0x0F58` (near the dungeon's `0x2C07:0x0F3C`). `0x000`–`0x07FF` = **3 exhibit floor maps, 16×16 tiles** (`0x80` wall / `0x00`–`0x03` floor / `0x10`–`0x43` wall-edge / `0xE0`–`0xEF` = the 16 display-case portals) + 5 empty slots; `0x800`+ = a near-copy of `DUNDATA.BSV`'s dungeon-view tile/graphic data (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`. |
 | `MUSOBJ.BSV` | 12961 | `MUS` | **decoded** — museum exhibit object sprites. BSAVE → `0x1447:0x0DB6` into `spriteBank`. Byte-for-byte the **same 3-region format as `DUNOBJ.BSV`**: object records (`0x000`–`0x3FF`), the `(maskSrc, screenDest)` pair table for `andSpriteMaskCell` (`0x400`–`0xFFF`, 768 pairs), then the sprite bitmap bank (`0x1000`–`0x329A`). A different, larger sprite set — otherwise identical structure and renderer (`drawViewSprite`). |
 | `MUSMSG.TXT` | 11229 | `MUS` | plaque + exhibit message text |
@@ -541,6 +541,26 @@ as `DUNOBJ` / `OUTOBJ` / `MUSOBJ`, so the same sprite-format family
 The exact sprite-cell dimensions and how `bmTNCALB` walks the record /
 table structure still need the castle-view renderer traced (it uses
 `rtm_FE19`, the shared single-tile blit).
+
+## `CEL*.BSV` / `DIS*.BSV` — cel animation + exhibit illustrations — **decoded 2026-08-31**
+
+`CEL0`–`CEL3` + `DIS9` are the 5 frames of `CELDRV`'s "AGAINST ALL
+ODDS!" endgame cinematic; `DIS0`–`DIS15` (+ `DIS0A`/`DIS1A`) are the
+museum exhibit illustration screens (`MUS.EXE`). One container
+(`decoders/cel_image.py`):
+
+| span | contents |
+|---|---|
+| `0x00`–`0x0F` | 8-word header: `[id, 0x0010, W, H, 0x0020, 0x000A, mode(0x10/0x30), stripBase(0x0220)]`. `W`/`H` in pixels (`CEL0`/`DIS9` = 272×120). |
+| `0x10`–`0xDF` | mostly zero (some files put a tiny extra table at `0x20`). |
+| `0xE0`–`stripBase` | **the cell table** — up to 80 entries `dw videoDest ; dw stripPtr`, ending exactly at `stripBase`. `videoDest` = CGA even-field byte offset — bands step `0x140` (8 screen scanlines), columns step `+2` (8 px) → a 10-col × 8-row grid of 8×8 cells (fewer for small frames). `CELDRV` relocates `stripPtr` by the BLOAD word-offset. |
+| `stripBase`–EOF | **the strip data** — 16-byte **field-interleaved** 8×8 CGA cells (word order → screen rows 0,2,4,6,1,3,5,7), packed 16-B-aligned. A cell-table entry whose gap to the next distinct `stripPtr` is `k·0x10` owns a horizontal run of `k` cells (drawn from `videoDest`, `+2` per cell). |
+
+**There is no RLE.** The "compression" is that a frame stores only its
+*changed* 8×8 cells and de-duplicates identical ones (several table
+entries can share one `stripPtr`). The 5 cinematic frames are painted in
+sequence over the same ~80×64-px region — a blast, a standing figure,
+the aftermath.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

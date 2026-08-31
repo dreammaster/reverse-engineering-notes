@@ -502,6 +502,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   relocate a BLOADed bank), `celFrame` (`ds:20BE`, cycles 1..5),
   `displayDuration` (`ds:20F8`). Everything else in DGROUP is
   one-function drawString layout scratch.
+- **2026-08-31** — Decoded the `CEL*.BSV` / `DIS*.BSV` container
+  (`decoders/cel_image.py`) — the cinematic frames and the museum
+  exhibit illustrations. 8-word header
+  `[id, 0x10, W, H, 0x20, 0x0A, mode, stripBase=0x220]`, then a **cell
+  table** at `0xE0` (`dw videoDest ; dw stripPtr`, up to 80 entries,
+  ending exactly at `stripBase`; `videoDest` bands step `0x140`,
+  columns `+2`), then the strips: **16-byte field-interleaved 8×8 CGA
+  cells**, `stripPtr` runs of `k·0x10` = `k` horizontal cells. **No
+  RLE** (my earlier note was wrong): a frame stores only its changed
+  cells and de-dups identical ones. The 5 cinematic frames paint in
+  sequence over one ~80×64 region. Rendered clean.
 - **2026-08-31** — Built `saver.idb`. **`SAVER.EXE` is the save-game
   handler** — a small module `OUT` / `DUN` chain to on a save-or-quit
   request: "DO YOU WANT TO SAVE / THE GAME NOW IN PROGRESS?", character-

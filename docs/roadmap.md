@@ -692,16 +692,18 @@ reimplementation.
       glyph font (upright + 180°-rotated) + card-back tiles, tiles
       0–127. Still open for both: the per-sprite tile grouping / index
       table.
-- [~] `DIS0-15.BSV` (+ `DIS0A`/`DIS1A`) and `CEL0-3.BSV` (2026-08-31) —
-      one shared container. `DIS*` = the ~18 **museum exhibit
-      illustration screens** (`MUS` builds `"DIS"+n+".BSV"`); `CEL0-3` +
-      `DIS9` = the 5 endgame-cinematic frames. Structure mapped: 8-word
-      header `{id, 0x10, W, H, 0x20, 0xA, 0x10/0x30, 0x220}` (full-screen
-      = 272×120) + relocatable strip-pointer table (`stripPtr` step
-      `0x140`, column-groups step `+2`) + RLE-packed CGA strips;
-      `celdrv_entry` loads each into `spriteBank` slot `bank·2000+1000`
-      and rebases the table. Open: the strip RLE encoding (same class as
-      `DUNOBJ` region C).
+- [x] `DIS0-15.BSV` (+ `DIS0A`/`DIS1A`) and `CEL0-3.BSV` (2026-08-31,
+      `decoders/cel_image.py`) — one shared container. `DIS*` = the ~18
+      **museum exhibit illustration screens**; `CEL0-3` + `DIS9` = the 5
+      endgame-cinematic frames. 8-word header
+      `[id, 0x10, W, H, 0x20, 0xA, mode, stripBase=0x220]`, then a **cell
+      table** at `0xE0` (`dw videoDest ; dw stripPtr`, ≤80 entries,
+      ending exactly at `stripBase`; `videoDest` bands step `0x140`,
+      columns `+2`), then **16-byte field-interleaved 8×8 CGA cells**
+      (`stripPtr` runs of `k·0x10` = `k` cells). **No RLE** — a frame
+      stores only its changed cells with dedup; `celdrv_entry` loads
+      each into `spriteBank` slot `bank·2000+1000` and rebases the
+      `stripPtr`s. Rendered clean.
 - [x] `MUSDATA.BSV` (2026-08-31) — **not music**; it's the Tarmalon
       Museum data: 3 exhibit floor maps (16×16, `0xE0`–`0xEF` = the 16
       display-case portals) at `0x000`–`0x7FF`, then a near-copy of
