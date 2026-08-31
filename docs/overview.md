@@ -571,6 +571,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   game-data array, pushed to almost every `rtm_` call). The other ~200
   are per-call compiled-BASIC scratch temps. This is the lever for
   naming OUT's ~55 remaining `sub_` helpers.
+- **2026-08-31** — Second OUT DGROUP pass (33 vars named total). The
+  mystery `ds:1F04` is `basRetVal` -- the shared compiled-BASIC
+  function-return / expression-result word (27 functions stage or read
+  it), with `basRetVal2` (`ds:1F06`) as its string/aux half. Also
+  `trialX`/`trialY` (`ds:208C`/`208A` -- the candidate move destination
+  `resolveMoveTarget` validates), `selectedSpell` (`ds:1E24`) and
+  `menuChoice` (`ds:1E22`) at the same offsets DUN uses, `dgroupSeg`
+  (`ds:0101`), `remarkIndex` (`ds:1ADC`), plus tentatives
+  (`attackRange`, `screenLayout`, `travelEventFlag`, `tileObjectRec`).
 - **2026-08-31** — Second OUT naming pass off the state vars + call
   graph + screen text (`apply_renames_out.py`): **67 / 121** `seg000`
   functions named (was ~40). New: the overworld-load chain

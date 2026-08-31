@@ -102,6 +102,58 @@ VARS = [
      "reset to 0xFF (= none) at encounter start and by several handlers; "
      "doMovement sets it to a small index. Likely the selected "
      "creature / target slot. TENTATIVE."),
+
+    # --- 2nd pass: the mid-traffic vars ---
+    (0x1F04, "basRetVal", False,
+     "the shared function-return / expression-result word (touched by "
+     "27 functions). A callee stages its result here (enterLocation "
+     "0x61A8, the combatBeat_* subcodes, doMovement's blocked flag) and "
+     "the caller reads it."),
+    (0x1F06, "basRetVal2", False,
+     "the aux / string-descriptor half of basRetVal -- holds a second "
+     "value or a DGROUP string pointer alongside 1F04."),
+    (0x0101, "dgroupSeg", False,
+     "the DGROUP self-segment -- `mov es, ds:101h` in resolveMoveTarget "
+     "/ resolveLocationFromMap / refreshMapView / museumAccessPrompt."),
+    (0x1E22, "menuChoice", False,
+     "the current Y/N / menu answer (read-only in seg000 -- set by the "
+     "prompt routines). Same DGROUP slot as every other module."),
+    (0x1E24, "selectedSpell", False,
+     "spell-menu selection index -- doAttackOrCast / lookupSpellSlot "
+     "read it; cleared by outInit / mainDispatch. Same slot as "
+     "DUN.EXE's selectedSpell."),
+    (0x208C, "trialX", False,
+     "candidate move destination X -- doMovement stages it here, hands "
+     "its address to resolveMoveTarget, and copies it into playerX on "
+     "success."),
+    (0x208A, "trialY", False, "candidate move destination Y (paired with trialX)."),
+    (0x1ADC, "remarkIndex", False,
+     "index into the flavour-string array (showIndexedRemark x4's it; "
+     "useCompass keys on `== 0x0B`)."),
+
+    # --- tentative ---
+    (0x214A, "attackRange", False,
+     "attack / spell range value -- checkSpellRange and j_rt_FE5B_5 "
+     "test `== 7`. TENTATIVE."),
+    (0x1E20, "screenLayout", False,
+     "active screen-layout / view-mode code (set to 0x0B by "
+     "enterLocation / enterOverworld / the FE4E handlers). Recurs across "
+     "modules. TENTATIVE."),
+    (0x1F1A, "travelEventFlag", False,
+     "1 when a Pegasus / ambush travel event is pending (set by "
+     "pegasusOrAmbush / doMovement, cleared on resolution). TENTATIVE."),
+    (0x2182, "pendingLocationType", False,
+     "copy of enteredLocationId staged before classifyLocationTile. "
+     "TENTATIVE."),
+    (0x222E, "flagWordSel", False,
+     "second quest-flag word / group selector used by applyGameFlag "
+     "next to questFlags (2234). TENTATIVE."),
+    (0x2444, "tileObjectRec", False,
+     "base of the ~8-word tile-object record readTileObject fills and "
+     "resolveMoveTarget consumes (type / coords / id fields). TENTATIVE."),
+    (0x231C, "transactionType", False,
+     "shop / food transaction kind (buyFood / addFoodDays / shopBuy / "
+     "creatureDefeated set 4 or 7). TENTATIVE."),
 ]
 
 

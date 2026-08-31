@@ -16552,10 +16552,72 @@ word_17570      dw 0                    ; DATA XREF: start+3E↑w
                 db 0D0h, 31h, 51h, 32h, 0A4h, 31h, 0F0h, 1Fh, 0F6h, 1Fh
                 db 0CCh, 31h, 25h, 2
                 dw seg seg002
-                db 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0CCh, 31h
-                db 0CCh, 31h, 0ACh, 31h, 0ACh, 31h, 0ACh, 31h, 0B0h, 31h
-                db 0B0h, 31h, 0B0h, 31h, 0ACh, 31h, 0C0h, 31h, 18h dup(0)
-                db 0C4h, 5, 0Dh dup(0)
+                db 0ACh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0CCh
+                db  31h ; 1
+                db 0CCh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0B0h
+                db  31h ; 1
+                db 0B0h
+                db  31h ; 1
+                db 0B0h
+                db  31h ; 1
+                db 0ACh
+                db  31h ; 1
+                db 0C0h
+                db  31h ; 1
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in resolveMoveTarget / resolveLocationFromMap / refreshMapView / museumAccessPrompt.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_175CB      dw 0                    ; DATA XREF: sub_16FFA+34↑w
 word_175CD      dw 0                    ; DATA XREF: sub_16FFA+3B↑w
 word_175CF      dw 0                    ; DATA XREF: sub_16FFA+42↑w
@@ -23159,8 +23221,7 @@ partyGold_hi    dw 0                    ; high word of partyGold (1AD2).
                 db    0
                 db    0
 hitPoints       dw 0                    ; party hit points. doMovement subtracts a starvation/fatigue amount each step (then prints "HIT POINTS: "); creatureAttack subtracts combat damage; <=1 -> "YOU FALL UNCONSCIOUS."; rest / eating restore it. buyFood compares against 0x64 (100 = full).
-                db    0
-                db    0
+remarkIndex     dw 0                    ; index into the flavour-string array (showIndexedRemark x4's it; useCompass keys on `== 0x0B`).
                 db    0
                 db    0
                 db    0
@@ -23993,12 +24054,9 @@ playerY         dw 0                    ; player row on the current map. Init 30
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
-                db    0
+screenLayout    dw 0                    ; active screen-layout / view-mode code (set to 0x0B by enterLocation / enterOverworld / the FE4E handlers). Recurs across modules. TENTATIVE.
+menuChoice      dw 0                    ; the current Y/N / menu answer (read-only in seg000 -- set by the prompt routines). Same DGROUP slot as every other module.
+selectedSpell   dw 0                    ; spell-menu selection index -- doAttackOrCast / lookupSpellSlot read it; cleared by outInit / mainDispatch. Same slot as DUN.EXE's selectedSpell.
                 db    0
                 db    0
                 db    0
@@ -24220,10 +24278,8 @@ playerY         dw 0                    ; player row on the current map. Init 30
                 db    0
                 db    0
 enteredLocationId dw 0                  ; map-object id of the location the player is entering / standing on (set by enterLocation, read by doMovement and the chainTo* functions to tell the next module which place to load).
-                db    0
-                db    0
-                db    0
-                db    0
+basRetVal       dw 0                    ; the shared function-return / expression-result word (touched by 27 functions). A callee stages its result here (enterLocation 0x61A8, the combatBeat_* subcodes, doMovement's blocked flag) and the caller reads it.
+basRetVal2      dw 0                    ; the aux / string-descriptor half of basRetVal -- holds a second value or a DGROUP string pointer alongside 1F04.
                 db    0
                 db    0
                 db    0
@@ -24241,8 +24297,7 @@ enteredLocationId dw 0                  ; map-object id of the location the play
 chainDestType   dw 0                    ; destination kind handed to the next executable: 2 = castle (chainToCastle), 3 = town (chainToTown), 4 = dungeon (chainToDungeon), 6 = museum (chainToMuseum / outInit). Consumed by chainExec.
                 db    0
                 db    0
-                db    0
-                db    0
+travelEventFlag dw 0                    ; 1 when a Pegasus / ambush travel event is pending (set by pegasusOrAmbush / doMovement, cleared on resolution). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -24607,10 +24662,8 @@ contextMode     dw 0                    ; top-level context / mode selector. mai
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+trialY          dw 0                    ; candidate move destination Y (paired with trialX).
+trialX          dw 0                    ; candidate move destination X -- doMovement stages it here, hands its address to resolveMoveTarget, and copies it into playerX on success.
                 db    0
                 db    0
                 db    0
@@ -24797,8 +24850,7 @@ turnActionFlag  dw 0                    ; set to 1 when the player has taken a t
 subMode         dw 0                    ; secondary mode within contextMode -- setMode_1 / setMode_2 / setMode_3 store 1 / 2 / 3 (also 4); read by mainDispatch, creatureAttack, doAttackOrCast.
                 db    0
                 db    0
-                db    0
-                db    0
+attackRange     dw 0                    ; attack / spell range value -- checkSpellRange and j_rt_FE5B_5 test `== 7`. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -24852,8 +24904,7 @@ subMode         dw 0                    ; secondary mode within contextMode -- s
                 db    0
                 db    0
 tileAhead       dw 0                    ; map tile value read from the world array during doMovement and handed to the collision test. TENTATIVE.
-                db    0
-                db    0
+pendingLocationType dw 0                ; copy of enteredLocationId staged before classifyLocationTile. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -25022,8 +25073,7 @@ encounterActive dw 0                    ; 1 while a creature encounter is runnin
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+flagWordSel     dw 0                    ; second quest-flag word / group selector used by applyGameFlag next to questFlags (2234). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -25258,6 +25308,7 @@ activeCreaturePtr dw 0                  ; record base (used as BX) for the creat
                 db    0
                 db    0
                 db    0
+transactionType dw 0                    ; shop / food transaction kind (buyFood / addFoodDays / shopBuy / creatureDefeated set 4 or 7). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -25552,10 +25603,7 @@ activeCreaturePtr dw 0                  ; record base (used as BX) for the creat
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+tileObjectRec   dw 0                    ; base of the ~8-word tile-object record readTileObject fills and resolveMoveTarget consumes (type / coords / id fields). TENTATIVE.
                 db    0
                 db    0
                 db    0

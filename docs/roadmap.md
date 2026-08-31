@@ -485,9 +485,13 @@ reimplementation.
 - [ ] Confirm the tentatives: `addFoodDays` / `spendFoodDays` /
       `drawFoodGauge` (1F04/231C usage), `identifyLocationObject` /
       `readTileObject` (the `resolveMoveTarget` sub-tree), `rollCreatureStats`.
-- [ ] `ds:1F04` — reused as a scratch/subcode word everywhere; in the
-      combat stubs it pairs with `combatPhase` as an animation/message
-      id, in movement it is the "blocked" result. Worth pinning down.
+- [x] `ds:1F04` = `basRetVal` (2026-08-31) — the shared compiled-BASIC
+      function-return / expression-result word (27 functions), with
+      `basRetVal2` (`ds:1F06`) as its string/aux half. That's why it
+      reads as "scratch" everywhere -- it *is* the codegen's return
+      slot. Second OUT DGROUP pass added `trialX`/`trialY` (208C/208A),
+      `selectedSpell` (1E24), `menuChoice` (1E22), `dgroupSeg` (0101),
+      `remarkIndex` (1ADC) + tentatives -> 33 OUT DGROUP vars named.
 - [x] Fixed the call-far fragmentation merge (2026-08-30) — was
       orphaning code when a fragment's successor wasn't adjacent. Now
       merges only truly-adjacent fragments + re-sweeps.
