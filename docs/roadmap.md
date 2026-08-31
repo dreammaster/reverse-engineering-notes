@@ -301,8 +301,15 @@ reimplementation.
       `saver_entry` -- and whether saving from a town / castle / museum
       is even possible (only `OUT.EXE` / `DUN.EXE` are chain targets).
       `rtm_FF08` = ? (looks like a program-name / env test).
-- [ ] `CHAR.DAT` field layout — `saveRosterToDisk` is the write side,
-      `readLegacyDat` / the menu's roster screens the read side.
+- [~] `CHAR.DAT` (2026-08-31) — container + write/read path decoded:
+      6-byte header (`05 06 07 00 | 7E 01` = reclen 382), 9 records ×
+      382. Record = 14-byte name + 74-byte scalar block (verbatim copy
+      of LEGLIB DGROUP `ds:1AC0..1B08`) + 7 BASIC int arrays
+      (descriptors `ds:1B0C` + k·`0x2E`, via `rtm_FE39`/`rtm_FE37`).
+      `partyGold` (rec `+0x20`, =20 new), `hitPoints` (`+0x28`),
+      `intelligence` (`+0x3E`) placed. `decoders/char_dat.py`. Still
+      open: the rest of the 37 scalars and the 7 arrays' split (needs a
+      populated save + the array DIMs from LEGLIB).
 - [ ] The "character disk" checks ("is not on this / character disk",
       "empty") imply a multi-disk / per-character-slot save scheme —
       confirm.
@@ -559,10 +566,15 @@ reimplementation.
       header words 3/4), word `W` -> tile `W//8`. The `.GLB` header
       word[1] is *not* tile width — tiles are always 8-px. CGA 320×200
       mode 4, palette 1. See file-formats.md.
-- [ ] `CHAR.DAT` (3444 bytes) — character roster the menu edits.
-      `readCharDat` / `writeCharDat` / `charRecordSize` are named.
-- [ ] Field-level decode of `LEGACY.DAT` (no BSAVE header — the odd one
-      out; likely game progress / roster / config).
+- [~] `CHAR.DAT` (3444 bytes) — container decoded (9 × 382-byte records:
+      name + LEGLIB DGROUP `ds:1AC0..1B08` scalars + 7 int arrays);
+      `decoders/char_dat.py`. Remaining: the per-field scalar breakdown
+      and the 7 arrays. `readCharDat` / `writeCharDat` / `saveRosterToDisk`
+      named.
+- [~] `LEGACY.DAT` (2945 bytes) — **not** save/config: it's the A–Z
+      keyboard-command name list (`Armor`/`Climb`/`Disembark`/…) + small
+      2 bpp CGA icons, same `05 06 xx xx 7E 01` header as `CHAR.DAT`.
+      Field layout still open.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
 - [ ] Town / castle / dungeon layouts.

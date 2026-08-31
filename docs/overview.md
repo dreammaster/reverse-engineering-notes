@@ -709,3 +709,21 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   card), then card-back pattern + frame/corner tiles. Only tiles 0–127
   of the 384 are used. The card renderer composites these onto a frame;
   which tile-run is which card is still open.
+- **2026-08-31** — Decoded `CHAR.DAT`'s container + save path (the roster
+  *is* the save — no separate file). BASIC random-access file, reclen
+  **382**: 6-byte header (`05 06 07 00` marker + `7E 01` = 382) then
+  **9 records × 382**. Record = 14-byte name + a 74-byte scalar block
+  that is a verbatim copy of the resident LEGLIB DGROUP range
+  `ds:1AC0..ds:1B08` + 7 BASIC integer arrays (descriptors at
+  `ds:1B0C` + k·`0x2E`). `SAVER.EXE saveRosterToDisk` peeks each word
+  via `rtm_FE35` and `PUT`s via `rtm_AB`; `MENU.EXE enumerateRoster`
+  does the mirror (`rtm_FE36` poke / `rtm_5E` GET). This is *why* the
+  character vars sit at fixed DGROUP offsets across every play module —
+  the block lives in LEGLIB's resident DGROUP and rides through the EXE
+  chain. Placed in the record: `partyGold` (`+0x20`, = 20 for a new
+  character), `hitPoints` (`+0x28`), `intelligence` (`+0x3E`).
+  `decoders/char_dat.py` lists the slots (all 9 are `"empty"` on a fresh
+  install). Also corrected `LEGACY.DAT`: it's **not** a save/config file
+  — it holds the A–Z keyboard-command names (`Armor`, `Climb`,
+  `Disembark`, …) + small 2 bpp CGA icons, and opens with the same
+  `05 06 xx xx 7E 01` header shape.

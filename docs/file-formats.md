@@ -10,8 +10,10 @@ Status (2026-08-31): the BSAVE container is confirmed, and the
 **`.GLB` tile format + `.GMP` cell-map format are decoded** —
 `decoders/glb_image.py` renders `TITLE` (the CGA title screen,
 pixel-for-pixel), `SDMAP` (the SDEFENDR combat-arena screen frame), and
-dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. The other `.BSV`
-files are still container-only.
+dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. `CHAR.DAT`'s
+container (9 × 382-byte roster records) and its write/read path are
+decoded; the record's scalar fields are partly identified. The other
+`.BSV` files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -58,8 +60,8 @@ castle/fort layout banks.
 | `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | **tiles decoded** — card graphics ("BJ" = BlackJack). Same container as `SDOBJ.GLB` (6161 b, `{0x0A,6,1,0,1}`, bare atlas, no `.GMP`); 384 8×8 tiles, only 0–127 used. Holds a card **rank/suit glyph font** — `A 2 3 4 5 6 7 8 9 10 J Q K` + the four suit pips (♠♣ white, ♥♦ magenta), in **both upright and 180°-rotated** forms (the two opposite card corners) — plus card-back pattern + frame/corner tiles. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. `decoders/glb_image.py BJCHR` dumps the atlas (use grid width 15 to line the font up). |
 | `BIGNUM.DAT` | 420 | `GMB2` (at least) | large-digit font — `GMB2` (Flip-Flop Parlour) BLOADs it to render the GOLD / BET / winnings numbers |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
-| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | character roster **and** the in-progress save (there is no separate save file). `SAVER.EXE`'s `saveRosterToDisk` is the write side; the menu roster screens + `readLegacyDat` read it. The "is not on this / character disk" / "empty" strings in `SAVER` imply a per-slot / removable "character disk" scheme. |
-| `LEGACY.DAT` | 2945 | `MENU`/`OUT` | **no `0xFD` magic** — not BSAVE; format unknown (config / progress?) |
+| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **container + write/read path decoded** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + a 74-byte scalar block (a copy of resident LEGLIB DGROUP `ds:1AC0..1B08`) + 7 BASIC integer arrays. See the dedicated section below. `decoders/char_dat.py` lists the slots. |
+| `LEGACY.DAT` | 2945 | `MENU` / `OUT` | **not a save/config file** — it's the game's **command / UI resource**: the A–Z keyboard-command name list (`Armor`, `Climb`, `Disembark`, `Fight`, `Gamespeed`, `Hold`, `Inventory`, `Leave`, `Magic`, `Open`, `Pass`, …) plus small 2 bpp CGA icon bitmaps. Same `05 06 xx xx 7E 01` header shape as `CHAR.DAT`. Field layout not yet mapped. |
 | `OUTDAT.DAT` | 1012 | `OUT` | not checked yet |
 | `DRCONFIG.DAT` | 1015 | `CONFIGUR` + all disk-loading code | **disk-drive layout**, not hardware config — which drive letter(s) hold the game floppies (or HD floppy / hard disk), so the loaders know where to look and can prompt for swaps. Written by `CONFIGUR.EXE` (`_main`); at offset near the start it holds a config-type byte (`'0'`/`'1'`/`'2'` — HD/hard-disk vs. 360K vs. 720K) and one or two drive-letter bytes. |
 | `STDRVSCR.DAT` | 6192 | `STDRV` | "Stones of Wisdom" rules / instruction text — the walk-through the dealer narrates ("YOU AND THE DEALER BOTH RECEIVE FIVE DICE…", "THE LOSER OF A GAME GIVES UP ONE DIE…"). Read by `stonesOfWisdomMain`; **not** a story/cut-scene script. |
@@ -116,6 +118,40 @@ wide; pass a 4th arg for a different width).
   ♥♦ magenta), in **upright and 180°-rotated** forms (for the two
   opposite corners of a card), then card-back pattern + frame/corner
   tiles. Grid width 15 lines the four suit rows up.
+
+## `CHAR.DAT` — character roster / save — **container decoded 2026-08-31**
+
+`CHAR.DAT` is the whole save system: the character roster *is* the
+save-in-progress (there is no separate save file). The game `OPEN`s it
+as a **BASIC random-access file, record length 382**, and `GET`/`PUT`s
+record `rosterIndex + 1`.
+
+| off | size | contents |
+|---|---|---|
+| `0x00` | 4 | `05 06 07 00` — purpose unconfirmed. `LEGACY.DAT` opens the same way with `05 06 04 0A`, so it's a shared BASIC-data-file marker, maybe a format/version tag. |
+| `0x04` | 2 | `7E 01` = `0x017E` = **382**, the record length |
+| `0x06` | 9 × 382 | the 9 roster records (`6 + 9*382 == 3444` = file size) |
+
+**Each 382-byte record** (FIELDed by `SAVER.EXE` `saveRosterToDisk` /
+`MENU.EXE` `enumerateRoster`):
+
+| off | size | field |
+|---|---|---|
+| `+0x000` | 14 | **name**, space-padded. `"empty"` marks an unused slot (all 9 are `"empty"` in a fresh install). Matches the "up to 14 letters long" name prompt. |
+| `+0x00E` | 74 | **scalar block** — 37 words copied verbatim from the resident LEGLIB DGROUP range `ds:1AC0`–`ds:1B08` (peeked word-by-word via `rtm_FE35`, written via `rtm_AB`). Identified so far (record offset): `+0x1C` dword ≈ experience (`ds:1AC2`); **`+0x20` dword `partyGold`** (`ds:1AD2`, = 20 for a new character); `+0x28` word `hitPoints` (`ds:1ADA`); `+0x3E` word `intelligence` (`ds:1AF0`, cap 28). `playerX`/`playerY` (`ds:1B02`/`1B06`) are also in this block. |
+| `+0x058` | 294 | **7 BASIC integer arrays** — DGROUP array descriptors at `ds:1B0C`, `1B3A`, `1B68`, `1B96`, `1BC4`, `1BF2`, `1C20` (stride `0x2E`), each written/read element-by-element by `rtm_FE39` / `rtm_FE37`. Contents (inventory, spells known, quest / map-visited flags, museum coins, per-category stats …) not yet split — needs a populated save and the array `DIM`s traced in LEGLIB. |
+
+Because the roster block lives in LEGLIB's **resident** DGROUP, it
+survives the `OUT`↔`DUN`↔`TWNDR`↔… EXE chaining — which is why
+`partyGold` / `hitPoints` / `playerX` sit at the same DGROUP offsets in
+every play module (see [overview.md](overview.md)). Loading a saved
+game = `MENU` `GET`s the record into `ds:1AC0`+ and chains to `OUT`;
+saving = `SAVER` `PUT`s `ds:1AC0`+ back. The "is not on this / character
+disk" / "empty" strings in `SAVER` are the removable-character-disk
+handling.
+
+`decoders/char_dat.py` reads the container and lists each slot
+(name + the identified scalar fields).
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 
