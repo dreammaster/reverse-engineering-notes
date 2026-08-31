@@ -5918,6 +5918,12 @@ static Bytes_2(void) {
 	set_cmt	(0X1B0C2,	"code for the tile / object in front of the player -- doWalk / walkBlocked / fightGuard branch on it (0xD7, 0xFD, 0xFE = special tiles; 0x40 = a guard, etc.).",	1);
 	create_word	(0X1B0C2);
 	set_name	(0X1B0C2,	"tileAhead");
+	set_cmt	(0X1B0C4,	"general-purpose integer working variable (11 functions) -- staged then compared / pushed to the value stack / used as an idiv operand. Same slot / role as OUT's workInt (not LEGLIB-fixed).",	1);
+	create_word	(0X1B0C4);
+	set_name	(0X1B0C4,	"workInt");
+	set_cmt	(0X1B0C6,	"high word / divisor companion of workInt (`idiv word ptr ds:1F06h`).",	1);
+	create_word	(0X1B0C6);
+	set_name	(0X1B0C6,	"workIntHi");
 	set_cmt	(0X1B0D6,	"working quantity / haggle amount in the shop code (merchantOffer sets 0x63 = 99 max; promptSellItem / loanRepayment / buyBackShop read & update it). TENTATIVE.",	1);
 	create_word	(0X1B0D6);
 	set_name	(0X1B0D6,	"shopWorkQty");

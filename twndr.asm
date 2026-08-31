@@ -29505,10 +29505,8 @@ menuChoice      dw 0                    ; current menu / spell-menu selection --
                 db    0
                 db    0
 tileAhead       dw 0                    ; code for the tile / object in front of the player -- doWalk / walkBlocked / fightGuard branch on it (0xD7, 0xFD, 0xFE = special tiles; 0x40 = a guard, etc.).
-                db    0
-                db    0
-                db    0
-                db    0
+workInt         dw 0                    ; general-purpose integer working variable (11 functions) -- staged then compared / pushed to the value stack / used as an idiv operand. Same slot / role as OUT's workInt (not LEGLIB-fixed).
+workIntHi       dw 0                    ; high word / divisor companion of workInt (`idiv word ptr ds:1F06h`).
                 db    0
                 db    0
                 db    0

@@ -85,6 +85,16 @@ VARS = [
      "current interior map height (0x28 / 0x5B / 0x49), paired with "
      "mapStride, set by bmTNCALB's setViewport."),
 
+    (0x1F04, "workInt",
+     "general-purpose integer working variable -- CASDR's single "
+     "most-written DGROUP word (21 functions, 38 writes): staged with "
+     "small animation / message subcodes (0x1C / 0x29 / 2 / 3), pushed "
+     "to the value stack, used as an array index. Same slot / role as "
+     "OUT's and TWNDR's workInt (not a LEGLIB-fixed slot)."),
+    (0x1F06, "workIntHi",
+     "high word / divisor companion of workInt (`idiv word ptr "
+     "ds:1F06h`)."),
+
     # --- shared with the bmTNCALB interior engine (seg001) ---
     (0x0101, "dgroupSeg",
      "the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile "

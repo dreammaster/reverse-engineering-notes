@@ -485,13 +485,16 @@ reimplementation.
 - [ ] Confirm the tentatives: `addFoodDays` / `spendFoodDays` /
       `drawFoodGauge` (1F04/231C usage), `identifyLocationObject` /
       `readTileObject` (the `resolveMoveTarget` sub-tree), `rollCreatureStats`.
-- [x] `ds:1F04` = `basRetVal` (2026-08-31) — the shared compiled-BASIC
-      function-return / expression-result word (27 functions), with
-      `basRetVal2` (`ds:1F06`) as its string/aux half. That's why it
-      reads as "scratch" everywhere -- it *is* the codegen's return
-      slot. Second OUT DGROUP pass added `trialX`/`trialY` (208C/208A),
-      `selectedSpell` (1E24), `menuChoice` (1E22), `dgroupSeg` (0101),
-      `remarkIndex` (1ADC) + tentatives -> 33 OUT DGROUP vars named.
+- [x] `ds:1F04` = `workInt` (2026-08-31) — OUT's general-purpose
+      integer working variable (the single most-reused local, 27
+      functions): push-to-value-stack / array index / the amount for
+      `add/sub ds:hitPoints`. `workIntHi` (`ds:1F06`) is its high word /
+      `idiv` divisor. Checked the other modules: **same offset in TWNDR
+      (11 fn) and CASDR (21 fn)** but NOT a LEGLIB-fixed slot -- DUN's
+      equivalent is `ds:20EA`, MUS's `ds:20B6`, and STDRV/CELDRV/MENU/
+      SAVER have none. Second OUT DGROUP pass also added `trialX`/`trialY`
+      (208C/208A), `selectedSpell` (1E24), `menuChoice` (1E22),
+      `dgroupSeg` (0101), `remarkIndex` (1ADC) -> 33 OUT DGROUP vars.
 - [x] Fixed the call-far fragmentation merge (2026-08-30) — was
       orphaning code when a fragment's successor wasn't adjacent. Now
       merges only truly-adjacent fragments + re-sweeps.

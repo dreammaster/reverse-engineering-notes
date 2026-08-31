@@ -4575,12 +4575,12 @@ static Bytes_1(void) {
 	set_cmt	(0X193C2,	"map-object id of the location the player is entering / standing on (set by enterLocation, read by doMovement and the chainTo* functions to tell the next module which place to load).",	1);
 	create_word	(0X193C2);
 	set_name	(0X193C2,	"enteredLocationId");
-	set_cmt	(0X193C4,	"the shared function-return / expression-result word (touched by 27 functions). A callee stages its result here (enterLocation 0x61A8, the combatBeat_* subcodes, doMovement's blocked flag) and the caller reads it.",	1);
+	set_cmt	(0X193C4,	"OUT's general-purpose integer working variable -- the single most-reused local (27 functions). Nearly every use is `mov ax,workInt / call rtm_FF20` (push to the value stack for display/formatting), `mov bx,workInt / shl bx,2` (array index), or `add/sub ds:hitPoints, ax` (the 'gain N days of food' / combat damage amount). Also carries the blocked flag out of the move pipeline. Same offset in TWNDR / CASDR (not a LEGLIB-fixed slot -- DUN uses ds:20EA, MUS ds:20B6).",	1);
 	create_word	(0X193C4);
-	set_name	(0X193C4,	"basRetVal");
-	set_cmt	(0X193C6,	"the aux / string-descriptor half of basRetVal -- holds a second value or a DGROUP string pointer alongside 1F04.",	1);
+	set_name	(0X193C4,	"workInt");
+	set_cmt	(0X193C6,	"the high word / divisor / idiv-remainder companion of workInt (TWNDR and CASDR `idiv word ptr ds:1F06h`).",	1);
 	create_word	(0X193C6);
-	set_name	(0X193C6,	"basRetVal2");
+	set_name	(0X193C6,	"workIntHi");
 	set_cmt	(0X193D6,	"destination kind handed to the next executable: 2 = castle (chainToCastle), 3 = town (chainToTown), 4 = dungeon (chainToDungeon), 6 = museum (chainToMuseum / outInit). Consumed by chainExec.",	1);
 	create_word	(0X193D6);
 	set_name	(0X193D6,	"chainDestType");

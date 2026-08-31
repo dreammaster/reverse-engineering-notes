@@ -104,14 +104,18 @@ VARS = [
      "creature / target slot. TENTATIVE."),
 
     # --- 2nd pass: the mid-traffic vars ---
-    (0x1F04, "basRetVal", False,
-     "the shared function-return / expression-result word (touched by "
-     "27 functions). A callee stages its result here (enterLocation "
-     "0x61A8, the combatBeat_* subcodes, doMovement's blocked flag) and "
-     "the caller reads it."),
-    (0x1F06, "basRetVal2", False,
-     "the aux / string-descriptor half of basRetVal -- holds a second "
-     "value or a DGROUP string pointer alongside 1F04."),
+    (0x1F04, "workInt", False,
+     "OUT's general-purpose integer working variable -- the single "
+     "most-reused local (27 functions). Nearly every use is `mov "
+     "ax,workInt / call rtm_FF20` (push to the value stack for "
+     "display/formatting), `mov bx,workInt / shl bx,2` (array index), or "
+     "`add/sub ds:hitPoints, ax` (the 'gain N days of food' / combat "
+     "damage amount). Also carries the blocked flag out of the move "
+     "pipeline. Same offset in TWNDR / CASDR (not a LEGLIB-fixed slot -- "
+     "DUN uses ds:20EA, MUS ds:20B6)."),
+    (0x1F06, "workIntHi", False,
+     "the high word / divisor / idiv-remainder companion of workInt "
+     "(TWNDR and CASDR `idiv word ptr ds:1F06h`)."),
     (0x0101, "dgroupSeg", False,
      "the DGROUP self-segment -- `mov es, ds:101h` in resolveMoveTarget "
      "/ resolveLocationFromMap / refreshMapView / museumAccessPrompt."),

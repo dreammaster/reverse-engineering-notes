@@ -4912,6 +4912,12 @@ static Bytes_1(void) {
 	set_cmt	(0X191F2,	"code for the tile / object in front of the player -- the #1 read in the module (doWalk, doFight, describeRoom, describeObjects, the gas-trap rooms, freezeWater all branch on it). Set by the bmTNCALB tile engine. Same slot as TWNDR.",	1);
 	create_word	(0X191F2);
 	set_name	(0X191F2,	"tileAhead");
+	set_cmt	(0X191F4,	"general-purpose integer working variable -- CASDR's single most-written DGROUP word (21 functions, 38 writes): staged with small animation / message subcodes (0x1C / 0x29 / 2 / 3), pushed to the value stack, used as an array index. Same slot / role as OUT's and TWNDR's workInt (not a LEGLIB-fixed slot).",	1);
+	create_word	(0X191F4);
+	set_name	(0X191F4,	"workInt");
+	set_cmt	(0X191F6,	"high word / divisor companion of workInt (`idiv word ptr ds:1F06h`).",	1);
+	create_word	(0X191F6);
+	set_name	(0X191F6,	"workIntHi");
 	set_cmt	(0X19214,	"reset to 0xFF (= none) by doWalk / gasRoomTrap / warlordConfrontation. The selected creature / target slot. Same slot as OUT.",	1);
 	create_word	(0X19214);
 	set_name	(0X19214,	"targetSlot");

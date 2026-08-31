@@ -26548,10 +26548,8 @@ menuChoice      dw 0                    ; current menu / Y-N answer (changeGameS
                 db    0
                 db    0
 tileAhead       dw 0                    ; code for the tile / object in front of the player -- the #1 read in the module (doWalk, doFight, describeRoom, describeObjects, the gas-trap rooms, freezeWater all branch on it). Set by the bmTNCALB tile engine. Same slot as TWNDR.
-                db    0
-                db    0
-                db    0
-                db    0
+workInt         dw 0                    ; general-purpose integer working variable -- CASDR's single most-written DGROUP word (21 functions, 38 writes): staged with small animation / message subcodes (0x1C / 0x29 / 2 / 3), pushed to the value stack, used as an array index. Same slot / role as OUT's and TWNDR's workInt (not a LEGLIB-fixed slot).
+workIntHi       dw 0                    ; high word / divisor companion of workInt (`idiv word ptr ds:1F06h`).
                 db    0
                 db    0
                 db    0

@@ -572,9 +572,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   are per-call compiled-BASIC scratch temps. This is the lever for
   naming OUT's ~55 remaining `sub_` helpers.
 - **2026-08-31** — Second OUT DGROUP pass (33 vars named total). The
-  mystery `ds:1F04` is `basRetVal` -- the shared compiled-BASIC
-  function-return / expression-result word (27 functions stage or read
-  it), with `basRetVal2` (`ds:1F06`) as its string/aux half. Also
+  mystery `ds:1F04` is `workInt` -- OUT's general-purpose integer
+  working variable, the single most-reused local (27 functions):
+  nearly every use is push-to-value-stack (`rtm_FF20`), array index
+  (`shl bx,2`), or `add/sub ds:hitPoints, ax` (the "gain N days of
+  food" / combat-damage amount). `workIntHi` (`ds:1F06`) is its high
+  word / `idiv` divisor. **Same offset in TWNDR / CASDR** (checked
+  2026-08-31 -- 11 / 21 functions there) but *not* a LEGLIB-fixed slot:
+  DUN's equivalent is `ds:20EA`, MUS's `ds:20B6`, and STDRV / CELDRV /
+  MENU / SAVER don't have a prominent one. Also
   `trialX`/`trialY` (`ds:208C`/`208A` -- the candidate move destination
   `resolveMoveTarget` validates), `selectedSpell` (`ds:1E24`) and
   `menuChoice` (`ds:1E22`) at the same offsets DUN uses, `dgroupSeg`

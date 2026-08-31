@@ -73,6 +73,14 @@ VARS = [
      "shop entry -- probably 'in a building' vs 'on the street'. "
      "TENTATIVE."),
 
+    (0x1F04, "workInt",
+     "general-purpose integer working variable (11 functions) -- staged "
+     "then compared / pushed to the value stack / used as an idiv "
+     "operand. Same slot / role as OUT's workInt (not LEGLIB-fixed)."),
+    (0x1F06, "workIntHi",
+     "high word / divisor companion of workInt (`idiv word ptr "
+     "ds:1F06h`)."),
+
     # --- shared with the bmTNCALB interior engine (seg001) ---
     (0x0101, "dgroupSeg",
      "the DGROUP self-segment -- `mov es, ds:101h` in the bmTNCALB tile "
