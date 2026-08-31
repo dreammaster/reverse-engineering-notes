@@ -603,10 +603,15 @@ reimplementation.
         `blitViewCell`'s index math walked with live data.
       - `DUNOBJ.BSV` (and `MUSOBJ.BSV` — byte-for-byte the same 3-region
         layout, larger museum sprite set, BSAVE `0x1447:0x0DB6`):
-        object records + the `(maskSrc, screenDest)` pair table
+        **region A = 40 fixed 10-byte object-type records** (`dw 0x0110`
+        tag + relocatable `fieldA/fieldC` sprite offset + `fieldB` group
+        index + `fieldD` frame count), then 6 category-bank pointers at
+        stride `0x49A`, then the `(maskSrc, screenDest)` pair table
         (`andSpriteMaskCell`) + mask cells + `basPutSprite` image
         arrays. Loads into `spriteBank` (`ds:1E58`), shared with
-        `OUTOBJ`.
+        `OUTOBJ`. Record semantics need `DUN.EXE`'s data-loader traced
+        (still in the un-swept dungeon-init path — no ref to the
+        `DUNOBJ.BSV` string desc `0x2874` in the current disassembly).
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.

@@ -255,10 +255,16 @@ array** `OUTOBJ.BSV` / `MUSOBJ.BSV` load into, plus `DUNMON*` at
 
 | region | span | contents |
 |---|---|---|
-| A | `~0x000`–`0x3FF` | object-definition records (`dw 0x0110 ; dw V ; dw 0 ; dw V ; dw K`) |
+| A | `0x000`–`0x18F` | **40 fixed 10-byte object-definition records** — `dw 0x0110` (constant tag on every record) `; dw fieldA ; dw fieldB ; dw fieldC ; dw fieldD`. `fieldA == fieldC` in ~34 records; the other ~6 are "group headers" with `fieldA ≠ fieldC` and a nonzero `fieldB` index (`0x24` / `0x1F` / `0x15` / `0x03` …). `fieldD` is a small count (0–`0x12`, usually 3–10). `fieldA` / `fieldC` (`0x0247`–`0x042F`) are **relocatable** offsets — the bytes they point at in the file are zero, so they are rebased at `BLOAD` time (like the `CEL`/`DIS` pointer tables). Tentatively: one record = one dungeon object *type* (chest / altar / fountain / statue / door / lever …), `fieldA/C` = its sprite offset, `fieldD` = its frame count, `fieldB` links it into one of 6 category groups. |
+| — | `0x190`–`0x1A3` | **6 relocatable bank pointers** at stride `0x49A` (`0x1240 + k·0x49A`, `k=0..5`) — the 6 object-category sub-banks in `spriteBank`. |
 | B | `0x400`–`0x8F1` | ~316 four-byte records = the **`(maskSrcOffset, screenDestOffset)` pairs** fed to `andSpriteMaskCell` (first of each pair steps by `0x10` = one 8-word cell) |
 | C | `0x8F2`–`0x15FF` | the sprite data the pairs point at: field-interleaved 8×8 **mask cells** + `basPutSprite` **image arrays** (`[dw w][dw h]` + planar rows). Renders as noise only because it isn't a flat bitmap — it's these two indexed structures. |
 | D | `0x1600`–end | zero padding |
+
+The precise record semantics need `DUN.EXE`'s data-loader traced — it
+`BLOAD`s `DUNOBJ.BSV` (string descriptor at DGROUP `0x2874`) and relocates
+region A, but that code sits in the still-un-swept dungeon-init path
+(no reference to `0x2874` appears in the current disassembly).
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
 

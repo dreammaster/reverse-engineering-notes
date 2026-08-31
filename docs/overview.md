@@ -884,3 +884,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `0x10`+ = walls, `0xFF` = rock. The 12 dungeon monsters are in the
   same string pool (4 per `DUNM<n>`): NERVE STREAKER / GNASHER TURTLE /
   ... / SLIME WART. `decoders/dun_map.py` now prints the legend.
+- **2026-08-31** -- `DUNOBJ.BSV` region A: **40 fixed 10-byte
+  object-type records** -- `dw 0x0110` (constant tag) + `dw fieldA` +
+  `dw fieldB` + `dw fieldC` + `dw fieldD`. `fieldA == fieldC` in ~34;
+  the other ~6 are "group headers" (`fieldA != fieldC`, nonzero
+  `fieldB` index). `fieldD` = small frame count (0-0x12). `fieldA/C`
+  (`0x0247`-`0x042F`) are relocatable -- targets are zero in the file,
+  rebased at BLOAD. Followed at `0x190` by **6 bank pointers at stride
+  `0x49A`** (`0x1240 + k*0x49A`). Full semantics blocked on `DUN.EXE`'s
+  data-loader: it `BLOAD`s `DUNOBJ.BSV` (string desc DGROUP `0x2874`)
+  and relocates region A, but that code is in the still-un-swept
+  dungeon-init path (`0x2874` is never loaded as an immediate in the
+  current disassembly).
