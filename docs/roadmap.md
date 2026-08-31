@@ -554,7 +554,10 @@ reimplementation.
 - [ ] Pin down the trailing `! # $ &` control codes in `drawString`.
 - [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
       (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
-- [ ] Trace the `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` / `OUTOBJ.BSV`.
+- [x] `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` — `loadOverworldData`
+      (`out` ~`0x14625`); builds `OUTM0<combatPhase>.BSV` + `OUTDATA.BSV`
+      via `rtm_FE07`. Both land in seg `0x86AE` (`OUTM*` @0, `OUTDATA`
+      @`0x2B22`) = one array bound at `ds:1E2A`.
 
 ## Data formats
 
@@ -575,8 +578,14 @@ reimplementation.
       keyboard-command name list (`Armor`/`Climb`/`Disembark`/…) + small
       2 bpp CGA icons, same `05 06 xx xx 7E 01` header as `CHAR.DAT`.
       Field layout still open.
-- [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
-      `BLOAD` sites are traced.
+- [~] Overworld data (2026-08-31) — architecture mapped (mirrors the
+      dungeon): `OUTM0/1/2.BSV` = map layers picked by `combatPhase`
+      (`OUTM0<phase>.BSV`), 8-byte header + 1 byte/tile, 128-wide
+      logical map; `OUTDATA.BSV` loads contiguously at `0x86AE:0x2B22` =
+      terrain tables (`0x000`-`0x3FF`) + 95-byte terrain-tile records
+      (`0x400`-`0xDFF`) + 124-byte object-sprite records
+      (`dw 0x28; dw 0x14` + 120 B; `0x1400`+ & `0x1F00`+). Open: the
+      95-byte tile record layout + terrain-table fields.
 - [~] Dungeon data (2026-08-31) — **rendering model cracked**
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`

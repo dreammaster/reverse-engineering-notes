@@ -786,3 +786,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   (`apply_renames_leglib.py`). Last-mile open: the `spriteBank`
   (`ds:1E58`) index arithmetic (some indices hit a runtime-built header
   at the array start) -- wants a live dump.
+- **2026-08-31** -- Mapped the overworld data (`OUTM*` + `OUTDATA.BSV`),
+  which mirrors the dungeon: `loadOverworldData` BLOADs
+  `OUTM0<combatPhase>.BSV` (map layers) to `0x86AE:0` and `OUTDATA.BSV`
+  to `0x86AE:0x2B22` -- one contiguous array bound at `ds:1E2A`. Map is
+  1 byte/tile, 128 wide (`idiv 0x80` / `and 0x7F`). `OUTDATA` =
+  terrain-type tables (`0x000`-`0x3FF`) + a run of **95-byte** terrain
+  tile records (`0x400`-`0xDFF`; `OUT` does `imul ds:2444h, 0x5Fh`) +
+  **124-byte** object-sprite records (`dw 0x28 ; dw 0x14` extent + 120 B
+  CGA data; `0x1400`+ and `0x1F00`+). `OUT` doesn't use `drawTileRun` --
+  it scrolls a 95-byte-tile / 13-stride working buffer with `rtm_FE1B`
+  (`rep stosb`) / `rtm_FE14` (`rep movsb`) and paints via `basPutSprite`.
+  Open: the 95-byte record layout + the terrain tables' fields.

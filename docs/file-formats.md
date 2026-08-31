@@ -16,10 +16,11 @@ decoded; the record's scalar fields are partly identified. The
 **dungeon data is decoded**: `DUNM1/2/3.BSV` tile maps fully (8 levels ×
 16×16), and the `DUN.EXE` first-person **sprite/tile rendering model**
 (the 4 LEGLIB primitives, the field-interleaved 8×8 cell, the
-mask-list + BASIC-`PUT`-image sprite format) — so `DUNDATA.BSV`,
-`DUNOBJ.BSV` and `DUNMONA/B.BSV` are understood structurally, with only
-the last-mile `spriteBank` index arithmetic (needs a live dump) open.
-The remaining `.BSV` files are still container-only.
+mask-list + BASIC-`PUT`-image sprite format). The **overworld** files
+`OUTM0/1/2.BSV` + `OUTDATA.BSV` have their architecture and region
+layout mapped (they mirror the dungeon's `DUNM* + DUNDATA`). Open on
+both: the last-mile bitmap-record packing. The remaining `.BSV` files
+are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -56,7 +57,9 @@ castle/fort layout banks.
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |
 | `FORTANIM.BSV` | 263 | `CASDR` | fort animation |
-| `OUTDATA.BSV`, `OUTOBJ.BSV`, `OUTM0.BSV`…`OUTM2.BSV`, `OUTDAT.DAT` | — | `OUT` | overworld map / objects / monsters |
+| `OUTM0.BSV` / `OUTM1.BSV` / `OUTM2.BSV` | 9969 / 4191 / 2101 | `OUT` | the 3 overworld map layers (picked by `combatPhase` in the filename `OUTM0<phase>.BSV`). BSAVE → `0x86AE:0x0000`. Shared 8-byte header `62 24 0A 00 11 00 3A 23`; 1 byte/tile terrain codes (`0x2C` = default, `0x2D`–`0x32`, …); logical map is 128 tiles wide (`OUT`'s feature scanner does `idiv 0x80` / `and 0x7F`). |
+| `OUTDATA.BSV` | 14235 | `OUT` | **structure mapped** — the shared overworld graphics + tables. BSAVE → `0x86AE:0x2B22`, i.e. **contiguous with the `OUTM*` layers in one array** (bound at `ds:1E2A`, exactly parallel to the dungeon's `DUNM* + DUNDATA`). See the dedicated section below. |
+| `OUTOBJ.BSV` | 4395 | `OUT` | overworld object sprites — BSAVE → `0x13A8:0x0DB6` into `spriteBank` (same `0x0DB6` offset as `DUNOBJ` / `MUSOBJ`). Not separately decoded (same shape as `DUNOBJ`). |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
 | `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
@@ -241,6 +244,38 @@ needs `drawViewSprite`'s `spriteBank` index math resolved against a
 live dump (some indices point at a runtime-built header at the array
 start) — but the frame *format* is now known: BASIC `PUT` image +
 `(src,dst)` mask-cell list.
+
+## Overworld data — `OUTM*` / `OUTDATA` — **structure mapped 2026-08-31**
+
+Same architecture as the dungeon: `OUTM0/1/2.BSV` (`BSAVE` →
+`0x86AE:0x0000`) are the map layers, and `OUTDATA.BSV` (`BSAVE` →
+`0x86AE:0x2B22`) loads `0x2B22` bytes later in the **same segment**, so
+they're one contiguous array (bound at `ds:1E2A`).
+
+**`OUTM0/1/2.BSV`** — the overworld map. `OUT`'s `loadOverworldData`
+builds the name `OUTM0<combatPhase>.BSV`, so the three are alternate
+world states (main map / post-event / endgame — sizes 9962 / 4184 /
+2094 B). All share the 8-byte header `62 24 0A 00 11 00 3A 23`; the body
+is 1 byte per tile, terrain codes clustered around `0x2C` (`,`, the
+default) through `0x32`. The logical map is **128 tiles wide** — the
+feature scanner unpacks a tile id as `y = id / 0x80`, `x = id & 0x7F`.
+
+**`OUTDATA.BSV`** (14228-byte payload) — the shared overworld graphics
+and tables:
+
+| span | contents |
+|---|---|
+| `0x000`–`0x3FF` | terrain-type tables — bytes `0x10`–`0x6D` in ~4 rows of `0x100` (per-terrain-code data: appearance / movement / encounter). The `+0x200` row is all `0x41`–`0x4B`. |
+| `0x400`–`0xDFF` | **terrain tile graphics** — a run of **95-byte (`0x5F`) records** (`OUT`'s tile renderer does `imul ds:2444h, 0x5F`); renders as coherent dithered forest/water/mountain texture. Each record is a small `basPutSprite`-style bitmap. |
+| `0xE00`–`0x13FF` | zeros |
+| `0x1400`–`0x1AFF`, `0x1F00`–`0x36FF` | **object / creature sprite banks** — a regular array of **124-byte (`0x7C`) records**, each `dw 0x28 ; dw 0x14` (40 × 20 extent) + 120 bytes of CGA 2 bpp data (a BASIC GET-array; the 120-byte body = 6 bytes/row × 20, so the stored bitmap is ~24 px wide — the `40` is a scaled/padded extent). |
+| gaps + tail | zero padding |
+
+`OUT` never calls `drawTileRun` — it scrolls a working tile buffer
+(95-byte tiles, 13-unit row stride) with `rtm_FE1B` (`rep stosb`) /
+`rtm_FE14` (`rep movsb`) and paints tiles/sprites via `basPutSprite`
+(`rtm_61`). The exact 95-byte tile-record layout and the terrain-table
+field meanings need `OUT`'s overworld draw path traced.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 
