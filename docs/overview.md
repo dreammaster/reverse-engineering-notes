@@ -853,3 +853,14 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `drawBigNumberPanel` for the GOLD / BET / winnings readouts.
   `decoders/bignum.py` (digits 1-6 render cleanly; the back half has a
   slight shear -- a designed slant or a blit nuance).
+- **2026-08-31** -- Mapped `CEL0-3.BSV` / `DIS9.BSV` (the 5 frames of
+  the "AGAINST ALL ODDS!" endgame cinematic). `celdrv_entry` builds each
+  name (`"CEL"+n+".BSV"`, then `dis9.bsv`, `cel3.bsv`), BLOADs it into
+  `spriteBank` at word-slot `bank*2000 + 1000`, then relocates the
+  file's pointer table by `+2*(bank*2000+1000)`. Each file: an 8-word
+  header (`{v, 0x10, W, H, 0x20, 0x0A, 0x10, 0x220}`; `CEL0` W=`0x110`
+  H=`0x78`), a relocatable `(stripPtr, ?)` table from `~0x100`
+  (`stripPtr` steps `0x140` = a 4-even-scanline band; column-groups step
+  `+2` = +8 px), then RLE-packed CGA bitmap strips from `~0x300` (798 B
+  for `CEL0`'s ~272x120 area = ~10:1, so compressed -- same open
+  question as `DUNOBJ` region C). `celFrame` cycles the 5 as animation.
