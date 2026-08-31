@@ -301,15 +301,22 @@ reimplementation.
       `saver_entry` -- and whether saving from a town / castle / museum
       is even possible (only `OUT.EXE` / `DUN.EXE` are chain targets).
       `rtm_FF08` = ? (looks like a program-name / env test).
-- [~] `CHAR.DAT` (2026-08-31) — container + write/read path decoded:
-      6-byte header (`05 06 07 00 | 7E 01` = reclen 382), 9 records ×
-      382. Record = 14-byte name + 74-byte scalar block (verbatim copy
-      of LEGLIB DGROUP `ds:1AC0..1B08`) + 7 BASIC int arrays
-      (descriptors `ds:1B0C` + k·`0x2E`, via `rtm_FE39`/`rtm_FE37`).
-      `partyGold` (rec `+0x20`, =20 new), `hitPoints` (`+0x28`),
-      `intelligence` (`+0x3E`) placed. `decoders/char_dat.py`. Still
-      open: the rest of the 37 scalars and the 7 arrays' split (needs a
-      populated save + the array DIMs from LEGLIB).
+- [~] `CHAR.DAT` (2026-08-31, fields mapped 2026-09-01) — container +
+      write/read path + framing fully decoded. 6-byte header
+      (`05 06 | 07 00` = 7 arrays | `7E 01` = reclen 382), 9 records ×
+      382. Record = 14-byte name + 74-byte scalar block (image of LEGLIB
+      DGROUP `ds:1AC0..1B08`) + 7 BASIC int arrays whose `DIM` bounds
+      (7/7/29/16/37/41/3 → 8/8/30/17/38/42/4 words) come from the
+      `rt_AF` calls in `MENU.EXE` init and sum to exactly 294 bytes.
+      Scalars placed via a full `ds:1AC0..1B08` xref sweep + the
+      LEGACY.DAT template defaults: gold `+0x20` (dword, 20),
+      hitPoints `+0x28` (200), strength `+0x3E` (15, cap 28), experience
+      `+0x10` (dword), inventory count `+0x38` (5), overworld X/Y
+      `+0x50`/`+0x54`, compendium rank `+0x2E` (1..7), game speed `+0x16`
+      (4), + dungeon pos/facing/timers. Array **S5** (`ds:1BF2`, `+0x122`)
+      = the shop price table. `decoders/char_dat.py` prints the template
+      split. Still open: per-element split of S2 (30 world/quest flags)
+      and S4 (38-word stat/map block) — needs a populated save.
 - [ ] The "character disk" checks ("is not on this / character disk",
       "empty") imply a multi-disk / per-character-slot save scheme —
       confirm.
@@ -569,11 +576,14 @@ reimplementation.
       header words 3/4), word `W` -> tile `W//8`. The `.GLB` header
       word[1] is *not* tile width — tiles are always 8-px. CGA 320×200
       mode 4, palette 1. See file-formats.md.
-- [~] `CHAR.DAT` (3444 bytes) — container decoded (9 × 382-byte records:
-      name + LEGLIB DGROUP `ds:1AC0..1B08` scalars + 7 int arrays);
-      `decoders/char_dat.py`. Remaining: the per-field scalar breakdown
-      and the 7 arrays. `readCharDat` / `writeCharDat` / `saveRosterToDisk`
-      named.
+- [~] `CHAR.DAT` (3444 bytes, fields mapped 2026-09-01) — 9 × 382-byte
+      records: 14-B name + 74-B scalar block (`ds:1AC0..1B08`) + 7 int
+      arrays with known `DIM` bounds (8/8/30/17/38/42/4 w, sum 294).
+      Gold / HP / strength / experience / inv-count / overworld X,Y /
+      compendium rank / game-speed scalars + the S5 shop price table
+      placed; `decoders/char_dat.py` prints the LEGACY.DAT template
+      split. Remaining: per-element split of arrays S2 (quest flags) and
+      S4 (stat/map block) — needs a populated save.
 - [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py`) —
       the master string/data table `menuStartup` loads. 6-B header,
       ~1602 B CGA icon bitmaps, a **123-string length-prefixed pool**

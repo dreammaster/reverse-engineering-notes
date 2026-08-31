@@ -79,7 +79,7 @@ castle/fort layout banks.
 | `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | **tiles decoded** — card graphics ("BJ" = BlackJack). Same container as `SDOBJ.GLB` (6161 b, `{0x0A,6,1,0,1}`, bare atlas, no `.GMP`); 384 8×8 tiles, only 0–127 used. Holds a card **rank/suit glyph font** — `A 2 3 4 5 6 7 8 9 10 J Q K` + the four suit pips (♠♣ white, ♥♦ magenta), in **both upright and 180°-rotated** forms (the two opposite card corners) — plus card-back pattern + frame/corner tiles. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. `decoders/glb_image.py BJCHR` dumps the atlas (use grid width 15 to line the font up). |
 | `BIGNUM.DAT` | 420 | `GMB2` | **decoded** — the large-digit font for `GMB2` (Flip-Flop Parlour)'s GOLD / BET / winnings readouts. **No BSAVE header** — a raw **112 × 15 px CGA 2 bpp bitmap** (28 bytes/row × 15 rows = 420 B exactly; autocorrelation locks the stride at 28). One horizontal strip of ~10 digit glyphs (~11 px pitch), blitted a digit at a time by `drawBigNumberPanel`. `decoders/bignum.py`. |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
-| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **container + write/read path decoded** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + a 74-byte scalar block (a copy of resident LEGLIB DGROUP `ds:1AC0..1B08`) + 7 BASIC integer arrays. See the dedicated section below. `decoders/char_dat.py` lists the slots. |
+| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **fully framed + fields mapped** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + 74-byte scalar block (image of resident LEGLIB DGROUP `ds:1AC0..1B08`) + **7 BASIC integer arrays with known `DIM` bounds** (8/8/30/17/38/42/4 words — sum = 294 = 382−14−74). Gold, HP, strength, experience, inventory count, overworld X/Y, compendium rank + the S5 shop price table identified; per-element split of S2/S4 still needs a populated save. See the dedicated section. `decoders/char_dat.py`. |
 | `LEGACY.DAT` | 2945 | `MENU` / `OUT` | **decoded** — the game's **master string/data table** (`menuStartup` loads it once). 6-B header (`05 06`, `dw 0x0A04`, `dw 0x017E`), then ~1602 B of CGA icon bitmaps (`0x006`–`0x647`), then a **123-entry length-prefixed string pool** (`0x648`–`0xA02`) — the A–Z command names, weapon/armor names, all item & spell & gem-coin names, directions, menu responses, digits, and the 12 town names — then a trailing **382-B new-character template** (the CHAR.DAT record copied into empty slots) ending in a **shop price table**. `decoders/legacy_dat.py`. See the section below. |
 | `OUTDAT.DAT` | 1012 | `OUT` | not checked yet |
 | `DRCONFIG.DAT` | 1015 | `CONFIGUR` + all disk-loading code | **disk-drive layout**, not hardware config — which drive letter(s) hold the game floppies (or HD floppy / hard disk), so the loaders know where to look and can prompt for swaps. Written by `CONFIGUR.EXE` (`_main`); at offset near the start it holds a config-type byte (`'0'`/`'1'`/`'2'` — HD/hard-disk vs. 360K vs. 720K) and one or two drive-letter bytes. |
@@ -151,14 +151,61 @@ record `rosterIndex + 1`.
 | `0x04` | 2 | `7E 01` = `0x017E` = **382**, the record length |
 | `0x06` | 9 × 382 | the 9 roster records (`6 + 9*382 == 3444` = file size) |
 
-**Each 382-byte record** (FIELDed by `SAVER.EXE` `saveRosterToDisk` /
-`MENU.EXE` `enumerateRoster`):
+**Each 382-byte record** — framing fully pinned down 2026-09-01.
+Write path: `SAVER.EXE` `saveRosterToDisk` (`rt_AB` for the name, then
+`rtm_FE35` peeks `ds:1AC0`–`ds:1B08` word-by-word, then `rtm_FE39` ×7
+over the array descriptors). Read path: `MENU.EXE`
+`showEmptyCharacterSlots` / `readCharDat` (`rtm_FE36` poke loop, then
+`rtm_FE37` ×7). The 7 arrays are `DIM …(bound) AS INTEGER` in
+`MENU.EXE`'s module init (the `rt_AF` calls with params
+`(desc, 0x101, elemSize 2, bound, 0, 0)`); the bounds sum to **exactly
+294 bytes = 382 − 14 − 74**, which nails the split:
 
 | off | size | field |
 |---|---|---|
 | `+0x000` | 14 | **name**, space-padded. `"empty"` marks an unused slot (all 9 are `"empty"` in a fresh install). Matches the "up to 14 letters long" name prompt. |
-| `+0x00E` | 74 | **scalar block** — 37 words copied verbatim from the resident LEGLIB DGROUP range `ds:1AC0`–`ds:1B08` (peeked word-by-word via `rtm_FE35`, written via `rtm_AB`). Identified so far (record offset): `+0x1C` dword ≈ experience (`ds:1AC2`); **`+0x20` dword `partyGold`** (`ds:1AD2`, = 20 for a new character); `+0x28` word `hitPoints` (`ds:1ADA`); `+0x3E` word `intelligence` (`ds:1AF0`, cap 28). `playerX`/`playerY` (`ds:1B02`/`1B06`) are also in this block. |
-| `+0x058` | 294 | **7 BASIC integer arrays** — DGROUP array descriptors at `ds:1B0C`, `1B3A`, `1B68`, `1B96`, `1BC4`, `1BF2`, `1C20` (stride `0x2E`), each written/read element-by-element by `rtm_FE39` / `rtm_FE37`. Contents (inventory, spells known, quest / map-visited flags, museum coins, per-category stats …) not yet split — needs a populated save and the array `DIM`s traced in LEGLIB. |
+| `+0x00E` | 74 | **scalar block** — 37 words, a verbatim image of the resident LEGLIB DGROUP range `ds:1AC0`–`ds:1B08`. Survives the `OUT`↔`DUN`↔`TWNDR`↔`MUS`↔`CASDR` chaining. See the field table below. |
+| `+0x058` | 16 | **S0** `ds:1B0C` `DIM(7)` — encounter / combat scratch (zeroed at the top of every `outInit`, so not real save data). |
+| `+0x068` | 16 | **S1** `ds:1B68` `DIM(7)` — inventory slot data, 8 slots (cursor `ds:1AEA`). `rtm_FE50` clamps elements to `0..4` = the LEGACY "weapon condition" scale (Shoddy…Superb). |
+| `+0x078` | 60 | **S2** `ds:1BC4` `DIM(29)` — world / quest state, 30 flags (cross-referenced against the overworld object array `ds:1C7C`). Template `[15]=1`, `[17]=2`. |
+| `+0x0B4` | 34 | **S3** `ds:1B3A` `DIM(16)` — museum progress (`MUS` bumps `[15]` on every entry, sets `[14]=1`). Template all-zero except `[0]=-1`. |
+| `+0x0D6` | 76 | **S4** `ds:1B96` `DIM(37)` — the main stat / map-state block, 38 words, ~150 read/write sites. `outInit` copies `S4[19]` (tmpl 200) → `hitPoints`, so S4 holds the persistent copy the `ds:1AC0` scalars are re-derived from. Template `[0..2]` = `1500/3099/31058` (RNG / world-hash junk from the dev dump), `[22]=32000`, `[25..29]=32767` sentinels, `[33]=3`. |
+| `+0x122` | 84 | **S5** `ds:1BF2` `DIM(41)` — **shop price table**: `S5[0]=7`, then 41 prices (weapon / armor / item / food): `400,350,350,13,500,220,950,450, 150,170,200,170,250, … 2000,1500,1700,5,1300,2000,5,21`. Identical for every character — FIELDed per-record only for convenience. |
+| `+0x176` | 8 | **S6** `ds:1C20` `DIM(3)` — reserved, 4 words, always `0`, no read/write site anywhere. Ends at `0x17E` = 382. |
+
+**Scalar block** (`+0x00E`, 37 words). Record offset ← DGROUP word;
+default from the LEGACY.DAT new-character template. `[C]` cross-checked
+in play-module code, `[?]` inferred from the template value + usage:
+
+| rec | ← ds: | default | field |
+|---|---|---|---|
+| `+0x10` | `1AC2` | 0 | `[C]` **experience** (dword; `TWNDR` `add`/`adc` accumulates) |
+| `+0x16` | `1AC8` | 4 | `[?]` **game speed** (read by MENU + every module) |
+| `+0x18` | `1ACA` | 0 | `[C]` chain-return / location context (`SAVER` `returnTarget`) |
+| `+0x1A` | `1ACC` | 15 | `[?]` attribute / resource (potion-wizard `+5`, cap `0x24`) |
+| `+0x20` | `1AD2` | **20** | `[C]` **party gold** (dword) |
+| `+0x24` | `1AD6` | −99 | `[C]` dungeon return position (dword; −99 = "none") |
+| `+0x28` | `1ADA` | **200** | `[C]` **hit points** |
+| `+0x2C` | `1ADE` | 15 | `[?]` museum-adjustable stat (`MUS` `showGold` `+10`) |
+| `+0x2E` | `1AE0` | 1 | `[C]` **compendium volumes / museum access rank** (1..7) |
+| `+0x30` | `1AE2` | 0 | `[C]` dungeon position `level<<8 | cell` (`cmp 0x700`) |
+| `+0x32` | `1AE4` | 0 | `[C]` dungeon / museum facing (0..3) |
+| `+0x34` | `1AE6` | 0 | `[C]` dungeon light / step counter |
+| `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
+| `+0x38` | `1AEA` | **5** | `[C]` **inventory count** (index into S1, guard `< 8`) |
+| `+0x3A` | `1AEC` | 9 | `[C]` paired count / damage multiplier (`DUN` `imul`) |
+| `+0x3E` | `1AF0` | 15 | `[C]` **strength** (cap `0x1C`=28; potion-wizard gate) |
+| `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; guard `< 8`) |
+| `+0x4C` | `1AFE` | 0 | `[C]` second-list count (paired with `1AFC`) |
+| `+0x50` | `1B02` | 178 | `[C]` **overworld X** (new game sets 40) |
+| `+0x54` | `1B06` | 106 | `[C]` **overworld Y** (new game sets 30) |
+| `+0x56` | `1B08` | 15 | `[?]` attribute-like (`DUN` subtracts from it) |
+
+`+0x0E`(`1AC0`), `+0x14`(`1AC6`), `+0x2A`(`1ADC`), `+0x3C`(`1AEE`),
+`+0x4E`/`+0x52`(`1B00`/`1B04`) are transient scene/UI state that happens
+to sit in the FIELDed range. `+0x1C`(`1ACE`), `+0x1E`(`1AD0`),
+`+0x40`–`+0x48`(`1AF2`–`1AFA`) have **no reference in any module** —
+dead words (`1AD0`'s `0x4270` default is stale dev-memory junk).
 
 Because the roster block lives in LEGLIB's **resident** DGROUP, it
 survives the `OUT`↔`DUN`↔`TWNDR`↔… EXE chaining — which is why
@@ -169,8 +216,9 @@ saving = `SAVER` `PUT`s `ds:1AC0`+ back. The "is not on this / character
 disk" / "empty" strings in `SAVER` are the removable-character-disk
 handling.
 
-`decoders/char_dat.py` reads the container and lists each slot
-(name + the identified scalar fields).
+`decoders/char_dat.py` reads the container, lists each slot (name + the
+identified scalar fields), and prints the LEGACY.DAT new-character
+template split field-by-field.
 
 ## Dungeon data — `DUNM*` / `DUNDATA` / `DUNOBJ` / `DUNMON*` — **decoded 2026-08-31**
 
@@ -608,7 +656,7 @@ Loaded once by `MENU.EXE`'s `menuStartup` (`decoders/legacy_dat.py`):
 | `0x000`–`0x005` | header: `05 06` (the shared BASIC-data marker, cf. `CHAR.DAT`), then `dw 0x0A04`, `dw 0x017E` (= 382, the `CHAR.DAT` record length). |
 | `0x006`–`0x647` | the command-menu **icon bitmaps** — ~1602 B of CGA 2 bpp data (cell layout not pinned down). |
 | `0x648`–`0xA02` | the **string pool** — 123 strings, each `db len ; db chars`, in fixed order: `[0..18]` the A–Z command names (`Armor`, `Climb`, `Disembark`, `End`, `Fight`, `Gamespeed`, `Hold`, `Inventory`, `Leave`, `Magic`, `Open`, `Pass`, `Rob`, `Speak`, `Take`, `Use`, `" "` (Q — unused), `Weapon`, `Xamine`); `[19..23]` weapon condition (`Shoddy`…`Superb`); `[24..32]` weapons (`bare hands`…`Compound bow`); `[33..37]` armor (`Studded hide`…`Mythan plate`); `[38..54]` per-item "use" verbs; `[55..78]` items (`nothing`, `Gold armband`, … the 7 gem coins); `[79..84]` spells (`Magic flame`…`Seek spell`); `[85..88]` directions; `[89..100]` menu responses; `[101..110]` digits `"0"`–`"9"`; `[111..122]` the 12 **town names** (`Isle City`, `Cobbleton`, `Alanville`, `Grand Ledge`, `Big Rapids`, `Thornberry`, `Mazelton`, `Thompson Crossing`, `Merchant Square`, `Laingsburg`, `Holy Point`, `Eagle Hollow`). |
-| `0xA03`–end | a 382-B **new-character template** copied into empty `CHAR.DAT` slots — 14-B name (`"empty"` + spaces) + the 368-B scalar block (default stats / starting kit), tail = a **shop price table** (`400, 350, 350, … 1200, 300, 420, … 2000` — weapon / armor / item costs). |
+| `0xA03`–end | a 382-B **new-character template** = one complete `CHAR.DAT` record copied into empty slots. Split field-by-field in the [`CHAR.DAT` section](#chardat--character-roster--save--container-decoded-2026-08-31): 14-B name + 74-B scalar block (gold 20, HP 200, strength 15, 5 items, …) + the 7 arrays, of which **S5 = the shop price table** (`7, 400, 350, 350, 13, 500, 220, 950, 450, 150, … 2000, 5, 21`). `decoders/char_dat.py` prints the whole split. |
 
 The string-pool ordering is the game's canonical index for weapons,
 armor, items, spells and towns — the `CHAR.DAT` equipment scalars and

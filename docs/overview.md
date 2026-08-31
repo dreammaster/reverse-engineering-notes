@@ -731,10 +731,20 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   does the mirror (`rtm_FE36` poke / `rtm_5E` GET). This is *why* the
   character vars sit at fixed DGROUP offsets across every play module —
   the block lives in LEGLIB's resident DGROUP and rides through the EXE
-  chain. Placed in the record: `partyGold` (`+0x20`, = 20 for a new
-  character), `hitPoints` (`+0x28`), `intelligence` (`+0x3E`).
-  `decoders/char_dat.py` lists the slots (all 9 are `"empty"` on a fresh
-  install).
+  chain.
+- **2026-09-01** — Mapped the `CHAR.DAT` record fields using the
+  LEGACY.DAT new-character template + a full `ds:1AC0..1B08` xref sweep.
+  The 7 arrays' `DIM` bounds (from `MENU.EXE`'s `rt_AF` init calls) are
+  8/8/30/17/38/42/4 words and sum to **exactly 294 = 382 − 14 − 74**,
+  which fixes the whole split. Placed: `partyGold` (`+0x20` dword, 20),
+  `hitPoints` (`+0x28`, 200), `strength` (`+0x3E`, 15 / cap 28),
+  `experience` (`+0x10` dword), inventory count (`+0x38`, 5), overworld
+  X/Y (`+0x50`/`+0x54`), compendium/museum rank (`+0x2E`, 1..7), game
+  speed (`+0x16`, 4), dungeon position/facing/timers. Array **S5**
+  (`ds:1BF2`) is the shop price table (`7, 400, 350, …`). S0 is combat
+  scratch (cleared each `outInit`), S6 is a dead 4-word slot. Per-element
+  split of S2 (30 quest flags) / S4 (38-word stat block) still needs a
+  populated save. `decoders/char_dat.py` prints the template split.
 - **2026-09-01** — Decoded `LEGACY.DAT` (`decoders/legacy_dat.py`) — the
   game's master string/data table, loaded once by `menuStartup`. 6-B
   header, ~1602 B of CGA icon bitmaps, then a **123-string
