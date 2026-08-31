@@ -873,3 +873,14 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   0xA, 0x10, 0x220}` = a 272x120 full-screen image); `DIS9` just doubles
   as the cinematic's frame 4. Header word[2]/[3] = width/height in px
   (`DIS3` = `0xE0`x`0x60`, `DIS0A` = `0x108`x`0x74`).
+- **2026-08-31** -- Decoded the `DUNM*` feature codes from `DUN.EXE`
+  (`moveHazards` / `doLookSearch` / `climbUp` / `climbDownOrExit` + the
+  string pool at `DUN.EXE:0x881c`). Codes `0x01`-`0x07` are the 7 named
+  **hidden traps**: POISON GAS VENT / FLOOR HOLE / SLIME SPLOTCH / TRIP
+  WIRE / CEILING HOLE / TREASURE CHEST / BOX. Walking onto one triggers
+  it; `Search` springs it (`+8` -> the `0x09`-`0x0F` "revealed" range).
+  `0x02` (FLOOR HOLE) drops you a level and stays as `0x0A`. `0x0A` =
+  stairs DOWN, `0x0D` = stairs UP (climb toggles `0x0A <-> 0x0D`).
+  `0x10`+ = walls, `0xFF` = rock. The 12 dungeon monsters are in the
+  same string pool (4 per `DUNM<n>`): NERVE STREAKER / GNASHER TURTLE /
+  ... / SLIME WART. `decoders/dun_map.py` now prints the legend.

@@ -21,12 +21,35 @@ solid rock, `< 0x10` a special feature looked up in a table (the
 "POISON GAS VENT" / "FLOOR HOLE" / "SLIME SPLOTCH" trap names live in
 `DUN.EXE`'s string pool).
 
-Tile bytes seen:
+Tile bytes (feature codes decoded from `DUN.EXE`'s `moveHazards` /
+`doLookSearch` / `climbUp` / `climbDownOrExit` + the `DUN.EXE` string
+pool at file offset 0x881c):
+
     0x00        open floor / corridor
-    0xFF        solid rock (the maze walls)
-    0x01..0x0F  special-feature tiles -- doors, up/down stairs, traps,
-                treasure, level links.  Exact code->feature mapping
-                still TBD (needs `loadDungeonLevel`'s feature table).
+    0x01        POISON GAS VENT   (hidden trap -> monster ambush)
+    0x02        FLOOR HOLE        (hidden trap -> fall to the next level
+                                   down; once sprung it becomes 0x0A)
+    0x03        SLIME SPLOTCH     (hidden trap -> ambush)
+    0x04        TRIP WIRE         (hidden trap -> ambush)
+    0x05        CEILING HOLE      (hidden trap -> ambush)
+    0x06        TREASURE CHEST    (hidden -> Search/open; else ambush)
+    0x07        BOX               (hidden -> Search/open; else ambush)
+    0x08        a non-hidden feature (visible container -- Search opens it
+                without springing a trap)
+    0x09..0x0F  walkable "revealed" features -- `doLookSearch` gives
+                codes >= 8 no spring effect and `moveHazards` prints
+                "YOU AVOID THE <name>". Confirmed: 0x0A = open
+                floor-hole / stairs DOWN, 0x0D = stairs UP (`climbUp` /
+                `climbDownOrExit` toggle 0x0A <-> 0x0D). 0x09 / 0x0B /
+                0x0C / 0x0E / 0x0F are common in the shipped maps and are
+                probably pillars / doors / decoration -- not confirmed.
+    0x10..0xFE  wall tiles (shown on the auto-map as CHR$(0x60 + b/16))
+    0xFF        solid rock (unlit / never drawn)
+
+The dungeon monsters (`DUN.EXE` string pool, one set per `DUNM<n>`):
+    DUNM1: NERVE STREAKER / GNASHER TURTLE / TENDRO SNAPPER / NIGHT STALKER
+    DUNM2: GRAPPLER / KNUCKLES / DANGLER / MR POTATO
+    DUNM3: RAKER BRUTE / BLUE LION / GIANT SLUG / SLIME WART
 
 `DUNM1/2/3` swap per dungeon group; `DUNDATA.BSV` (loaded contiguously
 at 0x2C07:0x173C, right after the map) is the constant part -- see
@@ -41,6 +64,17 @@ W = H = 16
 LEVEL_BYTES = W * H
 
 GLYPH = {0x00: "  ", 0xFF: "##"}   # everything else printed as its hex
+
+FEATURE = {
+    0x01: "POISON GAS VENT", 0x02: "FLOOR HOLE", 0x03: "SLIME SPLOTCH",
+    0x04: "TRIP WIRE", 0x05: "CEILING HOLE", 0x06: "TREASURE CHEST",
+    0x07: "BOX",
+    0x08: "visible container / feature",
+    0x0A: "stairs DOWN / open hole", 0x0D: "stairs UP",
+    0x09: "revealed feature", 0x0B: "revealed feature",
+    0x0C: "revealed feature", 0x0E: "revealed feature",
+    0x0F: "revealed feature",
+}
 
 
 def read_bsave(path):
@@ -69,8 +103,9 @@ def dump(name, games_dir):
                    + (", ".join(f"0x{m:02X}" for m in marks) or "(none)"))
         else:
             feats = sorted({b for b in g if 0 < b < 0x10})
-            tag = ("feature codes: "
-                   + (", ".join(f"0x{f:02X}" for f in feats) or "(none)"))
+            tag = ("features: "
+                   + ("; ".join(f"0x{f:02X} {FEATURE.get(f, '?')}"
+                                for f in feats) or "(none)"))
         print(f"\n--- {'exhibit map' if museum else 'level'} {lvl}   {tag}")
         for r in range(H):
             row = g[r * W:(r + 1) * W]

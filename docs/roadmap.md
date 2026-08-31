@@ -590,9 +590,13 @@ reimplementation.
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`
       `rtm_61`; 8×8 cells are the `.GLB` field-interleave):
-      - `DUNM1/2/3.BSV` **decoded** — 8 levels × 16×16 tiles/byte (`0x00`
-        floor / `0xFF` rock / `0x01`–`0x0F` features). `decoders/dun_map.py`.
-        Open: the feature code→type table.
+      - `DUNM1/2/3.BSV` **fully decoded** — 8 levels × 16×16 tiles/byte.
+        Feature codes: `0x01`–`0x07` = the 7 named hidden traps (POISON
+        GAS VENT / FLOOR HOLE / SLIME SPLOTCH / TRIP WIRE / CEILING HOLE
+        / TREASURE CHEST / BOX; spring → `+8`), `0x0A`/`0x0D` = stairs
+        down/up, `0x10`+ = walls, `0xFF` = rock. Monsters (4 per file)
+        recovered too. `decoders/dun_map.py`. (`0x09`/`0x0B`/`0x0C`/
+        `0x0E`/`0x0F` "revealed" features not individually confirmed.)
       - `DUNDATA.BSV` — loads into `dungeonMapArray` (`ds:1E2A`,
         contiguous with `DUNM*`); the `0x10`–`0x7F` region = wall
         tile-index lists, rest = the 8×8 tile bank. Sub-offsets need

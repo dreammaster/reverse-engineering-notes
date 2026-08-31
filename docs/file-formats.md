@@ -178,15 +178,32 @@ handling.
 `BSAVE` to `0x2C07:0x0F3C`. The 2048-byte payload is **8 dungeon levels,
 16×16 tiles, one byte per tile**, row-major (`8 × 256`):
 
-| byte | meaning |
+| byte | feature — **decoded 2026-08-31** (`DUN.EXE` `moveHazards` / `doLookSearch` / `climbUp` / `climbDownOrExit` + the string pool at `DUN.EXE:0x881c`) |
 |---|---|
 | `0x00` | open floor / corridor |
-| `0xFF` | solid rock — the maze walls |
-| `0x01`–`0x0F` | special-feature tiles: doors, up/down stairs, traps ("POISON GAS VENT", "FLOOR HOLE", "SLIME SPLOTCH" — names in `DUN.EXE`'s string pool), treasure, level links. The code→feature table is inside `DUN.EXE` and not mapped yet. |
+| `0x01` | **POISON GAS VENT** — hidden trap → monster ambush |
+| `0x02` | **FLOOR HOLE** — hidden trap → fall to the next level down; once sprung it stays as `0x0A` (an open down-passage) |
+| `0x03` | **SLIME SPLOTCH** — hidden trap → ambush |
+| `0x04` | **TRIP WIRE** — hidden trap → ambush |
+| `0x05` | **CEILING HOLE** — hidden trap → ambush |
+| `0x06` | **TREASURE CHEST** — hidden; Search/open (`openChest`), else ambush |
+| `0x07` | **BOX** — hidden; Search/open, else ambush |
+| `0x08` | a **visible** container (Search opens it without a trap check) |
+| `0x0A` | **stairs DOWN** / open floor-hole — `climbDownOrExit` descends here |
+| `0x0D` | **stairs UP** — `climbUp` ascends here; each climb toggles `0x0A ↔ 0x0D` |
+| `0x09` / `0x0B` / `0x0C` / `0x0E` / `0x0F` | walkable "revealed" features (common in the shipped maps — probably pillars / doors / decoration; not individually confirmed) |
+| `0x10`–`0xFE` | wall tiles (drawn on the auto-map as `CHR$(0x60 + b/16)`) |
+| `0xFF` | solid rock (unlit / never drawn) |
 
 `DUN.EXE` binds this array at DGROUP `ds:1E2A` and indexes
-`base + level*0x100`; bytes `≥ 0x10` are walls/normal, `< 0x10` index the
-feature table. `decoders/dun_map.py DUNM1` prints all 8 levels.
+`base + level*0x100`; bytes `≥ 0x10` are walls, `1..7` are hidden traps
+(springing one adds `8` → the `9..0x0F` "revealed" range). `Search`
+springs a hidden trap; walking onto one triggers it. The **dungeon
+monsters** are also in the `DUN.EXE` string pool, one set per file —
+`DUNM1`: NERVE STREAKER / GNASHER TURTLE / TENDRO SNAPPER / NIGHT STALKER;
+`DUNM2`: GRAPPLER / KNUCKLES / DANGLER / MR POTATO; `DUNM3`: RAKER BRUTE /
+BLUE LION / GIANT SLUG / SLIME WART. `decoders/dun_map.py DUNM1` prints
+all 8 levels with the feature legend.
 
 `MUSDATA.BSV` is the museum's counterpart: 3 exhibit floor maps (16×16,
 `0x000`–`0x07FF`) then, from `0x800`, its own copy of the dungeon-view
