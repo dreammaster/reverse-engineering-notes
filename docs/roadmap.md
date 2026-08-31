@@ -610,9 +610,10 @@ reimplementation.
         (ncols<<8)|nbands`, shrinking `3×15` → `1×5`. `0x110`–`0x693` =
         the tile lists — **every one a flat `ncols×nbands` cell-index
         array**, `0xFF` = skip, no marker layer. `0x694`–end = 255 ×
-        16-B CGA cells. `drawTileRun` + `blitViewCell` + the record table
-        fully decoded. Open: `drawViewWallBandMid`/`Far` (blocked-view
-        fallback) index the same records at other offsets.
+        16-B CGA cells. **Fully decoded** — `drawTileRun`, `blitViewCell`,
+        the 15-record table, and all 4 wall-band drawers (incl. the
+        blocked-view `Mid`/`Far` fallback, which re-use the side records'
+        `p2`/`p3` and the depth-4 front-wall triple).
       - `DUNOBJ.BSV` (and `MUSOBJ.BSV` — same container, larger museum
         set, BSAVE `0x1447:0x0DB6`): `decoders/dunobj.py`. `BLOAD`ed into
         `spriteBank` (`ds:1E58`) at **offset 0** (the BSAVE `0x0DB6` is
@@ -663,8 +664,8 @@ reimplementation.
       - `spriteBank` index arithmetic for `DUNMON` is now **resolved
         statically** — `bankBase = 0x1240 + monType·0x49A`, `getArray =
         bankBase + spriteBank[bankBase + P]`. Still open: `MUSOBJ`
-        bitmap-bank sub-offsets, and which `DUNDATA` projection record
-        maps to which on-screen wall.
+        bitmap-bank sub-offsets, and the `DUNOBJ` `0x8F2` object-art
+        indexing (both unused by `DUN.EXE` itself).
 - [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
       map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
       `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records

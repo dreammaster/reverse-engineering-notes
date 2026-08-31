@@ -248,8 +248,17 @@ coherent dithered stone panel with a dark edge; composited they make the
 first-person corridor view (arched dithered ceiling line, ragged floor
 line).
 
-**Still open:** `drawViewWallBandMid` / `drawViewWallBandFar` (the
-blocked-view fallback) index the same records at other word offsets.
+**Blocked-view fallback** — same records, no new fields. When a wall
+tile blocks the corridor at depth `k`, the near loop stops with the
+cursor on depth `k`'s **left-side record**, then for each side:
+`drawViewWallBandMid` (open side) draws that side wall from the record's
+`p2`/`p3` (words 4/5 — the darker strip-table columns, chosen on the
+blocking wall's `< 0x80` thickness), or `drawViewFloorCeiling` +
+`rtm_FE2B` fill (solid side). If the corridor is open to the end,
+`drawViewWallBandFar` draws depth 4's **front-wall triple** (words
+6/7/8 of the depth-4 wall-band record), tile list `+0xF`.
+
+The DUNDATA / `bmDUNG` first-person renderer is now **fully decoded.**
 
 ### The dungeon-view sprite & tile rendering model — **decoded 2026-08-31**
 

@@ -148,15 +148,25 @@ RENAMES = [
      'blit a monster / object sprite into the 3D view from its object '
      'descriptor ([bp+8]) -- rtm_FE46 / rtm_FE2E.'),
     (0x13DD1, "blitViewCell",
-     'the shared wall/surface draw primitive (rtm_FE2A) that all the '
-     'wall-band drawers call.'),
+     'draw one nbands x ncols grid of 8x8 cells: reads (videoOff, '
+     '(ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows '
+     'calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, '
+     'tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.'),
     (0x14166, "drawViewWallBandNear",
-     'draw the nearest wall-projection band (-> blitViewCell). '
-     'TENTATIVE (which band).'),
-    (0x1427C, "drawViewWallBandMid", 'draw the middle wall band. TENTATIVE.'),
-    (0x1430E, "drawViewWallBandFar", 'draw the far wall band. TENTATIVE.'),
+     'per depth band, blit the 3 triples of the 10-word wall-band record '
+     '(DUNDATA payload 0x20 + cursor): ceiling strip, floor strip, '
+     'front-wall block -- each via blitViewCell.'),
+    (0x1427C, "drawViewWallBandMid",
+     'blocked-view fallback for an OPEN corridor side: draw that side '
+     'wall from the left/right-side record\'s p2 (word 4) or p3 (word 5) '
+     'strip-table pointer, keyed on the blocking wall tile < 0x80.'),
+    (0x1430E, "drawViewWallBandFar",
+     'unobstructed corridor: draw depth 4\'s front-wall triple (words '
+     '6/7/8 of the depth-4 wall-band record), tile list +0xF.'),
     (0x14365, "drawViewFloorCeiling",
-     'draw the floor / ceiling planes of the view. TENTATIVE.'),
+     'draw a corridor side wall from a 7-word left/right-side record '
+     '(videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a '
+     'solid wall, p1 (col 1, shadowed) if it is an open passage.'),
 ]
 
 

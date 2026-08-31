@@ -70,8 +70,18 @@ bytes like `0x00`, `0x4B`-`0x56`, `0x70`, `0x7E`-`0x7F`, `0xC0`-`0xCC`
 are just the near-black shadow / edge bank cells every surface uses
 along its boundaries.
 
-Open: `drawViewWallBandMid` / `drawViewWallBandFar` (the blocked-view
-fallback path) index the same records at other offsets.
+The blocked-view fallback re-uses the same records at other word
+offsets, no new fields:
+
+  * if a wall tile blocks the corridor at depth k, the near loop stops
+    with the cursor on depth k's LEFT-side record.  For each side:
+      - open side  -> `drawViewWallBandMid` draws that side wall from the
+        record's `p2` (word 4) or `p3` (word 5) -- the darker strip-table
+        columns, chosen on the blocking wall's `< 0x80` thickness;
+      - solid side -> `drawViewFloorCeiling` + an `rtm_FE2B` fill.
+  * if the corridor is open all the way, `drawViewWallBandFar` draws
+    depth 4's FRONT-WALL triple (words 6/7/8 of the depth-4 wall-band
+    record), tile list offset `+0xF`.
 """
 import struct
 import sys

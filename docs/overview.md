@@ -753,9 +753,11 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   straight to `drawTileRun`; **no marker layer** (the `0x00` /
   `0x4B`-`0x7F` / `0xC0`-`0xCC` bytes are just the near-black shadow/edge
   cells). `0x694`-end = 255 16-B CGA cells. Composited, the strips make
-  a coherent corridor view.
-  Open: `drawViewWallBandMid` / `Far` (the blocked-view fallback) index
-  the same records at other offsets.
+  a coherent corridor view. The **blocked-view fallback** re-uses the
+  same records: `drawViewWallBandMid` draws an open side wall from the
+  side record's `p2`/`p3` (darker columns); `drawViewWallBandFar` draws
+  depth 4's front-wall triple when the corridor runs to the end. The
+  DUNDATA / `bmDUNG` renderer is **fully decoded**.
 - **2026-08-31** -- Mapped `DUNOBJ.BSV`'s region structure (dungeon
   objects + sprites). BSAVE to `0x140D:0x0DB6` -- the same DGROUP offset
   `OUTOBJ.BSV` / `MUSOBJ.BSV` load at, so there's one shared object
