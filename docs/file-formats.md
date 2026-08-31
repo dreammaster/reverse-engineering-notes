@@ -39,7 +39,7 @@ castle/fort layout banks.
 
 | File(s) | Size | Used by (guess) | Kind (guess) |
 |---|---|---|---|
-| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | title-screen graphics + map |
+| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **`.GLB` = the 8x8 tile bitmaps, `.GMP` = the per-cell tile-index map** (proven by `menu.idb` `seg001`'s `loadTitleImage`: it reads `.GLB` to `titleGlbBuf` + 0x11 = the bitmap data, `.GMP` to `titleGmpBuf`, then `blitCharCell` copies `map[cell]`-th 8x8 bitmap to `0xB800`). `scrollTitleImage` slides it horizontally (`titleScrollX`, step 40, wrap 160). |
 | `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | 12 town layouts |
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |

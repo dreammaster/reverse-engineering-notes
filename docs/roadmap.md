@@ -437,6 +437,12 @@ reimplementation.
       `sub_12055` -> `readCharDat`, `sub_12778` -> `writeCharDat`,
       `sub_10150` -> `menuStartup`, `sub_128A9` -> `updateCharDatEntry`,
       `sub_1210E` -> `enumerateRoster`. Only `sub_11A1E` still `sub_`.
+- [x] Map `menu` `seg001`'s DGROUP use (2026-08-31) -- the title-screen
+      helpers: `titleGlbBuf`/`titleGmpBuf` (`ds:3194`/`5194` load
+      buffers), `titleTilePtr` (`ds:6194`), `titleScrollX` (`ds:6196`,
+      step 40 / wrap 160), `titleColOfsTable` / `titleColTileTable`,
+      `titleGlbName` / `titleGmpName` / sizes. Confirmed `.GLB` = tile
+      bitmaps, `.GMP` = the cell map (see file-formats.md).
 - [ ] Confirm `playMusicTick` / `showTitleScreen` naming (the LEGACY.DAT
       touch in `playMusicTick` is unexplained).
 - [ ] `menu.idb` input path reads `C:\dev\lota\menu.exe` (a copy; the

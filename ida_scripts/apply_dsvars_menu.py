@@ -50,12 +50,42 @@ VARS = [
     (0x1AEE, "introStep",
      "intro-sequence step in playIntroAndLaunchGame (0 / 3 / 0xFF). "
      "TENTATIVE."),
+
+    # --- seg001 resident title-screen helpers (hand-written asm) ---
+    (0x317C, "titleGlbName", "\"TITLE.GLB\" -- the title tile-graphics file."),
+    (0x3186, "titleGmpName", "\"TITLE.GMP\" -- the title cell-map file."),
+    (0x3190, "titleGlbSize",
+     "byte count loadTitleImage passes to readFileWhole for TITLE.GLB."),
+    (0x3192, "titleGmpSize", "byte count for TITLE.GMP."),
+    (0x3194, "titleGlbBuf",
+     "load buffer for TITLE.GLB (the 8x8 tile bitmaps). ~8 KB region "
+     "(0x3194..0x5194)."),
+    (0x5194, "titleGmpBuf",
+     "load buffer for TITLE.GMP (the per-cell tile-index map the "
+     "blitter walks)."),
+    (0x6194, "titleTilePtr",
+     "pointer into titleGlbBuf at the tile-bitmap data (buf + 0x11, "
+     "skipping the BSAVE header). blitCharCell adds a tile index*2 to "
+     "it."),
+    (0x6196, "titleScrollX",
+     "horizontal scroll offset of the title image -- scrollTitleImage "
+     "advances it by 0x28 (40) each music tick and wraps at 0xA0 (160)."),
+    (0x6198, "titleColOfsTable",
+     "per-column screen-offset table scrollTitleImage indexes "
+     "(`[di+6198h]`)."),
+    (0x61C0, "titleColTileTable",
+     "per-column tile-index table scrollTitleImage indexes "
+     "(`[di+61C0h]`)."),
 ]
 
 
 def name_data(ea, name, cmt):
-    ida_bytes.del_items(ea, ida_bytes.DELIT_SIMPLE, 2)
-    ida_bytes.create_data(ea, ida_bytes.FF_WORD, 2, idc.BADADDR)
+    if name.endswith("Name"):
+        ida_bytes.del_items(ea, ida_bytes.DELIT_SIMPLE, 12)
+        idc.create_strlit(ea, ea + 10)
+    else:
+        ida_bytes.del_items(ea, ida_bytes.DELIT_SIMPLE, 2)
+        ida_bytes.create_data(ea, ida_bytes.FF_WORD, 2, idc.BADADDR)
     if idc.set_name(ea, name, idc.SN_NOWARN | idc.SN_CHECK):
         if cmt:
             idc.set_cmt(ea, cmt, 1)

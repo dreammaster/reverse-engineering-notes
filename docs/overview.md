@@ -380,6 +380,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `setViewport`, `drawActor`, `traceCombatLine`. These drive the
   `rtm_FE1x` graphics primitives in `leglib` `seg004` and read the
   interior map array (empty tile = `0xFF`).
+- **2026-08-31** — Mapped `menu.idb` `seg001`'s DGROUP use -- the 4
+  hand-written resident title-screen helpers (`loadTitleImage`,
+  `readFileWhole`, `blitCharCell`, `scrollTitleImage`). They load
+  `TITLE.GLB` (tile bitmaps) into `titleGlbBuf` (`ds:3194`) and
+  `TITLE.GMP` (the per-cell tile-index map) into `titleGmpBuf`
+  (`ds:5194`), then blit 8x8 cells to `0xB800`. `scrollTitleImage`
+  advances `titleScrollX` (`ds:6196`) by 40 each music tick, wrapping at
+  160, indexing `titleColOfsTable` / `titleColTileTable`. Names +
+  `titleGlbName` / `titleGmpName` / sizes.
 - **2026-08-31** — Mapped `bmDUNG` / `bmMUSDUNG`'s DGROUP state (the
   view renderers barely touch it directly): `dgroupSeg` (`ds:0101`),
   `viewDepthBand` (`ds:1F5A`, the depth-band loop counter), and the
