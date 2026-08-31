@@ -607,7 +607,13 @@ reimplementation.
       - Last-mile open (all three): the `spriteBank` index arithmetic
         (some indices point at a runtime-built header) — needs a dump
         from the running game.
-- [ ] Town / castle layouts.
+- [~] Town / castle data — `TCASOBJ.BSV` (2026-08-31) structure mapped:
+      loads into `spriteBank` (`ds:1E58`, seg `0x8537`) via
+      `loadCastleObjects`; object records (`(offA, offA+0x80)` pair
+      groups) + a CGA sprite/animation bank (`0x300`–`0xEFF`, ~12×`0x100`
+      frames) + 4 word-index tables + a tile tail. `FORTANIM.BSV`
+      overlays the last `0x100`. Still open: `TOWN0-B.BSV` /
+      `CASTLE.BS1/2` / `FORT.BS1/2` layouts, and the sprite-cell dims.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit
       glyph font (upright + 180°-rotated) + card-back tiles, tiles

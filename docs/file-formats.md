@@ -55,8 +55,8 @@ castle/fort layout banks.
 | `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` (or the generic `decoders/glb_image.py`) renders it. |
 | `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | 12 town layouts |
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
-| `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |
-| `FORTANIM.BSV` | 263 | `CASDR` | fort animation |
+| `TCASOBJ.BSV` | 4911 | `CASDR` | **structure mapped** — castle/town animated-object sprites. BSAVE → `0x8537:0x0000` into `spriteBank` (`ds:1E58`) via `loadCastleObjects` — same array/role as `DUNOBJ`/`OUTOBJ`/`MUSOBJ`. See the castle section below. |
+| `FORTANIM.BSV` | 263 | `CASDR` | fort-specific animation — BSAVE → `0x8537:0x1228`, i.e. it **overlays `TCASOBJ`'s last `0x100` bytes** (`0x1228`–`0x1327`), swapping the castle's animated-object frames for the fort's. |
 | `OUTM0.BSV` / `OUTM1.BSV` / `OUTM2.BSV` | 9969 / 4191 / 2101 | `OUT` | the 3 overworld map layers (picked by `combatPhase` in the filename `OUTM0<phase>.BSV`). BSAVE → `0x86AE:0x0000`. Shared 8-byte header `62 24 0A 00 11 00 3A 23`; 1 byte/tile terrain codes (`0x2C` = default, `0x2D`–`0x32`, …); logical map is 128 tiles wide (`OUT`'s feature scanner does `idiv 0x80` / `and 0x7F`). |
 | `OUTDATA.BSV` | 14235 | `OUT` | **structure mapped** — the shared overworld graphics + tables. BSAVE → `0x86AE:0x2B22`, i.e. **contiguous with the `OUTM*` layers in one array** (bound at `ds:1E2A`, exactly parallel to the dungeon's `DUNM* + DUNDATA`). See the dedicated section below. |
 | `OUTOBJ.BSV` | 4395 | `OUT` | overworld object sprites — BSAVE → `0x13A8:0x0DB6` into `spriteBank` (same `0x0DB6` offset as `DUNOBJ` / `MUSOBJ`). Not separately decoded (same shape as `DUNOBJ`). |
@@ -276,6 +276,25 @@ and tables:
 `rtm_FE14` (`rep movsb`) and paints tiles/sprites via `basPutSprite`
 (`rtm_61`). The exact 95-byte tile-record layout and the terrain-table
 field meanings need `OUT`'s overworld draw path traced.
+
+## Castle/town data — `TCASOBJ.BSV` + `FORTANIM.BSV` — **structure mapped 2026-08-31**
+
+`CASDR.EXE`'s `loadCastleObjects` `BSAVE`-loads `TCASOBJ.BSV` to
+`0x8537:0x0000` into `spriteBank` (`ds:1E58`) — the same array and role
+as `DUNOBJ` / `OUTOBJ` / `MUSOBJ`, so the same sprite-format family
+(mask + `basPutSprite`, field-interleaved 8×8 cells). 4904-byte payload:
+
+| span | contents |
+|---|---|
+| `0x000`–`0x0FF` | object records — groups of **four `(offA, offA+0x80)` word pairs** followed by a `(0,0)` terminator (~10 objects). The `offA` values (`0x0230`–`0x0CF0`) index the sprite bank; `+0x80` is the paired mask/second-plane. The 4 pairs are the object's 2×2 cell layout (col step `0x40`, row step `0x100`). |
+| `0x100`–`0x2FF` | small tables / mostly zero |
+| `0x300`–`0x0EFF` | **CGA 2 bpp sprite / animation bank** — ~12 blocks of `0x100` bytes, several byte-identical: the animation-loop frames (castle banners / torches / gate). `FORTANIM.BSV` overwrites the `0x1228`–`0x1327` block for the fort. |
+| `0x0F00`–`0x12FF` | 4 word-index tables, each `base + i·2`, table-to-table stride `0x63C` (bases `0x02B2`, `0x08EE`, `0x0F2A`, `0x1566`) — blit column/row address lists |
+| `0x1300`+ | a short tile-index tail (`E3 E4 E5 …`) |
+
+The exact sprite-cell dimensions and how `bmTNCALB` walks the record /
+table structure still need the castle-view renderer traced (it uses
+`rtm_FE19`, the shared single-tile blit).
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

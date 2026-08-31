@@ -798,3 +798,14 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   it scrolls a 95-byte-tile / 13-stride working buffer with `rtm_FE1B`
   (`rep stosb`) / `rtm_FE14` (`rep movsb`) and paints via `basPutSprite`.
   Open: the 95-byte record layout + the terrain tables' fields.
+- **2026-08-31** -- Mapped `TCASOBJ.BSV` (castle/town animated objects).
+  `CASDR`'s `loadCastleObjects` BSAVE-loads it to `0x8537:0x0000` into
+  `spriteBank` (`ds:1E58`) -- same array/role as `DUNOBJ`/`OUTOBJ`/
+  `MUSOBJ`. 4904-B payload: object records (`0x000`-`0xFF`, groups of
+  four `(offA, offA+0x80)` pairs + a `(0,0)` terminator) + a CGA 2 bpp
+  sprite/animation bank (`0x300`-`0xEFF`, ~12 blocks of `0x100`, several
+  byte-identical = animation frames) + 4 word-index tables
+  (`0xF00`-`0x12FF`, `base + i*2`, table stride `0x63C`) + a tile tail.
+  `FORTANIM.BSV` (256 B) loads to `0x8537:0x1228`, overwriting the last
+  `0x100`-byte animation block for the fort variant. Open: the
+  sprite-cell dims + how `bmTNCALB` walks it (`rtm_FE19`).
