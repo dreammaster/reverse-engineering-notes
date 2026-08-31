@@ -6,10 +6,11 @@ the function/global that proves them; anything untraced is flagged as a
 guess. See [overview.md](overview.md) for the code side and
 [roadmap.md](roadmap.md) for what's still open.
 
-Status (2026-08-31): the BSAVE container is confirmed, and
-**`TITLE.GLB` + `TITLE.GMP` are fully decoded** (`decoders/title_screen.py`
-renders the CGA title screen pixel-for-pixel). The other `.BSV`/`.GLB`
-files are still container-only.
+Status (2026-08-31): the BSAVE container is confirmed, and the
+**`.GLB` + `.GMP` tile/cell-map format is fully decoded** —
+`decoders/glb_image.py` renders both `TITLE` (the CGA title screen,
+pixel-for-pixel) and `SDMAP` (the SDEFENDR combat-arena screen frame).
+The other `.BSV` files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -41,7 +42,7 @@ castle/fort layout banks.
 
 | File(s) | Size | Used by (guess) | Kind (guess) |
 |---|---|---|---|
-| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` renders it. |
+| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` (or the generic `decoders/glb_image.py`) renders it. |
 | `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | 12 town layouts |
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |
@@ -51,7 +52,8 @@ castle/fort layout banks.
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
-| `SDMAP.GLB` / `.GMP`, `SDOBJ.GLB` | 4113 / 2081 / 6161 | `SDEFENDR` | combat-training arena playfield / sprites (loaded into `seg004`, driven by the hand-written `arenaGameLoop`) |
+| `SDMAP.GLB` / `.GMP` | 4113 / 2081 | `SDEFENDR` | **fully decoded** — 256-tile 8×8 CGA sheet + 41×25 column-major cell map = the combat-arena *screen frame* (ornate magenta viewport border around a black 3-D-view window, stippled background). Same format as `TITLE`; `decoders/glb_image.py SDMAP` renders it. |
+| `SDOBJ.GLB` | 6161 | `SDEFENDR` | combat-training arena sprites (loaded into `seg004`, drawn by the hand-written `drawArenaSprites`) — not yet decoded |
 | `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | card sprites ("BJ" = BlackJack) — `GMB1` (BlackJack) BLOADs it into `seg004`; `GMB2` shares it |
 | `BIGNUM.DAT` | 420 | `GMB2` (at least) | large-digit font — `GMB2` (Flip-Flop Parlour) BLOADs it to render the GOLD / BET / winnings numbers |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
@@ -65,31 +67,39 @@ castle/fort layout banks.
 `LEGACY.BAT` (4 bytes: `menu`), `manual.txt`, and
 `Passed.through.ANTiQUE.Shop` are not game data.
 
-## `TITLE.GLB` + `TITLE.GMP` — tile sheet + cell map — **decoded 2026-08-31**
+## `.GLB` + `.GMP` — tile sheet + cell map — **decoded 2026-08-31**
 
-Fully decoded and rendered (`decoders/title_screen.py` -> the CGA title
-screen). Both are BSAVE images; strip the 7-byte header, then:
+Fully decoded and rendered by `decoders/glb_image.py` (verified against
+`TITLE` → the CGA title screen, and `SDMAP` → the SDEFENDR combat-arena
+screen frame). `decoders/title_screen.py` is the earlier TITLE-only
+prototype. Both files are BSAVE images; strip the 7-byte header, then:
 
-**`TITLE.GLB`** (payload 8202 b) — the tile sheet.
+**`.GLB`** — the tile sheet.
 | off | contents |
 |---|---|
-| `0x00`–`0x09` | 5 header words: `{0x000A, 0x0008, 1, 1, 1}` (tile h/w = 8, then 1/1/1) |
-| `0x0A`–`0x200A` | **512 tiles × 16 bytes.** Each tile = one 8×8 CGA cell, 2 bpp / 4 colours. Stored **field-interleaved**: the 8 words are scanlines 0,2,4,6,1,3,5,7 (in that file order). Within a word, byte 0 = the left 4 px, MSB pair = leftmost. |
+| `0x00`–`0x09` | 5 header words. `word[0]` = `0x000A` (this header's size). The other four — `TITLE {8,1,1,1}`, `SDMAP {4,1,1,0}` — look like BASIC `DIM` bounds and are **not** needed to render. In particular `word[1]` is **not** the tile width (both sheets are 8-px tiles). |
+| `0x0A`–end | a flat array of **8×8 CGA tiles, 16 bytes each**, 2 bpp / 4 colours (TITLE 512 tiles, SDMAP 256). Stored **field-interleaved**: the 8 words are scanlines 0,2,4,6,1,3,5,7 (in that file order). Within a word, byte 0 = the left 4 px, MSB pair = leftmost. |
 
-**`TITLE.GMP`** (payload 2104 b) — the 40×25 cell map.
+**`.GMP`** — the cell map.
 | off | contents |
 |---|---|
-| `0x00`–`0x19` | header: 5 words `{0x1A, 0x11, 0x1A, 0x1A, 0x28}` (0x28 = 40 = column count), then `"title"` as wide chars (the BASIC source variable name), then zero padding |
-| `0x1A`–end | the cell array: **40 columns × 26 words, COLUMN-MAJOR** (25 rows used per column + 1 word of padding). Cell word `W` → tile index `W // 8` (the blitter does `src = tiledata + W*2`). |
+| `0x00`–`0x05` | 3 header words `{0x1A, 0x11, 0x1A}` (`0x1A` = this header's size) |
+| `word[3]` | **ROWS** — tile rows = words per column (`TITLE` 26, `SDMAP` 25) |
+| `word[4]` | **COLS** — tile columns (`TITLE` 40, `SDMAP` 41); `COLS*8` slightly overruns the 320-px screen, so the last column is padding |
+| `0x0A`–`0x19` | the BASIC source variable name (`"title"` / `"sdmap"`) as wide chars, zero-padded |
+| `0x1A`–end | the cell array: **COLS columns × ROWS words, COLUMN-MAJOR**. Cell word `W` → tile index `W // 8` (the blitter does `src = tiledata + W*2`, tile stride 16; every `W` seen is a multiple of 8). |
 
 Screen: CGA 320×200 mode 4, palette 1 (0 black / 1 cyan / 2 magenta /
 3 white); even scanlines at `B800:0000`, odd at `B800:2000`.
-`menu`'s `scrollTitleImage` re-blits it column-shifted each music tick
-(`titleScrollX`, step 40, wrap 160) for the slow horizontal drift.
+`menu`'s `scrollTitleImage` re-blits `TITLE` column-shifted each music
+tick (`titleScrollX`, step 40, wrap 160) for the slow horizontal drift.
+`SDMAP` is an ornate magenta viewport border (hanging tab, top/bottom
+latch details, side handles) around a black 3-D-view window, over a
+stippled CGA background — tiles 17–20 are the intentional stipple.
 
-The `{0x000A, 0x0008, 1, 1, 1}` / `{0x1A, 0x11, ...}` payload headers are
-the standard `.GLB` / `.GMP` preamble — expect the same shape on the
-other tile sheets (`SDMAP.GLB`, `BJCHR.GLB`, `SDOBJ.GLB`).
+The remaining tile sheets (`BJCHR.GLB`, `SDOBJ.GLB`) ship without a
+matching `.GMP`, so they are raw sprite atlases, not screen layouts — a
+different decode.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

@@ -324,8 +324,11 @@ reimplementation.
 - [ ] The `seg001` asm engine: it works on `ds:` bytes `0Ch/0Eh` (seg004
       playfield ptr), `11h` (turn key), `15h` (fire/shift), `16h`/`22h`
       (cooldown timers). Map the full arena state block in `seg004`.
-- [ ] `SDMAP.GLB` / `.GMP` / `SDOBJ.GLB` field layout (the arena
-      playfield + fireball/arrow sprites).
+- [x] `SDMAP.GLB` / `.GMP` (2026-08-31) — decoded: it's the arena
+      *screen frame* (ornate viewport border), standard `.GLB`/`.GMP`
+      tile+cellmap format, 256 tiles, 41×25 map. `decoders/glb_image.py`.
+- [ ] `SDOBJ.GLB` sprite atlas (fireball / arrow / target sprites) — no
+      `.GMP`, so a raw atlas, not a screen layout.
 - [ ] Confirm the stat-change math: the "40, 31, 22, 19, 16, 14, 12"
       table (per-level hit thresholds?) vs. the " INCREASE: + / DECREASE:
       -" applied to `ARMOR,WEAPON,ENDUR`.
@@ -540,14 +543,14 @@ reimplementation.
 
 ## Data formats
 
-- [x] **`TITLE.GLB` + `TITLE.GMP`** (2026-08-31) — fully decoded and
-      rendered (`decoders/title_screen.py`). `.GLB` = a flat 512-tile
-      sheet of 16-byte 8×8 CGA cells, **field-interleaved** (scanlines
-      0,2,4,6,1,3,5,7); `.GMP` = a 40×25 **column-major** cell map,
-      word `W` -> tile `W//8`. Both carry a small `.GLB`/`.GMP` preamble
-      (5 header words). CGA 320×200 mode 4, palette 1. See
-      file-formats.md. *This is the general `.GLB` tile format* -- apply
-      to `SDMAP.GLB`, `BJCHR.GLB`, `SDOBJ.GLB` next.
+- [x] **`.GLB` + `.GMP` (tile sheet + cell map)** (2026-08-31) — fully
+      decoded; `decoders/glb_image.py` renders `TITLE` (title screen) and
+      `SDMAP` (SDEFENDR combat-arena screen frame). `.GLB` = a flat sheet
+      of 16-byte 8×8 CGA cells, **field-interleaved** (scanlines
+      0,2,4,6,1,3,5,7); `.GMP` = a **column-major** cell map (dims in
+      header words 3/4), word `W` -> tile `W//8`. The `.GLB` header
+      word[1] is *not* tile width — tiles are always 8-px. CGA 320×200
+      mode 4, palette 1. See file-formats.md.
 - [ ] `CHAR.DAT` (3444 bytes) — character roster the menu edits.
       `readCharDat` / `writeCharDat` / `charRecordSize` are named.
 - [ ] Field-level decode of `LEGACY.DAT` (no BSAVE header — the odd one
@@ -555,8 +558,8 @@ reimplementation.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
 - [ ] Town / castle / dungeon layouts.
-- [ ] The other tile sheets (`SDMAP.GLB`/`.GMP`, `BJCHR.GLB`,
-      `SDOBJ.GLB`, the `CEL*.BSV`) — should follow the TITLE format.
+- [ ] The standalone tile atlases (`BJCHR.GLB`, `SDOBJ.GLB` — no `.GMP`)
+      and the `CEL*.BSV` ending images.
 - [ ] Music format (`MUSDATA.BSV` + the MML strings in `MENU`).
 
 ## ScummVM engine (future)

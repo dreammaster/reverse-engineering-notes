@@ -10,10 +10,11 @@ This file is the entry point into `docs/`. See also:
 - [roadmap.md](roadmap.md) — prioritized list of what's investigated vs.
   still open, per executable.
 - [file-formats.md](file-formats.md) — on-disk data formats (maps, saves,
-  graphics, music, etc.). `TITLE.GLB`/`.GMP` decoded; the rest
-  container-only.
+  graphics, music, etc.). The `.GLB`/`.GMP` tile+cellmap format is
+  decoded; the `.BSV` maps/tables are still container-only.
 - `decoders/` — standalone Python decoders for the data files
-  (`title_screen.py` -> the CGA title screen as a BMP). No deps.
+  (`glb_image.py` -> `TITLE` / `SDMAP` screens as BMPs;
+  `title_screen.py` is the TITLE-only prototype). Stdlib only, no deps.
 
 ## The game is compiled Microsoft BASIC, not C
 
@@ -679,3 +680,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `ds:1AD2` = partyGold and `ds:1ADA` = hitPoints in every one;
   `ds:1F02` = tileAhead and `ds:1F2A` = a turn/context flag wherever
   they appear. See each module's `apply_dsvars_<m>.py`.
+- **2026-08-31** — Decoded the `.GLB` + `.GMP` graphics format
+  (`decoders/glb_image.py`). `.GLB` = a flat sheet of 16-byte 8×8 CGA
+  tiles (2 bpp, palette 1), stored **field-interleaved** (scanlines
+  0,2,4,6,1,3,5,7); `.GMP` = a **column-major** cell map whose ROWS/COLS
+  are header words 3/4, each cell word `W` selecting tile `W // 8`. The
+  `.GLB` header word[1] (TITLE 8, SDMAP 4) is *not* a tile dimension —
+  tiles are always 8-px. Renders `TITLE` (title screen, pixel-perfect —
+  matches the earlier `title_screen.py`) and `SDMAP` = the **SDEFENDR
+  combat-arena screen frame**: an ornate magenta viewport border
+  (hanging tab, top/bottom latch details, side handles) around a black
+  3-D-view window, over a stippled CGA background (tiles 17–20 are the
+  intentional stipple, not a decode artefact). Only `TITLE` and `SDMAP`
+  ship a `.GMP`; `BJCHR.GLB` / `SDOBJ.GLB` are raw sprite atlases (no
+  cell map) and need a different decode. See file-formats.md.
