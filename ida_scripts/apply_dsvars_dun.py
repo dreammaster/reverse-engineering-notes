@@ -81,10 +81,37 @@ VARS = [
      "OUT.EXE's overworldArrayPtr."),
     (0x2276, "dungeonArrayPtr_seg", "segment word of dungeonArrayPtr (2274)."),
 
-    (0x20EA, "hpDisplayScratch",
-     "NOT engine state -- a DGROUP scratch word the code stages a value "
-     "in before a runtime call / the \"H.P.\" display (showHitPoints "
-     "pushes it). Named so it is not mistaken for hitPoints (1ADA)."),
+    (0x20EA, "workInt",
+     "DUN's general-purpose integer working variable (17 writes / 12 "
+     "functions) -- staged then pushed to the value stack for display "
+     "(the \"H.P.\" number showHitPoints prints comes through here) or "
+     "used as an amount. The DUN equivalent of OUT's workInt (which "
+     "lives at ds:1F04). Not the actual hit points -- those are "
+     "ds:1ADA."),
+
+    # --- 2nd pass: mid-traffic vars ---
+    (0x1E22, "menuChoice",
+     "the current Y/N / menu answer -- useMagicMenu reads it, "
+     "changeGameSpeed sets it. Same DGROUP slot as every other module."),
+    (0x2188, "monsterIndex",
+     "monster-list loop index -- moveMonsters resets it to 0 and inc's "
+     "it per monster; monsterAttack checks `== 0`."),
+    (0x1F08, "chestItemKind",
+     "openChest stages the found item's kind here (0x0A / 6); reused as "
+     "a 0/1 flag by useMagicMenu. TENTATIVE."),
+    (0x1F0A, "chestGold",
+     "openChest stages the gold-found amount here (0x258 = 600 / 0x46D "
+     "= 1133); reused as a flag by monsterAttack. TENTATIVE."),
+    (0x1AFE, "attackTargetTile",
+     "the tile / creature code in the attack direction -- "
+     "checkAttackTarget branches on it (`cmp ,6` / `cmp ,8` / `cmp "
+     ",0`). TENTATIVE."),
+    (0x2140, "attackMode",
+     "small enum useMagicMenu and doAttack test (`cmp ,2`) -- "
+     "melee vs. spell vs. ranged. TENTATIVE."),
+    (0x1E20, "screenLayout",
+     "view-mode / screen-layout code (set to 0x0B by climbDownOrExit / "
+     "dunMain). Recurs across modules. TENTATIVE."),
 
     # --- seg001 "bmDUNG" (the first-person view renderer) ---
     (0x0101, "dgroupSeg",

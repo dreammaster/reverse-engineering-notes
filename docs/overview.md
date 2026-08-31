@@ -619,7 +619,13 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   **same DGROUP offsets as OUT** -- LEGLIB fixes those slots across
   modules. New functions: `processTileFeature` (the per-turn feature
   handler + trap-name table), `moveMonsters`, `drawDungeonHud`,
-  `doLookSearch`, `clearTurnFlag`, `setActionPhase_1/2/3`.
+  `doLookSearch`, `clearTurnFlag`, `setActionPhase_1/2/3`. Second DGROUP
+  pass (2026-08-31): `ds:20EA` = `workInt` (DUN's general-purpose
+  integer local, the OUT-`ds:1F04` equivalent -- was mislabelled
+  "display scratch"), `menuChoice` (`ds:1E22`), `monsterIndex`
+  (`ds:2188`, the moveMonsters loop counter), `chestGold`/`chestItemKind`
+  (`ds:1F0A`/`1F08`), `attackTargetTile`, `attackMode`, `screenLayout`
+  -> ~24 DUN DGROUP vars named.
 - **2026-08-31** — Mapped the TWNDR.EXE state vars
   (`apply_dsvars_twndr.py`, DGROUP `seg004`) + 2nd naming pass: **51 /
   98**. `partyGold` (`ds:1AD2`) and `hitPoints` (`ds:1ADA`) confirmed at

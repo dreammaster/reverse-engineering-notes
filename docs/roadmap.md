@@ -109,8 +109,13 @@ reimplementation.
       (20C4), `selectedSpell` (1E24), `dungeonArrayPtr` (2274 far ptr),
       `levelProgressFlags` (1AE2), `actionPhase` (20EC); `turnActionFlag`
       (212E) and `chainDestType` (1F16) are the **same DGROUP slots as
-      OUT**. `hpDisplayScratch` (20EA) explicitly flagged as scratch, not
-      HP. `featureUnderfoot` / `scanTile` / `moveDelta` tentative.
+      OUT**. `featureUnderfoot` / `scanTile` / `moveDelta` tentative.
+- [x] 2nd DUN DGROUP pass (2026-08-31): `ds:20EA` = `workInt` (DUN's
+      general-purpose int local, the OUT-`ds:1F04` equivalent -- was
+      mislabelled "hpDisplayScratch"). Also `menuChoice` (1E22),
+      `monsterIndex` (2188 = the moveMonsters loop), `chestGold` /
+      `chestItemKind` (1F0A / 1F08), `attackTargetTile` (1AFE),
+      `attackMode` (2140), `screenLayout` (1E20). ~24 DUN DGROUP vars.
 - [~] Name `seg000` functions (`apply_renames_dun.py`): **38 / 72**
       (2026-08-31 second pass). New: `processTileFeature` (was
       `sub_12536` — the per-turn feature handler with the trap-name

@@ -20542,8 +20542,7 @@ levelProgressFlags dw 0                 ; per-level bit flags (openChest tests 0
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+attackTargetTile dw 0                   ; the tile / creature code in the attack direction -- checkAttackTarget branches on it (`cmp ,6` / `cmp ,8` / `cmp ,0`). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -21342,10 +21341,8 @@ viewObjectArray dw 0                    ; descriptor for the in-view monster / o
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+screenLayout    dw 0                    ; view-mode / screen-layout code (set to 0x0B by climbDownOrExit / dunMain). Recurs across modules. TENTATIVE.
+menuChoice      dw 0                    ; the current Y/N / menu answer -- useMagicMenu reads it, changeGameSpeed sets it. Same DGROUP slot as every other module.
 selectedSpell   dw 0                    ; spell-menu selection index (0..0x19). Set by useMagicMenu, read by castSpell to pick the effect.
                 db    0
                 db    0
@@ -21571,10 +21568,8 @@ spriteBank      dw 0                    ; descriptor for the sprite / monster gr
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+chestItemKind   dw 0                    ; openChest stages the found item's kind here (0x0A / 6); reused as a 0/1 flag by useMagicMenu. TENTATIVE.
+chestGold       dw 0                    ; openChest stages the gold-found amount here (0x258 = 600 / 0x46D = 1133); reused as a flag by monsterAttack. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -22045,7 +22040,7 @@ playerY         dw 0                    ; player row in the dungeon (paired with
                 db    0
                 db    0
                 db    0
-hpDisplayScratch dw 0                   ; NOT engine state -- a DGROUP scratch word the code stages a value in before a runtime call / the "H.P." display (showHitPoints pushes it). Named so it is not mistaken for hitPoints (1ADA).
+workInt         dw 0                    ; DUN's general-purpose integer working variable (17 writes / 12 functions) -- staged then pushed to the value stack for display (the "H.P." number showHitPoints prints comes through here) or used as an amount. The DUN equivalent of OUT's workInt (which lives at ds:1F04). Not the actual hit points -- those are ds:1ADA.
 actionPhase     dw 0                    ; small phase enum (1..4) set by the setActionPhase_* stubs and castSpell; monsterAttack and sub_12536 advance it. TENTATIVE.
                 db    0
                 db    0
@@ -22128,6 +22123,7 @@ turnActionFlag  dw 0                    ; 1 after a turn-consuming action (set b
                 db    0
                 db    0
                 db    0
+attackMode      dw 0                    ; small enum useMagicMenu and doAttack test (`cmp ,2`) -- melee vs. spell vs. ranged. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -22198,10 +22194,7 @@ turnActionFlag  dw 0                    ; 1 after a turn-consuming action (set b
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+monsterIndex    dw 0                    ; monster-list loop index -- moveMonsters resets it to 0 and inc's it per monster; monsterAttack checks `== 0`.
                 db    0
                 db    0
                 db    0
