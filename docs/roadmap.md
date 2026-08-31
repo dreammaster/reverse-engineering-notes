@@ -629,7 +629,13 @@ reimplementation.
       glyph font (upright + 180°-rotated) + card-back tiles, tiles
       0–127. Still open for both: the per-sprite tile grouping / index
       table. Plus the `CEL*.BSV` ending images.
-- [ ] Music format (`MUSDATA.BSV` + the MML strings in `MENU`).
+- [x] `MUSDATA.BSV` (2026-08-31) — **not music**; it's the Tarmalon
+      Museum data: 3 exhibit floor maps (16×16, `0xE0`–`0xEF` = the 16
+      display-case portals) at `0x000`–`0x7FF`, then a near-copy of
+      `DUNDATA.BSV`'s dungeon-view tile/graphic data from `0x800`
+      (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`.
+- [ ] Music format — the MML `PLAY` strings in `MENU` (`t120l4cl8ef…`)
+      + `basPlayMusic` / `rtm_CE`.
 
 ## ScummVM engine (future)
 

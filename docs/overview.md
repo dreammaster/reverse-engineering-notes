@@ -830,3 +830,12 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   CGA 2 bpp tile-graphic bank (`~0x2400`+, ~3.6 KB -- `.BS1`/`.BS2` are
   two floors of one building so they share it). `town_map.py` now
   auto-selects the layout from the filename.
+- **2026-08-31** -- Decoded `MUSDATA.BSV` -- the Tarmalon Museum, *not*
+  music. BSAVE to `0x2C1C:0x0F58` (right by the dungeon's
+  `0x2C07:0x0F3C`). `0x000`-`0x07FF` = **3 exhibit floor maps, 16x16
+  tiles** (`0x80` wall / `0x00`-`0x03` floor / `0x10`-`0x43` wall-edge /
+  `0xE0`-`0xEF` = the 16 display-case portals) + 5 empty slots;
+  `0x800`+ = its own near-copy of `DUNDATA.BSV`'s dungeon-view
+  tile/graphic data (many 64-byte regions byte-match at `~-0x800`
+  delta) -- the museum's `bmMUSDUNG` is literally `bmDUNG`, so exhibit
+  halls render as dungeon corridors. `decoders/dun_map.py MUSDATA`.

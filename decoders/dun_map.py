@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
-"""Decode `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` -- the Legacy of the
-Ancients dungeon tile maps.
+"""Decode `DUNM1/2/3.BSV` (dungeon tile maps) and `MUSDATA.BSV` (the
+museum's exhibit maps) -- both 16x16 tile levels read by the same
+first-person view renderer (`bmDUNG` == `bmMUSDUNG`).
 
-    python decoders/dun_map.py [DUNM1] [C:\\games\\lota]
+    python decoders/dun_map.py [DUNM1|MUSDATA] [C:\\games\\lota]
+
+`MUSDATA.BSV` holds 3 museum floor maps (16x16) at `0x000`, then -- from
+`0x800` on -- a near-copy of `DUNDATA.BSV`'s dungeon-view tile/graphic
+data (so the museum halls render exactly like dungeon corridors). Tile
+`0xE0`-`0xEF` on a museum map = one of the 16 exhibit / display-case
+portals `enterExhibit` routes on.
 
 Each file is a Microsoft BASIC `BSAVE` image (`[FD][seg][off][len]`,
 7-byte header; here seg 0x2C07, off 0x0F3C).  The payload is exactly
@@ -46,13 +53,25 @@ def read_bsave(path):
 
 def dump(name, games_dir):
     p = read_bsave(os.path.join(games_dir, name + ".BSV"))
-    print(f"{name}.BSV  payload {len(p)} bytes = {len(p)//LEVEL_BYTES} levels "
-          f"x {W}x{H}")
-    for lvl in range(len(p) // LEVEL_BYTES):
+    # MUSDATA.BSV: 3 museum "exhibit" levels (16x16) at the start, then a
+    # near-copy of DUNDATA.BSV's dungeon-view graphics (bmMUSDUNG == bmDUNG).
+    museum = name.upper().startswith("MUSDATA")
+    nlev = 3 if museum else len(p) // LEVEL_BYTES
+    print(f"{name}.BSV  payload {len(p)} bytes = {nlev} "
+          f"{'exhibit maps' if museum else 'levels'} x {W}x{H}")
+    for lvl in range(nlev):
         g = p[lvl * LEVEL_BYTES:(lvl + 1) * LEVEL_BYTES]
-        feats = sorted({b for b in g if 0 < b < 0x10})
-        print(f"\n--- level {lvl}   feature codes: "
-              f"{', '.join(f'0x{f:02X}' for f in feats) or '(none)'}")
+        if not any(g):
+            continue
+        if museum:
+            marks = sorted({b for b in g if 0xE0 <= b <= 0xEF})
+            tag = ("exhibit markers: "
+                   + (", ".join(f"0x{m:02X}" for m in marks) or "(none)"))
+        else:
+            feats = sorted({b for b in g if 0 < b < 0x10})
+            tag = ("feature codes: "
+                   + (", ".join(f"0x{f:02X}" for f in feats) or "(none)"))
+        print(f"\n--- {'exhibit map' if museum else 'level'} {lvl}   {tag}")
         for r in range(H):
             row = g[r * W:(r + 1) * W]
             print("  " + "".join(GLYPH.get(b, f"{b:02X}") for b in row))

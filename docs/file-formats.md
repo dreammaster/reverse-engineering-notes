@@ -20,8 +20,9 @@ mask-list + BASIC-`PUT`-image sprite format). The **overworld** files
 `OUTM0/1/2.BSV` + `OUTDATA.BSV` have their architecture and region
 layout mapped (they mirror the dungeon's `DUNM* + DUNDATA`); open there
 is the last-mile bitmap-record packing. The **12 town layouts**
-(`TOWN0..B.BSV`, 80×40) and the **castle / fort floor maps**
-(`CASTLE.BS1/2` 90×91, `FORT.BS1/2` 112×73) are decoded. What's left is
+(`TOWN0..B.BSV`, 80×40), the **castle / fort floor maps**
+(`CASTLE.BS1/2` 90×91, `FORT.BS1/2` 112×73), and the **museum**
+(`MUSDATA.BSV`, 3× 16×16 exhibit maps) are decoded. What's left is
 container/structure-only: the per-file tile-graphic banks, `TCASOBJ`
 sprite-cell dims, and the monster/object sprite pixel packing.
 
@@ -70,7 +71,8 @@ castle/fort layout banks.
 | `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **decoded** — dungeon monster sprites (two swappable sets). BSAVE → `0x140D:0x3236` into `spriteBank`. 14136-B payload = **exactly 6 records × 2356 B** = 6 monsters. Each = 20-B header (fixed 5-entry frame table) + 5 image frames (705/248/110/65/30 B = near→far, each a `basPutSprite` array) + ~5 mask frames + trailer. See the dungeon section below. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
-| `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
+| `MUSDATA.BSV` | 8055 | `MUS` | **decoded** — the Tarmalon Museum data. BSAVE → `0x2C1C:0x0F58` (near the dungeon's `0x2C07:0x0F3C`). `0x000`–`0x07FF` = **3 exhibit floor maps, 16×16 tiles** (`0x80` wall / `0x00`–`0x03` floor / `0x10`–`0x43` wall-edge / `0xE0`–`0xEF` = the 16 display-case portals) + 5 empty slots; `0x800`+ = a near-copy of `DUNDATA.BSV`'s dungeon-view tile/graphic data (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`. |
+| `MUSOBJ.BSV` / `MUSMSG.TXT` | 12961 / 11229 | `MUS` | exhibit object sprites (→ `spriteBank`, same `0x0DB6` offset as `DUNOBJ`) / plaque + exhibit message text |
 | `SDMAP.GLB` / `.GMP` | 4113 / 2081 | `SDEFENDR` | **fully decoded** — 256-tile 8×8 CGA sheet + 41×25 column-major cell map = the combat-arena *screen frame* (ornate magenta viewport border around a black 3-D-view window, stippled background). Same format as `TITLE`; `decoders/glb_image.py SDMAP` renders it. |
 | `SDOBJ.GLB` | 6161 | `SDEFENDR` | **tiles decoded** — 384 × 8×8 CGA tiles, same field-interleaved format as `TITLE`, **no `.GMP`** (bare sprite atlas). Content: approaching fireballs at ~6 scale steps, explosion / impact animation frames, cyan directional player-shot arrows, a horned enemy head. Per-sprite tile grouping TBD (needs the arena blit code). `decoders/glb_image.py SDOBJ` dumps the atlas. |
 | `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | **tiles decoded** — card graphics ("BJ" = BlackJack). Same container as `SDOBJ.GLB` (6161 b, `{0x0A,6,1,0,1}`, bare atlas, no `.GMP`); 384 8×8 tiles, only 0–127 used. Holds a card **rank/suit glyph font** — `A 2 3 4 5 6 7 8 9 10 J Q K` + the four suit pips (♠♣ white, ♥♦ magenta), in **both upright and 180°-rotated** forms (the two opposite card corners) — plus card-back pattern + frame/corner tiles. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. `decoders/glb_image.py BJCHR` dumps the atlas (use grid width 15 to line the font up). |
@@ -184,6 +186,14 @@ handling.
 `DUN.EXE` binds this array at DGROUP `ds:1E2A` and indexes
 `base + level*0x100`; bytes `≥ 0x10` are walls/normal, `< 0x10` index the
 feature table. `decoders/dun_map.py DUNM1` prints all 8 levels.
+
+`MUSDATA.BSV` is the museum's counterpart: 3 exhibit floor maps (16×16,
+`0x000`–`0x07FF`) then, from `0x800`, its own copy of the dungeon-view
+tile/graphic data — many 64-byte regions byte-match `DUNDATA.BSV` at a
+~`-0x800` delta (the museum's `bmMUSDUNG` is the same renderer as
+`bmDUNG`). Museum tile `0xE0`–`0xEF` = one of the 16 exhibit /
+display-case portals `enterExhibit` routes on (to `TWNDR` / `DUN` /
+`STDRV` / `CELDRV`).
 
 `DUNDATA.BSV` `BSAVE`s to `0x2C07:0x173C` — exactly `0x800` bytes after
 the map, so `DUNM* + DUNDATA` load into **one contiguous DGROUP array**
