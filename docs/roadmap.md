@@ -628,12 +628,19 @@ reimplementation.
         is drawn into; the creature pixels come from `DUNMON`
         (`basPutSprite`). Region A = the DUNMON bank pointers + the 5
         per-depth `(count, listStart)` descriptors, not an object table.
-      - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
-        `basPutSprite` image frames (near→far) + mask frames + trailer.
-        A/B = two swappable sets.
-      - Last-mile open (all three): the `spriteBank` index arithmetic
-        (some indices point at a runtime-built header) — needs a dump
-        from the running game.
+      - `DUNMONA/B.BSV` — **fully decoded** (`decoders/dunmon.py`): 6
+        blocks × 2356 B (one per monster-type slot), A = levels 0–3, B =
+        4–7. Each block = 6-word frame-offset table (`9/725/973/1083/
+        1148/1178`) + 3 zero words + **5 back-to-back stock MS-BASIC
+        `PUT` GET-arrays** for view-depths P0…P4 (82×68 / 48×41 / 32×27 /
+        24×21 / 16×14; `dw xBits ; dw yRows ; linear 2 bpp rows`, colour
+        0 transparent). `drawViewSprite` picks the block by
+        `viewObjectArray[8+slotClass] mod 6`, the frame by depth `P`.
+      - `spriteBank` index arithmetic for `DUNMON` is now **resolved
+        statically** — `bankBase = 0x1240 + monType·0x49A`, `getArray =
+        bankBase + spriteBank[bankBase + P]`. Still open: `DUNOBJ`
+        region-C mask-cell / `MUSOBJ` bitmap-bank sub-offsets, and
+        `DUNDATA` / `blitViewCell`'s wall-tile index math.
 - [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
       map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
       `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records

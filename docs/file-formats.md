@@ -68,7 +68,7 @@ castle/fort layout banks.
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
 | `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
-| `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **decoded** — dungeon monster sprites (two swappable sets). BSAVE → `0x140D:0x3236` into `spriteBank`. 14136-B payload = **exactly 6 records × 2356 B** = 6 monsters. Each = 20-B header (fixed 5-entry frame table) + 5 image frames (705/248/110/65/30 B = near→far, each a `basPutSprite` array) + ~5 mask frames + trailer. See the dungeon section below. |
+| `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **fully decoded** — dungeon monster sprites (`A` = levels 0–3, `B` = 4–7). BSAVE → `spriteBank` word `0x1240`. 14136-B payload = **exactly 6 blocks × 2356 B** (one per monster-type slot). Each block = 6-word frame-offset table (`9/725/973/1083/1148/1178`) + 3 zero words + **5 back-to-back MS-BASIC `PUT` GET-arrays** for view-depths P0…P4 (82×68 / 48×41 / 32×27 / 24×21 / 16×14, linear 2 bpp). See the dungeon section below. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | `MUS` (+ `CELDRV`) | **structure mapped** — the **museum exhibit "display" illustration screens** (~18). `MUS.EXE` builds the name `"DIS"+n+".BSV"` to show the picture of what's *on display in this museum* for an exhibit; `DIS9.BSV` doubles as frame 4 of `CELDRV`'s endgame cinematic. BSAVE → `0x13C2:0x0E4E`. **Byte-for-byte the same container as `CEL*.BSV`**: 8-word header `{id, 0x10, W_px, H_px, 0x20, 0x0A, 0x10/0x30, 0x220}` (the full-screen ones, incl. `DIS9`/`CEL0`, are `0x110`×`0x78` = 272×120), a relocatable strip-pointer table from `~0x100` (dest offset steps `0x140` per 4-scanline band, `+2` per 8-px column), then RLE-packed CGA 2 bpp strips. See the `CEL*.BSV` section. |
 | `CEL0.BSV` / `CEL2.BSV` (1573) · `CEL1.BSV` / `CEL3.BSV` (2597) | — | `CELDRV` | **structure mapped** — 4 of the 5 frames of the "AGAINST ALL ODDS!" endgame cinematic (the 5th is `DIS9.BSV`). Same container as the `DIS*.BSV` exhibit screens. `celdrv_entry` BLOADs each (`CEL0/1/2` built as `"CEL"+n+".BSV"`, then `dis9.bsv`, then `cel3.bsv`) into `spriteBank` at word-slot `bank·2000 + 1000`, then **relocates the file's pointer table** by `+2·(bank·2000+1000)`. Each file: an 8-word header (`{v, 0x10, W, H, 0x20, 0x0A, 0x10, 0x220}` — `CEL0` W=`0x110` H=`0x78`), a relocatable pointer table from `~0x100` (`(stripPtr, ?)` pairs; `stripPtr` steps by `0x140` = 320 = a 4-even-scanline band, and consecutive column-groups step `+2` = +8 px), then RLE-packed CGA bitmap strips from `~0x300` (798 B of data for `CEL0`'s ~272×120 area ⇒ ~10:1, so compressed). `celFrame` cycles the 5 as an animation. |
 | `MUSDATA.BSV` | 8055 | `MUS` | **decoded** — the Tarmalon Museum data. BSAVE → `0x2C1C:0x0F58` (near the dungeon's `0x2C07:0x0F3C`). `0x000`–`0x07FF` = **3 exhibit floor maps, 16×16 tiles** (`0x80` wall / `0x00`–`0x03` floor / `0x10`–`0x43` wall-edge / `0xE0`–`0xEF` = the 16 display-case portals) + 5 empty slots; `0x800`+ = a near-copy of `DUNDATA.BSV`'s dungeon-view tile/graphic data (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`. |
@@ -235,7 +235,7 @@ corridor by calling four LEGLIB primitives, all now identified:
 | `sub_1FED8` | the atomic **8×8 CGA cell copy**: `movsw` ×8 with `+0x4E` steps and a `+0x1F0E` jump after the 4th word (even field → odd field). This is **byte-identical to the `.GLB` field-interleave** — 8 consecutive words = scanlines 0,2,4,6,1,3,5,7. *Every* 8×8 graphic in the game uses this layout. |
 | `drawTileRun` (`rtm_FE2A`) | draw a horizontal run of `count` cells from a **byte tile-index list**; `0xFF` = skip (transparent); cell `N` is the 16 bytes at `srcBase + N*16`. Drives all wall/floor bands via `blitViewCell`. |
 | `andSpriteMaskCell` (`rtm_FE2E`) | sprite **mask** pass: `and es:[di], word` for one field-interleaved 8×8 cell (8 words). `drawViewSprite` calls it once per masked cell, walking a list of `(srcOffset, destOffset)` word pairs. |
-| `basPutSprite` (`rtm_61`, + `basPutSpriteXor` `rtm_60`) | stock Microsoft BASIC `PUT (x,y), array` — draws a **GET-array bitmap**: `dw widthPx ; dw heightPx ; planar CGA rows`. Honours `ds:250h/252h` origin, `ds:2D0h/2D1h` horizontal-flip, and an AND-vs-OR row-drawer. `drawViewSprite` uses this for the sprite **image** after `andSpriteMaskCell` lays the mask. |
+| `basPutSprite` (`rtm_61`, + `basPutSpriteXor` `rtm_60`) | stock Microsoft BASIC `PUT (x,y), array` — draws a **GET-array bitmap**: `dw xBits (=pixelWidth*2)` `; dw yRows ; then yRows rows of ceil(xBits/8) bytes`, 2 bpp packed left-to-right, rows top-to-bottom, **linear (not CGA field-interleaved)** — `PUT` splits the even/odd fields itself. Honours `ds:250h/252h` origin, `ds:2D0h/2D1h` horizontal-flip, and an AND-vs-OR row-drawer; colour 0 = transparent. `drawViewSprite` uses this for the sprite **image** after `andSpriteMaskCell` lays the mask. |
 
 `drawViewSprite` reads `viewObjectArray[8 + objType]` (`ds:1C7C`) → a
 **depth band 0–4** (`−6` wraps if `> 5`), then per band uses hard-coded
@@ -317,22 +317,74 @@ word indices `0x23`/`0x4B`/`0x73`/`0x9B`/`0xC3`). The per-slot
 `viewObjectArray` data (which objects are where) comes from the `DUNM`
 map tiles, which already carry `(class<<4)|wall` for pre-placed objects.
 
-### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
+### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites — **fully decoded 2026-08-31**
 
-`BSAVE` to `0x140D:0x3236` (into `spriteBank`, after `DUNOBJ`). 14136-byte
-payload = **exactly 6 records × 2356 (`0x934`) B** — 6 monsters.
-`DUNMONA` / `DUNMONB` are two swappable sets (~74% of bytes differ).
+`BSAVE` to `0x140D:0x3236`, loaded into `spriteBank` (`ds:1E58`) at
+**word offset `0x1240`** (right after `DUNOBJ`) by `loadDungeonMonsters`.
+14136-byte payload = **exactly 6 blocks × 2356 B (`0x49A` words)** — one
+per monster-type slot. `DUNMONA` = the monster set for dungeon levels
+0–3, `DUNMONB` = levels 4–7 (`loadDungeonMonsters` picks on
+`ds:1AE2h >= 0x400`); the two sets differ in ~74% of bytes.
 
-Each record: a 20-byte header (`dw 9` + the 5-entry frame table
-`0x2D5/0x3CD/0x43B/0x47C/0x49A` — identical across all 6, so frames are
-fixed-size + `dw 0xA4` `dw 0x44`), then **5 image frames** of
-705/248/110/65/30 bytes (the monster at 5 view distances, near→far —
-each a `basPutSprite` array), then **~5 mask frames** (`~1158` B), then a
-per-monster trailer. Pulling the exact `[dw w][dw h]` off each frame
-needs `drawViewSprite`'s `spriteBank` index math resolved against a
-live dump (some indices point at a runtime-built header at the array
-start) — but the frame *format* is now known: BASIC `PUT` image +
-`(src,dst)` mask-cell list.
+Every block has the identical structure:
+
+| words | contents |
+|---|---|
+| `0`–`4` | **frame-offset table** — word offsets, relative to block start, of the 5 pre-scaled sprites: `9, 725, 973, 1083, 1148`. Index = **view-depth band `P`** (`0` = adjacent … `4` = farthest). |
+| `5` | `0x49A` — block length / end marker. |
+| `6`–`8` | zero padding. |
+| `9` … | the 5 sprites, back to back — each a **stock Microsoft BASIC `GET`/`PUT` array**. |
+
+Sprite (GET-array) format — same as every other `basPutSprite` blit in
+the game:
+
+```
+dw  xBits      ; width in BITS = pixelWidth * 2   (CGA SCREEN 1, 2 bpp)
+dw  yRows      ; height in scanlines
+db  yRows * ceil(xBits/8) bytes of pixels
+```
+
+The pixel rows are **2 bpp packed left-to-right (MSB pair = leftmost
+pixel), row 0 at the top, byte-aligned per row, and stored linearly —
+NOT CGA field-interleaved** (unlike the `.GLB` tiles and the `DUNOBJ`
+region-C mask cells; `PUT` itself splits the even/odd fields). Colour 0
+is transparent (PUT verb `0`).
+
+The 5 depth frames in every block:
+
+| `P` | xBits | px | rows | B/row | frame B |
+|---|---|---|---|---|---|
+| 0 (near) | 164 | 82 | 68 | 21 | 1432 |
+| 1 | 96 | 48 | 41 | 12 | 496 |
+| 2 | 64 | 32 | 27 | 8 | 220 |
+| 3 | 48 | 24 | 21 | 6 | 130 |
+| 4 (far) | 32 | 16 | 14 | 4 | 60 |
+
+(Confirmed by rendering — DUNMONA block 0 P0 is an 82×68 coiled
+serpent, block 1 a spiky-shelled turtle, etc.; each `P` is a hand-drawn
+smaller redraw, not a scale-down.)
+
+**`drawViewSprite` (`bmDUNG` `seg001:0x13BD3`)** — the consumer:
+
+- args: `[bp+8]` → view-slot/class `(mapTile>>4)-1` (0–7); `[bp+6]` → depth `P` (0–4).
+- `monType = viewObjectArray[8 + slotClass]` (`ds:1C7C`), wrapped `mod 6`.
+- `bankBase = spriteBank[0x190 + monType*2]` = `0x1240 + monType*0x49A` (DUNOBJ region A's DUNMON bank table).
+- `getArray = bankBase + spriteBank[bankBase + P]` — the `P`-th frame of that monster block.
+- per-`P` constants baked into the function: sprite anchor `(X,Y)`, the DUNOBJ region-A mask descriptor index, and a clip-box:
+
+  | `P` | X | Y | maskDescIdx | box TL | box BR |
+  |---|---|---|---|---|---|
+  | 0 | 179 | 56 | `0x23` | (7,23) | (14,31) |
+  | 1 | 195 | 72 | `0x4B` | (9,25) | (13,29) |
+  | 2 | 204 | 80 | `0x73` | (10,26) | (12,28) |
+  | 3 | 208 | 82 | `0x9B` | (10,26) | (12,28) |
+  | 4 | 211 | 86 | `0xC3` | (11,27) | (11,27) |
+
+  `monType == 0` shifts `Y` up 6 px.
+- draw order: AND-blit the region-C mask cells (region-B `(videoDest,maskSrc)` list, `andSpriteMaskCell` × count) → `rtm_FE46` zero the clip box (erase last frame) → `rtm_7A` set the graphics cursor to `(X,Y)` → `basPutSprite(getArray, verb 0)`.
+
+So the split is: **`DUNOBJ` supplies the per-depth arch/frame mask,
+`DUNMON` supplies the per-monster, per-depth image.**
 
 ## Overworld data — `OUTM*` / `OUTDATA` — **structure mapped 2026-08-31**
 

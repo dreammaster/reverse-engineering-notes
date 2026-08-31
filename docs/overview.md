@@ -751,15 +751,22 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   but not a linear/tile layout -- renders as noise, so it's a
   `GET`/`PUT` sprite or column-major / RLE packing. Region D = zeros.
   Cracking region C and finding the table walker is the open work.
-- **2026-08-31** -- Decoded `DUNMONA/B.BSV`'s record structure (dungeon
-  monster sprites). BSAVE to `0x140D:0x3236`. 14136-B payload = exactly
-  **6 records x 2356 B** = 6 monsters. Each record: 20-B header (`dw 9`
-  + a fixed 5-entry frame-boundary table `0x2D5/0x3CD/0x43B/0x47C/0x49A`,
-  identical in all 6 -> fixed-size frames) + 5 image frames of
-  705/248/110/65/30 B (the monster at 5 view distances, near->far, like
-  `SDOBJ`'s scaled fireballs) + ~5 mask frames + a per-monster trailer.
-  `DUNMONA` vs `DUNMONB` differ in ~74% of bytes = two swappable monster
-  sets.
+- **2026-08-31** -- **Fully decoded `DUNMONA/B.BSV`** (dungeon monster
+  sprites; `decoders/dunmon.py`, renders clean). Loaded into `spriteBank`
+  at word offset `0x1240`. 14136-B payload = exactly **6 blocks x 2356 B
+  (`0x49A` words)**, one per monster-type slot; `DUNMONA` = the set for
+  dungeon levels 0-3, `DUNMONB` = 4-7. Each block: words 0-4 = a
+  frame-offset table (`9/725/973/1083/1148`, index = view-depth `P`),
+  word 5 = `0x49A` end marker, words 6-8 = zero pad, then the **5
+  back-to-back stock MS-BASIC `PUT` GET-arrays** for depths P0..P4 --
+  82x68 / 48x41 / 32x27 / 24x21 / 16x14 px (`dw xBits(=px*2) ; dw yRows ;
+  yRows linear 2-bpp rows`, colour 0 transparent, **not**
+  field-interleaved). `drawViewSprite` picks the block by
+  `viewObjectArray[8+slotClass] mod 6` and the frame by depth, then
+  `bankBase = 0x1240 + monType*0x49A`, `getArray = bankBase +
+  spriteBank[bankBase + P]` -- so the `spriteBank` index math is now
+  resolved statically, no live dump needed. `DUNOBJ` still supplies the
+  per-depth arch mask; `DUNMON` supplies the per-monster image.
 - **2026-08-31** -- Traced `bmDUNG`'s `drawViewSprite` / `blitViewCell`
   and the LEGLIB primitives behind them, cracking the dungeon-view
   graphics model:
@@ -777,15 +784,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
       `(srcOff, destOff)` pairs -- **exactly `DUNOBJ.BSV`'s pair table**.
     - `rtm_61`/`rtm_60` -> **`basPutSprite`** / `basPutSpriteXor`: stock
       MS-BASIC `PUT`; the sprite image is a GET-array
-      (`dw w ; dw h ; planar rows`).
+      (`dw xBits (=px*2) ; dw yRows ; yRows linear 2-bpp rows`, colour 0
+      transparent -- `PUT` splits the CGA fields itself).
   So a dungeon sprite = mask (`(src,dst)` cell-pair list, AND-blitted) +
   image (BASIC `PUT` array). `DUNDATA` big region = wall tile-index
   lists + an 8x8 field-interleaved tile bank. `DUNOBJ`/`DUNMON` frames
   are `basPutSprite` arrays, not raw bitmaps -- which is why they
   rendered as noise. Named the 4 primitives in `leglib.idb`
-  (`apply_renames_leglib.py`). Last-mile open: the `spriteBank`
-  (`ds:1E58`) index arithmetic (some indices hit a runtime-built header
-  at the array start) -- wants a live dump.
+  (`apply_renames_leglib.py`). (`spriteBank` index arithmetic since
+  resolved statically for `DUNMON` -- see the 2026-08-31 `DUNMONA/B`
+  entry above; `DUNOBJ` region-C mask cells + `MUSOBJ` bitmap bank still
+  open.)
 - **2026-08-31** -- Mapped the overworld data (`OUTM*` + `OUTDATA.BSV`),
   which mirrors the dungeon: `loadOverworldData` BLOADs
   `OUTM0<combatPhase>.BSV` (map layers) to `0x86AE:0` and `OUTDATA.BSV`
