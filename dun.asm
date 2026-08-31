@@ -8397,7 +8397,7 @@ drawViewSprite  endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 ; Attributes: noreturn
 
 blitViewCell    proc far                ; CODE XREF: drawViewWallBandNear+66↓P
@@ -8603,7 +8603,7 @@ loc_13F40:                              ; CODE XREF: renderDungeonView+A6↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewWallBandNear ; draw the nearest wall-projection band (-> blitViewCell). TENTATIVE (which band).
+                call    drawViewWallBandNear ; per depth band, blit the 3 triples of the 10-word wall-band record (DUNDATA payload 0x20 + cursor): ceiling strip, floor strip, front-wall block -- each via blitViewCell.
                 add     word ptr [bp-14h], 0Ah
                 cmp     word ptr [bp-16h], 0
                 jle     short loc_13FA2
@@ -8615,13 +8615,13 @@ loc_13FA2:                              ; CODE XREF: renderDungeonView+12F↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
+                call    drawViewFloorCeiling ; draw a corridor side wall from a 7-word left/right-side record (videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a solid wall, p1 (col 1, shadowed) if it is an open passage.
                 add     word ptr [bp-14h], 7
                 lea     ax, [bp-1Eh]
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
+                call    drawViewFloorCeiling ; draw a corridor side wall from a 7-word left/right-side record (videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a solid wall, p1 (col 1, shadowed) if it is an open passage.
                 add     word ptr [bp-14h], 7
                 mov     ax, [bp-20h]
                 inc     ax
@@ -8658,7 +8658,7 @@ loc_13FE5:                              ; CODE XREF: renderDungeonView+172↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewWallBandMid ; draw the middle wall band. TENTATIVE.
+                call    drawViewWallBandMid ; blocked-view fallback for an OPEN corridor side: draw that side wall from the left/right-side record's p2 (word 4) or p3 (word 5) strip-table pointer, keyed on the blocking wall tile < 0x80.
                 jmp     loc_1402B
 ; ---------------------------------------------------------------------------
 
@@ -8667,7 +8667,7 @@ loc_14009:                              ; CODE XREF: renderDungeonView+174↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
+                call    drawViewFloorCeiling ; draw a corridor side wall from a 7-word left/right-side record (videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a solid wall, p1 (col 1, shadowed) if it is an open passage.
                 mov     ax, 0Ah
                 imul    word ptr [bp-20h]
                 add     ax, 19Fh
@@ -8695,7 +8695,7 @@ loc_14038:                              ; CODE XREF: renderDungeonView+1C5↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewWallBandMid ; draw the middle wall band. TENTATIVE.
+                call    drawViewWallBandMid ; blocked-view fallback for an OPEN corridor side: draw that side wall from the left/right-side record's p2 (word 4) or p3 (word 5) strip-table pointer, keyed on the blocking wall tile < 0x80.
                 jmp     loc_1407E
 ; ---------------------------------------------------------------------------
 
@@ -8704,7 +8704,7 @@ loc_1405C:                              ; CODE XREF: renderDungeonView+1C7↑j
                 push    ax
                 lea     ax, [bp-14h]
                 push    ax
-                call    drawViewFloorCeiling ; draw the floor / ceiling planes of the view. TENTATIVE.
+                call    drawViewFloorCeiling ; draw a corridor side wall from a 7-word left/right-side record (videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a solid wall, p1 (col 1, shadowed) if it is an open passage.
                 mov     ax, 0Ah
                 imul    word ptr [bp-20h]
                 add     ax, 1A4h
@@ -8723,7 +8723,7 @@ loc_14081:                              ; CODE XREF: renderDungeonView+16B↑j
                 mov     [bp-2Ah], ax
                 lea     ax, [bp-2Ah]
                 push    ax
-                call    drawViewWallBandFar ; draw the far wall band. TENTATIVE.
+                call    drawViewWallBandFar ; unobstructed corridor: draw depth 4's front-wall triple (words 6/7/8 of the depth-4 wall-band record), tile list +0xF.
 
 j_rt_FE22:                              ; CODE XREF: renderDungeonView:loc_1407E↑j
                 call    far ptr rt_FE22 ; -> rtm_FE22  (leglib seg008:0x27fc9)
@@ -8839,7 +8839,7 @@ renderDungeonView endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; draw the nearest wall-projection band (-> blitViewCell). TENTATIVE (which band).
+; per depth band, blit the 3 triples of the 10-word wall-band record (DUNDATA payload 0x20 + cursor): ceiling strip, floor strip, front-wall block -- each via blitViewCell.
 ; Attributes: noreturn
 
 drawViewWallBandNear proc far           ; CODE XREF: renderDungeonView+122↑P
@@ -8883,7 +8883,7 @@ loc_1416E:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 
 loc_141D1:
                 mov     si, [bp+6]
@@ -8906,7 +8906,7 @@ loc_141D1:
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-18h], dx
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 
 loc_14208:
                 mov     si, 1E2Ah
@@ -8942,7 +8942,7 @@ loc_14225:                              ; CODE XREF: drawViewWallBandNear+BA↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-1Eh], dx
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
                 mov     si, 1E2Ah
                 mov     bx, [bp-1Eh]
                 add     bx, [si+0Ah]
@@ -8967,7 +8967,7 @@ drawViewWallBandNear endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; draw the middle wall band. TENTATIVE.
+; blocked-view fallback for an OPEN corridor side: draw that side wall from the left/right-side record's p2 (word 4) or p3 (word 5) strip-table pointer, keyed on the blocking wall tile < 0x80.
 ; Attributes: noreturn
 
 drawViewWallBandMid proc far            ; CODE XREF: renderDungeonView+193↑P
@@ -9016,7 +9016,7 @@ loc_1429D:                              ; CODE XREF: drawViewWallBandMid+19↑j
                 lea     ax, [bp-10h]
                 push    ax
                 mov     [bp-12h], dx
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 
 loc_142E2:
                 mov     si, 1E2Ah
@@ -9043,7 +9043,7 @@ drawViewWallBandMid endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; draw the far wall band. TENTATIVE.
+; unobstructed corridor: draw depth 4's front-wall triple (words 6/7/8 of the depth-4 wall-band record), tile list +0xF.
 ; Attributes: noreturn
 
 drawViewWallBandFar proc far            ; CODE XREF: renderDungeonView+220↑P
@@ -9075,7 +9075,7 @@ loc_14316:
                 push    ax
                 lea     ax, [bp-10h]
                 push    ax
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 
 j_rt_F4_0:                              ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
@@ -9091,7 +9091,7 @@ drawViewWallBandFar endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; draw the floor / ceiling planes of the view. TENTATIVE.
+; draw a corridor side wall from a 7-word left/right-side record (videoOff, dims, p0..p3, pad): p0 (col 0, lit) if that side is a solid wall, p1 (col 1, shadowed) if it is an open passage.
 ; Attributes: noreturn
 
 drawViewFloorCeiling proc far           ; CODE XREF: renderDungeonView+13C↑P
@@ -9129,7 +9129,7 @@ loc_14378:                              ; CODE XREF: drawViewFloorCeiling+E↑j
                 lea     ax, [bp-0Eh]
                 push    ax
                 mov     [bp-10h], dx
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
                 mov     si, 1E2Ah
                 mov     bx, 800h
                 add     bx, [si+0Ah]
@@ -9167,7 +9167,7 @@ loc_143DB:                              ; CODE XREF: drawViewFloorCeiling+10↑j
                 lea     ax, [bp-14h]
                 push    ax
                 mov     [bp-16h], dx
-                call    blitViewCell    ; the shared wall/surface draw primitive (rtm_FE2A) that all the wall-band drawers call.
+                call    blitViewCell    ; draw one nbands x ncols grid of 8x8 cells: reads (videoOff, (ncols<<8)|nbands) from dungeonMapArray[slotIdx], loops nbands rows calling drawTileRun(srcBankBase, seg, videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols). The shared wall/surface primitive.
 
 loc_1441A:
                 mov     si, 1E2Ah
