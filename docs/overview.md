@@ -820,17 +820,20 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   at `0x2B22` -- one array, parallel to the dungeon. `OUTDATA`
   `0x000`-`0x3FF` = **256 records x 4 bytes** -- record `T` = the four
   8x8 **sub-cell indices** for terrain-tile-type `T`, in a **2x2**
-  layout (TL, TR, BL, BR); values `0x10`-`0x6D` index the `OUTOBJ`
-  sub-cell bank; transitions come in groups of four. `0x400`-`0xDFF` =
-  a CGA pixel bank (consumer unconfirmed); `0x1400`+/`0x1F00`+ =
-  124-byte object/creature GET-array sprites. **The overworld uses
-  `drawTileRun` just like the dungeon** (my old "doesn't use
-  drawTileRun" note was wrong): `refreshMapView` builds a 26-wide
-  tile-index buffer from the 4-byte records (BL/BR to row `+0x1A`) and
-  `rtm_FE69` blits a `26 x 17` cell grid via `drawTileRun`;
-  `readTileObject` clips edge tiles (`ds:2444h`-`ds:2452h`). The
-  `imul ds:2444h, 0x5F` is the `OUTM` grid width (95), not a record
-  size. Open: the exact `OUTOBJ` sub-cell bank base.
+  layout (TL, TR, BL, BR); transitions come in groups of four.
+  `0x400`-`~0xD1F` = **the ~146-cell 8x8 sub-cell bitmap bank** (this is
+  what `sub_28156` points `drawTileRun` at: `srcSeg` = the `ds:1E2A`
+  array segment, `srcBase` = array byte `0x2F22` = OUTDATA payload
+  `0x400`, taken when `ds:2082h == 0x23CD`). So the terrain sub-cells
+  are in `OUTDATA`, not `OUTOBJ`. `0x1400`+/`0x1F00`+ = 124-byte
+  object/creature GET-array sprites (drawn via `basPutSprite`). **The
+  overworld uses `drawTileRun` just like the dungeon**: `refreshMapView`
+  builds a 26-wide tile-index buffer from the 4-byte records (BL/BR to
+  row `+0x1A`) and `rtm_FE69` blits a `26 x 17` cell grid via
+  `drawTileRun`; `readTileObject` clips edge tiles
+  (`ds:2444h`-`ds:2452h`). The `imul ds:2444h, 0x5F` is the `OUTM` grid
+  width (95), not a record size. The overworld map graphics are now
+  **fully decoded**.
 - **2026-08-31** -- Mapped `TCASOBJ.BSV` (castle/town animated objects).
   `CASDR`'s `loadCastleObjects` BSAVE-loads it to `0x8537:0x0000` into
   `spriteBank` (`ds:1E58`) -- same array/role as `DUNOBJ`/`OUTOBJ`/
