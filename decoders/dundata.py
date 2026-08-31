@@ -51,21 +51,26 @@ videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols)`.
                  (0x00-0xFE); 0x08-0x14 = wall face + floor/ceiling ramp,
                  0x16-0x19 = junction edges, 0x1E = fill, >=0x40 =
                  corner / trim / shadow cells and display-list markers.
-                 The `0x1E8` sub-region is a **4 x 0xCC-byte table**.
-                 Each column is a strip block headed by
-                 `4D 41 28 <texA> <texB> <variant>`: columns 0-1 carry
-                 texPair `72 53` (the 0x10-0x14 grey-stone cell set),
-                 columns 2-3 texPair `28 B0` (the 0xB0-0xCC set -- an
-                 alternate wall style).  The 9 side-wall projection
-                 records (2 per depth for depths 0-3 = left+right wall,
-                 1 for depth 4) each index it with a pointer quad
-                 X / X+0xCC / X+0x198 / X+0x264 -- the same row-offset X
-                 read down all 4 columns.  X advances (0x1E9, 0x216,
-                 0x234, ...) as the wall's strip data is packed
-                 sequentially within each column; dims shrink 3x15 ->
-                 1x5 with depth.  Bodies are `[marker][cell-index run]`
-                 display lists terminated by `4B 00 4D 00 00` /
-                 `4D 4C 00 00` and 0-padded to 0xCC.
+                 The `0x1E8` sub-region is a **4-column table**, each
+                 column `0xCC` bytes = one **lighting/distance level** of
+                 the wall geometry (col 0 fully lit, col 1 shadowed,
+                 col 2 lit, col 3 darkest / uses the `0xB0`-`0xCC` cell
+                 set).  Within a column, the **9 side-wall strips** are
+                 packed **contiguously from byte 1** (byte 0 of each
+                 `0xCC` block is unused -- the "recurring 4D 41 28" is
+                 that pad byte plus the first wall's top corner cells).
+                 A side-wall projection record carries the pointer quad
+                 `X / X+0xCC / X+0x198 / X+0x264` -- the same wall at the
+                 4 levels.  `X` advances by exactly `ncols*nbands` per
+                 wall (0x1E9, +0x2D, +0x1E, +0x1E, +0x10, ...); dims
+                 shrink `3x15` -> `1x5` with depth.  **A strip is a flat
+                 `ncols x nbands` row-major array of bank cell indices**
+                 (0xFF = skip) fed straight to `drawTileRun` -- no
+                 markers.  The bytes that look like delimiters
+                 (`0x00`, `0x4B`-`0x56`, `0x70`, `0x7E`-`0x7F`,
+                 `0xC0`-`0xCC`) are just the near-black shadow/edge bank
+                 cells that every wall uses along its floor line, ceiling
+                 line and near vertical edge.
     0x694-0x1691 the 8x8 tile bitmap bank: 255 cells x 16 B, CGA 2 bpp,
                  8 linear scanline-words per cell (cell 0 = blank).
 
@@ -103,17 +108,21 @@ def cell_pixels(p, off):
     return [[(row >> (14 - 2 * x)) & 3 for x in range(8)] for row in order]
 
 
-def strip_blocks(p, base=0x1E8, count=4, size=0xCC):
-    """The 4-column tile-strip table at 0x1E8.  Each column is a
-    `size`-byte block headed by `4D 41 28 texA texB variant`; the side-
-    wall projection records index it with pointer quads
-    X / X+size / X+2*size / X+3*size."""
-    out = []
-    for k in range(count):
-        b = p[base + k * size: base + (k + 1) * size]
-        out.append(dict(off=base + k * size, tag=b[:3], tex=(b[3], b[4]),
-                        variant=b[5], body=b[6:]))
-    return out
+# The 9 side-wall strips, packed contiguously from byte 1 of each column.
+# (X, ncols, nbands) -- X is the offset within column 0.
+SIDE_WALLS = [(0x1E9, 3, 15), (0x216, 3, 10), (0x234, 3, 10),
+              (0x252, 2, 8), (0x262, 2, 8), (0x272, 1, 6),
+              (0x278, 1, 6), (0x27E, 1, 5), (0x283, 1, 5)]
+STRIP_TABLE = 0x1E8
+STRIP_COL = 0xCC
+
+
+def wall_strip(p, wall, col):
+    """The (ncols x nbands) cell-index grid for side wall `wall` at
+    lighting/distance level `col` (0-3)."""
+    X, nc, nb = SIDE_WALLS[wall]
+    off = X + col * STRIP_COL
+    return [[p[off + r * nc + c] for c in range(nc)] for r in range(nb)]
 
 
 def records(p):
@@ -176,15 +185,12 @@ def main():
               % (a, r[0], r[1], dims, dims >> 8, dims & 0xFF,
                  " ".join("%04X" % x for x in r[3:])))
 
-    print("\n0x1E8 tile-strip table (4 columns x 0x%X B):" % 0xCC)
-    for k, blk in enumerate(strip_blocks(p)):
-        print("  col %d @0x%03X  tag=%s  tex=(%02X %02X)  variant=%02X"
-              % (k, blk["off"], blk["tag"].hex(), blk["tex"][0], blk["tex"][1], blk["variant"]))
-    side = [r for _, r in records(p) if len(r) == 7]   # screenBase,vOff,dims + 4 ptrs
-    print("  indexed by %d side-wall records, each ptr quad = X / X+0xCC / X+0x198 / X+0x264:"
-          % len(side))
-    for r in side:
-        print("    X=0x%04X  (dims %dx%d)" % (r[3] - 0x800, r[2] >> 8, r[2] & 0xFF))
+    print("\n0x1E8 strip table -- 4 columns x 0x%X B (lighting/distance levels)." % STRIP_COL)
+    print("9 side-wall strips packed contiguously from byte 1 of each column;")
+    print("each strip = flat ncols x nbands bank-cell-index grid (0xFF = skip):")
+    for w, (X, nc, nb) in enumerate(SIDE_WALLS):
+        b = bytes(p[X + r * nc + c] for r in range(nb) for c in range(nc))
+        print("  wall %d  X=0x%03X  %dx%d = %2d cells   %s" % (w, X, nc, nb, nc * nb, b.hex()))
 
     # render the whole bank, 16 cells/row
     S, cols = 8, 16

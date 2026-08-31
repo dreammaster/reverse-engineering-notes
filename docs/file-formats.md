@@ -223,7 +223,7 @@ Payload layout (5778 B, decoded 2026-08-31 — `decoders/dundata.py`):
 |---|---|
 | `0x000`–`0x03F` | header. **`word[0] = 0x0E94`** = the *array* byte offset of the tile bank (`DUN.EXE` passes it straight to `drawTileRun` as `srcBase`) — array `0x800` + payload `0x694`. Bytes `0x20`–`0x3F` = a pre-table lookup row. |
 | `0x040`–`~0x110` | **the projection record table** — ~13 variable-length records, ~3 per view depth (left wall / floor-ceiling strip / right wall). Each: `dw screenBase` (`0x28·(depth+1)` = `0x28/0x50/0x78/0xA0/0xC8`) `; dw videoOff ; dw packedDims ; dw <pointer words>`. **`packedDims = (ncols<<8) | nbands`**, both shrinking with depth (`0x030F` = 3×15 near → `0x0105` = 1×5 far). Side-wall records carry 4 bank pointers at a `0xCC` stride; floor/ceiling records carry 7. |
-| `~0x110`–`0x693` | **the tile-index byte lists** — bank cell indices (`0x00`–`0xFE`; `0xFF` = skip). `0x08`–`0x14` = wall face + floor/ceiling perspective ramp, `0x16`–`0x19` = junction edges, `0x1E` = fill, `≥0x40` = corner/trim/shadow cells + display-list markers. The `0x1E8` sub-region is a **4-column × `0xCC`-byte strip table** (see below). |
+| `~0x110`–`0x693` | **the tile-index byte lists** — bank cell indices (`0x00`–`0xFE`; `0xFF` = skip). `0x08`–`0x14` = wall face + floor/ceiling perspective ramp, `0x16`–`0x19` = junction edges, `0x1E` = fill, `0x00` / `0x4B`–`0x7F` / `0xC0`–`0xCC` = near-black shadow / edge cells. The `0x1E8` sub-region is a **4-column × `0xCC`-byte strip table** (see below). |
 | `0x694`–`0x1691` | **the 8×8 tile bitmap bank** — 255 cells × 16 B, CGA 2 bpp, **8 sequential words per cell** which `sub_1FED8` writes to screen rows 0,2,4,6,1,3,5,7 (so read-back order is `w0,w4,w1,w5,w2,w6,w3,w7`). Cell 0 = blank. |
 
 `blitViewCell(srcBankBase, tileIdxListPtr, slotIdx)` reads `(videoOff,
@@ -233,24 +233,30 @@ r·0x140, tileIdxListPtr + r·ncols, ncols)`. `renderDungeonView` threads
 a cursor (`[bp-14h]`, init `0x410` words = payload `0x20`, stepped
 `0xA/7/7` per band) through the record table, one record per wall band.
 
-**The `0x1E8` strip table.** A `4`-column × `0xCC`-byte grid. Each
-column is a strip block headed by `db 0x4D,0x41,0x28` (tag) `; db texA,
-texB ; db variant`: columns 0-1 use `texA,texB = 72 53` (the `0x10`–`0x14`
-grey-stone cell set), columns 2-3 use `28 B0` (the `0xB0`–`0xCC` set, an
-alternate wall style). The **9 side-wall records** (2 per depth for
-depths 0-3 = the left and right wall, 1 for depth 4) each carry a
-pointer quad `X / X+0xCC / X+0x198 / X+0x264` — one row-offset `X` read
-down all 4 columns. `X` walks forward (`0x1E9, 0x216, 0x234, …`) as each
-wall's strip is packed in sequence, and `packedDims` shrinks `3×15` →
-`1×5` with depth. A strip body is a `[marker][cell-index run]` display
-list (markers are the `≥0x40` bytes: `4B 00`, `4D 4C 00 00`,
-`4D 4A 4D 7E 7F`, `81 4A 84 83`, `71 28 2F`, `84 5A 5B`, …; runs hold
-`0x08`–`0x14`/`0x16`–`0x19`/`0x1E` surface cells), ended by
-`4B 00 4D 00 00` and `0`-padded to `0xCC`.
+**The `0x1E8` strip table.** A `4`-column grid, each column `0xCC`
+bytes = one **lighting / distance level** of the side-wall geometry
+(col 0 fully lit, col 1 shadowed, col 2 lit, col 3 darkest — col 3 uses
+the `0xB0`–`0xCC` cell set). Within a column, the **9 side-wall strips**
+(2 per depth for depths 0-3 = left + right wall, 1 for depth 4) are
+packed **contiguously starting at byte 1** — byte 0 of each `0xCC` block
+is unused pad (the "recurring `4D 41 28`" is that pad byte followed by
+the first wall's top-corner cells, *not* a header). A side-wall
+projection record carries the pointer quad `X / X+0xCC / X+0x198 /
+X+0x264` = the same wall at the 4 levels; `X` advances by exactly
+`ncols·nbands` per wall (`0x1E9, +0x2D, +0x1E, +0x1E, +0x10, …`) and
+`packedDims` shrinks `3×15` → `1×5` with depth.
+
+**A strip is a flat `ncols × nbands` row-major array of bank cell
+indices** (`0xFF` = skip) fed straight to `drawTileRun` — **there is no
+marker layer.** The bytes that look like delimiters (`0x00`, `0x4B`–`0x56`,
+`0x70`, `0x7E`–`0x7F`, `0xC0`–`0xCC`) are just the near-black shadow/edge
+bank cells every wall places along its floor line, ceiling line and near
+vertical edge (`0x00` = the fully blank cell). Rendered, each strip is a
+coherent dithered stone wall panel with a dark base.
 
 **Still open:** which record maps to which on-screen wall (the cursor
-step constants vs the `viewProjTable` `ds:1C4E` math), the strip-body
-marker semantics, and the `7`-pointer floor/ceiling records.
+step constants vs the `viewProjTable` `ds:1C4E` math), and the
+`7`-pointer floor/ceiling records.
 
 ### The dungeon-view sprite & tile rendering model — **decoded 2026-08-31**
 
