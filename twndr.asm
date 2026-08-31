@@ -29907,6 +29907,7 @@ viewBufOffset   dw 0                    ; screen-buffer start offset for the int
                 db    0
                 db    0
                 db    0
+workInt2        dw 0                    ; a second general-purpose integer temp (19 functions, 35 writes) -- mostly staged as a count / loop bound / numeric parameter (chooseAbove's menu-item count, changeGameSpeed's 500, ...). Distinct from workInt (1F04).
                 db    0
                 db    0
                 db    0
@@ -29955,10 +29956,7 @@ viewBufOffset   dw 0                    ; screen-buffer start offset for the int
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+scratchAcc      dw 0                    ; register-spill / accumulator scratch -- routines `mov ax,20D0 / ... / mov 20D0,ax` around calls; robberyEvent uses it as the running loot total. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -30464,6 +30462,7 @@ guardHitPoints  dw 0                    ; the guard's hit points during fightGua
                 db    0
                 db    0
                 db    0
+questGold       dw 0                    ; gold amount for a specific NPC / quest (npcRecurringDialog / townServiceDispatch stage 0x7530 = 30000, 0x974 = 2420). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -31080,10 +31079,7 @@ guardHitPoints  dw 0                    ; the guard's hit points during fightGua
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+jailState       dw 0                    ; jail-scene progress word (jailScene / jailRelease / npcRecurringDialog). TENTATIVE.
                 db    0
                 db    0
                 db    0

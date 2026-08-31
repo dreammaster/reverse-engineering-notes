@@ -26950,6 +26950,7 @@ viewLevel       dw 0                    ; second 1 / 2 mode flag, often checked 
                 db    0
                 db    0
                 db    0
+workInt2        dw 0                    ; a second general-purpose integer temp -- CASDR's most-written DGROUP word (31 functions, 45 writes), mostly staged as a count / loop bound / numeric parameter (chooseAbove 1..3, changeGameSpeed 500, privateLevelWarn 0x5DC). Distinct from workInt (1F04).
                 db    0
                 db    0
                 db    0
@@ -26962,10 +26963,7 @@ viewLevel       dw 0                    ; second 1 / 2 mode flag, often checked 
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+viewState       dw 0                    ; a small view / mode state (values 1 / 7 / 0x0B) -- doWalk / doFight / openDoor / invisibilitySpell set and test it. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -26995,6 +26993,7 @@ castleOrFort    dw 0                    ; a 1 / 2 selector read all over (doFigh
                 db    0
                 db    0
                 db    0
+scratchAcc      dw 0                    ; register-spill / accumulator scratch -- the movement / draw routines `mov ax,20CC / ... / mov 20CC,ax` around calls. TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -27241,10 +27240,7 @@ castleOrFort    dw 0                    ; a 1 / 2 selector read all over (doFigh
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
-                db    0
-                db    0
+destructTimer   dw 0                    ; the fortress self-destruct countdown (fortressSelfDestruct + sub_111A1; 0x14 / 8). TENTATIVE.
                 db    0
                 db    0
                 db    0
@@ -27532,8 +27528,7 @@ enemyHitPoints  dw 0                    ; the current opponent's hit points duri
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+questMarkState  dw 0                    ; the guardians-of-the-scroll / forearm-mark quest state -- only kingConfides and warlordConfrontation write it (0xFF / 0x50 / 0x78). TENTATIVE.
                 db    0
                 db    0
                 db    0

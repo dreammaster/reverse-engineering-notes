@@ -648,6 +648,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   after the Warlord falls), the `describeRoom` cases (`describeChest`,
   `describeLockedDoor`, `describeGasRoom`, `describePotionShop`),
   `facePlayerDirection` / `checkLineOfSight` (same shapes as TWNDR).
+- **2026-08-31** — Second TWNDR / CASDR DGROUP pass. Both have a
+  `workInt` at `ds:1F04` (like OUT) **and** a `workInt2` at `ds:209E`
+  (a second integer temp -- CASDR's is its single most-written DGROUP
+  word, 31 functions) plus a `scratchAcc` register-spill slot
+  (`ds:20D0` twndr / `ds:20CC` casdr). Meaningful state added:
+  `questGold` / `jailState` (twndr), `questMarkState` (`ds:22E6` casdr --
+  the forearm-mark quest, written only by `kingConfides` /
+  `warlordConfrontation`), `viewState`, `destructTimer`. The
+  0x1F04..0x1F12 block is a row of ~8 BC-6.0 codegen expression temps.
 - **2026-08-31** — Mapped the MUS.EXE state vars (`apply_dsvars_mus.py`,
   DGROUP `seg004`) + 2nd naming pass: **45 / 109**. Fifth module to
   confirm the shared slots (`partyGold` @ `ds:1AD2`, `hitPoints` @

@@ -120,6 +120,28 @@ VARS = [
     (0x24B2, "mapRowBytes",
      "row stride in bytes of the map array. (TWNDR: ds:2628.) "
      "TENTATIVE."),
+
+    # --- 2nd pass: mid-traffic vars ---
+    (0x209E, "workInt2",
+     "a second general-purpose integer temp -- CASDR's most-written "
+     "DGROUP word (31 functions, 45 writes), mostly staged as a count / "
+     "loop bound / numeric parameter (chooseAbove 1..3, changeGameSpeed "
+     "500, privateLevelWarn 0x5DC). Distinct from workInt (1F04)."),
+    (0x20CC, "scratchAcc",
+     "register-spill / accumulator scratch -- the movement / draw "
+     "routines `mov ax,20CC / ... / mov 20CC,ax` around calls. "
+     "TENTATIVE."),
+    (0x20AC, "viewState",
+     "a small view / mode state (values 1 / 7 / 0x0B) -- doWalk / "
+     "doFight / openDoor / invisibilitySpell set and test it. "
+     "TENTATIVE."),
+    (0x22E6, "questMarkState",
+     "the guardians-of-the-scroll / forearm-mark quest state -- only "
+     "kingConfides and warlordConfrontation write it (0xFF / 0x50 / "
+     "0x78). TENTATIVE."),
+    (0x21C4, "destructTimer",
+     "the fortress self-destruct countdown (fortressSelfDestruct + "
+     "sub_111A1; 0x14 / 8). TENTATIVE."),
 ]
 
 

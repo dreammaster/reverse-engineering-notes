@@ -168,6 +168,14 @@ reimplementation.
       `enemyHitPoints` (2222), `castleArrayPtr` (25B0 far ptr);
       `castleOrFort` (20C0, 1/2) / `viewLevel` (2084) / `mapStride`
       (1F26) tentative.
+- [x] 2nd TWNDR / CASDR DGROUP pass (2026-08-31). Both have `workInt`
+      (1F04) + `workInt2` (209E, a second int temp -- CASDR's most-
+      written word) + `scratchAcc` (20D0 twndr / 20CC casdr, a
+      register-spill slot). Meaningful state: `questGold` / `jailState`
+      (twndr), `questMarkState` (22E6 casdr = the forearm-mark quest,
+      written only by kingConfides / warlordConfrontation), `viewState`,
+      `destructTimer`. The 1F04..1F12 range is a row of ~8 BC-6.0
+      codegen expression temps.
 - [~] `casdr` names (endgame content): **47 / 102** (2nd pass
       2026-08-31). `warlordConfrontation`, `kingConfides` (the
       guardians-of-the-scroll quest + forearm mark), `potionWizard`,

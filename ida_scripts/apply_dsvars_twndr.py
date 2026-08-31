@@ -116,6 +116,24 @@ VARS = [
      "(placeNpcSprite sets 0x641 / 0x1020). TENTATIVE."),
     (0x2628, "mapRowBytes",
      "row stride in bytes of the map array (0x40 / 0x20). TENTATIVE."),
+
+    # --- 2nd pass: mid-traffic vars ---
+    (0x209E, "workInt2",
+     "a second general-purpose integer temp (19 functions, 35 writes) "
+     "-- mostly staged as a count / loop bound / numeric parameter "
+     "(chooseAbove's menu-item count, changeGameSpeed's 500, ...). "
+     "Distinct from workInt (1F04)."),
+    (0x20D0, "scratchAcc",
+     "register-spill / accumulator scratch -- routines `mov ax,20D0 / "
+     "... / mov 20D0,ax` around calls; robberyEvent uses it as the "
+     "running loot total. TENTATIVE."),
+    (0x22CC, "questGold",
+     "gold amount for a specific NPC / quest (npcRecurringDialog / "
+     "townServiceDispatch stage 0x7530 = 30000, 0x974 = 2420). "
+     "TENTATIVE."),
+    (0x2536, "jailState",
+     "jail-scene progress word (jailScene / jailRelease / "
+     "npcRecurringDialog). TENTATIVE."),
 ]
 
 
