@@ -3708,8 +3708,9 @@ static Bytes_1(void) {
 	make_array	(0X13FF8,	0XB);
 	create_strlit	(0X14003,	0X12);
 	set_name	(0X14003,	"aBBBBdbdbdbBtb");
-	create_byte	(0X14015);
-	make_array	(0X14015,	0X26);
+	set_cmt	(0X14031,	"the DGROUP self-segment -- `mov es, ds:101h` in playIntroAndLaunchGame.",	1);
+	create_word	(0X14031);
+	set_name	(0X14031,	"dgroupSeg");
 	create_word	(0X1403B);
 	create_word	(0X1403D);
 	create_word	(0X1403F);
@@ -3722,9 +3723,12 @@ static Bytes_1(void) {
 	set_cmt	(0X15D52,	"current Y/N / menu answer (eraseCharacterMenu and sub_10150 read it). Same DGROUP slot the play modules use for menu answers.",	1);
 	create_word	(0X15D52);
 	set_name	(0X15D52,	"menuChoice");
-	set_cmt	(0X15E32,	"1 while the main-menu loop is running (mainMenuLoop sets it, drawCancelOption checks it). TENTATIVE.",	1);
+	set_cmt	(0X15E32,	"1 while the main-menu loop runs, 0 to exit -- mainMenuLoop inits it to 1, passes its address (with menuLevel / menuHighlight) to the key-dispatch routine, and `cmp ds:1F02h, 0` breaks the loop; drawCancelOption checks it too.",	1);
 	create_word	(0X15E32);
-	set_name	(0X15E32,	"menuActive");
+	set_name	(0X15E32,	"menuRunning");
+	set_cmt	(0X15E3C,	"which menu screen is active -- mainMenuLoop cycles it 1 (main menu) -> 2 (a submenu / dialog) -> 1. Passed by reference alongside menuRunning.",	1);
+	create_word	(0X15E3C);
+	set_name	(0X15E3C,	"menuLevel");
 	set_cmt	(0X15E8C,	"the highlighted main-menu item (mainMenuLoop inits it to -1 = none; drawMainMenuScreen reads it to draw the selection bar).",	1);
 	create_word	(0X15E8C);
 	set_name	(0X15E8C,	"menuHighlight");

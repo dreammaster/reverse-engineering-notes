@@ -11061,7 +11061,43 @@ word_13FE0      dw 0                    ; DATA XREF: start+3E↑w
                 dw seg seg002
                 db 60h, 62h, 60h, 62h, 60h, 62h, 60h, 62h, 80h, 62h, 80h
 aBBBBdbdbdbBtb  db 'b`b`b`bdbdbdb`btb',0
-                db 17h dup(0), 0C4h, 5, 0Dh dup(0)
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C4h
+                db    5
+                db    0
+                db    0
+                db    0
+dgroupSeg       dw 0                    ; the DGROUP self-segment -- `mov es, ds:101h` in playIntroAndLaunchGame.
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 word_1403B      dw 0                    ; DATA XREF: sub_13A6A+34↑w
 word_1403D      dw 0                    ; DATA XREF: sub_13A6A+3B↑w
 word_1403F      dw 0                    ; DATA XREF: sub_13A6A+42↑w
@@ -18727,7 +18763,7 @@ menuChoice      dw 0                    ; current Y/N / menu answer (eraseCharac
                 db    0
                 db    0
                 db    0
-menuActive      dw 0                    ; 1 while the main-menu loop is running (mainMenuLoop sets it, drawCancelOption checks it). TENTATIVE.
+menuRunning     dw 0                    ; 1 while the main-menu loop runs, 0 to exit -- mainMenuLoop inits it to 1, passes its address (with menuLevel / menuHighlight) to the key-dispatch routine, and `cmp ds:1F02h, 0` breaks the loop; drawCancelOption checks it too.
                 db    0
                 db    0
                 db    0
@@ -18736,8 +18772,7 @@ menuActive      dw 0                    ; 1 while the main-menu loop is running 
                 db    0
                 db    0
                 db    0
-                db    0
-                db    0
+menuLevel       dw 0                    ; which menu screen is active -- mainMenuLoop cycles it 1 (main menu) -> 2 (a submenu / dialog) -> 1. Passed by reference alongside menuRunning.
                 db    0
                 db    0
                 db    0

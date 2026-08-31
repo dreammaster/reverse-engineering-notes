@@ -43,10 +43,20 @@ VARS = [
      "current Y/N / menu answer (eraseCharacterMenu and sub_10150 read "
      "it). Same DGROUP slot the play modules use for menu answers."),
 
+    (0x1F02, "menuRunning",
+     "1 while the main-menu loop runs, 0 to exit -- mainMenuLoop inits "
+     "it to 1, passes its address (with menuLevel / menuHighlight) to "
+     "the key-dispatch routine, and `cmp ds:1F02h, 0` breaks the loop; "
+     "drawCancelOption checks it too."),
+    (0x1F0C, "menuLevel",
+     "which menu screen is active -- mainMenuLoop cycles it 1 (main "
+     "menu) -> 2 (a submenu / dialog) -> 1. Passed by reference "
+     "alongside menuRunning."),
+    (0x0101, "dgroupSeg",
+     "the DGROUP self-segment -- `mov es, ds:101h` in "
+     "playIntroAndLaunchGame."),
+
     # --- tentative ---
-    (0x1F02, "menuActive",
-     "1 while the main-menu loop is running (mainMenuLoop sets it, "
-     "drawCancelOption checks it). TENTATIVE."),
     (0x1AEE, "introStep",
      "intro-sequence step in playIntroAndLaunchGame (0 / 3 / 0xFF). "
      "TENTATIVE."),

@@ -423,7 +423,10 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   barely has state (30 words touched, most one-function scratch):
   `menuHighlight` (`ds:1F5C`), `charCount` (`ds:2138`, 0..8),
   `rosterIndex` (`ds:1B0A`), `charRecordSize` (`ds:211C`, the CHAR.DAT
-  `imul` stride), `menuChoice` (`ds:1E22`). Named the 6 CHAR.DAT /
+  `imul` stride), `menuChoice` (`ds:1E22`); a 2nd pass added
+  `menuRunning` (`ds:1F02`, 1 = loop / 0 = exit) and `menuLevel`
+  (`ds:1F0C`, 1 = main menu / 2 = submenu -- both passed by-ref to the
+  key dispatcher) and `dgroupSeg` (`ds:0101`). Named the 6 CHAR.DAT /
   startup helpers that were left `sub_`: `menuStartup` (intro music +
   `LEGACY.DAT` + splash), `pressAnyKey`, `readCharDat`, `writeCharDat`,
   `updateCharDatEntry`, `enumerateRoster`. `menu.idb` is now essentially

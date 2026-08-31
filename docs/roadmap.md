@@ -450,6 +450,10 @@ reimplementation.
       `sub_12055` -> `readCharDat`, `sub_12778` -> `writeCharDat`,
       `sub_10150` -> `menuStartup`, `sub_128A9` -> `updateCharDatEntry`,
       `sub_1210E` -> `enumerateRoster`. Only `sub_11A1E` still `sub_`.
+      2nd pass added `menuRunning` (1F02), `menuLevel` (1F0C, 1 = main /
+      2 = submenu -- both passed by-ref to the key dispatcher),
+      `dgroupSeg` (0101). MENU's DGROUP is now fully mapped; the rest is
+      1-function scratch (menuStartup locals, the menu-item coord list).
 - [x] Map `menu` `seg001`'s DGROUP use (2026-08-31) -- the title-screen
       helpers: `titleGlbBuf`/`titleGmpBuf` (`ds:3194`/`5194` load
       buffers), `titleTilePtr` (`ds:6194`), `titleScrollX` (`ds:6196`,
