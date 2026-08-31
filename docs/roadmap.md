@@ -574,10 +574,13 @@ reimplementation.
       `decoders/char_dat.py`. Remaining: the per-field scalar breakdown
       and the 7 arrays. `readCharDat` / `writeCharDat` / `saveRosterToDisk`
       named.
-- [~] `LEGACY.DAT` (2945 bytes) — **not** save/config: it's the A–Z
-      keyboard-command name list (`Armor`/`Climb`/`Disembark`/…) + small
-      2 bpp CGA icons, same `05 06 xx xx 7E 01` header as `CHAR.DAT`.
-      Field layout still open.
+- [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py`) —
+      the master string/data table `menuStartup` loads. 6-B header,
+      ~1602 B CGA icon bitmaps, a **123-string length-prefixed pool**
+      (A–Z commands, weapon/armor/item/spell/gem-coin names, directions,
+      responses, digits, the 12 town names), then a 382-B new-character
+      template + shop price table. Icon-bitmap cell layout is the one
+      loose end.
 - [x] Overworld map graphics (2026-08-31, `decoders/outdata.py`) —
       mirrors the dungeon. `OUTM0/1/2.BSV` = map layers picked by
       `combatPhase`, 8-B header + 1 byte/tile, base grid **95 wide**

@@ -80,7 +80,7 @@ castle/fort layout banks.
 | `BIGNUM.DAT` | 420 | `GMB2` | **decoded** — the large-digit font for `GMB2` (Flip-Flop Parlour)'s GOLD / BET / winnings readouts. **No BSAVE header** — a raw **112 × 15 px CGA 2 bpp bitmap** (28 bytes/row × 15 rows = 420 B exactly; autocorrelation locks the stride at 28). One horizontal strip of ~10 digit glyphs (~11 px pitch), blitted a digit at a time by `drawBigNumberPanel`. `decoders/bignum.py`. |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
 | `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **container + write/read path decoded** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + a 74-byte scalar block (a copy of resident LEGLIB DGROUP `ds:1AC0..1B08`) + 7 BASIC integer arrays. See the dedicated section below. `decoders/char_dat.py` lists the slots. |
-| `LEGACY.DAT` | 2945 | `MENU` / `OUT` | **not a save/config file** — it's the game's **command / UI resource**: the A–Z keyboard-command name list (`Armor`, `Climb`, `Disembark`, `Fight`, `Gamespeed`, `Hold`, `Inventory`, `Leave`, `Magic`, `Open`, `Pass`, …) plus small 2 bpp CGA icon bitmaps. Same `05 06 xx xx 7E 01` header shape as `CHAR.DAT`. Field layout not yet mapped. |
+| `LEGACY.DAT` | 2945 | `MENU` / `OUT` | **decoded** — the game's **master string/data table** (`menuStartup` loads it once). 6-B header (`05 06`, `dw 0x0A04`, `dw 0x017E`), then ~1602 B of CGA icon bitmaps (`0x006`–`0x647`), then a **123-entry length-prefixed string pool** (`0x648`–`0xA02`) — the A–Z command names, weapon/armor names, all item & spell & gem-coin names, directions, menu responses, digits, and the 12 town names — then a trailing **382-B new-character template** (the CHAR.DAT record copied into empty slots) ending in a **shop price table**. `decoders/legacy_dat.py`. See the section below. |
 | `OUTDAT.DAT` | 1012 | `OUT` | not checked yet |
 | `DRCONFIG.DAT` | 1015 | `CONFIGUR` + all disk-loading code | **disk-drive layout**, not hardware config — which drive letter(s) hold the game floppies (or HD floppy / hard disk), so the loaders know where to look and can prompt for swaps. Written by `CONFIGUR.EXE` (`_main`); at offset near the start it holds a config-type byte (`'0'`/`'1'`/`'2'` — HD/hard-disk vs. 360K vs. 720K) and one or two drive-letter bytes. |
 | `STDRVSCR.DAT` | 6192 | `STDRV` | "Stones of Wisdom" rules / instruction text — the walk-through the dealer narrates ("YOU AND THE DEALER BOTH RECEIVE FIVE DICE…", "THE LOSER OF A GAME GIVES UP ONE DIE…"). Read by `stonesOfWisdomMain`; **not** a story/cut-scene script. |
@@ -598,6 +598,21 @@ as `DUNOBJ` / `OUTOBJ` / `MUSOBJ`, so the same sprite-format family
 The exact sprite-cell dimensions and how `bmTNCALB` walks the record /
 table structure still need the castle-view renderer traced (it uses
 `rtm_FE19`, the shared single-tile blit).
+
+## `LEGACY.DAT` — master string / data table — **decoded 2026-09-01**
+
+Loaded once by `MENU.EXE`'s `menuStartup` (`decoders/legacy_dat.py`):
+
+| span | contents |
+|---|---|
+| `0x000`–`0x005` | header: `05 06` (the shared BASIC-data marker, cf. `CHAR.DAT`), then `dw 0x0A04`, `dw 0x017E` (= 382, the `CHAR.DAT` record length). |
+| `0x006`–`0x647` | the command-menu **icon bitmaps** — ~1602 B of CGA 2 bpp data (cell layout not pinned down). |
+| `0x648`–`0xA02` | the **string pool** — 123 strings, each `db len ; db chars`, in fixed order: `[0..18]` the A–Z command names (`Armor`, `Climb`, `Disembark`, `End`, `Fight`, `Gamespeed`, `Hold`, `Inventory`, `Leave`, `Magic`, `Open`, `Pass`, `Rob`, `Speak`, `Take`, `Use`, `" "` (Q — unused), `Weapon`, `Xamine`); `[19..23]` weapon condition (`Shoddy`…`Superb`); `[24..32]` weapons (`bare hands`…`Compound bow`); `[33..37]` armor (`Studded hide`…`Mythan plate`); `[38..54]` per-item "use" verbs; `[55..78]` items (`nothing`, `Gold armband`, … the 7 gem coins); `[79..84]` spells (`Magic flame`…`Seek spell`); `[85..88]` directions; `[89..100]` menu responses; `[101..110]` digits `"0"`–`"9"`; `[111..122]` the 12 **town names** (`Isle City`, `Cobbleton`, `Alanville`, `Grand Ledge`, `Big Rapids`, `Thornberry`, `Mazelton`, `Thompson Crossing`, `Merchant Square`, `Laingsburg`, `Holy Point`, `Eagle Hollow`). |
+| `0xA03`–end | a 382-B **new-character template** copied into empty `CHAR.DAT` slots — 14-B name (`"empty"` + spaces) + the 368-B scalar block (default stats / starting kit), tail = a **shop price table** (`400, 350, 350, … 1200, 300, 420, … 2000` — weapon / armor / item costs). |
+
+The string-pool ordering is the game's canonical index for weapons,
+armor, items, spells and towns — the `CHAR.DAT` equipment scalars and
+the shop code index into it.
 
 ## `CEL*.BSV` / `DIS*.BSV` — cel animation + exhibit illustrations — **decoded 2026-08-31**
 

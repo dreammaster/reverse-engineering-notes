@@ -734,10 +734,16 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   chain. Placed in the record: `partyGold` (`+0x20`, = 20 for a new
   character), `hitPoints` (`+0x28`), `intelligence` (`+0x3E`).
   `decoders/char_dat.py` lists the slots (all 9 are `"empty"` on a fresh
-  install). Also corrected `LEGACY.DAT`: it's **not** a save/config file
-  — it holds the A–Z keyboard-command names (`Armor`, `Climb`,
-  `Disembark`, ...) + small 2 bpp CGA icons, and opens with the same
-  `05 06 xx xx 7E 01` header shape.
+  install).
+- **2026-09-01** — Decoded `LEGACY.DAT` (`decoders/legacy_dat.py`) — the
+  game's master string/data table, loaded once by `menuStartup`. 6-B
+  header, ~1602 B of CGA icon bitmaps, then a **123-string
+  length-prefixed pool** (`db len ; db chars`): the A–Z command names,
+  every weapon / armor / item / spell / gem-coin name, directions, menu
+  responses, digits, and the 12 town names (Isle City, Cobbleton,
+  Alanville, …). The tail is a 382-B new-character template (copied into
+  empty `CHAR.DAT` slots) ending in a shop price table. The string
+  order is the game's canonical item/weapon/spell index.
 - **2026-08-31** -- Decoded `DUNM1/2/3.BSV` (dungeon tile maps): BSAVE to
   `0x2C07:0x0F3C`, 2048-B payload = **8 levels x 16x16 tiles, 1 B/tile**
   (`0x00` floor / `0xFF` rock / `0x01`-`0x0F` features). `DUN.EXE` binds
