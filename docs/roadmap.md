@@ -592,7 +592,12 @@ reimplementation.
       wings — `chainExec` draws them for the travel events).
       `refreshMapView` builds a 26-wide index buffer from the terrain
       records; `rtm_FE69` blits it 26×17 via `drawTileRun`. All rendered
-      clean.
+      clean.  `OUTOBJ.BSV` (landmark-icon bank) **structure decoded**
+      (2026-09-01): BLOADs to `spriteBank` byte 0; 9-word ptr table →
+      6 CGA blocks + a `0x1560+2n` column-address list; word[4] (`0x830`)
+      is the `PEGASUS.BSV` slot for `combatPhase==2`; drawn via
+      `identifyLocationObject` → scratch slots → `refreshMapView` phase
+      2 → `rtm_FE69`.  Open: per-block sprite geometry.
 - [~] Dungeon data (2026-08-31) — **rendering model cracked**
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`

@@ -64,7 +64,7 @@ castle/fort layout banks.
 | `FORTANIM.BSV` | 263 | `CASDR` | fort-specific animation — BSAVE → `0x8537:0x1228`, i.e. it **overlays `TCASOBJ`'s last `0x100` bytes** (`0x1228`–`0x1327`), swapping the castle's animated-object frames for the fort's. |
 | `OUTM0.BSV` / `OUTM1.BSV` / `OUTM2.BSV` | 9969 / 4191 / 2101 | `OUT` | the 3 overworld map layers (picked by `combatPhase` in the filename `OUTM0<phase>.BSV`). BSAVE → `0x86AE:0x0000`. Shared 8-byte header `62 24 0A 00 11 00 3A 23`; 1 byte/tile terrain codes (`0x2C` = default, `0x2D`–`0x32`, …); logical map is 128 tiles wide (`OUT`'s feature scanner does `idiv 0x80` / `and 0x7F`). |
 | `OUTDATA.BSV` | 14235 | `OUT` | **fully decoded** — overworld graphics. BSAVE → `0x86AE:0x2B22`, contiguous with `OUTM*` in one array (`ds:1E2A`). `0x000`–`0x3FF` = 256 × 4-byte terrain-tile records (2×2 sub-cell indices); `0x400`–`~0xD1F` = the ~146-cell 8×8 sub-cell bank; `0x1400`+/`0x1F5C`+ = 64 × 124-byte object/creature sprite records (32 image+mask pairs, 40×12, 2 frames each). See the overworld section. |
-| `OUTOBJ.BSV` | 4395 | `OUT` | overworld object sprites — BSAVE → `0x13A8:0x0DB6` into `spriteBank` (same `0x0DB6` offset as `DUNOBJ` / `MUSOBJ`). Not separately decoded (same shape as `DUNOBJ`). |
+| `OUTOBJ.BSV` | 4395 | `OUT` | **structure decoded** — the overworld landmark-icon sprite bank. `loadOverworldData` `BLOAD`s it into `spriteBank` at **byte 0** (the BSAVE `0x0DB6` is ignored, like `DUNOBJ`). 9-word pointer table at byte 0 → 6 distinct CGA-2bpp sprite blocks (512/512/384/384/384/1222 B); a `dw 0x1560 + 2n` video-column address list + `0x0001` terminator in the tail. Word[4] (`0x0830`) is the slot `PEGASUS.BSV` (1152 B) overwrites when `combatPhase == 2`. Consumed via `identifyLocationObject` → `spriteBank` scratch slots → `refreshMapView` phase 2 → `rtm_FE69`/`rtm_FE6A`. See the overworld section. |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
 | `DUNDATA.BSV` | 5785 | `DUN` | **decoded** — the first-person view's wall/floor/ceiling graphics. BSAVE → `0x2C07:0x173C` = **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), one array. 5778-B payload: `word[0]` = the tile bank's array offset (`0x0E94` → payload `0x694`); `0x020`–`0x10F` = the projection record table (15 records = 5 depths × [10-word wall-band + 7-word left + 7-word right]); `0x110`–`0x693` = the flat `ncols×nbands` cell-index tile lists (incl. the 4×`0xCC` side-wall strip table at `0x1BC`); `0x694`–end = 255 × 16-B CGA cells. See the dungeon section. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
@@ -476,14 +476,38 @@ row, video `+0x140`/row). `sub_28156` hands `drawTileRun` its source:
 `srcSeg` = the `ds:1E2A` array segment (OUTM + OUTDATA), `srcBase` =
 array byte `0x2F22` = **OUTDATA payload `0x400`** — the override taken
 when `ds:2082h == 0x23CD` (the overworld tile-buffer word-base, byte
-`0x479A`). So the terrain sub-cells live in `OUTDATA`, **not** `OUTOBJ`;
-`OUTOBJ` only holds the object/creature sprites. Partial edge tiles are
-clipped by `readTileObject` (`ds:2444h`–`ds:2452h`) with `rtm_FE1B`
-(`rep stosb`) / `rtm_FE14` (`rep movsb`).
+`0x479A`). So the terrain sub-cells live in `OUTDATA`, **not** `OUTOBJ`.
+Partial edge tiles are clipped by `readTileObject` (`ds:2444h`–`ds:2452h`)
+with `rtm_FE1B` (`rep stosb`) / `rtm_FE14` (`rep movsb`).
 
-The overworld graphics are now **fully decoded** (`decoders/outdata.py`) —
-terrain tiles, the sub-cell bank, and the 32 object/creature sprite
-pairs.
+`OUTDATA`'s own graphics are **fully decoded** (`decoders/outdata.py`) —
+terrain tiles, the sub-cell bank, and the 32 travel-event sprite pairs
+(pegasus / bandits / creatures at `0x1400`+).
+
+### `OUTOBJ.BSV` — overworld landmark-icon sprites — **structure decoded 2026-09-01**
+
+`loadOverworldData` `BLOAD`s the 4388-byte payload into `spriteBank`
+(`ds:1E58`) at **byte 0** — the BSAVE `0x0DB6` is ignored, exactly like
+`DUNOBJ`.
+
+| span | contents |
+|---|---|
+| `0x00`–`0x11` | **9-word pointer table** — `0x2B0, 0x4B0, 0x2B0, 0x6B0, 0x830, 0x830, 0x830, 0x9B0, 0xB30` → 6 distinct sprite blocks (entries 0/2 share `0x2B0`; entries 4/5/6 share `0x830`). |
+| `0x12`–`0x2AF` | mostly zero — `identifyLocationObject` / `refreshMapView` fill parts of this at runtime as an object-slot scratch array (`spriteBank[0x120]` is the slot counter, `spriteBank[0x11E]` the enable flag `rtm_FE69` checks). |
+| `0x2B0`–`0xFF5` | the **6 sprite blocks** — CGA 2 bpp bitmap data, `512 / 512 / 384 / 384 / 384 / 1222` B. |
+| `0xFF6`–`0x1024` | a `dw 0x1560 + 2·n` **video-column address list** (~24 entries), `0x0001` terminator. |
+
+`spriteBank[8]` (word 4 = `0x830`) is the slot **`PEGASUS.BSV`** (1152 B,
+raw CGA bitmap, no table) overwrites when `combatPhase == 2` (the
+endgame pegasus travel). `identifyLocationObject` walks the current
+tile's location-type list, writing a `(videoDest, spritePtr, …)` slot
+per landmark into the scratch array; `refreshMapView`'s second pass
+(when `spriteBank[0x11E] != 0`) then overlays them via `rtm_FE69` →
+`drawTileRun`.
+
+**Still open:** the exact per-block sprite geometry (renders as ~16–32-px
+CGA data but not cleanly at any single stride) and the
+`identifyLocationObject` slot layout.
 
 ## `TOWN0.BSV` .. `TOWNB.BSV` — town layouts — **decoded 2026-08-31**
 
