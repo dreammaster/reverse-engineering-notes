@@ -823,8 +823,9 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   rendered as noise. Named the 4 primitives in `leglib.idb`
   (`apply_renames_leglib.py`). (`spriteBank` index arithmetic since
   resolved statically for `DUNMON` -- see the 2026-08-31 `DUNMONA/B`
-  entry above; `DUNOBJ` region-C mask cells + `MUSOBJ` bitmap bank still
-  open.)
+  entry above; `DUNOBJ` region-C mask cells decoded 2026-08-31;
+  `DUNOBJ`/`MUSOBJ` object *bitmap* banks are dormant -- no renderer
+  blits them.)
 - **2026-08-31** -- Decoded `OUTDATA.BSV`'s terrain records
   (`decoders/outdata.py`). `loadOverworldData` BLOADs
   `OUTM0<combatPhase>.BSV` at `ds:1E2A` array byte 0 and `OUTDATA.BSV`
@@ -890,13 +891,21 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   tile/graphic data (many 64-byte regions byte-match at `~-0x800`
   delta) -- the museum's `bmMUSDUNG` is literally `bmDUNG`, so exhibit
   halls render as dungeon corridors. `decoders/dun_map.py MUSDATA`.
-- **2026-08-31** -- `MUSOBJ.BSV` (museum exhibit object sprites, BSAVE
-  `0x1447:0x0DB6` into `spriteBank`) is **byte-for-byte the same
-  3-region layout as `DUNOBJ.BSV`**: object records (`0x000`-`0x3FF`),
-  the `(maskSrc, screenDest)` pair table for `andSpriteMaskCell`
-  (`0x400`-`0xFFF`, 768 pairs, first-of-pair stepping by `0x10`), then
-  the sprite bitmap bank (`0x1000`-`0x329A`). Just a larger sprite set;
-  identical renderer (`drawViewSprite`).
+- **2026-09-01** -- `MUSOBJ.BSV` (`BLOAD`ed to `spriteBank` byte 0) is
+  the museum's `DUNOBJ`-family object bank: `dw 0x0005`, region-A 5-word
+  records `[type, endWord, count, startWord, K]` (types `0x0110` /
+  `0x015b` / `0x018a` / `0x010d`, ~5 depth-band groups + a looser run),
+  the `(videoDest, maskSrc)` pair lists (from ~byte `0x732`), then the
+  16-B field-interleaved mask/bitmap cells (from ~`0xEBA`) to the
+  `0x329A` payload end. **Dormant** -- `mus.asm` has no `viewObjectArray`
+  (`ds:1C7C`) reference; `renderExhibitView` (`bmMUSDUNG` ≡ `bmDUNG`)
+  draws corridors only and never blits from `spriteBank`. Exhibit
+  artifacts come from `DIS*.BSV` + per-exhibit `.BSV` files
+  (`loadExhibitData` → `spriteBank[0x32A]` = `0x329A`, right after
+  `MUSOBJ`). Same "container carries more than the renderer uses" as
+  `DUNOBJ`'s `0x8F2` block -- **no game module blits an OBJ bank's
+  region B/C** (DUN's `drawViewSprite` uses `DUNMON`, not `DUNOBJ`'s own
+  bitmaps).
 - **2026-08-31** -- `BIGNUM.DAT` decoded: no BSAVE header, a raw
   **112 x 15 px CGA 2 bpp bitmap** (28 bytes/row x 15 = 420 B exactly;
   autocorrelation locks the stride at 28). One horizontal strip of ~10
@@ -1003,6 +1012,6 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   are the object/decoration bitmaps. **`DUN.EXE` reads none of the
   object path** -- `drawViewSprite` is the only `spriteBank` consumer
   and stops at region C; the `rtm_FE2D` cell-copy thunk is unreferenced.
-  The object path ships because `DUNOBJ` shares the OBJ container with
-  `MUSOBJ`, and only `MUS.EXE` wires it up (`loadExhibitData` uses
-  `spriteBank[0x32A]` as a per-exhibit `BLOAD` pointer).
+  `MUSOBJ` has the same dormant region — `MUS.EXE` doesn't wire it up
+  either (its `renderExhibitView` never blits from `spriteBank`). The
+  OBJ-family container just carries more than any renderer uses.

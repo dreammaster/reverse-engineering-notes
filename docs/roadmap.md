@@ -645,9 +645,9 @@ reimplementation.
         = region B `(videoDest, maskSrc)` pair lists. `0x8F2`–`0x1211` =
         ~146 field-interleaved 8×8 object/decoration bitmap cells —
         **DUN.EXE reads none of this object path** (`drawViewSprite` is
-        the only `spriteBank` reader and stops at region C); it ships
-        because `DUNOBJ` shares the OBJ container with `MUSOBJ`, which
-        only `MUS.EXE` fully uses. `0x1212`–`0x15A1` = **region C: 57
+        the only `spriteBank` reader and stops at region C); `MUSOBJ`'s
+        equivalent region is dormant too — the OBJ-family container
+        carries more than any renderer uses. `0x1212`–`0x15A1` = **region C: 57
         contiguous 16-byte AND-mask cells**. Loader **decoded**
         (`loadDungeonData`,
         `fix_dun_loaddungeondata.py`): `rtm_11` picks the array,
@@ -669,7 +669,9 @@ reimplementation.
         reused within a depth and shared across depths. Composited per
         depth: a rectangular aperture with a dithered top edge that
         shrinks P0→P4 — the lit niche the `DUNMON` sprite is `PUT` into.
-        Still open: the `0x8F2` object bitmaps and the `MUSOBJ` bank.
+        The `0x8F2` object bitmaps are **dormant** — no `DUN.EXE` code
+        reads them; `MUSOBJ`'s equivalent region is dormant too
+        (`renderExhibitView` never blits from `spriteBank`).
       - `DUNMONA/B.BSV` — **fully decoded** (`decoders/dunmon.py`): 6
         blocks × 2356 B (one per monster-type slot), A = levels 0–3, B =
         4–7. Each block = 6-word frame-offset table (`9/725/973/1083/
@@ -680,9 +682,11 @@ reimplementation.
         `viewObjectArray[8+slotClass] mod 6`, the frame by depth `P`.
       - `spriteBank` index arithmetic for `DUNMON` is now **resolved
         statically** — `bankBase = 0x1240 + monType·0x49A`, `getArray =
-        bankBase + spriteBank[bankBase + P]`. Still open: `MUSOBJ`
-        bitmap-bank sub-offsets, and the `DUNOBJ` `0x8F2` object-art
-        indexing (both unused by `DUN.EXE` itself).
+        bankBase + spriteBank[bankBase + P]`. `MUSOBJ.BSV` structure
+        decoded 2026-09-01 (same `DUNOBJ` family, dormant — `MUS.EXE`'s
+        `renderExhibitView` never blits sprites; exhibit art is
+        `DIS*.BSV` + per-exhibit `.BSV`). No open sprite items remain
+        on the dungeon/museum side.
 - [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
       map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
       `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records
