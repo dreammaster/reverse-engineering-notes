@@ -8,6 +8,11 @@ verified against TITLE + SDMAP -- see docs/file-formats.md.
   NAME is the stem, e.g. TITLE or SDMAP (loads NAME.GLB + NAME.GMP).
   Writes NAME.bmp (1x) and NAME_2x.bmp.
 
+  If NAME.GMP is absent (SDOBJ, BJCHR) the GLB is a bare sprite atlas
+  with no screen layout -- the tiles are dumped as a 24-wide grid so the
+  sprites can be eyeballed.  Pass a number as the 4th arg to change the
+  grid width.
+
 Format
 ------
 Both files are Microsoft BASIC BSAVE images: [FD][seg:2][off:2][len:2][payload].
@@ -21,6 +26,15 @@ Both files are Microsoft BASIC BSAVE images: [FD][seg:2][off:2][len:2][payload].
                   4 colours.  Stored FIELD-INTERLEAVED: the 8 words are
                   scanlines 0,2,4,6,1,3,5,7 in that file order.  Within a
                   word, byte 0 = the left 4 px, top bit-pair = leftmost px.
+
+Only `TITLE` and `SDMAP` ship a `.GMP`.  `SDOBJ.GLB` (SDEFENDR arena
+object sprites -- approaching fireballs at ~6 scale steps, explosion /
+impact animation frames, directional player-shot arrows, a horned enemy
+head) and `BJCHR.GLB` (GMB1/GMB2 card sprites) are bare atlases: 384 and
+384 tiles, same 16-byte field-interleaved tile format, but the client
+code indexes runs of tiles directly -- there is no cell map, and the
+per-sprite tile dimensions are not yet recovered (they need the arena /
+card blit routines).  Their `.GLB` header is `{0x0A, 6, 1, 0, 1}`.
 
 `.GMP` payload (the cell map):
     bytes[0..5]   3 header words {0x1A, 0x11, 0x1A}  (0x1A = this header size)
@@ -93,6 +107,40 @@ def decode(name, games_dir):
     return scr, W, H
 
 
+def render_tile(tiles, idx, scr, W, H, ox, oy):
+    """Blit one 16-byte field-interleaved 8x8 tile at (ox, oy)."""
+    src = idx * TILE_BYTES
+    for si in range(8):
+        r = (si * 2) if si < 4 else ((si - 4) * 2 + 1)
+        y = oy + r
+        if not (0 <= y < H):
+            continue
+        b0 = tiles[src + si * 2] if src + si * 2 < len(tiles) else 0
+        b1 = tiles[src + si * 2 + 1] if src + si * 2 + 1 < len(tiles) else 0
+        for p in range(8):
+            x = ox + p
+            if not (0 <= x < W):
+                continue
+            byte = b0 if p < 4 else b1
+            scr[y * W + x] = (byte >> (6 - (p % 4) * 2)) & 3
+
+
+def decode_atlas(name, games_dir, per_row=24):
+    """Bare `.GLB` with no `.GMP`: lay every tile out in a grid."""
+    glb = read_bsave(os.path.join(games_dir, name + ".GLB"))
+    gh = struct.unpack_from("<5H", glb, 0)
+    tiles = glb[0x0A:]
+    ntiles = len(tiles) // TILE_BYTES
+    rows = (ntiles + per_row - 1) // per_row
+    print(f"{name}: GLB hdr {gh}  (no .GMP -- sprite atlas)")
+    print(f"  {ntiles} tiles -> {per_row} x {rows} grid")
+    W, H = per_row * 8, rows * 8
+    scr = bytearray(W * H)
+    for t in range(ntiles):
+        render_tile(tiles, t, scr, W, H, (t % per_row) * 8, (t // per_row) * 8)
+    return scr, W, H
+
+
 def write_bmp(path, buf, w, h, pal, scale=1):
     if scale > 1:
         big = bytearray(w * scale * h * scale)
@@ -121,7 +169,11 @@ def main():
     name = sys.argv[1] if len(sys.argv) > 1 else "TITLE"
     games = sys.argv[2] if len(sys.argv) > 2 else r"C:\games\lota"
     out = sys.argv[3] if len(sys.argv) > 3 else name.lower() + ".bmp"
-    scr, w, h = decode(name, games)
+    if os.path.exists(os.path.join(games, name + ".GMP")):
+        scr, w, h = decode(name, games)
+    else:
+        per_row = int(sys.argv[4]) if len(sys.argv) > 4 else 24
+        scr, w, h = decode_atlas(name, games, per_row)
     write_bmp(out, scr, w, h, PAL, scale=1)
     write_bmp(out.replace(".bmp", "_2x.bmp"), scr, w, h, PAL, scale=2)
     print(f"wrote {out} ({w}x{h}) and _2x")

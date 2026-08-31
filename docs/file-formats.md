@@ -7,10 +7,11 @@ guess. See [overview.md](overview.md) for the code side and
 [roadmap.md](roadmap.md) for what's still open.
 
 Status (2026-08-31): the BSAVE container is confirmed, and the
-**`.GLB` + `.GMP` tile/cell-map format is fully decoded** —
-`decoders/glb_image.py` renders both `TITLE` (the CGA title screen,
-pixel-for-pixel) and `SDMAP` (the SDEFENDR combat-arena screen frame).
-The other `.BSV` files are still container-only.
+**`.GLB` tile format + `.GMP` cell-map format are decoded** —
+`decoders/glb_image.py` renders `TITLE` (the CGA title screen,
+pixel-for-pixel), `SDMAP` (the SDEFENDR combat-arena screen frame), and
+dumps the `SDOBJ.GLB` sprite atlas. The other `.BSV` files are still
+container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -53,8 +54,8 @@ castle/fort layout banks.
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
 | `SDMAP.GLB` / `.GMP` | 4113 / 2081 | `SDEFENDR` | **fully decoded** — 256-tile 8×8 CGA sheet + 41×25 column-major cell map = the combat-arena *screen frame* (ornate magenta viewport border around a black 3-D-view window, stippled background). Same format as `TITLE`; `decoders/glb_image.py SDMAP` renders it. |
-| `SDOBJ.GLB` | 6161 | `SDEFENDR` | combat-training arena sprites (loaded into `seg004`, drawn by the hand-written `drawArenaSprites`) — not yet decoded |
-| `BJCHR.GLB` | 6161 | `GMB1`/`GMB2` | card sprites ("BJ" = BlackJack) — `GMB1` (BlackJack) BLOADs it into `seg004`; `GMB2` shares it |
+| `SDOBJ.GLB` | 6161 | `SDEFENDR` | **tiles decoded** — 384 × 8×8 CGA tiles, same field-interleaved format as `TITLE`, **no `.GMP`** (bare sprite atlas). Content: approaching fireballs at ~6 scale steps, explosion / impact animation frames, cyan directional player-shot arrows, a horned enemy head. Per-sprite tile grouping TBD (needs the arena blit code). `decoders/glb_image.py SDOBJ` dumps the atlas. |
+| `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | card sprites ("BJ" = BlackJack) — byte-for-byte the same container shape as `SDOBJ.GLB` (identical 6161-byte size + `{0x0A,6,1,0,1}` header), a bare atlas of 384 8×8 tiles, no `.GMP`. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. Not yet rendered. |
 | `BIGNUM.DAT` | 420 | `GMB2` (at least) | large-digit font — `GMB2` (Flip-Flop Parlour) BLOADs it to render the GOLD / BET / winnings numbers |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
 | `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | character roster **and** the in-progress save (there is no separate save file). `SAVER.EXE`'s `saveRosterToDisk` is the write side; the menu roster screens + `readLegacyDat` read it. The "is not on this / character disk" / "empty" strings in `SAVER` imply a per-slot / removable "character disk" scheme. |
@@ -97,9 +98,17 @@ tick (`titleScrollX`, step 40, wrap 160) for the slow horizontal drift.
 latch details, side handles) around a black 3-D-view window, over a
 stippled CGA background — tiles 17–20 are the intentional stipple.
 
-The remaining tile sheets (`BJCHR.GLB`, `SDOBJ.GLB`) ship without a
-matching `.GMP`, so they are raw sprite atlases, not screen layouts — a
-different decode.
+`SDOBJ.GLB` and `BJCHR.GLB` ship without a matching `.GMP` — they are
+raw **sprite atlases**, not screen layouts. Same 16-byte
+field-interleaved 8×8 tile format (384 tiles each), but with no cell map
+the client code (SDEFENDR's arena engine, GMB1/GMB2's card renderer)
+indexes runs of tiles directly, and the per-sprite tile dimensions
+aren't recovered yet. `decoders/glb_image.py SDOBJ` dumps the atlas as a
+24-wide grid: the recognisable sprites are approaching fireballs at ~6
+scale steps, explosion / impact animation frames, cyan directional
+player-shot arrows, and a horned enemy head. Their header is
+`{0x0A, 6, 1, 0, 1}` (`word[3]` = 0 vs. 1 on the two screen images —
+possibly the "has cell map" flag).
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

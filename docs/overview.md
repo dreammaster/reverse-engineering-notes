@@ -694,3 +694,12 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   intentional stipple, not a decode artefact). Only `TITLE` and `SDMAP`
   ship a `.GMP`; `BJCHR.GLB` / `SDOBJ.GLB` are raw sprite atlases (no
   cell map) and need a different decode. See file-formats.md.
+- **2026-08-31** — Rendered `SDOBJ.GLB` (SDEFENDR arena object sprites)
+  via `glb_image.py`'s new atlas mode: 384 × 8×8 tiles, same 16-byte
+  field-interleaved format, no `.GMP` — SDEFENDR's arena engine indexes
+  runs of tiles directly. The 24-wide grid dump shows approaching
+  fireballs at ~6 scale steps, explosion / impact animation frames, cyan
+  directional player-shot arrows, and a horned enemy head. Per-sprite
+  tile grouping still needs the `seg001` blit code. `BJCHR.GLB` is a
+  byte-for-byte identical container (6161 b, `{0x0A,6,1,0,1}`) — same
+  atlas shape, not yet rendered.

@@ -327,8 +327,12 @@ reimplementation.
 - [x] `SDMAP.GLB` / `.GMP` (2026-08-31) — decoded: it's the arena
       *screen frame* (ornate viewport border), standard `.GLB`/`.GMP`
       tile+cellmap format, 256 tiles, 41×25 map. `decoders/glb_image.py`.
-- [ ] `SDOBJ.GLB` sprite atlas (fireball / arrow / target sprites) — no
-      `.GMP`, so a raw atlas, not a screen layout.
+- [~] `SDOBJ.GLB` sprite atlas (2026-08-31) — tiles decoded (384 × 8×8,
+      same field-interleaved format as `TITLE`, no `.GMP`);
+      `decoders/glb_image.py SDOBJ` dumps it. Visible: approaching
+      fireballs at ~6 scale steps, explosion frames, cyan directional
+      shot arrows, a horned enemy head. Still open: the per-sprite tile
+      grouping / index table (needs the arena blit routine in `seg001`).
 - [ ] Confirm the stat-change math: the "40, 31, 22, 19, 16, 14, 12"
       table (per-level hit thresholds?) vs. the " INCREASE: + / DECREASE:
       -" applied to `ARMOR,WEAPON,ENDUR`.
@@ -558,8 +562,9 @@ reimplementation.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
 - [ ] Town / castle / dungeon layouts.
-- [ ] The standalone tile atlases (`BJCHR.GLB`, `SDOBJ.GLB` — no `.GMP`)
-      and the `CEL*.BSV` ending images.
+- [~] The standalone sprite atlases — `SDOBJ.GLB` tiles rendered (above);
+      `BJCHR.GLB` (identical container: 6161 b, `{0x0A,6,1,0,1}`) not yet
+      rendered. Plus the `CEL*.BSV` ending images.
 - [ ] Music format (`MUSDATA.BSV` + the MML strings in `MENU`).
 
 ## ScummVM engine (future)
