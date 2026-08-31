@@ -540,16 +540,23 @@ reimplementation.
 
 ## Data formats
 
+- [x] **`TITLE.GLB` + `TITLE.GMP`** (2026-08-31) — fully decoded and
+      rendered (`decoders/title_screen.py`). `.GLB` = a flat 512-tile
+      sheet of 16-byte 8×8 CGA cells, **field-interleaved** (scanlines
+      0,2,4,6,1,3,5,7); `.GMP` = a 40×25 **column-major** cell map,
+      word `W` -> tile `W//8`. Both carry a small `.GLB`/`.GMP` preamble
+      (5 header words). CGA 320×200 mode 4, palette 1. See
+      file-formats.md. *This is the general `.GLB` tile format* -- apply
+      to `SDMAP.GLB`, `BJCHR.GLB`, `SDOBJ.GLB` next.
+- [ ] `CHAR.DAT` (3444 bytes) — character roster the menu edits.
+      `readCharDat` / `writeCharDat` / `charRecordSize` are named.
 - [ ] Field-level decode of `LEGACY.DAT` (no BSAVE header — the odd one
       out; likely game progress / roster / config).
-- [ ] `CHAR.DAT` (3444 bytes) — character roster the menu edits.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
 - [ ] Town / castle / dungeon layouts.
-- [ ] `TITLE.GLB` / `TITLE.GMP` (title-screen graphics) — good first
-      target since `MENU` loads them early.
-- [ ] Graphics pixel packing (CGA/EGA) and the `.GLB` palette/tile
-      layout.
+- [ ] The other tile sheets (`SDMAP.GLB`/`.GMP`, `BJCHR.GLB`,
+      `SDOBJ.GLB`, the `CEL*.BSV`) — should follow the TITLE format.
 - [ ] Music format (`MUSDATA.BSV` + the MML strings in `MENU`).
 
 ## ScummVM engine (future)

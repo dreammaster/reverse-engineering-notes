@@ -10,7 +10,10 @@ This file is the entry point into `docs/`. See also:
 - [roadmap.md](roadmap.md) — prioritized list of what's investigated vs.
   still open, per executable.
 - [file-formats.md](file-formats.md) — on-disk data formats (maps, saves,
-  graphics, music, etc.). Barely started.
+  graphics, music, etc.). `TITLE.GLB`/`.GMP` decoded; the rest
+  container-only.
+- `decoders/` — standalone Python decoders for the data files
+  (`title_screen.py` -> the CGA title screen as a BMP). No deps.
 
 ## The game is compiled Microsoft BASIC, not C
 

@@ -6,8 +6,10 @@ the function/global that proves them; anything untraced is flagged as a
 guess. See [overview.md](overview.md) for the code side and
 [roadmap.md](roadmap.md) for what's still open.
 
-Status: **just started (2026-08-30).** Only the container format below is
-confirmed so far; no field-level decoding of any file yet.
+Status (2026-08-31): the BSAVE container is confirmed, and
+**`TITLE.GLB` + `TITLE.GMP` are fully decoded** (`decoders/title_screen.py`
+renders the CGA title screen pixel-for-pixel). The other `.BSV`/`.GLB`
+files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -39,7 +41,7 @@ castle/fort layout banks.
 
 | File(s) | Size | Used by (guess) | Kind (guess) |
 |---|---|---|---|
-| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **`.GLB` = the 8x8 tile bitmaps, `.GMP` = the per-cell tile-index map** (proven by `menu.idb` `seg001`'s `loadTitleImage`: it reads `.GLB` to `titleGlbBuf` + 0x11 = the bitmap data, `.GMP` to `titleGmpBuf`, then `blitCharCell` copies `map[cell]`-th 8x8 bitmap to `0xB800`). `scrollTitleImage` slides it horizontally (`titleScrollX`, step 40, wrap 160). |
+| `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` renders it. |
 | `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | 12 town layouts |
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |
@@ -62,6 +64,32 @@ castle/fort layout banks.
 
 `LEGACY.BAT` (4 bytes: `menu`), `manual.txt`, and
 `Passed.through.ANTiQUE.Shop` are not game data.
+
+## `TITLE.GLB` + `TITLE.GMP` — tile sheet + cell map — **decoded 2026-08-31**
+
+Fully decoded and rendered (`decoders/title_screen.py` -> the CGA title
+screen). Both are BSAVE images; strip the 7-byte header, then:
+
+**`TITLE.GLB`** (payload 8202 b) — the tile sheet.
+| off | contents |
+|---|---|
+| `0x00`–`0x09` | 5 header words: `{0x000A, 0x0008, 1, 1, 1}` (tile h/w = 8, then 1/1/1) |
+| `0x0A`–`0x200A` | **512 tiles × 16 bytes.** Each tile = one 8×8 CGA cell, 2 bpp / 4 colours. Stored **field-interleaved**: the 8 words are scanlines 0,2,4,6,1,3,5,7 (in that file order). Within a word, byte 0 = the left 4 px, MSB pair = leftmost. |
+
+**`TITLE.GMP`** (payload 2104 b) — the 40×25 cell map.
+| off | contents |
+|---|---|
+| `0x00`–`0x19` | header: 5 words `{0x1A, 0x11, 0x1A, 0x1A, 0x28}` (0x28 = 40 = column count), then `"title"` as wide chars (the BASIC source variable name), then zero padding |
+| `0x1A`–end | the cell array: **40 columns × 26 words, COLUMN-MAJOR** (25 rows used per column + 1 word of padding). Cell word `W` → tile index `W // 8` (the blitter does `src = tiledata + W*2`). |
+
+Screen: CGA 320×200 mode 4, palette 1 (0 black / 1 cyan / 2 magenta /
+3 white); even scanlines at `B800:0000`, odd at `B800:2000`.
+`menu`'s `scrollTitleImage` re-blits it column-shifted each music tick
+(`titleScrollX`, step 40, wrap 160) for the slow horizontal drift.
+
+The `{0x000A, 0x0008, 1, 1, 1}` / `{0x1A, 0x11, ...}` payload headers are
+the standard `.GLB` / `.GMP` preamble — expect the same shape on the
+other tile sheets (`SDMAP.GLB`, `BJCHR.GLB`, `SDOBJ.GLB`).
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 
