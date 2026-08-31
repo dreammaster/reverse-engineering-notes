@@ -4899,7 +4899,7 @@ static Bytes_1(void) {
 	create_insn	(0X1DBC4);
 	set_cmt	(0X1DBC8,	"int 3Fh run-time entry 60",	1);
 	create_insn	(0X1DBC8);
-	set_name	(0X1DBC8,	"rtm_60");
+	set_name	(0X1DBC8,	"basPutSpriteXor");
 	create_insn	(x=0X1DC0C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1DC0F);
@@ -4913,7 +4913,7 @@ static Bytes_1(void) {
 	create_insn	(0X1DC81);
 	set_cmt	(0X1DC84,	"int 3Fh run-time entry 61",	1);
 	create_insn	(0X1DC84);
-	set_name	(0X1DC84,	"rtm_61");
+	set_name	(0X1DC84,	"basPutSprite");
 	create_insn	(x=0X1DC94);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1DC9C);
@@ -6064,7 +6064,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1FD3F,	"int 3Fh run-time entry FE2A",	1);
 	create_insn	(0X1FD3F);
-	set_name	(0X1FD3F,	"rtm_FE2A");
+	set_name	(0X1FD3F,	"drawTileRun");
 	create_insn	(x=0X1FD45);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1FD4C);
@@ -6096,7 +6096,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X1FDA1,	"int 3Fh run-time entry FE2E",	1);
 	create_insn	(0X1FDA1);
-	set_name	(0X1FDA1,	"rtm_FE2E");
+	set_name	(0X1FDA1,	"andSpriteMaskCell");
 	create_insn	(x=0X1FDAC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1FDAF);
@@ -12307,9 +12307,11 @@ static Functions_0(void) {
 	set_frame_size(0X1DBA4, 0, 2, 0X2);
 	add_func    (0X1DBC8,0X1DC84);
 	set_func_flags(0X1DBC8,0x5412);
+	set_func_cmt(0X1DBC8,	"sibling of basPutSprite (rtm_61) -- the other `PUT` verb (PSET/XOR path); shares sub_1BE5C / sub_1BEF0.", 1);
 	set_frame_size(0X1DBC8, 0X2, 2, 0X6);
 	add_func    (0X1DC84,0X1DD25);
 	set_func_flags(0X1DC84,0x5412);
+	set_func_cmt(0X1DC84,	"stock Microsoft BASIC `PUT (x,y), array, verb` -- draws a GET-array bitmap (`dw widthPx ; dw heightPx ; planar CGA rows`). ds:0E92h = bits/pixel (2 for CGA), ds:250h/252h = origin, ds:2D0h/2D1h = H-flip flags, ds:0EA7h/0EABh = the AND vs OR row-drawer. drawViewSprite uses this for the sprite IMAGE after andSpriteMaskCell lays the mask.", 1);
 	set_frame_size(0X1DC84, 0X4, 2, 0X8);
 	add_func    (0X1DD26,0X1DD7A);
 	set_func_flags(0X1DD26,0x5412);
@@ -12725,12 +12727,14 @@ static Functions_0(void) {
 	set_frame_size(0X1FD2A, 0X4, 0, 0);
 	add_func    (0X1FD3F,0X1FD82);
 	set_func_flags(0X1FD3F,0x5412);
+	set_func_cmt(0X1FD3F,	"draw a horizontal run of 8x8 CGA cells. args (srcBase, srcSeg, destOff, tileIndexList, count). For each of `count` cells: al = *tileIndexList++; if al==0FFh skip (transparent), else copy the 16-byte cell at srcBase + al*16 to video via sub_1FED8 (movsw x8, +4Eh steps, +1F0Eh field-jump after the 4th -- the same field-interleaved 8x8 layout as the .GLB tile sheets). dun/mus's blitViewCell drives this for every wall/floor band.", 1);
 	set_frame_size(0X1FD3F, 0X4, 2, 0XA);
 	add_func    (0X1FD82,0X1FDA1);
 	set_func_flags(0X1FD82,0x5412);
 	set_frame_size(0X1FD82, 0X4, 2, 0X6);
 	add_func    (0X1FDA1,0X1FE0B);
 	set_func_flags(0X1FDA1,0x5412);
+	set_func_cmt(0X1FDA1,	"sprite MASK pass: AND one field-interleaved 8x8 cell (8 words) into video (`and es:[di],ax` x8, +4Eh / +1F0Eh stepping). args (srcOff, srcSeg, destOff). drawViewSprite calls it once per masked cell, walking a list of (srcOff,destOff) word pairs -- exactly DUNOBJ.BSV's pointer-pair table.", 1);
 	set_frame_size(0X1FDA1, 0X4, 2, 0X6);
 	add_func    (0X1FE0B,0X1FE75);
 	set_func_flags(0X1FE0B,0x5412);
@@ -13225,6 +13229,10 @@ static Functions_0(void) {
 	add_func    (0X21FE8,0X2204E);
 	set_func_flags(0X21FE8,0x5400);
 	set_frame_size(0X21FE8, 0, 0, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X2204E,0X22064);
 	set_func_flags(0X2204E,0x5400);
 	set_frame_size(0X2204E, 0X6, 0, 0);
@@ -13285,10 +13293,6 @@ static Functions_0(void) {
 	add_func    (0X2237B,0X223B0);
 	set_func_flags(0X2237B,0x5400);
 	set_frame_size(0X2237B, 0, 0, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X223B0,0X22429);
 	set_func_flags(0X223B0,0x5400);
 	set_frame_size(0X223B0, 0, 0, 0);

@@ -8611,7 +8611,7 @@ loc_12C49:                              ; DATA XREF: seg003:4477↓o
                 db 0Bh
                 dw seg seg007
                 dd rtm_FE2D
-                dd rtm_FE2E
+                dd andSpriteMaskCell    ; sprite MASK pass: AND one field-interleaved 8x8 cell (8 words) into video (`and es:[di],ax` x8, +4Eh / +1F0Eh stepping). args (srcOff, srcSeg, destOff). drawViewSprite calls it once per masked cell, walking a list of (srcOff,destOff) word pairs -- exactly DUNOBJ.BSV's pointer-pair table.
                 dd rtm_FE2F
                 dd rtm_FE30
                 dd rtm_FE31
@@ -26588,7 +26588,7 @@ rtm_7D          endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A896       proc far                ; CODE XREF: rtm_60+D↓p
+sub_1A896       proc far                ; CODE XREF: basPutSpriteXor+D↓p
                                         ; rtm_6D+15↓p
                 mov     bx, 6FFh
                 jmp     short near ptr sub_1A89E
@@ -26599,7 +26599,7 @@ sub_1A896       endp
 
 
 sub_1A89B       proc near               ; CODE XREF: rtm_08+9↑p
-                                        ; rtm_60+8↓p ...
+                                        ; basPutSpriteXor+8↓p ...
                 mov     bx, 6F2h
 sub_1A89B       endp
 
@@ -30918,7 +30918,7 @@ loc_1BE2B:                              ; CODE XREF: seg003:9394↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BE58       proc near               ; CODE XREF: rtm_61+2A↓p
+sub_1BE58       proc near               ; CODE XREF: basPutSprite+2A↓p
                 mov     al, ds:0E92h
                 retn
 sub_1BE58       endp
@@ -30927,8 +30927,8 @@ sub_1BE58       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BE5C       proc near               ; CODE XREF: rtm_60+87↓p
-                                        ; rtm_61+6E↓p
+sub_1BE5C       proc near               ; CODE XREF: basPutSpriteXor+87↓p
+                                        ; basPutSprite+6E↓p
                 pushf
                 mov     ds:742h, bx
                 mov     word ptr ds:744h, es
@@ -30985,8 +30985,8 @@ sub_1BE5C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BEB7       proc near               ; CODE XREF: rtm_60+97↓p
-                                        ; rtm_60+A4↓p
+sub_1BEB7       proc near               ; CODE XREF: basPutSpriteXor+97↓p
+                                        ; basPutSpriteXor+A4↓p
                 push    si
                 push    di
                 push    bp
@@ -31021,8 +31021,8 @@ sub_1BEB7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BEF0       proc near               ; CODE XREF: rtm_61+7E↓p
-                                        ; rtm_61+8B↓p
+sub_1BEF0       proc near               ; CODE XREF: basPutSprite+7E↓p
+                                        ; basPutSprite+8B↓p
                 push    si
                 push    di
                 push    bp
@@ -31078,7 +31078,7 @@ sub_1BF2F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BF52       proc near               ; CODE XREF: rtm_60+5C↓p
+sub_1BF52       proc near               ; CODE XREF: basPutSpriteXor+5C↓p
                 mov     al, ds:0E92h
                 cbw
                 mul     dx
@@ -31358,7 +31358,7 @@ sub_1C07E       endp
 
 
 sub_1C0BB       proc near               ; CODE XREF: sub_1BFC8+1F↑p
-                                        ; rtm_60+32↓p ...
+                                        ; basPutSpriteXor+32↓p ...
                 mov     bx, ds:250h
                 sub     bx, cx
 
@@ -31375,7 +31375,7 @@ sub_1C0BB       endp
 
 
 sub_1C0C6       proc near               ; CODE XREF: sub_1BFC8+13↑p
-                                        ; rtm_60+12↓p
+                                        ; basPutSpriteXor+12↓p
                 mov     bx, ds:252h
                 sub     bx, dx
                 jmp     short loc_1C0C1
@@ -36447,9 +36447,10 @@ rtm_05          endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sibling of basPutSprite (rtm_61) -- the other `PUT` verb (PSET/XOR path); shares sub_1BE5C / sub_1BEF0.
 ; Attributes: bp-based frame
 
-rtm_60          proc far
+basPutSpriteXor proc far
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -36472,22 +36473,22 @@ arg_4           = word ptr  0Ah
                 jnb     short loc_1DBE3
                 xchg    dx, ds:252h
 
-loc_1DBE3:                              ; CODE XREF: rtm_60+15↑j
+loc_1DBE3:                              ; CODE XREF: basPutSpriteXor+15↑j
                 cmp     byte ptr ds:2D0h, 0
                 jz      short loc_1DBF5
                 cmp     byte ptr ds:2D1h, 0
                 jnz     short loc_1DBF5
                 xchg    dx, ds:252h
 
-loc_1DBF5:                              ; CODE XREF: rtm_60+20↑j
-                                        ; rtm_60+27↑j
+loc_1DBF5:                              ; CODE XREF: basPutSpriteXor+20↑j
+                                        ; basPutSpriteXor+27↑j
                 inc     bx
                 mov     ds:264h, bx
                 call    sub_1C0BB
                 jnb     short loc_1DC03
                 xchg    cx, ds:250h
 
-loc_1DC03:                              ; CODE XREF: rtm_60+35↑j
+loc_1DC03:                              ; CODE XREF: basPutSpriteXor+35↑j
                 inc     bx
                 mov     ds:262h, bx
                 call    word ptr ds:0EA1h
@@ -36512,7 +36513,7 @@ loc_1DC03:                              ; CODE XREF: rtm_60+35↑j
                 jmp     def_14641       ; jumptable 00014641 default case
 ; ---------------------------------------------------------------------------
 
-loc_1DC3A:                              ; CODE XREF: rtm_60+6D↑j
+loc_1DC3A:                              ; CODE XREF: basPutSpriteXor+6D↑j
                 push    bp
                 mov     bx, si
                 mov     es:[bx], dx
@@ -36530,7 +36531,7 @@ loc_1DC3A:                              ; CODE XREF: rtm_60+6D↑j
                 rcr     al, 1
                 jb      short loc_1DC6B
 
-loc_1DC5E:                              ; CODE XREF: rtm_60+9F↓j
+loc_1DC5E:                              ; CODE XREF: basPutSpriteXor+9F↓j
                 push    cx
                 call    sub_1BEB7
                 call    word ptr ds:0EABh
@@ -36539,15 +36540,15 @@ loc_1DC5E:                              ; CODE XREF: rtm_60+9F↓j
                 jmp     short loc_1DC76
 ; ---------------------------------------------------------------------------
 
-loc_1DC6B:                              ; CODE XREF: rtm_60+94↑j
-                                        ; rtm_60+AC↓j
+loc_1DC6B:                              ; CODE XREF: basPutSpriteXor+94↑j
+                                        ; basPutSpriteXor+AC↓j
                 push    cx
                 call    sub_1BEB7
                 call    word ptr ds:0EA7h
                 pop     cx
                 loop    loc_1DC6B
 
-loc_1DC76:                              ; CODE XREF: rtm_60+A1↑j
+loc_1DC76:                              ; CODE XREF: basPutSpriteXor+A1↑j
                 pop     bp
                 call    word ptr ds:0EB7h
                 pop     es
@@ -36556,16 +36557,17 @@ loc_1DC76:                              ; CODE XREF: rtm_60+A1↑j
                 retf    6
 ; ---------------------------------------------------------------------------
 
-loc_1DC81:                              ; CODE XREF: rtm_60+5F↑j
+loc_1DC81:                              ; CODE XREF: basPutSpriteXor+5F↑j
                 jmp     near ptr loc_1381D+1
-rtm_60          endp ; sp-analysis failed
+basPutSpriteXor endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; stock Microsoft BASIC `PUT (x,y), array, verb` -- draws a GET-array bitmap (`dw widthPx ; dw heightPx ; planar CGA rows`). ds:0E92h = bits/pixel (2 for CGA), ds:250h/252h = origin, ds:2D0h/2D1h = H-flip flags, ds:0EA7h/0EABh = the AND vs OR row-drawer. drawViewSprite uses this for the sprite IMAGE after andSpriteMaskCell lays the mask.
 ; Attributes: bp-based frame
 
-rtm_61          proc far
+basPutSprite    proc far
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -36588,7 +36590,7 @@ arg_4           = dword ptr  0Ah
                 mov     bx, [bp+arg_2]
                 les     bx, [bx]
 
-loc_1DCA1:                              ; CODE XREF: rtm_61+16↑j
+loc_1DCA1:                              ; CODE XREF: basPutSprite+16↑j
                 mov     si, es:[bx]
                 push    si
                 mov     di, es:[bx+2]
@@ -36615,20 +36617,20 @@ loc_1DCA1:                              ; CODE XREF: rtm_61+16↑j
                 jmp     short loc_1DCDD
 ; ---------------------------------------------------------------------------
 
-loc_1DCDA:                              ; CODE XREF: rtm_61+49↑j
-                                        ; rtm_61+50↑j
+loc_1DCDA:                              ; CODE XREF: basPutSprite+49↑j
+                                        ; basPutSprite+50↑j
                 dec     di
                 add     bx, di
 
-loc_1DCDD:                              ; CODE XREF: rtm_61+3C↑j
-                                        ; rtm_61+54↑j
+loc_1DCDD:                              ; CODE XREF: basPutSprite+3C↑j
+                                        ; basPutSprite+54↑j
                 jnb     short loc_1DCE2
 
-loc_1DCDF:                              ; CODE XREF: rtm_61+63↓j
+loc_1DCDF:                              ; CODE XREF: basPutSprite+63↓j
                 jmp     def_14641       ; jumptable 00014641 default case
 ; ---------------------------------------------------------------------------
 
-loc_1DCE2:                              ; CODE XREF: rtm_61:loc_1DCDD↑j
+loc_1DCE2:                              ; CODE XREF: basPutSprite:loc_1DCDD↑j
                 mov     dx, bx
                 call    sub_1C0F3
                 jnb     short loc_1DCDF
@@ -36647,7 +36649,7 @@ loc_1DCE2:                              ; CODE XREF: rtm_61:loc_1DCDD↑j
                 rcr     al, 1
                 jb      short loc_1DD0E
 
-loc_1DD01:                              ; CODE XREF: rtm_61+86↓j
+loc_1DD01:                              ; CODE XREF: basPutSprite+86↓j
                 push    cx
                 call    sub_1BEF0
                 call    word ptr ds:0EABh
@@ -36656,15 +36658,15 @@ loc_1DD01:                              ; CODE XREF: rtm_61+86↓j
                 jmp     short loc_1DD19
 ; ---------------------------------------------------------------------------
 
-loc_1DD0E:                              ; CODE XREF: rtm_61+7B↑j
-                                        ; rtm_61+93↓j
+loc_1DD0E:                              ; CODE XREF: basPutSprite+7B↑j
+                                        ; basPutSprite+93↓j
                 push    cx
                 call    sub_1BEF0
                 call    word ptr ds:0EA7h
                 pop     cx
                 loop    loc_1DD0E
 
-loc_1DD19:                              ; CODE XREF: rtm_61+88↑j
+loc_1DD19:                              ; CODE XREF: basPutSprite+88↑j
                 call    word ptr ds:0EB7h
                 pop     bp
                 pop     es
@@ -36672,7 +36674,7 @@ loc_1DD19:                              ; CODE XREF: rtm_61+88↑j
                 pop     si
                 pop     bp
                 retf    8
-rtm_61          endp ; sp-analysis failed
+basPutSprite    endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -36955,7 +36957,7 @@ sub_1DE67       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DE9D       proc far                ; CODE XREF: rtm_61+32↑p
+sub_1DE9D       proc far                ; CODE XREF: basPutSprite+32↑p
                                         ; sub_1DE67+16↑p ...
                 or      bx, bx
                 jz      short loc_1DEE3
@@ -41444,7 +41446,7 @@ sub_1F7A8       endp
 
 ; Attributes: bp-based frame
 
-sub_1F7AE       proc far                ; CODE XREF: rtm_60+4D↑p
+sub_1F7AE       proc far                ; CODE XREF: basPutSpriteXor+4D↑p
                                         ; rtm_8B+11↑p
 
 arg_0           = word ptr  4
@@ -42481,9 +42483,10 @@ sub_1FD2A       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; draw a horizontal run of 8x8 CGA cells. args (srcBase, srcSeg, destOff, tileIndexList, count). For each of `count` cells: al = *tileIndexList++; if al==0FFh skip (transparent), else copy the 16-byte cell at srcBase + al*16 to video via sub_1FED8 (movsw x8, +4Eh steps, +1F0Eh field-jump after the 4th -- the same field-interleaved 8x8 layout as the .GLB tile sheets). dun/mus's blitViewCell drives this for every wall/floor band.
 ; Attributes: bp-based frame
 
-rtm_FE2A        proc far                ; CODE XREF: rtm_FE69+9C↓P
+drawTileRun     proc far                ; CODE XREF: rtm_FE69+9C↓P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -42503,7 +42506,7 @@ arg_8           = word ptr  0Eh
                 jmp     short loc_1FD75
 ; ---------------------------------------------------------------------------
 
-loc_1FD54:                              ; CODE XREF: rtm_FE2A+39↓j
+loc_1FD54:                              ; CODE XREF: drawTileRun+39↓j
                 mov     bx, [bp+arg_6]
                 mov     al, [bx]
                 cmp     al, 0FFh
@@ -42517,13 +42520,13 @@ loc_1FD54:                              ; CODE XREF: rtm_FE2A+39↓j
                 add     si, [bp+arg_0]
                 call    sub_1FED8
 
-loc_1FD6F:                              ; CODE XREF: rtm_FE2A+1C↑j
+loc_1FD6F:                              ; CODE XREF: drawTileRun+1C↑j
                 inc     [bp+arg_6]
                 inc     di
                 inc     di
                 inc     dx
 
-loc_1FD75:                              ; CODE XREF: rtm_FE2A+13↑j
+loc_1FD75:                              ; CODE XREF: drawTileRun+13↑j
                 cmp     dx, [bp+arg_8]
                 jbe     short loc_1FD54
                 inc     si
@@ -42532,7 +42535,7 @@ loc_1FD75:                              ; CODE XREF: rtm_FE2A+13↑j
                 pop     si
                 pop     bp
                 retf    0Ah
-rtm_FE2A        endp
+drawTileRun     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42567,9 +42570,10 @@ rtm_FE2D        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; sprite MASK pass: AND one field-interleaved 8x8 cell (8 words) into video (`and es:[di],ax` x8, +4Eh / +1F0Eh stepping). args (srcOff, srcSeg, destOff). drawViewSprite calls it once per masked cell, walking a list of (srcOff,destOff) word pairs -- exactly DUNOBJ.BSV's pointer-pair table.
 ; Attributes: bp-based frame
 
-rtm_FE2E        proc far                ; DATA XREF: seg003:0214↑o
+andSpriteMaskCell proc far              ; DATA XREF: seg003:0214↑o
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -42620,7 +42624,7 @@ arg_4           = word ptr  0Ah
                 pop     si
                 pop     bp
                 retf    6
-rtm_FE2E        endp
+andSpriteMaskCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42752,7 +42756,7 @@ rtm_FE34        endp
 
 
 sub_1FED8       proc near               ; CODE XREF: sub_1FD2A+F↑p
-                                        ; rtm_FE2A+2D↑p ...
+                                        ; drawTileRun+2D↑p ...
                 push    si
                 push    di
                 movsw
@@ -65366,7 +65370,7 @@ loc_28E00:                              ; CODE XREF: rtm_FE69+B4↓j
                 push    word ptr [bp-1Eh]
                 push    word ptr [bp-0Ch]
                 push    word ptr [bp-10h]
-                call    rtm_FE2A
+                call    drawTileRun     ; draw a horizontal run of 8x8 CGA cells. args (srcBase, srcSeg, destOff, tileIndexList, count). For each of `count` cells: al = *tileIndexList++; if al==0FFh skip (transparent), else copy the 16-byte cell at srcBase + al*16 to video via sub_1FED8 (movsw x8, +4Eh steps, +1F0Eh field-jump after the 4th -- the same field-interleaved 8x8 layout as the .GLB tile sheets). dun/mus's blitViewCell drives this for every wall/floor band.
                 add     word ptr [bp-0Eh], 1Ah
                 add     word ptr [bp-1Eh], 140h
                 mov     ax, [bp-22h]

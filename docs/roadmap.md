@@ -577,21 +577,27 @@ reimplementation.
       Field layout still open.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
-- [~] Dungeon data (2026-08-31):
+- [~] Dungeon data (2026-08-31) — **rendering model cracked**
+      (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
+      `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`
+      `rtm_61`; 8×8 cells are the `.GLB` field-interleave):
       - `DUNM1/2/3.BSV` **decoded** — 8 levels × 16×16 tiles/byte (`0x00`
         floor / `0xFF` rock / `0x01`–`0x0F` features). `decoders/dun_map.py`.
-        Open: the feature code→type table (in `DUN.EXE`).
-      - `DUNDATA.BSV` — container mapped (loads contiguously after the
-        map at `0x2C07:0x173C`); big `0x10`–`0x7F` region + fields TBD.
-      - `DUNOBJ.BSV` — 4 regions mapped (object records / pointer-pair
-        index / CGA 2 bpp sprite pool / zero pad), loads at
-        `0x140D:0x0DB6` = shared with `OUTOBJ`/`MUSOBJ`. Sprite-pool
-        encoding + the table-walking routine still open.
-      - `DUNMONA/B.BSV` (monsters, `0x140D:0x3236`) — record structure
-        decoded: 6 monsters × 2356 B, each = header + 5 scaled image
-        frames (705/248/110/65/30 B, near→far) + ~5 mask frames + a
-        trailer. A/B are two swappable monster sets. Sprite pixel
-        encoding (RLE/skip) shared-open with `DUNOBJ` region C.
+        Open: the feature code→type table.
+      - `DUNDATA.BSV` — loads into `dungeonMapArray` (`ds:1E2A`,
+        contiguous with `DUNM*`); the `0x10`–`0x7F` region = wall
+        tile-index lists, rest = the 8×8 tile bank. Sub-offsets need
+        `blitViewCell`'s index math walked with live data.
+      - `DUNOBJ.BSV` — object records + the `(maskSrc, screenDest)` pair
+        table (`andSpriteMaskCell`) + mask cells + `basPutSprite` image
+        arrays. Loads into `spriteBank` (`ds:1E58`), shared with
+        `OUTOBJ`/`MUSOBJ`.
+      - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
+        `basPutSprite` image frames (near→far) + mask frames + trailer.
+        A/B = two swappable sets.
+      - Last-mile open (all three): the `spriteBank` index arithmetic
+        (some indices point at a runtime-built header) — needs a dump
+        from the running game.
 - [ ] Town / castle layouts.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit

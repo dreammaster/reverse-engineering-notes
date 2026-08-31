@@ -13,10 +13,13 @@ pixel-for-pixel), `SDMAP` (the SDEFENDR combat-arena screen frame), and
 dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. `CHAR.DAT`'s
 container (9 × 382-byte roster records) and its write/read path are
 decoded; the record's scalar fields are partly identified. The
-**dungeon tile maps `DUNM1/2/3.BSV`** are fully decoded (8 levels ×
-16×16 tiles); `DUNDATA.BSV`, `DUNOBJ.BSV` and `DUNMONA/B.BSV` have their
-record/region structure mapped (sprite pixel encoding still open). The
-remaining `.BSV` files are still container-only.
+**dungeon data is decoded**: `DUNM1/2/3.BSV` tile maps fully (8 levels ×
+16×16), and the `DUN.EXE` first-person **sprite/tile rendering model**
+(the 4 LEGLIB primitives, the field-interleaved 8×8 cell, the
+mask-list + BASIC-`PUT`-image sprite format) — so `DUNDATA.BSV`,
+`DUNOBJ.BSV` and `DUNMONA/B.BSV` are understood structurally, with only
+the last-mile `spriteBank` index arithmetic (needs a live dump) open.
+The remaining `.BSV` files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -56,8 +59,8 @@ castle/fort layout banks.
 | `OUTDATA.BSV`, `OUTOBJ.BSV`, `OUTM0.BSV`…`OUTM2.BSV`, `OUTDAT.DAT` | — | `OUT` | overworld map / objects / monsters |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
 | `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
-| `DUNOBJ.BSV` | 9351 | `DUN` | **structure mapped** — dungeon objects + their sprites. BSAVE → `0x140D:0x0DB6` (the offset `OUTOBJ.BSV` / `MUSOBJ.BSV` also load at → a shared object system). ~5.6 KB real data + zero pad. Four regions: object records (`~0x000`–`0x3FF`), a ~316-entry index table of 16-bit pointer pairs (`0x400`–`0x8F1`), a ~3.3 KB CGA 2 bpp sprite-bitmap pool (`0x8F2`–`0x15FF`), zero tail. Sprite-pool layout + consumer still open. See the dungeon section below. |
-| `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **record structure decoded** — dungeon monster sprites (two alternate sets). BSAVE → `0x140D:0x3236`. 14136-B payload = **exactly 6 records × 2356 B** = 6 monsters. Each = 20-B header (frame-count `9` + a fixed 5-entry frame-offset table, same in all 6) + 5 scaled image frames (705/248/110/65/30 B = near→far view distances) + ~5 mask frames + a per-monster trailer. Per-frame pixel encoding is RLE/skip-coded (open). See the dungeon section below. |
+| `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
+| `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **decoded** — dungeon monster sprites (two swappable sets). BSAVE → `0x140D:0x3236` into `spriteBank`. 14136-B payload = **exactly 6 records × 2356 B** = 6 monsters. Each = 20-B header (fixed 5-entry frame table) + 5 image frames (705/248/110/65/30 B = near→far, each a `basPutSprite` array) + ~5 mask frames + trailer. See the dungeon section below. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
@@ -159,7 +162,7 @@ handling.
 `decoders/char_dat.py` reads the container and lists each slot
 (name + the identified scalar fields).
 
-## `DUNM1/2/3.BSV` + `DUNDATA.BSV` — dungeon maps — **decoded 2026-08-31**
+## Dungeon data — `DUNM*` / `DUNDATA` / `DUNOBJ` / `DUNMON*` — **decoded 2026-08-31**
 
 `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` (one per dungeon group) each
 `BSAVE` to `0x2C07:0x0F3C`. The 2048-byte payload is **8 dungeon levels,
@@ -176,54 +179,68 @@ handling.
 feature table. `decoders/dun_map.py DUNM1` prints all 8 levels.
 
 `DUNDATA.BSV` `BSAVE`s to `0x2C07:0x173C` — exactly `0x800` bytes after
-the map, so `DUNM* + DUNDATA` sit **contiguously in one segment**. Its
-5778-byte payload has a header word (`0x0E94` = 3732), a record/table
-area (`~0x000`–`0x4FF`), a ~4.5 KB region of `0x10`–`0x7F` bytes
-(`~0x500`–`0x167F`, most likely the first-person view's wall/corridor
-tile-graphic bank), and an 18-byte tail. The field-level layout and
-which routine `BLOAD`s it are still open — the dungeon-init path in
-`dun.idb` needs a cleaner `coerce_code` pass first.
+the map, so `DUNM* + DUNDATA` load into **one contiguous DGROUP array**
+(`dungeonMapArray`, `ds:1E2A`). `DUN.EXE`'s `blitViewCell` reads
+wall/floor panels from this array: `dungeonMapArray[idx]` gives a base
+offset + a `(rowCount << 8 | colCount)` word, and the panel is drawn as
+a stack of horizontal 8×8-cell runs (see the rendering-model section
+below). So `DUNDATA`'s ~4.5 KB `0x10`–`0x7F` region (`~0x500`–`0x167F`)
+is the wall/corridor **tile-index lists** (one byte per 8×8 cell,
+`0xFF` = transparent), and the 8×8 **tile bank** (16-byte
+field-interleaved cells) is the rest of the payload. Exact sub-offsets
+still need `blitViewCell`'s index math walked with live data.
+
+### The dungeon-view sprite & tile rendering model — **decoded 2026-08-31**
+
+`DUN.EXE`'s `bmDUNG` segment (`renderDungeonView`) draws the first-person
+corridor by calling four LEGLIB primitives, all now identified:
+
+| primitive | what it does |
+|---|---|
+| `sub_1FED8` | the atomic **8×8 CGA cell copy**: `movsw` ×8 with `+0x4E` steps and a `+0x1F0E` jump after the 4th word (even field → odd field). This is **byte-identical to the `.GLB` field-interleave** — 8 consecutive words = scanlines 0,2,4,6,1,3,5,7. *Every* 8×8 graphic in the game uses this layout. |
+| `drawTileRun` (`rtm_FE2A`) | draw a horizontal run of `count` cells from a **byte tile-index list**; `0xFF` = skip (transparent); cell `N` is the 16 bytes at `srcBase + N*16`. Drives all wall/floor bands via `blitViewCell`. |
+| `andSpriteMaskCell` (`rtm_FE2E`) | sprite **mask** pass: `and es:[di], word` for one field-interleaved 8×8 cell (8 words). `drawViewSprite` calls it once per masked cell, walking a list of `(srcOffset, destOffset)` word pairs. |
+| `basPutSprite` (`rtm_61`, + `basPutSpriteXor` `rtm_60`) | stock Microsoft BASIC `PUT (x,y), array` — draws a **GET-array bitmap**: `dw widthPx ; dw heightPx ; planar CGA rows`. Honours `ds:250h/252h` origin, `ds:2D0h/2D1h` horizontal-flip, and an AND-vs-OR row-drawer. `drawViewSprite` uses this for the sprite **image** after `andSpriteMaskCell` lays the mask. |
+
+`drawViewSprite` reads `viewObjectArray[8 + objType]` (`ds:1C7C`) → a
+**depth band 0–4** (`−6` wraps if `> 5`), then per band uses hard-coded
+`spriteBank` (`ds:1E58`) offsets + screen-Y / height / clip-rect
+constants (the P-switch: mask-header word offsets `0x23/0x4B/0x73/0x9B/
+0xC3` step `0x28`; clip rects like `0x717`,`0xE1F`). It then runs the
+mask loop (`andSpriteMaskCell` × count) and the image (`basPutSprite`).
+
+So each dungeon **sprite** = a mask (list of `(src,dst)` 8×8-cell pairs,
+AND-blitted) + an image (BASIC `PUT` array, `[dw w][dw h][rows]`).
 
 ### `DUNOBJ.BSV` — dungeon objects + sprites
 
-`BSAVE`s to `0x140D:0x0DB6` — the **same DGROUP offset** that
-`OUTOBJ.BSV` and `MUSOBJ.BSV` load at, so there's one shared object
-system across the play modules. Payload 9344 bytes; only the first
-~`0x1600` are real (the rest is zero-filled BSS the game `BSAVE`d). Four
-regions:
+`BSAVE`s to `0x140D:0x0DB6` into `spriteBank` (`ds:1E58`) — the **same
+array** `OUTOBJ.BSV` / `MUSOBJ.BSV` load into, plus `DUNMON*` at
+`0x3236`. Payload 9344 bytes; only ~`0x1600` is real. Four regions:
 
 | region | span | contents |
 |---|---|---|
-| A | `~0x000`–`0x3FF` | object-definition records — repeated `dw 0x0110 ; dw V ; dw 0 ; dw V ; dw K` (two sub-tables, `V` ≈ `0x024x` then `0x042x` stepping by 6) |
-| B | `0x400`–`0x8F1` | ~316 four-byte records = **pairs of 16-bit values** both in `0x08F2`–`0x1592` (i.e. offsets into region C); the first of each pair steps by `0x10` |
-| C | `0x8F2`–`0x15FF` | ~3.3 KB **CGA 2 bpp sprite bitmaps** — the byte histogram is dominated by canonical pixel bytes (`0x00`, `0xAA`, `0xFF`, `0x55`, `0x3C`, `0xC3`, `0xF0`, `0x0F`), but the data is **not** a plain linear or 8×8-tile layout (renders as noise) — probably BASIC `GET`/`PUT` sprite records or a column-major / RLE packing |
+| A | `~0x000`–`0x3FF` | object-definition records (`dw 0x0110 ; dw V ; dw 0 ; dw V ; dw K`) |
+| B | `0x400`–`0x8F1` | ~316 four-byte records = the **`(maskSrcOffset, screenDestOffset)` pairs** fed to `andSpriteMaskCell` (first of each pair steps by `0x10` = one 8-word cell) |
+| C | `0x8F2`–`0x15FF` | the sprite data the pairs point at: field-interleaved 8×8 **mask cells** + `basPutSprite` **image arrays** (`[dw w][dw h]` + planar rows). Renders as noise only because it isn't a flat bitmap — it's these two indexed structures. |
 | D | `0x1600`–end | zero padding |
-
-Region B's pointer pairs index the region-C sprite pool (one is likely
-the image, the other a mask). Cracking region C's layout and finding
-the routine that walks these tables is the open work.
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
 
-`BSAVE` to `0x140D:0x3236` (same segment as `DUNOBJ`). The 14136-byte
-payload is **exactly 6 records of 2356 (`0x934`) bytes** — 6 monsters.
-`DUNMONA` and `DUNMONB` are two alternate monster sets (they share
-layout, differ in ~74% of bytes — swapped per dungeon).
+`BSAVE` to `0x140D:0x3236` (into `spriteBank`, after `DUNOBJ`). 14136-byte
+payload = **exactly 6 records × 2356 (`0x934`) B** — 6 monsters.
+`DUNMONA` / `DUNMONB` are two swappable sets (~74% of bytes differ).
 
-Each 2356-byte record:
-
-| off | size | contents |
-|---|---|---|
-| `+0x00` | 20 | header: `dw 0x0009` (frame count?) then a **5-entry frame-boundary table** `0x02D5, 0x03CD, 0x043B, 0x047C, 0x049A` (byte-identical in all 6 records → frames are fixed-size across monsters), then `dw 0x00A4`, `dw 0x0044`, then 1–2 per-monster flag words |
-| `+0x14` | 1158 | **5 image frames**, decreasing: 705 / 248 / 110 / 65 / 30 bytes — the monster drawn at 5 view distances (near → far), same idea as `SDOBJ.GLB`'s scaled fireballs |
-| `+0x49A` | ~1158 | **5 mask frames** (same 5 sizes) |
-| `+0x920` | ~20 | per-monster trailer |
-
-The frame bytes are CGA 2 bpp pixel data, but no row-major /
-column-major / planar stride renders them as a coherent creature —
-they're RLE- or skip/literal-coded. Decoding that (and the identical
-open question for `DUNOBJ.BSV` region C) needs `bmDUNG`'s
-`drawViewSprite` / `blitViewCell` (`rtm_FE2A`) traced.
+Each record: a 20-byte header (`dw 9` + the 5-entry frame table
+`0x2D5/0x3CD/0x43B/0x47C/0x49A` — identical across all 6, so frames are
+fixed-size + `dw 0xA4` `dw 0x44`), then **5 image frames** of
+705/248/110/65/30 bytes (the monster at 5 view distances, near→far —
+each a `basPutSprite` array), then **~5 mask frames** (`~1158` B), then a
+per-monster trailer. Pulling the exact `[dw w][dw h]` off each frame
+needs `drawViewSprite`'s `spriteBank` index math resolved against a
+live dump (some indices point at a runtime-built header at the array
+start) — but the frame *format* is now known: BASIC `PUT` image +
+`(src,dst)` mask-cell list.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

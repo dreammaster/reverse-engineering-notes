@@ -78,6 +78,33 @@ RENAMES = {
     "FE5B": ("screenRefresh",
              "engine: post-draw cursor/row update (divides a packed "
              "row*256+col by 100h). [name provisional]"),
+    "FE2A": ("drawTileRun",
+             "draw a horizontal run of 8x8 CGA cells. args "
+             "(srcBase, srcSeg, destOff, tileIndexList, count). For each "
+             "of `count` cells: al = *tileIndexList++; if al==0FFh skip "
+             "(transparent), else copy the 16-byte cell at "
+             "srcBase + al*16 to video via sub_1FED8 (movsw x8, "
+             "+4Eh steps, +1F0Eh field-jump after the 4th -- the same "
+             "field-interleaved 8x8 layout as the .GLB tile sheets). "
+             "dun/mus's blitViewCell drives this for every wall/floor "
+             "band."),
+    "FE2E": ("andSpriteMaskCell",
+             "sprite MASK pass: AND one field-interleaved 8x8 cell "
+             "(8 words) into video (`and es:[di],ax` x8, +4Eh / +1F0Eh "
+             "stepping). args (srcOff, srcSeg, destOff). drawViewSprite "
+             "calls it once per masked cell, walking a list of "
+             "(srcOff,destOff) word pairs -- exactly DUNOBJ.BSV's "
+             "pointer-pair table."),
+    "61": ("basPutSprite",
+           "stock Microsoft BASIC `PUT (x,y), array, verb` -- draws a "
+           "GET-array bitmap (`dw widthPx ; dw heightPx ; planar CGA "
+           "rows`). ds:0E92h = bits/pixel (2 for CGA), ds:250h/252h = "
+           "origin, ds:2D0h/2D1h = H-flip flags, ds:0EA7h/0EABh = the "
+           "AND vs OR row-drawer. drawViewSprite uses this for the "
+           "sprite IMAGE after andSpriteMaskCell lays the mask."),
+    "60": ("basPutSpriteXor",
+           "sibling of basPutSprite (rtm_61) -- the other `PUT` verb "
+           "(PSET/XOR path); shares sub_1BE5C / sub_1BEF0."),
 }
 
 

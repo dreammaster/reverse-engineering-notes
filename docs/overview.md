@@ -759,7 +759,30 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   705/248/110/65/30 B (the monster at 5 view distances, near->far, like
   `SDOBJ`'s scaled fireballs) + ~5 mask frames + a per-monster trailer.
   `DUNMONA` vs `DUNMONB` differ in ~74% of bytes = two swappable monster
-  sets. The frame pixels are CGA 2 bpp but render as noise at every
-  stride/orientation -> RLE/skip-coded, same open question as `DUNOBJ`
-  region C; both need `bmDUNG`'s `drawViewSprite` / `blitViewCell`
-  (`rtm_FE2A`) traced.
+  sets.
+- **2026-08-31** -- Traced `bmDUNG`'s `drawViewSprite` / `blitViewCell`
+  and the LEGLIB primitives behind them, cracking the dungeon-view
+  graphics model:
+    - `sub_1FED8` (the atomic 8x8 CGA cell copy) is **byte-identical to
+      the `.GLB` field-interleave** -- `movsw` x8, `+0x4E` steps,
+      `+0x1F0E` even->odd field jump after the 4th. Every 8x8 graphic in
+      the game shares this layout.
+    - `rtm_FE2A` -> **`drawTileRun`**: horizontal run of 8x8 cells from a
+      byte tile-index list, `0xFF` = transparent, cell `N` at
+      `srcBase + N*16`. Drives the wall/floor bands (`blitViewCell`
+      reads them from `dungeonMapArray` `ds:1E2A` = where `DUNM*` +
+      `DUNDATA` load contiguously).
+    - `rtm_FE2E` -> **`andSpriteMaskCell`**: `and es:[di],word` x8 for
+      one field-interleaved cell; driven by a list of
+      `(srcOff, destOff)` pairs -- **exactly `DUNOBJ.BSV`'s pair table**.
+    - `rtm_61`/`rtm_60` -> **`basPutSprite`** / `basPutSpriteXor`: stock
+      MS-BASIC `PUT`; the sprite image is a GET-array
+      (`dw w ; dw h ; planar rows`).
+  So a dungeon sprite = mask (`(src,dst)` cell-pair list, AND-blitted) +
+  image (BASIC `PUT` array). `DUNDATA` big region = wall tile-index
+  lists + an 8x8 field-interleaved tile bank. `DUNOBJ`/`DUNMON` frames
+  are `basPutSprite` arrays, not raw bitmaps -- which is why they
+  rendered as noise. Named the 4 primitives in `leglib.idb`
+  (`apply_renames_leglib.py`). Last-mile open: the `spriteBank`
+  (`ds:1E58`) index arithmetic (some indices hit a runtime-built header
+  at the array start) -- wants a live dump.
