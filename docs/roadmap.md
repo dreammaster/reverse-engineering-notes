@@ -606,16 +606,20 @@ reimplementation.
         `spriteBank` (`ds:1E58`) at **offset 0** (the BSAVE `0x0DB6` is
         ignored) so every file offset = its `spriteBank` offset, no
         relocation; `DUNMON*` loads right after at word `0x1240`.
-        `0x000`–`0x045` = `dw 5` + 7 object records
-        (`dw 0x0110 ; dw spriteWord ; dw 0 ; dw spriteWord ; dw K`;
-        object-sprite draw path still open). `0x046`–`0x18F` = 5 per-depth
-        mask descriptors (`dw 0x0110 ; dw endWord ; dw count ; dw
-        startWord ; dw K`, one every `0x28` words at
-        `0x23/0x4B/0x73/0x9B/0xC3`). `0x190`–`0x1A3` = the 6-word DUNMON
-        bank table. `~0x400`–`0x8F1` = region B (`(videoDest, maskSrc)`
-        pair lists). `0x8F2`–`0x1211` = object/decoration bitmaps
-        (consumer open). `0x1212`–`0x15A1` = **region C: 57 contiguous
-        16-byte AND-mask cells**. Loader **decoded** (`loadDungeonData`,
+        region A = **40 records** (`dw 0x0110 ; dw endWord ; dw count ;
+        dw startWord ; dw K`) in **5 depth-groups of 8**; the 8th of each
+        group (records 7/15/23/31/39, at words `0x23/0x4B/0x73/0x9B/
+        0xC3`) is the live mask descriptor, the other 7 are `count = 0`
+        per-object descriptors (`startWord` marker + frame count `K`).
+        `0x190`–`0x1A3` = the 6-word DUNMON bank table. `~0x247`–`0x8F1`
+        = region B `(videoDest, maskSrc)` pair lists. `0x8F2`–`0x1211` =
+        ~146 field-interleaved 8×8 object/decoration bitmap cells —
+        **DUN.EXE reads none of this object path** (`drawViewSprite` is
+        the only `spriteBank` reader and stops at region C); it ships
+        because `DUNOBJ` shares the OBJ container with `MUSOBJ`, which
+        only `MUS.EXE` fully uses. `0x1212`–`0x15A1` = **region C: 57
+        contiguous 16-byte AND-mask cells**. Loader **decoded**
+        (`loadDungeonData`,
         `fix_dun_loaddungeondata.py`): `rtm_11` picks the array,
         `resolveAndOpenGameFile` (`rtm_FE63`) opens, `basBload`
         (`rtm_FE07`) reads header+payload — no relocation.

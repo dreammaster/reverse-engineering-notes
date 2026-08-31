@@ -13,24 +13,38 @@ relocation.  `DUNMONA/B.BSV` then loads immediately after, at word
 
 Layout (real data ends at 0x15A1):
 
-    0x000-0x045  dw 0x0005, then 7 x 10-byte object records
-                 `dw 0x0110 ; dw spriteWord ; dw 0 ; dw spriteWord ; dw K`
-    0x046-0x18F  5 per-depth mask descriptors, one every 0x28 words at
-                 P_idx in {0x23,0x4B,0x73,0x9B,0xC3}, each
-                 `dw 0x0110 ; dw endWord ; dw count ; dw startWord ; dw K`
-                 (endWord == startWord + count*2)
+    0x002-0x191  region A: 40 records `dw 0x0110 ; dw endWord ; dw count ;
+                 dw startWord ; dw K`, in 5 groups of 8 (one group per
+                 view depth).  endWord == startWord + count*2.  Records
+                 7/15/23/31/39 (the 8th of each group) have count>0 and
+                 are the live per-depth mask descriptors; the other 35
+                 have count==0 and carry only a startWord marker into the
+                 extended region-B pair area + a K (frame count).
     0x190-0x1A3  DUNMON bank table: 6 words 0x1240 + k*0x49A
-    ~0x400-0x8F1 region B: per-depth (videoDest, maskSrc) word-pair lists
-    0x8F2-0x1211 object/decoration sprite bitmaps (consumer still open)
+    ~0x247-0x8F1 region B: (videoDest, maskSrc) word-pair lists.  The 5
+                 that drawViewSprite uses start at words
+                 0x2CF/0x36F/0x3EF/0x43F/0x469; words ~0x247-0x2CE and
+                 ~0x480-0x59E hold extra per-object sub-lists (delimited
+                 by the count==0 records) in a reversed (maskSrc,
+                 videoDest) order -- a separate consumer, not exercised
+                 by DUN.EXE.
+    0x8F2-0x1211 object/decoration sprite bitmaps -- ~146 field-inter-
+                 leaved 8x8 2bpp CGA cells.  DUN.EXE never reads this
+                 (drawViewSprite is the only spriteBank consumer and it
+                 stops at region C; the rtm_FE2D plain-cell-copy thunk is
+                 unreferenced).  Present because DUNOBJ shares the OBJ
+                 container with MUSOBJ, whose museum renderer has a
+                 richer object draw path (loadExhibitData BLOADs extra
+                 per-exhibit .BSVs via spriteBank[0x32A]).
     0x1212-0x15A1 region C: 57 contiguous 16-byte AND-mask cells
     0x15A2-end   zero padding
 
-`drawViewSprite`, per view-depth band P (0-4), reads the descriptor at
-`spriteBank[P_idx]`: word `+3` = mask-cell count, word `+4` = start word
-of that depth's region-B list.  It then walks `count` `(videoDest,
-maskSrc)` pairs, calling `andSpriteMaskCell(src=maskSrc, seg, dest=
-videoDest)` for each.  `maskSrc` is `0x1212 + 16*n` -- a direct byte
-offset to a region-C cell.
+`drawViewSprite`, per view-depth band P (0-4), reads record 8*P+7 at
+`spriteBank[P_idx]` (`P_idx` in {0x23,0x4B,0x73,0x9B,0xC3}): word `+3` =
+mask-cell count, word `+4` = start word of that depth's region-B list.
+It then walks `count` `(videoDest, maskSrc)` pairs, calling
+`andSpriteMaskCell(src=maskSrc, seg, dest=videoDest)` for each.
+`maskSrc` is `0x1212 + 16*n` -- a direct byte offset to a region-C cell.
 
 A region-C cell is one **field-interleaved 8x8, 2bpp AND stencil**: 8
 words, screen-scanline order 0,2,4,6,1,3,5,7; bits 15-14 = leftmost
@@ -61,21 +75,29 @@ def words(p):
     return struct.unpack("<%dH" % (len(p) // 2), p[:len(p) // 2 * 2])
 
 
-def object_records(W):
+def region_a_records(W):
+    """The 40 region-A records: 5 groups of 8, one group per view depth.
+    Each record is `dw 0x0110 ; dw endWord ; dw count ; dw startWord ; dw K`
+    with endWord == startWord + count*2.  Records 7/15/23/31/39 (the 8th
+    of each group) have count>0 and are the live per-depth mask
+    descriptors `drawViewSprite` reads; the other 35 have count==0 and
+    just carry a `startWord` marker into the extended region-B pair area
+    plus a `K` (frame count)."""
     out = []
     i = 1  # after `dw 0x0005`
-    while W[i] == 0x0110 and W[i + 2] == 0:      # B field 0 -> object record
-        out.append(dict(sprite=W[i + 1], K=W[i + 4]))
+    while len(out) < 40 and W[i] == 0x0110:
+        out.append(dict(word=i, end=W[i + 1], count=W[i + 2],
+                        start=W[i + 3], K=W[i + 4]))
         i += 5
     return out
 
 
 def mask_descriptors(W):
+    recs = region_a_records(W)
     out = {}
-    for P, pi in P_IDX.items():
-        tag, end, count, start, K = W[pi + 1], W[pi + 2], W[pi + 3], W[pi + 4], W[pi + 5]
-        assert tag == 0x0110 and start + count * 2 == end, (P, hex(pi))
-        out[P] = dict(count=count, start=start, end=end, K=K)
+    for P, r in enumerate(recs[7::8]):          # records 7,15,23,31,39
+        assert r["count"] and r["start"] + r["count"] * 2 == r["end"], (P, r)
+        out[P] = dict(count=r["count"], start=r["start"], end=r["end"], K=r["K"])
     return out
 
 
@@ -125,9 +147,12 @@ def main():
     p = load(path)
     W = words(p)
 
-    print("object records:")
-    for i, r in enumerate(object_records(W)):
-        print("  %d: spriteWord=%#06x  K=%d" % (i, r["sprite"], r["K"]))
+    ra = region_a_records(W)
+    print("region-A records (40 = 5 groups of 8):")
+    for i, r in enumerate(ra):
+        live = "  <-- P%d mask descriptor" % (i // 8) if r["count"] else ""
+        print("  %2d w%#05x: end=%#06x count=%-3d start=%#06x K=%-4d%s"
+              % (i, r["word"], r["end"], r["count"], r["start"], r["K"], live))
 
     print("\nmask descriptors + region-B lists:")
     md = mask_descriptors(W)
@@ -180,6 +205,28 @@ def main():
                         cv[yy][xx] = 3 if (cv[yy][xx] and bit == 3) else 0
         write_bmp(os.path.join(outdir, "dunobj_aperture_P%d.bmp" % P), cv, scale=3)
     print("wrote dunobj_aperture_P0..P4.bmp")
+
+    # the object/decoration bitmap block, 0x8F2..0x1211 -- 2 bpp CGA art,
+    # ~146 field-interleaved 8x8 cells.  DUN.EXE never reads it (drawViewSprite
+    # is the only spriteBank consumer and it stops at region C); dumped for
+    # reference / the still-unidentified object draw path.
+    OBJ = 0x8F2
+    nobj = (REGION_C - OBJ) // CELL
+    S, cols = 6, 16
+    rowsN = (nobj + cols - 1) // cols
+    cw = 8 * S + 1
+    canvas = [[0] * (cw * cols) for _ in range(cw * rowsN)]
+    for n in range(nobj):
+        px = cell_pixels(p, OBJ + n * CELL)
+        ox, oy = (n % cols) * cw, (n // cols) * cw
+        for y in range(8):
+            for x in range(8):
+                v = px[y][x]
+                for dy in range(S):
+                    for dx in range(S):
+                        canvas[oy + y * S + dy][ox + x * S + dx] = v
+    write_bmp(os.path.join(outdir, "dunobj_objbitmaps.bmp"), canvas)
+    print("wrote dunobj_objbitmaps.bmp  (%d cells, 0x8F2-0x1211 -- unused by DUN.EXE)" % nobj)
 
 
 if __name__ == "__main__":

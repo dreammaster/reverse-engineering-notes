@@ -952,7 +952,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   are ordered-dither patterns, reused within a list (P0 = 36 blits, 13
   unique) and shared across depths. Composited per depth: a **rectangular
   aperture with a dithered top edge** that shrinks P0->P4 -- the lit
-  niche the `DUNMON` sprite is `PUT` into. Bytes `0x8F2`-`0x1211` are a
-  separate block of object/decoration bitmaps (consumer still open). So
-  region A = a small object table + 5 mask descriptors + the DUNMON bank
-  table, *not* a 40-object placement table.
+  niche the `DUNMON` sprite is `PUT` into. Region A turns out to be
+  **40 records in 5 depth-groups of 8** (`dw 0x0110 ; dw endWord ;
+  dw count ; dw startWord ; dw K`): the 8th of each group is the live
+  mask descriptor, the other 7 are `count = 0` per-object descriptors
+  (a `startWord` into an extended region-B pair area + a frame count
+  `K`). Bytes `0x8F2`-`0x1211` (~146 field-interleaved 8×8 CGA cells)
+  are the object/decoration bitmaps. **`DUN.EXE` reads none of the
+  object path** -- `drawViewSprite` is the only `spriteBank` consumer
+  and stops at region C; the `rtm_FE2D` cell-copy thunk is unreferenced.
+  The object path ships because `DUNOBJ` shares the OBJ container with
+  `MUSOBJ`, and only `MUS.EXE` wires it up (`loadExhibitData` uses
+  `spriteBank[0x32A]` as a per-exhibit `BLOAD` pointer).
