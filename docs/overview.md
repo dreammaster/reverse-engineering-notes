@@ -701,5 +701,11 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   fireballs at ~6 scale steps, explosion / impact animation frames, cyan
   directional player-shot arrows, and a horned enemy head. Per-sprite
   tile grouping still needs the `seg001` blit code. `BJCHR.GLB` is a
-  byte-for-byte identical container (6161 b, `{0x0A,6,1,0,1}`) — same
-  atlas shape, not yet rendered.
+  byte-for-byte identical container (6161 b, `{0x0A,6,1,0,1}`).
+- **2026-08-31** — Rendered `BJCHR.GLB` (GMB1/GMB2 card graphics). Not
+  52 pre-drawn cards — it's a **card rank/suit glyph font**: `A 2 3 4 5
+  6 7 8 9 10 J Q K` + the four suit pips (♠♣ white, ♥♦ magenta), in both
+  **upright and 180°-rotated** forms (the two opposite corners of a
+  card), then card-back pattern + frame/corner tiles. Only tiles 0–127
+  of the 384 are used. The card renderer composites these onto a frame;
+  which tile-run is which card is still open.

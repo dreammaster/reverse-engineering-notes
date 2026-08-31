@@ -10,8 +10,8 @@ Status (2026-08-31): the BSAVE container is confirmed, and the
 **`.GLB` tile format + `.GMP` cell-map format are decoded** —
 `decoders/glb_image.py` renders `TITLE` (the CGA title screen,
 pixel-for-pixel), `SDMAP` (the SDEFENDR combat-arena screen frame), and
-dumps the `SDOBJ.GLB` sprite atlas. The other `.BSV` files are still
-container-only.
+dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. The other `.BSV`
+files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -55,7 +55,7 @@ castle/fort layout banks.
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
 | `SDMAP.GLB` / `.GMP` | 4113 / 2081 | `SDEFENDR` | **fully decoded** — 256-tile 8×8 CGA sheet + 41×25 column-major cell map = the combat-arena *screen frame* (ornate magenta viewport border around a black 3-D-view window, stippled background). Same format as `TITLE`; `decoders/glb_image.py SDMAP` renders it. |
 | `SDOBJ.GLB` | 6161 | `SDEFENDR` | **tiles decoded** — 384 × 8×8 CGA tiles, same field-interleaved format as `TITLE`, **no `.GMP`** (bare sprite atlas). Content: approaching fireballs at ~6 scale steps, explosion / impact animation frames, cyan directional player-shot arrows, a horned enemy head. Per-sprite tile grouping TBD (needs the arena blit code). `decoders/glb_image.py SDOBJ` dumps the atlas. |
-| `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | card sprites ("BJ" = BlackJack) — byte-for-byte the same container shape as `SDOBJ.GLB` (identical 6161-byte size + `{0x0A,6,1,0,1}` header), a bare atlas of 384 8×8 tiles, no `.GMP`. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. Not yet rendered. |
+| `BJCHR.GLB` | 6161 | `GMB1` / `GMB2` | **tiles decoded** — card graphics ("BJ" = BlackJack). Same container as `SDOBJ.GLB` (6161 b, `{0x0A,6,1,0,1}`, bare atlas, no `.GMP`); 384 8×8 tiles, only 0–127 used. Holds a card **rank/suit glyph font** — `A 2 3 4 5 6 7 8 9 10 J Q K` + the four suit pips (♠♣ white, ♥♦ magenta), in **both upright and 180°-rotated** forms (the two opposite card corners) — plus card-back pattern + frame/corner tiles. `GMB1` BLOADs it into `seg004`; `GMB2` shares it. `decoders/glb_image.py BJCHR` dumps the atlas (use grid width 15 to line the font up). |
 | `BIGNUM.DAT` | 420 | `GMB2` (at least) | large-digit font — `GMB2` (Flip-Flop Parlour) BLOADs it to render the GOLD / BET / winnings numbers |
 | `D.BSV`, `R.BSV`, `PEGASUS.BSV` | 3527 / 3527 / 1159 | ? | ? |
 | `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | character roster **and** the in-progress save (there is no separate save file). `SAVER.EXE`'s `saveRosterToDisk` is the write side; the menu roster screens + `readLegacyDat` read it. The "is not on this / character disk" / "empty" strings in `SAVER` imply a per-slot / removable "character disk" scheme. |
@@ -103,12 +103,19 @@ raw **sprite atlases**, not screen layouts. Same 16-byte
 field-interleaved 8×8 tile format (384 tiles each), but with no cell map
 the client code (SDEFENDR's arena engine, GMB1/GMB2's card renderer)
 indexes runs of tiles directly, and the per-sprite tile dimensions
-aren't recovered yet. `decoders/glb_image.py SDOBJ` dumps the atlas as a
-24-wide grid: the recognisable sprites are approaching fireballs at ~6
-scale steps, explosion / impact animation frames, cyan directional
-player-shot arrows, and a horned enemy head. Their header is
-`{0x0A, 6, 1, 0, 1}` (`word[3]` = 0 vs. 1 on the two screen images —
-possibly the "has cell map" flag).
+aren't recovered yet. Their header is `{0x0A, 6, 1, 0, 1}` (`word[3]` =
+0 vs. 1 on the two screen images — possibly the "has cell map" flag).
+`decoders/glb_image.py <NAME>` dumps either as a tile grid (default 24
+wide; pass a 4th arg for a different width).
+
+- **`SDOBJ.GLB`** — approaching fireballs at ~6 scale steps, explosion /
+  impact animation frames, cyan directional player-shot arrows, a horned
+  enemy head.
+- **`BJCHR.GLB`** — only tiles 0–127 are used. A card **rank/suit glyph
+  font**: `A 2 3 4 5 6 7 8 9 10 J Q K` + the four suit pips (♠♣ white,
+  ♥♦ magenta), in **upright and 180°-rotated** forms (for the two
+  opposite corners of a card), then card-back pattern + frame/corner
+  tiles. Grid width 15 lines the four suit rows up.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

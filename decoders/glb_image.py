@@ -30,11 +30,14 @@ Both files are Microsoft BASIC BSAVE images: [FD][seg:2][off:2][len:2][payload].
 Only `TITLE` and `SDMAP` ship a `.GMP`.  `SDOBJ.GLB` (SDEFENDR arena
 object sprites -- approaching fireballs at ~6 scale steps, explosion /
 impact animation frames, directional player-shot arrows, a horned enemy
-head) and `BJCHR.GLB` (GMB1/GMB2 card sprites) are bare atlases: 384 and
-384 tiles, same 16-byte field-interleaved tile format, but the client
-code indexes runs of tiles directly -- there is no cell map, and the
-per-sprite tile dimensions are not yet recovered (they need the arena /
-card blit routines).  Their `.GLB` header is `{0x0A, 6, 1, 0, 1}`.
+head) and `BJCHR.GLB` (GMB1/GMB2 card graphics -- a rank/suit glyph font
+in upright + 180-deg-rotated forms, then card-back / frame tiles; only
+tiles 0..127 used) are bare atlases: 384 tiles each, same 16-byte
+field-interleaved tile format, but the client code indexes runs of tiles
+directly -- there is no cell map, and the per-sprite tile dimensions are
+not yet recovered (they need the arena / card blit routines).  Their
+`.GLB` header is `{0x0A, 6, 1, 0, 1}`.  Grid width 15 lines up BJCHR's
+four suit rows.
 
 `.GMP` payload (the cell map):
     bytes[0..5]   3 header words {0x1A, 0x11, 0x1A}  (0x1A = this header size)

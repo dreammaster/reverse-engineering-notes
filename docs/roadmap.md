@@ -356,7 +356,11 @@ reimplementation.
       Identifying those `B$…` primitives would clarify `dealCardToHand`.
 - [ ] `gmb1` `ds:` vars: `ds:1F1Ah` (shoe pointer), `ds:1F04h`,
       `ds:21A4h`, the hand struct at `ds:1C7Ch`.
-- [ ] `BJCHR.GLB` sprite-sheet layout (52 cards + backs).
+- [~] `BJCHR.GLB` (2026-08-31) — tiles decoded: not 52 pre-drawn cards,
+      but a rank/suit glyph font (`A 2..10 J Q K` + ♠♣♥♦, upright +
+      180°-rotated) the renderer composites onto card frames, plus
+      card-back tiles. Tiles 0–127 used. `decoders/glb_image.py BJCHR`.
+      Still open: which tile-run makes each card, and the frame layout.
 - [x] Build `gmb2.idb` (2026-08-31) — it's **"Flip-Flop Parlour"**, a
       Plinko / pachinko game, *not* cards (doesn't touch `BJCHR.GLB`).
       Single code seg `seg000` "bmGMB2" (20 funcs), 467 thunks, 100%
@@ -562,9 +566,11 @@ reimplementation.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
 - [ ] Town / castle / dungeon layouts.
-- [~] The standalone sprite atlases — `SDOBJ.GLB` tiles rendered (above);
-      `BJCHR.GLB` (identical container: 6161 b, `{0x0A,6,1,0,1}`) not yet
-      rendered. Plus the `CEL*.BSV` ending images.
+- [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
+      rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit
+      glyph font (upright + 180°-rotated) + card-back tiles, tiles
+      0–127. Still open for both: the per-sprite tile grouping / index
+      table. Plus the `CEL*.BSV` ending images.
 - [ ] Music format (`MUSDATA.BSV` + the MML strings in `MENU`).
 
 ## ScummVM engine (future)
