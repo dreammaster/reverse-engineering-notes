@@ -846,3 +846,10 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   (`0x400`-`0xFFF`, 768 pairs, first-of-pair stepping by `0x10`), then
   the sprite bitmap bank (`0x1000`-`0x329A`). Just a larger sprite set;
   identical renderer (`drawViewSprite`).
+- **2026-08-31** -- `BIGNUM.DAT` decoded: no BSAVE header, a raw
+  **112 x 15 px CGA 2 bpp bitmap** (28 bytes/row x 15 = 420 B exactly;
+  autocorrelation locks the stride at 28). One horizontal strip of ~10
+  large-digit glyphs, blitted a digit at a time by `GMB2`'s
+  `drawBigNumberPanel` for the GOLD / BET / winnings readouts.
+  `decoders/bignum.py` (digits 1-6 render cleanly; the back half has a
+  slight shear -- a designed slant or a blit nuance).
