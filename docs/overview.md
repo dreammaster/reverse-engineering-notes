@@ -903,5 +903,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   payload). `DUNM<n>` -> `dungeonMapArray` (`ds:1E2A`) off 0; `DUNDATA`
   -> same array `+0x800`; `DUNOBJ` -> `spriteBank` (`ds:1E58`). **No
   pointer-table relocation** happens. Named `rtm_FE63` /`rtm_FE07`
-  /`rtm_02` in `leglib.idb`. Open: which routine *consumes* DUNOBJ
-  region A.
+  /`rtm_02` in `leglib.idb`.
+- **2026-08-31** -- Traced the DUNOBJ region-A consumer chain (some
+  helpers in this dun.idb region are still `db`-bytes -- a tangled
+  cluster): region A's 40 `[0x0110][pos][0][pos][class]` records
+  populate `viewObjectArray` (`ds:1C7C`, 63 words: `[idx]` = present,
+  `[idx+0x40]` = packed position `(level<<8)|(y<<4)|x`, `[8+class]` =
+  facing). `rebuildLevelView` stamps each present object into the map
+  grid as a tile `(class<<4) | wall | 0x10`. `renderDungeonView`
+  (`bmDUNG`) walks the view ray; a tile `>0x0F` -> class `(tile>>4)-1`
+  -> `drawViewSprite`, which uses `viewObjectArray[8+class]` to pick one
+  of region A's 6 bank pointers at `0x190` (= `0x1240 + k*0x49A` words =
+  the `DUNMON` records in `spriteBank`) and blits mask+image.
+  `moveMonsters` + `sub_139FC` relocate monsters on the map grid per
+  turn (class lives in tile bits 4-6).

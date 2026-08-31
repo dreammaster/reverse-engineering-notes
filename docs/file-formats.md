@@ -272,8 +272,34 @@ target BASIC array's descriptor (`rtm_11`), builds the name
 `DUNM<n>` → `dungeonMapArray` (`ds:1E2A`) offset 0; `DUNDATA.BSV` → the
 same array `+0x800`; `DUNOBJ.BSV` → `spriteBank` (`ds:1E58`). **No
 pointer-table relocation** — the offsets in region A / DUNDATA are used
-as-is against the array base. Which routine *consumes* region A (to
-place objects in the view) is still open.
+as-is against the array base.
+
+**Consumer chain** (partly traced — several `DUN.EXE` helpers in this
+cluster are still `db`-bytes):
+
+- **Object instances vs. the map.** The 40 region-A records are read at
+  level entry to populate `viewObjectArray` (`ds:1C7C`, DIM'd 63 words):
+  `viewObjectArray[idx]` = an object of that class is present,
+  `viewObjectArray[idx + 0x40]` = its packed map position. `fieldA` /
+  `fieldC` in a record ≈ that packed position (`(level<<8)|(y<<4)|x` —
+  the values `0x0247` … `0x042F` are level-2 → level-4 cells);
+  `fieldD` ≈ the class/type.
+- **`rebuildLevelView`** (on level change) stamps each present object
+  into the map grid: it writes `(class<<4) | wallType | 0x10` into the
+  tile at the object's position, so a map byte `> 0x0F` encodes
+  `high nibble = object class`, `low nibble = wall under it`.
+- **`renderDungeonView`** (`bmDUNG`, per frame) walks each view ray;
+  when a tile is `> 0x0F` it takes `(tile>>4) - 1` as the class, checks
+  `viewObjectArray[class-1] > 0`, and calls **`drawViewSprite`**.
+- **`drawViewSprite`** reads `viewObjectArray[8 + class]` (a facing,
+  0–5), uses it to pick one of **region A's 6 bank pointers** at
+  `0x190` — which resolve to `0x1240 + k·0x49A` *words* = the start of
+  the `DUNMON` data in `spriteBank` + `k` monster records — then
+  indexes by depth band and blits mask + image
+  (`andSpriteMaskCell` + `basPutSprite`).
+- **`moveMonsters`** + `sub_139FC` (per turn) iterate
+  `viewObjectArray[0..7]` and relocate each monster on the map grid
+  (pull its class out of tile bits 4–6, clear, re-stamp at the new cell).
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
 

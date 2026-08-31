@@ -612,8 +612,15 @@ reimplementation.
         `OUTOBJ`. Loader **decoded** (`loadDungeonData`,
         `fix_dun_loaddungeondata.py`): `rtm_11` picks the array,
         `resolveAndOpenGameFile` (`rtm_FE63`) opens, `basBload`
-        (`rtm_FE07`) reads header+payload — no relocation. Still open:
-        the region-A *consumer* (object placement in the view).
+        (`rtm_FE07`) reads header+payload — no relocation.
+        **Consumer chain traced**: region A's 40 records (position +
+        class) populate `viewObjectArray` (`ds:1C7C`); `rebuildLevelView`
+        stamps objects into the map grid as `(class<<4)|wall|0x10`;
+        `renderDungeonView` → `drawViewSprite` draws them, using region
+        A's 6 bank pointers at `0x190` (→ the `DUNMON` records).
+        `moveMonsters` + `sub_139FC` relocate monsters per turn. Still
+        `db`-bytes: `sub_12F9F` / `rebuildLevelView` cluster (the exact
+        region-A → `viewObjectArray` loop) — a tangled dun.idb region.
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.
