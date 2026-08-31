@@ -607,13 +607,19 @@ reimplementation.
       - Last-mile open (all three): the `spriteBank` index arithmetic
         (some indices point at a runtime-built header) — needs a dump
         from the running game.
-- [~] Town / castle data — `TCASOBJ.BSV` (2026-08-31) structure mapped:
-      loads into `spriteBank` (`ds:1E58`, seg `0x8537`) via
-      `loadCastleObjects`; object records (`(offA, offA+0x80)` pair
-      groups) + a CGA sprite/animation bank (`0x300`–`0xEFF`, ~12×`0x100`
-      frames) + 4 word-index tables + a tile tail. `FORTANIM.BSV`
-      overlays the last `0x100`. Still open: `TOWN0-B.BSV` /
-      `CASTLE.BS1/2` / `FORT.BS1/2` layouts, and the sprite-cell dims.
+- [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
+      map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
+      `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records
+      + a `0x1A` slot table + shop-name text (`0x1300`+).
+      `decoders/town_map.py`.
+- [~] `TCASOBJ.BSV` (2026-08-31) structure mapped: loads into
+      `spriteBank` (`ds:1E58`, seg `0x8537`) via `loadCastleObjects`;
+      object records (`(offA, offA+0x80)` pair groups) + a CGA
+      sprite/animation bank (`0x300`–`0xEFF`, ~12×`0x100` frames) + 4
+      word-index tables + a tile tail. `FORTANIM.BSV` overlays the last
+      `0x100`. Open: sprite-cell dims.
+- [ ] `CASTLE.BS1/2` / `FORT.BS1/2` layouts (12960 B; `setViewport`
+      modes 1 `0x5A×0x5B` / 2 `0x70×0x49`).
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit
       glyph font (upright + 180°-rotated) + card-back tiles, tiles

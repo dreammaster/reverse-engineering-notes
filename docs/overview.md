@@ -809,3 +809,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `FORTANIM.BSV` (256 B) loads to `0x8537:0x1228`, overwriting the last
   `0x100`-byte animation block for the fort variant. Open: the
   sprite-cell dims + how `bmTNCALB` walks it (`rtm_FE19`).
+- **2026-08-31** -- Decoded `TOWN0..B.BSV` (the 12 town layouts).
+  `TWNDR`'s `loadTownData` BLOADs `TOWN<n>` into the map array
+  (`ds:1E2A`); `setViewport` mode 0 reads it with `mapStride 0x50` (80),
+  `mapHeight 0x28` (40) -- map size `0xC80` = 3200 is hard-coded. So the
+  map is **80 wide x 40 tall, 1 byte/tile** (`0x000`-`0xC7F`), then
+  object/feature records (`0xC80`-`0xFFF`), a 192-byte `0x1A` slot table
+  (`0x1000`), padding, and the town's shop-name strings as wide chars
+  (`0x1300`+, the only size-varying part). Names are the game's puns
+  (TOWN0 = a port: FLUID MOTION / SAIL AWAY / CAPTAIN GREED'S; TOWNA = a
+  temple town: SAINTLY SWORDS / MIRACLE MAGIC / PROPHET FOR PROFIT).
+  `decoders/town_map.py`. `setViewport` modes 1/2 (`0x5A×0x5B`,
+  `0x70×0x49`) are the bigger `CASTLE.BS1/2` / `FORT.BS1/2` layouts.

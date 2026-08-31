@@ -18,9 +18,11 @@ decoded; the record's scalar fields are partly identified. The
 (the 4 LEGLIB primitives, the field-interleaved 8×8 cell, the
 mask-list + BASIC-`PUT`-image sprite format). The **overworld** files
 `OUTM0/1/2.BSV` + `OUTDATA.BSV` have their architecture and region
-layout mapped (they mirror the dungeon's `DUNM* + DUNDATA`). Open on
-both: the last-mile bitmap-record packing. The remaining `.BSV` files
-are still container-only.
+layout mapped (they mirror the dungeon's `DUNM* + DUNDATA`); open there
+is the last-mile bitmap-record packing. The **12 town layouts**
+(`TOWN0..B.BSV`) are decoded — 80×40 tile map + shop-name text. The
+remaining `.BSV` files (castle/fort layouts, `TCASOBJ` sprite cells,
+monsters) are container/structure-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -53,7 +55,7 @@ castle/fort layout banks.
 | File(s) | Size | Used by (guess) | Kind (guess) |
 |---|---|---|---|
 | `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` (or the generic `decoders/glb_image.py`) renders it. |
-| `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | 12 town layouts |
+| `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | **decoded** — the 12 town layouts. BSAVE → `0x9259:0x0000`. Each = an **80×40 tile map** (`0x000`–`0xC7F`, 1 byte/tile) + object/feature records + a `0x1A` slot table + the town's shop-name strings. `decoders/town_map.py`. See the town section below. |
 | `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | **structure mapped** — castle/town animated-object sprites. BSAVE → `0x8537:0x0000` into `spriteBank` (`ds:1E58`) via `loadCastleObjects` — same array/role as `DUNOBJ`/`OUTOBJ`/`MUSOBJ`. See the castle section below. |
 | `FORTANIM.BSV` | 263 | `CASDR` | fort-specific animation — BSAVE → `0x8537:0x1228`, i.e. it **overlays `TCASOBJ`'s last `0x100` bytes** (`0x1228`–`0x1327`), swapping the castle's animated-object frames for the fort's. |
@@ -276,6 +278,34 @@ and tables:
 `rtm_FE14` (`rep movsb`) and paints tiles/sprites via `basPutSprite`
 (`rtm_61`). The exact 95-byte tile-record layout and the terrain-table
 field meanings need `OUT`'s overworld draw path traced.
+
+## `TOWN0.BSV` .. `TOWNB.BSV` — town layouts — **decoded 2026-08-31**
+
+`TWNDR.EXE`'s `loadTownData` builds the name `TOWN<n>` and `BLOAD`s it
+into the shared map array (`ds:1E2A`). `setViewport` mode 0 reads the
+map with `mapStride = 0x50` (80) and `mapHeight = 0x28` (40); the map
+size `0xC80` = 3200 is hard-coded (`ds:253Ah` / `ds:256Ah` / `ds:25D0h`).
+
+| span | contents |
+|---|---|
+| `0x000`–`0xC7F` | **the town map — 80 wide × 40 tall, one byte per tile**, row-major. Tile codes (from `TOWN0`): `0x00` out-of-bounds, `0xA9` open ground, `0x0E`–`0x12` street/path, `0x48`–`0x4B` building walls, `0x67`–`0x6F` building interior, `0x3A` water, `0x3B`–`0x51` roofs, `0x5B` / `0x9C`–`0xD0` shop features, `0x70`–`0x89` / `0xB2`–`0xB6` decorations. The code→graphic mapping lives in `TWNDR` + `TCASOBJ.BSV`. |
+| `0xC80`–`0xFFF` | object / feature records — short multi-tile runs (`2D B5 B6 0B 98` etc.) for the shop-front art |
+| `0x1000`–`0x10BF` | a 192-byte table, all `0x1A` in `TOWN0` — likely door / NPC / shop-entrance slots (192 = 3 × 64) |
+| `0x10C0`–`0x12FF` | zero padding |
+| `0x1300`–end | the town's **shop / service names** as wide chars (`XX 00` per char), control-byte separated. This is the only part that varies in size between towns. |
+
+The names are the game's flavour: `TOWN0` = FLUID MOTION / ICE TOUGH /
+LIQUID ILLUSIONS / SAIL AWAY / CAPTAIN GREED'S (a port); `TOWN4` = AL'S
+ARMS / ANTHONY'S ARMOR / HUBERT'S HOUSE OF HEX / FLOYD'S FLOATAWAY /
+SOOTHING TOUCH / FELICIA'S FORTUNES / ED'S EASY MONEY; `TOWNA` = SAINTLY
+SWORDS / ARMAGEDDON ARMOR / MIRACLE MAGIC / SAIL SALES / HOLY HEALERS /
+BIZARRE BAZAAR / PROPHET FOR PROFIT (a temple town). Each town has the
+standard set — weapons, armour, magic, healer, bank, fortune-teller,
+tavern, boat sales.
+
+`setViewport` modes 1 (`0x5A × 0x5B`) and 2 (`0x70 × 0x49`) are for the
+larger `CASTLE.BS1/2` / `FORT.BS1/2` layouts (12960 B), which share
+`bmTNCALB` with the town renderer.
 
 ## Castle/town data — `TCASOBJ.BSV` + `FORTANIM.BSV` — **structure mapped 2026-08-31**
 
