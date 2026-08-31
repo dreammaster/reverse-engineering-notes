@@ -613,14 +613,18 @@ reimplementation.
         `fix_dun_loaddungeondata.py`): `rtm_11` picks the array,
         `resolveAndOpenGameFile` (`rtm_FE63`) opens, `basBload`
         (`rtm_FE07`) reads header+payload — no relocation.
-        **Consumer chain traced**: region A's 40 records (position +
-        class) populate `viewObjectArray` (`ds:1C7C`); `rebuildLevelView`
-        stamps objects into the map grid as `(class<<4)|wall|0x10`;
-        `renderDungeonView` → `drawViewSprite` draws them, using region
-        A's 6 bank pointers at `0x190` (→ the `DUNMON` records).
-        `moveMonsters` + `sub_139FC` relocate monsters per turn. Still
-        `db`-bytes: `sub_12F9F` / `rebuildLevelView` cluster (the exact
-        region-A → `viewObjectArray` loop) — a tangled dun.idb region.
+        **Consumer chain traced** (`fix_dun_coerce_gaps.py` coerced +837
+        insns across 13 dun functions): `loadDungeonMonsters` (`0x12F9F`)
+        reads `spriteBank[0x190]` (region A's 1st bank pointer, `0x1240`
+        words) and BLOADs `DUNMONA` (levels 0–3) / `DUNMONB` (4–7) there;
+        the 6 pointers = the 6 `DUNMON` records. Objects live in
+        `viewObjectArray` (`ds:1C7C`) as 8 slots; `rebuildLevelView`
+        stamps them into the map as `(slot<<4)|wall|0x10`;
+        `renderDungeonView` → `drawViewSprite` draws them.
+        `clearViewObjects` / `removeViewObject` tear them down. The
+        40-record table itself: no `DUN.EXE` code reads it — the
+        per-slot data comes from the `DUNM` map tiles. Records may be
+        editor metadata.
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.

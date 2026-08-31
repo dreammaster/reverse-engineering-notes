@@ -904,16 +904,25 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   -> same array `+0x800`; `DUNOBJ` -> `spriteBank` (`ds:1E58`). **No
   pointer-table relocation** happens. Named `rtm_FE63` /`rtm_FE07`
   /`rtm_02` in `leglib.idb`.
-- **2026-08-31** -- Traced the DUNOBJ region-A consumer chain (some
-  helpers in this dun.idb region are still `db`-bytes -- a tangled
-  cluster): region A's 40 `[0x0110][pos][0][pos][class]` records
-  populate `viewObjectArray` (`ds:1C7C`, 63 words: `[idx]` = present,
-  `[idx+0x40]` = packed position `(level<<8)|(y<<4)|x`, `[8+class]` =
-  facing). `rebuildLevelView` stamps each present object into the map
-  grid as a tile `(class<<4) | wall | 0x10`. `renderDungeonView`
-  (`bmDUNG`) walks the view ray; a tile `>0x0F` -> class `(tile>>4)-1`
-  -> `drawViewSprite`, which uses `viewObjectArray[8+class]` to pick one
-  of region A's 6 bank pointers at `0x190` (= `0x1240 + k*0x49A` words =
-  the `DUNMON` records in `spriteBank`) and blits mask+image.
-  `moveMonsters` + `sub_139FC` relocate monsters on the map grid per
-  turn (class lives in tile bits 4-6).
+- **2026-08-31** -- Coerced the tangled dun.idb back half:
+  `fix_dun_coerce_gaps.py` linear-decodes 13 seg000 functions whose
+  bodies were still `db` bytes (`findJewel`, `sub_12A13`, `sub_12B5A`,
+  `rollChestContents`, `sub_12D93`, `sub_12F9F`, `rebuildLevelView`,
+  `monsterSpecialAttack`, `sub_139FC`, ...) -- compiled-BASIC procs in
+  the daisy-chained `jmp -> mov cx,N -> basProcEnter` form the generic
+  sweep missed (a full `coerce_code.py` re-run *loops* on this module).
+  +837 insns. Then traced the DUNOBJ region-A consumer chain:
+  **`loadDungeonMonsters`** (`sub_12F9F`, run by `processTileFeature`
+  right after `loadDungeonData`) reads `spriteBank[0x190]` (= region A's
+  1st bank pointer, `0x1240` words) and BLOADs `DUNMONA.BSV` (levels
+  0-3) / `DUNMONB.BSV` (4-7, keyed on `ds:1AE2h >= 0x400`) into
+  `spriteBank` at that offset. The 6 pointers `0x1240 + k*0x49A` = the 6
+  `DUNMON` monster records (`0x49A` words = the record size).
+  Objects/monsters are tracked in `viewObjectArray` (`ds:1C7C`) as 8
+  slots; `rebuildLevelView` stamps them into the map on level change as
+  `(slot<<4) | wall | 0x10`; `renderDungeonView` -> `drawViewSprite`
+  draws them; `clearViewObjects` / `removeViewObject` tear them down;
+  `moveMonsters` + `sub_139FC` relocate them per turn. **No `DUN.EXE`
+  code reads the 40-record table** -- the per-slot data comes from the
+  `DUNM` map tiles (already `(class<<4)|wall`), so the 40 records may be
+  level-editor metadata.

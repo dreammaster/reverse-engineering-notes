@@ -274,32 +274,44 @@ same array `+0x800`; `DUNOBJ.BSV` → `spriteBank` (`ds:1E58`). **No
 pointer-table relocation** — the offsets in region A / DUNDATA are used
 as-is against the array base.
 
-**Consumer chain** (partly traced — several `DUN.EXE` helpers in this
-cluster are still `db`-bytes):
+**Consumer chain** (traced — the loaders are decoded; a couple of
+helpers in this `DUN.EXE` region are still tangled):
 
-- **Object instances vs. the map.** The 40 region-A records are read at
-  level entry to populate `viewObjectArray` (`ds:1C7C`, DIM'd 63 words):
-  `viewObjectArray[idx]` = an object of that class is present,
-  `viewObjectArray[idx + 0x40]` = its packed map position. `fieldA` /
-  `fieldC` in a record ≈ that packed position (`(level<<8)|(y<<4)|x` —
-  the values `0x0247` … `0x042F` are level-2 → level-4 cells);
-  `fieldD` ≈ the class/type.
-- **`rebuildLevelView`** (on level change) stamps each present object
-  into the map grid: it writes `(class<<4) | wallType | 0x10` into the
-  tile at the object's position, so a map byte `> 0x0F` encodes
-  `high nibble = object class`, `low nibble = wall under it`.
-- **`renderDungeonView`** (`bmDUNG`, per frame) walks each view ray;
-  when a tile is `> 0x0F` it takes `(tile>>4) - 1` as the class, checks
-  `viewObjectArray[class-1] > 0`, and calls **`drawViewSprite`**.
-- **`drawViewSprite`** reads `viewObjectArray[8 + class]` (a facing,
-  0–5), uses it to pick one of **region A's 6 bank pointers** at
-  `0x190` — which resolve to `0x1240 + k·0x49A` *words* = the start of
-  the `DUNMON` data in `spriteBank` + `k` monster records — then
-  indexes by depth band and blits mask + image
+- The **6 bank pointers at `0x190`** are the confirmed use of region A.
+  `loadDungeonMonsters` (`DUN.EXE` `0x12F9F`, called from
+  `processTileFeature` right after `loadDungeonData`) reads
+  `spriteBank[0x190]` (= `0x1240` *words*) and `BLOAD`s
+  `DUNMONA.BSV` (levels 0–3) / `DUNMONB.BSV` (levels 4–7, keyed on
+  `ds:1AE2h >= 0x400`) into `spriteBank` at that word offset. So the 6
+  pointers `0x1240 + k·0x49A` are the 6 `DUNMON` monster records
+  (`0x49A` words = `0x934` bytes each — exactly the `DUNMON` record
+  size), and region A tells `spriteBank` where the monster art lands.
+- **Objects/monsters vs. the map** are tracked in `viewObjectArray`
+  (`ds:1C7C`, DIM'd 63 words) as **8 slots**: `[idx]` = occupied,
+  `[idx + 0x10]/[idx + 0x18]` = x/y, `[idx + 0x20]` = packed position,
+  plus a facing word. `removeViewObject` clears a slot and strips it
+  from its map cell (`map[pos] &= 0x8F`); `clearViewObjects` does all 8.
+- **`rebuildLevelView`** (on level change) re-places the 8 slots for the
+  new level: strip from old cell, recompute position, walk to the
+  nearest free cell, stamp `map[pos] = (slotIdx<<4) | wallType | 0x10`,
+  refresh the slot fields. So a map byte `> 0x0F` encodes
+  `high nibble = slot/class`, `low nibble = wall under it`.
+- **`renderDungeonView`** (`bmDUNG`) walks each view ray; a tile
+  `> 0x0F` gives class `(tile>>4) - 1`; if `viewObjectArray[class-1] > 0`
+  it calls **`drawViewSprite`**, which reads `viewObjectArray[8+class]`
+  (facing), picks a `DUNMON` record, and blits mask + image
   (`andSpriteMaskCell` + `basPutSprite`).
-- **`moveMonsters`** + `sub_139FC` (per turn) iterate
-  `viewObjectArray[0..7]` and relocate each monster on the map grid
-  (pull its class out of tile bits 4–6, clear, re-stamp at the new cell).
+- **`moveMonsters`** + `sub_139FC` relocate monsters on the map grid
+  per turn (class in tile bits 4–6).
+
+The **40 `[0x0110]` records** in region A: only the trailing 6 bank
+pointers are provably consumed. `fieldA`/`fieldC` (`0x0247`…`0x042F`)
+look like packed positions (`(level<<8)|(y<<4)|x` — level-2…4 cells)
+and `fieldD` like a type, but no `DUN.EXE` code reads the 40-record
+table — the per-slot `viewObjectArray` data is populated from the
+`DUNM` map tiles (which already carry `(class<<4)|wall` for pre-placed
+objects), not from region A. The records may be level-editor metadata
+or feed something not yet located.
 
 ### `DUNMONA.BSV` / `DUNMONB.BSV` — dungeon monster sprites
 

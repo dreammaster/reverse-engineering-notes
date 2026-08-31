@@ -550,7 +550,7 @@ redrawDungeonView endp
 ; Attributes: noreturn
 
 sub_10336       proc near               ; CODE XREF: moveHazards+78↓p
-                                        ; climbDownOrExit+BC↓j ...
+                                        ; spellResult+B2↓j
                 mov     word ptr ds:20AAh, 32h ; '2'
                 mov     word ptr ds:20ACh, 2
                 mov     ax, 20AAh
@@ -681,6 +681,7 @@ loc_103EF:                              ; CODE XREF: doMovement+28↑j
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 jmp     loc_1051E
 ; ---------------------------------------------------------------------------
 
@@ -689,9 +690,8 @@ loc_10418:                              ; CODE XREF: doMovement+2A↑j
                 add     ax, ds:1AE2h
                 and     ax, 7FFh
                 mov     ds:20CAh, ax
-                call    sub_12E52
-
-loc_1042A:
+                call    far ptr sub_12E52
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C4h, 0Dh
                 jl      short loc_10434
                 jmp     loc_1043A
@@ -702,122 +702,234 @@ loc_10434:                              ; CODE XREF: doMovement+6D↑j
                 mov     ds:20BEh, ax
 
 loc_1043A:                              ; CODE XREF: doMovement+6F↑j
-                mov     ax, 2294h       ; MOVE
+                mov     ax, 2294h
                 push    ax
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-
-loc_10447:
-                cmp     word ptr ds:20C4h, 0
-                mov     ax, 0
-                jle     short loc_10452
-                dec     ax
-
-loc_10452:                              ; CODE XREF: doMovement+8D↑j
-                cmp     word ptr ds:20C4h, 8
-                mov     cx, 0
-                jge     short loc_1045D
-                dec     cx
-
-loc_1045D:                              ; CODE XREF: doMovement+98↑j
-                and     cx, ax
-                cmp     word ptr ds:20C4h, 5
-                mov     ax, 0
-                jz      short loc_1046A
-                dec     ax
-
-loc_1046A:                              ; CODE XREF: doMovement+A5↑j
-                and     ax, cx
-                and     ax, ax
-                jnz     short loc_10473
-                jmp     loc_10489
 ; ---------------------------------------------------------------------------
-
-loc_10473:                              ; CODE XREF: doMovement+AC↑j
-                mov     ax, ds:20C4h
-                add     ax, 8
-                mov     ds:20BEh, ax
-                mov     ax, 20CCh
-                push    ax
-                mov     ax, 20BEh
-                push    ax
-                call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
-
-loc_10489:                              ; CODE XREF: doMovement+AE↑j
-                cmp     word ptr ds:20C4h, 10h
-                jl      short loc_10493
-                jmp     loc_1051E
+                db  83h
+                db  3Eh ; >
+                db 0C4h
+                db  20h
+                db    0
+                db 0B8h
+                db    0
+                db    0
+                db  7Eh ; ~
+                db    1
+                db  48h ; H
+                db  83h
+                db  3Eh ; >
+                db 0C4h
+                db  20h
+                db    8
+                db 0B9h
+                db    0
+                db    0
+                db  7Dh ; }
+                db    1
+                db  49h ; I
+                db  23h ; #
+                db 0C8h
+                db  83h
+                db  3Eh ; >
+                db 0C4h
+                db  20h
+                db    5
+                db 0B8h
+                db    0
+                db    0
+                db  74h ; t
+                db    1
+                db  48h ; H
+                db  23h ; #
+                db 0C1h
+                db  23h ; #
+                db 0C0h
+                db  75h ; u
+                db    3
+                db 0E9h
+                db  16h
+                db    0
+                db 0A1h
+                db 0C4h
+                db  20h
+                db    5
+                db    8
+                db    0
+                db 0A3h
+                db 0BEh
+                db  20h
+                db 0B8h
+                db 0CCh
+                db  20h
+                db  50h ; P
+                db 0B8h
+                db 0BEh
+                db  20h
+                db  50h ; P
+                db  9Ah
+                db 0ECh
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  83h
+                db  3Eh ; >
+                db 0C4h
+                db  20h
+                db  10h
+                db  7Ch ; |
+                db    3
+                db 0E9h
+                db  8Bh
+                db    0
+                db 0A1h
+                db 0C4h
+                db  20h
+                db 0A3h
+                db 0C2h
+                db  20h
+                db 0A1h
+                db 0CAh
+                db  20h
+                db 0A3h
+                db 0E2h
+                db  1Ah
+                db  83h
+                db  3Eh ; >
+                db 0C0h
+                db  20h
+                db    0
+                db  7Fh ; 
+                db    3
+                db 0E9h
+                db  18h
+                db    0
+                db  83h
+                db  3Eh ; >
+                db 0C0h
+                db  20h
+                db    1
+                db  74h ; t
+                db    3
+                db 0E9h
+                db    7
+                db    0
+                db 0FFh
+                db    6
+                db 0CEh
+                db  20h
+                db 0E9h
+                db    4
+                db    0
+                db 0FFh
+                db    6
+                db 0D0h
+                db  20h
+                db 0E9h
+                db  15h
+                db    0
+                db  83h
+                db  3Eh ; >
+                db 0C0h
+                db  20h
+                db 0FFh
+                db  74h ; t
+                db    3
+                db 0E9h
+                db    7
+                db    0
+                db 0FFh
+                db  0Eh
+                db 0CEh
+                db  20h
+                db 0E9h
+                db    4
+                db    0
+                db 0FFh
+                db  0Eh
+                db 0D0h
+                db  20h
+                db 0BBh
+                db 0CEh
+                db  1Ah
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db  9Eh
+                db  22h ; "
+                db  9Ah
+                db 0E8h
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0CEh
+                db  1Ah
+                db  9Ah
+                db  18h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0F4h
+                db  1Ah
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0A2h
+                db  22h ; "
+                db  9Ah
+                db 0E8h
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0F4h
+                db  1Ah
+                db  9Ah
+                db  18h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0F8h
+                db  1Ah
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db  74h ; t
+                db  22h ; "
+                db  9Ah
+                db 0E8h
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0F8h
+                db  1Ah
+                db  9Ah
+                db  18h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
 ; ---------------------------------------------------------------------------
-
-loc_10493:                              ; CODE XREF: doMovement+CC↑j
-                mov     ax, ds:20C4h
-                mov     ds:20C2h, ax
-                mov     ax, ds:20CAh
-                mov     ds:1AE2h, ax
-                cmp     word ptr ds:20C0h, 0
-                jg      short loc_104A9
-                jmp     loc_104C1
-; ---------------------------------------------------------------------------
-
-loc_104A9:                              ; CODE XREF: doMovement+E2↑j
-                cmp     word ptr ds:20C0h, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                jz      short loc_104B3
-                jmp     loc_104BA
-; ---------------------------------------------------------------------------
-
-loc_104B3:                              ; CODE XREF: doMovement+EC↑j
-                inc     word ptr ds:20CEh
-                jmp     loc_104BE
-; ---------------------------------------------------------------------------
-
-loc_104BA:                              ; CODE XREF: doMovement+EE↑j
-                inc     word ptr ds:20D0h
-
-loc_104BE:                              ; CODE XREF: doMovement+F5↑j
-                jmp     loc_104D6
-; ---------------------------------------------------------------------------
-
-loc_104C1:                              ; CODE XREF: doMovement+E4↑j
-                cmp     word ptr ds:20C0h, 0FFFFh
-                jz      short loc_104CB
-                jmp     loc_104D2
-; ---------------------------------------------------------------------------
-
-loc_104CB:                              ; CODE XREF: doMovement+104↑j
-                dec     word ptr ds:20CEh
-                jmp     loc_104D6
-; ---------------------------------------------------------------------------
-
-loc_104D2:                              ; CODE XREF: doMovement+106↑j
-                dec     word ptr ds:20D0h
-
-loc_104D6:                              ; CODE XREF: doMovement:loc_104BE↑j
-                                        ; doMovement+10D↑j
-                mov     bx, 1ACEh
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                mov     bx, 229Eh
-                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                mov     bx, 1ACEh
-                call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
-                mov     bx, 1AF4h
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                mov     bx, 22A2h
-                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                mov     bx, 1AF4h
-                call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
-                mov     bx, 1AF8h
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                mov     bx, 2274h
-                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                mov     bx, 1AF8h
-                call    far ptr rt_FF50 ; -> rtm_FF50  (leglib seg004:0x2182d)
 
 loc_1051E:                              ; CODE XREF: doMovement+53↑j
-                                        ; doMovement+CE↑j
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_10527:
                 mov     si, 1BC4h
@@ -854,9 +966,11 @@ loc_10549:                              ; CODE XREF: doMovement+184↑j
                 push    ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 20D4h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 20D4h
                 push    ax
                 mov     si, 1D94h
@@ -864,6 +978,7 @@ loc_10549:                              ; CODE XREF: doMovement+184↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10590:                              ; CODE XREF: doMovement+179↑j
                 cmp     word ptr ds:20C4h, 0Fh
@@ -880,6 +995,7 @@ loc_1059B:                              ; CODE XREF: doMovement+1D6↑j
                 mov     ax, 20D8h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
 
 loc_105B1:
                 cmp     word ptr ds:20BEh, 0
@@ -1007,58 +1123,71 @@ drawDungeonHud  proc near
                 mov     ax, 22BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10697:
                 push    ax
                 mov     ax, 20E6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_106A1:
                 mov     ax, 20E6h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_106AA:
                 mov     ax, 20E6h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_106B3:                              ; CODE XREF: moveHazards+75↑p
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
 
 loc_106C0:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_106CA:
                 mov     bx, 22FEh
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
 
 loc_106D2:
                 mov     bx, 2302h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
 
 loc_106DA:
                 mov     bx, 2306h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_106E2:
                 mov     ax, ds:1ACAh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 loc_106EA:                              ; -> rtm_FF2B  (leglib seg004:0x21e15)
                 call    far ptr rt_FF2B
+; ---------------------------------------------------------------------------
 
 j_rt_FF4C:                              ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
+; ---------------------------------------------------------------------------
 
 loc_106F4:
                 mov     bx, 2274h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_106FC:
                 cmp     word ptr ds:20C2h, 0Ah
@@ -1068,28 +1197,32 @@ loc_106FC:
 
 loc_10707:                              ; CODE XREF: drawDungeonHud+77↑j
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 loc_1070C:
                 mov     bx, 230Ah
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
 
 j_rt_FF51:                              ; -> rtm_FF51  (leglib seg004:0x21b40)
                 call    far ptr rt_FF51
+; ---------------------------------------------------------------------------
 
 j_rt_FF4C_0:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
+; ---------------------------------------------------------------------------
 
 loc_1071E:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
                 call    far ptr rt_FF22
+; ---------------------------------------------------------------------------
 
 loc_10723:
                 mov     ds:20EAh, ax
                 call    showHitPoints   ; "H.P. -".
-
-nullsub_8:
-                retn
 drawDungeonHud  endp
 
+; ---------------------------------------------------------------------------
+                retn
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -1231,12 +1364,14 @@ loc_10848:                              ; CODE XREF: climbDownOrExit+B↑j
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:20E2h, 100h
 
 loc_1085B:                              ; CODE XREF: climbDownOrExit+D↑j
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_10864:                              ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
                 call    redrawDungeonView
@@ -1244,6 +1379,7 @@ loc_10864:                              ; repaint the dungeon viewport (called f
 
 j_rt_FE5B_2:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
+; ---------------------------------------------------------------------------
 
 loc_1086C:                              ; CODE XREF: moveHazards+9A↑j
                 mov     ax, ds:20E2h
@@ -1263,23 +1399,30 @@ loc_1087D:                              ; CODE XREF: climbDownOrExit+40↑j
                 inc     ax
                 push    ax
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 22BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2102h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2102h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2102h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                call    sub_12F9F
+; ---------------------------------------------------------------------------
+                call    far ptr loadDungeonMonsters ; BLOAD DUNMONA.BSV (levels 0-3) or DUNMONB.BSV (4-7, keyed on ds:1AE2h >= 0x400) into spriteBank at word offset spriteBank[0x190h] (= DUNOBJ region A's first bank pointer, 0x1240), then call clearViewObjects. Called from processTileFeature on level entry, right after loadDungeonData.
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C2h, 0Dh
                 mov     ax, 0
                 jnz     short loc_108CD
@@ -1291,14 +1434,26 @@ loc_108CD:                              ; CODE XREF: climbDownOrExit+92↑j
                 add     ax, 0Dh
                 mov     ds:20C2h, ax
                 call    sub_12E7D
+; ---------------------------------------------------------------------------
                 mov     ax, 20CCh
                 push    ax
                 mov     ax, 20C2h
                 push    ax
                 call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
-                call    rebuildLevelView ; rebuild the level view after a climb / level change (descriptor at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.
-                call    updateLevelState ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
-                jmp     sub_10336
+; ---------------------------------------------------------------------------
+                db  9Ah
+                db  5Ch ; \
+                db  30h ; 0
+                db    0 ; SEG16 SEGDEF [seg000,0]
+                db  10h
+                db  9Ah
+                db  3Ch ; <
+                db  39h ; 9
+                db    0 ; SEG16 SEGDEF [seg000,0]
+                db  10h
+                db 0E9h
+                db  3Fh ; ?
+                db 0FAh
 ; ---------------------------------------------------------------------------
 
 loc_108F7:                              ; CODE XREF: climbDownOrExit+42↑j
@@ -1307,21 +1462,25 @@ loc_108F7:                              ; CODE XREF: climbDownOrExit+42↑j
                 mov     ax, 2106h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10904:
                 mov     ax, 2106h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_1090D:
                 mov     ax, 2106h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_10916:
                 mov     word ptr ds:20EAh, 0
                 mov     bx, ds:1ACAh
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+; ---------------------------------------------------------------------------
 
 loc_10925:
                 add     ax, [bp+di+0Ah]
@@ -1369,26 +1528,33 @@ loc_10982:                              ; CODE XREF: climbDownOrExit+145↑j
                 sub     ax, ds:1B08h
                 push    ax
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 210Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 210Ah
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 210Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:210Eh, 7D0h
                 mov     ax, 210Eh
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:2110h, 1Bh
                 mov     ax, 2110h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:20EAh
                 mov     ds:1B08h, ax
 
@@ -1396,6 +1562,7 @@ loc_109D9:                              ; CODE XREF: dunMain+290↑j
                                         ; climbDownOrExit+11D↑j ...
                 mov     bx, ds:1ACAh
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+; ---------------------------------------------------------------------------
 
 loc_109E2:
                 add     dx, cx
@@ -1405,6 +1572,7 @@ loc_109E2:
                 mov     ax, 23BEh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_109F6:
                 push    ax
@@ -1413,6 +1581,7 @@ loc_109F6:
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10A06:
                 mov     si, 1B96h
@@ -1425,19 +1594,23 @@ loc_10A06:
                 mov     ax, 2112h
                 push    ax
                 call    far ptr rt_FE49 ; -> rtm_FE49  (leglib seg007:0x25248)
+; ---------------------------------------------------------------------------
 
 j_rt_FE4E:                              ; -> rtm_FE4E  (leglib seg007:0x25c5c)
                 call    far ptr rt_FE4E
+; ---------------------------------------------------------------------------
 
 loc_10A31:
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
+; ---------------------------------------------------------------------------
 
 loc_10A3A:
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_FE08 ; -> rtm_FE08  (leglib seg007:0x24a60)
+; ---------------------------------------------------------------------------
 
 loc_10A43:
                 mov     si, 1BC4h
@@ -1572,34 +1745,63 @@ loc_10BE1:                              ; CODE XREF: describeSurroundings+5↑j
                 mov     ax, 212Ch
                 push    ax
                 call    sub_12D93
+; ---------------------------------------------------------------------------
                 mov     ax, 2430h
                 push    ax
                 mov     bx, ds:212Eh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
+                shl     bx, 1
                 mov     si, 1F2Ch
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 2436h       ;  IS STALKING YOU!
-                push    ax
-                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 2130h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                mov     ax, 2130h
-                push    ax
-                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     ax, 2130h
-                push    ax
-                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                jmp     redrawDungeonView ; repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.
+; ---------------------------------------------------------------------------
+                db  50h ; P
+                db 0B8h
+                db  36h ; 6
+                db  24h ; $
+                db  50h ; P
+                db  9Ah
+                db  88h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  50h ; P
+                db 0B8h
+                db  30h ; 0
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  85h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  30h ; 0
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  7Ch ; |
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  30h ; 0
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db 0A0h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0E9h
+                db 0E4h
+                db 0F6h
 ; ---------------------------------------------------------------------------
 
 loc_10C38:                              ; CODE XREF: describeSurroundings+7↑j
                 call    sub_13AC7
+; ---------------------------------------------------------------------------
 
 loc_10C3D:
                 cmp     word ptr ds:20C2h, 0
@@ -1613,20 +1815,25 @@ loc_10C47:                              ; CODE XREF: describeSurroundings+6B↑j
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 244Ch       ;  IS IN SIGHT.
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2134h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2134h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2134h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 jmp     loc_10302
 ; ---------------------------------------------------------------------------
 
@@ -1636,16 +1843,19 @@ loc_10C7D:                              ; CODE XREF: describeSurroundings+6D↑j
                 mov     ax, 2138h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10C8A:
                 mov     ax, 2138h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_10C93:
                 mov     ax, 2138h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_10C9C:                              ; TO A
                 mov     ax, 2478h
@@ -1653,28 +1863,33 @@ loc_10C9C:                              ; TO A
                 mov     ax, 20C6h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10CA9:
                 push    ax
                 mov     ax, 22BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10CB3:
                 push    ax
                 mov     ax, 213Ch
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10CBD:
                 mov     ax, 213Ch
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_10CC6:
                 mov     ax, 213Ch
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_10CCF:
                 jmp     loc_10302
@@ -1708,8 +1923,7 @@ loc_10CE1:                              ; CODE XREF: clearTurnFlag+6↑j
                 mov     ax, ds:20CCh
                 mov     ds:1F14h, ax
                 call    sub_12E7D
-
-loc_10CFE:
+; ---------------------------------------------------------------------------
                 xor     ax, ax
                 jmp     loc_10DC1
 ; ---------------------------------------------------------------------------
@@ -1772,6 +1986,7 @@ loc_10D5E:                              ; CODE XREF: doLookSearch+7E↑j
                 mov     ax, 20C4h
                 push    ax
                 call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
+; ---------------------------------------------------------------------------
 
 loc_10D70:                              ; CODE XREF: doLookSearch+64↑j
                                         ; doLookSearch+80↑j
@@ -1809,6 +2024,7 @@ loc_10D95:                              ; CODE XREF: doLookSearch+30↑j
                 mov     ax, 20CCh
                 push    ax
                 call    far ptr rt_FE20 ; -> rtm_FE20  (leglib seg007:0x25883)
+; ---------------------------------------------------------------------------
                 mov     ds:2144h, ax
                 mov     ax, ds:2144h
                 mov     ds:20C4h, ax
@@ -1877,6 +2093,7 @@ loc_10E1C:                              ; CODE XREF: doLookSearch+13C↑j
                 mov     ax, 20EAh
                 push    ax
                 call    sub_12D93
+; ---------------------------------------------------------------------------
 
 locret_10E32:                           ; CODE XREF: doLookSearch+13E↑j
                 retn
@@ -1931,28 +2148,33 @@ openChest       proc near
                 mov     ax, 2496h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10E82:
                 push    ax
                 mov     ax, 214Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10E8C:
                 mov     ax, 214Ah
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_10E95:
                 mov     ax, 214Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_10E9E:
                 mov     word ptr ds:214Eh, 0Eh
                 mov     ax, 214Eh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
 
 loc_10EAD:
                 cmp     word ptr ds:20C2h, 0Eh
@@ -1968,6 +2190,7 @@ loc_10EB7:                              ; CODE XREF: openChest+3D↑j
 
 loc_10EC2:                              ; CODE XREF: openChest+48↑j
                 call    findJewel       ; "YOU FIND A LARGE PULSATING JEWEL".
+; ---------------------------------------------------------------------------
 
 loc_10EC7:                              ; CODE XREF: openChest+4A↑j
                 mov     ax, ds:2150h
@@ -1987,6 +2210,7 @@ loc_10EDA:                              ; CODE XREF: openChest+59↑j
                 push    word ptr ds:1AD8h
                 push    word ptr ds:1AD6h
                 call    far ptr rt_EE   ; -> rtm_EE  (leglib seg003:0x1c9d3)
+; ---------------------------------------------------------------------------
                 jg      short loc_10EF4
                 jmp     loc_10F16
 ; ---------------------------------------------------------------------------
@@ -1997,12 +2221,15 @@ loc_10EF4:                              ; CODE XREF: openChest+7A↑j
                 mov     ax, 2152h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2152h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2152h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
@@ -2016,13 +2243,17 @@ loc_10F22:                              ; CODE XREF: openChest+AA↑j
                 mov     bx, 24B4h
                 mov     [bp-0Ch], ax
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 mov     ax, 0
                 jnb     short loc_10F4F
                 dec     ax
@@ -2045,12 +2276,15 @@ loc_10F59:                              ; CODE XREF: openChest+DF↑j
                 mov     ax, 2156h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2156h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 2156h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20EAh, 1F4h
                 jg      short loc_10F8F
                 jmp     loc_10FBE
@@ -2060,56 +2294,72 @@ loc_10F8F:                              ; CODE XREF: openChest+115↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     bx, 22FEh
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
                 mov     bx, 24DAh
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
                 mov     ds:20EAh, ax
 
 loc_10FBE:                              ; CODE XREF: openChest+117↑j
                 call    showHitPoints   ; "H.P. -".
+; ---------------------------------------------------------------------------
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
 loc_10FC6:                              ; CODE XREF: openChest+E1↑j
                 mov     bx, 24DEh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 jb      short loc_10FEF
                 jmp     loc_10FF7
 ; ---------------------------------------------------------------------------
 
 loc_10FEF:                              ; CODE XREF: openChest+175↑j
-                call    rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
+                call    far ptr rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
+; ---------------------------------------------------------------------------
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
 loc_10FF7:                              ; CODE XREF: openChest+177↑j
                 mov     bx, 24E2h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 jb      short loc_11020
                 jmp     loc_11025
 ; ---------------------------------------------------------------------------
 
 loc_11020:                              ; CODE XREF: openChest+1A6↑j
-                call    sub_1299A
+                call    far ptr sub_1299A
+; ---------------------------------------------------------------------------
 
 loc_11025:                              ; CODE XREF: openChest+1A8↑j
                 mov     ax, ds:215Ah
@@ -2146,7 +2396,8 @@ loc_1104F:                              ; CODE XREF: openChest+1D5↑j
 ; ---------------------------------------------------------------------------
 
 loc_11066:                              ; CODE XREF: openChest+1EC↑j
-                call    rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
+                call    far ptr rollChestContents ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
+; ---------------------------------------------------------------------------
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
@@ -2173,16 +2424,23 @@ loc_110AD:                              ; CODE XREF: openChest+217↑j
                 push    ax
                 mov     ax, ds:1F08h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 mov     bx, 1AF8h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:1F0Ah
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF47 ; -> rtm_FF47  (leglib seg004:0x21b4f)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF42 ; -> rtm_FF42  (leglib seg004:0x21b59)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF23 ; -> rtm_FF23  (leglib seg004:0x218ee)
+; ---------------------------------------------------------------------------
                 push    dx
                 push    ax
                 call    far ptr rt_14   ; -> rtm_14  (leglib seg003:0x1c9c9)
+; ---------------------------------------------------------------------------
                 mov     ds:215Ch, ax
                 cmp     ax, ds:1F0Eh
                 jg      short loc_110ED
@@ -2205,18 +2463,25 @@ loc_110F3:                              ; CODE XREF: openChest+275↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-10h], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:215Ch
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+; ---------------------------------------------------------------------------
                 mov     bx, 226Ch
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF23 ; -> rtm_FF23  (leglib seg004:0x218ee)
+; ---------------------------------------------------------------------------
                 push    dx
                 push    ax
                 call    far ptr rt_14   ; -> rtm_14  (leglib seg003:0x1c9c9)
+; ---------------------------------------------------------------------------
                 sub     ax, [bp-0Eh]
                 sbb     dx, [bp-0Ch]
                 neg     ax
@@ -2237,13 +2502,18 @@ loc_11159:                              ; CODE XREF: openChest+2DB↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     bx, 24E6h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF27 ; -> rtm_FF27  (leglib seg004:0x21ddf)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
                 mov     ds:215Eh, ax
                 mov     bx, ds:1F10h
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -2259,6 +2529,7 @@ loc_11159:                              ; CODE XREF: openChest+2DB↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
                 call    far ptr rt_FE4F ; -> rtm_FE4F  (leglib seg007:0x2659c)
+; ---------------------------------------------------------------------------
                 mov     ax, 24EAh
                 push    ax
                 mov     bx, ds:215Eh
@@ -2268,10 +2539,12 @@ loc_11159:                              ; CODE XREF: openChest+2DB↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2266h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     bx, ds:215Ch
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
@@ -2280,20 +2553,25 @@ loc_11159:                              ; CODE XREF: openChest+2DB↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 22BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2160h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2160h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2160h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 call    sub_10384
 ; ---------------------------------------------------------------------------
                 jmp     loc_113BC
@@ -2320,13 +2598,17 @@ loc_1123D:                              ; CODE XREF: openChest+3C5↑j
                 mov     bx, 230Ah
                 mov     [bp-0Ch], ax
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 mov     ax, 0
                 jnb     short loc_1126A
                 dec     ax
@@ -2351,16 +2633,20 @@ loc_11282:                              ; CODE XREF: openChest+408↑j
                 mov     ax, 2164h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2164h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2164h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:2168h, 1Bh
                 mov     ax, 2168h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 mov     si, 1BC4h
                 mov     bx, 16h
                 add     bx, [si+0Ah]
@@ -2374,19 +2660,27 @@ loc_112C4:                              ; CODE XREF: openChest+3B9↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     bx, 2512h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:1AE0h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+; ---------------------------------------------------------------------------
                 mov     bx, 22FEh
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
                 mov     bx, 2516h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
                 mov     ds:20EAh, ax
                 mov     ax, ds:1ADAh
                 mov     ds:212Eh, ax
@@ -2423,26 +2717,33 @@ loc_1134D:                              ; CODE XREF: openChest+4D3↑j
                 push    ax
                 push    word ptr ds:20EAh
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 216Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 216Ah
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 216Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:216Eh, 13h
                 mov     ax, 216Eh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:2170h, 8
                 mov     ax, 2170h
                 push    ax
                 call    far ptr rt_FE56 ; -> rtm_FE56  (leglib seg007:0x27457)
+; ---------------------------------------------------------------------------
                 jmp     loc_113BC
 ; ---------------------------------------------------------------------------
 
@@ -2452,12 +2753,15 @@ loc_1139D:                              ; CODE XREF: openChest+4D5↑j
                 mov     ax, 2172h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2172h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2172h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_113BC:                              ; CODE XREF: openChest+62↑j
                                         ; openChest+9E↑j ...
@@ -2466,14 +2770,14 @@ loc_113BC:                              ; CODE XREF: openChest+62↑j
 
 loc_113BF:
                 call    sub_12E7D
-
-loc_113C4:
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:2176h, 0
                 mov     ax, 20CCh
                 push    ax
                 mov     ax, 2176h
                 push    ax
                 call    far ptr rt_FE41 ; -> rtm_FE41  (leglib seg007:0x258c7)
+; ---------------------------------------------------------------------------
 
 loc_113D7:
                 mov     word ptr ds:20C2h, 0
@@ -2522,6 +2826,7 @@ loc_11532:                              ; CODE XREF: monsterAttack+188↓j
                 mov     ax, 20ECh
                 push    ax
                 call    sub_12D93
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:218Ah, 0FFFFh
                 cmp     word ptr ds:1F02h, 0
                 jnz     short loc_1154B
@@ -2529,128 +2834,339 @@ loc_11532:                              ; CODE XREF: monsterAttack+188↓j
 ; ---------------------------------------------------------------------------
 
 loc_1154B:                              ; CODE XREF: monsterAttack+2A↑j
-                call    monsterSpecialAttack ; monster special-attack resolution (called from monsterAttack). TENTATIVE.
-                mov     word ptr ds:1F0Ah, 0
-                inc     word ptr ds:1F1Ch
-                mov     ax, ds:218Ah
-                and     ax, ax
-                jnz     short loc_11564
-                jmp     loc_11591
+                call    far ptr monsterSpecialAttack
 ; ---------------------------------------------------------------------------
-
-loc_11564:                              ; CODE XREF: monsterAttack+43↑j
-                mov     bx, ds:212Eh
-                inc     bx
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
-                or      al, 38h
-                add     [bx+si], bh
-                add     [bx+si-50E7h], dh
-                sbb     [bx+si], di
-                add     [bx+si-3BEAh], ch
-                sbb     [bx+si], bh
-                add     [bx+si], bh
-                add     [bx+si], bh
-                add     [bx+3817h], cl
-                add     [bx+di+1F0Ah], ah
-                and     ax, ax
-                jz      short loc_11591
-                jmp     loc_11698
+                db 0C7h
+                db    6
+                db  0Ah
+                db  1Fh
+                db    0
+                db    0
+                db 0FFh
+                db    6
+                db  1Ch
+                db  1Fh
+                db 0A1h
+                db  8Ah
+                db  21h ; !
+                db  23h ; #
+                db 0C0h
+                db  75h ; u
+                db    3
+                db 0E9h
+                db  2Dh ; -
+                db    0
+                db  8Bh
+                db  1Eh
+                db  2Eh ; .
+                db  21h ; !
+                db  43h ; C
+                db  9Ah
+                db    6
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  0Ch
+                db  38h ; 8
+                db    0
+                db  38h ; 8
+                db    0
+                db 0B0h
+                db  19h
+                db 0AFh
+                db  19h
+                db  38h ; 8
+                db    0
+                db 0A8h
+                db  16h
+                db 0C4h
+                db  18h
+                db  38h ; 8
+                db    0
+                db  38h ; 8
+                db    0
+                db  38h ; 8
+                db    0
+                db  8Fh
+                db  17h
+                db  38h ; 8
+                db    0
+                db 0A1h
+                db  0Ah
+                db  1Fh
+                db  23h ; #
+                db 0C0h
+                db  74h ; t
+                db    3
+                db 0E9h
+                db    7
+                db    1
+                db 0A1h
+                db 0C0h
+                db  1Ah
+                db  9Ah
+                db  58h ; X
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0FFh
+                db  36h ; 6
+                db  76h ; v
+                db  22h ; "
+                db 0FFh
+                db  36h ; 6
+                db  74h ; t
+                db  22h ; "
+                db  9Ah
+                db  7Bh ; {
+                db    4
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  8Bh
+                db 0D8h
+                db  89h
+                db  5Eh ; ^
+                db 0F4h
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db  64h ; d
+                db  25h ; %
+                db  9Ah
+                db  10h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  34h ; 4
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  76h ; v
+                db    3
+                db 0E9h
+                db  31h ; 1
+                db    0
+                db 0B8h
+                db  68h ; h
+                db  25h ; %
+                db  50h ; P
+                db 0B8h
+                db  8Ch
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  85h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  8Ch
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  7Ch ; |
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  8Ch
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db 0A0h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0C7h
+                db    6
+                db  90h
+                db  21h ; !
+                db    5
+                db    0
+                db 0B8h
+                db  90h
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  84h
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0E9h
+                db  80h
+                db    0
+                db 0FFh
+                db  36h ; 6
+                db  76h ; v
+                db  22h ; "
+                db 0FFh
+                db  36h ; 6
+                db  74h ; t
+                db  22h ; "
+                db  9Ah
+                db  7Bh ; {
+                db    4
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  8Bh
+                db 0D8h
+                db  89h
+                db  5Eh ; ^
+                db 0F4h
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db  12h
+                db  25h ; %
+                db  9Ah
+                db 0E8h
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0A1h
+                db  92h
+                db  21h ; !
+                db  9Ah
+                db  58h ; X
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db    8
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  60h ; `
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0A3h
+                db 0EAh
+                db  20h
+                db  29h ; )
+                db    6
+                db 0DAh
+                db  1Ah
+                db 0B8h
+                db  7Ah ; z
+                db  25h ; %
+                db  50h ; P
+                db 0FFh
+                db  36h ; 6
+                db 0EAh
+                db  20h
+                db  9Ah
+                db 0A3h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  50h ; P
+                db  9Ah
+                db  88h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  50h ; P
+                db 0B8h
+                db  8Eh
+                db  25h ; %
+                db  50h ; P
+                db  9Ah
+                db  88h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  50h ; P
+                db 0B8h
+                db  94h
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  85h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  94h
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  7Ch ; |
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0B8h
+                db  94h
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db 0A0h
+                db    1
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0C7h
+                db    6
+                db  98h
+                db  21h ; !
+                db    3
+                db    0
+                db 0B8h
+                db  98h
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  84h
+                db    5
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0A1h
+                db  88h
+                db  21h ; !
+                db  3Bh ; ;
+                db    6
+                db  1Ch
+                db  1Fh
+                db  7Fh ; 
+                db    3
+                db 0E9h
+                db  19h
+                db    0
+                db 0C7h
+                db    6
+                db  9Ah
+                db  21h ; !
+                db  1Eh
+                db    0
+                db 0C7h
+                db    6
+                db  9Ch
+                db  21h ; !
+                db 0CAh
+                db    0
+                db 0B8h
+                db  9Ah
+                db  21h ; !
+                db  50h ; P
+                db 0B8h
+                db  9Ch
+                db  21h ; !
+                db  50h ; P
+                db  9Ah
+                db  10h
+                db    6
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
 ; ---------------------------------------------------------------------------
-
-loc_11591:                              ; CODE XREF: monsterAttack+45↑j
-                                        ; monsterAttack+70↑j
-                mov     ax, ds:1AC0h
-                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-                push    word ptr ds:2276h
-                push    word ptr ds:2274h
-                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
-                mov     bx, ax
-                mov     [bp-0Ch], bx
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                mov     bx, 2564h
-                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
-                jbe     short loc_115C2
-                jmp     loc_115F3
-; ---------------------------------------------------------------------------
-
-loc_115C2:                              ; CODE XREF: monsterAttack+A1↑j
-                mov     ax, 2568h       ; ATTACK MISSED.
-                push    ax
-                mov     ax, 218Ch
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                mov     ax, 218Ch
-                push    ax
-                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     ax, 218Ch
-                push    ax
-                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:2190h, 5
-                mov     ax, 2190h
-                push    ax
-                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                jmp     loc_11673
-; ---------------------------------------------------------------------------
-
-loc_115F3:                              ; CODE XREF: monsterAttack+A3↑j
-                push    word ptr ds:2276h
-                push    word ptr ds:2274h
-                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
-                mov     bx, ax
-                mov     [bp-0Ch], bx
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-                mov     bx, 2512h
-                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
-                mov     ax, ds:2192h
-                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-                call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
-                call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
-                mov     ds:20EAh, ax
-                sub     ds:1ADAh, ax
-                mov     ax, 257Ah       ; HIT BY BLOW OF
-                push    ax
-                push    word ptr ds:20EAh
-                call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
-                push    ax
-                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 258Eh
-                push    ax
-                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
-                push    ax
-                mov     ax, 2194h
-                push    ax
-                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-                mov     ax, 2194h
-                push    ax
-                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
-                mov     ax, 2194h
-                push    ax
-                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
-                mov     word ptr ds:2198h, 3
-                mov     ax, 2198h
-                push    ax
-                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-
-loc_11673:                              ; CODE XREF: monsterAttack+D4↑j
-                mov     ax, ds:2188h
-                cmp     ax, ds:1F1Ch
-                jg      short loc_1167F
-                jmp     loc_11698
-; ---------------------------------------------------------------------------
-
-loc_1167F:                              ; CODE XREF: monsterAttack+15E↑j
-                mov     word ptr ds:219Ah, 1Eh
-                mov     word ptr ds:219Ch, 0CAh
-                mov     ax, 219Ah
-                push    ax
-                mov     ax, 219Ch
-                push    ax
-                call    far ptr rt_FE4A ; -> rtm_FE4A  (leglib seg008:0x27d92)
 
 loc_11698:                              ; CODE XREF: monsterAttack+2C↑j
-                                        ; monsterAttack+72↑j ...
                 mov     ax, ds:20ECh
                 inc     ax
 
@@ -2685,13 +3201,17 @@ loc_116CB:                              ; CODE XREF: monsterAttack+1AC↑j
                 mov     bx, 24B4h
                 mov     [bp-0Ch], cx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 mov     ax, 0
                 jnb     short loc_116FA
                 dec     ax
@@ -2709,10 +3229,12 @@ locret_11704:                           ; CODE XREF: monsterAttack+1E3↑j
 
 loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:219Eh, 16h
                 mov     ax, 219Eh
                 push    ax
                 call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
+; ---------------------------------------------------------------------------
                 mov     ax, 2594h       ; KNUCKLES BROKE YOUR
                 push    ax
                 mov     bx, ds:1AFCh
@@ -2728,20 +3250,25 @@ loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 25ACh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 21A0h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21A0h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 21A0h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     bx, ds:1AFCh
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     si, 1B0Ch
@@ -2751,6 +3278,7 @@ loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
                 mov     word ptr ds:1AFCh, 63h ; 'c'
                 mov     word ptr ds:1AFEh, 0
                 call    sub_12B18
+; ---------------------------------------------------------------------------
                 jmp     loc_118B1
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1AECh, 0
@@ -2774,13 +3302,17 @@ loc_117B2:                              ; CODE XREF: monsterAttack+293↑j
                 mov     bx, 24B4h
                 mov     [bp-0Ch], cx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Eh], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 mov     ax, 0
                 jnb     short loc_117E1
                 dec     ax
@@ -2798,10 +3330,12 @@ locret_117EB:                           ; CODE XREF: monsterAttack+2CA↑j
 
 loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:21A4h, 15h
                 mov     ax, 21A4h
                 push    ax
                 call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
+; ---------------------------------------------------------------------------
                 mov     ax, 25B2h       ; THE
                 push    ax
                 mov     bx, ds:212Eh
@@ -2811,20 +3345,25 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 25BAh       ;  ATE
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 21A6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21A6h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 21A6h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     ax, 25C2h       ; YOUR
                 push    ax
                 mov     bx, ds:1AEAh
@@ -2840,20 +3379,25 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 25ACh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 21AAh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21AAh
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 21AAh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     bx, ds:1AEAh
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     si, 1B0Ch
@@ -2863,22 +3407,29 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 mov     word ptr ds:1AEAh, 63h ; 'c'
                 mov     word ptr ds:1AECh, 0
                 call    sub_12B18
+; ---------------------------------------------------------------------------
 
 loc_118B1:                              ; CODE XREF: monsterAttack+270↑j
                 call    updateLevelState ; refresh per-level state (reads dungeonLevel + levelProgressFlags) -- called after climbs, kills, and from processTileFeature. TENTATIVE.
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FE4F ; -> rtm_FE4F  (leglib seg007:0x2659c)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:1F0Ah, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jmp     sub_10384
 ; ---------------------------------------------------------------------------
                 mov     bx, 25CCh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
                 mov     ax, 0
                 jnb     short loc_118EE
                 dec     ax
@@ -2909,33 +3460,44 @@ loc_11910:                              ; CODE XREF: monsterAttack+3F0↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 mov     bx, 25D0h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF27 ; -> rtm_FF27  (leglib seg004:0x21ddf)
+; ---------------------------------------------------------------------------
                 mov     bx, 2274h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
                 mov     ds:20EAh, ax
                 mov     word ptr ds:1F0Ah, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     ax, 25D4h
                 push    ax
                 push    word ptr ds:20EAh
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 21AEh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21AEh
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 21AEh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:20EAh
                 sub     ds:1ACCh, ax
                 mov     si, 1B96h
@@ -2952,6 +3514,7 @@ loc_11910:                              ; CODE XREF: monsterAttack+3F0↑j
                 mov     ax, 21B2h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 jmp     sub_1036A
 ; ---------------------------------------------------------------------------
                 retn
@@ -3025,7 +3588,7 @@ locret_11A0F:                           ; CODE XREF: sub_119B9+51↑j
 ; ---------------------------------------------------------------------------
 
 loc_11A10:                              ; CODE XREF: sub_119B9+53↑j
-                                        ; sub_11A1D+52↓j
+                                        ; seg000:1A6F↓j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -3040,36 +3603,43 @@ sub_11A1D       proc near
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_11A27:
                 mov     bx, 25FAh
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
 
 loc_11A2F:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
                 call    far ptr rt_FF27
+; ---------------------------------------------------------------------------
 
 loc_11A34:
                 mov     ax, ds:1AE2h
                 and     ax, 700h
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 j_rt_FF42:                              ; -> rtm_FF42  (leglib seg004:0x21b59)
                 call    far ptr rt_FF42
+; ---------------------------------------------------------------------------
 
 loc_11A44:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
                 call    far ptr rt_FF22
+; ---------------------------------------------------------------------------
 
 loc_11A49:
                 mov     ds:20CAh, ax
-                call    sub_12E52
+                call    far ptr sub_12E52
+sub_11A1D       endp
 
-loc_11A51:
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:20C4h, 0Fh
                 mov     ax, 0
                 jle     short loc_11A5C
                 dec     ax
 
-loc_11A5C:                              ; CODE XREF: sub_11A1D+3C↑j
+loc_11A5C:                              ; CODE XREF: seg000:1A59↑j
                 mov     bx, ax
                 mov     ax, ds:1AE2h
                 cmp     ax, ds:20CAh
@@ -3077,107 +3647,190 @@ loc_11A5C:                              ; CODE XREF: sub_11A1D+3C↑j
                 jnz     short loc_11A6B
                 dec     cx
 
-loc_11A6B:                              ; CODE XREF: sub_11A1D+4B↑j
+loc_11A6B:                              ; CODE XREF: seg000:1A68↑j
                 or      cx, bx
                 and     cx, cx
                 jnz     short loc_11A10
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
-
-loc_11A7E:
-                mov     bx, ax
-                mov     [bp-0Ch], bx
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-
-loc_11A88:
-                cmp     word ptr ds:1AE2h, 400h
-                mov     ax, 0
-                jl      short loc_11A94
-                dec     ax
-
-loc_11A94:                              ; CODE XREF: sub_11A1D+74↑j
-                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-
-j_rt_FF51_0:                            ; -> rtm_FF51  (leglib seg004:0x21b40)
-                call    far ptr rt_FF51
-
-loc_11A9E:
-                mov     bx, 25FEh
-                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-
-loc_11AA6:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
-                call    far ptr rt_FF27
-
-loc_11AAB:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
-                call    far ptr rt_FF22
-
-loc_11AB0:
-                mov     ds:20EAh, ax
-                mov     ax, 20CAh
-                push    ax
-                mov     ax, 20EAh
-                push    ax
-                call    sub_13850
-
-loc_11AC0:
-                mov     ax, 0Ah
-                cwd
-                push    dx
-                push    ax
-                mov     ax, ds:20EAh
-                add     ax, 0Fh
-                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-
-loc_11AD1:
-                push    word ptr ds:2276h
-                push    word ptr ds:2274h
-                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
-
-loc_11ADE:
-                mov     bx, ax
-                mov     [bp-0Ch], bx
-                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
-
-loc_11AE8:
-                mov     bx, 2602h
-                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-
-loc_11AF0:                              ; -> rtm_FF27  (leglib seg004:0x21ddf)
-                call    far ptr rt_FF27
-
-j_rt_FF42_0:                            ; -> rtm_FF42  (leglib seg004:0x21b59)
-                call    far ptr rt_FF42
-
-loc_11AFA:
-                mov     ax, ds:1ACAh
-                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
-
-j_rt_FF4C_1:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
-                call    far ptr rt_FF4C
-
-loc_11B07:
-                mov     bx, 2606h
-                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
-
-loc_11B0F:                              ; -> rtm_FF23  (leglib seg004:0x218ee)
-                call    far ptr rt_FF23
-
-loc_11B14:
-                push    dx
-                push    ax
-                call    far ptr rt_14   ; -> rtm_14  (leglib seg003:0x1c9c9)
-
-loc_11B1B:
-                mov     bx, ds:1F02h
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                mov     si, 1C7Ch
-                add     bx, [si+0Ah]
-                mov     es, word ptr [si+2]
-                mov     es:[bx], ax
-                retn
-sub_11A1D       endp
-
+; ---------------------------------------------------------------------------
+                db  8Bh
+                db 0D8h
+                db  89h
+                db  5Eh ; ^
+                db 0F4h
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  81h
+                db  3Eh ; >
+                db 0E2h
+                db  1Ah
+                db    0
+                db    4
+                db 0B8h
+                db    0
+                db    0
+                db  7Ch ; |
+                db    1
+                db  48h ; H
+                db  9Ah
+                db  58h ; X
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+j_rt_FF51_0     db  9Ah
+                db  1Ch
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db 0FEh
+                db  25h ; %
+                db  9Ah
+                db  10h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  74h ; t
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  60h ; `
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0A3h
+                db 0EAh
+                db  20h
+                db 0B8h
+                db 0CAh
+                db  20h
+                db  50h ; P
+                db 0B8h
+                db 0EAh
+                db  20h
+                db  50h ; P
+                db  9Ah
+                db  50h ; P
+                db  38h ; 8
+                db    0 ; SEG16 SEGDEF [seg000,0]
+                db  10h
+                db 0B8h
+                db  0Ah
+                db    0
+                db  99h
+                db  52h ; R
+                db  50h ; P
+                db 0A1h
+                db 0EAh
+                db  20h
+                db    5
+                db  0Fh
+                db    0
+                db  9Ah
+                db  58h ; X
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0FFh
+                db  36h ; 6
+                db  76h ; v
+                db  22h ; "
+                db 0FFh
+                db  36h ; 6
+                db  74h ; t
+                db  22h ; "
+                db  9Ah
+                db  7Bh ; {
+                db    4
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  8Bh
+                db 0D8h
+                db  89h
+                db  5Eh ; ^
+                db 0F4h
+                db  9Ah
+                db    4
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db    2
+                db  26h ; &
+                db  9Ah
+                db  10h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  74h ; t
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+j_rt_FF42_0     db  9Ah
+                db 0E0h
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0A1h
+                db 0CAh
+                db  1Ah
+                db  9Ah
+                db  58h ; X
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+j_rt_FF4C_1     db  9Ah
+                db    8
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db 0BBh
+                db    6
+                db  26h ; &
+                db  9Ah
+                db  10h
+                db    3
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  9Ah
+                db  64h ; d
+                db    2
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  52h ; R
+                db  50h ; P
+                db  9Ah
+                db  92h
+                db    0
+                db  45h ; E SEG16 SEGDEF [seg002,0]
+                db  14h
+                db  8Bh
+                db  1Eh
+                db    2
+                db  1Fh
+                db 0D1h
+                db 0E3h
+                db 0BEh
+                db  7Ch ; |
+                db  1Ch
+                db    3
+                db  5Ch ; \
+                db  0Ah
+                db  8Eh
+                db  44h ; D
+                db    2
+                db  26h ; &
+                db  89h
+                db    7
+                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -3322,6 +3975,7 @@ doAttack        proc near
                 mov     ax, 2646h       ;  WITH
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11C3A:
                 push    ax
@@ -3332,50 +3986,60 @@ loc_11C3A:
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11C4F:
                 push    ax
                 mov     ax, 22BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11C59:
                 push    ax
                 mov     ax, 21C2h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_11C63:
                 mov     ax, 21C2h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_11C6C:
                 mov     ax, 21C2h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_11C75:
                 mov     ax, ds:1AC0h
                 add     ax, 1Eh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 loc_11C80:
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
 
 loc_11C8D:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_11C97:
                 mov     bx, 2564h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
 
 loc_11C9F:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
                 call    far ptr rt_FF1F
+; ---------------------------------------------------------------------------
 
 loc_11CA4:
                 jnb     short loc_11CA9
@@ -3397,16 +4061,20 @@ loc_11CB9:                              ; CODE XREF: doAttack+80↑j
                 mov     ax, 21C6h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21C6h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 21C6h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:21CAh, 4
                 mov     ax, 21CAh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 jmp     loc_10302
 ; ---------------------------------------------------------------------------
 
@@ -3414,26 +4082,32 @@ loc_11CEA:                              ; CODE XREF: doAttack+76↑j
                 push    word ptr ds:2276h
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
 
 loc_11CF7:
                 mov     bx, ax
                 mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_11D01:
                 mov     bx, 2512h
                 call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
 
 loc_11D09:
                 mov     ax, ds:1B08h
                 add     ax, 1Eh
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 j_rt_FF4C_2:                            ; -> rtm_FF4C  (leglib seg004:0x21b4a)
                 call    far ptr rt_FF4C
+; ---------------------------------------------------------------------------
 
 loc_11D19:                              ; -> rtm_FF22  (leglib seg004:0x218e6)
                 call    far ptr rt_FF22
+; ---------------------------------------------------------------------------
 
 loc_11D1E:
                 mov     ds:21CCh, ax
@@ -3462,32 +4136,38 @@ loc_11D4B:                              ; CODE XREF: doAttack+10A↑j
                 push    ax
                 push    word ptr ds:21CCh
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
 
 loc_11D58:
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11D5E:
                 push    ax
                 mov     ax, 258Eh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11D68:
                 push    ax
                 mov     ax, 21D0h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_11D72:
                 mov     ax, 21D0h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_11D7B:
                 mov     ax, 21D0h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_11D84:
                 mov     bx, ds:20EAh
@@ -3522,23 +4202,28 @@ loc_11DBD:                              ; CODE XREF: doAttack+18A↑j
 
 loc_11DC6:                              ; CODE XREF: doAttack+191↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+; ---------------------------------------------------------------------------
                 mov     ax, 2682h       ; (PSYCHO STRENGTH SPELL IN EFFECT)
                 push    ax
                 mov     ax, 21D4h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 21D4h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 21D4h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_11DEA:                              ; CODE XREF: doAttack+193↑j
                 mov     word ptr ds:21D8h, 2
                 mov     ax, 21D8h
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
 
 loc_11DF9:
                 mov     bx, ds:20EAh
@@ -3571,6 +4256,7 @@ loc_11E26:                              ; CODE XREF: doAttack+1E0↑j
 
 j_rt_FE5B_11:                           ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
+; ---------------------------------------------------------------------------
 
 loc_11E2E:
                 mov     bx, ds:212Eh
@@ -3582,38 +4268,40 @@ loc_11E2E:
                 mov     ax, 26A8h       ;  DIES!!
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_11E46:
                 push    ax
                 mov     ax, 21DAh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_11E50:
                 mov     ax, 21DAh
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_11E59:
                 mov     ax, 21DAh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_11E62:
                 mov     ax, 20EAh
                 push    ax
-                call    sub_12A13
+                call    removeViewObject ; remove object/monster slot #(*arg) from play: zero its viewObjectArray flag/pos words and strip it from its map cell (map[pos] &= 0x8Fh, i.e. clear the class bits 4-6).
+doAttack        endp
 
-loc_11E6B:
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:21DEh, 6
                 mov     ax, 21DEh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-
-nullsub_10:
-                retn
-doAttack        endp
-
+; ---------------------------------------------------------------------------
+                db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -4352,8 +5040,8 @@ loc_1250D:
                 push    ax
                 call    sub_12ACA
 
-loc_1251C:
-                call    sub_129E3
+loc_1251C:                              ; loop 0..7 calling removeViewObject -- tears down all 8 view-object slots (removes each from the map, zeros its viewObjectArray fields).
+                call    clearViewObjects
 
 loc_12521:
                 mov     word ptr ds:2222h, 6
@@ -4538,7 +5226,7 @@ loc_1268A:                              ; CODE XREF: processTileFeature+13B↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 3Fh ; '?'
                 jle     short loc_12674
-                call    loadDungeonData ; Per-dungeon data load (called from processTileFeature on level entry). For each of DUNM<dungeonNo>.BSV (name built from ds:1ACAh via STR$ + trim + concat), DUNDATA.BSV and DUNOBJ.BSV: rtm_11 pushes the target BASIC array's descriptor, rtm_FE63(&name$) resolves the game-disk path and opens the file, rtm_FE07(&name$, &destOff) BLOADs it (reads the 7-byte [FD][seg][off][len] header then the payload). DUNM<n> -> dungeonMapArray (ds:1E2Ah) offset 0; DUNDATA.BSV -> the same array +0x800; DUNOBJ.BSV -> spriteBank (ds:1E58h). No pointer-table relocation happens here.
+                call    loadDungeonData ; BLOAD DUNM<dungeonNo>.BSV / DUNDATA.BSV / DUNOBJ.BSV -- see the func comment set by fix_dun_loaddungeondata.py.
 ; ---------------------------------------------------------------------------
                 xor     ax, ax
                 jmp     loc_126B6
@@ -4563,7 +5251,7 @@ loc_126B6:                              ; CODE XREF: processTileFeature+163↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 0Bh
                 jle     short loc_1269C
-                call    sub_12F9F
+                call    far ptr loadDungeonMonsters ; BLOAD DUNMONA.BSV (levels 0-3) or DUNMONB.BSV (4-7, keyed on ds:1AE2h >= 0x400) into spriteBank at word offset spriteBank[0x190h] (= DUNOBJ region A's first bank pointer, 0x1240), then call clearViewObjects. Called from processTileFeature on level entry, right after loadDungeonData.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:21B4h, 0
                 jmp     loc_126FA
@@ -4606,13 +5294,11 @@ loc_126FA:                              ; CODE XREF: processTileFeature+193↑j
 loc_126FF:
                 call    sub_12E7D
 ; ---------------------------------------------------------------------------
-
-loc_12704:
                 mov     ax, ds:20C4h
                 mov     ds:20C2h, ax
                 push    word ptr ds:1AD8h
                 push    word ptr ds:1AD6h
-                mov     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                mov     ax, 1
                 cwd
                 push    dx
                 push    ax
@@ -4743,6 +5429,9 @@ sub_1280E       endp
 ; Attributes: noreturn
 
 findJewel       proc far                ; CODE XREF: openChest:loc_10EC2↑P
+
+; FUNCTION CHUNK AT 29E0 SIZE 00000003 BYTES
+
                 mov     cx, 0Eh
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -4750,236 +5439,115 @@ findJewel       proc far                ; CODE XREF: openChest:loc_10EC2↑P
                 mov     bx, ds:1ACAh
                 call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
 ; ---------------------------------------------------------------------------
-                db    3
-                db  32h ; 2
-                db  28h ; (
-                db  0Eh
-                db  29h ; )
-                db  11h
-                db  29h ; )
-                db 0A1h
-                db  28h ; (
-                db  22h ; "
-                db  3Bh ; ;
-                db    6
-                db 0E2h
-                db  1Ah
-                db 0B9h
-                db    0
-                db    0
-                db  75h ; u
-                db    1
-                db  49h ; I
-                db 0BEh
-                db 0C4h
-                db  1Bh
-                db 0BBh
-                db  28h ; (
-                db    0
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0F3h
-                db  26h ; &
-                db  83h
-                db  3Fh ; ?
-                db    0
-                db 0B8h
-                db    0
-                db    0
-                db  75h ; u
-                db    1
-                db  48h ; H
-                db  23h ; #
-                db 0C1h
-                db  23h ; #
-                db 0C0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  1Ah
-                db    0
-                db 0C7h
-                db    6
-                db  50h ; P
-                db  21h ; !
-                db 0FFh
-                db 0FFh
-                db 0C7h
-                db    6
-                db 0EEh
-                db  1Ah
-                db  14h
-                db    0
-                db 0C7h
-                db    6
-                db 0EAh
-                db  20h
-                db  1Bh
-                db    0
-                db  9Ah
-                db  5Ah ; Z
-                db  2Bh ; +
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db 0E9h
-                db  15h
-                db    1
-                db 0A1h
-                db  28h ; (
-                db  22h ; "
-                db  3Bh ; ;
-                db    6
-                db 0E2h
-                db  1Ah
-                db  75h ; u
-                db    3
-                db 0E9h
-                db    9
-                db    1
-                db 0BEh
-                db 0C4h
-                db  1Bh
-                db 0BBh
-                db  20h
-                db    0
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0FBh
-                db  26h ; &
-                db  83h
-                db  3Fh ; ?
-                db    0
-                db 0B8h
-                db    0
-                db    0
-                db  7Eh ; ~
-                db    1
-                db  48h ; H
-                db 0BBh
-                db  18h
-                db    0
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0F3h
-                db  26h ; &
-                db  83h
-                db  3Fh ; ?
-                db    0
-                db 0B9h
-                db    0
-                db    0
-                db  7Eh ; ~
-                db    1
-                db  49h ; I
-                db  0Bh
-                db 0C8h
-                db  23h ; #
-                db 0C9h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db 0D3h
-                db    0
-                db 0A1h
-                db  2Ah ; *
-                db  22h ; "
-                db  3Bh ; ;
-                db    6
-                db 0E2h
-                db  1Ah
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  46h ; F
-                db    0
-                db  9Ah
-                db 0FCh
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0C7h
-                db  46h ; F
-                db 0F4h
-                db  16h
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0F4h
-                db  50h ; P
-                db  9Ah
-                db  98h
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db 0D2h
-                db  27h ; '
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  80h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db 0C4h
-                db  1Bh
-                db 0BBh
-                db  20h
-                db    0
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db 0C7h
-                db    7
-                db    1
-                db    0
-                db 0E9h
-                db  68h ; h
-                db    0
-                db 0E9h
-                db  7Eh ; ~
-                db    0
+                add     si, [bp+si]
+                sub     ds:1129h, cl
+                sub     [bx+di+2228h], sp
+                cmp     ax, ds:1AE2h
+                mov     cx, 0
+                jnz     short loc_1283F
+                dec     cx
+
+loc_1283F:                              ; CODE XREF: findJewel+28↑j
+                mov     si, 1BC4h
+                mov     bx, 28h ; '('
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     si, bx
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
+                jnz     short loc_12857
+                dec     ax
+
+loc_12857:                              ; CODE XREF: findJewel+40↑j
+                and     ax, cx
+                and     ax, ax
+                jnz     short loc_12860
+                jmp     loc_1287A
+; ---------------------------------------------------------------------------
+
+loc_12860:                              ; CODE XREF: findJewel+47↑j
+                mov     word ptr ds:2150h, 0FFFFh
+                mov     word ptr ds:1AEEh, 14h
+                mov     word ptr ds:20EAh, 1Bh
+                call    sub_12B5A
+; ---------------------------------------------------------------------------
+                jmp     loc_1298F
+; ---------------------------------------------------------------------------
+
+loc_1287A:                              ; CODE XREF: findJewel+49↑j
+                mov     ax, ds:2228h
+                cmp     ax, ds:1AE2h
+                jnz     short loc_12886
+                jmp     loc_1298F
+; ---------------------------------------------------------------------------
+
+loc_12886:                              ; CODE XREF: findJewel+6D↑j
+                mov     si, 1BC4h
+                mov     bx, 20h ; ' '
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     di, bx
+                cmp     word ptr es:[bx], 0
+                mov     ax, 0
+                jle     short loc_1289E
+                dec     ax
+
+loc_1289E:                              ; CODE XREF: findJewel+87↑j
+                mov     bx, 18h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     si, bx
+                cmp     word ptr es:[bx], 0
+                mov     cx, 0
+                jle     short loc_128B3
+                dec     cx
+
+loc_128B3:                              ; CODE XREF: findJewel+9C↑j
+                or      cx, ax
+                and     cx, cx
+                jz      short loc_128BC
+                jmp     loc_1298F
+; ---------------------------------------------------------------------------
+
+loc_128BC:                              ; CODE XREF: findJewel+A3↑j
+                mov     ax, ds:222Ah
+                cmp     ax, ds:1AE2h
+                jz      short loc_128C8
+                jmp     loc_1290E
+; ---------------------------------------------------------------------------
+
+loc_128C8:                              ; CODE XREF: findJewel+AF↑j
+                call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
+; ---------------------------------------------------------------------------
+                mov     word ptr [bp-0Ch], 16h
+                lea     ax, [bp-0Ch]
+                push    ax
+                call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
+; ---------------------------------------------------------------------------
+                mov     ax, 27D2h
+                push    ax
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     si, 1BC4h
+                mov     bx, 20h ; ' '
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     word ptr es:[bx], 1
+                jmp     loc_12976
+; ---------------------------------------------------------------------------
+
+loc_1290E:                              ; CODE XREF: findJewel+B1↑j
+                jmp     loc_1298F
 ; ---------------------------------------------------------------------------
                 mov     si, 1BC4h
                 mov     bx, 1Ch
@@ -5023,6 +5591,8 @@ loc_12928:                              ; CODE XREF: findJewel+10F↑j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
+
+loc_12976:                              ; CODE XREF: findJewel+F7↑j
                 mov     word ptr [bp-18h], 1Bh
                 lea     ax, [bp-18h]
                 push    ax
@@ -5032,7 +5602,8 @@ loc_12928:                              ; CODE XREF: findJewel+10F↑j
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:2150h, 0FFFFh
 
-loc_1298F:                              ; CODE XREF: findJewel+111↑j
+loc_1298F:                              ; CODE XREF: findJewel+63↑j
+                                        ; findJewel+6F↑j ...
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
                 retf    0
@@ -5047,9 +5618,11 @@ findJewel       endp
 
 ; Attributes: noreturn
 
-sub_1299A       proc far                ; CODE XREF: openChest:loc_11020↑P
+sub_1299A       proc near               ; CODE XREF: openChest:loc_11020↑P
                 mov     cx, 2
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+sub_1299A       endp
+
 ; ---------------------------------------------------------------------------
                 mov     word ptr [bp-0Ch], 0
                 lea     ax, [bp-0Ch]
@@ -5058,62 +5631,41 @@ sub_1299A       proc far                ; CODE XREF: openChest:loc_11020↑P
                 push    ax
                 call    far ptr rt_FE38 ; -> rtm_FE38  (leglib seg007:0x268f8)
 ; ---------------------------------------------------------------------------
-                db 0A1h
-                db 0EEh
-                db  1Ah
-                db  23h ; #
-                db 0C0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  14h
-                db    0
-                db 0C7h
-                db    6
-                db 0EAh
-                db  20h
-                db  13h
-                db    0
-                db  9Ah
-                db  5Ah ; Z
-                db  2Bh ; +
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db 0C7h
-                db    6
-                db  5Ah ; Z
-                db  21h ; !
-                db 0FFh
-                db 0FFh
-                db 0E9h
-                db    6
-                db    0
-                db 0C7h
-                db    6
-                db  5Ah ; Z
-                db  21h ; !
-                db    0
-                db    0
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                mov     ax, ds:1AEEh
+                and     ax, ax
+                jnz     short loc_129BE
+                jmp     loc_129D2
 ; ---------------------------------------------------------------------------
+
+loc_129BE:                              ; CODE XREF: seg000:29B9↑j
+                mov     word ptr ds:20EAh, 13h
+                call    sub_12B5A
+; ---------------------------------------------------------------------------
+                mov     word ptr ds:215Ah, 0FFFFh
+                jmp     loc_129D8
+; ---------------------------------------------------------------------------
+
+loc_129D2:                              ; CODE XREF: seg000:29BB↑j
+                mov     word ptr ds:215Ah, 0
+
+loc_129D8:                              ; CODE XREF: seg000:29CF↑j
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR findJewel
 
 loc_129E0:                              ; CODE XREF: findJewel:loc_12997↑j
                 jmp     loc_12A10
-sub_1299A       endp
-
+; END OF FUNCTION CHUNK FOR findJewel
 
 ; =============== S U B R O U T I N E =======================================
 
+; loop 0..7 calling removeViewObject -- tears down all 8 view-object slots (removes each from the map, zeros its viewObjectArray fields).
 ; Attributes: noreturn
 
-sub_129E3       proc far                ; CODE XREF: sub_124FE:loc_1251C↑P
+clearViewObjects proc far               ; CODE XREF: sub_124FE:loc_1251C↑P
+                                        ; seg000:3043↓P
                 mov     cx, 4
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -5121,15 +5673,16 @@ sub_129E3       proc far                ; CODE XREF: sub_124FE:loc_1251C↑P
                 jmp     loc_12A00
 ; ---------------------------------------------------------------------------
 
-loc_129F0:                              ; CODE XREF: sub_129E3+23↓j
+loc_129F0:                              ; CODE XREF: clearViewObjects+23↓j
                 mov     [bp-0Ch], ax
                 lea     ax, [bp-0Ch]
                 push    ax
-                call    sub_12A13
+                call    removeViewObject ; remove object/monster slot #(*arg) from play: zero its viewObjectArray flag/pos words and strip it from its map cell (map[pos] &= 0x8Fh, i.e. clear the class bits 4-6).
+; ---------------------------------------------------------------------------
                 mov     ax, [bp-0Eh]
                 inc     ax
 
-loc_12A00:                              ; CODE XREF: sub_129E3+A↑j
+loc_12A00:                              ; CODE XREF: clearViewObjects+A↑j
                 mov     [bp-0Eh], ax
                 cmp     ax, 7
                 jle     short loc_129F0
@@ -5138,23 +5691,24 @@ loc_12A00:                              ; CODE XREF: sub_129E3+A↑j
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_12A10:                              ; CODE XREF: sub_1299A:loc_129E0↑j
+loc_12A10:                              ; CODE XREF: findJewel:loc_129E0↑j
                 jmp     loc_12AC7
-sub_129E3       endp
+clearViewObjects endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
+; remove object/monster slot #(*arg) from play: zero its viewObjectArray flag/pos words and strip it from its map cell (map[pos] &= 0x8Fh, i.e. clear the class bits 4-6).
 ; Attributes: noreturn
 
-sub_12A13       proc far                ; CODE XREF: doAttack+236↑P
-                                        ; sub_129E3+14↑P
+removeViewObject proc far               ; CODE XREF: doAttack+236↑P
+                                        ; clearViewObjects+14↑P ...
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
                 mov     si, [bp+6]
                 mov     bx, [si]
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1C7Ch
                 mov     dx, bx
                 add     bx, [si+0Ah]
@@ -5176,118 +5730,51 @@ sub_12A13       proc far                ; CODE XREF: doAttack+236↑P
                 mov     [bp-0Ch], cx
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
 ; ---------------------------------------------------------------------------
-                db  8Bh
-                db  5Eh ; ^
-                db 0F4h
-                db  83h
-                db 0C3h
-                db  40h ; @
-                db 0BEh
-                db  7Ch ; |
-                db  1Ch
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db  89h
-                db  46h ; F
-                db 0F2h
-                db  8Bh
-                db 0D8h
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  8Ah
-                db  1Fh
-                db  30h ; 0
-                db 0FFh
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  25h ; %
-                db  8Fh
-                db    0
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  8Bh
-                db  5Eh ; ^
-                db 0F2h
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  88h
-                db    7
-                db  8Bh
-                db  76h ; v
-                db    6
-                db  8Bh
-                db    4
-                db 0D1h
-                db 0E0h
-                db    5
-                db  40h ; @
-                db    0
-                db  8Bh
-                db 0D8h
-                db 0BEh
-                db  7Ch ; |
-                db  1Ch
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db 0C7h
-                db    7
-                db    0
-                db    0
-                db 0FFh
-                db  0Eh
-                db 0B4h
-                db  21h ; !
-                db  83h
-                db  3Eh ; >
-                db 0B4h
-                db  21h ; !
-                db    0
-                db  7Ch ; |
-                db    3
-                db 0E9h
-                db    6
-                db    0
-                db 0C7h
-                db    6
-                db 0B4h
-                db  21h ; !
-                db    0
-                db    0
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    2
-                db    0
+                mov     bx, [bp-0Ch]
+                add     bx, 40h ; '@'
+                mov     si, 1C7Ch
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     [bp-0Eh], ax
+                mov     bx, ax
+                mov     es, word ptr ds:101h
+                mov     bl, es:[bx]
+                xor     bh, bh
+                mov     ax, bx
+                mov     [bp-10h], ax
+                and     ax, 8Fh
+                mov     [bp-10h], ax
+                mov     bx, [bp-0Eh]
+                mov     es, word ptr ds:101h
+                mov     es:[bx], al
+                mov     si, [bp+6]
+                mov     ax, [si]
+                shl     ax, 1
+                add     ax, 40h ; '@'
+                mov     bx, ax
+                mov     si, 1C7Ch
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     word ptr es:[bx], 0
+                dec     word ptr ds:21B4h
+                cmp     word ptr ds:21B4h, 0
+                jl      short loc_12AB9
+                jmp     loc_12ABF
 ; ---------------------------------------------------------------------------
 
-loc_12AC7:                              ; CODE XREF: sub_129E3:loc_12A10↑j
+loc_12AB9:                              ; CODE XREF: removeViewObject+A1↑j
+                mov     word ptr ds:21B4h, 0
+
+loc_12ABF:                              ; CODE XREF: removeViewObject+A3↑j
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    2
+; ---------------------------------------------------------------------------
+
+loc_12AC7:                              ; CODE XREF: clearViewObjects:loc_12A10↑j
                 jmp     loc_12B15
-sub_12A13       endp
+removeViewObject endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5329,7 +5816,7 @@ loc_12B05:                              ; CODE XREF: sub_12ACA+13↑j
                 retf    2
 ; ---------------------------------------------------------------------------
 
-loc_12B15:                              ; CODE XREF: sub_12A13:loc_12AC7↑j
+loc_12B15:                              ; CODE XREF: removeViewObject:loc_12AC7↑j
                 jmp     loc_12B57
 sub_12ACA       endp
 
@@ -5382,7 +5869,11 @@ sub_12B18       endp
 
 ; Attributes: noreturn
 
-sub_12B5A       proc far
+sub_12B5A       proc far                ; CODE XREF: findJewel+5E↑P
+                                        ; seg000:29C4↑P
+
+; FUNCTION CHUNK AT 2CE4 SIZE 00000003 BYTES
+
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -5390,208 +5881,96 @@ sub_12B5A       proc far
 j_rt_FE45:                              ; -> rtm_FE45  (leglib seg008:0x27c6e)
                 call    far ptr rt_FE45
 ; ---------------------------------------------------------------------------
-                db 0C7h
-                db  46h ; F
-                db 0F4h
-                db  16h
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0F4h
-                db  50h ; P
-                db  9Ah
-                db  98h
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  18h
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  83h
-                db  3Eh ; >
-                db 0EEh
-                db  1Ah
-                db  13h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  1Fh
-                db    0
-                db 0B8h
-                db  26h ; &
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  66h ; f
-                db  22h ; "
-                db  50h ; P
-                db  8Bh
-                db  1Eh
-                db 0EEh
-                db  1Ah
-                db 0D1h
-                db 0E3h
-                db 0D1h
-                db 0E3h
-                db 0BEh
-                db  66h ; f
-                db  1Dh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  53h ; S
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  2Ch ; ,
-                db  28h ; (
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db  1Eh
-                db 0EEh
-                db  1Ah
-                db 0D1h
-                db 0E3h
-                db 0BEh
-                db 0C4h
-                db  1Bh
-                db  8Bh
-                db 0D3h
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db  40h ; @
-                db  8Bh
-                db 0DAh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  89h
-                db    7
-                db  8Dh
-                db  46h ; F
-                db 0E6h
-                db  50h ; P
-                db  9Ah
-                db  84h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db  18h
-                db  2Bh ; +
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                mov     word ptr [bp-0Ch], 16h
+                lea     ax, [bp-0Ch]
+                push    ax
+                call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
+; ---------------------------------------------------------------------------
+                mov     ax, 2818h
+                push    ax
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                cmp     word ptr ds:1AEEh, 13h
+                jz      short loc_12B9E
+                jmp     loc_12BBD
+; ---------------------------------------------------------------------------
+
+loc_12B9E:                              ; CODE XREF: sub_12B5A+3F↑j
+                mov     ax, 2826h
+                push    ax
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+
+loc_12BBD:                              ; CODE XREF: sub_12B5A+41↑j
+                mov     ax, 2266h
+                push    ax
+                mov     bx, ds:1AEEh
+                shl     bx, 1
+                shl     bx, 1
+                mov     si, 1D66h
+                add     bx, [si+0Ah]
+                push    bx
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 282Ch
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     bx, ds:1AEEh
+                shl     bx, 1
+                mov     si, 1BC4h
+                mov     dx, bx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                inc     ax
+                mov     bx, dx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     es:[bx], ax
+                lea     ax, [bp-1Ah]
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+                call    sub_12B18
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
 loc_12C31:                              ; CODE XREF: sub_12B18:loc_12B57↑j
@@ -5604,10 +5983,12 @@ sub_12B5A       endp
 ; decide what a chest holds (reads dungeonLevel + levelProgressFlags). Called from openChest. TENTATIVE.
 ; Attributes: noreturn
 
-rollChestContents proc far              ; CODE XREF: openChest:loc_10FEF↑P
+rollChestContents proc near             ; CODE XREF: openChest:loc_10FEF↑P
                                         ; openChest:loc_11066↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+rollChestContents endp
+
 ; ---------------------------------------------------------------------------
                 mov     cx, 100h
                 mov     ax, ds:1AE2h
@@ -5622,148 +6003,66 @@ rollChestContents proc far              ; CODE XREF: openChest:loc_10FEF↑P
                 add     ax, cx
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
 ; ---------------------------------------------------------------------------
-                db 0FFh
-                db  36h ; 6
-                db  76h ; v
-                db  22h ; "
-                db 0FFh
-                db  36h ; 6
-                db  74h ; t
-                db  22h ; "
-                db  9Ah
-                db  7Bh ; {
-                db    4
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db 0D8h
-                db  89h
-                db  5Eh ; ^
-                db 0F0h
-                db  9Ah
-                db  10h
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BBh
-                db  34h ; 4
-                db  28h ; (
-                db  9Ah
-                db 0E8h
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db  60h ; `
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  89h
-                db  46h ; F
-                db 0EEh
-                db 0B8h
-                db  38h ; 8
-                db  28h ; (
-                db  50h ; P
-                db 0FFh
-                db  76h ; v
-                db 0EEh
-                db  9Ah
-                db 0A3h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  46h ; F
-                db  28h ; (
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db  46h ; F
-                db 0EEh
-                db  99h
-                db    3
-                db    6
-                db 0D2h
-                db  1Ah
-                db  13h
-                db  16h
-                db 0D4h
-                db  1Ah
-                db 0A3h
-                db 0D2h
-                db  1Ah
-                db  89h
-                db  16h
-                db 0D4h
-                db  1Ah
-                db 0C7h
-                db  46h ; F
-                db 0ECh
-                db    5
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db  40h ; @
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                push    word ptr ds:2276h
+                push    word ptr ds:2274h
+                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
 ; ---------------------------------------------------------------------------
+                mov     bx, ax
+                mov     [bp-10h], bx
+                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
+                mov     bx, 2834h
+                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
+                mov     [bp-12h], ax
+                mov     ax, 2838h
+                push    ax
+                push    word ptr [bp-12h]
+                call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2846h
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     ax, [bp-12h]
+                cwd
+                add     ax, ds:1AD2h
+                adc     dx, ds:1AD4h
+                mov     ds:1AD2h, ax
+                mov     ds:1AD4h, dx
+                mov     word ptr [bp-14h], 5
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_FE56 ; -> rtm_FE56  (leglib seg007:0x27457)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_12B5A
 
 loc_12CE4:                              ; CODE XREF: sub_12B5A:loc_12C31↑j
                 jmp     loc_12D90
-rollChestContents endp
-
+; END OF FUNCTION CHUNK FOR sub_12B5A
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -5865,7 +6164,7 @@ loc_12D7F:                              ; CODE XREF: stepMonsterToward:loc_12D4F
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_12D90:                              ; CODE XREF: rollChestContents:loc_12CE4↑j
+loc_12D90:                              ; CODE XREF: sub_12B5A:loc_12CE4↑j
                 jmp     loc_12E4F
 stepMonsterToward endp
 
@@ -5876,6 +6175,9 @@ stepMonsterToward endp
 
 sub_12D93       proc far                ; CODE XREF: describeSurroundings+1B↑P
                                         ; doLookSearch+152↑P ...
+
+; FUNCTION CHUNK AT 2E7A SIZE 00000003 BYTES
+
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -5883,7 +6185,7 @@ sub_12D93       proc far                ; CODE XREF: describeSurroundings+1B↑P
                 mov     si, [bp+6]
                 mov     bx, [si]
                 mov     dx, bx
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1C7Ch
                 mov     cx, bx
                 add     bx, [si+0Ah]
@@ -5905,124 +6207,59 @@ loc_12DC0:                              ; CODE XREF: sub_12D93+28↑j
                 mov     [bp-0Eh], dx
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
 ; ---------------------------------------------------------------------------
-                db  8Bh
-                db  5Eh ; ^
-                db 0F4h
-                db  8Bh
-                db 0D3h
-                db  83h
-                db 0C3h
-                db  40h ; @
-                db 0BEh
-                db  7Ch ; |
-                db  1Ch
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db  1Fh
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  8Ah
-                db  1Fh
-                db  30h ; 0
-                db 0FFh
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  25h ; %
-                db  70h ; p
-                db    0
-                db  89h
-                db  46h ; F
-                db 0EEh
-                db  8Bh
-                db  4Eh ; N
-                db 0F2h
-                db 0D1h
-                db 0E1h
-                db 0D1h
-                db 0E1h
-                db 0D1h
-                db 0E1h
-                db 0D1h
-                db 0E1h
-                db  83h
-                db 0C1h
-                db  10h
-                db  3Bh ; ;
-                db 0C1h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  29h ; )
-                db    0
-                db  8Bh
-                db 0DAh
-                db  83h
-                db 0C2h
-                db  10h
-                db  8Bh
-                db 0CBh
-                db  8Bh
-                db 0DAh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db 0A3h
-                db  2Eh ; .
-                db  21h ; !
-                db  83h
-                db 0C1h
-                db  50h ; P
-                db  8Bh
-                db 0D9h
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db 0A3h
-                db    2
-                db  1Fh
-                db 0E9h
-                db    8
-                db    0
-                db 0FFh
-                db  76h ; v
-                db    6
-                db  9Ah
-                db  13h
-                db  2Ah ; *
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
+                mov     bx, [bp-0Ch]
+                mov     dx, bx
+                add     bx, 40h ; '@'
+                mov     si, 1C7Ch
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     bx, es:[bx]
+                mov     es, word ptr ds:101h
+                mov     bl, es:[bx]
+                xor     bh, bh
+                mov     ax, bx
+                mov     [bp-10h], ax
+                and     ax, 70h
+                mov     [bp-12h], ax
+                mov     cx, [bp-0Eh]
+                shl     cx, 1
+                shl     cx, 1
+                shl     cx, 1
+                shl     cx, 1
+                add     cx, 10h
+                cmp     ax, cx
+                jz      short loc_12E16
+                jmp     loc_12E3F
+; ---------------------------------------------------------------------------
+
+loc_12E16:                              ; CODE XREF: sub_12D93+7E↑j
+                mov     bx, dx
+                add     dx, 10h
+                mov     cx, bx
+                mov     bx, dx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     ds:212Eh, ax
+                add     cx, 50h ; 'P'
+                mov     bx, cx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     ds:1F02h, ax
+                jmp     loc_12E47
+; ---------------------------------------------------------------------------
+
+loc_12E3F:                              ; CODE XREF: sub_12D93+80↑j
+                push    word ptr [bp+6]
+                call    removeViewObject ; remove object/monster slot #(*arg) from play: zero its viewObjectArray flag/pos words and strip it from its map cell (map[pos] &= 0x8Fh, i.e. clear the class bits 4-6).
 ; ---------------------------------------------------------------------------
 
 loc_12E47:                              ; CODE XREF: sub_12D93+2A↑j
+                                        ; sub_12D93+A9↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
-                db 0CAh
-                db    2
-                db    0
+                retf    2
 ; ---------------------------------------------------------------------------
 
 loc_12E4F:                              ; CODE XREF: stepMonsterToward:loc_12D90↑j
@@ -6034,10 +6271,12 @@ sub_12D93       endp
 
 ; Attributes: noreturn
 
-sub_12E52       proc far                ; CODE XREF: doMovement+63↑P
+sub_12E52       proc near               ; CODE XREF: doMovement+63↑P
                                         ; sub_11A1D+2F↑P ...
                 mov     cx, 2
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+sub_12E52       endp
+
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:20CAh
                 mov     ds:20CCh, ax
@@ -6045,29 +6284,18 @@ sub_12E52       proc far                ; CODE XREF: doMovement+63↑P
                 push    ax
                 call    far ptr rt_FE20 ; -> rtm_FE20  (leglib seg007:0x25883)
 ; ---------------------------------------------------------------------------
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db  8Bh
-                db  46h ; F
-                db 0F4h
-                db 0A3h
-                db 0C4h
-                db  20h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                mov     [bp-0Ch], ax
+                mov     ax, [bp-0Ch]
+                mov     ds:20C4h, ax
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
+                retf    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_12D93
 
 loc_12E7A:                              ; CODE XREF: sub_12D93:loc_12E4F↑j
                 jmp     loc_12E98
-sub_12E52       endp
-
+; END OF FUNCTION CHUNK FOR sub_12D93
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -6075,31 +6303,30 @@ sub_12E52       endp
 
 sub_12E7D       proc far                ; CODE XREF: climbDownOrExit+A0↑P
                                         ; doLookSearch+1E↑P ...
+
+; FUNCTION CHUNK AT 2F9C SIZE 00000003 BYTES
+; FUNCTION CHUNK AT 3059 SIZE 00000003 BYTES
+
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
                 mov     ax, ds:1AE2h
                 mov     ds:20CAh, ax
-                call    sub_12E52
+                call    far ptr sub_12E52
 ; ---------------------------------------------------------------------------
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
-loc_12E98:                              ; CODE XREF: sub_12E52:loc_12E7A↑j
+loc_12E98:                              ; CODE XREF: sub_12D93:loc_12E7A↑j
                 jmp     loc_12F9C
 sub_12E7D       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
-; Per-dungeon data load (called from processTileFeature on level entry). For each of DUNM<dungeonNo>.BSV (name built from ds:1ACAh via STR$ + trim + concat), DUNDATA.BSV and DUNOBJ.BSV: rtm_11 pushes the target BASIC array's descriptor, rtm_FE63(&name$) resolves the game-disk path and opens the file, rtm_FE07(&name$, &destOff) BLOADs it (reads the 7-byte [FD][seg][off][len] header then the payload). DUNM<n> -> dungeonMapArray (ds:1E2Ah) offset 0; DUNDATA.BSV -> the same array +0x800; DUNOBJ.BSV -> spriteBank (ds:1E58h). No pointer-table relocation happens here.
+; BLOAD DUNM<dungeonNo>.BSV / DUNDATA.BSV / DUNOBJ.BSV -- see the func comment set by fix_dun_loaddungeondata.py.
 ; Attributes: noreturn
 
 loadDungeonData proc far                ; CODE XREF: processTileFeature+15C↑P
@@ -6217,190 +6444,113 @@ loadDungeonData proc far                ; CODE XREF: processTileFeature+15C↑P
 loadDungeonData endp
 
 ; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_12E7D
 
 loc_12F9C:                              ; CODE XREF: sub_12E7D:loc_12E98↑j
                 jmp     loc_13059
+; END OF FUNCTION CHUNK FOR sub_12E7D
 
 ; =============== S U B R O U T I N E =======================================
 
+; BLOAD DUNMONA.BSV (levels 0-3) or DUNMONB.BSV (4-7, keyed on ds:1AE2h >= 0x400) into spriteBank at word offset spriteBank[0x190h] (= DUNOBJ region A's first bank pointer, 0x1240), then call clearViewObjects. Called from processTileFeature on level entry, right after loadDungeonData.
 ; Attributes: noreturn
 
-sub_12F9F       proc far                ; CODE XREF: climbDownOrExit+85↑P
+loadDungeonMonsters proc near           ; CODE XREF: climbDownOrExit+85↑P
                                         ; processTileFeature+188↑P
                 mov     cx, 8
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+loadDungeonMonsters endp
+
 ; ---------------------------------------------------------------------------
-                mov     word ptr ds:2244h, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                mov     word ptr ds:2244h, 1
                 cmp     word ptr ds:1AE2h, 400h
                 jge     short loc_12FB8
                 jmp     loc_12FBE
 ; ---------------------------------------------------------------------------
 
-loc_12FB8:                              ; CODE XREF: sub_12F9F+14↑j
+loc_12FB8:                              ; CODE XREF: seg000:2FB3↑j
                 mov     word ptr ds:2244h, 2
 
-loc_12FBE:                              ; CODE XREF: sub_12F9F+16↑j
+loc_12FBE:                              ; CODE XREF: seg000:2FB5↑j
                 mov     ax, ds:2244h
                 add     ax, 40h ; '@'
                 push    ax
                 call    far ptr rt_32   ; -> rtm_32  (leglib seg003:0x1b627)
 ; ---------------------------------------------------------------------------
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db  33h ; 3
-                db 0DBh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Ch
-                db 0C0h
-                db  50h ; P
-                db  9Ah
-                db 0AFh
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  7Eh ; ~
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  58h ; X
-                db  28h ; (
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db 0BBh
-                db  90h
-                db    1
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  74h ; t
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db  5Eh ; ^
-                db 0F0h
-                db 0D1h
-                db 0E3h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0EEh
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db    4
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0E3h
-                db  29h ; )
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 ; ---------------------------------------------------------------------------
+                mov     si, 1E58h
+                xor     bx, bx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es
+                push    ax
+                call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
+; ---------------------------------------------------------------------------
+                mov     ax, 287Eh
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2858h
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                mov     si, 1E58h
+                mov     bx, 190h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     [bp-10h], ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
+; ---------------------------------------------------------------------------
+                mov     bx, [bp-10h]
+                shl     bx, 1
+                mov     si, 1E58h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, bx
+                mov     [bp-12h], ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_bload ; -> basBload  (leglib seg007:0x24fbf)
+; ---------------------------------------------------------------------------
+                call    clearViewObjects ; loop 0..7 calling removeViewObject -- tears down all 8 view-object slots (removes each from the map, zeros its viewObjectArray fields).
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_12E7D
 
-loc_13059:                              ; CODE XREF: seg000:loc_12F9C↑j
+loc_13059:                              ; CODE XREF: sub_12E7D:loc_12F9C↑j
                 jmp     loc_13209
-sub_12F9F       endp
-
+; END OF FUNCTION CHUNK FOR sub_12E7D
 
 ; =============== S U B R O U T I N E =======================================
 
-; rebuild the level view after a climb / level change (descriptor at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.
+; on level change, re-place the 8 objects/monsters for the new level: loop viewObjectArray[0..7], for each occupied slot strip it from its old map cell (map[pos] &= 0x8Fh), recompute pos for the current level (ds:1AE2h & 0x700), walk to the nearest free cell, stamp map[newPos] = (slotIdx<<4) | wallType | 0x10, and refresh the slot's x/y/pos/facing fields. Called from climbDownOrExit.
 ; Attributes: noreturn
 
-rebuildLevelView proc far               ; CODE XREF: climbDownOrExit+B2↑P
+rebuildLevelView proc far
                 mov     cx, 10h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6412,39 +6562,24 @@ rebuildLevelView proc far               ; CODE XREF: climbDownOrExit+B2↑P
                 push    ax
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
 ; ---------------------------------------------------------------------------
-                db 0A1h
-                db 0E2h
-                db  1Ah
-                db  25h ; %
-                db    0
-                db    7
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db  3Dh ; =
-                db    0
-                db    4
-                db 0B9h
-                db    0
-                db    0
-                db  7Ch ; |
-                db    1
-                db  49h ; I
-                db  8Bh
-                db 0C1h
-                db  89h
-                db  46h ; F
-                db 0F2h
-                db  33h ; 3
-                db 0C0h
-                db 0E9h
-                db  63h ; c
-                db    1
+                mov     ax, ds:1AE2h
+                and     ax, 700h
+                mov     [bp-0Ch], ax
+                cmp     ax, 400h
+                mov     cx, 0
+                jl      short loc_13089
+                dec     cx
+
+loc_13089:                              ; CODE XREF: rebuildLevelView+2A↑j
+                mov     ax, cx
+                mov     [bp-0Eh], ax
+                xor     ax, ax
+                jmp     loc_131F6
 ; ---------------------------------------------------------------------------
                 nop
 
 loc_13094:                              ; CODE XREF: rebuildLevelView+1A2↓j
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     ax, 1
                 mov     bx, ax
                 mov     si, 1C7Ch
                 add     bx, [si+0Ah]
@@ -6517,10 +6652,10 @@ loc_130F9:                              ; CODE XREF: rebuildLevelView+98↑j
 
 loc_13138:                              ; CODE XREF: rebuildLevelView+9A↑j
                 mov     ax, [bp-16h]
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
                 add     ax, [bp-12h]
                 add     ax, 10h
                 mov     bx, [bp-10h]
@@ -6530,7 +6665,7 @@ loc_13138:                              ; CODE XREF: rebuildLevelView+9A↑j
                 mov     [bp-10h], ax
                 and     ax, 0Fh
                 mov     cx, [bp-16h]
-                shl     cx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     cx, 1
                 mov     bx, cx
                 add     cx, 20h ; ' '
                 mov     dx, bx
@@ -6597,6 +6732,8 @@ loc_131F2:                              ; CODE XREF: rebuildLevelView+4D↑j
                                         ; rebuildLevelView+16D↑j
                 mov     ax, [bp-16h]
                 inc     ax
+
+loc_131F6:                              ; CODE XREF: rebuildLevelView+34↑j
                 mov     [bp-16h], ax
                 cmp     ax, 7
                 jg      short loc_13201
@@ -6609,7 +6746,7 @@ loc_13201:                              ; CODE XREF: rebuildLevelView+1A0↑j
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_13209:                              ; CODE XREF: sub_12F9F:loc_13059↑j
+loc_13209:                              ; CODE XREF: sub_12E7D:loc_13059↑j
                 jmp     loc_13403
 rebuildLevelView endp
 
@@ -6730,6 +6867,7 @@ loc_132EA:                              ; CODE XREF: moveMonsters+D9↑j
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    sub_139FC
+; ---------------------------------------------------------------------------
                 mov     [bp-1Eh], ax
                 mov     ax, [bp-1Eh]
                 mov     [bp-22h], ax
@@ -6748,6 +6886,7 @@ loc_1330F:                              ; CODE XREF: moveMonsters+FE↑j
                 lea     ax, [bp-16h]
                 push    ax
                 call    sub_139FC
+; ---------------------------------------------------------------------------
                 mov     [bp-20h], ax
                 mov     ax, [bp-20h]
                 mov     [bp-22h], ax
@@ -6766,6 +6905,7 @@ loc_13330:                              ; CODE XREF: moveMonsters+DB↑j
                 lea     ax, [bp-16h]
                 push    ax
                 call    sub_139FC
+; ---------------------------------------------------------------------------
                 mov     [bp-24h], ax
                 mov     ax, [bp-24h]
                 mov     [bp-22h], ax
@@ -6784,6 +6924,7 @@ loc_13355:                              ; CODE XREF: moveMonsters+144↑j
                 lea     ax, [bp-1Ah]
                 push    ax
                 call    sub_139FC
+; ---------------------------------------------------------------------------
                 mov     [bp-26h], ax
                 mov     ax, [bp-26h]
                 mov     [bp-22h], ax
@@ -6791,7 +6932,7 @@ loc_13355:                              ; CODE XREF: moveMonsters+144↑j
 loc_13373:                              ; CODE XREF: moveMonsters:loc_1332D↑j
                                         ; moveMonsters+146↑j
                 mov     ax, [bp-2Ah]
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     ax, 1
                 mov     bx, ax
                 add     ax, 20h ; ' '
                 mov     dx, bx
@@ -6818,9 +6959,17 @@ loc_13373:                              ; CODE XREF: moveMonsters:loc_1332D↑j
                 lea     ax, [bp-2Ah]
                 push    ax
                 call    stepMonsterToward ; move one monster a step toward (playerX, playerY). TENTATIVE.
-                mov     [bp-28h], ax
-                mov     ax, [bp-28h]
-                mov     [bp-0Ch], ax
+; ---------------------------------------------------------------------------
+                db  89h
+                db  46h ; F
+                db 0D8h
+                db  8Bh
+                db  46h ; F
+                db 0D8h
+                db  89h
+                db  46h ; F
+                db 0F4h
+; ---------------------------------------------------------------------------
 
 loc_133C8:                              ; CODE XREF: moveMonsters+2E↑j
                 mov     ax, [bp-2Ah]
@@ -6869,90 +7018,52 @@ moveMonsters    endp
 
 showHitPoints   proc far                ; CODE XREF: drawDungeonHud+99↑P
                                         ; openChest:loc_10FBE↑P
+
+; FUNCTION CHUNK AT 356E SIZE 00000003 BYTES
+
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
-                mov     ax, 288Ch       ;    H.P. -
+                mov     ax, 288Ch
                 push    ax
                 push    word ptr ds:20EAh
                 call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
 ; ---------------------------------------------------------------------------
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0A1h
-                db 0EAh
-                db  20h
-                db  29h ; )
-                db    6
-                db 0DAh
-                db  1Ah
-                db 0C7h
-                db  46h ; F
-                db 0F0h
-                db    3
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  84h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     ax, ds:20EAh
+                sub     ds:1ADAh, ax
+                mov     word ptr [bp-10h], 3
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
 loc_1345A:                              ; CODE XREF: moveMonsters:loc_13403↑j
                 jmp     loc_1356E
 showHitPoints   endp
 
+; ---------------------------------------------------------------------------
 
-; =============== S U B R O U T I N E =======================================
-
-; monster special-attack resolution (called from monsterAttack). TENTATIVE.
-; Attributes: noreturn
-
-monsterSpecialAttack proc far           ; CODE XREF: monsterAttack:loc_1154B↑P
+monsterSpecialAttack:                   ; CODE XREF: monsterAttack:loc_1154B↑P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6960,272 +7071,146 @@ monsterSpecialAttack proc far           ; CODE XREF: monsterAttack:loc_1154B↑P
 j_rt_FE5B_20:                           ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
 ; ---------------------------------------------------------------------------
-j_rt_FE5B_21    db  9Ah
-                db  54h ; T
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  9Ah
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0A1h
-                db 0E4h
-                db  1Ah
-                db  40h ; @
-                db  3Bh ; ;
-                db    6
-                db    2
-                db  1Fh
-                db  74h ; t
-                db    3
-                db 0E9h
-                db  41h ; A
-                db    0
-                db 0B8h
-                db 0A6h
-                db  28h ; (
-                db  50h ; P
-                db  8Bh
-                db  1Eh
-                db  2Eh ; .
-                db  21h ; !
-                db 0D1h
-                db 0E3h
-                db 0D1h
-                db 0E3h
-                db 0BEh
-                db  2Ch ; ,
-                db  1Fh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  53h ; S
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  8Eh
-                db  25h ; %
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db  80h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0E9h
-                db  81h
-                db    0
-                db 0C7h
-                db    6
-                db  8Ah
-                db  21h ; !
-                db    0
-                db    0
-                db 0A1h
-                db    2
-                db  1Fh
-                db  2Bh ; +
-                db    6
-                db 0E4h
-                db  1Ah
-                db    5
-                db    3
-                db    0
-                db  89h
-                db  46h ; F
-                db 0ECh
-                db  3Dh ; =
-                db    3
-                db    0
-                db  7Fh ; 
-                db    3
-                db 0E9h
-                db    4
-                db    0
-                db  83h
-                db  46h ; F
-                db 0ECh
-                db 0FCh
-                db 0B8h
-                db 0AEh
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  83h
-                db  7Eh ; ~
-                db 0ECh
-                db    1
-                db  7Fh ; 
-                db    3
-                db 0E9h
-                db  0Dh
-                db    0
-                db 0B8h
-                db 0BCh
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  83h
-                db  7Eh ; ~
-                db 0ECh
-                db    2
-                db  7Fh ; 
-                db    3
-                db 0E9h
-                db  0Dh
-                db    0
-                db 0B8h
-                db 0C8h
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db 0D6h
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E4h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0E4h
-                db  50h ; P
-                db  9Ah
-                db  80h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0E4h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+
+j_rt_FE5B_21:                           ; -> screenRefresh  (leglib seg008:0x28861)
+                call    far ptr rt_FE5B
 ; ---------------------------------------------------------------------------
+                mov     ax, 289Ah
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     ax, ds:1AE4h
+                inc     ax
+                cmp     ax, ds:1F02h
+                jz      short loc_1349B
+                jmp     loc_134DC
+; ---------------------------------------------------------------------------
+
+loc_1349B:                              ; CODE XREF: seg000:3496↑j
+                mov     ax, 28A6h
+                push    ax
+                mov     bx, ds:212Eh
+                shl     bx, 1
+                shl     bx, 1
+                mov     si, 1F2Ch
+                add     bx, [si+0Ah]
+                push    bx
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 258Eh
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                jmp     loc_1355D
+; ---------------------------------------------------------------------------
+
+loc_134DC:                              ; CODE XREF: seg000:3498↑j
+                mov     word ptr ds:218Ah, 0
+                mov     ax, ds:1F02h
+                sub     ax, ds:1AE4h
+                add     ax, 3
+                mov     [bp-14h], ax
+                cmp     ax, 3
+                jg      short loc_134F7
+                jmp     loc_134FB
+; ---------------------------------------------------------------------------
+
+loc_134F7:                              ; CODE XREF: seg000:34F2↑j
+                add     word ptr [bp-14h], 0FFFCh
+
+loc_134FB:                              ; CODE XREF: seg000:34F4↑j
+                mov     ax, 28AEh
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                cmp     word ptr [bp-14h], 1
+                jg      short loc_13511
+                jmp     loc_1351E
+; ---------------------------------------------------------------------------
+
+loc_13511:                              ; CODE XREF: seg000:350C↑j
+                mov     ax, 28BCh
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+
+loc_1351E:                              ; CODE XREF: seg000:350E↑j
+                cmp     word ptr [bp-14h], 2
+                jg      short loc_13527
+                jmp     loc_13534
+; ---------------------------------------------------------------------------
+
+loc_13527:                              ; CODE XREF: seg000:3522↑j
+                mov     ax, 28C8h
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+
+loc_13534:                              ; CODE XREF: seg000:3524↑j
+                mov     ax, 28D6h
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-1Ch]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-1Ch]
+                push    ax
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-1Ch]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+
+loc_1355D:                              ; CODE XREF: seg000:34D9↑j
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR showHitPoints
 
 loc_1356E:                              ; CODE XREF: showHitPoints:loc_1345A↑j
                 jmp     loc_1384D
-monsterSpecialAttack endp
-
+; END OF FUNCTION CHUNK FOR showHitPoints
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -7676,7 +7661,7 @@ loc_13845:                              ; -> basProcLeave  (leglib seg003:0x1bb7
                 retf    0
 ; ---------------------------------------------------------------------------
 
-loc_1384D:                              ; CODE XREF: monsterSpecialAttack:loc_1356E↑j
+loc_1384D:                              ; CODE XREF: showHitPoints:loc_1356E↑j
                 jmp     loc_13939
 loadDungeonLevel endp
 
@@ -7685,7 +7670,7 @@ loadDungeonLevel endp
 
 ; Attributes: noreturn
 
-sub_13850       proc far                ; CODE XREF: sub_11A1D+9E↑P
+sub_13850       proc far
                 mov     cx, 0Ch
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -7801,7 +7786,7 @@ sub_13850       endp
 ; Attributes: noreturn
 
 updateLevelState proc far               ; CODE XREF: selectAbove:loc_1076C↑P
-                                        ; climbDownOrExit+B7↑P ...
+                                        ; monsterAttack:loc_118B1↑P ...
                 mov     cx, 4
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -7908,179 +7893,78 @@ sub_139FC       proc far                ; CODE XREF: moveMonsters+EE↑P
                 push    ax
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
 ; ---------------------------------------------------------------------------
-                db  8Bh
-                db  76h ; v
-                db  0Ch
-                db  8Bh
-                db    4
-                db  89h
-                db    4
-                db  8Bh
-                db  1Ch
-                db  8Bh
-                db 0D3h
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  8Ah
-                db  1Fh
-                db  30h ; 0
-                db 0FFh
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db  25h ; %
-                db  70h ; p
-                db    0
-                db  89h
-                db  46h ; F
-                db 0F2h
-                db  8Bh
-                db  46h ; F
-                db 0F4h
-                db  25h ; %
-                db  8Fh
-                db    0
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db  8Bh
-                db 0DAh
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  88h
-                db    7
-                db  8Bh
-                db  76h ; v
-                db  0Ch
-                db  8Bh
-                db    4
-                db  8Bh
-                db  7Eh ; ~
-                db  0Ah
-                db    3
-                db    5
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  8Bh
-                db 0D8h
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  8Ah
-                db  1Fh
-                db  30h ; 0
-                db 0FFh
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db 0C7h
-                db  46h ; F
-                db 0EEh
-                db    1
-                db    0
-                db  3Dh ; =
-                db  10h
-                db    0
-                db  7Ch ; |
-                db    3
-                db 0E9h
-                db  1Fh
-                db    0
-                db 0A1h
-                db 0E2h
-                db  1Ah
-                db  3Bh ; ;
-                db  46h ; F
-                db 0F0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  14h
-                db    0
-                db  8Bh
-                db  46h ; F
-                db 0F0h
-                db  89h
-                db    4
-                db  8Bh
-                db  76h ; v
-                db    6
-                db  8Bh
-                db    4
-                db  8Bh
-                db  7Eh ; ~
-                db    8
-                db    1
-                db    5
-                db 0C7h
-                db  46h ; F
-                db 0EEh
-                db    0
-                db    0
-                db  8Bh
-                db  76h ; v
-                db  0Ch
-                db  8Bh
-                db  1Ch
-                db  8Bh
-                db 0D3h
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  8Ah
-                db  1Fh
-                db  30h ; 0
-                db 0FFh
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F4h
-                db  0Bh
-                db  46h ; F
-                db 0F2h
-                db  8Bh
-                db 0DAh
-                db  8Eh
-                db    6
-                db    1
-                db    1
-                db  26h ; &
-                db  88h
-                db    7
-                db  8Bh
-                db  76h ; v
-                db  0Ch
-                db  8Bh
-                db    4
-                db  89h
-                db    4
-                db  8Bh
-                db  46h ; F
-                db 0EEh
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    8
-                db    0
+                mov     si, [bp+0Ch]
+                mov     ax, [si]
+                mov     [si], ax
+                mov     bx, [si]
+                mov     dx, bx
+                mov     es, word ptr ds:101h
+                mov     bl, es:[bx]
+                xor     bh, bh
+                mov     ax, bx
+                mov     [bp-0Ch], ax
+                and     ax, 70h
+                mov     [bp-0Eh], ax
+                mov     ax, [bp-0Ch]
+                and     ax, 8Fh
+                mov     [bp-0Ch], ax
+                mov     bx, dx
+                mov     es, word ptr ds:101h
+                mov     es:[bx], al
+                mov     si, [bp+0Ch]
+                mov     ax, [si]
+                mov     di, [bp+0Ah]
+                add     ax, [di]
+                mov     [bp-10h], ax
+                mov     bx, ax
+                mov     es, word ptr ds:101h
+                mov     bl, es:[bx]
+                xor     bh, bh
+                mov     ax, bx
+                mov     [bp-0Ch], ax
+                mov     word ptr [bp-12h], 1
+                cmp     ax, 10h
+                jl      short loc_13A72
+                jmp     loc_13A91
+; ---------------------------------------------------------------------------
+
+loc_13A72:                              ; CODE XREF: sub_139FC+71↑j
+                mov     ax, ds:1AE2h
+                cmp     ax, [bp-10h]
+                jnz     short loc_13A7D
+                jmp     loc_13A91
+; ---------------------------------------------------------------------------
+
+loc_13A7D:                              ; CODE XREF: sub_139FC+7C↑j
+                mov     ax, [bp-10h]
+                mov     [si], ax
+                mov     si, [bp+6]
+                mov     ax, [si]
+                mov     di, [bp+8]
+                add     [di], ax
+                mov     word ptr [bp-12h], 0
+
+loc_13A91:                              ; CODE XREF: sub_139FC+73↑j
+                                        ; sub_139FC+7E↑j
+                mov     si, [bp+0Ch]
+                mov     bx, [si]
+                mov     dx, bx
+                mov     es, word ptr ds:101h
+                mov     bl, es:[bx]
+                xor     bh, bh
+                mov     ax, bx
+                mov     [bp-0Ch], ax
+                or      ax, [bp-0Eh]
+                mov     bx, dx
+                mov     es, word ptr ds:101h
+                mov     es:[bx], al
+                mov     si, [bp+0Ch]
+                mov     ax, [si]
+                mov     [si], ax
+                mov     ax, [bp-12h]
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    8
 ; ---------------------------------------------------------------------------
 
 loc_13AC4:                              ; CODE XREF: updateLevelState:loc_139F9↑j
@@ -9490,7 +9374,7 @@ rt_13:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_14           proc near               ; CODE XREF: openChest+267↑P
-                                        ; openChest+2C1↑P ...
+                                        ; openChest+2C1↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -9515,7 +9399,7 @@ rt_17:                                  ; Overlay manager interrupt
 ; -> rtm_32  (leglib seg003:0x1b627)
 ; Attributes: noreturn
 
-rt_32           proc near               ; CODE XREF: sub_12F9F+26↑P
+rt_32           proc near               ; CODE XREF: seg000:2FC5↑P
                                         ; loadDungeonLevel+122↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -10310,7 +10194,7 @@ rt_F3:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_F4           proc near               ; CODE XREF: findJewel:loc_1298F↑P
-                                        ; sub_129E3+25↑P ...
+                                        ; seg000:loc_129D8↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10366,7 +10250,7 @@ rt_FB:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FC           proc near               ; CODE XREF: climbDownOrExit+E8↑P
-                                        ; climbDownOrExit+1A5↑P ...
+                                        ; climbDownOrExit+1A5↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10561,7 +10445,7 @@ rt_FF22         endp
 ; Attributes: noreturn
 
 rt_FF23         proc near               ; CODE XREF: openChest+260↑P
-                                        ; openChest+2BA↑P ...
+                                        ; openChest+2BA↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10791,7 +10675,7 @@ rt_FF43:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF44         proc near               ; CODE XREF: dunMain+120↑P
-                                        ; doMovement+11F↑P ...
+                                        ; drawDungeonHud+48↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10903,7 +10787,6 @@ rt_FF4F:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FF50         proc near               ; CODE XREF: dunMain+19E↑P
-                                        ; doMovement+127↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10917,7 +10800,7 @@ rt_FF50         endp
 ; Attributes: noreturn
 
 rt_FF51         proc near               ; CODE XREF: drawDungeonHud:j_rt_FF51↑P
-                                        ; sub_11A1D:j_rt_FF51_0↑P ...
+                                        ; spellResult+A5↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11214,7 +11097,7 @@ rt_0C:                                  ; Overlay manager interrupt
 ; -> rtm_11  (leglib seg003:0x12bde)
 ; Attributes: noreturn
 
-rt_11           proc near               ; CODE XREF: sub_12A13+44↑P
+rt_11           proc near               ; CODE XREF: removeViewObject+44↑P
                                         ; sub_12D93+41↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -12079,7 +11962,7 @@ rt_FE1F:                                ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FE20         proc near               ; CODE XREF: doLookSearch+D4↑P
-                                        ; sub_12E52+12↑P ...
+                                        ; seg000:2E64↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12306,7 +12189,7 @@ rt_FE37:                                ; Overlay manager interrupt
 ; -> rtm_FE38  (leglib seg007:0x268f8)
 ; Attributes: noreturn
 
-rt_FE38         proc near               ; CODE XREF: sub_1299A+15↑P
+rt_FE38         proc near               ; CODE XREF: seg000:29AF↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12388,8 +12271,8 @@ rt_FE40:                                ; Overlay manager interrupt
 ; -> rtm_FE41  (leglib seg007:0x258c7)
 ; Attributes: noreturn
 
-rt_FE41         proc near               ; CODE XREF: doMovement+C2↑P
-                                        ; climbDownOrExit+AD↑P ...
+rt_FE41         proc near               ; CODE XREF: climbDownOrExit+AD↑P
+                                        ; doLookSearch+90↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

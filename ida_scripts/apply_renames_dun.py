@@ -100,8 +100,30 @@ RENAMES = [
      'lookOrSearch.'),
     (0x10CD2, "clearTurnFlag", "turnActionFlag := 0 (before a non-turn action)."),
     (0x1305C, "rebuildLevelView",
-     'rebuild the level view after a climb / level change (descriptor '
-     'at ds:1E2Ah). Called only from climbDownOrExit. TENTATIVE.'),
+     'on level change, re-place the 8 objects/monsters for the new '
+     'level: loop viewObjectArray[0..7], for each occupied slot strip '
+     'it from its old map cell (map[pos] &= 0x8Fh), recompute pos for '
+     'the current level (ds:1AE2h & 0x700), walk to the nearest free '
+     'cell, stamp map[newPos] = (slotIdx<<4) | wallType | 0x10, and '
+     'refresh the slot\'s x/y/pos/facing fields. Called from '
+     'climbDownOrExit.'),
+    (0x12E9B, "loadDungeonData",
+     'BLOAD DUNM<dungeonNo>.BSV / DUNDATA.BSV / DUNOBJ.BSV -- see the '
+     'func comment set by fix_dun_loaddungeondata.py.'),
+    (0x12F9F, "loadDungeonMonsters",
+     'BLOAD DUNMONA.BSV (levels 0-3) or DUNMONB.BSV (4-7, keyed on '
+     'ds:1AE2h >= 0x400) into spriteBank at word offset '
+     'spriteBank[0x190h] (= DUNOBJ region A\'s first bank pointer, '
+     '0x1240), then call clearViewObjects. Called from '
+     'processTileFeature on level entry, right after loadDungeonData.'),
+    (0x129E3, "clearViewObjects",
+     'loop 0..7 calling removeViewObject -- tears down all 8 '
+     'view-object slots (removes each from the map, zeros its '
+     'viewObjectArray fields).'),
+    (0x12A13, "removeViewObject",
+     'remove object/monster slot #(*arg) from play: zero its '
+     'viewObjectArray flag/pos words and strip it from its map cell '
+     '(map[pos] &= 0x8Fh, i.e. clear the class bits 4-6).'),
     (0x1393C, "updateLevelState",
      'refresh per-level state (reads dungeonLevel + levelProgressFlags) '
      '-- called after climbs, kills, and from processTileFeature. '
