@@ -47,11 +47,25 @@ videoOff + r*0x140, tileIdxListPtr + r*ncols, ncols)`.
                  nbands -- both shrink with depth (0x030F = 3x15 near ->
                  0x0105 = 1x5 far).  Side-wall records carry 4 pointers
                  at a 0xCC stride; front-wall records carry 7.
-    ~0x110-0x693 the tile-index byte lists: flat, row-major arrays of
-                 bank cell indices (0x00-0xFE; 0xFF = skip).  Dominant
-                 0x10-0x1F = wall-surface cells, 0x00-0x0F / 0x40-0x5F =
-                 edge / floor / ceiling cells.  A 4D 41 28 72 53
-                 sub-header recurs at 0x1E8/0x2B4/0x380/0x44C.
+    ~0x110-0x693 the tile-index byte lists.  Bank cell indices
+                 (0x00-0xFE); 0x08-0x14 = wall face + floor/ceiling ramp,
+                 0x16-0x19 = junction edges, 0x1E = fill, >=0x40 =
+                 corner / trim / shadow cells and display-list markers.
+                 The `0x1E8` sub-region is a **4 x 0xCC-byte table**.
+                 Each column is a strip block headed by
+                 `4D 41 28 <texA> <texB> <variant>`: columns 0-1 carry
+                 texPair `72 53` (the 0x10-0x14 grey-stone cell set),
+                 columns 2-3 texPair `28 B0` (the 0xB0-0xCC set -- an
+                 alternate wall style).  The 9 side-wall projection
+                 records (2 per depth for depths 0-3 = left+right wall,
+                 1 for depth 4) each index it with a pointer quad
+                 X / X+0xCC / X+0x198 / X+0x264 -- the same row-offset X
+                 read down all 4 columns.  X advances (0x1E9, 0x216,
+                 0x234, ...) as the wall's strip data is packed
+                 sequentially within each column; dims shrink 3x15 ->
+                 1x5 with depth.  Bodies are `[marker][cell-index run]`
+                 display lists terminated by `4B 00 4D 00 00` /
+                 `4D 4C 00 00` and 0-padded to 0xCC.
     0x694-0x1691 the 8x8 tile bitmap bank: 255 cells x 16 B, CGA 2 bpp,
                  8 linear scanline-words per cell (cell 0 = blank).
 
@@ -87,6 +101,19 @@ def cell_pixels(p, off):
     w = struct.unpack("<8H", p[off:off + CELL])
     order = [w[0], w[4], w[1], w[5], w[2], w[6], w[3], w[7]]
     return [[(row >> (14 - 2 * x)) & 3 for x in range(8)] for row in order]
+
+
+def strip_blocks(p, base=0x1E8, count=4, size=0xCC):
+    """The 4-column tile-strip table at 0x1E8.  Each column is a
+    `size`-byte block headed by `4D 41 28 texA texB variant`; the side-
+    wall projection records index it with pointer quads
+    X / X+size / X+2*size / X+3*size."""
+    out = []
+    for k in range(count):
+        b = p[base + k * size: base + (k + 1) * size]
+        out.append(dict(off=base + k * size, tag=b[:3], tex=(b[3], b[4]),
+                        variant=b[5], body=b[6:]))
+    return out
 
 
 def records(p):
@@ -148,6 +175,16 @@ def main():
         print("  @w0x%03X  screenBase=0x%02X  videoOff=0x%04X  dims=0x%04X (ncols=%d nbands=%d)  ptrs: %s"
               % (a, r[0], r[1], dims, dims >> 8, dims & 0xFF,
                  " ".join("%04X" % x for x in r[3:])))
+
+    print("\n0x1E8 tile-strip table (4 columns x 0x%X B):" % 0xCC)
+    for k, blk in enumerate(strip_blocks(p)):
+        print("  col %d @0x%03X  tag=%s  tex=(%02X %02X)  variant=%02X"
+              % (k, blk["off"], blk["tag"].hex(), blk["tex"][0], blk["tex"][1], blk["variant"]))
+    side = [r for _, r in records(p) if len(r) == 7]   # screenBase,vOff,dims + 4 ptrs
+    print("  indexed by %d side-wall records, each ptr quad = X / X+0xCC / X+0x198 / X+0x264:"
+          % len(side))
+    for r in side:
+        print("    X=0x%04X  (dims %dx%d)" % (r[3] - 0x800, r[2] >> 8, r[2] & 0xFF))
 
     # render the whole bank, 16 cells/row
     S, cols = 8, 16
