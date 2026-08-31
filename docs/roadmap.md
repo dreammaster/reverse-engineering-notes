@@ -597,7 +597,12 @@ reimplementation.
       6 CGA blocks + a `0x1560+2n` column-address list; word[4] (`0x830`)
       is the `PEGASUS.BSV` slot for `combatPhase==2`; drawn via
       `identifyLocationObject` → scratch slots → `refreshMapView` phase
-      2 → `rtm_FE69`.  Open: per-block sprite geometry.
+      2 → `rtm_FE69` (`sub_282FD` punches `0xFFFF` holes in the tile
+      buffer, `rtm_FE0E` remap-copies `OUTOBJ[0..0x1B8]` in via a
+      256-entry table at `tileBuf[0x1D8]`, then the terrain
+      `drawTileRun` paints the merge).  Open: how a block's bytes become
+      cells — a tile-cell merge, not a bitmap blit; needs a live memory
+      dump (tile buffer + `0x1D8` remap table with a landmark visible).
 - [~] Dungeon data (2026-08-31) — **rendering model cracked**
       (`drawViewSprite` / `blitViewCell` + LEGLIB `drawTileRun`
       `rtm_FE2A` / `andSpriteMaskCell` `rtm_FE2E` / `basPutSprite`

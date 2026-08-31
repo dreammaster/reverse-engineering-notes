@@ -499,15 +499,32 @@ terrain tiles, the sub-cell bank, and the 32 travel-event sprite pairs
 
 `spriteBank[8]` (word 4 = `0x830`) is the slot **`PEGASUS.BSV`** (1152 B,
 raw CGA bitmap, no table) overwrites when `combatPhase == 2` (the
-endgame pegasus travel). `identifyLocationObject` walks the current
-tile's location-type list, writing a `(videoDest, spritePtr, …)` slot
-per landmark into the scratch array; `refreshMapView`'s second pass
-(when `spriteBank[0x11E] != 0`) then overlays them via `rtm_FE69` →
-`drawTileRun`.
+endgame pegasus travel).
 
-**Still open:** the exact per-block sprite geometry (renders as ~16–32-px
-CGA data but not cleanly at any single stride) and the
-`identifyLocationObject` slot layout.
+**The blit pipeline** (traced 2026-09-01, not fully resolved).
+`identifyLocationObject` walks the current tile's location-type list and
+appends a 3-word slot per landmark to the scratch array
+(`spriteBank[0x120]` = slot count, `[0x11E]` = enable). Each slot holds
+a sprite pointer (`spriteBank[0x10]` = the block-8 pointer `0xB30`) and
+a tile-buffer cell position computed as `0x34·row + 2·col + 0xDC`.
+`refreshMapView` phase 2 shuffles the slot table
+(`spriteBank[i·2+0x94] → [i·2]`), then `rtm_FE69`:
+
+1. `sub_282FD` — for each slot, **punches `0xFFFF` (transparent) into
+   the 26-wide tile buffer** at the landmark's cell (2 rows), saving the
+   displaced terrain tiles into `spriteBank` scratch.
+2. `rtm_FE0E` — copies `OUTOBJ` bytes `0..0x1B8` into the tile buffer at
+   `tileBuf[0x1D6]`, **remapping every byte through a 256-entry table at
+   `tileBuf[0x1D8]`**.
+3. the terrain `drawTileRun` pass (`26 × 17` cells) paints the merged
+   buffer.
+4. `rtm_FE6A` clears the slot scratch.
+
+**Still open:** how a block's bytes become drawable cells. The pipeline
+is a tile-cell merge (via the `rtm_FE0E` remap), not a straight bitmap
+blit, and the blocks don't render coherently at any fixed stride. Needs
+a live memory dump — the tile buffer plus the `0x1D8` remap table with a
+landmark on screen.
 
 ## `TOWN0.BSV` .. `TOWNB.BSV` — town layouts — **decoded 2026-08-31**
 
