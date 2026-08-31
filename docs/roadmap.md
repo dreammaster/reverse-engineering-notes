@@ -618,8 +618,12 @@ reimplementation.
       sprite/animation bank (`0x300`–`0xEFF`, ~12×`0x100` frames) + 4
       word-index tables + a tile tail. `FORTANIM.BSV` overlays the last
       `0x100`. Open: sprite-cell dims.
-- [ ] `CASTLE.BS1/2` / `FORT.BS1/2` layouts (12960 B; `setViewport`
-      modes 1 `0x5A×0x5B` / 2 `0x70×0x49`).
+- [x] `CASTLE.BS1/2` / `FORT.BS1/2` (2026-08-31) — the castle/fort floor
+      maps: `0x0000`–`0x1FFD` = tile map (castle **90×91**, fort
+      **112×73**, 1 byte/tile) + per-floor table + a shared CGA
+      tile-graphic bank (`~0x2400`+; `.BS1`/`.BS2` share it = two floors
+      of one building). `decoders/town_map.py CASTLE.BS1`. Open: the
+      per-building graphic banks + the tile-code→graphic map.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit
       glyph font (upright + 180°-rotated) + card-back tiles, tiles

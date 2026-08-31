@@ -20,9 +20,10 @@ mask-list + BASIC-`PUT`-image sprite format). The **overworld** files
 `OUTM0/1/2.BSV` + `OUTDATA.BSV` have their architecture and region
 layout mapped (they mirror the dungeon's `DUNM* + DUNDATA`); open there
 is the last-mile bitmap-record packing. The **12 town layouts**
-(`TOWN0..B.BSV`) are decoded — 80×40 tile map + shop-name text. The
-remaining `.BSV` files (castle/fort layouts, `TCASOBJ` sprite cells,
-monsters) are container/structure-only.
+(`TOWN0..B.BSV`, 80×40) and the **castle / fort floor maps**
+(`CASTLE.BS1/2` 90×91, `FORT.BS1/2` 112×73) are decoded. What's left is
+container/structure-only: the per-file tile-graphic banks, `TCASOBJ`
+sprite-cell dims, and the monster/object sprite pixel packing.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -56,7 +57,8 @@ castle/fort layout banks.
 |---|---|---|---|
 | `TITLE.GLB` / `TITLE.GMP` | 8209 / 2111 | `MENU` | **fully decoded** — 512-tile 8×8 CGA sheet + 40×25 column-major cell map. See the dedicated section below; `decoders/title_screen.py` (or the generic `decoders/glb_image.py`) renders it. |
 | `TOWN0.BSV`…`TOWNB.BSV` | ~5013–5123 | `TWNDR` | **decoded** — the 12 town layouts. BSAVE → `0x9259:0x0000`. Each = an **80×40 tile map** (`0x000`–`0xC7F`, 1 byte/tile) + object/feature records + a `0x1A` slot table + the town's shop-name strings. `decoders/town_map.py`. See the town section below. |
-| `CASTLE.BS1` / `.BS2`, `FORT.BS1` / `.BS2` | 12967 | `CASDR` | castle / fort layout banks |
+| `CASTLE.BS1` / `.BS2` | 12967 | `CASDR` | **decoded** — the two castle floors. BSAVE → `0x86AE:0x0000`. Each = a **90×91 tile map** (`0x000`–`0x1FFD`, 1 byte/tile) + a per-floor table + a shared CGA 2 bpp tile-graphic bank (`~0x2400`+). `.BS1`/`.BS2` differ only in `0x000`–`0x20BF` (map + table); the graphics bank is shared. `decoders/town_map.py CASTLE.BS1`. |
+| `FORT.BS1` / `.BS2` | 12967 | `CASDR` | **decoded** — the two Warlord's-fort floors, same layout as `CASTLE.BS*` but a **112×73 tile map** (`setViewport` mode 2). |
 | `TCASOBJ.BSV` | 4911 | `CASDR` | **structure mapped** — castle/town animated-object sprites. BSAVE → `0x8537:0x0000` into `spriteBank` (`ds:1E58`) via `loadCastleObjects` — same array/role as `DUNOBJ`/`OUTOBJ`/`MUSOBJ`. See the castle section below. |
 | `FORTANIM.BSV` | 263 | `CASDR` | fort-specific animation — BSAVE → `0x8537:0x1228`, i.e. it **overlays `TCASOBJ`'s last `0x100` bytes** (`0x1228`–`0x1327`), swapping the castle's animated-object frames for the fort's. |
 | `OUTM0.BSV` / `OUTM1.BSV` / `OUTM2.BSV` | 9969 / 4191 / 2101 | `OUT` | the 3 overworld map layers (picked by `combatPhase` in the filename `OUTM0<phase>.BSV`). BSAVE → `0x86AE:0x0000`. Shared 8-byte header `62 24 0A 00 11 00 3A 23`; 1 byte/tile terrain codes (`0x2C` = default, `0x2D`–`0x32`, …); logical map is 128 tiles wide (`OUT`'s feature scanner does `idiv 0x80` / `and 0x7F`). |
@@ -303,9 +305,21 @@ BIZARRE BAZAAR / PROPHET FOR PROFIT (a temple town). Each town has the
 standard set — weapons, armour, magic, healer, bank, fortune-teller,
 tavern, boat sales.
 
-`setViewport` modes 1 (`0x5A × 0x5B`) and 2 (`0x70 × 0x49`) are for the
-larger `CASTLE.BS1/2` / `FORT.BS1/2` layouts (12960 B), which share
-`bmTNCALB` with the town renderer.
+## `CASTLE.BS1/2` + `FORT.BS1/2` — castle / fort layouts — **decoded 2026-08-31**
+
+Same `bmTNCALB` renderer as the towns, bigger maps. `CASDR.EXE` sets
+`mapStride` = `0x5A` (90) for the castle, `0x70` (112) for the fort
+(`setViewport` modes 1 / 2). BSAVE → `0x86AE:0x0000`; 12960-byte payload:
+
+| span | contents |
+|---|---|
+| `0x0000`–`0x1FFD` | **the floor map** — castle **90 × 91**, fort **112 × 73**, 1 byte per tile, row-major (autocorrelation confirms stride 90 for `CASTLE.BS1`). Same tile-code vocabulary as the towns. |
+| `~0x1FFE`–`0x20BF` | a per-floor table (this is exactly where `.BS1` and `.BS2` stop differing) |
+| `0x20C0`–`0x23FF` | small tables + zero padding |
+| `~0x2400`–end | **the castle/fort CGA 2 bpp tile-graphic bank** (~3.6 KB) — *shared* between `.BS1` and `.BS2` (they're two floors of the same building). `CASTLE` vs `FORT` graphics are almost entirely different. |
+
+`decoders/town_map.py CASTLE.BS1` prints the map (it auto-selects the
+90×91 / 112×73 layout from the filename).
 
 ## Castle/town data — `TCASOBJ.BSV` + `FORTANIM.BSV` — **structure mapped 2026-08-31**
 

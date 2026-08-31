@@ -821,3 +821,12 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   temple town: SAINTLY SWORDS / MIRACLE MAGIC / PROPHET FOR PROFIT).
   `decoders/town_map.py`. `setViewport` modes 1/2 (`0x5A×0x5B`,
   `0x70×0x49`) are the bigger `CASTLE.BS1/2` / `FORT.BS1/2` layouts.
+- **2026-08-31** -- Decoded `CASTLE.BS1/2` + `FORT.BS1/2`. Same
+  `bmTNCALB` renderer, bigger maps: `CASDR` sets `mapStride` `0x5A` (90)
+  for the castle, `0x70` (112) for the fort. 12960-B payload:
+  `0x0000`-`0x1FFD` = the floor map (castle **90×91**, fort **112×73**,
+  1 byte/tile -- autocorrelation confirms stride 90) + a per-floor table
+  (exactly where `.BS1` vs `.BS2` stop differing, ~`0x2000`) + a shared
+  CGA 2 bpp tile-graphic bank (`~0x2400`+, ~3.6 KB -- `.BS1`/`.BS2` are
+  two floors of one building so they share it). `town_map.py` now
+  auto-selects the layout from the filename.
