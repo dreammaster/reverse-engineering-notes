@@ -839,3 +839,10 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   tile/graphic data (many 64-byte regions byte-match at `~-0x800`
   delta) -- the museum's `bmMUSDUNG` is literally `bmDUNG`, so exhibit
   halls render as dungeon corridors. `decoders/dun_map.py MUSDATA`.
+- **2026-08-31** -- `MUSOBJ.BSV` (museum exhibit object sprites, BSAVE
+  `0x1447:0x0DB6` into `spriteBank`) is **byte-for-byte the same
+  3-region layout as `DUNOBJ.BSV`**: object records (`0x000`-`0x3FF`),
+  the `(maskSrc, screenDest)` pair table for `andSpriteMaskCell`
+  (`0x400`-`0xFFF`, 768 pairs, first-of-pair stepping by `0x10`), then
+  the sprite bitmap bank (`0x1000`-`0x329A`). Just a larger sprite set;
+  identical renderer (`drawViewSprite`).

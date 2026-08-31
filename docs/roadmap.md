@@ -597,10 +597,12 @@ reimplementation.
         contiguous with `DUNM*`); the `0x10`–`0x7F` region = wall
         tile-index lists, rest = the 8×8 tile bank. Sub-offsets need
         `blitViewCell`'s index math walked with live data.
-      - `DUNOBJ.BSV` — object records + the `(maskSrc, screenDest)` pair
-        table (`andSpriteMaskCell`) + mask cells + `basPutSprite` image
+      - `DUNOBJ.BSV` (and `MUSOBJ.BSV` — byte-for-byte the same 3-region
+        layout, larger museum sprite set, BSAVE `0x1447:0x0DB6`):
+        object records + the `(maskSrc, screenDest)` pair table
+        (`andSpriteMaskCell`) + mask cells + `basPutSprite` image
         arrays. Loads into `spriteBank` (`ds:1E58`), shared with
-        `OUTOBJ`/`MUSOBJ`.
+        `OUTOBJ`.
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.
