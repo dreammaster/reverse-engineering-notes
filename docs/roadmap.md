@@ -587,7 +587,11 @@ reimplementation.
         index / CGA 2 bpp sprite pool / zero pad), loads at
         `0x140D:0x0DB6` = shared with `OUTOBJ`/`MUSOBJ`. Sprite-pool
         encoding + the table-walking routine still open.
-      - `DUNMON*.BSV` (monsters, `0x140D:0x3236`) — untouched.
+      - `DUNMONA/B.BSV` (monsters, `0x140D:0x3236`) — record structure
+        decoded: 6 monsters × 2356 B, each = header + 5 scaled image
+        frames (705/248/110/65/30 B, near→far) + ~5 mask frames + a
+        trailer. A/B are two swappable monster sets. Sprite pixel
+        encoding (RLE/skip) shared-open with `DUNOBJ` region C.
 - [ ] Town / castle layouts.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit

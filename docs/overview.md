@@ -751,3 +751,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   but not a linear/tile layout -- renders as noise, so it's a
   `GET`/`PUT` sprite or column-major / RLE packing. Region D = zeros.
   Cracking region C and finding the table walker is the open work.
+- **2026-08-31** -- Decoded `DUNMONA/B.BSV`'s record structure (dungeon
+  monster sprites). BSAVE to `0x140D:0x3236`. 14136-B payload = exactly
+  **6 records x 2356 B** = 6 monsters. Each record: 20-B header (`dw 9`
+  + a fixed 5-entry frame-boundary table `0x2D5/0x3CD/0x43B/0x47C/0x49A`,
+  identical in all 6 -> fixed-size frames) + 5 image frames of
+  705/248/110/65/30 B (the monster at 5 view distances, near->far, like
+  `SDOBJ`'s scaled fireballs) + ~5 mask frames + a per-monster trailer.
+  `DUNMONA` vs `DUNMONB` differ in ~74% of bytes = two swappable monster
+  sets. The frame pixels are CGA 2 bpp but render as noise at every
+  stride/orientation -> RLE/skip-coded, same open question as `DUNOBJ`
+  region C; both need `bmDUNG`'s `drawViewSprite` / `blitViewCell`
+  (`rtm_FE2A`) traced.
