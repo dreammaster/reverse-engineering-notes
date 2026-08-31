@@ -14,7 +14,8 @@ dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. `CHAR.DAT`'s
 container (9 × 382-byte roster records) and its write/read path are
 decoded; the record's scalar fields are partly identified. The
 **dungeon tile maps `DUNM1/2/3.BSV`** are fully decoded (8 levels ×
-16×16 tiles). The remaining `.BSV` files are still container-only.
+16×16 tiles); `DUNDATA.BSV` and `DUNOBJ.BSV` have their region layout
+mapped. The remaining `.BSV` files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -54,7 +55,8 @@ castle/fort layout banks.
 | `OUTDATA.BSV`, `OUTOBJ.BSV`, `OUTM0.BSV`…`OUTM2.BSV`, `OUTDAT.DAT` | — | `OUT` | overworld map / objects / monsters |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
 | `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
-| `DUNOBJ.BSV` / `DUNMONA.BSV` / `DUNMONB.BSV` | 9351 / 14143 | `DUN` | dungeon objects / monsters — BSAVE → `0x140D:…` (a **different** segment from the map). Not yet decoded. |
+| `DUNOBJ.BSV` | 9351 | `DUN` | **structure mapped** — dungeon objects + their sprites. BSAVE → `0x140D:0x0DB6` (the offset `OUTOBJ.BSV` / `MUSOBJ.BSV` also load at → a shared object system). ~5.6 KB real data + zero pad. Four regions: object records (`~0x000`–`0x3FF`), a ~316-entry index table of 16-bit pointer pairs (`0x400`–`0x8F1`), a ~3.3 KB CGA 2 bpp sprite-bitmap pool (`0x8F2`–`0x15FF`), zero tail. Sprite-pool layout + consumer still open. See the dungeon section below. |
+| `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | dungeon monsters — BSAVE → `0x140D:0x3236` (same segment as `DUNOBJ`, higher offset). Not yet decoded. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
@@ -181,8 +183,24 @@ tile-graphic bank), and an 18-byte tail. The field-level layout and
 which routine `BLOAD`s it are still open — the dungeon-init path in
 `dun.idb` needs a cleaner `coerce_code` pass first.
 
-`DUNOBJ.BSV` (objects) and `DUNMONA/B.BSV` (monsters) `BSAVE` to a
-different segment (`0x140D:…`) and are not decoded yet.
+### `DUNOBJ.BSV` — dungeon objects + sprites
+
+`BSAVE`s to `0x140D:0x0DB6` — the **same DGROUP offset** that
+`OUTOBJ.BSV` and `MUSOBJ.BSV` load at, so there's one shared object
+system across the play modules. Payload 9344 bytes; only the first
+~`0x1600` are real (the rest is zero-filled BSS the game `BSAVE`d). Four
+regions:
+
+| region | span | contents |
+|---|---|---|
+| A | `~0x000`–`0x3FF` | object-definition records — repeated `dw 0x0110 ; dw V ; dw 0 ; dw V ; dw K` (two sub-tables, `V` ≈ `0x024x` then `0x042x` stepping by 6) |
+| B | `0x400`–`0x8F1` | ~316 four-byte records = **pairs of 16-bit values** both in `0x08F2`–`0x1592` (i.e. offsets into region C); the first of each pair steps by `0x10` |
+| C | `0x8F2`–`0x15FF` | ~3.3 KB **CGA 2 bpp sprite bitmaps** — the byte histogram is dominated by canonical pixel bytes (`0x00`, `0xAA`, `0xFF`, `0x55`, `0x3C`, `0xC3`, `0xF0`, `0x0F`), but the data is **not** a plain linear or 8×8-tile layout (renders as noise) — probably BASIC `GET`/`PUT` sprite records or a column-major / RLE packing |
+| D | `0x1600`–end | zero padding |
+
+Region B's pointer pairs index the region-C sprite pool (one is likely
+the image, the other a mask). Cracking region C's layout and finding
+the routine that walks these tables is the open work.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

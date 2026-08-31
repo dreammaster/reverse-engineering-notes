@@ -577,12 +577,17 @@ reimplementation.
       Field layout still open.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
-- [~] Dungeon maps (2026-08-31) — `DUNM1/2/3.BSV` decoded: 8 levels ×
-      16×16 tiles/byte (`0x00` floor / `0xFF` rock / `0x01`–`0x0F`
-      features). `decoders/dun_map.py`. Open: the feature code→type
-      table (in `DUN.EXE`), and `DUNDATA.BSV`'s big region (loads
-      contiguously after the map at `0x2C07:0x173C`; container mapped,
-      fields TBD), plus `DUNOBJ.BSV` / `DUNMON*.BSV`.
+- [~] Dungeon data (2026-08-31):
+      - `DUNM1/2/3.BSV` **decoded** — 8 levels × 16×16 tiles/byte (`0x00`
+        floor / `0xFF` rock / `0x01`–`0x0F` features). `decoders/dun_map.py`.
+        Open: the feature code→type table (in `DUN.EXE`).
+      - `DUNDATA.BSV` — container mapped (loads contiguously after the
+        map at `0x2C07:0x173C`); big `0x10`–`0x7F` region + fields TBD.
+      - `DUNOBJ.BSV` — 4 regions mapped (object records / pointer-pair
+        index / CGA 2 bpp sprite pool / zero pad), loads at
+        `0x140D:0x0DB6` = shared with `OUTOBJ`/`MUSOBJ`. Sprite-pool
+        encoding + the table-walking routine still open.
+      - `DUNMON*.BSV` (monsters, `0x140D:0x3236`) — untouched.
 - [ ] Town / castle layouts.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit

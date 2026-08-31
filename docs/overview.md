@@ -739,3 +739,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   layout and its `BLOAD` site are still open (the dungeon-init path in
   `dun.idb` is partly-garbled asm and wants a fresh `coerce_code` pass).
   `DUNOBJ.BSV` / `DUNMON*.BSV` load to a different segment (`0x140D`).
+- **2026-08-31** -- Mapped `DUNOBJ.BSV`'s region structure (dungeon
+  objects + sprites). BSAVE to `0x140D:0x0DB6` -- the same DGROUP offset
+  `OUTOBJ.BSV` / `MUSOBJ.BSV` load at, so there's one shared object
+  system. ~5.6 KB real + zero pad. Region A (`~0..0x3FF`) = object
+  records (`dw 0x0110 ; dw V ; dw 0 ; dw V ; dw K`); region B
+  (`0x400..0x8F1`) = ~316 four-byte records, each a pair of 16-bit
+  offsets into region C (first steps by `0x10`); region C
+  (`0x8F2..0x15FF`) = ~3.3 KB of CGA 2 bpp sprite bitmaps (histogram is
+  all canonical pixel bytes `0x00/0xAA/0xFF/0x55/0x3C/0xC3/0xF0/0x0F`)
+  but not a linear/tile layout -- renders as noise, so it's a
+  `GET`/`PUT` sprite or column-major / RLE packing. Region D = zeros.
+  Cracking region C and finding the table walker is the open work.
