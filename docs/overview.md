@@ -864,3 +864,12 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `+2` = +8 px), then RLE-packed CGA bitmap strips from `~0x300` (798 B
   for `CEL0`'s ~272x120 area = ~10:1, so compressed -- same open
   question as `DUNOBJ` region C). `celFrame` cycles the 5 as animation.
+- **2026-08-31** -- `DIS0-15.BSV` (+ `DIS0A`/`DIS1A`) = the ~18 **museum
+  exhibit illustration screens** -- `MUS.EXE` builds `"DIS"+n+".BSV"`
+  (the `"DIS"` prefix string is at `MUS.EXE` `0x70bc`) to show the
+  picture of the artifact "on display in this museum". They are
+  **byte-for-byte the same container as `CEL*.BSV`** (`DIS9.BSV`'s
+  header is identical to `CEL0.BSV`'s: `{0, 0x10, 0x110, 0x78, 0x20,
+  0xA, 0x10, 0x220}` = a 272x120 full-screen image); `DIS9` just doubles
+  as the cinematic's frame 4. Header word[2]/[3] = width/height in px
+  (`DIS3` = `0xE0`x`0x60`, `DIS0A` = `0x108`x`0x74`).
