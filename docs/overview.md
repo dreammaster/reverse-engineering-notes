@@ -734,24 +734,28 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `decoders/dun_map.py` prints the mazes. `DUNOBJ.BSV` / `DUNMON*.BSV`
   load to a different segment (`0x140D`). (BLOAD site now decoded -- see
   `loadDungeonData`, 2026-08-31.)
-- **2026-08-31** -- Decoded `DUNDATA.BSV` (`decoders/dundata.py`) -- the
-  first-person view's wall/floor/ceiling graphics. BSAVE to
+- **2026-08-31** -- Fully decoded `DUNDATA.BSV` (`decoders/dundata.py`)
+  -- the first-person view's wall/floor/ceiling graphics. BSAVE to
   `0x2C07:0x173C` = `0x800` after the map, one contiguous array.
-  5778-B payload: `word[0] = 0x0E94` = the tile bank's *array* offset
-  (payload `0x694`), passed straight to `drawTileRun` as `srcBase`;
-  `0x040`-`~0x110` = the **projection record table** (~13 records, ~3
-  per view depth: left wall / floor-ceiling / right wall). Each record
-  is `dw screenBase (0x28*(depth+1)) ; dw videoOff ; dw packedDims ;
-  dw <pointers>`, `packedDims = (ncols<<8)|nbands` shrinking with depth
-  (`0x030F` = 3x15 near -> `0x0105` = 1x5 far -- exactly `blitViewCell`'s
-  dims word). `~0x110`-`0x693` = the **tile-index byte lists** (one bank
-  cell # per 8x8, `0xFF` = skip; `0x10`-`0x1F` wall cells,
-  `0x00`-`0x0F` / `0x40`-`0x5F` edge/floor/ceiling). `0x694`-end = 255
-  16-B CGA cells (`sub_1FED8` maps the 8 words to screen rows
-  0,2,4,6,1,3,5,7; cell 0 blank). `renderDungeonView` threads a cursor
-  through the record table (one record per wall band).
-  Open: which record -> which on-screen wall, and a record's pointer
-  list.
+  `word[0] = 0x0E94` = the tile bank's *array* offset (payload `0x694`),
+  `drawTileRun`'s `srcBase`. `0x020`-`0x10F` = the **projection record
+  table** = exactly **15 records**, walked by a cursor
+  `renderDungeonView` steps `0xA / 7 / 7` words per depth band. Per
+  depth: a **wall-band record** (10 words = three `(videoOff,
+  packedDims, tileListPtr)` triples + pad -- ceiling strip / floor strip
+  / front-wall block), then a **left-side** and a **right-side** record
+  (7 words each = `videoOff, packedDims, p0..p3, pad` -- `p0..p3` = the
+  corridor side wall in the 4 columns of the strip table at `0x1BC`;
+  `drawViewFloorCeiling` takes `p0` for a solid wall, `p1` for an open
+  passage). `packedDims = (ncols<<8)|nbands`, shrinking with depth.
+  `0x110`-`0x693` = the tile lists -- **every one is a flat `ncols ×
+  nbands` row-major array of bank cell indices** (`0xFF` = skip)
+  straight to `drawTileRun`; **no marker layer** (the `0x00` /
+  `0x4B`-`0x7F` / `0xC0`-`0xCC` bytes are just the near-black shadow/edge
+  cells). `0x694`-end = 255 16-B CGA cells. Composited, the strips make
+  a coherent corridor view.
+  Open: `drawViewWallBandMid` / `Far` (the blocked-view fallback) index
+  the same records at other offsets.
 - **2026-08-31** -- Mapped `DUNOBJ.BSV`'s region structure (dungeon
   objects + sprites). BSAVE to `0x140D:0x0DB6` -- the same DGROUP offset
   `OUTOBJ.BSV` / `MUSOBJ.BSV` load at, so there's one shared object

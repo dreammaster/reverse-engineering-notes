@@ -66,7 +66,7 @@ castle/fort layout banks.
 | `OUTDATA.BSV` | 14235 | `OUT` | **structure mapped** — the shared overworld graphics + tables. BSAVE → `0x86AE:0x2B22`, i.e. **contiguous with the `OUTM*` layers in one array** (bound at `ds:1E2A`, exactly parallel to the dungeon's `DUNM* + DUNDATA`). See the dedicated section below. |
 | `OUTOBJ.BSV` | 4395 | `OUT` | overworld object sprites — BSAVE → `0x13A8:0x0DB6` into `spriteBank` (same `0x0DB6` offset as `DUNOBJ` / `MUSOBJ`). Not separately decoded (same shape as `DUNOBJ`). |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
-| `DUNDATA.BSV` | 5785 | `DUN` | **decoded** — the first-person view's wall/floor/ceiling graphics. BSAVE → `0x2C07:0x173C` = **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), one array. 5778-B payload: `word[0]` = the tile bank's array offset (`0x0E94` → payload `0x694`); `0x040`–`~0x110` = the projection record table (`screenBase ; videoOff ; (ncols<<8)|nbands ; ptrs`, ~3 per depth); `~0x110`–`0x693` = the tile-index byte lists (cell # per 8×8, `0xFF` = skip); `0x694`–end = 255 × 16-B CGA cells. See the dungeon section. |
+| `DUNDATA.BSV` | 5785 | `DUN` | **decoded** — the first-person view's wall/floor/ceiling graphics. BSAVE → `0x2C07:0x173C` = **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), one array. 5778-B payload: `word[0]` = the tile bank's array offset (`0x0E94` → payload `0x694`); `0x020`–`0x10F` = the projection record table (15 records = 5 depths × [10-word wall-band + 7-word left + 7-word right]); `0x110`–`0x693` = the flat `ncols×nbands` cell-index tile lists (incl. the 4×`0xCC` side-wall strip table at `0x1BC`); `0x694`–end = 255 × 16-B CGA cells. See the dungeon section. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
 | `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **fully decoded** — dungeon monster sprites (`A` = levels 0–3, `B` = 4–7). BSAVE → `spriteBank` word `0x1240`. 14136-B payload = **exactly 6 blocks × 2356 B** (one per monster-type slot). Each block = 6-word frame-offset table (`9/725/973/1083/1148/1178`) + 3 zero words + **5 back-to-back MS-BASIC `PUT` GET-arrays** for view-depths P0…P4 (82×68 / 48×41 / 32×27 / 24×21 / 16×14, linear 2 bpp). See the dungeon section below. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | `MUS` (+ `CELDRV`) | **structure mapped** — the **museum exhibit "display" illustration screens** (~18). `MUS.EXE` builds the name `"DIS"+n+".BSV"` to show the picture of what's *on display in this museum* for an exhibit; `DIS9.BSV` doubles as frame 4 of `CELDRV`'s endgame cinematic. BSAVE → `0x13C2:0x0E4E`. **Byte-for-byte the same container as `CEL*.BSV`**: 8-word header `{id, 0x10, W_px, H_px, 0x20, 0x0A, 0x10/0x30, 0x220}` (the full-screen ones, incl. `DIS9`/`CEL0`, are `0x110`×`0x78` = 272×120), a relocatable strip-pointer table from `~0x100` (dest offset steps `0x140` per 4-scanline band, `+2` per 8-px column), then RLE-packed CGA 2 bpp strips. See the `CEL*.BSV` section. |
@@ -217,46 +217,39 @@ display-case portals `enterExhibit` routes on (to `TWNDR` / `DUN` /
 the map, so `DUNM* + DUNDATA` load into **one contiguous DGROUP array**
 (`dungeonMapArray`, `ds:1E2A`) at array byte `0x800`.
 
-Payload layout (5778 B, decoded 2026-08-31 — `decoders/dundata.py`):
+Payload layout (5778 B, decoded 2026-08-31 — `decoders/dundata.py`). Every
+offset word inside DUNDATA is an *array* offset (`0x800 + payloadOffset`),
+used raw.
 
 | span | contents |
 |---|---|
-| `0x000`–`0x03F` | header. **`word[0] = 0x0E94`** = the *array* byte offset of the tile bank (`DUN.EXE` passes it straight to `drawTileRun` as `srcBase`) — array `0x800` + payload `0x694`. Bytes `0x20`–`0x3F` = a pre-table lookup row. |
-| `0x040`–`~0x110` | **the projection record table** — ~13 variable-length records, ~3 per view depth (left wall / floor-ceiling strip / right wall). Each: `dw screenBase` (`0x28·(depth+1)` = `0x28/0x50/0x78/0xA0/0xC8`) `; dw videoOff ; dw packedDims ; dw <pointer words>`. **`packedDims = (ncols<<8) | nbands`**, both shrinking with depth (`0x030F` = 3×15 near → `0x0105` = 1×5 far). Side-wall records carry 4 bank pointers at a `0xCC` stride; floor/ceiling records carry 7. |
-| `~0x110`–`0x693` | **the tile-index byte lists** — bank cell indices (`0x00`–`0xFE`; `0xFF` = skip). `0x08`–`0x14` = wall face + floor/ceiling perspective ramp, `0x16`–`0x19` = junction edges, `0x1E` = fill, `0x00` / `0x4B`–`0x7F` / `0xC0`–`0xCC` = near-black shadow / edge cells. The `0x1E8` sub-region is a **4-column × `0xCC`-byte strip table** (see below). |
-| `0x694`–`0x1691` | **the 8×8 tile bitmap bank** — 255 cells × 16 B, CGA 2 bpp, **8 sequential words per cell** which `sub_1FED8` writes to screen rows 0,2,4,6,1,3,5,7 (so read-back order is `w0,w4,w1,w5,w2,w6,w3,w7`). Cell 0 = blank. |
+| `0x000`–`0x01F` | header. **`word[0] = 0x0E94`** = the tile bank's array offset (`drawTileRun`'s `srcBase`) = payload `0x694`. Rest zero. |
+| `0x020`–`0x10F` | **the projection record table** — exactly 15 records (see below), walked in sequence by a cursor `renderDungeonView` steps `0xA / 7 / 7` words per depth band. `240` B = `5` depths × (`10` + `7` + `7`) words. |
+| `0x110`–`0x1BB` | wall-band tile lists — the ceiling / floor / front-wall cell-index bytes (more live at `0x4EC`–`0x693`). |
+| `0x1BC`–`0x4EB` | **the strip table** — `4` columns × `0xCC` B = 4 render variants of the corridor side walls. Within a column the 10 side records' strips pack **contiguously**, each `ncols·nbands` bytes (`X` = `0x1BC`, `+0x2D, +0x2D, +0x1E, +0x1E, +0x10, +0x10, +6, +6, +5`). |
+| `0x4EC`–`0x693` | more wall-band tile lists (front-wall blocks). |
+| `0x694`–`0x1691` | **the 8×8 tile bitmap bank** — 255 cells × 16 B, CGA 2 bpp, **8 words per cell** which `sub_1FED8` writes to screen rows 0,2,4,6,1,3,5,7 (read-back order `w0,w4,w1,w5,w2,w6,w3,w7`). Cell 0 = blank. |
 
-`blitViewCell(srcBankBase, tileIdxListPtr, slotIdx)` reads `(videoOff,
-packedDims)` from `dungeonMapArray[slotIdx]` word-indexed, then draws
-`nbands` rows: row `r` = `drawTileRun(srcBankBase, seg, videoOff +
-r·0x140, tileIdxListPtr + r·ncols, ncols)`. `renderDungeonView` threads
-a cursor (`[bp-14h]`, init `0x410` words = payload `0x20`, stepped
-`0xA/7/7` per band) through the record table, one record per wall band.
+**The record table.** Per depth (0 = adjacent … 4 = farthest):
 
-**The `0x1E8` strip table.** A `4`-column grid, each column `0xCC`
-bytes = one **lighting / distance level** of the side-wall geometry
-(col 0 fully lit, col 1 shadowed, col 2 lit, col 3 darkest — col 3 uses
-the `0xB0`–`0xCC` cell set). Within a column, the **9 side-wall strips**
-(2 per depth for depths 0-3 = left + right wall, 1 for depth 4) are
-packed **contiguously starting at byte 1** — byte 0 of each `0xCC` block
-is unused pad (the "recurring `4D 41 28`" is that pad byte followed by
-the first wall's top-corner cells, *not* a header). A side-wall
-projection record carries the pointer quad `X / X+0xCC / X+0x198 /
-X+0x264` = the same wall at the 4 levels; `X` advances by exactly
-`ncols·nbands` per wall (`0x1E9, +0x2D, +0x1E, +0x1E, +0x10, …`) and
-`packedDims` shrinks `3×15` → `1×5` with depth.
+- **a wall-band record — 10 words** = three `(videoOff, packedDims, tileListPtr)` triples + 1 pad word. `packedDims = (ncols<<8) | nbands`. `drawViewWallBandNear` blits all three:
+  - triple 0 = the **ceiling** strip (wide + short: `23×2` near → `5×0` far),
+  - triple 1 = the **floor** strip (`17×2` → `3×0`, mostly the dark `0x4A`–`0x4C` cells),
+  - triple 2 = the **front-wall** block — the wall the player faces head-on (`17×13` near → `3×5` far).
+- **a left-side record and a right-side record — 7 words each** = `(videoOff, packedDims, p0, p1, p2, p3, padWord)`. `p0..p3` = the same corridor side wall in the 4 strip-table columns (deltas `0xCC`); `packedDims` shrinks `3×15` → `1×5` with depth. `drawViewFloorCeiling` picks **`p0` (col 0)** when that side is a solid wall, **`p1` (col 1)** when it's an open branching passage. `padWord` = `0x28·(depth+1)` (a screen-Y / horizon constant).
 
-**A strip is a flat `ncols × nbands` row-major array of bank cell
-indices** (`0xFF` = skip) fed straight to `drawTileRun` — **there is no
-marker layer.** The bytes that look like delimiters (`0x00`, `0x4B`–`0x56`,
-`0x70`, `0x7E`–`0x7F`, `0xC0`–`0xCC`) are just the near-black shadow/edge
-bank cells every wall places along its floor line, ceiling line and near
-vertical edge (`0x00` = the fully blank cell). Rendered, each strip is a
-coherent dithered stone wall panel with a dark base.
+**Every tile list — wall-band strip or side strip — is a flat `ncols ×
+nbands` row-major array of bank cell indices** (`0xFF` = skip) fed
+straight to `drawTileRun`. **There is no marker / display-list layer.**
+The bytes that look like delimiters (`0x00`, `0x4B`–`0x56`, `0x70`,
+`0x7E`–`0x7F`, `0xC0`–`0xCC`) are just the near-black shadow / edge bank
+cells every surface uses along its boundaries. Rendered, each strip is a
+coherent dithered stone panel with a dark edge; composited they make the
+first-person corridor view (arched dithered ceiling line, ragged floor
+line).
 
-**Still open:** which record maps to which on-screen wall (the cursor
-step constants vs the `viewProjTable` `ds:1C4E` math), and the
-`7`-pointer floor/ceiling records.
+**Still open:** `drawViewWallBandMid` / `drawViewWallBandFar` (the
+blocked-view fallback) index the same records at other word offsets.
 
 ### The dungeon-view sprite & tile rendering model — **decoded 2026-08-31**
 

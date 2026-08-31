@@ -601,14 +601,18 @@ reimplementation.
         first-person wall/floor/ceiling graphics; loads into
         `dungeonMapArray` (`ds:1E2A`) at array byte `0x800`, contiguous
         with `DUNM*`. `word[0]` = the tile bank's array offset
-        (`0x0E94` → payload `0x694`). `0x040`–`~0x110` = the projection
-        record table (`dw screenBase ; dw videoOff ; dw
-        (ncols<<8)|nbands ; dw ptrs`, ~3 per view depth; dims shrink
-        `3×15` → `1×5` with distance). `~0x110`–`0x693` = the tile-index
-        byte lists (one cell # per 8×8, `0xFF` = skip). `0x694`–end =
-        255 × 16-B CGA cells. `drawTileRun` (`rtm_FE2A`) + `blitViewCell`
-        fully decoded. Open: which record → which on-screen wall, and a
-        record's pointer-list fields.
+        (`0x0E94` → payload `0x694`). `0x020`–`0x10F` = the projection
+        record table = **15 records**, walked by a `0xA/7/7`-word cursor:
+        per depth a 10-word wall-band record (ceiling / floor / front-
+        wall triples) + a 7-word left and 7-word right record (`videoOff,
+        packedDims, p0..p3, pad`; `p0..p3` = the side wall in the 4
+        columns of the `0x1BC` strip table). `packedDims =
+        (ncols<<8)|nbands`, shrinking `3×15` → `1×5`. `0x110`–`0x693` =
+        the tile lists — **every one a flat `ncols×nbands` cell-index
+        array**, `0xFF` = skip, no marker layer. `0x694`–end = 255 ×
+        16-B CGA cells. `drawTileRun` + `blitViewCell` + the record table
+        fully decoded. Open: `drawViewWallBandMid`/`Far` (blocked-view
+        fallback) index the same records at other offsets.
       - `DUNOBJ.BSV` (and `MUSOBJ.BSV` — same container, larger museum
         set, BSAVE `0x1447:0x0DB6`): `decoders/dunobj.py`. `BLOAD`ed into
         `spriteBank` (`ds:1E58`) at **offset 0** (the BSAVE `0x0DB6` is
