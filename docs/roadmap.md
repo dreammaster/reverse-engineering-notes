@@ -597,10 +597,18 @@ reimplementation.
         down/up, `0x10`+ = walls, `0xFF` = rock. Monsters (4 per file)
         recovered too. `decoders/dun_map.py`. (`0x09`/`0x0B`/`0x0C`/
         `0x0E`/`0x0F` "revealed" features not individually confirmed.)
-      - `DUNDATA.BSV` — loads into `dungeonMapArray` (`ds:1E2A`,
-        contiguous with `DUNM*`); the `0x10`–`0x7F` region = wall
-        tile-index lists, rest = the 8×8 tile bank. Sub-offsets need
-        `blitViewCell`'s index math walked with live data.
+      - `DUNDATA.BSV` (2026-08-31, `decoders/dundata.py`) — the
+        first-person wall/floor/ceiling graphics; loads into
+        `dungeonMapArray` (`ds:1E2A`) at array byte `0x800`, contiguous
+        with `DUNM*`. `word[0]` = the tile bank's array offset
+        (`0x0E94` → payload `0x694`). `0x040`–`~0x110` = the projection
+        record table (`dw screenBase ; dw videoOff ; dw
+        (ncols<<8)|nbands ; dw ptrs`, ~3 per view depth; dims shrink
+        `3×15` → `1×5` with distance). `~0x110`–`0x693` = the tile-index
+        byte lists (one cell # per 8×8, `0xFF` = skip). `0x694`–end =
+        255 × 16-B CGA cells. `drawTileRun` (`rtm_FE2A`) + `blitViewCell`
+        fully decoded. Open: which record → which on-screen wall, and a
+        record's pointer-list fields.
       - `DUNOBJ.BSV` (and `MUSOBJ.BSV` — same container, larger museum
         set, BSAVE `0x1447:0x0DB6`): `decoders/dunobj.py`. `BLOAD`ed into
         `spriteBank` (`ds:1E58`) at **offset 0** (the BSAVE `0x0DB6` is
@@ -650,9 +658,9 @@ reimplementation.
         `viewObjectArray[8+slotClass] mod 6`, the frame by depth `P`.
       - `spriteBank` index arithmetic for `DUNMON` is now **resolved
         statically** — `bankBase = 0x1240 + monType·0x49A`, `getArray =
-        bankBase + spriteBank[bankBase + P]`. Still open: `DUNOBJ`
-        region-C mask-cell / `MUSOBJ` bitmap-bank sub-offsets, and
-        `DUNDATA` / `blitViewCell`'s wall-tile index math.
+        bankBase + spriteBank[bankBase + P]`. Still open: `MUSOBJ`
+        bitmap-bank sub-offsets, and which `DUNDATA` projection record
+        maps to which on-screen wall.
 - [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
       map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
       `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records

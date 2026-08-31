@@ -66,7 +66,7 @@ castle/fort layout banks.
 | `OUTDATA.BSV` | 14235 | `OUT` | **structure mapped** — the shared overworld graphics + tables. BSAVE → `0x86AE:0x2B22`, i.e. **contiguous with the `OUTM*` layers in one array** (bound at `ds:1E2A`, exactly parallel to the dungeon's `DUNM* + DUNDATA`). See the dedicated section below. |
 | `OUTOBJ.BSV` | 4395 | `OUT` | overworld object sprites — BSAVE → `0x13A8:0x0DB6` into `spriteBank` (same `0x0DB6` offset as `DUNOBJ` / `MUSOBJ`). Not separately decoded (same shape as `DUNOBJ`). |
 | `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
-| `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
+| `DUNDATA.BSV` | 5785 | `DUN` | **decoded** — the first-person view's wall/floor/ceiling graphics. BSAVE → `0x2C07:0x173C` = **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), one array. 5778-B payload: `word[0]` = the tile bank's array offset (`0x0E94` → payload `0x694`); `0x040`–`~0x110` = the projection record table (`screenBase ; videoOff ; (ncols<<8)|nbands ; ptrs`, ~3 per depth); `~0x110`–`0x693` = the tile-index byte lists (cell # per 8×8, `0xFF` = skip); `0x694`–end = 255 × 16-B CGA cells. See the dungeon section. |
 | `DUNOBJ.BSV` | 9351 | `DUN` | **decoded** — dungeon objects + sprites. BSAVE → `0x140D:0x0DB6` into `spriteBank` (shared with `OUTOBJ`/`MUSOBJ`). ~5.6 KB real + zero pad: object records, then the `(maskSrc, screenDest)` pair table fed to `andSpriteMaskCell`, then the mask cells + `basPutSprite` image arrays. See the dungeon section below. |
 | `DUNMONA.BSV` / `DUNMONB.BSV` | 14143 | `DUN` | **fully decoded** — dungeon monster sprites (`A` = levels 0–3, `B` = 4–7). BSAVE → `spriteBank` word `0x1240`. 14136-B payload = **exactly 6 blocks × 2356 B** (one per monster-type slot). Each block = 6-word frame-offset table (`9/725/973/1083/1148/1178`) + 3 zero words + **5 back-to-back MS-BASIC `PUT` GET-arrays** for view-depths P0…P4 (82×68 / 48×41 / 32×27 / 24×21 / 16×14, linear 2 bpp). See the dungeon section below. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | `MUS` (+ `CELDRV`) | **structure mapped** — the **museum exhibit "display" illustration screens** (~18). `MUS.EXE` builds the name `"DIS"+n+".BSV"` to show the picture of what's *on display in this museum* for an exhibit; `DIS9.BSV` doubles as frame 4 of `CELDRV`'s endgame cinematic. BSAVE → `0x13C2:0x0E4E`. **Byte-for-byte the same container as `CEL*.BSV`**: 8-word header `{id, 0x10, W_px, H_px, 0x20, 0x0A, 0x10/0x30, 0x220}` (the full-screen ones, incl. `DIS9`/`CEL0`, are `0x110`×`0x78` = 272×120), a relocatable strip-pointer table from `~0x100` (dest offset steps `0x140` per 4-scanline band, `+2` per 8-px column), then RLE-packed CGA 2 bpp strips. See the `CEL*.BSV` section. |
@@ -215,15 +215,27 @@ display-case portals `enterExhibit` routes on (to `TWNDR` / `DUN` /
 
 `DUNDATA.BSV` `BSAVE`s to `0x2C07:0x173C` — exactly `0x800` bytes after
 the map, so `DUNM* + DUNDATA` load into **one contiguous DGROUP array**
-(`dungeonMapArray`, `ds:1E2A`). `DUN.EXE`'s `blitViewCell` reads
-wall/floor panels from this array: `dungeonMapArray[idx]` gives a base
-offset + a `(rowCount << 8 | colCount)` word, and the panel is drawn as
-a stack of horizontal 8×8-cell runs (see the rendering-model section
-below). So `DUNDATA`'s ~4.5 KB `0x10`–`0x7F` region (`~0x500`–`0x167F`)
-is the wall/corridor **tile-index lists** (one byte per 8×8 cell,
-`0xFF` = transparent), and the 8×8 **tile bank** (16-byte
-field-interleaved cells) is the rest of the payload. Exact sub-offsets
-still need `blitViewCell`'s index math walked with live data.
+(`dungeonMapArray`, `ds:1E2A`) at array byte `0x800`.
+
+Payload layout (5778 B, decoded 2026-08-31 — `decoders/dundata.py`):
+
+| span | contents |
+|---|---|
+| `0x000`–`0x03F` | header. **`word[0] = 0x0E94`** = the *array* byte offset of the tile bank (`DUN.EXE` passes it straight to `drawTileRun` as `srcBase`) — array `0x800` + payload `0x694`. Bytes `0x20`–`0x3F` = a pre-table lookup row. |
+| `0x040`–`~0x110` | **the projection record table** — ~13 variable-length records, ~3 per view depth (left wall / floor-ceiling strip / right wall). Each: `dw screenBase` (`0x28·(depth+1)` = `0x28/0x50/0x78/0xA0/0xC8`) `; dw videoOff ; dw packedDims ; dw <pointer words>`. **`packedDims = (ncols<<8) | nbands`**, both shrinking with depth (`0x030F` = 3×15 near → `0x0105` = 1×5 far). Side-wall records carry 4 bank pointers at a `0xCC` stride; floor/ceiling records carry 7. |
+| `~0x110`–`0x693` | **the tile-index byte lists** — flat, row-major arrays of bank cell indices (`0x00`–`0xFE`; `0xFF` = skip). Dominant `0x10`–`0x1F` = wall-surface cells, `0x00`–`0x0F` / `0x40`–`0x5F` = edge / floor / ceiling cells. A `4D 41 28 72 53` sub-header recurs at `0x1E8/0x2B4/0x380/0x44C`. |
+| `0x694`–`0x1691` | **the 8×8 tile bitmap bank** — 255 cells × 16 B, CGA 2 bpp, **8 sequential words per cell** which `sub_1FED8` writes to screen rows 0,2,4,6,1,3,5,7 (so read-back order is `w0,w4,w1,w5,w2,w6,w3,w7`). Cell 0 = blank. |
+
+`blitViewCell(srcBankBase, tileIdxListPtr, slotIdx)` reads `(videoOff,
+packedDims)` from `dungeonMapArray[slotIdx]` word-indexed, then draws
+`nbands` rows: row `r` = `drawTileRun(srcBankBase, seg, videoOff +
+r·0x140, tileIdxListPtr + r·ncols, ncols)`. `renderDungeonView` threads
+a cursor (`[bp-14h]`, init `0x410` words = payload `0x20`, stepped
+`0xA/7/7` per band) through the record table, one record per wall band.
+
+**Still open:** which record maps to which on-screen wall (the cursor
+step constants vs the `viewProjTable` `ds:1C4E` math), and the meaning
+of a record's pointer list.
 
 ### The dungeon-view sprite & tile rendering model — **decoded 2026-08-31**
 

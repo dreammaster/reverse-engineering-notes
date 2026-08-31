@@ -731,14 +731,27 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `0x2C07:0x0F3C`, 2048-B payload = **8 levels x 16x16 tiles, 1 B/tile**
   (`0x00` floor / `0xFF` rock / `0x01`-`0x0F` features). `DUN.EXE` binds
   the array at `ds:1E2A` and indexes `base + level*0x100`.
-  `decoders/dun_map.py` prints the mazes. `DUNDATA.BSV` BSAVEs to
-  `0x2C07:0x173C` -- `0x800` bytes after the map, i.e. contiguous -- its
-  5778-B payload = header word + record/table area (`~0..0x4FF`) + a
-  ~4.5 KB `0x10`-`0x7F` byte region (`~0x500..0x167F`, likely the
-  first-person view's wall tile-graphic bank) + an 18-B tail; the field
-  layout is still open. `DUNOBJ.BSV` / `DUNMON*.BSV` load to a different
-  segment (`0x140D`). (BLOAD site now decoded -- see `loadDungeonData`,
-  2026-08-31.)
+  `decoders/dun_map.py` prints the mazes. `DUNOBJ.BSV` / `DUNMON*.BSV`
+  load to a different segment (`0x140D`). (BLOAD site now decoded -- see
+  `loadDungeonData`, 2026-08-31.)
+- **2026-08-31** -- Decoded `DUNDATA.BSV` (`decoders/dundata.py`) -- the
+  first-person view's wall/floor/ceiling graphics. BSAVE to
+  `0x2C07:0x173C` = `0x800` after the map, one contiguous array.
+  5778-B payload: `word[0] = 0x0E94` = the tile bank's *array* offset
+  (payload `0x694`), passed straight to `drawTileRun` as `srcBase`;
+  `0x040`-`~0x110` = the **projection record table** (~13 records, ~3
+  per view depth: left wall / floor-ceiling / right wall). Each record
+  is `dw screenBase (0x28*(depth+1)) ; dw videoOff ; dw packedDims ;
+  dw <pointers>`, `packedDims = (ncols<<8)|nbands` shrinking with depth
+  (`0x030F` = 3x15 near -> `0x0105` = 1x5 far -- exactly `blitViewCell`'s
+  dims word). `~0x110`-`0x693` = the **tile-index byte lists** (one bank
+  cell # per 8x8, `0xFF` = skip; `0x10`-`0x1F` wall cells,
+  `0x00`-`0x0F` / `0x40`-`0x5F` edge/floor/ceiling). `0x694`-end = 255
+  16-B CGA cells (`sub_1FED8` maps the 8 words to screen rows
+  0,2,4,6,1,3,5,7; cell 0 blank). `renderDungeonView` threads a cursor
+  through the record table (one record per wall band).
+  Open: which record -> which on-screen wall, and a record's pointer
+  list.
 - **2026-08-31** -- Mapped `DUNOBJ.BSV`'s region structure (dungeon
   objects + sprites). BSAVE to `0x140D:0x0DB6` -- the same DGROUP offset
   `OUTOBJ.BSV` / `MUSOBJ.BSV` load at, so there's one shared object
