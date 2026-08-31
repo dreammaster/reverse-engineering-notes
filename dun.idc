@@ -898,7 +898,25 @@ static Bytes_0(void) {
 	create_insn	(0X12E85);
 	create_insn	(0X12E98);
 	create_insn	(0X12E9B);
+	set_name	(0X12E9B,	"loadDungeonData");
 	create_insn	(0X12EA3);
+	create_insn	(0X12EB6);
+	create_insn	(0X12EC3);
+	create_insn	(0X12ED1);
+	create_insn	(0X12ED7);
+	create_insn	(0X12EE1);
+	create_insn	(0X12EEB);
+	create_insn	(0X12EF4);
+	create_insn	(0X12F11);
+	create_insn	(0X12F1E);
+	create_insn	(0X12F27);
+	create_insn	(0X12F45);
+	create_insn	(0X12F52);
+	create_insn	(0X12F65);
+	create_insn	(0X12F6E);
+	create_insn	(0X12F8B);
+	create_insn	(0X12F94);
+	create_insn	(0X12F99);
 	create_insn	(0X12F9C);
 	create_insn	(0X12F9F);
 	set_cmt	(0X12FA7,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
@@ -2572,12 +2590,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X14750);
 	op_hex		(x,	0);
 	set_name	(0X14750,	"rt_FF4A");
-	create_byte	(0X14752);
-	make_array	(0X14752,	0X2);
-	set_cmt	(0X14754,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	create_insn	(x=0X14754);
-	op_hex		(x,	0);
-	set_name	(0X14754,	"rt_FF4B");
 }
 
 //------------------------------------------------------------------------
@@ -2587,6 +2599,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_byte	(0X14752);
+	make_array	(0X14752,	0X2);
+	set_cmt	(0X14754,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	create_insn	(x=0X14754);
+	op_hex		(x,	0);
+	set_name	(0X14754,	"rt_FF4B");
 	create_byte	(0X14756);
 	make_array	(0X14756,	0X2);
 	set_cmt	(0X14758,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2684,7 +2702,7 @@ static Bytes_1(void) {
 	set_name	(0X14792,	"rt_10");
 	create_byte	(0X14794);
 	set_cmt	(0X14795,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X14795,	"-> rtm_60  (leglib seg003:0x1dbc8)",	1);
+	set_cmt	(0X14795,	"-> basPutSpriteXor  (leglib seg003:0x1dbc8)",	1);
 	create_insn	(x=0X14795);
 	op_hex		(x,	0);
 	set_name	(0X14795,	"rt_60");
@@ -2862,7 +2880,7 @@ static Bytes_1(void) {
 	set_name	(0X147F0,	"rt_01");
 	create_byte	(0X147F2);
 	set_cmt	(0X147F3,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X147F3,	"-> rtm_02  (leglib seg003:0x152d6)",	1);
+	set_cmt	(0X147F3,	"-> basBloadRaw  (leglib seg003:0x152d6)",	1);
 	create_insn	(x=0X147F3);
 	op_hex		(x,	0);
 	set_name	(0X147F3,	"rt_02");
@@ -2886,6 +2904,7 @@ static Bytes_1(void) {
 	set_name	(0X147FC,	"rt_0C");
 	create_byte	(0X147FE);
 	set_cmt	(0X147FF,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X147FF,	"rtm_FE07: BLOAD -- read a BSAVE image ([FD][seg:2][off:2][len:2] header + payload) via rtm_02 into the target array. args (&name$, &destOffset).",	1);
 	create_insn	(x=0X147FF);
 	op_hex		(x,	0);
 	set_name	(0X147FF,	"rt_11");
@@ -3534,9 +3553,10 @@ static Bytes_1(void) {
 	create_byte	(0X14952);
 	make_array	(0X14952,	0X2);
 	set_cmt	(0X14954,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X14954,	"rtm_FE07: BLOAD -- read a BSAVE image ([FD][seg:2][off:2][len:2] header + payload) via rtm_02 into the array pushed by rtm_11. args (&name$, &destOffset).",	1);
 	create_insn	(x=0X14954);
 	op_hex		(x,	0);
-	set_name	(0X14954,	"rt_FE07");
+	set_name	(0X14954,	"rt_bload");
 	create_byte	(0X14956);
 	make_array	(0X14956,	0X2);
 	set_cmt	(0X14958,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -4142,9 +4162,10 @@ static Bytes_1(void) {
 	create_byte	(0X14AC2);
 	make_array	(0X14AC2,	0X2);
 	set_cmt	(0X14AC4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X14AC4,	"rtm_FE63: resolve a game data-file's path (which drive, per DRCONFIG.DAT) and OPEN it. Called before every BLOAD / random GET/PUT. arg &name$.",	1);
 	create_insn	(x=0X14AC4);
 	op_hex		(x,	0);
-	set_name	(0X14AC4,	"rt_FE63");
+	set_name	(0X14AC4,	"rt_openGameFile");
 	create_byte	(0X14AC6);
 	make_array	(0X14AC6,	0X2);
 	set_cmt	(0X14AC8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -4780,8 +4801,9 @@ static Functions_0(void) {
 	set_func_flags(0X12E52,0x1403);
 	add_func    (0X12E7D,0X12E9B);
 	set_func_flags(0X12E7D,0x1403);
-	add_func    (0X12E9B,0X12F9F);
+	add_func    (0X12E9B,0X12F9C);
 	set_func_flags(0X12E9B,0x1403);
+	set_func_cmt(0X12E9B,	"Per-dungeon data load (called from processTileFeature on level entry). For each of DUNM<dungeonNo>.BSV (name built from ds:1ACAh via STR$ + trim + concat), DUNDATA.BSV and DUNOBJ.BSV: rtm_11 pushes the target BASIC array's descriptor, rtm_FE63(&name$) resolves the game-disk path and opens the file, rtm_FE07(&name$, &destOff) BLOADs it (reads the 7-byte [FD][seg][off][len] header then the payload). DUNM<n> -> dungeonMapArray (ds:1E2Ah) offset 0; DUNDATA.BSV -> the same array +0x800; DUNOBJ.BSV -> spriteBank (ds:1E58h). No pointer-table relocation happens here.", 1);
 	add_func    (0X12F9F,0X1305C);
 	set_func_flags(0X12F9F,0x1403);
 	add_func    (0X1305C,0X1320C);
@@ -4948,7 +4970,7 @@ static Functions_0(void) {
 	set_func_cmt(0X1476C,	"-> rtm_FF51  (leglib seg004:0x21b40)", 1);
 	add_func    (0X14798,0X1479B);
 	set_func_flags(0X14798,0x1401);
-	set_func_cmt(0X14798,	"-> rtm_61  (leglib seg003:0x1dc84)", 1);
+	set_func_cmt(0X14798,	"-> basPutSprite  (leglib seg003:0x1dc84)", 1);
 	add_func    (0X1479E,0X147A1);
 	set_func_flags(0X1479E,0x1401);
 	set_func_cmt(0X1479E,	"-> rtm_7A  (leglib seg003:0x1a853)", 1);
@@ -4978,7 +5000,7 @@ static Functions_0(void) {
 	set_func_cmt(0X1493C,	"-> rtm_FE01  (leglib seg008:0x27c25)", 1);
 	add_func    (0X14954,0X14958);
 	set_func_flags(0X14954,0x1401);
-	set_func_cmt(0X14954,	"-> rtm_FE07  (leglib seg007:0x24fbf)", 1);
+	set_func_cmt(0X14954,	"-> basBload  (leglib seg007:0x24fbf)", 1);
 	add_func    (0X14958,0X1495C);
 	set_func_flags(0X14958,0x1401);
 	set_func_cmt(0X14958,	"-> rtm_FE08  (leglib seg007:0x24a60)", 1);
@@ -5008,7 +5030,7 @@ static Functions_0(void) {
 	set_func_cmt(0X149DC,	"-> rtm_FE29  (leglib seg007:0x27391)", 1);
 	add_func    (0X149E0,0X149E4);
 	set_func_flags(0X149E0,0x1401);
-	set_func_cmt(0X149E0,	"-> rtm_FE2A  (leglib seg004:0x1fd3f)", 1);
+	set_func_cmt(0X149E0,	"-> drawTileRun  (leglib seg004:0x1fd3f)", 1);
 	add_func    (0X149E4,0X149E8);
 	set_func_flags(0X149E4,0x1401);
 	set_func_cmt(0X149E4,	"-> rtm_FE2B  (leglib seg008:0x289a9)", 1);
@@ -5017,7 +5039,7 @@ static Functions_0(void) {
 	set_func_cmt(0X149E8,	"-> rtm_FE2C  (leglib seg007:0x24fe3)", 1);
 	add_func    (0X149F0,0X149F4);
 	set_func_flags(0X149F0,0x1401);
-	set_func_cmt(0X149F0,	"-> rtm_FE2E  (leglib seg004:0x1fda1)", 1);
+	set_func_cmt(0X149F0,	"-> andSpriteMaskCell  (leglib seg004:0x1fda1)", 1);
 	add_func    (0X14A18,0X14A1C);
 	set_func_flags(0X14A18,0x1401);
 	set_func_cmt(0X14A18,	"-> rtm_FE38  (leglib seg007:0x268f8)", 1);
@@ -5086,7 +5108,7 @@ static Functions_0(void) {
 	set_func_cmt(0X14AB4,	"-> rtm_FE5F  (leglib seg004:0x1fc26)", 1);
 	add_func    (0X14AC4,0X14AC8);
 	set_func_flags(0X14AC4,0x1401);
-	set_func_cmt(0X14AC4,	"-> rtm_FE63  (leglib seg007:0x24a83)", 1);
+	set_func_cmt(0X14AC4,	"-> resolveAndOpenGameFile  (leglib seg007:0x24a83)", 1);
 	add_func    (0X14AE8,0X14AEC);
 	set_func_flags(0X14AE8,0x1401);
 	set_func_cmt(0X14AE8,	"-> rtm_FE6C  (leglib seg007:0x277c8)", 1);
@@ -5243,6 +5265,10 @@ static SegRegs(void) {
 	split_sreg_range(0X12DB5,"es",BADSEL,3);
 	split_sreg_range(0X12DCB,"es",BADSEL,3);
 	split_sreg_range(0X12EAE,"es",BADSEL,3);
+	split_sreg_range(0X12EFF,"es",BADSEL,3);
+	split_sreg_range(0X12F33,"es",BADSEL,3);
+	split_sreg_range(0X12F5D,"es",BADSEL,3);
+	split_sreg_range(0X12F79,"es",BADSEL,3);
 	split_sreg_range(0X1306F,"es",BADSEL,3);
 	split_sreg_range(0X130A1,"es",BADSEL,3);
 	split_sreg_range(0X130B7,"es",BADSEL,3);

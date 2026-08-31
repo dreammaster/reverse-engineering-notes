@@ -1782,7 +1782,7 @@ static Bytes_0(void) {
 	create_insn	(0X152D3);
 	set_cmt	(0X152D6,	"int 3Fh run-time entry 02",	1);
 	create_insn	(0X152D6);
-	set_name	(0X152D6,	"rtm_02");
+	set_name	(0X152D6,	"basBloadRaw");
 	create_insn	(x=0X152DC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X15304);
@@ -9499,7 +9499,7 @@ static Bytes_2(void) {
 	set_name	(0X24A60,	"rtm_FE08");
 	set_cmt	(0X24A83,	"int 3Fh run-time entry FE63",	1);
 	create_insn	(0X24A83);
-	set_name	(0X24A83,	"rtm_FE63");
+	set_name	(0X24A83,	"resolveAndOpenGameFile");
 	create_insn	(0X24AAC);
 	create_insn	(0X24AC2);
 	create_insn	(0X24B16);
@@ -9553,7 +9553,7 @@ static Bytes_2(void) {
 	set_name	(0X24F84,	"rtm_FE57");
 	set_cmt	(0X24FBF,	"int 3Fh run-time entry FE07",	1);
 	create_insn	(0X24FBF);
-	set_name	(0X24FBF,	"rtm_FE07");
+	set_name	(0X24FBF,	"basBload");
 	set_cmt	(0X24FE3,	"int 3Fh run-time entry FE2C",	1);
 	create_insn	(0X24FE3);
 	set_name	(0X24FE3,	"rtm_FE2C");
@@ -10768,6 +10768,7 @@ static Functions_0(void) {
 	set_frame_size(0X1527E, 0, 2, 0X6);
 	add_func    (0X152D6,0X15320);
 	set_func_flags(0X152D6,0x5412);
+	set_func_cmt(0X152D6,	"BLOAD core: OPEN, read `[FD][seg][off][len]` (7 bytes) into ds:651h, then read `len` bytes to the caller's dest (arg_0!=0) or to the header's own seg:off. args (useOverride, destOff, seg).", 1);
 	set_frame_size(0X152D6, 0, 2, 0X6);
 	add_func    (0X15320,0X1533F);
 	set_func_flags(0X15320,0x5400);
@@ -13218,6 +13219,10 @@ static Functions_0(void) {
 	add_func    (0X21E57,0X21E5D);
 	set_func_flags(0X21E57,0x5400);
 	set_frame_size(0X21E57, 0, 0, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X21EA9,0X21F8E);
 	set_func_flags(0X21EA9,0x5400);
 	set_frame_size(0X21EA9, 0, 0, 0);
@@ -13229,10 +13234,6 @@ static Functions_0(void) {
 	add_func    (0X21FE8,0X2204E);
 	set_func_flags(0X21FE8,0x5400);
 	set_frame_size(0X21FE8, 0, 0, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X2204E,0X22064);
 	set_func_flags(0X2204E,0x5400);
 	set_frame_size(0X2204E, 0X6, 0, 0);
@@ -13542,12 +13543,14 @@ static Functions_1(void) {
 	set_frame_size(0X24A60, 0, 0, 0X2);
 	add_func    (0X24A83,0X24F81);
 	set_func_flags(0X24A83,0x5402);
+	set_func_cmt(0X24A83,	"resolve a game data-file's path -- which drive holds it, per DRCONFIG.DAT -- and OPEN it. Called before every BLOAD and before random-file GET/PUT (dun's loadDungeonData, saver's readCharDat / saveRosterToDisk). arg &name$.", 1);
 	set_frame_size(0X24A83, 0, 0, 0X2);
 	add_func    (0X24F84,0X24FBC);
 	set_func_flags(0X24F84,0x5402);
 	set_frame_size(0X24F84, 0, 0, 0X8);
 	add_func    (0X24FBF,0X24FE0);
 	set_func_flags(0X24FBF,0x5402);
+	set_func_cmt(0X24FBF,	"the BASIC `BLOAD name$, offset` statement: thin wrapper over rtm_02 -- read the 7-byte `[FD][seg:2][off:2][len:2]` BSAVE header then the payload, into the target array/segment. args (&name$, &destOffset). dun's loadDungeonData uses it for DUNM*/DUNDATA/DUNOBJ; celdrv for the CEL/DIS frames.", 1);
 	set_frame_size(0X24FBF, 0, 0, 0X4);
 	add_func    (0X24FE3,0X2502A);
 	set_func_flags(0X24FE3,0x5402);

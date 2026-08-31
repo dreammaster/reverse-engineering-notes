@@ -8535,7 +8535,7 @@ rtm_11          endp
                 dd rtm_FE04
                 dd rtm_FE05
                 dd rtm_FE06
-                dd rtm_FE07
+                dd basBload             ; the BASIC `BLOAD name$, offset` statement: thin wrapper over rtm_02 -- read the 7-byte `[FD][seg:2][off:2][len:2]` BSAVE header then the payload, into the target array/segment. args (&name$, &destOffset). dun's loadDungeonData uses it for DUNM*/DUNDATA/DUNOBJ; celdrv for the CEL/DIS frames.
                 dd rtm_FE08
                 dd rtm_FE09
                 dd rtm_FE0A
@@ -8700,7 +8700,7 @@ loc_12CC1:                              ; CODE XREF: sub_16E0E-417E↑j
                 dd rtm_FE60
                 dd rtm_FE61
                 dd rtm_FE62
-                dd rtm_FE63
+                dd resolveAndOpenGameFile ; resolve a game data-file's path -- which drive holds it, per DRCONFIG.DAT -- and OPEN it. Called before every BLOAD and before random-file GET/PUT (dun's loadDungeonData, saver's readCharDat / saveRosterToDisk). arg &name$.
                 dd rtm_FE64
                 dd rtm_FE65
                 dd rtm_FE66
@@ -8743,7 +8743,7 @@ basProcExit2    endp ; sp-analysis failed
 ; first half of a proc's outer exit wrapper (clears ds:132h). menu SUB tails are `call basProcExit1 / jmp basProcExit2`. [verify: event/line-trap hook vs. return path]
 ; Attributes: bp-based frame
 
-basProcExit1    proc near               ; CODE XREF: rtm_FE63:loc_24B2E↓P
+basProcExit1    proc near               ; CODE XREF: resolveAndOpenGameFile:loc_24B2E↓P
                 push    bp              ; int 3Fh run-time entry EC
                 mov     bp, sp
                 mov     word ptr ds:132h, 0
@@ -13894,8 +13894,8 @@ loc_14ACC:                              ; CODE XREF: seg003:2036↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14AD0       proc far                ; CODE XREF: rtm_02+1E↓p
-                                        ; rtm_02+3B↓p
+sub_14AD0       proc far                ; CODE XREF: basBloadRaw+1E↓p
+                                        ; basBloadRaw+3B↓p
 
 ; FUNCTION CHUNK AT 0D85 SIZE 0000007F BYTES
 ; FUNCTION CHUNK AT 2019 SIZE 00000005 BYTES
@@ -14896,9 +14896,10 @@ rtm_03          endp ; sp-analysis failed
 
 ; =============== S U B R O U T I N E =======================================
 
+; BLOAD core: OPEN, read `[FD][seg][off][len]` (7 bytes) into ds:651h, then read `len` bytes to the caller's dest (arg_0!=0) or to the header's own seg:off. args (useOverride, destOff, seg).
 ; Attributes: bp-based frame
 
-rtm_02          proc far                ; CODE XREF: rtm_FE07+14↓P
+basBloadRaw     proc far                ; CODE XREF: basBload+14↓P
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -14924,27 +14925,27 @@ arg_4           = word ptr  0Ah
                 mov     bx, [bp+arg_2]
                 mov     dx, ds:101h
 
-loc_15310:                              ; CODE XREF: rtm_02+31↑j
+loc_15310:                              ; CODE XREF: basBloadRaw+31↑j
                 xchg    ax, cx
                 call    near ptr sub_14AD0
 
-loc_15314:                              ; CODE XREF: rtm_02+21↑j
+loc_15314:                              ; CODE XREF: basBloadRaw+21↑j
                 call    sub_1533F
                 jnb     short loc_1531C
                 jmp     near ptr loc_1384D+1
 ; ---------------------------------------------------------------------------
 
-loc_1531C:                              ; CODE XREF: rtm_02+41↑j
+loc_1531C:                              ; CODE XREF: basBloadRaw+41↑j
                 pop     bp
                 retf    6
-rtm_02          endp ; sp-analysis failed
+basBloadRaw     endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_15320       proc near               ; CODE XREF: rtm_03+2D↑p
-                                        ; rtm_02+13↑p
+                                        ; basBloadRaw+13↑p
                 push    si
                 call    sub_143EE
                 jnb     short loc_1532B
@@ -14966,7 +14967,7 @@ sub_15320       endp ; sp-analysis failed
 
 
 sub_1533F       proc near               ; CODE XREF: rtm_03+4E↑p
-                                        ; rtm_02:loc_15314↑p
+                                        ; basBloadRaw:loc_15314↑p
                 pushf
                 xor     ax, ax
                 push    ax
@@ -25196,8 +25197,8 @@ loc_19D00:                              ; CODE XREF: sub_19D7C:loc_19D89↓j
 
 ; Attributes: bp-based frame
 
-rtm_DE          proc far                ; CODE XREF: rtm_FE63+3AE↓P
-                                        ; rtm_FE63+3D5↓P
+rtm_DE          proc far                ; CODE XREF: resolveAndOpenGameFile+3AE↓P
+                                        ; resolveAndOpenGameFile+3D5↓P
                 push    bp              ; int 3Fh run-time entry DE
                 mov     bp, sp
                 push    si
@@ -28065,14 +28066,14 @@ rtm_91:                                 ; DATA XREF: seg007:038B↓o
                 jmp     short loc_1B0DB
 ; ---------------------------------------------------------------------------
 
-rtm_A7:                                 ; CODE XREF: rtm_FE63+4C↓P
-                                        ; rtm_FE63+55↓P ...
+rtm_A7:                                 ; CODE XREF: resolveAndOpenGameFile+4C↓P
+                                        ; resolveAndOpenGameFile+55↓P ...
                 mov     ax, 103h        ; int 3Fh run-time entry A7  [mid-func: verify]
                 jmp     short loc_1B0DB
 ; ---------------------------------------------------------------------------
 
-rtm_98:                                 ; CODE XREF: rtm_FE63+5E↓P
-                                        ; rtm_FE63+67↓P ...
+rtm_98:                                 ; CODE XREF: resolveAndOpenGameFile+5E↓P
+                                        ; resolveAndOpenGameFile+67↓P ...
                 mov     ax, 203h        ; int 3Fh run-time entry 98  [mid-func: verify]
 
 loc_1B0DB:                              ; CODE XREF: rtm_8C+3↑j
@@ -28932,7 +28933,7 @@ loc_1B5A2:                              ; CODE XREF: basStrAssign+9↑j
 ; Attributes: bp-based frame
 
 basStrConcat    proc far                ; CODE XREF: sub_1C440+9↓P
-                                        ; rtm_FE63+34E↓P ...
+                                        ; resolveAndOpenGameFile+34E↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -29003,8 +29004,8 @@ loc_1B5E5:                              ; CODE XREF: basStrConcat+12↑j
 
 ; Attributes: bp-based frame
 
-rtm_FF0A        proc far                ; CODE XREF: rtm_FE63+89↓P
-                                        ; rtm_FE63+9F↓P ...
+rtm_FF0A        proc far                ; CODE XREF: resolveAndOpenGameFile+89↓P
+                                        ; resolveAndOpenGameFile+9F↓P ...
 
 arg_0           = word ptr  6
 arg_2           = word ptr  8
@@ -29061,7 +29062,7 @@ rtm_FF0A        endp
 ; Attributes: bp-based frame
 
 rtm_32          proc far                ; CODE XREF: rtm_62+42↓P
-                                        ; rtm_FE63+344↓P ...
+                                        ; resolveAndOpenGameFile+344↓P ...
 
 arg_0           = word ptr  6
 
@@ -29107,7 +29108,7 @@ rtm_C1          endp
 
 ; Attributes: bp-based frame
 
-rtm_42          proc far                ; CODE XREF: rtm_FE63+D2↓P
+rtm_42          proc far                ; CODE XREF: resolveAndOpenGameFile+D2↓P
                                         ; rtm_FE3D+1BA↓P ...
 
 arg_0           = word ptr  6
@@ -29131,7 +29132,7 @@ rtm_42          endp
 
 ; Attributes: bp-based frame
 
-rtm_30          proc far                ; CODE XREF: rtm_FE63+151↓P
+rtm_30          proc far                ; CODE XREF: resolveAndOpenGameFile+151↓P
                                         ; rtm_FE62+115↓P ...
 
 arg_0           = word ptr  6
@@ -29276,7 +29277,7 @@ rtm_64          endp
 
 ; Attributes: bp-based frame
 
-rtm_6C          proc far                ; CODE XREF: rtm_FE63+D8↓P
+rtm_6C          proc far                ; CODE XREF: resolveAndOpenGameFile+D8↓P
                                         ; rtm_FE62+A0↓P ...
 
 arg_0           = word ptr  6
@@ -29290,7 +29291,7 @@ arg_2           = word ptr  8
                 jmp     short loc_1B714
 ; ---------------------------------------------------------------------------
 
-rtm_B5:                                 ; CODE XREF: rtm_FE63+14B↓P
+rtm_B5:                                 ; CODE XREF: resolveAndOpenGameFile+14B↓P
                                         ; rtm_FE44+19B↓P ...
                 push    bp              ; int 3Fh run-time entry B5  [mid-func: verify]
                 mov     bp, sp
@@ -29518,7 +29519,7 @@ rtm_E2          endp
 ; =============== S U B R O U T I N E =======================================
 
 
-rtm_E0          proc far                ; CODE XREF: rtm_FE63+B↓P
+rtm_E0          proc far                ; CODE XREF: resolveAndOpenGameFile+B↓P
                                         ; rtm_FE49+C0↓P ...
                 mov     ax, 7A61h       ; int 3Fh run-time entry E0
                 jmp     short loc_1B7F3
@@ -29957,7 +29958,7 @@ rtm_C5          endp
 ; Attributes: bp-based frame
 
 basStrClear     proc far                ; CODE XREF: rtm_FF0B+F↓P
-                                        ; rtm_FE63+41E↓P ...
+                                        ; resolveAndOpenGameFile+41E↓P ...
 
 arg_0           = word ptr  6
 
@@ -30562,8 +30563,8 @@ sub_1BC67       endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-rtm_C4          proc far                ; CODE XREF: rtm_FE63+43↓P
-                                        ; rtm_FE63+10C↓P
+rtm_C4          proc far                ; CODE XREF: resolveAndOpenGameFile+43↓P
+                                        ; resolveAndOpenGameFile+10C↓P
                                         ; DATA XREF: ...
 
 arg_0           = word ptr  6
@@ -33319,8 +33320,8 @@ sub_1CBCF       endp
 
 ; Attributes: bp-based frame
 
-rtm_62          proc far                ; CODE XREF: rtm_FE63:loc_24B02↓P
-                                        ; rtm_FE63:loc_24B18↓P ...
+rtm_62          proc far                ; CODE XREF: resolveAndOpenGameFile:loc_24B02↓P
+                                        ; resolveAndOpenGameFile:loc_24B18↓P ...
 
 ; FUNCTION CHUNK AT 0340 SIZE 0000000B BYTES
 
@@ -43998,8 +43999,8 @@ rtm_FE33        endp
 
 ; Attributes: bp-based frame
 
-rtm_FE64        proc far                ; CODE XREF: rtm_FE63+1B8↓P
-                                        ; rtm_FE63+200↓P ...
+rtm_FE64        proc far                ; CODE XREF: resolveAndOpenGameFile+1B8↓P
+                                        ; resolveAndOpenGameFile+200↓P ...
 
 var_s0          = word ptr  0
 
@@ -44056,8 +44057,8 @@ sub_20532       endp
 
 ; Attributes: bp-based frame
 
-rtm_FE66        proc far                ; CODE XREF: rtm_FE63+2D↓P
-                                        ; rtm_FE63+1C1↓P ...
+rtm_FE66        proc far                ; CODE XREF: resolveAndOpenGameFile+2D↓P
+                                        ; resolveAndOpenGameFile+1C1↓P ...
 
 var_s0          = word ptr  0
 
@@ -44129,7 +44130,7 @@ rtm_FE66        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_205C3       proc far                ; CODE XREF: rtm_FE63:loc_24E2C↓P
+sub_205C3       proc far                ; CODE XREF: resolveAndOpenGameFile:loc_24E2C↓P
                 push    ds
                 push    es
                 push    bp
@@ -46246,7 +46247,7 @@ sub_20EE4       endp
 
 ; Attributes: bp-based frame
 
-sub_20F38       proc far                ; CODE XREF: rtm_FE63+49D↓P
+sub_20F38       proc far                ; CODE XREF: resolveAndOpenGameFile+49D↓P
                                         ; rtm_FE28+5F↓P
 
 var_s0          = word ptr  0
@@ -57078,8 +57079,9 @@ rtm_FE08        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; resolve a game data-file's path -- which drive holds it, per DRCONFIG.DAT -- and OPEN it. Called before every BLOAD and before random-file GET/PUT (dun's loadDungeonData, saver's readCharDat / saveRosterToDisk). arg &name$.
 
-rtm_FE63        proc far                ; DATA XREF: seg003:02E8↑o
+resolveAndOpenGameFile proc far         ; DATA XREF: seg003:02E8↑o
                 mov     cx, 40h ; '@'   ; int 3Fh run-time entry FE63
                 call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]
@@ -57094,7 +57096,7 @@ rtm_FE63        proc far                ; DATA XREF: seg003:02E8↑o
                 jmp     loc_24B33
 ; ---------------------------------------------------------------------------
 
-loc_24AAC:                              ; CODE XREF: rtm_FE63+24↑j
+loc_24AAC:                              ; CODE XREF: resolveAndOpenGameFile+24↑j
                 lea     ax, [bp-10h]
                 push    ax
                 call    rtm_FE66
@@ -57105,7 +57107,7 @@ loc_24AAC:                              ; CODE XREF: rtm_FE63+24↑j
                 jmp     loc_24F67
 ; ---------------------------------------------------------------------------
 
-loc_24AC2:                              ; CODE XREF: rtm_FE63+3A↑j
+loc_24AC2:                              ; CODE XREF: resolveAndOpenGameFile+3A↑j
                 mov     ax, 0FFFFh
                 push    ax
                 call    rtm_C4
@@ -57129,7 +57131,7 @@ loc_24AC2:                              ; CODE XREF: rtm_FE63+3A↑j
                 call    rtm_98          ; int 3Fh run-time entry 98  [mid-func: verify]
                 nop
 
-loc_24B02:                              ; CODE XREF: rtm_FE63:loc_24B16↓j
+loc_24B02:                              ; CODE XREF: resolveAndOpenGameFile:loc_24B16↓j
                 call    rtm_62
                 push    ax
                 mov     ax, 1664h
@@ -57139,12 +57141,12 @@ loc_24B02:                              ; CODE XREF: rtm_FE63:loc_24B16↓j
                 jmp     loc_24B18
 ; ---------------------------------------------------------------------------
 
-loc_24B16:                              ; CODE XREF: rtm_FE63+8E↑j
+loc_24B16:                              ; CODE XREF: resolveAndOpenGameFile+8E↑j
                 jmp     short loc_24B02
 ; ---------------------------------------------------------------------------
 
-loc_24B18:                              ; CODE XREF: rtm_FE63+90↑j
-                                        ; rtm_FE63:loc_24B2C↓j
+loc_24B18:                              ; CODE XREF: resolveAndOpenGameFile+90↑j
+                                        ; resolveAndOpenGameFile:loc_24B2C↓j
                 call    rtm_62
                 push    ax
                 mov     ax, 1664h
@@ -57154,24 +57156,24 @@ loc_24B18:                              ; CODE XREF: rtm_FE63+90↑j
                 jmp     loc_24B2E
 ; ---------------------------------------------------------------------------
 
-loc_24B2C:                              ; CODE XREF: rtm_FE63+A4↑j
+loc_24B2C:                              ; CODE XREF: resolveAndOpenGameFile+A4↑j
                 jmp     short loc_24B18
 ; ---------------------------------------------------------------------------
 
-loc_24B2E:                              ; CODE XREF: rtm_FE63+A6↑j
+loc_24B2E:                              ; CODE XREF: resolveAndOpenGameFile+A6↑j
                 call    far ptr basProcExit1 ; first half of a proc's outer exit wrapper (clears ds:132h). menu SUB tails are `call basProcExit1 / jmp basProcExit2`. [verify: event/line-trap hook vs. return path]
 
-loc_24B33:                              ; CODE XREF: rtm_FE63+26↑j
+loc_24B33:                              ; CODE XREF: resolveAndOpenGameFile+26↑j
                 nop
 
-loc_24B34:                              ; CODE XREF: rtm_FE63+FA↓j
+loc_24B34:                              ; CODE XREF: resolveAndOpenGameFile+FA↓j
                 mov     ax, ds:1FE8h
                 cmp     ax, [bp-12h]
                 mov     cx, 0
                 jle     short loc_24B40
                 dec     cx
 
-loc_24B40:                              ; CODE XREF: rtm_FE63+BA↑j
+loc_24B40:                              ; CODE XREF: resolveAndOpenGameFile+BA↑j
                 mov     bx, [bp-12h]
                 shl     bx, 1
                 shl     bx, 1
@@ -57192,28 +57194,28 @@ loc_24B40:                              ; CODE XREF: rtm_FE63+BA↑j
                 jz      short loc_24B70
                 dec     ax
 
-loc_24B70:                              ; CODE XREF: rtm_FE63+EA↑j
+loc_24B70:                              ; CODE XREF: resolveAndOpenGameFile+EA↑j
                 and     ax, [bp-14h]
                 and     ax, ax
                 jnz     short loc_24B7A
                 jmp     loc_24B80
 ; ---------------------------------------------------------------------------
 
-loc_24B7A:                              ; CODE XREF: rtm_FE63+F2↑j
+loc_24B7A:                              ; CODE XREF: resolveAndOpenGameFile+F2↑j
                 inc     word ptr [bp-12h]
                 jmp     short loc_24B34
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_24B80:                              ; CODE XREF: rtm_FE63+F4↑j
+loc_24B80:                              ; CODE XREF: resolveAndOpenGameFile+F4↑j
                 mov     ax, ds:1FE8h
                 cmp     ax, [bp-12h]
                 jz      short loc_24B8B
                 jmp     loc_24BBC
 ; ---------------------------------------------------------------------------
 
-loc_24B8B:                              ; CODE XREF: rtm_FE63+103↑j
+loc_24B8B:                              ; CODE XREF: resolveAndOpenGameFile+103↑j
                 mov     ax, 0FFFFh
                 push    ax
                 call    rtm_C4
@@ -57228,19 +57230,19 @@ loc_24B8B:                              ; CODE XREF: rtm_FE63+103↑j
                 call    rtm_98          ; int 3Fh run-time entry 98  [mid-func: verify]
                 nop
 
-loc_24BB0:                              ; CODE XREF: rtm_FE63:loc_24BBA↓j
+loc_24BB0:                              ; CODE XREF: resolveAndOpenGameFile:loc_24BBA↓j
                 mov     ax, 1
                 and     ax, ax
                 jnz     short loc_24BBA
                 jmp     loc_24BBC
 ; ---------------------------------------------------------------------------
 
-loc_24BBA:                              ; CODE XREF: rtm_FE63+132↑j
+loc_24BBA:                              ; CODE XREF: resolveAndOpenGameFile+132↑j
                 jmp     short loc_24BB0
 ; ---------------------------------------------------------------------------
 
-loc_24BBC:                              ; CODE XREF: rtm_FE63+105↑j
-                                        ; rtm_FE63+134↑j
+loc_24BBC:                              ; CODE XREF: resolveAndOpenGameFile+105↑j
+                                        ; resolveAndOpenGameFile+134↑j
                 mov     bx, [bp-12h]
                 shl     bx, 1
                 shl     bx, 1
@@ -57262,29 +57264,29 @@ loc_24BBC:                              ; CODE XREF: rtm_FE63+105↑j
                 jmp     loc_24C9E
 ; ---------------------------------------------------------------------------
 
-loc_24BEC:                              ; CODE XREF: rtm_FE63+164↑j
+loc_24BEC:                              ; CODE XREF: resolveAndOpenGameFile+164↑j
                 cmp     ax, 3
                 mov     cx, 0
                 jnz     short loc_24BF5
                 dec     cx
 
-loc_24BF5:                              ; CODE XREF: rtm_FE63+16F↑j
+loc_24BF5:                              ; CODE XREF: resolveAndOpenGameFile+16F↑j
                 cmp     word ptr ds:1FEEh, 1
                 mov     ax, 0
                 jnz     short loc_24C00
                 dec     ax
 
-loc_24C00:                              ; CODE XREF: rtm_FE63+17A↑j
+loc_24C00:                              ; CODE XREF: resolveAndOpenGameFile+17A↑j
                 and     ax, cx
                 and     ax, ax
                 jnz     short loc_24C09
                 jmp     loc_24C0E
 ; ---------------------------------------------------------------------------
 
-loc_24C09:                              ; CODE XREF: rtm_FE63+181↑j
+loc_24C09:                              ; CODE XREF: resolveAndOpenGameFile+181↑j
                 mov     word ptr [bp-12h], 2
 
-loc_24C0E:                              ; CODE XREF: rtm_FE63+183↑j
+loc_24C0E:                              ; CODE XREF: resolveAndOpenGameFile+183↑j
                 mov     si, 1F5Eh
                 mov     bx, 2
                 add     bx, [si+0Ah]
@@ -57295,7 +57297,7 @@ loc_24C0E:                              ; CODE XREF: rtm_FE63+183↑j
                 jmp     loc_24C56
 ; ---------------------------------------------------------------------------
 
-loc_24C25:                              ; CODE XREF: rtm_FE63+19D↑j
+loc_24C25:                              ; CODE XREF: resolveAndOpenGameFile+19D↑j
                 mov     si, 1F8Ch
                 mov     bx, 2
                 add     bx, [si+0Ah]
@@ -57315,8 +57317,8 @@ loc_24C25:                              ; CODE XREF: rtm_FE63+19D↑j
                 jmp     loc_24F67
 ; ---------------------------------------------------------------------------
 
-loc_24C56:                              ; CODE XREF: rtm_FE63+19F↑j
-                                        ; rtm_FE63+1CE↑j
+loc_24C56:                              ; CODE XREF: resolveAndOpenGameFile+19F↑j
+                                        ; resolveAndOpenGameFile+1CE↑j
                 mov     si, 1F5Eh
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -57327,7 +57329,7 @@ loc_24C56:                              ; CODE XREF: rtm_FE63+19F↑j
                 jmp     loc_24C9E
 ; ---------------------------------------------------------------------------
 
-loc_24C6D:                              ; CODE XREF: rtm_FE63+1E5↑j
+loc_24C6D:                              ; CODE XREF: resolveAndOpenGameFile+1E5↑j
                 mov     si, 1F8Ch
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -57347,8 +57349,8 @@ loc_24C6D:                              ; CODE XREF: rtm_FE63+1E5↑j
                 jmp     loc_24F67
 ; ---------------------------------------------------------------------------
 
-loc_24C9E:                              ; CODE XREF: rtm_FE63+166↑j
-                                        ; rtm_FE63+1E7↑j ...
+loc_24C9E:                              ; CODE XREF: resolveAndOpenGameFile+166↑j
+                                        ; resolveAndOpenGameFile+1E7↑j ...
                 mov     cx, 4
                 mov     ax, [bp-16h]
                 cwd
@@ -57360,32 +57362,32 @@ loc_24C9E:                              ; CODE XREF: rtm_FE63+166↑j
                 jmp     loc_24CB6
 ; ---------------------------------------------------------------------------
 
-loc_24CB3:                              ; CODE XREF: rtm_FE63+22B↑j
+loc_24CB3:                              ; CODE XREF: resolveAndOpenGameFile+22B↑j
                 mov     [bp-16h], cx
 
-loc_24CB6:                              ; CODE XREF: rtm_FE63+22D↑j
+loc_24CB6:                              ; CODE XREF: resolveAndOpenGameFile+22D↑j
                 cmp     word ptr [bp-16h], 3
                 mov     ax, 0
                 jnz     short loc_24CC0
                 dec     ax
 
-loc_24CC0:                              ; CODE XREF: rtm_FE63+23A↑j
+loc_24CC0:                              ; CODE XREF: resolveAndOpenGameFile+23A↑j
                 cmp     word ptr ds:1FEEh, 1
                 mov     cx, 0
                 jnz     short loc_24CCB
                 dec     cx
 
-loc_24CCB:                              ; CODE XREF: rtm_FE63+245↑j
+loc_24CCB:                              ; CODE XREF: resolveAndOpenGameFile+245↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_24CD4
                 jmp     loc_24CD9
 ; ---------------------------------------------------------------------------
 
-loc_24CD4:                              ; CODE XREF: rtm_FE63+24C↑j
+loc_24CD4:                              ; CODE XREF: resolveAndOpenGameFile+24C↑j
                 mov     word ptr [bp-16h], 2
 
-loc_24CD9:                              ; CODE XREF: rtm_FE63+24E↑j
+loc_24CD9:                              ; CODE XREF: resolveAndOpenGameFile+24E↑j
                 mov     si, 1F5Eh
                 mov     bx, 2
                 add     bx, [si+0Ah]
@@ -57396,7 +57398,7 @@ loc_24CD9:                              ; CODE XREF: rtm_FE63+24E↑j
                 jmp     loc_24D21
 ; ---------------------------------------------------------------------------
 
-loc_24CF0:                              ; CODE XREF: rtm_FE63+268↑j
+loc_24CF0:                              ; CODE XREF: resolveAndOpenGameFile+268↑j
                 mov     si, 1F8Ch
                 mov     bx, 2
                 add     bx, [si+0Ah]
@@ -57416,8 +57418,8 @@ loc_24CF0:                              ; CODE XREF: rtm_FE63+268↑j
                 jmp     loc_24F67
 ; ---------------------------------------------------------------------------
 
-loc_24D21:                              ; CODE XREF: rtm_FE63+26A↑j
-                                        ; rtm_FE63+299↑j
+loc_24D21:                              ; CODE XREF: resolveAndOpenGameFile+26A↑j
+                                        ; resolveAndOpenGameFile+299↑j
                 mov     si, 1F5Eh
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -57428,7 +57430,7 @@ loc_24D21:                              ; CODE XREF: rtm_FE63+26A↑j
                 jmp     loc_24D69
 ; ---------------------------------------------------------------------------
 
-loc_24D38:                              ; CODE XREF: rtm_FE63+2B0↑j
+loc_24D38:                              ; CODE XREF: resolveAndOpenGameFile+2B0↑j
                 mov     si, 1F8Ch
                 mov     bx, 4
                 add     bx, [si+0Ah]
@@ -57448,31 +57450,31 @@ loc_24D38:                              ; CODE XREF: rtm_FE63+2B0↑j
                 jmp     loc_24F67
 ; ---------------------------------------------------------------------------
 
-loc_24D69:                              ; CODE XREF: rtm_FE63+2B2↑j
-                                        ; rtm_FE63+2E1↑j
+loc_24D69:                              ; CODE XREF: resolveAndOpenGameFile+2B2↑j
+                                        ; resolveAndOpenGameFile+2E1↑j
                 mov     word ptr [bp-28h], 1
                 cmp     word ptr [bp-16h], 2
                 mov     ax, 0
                 jnz     short loc_24D78
                 dec     ax
 
-loc_24D78:                              ; CODE XREF: rtm_FE63+2F2↑j
+loc_24D78:                              ; CODE XREF: resolveAndOpenGameFile+2F2↑j
                 cmp     word ptr [bp-16h], 4
                 mov     cx, 0
                 jnz     short loc_24D82
                 dec     cx
 
-loc_24D82:                              ; CODE XREF: rtm_FE63+2FC↑j
+loc_24D82:                              ; CODE XREF: resolveAndOpenGameFile+2FC↑j
                 or      cx, ax
                 and     cx, cx
                 jnz     short loc_24D8B
                 jmp     loc_24D90
 ; ---------------------------------------------------------------------------
 
-loc_24D8B:                              ; CODE XREF: rtm_FE63+303↑j
+loc_24D8B:                              ; CODE XREF: resolveAndOpenGameFile+303↑j
                 mov     word ptr [bp-28h], 2
 
-loc_24D90:                              ; CODE XREF: rtm_FE63+305↑j
+loc_24D90:                              ; CODE XREF: resolveAndOpenGameFile+305↑j
                 mov     bx, [bp-28h]
                 shl     bx, 1
                 mov     si, 1F8Ch
@@ -57523,7 +57525,7 @@ loc_24D90:                              ; CODE XREF: rtm_FE63+305↑j
                 jmp     loc_24E2C
 ; ---------------------------------------------------------------------------
 
-loc_24E16:                              ; CODE XREF: rtm_FE63+38E↑j
+loc_24E16:                              ; CODE XREF: resolveAndOpenGameFile+38E↑j
                 mov     cx, 3
                 sub     cx, [bp-28h]
                 shl     cx, 1
@@ -57533,7 +57535,7 @@ loc_24E16:                              ; CODE XREF: rtm_FE63+38E↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_24E2C:                              ; CODE XREF: rtm_FE63+390↑j
+loc_24E2C:                              ; CODE XREF: resolveAndOpenGameFile+390↑j
                 call    sub_205C3
                 call    rtm_DE
                 mov     bx, ax
@@ -57544,7 +57546,7 @@ loc_24E2C:                              ; CODE XREF: rtm_FE63+390↑j
                 lea     bx, [bp-36h]
                 call    rtm_FF50
 
-loc_24E50:                              ; CODE XREF: rtm_FE63:loc_24E71↓j
+loc_24E50:                              ; CODE XREF: resolveAndOpenGameFile:loc_24E71↓j
                 lea     bx, [bp-36h]
                 call    rtm_FF4B
                 call    rtm_DE
@@ -57556,20 +57558,20 @@ loc_24E50:                              ; CODE XREF: rtm_FE63:loc_24E71↓j
                 jmp     loc_24E74
 ; ---------------------------------------------------------------------------
 
-loc_24E71:                              ; CODE XREF: rtm_FE63+3E9↑j
+loc_24E71:                              ; CODE XREF: resolveAndOpenGameFile+3E9↑j
                 jmp     short loc_24E50
 ; ---------------------------------------------------------------------------
                 db  90h
 ; ---------------------------------------------------------------------------
 
-loc_24E74:                              ; CODE XREF: rtm_FE63+3EB↑j
-                                        ; rtm_FE63+4E1↓j
+loc_24E74:                              ; CODE XREF: resolveAndOpenGameFile+3EB↑j
+                                        ; resolveAndOpenGameFile+4E1↓j
                 cmp     word ptr [bp-16h], 4
                 jz      short loc_24E7D
                 jmp     loc_24EA9
 ; ---------------------------------------------------------------------------
 
-loc_24E7D:                              ; CODE XREF: rtm_FE63+3F5↑j
+loc_24E7D:                              ; CODE XREF: resolveAndOpenGameFile+3F5↑j
                 mov     ax, 1762h
                 push    ax
                 lea     ax, [bp-30h]
@@ -57588,7 +57590,7 @@ loc_24E7D:                              ; CODE XREF: rtm_FE63+3F5↑j
                 jmp     loc_24EEF
 ; ---------------------------------------------------------------------------
 
-loc_24EA9:                              ; CODE XREF: rtm_FE63+3F7↑j
+loc_24EA9:                              ; CODE XREF: resolveAndOpenGameFile+3F7↑j
                 mov     ax, 1788h
                 push    ax
                 mov     ax, [bp-16h]
@@ -57616,7 +57618,7 @@ loc_24EA9:                              ; CODE XREF: rtm_FE63+3F7↑j
                 push    ax
                 call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
 
-loc_24EEF:                              ; CODE XREF: rtm_FE63+423↑j
+loc_24EEF:                              ; CODE XREF: resolveAndOpenGameFile+423↑j
                 mov     ax, 17AAh
                 push    ax
                 lea     ax, [bp-44h]
@@ -57637,7 +57639,7 @@ loc_24EEF:                              ; CODE XREF: rtm_FE63+423↑j
                 call    sub_20F38
                 nop
 
-loc_24F26:                              ; CODE XREF: rtm_FE63:loc_24F3A↓j
+loc_24F26:                              ; CODE XREF: resolveAndOpenGameFile:loc_24F3A↓j
                 call    rtm_62
                 push    ax
                 mov     ax, 1664h
@@ -57647,12 +57649,12 @@ loc_24F26:                              ; CODE XREF: rtm_FE63:loc_24F3A↓j
                 jmp     loc_24F3C
 ; ---------------------------------------------------------------------------
 
-loc_24F3A:                              ; CODE XREF: rtm_FE63+4B2↑j
+loc_24F3A:                              ; CODE XREF: resolveAndOpenGameFile+4B2↑j
                 jmp     short loc_24F26
 ; ---------------------------------------------------------------------------
 
-loc_24F3C:                              ; CODE XREF: rtm_FE63+4B4↑j
-                                        ; rtm_FE63:loc_24F50↓j
+loc_24F3C:                              ; CODE XREF: resolveAndOpenGameFile+4B4↑j
+                                        ; resolveAndOpenGameFile:loc_24F50↓j
                 call    rtm_62
                 push    ax
                 mov     ax, 1664h
@@ -57662,11 +57664,11 @@ loc_24F3C:                              ; CODE XREF: rtm_FE63+4B4↑j
                 jmp     loc_24F52
 ; ---------------------------------------------------------------------------
 
-loc_24F50:                              ; CODE XREF: rtm_FE63+4C8↑j
+loc_24F50:                              ; CODE XREF: resolveAndOpenGameFile+4C8↑j
                 jmp     short loc_24F3C
 ; ---------------------------------------------------------------------------
 
-loc_24F52:                              ; CODE XREF: rtm_FE63+4CA↑j
+loc_24F52:                              ; CODE XREF: resolveAndOpenGameFile+4CA↑j
                 lea     ax, [bp-10h]
                 push    ax
                 call    rtm_FE66
@@ -57676,8 +57678,8 @@ loc_24F52:                              ; CODE XREF: rtm_FE63+4CA↑j
                 jmp     loc_24E74
 ; ---------------------------------------------------------------------------
 
-loc_24F67:                              ; CODE XREF: rtm_FE63+3C↑j
-                                        ; rtm_FE63+1D0↑j ...
+loc_24F67:                              ; CODE XREF: resolveAndOpenGameFile+3C↑j
+                                        ; resolveAndOpenGameFile+1D0↑j ...
                 lea     ax, [bp-30h]
                 push    ax
                 call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
@@ -57686,7 +57688,7 @@ loc_24F67:                              ; CODE XREF: rtm_FE63+3C↑j
                 call    basStrClear     ; zero a string descriptor (free a temp / `LET a$ = ""`). arg (descriptor).
                 call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    2
-rtm_FE63        endp ; sp-analysis failed
+resolveAndOpenGameFile endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 db 0E9h
@@ -57722,8 +57724,9 @@ rtm_FE57        endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; the BASIC `BLOAD name$, offset` statement: thin wrapper over rtm_02 -- read the 7-byte `[FD][seg:2][off:2][len:2]` BSAVE header then the payload, into the target array/segment. args (&name$, &destOffset). dun's loadDungeonData uses it for DUNM*/DUNDATA/DUNOBJ; celdrv for the CEL/DIS frames.
 
-rtm_FE07        proc far                ; DATA XREF: seg003:0178↑o
+basBload        proc far                ; DATA XREF: seg003:0178↑o
                 mov     cx, 0           ; int 3Fh run-time entry FE07
                 call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+8]
@@ -57731,10 +57734,10 @@ rtm_FE07        proc far                ; DATA XREF: seg003:0178↑o
                 push    word ptr [si]
                 mov     ax, 1
                 push    ax
-                call    rtm_02
+                call    basBloadRaw     ; BLOAD core: OPEN, read `[FD][seg][off][len]` (7 bytes) into ds:651h, then read `len` bytes to the caller's dest (arg_0!=0) or to the header's own seg:off. args (useOverride, destOff, seg).
                 call    far ptr basProcLeave ; SUB/FUNCTION epilogue: `dec ds:118h`, restores the frame, `jmp [ds:738h]` back to the caller. Pairs with basProcEnter; proc bodies end `call basProcLeave / retf 2`.
                 retf    4
-rtm_FE07        endp
+basBload        endp
 
 ; ---------------------------------------------------------------------------
                 db 0E9h
@@ -60716,8 +60719,8 @@ rtm_FE38        endp
 
 ; engine: draw one position-coded screen string. arg (string); body is `basProcEnter / drawStringInner / screenRefresh / basProcLeave`.
 
-drawString      proc far                ; CODE XREF: rtm_FE63+415↑P
-                                        ; rtm_FE63+45E↑P ...
+drawString      proc far                ; CODE XREF: resolveAndOpenGameFile+415↑P
+                                        ; resolveAndOpenGameFile+45E↑P ...
                 mov     cx, 0           ; int 3Fh run-time entry FE26
                 call    far ptr basProcEnter ; int 3Fh run-time entry F0  [mid-func: verify]
                 push    word ptr [bp+6]

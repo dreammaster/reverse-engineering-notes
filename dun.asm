@@ -1432,7 +1432,7 @@ j_rt_FE4E:                              ; -> rtm_FE4E  (leglib seg007:0x25c5c)
 loc_10A31:
                 mov     ax, 20C6h
                 push    ax
-                call    far ptr rt_FE63 ; -> rtm_FE63  (leglib seg007:0x24a83)
+                call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
 
 loc_10A3A:
                 mov     ax, 20C6h
@@ -4538,7 +4538,7 @@ loc_1268A:                              ; CODE XREF: processTileFeature+13B↑j
                 mov     ds:20ECh, ax
                 cmp     ax, 3Fh ; '?'
                 jle     short loc_12674
-                call    sub_12E9B
+                call    loadDungeonData ; Per-dungeon data load (called from processTileFeature on level entry). For each of DUNM<dungeonNo>.BSV (name built from ds:1ACAh via STR$ + trim + concat), DUNDATA.BSV and DUNOBJ.BSV: rtm_11 pushes the target BASIC array's descriptor, rtm_FE63(&name$) resolves the game-disk path and opens the file, rtm_FE07(&name$, &destOff) BLOADs it (reads the 7-byte [FD][seg][off][len] header then the payload). DUNM<n> -> dungeonMapArray (ds:1E2Ah) offset 0; DUNDATA.BSV -> the same array +0x800; DUNOBJ.BSV -> spriteBank (ds:1E58h). No pointer-table relocation happens here.
 ; ---------------------------------------------------------------------------
                 xor     ax, ax
                 jmp     loc_126B6
@@ -6099,9 +6099,10 @@ sub_12E7D       endp
 
 ; =============== S U B R O U T I N E =======================================
 
+; Per-dungeon data load (called from processTileFeature on level entry). For each of DUNM<dungeonNo>.BSV (name built from ds:1ACAh via STR$ + trim + concat), DUNDATA.BSV and DUNOBJ.BSV: rtm_11 pushes the target BASIC array's descriptor, rtm_FE63(&name$) resolves the game-disk path and opens the file, rtm_FE07(&name$, &destOff) BLOADs it (reads the 7-byte [FD][seg][off][len] header then the payload). DUNM<n> -> dungeonMapArray (ds:1E2Ah) offset 0; DUNDATA.BSV -> the same array +0x800; DUNOBJ.BSV -> spriteBank (ds:1E58h). No pointer-table relocation happens here.
 ; Attributes: noreturn
 
-sub_12E9B       proc far                ; CODE XREF: processTileFeature+15C↑P
+loadDungeonData proc far                ; CODE XREF: processTileFeature+15C↑P
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -6113,242 +6114,112 @@ sub_12E9B       proc far                ; CODE XREF: processTileFeature+15C↑P
                 push    ax
                 call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
 ; ---------------------------------------------------------------------------
-                db 0B8h
-                db  50h ; P
-                db  28h ; (
-                db  50h ; P
-                db 0FFh
-                db  36h ; 6
-                db 0CAh
-                db  1Ah
-                db  9Ah
-                db 0A3h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db    2
-                db    0
-                db  50h ; P
-                db 0B8h
-                db    1
-                db    0
-                db  50h ; P
-                db  9Ah
-                db 0BFh
-                db    0
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  58h ; X
-                db  28h ; (
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  74h ; t
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  2Ah ; *
-                db  1Eh
-                db  33h ; 3
-                db 0DBh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db    4
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  60h ; `
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  74h ; t
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  2Ah ; *
-                db  1Eh
-                db 0BBh
-                db    0
-                db    8
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0EEh
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db    4
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  70h ; p
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db  33h ; 3
-                db 0DBh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Ch
-                db 0C0h
-                db  50h ; P
-                db  9Ah
-                db 0AFh
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  74h ; t
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db  33h ; 3
-                db 0DBh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  8Bh
-                db 0C3h
-                db  89h
-                db  46h ; F
-                db 0ECh
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db    4
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0CAh
-                db    0
-                db    0
+                mov     ax, 2850h
+                push    ax
+                push    word ptr ds:1ACAh
+                call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2
+                push    ax
+                mov     ax, 1
+                push    ax
+                call    far ptr rt_46   ; -> rtm_46  (leglib seg003:0x1b71e)
+; ---------------------------------------------------------------------------
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2858h
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
+; ---------------------------------------------------------------------------
+                mov     si, 1E2Ah
+                xor     bx, bx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, bx
+                mov     [bp-10h], ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_bload ; -> basBload  (leglib seg007:0x24fbf)
+; ---------------------------------------------------------------------------
+                mov     ax, 2860h
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
+; ---------------------------------------------------------------------------
+                mov     si, 1E2Ah
+                mov     bx, 800h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, bx
+                mov     [bp-12h], ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_bload ; -> basBload  (leglib seg007:0x24fbf)
+; ---------------------------------------------------------------------------
+                mov     ax, 2870h
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                mov     si, 1E58h
+                xor     bx, bx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es
+                push    ax
+                call    far ptr rt_11   ; -> rtm_11  (leglib seg003:0x12bde)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_openGameFile ; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
+; ---------------------------------------------------------------------------
+                mov     si, 1E58h
+                xor     bx, bx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, bx
+                mov     [bp-14h], ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_bload ; -> basBload  (leglib seg007:0x24fbf)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
+loadDungeonData endp
+
 ; ---------------------------------------------------------------------------
 
 loc_12F9C:                              ; CODE XREF: sub_12E7D:loc_12E98↑j
                 jmp     loc_13059
-sub_12E9B       endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -6519,7 +6390,7 @@ loc_12FBE:                              ; CODE XREF: sub_12F9F+16↑j
                 db    0
 ; ---------------------------------------------------------------------------
 
-loc_13059:                              ; CODE XREF: sub_12E9B:loc_12F9C↑j
+loc_13059:                              ; CODE XREF: seg000:loc_12F9C↑j
                 jmp     loc_13209
 sub_12F9F       endp
 
@@ -8596,7 +8467,7 @@ loc_13D52:                              ; CODE XREF: drawViewSprite+1C0↓j
                 push    word ptr [bp-28h]
                 push    word ptr [bp-26h]
                 push    ax
-                call    far ptr rt_FE2E ; -> rtm_FE2E  (leglib seg004:0x1fda1)
+                call    far ptr rt_FE2E ; -> andSpriteMaskCell  (leglib seg004:0x1fda1)
                 mov     ax, [bp-2Ch]
                 inc     ax
 
@@ -8626,7 +8497,7 @@ loc_13DAD:
                 push    si
                 xor     ax, ax
                 push    ax
-                call    far ptr rt_61   ; -> rtm_61  (leglib seg003:0x1dc84)
+                call    far ptr rt_61   ; -> basPutSprite  (leglib seg003:0x1dc84)
 
 j_rt_F4:                                ; -> basProcLeave  (leglib seg003:0x1bb7c)
                 call    far ptr rt_F4
@@ -8695,7 +8566,7 @@ loc_13E36:                              ; CODE XREF: blitViewCell+90↓j
                 push    word ptr [bp-16h]
                 mov     si, [bp+6]
                 push    word ptr [si]
-                call    far ptr rt_FE2A ; -> rtm_FE2A  (leglib seg004:0x1fd3f)
+                call    far ptr rt_FE2A ; -> drawTileRun  (leglib seg004:0x1fd3f)
                 add     word ptr [bp-0Eh], 140h
                 mov     ax, [bp-10h]
                 add     [bp-14h], ax
@@ -9724,7 +9595,7 @@ rt_45:                                  ; Overlay manager interrupt
 ; -> rtm_46  (leglib seg003:0x1b71e)
 ; Attributes: noreturn
 
-rt_46           proc near
+rt_46           proc near               ; CODE XREF: loadDungeonData+31↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -11124,7 +10995,7 @@ rt_60:                                  ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_61  (leglib seg003:0x1dc84)
+; -> basPutSprite  (leglib seg003:0x1dc84)
 ; Attributes: noreturn
 
 rt_61           proc near               ; CODE XREF: drawViewSprite+1EE↑P
@@ -12031,15 +11902,16 @@ rt_FE06:                                ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE07  (leglib seg007:0x24fbf)
+; -> basBload  (leglib seg007:0x24fbf)
 ; Attributes: noreturn
 
-rt_FE07         proc near
+rt_bload        proc near               ; CODE XREF: loadDungeonData+71↑P
+                                        ; loadDungeonData+A5↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 7
-rt_FE07         endp
+rt_bload        endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12317,7 +12189,7 @@ rt_FE29         endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE2A  (leglib seg004:0x1fd3f)
+; -> drawTileRun  (leglib seg004:0x1fd3f)
 ; Attributes: noreturn
 
 rt_FE2A         proc near               ; CODE XREF: blitViewCell+76↑P
@@ -12364,7 +12236,7 @@ rt_FE2D:                                ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE2E  (leglib seg004:0x1fda1)
+; -> andSpriteMaskCell  (leglib seg004:0x1fda1)
 ; Attributes: noreturn
 
 rt_FE2E         proc near               ; CODE XREF: drawViewSprite+1B1↑P
@@ -12854,16 +12726,16 @@ rt_FE62:                                ; Overlay manager interrupt
 
 ; =============== S U B R O U T I N E =======================================
 
-; -> rtm_FE63  (leglib seg007:0x24a83)
+; -> resolveAndOpenGameFile  (leglib seg007:0x24a83)
 ; Attributes: noreturn
 
-rt_FE63         proc near               ; CODE XREF: climbDownOrExit+1FD↑P
-                                        ; lookOrSearch+20↑P
+rt_openGameFile proc near               ; CODE XREF: climbDownOrExit+1FD↑P
+                                        ; lookOrSearch+20↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
                 db 0FEh, 63h
-rt_FE63         endp
+rt_openGameFile endp
 
 ; ---------------------------------------------------------------------------
 

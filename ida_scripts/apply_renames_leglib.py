@@ -95,6 +95,21 @@ RENAMES = {
              "calls it once per masked cell, walking a list of "
              "(srcOff,destOff) word pairs -- exactly DUNOBJ.BSV's "
              "pointer-pair table."),
+    "FE63": ("resolveAndOpenGameFile",
+             "resolve a game data-file's path -- which drive holds it, per "
+             "DRCONFIG.DAT -- and OPEN it. Called before every BLOAD and "
+             "before random-file GET/PUT (dun's loadDungeonData, saver's "
+             "readCharDat / saveRosterToDisk). arg &name$."),
+    "FE07": ("basBload",
+             "the BASIC `BLOAD name$, offset` statement: thin wrapper over "
+             "rtm_02 -- read the 7-byte `[FD][seg:2][off:2][len:2]` BSAVE "
+             "header then the payload, into the target array/segment. "
+             "args (&name$, &destOffset). dun's loadDungeonData uses it for "
+             "DUNM*/DUNDATA/DUNOBJ; celdrv for the CEL/DIS frames."),
+    "02": ("basBloadRaw",
+           "BLOAD core: OPEN, read `[FD][seg][off][len]` (7 bytes) into "
+           "ds:651h, then read `len` bytes to the caller's dest (arg_0!=0) "
+           "or to the header's own seg:off. args (useOverride, destOff, seg)."),
     "61": ("basPutSprite",
            "stock Microsoft BASIC `PUT (x,y), array, verb` -- draws a "
            "GET-array bitmap (`dw widthPx ; dw heightPx ; planar CGA "

@@ -609,9 +609,11 @@ reimplementation.
         stride `0x49A`, then the `(maskSrc, screenDest)` pair table
         (`andSpriteMaskCell`) + mask cells + `basPutSprite` image
         arrays. Loads into `spriteBank` (`ds:1E58`), shared with
-        `OUTOBJ`. Record semantics need `DUN.EXE`'s data-loader traced
-        (still in the un-swept dungeon-init path — no ref to the
-        `DUNOBJ.BSV` string desc `0x2874` in the current disassembly).
+        `OUTOBJ`. Loader **decoded** (`loadDungeonData`,
+        `fix_dun_loaddungeondata.py`): `rtm_11` picks the array,
+        `resolveAndOpenGameFile` (`rtm_FE63`) opens, `basBload`
+        (`rtm_FE07`) reads header+payload — no relocation. Still open:
+        the region-A *consumer* (object placement in the view).
       - `DUNMONA/B.BSV` — 6 monsters × 2356 B; each = header + 5
         `basPutSprite` image frames (near→far) + mask frames + trailer.
         A/B = two swappable sets.

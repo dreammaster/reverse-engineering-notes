@@ -736,9 +736,9 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   5778-B payload = header word + record/table area (`~0..0x4FF`) + a
   ~4.5 KB `0x10`-`0x7F` byte region (`~0x500..0x167F`, likely the
   first-person view's wall tile-graphic bank) + an 18-B tail; the field
-  layout and its `BLOAD` site are still open (the dungeon-init path in
-  `dun.idb` is partly-garbled asm and wants a fresh `coerce_code` pass).
-  `DUNOBJ.BSV` / `DUNMON*.BSV` load to a different segment (`0x140D`).
+  layout is still open. `DUNOBJ.BSV` / `DUNMON*.BSV` load to a different
+  segment (`0x140D`). (BLOAD site now decoded -- see `loadDungeonData`,
+  2026-08-31.)
 - **2026-08-31** -- Mapped `DUNOBJ.BSV`'s region structure (dungeon
   objects + sprites). BSAVE to `0x140D:0x0DB6` -- the same DGROUP offset
   `OUTOBJ.BSV` / `MUSOBJ.BSV` load at, so there's one shared object
@@ -889,10 +889,19 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `dw fieldB` + `dw fieldC` + `dw fieldD`. `fieldA == fieldC` in ~34;
   the other ~6 are "group headers" (`fieldA != fieldC`, nonzero
   `fieldB` index). `fieldD` = small frame count (0-0x12). `fieldA/C`
-  (`0x0247`-`0x042F`) are relocatable -- targets are zero in the file,
-  rebased at BLOAD. Followed at `0x190` by **6 bank pointers at stride
-  `0x49A`** (`0x1240 + k*0x49A`). Full semantics blocked on `DUN.EXE`'s
-  data-loader: it `BLOAD`s `DUNOBJ.BSV` (string desc DGROUP `0x2874`)
-  and relocates region A, but that code is in the still-un-swept
-  dungeon-init path (`0x2874` is never loaded as an immediate in the
-  current disassembly).
+  (`0x0247`-`0x042F`) are `spriteBank` offsets. Followed at `0x190` by
+  **6 bank pointers at stride `0x49A`** (`0x1240 + k*0x49A`).
+- **2026-08-31** -- Coerced `DUN.EXE`'s data-loader
+  (`ida_scripts/fix_dun_loaddungeondata.py`): it was `sub_12E9B` with a
+  `db`-bytes body (coerce_code bailed after the first `call far`). Now
+  **`loadDungeonData`** (called from `processTileFeature` on level
+  entry). Per file (`DUNM<n>.BSV` / `DUNDATA.BSV` / `DUNOBJ.BSV`):
+  `rtm_11` pushes the target BASIC-array descriptor, name built as
+  `"DUNM" + STR$(ds:1ACAh) + ".BSV"`, then `resolveAndOpenGameFile`
+  (`rtm_FE63` -- pick the drive per `DRCONFIG.DAT`, open) and `basBload`
+  (`rtm_FE07` -> `rtm_02`: read the 7-byte `[FD][seg][off][len]` header +
+  payload). `DUNM<n>` -> `dungeonMapArray` (`ds:1E2A`) off 0; `DUNDATA`
+  -> same array `+0x800`; `DUNOBJ` -> `spriteBank` (`ds:1E58`). **No
+  pointer-table relocation** happens. Named `rtm_FE63` /`rtm_FE07`
+  /`rtm_02` in `leglib.idb`. Open: which routine *consumes* DUNOBJ
+  region A.
