@@ -725,5 +725,17 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `decoders/char_dat.py` lists the slots (all 9 are `"empty"` on a fresh
   install). Also corrected `LEGACY.DAT`: it's **not** a save/config file
   — it holds the A–Z keyboard-command names (`Armor`, `Climb`,
-  `Disembark`, …) + small 2 bpp CGA icons, and opens with the same
+  `Disembark`, ...) + small 2 bpp CGA icons, and opens with the same
   `05 06 xx xx 7E 01` header shape.
+- **2026-08-31** -- Decoded `DUNM1/2/3.BSV` (dungeon tile maps): BSAVE to
+  `0x2C07:0x0F3C`, 2048-B payload = **8 levels x 16x16 tiles, 1 B/tile**
+  (`0x00` floor / `0xFF` rock / `0x01`-`0x0F` features). `DUN.EXE` binds
+  the array at `ds:1E2A` and indexes `base + level*0x100`.
+  `decoders/dun_map.py` prints the mazes. `DUNDATA.BSV` BSAVEs to
+  `0x2C07:0x173C` -- `0x800` bytes after the map, i.e. contiguous -- its
+  5778-B payload = header word + record/table area (`~0..0x4FF`) + a
+  ~4.5 KB `0x10`-`0x7F` byte region (`~0x500..0x167F`, likely the
+  first-person view's wall tile-graphic bank) + an 18-B tail; the field
+  layout and its `BLOAD` site are still open (the dungeon-init path in
+  `dun.idb` is partly-garbled asm and wants a fresh `coerce_code` pass).
+  `DUNOBJ.BSV` / `DUNMON*.BSV` load to a different segment (`0x140D`).

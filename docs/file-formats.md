@@ -12,8 +12,9 @@ Status (2026-08-31): the BSAVE container is confirmed, and the
 pixel-for-pixel), `SDMAP` (the SDEFENDR combat-arena screen frame), and
 dumps the `SDOBJ.GLB` / `BJCHR.GLB` sprite atlases. `CHAR.DAT`'s
 container (9 × 382-byte roster records) and its write/read path are
-decoded; the record's scalar fields are partly identified. The other
-`.BSV` files are still container-only.
+decoded; the record's scalar fields are partly identified. The
+**dungeon tile maps `DUNM1/2/3.BSV`** are fully decoded (8 levels ×
+16×16 tiles). The remaining `.BSV` files are still container-only.
 
 ## `.BSV` / `.GLB` / `.GMP` / `.BS1` / `.BS2` — Microsoft BASIC `BSAVE` images
 
@@ -51,7 +52,9 @@ castle/fort layout banks.
 | `TCASOBJ.BSV` | 4911 | `CASDR` | town/castle object table |
 | `FORTANIM.BSV` | 263 | `CASDR` | fort animation |
 | `OUTDATA.BSV`, `OUTOBJ.BSV`, `OUTM0.BSV`…`OUTM2.BSV`, `OUTDAT.DAT` | — | `OUT` | overworld map / objects / monsters |
-| `DUNDATA.BSV`, `DUNOBJ.BSV`, `DUNM1.BSV`…`DUNM3.BSV`, `DUNMONA.BSV` / `DUNMONB.BSV` | — | `DUN` | dungeon map / objects / monsters |
+| `DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` | 2055 | `DUN` | **fully decoded** — dungeon tile maps. BSAVE → `0x2C07:0x0F3C`; payload 2048 B = **8 levels × 16×16 tiles, 1 byte/tile**. `0x00` floor, `0xFF` solid rock, `0x01`–`0x0F` features. `decoders/dun_map.py`. |
+| `DUNDATA.BSV` | 5785 | `DUN` | **container mapped** — BSAVE → `0x2C07:0x173C`, i.e. **contiguous right after `DUNM*`** (`0x0F3C + 0x800`), so map + `DUNDATA` are one block in memory. 5778-B payload: header word (`0x0E94` = 3732) + a record/table area (`~0x000`–`0x4FF`) + a large `0x10`–`0x7F` byte region (`~0x500`–`0x167F`, ≈4.5 KB, likely the first-person view's wall/corridor tile-graphic bank) + an 18-B tail. Field meaning + its `BLOAD` site still open. |
+| `DUNOBJ.BSV` / `DUNMONA.BSV` / `DUNMONB.BSV` | 9351 / 14143 | `DUN` | dungeon objects / monsters — BSAVE → `0x140D:…` (a **different** segment from the map). Not yet decoded. |
 | `DIS0.BSV`…`DIS15.BSV` (+ `DIS0A`, `DIS1A`) | 727–2055 | ? (`DIS9` → `CELDRV`) | "display" screens? ~18 of them. `celdrv_entry` BLOADs `DIS9.BSV` as one of the five ending image banks. |
 | `CEL0.BSV`…`CEL3.BSV` | 1573 / 2597 | `CELDRV` | endgame-cinematic image banks — `celdrv_entry` BLOADs `CEL0`/`CEL1`/`CEL2` (loop), then `DIS9.BSV`, then `CEL3.BSV`, via `rt_FE07`, and relocates each one's internal offset table by its load segment. |
 | `MUSDATA.BSV`, `MUSOBJ.BSV`, `MUSMSG.TXT` | 8055 / 12961 / 11229 | `MUS` | MUSEUM data / exhibit objects / message text |
@@ -152,6 +155,34 @@ handling.
 
 `decoders/char_dat.py` reads the container and lists each slot
 (name + the identified scalar fields).
+
+## `DUNM1/2/3.BSV` + `DUNDATA.BSV` — dungeon maps — **decoded 2026-08-31**
+
+`DUNM1.BSV` / `DUNM2.BSV` / `DUNM3.BSV` (one per dungeon group) each
+`BSAVE` to `0x2C07:0x0F3C`. The 2048-byte payload is **8 dungeon levels,
+16×16 tiles, one byte per tile**, row-major (`8 × 256`):
+
+| byte | meaning |
+|---|---|
+| `0x00` | open floor / corridor |
+| `0xFF` | solid rock — the maze walls |
+| `0x01`–`0x0F` | special-feature tiles: doors, up/down stairs, traps ("POISON GAS VENT", "FLOOR HOLE", "SLIME SPLOTCH" — names in `DUN.EXE`'s string pool), treasure, level links. The code→feature table is inside `DUN.EXE` and not mapped yet. |
+
+`DUN.EXE` binds this array at DGROUP `ds:1E2A` and indexes
+`base + level*0x100`; bytes `≥ 0x10` are walls/normal, `< 0x10` index the
+feature table. `decoders/dun_map.py DUNM1` prints all 8 levels.
+
+`DUNDATA.BSV` `BSAVE`s to `0x2C07:0x173C` — exactly `0x800` bytes after
+the map, so `DUNM* + DUNDATA` sit **contiguously in one segment**. Its
+5778-byte payload has a header word (`0x0E94` = 3732), a record/table
+area (`~0x000`–`0x4FF`), a ~4.5 KB region of `0x10`–`0x7F` bytes
+(`~0x500`–`0x167F`, most likely the first-person view's wall/corridor
+tile-graphic bank), and an 18-byte tail. The field-level layout and
+which routine `BLOAD`s it are still open — the dungeon-init path in
+`dun.idb` needs a cleaner `coerce_code` pass first.
+
+`DUNOBJ.BSV` (objects) and `DUNMONA/B.BSV` (monsters) `BSAVE` to a
+different segment (`0x140D:…`) and are not decoded yet.
 
 ## Screen-string pool (in the `.EXE`, not a file) — decoded 2026-08-30
 

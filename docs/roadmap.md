@@ -577,7 +577,13 @@ reimplementation.
       Field layout still open.
 - [ ] Overworld map (`OUTDATA.BSV` / `OUTM*.BSV`), once `OUT.EXE`'s
       `BLOAD` sites are traced.
-- [ ] Town / castle / dungeon layouts.
+- [~] Dungeon maps (2026-08-31) — `DUNM1/2/3.BSV` decoded: 8 levels ×
+      16×16 tiles/byte (`0x00` floor / `0xFF` rock / `0x01`–`0x0F`
+      features). `decoders/dun_map.py`. Open: the feature code→type
+      table (in `DUN.EXE`), and `DUNDATA.BSV`'s big region (loads
+      contiguously after the map at `0x2C07:0x173C`; container mapped,
+      fields TBD), plus `DUNOBJ.BSV` / `DUNMON*.BSV`.
+- [ ] Town / castle layouts.
 - [~] The standalone sprite atlases — `SDOBJ.GLB` and `BJCHR.GLB` tiles
       rendered (`decoders/glb_image.py`). `BJCHR` = a card rank/suit
       glyph font (upright + 180°-rotated) + card-back tiles, tiles
