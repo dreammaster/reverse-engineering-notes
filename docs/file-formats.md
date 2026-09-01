@@ -165,13 +165,13 @@ over the array descriptors). Read path: `MENU.EXE`
 |---|---|---|
 | `+0x000` | 14 | **name**, space-padded. `"empty"` marks an unused slot (all 9 are `"empty"` in a fresh install). Matches the "up to 14 letters long" name prompt. |
 | `+0x00E` | 74 | **scalar block** — 37 words, a verbatim image of the resident LEGLIB DGROUP range `ds:1AC0`–`ds:1B08`. Survives the `OUT`↔`DUN`↔`TWNDR`↔`MUS`↔`CASDR` chaining. See the field table below. |
-| `+0x058` | 16 | **S0** `ds:1B0C` `DIM(7)` — encounter / combat scratch (zeroed at the top of every `outInit`, so not real save data). |
-| `+0x068` | 16 | **S1** `ds:1B68` `DIM(7)` — inventory slot data, 8 slots (cursor `ds:1AEA`). `rtm_FE50` clamps elements to `0..4` = the LEGACY "weapon condition" scale (Shoddy…Superb). |
-| `+0x078` | 60 | **S2** `ds:1BC4` `DIM(29)` — world / quest state, 30 flags (cross-referenced against the overworld object array `ds:1C7C`). Template `[15]=1`, `[17]=2`. |
-| `+0x0B4` | 34 | **S3** `ds:1B3A` `DIM(16)` — museum progress (`MUS` bumps `[15]` on every entry, sets `[14]=1`). Template all-zero except `[0]=-1`. |
-| `+0x0D6` | 76 | **S4** `ds:1B96` `DIM(37)` — the main stat / map-state block, 38 words, ~150 read/write sites. `outInit` copies `S4[19]` (tmpl 200) → `hitPoints`, so S4 holds the persistent copy the `ds:1AC0` scalars are re-derived from. Template `[0..2]` = `1500/3099/31058` (RNG / world-hash junk from the dev dump), `[22]=32000`, `[25..29]=32767` sentinels, `[33]=3`. |
-| `+0x122` | 84 | **S5** `ds:1BF2` `DIM(41)` — **shop price table**: `S5[0]=7`, then 41 prices (weapon / armor / item / food): `400,350,350,13,500,220,950,450, 150,170,200,170,250, … 2000,1500,1700,5,1300,2000,5,21`. Identical for every character — FIELDed per-record only for convenience. |
-| `+0x176` | 8 | **S6** `ds:1C20` `DIM(3)` — reserved, 4 words, always `0`, no read/write site anywhere. Ends at `0x17E` = 382. |
+| `+0x058` | 16 | **S0** `ds:1B0C` `DIM(7)` — **inventory item-id list, 8 slots**. `PAULA` diff: `S0[0]` 0→1 when she got a weapon. `CASDR` writes small ids (`S0[0]=7`, `S0[7]=0xC`). (The earlier "combat scratch" read was wrong — it persists.) |
+| `+0x068` | 16 | **S1** `ds:1B68` `DIM(7)` — **inventory item CONDITION, 8 slots**, `0..4` = the LEGACY Shoddy…Superb scale (`rtm_FE50` clamps it). `PAULA` `S1[0]` 0→1, parallel to `S0[0]`. Cursor `ds:1AEA`. |
+| `+0x078` | 60 | **S2** `ds:1BC4` `DIM(29)` — 30 world / quest flags (indexed against the overworld object array `ds:1C7C`). `PAULA` changed only `[17]` (2→0, and the template's `[17]=2` looks like dev junk) — still mostly opaque. |
+| `+0x0B4` | 34 | **S3** `ds:1B3A` `DIM(16)` — 17 museum-progress words. `PAULA`: `[15]` 0→2 = **museum entry count** (`mus.asm:498` increments per visit); `[14]` 0→1 = **used an exhibit portal** (`mus.asm:1637`); `[1]`=−2, `[2]`=1 = other exhibit progress. |
+| `+0x0D6` | 76 | **S4** `ds:1B96` `DIM(37)` — the **main character + map block, 38 words, authoritative**. Confirmed: `S4[1]` = **saved museum/exhibit position** (`chainToTown`/`chainToDungeon` write `ds:1AE2` here; `PAULA` 32); `S4[19]` = **MAX hit points** (`buyFood` heals `ds:1ADA` up to it; `PAULA` 20 = a new peasant's HP, the template's 200 was dev junk — and `outInit` copies `S4[19]`→`ds:1ADA`, so where the scalar cache and S4 disagree, S4 wins). `PAULA` also moved `[10]=1`, `[11]=3`, `[34]` 3→0. `[22]=32000`, `[25..29]=32767` stay sentinel; `[0..2]` (1500/32/31058) still look like RNG/hash. |
+| `+0x122` | 84 | **S5** `ds:1BF2` `DIM(41)` — **shop price table**: `S5[0]=7`, then 41 prices. **Unchanged in `PAULA`'s save** → confirmed static / identical for every character (FIELDed per-record only for convenience). |
+| `+0x176` | 8 | **S6** `ds:1C20` `DIM(3)` — 4 words. **Not dead**: `PAULA` `[0]=17`, `[3]=18` (template all 0). No direct `si,1C20h` site → written via a computed index or LEGLIB. Purpose unknown (last-town? re-entry coords?). Ends at `0x17E` = 382. |
 
 **Scalar block** (`+0x00E`, 37 words). Record offset ← DGROUP word;
 default from the LEGACY.DAT new-character template. `[C]` cross-checked
@@ -183,29 +183,39 @@ in play-module code, `[?]` inferred from the template value + usage:
 | `+0x16` | `1AC8` | 4 | `[?]` **game speed** (read by MENU + every module) |
 | `+0x18` | `1ACA` | 0 | `[C]` chain-return / location context (`SAVER` `returnTarget`) |
 | `+0x1A` | `1ACC` | 15 | `[?]` attribute / resource (potion-wizard `+5`, cap `0x24`) |
-| `+0x20` | `1AD2` | **20** | `[C]` **party gold** (dword) |
-| `+0x24` | `1AD6` | −99 | `[C]` dungeon return position (dword; −99 = "none") |
-| `+0x28` | `1ADA` | **200** | `[C]` **hit points** |
+| `+0x1E` | `1AD0` | `0x4270` | `[P]` a counter/checksum — `PAULA` `0x426E` (−2). Thought dead; it *does* change. Purpose unknown. |
+| `+0x20` | `1AD2` | 20 | `[P]` **party gold** (dword; `PAULA` 120) |
+| `+0x24` | `1AD6` | −99 | `[P]` dungeon-return marker (dword; template −99/−1 was uninit, `PAULA` 0/0 = "not in a dungeon") |
+| `+0x28` | `1ADA` | 200 | `[C]` **hit points — working cache of `S4[19]`** (only refreshed by `outInit`; `PAULA` 200 is stale, real max = `S4[19]`=20) |
 | `+0x2C` | `1ADE` | 15 | `[?]` museum-adjustable stat (`MUS` `showGold` `+10`) |
 | `+0x2E` | `1AE0` | 1 | `[C]` **compendium volumes / museum access rank** (1..7) |
-| `+0x30` | `1AE2` | 0 | `[C]` dungeon position `level<<8 | cell` (`cmp 0x700`) |
-| `+0x32` | `1AE4` | 0 | `[C]` dungeon / museum facing (0..3) |
+| `+0x30` | `1AE2` | 0 | `[P]` **first-person-view (museum/dungeon) position**, kept across the overworld (`OUT` never touches it; `PAULA` 180) |
+| `+0x32` | `1AE4` | 0 | `[P]` **first-person-view facing** (0..3; `PAULA` 3) |
 | `+0x34` | `1AE6` | 0 | `[C]` dungeon light / step counter |
 | `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
-| `+0x38` | `1AEA` | **5** | `[C]` **inventory count** (index into S1, guard `< 8`) |
-| `+0x3A` | `1AEC` | 9 | `[C]` paired count / damage multiplier (`DUN` `imul`) |
-| `+0x3E` | `1AF0` | 15 | `[C]` **strength** (cap `0x1C`=28; potion-wizard gate) |
-| `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; guard `< 8`) |
-| `+0x4C` | `1AFE` | 0 | `[C]` second-list count (paired with `1AFC`) |
-| `+0x50` | `1B02` | 178 | `[C]` **overworld X** (new game sets 40) |
-| `+0x54` | `1B06` | 106 | `[C]` **overworld Y** (new game sets 30) |
-| `+0x56` | `1B08` | 15 | `[?]` attribute-like (`DUN` subtracts from it) |
+| `+0x38` | `1AEA` | 5 | `[?]` inventory slot count/max — `PAULA` still 5 after gaining an item, so maybe a fixed max |
+| `+0x3A` | `1AEC` | 9 | `[?]` paired count / damage multiplier (`DUN` `imul`) |
+| `+0x3E` | `1AF0` | 15 | `[P]` **strength** (`PAULA` 15; cap `0x1C`=28; potion-wizard gate) |
+| `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; `PAULA` 0) |
+| `+0x4C` | `1AFE` | 0 | `[P]` count paired with `1AFC` (`PAULA` 1 — one equipped item?) |
+| `+0x50` | `1B02` | 178 | `[P]` **overworld X** (new game 40; `PAULA` 14) |
+| `+0x54` | `1B06` | 106 | `[P]` **overworld Y** (new game 30; `PAULA` 42) |
+| `+0x56` | `1B08` | 15 | `[?]` attribute-like (`PAULA` 15; `DUN` subtracts from it) |
 
-`+0x0E`(`1AC0`), `+0x14`(`1AC6`), `+0x2A`(`1ADC`), `+0x3C`(`1AEE`),
-`+0x4E`/`+0x52`(`1B00`/`1B04`) are transient scene/UI state that happens
-to sit in the FIELDed range. `+0x1C`(`1ACE`), `+0x1E`(`1AD0`),
-`+0x40`–`+0x48`(`1AF2`–`1AFA`) have **no reference in any module** —
-dead words (`1AD0`'s `0x4270` default is stale dev-memory junk).
+`+0x0E`(`1AC0`), `+0x14`(`1AC6`, MUS walk-state; `PAULA` −10),
+`+0x2A`(`1ADC`), `+0x3C`(`1AEE`, `SAVER` sets it `0xEA`),
+`+0x4E`/`+0x52`(`1B00`/`1B04`, town/castle scratch) are transient
+scene/UI state that happens
+to sit in the FIELDed range. `+0x1C`(`1ACE`) and
+`+0x40`–`+0x48`(`1AF2`–`1AFA`) are truly dead — `SAVER`'s blind
+`ds:1AC0`–`ds:1B08` peek loop just captures whatever DGROUP garbage sits
+there (`PAULA` `1AF6`/`1AF8`/`1AFA` = `16128`/`36`/`16820`, not fields).
+`+0x1E`(`1AD0`) *does* change (`PAULA` −2) so it is used somewhere — a
+checksum or counter, still unidentified.
+
+**Save-diff tool:** `python decoders/char_dat.py --diff LEGACY.DAT
+CHAR.DAT <slot>` prints every scalar/array field that differs from the
+new-character template (this is how the `PAULA` column above was built).
 
 Because the roster block lives in LEGLIB's **resident** DGROUP, it
 survives the `OUT`↔`DUN`↔`TWNDR`↔… EXE chaining — which is why

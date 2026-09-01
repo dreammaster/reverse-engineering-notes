@@ -41,66 +41,82 @@ sum to exactly 294 bytes == 382 - 14 (name) - 74 (scalars).
     +0x122  84 B   S5  ds:1BF2  DIM(41)  42 words
     +0x176   8 B   S6  ds:1C20  DIM(3)    4 words   (ends at 0x17E = 382)
 
-Scalar fields (record offset <- DGROUP word; default = the LEGACY.DAT
-new-character template).  [C] = cross-checked in the play-module code,
-[?] = inferred from the template value + usage pattern.
+Scalar fields (record offset <- DGROUP word).  [C] = cross-checked in
+code, [P] = pinned by the PAULA save diff (2026-09-01: new game -> museum
+-> bought+equipped a weapon -> town 1), [?] = inferred.  KEY: `outInit`
+loads S4[19] -> hitPoints (ds:1ADA) and re-derives other working scalars
+from the arrays -- so where a scalar and an array element disagree, the
+ARRAY is authoritative and the scalar is a stale cache (PAULA never ran
+outInit, so her ds:1ADA=200 is stale template data while her real max HP
+S4[19]=20).
 
-    +0x0E <- 1AC0   [?] party/context flag (tmpl 15)
-    +0x10 <- 1AC2   [C] EXPERIENCE, dword (tmpl 0; TWNDR add/adc accumulates)
-    +0x14 <- 1AC6   [?] museum walk state (MUS only)
-    +0x16 <- 1AC8   [?] GAME SPEED (tmpl 4; read by MENU + every module)
+    +0x0E <- 1AC0   [?] context flag (tmpl 15, PAULA 15)
+    +0x10 <- 1AC2   [C] EXPERIENCE, dword (PAULA 0 -- no kills yet)
+    +0x14 <- 1AC6   [P] museum walk state (MUS only; PAULA -10 = 0xFFF6)
+    +0x16 <- 1AC8   [C] GAME SPEED (tmpl 4; menuStartup sets 3)
     +0x18 <- 1ACA   [C] chain-return / location context (SAVER returnTarget)
     +0x1A <- 1ACC   [?] attribute / resource (tmpl 15; potion-wizard +5, cap 0x24)
-    +0x1C <- 1ACE       unreferenced
-    +0x1E <- 1AD0       unreferenced (tmpl 0x4270 -- stale dev-memory junk)
-    +0x20 <- 1AD2   [C] PARTY GOLD, dword (tmpl 20)
-    +0x24 <- 1AD6   [C] dungeon return position, dword (tmpl -99 = "none")
-    +0x28 <- 1ADA   [C] HIT POINTS (tmpl 200)
-    +0x2A <- 1ADC   [?] portrait / message index (<= 11)
+    +0x1C <- 1ACE       dead -- no ref, PAULA 0
+    +0x1E <- 1AD0   [P] a COUNTER/checksum (tmpl 0x4270, PAULA 0x426E = -2);
+                        thought dead but it does change -- purpose unknown
+    +0x20 <- 1AD2   [P] PARTY GOLD, dword (PAULA 120; hi word +0x22 = 0)
+    +0x24 <- 1AD6   [P] dungeon-return marker, dword (tmpl -99/-1 was uninit;
+                        PAULA 0/0 = "not in a dungeon")
+    +0x28 <- 1ADA   [C] hit points -- WORKING cache of S4[19] (stale unless
+                        outInit ran; PAULA 200 is stale, real max = S4[19])
+    +0x2A <- 1ADC   [?] portrait / message index (<= 11; PAULA 1)
     +0x2C <- 1ADE   [?] museum-adjustable stat (tmpl 15; MUS showGold +10)
-    +0x2E <- 1AE0   [C] COMPENDIUM VOLUMES / museum access rank 1..7 (tmpl 1)
-    +0x30 <- 1AE2   [C] dungeon position, level<<8 | cell (DUN; cmp 0x700)
-    +0x32 <- 1AE4   [C] dungeon / museum facing 0..3
+    +0x2E <- 1AE0   [C] COMPENDIUM VOLUMES / museum access rank 1..7 (PAULA 1)
+    +0x30 <- 1AE2   [P] first-person-view (museum/dungeon) position, kept
+                        across the overworld (OUT never touches it; PAULA 180)
+    +0x32 <- 1AE4   [P] first-person-view facing 0..3 (PAULA 3)
     +0x34 <- 1AE6   [C] dungeon light / step counter (DUN inc/dec)
     +0x36 <- 1AE8   [C] dungeon spell-effect timer (DUN dec to 0)
-    +0x38 <- 1AEA   [C] INVENTORY COUNT (tmpl 5; index into S1, guard < 8)
-    +0x3A <- 1AEC   [C] paired count / damage multiplier (tmpl 9; DUN imul)
-    +0x3C <- 1AEE   [?] menu / dialog scratch (all modules incl. MENU/SAVER)
-    +0x3E <- 1AF0   [C] STRENGTH (tmpl 15; cap 0x1C=28; potion-wizard gate)
-    +0x40..0x48 <- 1AF2..1AFA   unreferenced (5 words)
-    +0x4A <- 1AFC   [C] selected-item cursor (tmpl 99 = "none"; index, guard < 8)
-    +0x4C <- 1AFE   [C] second-list count (paired with 1AFC)
-    +0x4E <- 1B00   [?] castle / town interior scratch (CASDR + TWNDR only)
-    +0x50 <- 1B02   [C] OVERWORLD X (new game sets 40)
-    +0x52 <- 1B04   [?] castle / town interior scratch
-    +0x54 <- 1B06   [C] OVERWORLD Y (new game sets 30)
-    +0x56 <- 1B08   [?] attribute-like (tmpl 15; DUN subtracts from it)
+    +0x38 <- 1AEA   [?] inventory slot count / max (tmpl 5, PAULA 5 -- did
+                        NOT change when she gained an item, so maybe max=5)
+    +0x3A <- 1AEC   [?] paired count / damage multiplier (tmpl 9; DUN imul)
+    +0x3C <- 1AEE   [C] SAVER write-marker -- saver.asm sets it to 0xEA
+                        (PAULA 234 = 0xEA); transient
+    +0x3E <- 1AF0   [C] STRENGTH (tmpl 15, PAULA 15; cap 0x1C=28; potion gate)
+    +0x40..0x48 <- 1AF2..1AFA   DEAD -- SAVER's blind peek loop captures
+                        whatever DGROUP garbage is there (PAULA 0 / 16128 /
+                        36 / 16820 -- not fields)
+    +0x4A <- 1AFC   [C] selected-item cursor (tmpl 99="none", PAULA 0)
+    +0x4C <- 1AFE   [P] count paired with 1AFC (PAULA 1 -- one equipped item?)
+    +0x4E <- 1B00   [P] town/castle interior scratch (TWNDR/CASDR; PAULA 74)
+    +0x50 <- 1B02   [P] OVERWORLD X (new game 40; PAULA 14)
+    +0x52 <- 1B04   [P] town/castle interior scratch (PAULA 17)
+    +0x54 <- 1B06   [P] OVERWORLD Y (new game 30; PAULA 42)
+    +0x56 <- 1B08   [?] attribute-like (tmpl 15, PAULA 15; DUN subtracts)
 
-Array roles (element-level split still needs a populated save):
+Array roles (PAULA diff 2026-09-01; per-element split still partial):
 
-    S0  encounter / combat scratch -- zeroed at the top of every outInit,
-        so not persistent character data (FIELDed only for convenience).
-    S1  inventory slot data, 8 slots -- cursor ds:1AEA; `rtm_FE50` clamps
-        elements to 0..4 (= the LEGACY "weapon condition" scale
-        Shoddy..Superb).  Template all-zero (a new character's 5 items
-        have not been given condition/ID values in the template dump).
-    S2  world / quest state -- 30 flags.  Cross-referenced against the
-        overworld object array (ds:1C7C) and landmark logic; index 29 is
-        used as its own bound.  Template: [15]=1, [17]=2, rest 0.
-    S3  museum progress -- MUS increments [15] on every museum entry,
-        sets [14]=1, tests [1] == 0xFFFE.  Template all-zero except
-        [0] = -1.
-    S4  the main stat / map-state block -- 38 words, the workhorse array
-        (~150 read/write sites).  outInit copies S4[19] (tmpl 200) ->
-        hitPoints, confirming S4 carries the persistent copy that the
-        ds:1AC0.. scalars are re-derived from.  Template: [0..2] =
-        1500/3099/31058 (RNG / world-hash, stale in the dev dump),
-        [22]=32000, [25..29]=32767 sentinels, [33]=3.
-    S5  SHOP PRICE TABLE -- S5[0]=7, then 41 prices (weapon / armor /
-        item / food costs): 400,350,350,13,500,220,950,450, 150,170,200,
-        170,250, ... 2000,1500,1700,5,1300,2000,5,21.  Identical for
-        every character (stored per-record only because it is FIELDed).
-    S6  reserved -- 4 words, always 0, no read/write site in any module.
+    S0  8-slot INVENTORY item-id list.  PAULA S0[0] 0->1 after she got a
+        weapon.  CASDR writes S0[0]=7, S0[7]=0xC -> values are small ids.
+        (Earlier "combat scratch" guess was wrong -- it persists.)
+    S1  8-slot INVENTORY item CONDITION (0..4, the LEGACY Shoddy..Superb
+        scale -- rtm_FE50 clamps it).  PAULA S1[0] 0->1, parallel to S0[0].
+    S2  30 world / quest flags.  PAULA: only [17] changed (2->0), and the
+        template's [17]=2 looks like dev junk -- so still mostly opaque.
+        Indexed against the overworld object array (ds:1C7C).
+    S3  17 museum-progress words.  PAULA: [15] 0->2 (= museum ENTRY COUNT,
+        mus.asm:498 increments it each visit); [14] 0->1 (used an exhibit
+        PORTAL, mus.asm:1637); [1]=-2, [2]=1 (other exhibit progress).
+    S4  38-word MAIN CHARACTER + map block -- authoritative.  Confirmed:
+        S4[1] = saved museum/exhibit position (chainToTown/chainToDungeon
+        write ds:1AE2 here; PAULA 32); S4[19] = MAX HIT POINTS (buyFood
+        compares it to current ds:1ADA and heals up to it; PAULA 20 = a
+        new peasant's HP, tmpl 200 was dev junk).  PAULA also changed
+        [10]=1, [11]=3 (=facing?), [34] 3->0.  [22]=32000, [25..29]=32767
+        stay sentinel.  [0..2] (1500/32/31058) still look like RNG/hash.
+    S5  SHOP PRICE TABLE -- S5[0]=7 then 41 prices.  UNCHANGED in PAULA's
+        save -> confirmed static / identical for every character.
+    S6  4 words -- NOT dead: PAULA [0]=17, [3]=18 (tmpl all 0).  No direct
+        `si,1C20h` site, so written via a computed index or LEGLIB.
+        Purpose unknown (last-town? re-entry coords? -- needs more saves).
+
+Still needs saves at known points to finish: which S4 elements are the
+RPG stats (dex/stamina/etc), the S2 quest-flag meanings, S6, and 1AD0.
 """
 import struct
 import sys
@@ -128,10 +144,11 @@ FIELDS = [
     (0x10, "d", "experience"),
     (0x16, "w", "gameSpeed"),
     (0x20, "d", "partyGold"),
-    (0x28, "w", "hitPoints"),
+    (0x28, "w", "hitPoints(cache)"),
     (0x2E, "w", "compendiumRank"),
-    (0x38, "w", "invCount"),
     (0x3E, "w", "strength"),
+    (0x30, "w", "viewPos"),
+    (0x32, "w", "viewFacing"),
     (0x50, "w", "overworldX"),
     (0x54, "w", "overworldY"),
 ]
@@ -192,8 +209,49 @@ def dump_template(legacy_path):
         print(f"  {nm} @0x{off:03X} ({cnt}w): {list(vals)}")
 
 
+def split_record(rec):
+    sc = list(struct.unpack_from(f"<{SCALARS}h", rec, SCALAR_OFF))
+    arrs = {nm: list(struct.unpack_from(f"<{c}h", rec, o))
+            for nm, o, c in array_layout()}
+    return sc, arrs
+
+
+def diff(path_a, path_b, slot_a=0, slot_b=0):
+    """Field-by-field diff of two CHAR.DAT records (or a record vs the
+    LEGACY.DAT template).  Pass a .DAT path for either side; slot index
+    selects the record (ignored for LEGACY.DAT)."""
+    def rec_of(path, slot):
+        d = open(path, "rb").read()
+        if path.lower().endswith("legacy.dat"):
+            return d[-RECLEN:], "template"
+        r = d[HEADER + slot * RECLEN: HEADER + (slot + 1) * RECLEN]
+        return r, r[:NAME].split(b"\x00")[0].rstrip().decode("latin1")
+
+    ra, na = rec_of(path_a, slot_a)
+    rb, nb = rec_of(path_b, slot_b)
+    sa, aa = split_record(ra)
+    sb, ab = split_record(rb)
+    print(f"diff  A={na!r}  ->  B={nb!r}\n")
+    print("  scalars (rec off / ds:):")
+    for k in range(SCALARS):
+        if sa[k] != sb[k]:
+            print(f"    +0x{SCALAR_OFF + 2*k:02X}  ds:{0x1AC0 + 2*k:04X}   "
+                  f"{sa[k]:6d} -> {sb[k]:6d}")
+    for nm in aa:
+        ch = [(i, aa[nm][i], ab[nm][i])
+              for i in range(len(aa[nm])) if aa[nm][i] != ab[nm][i]]
+        if ch:
+            print(f"  {nm}: " + ", ".join(f"[{i}] {x}->{y}" for i, x, y in ch))
+
+
 def main():
     args = sys.argv[1:]
+    if args and args[0] == "--diff":
+        a = args[1] if len(args) > 1 else r"C:\games\lota\LEGACY.DAT"
+        b = args[2] if len(args) > 2 else r"C:\games\lota\CHAR.DAT"
+        sb = int(args[3]) if len(args) > 3 else 0
+        diff(a, b, 0, sb)
+        return
     path = args[0] if args else r"C:\games\lota\CHAR.DAT"
     dump(path)
     legacy = args[1] if len(args) > 1 else r"C:\games\lota\LEGACY.DAT"
