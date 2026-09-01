@@ -2621,6 +2621,22 @@ disassembly work.
   wrapper. `sub_40AE7D`'s own ~90-line body (plausibly that function
   fused with its own `_within` helper) is left untraced, an honest open
   lead rather than a forced identification.
+- **`GetSaveSlotDescription`/`RestoreGameSlot` correct `restore_game_data`'s
+  own signature and reveal it's dual-mode, not a heavier predecessor.**
+  This build's `restore_game_data` takes `(int slotNumber, char
+  *descriptionOrNull)`, builds the save filename and opens it itself —
+  fusing 2011's separate `load_game()` (open+header) and
+  `restore_game_data(FILE*,...)` (deserialize) into one function.
+  Better: it's genuinely dual-mode — a `Destination!=NULL` early-exit
+  path reads only the description and returns, never touching the
+  full-state deserialization; only `GetSaveSlotDescription` passes a
+  real buffer, every other caller passes `NULL` for a full restore. Not
+  a behavioral regression, just both 2011 roles fused behind one
+  argument. `RestoreGameSlot` also gives `ExecutingScript.ooo`@+0x0C (the
+  pending-restore-slot field, previously only confirmed from its
+  consumer side) a WRITE-side confirmation: writes `slnum` there
+  directly when called mid-script, deferring the restore — matching
+  2011's role but predating its unified `postScriptActions[]` queue.
 
 ## Third-party library identification (Task #10)
 

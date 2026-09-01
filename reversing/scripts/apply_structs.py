@@ -2204,7 +2204,13 @@ struct ExecutingScript {
                             // PAIR (acruntim.h:689-690) folded into ONE field plus a magic
                             // sentinel (1000="show dialog"; -1="none"; else=direct slot
                             // number) -- 2011 keeps these as two separate enum cases. Cross-
-                            // confirmed by ExecutingScript::init, which sets this to -1.
+                            // confirmed by ExecutingScript::init, which sets this to -1. Also a
+                            // WRITE-side confirmation via RestoreGameSlot (already matched):
+                            // "curscript->ooo=slnum" when called from inside a running script,
+                            // deferring the actual restore -- matching 2011's own
+                            // "curscript->queue_action(ePSARestoreGame,slnum,...)" in ROLE,
+                            // though 2011 routes it through the later, unified
+                            // postScriptActions[] queue rather than this dedicated field.
   int dlgnum;                     // +0x10, high confidence: sentinel -1 = "no pending dialog".
                             // IDA's own pre-existing local-variable name. Confirmed via "cmp
                             // [dlgnum],0; jl skip; push dlgnum; call do_conversation(dlgnum)".

@@ -9546,3 +9546,56 @@ own real algorithmic content (a low-res-converted spiral/grid pixel
 search using `getpixel`/`thisroom.walls`/`thisroom.width`/`height`/
 `left`/`right`/`top`/`bottom`, several of which are already-confirmed
 fields that would get further reconfirmation routes if traced).
+
+### `GetSaveSlotDescription`/`RestoreGameSlot` reveal `restore_game_data`'s real signature and dual-mode design
+
+A genuinely valuable correction fell out of two more bare functions.
+`restore_game_data`'s own long-standing `matches.json` entry had cited
+2011's DECLARED prototype, `"int restore_game_data(FILE*, const "
+"char*)"`, as if it described this build's function too. Reading
+`GetSaveSlotDescription`'s own call site raised an immediate red flag:
+it passes `slnum` (a plain int) and a `char*` description buffer as
+`restore_game_data`'s two arguments -- not a `FILE*` at all. Checking
+`restore_game_data`'s own opening instructions confirms it: this
+build's version builds the save filename itself
+(`"sprintf(Buffer,\"agssave.%03d\",ooo)"`) and calls `fopen` directly,
+rather than 2011's split design where a separate `load_game()` opens
+the file and reads the header before ever calling
+`restore_game_data(FILE*,...)` for the deserialization proper. This
+build fuses BOTH roles into one function taking `(int slotNumber, char
+*descriptionOrNull)`.
+
+Better still, that fused function turns out to be genuinely DUAL-MODE:
+right after its initial header/version check, `"if(Destination!=NULL) "
+"{strcpy(Destination,Str1); fclose(Stream); return 0;}"` -- an early-
+exit path that reads ONLY the save's description string and returns,
+without touching any of the extensive full-state deserialization logic
+this function is otherwise famous for in this project's own history
+(the GameState/RoomStatus/DialogTopic recovery work all happened inside
+this same function's full-restore path). Every OTHER caller
+(`RestartGame`, `RestoreGameSlot`, `RestoreGameDialog`, and one more
+not yet matched) passes `nametouse=NULL` for a full restore; only
+`GetSaveSlotDescription` (now matched) passes a real buffer, taking the
+lightweight path. So the two initial guesses this investigation
+considered and discarded -- "this build fully reloads the save just to
+read its description" (wrong, ruled out once the early-exit branch was
+found) and "this is just a signature curiosity" (undersells it) --
+land on the real answer: one fused C function correctly implementing
+BOTH of 2011's separate `load_game()`/`restore_game_data(FILE*,...)`
+roles via a single mode-selecting argument, not a behavioral
+regression.
+
+`RestoreGameSlot` itself gives the `ExecutingScript.ooo`@+0x0C pending-
+restore-slot field (established several sessions ago, but only from its
+READ/consumer side) a brand-new WRITE-side confirmation: when called
+from inside a running script, it writes `slnum` straight into
+`curscript->ooo` and returns without restoring immediately, deferring
+the actual work -- matching 2011's own deferred-queueing design in
+role, though 2011 routes the same deferral through the later, unified
+`postScriptActions[]` queue (`"curscript->queue_action(ePSARestoreGame,"
+"slnum,...)"`, `AC.CPP:2828-2830`) rather than this build's own
+dedicated pre-unification field -- consistent with the broader,
+already-established finding that this build predates that queue-
+unification refactor entirely. DRIFT: 2011's leading
+`displayed_room<0` (game_start) guard and its `can_run_delayed_command()`
+call are both CONFIRMED ABSENT from this build's version.
