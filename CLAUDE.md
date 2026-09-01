@@ -2576,6 +2576,26 @@ disassembly work.
   but INLINES `game_paused--` directly instead of calling the already-
   matched `UnPauseGame()`, skipping its `>0` guard: a real, narrow
   correctness gap where this path could drive `game_paused` negative.
+- **`RoomObject.on` picks up two confirmed bit values, plus a new
+  `MergeObject` architectural lead.** `RemoveWalkableArea`/
+  `RestoreWalkableArea` close trivially (exact matches, further
+  confirmation routes for `walkable_areas_on[]`/`redo_walkable_areas`).
+  `ObjectOff`/`ObjectOn` are near-mirrors, but `ObjectOff` is missing
+  2011's `StopObjectMoving(obn)` call entirely — confirmed absent, and
+  no such function exists in this build at all. `MergeObject`
+  decisively confirms `on`'s third value: it sets `on=2` unconditionally
+  (no guard, unlike `ObjectOff`/`ObjectOn`'s own checks), matching
+  2011's own inline comment (`"don't change it if on==2 (merged)"`)
+  and its own final write. Bonus reconfirmations of `RoomObject.x`/`y`/
+  `num` (the last cross-indexing into `spriteheight[]`) from a new
+  site, plus two drift points: this build's merge-draw call takes 3
+  args where 2011's `draw_sprite_support_alpha` takes 4 (omitting the
+  num/alpha argument), and 2011's trailing `invalidate_screen()`/
+  `mark_current_background_dirty()` calls are confirmed absent — another
+  instance of this build's pipeline predating that later invalidation
+  machinery. `array1` (plausibly this build's `actsps[]`) and two
+  drawing helpers (`sub_410AFA`/`sub_410771`) are left unidentified by
+  name, candidates for a future round.
 
 ## Third-party library identification (Task #10)
 

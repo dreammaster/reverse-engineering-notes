@@ -717,7 +717,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Cross-checked against 2011's own MergeObject (AC.CPP:14876-14898). Validates obn via the already-matched is_valid_object, calls an unmatched helper (sub_410AFA(obn), plausibly this build's simpler predecessor of 2011's construct_object_gfx -- not chased further this round), then points abuf at the current room background (ebscene[bg_frame] via the already-established RAW_START-macro pattern, dword_523094[dword_4EEB58*4]) matching \"abuf=thisroom.ebscene[play.bg_frame];\" exactly, checks the room background's color depth against the object's own cached sprite's color depth (bitmap_color_depth, both already-matched Allegro calls) -- quitting \"!MergeObject: unable to merge object due to...\" on mismatch, matching 2011's own identical error string verbatim. Computes draw coordinates as x=objs[obn].x*mult_x, y=objs[obn].y*mult_y-spriteheight[objs[obn].num] -- matching 2011's \"xpos=multiply_up_coordinate(objs[obn].x); ypos=multiply_up_coordinate(objs[obn].y)-theHeight;\" exactly, EXCEPT this build computes the height subtrahend directly from the already-confirmed spriteheight[] global indexed by the already-confirmed RoomObject.num@+0x0C, rather than 2011's `theHeight` out-parameter from construct_object_gfx (which additionally accounts for object scaling) -- a bonus reconfirmation of both fields from a new site, and a plausible drift point (unconfirmed scaling behavior) left open. Draws via an unmatched helper (sub_410771(x,y,array1[obn]), NOT chased further) taking only 3 arguments (confirmed via the call site's `add esp,0Ch` cleanup) where 2011's equivalent, draw_sprite_support_alpha(xpos,ypos,actsps[obn],objs[obn].num), takes 4 -- this build's version omits the 4th (num/alpha-related) argument entirely, consistent with the broader already-established pattern that alpha-channel/hardware-blend support postdates this build. `array1` is plausibly this build's `actsps[]` equivalent (the per-object constructed-sprite cache, indexed by raw object number matching 2011's own indexing), not independently confirmed by name this round. Also CONFIRMS ABSENT: 2011's trailing invalidate_screen()/mark_current_background_dirty() calls -- neither exists anywhere in this function, consistent with this build's broader, already-established predates-hardware-acceleration rendering pattern. Restores abuf, then sets objs[obn].on=2 DIRECTLY (no conditional guard, unlike ObjectOff/ObjectOn's own on==0/on==1 checks) -- the DECISIVE confirmation of RoomObject.on's special sentinel value 2 (\"merged\"), matching 2011's own inline comment in ObjectOff verbatim (\"don't change it if on==2 (merged)\") and this function's own final \"objs[obn].on=2;\" write, plus the compiled-out DEBUG_CONSOLE call's own literal wording (\"merged into background\")."
   },
   {
     "kind": "function",
@@ -727,7 +727,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates obn via the already-matched is_valid_object (a further confirmation site), then does \"if(objs[obn].on==1) objs[obn].on=0;\" -- matching 2011's own \"if (objs[obn].on==1) {objs[obn].on=0; ...}\" (AC.CPP:14916-14924) in the on-field check/write, but DRIFT: 2011's version additionally calls StopObjectMoving(obn) inside that branch -- CONFIRMED ABSENT here, no such call exists anywhere in this function. This build's ObjectOff does not stop an in-progress object move when the object is turned off, a real behavioral difference from 2011 (a StopObjectMoving-equivalent script function has not been located/matched in this project at all yet). This is a further, WRITE-side confirmation of the already-confirmed RoomObject.on@+0x1C, matching the specific \"only touch it when on==1\" guard (2011's own comment: \"don't change it if on==2 (merged)\") exactly -- see MergeObject's own entry for the decisive confirmation of that on==2 sentinel value."
   },
   {
     "kind": "function",
@@ -737,7 +737,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Mirror of ObjectOff (already matched, see its own entry): \"if(objs[obn].on==0) objs[obn].on=1;\" -- exact match to 2011's entire function body (AC.CPP:14926-14932, minus DEBUG_CONSOLE). A further WRITE-side confirmation of RoomObject.on@+0x1C."
   },
   {
     "kind": "function",
@@ -987,7 +987,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates areanum in [1,15] (matching MAX_WALK_AREAS=15, zero drift), then does \"GameState.walkable_areas_on[areanum]=0; redo_walkable_areas();\" -- an exact, instruction-for-instruction match to 2011's entire function body (AC.CPP:17439-17445, minus the compiled-out DEBUG_CONSOLE call). Both walkable_areas_on[] (already confirmed via a memset several sessions ago) and redo_walkable_areas (already matched) get a further, independent confirmation route from a new call site."
   },
   {
     "kind": "function",
@@ -997,7 +997,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Mirror of RemoveWalkableArea (already matched, see its own entry): \"GameState.walkable_areas_on[areanum]=1; redo_walkable_areas();\" -- exact match to 2011's entire function body (AC.CPP:17447-17453, minus DEBUG_CONSOLE)."
   },
   {
     "kind": "function",

@@ -9441,3 +9441,47 @@ genuine, if narrow, correctness difference from the reference
 behavior, not just a stylistic inlining choice. Finally, `popup==1`
 (`POPUP_MOUSEY`) sets `on=-1`, matching
 `"else if(popup==POPUP_MOUSEY) guis[ifn].on=-1;"` exactly.
+
+### `MergeObject` decisively confirms `RoomObject.on`'s third sentinel state
+
+`RemoveWalkableArea`/`RestoreWalkableArea` closed trivially -- both
+exact, instruction-for-instruction matches to 2011's own tiny bodies
+(`AC.CPP:17439-17453`), each a further confirmation route for
+`GameState.walkable_areas_on[]` and `redo_walkable_areas` from a new
+call site. `ObjectOff`/`ObjectOn` are almost as simple, but `ObjectOff`
+carries a real drift finding: 2011's version calls `StopObjectMoving
+(obn)` when actually turning the object off (`AC.CPP:14916-14924`) --
+CONFIRMED ABSENT here, no such call exists anywhere in the function,
+and no `StopObjectMoving`-equivalent script function has been located
+in this build at all yet.
+
+`MergeObject` turned out to be the rich one, and closes a small
+standing question about `RoomObject.on` cleanly: 2011's own `ObjectOff`
+carries an inline comment, `"don't change it if on==2 (merged)"`, which
+this project's earlier `on`-confirmation rounds had never independently
+verified. Reading `MergeObject` end to end (cross-checked against
+2011's own version, `AC.CPP:14876-14898`) shows it ends with an
+UNCONDITIONAL `objs[obn].on=2` -- no guard, unlike `ObjectOff`/
+`ObjectOn`'s own `on==1`/`on==0` checks -- decisively confirming `on`
+genuinely has three live values in this build too: 0=off, 1=on,
+2=merged-into-background. Along the way, several already-confirmed
+`RoomObject` fields get bonus reconfirmations from a new site (`x`/`y`/
+`num`, the last cross-indexing into the already-confirmed
+`spriteheight[]` global), and two genuine drift points surface: this
+build computes the merge-draw's Y-offset directly from
+`spriteheight[num]` rather than a `theHeight` value returned by 2011's
+`construct_object_gfx` (which additionally accounts for object
+scaling -- an open question whether this build's simpler predecessor,
+tentatively `sub_410AFA`, does the same); and the actual sprite-blit
+call (`sub_410771`) takes only 3 arguments where 2011's
+`draw_sprite_support_alpha` takes 4, omitting the trailing num/alpha-
+related argument entirely -- consistent with this build's already-
+established pattern of predating alpha-channel/hardware-blend support.
+2011's trailing `invalidate_screen()`/`mark_current_background_dirty()`
+calls are likewise CONFIRMED ABSENT, another instance of this session's
+repeated finding that this build's whole rendering pipeline predates
+that later invalidation/redraw machinery. `array1` (indexed by raw
+object number, matching 2011's own `actsps[]` indexing convention) is
+plausibly this build's `actsps[]` equivalent but not independently
+confirmed by name -- left open, alongside `sub_410AFA`/`sub_410771`
+themselves, as candidates for a future round.

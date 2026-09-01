@@ -2704,7 +2704,14 @@ struct RoomObject {
                             // (already matched): "cmp byte[obj+1Ch],1; jz <hit-test-continue>" --
                             // an object must have `on==1` to be clickable/hit-testable, matching
                             // 2011's declared `char on;` (`acruntim.h:52`, object visibility) in
-                            // position and semantic role exactly.
+                            // position and semantic role exactly. Further confirmed via
+                            // `ObjectOff`/`ObjectOn` (both already matched, WRITE-side: toggle
+                            // 1<->0, each gated on the field's CURRENT value first) and, decisively,
+                            // via `MergeObject` (already matched): sets `on=2` UNCONDITIONALLY as
+                            // its final act, matching 2011's own "objs[obn].on=2; // mark the
+                            // sprite as merged" and the inline comment in `ObjectOff` itself
+                            // ("don't change it if on==2 (merged)") -- `on` has three real values
+                            // in this build too: 0=off, 1=on, 2=merged-into-background.
   char flags;                       // +0x1D, high confidence: confirmed via `GetObjectAt`
                             // (already matched), immediately after `on`: "movsx edx,byte[obj+
                             // 1Dh]; and edx,1; test edx,edx; jz <hit-test-continue>" -- a bit-0
