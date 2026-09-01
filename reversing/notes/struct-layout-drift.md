@@ -9485,3 +9485,32 @@ object number, matching 2011's own `actsps[]` indexing convention) is
 plausibly this build's `actsps[]` equivalent but not independently
 confirmed by name -- left open, alongside `sub_410AFA`/`sub_410771`
 themselves, as candidates for a future round.
+
+### `SetAreaLightLevel` closes `walk_area_light[]`'s valid range, and the room-tint-override absence gets a second confirmation
+
+`SetAreaLightLevel` (previously bare) writes directly into
+`word_522F2E[area]` -- decisively identified as
+`RoomStruct.walk_area_light[]`@+0x38A6 (already confirmed via version-
+gated `fread`s several rounds ago) via absolute-address arithmetic:
+`0x522F2E - 0x38A6 = 0x51F688`, exactly `thisroom`'s own independently-
+established base address (first pinned down during the `bpalettes[]`
+search). This is that field's first WRITE-side confirmation, on top of
+its existing read-only `fread` evidence.
+
+Two small drift points fell out alongside it. First, the settable
+range: this build validates `area` in `[0,14]` (`area<15`), a slightly
+narrower ceiling than 2011's own `"if((area<0)||(area>MAX_REGIONS)) "
+"quit(...)"` (`MAX_REGIONS=16`, `Common/acroom.h:66`) -- the underlying
+array capacity itself (16 slots) already matches 2011 with zero drift,
+so this is purely a script-API-level validation difference, not a
+smaller array. Second, and more interesting: 2011's `SetAreaLightLevel`
+does a SECOND write right after the light-level one -- `"thisroom."
+"regionTintLevel[area] &= ~TINT_IS_ENABLED;"`, disabling any active RGB
+tint override for that region -- CONFIRMED ABSENT here, no second array
+write exists anywhere in the function. This is a second, independent
+confirmation (on top of the earlier `rtint_red`/`green`/`blue`/`level`/
+`light` global-field absence, and `SetAmbientTint`'s own zero string
+occurrences) that this build's room-tint-override subsystem doesn't
+exist at all, now extended from "the globals that would hold an active
+tint don't exist" to "the very API that would clear one doesn't touch
+any such field either."

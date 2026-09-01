@@ -187,7 +187,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates area in [0,14] (jl on area<0xF(15) -- a slightly SMALLER settable range than 2011's own bound check, \"if((area<0)||(area>MAX_REGIONS)) quit(...)\" with MAX_REGIONS=16, Common/acroom.h:66,3738-3739 -- DRIFT, though the underlying array capacity itself, already confirmed as RoomStruct.walk_area_light[16]@+0x38A6, matches 2011 with zero drift; only the script-API's own settable-index ceiling differs), clamps brightness to [-100,100](0xFFFFFF9C/0x64), then writes brightness directly to word_522F2E[area] -- confirmed as RoomStruct.walk_area_light[]@+0x38A6 via absolute-address arithmetic (0x522F2E-0x38A6=0x51F688, exactly thisroom's own independently-established base address) -- a WRITE-side confirmation of that field (previously only confirmed via version-gated fread calls). Calls the already-matched generate_light_table() immediately after, matching 2011's own call order exactly. DRIFT: 2011's SECOND write, \"thisroom.regionTintLevel[area] &= ~TINT_IS_ENABLED;\" (disabling any RGB tint override for the region) is CONFIRMED ABSENT -- no second array write exists anywhere in this function, consistent with (and extending) this project's earlier finding that the entire room-tint-override subsystem (rtint_red/green/blue/level/light, SetAmbientTint) is absent from this build."
   },
   {
     "kind": "function",

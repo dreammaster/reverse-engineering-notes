@@ -2596,6 +2596,19 @@ disassembly work.
   machinery. `array1` (plausibly this build's `actsps[]`) and two
   drawing helpers (`sub_410AFA`/`sub_410771`) are left unidentified by
   name, candidates for a future round.
+- **`SetAreaLightLevel` closes `walk_area_light[]`'s valid range, and
+  the room-tint-override absence gets a second confirmation.** Its
+  write target, `word_522F2E[area]`, is decisively
+  `RoomStruct.walk_area_light[]`@+0x38A6 (already confirmed via `fread`,
+  now also confirmed by write) via `0x522F2E-0x38A6=0x51F688` landing
+  exactly on `thisroom`'s own established base address. DRIFT: this
+  build validates `area` in `[0,14]`, narrower than 2011's own
+  `MAX_REGIONS=16` bound check (the array's own 16-slot capacity is
+  unaffected, zero drift). More interesting: 2011's second write,
+  clearing a region's `TINT_IS_ENABLED` bit, is CONFIRMED ABSENT here —
+  a second, independent confirmation (after the `rtint_*` globals and
+  `SetAmbientTint`'s own absence) that the room-tint-override subsystem
+  doesn't exist in this build at all.
 
 ## Third-party library identification (Task #10)
 

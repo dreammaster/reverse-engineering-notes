@@ -4594,7 +4594,10 @@ struct RoomStruct {
                             // sits with zero gap immediately after `walk_area_zoom`. 2011's
                             // intervening `walk_area_zoom2[MAX_WALK_AREAS+1]` (`acroom.h:857`)
                             // is CONFIRMED ABSENT here -- no room for it between the two
-                            // confirmed zero-gap neighbors.
+                            // confirmed zero-gap neighbors. Also a WRITE-side confirmation via
+                            // `SetAreaLightLevel` (already matched): `word_522F2E[area]=
+                            // brightness` where `0x522F2E-0x38A6=0x51F688` is exactly
+                            // `thisroom`'s own independently-established base address.
   char objectnames[10][30];      // +0x38C6..0x39F2 (300 bytes), high confidence (RESOLVED,
                             // closing the mystery left open since round 6): `load_room`
                             // (already matched)'s block-type dispatch loop -- a SEPARATE
