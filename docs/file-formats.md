@@ -195,12 +195,12 @@ in play-module code, `[?]` inferred from the template value + usage:
 | `+0x10` | `1AC2` | 0 | `[C]` **experience** (dword; `TWNDR` `add`/`adc` accumulates) |
 | `+0x16` | `1AC8` | 4 | `[?]` **game speed** (read by MENU + every module) |
 | `+0x18` | `1ACA` | 0 | `[C]` chain-return / location context (`SAVER` `returnTarget`) |
-| `+0x1A` | `1ACC` | 15 | `[?]` attribute / resource (potion-wizard `+5`, cap `0x24`) |
+| `+0x1A` | `1ACC` | 15 | `[?]` **an attribute** (one of the 5 at 15; potion-wizard `+5`, cap `0x24`) |
 | `+0x1E` | `1AD0` | `0x4270` | `[P]` a counter/checksum — `PAULA` `0x426E` (−2). Thought dead; it *does* change. Purpose unknown. |
 | `+0x20` | `1AD2` | 20 | `[P]` **party gold** (dword; `PAULA` 120) |
 | `+0x24` | `1AD6` | −99 | `[P]` dungeon-return marker (dword; template −99/−1 was uninit, `PAULA` 0/0 = "not in a dungeon") |
 | `+0x28` | `1ADA` | 200 | `[C]` **hit points — working cache of `S4[19]`** (only refreshed by `outInit`; `PAULA` 200 is stale, real max = `S4[19]`=20) |
-| `+0x2C` | `1ADE` | 15 | `[?]` museum-adjustable stat (`MUS` `showGold` `+10`) |
+| `+0x2C` | `1ADE` | 15 | `[?]` **an attribute** (one of the 5 at 15; museum can adjust it) |
 | `+0x2E` | `1AE0` | 1 | `[C]` **compendium volumes / museum access rank** (1..7) |
 | `+0x30` | `1AE2` | 0 | `[P]` **first-person-view (museum/dungeon) position**, kept across the overworld (`OUT` never touches it; `PAULA` 180) |
 | `+0x32` | `1AE4` | 0 | `[P]` **first-person-view facing** (0..3; `PAULA` 3) |
@@ -208,12 +208,12 @@ in play-module code, `[?]` inferred from the template value + usage:
 | `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
 | `+0x38` | `1AEA` | 5 | `[?]` inventory slot count/max — `PAULA` still 5 after gaining an item, so maybe a fixed max |
 | `+0x3A` | `1AEC` | 9 | `[?]` paired count / damage multiplier (`DUN` `imul`) |
-| `+0x3E` | `1AF0` | 15 | `[P]` **strength** (`PAULA` 15; cap `0x1C`=28; potion-wizard gate) |
+| `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom raised it 15→17 (cap `0x1C`=28; the CASDR potion-wizard also reads it). One of the **5 attributes**: `+0x0E`/`+0x1A`/`+0x2C`/`+0x3E`/`+0x56` all start at 15; which of the other four is Strength / Dexterity / Stamina / Charm is unknown. |
 | `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; `PAULA` 0) |
 | `+0x4C` | `1AFE` | 0 | `[P]` count paired with `1AFC` (`PAULA` 1 — one equipped item?) |
 | `+0x50` | `1B02` | 178 | `[P]` **overworld X** (new game 40; `PAULA` 14) |
 | `+0x54` | `1B06` | 106 | `[P]` **overworld Y** (new game 30; `PAULA` 42) |
-| `+0x56` | `1B08` | 15 | `[?]` attribute-like (`PAULA` 15; `DUN` subtracts from it) |
+| `+0x56` | `1B08` | 15 | `[?]` **an attribute** (one of the 5 at 15; `DUN` subtracts from it in combat) |
 
 `+0x0E`(`1AC0`), `+0x14`(`1AC6`, MUS walk-state; `PAULA` −10),
 `+0x2A`(`1ADC`), `+0x3C`(`1AEE`, `SAVER` sets it `0xEA`),

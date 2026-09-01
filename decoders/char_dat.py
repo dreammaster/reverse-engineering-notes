@@ -84,7 +84,14 @@ S4[19]=20).
     +0x3A <- 1AEC   [?] paired count / damage multiplier (tmpl 9; DUN imul)
     +0x3C <- 1AEE   [C] SAVER write-marker -- saver.asm sets it to 0xEA
                         (PAULA 234 = 0xEA); transient
-    +0x3E <- 1AF0   [C] STRENGTH (tmpl 15, PAULA 15; cap 0x1C=28; potion gate)
+    +0x3E <- 1AF0   [P] INTELLIGENCE -- Stones of Wisdom raised it 15->17
+                        (cap 0x1C=28; casdr potion-wizard also reads it)
+
+    The 5 ATTRIBUTES are the five scalars that start at 15: +0x0E (1AC0),
+    +0x1A (1ACC), +0x2C (1ADE), +0x3E (1AF0 = INT), +0x56 (1B08).
+    Which of the other four is Strength / Dexterity / Stamina / Charm
+    is still unknown (needs a potion-wizard visit, SDEFENDR training, or
+    the Tulip quest "Charm: +10").
     +0x42 <- 1AF4   [C] a per-STEP counter (18 refs, TWNDR-heavy; doMovement
                         move tick + shops -- PAULA 0)
     +0x46 <- 1AF8   [C] the SICKNESS / food-quality counter -- doMovement
@@ -188,7 +195,7 @@ FIELDS = [
     (0x10, "d", "experience"),
     (0x20, "d", "gold"),
     (0x28, "w", "HP"),
-    (0x3E, "w", "strength"),
+    (0x3E, "w", "INT"),
     (0x2E, "w", "compendiumRank"),
     (0x50, "w", "wldX"),
     (0x54, "w", "wldY"),
@@ -257,6 +264,10 @@ def dump(path):
         print(line)
         if not used:
             continue
+        attrs = [struct.unpack_from("<h", rec, o)[0]
+                 for o in (0x0E, 0x1A, 0x2C, 0x3E, 0x56)]
+        print(f"           attrs:     ?={attrs[0]} ?={attrs[1]} ?={attrs[2]}"
+              f" INT={attrs[3]} ?={attrs[4]}")
         s0 = struct.unpack_from("<8h", rec, ARRAY_OFF)
         s1 = struct.unpack_from("<8h", rec, ARRAY_OFF + 16)
         s2 = struct.unpack_from("<30h", rec, ARRAY_OFF + 32)
