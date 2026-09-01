@@ -9364,3 +9364,40 @@ NESTING COUNTER, not a boolean -- matching the field's name and 2011's
 own behavior exactly, and now backed by four independent call sites
 (the three here plus `main_loop_until`'s own increment) instead of one
 unverified reference to an unmatched function.
+
+### Two quick wins from a fresh self-identifying-error-string sweep
+
+`SetCharacterProperty`/`SetCharacterSpeed` (both previously bare)
+closed cleanly, each with a genuine drift finding attached.
+
+`SetCharacterProperty` is a generic caller-supplied-bitmask setter on
+the already-confirmed `CharacterInfo.flags`@+0x20 (`flags &= ~flag; if
+(yesorno) flags |= flag;`) -- unlike `SetCharacterIgnoreLight`/
+`SetTalkingColor`'s hardcoded single-bit/byte manipulation from earlier
+rounds. 2011's equivalent (`Character_SetOption`,
+`Engine/acchars.cpp:1082-1096`) has a special-case redirect for
+`flag & CHF_MANUALSCALING` to a different function
+(`Character_SetIgnoreScaling`), explicitly commented "backwards
+compatibility fix" in the reference source -- CONFIRMED ABSENT here:
+this build's version applies the generic bitwise clear/set to every
+flag value uniformly, with no special case for `CHF_MANUALSCALING`
+at all, consistent with predating whatever later change made that
+redirect necessary.
+
+`SetCharacterSpeed` validates `nspeed` in `[1,50]`, validates the
+already-confirmed `CharacterInfo.walking`@+0x3C`==0` (a new confirmation
+route for that field, matching 2011's own "cannot change speed while
+walking" guard exactly), then writes `nspeed` to the already-confirmed
+`walkspeed`@+0x40 -- and that's it, no second field write anywhere.
+2011's `SetCharacterSpeed` is a thin wrapper delegating through
+`SetCharacterSpeedEx`/`Character_SetSpeedEx` to `Character_SetSpeed`
+(`acchars.cpp:1099-1112`), which supports independent X/Y walk speeds
+via a second field, `walkspeed_y` (defaulting to a `UNIFORM_WALK_SPEED`
+sentinel when both speeds match). This build's single write target
+CONFIRMS `walkspeed_y` absent from `CharacterInfo` entirely -- consistent
+with, and a further confirmation of, that struct's already-established
+complete closure -- and no `SetCharacterSpeedEx` entry point exists
+anywhere in the disassembly either, matching the same "later AGS split
+one function into a richer Ex-suffixed variant" pattern seen repeatedly
+elsewhere in this project (`FollowCharacter`/`FollowCharacterEx` being
+the closest precedent, from earlier this session).

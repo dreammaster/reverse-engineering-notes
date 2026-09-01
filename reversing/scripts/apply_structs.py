@@ -782,6 +782,9 @@ struct CharacterInfo {
                            // field ("chin->walking = <route data>", roughly) right after computing the
                            // path -- explains the modular-1000/10000 arithmetic seen elsewhere too (it's
                            // processing a packed route/movelist-derived value, not a plain boolean).
+                           // Also read (==0 check) by SetCharacterSpeed (already matched): guards
+                           // against changing walkspeed mid-walk, matching 2011's "if(chaa->walking)
+                           // quit(...)" (acchars.cpp:1103-1104) exactly.
   short animating;          // +0x3E, high confidence: walk_character's
                            // "if (chin->animating && autoWalkAnims) chin->animating = 0;" matches
                            // disasm exactly (test-and-clear-to-0 on this field, gated the same way).
@@ -790,7 +793,12 @@ struct CharacterInfo {
                            // 2011's `CHANIM_REPEAT=2` (`Common/acruntim.h:810`) exactly.
   short walkspeed;          // +0x40, high confidence: walk_character reads this into a global right where
                            // source has "int move_speed_x = chin->walkspeed;" (the very next source line
-                           // after the animating check above).
+                           // after the animating check above). Also the sole write target of
+                           // SetCharacterSpeed (already matched) -- and that function's SOLE write
+                           // target confirms 2011's second field, walkspeed_y (Character_SetSpeed,
+                           // acchars.cpp:1099-1112, supporting independent X/Y walk speeds), is
+                           // CONFIRMED ABSENT from this build's CharacterInfo entirely -- this build
+                           // has no SetCharacterSpeedEx entry point either.
   short animspeed;          // +0x42, high confidence (UPGRADED from tentative, CharacterExtras
                            // remaining-fields round): `update_stuff` (already matched) reads this
                            // field directly as the second addend in "wait =

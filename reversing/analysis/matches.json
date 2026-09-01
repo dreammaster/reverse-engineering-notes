@@ -1197,7 +1197,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates who via the already-matched is_valid_character, validates yesorno in [0,1] (quitting \"!SetCharacterProperty: parameter 3 must...\" otherwise), then does \"chars[who].flags &= ~flag; if(yesorno) chars[who].flags |= flag;\" directly on the already-confirmed CharacterInfo.flags@+0x20 -- a generic caller-supplied-bitmask setter, unlike SetCharacterIgnoreLight/SetTalkingColor's hardcoded single-bit/byte manipulation. DRIFT: 2011's equivalent (Character_SetOption, Engine/acchars.cpp:1082-1096) has a special-case redirect -- \"if (flag & CHF_MANUALSCALING) Character_SetIgnoreScaling(chaa,yesorno); else {flags&=~flag; if(yesorno) flags|=flag;}\" -- CONFIRMED ABSENT here: this build's version goes straight to the generic bitwise clear/set for EVERY flag value including CHF_MANUALSCALING(1), with no special-case branch at all. Consistent with this build predating whatever later compatibility-fix need introduced that redirect (2011's own comment calls it \"backwards compatibility fix\", implying it was needed once some later change made CHF_MANUALSCALING behave differently from a plain flag bit -- not yet independently investigated here)."
   },
   {
     "kind": "function",
@@ -1827,7 +1827,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates chaa via the already-matched is_valid_character, validates nspeed in [1,50](0x32) (quitting \"!SetCharacterSpeed: invalid speed value\" otherwise), validates the already-confirmed CharacterInfo.walking@+0x3C==0 (quitting \"!SetCharacterSpeed: cannot change speed while walking\" otherwise -- a new confirmation route for that field), then writes nspeed directly to the already-confirmed CharacterInfo.walkspeed@+0x40. DIRECTLY INLINED, unlike 2011's version, which is a thin wrapper: \"SetCharacterSpeedEx(chaa,nspeed,nspeed);\" -> Character_SetSpeedEx -> Character_SetSpeed(chaa,xspeed,yspeed) (Engine/acchars.cpp:1099-1112), which supports independent X/Y walk speeds and writes a SECOND field, walkspeed_y (defaulting to a UNIFORM_WALK_SPEED sentinel when xspeed==yspeed). This build's SetCharacterSpeed writes ONLY walkspeed@+0x40 -- no second write anywhere in the function -- CONFIRMING walkspeed_y is ABSENT from this build's CharacterInfo entirely, consistent with (and a further confirmation of) that struct's already-established complete field closure with no remaining unaccounted territory. No SetCharacterSpeedEx entry point exists in this build either (not found anywhere in the disassembly by name)."
   },
   {
     "kind": "function",

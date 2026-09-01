@@ -2552,6 +2552,17 @@ disassembly work.
   it's a genuine NESTING COUNTER, not a boolean — increment/decrement-
   with-clamp/`==0`-read — backed by four independent call sites now
   instead of one stale reference.
+- **Two quick wins from a fresh self-identifying-error-string sweep.**
+  `SetCharacterProperty` (previously bare) is a generic caller-supplied-
+  bitmask setter on `CharacterInfo.flags`; 2011's equivalent
+  (`Character_SetOption`) redirects `CHF_MANUALSCALING` to a different
+  function as an explicit "backwards compatibility fix" — CONFIRMED
+  ABSENT here, this build applies the bitmask uniformly to every flag.
+  `SetCharacterSpeed` (also bare) validates the already-confirmed
+  `walking`@+0x3C and writes only `walkspeed`@+0x40 — its single write
+  target confirms 2011's `walkspeed_y` (independent X/Y walk speed,
+  `Character_SetSpeed`) is absent from this build's `CharacterInfo`
+  entirely, and no `SetCharacterSpeedEx` entry point exists either.
 
 ## Third-party library identification (Task #10)
 
