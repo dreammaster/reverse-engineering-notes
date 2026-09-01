@@ -24,8 +24,8 @@
 '     0x18  compare      FF1F
 '  RND(1) = `push ds:24E8 : push ds:24E6 : call B$RND`  (ds:24E6 = SINGLE 1.0)
 '
-'  SINGLE constant pool (decoders/dgroup_consts.py OUT.EXE -- Paul: please
-'  spot-check ds:2C26, ds:279C, ds:2C32, ds:2E6C in DOSBox):
+'  SINGLE constant pool (decoders/dgroup_consts.py OUT.EXE; ds:2C26/279C/
+'  2C32/2E6C spot-checked in DOSBox 2026-09-01 -- all correct):
 '     ds:2476 0.40  ds:2482 0.50  ds:24E6 1.0   ds:24EA 20.0  ds:279C 4.0
 '     ds:280A 2.0   ds:2906 18.0  ds:290A 12.6  ds:2C26 11.0  ds:2C32 1.3
 '     ds:2E6C 6.0
@@ -148,12 +148,17 @@ END SUB
 '   * to hit: HIT when RND(1) < hitScratch; weakness-match forces 1.0
 '
 '  OPEN:
-'   1. the to-hit score.  Needs: (a) the value on the stack when
-'      resolvePlayerAttack is entered -- break at out.asm:6687, dump the
-'      value stack (12-byte slots from [ds:0FAC] up to [ds:111C]); (b) the
-'      FF2B op (leglib seg004:0x3954).  Then one more trace: break at the
-'      store to ds:208E (out.asm:6713) and read it as a 4-byte float, plus
-'      dump ds:2C26 / ds:279C / ds:2C32 / ds:2E6C to confirm the pool.
+'   1. the to-hit score.  Paul's 2026-09-01 trace: at entry the value stack
+'      (base ds:0FAC, ptr ds:111C = 0x0FB8) has ONE live slot = 0.0 (single).
+'      So hitScratch = ((0.0 {FF2B} Dex) * (wp+18)) / (creatureHP * 11),
+'      which can't give the observed 0.334167 -- FF2B and/or the entry
+'      state isn't understood yet.  NEXT: break at out.asm loc_13DA5
+'      (linear 0x13DA5, right after `call rt_FF2B`) and dump the top value-
+'      stack slot (12 bytes at [ds:111C]-0x0C) + ds:111C; then again at
+'      loc_13DB5 (0x13DB5, after FF4C).  Two intermediate values pin FF2B
+'      and the leftover.  (Stale slots above 0x0FB8 held 0.8 and 166.75 --
+'      0.334167*500 ~ 166.75, suggestive.)  Also dump ds:0F90..0FAC to see
+'      if the stack base is really 0x0FAC.
 '   2. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?
 '   3. spell damage (doAttackOrCast:6507-6523) -- structure known, needs
 '      ds:231C / ds:2502 / ds:2DD0.
