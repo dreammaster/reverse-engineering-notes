@@ -758,6 +758,19 @@ reimplementation.
       (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`.
 - [ ] Music format — the MML `PLAY` strings in `MENU` (`t120l4cl8ef…`)
       + `basPlayMusic` / `rtm_CE`.
+- [x] `DRCONFIG.DAT` (2026-09-01, `decoders/drconfig_dat.py`) — `"DD2"`
+      magic + 84 `<filename><diskcode>CRLF` records. Disk codes 0x00–0x03
+      = floppies 1–4, 0x0E = "any play disk". `CONFIGUR.EXE` edits only
+      the drive letters.
+- [x] `OUTDAT.DAT` (2026-09-01, `decoders/outdat_dat.py`) — the overworld
+      **name table** (NOT `OUTDATA.BSV`): 24 place names + 24 gem names +
+      a 240-B numeric block (TBD) + **32 creature names** index-aligned
+      to the `OUTDATA.BSV` 0x1400 sprite pairs. Loaded via a computed
+      filename (no literal ref).
+- [~] `D.BSV` / `R.BSV` (2026-09-01) — each = 220 field-interleaved 8×8
+      sub-cells, i.e. **alternate overworld terrain sub-cell banks**
+      (rendered; same format as `OUTDATA.BSV` 0x400). Likely the phase-1
+      / phase-2 counterparts. Loader not yet found.
 
 ## ScummVM engine (future)
 
