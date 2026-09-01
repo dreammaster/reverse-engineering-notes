@@ -276,9 +276,17 @@ reimplementation.
       dead? (All 54 string records here are ending / credits content.)
 - [ ] `DIS9.BSV` is loaded here (the `DIS*.BSV` set was "display screens?"
       in file-formats — this ties one of them to the ending).
-- [ ] The 999-line victory-story text: is it in `STDRVSCR`-style records
-      inside the EXE, or a `.BSV`? (`rt_46` array access on a DGROUP
-      table at `ds:1E58h`.)
+- [x] The victory-story text (2026-09-01) — **~51 lines, embedded string
+      constants** in CELDRV's data segment (from `celdrv.asm:12944`, the
+      `~` = 0x7E position code onward). Each = `<posCode> 07 " <TEXT> "
+      [,"P",scroll,page] ,0` (`drawStringInner` position-coded format;
+      `"N"` = hero name, `%` = line break, `"P",n,p` = scroll/page). Loaded
+      into the `ds:20D6` string array by `rtm_B3` at start-up, replayed by
+      `scrollStoryText`. The `storyLine` "0..999" is the **pixel-scroll
+      counter**, not a line count. Story: the wizard's Compendium is
+      stolen, terror spreads, the scroll reaches a peasant (`<hero>`),
+      who clears the museum quests + 4 guard jewels, flies the pegasus,
+      beats the Warlord, and enshrines the Compendium.
 
 ## SAVER.EXE — open questions
 
