@@ -5927,5 +5927,14 @@
     "source_line": 194,
     "confidence": "high",
     "evidence": "block wnewblock(int x1,int y1,int x2,int y2) at Common/Wgt2allg.h:194-211: \"twid=(x2-x1)+1; thit=(y2-y1)+1; ...tempbitm=create_bitmap(twid,thit); blit(abuf,tempbitm,x1,y1,0,0,tempbitm->w,tempbitm->h); return tempbitm;\". Called from ShakeScreen (already matched, see its own entry) as \"wnewblock(0,0,width-1,height-1)\" immediately after setting abuf=screen -- decisively confirms this is wnewblock specifically (not a bare create_bitmap) since wnewblock's own defining behavior is capturing FROM the currently-active `abuf`, matching why the caller sets abuf=screen right before calling it. create_bitmap/blit themselves are Allegro library internals, not chased further per this project's third-party-library scope rule."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "RestartGame",
+    "new_name": "RestartGame",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 1733,
+    "confidence": "high",
+    "evidence": "Already correctly named in the IDB (real linker symbol) but had NO matches.json entry at all until now. Matches 2011's restart_game() (AC.CPP:1733-1742, exported as the script function RestartGame). Branches on inside_script: if inside a running script, does curscript->[+0x64]++ (INCREMENTS, not merely sets to 1 -- a small correction/clarification to that field's own long-standing apply_structs.py description as an \"unnamed bool\") and returns without restarting immediately, matching 2011's \"curscript->queue_action(ePSARestartGame,0,\\\"RestartGame\\\"); return;\" in ROLE (deferred restart), though again through this build's own dedicated pre-unification field rather than 2011's later, unified postScriptActions[] queue. If NOT inside a script: calls the already-matched restore_game_data(999,NULL) -- confirming this build's own value for 2011's RESTART_POINT_SAVE_GAME_NUMBER=999 (AC.CPP:472) constant, and (per restore_game_data's own now-corrected entry) taking its full-restore path since nametouse is NULL. On failure, builds \"unable to restart game (error:%s)\" via the already-matched sprintf, indexing the pre-existing IDA-named load_game_errors[] array with the negated error code -- matching 2011's \"quitprintf(\\\"unable to restart game (error:%s)\\\",load_game_errors[-errcod]);\" exactly -- then calls the already-matched quit(). DRIFT: 2011's leading can_run_delayed_command() call is CONFIRMED ABSENT, no such call exists anywhere in this function."
   }
 ]

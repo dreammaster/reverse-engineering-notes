@@ -9599,3 +9599,34 @@ already-established finding that this build predates that queue-
 unification refactor entirely. DRIFT: 2011's leading
 `displayed_room<0` (game_start) guard and its `can_run_delayed_command()`
 call are both CONFIRMED ABSENT from this build's version.
+
+### `RestartGame` found with no `matches.json` entry at all, closing the loop on `ExecutingScript`'s last unnamed field
+
+A quick follow-up on the `restore_game_data` thread: `RestartGame` is
+already correctly named in the live IDB (a real linker symbol) and had
+been repeatedly REFERENCED by other functions' own `matches.json`
+entries for several sessions running -- but never actually had an
+entry of its own. Reading it in full closes that gap and matches
+2011's `restart_game()` (`AC.CPP:1733-1742`, exported as the script
+function `RestartGame`) closely: branching on `inside_script`, it
+either defers (writes to `ExecutingScript`'s `+0x64` field and
+returns) or immediately calls the already-matched
+`restore_game_data(999,NULL)` -- confirming this build's own value for
+`RESTART_POINT_SAVE_GAME_NUMBER=999` (`AC.CPP:472`) with zero drift,
+and (per `restore_game_data`'s own newly-corrected entry) taking its
+full-restore path since `nametouse` is `NULL`. On failure it builds an
+`"unable to restart game (error:%s)"` message indexing the pre-existing
+IDA-named `load_game_errors[]` array, matching 2011's own
+`quitprintf` call almost verbatim. DRIFT: 2011's leading
+`can_run_delayed_command()` call is CONFIRMED ABSENT.
+
+The `+0x64` write is worth a small correction to `ExecutingScript`'s
+own struct-level description, which had called this field an "unnamed
+bool" based purely on its consumer-side usage (a gate check). Reading
+the actual write instruction here shows it's `curscript->[+0x64]++` --
+a genuine INCREMENT, not a set-to-1 -- though it still functions as an
+effective boolean gate on the reading side (any nonzero value triggers
+the deferred restart). Combined with `RestoreGameSlot`'s own write-side confirmation of `ooo`
+from earlier this session, both of `ExecutingScript`'s remaining
+"gates a call to X()" fields now have their own dedicated producer
+function identified and matched, not just their consumer-side read.

@@ -2637,6 +2637,16 @@ disassembly work.
   consumer side) a WRITE-side confirmation: writes `slnum` there
   directly when called mid-script, deferring the restore — matching
   2011's role but predating its unified `postScriptActions[]` queue.
+- **`RestartGame` found with no `matches.json` entry at all**, despite
+  being correctly named in the live IDB and repeatedly cited by OTHER
+  functions' own entries for several sessions. Closes cleanly against
+  2011's `restart_game()` — confirms `RESTART_POINT_SAVE_GAME_NUMBER=999`
+  with zero drift, and (like `RestoreGameSlot`) defers via its own
+  dedicated `ExecutingScript`+0x64 field rather than 2011's unified
+  queue. That field's write turns out to be a genuine INCREMENT, not a
+  set-to-1 — a small correction to its earlier "unnamed bool"
+  description. DRIFT: 2011's `can_run_delayed_command()` call is
+  confirmed absent.
 
 ## Third-party library identification (Task #10)
 

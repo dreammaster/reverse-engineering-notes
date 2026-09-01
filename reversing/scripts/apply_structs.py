@@ -342,7 +342,11 @@ fields named and its size (0x10) exactly matches the reference source's
     (`sub_425500`) in matches.json; DRIFT: capacity is 2 here, not 2011's
     declared `MAX_QUEUED_SCRIPTS=4`. Finally an unnamed bool(+0x64,
     between `numanother` and `forked`) gates a call to `RestartGame()` --
-    matches `ePSARestartGame`. Cross-confirmed end to end by
+    matches `ePSARestartGame`. WRITE-side confirmed via `RestartGame`
+    itself (already matched): `curscript->[+0x64]++` when called from
+    inside a running script (an INCREMENT, not a plain set-to-1, though
+    it still functions as an effective boolean gate on the consumer
+    side). Cross-confirmed end to end by
     `ExecutingScript::init()` (`sub_424A00`), a constructor-style function
     that zero/(-1)-initializes precisely these 8 offsets in this exact
     order. ARCHITECTURAL FINDING: 2011 unifies NewRoom/InvScreen/
