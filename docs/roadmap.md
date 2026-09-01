@@ -584,13 +584,19 @@ reimplementation.
       placed; `decoders/char_dat.py` prints the LEGACY.DAT template
       split. Remaining: per-element split of arrays S2 (quest flags) and
       S4 (stat/map block) — needs a populated save.
-- [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py`) —
-      the master string/data table `menuStartup` loads. 6-B header,
-      ~1602 B CGA icon bitmaps, a **123-string length-prefixed pool**
-      (A–Z commands, weapon/armor/item/spell/gem-coin names, directions,
-      responses, digits, the 12 town names), then a 382-B new-character
-      template + shop price table. Icon-bitmap cell layout is the one
-      loose end.
+- [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py` +
+      `decoders/legacy_font.py`) — the master font/string/data table
+      `menuStartup` loads into resident LEGLIB DGROUP. 6-B header; then
+      **`0x006`–`0x605` = the 8×8 CGA software font** (96 glyphs ASCII
+      0x20–0x7F, 16 B each, 2 bpp field-interleaved — `drawStringInner`
+      renders all in-game text from it via `rtm_FE34`); `0x604`–`0x627`
+      = the game-speed timing table (`ds:1E8E`); `0x628`–`0x647` = the
+      first-person turn/step table (`ds:1C4E`, DUN/MUS `doMovement`);
+      `0x648`–`0xA02` = the **123-string length-prefixed pool** (A–Z
+      commands, weapon/armor/item/spell/gem-coin names, directions,
+      responses, digits, 12 town names); tail = the 382-B new-character
+      template + shop price table. (The "icon bitmaps" guess was wrong —
+      it's a font.)
 - [x] Overworld map graphics (2026-08-31, `decoders/outdata.py`) —
       mirrors the dungeon. `OUTM0/1/2.BSV` = map layers picked by
       `combatPhase`, 8-B header + 1 byte/tile, base grid **95 wide**

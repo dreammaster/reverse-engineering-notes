@@ -747,13 +747,24 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   populated save. `decoders/char_dat.py` prints the template split.
 - **2026-09-01** — Decoded `LEGACY.DAT` (`decoders/legacy_dat.py`) — the
   game's master string/data table, loaded once by `menuStartup`. 6-B
-  header, ~1602 B of CGA icon bitmaps, then a **123-string
+  header, the `0x006` binary region, then a **123-string
   length-prefixed pool** (`db len ; db chars`): the A–Z command names,
   every weapon / armor / item / spell / gem-coin name, directions, menu
   responses, digits, and the 12 town names (Isle City, Cobbleton,
   Alanville, …). The tail is a 382-B new-character template (copied into
   empty `CHAR.DAT` slots) ending in a shop price table. The string
   order is the game's canonical item/weapon/spell index.
+- **2026-09-01** — Decoded the `LEGACY.DAT` `0x006`–`0x647` binary region
+  (`decoders/legacy_font.py`). It is **not** "command-menu icon bitmaps":
+  `0x006`–`0x605` is the **8×8 CGA software font** — 96 glyphs (ASCII
+  `0x20`–`0x7F`), 16 bytes each, 2 bpp, field-interleaved — that
+  `drawStringInner` → `sub_28B90` → `rtm_FE34` renders **all in-game
+  text** from (`glyph = base + (ch−0x20)·16`). `0x604`–`0x627` is the
+  game-speed → delay timing table (`ds:1E8E`, indexed by `ds:1AC8`);
+  `0x628`–`0x647` is the first-person turn/step table (`ds:1C4E`, indexed
+  by key×facing, used by `DUN`/`MUS` `doMovement`). All three load into
+  resident LEGLIB DGROUP so they ride the EXE chain. `MENU`'s misnamed
+  `readLegacyDat` is a separate line-oriented text parser.
 - **2026-08-31** -- Decoded `DUNM1/2/3.BSV` (dungeon tile maps): BSAVE to
   `0x2C07:0x0F3C`, 2048-B payload = **8 levels x 16x16 tiles, 1 B/tile**
   (`0x00` floor / `0xFF` rock / `0x01`-`0x0F` features). `DUN.EXE` binds

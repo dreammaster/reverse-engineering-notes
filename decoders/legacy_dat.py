@@ -9,8 +9,10 @@ Layout (2945-byte file):
     0x000-0x005  header:  05 06  (the shared BASIC-data marker, cf.
                  CHAR.DAT), then  dw 0x0A04 , dw 0x017E (= 382, the
                  CHAR.DAT record length).
-    0x006-0x647  the command-menu icon bitmaps -- ~1602 B of CGA 2 bpp
-                 data (exact cell layout not pinned down).
+    0x006-0x605  the 8x8 CGA software font -- 96 glyphs (ASCII 0x20..0x7F),
+                 16 B each, 2 bpp field-interleaved.  See decoders/legacy_font.py.
+    0x606-0x647  two small resident tables: the game-speed timing table
+                 (ds:1E8E) and the first-person movement table (ds:1C4E).
     0x648-0xA02  the STRING POOL -- 123 length-prefixed strings
                  `db len ; db chars`, in fixed order:
                    [0..18]   the A-Z command names (Armor, Climb,
@@ -77,7 +79,8 @@ def main():
     d = load(path)
     m, w1, w2 = header(d)
     print("LEGACY.DAT  %d B   header: %04X %04X %04X" % (len(d), m, w1, w2))
-    print("icons: 0x006 - 0x%03X  (%d B, CGA 2 bpp)" % (POOL_START - 1, POOL_START - 6))
+    print("font: 0x006 - 0x605  (96 glyphs; see legacy_font.py)")
+    print("tables: 0x606 - 0x%03X  (game-speed timing + first-person move)" % (POOL_START - 1))
 
     strs, pool_end = strings(d)
     gi = {i: name for i, name in GROUPS}
