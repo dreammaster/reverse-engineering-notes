@@ -80,7 +80,7 @@ castle/fort layout banks.
 | `BIGNUM.DAT` | 420 | `GMB2` | **decoded** — the large-digit font for `GMB2` (Flip-Flop Parlour)'s GOLD / BET / winnings readouts. **No BSAVE header** — a raw **112 × 15 px CGA 2 bpp bitmap** (28 bytes/row × 15 rows = 420 B exactly; autocorrelation locks the stride at 28). One horizontal strip of ~10 digit glyphs (~11 px pitch), blitted a digit at a time by `drawBigNumberPanel`. `decoders/bignum.py`. |
 | `D.BSV`, `R.BSV` | 3527 / 3527 | `OUT` (disk 2, with the `OUTM*` group) | **rendered** — each a BSAVE image (`0x9259:0x000A`, 3520-B payload) = **220 field-interleaved 8×8 CGA sub-cells** (same format as `OUTDATA.BSV`'s 0x400 bank, low-byte-first). Content = alternate **overworld terrain sub-cell banks** (dithered water/forest/mountain/plains + diagonal edge cells; the last ~2 rows of objects are byte-shared between D and R). Almost certainly the phase-1 / phase-2 counterparts of `OUTDATA.BSV`'s phase-0 sub-cells (`OUTM1`/`OUTM2`). Not opened by literal name in any disassembled module — loaded via a computed filename. |
 | `PEGASUS.BSV` | 1159 | `OUT` | the pegasus sprite bank — `loadOverworldData` `BLOAD`s it into `spriteBank` **only when `combatPhase == 2`** (`OUTOBJ` word[4] `0x830` is its slot). |
-| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **fully framed + fields mapped** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + 74-byte scalar block (image of resident LEGLIB DGROUP `ds:1AC0..1B08`) + **7 BASIC integer arrays with known `DIM` bounds** (8/8/30/17/38/42/4 words — sum = 294 = 382−14−74). Gold, HP, strength, experience, inventory count, overworld X/Y, compendium rank + the S5 shop price table identified; per-element split of S2/S4 still needs a populated save. See the dedicated section. `decoders/char_dat.py`. |
+| `CHAR.DAT` | 3444 | `MENU` / `SAVER` / all play modules | **fully framed + fields mapped** — the character roster, which doubles as the in-progress save. 6-byte header + **9 records × 382 bytes**. Each record = 14-byte name + 74-byte scalar block (image of resident LEGLIB DGROUP `ds:1AC0..1B08`) + **7 BASIC integer arrays with known `DIM` bounds** (8/8/30/17/38/42/4 words — sum = 294 = 382−14−74). Name, gold, HP, the **5 attributes** (Dex/End/Charm/Int/Str), experience, overworld X/Y, compendium rank; **S0/S1** = equipment (id + condition), **S2** = 24-item bitmap + 6 spell counts, **S3** = per-exhibit "seen" flags, **S5** = shop prices — all from `PAULA` save-diffs. Open: XP/level and most of S4. See the dedicated section. `decoders/char_dat.py`. |
 | `LEGACY.DAT` | 2945 | `MENU` (→ resident, all modules) | **fully decoded** — the game's **master font/string/data table** (`menuStartup` loads it once into resident LEGLIB DGROUP). 6-B header, then the **8×8 CGA software font** (`0x006`–`0x605`, 96 glyphs ASCII 0x20–0x7F, `decoders/legacy_font.py`), the **game-speed timing table** + **first-person movement table** (`0x606`–`0x647`), the **123-entry length-prefixed string pool** (`0x648`–`0xA02`, all command/weapon/armor/item/spell/town names), then the **382-B new-character template** (= one `CHAR.DAT` record) ending in the **shop price table**. `decoders/legacy_dat.py` + `decoders/legacy_font.py`. |
 | `OUTDAT.DAT` | 1012 | `OUT` (disk 2) | **decoded** — the overworld **name / stat table** (distinct from `OUTDATA.BSV`). `outInit` opens it as file #1 (string at DGROUP `0x24A2`), `SEEK`s past the 6-B header and reads **7 BASIC arrays** whose `DIM` bounds tile the file exactly: `DIM$(23)` **24 place names** (ZARYL/TARMALON/…), `DIM$(23)` **24 gem names** (DIAMOND/EMERALD/…), then 4 int arrays over the 240-B block — **A1 `DIM(31)` = 32 creature stat words** (low byte = HP 15–200, high byte = attack/XP 20–55; SPRAYFISH 160, MAMMOTH SCREECHER 200), **A2 `DIM(31)`** (per-creature: a reward-ish stat + a `0x01`–`0x04`/`0x63` tag), **A3 `DIM(31)`** (combat — an element is `idiv`'d in `resolvePlayerAttack`), **A4 `DIM(23)` = the 12 town overworld coords** (`X[0..11]` then `Y[0..11]`; `resolveTownEntry` scans them — verified: town 5 = (14,42) = Thornberry, where the `PAULA` save stands) — then `DIM$(31)` **32 creature names** (PIXIE, STRIDER, FARMER, EATON WARRIOR, BANDIT, … MASTON LEAPER), index-aligned to the 32 `OUTDATA.BSV` sprite pairs. The 24 place / 24 gem names are per-game random flavour IDs shown on OUT's attributes screen as `World-<name>` / `Stone-<name>` / `Ring-<n>`. `decoders/outdat_dat.py`. |
 | `DRCONFIG.DAT` | 1015 | `CONFIGUR` + the LEGLIB file loader | **decoded** — the **disk manifest**. `"DD2"` magic, then **84 records** of `<filename>` + `<1-byte disk code>` + `CRLF`. Disk codes: `0x00`–`0x03` = the 4 game floppies (1–4), `0x0E` = "any play disk" (SAVER.EXE, DIS9, TCASOBJ). `CONFIGUR.EXE` edits only the drive letters that live in the record padding, not this structure. `decoders/drconfig_dat.py`. Disk 1 = LEGLIB/MENU/TITLE/CHAR.DAT; disk 2 = overworld+towns+museum; disk 3 = dungeons+castle+minigames+cinematics. |
@@ -192,15 +192,16 @@ in play-module code, `[?]` inferred from the template value + usage:
 
 | rec | ← ds: | default | field |
 |---|---|---|---|
+| `+0x0E` | `1AC0` | 15 | `[P]` **DEXTERITY** |
 | `+0x10` | `1AC2` | 0 | `[C]` **experience** (dword; `TWNDR` `add`/`adc` accumulates) |
 | `+0x16` | `1AC8` | 4 | `[?]` **game speed** (read by MENU + every module) |
 | `+0x18` | `1ACA` | 0 | `[C]` chain-return / location context (`SAVER` `returnTarget`) |
-| `+0x1A` | `1ACC` | 15 | `[?]` **an attribute** (one of the 5 at 15; potion-wizard `+5`, cap `0x24`) |
+| `+0x1A` | `1ACC` | 15 | `[P]` **ENDURANCE** (SDEFENDR training raises it; potion-wizard `+5`, cap `0x24`) |
 | `+0x1E` | `1AD0` | `0x4270` | `[P]` a counter/checksum — `PAULA` `0x426E` (−2). Thought dead; it *does* change. Purpose unknown. |
 | `+0x20` | `1AD2` | 20 | `[P]` **party gold** (dword; `PAULA` 120) |
 | `+0x24` | `1AD6` | −99 | `[P]` dungeon-return marker (dword; template −99/−1 was uninit, `PAULA` 0/0 = "not in a dungeon") |
 | `+0x28` | `1ADA` | 200 | `[C]` **hit points — working cache of `S4[19]`** (only refreshed by `outInit`; `PAULA` 200 is stale, real max = `S4[19]`=20) |
-| `+0x2C` | `1ADE` | 15 | `[?]` **an attribute** (one of the 5 at 15; museum can adjust it) |
+| `+0x2C` | `1ADE` | 15 | `[P]` **CHARM** — the Tulip quest reward is "Charm: +10" (`mus.asm:3482` `add ds:1ADEh, 0Ah`) |
 | `+0x2E` | `1AE0` | 1 | `[C]` **compendium volumes / museum access rank** (1..7) |
 | `+0x30` | `1AE2` | 0 | `[P]` **first-person-view (museum/dungeon) position**, kept across the overworld (`OUT` never touches it; `PAULA` 180) |
 | `+0x32` | `1AE4` | 0 | `[P]` **first-person-view facing** (0..3; `PAULA` 3) |
@@ -208,14 +209,19 @@ in play-module code, `[?]` inferred from the template value + usage:
 | `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
 | `+0x38` | `1AEA` | 5 | `[?]` inventory slot count/max — `PAULA` still 5 after gaining an item, so maybe a fixed max |
 | `+0x3A` | `1AEC` | 9 | `[?]` paired count / damage multiplier (`DUN` `imul`) |
-| `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom raised it 15→17 (cap `0x1C`=28; the CASDR potion-wizard also reads it). One of the **5 attributes**: `+0x0E`/`+0x1A`/`+0x2C`/`+0x3E`/`+0x56` all start at 15; which of the other four is Strength / Dexterity / Stamina / Charm is unknown. |
+| `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom: if INT < 30, a win gives +2 else +1, a loss −1 (cap `0x1C`=28). |
 | `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; `PAULA` 0) |
 | `+0x4C` | `1AFE` | 0 | `[P]` count paired with `1AFC` (`PAULA` 1 — one equipped item?) |
 | `+0x50` | `1B02` | 178 | `[P]` **overworld X** (new game 40; `PAULA` 14) |
 | `+0x54` | `1B06` | 106 | `[P]` **overworld Y** (new game 30; `PAULA` 42) |
-| `+0x56` | `1B08` | 15 | `[?]` **an attribute** (one of the 5 at 15; `DUN` subtracts from it in combat) |
+| `+0x56` | `1B08` | 15 | `[P]` **STRENGTH** (`DUN` subtracts from it in combat) |
 
-`+0x0E`(`1AC0`), `+0x14`(`1AC6`, MUS walk-state; `PAULA` −10),
+**The 5 attributes** — `+0x0E` `1AC0` **Dex**, `+0x1A` `1ACC` **End**,
+`+0x2C` `1ADE` **Charm**, `+0x3E` `1AF0` **Int**, `+0x56` `1B08` **Str**
+— confirmed by setting them to 16/17/18/19/20 and reading the labels
+off the in-game Inventory screen. All start at 15.
+
+`+0x14`(`1AC6`, MUS walk-state; `PAULA` −10),
 `+0x2A`(`1ADC`), `+0x3C`(`1AEE`, `SAVER` sets it `0xEA`),
 `+0x4E`/`+0x52`(`1B00`/`1B04`, town/castle scratch) are transient
 scene/UI state that happens

@@ -249,8 +249,10 @@ reimplementation.
 - [x] `STDRVSCR.DAT` (2026-09-01) — **not text**: `0xAA`-filled CGA screen
       graphics for the Stones-of-Wisdom table (`word[0]`=640 payload
       start). STDRV narrates its rules from strings in the EXE.
-- [ ] How the INTELLIGENCE delta (`intelligenceStat`) is written back to
-      the character record (shared with `SAVER` / `CHAR.DAT`?).
+- [x] The INTELLIGENCE delta (2026-09-02) — STDRV writes it straight to
+      the shared scalar `ds:1AF0` (`CHAR.DAT` rec `+0x3E`), which SAVER
+      persists. Rule (per a game guide, matches the save behaviour): if
+      INT < 30 a Stones-of-Wisdom win gives +2, else +1; each loss −1.
 
 ## CELDRV.EXE — open questions
 
@@ -330,7 +332,8 @@ reimplementation.
       weapons 0–8, armour 9–13 share the id space) — all pinned from 4
       PAULA save-diffs (kill + shopping spree). **Food / XP are NOT
       persisted** — runtime-only working vars (searched 4 saves). Still
-      open: the S4 RPG stats (dex/stamina/wisdom/intelligence/level).
+      open: XP / character level, and the S4 map/state slots. (The 5 attributes
+      Dex/End/Charm/Int/Str = scalars 1AC0/1ACC/1ADE/1AF0/1B08 -- all pinned.)
 - [ ] The "character disk" checks ("is not on this / character disk",
       "empty") imply a multi-disk / per-character-slot save scheme —
       confirm.
@@ -597,7 +600,8 @@ reimplementation.
       compendium rank / game-speed scalars + the S5 shop price table
       placed. **S2 = 24-item possession bitmap, S0/S1 = equipment slots**
       (2026-09-02, from 4 PAULA save-diffs). Food / XP are runtime-only
-      (not in the record). S2 FULLY decoded (24-item bitmap + 6 spell counts). Remaining: the S4 RPG stats.
+      (not in the record). S2 FULLY decoded (24-item bitmap + 6 spell counts). The 5 attributes
+      (Dex/End/Charm/Int/Str) = scalars 1AC0/1ACC/1ADE/1AF0/1B08. Remaining: XP/level.
 - [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py` +
       `decoders/legacy_font.py`) — the master font/string/data table
       `menuStartup` loads into resident LEGLIB DGROUP. 6-B header; then
