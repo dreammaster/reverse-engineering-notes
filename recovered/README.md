@@ -151,8 +151,10 @@ anchor). The combat pool it prints is quoted at the top of
       DANGLER drains `INT(RND(1)*3+1)` Endurance; KNUCKLES / armour-eater
       destroy equipment.  Normal monster-hit rolls are un-coerced in
       `dun.asm` — TODO.
-- [ ] DUN traps (the 7 named), monster movement, climb up/down, chest loot,
-      `CastSpell`
+- [x] `dun_traps.bas` — `MoveHazards`, `FallThroughDamage`, `DoLookSearch`.
+      Trap tiles 1..7 hidden / +8 revealed; FLOOR HOLE drops a level; other
+      traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.
+- [ ] DUN monster movement, climb up/down, chest/box loot, `CastSpell`
 
 ## Other modules
 
