@@ -246,8 +246,9 @@ reimplementation.
       crunching for the dice math -- no distinguishing text. `diceCount`
       / `stdrvArrayPtr` split them into "tally" and "table lookup"
       groups; naming each precisely needs the dice ruleset traced.
-- [ ] Field-decode `STDRVSCR.DAT` (6192 bytes) — is it the same
-      screen-string record pool as the in-EXE text, or a flat blob?
+- [x] `STDRVSCR.DAT` (2026-09-01) — **not text**: `0xAA`-filled CGA screen
+      graphics for the Stones-of-Wisdom table (`word[0]`=640 payload
+      start). STDRV narrates its rules from strings in the EXE.
 - [ ] How the INTELLIGENCE delta (`intelligenceStat`) is written back to
       the character record (shared with `SAVER` / `CHAR.DAT`?).
 
@@ -762,6 +763,11 @@ reimplementation.
       magic + 84 `<filename><diskcode>CRLF` records. Disk codes 0x00–0x03
       = floppies 1–4, 0x0E = "any play disk". `CONFIGUR.EXE` edits only
       the drive letters.
+- [x] `TWNMSG.TXT` / `MUSMSG.TXT` (2026-09-01, `decoders/msg_txt.py`) —
+      message banks: `word[0]` = table size = first-msg offset, then
+      `word[0]/2` 1-based word offsets (monotonic run only), `\r`-
+      terminated messages with `*`/`=`/`^`/`%`/`#X`/`@X`/`]…]` markup.
+      37 town rumours + 39 museum-exhibit narration blocks.
 - [x] `OUTDAT.DAT` (2026-09-01, `decoders/outdat_dat.py`) — the overworld
       **name table** (NOT `OUTDATA.BSV`): 24 place names + 24 gem names +
       a 240-B numeric block (TBD) + **32 creature names** index-aligned
