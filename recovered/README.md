@@ -138,8 +138,11 @@ anchor). The combat pool it prints is quoted at the top of
       encounter gate).  `ResolveMoveTarget`/`ReadTileObject` are viewport
       clipping, not game logic.
 - [x] `CreatureAttack` (un-folded; out_combat.bas v7)
-- [ ] `enterOverworld` / `loadOverworldData`, `awardFoundItem`, quest flags,
-      mail routes
+- [x] `out_flags_items.bas` — `ApplyGameFlag` + `SetFlag_*` (the story
+      bitfield `S4(11)`, shared with MUS), `AwardFoundItem`
+      (`S2(droppedItemId) += 1`)
+- [ ] `enterOverworld` / `loadOverworldData`, mail routes, per-bit meaning
+      of the quest flags (cross-module trace)
 
 ## DUN.EXE
 
