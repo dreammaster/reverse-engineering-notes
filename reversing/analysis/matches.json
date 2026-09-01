@@ -127,7 +127,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates red/green/blu each in [0,100], quitting \"!TintScreen: RGB values must be 0-100\" otherwise -- exact match to 2011's own bound check (AC.CPP:2672-2674). If all three are 0: sets the already-confirmed GameState.screen_tint(play_scren_tint)=-1 (disabled). Otherwise scales each component by *25/10 and packs them into screen_tint as red+(green<<8)+(blu<<16) -- an exact, instruction-for-instruction match to 2011's \"red=(red*25)/10; grn=(grn*25)/10; blu=(blu*25)/10; play.screen_tint=red+(grn<<8)+(blu<<16);\" (AC.CPP:2678-2685). DRIFT: 2011's leading invalidate_screen() call (before the zero-check) is CONFIRMED ABSENT -- no such call exists anywhere in this function, another instance of this build's rendering pipeline predating that later invalidation machinery (consistent with several other findings this session)."
   },
   {
     "kind": "function",
@@ -197,7 +197,7 @@
     "source_obj": "acchars.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj ADDENDUM (field evidence): validates charid via the already-matched is_valid_character, then calls sub_40AE7D(&chars[charid].x, &chars[charid].y) -- passing POINTERS to the already-confirmed CharacterInfo.x@+0x14/y@+0x18 for in-place modification. This matches 2011's own signature exactly: MoveToWalkableArea delegates through Character_PlaceOnWalkableArea to find_nearest_walkable_area(int*,int*) (Engine/acchars.cpp:392-405, called as \"find_nearest_walkable_area(&chap->x,&chap->y)\" at acchars.cpp:953) -- this build calls the equivalent 2-pointer-argument function DIRECTLY, without 2011's intervening Character_PlaceOnWalkableArea wrapper layer, the same 'later AGS added a script-object-oriented wrapper' pattern seen repeatedly elsewhere this session. sub_40AE7D itself (a substantial ~90-line function with an 8-variable local frame, plausibly find_nearest_walkable_area fused with find_nearest_walkable_area_within) is NOT independently traced/matched this round -- left as a real, promising open lead for a future round rather than force an unverified identification."
   },
   {
     "kind": "function",

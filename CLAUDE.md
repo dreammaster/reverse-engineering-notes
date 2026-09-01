@@ -2609,6 +2609,18 @@ disassembly work.
   a second, independent confirmation (after the `rtint_*` globals and
   `SetAmbientTint`'s own absence) that the room-tint-override subsystem
   doesn't exist in this build at all.
+- **`TintScreen` closes cleanly, plus a new `MoveToWalkableArea` signature match.**
+  `TintScreen`'s whole body (the disabled/all-zero branch and the
+  `*25/10`-scale-then-pack branch) is an exact, instruction-for-
+  instruction match to 2011 — minus a leading `invalidate_screen()`
+  call, CONFIRMED ABSENT, joining several other functions this session
+  showing the same predates-hardware-invalidation pattern.
+  `MoveToWalkableArea` calls `sub_40AE7D(&x,&y)`, matching 2011's
+  `find_nearest_walkable_area(int*,int*)` signature exactly — called
+  directly, without 2011's intervening `Character_PlaceOnWalkableArea`
+  wrapper. `sub_40AE7D`'s own ~90-line body (plausibly that function
+  fused with its own `_within` helper) is left untraced, an honest open
+  lead rather than a forced identification.
 
 ## Third-party library identification (Task #10)
 

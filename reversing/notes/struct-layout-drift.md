@@ -9514,3 +9514,35 @@ occurrences) that this build's room-tint-override subsystem doesn't
 exist at all, now extended from "the globals that would hold an active
 tint don't exist" to "the very API that would clear one doesn't touch
 any such field either."
+
+### `TintScreen`/`MoveToWalkableArea`: a clean close and an honest open lead
+
+`TintScreen` (previously bare) closes cleanly end to end: validates
+red/green/blu each in `[0,100]`, and its whole body -- the `all-zero
+means disabled` branch and the `*25/10`-scale-then-pack-into-
+`screen_tint` branch -- is an exact, instruction-for-instruction match
+to 2011's own body (`AC.CPP:2672-2685`). The one difference: 2011's
+leading `invalidate_screen()` call is CONFIRMED ABSENT, yet another
+instance of this session's repeated finding that this build's rendering
+pipeline predates that later invalidation machinery (joining `FadeOut`,
+`ShakeScreen`, `MergeObject`, and `SetPalRGB`/`CyclePalette` from
+earlier rounds).
+
+`MoveToWalkableArea` (previously only a thin boilerplate entry) turned
+out to have a genuinely useful signature match: it calls
+`sub_40AE7D(&chars[charid].x, &chars[charid].y)`, passing POINTERS to
+the already-confirmed `CharacterInfo.x`@+0x14/`y`@+0x18 for in-place
+modification -- matching 2011's `find_nearest_walkable_area(int*,int*)`
+(`Engine/acchars.cpp:392-405`) signature exactly, called directly rather
+than through 2011's intervening `Character_PlaceOnWalkableArea` wrapper
+(the same "later AGS added a script-object-oriented wrapper layer"
+pattern seen repeatedly this session). `sub_40AE7D` itself -- a
+substantial ~90-line function with an 8-variable local frame, plausibly
+`find_nearest_walkable_area` fused with its own `_within` helper -- was
+NOT traced this round. Deliberately left as an honest open lead rather
+than forcing an identification from the signature match alone; a
+genuine candidate for a future round given `find_nearest_walkable_area`'s
+own real algorithmic content (a low-res-converted spiral/grid pixel
+search using `getpixel`/`thisroom.walls`/`thisroom.width`/`height`/
+`left`/`right`/`top`/`bottom`, several of which are already-confirmed
+fields that would get further reconfirmation routes if traced).
