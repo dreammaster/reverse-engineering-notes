@@ -706,6 +706,13 @@ reimplementation.
         `renderExhibitView` never blits sprites; exhibit art is
         `DIS*.BSV` + per-exhibit `.BSV`). No open sprite items remain
         on the dungeon/museum side.
+      - **Palette animation: there is none** (checked 2026-09-01). The 5
+        frames/block = the 5 view depths (static redraws); the 6 blocks =
+        6 distinct monsters. `drawViewSprite` draws once per player
+        action. CGA colour is set once per view by `rtm_FE29` (`out
+        0x3D8,0x0A` / `out 0x3D9,0x30` = fixed palette 1 in the dungeon;
+        map-data-driven on the overworld) — no register cycling anywhere.
+        `decoders/dunmon.py --sheet`.
 - [x] `TOWN0..B.BSV` (2026-08-31) — the 12 town layouts. **80×40 tile
       map** (`0x000`–`0xC7F`, confirmed by `setViewport` mode 0:
       `mapStride 0x50`, `mapHeight 0x28`, size `0xC80`) + object records

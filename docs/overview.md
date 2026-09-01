@@ -824,6 +824,23 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   spriteBank[bankBase + P]` -- so the `spriteBank` index math is now
   resolved statically, no live dump needed. `DUNOBJ` still supplies the
   per-depth arch mask; `DUNMON` supplies the per-monster image.
+- **2026-09-01** -- Checked the `DUNMON`/overworld-creature **"palette
+  animation"**: there is none. The 5 "frames" per block are the 5 view
+  DEPTHS (hand-drawn redraws, not a cycle); the 6 blocks are 6 distinct
+  monsters (DUNMONA: streaker / two-headed turtle / octopoid / one-eyed
+  stalker / segmented worm / horned demon; DUNMONB: dragon / horse-thing
+  / horned swordsman / owlbear / caped antenna-beast / fanged
+  tentacle-thing). `drawViewSprite` runs once per player action
+  (`renderDungeonView` is a per-turn redraw); the sprite is static. CGA
+  colour is set **once** by `renderDungeonView` -> `rtm_FE29` (leglib
+  `seg007:0x27391`): `out 0x3D8, 0x0A` (graphics mode) + `out 0x3D9,
+  0x30` (palette 1, black border) + the matching `INT 10h,AH=0Bh`. No
+  register cycling anywhere. The overworld's `loadOverworldData` does the
+  same one-shot `rtm_FE29` but reads its two bytes from the map data
+  (`ds:1E2A[+4]` mode, `[+2]` colour), so `OUTM*` regions can ship a
+  different fixed palette -- still never animated. The `DUNOBJ` region-A
+  `K` field (once guessed "animation frame count") has no code reading
+  it. `decoders/dunmon.py --sheet` renders the proof.
 - **2026-08-31** -- Traced `bmDUNG`'s `drawViewSprite` / `blitViewCell`
   and the LEGLIB primitives behind them, cracking the dungeon-view
   graphics model:
