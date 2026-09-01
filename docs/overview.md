@@ -881,11 +881,15 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   what `sub_28156` points `drawTileRun` at: `srcSeg` = the `ds:1E2A`
   array segment, `srcBase` = array byte `0x2F22` = OUTDATA payload
   `0x400`, taken when `ds:2082h == 0x23CD`). So the terrain sub-cells
-  are in `OUTDATA`, not `OUTOBJ`. `0x1400`+/`0x1F5C`+ = **64 × 124-byte
-  object/creature sprite records** (`dw 40 ; dw 20` + a 40×12 CGA bitmap
-  = 2 side-by-side animation frames; 32 image+`AND`-mask pairs — pegasus,
-  mounted figures, monsters, wings — drawn by `chainExec`'s tail for the
-  "PEGASUS SETS YOU DOWN" / "AMBUSHED BY BANDITS!" events). **The
+  are in `OUTDATA`, not `OUTOBJ`. `0x1402`+/`0x1F5C`+ = **64 × 124-byte
+  object/creature sprite records** — MS-BASIC `PUT` GET-arrays
+  (`dw 0x28` = 40 bits = 20 px ; `dw 0x14` = 20 rows ; 100 B pixels +
+  20 B pad), **20×20 px single-frame** sprites, 32 image + `AND`-mask
+  pairs (walking man, warrior, sword-fighter, pegasus, centaur, wings,
+  ~24 monsters), drawn by `chainExec`'s tail for the "PEGASUS SETS YOU
+  DOWN" / "AMBUSHED BY BANDITS!" events — `decoders/outdata.py` renders
+  them. The 2026-09-01 fix: the old "40×12 / two side-by-side frames"
+  reading was a wrong 10 B/row stride; the arrays are 5 B/row. **The
   overworld uses `drawTileRun` just like the dungeon**: `refreshMapView`
   builds a 26-wide tile-index buffer from the 4-byte records (BL/BR to
   row `+0x1A`) and `rtm_FE69` blits a `26 x 17` cell grid via

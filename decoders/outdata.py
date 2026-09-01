@@ -44,19 +44,27 @@ copy a 13x13 map window (`array[0x120 + Y*0x5F + X]`) for move logic.
 
 ## The object / creature sprites (payload 0x1400 onward)
 
-A 2-byte prefix, then **64 records x 124 bytes** in two banks
-(`0x1402`-`~0x1A4E`, then `0x1F5C`-`0x3718`).  Each record:
+**64 records x 124 bytes** in two banks: `0x1402`-`0x1AC9` (14 records =
+7 pairs) and `0x1F5C`-`0x3793` (50 records = 25 pairs).  Each record is
+a **stock MS-BASIC `PUT` GET-array**, same convention as `DUNMON`:
 
-    dw 0x0028   -- width = 40 px
-    dw 0x0014   -- 20 (the sprite-cell height; only 12 rows are stored)
-    120 bytes   -- a 40 x 12 CGA 2 bpp bitmap, 10 bytes/row, linear
+    dw 0x0028   -- X extent in BITS = 40  ->  20 px wide (CGA SCREEN 1, 2 bpp)
+    dw 0x0014   -- Y extent = 20 rows
+    100 bytes   -- 20 rows x ceil(40/8) = 5 bytes/row, linear 2 bpp,
+                   MSB pair = leftmost pixel, colour 0 transparent
+    20 bytes    -- zero padding to the 124-byte record stride
 
-The 40 px hold **two side-by-side 20-wide animation frames** (a walk
-cycle etc.).  Records **pair up**: an even record is the image
-(`basPutSprite` verb 0) and the odd record right after it is the
-`AND`-mask (verb 1) -- 32 sprite pairs.  `chainExec`'s tail draws them
-for the special-travel events ("PEGASUS SETS YOU DOWN", "AMBUSHED BY
-BANDITS!"): pegasus, mounted figures, monster creatures, wings.
+So each sprite is **20 x 20 px** -- one figure, NOT "two side-by-side
+frames" (the earlier 40x12 reading was an artefact of a wrong 10 B/row
+stride).  Records **pair up**: the even record is the colour image
+(`basPutSprite` verb 0), the odd record right after it (+`0x7C` = 124 B)
+is the `AND`-mask silhouette (verb 1) -- **32 pairs**.  `chainExec`'s
+tail draws them for the special-travel events ("PEGASUS SETS YOU DOWN",
+"AMBUSHED BY BANDITS!"): a walking man, an armoured warrior, a
+sword-fighter, the pegasus, a centaur/mounted figure, wings, and a
+menagerie of overworld monsters (bug, scorpion, octopus, spider, bat,
+serpent, ...).  Static single-frame sprites -- no animation, no palette
+cycling (see decoders/dunmon.py notes).
 """
 import struct
 import sys
@@ -66,7 +74,8 @@ N_TILES = 256
 REC = 4
 BANK = 0x400
 SPRITE_HDR = b"\x28\x00\x14\x00"
-SPRITE_W, SPRITE_BPR, SPRITE_ROWS = 40, 10, 12
+SPRITE_REC = 124
+SPRITE_W, SPRITE_BPR, SPRITE_ROWS = 20, 5, 20
 PAL = [(0, 0, 0), (0x55, 0xFF, 0xFF), (0xFF, 0x55, 0xFF), (0xFF, 0xFF, 0xFF)]
 
 
@@ -104,8 +113,7 @@ def sprite_records(p):
 
 
 def sprite_pixels(p, off):
-    """One record -> SPRITE_ROWS rows of SPRITE_W palette indices
-    (the 40-px bitmap holds 2 side-by-side 20-wide frames)."""
+    """One 124-byte record -> 20 rows of 20 palette indices."""
     data = p[off + 4:off + 4 + SPRITE_BPR * SPRITE_ROWS]
     return [[(data[y * SPRITE_BPR + x // 4] >> (6 - 2 * (x % 4))) & 3
              for x in range(SPRITE_W)] for y in range(SPRITE_ROWS)]
@@ -121,6 +129,43 @@ def terrain_tile(p, T):
             for x in range(8):
                 img[qy * 8 + y][qx * 8 + x] = c[y][x]
     return img
+
+
+def write_png(path, rows, scale=1):
+    """rows = list of list of palette-index (0..3)."""
+    import zlib
+    h, w = len(rows), len(rows[0])
+    raw = bytearray()
+    for r in rows:
+        line = bytearray()
+        for v in r:
+            line += bytes(PAL[v]) * scale
+        for _ in range(scale):
+            raw.append(0)
+            raw += line
+    def ch(t, d):
+        return (struct.pack(">I", len(d)) + t + d
+                + struct.pack(">I", zlib.crc32(t + d) & 0xFFFFFFFF))
+    open(path, "wb").write(
+        b"\x89PNG\r\n\x1a\n"
+        + ch(b"IHDR", struct.pack(">IIBBBBB", w * scale, h * scale, 8, 2, 0, 0, 0))
+        + ch(b"IDAT", zlib.compress(bytes(raw), 9)) + ch(b"IEND", b""))
+
+
+def sprite_sheet(p, path, scale=5, cols=8):
+    """All sprite records: even = image, odd = AND-mask, side by side."""
+    sr = sprite_records(p)
+    gap = 1
+    cw, cht = SPRITE_W + gap, SPRITE_ROWS + gap
+    rows_n = (len(sr) + cols - 1) // cols
+    grid = [[0] * (cw * cols) for _ in range(cht * rows_n)]
+    for i, off in enumerate(sr):
+        spr = sprite_pixels(p, off)
+        ox, oy = (i % cols) * cw, (i // cols) * cht
+        for y, row in enumerate(spr):
+            for x, v in enumerate(row):
+                grid[oy + y][ox + x] = v
+    write_png(path, grid, scale)
 
 
 def write_bmp(path, rows, scale=1):
@@ -162,11 +207,12 @@ def main():
 
     sr = sprite_records(p)
     strides = {sr[i + 1] - sr[i] for i in range(len(sr) - 1) if sr[i + 1] - sr[i] < 0x100}
-    print("\nobject/creature sprites: %d records of 124 B (%d pairs), strides %s"
-          % (len(sr), len(sr) // 2, strides))
-    print("  bank 1: 0x%X .. 0x%X    bank 2: 0x%X .. 0x%X"
-          % (sr[0], max(o for o in sr if o < 0x1B00),
-             min(o for o in sr if o > 0x1B00), sr[-1]))
+    b1 = [o for o in sr if o < 0x1B00]
+    b2 = [o for o in sr if o > 0x1B00]
+    print("\nobject/creature sprites: %d records x 124 B (%d image/mask pairs),"
+          " 20x20 px, strides %s" % (len(sr), len(sr) // 2, strides))
+    print("  bank 1: 0x%X .. 0x%X  (%d recs)   bank 2: 0x%X .. 0x%X  (%d recs)"
+          % (b1[0], b1[-1], len(b1), b2[0], b2[-1], len(b2)))
 
     if outdir:
         os.makedirs(outdir, exist_ok=True)
@@ -188,25 +234,9 @@ def main():
         write_bmp(out, cv)
         print("wrote", out)
 
-        # sprite sheet: image row on top, mask row below, per pair
-        S, per = 6, 8
-        cw = (SPRITE_W + 3) * S
-        chh = (SPRITE_ROWS * 2 + 4) * S
-        npair = len(sr) // 2
-        cv = [[0] * (cw * per) for _ in range(chh * ((npair + per - 1) // per))]
-        for k in range(npair):
-            img = sprite_pixels(p, sr[k * 2])
-            msk = sprite_pixels(p, sr[k * 2 + 1])
-            ox, oy = (k % per) * cw, (k // per) * chh
-            for band, cells in ((0, img), (SPRITE_ROWS + 1, msk)):
-                for y, row in enumerate(cells):
-                    for x, v in enumerate(row):
-                        for dy in range(S):
-                            for dx in range(S):
-                                cv[oy + (band + y) * S + dy][ox + x * S + dx] = v
-        out = os.path.join(outdir, "outdata_sprites.bmp")
-        write_bmp(out, cv)
-        print("wrote", out)
+        out = os.path.join(outdir, "outdata_sprites.png")
+        sprite_sheet(p, out)
+        print("wrote", out, "(64 records; even col = image, odd col = AND-mask)")
 
 
 if __name__ == "__main__":

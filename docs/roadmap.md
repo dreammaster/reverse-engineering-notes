@@ -605,10 +605,14 @@ reimplementation.
       4-byte terrain records** (2×2 sub-cell indices; transitions in
       groups of 4), `0x400`-`~0xD1F` = **the ~146-cell 8×8 sub-cell
       bank** (`sub_28156` points `drawTileRun` here: `srcBase` = array
-      `0x2F22` = OUTDATA `0x400`), `0x1400`+/`0x1F5C`+ = **64 × 124-byte
-      object/creature sprite records** (`dw 40 ; dw 20` + a 40×12 bitmap
-      = 2 frames; 32 image+`AND`-mask pairs — pegasus, riders, monsters,
-      wings — `chainExec` draws them for the travel events).
+      `0x2F22` = OUTDATA `0x400`), `0x1402`+/`0x1F5C`+ = **64 × 124-byte
+      object/creature sprite records** = MS-BASIC `PUT` GET-arrays
+      (`dw 0x28`=40 bits=20 px ; `dw 0x14`=20 rows ; 100 B + 20 B pad),
+      **20×20 single-frame** sprites, 32 image+`AND`-mask pairs (walking
+      man, warrior, sword-fighter, pegasus, centaur, wings, ~24
+      monsters) — `chainExec` draws them for the travel events;
+      `decoders/outdata.py` renders the sheet. (2026-09-01: the old
+      "40×12 / 2 frames" was a wrong 10 B/row stride.)
       `refreshMapView` builds a 26-wide index buffer from the terrain
       records; `rtm_FE69` blits it 26×17 via `drawTileRun`. All rendered
       clean.  `OUTOBJ.BSV` (landmark-icon bank) **structure decoded**
