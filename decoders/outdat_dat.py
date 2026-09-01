@@ -11,15 +11,22 @@ Layout (1012-byte file)
     0x006-0x184  POOL 1 -- 48 length-prefixed strings (`db len ; db chars`):
                    [0..23]  24 PLACE names   (ZARYL, TARMALON, MERRILL, ...)
                    [24..47] 24 GEM/stone names (DIAMOND, EMERALD, RUBY, ...)
-    0x185-0x274  a 240-byte NUMERIC block, 3 sub-tables:
-                   ~0x185  small byte pairs (map coords / ids?)
-                   ~0x1C9  `(value, 0x63)` pairs with 0x01-0x04 run markers
-                   0x209   `03`, then 7 words (4,6,3,10,15,18,12), then
-                           ~25 byte-pairs (0xFF-terminated), then
-                   0x243   24 words: 86,77,51,39,4,14,7,31,48,55,84,82,43,
-                           82,57,78,80,42,24,6,31,16,4,3
-                 (exact field meaning TBD -- likely per-place/per-gem
-                 coordinates + per-creature or per-gem stats.)
+    0x185-0x274  a 240-byte NUMERIC block, ~4 sub-tables:
+                   0x185  64 B = **32 (b0, b1) pairs, one per creature**:
+                          b0 range 15..200 -- almost certainly HIT POINTS
+                          (PIXIE 30 ... GIANT MANTARAY 160 ... MAMMOTH
+                          SCREECHER 200); b1 range 20..50 -- attack or XP.
+                   0x1C5  `(value, 0x63)` pairs broken by small run
+                          markers (0x01-0x04, 0x8C04) -- per-region
+                          encounter lists?
+                   0x205  `03`, then 7 words (4,6,3,10,15,18,12) -- the
+                          7 gem-coin quest items? -- then ~25 byte-pairs
+                          ending 0xFF.
+                   0x245  24 words: 86,77,51,39,4,14,7,31,48,55,84,82,43,
+                          82,57,78,80,42,24,6,31,16,4,3 -- one per place
+                          or per gem (map cell? region difficulty?).
+                 (Exact meanings unconfirmed -- the file's reader is not
+                 located, so this is structural inference only.)
     0x275-0x3F3  POOL 2 -- 32 CREATURE names, length-prefixed.  These map
                  1:1 to the 32 image/AND-mask sprite pairs in
                  `OUTDATA.BSV` at 0x1400 (see decoders/outdata.py):
@@ -80,7 +87,11 @@ def main():
 
     j = find_next_pool(d, e1)
     print(f"\nnumeric block  0x{e1:03X}..0x{j:03X}  ({j - e1} B)")
-    print("  " + " ".join(f"{b:02x}" for b in d[e1:j]))
+    creature_stats = [(d[e1 + 2 * k], d[e1 + 2 * k + 1]) for k in range(32)]
+    print("  creature (hp?, atk/xp?) pairs [0x185, 32]:")
+    print("   ", creature_stats)
+    print("  mid block 0x%03X..0x%03X:" % (e1 + 64, j - 48))
+    print("   ", " ".join(f"{b:02x}" for b in d[e1 + 64:j - 48]))
     tail24 = struct.unpack_from("<24H", d, j - 48)
     print(f"  last 24 words (0x{j-48:03X}): {list(tail24)}")
 
