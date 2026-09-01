@@ -183,6 +183,7 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## leglib.bas — the shared engine primitives
 
-- [ ] arithmetic dispatch (done, see above), string ops, `drawString` codes,
-      file I/O (`rtm_FE07`/`rtm_02` BLOAD, `rtm_FE63`), the `rtm_FE*`
-      graphics layer, `B$RND`
+- [x] `leglib.bas` — a REFERENCE (not a reconstruction) of every primitive
+      the recovered module files call: the value stack + op table, `B$RND`,
+      string / text output + `drawString` codes, BSAVE file I/O, the bmXXXX
+      graphics layer, the SUB frame.  Makes the module files self-contained.
