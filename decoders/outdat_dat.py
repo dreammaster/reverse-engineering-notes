@@ -26,20 +26,28 @@ Layout (1012-byte file)
 ----------------------
     0x000-0x005  header 15 42 90 03 07 00
     0x006-0x184  pool 1: 48 length-prefixed strings
-                   [0..23]  24 place names   ZARYL, TARMALON, MERRILL, ...
-                   [24..47] 24 gem/stone names DIAMOND, EMERALD, RUBY, ...
+                   [0..23]  24 "World-" names  ZARYL, TARMALON, MERRILL, ...
+                   [24..47] 24 "Stone-" names  DIAMOND, EMERALD, RUBY, ...
+                 -- per-game random flavour IDs shown on OUT's attributes
+                 screen as "World-<name>" / "Stone-<name>" / "Ring-<n>".
     0x185        A1  32 words, one per creature.  Each word packs two
-                 bytes: low = HP-ish (15..200; SPRAYFISH 160, MAMMOTH
+                 bytes: low = HP (15..200; SPRAYFISH 160, MAMMOTH
                  SCREECHER 200), high = attack / XP (20..55).
     0x1C5        A2  32 words, one per creature.  low byte = a second
                  stat (tracks A1 loosely -- reward?), high byte = a
-                 group/biome tag (usually 0x63 = 99, else 0x01-0x04).
-    0x205        A3  32 words -- first 8 are small ints (3,4,6,3,10,15,
-                 18,12), then byte-pairs with a 0xFF in the run.  Not
-                 split.
-    0x245        A4  24 words, one per place (or gem):
-                 86,77,51,39,4,14,7,31,48,55,84,82,43,82,57,78,80,42,
-                 24,6,31,16,4,3  -- an overworld map/region index?
+                 tag (usually 0x63 = 99, else 0x01-0x04).
+    0x205        A3  32 words, one per creature -- combat use (an element
+                 read is `idiv`'d at resolvePlayerAttack).  Not split.
+    0x245        A4  24 words = **12 (X, Y) overworld map coordinates for
+                 the 12 towns**, X[0..11] then Y[0..11].  `resolveTownEntry`
+                 loops the 12 towns comparing `A4[t]` to the player X and
+                 `A4[t+12]` to the player Y.  Verified: A4 town 5 =
+                 (14, 42) = Thornberry, where the `PAULA` save stands.
+                   Isle City (86,43) Cobbleton (77,82) Alanville (51,57)
+                   Grand Ledge (39,78) Big Rapids (4,80) Thornberry (14,42)
+                   Mazelton (7,24) Thompson Crossing (31,6)
+                   Merchant Square (48,31) Laingsburg (55,16)
+                   Holy Point (84,4) Eagle Hollow (82,3)
     0x275-0x3F3  pool 2: 32 creature names, index-aligned to the 32
                  `OUTDATA.BSV` image/AND-mask sprite pairs (0x1400+):
                  PIXIE, STRIDER, FARMER, EATON WARRIOR, BANDIT, ...
@@ -87,8 +95,13 @@ def main():
         s2, tag = a2[i] & 0xFF, a2[i] >> 8
         print(f"  [{i:2}] {name:18} HP={hp:3} atk={atk:2}   A2={s2:3} tag={tag:#04x}")
 
-    print(f"\nA3 (32 w): {list(a3)}")
-    print(f"A4 (24 w, per place?): {list(a4)}")
+    print(f"\nA3 (32 w, combat): {list(a3)}")
+    towns = ["Isle City", "Cobbleton", "Alanville", "Grand Ledge",
+             "Big Rapids", "Thornberry", "Mazelton", "Thompson Crossing",
+             "Merchant Square", "Laingsburg", "Holy Point", "Eagle Hollow"]
+    print("\nA4 = 12 town overworld coordinates (X[0..11], Y[0..11]):")
+    for t in range(12):
+        print(f"  {towns[t]:18} ({a4[t]:2}, {a4[t + 12]:2})")
 
 
 if __name__ == "__main__":
