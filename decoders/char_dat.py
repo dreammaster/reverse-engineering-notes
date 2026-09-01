@@ -103,27 +103,37 @@ S4[19]=20).
     +0x54 <- 1B06   [P] OVERWORLD Y (new game 30; PAULA 42)
     +0x56 <- 1B08   [?] attribute-like (tmpl 15, PAULA 15; DUN subtracts)
 
-Array roles (PAULA diff 2026-09-01; per-element split still partial):
+Array roles (PAULA diffs, 4 saves 2026-09-01/02):
 
-    S0  8-slot INVENTORY item-id list.  PAULA S0[0] 0->1 after she got a
-        weapon.  CASDR writes S0[0]=7, S0[7]=0xC -> values are small ids.
-        (Earlier "combat scratch" guess was wrong -- it persists.)
-    S1  8-slot INVENTORY item CONDITION (0..4, the LEGACY Shoddy..Superb
-        scale -- rtm_FE50 clamps it).  PAULA S1[0] 0->1, parallel to S0[0].
-    S2  30 world / quest flags.  PAULA: only [17] changed (2->0), and the
-        template's [17]=2 looks like dev junk -- so still mostly opaque.
-        Indexed against the overworld object array (ds:1C7C).
-    S3  17 museum-progress words.  PAULA: [15] 0->2 (= museum ENTRY COUNT,
-        mus.asm:498 increments it each visit); [14] 0->1 (used an exhibit
-        PORTAL, mus.asm:1637); [1]=-2, [2]=1 (other exhibit progress).
-    S4  38-word block.  S4[1] = saved museum/exhibit position
-        (chainToTown/chainToDungeon write ds:1AE2 here; PAULA 32).
-        S4[19] = 20 = the peasant HP baseline / buyFood heal cap (NOT the
-        max -- PAULA's HP is 141, well above).  [22]=32000, [25..29]=32767
-        sentinel; [0..2] (1500/32/31058) look like RNG/hash.
+    S0 / S1  the EQUIPMENT slots -- S0 = item id, S1 = condition
+        (0..4 = LEGACY weapon-condition scale Shoddy/Fair/Good/Great/
+        Superb; rtm_FE50 clamps S1).  Weapons and armour share one id
+        space: weapons 0..8 (bare hands..Compound bow), armour 9..13
+        (Studded hide..Mythan plate).  Layout: S0[0..4] weapons,
+        S0[5..7] armour.  PAULA after buying+equipping a "Great knife"
+        and "Good studded hide": S0[1]=1 (Knife) S1[1]=3 (Great);
+        S0[6]=9 (Studded hide) S1[6]=2 (Good).  ds:1AFC = equipped
+        weapon slot (->1), ds:1AFE = armour equipped (1).
+    S2  **the 24-ITEM POSSESSION BITMAP** -- S2[k] = 1 if the party holds
+        LEGACY item[k] (the [55..78] sub-pool).  PAULA over 4 saves:
+        [1] Gold armband (start), [2] Climbing gear, [9] "mail" (flips
+        when you first own armour), [15] Compendium (the plot scroll,
+        from the intro), [17] Jade coin, [18] Topaz coin.  Keys / herbs /
+        the 7 gem coins / Crown / Scepter / Tulip / Compass all live
+        here too.
+    S3  17 museum-progress words.  [15] = museum entry count
+        (mus.asm:498), [14] = used an exhibit portal (mus.asm:1637),
+        [1]/[2] = other exhibit progress.
+    S4  38-word block.  S4[1] = saved museum/exhibit position; S4[13]
+        moved 0->1 when PAULA bought a raft; S4[7] -1->6 with a token
+        purchase.  S4[19] = 20 = the buyFood HP-heal cap (NOT max HP --
+        PAULA's HP is 999 after editing, 141/38 before).  [22]=32000,
+        [25..29]=32767 sentinels (one, [29], dropped to 593 mid-game);
+        [0..2] (1500/32/31058) look like RNG/hash.
     S5  SHOP PRICE TABLE -- S5[0]=7 then 41 prices.  Static / global.
-    S6  4 words -- NOT dead: PAULA [0]=17, [3]=18.  Written via a computed
-        index or LEGLIB.  Purpose unknown.
+    S6  4 words -- volatile; bounces (`[0]` 17/0, `[1]` 0/17, `[3]`
+        18/0 across saves).  Written via a computed index.  Purpose
+        unknown -- probably transient re-entry scratch, not real state.
 
 **Partial-save caveat** (PAULA save 2, after a kill): only the LIVE
 scalars moved -- gold (+35 loot), HP (-59 damage), 1AD0 (turn counter).
@@ -134,10 +144,16 @@ only flush to the arrays when you enter a town / museum / dungeon.
 "Food" (a displayed stat) is NOT in the record at all -- it lives in a
 working var (candidates: the per-step counters ds:1ACE / 1AF4 / 1AF8).
 
-Still open: which S4 elements are the RPG stats, the S2 quest flags,
-S6, where food/XP/level actually persist -- needs a save taken from
-INSIDE a town (forces the checkpoint flush) + the game's displayed
-numbers at that moment.
+**Food is NOT in the record** -- searched 4 saves; the displayed "days
+of food" (53 / 105 / 196) never appears as a word or byte.  It is a
+runtime-only working var (ds:1AF8 and friends are per-step counters but
+don't track the display value).  So food cannot be save-edited; HP
+(ds:1ADA) and gold (ds:1AD2 dword) can and do.
+
+Still open: which S4 elements are the RPG stats (dex/stamina/wisdom/
+intelligence/level/XP), and where XP/level persist -- experience
+(ds:1AC2) has stayed 0 across all PAULA saves despite a kill, so XP may
+also be checkpoint-only in an array slot.
 """
 import struct
 import sys
@@ -163,16 +179,33 @@ ARRAYS = [
 # record offset -> (kind, label); kind 'w' signed word, 'd' signed dword
 FIELDS = [
     (0x10, "d", "experience"),
-    (0x16, "w", "gameSpeed"),
-    (0x20, "d", "partyGold"),
-    (0x28, "w", "hitPoints(cache)"),
-    (0x2E, "w", "compendiumRank"),
+    (0x20, "d", "gold"),
+    (0x28, "w", "HP"),
     (0x3E, "w", "strength"),
-    (0x30, "w", "viewPos"),
-    (0x32, "w", "viewFacing"),
-    (0x50, "w", "overworldX"),
-    (0x54, "w", "overworldY"),
+    (0x2E, "w", "compendiumRank"),
+    (0x50, "w", "wldX"),
+    (0x54, "w", "wldY"),
 ]
+
+# LEGACY.DAT item sub-pool ([55..78]) -- S2[k] = "party holds item k"
+ITEMS = ["nothing", "Gold armband", "Climbing gear", "Healing herbs",
+         "Iron key", "Copper key", "Brass key", "Stone key", "Magic seeds",
+         "mail", "Tulip", "Compass", "Magic ice", "Scepter", "Guard jewel",
+         "Compendium", "Crown", "Jade coin", "Topaz coin", "Amethyst coin",
+         "Sapphire coin", "Turquoise coin", "Ruby coin", "Diamond coin"]
+WEAPONS = ["bare hands", "Knife", "Leaded club", "Bladed staff", "Flail",
+           "War hammer", "Bow & arrow", "Broadaxe", "Compound bow"]
+ARMOUR = ["Studded hide", "Ring mail", "Double mail", "Plated mail",
+          "Mythan plate"]
+CONDITION = ["Shoddy", "Fair", "Good", "Great", "Superb"]
+
+
+def gear_name(item_id):
+    if 0 <= item_id < len(WEAPONS):
+        return WEAPONS[item_id]
+    if 9 <= item_id < 9 + len(ARMOUR):
+        return ARMOUR[item_id - 9]
+    return f"id{item_id}"
 
 
 def load(path):
@@ -207,12 +240,25 @@ def dump(path):
         rec = b[HEADER + i * reclen: HEADER + (i + 1) * reclen]
         name = rec[:NAME].split(b"\x00")[0].rstrip().decode("latin1")
         used = name.lower() not in ("empty", "")
-        line = f"  slot {i}: {name!r:18} {'USED' if used else 'empty'}"
+        line = f"  slot {i}: {name!r:16} {'USED' if used else 'empty'}"
         if used:
             for off, kind, label in FIELDS:
                 fmt = "<i" if kind == "d" else "<h"
                 line += f"  {label}={struct.unpack_from(fmt, rec, off)[0]}"
         print(line)
+        if not used:
+            continue
+        s0 = struct.unpack_from("<8h", rec, ARRAY_OFF)
+        s1 = struct.unpack_from("<8h", rec, ARRAY_OFF + 16)
+        s2 = struct.unpack_from("<30h", rec, ARRAY_OFF + 32)
+        eq = [f"{gear_name(s0[k])}"
+              f" ({CONDITION[s1[k]] if 0 <= s1[k] < 5 else s1[k]})"
+              for k in range(8) if s0[k]]
+        if eq:
+            print(f"           equipment: {', '.join(eq)}")
+        held = [ITEMS[k] for k in range(min(24, 30)) if s2[k]]
+        if held:
+            print(f"           items:     {', '.join(held)}")
 
 
 def dump_template(legacy_path):
