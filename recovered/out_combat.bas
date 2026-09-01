@@ -1,10 +1,13 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld combat                                     [v5]
+'  OUT.EXE  --  overworld combat                                     [v6]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: RollEncounterMod  ComputeEquippedPower  SpellAttack
 '        ResolvePlayerAttack  CreatureDefeated
 '  Not here: CreatureAttack (the monster's turn) -- collapsed at out.asm:3468.
+'
+'  v6: to-hit confirmed by a 2nd DOSBox trace -- L is the CONSTANT 0.8
+'  (ds:2E3A), not Dex/(wp+18).  Formula: Dex^0.8 * (wp+18) / (creatureHP*11).
 ' ==========================================================================
 '
 '  v4: the to-hit is SOLVED (exact float match against Paul's DOSBox trace).
@@ -122,19 +125,17 @@ SUB ResolvePlayerAttack                               ' asm: out.asm:6686 (resol
 
     ' ---- 1. to-hit score --------------------------------------------- asm:6687-6714
     '   push CSNG(Dexterity)                                    ' asm:6687
-    '   FF2B   ->  Dexterity ^ L                                ' asm:6691
-    '          L = the value the caller left on the stack; in Paul's trace
-    '          L = 0.8 exactly == Dexterity / (weaponPower + 18).  The push
-    '          of L is in the (collapsed) caller -- take this as
-    '          L = Dexterity / (weaponPower + 18) pending a 2nd trace.
+    '   FF2B   ->  Dexterity ^ 0.8   (0.8 = ds:2E3A, pushed by the caller)  asm:6691
     '   push (weaponPower + 18) ; FF4C (*)                      ' asm:6694-6698
     '   push creatureHP ; FF4E ds:2C26 (*) -> creatureHP * 11.0 ' asm:6702-6706
     '   FF47 (/) ; pop -> hitScratch (ds:208E)                  ' asm:6710-6713
-    hitScratch = (Dexterity ^ (Dexterity / (weaponPower + 18))) _
-                 * (weaponPower + 18) / (creatureHP * 11.0)               ' asm:6687-6714
-    '  EXACT: 16^0.8 * 20 / 550 = 0.33416682 = the observed ds:208E.
-    '  Bigger Dex / weapon and lower enemy HP -> higher hitScratch -> more
-    '  likely to hit (step 2).  '?ord only on the L push (caller is collapsed).
+    hitScratch = Dexterity ^ 0.8 * (weaponPower + 18) / (creatureHP * 11.0) ' asm:6687-6714
+    '  VERIFIED against two DOSBox traces (bit-exact bar 1-2 ULP of the
+    '  software pow):
+    '     Dex 16, wp 2, cHP 50  -> 0.334167  (0x3EAB17EA)
+    '     Dex 20, wp 8, cHP 35  -> 0.741885  (0x3F3DEC2F)
+    '  Dexterity has diminishing returns (^0.8); the +18 makes weaponPower a
+    '  modest linear bonus; tougher creatures (higher HP) are harder to hit.
 
     IF creatureWeak = weaponId THEN                                       ' asm:6717
         hitScratch = 1.0                       ' ds:24E6  (plain assign)  ' asm:6723-6727
@@ -246,7 +247,8 @@ END SUB
 '  SOLID -- operators pinned from LEGLIB.EXE; formulas verified against
 '  Paul's DOSBox traces (to-hit is an EXACT float match) or self-consistent:
 '   * op table = + - -rev * / /rev cmp  (README) ; FF2B = `^` reversed
-'   * to-hit score  = (Dex ^ (Dex/(wp+18))) * (wp+18) / (creatureHP * 11)
+'   * to-hit score  = Dex^0.8 * (weaponPower + 18) / (creatureHP * 11)
+'                     [VERIFIED, two DOSBox traces; 0.8 = ds:2E3A]
 '   * to hit        : HIT when RND(1) < hitScratch ; weakness-match forces 1.0
 '   * RollEncounterMod  = INT( RND(1)*18 + 12.6 )               [12..30]
 '   * base damage       = INT( Str * (wp/6 + 1/2) / (2*RND(1) + 1) )
@@ -265,10 +267,7 @@ END SUB
 '     NO experience award (overworld kills = food/gold/items only)
 '
 '  OPEN:
-'   1. the `L` push for the to-hit -- observed L = Dex/(wp+18) exactly, but
-'      the pushing code is in the collapsed caller.  A 2nd trace with a
-'      different weapon/Dex confirms whether L really is Dex/(wp+18).
-'   2. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?  same
+'   1. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?  same
 '      question for the CreatureDefeated food gate.
 '   3. selectedSpell range (23..28 assumed from the -337.5 = -22.5*15 offset).
 '   4. CreatureDefeated: the exact DropChance / GoldChance RND gates and the

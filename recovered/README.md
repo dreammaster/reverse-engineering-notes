@@ -125,8 +125,13 @@ anchor). The combat pool it prints is quoted at the top of
 ## OUT.EXE
 
 - [x] `out_combat.bas` — `RollEncounterMod`, `ComputeEquippedPower`,
-      `SpellAttack`, `ResolvePlayerAttack` (to-hit an exact float match),
-      `CreatureDefeated`. All melee/spell formulas verified or derived.
+      `SpellAttack`, `ResolvePlayerAttack`, `CreatureDefeated`. All
+      melee/spell formulas verified or derived.  to-hit =
+      `Dex^0.8 * (weaponPower+18) / (creatureHP*11)` — confirmed by two
+      independent DOSBox traces (the `^` exponent is the constant `ds:2E3A`
+      = 0.8, not a derived term).
+- [x] `out_encounter.bas` — `CreatureApproach`, `BeginEncounterView`
+- [x] `out_economy.bas` — `ProvisionerShop`, `ShopConfirmBuy` (prices)
 - [~] `out_movement.bas` — `DoMovement`: the per-step tick (food drain,
       terrain wear, step counter) + food-poisoning damage are solid; the
       tile-entry dispatch, sickness/roll gating, and `ResolveMoveTarget`
