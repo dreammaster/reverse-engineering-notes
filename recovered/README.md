@@ -132,15 +132,14 @@ anchor). The combat pool it prints is quoted at the top of
       = 0.8, not a derived term).
 - [x] `out_encounter.bas` — `CreatureApproach`, `BeginEncounterView`
 - [x] `out_economy.bas` — `ProvisionerShop`, `ShopConfirmBuy` (prices)
-- [~] `out_movement.bas` — `DoMovement`: the per-step tick (food drain,
-      terrain wear, step counter) + food-poisoning damage are solid; the
-      tile-entry dispatch, sickness/roll gating, and `ResolveMoveTarget`
-      (out.asm:9203) are partial / TODO.
-- [ ] `CreatureAttack` (out.asm:3468, collapsed) — the monster's turn
-- [ ] confirm the to-hit `L` (= `Dex/(wp+18)`?) with a 2nd trace
-- [ ] economy: `shopBuy`, `buyFood`, bank interest, mail routes
-- [ ] `enterOverworld` / `loadOverworldData`, `creatureApproach`,
-      `beginEncounterView`, `awardFoundItem`, chest/loot, quest flags
+- [x] `out_movement.bas` — `DoMovement` (per-step tick + food-poisoning)
+      and `ClassifyLocationTile` (the terrain-cost classifier: tile type
+      -> enteredLocationId 5/10/15 -> food per step 0.25/0.5/0.75 AND the
+      encounter gate).  `ResolveMoveTarget`/`ReadTileObject` are viewport
+      clipping, not game logic.
+- [x] `CreatureAttack` (un-folded; out_combat.bas v7)
+- [ ] `enterOverworld` / `loadOverworldData`, `awardFoundItem`, quest flags,
+      mail routes
 
 ## DUN.EXE
 
@@ -156,7 +155,12 @@ anchor). The combat pool it prints is quoted at the top of
 - [x] `dun_traps.bas` — `MoveHazards`, `FallThroughDamage`, `DoLookSearch`.
       Trap tiles 1..7 hidden / +8 revealed; FLOOR HOLE drops a level; other
       traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.
-- [ ] DUN monster movement, climb up/down, chest/box loot, `CastSpell`
+- [x] `dun_chest.bas` — `OpenChest`, `RollChestContents`, `FindJewel`.
+      Chest gold = `INT(chestBase*RND(1) + 60)`,
+      `chestBase = (10*dungeonNumber + dungeonLevel)*20 + 20`; a per-level
+      gold high-water mark stops re-farming; the quest jewel is a level-7
+      chest granted once.
+- [ ] DUN monster movement, climb up/down, `CastSpell`
 
 ## TWNDR.EXE
 

@@ -1,15 +1,13 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld movement + per-step upkeep                  [v1]
+'  OUT.EXE  --  overworld movement + per-step upkeep                  [v2]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 '
-'  SUBs: DoMovement  (the per-step tick is solid; the tile-entry dispatch
-'                     and the sickness/encounter gating are partial)
-'  Referenced but not yet reconstructed here:
-'     ResolveMoveTarget  (out.asm:9203, ~1 KB far SUB) -- reads the
-'        destination tile, sets enteredLocationId / ds:1F04, dispatches to
-'        classifyLocationTile / identifyLocationObject / readTileObject.
-'     ClassifyLocationTile, EnterLocationOrChain -- the town/dungeon/museum
-'        transition path.
+'  SUBs: DoMovement (per-step tick solid; sickness/encounter gating partial)
+'        ClassifyLocationTile (out.asm:11858 -- the terrain-cost classifier)
+'
+'  ResolveMoveTarget (out.asm:9973) and ReadTileObject (out.asm:10468) are
+'  viewport clipping + tile-record reads (rtm_FE1B/FE14 cell blits, 13x13
+'  window copy from ds:1E2A), not game logic -- not reconstructed here.
 ' ==========================================================================
 '
 '  DGROUP vars:
@@ -76,6 +74,23 @@ TileHasObject:                                                            ' loc_
     ChainToLocation tileObjectType               ' rtm_FD dispatch        ' asm:1662-1663
 END SUB
 
-' ResolveMoveTarget / ClassifyLocationTile / ChainToLocation / the
-' NonWorldMove branch (first-person interiors reuse this SUB via contextMode
-' >= 10) are all TODO -- separate reconstruction pass.
+
+' --------------------------------------------------------------------------
+SUB ClassifyLocationTile                              ' asm: out.asm:11858 (classifyLocationTile)
+' --------------------------------------------------------------------------
+' Maps the raw tile-object type under the player (ds:2182, 0..13) to
+' enteredLocationId (ds:1F02) -- which IS the terrain cost: DoMovement's
+' tick does  food -= enteredLocationId / 20  and the encounter trigger is
+' stepScratch (= enteredLocationId/20) <= RND(1)*(level+9).  So a higher
+' code means BOTH more food per step AND fewer encounters.
+
+    SELECT CASE tileObjectType                        ' ds:2182           ' asm:11863-11935
+    CASE 0            : enteredLocationId = 10   ' open ground             ' asm:11871
+    CASE 1, 2         : enteredLocationId = 5    ' road / easy             ' asm:11888
+    CASE 3, 4, 5      : enteredLocationId = 10                            ' asm:11906
+    CASE 6           : enteredLocationId = 15   ' rough (forest / swamp)   ' asm:11918
+    CASE 7 TO 13     : enteredLocationId = 5                              ' asm:11935
+    CASE ELSE        : ' unchanged
+    END SELECT
+    '  -> food per step: code 5 = 0.25, code 10 = 0.50, code 15 = 0.75.
+END SUB
