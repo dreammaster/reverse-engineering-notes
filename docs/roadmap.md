@@ -782,10 +782,13 @@ reimplementation.
       terminated messages with `*`/`=`/`^`/`%`/`#X`/`@X`/`]…]` markup.
       37 town rumours + 39 museum-exhibit narration blocks.
 - [x] `OUTDAT.DAT` (2026-09-01, `decoders/outdat_dat.py`) — the overworld
-      **name table** (NOT `OUTDATA.BSV`): 24 place names + 24 gem names +
-      a 240-B numeric block (TBD) + **32 creature names** index-aligned
-      to the `OUTDATA.BSV` 0x1400 sprite pairs. Loaded via a computed
-      filename (no literal ref).
+      **name / stat table** (NOT `OUTDATA.BSV`). `outInit` opens it as
+      file #1 and reads 7 BASIC arrays whose DIMs tile the file: 24
+      place names + 24 gem names + A1 (32 creature stat words: lo = HP
+      15–200, hi = atk/XP) + A2 (32 w, reward + `0x01–0x04`/`0x63` tag)
+      + A3 (32 w) + A4 (24 per-place words) + 32 creature names
+      (index-aligned to the `OUTDATA.BSV` sprite pairs). A2 tag / A3 / A4
+      exact meaning still needs the encounter code traced.
 - [~] `D.BSV` / `R.BSV` (2026-09-01) — each = 220 field-interleaved 8×8
       sub-cells, i.e. **alternate overworld terrain sub-cell banks**
       (rendered; same format as `OUTDATA.BSV` 0x400). Likely the phase-1

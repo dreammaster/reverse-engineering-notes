@@ -1,48 +1,49 @@
 #!/usr/bin/env python3
-"""Decode `OUTDAT.DAT` -- Legacy of the Ancients' overworld name / data
-table (24 place names + 24 gem names + 32 creature names + numeric
-sub-tables).  Distinct from `OUTDATA.BSV` (the overworld graphics).
+"""Decode `OUTDAT.DAT` -- Legacy of the Ancients' overworld name / stat
+table (distinct from `OUTDATA.BSV`, the overworld graphics).
 
     python decoders/outdat_dat.py [C:\\games\\lota\\OUTDAT.DAT]
 
+The reader
+----------
+`OUT.EXE` `outInit` opens `OUTDAT.DAT` as file #1 (the string constant is
+at DGROUP `0x24A2`, descriptor `0x24AC`), `SEEK`s to byte 7 (past the
+6-byte header) and reads **7 BASIC arrays** straight through with
+`rtm_FE68` (string array) / `rtm_FE37` (int array).  Their `DIM` bounds
+(from the `rt_AF` calls at the top of `outInit`) exactly tile the file:
+
+    rtm_FE68 ds:2106  DIM$(23)  -> 24  PLACE names   (pool 1 [0..23])
+    rtm_FE68 ds:2118  DIM$(23)  -> 24  GEM names     (pool 1 [24..47])
+    rtm_FE37 ds:209A  DIM(31)   -> 32 words  A1  (0x185)
+    rtm_FE37 ds:20AC  DIM(31)   -> 32 words  A2  (0x1C5)
+    rtm_FE37 ds:20BE  DIM(31)   -> 32 words  A3  (0x205)
+    rtm_FE37 ds:20D0  DIM(23)   -> 24 words  A4  (0x245)
+    rtm_FE68 ds:20E2  DIM$(31)  -> 32  CREATURE names (pool 2)
+
+    (32+32+32+24) words = 240 bytes = exactly the 0x185..0x274 block.
+
 Layout (1012-byte file)
 ----------------------
-    0x000-0x005  header: 15 42 90 03 07 00  (words 0x4215, 0x0390, 0x0007)
-    0x006-0x184  POOL 1 -- 48 length-prefixed strings (`db len ; db chars`):
-                   [0..23]  24 PLACE names   (ZARYL, TARMALON, MERRILL, ...)
-                   [24..47] 24 GEM/stone names (DIAMOND, EMERALD, RUBY, ...)
-    0x185-0x274  a 240-byte NUMERIC block, ~4 sub-tables:
-                   0x185  64 B = **32 (b0, b1) pairs, one per creature**:
-                          b0 range 15..200 -- almost certainly HIT POINTS
-                          (PIXIE 30 ... GIANT MANTARAY 160 ... MAMMOTH
-                          SCREECHER 200); b1 range 20..50 -- attack or XP.
-                   0x1C5  `(value, 0x63)` pairs broken by small run
-                          markers (0x01-0x04, 0x8C04) -- per-region
-                          encounter lists?
-                   0x205  `03`, then 7 words (4,6,3,10,15,18,12) -- the
-                          7 gem-coin quest items? -- then ~25 byte-pairs
-                          ending 0xFF.
-                   0x245  24 words: 86,77,51,39,4,14,7,31,48,55,84,82,43,
-                          82,57,78,80,42,24,6,31,16,4,3 -- one per place
-                          or per gem (map cell? region difficulty?).
-                 (Exact meanings unconfirmed -- the file's reader is not
-                 located, so this is structural inference only.)
-    0x275-0x3F3  POOL 2 -- 32 CREATURE names, length-prefixed.  These map
-                 1:1 to the 32 image/AND-mask sprite pairs in
-                 `OUTDATA.BSV` at 0x1400 (see decoders/outdata.py):
-                   PIXIE, STRIDER, FARMER, EATON WARRIOR, BANDIT,
-                   SHADOW WISP, HUGGYN, SPRAYFISH, WAVE SKIMMER,
-                   SEA SWALLOW, GIANT MANTARAY, WIND STALKER, SCORPOD,
-                   BONE DWELLER, PRACTON PIERCER, CARRION MANGLER,
-                   VENTRO FLAILER, STINGING RAKISH, BLISTOPOD,
-                   PIT STRIKER, SLASH NETTLE, VENOM FLOATER, PULP CRAWLER,
-                   THRUST CREEPER, SLIME WIERD, SCRABBLER, NEURAL CLOUD,
-                   CHURLER, ROCK BEETLE, MAMMOTH SCREECHER, MIME GHOUL,
-                   MASTON LEAPER.
-
-`OUTDAT.DAT` is not opened by literal name in any disassembled module --
-it is loaded through a computed filename (the LEGLIB loader resolves the
-disk from `DRCONFIG.DAT`; the file is on disk 3).
+    0x000-0x005  header 15 42 90 03 07 00
+    0x006-0x184  pool 1: 48 length-prefixed strings
+                   [0..23]  24 place names   ZARYL, TARMALON, MERRILL, ...
+                   [24..47] 24 gem/stone names DIAMOND, EMERALD, RUBY, ...
+    0x185        A1  32 words, one per creature.  Each word packs two
+                 bytes: low = HP-ish (15..200; SPRAYFISH 160, MAMMOTH
+                 SCREECHER 200), high = attack / XP (20..55).
+    0x1C5        A2  32 words, one per creature.  low byte = a second
+                 stat (tracks A1 loosely -- reward?), high byte = a
+                 group/biome tag (usually 0x63 = 99, else 0x01-0x04).
+    0x205        A3  32 words -- first 8 are small ints (3,4,6,3,10,15,
+                 18,12), then byte-pairs with a 0xFF in the run.  Not
+                 split.
+    0x245        A4  24 words, one per place (or gem):
+                 86,77,51,39,4,14,7,31,48,55,84,82,43,82,57,78,80,42,
+                 24,6,31,16,4,3  -- an overworld map/region index?
+    0x275-0x3F3  pool 2: 32 creature names, index-aligned to the 32
+                 `OUTDATA.BSV` image/AND-mask sprite pairs (0x1400+):
+                 PIXIE, STRIDER, FARMER, EATON WARRIOR, BANDIT, ...
+                 SCORPOD, ... MAMMOTH SCREECHER, MIME GHOUL, MASTON LEAPER
 """
 import struct
 import sys
@@ -64,43 +65,30 @@ def pool(d, i, maxlen=40):
     return out, i
 
 
-def find_next_pool(d, i):
-    """Skip binary bytes to the next length-prefixed ASCII run."""
-    while i < len(d):
-        n = d[i]
-        if 3 <= n <= 20 and i + 1 + n <= len(d) and \
-                all(0x41 <= b <= 0x5A or b == 0x20 for b in d[i + 1:i + 1 + n]):
-            return i
-        i += 1
-    return len(d)
-
-
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else r"C:\games\lota\OUTDAT.DAT"
     d = open(path, "rb").read()
     print(f"{path}  {len(d)} B   header {struct.unpack_from('<3H', d, 0)}")
 
     p1, e1 = pool(d, HEADER)
-    print(f"\nPOOL 1  0x{HEADER:03X}..0x{e1:03X}  ({len(p1)} strings)")
-    print("  places [0..23]: " + ", ".join(p1[:24]))
-    print("  gems  [24..47]: " + ", ".join(p1[24:]))
+    places, gems = p1[:24], p1[24:48]
+    print(f"\n24 PLACES : {', '.join(places)}")
+    print(f"24 GEMS   : {', '.join(gems)}")
 
-    j = find_next_pool(d, e1)
-    print(f"\nnumeric block  0x{e1:03X}..0x{j:03X}  ({j - e1} B)")
-    creature_stats = [(d[e1 + 2 * k], d[e1 + 2 * k + 1]) for k in range(32)]
-    print("  creature (hp?, atk/xp?) pairs [0x185, 32]:")
-    print("   ", creature_stats)
-    print("  mid block 0x%03X..0x%03X:" % (e1 + 64, j - 48))
-    print("   ", " ".join(f"{b:02x}" for b in d[e1 + 64:j - 48]))
-    tail24 = struct.unpack_from("<24H", d, j - 48)
-    print(f"  last 24 words (0x{j-48:03X}): {list(tail24)}")
+    a1 = struct.unpack_from("<32H", d, e1)
+    a2 = struct.unpack_from("<32H", d, e1 + 64)
+    a3 = struct.unpack_from("<32H", d, e1 + 128)
+    a4 = struct.unpack_from("<24H", d, e1 + 192)
 
-    p2, e2 = pool(d, j)
-    print(f"\nPOOL 2  0x{j:03X}..0x{e2:03X}  ({len(p2)} creature names)")
-    for k, s in enumerate(p2):
-        print(f"  [{k:2}] {s}")
-    if e2 < len(d):
-        print(f"\ntrailing 0x{e2:03X}..0x{len(d):03X}: {d[e2:].hex()}")
+    p2, _ = pool(d, e1 + 240)
+    print(f"\n32 CREATURES + stats  (A1 = HP|atk, A2 = stat|biome):")
+    for i, name in enumerate(p2):
+        hp, atk = a1[i] & 0xFF, a1[i] >> 8
+        s2, tag = a2[i] & 0xFF, a2[i] >> 8
+        print(f"  [{i:2}] {name:18} HP={hp:3} atk={atk:2}   A2={s2:3} tag={tag:#04x}")
+
+    print(f"\nA3 (32 w): {list(a3)}")
+    print(f"A4 (24 w, per place?): {list(a4)}")
 
 
 if __name__ == "__main__":
