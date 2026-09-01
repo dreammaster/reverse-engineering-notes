@@ -757,8 +757,13 @@ reimplementation.
       display-case portals) at `0x000`–`0x7FF`, then a near-copy of
       `DUNDATA.BSV`'s dungeon-view tile/graphic data from `0x800`
       (`bmMUSDUNG` ≡ `bmDUNG`). `decoders/dun_map.py MUSDATA`.
-- [ ] Music format — the MML `PLAY` strings in `MENU` (`t120l4cl8ef…`)
-      + `basPlayMusic` / `rtm_CE`.
+- [x] Music format (2026-09-01, `decoders/music_mml.py`) — **no music
+      file**; GW-BASIC `PLAY` MML string constants in `MENU.EXE`
+      (`0x6EE4`, `0x7DB6`+) and `CELDRV.EXE` (`0x3920`+, same tune),
+      played one voice via `basPlayMusic`/`rtm_CE` on the PC speaker.
+      6 phrases: a looping 3-phrase title theme + a 2-phrase menu theme
+      + a phrase-1 variant. Standard `oN`/`<>`/`lN`/`tN`/`a-g(+#-)(len)(.)`
+      /`p`/`nN`/`mn`/`ml` dialect; parser emits note/freq/ms events.
 - [x] `DRCONFIG.DAT` (2026-09-01, `decoders/drconfig_dat.py`) — `"DD2"`
       magic + 84 `<filename><diskcode>CRLF` records. Disk codes 0x00–0x03
       = floppies 1–4, 0x0E = "any play disk". `CONFIGUR.EXE` edits only

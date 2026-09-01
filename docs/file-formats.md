@@ -90,6 +90,18 @@ castle/fort layout banks.
 `LEGACY.BAT` (4 bytes: `menu`), `manual.txt`, and
 `Passed.through.ANTiQUE.Shop` are not game data.
 
+**Music** — there is no music file. The tunes are GW-BASIC `PLAY` MML
+string constants compiled into `MENU.EXE` (`0x6EE4` + `0x7DB6`–`0x7EE0`)
+and `CELDRV.EXE` (`0x3920`+, same tune for the endgame). `basPlayMusic`
+(`rtm_CE`, leglib seg003:0x1EDBA) drives the PC speaker, one voice.
+**6 phrases**: a ~12 s looping **title theme** (3 phrases,
+`showTitleScreen` → `playMusicTick`) + a ~8 s **menu theme** (2 phrases,
+`menuStartup` at `ds:210A`/`ds:210E`), plus an earlier variant of
+phrase 1. Dialect: `oN` octave, `<`/`>` shift, `lN` default length, `tN`
+tempo, `a`–`g`(`+`/`#`/`-`)(len)(`.`), `p`/`r` rest, `nN` note number,
+`mn`/`ml`/`ms` articulation. `decoders/music_mml.py` extracts and parses
+them to note/frequency/duration event lists.
+
 ## `.GLB` + `.GMP` — tile sheet + cell map — **decoded 2026-08-31**
 
 Fully decoded and rendered by `decoders/glb_image.py` (verified against
