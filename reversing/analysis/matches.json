@@ -387,7 +387,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Calls the already-matched GetTranslation, then reads the already-confirmed CharacterInfo.flags@+0x20's packed talkcolor byte (see SetTalkingColor's own entry, this session) via \"(flags&0xFF000000)>>24\" negated, and calls the already-matched CreateTextOverlay(xx=0x7530/*OVR_AUTOPLACE*/, yy=charid, wii=usetup_base_width/2, fontid, clr=-talkcolor, translated text) -- an EXACT argument-order match to 2011's own \"CreateTextOverlay(OVR_AUTOPLACE,charid,scrnwid/2,FONT_SPEECH,-game.chars[charid].talkcolor,get_translation(speel));\" (AC.CPP:13313-13314), a THIRD independent confirmation this session of the talkcolor-packed-in-flags finding. Then calls the newly-named GetTextDisplayTime(Str) (sub_4136AF, see its own entry) and writes the result directly into ScreenOverlay.timeout@+0x10 (dword_4CD230[idx], idx from the already-matched find_overlay_of_type) -- a further WRITE-side confirmation of that field from a new site, matching 2011's \"screenover[scid].timeout=GetTextDisplayTime(speel,1);\" (AC.CPP:13318) in role. DRIFT: 2011's leading loop that removes any PREVIOUS background-speech overlay for the SAME character (\"for(cc=0;cc<numscreenover;cc++) if(screenover[cc].bgSpeechForChar==charid) remove_screen_overlay_index(cc);\", AC.CPP:13305-13311) and the trailing \"screenover[scid].bgSpeechForChar=charid;\" write are BOTH CONFIRMED ABSENT here -- consistent with, and a second/behavioral confirmation of, ScreenOverlay.bgSpeechForChar's already-established structural absence (this build's ScreenOverlay has only 5 fields, no bgSpeechForChar at all -- there's simply no field for this logic to exist around)."
   },
   {
     "kind": "function",
@@ -407,7 +407,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newvol in [0,255], then: if dword_52321C(speechmp3, already established as this build's single-channel speech SOUNDCLIP* handle) is set, calls its VTABLE SLOT 2 with newvol as the sole argument -- matching 2011's \"if(channels[SCHAN_SPEECH]) channels[SCHAN_SPEECH]->set_volume(newvol);\" (AC.CPP:13453-13461) exactly, and NEWLY IDENTIFYING SOUNDCLIP's own vtable slot 2 as set_volume(int) -- the first SOUNDCLIP virtual-method slot identified in this project (previously only the base class's plain-data layout, vtbl+done, was recovered). Then writes newvol directly to dword_4EF2A8, decisively confirmed as GameState.speech_volume@+0x890 via absolute-address arithmetic (0x4EEA18+0x890=0x4EF2A8, exactly GameState's own established base) -- a further, independent WRITE-side confirmation of that field, previously only confirmed via a READ site (play_speech/sub_4141B8)."
   },
   {
     "kind": "function",
@@ -437,7 +437,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newstyle in [0,3] (quitting \"!SetSpeechStyle: must use a SPEECH_* constant...\" otherwise), then writes it directly to byte_513340 -- already established as GameSetupStructBase.options[OPT_SPEECHTYPE]. Exact, decisive match to 2011's own \"if((newstyle<0)||(newstyle>3)) quit(...); game.options[OPT_SPEECHTYPE]=newstyle;\" (AC.CPP:13480-13484), zero drift -- a further, independent confirmation of that field/byte from a new write site."
   },
   {
     "kind": "function",
@@ -447,7 +447,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol; apply_structs.py's GameState.want_speech comment already cited this function's behavior from an earlier round, but this matches.json entry itself was still bare). Validates newmod in [0,2] (quitting \"!SetVoiceMode: invalid mode number (must be 0,1,2)\" otherwise), then: if want_speech<0 (voice pack not available), stores want_speech=(-newmod)-1 (encoding the desired mode as negative, to remember it for later if a VOX file is added); else stores want_speech=newmod directly. Exact, decisive, instruction-for-instruction match to 2011's own SetVoiceMode (AC.CPP:13495-13504), zero drift."
   },
   {
     "kind": "function",
@@ -457,7 +457,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-check body: \"return (want_speech>=0);\" -- exact match to 2011's own \"if(play.want_speech<0) return 0; return 1;\" (AC.CPP:13506-13510), zero drift. A further, independent confirmation of GameState.want_speech's negative-means-unavailable convention, complementing SetVoiceMode's own write-side evidence."
   },
   {
     "kind": "function",
@@ -5332,11 +5332,11 @@
   {
     "kind": "manual",
     "asm_name": "sub_4136AF",
-    "new_name": null,
+    "new_name": "GetTextDisplayTime",
     "source_file": "Engine/AC.CPP",
     "source_line": 12688,
-    "confidence": "medium",
-    "evidence": "GameState field confirmation (fresh survey, closing the last tentative fields): \"(strlen(Str)/dword_4EEB0C + 1) * frames_per_second\" matches the ROLE of 2011's text-display-duration calculation, \"((uselen / (play.text_speed + play.text_speed_modifier)) + 1) * 1000\" then scaled by fps (AC.CPP:12688-12692) -- this build's simpler predecessor, lacking text_speed_modifier/lipsync_speed/text_min_display_time_ms (all later additions). Also confirmed independently: dword_4EEB0C is set to the literal value 15 during game-startup init, matching 2011's \"play.text_speed=15;\" (AC.CPP:26289) exactly. Identifies dword_4EEB0C as GameState.text_speed (high confidence via the exact init-value match; the role match alone would only be medium given the structural simplification). Function itself not matched to a specific 2011 name this round -- called from a blocking-wait-loop-adjacent context (previously flagged, see check_skip_cutscene_keypress's entry)."
+    "confidence": "high",
+    "evidence": "GameState field confirmation (fresh survey, closing the last tentative fields): \"(strlen(Str)/dword_4EEB0C + 1) * frames_per_second\" matches the ROLE of 2011's text-display-duration calculation, \"((uselen / (play.text_speed + play.text_speed_modifier)) + 1) * 1000\" then scaled by fps (AC.CPP:12688-12692) -- this build's simpler predecessor, lacking text_speed_modifier/lipsync_speed/text_min_display_time_ms (all later additions). Also confirmed independently: dword_4EEB0C is set to the literal value 15 during game-startup init, matching 2011's \"play.text_speed=15;\" (AC.CPP:26289) exactly. Identifies dword_4EEB0C as GameState.text_speed (high confidence via the exact init-value match; the role match alone would only be medium given the structural simplification). Function itself not matched to a specific 2011 name this round -- called from a blocking-wait-loop-adjacent context (previously flagged, see check_skip_cutscene_keypress's entry). NAMED (this round): a second, independent call site closes the identification. DisplaySpeechBackground (already matched, see its own entry) calls \"sub_4136AF(Str)\" and stores the result DIRECTLY into ScreenOverlay.timeout@+0x10 -- matching 2011's exact call shape and role, \"screenover[scid].timeout=GetTextDisplayTime(speel,1);\" (AC.CPP:13318). Combined with the already-confirmed text_speed-based duration formula and the exact-init-value confirmation of GameState.text_speed, this is now a decisive match: GetTextDisplayTime(char*)."
   },
   {
     "kind": "manual",

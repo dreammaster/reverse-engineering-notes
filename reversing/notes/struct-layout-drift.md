@@ -9715,3 +9715,54 @@ initial construction). Exact match to 2011's own three-line
 member of this session's overlay-script-API sweep (`RemoveOverlay`,
 `CreateTextOverlay`, `SetTextOverlay`, `MoveOverlay`) is now fully
 documented.
+
+### A speech-subsystem sweep: `SOUNDCLIP`'s first vtable slot, a new `GetTextDisplayTime` name, and a third confirmation of the `talkcolor` packing
+
+`SetVoiceMode`/`IsVoxAvailable` close as a clean pair -- exact matches
+to 2011's own tiny bodies (`AC.CPP:13495-13510`), zero drift, both
+confirming `GameState.want_speech`'s negative-means-"remembered but
+unavailable" convention (the field was already known from an earlier
+round's struct-comment summary, but this matches.json entry itself had
+stayed bare). `SetSpeechStyle` closes just as cleanly, confirming
+`GameSetupStructBase.options[OPT_SPEECHTYPE]` from a new write site.
+
+`SetSpeechVolume` turned out to be worth more: alongside a further,
+independent WRITE-side confirmation of `GameState.speech_volume`@+0x890
+(previously only confirmed via a read site), it calls the already-
+established `speechmp3` handle's VTABLE SLOT 2 with the new volume --
+matching 2011's `"channels[SCHAN_SPEECH]->set_volume(newvol);"`
+(`AC.CPP:13458`) exactly, and NEWLY IDENTIFYING that slot as
+`set_volume(int)`. This is the first `SOUNDCLIP` virtual-method slot
+actually identified in this project -- earlier rounds recovered the
+minimal base class's plain-data layout (`vtbl`+`done`, 8 bytes vs.
+2011's ~0x40) but never a method. Only confirmed from one call site so
+far; a second, independent instance (a different derived-class object,
+or `SetSoundVolume`'s own likely-analogous call) would be worth
+checking in a future round.
+
+`DisplaySpeechBackground` closes the sweep with the richest single
+function of the round. Its argument-order match to 2011's own
+`"CreateTextOverlay(OVR_AUTOPLACE,charid,scrnwid/2,FONT_SPEECH,"
+"-game.chars[charid].talkcolor,get_translation(speel));"`
+(`AC.CPP:13313-13314`) is exact, including reading the already-
+confirmed `CharacterInfo.flags`@+0x20's packed `talkcolor` byte --
+a THIRD independent confirmation this session of that packing (after
+`SetTalkingColor` itself and, indirectly, every function that reads
+`flags` without disturbing the top byte). It also closes the
+previously-medium-confidence `sub_4136AF` lead (already correctly
+identified by ROLE and by an exact `text_speed`-init-value match in an
+earlier round, but never formally named): a second, independent call
+site -- storing its return value directly into the already-confirmed
+`ScreenOverlay.timeout`@+0x10, matching 2011's own
+`"screenover[scid].timeout=GetTextDisplayTime(speel,1);"`
+(`AC.CPP:13318`) exactly -- is decisive enough to apply the name
+`GetTextDisplayTime` now. Finally, DRIFT: 2011's leading loop that
+clears any PREVIOUS background-speech overlay for the same character
+(keyed on `ScreenOverlay.bgSpeechForChar`) and the trailing write to
+that same field are BOTH CONFIRMED ABSENT here -- not a surprise given
+`bgSpeechForChar` was already established as structurally absent from
+this build's 5-field `ScreenOverlay` (`pic`/`type`/`x`/`y`/`timeout`
+only), but this is the first BEHAVIORAL confirmation of that absence,
+on top of the earlier purely-structural one: there's no field for the
+"remove any earlier background speech from this character" logic to
+even reference, so unsurprisingly it doesn't exist either.

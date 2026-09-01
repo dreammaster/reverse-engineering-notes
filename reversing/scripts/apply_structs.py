@@ -3710,7 +3710,9 @@ struct GameState {
                             // play.speech_volume,0); ... speechmp3=my_load_mp3(finame,
                             // play.speech_volume);" (AC.CPP:13387-13396) exactly. Sits with
                             // ZERO gap immediately after sound_volume, matching 2011's exact
-                            // declared pairing with zero drift.
+                            // declared pairing with zero drift. Also a WRITE-side confirmation
+                            // via SetSpeechVolume (already matched): "dword_4EF2A8=newvol"
+                            // matches source's "play.speech_volume=newvol;" exactly.
   int normal_font;              // +0x894, high confidence: `SetNormalFont` (already matched,
                             // mechanical) does "if (fontnum<0 || fontnum>=dword_51D2EC)
                             // quit(...); dword_4EF2AC=fontnum;" matching 2011's "if
@@ -3936,7 +3938,10 @@ struct ScreenOverlay {
                             // confirmation via MoveOverlay (already matched), same as `x`.
   int timeout;                  // +0x10, high confidence: "screenover[numscreenover].timeout
                             // = 0;" -- set to a literal 0 at creation time, matching source
-                            // exactly.
+                            // exactly. Further WRITE-side confirmation via
+                            // DisplaySpeechBackground (already matched):
+                            // "dword_4CD230[idx]=GetTextDisplayTime(Str)" matches source's
+                            // "screenover[scid].timeout=GetTextDisplayTime(speel,1);" in role.
 };
 
 // Related globals found in the same round (not ScreenOverlay struct members):
@@ -5026,6 +5031,12 @@ struct SOUNDCLIP {
                             // `SOUNDCLIP()` constructor's own "done=0;" (`acsound.h:85`) -- the
                             // one base-class field this build's simplified version keeps.
 };                          // Total confirmed size: 8 bytes (vs. 2011's ~0x40).
+                            // Vtable slot 2 (`vtbl+0x08`) identified via `SetSpeechVolume`
+                            // (already matched): "speechmp3->vtbl[2](newvol)" matches 2011's
+                            // "channels[SCHAN_SPEECH]->set_volume(newvol);" (AC.CPP:13458)
+                            // exactly -- the first SOUNDCLIP virtual-method slot identified
+                            // in this project. Not yet cross-checked against a second call
+                            // site or other derived-class instance.
 
 struct MYWAVE {
   void *vtbl;                     // +0x00, see `SOUNDCLIP.vtbl` above.

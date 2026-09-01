@@ -2683,6 +2683,23 @@ disassembly work.
   genuinely different (runtime-mutation) call site. `RemoveOverlay`/
   `CreateTextOverlay`/`SetTextOverlay`/`MoveOverlay` are now all fully
   documented.
+- **`SetVoiceMode`/`IsVoxAvailable`/`SetSpeechStyle` close cleanly;
+  `SetSpeechVolume` identifies `SOUNDCLIP`'s first vtable slot; a new
+  `GetTextDisplayTime` name closes `DisplaySpeechBackground`.**
+  `SetVoiceMode`/`IsVoxAvailable` are exact matches confirming
+  `GameState.want_speech`'s negative-means-unavailable convention.
+  `SetSpeechStyle` confirms `options[OPT_SPEECHTYPE]` from a new write
+  site. `SetSpeechVolume` calls the already-established `speechmp3`
+  handle's vtable SLOT 2 with the new volume — matching 2011's
+  `channels[SCHAN_SPEECH]->set_volume(newvol)` exactly and newly
+  identifying that slot, the first `SOUNDCLIP` virtual method actually
+  named in this project. `DisplaySpeechBackground` gives the packed
+  `talkcolor` byte a THIRD independent confirmation, closes the
+  previously-medium-confidence `sub_4136AF` lead as `GetTextDisplayTime`
+  via a second call site, and confirms 2011's per-character background-
+  speech cleanup logic absent — unsurprising since `ScreenOverlay.
+  bgSpeechForChar` was already known structurally absent, but this is
+  the first behavioral confirmation of that gap.
 
 ## Third-party library identification (Task #10)
 
