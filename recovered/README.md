@@ -42,25 +42,39 @@ stream of `int 3Fh` thunks; this table is how to read them back as infix:
 
 **Arithmetic ops** — each thunk loads an index into `bx`, then
 `call word ptr [bx+0F7Ch]` (leglib `rtm_FF44` body, `seg004:21A69`). The
-`[ds:0F7C]` table is runtime-filled (zero in the image), but the indices
-are hard-coded in the thunks and map to the canonical BASIC operator order:
+`[ds:0F7C]` table is runtime-filled and shows as `db 0` in `leglib.asm`,
+**but it is present in `LEGLIB.EXE`** at file offset `5632 + 0x0F7C`
+(leglib DGROUP:0 == file 5632). Reading it back and disassembling the 8
+handlers (`seg004:0x2CA2 / 0x2C9A / 0x2C98 / 0x2E04 / 0x2E8A / 0x2E88 /
+0x2BF3 / —`) gives the **actual** table, which is *not* the canonical
+BASIC order — there is no `\`, `MOD`, or `^` in it:
 
-| index | op | immediate-operand thunk (`mov bx,addr` first) | stack-stack thunk |
-|---|---|---|---|
-| `0x00` | **`+`** | `rtm_FF44` | `rtm_FF42` |
-| `0x04` | **`-`** | `sub_21A02` | `sub_21A4A` |
-| `0x08` | **`*`** | `rtm_FF53` | — |
-| `0x0C` | **`/`** | `rtm_FF4E` | `rtm_FF4C` |
-| `0x10` | **`\`** | `sub_21A4A`* | `rtm_FF47` |
-| `0x14` | **`MOD`** | `rtm_FF49` | (`seg004:2186`) |
-| `0x18` | **`^`** | `sub_21B63` | `sub_21B63` |
-| `0x1C` | **compare** | — | `rtm_FF1F` (sets carry for `jb`/`jnb`) |
+| index | op | how the handler works | immediate thunk | stack-stack thunk |
+|---|---|---|---|---|
+| `0x00` | **`+`** | add | `rtm_FF44` | `rtm_FF42` |
+| `0x04` | **`-`** (a−b) | negates b, then add | `sub_21A02` | — |
+| `0x08` | **`-` reversed** (b−a) | swap, negate, add | `rtm_FF53` | — |
+| `0x0C` | **`*`** | XOR signs, **add exponents** | `rtm_FF4E` | `rtm_FF4C` |
+| `0x10` | **`/`** (TOS1÷TOS) | XOR signs, **sub exponents** | `sub_21A4A` | `rtm_FF47` |
+| `0x14` | **`/` reversed** (TOS÷TOS1) | swap, then `0x10` | `rtm_FF49` | — |
+| `0x18` | **compare** | ordered float compare | — | — |
+| `0x1C` | **compare** | via `[ds:0F78]`, munges flags for `jb`/`jnb` | — | `rtm_FF1F` |
 
-\* the `0x04`/`0x10` immediate thunks share code paths in the listing; the
-index in `ax` is what matters. Operator identity is now solid; **operand
-order** for `- / \ MOD ^` (i.e. is the immediate/second push the divisor or
-the dividend) is the remaining unknown — tagged `'?ord`. One DOSBox watch
-on the destination of an expression settles it for the whole codebase.
+So: `FF4C`/`FF4E` = **`*`** (not `/`), `FF47` = **`/`**, `FF49` = **`/`
+with operands reversed** (as an immediate op: `TOS / imm`), `FF53` = **`-`
+reversed**. Verified against two independent expressions: `rollCreatureStats`
+= `INT(RND*18 + 12.6)` (a 12–30 roll — `/` there would be a constant), and
+OUT combat damage = `INT(Str*(wp/6 + 0.5)/(2*RND + 1))` (matches Paul's
+DOSBox "BLOW OF 6").
+
+**`\`, `MOD`, `^`, and the relational ops** are separate thunks with their
+own leglib handlers (e.g. `rtm_FF2B` -> `seg004:0x3954`), *not* entries in
+this table. `rtm_FF2B` **pops two operands** (it is binary, not the coercion
+the earlier notes assumed) — `seg004:0x3954` zero-checks both exponents and
+copies both to work buffers, i.e. it looks like `\` or `MOD`. Not yet pinned.
+
+**Still `'?ord`:** the compare direction (`FF1F` + `jb`/`jnb`), and whether
+a stack-stack op sees the deeper or the top operand as its left side.
 
 **String / misc thunks:** `basStrAssign(dst,src)` = `dst$ = src$`;
 `basStrConcat(a,b)` = `a$ + b$`; `rtm_D2(fmt,val)` = `fmt$ + STR$(val)`;
@@ -81,11 +95,14 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## Status
 
-- [x] `out_combat.bas` — the overworld player-attack path (pilot v2)
+- [x] `out_combat.bas` — the overworld player-attack path (pilot v3)
 - [x] `decoders/dgroup_consts.py` — pull the SINGLE/INT/STRING constant
       pool out of any module EXE
-- [ ] one DOSBox watch on `ds:2192` / `ds:208E` during a fight → pins
-      operand order + op `0x10` for the whole codebase
+- [x] leglib op-dispatch table read from `LEGLIB.EXE` (`+ - -rev * / /rev
+      cmp`) — corrected the `* / \ MOD ^` mis-mapping
+- [x] verified formulas: base/chip/weakness-match damage, RollEncounterMod
+- [ ] the to-hit score: dump the value stack at `out.asm:6687` + decode
+      `rtm_FF2B` (`seg004:0x3954`)
 - [ ] `out_combat.bas` — the monster-attack path (`creatureAttack`, still
       collapsed in `out.asm`)
 - [ ] the rest of `out`, then `dun`, `casdr`, `mus`, `twndr`
