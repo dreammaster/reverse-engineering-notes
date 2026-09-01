@@ -1547,7 +1547,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: increments GameState.disabled_user_interface (play_disabled_user_interface, a NESTING COUNTER not a boolean -- already established via main_loop_until's own entry, reconfirmed here), sets guis_need_update=1, then calls the already-matched SetMouseCursor(7) (CURS_WAIT). A simple, direct confirmation of the field's increment role at the script-API level."
   },
   {
     "kind": "function",
@@ -1557,7 +1557,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: sets guis_need_update=1, decrements GameState.disabled_user_interface, then clamps it to 0 if it drops below 1 (i.e. <1, matching an unsigned-nesting-counter guard against going negative) and calls the already-matched SetDefaultCursor() only in that clamped case -- i.e. only restores the default cursor once the nesting count has genuinely reached zero, not on every decrement. Confirms the field's decrement/clamp role directly, complementing DisableInterface's increment (see its own entry) and main_loop_until's own increment site."
   },
   {
     "kind": "function",
@@ -1567,7 +1567,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Trivial: returns (GameState.disabled_user_interface==0) as a boolean. Called from check_controls (already matched) to gate whether user input is currently accepted. Third and final confirmation of the field's role this round, alongside DisableInterface/EnableInterface's own increment/decrement evidence."
   },
   {
     "kind": "function",

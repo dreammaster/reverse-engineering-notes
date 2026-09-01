@@ -3194,9 +3194,15 @@ struct GameState {
                             // (`play_usedmode`), positionally exact; `ProcessClick` (already
                             // matched) writes it once via "play.usedmode=mood;" (AC.CPP:16680),
                             // matching the single write XREF'd here.
-  int disabled_user_interface;  // +0x08, medium-high confidence: pre-existing IDA name, XREF'd
-                            // from an as-yet-unmatched helper (sub_40C395) reading then writing
-                            // it -- plausible role match, not yet individually confirmed.
+  int disabled_user_interface;  // +0x08, high confidence (UPGRADED from medium-high: the
+                            // "as-yet-unmatched helper" this comment used to cite, sub_40C395,
+                            // has since been matched to main_loop_until, which increments this
+                            // field -- see its own matches.json entry). Further confirmed as a
+                            // NESTING COUNTER (not a boolean) via DisableInterface (increments)/
+                            // EnableInterface (decrements, clamped to 0 if it would go negative,
+                            // only restoring the default cursor once the count reaches zero)/
+                            // IsInterfaceEnabled (reads ==0) -- all three already matched, see
+                            // their own entries.
   int gscript_timer;          // +0x0C, HIGH confidence (UPGRADED from medium-high): confirmed
                             // via the graph-script command interpreter (`sub_41CDC3`, newly
                             // characterized this round -- see `run_graph_script`'s own matches.json

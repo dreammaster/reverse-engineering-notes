@@ -2543,6 +2543,15 @@ disassembly work.
   this session (after `FadeOut`/`FADE_DISSOLVE`) of this build's entire
   rendering pipeline predating the later hardware-acceleration
   abstraction wholesale, not just in fade-related code.
+- **`GameState.disabled_user_interface` upgraded to fully confirmed,
+  plus a stale comment fixed.** Its comment cited "an as-yet-unmatched
+  helper" as its only evidence, but that helper had been matched to
+  `main_loop_until` (which increments this field) several rounds ago
+  without the comment being updated. `DisableInterface`/
+  `EnableInterface`/`IsInterfaceEnabled` (all previously bare) confirm
+  it's a genuine NESTING COUNTER, not a boolean — increment/decrement-
+  with-clamp/`==0`-read — backed by four independent call sites now
+  instead of one stale reference.
 
 ## Third-party library identification (Task #10)
 

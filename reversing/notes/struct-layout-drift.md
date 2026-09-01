@@ -9342,3 +9342,25 @@ why this build's `ShakeScreen` has only ONE implementation path, where
 branch (unreachable here, since no such driver abstraction exists) and
 the plain software-blit branch this build's version corresponds to
 almost line for line.
+
+### `DisableInterface`/`EnableInterface`/`IsInterfaceEnabled` upgrade `GameState.disabled_user_interface` to fully confirmed, and fix a stale comment
+
+A quick, clean round closing out a small standing loose end.
+`GameState.disabled_user_interface`'s own `apply_structs.py` comment had
+been sitting at medium-high confidence for a while, citing "an as-yet-
+unmatched helper (`sub_40C395`)" as its only evidence -- but that helper
+was matched to `main_loop_until` (which increments this field) several
+rounds ago, without the struct comment ever being updated to reflect it.
+Fixing that stale reference turned up three more bare script-API
+functions worth reading properly: `DisableInterface` (increments the
+field, sets `guis_need_update=1`, switches to the WAIT cursor via the
+already-matched `SetMouseCursor(7)`), `EnableInterface` (decrements it,
+clamping to 0 if it would go negative, and restores the default cursor
+via `SetDefaultCursor` ONLY once the clamped count reaches zero -- not
+on every decrement), and `IsInterfaceEnabled` (a trivial `==0` read,
+called from `check_controls` to gate whether user input is currently
+accepted). Together these confirm `disabled_user_interface` is a genuine
+NESTING COUNTER, not a boolean -- matching the field's name and 2011's
+own behavior exactly, and now backed by four independent call sites
+(the three here plus `main_loop_until`'s own increment) instead of one
+unverified reference to an unmatched function.
