@@ -193,25 +193,25 @@ in play-module code, `[?]` inferred from the template value + usage:
 | rec | ← ds: | default | field |
 |---|---|---|---|
 | `+0x0E` | `1AC0` | 15 | `[P]` **DEXTERITY** |
-| `+0x10` | `1AC2` | 0 | `[C]` **experience** (dword; `TWNDR` `add`/`adc` accumulates) |
+| `+0x10` | `1AC2` | 0 | `[C]` **bank balance** (dword) — *not* experience. `TWNDR`'s `add`/`adc` is the deposit + per-visit interest (`twndr.asm:4923`). 0 in fresh saves because nothing's deposited. LotA has **no XP stat**. |
 | `+0x16` | `1AC8` | 4 | `[?]` **game speed** (read by MENU + every module) |
 | `+0x18` | `1ACA` | 0 | `[C]` chain-return / location context (`SAVER` `returnTarget`) |
 | `+0x1A` | `1ACC` | 15 | `[P]` **ENDURANCE** (SDEFENDR training raises it; potion-wizard `+5`, cap `0x24`) |
 | `+0x1E` | `1AD0` | `0x4270` | `[P]` a counter/checksum — `PAULA` `0x426E` (−2). Thought dead; it *does* change. Purpose unknown. |
 | `+0x20` | `1AD2` | 20 | `[P]` **party gold** (dword; `PAULA` 120) |
 | `+0x24` | `1AD6` | −99 | `[P]` dungeon-return marker (dword; template −99/−1 was uninit, `PAULA` 0/0 = "not in a dungeon") |
-| `+0x28` | `1ADA` | 200 | `[C]` **hit points — working cache of `S4[19]`** (only refreshed by `outInit`; `PAULA` 200 is stale, real max = `S4[19]`=20) |
+| `+0x28` | `1ADA` | 200 | `[C]` **current hit points**. Max HP is a **character-level lookup** (L1 200, L2 300, L3 500, L4 800, L5 1200, L6 1600, L7 2200, L10 3000), *not* a stored field. `S4[19]` (=20) is only the `buyFood` heal-per-visit cap. |
 | `+0x2C` | `1ADE` | 15 | `[P]` **CHARM** — the Tulip quest reward is "Charm: +10" (`mus.asm:3482` `add ds:1ADEh, 0Ah`) |
 | `+0x2E` | `1AE0` | 1 | `[P]` **character level** ("museum rank") — the museum caretaker raised `PAULA` 1→2; gates exhibits by level (`mus.asm` `cmp 3/4/5/7/8`), scales casino/shop payouts (`imul ds:1AE0h`). `S3[14]` moves in parallel with it. |
 | `+0x30` | `1AE2` | 0 | `[P]` **first-person-view (museum/dungeon) position**, kept across the overworld (`OUT` never touches it; `PAULA` 180) |
 | `+0x32` | `1AE4` | 0 | `[P]` **first-person-view facing** (0..3; `PAULA` 3) |
 | `+0x34` | `1AE6` | 0 | `[C]` dungeon light / step counter |
 | `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
-| `+0x38` | `1AEA` | 5 | `[?]` inventory slot count/max — `PAULA` still 5 after gaining an item, so maybe a fixed max |
-| `+0x3A` | `1AEC` | 9 | `[?]` paired count / damage multiplier (`DUN` `imul`) |
+| `+0x38` | `1AEA` | 5 | `[C]` **equipped armour slot** — index into `S0()`/`S1()` (`< 8` guard); `ComputeEquippedPower` reads `S1(1AEA)` for the armour condition (`out.asm:4346`). |
+| `+0x3A` | `1AEC` | 9 | `[C]` **equipped armour id** (9..13); `playerDefense += armorId - 9` = armour tier (`out.asm:4357`). |
 | `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom: if INT < 30, a win gives +2 else +1, a loss −1 (cap `0x1C`=28). |
-| `+0x4A` | `1AFC` | 99 | `[C]` selected-item cursor (99 = none; `PAULA` 0) |
-| `+0x4C` | `1AFE` | 0 | `[P]` count paired with `1AFC` (`PAULA` 1 — one equipped item?) |
+| `+0x4A` | `1AFC` | 99 | `[C]` **equipped weapon slot** — index into `S0()`/`S1()` (`< 8` guard, 99 = unarmed); `ComputeEquippedPower` reads `S1(1AFC)` for the weapon condition (`out.asm:4373`). |
+| `+0x4C` | `1AFE` | 0 | `[C]` **equipped weapon id** (0..8; indexes `Weapon$()`). `weaponPower = INT(weaponId + S1(weaponSlot)/2.8)`; also the value combat compares against `creatureWeak`. |
 | `+0x50` | `1B02` | 178 | `[P]` **overworld X** (new game 40; `PAULA` 14) |
 | `+0x54` | `1B06` | 106 | `[P]` **overworld Y** (new game 30; `PAULA` 42) |
 | `+0x56` | `1B08` | 15 | `[P]` **STRENGTH** (`DUN` subtracts from it in combat) |
@@ -222,13 +222,17 @@ in play-module code, `[?]` inferred from the template value + usage:
 off the in-game Inventory screen. All start at 15.
 
 `+0x14`(`1AC6`, MUS walk-state; `PAULA` −10),
-`+0x2A`(`1ADC`), `+0x3C`(`1AEE`, `SAVER` sets it `0xEA`),
+`+0x2A`(`1ADC`),
 `+0x4E`/`+0x52`(`1B00`/`1B04`, town/castle scratch) are transient
-scene/UI state that happens
-to sit in the FIELDed range. `+0x1C`(`1ACE`) and
-`+0x40`–`+0x48`(`1AF2`–`1AFA`) are truly dead — `SAVER`'s blind
-`ds:1AC0`–`ds:1B08` peek loop just captures whatever DGROUP garbage sits
-there (`PAULA` `1AF6`/`1AF8`/`1AFA` = `16128`/`36`/`16820`, not fields).
+scene/UI state that happens to sit in the FIELDed range.
+`+0x3C`(`1AEE`) = **droppedItemId** — the id of the item a creature will
+drop; `creatureDefeated` checks `≠ 0`, `awardFoundItem` grants
+`S2(1AEE)`.
+`+0x1C`(`1ACE`) = the **food counter** (per-step `food -= terrainCost/20`;
+`creatureDefeated` adds "flesh for food" days). `+0x1E`(`1AD0`),
+`+0x34`(`1AE6`) and `+0x40`–`+0x48`(`1AF2`–`1AFA`) are per-step
+health/light counters or dead — `SAVER`'s blind peek loop captures
+whatever DGROUP value sits there.
 `+0x1E`(`1AD0`) *does* change (`PAULA` −2) so it is used somewhere — a
 checksum or counter, still unidentified.
 

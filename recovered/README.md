@@ -8,6 +8,12 @@ and they deliberately keep the game's structure (one file per `.EXE`
 module, calling a shared `leglib` library) rather than pre-flattening it
 for the C++/ScummVM port.
 
+**For the reimplementation, read [`../docs/game-logic.md`](../docs/game-logic.md)
+first** — it consolidates every verified/derived formula from these files
+with confidence levels and the list of runtime constants still needing a
+DOSBox dump. These `.bas` files are the function-level source of truth
+behind it.
+
 ## Confidence markers
 
 Every non-trivial line is tagged:

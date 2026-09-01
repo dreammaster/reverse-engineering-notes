@@ -812,49 +812,62 @@ reimplementation.
       (rendered; same format as `OUTDATA.BSV` 0x400). Likely the phase-1
       / phase-2 counterparts. Loader not yet found.
 
-## pseudo-BASIC reconstruction (`recovered/`)
+## pseudo-BASIC reconstruction (`recovered/`) — breadth-first pass DONE
 
 Decided 2026-09-01 (with Paul): before the C++/ScummVM port, reconstruct
-the compiled modules as reviewable pseudo-BASIC, one file per `.EXE`,
-keeping the shared-`leglib` structure. This is the layer Paul reviews the
-game logic (encounter / fight / economy) against. See
-[recovered/README.md](../recovered/README.md).
+the compiled modules as reviewable pseudo-BASIC, one file per subsystem,
+keeping the shared-`leglib` structure. The consolidated mechanics
+reference distilled from it is **[game-logic.md](game-logic.md)** — start
+there for the port. See also [recovered/README.md](../recovered/README.md).
 
-- [x] `recovered/README.md` — methodology, confidence tags, the `leglib`
-      value-stack model.
-- [x] **leglib arithmetic dispatch cracked** (2026-09-01) — the `int 3Fh`
-      arith thunks each load a hard-coded index into `bx` then
-      `call [bx+0F7Ch]`. Indices: `+`=0x00 `-`=0x04 `*`=0x08 `/`=0x0C
-      `\`=0x10 `MOD`=0x14 `^`=0x18 `compare`=0x1C (canonical BASIC order).
-      Operator identity is now solid; operand ORDER for the
-      non-commutative ops is the one remaining unknown (needs a DOSBox
-      watch). `rtm_FF4B` pushes a **SINGLE**, not an int; combat math is
-      single-precision.
-- [x] **`decoders/dgroup_consts.py`** (2026-09-01) — the module constant
-      pools (`ds:xxxx` SINGLE / INT / STRING literals) are rendered as
-      `db 0` in IDA's `.asm` export but ARE in the unpacked EXE. This
-      pulls them out. `OUT.EXE` DGROUP:0 = file `0x8C80`. The overworld
-      combat pool: 0.40 / 0.50 / 0.67 / 0.25 / 2.0 / 0.75 / 1.7 / 18.0 /
-      12.6 / 256.0 / 3.5 / 2.8 / 11.0 / 1.02 / -6.0 / 1.3 / 6.0 / 1.0 / 20.0.
-- [x] `recovered/out_combat.bas` (pilot v2) — `ComputeEquippedPower`
-      (`sub_12823`), `RollEncounterMod` (`rollCreatureStats`),
-      `ResolvePlayerAttack` (`resolvePlayerAttack`). Key result: **weapon
-      id == creature's weak-weapon id → damage = Strength** (the guide's
-      "one blow"); wrong weapon vs a creature with a weakness → ~1-3 chip
-      damage; `creatureWeak = 99` = "no weakness". to-hit compares a
-      computed fraction to `RND(1)`, hit when the fraction is smaller.
-- [ ] dsvars corrections this surfaced for a future `apply_dsvars_out`
-      pass: `ds:24E6` is the SINGLE `1.0` (RND's mode arg), **not**
-      `overworldArrayPtr` / a far ptr; `ds:2192` holds the rolled damage
-      at least inside `resolvePlayerAttack` (currently named `combatPhase`).
-- [ ] one DOSBox session: watch `ds:2192` and `ds:208E` through a fight
-      → pins operand order + op `0x10` for every reconstructed expression.
-- [ ] `creatureAttack` (collapsed at `out.asm:3468`) — the monster-attack
-      half; needs an IDA re-pass to un-collapse or a DOSBox trace.
-- [ ] then the rest of `out`, `dun`, `casdr`, `mus`, `twndr`, `leglib`.
+**Model, done:**
+- [x] `recovered/README.md` + `leglib.bas` — value-stack model, the
+      **corrected** `ds:0F7C` op table (read from `LEGLIB.EXE`, NOT
+      canonical order): `+ - -rev * / /rev cmp`; `rtm_FF2B` = `^`.
+- [x] value-stack node layout — value at `[node.ptr]` == `[ds:111C]` for
+      the top slot.
+- [x] `decoders/dgroup_consts.py` — pull the `ds:xxxx` SINGLE/INT/STRING
+      constant pool out of any unpacked module EXE.
+- [x] to-hit formula **verified bit-exact** by two DOSBox traces:
+      `Dex^0.8 * (weaponPower+18) / (creatureHP*11)`.
+
+**Reconstructions (12 `.bas` files):**
+- [x] OUT: `out_combat` (complete — to-hit/damage/spell/CreatureAttack/
+      CreatureDefeated), `out_movement`, `out_economy`, `out_encounter`,
+      `out_flags_items`.
+- [x] DUN: `dun_combat` (`monsterAttack` un-folded + coerced via
+      `ida_scripts/fix_dun_monsterattack.py`), `dun_traps`, `dun_chest`.
+- [x] TWNDR: `twndr_services` (bank). CASDR: `casdr_castle`. MUS:
+      `mus_exhibits`.
+
+**IDA scripts added:** `expand_folded_out.py` (un-fold `creatureAttack`),
+`fix_dun_monsterattack.py` (coerce the raw monster-hit loop).
+
+**Corrections this pass forced** (not yet folded into `apply_dsvars_*`):
+- `ds:24E6` (OUT) / `ds:2274` (DUN) / `ds:25B0` (CASDR) = the SINGLE `1.0`
+  passed to `RND()`, **not** a far pointer — the `overworldArrayPtr`
+  dsvars label is wrong.
+- `ds:1AC2:1AC4` (CHAR.DAT `+0x10`, "experience") = the **bank balance**;
+  LotA has **no XP stat**.
+- `ds:2192` (OUT) = the shared workInt / rolled damage inside
+  `resolvePlayerAttack`, mislabelled `combatPhase`.
+- CHAR.DAT `1AEA`/`1AEC` = equipped armour slot/id; `1AFC`/`1AFE` =
+  equipped weapon slot/id (see file-formats.md).
+
+**Depth items still open** — see [game-logic.md §8](game-logic.md#8-what-still-needs-a-dosbox-dump):
+- [ ] runtime-loaded constants (region encounter gates, bank `K`, castle
+      `difficulty`, `creatureAtk` / `monsterAtk`, `S4(12)`) — one DOSBox
+      memory dump each.
+- [ ] operand order for `-` / `/` where `'?ord`-tagged.
+- [ ] `CastSpell` (DUN), `enterOverworld` / `loadOverworldData` (OUT),
+      casino payouts, mail routes, per-bit quest-flag semantics.
 
 ## ScummVM engine (future)
 
-Not started. Same end goal as `ultima1`/`ultima2`: once the modules are
-documented, a clean C++ reimplementation, then a ScummVM engine module.
-The pseudo-BASIC layer above feeds this.
+Not started. Same end goal as `ultima1`/`ultima2`: a clean C++
+reimplementation, then a ScummVM engine module. Documentation is now in
+shape for a fresh implementation thread to work from:
+**[game-logic.md](game-logic.md)** (mechanics) +
+**[file-formats.md](file-formats.md)** (on-disk data) +
+**[overview.md](overview.md)** (architecture). The `recovered/*.bas`
+files are the function-level source of truth.

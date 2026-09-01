@@ -7,14 +7,19 @@ module — same approach as the sibling [`ultima1`](../../ultima1) and
 [`ultima2`](../../ultima2) projects.
 
 This file is the entry point into `docs/`. See also:
+- **[game-logic.md](game-logic.md)** — the mechanics reference (combat,
+  economy, movement, encounters) distilled from `../recovered/`. **Start
+  here for the reimplementation.**
 - [roadmap.md](roadmap.md) — prioritized list of what's investigated vs.
   still open, per executable.
 - [file-formats.md](file-formats.md) — on-disk data formats (maps, saves,
-  graphics, music, etc.). The `.GLB`/`.GMP` tile+cellmap format is
-  decoded; the `.BSV` maps/tables are still container-only.
-- `decoders/` — standalone Python decoders for the data files
-  (`glb_image.py` -> `TITLE` / `SDMAP` screens as BMPs;
-  `title_screen.py` is the TITLE-only prototype). Stdlib only, no deps.
+  graphics, music, etc.). Most formats are fully decoded (`decoders/`).
+- [`../recovered/`](../recovered/) — the compiled modules reconstructed as
+  reviewable pseudo-BASIC, one file per subsystem, with `../recovered/
+  README.md` + `leglib.bas` covering the runtime model. Function-level
+  source of truth for the game logic.
+- `decoders/` — standalone stdlib-only Python decoders for every data
+  file.
 
 ## The game is compiled Microsoft BASIC, not C
 
@@ -293,7 +298,42 @@ BASIC 6.0 runtime routines (`B$…`) behind the hot ordinals. From
 | `rtm_D1` | 149 | `seg003:1B9B0` | — |
 | `rtm_FE26` | 98 | graphics seg | bitmap blit (menu draws heavily) |
 | `rtm_AF` | 26 | `seg003:13608` | multi-entry (`xor al,al` / `mov al,0FFh` fall-through with `rtm_0F`) |
-| `rtm_F0` `rtm_F4` | 21 each | `seg003:1BBA7` / `1BB7C` | adjacent — paired variants |
+| `rtm_F0` `rtm_F4` | 21 each | `seg003:1BBA7` / `1BB7C` | `basProcEnter` / `basProcLeave` (SUB frame; `mov cx,N` = local size) |
+
+### The `rtm_FF*` value-stack cluster (arithmetic)
+
+Compiled BASIC 6.0 evaluates expressions on a **software value stack**
+(base `ds:0FAC`, pointer `ds:111C`; 12-byte nodes; **a node's value is
+stored at `[node.ptr]`, and the top value is the single at `[ds:111C]`**).
+All game arithmetic is **single-precision float**.
+
+| thunk | meaning |
+|---|---|
+| `rtm_FF20(ax)` | push `ax` as INTEGER |
+| `rtm_FF4B(addr)` | push the SINGLE at `[addr]` (also used after `rtm_B8`/`B$RND` with `addr` = the pointer it returned) |
+| `rtm_FF50(addr)` | pop top → `[addr]` |
+| `rtm_FF22` | pop top → `ax` |
+| `rtm_FF2B` / `rtm_FF27` | INT↔SINGLE coercion |
+| `rtm_B8(seg,off)` | `B$RND` — arg is the module's SINGLE `1.0` (OUT `ds:24E6`, DUN `ds:2274`, CASDR `ds:25B0`), so `RND(1)`, result in `[0,1)` |
+
+Binary operators load an index into `bx` then `call [bx+0F7Ch]`. The
+`[ds:0F7C]` table is `db 0` in `leglib.asm` but **is in `LEGLIB.EXE` at
+file offset `5632 + 0x0F7C`**; disassembling the 8 handlers gives the real
+table (NOT canonical BASIC order — there is no `\`/`MOD`/`^` in it):
+
+| op | immediate thunk | stack-stack thunk |
+|---|---|---|
+| `+` | `rtm_FF44` | `rtm_FF42` |
+| `-` (a−b) | `sub_21A02` | — |
+| `-` reversed (b−a) | `rtm_FF53` | — |
+| `*` | `rtm_FF4E` | `rtm_FF4C` |
+| `/` (deeper ÷ top) | `sub_21A4A` | `rtm_FF47` |
+| `/` reversed (as imm: TOS ÷ imm) | `rtm_FF49` | — |
+| compare | — | `rtm_FF1F` (flags for `jb`/`jnb`) |
+
+`rtm_FF2B` (own thunk `seg004:0x3954`) = **`^`** (`TOS ^ TOS1`). `\`, `MOD`
+and the 32-bit ops (`rtm_FF23`/`FF28`/`FF48`, `rtm_14`, `rtm_EE`) are
+separate integer thunks. See [game-logic.md §1](game-logic.md#1-the-arithmetic-model-how-to-read-the-formulas).
 
 ## Findings log
 
@@ -1063,3 +1103,27 @@ Decided 2026-08-30 (with Paul): work `LEGLIB.EXE` first (or alongside
   `MUSOBJ` has the same dormant region — `MUS.EXE` doesn't wire it up
   either (its `renderExhibitView` never blits from `spriteBank`). The
   OBJ-family container just carries more than any renderer uses.
+- **2026-09-01/02** — **Game-logic reconstruction pass.** Reconstructed
+  the play modules' logic as reviewable pseudo-BASIC in
+  [`../recovered/`](../recovered/) (12 `.bas` files) and distilled the
+  mechanics into **[game-logic.md](game-logic.md)**. Highlights:
+  - **The `ds:0F7C` arithmetic op table was read out of `LEGLIB.EXE`**
+    (file `5632 + 0x0F7C`) and is **not** canonical BASIC order:
+    `+`(0) `-`(4) `-rev`(8) `*`(0xC) `/`(0x10) `/rev`(0x14) `cmp`(0x18/1C).
+    `rtm_FF2B` = `^` (own thunk). So `rtm_FF4C`/`FF4E` = `*` (not `/`),
+    `rtm_FF47` = `/`, `rtm_FF53` = `-rev`. All game arithmetic is
+    single-precision; `rtm_FF4B` pushes a SINGLE. Value-stack node value
+    is at `[node.ptr]` == `[ds:111C]` for the top.
+  - **Overworld to-hit verified bit-exact** vs two DOSBox traces:
+    `Dexterity^0.8 * (weaponPower + 18) / (creatureHP * 11)`, hit when
+    `RND(1) <` that.
+  - The three play modules use **three different combat models** (OUT
+    weapon-weakness + `^0.8`; DUN linear `RND*70 vs Dex`; CASDR
+    Endurance/armour in the denominator).
+  - `creatureAttack` un-folded (`ida_scripts/expand_folded_out.py`) and
+    DUN `monsterAttack`'s raw-byte loop coerced
+    (`ida_scripts/fix_dun_monsterattack.py`).
+  - Corrections: CHAR.DAT `+0x10` "experience" is the **bank balance**
+    (LotA has no XP); `ds:24E6`/`2274`/`25B0` are the RND `1.0` constant,
+    not `overworldArrayPtr`; CHAR.DAT `1AEA/1AEC/1AFC/1AFE` = equipped
+    armour/weapon slot+id.
