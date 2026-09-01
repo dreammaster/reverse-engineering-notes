@@ -125,9 +125,12 @@ Array roles (PAULA diffs, 4 saves 2026-09-01/02):
           (Magic flame, Firebolt, Befuddle, Psyco strength, Kill flash,
           Seek).  Verified: bought 2 Magic flame -> S2[24]=2, 1 Firebolt
           -> S2[25]=1, 1 Seek spell -> S2[29]=1.
-    S3  17 museum-progress words.  [15] = museum entry count
-        (mus.asm:498), [14] = used an exhibit portal (mus.asm:1637),
-        [1]/[2] = other exhibit progress.
+    S3  17 museum-progress words.  S3[k] (k = 1..13) = "viewed exhibit k"
+        (PAULA: [1..4] all set after seeing 4 exhibits).  S3[14] = used
+        an exhibit portal; S3[15] = museum entry count (mus.asm:498).
+        Note: a museum visit CLEARED PAULA's gem coins / "mail" /
+        Seek-spell from S2 -- the museum may consume a coin per entry
+        (or S2 re-syncs from a stale working copy on the transition).
     S4  38-word block.  S4[1] = saved museum/exhibit position; S4[13]
         moved 0->1 when PAULA bought a raft; S4[7] -1->6 with a token
         purchase.  S4[19] = 20 = the buyFood HP-heal cap (NOT max HP --
