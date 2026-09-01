@@ -16,12 +16,26 @@ Each file is a Microsoft BASIC `BSAVE` image. `loadTownData` /
     mode 1  mapStride 0x5A (90)  mapHeight 0x5B (91)   castles
     mode 2  mapStride 0x70 (112) mapHeight 0x49 (73)   forts
 
-Town payload: map (`0x000`..) then object/feature records, a 192-byte
-`0x1A` slot table at `0x1000`, padding, and the town's shop-name strings
-as wide chars from `0x1300`. Castle/fort: map, a per-floor table (where
-`.BS1` vs `.BS2` stop differing, ~`0x2000`), then a shared CGA 2 bpp
-tile-graphic bank (`~0x2400`+). Tile bytes are graphic indices; the
-code->graphic map is in `TWNDR`/`CASDR` + `TCASOBJ.BSV`.
+Interiors render exactly like the overworld: `drawInteriorTiles`
+(`bmTNCALB`) blits a **26 x 17 grid of 8x8 cells** with `rtm_FE1B`,
+sourced from the map array at `ds:2082`.
+
+Town payload: map (`0x000`..`w*h`) then at `~0xC80` a tile-code list +
+**4-byte object records** `(x, y, type, 0)` for the shops/doors +
+multi-cell building shapes; a 192-byte `0x1A` slot table at `0x1000`;
+a small word param table at `~0x12C0`; the shop-name strings as
+length-prefixed wide chars from `0x1300`.  Towns carry **no tile-graphic
+bank** -- they use the shared `bmTNCALB` tile set.
+
+Castle/fort: map, a per-floor table (where `.BS1` vs `.BS2` stop
+differing, `~0x2000`), then a **~234-cell CGA 2 bpp tile-graphic bank at
+`0x2400`** (field-interleaved 8x8 cells, low-byte-first -- walls,
+floors, doorframes, windows, torches, decoration).  Tile bytes are
+graphic indices into it.  `TCASOBJ.BSV` supplies animated-object frames
+(banners / torches / gates) overlaid on specific tiles;
+`FORTANIM.BSV` swaps `TCASOBJ`'s last `0x100` block for the fort.
+
+Pass `--bank` to render the castle/fort `0x2400` graphic bank to a PNG.
 """
 import os
 import struct
@@ -85,9 +99,64 @@ def dump(name, games_dir):
             print(f"  {s}")
 
 
+PAL = [(0, 0, 0), (0x55, 0xFF, 0xFF), (0xFF, 0x55, 0xFF), (0xFF, 0xFF, 0xFF)]
+
+
+def _cell(p, o):
+    w = struct.unpack("<8H", p[o:o + 16].ljust(16, b"\0"))
+    rows = []
+    for wd in (w[0], w[4], w[1], w[5], w[2], w[6], w[3], w[7]):
+        lo, hi = wd & 0xFF, wd >> 8
+        rows.append([(lo >> 6) & 3, (lo >> 4) & 3, (lo >> 2) & 3, lo & 3,
+                     (hi >> 6) & 3, (hi >> 4) & 3, (hi >> 2) & 3, hi & 3])
+    return rows
+
+
+def render_bank(name, games_dir, out, start=0x2400, cols=24, scale=4):
+    import zlib
+    fname = name if "." in name else name + ".BS1"
+    p = read_bsave(os.path.join(games_dir, fname))
+    n = (len(p) - start) // 16
+    rn = (n + cols - 1) // cols
+    grid = [[0] * (9 * cols) for _ in range(9 * rn)]
+    for k in range(n):
+        c = _cell(p, start + k * 16)
+        ox, oy = (k % cols) * 9, (k // cols) * 9
+        for y in range(8):
+            for x in range(8):
+                grid[oy + y][ox + x] = c[y][x]
+    h, w = len(grid), len(grid[0])
+    raw = bytearray()
+    for row in grid:
+        line = bytearray()
+        for v in row:
+            line += bytes(PAL[v]) * scale
+        for _ in range(scale):
+            raw.append(0)
+            raw += line
+
+    def ch(t, d):
+        return (struct.pack(">I", len(d)) + t + d
+                + struct.pack(">I", zlib.crc32(t + d) & 0xFFFFFFFF))
+    open(out, "wb").write(
+        b"\x89PNG\r\n\x1a\n"
+        + ch(b"IHDR", struct.pack(">IIBBBBB", w * scale, h * scale, 8, 2, 0, 0, 0))
+        + ch(b"IDAT", zlib.compress(bytes(raw), 9)) + ch(b"IEND", b""))
+    print(f"wrote {out}  ({n} cells from 0x{start:X})")
+
+
 def main():
-    name = sys.argv[1] if len(sys.argv) > 1 else "TOWN0"
-    games = sys.argv[2] if len(sys.argv) > 2 else r"C:\games\lota"
+    argv = sys.argv[1:]
+    bank_out = None
+    if "--bank" in argv:
+        i = argv.index("--bank")
+        bank_out = argv[i + 1] if i + 1 < len(argv) else "castle_bank.png"
+        argv = argv[:i] + argv[i + 2:]
+    name = argv[0] if argv else "TOWN0"
+    games = argv[1] if len(argv) > 1 else r"C:\games\lota"
+    if bank_out:
+        render_bank(name, games, bank_out)
+        return
     dump(name, games)
 
 
