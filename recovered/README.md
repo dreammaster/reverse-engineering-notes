@@ -164,7 +164,25 @@ anchor). The combat pool it prints is quoted at the top of
       daysElapsed / K)` per visit.
 - [ ] shop counters, guard fight, item-grab, mail routes, robbery event
 
-## Other modules
+## CASDR.EXE
 
-- [ ] `casdr`, `mus`
-- [ ] `leglib.bas` — the shared engine primitives
+- [x] `casdr_castle.bas` — `AttackHit`, `GasDamage`, `WarlordAttack`,
+      `DescribeRoom`.  Castle incoming melee mitigates via **Endurance and
+      armour in the denominator**: `dmg = INT(enemyAtk^1.8 * (RND*600+300)
+      * difficulty / (armorVal * Endurance^0.9) + 2)`.  Warlord blow =
+      `INT(RND(1)*99 + 80)` (80..178).
+- [ ] `doFight`/`enemyAttack` (player's castle attack), chest loot, locked
+      doors, `WarlordConfrontation`, `FortressSelfDestruct`
+
+## MUS.EXE
+
+- [x] `mus_exhibits.bas` — `EnterExhibit`, `TestExhibitFlag`.  Each exhibit
+      chains to a driver EXE and consumes its required gem coin; responses
+      gated on quest-flag bits.  Stones-of-Wisdom INT maths are in STDRV.
+- [ ] exhibitId -> coin mapping, the caretaker level-up
+
+## leglib.bas — the shared engine primitives
+
+- [ ] arithmetic dispatch (done, see above), string ops, `drawString` codes,
+      file I/O (`rtm_FE07`/`rtm_02` BLOAD, `rtm_FE63`), the `rtm_FE*`
+      graphics layer, `B$RND`
