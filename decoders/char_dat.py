@@ -56,14 +56,21 @@ S4[19]=20).
     +0x16 <- 1AC8   [C] GAME SPEED (tmpl 4; menuStartup sets 3)
     +0x18 <- 1ACA   [C] chain-return / location context (SAVER returnTarget)
     +0x1A <- 1ACC   [?] attribute / resource (tmpl 15; potion-wizard +5, cap 0x24)
-    +0x1C <- 1ACE       dead -- no ref, PAULA 0
-    +0x1E <- 1AD0   [P] a COUNTER/checksum (tmpl 0x4270, PAULA 0x426E = -2);
-                        thought dead but it does change -- purpose unknown
-    +0x20 <- 1AD2   [P] PARTY GOLD, dword (PAULA 120; hi word +0x22 = 0)
+    +0x1C <- 1ACE   [C] a per-STEP depleting counter (21 refs; doMovement's
+                        move tick pushes/pops it -- fatigue? PAULA 0)
+    +0x1E <- 1AD0   [P] a COUNTER that ticks with play (tmpl 0x4270; PAULA
+                        0x426E after the museum, 0x4257 after a fight --
+                        turn count / RNG state; not a stat)
+    +0x20 <- 1AD2   [P] PARTY GOLD, dword (PAULA 120 -> 155 after a kill;
+                        +0x22 hi = 0)
     +0x24 <- 1AD6   [P] dungeon-return marker, dword (tmpl -99/-1 was uninit;
                         PAULA 0/0 = "not in a dungeon")
-    +0x28 <- 1ADA   [C] hit points -- WORKING cache of S4[19] (stale unless
-                        outInit ran; PAULA 200 is stale, real max = S4[19])
+    +0x28 <- 1ADA   [P] HIT POINTS -- the live current HP (PAULA 200 after
+                        the museum -> 141 after a fight).  S4[19] (=20) is
+                        NOT the max: it is the peasant baseline / food-heal
+                        cap (buyFood only tops HP up to S4[19]); real HP
+                        grows past it with play.  No separate max is
+                        stored in the record.
     +0x2A <- 1ADC   [?] portrait / message index (<= 11; PAULA 1)
     +0x2C <- 1ADE   [?] museum-adjustable stat (tmpl 15; MUS showGold +10)
     +0x2E <- 1AE0   [C] COMPENDIUM VOLUMES / museum access rank 1..7 (PAULA 1)
@@ -78,9 +85,16 @@ S4[19]=20).
     +0x3C <- 1AEE   [C] SAVER write-marker -- saver.asm sets it to 0xEA
                         (PAULA 234 = 0xEA); transient
     +0x3E <- 1AF0   [C] STRENGTH (tmpl 15, PAULA 15; cap 0x1C=28; potion gate)
-    +0x40..0x48 <- 1AF2..1AFA   DEAD -- SAVER's blind peek loop captures
-                        whatever DGROUP garbage is there (PAULA 0 / 16128 /
-                        36 / 16820 -- not fields)
+    +0x42 <- 1AF4   [C] a per-STEP counter (18 refs, TWNDR-heavy; doMovement
+                        move tick + shops -- PAULA 0)
+    +0x46 <- 1AF8   [C] the SICKNESS / food-quality counter -- doMovement
+                        rolls `random vs 1AF8`; low -> "YOU GROW SICK FROM
+                        SOMETHING YOU ATE!" (22 refs across OUT/DUN/MUS/TWNDR;
+                        PAULA 18).  Also used as a small byte-array base
+                        (`[bp+di+1AF8h]`).
+    +0x40 <- 1AF2, +0x44 <- 1AF6, +0x48 <- 1AFA   truly DEAD -- no ref;
+                        SAVER's blind peek loop captures DGROUP garbage
+                        (PAULA 0 / 16584 / 16914)
     +0x4A <- 1AFC   [C] selected-item cursor (tmpl 99="none", PAULA 0)
     +0x4C <- 1AFE   [P] count paired with 1AFC (PAULA 1 -- one equipped item?)
     +0x4E <- 1B00   [P] town/castle interior scratch (TWNDR/CASDR; PAULA 74)
@@ -102,21 +116,28 @@ Array roles (PAULA diff 2026-09-01; per-element split still partial):
     S3  17 museum-progress words.  PAULA: [15] 0->2 (= museum ENTRY COUNT,
         mus.asm:498 increments it each visit); [14] 0->1 (used an exhibit
         PORTAL, mus.asm:1637); [1]=-2, [2]=1 (other exhibit progress).
-    S4  38-word MAIN CHARACTER + map block -- authoritative.  Confirmed:
-        S4[1] = saved museum/exhibit position (chainToTown/chainToDungeon
-        write ds:1AE2 here; PAULA 32); S4[19] = MAX HIT POINTS (buyFood
-        compares it to current ds:1ADA and heals up to it; PAULA 20 = a
-        new peasant's HP, tmpl 200 was dev junk).  PAULA also changed
-        [10]=1, [11]=3 (=facing?), [34] 3->0.  [22]=32000, [25..29]=32767
-        stay sentinel.  [0..2] (1500/32/31058) still look like RNG/hash.
-    S5  SHOP PRICE TABLE -- S5[0]=7 then 41 prices.  UNCHANGED in PAULA's
-        save -> confirmed static / identical for every character.
-    S6  4 words -- NOT dead: PAULA [0]=17, [3]=18 (tmpl all 0).  No direct
-        `si,1C20h` site, so written via a computed index or LEGLIB.
-        Purpose unknown (last-town? re-entry coords? -- needs more saves).
+    S4  38-word block.  S4[1] = saved museum/exhibit position
+        (chainToTown/chainToDungeon write ds:1AE2 here; PAULA 32).
+        S4[19] = 20 = the peasant HP baseline / buyFood heal cap (NOT the
+        max -- PAULA's HP is 141, well above).  [22]=32000, [25..29]=32767
+        sentinel; [0..2] (1500/32/31058) look like RNG/hash.
+    S5  SHOP PRICE TABLE -- S5[0]=7 then 41 prices.  Static / global.
+    S6  4 words -- NOT dead: PAULA [0]=17, [3]=18.  Written via a computed
+        index or LEGLIB.  Purpose unknown.
 
-Still needs saves at known points to finish: which S4 elements are the
-RPG stats (dex/stamina/etc), the S2 quest-flag meanings, S6, and 1AD0.
+**Partial-save caveat** (PAULA save 2, after a kill): only the LIVE
+scalars moved -- gold (+35 loot), HP (-59 damage), 1AD0 (turn counter).
+Every array (S0..S6) was BYTE-IDENTICAL to the pre-fight save.  So the
+S0..S6 arrays are a "last location-transition" checkpoint, not live
+state -- XP / inventory changes / grown max-HP land in working vars and
+only flush to the arrays when you enter a town / museum / dungeon.
+"Food" (a displayed stat) is NOT in the record at all -- it lives in a
+working var (candidates: the per-step counters ds:1ACE / 1AF4 / 1AF8).
+
+Still open: which S4 elements are the RPG stats, the S2 quest flags,
+S6, where food/XP/level actually persist -- needs a save taken from
+INSIDE a town (forces the checkpoint flush) + the game's displayed
+numbers at that moment.
 """
 import struct
 import sys
