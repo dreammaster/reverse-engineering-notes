@@ -36,8 +36,11 @@ Layout (1012-byte file)
     0x1C5        A2  32 words, one per creature.  low byte = a second
                  stat (tracks A1 loosely -- reward?), high byte = a
                  tag (usually 0x63 = 99, else 0x01-0x04).
-    0x205        A3  32 words, one per creature -- combat use (an element
-                 read is `idiv`'d at resolvePlayerAttack).  Not split.
+    0x205        A3  32 words, one per creature = the **kill reward**.
+                 `creatureDefeated` does `A3[i] / 0x100` -> the reward
+                 amount (gold / found-item tier).  low byte 3..75, high
+                 byte 0..89; the first 7 creatures (PIXIE..HUGGYN) have a
+                 tiny flat value (4,6,3,10,15,18,12).
     0x245        A4  24 words = **12 (X, Y) overworld map coordinates for
                  the 12 towns**, X[0..11] then Y[0..11].  `resolveTownEntry`
                  loops the 12 towns comparing `A4[t]` to the player X and
@@ -95,7 +98,9 @@ def main():
         s2, tag = a2[i] & 0xFF, a2[i] >> 8
         print(f"  [{i:2}] {name:18} HP={hp:3} atk={atk:2}   A2={s2:3} tag={tag:#04x}")
 
-    print(f"\nA3 (32 w, combat): {list(a3)}")
+    print("\nA3 = kill reward per creature  (creatureDefeated: A3[i] / 0x100):")
+    for i, name in enumerate(p2):
+        print(f"  [{i:2}] {name:18} A3={a3[i]:5}  (>>8 = {a3[i] >> 8}, &FF = {a3[i] & 0xFF})")
     towns = ["Isle City", "Cobbleton", "Alanville", "Grand Ledge",
              "Big Rapids", "Thornberry", "Mazelton", "Thompson Crossing",
              "Merchant Square", "Laingsburg", "Holy Point", "Eagle Hollow"]
