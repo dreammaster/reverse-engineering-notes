@@ -2532,6 +2532,17 @@ disassembly work.
   a `GetRegionAt` same-room fallback, and `activeinv`/cursor revalidation
   — all CONFIRMED ABSENT here. Corrects an earlier struct-comment note
   that had overstated the match as "exactly" matching source.
+- **`ShakeScreen` closes cleanly, plus a new `Common/Wgt2allg.h` match.**
+  Its screen-capture call, made right after setting `abuf=screen`, is
+  decisively `wnewblock` (new match) — the capture step matters, since
+  `wnewblock` specifically blits FROM the current `abuf`. Its 40-pass,
+  50ms-delay shake loop matches 2011 with zero drift, alternating
+  `wputblock(0,0,Block,0)`/`wputblock(0,severe,Block,0)` — calling the
+  already-matched `wputblock` DIRECTLY, with no `render_to_screen`
+  wrapper or `gfxDriver` layer in between. A third independent instance
+  this session (after `FadeOut`/`FADE_DISSOLVE`) of this build's entire
+  rendering pipeline predating the later hardware-acceleration
+  abstraction wholesale, not just in fade-related code.
 
 ## Third-party library identification (Task #10)
 

@@ -9308,3 +9308,37 @@ function later growing into a richer helper chain, just observed here
 at the level of an entire script-API entry point rather than a struct
 or a subsystem. The `CharacterInfo.room` comment's overstated "matches
 source exactly" claim is corrected in place.
+
+### `ShakeScreen` closes cleanly: `wnewblock` matched, and this build's screen-shake presenter is shown to bypass any `render_to_screen`/`gfxDriver` layer entirely
+
+`ShakeScreen` (previously bare) turned out to be a clean, complete match
+end to end, and picked up a new `Common/Wgt2allg.h` function along the
+way. Gated on `dword_4EEB54`(`fast_forward`, already confirmed) the same
+way as several other functions this session, it saves `abuf` into a
+local, scales `severe` by `current_screen_resolution_multiplier_y`,
+points `abuf` at `screen`, then allocates a screen-sized capture bitmap
+via a call whose args -- `(0,0,width-1,height-1)`, made right after
+setting `abuf=screen` -- decisively identify it as `wnewblock`
+(`Wgt2allg.h:194-211`, `"blit(abuf,tempbitm,x1,y1,0,0,...)"`, i.e. it
+specifically captures FROM the currently-active `abuf`, explaining why
+the caller bothers pointing `abuf` at `screen` immediately beforehand).
+
+The main loop runs 40 times with a 50ms delay each, matching 2011's own
+`"for(hh=0;hh<40;hh++){platform->Delay(50);...}"` (`AC.CPP:20287-20296`)
+with zero drift on both constants, and alternates every other iteration
+(via the same branchless mod-2 idiom seen elsewhere this project) between
+`wputblock(0,0,Block,0)` and `wputblock(0,severe,Block,0)` -- a decisive
+match to 2011's `"render_to_screen(tty,0,0)"`/`"render_to_screen(tty,0,
+severe)"` pair. The interesting part: this build calls the already-
+matched `wputblock` DIRECTLY, with no separate `render_to_screen`
+wrapper function or `gfxDriver` abstraction layer in between at all --
+consistent with, and now a third independent instance of, this session's
+repeated finding (already seen in the `FadeOut`/manual-palette-fade
+cluster and the `FADE_DISSOLVE` effect) that this build's entire
+rendering pipeline predates the later hardware-acceleration abstraction
+wholesale, not just in the fade-related subsystems. This also explains
+why this build's `ShakeScreen` has only ONE implementation path, where
+2011's has bifurcated into a `gfxDriver->RequiresFullRedrawEachFrame()`
+branch (unreachable here, since no such driver abstraction exists) and
+the plain software-blit branch this build's version corresponds to
+almost line for line.

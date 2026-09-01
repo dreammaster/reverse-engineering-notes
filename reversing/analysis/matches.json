@@ -1657,7 +1657,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Gated on dword_4EEB54(fast_forward, already confirmed)!=0 -- matches 2011's \"if (play.fast_forward) return;\" (AC.CPP:20256-20257) exactly, though this build's version is missing the preceding EndSkippingUntilCharStops() call (already established several sessions ago as an entire absent subsystem). Saves abuf into a local (oldsc), scales severe by current_screen_resolution_multiplier_y, sets abuf=screen, allocates a screen-sized capture via the newly-matched wnewblock(0,0,width-1,height-1) (see its own entry), then loops 40 times (0x28) with a 50ms(0x32) delay each -- matching 2011's \"for(hh=0;hh<40;hh++) {platform->Delay(50); ...}\" (AC.CPP:20287-20296) with zero drift on both constants. Each iteration alternates via a branchless mod-2 idiom (hh%2): even -> wputblock(0,0,Block,0), odd -> wputblock(0,severe,Block,0) -- a DECISIVE exact match to 2011's \"render_to_screen(tty,0,0)\" / \"render_to_screen(tty,0,severe)\" (AC.CPP:20290-20293), confirming this build's own screen-shake presenter calls the already-matched wputblock DIRECTLY -- no separate render_to_screen wrapper/gfxDriver abstraction exists yet, this build's whole rendering pipeline still predates that later hardware-acceleration layer (consistent with several earlier findings this session -- FadeOut/palette-fade, the FADE_DISSOLVE effect -- all showing the same predates-gfxDriver pattern). Also matches the already-matched update_polled_stuff() call each iteration exactly. This build's version is the software-blit-only branch of 2011's now-bifurcated implementation (2011 gained a SECOND, gfxDriver-based branch for drivers that RequiresFullRedrawEachFrame() -- absent here, unsurprising given no gfxDriver abstraction exists at all in this build)."
   },
   {
     "kind": "function",
@@ -5918,5 +5918,14 @@
     "source_line": 170,
     "confidence": "high",
     "evidence": "void wcolrotate(unsigned char start,unsigned char finish,int dir,color*pall) at Common/Wgt2allg.h:170-191. This build's implementation matches ONLY the dir==0 (\"rotate left\") branch exactly: \"tempp=pall[start]; for(jj=start;jj<finish;jj++) pall[jj]=pall[jj+1]; pall[finish]=tempp;\" -- disasm computes var_4=pall[from&0xFF](tempp), loops var_8=from&0xFF while <(to&0xFF) copying pall[var_8]=pall[var_8+1], then writes pall[to&0xFF]=var_4. CRITICAL DRIFT: this build's version has NO dir==0/dir==1 branch at all -- the `dir` argument (arg_8@+0x10 in the stack frame) is pushed by the caller but never read anywhere in the function body. This build's wcolrotate ALWAYS performs the \"rotate left\" algorithm regardless of what dir is passed -- the \"rotate right\"/dir==1 branch (source's else clause, acroom.h:182-190) is entirely absent, not merely unused. Called from CyclePalette (already matched, see its own entry for the full compounding drift picture)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401177",
+    "new_name": "wnewblock",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 194,
+    "confidence": "high",
+    "evidence": "block wnewblock(int x1,int y1,int x2,int y2) at Common/Wgt2allg.h:194-211: \"twid=(x2-x1)+1; thit=(y2-y1)+1; ...tempbitm=create_bitmap(twid,thit); blit(abuf,tempbitm,x1,y1,0,0,tempbitm->w,tempbitm->h); return tempbitm;\". Called from ShakeScreen (already matched, see its own entry) as \"wnewblock(0,0,width-1,height-1)\" immediately after setting abuf=screen -- decisively confirms this is wnewblock specifically (not a bare create_bitmap) since wnewblock's own defining behavior is capturing FROM the currently-active `abuf`, matching why the caller sets abuf=screen right before calling it. create_bitmap/blit themselves are Allegro library internals, not chased further per this project's third-party-library scope rule."
   }
 ]
