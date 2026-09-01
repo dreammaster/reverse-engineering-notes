@@ -90,24 +90,27 @@ SUB ResolvePlayerAttack                               ' asm: out.asm:6686 (resol
 ' (three variants keyed on the creature's weapon-weakness), subtract from
 ' the enemy HP cell, CreatureDefeated when it reaches 0.
 
-    ' ---- 1. to-hit fraction -------------------------------------------- asm:6687-6714
+    ' ---- 1. to-hit score --------------------------------------------- asm:6687-6714
     '   hitScratch =  ( CSNG(Dexterity) / (weaponPower + 18) )
-    '                   op0x10
-    '                 ( enemyArmor / 11.0 )                    ' ds:2C26 = 11.0
+    '                   op0x10                                  ' FF47 = index 0x10 = `\`
+    '                 ( enemyArmor / 11.0 )                     ' FF4E, ds:2C26 = 11.0
     hitScratch = (Dexterity / (weaponPower + 18)) \ (enemyArmor / 11.0)   '?ord ' asm:6687-6714
-    '  op 0x10 is integer-divide in the README table, but hitScratch is
-    '  compared to RND(1) below and you only HIT when it is SMALL, so it
-    '  must end up a fraction -- op 0x10 here is more likely `-`.           '??
+    '  README table says op 0x10 = `\`.  hitScratch is a bigger-is-better
+    '  to-hit SCORE (you HIT when RND(1) < hitScratch, see step 2), not a
+    '  [0,1] fraction -- Paul's DOSBox watch showed ds:208E holding values
+    '  like 0xAC.  Operand order for the two `/` and the `\` still open.    '?ord
 
     IF creatureWeak = weaponId THEN                                       ' asm:6717
-        hitScratch = hitScratch + 1.0                        ' ds:24E6    ' asm:6723
+        hitScratch = 1.0                       ' ds:24E6  (plain assign)  ' asm:6723-6727
+        '  matching the creature's weak weapon -> forced hit (RND(1) < 1.0
+        '  is always true)
     END IF
 
     PRINT "ATTACK "; Creature$(creatureIndex)                             ' asm:6730 (2E3E)
     PRINT "WITH "; Weapon$(weaponId); "."                                 ' asm:6756 (2E4A + 27D6)
 
-    ' ---- 2. roll to hit ---------------------------------------------- asm:6789-6808
-    IF hitScratch >= RND(1) THEN                                          '?ord ' asm:6803 (FF1F, jnb)
+    ' ---- 2. roll to hit -- HIT when RND(1) < hitScratch ------------- asm:6789-6808
+    IF RND(1) >= hitScratch THEN                                          '?ord ' asm:6803 (FF1F, jnb -> MISS)
         PRINT "YOUR ATTACK MISSES."                                       ' asm:6812 (2E54)
         Delay 4                                                           ' asm:6823 (ds:23A6 = 4)
         StageSfx_Attack                                                   ' asm:6827
@@ -157,21 +160,36 @@ END SUB
 '     miss / hit / 3-way damage / kill structure
 '   * operator IDENTITY per thunk (leglib dispatch indices: +0 -4 *8 /C \10
 '     MOD14 ^18 cmp1C -- see README)
-'   * "your weapon == the creature's weak weapon"  ->  damage = Strength
-'     (the guide's "goes down with one blow")
+'   * "your weapon == the creature's weak weapon"  ->  hitScratch = 1.0
+'     (forced hit) AND damage = Strength (the guide's "one blow")
 '   * "creature has a weakness, wrong weapon"       ->  ~1-3 chip damage
 '   * creatureWeak = 99 is the "no weakness" sentinel
-'   * combat math is single-precision; to-hit compares a fraction to RND(1),
-'     and you HIT when the fraction is the SMALLER side
+'   * combat math is single-precision
+'   * to-hit: you HIT when RND(1) < hitScratch  (bigger hitScratch = better;
+'     the weakness branch pins the sense -- it sets 1.0 for a *guaranteed*
+'     hit, which only works if the test is RND(1) < hitScratch)
+'   * ds:2192 holds the final damage integer (Paul's DOSBox watch: it read
+'     3 for a "Damage 3" hit).  It is ALSO reused as the encounter-view
+'     `combatPhase` enum (3..7) by beginEncounterView & combatBeat_* --
+'     classic compiled-BASIC scratch reuse.
 '
 '  NEEDS CONFIRMING  ('?ord / '??):
-'   1. operand order for the non-commutative middle ops.  `A op B` vs
-'      `B op A` changes to-hit and base damage completely.
-'   2. op 0x10 in the to-hit and base-damage lines: the README says `\`
-'      (int divide) but the result has to be fractional there -- likely `-`.
-'      One DOSBox watch on the write to ds:2192 / ds:208E during a fight
-'      settles 1 and 2 together.
-'   3. RollEncounterMod: RND(1)/18 vs 18/RND(1); and the 40 vs 60 % gate.
-'   4. ds:1AEC (ComputeEquippedPower) and the exact weaponSlot/armorSlot
+'   1. operand order for the non-commutative ops (the two `/` in the
+'      to-hit line, the `\`, the `/` and `\` in base damage).  `A op B` vs
+'      `B op A` changes to-hit and base damage completely.  Needs a
+'      PLAYER-attacks-monster DOSBox trace: dump 4 bytes at ds:208E (float)
+'      and 2 bytes at ds:2192 (int) when "ENEMY HIT BY BLOW OF N" prints,
+'      plus ds:1AC0 (Dex) ds:1B08 (Str) ds:21FC ds:22A6 ds:22D6 ds:1AFE
+'      and the N that printed.
+'   2. RollEncounterMod: RND(1)/18 vs 18/RND(1); and the 40 vs 60 % gate.
+'   3. ds:1AEC (ComputeEquippedPower) and the exact weaponSlot/armorSlot
 '      /weaponId roles.
-'   5. where encMod is consumed (not here -- probably CreatureAttack).
+'   4. where encMod is consumed (not here -- CreatureAttack, still
+'      collapsed at out.asm:3468).
+'
+'  NOTE: Paul's first DOSBox trace was a MONSTER-attacks-player event
+'  (`creatureAttack`), which is the one combat function still collapsed in
+'  out.asm -- so those ds:2192 = 1,3,5,3 / ds:208E = 0x5C,0,0xAC samples
+'  can't be mapped to source lines yet.  What they DID confirm: ds:2192 is
+'  the shared damage scratch (final = 3 = the "Damage 3" shown), and
+'  ds:208E is live during movement too.
