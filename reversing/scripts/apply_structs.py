@@ -646,8 +646,13 @@ struct CharacterInfo {
                            // data table -- an unambiguous "this is a view number" pattern. Also directly
                            // confirmed again via Character_UnlockView's defview assignment (see above).
   int room;                // +0x0C, high confidence: SetPlayerCharacter saves this, switches
-                           // playerchar, and calls NewRoom(new playerchar->room) if it changed --
-                           // matches source exactly.
+                           // playerchar, and calls NewRoom(new playerchar->room) if it changed.
+                           // CORRECTION: matches the CORE behavior, not "exactly" -- this build's
+                           // version is a much simpler predecessor of 2011's (which delegates to
+                           // Character_SetAsPlayer, with a same-character no-op check,
+                           // game_start/displayed_room guard, region-interaction fallback, and
+                           // activeinv/cursor revalidation this build lacks entirely). See
+                           // SetPlayerCharacter's own matches.json entry for the full comparison.
   int prevroom;              // +0x10, high confidence (UPGRADED from TENTATIVE, found in a later
                            // round while chasing the `ags-archives/`-confirmed field name -- see
                            // `reversing/notes/ags-archives-cross-reference.md`): `load_new_room`

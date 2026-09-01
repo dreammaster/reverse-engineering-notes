@@ -2523,6 +2523,15 @@ disassembly work.
   and no hi-color `invalidate_screen()` call — three features confirmed
   absent in one small function. `SetPalRGB` shows the same missing
   hi-color check at its own call site.
+- **`SetPlayerCharacter` shows a genuinely simpler predecessor of 2011's
+  `Character_SetAsPlayer`-delegating version.** This build inlines just
+  four steps (save old room, update `playercharacter`, swap `playerchar`,
+  call `update_invorder`, conditionally `NewRoom`); 2011 wraps that same
+  core in `Character_SetAsPlayer` (`Engine/acchars.cpp:1011-1043`) with
+  a same-character no-op check, a `displayed_room<0`/game-start guard,
+  a `GetRegionAt` same-room fallback, and `activeinv`/cursor revalidation
+  — all CONFIRMED ABSENT here. Corrects an earlier struct-comment note
+  that had overstated the match as "exactly" matching source.
 
 ## Third-party library identification (Task #10)
 

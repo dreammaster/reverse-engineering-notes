@@ -9273,3 +9273,38 @@ consistent with this build predating the eventual, fuller
 `invalidate_screen()` hi-color check) at its own call site, reinforcing
 that this build doesn't yet invalidate the screen on any palette change
 in hi-color modes.
+
+### `SetPlayerCharacter` shown to be a genuinely simpler predecessor of 2011's `Character_SetAsPlayer`-delegating version
+
+`SetPlayerCharacter` had an interesting documentation gap: its own
+`matches.json` record was still bare, even though `apply_structs.py`'s
+`CharacterInfo.room` comment had already summarized its behavior from an
+early round and asserted it "matches source exactly." Reading 2011's
+actual current implementation (not just its thin `SetPlayerCharacter`
+wrapper, but the `Character_SetAsPlayer` function it delegates to,
+`Engine/acchars.cpp:1011-1043`) shows that claim was too strong.
+
+This build's version does exactly four things: save the OLD player
+character's room, update `GameSetupStructBase.playercharacter`, swap the
+`playerchar` pointer to the new character, call the already-matched
+`update_invorder()`, then call `NewRoom()` if the new character's room
+differs from the just-saved old one. 2011's `Character_SetAsPlayer` does
+all of that too, but wrapped in substantially more edge-case handling
+this build simply doesn't have: an early same-character no-op check
+(`if (game.playercharacter==chaa->index_id) return;` -- CONFIRMED ABSENT
+here, this build always re-runs the full swap even when redundant); an
+early-return guard for `displayed_room<0` (i.e. during `game_start`,
+before any room is shown) that this build lacks entirely -- its own
+room-change check compares the new character's room against a locally-
+saved old-room variable rather than the global `displayed_room`, so
+behavior when called during game startup could genuinely differ; a
+`GetRegionAt`-based region-interaction fallback for the "staying in the
+same room" case (absent); and `activeinv`/cursor-mode revalidation logic
+for when the previous character's selected inventory item doesn't carry
+over sensibly (absent). This build's version implements only the core
+player-switch-and-conditionally-change-room behavior -- consistent with
+this project's now-familiar pattern of a single simpler 2002-era
+function later growing into a richer helper chain, just observed here
+at the level of an entire script-API entry point rather than a struct
+or a subsystem. The `CharacterInfo.room` comment's overstated "matches
+source exactly" claim is corrected in place.
