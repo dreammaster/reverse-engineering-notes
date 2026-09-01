@@ -9231,3 +9231,45 @@ worth remembering as a pattern if similar-looking branchless boolean
 logic turns up elsewhere). This also reconfirms `DialogTopic`'s own
 `0x484`(1156)-byte total size a further way via the function's own
 `imul ecx,484h` stride, and `dword_4EDA48=dialog` from a new call site.
+
+### `FollowCharacter`/`SetGUIPosition` documented; `CyclePalette`/`SetPalRGB` yield two new `Common/Wgt2allg.h` matches and a genuine bidirectional-rotate absence
+
+A continued bare-match sweep. `FollowCharacter` (previously bare) is a
+trivial one-line wrapper, `FollowCharacterEx(who,tofollow,10,97)`,
+matching 2011's entire function body verbatim with zero drift on both
+default constants. `SetGUIPosition` (also bare) validates `ifn`/`xx`/`yy`
+against GUI count and screen bounds, then writes
+`guis[ifn].x=xx*current_screen_resolution_multiplier_x` and the `y`
+equivalent directly to `[guis+ifn*0x184+0x28]`/`+0x2C` -- a further,
+WRITE-side confirmation of `GUIMain.x`@+0x28/`y`@+0x2C (previously only
+confirmed via read sites in `mouse_but_down`/`GetGUIAt`).
+
+`CyclePalette`/`SetPalRGB` (both bare) turned into a genuinely
+productive pair, yielding two brand-new function matches to
+`Common/Wgt2allg.h` (AGS's own small platform-compat header, not a
+third-party library) that neither had a `matches.json` entry before:
+`sub_401078` -> `wsetrgb` (an exact 3-instruction match to
+`Wgt2allg.h:147-152`'s `pall[coll].r/g/b=r/g/b`) and `sub_401111` ->
+`wcolrotate` (`Wgt2allg.h:170-191`).
+
+The `wcolrotate` match surfaced a genuine, decisive drift finding: 2011's
+version branches on a `dir` parameter (`dir==0`: rotate left; `dir==1`:
+rotate right, an `if/else` with two full loop bodies), but this build's
+implementation matches ONLY the `dir==0` branch's algorithm -- and
+critically, the `dir` argument is pushed onto the stack by every caller
+but never READ anywhere in the function body. This build's `wcolrotate`
+unconditionally performs the "rotate left" algorithm regardless of what
+`dir` is passed; the "rotate right" branch doesn't exist as dead code,
+it was never written. Tracing back to `CyclePalette` (the only caller)
+confirms the whole chain is consistent: this build's `CyclePalette` has
+no `eend>strt` forwards-vs-backwards branch either -- it always calls
+`wcolrotate(from,to,0,palette)` regardless of argument order -- AND has
+no bounds-check `quit()` at all (2011's `"if((strt<0)||(strt>255)||
+(eend<0)||(eend>255)) quit(...)"` is simply absent), AND no
+`game.color_depth>1` `invalidate_screen()` hi-color-refresh call. Three
+separate features confirmed absent in one small function, all
+consistent with this build predating the eventual, fuller
+`CyclePalette`. `SetPalRGB` shows the same third absence (no
+`invalidate_screen()` hi-color check) at its own call site, reinforcing
+that this build doesn't yet invalidate the screen on any palette change
+in hi-color modes.

@@ -2508,6 +2508,21 @@ disassembly work.
   body decisively confirms `DFLG_ON=1`/`DFLG_OFFPERM=2`
   (`Common/acroom.h:2648-2649`) with zero drift, and reconfirms
   `DialogTopic`'s `0x484`(1156)-byte size a further way.
+- **Two new `Common/Wgt2allg.h` matches from a `CyclePalette`/
+  `SetPalRGB` sweep, plus a genuine feature-absence finding.**
+  `FollowCharacter`/`SetGUIPosition` (both bare) get retroactively
+  documented (the latter giving `GUIMain.x`@+0x28/`y`@+0x2C a WRITE-side
+  confirmation). `CyclePalette`/`SetPalRGB` yield two brand-new matches:
+  `wsetrgb` and `wcolrotate` (AGS's own small platform-compat header,
+  not third-party). `wcolrotate`'s match reveals this build's version
+  implements ONLY 2011's `dir==0` ("rotate left") branch — the `dir`
+  argument is pushed by every caller but never read in the function
+  body, so the "rotate right" branch isn't dead code, it was never
+  written. Tracing to `CyclePalette` (its only caller) confirms the
+  whole chain: no forwards/backwards branch, no bounds-check `quit()`,
+  and no hi-color `invalidate_screen()` call — three features confirmed
+  absent in one small function. `SetPalRGB` shows the same missing
+  hi-color check at its own call site.
 
 ## Third-party library identification (Task #10)
 

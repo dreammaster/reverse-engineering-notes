@@ -418,9 +418,13 @@ struct GUIMain {
                            // one and not the other for unrelated reasons).
   int x;                  // +0x28, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
                            // `GetGUIAt` (already matched, script-exported) as part of its
-                           // point-in-bounding-box hit test.
+                           // point-in-bounding-box hit test. Also a WRITE-side confirmation via
+                           // `SetGUIPosition` (already matched): writes
+                           // `xx*current_screen_resolution_multiplier_x` directly here.
   int y;                  // +0x2C, confirmed via GUIMain::mouse_but_down; RECONFIRMED via
-                           // `GetGUIAt` the same way as `x` above.
+                           // `GetGUIAt` the same way as `x` above. Also confirmed via
+                           // `SetGUIPosition`'s matching write of
+                           // `yy*current_screen_resolution_multiplier_y`.
   int wid;                  // +0x30, high confidence (UPGRADED from MEDIUM): confirmed via
                            // `GetGUIAt` (already matched, script-exported): "eax=guis[idx].x;
                            // add eax,[guis+idx*184h+30h]; cmp xx,eax; setle cl" -- computes

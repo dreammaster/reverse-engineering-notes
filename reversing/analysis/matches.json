@@ -1177,7 +1177,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). A trivial one-line wrapper: \"push 0x61(97); push 0xA(10); push tofollow; push who; call FollowCharacterEx\" -- matches 2011's entire function body verbatim, \"FollowCharacterEx(who,tofollow,10,97);\" (AC.CPP:17971-17973), zero drift on both default constants (dist=10, eagerness=97)."
   },
   {
     "kind": "function",
@@ -1357,7 +1357,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates ifn<numgui (dword_51DB04), then validates xx/yy against screen bounds (0<=xx<screen_width via word_522F08, 0<=yy<screen_height via sub_414F63's return value -- both not yet individually identified) quitting \"!SetGUIPosition: co-ordinates must lie...\" otherwise, then writes \"guis[ifn].x = xx*current_screen_resolution_multiplier_x; guis[ifn].y = yy*current_screen_resolution_multiplier_y;\" directly to [guis+ifn*0x184+0x28]/+0x2C -- a further, WRITE-side confirmation of GUIMain.x@+0x28/y@+0x2C (previously only confirmed via read sites in mouse_but_down/GetGUIAt), and confirms this build scales GUI positions by the current screen-resolution multiplier at set-time (matching the general AGS low-res/hi-res coordinate scaling convention)."
   },
   {
     "kind": "function",
@@ -1667,7 +1667,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: \"wcolrotate(from,to,0,palette); set_palette_range(palette,from,to,0);\" -- both already-matched (wcolrotate/set_palette_range, see their own entries). THREE things 2011's CyclePalette (AC.CPP:20320-20340) has that this build's version CONFIRMS ABSENT: (1) no bounds-check quit() at all (\"if((strt<0)||(strt>255)||(eend<0)||(eend>255)) quit(...)\" -- disasm goes straight from arguments to the wcolrotate call with zero validation); (2) no game.color_depth>1 invalidate_screen() hi-color-screen-refresh call; (3) no `eend>strt` forwards-vs-backwards branch -- this build ALWAYS calls wcolrotate with dir=0 (forwards) regardless of argument order, consistent with wcolrotate's own already-matched finding that the dir parameter is never even read. This build's CyclePalette is a genuinely simpler, unidirectional, unvalidated predecessor of 2011's function -- not a smaller variant of the same feature set, an earlier one that predates bidirectional cycling, bounds validation, and hi-color palette-change screen invalidation all at once."
   },
   {
     "kind": "function",
@@ -1677,7 +1677,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: \"wsetrgb(from,rr,gg,bb,palette); set_palette_range(palette,from,from,0);\" -- matches 2011's \"wsetrgb(inndx,rr,gg,bb,palette); wsetpalette(inndx,inndx,palette);\" (AC.CPP:20345-20346) exactly, MINUS the preceding \"if (game.color_depth>1) invalidate_screen();\" hi-color check (AC.CPP:20342-20343) -- confirmed absent here, consistent with CyclePalette's own matching absence of the same check (see its own entry) -- this build doesn't yet invalidate the screen on palette changes in hi-color modes at either of these two call sites."
   },
   {
     "kind": "function",
@@ -5900,5 +5900,23 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "Trivial one-line __thiscall helper: \"return (*this != 0) ? 1 : 0;\" -- a null-check on a pointer-sized field. Called with &dword_4EDA58 (this build's single ambient-sound SOUNDCLIP* handle, already confirmed via PlayAmbientSound/update_ambient_sound_vol) from mainloop, FadeOut, and sub_40A21C (all already matched/characterized), each guarding a conditional call into the handle's own vtable slot 0 if set. This completes the picture of this build's per-frame/per-tick audio polling: THREE separate single-channel audio systems -- speech (dword_52321C=speechmp3), sound effects (dword_523220, PlaySound's channel), and ambient sound (dword_4EDA58, via this helper) -- are each polled the same way (null-check, then call vtable slot 0) from multiple otherwise-unrelated call sites. Left unnamed: too trivial and too generically-shaped to confidently attach a specific 2011 identifier to (2011's own equivalent audio-polling logic is folded into a much larger, channels[]-array-based update_polled_audio()-style routine with no directly comparable single-purpose helper)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401078",
+    "new_name": "wsetrgb",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 147,
+    "confidence": "high",
+    "evidence": "void wsetrgb(int coll,int r,int g,int b,color*pall) at Common/Wgt2allg.h:147-152: \"pall[coll].r=r; pall[coll].g=g; pall[coll].b=b;\". Exact instruction-for-instruction match: three single-BYTE writes to [pall+coll*4+0]/[+1]/[+2] (a 4-byte-per-entry PALETTE array, matching Allegro's own RGB/color struct layout), leaving the 4th byte (filler/alpha) untouched. Called from SetPalRGB (already matched, see its own entry) as \"wsetrgb(inndx,rr,gg,bb,palette)\", matching source's \"wsetrgb(inndx,rr,gg,bb,palette); wsetpalette(inndx,inndx,palette);\" (AC.CPP:20345-20346) exactly for the first call (wsetpalette itself already established as this build's set_palette_range wrapper)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401111",
+    "new_name": "wcolrotate",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 170,
+    "confidence": "high",
+    "evidence": "void wcolrotate(unsigned char start,unsigned char finish,int dir,color*pall) at Common/Wgt2allg.h:170-191. This build's implementation matches ONLY the dir==0 (\"rotate left\") branch exactly: \"tempp=pall[start]; for(jj=start;jj<finish;jj++) pall[jj]=pall[jj+1]; pall[finish]=tempp;\" -- disasm computes var_4=pall[from&0xFF](tempp), loops var_8=from&0xFF while <(to&0xFF) copying pall[var_8]=pall[var_8+1], then writes pall[to&0xFF]=var_4. CRITICAL DRIFT: this build's version has NO dir==0/dir==1 branch at all -- the `dir` argument (arg_8@+0x10 in the stack frame) is pushed by the caller but never read anywhere in the function body. This build's wcolrotate ALWAYS performs the \"rotate left\" algorithm regardless of what dir is passed -- the \"rotate right\"/dir==1 branch (source's else clause, acroom.h:182-190) is entirely absent, not merely unused. Called from CyclePalette (already matched, see its own entry for the full compounding drift picture)."
   }
 ]
