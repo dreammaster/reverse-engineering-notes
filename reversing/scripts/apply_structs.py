@@ -3488,6 +3488,9 @@ struct GameState {
                             // GlobalInts to 300" -- an exact match, meaning this exact 300-value
                             // capacity was introduced December 2001 and stayed unchanged through
                             // Rob Blanc 1's own ~2.4b era before later growing to 2011's 500.
+                            // Further READ-side confirmation via GetGlobalInt (already matched):
+                            // "return dword_4EEB74[index];" where 0x4EEB74-0x15C=0x4EEA18,
+                            // exactly GameState's own established base address.
   // The +0x60C..+0x80C span (512 bytes) is now FULLY BYTE-ACCOUNTED FOR, and unlike when this
   // comment was first written, its first 8 bytes (cur_music_number/music_repeat, immediately
   // below) are now real confirmed fields, not a pad -- the rest is broken into precisely-sized

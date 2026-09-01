@@ -87,7 +87,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-call body: \"set_palette_range(palette,0,255,0)\" -- matches the already-established wsetpalette(0,255,palette) wrapper pattern (set_palette_range is the already-matched Allegro library function). DRIFT: 2011's own UpdatePalette (AC.CPP:24118-24124) gates the equivalent call behind BOTH \"if (game.color_depth>1) invalidate_screen();\" (already CONFIRMED ABSENT pattern elsewhere this session) AND \"if (!play.fast_forward) setpal();\" -- this build's version has NEITHER guard, calling set_palette_range UNCONDITIONALLY even during fast-forward (e.g. skipping cutscenes). A real, confirmable behavioral difference: this build always applies palette updates regardless of fast_forward state, where 2011 explicitly skips them during fast-forward."
   },
   {
     "kind": "function",
@@ -267,7 +267,7 @@
     "source_obj": "acplatfm.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-instruction body: \"return (game_paused>0);\" -- exact match to 2011's own trivial \"return (game_paused>0);\" -- a further confirmation of the already-established standalone game_paused global from a new call site (check_controls, already matched, calls it twice)."
   },
   {
     "kind": "function",
@@ -497,7 +497,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates index in [0,300) (quitting \"!GetGlobalInt: invalid index\" otherwise -- matching the already-established MAXGSVALUES drift, 300 here vs 2011's declared 500), then returns dword_4EEB74[index] -- decisively confirmed as GameState.globalscriptvars[300]@+0x15C via absolute-address arithmetic (0x4EEB74-0x15C=0x4EEA18, exactly GameState's own established base address) -- a further, independent READ-side confirmation of that field/array from a new call site, on top of its existing SetGlobalInt-based confirmation. Exact match to 2011's own \"if((index<0)|(index>=MAXGSVALUES)) quit(...); return play.globalscriptvars[index];\" (AC.CPP:13988-13992)."
   },
   {
     "kind": "function",

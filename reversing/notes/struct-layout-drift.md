@@ -9630,3 +9630,31 @@ the deferred restart). Combined with `RestoreGameSlot`'s own write-side confirma
 from earlier this session, both of `ExecutingScript`'s remaining
 "gates a call to X()" fields now have their own dedicated producer
 function identified and matched, not just their consumer-side read.
+
+### `UpdatePalette`/`IsGamePaused`/`GetGlobalInt`: a small sweep turns up one real behavioral drift
+
+`IsGamePaused` and `GetGlobalInt` close as expected -- exact matches to
+2011's own trivial bodies, the latter giving `GameState.
+globalscriptvars[300]`@+0x15C (already confirmed via `SetGlobalInt`) a
+further, independent READ-side confirmation from a new call site
+(`0x4EEB74-0x15C=0x4EEA18`, exactly `GameState`'s own established base
+address).
+
+`UpdatePalette` is the interesting one. Its own body is a single call,
+`set_palette_range(palette,0,255,0)` -- matching the already-established
+`wsetpalette(0,255,palette)` idiom -- but 2011's own `UpdatePalette`
+(`AC.CPP:24118-24124`) gates the equivalent call behind TWO conditions:
+`"if (game.color_depth>1) invalidate_screen();"` (the now-familiar,
+already-confirmed-absent hi-color-invalidation pattern) AND, separately,
+`"if (!play.fast_forward) setpal();"`. This build's version has NEITHER
+guard -- it calls `set_palette_range` UNCONDITIONALLY, even while
+`fast_forward` is active (e.g. during a skipped cutscene). Unlike most
+of this session's "confirmed absent" findings, which describe cosmetic
+or purely-technical differences (a missing validation bound, a missing
+screen-refresh call with no player-visible timing effect), this one is
+a genuine, player-visible BEHAVIORAL difference: this build will keep
+re-applying palette changes during fast-forwarded sequences that 2011
+deliberately skips, for performance and/or visual-consistency reasons.
+Worth flagging explicitly for the eventual ScummVM reimplementation,
+since silently adding 2011's `fast_forward` guard would change
+observable behavior rather than just internal structure.

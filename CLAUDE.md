@@ -2647,6 +2647,17 @@ disassembly work.
   set-to-1 — a small correction to its earlier "unnamed bool"
   description. DRIFT: 2011's `can_run_delayed_command()` call is
   confirmed absent.
+- **A small sweep turns up one real behavioral drift.** `IsGamePaused`/
+  `GetGlobalInt` close as exact matches (the latter reconfirming
+  `globalscriptvars[300]` from a new site). `UpdatePalette` is the
+  interesting one: 2011 gates its palette-apply call behind BOTH a
+  hi-color `invalidate_screen()` check AND `!play.fast_forward` — this
+  build has NEITHER guard, calling `set_palette_range` unconditionally
+  even during fast-forwarded sequences. Unlike most "confirmed absent"
+  findings this session, this one is player-visible: this build keeps
+  re-applying palette changes during fast-forward that 2011 explicitly
+  skips — worth flagging for the eventual ScummVM port rather than
+  "fixing" by default.
 
 ## Third-party library identification (Task #10)
 
