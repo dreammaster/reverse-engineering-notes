@@ -1347,7 +1347,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates ifn<numgui (dword_51DB04), then does the De Morgan-negated equivalent of 2011's early-return guard: \"if ((on!=0)||(popup==1)) {...turn off...}\" matches \"if((on==0)&&(popup!=POPUP_MOUSEY)) return;\" (AC.CPP:18618-18623) exactly, reconfirming both GUIMain.on@+0x90 and POPUP_MOUSEY=1 (already established) from a new site. The turn-off body: sets on@+0x90=0; if mouseover@+0x54>=0, calls objs[mouseover]->vtbl[2]() then sets mouseover=-1 -- vtable SLOT 2 is already independently established as MouseLeave (from the GUIButton vtable-recovery round), so this is a clean, new confirmation of both GUIMain.mouseover@+0x54 AND the shared GUIObject vtable slot order, matching 2011's \"guis[ifn].objs[guis[ifn].mouseover]->MouseLeave(); guis[ifn].mouseover=-1;\" exactly. DRIFT: no `control_positions_changed()` call anywhere in the function -- CONFIRMED ABSENT, a later addition. Then guis_need_update=1, then: if popup@+0x40==2, decrements game_paused directly (INLINING UnPauseGame's own already-matched decrement, but WITHOUT its >0 guard -- this call site can drive game_paused negative where UnPauseGame() itself never would) -- confirms POPUP_SCRIPT=2 (a new constant, complementing the already-known POPUP_MOUSEY=1), matching 2011's \"if(popup==POPUP_SCRIPT) UnPauseGame();\" in ROLE though not in the exact bounds-safety of the call; else if popup@+0x40==1(POPUP_MOUSEY), sets on@+0x90=-1, matching \"else if(popup==POPUP_MOUSEY) guis[ifn].on=-1;\" exactly."
   },
   {
     "kind": "function",
@@ -1367,7 +1367,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol; game_paused itself was already established as a standalone global, not a struct field, several sessions ago, but this function's own entry was still bare). One-instruction body: \"game_paused++;\" -- exact match to 2011's entire function body (AC.CPP:4988-4991), minus the compiled-out DEBUG_CONSOLE call."
   },
   {
     "kind": "function",
@@ -1377,7 +1377,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: \"if (game_paused>0) game_paused--;\" -- exact match to 2011's entire function body (AC.CPP:4992-4996), minus the compiled-out DEBUG_CONSOLE call."
   },
   {
     "kind": "function",
@@ -1707,7 +1707,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-instruction body: \"return cur_mode;\" (dword_4EDA7C, already established as GetCursorMode's own global via main_loop_until's earlier round) -- a trivial getter, exact match."
   },
   {
     "kind": "function",

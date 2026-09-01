@@ -453,6 +453,11 @@ struct GUIMain {
                            // acroom.h:277`) precisely (gating the "should this GUI auto-show when
                            // the mouse nears the trigger line" logic). Matches 2011's declared
                            // field (`acgui.h:672`) in position and semantic role exactly.
+                           // `InterfaceOff` (already matched) confirms POPUP_MOUSEY=1 a second
+                           // way ("guis[ifn].on=-1" only when popup==1) and additionally confirms
+                           // POPUP_SCRIPT=2 ("if popup==2, decrement game_paused"), matching
+                           // 2011's "if(popup==POPUP_SCRIPT) UnPauseGame();" in role -- though
+                           // this build's inlined decrement skips UnPauseGame's own >0 guard.
   int popupyp;                // +0x44, high confidence (UPGRADED from MEDIUM): confirmed via BOTH
                            // `check_controls` ("mov eax,mouseY; cmp eax,[guis+ev2*184h+44h]; jge
                            // <not-yet>" -- guarding the "show this popup GUI" trigger, only
@@ -522,7 +527,13 @@ struct GUIMain {
                            // exactly, where `[this+0xEC]` is `GUILabel.textcol`, already
                            // independently confirmed via `GUILabel__ReadFromFile`'s own default-
                            // value logic.
-  int mouseover;          // +0x54, confirmed via GUIMain::mouse_but_down
+  int mouseover;          // +0x54, confirmed via GUIMain::mouse_but_down. Also confirmed via
+                           // `InterfaceOff` (already matched): "if(mouseover>=0) {
+                           // objs[mouseover]->vtbl[2](); mouseover=-1;}" -- vtbl slot 2 is
+                           // already independently established as MouseLeave (GUIButton vtable-
+                           // recovery round), matching 2011's
+                           // "guis[ifn].objs[guis[ifn].mouseover]->MouseLeave();
+                           // guis[ifn].mouseover=-1;" exactly.
   int mousewasx;              // +0x58, high confidence (UPGRADED from MEDIUM): confirmed via the
                            // same newly-found `GUIMain::init()`-equivalent as `bgcol` (see its own
                            // entry for the complete writeup and caveat): "[this+0x58]=-1" matches

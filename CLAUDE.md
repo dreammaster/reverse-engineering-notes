@@ -2563,6 +2563,19 @@ disassembly work.
   target confirms 2011's `walkspeed_y` (independent X/Y walk speed,
   `Character_SetSpeed`) is absent from this build's `CharacterInfo`
   entirely, and no `SetCharacterSpeedEx` entry point exists either.
+- **`PauseGame`/`UnPauseGame`/`GetCursorMode` close trivially;
+  `InterfaceOff` cross-confirms a vtable slot and finds a real bounds-
+  safety gap.** The first three are one-or-two-instruction wrappers
+  around already-established globals. `InterfaceOff`'s turn-off body
+  calls `objs[mouseover]->vtbl[2]()` then `mouseover=-1` — vtable slot 2
+  was already established as `MouseLeave` (the original `GUIButton`
+  vtable round), so this cross-confirms both `GUIMain.mouseover`@+0x54
+  and that vtable ordering from an independent site, and confirms
+  `control_positions_changed()` absent (a later addition). Its tail
+  confirms `POPUP_SCRIPT=2` (alongside the known `POPUP_MOUSEY=1`) —
+  but INLINES `game_paused--` directly instead of calling the already-
+  matched `UnPauseGame()`, skipping its `>0` guard: a real, narrow
+  correctness gap where this path could drive `game_paused` negative.
 
 ## Third-party library identification (Task #10)
 

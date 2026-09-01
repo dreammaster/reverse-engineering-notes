@@ -9401,3 +9401,43 @@ anywhere in the disassembly either, matching the same "later AGS split
 one function into a richer Ex-suffixed variant" pattern seen repeatedly
 elsewhere in this project (`FollowCharacter`/`FollowCharacterEx` being
 the closest precedent, from earlier this session).
+
+### `PauseGame`/`UnPauseGame`/`GetCursorMode` close trivially; `InterfaceOff` cross-confirms a vtable slot and finds a real bounds-safety gap
+
+Four more bare functions swept in one pass. `PauseGame`/`UnPauseGame`/
+`GetCursorMode` are all one-or-two-instruction wrappers around already-
+established standalone globals (`game_paused`, `cur_mode`) -- exact
+matches to 2011's own tiny function bodies, minus compiled-out
+`DEBUG_CONSOLE` calls.
+
+`InterfaceOff` turned out to be the rich one. Its early "already off,
+nothing to do" guard is the De Morgan-negated form of 2011's own early
+return (`"if((on==0)&&(popup!=POPUP_MOUSEY)) return;"`,
+`AC.CPP:18618-18623`), reconfirming `GUIMain.on`@+0x90 and
+`POPUP_MOUSEY=1` from a new site. The turn-off body does something more
+interesting: `"if(mouseover>=0) { objs[mouseover]->vtbl[2](); "
+"mouseover=-1; }"` -- vtable SLOT 2 was already independently
+established as `MouseLeave` back in the original `GUIButton` vtable-
+recovery round (`MouseMove`@0, `MouseOver`@1, `MouseLeave`@2,
+`MouseDown`@3, ...), so this is a clean cross-confirmation of BOTH
+`GUIMain.mouseover`@+0x54 and that vtable slot ordering from a
+completely independent call site, matching 2011's
+`"guis[ifn].objs[guis[ifn].mouseover]->MouseLeave(); "
+"guis[ifn].mouseover=-1;"` exactly. `control_positions_changed()`
+(2011's very next line) is CONFIRMED ABSENT -- no such call anywhere in
+the function, a later addition.
+
+The tail closes out the `popup` enum: `popup==2` decrements
+`game_paused` directly, confirming `POPUP_SCRIPT=2` (a genuinely new
+constant, alongside the already-known `POPUP_MOUSEY=1`) and matching
+2011's `"if(popup==POPUP_SCRIPT) UnPauseGame();"` in ROLE -- but with a
+real, if minor, bounds-safety gap: this call site INLINES the
+decrement directly (`game_paused--`) rather than calling the already-
+matched `UnPauseGame()`, and skips that function's own `>0` guard. A
+`POPUP_SCRIPT`-type GUI turned off twice in a row (or any other path
+that manages to call this with `game_paused` already at 0) could drive
+it negative here, where a real `UnPauseGame()` call never would -- a
+genuine, if narrow, correctness difference from the reference
+behavior, not just a stylistic inlining choice. Finally, `popup==1`
+(`POPUP_MOUSEY`) sets `on=-1`, matching
+`"else if(popup==POPUP_MOUSEY) guis[ifn].on=-1;"` exactly.
