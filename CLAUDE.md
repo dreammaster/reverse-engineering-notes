@@ -2673,6 +2673,16 @@ disassembly work.
   `crovr_id`. One open detail: its `_display_main` call passes only 7
   arguments vs. the 10-parameter signature established elsewhere —
   plausibly compiled-in C++ default arguments, not confirmed this round.
+- **`SetTextOverlay`/`MoveOverlay` close the overlay-script-API sweep
+  with zero drift.** `SetTextOverlay` — remove-then-recreate-with-same-
+  ID via the already-matched `RemoveOverlay`/`CreateTextOverlay`,
+  `crovr_id` included — matches 2011 line for line. `MoveOverlay`
+  writes newx/newy directly to `ScreenOverlay.x`@+0x08/`y`@+0x0C
+  (already established via `add_screen_overlay`'s creation-time
+  writes), a further WRITE-side confirmation of both fields from a
+  genuinely different (runtime-mutation) call site. `RemoveOverlay`/
+  `CreateTextOverlay`/`SetTextOverlay`/`MoveOverlay` are now all fully
+  documented.
 
 ## Third-party library identification (Task #10)
 

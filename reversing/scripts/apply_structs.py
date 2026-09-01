@@ -3928,9 +3928,12 @@ struct ScreenOverlay {
                             // type;" -- also independently confirmed via
                             // find_overlay_of_type's own field read.
   int x;                        // +0x08, high confidence: direct assignment from
-                            // add_screen_overlay's `x` parameter.
+                            // add_screen_overlay's `x` parameter. Further WRITE-side
+                            // confirmation via MoveOverlay (already matched):
+                            // "screenover[ovri].x=newx" matches source exactly.
   int y;                        // +0x0C, high confidence: direct assignment from
-                            // add_screen_overlay's `y` parameter.
+                            // add_screen_overlay's `y` parameter. Further WRITE-side
+                            // confirmation via MoveOverlay (already matched), same as `x`.
   int timeout;                  // +0x10, high confidence: "screenover[numscreenover].timeout
                             // = 0;" -- set to a literal 0 at creation time, matching source
                             // exactly.

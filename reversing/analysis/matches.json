@@ -367,7 +367,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Formats text via the already-matched GetTranslation/vsprintf, calls the already-matched RemoveOverlay(ovrid), then sets crovr_id(dword_4B42E8, established this session via CreateTextOverlay's own entry)=ovrid before calling the already-matched CreateTextOverlay(...) and verifying its return value equals ovrid (quitting \"SetTextOverlay internal error: inconsistent...\" otherwise) -- an exact, decisive, line-for-line match to 2011's own SetTextOverlay (AC.CPP:13169-13179), zero drift."
   },
   {
     "kind": "function",
@@ -377,7 +377,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Scales newx/newy by the resolution multipliers, validates ovrid via the already-matched find_overlay_of_type (sub_40A0E9), then writes newx/newy directly to dword_4CD228[idx]/dword_4CD22C[idx] -- decisively confirmed as ScreenOverlay.x@+0x08/y@+0x0C (already established via add_screen_overlay's own creation-time write, array base dword_4CD220) -- a further, independent WRITE-side confirmation of both fields from a new call site. Exact match to 2011's own MoveOverlay (AC.CPP:13239-13246): \"multiply_up_coordinates(&newx,&newy); ovri=find_overlay_of_type(ovrid); if(ovri<0) quit(...); screenover[ovri].x=newx; screenover[ovri].y=newy;\", zero drift."
   },
   {
     "kind": "function",

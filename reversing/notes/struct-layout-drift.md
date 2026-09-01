@@ -9691,3 +9691,27 @@ cleanup size), fewer than the 10-parameter signature established
 elsewhere from a different caller (`_display_at`) -- plausibly
 explained by compiled-in C++ default arguments for the trailing
 parameters, but not independently confirmed this round.
+
+### `SetTextOverlay`/`MoveOverlay` close the overlay-script-API sweep with zero drift
+
+The last two overlay-family functions in this round both close cleanly.
+`SetTextOverlay` -- formats text, calls the already-matched
+`RemoveOverlay(ovrid)`, sets `crovr_id=ovrid` (the global identified
+moments earlier via `CreateTextOverlay`), calls the already-matched
+`CreateTextOverlay(...)`, and verifies the returned ID matches `ovrid`
+-- is a decisive, line-for-line match to 2011's own version
+(`AC.CPP:13169-13179`), zero drift; the whole "remove then recreate
+with the same ID" idiom, `crovr_id` included, carries over exactly.
+
+`MoveOverlay` scales its coordinates, validates via the already-matched
+`find_overlay_of_type`, then writes directly to
+`dword_4CD228[idx]`/`dword_4CD22C[idx]` -- landing exactly on
+`ScreenOverlay.x`@+0x08/`y`@+0x0C's already-established array base
+(`dword_4CD220`, from `add_screen_overlay`'s own creation-time writes)
+-- giving both fields a further, independent WRITE-side confirmation
+from a genuinely different call site (a runtime mutation, not just
+initial construction). Exact match to 2011's own three-line
+`MoveOverlay` (`AC.CPP:13239-13246`), zero drift. With this, every
+member of this session's overlay-script-API sweep (`RemoveOverlay`,
+`CreateTextOverlay`, `SetTextOverlay`, `MoveOverlay`) is now fully
+documented.
