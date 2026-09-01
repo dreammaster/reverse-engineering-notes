@@ -1,18 +1,20 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld combat, player-attack path            [PILOT v3]
+'  OUT.EXE  --  overworld combat, player-attack path            [PILOT v4]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 ' ==========================================================================
 '
-'  v3: the leglib op-dispatch table was read straight out of LEGLIB.EXE
-'  (ds:0F7C, 8 entries).  It is NOT the canonical BASIC operator order --
-'  it is  + - -rev * / /rev cmp  (see README).  So the earlier "\ MOD ^"
-'  guesses were wrong.  Every operator below is now pinned; what remains
-'  open is the to-hit (resolvePlayerAttack is entered with a value already
-'  on the stack, and its first op `FF2B` is a non-table binary op).
+'  v4: the to-hit is SOLVED (exact float match against Paul's DOSBox trace).
+'  Two things unlocked it:
+'   - the leglib op table, read from LEGLIB.EXE (ds:0F7C): + - -rev * / /rev
+'     cmp, plus `FF2B` = `^` reversed  (NOT in the table -- own thunk).
+'   - the value-stack node layout: a node's value lives at [node.ptrField],
+'     which for the top slot == [ds:111C].  (The 8 bytes at the node start
+'     are unused -- an earlier trace misread them as 0.)
 '
 '  Verified against Paul's DOSBox trace (knife vs neural cloud):
 '     Dex 16, Str 19, weaponPower 2, creatureHP 50, creatureWeak 3,
-'     weaponId 1  ->  "ENEMY HIT BY BLOW OF 6"  /  a separate "MISSES"
+'     weaponId 1  ->  hitScratch = 0x3EAB17EA = 0.33416682  (exact),
+'     "ENEMY HIT BY BLOW OF 6", and a separate "MISSES".
 '
 '  leglib op table (ds:0F7C, index = 0/4/8/C/10/14/18/1C):
 '     0x00  +            FF44 (imm) / FF42 (stack)
@@ -22,6 +24,7 @@
 '     0x10  /            FF47                 (TOS1 / TOS)
 '     0x14  / reversed   FF49                 (TOS / TOS1; as imm: TOS / imm)
 '     0x18  compare      FF1F
+'  FF2B  =  `^` reversed  (TOS ^ TOS1)  -- own thunk, leglib seg004:0x3954
 '  RND(1) = `push ds:24E8 : push ds:24E6 : call B$RND`  (ds:24E6 = SINGLE 1.0)
 '
 '  SINGLE constant pool (decoders/dgroup_consts.py OUT.EXE; ds:2C26/279C/
@@ -60,26 +63,21 @@ END SUB
 SUB ResolvePlayerAttack                               ' asm: out.asm:6686 (resolvePlayerAttack)
 ' --------------------------------------------------------------------------
 
-    ' ---- 1. to-hit score  --  NOT YET SOLVED --------------------------- asm:6687-6714
+    ' ---- 1. to-hit score --------------------------------------------- asm:6687-6714
     '   push CSNG(Dexterity)                                    ' asm:6687
-    '   FF2B                    <- binary, POPS a 2nd operand   ' asm:6691  '??
-    '   push (weaponPower + 18)                                 ' asm:6694
-    '   FF4C  (*)                                               ' asm:6698
-    '   push creatureHP                                         ' asm:6702
-    '   FF4E ds:2C26 (*)   -> creatureHP * 11.0                 ' asm:6706
-    '   FF47 (/)          -> (...) / (creatureHP * 11)          ' asm:6710
-    '   pop -> hitScratch (ds:208E)                             ' asm:6713
-    '
-    '   With the table as read, this is
-    '       hitScratch = (X {FF2B} Dex) * (weaponPower+18) / (creatureHP * 11)
-    '   where X is whatever the caller (creatureAttack / doAttackOrCast,
-    '   both partly collapsed) left on the value stack, and FF2B is a
-    '   non-dispatch-table op (leglib handler seg004:0x3954 -- looks like
-    '   `\` or MOD: it zero-checks both exponents and copies both operands
-    '   to work buffers).  Paul's trace: hitScratch = 0.334167 for the
-    '   inputs above -- the (Dex*(wp+18))/(creatureHP*11) part alone gives
-    '   0.5818, so the FF2B operand/op accounts for the rest.             'CHECK
-    hitScratch = ToHitScore()                                 '?? ' asm:6687-6714
+    '   FF2B   ->  Dexterity ^ L                                ' asm:6691
+    '          L = the value the caller left on the stack; in Paul's trace
+    '          L = 0.8 exactly == Dexterity / (weaponPower + 18).  The push
+    '          of L is in the (collapsed) caller -- take this as
+    '          L = Dexterity / (weaponPower + 18) pending a 2nd trace.
+    '   push (weaponPower + 18) ; FF4C (*)                      ' asm:6694-6698
+    '   push creatureHP ; FF4E ds:2C26 (*) -> creatureHP * 11.0 ' asm:6702-6706
+    '   FF47 (/) ; pop -> hitScratch (ds:208E)                  ' asm:6710-6713
+    hitScratch = (Dexterity ^ (Dexterity / (weaponPower + 18))) _
+                 * (weaponPower + 18) / (creatureHP * 11.0)               ' asm:6687-6714
+    '  EXACT: 16^0.8 * 20 / 550 = 0.33416682 = the observed ds:208E.
+    '  Bigger Dex / weapon and lower enemy HP -> higher hitScratch -> more
+    '  likely to hit (step 2).  '?ord only on the L push (caller is collapsed).
 
     IF creatureWeak = weaponId THEN                                       ' asm:6717
         hitScratch = 1.0                       ' ds:24E6  (plain assign)  ' asm:6723-6727
@@ -136,29 +134,23 @@ END SUB
 ' ==========================================================================
 '  STATUS
 ' ==========================================================================
-'  SOLID (operators pinned from LEGLIB.EXE; formulas below verified or
-'  self-consistent):
-'   * op table = + - -rev * / /rev cmp   (README)
-'   * RollEncounterMod   = INT( RND(1)*18 + 12.6 )              [12..30]
-'   * base damage        = INT( Str * (wp/6 + 1/2) / (2*RND(1) + 1) )
-'   * chip damage        = INT( 4*RND(1) + wp/1.3 + 1 )
-'   * weakness-match dmg  = INT( Str + 20*RND(1) )
-'   * creatureHP  = creatureStatWord MOD 256   (out.asm:3924-3943)
-'   * creatureWeak = creatureWeakWord MOD 256, 99 = none  (3944-3963)
-'   * to hit: HIT when RND(1) < hitScratch; weakness-match forces 1.0
+'  SOLID -- operators pinned from LEGLIB.EXE; formulas verified against
+'  Paul's DOSBox traces (to-hit is an EXACT float match) or self-consistent:
+'   * op table = + - -rev * / /rev cmp  (README) ; FF2B = `^` reversed
+'   * to-hit score  = (Dex ^ (Dex/(wp+18))) * (wp+18) / (creatureHP * 11)
+'   * to hit        : HIT when RND(1) < hitScratch ; weakness-match forces 1.0
+'   * RollEncounterMod  = INT( RND(1)*18 + 12.6 )               [12..30]
+'   * base damage       = INT( Str * (wp/6 + 1/2) / (2*RND(1) + 1) )
+'   * chip damage       = INT( 4*RND(1) + wp/1.3 + 1 )
+'   * weakness-match dmg = INT( Str + 20*RND(1) )
+'   * creatureHP   = creatureStatWord  MOD 256   (out.asm:3924-3943)
+'   * creatureWeak = creatureWeakWord  MOD 256, 99 = none  (3944-3963)
+'   * value-stack node: value at [node.ptrField]; top value at [ds:111C]
 '
 '  OPEN:
-'   1. the to-hit score.  Paul's 2026-09-01 trace: at entry the value stack
-'      (base ds:0FAC, ptr ds:111C = 0x0FB8) has ONE live slot = 0.0 (single).
-'      So hitScratch = ((0.0 {FF2B} Dex) * (wp+18)) / (creatureHP * 11),
-'      which can't give the observed 0.334167 -- FF2B and/or the entry
-'      state isn't understood yet.  NEXT: break at out.asm loc_13DA5
-'      (linear 0x13DA5, right after `call rt_FF2B`) and dump the top value-
-'      stack slot (12 bytes at [ds:111C]-0x0C) + ds:111C; then again at
-'      loc_13DB5 (0x13DB5, after FF4C).  Two intermediate values pin FF2B
-'      and the leftover.  (Stale slots above 0x0FB8 held 0.8 and 166.75 --
-'      0.334167*500 ~ 166.75, suggestive.)  Also dump ds:0F90..0FAC to see
-'      if the stack base is really 0x0FAC.
+'   1. the `L` push for the to-hit -- observed L = Dex/(wp+18) exactly, but
+'      the pushing code is in the collapsed caller.  A 2nd trace with a
+'      different weapon/Dex confirms whether L really is Dex/(wp+18).
 '   2. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?
 '   3. spell damage (doAttackOrCast:6507-6523) -- structure known, needs
 '      ds:231C / ds:2502 / ds:2DD0.

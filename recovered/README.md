@@ -68,13 +68,34 @@ OUT combat damage = `INT(Str*(wp/6 + 0.5)/(2*RND + 1))` (matches Paul's
 DOSBox "BLOW OF 6").
 
 **`\`, `MOD`, `^`, and the relational ops** are separate thunks with their
-own leglib handlers (e.g. `rtm_FF2B` -> `seg004:0x3954`), *not* entries in
-this table. `rtm_FF2B` **pops two operands** (it is binary, not the coercion
-the earlier notes assumed) — `seg004:0x3954` zero-checks both exponents and
-copies both to work buffers, i.e. it looks like `\` or `MOD`. Not yet pinned.
+own leglib handlers, *not* entries in this table. `rtm_FF2B`
+(-> `seg004:0x3954`) = **`^` with operands reversed** (`TOS ^ TOS1`): it
+**pops two operands** (binary, not the coercion the earlier notes assumed).
+Confirmed by an exact float match — OUT to-hit `Dex ^ (Dex/(wp+18)) * (wp+18)
+/ (creatureHP*11)` reproduces the observed `ds:208E` = `0x3EAB17EA` bit for
+bit (`16^0.8 * 20 / 550 = 0.33416682`).
+
+## Value-stack node layout
+
+Each 12-byte node is `[8 bytes unused][2-byte pointer][2-byte type tag]`.
+**The node's value is stored at `[pointer]`**, not inline — and `pointer`
+is `nodeStart + 12`, i.e. it points into the next node's space. So:
+
+- the **top-of-stack value is the 4-byte single at `[ds:111C]`** (the stack
+  pointer itself), *not* at `[ds:111C]-12`.
+- `rtm_FF4B` (push) writes the value to `[oldPtr+12]`, sets the new node's
+  pointer field to `oldPtr+12`, tag to 3, advances `ds:111C` by 12.
+- `rtm_FF50 addr` (pop→var) does `si = topNode.pointer ; movsw movsw` from
+  `ds:si` to `ds:addr`, then `ds:111C -= 12`.
+
+When dumping the value stack in DOSBox, read `[ds:111C]` for the top value
+and `[ds:111C - 12*k]` for the k-th-from-top **node header** (its value is
+at that header's pointer field).
 
 **Still `'?ord`:** the compare direction (`FF1F` + `jb`/`jnb`), and whether
-a stack-stack op sees the deeper or the top operand as its left side.
+a stack-stack op sees the deeper or the top operand as its left side (only
+matters for `-` / `/`, and `FF49` vs `FF47` / `FF53` already encode the two
+directions).
 
 **String / misc thunks:** `basStrAssign(dst,src)` = `dst$ = src$`;
 `basStrConcat(a,b)` = `a$ + b$`; `rtm_D2(fmt,val)` = `fmt$ + STR$(val)`;
@@ -95,14 +116,15 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## Status
 
-- [x] `out_combat.bas` — the overworld player-attack path (pilot v3)
+- [x] `out_combat.bas` — the overworld player-attack path (pilot v4)
 - [x] `decoders/dgroup_consts.py` — pull the SINGLE/INT/STRING constant
       pool out of any module EXE
 - [x] leglib op-dispatch table read from `LEGLIB.EXE` (`+ - -rev * / /rev
-      cmp`) — corrected the `* / \ MOD ^` mis-mapping
-- [x] verified formulas: base/chip/weakness-match damage, RollEncounterMod
-- [ ] the to-hit score: dump the value stack at `out.asm:6687` + decode
-      `rtm_FF2B` (`seg004:0x3954`)
+      cmp`); `FF2B` = `^` reversed
+- [x] value-stack node layout (value at `[node.ptr]` == `[ds:111C]` for top)
+- [x] verified formulas: to-hit (exact float), base/chip/weakness-match
+      damage, RollEncounterMod
+- [ ] confirm the to-hit `L` (= `Dex/(wp+18)`?) with a 2nd trace
 - [ ] `out_combat.bas` — the monster-attack path (`creatureAttack`, still
       collapsed in `out.asm`)
 - [ ] the rest of `out`, then `dun`, `casdr`, `mus`, `twndr`
