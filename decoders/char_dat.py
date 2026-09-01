@@ -114,13 +114,17 @@ Array roles (PAULA diffs, 4 saves 2026-09-01/02):
         and "Good studded hide": S0[1]=1 (Knife) S1[1]=3 (Great);
         S0[6]=9 (Studded hide) S1[6]=2 (Good).  ds:1AFC = equipped
         weapon slot (->1), ds:1AFE = armour equipped (1).
-    S2  **the 24-ITEM POSSESSION BITMAP** -- S2[k] = 1 if the party holds
-        LEGACY item[k] (the [55..78] sub-pool).  PAULA over 4 saves:
-        [1] Gold armband (start), [2] Climbing gear, [9] "mail" (flips
-        when you first own armour), [15] Compendium (the plot scroll,
-        from the intro), [17] Jade coin, [18] Topaz coin.  Keys / herbs /
-        the 7 gem coins / Crown / Scepter / Tulip / Compass all live
-        here too.
+    S2  30 words = the ITEM + SPELL inventory:
+        [0..23] = the **24-item possession bitmap** -- S2[k] = 1 if the
+          party holds LEGACY item[k] (the [55..78] sub-pool).  Observed:
+          [1] Gold armband (start), [2] Climbing gear, [9] "mail" (first
+          armour), [15] Compendium (the plot scroll), [17] Jade coin,
+          [18] Topaz coin.  Keys / herbs / the 7 gem coins / Crown /
+          Scepter / Tulip / Compass all live here.
+        [24..29] = the **6 spell CHARGE COUNTS** -- LEGACY spells [79..84]
+          (Magic flame, Firebolt, Befuddle, Psyco strength, Kill flash,
+          Seek).  Verified: bought 2 Magic flame -> S2[24]=2, 1 Firebolt
+          -> S2[25]=1, 1 Seek spell -> S2[29]=1.
     S3  17 museum-progress words.  [15] = museum entry count
         (mus.asm:498), [14] = used an exhibit portal (mus.asm:1637),
         [1]/[2] = other exhibit progress.
@@ -198,6 +202,8 @@ WEAPONS = ["bare hands", "Knife", "Leaded club", "Bladed staff", "Flail",
 ARMOUR = ["Studded hide", "Ring mail", "Double mail", "Plated mail",
           "Mythan plate"]
 CONDITION = ["Shoddy", "Fair", "Good", "Great", "Superb"]
+SPELLS = ["Magic flame", "Firebolt", "Befuddle", "Psyco strength",
+          "Kill flash", "Seek"]
 
 
 def gear_name(item_id):
@@ -256,9 +262,12 @@ def dump(path):
               for k in range(8) if s0[k]]
         if eq:
             print(f"           equipment: {', '.join(eq)}")
-        held = [ITEMS[k] for k in range(min(24, 30)) if s2[k]]
+        held = [ITEMS[k] for k in range(24) if s2[k]]
         if held:
             print(f"           items:     {', '.join(held)}")
+        spells = [f"{SPELLS[k]} x{s2[24 + k]}" for k in range(6) if s2[24 + k]]
+        if spells:
+            print(f"           spells:    {', '.join(spells)}")
 
 
 def dump_template(legacy_path):

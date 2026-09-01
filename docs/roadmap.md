@@ -597,7 +597,7 @@ reimplementation.
       compendium rank / game-speed scalars + the S5 shop price table
       placed. **S2 = 24-item possession bitmap, S0/S1 = equipment slots**
       (2026-09-02, from 4 PAULA save-diffs). Food / XP are runtime-only
-      (not in the record). Remaining: the S4 RPG stats.
+      (not in the record). S2 FULLY decoded (24-item bitmap + 6 spell counts). Remaining: the S4 RPG stats.
 - [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py` +
       `decoders/legacy_font.py`) — the master font/string/data table
       `menuStartup` loads into resident LEGLIB DGROUP. 6-B header; then
