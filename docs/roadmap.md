@@ -324,8 +324,13 @@ reimplementation.
       `+0x50`/`+0x54`, compendium rank `+0x2E` (1..7), game speed `+0x16`
       (4), + dungeon pos/facing/timers. Array **S5** (`ds:1BF2`, `+0x122`)
       = the shop price table. `decoders/char_dat.py` prints the template
-      split. Still open: per-element split of S2 (30 world/quest flags)
-      and S4 (38-word stat/map block) — needs a populated save.
+      split + an equipment / item readout. **S2 = the 24-item possession
+      bitmap** (`S2[k]` = holds LEGACY item `[k]`), **S0/S1 = the
+      equipment slots** (id + Shoddy/Fair/Good/Great/Superb condition;
+      weapons 0–8, armour 9–13 share the id space) — all pinned from 4
+      PAULA save-diffs (kill + shopping spree). **Food / XP are NOT
+      persisted** — runtime-only working vars (searched 4 saves). Still
+      open: the S4 RPG stats (dex/stamina/wisdom/intelligence/level).
 - [ ] The "character disk" checks ("is not on this / character disk",
       "empty") imply a multi-disk / per-character-slot save scheme —
       confirm.
@@ -590,9 +595,9 @@ reimplementation.
       arrays with known `DIM` bounds (8/8/30/17/38/42/4 w, sum 294).
       Gold / HP / strength / experience / inv-count / overworld X,Y /
       compendium rank / game-speed scalars + the S5 shop price table
-      placed; `decoders/char_dat.py` prints the LEGACY.DAT template
-      split. Remaining: per-element split of arrays S2 (quest flags) and
-      S4 (stat/map block) — needs a populated save.
+      placed. **S2 = 24-item possession bitmap, S0/S1 = equipment slots**
+      (2026-09-02, from 4 PAULA save-diffs). Food / XP are runtime-only
+      (not in the record). Remaining: the S4 RPG stats.
 - [x] `LEGACY.DAT` (2945 bytes, 2026-09-01, `decoders/legacy_dat.py` +
       `decoders/legacy_font.py`) — the master font/string/data table
       `menuStartup` loads into resident LEGLIB DGROUP. 6-B header; then
