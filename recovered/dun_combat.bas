@@ -60,16 +60,26 @@ SUB MonsterAttack                                     ' asm: dun.asm:2812 (monst
 ' If the slot's ds:1F02 flag is set -> MonsterSpecialAttack, else a normal
 ' physical hit.
 
-    FOR slot = 1 TO 7                                                     ' asm:3169-3177
+    FOR slot = 1 TO 7                                 ' ds:20EC           ' asm:2982-3177
         IF NOT monsterPresent(slot) THEN GOTO NextSlot
         IF monsterIsSpecial(slot) THEN                 ' ds:1F02          ' asm:2831-2837
             MonsterSpecialAttack
+
         ELSE
-            ' ---- normal physical hit --------------------------------
-            ' NOTE: the normal-hit to-hit + damage rolls sit in a region
-            ' IDA did not fully coerce (dun.asm ~3138-3168, raw db bytes).
-            ' Needs an IDA re-pass or a DOSBox trace.                     'CHECK
-            NormalMonsterHit slot
+            ' ---- normal physical hit ------------------------------ asm:2867-2962
+            '   MISS when  RND(1) * 70 <= Dexterity
+            '   -> monster hit chance = 1 - Dexterity/70 .  Dex 20 -> 71%,
+            '      Dex 40 -> 43%, Dex 70 -> never.  (Mirror of the player's
+            '      own DUN to-hit, RND*70 < Dex+30, minus the +30.)
+            IF RND(1) * 70.0 <= Dexterity THEN         ' ds:2564         ' asm:2869-2885 '?ord
+                PRINT "ATTACK MISSED."                                    ' asm:2890
+            ELSE
+                dmg = INT( (RND(1) + 0.5) * monsterAtk(slot) )  ' ds:2512, ds:2192 ' asm:2912-2931
+                '   NO armour / Endurance mitigation here -- unlike OUT and
+                '   CASDR, DUN monster damage is just (RND + 0.5) * atk.
+                hitPoints = hitPoints - dmg                               ' asm:2932
+                PRINT "HIT BY BLOW OF "; dmg; "!"                         ' asm:2933-2957
+            END IF
         END IF
 NextSlot:
     NEXT slot
@@ -103,15 +113,17 @@ END SUB
 
 ' ==========================================================================
 '  SOLID
-'   * player to hit : RND(1) * 70 < Dexterity + 30
-'   * player damage : INT( (RND(1) + 1/2) * (Strength + 30) * (weaponPower
-'                          + 40) / 450 )   [+50% while spell-buffed]
-'   * DANGLER drain : INT( RND(1) * 3 + 1 )  from Endurance
+'   * player to hit  : RND(1) * 70 < Dexterity + 30
+'   * player damage  : INT( (RND(1) + 1/2) * (Strength + 30) * (weaponPower
+'                           + 40) / 450 )   [+50% while spell-buffed]
+'   * monster to hit : MISS when RND(1) * 70 <= Dexterity
+'   * monster damage : INT( (RND(1) + 0.5) * monsterAtk )  -- NO mitigation
+'   * DANGLER drain  : INT( RND(1) * 3 + 1 )  from Endurance
 '   * KNUCKLES / armour-eater : destroy the equipped weapon / armour
 '   * specials fire at ~3% (ds:24B4 = 0.97)
 '
 '  OPEN
-'   * the normal monster-hit to-hit + damage (un-coerced in dun.asm)
 '   * weaponPower (ds:21CE) derivation -- DUN's ComputeEquippedPower analogue
+'   * monsterAtk (ds:2192) -- rolled per monster from the DUNM stat table
 '   * CastSpell (dun.asm:4696)
 '   * the /450 and the (21CE + 40) -- confirm 21CE is weaponPower with a trace

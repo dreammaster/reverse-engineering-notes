@@ -650,6 +650,36 @@ static Bytes_0(void) {
 	create_insn	(0X11531);
 	create_insn	(0X1153B);
 	create_insn	(0X1154B);
+	create_insn	(0X11550);
+	create_insn	(0X11564);
+	create_insn	(x=0X1156E);
+	op_hex		(x,	1);
+	create_insn	(0X11591);
+	create_insn	(0X11599);
+	create_insn	(0X115A6);
+	create_insn	(0X115B0);
+	create_insn	(0X115B8);
+	create_insn	(0X115BD);
+	create_insn	(0X115C2);
+	create_insn	(0X115CF);
+	create_insn	(0X115D8);
+	create_insn	(0X115E1);
+	create_insn	(0X115F0);
+	create_insn	(0X115F3);
+	create_insn	(0X11600);
+	create_insn	(0X1160A);
+	create_insn	(0X11612);
+	create_insn	(0X1161A);
+	create_insn	(0X1161F);
+	create_insn	(0X11624);
+	create_insn	(0X11638);
+	create_insn	(0X1163E);
+	create_insn	(0X11648);
+	create_insn	(0X11652);
+	create_insn	(0X1165B);
+	create_insn	(0X11664);
+	create_insn	(0X11673);
+	create_insn	(0X1167F);
 	create_insn	(0X11698);
 	create_insn	(0X116A7);
 	create_insn	(0X116A8);
@@ -660,15 +690,11 @@ static Bytes_0(void) {
 	create_insn	(0X11704);
 	create_insn	(0X11705);
 	create_insn	(0X1170A);
-	set_cmt	(0X11719,	"KNUCKLES BROKE YOUR ",	0);
 	create_insn	(0X11719);
-	set_cmt	(0X11721,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11721);
 	op_hex		(x,	1);
-	set_cmt	(0X1172F,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X1172F);
 	op_hex		(x,	1);
-	set_cmt	(0X11731,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11731);
 	op_hex		(x,	1);
 	create_insn	(0X11741);
@@ -676,7 +702,6 @@ static Bytes_0(void) {
 	create_insn	(0X11755);
 	create_insn	(0X1175E);
 	create_insn	(0X11767);
-	set_cmt	(0X1176B,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X1176B);
 	op_hex		(x,	1);
 	create_insn	(0X1178C);
@@ -688,28 +713,20 @@ static Bytes_0(void) {
 	create_insn	(0X117EB);
 	create_insn	(0X117EC);
 	create_insn	(0X117F1);
-	set_cmt	(0X11800,	"THE ",	0);
 	create_insn	(0X11800);
-	set_cmt	(0X11808,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11808);
 	op_hex		(x,	1);
-	set_cmt	(0X1180A,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X1180A);
 	op_hex		(x,	1);
 	create_insn	(0X11818);
-	set_cmt	(0X11819,	" ATE",	0);
 	create_insn	(0X11822);
 	create_insn	(0X1182C);
 	create_insn	(0X11835);
-	set_cmt	(0X1183E,	"YOUR ",	0);
 	create_insn	(0X1183E);
-	set_cmt	(0X11846,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11846);
 	op_hex		(x,	1);
-	set_cmt	(0X11854,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11854);
 	op_hex		(x,	1);
-	set_cmt	(0X11856,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11856);
 	op_hex		(x,	1);
 	create_insn	(0X11866);
@@ -717,12 +734,10 @@ static Bytes_0(void) {
 	create_insn	(0X1187A);
 	create_insn	(0X11883);
 	create_insn	(0X1188C);
-	set_cmt	(0X11890,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X11890);
 	op_hex		(x,	1);
 	create_insn	(0X118B1);
 	create_insn	(0X118B6);
-	set_cmt	(0X118BB,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X118BB);
 	create_insn	(0X118C4);
 	create_insn	(0X118CC);
@@ -737,7 +752,6 @@ static Bytes_0(void) {
 	create_insn	(0X11934);
 	create_insn	(0X1193C);
 	create_insn	(0X11941);
-	set_cmt	(0X11944,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X11957);
 	create_insn	(0X1195D);
 	create_insn	(0X11967);
@@ -2870,15 +2884,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1471C);
 	op_hex		(x,	0);
 	set_name	(0X1471C,	"rt_FF3D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X1471E);
 	make_array	(0X1471E,	0X2);
 	set_cmt	(0X14720,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2907,6 +2912,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X1472C);
 	op_hex		(x,	0);
 	set_name	(0X1472C,	"rt_FF41");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X1472E);
 	make_array	(0X1472E,	0X2);
 	set_cmt	(0X14730,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5107,7 +5121,7 @@ static Functions_0(void) {
 	add_func    (0X11509,0X1151C);
 	set_func_flags(0X11509,0x1401);
 	add_func    (0X1151C,0X119B9);
-	set_func_flags(0X1151C,0x5400);
+	set_func_flags(0X1151C,0x5000);
 	set_func_cmt(0X1151C,	"\"ATTACK MISSED.\", \"HIT BY BLOW OF \", \"KNUCKLES BROKE YOUR \", \" ATE YOUR \", \"ENDURANCE DRAIN: \". ~1.2 KB.", 1);
 	set_frame_size(0X1151C, 0, 0, 0);
 	add_func    (0X119B9,0X11A1D);
@@ -5187,6 +5201,9 @@ static Functions_0(void) {
 	add_func    (0X13406,0X1345D);
 	set_func_flags(0X13406,0x1403);
 	set_func_cmt(0X13406,	"\"H.P. -\".", 1);
+	add_func    (0X1345D,0X13465);
+	set_func_flags(0X1345D,0x1401);
+	set_func_cmt(0X1345D,	"monster special-attack resolution (called from monsterAttack). TENTATIVE.", 1);
 	add_func    (0X13571,0X13850);
 	set_func_flags(0X13571,0x1403);
 	set_func_cmt(0X13571,	"loads a dungeon level (\"level\", \"monst\" -- DUNM*.BSV / DUNMON*.BSV). ~0.7 KB, called from an init helper.", 1);

@@ -146,11 +146,13 @@ anchor). The combat pool it prints is quoted at the top of
 
 - [x] `dun_combat.bas` — `DoAttack`, `MonsterAttack`, `MonsterSpecialAttack`.
       DUN uses a simpler linear model than OUT:
-      to-hit `RND(1)*70 < Dex+30`; damage
-      `INT((RND(1)+0.5)*(Str+30)*(weaponPower+40)/450)`;
-      DANGLER drains `INT(RND(1)*3+1)` Endurance; KNUCKLES / armour-eater
-      destroy equipment.  Normal monster-hit rolls are un-coerced in
-      `dun.asm` — TODO.
+      player to-hit `RND*70 < Dex+30`; player damage
+      `INT((RND+0.5)*(Str+30)*(weaponPower+40)/450)`;
+      **monster** to-hit `miss when RND*70 <= Dex`, monster damage
+      `INT((RND+0.5)*monsterAtk)` (no mitigation).
+      DANGLER drains `INT(RND*3+1)` Endurance; KNUCKLES / armour-eater
+      destroy equipment.  (`monsterAttack` un-folded/coerced via
+      `ida_scripts/fix_dun_monsterattack.py`.)
 - [x] `dun_traps.bas` — `MoveHazards`, `FallThroughDamage`, `DoLookSearch`.
       Trap tiles 1..7 hidden / +8 revealed; FLOOR HOLE drops a level; other
       traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.

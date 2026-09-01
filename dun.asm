@@ -2834,339 +2834,153 @@ loc_11532:                              ; CODE XREF: monsterAttack+188↓j
 ; ---------------------------------------------------------------------------
 
 loc_1154B:                              ; CODE XREF: monsterAttack+2A↑j
-                call    far ptr monsterSpecialAttack
+                call    far ptr monsterSpecialAttack ; monster special-attack resolution (called from monsterAttack). TENTATIVE.
 ; ---------------------------------------------------------------------------
-                db 0C7h
-                db    6
-                db  0Ah
-                db  1Fh
-                db    0
-                db    0
-                db 0FFh
-                db    6
-                db  1Ch
-                db  1Fh
-                db 0A1h
-                db  8Ah
-                db  21h ; !
-                db  23h ; #
-                db 0C0h
-                db  75h ; u
-                db    3
-                db 0E9h
-                db  2Dh ; -
-                db    0
-                db  8Bh
-                db  1Eh
-                db  2Eh ; .
-                db  21h ; !
-                db  43h ; C
-                db  9Ah
-                db    6
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  0Ch
-                db  38h ; 8
-                db    0
-                db  38h ; 8
-                db    0
-                db 0B0h
-                db  19h
-                db 0AFh
-                db  19h
-                db  38h ; 8
-                db    0
-                db 0A8h
-                db  16h
-                db 0C4h
-                db  18h
-                db  38h ; 8
-                db    0
-                db  38h ; 8
-                db    0
-                db  38h ; 8
-                db    0
-                db  8Fh
-                db  17h
-                db  38h ; 8
-                db    0
-                db 0A1h
-                db  0Ah
-                db  1Fh
-                db  23h ; #
-                db 0C0h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db    7
-                db    1
-                db 0A1h
-                db 0C0h
-                db  1Ah
-                db  9Ah
-                db  58h ; X
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0FFh
-                db  36h ; 6
-                db  76h ; v
-                db  22h ; "
-                db 0FFh
-                db  36h ; 6
-                db  74h ; t
-                db  22h ; "
-                db  9Ah
-                db  7Bh ; {
-                db    4
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db 0D8h
-                db  89h
-                db  5Eh ; ^
-                db 0F4h
-                db  9Ah
-                db    4
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BBh
-                db  64h ; d
-                db  25h ; %
-                db  9Ah
-                db  10h
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db  34h ; 4
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  76h ; v
-                db    3
-                db 0E9h
-                db  31h ; 1
-                db    0
-                db 0B8h
-                db  68h ; h
-                db  25h ; %
-                db  50h ; P
-                db 0B8h
-                db  8Ch
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  8Ch
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  8Ch
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0C7h
-                db    6
-                db  90h
-                db  21h ; !
-                db    5
-                db    0
-                db 0B8h
-                db  90h
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  84h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0E9h
-                db  80h
-                db    0
-                db 0FFh
-                db  36h ; 6
-                db  76h ; v
-                db  22h ; "
-                db 0FFh
-                db  36h ; 6
-                db  74h ; t
-                db  22h ; "
-                db  9Ah
-                db  7Bh ; {
-                db    4
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  8Bh
-                db 0D8h
-                db  89h
-                db  5Eh ; ^
-                db 0F4h
-                db  9Ah
-                db    4
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0BBh
-                db  12h
-                db  25h ; %
-                db  9Ah
-                db 0E8h
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0A1h
-                db  92h
-                db  21h ; !
-                db  9Ah
-                db  58h ; X
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db    8
-                db    3
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  9Ah
-                db  60h ; `
-                db    2
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0A3h
-                db 0EAh
-                db  20h
-                db  29h ; )
-                db    6
-                db 0DAh
-                db  1Ah
-                db 0B8h
-                db  7Ah ; z
-                db  25h ; %
-                db  50h ; P
-                db 0FFh
-                db  36h ; 6
-                db 0EAh
-                db  20h
-                db  9Ah
-                db 0A3h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  8Eh
-                db  25h ; %
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db  50h ; P
-                db 0B8h
-                db  94h
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  94h
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  7Ch ; |
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0B8h
-                db  94h
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0C7h
-                db    6
-                db  98h
-                db  21h ; !
-                db    3
-                db    0
-                db 0B8h
-                db  98h
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  84h
-                db    5
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
-                db 0A1h
-                db  88h
-                db  21h ; !
-                db  3Bh ; ;
-                db    6
-                db  1Ch
-                db  1Fh
-                db  7Fh ; 
-                db    3
-                db 0E9h
-                db  19h
-                db    0
-                db 0C7h
-                db    6
-                db  9Ah
-                db  21h ; !
-                db  1Eh
-                db    0
-                db 0C7h
-                db    6
-                db  9Ch
-                db  21h ; !
-                db 0CAh
-                db    0
-                db 0B8h
-                db  9Ah
-                db  21h ; !
-                db  50h ; P
-                db 0B8h
-                db  9Ch
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  10h
-                db    6
-                db  45h ; E SEG16 SEGDEF [seg002,0]
-                db  14h
+                mov     word ptr ds:1F0Ah, 0
+                inc     word ptr ds:1F1Ch
+                mov     ax, ds:218Ah
+                and     ax, ax
+                jnz     short loc_11564
+                jmp     loc_11591
+; ---------------------------------------------------------------------------
+
+loc_11564:                              ; CODE XREF: monsterAttack+43↑j
+                mov     bx, ds:212Eh
+                inc     bx
+                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+; ---------------------------------------------------------------------------
+                or      al, 38h
+                add     [bx+si], bh
+                add     [bx+si-50E7h], dh
+                sbb     [bx+si], di
+                add     [bx+si-3BEAh], ch
+                sbb     [bx+si], bh
+                add     [bx+si], bh
+                add     [bx+si], bh
+                add     [bx+3817h], cl
+                add     [bx+di+1F0Ah], ah
+                and     ax, ax
+                jz      short loc_11591
+                jmp     loc_11698
+; ---------------------------------------------------------------------------
+
+loc_11591:                              ; CODE XREF: monsterAttack+45↑j
+                                        ; monsterAttack+70↑j
+                mov     ax, ds:1AC0h
+                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
+                push    word ptr ds:2276h
+                push    word ptr ds:2274h
+                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
+                mov     bx, ax
+                mov     [bp-0Ch], bx
+                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
+                mov     bx, 2564h
+                call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_FF1F ; -> rtm_FF1F  (leglib seg004:0x21b5e)
+; ---------------------------------------------------------------------------
+                jbe     short loc_115C2
+                jmp     loc_115F3
+; ---------------------------------------------------------------------------
+
+loc_115C2:                              ; CODE XREF: monsterAttack+A1↑j
+                mov     ax, 2568h
+                push    ax
+                mov     ax, 218Ch
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                mov     ax, 218Ch
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                mov     ax, 218Ch
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     word ptr ds:2190h, 5
+                mov     ax, 2190h
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+                jmp     loc_11673
+; ---------------------------------------------------------------------------
+
+loc_115F3:                              ; CODE XREF: monsterAttack+A3↑j
+                push    word ptr ds:2276h
+                push    word ptr ds:2274h
+                call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
+; ---------------------------------------------------------------------------
+                mov     bx, ax
+                mov     [bp-0Ch], bx
+                call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
+                mov     bx, 2512h
+                call    far ptr rt_FF44 ; -> rtm_FF44  (leglib seg004:0x21a62)
+; ---------------------------------------------------------------------------
+                mov     ax, ds:2192h
+                call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
+                call    far ptr rt_FF4C ; -> rtm_FF4C  (leglib seg004:0x21b4a)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
+; ---------------------------------------------------------------------------
+                mov     ds:20EAh, ax
+                sub     ds:1ADAh, ax
+                mov     ax, 257Ah
+                push    ax
+                push    word ptr ds:20EAh
+                call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 258Eh
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2194h
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                mov     ax, 2194h
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                mov     ax, 2194h
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     word ptr ds:2198h, 3
+                mov     ax, 2198h
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+
+loc_11673:                              ; CODE XREF: monsterAttack+D4↑j
+                mov     ax, ds:2188h
+                cmp     ax, ds:1F1Ch
+                jg      short loc_1167F
+                jmp     loc_11698
+; ---------------------------------------------------------------------------
+
+loc_1167F:                              ; CODE XREF: monsterAttack+15E↑j
+                mov     word ptr ds:219Ah, 1Eh
+                mov     word ptr ds:219Ch, 0CAh
+                mov     ax, 219Ah
+                push    ax
+                mov     ax, 219Ch
+                push    ax
+                call    far ptr rt_FE4A ; -> rtm_FE4A  (leglib seg008:0x27d92)
 ; ---------------------------------------------------------------------------
 
 loc_11698:                              ; CODE XREF: monsterAttack+2C↑j
+                                        ; monsterAttack+72↑j ...
                 mov     ax, ds:20ECh
                 inc     ax
 
@@ -3235,16 +3049,16 @@ loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
                 push    ax
                 call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
 ; ---------------------------------------------------------------------------
-                mov     ax, 2594h       ; KNUCKLES BROKE YOUR
+                mov     ax, 2594h
                 push    ax
                 mov     bx, ds:1AFCh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     ax, es:[bx]
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     ax, 1
+                shl     ax, 1
                 mov     bx, ax
                 mov     si, 1D0Ah
                 add     bx, [si+0Ah]
@@ -3270,7 +3084,7 @@ loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:1AFCh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -3336,18 +3150,18 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 push    ax
                 call    far ptr rt_FE6C ; -> rtm_FE6C  (leglib seg007:0x277c8)
 ; ---------------------------------------------------------------------------
-                mov     ax, 25B2h       ; THE
+                mov     ax, 25B2h
                 push    ax
                 mov     bx, ds:212Eh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
+                shl     bx, 1
                 mov     si, 1F2Ch
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 ; ---------------------------------------------------------------------------
                 push    ax
-                mov     ax, 25BAh       ;  ATE
+                mov     ax, 25BAh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
 ; ---------------------------------------------------------------------------
@@ -3364,16 +3178,16 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
-                mov     ax, 25C2h       ; YOUR
+                mov     ax, 25C2h
                 push    ax
                 mov     bx, ds:1AEAh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     ax, es:[bx]
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
-                shl     ax, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     ax, 1
+                shl     ax, 1
                 mov     bx, ax
                 mov     si, 1D0Ah
                 add     bx, [si+0Ah]
@@ -3399,7 +3213,7 @@ loc_117EC:                              ; CODE XREF: monsterAttack+2CC↑j
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:1AEAh
-                shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                shl     bx, 1
                 mov     si, 1B0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -3414,7 +3228,7 @@ loc_118B1:                              ; CODE XREF: monsterAttack+270↑j
 ; ---------------------------------------------------------------------------
                 call    far ptr rt_FE4F ; -> rtm_FE4F  (leglib seg007:0x2659c)
 ; ---------------------------------------------------------------------------
-                mov     word ptr ds:1F0Ah, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                mov     word ptr ds:1F0Ah, 1
                 jmp     sub_10384
 ; ---------------------------------------------------------------------------
                 mov     bx, 25CCh
@@ -3476,7 +3290,7 @@ loc_11910:                              ; CODE XREF: monsterAttack+3F0↑j
                 call    far ptr rt_FF22 ; -> rtm_FF22  (leglib seg004:0x218e6)
 ; ---------------------------------------------------------------------------
                 mov     ds:20EAh, ax
-                mov     word ptr ds:1F0Ah, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
+                mov     word ptr ds:1F0Ah, 1
                 mov     ax, 25D4h
                 push    ax
                 push    word ptr ds:20EAh
@@ -7061,11 +6875,17 @@ loc_1345A:                              ; CODE XREF: moveMonsters:loc_13403↑j
                 jmp     loc_1356E
 showHitPoints   endp
 
-; ---------------------------------------------------------------------------
 
-monsterSpecialAttack:                   ; CODE XREF: monsterAttack:loc_1154B↑P
+; =============== S U B R O U T I N E =======================================
+
+; monster special-attack resolution (called from monsterAttack). TENTATIVE.
+; Attributes: noreturn
+
+monsterSpecialAttack proc near          ; CODE XREF: monsterAttack:loc_1154B↑P
                 mov     cx, 12h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+monsterSpecialAttack endp
+
 ; ---------------------------------------------------------------------------
 
 j_rt_FE5B_20:                           ; -> screenRefresh  (leglib seg008:0x28861)
@@ -10250,7 +10070,7 @@ rt_FB:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_FC           proc near               ; CODE XREF: climbDownOrExit+E8↑P
-                                        ; climbDownOrExit+1A5↑P
+                                        ; climbDownOrExit+1A5↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
