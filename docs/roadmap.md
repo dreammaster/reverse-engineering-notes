@@ -323,7 +323,7 @@ reimplementation.
       LEGACY.DAT template defaults: gold `+0x20` (dword, 20),
       hitPoints `+0x28` (200), strength `+0x3E` (15, cap 28), experience
       `+0x10` (dword), inventory count `+0x38` (5), overworld X/Y
-      `+0x50`/`+0x54`, compendium rank `+0x2E` (1..7), game speed `+0x16`
+      `+0x50`/`+0x54`, character level `+0x2E`, game speed `+0x16`
       (4), + dungeon pos/facing/timers. Array **S5** (`ds:1BF2`, `+0x122`)
       = the shop price table. `decoders/char_dat.py` prints the template
       split + an equipment / item readout. **S2 = the 24-item possession
@@ -597,7 +597,7 @@ reimplementation.
       records: 14-B name + 74-B scalar block (`ds:1AC0..1B08`) + 7 int
       arrays with known `DIM` bounds (8/8/30/17/38/42/4 w, sum 294).
       Gold / HP / strength / experience / inv-count / overworld X,Y /
-      compendium rank / game-speed scalars + the S5 shop price table
+      level / game-speed scalars + the S5 shop price table
       placed. **S2 = 24-item possession bitmap, S0/S1 = equipment slots**
       (2026-09-02, from 4 PAULA save-diffs). Food / XP are runtime-only
       (not in the record). S2 FULLY decoded (24-item bitmap + 6 spell counts). The 5 attributes

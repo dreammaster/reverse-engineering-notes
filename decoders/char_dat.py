@@ -50,12 +50,14 @@ ARRAY is authoritative and the scalar is a stale cache (PAULA never ran
 outInit, so her ds:1ADA=200 is stale template data while her real max HP
 S4[19]=20).
 
-    +0x0E <- 1AC0   [?] context flag (tmpl 15, PAULA 15)
-    +0x10 <- 1AC2   [C] EXPERIENCE, dword (PAULA 0 -- no kills yet)
+    +0x0E <- 1AC0   [P] DEXTERITY   (one of the 5 attributes -- see below)
+    +0x10 <- 1AC2   [C] EXPERIENCE, dword (stayed 0 in every PAULA save
+                        despite a kill -- XP is checkpoint-only / lives
+                        in an array slot that only syncs on transition)
     +0x14 <- 1AC6   [P] museum walk state (MUS only; PAULA -10 = 0xFFF6)
     +0x16 <- 1AC8   [C] GAME SPEED (tmpl 4; menuStartup sets 3)
     +0x18 <- 1ACA   [C] chain-return / location context (SAVER returnTarget)
-    +0x1A <- 1ACC   [?] attribute / resource (tmpl 15; potion-wizard +5, cap 0x24)
+    +0x1A <- 1ACC   [P] ENDURANCE   (attribute; potion-wizard +5, cap 0x24)
     +0x1C <- 1ACE   [C] a per-STEP depleting counter (21 refs; doMovement's
                         move tick pushes/pops it -- fatigue? PAULA 0)
     +0x1E <- 1AD0   [P] a COUNTER that ticks with play (tmpl 0x4270; PAULA
@@ -65,15 +67,18 @@ S4[19]=20).
                         +0x22 hi = 0)
     +0x24 <- 1AD6   [P] dungeon-return marker, dword (tmpl -99/-1 was uninit;
                         PAULA 0/0 = "not in a dungeon")
-    +0x28 <- 1ADA   [P] HIT POINTS -- the live current HP (PAULA 200 after
-                        the museum -> 141 after a fight).  S4[19] (=20) is
-                        NOT the max: it is the peasant baseline / food-heal
-                        cap (buyFood only tops HP up to S4[19]); real HP
-                        grows past it with play.  No separate max is
-                        stored in the record.
+    +0x28 <- 1ADA   [P] HIT POINTS -- live current HP (PAULA 200 -> 141
+                        after a fight -> edited to 999 -> drains as she
+                        walks).  S4[19] (=20) = the buyFood heal cap, not
+                        max HP.  No separate max is stored in the record.
     +0x2A <- 1ADC   [?] portrait / message index (<= 11; PAULA 1)
-    +0x2C <- 1ADE   [?] museum-adjustable stat (tmpl 15; MUS showGold +10)
-    +0x2E <- 1AE0   [C] COMPENDIUM VOLUMES / museum access rank 1..7 (PAULA 1)
+    +0x2C <- 1ADE   [P] CHARM   (attribute; Tulip quest gives "Charm: +10")
+    +0x2E <- 1AE0   [P] CHARACTER LEVEL ("museum rank") -- the museum
+                        caretaker raised PAULA 1->2.  Gates exhibits by
+                        level (mus.asm cmp 3/4/5/7/8); scales casino &
+                        shop payouts (imul ds:1AE0h in GMB1/GMB2/TWNDR).
+                        Never written in the coerced disassembly -- the
+                        level-up write is in an uncoerced blob.
     +0x30 <- 1AE2   [P] first-person-view (museum/dungeon) position, kept
                         across the overworld (OUT never touches it; PAULA 180)
     +0x32 <- 1AE4   [P] first-person-view facing 0..3 (PAULA 3)
@@ -109,7 +114,7 @@ S4[19]=20).
     +0x50 <- 1B02   [P] OVERWORLD X (new game 40; PAULA 14)
     +0x52 <- 1B04   [P] town/castle interior scratch (PAULA 17)
     +0x54 <- 1B06   [P] OVERWORLD Y (new game 30; PAULA 42)
-    +0x56 <- 1B08   [?] attribute-like (tmpl 15, PAULA 15; DUN subtracts)
+    +0x56 <- 1B08   [P] STRENGTH   (attribute; DUN subtracts from it in combat)
 
 Array roles (PAULA diffs, 4 saves 2026-09-01/02):
 
@@ -134,11 +139,12 @@ Array roles (PAULA diffs, 4 saves 2026-09-01/02):
           Seek).  Verified: bought 2 Magic flame -> S2[24]=2, 1 Firebolt
           -> S2[25]=1, 1 Seek spell -> S2[29]=1.
     S3  17 museum-progress words.  S3[k] (k = 1..13) = "viewed exhibit k"
-        (PAULA: [1..4] all set after seeing 4 exhibits).  S3[14] = used
-        an exhibit portal; S3[15] = museum entry count (mus.asm:498).
-        Note: a museum visit CLEARED PAULA's gem coins / "mail" /
-        Seek-spell from S2 -- the museum may consume a coin per entry
-        (or S2 re-syncs from a stale working copy on the transition).
+        (PAULA: [1..4] all set after seeing 4; [7] set by Stones of
+        Wisdom).  S3[14] moves in parallel with the character LEVEL
+        (ds:1AE0) -- 1->2 when the caretaker levelled PAULA up.  S3[15] =
+        museum entry count (mus.asm:498).  The museum consumes one
+        Amethyst coin per use (patched S2[19]=1 -> 0 after one visit;
+        unused Jade/Topaz survived).
     S4  38-word block.  S4[1] = saved museum/exhibit position; S4[13]
         moved 0->1 when PAULA bought a raft; S4[7] -1->6 with a token
         purchase.  S4[19] = 20 = the buyFood HP-heal cap (NOT max HP --
@@ -196,7 +202,7 @@ FIELDS = [
     (0x10, "d", "experience"),
     (0x20, "d", "gold"),
     (0x28, "w", "HP"),
-    (0x2E, "w", "compendiumRank"),
+    (0x2E, "w", "level"),
     (0x50, "w", "wldX"),
     (0x54, "w", "wldY"),
 ]
