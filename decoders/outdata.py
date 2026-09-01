@@ -17,12 +17,19 @@ out as a **2x2 grid**:
     byte 0 = top-left      byte 1 = top-right
     byte 2 = bottom-left   byte 3 = bottom-right
 
-Values `0x01`-`0x91` (+ a `0xDB` "blank" for the unused `0xF0`-`0xFF`
-types) index the **sub-cell bitmap bank at OUTDATA payload `0x400`** --
-~146 field-interleaved 16-byte 8x8 CGA cells, cell `N` at `0x400 + N*16`
-(cell 0 = blank).  253 of 256 types are defined;
-type `0x2C` = `3A 3A 3A 3A` is the plain ground quad, and terrain
-transitions come in groups of four (the edge rotations).
+Values index the **sub-cell bitmap bank at OUTDATA payload `0x400`**:
+**146 cells** (`0x00`-`0x91`), `0x400`-`0xD1F` (`0x920` B), each a
+**field-interleaved 16-byte 8x8 CGA cell**, cell `N` at `0x400 + N*16`.
+Cell `0x00` = all zero (blank ground = colour 0, black); `0x400 + 146*16`
+onward is zero padding to `0x1400`.  The terrain records reference every
+cell `0x01`-`0x91`, plus `0x00` and `0xDB` (which lands in the zero pad
+= blank) as the filler for the undefined `0xF0`-`0xFF` tile types.
+253 of 256 tile types are defined; type `0x2C` = `3A 3A 3A 3A` is the
+plain-ground quad (cell `0x3A` = the grass dither), and terrain
+transitions come in **groups of four** = the 4 edge rotations
+(coastline, forest edge, mountain edge, snow/desert edge).  The `main()`
+render (pass an outdir) writes `outdata_subcells.png` (the 146-cell
+bank) and `outdata_terrain.bmp` (the 253 assembled 16x16 tiles).
 
 ## The renderer (parallels the dungeon)
 
@@ -95,15 +102,25 @@ def records(p):
 
 
 def sub_cell(p, n):
-    """16-byte bank cell -> 8 rows of 8 palette indices.  Same
-    field-interleave as every other 8x8 cell: on-screen row order is
-    w0,w4,w1,w5,w2,w6,w3,w7."""
+    """16-byte bank cell -> 8 rows of 8 palette indices (0..3).
+
+    Field-interleaved: the 8 words go to screen scanlines 0,2,4,6 then
+    1,3,5,7, so top-to-bottom read order is w0,w4,w1,w5,w2,w6,w3,w7.
+    Within a word, memory is little-endian: the LOW byte holds the LEFT
+    4 pixels, the high byte the right 4; leftmost pixel = bits 7-6 of
+    its byte.  (Verified by rendering -- the group-of-4 coastline edge
+    rotations only line up with this order.)"""
     o = BANK + n * 16
     if o + 16 > len(p):
         return [[0] * 8 for _ in range(8)]
     w = struct.unpack("<8H", p[o:o + 16])
     order = [w[0], w[4], w[1], w[5], w[2], w[6], w[3], w[7]]
-    return [[(row >> (14 - 2 * x)) & 3 for x in range(8)] for row in order]
+    out = []
+    for wd in order:
+        lo, hi = wd & 0xFF, wd >> 8
+        out.append([(lo >> 6) & 3, (lo >> 4) & 3, (lo >> 2) & 3, lo & 3,
+                    (hi >> 6) & 3, (hi >> 4) & 3, (hi >> 2) & 3, hi & 3])
+    return out
 
 
 def sprite_records(p):
@@ -168,24 +185,6 @@ def sprite_sheet(p, path, scale=5, cols=8):
     write_png(path, grid, scale)
 
 
-def write_bmp(path, rows, scale=1):
-    h = len(rows)
-    ww = len(rows[0]) if h else 0
-    W_, H_ = ww * scale, h * scale
-    rb = (W_ * 3 + 3) & ~3
-    pad = rb - W_ * 3
-    size = rb * H_
-    with open(path, "wb") as f:
-        f.write(b"BM" + struct.pack("<IHHI", 14 + 40 + size, 0, 0, 54))
-        f.write(struct.pack("<IiiHHIIiiII", 40, W_, H_, 1, 24, 0, size, 2835, 2835, 0, 0))
-        for y in range(H_ - 1, -1, -1):
-            srow = rows[y // scale]
-            for x in range(W_):
-                r, g, b = PAL[srow[x // scale]]
-                f.write(bytes((b, g, r)))
-            f.write(b"\0" * pad)
-
-
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else r"C:\games\lota\OUTDATA.BSV"
     outdir = sys.argv[2] if len(sys.argv) > 2 else None
@@ -216,23 +215,33 @@ def main():
 
     if outdir:
         os.makedirs(outdir, exist_ok=True)
-        S, per = 6, 16
         tiles = [t for t, _ in recs]
-        cw = 16 * S + 2
-        rowsN = (len(tiles) + per - 1) // per
-        cv = [[0] * (cw * per) for _ in range(cw * rowsN)]
+        out = os.path.join(outdir, "outdata_terrain.png")
+        cols = 16
+        rn = (len(tiles) + cols - 1) // cols
+        grid = [[0] * (18 * cols) for _ in range(18 * rn)]
         for i, T in enumerate(tiles):
             img = terrain_tile(p, T)
-            ox, oy = (i % per) * cw, (i // per) * cw
+            ox, oy = (i % cols) * 18, (i // cols) * 18
             for y in range(16):
                 for x in range(16):
-                    v = img[y][x]
-                    for dy in range(S):
-                        for dx in range(S):
-                            cv[oy + y * S + dy][ox + x * S + dx] = v
-        out = os.path.join(outdir, "outdata_terrain.bmp")
-        write_bmp(out, cv)
-        print("wrote", out)
+                    grid[oy + y][ox + x] = img[y][x]
+        write_png(out, grid, 6)
+        print("wrote", out, "(%d assembled 16x16 terrain tiles)" % len(tiles))
+
+        # the raw 146-cell sub-cell bank
+        cols = 16
+        rn = (146 + cols - 1) // cols
+        grid = [[0] * (9 * cols) for _ in range(9 * rn)]
+        for n in range(146):
+            cell = sub_cell(p, n)
+            ox, oy = (n % cols) * 9, (n // cols) * 9
+            for y in range(8):
+                for x in range(8):
+                    grid[oy + y][ox + x] = cell[y][x]
+        out = os.path.join(outdir, "outdata_subcells.png")
+        write_png(out, grid, 7)
+        print("wrote", out, "(146-cell 8x8 sub-cell bank, 0x400-0xD1F)")
 
         out = os.path.join(outdir, "outdata_sprites.png")
         sprite_sheet(p, out)
