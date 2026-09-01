@@ -9190,3 +9190,44 @@ already established in earlier rounds, with no collision against the
 `talkcolor` byte just found (`OCHF_SPEECHCOL` occupies bits 24-31 only,
 well clear of every `CHF_*` bit constant declared, the highest being
 `CHF_ANTIGLIDE=0x20000` at bit 17).
+
+### A data-hygiene fix: three duplicate `matches.json` entries found and removed
+
+While looking up `SetDialogOption`'s existing entry to extend it with a
+fresh finding, its `matches.json` record turned out to be a genuine
+DUPLICATE: a stale bare `"kind":"function"` mechanical entry (linker-
+symbol-only, no field evidence) sitting alongside a fuller `"kind":
+"manual"` entry that had already superseded it in an earlier round.
+`CLAUDE.md`'s own workflow section had flagged exactly this risk in
+advance -- `build_matches.py` "currently only emits `kind: function`
+mechanical matches; keep manual entries in a separate pass or merge
+carefully -- check the script before assuming it's non-destructive" --
+and this is precisely that failure mode: a later mechanical regeneration
+re-added a bare entry for a function that already had a hand-written one,
+without checking for the existing record first. A full sweep for the
+same pattern found two more: `RunCharacterInteraction` and `GetInvName`,
+both with the identical shape (stale bare duplicate + superseding manual
+entry). All three stale duplicates removed, keeping the fuller manual
+entry in each case (`matches.json` count: 620 -> 617). No information
+was lost -- every dropped entry's content was a strict subset of the
+entry kept alongside it. This is worth remembering as a recurring risk
+if `build_matches.py` is ever re-run again: check for existing manual
+entries by `asm_name` before merging its mechanical output, not just
+after.
+
+### `SetDialogOption`'s full body closes `DFLG_ON`/`DFLG_OFFPERM` decisively
+
+With the duplicate resolved, `SetDialogOption`'s surviving entry only
+described its two bounds checks -- the actual flag-manipulation logic
+had never been fully read. Doing so now shows a complete, exact match to
+2011's own body: `optionflags[opt] &= ~DFLG_ON;` unconditionally, then
+`if (onoroff && !(optionflags[opt] & DFLG_OFFPERM)) optionflags[opt] |=
+DFLG_ON;`, then separately `if (onoroff==2) optionflags[opt] |=
+DFLG_OFFPERM;` -- matching `Common/acroom.h:2648-2649`'s `DFLG_ON=1`/
+`DFLG_OFFPERM=2` with zero drift (the disasm's "only turn ON if not
+OFFPERM" gate is computed via a branchless bit-test-to-mask idiom, `and
+edx,2; neg edx; sbb edx,edx; inc edx`, rather than a conditional jump --
+worth remembering as a pattern if similar-looking branchless boolean
+logic turns up elsewhere). This also reconfirms `DialogTopic`'s own
+`0x484`(1156)-byte total size a further way via the function's own
+`imul ecx,484h` stride, and `dword_4EDA48=dialog` from a new call site.

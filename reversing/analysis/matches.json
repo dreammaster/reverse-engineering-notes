@@ -921,16 +921,6 @@
   },
   {
     "kind": "function",
-    "asm_name": "RunCharacterInteraction",
-    "new_name": null,
-    "source_file": "Engine/AC.CPP",
-    "source_obj": "AC.obj",
-    "is_library": false,
-    "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
-  },
-  {
-    "kind": "function",
     "asm_name": "GetObjectX",
     "new_name": null,
     "source_file": "Engine/AC.CPP",
@@ -1661,16 +1651,6 @@
   },
   {
     "kind": "function",
-    "asm_name": "SetDialogOption",
-    "new_name": null,
-    "source_file": "Engine/AC.CPP",
-    "source_obj": "AC.obj",
-    "is_library": false,
-    "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
-  },
-  {
-    "kind": "function",
     "asm_name": "ShakeScreen",
     "new_name": null,
     "source_file": "Engine/AC.CPP",
@@ -1768,16 +1748,6 @@
     "is_library": false,
     "confidence": "high",
     "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.name@+0x110 -- the character-hovering branch does \"lea ecx,[game_chars+charidx*140h+110h]; push ecx; call GetTranslation\" then strcpy's the result into the caller's destination buffer, matching 2011's \"strcpy(tempo,get_translation(game.chars[onhs].name));\" exactly. Upgrades name from MEDIUM (positional) to HIGH confidence. See reversing/notes/struct-layout-drift.md for the complete writeup."
-  },
-  {
-    "kind": "function",
-    "asm_name": "GetInvName",
-    "new_name": null,
-    "source_file": "Engine/AC.CPP",
-    "source_obj": "AC.obj",
-    "is_library": false,
-    "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
   },
   {
     "kind": "function",
@@ -5059,7 +5029,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": null,
     "confidence": "high",
-    "evidence": "Retroactive struct-field documentation (SetDialogOption itself was already named in the IDB via exact linker-symbol/script-export match, long before this entry existed). New field evidence recorded here, resolving DialogTopic (a genuinely new struct this round, with NO older-ancestor reference in Common/acroom.h to check against -- see reversing/notes/struct-layout-drift.md): confirms DialogTopic.numoptions @ +0x480 via \"cmp opt,[dlg*0x484+dialog+0x480]; setnle bl; ...quit(\\\"!SetDialogOption: Invalid option number\\\")\" -- an option-index range check matching 2011's declared `int numoptions` exactly. Also confirms DialogTopic.optionflags[15] @ +0x41C via bitwise \"AND ~1\"/\"OR 1\" and \"AND 2\"/\"OR 2\" manipulation on \"[dialog+dlg*0x484+opt*4+0x41C]\", matching 2011's documented DFLG_ON=1/DFLG_OFFPERM=2 semantics exactly."
+    "evidence": "Retroactive struct-field documentation (SetDialogOption itself was already named in the IDB via exact linker-symbol/script-export match, long before this entry existed). New field evidence recorded here, resolving DialogTopic (a genuinely new struct this round, with NO older-ancestor reference in Common/acroom.h to check against -- see reversing/notes/struct-layout-drift.md): confirms DialogTopic.numoptions @ +0x480 via \"cmp opt,[dlg*0x484+dialog+0x480]; setnle bl; ...quit(\\\"!SetDialogOption: Invalid option number\\\")\" -- an option-index range check matching 2011's declared `int numoptions` exactly. Also confirms DialogTopic.optionflags[15] @ +0x41C via bitwise \"AND ~1\"/\"OR 1\" and \"AND 2\"/\"OR 2\" manipulation on \"[dialog+dlg*0x484+opt*4+0x41C]\", matching 2011's documented DFLG_ON=1/DFLG_OFFPERM=2 semantics exactly. ADDENDUM (full body now read, not just the two bounds checks): the actual flag-manipulation logic is a decisive, complete match to 2011's own SetDialogOption body: \"dialog[dlg].optionflags[option] &= ~DFLG_ON; if (onoroff && !(dialog[dlg].optionflags[option] & DFLG_OFFPERM)) dialog[dlg].optionflags[option] |= DFLG_ON; if (onoroff==2) dialog[dlg].optionflags[option] |= DFLG_OFFPERM;\" -- disasm clears bit 0 unconditionally first (\"and ecx,0FFFFFFFEh\"), then ORs bit 0 back in only if onoroff==1 AND bit 1 (DFLG_OFFPERM) is currently clear (computed via a branchless \"and edx,2; neg edx; sbb edx,edx; inc edx\" mask), then separately ORs in bit 1 if onoroff==2. This decisively confirms DFLG_ON=1/DFLG_OFFPERM=2 (Common/acroom.h:2648-2649) with zero drift -- the first individually-confirmed bit values for DialogTopic.optionflags[], previously only known as a 15-entry array with unconfirmed per-bit meaning. Also reconfirms DialogTopic's own 0x484(1156)-byte total size a further way via the \"imul ecx,484h\" stride, and dword_4EDA48=dialog (already established) from a new call site."
   },
   {
     "kind": "manual",

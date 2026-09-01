@@ -2496,6 +2496,18 @@ disassembly work.
   confirms `CHF_NOLIGHTING=0x20` on the same `flags` field, zero drift,
   with no collision against the `talkcolor` byte (`OCHF_SPEECHCOL`
   occupies bits 24-31, clear of every declared `CHF_*` bit).
+- **A data-hygiene fix: found and removed three duplicate `matches.json`
+  entries.** `RunCharacterInteraction`/`SetDialogOption`/`GetInvName`
+  each had a stale bare `"kind":"function"` mechanical entry sitting
+  alongside a fuller `"kind":"manual"` entry that had already superseded
+  it — exactly the risk this file's own workflow section warned about
+  (`build_matches.py` can re-add a bare entry without checking for an
+  existing manual one first). All three removed with no information
+  loss (`matches.json`: 620 → 617 entries). Also fully closed
+  `SetDialogOption`'s remaining logic: a complete match to 2011's own
+  body decisively confirms `DFLG_ON=1`/`DFLG_OFFPERM=2`
+  (`Common/acroom.h:2648-2649`) with zero drift, and reconfirms
+  `DialogTopic`'s `0x484`(1156)-byte size a further way.
 
 ## Third-party library identification (Task #10)
 
