@@ -156,7 +156,15 @@ anchor). The combat pool it prints is quoted at the top of
       traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.
 - [ ] DUN monster movement, climb up/down, chest/box loot, `CastSpell`
 
+## TWNDR.EXE
+
+- [x] `twndr_services.bas` — `SpendGold`, `Bank`.  **Correction:** the
+      CHAR.DAT "experience" dword (`ds:1AC2:1AC4`) is the **bank balance**;
+      LotA has no XP stat.  Interest = `MIN(1500, MIN(5000, balance) *
+      daysElapsed / K)` per visit.
+- [ ] shop counters, guard fight, item-grab, mail routes, robbery event
+
 ## Other modules
 
-- [ ] `twndr`, `casdr`, `mus`
+- [ ] `casdr`, `mus`
 - [ ] `leglib.bas` — the shared engine primitives
