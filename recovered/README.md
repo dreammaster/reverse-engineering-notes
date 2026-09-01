@@ -114,18 +114,30 @@ file offset `0x8C80` in `OUT.EXE`, found via the `"ENEMY HIT BY BLOW OF "`
 anchor). The combat pool it prints is quoted at the top of
 `out_combat.bas`.
 
-## Status
+## Model — done
 
-- [x] `out_combat.bas` — the overworld player-attack path (pilot v4)
 - [x] `decoders/dgroup_consts.py` — pull the SINGLE/INT/STRING constant
       pool out of any module EXE
 - [x] leglib op-dispatch table read from `LEGLIB.EXE` (`+ - -rev * / /rev
       cmp`); `FF2B` = `^` reversed
 - [x] value-stack node layout (value at `[node.ptr]` == `[ds:111C]` for top)
-- [x] verified formulas: to-hit (exact float), base/chip/weakness-match
-      damage, RollEncounterMod
+
+## OUT.EXE
+
+- [x] `out_combat.bas` — `RollEncounterMod`, `ComputeEquippedPower`,
+      `SpellAttack`, `ResolvePlayerAttack` (to-hit an exact float match),
+      `CreatureDefeated`. All melee/spell formulas verified or derived.
+- [~] `out_movement.bas` — `DoMovement`: the per-step tick (food drain,
+      terrain wear, step counter) + food-poisoning damage are solid; the
+      tile-entry dispatch, sickness/roll gating, and `ResolveMoveTarget`
+      (out.asm:9203) are partial / TODO.
+- [ ] `CreatureAttack` (out.asm:3468, collapsed) — the monster's turn
 - [ ] confirm the to-hit `L` (= `Dex/(wp+18)`?) with a 2nd trace
-- [ ] `out_combat.bas` — the monster-attack path (`creatureAttack`, still
-      collapsed in `out.asm`)
-- [ ] the rest of `out`, then `dun`, `casdr`, `mus`, `twndr`
+- [ ] economy: `shopBuy`, `buyFood`, bank interest, mail routes
+- [ ] `enterOverworld` / `loadOverworldData`, `creatureApproach`,
+      `beginEncounterView`, `awardFoundItem`, chest/loot, quest flags
+
+## Other modules
+
+- [ ] `dun` (combat, traps, monsters, climb), `twndr`, `casdr`, `mus`
 - [ ] `leglib.bas` — the shared engine primitives

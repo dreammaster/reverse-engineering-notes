@@ -1,6 +1,10 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld combat, player-attack path            [PILOT v4]
+'  OUT.EXE  --  overworld combat                                     [v5]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
+'
+'  SUBs: RollEncounterMod  ComputeEquippedPower  SpellAttack
+'        ResolvePlayerAttack  CreatureDefeated
+'  Not here: CreatureAttack (the monster's turn) -- collapsed at out.asm:3468.
 ' ==========================================================================
 '
 '  v4: the to-hit is SOLVED (exact float match against Paul's DOSBox trace).
@@ -56,6 +60,59 @@ SUB RollEncounterMod                                  ' asm: out.asm:3723 (rollC
         '  RND(1) in [0,1) -> encMod in [12, 30].  (This is why op 0x0C
         '  must be `*`: `/` would collapse it to a constant 12.)
     END IF
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB ComputeEquippedPower                              ' asm: out.asm:4337 (sub_12823)
+' --------------------------------------------------------------------------
+' Turns the equipped weapon + armour (and their wear) into the two combat
+' numbers.  Runs once on encounter start (also from enterOverworld).
+'   armorSlot  = ds:1AEA   armorId  = ds:1AEC   (armour ids 9..13)
+'   weaponSlot = ds:1AFC   weaponId = ds:1AFE   (weapon ids 0..8)
+'   S1() = ds:1B68 = equipment condition, 0..4 (Shoddy..Superb)
+
+    playerDefense = 0                                     ' ds:2266     ' asm:4339
+    IF armorSlot < 8 THEN                                              ' asm:4340
+        playerDefense = INT( S1(armorSlot) / 3.5 + (armorId - 9) )     ' asm:4354-4361
+        '  ds:2970 = 3.5 ; (armorId - 9) = armour tier 0..4.
+        '  -> defense 0..5.  Consumed by CreatureAttack (still collapsed).
+    END IF
+
+    weaponPower = weaponId                                ' ds:22D6    ' asm:4364-4365
+    IF weaponSlot < 8 THEN                                            ' asm:4366
+        weaponPower = INT( weaponId + S1(weaponSlot) / 2.8 )          ' asm:4372-4385
+        '  ds:2974 = 2.8 .  Knife (id 1), Fair (cond 1) -> INT(1 + 0.36) = 1.
+        '  Paul's DOSBox trace had weaponPower = 2 (a better-condition knife).
+    END IF
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB SpellAttack                                       ' asm: out.asm:6365 (doAttackOrCast)
+' --------------------------------------------------------------------------
+' The "cast" branch of the attack command.  selectedSpell (ds:1E24) is the
+' spell's index; 29 = Seek (handled elsewhere), 23..28 = the attack spells.
+'   spellPower = ds:231C = selectedSpell
+
+    SpellCharge(selectedSpell) = SpellCharge(selectedSpell) - 1        ' asm:6416-6428
+    PRINT "ATTACK WITH "; Spell$(selectedSpell); "."                   ' asm:6429-6451
+    IF SpellCharge(selectedSpell) < 1 THEN selectedSpell = 0           ' asm:6452-6464
+
+    ' ---- fizzle check -------------------------------------------- asm:6466-6480
+    IF RND(1) * 45.0 > (Intelligence + 20) THEN            ' ds:2DBA 45 ' asm:6467-6479
+        PRINT "ATTACK FIZZLES"                                          ' asm:6492
+        StageSfx_Event : EXIT SUB
+        '  success chance = min(1, (Intelligence + 20) / 45).  INT 15 -> 78%,
+        '  INT >= 25 -> never fizzles.
+    END IF
+
+    ' ---- spell damage ------------------------------------------- asm:6507-6523
+    workDamage = INT( (selectedSpell * 15.0 - 337.5) * (RND(1) + 1.0) ) ' asm:6507-6523
+    '  ds:2502 = 15.0 ; ds:2DD0 = -337.5 ( = -22.5*15 ) ; ds:24E6 = 1.0
+    '  = INT( (selectedSpell - 22.5) * 15 * (RND(1) + 1) )
+    '  Magic flame (23): 7.5..15 ; Kill flash (28): 82.5..165.            '?? (selectedSpell range)
+    GOTO ApplyHitAndMaybeKill   ' shares resolvePlayerAttack's tail (loc_13FBA)
 END SUB
 
 
@@ -131,6 +188,58 @@ SUB ResolvePlayerAttack                               ' asm: out.asm:6686 (resol
 END SUB
 
 
+' --------------------------------------------------------------------------
+SUB CreatureDefeated                                  ' asm: out.asm:7023 (creatureDefeated)
+' --------------------------------------------------------------------------
+' Death resolution (~1.1 KB, mostly text).  rewardTier drives every payout.
+'   rewardTier   = A3(creatureIndex) \ 256          ' ds:1F04  (A3 = ds:20BE)
+'   creatureCount = ds:22B0   (how many of this type were in the encounter)
+'   food = ds:1ACE   partyGold = ds:1AD2 (dword)
+'   ds:2496 = 0.6   ds:29FA = 0.7   ds:2E9E = 200
+
+    PRINT "THE "; Creature$(creatureIndex); " DIES."                      ' asm:7025-7038
+    encounterActive = encounterActive - 1                                 ' asm:7052 (ds:21FE)
+    IF encounterActive > 0 THEN StageSfx_Event : EXIT SUB    ' more to fight  asm:7053-7055
+
+    contextMode = 0 : RedrawAfterAction                                   ' asm:7062-7063
+    rewardTier = A3(creatureIndex) \ 256                                  ' asm:7072-7081
+
+    ' ---- "flesh for food?" option ------------------------------- asm:7088-7234
+    '   offered ~60% of the time (RND < 0.4 gate), and not when food >= 200
+    IF food < 200 AND RND(1) < 0.4 THEN                    ' ds:2E9E, ds:2476 '?ord
+        PRINT "DO YOU WANT TO USE THE "; Creature$(creatureIndex); _
+              " FLESH FOR FOOD?"                                          ' asm:7144-7207
+        IF YesNo() THEN                                    ' ds:1E22 = 1  ' asm:7221
+            foodGain = 0
+            FOR k = 1 TO creatureCount                                    ' asm:7234-7263
+                foodGain = foodGain + (RND(1) * 0.6 + 0.7) * (rewardTier AND 63)
+            NEXT k                                         ' ds:2496, ds:29FA
+            foodGain = INT(foodGain) + 1                                  ' asm:7264
+            food = food + foodGain                                       ' asm:7266-7271
+            PRINT "YOU GAIN"; foodGain; " DAYS OF FOOD."                  ' asm:7272-7291
+        END IF
+    END IF
+
+    ' ---- dropped item ------------------------------------------ asm:7311-7343
+    IF RND(1) < DropChance() AND creatureDropId <> 0 THEN   ' ds:1AEE     ' asm:7333-7342
+        AwardFoundItem                    ' "YOU FIND A <item>"           ' asm:7343
+        EXIT SUB
+    END IF
+
+    ' ---- gold ------------------------------------------------- asm:7346-7462
+    IF S0(4) = 0 AND RND(1) < GoldChance() THEN            ' asm:7348-7385 '??
+        goldFound = INT( (RND(1) * 0.6 + 0.7) * creatureCount _
+                         * (rewardTier AND 63) )                          ' asm:7413-7430
+        PRINT "YOU FIND"; goldFound; " GOLD."                             ' asm:7431-7450
+        partyGold = partyGold + goldFound                                 ' asm:7451-7456
+    ELSE
+        AddFoodDays 4                     ' ds:231C = 4                    ' asm:7460-7462
+    END IF
+    '  NOTE: no experience award anywhere in this function -- overworld
+    '  kills give food + gold + items only.  XP is museum-only (per guide). '??
+END SUB
+
+
 ' ==========================================================================
 '  STATUS
 ' ==========================================================================
@@ -147,12 +256,21 @@ END SUB
 '   * creatureWeak = creatureWeakWord  MOD 256, 99 = none  (3944-3963)
 '   * value-stack node: value at [node.ptrField]; top value at [ds:111C]
 '
+'   * ComputeEquippedPower = weaponPower = INT(weaponId + cond/2.8);
+'     playerDefense = INT(cond/3.5 + armorTier)
+'   * SpellAttack: fizzle when RND(1)*45 > Intelligence+20;
+'     spell dmg = INT((selectedSpell - 22.5) * 15 * (RND(1)+1))
+'   * CreatureDefeated: food/gold both = (RND(1)*0.6 + 0.7) * rewardTier
+'     [* creatureCount for gold], rewardTier = A3(creatureIndex) \ 256;
+'     NO experience award (overworld kills = food/gold/items only)
+'
 '  OPEN:
 '   1. the `L` push for the to-hit -- observed L = Dex/(wp+18) exactly, but
 '      the pushing code is in the collapsed caller.  A 2nd trace with a
 '      different weapon/Dex confirms whether L really is Dex/(wp+18).
-'   2. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?
-'   3. spell damage (doAttackOrCast:6507-6523) -- structure known, needs
-'      ds:231C / ds:2502 / ds:2DD0.
-'   4. ComputeEquippedPower (sub_12823) -- redo with the corrected ops.
+'   2. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?  same
+'      question for the CreatureDefeated food gate.
+'   3. selectedSpell range (23..28 assumed from the -337.5 = -22.5*15 offset).
+'   4. CreatureDefeated: the exact DropChance / GoldChance RND gates and the
+'      S0(4) test at asm:7348.
 '   5. CreatureAttack (out.asm:3468, collapsed) -- the monster half.
