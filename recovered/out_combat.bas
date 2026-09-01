@@ -1,11 +1,13 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld combat                                     [v6]
+'  OUT.EXE  --  overworld combat                                     [v7]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: RollEncounterMod  ComputeEquippedPower  SpellAttack
-'        ResolvePlayerAttack  CreatureDefeated
-'  Not here: CreatureAttack (the monster's turn) -- collapsed at out.asm:3468.
+'        ResolvePlayerAttack  CreatureDefeated  CreatureAttack
 '
+'  v7: CreatureAttack (the monster's turn) reconstructed -- `creatureAttack`
+'  was un-folded in out.idb (ida_scripts/expand_folded_out.py) and is now
+'  fully in out.asm (0x11CB3..0x12143).
 '  v6: to-hit confirmed by a 2nd DOSBox trace -- L is the CONSTANT 0.8
 '  (ds:2E3A), not Dex/(wp+18).  Formula: Dex^0.8 * (wp+18) / (creatureHP*11).
 ' ==========================================================================
@@ -241,6 +243,62 @@ SUB CreatureDefeated                                  ' asm: out.asm:7023 (creat
 END SUB
 
 
+' --------------------------------------------------------------------------
+SUB CreatureAttack                                   ' asm: out.asm:3474 (creatureAttack, 0x11CB3)
+' --------------------------------------------------------------------------
+' The monsters' turn.  Every engaged creature rolls to hit; hits accumulate
+' one combined damage number; death here is NOT a game over -- you "FALL
+' UNCONSCIOUS" and revive.
+'   creatureAtk    = ds:2264   (rolled at encounter start -- 0 in the EXE)
+'   playerDefense  = ds:2266   (ComputeEquippedPower)
+'   S4(12)         = ds:1B96 elem 0x0C  (a region difficulty/scaling word)
+'   hitCount 1F06   totalDmg 1F04   loopN 2262 = creaturesToFight (21FE)
+
+    IF contextMode > 11 THEN EXIT SUB                 ' ds:1F2A            ' asm:3478-3480
+
+    ' ---- the monsters' shared to-hit chance --------------------- asm:3486-3510
+    '   toHitChance = MIN( 0.75 , creatureHP / (Dexterity*2 + 20) )
+    '   -- scales with the CREATURE's HP, inversely with your Dexterity,
+    '      capped at 0.75.
+    toHitChance = creatureHP / (Dexterity * 2.0 + 20.0)   ' ds:280A, ds:24EA
+    IF toHitChance > 0.75 THEN toHitChance = 0.75         ' ds:280E        ' asm:3497-3510
+
+    hitCount = 0 : totalDmg = 0                                           ' asm:3484-3485
+    FOR k = 1 TO creaturesToFight                     ' ds:2262           ' asm:3520-3584
+        IF RND(1) <= toHitChance THEN                                     ' asm:3521-3530 '?ord
+            hitCount = hitCount + 1                                       ' asm:3535
+            blow = creatureAtk * (RND(1) + 0.4) * 1.7   ' ds:2476, ds:2812 ' asm:3536-3554
+            totalDmg = (totalDmg + 0.5 + blow) _
+                       * (S4(12) + 2) / (Endurance * (playerDefense + 2))  ' asm:3556-3574 '??
+            '  the whole running total is re-scaled by
+            '  (S4(12)+2) / (Endurance*(playerDefense+2)) each hit -- so
+            '  earlier blows in the same round keep getting mitigated.
+            '  S4(12) is a biggish region word (like the S4 sentinels);
+            '  with it ~ Endurance*(pd+2) the scale is ~1 (purely additive). '?? (S4(12))
+        END IF
+    NEXT k
+    totalDmg = INT(totalDmg)
+
+    PRINT "ATTACKED BY "; creaturesToFight; " "; Creature$(creatureIndex); _
+          PLURAL$(creaturesToFight)                                       ' asm:3597-3642
+    PRINT "HITS: "; hitCount; "    DAMAGE: "; totalDmg                     ' asm:3644-3669
+
+    hitPoints = hitPoints - totalDmg                                      ' asm:3670-3671
+    IF hitPoints >= 1 THEN EXIT SUB                   ' survived           ' asm:3675-3695
+
+    ' ---- knocked out ------------------------------------------- asm:3698-3760+
+    RedrawAfterAction                                                     ' asm:3699
+    PRINT "YOU FALL UNCONSCIOUS."                     ' ds:2844           ' asm:3700-3711
+    contextMode = 0                                                       ' asm:3714
+    hitPoints = INT( RND(1) * 50.0 + 60.0 )           ' ds:285E, ds:2862  ' asm:3716-3727
+    '  revive with 60..110 HP.
+    IF RND(1) >= 0.5 AND food > 50 THEN                ' ds:2482, ds:285E ' asm:3728-3752 '??
+        food = food - foodPenalty                     ' a ration hit on waking
+    END IF
+    ' ... teleport to the nearest town / safe tile ...
+END SUB
+
+
 ' ==========================================================================
 '  STATUS
 ' ==========================================================================
@@ -265,6 +323,10 @@ END SUB
 '   * CreatureDefeated: food/gold both = (RND(1)*0.6 + 0.7) * rewardTier
 '     [* creatureCount for gold], rewardTier = A3(creatureIndex) \ 256;
 '     NO experience award (overworld kills = food/gold/items only)
+'   * CreatureAttack: monster to-hit = MIN(0.75, creatureHP/(Dex*2+20));
+'     per hit  blow = creatureAtk * (RND(1)+0.4) * 1.7 , accumulated with a
+'     per-hit re-scale by (S4(12)+2)/(Endurance*(playerDefense+2));
+'     death -> "YOU FALL UNCONSCIOUS", revive at INT(RND(1)*50+60) HP
 '
 '  OPEN:
 '   1. RollEncounterMod: is the 0.40 gate a < or >= (40% vs 60%)?  same
@@ -272,4 +334,6 @@ END SUB
 '   3. selectedSpell range (23..28 assumed from the -337.5 = -22.5*15 offset).
 '   4. CreatureDefeated: the exact DropChance / GoldChance RND gates and the
 '      S0(4) test at asm:7348.
-'   5. CreatureAttack (out.asm:3468, collapsed) -- the monster half.
+'   5. CreatureAttack: S4(12) value (region difficulty word); the compounding
+'      re-scale; the unconscious-revive teleport target + food penalty.
+'   6. creatureAtk (ds:2264) -- rolled at encounter start; find where.

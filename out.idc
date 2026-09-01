@@ -4819,7 +4819,7 @@ static Functions_0(void) {
 	set_func_cmt(0X117B0,	"encounter start: \"UNKNOWN CREATURE\", \" APPROACHING FROM THE \", \" IS / ARE APPROACHING.\" ~1.3 KB.", 1);
 	set_frame_size(0X117B0, 0, 0, 0);
 	add_func    (0X11CB3,0X12143);
-	set_func_flags(0X11CB3,0x14c1);
+	set_func_flags(0X11CB3,0x1481);
 	set_func_cmt(0X11CB3,	"creature turn / damage: \"ATTACKED BY \", \"HITS: \", \"DAMAGE: \", \"YOU FALL UNCONSCIOUS.\", \"THE SLEEP DOES YOU GOOD. / YOU AWAKE FEELING BETTER.\", \"CHECK YOUR SUPPLIES!!\". IDA mis-named it j_rt_FE5B_1; ~1.2 KB.", 1);
 	add_func    (0X12143,0X121F7);
 	set_func_flags(0X12143,0x1401);
@@ -4880,12 +4880,12 @@ static Functions_0(void) {
 	set_func_flags(0X127E4,0x1401);
 	set_func_cmt(0X127E4,	"ds:2146h := 3.", 1);
 	add_func    (0X127EA,0X12823);
-	set_func_flags(0X127EA,0x14c1);
+	set_func_flags(0X127EA,0x1481);
 	add_func    (0X12823,0X128B2);
 	set_func_flags(0X12823,0x5400);
 	set_frame_size(0X12823, 0, 0, 0);
 	add_func    (0X128B2,0X128C5);
-	set_func_flags(0X128B2,0x14c3);
+	set_func_flags(0X128B2,0x1483);
 	add_func    (0X128C5,0X12969);
 	set_func_flags(0X128C5,0x1401);
 	set_func_cmt(0X128C5,	"\"** CHANGE GAME SPEED ** / (1 IS FASTEST) / GAMESPEED IS: \"", 1);
@@ -4930,7 +4930,7 @@ static Functions_0(void) {
 	add_func    (0X136F2,0X13705);
 	set_func_flags(0X136F2,0x1401);
 	add_func    (0X13705,0X13896);
-	set_func_flags(0X13705,0x14c1);
+	set_func_flags(0X13705,0x1481);
 	add_func    (0X13896,0X138CA);
 	set_func_flags(0X13896,0x1401);
 	set_func_cmt(0X13896,	"\"YOU ARE NEXT TO \"", 1);
@@ -4960,7 +4960,7 @@ static Functions_0(void) {
 	set_func_flags(0X13C60,0x1401);
 	set_func_cmt(0X13C60,	"the central overworld command/event loop (~3.8 KB). Branches on ds:1F2Ah; prints the combat lines (NOTHING TO FIGHT / NOT IN RANGE. / YOUR ATTACK MISSES. / ENEMY HIT BY BLOW OF ) and fans out to the per-command helpers.", 1);
 	add_func    (0X13CF1,0X13D98);
-	set_func_flags(0X13CF1,0x14c1);
+	set_func_flags(0X13CF1,0x1481);
 	add_func    (0X13D98,0X14054);
 	set_func_flags(0X13D98,0x1401);
 	set_func_cmt(0X13D98,	"the player attack round: hit/miss math off the value stack, \"YOUR ATTACK MISSES.\" / \"ENEMY HIT BY BLOW OF \", steps combatPhase. ~0.7 KB.", 1);
@@ -5089,7 +5089,7 @@ static Functions_0(void) {
 	set_func_flags(0X161AD,0x1403);
 	set_func_cmt(0X161AD,	"the museum access-code entry (\"World- / Stone- / Ring- \", ordinal suffixes st/nd/rd/th, \"*** TRY AGAIN ***\"). ~1.6 KB.", 1);
 	add_func    (0X167D5,0X167DA);
-	set_func_flags(0X167D5,0x14c1);
+	set_func_flags(0X167D5,0x1481);
 	add_func    (0X167F0,0X167F3);
 	set_func_flags(0X167F0,0x1401);
 	set_func_cmt(0X167F0,	"-> basProcExit1  (leglib seg003:0x12dc7)", 1);
