@@ -337,7 +337,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Calls the already-matched find_overlay_of_type(ovrid) (sub_40A0E9), quitting \"!RemoveOverlay: invalid overlay id passed\" if it returns <0, then calls the already-matched remove_screen_overlay(ovrid) (sub_409FD4) -- an exact, 2-line match to 2011's entire function body (AC.CPP:13116-13119: \"if(find_overlay_of_type(ovrid)<0) quit(...); remove_screen_overlay(ovrid);\"), zero drift. NOTE for future readers: the currently-exported rob_blanc_1.asm still displays this second call's target as \"stop_fast_forwarding\" -- a STALE pre-correction IDA label (sub_409FD4 was originally, wrongly, matched to stop_fast_forwarding on callgraph-position evidence alone; the correction to remove_screen_overlay, recorded in this same round of work, was discovered by reading THIS exact call site's real behavior, but the IDB rename hasn't been re-applied/re-exported yet -- see remove_screen_overlay's own matches.json entry for the full correction writeup). Trust matches.json's `sub_409FD4` entry over the .asm text at this call site until the next re-export."
   },
   {
     "kind": "function",
@@ -357,7 +357,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Cross-checked against 2011's CreateTextOverlay/CreateTextOverlayCore (AC.CPP:13141-13167, split into two functions there but fused here). Formats the (already-translated, via the already-matched GetTranslation) text via the already-matched vsprintf, then: if xx==0x7530(30000), skips the multiply_up_coordinates-equivalent scaling -- decisively matching Common/acruntim.h:835's OVR_AUTOPLACE=30000 constant with ZERO drift; if wii<8, defaults wii to usetup_base_width/2 (matching \"if(wii<8) wii=scrnwid/2;\"); if xx<0, centers via xx=usetup_base_width/2-wii/2 (matching \"if(xx<0) xx=scrnwid/2-wii/2;\"); if clr==0, defaults to 16 (matching \"if(clr==0) clr=16;\") -- all four checks exact, zero drift. Then does \"blcode=crovr_id; crovr_id=2;\" -- a decisive, exact match to source's own \"int blcode=crovr_id; crovr_id=2;\" -- newly identifying dword_4B42E8 as crovr_id (a global not previously tracked in this project). Finally calls the already-matched _display_main(xx,yy,wii,Str,blcode,fontid,-clr) -- NOTE: only 7 arguments are pushed (confirmed via the call site's own `add esp,1Ch`=28-byte/7-dword cleanup), fewer than the 10-parameter signature _display_main's own entry establishes from a DIFFERENT caller (_display_at) -- plausibly this build's _display_main has compiled-in default arguments for the trailing parameters (a C++ default-argument declaration would produce exactly this per-call-site variability), not independently confirmed this round -- left as an open detail rather than an assumed conclusion."
   },
   {
     "kind": "function",

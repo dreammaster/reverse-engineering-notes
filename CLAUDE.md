@@ -2658,6 +2658,21 @@ disassembly work.
   re-applying palette changes during fast-forward that 2011 explicitly
   skips — worth flagging for the eventual ScummVM port rather than
   "fixing" by default.
+- **`RemoveOverlay` found with no `matches.json` entry despite being
+  fully covered by an earlier correction.** Its 2-line body is a clean
+  match to 2011 (`find_overlay_of_type` + `remove_screen_overlay`, both
+  already matched). Worth noting: the currently-exported `.asm` still
+  displays the second call as `stop_fast_forwarding` — the STALE, pre-
+  correction IDA label from several rounds ago (that correction to
+  `remove_screen_overlay` was discovered by reading this exact call
+  site; the IDB rename just hasn't been re-exported since). Recorded
+  explicitly so a future session doesn't re-trust the stale text.
+  `CreateTextOverlay` also closes cleanly, with zero drift on every
+  constant checked (`OVR_AUTOPLACE=30000`, default width/color/
+  centering logic) and a new global identified: `dword_4B42E8`=
+  `crovr_id`. One open detail: its `_display_main` call passes only 7
+  arguments vs. the 10-parameter signature established elsewhere —
+  plausibly compiled-in C++ default arguments, not confirmed this round.
 
 ## Third-party library identification (Task #10)
 

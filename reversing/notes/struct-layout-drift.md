@@ -9658,3 +9658,36 @@ deliberately skips, for performance and/or visual-consistency reasons.
 Worth flagging explicitly for the eventual ScummVM reimplementation,
 since silently adding 2011's `fast_forward` guard would change
 observable behavior rather than just internal structure.
+
+### `RemoveOverlay` closes trivially, but resolves a naming trap for future readers; `CreateTextOverlay` closes cleanly with a new global identified
+
+`RemoveOverlay` itself is a clean, 2-line match to 2011
+(`AC.CPP:13116-13119`): calls the already-matched `find_overlay_of_type`
+to validate, then the already-matched `remove_screen_overlay`. The
+useful part is a documentation fix, not new content: the currently-
+exported `rob_blanc_1.asm` still displays that second call's target as
+`stop_fast_forwarding` -- but that's the STALE, pre-correction IDA
+label from several rounds ago (`sub_409FD4` was originally matched to
+`stop_fast_forwarding` on callgraph position alone, then corrected to
+`remove_screen_overlay` once its body was actually read -- and that
+correction was discovered by reading THIS EXACT call site). The IDB
+rename hasn't been re-applied/re-exported since, so the `.asm` text
+still lags the truth recorded in `matches.json`. Recorded explicitly in
+`RemoveOverlay`'s own entry so a future session reading this same call
+site doesn't independently re-derive (or worse, trust) the stale label.
+
+`CreateTextOverlay` closes cleanly against 2011's (here-fused)
+`CreateTextOverlay`/`CreateTextOverlayCore` pair (`AC.CPP:13141-13167`)
+with zero drift on every checked constant: the `xx==30000` auto-place
+sentinel matches `Common/acruntim.h:835`'s `OVR_AUTOPLACE=30000`
+exactly; the `wii<8`/`xx<0`/`clr==0` default-and-centering logic all
+match source line for line. A genuinely new global falls out along the
+way: `"blcode=crovr_id; crovr_id=2;"` matches source's own identical
+statement verbatim, identifying `dword_4B42E8` as `crovr_id` (not
+previously tracked in this project). One open detail flagged rather
+than resolved: the final call to the already-matched `_display_main`
+passes only 7 arguments here (confirmed via the call site's own stack-
+cleanup size), fewer than the 10-parameter signature established
+elsewhere from a different caller (`_display_at`) -- plausibly
+explained by compiled-in C++ default arguments for the trailing
+parameters, but not independently confirmed this round.
