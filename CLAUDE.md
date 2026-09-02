@@ -2805,6 +2805,21 @@ disassembly work.
   this session (after `InterfaceOff`'s). Also decisively confirms
   `GameSetupStructBase.options[9]`=`OPT_ALWAYSSPCH`, distinct from the
   adjacent already-confirmed `options[10]`=`OPT_SPEECHTYPE`.
+- **`DisplaySpeech`/`DisplaySpeechAt`: the richest architectural pair
+  this session.** This build's `DisplaySpeech` still has genuine
+  variadic printf-style formatting built in — 2011's own version is a
+  trivial fixed-2-parameter wrapper with no `...` at all, and its
+  `_displayspeech` callee has a commented-out translation line noting
+  "the strings are pre-translated," consistent with 2011 having moved
+  formatting elsewhere entirely. Bigger find: `DisplaySpeechAt` calls
+  `_display_at` (the plain positioned-text-box function `DisplayAt`
+  uses) instead of `_displayspeech` (the real portrait-based speech
+  system `DisplaySpeech` itself uses) — passing the character's talk
+  color as a text-color argument. A colored-text-box approximation of
+  speech, not the real thing — and 2011's own source still carries a
+  "doesn't use the right speech style" comment on this exact function,
+  a suggestive (not confirmed) connection to this build's own simpler
+  predecessor implementation.
 
 ## Third-party library identification (Task #10)
 

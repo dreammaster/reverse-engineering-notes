@@ -10066,3 +10066,49 @@ confirmed `options[10]`=`OPT_SPEECHTYPE` (`SetSpeechStyle`'s own field,
 `0x513340`), worth stating explicitly since a first draft of this
 note briefly conflated the two before the arithmetic was checked
 against both index values side by side.
+
+### `DisplaySpeech`/`DisplaySpeechAt`: this build's DisplaySpeech still has real variadic formatting, and DisplaySpeechAt is a genuinely different implementation
+
+Two more previously-bare functions, and the richest architectural pair
+found this session. `DisplaySpeech` validates its character-ID
+argument inline, then formats its text via a genuine variadic
+`ArgList`/`vsprintf` setup -- but 2011's OWN `DisplaySpeech`
+(`AC.CPP:13966-13968`) is a trivial fixed-2-parameter function with NO
+`...` variadic parameter at all: `"void DisplaySpeech(char*texx,int "
+"aschar) { _displayspeech(texx,aschar,-1,-1,-1,0); }"`. This build's
+version genuinely still HAS printf-style format-string support built
+directly into `DisplaySpeech` itself; 2011 has removed it entirely by
+this point. A supporting clue sits right inside 2011's own
+`_displayspeech`: a commented-out `"//texx=get_translation(texx);"`
+with the note `"// the strings are pre-translated"` -- 2011 expects
+callers to have ALREADY translated (and by implication, formatted) the
+string before calling in, exactly matching what this build's
+`DisplaySpeech` still does itself, just at an earlier point in the
+call chain than 2011's own (now format-string-free) version needs.
+
+`DisplaySpeechAt` is the bigger find. It calls `_display_at` -- the
+same plain positioned-text-box function `DisplayAt`/
+`DisplaySpeechBackground` use -- passing the talking character's own
+packed talk-color (extracted from `CharacterInfo.flags`@+0x20, a
+further independent confirmation of that packing) as `_display_at`'s
+own `asspch` parameter, which 2011's `_display_at`/`_display_main`
+chain uses purely to select `FONT_SPEECH` over `FONT_NORMAL` and to
+color the displayed text (`"if(asspch) usingfont=FONT_SPEECH;"`,
+`AC.CPP:13074`, passed through as a raw text-color argument). This is
+a colored-text-box APPROXIMATION of speech display -- not the real
+portrait+text Sierra-style speech system `_displayspeech` implements,
+which `DisplaySpeech` itself genuinely uses. 2011's CURRENT
+`DisplaySpeechAt` instead calls `_displayspeech` directly, the same
+function `DisplaySpeech` uses -- a completely different implementation
+shape from this build's own version, not merely a missing later
+feature. Worth noting without overclaiming: 2011's own source still
+carries an explicit `"UNDOCUMENTED BECAUSE IT DOESN'T WORK PROPERLY AT "
+"640x400 AND DOESN'T USE THE RIGHT SPEECH STYLE"` comment directly
+above `DisplaySpeechAt`, even in its current `_displayspeech`-routed
+form -- plausibly connected to this build's own simpler `_display_at`-
+based predecessor (this build's version quite literally doesn't use
+the "right" -- i.e. portrait-based -- speech style, matching the
+comment's wording closely), but the exact causal chain from this
+build's implementation to 2011's still-lingering complaint isn't
+independently confirmed, just a strongly suggestive coincidence worth
+flagging rather than asserting as settled.
