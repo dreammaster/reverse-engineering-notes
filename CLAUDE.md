@@ -2726,6 +2726,15 @@ disassembly work.
   re-export lag already flagged for `stop_fast_forwarding`/
   `remove_screen_overlay` — trust `matches.json` over the `.asm` text
   at these specific sites until the next re-export.
+- **`SetObjectGraphic` shows a genuine three-field behavioral gap.**
+  This build writes `RoomObject.num` and clears `cycling` only — 2011's
+  version additionally resets `frame=0`/`loop=0`/`view=-1`, fully
+  disconnecting the object from any view-based animation when its
+  graphic changes directly by sprite number. All three resets are
+  CONFIRMED ABSENT here. Flagged rather than "fixed": whether this is
+  player-visible depends on how the drawing code treats a stale
+  `frame`/`loop`/`view` once `num` is set directly, not traced this
+  round. `IsGUIOn` closes cleanly alongside it, zero drift.
 
 ## Third-party library identification (Task #10)
 

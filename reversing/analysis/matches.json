@@ -747,7 +747,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates obn via the already-matched is_valid_object, then writes slott directly to the already-confirmed RoomObject.num@+0x0C (unconditionally, no change-detection guard) and clears the already-confirmed cycling@+0x1A to 0. DRIFT: 2011's own SetObjectGraphic (AC.CPP:14973-14984) does substantially more -- \"if(objs[obn].num!=slott) {objs[obn].num=slott; DEBUG_CONSOLE(...);} objs[obn].cycling=0; objs[obn].frame=0; objs[obn].loop=0; objs[obn].view=-1;\" -- THREE additional field resets (frame=0, loop=0, view=-1, fully disconnecting the object from any view-based animation state once it's showing a raw sprite by number) are CONFIRMED ABSENT here -- no writes to frame/loop/view exist anywhere in this function. This build's version leaves the object's old frame/loop/view values in place after a graphic change, a real, confirmable behavioral difference (not just a missing debug-console call) -- worth flagging for the eventual ScummVM port, since silently adding 2011's resets would change observable state even if not always visibly so, depending on how the drawing code actually uses those fields when `num` is set directly."
   },
   {
     "kind": "function",
@@ -887,7 +887,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates guinum<numgui, then returns the already-confirmed GUIMain.on@+0x90 compared >=1 as a 0/1 boolean -- correctly excluding both on==0(off) and on==-1(the already-established POPUP_MOUSEY closed-but-pending sentinel). Exact match to 2011's own \"if((guinum<0)||(guinum>=game.numgui)) quit(...); return (guis[guinum].on>=1)?1:0;\" (AC.CPP:16135-16138), zero drift."
   },
   {
     "kind": "function",

@@ -9832,3 +9832,31 @@ helper..."), not the corrected `is_valid_object` identification --
 same lag as the `stop_fast_forwarding`/`remove_screen_overlay` case
 from two rounds ago. `matches.json` is current; the `.asm` text at
 these specific call sites is not, until the next re-export.
+
+### `SetObjectGraphic` shows a genuine three-field behavioral gap; `IsGUIOn` closes cleanly
+
+`SetObjectGraphic` (previously bare) writes the already-confirmed
+`RoomObject.num`@+0x0C unconditionally (no change-detection guard) and
+clears `cycling`@+0x1A to 0 -- but that's ALL it does. 2011's own
+version (`AC.CPP:14973-14984`) does substantially more after the
+guarded `num` assignment: `"objs[obn].cycling=0; objs[obn].frame=0; "
+"objs[obn].loop=0; objs[obn].view=-1;"` -- three additional field
+resets, fully disconnecting the object from whatever view-based
+animation it might have been running, since it's now displaying a raw
+sprite by number instead. All three (`frame`/`loop`/`view`) are
+CONFIRMED ABSENT from this build's version -- no writes to any of them
+exist anywhere in the function. This is a genuine, confirmable
+behavioral gap, not just a missing debug-console call: an object mid-
+animation that gets its graphic changed via this API keeps its old
+`frame`/`loop`/`view` values in this build, where 2011 would reset all
+three. Whether that's actually player-visible depends on how the
+drawing code treats those fields once `num` has been set directly
+(not independently traced this round) -- flagged rather than resolved,
+since silently "fixing" it in a ScummVM port would change behavior
+without confirming which behavior is actually correct to preserve.
+
+`IsGUIOn` closes trivially and cleanly alongside it: returns the
+already-confirmed `GUIMain.on`@+0x90 compared `>=1`, correctly
+excluding both `on==0` (off) and the already-established `on==-1`
+`POPUP_MOUSEY` sentinel -- an exact match to 2011's own one-line
+return, zero drift.

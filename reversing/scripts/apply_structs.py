@@ -2645,7 +2645,10 @@ struct RoomObject {
                             // `pic`'s low word, the same pattern seen elsewhere in this project
                             // (e.g. `InventoryItemInfo`). Matches 2011's declared `short num; //
                             // sprite slot number` (`acruntim.h:46`) in position and semantic role
-                            // exactly.
+                            // exactly. Also a further WRITE-side confirmation via
+                            // SetObjectGraphic (already matched) -- see that function's own
+                            // entry for a real drift finding: unlike 2011, this build's
+                            // SetObjectGraphic does NOT reset frame/loop/view when num changes.
   short baseline;                    // +0x0E, high confidence: confirmed via `GetObjectAt`
                             // (already matched): "cmp var,1; jge <use-as-is>; else var=y" --
                             // matching 2011's `get_baseline()` ("if (baseline<1) return y; return
