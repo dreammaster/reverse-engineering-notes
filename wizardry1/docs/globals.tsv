@@ -21,8 +21,9 @@
 57	HIRES400	manual	boolean: 400-line vs 200-line screen mode (picks 200/400 file prefix)
 59	HAS_EXTRAM	manual	boolean: extended RAM available (enables extra caches)
 60	CONUNIT	manual	console output unit number
+61	CHARDISK	manual	ARRAY[0..5] OF INTEGER - roster slot index per party member (Apple word 68)
 195	GBUF	manual	shared scratch string buffer; taken by-ref by 45 procs, all segments
-363	CHARACTR	manual	party = ARRAY[0..5] OF TCHAR (104 words each); Apple word 74 + 289
+363	CHARACTR	manual	party ARRAY[0..5] OF TCHAR, 104 words each (p-code confirmed via ROLLER GETCHARC); Apple word 74 + 289
 987	SCNTOC	manual	TSCNTOC record (252 words); Apple word 698 + 289
 1008	SCNTOC_RECPER2B	manual	SCNTOC+21: records per 1024-byte unit [8]
 1016	SCNTOC_RECPERDK	manual	SCNTOC+29: record count per type [8]

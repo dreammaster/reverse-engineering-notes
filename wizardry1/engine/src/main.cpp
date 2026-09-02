@@ -3,6 +3,8 @@
 #include "wiz/ucsd_volume.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
+#include "wiz/rng.h"
+#include "wiz/roller.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -139,9 +141,73 @@ static int cmdStrings(const char *krn) {
     return 0;
 }
 
+static int cmdRng(int argc, char **argv) {
+    Rng rng(u32(std::strtoul(argv[2], nullptr, 0)));
+    int n = argc > 3 ? std::atoi(argv[3]) : 16;
+    for (int i = 0; i < n; ++i) std::printf("%u\n", rng.next());
+    return 0;
+}
+
+static const char *kRaces[] = {"norace", "human", "elf", "dwarf", "gnome", "hobbit"};
+static const char *kAligns[] = {"unalign", "good", "neutral", "evil"};
+static const char *kClasses[] = {"FIGHTER", "MAGE", "PRIEST", "THIEF",
+                                 "BISHOP", "SAMURAI", "LORD", "NINJA"};
+
+static int cmdRoll(int argc, char **argv) {
+    if (argc < 5) { std::puts("roll <seed> <race> <align>"); return 2; }
+    u32 seed = u32(std::strtoul(argv[2], nullptr, 0));
+    Race race = Race::Human;
+    for (int i = 0; i < 6; ++i) if (argv[3] == std::string(kRaces[i])) race = Race(i);
+    Align al = Align::Good;
+    for (int i = 0; i < 4; ++i) if (argv[4] == std::string(kAligns[i])) al = Align(i);
+
+    Rng rng(seed);
+    Character c;
+    c.name = "ROLLED";
+    c.race = race;
+    c.align = al;
+    raceBaseAttrs(race, c.attrib);
+    int base[ATTR_COUNT];
+    raceBaseAttrs(race, base);
+    int bonus = rollBonusPoints(rng);
+
+    // demo point spend: round-robin over the six attributes, cap 18
+    int spent = bonus;
+    for (int k = 0; spent > 0; k = (k + 1) % ATTR_COUNT)
+        if (c.attrib[k] < 18) { c.attrib[k]++; spent--; }
+
+    bool elig[8];
+    classEligibility(c.attrib, al, elig);
+    for (int cls = 7; cls >= 0; --cls)          // prefer the fanciest class
+        if (elig[cls]) { c.cls = Class(cls); break; }
+
+    c.age = rollAge(rng);
+    c.gold.v = rollGold(rng);
+    c.hpMax = c.hpLeft = rollHp(c.cls, c.attrib[VIT], rng);
+    startingSpells(c);
+
+    std::printf("seed 0x%08x  race %s  align %s   bonus points %d\n",
+                seed, kRaces[int(race)], kAligns[int(al)], bonus);
+    std::printf("  base    STR %2d  IQ %2d  PIE %2d  VIT %2d  AGI %2d  LCK %2d\n",
+                base[STR], base[IQ], base[PIETY], base[VIT], base[AGI], base[LUCK]);
+    std::printf("  +demo   STR %2d  IQ %2d  PIE %2d  VIT %2d  AGI %2d  LCK %2d\n",
+                c.attrib[STR], c.attrib[IQ], c.attrib[PIETY],
+                c.attrib[VIT], c.attrib[AGI], c.attrib[LUCK]);
+    std::printf("  eligible:");
+    for (int i = 0; i < 8; ++i) if (elig[i]) std::printf(" %s", kClasses[i]);
+    std::printf("\n  -> %s  age %d wk (%.1f yr)  gold %lld  HP %d\n",
+                kClasses[int(c.cls)], c.age, c.age / 52.0,
+                (long long)c.gold.v, c.hpMax);
+    if (c.mageSpells[1])   std::printf("  knows HALITO, KATINO (2 mage casts)\n");
+    if (c.priestSpells[1]) std::printf("  knows DIOS, BADIOS (2 priest casts)\n");
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) return usage();
     std::string cmd = argv[1];
+    if (cmd == "rng") return cmdRng(argc, argv);
+    if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

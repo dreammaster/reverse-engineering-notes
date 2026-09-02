@@ -70,11 +70,17 @@ Decided direction (2026-09-02):
 - [x] Data layer, verified byte-identical to the Python tools:
       `wiz/ucsd_volume` (mount `.DSK`), `wiz/string_pool` (`ASCII.KRN`),
       `wiz/scenario` (TOC + record grid), `wiz/types` (`WizLong`, enums).
-- [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) filled in
-      per the +289 layout; maze bit-packing validated vs a known map.
+- [~] `ROLLER` rules ported — `engine/wiz/rng.h` (the Apple LFSR RANDOM),
+      `engine/wiz/roller.h` (race base attrs, `classEligibility` = GTCHGLST,
+      bonus-point roll, HP/gold/age rolls, starting spells), `engine/wiz/
+      character.h`. `wiz1 roll <seed> <race> <align>` demo. Still TODO: the
+      208-byte `TCHAR` (de)serialiser + the interactive menu flow.
+- [ ] Cross-check `rng.h` against the running SYSTEM.INTERP (exact sequence).
+- [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
+      +289 layout; maze bit-packing validated vs a known map.
 - [ ] Platform layer: framebuffer + input abstraction (SDL now, `OSystem` later).
-- [ ] Port in gameplay order: `ROLLER` → `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D
-      view) → `COMBAT` family → `REWARDS` → `SPECIALS` → save/restore.
+- [ ] Continue: `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D view) → `COMBAT` family
+      → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine
