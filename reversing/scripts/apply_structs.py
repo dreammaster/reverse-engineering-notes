@@ -3626,7 +3626,10 @@ struct GameState {
                             // "char walkable_areas_on[...]; short screen_flipped; short
                             // offsets_locked;" (acruntim.h:556-558) with zero slack. Directly
                             // confirmed via `main`'s init block: word_4EF234=0 matches 2011's
-                            // "play.screen_flipped=0;" (AC.CPP:26331) exactly.
+                            // "play.screen_flipped=0;" (AC.CPP:26331) exactly. Further WRITE-
+                            // side confirmation via FlipScreen (already matched): writes
+                            // `amount` directly here, matching source's own
+                            // "play.screen_flipped=amount;" exactly.
   short offsets_locked;    // +0x81E, high confidence: originally found via sub_40AAE3 zeroing
                             // it immediately after bg_frame_locked (matching source's exact
                             // adjacent assignment order), and its GameState membership -- left

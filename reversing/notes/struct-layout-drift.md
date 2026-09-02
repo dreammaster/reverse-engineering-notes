@@ -10003,3 +10003,34 @@ literal-argument match) and `wouttext_outline` (`sub_413635`, a call-
 shape match only -- its own internal body, which in 2011 handles font-
 outline/speech-shadow rendering, wasn't independently traced this
 round, kept at medium-high confidence pending that).
+
+### `StringToInt`/`StrGetCharAt`/`IsSoundPlaying`/`FlipScreen`: two trivial closures, and a real fast-forward gap in `IsSoundPlaying`
+
+`StringToInt`/`StrGetCharAt` close with zero effort -- one-line/one-
+check bodies, exact matches to 2011's own trivial implementations
+(`AC.CPP:15365-15373`), nothing further to say.
+
+`FlipScreen` closes just as cleanly but with more payoff: it writes
+directly to the already-confirmed `GameState.screen_flipped`@+0x81C
+(`0x4EEA18+0x81C=0x4EF234`, zero slack), a WRITE-side confirmation for
+a field that had only ever been confirmed via its startup zero-init
+before now. Exact match to 2011's own three-line function
+(`AC.CPP:17545-17548`), zero drift.
+
+`IsSoundPlaying` is the interesting one. It checks only the already-
+established single sound-effect-channel handle (`dword_523220`) and
+its `done`@+0x04 field directly -- the expected single-channel-
+predecessor shape, consistent with `PlaySound`'s own design from
+earlier this project, in place of 2011's loop over a `channels[]`
+array (`AC.CPP:5983-5993`). But 2011's version ALSO has a leading
+`"if(play.fast_forward) return 0;"` guard that this build's version
+lacks entirely -- no such check exists anywhere in the function. This
+means `IsSoundPlaying()` can genuinely return `true` during a fast-
+forwarded sequence in this build, where 2011 always reports `false`
+regardless of actual channel state. Unlike most of this session's
+"confirmed absent" findings, which are invisible internal bookkeeping
+differences, this one is directly observable to any script that polls
+`IsSoundPlaying()` during a skip -- joining `UpdatePalette`'s own
+earlier fast-forward-related finding as a second confirmed instance of
+this build simply not having fast-forward-awareness baked into a
+function that 2011 later added it to.

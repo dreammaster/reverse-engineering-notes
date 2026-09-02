@@ -2782,6 +2782,18 @@ disassembly work.
   just a later feature. Two bonus matches: `wtexttransparent` (exact
   `TEXTFG=0` argument match) and `wouttext_outline` (call-shape only,
   its own body not traced).
+- **`FlipScreen` gives `screen_flipped` its first write confirmation;
+  `IsSoundPlaying` is missing fast-forward awareness.** `StringToInt`/
+  `StrGetCharAt` close trivially, zero drift. `FlipScreen` writes
+  `GameState.screen_flipped` directly (previously confirmed only via
+  its startup zero-init), exact match otherwise. `IsSoundPlaying`
+  checks only the established single sound-effect channel (the usual
+  single-channel-predecessor shape) — but 2011's leading
+  `if(play.fast_forward) return 0;` guard is confirmed absent, so this
+  build can report a sound playing during a skipped/fast-forwarded
+  sequence where 2011 always says no — a second confirmed instance of
+  fast-forward-awareness missing from a function 2011 later added it
+  to (after `UpdatePalette`'s own earlier finding).
 
 ## Third-party library identification (Task #10)
 

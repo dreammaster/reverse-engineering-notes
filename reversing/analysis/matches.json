@@ -817,7 +817,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-call body: \"return atoi(stino);\" -- exact match to 2011's entire function body (AC.CPP:15365-15367), zero drift."
   },
   {
     "kind": "function",
@@ -827,7 +827,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Bounds-checks posn against [0,strlen(strin)) via the already-matched strlen, returning 0 if out of range, else the character at that offset (sign-extended). Exact match to 2011's own \"if((posn<0)||(posn>=(int)strlen(strin))) return 0; return strin[posn];\" (AC.CPP:15369-15373), zero drift."
   },
   {
     "kind": "function",
@@ -847,7 +847,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Returns true iff the already-established sound-effect channel handle (dword_523220) is non-null AND its already-confirmed SOUNDCLIP.done@+0x04==0 -- matching 2011's own per-channel check, \"(channels[i]!=NULL) && (channels[i]->done==0)\", but checking only this build's ONE single sound-effect channel directly rather than looping over 2011's channels[]/numSoundChannels array (AC.CPP:5983-5993) -- the usual single-channel-predecessor pattern, consistent with PlaySound's own design. DRIFT: 2011's leading \"if(play.fast_forward) return 0;\" early-exit is CONFIRMED ABSENT -- no such check exists anywhere in this function, meaning IsSoundPlaying() can return true during a fast-forwarded sequence in this build, where 2011 always reports false. A real, player/script-visible behavioral difference for any script that polls this during a skip."
   },
   {
     "kind": "function",
@@ -1027,7 +1027,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates amount in [0,3] (quitting \"!FlipScreen: invalid argument (0-3)\" otherwise), then writes it directly to the already-confirmed GameState.screen_flipped@+0x81C (0x4EEA18+0x81C=0x4EF234, zero slack) -- a WRITE-side confirmation of that field, previously only confirmed via its startup zero-init. Exact, decisive match to 2011's own \"if((amount<0)|(amount>3)) quit(...); play.screen_flipped=amount;\" (AC.CPP:17545-17548), zero drift."
   },
   {
     "kind": "function",
