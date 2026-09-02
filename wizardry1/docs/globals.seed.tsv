@@ -1,0 +1,35 @@
+# Hand-verified DOS global word -> name/meaning.  conf=manual (kept verbatim).
+# Merged into docs/globals.tsv by tools/globals.py gen.
+# word	name	conf	note
+3	INCHAR	manual	input char; read ~41x, written by GETKEY; consts CR/'0'/'A'
+4	PARTYCNT	manual	party size; most-read global (86x); loop bound "0..PARTYCNT-1"
+14	CACHE_LRU	manual	MRU list head for the string cache; STRINIT:=NIL, GETSTR prepends
+16	BACKGND	manual	main screen window record; taken by-ref 54x; alloc in STRINIT
+17	WINDOW1	manual	secondary window ptr; alloc in STRINIT
+18	XGOTO	manual	TXGOTO state-machine target enum; written 63x (consts 2/7/9/10)
+19	XGOTO2	manual	secondary TXGOTO target
+20	CACHEWRI	manual	boolean; GETREC:=FALSE / GETRECW:=TRUE / STRINIT:=FALSE  (Apple word 8)
+24	CACHEBL	manual	scenario block currently in IOCACHE; STRINIT:=-1 (Apple word 4)
+26	KRNBLOCK	manual	first volume block of ASCII.KRN (GetStr "SoffSet"); set by LOADSTRTREE
+27	SCNTOCBL	manual	first volume block of SCENARIO.DATA; GETREC adds it to DSKBLOCK (Apple word 5)
+44	STR_NODE	manual	GETSTR: current strTree node index
+45	STR_ROOT	manual	GETSTR: strTree root node index (= strTree[0].word[4])
+46	STR_OFFSETS	manual	ptr -> strOffsets[] (loaded from ASCII.KRN block 45)
+47	STR_TREE	manual	ptr -> strTree[] (loaded from ASCII.KRN block 51)
+48	S_CACHE_HEAD	manual	86-byte string-cache node list head
+49	S_CACHE_TAIL	manual	86-byte string-cache node list tail
+50	D_CACHE_HEAD	manual	518-byte block-cache node list head
+51	D_CACHE_TAIL	manual	518-byte block-cache node list tail
+57	HIRES400	manual	boolean: 400-line vs 200-line screen mode (picks 200/400 file prefix)
+59	HAS_EXTRAM	manual	boolean: extended RAM available (enables extra caches)
+60	CONUNIT	manual	console output unit number
+195	GBUF	manual	shared scratch string buffer; taken by-ref by 45 procs, all segments
+363	CHARACTR	manual	party = ARRAY[0..5] OF TCHAR (104 words each); Apple word 74 + 289
+987	SCNTOC	manual	TSCNTOC record (252 words); Apple word 698 + 289
+1008	SCNTOC_RECPER2B	manual	SCNTOC+21: records per 1024-byte unit [8]
+1016	SCNTOC_RECPERDK	manual	SCNTOC+29: record count per type [8]
+1024	SCNTOC_RECSIZE	manual	SCNTOC+37: record byte size per type [8]
+1032	SCNTOC_BLOFF	manual	SCNTOC+45: first block per type [8]
+1170	SCNTOC_SPELLHSH	manual	SCNTOC+183: spell name-key table
+1239	IOCACHE	manual	1024-byte scenario block buffer (512 words); Apple word 950 + 289
+1751	CHARSET	manual	64 x TCHRIMAG font-image cache (256 words); Apple word 1462 + 289

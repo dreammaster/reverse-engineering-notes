@@ -55,10 +55,13 @@ Decided direction (2026-09-02):
       loader/decipher, KANJIREA 8/10 = tree loader. Cipher:
       `plain[k] = (raw[k] - 67*(KN mod 51) - 23*k) mod 256`.
       Monster/item names wired into `tools/scenario.py`.
-- [ ] Map the ~6 tokenised quest-item names (embedded `0x77` join byte).
-- [ ] Name every segment's procs (call-graph + structure match to Apple, not
-      just number — DOS numbering drifts above ~proc 15).
-- [ ] Constant-pool / global-variable map per segment.
+- [x] Global-variable map — `tools/globals.py`, `docs/globals.md`. Key
+      finding: `DOS_word = Apple_word + 289` for word ≥ 363 (CHARACTR /
+      SCNTOC / IOCACHE / CHARSET all verified), so the record layouts come
+      for free. ~34 globals named; `pcode_dis` annotates LDO/SRO/LAO/SLDO
+      (1087 annotations across the listings).
+- [ ] Name more procs (auto-matcher + globals context; DOS numbering drifts
+      above ~proc 15) and the ~6 tokenised quest-item names (`0x77` byte).
 
 ## Phase 3 — standalone C++ engine
 

@@ -64,6 +64,31 @@ def load_procmap(path="docs/procmap.tsv"):
 def pname(segname, procnum):
     return PROCMAP.get((segname, procnum))
 
+
+GLOBALS = {}          # word -> name, from docs/globals.tsv
+GRANGES = [(363, 987, "CHARACTR", 104), (987, 1239, "SCNTOC", None),
+           (1239, 1751, "IOCACHE", None)]
+
+
+def load_globals(path="docs/globals.tsv"):
+    if not os.path.exists(path):
+        return
+    for line in open(path):
+        if line.startswith("#") or "\t" not in line:
+            continue
+        f = line.rstrip("\n").split("\t")
+        if len(f) >= 2:
+            GLOBALS[int(f[0])] = f[1]
+
+
+def gname(w):
+    if w in GLOBALS:
+        return GLOBALS[w]
+    for lo, hi, nm, stride in GRANGES:
+        if lo <= w < hi:
+            return f"{nm}+{w - lo}" if stride is None else f"{nm}[{(w-lo)//stride}]+{(w-lo)%stride}"
+    return None
+
 # opcode -> (mnemonic, operand-kind)
 OPS = {
     0x80: ("ABI", "-"), 0x81: ("ABR", "-"), 0x82: ("ADI", "-"), 0x83: ("ADR", "-"),
@@ -239,7 +264,9 @@ def decode_one(d, ip, anchor, pretty=False):
     if 0xD8 <= op <= 0xE7:
         return (f"SLDL   {op - 0xD7}" if pretty else None), "-", p
     if 0xE8 <= op <= 0xF7:
-        return (f"SLDO   {op - 0xE7}" if pretty else None), "-", p
+        g = gname(op - 0xE7)
+        return (f"SLDO   {op - 0xE7}" + (f"  ; {g}" if pretty and g else "")
+                if pretty else None), "-", p
     if 0xF8 <= op <= 0xFF:
         return (f"SIND   {op - 0xF8}" if pretty else None), "-", p
 
@@ -250,7 +277,9 @@ def decode_one(d, ip, anchor, pretty=False):
 
     if kind == "big":
         v, p = rd_big(d, p)
-        return (f"{mnem:<6} {v}" if pretty else None), "-", p
+        g = gname(v) if mnem in ("LDO", "SRO", "LAO") else None
+        return (f"{mnem:<6} {v}" + (f"  ; {g}" if pretty and g else "")
+                if pretty else None), "-", p
 
     if kind == "ub":
         v = d[p]
@@ -392,6 +421,7 @@ def main(argv):
         print(__doc__)
         sys.exit(2)
     load_procmap()
+    load_globals()
     {"segments": cmd_segments, "procs": cmd_procs, "dis": cmd_dis,
      "dis-all": cmd_dis_all}[argv[0]](argv[1:])
 
