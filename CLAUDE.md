@@ -2769,6 +2769,19 @@ disassembly work.
   Shared drift: 2011's leading `if(nloops<1) quit(...)` bounds check is
   CONFIRMED ABSENT from all three — calling any of them with `0` or a
   negative loop count has no guard against it in this build.
+- **`RawDrawLine`/`RawDrawTriangle` close as near-exact Allegro-backed
+  matches; `RawPrint` shows this build predates a targeted 2011
+  bugfix.** The first two draw onto `ebscene[bg_frame]` with the
+  already-confirmed `raw_color`, matching 2011 with zero drift except
+  for the now-familiar absent `raw_modified[]`/`invalidate_screen()`
+  calls. `RawPrint` calls `wtextcolor(raw_color)` directly — but 2011's
+  own source deliberately avoids exactly that call, with a comment
+  explaining it causes a 16→32 color conversion bug, plus a dedicated
+  hi-color-on-8-bit warning branch. Neither the workaround nor the
+  warning exists here — this build predates the bug's discovery, not
+  just a later feature. Two bonus matches: `wtexttransparent` (exact
+  `TEXTFG=0` argument match) and `wouttext_outline` (call-shape only,
+  its own body not traced).
 
 ## Third-party library identification (Task #10)
 

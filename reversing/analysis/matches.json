@@ -597,7 +597,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Formats text via the already-matched GetTranslation/vsprintf, then calls the already-established wtextcolor (sub_401F62) with the already-confirmed raw_color -- a REAL DRIFT: 2011's own RawPrint explicitly AVOIDS calling wtextcolor here, with its own source comment stating why (\"don't use wtextcolor because it will do a 16->32 conversion\"), instead assigning \"textcol=play.raw_color;\" directly as a plain global write (AC.CPP:14450-14451) -- this build calls wtextcolor unconditionally, predating whatever hi-color-conversion concern later motivated 2011's workaround (2011's own follow-up special-case, \"if (bitmap_color_depth(abuf)<=8 && raw_color>255) {wtextcolor(1); debug_log(...);}\", is also CONFIRMED ABSENT here -- no such branch exists). Points abuf at ebscene[bg_frame] (the established RAW_START pattern) via the newly-matched wtexttransparent(0) (sub_401B02, see its own entry -- TEXTFG=0 literal match), then calls the newly-matched wouttext_outline (sub_413635, call-shape match only, see its own entry) with the already-confirmed normal_font@+0x894 (0x4EEA18+0x894=0x4EF2AC, zero slack) -- matching 2011's own \"wouttext_outline(xx,yy,play.normal_font,displbuf);\" call shape exactly. DRIFT: same invalidate_screen()/mark_current_background_dirty() absence pattern as RawDrawLine/RawDrawTriangle."
   },
   {
     "kind": "function",
@@ -617,7 +617,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Scales all 4 coordinates by the resolution multipliers, then draws a \"thick enough to look the same at all resolutions\" line via a nested loop (0..mult_x, 0..mult_y) of the already-matched Allegro line() calls, each offset by the loop indices, onto ebscene[bg_frame] (the already-established RAW_START-macro pattern) using the already-confirmed GameState.raw_color@+0x938 (0x4EEA18+0x938=0x4EF350, zero slack) -- an exact match to 2011's own \"for(ii..){for(jj..) line(thisroom.ebscene[play.bg_frame],fromx+ii,fromy+jj,tox+ii,toy+jj,play.raw_color);}\" (AC.CPP:14563-14573), with this build's loop bounds read directly from the resolution-multiplier globals rather than a get_fixed_pixel_size(1) function call -- functionally equivalent, a simpler direct-global-read predecessor. DRIFT: 2011's leading \"play.raw_modified[play.bg_frame]=1;\" write and trailing \"invalidate_screen(); mark_current_background_dirty();\" calls are ALL CONFIRMED ABSENT -- no such writes/calls exist anywhere in this function, consistent with (and a further confirmation of) raw_modified[]'s already-established absence from this build's GameState, and the broader predates-invalidation-machinery pattern found repeatedly elsewhere this session."
   },
   {
     "kind": "function",
@@ -627,7 +627,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Scales all 6 coordinates by the resolution multipliers, then calls the newly-matched Allegro triangle() (sub_43E7D0, see its own entry) with ebscene[bg_frame] and the already-confirmed raw_color -- an exact, decisive match to 2011's own \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14595-14604). DRIFT: same as RawDrawLine -- 2011's leading raw_modified[] write and trailing invalidate_screen()/mark_current_background_dirty() calls are all CONFIRMED ABSENT here too, a further, independent confirmation of both already-established absences."
   },
   {
     "kind": "function",
@@ -5945,5 +5945,32 @@
     "is_library": true,
     "confidence": "high",
     "evidence": "Allegro library API function, called from load_new_room (already matched) as \"set_color_depth(8);\" -- matching 2011's own \"set_color_depth(8);\" (AC.CPP:4063) at the exact same position (right before displayed_room=newnum, see load_new_room's own updated entry). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401B02",
+    "new_name": "wtexttransparent",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 711,
+    "confidence": "high",
+    "evidence": "Called from RawPrint (already matched, see its own entry) as \"sub_401B02(0);\" -- matching 2011's \"wtexttransparent(TEXTFG);\" (AC.CPP:14453) where TEXTFG=0 (Common/Wgt2allg.h:62), an exact literal-argument match. Declared at Wgt2allg.h:711, not chased into its own body this round."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_413635",
+    "new_name": "wouttext_outline",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 12612,
+    "confidence": "medium-high",
+    "evidence": "Called from RawPrint (already matched, see its own entry) with 4 arguments (x,y,font,text) matching 2011's own \"wouttext_outline(xx,yy,play.normal_font,displbuf);\" (AC.CPP:14459) call shape exactly. Named by call-shape/role match this round, NOT independently traced through its own body -- 2011's own version (AC.CPP:12612-...) has real internal complexity (font-outline/speech-text-shadow handling) that may or may not be present in this build's simpler-era implementation; confidence kept at medium-high pending a dedicated internal read."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43E7D0",
+    "new_name": "triangle",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "Allegro library API function. Called from RawDrawTriangle (already matched) with 8 arguments (bitmap,x1,y1,x2,y2,x3,y3,color) -- an exact match to Allegro's own triangle() signature (declared in libsrc/allegro-4.2.2/include/allegro/draw.h) and to 2011's own call, \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14601). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule."
   }
 ]

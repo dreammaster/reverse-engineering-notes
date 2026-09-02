@@ -9959,3 +9959,47 @@ against it at all, where 2011 explicitly rejects it -- a small but
 real, confirmable difference worth carrying into the reconstruction
 rather than assuming these three functions are otherwise-identical
 matches.
+
+### `RawDrawLine`/`RawDrawTriangle`/`RawPrint`: two clean Allegro matches, and a genuine "predates a bugfix" finding
+
+`RawDrawLine` and `RawDrawTriangle` (both previously bare) close as
+decisive, near-exact matches to 2011. `RawDrawLine` draws a
+deliberately-thick line (a nested loop of the already-matched Allegro
+`line()`, one call per sub-pixel offset, "thick enough to look the
+same at all resolutions") using the already-confirmed
+`raw_color`@+0x938 (`0x4EEA18+0x938=0x4EF350`, zero slack) onto
+`ebscene[bg_frame]` -- matching 2011's own doubly-nested loop exactly,
+just reading the resolution multipliers directly rather than through
+a `get_fixed_pixel_size(1)` call. `RawDrawTriangle` is even cleaner: a
+single call to Allegro's own `triangle()` (a newly-matched library
+function, `sub_43E7D0`, an exact 8-argument signature match) with the
+same `ebscene[bg_frame]`/`raw_color` pair. Both give `raw_color` and
+`raw_modified[]`'s already-established absence (2011's leading
+`play.raw_modified[play.bg_frame]=1;` write, and its trailing
+`invalidate_screen()`/`mark_current_background_dirty()` calls, are all
+CONFIRMED ABSENT in both functions) further, independent confirmation.
+
+`RawPrint` closes too, and turns up something more interesting than a
+routine drift: it calls the already-established `wtextcolor` directly
+with `raw_color` -- but 2011's own `RawPrint` (`AC.CPP:14444-14464`)
+explicitly does NOT do that. Its own source comment says why: `"// "
+"don't use wtextcolor because it will do a 16->32 conversion"`,
+assigning `textcol=play.raw_color;` as a plain global write instead,
+and then has an entire follow-up special case handling the specific
+failure mode that workaround exists for (`"if "
+"(bitmap_color_depth(abuf)<=8 && play.raw_color>255) {wtextcolor(1); "
+"debug_log(...);}"`, warning when a hi-color raw-color value is used
+on an 8-bit background). Neither the workaround nor the special-case
+warning branch exists in this build -- it just calls `wtextcolor`
+unconditionally, predating whatever specific bug or limitation later
+motivated 2011's careful avoidance of that exact call in this exact
+context. This is a genuine "this build predates a targeted bugfix,"
+not merely "this build lacks a later feature" -- worth flagging for
+the eventual reconstruction, since a real color-depth-conversion glitch
+in raw-print text color plausibly exists in this build that 2011
+deliberately worked around. Also picks up two more function matches
+along the way: `wtexttransparent` (`sub_401B02`, an exact `TEXTFG=0`
+literal-argument match) and `wouttext_outline` (`sub_413635`, a call-
+shape match only -- its own internal body, which in 2011 handles font-
+outline/speech-shadow rendering, wasn't independently traced this
+round, kept at medium-high confidence pending that).

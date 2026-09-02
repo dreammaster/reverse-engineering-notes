@@ -3732,7 +3732,9 @@ struct GameState {
                             // included, dword_51D2EC=game.numfonts already confirmed. Sits
                             // with ZERO gap immediately after speech_volume, matching 2011's
                             // exact declared adjacency "sound_volume,speech_volume;
-                            // normal_font, speech_font;" with zero drift.
+                            // normal_font, speech_font;" with zero drift. Further READ-side
+                            // confirmation via RawPrint (already matched): passed directly to
+                            // the newly-matched wouttext_outline call.
   int speech_font;               // +0x898, high confidence (UPGRADED from medium-high): the
                             // pre-existing IDA name `fontid` turned out to be genuine, not
                             // another mislabeling artifact like `ifnum`/`play_want_music` --
@@ -3801,6 +3803,10 @@ struct GameState {
                             // (AC.CPP:14434) exactly. Sits with ZERO gap immediately before
                             // filenumbers below, CONFIRMING 2011's declared
                             // raw_modified[MAX_BSCENE] is ABSENT here -- no room for it at all.
+                            // Further READ-side confirmations via RawDrawLine/RawDrawTriangle/
+                            // RawPrint (all already matched) -- all three also independently
+                            // reconfirm raw_modified[]'s absence (none writes to it) and the
+                            // broader predates-invalidate_screen()-machinery pattern.
   short filenumbers[20];        // +0x93C..0x964 (40 bytes), high confidence: pre-existing IDA
                             // name (`play_filenumbers`), capacity confirmed via
                             // `ListBoxSaveGameList` (already matched)'s own sort/swap loop
