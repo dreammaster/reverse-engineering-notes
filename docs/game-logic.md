@@ -313,17 +313,23 @@ heal cost         = INT( hpRestored * (RND(1) + 2) / 3 )  gold
 
 Prices scale with **party level** — a soft anti-hoarding curve.
 
-### Town bank — [`twndr_services.bas`](../recovered/twndr_services.bas) — *partial*
+### Town bank — [`twndr_services.bas`](../recovered/twndr_services.bas) — *derived*
 
 Balance in `ds:1AC2:1AC4` (the CHAR.DAT "experience" slot). Interest
 accrues **per visit** — `twndr.asm:4923`:
 ```
-interest = MIN( 1500, MIN(5000, balance) * daysElapsed / K )
+interest = MIN( 1500, MIN(5000, balance) * daysElapsed \ 999 )
 balance += interest
 ```
-Deposit / withdraw move gold 1:1. (*partial*: `K` = `ds:2C3C`, runtime —
-~1000 per the guide's "1 gold per 1000 per day".) `SpendGold(amount)` =
-`partyGold -= amount` is the shared vendor helper.
+`\ 999` is `ds:2C3C`, an **8-byte DOUBLE constant = 999.0** (the bank math
+is done in double precision). `daysElapsed` = `S4(36)`, fed from `ds:1AF4`
+(the per-step terrain-wear accumulator — a distance-travelled proxy, not
+literal days). Deposit / withdraw move gold 1:1.
+
+**Moneylender** (a separate NPC): a flat 50 % loan — borrow 200 → owe 300,
+due in ~120 "days". Computed at loan time.
+
+`SpendGold(amount)` = `partyGold -= amount` is the shared vendor helper.
 
 ### DUN chests — [`dun_chest.bas`](../recovered/dun_chest.bas) — *derived*
 
@@ -373,44 +379,36 @@ progress. **Per-bit meaning is still an open cross-module trace.**
 
 ---
 
-## 8. What still needs a DOSBox dump
+## 8. Constants — all resolved
 
-Every runtime-loaded constant below reads `0` in the EXE (set from
-map / creature / region data at startup). A faithful port needs their
-real values — one memory dump each while the relevant screen is active:
+The formulas above once had ~7 "runtime-loaded" constants (`0` in the EXE
+at a naïve read). Every one turned out to be static — an `OUTDAT.DAT`
+byte, a `*.EXE` constant read at the wrong width, or a formula. **No
+DOSBox dump is needed to implement the mechanics.**
 
-### OUT region encounter gates — `ds:2092` / `ds:2096`
+| earlier "runtime" symbol | resolution |
+|---|---|
+| `ds:21FC` (player to-hit divisor) | `A1(creatureIndex) \ 256` — the HIGH byte |
+| `ds:2264` (monster attack stat) | `A1(creatureIndex) AND 0xFF` — the LOW byte |
+| `S4(12)` (CreatureAttack mitigation) | a persistent character word — `0` in the current save |
+| `ds:21CE` / `ds:2192` (DUN) | `updateLevelState` formulas (§3b) |
+| `ds:226E` (CASDR difficulty) | `3.5` castle / `1.0` fort — constants `ds:31A8` / `ds:25B0` |
+| `ds:2C3C` (bank divisor) | an 8-byte DOUBLE = `999.0` (a 32-bit read misses it) |
 
-`BeginEncounterView` reads two per-region probabilities from these
-value-stack scratch slots. They are set per map area (mechanism not yet
-found — not raw floats in `OUTM*.BSV`). Samples so far (DOSBox):
+**OUT region encounter gates `ds:2092` / `ds:2096`** — these are still
+worth a per-region table for tuning. `BeginEncounterView` reads two
+per-map probabilities from these slots; the load mechanism isn't pinned
+(not raw floats in `OUTM*.BSV`). Samples so far:
 
 | where | `ds:2092` (P mid-tier) | `ds:2096` (anti-weak) |
 |---|---|---|
 | near the museum (start area) | 0.00 | 0.00 |
-| far west (after combat) | 0.22 | 0.40 |
+| far west | 0.22 | 0.40 |
 | far northwest | 0.35 | 0.55 |
 
-Higher = tougher (more guaranteed mid-tier, fewer weak creatures). The
-start area is all-easy (0/0 → ~50 % weak). A port can seed a small
-distance-from-start table from a handful more samples; not raw-number
-critical.
+Higher = tougher (more guaranteed mid-tier, fewer weak). The start area is
+all-easy (0/0 → ~50 % weak). Not raw-number critical — a port can seed a
+distance-from-start curve and tune.
 
-### Bank interest divisor — `ds:2C3C` (TWNDR)
-
-`0` in the EXE, referenced once (`twndr.asm:4963`, `rtm_FF48` = a LONG
-`\` op), and **never written by TWNDR code**. Either it's a startup
-`DATA`/`READ` value in an un-coerced region, or bank interest is
-effectively disabled (`\0`). **One DOSBox dump of `ds:2C3C` (as int32)
-while in a town** settles it. If it reads 0, implement interest per the
-guide (~1 gold / 1000 / day) as a design choice, or omit it.
-
-### Everything else resolved / not blocking
-
-`ds:2264` = `A1 AND 0xFF`, `ds:21FC` = `A1 \ 256`, `ds:21CE` / `ds:2192`
-(DUN) = `updateLevelState` formulas, `S4(12)` = a persistent character
-word (0), `ds:226E` (CASDR) = 3.5 castle / 1.0 fort. Operand order for
-`/` is confirmed by the to-hit and damage traces.
-
-Also open (not blocking): `CastSpell` (DUN), the casino payout math, mail
-routes, the per-bit quest-flag semantics.
+Also open (not blocking): `CastSpell` (DUN), the casino payout math, the
+per-bit quest-flag semantics.

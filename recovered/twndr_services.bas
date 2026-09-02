@@ -39,11 +39,13 @@ SUB Bank                                              ' asm: twndr.asm:5060+ (to
 ' "CONVIENENCE BANK" -- 1. DEPOSIT FUNDS  2. WITHDRAW FUNDS  3. BALANCE INQUIRY
 
     ' ---- interest accrues on every visit -------------------------- asm:4923-5000
-    '   interest = MIN(1500, MIN(5000, bankBalance) * daysElapsed / K)
-    '   K (ds:2C3C) is loaded at runtime -- ~1000 per the game guide
-    '   ("about 1 gold per 1000 per day").
+    '   interest = MIN(1500, MIN(5000, bankBalance) * daysElapsed \ 999)
+    '   ds:2C3C is an 8-BYTE DOUBLE constant = 999.0 (bank math is double
+    '   precision; a 4-byte read of it is 0, which misled an earlier note).
+    '   daysElapsed = S4(36), fed from ds:1AF4 (the terrain-wear
+    '   accumulator -- a distance-travelled proxy, not literal days).
     capped   = bankBalance : IF capped > 5000 THEN capped = 5000          ' asm:4929-4941
-    interest = capped * daysElapsed \ interestDivisor                     ' asm:4944-4970 '??
+    interest = capped * daysElapsed \ 999                                 ' asm:4944-4970
     IF interest > 1500 THEN interest = 1500                               ' asm:4974-4986
     bankBalance = bankBalance + interest                                  ' asm:4991-5000
 
@@ -83,11 +85,12 @@ END SUB
 ' ==========================================================================
 '  SOLID
 '   * bank balance lives in ds:1AC2:1AC4 (the CHAR.DAT "experience" slot)
-'   * interest per visit = MIN(1500, MIN(5000, balance) * daysElapsed / K)
+'   * interest per visit = MIN(1500, MIN(5000, balance) * daysElapsed \ 999)
+'     (ds:2C3C = an 8-byte DOUBLE 999.0 ; daysElapsed = S4(36) <- ds:1AF4,
+'      the terrain-wear / distance accumulator)
+'   * moneylender = flat 50% loan (borrow 200 -> owe 300), computed once
 '   * SpendGold(amount): partyGold -= amount   (shared by every vendor)
 '   * deposit/withdraw move gold between partyGold and bankBalance 1:1
 '
 '  OPEN
-'   * interestDivisor K (ds:2C3C, runtime) -- trace it
-'   * daysElapsed source (ds:1AF4 -> S4(36))
 '   * the shop counters' price rolls, guard combat, mail routes, robberyEvent

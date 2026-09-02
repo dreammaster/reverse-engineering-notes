@@ -854,11 +854,15 @@ there for the port. See also [recovered/README.md](../recovered/README.md).
 - CHAR.DAT `1AEA`/`1AEC` = equipped armour slot/id; `1AFC`/`1AFE` =
   equipped weapon slot/id (see file-formats.md).
 
-**Depth items still open** — see [game-logic.md §8](game-logic.md#8-what-still-needs-a-dosbox-dump):
-- [ ] runtime-loaded constants (region encounter gates, bank `K`, castle
-      `difficulty`, `creatureAtk` / `monsterAtk`, `S4(12)`) — one DOSBox
-      memory dump each.
-- [ ] operand order for `-` / `/` where `'?ord`-tagged.
+**Constants — ALL resolved statically** (2026-09-02). The formulas' ~7
+"runtime-loaded" constants each turned out to be an `OUTDAT.DAT` byte, a
+`*.EXE` constant read at the wrong width (`ds:2C3C` is an 8-byte double =
+999.0; `ds:226E` = 3.5 castle / 1.0 fort), or a formula. Operand order
+confirmed by the verified to-hit + damage traces. No DOSBox dumps needed
+to implement the mechanics. `ds:2092`/`ds:2096` (OUT region encounter
+gates) still merit a per-region table for tuning — 3 samples so far.
+
+**Still open** (not blocking a first implementation):
 - [ ] `CastSpell` (DUN), `enterOverworld` / `loadOverworldData` (OUT),
       casino payouts, mail routes, per-bit quest-flag semantics.
 

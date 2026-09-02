@@ -10,9 +10,9 @@ for the C++/ScummVM port.
 
 **For the reimplementation, read [`../docs/game-logic.md`](../docs/game-logic.md)
 first** — it consolidates every verified/derived formula from these files
-with confidence levels and the list of runtime constants still needing a
-DOSBox dump. These `.bas` files are the function-level source of truth
-behind it.
+with confidence levels. Every constant is resolved; no DOSBox dumps are
+needed to implement the mechanics. These `.bas` files are the
+function-level source of truth behind it.
 
 ## Confidence markers
 
@@ -98,10 +98,10 @@ When dumping the value stack in DOSBox, read `[ds:111C]` for the top value
 and `[ds:111C - 12*k]` for the k-th-from-top **node header** (its value is
 at that header's pointer field).
 
-**Still `'?ord`:** the compare direction (`FF1F` + `jb`/`jnb`), and whether
-a stack-stack op sees the deeper or the top operand as its left side (only
-matters for `-` / `/`, and `FF49` vs `FF47` / `FF53` already encode the two
-directions).
+**Operand order — resolved:** the verified OUT to-hit
+(`FF47` = deeper ÷ top) and damage (`FF49` imm = `TOS ÷ imm`) traces pin
+it. `FF49` vs `FF47` / `FF53` vs `sub_21A02` already encode the two
+directions of `/` and `-`.
 
 **String / misc thunks:** `basStrAssign(dst,src)` = `dst$ = src$`;
 `basStrConcat(a,b)` = `a$ + b$`; `rtm_D2(fmt,val)` = `fmt$ + STR$(val)`;
@@ -131,11 +131,12 @@ anchor). The combat pool it prints is quoted at the top of
 ## OUT.EXE
 
 - [x] `out_combat.bas` — `RollEncounterMod`, `ComputeEquippedPower`,
-      `SpellAttack`, `ResolvePlayerAttack`, `CreatureDefeated`. All
-      melee/spell formulas verified or derived.  to-hit =
-      `Dex^0.8 * (weaponPower+18) / (creatureHP*11)` — confirmed by two
-      independent DOSBox traces (the `^` exponent is the constant `ds:2E3A`
-      = 0.8, not a derived term).
+      `SpellAttack`, `ResolvePlayerAttack`, `CreatureDefeated`,
+      `CreatureAttack`. All melee/spell formulas verified or derived.
+      to-hit = `Dex^0.8 * (weaponPower+18) / (creatureDefense*11)` —
+      confirmed by two DOSBox traces (`^0.8` is the constant `ds:2E3A`).
+      `creatureDefense` = `A1(creature) \ 256`; `creatureAtk` (monster
+      damage) = `A1(creature) AND 0xFF`.
 - [x] `out_encounter.bas` — `CreatureApproach`, `BeginEncounterView`
 - [x] `out_economy.bas` — `ProvisionerShop`, `ShopConfirmBuy` (prices)
 - [x] `out_movement.bas` — `DoMovement` (per-step tick + food-poisoning)
@@ -175,8 +176,9 @@ anchor). The combat pool it prints is quoted at the top of
 
 - [x] `twndr_services.bas` — `SpendGold`, `Bank`.  **Correction:** the
       CHAR.DAT "experience" dword (`ds:1AC2:1AC4`) is the **bank balance**;
-      LotA has no XP stat.  Interest = `MIN(1500, MIN(5000, balance) *
-      daysElapsed / K)` per visit.
+      LotA has no XP stat.  Interest =
+      `MIN(1500, MIN(5000, balance) * daysElapsed \ 999)` (`ds:2C3C` is an
+      8-byte double = 999.0).  Moneylender = flat 50% loan.
 - [ ] shop counters, guard fight, item-grab, mail routes, robbery event
 
 ## CASDR.EXE
