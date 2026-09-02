@@ -9808,3 +9808,27 @@ CONFIRMED ABSENT here; this build directly nudges the one already-
 playing sound-effect channel instead, the same single-channel-
 predecessor shape already seen throughout this project's audio work
 (`PlaySound`'s own design being the clearest earlier precedent).
+
+### `GetObjectX`/`GetObjectY`/`IsObjectAnimating`/`IsObjectMoving` close as a clean four-function sweep
+
+A quick, low-drama round after the last two rounds' self-caught
+CLAUDE.md paste mistakes -- four simple `RoomObject` getters, all
+previously bare, all exact matches to 2011 with zero drift once read.
+`GetObjectX`/`GetObjectY` return the already-confirmed `RoomObject.x`
+@+0x00/`y`@+0x04 directly after the usual `is_valid_object` check.
+`IsObjectAnimating` returns the already-confirmed `cycling`@+0x1A
+normalized to 0/1 via a branchless `neg/sbb/neg` idiom, matching
+2011's `"(objs[objj].cycling!=0)?1:0;"` exactly. `IsObjectMoving`
+returns the already-confirmed `moving`@+0x18 (a SHORT, read via
+`movsx`) compared `>0`, matching `"(objs[objj].moving>0)?1:0;"`
+exactly. No new fields, no drift, no correction needed -- a
+straightforward batch of documentation-only closures, useful mainly
+for shrinking the remaining bare-match pool rather than for any new
+finding. Worth a small standing note for future sessions reading this
+same `is_valid_object` call site: the currently-exported `.asm`'s own
+inline comment at every one of these four call sites still shows the
+STALE pre-rename `sub_4256E0` text ("confidence: medium, Unnamed
+helper..."), not the corrected `is_valid_object` identification --
+same lag as the `stop_fast_forwarding`/`remove_screen_overlay` case
+from two rounds ago. `matches.json` is current; the `.asm` text at
+these specific call sites is not, until the next re-export.

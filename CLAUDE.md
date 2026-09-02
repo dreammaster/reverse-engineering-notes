@@ -2716,6 +2716,16 @@ disassembly work.
   DRIFT: 2011's two `Game_SetAudioTypeVolume` calls (a later audio-type
   volume system) are absent — this build just nudges the one already-
   playing channel directly.
+- **A quick, clean sweep of four `RoomObject` getters.**
+  `GetObjectX`/`GetObjectY`/`IsObjectAnimating`/`IsObjectMoving` (all
+  previously bare) close as exact matches to 2011 with zero drift and
+  no new fields — a documentation-only round, useful mainly for
+  shrinking the remaining bare-match pool. Noted for future sessions:
+  the exported `.asm`'s own comments at these `is_valid_object` call
+  sites still show the stale pre-rename `sub_4256E0` text, the same
+  re-export lag already flagged for `stop_fast_forwarding`/
+  `remove_screen_overlay` — trust `matches.json` over the `.asm` text
+  at these specific sites until the next re-export.
 
 ## Third-party library identification (Task #10)
 

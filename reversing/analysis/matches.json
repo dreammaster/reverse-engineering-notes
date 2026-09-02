@@ -927,7 +927,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objj via the already-matched is_valid_object (sub_4256E0 -- NOTE: the exported .asm's own comment at this call site still shows the stale pre-rename \"confidence: medium, Unnamed helper\" text; matches.json's own sub_4256E0 entry is current), then returns the already-confirmed RoomObject.x@+0x00 directly. Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return objs[objj].x;\" (AC.CPP:16388-16391), zero drift."
   },
   {
     "kind": "function",
@@ -937,7 +937,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Mirror of GetObjectX (already matched, see its own entry for the is_valid_object staleness note): returns the already-confirmed RoomObject.y@+0x04 directly. Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return objs[objj].y;\" (AC.CPP:16397-16400), zero drift."
   },
   {
     "kind": "function",
@@ -947,7 +947,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objj via the already-matched is_valid_object, then returns the already-confirmed RoomObject.cycling@+0x1A normalized to a 0/1 boolean (via a branchless neg/sbb/neg idiom). Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return (objs[objj].cycling!=0)?1:0;\" (AC.CPP:16406-16409), zero drift."
   },
   {
     "kind": "function",
@@ -957,7 +957,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objj via the already-matched is_valid_object, then returns the already-confirmed RoomObject.moving@+0x18 (read as a SHORT via movsx) compared >0 as a 0/1 boolean. Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return (objs[objj].moving>0)?1:0;\" (AC.CPP:16415-16418), zero drift."
   },
   {
     "kind": "function",
