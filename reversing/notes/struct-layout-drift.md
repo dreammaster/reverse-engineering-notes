@@ -9860,3 +9860,49 @@ already-confirmed `GUIMain.on`@+0x90 compared `>=1`, correctly
 excluding both `on==0` (off) and the already-established `on==-1`
 `POPUP_MOUSEY` sentinel -- an exact match to 2011's own one-line
 return, zero drift.
+
+### The old bounding-box collision system: `AreObjectsColliding`/`AreCharObjColliding`/`AreCharactersColliding`
+
+A genuine architectural find, not just a match. All three collision-
+check script functions (all previously bare) turn out to have NO
+useful 2011 counterpart to diff against at the implementation level --
+2011's own versions of all three have been reduced to one-line
+delegations into a later, generic, hardware-accelerated pixel-overlap
+system (`AreThingsOverlapping`/`Character_IsCollidingWithObject`/
+`Character_IsCollidingWithChar`, built around `actsps[]`/
+`GetObjectImage()`/`gfxDriver` stretch-and-flip support -- none of
+which exist in this build). This build instead implements a genuinely
+older, purely geometric approach: a plain axis-aligned bounding-box
+(AABB) test, computed directly from each object/character's position
+and its currently-displayed sprite's width/height (via the already-
+established `spritewidth[]`/`spriteheight[]` globals, scaled by the
+resolution multipliers), with four early-exit range comparisons
+(left/right/top/bottom edges) falling through to "colliding" only if
+all four pass. Characterized at the algorithm-shape level rather than
+traced to full per-instruction precision, since there's no 2011 source
+to check individual instructions against -- but every global/field the
+algorithm touches was already independently confirmed elsewhere in
+this project, so the shape itself is on solid ground.
+
+Two smaller, genuinely new pieces fell out along the way. First,
+`AreCharObjColliding` checks the already-confirmed `RoomObject.on`
+@+0x1C `==1` before attempting any geometry (an object that's off or
+merged-into-background can't be collided with) -- a further
+confirmation of `on`'s three-state semantics from a new read site.
+Second, and more interesting: `AreCharObjColliding` also short-circuits
+on `chars[charid].room`@+0x0C (already confirmed) `!=` a bare,
+standalone global IDA displays as `newnum` -- decisively NOT the
+already-confirmed `ExecutingScript.newnum`@+0x04 field (this access has
+no `curscript`-relative indirection at all) -- plausibly this build's
+`displayed_room` equivalent (a character not in the currently-active
+room obviously can't collide with a room object), but NOT independently
+confirmed by name this round. `AreCharactersColliding`, by contrast,
+needs no such external global at all -- both characters carry their own
+`room`@+0x0C directly, so its own same-room short-circuit is a clean,
+self-contained `chars[cchar1].room != chars[cchar2].room` check,
+giving that field yet another independent confirmation route. The
+`newnum`-displayed global's real identity is left as a genuine open
+lead for a future round -- a reasonable next step would be checking
+whether any already-matched function reads/writes it under a
+name that IS independently confirmed (e.g. `new_room`'s own body,
+already matched, is the natural place `displayed_room` would get set).

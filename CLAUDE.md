@@ -2735,6 +2735,21 @@ disassembly work.
   player-visible depends on how the drawing code treats a stale
   `frame`/`loop`/`view` once `num` is set directly, not traced this
   round. `IsGUIOn` closes cleanly alongside it, zero drift.
+- **The old bounding-box collision system found**:
+  `AreObjectsColliding`/`AreCharObjColliding`/`AreCharactersColliding`
+  (all previously bare) have no useful 2011 counterpart to diff against
+  — 2011's own versions are one-line delegations into a later, hardware-
+  accelerated pixel-overlap system this build doesn't have. This build
+  instead does a plain axis-aligned bounding-box test using each
+  object/character's position and current sprite's width/height (via
+  the already-established `spritewidth[]`/`spriteheight[]` globals),
+  characterized at the algorithm-shape level since there's no 2011
+  source to verify individual instructions against. Bonus: confirms
+  `RoomObject.on==1` as a collision precondition, and surfaces an open
+  lead — `AreCharObjColliding` short-circuits on a character's room
+  against a bare global displayed as `newnum` (NOT the already-
+  confirmed `ExecutingScript.newnum` field), plausibly `displayed_room`
+  but not confirmed by name.
 
 ## Third-party library identification (Task #10)
 

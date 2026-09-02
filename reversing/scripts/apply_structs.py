@@ -2724,7 +2724,9 @@ struct RoomObject {
                             // its final act, matching 2011's own "objs[obn].on=2; // mark the
                             // sprite as merged" and the inline comment in `ObjectOff` itself
                             // ("don't change it if on==2 (merged)") -- `on` has three real values
-                            // in this build too: 0=off, 1=on, 2=merged-into-background.
+                            // in this build too: 0=off, 1=on, 2=merged-into-background. Also read
+                            // (==1 required) by AreCharObjColliding (already matched) as an
+                            // early-exit collision-precondition check.
   char flags;                       // +0x1D, high confidence: confirmed via `GetObjectAt`
                             // (already matched), immediately after `on`: "movsx edx,byte[obj+
                             // 1Dh]; and edx,1; test edx,edx; jz <hit-test-continue>" -- a bit-0

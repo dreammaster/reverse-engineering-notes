@@ -757,7 +757,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates both object numbers via the already-matched is_valid_object (sub_4256E0). NO DIRECT 2011 COMPARISON POSSIBLE: 2011's own AreObjectsColliding (AC.CPP:15060-15065) is just \"return AreThingsOverlapping(obj1+OVERLAPPING_OBJECT,obj2+OVERLAPPING_OBJECT)?1:0;\" -- delegating entirely to a later, generic hardware-accelerated pixel-overlap-testing system built around actsps[]/GetObjectImage()/gfxDriver stretch-and-flip support that doesn't exist in this build at all. This build's own implementation is architecturally a whole different, much older approach: a plain axis-aligned bounding-box (AABB) test computed directly from each object's already-confirmed x@+0x00/y@+0x04/num@+0x0C fields, looking up per-sprite width/height via the already-established spritewidth[](dword_4CD2E8)/spriteheight[](dword_4E787C) globals and scaling by the resolution multipliers -- four early-exit range comparisons (left/right/top/bottom) falling through to a match only if all four pass. A genuine pre-pixel-perfect predecessor system, not traced to full per-instruction precision but characterized at the algorithm-shape level; every global/field it touches was already independently confirmed elsewhere."
   },
   {
     "kind": "function",
@@ -767,7 +767,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objid via the already-matched is_valid_object and charid via the already-matched is_valid_character. Two early-exit short-circuits before any geometry: (1) if chars[charid].room@+0x0C (already confirmed) != a bare global displayed as \"newnum\" -- NOT the already-confirmed ExecutingScript.newnum@+0x04 field (this access has no curscript-relative indirection at all, a plain standalone global), plausibly this build's displayed_room equivalent but NOT independently confirmed by name this round -- return false (a character not currently in the active room can't be colliding with a room object); (2) if the already-confirmed RoomObject.on@+0x1C != 1 (must be genuinely visible, not off(0) or merged(2)) -- return false, a further confirmation of `on`'s three-state semantics from a new read site. The AABB geometry itself reuses the object's num-based spritewidth[]/spriteheight[] lookup (as in AreObjectsColliding) against the CHARACTER's CURRENT sprite, looked up via the already-confirmed view@+0x08/loop@+0x38/frame@+0x3A chain into the already-confirmed views[]/ViewStruct272/ViewFrame272 structures (matching the 0x8D4/0x118/0x1C strides exactly) -- a bonus reconfirmation of all three CharacterInfo fields and the views[] global from a new call chain. Same architectural note as AreObjectsColliding: 2011's own AreCharObjColliding (AC.CPP:15111-15118) delegates entirely to the later Character_IsCollidingWithObject, offering no line-level comparison."
   },
   {
     "kind": "function",
@@ -777,7 +777,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates both character numbers via the already-matched is_valid_character. Opens with a self-contained same-room short-circuit -- chars[cchar1].room@+0x0C != chars[cchar2].room @+0x0C returns false immediately -- a further confirmation of CharacterInfo.room@+0x0C from a new site, this time WITHOUT needing the ambiguous standalone \"newnum\"/displayed_room-style global that AreCharObjColliding needed (both characters carry their own room directly). The remainder follows the same AABB-via-view/loop/frame-chain shape already characterized in AreObjectsColliding/AreCharObjColliding (not traced to full instruction-level precision this round, consistent with those two entries). Same architectural note: 2011's own AreCharactersColliding (AC.CPP:15120-15127) delegates entirely to the later Character_IsCollidingWithChar, offering no line-level comparison."
   },
   {
     "kind": "function",
