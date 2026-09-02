@@ -157,13 +157,26 @@ def cmd_toc(args):
     print(f"  toc string block ends at byte {s['_end']:#x}")
 
 
+# name-pool keys are positional, not stored in the record:
+#   monster r -> 13000 + 4*r + {0 unidSing, 1 unidPlur, 2 realSing, 3 realPlur}
+#   object  r -> 14000 + 2*r + {0 unidName, 1 realName}
+NAME_KEY = {2: lambda r: 13000 + 4 * r + 2, 4: lambda r: 14000 + 2 * r + 1}
+
+
 def cmd_list(args):
     sc = Scenario(args[0])
     t = resolve_type(args[1])
+    pool = None
+    if len(args) > 2:
+        import strpool
+        pool = strpool.StringPool(args[2])
     for r in range(sc.count[t]):
-        rec = sc.record(t, r)
-        name, _ = pstr(rec, 0)
-        print(f"  [{r:3d}] {name!r}")
+        if pool and t in NAME_KEY:
+            b = pool.get(NAME_KEY[t](r))
+            nm = b.decode("latin1") if b else "?"
+        else:
+            nm, _ = pstr(sc.record(t, r), 0)
+        print(f"  [{r:3d}] {nm}")
 
 
 def cmd_rec(args):

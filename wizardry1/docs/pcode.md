@@ -84,10 +84,26 @@ addressing all at once. Note the DOS proc numbering drifts from Apple's above
 the low teens (procedures inserted/removed in the 1987 rewrite), so the
 `P0100NN` map is a **hint above ~proc 15**, not authoritative.
 
+## Procedures identified so far
+
+| proc | name | notes |
+|---|---|---|
+| WIZARDRY 2 | `PRINTBEL` | `CGP 58` |
+| WIZARDRY 3 | `GETREC` | scenario block cache; `CGP 65/66` = read/write-retry helpers |
+| WIZARDRY 4 | `GETRECW` | `GETREC` + `CACHEWRI := TRUE` |
+| WIZARDRY 38 | `GetStr(KN, VAR s)` | binary search over `strTree` (globals 44 node / 45 root / 46 strOffsets / 47 strTree) |
+| WIZARDRY 82 | *(GetStr inner)* | `ASCII.KRN` block fetch + decipher (see `docs/file-formats.md`) |
+| WIZARDRY 64 | `CheckCache(head, tail, key)` | LRU-ish node cache; 518-B `d` nodes, 86-B `s` nodes |
+| WIZARDRY 17 | dispose / free RAM block | |
+| WIZARDRY 59 | open file on unit, return first block | data=2090 |
+| KANJIREA 6 | `AllocCaches` | builds the `d`/`s` cache free lists |
+| KANJIREA 7 | `AddCache(prev, size)` | |
+| KANJIREA 8 | `LoadStrTree(fname)` | opens `ASCII.KRN`, reads header, `LoadRam`s `strOffsets`/`strTree`, sets `SoffSet` (global 26) |
+| KANJIREA 9 | `LoadRam(startBlk, byteLen)` | `Allocate` + `UNITREAD` |
+| KANJIREA 10 | string-system init | picks `200`/`400` charset+monster prefix, then `LoadStrTree('ASCII.KRN')` |
+
 ## Next
 
-- Cross-reference every segment's procs to Apple names (match on call graph +
-  structure, not just number).
-- Recover the `ASCII.KRN` string-pool decompressor (`GetStr`) — a proc in
-  `WIZARDRY` or `GAMEUTIL`; unblocks the monster/item/spell/message names.
-- Feed the recovered semantics into the Phase 3 C++ port.
+- Cross-reference remaining procs to Apple names (call graph + structure).
+- Map the tokenised quest-item names (`0x77` join byte).
+- Constant-pool / global-variable map per segment; feed into the Phase 3 C++ port.

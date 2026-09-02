@@ -56,18 +56,38 @@ offset = RECSIZE[T] * (R % RECPER2B[T])          within that 1024-byte unit
 Block accounting closes exactly (`ceil(count/perUnit)*2` blocks per type,
 each type starting where the previous ends), which validates the whole scheme.
 
-### Where the text is — *not in the records*
+### Where the text is — `ASCII.KRN` string pool  ✅ decoded
 
-Monster / item / reward records contain **no name strings** — only small
-integers and a name key. Names, spell names and messages resolve through a
-keyed string pool (`GetStr(KN)` / `SetString` / `strTree` / `strOffsets` in
-the loader source fragments left in SCENARIO.DATA slack, blocks 3–73). The
-pool is almost certainly **`ASCII.KRN`** (27,648 B, fully high-entropy →
-LZ-compressed, cf. Apple's `LZDECOMP`). Decoding it needs the DOS
-decompressor from `SYSTEM.PASCAL` → **Phase 2**.
+Monster / item / reward records contain **no name strings** — names, spell
+names and every message live in **`ASCII.KRN`**, keyed by integer. Decoder:
+`tools/strpool.py` (recovered from `SYSTEM.PASCAL` — `GetStr` = WIZARDRY
+proc 38, loader = WIZARDRY proc 82, tree loader = KANJIREA procs 8/10).
 
-Addressing hint from the fragments: `blk := KN DIV 256 + Soffset;
-offset := 2*(KN MOD 256)` — index blocks of 256 × u16 offsets.
+`ASCII.KRN` (54 blocks, LE):
+
+| region | contents |
+|---|---|
+| block 0 | header: `u16 offBlk, offLen, treeBlk, treeLen` |
+| blocks 1–44 | enciphered string data (Pascal strings, word-aligned) |
+| block 45 (`offBlk`) | `strOffsets[]` — `u16` per key slot → word offset of the string |
+| block 51 (`treeBlk`) | `strTree[]` — 5×`u16` nodes `{startIdx, endIdx, indexOffset, left, right}`; node 0's word[4] is the root |
+
+Lookup for key `KN`: binary-search `strTree` for the node whose
+`[startIdx,endIdx]` contains `KN`; `SVAL = strOffsets[node.indexOffset + KN -
+node.startIdx]`; the string is at byte `2*SVAL` (`len` byte, then `len`
+bytes); decipher each byte `k = 1..len`:
+
+```
+plain[k] = (raw[k] - 67*(KN mod 51) - 23*k) mod 256
+```
+
+Key ranges: `600–1500` UI / combat templates, `5000+` spell names,
+`10000+` class names, `13000 + 4*monsterIdx + {0 unidSing,1 unidPlur,2
+sing,3 plur}`, `14000 + 2*objIdx + {0 unid,1 real}`, `20000 + 50*msgNo +
+line` scenario messages. Full dump: [`docs/strings.txt`](strings.txt).
+
+*Open:* a few quest-item names carry an embedded token byte (post-decipher
+`0x77`) for word-join / " OF " — not yet mapped; everything else is clean.
 
 ### Record layouts (partial — field order per Apple, sizes per DOS)
 

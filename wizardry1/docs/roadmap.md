@@ -50,10 +50,14 @@ Decided direction (2026-09-02):
       `docs/pcode.md`.
 - [x] Codefile layout documented; activation-record model from `pm_proc_entry`.
 - [x] Validated: DOS `WIZARDRY` procs 2/3/4 = Apple `PRINTBEL`/`GETREC`/`GETRECW`.
+- [x] Recover `GetStr(KN)` + the `ASCII.KRN` cipher — `tools/strpool.py`,
+      `docs/strings.txt`. WIZARDRY proc 38 = GetStr (range tree), proc 82 =
+      loader/decipher, KANJIREA 8/10 = tree loader. Cipher:
+      `plain[k] = (raw[k] - 67*(KN mod 51) - 23*k) mod 256`.
+      Monster/item names wired into `tools/scenario.py`.
+- [ ] Map the ~6 tokenised quest-item names (embedded `0x77` join byte).
 - [ ] Name every segment's procs (call-graph + structure match to Apple, not
       just number — DOS numbering drifts above ~proc 15).
-- [ ] Recover the `ASCII.KRN` decompressor / `GetStr(KN)` → unblocks all the
-      name/message text.
 - [ ] Constant-pool / global-variable map per segment.
 
 ## Phase 3 — standalone C++ engine
