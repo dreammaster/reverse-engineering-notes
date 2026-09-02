@@ -39,6 +39,11 @@ public:
     // UPDCHARS: everyone leaves (used by Edge of Town -> Training / Leave).
     void disband(Roster &roster);
 
+    // After the Temple heals a roster record, refresh any party member that
+    // maps to it -- keeping the party copy's gold (tithe deductions) and
+    // in-maze flag.  (DOS CANT brackets its work with proc 12 / proc 13.)
+    void resyncFromRoster(const Roster &roster);
+
     // Persist the party roster indices so a session can resume mid-town.
     bool load(const std::string &path, const Roster &roster);
     bool save(const std::string &path) const;

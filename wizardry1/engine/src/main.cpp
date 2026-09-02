@@ -17,6 +17,7 @@
 #include "wiz/shop.h"
 #include "wiz/town_ui.h"
 #include "wiz/inn.h"
+#include "wiz/temple.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -489,9 +490,11 @@ static int cmdTown(int argc, char **argv) {
 }
 
 // Headless: seed the world, script one trip through the town, print the party.
+// The optional 7th arg mangles a roster slot for testing, e.g. "wound=7:5"
+// sets roster slot 7 to status 5 (DEAD), HP 0.
 static int cmdTownTest(int argc, char **argv) {
     if (argc < 5) {
-        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir] [ASCII.KRN]");
+        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir] [ASCII.KRN] [wound=S:ST]");
         return 2;
     }
     Font font;
@@ -504,6 +507,17 @@ static int cmdTownTest(int argc, char **argv) {
     shop.seedFrom(sc);
     StringPool sp;
     bool haveSp = argc > 6 && sp.load(readFile(argv[6]));
+
+    if (argc > 7 && std::strncmp(argv[7], "wound=", 6) == 0) {
+        int slot = -1, st = 5;
+        std::sscanf(argv[7] + 6, "%d:%d", &slot, &st);
+        if (slot >= 0 && slot < roster.count()) {
+            roster.slot(slot).status = Status(st);
+            roster.slot(slot).hpLeft = 0;
+            std::printf("wounded roster slot %d (%s) -> status %d\n",
+                        slot, roster.slot(slot).name.c_str(), st);
+        }
+    }
 
     auto p = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
     Rng rng;
@@ -522,6 +536,12 @@ static int cmdTownTest(int argc, char **argv) {
         for (int j = 0; j < c.possCount; ++j)
             std::printf(" #%d%s", c.poss[j].itemIndex, c.poss[j].identified ? "" : "?");
         std::printf("\n");
+    }
+    for (int i = 0; i < roster.count(); ++i) {
+        const Character &r = roster.slot(i);
+        if (!r.name.empty() && r.status != Status::OK && r.status != Status::Lost)
+            std::printf("roster %d) %-16s status %d HP%d/%d age %dwk\n",
+                        i, r.name.c_str(), int(r.status), r.hpLeft, r.hpMax, r.age);
     }
     return 0;
 }
@@ -577,6 +597,48 @@ static int cmdInnTest(int argc, char **argv) {
     return c.charLevel == 2 ? 0 : 1;
 }
 
+// Exercise the Temple of Cant rules (wiz/temple.h) deterministically: fee
+// calculation + a resurrection attempt on a DEAD and an ASHES character.
+static int cmdTempleTest(int argc, char **argv) {
+    (void)argc; (void)argv;
+    auto make = [](Status st, int vit, int lvl) {
+        Character c{};
+        c.name = "LAZARUS";
+        c.cls = Class::Fighter;
+        c.status = st;
+        c.charLevel = c.maxLevelAcquired = lvl;
+        for (int i = 0; i < ATTR_COUNT; ++i) c.attrib[i] = 12;
+        c.attrib[VIT] = vit;
+        c.hpMax = 20;
+        c.hpLeft = 0;
+        c.age = 15 * 52;
+        return c;
+    };
+
+    struct Case { const char *tag; Status st; int vit; int lvl; };
+    const Case cases[] = {
+        {"paralyzed", Status::Paralyzed, 12, 3},
+        {"dead-hi-vit", Status::Dead, 18, 5},
+        {"ashes-lo-vit", Status::Ashes, 3, 8},
+    };
+    Rng rng;
+    int fails = 0;
+    for (const Case &k : cases) {
+        Character who = make(k.st, k.vit, k.lvl);
+        int64_t fee = templeFee(k.st, k.lvl);
+        InnLog log;
+        Status before = who.status;
+        CantResult r = doCant(who, rng, log);
+        std::printf("%-13s L%d fee=%lld  %d -> %d  (%s)  age +%dwk\n",
+                    k.tag, k.lvl, (long long)fee, int(before), int(who.status),
+                    r == CantResult::Cured ? "CURED" : "WORSENED",
+                    who.age - 15 * 52);
+        for (const auto &m : log) std::printf("   | %s\n", m.c_str());
+        if (k.st == Status::Paralyzed && who.status != Status::OK) ++fails;
+    }
+    return fails ? 1 : 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
@@ -590,6 +652,7 @@ int main(int argc, char **argv) {
     if (cmd == "town") return cmdTown(argc, argv);
     if (cmd == "town-test") return cmdTownTest(argc, argv);
     if (cmd == "inn-test") return cmdInnTest(argc, argv);
+    if (cmd == "temple-test") return cmdTempleTest(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

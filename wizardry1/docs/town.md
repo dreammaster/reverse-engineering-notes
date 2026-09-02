@@ -196,10 +196,32 @@ sub): `LISTPOSS` shows the character's items priced at `PRICE / 2`
 engine keeps the mutable stock counts in `shop.dat` (not the user's
 `SCENARIO.DATA`).
 
-### Temple of Cant — `CANT` `P010202`  *(not yet ported)*
+### Temple of Radiant Cant — `CANT` `P010202`  (ported: `engine/wiz/temple.h`)
 
-Tithe to cure status: heal paralysis / stone / dead / ashes for a fee scaled
-by the patient's level; failed resurrection worsens DEAD→ASHES→LOST.
+DOS `SHOPS` proc 2: `REPEAT { WELCOME; CANTSHOP } UNTIL FALSE`, bracketed by a
+party→roster flush (proc 12) and a roster→party reload that keeps each party
+member's gold (proc 13) — so a party member who is also the patient stays in
+sync.  **The patient is a *roster* character** (any slot), the payer is a
+*party* member.
+
+**`WELCOME`** (`P010205` / DOS procs 6+7): Apple types a name; DOS shows a
+lettered list of roster characters who are present and not OK / not LOST.
+The engine lists the ones the Temple can actually price —
+**`P-LYZE` / `STONED` / `DEAD` / `ASHES`** (DOS/Apple `GETPAYER` has no cost
+for `AFRAID`/`ASLEEP`, and DOS's `XJP 3..6` would trap on them).  `[RETURN]`
+leaves the Temple.
+
+**`GETPAYER`** (`P010207`): donation = `{P-LYZE 100, STONED 200, DEAD 250,
+ASHES 500} × patient level`.  `GETCHARX('WHO WILL TITHE')` picks a party
+member; `donation > payer gold` → `** CHEAP APOSTATES! OUT! **`; else the
+payer pays.
+
+**`DOCANT`** (`P010208`) + **`ASHLOST`** (`P010209`): "MURMUR – CHANT – PRAY –
+INVOKE!".  `P-LYZE`/`STONED` always cured.  Resurrection roll:
+`DEAD` succeeds when `RANDOM mod 100 ≤ 50 + 3·VIT`; `ASHES` when
+`≤ 40 + 3·VIT`.  Success → `STATUS := OK`, HP set (`DEAD`→1, `ASHES`→max),
+`AGE += RANDOM mod 52 + 1`.  Failure → `DEAD → ASHES` ("NEEDS KADORTO NOW") /
+`ASHES → LOST` ("WILL BE BURIED"); the donation is **not** refunded.
 
 ## Engine port
 
@@ -211,13 +233,18 @@ by the patient's level; failed resurrection worsens DEAD→ASHES→LOST.
 * `engine/wiz/shop.h` + `shop.cpp` — `Shop` (per-object `BOLTACXX` stock,
   seeded from the scenario, persisted to `shop.dat`), `sellValue`/`serviceFee`;
   `ObjectRec` in `scenario.h` decodes the rest of `TOBJREC`.
+* `engine/wiz/temple.h` — the Temple rules (pure): `templeFee`,
+  `templeTreatable`, `doCant` → `CantResult`.  `Party::resyncFromRoster`
+  mirrors DOS `CANT`'s proc-12/13 bracketing.
 * `engine/wiz/town_ui.{h,cpp}` — `runTown(Ui&, TownWorld&)`: the CASTLE hub,
   Gilgamesh's Tavern, the Adventurer's Inn, Boltac's Trading Post
-  (`boltac`/`doPlayer`/`doBuy`/`purchase`/`sellIdun`/`transact`), and the Edge
-  of Town.  The Temple of Cant is a stub.  Returns a `TownExit` (`Roller`,
-  `Maze`, `LeaveGame`, `WindowClosed`).  `TownWorld` bundles the party /
-  roster / shop / scenario / string pool / rng + save paths.
+  (`boltac`/`doPlayer`/`doBuy`/`purchase`/`sellIdun`/`transact`), the Temple
+  of Cant (`temple`/`templeWelcome`/`cantShop`), and the Edge of Town.
+  Returns a `TownExit` (`Roller`, `Maze`, `LeaveGame`, `WindowClosed`).
+  `TownWorld` bundles the party / roster / shop / scenario / string pool /
+  rng + save paths.
 * `wiz1 town <CHARSET> <SCENARIO.DATA> [TITLE] [ASCII.KRN] [roster.dat]
   [party.dat] [shop.dat]` — SDL; `wiz1 town-test <CHARSET> <SCENARIO.DATA>
-  <keyscript> [dumpdir] [ASCII.KRN]` — headless; `wiz1 inn-test
-  <SCENARIO.DATA>` — deterministic level-up check.
+  <keyscript> [dumpdir] [ASCII.KRN] [wound=S:ST]` — headless;
+  `wiz1 inn-test` / `wiz1 temple-test <SCENARIO.DATA>` — deterministic rule
+  checks.

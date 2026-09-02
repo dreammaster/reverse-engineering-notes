@@ -44,6 +44,17 @@ void Party::disband(Roster &roster) {
     for (int &d : disk_) d = -1;
 }
 
+void Party::resyncFromRoster(const Roster &roster) {
+    for (int i = 0; i < count_; ++i) {
+        if (disk_[i] < 0 || disk_[i] >= roster.count()) continue;
+        int64_t gold = chars_[i].gold.v;
+        bool inMaze = chars_[i].inMaze;
+        chars_[i] = roster.slot(disk_[i]);
+        chars_[i].gold.v = gold;
+        chars_[i].inMaze = inMaze;
+    }
+}
+
 bool Party::load(const std::string &path, const Roster &roster) {
     FILE *f = std::fopen(path.c_str(), "rb");
     if (!f) return false;

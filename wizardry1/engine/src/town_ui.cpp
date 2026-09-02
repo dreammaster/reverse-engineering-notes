@@ -3,6 +3,7 @@
 #include "wiz/roster.h"
 #include "wiz/string_pool.h"
 #include "wiz/inn.h"
+#include "wiz/temple.h"
 
 #include <cstdio>
 #include <string>
@@ -621,6 +622,88 @@ void boltac(TownCtx &c) {
     }
 }
 
+// ---- Temple of Radiant Cant (CANT P010202) ------------------------------
+
+// WELCOME (P010205 / DOS proc 6+7): list the roster characters the Temple can
+// treat (present, status PLYZE / STONED / DEAD / ASHES) and pick one.
+// Returns the roster slot, or -1 to leave the Temple.
+int templeWelcome(TownCtx &c) {
+    auto &t = c.ts();
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 13); t.putChar(11);
+    t.writeln(" WELCOME TO THE TEMPLE OF RADIANT CANT!");
+
+    int slot[26], n = 0;
+    for (int i = 0; i < c.roster.count() && n < 20; ++i) {
+        const Character &r = c.roster.slot(i);
+        if (r.name.empty() || r.inMaze || !templeTreatable(r.status)) continue;
+        slot[n] = i;
+        t.gotoXY(20 * (n % 2), 15 + n / 2);
+        char b[40];
+        std::snprintf(b, sizeof b, "%c) %-9s %s", 'A' + n, r.name.substr(0, 9).c_str(),
+                      statusName(c.sc, r.status));
+        t.write(b);
+        ++n;
+    }
+    t.gotoXY(0, 22);
+    t.write("WHO ARE YOU HELPING ([RETURN] EXITS) ? >");
+    for (;;) {
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) return -1;
+        int p = k - 'A';
+        if (p >= 0 && p < n) return slot[p];
+    }
+}
+
+// PAYCANT (P010206) -> GETPAYER (P010207) + DOCANT (P010208), for the roster
+// character in `patientSlot`.
+void cantShop(TownCtx &c, int patientSlot) {
+    auto &t = c.ts();
+    Character &who = c.roster.slot(patientSlot);
+
+    // GETPAYER
+    int64_t fee = templeFee(who.status, who.charLevel);
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 17); t.putChar(11);
+    char b[48];
+    std::snprintf(b, sizeof b, "THE DONATION WILL BE %lld", (long long)fee);
+    t.writeln(b);
+    int payer = getCharX(c, false, "WHO WILL TITHE");
+    if (c.ui.quit() || payer < 0) return;                     // EXIT(CANTSHOP)
+    Character &pc = c.party.member(payer);
+    if (pc.gold.v < fee) { aastraa(c, "** CHEAP APOSTATES! OUT! **"); return; }
+    pc.gold.v -= fee;
+
+    // DOCANT
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 17); t.putChar(11);
+    for (const char *step : {"MURMUR - ", "CHANT - ", "PRAY - "}) {
+        t.write(step); c.ui.refresh(); c.ui.delayMs(350);
+    }
+    t.writeln("INVOKE!");
+
+    InnLog log;
+    doCant(who, c.rng, log);
+    c.party.resyncFromRoster(c.roster);
+    c.save();
+
+    t.gotoXY(0, 19);
+    for (const auto &m : log) t.writeln(m);
+    aastraa(c, "** " + (log.empty() ? std::string("...") : log.back()) + " **");
+}
+
+// CANT (P010202): REPEAT { WELCOME; CANTSHOP } -- the only exit is [RETURN] at
+// WELCOME.
+void temple(TownCtx &c) {
+    for (;;) {
+        dspParty(c, "TEMPLE");
+        dspTitle(c, "TEMPLE");
+        int patientSlot = templeWelcome(c);
+        if (patientSlot < 0) return;
+        cantShop(c, patientSlot);
+    }
+}
+
 } // namespace
 
 TownExit runTown(Ui &ui, TownWorld &w) {
@@ -647,7 +730,7 @@ TownExit runTown(Ui &ui, TownWorld &w) {
         } else if (k == 'B') {
             boltac(c);
         } else if (k == 'C') {
-            notice(c, "THE TEMPLE IS NOT YET OPEN");
+            temple(c);
         } else if (k == 'E') {
             TownExit out;
             if (edgeOfTown(c, out)) return out;

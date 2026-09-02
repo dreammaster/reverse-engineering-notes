@@ -91,3 +91,18 @@ add_test(NAME shop_buy_sell
 # 185 - 25 - 15 + 12 = 157, keeping item #2.
 set_tests_properties(shop_buy_sell PROPERTIES
     PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*157gp poss: #2")
+add_test(NAME temple_rules COMMAND wiz1 temple-test)
+set_tests_properties(temple_rules PROPERTIES
+    PASS_REGULAR_EXPRESSION "paralyzed.*CURED(.|\n)*ashes-lo-vit.*WORSENED(.|\n)*WILL BE BURIED")
+add_test(NAME temple_heal
+         COMMAND wiz1 town-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "GATHESUS\\r\\r\\rCA1\\r\\rEM" "" ""
+                 "wound=6:3")
+# THESUS (185 gp) tithes 100 for a level-1 paralysis cure -> 85 gp, and roster
+# slot 6 is no longer listed as wounded.
+set_tests_properties(temple_heal PROPERTIES
+    PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*THESUS[^\n]*85gp")
+set_tests_properties(temple_heal PROPERTIES
+    FAIL_REGULAR_EXPRESSION "roster 6")
