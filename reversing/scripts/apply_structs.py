@@ -1627,6 +1627,13 @@ struct GameSetupStructBase {
                             // OPT_* constant that could fit is index 19 (OPT_FADETYPE, acroom.h:2725)
                             // -- consistent with this build predating later UI/rendering options
                             // (OPT_DIALOGNUMBERED, OPT_MOUSEWHEEL, OPT_ANTIALIASFONTS, etc.).
+                            // options[9]=OPT_ALWAYSSPCH (acroom.h:2715) confirmed via DisplayAtY
+                            // (already matched): "if(options[9]) {...route through
+                            // _displayspeech...}" matches source's
+                            // "if(game.options[OPT_ALWAYSSPCH]) DisplaySpeechAt(...);" in role,
+                            // landing exactly on 0x513337-1+9=0x51333F with zero slack.
+                            // options[10]=OPT_SPEECHTYPE (acroom.h:2716) separately confirmed via
+                            // SetSpeechStyle (already matched), landing on 0x513337-1+10=0x513340.
   unsigned char paluses[256];     // +0x32, high confidence: confirmed directly via a shared loop in
                             // `main` (also used for defpal below) -- "for (ee=0; ee<256; ee++) if
                             // (paluses[ee]!=2) palette[ee]=defpal[ee];" -- disasm's `cmp
@@ -3243,7 +3250,13 @@ struct GameState {
                             // EnableInterface (decrements, clamped to 0 if it would go negative,
                             // only restoring the default cursor once the count reaches zero)/
                             // IsInterfaceEnabled (reads ==0) -- all three already matched, see
-                            // their own entries.
+                            // their own entries. DRIFT: DisplayAtY (already matched) calls
+                            // mainloop() when screen_is_dirty is set, but WITHOUT bracketing
+                            // that call in disabled_user_interface++/-- the way 2011 does
+                            // ("play.disabled_user_interface++; mainloop();
+                            // play.disabled_user_interface--;", AC.CPP:14076-14078) -- confirmed
+                            // absent at this specific call site (the field's own role
+                            // elsewhere is unaffected).
   int gscript_timer;          // +0x0C, HIGH confidence (UPGRADED from medium-high): confirmed
                             // via the graph-script command interpreter (`sub_41CDC3`, newly
                             // characterized this round -- see `run_graph_script`'s own matches.json

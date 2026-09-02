@@ -10034,3 +10034,35 @@ differences, this one is directly observable to any script that polls
 earlier fast-forward-related finding as a second confirmed instance of
 this build simply not having fast-forward-awareness baked into a
 function that 2011 later added it to.
+
+### `DisplayAt`/`DisplayAtY`/`Display`: two new globals identified, and a second `disabled_user_interface`-bracketing absence
+
+`Display` closes trivially -- a two-line wrapper around the already-
+matched `DisplayAtY(-1,...)`, exact match to 2011's own equally-trivial
+body. `DisplayAt` closes almost as cleanly, reconfirming the "this
+build's `_display_at`/`_display_main` calls pass fewer arguments than
+their own established signature, plausibly via compiled-in C++ default
+values" theory from the `CreateTextOverlay` round -- a second instance
+of the exact same pattern, and this time the VALUES of the arguments
+actually pushed match 2011's own first several argument values exactly,
+reinforcing rather than complicating that theory.
+
+`DisplayAtY` is the rich one. Its Y-bound validation decisively
+confirms a new function match, `GetMaxScreenHeight()` (`sub_414F63`,
+called with no arguments, its return value used directly as the upper
+bound). Its `mainloop()`-pumping branch decisively identifies a new
+global, `screen_is_dirty` (`dword_523210`) -- but the specific
+`disabled_user_interface++`/`--` bracketing 2011 wraps around this
+particular `mainloop()` call is CONFIRMED ABSENT here, a second
+instance (after `InterfaceOff`'s own earlier finding) of this
+already-well-confirmed counter field simply not being touched at a
+site where 2011 touches it -- the field's own general role is
+unaffected, just this one call site. Finally, the branch selecting
+between "speech-style display" and "plain text box" decisively
+confirms `GameSetupStructBase.options[9]` as `OPT_ALWAYSSPCH`
+(`Common/acroom.h:2715`, landing on `0x513337-1+9=0x51333F` with zero
+slack) -- a genuinely different, adjacent byte from the already-
+confirmed `options[10]`=`OPT_SPEECHTYPE` (`SetSpeechStyle`'s own field,
+`0x513340`), worth stating explicitly since a first draft of this
+note briefly conflated the two before the arithmetic was checked
+against both index values side by side.

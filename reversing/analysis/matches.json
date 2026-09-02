@@ -397,7 +397,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Formats text via the already-matched GetTranslation/vsprintf, scales xxp/yyp/widd by the resolution multipliers, defaults widd<1 to usetup_base_width/2 and centers xxp<0 to usetup_base_width/2-widd/2 -- exact match to 2011's own \"if(widd<1) widd=scrnwid/2; if(xxp<0) xxp=scrnwid/2-widd/2;\" -- then calls the already-matched _display_at(xxp,yyp,widd,Buffer,1,0) with only 6 arguments (confirmed via the call site's own `add esp,18h`=24-byte/6-dword cleanup), where 2011's own call, \"_display_at(xxp,yyp,widd,displbuf,1,0,0,0,false);\" (AC.CPP:13322-13334), passes 9 -- but the 6 VALUES this build passes match 2011's own first 6 argument values exactly (1,0 for the two shown trailing args), reinforcing (a second instance this session, after CreateTextOverlay's _display_main call) the theory that this build's own _display_at/_display_main have compiled-in C++ default arguments for their trailing parameters, not a genuine behavioral difference."
   },
   {
     "kind": "function",
@@ -527,7 +527,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates ypos against the newly-matched GetMaxScreenHeight() (sub_414F63, see its own entry), matching 2011's own bounds check (AC.CPP:14059-14060) exactly. Then: if the already-established dword_523210 (checked ==0, gating a call to the already-matched mainloop()) is nonzero, decisively identified as GameState.screen_is_dirty (a NEW global identification) -- matching 2011's own \"if(screen_is_dirty) {play.disabled_user_interface++; mainloop(); play.disabled_user_interface--;}\" (AC.CPP:14074-14079) in the mainloop() call itself, BUT DRIFT: the disabled_user_interface increment/decrement bracketing this specific mainloop() call is CONFIRMED ABSENT -- no such writes exist around this call site, even though disabled_user_interface's own increment/decrement role is independently confirmed elsewhere (DisableInterface/EnableInterface, already matched). Then reads the already-confirmed GameSetupStructBase.options[9]@(0x513337-1+9=0x51333F, zero slack) -- decisively confirmed as OPT_ALWAYSSPCH (Common/acroom.h:2715) -- and if set, routes through the already-matched _displayspeech (fused/inlined rather than going through a separate DisplaySpeechAt wrapper, matching this build's usual inlining pattern) instead of the plain text-box _display_at path; matches 2011's own \"if(game.options[OPT_ALWAYSSPCH]) DisplaySpeechAt(...); else {...}\" (AC.CPP:14069-14082) in ROLE."
   },
   {
     "kind": "function",
@@ -537,7 +537,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Formats text via the already-matched GetTranslation/vsprintf, then calls the already-matched DisplayAtY(-1, Buffer) -- exact, decisive match to 2011's entire function body (AC.CPP:14085-14092), zero drift."
   },
   {
     "kind": "function",
@@ -5972,5 +5972,13 @@
     "is_library": true,
     "confidence": "high",
     "evidence": "Allegro library API function. Called from RawDrawTriangle (already matched) with 8 arguments (bitmap,x1,y1,x2,y2,x3,y3,color) -- an exact match to Allegro's own triangle() signature (declared in libsrc/allegro-4.2.2/include/allegro/draw.h) and to 2011's own call, \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14601). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_414F63",
+    "new_name": "GetMaxScreenHeight",
+    "source_file": "Engine/AC.CPP",
+    "confidence": "high",
+    "evidence": "Called from DisplayAtY (already matched, see its own entry) with no arguments, its return value used as the upper bound in \"if((ypos<-1)||(ypos>=eax)) quit(...)\" -- an exact match to 2011's own \"if((ypos<-1)||(ypos>= GetMaxScreenHeight())) quitprintf(\\\"!DisplayAtY: invalid Y co-ordinate supplied...\\\",ypos,GetMaxScreenHeight());\" (AC.CPP:14059-14060), matching both the call shape and the exact role. Not independently traced through its own body this round."
   }
 ]

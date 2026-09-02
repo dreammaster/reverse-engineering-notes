@@ -2794,6 +2794,17 @@ disassembly work.
   sequence where 2011 always says no — a second confirmed instance of
   fast-forward-awareness missing from a function 2011 later added it
   to (after `UpdatePalette`'s own earlier finding).
+- **`DisplayAtY` identifies two new globals and a second
+  `disabled_user_interface`-bracketing absence.** `Display`/`DisplayAt`
+  close cleanly (the latter reinforcing the "compiled-in default
+  arguments" theory for `_display_at`/`_display_main` from an earlier
+  round). `DisplayAtY` confirms a new function, `GetMaxScreenHeight`,
+  and a new global, `screen_is_dirty` — but the
+  `disabled_user_interface++`/`--` bracketing 2011 wraps around its
+  `mainloop()` call is confirmed absent here, the second such gap found
+  this session (after `InterfaceOff`'s). Also decisively confirms
+  `GameSetupStructBase.options[9]`=`OPT_ALWAYSSPCH`, distinct from the
+  adjacent already-confirmed `options[10]`=`OPT_SPEECHTYPE`.
 
 ## Third-party library identification (Task #10)
 
