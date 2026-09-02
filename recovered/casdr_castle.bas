@@ -15,7 +15,7 @@
 '     playerX/Y (castle grid)   destructTimer (0x14 / 8)
 '     ds:28B2 1.8   ds:28B6 600   ds:28BA 300   ds:28BE 0.9   ds:2744 2
 '     ds:28DA 50    ds:28A0 99    ds:2B94 80    ds:2084 enemyAtk (runtime)
-'     ds:226E  difficulty multiplier (runtime, 0 in the EXE image)
+'     ds:226E  difficulty = 3.5 (castle, ds:31A8) / 1.0 (fort, ds:25B0)
 
 
 ' --------------------------------------------------------------------------
@@ -25,7 +25,9 @@ SUB AttackHit                                         ' asm: casdr.asm:4166 (att
 ' in the DENOMINATOR (so they scale defensively, not linearly).
 
     raw = (enemyAtk ^ 1.8) * (RND(1) * 600 + 300) * difficulty            ' asm:4167-4212
-    '  ds:28B2 1.8 ; ds:28B6 600 ; ds:28BA 300 ; ds:226E difficulty
+    '  ds:28B2 1.8 ; ds:28B6 600 ; ds:28BA 300
+    '  difficulty (ds:226E, set by loadCastleLevel casdr.asm:10033):
+    '     3.5 inside the castle (ds:31A8) ; 1.0 inside the fort (ds:25B0)
 
     IF armorId > 0 THEN armorVal = armorId - 6 ELSE armorVal = armorId + 2 ' asm:4221-4231
     '  (mask*8 + armorId + 2 : with armour  armorId-6, without  2)
@@ -83,7 +85,6 @@ SUB DescribeRoom                                      ' asm: casdr.asm:6187 (des
 '   * FLOOR-plan rooms are a SELECT CASE; effects are separate handlers
 '
 '  OPEN
-'   * difficulty (ds:226E) -- runtime, dominates the magnitude; trace it
 '   * gas damage `base` (stack leftover), chest-loot roll, locked-door key
 '   * WarlordConfrontation script + FortressSelfDestruct countdown (0x14 / 8)
 '   * doFight / enemyAttack (the player's castle attack + non-warlord enemies)

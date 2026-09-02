@@ -236,15 +236,16 @@ so a well-armoured party makes the monsters' rolls smaller at level load.
 
 ### 3c. CASTLE (CASDR) — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 
-**Incoming melee** — *partial* — `casdr.asm:4166` (`attackHit`):
+**Incoming melee** — *derived* — `casdr.asm:4166` (`attackHit`):
 ```
 raw = enemyAtk^1.8 * (RND(1)*600 + 300) * difficulty
 dmg = INT( raw / (armorVal * Endurance^0.9) + 2 )
 ```
 Endurance and armour mitigate as a **denominator** term (defensive
 scaling, not subtraction). `armorVal` = `armorId - 6` with armour, `2`
-without. (*partial*: `difficulty` = `ds:226E`, runtime — it dominates
-the magnitude.)
+without. `difficulty` (`ds:226E`, set by `loadCastleLevel` `casdr.asm:10033`):
+**`3.5` inside the castle, `1.0` inside the fort** (constants `ds:31A8` /
+`ds:25B0`).
 
 **Warlord blow** — *derived* — `casdr.asm:6034`: `INT( RND(1)*99 + 80 )`
 (80..178). Applied by the caller.
@@ -378,21 +379,38 @@ Every runtime-loaded constant below reads `0` in the EXE (set from
 map / creature / region data at startup). A faithful port needs their
 real values — one memory dump each while the relevant screen is active:
 
-**Just three** genuinely runtime-loaded constants remain (`0` in the EXE,
-copied from map data at load; each needs one memory dump on the relevant
-screen):
+### OUT region encounter gates — `ds:2092` / `ds:2096`
 
-| symbol | dump as | where / when | what it gates |
-|---|---|---|---|
-| `ds:2092` **and** `ds:2096` (OUT) | float ×2 | standing on the overworld, 2–3 different map regions | the two encounter weak/tier gate probabilities in `BeginEncounterView` |
-| `ds:226E` (CASDR) | float | inside the castle **and** the fort, ideally 2 depths | castle incoming-damage `difficulty` — dominates the magnitude |
-| `ds:2C3C` (TWNDR) | **int32** (it's a LONG) | in a town / at the bank | bank interest divisor `K` (~1000 per the guide) |
+`BeginEncounterView` reads two per-region probabilities from these
+value-stack scratch slots. They are set per map area (mechanism not yet
+found — not raw floats in `OUTM*.BSV`). Samples so far (DOSBox):
 
-Everything else on the earlier list resolved: `ds:2264` = `A1 AND 0xFF`,
-`ds:21FC` = `A1 \ 256`, `ds:21CE` / `ds:2192` (DUN) = `updateLevelState`
-formulas, `S4(12)` = a persistent character word (0). Operand order for
-`/` is **confirmed** by the to-hit (`FF47` = deeper ÷ top) and damage
-(`FF49` imm = `TOS ÷ imm`) traces.
+| where | `ds:2092` (P mid-tier) | `ds:2096` (anti-weak) |
+|---|---|---|
+| near the museum (start area) | 0.00 | 0.00 |
+| far west (after combat) | 0.22 | 0.40 |
+| far northwest | 0.35 | 0.55 |
+
+Higher = tougher (more guaranteed mid-tier, fewer weak creatures). The
+start area is all-easy (0/0 → ~50 % weak). A port can seed a small
+distance-from-start table from a handful more samples; not raw-number
+critical.
+
+### Bank interest divisor — `ds:2C3C` (TWNDR)
+
+`0` in the EXE, referenced once (`twndr.asm:4963`, `rtm_FF48` = a LONG
+`\` op), and **never written by TWNDR code**. Either it's a startup
+`DATA`/`READ` value in an un-coerced region, or bank interest is
+effectively disabled (`\0`). **One DOSBox dump of `ds:2C3C` (as int32)
+while in a town** settles it. If it reads 0, implement interest per the
+guide (~1 gold / 1000 / day) as a design choice, or omit it.
+
+### Everything else resolved / not blocking
+
+`ds:2264` = `A1 AND 0xFF`, `ds:21FC` = `A1 \ 256`, `ds:21CE` / `ds:2192`
+(DUN) = `updateLevelState` formulas, `S4(12)` = a persistent character
+word (0), `ds:226E` (CASDR) = 3.5 castle / 1.0 fort. Operand order for
+`/` is confirmed by the to-hit and damage traces.
 
 Also open (not blocking): `CastSpell` (DUN), the casino payout math, mail
 routes, the per-bit quest-flag semantics.
