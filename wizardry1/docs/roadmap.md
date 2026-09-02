@@ -44,11 +44,17 @@ Decided direction (2026-09-02):
 
 ## Phase 2 — p-code map
 
-- [ ] p-code disassembler (`tools/pcode_dis.py`) for `SYSTEM.PASCAL` segments,
-      dialect per Phase 0.
-- [ ] Per-segment: recover procedure boundaries, jump tables, constant pools;
-      align each procedure to its Apple Pascal counterpart; log divergences.
-- [ ] Annotated listing checked into `docs/pcode/`.
+- [x] p-code disassembler `tools/pcode_dis.py` — codefile dir, segment table,
+      per-segment proc dictionary + PATs, full opcode/operand decode incl.
+      forward/backward/XJP jumps. Clean over all 16 segments / 587 procs.
+      `docs/pcode.md`.
+- [x] Codefile layout documented; activation-record model from `pm_proc_entry`.
+- [x] Validated: DOS `WIZARDRY` procs 2/3/4 = Apple `PRINTBEL`/`GETREC`/`GETRECW`.
+- [ ] Name every segment's procs (call-graph + structure match to Apple, not
+      just number — DOS numbering drifts above ~proc 15).
+- [ ] Recover the `ASCII.KRN` decompressor / `GetStr(KN)` → unblocks all the
+      name/message text.
+- [ ] Constant-pool / global-variable map per segment.
 
 ## Phase 3 — standalone C++ engine
 
