@@ -27,6 +27,8 @@ add_library(wizcore STATIC
   src/maze.cpp
   src/maze3d.cpp
   src/maze_ui.cpp
+  src/combat.cpp
+  src/combat_ui.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -141,3 +143,12 @@ add_test(NAME town_to_maze
 # form a party, Edge of Town -> Maze, decline stairs, step twice, leave:
 set_tests_properties(town_to_maze PROPERTIES
     PASS_REGULAR_EXPRESSION "maze exit: TO-TOWN  pos .0,2. NORTH")
+add_test(NAME combat_fight
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# a full party FIGHTs the weakest monster group and wins with XP.
+set_tests_properties(combat_fight PROPERTIES
+    PASS_REGULAR_EXPRESSION "result: WON(.|\n)*THESUS[^\n]* [1-9][0-9]* ep")

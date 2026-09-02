@@ -2,6 +2,7 @@
 #include "wiz/maze.h"
 #include "wiz/maze3d.h"
 #include "wiz/scenario.h"
+#include "wiz/combat_ui.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -27,6 +28,7 @@ struct MazeCtx {
     Ui &ui;
     Party &party;
     const Scenario &sc;
+    const StringPool *sp;
     Rng &rng;
     MazeState &st;
     MazeLevel m;
@@ -109,6 +111,16 @@ void msg(MazeCtx &c, const std::string &s) {
     msgClear(c);
     c.t().gotoXY(1, 17);
     c.t().write(s.substr(0, 38));
+}
+
+// Hand off to combat.  Returns true (with `out` set) if the maze session
+// ends -- the window closed or the party was wiped.
+bool runFight(MazeCtx &c, int enemyInx, MazeExit &out) {
+    CombatResult r = runCombat(c.ui, c.party, c.sc, c.sp, c.rng, enemyInx, c.st.level);
+    c.needDraw = true;
+    if (r == CombatResult::WindowClosed) { out = MazeExit::WindowClosed; return true; }
+    if (r == CombatResult::PartyWiped)   { out = MazeExit::PartyWiped;   return true; }
+    return false;
 }
 
 // ---- RUNINIT (P010E25): the fixed HUD frame ---------------------------
@@ -235,19 +247,21 @@ bool specSquare(MazeCtx &c, bool initTurn, MazeExit &out) {
         case Square::ScnMsg:
             msg(c, "THERE IS WRITING ON THE WALL... (unhandled)");
             break;
-        case Square::Encounter:
-            msg(c, "-- AN ENCOUNTER -- (combat not yet ported)");
+        case Square::Encounter: {
+            // CHENCOUN: a fixed fight, ENEMYINX = AUX2 + rand%AUX1
+            int a1 = std::max(1, c.m.aux1(sq));
+            int inx = c.m.aux2(sq) + c.rng.mod(a1);
+            if (runFight(c, inx, out)) return true;
             c.fm.clearRoom(c.m, c.st.pos.x, c.st.pos.y);
-            c.present(); c.ui.pressAnyKey("PRESS ANY KEY");
             break;
+        }
         default:
             break;
     }
     return false;
 }
 
-// RUNMAIN's random-encounter test (combat not ported -- we just clear the
-// room and move on).
+// RUNMAIN's random-encounter test (P010E0E).
 bool encounterRoll(MazeCtx &c, bool initTurn, int lastKey) {
     if (c.rng.mod(99) == 35) return true;
     if (c.fm.at(c.st.pos.x, c.st.pos.y)) return true;
@@ -257,10 +271,21 @@ bool encounterRoll(MazeCtx &c, bool initTurn, int lastKey) {
     return false;
 }
 
+// ENCOUNTR: roll a random monster index from the level's ENMYCALC table.
+int rollEnemyInx(MazeCtx &c) {
+    int encType = 1;
+    while (c.rng.mod(4) == 2 && encType < 3) ++encType;
+    EnemyCalc e = c.m.enemyCalc(encType);
+    int encCalc = 0;
+    while (c.rng.mod(100) < e.percWorse && encCalc < e.worse01) ++encCalc;
+    return e.minEnemy + c.rng.mod(std::max(1, e.range0n)) + e.multWorse * encCalc;
+}
+
 } // namespace
 
-MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, Rng &rng, MazeState &st) {
-    MazeCtx c{ui, party, sc, rng, st};
+MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
+                 Rng &rng, MazeState &st) {
+    MazeCtx c{ui, party, sc, sp, rng, st};
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
     if (st.level < 1) st.level = 1;
     if (!c.m.load(sc.record(Scenario::Maze, st.level - 1))) return MazeExit::ToTown;
@@ -288,10 +313,9 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, Rng &rng, MazeState &
         }
 
         if (initTurn && encounterRoll(c, initTurn, lastKey)) {
-            msg(c, "-- MONSTERS! -- (combat not yet ported)");
+            MazeExit out;
+            if (runFight(c, rollEnemyInx(c), out)) return out;
             c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
-            c.present();
-            if (c.ui.pressAnyKey("PRESS ANY KEY"), c.ui.quit()) return MazeExit::WindowClosed;
         }
 
         prStats(c);

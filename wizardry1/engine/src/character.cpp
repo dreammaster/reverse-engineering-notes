@@ -87,6 +87,14 @@ void Character::read(Bytes rec) {
     for (int i = 1; i <= 50; ++i) spellKnown[i] = getBit(p, 69, i);
     for (int i = 1; i <= 7; ++i) mageSpells[i]   = i16(w(p, 73 + i - 1));
     for (int i = 1; i <= 7; ++i) priestSpells[i] = i16(w(p, 80 + i - 1));
+
+    hpCalcMd   = i16(w(p, 87));
+    healPts    = i16(w(p, 89));
+    critHitM   = w(p, 90) != 0;
+    swingCnt   = i16(w(p, 91));
+    hpDamRc[0] = i16(w(p, 92)); hpDamRc[1] = i16(w(p, 93)); hpDamRc[2] = i16(w(p, 94));
+    wepSlay    = w(p, 98);
+    poison     = i16(w(p, 99));
 }
 
 std::array<u8, Character::kRecordBytes> Character::write() const {
@@ -127,6 +135,14 @@ std::array<u8, Character::kRecordBytes> Character::write() const {
     for (int i = 1; i <= 50; ++i) setBit(p, 69, i, spellKnown[i]);
     for (int i = 1; i <= 7; ++i) setw(p, 73 + i - 1, u16(i16(mageSpells[i])));
     for (int i = 1; i <= 7; ++i) setw(p, 80 + i - 1, u16(i16(priestSpells[i])));
+
+    setw(p, 87, u16(i16(hpCalcMd)));
+    setw(p, 89, u16(i16(healPts)));
+    setw(p, 90, critHitM ? 1 : 0);
+    setw(p, 91, u16(i16(swingCnt)));
+    setw(p, 92, u16(i16(hpDamRc[0]))); setw(p, 93, u16(i16(hpDamRc[1]))); setw(p, 94, u16(i16(hpDamRc[2])));
+    setw(p, 98, wepSlay);
+    setw(p, 99, u16(i16(poison)));
 
     return out;
 }

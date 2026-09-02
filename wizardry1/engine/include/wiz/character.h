@@ -65,6 +65,16 @@ struct Character {
     int  mageSpells[8]  = {};       // [1..7] casts per level
     int  priestSpells[8] = {};
 
+    // combat tail (TCHAR words 87-99) -- derived from level/str/class/gear by
+    // deriveStats() (roller.h); the shipped roster records already carry them.
+    int  hpCalcMd = 0;              // word 87  to-hit modifier
+    int  healPts  = 0;              // word 89  per-turn regen in the maze
+    bool critHitM = false;          // word 90  weapon can instant-kill
+    int  swingCnt = 1;              // word 91  melee attacks per round
+    int  hpDamRc[3] = {2, 2, 0};    // words 92-94  THPREC {dice, sides, +}
+    u16  wepSlay  = 0;              // word 98  WEPVSTYP: slays monster class bit
+    int  poison   = 0;              // word 99  LOSTXYL.POISNAMT[1]
+
     // the untouched 208-byte record; fields above are re-encoded over it on
     // write so the combat tail and any not-yet-modelled bits survive.
     std::array<u8, kRecordBytes> raw{};

@@ -8,6 +8,7 @@
 namespace wiz {
 
 class Scenario;
+class StringPool;
 
 // Persistent maze position + party state carried between the town and the
 // maze, and across levels.
@@ -27,6 +28,7 @@ enum class MazeExit {
 
 // Run the maze until the party leaves.  On entry `st.level`/`st.pos` are the
 // spawn point (0,0 NORTH, level 1 when arriving from the Edge of Town).
-MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, Rng &rng, MazeState &st);
+MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
+                 Rng &rng, MazeState &st);
 
 } // namespace wiz

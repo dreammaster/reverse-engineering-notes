@@ -92,4 +92,25 @@ inline void startingSpells(Character &c) {
     }
 }
 
+// UTILITIE proc 25 (P010119) -- recompute the combat tail from level / class /
+// strength (unarmed; the engine does not model equipment yet).
+inline void deriveStats(Character &c) {
+    bool fighty = c.cls == Class::Fighter || c.cls == Class::Priest ||
+                  int(c.cls) >= int(Class::Samurai);
+    c.hpCalcMd = fighty ? 2 + c.charLevel / 3 : c.charLevel / 5;
+    c.hpDamRc[0] = 2; c.hpDamRc[1] = 2; c.hpDamRc[2] = 0;
+    int str = c.attrib[STR];
+    if (str > 15) { c.hpCalcMd += str - 15; c.hpDamRc[2] = str - 15; }
+    else if (str < 6) c.hpCalcMd += str - 6;
+    c.healPts = 0;
+    c.critHitM = c.cls == Class::Ninja;
+    c.swingCnt = 1;
+    if (c.cls == Class::Ninja) c.hpDamRc[1] = 4;
+    c.armorClass = 10;
+    if (c.cls == Class::Fighter || int(c.cls) >= int(Class::Samurai))
+        c.swingCnt += c.charLevel / 5 + (c.cls == Class::Ninja ? 1 : 0);
+    if (c.swingCnt > 10) c.swingCnt = 10;
+    c.wepSlay = 0;
+}
+
 } // namespace wiz

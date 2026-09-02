@@ -22,6 +22,7 @@
 #include "wiz/runner.h"
 #include "wiz/maze3d.h"
 #include "wiz/maze_ui.h"
+#include "wiz/combat_ui.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -443,7 +444,7 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
         if (e == TownExit::ToRoller) inTown = false;
         else if (e == TownExit::ToMaze) {
             MazeState st;                            // ENTMAZE: level 1, (0,0) N
-            MazeExit me = runMaze(ui, world.party, world.sc, world.rng, st);
+            MazeExit me = runMaze(ui, world.party, world.sc, world.sp, world.rng, st);
             if (me == MazeExit::WindowClosed) return;
             // PartyWiped / ToTown both drop back to the town; a real XCEMETRY
             // would run the cemetery scene first.  The party's working copies
@@ -531,7 +532,7 @@ static int cmdTownTest(int argc, char **argv) {
     TownExit e = runTown(ui, world);
     if (e == TownExit::ToMaze) {                     // continue into the maze
         MazeState mst;
-        MazeExit me = runMaze(ui, party, sc, rng, mst);
+        MazeExit me = runMaze(ui, party, sc, haveSp ? &sp : nullptr, rng, mst);
         static const char *mx[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
         std::printf("maze exit: %s  pos (%d,%d) %s level %d\n", mx[int(me)],
                     mst.pos.x, mst.pos.y, dirName(mst.pos.dir), mst.level);
@@ -804,7 +805,7 @@ static int cmdMazeSdl(int argc, char **argv) {
     Ui ui(*plat, font);
     MazeState st;
     st.level = argc > 4 ? std::max(1, std::atoi(argv[4])) : 1;
-    runMaze(ui, party, sc, rng, st);
+    runMaze(ui, party, sc, nullptr, rng, st);
     return 0;
 }
 
@@ -821,7 +822,7 @@ static int cmdMazePlayTest(int argc, char **argv) {
     Rng rng;
     Ui ui(*plat, font);
     MazeState st;
-    MazeExit e = runMaze(ui, party, sc, rng, st);
+    MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
     static const char *ex[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
     std::printf("exit: %s   pos (%d,%d) %s  level %d\n", ex[int(e)],
                 st.pos.x, st.pos.y, dirName(st.pos.dir), st.level);
@@ -832,12 +833,39 @@ static int cmdMazePlayTest(int argc, char **argv) {
     return 0;
 }
 
+// wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN]
+static int cmdCombatTest(int argc, char **argv) {
+    if (argc < 6) { std::puts("combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN]"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
+    StringPool sp;
+    bool haveSp = argc > 6 && sp.load(readFile(argv[6]));
+    int mon = std::atoi(argv[4]);
+
+    auto plat = makeNullPlatform(unescape(argv[5]), "");
+    Rng rng;
+    Ui ui(*plat, font);
+    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1);
+    static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED"};
+    std::printf("result: %s\n", rn[int(r)]);
+    for (int i = 0; i < party.count(); ++i) {
+        const Character &c = party.member(i);
+        std::printf("  %-12s HP %3d/%-3d st%d  %lld ep  %lld gp\n", c.name.c_str(),
+                    c.hpLeft, c.hpMax, int(c.status), (long long)c.exp.v, (long long)c.gold.v);
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
     if (cmd == "maze") return cmdMaze(argc, argv);
     if (cmd == "maze-sdl") return cmdMazeSdl(argc, argv);
     if (cmd == "maze-play-test") return cmdMazePlayTest(argc, argv);
+    if (cmd == "combat-test") return cmdCombatTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

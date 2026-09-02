@@ -285,6 +285,7 @@ void makeChar(RollerCtx &c, int slotIdx, const std::string &startName) {
     }
 
     startingSpells(ch);
+    deriveStats(ch);
     ch.hpMax = ch.hpLeft = rollHp(ch.cls, ch.attrib[VIT], c.rng);
 
     c.roster.slot(slotIdx) = ch;

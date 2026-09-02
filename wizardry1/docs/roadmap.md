@@ -131,8 +131,18 @@ Decided direction (2026-09-02):
       buttons). Runs from the Edge of Town (`M`). `wiz1 maze` (ASCII walk) /
       `wiz1 maze-sdl` (SDL HUD) / `wiz1 maze-play-test` (headless). 12 CMake
       tests. TODO: combat hand-off, `UPDATEHP` regen/poison, `SCNMSG`, camp.
-- [ ] Continue: `COMBAT` family (encounters from the maze) → `REWARDS` →
-      `SPECIALS`/`SCNMSG` → `CAMP` → save/restore (`PLAYER.DATA`).
+- [~] `COMBAT` family — a **core** is ported (`docs/combat.md`):
+      `engine/wiz/combat.{h,cpp}` (TENEMY decode, `buildEncounter` = CINIT,
+      `partyAttack`/`monsterAttack` = DAM2ENMY/DAM2ME with the real to-hit /
+      damage / status / drain / crit formulas, XP+gold split) +
+      `engine/wiz/combat_ui.cpp` (F)IGHT/P)ARRY/R)UN round loop). Character
+      combat tail (words 87-99) + `deriveStats` (UTILITIE 25). Wired to the
+      maze: `ENCOUNTE` squares + the random `ENCOUNTR` roll call `runCombat`.
+      `wiz1 combat-test` (headless, CMake test `combat_fight`). TODO:
+      spellcasting (`CASTASPE`), breath, allied-group summons, the full
+      `ZREWARD` item table, the cemetery scene.
+- [ ] Continue: combat spells → `REWARDS` `ZREWARD` items → `SCNMSG`/`SPECIALS`
+      → `CAMP` → save/restore (`PLAYER.DATA`).
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine
