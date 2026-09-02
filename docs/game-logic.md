@@ -378,16 +378,21 @@ Every runtime-loaded constant below reads `0` in the EXE (set from
 map / creature / region data at startup). A faithful port needs their
 real values — one memory dump each while the relevant screen is active:
 
-| symbol | where | what it gates |
-|---|---|---|
-| `ds:2092` / `ds:2096` (OUT) | `loadOverworldData` copies from `OUTM*` | the two encounter weak/tier gate probabilities in `BeginEncounterView`, per map |
-| `ds:226E` (CASDR) | `loadCastleLevel` copies from `CASTLE.BS1/2` | castle incoming-damage `difficulty` — dominates the magnitude; `0` in the EXE and never written by CASDR code |
-| `ds:2C3C` (TWNDR) | the bank | 32-bit interest divisor `K` (~1000 per the guide) — `0` in the EXE |
-| operand order | a few `.bas` lines | `-` / `/` where `'?ord` is tagged — one trace pins it for the whole codebase |
+**Just three** genuinely runtime-loaded constants remain (`0` in the EXE,
+copied from map data at load; each needs one memory dump on the relevant
+screen):
 
-*(`ds:2264`, `ds:21CE`, `ds:2192`, `S4(12)` were on this list earlier — all
-resolved statically: the first three are formulas / `OUTDAT.DAT` data,
-`S4(12)` is a persistent character word = 0 in the current save.)*
+| symbol | dump as | where / when | what it gates |
+|---|---|---|---|
+| `ds:2092` **and** `ds:2096` (OUT) | float ×2 | standing on the overworld, 2–3 different map regions | the two encounter weak/tier gate probabilities in `BeginEncounterView` |
+| `ds:226E` (CASDR) | float | inside the castle **and** the fort, ideally 2 depths | castle incoming-damage `difficulty` — dominates the magnitude |
+| `ds:2C3C` (TWNDR) | **int32** (it's a LONG) | in a town / at the bank | bank interest divisor `K` (~1000 per the guide) |
+
+Everything else on the earlier list resolved: `ds:2264` = `A1 AND 0xFF`,
+`ds:21FC` = `A1 \ 256`, `ds:21CE` / `ds:2192` (DUN) = `updateLevelState`
+formulas, `S4(12)` = a persistent character word (0). Operand order for
+`/` is **confirmed** by the to-hit (`FF47` = deeper ÷ top) and damage
+(`FF49` imm = `TOS ÷ imm`) traces.
 
 Also open (not blocking): `CastSpell` (DUN), the casino payout math, mail
 routes, the per-bit quest-flag semantics.
