@@ -1,0 +1,9 @@
+*.idb
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+
+__pycache__/
+*.pyc

@@ -1,0 +1,254 @@
+PAGE -   0
+Current memory available:    9169
+2 blocks for procedure code  8693 words left
+PAGE -   1  COPYPROT  FILE:COPYPROT   
+
+
+0000|                        .FUNC COPYPROT,0 ; NO PARAMETERS         P050002
+Current memory available:    8644
+0000|                       ; ---------------------------------------
+0000|                       ;
+0000|                       ; WHEN THIS ROUTINE STARTS, THE DRIVE IS ALREADY ON TRACK $22.
+0000|                       ;
+0000|                       ; THE RETURN VALUE IS A BOOLEAN:
+0000|                       ;    TRUE = GOOD COPY
+0000|                       ;    FALSE = BAD COPY
+0000|                       ;
+0000| 68                     PLA          ; SAVE RETURN ADDR
+0001| 85 00                  STA 00
+0003| 68                     PLA
+0004| 85 01                  STA 01
+0006| 68                     PLA          ; THROW AWAY 2 WORDS
+0007| 68                     PLA          ;
+0008| 68                     PLA          ;
+0009| 68                     PLA          ;
+000A|                       ;
+000A| A9 00                  LDA #0       ; PUSH MOST SIGNIFICANT BYTE OF RETURN VALUE
+000C| 48                     PHA          ;      (RETURN VALUE IS A BOOLEAN....ONLY LS BIT.)
+000D|                       ;
+000D| A2 60                  LDX #60
+000F| BD 89C0                LDA 0C089,X  ; MOTOR ON
+0012|                       L4118: 
+0012| 20 ****                JSR P2D
+0015| CE ****                DEC DFB
+0018| D0F8                   BNE L4118    ; LOOP 256 TIMES
+001A| 20 ****                JSR PDE      ; CALL MAIN CODE FOR COPY PROTECTION
+001D| BD 88C0                LDA 0C088,X  ; MOTOR OFF
+0020| 2A                     ROL A        ; CARRY IS 0 ON GOOD COPY, AND 1 ON BAD COPY
+0021| 49 FF                  EOR #0FF     ; FLIP THE BIT
+0023| 29 01                  AND #01
+0025| 48                     PHA          ; PUSH LSB OF RETURN VALUE (0 = FALSE, 1 = TRUE)
+0026|                       ;
+0026| A5 01                  LDA 1        ; RESTORE RETURN ADDR
+0028| 48                     PHA
+0029| A5 00                  LDA 0
+002B| 48                     PHA
+002C|                       ;
+002C| 60                     RTS          ; RETURN TO PASCAL PROCEDURE
+002D|                       ;
+002D|                       ; ----------------------------------------
+002D|                       ;
+0013* 2D00
+002D|                       P2D:          ; READ A DISK ADDRESS FIELD
+002D| BD 8EC0                LDA 0C08E,X
+0030|                       L4136:
+0030| BD 8CC0                LDA 0C08C,X
+0033| 10FB                   BPL L4136
+0035|                       L413B:
+0035| C9 D5                  CMP #0D5     ; D5
+0037| D0F7                   BNE L4136
+0039|                       L413F:
+0039| BD 8CC0                LDA 0C08C,X
+PAGE -   2  COPYPROT  FILE:COPYPROT   
+
+
+003C| 10FB                   BPL L413F
+003E| C9 AA                  CMP #0AA     ; AA
+0040| D0F3                   BNE L413B
+0042|                       L4148:
+0042| BD 8CC0                LDA 0C08C,X
+0045| 10FB                   BPL L4148
+0047| C9 96                  CMP #096     ; 96
+0049| D0EA                   BNE L413B
+004B| 20 ****                JSR P88      ; VOL
+004E| 85 02                  STA 02
+0050| 20 ****                JSR P88      ; TRACK
+0053| 45 02                  EOR 02
+0055| 85 02                  STA 02
+0057| 20 ****                JSR P88      ; SECTOR
+005A| 8D ****                STA DFD      ;   SAVE IT
+005D| 45 02                  EOR 02
+005F| 85 02                  STA 02
+0061| 20 ****                JSR P88      ; CHECKSUM
+0064| 45 02                  EOR 02
+0066| D0C8                   BNE L4136    ; NOT OK? GOTO L4136
+0068|                       L416E:
+0068| BD 8CC0                LDA 0C08C,X
+006B| 10FB                   BPL L416E
+006D| C9 DE                  CMP #0DE     ; DE
+006F| D0C4                   BNE L413B
+0071|                       L4177:
+0071| BD 8CC0                LDA 0C08C,X
+0074| 10FB                   BPL L4177
+0076| C9 AA                  CMP #0AA     ; AA
+0078| D0BB                   BNE L413B
+007A| 60                     RTS
+007B|                       ;
+007B|                       ; --------------------------------------
+007B|                       ;
+007B|                       P7B:          ; READ A SECTOR ADDR FIELD
+007B| 85 03                  STA 03       ; A = SECTOR TO READ
+007D|                       L4183:
+007D| 20 2D00                JSR P2D
+0080| AD ****                LDA DFD
+0083| C5 03                  CMP 03
+0085| D0F6                   BNE L4183    ; CONTINUE READING UNTIL DESIRED SECTOR ADDR FIELD
+0087| 60                     RTS
+0088|                       ;
+0088|                       ; -------------------------------------
+0088|                       ;
+0062* 8800
+0058* 8800
+0051* 8800
+004C* 8800
+0088|                       P88:          ; READ 2 ODD/EVEN ENCODED BYTES
+0088| BD 8CC0                LDA 0C08C,X  ;    (VOL, TRACK, SECTOR, CHECKSUM)
+008B| 10FB                   BPL P88
+008D| 38                     SEC
+008E| 2A                     ROL A
+008F| 8D ****                STA D9B
+PAGE -   3  COPYPROT  FILE:COPYPROT   
+
+
+0092|                       L4198:
+0092| BD 8CC0                LDA 0C08C,X  ; STROBE FOR INPUT
+0095| 10FB                   BPL L4198
+0097| 2D ****                AND D9B
+009A| 60                     RTS          ; A = DECODED BYTE
+009B|                       ;
+0098* 9B00
+0090* 9B00
+009B| 00                    D9B .BYTE 0 
+009C|                       ;
+009C|                       ; -------------------------------------
+009C|                       ;
+009C|                       P9C:
+009C| 20 7B00                JSR P7B      ; READ ADDR FIELD
+009F| 20 ****                JSR PBF      ; READ DATA PROLOGUE
+00A2|                                     ;
+00A2| A0 00                  LDY #0       ; START TIMING LOOP
+00A4|                       L41AA:
+00A4| 20 ****                JSR PFA      ;   IF MY CALCULATIONS ARE CORRECT, THIS CODE IS
+00A7| 20 ****                JSR PFA      ;   WAITING A BIT LONGER THAN A NORMAL SECTOR
+00AA| 20 ****                JSR PFA      ;   BEFORE SEARCHING FOR THE 'DE' IN THE EPILOG.
+00AD| 88                     DEY
+00AE| D0F4                   BNE L41AA    ; LOOP 256 TIMES
+00B0|                                     ; NOTE:  BNE IS 3 CYCLES TO SAME PAGE
+00B0|                                     ;        BNE IS 4 CYCLES TO ANOTHER PAGE
+00B0|                                     ; THERE IS THE POTENTIAL THAT THIS CODE IS DEPENDENT
+00B0|                                     ; ON WHERE IT IS LOADED IN MEMORY.
+00B0|                                     ; I.E. THIS APPEARS TO BE A MINOR PROGRAMMING BUG.
+00B0|                                     ;
+00B0| BD 8EC0                LDA 0C08E,X  ; INPUT
+00B3|                       L41B9:
+00B3| BD 8CC0                LDA 0C08C,X  ; STROBE
+00B6| 10FB                   BPL L41B9
+00B8| C8                     INY
+00B9| C9 DE                  CMP #0DE     ; LOOK FOR 'DE'
+00BB| D0F6                   BNE L41B9
+00BD| 98                     TYA
+00BE| 60                     RTS          ; A = COUNT (MOD 256) BEFORE 'DE' ENCOUNTERED
+00BF|                       ;
+00BF|                       ; --------------------------------------
+00BF|                       ;
+00A0* BF00
+00BF|                       PBF:          ; READ DATA PROLOGUE
+00BF| BD 8EC0                LDA 0C08E,X
+00C2|                       L41C8:
+00C2| BD 8CC0                LDA 0C08C,X
+00C5| 10FB                   BPL L41C8
+00C7|                       L41CD:
+00C7| C9 D5                  CMP #0D5     ; D5
+00C9| D0F7                   BNE L41C8
+00CB|                       L41D1:
+00CB| BD 8CC0                LDA 0C08C,X
+00CE| 10FB                   BPL L41D1
+00D0| C9 AA                  CMP #0AA     ; AA
+00D2| D0F3                   BNE L41CD
+PAGE -   4  COPYPROT  FILE:COPYPROT   
+
+
+00D4|                       L41DA:
+00D4| BD 8CC0                LDA 0C08C,X
+00D7| 10FB                   BPL L41DA
+00D9| C9 AD                  CMP #0AD     ; AD
+00DB| D0EA                   BNE L41CD
+00DD| 60                     RTS
+00DE|                       ;
+00DE|                       ; -------------------------------------
+00DE|                       ;
+001B* DE00
+00DE|                       PDE:          ; MAIN PATH SUBROUTINE
+00DE| AD ****                LDA DFE      ; SECTOR 'D' (PHYSICAL) IS THE ONE WE ARE GOING TO EXAMINE
+00E1| 20 9C00                JSR P9C      ; READ ADDR FIELD, READ DATA PROLOGUE, DO FUNNY COUNTING
+00E4| C9 10                  CMP #010     ; FUNNY COUNT MUST BE BETWEEN $10 AND $1C.
+00E6| 90**                   BCC L41FF
+00E8| C9 1C                  CMP #01C
+00EA| B0**                   BCS L41FF
+00EC| AD ****                LDA DFF      ; NOW EXAMINE SECTOR 'F'
+00EF| 20 9C00                JSR P9C
+00F2| C9 26                  CMP #026     ; FUNNY COUNT MUST BE BETWEEN $26 AND $36.
+00F4| 90**                   BCC L41FF
+00F6| C9 36                  CMP #036
+00F8| 60                     RTS          ; GOOD RETURN (CARRY = 0)
+00F4* 03
+00EA* 0D
+00E6* 11
+00F9|                       L41FF:
+00F9| 38                     SEC          ; BAD RETURN (CARRY = 1)
+00AB* FA00
+00A8* FA00
+00A5* FA00
+00FA|                       PFA:
+00FA| 60                     RTS
+00FB|                       
+00FB|                       ;
+00FB|                       ; D5 AA 96 ... DE AA EB ... D5 AA AD ................ DE
+00FB|                       ;                                    ^^^^^^^^^^^^^^^^
+00FB|                       ;                                    FUNNY TIMING
+00FB|                       ;                                    NORMAL IS 10944 I THINK.
+00FB|                       ;                                    11008 TO 11392 FOR WIZ3 I THINK.
+00FB|                       ;
+00FB|                       ; --------------------------------------
+00FB|                       ;
+0016* FB00
+00FB| 00                    DFB .BYTE 0 ;
+00FC| 00                        .BYTE 0 ; WASTED BYTE
+0081* FD00
+005B* FD00
+00FD| 00                    DFD .BYTE 0 ; SECTOR NUMBER READ
+00DF* FE00
+00FE| 0D                    DFE .BYTE 0D ; SECTOR 'D' INVOLVED IN COPY PROTECTION SCHEME
+00ED* FF00
+00FF| 0F                    DFF .BYTE 0F ; SECTOR 'F' INVOLVED IN COPY PROTECTION SCHEME
+0100|                        .END
+PAGE -   5  COPYPROT  FILE:COPYPROT  SYMBOLTABLE DUMP
+
+
+AB - Absolute     LB - Label     UD - Undefined     MC - Macro
+RF - Ref          DF - Def       PR - Proc          FC - Func
+PB - Public       PV - Private   CS - Consts
+
+
+COPYPROT FC ----|  D9B      LB 009B|  DFB      LB 00FB|  DFD      LB 00FD|  DFE      LB 00FE|  DFF      LB 00FF|  L4118    LB 0012
+L4136    LB 0030|  L413B    LB 0035|  L413F    LB 0039|  L4148    LB 0042|  L416E    LB 0068|  L4177    LB 0071|  L4183    LB 007D
+L4198    LB 0092|  L41AA    LB 00A4|  L41B9    LB 00B3|  L41C8    LB 00C2|  L41CD    LB 00C7|  L41D1    LB 00CB|  L41DA    LB 00D4
+L41FF    LB 00F9|  P2D      LB 002D|  P7B      LB 007B|  P88      LB 0088|  P9C      LB 009C|  PBF      LB 00BF|  PDE      LB 00DE
+PFA      LB 00FA|  
+PAGE -   6  COPYPROT  FILE:COPYPROT   
+
+
+Current minimum space is 8365 words
+
+Assembly complete:       198 lines
+     0   Errors flagged on this Assembly
