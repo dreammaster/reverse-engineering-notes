@@ -9906,3 +9906,28 @@ lead for a future round -- a reasonable next step would be checking
 whether any already-matched function reads/writes it under a
 name that IS independently confirmed (e.g. `new_room`'s own body,
 already matched, is the natural place `displayed_room` would get set).
+
+### Immediate follow-up: the `newnum`/`displayed_room` lead resolved, plus a new Allegro match
+
+Picked the just-flagged lead back up right away by reading
+`load_new_room` (already matched, `sub_40B194`) from its own very
+first instructions -- the natural place to check, since 2011's own
+`load_new_room` is exactly where `displayed_room=newnum;` happens
+(`AC.CPP:4064`), and this build's opening sequence turns out to match
+2011's in EXACT instruction order: `done_es_error=0`-equivalent
+(`dword_523198=0`, position-matched but not independently confirmed),
+`set_color_depth(8)` (a genuinely new Allegro library match, `sub_
+434DE0` -- called with the literal `8`, matching 2011's own
+`"set_color_depth(8);"` at the identical position), THEN the write
+that resolves the lead: `newnum=[ebp+newnum]` -- the function's own
+LOCAL parameter copied into a GLOBAL that IDA happens to display with
+the exact same name (a pure naming coincidence, not evidence by
+itself -- exactly the trap this project's own methodology repeatedly
+warns about) -- THEN the `"room%d.crm"` filename `sprintf` immediately
+after. Three operations, one order, zero drift: this decisively
+confirms the bare global is `displayed_room`, not a second appearance
+of `ExecutingScript.newnum`. `AreCharObjColliding`'s own entry updated
+to reflect the now-confirmed identity. 2011's intervening
+`play.room_changes++;` has no visible counterpart in this build's
+opening sequence -- a small open detail, left for a future round
+rather than force-fit into the one confirmed `dword_523198=0` write.

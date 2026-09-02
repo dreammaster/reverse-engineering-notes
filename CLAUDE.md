@@ -2750,6 +2750,16 @@ disassembly work.
   against a bare global displayed as `newnum` (NOT the already-
   confirmed `ExecutingScript.newnum` field), plausibly `displayed_room`
   but not confirmed by name.
+- **Immediate follow-up resolves the `newnum`/`displayed_room` lead.**
+  Reading `load_new_room`'s own opening instructions shows the exact
+  same 3-step sequence, in the exact same order, as 2011's own opening
+  (`set_color_depth(8)` — a new Allegro match — then `displayed_room=
+  newnum`, then the `"room%d.crm"` filename `sprintf`). The bare global
+  `AreCharObjColliding` reads (previously just "displayed as `newnum`,
+  plausibly `displayed_room`") is now decisively confirmed — a pure
+  naming coincidence between the local parameter and the global it gets
+  copied into, not evidence by itself, but the surrounding instruction
+  order settles it.
 
 ## Third-party library identification (Task #10)
 
