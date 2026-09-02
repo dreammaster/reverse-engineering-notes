@@ -85,11 +85,14 @@ Decided direction (2026-09-02):
       real interpreter would be the final confirmation.
 - [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
       +289 layout; maze bit-packing validated vs a known map.
-- [~] Platform layer: `engine/wiz/surface.h` (8bpp framebuffer + primitives),
+- [x] Platform layer: `engine/wiz/surface.h` (8bpp framebuffer + primitives),
       `wiz/font.h` (`*.CHARSET` = 16×8, 512 glyphs), `wiz/platform.h` abstract
-      + `NullPlatform` (PPM dumps) + `SdlPlatform` (SDL2 window, builds against
-      ScummVM's prebuilt libs). `wiz1 show font/title`. TODO: text-grid layer
-      for menus, `200.TITLE` decode, `200.MONSTERS` display lists.
+      + `NullPlatform` (PPM dumps) + `SdlPlatform` (SDL2 window).
+- [x] Text-grid layer: `engine/wiz/textscreen.h` — 40×24 cell grid, windows
+      (`setWindow`, clamped GOTOXY), UCSD control codes (CHR 12/11/29/8/13/10),
+      `CLRRECT`, Pascal `': w'` right-justify, inverse video, font render.
+      `wiz1 mockup` renders the MAKEMENU screen.
+- [ ] `200.TITLE` decode, `200.MONSTERS` display lists.
 - [ ] Continue: `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D view) → `COMBAT` family
       → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.

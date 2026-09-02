@@ -18,6 +18,7 @@ add_library(wizcore STATIC
   src/character.cpp
   src/surface.cpp
   src/font.cpp
+  src/textscreen.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
 )

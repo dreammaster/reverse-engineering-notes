@@ -8,6 +8,7 @@
 #include "wiz/character.h"
 #include "wiz/surface.h"
 #include "wiz/font.h"
+#include "wiz/textscreen.h"
 #include "wiz/platform.h"
 
 #include <cstdio>
@@ -302,6 +303,41 @@ static int cmdShow(int argc, char **argv) {
     return usage();
 }
 
+// A static mock of ROLLER's MAKEMENU screen, to exercise the text grid.
+static int cmdMockup(int argc, char **argv) {
+    if (argc < 3) { std::puts("mockup <CHARSET> [out.ppm]"); return 2; }
+    Font f;
+    if (!f.load(readFile(argv[2]))) { std::fprintf(stderr, "bad charset\n"); return 1; }
+
+    TextScreen t;
+    t.putChar(12);                                     // clear + home
+    t.gotoXY(0, 0); t.writeField("NAME ", 10); t.write("GANDALF");
+    t.gotoXY(0, 1); t.writeField("PASSWORD", 9);
+    t.gotoXY(0, 2); t.writeField("RACE", 9); t.write(" ELF");
+    t.gotoXY(0, 3); t.writeField("POINTS", 9); t.write(" 4");
+    static const char *attr[] = {"STRENGTH", "I.Q.", "PIETY", "VITALITY",
+                                 "AGILITY", "LUCK"};
+    static const int val[] = {9, 15, 12, 8, 11, 7};
+    for (int i = 0; i < 6; ++i) {
+        t.gotoXY(0, 5 + i); t.writeField(attr[i], 9);
+        t.gotoXY(10, 5 + i); char b[4]; std::snprintf(b, 4, "%2d", val[i]); t.write(b);
+    }
+    static const char *cls[] = {"A) FIGHTER", "B) MAGE", "C) PRIEST"};
+    for (int i = 0; i < 3; ++i) { t.gotoXY(20, 5 + i); t.write(cls[i]); }
+    t.gotoXY(13, 6); t.setAttr(ATTR_INVERSE); t.write("<--"); t.setAttr(ATTR_NORMAL);
+    t.gotoXY(0, 12); t.writeField("ALIGNMENT", 9); t.write(" GOOD");
+    t.gotoXY(0, 13); t.writeField("CLASS", 9);
+    t.setWindow(0, 15, 40, 9);
+    t.writeln("ENTER [+,-] TO ALTER A SCORE,");
+    t.writeln("      [RET] TO GO TO NEXT SCORE,");
+    t.writeln("      [ESC] TO GO ON WHEN POINTS USED UP");
+
+    Surface s(TextScreen::kCols * Font::kW, TextScreen::kRows * Font::kH);
+    t.render(s, f);
+    showSurface(s, argc > 3 ? argv[3] : nullptr);
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
@@ -309,6 +345,7 @@ int main(int argc, char **argv) {
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);
     if (cmd == "show") return cmdShow(argc, argv);
+    if (cmd == "mockup") return cmdMockup(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

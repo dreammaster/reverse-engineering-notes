@@ -31,6 +31,7 @@ ScummVM engine; the standalone `wiz1` executable is the driver.
 |---|---|
 | `wiz/surface.h` | 8-bit indexed framebuffer + primitives (lines, rects, 1-bpp blit, PPM dump) |
 | `wiz/font.h` | `200/400.CHARSET` — 16×8 glyphs, `drawText` onto a Surface |
+| `wiz/textscreen.h` | 40×24 character grid: windows, clamped `gotoXY`, UCSD control codes, `CLRRECT`, `': w'` right-justify, inverse video, font render |
 | `wiz/platform.h` | abstract `Platform` (present / pollKey / waitKey); `NullPlatform` (headless PPM) + `SdlPlatform` (SDL2 window) |
 
 SDL2 is optional. On Windows it links against ScummVM's prebuilt libs — set
@@ -66,5 +67,8 @@ wiz1 items    extracted/wiz1/SCENARIO.DATA extracted/wiz1/ASCII.KRN
 wiz1 exp      extracted/wiz1/SCENARIO.DATA
 wiz1 str      extracted/wiz1/ASCII.KRN 13010 5001 20355
 wiz1 rng      1 16
-wiz1 roll     0xdeadbeef elf good
+wiz1 roll     elf good
+wiz1 roster   extracted/wiz1/SCENARIO.DATA
+wiz1 show     font extracted/wiz1/200.CHARSET font.ppm
+wiz1 mockup   extracted/wiz1/200.CHARSET menu.ppm     # or omit .ppm for an SDL window
 ```
