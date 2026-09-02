@@ -91,15 +91,32 @@ line` scenario messages. Full dump: [`docs/strings.txt`](strings.txt).
 
 ### Record layouts (partial — field order per Apple, sizes per DOS)
 
-**ZMAZE (894 B)** — `TMAZE`: four `PACKED ARRAY[0..19][0..19] OF TWALL`
-(W,S,E,N; `TWALL = OPEN WALL DOOR HIDEDOOR`, 2 bits) ≈ perimeter shows as
-runs of `0x55`; then `FIGHTS` (1 bit/sq), `SQREXTRA` (4 bits/sq, indexes into
-the next tables), `SQRETYPE[16]` (`TSQUARE`: NORMAL STAIRS PIT CHUTE SPINNER
-DARK TRANSFER OUCHY BUTTONZ ROCKWATE FIZZLE SCNMSG ENCOUNTE — DOS renames
-SPINNER→TURNRANDOM, DARK→SDARKNESS, TRANSFER→STELEPORT, OUCHY→DAMAGE), then
-`AUX0/AUX1/AUX2[16]` (u16, stairs targets / message #s / encounter data) and
-`ENMYCALC[1..3]` (5×u16: MINENEMY MULTWORS WORSE01 RANGE0N PERCWORS). Exact
-DOS bit packing TBD (Phase 3 validation vs known maps).
+**ZMAZE (894 B / 447 words)** — `TMAZE`.  Bit packing **confirmed** from DOS
+`RUNNER` procs 13/19 + UCSD packed-array rules, and validated by rendering
+level 1 (start `@(0,0)` NORTH on the castle stairs, the long door-lined
+corridor, the big `DARK` room).  All grids are `[x][y]`, x = east, y = north,
+both mod 20.  `engine/wiz/maze.h` reads it.
+
+| word | field | pack |
+|--:|---|---|
+| 0 | `W[x][y]` | 2 bits, 3 words/row, `IXP 8,2` |
+| 60 | `S[x][y]` | " |
+| 120 | `E[x][y]` | " |
+| 180 | `N[x][y]` | " |
+| 240 | `FIGHTS[x][y]` | 1 bit, 2 words/row, `IXP 16,1` |
+| 280 | `SQREXTRA[x][y]` | 4 bits, 5 words/row, `IXP 4,4` → 0..15 |
+| 380 | `SQRETYPE[0..15]` | 4 bits, `IXP 4,4` → `TSQUARE` |
+| 384 | `AUX0[0..15]` | i16 |
+| 400 | `AUX1[0..15]` | i16 |
+| 416 | `AUX2[0..15]` | i16 |
+| 432 | `ENMYCALC[1..3]` | 5×i16: MINENEMY MULTWORS WORSE01 RANGE0N PERCWORS |
+
+`TWALL = OPEN(0) WALL(1) DOOR(2) HIDEDOOR(3)`.  `TSQUARE = NORMAL STAIRS PIT
+CHUTE SPINNER DARK TRANSFER OUCHY BUTTONZ ROCKWATE FIZZLE SCNMSG ENCOUNTE`
+(0..12; DOS renames SPINNER→TURNRANDOM, DARK→SDARKNESS, TRANSFER→STELEPORT,
+OUCHY→DAMAGE).  `SQRETYPE`/`AUX*` are indexed by the cell's `SQREXTRA` value —
+per-level there are ≤ 16 distinct special-square descriptors.  Stairs/chutes/
+teleports: `AUX0` = target level, `AUX1` = target y, `AUX2` = target x.
 
 **ZENEMY (94 B)** — `TENEMY` minus the 4 leading name strings: `PIC` (image
 #), `CALC1` (TWIZLONG hp-dice), `HPREC`, `CLASS`, `AC`, `RECSN`+`RECS[1..7]`,

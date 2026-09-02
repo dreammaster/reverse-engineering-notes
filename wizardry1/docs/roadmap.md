@@ -119,8 +119,15 @@ Decided direction (2026-09-02):
       (`runTown(Ui&, TownWorld&)` → `TownExit`). `wiz1 town` (SDL) /
       `wiz1 town-test` + `wiz1 inn-test` + `wiz1 temple-test` (headless, CMake
       tests). **The town is complete.**
-- [ ] Continue: `RUNNER` (maze + 3D view) → `COMBAT` family → `REWARDS`
-      → `SPECIALS` → save/restore.
+- [~] `RUNNER` — the maze. `docs/maze.md` maps the whole segment. The
+      **`TMAZE` bit packing is cracked** (`docs/file-formats.md`) and validated
+      by rendering level 1. Ported: `engine/wiz/maze.h`/`.cpp` (`MazeLevel`
+      reader) + `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
+      `DOTURN`, the FRWD/LEFT/RIGH view helpers). `wiz1 maze <SCENARIO.DATA>
+      [level] [F/L/R/K script]` walks a level with a top-down ASCII view
+      (CMake test `maze_walk`). TODO: `DRAWMAZE` — the first-person wireframe.
+- [ ] Continue: `RUNNER` `DRAWMAZE` 3D view → `SPECSQAR` traps/stairs →
+      `COMBAT` family → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

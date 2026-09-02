@@ -18,6 +18,8 @@
 #include "wiz/town_ui.h"
 #include "wiz/inn.h"
 #include "wiz/temple.h"
+#include "wiz/maze.h"
+#include "wiz/runner.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -639,9 +641,119 @@ static int cmdTempleTest(int argc, char **argv) {
     return fails ? 1 : 0;
 }
 
+// ---- the maze -----------------------------------------------------------
+
+static char squareMark(Square s) {
+    switch (s) {
+        case Square::Stairs:     return 'S';
+        case Square::Pit:        return 'P';
+        case Square::Chute:      return 'C';
+        case Square::TurnRandom: return 'R';   // spinner
+        case Square::Darkness:   return 'D';
+        case Square::Teleport:   return 'T';
+        case Square::Damage:     return 'O';   // "ouch"
+        case Square::Buttons:    return 'B';
+        case Square::RockWater:  return 'K';
+        case Square::Fizzle:     return 'F';
+        case Square::ScnMsg:     return 'M';
+        case Square::Encounter:  return 'E';
+        default:                 return ' ';
+    }
+}
+
+// Top-down ASCII map, north up.  Cell = "+--" wide; interior char is the
+// party arrow or a special-square letter.
+static void drawMazeTop(const MazeLevel &m, const MazePos &p) {
+    static const char *arrow = "^>v<";
+    for (int y = 19; y >= 0; --y) {
+        std::string a, b;
+        for (int x = 0; x < 20; ++x) {
+            Wall n = m.wall(x, y, NORTH);
+            a += '+';
+            a += (n == Wall::Wall ? "--" : n == Wall::Open ? "  " : "··");
+            Wall w = m.wall(x, y, WEST);
+            b += (w == Wall::Wall ? '|' : w == Wall::Open ? ' ' : ':');
+            char c = ' ';
+            if (x == p.x && y == p.y) c = arrow[p.dir & 3];
+            else if (Square s = m.squareAt(x, y); s != Square::Normal) c = squareMark(s);
+            b += c; b += ' ';
+        }
+        Wall e = m.wall(19, y, EAST);
+        a += '+';
+        b += (e == Wall::Wall ? '|' : e == Wall::Open ? ' ' : ':');
+        std::printf("%s\n%s\n", a.c_str(), b.c_str());
+    }
+    std::string bottom;
+    for (int x = 0; x < 20; ++x) {
+        Wall s = m.wall(x, 0, SOUTH);
+        bottom += '+';
+        bottom += (s == Wall::Wall ? "--" : s == Wall::Open ? "  " : "··");
+    }
+    bottom += '+';
+    std::printf("%s\n", bottom.c_str());
+}
+
+static void printCell(const MazeLevel &m, const MazePos &p) {
+    std::printf("@ (%d,%d) facing %s   walls: F=%d L=%d R=%d B=%d\n",
+                p.x, p.y, dirName(p.dir),
+                int(m.wall(p.x, p.y, p.dir)),
+                int(m.wall(p.x, p.y, (p.dir + 3) & 3)),
+                int(m.wall(p.x, p.y, (p.dir + 1) & 3)),
+                int(m.wall(p.x, p.y, (p.dir + 2) & 3)));
+    int sx = m.squareExtra(p.x, p.y);
+    Square s = m.squareType(sx);
+    if (s != Square::Normal)
+        std::printf("  square: %s  aux0=%d aux1=%d aux2=%d\n",
+                    [](Square q) {
+                        static const char *n[] = {"NORMAL","STAIRS","PIT","CHUTE","SPINNER",
+                            "DARK","TELEPORT","DAMAGE","BUTTONS","ROCKWATER","FIZZLE","SCNMSG","ENCOUNTER"};
+                        return n[int(q)];
+                    }(s),
+                    m.aux0(sx), m.aux1(sx), m.aux2(sx));
+}
+
+// wiz1 maze <SCENARIO.DATA> [level 1-10] [keyscript F/L/R/K/Q]
+static int cmdMaze(int argc, char **argv) {
+    if (argc < 3) { std::puts("maze <SCENARIO.DATA> [level] [keyscript]"); return 2; }
+    Scenario sc;
+    if (!sc.load(readFile(argv[2]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    int level = argc > 3 ? std::atoi(argv[3]) : 1;
+    if (level < 1 || level > sc.count(Scenario::Maze)) { std::fprintf(stderr, "level 1..%d\n", sc.count(Scenario::Maze)); return 1; }
+
+    MazeLevel m;
+    if (!m.load(sc.record(Scenario::Maze, level - 1))) { std::fprintf(stderr, "bad maze record\n"); return 1; }
+
+    MazePos p{0, 0, NORTH};
+    std::string keys = argc > 4 ? unescape(argv[4]) : "";
+    std::printf("=== maze level %d ===\n", level);
+    drawMazeTop(m, p);
+    printCell(m, p);
+
+    int bumps = 0;
+    for (char k : keys) {
+        k = char(std::toupper((unsigned char)k));
+        if (k == 'Q') break;
+        if (k == 'F' || k == 'W') { if (canWalk(m, p)) stepForward(p); else { std::puts("bump!"); ++bumps; } }
+        else if (k == 'K') { if (canKick(m, p)) stepForward(p); else { std::puts("bump!"); ++bumps; } }
+        else if (k == 'L' || k == 'A') turn(p, 3);
+        else if (k == 'R' || k == 'D') turn(p, 1);
+        else continue;
+        std::printf("\n> %c\n", k);
+        printCell(m, p);
+    }
+    if (!keys.empty()) {
+        std::puts("");
+        drawMazeTop(m, p);
+        std::printf("RESULT (%d,%d) %s bumps=%d square=%d\n", p.x, p.y, dirName(p.dir),
+                    bumps, int(m.squareAt(p.x, p.y)));
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
+    if (cmd == "maze") return cmdMaze(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

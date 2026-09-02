@@ -24,6 +24,7 @@ add_library(wizcore STATIC
   src/roller_ui.cpp
   src/party.cpp
   src/shop.cpp
+  src/maze.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -106,3 +107,11 @@ set_tests_properties(temple_heal PROPERTIES
     PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*THESUS[^\n]*85gp")
 set_tests_properties(temple_heal PROPERTIES
     FAIL_REGULAR_EXPRESSION "roster 6")
+add_test(NAME maze_walk
+         COMMAND wiz1 maze
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "FFFRFF")
+# Wizardry level 1 starts at (0,0) NORTH on the castle stairs; three steps
+# north hug the west wall, then a wall blocks two attempts to move east.
+set_tests_properties(maze_walk PROPERTIES
+    PASS_REGULAR_EXPRESSION "RESULT .0,3. EAST bumps=2 square=0")
