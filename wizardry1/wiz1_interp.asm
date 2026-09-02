@@ -48,24 +48,24 @@ interp_reloc    proc near               ; CODE XREF: interp_start↑j
                 assume ss:nothing
                 mov     sp, bx
                 push    dx
-                call    sub_3716
+                call    pm_trace_init
                 pop     dx
-                call    sub_1309
-                call    sub_1276
+                call    pm_build_drive_table
+                call    pm_check_memsize
                 xor     ax, ax
                 mov     cs:word_3CC2, ax
                 mov     cs:word_3CC0, ax
 
 loc_3F:                                 ; DATA XREF: INTERP:38F8↓r
-                call    sub_11A
+                call    pm_init_regs
 
-loc_42:                                 ; DATA XREF: sub_1309+1↓r
-                call    sub_129
+loc_42:                                 ; DATA XREF: pm_build_drive_table+1↓r
+                call    pm_bootstrap_pascal
                 cld
 
-loc_46:                                 ; DATA XREF: sub_7E9+13↓r
-                                        ; sub_1276↓r
-                jmp     loc_E7
+loc_46:                                 ; DATA XREF: pm_disk_setup+13↓r
+                                        ; pm_check_memsize↓r
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 mov     bx, 3A1h
                 jmp     short loc_AE
@@ -81,7 +81,7 @@ loc_53:                                 ; CODE XREF: sub_2A59+3B↓j
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
 
-loc_58:                                 ; CODE XREF: sub_293E:loc_293B↓j
+loc_58:                                 ; CODE XREF: pm_proc_entry:loc_293B↓j
                                         ; sub_2A59+50↓j
                                         ; DATA XREF: ...
                 mov     bx, 4A2h
@@ -91,7 +91,7 @@ loc_58:                                 ; CODE XREF: sub_293E:loc_293B↓j
 loc_5D:                                 ; CODE XREF: INTERP:2B09↓j
                 mov     bx, 40Dh
 
-loc_60:                                 ; DATA XREF: sub_550+81↓r
+loc_60:                                 ; DATA XREF: pm_scan_boot_volume+81↓r
                                         ; INTERP:0615↓r ...
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
@@ -116,13 +116,13 @@ loc_6C:                                 ; CODE XREF: INTERP:loc_2689↓j
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
 
-loc_76:                                 ; CODE XREF: sub_129+4B↓j
-                                        ; DATA XREF: sub_550+5D↓r
+loc_76:                                 ; CODE XREF: pm_bootstrap_pascal+4B↓j
+                                        ; DATA XREF: pm_scan_boot_volume+5D↓r
                 mov     bx, 434h
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
 
-loc_7B:                                 ; CODE XREF: sub_2630+3E↓j
+loc_7B:                                 ; CODE XREF: op_LDE+3E↓j
                                         ; INTERP:2694↓j ...
                 mov     bx, 45Ch
                 jmp     short loc_AE
@@ -138,8 +138,8 @@ loc_85:                                 ; CODE XREF: INTERP:loc_2E6B↓j
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
 
-loc_8A:                                 ; CODE XREF: sub_129+7↓j
-                                        ; sub_129+24↓j ...
+loc_8A:                                 ; CODE XREF: pm_bootstrap_pascal+7↓j
+                                        ; pm_bootstrap_pascal+24↓j ...
                 mov     bx, 44Bh
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
@@ -178,7 +178,7 @@ loc_AE:                                 ; CODE XREF: interp_reloc+31↑j
                 call    sub_372B
                 push    di
                 mov     di, 398Ch
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 pop     bx
 
@@ -187,7 +187,7 @@ loc_BB:                                 ; CODE XREF: interp_reloc+AB↓j
                 inc     bx
                 or      al, al
                 jz      short loc_C8
-                call    sub_38CB
+                call    pm_trace_step
                 jmp     short loc_BB
 ; ---------------------------------------------------------------------------
 
@@ -202,44 +202,44 @@ loc_C8:                                 ; CODE XREF: interp_reloc+A6↑j
                 mov     bx, [si]
                 push    di
                 mov     di, 3998h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 pop     bx
                 pop     ax
 
-loc_E4:                                 ; CODE XREF: INTERP:loc_2677↓j
-                jmp     loc_1307
+loc_E4:                                 ; CODE XREF: INTERP:op_BPT_HLT↓j
+                jmp     pm_hang
 ; ---------------------------------------------------------------------------
 
-loc_E7:                                 ; CODE XREF: interp_reloc:loc_46↑j
+interp_fetch:                           ; CODE XREF: interp_reloc:loc_46↑j
                                         ; interp_reloc+E0↓j ...
                 xor     ah, ah
                 cld
                 lodsb
                 or      al, al
-                jns     short loc_FA
+                jns     short op_SLDC_push
                 mov     di, si
                 shl     al, 1
                 mov     bx, ax
                 jmp     cs:off_2A1[bx]
 ; ---------------------------------------------------------------------------
 
-loc_FA:                                 ; CODE XREF: interp_reloc+D2↑j
+op_SLDC_push:                           ; CODE XREF: interp_reloc+D2↑j
                 push    ax
-                jmp     short loc_E7
+                jmp     short interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_FD:                                 ; CODE XREF: interp_reloc+DA↑j
+op_NOP2:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0345↓o ...
-                jmp     short loc_E7
+                jmp     short interp_fetch ; p-code opcode 0xd2 NOP2
 interp_reloc    endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_FF          proc near               ; CODE XREF: INTERP:loc_2671↓p
-                                        ; INTERP:loc_26BE↓p ...
+pm_fetch_big    proc near               ; CODE XREF: INTERP:op_SKIP1_D5↓p
+                                        ; INTERP:op_LDL↓p ...
                 lodsb
                 or      al, al
                 jns     short loc_10A
@@ -249,55 +249,55 @@ sub_FF          proc near               ; CODE XREF: INTERP:loc_2671↓p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_10A:                                ; CODE XREF: sub_FF+3↑j
+loc_10A:                                ; CODE XREF: pm_fetch_big+3↑j
                 xor     ah, ah
                 shl     ax, 1
                 retn
-sub_FF          endp
+pm_fetch_big    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10F         proc near               ; CODE XREF: INTERP:2729↓p
+pm_walk_static_link proc near           ; CODE XREF: INTERP:2729↓p
                                         ; INTERP:273A↓p ...
                 xor     ch, ch
                 mov     bx, bp
                 jcxz    short locret_119
 
-loc_115:                                ; CODE XREF: sub_10F+8↓j
+loc_115:                                ; CODE XREF: pm_walk_static_link+8↓j
                 mov     bx, [bx]
                 loop    loc_115
 
-locret_119:                             ; CODE XREF: sub_10F+4↑j
+locret_119:                             ; CODE XREF: pm_walk_static_link+4↑j
                 retn
-sub_10F         endp
+pm_walk_static_link endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11A         proc near               ; CODE XREF: interp_reloc:loc_3F↑p
+pm_init_regs    proc near               ; CODE XREF: interp_reloc:loc_3F↑p
                 mov     ax, 732h
                 mov     ds:word_604, ax
                 mov     ax, 0E01Ch
                 mov     ds:word_602, ax
                 mov     bp, ax
                 retn
-sub_11A         endp
+pm_init_regs    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_129         proc near               ; CODE XREF: interp_reloc:loc_42↑p
-                call    sub_550
+pm_bootstrap_pascal proc near           ; CODE XREF: interp_reloc:loc_42↑p
+                call    pm_scan_boot_volume
                 or      ax, ax
                 jz      short loc_133
                 jmp     loc_8A
 ; ---------------------------------------------------------------------------
 
-loc_133:                                ; CODE XREF: sub_129+5↑j
+loc_133:                                ; CODE XREF: pm_bootstrap_pascal+5↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 4
@@ -307,13 +307,13 @@ loc_133:                                ; CODE XREF: sub_129+5↑j
                 push    bx
                 mov     bx, 2
                 push    bx
-                call    sub_639
+                call    pm_load_startup_seg
                 or      ax, ax
                 jz      short loc_150
                 jmp     loc_8A
 ; ---------------------------------------------------------------------------
 
-loc_150:                                ; CODE XREF: sub_129+22↑j
+loc_150:                                ; CODE XREF: pm_bootstrap_pascal+22↑j
                 cld
                 mov     bx, ds:word_604
                 mov     cx, 4Eh ; 'N'
@@ -321,7 +321,7 @@ loc_150:                                ; CODE XREF: sub_129+22↑j
                 push    cs
                 pop     es
 
-loc_15B:                                ; CODE XREF: sub_129+48↓j
+loc_15B:                                ; CODE XREF: pm_bootstrap_pascal+48↓j
                 push    cx
                 mov     cl, cs:byte_210
                 xor     ch, ch
@@ -336,7 +336,7 @@ loc_15B:                                ; CODE XREF: sub_129+48↓j
                 jmp     loc_76
 ; ---------------------------------------------------------------------------
 
-loc_177:                                ; CODE XREF: sub_129+42↑j
+loc_177:                                ; CODE XREF: pm_bootstrap_pascal+42↑j
                 pop     cx
                 pop     es
                 mov     dx, [bx]
@@ -349,20 +349,20 @@ loc_177:                                ; CODE XREF: sub_129+42↑j
                 mov     ax, 200h
                 push    ax
                 push    dx
-                call    sub_639
+                call    pm_load_startup_seg
                 pop     dx
                 or      ax, ax
                 jz      short loc_197
                 jmp     loc_8A
 ; ---------------------------------------------------------------------------
 
-loc_197:                                ; CODE XREF: sub_129+69↑j
+loc_197:                                ; CODE XREF: pm_bootstrap_pascal+69↑j
                 xor     ax, ax
                 mov     di, 6B2h
                 mov     cx, 20h ; ' '
                 rep stosw
                 mov     bx, ds:word_604
-                call    sub_22F
+                call    pm_build_procdict
                 mov     cx, ds:0E13Eh
                 or      cx, cx
                 jz      short loc_1CD
@@ -371,26 +371,26 @@ loc_197:                                ; CODE XREF: sub_129+69↑j
                 push    ds:word_602
                 mov     ds:word_602, 0FE7Ch
                 xor     ax, ax
-                call    sub_29FD
+                call    pm_load_code_segment
                 pop     ds:word_602
                 xor     bl, bl
                 jmp     short loc_1D7
 ; ---------------------------------------------------------------------------
 
-loc_1CD:                                ; CODE XREF: sub_129+85↑j
+loc_1CD:                                ; CODE XREF: pm_bootstrap_pascal+85↑j
                 mov     ax, 1
-                call    sub_29FD
+                call    pm_load_code_segment
                 mov     bl, 1
                 push    ax
                 push    ax
 
-loc_1D7:                                ; CODE XREF: sub_129+A2↑j
+loc_1D7:                                ; CODE XREF: pm_bootstrap_pascal+A2↑j
                 xor     bh, bh
                 shl     bx, 1
                 mov     cx, [bx+632h]
                 shr     bx, 1
                 mov     al, 1
-                call    sub_293E
+                call    pm_proc_entry
                 mov     ax, sp
                 inc     ax
                 inc     ax
@@ -405,17 +405,17 @@ loc_1D7:                                ; CODE XREF: sub_129+A2↑j
                 mov     word ptr ds:0E0E6h, 0
                 mov     word ptr ds:0E0E2h, 4
                 retn
-sub_129         endp ; sp-analysis failed
+pm_bootstrap_pascal endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
-byte_210        db 0Dh                  ; DATA XREF: sub_129+33↑r
+byte_210        db 0Dh                  ; DATA XREF: pm_bootstrap_pascal+33↑r
 aSystemPascal   db 'SYSTEM.PASCAL',0
                 db 10h dup(0)
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22F         proc near               ; CODE XREF: sub_129+7C↑p
+pm_build_procdict proc near             ; CODE XREF: pm_bootstrap_pascal+7C↑p
                 mov     di, 0E13Eh
                 mov     cx, 60h ; '`'
                 xor     ax, ax
@@ -426,7 +426,7 @@ sub_22F         proc near               ; CODE XREF: sub_129+7C↑p
                 mov     si, bx
                 xor     bp, bp
 
-loc_244:                                ; CODE XREF: sub_22F:loc_289↓j
+loc_244:                                ; CODE XREF: pm_build_procdict:loc_289↓j
                 shl     bp, 1
                 mov     bx, [bp+si]
                 shr     bp, 1
@@ -439,7 +439,7 @@ loc_244:                                ; CODE XREF: sub_22F:loc_289↓j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_253:                                ; CODE XREF: sub_22F+1D↑j
+loc_253:                                ; CODE XREF: pm_build_procdict+1D↑j
                 mov     bx, [bp+si+100h]
                 xor     bh, bh
                 or      bx, bx
@@ -448,8 +448,8 @@ loc_253:                                ; CODE XREF: sub_22F+1D↑j
                 jnz     short loc_265
                 mov     bx, 0Fh
 
-loc_265:                                ; CODE XREF: sub_22F+2C↑j
-                                        ; sub_22F+31↑j
+loc_265:                                ; CODE XREF: pm_build_procdict+2C↑j
+                                        ; pm_build_procdict+31↑j
                 mov     ax, bx
                 shl     bx, 1
                 add     bx, ax
@@ -472,16 +472,16 @@ loc_265:                                ; CODE XREF: sub_22F+2C↑j
                 shr     bp, 1
                 mov     [bx+di], ax
 
-loc_289:                                ; CODE XREF: sub_22F+21↑j
+loc_289:                                ; CODE XREF: pm_build_procdict+21↑j
                 loop    loc_244
                 retn
-sub_22F         endp
+pm_build_procdict endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28C         proc near               ; CODE XREF: sub_2AAC+6↓p
+pm_flush_pending_seg proc near          ; CODE XREF: sub_2AAC+6↓p
                                         ; INTERP:loc_2BBD↓p ...
                 push    bx
                 mov     bx, ds:0E0E6h
@@ -490,140 +490,140 @@ sub_28C         proc near               ; CODE XREF: sub_2AAC+6↓p
                 mov     ds:word_604, bx
                 mov     word ptr ds:0E0E6h, 0
 
-loc_29F:                                ; CODE XREF: sub_28C+7↑j
+loc_29F:                                ; CODE XREF: pm_flush_pending_seg+7↑j
                 pop     bx
                 retn
-sub_28C         endp
+pm_flush_pending_seg endp
 
 ; ---------------------------------------------------------------------------
-off_2A1         dw offset loc_2777      ; DATA XREF: interp_reloc+DA↑r
-                dw offset loc_268C
-                dw offset loc_2782
-                dw offset loc_268C
-                dw offset loc_2760
-                dw offset loc_33E8
-                dw offset loc_27A1
-                dw offset loc_268C
-                dw offset loc_267A
-                dw offset loc_268C
-                dw offset loc_268C
-                dw offset loc_3237
-                dw offset loc_3359
-                dw offset loc_2768
-                dw offset loc_27AE
-                dw offset loc_2799
-                dw offset loc_268C
-                dw offset loc_278A
-                dw offset loc_268C
-                dw offset loc_2770
-                dw offset loc_32C2
-                dw offset loc_2791
-                dw offset loc_268C
-                dw offset loc_32BF
-                dw offset loc_2657
-                dw offset loc_268C
-                dw offset loc_3436
-                dw offset loc_36D8
-                dw offset loc_3394
-                dw offset sub_2630
-                dw offset loc_2B40
-                dw offset loc_26A0
-                dw offset loc_3272
-                dw offset loc_27D0
-                dw offset loc_3180
-                dw offset loc_342B
-                dw offset loc_319D
-                dw offset loc_2706
-                dw offset loc_36A0
-                dw offset loc_264A
-                dw offset loc_318A
-                dw offset loc_26F7
-                dw offset loc_36AB
-                dw offset loc_2716
-                dw offset loc_27F5
-                dw offset loc_28E6
-                dw offset loc_2861
-                dw offset loc_34DA
-                dw offset loc_34EE
-                dw offset loc_34F3
-                dw offset loc_2737
-                dw offset loc_343D
-                dw offset loc_34E4
-                dw offset loc_34E9
-                dw offset loc_2726
-                dw offset loc_34DF
-                dw offset loc_2749
-                dw offset loc_27D9
-                dw offset loc_31E7
-                dw offset loc_31F9
-                dw offset loc_3452
-                dw offset loc_3465
-                dw offset loc_36F0
-                dw offset loc_36FA
-                dw offset loc_31C3
-                dw offset loc_28D3
-                dw offset loc_28A4
-                dw offset loc_3480
-                dw offset loc_34BC
-                dw offset loc_34CB
-                dw offset loc_26C9
-                dw offset loc_26A6
-                dw offset loc_349E
-                dw offset loc_34AD
-                dw offset loc_26BE
-                dw offset loc_348F
-                dw offset loc_26D5
-                dw offset loc_281A
-                dw offset loc_284C
-                dw offset loc_288E
-                dw offset loc_31B8
-                dw offset loc_263D
-                dw offset loc_FD
-                dw offset loc_2666
-                dw offset loc_2666
-                dw offset loc_2671
-                dw offset loc_2677
-                dw offset loc_FD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26AD
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_26E1
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
-                dw offset loc_3420
+off_2A1         dw offset op_ABI        ; DATA XREF: interp_reloc+DA↑r
+                dw offset op_SQR_trap
+                dw offset op_ADI
+                dw offset op_SQR_trap
+                dw offset op_LAND
+                dw offset op_DIF
+                dw offset op_DVI
+                dw offset op_SQR_trap
+                dw offset op_CHK
+                dw offset op_SQR_trap
+                dw offset op_SQR_trap
+                dw offset op_INN
+                dw offset op_INT_set
+                dw offset op_LOR
+                dw offset op_MODI
+                dw offset op_MPI
+                dw offset op_SQR_trap
+                dw offset op_NGI
+                dw offset op_SQR_trap
+                dw offset op_LNOT
+                dw offset op_SRS
+                dw offset op_SBI
+                dw offset op_SQR_trap
+                dw offset op_SGS
+                dw offset op_SQI
+                dw offset op_SQR_trap
+                dw offset op_STO
+                dw offset op_IXS
+                dw offset op_UNI
+                dw offset op_LDE
+                dw offset op_CSP
+                dw offset op_LDCN
+                dw offset op_ADJ
+                dw offset op_FJP
+                dw offset op_INC
+                dw offset op_IND
+                dw offset op_IXA
+                dw offset op_LAO
+                dw offset op_LSA
+                dw offset op_LAE
+                dw offset op_MOV
+                dw offset op_LDO
+                dw offset op_SAS
+                dw offset op_SRO
+                dw offset op_XJP
+                dw offset op_RNP
+                dw offset op_CIP
+                dw offset op_EQU
+                dw offset op_GEQ
+                dw offset op_GTR
+                dw offset op_LDA
+                dw offset op_LDC
+                dw offset op_LEQ
+                dw offset op_LES
+                dw offset op_LOD
+                dw offset op_NEQ
+                dw offset op_STR
+                dw offset op_UJP
+                dw offset op_LDP
+                dw offset op_STP
+                dw offset op_LDM
+                dw offset op_STM
+                dw offset op_LDB
+                dw offset op_STB
+                dw offset op_IXP
+                dw offset op_RBP
+                dw offset op_CBP
+                dw offset op_EQUI
+                dw offset op_GEQI
+                dw offset op_GTRI
+                dw offset op_LLA
+                dw offset op_LDCI
+                dw offset op_LEQI
+                dw offset op_LESI
+                dw offset op_LDL
+                dw offset op_NEQI
+                dw offset op_STL
+                dw offset op_CXP
+                dw offset op_CLP
+                dw offset op_CGP
+                dw offset op_LPA
+                dw offset op_STE
+                dw offset op_NOP2
+                dw offset op_UNIMPL_D3
+                dw offset op_UNIMPL_D3
+                dw offset op_SKIP1_D5
+                dw offset op_BPT_HLT
+                dw offset op_NOP2
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDL
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SLDO
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
+                dw offset op_SIND
 aOopsEndOfCodeE db 'OOPS! end of code encountered!!',0
 aDividedByTake  db 'Divided by Take',0
 aUserBreak      db 'User Break',0
@@ -643,15 +643,15 @@ aSystemTrapErro db 'System trap error',0
 aDiskErrorRetur db 'Disk error returned during cache read',0
 aProcessorTrapI db 'Processor trap (illegal instruction?)',0
                 align 10h
-word_540        dw 0                    ; DATA XREF: sub_639+C↓w
-                                        ; sub_924↓r ...
-word_542        dw 0                    ; DATA XREF: sub_639↓w
-                                        ; sub_639+2F↓r ...
+word_540        dw 0                    ; DATA XREF: pm_load_startup_seg+C↓w
+                                        ; pm_read_blocks↓r ...
+word_542        dw 0                    ; DATA XREF: pm_load_startup_seg↓w
+                                        ; pm_load_startup_seg+2F↓r ...
 byte_544        db 0                    ; DATA XREF: sub_FEA+4↓w
                                         ; sub_FEA+34↓w ...
 byte_545        db 0DFh, 2, 85h, 2, 12h, 2Ah, 0FFh, 50h, 0F6h
-                                        ; DATA XREF: sub_1108+3↓r
-                                        ; sub_1108+8↓w ...
+                                        ; DATA XREF: sbios_disk_io+3↓r
+                                        ; sbios_disk_io+8↓w ...
 byte_54E        db 19h                  ; DATA XREF: INTERP:0DB9↓w
                                         ; sub_DC3+6↓w ...
 ; ---------------------------------------------------------------------------
@@ -660,7 +660,7 @@ byte_54E        db 19h                  ; DATA XREF: INTERP:0DB9↓w
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_550         proc near               ; CODE XREF: sub_129↑p
+pm_scan_boot_volume proc near           ; CODE XREF: pm_bootstrap_pascal↑p
                 lea     bx, ds:5A30h
                 mov     cs:word_1229, bx
                 mov     cx, 0Dh
@@ -674,7 +674,7 @@ sub_550         proc near               ; CODE XREF: sub_129↑p
                 pop     es
                 mov     bx, 125Ch
 
-loc_56B:                                ; CODE XREF: sub_550:loc_5A3↓j
+loc_56B:                                ; CODE XREF: pm_scan_boot_volume:loc_5A3↓j
                 mov     di, cs:[bx]
                 or      di, di
                 jz      short loc_5A5
@@ -689,10 +689,10 @@ loc_56B:                                ; CODE XREF: sub_550:loc_5A3↓j
                 jmp     short loc_59A
 ; ---------------------------------------------------------------------------
 
-loc_583:                                ; CODE XREF: sub_550+2D↑j
+loc_583:                                ; CODE XREF: pm_scan_boot_volume+2D↑j
                 push    di
                 push    bx
-                call    sub_619
+                call    pm_open_file
                 pop     bx
                 pop     di
                 or      ax, ax
@@ -702,17 +702,17 @@ loc_583:                                ; CODE XREF: sub_550+2D↑j
                 jnb     short loc_59A
                 or      dx, 8000h
 
-loc_59A:                                ; CODE XREF: sub_550+31↑j
-                                        ; sub_550+44↑j
+loc_59A:                                ; CODE XREF: pm_scan_boot_volume+31↑j
+                                        ; pm_scan_boot_volume+44↑j
                 and     di, 3FFFh
                 mov     cs:[di+1235h], dx
 
-loc_5A3:                                ; CODE XREF: sub_550+3C↑j
+loc_5A3:                                ; CODE XREF: pm_scan_boot_volume+3C↑j
                 jmp     short loc_56B
 ; ---------------------------------------------------------------------------
 
-loc_5A5:                                ; CODE XREF: sub_550+20↑j
-                call    sub_7E9
+loc_5A5:                                ; CODE XREF: pm_scan_boot_volume+20↑j
+                call    pm_disk_setup
                 push    es
                 xor     bx, bx
                 mov     es, bx
@@ -726,14 +726,14 @@ loc_5A5:                                ; CODE XREF: sub_550+20↑j
                 push    es
                 js      short $+2
 
-loc_5C5:                                ; CODE XREF: sub_550+73↑j
+loc_5C5:                                ; CODE XREF: pm_scan_boot_volume+73↑j
                 inc     bp
                 add     ax, 8C26h
                 push    cs
                 jp      short $+2
 
-loc_5CC:                                ; CODE XREF: sub_550+70↑j
-                                        ; sub_550+7A↑j
+loc_5CC:                                ; CODE XREF: pm_scan_boot_volume+70↑j
+                                        ; pm_scan_boot_volume+7A↑j
                 pop     es
                 xor     ax, ax
                 mov     dx, ax
@@ -743,22 +743,22 @@ loc_5CC:                                ; CODE XREF: sub_550+70↑j
                 cld
                 xor     ax, ax
                 retn
-sub_550         endp ; sp-analysis failed
+pm_scan_boot_volume endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 db 0BFh, 35h, 12h, 0B9h, 0Dh, 0, 2Eh, 8Bh, 1Dh, 2 dup(47h)
                 db 0Bh, 0DBh, 74h, 12h, 0F7h, 0C3h, 0, 40h, 74h, 0Ch, 81h
                 db 0E3h, 0FFh, 3Fh, 57h, 51h, 0B4h, 3Eh, 2 dup(90h), 59h
                 db 5Fh, 0E2h, 0E3h, 6, 1Eh, 33h, 0DBh, 8Eh, 0C3h
-word_600        dw 0C52Eh               ; DATA XREF: sub_129+CA↑w
-word_602        dw 2B1Eh                ; DATA XREF: sub_11A+9↑w
-                                        ; sub_129+8D↑r ...
-word_604        dw 2612h                ; DATA XREF: sub_11A+3↑w
-                                        ; sub_129+11↑r ...
+word_600        dw 0C52Eh               ; DATA XREF: pm_bootstrap_pascal+CA↑w
+word_602        dw 2B1Eh                ; DATA XREF: pm_init_regs+9↑w
+                                        ; pm_bootstrap_pascal+8D↑r ...
+word_604        dw 2612h                ; DATA XREF: pm_init_regs+3↑w
+                                        ; pm_bootstrap_pascal+11↑r ...
 word_606        dw 1E89h                ; DATA XREF: interp_reloc:loc_C8↑r
 word_608        dw 78h                  ; DATA XREF: interp_reloc+B3↑r
-                                        ; sub_129+CE↑r
-word_60A        dw 8C26h                ; DATA XREF: sub_129+D1↑w
+                                        ; pm_bootstrap_pascal+CE↑r
+word_60A        dw 8C26h                ; DATA XREF: pm_bootstrap_pascal+D1↑w
 ; ---------------------------------------------------------------------------
                 push    ds
                 jp      short $+2
@@ -777,7 +777,7 @@ loc_60F:                                ; CODE XREF: INTERP:060D↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_619         proc near               ; CODE XREF: sub_550+35↑p
+pm_open_file    proc near               ; CODE XREF: pm_scan_boot_volume+35↑p
                 mov     al, 0
                 test    di, 4000h
                 jz      short loc_635
@@ -785,7 +785,7 @@ sub_619         proc near               ; CODE XREF: sub_550+35↑p
                 jnz     short loc_629
                 mov     al, 2
 
-loc_629:                                ; CODE XREF: sub_619+C↑j
+loc_629:                                ; CODE XREF: pm_open_file+C↑j
                 mov     ah, 3Dh ; '='
                 push    ds
                 push    cs
@@ -796,20 +796,20 @@ loc_629:                                ; CODE XREF: sub_619+C↑j
                 jb      short loc_637
                 mov     dx, ax
 
-loc_635:                                ; CODE XREF: sub_619+6↑j
+loc_635:                                ; CODE XREF: pm_open_file+6↑j
                 xor     ax, ax
 
-loc_637:                                ; CODE XREF: sub_619+18↑j
+loc_637:                                ; CODE XREF: pm_open_file+18↑j
                 cld
                 retn
-sub_619         endp
+pm_open_file    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_639         proc near               ; CODE XREF: sub_129+1D↑p
-                                        ; sub_129+63↑p ...
+pm_load_startup_seg proc near           ; CODE XREF: pm_bootstrap_pascal+1D↑p
+                                        ; pm_bootstrap_pascal+63↑p ...
                 pop     cs:word_542
                 pop     bx
                 pop     cx
@@ -831,33 +831,33 @@ sub_639         proc near               ; CODE XREF: sub_129+1D↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_660:                                ; CODE XREF: sub_639+1F↑j
+loc_660:                                ; CODE XREF: pm_load_startup_seg+1F↑j
                 test    ax, 4000h
                 jnz     short loc_66D
-                call    sub_924
+                call    pm_read_blocks
                 jmp     cs:word_542
 ; ---------------------------------------------------------------------------
 
-loc_66D:                                ; CODE XREF: sub_639+2A↑j
+loc_66D:                                ; CODE XREF: pm_load_startup_seg+2A↑j
                 mov     ax, 40h ; '@'
 
-loc_670:                                ; CODE XREF: sub_639+24↑j
+loc_670:                                ; CODE XREF: pm_load_startup_seg+24↑j
                 cld
                 jmp     cs:word_542
-sub_639         endp ; sp-analysis failed
+pm_load_startup_seg endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_676         proc near               ; CODE XREF: INTERP:loc_2CBF↓p
+pm_kbd_helper   proc near               ; CODE XREF: INTERP:loc_2CBF↓p
                 pop     di
                 pop     ax
                 mov     bx, ax
                 shl     bx, 1           ; switch 13 cases
                 jmp     cs:jpt_67C[bx]  ; switch jump
 ; ---------------------------------------------------------------------------
-jpt_67C         dw offset loc_6B6       ; DATA XREF: sub_676+6↑r
+jpt_67C         dw offset loc_6B6       ; DATA XREF: pm_kbd_helper+6↑r
                 dw offset loc_69B       ; jump table for switch statement
                 dw offset loc_69B
                 dw offset loc_6B6
@@ -872,8 +872,8 @@ jpt_67C         dw offset loc_6B6       ; DATA XREF: sub_676+6↑r
                 dw offset loc_6B3
 ; ---------------------------------------------------------------------------
 
-loc_69B:                                ; CODE XREF: sub_676+6↑j
-                                        ; sub_676+2F↓j
+loc_69B:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; pm_kbd_helper+2F↓j
                                         ; DATA XREF: ...
                 mov     ah, 1           ; jumptable 0000067C cases 1,2
                 int     16h             ; KEYBOARD - CHECK BUFFER, DO NOT CLEAR
@@ -887,50 +887,50 @@ loc_69B:                                ; CODE XREF: sub_676+6↑j
                 jmp     short loc_69B   ; jumptable 0000067C cases 1,2
 ; ---------------------------------------------------------------------------
 
-loc_6A7:                                ; CODE XREF: sub_676+29↑j
+loc_6A7:                                ; CODE XREF: pm_kbd_helper+29↑j
                 jmp     short loc_6BC
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_6AA:                                ; CODE XREF: sub_676+6↑j
-                                        ; DATA XREF: sub_676:jpt_67C↑o
+loc_6AA:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; DATA XREF: pm_kbd_helper:jpt_67C↑o
                 jmp     short loc_6B6   ; jumptable 0000067C case 7
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_6AD:                                ; CODE XREF: sub_676+6↑j
-                                        ; DATA XREF: sub_676:jpt_67C↑o
+loc_6AD:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; DATA XREF: pm_kbd_helper:jpt_67C↑o
                 jmp     short loc_6B6   ; jumptable 0000067C case 8
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_6B0:                                ; CODE XREF: sub_676+6↑j
-                                        ; DATA XREF: sub_676:jpt_67C↑o
+loc_6B0:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; DATA XREF: pm_kbd_helper:jpt_67C↑o
                 jmp     short loc_6BC   ; jumptable 0000067C case 6
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_6B3:                                ; CODE XREF: sub_676+6↑j
-                                        ; DATA XREF: sub_676:jpt_67C↑o
+loc_6B3:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; DATA XREF: pm_kbd_helper:jpt_67C↑o
                 jmp     short loc_6BC   ; jumptable 0000067C cases 4,5,9-12
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_6B6:                                ; CODE XREF: sub_676+6↑j
-                                        ; sub_676:loc_6AA↑j ...
+loc_6B6:                                ; CODE XREF: pm_kbd_helper+6↑j
+                                        ; pm_kbd_helper:loc_6AA↑j ...
                 mov     ax, 2           ; jumptable 0000067C cases 0,3
                 cld
                 jmp     di
 ; ---------------------------------------------------------------------------
 
-loc_6BC:                                ; CODE XREF: sub_676:loc_6A7↑j
-                                        ; sub_676:loc_6B0↑j ...
+loc_6BC:                                ; CODE XREF: pm_kbd_helper:loc_6A7↑j
+                                        ; pm_kbd_helper:loc_6B0↑j ...
                 xor     ax, ax
                 cld
                 jmp     di
-sub_676         endp ; sp-analysis failed
+pm_kbd_helper   endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
                 pop     cs:word_542
@@ -1001,7 +1001,7 @@ loc_730:                                ; CODE XREF: INTERP:0716↑j
 ; START OF FUNCTION CHUNK FOR sub_737
 
 loc_733:                                ; CODE XREF: sub_737:loc_73C↓j
-                call    sub_38CB
+                call    pm_trace_step
                 retn
 ; END OF FUNCTION CHUNK FOR sub_737
 
@@ -1105,23 +1105,23 @@ loc_7D4:                                ; CODE XREF: INTERP:0722↑j
                 mov     ax, 3
                 jmp     cs:word_122F
 ; ---------------------------------------------------------------------------
-byte_7DC        db 0                    ; DATA XREF: sub_7E9+34↓w
+byte_7DC        db 0                    ; DATA XREF: pm_disk_setup+34↓w
                                         ; INTERP:loc_8EF↓w ...
-word_7DD        dw 0                    ; DATA XREF: sub_7E9+25↓w
+word_7DD        dw 0                    ; DATA XREF: pm_disk_setup+25↓w
                                         ; INTERP:loc_901↓r
-word_7DF        dw 0                    ; DATA XREF: sub_7E9+29↓w
+word_7DF        dw 0                    ; DATA XREF: pm_disk_setup+29↓w
                                         ; INTERP:loc_856↓r ...
-word_7E1        dw 0                    ; DATA XREF: sub_7E9+2D↓w
+word_7E1        dw 0                    ; DATA XREF: pm_disk_setup+2D↓w
                                         ; INTERP:0883↓r ...
-word_7E3        dw 0                    ; DATA XREF: sub_7E9+F↓w
-                                        ; sub_7E9+19↓r ...
+word_7E3        dw 0                    ; DATA XREF: pm_disk_setup+F↓w
+                                        ; pm_disk_setup+19↓r ...
 byte_7E5        db 4 dup(0)             ; DATA XREF: INTERP:0879↓w
                                         ; INTERP:08B5↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_7E9         proc near               ; CODE XREF: sub_550:loc_5A5↑p
+pm_disk_setup   proc near               ; CODE XREF: pm_scan_boot_volume:loc_5A5↑p
                 lea     ax, ds:99E0h
                 mov     cl, 4
                 shr     ax, cl
@@ -1145,13 +1145,13 @@ sub_7E9         proc near               ; CODE XREF: sub_550:loc_5A5↑p
                 lea     bx, ds:44D2h
                 mov     cx, 7D0h
 
-loc_82D:                                ; CODE XREF: sub_7E9+4A↓j
+loc_82D:                                ; CODE XREF: pm_disk_setup+4A↓j
                 mov     cs:[bx], ax
                 add     bx, 2
                 loop    loc_82D
                 xor     ax, ax
                 retn
-sub_7E9         endp
+pm_disk_setup   endp
 
 ; ---------------------------------------------------------------------------
                 mov     ax, [di]
@@ -1292,17 +1292,17 @@ sub_921         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_924         proc near               ; CODE XREF: sub_639+2C↑p
+pm_read_blocks  proc near               ; CODE XREF: pm_load_startup_seg+2C↑p
                 cmp     cs:word_540, 4
                 jnz     short loc_934
                 test    cs:byte_7DC, 0FFh
                 jnz     short loc_937
 
-loc_934:                                ; CODE XREF: sub_924+6↑j
+loc_934:                                ; CODE XREF: pm_read_blocks+6↑j
                 jmp     sub_B33
 ; ---------------------------------------------------------------------------
 
-loc_937:                                ; CODE XREF: sub_924+E↑j
+loc_937:                                ; CODE XREF: pm_read_blocks+E↑j
                 push    ds
                 push    es
                 push    si
@@ -1317,7 +1317,7 @@ loc_937:                                ; CODE XREF: sub_924+E↑j
                 mov     dx, es
                 mov     [bp-8], dx
 
-loc_953:                                ; CODE XREF: sub_924+C7↓j
+loc_953:                                ; CODE XREF: pm_read_blocks+C7↓j
                 mov     bx, [bp-4]
                 call    sub_9F8
                 mov     [bp-0Ch], bx
@@ -1334,10 +1334,10 @@ loc_953:                                ; CODE XREF: sub_924+C7↓j
                 cmp     ax, [bp-6]
                 jb      short loc_97C
 
-loc_979:                                ; CODE XREF: sub_924+3E↑j
+loc_979:                                ; CODE XREF: pm_read_blocks+3E↑j
                 mov     ax, [bp-6]
 
-loc_97C:                                ; CODE XREF: sub_924+53↑j
+loc_97C:                                ; CODE XREF: pm_read_blocks+53↑j
                 push    ax
                 push    word ptr [bp-4]
                 push    word ptr [bp-0Ah]
@@ -1356,7 +1356,7 @@ loc_97C:                                ; CODE XREF: sub_924+53↑j
                 cmp     word ptr [bp-6], 0
                 jz      short loc_9EE
 
-loc_9A3:                                ; CODE XREF: sub_924+43↑j
+loc_9A3:                                ; CODE XREF: pm_read_blocks+43↑j
                 mov     ax, 8000h
                 cmp     word ptr [bp-0Eh], 40h ; '@'
                 jnb     short loc_9B5
@@ -1365,12 +1365,12 @@ loc_9A3:                                ; CODE XREF: sub_924+43↑j
                 shl     ah, 1
                 xor     al, al
 
-loc_9B5:                                ; CODE XREF: sub_924+86↑j
+loc_9B5:                                ; CODE XREF: pm_read_blocks+86↑j
                 cmp     ax, [bp-6]
                 jbe     short loc_9BD
                 mov     ax, [bp-6]
 
-loc_9BD:                                ; CODE XREF: sub_924+94↑j
+loc_9BD:                                ; CODE XREF: pm_read_blocks+94↑j
                 sub     [bp-6], ax
                 mov     cx, ax
                 mov     al, ah
@@ -1392,11 +1392,11 @@ loc_9BD:                                ; CODE XREF: sub_924+94↑j
                 jmp     loc_953
 ; ---------------------------------------------------------------------------
 
-loc_9EE:                                ; CODE XREF: sub_924+7D↑j
-                                        ; sub_924+C5↑j
+loc_9EE:                                ; CODE XREF: pm_read_blocks+7D↑j
+                                        ; pm_read_blocks+C5↑j
                 xor     ax, ax
 
-loc_9F0:                                ; CODE XREF: sub_924+77↑j
+loc_9F0:                                ; CODE XREF: pm_read_blocks+77↑j
                 mov     sp, bp
                 pop     bp
                 pop     di
@@ -1404,13 +1404,13 @@ loc_9F0:                                ; CODE XREF: sub_924+77↑j
                 pop     es
                 pop     ds
                 retn
-sub_924         endp
+pm_read_blocks  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_9F8         proc near               ; CODE XREF: sub_924+32↑p
+sub_9F8         proc near               ; CODE XREF: pm_read_blocks+32↑p
                 push    es
                 push    di
                 push    ax
@@ -1458,7 +1458,7 @@ sub_9F8         endp
 
 
 sub_A3A         proc near               ; CODE XREF: INTERP:08AB↑p
-                                        ; sub_924+AD↑p
+                                        ; pm_read_blocks+AD↑p
                 push    cx
                 mov     cx, 5
                 shl     bx, cl
@@ -1474,7 +1474,7 @@ sub_A3A         endp
 
 
 sub_A4B         proc near               ; CODE XREF: INTERP:08A8↑p
-                                        ; sub_924+AA↑p
+                                        ; pm_read_blocks+AA↑p
                 add     bx, bx
                 lea     bx, [bx+44D2h]
                 mov     bx, cs:[bx]
@@ -1548,7 +1548,7 @@ loc_A8E:                                ; CODE XREF: INTERP:0A70↑j
                 mov     ax, 802h
                 push    ax
                 push    dx
-                call    sub_639
+                call    pm_load_startup_seg
                 mov     ax, cs:6250h
                 cmp     ax, 4
                 jb      short loc_AC9
@@ -1629,7 +1629,7 @@ loc_B2B:                                ; CODE XREF: INTERP:0A81↑j
 
 
 sub_B33         proc near               ; CODE XREF: INTERP:08D2↑p
-                                        ; sub_924:loc_934↑j ...
+                                        ; pm_read_blocks:loc_934↑j ...
                 mov     cs:word_A57, 0DC3h
                 jmp     short loc_B44
 ; ---------------------------------------------------------------------------
@@ -1794,12 +1794,12 @@ loc_C50:                                ; CODE XREF: sub_C0D:loc_CDA↓j
                 add     ax, 9
                 push    di
                 mov     di, 39BFh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 call    sub_38DD
                 push    di
                 mov     di, 39EDh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
 
 loc_C6A:                                ; CODE XREF: sub_C0D+40↑j
@@ -2439,20 +2439,20 @@ loc_107D:                               ; CODE XREF: sub_1065+E↑j
                 mov     ds, cs:word_1270
                 push    di
                 mov     di, 39EFh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 push    di
                 mov     di, 3A10h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 push    di
                 mov     di, 3A2Fh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 call    sub_38DD
                 push    di
                 mov     di, 3A44h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 pop     ds
                 pop     es
@@ -2488,7 +2488,7 @@ loc_10E3:                               ; CODE XREF: INTERP:10D4↑j
                 mov     al, 0Fh
                 jnz     short loc_10FF
                 mov     ax, cs:[bx+125Eh]
-                call    sub_1108
+                call    sbios_disk_io
                 jnb     short loc_1105
 
 loc_10FF:                               ; CODE XREF: INTERP:10CF↑j
@@ -2505,7 +2505,7 @@ loc_1105:                               ; CODE XREF: INTERP:10FD↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1108        proc near               ; CODE XREF: INTERP:10FA↑p
+sbios_disk_io   proc near               ; CODE XREF: INTERP:10FA↑p
                 push    si
                 mov     dx, ax
                 push    word ptr cs:byte_545+4
@@ -2516,7 +2516,7 @@ sub_1108        proc near               ; CODE XREF: INTERP:10FA↑p
                 jz      short loc_111F
                 mov     ch, 4Fh ; 'O'
 
-loc_111F:                               ; CODE XREF: sub_1108+13↑j
+loc_111F:                               ; CODE XREF: sbios_disk_io+13↑j
                 and     dl, 7Fh
                 mov     ah, 18h
                 mov     cl, 9
@@ -2535,7 +2535,7 @@ loc_111F:                               ; CODE XREF: sub_1108+13↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_1136:                               ; CODE XREF: sub_1108+28↑j
+loc_1136:                               ; CODE XREF: sbios_disk_io+28↑j
                 push    dx
                 push    cx
                 push    bx
@@ -2551,13 +2551,13 @@ loc_1136:                               ; CODE XREF: sub_1108+28↑j
                 jz      short loc_1149
                 mov     al, 1
 
-loc_1149:                               ; CODE XREF: sub_1108+3D↑j
+loc_1149:                               ; CODE XREF: sbios_disk_io+3D↑j
                 mov     ah, 17h
                 int     18h             ; TRANSFER TO ROM BASIC
                                         ; causes transfer to ROM-based BASIC (IBM-PC)
                                         ; often reboots a compatible; often has no effect at all
 
-loc_114D:                               ; CODE XREF: sub_1108+24↑j
+loc_114D:                               ; CODE XREF: sbios_disk_io+24↑j
                 mov     cs:byte_54E, 19h
                 xor     ax, ax
                 int     18h             ; TRANSFER TO ROM BASIC
@@ -2565,7 +2565,7 @@ loc_114D:                               ; CODE XREF: sub_1108+24↑j
                                         ; often reboots a compatible; often has no effect at all
                 clc
 
-loc_1158:                               ; CODE XREF: sub_1108+2B↑j
+loc_1158:                               ; CODE XREF: sbios_disk_io+2B↑j
                 pop     dx
                 jb      short loc_1177
                 mov     si, 0A0h
@@ -2573,10 +2573,10 @@ loc_1158:                               ; CODE XREF: sub_1108+2B↑j
                 jnz     short loc_1166
                 mov     si, 50h ; 'P'
 
-loc_1166:                               ; CODE XREF: sub_1108+59↑j
+loc_1166:                               ; CODE XREF: sbios_disk_io+59↑j
                 mov     bx, 0
 
-loc_1169:                               ; CODE XREF: sub_1108+6B↓j
+loc_1169:                               ; CODE XREF: sbios_disk_io+6B↓j
                 push    si
                 call    sub_1186
                 pop     si
@@ -2586,8 +2586,8 @@ loc_1169:                               ; CODE XREF: sub_1108+6B↓j
                 jnz     short loc_1169
                 xor     ax, ax
 
-loc_1177:                               ; CODE XREF: sub_1108+51↑j
-                                        ; sub_1108+66↑j
+loc_1177:                               ; CODE XREF: sbios_disk_io+51↑j
+                                        ; sbios_disk_io+66↑j
                 pushf
                 push    ax
                 xor     ax, ax
@@ -2599,13 +2599,13 @@ loc_1177:                               ; CODE XREF: sub_1108+51↑j
                 pop     word ptr cs:byte_545+4
                 pop     si
                 retn
-sub_1108        endp
+sbios_disk_io   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1186        proc near               ; CODE XREF: sub_1108+62↑p
+sub_1186        proc near               ; CODE XREF: sbios_disk_io+62↑p
                 push    word ptr cs:byte_545+4
                 mov     cs:byte_545+4, dh
                 push    es
@@ -2710,10 +2710,10 @@ loc_1225:                               ; CODE XREF: INTERP:1217↑j
                 mov     ax, 278h
                 retn
 ; ---------------------------------------------------------------------------
-word_1229       dw 0                    ; DATA XREF: sub_550+4↑w
+word_1229       dw 0                    ; DATA XREF: pm_scan_boot_volume+4↑w
                                         ; sub_EA5+8C↑r ...
-word_122B       dw 0                    ; DATA XREF: sub_550+62↑w
-word_122D       dw 0                    ; DATA XREF: sub_550+67↑w
+word_122B       dw 0                    ; DATA XREF: pm_scan_boot_volume+62↑w
+word_122D       dw 0                    ; DATA XREF: pm_scan_boot_volume+67↑w
 word_122F       dw 0                    ; DATA XREF: INTERP:0702↑w
                                         ; INTERP:070E↑r ...
                 db 2 dup(0)
@@ -2736,7 +2736,7 @@ word_1270       dw 0                    ; DATA XREF: sub_C0D+2↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1276        proc near               ; CODE XREF: interp_reloc+17↑p
+pm_check_memsize proc near              ; CODE XREF: interp_reloc+17↑p
                 int     12h             ; MEMORY SIZE -
                                         ; Return: AX = number of contiguous 1K blocks of memory
                 mov     dx, ax
@@ -2752,18 +2752,18 @@ sub_1276        proc near               ; CODE XREF: interp_reloc+17↑p
                 jnb     short loc_12A1
                 push    di
                 mov     di, 3A46h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 push    di
                 mov     di, 3A83h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
-                jmp     short loc_1307
+                jmp     short pm_hang
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_12A1:                               ; CODE XREF: sub_1276+16↑j
+loc_12A1:                               ; CODE XREF: pm_check_memsize+16↑j
                 pop     dx
                 cli
                 xor     ax, ax
@@ -2783,7 +2783,7 @@ loc_12A1:                               ; CODE XREF: sub_1276+16↑j
                 mov     bx, 1272h
                 mov     [di+14h], bx
 
-loc_12CC:                               ; CODE XREF: sub_1276+39↑j
+loc_12CC:                               ; CODE XREF: pm_check_memsize+39↑j
                 sti
                 mov     ax, cs
                 sub     ax, 1000h
@@ -2814,16 +2814,16 @@ loc_12CC:                               ; CODE XREF: sub_1276+39↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1307:                               ; CODE XREF: interp_reloc:loc_E4↑j
-                                        ; sub_1276+28↑j ...
-                jmp     short loc_1307
-sub_1276        endp ; sp-analysis failed
+pm_hang:                                ; CODE XREF: interp_reloc:loc_E4↑j
+                                        ; pm_check_memsize+28↑j ...
+                jmp     short pm_hang
+pm_check_memsize endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1309        proc near               ; CODE XREF: interp_reloc+14↑p
+pm_build_drive_table proc near          ; CODE XREF: interp_reloc+14↑p
                 push    dx
                 int     11h             ; EQUIPMENT DETERMINATION
                                         ; Return: AX = equipment flag bits
@@ -2844,7 +2844,7 @@ sub_1309        proc near               ; CODE XREF: interp_reloc+14↑p
                 pop     es
                 assume es:nothing
 
-loc_1329:                               ; CODE XREF: sub_1309+2A↓j
+loc_1329:                               ; CODE XREF: pm_build_drive_table+2A↓j
                 mov     ax, bx
                 stosw
                 mov     ax, dx
@@ -2857,13 +2857,13 @@ loc_1329:                               ; CODE XREF: sub_1309+2A↓j
                 pop     es
                 pop     di
                 retn
-sub_1309        endp
+pm_build_drive_table endp
 
 ; ---------------------------------------------------------------------------
                 pop     di
                 pop     di
                 popf
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 10h
                 db 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 0A2h
@@ -3328,87 +3328,87 @@ word_13F3       dw 0                    ; DATA XREF: INTERP:078B↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2630        proc near               ; CODE XREF: interp_reloc+DA↑j
+op_LDE          proc near               ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02DB↑o
-                push    ax
+                push    ax              ; p-code opcode 0x9d LDE
                 push    si
                 push    di
                 mov     di, 3BC2h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     short loc_2664
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_263D:                               ; CODE XREF: interp_reloc+DA↑j
+op_STE:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0343↑o
-                push    ax
+                push    ax              ; p-code opcode 0xd1 STE
                 push    si
                 push    di
                 mov     di, 3BC9h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     short loc_2664
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_264A:                               ; CODE XREF: interp_reloc+DA↑j
+op_LAE:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02EF↑o
-                push    ax
+                push    ax              ; p-code opcode 0xa7 LAE
                 push    si
                 push    di
                 mov     di, 3BD0h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     short loc_2664
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_2657:                               ; CODE XREF: interp_reloc+DA↑j
+op_SQI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02D1↑o
-                push    ax
+                push    ax              ; p-code opcode 0x98 SQI
                 push    si
                 push    di
                 mov     di, 3BD7h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     short loc_2664
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2664:                               ; CODE XREF: sub_2630+A↑j
-                                        ; sub_2630+17↑j ...
+loc_2664:                               ; CODE XREF: op_LDE+A↑j
+                                        ; op_LDE+17↑j ...
                 pop     si
                 pop     ax
 
-loc_2666:                               ; CODE XREF: interp_reloc+DA↑j
+op_UNIMPL_D3:                           ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0347↑o ...
-                push    di
+                push    di              ; p-code opcode 0xd3 UNIMPL_D3
                 mov     di, 3BDEh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_7B
-sub_2630        endp ; sp-analysis failed
+op_LDE          endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
 
-loc_2671:                               ; CODE XREF: interp_reloc+DA↑j
+op_SKIP1_D5:                            ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:034B↑o
-                call    sub_FF
-                jmp     loc_E7
+                call    pm_fetch_big    ; p-code opcode 0xd5 SKIP1_D5
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2677:                               ; CODE XREF: interp_reloc+DA↑j
+op_BPT_HLT:                             ; CODE XREF: interp_reloc+DA↑j
                                         ; INTERP:2AE1↓j
                                         ; DATA XREF: ...
-                jmp     loc_E4
+                jmp     loc_E4          ; p-code opcode 0xd6 BPT_HLT
 ; ---------------------------------------------------------------------------
 
-loc_267A:                               ; CODE XREF: interp_reloc+DA↑j
+op_CHK:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02B1↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x88 CHK
                 pop     cx
                 pop     ax
                 cmp     ax, bx
@@ -3416,7 +3416,7 @@ loc_267A:                               ; CODE XREF: interp_reloc+DA↑j
                 cmp     ax, cx
                 jl      short loc_2689
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2689:                               ; CODE XREF: INTERP:267F↑j
@@ -3424,34 +3424,34 @@ loc_2689:                               ; CODE XREF: INTERP:267F↑j
                 jmp     loc_6C
 ; ---------------------------------------------------------------------------
 
-loc_268C:                               ; CODE XREF: interp_reloc+DA↑j
+op_SQR_trap:                            ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02A3↑o ...
-                push    di
+                push    di              ; p-code opcode 0x99 SQR_trap
                 mov     di, 3C0Ch
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_7B
 ; ---------------------------------------------------------------------------
                 align 10h
 
-loc_26A0:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDCN:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02DF↑o
-                xor     ax, ax
+                xor     ax, ax          ; p-code opcode 0x9f LDCN
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26A6:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDCI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:032F↑o
-                push    word ptr [si]
+                push    word ptr [si]   ; p-code opcode 0xc7 LDCI
                 inc     si
                 inc     si
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26AD:                               ; CODE XREF: interp_reloc+DA↑j
+op_SLDL:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0351↑o ...
-                sub     al, 0B0h
+                sub     al, 0B0h        ; p-code opcode 0xd8 SLDL
                 push    ax
                 shr     ax, 1
                 inc     ax
@@ -3459,38 +3459,38 @@ loc_26AD:                               ; CODE XREF: interp_reloc+DA↑j
                 xor     ah, ah
                 mov     di, ax
                 push    word ptr [bp+di+0Ch]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26BE:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDL:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0335↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xca LDL
                 mov     di, ax
                 push    word ptr [bp+di+0Ah]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26C9:                               ; CODE XREF: interp_reloc+DA↑j
+op_LLA:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:032D↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xc6 LLA
                 mov     di, ax
                 lea     bx, [bp+di+0Ah]
                 push    bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26D5:                               ; CODE XREF: interp_reloc+DA↑j
+op_STL:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0339↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xcc STL
                 mov     di, ax
                 pop     dx
                 mov     [bp+di+0Ah], dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26E1:                               ; CODE XREF: interp_reloc+DA↑j
+op_SLDO:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0371↑o ...
-                xor     ah, ah
+                xor     ah, ah          ; p-code opcode 0xe8 SLDO
                 sub     ax, 0D0h
                 push    ax
                 shr     ax, 1
@@ -3499,169 +3499,169 @@ loc_26E1:                               ; CODE XREF: interp_reloc+DA↑j
                 mov     bx, ds:600h
                 add     bx, ax
                 push    word ptr [bx+0Ch]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_26F7:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F3↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa9 LDO
                 mov     bx, ds:600h
                 add     bx, ax
                 push    word ptr [bx+0Ah]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2706:                               ; CODE XREF: interp_reloc+DA↑j
+op_LAO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02EB↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa5 LAO
                 mov     bx, ds:600h
                 add     bx, ax
                 lea     ax, [bx+0Ah]
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2716:                               ; CODE XREF: interp_reloc+DA↑j
+op_SRO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F7↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xab SRO
                 mov     bx, ds:600h
                 add     bx, ax
                 pop     ax
                 mov     [bx+0Ah], ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2726:                               ; CODE XREF: interp_reloc+DA↑j
+op_LOD:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:030D↑o
-                mov     cl, [si]
+                mov     cl, [si]        ; p-code opcode 0xb6 LOD
                 inc     si
-                call    sub_10F
-                call    sub_FF
+                call    pm_walk_static_link
+                call    pm_fetch_big
                 add     bx, ax
                 push    word ptr [bx+0Ah]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2737:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDA:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0305↑o
-                mov     cl, [si]
+                mov     cl, [si]        ; p-code opcode 0xb2 LDA
                 inc     si
-                call    sub_10F
-                call    sub_FF
+                call    pm_walk_static_link
+                call    pm_fetch_big
                 add     bx, ax
                 lea     bx, [bx+0Ah]
                 push    bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2749:                               ; CODE XREF: interp_reloc+DA↑j
+op_STR:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0311↑o
-                mov     cl, [si]
+                mov     cl, [si]        ; p-code opcode 0xb8 STR
                 inc     si
-                call    sub_10F
-                call    sub_FF
+                call    pm_walk_static_link
+                call    pm_fetch_big
                 add     bx, ax
                 pop     ax
                 mov     [bx+0Ah], ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 8
 
-loc_2760:                               ; CODE XREF: interp_reloc+DA↑j
+op_LAND:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02A9↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x84 LAND
                 pop     bx
                 and     ax, bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2768:                               ; CODE XREF: interp_reloc+DA↑j
+op_LOR:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02BB↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x8d LOR
                 pop     bx
                 or      ax, bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2770:                               ; CODE XREF: interp_reloc+DA↑j
+op_LNOT:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02C7↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x93 LNOT
                 not     ax
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2777:                               ; CODE XREF: interp_reloc+DA↑j
+op_ABI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:off_2A1↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x80 ABI
                 or      ax, ax
                 jns     short loc_277E
                 neg     ax
 
 loc_277E:                               ; CODE XREF: INTERP:277A↑j
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2782:                               ; CODE XREF: interp_reloc+DA↑j
+op_ADI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02A5↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x82 ADI
                 pop     bx
                 add     ax, bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_278A:                               ; CODE XREF: interp_reloc+DA↑j
+op_NGI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02C3↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x91 NGI
                 neg     ax
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2791:                               ; CODE XREF: interp_reloc+DA↑j
+op_SBI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02CB↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x95 SBI
                 pop     ax
                 sub     ax, bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2799:                               ; CODE XREF: interp_reloc+DA↑j
+op_MPI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02BF↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x8f MPI
                 pop     bx
                 imul    bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_27A1:                               ; CODE XREF: interp_reloc+DA↑j
+op_DVI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02AD↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x86 DVI
                 pop     ax
                 or      bx, bx
                 jz      short loc_27BE
                 cwd
                 idiv    bx
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_27AE:                               ; CODE XREF: interp_reloc+DA↑j
+op_MODI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02BD↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x8e MODI
                 pop     ax
                 or      bx, bx
                 jz      short loc_27BE
                 cwd
                 idiv    bx
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 jmp     loc_67
 ; ---------------------------------------------------------------------------
@@ -3670,29 +3670,29 @@ loc_27BE:                               ; CODE XREF: INTERP:27A5↑j
                                         ; INTERP:27B2↑j
                 xor     ax, ax
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 10h
 
-loc_27D0:                               ; CODE XREF: interp_reloc+DA↑j
+op_FJP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02E3↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0xa1 FJP
                 and     al, 1
-                jz      short loc_27D9
+                jz      short op_UJP
                 inc     si
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_27D9:                               ; CODE XREF: interp_reloc+DA↑j
+op_UJP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; INTERP:27D3↑j
                                         ; DATA XREF: ...
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xb9 UJP
                 inc     si
                 or      al, al
                 js      short loc_27E7
                 xor     ah, ah
                 add     si, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_27E7:                               ; CODE XREF: INTERP:27DE↑j
@@ -3701,12 +3701,12 @@ loc_27E7:                               ; CODE XREF: INTERP:27DE↑j
                 add     bx, ax
                 sub     bx, [bx]
                 mov     si, bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_27F5:                               ; CODE XREF: interp_reloc+DA↑j
+op_XJP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F9↑o
-                test    si, 1
+                test    si, 1           ; p-code opcode 0xac XJP
                 jz      short loc_27FC
                 inc     si
 
@@ -3730,18 +3730,18 @@ loc_2814:                               ; CODE XREF: INTERP:27FF↑j
                 lea     si, [si+4]
 
 loc_2817:                               ; CODE XREF: INTERP:2811↑j
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_281A:                               ; CODE XREF: interp_reloc+DA↑j
+op_CXP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:033B↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xcd CXP
                 cbw
                 or      ax, ax
                 jz      short loc_2828
                 push    ax
                 push    si
-                call    sub_29FD
+                call    pm_load_code_segment
                 pop     si
                 pop     ax
 
@@ -3753,7 +3753,7 @@ loc_2828:                               ; CODE XREF: INTERP:281F↑j
                 shl     bx, 1
                 mov     cx, [bx+632h]
                 shr     bx, 1
-                call    sub_293E
+                call    pm_proc_entry
                 mov     bx, ds:608h
                 mov     al, [bx+1]
                 or      al, al
@@ -3770,25 +3770,25 @@ loc_2849:                               ; CODE XREF: INTERP:2842↑j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_284C:                               ; CODE XREF: interp_reloc+DA↑j
+op_CLP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:033D↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xce CLP
                 inc     si
                 mov     bl, 0FFh
                 mov     cx, ds:606h
-                call    sub_293E
+                call    pm_proc_entry
                 mov     dx, [bp+2]
                 mov     [bp+0], dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2861:                               ; CODE XREF: interp_reloc+DA↑j
+op_CIP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02FD↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xae CIP
                 inc     si
                 mov     bl, 0FFh
                 mov     cx, ds:606h
-                call    sub_293E
+                call    pm_proc_entry
 
 loc_286D:                               ; CODE XREF: INTERP:2846↑j
                 mov     bx, ds:608h
@@ -3807,28 +3807,28 @@ loc_287D:                               ; CODE XREF: INTERP:2878↑j
                 jnz     short loc_287A
                 mov     dx, [bx+2]
                 mov     [bp+0], dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_288E:                               ; CODE XREF: interp_reloc+DA↑j
+op_CGP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:033F↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xcf CGP
                 inc     si
                 mov     bl, 0FFh
                 mov     cx, ds:606h
-                call    sub_293E
+                call    pm_proc_entry
                 mov     dx, ds:600h
                 mov     [bp+0], dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_28A4:                               ; CODE XREF: interp_reloc+DA↑j
+op_CBP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0325↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xc2 CBP
                 inc     si
                 mov     bl, 0FFh
                 mov     cx, ds:606h
-                call    sub_293E
+                call    pm_proc_entry
 
 loc_28B0:                               ; CODE XREF: INTERP:loc_2849↑j
                 mov     bx, ds:60Ah
@@ -3842,12 +3842,12 @@ loc_28B0:                               ; CODE XREF: INTERP:loc_2849↑j
                 mov     ds:0E0EAh, bp
                 mov     ax, ds:608h
                 mov     ds:60Ah, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_28D3:                               ; CODE XREF: interp_reloc+DA↑j
+op_RBP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0323↑o
-                mov     sp, [bp+0Ah]
+                mov     sp, [bp+0Ah]    ; p-code opcode 0xc1 RBP
                 pop     dx
                 mov     ds:600h, dx
                 mov     ds:0E0EAh, dx
@@ -3856,9 +3856,9 @@ loc_28D3:                               ; CODE XREF: interp_reloc+DA↑j
                 jmp     short loc_28E9
 ; ---------------------------------------------------------------------------
 
-loc_28E6:                               ; CODE XREF: interp_reloc+DA↑j
+op_RNP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02FB↑o
-                mov     sp, [bp+0Ah]
+                mov     sp, [bp+0Ah]    ; p-code opcode 0xad RNP
 
 loc_28E9:                               ; CODE XREF: INTERP:28E4↑j
                 mov     dx, [bp-2]
@@ -3885,7 +3885,7 @@ loc_2905:                               ; CODE XREF: INTERP:28F4↑j
                 cmp     al, [bx]
                 jz      short loc_2921
                 cbw
-                call    sub_2ABF
+                call    pm_release_code_segment
                 mov     bx, [bp+6]
                 mov     ds:606h, bx
                 mov     ds:0E0F0h, bx
@@ -3898,18 +3898,18 @@ loc_2921:                               ; CODE XREF: INTERP:2910↑j
                 mov     dx, [bp+2]
                 mov     bp, dx
                 mov     ds:0E0ECh, dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_293E
+; START OF FUNCTION CHUNK FOR pm_proc_entry
 
-loc_293B:                               ; CODE XREF: sub_293E+2↓j
+loc_293B:                               ; CODE XREF: pm_proc_entry+2↓j
                 jmp     loc_58
-; END OF FUNCTION CHUNK FOR sub_293E
+; END OF FUNCTION CHUNK FOR pm_proc_entry
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_293E        proc near               ; CODE XREF: sub_129+BA↑p
+pm_proc_entry   proc near               ; CODE XREF: pm_bootstrap_pascal+BA↑p
                                         ; INTERP:2836↑p ...
 
 ; FUNCTION CHUNK AT 293B SIZE 00000003 BYTES
@@ -3942,14 +3942,14 @@ sub_293E        proc near               ; CODE XREF: sub_129+BA↑p
                 dec     word ptr [bx+6B2h]
                 pop     bx
 
-loc_2978:                               ; CODE XREF: sub_293E+2B↑j
+loc_2978:                               ; CODE XREF: pm_proc_entry+2B↑j
                 sub     bx, 2
                 sub     bx, [bx]
                 push    cs:word_2B32
                 jmp     bx
 ; ---------------------------------------------------------------------------
 
-loc_2984:                               ; CODE XREF: sub_293E+24↑j
+loc_2984:                               ; CODE XREF: pm_proc_entry+24↑j
                 mov     di, ds:602h
                 sub     bx, 8
                 sub     di, [bx]
@@ -3970,7 +3970,7 @@ loc_2984:                               ; CODE XREF: sub_293E+24↑j
                 mov     dx, di
                 lea     di, [di+0Ch]
 
-loc_29BC:                               ; CODE XREF: sub_293E+83↓j
+loc_29BC:                               ; CODE XREF: pm_proc_entry+83↓j
                 pop     ax
                 mov     [di], ax
                 inc     di
@@ -3978,7 +3978,7 @@ loc_29BC:                               ; CODE XREF: sub_293E+83↓j
                 loop    loc_29BC
                 mov     di, dx
 
-loc_29C5:                               ; CODE XREF: sub_293E+75↑j
+loc_29C5:                               ; CODE XREF: pm_proc_entry+75↑j
                 mov     [di+0Ah], sp
                 lea     si, [bx+6]
                 sub     si, [si]
@@ -3997,14 +3997,14 @@ loc_29C5:                               ; CODE XREF: sub_293E+75↑j
                 mov     ds:0E0F0h, dx
                 mov     bx, cs:word_2B32
                 jmp     bx
-sub_293E        endp ; sp-analysis failed
+pm_proc_entry   endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29FD        proc near               ; CODE XREF: sub_129+99↑p
-                                        ; sub_129+A7↑p ...
+pm_load_code_segment proc near          ; CODE XREF: pm_bootstrap_pascal+99↑p
+                                        ; pm_bootstrap_pascal+A7↑p ...
                 mov     ds:60Eh, ax
                 mov     bx, ax
                 shl     bx, 1
@@ -4016,7 +4016,7 @@ sub_29FD        proc near               ; CODE XREF: sub_129+99↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2A12:                               ; CODE XREF: sub_29FD+D↑j
+loc_2A12:                               ; CODE XREF: pm_load_code_segment+D↑j
                 push    si
                 mov     di, ds:602h
                 mov     [bx+672h], di
@@ -4038,7 +4038,7 @@ loc_2A12:                               ; CODE XREF: sub_29FD+D↑j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_2A43:                               ; CODE XREF: sub_29FD+35↑j
+loc_2A43:                               ; CODE XREF: pm_load_code_segment+35↑j
                 mov     dx, di
                 sub     dx, 2
                 mov     [bx+632h], dx
@@ -4049,18 +4049,18 @@ loc_2A43:                               ; CODE XREF: sub_29FD+35↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_2A57:                               ; CODE XREF: sub_29FD+43↑j
-                                        ; sub_29FD+58↑j
+loc_2A57:                               ; CODE XREF: pm_load_code_segment+43↑j
+                                        ; pm_load_code_segment+58↑j
                 pop     si
                 retn
-sub_29FD        endp
+pm_load_code_segment endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A59        proc near               ; CODE XREF: sub_129+8A↑p
-                                        ; sub_29FD+50↑p
+sub_2A59        proc near               ; CODE XREF: pm_bootstrap_pascal+8A↑p
+                                        ; pm_load_code_segment+50↑p
                 push    ax
                 mov     bx, ax
                 shl     bx, 1
@@ -4081,7 +4081,7 @@ sub_2A59        proc near               ; CODE XREF: sub_129+8A↑p
                 push    di
                 push    word ptr [bx+4]
                 push    word ptr [bx+2]
-                call    sub_639
+                call    pm_load_startup_seg
                 pop     bx
                 cmp     ax, 0
                 mov     ds:0E0DEh, ax
@@ -4099,7 +4099,7 @@ loc_2A97:                               ; CODE XREF: sub_2A59+39↑j
 loc_2AA1:                               ; CODE XREF: sub_2A59+12↑j
                 push    di
                 mov     di, 3C30h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_58
 sub_2A59        endp
@@ -4108,11 +4108,11 @@ sub_2A59        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AAC        proc near               ; CODE XREF: sub_293E+55↑p
+sub_2AAC        proc near               ; CODE XREF: pm_proc_entry+55↑p
                                         ; sub_2A59+21↑p
                 cmp     di, ds:604h
                 ja      short locret_2ABE
-                call    sub_28C
+                call    pm_flush_pending_seg
                 cmp     di, ds:604h
                 ja      short locret_2ABE
                 jmp     loc_62
@@ -4127,7 +4127,7 @@ sub_2AAC        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2ABF        proc near               ; CODE XREF: INTERP:2913↑p
+pm_release_code_segment proc near       ; CODE XREF: INTERP:2913↑p
                                         ; INTERP:2B25↓p
                 mov     bx, ax
                 shl     bx, 1
@@ -4137,14 +4137,14 @@ sub_2ABF        proc near               ; CODE XREF: INTERP:2913↑p
                 mov     dx, [bx+672h]
                 mov     ds:602h, dx
 
-locret_2AD3:                            ; CODE XREF: sub_2ABF+4↑j
-                                        ; sub_2ABF+A↑j
+locret_2AD3:                            ; CODE XREF: pm_release_code_segment+4↑j
+                                        ; pm_release_code_segment+A↑j
                 retn
-sub_2ABF        endp
+pm_release_code_segment endp
 
 ; ---------------------------------------------------------------------------
 
-loc_2AD4:                               ; CODE XREF: INTERP:2B4D↓j
+loc_2AD4:                               ; CODE XREF: INTERP:jpt_CSP↓j
                                         ; DATA XREF: INTERP:jpt_2B4D↓o
                 pop     cx              ; jumptable 00002B4D case 4
                 pop     dx
@@ -4152,7 +4152,7 @@ loc_2AD4:                               ; CODE XREF: INTERP:2B4D↓j
                 mov     al, [bx+1]
                 or      al, al
                 jns     short loc_2AE4
-                jmp     loc_2677
+                jmp     op_BPT_HLT
 ; ---------------------------------------------------------------------------
 
 loc_2AE4:                               ; CODE XREF: INTERP:2ADF↑j
@@ -4163,7 +4163,7 @@ loc_2AE4:                               ; CODE XREF: INTERP:2ADF↑j
                 mov     bx, ds:606h
                 cmp     [bx], dl
                 jnz     short loc_2AF8
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2AF8:                               ; CODE XREF: INTERP:2AEB↑j
@@ -4194,35 +4194,37 @@ loc_2B0C:                               ; CODE XREF: INTERP:2B07↑j
                 jnz     short loc_2AFC
                 cmp     dl, [di]
                 jnz     short loc_2AFC
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2B24:                               ; CODE XREF: INTERP:2B4D↓j
+loc_2B24:                               ; CODE XREF: INTERP:jpt_CSP↓j
                                         ; DATA XREF: INTERP:jpt_2B4D↓o
                 pop     ax              ; jumptable 00002B4D case 22
-                call    sub_2ABF
-                jmp     loc_E7
+                call    pm_release_code_segment
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2B2B:                               ; CODE XREF: INTERP:2B4D↓j
+loc_2B2B:                               ; CODE XREF: INTERP:jpt_CSP↓j
                                         ; DATA XREF: INTERP:jpt_2B4D↓o
                 pop     ax              ; jumptable 00002B4D case 21
-                call    sub_29FD
-                jmp     loc_E7
+                call    pm_load_code_segment
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
-word_2B32       dw 0                    ; DATA XREF: sub_293E+13↑w
-                                        ; sub_293E+3F↑r ...
+word_2B32       dw 0                    ; DATA XREF: pm_proc_entry+13↑w
+                                        ; pm_proc_entry+3F↑r ...
                 align 10h
 
-loc_2B40:                               ; CODE XREF: interp_reloc+DA↑j
+op_CSP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02DD↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0x9e CSP
                 inc     si
                 cbw
                 mov     bx, ax
                 shl     bx, 1           ; switch 41 cases
                 mov     bx, cs:jpt_2B4D[bx]
-                jmp     bx              ; switch jump
+
+jpt_CSP:                                ; switch jump
+                jmp     bx
 ; ---------------------------------------------------------------------------
 jpt_2B4D        dw offset loc_2E88      ; DATA XREF: INTERP:2B48↑r
                 dw offset loc_2BBD      ; jump table for switch statement
@@ -4267,40 +4269,40 @@ jpt_2B4D        dw offset loc_2E88      ; DATA XREF: INTERP:2B48↑r
                 dw offset loc_2E6E
 ; ---------------------------------------------------------------------------
 
-loc_2BA1:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BA1:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 push    di              ; jumptable 00002B4D cases 13-20,25-31
                 mov     di, 3C49h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_7B
 ; ---------------------------------------------------------------------------
 
-loc_2BAC:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BAC:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 jmp     short loc_2BB2  ; jumptable 00002B4D case 23
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_2BAF:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BAF:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 jmp     short loc_2BB2  ; jumptable 00002B4D case 24
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2BB2:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BB2:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; INTERP:loc_2BAC↑j ...
                 push    di              ; jumptable 00002B4D case 36
                 mov     di, 3C5Bh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_7B
 ; ---------------------------------------------------------------------------
 
-loc_2BBD:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BBD:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
-                call    sub_28C         ; jumptable 00002B4D case 1
+                call    pm_flush_pending_seg ; jumptable 00002B4D case 1
                 pop     cx
                 pop     bx
                 shl     cx, 1
@@ -4314,29 +4316,29 @@ loc_2BBD:                               ; CODE XREF: INTERP:2B4D↑j
 
 loc_2BD5:                               ; CODE XREF: INTERP:2BD0↑j
                 mov     ds:604h, di
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2BDC:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BDC:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
-                call    sub_28C         ; jumptable 00002B4D case 32
+                call    pm_flush_pending_seg ; jumptable 00002B4D case 32
                 pop     bx
                 mov     dx, ds:604h
                 mov     [bx], dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2BE9:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BE9:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     bx              ; jumptable 00002B4D case 33
                 mov     dx, [bx]
                 mov     ds:604h, dx
                 xor     ax, ax
                 mov     ds:0E0E6h, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2BF8:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2BF8:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     bx              ; jumptable 00002B4D case 8
                 pop     dx
@@ -4385,10 +4387,10 @@ loc_2C2C:                               ; CODE XREF: INTERP:2C0E↑j
                 mov     bx, dx
                 mov     [bx], di
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2C34:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2C34:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     ax              ; jumptable 00002B4D case 10
                 pop     cx
@@ -4401,10 +4403,10 @@ loc_2C34:                               ; CODE XREF: INTERP:2B4D↑j
                 rep stosb
 
 loc_2C41:                               ; CODE XREF: INTERP:2C3A↑j
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2C44:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2C44:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     dx              ; jumptable 00002B4D case 11
                 pop     bx
@@ -4447,10 +4449,10 @@ loc_2C6C:                               ; CODE XREF: INTERP:2C66↑j
 loc_2C6D:                               ; CODE XREF: INTERP:2C69↑j
                 sub     di, bx
                 push    di
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2C73:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2C73:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 mov     dx, si          ; jumptable 00002B4D case 3
                 call    sub_2CA8
@@ -4461,10 +4463,10 @@ loc_2C73:                               ; CODE XREF: INTERP:2B4D↑j
                 std
                 rep movsb
                 mov     si, dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2C86:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2C86:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 mov     dx, si          ; jumptable 00002B4D case 2
                 call    sub_2CA8
@@ -4476,7 +4478,7 @@ loc_2C86:                               ; CODE XREF: INTERP:2B4D↑j
 loc_2C93:                               ; CODE XREF: INTERP:2CA6↓j
                 rep movsb
                 mov     si, dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2C9A:                               ; CODE XREF: INTERP:2C91↑j
@@ -4484,7 +4486,7 @@ loc_2C9A:                               ; CODE XREF: INTERP:2C91↑j
                 jb      short loc_2CA4
                 lodsw
                 rep stosw
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2CA4:                               ; CODE XREF: INTERP:2C9C↑j
@@ -4509,30 +4511,30 @@ sub_2CA8        endp ; sp-analysis failed
 
 ; ---------------------------------------------------------------------------
 
-loc_2CB4:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2CB4:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 xor     ax, ax          ; jumptable 00002B4D case 9
                 pop     bx
                 mov     [bx], ax
                 pop     bx
                 mov     [bx], ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2CBF:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2CBF:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
-                call    sub_676         ; jumptable 00002B4D case 38
+                call    pm_kbd_helper   ; jumptable 00002B4D case 38
                 mov     ds:0E0DEh, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2CC8:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2CC8:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 push    word ptr ds:0E0DEh ; jumptable 00002B4D case 34
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2CCF:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2CCF:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     ax              ; jumptable 00002B4D case 5
                 pop     dx
@@ -4584,23 +4586,23 @@ word_2CF7       dw 0Dh                  ; DATA XREF: INTERP:2CDD↑r
 loc_2D9F:                               ; CODE XREF: INTERP:2CF4↑j
                                         ; INTERP:2DDC↓j
                 mov     word ptr ds:0E0DEh, 3
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2DA8:                               ; CODE XREF: INTERP:loc_2CF1↑j
                                         ; INTERP:loc_2DDA↓j
                 mov     word ptr ds:0E0DEh, 2
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2DB1:                               ; CODE XREF: INTERP:loc_2CEE↑j
                                         ; INTERP:loc_2DD8↓j
                 xor     ax, ax
                 mov     ds:0E0DEh, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2DB9:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2DB9:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     ax              ; jumptable 00002B4D case 6
                 pop     dx
@@ -4647,12 +4649,12 @@ word_2DDE       dw 0Dh                  ; DATA XREF: INTERP:2DC7↑r
                 db 0FFh
 ; ---------------------------------------------------------------------------
 
-loc_2E6B:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2E6B:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 jmp     loc_85          ; jumptable 00002B4D case 39
 ; ---------------------------------------------------------------------------
 
-loc_2E6E:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2E6E:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 mov     ax, ds:602h     ; jumptable 00002B4D case 40
                 mov     bx, ds:0E0E6h
@@ -4669,28 +4671,28 @@ loc_2E7E:                               ; CODE XREF: INTERP:2E77↑j
 loc_2E82:                               ; CODE XREF: INTERP:2E7B↑j
                 shr     ax, 1
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2E88:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2E88:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 mov     ax, ds:0E0DEh   ; jumptable 00002B4D case 0
                 or      ax, ax
                 jnz     short loc_2E92
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_2E92:                               ; CODE XREF: INTERP:2E8D↑j
                 jmp     loc_4E
 ; ---------------------------------------------------------------------------
 
-loc_2E95:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2E95:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 jmp     short loc_2ED0  ; jumptable 00002B4D case 12
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2E98:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2E98:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     bx              ; jumptable 00002B4D case 35
                 mov     ax, 2
@@ -4702,10 +4704,10 @@ loc_2EA6:                               ; CODE XREF: INTERP:2E9F↑j
                 mov     ds:0E0DEh, ax
                 xor     ax, ax
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2EAF:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2EAF:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     bx              ; jumptable 00002B4D case 37
                 mov     ax, 2
@@ -4715,7 +4717,7 @@ loc_2EAF:                               ; CODE XREF: INTERP:2B4D↑j
 
 loc_2EBD:                               ; CODE XREF: INTERP:2EB6↑j
                 mov     ds:0E0DEh, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 db 2, 2 dup(0), 2, 0, 2, 0, 6 dup(2)
 ; ---------------------------------------------------------------------------
@@ -4723,12 +4725,12 @@ loc_2EBD:                               ; CODE XREF: INTERP:2EB6↑j
 loc_2ED0:                               ; CODE XREF: INTERP:loc_2E95↑j
                 push    di
                 mov     di, 3C71h
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 jmp     loc_7B
 ; ---------------------------------------------------------------------------
 
-loc_2EDB:                               ; CODE XREF: INTERP:2B4D↑j
+loc_2EDB:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     dx              ; jumptable 00002B4D case 7
                 pop     bx
@@ -4842,7 +4844,7 @@ loc_2F72:                               ; CODE XREF: INTERP:2F65↑j
                 mov     [bx+2], ax
                 mov     [bx+4], dx
                 pop     si
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 db 0B0h, 2Fh, 0C6h, 2Fh, 0D2h, 2Fh, 0E8h, 2Fh, 8, 30h
                 db 28h, 30h, 52h, 30h, 7Ah, 31h, 5Eh, 30h, 7Ah, 31h, 7Ah
@@ -4885,18 +4887,18 @@ loc_2F72:                               ; CODE XREF: INTERP:2F65↑j
                 db 19h, 7 dup(0)
 ; ---------------------------------------------------------------------------
 
-loc_3180:                               ; CODE XREF: interp_reloc+DA↑j
+op_INC:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02E5↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa2 INC
                 pop     bx
                 add     bx, ax
                 push    bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_318A:                               ; CODE XREF: interp_reloc+DA↑j
+op_MOV:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F1↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa8 MOV
                 mov     cx, ax
                 shr     cx, 1
                 pop     bx
@@ -4906,12 +4908,12 @@ loc_318A:                               ; CODE XREF: interp_reloc+DA↑j
                 cld
                 rep movsw
                 pop     si
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_319D:                               ; CODE XREF: interp_reloc+DA↑j
+op_IXA:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02E9↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa4 IXA
                 pop     cx
                 pop     bx
                 cmp     ax, 2
@@ -4929,22 +4931,22 @@ loc_31AE:                               ; CODE XREF: INTERP:31A5↑j
 loc_31B2:                               ; CODE XREF: INTERP:31AB↑j
                 add     bx, ax
                 push    bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_31B8:                               ; CODE XREF: interp_reloc+DA↑j
+op_LPA:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0341↑o
-                mov     al, [si]
+                mov     al, [si]        ; p-code opcode 0xd0 LPA
                 inc     si
                 push    si
                 xor     ah, ah
                 add     si, ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_31C3:                               ; CODE XREF: interp_reloc+DA↑j
+op_IXP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0321↑o
-                mov     cl, [si]
+                mov     cl, [si]        ; p-code opcode 0xc0 IXP
                 xor     ch, ch
                 inc     si
                 mov     bl, [si]
@@ -4968,12 +4970,12 @@ loc_31DF:                               ; CODE XREF: INTERP:31E1↓j
 
 loc_31E3:                               ; CODE XREF: INTERP:31DD↑j
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_31E7:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0315↑o
-                pop     cx
+                pop     cx              ; p-code opcode 0xba LDP
                 pop     bx
                 pop     di
                 mov     ax, [di]
@@ -4981,12 +4983,12 @@ loc_31E7:                               ; CODE XREF: interp_reloc+DA↑j
                 shl     bx, 1
                 and     ax, cs:[bx+3215h]
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_31F9:                               ; CODE XREF: interp_reloc+DA↑j
+op_STP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0317↑o
-                pop     dx
+                pop     dx              ; p-code opcode 0xbb STP
                 pop     cx
                 pop     bx
                 pop     di
@@ -5000,16 +5002,16 @@ loc_31F9:                               ; CODE XREF: interp_reloc+DA↑j
                 and     ax, bx
                 or      ax, dx
                 mov     [di], ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 db 1, 0, 3, 0, 7, 0, 0Fh, 0, 1Fh, 0, 3Fh, 0, 7Fh, 0, 0FFh
                 db 0, 0FFh, 1, 0FFh, 3, 0FFh, 7, 0FFh, 0Fh, 0FFh, 1Fh
                 db 0FFh, 3Fh, 0FFh, 7Fh, 2 dup(0FFh)
 ; ---------------------------------------------------------------------------
 
-loc_3237:                               ; CODE XREF: interp_reloc+DA↑j
+op_INN:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02B7↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x8b INN
                 shl     bx, 1
                 mov     di, sp
                 mov     ax, [bx+di]
@@ -5042,12 +5044,12 @@ loc_3269:                               ; CODE XREF: INTERP:3265↑j
                 lea     bx, [bx+di]
                 mov     [bx], ax
                 mov     sp, bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_3272:                               ; CODE XREF: interp_reloc+DA↑j
+op_ADJ:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02E1↑o
-                mov     dl, [si]
+                mov     dl, [si]        ; p-code opcode 0xa0 ADJ
                 inc     si
                 xor     dh, dh
                 pop     bx
@@ -5098,18 +5100,18 @@ loc_32A0:                               ; CODE XREF: INTERP:327C↑j
 
 loc_32BC:                               ; CODE XREF: INTERP:327A↑j
                                         ; INTERP:329D↑j
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_32BF:                               ; CODE XREF: interp_reloc+DA↑j
+op_SGS:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02CF↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x97 SGS
                 push    ax
                 push    ax
 
-loc_32C2:                               ; CODE XREF: interp_reloc+DA↑j
+op_SRS:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02C9↑o
-                pop     dx
+                pop     dx              ; p-code opcode 0x94 SRS
                 pop     bx
                 or      bx, bx
                 js      short loc_3312
@@ -5185,21 +5187,21 @@ loc_3334:                               ; CODE XREF: INTERP:332D↑j
                 mov     [bx+di], dl
 
 loc_3340:                               ; CODE XREF: INTERP:330F↑j
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_3343:                               ; CODE XREF: INTERP:32CA↑j
                 xor     ax, ax
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 db 1, 3, 7, 0Fh, 1Fh, 3Fh, 7Fh, 2 dup(0FFh), 0FEh, 0FCh
                 db 0F8h, 0F0h, 0E0h, 0C0h, 80h
 ; ---------------------------------------------------------------------------
 
-loc_3359:                               ; CODE XREF: interp_reloc+DA↑j
+op_INT_set:                             ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02B9↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x8c INT_set
                 mov     di, sp
                 push    si
                 mov     si, di
@@ -5239,12 +5241,12 @@ loc_338B:                               ; CODE XREF: INTERP:3380↑j
                 pop     bx
                 lea     sp, [si-2]
                 mov     si, bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_3394:                               ; CODE XREF: interp_reloc+DA↑j
+op_UNI:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02D9↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x9c UNI
                 mov     di, sp
                 push    si
                 mov     si, di
@@ -5270,7 +5272,7 @@ loc_33B4:                               ; CODE XREF: INTERP:33AA↑j
                 pop     bx
                 lea     sp, [si-2]
                 mov     si, bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_33BD:                               ; CODE XREF: INTERP:33A6↑j
@@ -5303,12 +5305,12 @@ loc_33CF:                               ; CODE XREF: INTERP:33C1↑j
                 pop     dx
                 mov     sp, di
                 mov     si, dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_33E8:                               ; CODE XREF: interp_reloc+DA↑j
+op_DIF:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02AB↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x85 DIF
                 mov     di, sp
                 push    si
                 mov     si, di
@@ -5338,39 +5340,39 @@ loc_340D:                               ; CODE XREF: INTERP:3401↑j
                 pop     bx
                 lea     sp, [si-2]
                 mov     si, bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 10h
 
-loc_3420:                               ; CODE XREF: interp_reloc+DA↑j
+op_SIND:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0391↑o ...
-                and     ax, 0Fh
+                and     ax, 0Fh         ; p-code opcode 0xf8 SIND
                 pop     bx
                 add     bx, ax
                 push    word ptr [bx]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_342B:                               ; CODE XREF: interp_reloc+DA↑j
+op_IND:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02E7↑o
-                call    sub_FF
+                call    pm_fetch_big    ; p-code opcode 0xa3 IND
                 pop     bx
                 add     bx, ax
                 push    word ptr [bx]
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_3436:                               ; CODE XREF: interp_reloc+DA↑j
+op_STO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02D5↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0x9a STO
                 pop     bx
                 mov     [bx], ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_343D:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDC:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0307↑o
-                xor     ch, ch
+                xor     ch, ch          ; p-code opcode 0xb3 LDC
                 mov     cl, [si]
                 inc     si
                 test    si, 1
@@ -5383,12 +5385,12 @@ loc_3449:                               ; CODE XREF: INTERP:3446↑j
                 inc     si
                 inc     si
                 loop    loc_3449
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_3452:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDM:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0319↑o
-                xor     ch, ch
+                xor     ch, ch          ; p-code opcode 0xbc LDM
                 mov     cl, [si]
                 inc     si
                 pop     bx
@@ -5400,12 +5402,12 @@ loc_345C:                               ; CODE XREF: INTERP:3460↓j
                 dec     bx
                 push    word ptr [bx]
                 loop    loc_345C
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_3465:                               ; CODE XREF: interp_reloc+DA↑j
+op_STM:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:031B↑o
-                xor     ch, ch
+                xor     ch, ch          ; p-code opcode 0xbd STM
                 mov     cl, [si]
                 inc     si
                 mov     di, sp
@@ -5419,13 +5421,13 @@ loc_3472:                               ; CODE XREF: INTERP:3476↓j
                 inc     bx
                 loop    loc_3472
                 pop     ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 8
 
-loc_3480:                               ; CODE XREF: interp_reloc+DA↑j
+op_EQUI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0327↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xc3 EQUI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5434,12 +5436,12 @@ loc_3480:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_348B:                               ; CODE XREF: INTERP:3487↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_348F:                               ; CODE XREF: interp_reloc+DA↑j
+op_NEQI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0337↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xcb NEQI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5448,12 +5450,12 @@ loc_348F:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_349A:                               ; CODE XREF: INTERP:3496↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_349E:                               ; CODE XREF: interp_reloc+DA↑j
+op_LEQI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0331↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xc8 LEQI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5462,12 +5464,12 @@ loc_349E:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_34A9:                               ; CODE XREF: INTERP:34A5↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_34AD:                               ; CODE XREF: interp_reloc+DA↑j
+op_LESI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0333↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xc9 LESI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5476,12 +5478,12 @@ loc_34AD:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_34B8:                               ; CODE XREF: INTERP:34B4↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_34BC:                               ; CODE XREF: interp_reloc+DA↑j
+op_GEQI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0329↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xc4 GEQI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5490,12 +5492,12 @@ loc_34BC:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_34C7:                               ; CODE XREF: INTERP:34C3↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_34CB:                               ; CODE XREF: interp_reloc+DA↑j
+op_GTRI:                                ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:032B↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xc5 GTRI
                 pop     ax
                 mov     dx, 1
                 cmp     ax, bx
@@ -5504,50 +5506,50 @@ loc_34CB:                               ; CODE XREF: interp_reloc+DA↑j
 
 loc_34D6:                               ; CODE XREF: INTERP:34D2↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_34DA:                               ; CODE XREF: interp_reloc+DA↑j
+op_EQU:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02FF↑o
-                mov     bh, 1
+                mov     bh, 1           ; p-code opcode 0xaf EQU
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_34DF:                               ; CODE XREF: interp_reloc+DA↑j
+op_NEQ:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:030F↑o
-                mov     bh, 6
+                mov     bh, 6           ; p-code opcode 0xb7 NEQ
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_34E4:                               ; CODE XREF: interp_reloc+DA↑j
+op_LEQ:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0309↑o
-                mov     bh, 3
+                mov     bh, 3           ; p-code opcode 0xb4 LEQ
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_34E9:                               ; CODE XREF: interp_reloc+DA↑j
+op_LES:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:030B↑o
-                mov     bh, 2
+                mov     bh, 2           ; p-code opcode 0xb5 LES
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_34EE:                               ; CODE XREF: interp_reloc+DA↑j
+op_GEQ:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0301↑o
-                mov     bh, 5
+                mov     bh, 5           ; p-code opcode 0xb0 GEQ
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_34F3:                               ; CODE XREF: interp_reloc+DA↑j
+op_GTR:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0303↑o
-                mov     bh, 4
+                mov     bh, 4           ; p-code opcode 0xb1 GTR
                 jmp     short loc_34F8
 ; ---------------------------------------------------------------------------
                 align 2
@@ -5678,7 +5680,7 @@ loc_3592:                               ; CODE XREF: INTERP:358A↑j
 
 loc_359B:                               ; CODE XREF: INTERP:3596↑j
                 push    dx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_359F:                               ; CODE XREF: INTERP:loc_3517↑j
@@ -5768,7 +5770,7 @@ loc_3600:                               ; CODE XREF: INTERP:35CB↑j
                 mov     si, dx
                 and     ax, 1
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -5844,7 +5846,7 @@ sub_363E        endp
 ; ---------------------------------------------------------------------------
 
 loc_364F:                               ; CODE XREF: INTERP:loc_351D↑j
-                call    sub_FF
+                call    pm_fetch_big
                 shr     ax, 1
                 mov     cx, ax
                 pop     dx
@@ -5872,7 +5874,7 @@ loc_366D:                               ; CODE XREF: INTERP:3665↑j
 ; ---------------------------------------------------------------------------
 
 loc_3670:                               ; CODE XREF: INTERP:loc_3520↑j
-                call    sub_FF
+                call    pm_fetch_big
                 shr     ax, 1
                 mov     cx, ax
                 pop     dx
@@ -5894,28 +5896,28 @@ loc_368B:                               ; CODE XREF: INTERP:3514↑j
                 mov     ax, si
                 push    di
                 mov     di, 3C8Dh
-                call    sub_374C
+                call    pm_format_msg
                 pop     di
                 pop     ax
                 jmp     loc_7B
 ; ---------------------------------------------------------------------------
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 4
 
-loc_36A0:                               ; CODE XREF: interp_reloc+DA↑j
+op_LSA:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02ED↑o
-                push    si
+                push    si              ; p-code opcode 0xa6 LSA
                 mov     cl, [si]
                 inc     si
                 xor     ch, ch
                 add     si, cx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_36AB:                               ; CODE XREF: interp_reloc+DA↑j
+op_SAS:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F5↑o
-                mov     cl, [si]
+                mov     cl, [si]        ; p-code opcode 0xaa SAS
                 inc     si
                 pop     bx
                 pop     di
@@ -5943,7 +5945,7 @@ loc_36C2:                               ; CODE XREF: INTERP:36B2↑j
                 pop     si
 
 loc_36D2:                               ; CODE XREF: INTERP:36BF↑j
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_36D5:                               ; CODE XREF: INTERP:36B7↑j
@@ -5951,9 +5953,9 @@ loc_36D5:                               ; CODE XREF: INTERP:36B7↑j
                 jmp     loc_80
 ; ---------------------------------------------------------------------------
 
-loc_36D8:                               ; CODE XREF: interp_reloc+DA↑j
+op_IXS:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02D7↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0x9b IXS
                 pop     di
                 or      bx, bx
                 jz      short loc_36ED
@@ -5963,7 +5965,7 @@ loc_36D8:                               ; CODE XREF: interp_reloc+DA↑j
                 ja      short loc_36ED
                 push    di
                 push    bx
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
 loc_36ED:                               ; CODE XREF: INTERP:36DC↑j
@@ -5971,40 +5973,40 @@ loc_36ED:                               ; CODE XREF: INTERP:36DC↑j
                 jmp     loc_6C
 ; ---------------------------------------------------------------------------
 
-loc_36F0:                               ; CODE XREF: interp_reloc+DA↑j
+op_LDB:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:031D↑o
-                pop     bx
+                pop     bx              ; p-code opcode 0xbe LDB
                 pop     di
                 mov     al, [bx+di]
                 xor     ah, ah
                 push    ax
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_36FA:                               ; CODE XREF: interp_reloc+DA↑j
+op_STB:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:031F↑o
-                pop     ax
+                pop     ax              ; p-code opcode 0xbf STB
                 pop     bx
                 pop     di
                 mov     [bx+di], al
-                jmp     loc_E7
+                jmp     interp_fetch
 ; ---------------------------------------------------------------------------
                 align 10h
 word_3710       dw 1                    ; DATA XREF: INTERP:3734↓r
                                         ; INTERP:373C↓w ...
-word_3712       dw 0                    ; DATA XREF: sub_3716↓w
-word_3714       dw 1BBh                 ; DATA XREF: sub_3716+A↓w
+word_3712       dw 0                    ; DATA XREF: pm_trace_init↓w
+word_3714       dw 1BBh                 ; DATA XREF: pm_trace_init+A↓w
                                         ; INTERP:3725↓w ...
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_3716        proc near               ; CODE XREF: interp_reloc+10↑p
+pm_trace_init   proc near               ; CODE XREF: interp_reloc+10↑p
                 mov     cs:word_3712, 0
                 mov     ax, 38F2h
                 mov     cs:word_3714, ax
                 retn
-sub_3716        endp
+pm_trace_init   endp
 
 ; ---------------------------------------------------------------------------
                 mov     cs:word_3714, bx
@@ -6032,7 +6034,7 @@ sub_372B        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_374C        proc near               ; CODE XREF: interp_reloc+9B↑p
+pm_format_msg   proc near               ; CODE XREF: interp_reloc+9B↑p
                                         ; interp_reloc+C3↑p ...
 
 ; FUNCTION CHUNK AT 387F SIZE 00000017 BYTES
@@ -6043,7 +6045,7 @@ sub_374C        proc near               ; CODE XREF: interp_reloc+9B↑p
                 jmp     nullsub_2
 ; ---------------------------------------------------------------------------
 
-loc_3758:                               ; CODE XREF: sub_374C+7↑j
+loc_3758:                               ; CODE XREF: pm_format_msg+7↑j
                 mov     cs:word_3984, ax
                 mov     cs:word_3986, bx
                 mov     cs:word_3988, cx
@@ -6056,7 +6058,7 @@ loc_3758:                               ; CODE XREF: sub_374C+7↑j
                 pop     es
                 mov     bx, di
 
-loc_3773:                               ; CODE XREF: sub_374C:loc_3788↓j
+loc_3773:                               ; CODE XREF: pm_format_msg:loc_3788↓j
                 mov     al, es:[bx]
                 inc     bx
                 or      al, al
@@ -6067,20 +6069,20 @@ loc_3773:                               ; CODE XREF: sub_374C:loc_3788↓j
                 cmp     al, 5Ch ; '\'
                 jz      short loc_37DC
 
-loc_3785:                               ; CODE XREF: sub_374C+2D↑j
-                                        ; sub_374C+55↓j ...
+loc_3785:                               ; CODE XREF: pm_format_msg+2D↑j
+                                        ; pm_format_msg+55↓j ...
                 call    sub_38ED
 
-loc_3788:                               ; CODE XREF: sub_374C+84↓j
-                                        ; sub_374C+89↓j ...
+loc_3788:                               ; CODE XREF: pm_format_msg+84↓j
+                                        ; pm_format_msg+89↓j ...
                 jmp     short loc_3773
 ; ---------------------------------------------------------------------------
 
-loc_378A:                               ; CODE XREF: sub_374C+2F↑j
+loc_378A:                               ; CODE XREF: pm_format_msg+2F↑j
                 jmp     loc_387F
 ; ---------------------------------------------------------------------------
 
-loc_378D:                               ; CODE XREF: sub_374C+33↑j
+loc_378D:                               ; CODE XREF: pm_format_msg+33↑j
                 mov     al, es:[bx]
                 inc     bx
                 cmp     al, 68h ; 'h'
@@ -6094,15 +6096,15 @@ loc_378D:                               ; CODE XREF: sub_374C+33↑j
                 jmp     short loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_37A3:                               ; CODE XREF: sub_374C+53↑j
+loc_37A3:                               ; CODE XREF: pm_format_msg+53↑j
                 jmp     loc_395D
 ; ---------------------------------------------------------------------------
 
-loc_37A6:                               ; CODE XREF: sub_374C+4F↑j
+loc_37A6:                               ; CODE XREF: pm_format_msg+4F↑j
                 jmp     loc_393A
 ; ---------------------------------------------------------------------------
 
-loc_37A9:                               ; CODE XREF: sub_374C+47↑j
+loc_37A9:                               ; CODE XREF: pm_format_msg+47↑j
                 mov     al, es:[bx]
                 inc     bx
                 xor     ah, ah
@@ -6122,22 +6124,22 @@ loc_37A9:                               ; CODE XREF: sub_374C+47↑j
                 jmp     short loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_37CD:                               ; CODE XREF: sub_374C+75↑j
+loc_37CD:                               ; CODE XREF: pm_format_msg+75↑j
                 call    sub_3897
                 jmp     short loc_3788
 ; ---------------------------------------------------------------------------
 
-loc_37D2:                               ; CODE XREF: sub_374C+79↑j
+loc_37D2:                               ; CODE XREF: pm_format_msg+79↑j
                 call    sub_389E
                 jmp     short loc_3788
 ; ---------------------------------------------------------------------------
 
-loc_37D7:                               ; CODE XREF: sub_374C+7D↑j
+loc_37D7:                               ; CODE XREF: pm_format_msg+7D↑j
                 call    sub_38AB
                 jmp     short loc_3788
 ; ---------------------------------------------------------------------------
 
-loc_37DC:                               ; CODE XREF: sub_374C+37↑j
+loc_37DC:                               ; CODE XREF: pm_format_msg+37↑j
                 mov     al, es:[bx]
                 inc     bx
                 cmp     al, 6Eh ; 'n'
@@ -6146,14 +6148,14 @@ loc_37DC:                               ; CODE XREF: sub_374C+37↑j
                 jmp     short loc_3788
 ; ---------------------------------------------------------------------------
 
-loc_37E9:                               ; CODE XREF: sub_374C+96↑j
+loc_37E9:                               ; CODE XREF: pm_format_msg+96↑j
                 cmp     al, 74h ; 't'
                 jnz     short loc_37F1
                 mov     al, 9
                 jmp     short loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_37F1:                               ; CODE XREF: sub_374C+9F↑j
+loc_37F1:                               ; CODE XREF: pm_format_msg+9F↑j
                 cmp     al, 78h ; 'x'
                 jnz     short loc_37FC
                 call    sub_390D
@@ -6161,25 +6163,25 @@ loc_37F1:                               ; CODE XREF: sub_374C+9F↑j
                 jmp     short loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_37FC:                               ; CODE XREF: sub_374C+A7↑j
+loc_37FC:                               ; CODE XREF: pm_format_msg+A7↑j
                 cmp     al, 65h ; 'e'
                 jnz     short loc_3804
                 mov     al, 1Bh
                 jmp     short loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_3804:                               ; CODE XREF: sub_374C+B2↑j
+loc_3804:                               ; CODE XREF: pm_format_msg+B2↑j
                 cmp     al, 72h ; 'r'
                 jnz     short loc_380D
                 mov     al, 0Dh
                 jmp     loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_380D:                               ; CODE XREF: sub_374C+BA↑j
+loc_380D:                               ; CODE XREF: pm_format_msg+BA↑j
                 jmp     loc_3785
 ; ---------------------------------------------------------------------------
 
-loc_3810:                               ; CODE XREF: sub_374C+4B↑j
+loc_3810:                               ; CODE XREF: pm_format_msg+4B↑j
                 mov     al, es:[bx]
                 inc     bx
                 xor     ah, ah
@@ -6202,21 +6204,21 @@ loc_3810:                               ; CODE XREF: sub_374C+4B↑j
                 mov     cl, al
                 xor     ch, ch
 
-loc_383F:                               ; CODE XREF: sub_374C+FA↓j
+loc_383F:                               ; CODE XREF: pm_format_msg+FA↓j
                 mov     al, cs:[si]
                 inc     si
                 call    sub_38ED
                 loop    loc_383F
 
-loc_3848:                               ; CODE XREF: sub_374C+E1↑j
+loc_3848:                               ; CODE XREF: pm_format_msg+E1↑j
                 jmp     loc_3788
-sub_374C        endp
+pm_format_msg   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_384B        proc near               ; CODE XREF: sub_374C+D6↑p
+sub_384B        proc near               ; CODE XREF: pm_format_msg+D6↑p
                 mov     di, 3875h
                 mov     si, 2710h
 
@@ -6248,9 +6250,9 @@ sub_384B        endp
                 xor     [bx+si], dh
                 xor     [bx+si], dh
                 xor     [bx+si], dh
-; START OF FUNCTION CHUNK FOR sub_374C
+; START OF FUNCTION CHUNK FOR pm_format_msg
 
-loc_387F:                               ; CODE XREF: sub_374C:loc_378A↑j
+loc_387F:                               ; CODE XREF: pm_format_msg:loc_378A↑j
                 pop     es
                 pop     ds
                 assume ds:nothing
@@ -6260,13 +6262,13 @@ loc_387F:                               ; CODE XREF: sub_374C:loc_378A↑j
                 mov     bx, cs:word_3986
                 mov     cx, cs:word_3988
                 mov     dx, cs:word_398A
-; END OF FUNCTION CHUNK FOR sub_374C
+; END OF FUNCTION CHUNK FOR pm_format_msg
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_2. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_3897        proc near               ; CODE XREF: sub_374C:loc_37CD↑p
+sub_3897        proc near               ; CODE XREF: pm_format_msg:loc_37CD↑p
                 push    dx
                 mov     dl, dh
                 call    sub_389E
@@ -6277,7 +6279,7 @@ sub_3897        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_389E        proc near               ; CODE XREF: sub_374C:loc_37D2↑p
+sub_389E        proc near               ; CODE XREF: pm_format_msg:loc_37D2↑p
                                         ; sub_3897+3↑p
                 push    dx
                 shr     dx, 1
@@ -6292,7 +6294,7 @@ sub_389E        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_38AB        proc near               ; CODE XREF: sub_374C:loc_37D7↑p
+sub_38AB        proc near               ; CODE XREF: pm_format_msg:loc_37D7↑p
                                         ; sub_389E+9↑p
                 mov     al, dl
                 and     al, 0Fh
@@ -6325,7 +6327,7 @@ sub_38AB        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_38CB        proc near               ; CODE XREF: interp_reloc+A8↑p
+pm_trace_step   proc near               ; CODE XREF: interp_reloc+A8↑p
                                         ; sub_737:loc_733↑p
                 push    ax
                 push    bx
@@ -6343,7 +6345,7 @@ sub_38CB        proc near               ; CODE XREF: interp_reloc+A8↑p
                 pop     bx
                 pop     ax
                 retn
-sub_38CB        endp
+pm_trace_step   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6372,8 +6374,8 @@ sub_38DD        endp
 
 ; Attributes: thunk
 
-sub_38ED        proc near               ; CODE XREF: sub_374C:loc_3785↑p
-                                        ; sub_374C+F7↑p ...
+sub_38ED        proc near               ; CODE XREF: pm_format_msg:loc_3785↑p
+                                        ; pm_format_msg+F7↑p ...
                 jmp     cs:word_3714
 sub_38ED        endp
 
@@ -6404,7 +6406,7 @@ sub_38FD        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_3904        proc near               ; CODE XREF: sub_374C+98↑p
+sub_3904        proc near               ; CODE XREF: pm_format_msg+98↑p
                 mov     al, 0Dh
                 call    sub_38ED
                 mov     al, 0Ah
@@ -6415,7 +6417,7 @@ sub_3904        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_390D        proc near               ; CODE XREF: sub_374C+A9↑p
+sub_390D        proc near               ; CODE XREF: pm_format_msg+A9↑p
                 xor     dx, dx
 
 loc_390F:                               ; CODE XREF: sub_390D+2A↓j
@@ -6453,9 +6455,9 @@ locret_3939:                            ; CODE XREF: sub_390D+7↑j
 sub_390D        endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_374C
+; START OF FUNCTION CHUNK FOR pm_format_msg
 
-loc_393A:                               ; CODE XREF: sub_374C:loc_37A6↑j
+loc_393A:                               ; CODE XREF: pm_format_msg:loc_37A6↑j
                 mov     al, es:[bx]
                 inc     bx
                 xor     ah, ah
@@ -6466,7 +6468,7 @@ loc_393A:                               ; CODE XREF: sub_374C:loc_37A6↑j
                 push    bx
                 mov     bx, cs:[si]
 
-loc_394D:                               ; CODE XREF: sub_374C+20B↓j
+loc_394D:                               ; CODE XREF: pm_format_msg+20B↓j
                 mov     al, [bx]
                 or      al, al
                 jz      short loc_3959
@@ -6475,12 +6477,12 @@ loc_394D:                               ; CODE XREF: sub_374C+20B↓j
                 jmp     short loc_394D
 ; ---------------------------------------------------------------------------
 
-loc_3959:                               ; CODE XREF: sub_374C+205↑j
+loc_3959:                               ; CODE XREF: pm_format_msg+205↑j
                 pop     bx
                 jmp     loc_3788
 ; ---------------------------------------------------------------------------
 
-loc_395D:                               ; CODE XREF: sub_374C:loc_37A3↑j
+loc_395D:                               ; CODE XREF: pm_format_msg:loc_37A3↑j
                 mov     al, es:[bx]
                 inc     bx
                 xor     ah, ah
@@ -6492,7 +6494,7 @@ loc_395D:                               ; CODE XREF: sub_374C:loc_37A3↑j
                 mov     bx, cs:[si]
                 mov     cl, [bx]
 
-loc_3972:                               ; CODE XREF: sub_374C+232↓j
+loc_3972:                               ; CODE XREF: pm_format_msg+232↓j
                 or      cl, cl
                 jz      short loc_3980
                 inc     bx
@@ -6502,19 +6504,19 @@ loc_3972:                               ; CODE XREF: sub_374C+232↓j
                 jmp     short loc_3972
 ; ---------------------------------------------------------------------------
 
-loc_3980:                               ; CODE XREF: sub_374C+228↑j
+loc_3980:                               ; CODE XREF: pm_format_msg+228↑j
                 pop     bx
                 jmp     loc_3788
-; END OF FUNCTION CHUNK FOR sub_374C
+; END OF FUNCTION CHUNK FOR pm_format_msg
 ; ---------------------------------------------------------------------------
-word_3984       dw 0                    ; DATA XREF: sub_374C:loc_3758↑w
-                                        ; sub_374C+137↑r
-word_3986       dw 0                    ; DATA XREF: sub_374C+10↑w
-                                        ; sub_374C+13B↑r
-word_3988       dw 0                    ; DATA XREF: sub_374C+15↑w
-                                        ; sub_374C+140↑r
-word_398A       dw 0                    ; DATA XREF: sub_374C+1A↑w
-                                        ; sub_374C+145↑r
+word_3984       dw 0                    ; DATA XREF: pm_format_msg:loc_3758↑w
+                                        ; pm_format_msg+137↑r
+word_3986       dw 0                    ; DATA XREF: pm_format_msg+10↑w
+                                        ; pm_format_msg+13B↑r
+word_3988       dw 0                    ; DATA XREF: pm_format_msg+15↑w
+                                        ; pm_format_msg+140↑r
+word_398A       dw 0                    ; DATA XREF: pm_format_msg+1A↑w
+                                        ; pm_format_msg+145↑r
 aNexecerr       db '\nEXECERR: ',0
 aNsegHc2ProcHd2 db '\nSeg#%hc2, Proc#%hd2, Inst#%ha4[%hb2]',0
 aNpleaseInsertD db '~{\nPlease insert disk %ha1 and press space\n',0

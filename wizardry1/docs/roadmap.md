@@ -14,11 +14,16 @@ Decided direction (2026-09-02):
 - [x] UCSD p-System volume reader — `tools/ucsd_disk.py` (list / extract / block).
 - [x] Extract `WIZ1.DSK` → `extracted/wiz1/`.
 - [x] Parse `SYSTEM.PASCAL` segment dictionary (16 named segments).
-- [ ] Load `SYSTEM.INTERP` into IDA (`ida_scripts/`), analyze:
-      - opcode dispatch table → exact p-code dialect
-      - SBIOS / native call interface, `HAS.STROPS` linkage
-      - runtime layout (E-reg, stack, segment table, KP/SP/IPC)
-- [ ] Document the p-machine in `docs/pmachine.md`.
+- [x] Load `SYSTEM.INTERP` into IDA (`ida_scripts/`), analyze:
+      - [x] opcode dispatch table (`off_2A1`, 128 entries) — all 128 opcodes
+            mapped; standard UCSD p-code confirmed. `ida_scripts/apply_names_interp.py`.
+      - [x] SBIOS interface — disk via hooked `INT 18h` (`sbios_disk_io`),
+            kbd `INT 16h`, video `INT 10h`.
+      - [x] runtime layout — IPC=SI, eval stack=SP, MP=BP, globals `ds:[600h]`,
+            heap `ds:[604h]/[602h]`.
+      - [ ] `HAS.STROPS` native-call ABI (deferred to Phase 1).
+      - [ ] CSP 0, 7–9, 12, 21–24 exact semantics.
+- [x] Document the p-machine in `docs/pmachine.md`.
 
 ## Phase 1 — data formats
 
