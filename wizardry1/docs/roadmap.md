@@ -27,16 +27,20 @@ Decided direction (2026-09-02):
 
 ## Phase 1 — data formats
 
-- [ ] `SCENARIO.DATA`: title, header table, then MAZE / MONSTER / OBJECT /
-      REWARD / IMAGE / SPELL / MESSAGE record arrays. Map against the Apple
-      `TMAZEREC` / `TOBJREC` / monster records in `Wiz1WizardryPascal.txt`.
+- [x] `SCENARIO.DATA` **container** — TSCNTOC header + per-type record grid,
+      fully decoded and self-validating. `tools/scenario.py` (toc/list/rec/dump).
+- [~] `SCENARIO.DATA` **records** — field order per Apple structs; DOS bit
+      packing for `TMAZE` still to be pinned (Phase 3 vs known maps). `TWIZLONG`
+      / `TEXP` confirmed.
+- [ ] Keyed string pool — monster/item/spell **names live in `ASCII.KRN`**
+      (LZ-compressed), not in the records. Needs the DOS decompressor →
+      **blocked on Phase 2**.
 - [ ] `200/400.CHARSET` — glyph format (looks like 256 × 32 bytes).
 - [ ] `200/400.TITLE` — title bitmap encoding.
 - [ ] `200.MONSTERS` — monster portrait display-list opcodes.
-- [ ] `ASCII.KRN`, `HAS.CACHE`, `KANA.KEYMAP` — identify.
+- [ ] `HAS.CACHE`, `KANA.KEYMAP` — identify (share a 512-byte prefix).
 - [ ] `PLAYER.DATA` / `SAVEn.DSK` — party save format (UCSD volumes too).
-- [ ] Write `docs/file-formats.md` with byte-level layouts + a validating
-      extractor/renderer for each.
+- [x] `docs/file-formats.md` started with the above.
 
 ## Phase 2 — p-code map
 
