@@ -37,8 +37,9 @@ static int usage() {
         "  exp      <SCENARIO.DATA>           xp-per-level table\n"
         "  str     <ASCII.KRN> <key>...       decode string pool keys\n"
         "  strings <ASCII.KRN>               dump every string\n"
-        "  roster  <SCENARIO.DATA>            list the roster + round-trip check
-");
+        "  roster  <SCENARIO.DATA>            list the roster + round-trip check\n"
+        "  rng     [s3hex] [n]               RANDOM sequence\n"
+        "  roll    <race> <align> [s3hex]     roll a character\n");
     return 2;
 }
 
