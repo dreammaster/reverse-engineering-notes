@@ -37,7 +37,9 @@ Decided direction (2026-09-02):
       **blocked on Phase 2**.
 - [ ] `200/400.CHARSET` — glyph format (looks like 256 × 32 bytes).
 - [ ] `200/400.TITLE` — title bitmap encoding.
-- [ ] `200.MONSTERS` — monster portrait display-list opcodes.
+- [~] `200.MONSTERS` — 29 records × 512 B, `TENEMY.PIC` indexed. Load path +
+      `CONUNIT` subfn table mapped; payload is compressed (raw geometry = noise),
+      decompressor is native code in `SYSTEM.INTERP`. See `docs/file-formats.md`.
 - [ ] `HAS.CACHE`, `KANA.KEYMAP` — identify (share a 512-byte prefix).
 - [ ] `PLAYER.DATA` / `SAVEn.DSK` — party save format (UCSD volumes too).
 - [x] `docs/file-formats.md` started with the above.
@@ -101,7 +103,8 @@ Decided direction (2026-09-02):
 - [x] `200/400.TITLE` decoded — 320×64 2bpp CGA (the "Wizardry" logo).
       `engine/wiz/bitmap.h` (`loadCga2bpp`/`loadTitle`); `wiz1 show title`;
       shown at boot by `wiz1 roller`.
-- [ ] `200.MONSTERS` monster-portrait display lists.
+- [~] `200.MONSTERS` — grid + load path mapped; compressed payload TBD (needs
+      `SYSTEM.INTERP` console-driver RE). Doesn't block the town/maze work.
 - [ ] Continue: `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D view) → `COMBAT` family
       → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.

@@ -157,10 +157,63 @@ The shipped roster is test data (`THESUS`, `NEB`, …). Creation rules in
 |---|---|---|
 | `200.CHARSET` / `400.CHARSET` | 8192 | **font: 16 w × 8 h, 16 bytes/glyph (2 B/row, MSB left), 512 glyphs.** 0–255 = text (ASCII + box-draw); 256–511 = a 2nd bank (kana + graphics). `200`/`400` are the two screen modes; the bitmaps are near-identical. Rendered by `engine/wiz/font.h`. |
 | `200.TITLE` / `400.TITLE` | 5120 | the "Wizardry" script logo — **320×64, 2bpp CGA** (each byte = 4 px, high pair first). `200` uses colour 2 only (solid); `400` also uses colour 3 (white body + outline). `engine/wiz/bitmap.h` `loadTitle`. The DOS title also shows key 2018 `"WELCOME TO THE WORLD OF WIZARDRY!"` + an `S)TART GAME` / `M)AKE SCENARIO DISK` / language menu (Apple's "PREPARE YOURSELF…" is Apple-only). |
-| `200.MONSTERS` | 16384 | monster portraits — draw-primitive display lists; header `00 00 04 00 05 00 0d 00 …` then nibble draw data. `.MONSTERS` file selected by `Concat2(tstr,'.MONSTERS'); FirstBlock(4,tstr)` |
+| `200.MONSTERS` | 16384 | 29 monster-portrait records × 512 B (blocks 29–31 are disk slack — MPW/Mac-Pascal source scraps). **Payload compressed**, scheme not yet cracked — see below. |
 | `ASCII.KRN` | 27648 | compressed keyed string pool (see above) |
 | `HAS.CACHE` / `KANA.KEYMAP` | 512 / 1024 | share a 512-byte prefix (offset/prefix table?); `KANA.KEYMAP` feeds the `KANJIREA` segment |
 | `HAS.STROPS` | 512 | **native x86** string-op helpers loaded as a machine-code segment |
+
+### `200.MONSTERS` — monster portraits (partly decoded)
+
+**Load path.** `KANJIREA` proc 12 (`LoadMonsters`):
+`FINDFILE(".MONSTERS")` → fallback `FINDFILE("200.MONSTERS")` →
+`UNITWRITE(CONUNIT, @fileNum, 0, subfn=18, fileNum, 0)`. Subfn 18 hands the
+whole file to the `SYSTEM.INTERP` console-unit driver, which caches it
+(analogue of Apple loading the pics into `IOCACHE`). Portraits are then blitted
+on demand from combat (`CINIT`/`CUTIL`) via further `CONUNIT` `UNITWRITE`
+subfns.
+
+**Console-unit (`CONUNIT` = global word 60) `UNITWRITE` sub-functions** seen in
+the p-code (`CSP UNITWRITE`, the byte before the CSP is the subfn):
+
+| subfn | caller | meaning |
+|--:|---|---|
+| 3 | many | present / flip `WINDOW1` to the visible page |
+| 13 | `KANJIREA` 13, `CUTIL` 38 | blit buffer → screen (masked?) |
+| 14 | `KANJIREA` 11 | load `*.CHARSET` into the driver |
+| 17 | `KANJIREA` 13, `CUTIL` 38/41 | blit an offscreen buffer into `WINDOW1` |
+| 18 | `KANJIREA` 12 | load `*.MONSTERS` into the driver cache |
+| 19 | `KANJIREA` 13, `CUTIL` 41 | per-row / scanline poke |
+| 23 | `KANJIREA` 13 | blit a loaded bitmap file (`*.TITLE`) |
+
+**Record grid.** 29 records of 512 bytes (`29 × 512 = 14848`; the file is
+padded to 16384 / 32 blocks, and blocks 29–31 hold unrelated Mac-Pascal
+source-file slack). `TENEMY.PIC` (DOS word 0 of the 94-byte monster record;
+Apple has it at word 32, after four `STRING[15]` names that DOS drops)
+indexes this grid — the shipped scenario uses `PIC` values `0‥28`.
+
+**Apple reference format** (`ENEMYPIC`, Apple `CINIT` proc 2 = `P010502`):
+each pic is **70 × 50 px, 1bpp**, stored as 50 rows × 10 bytes = 500 bytes
+(record padded to 512). Apple blits it with
+`FOR PICLINE := 23 TO 72 DO MOVELEFT(IOCACHE[ENEMYID], scrnaddr, 10);
+ENEMYID += 10` — i.e. the file data is linear rows; only the *screen* address
+is hi-res-interleaved.
+
+**Status: the DOS payload is compressed / transformed — not raw pixels.**
+Rendered as a raw 1bpp bitmap at every plausible geometry (widths
+32/40/48/56/64/70/80 × 50 rows, both bit orders; 64×64; a full 320×200 2bpp
+CGA page) it is pure noise. Each 512-byte record starts with a small control
+block — record 0 is `00 00 | 04 00 05 00 0d 00 | 01 40 03 40 01 d0 00 00 …`
+(words `0, 4, 5, 13, 0x4001, 0x4003, 0xD001, …`; the `0x4000`/`0xD000` high
+bits look like RLE run/literal tags). Byte histogram after the header is
+dominated by `0x00` then the dither/bitmask bytes `0xAA 0x55 0xFF 0x11 0x22
+0x44 0x88 0x20 0x40 0x80` — consistent with a compressed 1bpp image.
+Zero-run RLE (`00 <count>`) decodes to ~4.3 KB/record — not a clean pic size,
+so the scheme is more than plain zero-RLE.
+
+**To finish:** the decompressor is native x86 inside `SYSTEM.INTERP` (only
+16384 bytes — fully covered by `wiz1_interp.asm`), in the `CONUNIT` driver's
+subfn-18 / portrait-blit path. Needs a focused static RE of that driver or a
+live DOSBox trace. **Not on the critical path** for `CASTLE`/`SHOPS`/`RUNNER`.
 
 ---
 
