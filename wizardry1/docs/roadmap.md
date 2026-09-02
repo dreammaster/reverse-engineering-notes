@@ -105,8 +105,16 @@ Decided direction (2026-09-02):
       shown at boot by `wiz1 roller`.
 - [~] `200.MONSTERS` — grid + load path mapped; compressed payload TBD (needs
       `SYSTEM.INTERP` console-driver RE). Doesn't block the town/maze work.
-- [ ] Continue: `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D view) → `COMBAT` family
-      → `REWARDS` → `SPECIALS` → save/restore.
+- [~] `CASTLE`/`SHOPS` — the town. `docs/town.md` maps the `XGOTO` state
+      machine + both segments. Ported so far: the Castle hub menu, Gilgamesh's
+      Tavern (add / remove / see a member, alignment + password gates), and the
+      Edge of Town (maze / training / castle / leave). `engine/wiz/party.{h,cpp}`
+      (`Party` = 6 slots + roster indices + `GETALIGN`), `engine/wiz/town_ui.{h,cpp}`
+      (`runTown` → `TownExit`). `wiz1 town` (SDL) / `wiz1 town-test` (headless,
+      a CMake test). TODO: Adventurer's Inn (rest + level-up), Boltac's Trading
+      Post, Temple of Cant.
+- [ ] Continue: `RUNNER` (maze + 3D view) → `COMBAT` family → `REWARDS`
+      → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

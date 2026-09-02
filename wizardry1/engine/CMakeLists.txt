@@ -22,6 +22,8 @@ add_library(wizcore STATIC
   src/textscreen.cpp
   src/roster.cpp
   src/roller_ui.cpp
+  src/party.cpp
+  src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
 )
@@ -65,3 +67,10 @@ add_test(NAME roller_flow
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
                  "ZORK\\rY\\r\\rBA++++++++++\\eAY\\r")
 set_tests_properties(roller_flow PROPERTIES PASS_REGULAR_EXPRESSION "ZORK .*C0 A1")
+add_test(NAME town_flow
+         COMMAND wiz1 town-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "GATHESUS\\r\\rALYSANDER\\r\\rATREON\\r\\r\\rEM")
+set_tests_properties(town_flow PROPERTIES
+    PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*3\\) TREON +slot=3")
