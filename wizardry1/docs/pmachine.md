@@ -171,6 +171,28 @@ but not yet fully decoded — table:
   (`0xCD`) triggers it on first reference; "call unlinked segment" is the trap.
 - Return: `RNP`/`RBP` restore `SP` from `[BP+0Ah]`, `BP` from the dynamic link.
 
+## RANDOM  (WIZARDRY p-code proc 34)
+
+`RANDOM` is not a CSP — it is `UNITREAD(unit 13, buf, len 0, subfn 10, …)`.
+Unit 13's SBIOS handler routes subfn 10 to the generator at `0x221E`:
+
+```
+s0 = s0*0x6A2D + 0x3619        s1 = s1*0xFFF1 + 0xFF8B     (all mod 2^16)
+s2 = s2*0xFFAF + 0x0183        s3 = s3*0xFFD9 + 0x7FC9
+bx  = (s0<<4 & 0xFF00) ^ (s2>>4 & 0xFF) ^ (s1 & 0x0FF0) ^ (byteswap(s3) & 0xF00F)
+ax  = byteswap(s3) & 0xF00F & 0x7FFF
+result := ax                  ; *** stores AX, not the mixed BX -- shipped bug ***
+```
+
+So the four LCGs all advance but **only `s3` reaches the output**:
+`RANDOM = byteswap(s3) & 0x700F` — **128 distinct values**, period 65536.
+This is the notoriously weak PC-Wizardry RNG. Ship seed
+`{s0,s1,s2,s3} = {0x5BAB, 0xD02B, 0x7E15, 0x7351}` (fixed in the image; a
+keyboard-poll path adds a fixed-constant "stir" but no clock entropy).
+Reproduced in `engine/wiz/rng.h` (with `nextIntended()` = the store-BX
+version for comparison). Unit 1/2 subfn is the real keyboard (`int 16h`),
+used by `GETKEY` — not RANDOM.
+
 ## Native / SBIOS interface
 
 `WIZ1.COM` stays resident and hooks **`INT 18h`** (the PC cassette/ROM-BASIC

@@ -75,7 +75,12 @@ Decided direction (2026-09-02):
       bonus-point roll, HP/gold/age rolls, starting spells), `engine/wiz/
       character.h`. `wiz1 roll <seed> <race> <align>` demo. Still TODO: the
       208-byte `TCHAR` (de)serialiser + the interactive menu flow.
-- [ ] Cross-check `rng.h` against the running SYSTEM.INTERP (exact sequence).
+- [x] RNG cross-checked against SYSTEM.INTERP — RANDOM = `UNITREAD(unit 13,
+      subfn 10)` → generator at `0x221E`. Found a **shipped bug**: it mixes 4
+      LCG states in BX but returns AX = `byteswap(s3) & 0x700F` (128 values,
+      period 65536 — the weak PC-Wizardry RNG). `engine/wiz/rng.h` reproduces
+      it exactly (matches a byte-accurate sim). A live sequence diff vs the
+      real interpreter would be the final confirmation.
 - [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
       +289 layout; maze bit-packing validated vs a known map.
 - [ ] Platform layer: framebuffer + input abstraction (SDL now, `OSystem` later).

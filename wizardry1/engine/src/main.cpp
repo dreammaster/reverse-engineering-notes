@@ -142,7 +142,7 @@ static int cmdStrings(const char *krn) {
 }
 
 static int cmdRng(int argc, char **argv) {
-    Rng rng(u32(std::strtoul(argv[2], nullptr, 0)));
+    Rng rng(argc > 2 ? u16(std::strtoul(argv[2], nullptr, 0)) : u16(0x7351));
     int n = argc > 3 ? std::atoi(argv[3]) : 16;
     for (int i = 0; i < n; ++i) std::printf("%u\n", rng.next());
     return 0;
@@ -154,14 +154,14 @@ static const char *kClasses[] = {"FIGHTER", "MAGE", "PRIEST", "THIEF",
                                  "BISHOP", "SAMURAI", "LORD", "NINJA"};
 
 static int cmdRoll(int argc, char **argv) {
-    if (argc < 5) { std::puts("roll <seed> <race> <align>"); return 2; }
-    u32 seed = u32(std::strtoul(argv[2], nullptr, 0));
+    if (argc < 4) { std::puts("roll <race> <align> [s3hex]"); return 2; }
     Race race = Race::Human;
-    for (int i = 0; i < 6; ++i) if (argv[3] == std::string(kRaces[i])) race = Race(i);
+    for (int i = 0; i < 6; ++i) if (argv[2] == std::string(kRaces[i])) race = Race(i);
     Align al = Align::Good;
-    for (int i = 0; i < 4; ++i) if (argv[4] == std::string(kAligns[i])) al = Align(i);
+    for (int i = 0; i < 4; ++i) if (argv[3] == std::string(kAligns[i])) al = Align(i);
+    u16 s3 = argc > 4 ? u16(std::strtoul(argv[4], nullptr, 0)) : u16(0x7351);
 
-    Rng rng(seed);
+    Rng rng(s3);
     Character c;
     c.name = "ROLLED";
     c.race = race;
@@ -186,8 +186,8 @@ static int cmdRoll(int argc, char **argv) {
     c.hpMax = c.hpLeft = rollHp(c.cls, c.attrib[VIT], rng);
     startingSpells(c);
 
-    std::printf("seed 0x%08x  race %s  align %s   bonus points %d\n",
-                seed, kRaces[int(race)], kAligns[int(al)], bonus);
+    std::printf("race %s  align %s  s3=0x%04x   bonus points %d\n",
+                kRaces[int(race)], kAligns[int(al)], s3, bonus);
     std::printf("  base    STR %2d  IQ %2d  PIE %2d  VIT %2d  AGI %2d  LCK %2d\n",
                 base[STR], base[IQ], base[PIETY], base[VIT], base[AGI], base[LUCK]);
     std::printf("  +demo   STR %2d  IQ %2d  PIE %2d  VIT %2d  AGI %2d  LCK %2d\n",
@@ -204,7 +204,7 @@ static int cmdRoll(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 3) return usage();
+    if (argc < 2) return usage();
     std::string cmd = argv[1];
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);

@@ -2832,8 +2832,6 @@ loc_12CC:                               ; CODE XREF: pm_check_memsize+39↑j
                 push    dx
                 mov     bx, 0Ch
                 mov     dx, 133Bh
-
-loc_12FF:                               ; DATA XREF: INTERP:2CF8↓o
                 mov     [bx], dx
                 mov     ax, cs
                 mov     [bx+2], ax
@@ -2873,8 +2871,6 @@ pm_build_drive_table proc near          ; CODE XREF: interp_reloc+14↑p
 loc_1329:                               ; CODE XREF: pm_build_drive_table+2A↓j
                 mov     ax, bx
                 stosw
-
-loc_132C:                               ; DATA XREF: INTERP:2CFA↓o
                 mov     ax, dx
                 stosw
                 inc     bl
@@ -2912,7 +2908,7 @@ pm_build_drive_table endp
 byte_13F2       db 0                    ; DATA XREF: sub_741+5F↑w
                                         ; sub_741+64↑r ...
 word_13F3       dw 0                    ; DATA XREF: sub_741+4A↑r
-                db 35h, 2Dh, 2Eh, 7, 5Bh, 2, 2 dup(57h), 2, 3, 2 dup(0)
+byte_13F5       db 35h, 2Dh, 2Eh, 7, 5Bh, 2, 2 dup(57h), 2, 3, 2 dup(0)
                 db 61h, 50h, 52h, 0Fh, 19h, 6, 2 dup(19h), 2, 0Dh, 0Bh
                 db 0Ch, 0Eh dup(0), 23h, 14h, 25h, 14h, 29h, 14h, 2Fh
                 db 14h, 0Fh, 0, 0Bh, 0, 13h, 0, 7, 0, 0Fh, 0, 17h, 0, 3
@@ -3208,104 +3204,921 @@ word_13F3       dw 0                    ; DATA XREF: sub_741+4A↑r
                 db 0A5h, 3, 0FAh, 0A5h, 2Bh, 0FDh, 5Dh, 1Fh, 7, 5Fh, 5Eh
                 db 0C3h, 56h, 57h, 6, 0D1h, 0E6h, 0B8h, 2 dup(0FFh), 2Eh
                 db 8Bh, 0BCh, 2, 3Dh, 0BBh, 0, 0B0h
-                db 8Eh, 0C3h, 0BBh, 0FEh, 1Fh, 0BAh, 0A8h, 5Fh, 0ABh, 3
-                db 0FBh, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh, 2Bh, 0FAh
-                db 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh, 2Bh
-                db 0FAh, 7, 5Fh, 5Eh, 0C3h, 56h, 57h, 6, 0D1h, 0E6h, 33h
-                db 0C0h, 89h, 84h, 0, 0EDh, 2Eh, 8Bh, 0BCh, 2, 3Dh, 0BBh
-                db 0, 0B0h, 8Eh, 0C3h, 0BBh, 0FEh, 1Fh, 0BAh, 0A8h, 5Fh
-                db 90h, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh
-                db 2Bh, 0FAh, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh, 0ABh, 3, 0FBh
-                db 0ABh, 2Bh, 0FAh, 7, 5Fh, 5Eh, 0C3h, 56h, 57h, 55h, 6
-                db 0D1h, 0E6h, 2Eh, 8Bh, 0BCh, 2, 3Dh, 0BBh, 0, 0B0h, 8Eh
-                db 0C3h, 32h, 0FFh, 8Ah, 0DCh, 80h, 0E3h, 1Fh, 4Bh, 0D1h
-                db 0E3h, 2Eh, 8Bh, 0B7h, 0F2h, 59h, 8Ah, 0DCh, 0D1h, 0EBh
-                db 0D1h, 0EBh, 0D1h, 0EBh, 0D1h, 0EBh, 81h, 0E3h, 6, 0
-                db 3, 0B7h, 30h, 0E8h, 1Eh, 0Eh, 1Fh, 0B8h, 0, 0B0h, 8Eh
-                db 0C0h, 0BAh, 0FEh, 1Fh, 0BDh, 0A8h, 5Fh, 90h, 0A5h, 3
-                db 0FAh, 0A5h, 3, 0FAh, 0A5h, 3, 0FAh, 0A5h, 2Bh, 0FDh
-                db 0A5h, 3, 0FAh, 0A5h, 3, 0FAh, 0A5h, 3, 0FAh, 0A5h, 2Bh
-                db 0FDh, 1Fh, 7, 5Dh, 5Fh, 5Eh, 0C3h, 8Bh, 0CAh, 2Eh, 0A1h
-                db 0E2h, 13h, 0BBh, 50h, 0, 0F7h, 0E3h, 0Bh, 0C9h, 75h
-                db 3, 0E9h, 8Ah, 0, 55h, 56h, 6, 1Eh, 33h, 0DBh, 53h, 0FFh
-                db 36h, 0E2h, 0E0h, 0BFh, 52h, 72h, 57h, 2Eh, 0A1h, 0E2h
-                db 13h, 0BBh, 50h, 0, 0F7h, 0E3h, 5, 0, 2, 50h, 51h, 8Ch
-                db 0CBh, 8Eh, 0C3h, 8Eh, 0DBh, 0E8h, 19h, 0E5h, 0BEh, 56h
-                db 72h, 0BFh, 0A4h, 0, 2Eh, 8Bh, 0BDh, 2, 3Dh, 2Eh, 8Bh
-                db 0Eh, 0E2h, 13h, 8Ch, 0C8h, 8Eh, 0D8h, 0BBh, 0, 0B0h
-                db 8Eh, 0C3h, 0FCh, 0D1h, 0E9h, 0D1h, 0E9h, 0B8h, 23h
-                db 0, 0BBh, 0BAh, 1Fh, 0BAh, 0ECh, 5Fh, 0BDh, 0Ah, 0, 51h
-                db 8Bh, 0C8h, 0F3h, 0A5h, 3, 0FBh, 3, 0F5h, 8Bh, 0C8h
-                db 0F3h, 0A5h, 3, 0FBh, 3, 0F5h, 8Bh, 0C8h, 0F3h, 0A5h
-                db 3, 0FBh, 3, 0F5h, 8Bh, 0C8h, 0F3h, 0A5h, 2Bh, 0FAh
-                db 3, 0F5h, 59h, 0E2h, 0DCh, 1Fh, 7, 0BFh, 38h, 0E8h, 0B9h
-                db 4, 0, 0C7h, 5, 2 dup(0FFh), 83h, 0C7h, 4, 0E2h, 0F7h
-                db 5Eh, 5Dh, 0E9h, 63h, 0DFh, 6, 56h, 57h, 2Eh, 0A1h, 0DCh
-                db 13h, 0BFh, 0A4h, 0, 2Eh, 8Bh, 0BDh, 2, 3Dh, 0BBh, 0
-                db 0B0h, 8Eh, 0C3h, 0FCh, 2Eh, 8Bh, 0Eh, 0E2h, 13h, 0D1h
-                db 0E9h, 0D1h, 0E9h, 0BEh, 23h, 0, 0BBh, 0BAh, 1Fh, 0BAh
-                db 0ECh, 5Fh, 33h, 0C0h, 51h, 8Bh, 0CEh, 0F3h, 0ABh, 3
-                db 0FBh, 8Bh, 0CEh, 0F3h, 0ABh, 3, 0FBh, 8Bh, 0CEh, 0F3h
-                db 0ABh, 3, 0FBh, 8Bh, 0CEh, 0F3h, 0ABh, 2Bh, 0FAh, 59h
-                db 0E2h, 0E4h, 5Fh, 5Eh, 7, 0E9h, 18h, 0DFh, 6, 0BBh, 0
-                db 0B0h, 8Eh, 0C3h, 0BBh, 2 dup(0), 3Ch, 0, 74h, 3, 0BBh
-                db 2 dup(0FFh), 8Bh, 0C3h, 2Eh, 8Bh, 3Eh, 2, 3Dh, 0B9h
-                db 32h, 0, 0BBh, 0B0h, 1Fh, 0BAh, 0F6h, 5Fh, 51h, 0B9h
-                db 28h, 0, 0F3h, 0ABh, 3, 0FBh, 0B9h, 28h, 0, 0F3h, 0ABh
-                db 3, 0FBh, 0B9h, 28h, 0, 0F3h, 0ABh, 3, 0FBh, 0B9h, 28h
-                db 0, 0F3h, 0ABh, 2Bh, 0FAh, 59h, 0E2h, 0E0h, 7, 0C3h
-                db 0B8h, 1, 0, 0C3h, 0C7h, 6, 0DEh, 0E0h, 3, 0, 0E9h, 0C9h
-                db 0DEh, 2Eh, 0A1h, 37h, 14h, 0BBh, 2Dh, 6Ah, 0F7h, 0E3h
-                db 2Eh, 3, 6, 3Fh, 14h, 2Eh, 0A3h, 37h, 14h, 2Eh
-                db 0A1h, 39h, 14h, 0BBh, 0F1h, 0FFh, 0F7h, 0E3h, 2Eh, 3
-                db 6, 41h, 14h, 2Eh, 0A3h, 39h, 14h, 2Eh, 0A1h, 3Bh, 14h
-                db 0BBh, 0AFh, 0FFh, 0F7h, 0E3h, 2Eh, 3, 6, 43h, 14h, 2Eh
-                db 0A3h, 3Bh, 14h, 2Eh, 0A1h, 3Dh, 14h, 0BBh, 0D9h, 0FFh
-                db 0F7h, 0E3h, 2Eh, 3, 6, 45h, 14h, 2Eh, 0A3h, 3Dh, 14h
-                db 0B9h, 4, 0, 2Eh, 0A1h, 37h, 14h, 0D3h, 0E0h, 25h, 0
-                db 0FFh, 8Bh, 0D8h, 2Eh, 0A1h, 3Bh, 14h, 0D3h, 0E8h, 25h
-                db 0FFh, 0, 33h, 0D8h, 2Eh, 0A1h, 39h, 14h, 25h, 0F0h
-                db 0Fh, 33h, 0D8h, 2Eh, 0A1h, 3Dh, 14h, 0B1h, 8, 0D3h
-                db 0C0h, 25h, 0Fh, 0F0h, 33h, 0D8h, 25h, 0FFh, 7Fh, 89h
-                db 5, 0E9h, 4Ah, 0DEh, 50h, 53h, 51h, 52h, 2Eh, 0A1h, 3Fh
-                db 14h, 2Eh, 8Bh, 1Eh, 41h, 14h, 2Eh, 8Bh, 0Eh, 43h, 14h
-                db 2Eh, 8Bh, 16h, 45h, 14h, 2Eh, 1, 1Eh, 3Dh, 14h, 2Eh
-                db 1, 0Eh, 37h, 14h, 2Eh, 1, 16h, 39h, 14h, 2Eh, 1, 6
-                db 3Bh, 14h, 5Ah, 59h, 5Bh, 58h, 0C3h, 0E8h, 0CDh, 0FFh
-                db 0B4h, 1, 0CDh, 16h, 0B8h, 2 dup(0), 74h, 6, 0B8h, 1
-                db 0, 0EBh, 19h, 90h, 8Bh, 0D8h, 2Eh, 0A1h, 37h, 14h, 0F7h
-                db 0E3h, 2Eh, 0A3h, 37h, 14h, 0F7h, 0DBh, 2Eh, 0A1h, 39h
-                db 14h, 0F7h, 0E3h, 2Eh, 0A3h, 39h, 14h, 89h, 5, 0FCh
-                db 0E9h, 0EAh, 0DDh, 0C7h, 5, 1, 0, 0FCh, 0E9h, 0E2h, 0DDh
-                db 0D1h, 0E2h, 2Eh, 89h, 16h, 49h, 14h, 0B4h, 0, 0CDh
-                db 1Ah, 2Eh, 89h, 16h, 47h, 14h, 0E8h, 85h, 0FFh, 0B4h
-                db 1, 0CDh, 16h, 75h, 1Fh, 0B4h, 2, 0CDh, 16h, 24h, 1Fh
-                db 75h, 17h, 0B4h, 0, 0CDh, 1Ah, 2Eh, 3Bh, 16h, 47h, 14h
-                db 74h, 0E4h, 2Eh, 89h, 16h, 47h, 14h, 2Eh, 0FFh, 0Eh
-                db 49h, 14h, 75h, 0D8h, 0FCh, 0E9h, 0A6h, 0DDh, 0E8h, 0CCh
-                db 0EEh, 89h, 5, 0FCh, 0E9h, 9Dh, 0DDh, 8Bh, 0C2h, 0E8h
-                db 76h, 0EDh, 0FCh, 0E9h, 94h, 0DDh, 0E8h, 74h, 0EDh, 0A3h
-                db 0DEh, 0E0h, 0FCh, 0E9h, 8Ah, 0DDh, 0B4h, 2, 0CDh, 16h
-                db 24h, 40h, 75h, 0Ah, 0Bh, 0D2h, 74h, 0Ah, 4Ah, 74h, 0Eh
-                db 4Ah, 74h, 12h, 0FCh, 0E9h, 74h, 0DDh, 0E8h, 1Ah, 0
-                db 0FCh, 0EBh, 52h, 90h, 0E8h, 1Dh, 0, 0FCh, 0EBh, 4Bh
-                db 90h, 0E8h, 16h, 0, 0B9h, 0, 80h, 0E8h, 23h, 0, 0E8h
-                db 0Dh, 0, 0EBh, 3Ch, 90h, 0E8h, 1Dh, 0, 0E8h, 0Eh, 0
-                db 0E8h, 2Bh, 0, 0C3h, 0E8h, 13h, 0, 0E8h, 0Ah, 0, 0E8h
-                db 21h, 0, 0C3h, 0B9h, 0, 20h, 0EBh, 4, 90h, 0B9h, 0, 4
-                db 0E2h, 0FEh, 0C3h, 0B0h, 0B6h, 0E6h, 43h, 0B8h, 15h
-                db 2, 0E6h, 42h, 8Ah, 0C4h, 0E6h, 42h, 0E4h, 61h, 0Ch
-                db 3, 0E6h, 61h, 0C3h, 0E4h, 61h, 24h, 0FCh, 0E6h, 61h
-                db 0C3h, 0E9h, 19h, 0DDh, 0E8h, 9Bh, 0E6h, 0A3h, 0DEh
-                db 0E0h, 0FCh, 0E9h, 0Fh, 0DDh, 6, 0E8h, 5Ch, 0E4h, 7
-                db 0A3h, 0DEh, 0E0h, 0FCh, 0E9h, 3, 0DDh, 56h, 8Bh, 1Dh
-                db 0Bh, 0DBh, 74h, 3Ah, 39h, 17h, 75h, 31h, 3Bh, 1Dh, 74h
-                db 53h, 8Bh, 47h, 2, 8Bh, 77h, 4, 89h, 44h, 2, 3Bh, 5Dh
-                db 2, 75h, 6, 89h, 75h, 2, 0EBh, 9, 90h, 8Bh, 0CEh, 8Bh
-                db 77h, 2, 89h, 4Ch, 4, 0C7h, 47h, 4, 2 dup(0), 8Bh, 35h
-                db 89h, 77h, 2, 89h, 5Ch, 4, 89h, 1Dh, 0EBh, 26h, 8Bh
-                db 5Fh, 2, 0EBh, 0C2h, 8Bh, 5Dh, 2, 8Bh, 77h, 4, 89h, 75h
-                db 2, 0C7h, 44h, 2, 2 dup(0), 0C7h
+                db  8Eh
+                db 0C3h
+                db 0BBh
+                db 0FEh
+                db  1Fh
+                db 0BAh
+                db 0A8h
+                db  5Fh ; _
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db    7
+                db  5Fh ; _
+                db  5Eh ; ^
+                db 0C3h
+                db  56h ; V
+                db  57h ; W
+                db    6
+                db 0D1h
+                db 0E6h
+                db  33h ; 3
+                db 0C0h
+                db  89h
+                db  84h
+                db    0
+                db 0EDh
+                db  2Eh ; .
+                db  8Bh
+                db 0BCh
+                db    2
+                db  3Dh ; =
+                db 0BBh
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C3h
+                db 0BBh
+                db 0FEh
+                db  1Fh
+                db 0BAh
+                db 0A8h
+                db  5Fh ; _
+                db  90h
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db    7
+                db  5Fh ; _
+                db  5Eh ; ^
+                db 0C3h
+                db  56h ; V
+                db  57h ; W
+                db  55h ; U
+                db    6
+                db 0D1h
+                db 0E6h
+                db  2Eh ; .
+                db  8Bh
+                db 0BCh
+                db    2
+                db  3Dh ; =
+                db 0BBh
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C3h
+                db  32h ; 2
+                db 0FFh
+                db  8Ah
+                db 0DCh
+                db  80h
+                db 0E3h
+                db  1Fh
+                db  4Bh ; K
+                db 0D1h
+                db 0E3h
+                db  2Eh ; .
+                db  8Bh
+                db 0B7h
+                db 0F2h
+                db  59h ; Y
+                db  8Ah
+                db 0DCh
+                db 0D1h
+                db 0EBh
+                db 0D1h
+                db 0EBh
+                db 0D1h
+                db 0EBh
+                db 0D1h
+                db 0EBh
+                db  81h
+                db 0E3h
+                db    6
+                db    0
+                db    3
+                db 0B7h
+                db  30h ; 0
+                db 0E8h
+                db  1Eh
+                db  0Eh
+                db  1Fh
+                db 0B8h
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C0h
+                db 0BAh
+                db 0FEh
+                db  1Fh
+                db 0BDh
+                db 0A8h
+                db  5Fh ; _
+                db  90h
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db  1Fh
+                db    7
+                db  5Dh ; ]
+                db  5Fh ; _
+                db  5Eh ; ^
+                db 0C3h
+                db  8Bh
+                db 0CAh
+                db  2Eh ; .
+                db 0A1h
+                db 0E2h
+                db  13h
+                db 0BBh
+                db  50h ; P
+                db    0
+                db 0F7h
+                db 0E3h
+                db  0Bh
+                db 0C9h
+                db  75h ; u
+                db    3
+                db 0E9h
+                db  8Ah
+                db    0
+                db  55h ; U
+                db  56h ; V
+                db    6
+                db  1Eh
+                db  33h ; 3
+                db 0DBh
+                db  53h ; S
+                db 0FFh
+                db  36h ; 6
+                db 0E2h
+                db 0E0h
+                db 0BFh
+                db  52h ; R
+                db  72h ; r
+                db  57h ; W
+                db  2Eh ; .
+                db 0A1h
+                db 0E2h
+                db  13h
+                db 0BBh
+                db  50h ; P
+                db    0
+                db 0F7h
+                db 0E3h
+                db    5
+                db    0
+                db    2
+                db  50h ; P
+                db  51h ; Q
+                db  8Ch
+                db 0CBh
+                db  8Eh
+                db 0C3h
+                db  8Eh
+                db 0DBh
+                db 0E8h
+                db  19h
+                db 0E5h
+                db 0BEh
+                db  56h ; V
+                db  72h ; r
+                db 0BFh
+                db 0A4h
+                db    0
+                db  2Eh ; .
+                db  8Bh
+                db 0BDh
+                db    2
+                db  3Dh ; =
+                db  2Eh ; .
+                db  8Bh
+                db  0Eh
+                db 0E2h
+                db  13h
+                db  8Ch
+                db 0C8h
+                db  8Eh
+                db 0D8h
+                db 0BBh
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C3h
+                db 0FCh
+                db 0D1h
+                db 0E9h
+                db 0D1h
+                db 0E9h
+                db 0B8h
+                db  23h ; #
+                db    0
+                db 0BBh
+                db 0BAh
+                db  1Fh
+                db 0BAh
+                db 0ECh
+                db  5Fh ; _
+                db 0BDh
+                db  0Ah
+                db    0
+                db  51h ; Q
+                db  8Bh
+                db 0C8h
+                db 0F3h
+                db 0A5h
+                db    3
+                db 0FBh
+                db    3
+                db 0F5h
+                db  8Bh
+                db 0C8h
+                db 0F3h
+                db 0A5h
+                db    3
+                db 0FBh
+                db    3
+                db 0F5h
+                db  8Bh
+                db 0C8h
+                db 0F3h
+                db 0A5h
+                db    3
+                db 0FBh
+                db    3
+                db 0F5h
+                db  8Bh
+                db 0C8h
+                db 0F3h
+                db 0A5h
+                db  2Bh ; +
+                db 0FAh
+                db    3
+                db 0F5h
+                db  59h ; Y
+                db 0E2h
+                db 0DCh
+                db  1Fh
+                db    7
+                db 0BFh
+                db  38h ; 8
+                db 0E8h
+                db 0B9h
+                db    4
+                db    0
+                db 0C7h
+                db    5
+                db 0FFh
+                db 0FFh
+                db  83h
+                db 0C7h
+                db    4
+                db 0E2h
+                db 0F7h
+                db  5Eh ; ^
+                db  5Dh ; ]
+                db 0E9h
+                db  63h ; c
+                db 0DFh
+                db    6
+                db  56h ; V
+                db  57h ; W
+                db  2Eh ; .
+                db 0A1h
+                db 0DCh
+                db  13h
+                db 0BFh
+                db 0A4h
+                db    0
+                db  2Eh ; .
+                db  8Bh
+                db 0BDh
+                db    2
+                db  3Dh ; =
+                db 0BBh
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C3h
+                db 0FCh
+                db  2Eh ; .
+                db  8Bh
+                db  0Eh
+                db 0E2h
+                db  13h
+                db 0D1h
+                db 0E9h
+                db 0D1h
+                db 0E9h
+                db 0BEh
+                db  23h ; #
+                db    0
+                db 0BBh
+                db 0BAh
+                db  1Fh
+                db 0BAh
+                db 0ECh
+                db  5Fh ; _
+                db  33h ; 3
+                db 0C0h
+                db  51h ; Q
+                db  8Bh
+                db 0CEh
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db  8Bh
+                db 0CEh
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db  8Bh
+                db 0CEh
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db  8Bh
+                db 0CEh
+                db 0F3h
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db  59h ; Y
+                db 0E2h
+                db 0E4h
+                db  5Fh ; _
+                db  5Eh ; ^
+                db    7
+                db 0E9h
+                db  18h
+                db 0DFh
+                db    6
+                db 0BBh
+                db    0
+                db 0B0h
+                db  8Eh
+                db 0C3h
+                db 0BBh
+                db    0
+                db    0
+                db  3Ch ; <
+                db    0
+                db  74h ; t
+                db    3
+                db 0BBh
+                db 0FFh
+                db 0FFh
+                db  8Bh
+                db 0C3h
+                db  2Eh ; .
+                db  8Bh
+                db  3Eh ; >
+                db    2
+                db  3Dh ; =
+                db 0B9h
+                db  32h ; 2
+                db    0
+                db 0BBh
+                db 0B0h
+                db  1Fh
+                db 0BAh
+                db 0F6h
+                db  5Fh ; _
+                db  51h ; Q
+                db 0B9h
+                db  28h ; (
+                db    0
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0B9h
+                db  28h ; (
+                db    0
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0B9h
+                db  28h ; (
+                db    0
+                db 0F3h
+                db 0ABh
+                db    3
+                db 0FBh
+                db 0B9h
+                db  28h ; (
+                db    0
+                db 0F3h
+                db 0ABh
+                db  2Bh ; +
+                db 0FAh
+                db  59h ; Y
+                db 0E2h
+                db 0E0h
+                db    7
+                db 0C3h
+                db 0B8h
+                db    1
+                db    0
+                db 0C3h
+                db 0C7h
+                db    6
+                db 0DEh
+                db 0E0h
+                db    3
+                db    0
+                db 0E9h
+                db 0C9h
+                db 0DEh
+; ---------------------------------------------------------------------------
+                mov     ax, word ptr cs:byte_13F5+42h
+                mov     bx, 6A2Dh
+                mul     bx
+                add     ax, word ptr cs:byte_13F5+4Ah
+                mov     word ptr cs:byte_13F5+42h, ax
+                mov     ax, word ptr cs:byte_13F5+44h
+                mov     bx, 0FFF1h
+                mul     bx
+                add     ax, word ptr cs:byte_13F5+4Ch
+                mov     word ptr cs:byte_13F5+44h, ax
+                mov     ax, word ptr cs:byte_13F5+46h
+                mov     bx, 0FFAFh
+                mul     bx
+                add     ax, word ptr cs:byte_13F5+4Eh
+                mov     word ptr cs:byte_13F5+46h, ax
+                mov     ax, word ptr cs:byte_13F5+48h
+                mov     bx, 0FFD9h
+                mul     bx
+                add     ax, word ptr cs:byte_13F5+50h
+                mov     word ptr cs:byte_13F5+48h, ax
+                mov     cx, 4
+                mov     ax, word ptr cs:byte_13F5+42h
+                shl     ax, cl
+                and     ax, 0FF00h
+                mov     bx, ax
+                mov     ax, word ptr cs:byte_13F5+46h
+                shr     ax, cl
+                and     ax, 0FFh
+                xor     bx, ax
+                mov     ax, word ptr cs:byte_13F5+44h
+                and     ax, 0FF0h
+                xor     bx, ax
+                mov     ax, word ptr cs:byte_13F5+48h
+                mov     cl, 8
+                rol     ax, cl
+                and     ax, 0F00Fh
+                xor     bx, ax
+                and     ax, 7FFFh
+                mov     [di], ax
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+                push    ax
+                push    bx
+                push    cx
+                push    dx
+                mov     ax, word ptr cs:byte_13F5+4Ah
+                mov     bx, word ptr cs:byte_13F5+4Ch
+                mov     cx, word ptr cs:byte_13F5+4Eh
+                mov     dx, word ptr cs:byte_13F5+50h
+                add     word ptr cs:byte_13F5+48h, bx
+                add     word ptr cs:byte_13F5+42h, cx
+                add     word ptr cs:byte_13F5+44h, dx
+                add     word ptr cs:byte_13F5+46h, ax
+                pop     dx
+                pop     cx
+                pop     bx
+                pop     ax
+                retn
+; ---------------------------------------------------------------------------
+                db 0E8h
+                db 0CDh
+                db 0FFh
+                db 0B4h
+                db    1
+                db 0CDh
+                db  16h
+                db 0B8h
+                db    0
+                db    0
+                db  74h ; t
+                db    6
+                db 0B8h
+                db    1
+                db    0
+                db 0EBh
+                db  19h
+                db  90h
+                db  8Bh
+                db 0D8h
+                db  2Eh ; .
+                db 0A1h
+                db  37h ; 7
+                db  14h
+                db 0F7h
+                db 0E3h
+                db  2Eh ; .
+                db 0A3h
+                db  37h ; 7
+                db  14h
+                db 0F7h
+                db 0DBh
+                db  2Eh ; .
+                db 0A1h
+                db  39h ; 9
+                db  14h
+                db 0F7h
+                db 0E3h
+                db  2Eh ; .
+                db 0A3h
+                db  39h ; 9
+                db  14h
+                db  89h
+                db    5
+                db 0FCh
+                db 0E9h
+                db 0EAh
+                db 0DDh
+                db 0C7h
+                db    5
+                db    1
+                db    0
+                db 0FCh
+                db 0E9h
+                db 0E2h
+                db 0DDh
+                db 0D1h
+                db 0E2h
+                db  2Eh ; .
+                db  89h
+                db  16h
+                db  49h ; I
+                db  14h
+                db 0B4h
+                db    0
+                db 0CDh
+                db  1Ah
+                db  2Eh ; .
+                db  89h
+                db  16h
+                db  47h ; G
+                db  14h
+                db 0E8h
+                db  85h
+                db 0FFh
+                db 0B4h
+                db    1
+                db 0CDh
+                db  16h
+                db  75h ; u
+                db  1Fh
+                db 0B4h
+                db    2
+                db 0CDh
+                db  16h
+                db  24h ; $
+                db  1Fh
+                db  75h ; u
+                db  17h
+                db 0B4h
+                db    0
+                db 0CDh
+                db  1Ah
+                db  2Eh ; .
+                db  3Bh ; ;
+                db  16h
+                db  47h ; G
+                db  14h
+                db  74h ; t
+                db 0E4h
+                db  2Eh ; .
+                db  89h
+                db  16h
+                db  47h ; G
+                db  14h
+                db  2Eh ; .
+                db 0FFh
+                db  0Eh
+                db  49h ; I
+                db  14h
+                db  75h ; u
+                db 0D8h
+                db 0FCh
+                db 0E9h
+                db 0A6h
+                db 0DDh
+                db 0E8h
+                db 0CCh
+                db 0EEh
+                db  89h
+                db    5
+                db 0FCh
+                db 0E9h
+                db  9Dh
+                db 0DDh
+                db  8Bh
+                db 0C2h
+                db 0E8h
+                db  76h ; v
+                db 0EDh
+                db 0FCh
+                db 0E9h
+                db  94h
+                db 0DDh
+                db 0E8h
+                db  74h ; t
+                db 0EDh
+                db 0A3h
+                db 0DEh
+                db 0E0h
+                db 0FCh
+                db 0E9h
+                db  8Ah
+                db 0DDh
+                db 0B4h
+                db    2
+                db 0CDh
+                db  16h
+                db  24h ; $
+                db  40h ; @
+                db  75h ; u
+                db  0Ah
+                db  0Bh
+                db 0D2h
+                db  74h ; t
+                db  0Ah
+                db  4Ah ; J
+                db  74h ; t
+                db  0Eh
+                db  4Ah ; J
+                db  74h ; t
+                db  12h
+                db 0FCh
+                db 0E9h
+                db  74h ; t
+                db 0DDh
+                db 0E8h
+                db  1Ah
+                db    0
+                db 0FCh
+                db 0EBh
+                db  52h ; R
+                db  90h
+                db 0E8h
+                db  1Dh
+                db    0
+                db 0FCh
+                db 0EBh
+                db  4Bh ; K
+                db  90h
+                db 0E8h
+                db  16h
+                db    0
+                db 0B9h
+                db    0
+                db  80h
+                db 0E8h
+                db  23h ; #
+                db    0
+                db 0E8h
+                db  0Dh
+                db    0
+                db 0EBh
+                db  3Ch ; <
+                db  90h
+                db 0E8h
+                db  1Dh
+                db    0
+                db 0E8h
+                db  0Eh
+                db    0
+                db 0E8h
+                db  2Bh ; +
+                db    0
+                db 0C3h
+                db 0E8h
+                db  13h
+                db    0
+                db 0E8h
+                db  0Ah
+                db    0
+                db 0E8h
+                db  21h ; !
+                db    0
+                db 0C3h
+                db 0B9h
+                db    0
+                db  20h
+                db 0EBh
+                db    4
+                db  90h
+                db 0B9h
+                db    0
+                db    4
+                db 0E2h
+                db 0FEh
+                db 0C3h
+                db 0B0h
+                db 0B6h
+                db 0E6h
+                db  43h ; C
+                db 0B8h
+                db  15h
+                db    2
+                db 0E6h
+                db  42h ; B
+                db  8Ah
+                db 0C4h
+                db 0E6h
+                db  42h ; B
+                db 0E4h
+                db  61h ; a
+                db  0Ch
+                db    3
+                db 0E6h
+                db  61h ; a
+                db 0C3h
+                db 0E4h
+                db  61h ; a
+                db  24h ; $
+                db 0FCh
+                db 0E6h
+                db  61h ; a
+                db 0C3h
+                db 0E9h
+                db  19h
+                db 0DDh
+                db 0E8h
+                db  9Bh
+                db 0E6h
+                db 0A3h
+                db 0DEh
+                db 0E0h
+                db 0FCh
+                db 0E9h
+                db  0Fh
+                db 0DDh
+                db    6
+                db 0E8h
+                db  5Ch ; \
+                db 0E4h
+                db    7
+                db 0A3h
+                db 0DEh
+                db 0E0h
+                db 0FCh
+                db 0E9h
+                db    3
+                db 0DDh
+                db  56h ; V
+                db  8Bh
+                db  1Dh
+                db  0Bh
+                db 0DBh
+                db  74h ; t
+                db  3Ah ; :
+                db  39h ; 9
+                db  17h
+                db  75h ; u
+                db  31h ; 1
+                db  3Bh ; ;
+                db  1Dh
+                db  74h ; t
+                db  53h ; S
+                db  8Bh
+                db  47h ; G
+                db    2
+                db  8Bh
+                db  77h ; w
+                db    4
+                db  89h
+                db  44h ; D
+                db    2
+                db  3Bh ; ;
+                db  5Dh ; ]
+                db    2
+                db  75h ; u
+                db    6
+                db  89h
+                db  75h ; u
+                db    2
+                db 0EBh
+                db    9
+                db  90h
+                db  8Bh
+                db 0CEh
+                db  8Bh
+                db  77h ; w
+                db    2
+                db  89h
+                db  4Ch ; L
+                db    4
+                db 0C7h
+                db  47h ; G
+                db    4
+                db    0
+                db    0
+                db  8Bh
+                db  35h ; 5
+                db  89h
+                db  77h ; w
+                db    2
+                db  89h
+                db  5Ch ; \
+                db    4
+                db  89h
+                db  1Dh
+                db 0EBh
+                db  26h ; &
+                db  8Bh
+                db  5Fh ; _
+                db    2
+                db 0EBh
+                db 0C2h
+                db  8Bh
+                db  5Dh ; ]
+                db    2
+                db  8Bh
+                db  77h ; w
+                db    4
+                db  89h
+                db  75h ; u
+                db    2
+                db 0C7h
+                db  44h ; D
+                db    2
+                db    0
+                db    0
+                db 0C7h
                 db 47h, 4, 2 dup(0), 8Bh, 35h, 89h, 77h, 2, 0C7h, 7, 0
                 db 80h, 89h, 5Ch, 4, 89h, 1Dh, 5Eh, 0E9h, 9Dh, 0DCh, 0FCh
                 db 56h, 6, 1Eh, 7, 85h, 0D2h, 74h, 10h, 50h, 57h, 8Bh
@@ -4259,7 +5072,7 @@ jpt_2B4D        dw offset loc_2E88      ; DATA XREF: INTERP:2B48↑r
                 dw offset loc_2C86
                 dw offset loc_2C73
                 dw offset loc_2AD4
-                dw offset loc_2CCF
+                dw offset loc_2CCE+1
                 dw offset loc_2DB9
                 dw offset loc_2EDB
                 dw offset loc_2BF8
@@ -4559,51 +5372,61 @@ loc_2CBF:                               ; CODE XREF: INTERP:jpt_CSP↑j
 loc_2CC8:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 push    word ptr ds:0E0DEh ; jumptable 00002B4D case 34
-                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+                db 0E9h
+                db  18h
 ; ---------------------------------------------------------------------------
 
-loc_2CCF:                               ; CODE XREF: INTERP:jpt_CSP↑j
+loc_2CCE:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
-                pop     ax              ; jumptable 00002B4D case 5
+                aam     58h ; 'X'
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     di
                 add     di, bx
                 pop     bx
-                jcxz    short near ptr word_2CEE
+                jcxz    short loc_2CEE
                 or      bx, bx
                 jz      short loc_2CF1
-                cmp     bx, word ptr cs:byte_2CF7
+                cmp     bx, cs:word_2CF7
                 ja      short loc_2CF1
                 shl     bx, 1
                 push    word ptr cs:[bx+2CF7h]
                 shr     bx, 1
                 retn
 ; ---------------------------------------------------------------------------
-word_2CEE       dw 0C0E9h               ; CODE XREF: INTERP:2CD7↑j
-                db 0
+
+loc_2CEE:                               ; CODE XREF: INTERP:2CD7↑j
+                jmp     loc_2DB1
 ; ---------------------------------------------------------------------------
 
 loc_2CF1:                               ; CODE XREF: INTERP:2CDB↑j
                                         ; INTERP:2CE2↑j
-                jmp     near ptr loc_2DA7+1
+                jmp     loc_2DA8
 ; ---------------------------------------------------------------------------
-                jmp     near ptr loc_2D9D+2
+                jmp     loc_2D9F
 ; ---------------------------------------------------------------------------
-byte_2CF7       db 0Dh                  ; DATA XREF: INTERP:2CDD↑r
-                dw offset loc_12FF+1
-                dw offset loc_132C+1
-                dw 0F12Dh
-                dw 942Ch
-                dw 942Dh
-                dw 0F42Dh
-                dw 0F42Ch
-                dw 0F42Ch
-                db 2Ch, 94h, 2Dh, 94h, 2Dh, 94h, 2Dh, 94h, 2Dh, 4Bh, 14h
+word_2CF7       dw 0Dh                  ; DATA XREF: INTERP:2CDD↑r
+                dw 2D13h
+                dw 2D13h
+                dw 2CF1h
+                dw 2D94h
+                dw 2D94h
+                dw 2CF4h
+                dw 2CF4h
+                dw 2CF4h
+                dw 2D94h
+                dw 2D94h
+                dw 2D94h
+                dw 2D94h
+; ---------------------------------------------------------------------------
+                dec     bx
+; ---------------------------------------------------------------------------
+                db 14h
 ; ---------------------------------------------------------------------------
                 call    sub_2D28
-                call    loc_2D5D
+                call    sub_2D5D
                 call    sub_2D1F
                 jmp     loc_2DB3
 
@@ -4646,10 +5469,12 @@ locret_2D5C:                            ; CODE XREF: sub_2D28+2D↑j
                 retn
 sub_2D28        endp
 
-; ---------------------------------------------------------------------------
 
-loc_2D5D:                               ; CODE XREF: INTERP:2D16↑p
-                                        ; INTERP:2D85↓j
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2D5D        proc near               ; CODE XREF: INTERP:2D16↑p
+                                        ; sub_2D5D+28↓j
                 call    sub_2D8B
                 mov     [di], al
                 test    byte ptr ds:623h, 0FFh
@@ -4665,28 +5490,27 @@ loc_2D5D:                               ; CODE XREF: INTERP:2D16↑p
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_2D7C:                               ; CODE XREF: INTERP:2D67↑j
-                                        ; INTERP:2D6D↑j
+loc_2D7C:                               ; CODE XREF: sub_2D5D+A↑j
+                                        ; sub_2D5D+10↑j
                 cmp     bl, 1
                 jnz     short loc_2D84
-; ---------------------------------------------------------------------------
-                db 0E8h
-; ---------------------------------------------------------------------------
-                lea     ax, [bx+si]
+                call    loc_2E11
 
-loc_2D84:                               ; CODE XREF: INTERP:2D7F↑j
+loc_2D84:                               ; CODE XREF: sub_2D5D+22↑j
                 inc     di
-                loop    loc_2D5D
+                loop    sub_2D5D
 
-loc_2D87:                               ; CODE XREF: INTERP:2D72↑j
-                                        ; INTERP:2D79↑j
+loc_2D87:                               ; CODE XREF: sub_2D5D+15↑j
+                                        ; sub_2D5D+1C↑j
                 mov     ax, ds:0E0DEh
                 retn
+sub_2D5D        endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D8B        proc near               ; CODE XREF: INTERP:loc_2D5D↑p
+sub_2D8B        proc near               ; CODE XREF: sub_2D5D↑p
                 push    bx
                 call    sub_741
                 mov     ds:0E0DEh, ax
@@ -4700,35 +5524,29 @@ sub_2D8B        endp
                 push    di
                 push    cx
                 push    dx
+                call    pm_load_startup_seg
+                jmp     short loc_2DB3
 ; ---------------------------------------------------------------------------
-                db 0E8h
+                db 90h
 ; ---------------------------------------------------------------------------
-                popf
-                fsubr   st, st(3)
 
-loc_2D9D:                               ; CODE XREF: INTERP:2CF4↑j
-                adc     ax, 0C790h
-                push    es
-                fsubrp  st, st
-                add     ax, [bx+si]
-; ---------------------------------------------------------------------------
-                db 0E9h
-; ---------------------------------------------------------------------------
-                aas
-
-loc_2DA7:                               ; CODE XREF: INTERP:loc_2CF1↑j
-                                        ; INTERP:loc_2DDA↓j
-                rol     di, cl
-                push    es
-                fsubrp  st, st
-                add     al, [bx+si]
+loc_2D9F:                               ; CODE XREF: INTERP:2CF4↑j
+                mov     word ptr ds:0E0DEh, 3
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
-loc_2DB1:                               ; CODE XREF: INTERP:loc_2DD8↓j
+loc_2DA8:                               ; CODE XREF: INTERP:loc_2CF1↑j
+                                        ; INTERP:loc_2DDA↓j
+                mov     word ptr ds:0E0DEh, 2
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_2DB1:                               ; CODE XREF: INTERP:loc_2CEE↑j
+                                        ; INTERP:loc_2DD8↓j
                 xor     ax, ax
 
 loc_2DB3:                               ; CODE XREF: INTERP:2D1C↑j
+                                        ; INTERP:2D9C↑j
                 mov     ds:0E0DEh, ax
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
@@ -4759,26 +5577,92 @@ loc_2DD8:                               ; CODE XREF: INTERP:2DC1↑j
 
 loc_2DDA:                               ; CODE XREF: INTERP:2DC5↑j
                                         ; INTERP:2DCC↑j
-                jmp     short near ptr loc_2DA7+1
+                jmp     short loc_2DA8
 ; ---------------------------------------------------------------------------
-                db 0EBh, 0C1h
+                db 0EBh
+                db 0C1h
 word_2DDE       dw 0Dh                  ; DATA XREF: INTERP:2DC7↑r
-                db 0FAh, 2Dh, 0FAh, 2Dh, 0DAh, 2Dh, 60h, 2Eh, 60h, 2Eh
-                db 0FAh, 2Dh, 0DCh, 2Dh, 0DAh, 2Dh, 60h, 2Eh, 60h, 2Eh
-                db 60h, 2Eh, 60h, 2Eh, 5Bh, 14h, 0E8h, 2Bh, 0FFh, 0E8h
-                db 5, 0, 0E8h, 1Ch, 0FFh, 0EBh, 0AEh, 8Ah, 5, 0E8h, 7
-                db 0, 47h, 0E2h, 0F8h, 0A1h, 0DEh, 0E0h, 0C3h, 0F6h, 6
-                db 23h, 6, 0FFh, 74h, 29h, 0F6h, 87h, 24h, 6, 0FFh, 74h
-                db 18h, 51h, 8Ah, 0C8h, 80h, 0E9h, 20h, 32h, 0EDh, 0E3h
-                db 7, 0B0h, 20h, 0E8h, 27h, 0, 0E2h, 0F9h, 59h, 0C6h, 87h
-                db 24h, 6, 0, 0C3h
+                db 0FAh
+                db  2Dh ; -
+                db 0FAh
+                db  2Dh ; -
+                db 0DAh
+                db  2Dh ; -
+                db  60h ; `
+                db  2Eh ; .
+                db  60h ; `
+                db  2Eh ; .
+                db 0FAh
+                db  2Dh ; -
+                db 0DCh
+                db  2Dh ; -
+                db 0DAh
+                db  2Dh ; -
+                db  60h ; `
+                db  2Eh ; .
+                db  60h ; `
+                db  2Eh ; .
+                db  60h ; `
+                db  2Eh ; .
+                db  60h ; `
+                db  2Eh ; .
+                db  5Bh ; [
+                db  14h
+                db 0E8h
+                db  2Bh ; +
+                db 0FFh
+                db 0E8h
+                db    5
+                db    0
+                db 0E8h
+                db  1Ch
+                db 0FFh
+                db 0EBh
+                db 0AEh
+                db  8Ah
+                db    5
+                db 0E8h
+                db    7
+                db    0
+                db  47h ; G
+                db 0E2h
+                db 0F8h
+                db 0A1h
+                db 0DEh
+                db 0E0h
+                db 0C3h
 ; ---------------------------------------------------------------------------
+
+loc_2E11:                               ; CODE XREF: sub_2D5D+24↑p
+                test    byte ptr ds:623h, 0FFh
+                jz      short near ptr byte_2E41
+                test    byte ptr [bx+624h], 0FFh
+                jz      short loc_2E37
+                push    cx
+                mov     cl, al
+                sub     cl, 20h ; ' '
+                xor     ch, ch
+                jcxz    short loc_2E30
+
+loc_2E29:                               ; CODE XREF: INTERP:2E2E↓j
+                mov     al, 20h ; ' '
+                call    sub_2E55
+                loop    loc_2E29
+
+loc_2E30:                               ; CODE XREF: INTERP:2E27↑j
+                pop     cx
+                mov     byte ptr [bx+624h], 0
+                retn
+; ---------------------------------------------------------------------------
+
+loc_2E37:                               ; CODE XREF: INTERP:2E1D↑j
                 cmp     al, 10h
                 jnz     short near ptr byte_2E41
                 mov     byte ptr [bx+624h], 0FFh
                 retn
 ; ---------------------------------------------------------------------------
-byte_2E41       db 0F6h, 6, 22h, 6      ; CODE XREF: INTERP:2E39↑j
+byte_2E41       db 0F6h, 6, 22h, 6      ; CODE XREF: INTERP:2E16↑j
+                                        ; INTERP:2E39↑j
 ; ---------------------------------------------------------------------------
                 push    word ptr [si+9]
                 cmp     al, 0Dh
@@ -4793,8 +5677,8 @@ loc_2E51:                               ; CODE XREF: INTERP:2E4A↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2E55        proc near               ; CODE XREF: INTERP:2E4C↑p
-                                        ; INTERP:loc_2E51↑p
+sub_2E55        proc near               ; CODE XREF: INTERP:2E2B↑p
+                                        ; INTERP:2E4C↑p ...
                 push    bx
                 push    bx
                 push    ax

@@ -1,14 +1,26 @@
-// The Wizardry PRNG.
+// The DOS Wizardry PRNG -- reverse-engineered from SYSTEM.INTERP.
 //
-// Ported from the Apple assembly primitive RANDOM (P01001C,
-// sources/WizardryCode/wiz1d/random.txt): a 32-bit shift register held in
-// four bytes ($47A,$4FA,$57A,$5FB), advanced 7 bit-positions per call with a
-// two-tap XOR feedback, returning a 15-bit value 0..32767.
+// RANDOM is WIZARDRY p-code proc 34, which calls UNITREAD(unit 13, buf, 0,
+// subfn 10, ...).  That SBIOS entry (SYSTEM.INTERP @ 0x221E) is:
 //
-// The DOS SYSTEM.INTERP services RANDOM as UNITREAD(consoleUnit, buf, 0,
-// block=10, 0) and its x86 code is a faithful port of the same LFSR (feedback
-// bytes at 0x622/0x623, state at 0x630/0xE21C) -- an exact-sequence
-// cross-check against the running interpreter is still TODO.
+//   s0 = s0*0x6A2D + 0x3619        s1 = s1*0xFFF1 + 0xFF8B     (mod 2^16)
+//   s2 = s2*0xFFAF + 0x0183        s3 = s3*0xFFD9 + 0x7FC9
+//
+//   bx  = (s0 << 4) & 0xFF00
+//   bx ^= (s2 >> 4) & 0x00FF
+//   bx ^= s1 & 0x0FF0
+//   ax  = byteswap(s3) & 0xF00F                     ; `rol ax,8`
+//   bx ^= ax                                        ; bx now = the full mix
+//   ax &= 0x7FFF
+//   result := ax                                    ; *** stores AX, not BX ***
+//
+// The interpreter computes a 4-state mix in BX and then returns AX -- a
+// shipped bug.  The effective output is therefore  byteswap(s3) & 0x700F  :
+// only s3 matters, giving 128 distinct values on a period-65536 cycle.  This
+// is the notoriously weak PC-Wizardry RNG; we reproduce it exactly.
+//
+// No keyboard / timer entropy feeds this path (that is unit 1/2, used by
+// GETKEY).  The image ships fixed initial state {0x5BAB,0xD02B,0x7E15,0x7351}.
 #pragma once
 #include "wiz/types.h"
 
@@ -16,36 +28,44 @@ namespace wiz {
 
 class Rng {
 public:
-    explicit Rng(u32 seed = 0x1D8B2F41u) { reseed(seed); }
+    Rng() { reseed(); }
+    // Only s3 affects the output; pass just that to explore the 65536 cycle.
+    explicit Rng(u16 s3) { reseed(0x5BAB, 0xD02B, 0x7E15, s3); }
 
-    void reseed(u32 seed) {
-        b_[0] = u8(seed);
-        b_[1] = u8(seed >> 8);
-        b_[2] = u8(seed >> 16);
-        b_[3] = u8(seed >> 24);
-        if ((b_[0] | b_[1] | b_[2] | b_[3]) == 0) b_[0] = 1;   // avoid all-zero
+    void reseed(u16 s0 = 0x5BAB, u16 s1 = 0xD02B, u16 s2 = 0x7E15, u16 s3 = 0x7351) {
+        s_[0] = s0; s_[1] = s1; s_[2] = s2; s_[3] = s3;
     }
 
-    // One RANDOM call: 0..32767.
+    // One RANDOM call.  All four LCGs advance (their cross-terms feed BX,
+    // which the interpreter discards), but only s3 reaches the result:
+    // 0..32767 nominal, 128 distinct values, period 65536.
     u16 next() {
-        for (int i = 0; i < 7; ++i) {
-            int tapLo = (b_[0] >> 6) & 1;          // N after `ASL $47A`
-            int tapHi = (b_[3] >> 6) & 1;          // N after `ROL $5FB`
-            int c = (b_[0] >> 7) & 1;
-            b_[0] = u8(b_[0] << 1);
-            int c1 = (b_[1] >> 7) & 1; b_[1] = u8((b_[1] << 1) | c); c = c1;
-            int c2 = (b_[2] >> 7) & 1; b_[2] = u8((b_[2] << 1) | c); c = c2;
-            b_[3] = u8((b_[3] << 1) | c);
-            if (tapLo ^ tapHi) b_[0] |= 1;         // `INC $47A` feedback
-        }
-        return u16(((b_[0] >> 1) << 8) | b_[2]);
+        s_[0] = u16(s_[0] * 0x6A2Du + 0x3619u);
+        s_[1] = u16(s_[1] * 0xFFF1u + 0xFF8Bu);
+        s_[2] = u16(s_[2] * 0xFFAFu + 0x0183u);
+        s_[3] = u16(s_[3] * 0xFFD9u + 0x7FC9u);
+        u16 ax = u16(((s_[3] << 8) | (s_[3] >> 8)) & 0xF00F);   // rol s3,8
+        return u16(ax & 0x7FFF);                                // == ax & 0x700F
     }
 
-    // RANDOM MOD n, the game's idiom for a bounded roll.
+    // RANDOM MOD n -- the game's idiom for a bounded roll.
     int mod(int n) { return n > 0 ? int(next() % u16(n)) : 0; }
 
+    // The "intended" mix (store BX): kept for comparison / a future toggle.
+    u16 nextIntended() {
+        s_[0] = u16(s_[0] * 0x6A2Du + 0x3619u);
+        s_[1] = u16(s_[1] * 0xFFF1u + 0xFF8Bu);
+        s_[2] = u16(s_[2] * 0xFFAFu + 0x0183u);
+        s_[3] = u16(s_[3] * 0xFFD9u + 0x7FC9u);
+        u16 bx = u16((s_[0] << 4) & 0xFF00);
+        bx ^= u16((s_[2] >> 4) & 0x00FF);
+        bx ^= u16(s_[1] & 0x0FF0);
+        bx ^= u16(((s_[3] << 8) | (s_[3] >> 8)) & 0xF00F);
+        return u16(bx & 0x7FFF);
+    }
+
 private:
-    u8 b_[4];
+    u16 s_[4];
 };
 
 } // namespace wiz
