@@ -1,0 +1,24 @@
+# IDA databases (regenerable from the disk images + scripts; .asm/.idc are the
+# committed backups instead)
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+*.$$$
+
+# Extracted disk contents (regenerable via tools/ucsd_disk.py)
+/extracted/
+
+# Raw binaries carved out of the game disks (not ours to redistribute;
+# the committed .asm/.idc listings are the analysis backup)
+/wiz1_interp
+*.bin
+*.img
+
+# Python
+__pycache__/
+*.pyc
+
+# transient IDA run log
+ida_scripts/batch_run_and_export.log
