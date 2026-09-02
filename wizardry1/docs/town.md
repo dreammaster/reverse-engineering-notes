@@ -95,16 +95,51 @@ non-neutral member, else `NEUTRAL`. (Used to gate `ADDPARTY`.)
 party names at rows 20-21 (two columns), then reads a digit `1..PARTYCNT`;
 `[RETURN]` → returns −1. Result is 0-based.
 
-### Adventurer's Inn — `ADVNTINN` `P010A0F`  *(not yet ported)*
+### Adventurer's Inn — `ADVNTINN` `P010A0F`  (ported: `engine/wiz/inn.h`)
 
-Rest to recover HP and (for spellcasters) regain spell points; if enough XP,
-level up. Room tiers: `[A]` Stables free, `[B]` Cots 10 gp/wk, `[C]` Economy
-50, `[D]` Merchant 200, `[E]` Royal 500. Better rooms heal more HP/week and
-always restore spell points; the Stables heal nothing. Aging: 1 week/visit
-(more for higher tiers). Level-up chain: `CHNEWLEV` → `MADELEV` (`MOREHP`
-per-class HP roll + vitality mod, `TRYLEARN`/`TRY2LRN` new-spell rolls vs
-IQ/PIETY, `GAINLOST`/`OLDAGE` age-based attribute drift, `SETSPELS`
-spell-points-per-level table).
+`GETWHO` (`GETCHARX(FALSE,'WHO WILL STAY')`) → if `STATUS = OK`, the room menu
+loops until `[RETURN]` or the character stops being OK.
+
+| key | `TAKENAP(hpAdd, gpWeek)` | room |
+|---|---|---|
+| A | 0, 0 | The Stables (free) |
+| B | 1, 10 | Cots |
+| C | 3, 50 | Economy Rooms |
+| D | 7, 200 | Merchant Suites |
+| E | 10, 500 | Royal Suites |
+
+**`TAKENAP`** (`P010A23`): if `hpAdd > 0`, `HEALHP` loops
+**`while GOLD >= gpWeek and HPLEFT < HPMAX and not KEYAVAIL`** — each week:
+`HPLEFT += hpAdd` (cap `HPMAX`), `GOLD -= gpWeek`, **`AGE += 1`** (the DOS
+`HEALHP`, CASTLE proc 41, ages a week; the Apple `HEALHP` does not — DOS also
+tracks `AGE mod 52 = 1` in a birthday flag). The Stables just prints
+`<name> IS NAPPING`. Afterwards, unconditionally: `CHNEWLEV` then `SETSPELS`
+— so **resting always refills spell slots and checks for a level, even for
+free in the Stables and even while broke**.
+
+**`CHNEWLEV`** (`P010A19`): threshold = `EXP2NEXT[CLASS][CHARLEV]` for level
+≤ 12, else `EXP2NEXT[CLASS][12] + (CHARLEV-12)*EXP2NEXT[CLASS][0]`. If
+`EXP ≥ threshold` → **`MADELEV`** (one level per stay), else print the
+shortfall. `MADELEV`: `CHARLEV++`, bump `MAXLEVAC`; `SETSPELS`; `TRYLEARN`;
+`GAINLOST`; recompute `HPMAX` = Σ `MOREHP` over 1..CHARLEV (+1 extra for
+Samurai), floored at old `HPMAX + 1`.
+
+* **`MOREHP`** (`P010A1B`): `rand % {Fig/Lord 10, Pri/Sam 8, Thi/Bis/Nin 6,
+  Mage 4}` + 1, then vitality mod (`3:-2  4-5:-1  16:+1  17:+2  18:+3`), min 1.
+* **`SETSPELS`** (`P010A12`): `MINMAG`/`MINPRI` set each of 7 groups to the
+  count of spells known in it; then `SPLPERLV` raises them toward
+  `CHARLEV - levelMod` (per-class `levelMod`/`step`: Mage 0/2, Priest 0/2,
+  Bishop priest 3/4 + mage 0/4, Lord priest 3/2, Samurai mage 3/3), cap 9.
+  Mage spell groups: 1-4, 5-6, 7-8, 9-11, 12-14, 15-18, 19-21.  Priest:
+  22-26, 27-30, 31-34, 35-38, 39-44, 45-48, 49-50 (the `SPELLSKN` array is
+  effectively 1-indexed 1..50).
+* **`TRYLEARN`/`TRY2LRN`** (`P010A1C/D`): for each accessible spell group, for
+  each unknown spell, learn it if `rand % 30 < IQ` (mage) / `PIETY` (priest),
+  or if no spell in the group is known yet.
+* **`GAINLOST`/`OLDAGE`** (`P010A20/22`): per attribute, with prob 3/4, roll
+  `rand % 130 < AGE/52` → lose 1 (18 resists 5/6 of the time); else gain 1
+  (unless already 18). Vitality dropping to 2 = death of old age (`STATUS :=
+  LOST`, `HPLEFT := 0`).
 
 ## SHOPS (Apple segment 8 / DOS 14, `P010201`)
 
@@ -139,10 +174,14 @@ by the patient's level; failed resurrection worsens DEAD→ASHES→LOST.
 * `engine/wiz/party.h` — `Party`: up to 6 `Character` copies + `charDisk[6]`
   roster indices + `partyCount`; `add`/`remove` move records between the party
   and the `Roster`; `align()` = `GETALIGN`.
+* `engine/wiz/inn.h` — the Adventurer's Inn rules (pure): `setSpells`,
+  `moreHp`, `tryLearn`, `gainLost`, `checkNewLevel`/`madeLevel`, `kRooms`.
 * `engine/wiz/town_ui.{h,cpp}` — `runTown(...)`: the CASTLE hub, Gilgamesh's
-  Tavern (add/remove/see), and the Edge of Town. Inn/Boltac/Temple are stubs
-  that return to the hub. Returns a `TownExit` telling `main` where to go
-  next (`Roller`, `Maze`, `LeaveGame`, `WindowClosed`).
+  Tavern (add/remove/see), the Adventurer's Inn (`advntInn`/`takeNap`), and
+  the Edge of Town. Boltac / Temple are stubs that return to the hub. Returns
+  a `TownExit` telling `main` where to go next (`Roller`, `Maze`, `LeaveGame`,
+  `WindowClosed`).
 * `wiz1 town <CHARSET> <SCENARIO.DATA> [TITLE] [roster.dat] [party.dat]` —
   SDL; `wiz1 town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir]` —
-  headless, drives one trip through the town.
+  headless, drives one trip through the town; `wiz1 inn-test <SCENARIO.DATA>`
+  — deterministic level-up check.

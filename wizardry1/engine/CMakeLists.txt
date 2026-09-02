@@ -74,3 +74,8 @@ add_test(NAME town_flow
                  "GATHESUS\\r\\rALYSANDER\\r\\rATREON\\r\\r\\rEM")
 set_tests_properties(town_flow PROPERTIES
     PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*3\\) TREON +slot=3")
+add_test(NAME inn_levelup
+         COMMAND wiz1 inn-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
+set_tests_properties(inn_levelup PROPERTIES
+    PASS_REGULAR_EXPRESSION "rested 3 week.*(.|\n)*YOU MADE A LEVEL(.|\n)*after:  L2")

@@ -1,6 +1,7 @@
 #include "wiz/town_ui.h"
 #include "wiz/scenario.h"
 #include "wiz/roster.h"
+#include "wiz/inn.h"
 
 #include <cstdio>
 #include <string>
@@ -267,6 +268,102 @@ bool edgeOfTown(TownCtx &c, TownExit &out) {
     }
 }
 
+// ---- Adventurer's Inn (ADVNTINN P010A0F) --------------------------------
+
+// INNMENU (P010A11): the room list.
+void innMenu(TownCtx &c, const Character &ch) {
+    auto &t = c.ts();
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 13); t.putChar(11);
+    t.write("   WELCOME ");
+    t.write(ch.name);
+    t.writeln(". WE HAVE:");
+    t.writeln("");
+    for (int i = 0; i < 5; ++i) {
+        char b[64];
+        std::snprintf(b, sizeof b, "[%c] %s", 'A' + i, kRooms[i].name);
+        t.writeln(b);
+    }
+    t.write("    OR [RETURN] TO LEAVE");
+}
+
+// HEALHP one week's frame.
+void healFrame(TownCtx &c, const Character &ch) {
+    auto &t = c.ts();
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 13); t.putChar(11);
+    t.write(ch.name); t.writeln(" IS HEALING UP");
+    t.writeln("");
+    char b[48];
+    std::snprintf(b, sizeof b, "         HIT POINTS (%d/%d)", ch.hpLeft, ch.hpMax);
+    t.writeln(b);
+    t.writeln("");
+    std::snprintf(b, sizeof b, "               GOLD  %lld", (long long)ch.gold.v);
+    t.write(b);
+}
+
+// TAKENAP (P010A23): rest in `room`, then check for a level and refill spells.
+void takeNap(TownCtx &c, int partyX, int room) {
+    Character &ch = c.party.member(partyX);
+    const RoomTier &rt = kRooms[room];
+    InnLog log;
+    auto &t = c.ts();
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 13); t.putChar(11);
+
+    if (rt.hpPerWeek > 0) {
+        while (ch.gold.v >= rt.goldPerWeek && ch.hpLeft < ch.hpMax) {
+            ch.hpLeft += rt.hpPerWeek;
+            if (ch.hpLeft > ch.hpMax) ch.hpLeft = ch.hpMax;
+            ch.gold.v -= rt.goldPerWeek;
+            ch.age += 1;                          // DOS HEALHP ages a week
+            healFrame(c, ch);
+            c.ui.refresh();
+            if (c.ui.pollKey() != KEY_NONE) break;   // KEYAVAIL -> stop resting
+            c.ui.delayMs(60);
+        }
+    } else {
+        t.write(ch.name); t.write(" IS NAPPING");
+    }
+
+    ExpTable exp{c.sc.record(Scenario::Exp, 0)};
+    checkNewLevel(ch, exp, c.rng, log);
+    setSpells(ch);                                // resting refills spell slots
+
+    t.gotoXY(0, 13); t.putChar(11);
+    int row = 0;
+    for (const auto &m : log) { t.gotoXY(0, 13 + row++); t.write(m); }
+    t.gotoXY(0, 23); t.write("PRESS [RETURN] TO LEAVE");
+    for (;;) {
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) break;
+    }
+    c.save();
+}
+
+void advntInn(TownCtx &c) {
+    for (;;) {                                    // REPEAT GETWHO ... UNTIL FALSE
+        dspParty(c, "INN");
+        dspTitle(c, "INN");
+        int partyX = getCharX(c, false, "WHO WILL STAY");
+        if (c.ui.quit() || partyX < 0) return;
+        Character &ch = c.party.member(partyX);
+        if (ch.status != Status::OK) continue;
+
+        int k = 0;
+        do {
+            innMenu(c, ch);
+            k = c.ui.getKey();
+            if (c.ui.quit()) return;
+            if (k == KEY_RETURN) break;
+            int room = k - 'A';
+            if (room >= 0 && room < 5) takeNap(c, partyX, room);
+            dspParty(c, "INN");
+            dspTitle(c, "INN");
+        } while (k != KEY_RETURN && ch.status == Status::OK);
+    }
+}
+
 } // namespace
 
 TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
@@ -290,7 +387,7 @@ TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
         if (k == 'G') {
             gilgamesh(c);
         } else if (k == 'A') {
-            notice(c, "THE INN IS NOT YET OPEN");
+            advntInn(c);
         } else if (k == 'B') {
             notice(c, "BOLTAC'S IS NOT YET OPEN");
         } else if (k == 'C') {

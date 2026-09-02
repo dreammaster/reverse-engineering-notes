@@ -84,7 +84,7 @@ void Character::read(Bytes rec) {
     hpMax            = i16(w(p, 68));
     armorClass       = i16(w(p, 88));
 
-    for (int i = 0; i < 50; ++i) spellKnown[i] = getBit(p, 69, i);
+    for (int i = 1; i <= 50; ++i) spellKnown[i] = getBit(p, 69, i);
     for (int i = 1; i <= 7; ++i) mageSpells[i]   = i16(w(p, 73 + i - 1));
     for (int i = 1; i <= 7; ++i) priestSpells[i] = i16(w(p, 80 + i - 1));
 }
@@ -124,7 +124,7 @@ std::array<u8, Character::kRecordBytes> Character::write() const {
     setw(p, 68, u16(i16(hpMax)));
     setw(p, 88, u16(i16(armorClass)));
 
-    for (int i = 0; i < 50; ++i) setBit(p, 69, i, spellKnown[i]);
+    for (int i = 1; i <= 50; ++i) setBit(p, 69, i, spellKnown[i]);
     for (int i = 1; i <= 7; ++i) setw(p, 73 + i - 1, u16(i16(mageSpells[i])));
     for (int i = 1; i <= 7; ++i) setw(p, 80 + i - 1, u16(i16(priestSpells[i])));
 

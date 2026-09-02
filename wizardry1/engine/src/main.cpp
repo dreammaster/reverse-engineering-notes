@@ -15,7 +15,9 @@
 #include "wiz/roller_ui.h"
 #include "wiz/party.h"
 #include "wiz/town_ui.h"
+#include "wiz/inn.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -508,6 +510,57 @@ static int cmdTownTest(int argc, char **argv) {
     return 0;
 }
 
+// Exercise the Adventurer's Inn rules (wiz/inn.h) deterministically:
+// a wounded, XP-flush Fighter rests in the Economy room, heals + ages, then
+// makes a level.
+static int cmdInnTest(int argc, char **argv) {
+    if (argc < 3) { std::puts("inn-test <SCENARIO.DATA>"); return 2; }
+    Scenario sc;
+    if (!sc.load(readFile(argv[2]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    ExpTable exp{sc.record(Scenario::Exp, 0)};
+
+    Character c{};
+    c.name = "GROMP";
+    c.cls = Class::Fighter;
+    c.race = Race::Human;
+    c.align = Align::Neutral;
+    c.status = Status::OK;
+    c.charLevel = c.maxLevelAcquired = 1;
+    for (int i = 0; i < ATTR_COUNT; ++i) c.attrib[i] = 12;
+    c.attrib[VIT] = 15;
+    c.hpMax = 10;
+    c.hpLeft = 3;
+    c.age = 20 * 52;                       // 20 years
+    c.gold.v = 1000;
+    c.exp.v = exp.threshold(int(Class::Fighter), 1).value();   // exactly enough for L2
+
+    std::printf("before: L%d HP %d/%d age %dwk %lldgp exp %lld  (need %lld for L2)\n",
+                c.charLevel, c.hpLeft, c.hpMax, c.age, (long long)c.gold.v,
+                (long long)c.exp.v,
+                (long long)exp.threshold(int(Class::Fighter), 1).value());
+
+    Rng rng;
+    const RoomTier &rt = kRooms[2];        // Economy: +3 hp / 50 gp per week
+    int weeks = 0;
+    while (c.gold.v >= rt.goldPerWeek && c.hpLeft < c.hpMax) {
+        c.hpLeft = std::min(c.hpMax, c.hpLeft + rt.hpPerWeek);
+        c.gold.v -= rt.goldPerWeek;
+        c.age += 1;
+        ++weeks;
+    }
+    InnLog log;
+    checkNewLevel(c, exp, rng, log);
+    setSpells(c);
+
+    std::printf("rested %d week(s)\n", weeks);
+    for (const auto &m : log) std::printf("  | %s\n", m.c_str());
+    std::printf("after:  L%d HP %d/%d age %dwk %lldgp  S%d I%d P%d V%d A%d L%d\n",
+                c.charLevel, c.hpLeft, c.hpMax, c.age, (long long)c.gold.v,
+                c.attrib[0], c.attrib[1], c.attrib[2], c.attrib[3],
+                c.attrib[4], c.attrib[5]);
+    return c.charLevel == 2 ? 0 : 1;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
@@ -520,6 +573,7 @@ int main(int argc, char **argv) {
     if (cmd == "roller-test") return cmdRollerTest(argc, argv);
     if (cmd == "town") return cmdTown(argc, argv);
     if (cmd == "town-test") return cmdTownTest(argc, argv);
+    if (cmd == "inn-test") return cmdInnTest(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

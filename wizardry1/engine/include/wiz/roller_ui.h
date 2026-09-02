@@ -20,6 +20,8 @@ public:
 
     TextScreen &ts() { return ts_; }
     void refresh();
+    int  pollKey() { return p_.pollKey(); }   // non-blocking; KEY_NONE if idle
+    void delayMs(int ms) { p_.delayMs(ms); }
     int  getKey();                            // blocking; letters upper-cased
     std::string getLine(int maxLen);          // echoed entry, ends on RETURN
     std::string getPass(int maxLen, Rng &rng);// echoes 1-2 'X' per keystroke

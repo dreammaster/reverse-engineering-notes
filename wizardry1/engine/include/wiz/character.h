@@ -60,7 +60,8 @@ struct Character {
     int hpMax  = 0;
     int armorClass = 10;
 
-    bool spellKnown[50] = {};
+    bool spellKnown[51] = {};       // 1..50 (the game's SPELLSKN is 1-indexed;
+                                    // slot 0 is unused, matching the source)
     int  mageSpells[8]  = {};       // [1..7] casts per level
     int  priestSpells[8] = {};
 
