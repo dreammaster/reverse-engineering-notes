@@ -2820,6 +2820,16 @@ disassembly work.
   "doesn't use the right speech style" comment on this exact function,
   a suggestive (not confirmed) connection to this build's own simpler
   predecessor implementation.
+- **`ProcessClick`'s walk-mode branch gives `hswalkto[]` a read-side
+  confirmation, and is missing one real gate.** Only the opening
+  `MODE_WALK` early-return branch was read (the function is much
+  longer; the rest is an open continuation). Confirms
+  `options[12]`=`OPT_NOWALKMODE` and gives `RoomStruct.hswalkto[]` its
+  first read-side confirmation. Gap: 2011 additionally gates the walk-
+  to-point override behind `play.auto_use_walkto_points==0`; this
+  build's branch applies a valid walk-to point unconditionally —
+  confirmed absent from this call site only, not searched for
+  elsewhere in `GameState` yet.
 
 ## Third-party library identification (Task #10)
 

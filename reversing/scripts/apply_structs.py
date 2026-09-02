@@ -4570,7 +4570,10 @@ struct RoomStruct {
                             // `short[2]` pair (x,y) rather than declaring a new `_Point` type,
                             // x20 = 80 bytes, capacity matching this build's already-confirmed
                             // `MAX_HOTSPOTS=20` with zero drift. Sits with zero gap immediately
-                            // before `hotspotnames`.
+                            // before `hotspotnames`. Further READ-side confirmation via
+                            // ProcessClick (already matched): reads hswalkto[hotspot].x/.y
+                            // (word_521A4C[hotspot*4]/word_521A4E[hotspot*4]) to override the
+                            // click-walk destination, landing exactly on this array's own base.
   char hotspotnames[20][30];     // +0x2414..0x266C (600 bytes), high confidence, ARCHITECTURAL
                             // DRIFT from 2011: this build stores hotspot names as a FIXED
                             // INLINE `char[20][30]` array, not 2011's `char* hotspotnames[

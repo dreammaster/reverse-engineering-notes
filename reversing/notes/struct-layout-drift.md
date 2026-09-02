@@ -10112,3 +10112,35 @@ comment's wording closely), but the exact causal chain from this
 build's implementation to 2011's still-lingering complaint isn't
 independently confirmed, just a strongly suggestive coincidence worth
 flagging rather than asserting as settled.
+
+### `ProcessClick`'s walk-mode branch: `hswalkto[]` gets a read-side confirmation, and a real gate is missing
+
+`ProcessClick` is a large function -- only its opening walk-mode branch
+(the `mood==MODE_WALK` early-return path) was read this round, not the
+substantially longer click-dispatch logic that follows for
+`LOCTYPE_CHAR`/`LOCTYPE_OBJ`/etc., left as a genuine open continuation
+for a future round. That one branch was still worth the read: it
+decisively confirms `GameSetupStructBase.options[12]` as
+`OPT_NOWALKMODE` (`Common/acroom.h:2718`, `0x513336+12=0x513342`, zero
+slack) gating the whole walk-to-hotspot behavior, and gives
+`RoomStruct.hswalkto[]` its first READ-side confirmation (previously
+only confirmed via its own `fread`) -- `word_521A4C`/`word_521A4E`,
+indexed by hotspot number with a 4-byte stride, land exactly on that
+array's own established base (`0x51F688+0x23C4`).
+
+One real, if narrowly-scoped, gap: 2011's own equivalent branch
+(`AC.CPP:16667-16679`) gates the walk-to-point override behind an
+ADDITIONAL check, `"play.auto_use_walkto_points==0"`, on top of the
+hotspot validity and `hswalkto[].x>=1` checks this build's version
+already has. This build's branch has no such additional gate -- it
+applies a valid walk-to point unconditionally whenever one exists.
+Deliberately NOT claimed as "confirmed absent from this build's
+`GameState`" -- only this one call site's own logic lacks the check;
+`auto_use_walkto_points` itself hasn't been searched for anywhere else
+in this project yet. A smaller, unresolved detail sits alongside it:
+2011's version computes `GetLocationType(xx,yy)` unconditionally before
+even checking the mood, but this build's walk-mode branch has no
+visible `GetLocationType` call before its own early return -- plausibly
+just deferred to later in the function (not needed for this specific
+branch) rather than genuinely restructured, but not resolved without
+reading the rest of the function.
