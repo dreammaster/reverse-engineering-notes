@@ -32,11 +32,11 @@ bool Scenario::load(std::vector<u8> scenarioData) {
         bloff_[t]    = rd16(d + 0x5A + 2 * t);
     }
 
-    const u8 *p = d + 0x6A;
-    race_   = readStrArray(p, 6, 10);   // STRING[9]  -> 10 bytes
-    class_  = readStrArray(p, 8, 10);
-    status_ = readStrArray(p, 8, 9);    // STRING[8]  -> 9 bytes
-    align_  = readStrArray(p, 4, 10);
+    const u8 *p = d + 0x6A;             // all four arrays are 10 bytes/entry
+    race_   = readStrArray(p, 6, 10);   // RACE   0x6A
+    class_  = readStrArray(p, 8, 10);   // CLASS  0xA6
+    status_ = readStrArray(p, 8, 10);   // STATUS 0xF6
+    align_  = readStrArray(p, 4, 10);   // ALIGN  0x146
     return true;
 }
 

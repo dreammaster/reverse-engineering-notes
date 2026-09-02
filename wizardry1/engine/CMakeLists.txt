@@ -19,6 +19,8 @@ add_library(wizcore STATIC
   src/surface.cpp
   src/font.cpp
   src/textscreen.cpp
+  src/roster.cpp
+  src/roller_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
 )
@@ -56,3 +58,9 @@ add_test(NAME dump_toc
          COMMAND wiz1 toc "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
 add_test(NAME roster_roundtrip
          COMMAND wiz1 roster "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
+add_test(NAME roller_flow
+         COMMAND wiz1 roller-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "ZORK\\rY\\r\\rBA++++++++++\\eAY\\r")
+set_tests_properties(roller_flow PROPERTIES PASS_REGULAR_EXPRESSION "ZORK .*C0 A1")

@@ -76,7 +76,13 @@ Decided direction (2026-09-02):
 - [x] `TCHAR` (de)serialiser — `engine/wiz/character.{h,cpp}`. Full field
       word-offset map recovered from the ROLLER p-code; all 20 shipped
       roster records round-trip byte-identically. `wiz1 roster` / `wiz1 roll`.
-- [ ] `ROLLER` interactive menu flow (needs the platform layer).
+- [x] `ROLLER` interactive flow — `engine/wiz/roller_ui.{h,cpp}` +
+      `wiz/roster.{h,cpp}`. The Training Grounds: create (password ×2, race,
+      alignment, live point-allocation with class eligibility, keep Y/N),
+      `*ROSTER`, TRAINING (inspect / delete / reroll / set password). Roster
+      persisted to `roster.dat` (seeded from the scenario). `wiz1 roller`
+      (SDL) / `wiz1 roller-test <keyscript>` (headless, a CMake test).
+      Also fixed: `SCENARIO.DATA` STATUS/ALIGN string arrays are 10 B/entry.
 - [x] RNG cross-checked against SYSTEM.INTERP — RANDOM = `UNITREAD(unit 13,
       subfn 10)` → generator at `0x221E`. Found a **shipped bug**: it mixes 4
       LCG states in BX but returns AX = `byteswap(s3) & 0x700F` (128 values,

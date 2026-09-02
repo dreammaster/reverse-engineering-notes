@@ -50,9 +50,10 @@ inline int rollBonusPoints(Rng &rng) {
     return pts;
 }
 
-// INITCHAR
-inline int rollAge(Rng &rng)  { return 18 * 52 + rng.mod(300); }
-inline int rollGold(Rng &rng) { return 90 + rng.mod(100); }
+// INITCHAR.  The DOS build sets AGE to a flat 500 weeks (Apple rolled
+// 18*52 + rand%300); gold is 100 + rand%100 (Apple used 90).
+inline int rollAge(Rng &)     { return 500; }
+inline int rollGold(Rng &rng) { return 100 + rng.mod(100); }
 
 // KEEPCHYN: starting HP from class + vitality, with two 10% shrink rolls.
 inline int rollHp(Class cls, int vitality, Rng &rng) {

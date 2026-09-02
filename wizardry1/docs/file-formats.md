@@ -25,10 +25,10 @@ fixed-size records per data type.
 | `0x3A` | `RECPERDK[8]` | u16 ×8 | total record count |
 | `0x4A` | `RECSIZE[8]` | u16 ×8 | record size in bytes *(Apple field `UNUSEDXX`, repurposed)* |
 | `0x5A` | `BLOFF[8]` | u16 ×8 | first block of the type's data (from file start) |
-| `0x6A` | `RACE[6]` | STRING[9] (10 B each) | `NO RACE HUMAN ELF DWARF GNOME HOBBIT` |
-| `0x9E` | `CLASS[8]` | STRING[9] (10 B) | `FIGHTER MAGE PRIEST THIEF BISHOP SAMURAI LORD NINJA` |
-| `0xEE` | `STATUS[8]` | STRING[8] (9 B) | `OK AFRAID ASLEEP PLYZE STONED DEAD ASHES LOST` |
-| `0x136` | `ALIGN[4]` | STRING[9] (10 B) | `UNALIGN GOOD NEUTRAL EVIL` |
+| `0x6A` | `RACE[6]` | 10 B/entry | `NO RACE HUMAN ELF DWARF GNOME HOBBIT` |
+| `0xA6` | `CLASS[8]` | 10 B | `FIGHTER MAGE PRIEST THIEF BISHOP SAMURAI LORD NINJA` |
+| `0xF6` | `STATUS[8]` | 10 B | `OK AFRAID ASLEEP P-LYZE STONED DEAD ASHES LOST` |
+| `0x146` | `ALIGN[4]` | 10 B | `UNALIGN GOOD NEUTRAL EVIL` |
 | `0x15E` | `SPELLHSH[51]` | u16 ×51 | spell name hashes |
 | … | `SPELLGRP` | packed 3-bit ×51 | spell level 1..7 |
 | … | `SPELL012` | packed 2-bit ×51 | `GENERIC / PERSON / GROUP` targeting |

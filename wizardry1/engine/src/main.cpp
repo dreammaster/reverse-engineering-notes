@@ -10,6 +10,8 @@
 #include "wiz/font.h"
 #include "wiz/textscreen.h"
 #include "wiz/platform.h"
+#include "wiz/roster.h"
+#include "wiz/roller_ui.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -338,6 +340,80 @@ static int cmdMockup(int argc, char **argv) {
     return 0;
 }
 
+static int cmdRoller(int argc, char **argv) {
+    if (argc < 4) {
+        std::puts("roller <CHARSET> <SCENARIO.DATA> [roster.dat]");
+        return 2;
+    }
+    Font font;
+    if (!font.load(readFile(argv[2]))) { std::fprintf(stderr, "bad charset\n"); return 1; }
+    Scenario sc;
+    if (!sc.load(readFile(argv[3]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+
+    std::string rosterPath = argc > 4 ? argv[4] : "roster.dat";
+    Roster roster;
+    if (!roster.load(rosterPath)) {
+        roster.seedFrom(sc);
+        std::printf("seeded %s from the scenario roster\n", rosterPath.c_str());
+    }
+
+    auto p = makeSdlPlatform("Wizardry - Training Grounds", 2);
+    if (!p) { std::puts("roller needs the SDL2 backend"); return 1; }
+
+    Rng rng;
+    Ui ui(*p, font);
+    runRoller(ui, roster, sc, rng, rosterPath);
+    roster.save(rosterPath);
+    return 0;
+}
+
+// Headless flow test: run the ROLLER with a scripted key string, print the
+// resulting roster.  Escapes: \r \b \e (esc); \xHH.
+static std::string unescape(const std::string &in) {
+    std::string o;
+    for (size_t i = 0; i < in.size(); ++i) {
+        if (in[i] != '\\') { o.push_back(in[i]); continue; }
+        char n = ++i < in.size() ? in[i] : 0;
+        if (n == 'r') o.push_back('\r');
+        else if (n == 'b') o.push_back('\b');
+        else if (n == 'e') o.push_back('\x1b');
+        else if (n == 'x' && i + 2 < in.size()) {
+            o.push_back(char(std::stoi(in.substr(i + 1, 2), nullptr, 16)));
+            i += 2;
+        } else o.push_back(n);
+    }
+    return o;
+}
+
+static int cmdRollerTest(int argc, char **argv) {
+    if (argc < 5) {
+        std::puts("roller-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir]");
+        return 2;
+    }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    roster.seedFrom(sc);
+
+    auto p = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
+    Rng rng;
+    Ui ui(*p, font);
+    runRoller(ui, roster, sc, rng, "");            // empty path -> no autosave
+
+    for (int i = 0; i < roster.count(); ++i) {
+        const Character &c = roster.slot(i);
+        if (c.status == Status::Lost && c.name.empty()) continue;
+        std::printf("[%2d] %-16s R%d C%d A%d L%d %s  S%d I%d P%d V%d A%d L%d  HP%d/%d %lldgp\n",
+                    i, c.name.c_str(), int(c.race), int(c.cls), int(c.align),
+                    c.charLevel, c.status == Status::Lost ? "LOST" : "OK",
+                    c.attrib[0], c.attrib[1], c.attrib[2], c.attrib[3],
+                    c.attrib[4], c.attrib[5], c.hpLeft, c.hpMax,
+                    (long long)c.gold.v);
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
@@ -346,6 +422,8 @@ int main(int argc, char **argv) {
     if (cmd == "roster") return cmdRoster(argv[2]);
     if (cmd == "show") return cmdShow(argc, argv);
     if (cmd == "mockup") return cmdMockup(argc, argv);
+    if (cmd == "roller") return cmdRoller(argc, argv);
+    if (cmd == "roller-test") return cmdRollerTest(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

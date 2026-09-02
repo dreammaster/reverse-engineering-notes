@@ -36,7 +36,11 @@ struct Platform {
     virtual bool running() const = 0;
 };
 
-std::unique_ptr<Platform> makeNullPlatform(const std::string &dumpDir = "");
+// Headless.  `keyScript` feeds waitKey()/pollKey() one char at a time (with
+// "\r"=RETURN, "\x1b"=ESC, "\b"=BACKSPACE, "\x09..\x0c"=arrows); when it runs
+// out, keys return KEY_QUIT.  `dumpDir` (if set) writes each present() as a PPM.
+std::unique_ptr<Platform> makeNullPlatform(const std::string &keyScript = "",
+                                           const std::string &dumpDir = "");
 std::unique_ptr<Platform> makeSdlPlatform(const char *title, int scale);  // nullptr if no SDL
 
 } // namespace wiz

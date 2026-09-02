@@ -5,3 +5,5 @@ build/
 *.pdb
 *.ppm
 *.png
+roster.dat
+*.dat

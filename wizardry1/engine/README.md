@@ -38,9 +38,15 @@ SDL2 is optional. On Windows it links against ScummVM's prebuilt libs — set
 `WIZ_SDL_DIR` (default `C:/dev/scummvm_libs_2015`); without it the build is
 headless-only.
 
-Not yet: a text-grid layer for the menus, the interactive `ROLLER` flow
-(`GETPASS`, point allocation, `TRAINING`), and `CASTLE` / `SHOPS` / `RUNNER`
-/ combat onward.
+**Game — the Training Grounds** (`wiz/roller_ui.h`, `wiz/roster.h`):
+`wiz1 roller <CHARSET> <SCENARIO.DATA>` opens an SDL window with the working
+character roller — create (password, race, alignment, live point allocation
+with class eligibility, keep Y/N), `*ROSTER`, and TRAINING (inspect / delete
+/ reroll / set password).  The roster is kept in `roster.dat`.
+`wiz1 roller-test <CHARSET> <SCENARIO> <keyscript> [dumpdir]` runs it
+headless with scripted input.
+
+Not yet: `CASTLE` / `SHOPS` / `RUNNER` / combat onward.
 
 ## Build
 

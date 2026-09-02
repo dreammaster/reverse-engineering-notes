@@ -15,7 +15,7 @@ TSCNTOC (the parts we use):
     off 0x4A RECSIZE[8]  u16   record size in bytes   (Apple's "UNUSEDXX")
     off 0x5A BLOFF[8]    u16   first block of the type's data
     off 0x6A RACE[6]     STRING[9]  ("NO RACE","HUMAN","ELF","DWARF","GNOME","HOBBIT")
-    ...      CLASS[8] STRING[9], STATUS[8] STRING[8], ALIGN[4] STRING[9],
+    0x0A6    CLASS[8], 0xF6 STATUS[8], 0x146 ALIGN[4]  (all STRING, 10 B/entry)
              SPELLHSH[51] u16, SPELLGRP (packed 3-bit ×51), SPELL012 (packed 2-bit ×51)
 
 The 8 data types (enum TZSCN):
@@ -96,7 +96,7 @@ class Scenario:
         off = 0x6A
         race, off = self._strings(off, 6, 10)
         klass, off = self._strings(off, 8, 10)
-        status, off = self._strings(off, 8, 9)
+        status, off = self._strings(off, 8, 10)
         align, off = self._strings(off, 4, 10)
         return {"race": race, "class": klass, "status": status,
                 "align": align, "_end": off}
