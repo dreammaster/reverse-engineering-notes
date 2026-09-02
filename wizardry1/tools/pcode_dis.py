@@ -45,6 +45,25 @@ BLOCK = 512
 # p-System segment number -> name, filled from the codefile itself.
 SEGNUM_NAME = {}
 
+# (segname, procnum) -> apple name, loaded from docs/procmap.tsv if present.
+PROCMAP = {}
+CUR_SEG = ""          # segment being disassembled (for CLP/CGP/CIP/CBP targets)
+
+
+def load_procmap(path="docs/procmap.tsv"):
+    if not os.path.exists(path):
+        return
+    for line in open(path):
+        if line.startswith("#") or "\t" not in line:
+            continue
+        f = line.rstrip("\n").split("\t")
+        if len(f) >= 3:
+            PROCMAP[(f[0], int(f[1]))] = f[2]
+
+
+def pname(segname, procnum):
+    return PROCMAP.get((segname, procnum))
+
 # opcode -> (mnemonic, operand-kind)
 OPS = {
     0x80: ("ABI", "-"), 0x81: ("ABR", "-"), 0x82: ("ADI", "-"), 0x83: ("ADR", "-"),
@@ -150,6 +169,8 @@ def find_segment(segs, key):
 
 # --------------------------------------------------------------------------
 def disasm_proc(seg, proc, out):
+    global CUR_SEG
+    CUR_SEG = seg.name
     d = seg.data
     anchor = proc.anchor
     ip = proc.entry
@@ -179,8 +200,10 @@ def disasm_proc(seg, proc, out):
         scan = nxt
     code_end = min(end, jtab_lo)
 
-    out.append(f"; ---- {seg.name}:proc {proc.num}  entry={ip:#x} code_end={code_end:#x} "
-               f"anchor={anchor:#x} data={proc.dsize} param={proc.psize} exitrel={proc.exitrel} ----")
+    nm = pname(seg.name, proc.num)
+    out.append(f"; ---- {seg.name}:proc {proc.num}"
+               f"{'  = ' + nm if nm else ''}  entry={ip:#x} code_end={code_end:#x} "
+               f"data={proc.dsize} param={proc.psize} ----")
 
     max_label = max(labels) if labels else 0
     TERM = ("UJP", "RNP", "RBP", "HLT", "XJP")
@@ -231,6 +254,9 @@ def decode_one(d, ip, anchor, pretty=False):
 
     if kind == "ub":
         v = d[p]
+        if pretty and mnem in ("CLP", "CGP", "CIP", "CBP"):
+            nm = pname(CUR_SEG, v)
+            return f"{mnem:<6} {v}" + (f"  ; {nm}" if nm else ""), "call", p + 1
         return (f"{mnem:<6} {v}" if pretty else None), "-", p + 1
 
     if kind == "ubt":
@@ -276,7 +302,9 @@ def decode_one(d, ip, anchor, pretty=False):
     if kind == "cxp":
         sn, pn = d[p], d[p + 1]
         nm = SEGNUM_NAME.get(sn, f"seg{sn}")
-        return (f"CXP    {nm},{pn}" if pretty else None), "call", p + 2
+        an = pname(nm, pn)
+        return (f"CXP    {nm},{pn}" + (f"  ; {an}" if an else "") if pretty
+                else None), "call", p + 2
 
     if kind == "jump":
         db = d[p]
@@ -363,6 +391,7 @@ def main(argv):
     if len(argv) < 2:
         print(__doc__)
         sys.exit(2)
+    load_procmap()
     {"segments": cmd_segments, "procs": cmd_procs, "dis": cmd_dis,
      "dis-all": cmd_dis_all}[argv[0]](argv[1:])
 

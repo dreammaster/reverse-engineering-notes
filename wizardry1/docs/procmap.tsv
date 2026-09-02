@@ -1,0 +1,48 @@
+# dos_seg	dos_proc	apple_name	conf	evidence
+CAMP	1	CAMP	manual	segment main
+CAMP	39	TRADGOLD	auto:6	calls:ADDLONGS,MULTLONG,SUBLONGS
+CASTASPE	1	CASTASPE	manual	segment main
+CASTLE	1	CASTLE	manual	segment main
+CASTLE	13	EXITADDP	auto:4	calls:GETREC,GETRECW
+CASTLE	17	OLDAGE	auto:4	calls:ADDLONGS,SUBLONGS
+CINIT	1	CINIT	manual	segment main
+COMBAT	1	COMBAT	manual	segment main
+CUTIL	1	CUTIL	manual	segment main
+GAMEUTIL	1	GAMEUTIL	manual	segment main
+KANJIREA	1	KANJIREA	manual	segment main
+KANJIREA	6	ALLOCCACHES	manual	builds d/s cache free lists
+KANJIREA	7	ADDCACHE	manual	AddCache(prev,size)
+KANJIREA	8	LOADSTRTREE	manual	opens ASCII.KRN, loads strOffsets/strTree, sets SoffSet
+KANJIREA	9	LOADRAM	manual	Allocate + UNITREAD(startBlk,byteLen)
+KANJIREA	10	STRINIT	manual	picks 200/400 prefix; LoadStrTree('ASCII.KRN')
+REWARDS	1	REWARDS	manual	segment main
+REWARDS	4	ENMYREWD	auto:4	calls:GETREC,GETRECW
+REWARDS	5	FOUNDITM	auto:5	str:FOUND calls:GETREC
+REWARDS	12	PRTRAPTY	auto:24	str:ALARM,CROSSBOWBOLT,EXPLODINGBOX
+REWARDS	32	DROPLEVL	auto:5	str:EACHSURVIVORGETS calls:ADDLONGS
+ROLLER	1	ROLLER	manual	segment main
+ROLLER	11	SETXBASE	auto:12	str:5776,7696,7787
+RUNNER	1	RUNNER	manual	segment main
+SHOPS	1	SHOPS	manual	segment main
+SHOPS	9	GETPAYER	auto:4	calls:MULTLONG,SUBLONGS
+SHOPS	20	AASTRAA	auto:6	calls:GETREC,GETRECW,SUBLONGS
+SHOPS	25	CONGRATS	auto:6	calls:ADDLONGS,GETREC,GETRECW
+SPECIALS	1	SPECIALS	manual	segment main
+SWINGASW	1	SWINGASW	manual	segment main
+UTILITIE	1	UTILITIE	manual	segment main
+UTILITIE	25	CURSBELL	auto:20	str:ARMOR,GAUNTLETS,MISCITEM calls:GETREC
+WIZARDRY	1	WIZARDRY	manual	segment main; CXPs to CASTLE/CAMP/COMBAT/GAMEUTIL
+WIZARDRY	2	PRINTBEL	manual	calls WRITECH(58); Apple proc 2
+WIZARDRY	3	GETREC	manual	block-cache addr arithmetic; = Apple GETREC exactly
+WIZARDRY	4	GETRECW	manual	calls GETREC then CACHEWRI:=TRUE
+WIZARDRY	5	ADDLONGS	manual	Apple proc 5; shares carry helper 69 with SUBLONGS
+WIZARDRY	6	SUBLONGS	manual	Apple proc 6; shares carry helper 69 with ADDLONGS
+WIZARDRY	7	BCD2LONG	manual	Apple proc 7; shares BCD helpers 70/73 with LONG2BCD
+WIZARDRY	8	LONG2BCD	manual	Apple proc 8
+WIZARDRY	9	MULTLONG	manual	Apple proc 9
+WIZARDRY	38	GETSTR	manual	binary search over strTree; literal "**ERR**"
+WIZARDRY	59	FINDFILE	manual	open file on unit, return first block; data=2090
+WIZARDRY	64	CHECKCACHE	manual	d/s node cache lookup (518/86-byte nodes)
+WIZARDRY	65	UNITREAD_RETRY	manual	UNITREAD until IORESULT=0 (called by GETREC)
+WIZARDRY	66	UNITWRITE_RETRY	manual	UNITWRITE until IORESULT=0 (called by GETREC)
+WIZARDRY	82	GETSTR_LOAD	manual	inner: ASCII.KRN block fetch + decipher
