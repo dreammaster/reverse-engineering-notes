@@ -60,17 +60,32 @@ given square shows toward the front / left / right, for the renderer).
 `QUIETXFR` only changes level (via `EXITRUN` → `XNEWMAZE`) when
 `MAZELEV <> AUX0[SQTYPE]`.
 
-## The 3D view — `DRAWMAZE` (`P010E02`)  *(not yet ported)*
+## The 3D view — `DRAWMAZE` (`P010E02`)  (ported: `engine/wiz/maze3d.h`)
 
-A wireframe drawn with the interp's `DRAWLINE(x, y, dH, dV, len)` primitive
-into an 82×79 picture area.  `LIGHTDIS` squares deep (2 dark / 3–5 with
-`LIGHT`, halved for `QUICKPLT`); each step halves `WALWIDTH` (32→16→8…) and
-insets `UL/LR` toward the vanishing point.  Per depth it draws
-`LEFTVIEW`/`RIGHVIEW` side panels (`DRAWLEFT`/`DRAWRIGH`, with door cut-outs
-that reveal `HIDEDOOR` only on `RANDOM mod 6 = 3` without light) and, when a
-side is open, the perpendicular face one square over (`FRWDVIEW(±1)` →
-`DRAWFRNT`).  Stops at the first non-open `FRWDVIEW(0)` or a `DARK` square.
+A wireframe drawn with `DRAWLINE(x, y, dH, dV, len)` — a run of `len` points
+from `(x,y)` stepping `(dH, dV)` (each ∈ {−1,0,1}) — into an **82 × 79**
+picture area, origin top-left.  The DOS build precomputes the shape into 4
+fixed depth layers (`RUNNER` procs 21/27/33/39; `DRAWLINE` = `CONUNIT`
+`UNITWRITE` subfn 5); the port reproduces the Apple halving loop, which is
+equivalent and fully specified in the Pascal.
 
-Data + movement + a top-down debug view are done (`wiz1 maze
-<SCENARIO.DATA> [level] [F/L/R/K/Q script]`).  Porting `DRAWMAZE` +
-`DRAWLINE` to a `Surface` is the next step.
+`LIGHTDIS` squares deep (2 unlit / 3–5 with `LIGHT`, or 3 with `QUICKPLT`; a
+lit draw decrements `LIGHT`).  Start geometry `UL=8 LR=72 WALWIDTH=32
+DOORWIDT=16 DOORFRAM=8 WALHEIGH=64`; each step halves `WALWIDTH` (→16→8…) and
+insets `UL += WALWIDTH`, `LR -= WALWIDTH`.  Per depth, at the drawing cursor
+`(X4DRAW, Y4DRAW)` (advanced one square forward each iteration by `SHFTPOS`):
+
+* `CLRPICT(XLOWER, 0, XUPPER, 79)` sets the horizontal clip for this depth's
+  `DRAWLINE`s (nearer walls have already narrowed it).
+* `LEFTVIEW(0) ≠ OPEN` → `DRAWLEFT` (a receding trapezoid; `XLOWER := UL`);
+  else if `FRWDVIEW(−1) ≠ OPEN` → `DRAWFRNT(wt, −2·WW)` (the face one square
+  to the left).  `RIGHVIEW`/`FRWDVIEW(+1)` are the mirror.
+* `FRWDVIEW(0) ≠ OPEN` → `DRAWFRNT(wt, 0)` and **stop**.
+* Door cut-outs are drawn for a real `DOOR`, or a `HIDEDOOR` that is lit or
+  passes `RANDOM mod 6 = 3`.
+* `DARK` stops the draw; a same-level `TRANSFER` jumps the cursor to
+  `(AUX2, AUX1)`.
+
+`wiz1 maze <SCENARIO.DATA> [level] [F/L/R/K/Q script]` prints the wireframe as
+ASCII after every step (CMake test `maze_3d`); `wiz1 maze-sdl <SCENARIO.DATA>
+[level]` walks a level with the wireframe in an SDL window.

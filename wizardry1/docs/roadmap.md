@@ -122,11 +122,14 @@ Decided direction (2026-09-02):
 - [~] `RUNNER` — the maze. `docs/maze.md` maps the whole segment. The
       **`TMAZE` bit packing is cracked** (`docs/file-formats.md`) and validated
       by rendering level 1. Ported: `engine/wiz/maze.h`/`.cpp` (`MazeLevel`
-      reader) + `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
-      `DOTURN`, the FRWD/LEFT/RIGH view helpers). `wiz1 maze <SCENARIO.DATA>
-      [level] [F/L/R/K script]` walks a level with a top-down ASCII view
-      (CMake test `maze_walk`). TODO: `DRAWMAZE` — the first-person wireframe.
-- [ ] Continue: `RUNNER` `DRAWMAZE` 3D view → `SPECSQAR` traps/stairs →
+      reader), `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
+      `DOTURN`, FRWD/LEFT/RIGH view helpers), and **`engine/wiz/maze3d.h`/`.cpp`
+      — `DRAWMAZE`, the first-person wireframe** (Apple halving loop into an
+      82×79 pic). `wiz1 maze` (top-down + ASCII wireframe walk, tests
+      `maze_walk`/`maze_3d`) / `wiz1 maze-sdl` (SDL wireframe walk). TODO:
+      wire the maze into the game loop with the HUD + `SPECSQAR` traps/stairs +
+      `RUNMAIN`'s encounter checks.
+- [ ] Continue: `RUNNER` `RUNMAIN`/`SPECSQAR` (traps, stairs, encounters) →
       `COMBAT` family → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 

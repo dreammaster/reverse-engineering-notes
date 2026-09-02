@@ -20,6 +20,7 @@
 #include "wiz/temple.h"
 #include "wiz/maze.h"
 #include "wiz/runner.h"
+#include "wiz/maze3d.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -693,6 +694,23 @@ static void drawMazeTop(const MazeLevel &m, const MazePos &p) {
     std::printf("%s\n", bottom.c_str());
 }
 
+// ASCII rendering of the 82x79 wireframe pic (2x2 blocks -> 41x40 chars).
+static void printMaze3d(const MazeLevel &m, const MazePos &p, int level) {
+    Surface pic(kPicW, kPicH);
+    int light = 0;
+    Rng rng;
+    drawMazeView(pic, m, p, level, light, false, rng);
+    for (int y = 0; y < kPicH; y += 2) {
+        std::string row;
+        for (int x = 0; x < kPicW; x += 2) {
+            bool on = pic.get(x, y) || pic.get(x + 1, y) ||
+                      pic.get(x, y + 1) || pic.get(x + 1, y + 1);
+            row += on ? '#' : ' ';
+        }
+        std::printf("  |%s|\n", row.c_str());
+    }
+}
+
 static void printCell(const MazeLevel &m, const MazePos &p) {
     std::printf("@ (%d,%d) facing %s   walls: F=%d L=%d R=%d B=%d\n",
                 p.x, p.y, dirName(p.dir),
@@ -728,6 +746,7 @@ static int cmdMaze(int argc, char **argv) {
     std::printf("=== maze level %d ===\n", level);
     drawMazeTop(m, p);
     printCell(m, p);
+    printMaze3d(m, p, level);
 
     int bumps = 0;
     for (char k : keys) {
@@ -740,6 +759,7 @@ static int cmdMaze(int argc, char **argv) {
         else continue;
         std::printf("\n> %c\n", k);
         printCell(m, p);
+        printMaze3d(m, p, level);
     }
     if (!keys.empty()) {
         std::puts("");
@@ -750,10 +770,44 @@ static int cmdMaze(int argc, char **argv) {
     return 0;
 }
 
+// wiz1 maze-sdl <SCENARIO.DATA> [level] -- walk a level with the wireframe.
+static int cmdMazeSdl(int argc, char **argv) {
+    if (argc < 3) { std::puts("maze-sdl <SCENARIO.DATA> [level]"); return 2; }
+    Scenario sc;
+    if (!sc.load(readFile(argv[2]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    int level = argc > 3 ? std::atoi(argv[3]) : 1;
+    MazeLevel m;
+    if (!m.load(sc.record(Scenario::Maze, std::max(0, level - 1)))) return 1;
+
+    auto plat = makeSdlPlatform("Wizardry - Maze", 4);
+    if (!plat) { std::puts("maze-sdl needs the SDL2 backend"); return 1; }
+
+    MazePos p{0, 0, NORTH};
+    int light = 0;
+    Rng rng;
+    Surface pic(kPicW, kPicH);
+    while (plat->running()) {
+        int l = light;                              // a redraw must not consume LIGHT
+        drawMazeView(pic, m, p, level, l, false, rng);
+        plat->present(pic, kCgaPalette, 4);
+
+        int k = plat->waitKey();
+        if (k == KEY_QUIT || k == KEY_ESC) break;
+        if (k == KEY_UP || k == 'F' || k == 'f' || k == 'w' || k == 'W') { if (canWalk(m, p)) stepForward(p); }
+        else if (k == 'K' || k == 'k') { if (canKick(m, p)) stepForward(p); }
+        else if (k == KEY_LEFT || k == 'L' || k == 'l' || k == 'a' || k == 'A') turn(p, 3);
+        else if (k == KEY_RIGHT || k == 'R' || k == 'r' || k == 'd' || k == 'D') turn(p, 1);
+        else if (k == KEY_DOWN) turn(p, 2);
+        std::printf("(%d,%d) %s  sq=%d\n", p.x, p.y, dirName(p.dir), int(m.squareAt(p.x, p.y)));
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
     if (cmd == "maze") return cmdMaze(argc, argv);
+    if (cmd == "maze-sdl") return cmdMazeSdl(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

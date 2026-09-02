@@ -25,6 +25,7 @@ add_library(wizcore STATIC
   src/party.cpp
   src/shop.cpp
   src/maze.cpp
+  src/maze3d.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -115,3 +116,11 @@ add_test(NAME maze_walk
 # north hug the west wall, then a wall blocks two attempts to move east.
 set_tests_properties(maze_walk PROPERTIES
     PASS_REGULAR_EXPRESSION "RESULT .0,3. EAST bumps=2 square=0")
+add_test(NAME maze_3d
+         COMMAND wiz1 maze
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "FFFR")
+# Facing the dead-end wall east of (0,3): DRAWFRNT fills the top of the
+# 82x79 pic with a solid wall edge.
+set_tests_properties(maze_3d PROPERTIES
+    PASS_REGULAR_EXPRESSION "###################################")
