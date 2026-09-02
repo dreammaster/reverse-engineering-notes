@@ -1,0 +1,325 @@
+#include "wiz/maze_ui.h"
+#include "wiz/maze.h"
+#include "wiz/maze3d.h"
+#include "wiz/scenario.h"
+
+#include <algorithm>
+#include <cstdio>
+#include <string>
+
+namespace wiz {
+namespace {
+
+// --- HUD geometry (640x192 text surface, 16x8 font) --------------------
+constexpr int kPicX = 6, kPicY = 2, kPicScale = 2, kPicClipH = 134;
+
+const char *alignName(const Scenario &sc, Align a) {
+    return int(a) < int(sc.aligns().size()) ? sc.aligns()[int(a)].c_str() : "?";
+}
+const char *className(const Scenario &sc, Class c) {
+    return int(c) < int(sc.classes().size()) ? sc.classes()[int(c)].c_str() : "?";
+}
+const char *statusName(const Scenario &sc, Status s) {
+    return int(s) < int(sc.statuses().size()) ? sc.statuses()[int(s)].c_str() : "?";
+}
+
+struct MazeCtx {
+    Ui &ui;
+    Party &party;
+    const Scenario &sc;
+    Rng &rng;
+    MazeState &st;
+    MazeLevel m;
+    FightMap fm;
+    Surface pic{kPicW, kPicH};
+    Surface pane{kPicW * kPicScale, std::min(kPicH * kPicScale, kPicClipH)};
+    bool needDraw = true;
+
+    TextScreen &t() { return ui.ts(); }
+
+    void present() {
+        // wireframe into the pic buffer (a redraw must not spend LIGHT)
+        int light = st.light;
+        drawMazeView(pic, m, st.pos, st.level, light, st.quickPlot, rng);
+        for (int y = 0; y < pane.height(); ++y)
+            for (int x = 0; x < pane.width(); ++x)
+                pane.set(x, y, pic.get(x / kPicScale, y / kPicScale));
+        ui.setOverlay(&pane, kPicX, kPicY);
+        ui.refresh();
+    }
+};
+
+// ---- PRSTATS (P010E0B): the party panel, rows 18..23 -------------------
+
+void prStats(MazeCtx &c) {
+    auto &t = c.t();
+    t.resetWindow();
+    t.clearRect(0, 18, 40, 6);
+    // sort a view of the party by status (alive first) -- indices only
+    int order[Party::kMax];
+    for (int i = 0; i < c.party.count(); ++i) order[i] = i;
+    for (int i = 0; i < c.party.count() - 1; ++i)
+        for (int j = i + 1; j < c.party.count(); ++j)
+            if (int(c.party.member(order[i]).status) > int(c.party.member(order[j]).status))
+                std::swap(order[i], order[j]);
+
+    bool anyAlive = false;
+    for (int row = 0; row < c.party.count(); ++row) {
+        Character &ch = c.party.member(order[row]);
+        int y = 18 + row;
+        char b[48];
+        t.gotoXY(0, y);
+        std::snprintf(b, sizeof b, "%d %s", row + 1, ch.name.c_str());
+        t.write(b);
+
+        t.gotoXY(15, y);
+        std::snprintf(b, sizeof b, "%c-%.3s", alignName(c.sc, ch.align)[0],
+                      className(c.sc, ch.cls));
+        t.write(b);
+
+        int ac = ch.armorClass - c.st.protect;
+        t.gotoXY(21, y);
+        if (ac >= 0)            std::snprintf(b, sizeof b, "%3d", ac);
+        else if (ac > -10)      std::snprintf(b, sizeof b, " -%d", -ac);
+        else                    std::snprintf(b, sizeof b, " LO");
+        t.write(b);
+
+        if (int(ch.status) >= int(Status::Dead)) ch.hpLeft = 0;
+        t.gotoXY(25, y);
+        std::snprintf(b, sizeof b, "%4d ", ch.hpLeft);
+        t.write(b);
+
+        t.gotoXY(31, y);
+        if (ch.status == Status::OK) {
+            anyAlive = true;
+            std::snprintf(b, sizeof b, "%4d", ch.hpMax);
+            t.write(b);
+        } else {
+            t.write(statusName(c.sc, ch.status));
+        }
+    }
+    (void)anyAlive;
+}
+
+void msgClear(MazeCtx &c) {
+    c.t().resetWindow();
+    c.t().clearRect(0, 15, 40, 3);
+}
+void msg(MazeCtx &c, const std::string &s) {
+    msgClear(c);
+    c.t().gotoXY(1, 17);
+    c.t().write(s.substr(0, 38));
+}
+
+// ---- RUNINIT (P010E25): the fixed HUD frame ---------------------------
+
+void runInit(MazeCtx &c) {
+    auto &t = c.t();
+    t.resetWindow();
+    t.putChar(12);
+    t.gotoXY(13, 1); t.write("F)ORWARD  C)AMP    S)TATUS");
+    t.gotoXY(13, 2); t.write("L)EFT     Q)UICK   A<-W->D");
+    t.gotoXY(13, 3); t.write("R)IGHT    T)IME");
+    t.gotoXY(13, 4); t.write("K)ICK     I)NSPECT");
+    t.gotoXY(13, 7); t.write("SPELLS :");
+    prStats(c);
+}
+
+// ---- ROCKWATR (P010E16): pit / ouch damage ---------------------------
+
+void rockDamage(MazeCtx &c, int sq) {
+    auto &m = c.m;
+    int base = m.aux0(sq), dice = m.aux2(sq), sides = std::max(1, m.aux1(sq));
+    for (int i = 0; i < c.party.count(); ++i) {
+        Character &ch = c.party.member(i);
+        if (int(ch.status) >= int(Status::Dead)) continue;
+        if (c.rng.mod(25) + c.st.level <= ch.attrib[AGI]) continue;      // dodged
+        int dmg = base;
+        for (int d = 0; d < dice; ++d) dmg += c.rng.mod(sides) + 1;
+        ch.hpLeft -= dmg;
+        if (ch.hpLeft < 0) {
+            ch.hpLeft = 0;
+            ch.status = Status::Dead;
+            msg(c, ch.name + " DIED");
+        }
+    }
+    prStats(c);
+}
+
+// ---- QUIETXFR / stairs / teleport ------------------------------------
+
+// Returns true if the transfer left the maze (stairs to level 0).
+bool quietXfr(MazeCtx &c, int sq, MazeExit &out) {
+    int tgt = c.m.aux0(sq);
+    c.st.pos.x = wrap20(c.m.aux2(sq));
+    c.st.pos.y = wrap20(c.m.aux1(sq));
+    if (tgt != c.st.level) {
+        if (tgt <= 0) { out = MazeExit::ToTown; return true; }   // NEWMAZE: level 0 -> castle
+        c.st.level = tgt;
+        c.m.load(c.sc.record(Scenario::Maze, c.st.level - 1));
+        c.fm.build(c.m, c.rng);
+        c.fm.clearRoom(c.m, c.st.pos.x, c.st.pos.y);
+    }
+    c.needDraw = true;
+    return false;
+}
+
+// ---- SPECSQAR (P010E10) ---------------------------------------------
+
+// Returns true (with `out` set) if the square ends the maze session.
+bool specSquare(MazeCtx &c, bool initTurn, MazeExit &out) {
+    int sq = c.m.squareExtra(c.st.pos.x, c.st.pos.y);
+    Square ty = c.m.squareType(sq);
+    c.t().resetWindow();
+    c.t().clearRect(0, 15, 40, 3);
+
+    switch (ty) {
+        case Square::Stairs: {
+            if (!initTurn) break;
+            bool up = c.st.level > c.m.aux0(sq);
+            msg(c, std::string("STAIRS GOING ") + (up ? "UP." : "DOWN.") + "  TAKE THEM (Y/N)?");
+            c.present();
+            if (c.ui.menu("YN") == 'Y') return quietXfr(c, sq, out);
+            break;
+        }
+        case Square::Chute:
+            msg(c, "A CHUTE!");
+            c.present(); c.ui.delayMs(400);
+            return quietXfr(c, sq, out);
+        case Square::Teleport:
+            return quietXfr(c, sq, out);
+        case Square::TurnRandom:
+            if (initTurn) { c.st.pos.dir = c.rng.mod(4); c.needDraw = true; }
+            break;
+        case Square::Darkness:
+            msg(c, "IT'S VERY DARK HERE");
+            c.st.light = 0;
+            break;
+        case Square::Damage:
+            msg(c, "OUCH!");
+            rockDamage(c, sq);
+            break;
+        case Square::Pit:
+            if (!initTurn) break;
+            msg(c, "A PIT!");
+            rockDamage(c, sq);
+            break;
+        case Square::RockWater:
+            msg(c, "YOU ARE SWEPT AWAY!");
+            c.present(); c.ui.delayMs(500);
+            c.st.level = 1;
+            c.st.pos = MazePos{0, 0, NORTH};
+            c.m.load(c.sc.record(Scenario::Maze, 0));
+            c.fm.build(c.m, c.rng);
+            c.fm.clearRoom(c.m, 0, 0);
+            c.needDraw = true;
+            break;
+        case Square::Buttons: {
+            int lo = c.m.aux2(sq), hi = c.m.aux1(sq);
+            char prompt[48];
+            std::snprintf(prompt, sizeof prompt, "BUTTONS A THROUGH %c. PRESS ONE (RET=NONE)",
+                          char('A' + hi - lo));
+            msg(c, prompt);
+            c.present();
+            int k = c.ui.getKey();
+            if (k >= 'A' && k <= 'A' + hi - lo) {
+                c.st.level = lo + (k - 'A');
+                if (c.st.level <= 0) { out = MazeExit::ToTown; return true; }
+                c.m.load(c.sc.record(Scenario::Maze, c.st.level - 1));
+                c.fm.build(c.m, c.rng);
+                c.fm.clearRoom(c.m, c.st.pos.x, c.st.pos.y);
+                c.needDraw = true;
+            }
+            break;
+        }
+        case Square::ScnMsg:
+            msg(c, "THERE IS WRITING ON THE WALL... (unhandled)");
+            break;
+        case Square::Encounter:
+            msg(c, "-- AN ENCOUNTER -- (combat not yet ported)");
+            c.fm.clearRoom(c.m, c.st.pos.x, c.st.pos.y);
+            c.present(); c.ui.pressAnyKey("PRESS ANY KEY");
+            break;
+        default:
+            break;
+    }
+    return false;
+}
+
+// RUNMAIN's random-encounter test (combat not ported -- we just clear the
+// room and move on).
+bool encounterRoll(MazeCtx &c, bool initTurn, int lastKey) {
+    if (c.rng.mod(99) == 35) return true;
+    if (c.fm.at(c.st.pos.x, c.st.pos.y)) return true;
+    if (initTurn && (lastKey == 'K') && c.m.fights(c.st.pos.x, c.st.pos.y) &&
+        c.rng.mod(8) == 3)
+        return true;
+    return false;
+}
+
+} // namespace
+
+MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, Rng &rng, MazeState &st) {
+    MazeCtx c{ui, party, sc, rng, st};
+    struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
+    if (st.level < 1) st.level = 1;
+    if (!c.m.load(sc.record(Scenario::Maze, st.level - 1))) return MazeExit::ToTown;
+    c.fm.build(c.m, rng);
+    c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
+
+    runInit(c);
+    bool initTurn = true;
+    int lastKey = 0;
+
+    for (;;) {
+        auto &t = c.t();
+        t.resetWindow();
+        char hdr[40];
+        std::snprintf(hdr, sizeof hdr, "LEVEL %d   %2d,%-2d  %-5s", st.level,
+                      st.pos.x, st.pos.y, dirName(st.pos.dir));
+        t.gotoXY(14, 0); t.write(hdr);
+        t.gotoXY(22, 7); t.write(st.light > 0 ? "LIGHT  " : "       ");
+        t.gotoXY(22, 8); t.write(st.protect > 0 ? "PROTECT" : "       ");
+
+        Square here = c.m.squareAt(st.pos.x, st.pos.y);
+        if (here != Square::Normal && initTurn) {
+            MazeExit out;
+            if (specSquare(c, initTurn, out)) return out;
+        }
+
+        if (initTurn && encounterRoll(c, initTurn, lastKey)) {
+            msg(c, "-- MONSTERS! -- (combat not yet ported)");
+            c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
+            c.present();
+            if (c.ui.pressAnyKey("PRESS ANY KEY"), c.ui.quit()) return MazeExit::WindowClosed;
+        }
+
+        prStats(c);
+        c.present();
+        initTurn = false;
+
+        int k = c.ui.getKey();
+        if (c.ui.quit()) return MazeExit::WindowClosed;
+        lastKey = k;
+
+        if (k == KEY_ESC || k == KEY_RETURN) return MazeExit::ToTown;
+        if (k == 'F' || k == 'W' || k == KEY_UP) {
+            if (canWalk(c.m, st.pos)) { stepForward(st.pos); initTurn = true; c.needDraw = true; msgClear(c); }
+            else { msg(c, "OUCH!  A WALL."); }
+        } else if (k == 'K') {
+            if (canKick(c.m, st.pos)) { stepForward(st.pos); initTurn = true; c.needDraw = true; msgClear(c); }
+            else { msg(c, "OUCH!  A WALL."); }
+        } else if (k == 'L' || k == 'A' || k == KEY_LEFT) { turn(st.pos, 3); c.needDraw = true; msgClear(c); }
+        else if (k == 'R' || k == 'D' || k == KEY_RIGHT)  { turn(st.pos, 1); c.needDraw = true; msgClear(c); }
+        else if (k == 'S') { prStats(c); }
+        else if (k == 'Q') {
+            st.quickPlot = !st.quickPlot;
+            msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
+            c.needDraw = true;
+        } else if (k == 'C' || k == 'I') {
+            return MazeExit::ToTown;                 // CAMP / INSPECT not ported
+        }
+    }
+}
+
+} // namespace wiz

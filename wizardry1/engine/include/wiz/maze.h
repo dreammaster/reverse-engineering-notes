@@ -21,6 +21,8 @@
 
 namespace wiz {
 
+class Rng;
+
 enum Dir : int { NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3 };
 
 inline int wrap20(int v) { return ((v % 20) + 20) % 20; }
@@ -53,11 +55,26 @@ public:
 
     EnemyCalc enemyCalc(int group) const;   // group 1..3
 
+    bool valid() const { return p_ != nullptr; }
+
 private:
     const u8 *p_ = nullptr;
     u16 w_(int word) const { return rd16(p_ + word * 2); }
     int packed_(int baseWord, int rowWords, int perWord, int bits, int x, int y) const;
     int aux_(int which, int idx) const;
+};
+
+// FIGHTMAP -- the per-run "unfought room" mask (RUNNER globals).  `FIGHTS`
+// seeds it from the level (9 random fight cells + every ENCOUNTE square,
+// each flood-filled through open edges); `clearRoom` wipes the room you have
+// just cleared.
+struct FightMap {
+    bool cell[20][20] = {};
+    bool at(int x, int y) const { return cell[wrap20(x)][wrap20(y)]; }
+
+    void build(const MazeLevel &m, Rng &rng);            // FIGHTS (P010116)
+    void fillRoom(const MazeLevel &m, int x, int y);     // FILLROOM (P010118)
+    void clearRoom(const MazeLevel &m, int x, int y);    // CLROOMFG (P010026)
 };
 
 } // namespace wiz

@@ -20,6 +20,9 @@ public:
 
     TextScreen &ts() { return ts_; }
     void refresh();
+    // A graphics pane blitted over the text on every present (index 0 is
+    // transparent).  Pass nullptr to clear it.  Used by the maze view.
+    void setOverlay(const Surface *ov, int x = 0, int y = 0) { ov_ = ov; ovX_ = x; ovY_ = y; }
     int  pollKey() { return p_.pollKey(); }   // non-blocking; KEY_NONE if idle
     void delayMs(int ms) { p_.delayMs(ms); }
     int  getKey();                            // blocking; letters upper-cased
@@ -34,6 +37,8 @@ private:
     const Font &font_;
     TextScreen ts_;
     Surface surf_;
+    const Surface *ov_ = nullptr;
+    int ovX_ = 0, ovY_ = 0;
     bool quit_ = false;
 };
 

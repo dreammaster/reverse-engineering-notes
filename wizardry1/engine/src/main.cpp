@@ -21,6 +21,7 @@
 #include "wiz/maze.h"
 #include "wiz/runner.h"
 #include "wiz/maze3d.h"
+#include "wiz/maze_ui.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -441,11 +442,12 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
         if (e == TownExit::WindowClosed || e == TownExit::LeaveGame) return;
         if (e == TownExit::ToRoller) inTown = false;
         else if (e == TownExit::ToMaze) {
-            ui.ts().resetWindow();
-            ui.ts().putChar(12);
-            ui.ts().writeCentered("THE MAZE IS NOT YET OPEN", 10);
-            ui.pressAnyKey();
-            // fall back into the town
+            MazeState st;                            // ENTMAZE: level 1, (0,0) N
+            MazeExit me = runMaze(ui, world.party, world.sc, world.rng, st);
+            if (me == MazeExit::WindowClosed) return;
+            // PartyWiped / ToTown both drop back to the town; a real XCEMETRY
+            // would run the cemetery scene first.  The party's working copies
+            // (HP, deaths) are written back when they leave at the Edge of Town.
         }
     }
 }
@@ -527,6 +529,13 @@ static int cmdTownTest(int argc, char **argv) {
     Ui ui(*p, font);
     TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng, "", "", ""};
     TownExit e = runTown(ui, world);
+    if (e == TownExit::ToMaze) {                     // continue into the maze
+        MazeState mst;
+        MazeExit me = runMaze(ui, party, sc, rng, mst);
+        static const char *mx[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
+        std::printf("maze exit: %s  pos (%d,%d) %s level %d\n", mx[int(me)],
+                    mst.pos.x, mst.pos.y, dirName(mst.pos.dir), mst.level);
+    }
 
     static const char *kExit[] = {"ROLLER", "MAZE", "LEAVE", "WINDOW-CLOSED"};
     std::printf("exit: %s\n", kExit[int(e)]);
@@ -770,35 +779,55 @@ static int cmdMaze(int argc, char **argv) {
     return 0;
 }
 
-// wiz1 maze-sdl <SCENARIO.DATA> [level] -- walk a level with the wireframe.
+// Build a scratch party of the first live roster characters, for the
+// standalone maze commands.
+static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
+    roster.seedFrom(sc);
+    Party p;
+    for (int i = 0; i < roster.count() && p.count() < n; ++i)
+        if (roster.slot(i).status != Status::Lost) p.add(roster, i);
+    return p;
+}
+
+// wiz1 maze-sdl <CHARSET> <SCENARIO.DATA> [level] -- play the maze with the HUD.
 static int cmdMazeSdl(int argc, char **argv) {
-    if (argc < 3) { std::puts("maze-sdl <SCENARIO.DATA> [level]"); return 2; }
+    if (argc < 4) { std::puts("maze-sdl <CHARSET> <SCENARIO.DATA> [level]"); return 2; }
+    Font font;
     Scenario sc;
-    if (!sc.load(readFile(argv[2]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
-    int level = argc > 3 ? std::atoi(argv[3]) : 1;
-    MazeLevel m;
-    if (!m.load(sc.record(Scenario::Maze, std::max(0, level - 1)))) return 1;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
 
-    auto plat = makeSdlPlatform("Wizardry - Maze", 4);
+    auto plat = makeSdlPlatform("Wizardry - Maze", 2);
     if (!plat) { std::puts("maze-sdl needs the SDL2 backend"); return 1; }
-
-    MazePos p{0, 0, NORTH};
-    int light = 0;
     Rng rng;
-    Surface pic(kPicW, kPicH);
-    while (plat->running()) {
-        int l = light;                              // a redraw must not consume LIGHT
-        drawMazeView(pic, m, p, level, l, false, rng);
-        plat->present(pic, kCgaPalette, 4);
+    Ui ui(*plat, font);
+    MazeState st;
+    st.level = argc > 4 ? std::max(1, std::atoi(argv[4])) : 1;
+    runMaze(ui, party, sc, rng, st);
+    return 0;
+}
 
-        int k = plat->waitKey();
-        if (k == KEY_QUIT || k == KEY_ESC) break;
-        if (k == KEY_UP || k == 'F' || k == 'f' || k == 'w' || k == 'W') { if (canWalk(m, p)) stepForward(p); }
-        else if (k == 'K' || k == 'k') { if (canKick(m, p)) stepForward(p); }
-        else if (k == KEY_LEFT || k == 'L' || k == 'l' || k == 'a' || k == 'A') turn(p, 3);
-        else if (k == KEY_RIGHT || k == 'R' || k == 'r' || k == 'd' || k == 'D') turn(p, 1);
-        else if (k == KEY_DOWN) turn(p, 2);
-        std::printf("(%d,%d) %s  sq=%d\n", p.x, p.y, dirName(p.dir), int(m.squareAt(p.x, p.y)));
+// Headless: script a walk through the maze and print the ending state.
+static int cmdMazePlayTest(int argc, char **argv) {
+    if (argc < 5) { std::puts("maze-play-test <CHARSET> <SCENARIO.DATA> <keyscript>"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
+
+    auto plat = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
+    Rng rng;
+    Ui ui(*plat, font);
+    MazeState st;
+    MazeExit e = runMaze(ui, party, sc, rng, st);
+    static const char *ex[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
+    std::printf("exit: %s   pos (%d,%d) %s  level %d\n", ex[int(e)],
+                st.pos.x, st.pos.y, dirName(st.pos.dir), st.level);
+    for (int i = 0; i < party.count(); ++i) {
+        const Character &c = party.member(i);
+        std::printf("  %s HP %d/%d  status %d\n", c.name.c_str(), c.hpLeft, c.hpMax, int(c.status));
     }
     return 0;
 }
@@ -808,6 +837,7 @@ int main(int argc, char **argv) {
     std::string cmd = argv[1];
     if (cmd == "maze") return cmdMaze(argc, argv);
     if (cmd == "maze-sdl") return cmdMazeSdl(argc, argv);
+    if (cmd == "maze-play-test") return cmdMazePlayTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

@@ -125,12 +125,14 @@ Decided direction (2026-09-02):
       reader), `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
       `DOTURN`, FRWD/LEFT/RIGH view helpers), and **`engine/wiz/maze3d.h`/`.cpp`
       — `DRAWMAZE`, the first-person wireframe** (Apple halving loop into an
-      82×79 pic). `wiz1 maze` (top-down + ASCII wireframe walk, tests
-      `maze_walk`/`maze_3d`) / `wiz1 maze-sdl` (SDL wireframe walk). TODO:
-      wire the maze into the game loop with the HUD + `SPECSQAR` traps/stairs +
-      `RUNMAIN`'s encounter checks.
-- [ ] Continue: `RUNNER` `RUNMAIN`/`SPECSQAR` (traps, stairs, encounters) →
-      `COMBAT` family → `REWARDS` → `SPECIALS` → save/restore.
+      82×79 pic), and **`RUNMAIN`/`RUNINIT`/`PRSTATS`/`SPECSQAR` — the turn
+      loop + HUD** (`engine/wiz/maze_ui.h`: `runMaze` → `MazeExit`; `FightMap`
+      = `FIGHTS`/`CLROOMFG`; stairs/chutes/teleport/spinner/dark/pit/river/
+      buttons). Runs from the Edge of Town (`M`). `wiz1 maze` (ASCII walk) /
+      `wiz1 maze-sdl` (SDL HUD) / `wiz1 maze-play-test` (headless). 12 CMake
+      tests. TODO: combat hand-off, `UPDATEHP` regen/poison, `SCNMSG`, camp.
+- [ ] Continue: `COMBAT` family (encounters from the maze) → `REWARDS` →
+      `SPECIALS`/`SCNMSG` → `CAMP` → save/restore (`PLAYER.DATA`).
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

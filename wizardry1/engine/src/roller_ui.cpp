@@ -14,6 +14,10 @@ namespace wiz {
 
 void Ui::refresh() {
     ts_.render(surf_, font_);
+    if (ov_)
+        for (int y = 0; y < ov_->height(); ++y)
+            for (int x = 0; x < ov_->width(); ++x)
+                if (u8 c = ov_->get(x, y)) surf_.set(ovX_ + x, ovY_ + y, c);
     p_.present(surf_, kDefaultPalette, 16);
 }
 

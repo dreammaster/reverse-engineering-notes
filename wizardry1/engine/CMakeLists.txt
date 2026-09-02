@@ -26,6 +26,7 @@ add_library(wizcore STATIC
   src/shop.cpp
   src/maze.cpp
   src/maze3d.cpp
+  src/maze_ui.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -124,3 +125,19 @@ add_test(NAME maze_3d
 # 82x79 pic with a solid wall edge.
 set_tests_properties(maze_3d PROPERTIES
     PASS_REGULAR_EXPRESSION "###################################")
+add_test(NAME maze_play
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "NFFFR\\e")
+# decline the castle stairs, walk three north, turn east, then leave:
+set_tests_properties(maze_play PROPERTIES
+    PASS_REGULAR_EXPRESSION "exit: TO-TOWN   pos .0,3. EAST  level 1")
+add_test(NAME town_to_maze
+         COMMAND wiz1 town-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "GATHESUS\\r\\r\\rEMNFF\\e")
+# form a party, Edge of Town -> Maze, decline stairs, step twice, leave:
+set_tests_properties(town_to_maze PROPERTIES
+    PASS_REGULAR_EXPRESSION "maze exit: TO-TOWN  pos .0,2. NORTH")

@@ -23,7 +23,12 @@ Ported: `engine/wiz/runner.h` — `MazePos {x,y,dir}`, `shftPos`, `stepForward`,
 `turn`, `canWalk`, `canKick`, and `frwdView`/`leftView`/`righView` (the wall a
 given square shows toward the front / left / right, for the renderer).
 
-## RUNMAIN (`P010E0E`) — the turn loop
+## RUNMAIN (`P010E0E`) — the turn loop  (ported: `engine/wiz/maze_ui.h`)
+
+`runMaze(Ui&, Party&, Scenario&, Rng&, MazeState&) -> MazeExit`.  On load,
+`FIGHTS` (`P010116`, in `engine/wiz/maze.h` `FightMap`) seeds the unfought-room
+mask (9 random `FIGHTS`-cell seeds + every `ENCOUNTE` square, each flood-filled
+through open edges) and `CLROOMFG` clears the room you spawn in.
 
 `RUNINIT` draws the fixed HUD (`F)ORWARD C)AMP S)TATUS` … , `PRSTATS`), then
 `REPEAT`:
@@ -87,5 +92,24 @@ insets `UL += WALWIDTH`, `LR -= WALWIDTH`.  Per depth, at the drawing cursor
   `(AUX2, AUX1)`.
 
 `wiz1 maze <SCENARIO.DATA> [level] [F/L/R/K/Q script]` prints the wireframe as
-ASCII after every step (CMake test `maze_3d`); `wiz1 maze-sdl <SCENARIO.DATA>
-[level]` walks a level with the wireframe in an SDL window.
+ASCII after every step (CMake test `maze_3d`).
+
+## The HUD  (`engine/wiz/maze_ui.cpp`)
+
+640×192 text surface (40×24, 16×8 font) with the wireframe pane blitted over
+it (via `Ui::setOverlay`) top-left, the command list at col 13, and `PRSTATS`
+(party panel: `# NAME  A-CLS  AC  HP  HPMAX/STATUS`, sorted alive-first) on
+rows 18-23.  Movement: `F`/`W`/↑ forward, `K` kick, `L`/`A`/← left, `R`/`D`/→
+right, `S` re-list party, `Q` quick-plot, `Esc` leave.  `SPECSQAR` handles
+stairs (Y/N → change level; target level 0 → back to town), chutes,
+teleporters, spinners, darkness, pits/damage (`ROCKWATR`: agility check vs
+`rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`), the river
+(`ROCKWATE` → level 1), and buttons.  Encounters are detected (`rand%99=35`,
+an unfought room, a kick into a `FIGHTS` square) but combat is not ported yet
+— the room is just cleared and the walk continues.  Not ported: `UPDATEHP`
+poison/regen (needs `POISNAMT`/`HEALPTS` on `Character`), `SETTIME`, the
+`SCNMSG` scripted messages, and camp/inspect (`C`/`I` return to town).
+
+Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET>
+<SCENARIO.DATA> [level]` (SDL) / `wiz1 maze-play-test <CHARSET> <SCENARIO.DATA>
+<keyscript>` (headless; tests `maze_play`, `town_to_maze`).
