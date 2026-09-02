@@ -90,12 +90,19 @@ SUB BeginEncounterView                               ' asm: out.asm:3772 (beginE
 
     ' ---- the creature type --------------------------------- asm:3863-3895
     creatureIndex = INT( RND(1) * range + base )                          ' asm:3865-3895
-    '  then A1(creatureIndex) / A2 / A3 / names are all indexed by this.
-    '  creatureHP   = A1(creatureIndex) MOD 256    (out_combat.bas)
-    '  creatureWeak = A2(creatureIndex) MOD 256
+    '  A1/A2/A3/names are all indexed by this (OUTDAT.DAT):
+    '  creatureDefense = A1(creatureIndex) \ 256      (ds:21FC, HIGH byte)
+    '  creatureAtk     = A1(creatureIndex) AND 0xFF   (ds:2264, LOW byte)
+    '  creatureWeak    = A2(creatureIndex) \ 256      (ds:22A6, 99 = none)
 
     RollEncounterMod                                  ' out_combat.bas    ' asm: -> rollCreatureStats
-    ' ... lay out the viewObjectArray slots, draw the encounter view ...
+
+    ' ---- per-creature HP into viewObjectArray ------------------- asm:4442
+    FOR slot = 1 TO creaturesToFight
+        viewObjectArray(slot) = INT( creatureAtk * (RND(1) / 4.0 + 0.35) _
+                                     * (S4(12) + 2) )   ' ds:279C, ds:248A
+    NEXT slot
+    ' ... draw the encounter view ...
 END SUB
 
 
@@ -111,6 +118,6 @@ END SUB
 '
 '  OPEN
 '   * groupSize's `rt_14` scaling (the 2500 divisor)
-'   * regionWeakGate / regionTierGate (ds:2092 / ds:2096) -- per-map,
-'     loaded by loadOverworldData; dump from a running game
+'   * regionWeakGate / regionTierGate (ds:2092 / ds:2096) -- copied per-map
+'     from the OUTM* data by loadOverworldData; NEEDS a DOSBox dump
 '   * whether a higher-tier (base >= 7) branch exists for late game

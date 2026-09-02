@@ -92,11 +92,17 @@ def main():
     a4 = struct.unpack_from("<24H", d, e1 + 192)
 
     p2, _ = pool(d, e1 + 240)
-    print(f"\n32 CREATURES + stats  (A1 = HP|atk, A2 = stat|biome):")
+    # A1 word: LOW byte = the monster's attack stat (ds:2264, "creatureAtk";
+    #          also seeds the depletable enemy HP roll), HIGH byte = the
+    #          to-hit defense (ds:21FC, "creatureDefense"). See
+    #          docs/game-logic.md 3a. A2 HIGH byte = weak-weapon id (99=none).
+    print(f"\n32 CREATURES + stats  (A1 = atkStat|toHitDefense, "
+          f"A2 = ?|weakWeapon):")
     for i, name in enumerate(p2):
-        hp, atk = a1[i] & 0xFF, a1[i] >> 8
-        s2, tag = a2[i] & 0xFF, a2[i] >> 8
-        print(f"  [{i:2}] {name:18} HP={hp:3} atk={atk:2}   A2={s2:3} tag={tag:#04x}")
+        atk_stat, defense = a1[i] & 0xFF, a1[i] >> 8
+        a2lo, weak = a2[i] & 0xFF, a2[i] >> 8
+        print(f"  [{i:2}] {name:18} atkStat={atk_stat:3} toHitDefense={defense:2}"
+              f"   a2lo={a2lo:3} weakWeapon={weak if weak != 0x63 else 'none'}")
 
     print("\nA3 = kill reward per creature  (creatureDefeated: A3[i] / 0x100):")
     for i, name in enumerate(p2):

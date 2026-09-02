@@ -9,7 +9,7 @@
 '  was un-folded in out.idb (ida_scripts/expand_folded_out.py) and is now
 '  fully in out.asm (0x11CB3..0x12143).
 '  v6: to-hit confirmed by a 2nd DOSBox trace -- L is the CONSTANT 0.8
-'  (ds:2E3A), not Dex/(wp+18).  Formula: Dex^0.8 * (wp+18) / (creatureHP*11).
+'  (ds:2E3A), not Dex/(wp+18).  Formula: Dex^0.8 * (wp+18) / (creatureDefense*11).
 ' ==========================================================================
 '
 '  v4: the to-hit is SOLVED (exact float match against Paul's DOSBox trace).
@@ -21,7 +21,7 @@
 '     are unused -- an earlier trace misread them as 0.)
 '
 '  Verified against Paul's DOSBox trace (knife vs neural cloud):
-'     Dex 16, Str 19, weaponPower 2, creatureHP 50, creatureWeak 3,
+'     Dex 16, Str 19, weaponPower 2, creatureDefense 50, creatureWeak 3,
 '     weaponId 1  ->  hitScratch = 0x3EAB17EA = 0.33416682  (exact),
 '     "ENEMY HIT BY BLOW OF 6", and a separate "MISSES".
 '
@@ -42,12 +42,17 @@
 '     ds:280A 2.0   ds:2906 18.0  ds:290A 12.6  ds:2C26 11.0  ds:2C32 1.3
 '     ds:2E6C 6.0
 '
-'  DGROUP vars:
+'  DGROUP vars (creature stats come from OUTDAT.DAT, decoders/outdat_dat.py):
 '     Dexterity 1AC0   Strength 1B08   weaponPower 22D6   weaponId 1AFE
-'     creatureHP   21FC = (creatureStatWord MOD 256)     [out.asm:3924-3943]
-'     creatureWeak 22A6 = (creatureWeakWord MOD 256), 99 = "no weakness"
-'                                                       [out.asm:3944-3963]
-'     enemyHpCell  21FE  (index into viewObjectArray, ds:1C7C)
+'     creatureDefense 21FC = A1(creatureIndex) \ 256   (HIGH byte, ~20..55;
+'                          the to-hit divisor term)          [out.asm:4369]
+'     creatureAtk     2264 = A1(creatureIndex) AND 0xFF (LOW byte, ~15..200;
+'                          the monster's damage stat)         [out.asm:4340]
+'     creatureWeak    22A6 = A2(creatureIndex) \ 256, 99 = "no weakness"
+'                          (tags 1..4 = weak to that weapon id) [out.asm:4389]
+'     enemy HP  = viewObjectArray(slot) = INT( creatureAtk *
+'                 (RND(1)/4 + 0.35) * (S4(12) + 2) )   per creature [out.asm:4442]
+'     enemyHpCell  21FE  (index / count into viewObjectArray, ds:1C7C)
 '     hitScratch   208E (single)     workDamage 2192 (int; also reused as
 '                                    the combatPhase enum elsewhere)
 
@@ -129,9 +134,9 @@ SUB ResolvePlayerAttack                               ' asm: out.asm:6686 (resol
     '   push CSNG(Dexterity)                                    ' asm:6687
     '   FF2B   ->  Dexterity ^ 0.8   (0.8 = ds:2E3A, pushed by the caller)  asm:6691
     '   push (weaponPower + 18) ; FF4C (*)                      ' asm:6694-6698
-    '   push creatureHP ; FF4E ds:2C26 (*) -> creatureHP * 11.0 ' asm:6702-6706
+    '   push creatureDefense ; FF4E ds:2C26 (*) -> creatureDefense * 11.0 ' asm:6702-6706
     '   FF47 (/) ; pop -> hitScratch (ds:208E)                  ' asm:6710-6713
-    hitScratch = Dexterity ^ 0.8 * (weaponPower + 18) / (creatureHP * 11.0) ' asm:6687-6714
+    hitScratch = Dexterity ^ 0.8 * (weaponPower + 18) / (creatureDefense * 11.0) ' asm:6687-6714
     '  VERIFIED against two DOSBox traces (bit-exact bar 1-2 ULP of the
     '  software pow):
     '     Dex 16, wp 2, cHP 50  -> 0.334167  (0x3EAB17EA)
@@ -249,18 +254,19 @@ SUB CreatureAttack                                   ' asm: out.asm:3474 (creatu
 ' The monsters' turn.  Every engaged creature rolls to hit; hits accumulate
 ' one combined damage number; death here is NOT a game over -- you "FALL
 ' UNCONSCIOUS" and revive.
-'   creatureAtk    = ds:2264   (rolled at encounter start -- 0 in the EXE)
+'   creatureAtk    = ds:2264 = A1(creatureIndex) AND 0xFF
 '   playerDefense  = ds:2266   (ComputeEquippedPower)
-'   S4(12)         = ds:1B96 elem 0x0C  (a region difficulty/scaling word)
+'   S4(12)         = ds:1B96 elem 0x0C  (persistent character word; 0 in the
+'                   current save -> the (S4(12)+2) term = 2)
 '   hitCount 1F06   totalDmg 1F04   loopN 2262 = creaturesToFight (21FE)
 
     IF contextMode > 11 THEN EXIT SUB                 ' ds:1F2A            ' asm:3478-3480
 
     ' ---- the monsters' shared to-hit chance --------------------- asm:3486-3510
-    '   toHitChance = MIN( 0.75 , creatureHP / (Dexterity*2 + 20) )
-    '   -- scales with the CREATURE's HP, inversely with your Dexterity,
+    '   toHitChance = MIN( 0.75 , creatureDefense / (Dexterity*2 + 20) )
+    '   -- scales with creatureDefense, inversely with your Dexterity,
     '      capped at 0.75.
-    toHitChance = creatureHP / (Dexterity * 2.0 + 20.0)   ' ds:280A, ds:24EA
+    toHitChance = creatureDefense / (Dexterity * 2.0 + 20.0)   ' ds:280A, ds:24EA
     IF toHitChance > 0.75 THEN toHitChance = 0.75         ' ds:280E        ' asm:3497-3510
 
     hitCount = 0 : totalDmg = 0                                           ' asm:3484-3485
@@ -305,15 +311,16 @@ END SUB
 '  SOLID -- operators pinned from LEGLIB.EXE; formulas verified against
 '  Paul's DOSBox traces (to-hit is an EXACT float match) or self-consistent:
 '   * op table = + - -rev * / /rev cmp  (README) ; FF2B = `^` reversed
-'   * to-hit score  = Dex^0.8 * (weaponPower + 18) / (creatureHP * 11)
+'   * to-hit score  = Dex^0.8 * (weaponPower + 18) / (creatureDefense * 11)
 '                     [VERIFIED, two DOSBox traces; 0.8 = ds:2E3A]
 '   * to hit        : HIT when RND(1) < hitScratch ; weakness-match forces 1.0
 '   * RollEncounterMod  = INT( RND(1)*18 + 12.6 )               [12..30]
 '   * base damage       = INT( Str * (wp/6 + 1/2) / (2*RND(1) + 1) )
 '   * chip damage       = INT( 4*RND(1) + wp/1.3 + 1 )
 '   * weakness-match dmg = INT( Str + 20*RND(1) )
-'   * creatureHP   = creatureStatWord  MOD 256   (out.asm:3924-3943)
-'   * creatureWeak = creatureWeakWord  MOD 256, 99 = none  (3944-3963)
+'   * creatureDefense = A1(creatureIndex) \ 256 ; creatureAtk = A1 AND 0xFF ;
+'     creatureWeak = A2(creatureIndex) \ 256 (99 = none)  [out.asm:4340-4389]
+'   * enemy HP = INT( creatureAtk * (RND(1)/4 + 0.35) * (S4(12) + 2) )
 '   * value-stack node: value at [node.ptrField]; top value at [ds:111C]
 '
 '   * ComputeEquippedPower = weaponPower = INT(weaponId + cond/2.8);
@@ -323,7 +330,7 @@ END SUB
 '   * CreatureDefeated: food/gold both = (RND(1)*0.6 + 0.7) * rewardTier
 '     [* creatureCount for gold], rewardTier = A3(creatureIndex) \ 256;
 '     NO experience award (overworld kills = food/gold/items only)
-'   * CreatureAttack: monster to-hit = MIN(0.75, creatureHP/(Dex*2+20));
+'   * CreatureAttack: monster to-hit = MIN(0.75, creatureDefense/(Dex*2+20));
 '     per hit  blow = creatureAtk * (RND(1)+0.4) * 1.7 , accumulated with a
 '     per-hit re-scale by (S4(12)+2)/(Endurance*(playerDefense+2));
 '     death -> "YOU FALL UNCONSCIOUS", revive at INT(RND(1)*50+60) HP
@@ -334,6 +341,5 @@ END SUB
 '   3. selectedSpell range (23..28 assumed from the -337.5 = -22.5*15 offset).
 '   4. CreatureDefeated: the exact DropChance / GoldChance RND gates and the
 '      S0(4) test at asm:7348.
-'   5. CreatureAttack: S4(12) value (region difficulty word); the compounding
-'      re-scale; the unconscious-revive teleport target + food penalty.
-'   6. creatureAtk (ds:2264) -- rolled at encounter start; find where.
+'   5. CreatureAttack: whether anything ever raises S4(12) from 0; the
+'      unconscious-revive teleport target + the food-penalty roll.

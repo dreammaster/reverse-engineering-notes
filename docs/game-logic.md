@@ -95,25 +95,41 @@ Each play module has its own combat math. Do not share code between them.
 
 ### 3a. OVERWORLD (OUT) — [`out_combat.bas`](../recovered/out_combat.bas)
 
-Per-encounter setup:
+Per-encounter setup (`beginEncounterView`, `out.asm:4217`), from
+`OUTDAT.DAT` (`decoders/outdat_dat.py`):
 - `creatureIndex` = `INT( RND(1) * range + base )`, `(base,range)` picked
   by RND gates: `(3,4)` mid-tier, `(0,3)` weak (pixie/strider/farmer),
-  higher tiers late — `out.asm:3863` (`beginEncounterView`).
-- `creatureHP` = `A1(creatureIndex) MOD 256` (`ds:21FC`) — `out.asm:3924`
-- `creatureWeak` = `A2(creatureIndex) MOD 256` (`ds:22A6`), **99 = no
-  weak weapon** — `out.asm:3944`
+  higher tiers late.
+- `creatureDefense` = `A1(creatureIndex) \ 256` (`ds:21FC`) — the HIGH
+  byte of the A1 word (the value `outdat_dat.py` prints as `atk`,
+  range ~20–55). Feeds the player's to-hit divisor. — `out.asm:4369`
+- `creatureAtk` = `A1(creatureIndex) AND 0xFF` (`ds:2264`) — the LOW byte
+  (`outdat_dat.py`'s `HP` column, ~15–200). The monster's damage stat.
+  — `out.asm:4340`
+- `creatureWeak` = `A2(creatureIndex) \ 256` (`ds:22A6`), **99 = no weak
+  weapon** — `out.asm:4389`
+- **enemy hit points** (the depletable cell, `viewObjectArray(slot)`) is a
+  ROLL from `creatureAtk`, per creature:
+  `INT( creatureAtk * (RND(1)/4 + 0.35) * (S4(12) + 2) )` — `out.asm:4442`.
+  `S4(12)` is a persistent character word (0 in the current save, so the
+  `+2` term = 2; confirm whether anything ever raises it).
 - `creaturesToFight` = `INT( r^(3.2·r + 0.83) · groupSize + 1 )`, skewed
-  low — `out.asm:3095`
+  low.
+
+*(Note: `outdat_dat.py`'s `HP` / `atk` column headers are the two A1 bytes;
+the game uses the LOW byte as the attack stat and the HIGH byte as the
+to-hit defense, i.e. swapped from the header names. The real depletable HP
+is the roll above.)*
 
 **Player to-hit** — *verified* (two DOSBox traces) — `out.asm:6687`:
 ```
-hitScratch = Dexterity^0.8 * (weaponPower + 18) / (creatureHP * 11)
+hitScratch = Dexterity^0.8 * (weaponPower + 18) / (creatureDefense * 11)
 HIT  when  RND(1) < hitScratch
 ```
 The `^0.8` exponent is the constant `ds:2E3A`. A weapon that matches
 `creatureWeak` forces `hitScratch = 1.0` (guaranteed hit).
-Traces: Dex 16/wp 2/cHP 50 → 0.334167 (`0x3EAB17EA`); Dex 20/wp 8/cHP 35
-→ 0.741885 (`0x3F3DEC2F`).
+Traces: Dex 16/wp 2/`creatureDefense` 50 → 0.334167 (`0x3EAB17EA`);
+Dex 20/wp 8/`creatureDefense` 35 → 0.741885 (`0x3F3DEC2F`).
 
 **Player damage** — *derived* — `out.asm:6830`:
 ```
@@ -137,19 +153,20 @@ spellDmg = INT( (selectedSpell - 22.5) * 15 * (RND(1) + 1) )
 `selectedSpell` in 23..28 (Seek = 29, handled separately). Casting
 decrements the spell's `S2()` charge.
 
-**Monster attack** (`CreatureAttack`) — *partial* — `out.asm:3474`
-(un-folded from `creatureAttack`):
+**Monster attack** (`CreatureAttack`) — *derived* (magnitude matched a
+trace) — `out.asm:3474` (un-folded from `creatureAttack`):
 ```
-toHitChance = MIN( 0.75, creatureHP / (Dexterity*2 + 20) )
+toHitChance = MIN( 0.75, creatureDefense / (Dexterity*2 + 20) )
 per creature:  IF RND(1) <= toHitChance THEN it hits
   blow     = creatureAtk * (RND(1) + 0.4) * 1.7
   totalDmg = (totalDmg + 0.5 + blow) * (S4(12) + 2) / (Endurance * (playerDefense + 2))
 hitPoints -= INT(totalDmg)
 ```
-Monster hit chance rises with the **creature's** HP, falls with your Dex.
-The running total is re-scaled by the mitigation term on every hit
-(*partial*: `S4(12)` is a runtime region word; with it ≈ `Endurance*(pd+2)`
-the scale is ≈ 1). `creatureAtk` = `ds:2264`, rolled at encounter start.
+Monster hit chance rises with `creatureDefense`, falls with your Dex.
+With `S4(12) = 0` the mitigation scale is `2 / (Endurance*(playerDefense+2))`
+(heavily damped — a single blow ≈ `creatureAtk*0.7*1.7 * 0.03..0.07`).
+Verified magnitude: neural cloud (`creatureAtk` 60) vs PAULA (End 17,
+playerDefense 1) → "Damage 3" (formula gives 3.6 → INT 3).
 
 **Death is not a game over** — `out.asm:3698`:
 ```
@@ -183,13 +200,16 @@ Simpler linear model — no weapon-weakness system, no per-encounter
 HIT  when  RND(1) * 70 < Dexterity + 30      ' hit chance = min(1,(Dex+30)/70)
 ```
 
-**Player damage** — *partial* — `dun.asm:4081`:
+**Player damage** — *derived* — `dun.asm:4081`:
 ```
 dmg = INT( (RND(1) + 0.5) * (Strength + 30) * (weaponPower + 40) / 450 )
 ' +50% while a spell buff (ds:1AE8) is active
 ```
-(*partial*: `weaponPower` = `ds:21CE`, DUN's own equip calc; confirm the
-`/450` and `+40` with a trace.)
+`weaponPower` (`ds:21CE`, `updateLevelState` `dun.asm:7638`):
+```
+weaponPower = weaponId*10 + 10 + (S1(weaponSlot) * 100 \ 28)   ' 99 slot -> no bonus
+```
+(Great knife id 1 / Great cond 3 → `20 + 10 = 30`.)
 
 **Monster to-hit** — *derived* — `dun.asm:2867`:
 ```
@@ -198,8 +218,15 @@ MISS  when  RND(1) * 70 <= Dexterity         ' hit chance = 1 - Dex/70
 
 **Monster damage** — *derived* — `dun.asm:2912`:
 ```
-dmg = INT( (RND(1) + 0.5) * monsterAtk )     ' NO armour / Endurance mitigation
+dmg = INT( (RND(1) + 0.5) * monsterAtk )     ' no *further* mitigation here
 ```
+`monsterAtk` (`ds:2192`, `updateLevelState` `dun.asm:7670`) already bakes in
+the player's armour:
+```
+monsterAtk = (dungeonLevel + 7) * (dungeonNumber - k) * 100 \ (armorDefenseTerm + 30)
+armorDefenseTerm = (S1(armorSlot) * 100 \ 35) + armorId*10 - 70
+```
+so a well-armoured party makes the monsters' rolls smaller at level load.
 
 **Monster special attacks** — [`dun_combat.bas`](../recovered/dun_combat.bas)
 — fire ~3% of the time (`ds:24B4 = 0.97`):
@@ -353,15 +380,14 @@ real values — one memory dump each while the relevant screen is active:
 
 | symbol | where | what it gates |
 |---|---|---|
-| `ds:2092` / `ds:2096` (OUT) | `loadOverworldData` | encounter weak/tier gates, per map |
-| `ds:2264` (OUT) | encounter start | `creatureAtk` in CreatureAttack |
-| `S4(12)` (OUT) | region | the CreatureAttack mitigation scale |
-| `ds:2192` (DUN) | per monster | `monsterAtk` |
-| `ds:21CE` (DUN) | equip | DUN `weaponPower` |
-| `ds:226E` (CASDR) | level load | castle `difficulty` (dominates incoming damage) |
-| `ds:2C3C` (TWNDR) | bank | interest divisor `K` |
-| operand order | any | `-` / `/` where `'?ord` is tagged in the `.bas` files |
+| `ds:2092` / `ds:2096` (OUT) | `loadOverworldData` copies from `OUTM*` | the two encounter weak/tier gate probabilities in `BeginEncounterView`, per map |
+| `ds:226E` (CASDR) | `loadCastleLevel` copies from `CASTLE.BS1/2` | castle incoming-damage `difficulty` — dominates the magnitude; `0` in the EXE and never written by CASDR code |
+| `ds:2C3C` (TWNDR) | the bank | 32-bit interest divisor `K` (~1000 per the guide) — `0` in the EXE |
+| operand order | a few `.bas` lines | `-` / `/` where `'?ord` is tagged — one trace pins it for the whole codebase |
 
-Also open: `CastSpell` (DUN), `enterOverworld` / `loadOverworldData`
-(OUT), the casino payout math, mail routes, and the per-bit quest-flag
-semantics.
+*(`ds:2264`, `ds:21CE`, `ds:2192`, `S4(12)` were on this list earlier — all
+resolved statically: the first three are formulas / `OUTDAT.DAT` data,
+`S4(12)` is a persistent character word = 0 in the current save.)*
+
+Also open (not blocking): `CastSpell` (DUN), the casino payout math, mail
+routes, the per-bit quest-flag semantics.

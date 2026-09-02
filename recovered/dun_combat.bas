@@ -122,8 +122,15 @@ END SUB
 '   * KNUCKLES / armour-eater : destroy the equipped weapon / armour
 '   * specials fire at ~3% (ds:24B4 = 0.97)
 '
+'  DERIVED (both in updateLevelState, dun.asm:7638 / 7670 -- static, no
+'  runtime constants):
+'   * weaponPower (ds:21CE) = weaponId*10 + 10 + (S1(weaponSlot) * 100 \ 28)
+'     (weaponSlot 99 -> no condition bonus)
+'   * monsterAtk (ds:2192) = (dungeonLevel + 7) * (dungeonNumber - k) * 100
+'                            \ (armorDefenseTerm + 30),
+'     armorDefenseTerm = (S1(armorSlot) * 100 \ 35) + armorId*10 - 70
+'     -- so a well-armoured party shrinks the monsters' rolls at level load
+'
 '  OPEN
-'   * weaponPower (ds:21CE) derivation -- DUN's ComputeEquippedPower analogue
-'   * monsterAtk (ds:2192) -- rolled per monster from the DUNM stat table
 '   * CastSpell (dun.asm:4696)
-'   * the /450 and the (21CE + 40) -- confirm 21CE is weaponPower with a trace
+'   * confirm the /450 and the `k` in the monsterAtk formula with a trace
