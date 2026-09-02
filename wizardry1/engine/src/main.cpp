@@ -9,6 +9,7 @@
 #include "wiz/surface.h"
 #include "wiz/font.h"
 #include "wiz/textscreen.h"
+#include "wiz/bitmap.h"
 #include "wiz/platform.h"
 #include "wiz/roster.h"
 #include "wiz/roller_ui.h"
@@ -257,16 +258,17 @@ static int cmdRoster(const char *scn) {
     return mism ? 1 : 0;
 }
 
-static void showSurface(const Surface &s, const char *ppm) {
+static void showSurface(const Surface &s, const char *ppm,
+                        const Color *pal = kDefaultPalette, int palLen = 16) {
     if (ppm) {                                   // explicit file -> headless
-        s.savePPM(ppm, kDefaultPalette, 16);
+        s.savePPM(ppm, pal, palLen);
         std::printf("wrote %s  (%dx%d)\n", ppm, s.width(), s.height());
         return;
     }
     auto p = makeSdlPlatform("wiz1", 2);          // else open a window
     if (!p) { std::puts("no SDL2 backend; pass an out.ppm path"); return; }
     while (p->running()) {
-        p->present(s, kDefaultPalette, 16);
+        p->present(s, pal, palLen);
         int k = p->waitKey();
         if (k == KEY_QUIT || k == KEY_ESC || k == KEY_RETURN) break;
     }
@@ -295,11 +297,8 @@ static int cmdShow(int argc, char **argv) {
         return 0;
     }
     if (what == "title") {
-        // 200.TITLE is 5120 B; try 512x80 1bpp (512*80/8 = 5120).
-        Surface s(512, 80);
-        s.fill(0);
-        s.blit1bpp(bytes.data(), 512, 80, 0, 0, 15);
-        showSurface(s, ppm);
+        Surface s = loadTitle({bytes.data(), bytes.size()});   // 320x64 2bpp CGA
+        showSurface(s, ppm, kCgaPalette, 4);
         return 0;
     }
     return usage();
@@ -342,15 +341,16 @@ static int cmdMockup(int argc, char **argv) {
 
 static int cmdRoller(int argc, char **argv) {
     if (argc < 4) {
-        std::puts("roller <CHARSET> <SCENARIO.DATA> [roster.dat]");
+        std::puts("roller <CHARSET> <SCENARIO.DATA> [TITLE] [roster.dat]");
         return 2;
     }
     Font font;
     if (!font.load(readFile(argv[2]))) { std::fprintf(stderr, "bad charset\n"); return 1; }
     Scenario sc;
     if (!sc.load(readFile(argv[3]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    auto title = argc > 4 ? readFile(argv[4]) : std::vector<u8>{};
+    std::string rosterPath = argc > 5 ? argv[5] : "roster.dat";
 
-    std::string rosterPath = argc > 4 ? argv[4] : "roster.dat";
     Roster roster;
     if (!roster.load(rosterPath)) {
         roster.seedFrom(sc);
@@ -362,6 +362,7 @@ static int cmdRoller(int argc, char **argv) {
 
     Rng rng;
     Ui ui(*p, font);
+    if (!title.empty() && !showTitle(*p, font, {title.data(), title.size()})) return 0;
     runRoller(ui, roster, sc, rng, rosterPath);
     roster.save(rosterPath);
     return 0;

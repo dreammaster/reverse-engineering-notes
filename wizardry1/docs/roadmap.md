@@ -98,7 +98,10 @@ Decided direction (2026-09-02):
       (`setWindow`, clamped GOTOXY), UCSD control codes (CHR 12/11/29/8/13/10),
       `CLRRECT`, Pascal `': w'` right-justify, inverse video, font render.
       `wiz1 mockup` renders the MAKEMENU screen.
-- [ ] `200.TITLE` decode, `200.MONSTERS` display lists.
+- [x] `200/400.TITLE` decoded — 320×64 2bpp CGA (the "Wizardry" logo).
+      `engine/wiz/bitmap.h` (`loadCga2bpp`/`loadTitle`); `wiz1 show title`;
+      shown at boot by `wiz1 roller`.
+- [ ] `200.MONSTERS` monster-portrait display lists.
 - [ ] Continue: `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D view) → `COMBAT` family
       → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.

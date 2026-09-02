@@ -17,6 +17,7 @@ add_library(wizcore STATIC
   src/scenario.cpp
   src/character.cpp
   src/surface.cpp
+  src/bitmap.cpp
   src/font.cpp
   src/textscreen.cpp
   src/roster.cpp

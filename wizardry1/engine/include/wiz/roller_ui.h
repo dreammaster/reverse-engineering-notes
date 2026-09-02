@@ -35,6 +35,10 @@ private:
     bool quit_ = false;
 };
 
+// Show the "Wizardry" logo (200/400.TITLE bytes) + welcome line; wait for a
+// key.  Returns false if the window was closed.
+bool showTitle(Platform &p, const Font &font, Bytes titleData);
+
 // Runs the Training Grounds until the player leaves for the castle (empty
 // name) or closes the window.  `rosterPath` is written on any change.
 void runRoller(Ui &ui, Roster &roster, const Scenario &sc, Rng &rng,

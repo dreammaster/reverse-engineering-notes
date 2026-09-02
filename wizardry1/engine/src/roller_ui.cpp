@@ -1,6 +1,7 @@
 #include "wiz/roller_ui.h"
 #include "wiz/roller.h"
 #include "wiz/scenario.h"
+#include "wiz/bitmap.h"
 
 #include <array>
 #include <cctype>
@@ -419,6 +420,30 @@ void create(RollerCtx &c, const std::string &name) {
 }
 
 } // namespace
+
+bool showTitle(Platform &p, const Font &font, Bytes titleData) {
+    // 320x64 CGA logo centred on a 640x400 screen, welcome text below.
+    Surface s(640, 200);
+    s.fill(0);
+    Surface logo = loadTitle(titleData);
+    for (int y = 0; y < logo.height(); ++y)
+        for (int x = 0; x < logo.width(); ++x)
+            if (u8 c = logo.get(x, y)) s.set(160 + x, 24 + y, c);
+    // draw the text in palette index 2 (green)
+    TextScreen ts;
+    ts.gotoXY(4, 14);  ts.write("WELCOME TO THE WORLD OF WIZARDRY!");
+    ts.gotoXY(14, 18); ts.write("PRESS ANY KEY");
+    for (int r = 0; r < TextScreen::kRows; ++r)
+        for (int c = 0; c < TextScreen::kCols; ++c)
+            if (char ch = ts.at(c, r); ch != ' ')
+                font.drawGlyph(s, (unsigned char)ch, c * Font::kW, r * Font::kH, 2);
+    for (;;) {
+        p.present(s, kCgaPalette, 4);
+        int k = p.waitKey();
+        if (k == KEY_QUIT) return false;
+        if (k != KEY_NONE) return true;
+    }
+}
 
 void runRoller(Ui &ui, Roster &roster, const Scenario &sc, Rng &rng,
                const std::string &rosterPath) {
