@@ -117,26 +117,34 @@ Object 0 = the null/"nothing" item (`06 00 …` then `FF FF`).
 **ZEXP (624 B)** — `TEXP = ARRAY[FIGHTER..NINJA] OF ARRAY[0..12] OF TWIZLONG`
 (8 × 13 × 6 B). XP thresholds for levels 1..13 per class.
 
-**ZCHAR / `TCHAR` (208 B = 104 words)** — party member. Confirmed:
-`CHARACTR` is global word 363 (`= ARRAY[0..5] OF TCHAR`, stride 104 words,
-from ROLLER's `GETCHARC`). Field offsets *within the record*, in words, from
-the DOS ROLLER p-code (some still tentative — `?`):
+**ZCHAR / `TCHAR` (208 B = 104 words)** — party member. `CHARACTR` = global
+word 363 (`ARRAY[0..5] OF TCHAR`, stride 104 words). Field **word** offsets
+*within the record*, recovered from the DOS ROLLER p-code and verified by a
+byte-exact round-trip of all 20 shipped roster records
+(`engine/wiz/character.{h,cpp}`):
 
-| off | field | off | field |
+| word | field | word | field |
 |--:|---|--:|---|
-| 0 | `NAME` STRING[15] (8 w) | 34 | `POSS.POSSCNT` |
-| 8 | `PASSWORD` STRING[15] (8 w) | 35 | `POSS.POSSESS[1..8]` (4 w each: EQUIPED, CURSED, IDENT?, EQINDEX) |
-| 16? | `INMAZE` / `RACE` | 67 | `EXP` (LOW, MID, HIGH) |
-| 22? | `RACE` / `ALIGN` region | 70 | `MAXLEVAC` |
-| 23 | `CLASS` | 71 | `CHARLEV` |
-| 24 | `AGE` (weeks) | 72 | `HPLEFT` |
-| ? | `STATUS`, `ALIGN`, `ATTRIB[6]`, `LUCKSKIL[5]` | 73 | `HPMAX` |
-| ? | `GOLD` (TWIZLONG) | 74 | `SPELLKN` packed bits (`IXP 16,1`) |
-| | | 78 | `MAGESP[1..7]` |
-| | | 85 | `PRIESTSP[1..7]` |
+| 0 | `NAME` STRING[15] (8 w) | 29 | `POSS.POSSCNT` |
+| 8 | `PASSWORD` STRING[15] (8 w) | 30 | `POSS.POSSESS[1..8]` — 4 w each: EQUIPED, CURSED, IDENTIF, EQINDEX (all unpacked, unlike Apple) |
+| 16 | `INMAZE` | 62 | `EXP` (TWIZLONG: LOW/MID/HIGH) |
+| 17 | `RACE` | 65 | `MAXLEVAC` |
+| 18 | `CLASS` (8 = "none", set by ROLLER) | 66 | `CHARLEV` |
+| 19 | `AGE` (weeks) | 67 | `HPLEFT` |
+| 20 | `STATUS` | 68 | `HPMAX` |
+| 21 | `ALIGN` | 69 | `SPELLKN[0..49]` packed 1-bit (`IXP 16,1`), 4 w |
+| 22 | `ATTRIB[STR..LUCK]` packed 5-bit (`IXP 3,5`), 2 w | 73 | `MAGESP[1..7]` |
+| 24 | `LUCKSKIL[0..4]` packed 5-bit, 2 w | 80 | `PRIESTSP[1..7]` |
+| 26 | `GOLD` (TWIZLONG) | 88 | `ARMORCL` |
 
-The shipped roster is test data (`THESUS`, `NEB`, …). Creation rules ported
-in `engine/wiz/roller.h`.
+Words 87 and 89–103 (`HPCALCMD`, `HEALPTS`, `CRITHITM`, `SWINGCNT`,
+`HPDAMRC`, `WEPVSTY2/3/P`, `LOSTXYL`) are not modelled yet — carried through
+verbatim on write. `IXP 3,5` packs 3 fields/word from bit 0 (5 bits each,
+bit 15 spare); `IXP 16,1` uses all 16 bits. UCSD string writes touch only
+the length byte + chars (stale tail bytes are preserved).
+
+The shipped roster is test data (`THESUS`, `NEB`, …). Creation rules in
+`engine/wiz/roller.h`.
 
 `TWIZLONG` = 3 × i16 `{LOW, MID, HIGH}`, a base-10000 bignum (see Apple
 `ADDLONGS`): value = `LOW + MID*10000 + HIGH*10^8`.

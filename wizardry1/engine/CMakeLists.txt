@@ -15,6 +15,7 @@ add_library(wizcore STATIC
   src/ucsd_volume.cpp
   src/string_pool.cpp
   src/scenario.cpp
+  src/character.cpp
 )
 target_include_directories(wizcore PUBLIC include)
 

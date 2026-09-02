@@ -21,13 +21,13 @@ ScummVM engine; the standalone `wiz1` executable is the driver.
 
 | module | what |
 |---|---|
-| `wiz/rng.h` | `RANDOM` — the 32-bit LFSR from the Apple assembly primitive |
+| `wiz/rng.h` | `RANDOM` — reversed from `SYSTEM.INTERP` (the weak 128-value PC-Wizardry RNG) |
 | `wiz/roller.h` | race base attrs, class eligibility (`GTCHGLST`), bonus-point / HP / gold / age rolls, starting spells |
-| `wiz/character.h` | native `Character` model (208-byte record (de)serialiser still TODO) |
+| `wiz/character.{h,cpp}` | `Character` model + 208-byte `TCHAR` record reader/writer (round-trips all 20 shipped roster records byte-identically) |
 
-Not yet: the platform layer (framebuffer + input), the `TCHAR` record
-serialiser, the interactive menu flow, and `CASTLE` / `SHOPS` / `RUNNER` /
-combat onward.
+Not yet: the platform layer (framebuffer + input), the interactive menu
+flow (`GETPASS`, point allocation, `TRAINING`), and `CASTLE` / `SHOPS` /
+`RUNNER` / combat onward.
 
 ## Build
 

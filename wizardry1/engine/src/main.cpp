@@ -5,6 +5,7 @@
 #include "wiz/string_pool.h"
 #include "wiz/rng.h"
 #include "wiz/roller.h"
+#include "wiz/character.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -35,7 +36,9 @@ static int usage() {
         "  items    <SCENARIO.DATA> <ASCII.KRN>\n"
         "  exp      <SCENARIO.DATA>           xp-per-level table\n"
         "  str     <ASCII.KRN> <key>...       decode string pool keys\n"
-        "  strings <ASCII.KRN>               dump every string\n");
+        "  strings <ASCII.KRN>               dump every string\n"
+        "  roster  <SCENARIO.DATA>            list the roster + round-trip check
+");
     return 2;
 }
 
@@ -200,7 +203,51 @@ static int cmdRoll(int argc, char **argv) {
                 (long long)c.gold.v, c.hpMax);
     if (c.mageSpells[1])   std::printf("  knows HALITO, KATINO (2 mage casts)\n");
     if (c.priestSpells[1]) std::printf("  knows DIOS, BADIOS (2 priest casts)\n");
+
+    // encode -> a real 208-byte roster record, and read it back
+    c.name = "ROLLED";
+    c.charLevel = c.maxLevelAcquired = 1;
+    auto rec = c.write();
+    Character rt;
+    rt.read({rec.data(), rec.size()});
+    std::printf("  208-byte record: %02x %02x %02x %02x ...  round-trip %s\n",
+                rec[0], rec[1], rec[2], rec[3],
+                (rt.name == c.name && rt.cls == c.cls && rt.attrib[VIT] == c.attrib[VIT]
+                 && rt.gold.v == c.gold.v) ? "ok" : "FAIL");
     return 0;
+}
+
+static const char *kRaceShort[] = {"---", "HUM", "ELF", "DWA", "GNO", "HOB"};
+static const char *kAlignShort[] = {"-", "G", "N", "E"};
+static const char *kStatus[] = {"OK", "AFRAID", "ASLEEP", "PLYZE",
+                                "STONED", "DEAD", "ASHES", "LOST"};
+
+static int cmdRoster(const char *scn) {
+    Scenario sc;
+    if (!sc.load(readFile(scn))) return 1;
+    int mism = 0;
+    for (int i = 0; i < sc.count(Scenario::Char); ++i) {
+        Bytes rec = sc.record(Scenario::Char, i);
+        if (rec.size() < Character::kRecordBytes) continue;
+        Character c;
+        c.read(rec);
+        auto back = c.write();                          // round-trip check
+        bool same = std::memcmp(back.data(), rec.p, Character::kRecordBytes) == 0;
+        if (!same) ++mism;
+        if (c.name.empty() && c.status == Status::Lost) continue;   // empty slot
+        std::printf("[%2d] %-16s %s %-7s %s L%-2d %-6s  "
+                    "S%2d I%2d P%2d V%2d A%2d L%2d  AC%d HP %d/%d  %lldgp%s\n",
+                    i, c.name.c_str(), kRaceShort[int(c.race) & 7],
+                    kClasses[int(c.cls) & 7], kAlignShort[int(c.align) & 3],
+                    c.charLevel, kStatus[int(c.status) & 7],
+                    c.attrib[STR], c.attrib[IQ], c.attrib[PIETY],
+                    c.attrib[VIT], c.attrib[AGI], c.attrib[LUCK],
+                    c.armorClass, c.hpLeft, c.hpMax, (long long)c.gold.v,
+                    same ? "" : "  [!round-trip]");
+    }
+    std::printf("round-trip: %d/%d records re-encode identically\n",
+                sc.count(Scenario::Char) - mism, sc.count(Scenario::Char));
+    return mism ? 1 : 0;
 }
 
 int main(int argc, char **argv) {
@@ -208,6 +255,7 @@ int main(int argc, char **argv) {
     std::string cmd = argv[1];
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
+    if (cmd == "roster") return cmdRoster(argv[2]);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

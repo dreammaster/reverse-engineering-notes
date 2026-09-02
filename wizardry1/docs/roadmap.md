@@ -70,11 +70,13 @@ Decided direction (2026-09-02):
 - [x] Data layer, verified byte-identical to the Python tools:
       `wiz/ucsd_volume` (mount `.DSK`), `wiz/string_pool` (`ASCII.KRN`),
       `wiz/scenario` (TOC + record grid), `wiz/types` (`WizLong`, enums).
-- [~] `ROLLER` rules ported — `engine/wiz/rng.h` (the Apple LFSR RANDOM),
-      `engine/wiz/roller.h` (race base attrs, `classEligibility` = GTCHGLST,
-      bonus-point roll, HP/gold/age rolls, starting spells), `engine/wiz/
-      character.h`. `wiz1 roll <seed> <race> <align>` demo. Still TODO: the
-      208-byte `TCHAR` (de)serialiser + the interactive menu flow.
+- [x] `ROLLER` rules ported — `engine/wiz/rng.h`, `engine/wiz/roller.h`
+      (race base attrs, `classEligibility` = GTCHGLST, bonus/HP/gold/age
+      rolls, starting spells).
+- [x] `TCHAR` (de)serialiser — `engine/wiz/character.{h,cpp}`. Full field
+      word-offset map recovered from the ROLLER p-code; all 20 shipped
+      roster records round-trip byte-identically. `wiz1 roster` / `wiz1 roll`.
+- [ ] `ROLLER` interactive menu flow (needs the platform layer).
 - [x] RNG cross-checked against SYSTEM.INTERP — RANDOM = `UNITREAD(unit 13,
       subfn 10)` → generator at `0x221E`. Found a **shipped bug**: it mixes 4
       LCG states in BX but returns AX = `byteswap(s3) & 0x700F` (128 values,
