@@ -25,9 +25,21 @@ ScummVM engine; the standalone `wiz1` executable is the driver.
 | `wiz/roller.h` | race base attrs, class eligibility (`GTCHGLST`), bonus-point / HP / gold / age rolls, starting spells |
 | `wiz/character.{h,cpp}` | `Character` model + 208-byte `TCHAR` record reader/writer (round-trips all 20 shipped roster records byte-identically) |
 
-Not yet: the platform layer (framebuffer + input), the interactive menu
-flow (`GETPASS`, point allocation, `TRAINING`), and `CASTLE` / `SHOPS` /
-`RUNNER` / combat onward.
+**Platform layer** (`wizcore`):
+
+| module | what |
+|---|---|
+| `wiz/surface.h` | 8-bit indexed framebuffer + primitives (lines, rects, 1-bpp blit, PPM dump) |
+| `wiz/font.h` | `200/400.CHARSET` — 16×8 glyphs, `drawText` onto a Surface |
+| `wiz/platform.h` | abstract `Platform` (present / pollKey / waitKey); `NullPlatform` (headless PPM) + `SdlPlatform` (SDL2 window) |
+
+SDL2 is optional. On Windows it links against ScummVM's prebuilt libs — set
+`WIZ_SDL_DIR` (default `C:/dev/scummvm_libs_2015`); without it the build is
+headless-only.
+
+Not yet: a text-grid layer for the menus, the interactive `ROLLER` flow
+(`GETPASS`, point allocation, `TRAINING`), and `CASTLE` / `SHOPS` / `RUNNER`
+/ combat onward.
 
 ## Build
 

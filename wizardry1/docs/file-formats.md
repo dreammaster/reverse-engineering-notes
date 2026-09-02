@@ -155,8 +155,8 @@ The shipped roster is test data (`THESUS`, `NEB`, …). Creation rules in
 
 | file | size | notes |
 |---|---|---|
-| `200.CHARSET` / `400.CHARSET` | 8192 | 256 glyphs; two resolutions (200/400-line) |
-| `200.TITLE` / `400.TITLE` | 5120 | title screen bitmap |
+| `200.CHARSET` / `400.CHARSET` | 8192 | **font: 16 w × 8 h, 16 bytes/glyph (2 B/row, MSB left), 512 glyphs.** 0–255 = text (ASCII + box-draw); 256–511 = a 2nd bank (kana + graphics). `200`/`400` are the two screen modes; the bitmaps are near-identical. Rendered by `engine/wiz/font.h`. |
+| `200.TITLE` / `400.TITLE` | 5120 | title screen bitmap — geometry not yet cracked (512×80 1bpp is noise; likely RLE/LZ or 2bpp) |
 | `200.MONSTERS` | 16384 | monster portraits — draw-primitive display lists; header `00 00 04 00 05 00 0d 00 …` then nibble draw data. `.MONSTERS` file selected by `Concat2(tstr,'.MONSTERS'); FirstBlock(4,tstr)` |
 | `ASCII.KRN` | 27648 | compressed keyed string pool (see above) |
 | `HAS.CACHE` / `KANA.KEYMAP` | 512 / 1024 | share a 512-byte prefix (offset/prefix table?); `KANA.KEYMAP` feeds the `KANJIREA` segment |

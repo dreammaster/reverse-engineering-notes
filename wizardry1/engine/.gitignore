@@ -2,3 +2,6 @@ build/
 *.exe
 *.lib
 *.obj
+*.pdb
+*.ppm
+*.png

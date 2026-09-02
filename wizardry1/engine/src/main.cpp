@@ -6,6 +6,9 @@
 #include "wiz/rng.h"
 #include "wiz/roller.h"
 #include "wiz/character.h"
+#include "wiz/surface.h"
+#include "wiz/font.h"
+#include "wiz/platform.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -251,12 +254,61 @@ static int cmdRoster(const char *scn) {
     return mism ? 1 : 0;
 }
 
+static void showSurface(const Surface &s, const char *ppm) {
+    if (ppm) {                                   // explicit file -> headless
+        s.savePPM(ppm, kDefaultPalette, 16);
+        std::printf("wrote %s  (%dx%d)\n", ppm, s.width(), s.height());
+        return;
+    }
+    auto p = makeSdlPlatform("wiz1", 2);          // else open a window
+    if (!p) { std::puts("no SDL2 backend; pass an out.ppm path"); return; }
+    while (p->running()) {
+        p->present(s, kDefaultPalette, 16);
+        int k = p->waitKey();
+        if (k == KEY_QUIT || k == KEY_ESC || k == KEY_RETURN) break;
+    }
+}
+
+static int cmdShow(int argc, char **argv) {
+    if (argc < 4) { std::puts("show <font|title|glyphs> <FILE> [out.ppm]"); return 2; }
+    std::string what = argv[2];
+    auto bytes = readFile(argv[3]);
+    const char *ppm = argc > 4 ? argv[4] : nullptr;
+    if (bytes.empty()) { std::fprintf(stderr, "cannot read %s\n", argv[3]); return 1; }
+
+    if (what == "font" || what == "glyphs") {
+        Font f;
+        if (!f.load(bytes)) return 1;
+        int cols = 32, rows = (f.glyphCount() + cols - 1) / cols;
+        Surface s(cols * (Font::kW + 1) + 1, rows * (Font::kH + 1) + 1);
+        s.fill(0);
+        for (int g = 0; g < f.glyphCount(); ++g) {
+            int gx = 1 + (g % cols) * (Font::kW + 1);
+            int gy = 1 + (g / cols) * (Font::kH + 1);
+            f.drawGlyph(s, g, gx, gy, 10 /* green */);
+        }
+        std::printf("%d glyphs, %dx%d cells\n", f.glyphCount(), Font::kW, Font::kH);
+        showSurface(s, ppm);
+        return 0;
+    }
+    if (what == "title") {
+        // 200.TITLE is 5120 B; try 512x80 1bpp (512*80/8 = 5120).
+        Surface s(512, 80);
+        s.fill(0);
+        s.blit1bpp(bytes.data(), 512, 80, 0, 0, 15);
+        showSurface(s, ppm);
+        return 0;
+    }
+    return usage();
+}
+
 int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);
+    if (cmd == "show") return cmdShow(argc, argv);
     if (cmd == "files") return cmdFiles(argv[2]);
     if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
     if (cmd == "toc") return cmdToc(argv[2]);

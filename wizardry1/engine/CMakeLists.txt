@@ -10,19 +10,48 @@ else()
   add_compile_options(-Wall -Wextra)
 endif()
 
-# Core data layer -- no external dependencies, portable to a ScummVM engine.
+# Core data + platform layer -- portable to a ScummVM engine.
 add_library(wizcore STATIC
   src/ucsd_volume.cpp
   src/string_pool.cpp
   src/scenario.cpp
   src/character.cpp
+  src/surface.cpp
+  src/font.cpp
+  src/platform_null.cpp
+  src/platform_sdl.cpp
 )
 target_include_directories(wizcore PUBLIC include)
 
-# Standalone CLI harness / test driver.
+# Optional SDL2 window backend.  Uses find_package, or the ScummVM prebuilt
+# libs if WIZ_SDL_DIR points at them (e.g. C:/dev/scummvm_libs_2015).
+set(WIZ_SDL_DIR "" CACHE PATH "prebuilt SDL2 (contains include/SDL2 and lib/<arch>/Release)")
+find_package(SDL2 QUIET)
+if(NOT SDL2_FOUND AND WIZ_SDL_DIR AND EXISTS "${WIZ_SDL_DIR}/include/SDL2/SDL.h")
+  add_library(SDL2::SDL2 UNKNOWN IMPORTED)
+  file(GLOB _sdl_lib "${WIZ_SDL_DIR}/lib/x64/Release/SDL2.lib" "${WIZ_SDL_DIR}/lib/SDL2.lib")
+  set_target_properties(SDL2::SDL2 PROPERTIES
+    IMPORTED_LOCATION "${_sdl_lib}"
+    INTERFACE_INCLUDE_DIRECTORIES "${WIZ_SDL_DIR}/include/SDL2"
+    # the ScummVM prebuilt SDL2.lib is static -- pull in the Win32 libs it needs
+    INTERFACE_LINK_LIBRARIES "winmm;setupapi;imm32;version;cfgmgr32")
+  if(_sdl_lib)
+    set(SDL2_FOUND TRUE)
+  endif()
+endif()
+if(SDL2_FOUND)
+  target_link_libraries(wizcore PUBLIC SDL2::SDL2)
+  target_compile_definitions(wizcore PUBLIC WIZ_HAVE_SDL)
+  message(STATUS "wiz1: SDL2 window backend enabled")
+else()
+  message(STATUS "wiz1: no SDL2 -- headless (PPM) backend only")
+endif()
+
 add_executable(wiz1 src/main.cpp)
 target_link_libraries(wiz1 PRIVATE wizcore)
 
 enable_testing()
 add_test(NAME dump_toc
          COMMAND wiz1 toc "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
+add_test(NAME roster_roundtrip
+         COMMAND wiz1 roster "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
