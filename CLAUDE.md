@@ -2700,6 +2700,22 @@ disassembly work.
   speech cleanup logic absent — unsurprising since `ScreenOverlay.
   bgSpeechForChar` was already known structurally absent, but this is
   the first behavioral confirmation of that gap.
+- **`SetMusicVolume`/`SetMusicMasterVolume`/`SetSoundVolume` close, with
+  a real validation-range drift and a second `SOUNDCLIP` vtable
+  confirmation.** `SetMusicVolume` writes to `RoomStruct.
+  options[ST_VOLUME]` (confirmed via absolute-address arithmetic
+  landing exactly on `thisroom`'s base) — but validates `[1,5]`, not
+  2011's `[-3,5]`: the negative "quieter than room default" range is
+  confirmed absent at this API boundary. `SetMusicMasterVolume` closes
+  with zero drift, reconfirming `music_master_volume`'s `+60` formula
+  from a new write site. `SetSoundVolume` writes `GameState.
+  sound_volume`, then — if a sound effect is currently playing — calls
+  its channel's vtable slot 2 directly, a SECOND independent
+  confirmation that slot 2 is `set_volume(int)` (now confirmed across
+  two different `SOUNDCLIP` instances, not just two call sites on one).
+  DRIFT: 2011's two `Game_SetAudioTypeVolume` calls (a later audio-type
+  volume system) are absent — this build just nudges the one already-
+  playing channel directly.
 
 ## Third-party library identification (Task #10)
 

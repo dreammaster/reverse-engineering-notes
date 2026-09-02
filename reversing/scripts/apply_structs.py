@@ -3702,7 +3702,12 @@ struct GameState {
                             // (AC.CPP:1567) exactly. Sits with ZERO gap immediately after
                             // script_timers, matching 2011's exact declared adjacency
                             // "script_timers[MAX_TIMERS]; sound_volume,speech_volume;" with
-                            // zero drift.
+                            // zero drift. WRITE-side confirmed via SetSoundVolume (already
+                            // matched): "dword_4EF2A4=newvol" matches source's
+                            // "play.sound_volume=newvol;" exactly. That same function's
+                            // conditional voice-adjust call is a SECOND independent
+                            // confirmation of SOUNDCLIP's vtable slot 2 (set_volume), see
+                            // SOUNDCLIP's own struct comment.
   int speech_volume;            // +0x890, high confidence: an unmatched helper (sub_4141B8,
                             // called from _display_at, already matched) passes dword_4EF2A8 as
                             // a volume argument to WAV-then-MP3 speech-file-loading helpers in
@@ -4372,7 +4377,10 @@ struct RoomStruct {
                             // ElementSize=0xA(10), Count=1)` matches source's declared `char
                             // options[10];  // [0]=startup music` (`acroom.h:830`) in both
                             // position and exact size, sitting with zero gap immediately after
-                            // `password`.
+                            // `password`. Also a WRITE-side confirmation via SetMusicVolume
+                            // (already matched): "options[ST_VOLUME]=newvol" where ST_VOLUME=4
+                            // (Common/acroom.h:139), landing exactly on
+                            // thisroom+0x941+4=0x51FFCD with zero slack.
   char _pad_align_message[1]; // +0x94B..0x94C, compiler alignment padding (not a real field) --
                             // boxed in with zero slack by `options`'s own confirmed end and
                             // `message[]`'s own confirmed start (needs 4-byte alignment for its
@@ -5035,8 +5043,11 @@ struct SOUNDCLIP {
                             // (already matched): "speechmp3->vtbl[2](newvol)" matches 2011's
                             // "channels[SCHAN_SPEECH]->set_volume(newvol);" (AC.CPP:13458)
                             // exactly -- the first SOUNDCLIP virtual-method slot identified
-                            // in this project. Not yet cross-checked against a second call
-                            // site or other derived-class instance.
+                            // in this project. SECOND independent confirmation via
+                            // `SetSoundVolume` (already matched): the sound-effect-channel
+                            // handle's own vtbl[2](newvol) call, gated on IsSoundPlaying(),
+                            // matches the same set_volume role on a DIFFERENT SOUNDCLIP
+                            // instance -- now HIGH confidence across two derived-class objects.
 
 struct MYWAVE {
   void *vtbl;                     // +0x00, see `SOUNDCLIP.vtbl` above.

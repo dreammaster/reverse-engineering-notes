@@ -1107,7 +1107,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newvol in [1,5] -- DRIFT: 2011's own bound is [-3,5] (\"if((newvol<-3)||(newvol>5)) quit(...);\", AC.CPP:17676-17678) -- this build's range excludes the negative \"quieter than room default\" values (-3 to -1) entirely, a real, confirmable validation-range difference, not just a smaller array capacity. Writes newvol directly to byte_51FFCD, decisively confirmed as RoomStruct.options[ST_VOLUME]@(thisroom+0x941+4) via exact absolute-address arithmetic (0x51F688+0x941+4=0x51FFCD, landing exactly on thisroom's own established base plus the already-confirmed options[10] array's start plus Common/acroom.h:139's ST_VOLUME=4 index) -- a further WRITE-side confirmation of that field from a new site (previously only confirmed via fread). Then calls the already-matched update_music_volume (sub_418E82), matching 2011's own \"thisroom.options[ST_VOLUME]=newvol; update_music_volume();\" exactly in role."
   },
   {
     "kind": "function",
@@ -1117,7 +1117,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newvol in [0,100], then writes newvol+60(0x3C) directly to dword_4EF220 -- already established as GameState.music_master_volume -- exactly matching 2011's own \"play.music_master_volume=newvol+60;\" (AC.CPP:17683-17687) with zero drift on both the bound and the +60 offset formula. Then calls the already-matched update_music_volume (sub_418E82), matching source exactly. A further WRITE-side confirmation of music_master_volume from a new site."
   },
   {
     "kind": "function",
@@ -1127,7 +1127,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newvol in [0,255], writes it directly to dword_4EF2A4, decisively confirmed as GameState.sound_volume@+0x88C via absolute-address arithmetic (0x4EEA18+0x88C=0x4EF2A4, exactly GameState's own established base) -- a further WRITE-side confirmation of that field from a new site. Then, if the already-matched IsSoundPlaying() returns true, calls the already-established sound-effect-channel handle's (dword_523220) VTABLE SLOT 2 with newvol -- a SECOND independent confirmation this session that SOUNDCLIP's vtable slot 2 is set_volume(int) (first confirmed via SetSpeechVolume's own speechmp3 call last round). Finally calls the already-matched update_ambient_sound_vol (sub_4089CC) unconditionally, matching 2011's own trailing \"update_ambient_sound_vol();\" call exactly. DRIFT: 2011's own SetSoundVolume (AC.CPP:17690-17697) additionally makes TWO Game_SetAudioTypeVolume calls (a later, more general audio-type-based volume management system, AUDIOTYPE_LEGACY_AMBIENT_SOUND/AUDIOTYPE_LEGACY_SOUND) -- CONFIRMED ABSENT here; this build directly adjusts the single already-playing sound-effect channel instead, consistent with the broader single-channel-predecessor pattern already established throughout this project (e.g. PlaySound's own single-channel design)."
   },
   {
     "kind": "function",

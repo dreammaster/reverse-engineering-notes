@@ -9766,3 +9766,45 @@ only), but this is the first BEHAVIORAL confirmation of that absence,
 on top of the earlier purely-structural one: there's no field for the
 "remove any earlier background speech from this character" logic to
 even reference, so unsurprisingly it doesn't exist either.
+
+### `SetMusicVolume`/`SetMusicMasterVolume`/`SetSoundVolume`: three volume-control functions close, one genuine validation-range drift, and a second confirmation of `SOUNDCLIP`'s vtable slot 2
+
+Continuing the audio-subsystem sweep. `SetMusicVolume` writes directly
+to `byte_51FFCD`, which lands EXACTLY on
+`RoomStruct.options[ST_VOLUME]`'s computed absolute address
+(`thisroom`'s established base `0x51F688` + the already-confirmed
+`options[10]` array's own `+0x941` start + `Common/acroom.h:139`'s
+`ST_VOLUME=4` index = `0x51FFCD`, zero slack) -- a further WRITE-side
+confirmation of that field from a new site, and a genuine, confirmable
+DRIFT: this build validates `newvol` in `[1,5]`, where 2011 validates
+`[-3,5]` (`AC.CPP:17676-17678`). The negative "quieter than the room's
+own default" range (-3 to -1) simply isn't accepted here -- not a
+smaller array, a real narrower valid-input range at the script-API
+boundary.
+
+`SetMusicMasterVolume` closes with zero drift: validates `[0,100]`,
+writes `newvol+60` to the already-established
+`GameState.music_master_volume`, matching 2011's own
+`"play.music_master_volume=newvol+60;"` (`AC.CPP:17683-17687`) exactly
+on both the bound and the `+60` offset formula -- a further WRITE-side
+confirmation from a new site.
+
+`SetSoundVolume` is the richest of the three. It writes directly to
+`GameState.sound_volume`@+0x88C (a further WRITE-side confirmation,
+`0x4EEA18+0x88C=0x4EF2A4` with zero slack), and -- if the already-
+matched `IsSoundPlaying()` says a sound effect is currently active --
+immediately calls that sound-effect channel's own VTABLE SLOT 2 with
+the new volume. This is a SECOND, independent confirmation this
+session that `SOUNDCLIP`'s vtable slot 2 is `set_volume(int)` (the
+first came from `SetSpeechVolume`'s `speechmp3` handle last round) --
+now confirmed across two genuinely different derived-class object
+instances, not just two call sites on the same one. Finally it calls
+the already-matched `update_ambient_sound_vol`, matching 2011's own
+trailing call exactly. DRIFT: 2011's own `SetSoundVolume`
+(`AC.CPP:17690-17697`) additionally makes two `Game_SetAudioTypeVolume`
+calls -- a later, more general audio-type-based volume-management
+system (`AUDIOTYPE_LEGACY_AMBIENT_SOUND`/`AUDIOTYPE_LEGACY_SOUND`) --
+CONFIRMED ABSENT here; this build directly nudges the one already-
+playing sound-effect channel instead, the same single-channel-
+predecessor shape already seen throughout this project's audio work
+(`PlaySound`'s own design being the clearest earlier precedent).
