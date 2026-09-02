@@ -65,8 +65,14 @@ Decided direction (2026-09-02):
 
 ## Phase 3 — standalone C++ engine
 
-- [ ] `engine/` subfolder: VFS over `.DSK`, framebuffer + input platform layer,
-      no ScummVM dependency.
+- [x] `engine/` skeleton: CMake, `wizcore` static lib (no deps) + `wiz1` CLI.
+      Builds with MSVC (`engine/build.ps1`).
+- [x] Data layer, verified byte-identical to the Python tools:
+      `wiz/ucsd_volume` (mount `.DSK`), `wiz/string_pool` (`ASCII.KRN`),
+      `wiz/scenario` (TOC + record grid), `wiz/types` (`WizLong`, enums).
+- [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) filled in
+      per the +289 layout; maze bit-packing validated vs a known map.
+- [ ] Platform layer: framebuffer + input abstraction (SDL now, `OSystem` later).
 - [ ] Port in gameplay order: `ROLLER` → `CASTLE`/`SHOPS` → `RUNNER` (maze + 3D
       view) → `COMBAT` family → `REWARDS` → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.

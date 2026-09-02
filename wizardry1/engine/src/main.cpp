@@ -1,0 +1,154 @@
+// Standalone CLI harness for the Wizardry data layer -- mirrors the Python
+// tools so its output can be diffed against them.  Not the game yet.
+#include "wiz/ucsd_volume.h"
+#include "wiz/scenario.h"
+#include "wiz/string_pool.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <string>
+
+using namespace wiz;
+
+static std::vector<u8> readFile(const char *path) {
+    FILE *f = std::fopen(path, "rb");
+    if (!f) return {};
+    std::fseek(f, 0, SEEK_END);
+    long n = std::ftell(f);
+    std::fseek(f, 0, SEEK_SET);
+    std::vector<u8> v(size_t(n < 0 ? 0 : n));
+    if (!v.empty() && std::fread(v.data(), 1, v.size(), f) != v.size()) v.clear();
+    std::fclose(f);
+    return v;
+}
+
+static int usage() {
+    std::puts(
+        "wiz1 <command> <args>\n"
+        "  files   <WIZ1.DSK>                 list the p-System volume\n"
+        "  extract <WIZ1.DSK> <NAME> <out>    write one file out\n"
+        "  toc     <SCENARIO.DATA>            scenario table of contents\n"
+        "  monsters <SCENARIO.DATA> <ASCII.KRN>\n"
+        "  items    <SCENARIO.DATA> <ASCII.KRN>\n"
+        "  exp      <SCENARIO.DATA>           xp-per-level table\n"
+        "  str     <ASCII.KRN> <key>...       decode string pool keys\n"
+        "  strings <ASCII.KRN>               dump every string\n");
+    return 2;
+}
+
+static int cmdFiles(const char *dsk) {
+    UcsdVolume v;
+    if (!v.load(dsk)) { std::fprintf(stderr, "cannot load %s\n", dsk); return 1; }
+    std::printf("volume %s  (%zu blocks)\n\n", v.volumeName().c_str(), v.totalBlocks());
+    for (const auto &e : v.entries())
+        std::printf("  %2d  %-16s  kind=%d  blocks %u..%u  %zu bytes\n",
+                    e.index, e.name.c_str(), int(e.kind), e.firstBlock,
+                    e.lastBlock - 1, e.size());
+    return 0;
+}
+
+static int cmdExtract(const char *dsk, const char *name, const char *out) {
+    UcsdVolume v;
+    if (!v.load(dsk)) return 1;
+    const auto *e = v.find(name);
+    if (!e) { std::fprintf(stderr, "not found: %s\n", name); return 1; }
+    auto bytes = v.fileBytes(*e);
+    FILE *f = std::fopen(out, "wb");
+    if (!f) return 1;
+    std::fwrite(bytes.data(), 1, bytes.size(), f);
+    std::fclose(f);
+    std::printf("wrote %s  (%zu bytes)\n", out, bytes.size());
+    return 0;
+}
+
+static int cmdToc(const char *path) {
+    Scenario sc;
+    if (!sc.load(readFile(path))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    std::printf("game: %s\n\n", sc.gameName().c_str());
+    std::printf("  %-8s %6s %8s\n", "type", "count", "recsize");
+    for (int t = Scenario::Maze; t < Scenario::TypeCount; ++t)
+        std::printf("  %-8s %6d %8d\n", Scenario::typeName(Scenario::Type(t)),
+                    sc.count(Scenario::Type(t)), sc.recSize(Scenario::Type(t)));
+    std::printf("\n  races  :");
+    for (auto &s : sc.races()) std::printf(" %s", s.c_str());
+    std::printf("\n  classes:");
+    for (auto &s : sc.classes()) std::printf(" %s", s.c_str());
+    std::printf("\n");
+    return 0;
+}
+
+static int cmdMonsters(const char *scn, const char *krn, bool items) {
+    Scenario sc;
+    StringPool sp;
+    if (!sc.load(readFile(scn)) || !sp.load(readFile(krn))) return 1;
+    auto type = items ? Scenario::Object : Scenario::Monster;
+    for (int i = 0; i < sc.count(type); ++i) {
+        int key = items ? StringPool::objectNameKey(i) : StringPool::monsterNameKey(i);
+        std::printf("  [%3d] %s\n", i, sp.get(key).c_str());
+    }
+    return 0;
+}
+
+static int cmdExp(const char *scn) {
+    Scenario sc;
+    if (!sc.load(readFile(scn))) return 1;
+    Bytes b = sc.record(Scenario::Exp, 0);
+    if (b.empty()) return 1;
+    ExpTable xp{b};
+    static const char *cn[] = {"FIG", "MAG", "PRI", "THI", "BIS", "SAM", "LOR", "NIN"};
+    std::printf("        L1     L2     L3     L4     L5\n");
+    for (int c = 0; c < 8; ++c) {
+        std::printf("  %s", cn[c]);
+        for (int l = 1; l <= 5; ++l)
+            std::printf(" %6lld", (long long)xp.threshold(c, l).value());
+        std::printf("\n");
+    }
+    return 0;
+}
+
+static int cmdStr(int argc, char **argv) {
+    StringPool sp;
+    if (!sp.load(readFile(argv[2]))) return 1;
+    for (int i = 3; i < argc; ++i) {
+        int k = std::atoi(argv[i]);
+        bool ok;
+        std::string s = sp.get(k, &ok);
+        std::printf("[%d] %s%s\n", k, s.c_str(), ok ? "" : "  <no key>");
+    }
+    return 0;
+}
+
+static std::string escape(const std::string &s) {   // match tools/strpool.py
+    std::string o;
+    for (unsigned char c : s) {
+        if (c >= 32 && c < 127) o.push_back(char(c));
+        else { char b[5]; std::snprintf(b, sizeof b, "\\x%02x", c); o += b; }
+    }
+    return o;
+}
+
+static int cmdStrings(const char *krn) {
+    StringPool sp;
+    if (!sp.load(readFile(krn))) return 1;
+    for (int k = sp.keyLo(); k <= sp.keyHi(); ++k) {
+        bool ok;
+        std::string s = sp.get(k, &ok);
+        if (ok) std::printf("%5d  %s\n", k, escape(s).c_str());
+    }
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    if (argc < 3) return usage();
+    std::string cmd = argv[1];
+    if (cmd == "files") return cmdFiles(argv[2]);
+    if (cmd == "extract" && argc == 5) return cmdExtract(argv[2], argv[3], argv[4]);
+    if (cmd == "toc") return cmdToc(argv[2]);
+    if (cmd == "monsters" && argc == 4) return cmdMonsters(argv[2], argv[3], false);
+    if (cmd == "items" && argc == 4) return cmdMonsters(argv[2], argv[3], true);
+    if (cmd == "exp") return cmdExp(argv[2]);
+    if (cmd == "str" && argc >= 4) return cmdStr(argc, argv);
+    if (cmd == "strings") return cmdStrings(argv[2]);
+    return usage();
+}
