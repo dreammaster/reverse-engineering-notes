@@ -1,6 +1,7 @@
 #include "wiz/town_ui.h"
 #include "wiz/scenario.h"
 #include "wiz/roster.h"
+#include "wiz/string_pool.h"
 #include "wiz/inn.h"
 
 #include <cstdio>
@@ -29,15 +30,29 @@ struct TownCtx {
     Ui &ui;
     Party &party;
     Roster &roster;
+    Shop &shop;
     const Scenario &sc;
+    const StringPool *sp;
     Rng &rng;
     const std::string &rosterPath;
     const std::string &partyPath;
+    const std::string &shopPath;
 
     TextScreen &ts() { return ui.ts(); }
     void save() {
         if (!rosterPath.empty()) roster.save(rosterPath);
         if (!partyPath.empty()) party.save(partyPath);
+        if (!shopPath.empty()) shop.save(shopPath);
+    }
+
+    // objectNameKey(idx, field): field 1 = identified, 0 = unidentified.
+    std::string itemName(int idx, bool identified) const {
+        if (sp) {
+            bool ok = false;
+            std::string s = sp->get(StringPool::objectNameKey(idx, identified ? 1 : 0), &ok);
+            if (ok && !s.empty()) return s;
+        }
+        return "ITEM " + std::to_string(idx);
     }
 };
 
@@ -364,12 +379,253 @@ void advntInn(TownCtx &c) {
     }
 }
 
+// ---- Boltac's Trading Post (BOLTAC P01020A) -----------------------------
+
+enum ShopAction { SA_SELL = 0, SA_UNCURSE = 1, SA_IDENTIFY = 2 };
+
+// AASTRAA / CENTSTR: a centred one-liner in the menu area, then a key.
+void aastraa(TownCtx &c, const std::string &msg) {
+    auto &t = c.ts();
+    t.setWindow(0, 13, 40, 11);
+    t.putChar(11);
+    t.writeCentered(msg, 4);
+    t.resetWindow();
+    t.gotoXY(0, 23);
+    c.ui.pressAnyKey();
+}
+
+// Fill objList[0..5] with the next / previous 6 shelvable object indices,
+// wrapping 1..count-1 and skipping anything not on the shelf (SCROLPOS/NEG).
+bool scrollPage(TownCtx &c, int objList[6], bool forward) {
+    int rec = c.sc.count(Scenario::Object);
+    int onShelf = 0;
+    for (int i = 1; i < rec; ++i) if (c.shop.onShelf(c.sc, i)) ++onShelf;
+    if (onShelf == 0) return false;
+
+    if (forward) {
+        int inv = objList[5] - 1;
+        for (int x = 0; x < 6; ++x) {
+            do { if (++inv >= rec) inv = 1; } while (!c.shop.onShelf(c.sc, inv));
+            objList[x] = inv;
+        }
+    } else {
+        int inv = objList[0] + 1;
+        for (int x = 5; x >= 0; --x) {
+            do { if (--inv < 1) inv = rec - 1; } while (!c.shop.onShelf(c.sc, inv));
+            objList[x] = inv;
+        }
+    }
+    return true;
+}
+
+void drawShopPage(TownCtx &c, const int objList[6], const Character &ch) {
+    auto &t = c.ts();
+    for (int x = 0; x < 6; ++x) {
+        int obj = objList[x];
+        ObjectRec o{c.sc.record(Scenario::Object, obj)};
+        t.gotoXY(0, 13 + x + 1);
+        t.putChar(29);
+        char b[64];
+        std::snprintf(b, sizeof b, "%d)%-15s %lld", x + 1,
+                      c.itemName(obj, true).substr(0, 15).c_str(),
+                      (long long)o.price().value());
+        t.write(b);
+        if (!o.classUse(int(ch.cls))) t.write(" UNUSABLE");
+    }
+}
+
+// PURCHASE (P01020F).
+void purchase(TownCtx &c, int objList[6], int charIdx) {
+    auto &t = c.ts();
+    Character &ch = c.party.member(charIdx);
+    int buyX;
+    for (;;) {
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 21); t.putChar(11);
+        t.write("PURCHASE WHICH ITEM ([RETURN] EXITS) ? >");
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) return;
+        buyX = k - '1';
+        if (buyX >= 0 && buyX < 6) break;
+    }
+    int obj = objList[buyX];
+    ObjectRec o{c.sc.record(Scenario::Object, obj)};
+
+    if (c.shop.stock(obj) == 0)       { aastraa(c, "** YOU BOUGHT THE LAST ONE **"); return; }
+    if (ch.possCount == 8)            { aastraa(c, "** YOU CANT CARRY ANYTHING MORE **"); return; }
+    if (ch.gold.v < o.price().value()){ aastraa(c, "** YOU CANNOT AFFORD IT **"); return; }
+
+    bool confirmedUnusable = false;
+    if (!o.classUse(int(ch.cls))) {
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 22); t.putChar(11);
+        t.write("UNUSABLE ITEM - CONFIRM BUY (Y/N) ? >");
+        int k = c.ui.menu("YN");
+        if (c.ui.quit() || k == 'N') { aastraa(c, "** WE ALL MAKE MISTAKES **"); return; }
+        confirmedUnusable = true;
+    }
+
+    ch.gold.v -= o.price().value();
+    ch.poss[ch.possCount] = Possession{false, false, true, obj};
+    ch.possCount += 1;
+    int n = c.shop.stock(obj);
+    if (n > 0) c.shop.setStock(obj, n - 1);
+    c.save();
+    aastraa(c, confirmedUnusable ? "** ITS YOUR MONEY **" : "** JUST WHAT YOU NEEDED **");
+}
+
+// DOBUY (P01020C).
+void doBuy(TownCtx &c, int charIdx) {
+    auto &t = c.ts();
+    const Character &ch = c.party.member(charIdx);
+    int objList[6] = {1, 0, 0, 0, 0, 1};
+    bool reScroll = true, forward = true;
+
+    for (;;) {
+        if (reScroll) {
+            if (!scrollPage(c, objList, forward)) { aastraa(c, "** BOLTAC HAS NOTHING TO SELL **"); return; }
+        }
+        reScroll = true;
+        forward = true;
+
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 13); t.putChar(11);
+        drawShopPage(c, objList, ch);
+        t.gotoXY(0, 20); t.putChar(11);
+        char b[48];
+        std::snprintf(b, sizeof b, "YOU HAVE %lld GOLD", (long long)ch.gold.v);
+        t.writeln(b);
+        t.writeln("YOU MAY P)URCHASE, SCROLL");
+        t.writeln("        F)ORWARD OR B)ACK, GO TO THE");
+        t.write("        S)TART, OR L)EAVE");
+
+        int k = c.ui.menu("PFBSL");
+        if (c.ui.quit() || k == 'L') return;
+        if (k == 'P') { purchase(c, objList, charIdx); reScroll = false; }
+        else if (k == 'S') { objList[5] = 1; }
+        else if (k == 'B') { forward = false; }
+        // 'F' -> reScroll stays true, forward stays true
+    }
+}
+
+// LISTPOSS (P010212): the character's carried items with Boltac's prices.
+void listPoss(TownCtx &c, int charIdx, int action) {
+    auto &t = c.ts();
+    const Character &ch = c.party.member(charIdx);
+    t.setWindow(0, 0, 40, 24);
+    t.gotoXY(0, 13); t.putChar(11);
+    for (int i = 0; i < ch.possCount; ++i) {
+        const Possession &p = ch.poss[i];
+        ObjectRec o{c.sc.record(Scenario::Object, p.itemIndex)};
+        int64_t price = o.price().value() / 2;
+        if (action == SA_SELL && !p.identified) price = 1;
+        char b[64];
+        std::snprintf(b, sizeof b, "%d)%-15s %lld", i + 1,
+                      c.itemName(p.itemIndex, p.identified).substr(0, 15).c_str(),
+                      (long long)price);
+        t.gotoXY(0, 13 + i); t.write(b);
+    }
+}
+
+// TRANSACT (P010213).
+void transact(TownCtx &c, int charIdx, int x, int action) {
+    Character &ch = c.party.member(charIdx);
+    Possession &p = ch.poss[x];
+    int obj = p.itemIndex;
+    ObjectRec o{c.sc.record(Scenario::Object, obj)};
+    int64_t price = o.price().value() / 2;
+
+    if (action == SA_SELL) {
+        if (!p.identified) price = 1;
+        if (p.cursed) { aastraa(c, "** WE DONT BUY CURSED ITEMS **"); return; }
+    } else {
+        if (!p.cursed && action == SA_UNCURSE) { aastraa(c, "** THAT IS NOT A CURSED ITEM **"); return; }
+        if (p.identified && action == SA_IDENTIFY) { aastraa(c, "** THAT HAS BEEN IDENTIFIED **"); return; }
+        if (ch.gold.v < price) { aastraa(c, "** YOU CANT AFFORD THE FEE **"); return; }
+    }
+
+    if (action == SA_SELL) ch.gold.v += price;
+    else                   ch.gold.v -= price;
+
+    if (action == SA_IDENTIFY) {
+        p.identified = true;
+    } else {                                   // SELL or UNCURSE: lose the item
+        for (int j = x + 1; j < ch.possCount; ++j) ch.poss[j - 1] = ch.poss[j];
+        ch.possCount -= 1;
+        if (action == SA_SELL) {
+            int n = c.shop.stock(obj);
+            if (n > -1) c.shop.setStock(obj, n + 1);
+        }
+    }
+    c.save();
+    aastraa(c, "** ANYTHING ELSE, SIRE? **");
+}
+
+// SELLIDUN (P010211).
+void sellIdun(TownCtx &c, int charIdx, int action) {
+    auto &t = c.ts();
+    const Character &ch = c.party.member(charIdx);
+    for (;;) {
+        listPoss(c, charIdx, action);
+        if (ch.possCount == 0) return;
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 22); t.putChar(11);
+        t.write(action == SA_SELL    ? "WHICH DO YOU WISH TO SELL ? >"
+              : action == SA_UNCURSE ? "WHICH DO YOU WISH UNCURSED ? >"
+                                     : "WHICH DO YOU WISH IDENTIFIED ? >");
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) return;
+        int x = k - '1';
+        if (x >= 0 && x < ch.possCount) transact(c, charIdx, x, action);
+    }
+}
+
+// DOPLAYER (P01020B).
+void doPlayer(TownCtx &c, int charIdx) {
+    auto &t = c.ts();
+    const Character &ch = c.party.member(charIdx);
+    for (;;) {
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 13); t.putChar(11);
+        char b[48];
+        std::snprintf(b, sizeof b, "      WELCOME %s", ch.name.c_str());
+        t.writeln(b);
+        std::snprintf(b, sizeof b, "     YOU HAVE %lld GOLD", (long long)ch.gold.v);
+        t.writeln(b);
+        t.writeln("");
+        t.writeln("YOU MAY B)UY  AN ITEM,");
+        t.writeln("        S)ELL AN ITEM, HAVE AN ITEM");
+        t.writeln("        U)NCURSED,  OR HAVE AN ITEM");
+        t.write("        I)DENTIFIED, OR L)EAVE");
+        int k = c.ui.menu("BSUIL");
+        if (c.ui.quit() || k == 'L') return;
+        if (k == 'B') doBuy(c, charIdx);
+        else if (k == 'S') sellIdun(c, charIdx, SA_SELL);
+        else if (k == 'U') sellIdun(c, charIdx, SA_UNCURSE);
+        else if (k == 'I') sellIdun(c, charIdx, SA_IDENTIFY);
+    }
+}
+
+// BOLTAC (P01020A).
+void boltac(TownCtx &c) {
+    for (;;) {
+        dspParty(c, "SHOP");
+        dspTitle(c, "SHOP");
+        auto &t = c.ts();
+        t.setWindow(0, 0, 40, 24);
+        t.gotoXY(0, 13); t.putChar(11);
+        t.writeln("       WELCOME TO THE TRADING POST");
+        int charIdx = getCharX(c, false, "WHO WILL ENTER");
+        if (c.ui.quit() || charIdx < 0) return;
+        doPlayer(c, charIdx);
+    }
+}
+
 } // namespace
 
-TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
-                 Rng &rng, const std::string &rosterPath,
-                 const std::string &partyPath) {
-    TownCtx c{ui, party, roster, sc, rng, rosterPath, partyPath};
+TownExit runTown(Ui &ui, TownWorld &w) {
+    TownCtx c{ui, w.party, w.roster, w.shop, w.sc, w.sp, w.rng,
+              w.rosterPath, w.partyPath, w.shopPath};
 
     for (;;) {
         dspParty(c, "MARKET");
@@ -381,7 +637,7 @@ TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
             if (ui.quit()) return TownExit::WindowClosed;
             bool valid = k == 'A' || k == 'G' || k == 'B' || k == 'C' || k == 'E';
             if (!valid) continue;
-            if (party.count() > 0 || k == 'E' || k == 'G') break;
+            if (c.party.count() > 0 || k == 'E' || k == 'G') break;
         }
 
         if (k == 'G') {
@@ -389,7 +645,7 @@ TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
         } else if (k == 'A') {
             advntInn(c);
         } else if (k == 'B') {
-            notice(c, "BOLTAC'S IS NOT YET OPEN");
+            boltac(c);
         } else if (k == 'C') {
             notice(c, "THE TEMPLE IS NOT YET OPEN");
         } else if (k == 'E') {

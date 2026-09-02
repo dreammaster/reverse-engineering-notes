@@ -23,6 +23,7 @@ add_library(wizcore STATIC
   src/roster.cpp
   src/roller_ui.cpp
   src/party.cpp
+  src/shop.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -79,3 +80,14 @@ add_test(NAME inn_levelup
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA")
 set_tests_properties(inn_levelup PROPERTIES
     PASS_REGULAR_EXPRESSION "rested 3 week.*(.|\n)*YOU MADE A LEVEL(.|\n)*after:  L2")
+add_test(NAME shop_buy_sell
+         COMMAND wiz1 town-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "GATHESUS\\r\\r\\rB1BP1\\rP2\\rLS1\\r\\rL\\rEM"
+                 ""
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# buy #1 (25 gp) + #2 (15 gp), sell #1 back unidentified-safe (identified: 12 gp):
+# 185 - 25 - 15 + 12 = 157, keeping item #2.
+set_tests_properties(shop_buy_sell PROPERTIES
+    PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*157gp poss: #2")

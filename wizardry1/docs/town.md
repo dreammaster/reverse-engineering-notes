@@ -159,10 +159,42 @@ Menu depends on `PARTYCNT`:
 * `L` → `XGOTO:=XDONE` + `UPDCHARS`.
 * `C` → `XGOTO:=XCASTLE`.
 
-### Boltac's Trading Post — `BOLTAC` `P01020A`  *(not yet ported)*
+### Boltac's Trading Post — `BOLTAC` `P01020A`  (ported: `engine/wiz/shop.h`)
 
-Buy / sell / uncurse / identify / pool gold. Item stock and prices from the
-`ZOBJECT` records (`BOLTACXX` = shop stock count / −1 = unlimited).
+DOS `SHOPS` proc 14. `HALFPRIC = 2`. `GETCHARX(FALSE,'WHO WILL ENTER')` →
+`DOPLAYER` (proc 15): `B)UY` / `S)ELL` / `U)NCURSED` / `I)DENTIFIED` / `L)EAVE`.
+
+**`DOBUY`** (proc 16): a 6-item window over the `ZOBJECT` records
+(`SCROLPOS`/`SCROLNEG`, procs 18/19, via the item-advance helper proc 17):
+walk indices `1..count-1` (record 0 is skipped), wrapping, showing only items
+with `BOLTACXX != 0` (DOS also guards `> -2`) and not `CURSED`.  Each line:
+`N)<name:15> <list price>` + ` UNUSABLE` if `not CLASSUSE[class]`.  Menu:
+`P)URCHASE`, `F)ORWARD`, `B)ACK`, `S)TART`, `L)EAVE`.
+
+**`PURCHASE`** (proc 20): pick `1..6`.  Refuse (centred `** … **`, then key)
+if `BOLTACXX = 0` (`YOU BOUGHT THE LAST ONE`), `POSSCNT = 8`
+(`YOU CANT CARRY ANYTHING MORE`), or `GOLD < PRICE` (`YOU CANNOT AFFORD IT`).
+`not CLASSUSE` → confirm `Y/N`.  On buy: `GOLD -= PRICE`; append
+`{EQUIPED:F, CURSED:F, IDENTIF:T, EQINDEX:obj}`; `POSSCNT++`; if
+`BOLTACXX > 0` then `BOLTACXX--`.
+
+**`SELLIDUN(action)`** (proc 23) + **`TRANSACT`** (proc 19 in Apple / a DOS
+sub): `LISTPOSS` shows the character's items priced at `PRICE / 2`
+(unidentified sells for **1 gp**).
+* SELL: refuse cursed items; else `GOLD += price`, remove the item, and if
+  `BOLTACXX > -1` return one to stock.
+* UNCURSE: refuse non-cursed; else `GOLD -= price` and **destroy** the item.
+* IDENTIFY: refuse already-identified; else `GOLD -= price`, set `IDENTIF`.
+
+**`TOBJREC`** (DOS, 46 B / 23 words — Apple's minus the two dropped
+`STRING[15]` names; verified vs DOS `SHOPS` 17/20): word 0 `OBJTYPE`,
+1 `ALIGN`, 2 `CURSED`, 3 `SPECIAL`, 4 `CHANGETO`, 5 `CHGCHANC`,
+6-8 `PRICE`, 9 `BOLTACXX`, 10 `SPELLPWR`, 11 `CLASSUSE` (bit = class),
+12 `HEALPTS`, 13-14 `WEPVSTY2/3`, 15 `ARMORMOD`, 16 `WEPHITMD`,
+17-19 `WEPHPDAM`, 20 `XTRASWNG`, 21 `CRITHITM`, 22 `WEPVSTYP`.  Item names:
+`objectNameKey(idx, 0)` = unidentified, `(idx, 1)` = identified.  Standalone
+engine keeps the mutable stock counts in `shop.dat` (not the user's
+`SCENARIO.DATA`).
 
 ### Temple of Cant — `CANT` `P010202`  *(not yet ported)*
 
@@ -176,12 +208,16 @@ by the patient's level; failed resurrection worsens DEAD→ASHES→LOST.
   and the `Roster`; `align()` = `GETALIGN`.
 * `engine/wiz/inn.h` — the Adventurer's Inn rules (pure): `setSpells`,
   `moreHp`, `tryLearn`, `gainLost`, `checkNewLevel`/`madeLevel`, `kRooms`.
-* `engine/wiz/town_ui.{h,cpp}` — `runTown(...)`: the CASTLE hub, Gilgamesh's
-  Tavern (add/remove/see), the Adventurer's Inn (`advntInn`/`takeNap`), and
-  the Edge of Town. Boltac / Temple are stubs that return to the hub. Returns
-  a `TownExit` telling `main` where to go next (`Roller`, `Maze`, `LeaveGame`,
-  `WindowClosed`).
-* `wiz1 town <CHARSET> <SCENARIO.DATA> [TITLE] [roster.dat] [party.dat]` —
-  SDL; `wiz1 town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir]` —
-  headless, drives one trip through the town; `wiz1 inn-test <SCENARIO.DATA>`
-  — deterministic level-up check.
+* `engine/wiz/shop.h` + `shop.cpp` — `Shop` (per-object `BOLTACXX` stock,
+  seeded from the scenario, persisted to `shop.dat`), `sellValue`/`serviceFee`;
+  `ObjectRec` in `scenario.h` decodes the rest of `TOBJREC`.
+* `engine/wiz/town_ui.{h,cpp}` — `runTown(Ui&, TownWorld&)`: the CASTLE hub,
+  Gilgamesh's Tavern, the Adventurer's Inn, Boltac's Trading Post
+  (`boltac`/`doPlayer`/`doBuy`/`purchase`/`sellIdun`/`transact`), and the Edge
+  of Town.  The Temple of Cant is a stub.  Returns a `TownExit` (`Roller`,
+  `Maze`, `LeaveGame`, `WindowClosed`).  `TownWorld` bundles the party /
+  roster / shop / scenario / string pool / rng + save paths.
+* `wiz1 town <CHARSET> <SCENARIO.DATA> [TITLE] [ASCII.KRN] [roster.dat]
+  [party.dat] [shop.dat]` — SDL; `wiz1 town-test <CHARSET> <SCENARIO.DATA>
+  <keyscript> [dumpdir] [ASCII.KRN]` — headless; `wiz1 inn-test
+  <SCENARIO.DATA>` — deterministic level-up check.

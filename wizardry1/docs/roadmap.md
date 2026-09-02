@@ -110,11 +110,13 @@ Decided direction (2026-09-02):
       Tavern (add / remove / see a member, alignment + password gates), the
       **Adventurer's Inn** (rest / heal / age / spell-refill / level-up chain:
       `CHNEWLEV`/`MADELEV`/`MOREHP`/`TRYLEARN`/`GAINLOST` — `engine/wiz/inn.h`),
-      and the Edge of Town (maze / training / castle / leave).
+      **Boltac's Trading Post** (buy / sell / uncurse / identify; per-object
+      stock in `shop.dat`; `TOBJREC` decoded — `engine/wiz/shop.h`), and the
+      Edge of Town (maze / training / castle / leave).
       `engine/wiz/party.{h,cpp}` (`Party` = 6 slots + roster indices +
-      `GETALIGN`), `engine/wiz/town_ui.{h,cpp}` (`runTown` → `TownExit`).
-      `wiz1 town` (SDL) / `wiz1 town-test` + `wiz1 inn-test` (headless, CMake
-      tests). TODO: Boltac's Trading Post, Temple of Cant.
+      `GETALIGN`), `engine/wiz/town_ui.{h,cpp}` (`runTown(Ui&, TownWorld&)` →
+      `TownExit`). `wiz1 town` (SDL) / `wiz1 town-test` + `wiz1 inn-test`
+      (headless, CMake tests). TODO: Temple of Cant.
 - [ ] Continue: `RUNNER` (maze + 3D view) → `COMBAT` family → `REWARDS`
       → `SPECIALS` → save/restore.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.

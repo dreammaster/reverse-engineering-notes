@@ -1,15 +1,18 @@
 // The Castle and its establishments -- the "town".
 //
-// Ports the menu flow of CASTLE (P010A01) and the Edge of Town (EDGETOWN,
-// P01021A in SHOPS); see docs/town.md.  The Adventurer's Inn, Boltac's
-// Trading Post and the Temple of Cant are stubbed for now.
+// Ports the menu flow of CASTLE (P010A01) and SHOPS (P010201); see
+// docs/town.md.  Ported: the Castle hub, Gilgamesh's Tavern, the Adventurer's
+// Inn, Boltac's Trading Post, and the Edge of Town.  The Temple of Cant is
+// still a stub.
 #pragma once
 #include "wiz/roller_ui.h"          // Ui
 #include "wiz/party.h"
+#include "wiz/shop.h"
 
 namespace wiz {
 
 class Scenario;
+class StringPool;
 
 // Where the town hands control next (the WIZARDRY-mainline XGOTO, trimmed to
 // what the standalone engine currently reaches).
@@ -20,11 +23,18 @@ enum class TownExit {
     WindowClosed,    // the SDL window was closed
 };
 
-// Run the Castle hub until the player leaves via the Edge of Town.  `roster`
-// and `party` are persisted to their paths on every change (empty path =
-// no autosave).
-TownExit runTown(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
-                 Rng &rng, const std::string &rosterPath,
-                 const std::string &partyPath);
+// The persistent state the town reads and writes.  Empty paths = no autosave.
+struct TownWorld {
+    Party &party;
+    Roster &roster;
+    Shop &shop;
+    const Scenario &sc;
+    const StringPool *sp = nullptr;     // item names; null -> "ITEM n"
+    Rng &rng;
+    std::string rosterPath, partyPath, shopPath;
+};
+
+// Run the Castle hub until the player leaves via the Edge of Town.
+TownExit runTown(Ui &ui, TownWorld &world);
 
 } // namespace wiz

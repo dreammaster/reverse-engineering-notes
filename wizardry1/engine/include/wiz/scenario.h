@@ -48,9 +48,24 @@ struct MonsterRec {
     // name comes from the string pool: StringPool::monsterNameKey(index)
 };
 
+// TOBJREC -- 46 bytes / 23 words.  The DOS record drops Apple's two STRING[15]
+// name fields (they live in ASCII.KRN: objectNameKey(idx, 0)=unidentified,
+// objectNameKey(idx, 1)=identified), so every offset is Apple's minus 16.
+// Verified against DOS SHOPS procs 17/20 (BOLTAC).
 struct ObjectRec {
     Bytes b;
-    ObjType type() const { return ObjType(rd16(b, 0) & 0xFF); }
+    u16  w(int i) const   { return rd16(b.p + i * 2); }
+    ObjType type() const  { return ObjType(w(0) & 0xFF); }         // word 0
+    Align align() const   { return Align(w(1) & 0xFF); }           // word 1
+    bool cursed() const   { return w(2) != 0; }                    // word 2
+    int  special() const  { return i16(w(3)); }                    // word 3
+    int  changeTo() const { return i16(w(4)); }                    // word 4
+    int  chgChance() const{ return i16(w(5)); }                    // word 5
+    WizLong price() const { return WizLong::read(b.p + 6 * 2); }   // words 6-8
+    int  boltacXX() const { return i16(w(9)); }                    // word 9  (-1 = unlimited)
+    int  spellPwr() const { return i16(w(10)); }                   // word 10
+    bool classUse(int cls) const { return (w(11) >> (cls & 15)) & 1; }  // word 11
+    int  healPts() const  { return i16(w(12)); }                   // word 12
 };
 
 // TEXP = ARRAY[Fighter..Ninja] OF ARRAY[0..12] OF TWIZLONG

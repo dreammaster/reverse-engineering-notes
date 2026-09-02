@@ -14,6 +14,7 @@
 #include "wiz/roster.h"
 #include "wiz/roller_ui.h"
 #include "wiz/party.h"
+#include "wiz/shop.h"
 #include "wiz/town_ui.h"
 #include "wiz/inn.h"
 
@@ -424,17 +425,15 @@ static int cmdRollerTest(int argc, char **argv) {
 // ---- the town ------------------------------------------------------------
 
 // Drive the roller <-> town loop until the player leaves the game.
-static void playTownLoop(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
-                         Rng &rng, const std::string &rosterPath,
-                         const std::string &partyPath, bool startInTown) {
+static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
     bool inTown = startInTown;
     for (;;) {
         if (!inTown) {
-            runRoller(ui, roster, sc, rng, rosterPath);
+            runRoller(ui, world.roster, world.sc, world.rng, world.rosterPath);
             if (ui.quit()) return;
             inTown = true;
         }
-        TownExit e = runTown(ui, party, roster, sc, rng, rosterPath, partyPath);
+        TownExit e = runTown(ui, world);
         if (e == TownExit::WindowClosed || e == TownExit::LeaveGame) return;
         if (e == TownExit::ToRoller) inTown = false;
         else if (e == TownExit::ToMaze) {
@@ -449,7 +448,8 @@ static void playTownLoop(Ui &ui, Party &party, Roster &roster, const Scenario &s
 
 static int cmdTown(int argc, char **argv) {
     if (argc < 4) {
-        std::puts("town <CHARSET> <SCENARIO.DATA> [TITLE] [roster.dat] [party.dat]");
+        std::puts("town <CHARSET> <SCENARIO.DATA> [TITLE] [ASCII.KRN] "
+                  "[roster.dat] [party.dat] [shop.dat]");
         return 2;
     }
     Font font;
@@ -457,8 +457,11 @@ static int cmdTown(int argc, char **argv) {
     Scenario sc;
     if (!sc.load(readFile(argv[3]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
     auto title = argc > 4 ? readFile(argv[4]) : std::vector<u8>{};
-    std::string rosterPath = argc > 5 ? argv[5] : "roster.dat";
-    std::string partyPath  = argc > 6 ? argv[6] : "party.dat";
+    StringPool sp;
+    bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
+    std::string rosterPath = argc > 6 ? argv[6] : "roster.dat";
+    std::string partyPath  = argc > 7 ? argv[7] : "party.dat";
+    std::string shopPath   = argc > 8 ? argv[8] : "shop.dat";
 
     Roster roster;
     if (!roster.load(rosterPath)) {
@@ -467,6 +470,8 @@ static int cmdTown(int argc, char **argv) {
     }
     Party party;
     party.load(partyPath, roster);
+    Shop shop;
+    if (!shop.load(shopPath, sc)) shop.seedFrom(sc);
 
     auto p = makeSdlPlatform("Wizardry - Castle", 2);
     if (!p) { std::puts("town needs the SDL2 backend"); return 1; }
@@ -474,16 +479,19 @@ static int cmdTown(int argc, char **argv) {
     Rng rng;
     Ui ui(*p, font);
     if (!title.empty() && !showTitle(*p, font, {title.data(), title.size()})) return 0;
-    playTownLoop(ui, party, roster, sc, rng, rosterPath, partyPath, party.count() > 0);
+    TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng,
+                    rosterPath, partyPath, shopPath};
+    playTownLoop(ui, world, party.count() > 0);
     roster.save(rosterPath);
     party.save(partyPath);
+    shop.save(shopPath);
     return 0;
 }
 
-// Headless: seed a roster, script one trip through the town, print the party.
+// Headless: seed the world, script one trip through the town, print the party.
 static int cmdTownTest(int argc, char **argv) {
     if (argc < 5) {
-        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir]");
+        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir] [ASCII.KRN]");
         return 2;
     }
     Font font;
@@ -492,20 +500,28 @@ static int cmdTownTest(int argc, char **argv) {
     Roster roster;
     roster.seedFrom(sc);
     Party party;
+    Shop shop;
+    shop.seedFrom(sc);
+    StringPool sp;
+    bool haveSp = argc > 6 && sp.load(readFile(argv[6]));
 
     auto p = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
     Rng rng;
     Ui ui(*p, font);
-    TownExit e = runTown(ui, party, roster, sc, rng, "", "");
+    TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng, "", "", ""};
+    TownExit e = runTown(ui, world);
 
     static const char *kExit[] = {"ROLLER", "MAZE", "LEAVE", "WINDOW-CLOSED"};
     std::printf("exit: %s\n", kExit[int(e)]);
     std::printf("party (%d):\n", party.count());
     for (int i = 0; i < party.count(); ++i) {
         const Character &c = party.member(i);
-        std::printf("  %d) %-16s slot=%d A%d %s HP%d/%d\n", i + 1, c.name.c_str(),
-                    party.rosterSlot(i), int(c.align),
-                    c.inMaze ? "OUT" : "in", c.hpLeft, c.hpMax);
+        std::printf("  %d) %-16s slot=%d A%d %s HP%d/%d %lldgp poss:",
+                    i + 1, c.name.c_str(), party.rosterSlot(i), int(c.align),
+                    c.inMaze ? "OUT" : "in", c.hpLeft, c.hpMax, (long long)c.gold.v);
+        for (int j = 0; j < c.possCount; ++j)
+            std::printf(" #%d%s", c.poss[j].itemIndex, c.poss[j].identified ? "" : "?");
+        std::printf("\n");
     }
     return 0;
 }
