@@ -9931,3 +9931,31 @@ to reflect the now-confirmed identity. 2011's intervening
 `play.room_changes++;` has no visible counterpart in this build's
 opening sequence -- a small open detail, left for a future round
 rather than force-fit into the one confirmed `dword_523198=0` write.
+
+### `scrWait`/`WaitKey`/`WaitMouseKey`: a clean trio, and a shared validation-absence drift
+
+Three small, previously-bare wait-loop entry points close together.
+All three set the already-confirmed `GameState.wait_counter`@+0x148
+and `key_skip_wait`@+0x89C, then call the already-matched
+`do_main_cycle(UNTIL_MOVEEND, &wait_counter)` -- the literal `2` this
+build's disassembly shows for `WaitKey`'s call turns out to just be
+`UNTIL_MOVEEND` itself (`Common/acruntim.h:853`), not a genuine
+different sentinel from `scrWait`/`WaitMouseKey`'s own symbolic
+references to the same constant -- an IDA-display inconsistency,
+resolved by checking the actual enum value rather than assuming a
+difference from the display alone. `WaitKey`/`WaitMouseKey` both then
+return `(wait_counter<0)?1:0`, exact matches to 2011's own tail logic.
+
+The genuinely new piece: `key_skip_wait`'s own three write sites
+(`scrWait`=0, `WaitKey`=1, `WaitMouseKey`=3) confirm its literal
+values exactly matching 2011's own convention (`AC.CPP:15129-15160`) --
+a real, useful behavioral confirmation for a field that was previously
+only confirmed via a `>1` comparison in `check_controls`, never an
+individual assignment. And a shared drift: all three functions are
+missing 2011's own leading bounds check, `"if(nloops<1) quit(...)"`
+-- no comparison or `quit()` call exists anywhere in any of the three.
+Calling `Wait(0)` or a negative value in this build has no validation
+against it at all, where 2011 explicitly rejects it -- a small but
+real, confirmable difference worth carrying into the reconstruction
+rather than assuming these three functions are otherwise-identical
+matches.

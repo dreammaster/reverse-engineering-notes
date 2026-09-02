@@ -787,7 +787,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Sets the already-confirmed GameState.wait_counter@+0x148=nloops (a WORD-sized write, matching that field's own already-established `short` type) and key_skip_wait@+0x89C=0, then calls the already-matched do_main_cycle(UNTIL_MOVEEND=2, &wait_counter). DRIFT: 2011's own leading bounds check, \"if(nloops<1) quit(\\\"!Wait: must wait at least 1 loop\\\");\" (AC.CPP:15130-15131), is CONFIRMED ABSENT -- no comparison or quit() call exists anywhere in this function, a real validation-absence drift shared by WaitKey/WaitMouseKey (see their own entries) -- calling any of these three with nloops<=0 in this build has no guard against it at all."
   },
   {
     "kind": "function",
@@ -797,7 +797,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Sets the already-confirmed GameState.wait_counter@+0x148=nloops and key_skip_wait@+0x89C=1, calls the already-matched do_main_cycle(UNTIL_MOVEEND=2,&wait_counter), then returns (wait_counter<0)?1:0 -- exact match to 2011's own \"play.wait_counter=nloops; play.key_skip_wait=1; do_main_cycle(UNTIL_MOVEEND,(int)&play.wait_counter); if(play.wait_counter<0) return 1; return 0;\" (AC.CPP:15138-15148), aside from the same missing nloops<1 bounds check flagged in scrWait's own entry. Confirms key_skip_wait==1 means \"any key skips the wait,\" matching 2011's own convention exactly."
   },
   {
     "kind": "function",
@@ -807,7 +807,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Sets the already-confirmed GameState.wait_counter@+0x148=nloops and key_skip_wait@+0x89C=3, calls the already-matched do_main_cycle(UNTIL_MOVEEND=2,&wait_counter), then returns (wait_counter<0)?1:0 -- exact match to 2011's own \"...key_skip_wait=3; do_main_cycle(...); if(play.wait_counter<0) return 1; return 0;\" (AC.CPP:15150-15160), aside from the same missing nloops<1 bounds check. Confirms key_skip_wait==3 means \"either a key OR a mouse click skips the wait\" (plausibly a 1|2 bitwise-OR of a key bit and a mouse bit, though 2011's own source only ever uses the literal values 0/1/3, never isolates bit 2 on its own -- not independently confirmed as a true bitmask this round)."
   },
   {
     "kind": "function",

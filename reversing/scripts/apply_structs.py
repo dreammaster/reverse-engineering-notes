@@ -3744,7 +3744,10 @@ struct GameState {
                             // `check_controls` (already matched): "if (play_wait_counter>0 &&
                             // play_key_skip_wait>1) play_wait_counter=0xFFFF;" matches 2011's
                             // "else if ((play.wait_counter > 0) && (play.key_skip_wait > 1))"
-                            // (AC.CPP:5742) exactly.
+                            // (AC.CPP:5742) exactly. WRITE-side values confirmed via
+                            // scrWait/WaitKey/WaitMouseKey (all already matched): 0="wait only,
+                            // no key/mouse skip", 1="any key skips", 3="key or mouse click
+                            // skips" -- matching 2011's own literal values exactly.
   char _pad_align7[0x03];      // +0x89D..0x8A0, compiler alignment padding (not a real field)
                             // -- confirmed via IDA's own "align 4" directive at this exact
                             // point in the raw .data listing.

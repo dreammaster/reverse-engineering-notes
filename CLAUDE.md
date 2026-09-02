@@ -2760,6 +2760,15 @@ disassembly work.
   naming coincidence between the local parameter and the global it gets
   copied into, not evidence by itself, but the surrounding instruction
   order settles it.
+- **`scrWait`/`WaitKey`/`WaitMouseKey` close together, sharing one real
+  validation-absence drift.** All three write `GameState.wait_counter`/
+  `key_skip_wait` then call the already-matched `do_main_cycle`. The
+  three `key_skip_wait` write values (`0`/`1`/`3`) match 2011's own
+  convention exactly, the first individual-assignment confirmation for
+  that field (previously only confirmed via a `>1` comparison).
+  Shared drift: 2011's leading `if(nloops<1) quit(...)` bounds check is
+  CONFIRMED ABSENT from all three — calling any of them with `0` or a
+  negative loop count has no guard against it in this build.
 
 ## Third-party library identification (Task #10)
 
