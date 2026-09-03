@@ -82,8 +82,11 @@ void castSpell(Battle &bt, const Scenario &sc, Party &party, bool casterMon,
                int casterLevel, int no, int tgGroup, int tgInst, int tgAlly,
                Rng &rng, CombatLog &log);
 
-// GIVEEXP + gold: split the spoils among the survivors.
-void distributeRewards(const Battle &bt, const Scenario &sc, Party &party,
-                       Rng &rng, CombatLog &log);
+// GIVEEXP + CHSTGOLD: real per-kill XP and the ZREWARD treasure list, split
+// among the survivors (see wiz/rewards.h).  `attk012`: 0 wandering monster,
+// 1 set-piece first visit (double gold), 2 re-fight / scripted (REWARD2).
+// `sp` resolves dropped-item names.  Returns the reward index used (or -1).
+int distributeRewards(const Battle &bt, const Scenario &sc, const StringPool *sp,
+                      Party &party, int attk012, Rng &rng, CombatLog &log);
 
 } // namespace wiz

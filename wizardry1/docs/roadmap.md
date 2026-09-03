@@ -130,19 +130,22 @@ Decided direction (2026-09-02):
       = `FIGHTS`/`CLROOMFG`; stairs/chutes/teleport/spinner/dark/pit/river/
       buttons). Runs from the Edge of Town (`M`). `wiz1 maze` (ASCII walk) /
       `wiz1 maze-sdl` (SDL HUD) / `wiz1 maze-play-test` (headless). 12 CMake
-      tests. TODO: combat hand-off, `UPDATEHP` regen/poison, `SCNMSG`, camp.
-- [~] `COMBAT` family — a **core** is ported (`docs/combat.md`):
-      `engine/wiz/combat.{h,cpp}` (TENEMY decode, `buildEncounter` = CINIT,
-      `partyAttack`/`monsterAttack` = DAM2ENMY/DAM2ME with the real to-hit /
-      damage / status / drain / crit formulas, XP+gold split) +
-      `engine/wiz/combat_ui.cpp` (F)IGHT/P)ARRY/R)UN round loop). Character
-      combat tail (words 87-99) + `deriveStats` (UTILITIE 25). Wired to the
-      maze: `ENCOUNTE` squares + the random `ENCOUNTR` roll call `runCombat`.
-      `wiz1 combat-test` (headless, CMake test `combat_fight`). TODO:
-      spellcasting (`CASTASPE`), breath, allied-group summons, the full
-      `ZREWARD` item table, the cemetery scene.
-- [ ] Continue: combat spells → `REWARDS` `ZREWARD` items → `SCNMSG`/`SPECIALS`
-      → `CAMP` → save/restore (`PLAYER.DATA`).
+      tests. Combat hand-off done. TODO: `UPDATEHP` regen/poison, `SCNMSG`, camp.
+- [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
+      (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
+      = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
+      formulas; `castSpell` = CASTASPE `DOMAGE`/`DOPRIEST` effects) +
+      `engine/wiz/combat_ui.cpp` (F)IGHT/C)AST/P)ARRY/R)UN round loop, monster
+      spell AI, the `ACHEST` chest/trap mini-game).  `engine/wiz/rewards.{h,cpp}`
+      = `REWARDS`: `CALCKILL` XP (EXPAMT is dead), `TREWARD`/ZREWARD decode,
+      `ENMYREWD`+`GETREWRD`+`GOLDREWD`/`ITEMREWD` gold & item drops,
+      `GTTRAPTY`/`DOTRAPDM` traps.  Character combat tail (words 87-99) +
+      `deriveStats` (UTILITIE 25). Wired to the maze with `attk012` from
+      `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
+      `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
+      `FRIENDLY` parley, the cemetery scene.
+- [ ] Continue: `SCNMSG`/`SPECIALS` → `CAMP` → save/restore (`PLAYER.DATA`)
+      → the `XCEMETRY` scene.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

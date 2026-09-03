@@ -120,9 +120,17 @@ teleports: `AUX0` = target level, `AUX1` = target y, `AUX2` = target x.
 
 **ZENEMY (94 B)** — `TENEMY` minus the 4 leading name strings: `PIC` (image
 #), `CALC1` (TWIZLONG hp-dice), `HPREC`, `CLASS`, `AC`, `RECSN`+`RECS[1..7]`,
-`EXPAMT` (TWIZLONG), `DRAINAMT`, `HEALPTS`, `REWARD1/2` (→ ZREWARD index),
+`EXPAMT` (TWIZLONG — **unused**; XP is `CALCKILL` from the other stats),
+`DRAINAMT`, `HEALPTS`, `REWARD1/2` (→ ZREWARD index),
 `ENMYTEAM`, `TEAMPERC`, `MAGSPELS`, `PRISPELS`, `UNIQUE`, `BREATHE`,
 `UNAFFCT`, `WEPVSTY3` + `SPPC` (packed bit flags). + name key.
+
+**ZREWARD (168 B / 84 words)** — `TREWARD` (REWARDS `CHSTGOLD`, decoded in
+`engine/wiz/rewards.h`): `BCHEST` (w0), `BTRAPTYP` (w1, packed `bool[0..7]` —
+trap types possible for this chest), `REWRDCNT` (w2), then `REWARDXX[1..9]` at
+w3+, **9 words each**: `REWDPERC` (0), `BITEM` (1, 0 = gold), then a 7-word
+variant record — gold `{TRIES,AVEAMT,MINADD,MULTX,TRIES2,AVEAMT2,MINADD2}` or
+item `{MININDX,MFACTOR,MAXTIMES,RANGE,PERCBIGR,·,·}`.  See `docs/combat.md`.
 
 **ZOBJECT (46 B)** — `TOBJREC` minus name strings: `OBJTYPE` (WEAPON ARMOR
 SHIELD HELMET GAUNTLET SPECIAL MISC), `ALIGN`, `CURSED`, `SPECIAL`,

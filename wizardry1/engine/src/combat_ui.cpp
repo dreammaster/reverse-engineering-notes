@@ -1,12 +1,15 @@
 #include "wiz/combat_ui.h"
 #include "wiz/combat.h"
+#include "wiz/rewards.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/roller.h"          // deriveStats
 
+#include <cctype>
 #include <cstdio>
 #include <deque>
 #include <string>
+#include <vector>
 
 namespace wiz {
 namespace {
@@ -27,6 +30,8 @@ struct CombatCtx {
     Battle bt;
     std::deque<std::string> log;
     std::vector<std::string> *transcript = nullptr;
+    int attk012 = 2;
+    int mazeLevel = 1;
 
     TextScreen &t() { return ui.ts(); }
 
@@ -230,11 +235,167 @@ bool round(CombatCtx &c, CombatResult &out) {
     return false;
 }
 
+// ---- ACHEST (REWARDS P010D08): the chest / trap mini-game ------------
+
+enum class ChestExit { Rewards, Left, Alarm, Wiped };
+
+// Ask "<prompt>" and read a party slot digit; -1 if out of range / not OK.
+int askChar(CombatCtx &c, const char *prompt, bool needOk = true) {
+    auto &t = c.t();
+    t.clearRect(0, 22, 40, 2);
+    t.gotoXY(0, 22); t.write(prompt);
+    int k = c.ui.getKey();
+    if (c.ui.quit()) return -2;
+    int idx = k - '1';
+    if (idx < 0 || idx >= c.party.count()) return -1;
+    if (needOk && c.party.member(idx).status != Status::OK) return -1;
+    return idx;
+}
+
+void trapHit(CombatCtx &c, const ChestTrap &tr, int chestChar, ChestExit &ce) {
+    CombatLog l;
+    l.push_back("OOPS! A " + trapName(tr) + "!");
+    TrapOutcome o = springTrap(tr, c.party, chestChar, c.mazeLevel, c.rng, l);
+    c.say(l);
+    if (o.wiped)         ce = ChestExit::Wiped;
+    else if (o.alarm)    ce = ChestExit::Alarm;
+    else if (o.teleport) c.say("YOU ARE WHISKED AWAY!");   // maze relocates on return
+}
+
+ChestExit runChest(CombatCtx &c, const RewardRec &rw) {
+    ChestTrap tr = pickChestTrap(rw, c.mazeLevel, c.rng);
+    std::vector<char> looked(c.party.count(), 0);
+    c.say("A CHEST!  YOU MAY:");
+    c.draw();
+
+    for (int guard = 0; guard < 60; ++guard) {
+        auto &t = c.t();
+        t.clearRect(0, 22, 40, 2);
+        t.gotoXY(0, 22); t.write("O)PEN  I)NSPECT  D)ISARM  C)ALFO  L)EAVE");
+        int k = c.ui.getKey();
+        if (c.ui.quit()) return ChestExit::Left;
+        ChestExit ce = ChestExit::Rewards;
+
+        if (k == 'L') return ChestExit::Left;
+
+        if (k == 'O') {
+            int who = askChar(c, "WHO (#) WILL OPEN?");
+            if (who < 0) continue;
+            if (tr.type == 0) return ChestExit::Rewards;
+            if (c.rng.mod(1000) < c.party.member(who).charLevel) return ChestExit::Rewards;
+            trapHit(c, tr, who, ce);
+            return ce;
+        }
+
+        if (k == 'I') {
+            int who = askChar(c, "WHO (#) WILL INSPECT?");
+            if (who < 0) continue;
+            if (looked[who]) { c.say("YOU ALREADY LOOKED!"); c.draw(); continue; }
+            looked[who] = 1;
+            Character &ch = c.party.member(who);
+            int chance = ch.attrib[AGI];
+            if (ch.cls == Class::Thief)      chance *= 6;
+            else if (ch.cls == Class::Ninja) chance *= 4;
+            if (chance > 95) chance = 95;
+            if (c.rng.mod(100) < chance) {
+                c.say(std::string("IT IS A ") + trapName(tr));      // PRTRAP
+                c.draw();
+            } else if (c.rng.mod(20) > ch.attrib[AGI]) {
+                trapHit(c, tr, who, ce);                            // set it off
+                return ce;
+            } else {
+                ChestTrap rnd{ c.rng.mod(8), c.rng.mod(5) };        // PRRNDTRP
+                c.say(std::string("IT LOOKS LIKE A ") + trapName(rnd));
+                c.draw();
+            }
+            continue;
+        }
+
+        if (k == 'C') {
+            int who = askChar(c, "WHO (#) WILL CAST CALFO?");
+            if (who < 0) continue;
+            Character &ch = c.party.member(who);
+            if (!ch.spellKnown[28] || ch.priestSpells[2] <= 0) { c.say("CAN'T CAST CALFO!"); c.draw(); continue; }
+            ch.priestSpells[2]--;
+            if (c.rng.mod(100) < 95) c.say(std::string("IT IS A ") + trapName(tr));
+            else { ChestTrap rnd{ c.rng.mod(8), c.rng.mod(5) };
+                   c.say(std::string("IT LOOKS LIKE A ") + trapName(rnd)); }
+            c.draw();
+            continue;
+        }
+
+        if (k == 'D') {
+            int who = askChar(c, "WHO (#) WILL DISARM?");
+            if (who < 0) continue;
+            auto &t2 = c.t();
+            t2.clearRect(0, 22, 40, 2);
+            t2.gotoXY(0, 22); t2.write("WHAT TRAP > ");
+            std::string guess = c.ui.getLine(24);
+            if (c.ui.quit()) return ChestExit::Left;
+            for (auto &ch : guess) ch = char(std::toupper((unsigned char)ch));
+            Character &ch = c.party.member(who);
+            bool right = (guess == trapName(tr));
+            if (!right) { trapHit(c, tr, who, ce); return ce; }
+            bool rogue = ch.cls == Class::Thief || ch.cls == Class::Ninja;
+            if (c.rng.mod(70) < ch.charLevel - c.mazeLevel + (rogue ? 50 : 0)) {
+                c.say("YOU DISARMED IT!");
+                return ChestExit::Rewards;
+            }
+            if (c.rng.mod(20) < ch.attrib[AGI]) { c.say("DISARM FAILED!!"); c.draw(); continue; }
+            c.say("YOU SET IT OFF!");
+            trapHit(c, tr, who, ce);
+            return ce;
+        }
+    }
+    return ChestExit::Rewards;
+}
+
+} // namespace
+
+namespace {
+
+// GIVEEXP + ACHEST + CHSTGOLD after a win.  Returns true if the party was
+// wiped out by a chest trap (caller -> PartyWiped).
+bool awardVictory(CombatCtx &c, int enemyInx) {
+    CombatLog l;
+    giveExp(c.bt, c.sc, c.party, l);
+    c.say("*** VICTORY ***");
+    c.say(l);
+    c.pause();
+
+    int o2 = 1;
+    int ridx = chooseRewardIndex(c.bt, c.sc, c.attk012, o2);
+    RewardRec rw;
+    bool haveRw = loadReward(c.sc, ridx, rw);
+
+    if (haveRw && rw.chest()) {
+        switch (runChest(c, rw)) {
+            case ChestExit::Left:  c.say("YOU LEAVE THE CHEST."); c.pause(); return false;
+            case ChestExit::Wiped: c.pause(); return true;
+            case ChestExit::Alarm:
+                c.say("THE ALARM SOUNDS!");
+                c.pause();
+                if (runCombat(c.ui, c.party, c.sc, c.sp, c.rng, enemyInx,
+                              c.mazeLevel, 2, c.transcript) == CombatResult::PartyWiped)
+                    return true;
+                break;                                  // then still grab the loot
+            case ChestExit::Rewards: break;
+        }
+    }
+
+    CombatLog l2;
+    std::vector<ItemGrant> grants;
+    bool hc = false;
+    rollTreasure(c.bt, c.sc, c.sp, c.party, c.attk012, c.rng, l2, grants, hc);
+    if (!l2.empty()) { c.say(l2); c.pause(); }
+    return !partyCanFight(c.party);
+}
+
 } // namespace
 
 CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
                        const StringPool *sp, Rng &rng, int enemyInx, int mazeLevel,
-                       std::vector<std::string> *transcript) {
+                       int attk012, std::vector<std::string> *transcript) {
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
     ui.setOverlay(nullptr);
 
@@ -245,6 +406,8 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
 
     CombatCtx c{ui, party, sc, sp, rng};
     c.transcript = transcript;
+    c.attk012 = attk012;
+    c.mazeLevel = mazeLevel;
     buildEncounter(c.bt, sc, enemyInx, mazeLevel, rng);
     c.say("A GROUP OF MONSTERS BLOCKS YOUR WAY!");
     c.pause();
@@ -253,11 +416,7 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
         CombatResult out;
         if (round(c, out)) {
             if (out == CombatResult::Won) {
-                CombatLog l;
-                distributeRewards(c.bt, sc, party, rng, l);
-                c.say("*** VICTORY ***");
-                c.say(l);
-                c.pause();
+                if (awardVictory(c, enemyInx)) return CombatResult::PartyWiped;
             } else if (out == CombatResult::Fled) {
                 c.say("YOU HAVE FLED FROM COMBAT.");
                 c.pause();

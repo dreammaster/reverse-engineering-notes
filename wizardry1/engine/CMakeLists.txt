@@ -29,6 +29,7 @@ add_library(wizcore STATIC
   src/maze_ui.cpp
   src/combat.cpp
   src/combat_ui.cpp
+  src/rewards.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -161,3 +162,12 @@ add_test(NAME combat_spell
 # mage HALITO + priest BADIOS damage monsters, priest DIOS heals; party wins.
 set_tests_properties(combat_spell PROPERTIES
     PASS_REGULAR_EXPRESSION "summary: result=WON casts=[3-9] healed=[1-9]")
+add_test(NAME reward_drop
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\rO1\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
+# win, open the ZREWARD chest: real CALCKILL xp, an item drop, a gold share.
+set_tests_properties(reward_drop PROPERTIES
+    PASS_REGULAR_EXPRESSION "FOUND - SWORD(.|\n)*summary: result=WON[^\n]*items=[1-9]")

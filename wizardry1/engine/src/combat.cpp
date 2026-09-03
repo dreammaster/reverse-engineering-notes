@@ -1,7 +1,9 @@
 #include "wiz/combat.h"
+#include "wiz/rewards.h"
 #include "wiz/string_pool.h"
 
 #include <algorithm>
+#include <cstdint>
 
 namespace wiz {
 
@@ -437,34 +439,12 @@ void castSpell(Battle &bt, const Scenario &sc, Party &party, bool casterMon,
     (void)casterLevel;
 }
 
-void distributeRewards(const Battle &bt, const Scenario &sc, Party &party,
-                       Rng &rng, CombatLog &log) {
-    int64_t xp = 0, gold = 0;
-    for (int g = 0; g < bt.nGroups; ++g) {
-        MonsterRec r = bt.grp[g].rec(sc);
-        // EXPAMT is 0 in this scenario; the real GIVEEXP reads the ZREWARD
-        // record.  Until that is decoded, approximate from the monster's HD
-        // and reward tier.
-        int64_t per = r.expAmt().value();
-        if (per == 0) per = int64_t(r.hpDice()) * r.hpFac() * 12 + r.reward2() * 8 + 5;
-        xp += per * bt.grp[g].count;
-        gold += int64_t(bt.grp[g].count) * (rng.mod(bt.mazeLevel * 20 + 10) + 1);
-    }
-    int living = 0;
-    for (int i = 0; i < party.count(); ++i)
-        if (int(party.member(i).status) < int(Status::Dead)) ++living;
-    if (living == 0) return;
-    int64_t eachXp = xp / living, eachGp = gold / living;
-    for (int i = 0; i < party.count(); ++i) {
-        Character &c = party.member(i);
-        if (int(c.status) >= int(Status::Dead)) continue;
-        c.exp.v += eachXp;
-        c.gold.v += eachGp;
-    }
-    char b[80];
-    std::snprintf(b, sizeof b, "EACH SURVIVOR GAINS %lld E.P. AND %lld GOLD",
-                  (long long)eachXp, (long long)eachGp);
-    log.push_back(b);
+int distributeRewards(const Battle &bt, const Scenario &sc, const StringPool *sp,
+                      Party &party, int attk012, Rng &rng, CombatLog &log) {
+    giveExp(bt, sc, party, log);
+    std::vector<ItemGrant> grants;
+    bool hasChest = false;
+    return rollTreasure(bt, sc, sp, party, attk012, rng, log, grants, hasChest);
 }
 
 } // namespace wiz

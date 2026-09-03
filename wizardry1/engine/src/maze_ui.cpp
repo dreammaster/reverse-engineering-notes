@@ -115,8 +115,9 @@ void msg(MazeCtx &c, const std::string &s) {
 
 // Hand off to combat.  Returns true (with `out` set) if the maze session
 // ends -- the window closed or the party was wiped.
-bool runFight(MazeCtx &c, int enemyInx, MazeExit &out) {
-    CombatResult r = runCombat(c.ui, c.party, c.sc, c.sp, c.rng, enemyInx, c.st.level);
+bool runFight(MazeCtx &c, int enemyInx, MazeExit &out, int attk012 = 2) {
+    CombatResult r = runCombat(c.ui, c.party, c.sc, c.sp, c.rng, enemyInx,
+                               c.st.level, attk012);
     c.needDraw = true;
     if (r == CombatResult::WindowClosed) { out = MazeExit::WindowClosed; return true; }
     if (r == CombatResult::PartyWiped)   { out = MazeExit::PartyWiped;   return true; }
@@ -314,7 +315,11 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
 
         if (initTurn && encounterRoll(c, initTurn, lastKey)) {
             MazeExit out;
-            if (runFight(c, rollEnemyInx(c), out)) return out;
+            // ENCOUNTR's ATTK012: a wandering monster (0), a set-piece fight
+            // room on first entry (1 -> double gold), or a re-fought room (2).
+            int a012 = !c.m.fights(st.pos.x, st.pos.y) ? 0
+                     : (c.fm.at(st.pos.x, st.pos.y) ? 1 : 2);
+            if (runFight(c, rollEnemyInx(c), out, a012)) return out;
             c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
         }
 

@@ -80,24 +80,74 @@ start) is > 0, prompts for a target, decrements the pool and calls
 the fight via the `Battle` AC-mod fields and feed back into the `DAM2ME`
 to-hit.  Test `combat_spell`.
 
-Win → `distributeRewards` (XP from `EXPAMT`, or — since it is 0 here — a
-`HD`/reward-tier heuristic; gold scaled by level), split among survivors.
+Win → `distributeRewards` = `giveExp` + `rollTreasure` (REWARDS, below).
 Whole party down → `MazeExit::PartyWiped` (a real `XCEMETRY` scene is TODO).
+
+## Rewards — `REWARDS` (`P010D01`, `wiz/rewards.{h,cpp}`)
+
+**`GIVEEXP` / `CALCKILL`** — the record's `EXPAMT` is dead (the source
+comments `KILLEXP := ENEMYREC.EXPAMT; LOL`).  XP per kill is built from the
+monster's stats, and `mltAdd(n,a)` means `a·2^(n-1)` (a repeated-doubling
+`ADDLONGS`):
+
+```
+e  = LEVEL·HPFAC · (BREATHE=0 ? 20 : 40)
+   + mltAdd(MAGSPELS,35) + mltAdd(PRISPELS,35)
+   + mltAdd(DRAINAMT,200) + mltAdd(HEALPTS,90)
+   + 40·(11 − AC)
+   + (RECSN>1  ? mltAdd(RECSN,30) : 0)
+   + (UNAFFCT>0 ? mltAdd(UNAFFCT/10+1, 40) : 0)
+   + mltAdd(#WEPVSTY3 bits 1..6, 35) + mltAdd(#SPPC bits 0..6, 40)
+```
+
+Each survivor gets `Σ_groups e·killed / aliveCount`.
+
+**`TREWARD`** (ZREWARD, 24 × 168 B): `BCHEST`(w0), `BTRAPTYP`(w1, packed
+bool[0..7]), `REWRDCNT`(w2), then `REWARDXX[1..9]` — 9 words each:
+`REWDPERC`(0), `BITEM`(1), then a 7-word gold *or* item sub-record
+(`TRIES/AVEAMT/MINADD/MULTX/TRIES2/AVEAMT2/MINADD2` vs
+`MININDX/MFACTOR/MAXTIMES/RANGE/PERCBIGR`).
+
+**`ENMYREWD`** picks the table from group 0's monster by `attk012`:
+`0` → `REWARD1`; `1` → `REWARD1` with **×2 gold** (`ONEORTWO`); `2` →
+`REWARD2`.  The maze sets it in `ENCOUNTR` — `0` wandering monster, `1`
+set-piece room on first entry, `2` re-fought room / scripted `ENCOUNTE`.
+
+**`GETREWRD`** per entry: skip if `REWDPERC < rand%100`; else
+`GOLDREWD` (`gold = calculat(TRIES,AVEAMT,MINADD)·MULTX·calculat(TRIES2,…)·
+ONEORTWO`, `calculat(t,a,m)=m+Σ_t(rand%a+1)`) accumulates a pot split by
+`GIVEGOLD`; or `ITEMREWD` drops object
+`MININDX + calculat(1,RANGE,1) + MFACTOR·bigrolls` into a random conscious
+member's pack.
+
+**`ACHEST`** (`combat_ui.cpp runChest`): `GTTRAPTY` rolls the real trap
+(`type` 0 trapless / 1 poison / 2 gas / 3 `TRAP3TYP` sub-table / 4 teleport
+/ 5 anti-mage / 6 anti-priest / 7 alarm), then `O)PEN` (level/1000 roll),
+`I)NSPECT` (agility, ×6 thief / ×4 ninja), `D)ISARM` (type the trap name;
+`rand%70 < level − mazeLevel + 50·rogue`), `C)ALFO` (spell 28, priest
+group 2), `L)EAVE` (forfeits the treasure entirely).  `DOTRAPDM` =
+`springTrap`: HP damage / poison / paralysis / `ANTIPM` stone-or-paralyse
+by class; teleport and alarm bubble back to the caller.  Tests
+`reward_drop` (+ `attk012` arg on `combat-test`).
 
 ## UI / flow
 
-`runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel)`
-→ `CombatResult {Won, Fled, PartyWiped, WindowClosed}`.  The round: each
-conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY` /
-`R)UN` (≈75 % escape), then every living (awake, unparalysed) monster acts.
-`wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]`
-(headless; prints the fight transcript + a `summary:` line; tests
-`combat_fight` / `combat_spell`).  Wired into the maze: an `ENCOUNTE` square or the random
-`ENCOUNTR` roll (`rand%99=35` / an unfought room / a kick into a fight
-square) calls `runCombat`.
+`runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel,
+attk012=2, transcript=nullptr)` → `CombatResult {Won, Fled, PartyWiped,
+WindowClosed}`.  The round: each conscious member picks `F)IGHT` (+ group
+letter if >1) / `C)AST` / `P)ARRY` / `R)UN` (≈75 % escape), then every living
+(awake, unparalysed) monster acts.
+`wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]
+[attk012]` (headless; prints the fight transcript + a `summary:` line; tests
+`combat_fight` / `combat_spell` / `reward_drop`).  Wired into the maze: an
+`ENCOUNTE` square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought
+room / a kick into a fight square) calls `runCombat`.
 
 **Not ported:** `DOBREATH` (dragon breath), allied-group summons / `YELLHELP`,
-item use in combat, the `FRIENDLY` parley, the full `ZREWARD` item-drop table,
-and the cemetery scene.  Spell effects are modelled from `DOMAGE`/`DOPRIEST`
-behaviour, not yet diffed opcode-for-opcode against `CASTASPE`; a few
-utility spells (`DUMAPIC`, `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.
+item use in combat, the `FRIENDLY` parley, and the cemetery scene.  Spell
+effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
+opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
+`MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`
+decrement/write-back (a killed unique monster becoming its non-unique form)
+is skipped — the engine holds `SCENARIO.DATA` read-only.  The chest `ALARM`
+re-fight recurses into `runCombat` once rather than looping via `CHSTALRM`.
