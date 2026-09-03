@@ -29,14 +29,13 @@ Decided direction (2026-09-02):
 
 - [x] `SCENARIO.DATA` **container** — TSCNTOC header + per-type record grid,
       fully decoded and self-validating. `tools/scenario.py` (toc/list/rec/dump).
-- [~] `SCENARIO.DATA` **records** — field order per Apple structs; DOS bit
-      packing for `TMAZE` still to be pinned (Phase 3 vs known maps). `TWIZLONG`
-      / `TEXP` confirmed.
-- [ ] Keyed string pool — monster/item/spell **names live in `ASCII.KRN`**
-      (LZ-compressed), not in the records. Needs the DOS decompressor →
-      **blocked on Phase 2**.
-- [ ] `200/400.CHARSET` — glyph format (looks like 256 × 32 bytes).
-- [ ] `200/400.TITLE` — title bitmap encoding.
+- [x] `SCENARIO.DATA` **records** — `TCHAR` / `TENEMY` / `TOBJREC` / `TMAZE`
+      all decoded (`+289` layout), `TMAZE` bit-packing validated by rendering
+      level 1; `TWIZLONG` / `TEXP` confirmed. Field maps in `engine/wiz/*.h`.
+- [x] Keyed string pool — `GetStr(KN)` + the `ASCII.KRN` cipher recovered in
+      Phase 2 (`tools/strpool.py`, `engine/wiz/string_pool.h`).
+- [x] `200/400.CHARSET` — 16×8, 512 glyphs; `engine/wiz/font.h` (`wiz1 mockup`).
+- [x] `200/400.TITLE` — 320×64 2bpp CGA; `engine/wiz/bitmap.h` (`wiz1 show title`).
 - [~] `200.MONSTERS` — 29 records × 512 B, `TENEMY.PIC` indexed. Load path +
       `CONUNIT` subfn table mapped; payload is compressed (raw geometry = noise),
       decompressor is native code in `SYSTEM.INTERP`. See `docs/file-formats.md`.
@@ -93,8 +92,8 @@ Decided direction (2026-09-02):
       period 65536 — the weak PC-Wizardry RNG). `engine/wiz/rng.h` reproduces
       it exactly (matches a byte-accurate sim). A live sequence diff vs the
       real interpreter would be the final confirmation.
-- [ ] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
-      +289 layout; maze bit-packing validated vs a known map.
+- [x] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
+      +289 layout; maze bit-packing validated by rendering level 1.
 - [x] Platform layer: `engine/wiz/surface.h` (8bpp framebuffer + primitives),
       `wiz/font.h` (`*.CHARSET` = 16×8, 512 glyphs), `wiz/platform.h` abstract
       + `NullPlatform` (PPM dumps) + `SdlPlatform` (SDL2 window).
@@ -174,8 +173,13 @@ Decided direction (2026-09-02):
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: Phase 4 — the ScummVM engine.
-- [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
+- [x] **Phase 3 is functionally complete** — the standalone engine plays a
+      full loop (roster → town → maze → combat → camp → save) with the whole
+      `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` / `SHOPS` families ported.
+- [ ] Validate against the real interpreter: same PRNG, same seeded outcomes
+      (needs `SYSTEM.INTERP` running — a Phase 0 loose end).
+- [ ] Nice-to-haves, none blocking: `200.MONSTERS` art decompressor (native
+      RE), `HAS.CACHE` / `KANA.KEYMAP` id, more proc names, chevrons/medals.
 
 ## Phase 4 — ScummVM engine
 
