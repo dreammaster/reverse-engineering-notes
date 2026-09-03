@@ -4,6 +4,7 @@
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/specials.h"
+#include "wiz/equip.h"
 #include "wiz/camp_ui.h"
 #include "wiz/combat_ui.h"
 
@@ -381,6 +382,7 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
                  Rng &rng, MazeState &st) {
     MazeCtx c{ui, party, sc, sp, rng, st};
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
+    for (int i = 0; i < party.count(); ++i) equipRecalc(party.member(i), sc);
     if (st.level < 1) st.level = 1;
     if (!c.m.load(sc.record(Scenario::Maze, st.level - 1))) return MazeExit::ToTown;
     c.fm.build(c.m, rng);

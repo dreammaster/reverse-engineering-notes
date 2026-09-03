@@ -1,6 +1,7 @@
 #include "wiz/camp_ui.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
+#include "wiz/equip.h"
 
 #include <cstdio>
 #include <string>
@@ -179,6 +180,59 @@ void reorder(CampCtx &c) {
             }
 }
 
+// ---- DOEQUIP: pick one item of a slot type to equip ---------------
+void doEquipSlot(CampCtx &c, Character &ch, ObjType ot, const char *label) {
+    int list[8], n = 0, cursed = -1;
+    for (int i = 0; i < ch.possCount; ++i) {
+        ObjectRec o{c.sc.record(Scenario::Object, ch.poss[i].itemIndex)};
+        if (o.type() != ot || !o.classUse(int(ch.cls))) continue;
+        list[n++] = i;
+        if (ch.poss[i].cursed) cursed = i;
+    }
+    if (n == 0) return;
+
+    auto &t = c.t();
+    t.putChar(12);
+    t.gotoXY(0, 0); t.write(std::string("SELECT ") + label + " FOR " + ch.name);
+    for (int j = 0; j < n; ++j) {
+        const Possession &p = ch.poss[list[j]];
+        char flag = p.cursed ? '-' : (p.identified ? ' ' : '?');
+        char b[48];
+        std::snprintf(b, sizeof b, "  %d)%c%s", j + 1, flag,
+                      objName(c, p.itemIndex, p.identified).c_str());
+        t.gotoXY(0, 3 + j); t.write(std::string(b).substr(0, 39));
+    }
+
+    if (cursed >= 0) {                       // force-equipped, no choice
+        ch.poss[cursed].equipped = true;
+        c.ui.pressAnyKey("** CURSED **");
+        return;
+    }
+    for (;;) {
+        t.gotoXY(0, 15); t.putChar(11);
+        t.write("WHICH ONE ([RET] FOR NONE) ? >");
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) return;
+        int p = k - '0';
+        if (p >= 1 && p <= n) { ch.poss[list[p - 1]].equipped = true; return; }
+    }
+}
+
+// EQUIP1: strip everything, walk the slot types, recompute the tail.
+void runEquip(CampCtx &c, Character &ch) {
+    for (int i = 0; i < ch.possCount; ++i) ch.poss[i].equipped = false;
+    doEquipSlot(c, ch, ObjType::Weapon,   "WEAPON");
+    doEquipSlot(c, ch, ObjType::Armor,    "ARMOR");
+    doEquipSlot(c, ch, ObjType::Shield,   "SHIELD");
+    doEquipSlot(c, ch, ObjType::Helmet,   "HELMET");
+    doEquipSlot(c, ch, ObjType::Gauntlet, "GAUNTLETS");
+    doEquipSlot(c, ch, ObjType::Misc,     "MISC. ITEM");
+    equipRecalc(ch, c.sc);
+    std::printf("EQUIP| %s AC %d swings %d dmg %dd%d+%d slay %#x\n", ch.name.c_str(),
+                ch.armorClass, ch.swingCnt, ch.hpDamRc[0], ch.hpDamRc[1],
+                ch.hpDamRc[2], ch.wepSlay);
+}
+
 // ---- CAMPMENU: one character's inspect sub-menu --------------------
 // Returns false only if the window closed.
 bool inspectChar(CampCtx &c, int idx) {
@@ -195,7 +249,8 @@ bool inspectChar(CampCtx &c, int idx) {
         if (k == 'L') return true;
         if (k == 'R') { readBooks(c, ch); continue; }
         if (k == 'D') { dropItem(c, ch); continue; }
-        if (k == 'E' || k == 'T' || (ok && (k == 'S' || k == 'U' || k == 'I'))) {
+        if (k == 'E') { runEquip(c, ch); continue; }
+        if (k == 'T' || (ok && (k == 'S' || k == 'U' || k == 'I'))) {
             c.ui.pressAnyKey("-- NOT AVAILABLE IN CAMP YET --");
             continue;
         }
@@ -245,7 +300,10 @@ CampExit runCamp(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
             continue;
         }
         if (k == 'R') { reorder(c); continue; }
-        if (k == 'E') { ui.pressAnyKey("-- EQUIP NOT PORTED YET --"); continue; }
+        if (k == 'E') {                          // EQUIP1(-1): every member
+            for (int i = 0; i < party.count(); ++i) runEquip(c, party.member(i));
+            continue;
+        }
         if (k == 'D') {
             campList(c);
             c.t().gotoXY(0, 18); c.t().putChar(11);

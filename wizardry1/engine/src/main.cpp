@@ -838,9 +838,10 @@ static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
     return p;
 }
 
-// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]
+// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]
+//   grants: "m:i,m:i,..."  give member m (0-based) identified object i
 static int cmdCampTest(int argc, char **argv) {
-    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]"); return 2; }
+    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -848,6 +849,26 @@ static int cmdCampTest(int argc, char **argv) {
     Party party = scratchParty(sc, roster);
     StringPool sp;
     bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
+
+    if (argc > 6) {
+        std::string g = argv[6];
+        size_t pos = 0;
+        while (pos < g.size()) {
+            size_t comma = g.find(',', pos);
+            std::string tok = g.substr(pos, comma == std::string::npos ? comma : comma - pos);
+            size_t colon = tok.find(':');
+            if (colon != std::string::npos) {
+                int m = std::atoi(tok.substr(0, colon).c_str());
+                int it = std::atoi(tok.substr(colon + 1).c_str());
+                if (m >= 0 && m < party.count() && party.member(m).possCount < 8) {
+                    Character &ch = party.member(m);
+                    ch.poss[ch.possCount++] = Possession{false, false, true, it};
+                }
+            }
+            if (comma == std::string::npos) break;
+            pos = comma + 1;
+        }
+    }
 
     auto plat = makeNullPlatform(unescape(argv[4]), "");
     Rng rng;
@@ -868,9 +889,13 @@ static int cmdCampTest(int argc, char **argv) {
         order += party.member(i).name;
     }
     std::printf("camp exit: %s | order: %s\n", ex[int(e)], order.c_str());
-    for (int i = 0; i < party.count(); ++i)
-        std::printf("  %d %-12s poss%d\n", i + 1, party.member(i).name.c_str(),
-                    party.member(i).possCount);
+    for (int i = 0; i < party.count(); ++i) {
+        const Character &ch = party.member(i);
+        std::printf("  %d %-12s poss%d AC%d", i + 1, ch.name.c_str(), ch.possCount, ch.armorClass);
+        for (int k = 0; k < ch.possCount; ++k)
+            std::printf(" %s#%d", ch.poss[k].equipped ? "E" : "", ch.poss[k].itemIndex);
+        std::printf("\n");
+    }
     return 0;
 }
 

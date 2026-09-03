@@ -102,6 +102,18 @@ struct ObjectRec {
     int  spellPwr() const { return i16(w(10)); }                   // word 10
     bool classUse(int cls) const { return (w(11) >> (cls & 15)) & 1; }  // word 11
     int  healPts() const  { return i16(w(12)); }                   // word 12
+    // ---- equip tail (Apple TOBJREC words 29..38, verified vs LONG SWORD =
+    // 1d8 / SHORT SWORD = 1d6 / LEATHER = ARMORMOD 2) --------------------
+    u16  wepVsty2() const { return w(13); }                        // slay bits
+    u16  wepVsty3() const { return w(14); }
+    int  armorMod() const { return i16(w(15)); }                   // AC := AC - this
+    int  wepHitMd() const { return i16(w(16)); }                   // HPCALCMD bonus
+    void wepHpDam(int &dice, int &fac, int &add) const {           // THPREC 17-19
+        dice = i16(w(17)); fac = i16(w(18)); add = i16(w(19));
+    }
+    int  xtraSwng() const { return i16(w(20)); }                   // word 20
+    bool critHitM() const { return w(21) != 0; }                   // word 21
+    u16  wepVstyp() const { return w(22); }                        // -> Character.wepSlay
 };
 
 // TEXP = ARRAY[Fighter..Ninja] OF ARRAY[0..12] OF TWIZLONG

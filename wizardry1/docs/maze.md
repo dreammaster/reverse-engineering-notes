@@ -150,17 +150,33 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   `DSPSPELS` (the 7 mage + 7 priest slot counts) and `DSPITEMS` (the pack in
   two columns with the `* - ? #` flag from equipped / cursed / identified /
   `CLASSUSE`).  Sub-menu by status: OK gets `E)QUIP D)ROP T)RADE R)EAD
-  S)PELL U)SE I)DENT L)EAVE`, otherwise the short form.  Ported: `R)EAD`
-  (list known spell names) and `D)ROP` (`DROPITEM` — refuses cursed /
-  equipped).  `E`/`T`/`S`/`U`/`I` say "not available in camp yet".
+  S)PELL U)SE I)DENT L)EAVE`, otherwise the short form.  Ported: `E)QUIP`
+  (below), `R)EAD` (list known spell names) and `D)ROP` (`DROPITEM` —
+  refuses cursed / equipped).  `T`/`S`/`U`/`I` say "not available yet".
+* **`EQUIP`** (`EQUIPCHR` / `ARMORPOW`, `UTILITIE` procs P010119 / P01011E —
+  `engine/wiz/equip.h`).  `DOEQUIP` walks the slot types
+  (weapon / armor / shield / helmet / gauntlet / misc) — for each it lists
+  the class-usable items of that type and prompts (`[RET]` = none); a
+  cursed item of a type is force-equipped.  Then `equipRecalc` (the
+  `ARM4CHAR` / whole-party path, also run on entering the maze) rebuilds
+  the combat tail: `LUCKSKIL` from level/luck + class + race, the base
+  unarmed stats (`deriveStats`), the best `HEALPTS` of anything carried,
+  then each equipped item via `ARMORPOW` — `ARMORCL -= ARMORMOD`,
+  `HPCALCMD += WEPHITMD`, `SWINGCNT := max(SWINGCNT, XTRASWNG)`, a weapon
+  sets `HPDAMRC` (keeping the STR damage add) + `CRITHITM` + `WEPVSTYP`
+  slay bits; an item whose `ALIGN` clashes with the wearer is cursed
+  (`HPCALCMD −1`, `ARMORCL +1`).  A still-unarmed ninja gets
+  `ARMORCL −= level/3 + 2`.  `DOS TOBJREC` equip tail decoded at words
+  13–22 (verified: LONG SWORD 1d8 / SHORT SWORD 1d6 / LEATHER `ARMORMOD` 2).
 * **`REORDER`** (`UTILITIE` proc 27) — type the current slot numbers in the
   new order; a selection sort by that permutation swaps the party members
   (`Party::swapMembers` moves the character copy and roster index together).
 * **`DISBAND`** — confirm twice → leave the maze for town.
 
-`wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]` dumps the
-final screen + `camp exit: … | order: …` (tests `camp_sheet` / `camp_flow`
-/ `camp_disband`).  Not ported: `EQUIP` (`GAMEUTIL`), `USEITEM`, `DOTRADE`,
-`IDENTIFY`, `CASTSPEL` (the non-combat spell set), chevrons/medals.
-`StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
-(`5001` = `HALITO`).
+`wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]`
+(`grants` = `m:i,…` gives member `m` object `i`) dumps the final screen +
+`camp exit: … | order: …` (tests `camp_sheet` / `camp_flow` / `camp_disband`
+/ `camp_equip`).  Not ported: `USEITEM`, `DOTRADE`, `IDENTIFY`, `CASTSPEL`
+(the non-combat spell set), `CHSPCPOW` (invoke an item's special power),
+chevrons/medals.  `StringPool::spellNameKey` was off by one — fixed to
+`5000 + idx` (`5001` = `HALITO`).

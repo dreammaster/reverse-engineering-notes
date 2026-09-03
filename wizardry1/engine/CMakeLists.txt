@@ -211,3 +211,12 @@ add_test(NAME camp_disband
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
 set_tests_properties(camp_disband PROPERTIES
     PASS_REGULAR_EXPRESSION "camp exit: DISBANDED")
+add_test(NAME camp_equip
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1E11"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "0:1,0:10")
+# THESUS (STR 17) equips a LONG SWORD (1d8) + LEATHER ARMOR (ARMORMOD 2):
+# EQUIPCHR -> AC 8, damage 1d8 + the STR bonus.
+set_tests_properties(camp_equip PROPERTIES
+    PASS_REGULAR_EXPRESSION "EQUIP. THESUS AC 8 swings 1 dmg 1d8.2")

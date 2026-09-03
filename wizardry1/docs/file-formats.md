@@ -134,12 +134,14 @@ w3+, **9 words each**: `REWDPERC` (0), `BITEM` (1, 0 = gold), then a 7-word
 variant record — gold `{TRIES,AVEAMT,MINADD,MULTX,TRIES2,AVEAMT2,MINADD2}` or
 item `{MININDX,MFACTOR,MAXTIMES,RANGE,PERCBIGR,·,·}`.  See `docs/combat.md`.
 
-**ZOBJECT (46 B)** — `TOBJREC` minus name strings: `OBJTYPE` (WEAPON ARMOR
-SHIELD HELMET GAUNTLET SPECIAL MISC), `ALIGN`, `CURSED`, `SPECIAL`,
-`CHANGETO`, `CHGCHANC`, `PRICE` (TWIZLONG), `BOLTACXX`, `SPELLPWR`,
-`CLASSUSE` (8-bit), `HEALPTS`, weapon-vs-type bitfields, `WEPHITMD`,
-`WEPHPDAM` (THPREC), `XTRASWNG`, `CRITHITM`. + name key.
-Object 0 = the null/"nothing" item (`06 00 …` then `FF FF`).
+**ZOBJECT (46 B / 23 words)** — `TOBJREC` minus the two name strings, so
+Apple word − 16.  `OBJTYPE`(0, WEAPON ARMOR SHIELD HELMET GAUNTLET SPECIAL
+MISC), `ALIGN`(1), `CURSED`(2), `SPECIAL`(3), `CHANGETO`(4), `CHGCHANC`(5),
+`PRICE`(6–8 TWIZLONG), `BOLTACXX`(9), `SPELLPWR`(10), `CLASSUSE`(11, 8-bit),
+`HEALPTS`(12), `WEPVSTY2`(13), `WEPVSTY3`(14), `ARMORMOD`(15, `AC -= this`),
+`WEPHITMD`(16), `WEPHPDAM`(17–19 THPREC), `XTRASWNG`(20), `CRITHITM`(21),
+`WEPVSTYP`(22).  Verified: LONG SWORD `WEPHPDAM` = 1d8, SHORT SWORD 1d6,
+LEATHER ARMOR `ARMORMOD` = 2.  Object 0 = the null/"nothing" item.
 
 **ZEXP (624 B)** — `TEXP = ARRAY[FIGHTER..NINJA] OF ARRAY[0..12] OF TWIZLONG`
 (8 × 13 × 6 B). XP thresholds for levels 1..13 per class.
