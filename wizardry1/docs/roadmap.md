@@ -41,7 +41,9 @@ Decided direction (2026-09-02):
       `CONUNIT` subfn table mapped; payload is compressed (raw geometry = noise),
       decompressor is native code in `SYSTEM.INTERP`. See `docs/file-formats.md`.
 - [ ] `HAS.CACHE`, `KANA.KEYMAP` — identify (share a 512-byte prefix).
-- [ ] `PLAYER.DATA` / `SAVEn.DSK` — party save format (UCSD volumes too).
+- [x] `SAVEn.DSK` — **no `PLAYER.DATA`**: each is a full bootable UCSD disk
+      image (one slot per scenario); the save IS `SCENARIO.DATA` written back
+      in place. `docs/file-formats.md`.
 - [x] `docs/file-formats.md` started with the above.
 
 ## Phase 2 — p-code map
@@ -154,9 +156,12 @@ Decided direction (2026-09-02):
       `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
       `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
       `FRIENDLY` parley, the cemetery scene.
-- [ ] Continue: save/restore (`PLAYER.DATA`, incl. dungeon body recovery) →
-      the remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/
-      non-combat spells) → `SETTIME` → the remaining `SCNMSG` side effects.
+- [~] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
+      (`MazeState`) resumes an interrupted delve. TODO: the
+      `LOSTXYL.LOCATION` dungeon-body model + recovery (`SPECIALS` `PICKUP`).
+- [ ] Continue: the remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/
+      `CHSPCPOW`/non-combat spells) → `SETTIME` → dungeon body recovery →
+      the remaining `SCNMSG` side effects.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

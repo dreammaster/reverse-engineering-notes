@@ -31,7 +31,7 @@ struct TownWorld {
     const Scenario &sc;
     const StringPool *sp = nullptr;     // item names; null -> "ITEM n"
     Rng &rng;
-    std::string rosterPath, partyPath, shopPath;
+    std::string rosterPath, partyPath, shopPath, mazePath;
 };
 
 // Run the Castle hub until the player leaves via the Edge of Town.

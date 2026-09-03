@@ -436,6 +436,11 @@ static int cmdRollerTest(int argc, char **argv) {
 // Drive the roller <-> town loop until the player leaves the game.
 static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
     bool inTown = startInTown;
+    // An interrupted delve (window closed mid-maze) leaves maze.dat behind;
+    // the party resumes there on the next M).
+    MazeState mst;
+    bool resume = !world.mazePath.empty() && mst.load(world.mazePath) &&
+                  mst.active && world.party.count() > 0;
     for (;;) {
         if (!inTown) {
             runRoller(ui, world.roster, world.sc, world.rng, world.rosterPath);
@@ -446,11 +451,16 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
         if (e == TownExit::WindowClosed || e == TownExit::LeaveGame) return;
         if (e == TownExit::ToRoller) inTown = false;
         else if (e == TownExit::ToMaze) {
-            MazeState st;                            // ENTMAZE: level 1, (0,0) N
-            MazeExit me = runMaze(ui, world.party, world.sc, world.sp, world.rng, st);
-            if (me == MazeExit::WindowClosed) return;
+            if (!resume) mst = MazeState{};          // ENTMAZE: level 1, (0,0) N
+            resume = false;
+            MazeExit me = runMaze(ui, world.party, world.sc, world.sp, world.rng, mst);
+            if (me == MazeExit::WindowClosed) {      // interrupted -- save to resume
+                if (!world.mazePath.empty()) mst.save(world.mazePath);
+                return;
+            }
+            if (!world.mazePath.empty()) std::remove(world.mazePath.c_str());  // delve over
             if (me == MazeExit::PartyWiped) {        // XGOTO := XCEMETRY
-                runCemetery(ui, world.party, world.roster, st.level, world.rng);
+                runCemetery(ui, world.party, world.roster, mst.level, world.rng);
                 if (!world.rosterPath.empty()) world.roster.save(world.rosterPath);
                 if (!world.partyPath.empty()) world.party.save(world.partyPath);
             }
@@ -463,7 +473,7 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
 static int cmdTown(int argc, char **argv) {
     if (argc < 4) {
         std::puts("town <CHARSET> <SCENARIO.DATA> [TITLE] [ASCII.KRN] "
-                  "[roster.dat] [party.dat] [shop.dat]");
+                  "[roster.dat] [party.dat] [shop.dat] [maze.dat]");
         return 2;
     }
     Font font;
@@ -476,6 +486,7 @@ static int cmdTown(int argc, char **argv) {
     std::string rosterPath = argc > 6 ? argv[6] : "roster.dat";
     std::string partyPath  = argc > 7 ? argv[7] : "party.dat";
     std::string shopPath   = argc > 8 ? argv[8] : "shop.dat";
+    std::string mazePath   = argc > 9 ? argv[9] : "maze.dat";
 
     Roster roster;
     if (!roster.load(rosterPath)) {
@@ -494,7 +505,7 @@ static int cmdTown(int argc, char **argv) {
     Ui ui(*p, font);
     if (!title.empty() && !showTitle(*p, font, {title.data(), title.size()})) return 0;
     TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng,
-                    rosterPath, partyPath, shopPath};
+                    rosterPath, partyPath, shopPath, mazePath};
     playTownLoop(ui, world, party.count() > 0);
     roster.save(rosterPath);
     party.save(partyPath);
@@ -535,7 +546,7 @@ static int cmdTownTest(int argc, char **argv) {
     auto p = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
     Rng rng;
     Ui ui(*p, font);
-    TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng, "", "", ""};
+    TownWorld world{party, roster, shop, sc, haveSp ? &sp : nullptr, rng, "", "", "", ""};
     TownExit e = runTown(ui, world);
     if (e == TownExit::ToMaze) {                     // continue into the maze
         MazeState mst;
@@ -923,6 +934,46 @@ static int cmdMazeSdl(int argc, char **argv) {
     return 0;
 }
 
+// wiz1 game-test <CHARSET> <SCENARIO.DATA> <script1> <script2>
+//   delve with script1 (ends by "closing the window"), save the session,
+//   reload it and delve again with script2 -- the party resumes in place.
+static int cmdGameTest(int argc, char **argv) {
+    if (argc < 6) { std::puts("game-test <CHARSET> <SCENARIO.DATA> <script1> <script2>"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
+    Rng rng;
+    const std::string savePath = "game_test_maze.dat";
+    std::remove(savePath.c_str());
+
+    {   // --- first delve, interrupted by "closing the window" ---
+        auto plat = makeNullPlatform(unescape(argv[4]), "");
+        Ui ui(*plat, font);
+        MazeState st;
+        st.level = 1; st.pos = MazePos{1, 10, 1};
+        MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
+        std::printf("delve 1: exit %d  pos (%d,%d) dir %d  active %d\n",
+                    int(e), st.pos.x, st.pos.y, st.pos.dir, st.active ? 1 : 0);
+        if (e == MazeExit::WindowClosed && st.active) st.save(savePath);
+    }
+
+    {   // --- relaunch: load the session and resume ---
+        MazeState st;
+        bool loaded = st.load(savePath);
+        std::printf("reload: ok %d  active %d  resume (%d,%d) dir %d level %d\n",
+                    loaded ? 1 : 0, st.active ? 1 : 0, st.pos.x, st.pos.y, st.pos.dir, st.level);
+        auto plat = makeNullPlatform(unescape(argv[5]), "");
+        Ui ui(*plat, font);
+        MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
+        std::printf("delve 2: exit %d  pos (%d,%d) dir %d\n",
+                    int(e), st.pos.x, st.pos.y, st.pos.dir);
+    }
+    std::remove(savePath.c_str());
+    return 0;
+}
+
 // wiz1 cemetery-test <CHARSET> <SCENARIO.DATA> <keyscript> [level]
 static int cmdCemeteryTest(int argc, char **argv) {
     if (argc < 5) { std::puts("cemetery-test <CHARSET> <SCENARIO.DATA> <keyscript> [level]"); return 2; }
@@ -1043,6 +1094,7 @@ int main(int argc, char **argv) {
     if (cmd == "combat-test") return cmdCombatTest(argc, argv);
     if (cmd == "camp-test") return cmdCampTest(argc, argv);
     if (cmd == "cemetery-test") return cmdCemeteryTest(argc, argv);
+    if (cmd == "game-test") return cmdGameTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

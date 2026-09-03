@@ -236,3 +236,12 @@ add_test(NAME cemetery
 # CEMETARY / BADSTUFF: everyone dies, gold halved, an item lost, party emptied.
 set_tests_properties(cemetery PROPERTIES
     PASS_REGULAR_EXPRESSION "m0: gold 185->92  poss 2->1")
+add_test(NAME game_resume
+         COMMAND wiz1 game-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "FFFFF" "\\e")
+# an interrupted delve (window closed mid-maze) saves the session; relaunch
+# reloads it and the party resumes at the same square.
+set_tests_properties(game_resume PROPERTIES
+    PASS_REGULAR_EXPRESSION "delve 1: exit 2  pos .6,10.(.|\n)*resume .6,10. dir 1 level 1")

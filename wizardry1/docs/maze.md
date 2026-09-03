@@ -117,9 +117,18 @@ then finds nobody `OK` the maze ends at the cemetery
 
 Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET>
 <SCENARIO.DATA> [level]` (SDL) / `wiz1 maze-play-test <CHARSET> <SCENARIO.DATA>
-<keyscript> [ASCII.KRN] [level x y dir]` (headless; tests `maze_play`,
-`town_to_maze`, `scnmsg_room`).  `wiz1 maze-scan <SCENARIO.DATA> [ASCII.KRN]`
-lists every special-square descriptor (with SCNMSG text) across all levels.
+<keyscript> [ASCII.KRN] [level x y dir] [poison]` (headless; tests
+`maze_play`, `town_to_maze`, `scnmsg_room`, `maze_poison`).  `wiz1 maze-scan
+<SCENARIO.DATA> [ASCII.KRN]` lists every special-square descriptor.
+
+**Save / resume.**  DOS Wizardry has no `PLAYER.DATA` — the save is
+`SCENARIO.DATA` in place (see `docs/file-formats.md`).  The engine keeps
+`MazeState::save/load` (`maze.dat`, magic `WZM1`): closing the window
+mid-delve (`MazeExit::WindowClosed`) writes level / `MAZEX,Y` / `DIRECTIO` /
+`LIGHT` / `ACMOD2` / `QUICKPLT` / `FIGHTMAP`-less `scnMsgFired`, and the
+party resumes at the same square on the next launch (`st.active`).  Leaving
+via the stairs / camp / Esc / a wipe ends the delve and deletes `maze.dat`.
+`wiz1 game-test` / test `game_resume`.
 
 ## SCNMSG — scripted messages  (`SPECIALS` `SPCMISC` / `DOMSG`)
 

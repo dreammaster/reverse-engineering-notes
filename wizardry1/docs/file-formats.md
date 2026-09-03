@@ -166,9 +166,12 @@ byte-exact round-trip of all 20 shipped roster records
 | 24 | `LUCKSKIL[0..4]` packed 5-bit, 2 w | 80 | `PRIESTSP[1..7]` |
 | 26 | `GOLD` (TWIZLONG) | 88 | `ARMORCL` |
 
-Words 87 and 89–103 (`HPCALCMD`, `HEALPTS`, `CRITHITM`, `SWINGCNT`,
-`HPDAMRC`, `WEPVSTY2/3/P`, `LOSTXYL`) are not modelled yet — carried through
-verbatim on write. `IXP 3,5` packs 3 fields/word from bit 0 (5 bits each,
+Combat tail (from the combat/equip work): 87 `HPCALCMD`, 89 `HEALPTS`,
+90 `CRITHITM`, 91 `SWINGCNT`, 92–94 `HPDAMRC` (THPREC), 98 `WEPVSTYP` (slay
+bits).  `LOSTXYL` is a **variant record** at words 99–102 —
+`POISNAMT[1..4]` / `LOCATION[1..4]` (dungeon x, y, level) / `AWARDS[1..4]`
+(medals) overlaid; the engine models word 99 as `poison`.  Words 95–97,
+100–103 pass through verbatim on write. `IXP 3,5` packs 3 fields/word from bit 0 (5 bits each,
 bit 15 spare); `IXP 16,1` uses all 16 bits. UCSD string writes touch only
 the length byte + chars (stale tail bytes are preserved).
 
@@ -246,7 +249,33 @@ live DOSBox trace. **Not on the critical path** for `CASTLE`/`SHOPS`/`RUNNER`.
 
 ---
 
-## PLAYER.DATA / SAVEn.DSK (Phase 1)
+## Saved games — `SAVEn.DSK`  ✅ examined
 
-`SAVE1.DSK`–`SAVE5.DSK` are UCSD p-System volumes too; the party save is
-`PLAYER.DATA`. Not yet examined.
+**There is no `PLAYER.DATA`.**  `SAVE1.DSK`–`SAVE5.DSK` (655360 B each) are
+**complete bootable UCSD p-System volumes** — one save slot per scenario
+(SAVE1 = Wiz 1, SAVE2 = Wiz 2, …).  Each holds a full copy of
+`SYSTEM.PASCAL` + `SYSTEM.INTERP` + `ASCII.KRN` + `SCENARIO.DATA` + the
+art files, plus one junk/anti-tamper blob (`ZOT`/`DERF`/…).
+
+The save state **is `SCENARIO.DATA`**: the p-code writes each character
+record back to the `ZCHAR` area in place (`GETRECW( ZCHAR, CHARDISK[i], … )`)
+on every town/maze transition, and mutates `ZMAZE` for consumed one-shot
+squares.  "M)AKE SCENARIO DISK" / the save menu copies the whole working
+image to a `SAVEn` slot.  Diffing `SAVE1.DSK`'s `SCENARIO.DATA` against the
+shipped `WIZ1.DSK` shows **38 bytes** changed — only the six party members'
+`NAME` fields (a lightly-used demo slot).
+
+The session state the game keeps in **globals** (not on disk): `MAZEX`,
+`MAZEY`, `MAZELEV`, `DIRECTIO`, `LIGHT`, `ACMOD2`, `QUICKPLT`, and the
+`FIGHTMAP`.  A character physically left in the dungeon (disband, death) is
+marked by `INMAZE` + a non-zero `LOSTXYL.LOCATION[1..3]` (= the poison words
+99–101, a variant record); `(0,0,0)` means "in town".
+
+**Engine port:** `roster.dat` (20 × 208-byte `TCHAR`) is the byte-identical
+equivalent of the on-disk `ZCHAR` save.  `party.dat` / `shop.dat` hold the
+active roster indices / Boltac stock.  `maze.dat` (`MazeState::save/load`,
+magic `WZM1`) persists an **interrupted delve** — the window closed
+mid-maze — so the party resumes at the same square on relaunch; it is
+deleted when the delve ends via the stairs / camp / Esc / a wipe.  Test
+`game_resume`.  Still TODO: the `LOSTXYL.LOCATION` dungeon-body model and
+its recovery (`SPECIALS` `PICKUP`).

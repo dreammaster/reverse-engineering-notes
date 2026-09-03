@@ -6,6 +6,7 @@
 #include "wiz/runner.h"
 
 #include <map>
+#include <string>
 
 namespace wiz {
 
@@ -25,6 +26,14 @@ struct MazeState {
     // read-only, so the AUX0 write-back is tracked here instead).
     // key = level*100 + descriptor index -> times already fired.
     std::map<int, int> scnMsgFired;
+
+    bool active = false;            // a delve is in progress (resume on relaunch)
+
+    // The interrupted-delve save.  DOS Wizardry has no PLAYER.DATA -- the
+    // save is SCENARIO.DATA in place; this is the session state the game
+    // keeps in globals (MAZEX/Y/LEV/DIRECTIO/LIGHT/ACMOD2/QUICKPLT).
+    bool save(const std::string &path) const;
+    bool load(const std::string &path);            // false if absent / bad
 };
 
 enum class MazeExit {

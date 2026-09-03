@@ -9,11 +9,60 @@
 #include "wiz/combat_ui.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <vector>
 
 namespace wiz {
+
+// ---- MazeState save / restore (the interrupted-delve session) --------
+
+namespace {
+constexpr char kMazeMagic[4] = {'W', 'Z', 'M', '1'};
+void put32(std::FILE *f, int32_t v) { std::fwrite(&v, 4, 1, f); }
+bool get32(std::FILE *f, int32_t &v) { return std::fread(&v, 4, 1, f) == 1; }
+}
+
+bool MazeState::save(const std::string &path) const {
+    std::FILE *f = std::fopen(path.c_str(), "wb");
+    if (!f) return false;
+    std::fwrite(kMazeMagic, 1, 4, f);
+    put32(f, active ? 1 : 0);
+    put32(f, level);
+    put32(f, pos.x); put32(f, pos.y); put32(f, pos.dir);
+    put32(f, light); put32(f, protect); put32(f, quickPlot ? 1 : 0);
+    put32(f, int32_t(scnMsgFired.size()));
+    for (const auto &kv : scnMsgFired) { put32(f, kv.first); put32(f, kv.second); }
+    std::fclose(f);
+    return true;
+}
+
+bool MazeState::load(const std::string &path) {
+    std::FILE *f = std::fopen(path.c_str(), "rb");
+    if (!f) return false;
+    char m[4];
+    int32_t v, n = 0;
+    bool ok = std::fread(m, 1, 4, f) == 4 && std::memcmp(m, kMazeMagic, 4) == 0;
+    auto rd = [&](int &dst) { ok = ok && get32(f, v); if (ok) dst = v; };
+    int a = 0, qp = 0;
+    rd(a); rd(level); rd(pos.x); rd(pos.y); rd(pos.dir);
+    rd(light); rd(protect); rd(qp);
+    if (ok && get32(f, n)) {
+        scnMsgFired.clear();
+        for (int i = 0; i < n && ok; ++i) {
+            int32_t k = 0, c = 0;
+            ok = get32(f, k) && get32(f, c);
+            if (ok) scnMsgFired[k] = c;
+        }
+    }
+    std::fclose(f);
+    if (!ok) return false;
+    active = a != 0;
+    quickPlot = qp != 0;
+    return true;
+}
 namespace {
 
 // --- HUD geometry (640x192 text surface, 16x8 font) --------------------
@@ -411,8 +460,8 @@ int rollEnemyInx(MazeCtx &c) {
 
 } // namespace
 
-MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
-                 Rng &rng, MazeState &st) {
+static MazeExit runMazeImpl(Ui &ui, Party &party, const Scenario &sc,
+                            const StringPool *sp, Rng &rng, MazeState &st) {
     MazeCtx c{ui, party, sc, sp, rng, st};
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
     for (int i = 0; i < party.count(); ++i) equipRecalc(party.member(i), sc);
@@ -486,6 +535,16 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
             return MazeExit::ToTown;                 // SPECIALS.INSPECT not ported
         }
     }
+}
+
+MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
+                 Rng &rng, MazeState &st) {
+    st.active = true;
+    MazeExit e = runMazeImpl(ui, party, sc, sp, rng, st);
+    // Only an interrupted delve (the window closed) is worth resuming; a
+    // return to town via the stairs / camp / Esc ends the delve.
+    st.active = (e == MazeExit::WindowClosed);
+    return e;
 }
 
 } // namespace wiz
