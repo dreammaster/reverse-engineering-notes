@@ -143,6 +143,39 @@ void runInit(MazeCtx &c) {
     prStats(c);
 }
 
+// ---- UPDATEHP (P010E1C): per-move poison / regen ---------------------
+
+// Once per actual move, each conscious member has a 1-in-4 chance to take
+// POISNAMT damage and HEALPTS regen (net); poison can kill.
+void updateHp(MazeCtx &c) {
+    for (int i = 0; i < c.party.count(); ++i) {
+        Character &ch = c.party.member(i);
+        if (int(ch.status) >= int(Status::Dead)) continue;
+        if (c.rng.mod(4) != 2) continue;
+        ch.hpLeft += ch.healPts - ch.poison;
+        if (ch.hpLeft <= 0) {
+            ch.poison = 0;
+            ch.hpLeft = 0;
+            if (int(ch.status) < int(Status::Dead)) {
+                ch.status = Status::Dead;
+                msg(c, ch.name + " DIED");
+                prStats(c);
+                c.present();
+                c.ui.delayMs(400);
+            }
+        } else if (ch.hpLeft > ch.hpMax) {
+            ch.hpLeft = ch.hpMax;
+        }
+    }
+}
+
+// PRSTATS' ANYALIVE test: the maze ends at the cemetery when nobody is OK.
+bool anyConscious(const Party &p) {
+    for (int i = 0; i < p.count(); ++i)
+        if (p.member(i).status == Status::OK) return true;
+    return false;
+}
+
 // ---- ROCKWATR (P010E16): pit / ouch damage ---------------------------
 
 void rockDamage(MazeCtx &c, int sq) {
@@ -417,6 +450,9 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
             if (runFight(c, rollEnemyInx(c), out, a012)) return out;
             c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
         }
+
+        if (initTurn) updateHp(c);
+        if (!anyConscious(party)) return MazeExit::PartyWiped;
 
         prStats(c);
         c.present();

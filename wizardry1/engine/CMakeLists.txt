@@ -220,3 +220,19 @@ add_test(NAME camp_equip
 # EQUIPCHR -> AC 8, damage 1d8 + the STR bonus.
 set_tests_properties(camp_equip PROPERTIES
     PASS_REGULAR_EXPRESSION "EQUIP. THESUS AC 8 swings 1 dmg 1d8.2")
+add_test(NAME maze_poison
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "FFFFFFFFFFFF\\e"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 1 1 10 1 20)
+# UPDATEHP: heavily poisoned, walking the corridor kills THESUS mid-maze.
+set_tests_properties(maze_poison PROPERTIES
+    PASS_REGULAR_EXPRESSION "THESUS HP 0/8  status 5")
+add_test(NAME cemetery
+         COMMAND wiz1 cemetery-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "\\r" 3)
+# CEMETARY / BADSTUFF: everyone dies, gold halved, an item lost, party emptied.
+set_tests_properties(cemetery PROPERTIES
+    PASS_REGULAR_EXPRESSION "m0: gold 185->92  poss 2->1")

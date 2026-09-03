@@ -104,9 +104,16 @@ right, `S` re-list party, `Q` quick-plot, `C` camp (below), `Esc` leave.
 `SPECSQAR` handles stairs (Y/N → change level; target level 0 → back to
 town), chutes, teleporters, spinners, darkness, pits/damage (`ROCKWATR`:
 agility check vs `rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`),
-the river (`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`), and
-`SCNMSG`.  Not ported: `UPDATEHP` poison/regen, `SETTIME`, `I` inspect
+the river (`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`),
+`SCNMSG`, and `UPDATEHP` (below).  Not ported: `SETTIME`, `I` inspect
 (`SPECIALS.INSPECT` — look for secret doors).
+
+**`UPDATEHP`** (`P010E1C`) runs once per actual move: each conscious member
+has a `rand%4 == 2` chance to take `POISNAMT` damage and `HEALPTS` regen
+(net) — poison can kill (`… DIED`), regen caps at `HPMAX`.  When `PRSTATS`
+then finds nobody `OK` the maze ends at the cemetery
+(`MazeExit::PartyWiped`).  `maze-play-test`'s last arg poisons every member
+(test `maze_poison`).
 
 Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET>
 <SCENARIO.DATA> [level]` (SDL) / `wiz1 maze-play-test <CHARSET> <SCENARIO.DATA>

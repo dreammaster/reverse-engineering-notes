@@ -134,10 +134,13 @@ Decided direction (2026-09-02):
       list, `DSPSTATS` sheet, `REORDER`, `DROP`, `READ` spellbooks,
       `DISBAND`, **`EQUIP`** — `engine/wiz/equip.h` `EQUIPCHR`/`ARMORPOW`,
       DOS `TOBJREC` equip tail decoded, run on entering the maze too).
-      Runs from the Edge of Town (`M`). `wiz1 maze` / `maze-sdl` /
-      `maze-play-test` / `maze-scan` / `camp-test`. Combat hand-off done.
-      TODO: `UPDATEHP` regen/poison, `SETTIME`, camp `USE`/`TRADE`/
-      `IDENTIFY`/`CHSPCPOW`/non-combat spells, the other `SCNMSG` side effects.
+      `UPDATEHP` per-move poison/regen; on a total wipe -> `CEMETARY`
+      (`engine/wiz/cemetery.h` `BADSTUFF`: die, halve gold, break items,
+      empty the party, tombstone). Runs from the Edge of Town (`M`).
+      `wiz1 maze` / `maze-sdl` / `maze-play-test` / `maze-scan` / `camp-test`
+      / `cemetery-test`. Combat hand-off done. TODO: `SETTIME`, camp
+      `USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/non-combat spells, the dungeon
+      body-recovery rescue, the other `SCNMSG` side effects.
 - [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
@@ -151,9 +154,9 @@ Decided direction (2026-09-02):
       `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
       `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
       `FRIENDLY` parley, the cemetery scene.
-- [ ] Continue: save/restore (`PLAYER.DATA`) → the `XCEMETRY` scene → the
-      remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/non-combat
-      spells) → the remaining `SCNMSG` side effects.
+- [ ] Continue: save/restore (`PLAYER.DATA`, incl. dungeon body recovery) →
+      the remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/
+      non-combat spells) → `SETTIME` → the remaining `SCNMSG` side effects.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

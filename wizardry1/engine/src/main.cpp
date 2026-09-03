@@ -18,6 +18,7 @@
 #include "wiz/town_ui.h"
 #include "wiz/inn.h"
 #include "wiz/temple.h"
+#include "wiz/cemetery.h"
 #include "wiz/maze.h"
 #include "wiz/runner.h"
 #include "wiz/maze3d.h"
@@ -448,9 +449,13 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
             MazeState st;                            // ENTMAZE: level 1, (0,0) N
             MazeExit me = runMaze(ui, world.party, world.sc, world.sp, world.rng, st);
             if (me == MazeExit::WindowClosed) return;
-            // PartyWiped / ToTown both drop back to the town; a real XCEMETRY
-            // would run the cemetery scene first.  The party's working copies
-            // (HP, deaths) are written back when they leave at the Edge of Town.
+            if (me == MazeExit::PartyWiped) {        // XGOTO := XCEMETRY
+                runCemetery(ui, world.party, world.roster, st.level, world.rng);
+                if (!world.rosterPath.empty()) world.roster.save(world.rosterPath);
+                if (!world.partyPath.empty()) world.party.save(world.partyPath);
+            }
+            // ToTown: the party's working copies (HP, deaths) are written back
+            // when they leave at the Edge of Town.
         }
     }
 }
@@ -918,9 +923,43 @@ static int cmdMazeSdl(int argc, char **argv) {
     return 0;
 }
 
+// wiz1 cemetery-test <CHARSET> <SCENARIO.DATA> <keyscript> [level]
+static int cmdCemeteryTest(int argc, char **argv) {
+    if (argc < 5) { std::puts("cemetery-test <CHARSET> <SCENARIO.DATA> <keyscript> [level]"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
+    int level = argc > 5 ? std::atoi(argv[5]) : 1;
+
+    // give member 0 a couple of items so BREAKPOS has something to roll
+    Character &m0 = party.member(0);
+    m0.poss[m0.possCount++] = Possession{false, false, true, 1};
+    m0.poss[m0.possCount++] = Possession{false, false, true, 10};
+    int64_t goldBefore = m0.gold.v;
+    int possBefore = m0.possCount;
+
+    auto plat = makeNullPlatform(unescape(argv[4]), "");
+    Rng rng;
+    Ui ui(*plat, font);
+    runCemetery(ui, party, roster, level, rng);
+
+    std::printf("party count: %d\n", party.count());
+    for (int i = 0; i < 6; ++i) {
+        const Character &c = roster.slot(i);
+        if (c.name.empty()) continue;
+        std::printf("  %-12s status %d  hp %d  %lldgp  poss%d\n", c.name.c_str(),
+                    int(c.status), c.hpLeft, (long long)c.gold.v, c.possCount);
+    }
+    std::printf("m0: gold %lld->%lld  poss %d->%d\n", (long long)goldBefore,
+                (long long)roster.slot(0).gold.v, possBefore, roster.slot(0).possCount);
+    return 0;
+}
+
 // Headless: script a walk through the maze and print the ending state.
 static int cmdMazePlayTest(int argc, char **argv) {
-    if (argc < 5) { std::puts("maze-play-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [level x y dir]"); return 2; }
+    if (argc < 5) { std::puts("maze-play-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [level x y dir] [poison0]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -938,6 +977,8 @@ static int cmdMazePlayTest(int argc, char **argv) {
         st.level = std::atoi(argv[6]);
         st.pos = MazePos{std::atoi(argv[7]), std::atoi(argv[8]), std::atoi(argv[9])};
     }
+    if (argc > 10)                              // poison every member
+        for (int i = 0; i < party.count(); ++i) party.member(i).poison = std::atoi(argv[10]);
     MazeExit e = runMaze(ui, party, sc, haveSp ? &sp : nullptr, rng, st);
     static const char *ex[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
     std::printf("exit: %s   pos (%d,%d) %s  level %d\n", ex[int(e)],
@@ -1001,6 +1042,7 @@ int main(int argc, char **argv) {
     if (cmd == "maze-play-test") return cmdMazePlayTest(argc, argv);
     if (cmd == "combat-test") return cmdCombatTest(argc, argv);
     if (cmd == "camp-test") return cmdCampTest(argc, argv);
+    if (cmd == "cemetery-test") return cmdCemeteryTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);
