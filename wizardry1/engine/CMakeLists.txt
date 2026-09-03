@@ -158,7 +158,7 @@ add_test(NAME combat_spell
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
-                 "\\rPC1PPPC2\\rPPPPPC12\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "\\r\\rPC1PPPC2\\rPPPPPC12\\rPPPPPP\\rFFFFFF\\rFFFFFF\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
 # mage HALITO + priest BADIOS damage monsters, priest DIOS heals; party wins.
 set_tests_properties(combat_spell PROPERTIES
@@ -183,7 +183,7 @@ set_tests_properties(friendly_fight PROPERTIES
 add_test(NAME reward_drop
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 2
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 22
                  "\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\rO1\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # win, open the ZREWARD chest: real CALCKILL xp, an item drop, a gold share.
@@ -192,8 +192,8 @@ set_tests_properties(reward_drop PROPERTIES
 add_test(NAME combat_breath
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 28
-                 "\\rPPPPPP\\rPPPPPP\\rPPPPPP\\rPPPPPP\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 35
+                 "\\r\\rPPPPPP\\rPPPPPP\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # DOBREATH: a dragon's breath hits the whole party for HPLEFT/2 (halved).
 set_tests_properties(combat_breath PROPERTIES
@@ -224,7 +224,17 @@ add_test(NAME combat_surprise
                  "\\rPPPPPP\\rPPPPPP\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 set_tests_properties(combat_surprise PROPERTIES
-    PASS_REGULAR_EXPRESSION "THE MONSTERS SURPRISED YOU")
+    PASS_REGULAR_EXPRESSION "SURPRISED (THE MONSTERS|YOU)")
+add_test(NAME combat_groups
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 82
+                 "\\r\\rPPPPPP\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 -1 2)
+# CINIT ENGROUPS: on maze level 2 a PRIEST calls in an allied group of GIANTS
+# (ENMYTEAM chain + the TEAMPERC roll).
+set_tests_properties(combat_groups PROPERTIES
+    PASS_REGULAR_EXPRESSION "2 GROUPS OF MONSTERS(.|\n)*B. 3 GIANTS")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

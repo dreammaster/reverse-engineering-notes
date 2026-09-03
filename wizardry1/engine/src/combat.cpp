@@ -15,10 +15,15 @@ int MonGroup::firstLiving() const {
 
 // ---- CINIT: build the encounter --------------------------------------
 
-static void engroups(Battle &bt, const Scenario &sc, int enmyI, int grp, Rng &rng) {
+// ENGROUPS: resolve `enmyI` through the ENMYTEAM chain to its "real" (UNIQUE)
+// record, store it as group `grp`, then -- deeper into the dungeon and on a
+// TEAMPERC roll -- recurse to add an allied group.  DOS group indices are
+// 1-based (group 0 = the party), so `grp + 1` is the DOS `ENMYGRUP`.
+static void engroups(Battle &bt, const Scenario &sc, int enmyI, int grp,
+                     int mazeLevel, Rng &rng) {
     if (grp >= 4) return;
     int nmon = sc.count(Scenario::Monster);
-    // ENGROUPS' ENMYTEAM chain to the "real" (UNIQUE) record.
+
     MonsterRec r{sc.record(Scenario::Monster, enmyI)};
     for (int guard = 0; guard < 8 && r.unique() == 0; ++guard) {
         int t = r.enmyTeam();
@@ -27,10 +32,11 @@ static void engroups(Battle &bt, const Scenario &sc, int enmyI, int grp, Rng &rn
         r = MonsterRec{sc.record(Scenario::Monster, enmyI)};
     }
     bt.grp[grp].enemyId = enmyI;
-    // Allied groups: the exact TENEMY tail offsets (ENMYTEAM/TEAMPERC) are not
-    // yet confirmed, so multi-group encounters are only built from the maze's
-    // own descriptors, not by chasing ENMYTEAM here.
-    (void)rng;
+
+    int team = r.enmyTeam();
+    if (grp + 1 < 4 && team >= 0 && team < nmon && grp + 1 <= mazeLevel &&
+        rng.mod(100) < r.teamPerc())
+        engroups(bt, sc, team, grp + 1, mazeLevel, rng);
 }
 
 void buildEncounter(Battle &bt, const Scenario &sc, int enemyInx, int mazeLevel, Rng &rng) {
@@ -39,7 +45,7 @@ void buildEncounter(Battle &bt, const Scenario &sc, int enemyInx, int mazeLevel,
     int nmon = sc.count(Scenario::Monster);
     if (enemyInx < 0 || enemyInx >= nmon) enemyInx = 0;
 
-    engroups(bt, sc, enemyInx, 0, rng);
+    engroups(bt, sc, enemyInx, 0, mazeLevel, rng);
 
     int cap = std::min(9, 4 + mazeLevel);
     for (int g = 0; g < 4; ++g) {

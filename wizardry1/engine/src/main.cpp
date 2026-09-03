@@ -1104,13 +1104,14 @@ static int cmdCombatTest(int argc, char **argv) {
     int mon = std::atoi(argv[4]);
     int attk012 = argc > 7 ? std::atoi(argv[7]) : 2;
     int parleyThresh = argc > 8 ? std::atoi(argv[8]) : -1;
+    int mazeLevel = argc > 9 ? std::atoi(argv[9]) : 1;
 
     auto plat = makeNullPlatform(unescape(argv[5]), "");
     Rng rng;
     Ui ui(*plat, font);
     std::vector<std::string> transcript;
-    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1,
-                               attk012, &transcript, parleyThresh);
+    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon,
+                               mazeLevel, attk012, &transcript, parleyThresh);
     static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED", "FRIENDLY"};
     std::printf("result: %s\n", rn[int(r)]);
     int casts = 0, healed = 0;

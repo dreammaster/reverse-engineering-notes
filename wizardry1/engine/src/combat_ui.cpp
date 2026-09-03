@@ -492,7 +492,15 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
     c.bt.surprise = (rng.mod(100) > 80) ? 1 : (rng.mod(100) > 80 ? 2 : 0);
 
     if (friendlyParley(c)) return CombatResult::Friendly;
-    c.say("A GROUP OF MONSTERS BLOCKS YOUR WAY!");
+    if (c.bt.nGroups > 1) {
+        CombatLog l;
+        l.push_back(std::to_string(c.bt.nGroups) + " GROUPS OF MONSTERS!");
+        for (int g = 0; g < c.bt.nGroups; ++g)
+            l.push_back(std::string(1, char('A' + g)) + ") " + groupName(sc, sp, c.bt.grp[g]));
+        c.say(l);
+    } else {
+        c.say("A GROUP OF MONSTERS BLOCKS YOUR WAY!");
+    }
     if (c.bt.surprise == 1)      c.say("YOU SURPRISED THE MONSTERS!");
     else if (c.bt.surprise == 2) c.say("THE MONSTERS SURPRISED YOU!");
     c.pause();

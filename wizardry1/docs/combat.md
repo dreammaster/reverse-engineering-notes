@@ -16,7 +16,7 @@ spell AI).
 | 1-3 | `CALC1` — group-count dice | | 35 | `HEALPTS` |
 | 4-6 | `HPREC` — per-monster HP dice | | 36 | `REWARD1` (0 here) |
 | 7 | `CLASS` | | 37 | `REWARD2` → `ZREWARD` index |
-| 8 | `AC` | | 38-39 | `ENMYTEAM` / `TEAMPERC` (provisional) |
+| 8 | `AC` | | 38-39 | `ENMYTEAM` / `TEAMPERC` (allied group) |
 | 9 | `RECSN` — attacks/round | | 40-41 | `MAGSPELS` / `PRISPELS` |
 | 10-30 | `RECS[1..7]` — THPREC damage/attack | | 42 | `UNIQUE` (−1 = encounterable) |
 | 31-33 | `EXPAMT` — **0 in this scenario** | | 43-44 | `BREATHE` / `UNAFFCT` |
@@ -32,11 +32,17 @@ Base unarmed: `HPCALCMD = (fighty ? 2 + lvl/3 : lvl/5) + str-15 (if >15)`;
 
 ## Encounter build — `CINIT` (`INITGRUP`/`ENGROUPS`)
 
-`buildEncounter(bt, sc, enemyInx, mazeLevel, rng)`: chase `ENMYTEAM` to the
-`UNIQUE` record, then group count `= clamp(CALC1 roll, 1, min(9, 4+level))`,
-each monster `HP = HPREC roll`.  Multi-group encounters via `ENMYTEAM`
-chaining are held back until those offsets are confirmed — the maze's own
-`ENCOUNTE`/`ENMYCALC` descriptors are the current source of an encounter.
+`buildEncounter(bt, sc, enemyInx, mazeLevel, rng)` = `INITGRUP` + `ENGROUPS`:
+for each group, chase `ENMYTEAM` to a record with `UNIQUE ≠ 0`, store it,
+then — while the group index (1-based) is `< 4` **and** `≤ MAZELEV` **and**
+`rand%100 < TEAMPERC` — recurse to add an **allied group** from that
+record's `ENMYTEAM`.  So a level-2 delve can field up to 3 groups, level 3+
+up to 4.  `TENEMY` `ENMYTEAM`/`TEAMPERC` = words 38/39 (Apple layout − 32,
+confirmed; nearly every WIZ1 monster has an ally).  Per group the count is
+`clamp(CALC1 roll, 1, min(9, 4+level))`, each monster `HP = HPREC roll`.
+The maze's `ENCOUNTE`/`ENMYCALC` descriptors still pick the *lead* monster;
+`combat-test`'s 9th arg sets the maze level for the `TEAMPERC` gate.  Test
+`combat_groups`.
 
 ## Resolution — `DAM2ENMY` / `DAM2ME`
 
@@ -168,8 +174,7 @@ The weak PC RNG rarely lands `z` in the window on its own, so
 `combat-test`'s `parleyThresh` arg overrides `thresh` for the tests.
 
 **Not ported:** `DODISPEL` (a Lord/Bishop monster dissolving *summoned*
-allies), allied *groups* (`ENMYTEAM` chaining — only a single group is
-built) and in-combat item use.  Spell
+allies) and in-combat item use.  Spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`
