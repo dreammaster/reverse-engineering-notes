@@ -10221,3 +10221,33 @@ anywhere in the function. This build's leave-room event hook cannot
 redirect the destination room the way 2011's later version can; a
 real, confirmed feature absence, not merely a smaller/inlined version
 of the same behavior.
+
+### `evblockbasename`/`evblocknum` globals finally renamed -- identified in prose several rounds ago, never actually pushed to the IDB
+
+A small data-hygiene find while re-reading `process_event`'s own
+`EVB_ROOM`/`EVB_HOTSPOT` dispatch for the `new_room` round above: the
+bare globals `String1` and `iii` were both already IDENTIFIED by name
+in earlier rounds' prose (`String1`==`evblockbasename`, confirmed via
+`run_event_block_inv`'s own body several sessions ago; `iii`'s
+EVB_HOTSPOT-branch role was documented, if not explicitly named, in
+`process_event`'s own entry) but neither rename was ever actually
+pushed into the live IDB -- the same "documented but not applied"
+gap this session's fresh IDB update already found and fixed twice
+before (`run_dialog_request`->`run_dialog_script`,
+`stop_fast_forwarding`->`remove_screen_overlay`). Renamed directly by
+address (`String1`@0x4EF37C, `iii`@0x51F684, both confirmed via IDA's
+own `get_name_ea_simple` lookup, not guessed) to `evblockbasename`/
+`evblocknum`, matching 2011's own globals of the same names exactly.
+
+`evblocknum` picks up a second, independent confirmation site in the
+process: `check_controls`' own click-dispatch body turns out to have
+2011's entire `RunInventoryInteraction(iit,modd)` (`AC.CPP:5616-5633`)
+fused inline rather than called as a separate function -- `iii=iit`
+right before the `MODE_LOOK`/`MODE_HAND`/`MODE_USE`/`MODE_TALK`/
+fallback dispatch into `run_event_block_inv`, matching source's
+`evblocknum=iit;` (`AC.CPP:5620`) exactly, and the four-way dispatch
+(keyed off the already-confirmed `cur_mode`/`dword_4EDA7C` global)
+matching each of `RunInventoryInteraction`'s own `modd` branches one
+for one. This build's `RunInventoryInteraction` has no separate
+existence, the same historical-fusion pattern already found repeatedly
+elsewhere (`cc_run_code`/`offset_over_inv`/`unload_old_room`/etc.).

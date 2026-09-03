@@ -2891,6 +2891,17 @@ disassembly work.
   after, letting an OnRoomLeave-equivalent script redirect the actual
   destination room — CONFIRMED ABSENT here, no such write/re-read
   exists anywhere in this build's `new_room`.
+- **`evblockbasename`/`evblocknum` globals renamed** — a third instance
+  of the "identified in prose, never actually pushed to the IDB" gap
+  this session's fresh IDB update already found and fixed twice
+  (`run_dialog_request`→`run_dialog_script`,
+  `stop_fast_forwarding`→`remove_screen_overlay`). `String1`@0x4EF37C
+  and `iii`@0x51F684 renamed directly to match 2011's own globals of
+  the same names. `evblocknum` picks up a second confirmation site:
+  `check_controls` turns out to have 2011's entire
+  `RunInventoryInteraction(iit,modd)` (`AC.CPP:5616-5633`) fused
+  inline rather than called separately — `iii=iit` matches
+  `evblocknum=iit;` (`AC.CPP:5620`) exactly.
 
 ## Third-party library identification (Task #10)
 

@@ -153792,7 +153792,7 @@ static Bytes_27(void) {
 	set_name	(0X4EF354,	"play_filenumbers");
 	create_word	(0X4EF356);
 	create_dword	(0X4EF37C);
-	set_name	(0X4EF37C,	"String1");
+	set_name	(0X4EF37C,	"evblockbasename");
 	create_dword	(0X4EF380);
 	create_dword	(0X4EF384);
 	create_word	(0X4EF398);
@@ -153916,7 +153916,7 @@ static Bytes_27(void) {
 	create_dword	(0X51DB08);
 	create_byte	(0X51DB2C);
 	create_dword	(0X51F684);
-	set_name	(0X51F684,	"iii");
+	set_name	(0X51F684,	"evblocknum");
 	MakeStruct	(0X51F688,	"roomstruct");
 	set_name	(0X51F688,	"rstruc");
 	create_dword	(0X51F69C);
@@ -155902,7 +155902,7 @@ static Functions_1(void) {
 	add_func    (0X40C361,0X40C395);
 	set_func_flags(0X40C361,0x5410);
 	SetType(0X40C361, "void __stdcall new_room(int newnum, CharacterInfo *forchar);");
-	set_func_cmt(0X40C361,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X40C361,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before -- now readable cleanly for the first time since the fresh .asm re-export applied all this session's renames). Turns out to be a short, clean 4-call wrapper: run_room_event(8)/GE_MAN_DIES-adjacent room-EventBlock helper (sub_40C335, already matched), run_on_event(GE_LEAVE_ROOM=1, displayed_room) -- the SECOND argument reads the bare global `newnum` with NO [ebp+...] indirection, decisively distinguishing it from the function's own LOCAL parameter of the same symbolic name (which the frame declares as `newnum=dword ptr 8` and which IS accessed via [ebp+newnum] later in the SAME function, for the load_new_room call) -- confirming this reads the already-established STANDALONE global previously decisively identified as displayed_room (see load_new_room's own entry), matching 2011's own \"run_on_event(GE_LEAVE_ROOM,displa" "yed_room);\" (AC.CPP:4638) exactly, NOT a bug passing the wrong room ", 1);
 	set_frame_size(0X40C361, 0, 4, 0X8);
 	define_local_var(0X40C361, 0X40C395, "[bp+0X8]", "newnum");
 	define_local_var(0X40C361, 0X40C395, "[bp+0XC]", "forchar");
