@@ -5,19 +5,19 @@
   "is_named": true
  },
  {
-  "name": "sub_401078",
+  "name": "wsetrgb",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_401111",
+  "name": "wcolrotate",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_401177",
+  "name": "wnewblock",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "getshort",
@@ -35,9 +35,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40177C",
+  "name": "wputblock",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4017CF",
@@ -65,9 +65,9 @@
   "is_named": false
  },
  {
-  "name": "sub_401B02",
+  "name": "wtexttransparent",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_401B30",
@@ -90,9 +90,9 @@
   "is_named": false
  },
  {
-  "name": "sub_401F62",
+  "name": "wtextcolor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "get_col8_lookup",
@@ -200,19 +200,19 @@
   "is_named": false
  },
  {
-  "name": "sub_40390F",
+  "name": "decrypt_text",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_403969",
+  "name": "read_string_decrypt",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4039AB",
+  "name": "read_dictionary",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_403A1A",
@@ -590,24 +590,24 @@
   "is_named": false
  },
  {
-  "name": "sub_408556",
+  "name": "my_load_wave",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_408623",
+  "name": "my_load_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_408811",
+  "name": "my_load_static_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4089CC",
+  "name": "update_ambient_sound_vol",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "StopAmbientSound",
@@ -635,9 +635,9 @@
   "is_named": true
  },
  {
-  "name": "sub_408E49",
+  "name": "pack_fopen",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "init_translation",
@@ -735,9 +735,9 @@
   "is_named": true
  },
  {
-  "name": "sub_409A9C",
+  "name": "cancel_all_scripts",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "post_script_cleanup",
@@ -755,19 +755,19 @@
   "is_named": true
  },
  {
-  "name": "sub_409F23",
-  "addr_hint": null,
-  "is_named": false
- },
- {
-  "name": "stop_fast_forwarding",
+  "name": "run_text_script_2iparam",
   "addr_hint": null,
   "is_named": true
  },
  {
-  "name": "sub_40A0E9",
+  "name": "remove_screen_overlay",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
+ },
+ {
+  "name": "find_overlay_of_type",
+  "addr_hint": null,
+  "is_named": true
  },
  {
   "name": "add_screen_overlay",
@@ -805,9 +805,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40AD11",
+  "name": "redo_walkable_areas",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "generate_light_table",
@@ -855,9 +855,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40C395",
+  "name": "main_loop_until",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_40C3E0",
@@ -865,9 +865,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40C75E",
+  "name": "run_animation",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "setevent",
@@ -880,12 +880,12 @@
   "is_named": true
  },
  {
-  "name": "sub_40CE8A",
+  "name": "processallevents",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "_EVP_PBE_cleanup",
+  "name": "update_events",
   "addr_hint": null,
   "is_named": true
  },
@@ -1005,9 +1005,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40EB43",
+  "name": "find_looporder_index",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_40EB7B",
@@ -1020,9 +1020,9 @@
   "is_named": true
  },
  {
-  "name": "sub_41024B",
+  "name": "replace_macro_tokens",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "update_invorder",
@@ -1040,14 +1040,14 @@
   "is_named": false
  },
  {
-  "name": "sub_4106E0",
+  "name": "clear_sprite_list",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4106EF",
+  "name": "add_to_sprite_list",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_410771",
@@ -1155,14 +1155,14 @@
   "is_named": true
  },
  {
-  "name": "sub_413635",
+  "name": "wouttext_outline",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4136AF",
+  "name": "GetTextDisplayTime",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "_display_main",
@@ -1210,9 +1210,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4141B8",
+  "name": "play_speech",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_41435E",
@@ -1290,9 +1290,9 @@
   "is_named": true
  },
  {
-  "name": "sub_414F63",
+  "name": "GetMaxScreenHeight",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "DisplayAtY",
@@ -1530,9 +1530,9 @@
   "is_named": true
  },
  {
-  "name": "sub_417088",
+  "name": "run_event_block",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GetGUIAt",
@@ -1570,9 +1570,9 @@
   "is_named": true
  },
  {
-  "name": "sub_417E77",
+  "name": "check_click_on_object",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_417ECD",
@@ -1590,9 +1590,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4181FF",
+  "name": "check_click_on_character",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GetObjectX",
@@ -1660,7 +1660,7 @@
   "is_named": true
  },
  {
-  "name": "SetalkBehindBase",
+  "name": "SetWalkBehindBase",
   "addr_hint": null,
   "is_named": true
  },
@@ -1705,9 +1705,9 @@
   "is_named": true
  },
  {
-  "name": "sub_418E82",
+  "name": "update_music_volume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SetMusicVolume",
@@ -2170,7 +2170,7 @@
   "is_named": true
  },
  {
-  "name": "SetObjectIgnoreWalkBehinds",
+  "name": "SetObjectIgnoreWalkbehinds",
   "addr_hint": null,
   "is_named": true
  },
@@ -2305,12 +2305,12 @@
   "is_named": false
  },
  {
-  "name": "sub_41D342",
+  "name": "run_graph_script",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "run_dialog_request",
+  "name": "run_dialog_script",
   "addr_hint": null,
   "is_named": true
  },
@@ -2475,9 +2475,9 @@
   "is_named": true
  },
  {
-  "name": "sub_423EC0",
+  "name": "putpixel",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_423EF0",
@@ -2485,9 +2485,9 @@
   "is_named": false
  },
  {
-  "name": "sub_423F20",
+  "name": "getpixel",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_423F40",
@@ -2650,29 +2650,29 @@
   "is_named": true
  },
  {
-  "name": "sub_424570",
+  "name": "roomstruct__roomstruct",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424750",
+  "name": "sprstruc__sprstruc",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_424770",
+  "name": "FullAnimation__FullAnimation",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4247A0",
+  "name": "AnimationStruct__AnimationStruct",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4247D0",
+  "name": "PolyPoints__PolyPoints",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4247F0",
@@ -2715,9 +2715,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424A00",
+  "name": "ExecutingScript__init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424A60",
@@ -2905,14 +2905,14 @@
   "is_named": false
  },
  {
-  "name": "sub_4254D0",
+  "name": "is_valid_character",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_425500",
+  "name": "ExecutingScript__run_another",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "acquire_screen",
@@ -2960,9 +2960,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4256E0",
+  "name": "is_valid_object",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_425710",
@@ -3300,9 +3300,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42A4DB",
+  "name": "ccFreeScript",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "dump_instruction",
@@ -3355,9 +3355,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42AAA1",
+  "name": "ccGetCurrentInstance",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "ccCreateInstanceEx",
@@ -3400,14 +3400,14 @@
   "is_named": true
  },
  {
-  "name": "sub_42C24C",
+  "name": "ccAbortInstance",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_42C270",
+  "name": "ccAbortAndDestroyInstance",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "freadstring",
@@ -3540,9 +3540,9 @@
   "is_named": false
  },
  {
-  "name": "sub_42EE9A",
+  "name": "pack_fclose",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42EF4B",
@@ -3595,9 +3595,9 @@
   "is_named": false
  },
  {
-  "name": "sub_42F8FC",
+  "name": "pack_fread",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42F995",
@@ -4085,9 +4085,9 @@
   "is_named": false
  },
  {
-  "name": "sub_434DE0",
+  "name": "set_color_depth",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_434E70",
@@ -4485,19 +4485,19 @@
   "is_named": false
  },
  {
-  "name": "sub_43C840",
+  "name": "get_palette",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_43C860",
+  "name": "get_palette_range",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_43C8A0",
+  "name": "fade_interpolate",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_43C990",
@@ -4590,9 +4590,9 @@
   "is_named": true
  },
  {
-  "name": "sub_43E7D0",
+  "name": "triangle",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_43E860",
@@ -4765,9 +4765,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4444C0",
+  "name": "load_sample",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "load_voc",
@@ -4790,9 +4790,9 @@
   "is_named": false
  },
  {
-  "name": "sub_444AF0",
+  "name": "play_sample",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_444B80",
@@ -4820,14 +4820,14 @@
   "is_named": false
  },
  {
-  "name": "sub_445050",
+  "name": "release_voice",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_445070",
+  "name": "voice_start",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4450B0",
@@ -4850,9 +4850,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4451A0",
+  "name": "voice_set_playmode",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_445200",
@@ -4860,9 +4860,9 @@
   "is_named": false
  },
  {
-  "name": "sub_445260",
+  "name": "voice_set_volume",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4452D0",
@@ -4880,9 +4880,9 @@
   "is_named": false
  },
  {
-  "name": "sub_445560",
+  "name": "voice_set_pan",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "update_sweeps",
@@ -5480,14 +5480,14 @@
   "is_named": true
  },
  {
-  "name": "sub_44AFC0",
+  "name": "load_midi",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_44B130",
+  "name": "destroy_midi",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_44B180",
@@ -5505,14 +5505,9 @@
   "is_named": false
  },
  {
-  "name": "sub_44B570",
+  "name": "play_midi",
   "addr_hint": null,
-  "is_named": false
- },
- {
-  "name": "sub_44B580",
-  "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_44B630",
@@ -5575,9 +5570,9 @@
   "is_named": false
  },
  {
-  "name": "sub_44C610",
+  "name": "stop_midi",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_44C620",
@@ -8185,19 +8180,19 @@
   "is_named": true
  },
  {
-  "name": "sub_477320",
+  "name": "load_mod",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_477470",
+  "name": "play_mod",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_477790",
+  "name": "stop_mod",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_477870",
@@ -8205,9 +8200,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4778B0",
+  "name": "is_mod_playing",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_477990",
@@ -8215,9 +8210,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4779A0",
+  "name": "destroy_mod",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_477A70",
@@ -8790,9 +8785,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47E3F0",
+  "name": "almp3_create_mp3",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47E730",
@@ -8865,9 +8860,9 @@
   "is_named": false
  },
  {
-  "name": "sub_47ED10",
+  "name": "almp3_create_mp3stream",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_47F0D0",
