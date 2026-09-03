@@ -22,6 +22,8 @@ struct MazeState {
     int light = 0;                  // LIGHT counter (spell)
     int protect = 0;                // ACMOD2 (spell)
     bool quickPlot = false;         // QUICKPLT
+    int timeDelay = 2000;           // TIMEDLAY -- the tunable message pause
+                                    // (SETTIME, maze `T`; DOS range 1..5000)
 
     // SCNMSG one-shot / countdown bookkeeping (the engine holds SCENARIO.DATA
     // read-only, so the AUX0 write-back is tracked here instead).

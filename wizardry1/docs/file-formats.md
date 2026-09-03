@@ -276,7 +276,7 @@ marked by `INMAZE` + a non-zero `LOSTXYL.LOCATION[1..3]` (= the poison words
 **Engine port:** `roster.dat` (20 × 208-byte `TCHAR`) is the byte-identical
 equivalent of the on-disk `ZCHAR` save.  `party.dat` / `shop.dat` hold the
 active roster indices / Boltac stock.  `maze.dat` (`MazeState::save/load`,
-magic `WZM1`) persists an **interrupted delve** — the window closed
+magic `WZM2`) persists an **interrupted delve** — the window closed
 mid-maze — so the party resumes at the same square on relaunch; it is
 deleted when the delve ends via the stairs / camp / Esc / a wipe.  Test
 `game_resume`.  A character physically left in the dungeon

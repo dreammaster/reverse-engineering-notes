@@ -105,8 +105,11 @@ right, `S` re-list party, `Q` quick-plot, `C` camp (below), `I` inspect
 level 0 → back to town), chutes, teleporters, spinners, darkness,
 pits/damage (`ROCKWATR`: agility check vs `rand%25 + level`, damage
 `AUX0 + AUX2·(rand%AUX1 + 1)`), the river (`ROCKWATE` → level 1), buttons,
-encounters (→ `runCombat`), `SCNMSG`, and `UPDATEHP` (below).  Not ported:
-`SETTIME`.
+encounters (→ `runCombat`), `SCNMSG`, and `UPDATEHP` (below).  `T` =
+`SETTIME` (`P010E22`): prompts `NEW DELAY (1-5000)` and stores it in
+`MazeState::timeDelay` (DOS `TIMEDLAY`, default 2000 — a busy-loop count;
+the engine scales it to `≈timeDelay/5` ms for `MazeCtx::pause1`, the
+message pause after a death / chute / river).  It rides along in `maze.dat`.
 
 **`UPDATEHP`** (`P010E1C`) runs once per actual move: each conscious member
 has a `rand%4 == 2` chance to take `POISNAMT` damage and `HEALPTS` regen
@@ -123,7 +126,7 @@ Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET
 
 **Save / resume.**  DOS Wizardry has no `PLAYER.DATA` — the save is
 `SCENARIO.DATA` in place (see `docs/file-formats.md`).  The engine keeps
-`MazeState::save/load` (`maze.dat`, magic `WZM1`): closing the window
+`MazeState::save/load` (`maze.dat`, magic `WZM2`): closing the window
 mid-delve (`MazeExit::WindowClosed`) writes level / `MAZEX,Y` / `DIRECTIO` /
 `LIGHT` / `ACMOD2` / `QUICKPLT` / `FIGHTMAP`-less `scnMsgFired`, and the
 party resumes at the same square on the next launch (`st.active`).  Leaving

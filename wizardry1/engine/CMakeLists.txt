@@ -253,3 +253,12 @@ add_test(NAME pickup
 # by the maze `I` command; its LOSTXYL.LOCATION clears.
 set_tests_properties(pickup PROPERTIES
     PASS_REGULAR_EXPRESSION "PICKUP. recovered GHOST(.|\n)*loc.0,0,0.")
+add_test(NAME settime
+         COMMAND wiz1 game-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "T250\\rFF" "\\e")
+# SETTIME (maze `T`): the tuned TIMEDLAY is kept in MazeState and survives
+# the save/reload.
+set_tests_properties(settime PROPERTIES
+    PASS_REGULAR_EXPRESSION "reload:[^\n]*delay 250")

@@ -139,10 +139,11 @@ Decided direction (2026-09-02):
       `UPDATEHP` per-move poison/regen; on a total wipe -> `CEMETARY`
       (`engine/wiz/cemetery.h` `BADSTUFF`: die, halve gold, break items,
       empty the party, tombstone). Runs from the Edge of Town (`M`).
-      `wiz1 maze` / `maze-sdl` / `maze-play-test` / `maze-scan` / `camp-test`
-      / `cemetery-test`. Combat hand-off done. TODO: `SETTIME`, camp
-      `USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/non-combat spells, the dungeon
-      body-recovery rescue, the other `SCNMSG` side effects.
+      `SETTIME` (`T`) tunes `TIMEDLAY` (kept in `MazeState`). Runs from the
+      Edge of Town (`M`). `wiz1 maze` / `maze-sdl` / `maze-play-test` /
+      `maze-scan` / `camp-test` / `cemetery-test` / `pickup-test`.
+      TODO: camp `USE`/`TRADE`/`IDENTIFY`/`CHSPCPOW`/non-combat spells, the
+      other `SCNMSG` side effects.
 - [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
@@ -162,8 +163,8 @@ Decided direction (2026-09-02):
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
 - [ ] Continue: the remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/
-      `CHSPCPOW`/non-combat spells) → `SETTIME` → the remaining `SCNMSG`
-      side effects → `DOBREATH` / `FRIENDLY` in combat.
+      `CHSPCPOW`/non-combat spells) → the remaining `SCNMSG` side effects →
+      `DOBREATH` / `FRIENDLY` in combat.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

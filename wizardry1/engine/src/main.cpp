@@ -995,8 +995,9 @@ static int cmdGameTest(int argc, char **argv) {
     {   // --- relaunch: load the session and resume ---
         MazeState st;
         bool loaded = st.load(savePath);
-        std::printf("reload: ok %d  active %d  resume (%d,%d) dir %d level %d\n",
-                    loaded ? 1 : 0, st.active ? 1 : 0, st.pos.x, st.pos.y, st.pos.dir, st.level);
+        std::printf("reload: ok %d  active %d  resume (%d,%d) dir %d level %d  delay %d\n",
+                    loaded ? 1 : 0, st.active ? 1 : 0, st.pos.x, st.pos.y, st.pos.dir,
+                    st.level, st.timeDelay);
         auto plat = makeNullPlatform(unescape(argv[5]), "");
         Ui ui(*plat, font);
         MazeExit e = runMaze(ui, party, roster, sc, nullptr, rng, st);

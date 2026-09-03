@@ -21,7 +21,7 @@ namespace wiz {
 // ---- MazeState save / restore (the interrupted-delve session) --------
 
 namespace {
-constexpr char kMazeMagic[4] = {'W', 'Z', 'M', '1'};
+constexpr char kMazeMagic[4] = {'W', 'Z', 'M', '2'};
 void put32(std::FILE *f, int32_t v) { std::fwrite(&v, 4, 1, f); }
 bool get32(std::FILE *f, int32_t &v) { return std::fread(&v, 4, 1, f) == 1; }
 }
@@ -34,6 +34,7 @@ bool MazeState::save(const std::string &path) const {
     put32(f, level);
     put32(f, pos.x); put32(f, pos.y); put32(f, pos.dir);
     put32(f, light); put32(f, protect); put32(f, quickPlot ? 1 : 0);
+    put32(f, timeDelay);
     put32(f, int32_t(scnMsgFired.size()));
     for (const auto &kv : scnMsgFired) { put32(f, kv.first); put32(f, kv.second); }
     std::fclose(f);
@@ -49,7 +50,7 @@ bool MazeState::load(const std::string &path) {
     auto rd = [&](int &dst) { ok = ok && get32(f, v); if (ok) dst = v; };
     int a = 0, qp = 0;
     rd(a); rd(level); rd(pos.x); rd(pos.y); rd(pos.dir);
-    rd(light); rd(protect); rd(qp);
+    rd(light); rd(protect); rd(qp); rd(timeDelay);
     if (ok && get32(f, n)) {
         scnMsgFired.clear();
         for (int i = 0; i < n && ok; ++i) {
@@ -94,6 +95,11 @@ struct MazeCtx {
     bool needDraw = true;
 
     TextScreen &t() { return ui.ts(); }
+
+    // PAUSE1: the SETTIME-tunable message delay.  DOS TIMEDLAY is a busy-loop
+    // count (default 2000); scale it to ~1/5 ms per unit so the default
+    // matches the engine's old hard-coded ~400 ms feel.
+    void pause1() { ui.delayMs(std::max(1, st.timeDelay / 5)); }
 
     void present() {
         // wireframe into the pic buffer (a redraw must not spend LIGHT)
@@ -194,6 +200,28 @@ void runInit(MazeCtx &c) {
     prStats(c);
 }
 
+// ---- SETTIME (P010E22): tune the message delay ----------------------
+
+void runSetTime(MazeCtx &c) {
+    auto &t = c.t();
+    t.resetWindow();
+    t.clearRect(0, 15, 40, 3);
+    t.gotoXY(1, 16); t.write("NEW DELAY (1-5000) >");
+    std::string s = c.ui.getLine(4);
+    t.clearRect(0, 15, 40, 3);
+    if (c.ui.quit() || s.empty()) return;
+    int v = 0;
+    for (char ch : s) {
+        if (ch < '0' || ch > '9') return;             // non-digit -> EXITTIME
+        v = 10 * v + (ch - '0');
+    }
+    if (v >= 1 && v <= 5000) {
+        c.st.timeDelay = v;
+        msg(c, "DELAY SET TO " + std::to_string(v));
+    }
+    c.needDraw = true;
+}
+
 // ---- UPDATEHP (P010E1C): per-move poison / regen ---------------------
 
 // Once per actual move, each conscious member has a 1-in-4 chance to take
@@ -212,7 +240,7 @@ void updateHp(MazeCtx &c) {
                 msg(c, ch.name + " DIED");
                 prStats(c);
                 c.present();
-                c.ui.delayMs(400);
+                c.pause1();
             }
         } else if (ch.hpLeft > ch.hpMax) {
             ch.hpLeft = ch.hpMax;
@@ -456,7 +484,7 @@ bool specSquare(MazeCtx &c, bool initTurn, MazeExit &out) {
         }
         case Square::Chute:
             msg(c, "A CHUTE!");
-            c.present(); c.ui.delayMs(400);
+            c.present(); c.pause1();
             return quietXfr(c, sq, out);
         case Square::Teleport:
             return quietXfr(c, sq, out);
@@ -478,7 +506,7 @@ bool specSquare(MazeCtx &c, bool initTurn, MazeExit &out) {
             break;
         case Square::RockWater:
             msg(c, "YOU ARE SWEPT AWAY!");
-            c.present(); c.ui.delayMs(500);
+            c.present(); c.pause1();
             c.st.level = 1;
             c.st.pos = MazePos{0, 0, NORTH};
             c.m.load(c.sc.record(Scenario::Maze, 0));
@@ -606,6 +634,7 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
         } else if (k == 'L' || k == 'A' || k == KEY_LEFT) { turn(st.pos, 3); c.needDraw = true; msgClear(c); }
         else if (k == 'R' || k == 'D' || k == KEY_RIGHT)  { turn(st.pos, 1); c.needDraw = true; msgClear(c); }
         else if (k == 'S') { prStats(c); }
+        else if (k == 'T') { runSetTime(c); }
         else if (k == 'Q') {
             st.quickPlot = !st.quickPlot;
             msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
