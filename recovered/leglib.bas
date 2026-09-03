@@ -13,6 +13,10 @@
 '  runtime itself is not reproduced (it is standard compiled BASIC + the
 '  bmXXXX graphics system, ~2400 KB of asm).
 '
+'  ***  For the PORT, use recovered/leglib_runtime.c  ***  -- the same
+'  primitives written out as C, which is what a ScummVM engine actually
+'  needs (the value stack collapses to plain expressions, etc.).
+'
 '  ------------------------------------------------------------------------
 '  1.  THE VALUE STACK  (arithmetic in compiled BASIC 6.0)
 '  ------------------------------------------------------------------------
@@ -53,7 +57,9 @@
 '    The far-pointer arg is the module's SINGLE constant 1.0
 '    (OUT ds:24E6, DUN ds:2274, CASDR ds:25B0, ...).  B$RND returns a
 '    pointer to the result single -> fed straight to rtm_FF4B.
-'    Result is in [0, 1).   rtm_FC = reseed / advance.
+'    Result is in [0, 1).   LCG: seed = seed*214013 + 2531011 (mod 2^24),
+'    constants at ds:1AE / ds:1B2.   (rtm_FC is NOT the RNG -- it is the
+'    ON n GOSUB dispatcher; see leglib_runtime.c section 3.)
 '
 '  ------------------------------------------------------------------------
 '  3.  STRINGS + TEXT OUTPUT

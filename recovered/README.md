@@ -43,8 +43,12 @@ stream of `int 3Fh` thunks; this table is how to read them back as infix:
 | `rtm_FF22` | pop→AX | pop top into `ax` (end of expression) |
 | `rtm_FF2B` | — | INT → SINGLE coercion |
 | `rtm_FF27` | — | SINGLE → INT/LONG coercion (truncates) |
-| `rtm_B8(seg,off)` | `B$RND` | **`RND(x)`** — `push ds:24E8 : push ds:24E6 : call B$RND`; `ds:24E6` is the SINGLE `1.0`, so this is `RND(1)` = next random in `[0,1)`. Returns a pointer to the result single (→ fed to `rtm_FF4B`). |
-| `rtm_FC` | `B$RANDOMIZE`-ish | seed the RNG |
+| `rtm_B8(seg,off)` | `B$RND` | **`RND(x)`** — `push ds:24E8 : push ds:24E6 : call B$RND`; `ds:24E6` is the SINGLE `1.0`, so this is `RND(1)` = next random in `[0,1)`. Returns a pointer to the result single (→ fed to `rtm_FF4B`). 24-bit LCG, `seed = seed*214013 + 2531011` (constants at `ds:1AE`/`ds:1B2`). |
+| `rtm_FC` | `B$` ON-GOSUB | **`ON <bx> GOSUB/GOTO ...`** — 1-based selector in `bx`; inline `db count` + `dw arm[]` follow the `call`; out-of-range = no-op. NOT the RNG. `ida_scripts/fix_on_gosub_tables.py` decodes the tables. |
+
+See **[`leglib_runtime.c`](leglib_runtime.c)** for the hand-written runtime
+(value stack, RNG, ON-GOSUB, text codes, BSAVE) written out as C — the port
+should call the C equivalents, not reimplement any of it as BASIC.
 
 **Arithmetic ops** — each thunk loads an index into `bx`, then
 `call word ptr [bx+0F7Ch]` (leglib `rtm_FF44` body, `seg004:21A69`). The
@@ -198,9 +202,14 @@ anchor). The combat pool it prints is quoted at the top of
       gated on quest-flag bits.  Stones-of-Wisdom INT maths are in STDRV.
 - [ ] exhibitId -> coin mapping, the caretaker level-up
 
-## leglib.bas — the shared engine primitives
+## leglib — the shared runtime / engine primitives
 
-- [x] `leglib.bas` — a REFERENCE (not a reconstruction) of every primitive
-      the recovered module files call: the value stack + op table, `B$RND`,
-      string / text output + `drawString` codes, BSAVE file I/O, the bmXXXX
-      graphics layer, the SUB frame.  Makes the module files self-contained.
+- [x] `leglib_runtime.c` — the hand-written runtime **as C** (the form a
+      ScummVM port wants): the value stack is a compiler artifact that
+      collapses to plain C expressions (with the real operand-order table),
+      the `B$RND` 24-bit LCG with its constants, the `rt_FC` ON-GOSUB
+      dispatcher, the `drawString` control codes, the 7-byte BSAVE header,
+      the graphics + music far calls, the SUB frame.
+- [x] `leglib.bas` — the same primitives sketched as BASIC, so the
+      `*.bas` module files read on their own.  `leglib_runtime.c` supersedes
+      it for anything a port would actually implement.

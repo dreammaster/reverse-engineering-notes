@@ -314,7 +314,12 @@ All game arithmetic is **single-precision float**.
 | `rtm_FF50(addr)` | pop top → `[addr]` |
 | `rtm_FF22` | pop top → `ax` |
 | `rtm_FF2B` / `rtm_FF27` | INT↔SINGLE coercion |
-| `rtm_B8(seg,off)` | `B$RND` — arg is the module's SINGLE `1.0` (OUT `ds:24E6`, DUN `ds:2274`, CASDR `ds:25B0`), so `RND(1)`, result in `[0,1)` |
+| `rtm_B8(seg,off)` | `B$RND` — arg is the module's SINGLE `1.0` (OUT `ds:24E6`, DUN `ds:2274`, CASDR `ds:25B0`), so `RND(1)`, result in `[0,1)`. 24-bit LCG `seed = seed*214013 + 2531011` (`ds:1AE` / `ds:1B2`) |
+| `rtm_FC` | **`ON <bx> GOSUB/GOTO`** — 1-based selector; inline `db count` + `dw arm[]` follow the `call far`; out-of-range = no-op. Not the RNG. `ida_scripts/fix_on_gosub_tables.py` decodes the ~13 tables the game has. |
+
+The whole runtime cluster is written out as C in
+[`recovered/leglib_runtime.c`](../recovered/leglib_runtime.c) — a port
+calls the C equivalents (the value stack collapses to plain expressions).
 
 Binary operators load an index into `bx` then `call [bx+0F7Ch]`. The
 `[ds:0F7C]` table is `db 0` in `leglib.asm` but **is in `LEGLIB.EXE` at
