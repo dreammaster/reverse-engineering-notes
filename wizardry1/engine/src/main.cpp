@@ -175,6 +175,35 @@ static int cmdRng(int argc, char **argv) {
     return 0;
 }
 
+// wiz1 rng-trace <s0hex> <s1hex> <s2hex> <s3hex> [n]
+//   Seed the full 4-state generator and print, per RANDOM call:
+//     <i>  s0 s1 s2 s3   out=<result>  bx=<store-BX variant>
+//   The state columns are the state *after* advancing on call i (matching a
+//   DOSBox breakpoint that dumps [INTERP:1437] right after the four LCG
+//   stores).  Diff this against the debugger capture.
+static int cmdRngTrace(int argc, char **argv) {
+    if (argc < 6) { std::puts("rng-trace <s0hex> <s1hex> <s2hex> <s3hex> [n]"); return 2; }
+    u16 s[4];
+    for (int k = 0; k < 4; ++k) s[k] = u16(std::strtoul(argv[2 + k], nullptr, 16));
+    int n = argc > 6 ? std::atoi(argv[6]) : 64;
+    std::printf("# seed s0=%04X s1=%04X s2=%04X s3=%04X\n", s[0], s[1], s[2], s[3]);
+    for (int i = 0; i < n; ++i) {
+        s[0] = u16(s[0] * 0x6A2Du + 0x3619u);
+        s[1] = u16(s[1] * 0xFFF1u + 0xFF8Bu);
+        s[2] = u16(s[2] * 0xFFAFu + 0x0183u);
+        s[3] = u16(s[3] * 0xFFD9u + 0x7FC9u);
+        u16 axr = u16((((s[3] << 8) | (s[3] >> 8)) & 0xF00Fu) & 0x7FFFu);   // stored AX
+        u16 bx  = u16((s[0] << 4) & 0xFF00u);
+        bx ^= u16((s[2] >> 4) & 0x00FFu);
+        bx ^= u16(s[1] & 0x0FF0u);
+        bx ^= u16((((s[3] << 8) | (s[3] >> 8)) & 0xF00Fu));
+        bx = u16(bx & 0x7FFFu);
+        std::printf("%4d  %04X %04X %04X %04X   out=%-5u  bx=%u\n",
+                    i, s[0], s[1], s[2], s[3], axr, bx);
+    }
+    return 0;
+}
+
 static const char *kRaces[] = {"norace", "human", "elf", "dwarf", "gnome", "hobbit"};
 static const char *kAligns[] = {"unalign", "good", "neutral", "evil"};
 static const char *kClasses[] = {"FIGHTER", "MAGE", "PRIEST", "THIEF",
@@ -1199,6 +1228,7 @@ int main(int argc, char **argv) {
     if (cmd == "game-test") return cmdGameTest(argc, argv);
     if (cmd == "pickup-test") return cmdPickupTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
+    if (cmd == "rng-trace") return cmdRngTrace(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);
     if (cmd == "show") return cmdShow(argc, argv);
