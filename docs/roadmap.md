@@ -5,6 +5,28 @@ add notes as they're resolved — this file is meant to stay current across
 sessions, unlike a one-off todo list. See [overview.md](overview.md) for
 the per-executable breakdown this tracks against.
 
+## 2026-09-03 — ON-GOSUB decode, full module coverage, runtime-as-C
+
+- [x] **`rt_FC` / `rt_FD` inline dispatch tables decoded**
+      (`ida_scripts/fix_on_gosub_tables.py`). `rt_FC` = compiled
+      `ON n GOSUB` (not "reseed the RNG" as previously labelled), `rt_FD` =
+      `ON n GOTO`; both carry `db count` + `dw arm[]` inline after the
+      `call far`, which IDA had mis-decoded everywhere. ~40 tables across
+      `out/dun/casdr/twndr/mus` now readable (quest-flag dispatch, region
+      presets, dungeon-exit routing, `castSpell` spell dispatch, …).
+- [x] **`ds:2092` / `ds:2096` closed** — a 5-row per-tile constant table
+      (`regionPreset_A..E`), not per-map data. See
+      [game-logic.md §4](game-logic.md#4-movement--terrain).
+- [x] **`recovered/leglib_runtime.c`** — the hand-written runtime as C
+      (value stack → plain expressions, `B$RND` LCG `seed*214013+2531011`,
+      `rt_FC`/`rt_FD`, `drawString` codes, BSAVE header).
+- [x] **Every executable now has a `recovered/*` file** — added
+      `menu_saver.bas` (starting stats: all attrs 15 / HP 200 / 0 gold /
+      Studded hide / bare hands), `stdrv_dice.bas`, `sdefendr_training.bas`,
+      `gmb_casino.bas`, `misc_drivers.bas`.
+- [ ] Still open: `ds:1AE0` (character level) increment site; DUN full
+      spell table; TWNDR shops/guard/mail; CASDR player-attack/loot.
+
 ## Infra (done, 2026-08-30)
 
 - [x] Set up headless IDA pipeline
@@ -249,10 +271,12 @@ reimplementation.
 - [x] `STDRVSCR.DAT` (2026-09-01) — **not text**: `0xAA`-filled CGA screen
       graphics for the Stones-of-Wisdom table (`word[0]`=640 payload
       start). STDRV narrates its rules from strings in the EXE.
-- [x] The INTELLIGENCE delta (2026-09-02) — STDRV writes it straight to
-      the shared scalar `ds:1AF0` (`CHAR.DAT` rec `+0x3E`), which SAVER
-      persists. Rule (per a game guide, matches the save behaviour): if
-      INT < 30 a Stones-of-Wisdom win gives +2, else +1; each loss −1.
+- [x] The INTELLIGENCE delta (2026-09-03, **from the STDRV.EXE code +
+      constants**, supersedes the earlier guide-based guess) — `ds:1AF0`
+      changes **once per match** in `resolveChallenge`:
+      win → `+3/+2/+1/0` for INT below 15/30/60; loss → `−3/−2/−1/0` for
+      INT above 49/39/9. Cap 60, floor ~9. See
+      [`stdrv_dice.bas`](../recovered/stdrv_dice.bas).
 
 ## CELDRV.EXE — open questions
 
