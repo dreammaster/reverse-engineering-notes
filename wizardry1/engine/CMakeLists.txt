@@ -326,6 +326,15 @@ add_test(NAME camp_use
 # consumed (changeTo 0).
 set_tests_properties(camp_use PROPERTIES
     PASS_REGULAR_EXPRESSION "CAMPCAST. THESUS casts LATUMOFI(.|\n)*THESUS[^\n]*#0")
+add_test(NAME camp_identify
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1I1xLL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "0:10:0" "cls=0:4")
+# IDITEM (P010108): a level-1 Bishop tries to identify an unknown ARMOR.
+# 10 + 5*1 = 15% -> the fixed PRNG rolls a FAILURE; the item stays in the pack.
+set_tests_properties(camp_identify PROPERTIES
+    PASS_REGULAR_EXPRESSION "IDENT. THESUS -> ARMOR .FAILURE.(.|\n)*THESUS[^\n]*#10")
 add_test(NAME maze_poison
          COMMAND wiz1 maze-play-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

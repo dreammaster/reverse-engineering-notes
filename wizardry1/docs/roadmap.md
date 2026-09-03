@@ -141,11 +141,11 @@ Decided direction (2026-09-02):
       (`engine/wiz/cemetery.h` `BADSTUFF`: die, halve gold, break items,
       empty the party, tombstone). Runs from the Edge of Town (`M`).
       `SETTIME` (`T`) tunes `TIMEDLAY` (kept in `MazeState`). Runs from the
-      camp `TRADE` / `S)PELL` (non-combat `CASTSPEL`) / `U)SE` an item.
-      Edge of Town (`M`). `wiz1 maze` / `maze-sdl` / `maze-play-test` /
-      `maze-scan` / `camp-test` / `cemetery-test` / `pickup-test`.
-      TODO: camp `IDENTIFY` (`CAMPSTF`) / `CHSPCPOW`, the delegating camp
-      spells, the other `SCNMSG` side effects.
+      camp `TRADE` / `S)PELL` (non-combat `CASTSPEL`) / `U)SE` an item /
+      `I)DENT` (`IDITEM` — Bishop identify, `rand%100 < 10+5·lvl`, curse
+      backfire). Edge of Town (`M`). `wiz1 maze` / `maze-sdl` /
+      `maze-play-test` / `maze-scan` / `camp-test` / `cemetery-test` /
+      `pickup-test`. TODO: camp `CHSPCPOW`, the delegating camp spells.
 - [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
@@ -167,7 +167,7 @@ Decided direction (2026-09-02):
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: camp `IDENTIFY` (`CAMPSTF`) → `DODISPEL` → Phase 4.
+- [ ] Continue: `DODISPEL` → Phase 4.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

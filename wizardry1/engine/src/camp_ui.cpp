@@ -414,6 +414,45 @@ void doUse(CampCtx &c, Character &ch) {
     campCast(c, ch, o.spellPwr());                        // SPELLPWR -> spell number
 }
 
+// ---- IDITEM (P010108): a Bishop identifies one packed item --------
+// Dispatched from camp I)DENT (P010C15): CLASS must be BISHOP, then the
+// work runs in UTILITIE's XCAMPSTF screen.
+void doIdentify(CampCtx &c, Character &ch) {
+    if (ch.cls != Class::Bishop) { c.ui.pressAnyKey("** NOT BISHOP **"); return; }
+    auto &t = c.t();
+    int n;
+    for (;;) {
+        t.gotoXY(0, 18); t.putChar(11);
+        t.write("IDENTIFY WHAT ITEM (0=EXIT) ? >");
+        int k = c.ui.getKey();
+        if (c.ui.quit()) return;
+        n = k - '0';
+        if (n == 0) return;
+        if (n >= 1 && n <= ch.possCount) break;
+    }
+    Possession &p = ch.poss[n - 1];
+    if (p.identified) { c.ui.pressAnyKey("** ALREADY IDENTIFIED **"); return; }
+
+    p.identified = c.rng.mod(100) < (10 + 5 * ch.charLevel);
+    std::printf("IDENT| %s -> %s (%s)\n", ch.name.c_str(),
+                objName(c, p.itemIndex, p.identified).c_str(),
+                p.identified ? "SUCCESS" : "FAILURE");
+    c.ui.pressAnyKey(p.identified ? "SUCCESS!" : "FAILURE");
+
+    // Curse backfire: the item's true CURSED flag bites, and a cursed item
+    // sticks to the hand (DOS falls through to the equipment display).
+    if (c.rng.mod(100) < (35 - 3 * ch.charLevel)) {
+        ObjectRec o{c.sc.record(Scenario::Object, p.itemIndex)};
+        p.cursed = o.cursed();
+        if (p.cursed) {
+            p.equipped = true;
+            equipRecalc(ch, c.sc);
+            std::printf("IDENT| %s CURSED by the identify!\n", ch.name.c_str());
+            c.ui.pressAnyKey("** CURSED! **");
+        }
+    }
+}
+
 // ---- CAMPMENU: one character's inspect sub-menu --------------------
 // Returns false only if the window closed.
 bool inspectChar(CampCtx &c, int idx) {
@@ -434,11 +473,7 @@ bool inspectChar(CampCtx &c, int idx) {
         if (k == 'T') { doTrade(c, idx); continue; }
         if (ok && k == 'S') { campCast(c, ch, 0); continue; }
         if (ok && k == 'U') { doUse(c, ch); continue; }
-        if (ok && k == 'I') {
-            c.ui.pressAnyKey(ch.cls == Class::Bishop ? "-- IDENTIFY NEEDS THE SPELLBOOK SCREEN --"
-                                                     : "** NOT BISHOP **");
-            continue;
-        }
+        if (ok && k == 'I') { doIdentify(c, ch); continue; }
     }
 }
 

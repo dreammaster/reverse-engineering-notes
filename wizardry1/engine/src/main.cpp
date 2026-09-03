@@ -855,10 +855,10 @@ static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
     return p;
 }
 
-// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]
-//   grants: "m:i,m:i,..."  give member m (0-based) identified object i
+// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c]
+//   grants: "m:i[:u],..."  give member m (0-based) object i (u=0 -> unidentified)
 static int cmdCampTest(int argc, char **argv) {
-    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]"); return 2; }
+    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -876,10 +876,14 @@ static int cmdCampTest(int argc, char **argv) {
             size_t colon = tok.find(':');
             if (colon != std::string::npos) {
                 int m = std::atoi(tok.substr(0, colon).c_str());
-                int it = std::atoi(tok.substr(colon + 1).c_str());
+                std::string rest = tok.substr(colon + 1);
+                size_t colon2 = rest.find(':');
+                int it = std::atoi(rest.substr(0, colon2).c_str());
+                bool ident = colon2 == std::string::npos ||
+                             std::atoi(rest.substr(colon2 + 1).c_str()) != 0;
                 if (m >= 0 && m < party.count() && party.member(m).possCount < 8) {
                     Character &ch = party.member(m);
-                    ch.poss[ch.possCount++] = Possession{false, false, true, it};
+                    ch.poss[ch.possCount++] = Possession{false, false, ident, it};
                 }
             }
             if (comma == std::string::npos) break;
@@ -887,12 +891,19 @@ static int cmdCampTest(int argc, char **argv) {
         }
     }
 
-    if (argc > 7) {                             // wound=idx:hp[:status]
-        int m = -1, hp = 1, s = 0;
-        std::sscanf(argv[7], "wound=%d:%d:%d", &m, &hp, &s);
-        if (m >= 0 && m < party.count()) {
+    if (argc > 7) {                             // wound=idx:hp[:status] | cls=idx:class
+        int m = -1, hp = 1, s = 0, cl = -1;
+        if (std::sscanf(argv[7], "wound=%d:%d:%d", &m, &hp, &s) >= 2 &&
+            m >= 0 && m < party.count()) {
             party.member(m).hpLeft = hp;
             if (s > 0) party.member(m).status = Status(s);
+        }
+        m = -1;
+        if (std::sscanf(argv[7], "cls=%d:%d", &m, &cl) == 2 &&
+            m >= 0 && m < party.count() && cl >= 0) {
+            party.member(m).cls = Class(cl);
+            deriveStats(party.member(m));
+            setSpells(party.member(m));
         }
     }
 

@@ -181,8 +181,12 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   (below), `R)EAD` (list known spells), `D)ROP` (`DROPITEM` — refuses cursed
   / equipped), `T)RADE` (`DOTRADE` — hand gold and non-cursed/unequipped
   items to another member), `S)PELL` / `U)SE` (`CASTSPEL` / `USEITEM`,
-  below).  `I)DENT` needs the Bishop spellbook screen (`CAMPSTF`), not
-  ported — says `** NOT BISHOP **` otherwise.
+  below).  `I)DENT` (`IDITEM`, `P010108`, dispatched via `IDENTIFY`
+  `P010C15`): Bishop-only (`** NOT BISHOP **` otherwise); pick a packed
+  item; already-identified is refused; `IDENTIF := rand%100 < 10 + 5·CHARLEV`
+  (`SUCCESS!` / `FAILURE`); then `rand%100 < 35 − 3·CHARLEV` backfires —
+  the item's true `CURSED` flag bites and a now-cursed item sticks to the
+  hand (DOS falls through to the equipment display).
 * **`CASTSPEL`** (`P010C06`) — the in-camp (non-combat) spell set.
   `S)PELL` lists the caster's known spells whose priest pool is > 0;
   `U)SE` an item invokes its `SPELLPWR` spell for free (skipping the pool
@@ -216,12 +220,13 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   `AGE += 25`), written back to the roster, and the party empties.
 
 `wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]
-[wound=idx:hp[:status]]` (`grants` = `m:i,…` gives member `m` object `i`)
-dumps the final screen + `camp exit: … | order: …` and a per-member line
-(tests `camp_sheet` / `camp_flow` / `camp_disband` / `camp_equip` /
-`camp_cast` / `camp_trade` / `camp_use`).  Not ported: `IDENTIFY`
-(`CAMPSTF`), `CHSPCPOW` (invoke an item's special power), the delegating
-camp spells (`DUMAPIC`/`KANDI`/`MALOR`), chevrons/medals.
+[wound=idx:hp[:status] | cls=idx:class]` (`grants` = `m:i[:u],…` gives
+member `m` object `i`, `u=0` = unidentified) dumps the final screen +
+`camp exit: … | order: …` and a per-member line (tests `camp_sheet` /
+`camp_flow` / `camp_disband` / `camp_equip` / `camp_cast` / `camp_trade` /
+`camp_use` / `camp_identify`).  Not ported: `CHSPCPOW` (invoke an item's
+special power), the delegating camp spells (`DUMAPIC`/`KANDI`/`MALOR`),
+chevrons/medals.
 `StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
 (`5001` = `HALITO`).
 
