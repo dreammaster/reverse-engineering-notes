@@ -193,7 +193,7 @@ add_test(NAME combat_breath
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 28
-                 "\\rPPPPPP\\r\\r\\r"
+                 "\\rPPPPPP\\rPPPPPP\\rPPPPPP\\rPPPPPP\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # DOBREATH: a dragon's breath hits the whole party for HPLEFT/2 (halved).
 set_tests_properties(combat_breath PROPERTIES
@@ -202,7 +202,7 @@ add_test(NAME combat_yell
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 87
-                 "\\rPPPPPP\\rPPPPPP\\rPPPPPP\\r\\r\\r"
+                 "\\rPPPPPP\\rPPPPPP\\rPPPPPP\\rPPPPPP\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # YELLHELP: the monster calls an ally into its group.
 set_tests_properties(combat_yell PROPERTIES
@@ -211,11 +211,20 @@ add_test(NAME combat_flee
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 4
-                 "\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "\\rPPPPPP\\rPPPPPP\\rPPPPPP\\rPPPPPP\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # DORUN: a weak monster flees the fight.
 set_tests_properties(combat_flee PROPERTIES
     PASS_REGULAR_EXPRESSION "IT FLEES")
+# ... and the same fight opens with the monsters' surprise (a free round).
+add_test(NAME combat_surprise
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 4
+                 "\\rPPPPPP\\rPPPPPP\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
+set_tests_properties(combat_surprise PROPERTIES
+    PASS_REGULAR_EXPRESSION "THE MONSTERS SURPRISED YOU")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

@@ -188,11 +188,13 @@ void monsterTurn(CombatCtx &c, int g, int m) {
 
 // One round: each conscious member acts, then every living monster attacks.
 // Returns a CombatResult once the fight is decided, else CombatResult::Won as
-// a sentinel meaning "continue" (checked by the caller loop).
-bool round(CombatCtx &c, CombatResult &out) {
+// a sentinel meaning "continue" (checked by the caller loop).  `partyActs` /
+// `monstersAct` are false on the first round of a surprise.
+bool round(CombatCtx &c, CombatResult &out, bool partyActs = true,
+           bool monstersAct = true) {
     auto &t = c.t();
 
-    for (int i = 0; i < c.party.count(); ++i) {
+    for (int i = 0; partyActs && i < c.party.count(); ++i) {
         Character &ch = c.party.member(i);
         if (ch.status != Status::OK && ch.status != Status::Afraid) continue;
         if (allMonstersDead(c.bt)) break;
@@ -241,7 +243,7 @@ bool round(CombatCtx &c, CombatResult &out) {
     if (allMonstersDead(c.bt)) { out = CombatResult::Won; return true; }
 
     // monsters retaliate
-    for (int g = 0; g < c.bt.nGroups; ++g)
+    for (int g = 0; monstersAct && g < c.bt.nGroups; ++g)
         for (int m = 0; m < c.bt.grp[g].count; ++m) {
             Status ms = c.bt.grp[g].status[m];
             if (int(ms) >= int(Status::Dead) || ms == Status::Asleep || ms == Status::Paralyzed)
@@ -484,18 +486,22 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
     c.parleyThresh = parleyThresh;
     buildEncounter(c.bt, sc, enemyInx, mazeLevel, rng);
 
-    // INITATTK's surprise roll (kept for RNG fidelity; the free-round effect
-    // is not modelled yet): party surprised (1), monsters surprised (2), or
-    // neither (0).
+    // INITATTK's surprise roll: 1 = the party surprised the monsters (a free
+    // party round), 2 = the monsters surprised the party (a free monster
+    // round), 0 = neither.
     c.bt.surprise = (rng.mod(100) > 80) ? 1 : (rng.mod(100) > 80 ? 2 : 0);
 
     if (friendlyParley(c)) return CombatResult::Friendly;
     c.say("A GROUP OF MONSTERS BLOCKS YOUR WAY!");
+    if (c.bt.surprise == 1)      c.say("YOU SURPRISED THE MONSTERS!");
+    else if (c.bt.surprise == 2) c.say("THE MONSTERS SURPRISED YOU!");
     c.pause();
 
     for (int guard = 0; guard < 200; ++guard) {
         CombatResult out;
-        if (round(c, out)) {
+        bool first = guard == 0;
+        if (round(c, out, !(first && c.bt.surprise == 2),
+                          !(first && c.bt.surprise == 1))) {
             if (out == CombatResult::Won) {
                 if (awardVictory(c, enemyInx)) return CombatResult::PartyWiped;
             } else if (out == CombatResult::Fled) {

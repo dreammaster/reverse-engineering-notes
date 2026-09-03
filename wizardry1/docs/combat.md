@@ -142,9 +142,9 @@ by class; teleport and alarm bubble back to the caller.  Tests
 `runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel,
 attk012=2, transcript=nullptr, parleyThresh=-1)` → `CombatResult {Won, Fled,
 PartyWiped, WindowClosed, Friendly}`.  `INITATTK` order: `buildEncounter` →
-the surprise roll (`rand%100 > 80` → party surprised (1); else a second
-roll → monsters surprised (2); else 0 — kept for RNG fidelity, the
-free-round effect is not modelled) → `FRIENDLY` (below).  The round: each
+the surprise roll (`rand%100 > 80` → **1** the party surprised the monsters,
+a free party round; else a second roll → **2** the monsters surprised the
+party, a free monster round; else **0**) → `FRIENDLY` (below).  The round: each
 conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY`
 / `R)UN` (≈75 % escape), then every living (awake, unparalysed) monster acts.
 `wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]
@@ -169,7 +169,7 @@ The weak PC RNG rarely lands `z` in the window on its own, so
 
 **Not ported:** `DODISPEL` (a Lord/Bishop monster dissolving *summoned*
 allies), allied *groups* (`ENMYTEAM` chaining — only a single group is
-built), the `SURPRISE` free round, in-combat item use.  Spell
+built) and in-combat item use.  Spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`

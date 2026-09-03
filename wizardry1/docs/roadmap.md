@@ -156,19 +156,19 @@ Decided direction (2026-09-02):
       `ENMYREWD`+`GETREWRD`+`GOLDREWD`/`ITEMREWD` gold & item drops,
       `GTTRAPTY`/`DOTRAPDM` traps.  Character combat tail (words 87-99) +
       `deriveStats` (UTILITIE 25). Wired to the maze with `attk012` from
-      `ENCOUNTR`. `FRIENDLY` parley + the surprise roll (`INITATTK`).
+      `ENCOUNTR`. `FRIENDLY` parley + surprise (a free party or monster round, `INITATTK`).
       `monsterTurn` = `CUTIL`'s action priority: spell → `DOBREATH` →
       `YELLHELP` (summon an ally) → `DORUN` (flee) → melee. `wiz1
       combat-test` (11 CMake tests incl. `combat_breath` / `combat_yell` /
       `combat_flee` / `friendly_*`). TODO: `DODISPEL`, allied *groups*
-      (`ENMYTEAM`), the surprise free round.
+      (`ENMYTEAM`), `DODISPEL`.
 - [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
       (`MazeState`) resumes an interrupted delve; `Character` models
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
 - [ ] Continue: camp `IDENTIFY` (`CAMPSTF`) → allied combat *groups*
-      (`ENMYTEAM`) → the surprise free round → `DODISPEL`.
+      (`ENMYTEAM`) → `DODISPEL`.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine
