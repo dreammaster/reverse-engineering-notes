@@ -586,6 +586,7 @@ runCreditsCrawl proc near               ; CODE XREF: celdrv_entry+412↑j
                 mov     ax, 20EAh
                 push    ax
                 call    far ptr delayWithMusic ; wait ~N units (arg) while pumping serviceMusic. TENTATIVE.
+; ---------------------------------------------------------------------------
 
 loc_104DD:                              ; w\x07 "mnmbt180o2"x\x07 "l4cl8g>mll4c.m
                 mov     word ptr ds:20BEh, 0
@@ -600,6 +601,7 @@ loc_104EF:                              ; CODE XREF: runCreditsCrawl+1E↑j
 
 loc_104F3:                              ; CODE XREF: celAnimStep:loc_10682↓j
                 call    far ptr rt_FE2C ; -> rtm_FE2C  (leglib seg007:0x24fe3)
+; ---------------------------------------------------------------------------
 
 loc_104F8:
                 mov     word ptr ds:20ECh, 14h
@@ -615,20 +617,23 @@ loc_104F8:
                 mov     ax, 20F2h
                 push    ax
                 call    far ptr rt_FE42 ; -> rtm_FE42  (leglib seg007:0x2730c)
+; ---------------------------------------------------------------------------
 
 loc_10525:                              ; w\x07 "mnmbt180o2"x\x07 "l4cl8g>mll4c.m
                 mov     word ptr ds:1FEAh, 0
                 call    far ptr rt_FE45 ; -> rtm_FE45  (leglib seg008:0x27c6e)
+; ---------------------------------------------------------------------------
 
 loc_10530:
                 mov     bx, ds:1AEEh
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
-
-loc_10539:
-                add     al, 85h
-                add     ax, 5ABh
-                setalc
-                add     ax, 601h
+                call    far ptr rt_FC   ; assign + drawStringInner + clear one credit string. TENTATIVE.
+; ---------------------------------------------------------------------------
+                db 4                    ; ON..GOSUB arm count
+                dw offset drawCreditLine ; assign + drawStringInner + clear one credit string. TENTATIVE.
+                dw offset showCreditIbmVersion ; "IBM VERSION BY / ALVIN DE YOUNG / RICK TUMANIS / GREGG SEELHOFF / BOB LUZENSKI".
+                dw offset showCreditMusic ; "ORIGINAL MUSIC & SOUNDS BY / JOHNNY KLONARIS".
+                dw offset showCreditArtwork ; "ARTWORK BY / RICK TUMANIS / DAN STECHOW / ROSEANN MILLER / ...".
+; ---------------------------------------------------------------------------
                 inc     word ptr ds:1AEEh
                 cmp     word ptr ds:1AEEh, 4
                 jg      short loc_10550
@@ -675,7 +680,8 @@ runCreditsCrawl endp
 ; assign + drawStringInner + clear one credit string. TENTATIVE.
 ; Attributes: noreturn
 
-drawCreditLine  proc near
+drawCreditLine  proc near               ; CODE XREF: runCreditsCrawl+66↑j
+                                        ; DATA XREF: runCreditsCrawl+6C↑o
                 mov     ax, 216Ah
                 push    ax
                 mov     ax, 20F4h
@@ -703,7 +709,8 @@ drawCreditLine  endp
 ; "IBM VERSION BY / ALVIN DE YOUNG / RICK TUMANIS / GREGG SEELHOFF / BOB LUZENSKI".
 ; Attributes: noreturn
 
-showCreditIbmVersion proc near
+showCreditIbmVersion proc near          ; CODE XREF: runCreditsCrawl+66↑j
+                                        ; DATA XREF: runCreditsCrawl+6E↑o
                 mov     ax, 21B6h       ; @\n IBM VERSION BY\n\n ALVIN DE YOUNG\n  RICK TUMANIS\n GREGG SEELHOFF\n
                 push    ax
                 mov     ax, 20FAh
@@ -734,7 +741,8 @@ showCreditIbmVersion endp
 ; "ORIGINAL MUSIC & SOUNDS BY / JOHNNY KLONARIS".
 ; Attributes: noreturn
 
-showCreditMusic proc near
+showCreditMusic proc near               ; CODE XREF: runCreditsCrawl+66↑j
+                                        ; DATA XREF: runCreditsCrawl+70↑o
                 mov     ax, 220Ah       ; @\n ORIGINAL MUSIC\n  &\n   SOUNDS BY\n\n   JOHNNY\n     KLONARIS
                 push    ax
                 mov     ax, 20FEh
@@ -765,7 +773,8 @@ showCreditMusic endp
 ; "ARTWORK BY / RICK TUMANIS / DAN STECHOW / ROSEANN MILLER / ...".
 ; Attributes: noreturn
 
-showCreditArtwork proc near
+showCreditArtwork proc near             ; CODE XREF: runCreditsCrawl+66↑j
+                                        ; DATA XREF: runCreditsCrawl+72↑o
                 mov     ax, 224Ah       ; @  ARTWORK BY\n\n RICK TUMANIS\n  DAN STECHOW\n ROSEANN MILLER\n C&J DOU
                 push    ax
                 mov     ax, 2102h

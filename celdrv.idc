@@ -202,8 +202,27 @@ static Bytes_0(void) {
 	create_insn	(0X104CE);
 	set_name	(0X104CE,	"runCreditsCrawl");
 	set_cmt	(0X104DD,	"w\\x07 \"mnmbt180o2\"x\\x07 \"l4cl8g>mll4c.m",	0);
+	create_insn	(0X104DD);
 	set_cmt	(0X104E9,	"w\\x07 \"mnmbt180o2\"x\\x07 \"l4cl8g>mll4c.m",	0);
+	create_insn	(0X104F8);
 	set_cmt	(0X10525,	"w\\x07 \"mnmbt180o2\"x\\x07 \"l4cl8g>mll4c.m",	0);
+	create_insn	(0X10525);
+	create_insn	(0X10530);
+	set_cmt	(0X10539,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10539);
+	create_word	(x=0X1053A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1053C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1053E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10540);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X10542);
 	set_cmt	(0X10550,	"h!\\nHn!@\\n LEGACY OF THE\\n    ANCIENTS\\n\\n       BY\\n\\n JOHN & CHARLES\\n",	0);
 	create_insn	(0X10550);
 	set_cmt	(0X1055F,	"w\\x07 \"mnmbt180o2\"x\\x07 \"l4cl8g>mll4c.m",	0);
@@ -2284,13 +2303,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X10CF4);
 	op_hex		(x,	0);
 	set_name	(0X10CF4,	"rt_FE43");
-	create_byte	(0X10CF6);
-	make_array	(0X10CF6,	0X2);
-	set_cmt	(0X10CF8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
-	set_cmt	(0X10CF8,	"-> rtm_FE44  (leglib seg007:0x2502d)",	1);
-	create_insn	(x=0X10CF8);
-	op_hex		(x,	0);
-	set_name	(0X10CF8,	"rt_FE44");
 }
 
 //------------------------------------------------------------------------
@@ -2300,6 +2312,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_byte	(0X10CF6);
+	make_array	(0X10CF6,	0X2);
+	set_cmt	(0X10CF8,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
+	set_cmt	(0X10CF8,	"-> rtm_FE44  (leglib seg007:0x2502d)",	1);
+	create_insn	(x=0X10CF8);
+	op_hex		(x,	0);
+	set_name	(0X10CF8,	"rt_FE44");
 	create_byte	(0X10CFA);
 	make_array	(0X10CFA,	0X2);
 	set_cmt	(0X10CFC,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);

@@ -77,7 +77,9 @@ twndr_entry     endp
 
 ; Attributes: noreturn thunk
 
-sub_10113       proc near
+sub_10113       proc near               ; CODE XREF: doWalk+170↓j
+                                        ; doWalk+19A↓j
+                                        ; DATA XREF: ...
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
 ; ---------------------------------------------------------------------------
 
@@ -372,40 +374,39 @@ loc_10303:                              ; CODE XREF: doWalk+158↑j
 loc_1030D:                              ; CODE XREF: doWalk+166↑j
                 mov     bx, ds:1E20h
                 inc     bx
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "PASS".
 ; ---------------------------------------------------------------------------
-                or      ax, 649h
-                adc     ax, [bx+di]
-                adc     ax, [bx+di]
-                adc     ax, [bx+di]
-                adc     cx, [bx+di]
-                cmc
-                push    es
-                inc     ax
-                push    es
-                loop    loc_1032E
-                movsb
-                pop     es
-                sub     ds:113h, cx
-
-loc_1032E:                              ; CODE XREF: doWalk+184↑j
-                rol     byte ptr ds:5B77h, 0E9h
+                db 0Dh                  ; ON..GOSUB arm count
+                dw offset loc_10649
+                dw offset sub_10113
+                dw offset sub_10113
+                dw offset sub_10113
+                dw offset loc_10913
+                dw offset changeGameSpeed ; "** CHANGE GAMESPEED ** / (1 IS FASTEST) / GAMESPEED IS: "
+                dw offset loc_10640
+                dw offset j_rt_FE2C_2
+                dw offset walkBlocked   ; "WALK OUT YOURSELF.", "MOVE NOWHERE".
+                dw offset useMagicMenu  ; "USE WHICH MAGIC?", "YOU HAVE NO ", "ATTACK WITH "
+                dw offset sub_10113
+                dw offset passTurn      ; "PASS".
+                dw offset robCommand    ; "ROB".
+                db 0E9h
+; ---------------------------------------------------------------------------
                 sbb     [bx+si], ax
 
 loc_10335:                              ; CODE XREF: doWalk+168↑j
                 mov     bx, ds:1E20h
                 add     bx, 0FFF4h
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "-CHOOSE ABOVE" menu helper.
 ; ---------------------------------------------------------------------------
-
-loc_10341:
-                push    es
-                sahf
-                adc     [bp+di], dx
-                add     [bx+si+135Dh], bx
-                add     [bx], si
-                push    es
-                adc     ax, [bx+di]
+                db 6                    ; ON..GOSUB arm count
+                dw offset speakCommand  ; "SPEAK".
+                dw offset sub_10113
+                dw offset showFlavorText ; pick one of four strings by ds:1ADC and display it. TENTATIVE.
+                dw offset sub_10113
+                dw offset chooseAbove   ; "-CHOOSE ABOVE" menu helper.
+                dw offset sub_10113
+; ---------------------------------------------------------------------------
 
 loc_1034E:                              ; CODE XREF: sub_10183:loc_1019F↑j
                 mov     word ptr ds:20BAh, 0 ; \x14@\x0fD6I KNOW NO MORE.\xf4\x19X6\n  READ YOUR FORTUNE FOR \xf4\x1cv6
@@ -418,7 +419,7 @@ loc_1034E:                              ; CODE XREF: sub_10183:loc_1019F↑j
                 mov     ax, 1F2Ah
                 push    ax
                 call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
-doWalk          endp ; sp-analysis failed
+doWalk          endp
 
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1F2Ah, 0 ; \x14@\x0fD6I KNOW NO MORE.\xf4\x19X6\n  READ YOUR FORTUNE FOR \xf4\x1cv6
@@ -864,13 +865,20 @@ sub_10593       endp
 ; "-CHOOSE ABOVE" menu helper.
 ; Attributes: noreturn
 
-chooseAbove     proc near
+chooseAbove     proc near               ; CODE XREF: doWalk+19A↑j
+                                        ; DATA XREF: doWalk+1A8↑o
                 mov     word ptr ds:209Eh, 1
                 jmp     loc_1064F
 ; ---------------------------------------------------------------------------
+
+loc_10640:                              ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+182↑o
                 mov     word ptr ds:209Eh, 3
                 jmp     loc_1064F
 ; ---------------------------------------------------------------------------
+
+loc_10649:                              ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+176↑o
                 mov     word ptr ds:209Eh, 2
 
 loc_1064F:                              ; CODE XREF: chooseAbove+6↑j
@@ -959,7 +967,8 @@ chooseAbove     endp
 ; "PASS".
 ; Attributes: noreturn
 
-passTurn        proc near
+passTurn        proc near               ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+18C↑o
                 mov     ax, 2680h       ; PASS
                 push    ax
                 mov     ax, 210Ch
@@ -987,7 +996,8 @@ passTurn        endp
 ; "** CHANGE GAMESPEED ** / (1 IS FASTEST) / GAMESPEED IS: "
 ; Attributes: noreturn
 
-changeGameSpeed proc near
+changeGameSpeed proc near               ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+180↑o
                 mov     ax, 2688h       ; \n\n\n** CHANGE GAMESPEED **
                 push    ax
                 mov     ax, 2110h
@@ -1080,7 +1090,8 @@ changeGameSpeed endp
 ; "WALK OUT YOURSELF.", "MOVE NOWHERE".
 ; Attributes: noreturn
 
-walkBlocked     proc near
+walkBlocked     proc near               ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+186↑o
                 mov     bx, ds:1E20h
                 shl     bx, 1
                 shl     bx, 1
@@ -1237,7 +1248,8 @@ walkBlocked     endp
 ; "USE WHICH MAGIC?", "YOU HAVE NO ", "ATTACK WITH "
 ; Attributes: noreturn
 
-useMagicMenu    proc near
+useMagicMenu    proc near               ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+188↑o
                 cmp     word ptr ds:1E24h, 1
                 jg      short loc_10E33
                 jmp     loc_10E39
@@ -1674,7 +1686,8 @@ guardAttack     endp
 ; "SPEAK".
 ; Attributes: noreturn
 
-speakCommand    proc near
+speakCommand    proc near               ; CODE XREF: doWalk+19A↑j
+                                        ; DATA XREF: doWalk+1A0↑o
                 mov     ax, 28A4h       ; SPEAK
                 push    ax
                 mov     ax, 21B0h
@@ -10499,7 +10512,8 @@ offerGuardBribe endp
 ; "ROB".
 ; Attributes: noreturn
 
-robCommand      proc near
+robCommand      proc near               ; CODE XREF: doWalk+170↑j
+                                        ; DATA XREF: doWalk+18E↑o
                 mov     ax, 37C8h       ; ROB
                 push    ax
                 mov     ax, 2598h
@@ -10881,7 +10895,8 @@ stealGold       endp
 ; pick one of four strings by ds:1ADC and display it. TENTATIVE.
 ; Attributes: noreturn
 
-showFlavorText  proc near
+showFlavorText  proc near               ; CODE XREF: doWalk+19A↑j
+                                        ; DATA XREF: doWalk+1A4↑o
                 mov     bx, ds:1ADCh
                 shl     bx, 1
                 shl     bx, 1

@@ -336,9 +336,18 @@ static Bytes_0(void) {
 	create_insn	(0X10904);
 	create_insn	(0X1090D);
 	create_insn	(0X10916);
-	create_insn	(0X10925);
-	create_insn	(x=0X10928);
-	op_hex		(x,	1);
+	set_cmt	(0X10925,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10925);
+	create_word	(x=0X10926);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10928);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1092A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X1092C);
 	set_cmt	(0X10958,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X10958);
 	set_cmt	(0X10982,	"STRENGTH:  +",	0);
@@ -350,7 +359,18 @@ static Bytes_0(void) {
 	create_insn	(0X109B5);
 	create_insn	(0X109C4);
 	create_insn	(0X109D3);
-	create_insn	(0X109E2);
+	set_cmt	(0X109E2,	"ON..GOSUB arm count",	0);
+	create_byte	(0X109E2);
+	create_word	(x=0X109E3);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E5);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X109E9);
 	create_insn	(0X109F6);
 	create_insn	(0X10A06);
 	create_insn	(0X10A2C);
@@ -652,8 +672,45 @@ static Bytes_0(void) {
 	create_insn	(0X1154B);
 	create_insn	(0X11550);
 	create_insn	(0X11564);
-	create_insn	(x=0X1156E);
-	op_hex		(x,	1);
+	set_cmt	(0X1156E,	"ON..GOSUB arm count",	0);
+	create_byte	(0X1156E);
+	create_word	(x=0X1156F);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11571);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11573);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11575);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11577);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11579);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1157B);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1157D);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1157F);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11581);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11583);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X11585);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X11587);
 	create_insn	(0X11591);
 	create_insn	(0X11599);
 	create_insn	(0X115A6);
@@ -2884,6 +2941,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1471C);
 	op_hex		(x,	0);
 	set_name	(0X1471C,	"rt_FF3D");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X1471E);
 	make_array	(0X1471E,	0X2);
 	set_cmt	(0X14720,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2912,15 +2978,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1472C);
 	op_hex		(x,	0);
 	set_name	(0X1472C,	"rt_FF41");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X1472E);
 	make_array	(0X1472E,	0X2);
 	set_cmt	(0X14730,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);

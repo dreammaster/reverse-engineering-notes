@@ -72,7 +72,8 @@ dun_entry       endp
 sub_10033       proc near
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
 
-nullsub_1:
+nullsub_1:                              ; CODE XREF: monsterAttack+4D↓j
+                                        ; DATA XREF: monsterAttack+53↓o ...
                 retn
 sub_10033       endp
 
@@ -1481,11 +1482,12 @@ loc_10916:
                 mov     bx, ds:1ACAh
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
 ; ---------------------------------------------------------------------------
-
-loc_10925:
-                add     ax, [bp+di+0Ah]
-                or      byte ptr [bp+si], 89h
-                or      bh, [bp+1B96h]
+                db 3                    ; ON..GOSUB arm count
+                dw offset loc_10A43
+                dw offset sub_10A82
+                dw offset sub_10A89
+; ---------------------------------------------------------------------------
+                mov     si, 1B96h
                 mov     bx, 16h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -1561,13 +1563,14 @@ loc_10982:                              ; CODE XREF: climbDownOrExit+145↑j
 loc_109D9:                              ; CODE XREF: dunMain+290↑j
                                         ; climbDownOrExit+11D↑j ...
                 mov     bx, ds:1ACAh
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; -> MUS.EXE.
 ; ---------------------------------------------------------------------------
-
-loc_109E2:
-                add     dx, cx
-                or      bh, [di-42F6h]
-                or      bh, [bx+si+23B2h]
+                db 3                    ; ON..GOSUB arm count
+                dw offset chainToOverworld ; -> OUT.EXE.
+                dw offset chainToMuseum ; -> MUS.EXE.
+                dw offset chainToMuseum ; -> MUS.EXE.
+; ---------------------------------------------------------------------------
+                mov     ax, 23B2h
                 push    ax
                 mov     ax, 23BEh
                 push    ax
@@ -1612,7 +1615,8 @@ loc_10A3A:
                 call    far ptr rt_FE08 ; -> rtm_FE08  (leglib seg007:0x24a60)
 ; ---------------------------------------------------------------------------
 
-loc_10A43:
+loc_10A43:                              ; CODE XREF: climbDownOrExit+E8↑j
+                                        ; DATA XREF: climbDownOrExit+EE↑o
                 mov     si, 1BC4h
                 mov     bx, 28h ; '('
                 add     bx, [si+0Ah]
@@ -1649,7 +1653,8 @@ climbDownOrExit endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10A82       proc near
+sub_10A82       proc near               ; CODE XREF: climbDownOrExit+E8↑j
+                                        ; DATA XREF: climbDownOrExit+F0↑o
                 mov     word ptr ds:20EAh, 100h
                 retn
 sub_10A82       endp
@@ -1658,7 +1663,8 @@ sub_10A82       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10A89       proc near
+sub_10A89       proc near               ; CODE XREF: climbDownOrExit+E8↑j
+                                        ; DATA XREF: climbDownOrExit+F2↑o
                 mov     si, 1BC4h
                 mov     bx, 1Ch
                 add     bx, [si+0Ah]
@@ -1692,7 +1698,8 @@ sub_10A89       endp
 ; -> MUS.EXE.
 ; Attributes: noreturn
 
-chainToMuseum   proc near
+chainToMuseum   proc near               ; CODE XREF: climbDownOrExit+1A5↑j
+                                        ; DATA XREF: climbDownOrExit+1AD↑o ...
                 mov     ax, 23C2h       ; MUS.EXE
                 push    ax
                 mov     ax, 20C6h
@@ -1710,7 +1717,8 @@ chainToMuseum   endp
 ; -> OUT.EXE.
 ; Attributes: noreturn
 
-chainToOverworld proc near
+chainToOverworld proc near              ; CODE XREF: climbDownOrExit+1A5↑j
+                                        ; DATA XREF: climbDownOrExit+1AB↑o
                 mov     ax, 23CEh       ; OUT.EXE
                 push    ax
                 mov     ax, 20C6h
@@ -2849,16 +2857,21 @@ loc_11564:                              ; CODE XREF: monsterAttack+43↑j
                 inc     bx
                 call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
 ; ---------------------------------------------------------------------------
-                or      al, 38h
-                add     [bx+si], bh
-                add     [bx+si-50E7h], dh
-                sbb     [bx+si], di
-                add     [bx+si-3BEAh], ch
-                sbb     [bx+si], bh
-                add     [bx+si], bh
-                add     [bx+si], bh
-                add     [bx+3817h], cl
-                add     [bx+di+1F0Ah], ah
+                db 0Ch                  ; ON..GOSUB arm count
+                dw offset nullsub_1
+                dw offset nullsub_1
+                dw offset locret_119B0
+                dw offset locret_119AF
+                dw offset nullsub_1
+                dw offset loc_116A8
+                dw offset loc_118C4
+                dw offset nullsub_1
+                dw offset nullsub_1
+                dw offset nullsub_1
+                dw offset loc_1178F
+                dw offset nullsub_1
+; ---------------------------------------------------------------------------
+                mov     ax, ds:1F0Ah
                 and     ax, ax
                 jz      short loc_11591
                 jmp     loc_11698
@@ -2994,6 +3007,9 @@ loc_1169C:                              ; CODE XREF: monsterAttack+12↑j
 locret_116A7:                           ; CODE XREF: monsterAttack+186↑j
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_116A8:                              ; CODE XREF: monsterAttack+4D↑j
+                                        ; DATA XREF: monsterAttack+5D↑o
                 cmp     word ptr ds:1AFEh, 0
                 mov     ax, 0
                 jnz     short loc_116B3
@@ -3095,6 +3111,9 @@ loc_11705:                              ; CODE XREF: monsterAttack+1E5↑j
 ; ---------------------------------------------------------------------------
                 jmp     loc_118B1
 ; ---------------------------------------------------------------------------
+
+loc_1178F:                              ; CODE XREF: monsterAttack+4D↑j
+                                        ; DATA XREF: monsterAttack+67↑o
                 cmp     word ptr ds:1AECh, 0
                 mov     ax, 0
                 jnz     short loc_1179A
@@ -3231,6 +3250,9 @@ loc_118B1:                              ; CODE XREF: monsterAttack+270↑j
                 mov     word ptr ds:1F0Ah, 1
                 jmp     sub_10384
 ; ---------------------------------------------------------------------------
+
+loc_118C4:                              ; CODE XREF: monsterAttack+4D↑j
+                                        ; DATA XREF: monsterAttack+5F↑o
                 mov     bx, 25CCh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
 ; ---------------------------------------------------------------------------
@@ -3331,8 +3353,14 @@ loc_11910:                              ; CODE XREF: monsterAttack+3F0↑j
 ; ---------------------------------------------------------------------------
                 jmp     sub_1036A
 ; ---------------------------------------------------------------------------
+
+locret_119AF:                           ; CODE XREF: monsterAttack+4D↑j
+                                        ; DATA XREF: monsterAttack+59↑o
                 retn
 ; ---------------------------------------------------------------------------
+
+locret_119B0:                           ; CODE XREF: monsterAttack+4D↑j
+                                        ; DATA XREF: monsterAttack+57↑o
                 retn
 ; ---------------------------------------------------------------------------
 

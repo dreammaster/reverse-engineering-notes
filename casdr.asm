@@ -147,8 +147,8 @@ casdr_entry     endp
 
 ; Attributes: noreturn
 
-sub_100C3       proc near               ; CODE XREF: seg000:1351↓j
-                                        ; doFight+10C↓j ...
+sub_100C3       proc near               ; CODE XREF: doWalk+26C↓j
+                                        ; doWalk+292↓j ...
                 mov     word ptr ds:209Eh, 32h ; '2'
                 jmp     sub_100D2
 sub_100C3       endp
@@ -518,7 +518,8 @@ sub_10345       endp
 
 ; Attributes: noreturn
 
-sub_10396       proc near               ; CODE XREF: loadCastleLevel+127↓p
+sub_10396       proc near               ; CODE XREF: doWalk+33B↓p
+                                        ; loadCastleLevel+127↓p
                 cmp     word ptr ds:20BEh, 0
                 jz      short loc_103A0
                 jmp     loc_103C8
@@ -563,6 +564,9 @@ sub_10396       endp
 ; Attributes: noreturn
 
 doWalk          proc near               ; CODE XREF: doWalk+F4↓j
+
+; FUNCTION CHUNK AT 0725 SIZE 00000009 BYTES
+
                 mov     ax, 1F24h
                 push    ax
                 call    far ptr rt_FE44 ; -> rtm_FE44  (leglib seg007:0x2502d)
@@ -983,73 +987,63 @@ loc_1064D:
 loc_10657:                              ; CODE XREF: doWalk+262↑j
                 mov     bx, ds:1E20h
                 inc     bx
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "** CHANGE GAMESPEED **".
 ; ---------------------------------------------------------------------------
-                or      ax, [di+2507h]
-                pop     es
-                retn
+                db 0Bh                  ; ON..GOSUB arm count
+                dw offset loc_10785
+                dw offset loc_10725
+                dw offset sub_100C3
+                dw offset sub_100C3
+                dw offset doFight       ; "FIGHT WITH ", "ENTER DIRECTION: ", "YOUR ARROW DROPS.", "HIT DOOR.  IT HOLDS.", "ATTACK ON ", " STRUCK ". ~2 KB.
+                dw offset changeGameSpeed ; "** CHANGE GAMESPEED **".
+                dw offset loc_1077C
+                dw offset j_rt_FE4E_1
+                dw offset sub_100C3
+                dw offset loc_11A37
+                dw offset openDoor      ; "DOORS LOCKED." -- door/lock handling. ~1 KB.
 ; ---------------------------------------------------------------------------
-                add     bl, al
-                add     [bx], cl
-                adc     al, 0FAh
-                pop     es
-                jl      short near ptr loc_10675+2
-                out     7, ax           ; DMA controller, 8237A-5.
-                                        ; channel 3 base address and word count
-                retn
-; ---------------------------------------------------------------------------
-                add     [bx], dh
-
-loc_10675:                              ; CODE XREF: doWalk+27E↑j
-                sbb     dl, [bx+di+36h]
-                jmp     near ptr loc_10694+2
+                jmp     near ptr unk_10696
 ; ---------------------------------------------------------------------------
 
 loc_1067B:                              ; CODE XREF: doWalk+264↑j
                 mov     bx, ds:1E20h
                 add     bx, 0FFF5h
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "-CHOOSE ABOVE" menu helper.
 doWalk          endp
 
 ; ---------------------------------------------------------------------------
-                pop     es
-                enter   9707h, 1Fh
-; ---------------------------------------------------------------------------
+                db 7                    ; ON..GOSUB arm count
+                dw offset j_rt_FE5B_0
+                dw offset j_rt_FE5B_4
                 db 0DBh
-
-; =============== S U B R O U T I N E =======================================
-
-; per-turn castle update: reads castleOrFort / turnFlag, moves the guards and calls warlordAttack (-> refreshView / scanLineOfSight). TENTATIVE.
-; Attributes: noreturn
-
-castleTurnUpdate proc near
-                xor     dl, ch
-                cmp     al, bl
-                add     [bp+di+7], dh
-
-loc_10694:                              ; CODE XREF: j_rt_FE01+AE↑j
+castleTurnUpdate db  32h ; 2            ; per-turn castle update: reads castleOrFort / turnFlag, moves the guards and calls warlordAttack (-> refreshView / scanLineOfSight). TENTATIVE.
+                dw offset useKey        ; "UNLOCK DOOR.", "THIS KEY DOES NOTHING HERE.".
+                dw offset sub_100C3
+                dw offset chooseAbove   ; "-CHOOSE ABOVE" menu helper.
+                dw offset describeRoom  ; look / room description: "ICE GLISTENS BENEATH YOU.", "YOU'RE IN A HIDDEN CORRIDOR.", "A RIVER RACES BY.", "IN A LARGE CASTLE.", "ON CASTLE LEVEL 2.", "NO OTHER / INFORMATION AVAILABLE HERE.".
+unk_10696       db  83h                 ; CODE XREF: j_rt_FE01+AE↑j
                                         ; doWalk+288↑j
-                mov     di, 832Ah
+; ---------------------------------------------------------------------------
                 db      3Eh
                 shl     byte ptr [bx+si], 2
                 mov     ax, 0
                 jnz     short loc_106A1
                 dec     ax
 
-loc_106A1:                              ; CODE XREF: castleTurnUpdate+11↑j
+loc_106A1:                              ; CODE XREF: seg000:069E↑j
                 mov     ds:2108h, ax
                 cmp     word ptr ds:1F2Ah, 1
                 mov     ax, 0
                 jnz     short loc_106AF
                 dec     ax
 
-loc_106AF:                              ; CODE XREF: castleTurnUpdate+1F↑j
+loc_106AF:                              ; CODE XREF: seg000:06AC↑j
                 cmp     word ptr ds:20ACh, 1
                 mov     cx, 0
                 jnz     short loc_106BA
                 dec     cx
 
-loc_106BA:                              ; CODE XREF: castleTurnUpdate+2A↑j
+loc_106BA:                              ; CODE XREF: seg000:06B7↑j
                 and     ax, cx
                 mov     ds:210Ah, ax
                 mov     ax, 1B00h
@@ -1067,46 +1061,46 @@ loc_106BA:                              ; CODE XREF: castleTurnUpdate+2A↑j
                 jmp     loc_106EB
 ; ---------------------------------------------------------------------------
 
-loc_106DE:                              ; CODE XREF: castleTurnUpdate+4C↑j
+loc_106DE:                              ; CODE XREF: seg000:06D9↑j
                 cmp     word ptr ds:2080h, 0
                 jg      short loc_106E8
                 jmp     loc_106EB
 ; ---------------------------------------------------------------------------
 
-loc_106E8:                              ; CODE XREF: castleTurnUpdate+56↑j
+loc_106E8:                              ; CODE XREF: seg000:06E3↑j
                 call    sub_11D3D
 
-loc_106EB:                              ; CODE XREF: castleTurnUpdate+4E↑j
-                                        ; castleTurnUpdate+58↑j
+loc_106EB:                              ; CODE XREF: seg000:06DB↑j
+                                        ; seg000:06E5↑j
                 cmp     word ptr ds:20AAh, 0
                 jg      short loc_106F5
                 jmp     loc_106F8
 ; ---------------------------------------------------------------------------
 
-loc_106F5:                              ; CODE XREF: castleTurnUpdate+63↑j
+loc_106F5:                              ; CODE XREF: seg000:06F0↑j
                 call    sub_11F14
 ; ---------------------------------------------------------------------------
 
-loc_106F8:                              ; CODE XREF: castleTurnUpdate+65↑j
+loc_106F8:                              ; CODE XREF: seg000:06F2↑j
                 cmp     word ptr ds:20B8h, 0
                 jg      short loc_10702
                 jmp     loc_10705
 ; ---------------------------------------------------------------------------
 
-loc_10702:                              ; CODE XREF: castleTurnUpdate+70↑j
+loc_10702:                              ; CODE XREF: seg000:06FD↑j
                 call    sub_127C8
 
-loc_10705:                              ; CODE XREF: castleTurnUpdate+72↑j
+loc_10705:                              ; CODE XREF: seg000:06FF↑j
                 cmp     word ptr ds:20BAh, 0
                 jg      short loc_1070F
                 jmp     loc_10712
 ; ---------------------------------------------------------------------------
 
-loc_1070F:                              ; CODE XREF: castleTurnUpdate+7D↑j
+loc_1070F:                              ; CODE XREF: seg000:070A↑j
                 call    warlordAttack   ; "WARLORD ATTACK - BLOW ".
 ; ---------------------------------------------------------------------------
 
-loc_10712:                              ; CODE XREF: castleTurnUpdate+7F↑j
+loc_10712:                              ; CODE XREF: seg000:070C↑j
                 call    sub_16181
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:20C0h
@@ -1117,15 +1111,15 @@ loc_10712:                              ; CODE XREF: castleTurnUpdate+7F↑j
                 db    3
                 db 0E7h
                 db    4
-                db 0C7h                 ; CODE XREF: j_rt_FE4E_1:loc_107F1↓p
-                db    6
-                db  9Eh
-                db  20h
-                db    1
-                db    0
-                db 0E8h
-                db  68h ; h
-                db 0FCh
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR doWalk
+
+loc_10725:                              ; CODE XREF: doWalk+26C↑j
+                                        ; j_rt_FE4E_1:loc_107F1↓p
+                                        ; DATA XREF: ...
+                mov     word ptr ds:209Eh, 1
+                call    sub_10396
+; END OF FUNCTION CHUNK FOR doWalk
 ; ---------------------------------------------------------------------------
 
 loc_1072E:                              ; CODE XREF: j_rt_FE01:loc_101CC↑p
@@ -1165,8 +1159,6 @@ loc_1072E:                              ; CODE XREF: j_rt_FE01:loc_101CC↑p
 
 loc_1076D:                              ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
                 call    refreshView
-castleTurnUpdate endp
-
 ; ---------------------------------------------------------------------------
                 retn
 
@@ -1175,13 +1167,20 @@ castleTurnUpdate endp
 ; "-CHOOSE ABOVE" menu helper.
 ; Attributes: noreturn
 
-chooseAbove     proc near
+chooseAbove     proc near               ; CODE XREF: doWalk+292↑j
+                                        ; DATA XREF: seg000:0692↑o
                 mov     word ptr ds:209Eh, 1
                 jmp     loc_1078B
 ; ---------------------------------------------------------------------------
+
+loc_1077C:                              ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+27E↑o
                 mov     word ptr ds:209Eh, 3
                 jmp     loc_1078B
 ; ---------------------------------------------------------------------------
+
+loc_10785:                              ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+272↑o
                 mov     word ptr ds:209Eh, 2
 
 loc_1078B:                              ; CODE XREF: chooseAbove+6↑j
@@ -1239,7 +1238,8 @@ j_j_rt_FE4E_2:
 ; "** CHANGE GAMESPEED **".
 ; Attributes: noreturn
 
-changeGameSpeed proc near
+changeGameSpeed proc near               ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+27C↑o
                 mov     ax, 2532h       ; \n\n\n** CHANGE GAMESPEED **
                 push    ax
                 mov     ax, 211Eh
@@ -2795,7 +2795,8 @@ sub_113EB       endp
 ; "FIGHT WITH ", "ENTER DIRECTION: ", "YOUR ARROW DROPS.", "HIT DOOR.  IT HOLDS.", "ATTACK ON ", " STRUCK ". ~2 KB.
 ; Attributes: noreturn
 
-doFight         proc near
+doFight         proc near               ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+27A↑o
                 mov     word ptr ds:1AEEh, 0
                 mov     ax, 269Ah       ; \n\nFIGHT WITH
                 push    ax
@@ -3630,6 +3631,9 @@ loc_11A29:                              ; CODE XREF: doFight+615↑j
 locret_11A36:                           ; CODE XREF: doFight+617↑j
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_11A37:                              ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+284↑o
                 mov     ax, 2784h       ; \n\nUSE WHICH MAGIC?
                 push    ax
                 mov     ax, 2236h
@@ -4333,7 +4337,7 @@ attackHit       endp
 ; Attributes: noreturn
 
 sub_11F14       proc near               ; CODE XREF: doWalk:loc_104DE↑p
-                                        ; castleTurnUpdate:loc_106F5↑p
+                                        ; seg000:loc_106F5↑p
                 mov     ax, 1B00h
                 push    ax
                 mov     ax, 1B04h
@@ -5605,7 +5609,7 @@ sub_1276C       endp
 
 
 sub_127C8       proc near               ; CODE XREF: doWalk:loc_105F1↑p
-                                        ; castleTurnUpdate:loc_10702↑p ...
+                                        ; seg000:loc_10702↑p ...
                 mov     si, 1BC4h
                 mov     bx, 1Eh
                 add     bx, [si+0Ah]
@@ -6032,7 +6036,7 @@ enemyAttack     endp
 ; Attributes: noreturn
 
 warlordAttack   proc near               ; CODE XREF: doWalk:loc_105FE↑p
-                                        ; castleTurnUpdate:loc_1070F↑p
+                                        ; seg000:loc_1070F↑p
                 push    word ptr ds:25B2h
                 push    word ptr ds:25B0h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
@@ -6184,7 +6188,8 @@ warlordAttack   endp
 ; look / room description: "ICE GLISTENS BENEATH YOU.", "YOU'RE IN A HIDDEN CORRIDOR.", "A RIVER RACES BY.", "IN A LARGE CASTLE.", "ON CASTLE LEVEL 2.", "NO OTHER / INFORMATION AVAILABLE HERE.".
 ; Attributes: noreturn
 
-describeRoom    proc near
+describeRoom    proc near               ; CODE XREF: doWalk+292↑j
+                                        ; DATA XREF: seg000:0694↑o
                 mov     word ptr ds:2332h, 39h ; '9'
                 mov     word ptr ds:2334h, 0Fh
                 mov     ax, 2332h
@@ -7456,7 +7461,7 @@ describeObjects endp
 ; "YOU PUT ON ARMOR.", "NOTHING TO TAKE", "YOU TAKE  SEEDS.", "YOU GRAB THE ", "YOU CAN'T HOLD IT.".
 ; Attributes: noreturn
 
-takeItem        proc near
+takeItem        proc near               ; CODE XREF: doWalk+292↑j
                 mov     ax, 1B00h
                 push    ax
                 mov     ax, 1B04h
@@ -7888,7 +7893,8 @@ takeItem        endp
 ; "DOORS LOCKED." -- door/lock handling. ~1 KB.
 ; Attributes: noreturn
 
-openDoor        proc near
+openDoor        proc near               ; CODE XREF: doWalk+26C↑j
+                                        ; DATA XREF: doWalk+286↑o
                 mov     ax, 1B00h
                 push    ax
                 mov     ax, 1B04h
@@ -8897,7 +8903,8 @@ sub_13AB5       endp
 ; "UNLOCK DOOR.", "THIS KEY DOES NOTHING HERE.".
 ; Attributes: noreturn
 
-useKey          proc near
+useKey          proc near               ; CODE XREF: doWalk+292↑j
+                                        ; DATA XREF: seg000:068E↑o
                 mov     ax, 2B56h
                 push    ax
                 mov     bx, ds:1ADCh
@@ -13950,7 +13957,7 @@ moveActor       endp
 
 ; Attributes: noreturn
 
-sub_16181       proc far                ; CODE XREF: castleTurnUpdate:loc_10712↑P
+sub_16181       proc far                ; CODE XREF: seg000:loc_10712↑P
                                         ; exitCastle↑P
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -13972,7 +13979,7 @@ sub_16181       endp
 ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; Attributes: noreturn
 
-refreshView     proc far                ; CODE XREF: castleTurnUpdate:loc_1076D↑P
+refreshView     proc far                ; CODE XREF: seg000:loc_1076D↑P
                                         ; chooseAbove:loc_107C0↑P ...
                 mov     cx, 0
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
@@ -15675,7 +15682,7 @@ rt_FC           endp
 ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
 ; Attributes: noreturn
 
-rt_FD           proc near               ; CODE XREF: castleTurnUpdate+8E↑P
+rt_FD           proc near               ; CODE XREF: seg000:071B↑P
                                         ; moveBlocked+164↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
@@ -17483,7 +17490,7 @@ rt_FE41:                                ; Overlay manager interrupt
 ; -> rtm_FE42  (leglib seg007:0x2730c)
 ; Attributes: noreturn
 
-rt_FE42         proc near               ; CODE XREF: castleTurnUpdate+C9↑P
+rt_FE42         proc near               ; CODE XREF: seg000:0756↑P
                                         ; sub_1276C+28↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)

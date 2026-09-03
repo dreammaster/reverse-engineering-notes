@@ -101,6 +101,8 @@ mus_entry       endp
 ; Attributes: noreturn thunk
 
 sub_1006C       proc near               ; CODE XREF: mus_entry:loc_10069↑j
+                                        ; useCommand+270↓j
+                                        ; DATA XREF: ...
                 call    sub_124AC
 ; ---------------------------------------------------------------------------
 
@@ -596,25 +598,27 @@ loc_103AD:                              ; CODE XREF: sub_1037F+2B↑j
 loc_103B6:                              ; CODE XREF: sub_1037F+32↑j
                 mov     bx, ds:20A6h
                 add     bx, 0FF21h
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "ANCIENT ARTIFACT".
 ; ---------------------------------------------------------------------------
-                adc     [bp+di-32F1h], bl
-                pslld   mm1, qword ptr [bx]
-                or      ax, 3210h
-                adc     [bx+10h], dl
-                jb      short loc_103E2
-                lea     dx, [bx+si]
-                rcl     byte ptr [bx+si], 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
-                cmc
-                adc     [bp+si], bl
-                adc     [bx], di
-                adc     [si+11h], sp
-                mov     [bx+di], dx
-                test    al, 10h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
-
-loc_103E2:                              ; CODE XREF: sub_1037F+51↑j
-                scasb
-                adc     [bx+di+2], di
+                db 10h                  ; ON..GOSUB arm count
+                dw offset exhibitName_artifact ; "ANCIENT ARTIFACT".
+                dw offset exhibitName_weaponry ; "THE ANCIENT / ART OF WEAPONRY".
+                dw offset exhibitName_thornberry ; "THORNBERRY", "A TYPICAL TOWN OF TARMALON".
+                dw offset sub_1100D
+                dw offset exhibitName_herbOfLife ; "THE / HERB OF LIFE".
+                dw offset exhibitName_pirateTreasure ; "PIRATE TREASURE".
+                dw offset exhibitName_nativeCurrency ; "NATIVE CURRENCY".
+                dw offset exhibitName_stonesOfWisdom ; "STONES OF WISDOM".
+                dw offset sub_110D0
+                dw offset exhibitName_testForKnights ; "TEST FOR KNIGHTS".
+                dw offset sub_1111A
+                dw offset exhibitName_guardian ; "THE / GUARDIAN".
+                dw offset exhibitName_fourJewels ; "THE / FOUR JEWELS".
+                dw offset exhibitName_flightOfFancy ; "FLIGHT OF FANCY".
+                dw offset sub_110A8
+                dw offset welcomeMessage ; "WELCOME / TO THE FAMED / TARMALON MUSEUM!".
+; ---------------------------------------------------------------------------
+                mov     cx, 2
                 mov     ax, 20C4h
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
@@ -986,14 +990,17 @@ enterExhibit    proc near
                 mov     ax, 2100h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_10707:
                 mov     ax, 2100h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 j_rt_FE5B_3:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
+; ---------------------------------------------------------------------------
 
 loc_10715:
                 cmp     word ptr ds:20FEh, 3
@@ -1058,45 +1065,50 @@ loc_10769:                              ; CODE XREF: enterExhibit+68↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_1079B:
                 push    ax
                 mov     ax, 23DEh
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_107A5:
                 push    ax
                 mov     ax, 2108h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_107AF:
                 mov     bx, ds:20FEh
                 inc     bx
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
-
-loc_107B9:
-                adc     [bp+di-32F1h], bl
-                pslld   mm1, qword ptr [bx]
-                or      ax, 3210h
-                adc     [bx+10h], dl
-                jb      short loc_107D8
-                lea     dx, [bx+si]
-                rcl     byte ptr [bx+si], 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
-                cmc
-                adc     [bp+si], bl
-                adc     [bx], di
-                adc     [si+11h], sp
-                mov     [bx+di], dx
-                test    al, 10h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
-
-loc_107D8:                              ; CODE XREF: enterExhibit+C8↑j
-                scasb
-                adc     [bx+di+2], di
+                call    far ptr rt_FC   ; "ANCIENT ARTIFACT".
+; ---------------------------------------------------------------------------
+                db 10h                  ; ON..GOSUB arm count
+                dw offset exhibitName_artifact ; "ANCIENT ARTIFACT".
+                dw offset exhibitName_weaponry ; "THE ANCIENT / ART OF WEAPONRY".
+                dw offset exhibitName_thornberry ; "THORNBERRY", "A TYPICAL TOWN OF TARMALON".
+                dw offset sub_1100D
+                dw offset exhibitName_herbOfLife ; "THE / HERB OF LIFE".
+                dw offset exhibitName_pirateTreasure ; "PIRATE TREASURE".
+                dw offset exhibitName_nativeCurrency ; "NATIVE CURRENCY".
+                dw offset exhibitName_stonesOfWisdom ; "STONES OF WISDOM".
+                dw offset sub_110D0
+                dw offset exhibitName_testForKnights ; "TEST FOR KNIGHTS".
+                dw offset sub_1111A
+                dw offset exhibitName_guardian ; "THE / GUARDIAN".
+                dw offset exhibitName_fourJewels ; "THE / FOUR JEWELS".
+                dw offset exhibitName_flightOfFancy ; "FLIGHT OF FANCY".
+                dw offset sub_110A8
+                dw offset welcomeMessage ; "WELCOME / TO THE FAMED / TARMALON MUSEUM!".
+; ---------------------------------------------------------------------------
+                mov     cx, 2
                 mov     ax, 210Ch
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
+; ---------------------------------------------------------------------------
 
 loc_107E6:
                 cwd
@@ -1105,34 +1117,40 @@ loc_107E6:
                 sub     cx, ax
                 push    cx
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
+; ---------------------------------------------------------------------------
 
 loc_107F6:
                 push    ax
                 mov     ax, 210Ch
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10800:
                 push    ax
                 mov     ax, 2110h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_1080A:
                 mov     ax, 2110h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
 
 loc_10813:
                 mov     ax, 2110h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_1081C:
                 mov     cx, 2
                 mov     ax, 20C4h
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
+; ---------------------------------------------------------------------------
 
 loc_10828:
                 cwd
@@ -1146,14 +1164,17 @@ loc_10828:
                 mov     ax, 2116h
                 push    ax
                 call    far ptr rt_FE3F ; -> rtm_FE3F  (leglib seg008:0x27d5a)
+; ---------------------------------------------------------------------------
 
 loc_10848:
                 mov     ax, 20C4h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 j_rt_FE40:                              ; -> rtm_FE40  (leglib seg008:0x27ce7)
                 call    far ptr rt_FE40
+; ---------------------------------------------------------------------------
 
 loc_10856:
                 cmp     word ptr ds:2106h, 0
@@ -1167,12 +1188,14 @@ loc_10860:                              ; CODE XREF: enterExhibit+15D↑j
                 mov     ax, 2108h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_1086D:                              ; CODE XREF: enterExhibit+15F↑j
                 mov     cx, 2
                 mov     ax, 2108h
                 push    ax
                 call    far ptr rt_42   ; -> rtm_42  (leglib seg003:0x1b651)
+; ---------------------------------------------------------------------------
 
 loc_10879:
                 cwd
@@ -1181,28 +1204,33 @@ loc_10879:
                 sub     cx, ax
                 push    cx
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
+; ---------------------------------------------------------------------------
 
 loc_10889:
                 push    ax
                 mov     ax, 2108h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_10893:
                 push    ax
                 mov     ax, 2118h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_1089D:
                 mov     ax, 2118h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_108A6:
                 mov     ax, 2118h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_108AF:
                 mov     si, 1B96h
@@ -1218,16 +1246,20 @@ loc_108AF:
                 mov     ax, cx
                 mov     [bp-10h], cx
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
 
 loc_108D4:
                 mov     bx, 23FCh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
 
 loc_108DC:                              ; -> rtm_FF2B  (leglib seg004:0x21e15)
                 call    far ptr rt_FF2B
+; ---------------------------------------------------------------------------
 
 loc_108E1:                              ; -> rtm_FF23  (leglib seg004:0x218ee)
                 call    far ptr rt_FF23
+; ---------------------------------------------------------------------------
 
 loc_108E6:
                 and     ax, [bp-0Eh]
@@ -1256,6 +1288,7 @@ loc_1090B:                              ; CODE XREF: enterExhibit+208↑j
 
 loc_1090E:                              ; CODE XREF: enterExhibit+20A↑j
                 call    sub_12C67
+; ---------------------------------------------------------------------------
 
 loc_10913:                              ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 mov     word ptr ds:20B4h, 1
@@ -1306,12 +1339,15 @@ loc_1095E:                              ; CODE XREF: enterExhibit+25D↑j
                 mov     ax, 211Eh
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 211Eh
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 211Eh
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:20B6h
                 and     ax, ax
                 jnz     short loc_1098A
@@ -1320,6 +1356,7 @@ loc_1095E:                              ; CODE XREF: enterExhibit+25D↑j
 
 loc_1098A:                              ; CODE XREF: enterExhibit+287↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+; ---------------------------------------------------------------------------
 
 loc_1098F:                              ; CODE XREF: enterExhibit+289↑j
                 mov     si, 1B96h
@@ -1356,6 +1393,7 @@ loc_109C3:                              ; CODE XREF: enterExhibit+2C2↑j
 
 loc_109CE:                              ; CODE XREF: enterExhibit+2CB↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+; ---------------------------------------------------------------------------
                 jmp     loc_109F5
 ; ---------------------------------------------------------------------------
 
@@ -1365,12 +1403,15 @@ loc_109D6:                              ; CODE XREF: enterExhibit+2CD↑j
                 mov     ax, 2122h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2122h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 2122h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_109F5:                              ; CODE XREF: enterExhibit+2D5↑j
                 mov     bx, ds:2104h
@@ -1390,6 +1431,7 @@ loc_10A0F:                              ; CODE XREF: enterExhibit+30C↑j
                 mov     ax, 210Ch
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:2104h, 13h
                 jz      short loc_10A26
                 jmp     loc_10A33
@@ -1401,6 +1443,7 @@ loc_10A26:                              ; CODE XREF: enterExhibit+323↑j
                 mov     ax, 210Ch
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_10A33:                              ; CODE XREF: enterExhibit+325↑j
                 mov     ax, 2434h       ; YOU'LL NEED A
@@ -1408,6 +1451,7 @@ loc_10A33:                              ; CODE XREF: enterExhibit+325↑j
                 mov     ax, 210Ch
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     bx, ds:2104h
                 shl     bx, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -1416,20 +1460,25 @@ loc_10A33:                              ; CODE XREF: enterExhibit+325↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2446h
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 2126h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2126h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
                 mov     ax, 2126h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -1443,20 +1492,25 @@ loc_10A7C:                              ; CODE XREF: enterExhibit+30E↑j
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 245Ch
                 push    ax
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
                 push    ax
                 mov     ax, 212Ah
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 212Ah
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 212Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:212Eh, 0
                 mov     word ptr ds:2130h, 2
                 mov     word ptr ds:2132h, 3
@@ -1470,6 +1524,7 @@ loc_10A7C:                              ; CODE XREF: enterExhibit+30E↑j
                 mov     ax, 2134h
                 push    ax
                 call    far ptr rt_FE57 ; -> rtm_FE57  (leglib seg007:0x24f84)
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1E22h, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 jz      short locret_10AF1
                 jmp     loc_10AF2
@@ -1490,7 +1545,7 @@ loc_10AF2:                              ; CODE XREF: enterExhibit+3F0↑j
                 dec     ax
                 mov     bx, dx
 
-loc_10B09:                              ; CODE XREF: sub_10B23+26↓j
+loc_10B09:                              ; CODE XREF: seg000:0B49↓j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
@@ -1500,32 +1555,31 @@ loc_10B12:                              ; CODE XREF: enterExhibit+242↑j
                 call    sub_11B45
                 mov     bx, ds:20FEh
                 inc     bx
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; "THE PIRATE'S LAIR".
 enterExhibit    endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-
-sub_10B23       proc near
-                adc     al, ah
-                adc     cx, bp
-                adc     [si+12h], ax
-                movsw
-                pop     ss
-                jz      short loc_10B41
-                adc     [bp+di], dl
-                sbb     byte ptr [bx+si], 8Eh
-                sbb     [di-49E7h], bp
-                sbb     bx, bx
-                sbb     [di], si
-                sbb     al, [di+1Ah]
-                test    [bp+si], bx
-                aas
-
-loc_10B41:                              ; CODE XREF: sub_10B23+9↑j
-                adc     al, 14h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
-                sbb     cx, [bp+di-1E2h]
+; ---------------------------------------------------------------------------
+                db 10h                  ; ON..GOSUB arm count
+                dw offset sub_111E0
+                dw offset sub_111E9
+                dw offset sub_11244
+                dw offset searchCommand ; "HELP SEARCH", "CONTINUE SEARCHING".
+                dw offset eatFruitCommand ; "EAT THE FRUIT".
+                dw offset exhibitName_piratesLair ; "THE PIRATE'S LAIR".
+                dw offset sub_11880
+                dw offset sub_1198E
+                dw offset sub_119AD
+                dw offset sub_119B6
+                dw offset sub_119DB
+                dw offset sub_11A35
+                dw offset exhibitName_fourJewelDungeon ; "THE FOUR JEWEL DUNGEON".
+                dw offset climbCommand  ; "CLIMB ON".
+                dw offset checkFlag_2000 ; flagTestMask := 0x2000, then testExhibitFlag.
+                dw offset sub_11B14
+                db  8Bh
+                db  1Eh
+                db 0FEh
+; ---------------------------------------------------------------------------
                 and     cl, dl
                 jcxz    short loc_10B09
                 cmp     bl, [bp+di]
@@ -1533,8 +1587,6 @@ loc_10B41:                              ; CODE XREF: sub_10B23+9↑j
                 mov     es, word ptr [si+2]
                 mov     ax, ds:2106h
                 mov     es:[bx], ax
-sub_10B23       endp ; sp-analysis failed
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -1558,24 +1610,22 @@ loc_10B64:                              ; CODE XREF: sub_10B59+7↑j
                 mov     ax, es:[bx]
                 inc     ax
                 mov     bx, ax
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; flagTestMask := 0x2B, then testExhibitFlag.
 sub_10B59       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; flagTestMask := 0x03, then testExhibitFlag.
-
-checkFlag_03    proc near
-                or      [bx], bl
-                or      al, 57h
-                or      al, 9Ch
-                or      al, 0A5h
-                or      al, 0CEh
-                or      al, 0EAh
-                or      al, 0F3h
-                or      al, 0Fh
-                or      ax, 0E0A1h
+; ---------------------------------------------------------------------------
+checkFlag_03    db 8                    ; ON..GOSUB arm count
+                dw offset sub_10C1F
+                dw offset checkFlag_2B  ; flagTestMask := 0x2B, then testExhibitFlag.
+                dw offset checkFlag_D0  ; flagTestMask := 0xD0, then testExhibitFlag.
+                dw offset checkFlag_0300 ; flagTestMask := 0x0300, then testExhibitFlag.
+                dw offset sub_10CCE
+                dw offset checkFlag_0800 ; flagTestMask := 0x0800, then testExhibitFlag.
+                dw offset sub_10CF3
+                dw offset sub_10D0F
+                db 0A1h
+                db 0E0h
+; ---------------------------------------------------------------------------
                 sbb     ah, [bp+di+1AEEh]
                 mov     word ptr ds:2136h, 3
                 cmp     word ptr ds:2138h, 0
@@ -1583,7 +1633,7 @@ checkFlag_03    proc near
                 jmp     loc_10BBE
 ; ---------------------------------------------------------------------------
 
-loc_10BA2:                              ; CODE XREF: checkFlag_03+22↑j
+loc_10BA2:                              ; CODE XREF: seg000:0B9D↑j
                 mov     si, 1B96h
                 mov     bx, 14h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
                 add     bx, [si+0Ah]
@@ -1595,7 +1645,7 @@ loc_10BA2:                              ; CODE XREF: checkFlag_03+22↑j
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
 
-loc_10BBE:                              ; CODE XREF: checkFlag_03+24↑j
+loc_10BBE:                              ; CODE XREF: seg000:0B9F↑j
                 call    testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
                 mov     si, 1B96h
                 mov     bx, 14h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
@@ -1614,24 +1664,24 @@ loc_10BBE:                              ; CODE XREF: checkFlag_03+24↑j
                 jnz     short loc_10BEC
                 dec     cx
 
-loc_10BEC:                              ; CODE XREF: checkFlag_03+6E↑j
+loc_10BEC:                              ; CODE XREF: seg000:0BE9↑j
                 or      cx, ds:2138h
                 and     cx, cx
                 jnz     short loc_10BF7
                 jmp     loc_10BFB
 ; ---------------------------------------------------------------------------
 
-loc_10BF7:                              ; CODE XREF: checkFlag_03+77↑j
+loc_10BF7:                              ; CODE XREF: seg000:0BF2↑j
                 dec     word ptr ds:1AEEh
 
-loc_10BFB:                              ; CODE XREF: checkFlag_03+79↑j
+loc_10BFB:                              ; CODE XREF: seg000:0BF4↑j
                 mov     ax, ds:1AE0h
                 cmp     ax, ds:1AEEh
                 jl      short loc_10C07
                 jmp     locret_10C1E
 ; ---------------------------------------------------------------------------
 
-loc_10C07:                              ; CODE XREF: checkFlag_03+87↑j
+loc_10C07:                              ; CODE XREF: seg000:0C02↑j
                 mov     ax, ds:1AEEh
                 mov     ds:1AC6h, ax
                 mov     si, 1B3Ah
@@ -1640,15 +1690,14 @@ loc_10C07:                              ; CODE XREF: checkFlag_03+87↑j
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
 
-locret_10C1E:                           ; CODE XREF: checkFlag_03+89↑j
+locret_10C1E:                           ; CODE XREF: seg000:0C04↑j
                 retn
-checkFlag_03    endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10C1F       proc near
+sub_10C1F       proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B7C↑o
                 mov     si, 1B96h
                 mov     bx, 16h
                 add     bx, [si+0Ah]
@@ -1682,7 +1731,8 @@ sub_10C1F       endp
 
 ; flagTestMask := 0x2B, then testExhibitFlag.
 
-checkFlag_2B    proc near
+checkFlag_2B    proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B7E↑o
                 mov     word ptr ds:2136h, 2Bh ; '+'
                 call    testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
                 mov     si, 1B3Ah
@@ -1719,7 +1769,8 @@ checkFlag_2B    endp
 
 ; flagTestMask := 0xD0, then testExhibitFlag.
 
-checkFlag_D0    proc near
+checkFlag_D0    proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B80↑o
                 mov     word ptr ds:2136h, 0D0h
                 jmp     testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
 checkFlag_D0    endp
@@ -1729,7 +1780,8 @@ checkFlag_D0    endp
 
 ; flagTestMask := 0x0300, then testExhibitFlag.
 
-checkFlag_0300  proc near
+checkFlag_0300  proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B82↑o
                 mov     word ptr ds:2136h, 300h
                 call    testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
                 mov     si, 1BC4h
@@ -1752,7 +1804,8 @@ checkFlag_0300  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10CCE       proc near
+sub_10CCE       proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B84↑o
                 mov     si, 1B96h
                 mov     bx, 24h ; '$'
                 add     bx, [si+0Ah]
@@ -1773,7 +1826,8 @@ sub_10CCE       endp
 
 ; flagTestMask := 0x0800, then testExhibitFlag.
 
-checkFlag_0800  proc near
+checkFlag_0800  proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B86↑o
                 mov     word ptr ds:2136h, 800h
                 jmp     testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
 checkFlag_0800  endp
@@ -1782,7 +1836,8 @@ checkFlag_0800  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10CF3       proc near
+sub_10CF3       proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B88↑o
                 mov     si, 1BC4h
                 mov     bx, 1Eh
                 add     bx, [si+0Ah]
@@ -1802,7 +1857,8 @@ sub_10CF3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10D0F       proc near
+sub_10D0F       proc near               ; CODE XREF: sub_10B59+1D↑j
+                                        ; DATA XREF: seg000:0B8A↑o
                 mov     word ptr ds:2138h, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 retn
 sub_10D0F       endp
@@ -1812,7 +1868,7 @@ sub_10D0F       endp
 
 ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
 
-testExhibitFlag proc near               ; CODE XREF: checkFlag_03:loc_10BBE↑p
+testExhibitFlag proc near               ; CODE XREF: seg000:loc_10BBE↑p
                                         ; checkFlag_2B+6↑p ...
                 mov     si, 1B96h
                 mov     bx, 16h
@@ -2163,7 +2219,9 @@ sub_10F33       endp
 ; "ANCIENT ARTIFACT".
 ; Attributes: noreturn
 
-exhibitName_artifact proc near
+exhibitName_artifact proc near          ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2466h       ; ANCIENT ARTIFACT
                 push    ax
                 mov     ax, 20C4h
@@ -2200,7 +2258,9 @@ exhibitName_artifact endp
 ; "THE ANCIENT / ART OF WEAPONRY".
 ; Attributes: noreturn
 
-exhibitName_weaponry proc near
+exhibitName_weaponry proc near          ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2486h       ; ART OF WEAPONRY
                 push    ax
                 mov     ax, 20C4h
@@ -2230,7 +2290,9 @@ exhibitName_weaponry endp
 ; "THORNBERRY", "A TYPICAL TOWN OF TARMALON".
 ; Attributes: noreturn
 
-exhibitName_thornberry proc near
+exhibitName_thornberry proc near        ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 24AAh       ; THORNBERRY
                 push    ax
                 mov     ax, 20C4h
@@ -2253,7 +2315,9 @@ exhibitName_thornberry endp
 
 ; Attributes: noreturn
 
-sub_1100D       proc near
+sub_1100D       proc near               ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 24D6h       ; FLOWER FOUNTAIN
                 push    ax
                 mov     ax, 20C4h
@@ -2283,7 +2347,9 @@ sub_1100D       endp
 ; "THE / HERB OF LIFE".
 ; Attributes: noreturn
 
-exhibitName_herbOfLife proc near
+exhibitName_herbOfLife proc near        ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 24F8h       ; HERB OF LIFE
                 push    ax
                 mov     ax, 20C4h
@@ -2313,7 +2379,9 @@ exhibitName_herbOfLife endp
 ; "PIRATE TREASURE".
 ; Attributes: noreturn
 
-exhibitName_pirateTreasure proc near
+exhibitName_pirateTreasure proc near    ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2510h       ; PIRATE TREASURE
                 push    ax
                 mov     ax, 210Ch
@@ -2337,7 +2405,9 @@ exhibitName_pirateTreasure endp
 ; "NATIVE CURRENCY".
 ; Attributes: noreturn
 
-exhibitName_nativeCurrency proc near
+exhibitName_nativeCurrency proc near    ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2524h       ; NATIVE CURRENCY
                 push    ax
                 mov     ax, 210Ch
@@ -2361,7 +2431,9 @@ exhibitName_nativeCurrency endp
 ; "STONES OF WISDOM".
 ; Attributes: noreturn
 
-exhibitName_stonesOfWisdom proc near
+exhibitName_stonesOfWisdom proc near    ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2538h       ; STONES OF WISDOM
                 push    ax
                 mov     ax, 210Ch
@@ -2384,7 +2456,9 @@ exhibitName_stonesOfWisdom endp
 
 ; Attributes: noreturn
 
-sub_110A8       proc near
+sub_110A8       proc near               ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 254Ch       ; INFORMATION
                 push    ax
                 mov     ax, 210Ch
@@ -2414,7 +2488,9 @@ sub_110A8       endp
 
 ; Attributes: noreturn
 
-sub_110D0       proc near
+sub_110D0       proc near               ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 255Ch       ; TAPESTRY
                 push    ax
                 mov     ax, 20C4h
@@ -2444,7 +2520,9 @@ sub_110D0       endp
 ; "TEST FOR KNIGHTS".
 ; Attributes: noreturn
 
-exhibitName_testForKnights proc near
+exhibitName_testForKnights proc near    ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 256Eh       ; TEST FOR KNIGHTS
                 push    ax
                 mov     ax, 20C4h
@@ -2473,7 +2551,9 @@ exhibitName_testForKnights endp
 
 ; Attributes: noreturn
 
-sub_1111A       proc near
+sub_1111A       proc near               ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2582h       ; LOST DISPLAYS
                 push    ax
                 mov     ax, 20C4h
@@ -2503,7 +2583,9 @@ sub_1111A       endp
 ; "THE / GUARDIAN".
 ; Attributes: noreturn
 
-exhibitName_guardian proc near
+exhibitName_guardian proc near          ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 2594h       ; GUARDIAN
                 push    ax
                 mov     ax, 20C4h
@@ -2533,7 +2615,9 @@ exhibitName_guardian endp
 ; "THE / FOUR JEWELS".
 ; Attributes: noreturn
 
-exhibitName_fourJewels proc near
+exhibitName_fourJewels proc near        ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 25A0h       ; FOUR JEWELS
                 push    ax
                 mov     ax, 20C4h
@@ -2563,7 +2647,9 @@ exhibitName_fourJewels endp
 ; "FLIGHT OF FANCY".
 ; Attributes: noreturn
 
-exhibitName_flightOfFancy proc near
+exhibitName_flightOfFancy proc near     ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 25B0h       ; FLIGHT OF FANCY
                 push    ax
                 mov     ax, 20C4h
@@ -2593,7 +2679,9 @@ exhibitName_flightOfFancy endp
 ; "WELCOME / TO THE FAMED / TARMALON MUSEUM!".
 ; Attributes: noreturn
 
-welcomeMessage  proc near
+welcomeMessage  proc near               ; CODE XREF: sub_1037F+3F↑j
+                                        ; enterExhibit+B6↑j
+                                        ; DATA XREF: ...
                 mov     ax, 25C4h       ; WELCOME
                 push    ax
                 mov     ax, 20C4h
@@ -2629,7 +2717,8 @@ welcomeMessage  endp
 
 ; Attributes: noreturn
 
-sub_111E0       proc near
+sub_111E0       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B24↑o
                 mov     word ptr ds:20B6h, 49h ; 'I'
                 jmp     loc_11D05
 sub_111E0       endp
@@ -2639,7 +2728,8 @@ sub_111E0       endp
 
 ; Attributes: noreturn
 
-sub_111E9       proc near
+sub_111E9       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B26↑o
                 cmp     word ptr ds:2106h, 2
                 mov     ax, 0
                 jnz     short loc_111F4
@@ -2687,7 +2777,8 @@ sub_111E9       endp
 
 ; Attributes: noreturn
 
-sub_11244       proc near
+sub_11244       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B28↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_11251
@@ -2803,7 +2894,8 @@ sub_1127E       endp
 ; "THE PIRATE'S LAIR".
 ; Attributes: noreturn
 
-exhibitName_piratesLair proc near
+exhibitName_piratesLair proc near       ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B2E↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_1131D
@@ -2865,7 +2957,8 @@ sub_1134E       endp
 ; "EAT THE FRUIT".
 ; Attributes: noreturn
 
-eatFruitCommand proc near
+eatFruitCommand proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B2C↑o
                 mov     word ptr ds:20B6h, 2Bh ; '+'
                 call    loc_11D05
 ; ---------------------------------------------------------------------------
@@ -2986,7 +3079,9 @@ sub_113ED       endp
 ; flagTestMask := 0x2000, then testExhibitFlag.
 ; Attributes: noreturn
 
-checkFlag_2000  proc near               ; CODE XREF: useCommand+1D0↓j
+checkFlag_2000  proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; useCommand+1D0↓j
+                                        ; DATA XREF: ...
                 mov     word ptr ds:2136h, 2000h
                 call    testExhibitFlag ; test whether the bits in flagTestMask are set in the museum flag word ([ds:1B96 desc + 0x16]); leaves the result in flagTestResult.
                 mov     ax, ds:2138h
@@ -3376,7 +3471,8 @@ sub_11775       endp
 ; "HELP SEARCH", "CONTINUE SEARCHING".
 ; Attributes: noreturn
 
-searchCommand   proc near
+searchCommand   proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B2A↑o
                 mov     si, 1BC4h
                 mov     bx, 14h         ; \xe8# - EXHIBIT CLOSED - @\x01\x04$@\xf4\x1e$YOU H
                 add     bx, [si+0Ah]
@@ -3495,7 +3591,8 @@ sub_11863       endp
 
 ; Attributes: noreturn
 
-sub_11880       proc near
+sub_11880       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B30↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_1188D
@@ -3553,7 +3650,8 @@ sub_11880       endp
 
 ; Attributes: noreturn
 
-sub_1198E       proc near
+sub_1198E       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B32↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_1199B
@@ -3575,7 +3673,8 @@ sub_1198E       endp
 
 ; Attributes: noreturn
 
-sub_119AD       proc near
+sub_119AD       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B34↑o
                 mov     word ptr ds:20B6h, 31h ; '1'
                 jmp     sub_11D02
 sub_119AD       endp
@@ -3585,7 +3684,8 @@ sub_119AD       endp
 
 ; Attributes: noreturn
 
-sub_119B6       proc near
+sub_119B6       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B36↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_119C3
@@ -3608,7 +3708,8 @@ sub_119B6       endp
 
 ; Attributes: noreturn
 
-sub_119DB       proc near
+sub_119DB       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B38↑o
                 mov     word ptr ds:20B6h, 33h ; '3'
                 call    sub_11D02
 ; ---------------------------------------------------------------------------
@@ -3666,7 +3767,8 @@ sub_119F0       endp
 
 ; Attributes: noreturn
 
-sub_11A35       proc near
+sub_11A35       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B3A↑o
                 mov     word ptr ds:20B6h, 34h ; '4'
                 call    sub_11D02
 ; ---------------------------------------------------------------------------
@@ -3682,7 +3784,8 @@ sub_11A35       endp
 ; "THE FOUR JEWEL DUNGEON".
 ; Attributes: noreturn
 
-exhibitName_fourJewelDungeon proc near
+exhibitName_fourJewelDungeon proc near  ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B3C↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 0
                 jz      short loc_11A52
@@ -3727,7 +3830,8 @@ exhibitName_fourJewelDungeon endp
 ; "CLIMB ON".
 ; Attributes: noreturn
 
-climbCommand    proc near
+climbCommand    proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B3E↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 jnz     short loc_11A92
@@ -3811,7 +3915,8 @@ sub_11AE9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11B14       proc near
+sub_11B14       proc near               ; CODE XREF: enterExhibit+420↑j
+                                        ; DATA XREF: seg000:0B42↑o
                 call    sub_11C82
                 cmp     word ptr ds:1E22h, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 jz      short locret_11B21
@@ -5100,27 +5205,21 @@ loc_12385:                              ; CODE XREF: useCommand+253↑j
 loc_12393:                              ; CODE XREF: useCommand+255↑j
                 mov     word ptr ds:1F16h, 6
                 mov     bx, ds:213Ch
-                call    far ptr rt_FC   ; -> rtm_FC  (leglib seg003:0x1ca63)
+                call    far ptr rt_FC   ; -> TWNDR.EXE (town exhibit).
 useCommand      endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_123A2       proc near
-                push    es
-                sub     [si], sp
-                aaa
-                and     al, 6Ch
-                add     [di+24h], al
-                nop
-                and     al, 9Eh
-                and     al, 83h
+; ---------------------------------------------------------------------------
+                db 6                    ; ON..GOSUB arm count
+                dw offset sub_12429
+                dw offset chainToTown   ; -> TWNDR.EXE (town exhibit).
+                dw offset sub_1006C
+                dw offset chainToDungeon ; -> DUN.EXE (dungeon exhibit).
+                dw offset chainToStory  ; -> STDRV.EXE (story driver).
+                dw offset chainToCel    ; -> CELDRV.EXE (cel-animation player).
+                db  83h
+; ---------------------------------------------------------------------------
                 db      3Eh
                 loopne  near ptr loc_123CB+2
-sub_123A2       endp ; sp-analysis failed
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -5143,7 +5242,7 @@ loc_123C5:                              ; CODE XREF: sub_123B3+F↑j
                 and     cx, cx
                 jnz     short loc_123CE
 
-loc_123CB:                              ; CODE XREF: sub_123A2+E↑j
+loc_123CB:                              ; CODE XREF: seg000:23B0↑j
                 jmp     loc_123D1
 ; ---------------------------------------------------------------------------
 
@@ -5224,19 +5323,21 @@ sub_123B3       endp ; sp-analysis failed
                 db    4
                 db  4Dh ; M SEG16 SEGDEF [seg002,0]
                 db  13h
-                db 0B8h
-                db  3Ch ; <
-                db  28h ; (
-                db  50h ; P
-                db 0B8h
-                db  0Ch
-                db  21h ; !
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: noreturn
+
+sub_12429       proc near               ; CODE XREF: useCommand+270↑j
+                                        ; DATA XREF: seg000:23A3↑o
+                mov     ax, 283Ch
+                push    ax
+                mov     ax, 210Ch
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+sub_12429       endp
+
+; ---------------------------------------------------------------------------
                 db 0C3h
 
 ; =============== S U B R O U T I N E =======================================
@@ -5244,7 +5345,8 @@ sub_123B3       endp ; sp-analysis failed
 ; -> TWNDR.EXE (town exhibit).
 ; Attributes: noreturn
 
-chainToTown     proc near
+chainToTown     proc near               ; CODE XREF: useCommand+270↑j
+                                        ; DATA XREF: seg000:23A5↑o
                 mov     ax, 2844h       ; TWNDR
                 push    ax
                 mov     ax, 210Ch
@@ -5261,7 +5363,8 @@ chainToTown     endp
 ; -> DUN.EXE (dungeon exhibit).
 ; Attributes: noreturn
 
-chainToDungeon  proc near
+chainToDungeon  proc near               ; CODE XREF: useCommand+270↑j
+                                        ; DATA XREF: seg000:23A9↑o
                 mov     ax, 284Eh       ; DUN
                 push    ax
                 mov     ax, 210Ch
@@ -5303,7 +5406,8 @@ chainToDungeon  endp
 ; -> STDRV.EXE (story driver).
 ; Attributes: noreturn
 
-chainToStory    proc near
+chainToStory    proc near               ; CODE XREF: useCommand+270↑j
+                                        ; DATA XREF: seg000:23AB↑o
                 mov     ax, 2856h       ; STDRV
                 push    ax
                 mov     ax, 210Ch
@@ -5320,7 +5424,8 @@ chainToStory    endp
 ; -> CELDRV.EXE (cel-animation player).
 ; Attributes: noreturn
 
-chainToCel      proc near
+chainToCel      proc near               ; CODE XREF: useCommand+270↑j
+                                        ; DATA XREF: seg000:23AD↑o
                 mov     ax, 2860h       ; CELDRV
                 push    ax
                 mov     ax, 210Ch

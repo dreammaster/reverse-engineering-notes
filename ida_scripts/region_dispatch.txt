@@ -1,0 +1,280 @@
+=== fragment starts (mov bx,K / FF4B / mov bx,208E / FF50) ===
+  0x01009c   K=0x246e  mov     bx, 246Eh
+  0x0100cd   K=0x247a  mov     bx, 247Ah
+  0x0100fe   K=0x2486  mov     bx, 2486h
+  0x01012f   K=0x2492  mov     bx, 2492h
+  0x010160   K=0x2476  mov     bx, 2476h
+  0x012ce7   K=0x2584  mov     bx, 2584h
+  0x012e36   K=0x272e  mov     bx, 272Eh
+  0x013dde   K=0x24e6  mov     bx, 24E6h
+
+--- fragment 0x01009c (body from 0x01009c) ---
+  0x01009c  mov     bx, 246Eh
+  0x01009f  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100a4  mov     bx, 208Eh
+  0x0100a7  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100ac  mov     bx, 2472h
+  0x0100af  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100b4  mov     bx, 2092h
+  0x0100b7  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100bc  mov     bx, 2476h
+  0x0100bf  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100c4  mov     bx, 2096h
+  0x0100c7  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100cc  retn
+  xrefs into fragment:
+    from 0x01009c  mov     bx, 246Eh   (type 21)
+    from 0x01009f  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x0100a4  mov     bx, 208Eh   (type 21)
+    from 0x0100a7  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x0100ac  mov     bx, 2472h   (type 21)
+    from 0x0100af  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x0100b4  mov     bx, 2092h   (type 21)
+
+--- fragment 0x0100cd (body from 0x0100cd) ---
+  0x0100cd  mov     bx, 247Ah
+  0x0100d0  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100d5  mov     bx, 208Eh
+  0x0100d8  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100dd  mov     bx, 247Eh
+  0x0100e0  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100e5  mov     bx, 2092h
+  0x0100e8  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100ed  mov     bx, 2482h
+  0x0100f0  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x0100f5  mov     bx, 2096h
+  0x0100f8  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x0100fd  retn
+  xrefs into fragment:
+    from 0x0100cd  mov     bx, 247Ah   (type 21)
+    from 0x0100d0  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x0100d5  mov     bx, 208Eh   (type 21)
+    from 0x0100d8  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x0100dd  mov     bx, 247Eh   (type 21)
+    from 0x0100e0  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x0100e5  mov     bx, 2092h   (type 21)
+
+--- fragment 0x0100fe (body from 0x0100fe) ---
+  0x0100fe  mov     bx, 2486h
+  0x010101  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010106  mov     bx, 208Eh
+  0x010109  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01010e  mov     bx, 248Ah
+  0x010111  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010116  mov     bx, 2092h
+  0x010119  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01011e  mov     bx, 248Eh
+  0x010121  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010126  mov     bx, 2096h
+  0x010129  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01012e  retn
+  xrefs into fragment:
+    from 0x0100fe  mov     bx, 2486h   (type 21)
+    from 0x010101  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010106  mov     bx, 208Eh   (type 21)
+    from 0x010109  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x01010e  mov     bx, 248Ah   (type 21)
+    from 0x010111  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010116  mov     bx, 2092h   (type 21)
+
+--- fragment 0x01012f (body from 0x01012f) ---
+  0x01012f  mov     bx, 2492h
+  0x010132  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010137  mov     bx, 208Eh
+  0x01013a  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01013f  mov     bx, 2476h
+  0x010142  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010147  mov     bx, 2092h
+  0x01014a  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01014f  mov     bx, 2496h
+  0x010152  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010157  mov     bx, 2096h
+  0x01015a  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x01015f  retn
+  xrefs into fragment:
+    from 0x01012f  mov     bx, 2492h   (type 21)
+    from 0x010132  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010137  mov     bx, 208Eh   (type 21)
+    from 0x01013a  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x01013f  mov     bx, 2476h   (type 21)
+    from 0x010142  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010147  mov     bx, 2092h   (type 21)
+
+--- fragment 0x010160 (body from 0x010160) ---
+  0x010160  mov     bx, 2476h
+  0x010163  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010168  mov     bx, 208Eh
+  0x01016b  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x010170  mov     bx, 249Ah
+  0x010173  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x010178  mov     bx, 2092h
+  0x01017b  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x010180  retn
+  xrefs into fragment:
+    from 0x010160  mov     bx, 2476h   (type 21)
+    from 0x010163  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010168  mov     bx, 208Eh   (type 21)
+    from 0x01016b  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x010170  mov     bx, 249Ah   (type 21)
+    from 0x010173  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x010178  mov     bx, 2092h   (type 21)
+
+--- fragment 0x012ce7 (body from 0x012ce7) ---
+  0x012ce7  mov     bx, 2584h
+  0x012cea  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x012cef  mov     bx, 208Eh
+  0x012cf2  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x012cf7  jmp     loc_132FB
+  0x012cfa  mov     bx, 285Eh
+  0x012cfd  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x012d02  mov     bx, 1ACEh
+  0x012d05  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x012d0a  call    far ptr rt_FF1F; -> rtm_FF1F  (leglib seg004:0x21b5e)
+  0x012d0f  mov     ax, 0
+  0x012d12  jnb     short loc_12D15
+  0x012d14  dec     ax
+  0x012d15  call    far ptr rt_FF20; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+  0x012d1a  mov     bx, 2A64h
+  0x012d1d  call    far ptr rt_FF4E; -> rtm_FF4E  (leglib seg004:0x21a1a)
+  0x012d22  mov     bx, 2AB4h
+  0x012d25  call    far ptr rt_FF44; -> rtm_FF44  (leglib seg004:0x21a62)
+  0x012d2a  push    word ptr ds:24E8h
+  0x012d2e  push    word ptr ds:24E6h
+  xrefs into fragment:
+    from 0x012ce3  add     ds:1ADAh, ax   (type 21)
+    from 0x012ce7  mov     bx, 2584h   (type 21)
+    from 0x012cea  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x012cef  mov     bx, 208Eh   (type 21)
+    from 0x012cf2  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x012bc2  jmp     loc_12CFA   (type 19)
+    from 0x012bda  jmp     loc_12CFA   (type 19)
+    from 0x012cfa  mov     bx, 285Eh   (type 21)
+    from 0x012cfd  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+
+--- fragment 0x012e36 (body from 0x012e36) ---
+  0x012e36  mov     bx, 272Eh
+  0x012e39  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x012e3e  mov     bx, 208Eh
+  0x012e41  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x012e46  jmp     loc_132FB
+  0x012e49  mov     si, 1B0Ch
+  0x012e4c  mov     bx, 8
+  0x012e4f  add     bx, [si+0Ah]
+  0x012e52  mov     es, word ptr [si+2]
+  0x012e55  mov     di, bx
+  0x012e57  cmp     word ptr es:[bx], 0
+  0x012e5b  mov     ax, 0
+  0x012e5e  jz      short loc_12E61
+  0x012e60  dec     ax
+  0x012e61  mov     bx, 0Eh
+  0x012e64  add     bx, [si+0Ah]
+  0x012e67  mov     es, word ptr [si+2]
+  0x012e6a  mov     si, bx
+  0x012e6c  cmp     word ptr es:[bx], 0
+  0x012e70  mov     cx, 0
+  xrefs into fragment:
+    from 0x012e31  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x012e36  mov     bx, 272Eh   (type 21)
+    from 0x012e39  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x012e3e  mov     bx, 208Eh   (type 21)
+    from 0x012e41  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x012d48  jmp     loc_12E49   (type 19)
+    from 0x012e49  mov     si, 1B0Ch   (type 21)
+    from 0x012e4c  mov     bx, 8   (type 21)
+
+--- fragment 0x013dde (body from 0x013dde) ---
+  0x013dde  mov     bx, 24E6h
+  0x013de1  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)
+  0x013de6  mov     bx, 208Eh
+  0x013de9  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)
+  0x013dee  mov     ax, 2E3Eh; ATTACK
+  0x013df1  push    ax
+  0x013df2  mov     bx, ds:2254h
+  0x013df6  shl     bx, 1
+  0x013df8  shl     bx, 1
+  0x013dfa  mov     si, 20E2h
+  0x013dfd  add     bx, [si+0Ah]
+  0x013e00  push    bx
+  0x013e01  call    far ptr rt_C3; -> basStrConcat  (leglib seg003:0x1b5ab)
+  0x013e06  push    ax
+  0x013e07  mov     ax, 239Ah
+  0x013e0a  push    ax
+  0x013e0b  call    far ptr rt_C2; -> basStrAssign  (leglib seg003:0x1b572)
+  0x013e10  mov     ax, 239Ah
+  0x013e13  push    ax
+  0x013e14  call    far ptr rt_FE26; -> drawString  (leglib seg007:0x26967)
+  xrefs into fragment:
+    from 0x013dd9  jz      short loc_13DDE   (type 19)
+    from 0x013dde  mov     bx, 24E6h   (type 21)
+    from 0x013de1  call    far ptr rt_FF4B; -> rtm_FF4B  (leglib seg004:0x21690)   (type 21)
+    from 0x013de6  mov     bx, 208Eh   (type 21)
+    from 0x013de9  call    far ptr rt_FF50; -> rtm_FF50  (leglib seg004:0x2182d)   (type 21)
+    from 0x013ddb  jmp     loc_13DEE   (type 19)
+    from 0x013dee  mov     ax, 2E3Eh; ATTACK   (type 21)
+    from 0x013df1  push    ax   (type 21)
+    from 0x013df2  mov     bx, ds:2254h   (type 21)
+    from 0x013df6  shl     bx, 1   (type 21)
+
+=== bytes/words in [0x1003c, 0x1009c) (candidate GOSUB table) ===
+  0x01003c  mov     ax, 101h
+  0x01003e  push    ax
+  0x01003f  mov     ax, 1E2Ah
+  0x010042  push    ax
+  0x010043  call    far ptr rt_AF; -> basScreenInit  (leglib seg003:0x13608)
+  0x010048  xor     ax, ax
+  0x01004a  push    ax
+  0x01004b  mov     ax, 0BB8h
+  0x01004e  push    ax
+  0x01004f  mov     ax, 2; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
+  0x010052  push    ax
+  0x010053  mov     ax, 101h
+  0x010056  push    ax
+  0x010057  mov     ax, 1E58h
+  0x01005a  push    ax
+  0x01005b  call    far ptr rt_AF; -> basScreenInit  (leglib seg003:0x13608)
+  0x010060  cmp     word ptr ds:1AC0h, 0
+  0x010065  jz      short loc_1006A
+  0x010067  jmp     loc_1007B
+  0x01006a  call    far ptr rt_FE03; -> rtm_FE03  (leglib seg007:0x268e5)
+  0x01006f  mov     word ptr ds:1B02h, 28h ; '('
+  0x010075  mov     word ptr ds:1B06h, 1Eh
+  0x01007b  jmp     loc_10181
+  0x01007e  mov     ax, 2460h; bad commd
+  0x010081  push    ax
+  0x010082  call    far ptr rt_98; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
+  0x010087  retn
+  0x010088  dec     word ptr ds:208Ah
+  0x01008c  retn
+  0x01008d  inc     word ptr ds:208Ch
+  0x010091  retn
+  0x010092  inc     word ptr ds:208Ah
+  0x010096  retn
+  0x010097  dec     word ptr ds:208Ch
+  0x01009b  retn
+
+=== loadOverworldData = 0x14619 ; callers ===
+  called from 0x014613  (initOverworldViewport)
+  called from 0x0148a1  (enterOverworld)
+
+=== writes touching ds:2192 ===
+  0x010d0d  mov     ds:2192h, ax                      [doMovement]
+  0x0118e8  mov     ds:2192h, ax                      [creatureApproach]
+  0x011ad1  mov     ds:2192h, ax                      [creatureApproach]
+  0x012c72  mov     ds:2192h, ax                      [buyFood]
+  0x012db0  mov     ds:2192h, ax                      [buyFood]
+  0x0130bf  mov     ds:2192h, ax                      [shopBuy]
+  0x0133f1  mov     ds:2192h, ax                      [addFoodDays]
+  0x01349d  mov     ds:2192h, ax                      [spendFoodDays]
+  0x013baa  mov     ds:2192h, ax                      [doAttackOrCast]
+  0x013f10  mov     ds:2192h, ax                      [resolvePlayerAttack]
+  0x013f77  mov     ds:2192h, ax                      [resolvePlayerAttack]
+  0x013fb7  mov     ds:2192h, ax                      [resolvePlayerAttack]
+  0x01427f  mov     ds:2192h, ax                      [creatureDefeated]
+  0x014443  mov     ds:2192h, ax                      [creatureDefeated]
+  0x014890  mov     ds:2192h, ax                      [enterOverworld]
+
+=== writes touching ds:2092 ===
+
+=== writes touching ds:2096 ===
+
+=== writes touching ds:208E ===

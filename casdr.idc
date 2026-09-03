@@ -243,19 +243,65 @@ static Bytes_0(void) {
 	create_insn	(0X1063A);
 	create_insn	(0X1064D);
 	create_insn	(0X10657);
-	create_insn	(0X10661);
-	create_insn	(0X10667);
-	set_cmt	(0X10670,	"DMA controller, 8237A-5.\nchannel 3 base address and word count",	0);
-	create_insn	(x=0X10670);
-	op_hex		(x,	0);
-	create_insn	(0X10673);
+	set_cmt	(0X10661,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10661);
+	create_word	(x=0X10662);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10664);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10666);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10668);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1066A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1066C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1066E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10670);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10672);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10674);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10676);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X10678);
 	create_insn	(0X1067B);
-	create_insn	(0X10687);
-	create_insn	(x=0X10688);
-	op_hex		(x,	0);
-	op_hex		(x,	1);
-	create_insn	(0X1068D);
+	set_cmt	(0X10687,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10687);
+	create_word	(x=0X10688);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1068A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	set_cmt	(0X1068D,	"per-turn castle update: reads castleOrFort / turnFlag, moves the guards and calls warlordAttack (-> refreshView / scanLineOfSight). TENTATIVE.",	1);
 	set_name	(0X1068D,	"castleTurnUpdate");
+	create_word	(x=0X1068E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10690);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10692);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10694);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(x=0X10697);
 	op_hex		(x,	1);
 	create_insn	(0X106D4);
@@ -267,6 +313,7 @@ static Bytes_0(void) {
 	create_insn	(0X1070F);
 	create_insn	(0X10712);
 	create_insn	(0X10717);
+	create_insn	(0X10725);
 	create_insn	(0X1072E);
 	create_insn	(0X1076D);
 	create_insn	(0X10772);
@@ -3238,6 +3285,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X16990);
 	op_hex		(x,	0);
 	set_name	(0X16990,	"rt_FF4E");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X16992);
 	make_array	(0X16992,	0X2);
 	set_cmt	(0X16994,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -3265,15 +3321,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X169A0);
 	op_hex		(x,	0);
 	set_name	(0X169A0,	"rt_FF52");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X169A2);
 	make_array	(0X169A2,	0X2);
 	set_cmt	(0X169A4,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5155,9 +5202,6 @@ static Functions_0(void) {
 	add_func    (0X103F0,0X10687);
 	set_func_flags(0X103F0,0x1401);
 	set_func_cmt(0X103F0,	"\"WALK \" -- castle movement.", 1);
-	add_func    (0X1068D,0X10772);
-	set_func_flags(0X1068D,0x1401);
-	set_func_cmt(0X1068D,	"per-turn castle update: reads castleOrFort / turnFlag, moves the guards and calls warlordAttack (-> refreshView / scanLineOfSight). TENTATIVE.", 1);
 	add_func    (0X10773,0X107C5);
 	set_func_flags(0X10773,0x1401);
 	set_func_cmt(0X10773,	"\"-CHOOSE ABOVE\" menu helper.", 1);
@@ -5731,6 +5775,7 @@ static Functions_0(void) {
 	add_func    (0X1720B,0X17215);
 	set_func_flags(0X1720B,0x5400);
 	set_frame_size(0X1720B, 0, 0, 0);
+	append_func_tail(0X103F0,0X10725,0X1072E);
 	append_func_tail(0X16F57,0X16E79,0X16E7E);
 	append_func_tail(0X16EBF,0X16E7E,0X16E83);
 	append_func_tail(0X17136,0X16E7E,0X16E83);
@@ -5763,9 +5808,6 @@ static SegRegs(void) {
 	split_sreg_range(0X10000,"es",BADSEL,3);
 	split_sreg_range(0X1030F,"es",BADSEL,3);
 	split_sreg_range(0X10383,"es",BADSEL,3);
-	split_sreg_range(0X10666,"es",BADSEL,3);
-	split_sreg_range(0X1066E,"es",BADSEL,3);
-	split_sreg_range(0X10688,"es",BADSEL,3);
 	split_sreg_range(0X10BB5,"es",BADSEL,3);
 	split_sreg_range(0X10D2B,"es",BADSEL,3);
 	split_sreg_range(0X10D63,"es",BADSEL,3);

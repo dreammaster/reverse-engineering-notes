@@ -198,12 +198,70 @@ static Bytes_0(void) {
 	create_insn	(0X102F3);
 	create_insn	(0X102FD);
 	create_insn	(0X1030D);
-	create_insn	(x=0X10317);
-	op_hex		(x,	1);
-	create_insn	(x=0X1032E);
-	op_hex		(x,	1);
-	create_insn	(0X10341);
+	set_cmt	(0X10317,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10317);
+	create_word	(x=0X10318);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1031A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1031C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1031E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10320);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10322);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10324);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10326);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10328);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1032A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1032C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1032E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10330);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X10333);
+	set_cmt	(0X10341,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10341);
+	create_word	(x=0X10342);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10344);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10346);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10348);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1034A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1034C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	set_cmt	(0X1034E,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+	create_insn	(0X1034E);
 	set_cmt	(0X10369,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X10369);
 	set_cmt	(0X10373,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -323,6 +381,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X108A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X108AB);
+	op_hex		(x,	1);
+	create_insn	(0X10913);
+	create_insn	(x=0X10921);
+	op_hex		(x,	1);
+	create_insn	(x=0X10923);
 	op_hex		(x,	1);
 	set_cmt	(0X1094D,	"ENTER DIRECTION: ",	0);
 	create_insn	(0X1094D);
@@ -2923,6 +2986,15 @@ static Bytes_0(void) {
 	create_insn	(0X18342);
 	set_cmt	(0X18348,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X1834E,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X18358);
 	create_insn	(0X18365);
 	create_insn	(0X1836B);
@@ -2944,15 +3016,6 @@ static Bytes_0(void) {
 	set_name	(0X18439,	"dirBetween");
 	set_cmt	(0X18454,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18457,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X18460,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18463,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X18473,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
@@ -5142,6 +5205,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A54);
 	op_hex		(x,	0);
 	set_name	(0X18A54,	"rt_FE23");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X18A56);
 	make_array	(0X18A56,	0X2);
 	set_cmt	(0X18A58,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5169,15 +5241,6 @@ static Bytes_1(void) {
 	set_name	(0X18A64,	"rt_FE27");
 	create_byte	(0X18A66);
 	make_array	(0X18A66,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X18A68,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X18A68);
 	op_hex		(x,	0);
@@ -6802,7 +6865,6 @@ static SegRegs(void) {
 	split_sreg_range(0X10000,"es",BADSEL,3);
 	split_sreg_range(0X1005C,"es",BADSEL,3);
 	split_sreg_range(0X10192,"es",BADSEL,3);
-	split_sreg_range(0X1032A,"es",BADSEL,3);
 	split_sreg_range(0X10497,"es",BADSEL,3);
 	split_sreg_range(0X104EA,"es",BADSEL,3);
 	split_sreg_range(0X104FA,"es",BADSEL,3);
