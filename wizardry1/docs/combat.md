@@ -133,18 +133,35 @@ by class; teleport and alarm bubble back to the caller.  Tests
 ## UI / flow
 
 `runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel,
-attk012=2, transcript=nullptr)` → `CombatResult {Won, Fled, PartyWiped,
-WindowClosed}`.  The round: each conscious member picks `F)IGHT` (+ group
-letter if >1) / `C)AST` / `P)ARRY` / `R)UN` (≈75 % escape), then every living
-(awake, unparalysed) monster acts.
+attk012=2, transcript=nullptr, parleyThresh=-1)` → `CombatResult {Won, Fled,
+PartyWiped, WindowClosed, Friendly}`.  `INITATTK` order: `buildEncounter` →
+the surprise roll (`rand%100 > 80` → party surprised (1); else a second
+roll → monsters surprised (2); else 0 — kept for RNG fidelity, the
+free-round effect is not modelled) → `FRIENDLY` (below).  The round: each
+conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY`
+/ `R)UN` (≈75 % escape), then every living (awake, unparalysed) monster acts.
 `wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]
-[attk012]` (headless; prints the fight transcript + a `summary:` line; tests
-`combat_fight` / `combat_spell` / `reward_drop`).  Wired into the maze: an
-`ENCOUNTE` square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought
-room / a kick into a fight square) calls `runCombat`.
+[attk012] [parleyThresh]` (headless; prints the fight transcript + a
+`summary:` line; tests `combat_fight` / `combat_spell` / `reward_drop` /
+`friendly_leave` / `friendly_fight`).  Wired into the maze: an `ENCOUNTE`
+square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought room / a
+kick into a fight square) calls `runCombat`.
+
+## FRIENDLY — the parley  (`COMBAT` P010509)
+
+Runs from `INITATTK`.  Only when the party has a `GOOD` member (`GOODLEAV`).
+`z = rand%100`; the encounter is friendly iff `50 ≤ z ≤ thresh`, where
+`thresh` is by the first group's monster `CLASS` — fighter 60, mage 55,
+priest 65, thief 53, class-4 80, class-7 75, anything else 50 (never).
+On a friendly encounter every group is identified and the party is offered
+`F)IGHT` / `L)EAVE IN PEACE`.  `L` → `CombatResult::Friendly` (the maze
+treats it like a clean exit — no XP, no loot).  `F` → the fight proceeds
+and each `GOOD` member has a `rand%2000 == 565` chance to turn `EVIL`.
+The weak PC RNG rarely lands `z` in the window on its own, so
+`combat-test`'s `parleyThresh` arg overrides `thresh` for the tests.
 
 **Not ported:** `DOBREATH` (dragon breath), allied-group summons / `YELLHELP`,
-item use in combat, the `FRIENDLY` parley, and the cemetery scene.  Spell
+item use in combat, and the cemetery scene.  Spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`

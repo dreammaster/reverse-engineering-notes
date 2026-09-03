@@ -155,16 +155,18 @@ Decided direction (2026-09-02):
       `ENMYREWD`+`GETREWRD`+`GOLDREWD`/`ITEMREWD` gold & item drops,
       `GTTRAPTY`/`DOTRAPDM` traps.  Character combat tail (words 87-99) +
       `deriveStats` (UTILITIE 25). Wired to the maze with `attk012` from
-      `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
-      `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
-      `FRIENDLY` parley, the cemetery scene.
+      `ENCOUNTR`. `FRIENDLY` parley (`INITATTK`) + the surprise roll (kept
+      for RNG fidelity). `wiz1 combat-test` (CMake tests `combat_fight` /
+      `combat_spell` / `reward_drop` / `friendly_leave` / `friendly_fight`).
+      TODO: `DOBREATH` (dragon breath), allied-group summons / `YELLHELP`,
+      the surprise free round.
 - [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
       (`MazeState`) resumes an interrupted delve; `Character` models
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: the remaining `SCNMSG` side effects → `DOBREATH` /
-      `FRIENDLY` in combat → camp `IDENTIFY` (`CAMPSTF`).
+- [ ] Continue: `DOBREATH` / allied summons in combat → the remaining
+      `SCNMSG` side effects → camp `IDENTIFY` (`CAMPSTF`).
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

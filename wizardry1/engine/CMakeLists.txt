@@ -163,15 +163,32 @@ add_test(NAME combat_spell
 # mage HALITO + priest BADIOS damage monsters, priest DIOS heals; party wins.
 set_tests_properties(combat_spell PROPERTIES
     PASS_REGULAR_EXPRESSION "summary: result=WON casts=[3-9] healed=[1-9]")
+add_test(NAME friendly_leave
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 30 "L\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 100)
+# FRIENDLY: a party with a GOOD member (NOBAL) parleys and leaves in peace.
+set_tests_properties(friendly_leave PROPERTIES
+    PASS_REGULAR_EXPRESSION "result: FRIENDLY(.|\n)*THEY HAIL YOU IN WELCOME")
+add_test(NAME friendly_fight
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 30
+                 "F\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 100)
+# choosing F)IGHT at the parley attacks the friendly group and wins.
+set_tests_properties(friendly_fight PROPERTIES
+    PASS_REGULAR_EXPRESSION "YOU ATTACK THE FRIENDLY GROUP(.|\n)*result=WON")
 add_test(NAME reward_drop
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
-                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 4
                  "\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\rO1\\r\\r\\r"
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
 # win, open the ZREWARD chest: real CALCKILL xp, an item drop, a gold share.
 set_tests_properties(reward_drop PROPERTIES
-    PASS_REGULAR_EXPRESSION "FOUND - SWORD(.|\n)*summary: result=WON[^\n]*items=[1-9]")
+    PASS_REGULAR_EXPRESSION "EACH SHARE IS WORTH [1-9](.|\n)*summary: result=WON[^\n]*items=[1-9]")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

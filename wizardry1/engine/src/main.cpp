@@ -1093,7 +1093,7 @@ static int cmdMazePlayTest(int argc, char **argv) {
 
 // wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012]
 static int cmdCombatTest(int argc, char **argv) {
-    if (argc < 6) { std::puts("combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012]"); return 2; }
+    if (argc < 6) { std::puts("combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012] [parleyThresh]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -1103,13 +1103,15 @@ static int cmdCombatTest(int argc, char **argv) {
     bool haveSp = argc > 6 && sp.load(readFile(argv[6]));
     int mon = std::atoi(argv[4]);
     int attk012 = argc > 7 ? std::atoi(argv[7]) : 2;
+    int parleyThresh = argc > 8 ? std::atoi(argv[8]) : -1;
 
     auto plat = makeNullPlatform(unescape(argv[5]), "");
     Rng rng;
     Ui ui(*plat, font);
     std::vector<std::string> transcript;
-    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1, attk012, &transcript);
-    static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED"};
+    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1,
+                               attk012, &transcript, parleyThresh);
+    static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED", "FRIENDLY"};
     std::printf("result: %s\n", rn[int(r)]);
     int casts = 0, healed = 0;
     for (const auto &l : transcript) {

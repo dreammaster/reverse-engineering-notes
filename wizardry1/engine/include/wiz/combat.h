@@ -31,6 +31,7 @@ struct Battle {
     MonGroup grp[4];
     int  nGroups = 0;
     bool friendly = false;
+    int  surprise = 0;              // INITATTK: 1 party surprised, 2 monsters, 0 neither
     int  mazeLevel = 1;
     int  pAcMod[Party::kMax] = {};   // per-battle AC bonus (MOGREF / KALKI / ...)
     int  acMod2 = 0;                 // MAPORFIC party-wide AC

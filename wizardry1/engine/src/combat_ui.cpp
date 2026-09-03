@@ -32,6 +32,7 @@ struct CombatCtx {
     std::vector<std::string> *transcript = nullptr;
     int attk012 = 2;
     int mazeLevel = 1;
+    int parleyThresh = -1;
 
     TextScreen &t() { return ui.ts(); }
 
@@ -350,6 +351,58 @@ ChestExit runChest(CombatCtx &c, const RewardRec &rw) {
     return ChestExit::Rewards;
 }
 
+// ---- FRIENDLY (COMBAT P010509): the parley -------------------------
+
+// Rolls the friendly-encounter check.  Returns true if the party chose to
+// leave in peace (runCombat -> CombatResult::Friendly); false to proceed
+// into the fight (also the common "not friendly this time" path).
+bool friendlyParley(CombatCtx &c) {
+    bool anyGood = false;                            // GOODLEAV
+    for (int i = 0; i < c.party.count(); ++i)
+        anyGood = anyGood || c.party.member(i).align == Align::Good;
+    if (!anyGood) return false;
+
+    int z = c.rng.mod(100);
+    int thresh;
+    switch (c.bt.grp[0].rec(c.sc).cls()) {           // BATTLERC[1].B.CLASS
+        case 0: thresh = 60; break;   // fighter
+        case 1: thresh = 55; break;   // mage
+        case 2: thresh = 65; break;   // priest
+        case 3: thresh = 53; break;   // thief
+        case 4: thresh = 80; break;
+        case 7: thresh = 75; break;
+        default: thresh = 50; break;
+    }
+    if (c.parleyThresh >= 0) thresh = c.parleyThresh;    // test override
+    if (z < 50 || z > thresh) return false;          // hostile after all
+
+    for (int g = 0; g < c.bt.nGroups; ++g) c.bt.grp[g].identified = true;
+    CombatLog l;
+    l.push_back("A FRIENDLY GROUP OF " + groupName(c.sc, c.sp, c.bt.grp[0]) + ".");
+    l.push_back("THEY HAIL YOU IN WELCOME!");
+    c.say(l);
+    c.draw();
+    c.t().gotoXY(0, 22);
+    c.t().write("F)IGHT OR L)EAVE IN PEACE?");
+    c.ui.refresh();
+
+    for (;;) {
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == 'L') { c.say("YOU LEAVE IN PEACE."); return true; }
+        if (k == 'F') {
+            for (int i = 0; i < c.party.count(); ++i) {  // attacking friends
+                Character &ch = c.party.member(i);
+                if (ch.align == Align::Good && c.rng.mod(2000) == 565) {
+                    ch.align = Align::Evil;
+                    c.say(ch.name + " TURNS EVIL!");
+                }
+            }
+            c.say("YOU ATTACK THE FRIENDLY GROUP!");
+            return false;
+        }
+    }
+}
+
 } // namespace
 
 namespace {
@@ -395,7 +448,8 @@ bool awardVictory(CombatCtx &c, int enemyInx) {
 
 CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
                        const StringPool *sp, Rng &rng, int enemyInx, int mazeLevel,
-                       int attk012, std::vector<std::string> *transcript) {
+                       int attk012, std::vector<std::string> *transcript,
+                       int parleyThresh) {
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
     ui.setOverlay(nullptr);
 
@@ -408,7 +462,15 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
     c.transcript = transcript;
     c.attk012 = attk012;
     c.mazeLevel = mazeLevel;
+    c.parleyThresh = parleyThresh;
     buildEncounter(c.bt, sc, enemyInx, mazeLevel, rng);
+
+    // INITATTK's surprise roll (kept for RNG fidelity; the free-round effect
+    // is not modelled yet): party surprised (1), monsters surprised (2), or
+    // neither (0).
+    c.bt.surprise = (rng.mod(100) > 80) ? 1 : (rng.mod(100) > 80 ? 2 : 0);
+
+    if (friendlyParley(c)) return CombatResult::Friendly;
     c.say("A GROUP OF MONSTERS BLOCKS YOUR WAY!");
     c.pause();
 
