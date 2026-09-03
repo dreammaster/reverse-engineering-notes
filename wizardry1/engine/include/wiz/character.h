@@ -75,6 +75,14 @@ struct Character {
     u16  wepSlay  = 0;              // word 98  WEPVSTYP: slays monster class bit
     int  poison   = 0;              // word 99  LOSTXYL.POISNAMT[1]
 
+    // LOSTXYL is a variant record at words 99-102: POISNAMT / LOCATION / AWARDS
+    // overlaid.  A body physically left in the dungeon (death, disband) has
+    // INMAZE = false and LOCATION = (x, y, level); (0,0,0) = "in town",
+    // (-1,-1,-1) = lost for good.  `poison` and `lostX` alias word 99 -- a
+    // character is never simultaneously poisoned and a dungeon corpse.
+    int  lostX = 0, lostY = 0, lostLevel = 0;   // words 99, 100, 101
+    bool inDungeon() const { return lostLevel != 0; }
+
     // the untouched 208-byte record; fields above are re-encoded over it on
     // write so the combat tail and any not-yet-modelled bits survive.
     std::array<u8, kRecordBytes> raw{};

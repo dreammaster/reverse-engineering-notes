@@ -287,8 +287,9 @@ void campList(CampCtx &c) {
 
 } // namespace
 
-CampExit runCamp(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
-                 Rng &rng) {
+CampExit runCamp(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
+                 const StringPool *sp, Rng &rng,
+                 int mazeX, int mazeY, int mazeLevel) {
     CampCtx c{ui, party, sc, sp, rng};
     for (;;) {
         campList(c);
@@ -311,6 +312,14 @@ CampExit runCamp(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
             if (ui.menu("YN") != 'Y') continue;
             c.t().gotoXY(0, 19); c.t().write("RE-CONFIRM (Y/N) ?");
             if (ui.menu("YN") != 'Y') continue;
+            // DISBAND: leave every member as a body in the current room.
+            for (int i = 0; i < party.count(); ++i) {
+                Character &m = party.member(i);
+                m.inMaze = false;
+                m.lostX = mazeX; m.lostY = mazeY; m.lostLevel = mazeLevel;
+                m.age += 25;
+            }
+            party.disband(roster);          // persist the bodies + empty the party
             return CampExit::Disbanded;
         }
     }

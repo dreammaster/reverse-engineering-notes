@@ -100,13 +100,13 @@ ASCII after every step (CMake test `maze_3d`).
 it (via `Ui::setOverlay`) top-left, the command list at col 13, and `PRSTATS`
 (party panel: `# NAME  A-CLS  AC  HP  HPMAX/STATUS`, sorted alive-first) on
 rows 18-23.  Movement: `F`/`W`/↑ forward, `K` kick, `L`/`A`/← left, `R`/`D`/→
-right, `S` re-list party, `Q` quick-plot, `C` camp (below), `Esc` leave.
-`SPECSQAR` handles stairs (Y/N → change level; target level 0 → back to
-town), chutes, teleporters, spinners, darkness, pits/damage (`ROCKWATR`:
-agility check vs `rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`),
-the river (`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`),
-`SCNMSG`, and `UPDATEHP` (below).  Not ported: `SETTIME`, `I` inspect
-(`SPECIALS.INSPECT` — look for secret doors).
+right, `S` re-list party, `Q` quick-plot, `C` camp (below), `I` inspect
+(below), `Esc` leave.  `SPECSQAR` handles stairs (Y/N → change level; target
+level 0 → back to town), chutes, teleporters, spinners, darkness,
+pits/damage (`ROCKWATR`: agility check vs `rand%25 + level`, damage
+`AUX0 + AUX2·(rand%AUX1 + 1)`), the river (`ROCKWATE` → level 1), buttons,
+encounters (→ `runCombat`), `SCNMSG`, and `UPDATEHP` (below).  Not ported:
+`SETTIME`.
 
 **`UPDATEHP`** (`P010E1C`) runs once per actual move: each conscious member
 has a `rand%4 == 2` chance to take `POISNAMT` damage and `HEALPTS` regen
@@ -187,7 +187,9 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
 * **`REORDER`** (`UTILITIE` proc 27) — type the current slot numbers in the
   new order; a selection sort by that permutation swaps the party members
   (`Party::swapMembers` moves the character copy and roster index together).
-* **`DISBAND`** — confirm twice → leave the maze for town.
+* **`DISBAND`** — confirm twice; every member is left as a body in the
+  current room (`INMAZE := FALSE`, `LOSTXYL.LOCATION := (x,y,level)`,
+  `AGE += 25`), written back to the roster, and the party empties.
 
 `wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]`
 (`grants` = `m:i,…` gives member `m` object `i`) dumps the final screen +
@@ -196,3 +198,16 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
 (the non-combat spell set), `CHSPCPOW` (invoke an item's special power),
 chevrons/medals.  `StringPool::spellNameKey` was off by one — fixed to
 `5000 + idx` (`5001` = `HALITO`).
+
+## `I`nspect — body recovery  (`SPECIALS` `INSPECT` / `EXPLROOM` / `LOOKLOST` / `PICKUP`, P010302-05)
+
+`maze_ui.cpp runInspect`.  `EXPLROOM` flood-fills from `(MAZEX, MAZEY)`
+through **OPEN** cell edges only (walls *and* doors stop it) to find the
+room's cells (`INMYROOM`).  `LOOKLOST` then scans the roster for characters
+with `INMAZE = false`, `LOSTXYL.LOCATION[3] == MAZELEV`, and
+`(LOCATION[1], LOCATION[2])` inside the room — up to 5 — and lists them.
+`P)ICK UP` adds one to the party (`Party::add` sets `INMAZE := TRUE`),
+clears its `LOCATION`, and it can then be carried out and resurrected at the
+Temple; `L)EAVE` returns to the maze.  A body whose `LOCATION` is
+`(-1,-1,-1)` (the cemetery's `rand%50 < level` roll) is unrecoverable.
+`wiz1 pickup-test` / test `pickup`.

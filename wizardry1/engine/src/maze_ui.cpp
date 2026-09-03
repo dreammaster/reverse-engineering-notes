@@ -1,6 +1,7 @@
 #include "wiz/maze_ui.h"
 #include "wiz/maze.h"
 #include "wiz/maze3d.h"
+#include "wiz/roster.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/specials.h"
@@ -81,6 +82,7 @@ const char *statusName(const Scenario &sc, Status s) {
 struct MazeCtx {
     Ui &ui;
     Party &party;
+    Roster &roster;
     const Scenario &sc;
     const StringPool *sp;
     Rng &rng;
@@ -352,6 +354,88 @@ bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
     return false;
 }
 
+// ---- SPECIALS INSPECT: EXPLROOM + LOOKLOST + PICKUP -----------------
+
+// EXPLROOM: flood-fill from (x0,y0) through OPEN edges only (walls and doors
+// stop it) -- the connected open area = "the room I'm in".
+void exploreRoom(const MazeLevel &m, int x0, int y0, bool room[20][20]) {
+    for (int x = 0; x < 20; ++x) for (int y = 0; y < 20; ++y) room[x][y] = false;
+    room[x0][y0] = true;
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        for (int x = 0; x < 20; ++x)
+            for (int y = 0; y < 20; ++y) {
+                if (!room[x][y]) continue;
+                const int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0};
+                for (int d = 0; d < 4; ++d) {
+                    if (m.wall(x, y, d) != Wall::Open) continue;
+                    int nx = wrap20(x + dx[d]), ny = wrap20(y + dy[d]);
+                    if (!room[nx][ny]) { room[nx][ny] = true; changed = true; }
+                }
+            }
+    }
+}
+
+// The maze `I` command: look around the room for characters left in the
+// dungeon (a death or a camp DISBAND) and offer to carry them out.
+void runInspect(MazeCtx &c) {
+    auto &t = c.t();
+    c.ui.setOverlay(nullptr);
+
+    bool room[20][20];
+    exploreRoom(c.m, c.st.pos.x, c.st.pos.y, room);
+
+    int list[6], n = 0;                              // LOOKLOST
+    for (int i = 0; i < c.roster.count() && n < 5; ++i) {
+        const Character &r = c.roster.slot(i);
+        if (r.inMaze || r.lostLevel != c.st.level) continue;
+        if (r.lostX < 0 || r.lostX >= 20 || r.lostY < 0 || r.lostY >= 20) continue;
+        if (!room[r.lostX][r.lostY]) continue;
+        list[n++] = i;
+    }
+
+    for (;;) {
+        t.resetWindow();
+        t.putChar(12);
+        t.gotoXY(0, 0); t.write("LOOKING...");
+        t.gotoXY(0, 2); t.write("FOUND:");
+        for (int j = 0; j < n; ++j) {
+            char b[40];
+            std::snprintf(b, sizeof b, "%d) %s", j + 1, c.roster.slot(list[j]).name.c_str());
+            t.gotoXY(2, 3 + j); t.write(b);
+        }
+        if (n == 0) { t.gotoXY(2, 3); t.write("** NO ONE **"); }
+        t.gotoXY(0, 20);
+        t.write(n > 0 ? "OPTIONS: P)ICK UP  L)EAVE" : "OPTIONS: L)EAVE");
+        c.ui.refresh();
+
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == 'L') break;
+        if (k != 'P' || n == 0) continue;
+
+        if (c.party.full()) { c.ui.pressAnyKey("YOU HAVE 6 - PRESS [RET]"); continue; }
+        t.gotoXY(0, 20); t.putChar(11);
+        t.write("GET WHO (0=EXIT) >");
+        int w = c.ui.getKey();
+        if (c.ui.quit()) break;
+        int pick = w - '1';
+        if (w == '0' || pick < 0 || pick >= n) continue;
+
+        int slot = list[pick];
+        c.party.add(c.roster, slot);                 // INMAZE := TRUE, joins the party
+        Character &pm = c.party.member(c.party.count() - 1);
+        pm.lostX = pm.lostY = pm.lostLevel = 0;
+        Character &rs = c.roster.slot(slot);
+        rs.lostX = rs.lostY = rs.lostLevel = 0;
+        std::printf("PICKUP| recovered %s\n", rs.name.c_str());
+        for (int j = pick; j + 1 < n; ++j) list[j] = list[j + 1];
+        --n;
+    }
+    runInit(c);
+    c.needDraw = true;
+}
+
 // ---- SPECSQAR (P010E10) ---------------------------------------------
 
 // Returns true (with `out` set) if the square ends the maze session.
@@ -460,9 +544,10 @@ int rollEnemyInx(MazeCtx &c) {
 
 } // namespace
 
-static MazeExit runMazeImpl(Ui &ui, Party &party, const Scenario &sc,
-                            const StringPool *sp, Rng &rng, MazeState &st) {
-    MazeCtx c{ui, party, sc, sp, rng, st};
+static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
+                            const Scenario &sc, const StringPool *sp, Rng &rng,
+                            MazeState &st) {
+    MazeCtx c{ui, party, roster, sc, sp, rng, st};
     struct ClearOverlay { Ui &u; ~ClearOverlay() { u.setOverlay(nullptr); } } _co{ui};
     for (int i = 0; i < party.count(); ++i) equipRecalc(party.member(i), sc);
     if (st.level < 1) st.level = 1;
@@ -526,21 +611,22 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, const Scenario &sc,
             msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
             c.needDraw = true;
         } else if (k == 'C') {
-            switch (runCamp(c.ui, c.party, c.sc, c.sp, c.rng)) {
+            switch (runCamp(c.ui, c.party, c.roster, c.sc, c.sp, c.rng,
+                            st.pos.x, st.pos.y, st.level)) {
                 case CampExit::WindowClosed: return MazeExit::WindowClosed;
                 case CampExit::Disbanded:    return MazeExit::ToTown;
                 case CampExit::ToMaze:       runInit(c); c.needDraw = true; break;
             }
         } else if (k == 'I') {
-            return MazeExit::ToTown;                 // SPECIALS.INSPECT not ported
+            runInspect(c);                           // SPECIALS INSPECT / PICKUP
         }
     }
 }
 
-MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
-                 Rng &rng, MazeState &st) {
+MazeExit runMaze(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
+                 const StringPool *sp, Rng &rng, MazeState &st) {
     st.active = true;
-    MazeExit e = runMazeImpl(ui, party, sc, sp, rng, st);
+    MazeExit e = runMazeImpl(ui, party, roster, sc, sp, rng, st);
     // Only an interrupted delve (the window closed) is worth resuming; a
     // return to town via the stairs / camp / Esc ends the delve.
     st.active = (e == MazeExit::WindowClosed);

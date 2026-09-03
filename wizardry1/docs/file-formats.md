@@ -170,8 +170,10 @@ Combat tail (from the combat/equip work): 87 `HPCALCMD`, 89 `HEALPTS`,
 90 `CRITHITM`, 91 `SWINGCNT`, 92–94 `HPDAMRC` (THPREC), 98 `WEPVSTYP` (slay
 bits).  `LOSTXYL` is a **variant record** at words 99–102 —
 `POISNAMT[1..4]` / `LOCATION[1..4]` (dungeon x, y, level) / `AWARDS[1..4]`
-(medals) overlaid; the engine models word 99 as `poison`.  Words 95–97,
-100–103 pass through verbatim on write. `IXP 3,5` packs 3 fields/word from bit 0 (5 bits each,
+(medals) overlaid.  The engine models words 99–101 as `poison` and
+`lostX/lostY/lostLevel`: a live character writes `poison` to word 99 (100–101
+stay 0); a dungeon corpse (`INMAZE = false`, `lostLevel != 0`) writes its
+`LOCATION` to 99–101 instead.  Words 95–97, 102–103 pass through verbatim. `IXP 3,5` packs 3 fields/word from bit 0 (5 bits each,
 bit 15 spare); `IXP 16,1` uses all 16 bits. UCSD string writes touch only
 the length byte + chars (stale tail bytes are preserved).
 
@@ -277,5 +279,6 @@ active roster indices / Boltac stock.  `maze.dat` (`MazeState::save/load`,
 magic `WZM1`) persists an **interrupted delve** — the window closed
 mid-maze — so the party resumes at the same square on relaunch; it is
 deleted when the delve ends via the stairs / camp / Esc / a wipe.  Test
-`game_resume`.  Still TODO: the `LOSTXYL.LOCATION` dungeon-body model and
-its recovery (`SPECIALS` `PICKUP`).
+`game_resume`.  A character physically left in the dungeon
+(`LOSTXYL.LOCATION`, from a death or a camp `DISBAND`) is modelled and
+carried out by the maze `I` command (`SPECIALS` `PICKUP`, `docs/maze.md`).

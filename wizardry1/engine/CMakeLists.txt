@@ -245,3 +245,11 @@ add_test(NAME game_resume
 # reloads it and the party resumes at the same square.
 set_tests_properties(game_resume PROPERTIES
     PASS_REGULAR_EXPRESSION "delve 1: exit 2  pos .6,10.(.|\n)*resume .6,10. dir 1 level 1")
+add_test(NAME pickup
+         COMMAND wiz1 pickup-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "IP1L\\e")
+# SPECIALS INSPECT/PICKUP: a body planted in the start room is carried out
+# by the maze `I` command; its LOSTXYL.LOCATION clears.
+set_tests_properties(pickup PROPERTIES
+    PASS_REGULAR_EXPRESSION "PICKUP. recovered GHOST(.|\n)*loc.0,0,0.")

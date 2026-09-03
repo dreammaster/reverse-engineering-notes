@@ -453,19 +453,20 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
         else if (e == TownExit::ToMaze) {
             if (!resume) mst = MazeState{};          // ENTMAZE: level 1, (0,0) N
             resume = false;
-            MazeExit me = runMaze(ui, world.party, world.sc, world.sp, world.rng, mst);
+            MazeExit me = runMaze(ui, world.party, world.roster, world.sc,
+                                  world.sp, world.rng, mst);
             if (me == MazeExit::WindowClosed) {      // interrupted -- save to resume
                 if (!world.mazePath.empty()) mst.save(world.mazePath);
                 return;
             }
             if (!world.mazePath.empty()) std::remove(world.mazePath.c_str());  // delve over
-            if (me == MazeExit::PartyWiped) {        // XGOTO := XCEMETRY
-                runCemetery(ui, world.party, world.roster, mst.level, world.rng);
-                if (!world.rosterPath.empty()) world.roster.save(world.rosterPath);
-                if (!world.partyPath.empty()) world.party.save(world.partyPath);
-            }
-            // ToTown: the party's working copies (HP, deaths) are written back
-            // when they leave at the Edge of Town.
+            if (me == MazeExit::PartyWiped)          // XGOTO := XCEMETRY
+                runCemetery(ui, world.party, world.roster,
+                            mst.pos.x, mst.pos.y, mst.level, world.rng);
+            // Persist the delve's outcome (deaths, disband-in-dungeon, HP,
+            // recovered bodies) right away.
+            if (!world.rosterPath.empty()) world.roster.save(world.rosterPath);
+            if (!world.partyPath.empty()) world.party.save(world.partyPath);
         }
     }
 }
@@ -550,7 +551,7 @@ static int cmdTownTest(int argc, char **argv) {
     TownExit e = runTown(ui, world);
     if (e == TownExit::ToMaze) {                     // continue into the maze
         MazeState mst;
-        MazeExit me = runMaze(ui, party, sc, haveSp ? &sp : nullptr, rng, mst);
+        MazeExit me = runMaze(ui, party, roster, sc, haveSp ? &sp : nullptr, rng, mst);
         static const char *mx[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
         std::printf("maze exit: %s  pos (%d,%d) %s level %d\n", mx[int(me)],
                     mst.pos.x, mst.pos.y, dirName(mst.pos.dir), mst.level);
@@ -889,7 +890,7 @@ static int cmdCampTest(int argc, char **argv) {
     auto plat = makeNullPlatform(unescape(argv[4]), "");
     Rng rng;
     Ui ui(*plat, font);
-    CampExit e = runCamp(ui, party, sc, haveSp ? &sp : nullptr, rng);
+    CampExit e = runCamp(ui, party, roster, sc, haveSp ? &sp : nullptr, rng, 5, 5, 1);
 
     TextScreen &t = ui.ts();
     for (int y = 0; y < 24; ++y) {
@@ -930,7 +931,39 @@ static int cmdMazeSdl(int argc, char **argv) {
     Ui ui(*plat, font);
     MazeState st;
     st.level = argc > 4 ? std::max(1, std::atoi(argv[4])) : 1;
-    runMaze(ui, party, sc, nullptr, rng, st);
+    runMaze(ui, party, roster, sc, nullptr, rng, st);
+    return 0;
+}
+
+// wiz1 pickup-test <CHARSET> <SCENARIO.DATA> <keyscript>
+//   a body is planted in the party's start room; the script drives the
+//   maze `I` command to recover it.
+static int cmdPickupTest(int argc, char **argv) {
+    if (argc < 5) { std::puts("pickup-test <CHARSET> <SCENARIO.DATA> <keyscript>"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster, 3);       // room for a rescue
+
+    Character &body = roster.slot(7);                 // plant a corpse
+    body.name = "GHOST";
+    body.status = Status::Dead;
+    body.hpLeft = 0;
+    body.inMaze = false;
+    body.lostX = 1; body.lostY = 10; body.lostLevel = 1;
+
+    auto plat = makeNullPlatform(unescape(argv[4]), "");
+    Rng rng;
+    Ui ui(*plat, font);
+    MazeState st;
+    st.level = 1; st.pos = MazePos{1, 10, 1};
+    runMaze(ui, party, roster, sc, nullptr, rng, st);
+
+    std::printf("party (%d):", party.count());
+    for (int i = 0; i < party.count(); ++i) std::printf(" %s", party.member(i).name.c_str());
+    std::printf("\nGHOST roster: inMaze=%d loc(%d,%d,%d)\n", roster.slot(7).inMaze ? 1 : 0,
+                roster.slot(7).lostX, roster.slot(7).lostY, roster.slot(7).lostLevel);
     return 0;
 }
 
@@ -953,7 +986,7 @@ static int cmdGameTest(int argc, char **argv) {
         Ui ui(*plat, font);
         MazeState st;
         st.level = 1; st.pos = MazePos{1, 10, 1};
-        MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
+        MazeExit e = runMaze(ui, party, roster, sc, nullptr, rng, st);
         std::printf("delve 1: exit %d  pos (%d,%d) dir %d  active %d\n",
                     int(e), st.pos.x, st.pos.y, st.pos.dir, st.active ? 1 : 0);
         if (e == MazeExit::WindowClosed && st.active) st.save(savePath);
@@ -966,7 +999,7 @@ static int cmdGameTest(int argc, char **argv) {
                     loaded ? 1 : 0, st.active ? 1 : 0, st.pos.x, st.pos.y, st.pos.dir, st.level);
         auto plat = makeNullPlatform(unescape(argv[5]), "");
         Ui ui(*plat, font);
-        MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
+        MazeExit e = runMaze(ui, party, roster, sc, nullptr, rng, st);
         std::printf("delve 2: exit %d  pos (%d,%d) dir %d\n",
                     int(e), st.pos.x, st.pos.y, st.pos.dir);
     }
@@ -994,7 +1027,7 @@ static int cmdCemeteryTest(int argc, char **argv) {
     auto plat = makeNullPlatform(unescape(argv[4]), "");
     Rng rng;
     Ui ui(*plat, font);
-    runCemetery(ui, party, roster, level, rng);
+    runCemetery(ui, party, roster, 5, 5, level, rng);
 
     std::printf("party count: %d\n", party.count());
     for (int i = 0; i < 6; ++i) {
@@ -1030,7 +1063,7 @@ static int cmdMazePlayTest(int argc, char **argv) {
     }
     if (argc > 10)                              // poison every member
         for (int i = 0; i < party.count(); ++i) party.member(i).poison = std::atoi(argv[10]);
-    MazeExit e = runMaze(ui, party, sc, haveSp ? &sp : nullptr, rng, st);
+    MazeExit e = runMaze(ui, party, roster, sc, haveSp ? &sp : nullptr, rng, st);
     static const char *ex[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
     std::printf("exit: %s   pos (%d,%d) %s  level %d\n", ex[int(e)],
                 st.pos.x, st.pos.y, dirName(st.pos.dir), st.level);
@@ -1095,6 +1128,7 @@ int main(int argc, char **argv) {
     if (cmd == "camp-test") return cmdCampTest(argc, argv);
     if (cmd == "cemetery-test") return cmdCemeteryTest(argc, argv);
     if (cmd == "game-test") return cmdGameTest(argc, argv);
+    if (cmd == "pickup-test") return cmdPickupTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);

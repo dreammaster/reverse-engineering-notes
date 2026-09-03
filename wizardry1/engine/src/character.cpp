@@ -95,6 +95,9 @@ void Character::read(Bytes rec) {
     hpDamRc[0] = i16(w(p, 92)); hpDamRc[1] = i16(w(p, 93)); hpDamRc[2] = i16(w(p, 94));
     wepSlay    = w(p, 98);
     poison     = i16(w(p, 99));
+    lostX      = i16(w(p, 99));
+    lostY      = i16(w(p, 100));
+    lostLevel  = i16(w(p, 101));
 }
 
 std::array<u8, Character::kRecordBytes> Character::write() const {
@@ -142,7 +145,15 @@ std::array<u8, Character::kRecordBytes> Character::write() const {
     setw(p, 91, u16(i16(swingCnt)));
     setw(p, 92, u16(i16(hpDamRc[0]))); setw(p, 93, u16(i16(hpDamRc[1]))); setw(p, 94, u16(i16(hpDamRc[2])));
     setw(p, 98, wepSlay);
-    setw(p, 99, u16(i16(poison)));
+    // LOSTXYL variant: LOCATION when the character is a dungeon corpse,
+    // else POISNAMT (words 100-101 stay 0 for a live, un-lost character).
+    if (inDungeon()) {
+        setw(p, 99, u16(i16(lostX)));
+        setw(p, 100, u16(i16(lostY)));
+        setw(p, 101, u16(i16(lostLevel)));
+    } else {
+        setw(p, 99, u16(i16(poison)));
+    }
 
     return out;
 }

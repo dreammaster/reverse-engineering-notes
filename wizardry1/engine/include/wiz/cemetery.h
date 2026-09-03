@@ -12,10 +12,12 @@ namespace wiz {
 
 // BADSTUFF: every member (unless already LOST) dies, drops half their gold,
 // and rolls each non-cursed item for destruction (RANDOM mod 21 > LUCK).
-// A body is left recoverable at (x,y,level) unless `RANDOM mod 50 < level`,
-// in which case it is lost for good.  The dead records are written back to
-// the roster and the party is emptied; the tombstone screen waits for RETURN.
-inline void runCemetery(Ui &ui, Party &party, Roster &roster, int mazeLevel, Rng &rng) {
+// A body is left recoverable at (mazeX,mazeY,mazeLevel) unless
+// `RANDOM mod 50 < level`, in which case it is lost for good (-1,-1,-1).
+// The dead records are written back to the roster and the party is emptied;
+// the tombstone screen waits for RETURN.
+inline void runCemetery(Ui &ui, Party &party, Roster &roster,
+                        int mazeX, int mazeY, int mazeLevel, Rng &rng) {
     int n = party.count();
     std::vector<std::pair<std::string, int>> graves;   // name, age-in-years
     for (int i = 0; i < n; ++i) {
@@ -35,10 +37,11 @@ inline void runCemetery(Ui &ui, Party &party, Roster &roster, int mazeLevel, Rng
         }
         c.possCount = w;
 
-        // (rand%50 < level) -> body lost; otherwise recoverable -- the rescue
-        // mechanic needs PLAYER.DATA and is not modelled yet, so just burn
-        // the roll to stay RNG-aligned.
-        (void)(rng.mod(50) < mazeLevel);
+        if (rng.mod(50) < mazeLevel) {               // body lost for good
+            c.lostX = c.lostY = c.lostLevel = -1;
+        } else {                                     // recoverable via `I`nspect
+            c.lostX = mazeX; c.lostY = mazeY; c.lostLevel = mazeLevel;
+        }
     }
     party.disband(roster);                            // persist + clear
 

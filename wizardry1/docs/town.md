@@ -152,12 +152,13 @@ Reached when the whole party is wiped out in the maze (`MazeExit::PartyWiped`
 → `runCemetery`).  `BADSTUFF` — every member (unless already `LOST`): any
 non-`DEAD` status becomes `DEAD`, `INMAZE:=FALSE`, `GOLD := GOLD div 2`, and
 `BREAKPOS` rolls each non-cursed item — `RANDOM mod 21 > LUCK` destroys it.
-A body is left recoverable at `(MAZEX, MAZEY, MAZELEV)` unless
-`RANDOM mod 50 < MAZELEV` (then lost for good) — the rescue mechanic needs
-`PLAYER.DATA` and is **not modelled**, so the roll is just burned.  The dead
-records are written back to the roster (and `roster.dat`/`party.dat` saved),
-the party is emptied, and the tombstone screen ("YOUR ENTIRE PARTY HAS BEEN
-SLAUGHTERED") waits for RETURN.  `wiz1 cemetery-test` (test `cemetery`).
+A body is left recoverable at `LOSTXYL.LOCATION := (MAZEX, MAZEY, MAZELEV)`
+unless `RANDOM mod 50 < MAZELEV`, which loses it for good (`(-1,-1,-1)`).
+The dead records are written back to the roster (and `roster.dat`/`party.dat`
+saved), the party is emptied, and the tombstone screen ("YOUR ENTIRE PARTY
+HAS BEEN SLAUGHTERED") waits for RETURN.  A recoverable body is carried out
+by a later party's maze `I`nspect (see `docs/maze.md`) and resurrected at
+the Temple.  `wiz1 cemetery-test` (test `cemetery`).
 
 ### Edge of Town — `EDGETOWN` `P01021A`
 

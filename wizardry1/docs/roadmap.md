@@ -156,12 +156,14 @@ Decided direction (2026-09-02):
       `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
       `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
       `FRIENDLY` parley, the cemetery scene.
-- [~] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
-      (`MazeState`) resumes an interrupted delve. TODO: the
-      `LOSTXYL.LOCATION` dungeon-body model + recovery (`SPECIALS` `PICKUP`).
+- [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
+      (`MazeState`) resumes an interrupted delve; `Character` models
+      `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
+      dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
+      carries it out for resurrection at the Temple.
 - [ ] Continue: the remaining camp actions (`USE`/`TRADE`/`IDENTIFY`/
-      `CHSPCPOW`/non-combat spells) → `SETTIME` → dungeon body recovery →
-      the remaining `SCNMSG` side effects.
+      `CHSPCPOW`/non-combat spells) → `SETTIME` → the remaining `SCNMSG`
+      side effects → `DOBREATH` / `FRIENDLY` in combat.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine
