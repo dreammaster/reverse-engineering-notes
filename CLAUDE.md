@@ -197,6 +197,37 @@ reversing/
                                      pattern where a script-export string
                                      literal already owns the name a function
                                      needs (bumps the string to s_<name>).
+    apply_all_and_export.py        - IDAPython driver script. Chains
+                                     apply_matches.py + apply_structs.py, saves
+                                     the database, then re-exports both
+                                     rob_blanc_1.asm and rob_blanc_1.idc --
+                                     runnable headlessly via IDA's own batch
+                                     mode (idat.exe -A -S, no GUI/Alt-F7
+                                     needed), from the repo root:
+                                       idat.exe -A
+                                         -S"reversing/scripts/apply_all_and_export.py"
+                                         -L"reversing/scripts/logs/apply_all.log"
+                                         rob_blanc_1.idb
+                                     Idempotent; safe to re-run any time
+                                     matches.json/apply_structs.py grow. NOTE:
+                                     apply_matches.py's own name lookup only
+                                     matches the LITERAL current asm_name (or
+                                     new_name as a fallback) -- if the IDB
+                                     already carries a DIFFERENT stale name at
+                                     that address (e.g. from a since-corrected
+                                     match, before this script existed to keep
+                                     things in sync), the entry is silently
+                                     skipped rather than fixed. Check the log's
+                                     "SKIP (name not found in IDB)" lines after
+                                     each run; a genuine stale-name mismatch
+                                     needs a one-off `idc.set_name(0x<addr>,
+                                     "<name>", ...)` fix (the sub_XXXXXXXX
+                                     asm_name conveniently IS the address in
+                                     hex) -- a couple of long-standing cases
+                                     from earlier sessions (run_dialog_request
+                                     ->run_dialog_script, stop_fast_forwarding
+                                     ->remove_screen_overlay) were fixed this
+                                     way the first time this script ran.
     extract_prototypes.py          - aim #3 tooling. Pulls C/C++ signatures out
                                      of the reference source for every high-
                                      confidence matched function ->
@@ -296,9 +327,13 @@ reversing/
    "function"` mechanical matches; keep manual entries in a separate pass or
    merge carefully — check the script before assuming it's non-destructive
    if you extend it).
-5. Open the IDB in IDA, run `apply_matches.py` to push renames/comments in.
-6. Re-export `rob_blanc_1.asm` from IDA when it's useful to snapshot
-   progress, and go back to step 1.
+5. Open the IDB in IDA, run `apply_matches.py` to push renames/comments in
+   (and `apply_structs.py` for struct/type declarations) — or run
+   `apply_all_and_export.py` via `idat.exe -A -S` for a headless one-shot
+   that does both AND re-exports steps 6 below, no GUI needed.
+6. Re-export `rob_blanc_1.asm`/`rob_blanc_1.idc` from IDA when it's useful
+   to snapshot progress (done automatically by `apply_all_and_export.py`),
+   and go back to step 1.
 
 ## Current snapshot (as of this writing — regenerate via the scripts above
 rather than trusting these numbers as they age)
