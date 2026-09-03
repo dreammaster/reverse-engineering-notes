@@ -787,6 +787,7 @@ static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
     Party p;
     for (int i = 0; i < roster.count() && p.count() < n; ++i)
         if (roster.slot(i).status != Status::Lost) p.add(roster, i);
+    for (int i = 0; i < p.count(); ++i) { deriveStats(p.member(i)); setSpells(p.member(i)); }
     return p;
 }
 
@@ -848,9 +849,17 @@ static int cmdCombatTest(int argc, char **argv) {
     auto plat = makeNullPlatform(unescape(argv[5]), "");
     Rng rng;
     Ui ui(*plat, font);
-    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1);
+    std::vector<std::string> transcript;
+    CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon, 1, &transcript);
     static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED"};
     std::printf("result: %s\n", rn[int(r)]);
+    int casts = 0, healed = 0;
+    for (const auto &l : transcript) {
+        std::printf("| %s\n", l.c_str());
+        if (l.find(" CASTS ") != std::string::npos) ++casts;
+        if (l.find(" IS HEALED") != std::string::npos) ++healed;
+    }
+    std::printf("summary: result=%s casts=%d healed=%d\n", rn[int(r)], casts, healed);
     for (int i = 0; i < party.count(); ++i) {
         const Character &c = party.member(i);
         std::printf("  %-12s HP %3d/%-3d st%d  %lld ep  %lld gp\n", c.name.c_str(),

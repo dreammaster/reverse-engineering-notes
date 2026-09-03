@@ -32,6 +32,8 @@ struct Battle {
     int  nGroups = 0;
     bool friendly = false;
     int  mazeLevel = 1;
+    int  pAcMod[Party::kMax] = {};   // per-battle AC bonus (MOGREF / KALKI / ...)
+    int  acMod2 = 0;                 // MAPORFIC party-wide AC
 };
 
 // N dice of 1..fac, plus a flat add (CALCHP / ENEMYCNT).
@@ -59,6 +61,26 @@ void monsterAttack(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
 
 bool allMonstersDead(const Battle &bt);
 bool partyCanFight(const Party &party);          // any OK / Afraid member
+
+// ---- CASTASPE ---------------------------------------------------------
+
+enum SpTarg { SP_SELF, SP_ONE_ENEMY, SP_ENEMY_GROUP, SP_ONE_ALLY, SP_PARTY, SP_ALL_ENEMIES };
+
+struct SpellDef {
+    const char *name;
+    int   level;         // 1..7
+    bool  priest;        // else mage
+    SpTarg targ;
+    bool  offensive;     // true = targets an enemy / enemy group
+};
+const SpellDef *spellDef(int no);   // no in 1..50, else nullptr
+
+// Apply spell `no` (1..50).  `casterMon` = a monster casts (effects land on
+// the party); otherwise a party member casts and enemy effects hit group
+// `tgGroup` (`tgInst` a specific monster, `tgAlly` a party member).
+void castSpell(Battle &bt, const Scenario &sc, Party &party, bool casterMon,
+               int casterLevel, int no, int tgGroup, int tgInst, int tgAlly,
+               Rng &rng, CombatLog &log);
 
 // GIVEEXP + gold: split the spoils among the survivors.
 void distributeRewards(const Battle &bt, const Scenario &sc, Party &party,

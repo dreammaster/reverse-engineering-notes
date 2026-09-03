@@ -1,9 +1,9 @@
 # Combat  (COMBAT / CINIT / CUTIL / MELEE / SWINGASW)
 
-`P010401 .. P010901`, DOS segments 7-11.  A **core** is ported —
-`engine/wiz/combat.{h,cpp}` (data + resolution) and `engine/wiz/combat_ui.cpp`
-(the screen + round loop).  Spellcasting and monster spell AI are **not**
-ported yet.
+`P010401 .. P010901`, DOS segments 7-11.  Ported —
+`engine/wiz/combat.{h,cpp}` (data + resolution + `CASTASPE` spell effects) and
+`engine/wiz/combat_ui.cpp` (the screen + round loop + spell menus + monster
+spell AI).
 
 ## Records
 
@@ -50,6 +50,36 @@ chaining are held back until those offsets are confirmed — the maze's own
   bits (poison / paralyse / stone, resisted by `LUCKSKIL`), level drain, and
   the SPPC crit.  Monsters favour the front three.
 
+## Spellcasting — `CASTASPE` (`DOMAGE` proc 28 / `DOPRIEST` proc 27)
+
+`castSpell(bt, sc, party, casterMon, casterLevel, no, tgGroup, tgInst, tgAlly,
+rng, log)` applies spell `no` (Wizardry numbering 1-50; mage 1-21, priest
+22-50 — matches `Character::spellKnown`).  A 50-entry table (`kTable` in
+`combat.cpp`, mirrored by `spellDef()`) gives each spell a `level`, `priest`
+flag, `SpTarg` (self / one-enemy / enemy-group / one-ally / party /
+all-enemies) and an effect `kind`:
+
+| kind | effect | source proc |
+|---|---|---|
+| `K_DMG1` | `a`d`b` to one monster, `DOHITS` `UNAFFCT` resist | `DOHITS` |
+| `K_DMGG` | `a`d`b` to every monster in the group(s) | `HITGROUP` |
+| `K_HEAL` / `K_HEALF` | restore `a`d`b` HP / full | `DOHEAL` |
+| `K_SLEEP` / `K_HOLD` / `K_SILENCE` | status vs `ISISNOT` `rand%100` roll | `DOSLEPT`/`DOHOLD`/`DOSILENC` |
+| `K_DEATH` | instant kill vs resist (`DI`/`BADI`/`MAKANITO`) | `DOSLAIN` |
+| `K_ACSELF` / `K_ACPARTY` / `K_ACPEN` | AC buff (`bt.pAcMod`/`bt.acMod2`) / enemy AC penalty (`grp.acMod`) | `MODAC` |
+| `K_CUREPARA` / `K_UNPOISON` / `K_SETHP` | cure paralysis / poison / `MABADI` set-HP | — |
+
+Monster casters: `combat_ui.cpp monsterTurn` — a monster with `MAGSPELS` /
+`PRISPELS` > 0 casts (`rand%3==0`) a level-appropriate offensive spell instead
+of meleeing; effects land on the party and are resisted by `LUCKSKIL`.
+
+Party casters: `doCast` lists the caster's known spells whose group pool
+(`mageSpells` / `priestSpells`, refilled by `setSpells` at rest / combat
+start) is > 0, prompts for a target, decrements the pool and calls
+`castSpell`.  Buffs (`MOGREF`, `KALKI`, `MAPORFIC`, `DILTO`, …) persist for
+the fight via the `Battle` AC-mod fields and feed back into the `DAM2ME`
+to-hit.  Test `combat_spell`.
+
 Win → `distributeRewards` (XP from `EXPAMT`, or — since it is 0 here — a
 `HD`/reward-tier heuristic; gold scaled by level), split among survivors.
 Whole party down → `MazeExit::PartyWiped` (a real `XCEMETRY` scene is TODO).
@@ -58,13 +88,16 @@ Whole party down → `MazeExit::PartyWiped` (a real `XCEMETRY` scene is TODO).
 
 `runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel)`
 → `CombatResult {Won, Fled, PartyWiped, WindowClosed}`.  The round: each
-conscious member picks `F)IGHT` (+ group letter if >1) / `P)ARRY` / `R)UN`
-(≈75 % escape), then every living monster retaliates.  `wiz1 combat-test
-<CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]` (headless; test
-`combat_fight`).  Wired into the maze: an `ENCOUNTE` square or the random
+conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY` /
+`R)UN` (≈75 % escape), then every living (awake, unparalysed) monster acts.
+`wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]`
+(headless; prints the fight transcript + a `summary:` line; tests
+`combat_fight` / `combat_spell`).  Wired into the maze: an `ENCOUNTE` square or the random
 `ENCOUNTR` roll (`rand%99=35` / an unfought room / a kick into a fight
 square) calls `runCombat`.
 
-**Not ported:** spellcasting (`CASTASPE` — party and monster), `DOBREATH`,
-allied-group summons / `YELLHELP`, item use, the `FRIENDLY` parley, the full
-`ZREWARD` item-drop table, and the cemetery scene.
+**Not ported:** `DOBREATH` (dragon breath), allied-group summons / `YELLHELP`,
+item use in combat, the `FRIENDLY` parley, the full `ZREWARD` item-drop table,
+and the cemetery scene.  Spell effects are modelled from `DOMAGE`/`DOPRIEST`
+behaviour, not yet diffed opcode-for-opcode against `CASTASPE`; a few
+utility spells (`DUMAPIC`, `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.

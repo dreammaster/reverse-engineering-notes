@@ -152,3 +152,12 @@ add_test(NAME combat_fight
 # a full party FIGHTs the weakest monster group and wins with XP.
 set_tests_properties(combat_fight PROPERTIES
     PASS_REGULAR_EXPRESSION "result: WON(.|\n)*THESUS[^\n]* [1-9][0-9]* ep")
+add_test(NAME combat_spell
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
+                 "\\rPC1PPPC2\\rPPPPPC12\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# mage HALITO + priest BADIOS damage monsters, priest DIOS heals; party wins.
+set_tests_properties(combat_spell PROPERTIES
+    PASS_REGULAR_EXPRESSION "summary: result=WON casts=[3-9] healed=[1-9]")
