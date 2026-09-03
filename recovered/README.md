@@ -132,6 +132,45 @@ anchor). The combat pool it prints is quoted at the top of
       cmp`); `FF2B` = `^` reversed
 - [x] value-stack node layout (value at `[node.ptr]` == `[ds:111C]` for top)
 
+## MENU.EXE / SAVER.EXE
+
+- [x] `menu_saver.bas` — launcher flow, roster / new-game, and the save.
+      **Starting stats** (from the LEGACY.DAT new-character template, bytes
+      `0xA03..`): STR/DEX/END/INT/CHARM all **15**, HP **200**, level 1,
+      **0 gold**, Studded-hide armour, bare hands.  SAVER = a byte-image of
+      resident DGROUP `ds:1AC0..1B08` + the 7 arrays → CHAR.DAT record
+      `ds:1B0A`.
+
+## STDRV.EXE — Stones of Wisdom
+
+- [x] `stdrv_dice.bas` — a Liar's-Dice / Perudo match vs a dealer.  Winning
+      a **match** raises **Intelligence** (`+3/+2/+1/0` under Int 15/30/60),
+      losing lowers it (`-3/-2/-1/0` over Int 49/39/9) — self-balancing,
+      cap 60, floor ~9.  Delta tables read from `STDRV.EXE`.  The dealer
+      bid/challenge AI is summarised (odds constants still open).
+
+## SDEFENDR.EXE — the Training School
+
+- [x] `sdefendr_training.bas` — an arena shooter.  The ENDURANCE and
+      DEXTERITY disciplines set `attribute += (sessionScore − yourPrevBest)`
+      for that discipline (a worse run subtracts the margin).  ARMOR /
+      WEAPON / BLOCK / SHOOT effects still open.
+
+## GMB1.EXE / GMB2.EXE — casino
+
+- [x] `gmb_casino.bas` — Blackjack (`GMB1`, standard rules + 5-card Charlie
+      + natural-pays-double) and Flip-Flop (`GMB2`, a rigged Plinko:
+      baskets pay 1×/2×/5× the bet, but `computePayout` nudges the landing
+      basket ±1 to drag `totalWon/totalWagered` back inside a band).  Both
+      only move party gold (`ds:1AD2:1AD4`).
+
+## CELDRV.EXE / CONFIGUR.EXE
+
+- [x] `misc_drivers.bas` — CELDRV = the "AGAINST ALL ODDS!" endgame
+      cinematic (CEL0-3/DIS9 image banks + a 999-line victory crawl + the
+      credits).  CONFIGUR = a small **C** utility that edits the drive
+      letters in DRCONFIG.DAT.  No game mechanics in either.
+
 ## OUT.EXE
 
 - [x] `out_combat.bas` — `RollEncounterMod`, `ComputeEquippedPower`,
@@ -141,7 +180,10 @@ anchor). The combat pool it prints is quoted at the top of
       confirmed by two DOSBox traces (`^0.8` is the constant `ds:2E3A`).
       `creatureDefense` = `A1(creature) \ 256`; `creatureAtk` (monster
       damage) = `A1(creature) AND 0xFF`.
-- [x] `out_encounter.bas` — `CreatureApproach`, `BeginEncounterView`
+- [x] `out_encounter.bas` — `CreatureApproach`, `BeginEncounterView`.
+      `ds:2092`/`ds:2096`/`ds:208E` = a 5-row per-tile constant table
+      (`regionPreset_A..E`, `ON (rawTile+1) GOSUB`), **fully recovered** —
+      no per-map data.
 - [x] `out_economy.bas` — `ProvisionerShop`, `ShopConfirmBuy` (prices)
 - [x] `out_movement.bas` — `DoMovement` (per-step tick + food-poisoning)
       and `ClassifyLocationTile` (the terrain-cost classifier: tile type
