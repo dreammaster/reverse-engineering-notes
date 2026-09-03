@@ -95,11 +95,14 @@ Each play module has its own combat math. Do not share code between them.
 
 ### 3a. OVERWORLD (OUT) — [`out_combat.bas`](../recovered/out_combat.bas)
 
-Per-encounter setup (`beginEncounterView`, `out.asm:4217`), from
-`OUTDAT.DAT` (`decoders/outdat_dat.py`):
-- `creatureIndex` = `INT( RND(1) * range + base )`, `(base,range)` picked
-  by RND gates: `(3,4)` mid-tier, `(0,3)` weak (pixie/strider/farmer),
-  higher tiers late.
+Per-encounter setup (`beginEncounterView`, `out.asm` `beginEncounterView`),
+from `OUTDAT.DAT` (`decoders/outdat_dat.py`):
+- `creatureIndex` = `INT( creatureTypeBase + RND(1) * groupSize )`. A 3-way
+  cascade on the encounter gates (§4) picks `(groupSize, creatureTypeBase)`:
+  `RND(1) < encGate1` → per-tile band via `combatBeat_1..7`
+  (`(4,3) (6,11) (4,17) (4,21) (3,25) (4,28) (4,28) (4,7)` for raw tile
+  0..7); else `(4,3)` mid; `RND(1) < encGate2` and `RND(1) < 0.5` →
+  `(3,0)` weak band (pixie/strider/farmer).
 - `creatureDefense` = `A1(creatureIndex) \ 256` (`ds:21FC`) — the HIGH
   byte of the A1 word (the value `outdat_dat.py` prints as `atk`,
   range ~20–55). Feeds the player's to-hit divisor. — `out.asm:4369`
@@ -260,43 +263,69 @@ per turn spent in a cloudy room.
 
 ## 4. Movement & terrain — [`out_movement.bas`](../recovered/out_movement.bas)
 
-Per overworld step (`DoMovement`, `out.asm:1427`), after committing the move:
+Per overworld step (`DoMovement`, `out.asm` `doMovement`), after committing
+the move. The step direction is an `ON facing GOSUB` (`rt_FC`):
+`facing` 1/2/3/4 → `trialY-1` / `trialX+1` / `trialY+1` / `trialX-1`;
+out-of-range → "bad command".
 
-**Terrain classification** (`ClassifyLocationTile`, `out.asm:11858`) — the
-tile-object type (0..13) maps to `enteredLocationId`, which IS the
-terrain cost:
+**Terrain — two independent uses of the raw tile type (0..13):**
 
-| tile type | `enteredLocationId` | food / step | encounter |
-|---|---|---|---|
-| 1, 2, 7–13 | 5 | 0.25 | most likely |
-| 0, 3, 4, 5 | 10 | 0.50 | medium |
-| 6 (forest / swamp) | 15 | 0.75 | least likely |
+*(a) food cost* — `ClassifyLocationTile` (`out.asm` `classifyLocationTile`)
+maps the raw tile to `enteredLocationId` ∈ {5,10,15}:
 
-**Per-step tick** — *derived* — `out.asm:1507`:
+| raw tile | `enteredLocationId` | food / step |
+|---|---|---|
+| 1, 2, 7–13 | 5 | 0.25 |
+| 0, 3, 4, 5 | 10 | 0.50 |
+| 6 (forest / swamp) | 15 | 0.75 |
+
+*(b) encounter preset* — `CreatureApproach` runs a separate
+`ON (rawTile+1) GOSUB regionPreset_A..E` (`rt_FC`, arms at
+`out.asm:0x1009C`) that loads a hardcoded `(encFreq, encGate1, encGate2)`
+triple into `ds:208E` / `ds:2092` / `ds:2096`. **This is the whole of the
+"region difficulty" system — a 5-row constant table, no per-map data, no
+formula.** Table and field-sample confirmation in
+[`out_encounter.bas`](../recovered/out_encounter.bas):
+
+| raw tile | preset | `encFreq` (208E) | `encGate1` (2092) | `encGate2` (2096) |
+|---|---|---|---|---|
+| 0, 2 | B | 0.67 | 0.25 | 0.50 |
+| 1 | A | 0.51 | 0.22 | 0.40 |
+| 3, 5 | C | 0.90 | 0.35 | 0.55 |
+| 4, 6 | D | 1.25 | 0.40 | 0.60 |
+| 7 | E | 0.40 | −1.0 | *(kept)* |
+| ≥ 8 | — | *(ON GOSUB out of range → all three unchanged)* |
+
+**Per-step tick** — *derived* — `out.asm` `doMovement`:
 ```
 stepCost     = enteredLocationId / 20
 food        -= stepCost                       ' ds:1ACE
-terrainWear += stepCost                       ' ds:1AF4
+terrainWear += stepCost                       ' ds:1AF4  (S4(36), fed to bank interest)
 stepCounter += 1                              ' ds:1AF8
 ```
 
-**Food poisoning** — *partial* — `out.asm:1550`: gated on the step
-counter passing 500 plus an RND roll ("eaten questionable flesh and
-walked far"): `hitPoints -= INT( hitPoints / (3 * (RND(1) + 1)) )`, then
+**Food poisoning** — *partial*: gated on `stepCounter` passing 500 plus an
+RND roll: `hitPoints -= INT( hitPoints / (3 * (RND(1) + 1)) )`, then
 "YOU GROW SICK FROM SOMETHING YOU ATE!".
 
-**Encounter trigger** (`CreatureApproach`, `out.asm:2943`) — *derived*:
+**Encounter trigger** (`CreatureApproach`) — *derived*:
 ```
-an encounter fires this step when
-    (enteredLocationId / 20)  <=  RND(1) * (characterLevel + 9)
+no encounter this step when   encFreq  >  RND(1) * (characterLevel + 9)
 ```
-so rougher terrain is safer and higher level is more dangerous. A rare
-special encounter (`RND < 0.06`) needs `S2(15)` held, `stepCounter > 500`,
+i.e. per-step chance ≈ `encFreq / (characterLevel + 9)` — roads (encFreq
+0.51) are safer than rough terrain (1.25), higher level slightly reduces
+the rate. **Comparison polarity is one DOSBox jump-observation from
+confirmed** (`creatureApproach` +0x83, the `ja`); the reverse reading
+(`encFreq <= RND*(level+9)`) is possible but gives ~90 %/step. A rare
+scripted ambush (`RND < 0.06`) needs `S2(15)` held, `stepCounter > 500`,
 and level 2..7.
 
-`ResolveMoveTarget` / `ReadTileObject` (`out.asm:9973` / `10468`) are
-viewport clipping + the 13×13 map-window copy (`array[0x120 + Y*95 + X]`
-from `ds:1E2A`), not game logic.
+`encGate1` / `encGate2` are then consumed by `BeginEncounterView` as a
+3-way cascade choosing the creature band — see §3a and
+[`out_encounter.bas`](../recovered/out_encounter.bas).
+
+`ResolveMoveTarget` / `ReadTileObject` are viewport clipping + the 13×13
+map-window copy (`array[0x120 + Y*95 + X]` from `ds:1E2A`), not game logic.
 
 ---
 
@@ -395,20 +424,14 @@ DOSBox dump is needed to implement the mechanics.**
 | `ds:226E` (CASDR difficulty) | `3.5` castle / `1.0` fort — constants `ds:31A8` / `ds:25B0` |
 | `ds:2C3C` (bank divisor) | an 8-byte DOUBLE = `999.0` (a 32-bit read misses it) |
 
-**OUT region encounter gates `ds:2092` / `ds:2096`** — these are still
-worth a per-region table for tuning. `BeginEncounterView` reads two
-per-map probabilities from these slots; the load mechanism isn't pinned
-(not raw floats in `OUTM*.BSV`). Samples so far:
+| `ds:2092` / `ds:2096` (OUT encounter gates) | a 5-row constant table (`regionPreset_A..E`) keyed on the raw map tile — see §4. Not per-map, not runtime. Field samples match the table exactly. |
 
-| where | `ds:2092` (P mid-tier) | `ds:2096` (anti-weak) |
-|---|---|---|
-| near the museum (start area) | 0.00 | 0.00 |
-| far west | 0.22 | 0.40 |
-| far northwest | 0.35 | 0.55 |
+The `ds:2092` / `ds:2096` hunt is closed: `fix_on_gosub_tables.py` decoded
+the `ON (rawTile+1) GOSUB` in `creatureApproach`, and the five arms
+(`out.asm:0x1009C`) store hardcoded triples pulled from `ds:246E..249A`.
+The earlier field samples (museum 0/0, west 0.22/0.40, NW 0.35/0.55) are
+presets *(none)* / A / C respectively.
 
-Higher = tougher (more guaranteed mid-tier, fewer weak). The start area is
-all-easy (0/0 → ~50 % weak). Not raw-number critical — a port can seed a
-distance-from-start curve and tune.
-
-Also open (not blocking): `CastSpell` (DUN), the casino payout math, the
-per-bit quest-flag semantics.
+Also open (not blocking): the encounter-trigger comparison polarity (one
+DOSBox jump obs), `CastSpell` (DUN), the casino payout math, the per-bit
+quest-flag semantics.

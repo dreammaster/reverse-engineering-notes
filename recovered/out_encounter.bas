@@ -1,106 +1,159 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld encounter generation                       [v1]
+'  OUT.EXE  --  overworld encounter generation                       [v2]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 '
-'  SUBs: CreatureApproach (the per-step encounter check)
-'        BeginEncounterView (picks the creature type + count, sets the view)
-'  RollEncounterMod lives in out_combat.bas.
+'  SUBs: CreatureApproach   (per-step: does a creature appear? how many?)
+'        BeginEncounterView  (picks the creature TYPE + sets the combat view)
+'  RollEncounterMod / rollCreatureStats live in out_combat.bas.
+'
+'  *** ds:2092 / ds:2096 are NOT runtime-loaded and NOT a formula. ***
+'  They are assigned every step from a 5-row table of hardcoded constants,
+'  selected by the map tile the player is standing on.  Full table below.
+'  (Earlier notes asked for a DOSBox dump "per map" -- not needed; the
+'   OUTM<n>.BSV banks do not carry these.)
 ' ==========================================================================
 '
 '  DGROUP vars:
-'     contextMode 1F2A   facing 1E1E   characterLevel 1AE0
-'     stepCounter 1AF8   enteredTileType 214A
-'     stepScratch 208E (single; = enteredLocationId/20 after a move)
-'     creatureIndex 2254   groupSize 2192   creaturesToFight 21FE
-'     approachDir 1F2A (reused)   S2() = ds:1BC4
-'   region params loaded per-map by loadOverworldData (0 in the EXE image):
-'     ds:2092  weak-creature gate      ds:2096  creature-tier gate
-'   constants:
+'     contextMode 1F2A     facing 1E1E        characterLevel 1AE0
+'     stepCounter 1AF8     rawTileType 214A (== 2182 == enteredLocationId
+'                          before classifyLocationTile rewrites it)
+'     encFreq   208E  (single) -- per-tile encounter weight  (the ON GOSUB
+'                                 also parks it in the generic step scratch)
+'     encGate1  2092  (single) -- tier-A probability   ("regionWeakGate")
+'     encGate2  2096  (single) -- tier-B probability   ("regionTierGate")
+'     groupSize 2192       creatureTypeBase 1F04       creatureIndex 2254
+'     creaturesToFight 21FE
+'  constants:
 '     ds:2790 0.06   ds:2794 3.2   ds:2798 0.83   ds:279C 4.0
-'     ds:2482 0.5    ds:24E6 1.0   ds:2552 500
+'     ds:2482 0.5    ds:24E6 1.0   ds:2552 500    ds:290E 256
+'
+'  --- the per-tile encounter presets (regionPreset_A..E, out.asm:0x1009C..) ---
+'  ON GOSUB, 1-based, selector = rawTileType + 1, 8 entries -> 5 presets:
+'
+'     rawTile  preset   encFreq  encGate1  encGate2   (encGate2 '-' = untouched)
+'        0       B        0.67     0.25      0.50
+'        1       A        0.51     0.22      0.40
+'        2       B        0.67     0.25      0.50
+'        3       C        0.90     0.35      0.55
+'        4       D        1.25     0.40      0.60
+'        5       C        0.90     0.35      0.55
+'        6       D        1.25     0.40      0.60
+'        7       E        0.40    -1.00       -
+'      8..n    (index out of range -> ON GOSUB is a no-op; presets unchanged)
+'
+'  Field samples (Paul, DOSBox) confirm the table exactly:
+'     museum-adjacent : 2092=0.00 2096=0.00  (never left tiles >= 8 yet)
+'     far west        : 2092=0.22 2096=0.40  = preset A  (rawTile 1)
+'     north-west      : 2092=0.35 2096=0.55  = preset C  (rawTile 3 or 5)
 
 
 ' --------------------------------------------------------------------------
-SUB CreatureApproach                                 ' asm: out.asm:2943 (creatureApproach)
+SUB CreatureApproach                                 ' asm: out.asm:3101 (creatureApproach)
 ' --------------------------------------------------------------------------
-' Called once per step from the main loop.  Decides whether a creature
-' appears this step, and if so how many and from which direction.
+' Called once per step from outInit's main loop.
 
-    IF contextMode > 0 THEN EXIT SUB                  ' already busy       ' asm:2944
-    IF facing = 0 OR workIntHi <> -9 THEN EXIT SUB    ' no real move        ' asm:2949-2967
+    IF contextMode > 0 THEN EXIT SUB                  ' already busy       ' asm:3102
+    IF facing = 0 OR workIntHi <> -9 THEN EXIT SUB    ' not a real move    ' asm:3107-3125
 
-    RandomizeStep enteredTileType + 1                 ' rtm_FC             ' asm:2974-2977
+    ' ---- load this tile's encounter preset ---------------------- asm:3133-3143
+    '   ON (rawTileType + 1) GOSUB regionPreset_B,A,B,C,D,C,D,E
+    '   -> sets encFreq (208E), encGate1 (2092), encGate2 (2096)
+    SELECT CASE rawTileType
+        CASE 0, 2 : encFreq = .67 : encGate1 = .25 : encGate2 = .50   ' preset B
+        CASE 1    : encFreq = .51 : encGate1 = .22 : encGate2 = .40   ' preset A
+        CASE 3, 5 : encFreq = .90 : encGate1 = .35 : encGate2 = .55   ' preset C
+        CASE 4, 6 : encFreq = 1.25: encGate1 = .40 : encGate2 = .60   ' preset D
+        CASE 7    : encFreq = .40 : encGate1 = -1.0                   ' preset E (encGate2 kept)
+        CASE ELSE : ' rawTileType >= 8 : ON GOSUB out of range, no change
+    END SELECT
 
-    ' ---- the encounter trigger ---------------------------------- asm:2985-3000
-    '   an encounter happens this step when
-    '       stepScratch  <=  RND(1) * (characterLevel + 9)
-    '   stepScratch = enteredLocationId / 20  (set by DoMovement) -- so
-    '   rougher terrain (higher id) is SAFER, higher level is more dangerous.
-    IF stepScratch > RND(1) * (characterLevel + 9) THEN EXIT SUB           ' asm:2986-2999
+    ' ---- the encounter trigger --------------------------------- asm:3145-3159
+    '   leglib compare (FF1F) of  encFreq  vs  RND(1) * (characterLevel + 9);
+    '   the `ja` returns with no encounter.  Best reading (gives sane rates
+    '   and matches terrain: roads encFreq .51, rough terrain 1.25):
+    '        encounter this step  <=>  RND(1) * (characterLevel + 9) <= encFreq
+    '   i.e. per-step chance ~ encFreq / (characterLevel + 9).
+    '   [POLARITY: one DOSBox observation of the jump at creatureApproach+0x83
+    '    would confirm vs. the reverse `encFreq > RND*(level+9)`.]
+    IF RND(1) * (characterLevel + 9) > encFreq THEN EXIT SUB              ' asm:3145-3159
 
-    ' ---- rare special encounter -------------------------------- asm:3007-3067
-    '   if you hold S2(15) AND stepCounter > 500 AND 2 <= level <= 7
-    '   AND RND(1) < 0.06  ->  a scripted / tougher encounter (loc_14AA1)
+    ' ---- rare scripted / tougher encounter --------------------- asm:3167-3227
+    '   holding S2(15) AND stepCounter > 500 AND 2 <= level <= 7
+    '   AND RND(1) < 0.06  ->  loc_14AA1 (banditAmbushEvent path)
     IF haveCompendium AND stepCounter > 500 AND characterLevel >= 2 _
-       AND characterLevel <= 7 AND RND(1) < 0.06 THEN                      ' asm:3036-3067
-        SpecialEncounter : EXIT SUB
+       AND characterLevel <= 7 AND RND(1) < 0.06 THEN                     ' asm:3196-3227
+        BanditAmbushEvent : EXIT SUB
     END IF
 
-    contextMode = 10                                                      ' asm:3072
+    contextMode = 10                                                     ' asm:3232
 
-    ' ---- group size (capped at 7) ----------------------------- asm:3073-3092
-    groupSize = (stepCounter MOD 2500) \ SomeScale + 1     ' rt_14, TODO   '??
+    ' ---- group size (capped at 7) ---------------------------- asm:3233-3252
+    '   rt_14 = 32-bit \ ;  (stepCounter \ 2500) + 1  clamped to 7.
+    groupSize = (stepCounter \ 2500) + 1                                 ' asm:3233-3252
     IF groupSize > 7 THEN groupSize = 7
 
-    ' ---- how many actually engage ---------------------------- asm:3095-3119
+    ' ---- how many of the group actually engage -------------- asm:3255-3279
     r = RND(1)
-    creaturesToFight = INT( (r ^ (3.2 * r + 0.83)) * groupSize + 1 )       ' asm:3095-3119
-    '  ds:2794 3.2 ; ds:2798 0.83 .  r^(0.83..4) is skewed low -> usually
-    '  1..3 engage even for a big group.
+    creaturesToFight = INT( (r ^ (3.2 * r + 0.83)) * groupSize + 1 )     ' asm:3255-3279
+    '   ds:2794 3.2 ; ds:2798 0.83 .  exponent 0.83..4 skews r low, so
+    '   usually only 1..3 engage even for a big group.
 
-    ' ---- approach direction --------------------------------- asm:3133-3146
-    IF RND(1) <= 0.5 THEN                             ' ds:2482            ' asm:3120-3129
-        approachDir = INT( RND(1) * 4.0 + 1.0 )       ' ds:279C 4.0        ' asm:3134-3146
+    ' ---- approach direction (50% of the time) --------------- asm:3280-3306
+    IF RND(1) <= 0.5 THEN                             ' ds:2482            ' asm:3280-3289
+        approachDir = INT( RND(1) * 4.0 + 1.0 )       ' ds:279C 4.0
     END IF
 
-    PRINT "UNKNOWN CREATURE"; PLURAL$(creaturesToFight)                    ' asm:3149-3176
-    PRINT "APPROACHING FROM THE "; Direction$(approachDir)                 ' asm:3179+
+    PRINT "UNKNOWN CREATURE"; PLURAL$(creaturesToFight)                  ' asm:3309-3336
+    PRINT "APPROACHING FROM THE "; Direction$(approachDir)               ' asm:3339+
     BeginEncounterView
 END SUB
 
 
 ' --------------------------------------------------------------------------
-SUB BeginEncounterView                               ' asm: out.asm:3772 (beginEncounterView)
+SUB BeginEncounterView                               ' asm: out.asm:4386 (beginEncounterView)
 ' --------------------------------------------------------------------------
-' Also called from quitOrTalk (re-enter combat after a parley).
+' Also entered from quitOrTalk (re-open combat after a failed parley).
+'
+' encGate1 / encGate2 form a 3-way cascade that picks the creature BAND
+' (typeBase + groupSize) that creatureIndex is then rolled inside.
 
-    IF contextMode < 5 THEN backupContextMode = contextMode               ' asm:3774-3781
-    contextMode = 11                                                      ' asm:3784
+    IF contextMode < 5 THEN backupContextMode = contextMode              ' asm:4388-4395
+    contextMode = 11                                  ' "encounter view"  ' asm:4398
 
-    ' ---- pick (base, range) for the creature-type roll ----------- asm:3785-3861
-    IF RND(1) >= regionWeakGate THEN                  ' ds:2092            ' asm:3786-3803
-        base = 3 : range = 4                          ' mid-tier: 3..6
-        RollCreaturePosition
+    IF RND(1) < encGate1 THEN                         ' ds:2092  tier A   ' asm:4399-4417
+        ' ON (rawTileType + 1) GOSUB combatBeat_1..7  -- per-tile band:
+        SELECT CASE rawTileType                                          ' asm:4420-4434
+            CASE 0 : groupSize = 4 : creatureTypeBase = 3    ' combatBeat_1
+            CASE 1 : groupSize = 6 : creatureTypeBase = 11   ' combatBeat_2
+            CASE 2 : groupSize = 4 : creatureTypeBase = 17   ' combatBeat_3
+            CASE 3 : groupSize = 4 : creatureTypeBase = 21   ' combatBeat_4
+            CASE 4 : groupSize = 3 : creatureTypeBase = 25   ' combatBeat_5
+            CASE 5, 6 : groupSize = 4 : creatureTypeBase = 28 ' combatBeat_6
+            CASE 7 : groupSize = 4 : creatureTypeBase = 7    ' combatBeat_7
+        END SELECT
     ELSE
-        base = 3 : range = 4                          ' loc_1238C default
-        IF RND(1) < regionTierGate THEN               ' ds:2096            ' asm:3823-3841
-            IF RND(1) < 0.5 THEN base = 0 : range = 3 ' weak: 0..2 (pixie/strider/farmer) asm:3846-3861
+        groupSize = 4 : creatureTypeBase = 3             ' default mid     ' asm:4438-4440
+        IF RND(1) < encGate2 THEN                     ' ds:2096  tier B   ' asm:4441-4459
+            IF RND(1) < 0.5 THEN                                          ' asm:4462-4474
+                contextMode = 12
+                groupSize = 3 : creatureTypeBase = 0     ' weak band 0..2 (pixie/strider/farmer)
+            END IF
         END IF
     END IF
 
-    ' ---- the creature type --------------------------------- asm:3863-3895
-    creatureIndex = INT( RND(1) * range + base )                          ' asm:3865-3895
-    '  A1/A2/A3/names are all indexed by this (OUTDAT.DAT):
-    '  creatureDefense = A1(creatureIndex) \ 256      (ds:21FC, HIGH byte)
-    '  creatureAtk     = A1(creatureIndex) AND 0xFF   (ds:2264, LOW byte)
-    '  creatureWeak    = A2(creatureIndex) \ 256      (ds:22A6, 99 = none)
+    ' ---- the creature type ------------------------------------ asm:4481-4513
+    creatureIndex = INT( creatureTypeBase + RND(1) * groupSize )
+    '  OUTDAT.DAT arrays indexed by creatureIndex (ds:209A word[], ds:20AC word[]):
+    '    creatureDefense = A1(creatureIndex) \ 256   (ds:21FC ; ds:290E = 256)
+    '    creatureAtk     = A1(creatureIndex) AND 255 (ds:2264 ; via rollCreatureStats)
+    '    creatureWeak    = A2(creatureIndex) \ 256   (ds:22A6 ; 99 = no weakness)
 
-    RollEncounterMod                                  ' out_combat.bas    ' asm: -> rollCreatureStats
+    RollEncounterMod                                  ' out_combat.bas / rollCreatureStats
 
-    ' ---- per-creature HP into viewObjectArray ------------------- asm:4442
+    ' ---- per-creature HP into viewObjectArray ----------------- asm: creatureDefeated area
     FOR slot = 1 TO creaturesToFight
         viewObjectArray(slot) = INT( creatureAtk * (RND(1) / 4.0 + 0.35) _
-                                     * (S4(12) + 2) )   ' ds:279C, ds:248A
+                                     * (S4(12) + 2) )
     NEXT slot
     ' ... draw the encounter view ...
 END SUB
@@ -108,16 +161,17 @@ END SUB
 
 ' ==========================================================================
 '  SOLID
-'   * encounter trigger : stepScratch <= RND(1) * (characterLevel + 9),
-'     stepScratch = enteredLocationId / 20
-'   * creaturesToFight  : INT( r^(3.2r + 0.83) * groupSize + 1 )
-'   * approach direction: INT( RND(1)*4 + 1 )   (50% of the time)
-'   * creature type     : INT( RND(1) * range + base ), (base,range) in
-'                         {(3,4) mid, (0,3) weak, ...}
-'   * rare special      : S2(15) + stepCounter>500 + level 2..7 + RND<0.06
+'   * encGate1 (2092) / encGate2 (2096) / encFreq (208E): a 5-row constant
+'     table (regionPreset_A..E), selected by rawTileType via ON GOSUB.
+'     FULLY RECOVERED -- table above.  No per-map / DOSBox data needed.
+'   * creature band selection cascade (encGate1 -> per-tile combatBeat_*,
+'     else mid, else encGate2 -> weak) -- structure verified from the asm.
+'   * combatBeat_* (groupSize, creatureTypeBase) table -- verified.
+'   * creaturesToFight  = INT( r^(3.2r + 0.83) * groupSize + 1 )
+'   * approach direction = INT( RND(1)*4 + 1 )   (50% of the time)
+'   * rare special = S2(15) + stepCounter>500 + level 2..7 + RND<0.06
 '
 '  OPEN
-'   * groupSize's `rt_14` scaling (the 2500 divisor)
-'   * regionWeakGate / regionTierGate (ds:2092 / ds:2096) -- copied per-map
-'     from the OUTM* data by loadOverworldData; NEEDS a DOSBox dump
-'   * whether a higher-tier (base >= 7) branch exists for late game
+'   * encounter-trigger comparison POLARITY (one DOSBox jump observation)
+'   * groupSize's exact rt_14 divisor (2500 assumed from ds:09C4)
+'   * whether creatureTypeBase gets a story-phase (S4(12)) bump anywhere

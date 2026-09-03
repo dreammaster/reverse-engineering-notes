@@ -1,5 +1,5 @@
 ' ==========================================================================
-'  OUT.EXE  --  overworld movement + per-step upkeep                  [v2]
+'  OUT.EXE  --  overworld movement + per-step upkeep                  [v3]
 '  reconstructed from out.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoMovement (per-step tick solid; sickness/encounter gating partial)
@@ -31,12 +31,24 @@ SUB DoMovement                                        ' asm: out.asm:1427 (doMov
     IF contextMode >= 10 THEN GOTO NonWorldMove        ' ds:1F2A          ' asm:1457-1459
 
     trialX = playerX : trialY = playerY                                   ' asm:1464-1467
-    RandomizeStep facing                              ' rtm_FC           ' asm:1468-1469
+    ' ON facing GOSUB move_north, move_east, move_south, move_west  (rt_FC)
+    '   move_north: trialY = trialY - 1     move_south: trialY = trialY + 1
+    '   move_east : trialX = trialX + 1     move_west : trialX = trialX - 1
+    SELECT CASE facing                               ' rtm_FC            ' asm:1468-1469
+        CASE 1 : trialY = trialY - 1
+        CASE 2 : trialX = trialX + 1
+        CASE 3 : trialY = trialY + 1
+        CASE 4 : trialX = trialX - 1
+        CASE ELSE : PRINT "bad command" : EXIT SUB   ' out-of-range arm
+    END SELECT
     enteredTileType = MapWindow(trialY, trialX)                           ' asm:1470-1478
     ResolveMoveTarget trialX, trialY, turnActionFlag, remarkIndex, _
                       enteredTileType, facing                             ' asm:1479-1491
     S4(24) = enteredTileType                          ' checkpoint copy   ' asm:1492-1497
     enteredLocationId = ds1F02                                            ' asm:1498-1499
+    rawTileType = enteredLocationId       ' -> ds:214A ; the ONLY input to
+                                          ' CreatureApproach's per-tile
+                                          ' encounter-preset ON GOSUB.      asm:1552-1553
 
     IF tileObjectType <> 0 THEN GOTO TileHasObject     ' ds:1F04         ' asm:1500-1502
 
@@ -79,10 +91,11 @@ END SUB
 SUB ClassifyLocationTile                              ' asm: out.asm:11858 (classifyLocationTile)
 ' --------------------------------------------------------------------------
 ' Maps the raw tile-object type under the player (ds:2182, 0..13) to
-' enteredLocationId (ds:1F02) -- which IS the terrain cost: DoMovement's
-' tick does  food -= enteredLocationId / 20  and the encounter trigger is
-' stepScratch (= enteredLocationId/20) <= RND(1)*(level+9).  So a higher
-' code means BOTH more food per step AND fewer encounters.
+' enteredLocationId (ds:1F02) -- which IS the terrain FOOD cost: DoMovement's
+' tick does  food -= enteredLocationId / 20  (code 5 = 0.25/step, 10 = 0.50,
+' 15 = 0.75).  This is SEPARATE from the encounter rate: the encounter
+' weight comes from CreatureApproach's per-tile ON GOSUB keyed on the RAW
+' tile type (see out_encounter.bas), not from this classified value.
 
     SELECT CASE tileObjectType                        ' ds:2182           ' asm:11863-11935
     CASE 0            : enteredLocationId = 10   ' open ground             ' asm:11871
