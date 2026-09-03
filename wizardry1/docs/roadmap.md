@@ -146,7 +146,7 @@ Decided direction (2026-09-02):
       backfire). Edge of Town (`M`). `wiz1 maze` / `maze-sdl` /
       `maze-play-test` / `maze-scan` / `camp-test` / `cemetery-test` /
       `pickup-test`. TODO: camp `CHSPCPOW`, the delegating camp spells.
-- [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
+- [x] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
       formulas; `castSpell` = CASTASPE `DOMAGE`/`DOPRIEST` effects) +
@@ -160,16 +160,17 @@ Decided direction (2026-09-02):
       `monsterTurn` = `CUTIL`'s action priority: spell → `DOBREATH` →
       `YELLHELP` → `DORUN` → melee. `ENGROUPS` builds up to 4 allied groups
       (`ENMYTEAM`/`TEAMPERC`, gated by the maze level). Party `D)ISPEL`
-      (`DODISPEL` — Priest / Lord>8 / Bishop>3 dissolve undead, no XP).
-      `wiz1 combat-test` (14 CMake tests incl. `combat_breath` /
+      (`DODISPEL` — Priest / Lord>8 / Bishop>3 dissolve undead, no XP) and
+      `U)SE` an item (`USEITEM` — invoke its `SPELLPWR`, roll `CHGCHANC`).
+      `wiz1 combat-test` (15 CMake tests incl. `combat_breath` /
       `combat_yell` / `combat_flee` / `combat_groups` / `combat_dispel` /
-      `friendly_*`).
+      `combat_useitem` / `friendly_*`).
 - [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
       (`MazeState`) resumes an interrupted delve; `Character` models
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: in-combat `U)SE` an item → Phase 4.
+- [ ] Continue: Phase 4 — the ScummVM engine.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

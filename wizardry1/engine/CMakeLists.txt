@@ -246,6 +246,16 @@ add_test(NAME combat_dispel
 # (both would be 76).
 set_tests_properties(combat_dispel PROPERTIES
     PASS_REGULAR_EXPRESSION "1 DISSOLVES!(.|\n)*EACH SURVIVOR GETS 38 E")
+add_test(NAME combat_useitem
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 3
+                 "\\rU1PPPPP\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 -1 1 "0:28")
+# CUTIL USEITEM: THESUS invokes a HALITO scroll (obj 28, SPELLPWR 1) at the
+# group; CHGCHANC 100 consumes it to object 0.
+set_tests_properties(combat_useitem PROPERTIES
+    PASS_REGULAR_EXPRESSION "THESUS USES [a-z]*HALITO!(.|\n)*poss1 #0")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

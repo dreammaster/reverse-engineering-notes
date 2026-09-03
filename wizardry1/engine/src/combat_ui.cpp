@@ -147,6 +147,78 @@ bool doCast(CombatCtx &c, Character &ch, bool &quit) {
     return true;
 }
 
+// U)SE an item in combat (CUTIL USEITEM P010604).  A packed item is useable
+// when its SPELLPWR names a spell and it is either a SPECIAL or equipped.
+// The item invokes that spell for free (no pool cost), targeted per the
+// spell's own targeting, then rolls CHGCHANC to transform to CHANGETO.
+bool doUseItem(CombatCtx &c, Character &ch, bool &quit) {
+    quit = false;
+    auto &t = c.t();
+    int list[8], n = 0;
+    for (int i = 0; i < ch.possCount && n < 8; ++i) {
+        ObjectRec o{c.sc.record(Scenario::Object, ch.poss[i].itemIndex)};
+        if (o.spellPwr() > 0 &&
+            (o.type() == ObjType::Special || ch.poss[i].equipped))
+            list[n++] = i;
+    }
+    if (n == 0) { c.say(ch.name + " HAS NOTHING TO USE"); return false; }
+
+    auto itemName = [&](int slot) -> std::string {
+        const Possession &p = ch.poss[slot];
+        if (c.sp) {
+            bool ok = false;
+            std::string s = c.sp->get(
+                StringPool::objectNameKey(p.itemIndex, p.identified ? 1 : 0), &ok);
+            if (ok && !s.empty()) return s;
+        }
+        return "ITEM #" + std::to_string(p.itemIndex);
+    };
+
+    t.clearRect(0, 22, 40, 2);
+    t.gotoXY(0, 22);
+    std::string line = "USE: ";
+    for (int i = 0; i < n; ++i) {
+        line += char('1' + i); line += ')'; line += itemName(list[i]); line += ' ';
+    }
+    t.write(line.substr(0, 39));
+    int k = c.ui.getKey();
+    if (c.ui.quit()) { quit = true; return false; }
+    int pick = k - '1';
+    if (pick < 0 || pick >= n) return false;
+
+    Possession &p = ch.poss[list[pick]];
+    ObjectRec o{c.sc.record(Scenario::Object, p.itemIndex)};
+    int sp = o.spellPwr();
+    const SpellDef *d = spellDef(sp);
+    if (!d) { c.say("NOTHING HAPPENS"); return true; }
+
+    int tg = -1, tgAlly = -1;
+    if (d->targ == SP_ENEMY_GROUP || d->targ == SP_ONE_ENEMY) {
+        tg = pickGroup(c, quit);
+        if (quit || tg < 0) return false;
+    } else if (d->targ == SP_ONE_ALLY) {
+        t.gotoXY(0, 23); t.write("ON WHOM (1-");
+        t.write(std::to_string(c.party.count())); t.write(")?");
+        int w = c.ui.getKey();
+        if (c.ui.quit()) { quit = true; return false; }
+        tgAlly = w - '1';
+        if (tgAlly < 0 || tgAlly >= c.party.count()) return false;
+    } else {
+        for (int i = 0; i < c.party.count(); ++i)
+            if (&c.party.member(i) == &ch) tgAlly = i;
+    }
+
+    CombatLog l;
+    l.push_back(ch.name + " USES " + itemName(list[pick]) + "!");
+    castSpell(c.bt, c.sc, c.party, false, ch.charLevel, sp, tg, -1, tgAlly, c.rng, l);
+    if (c.rng.mod(100) < o.chgChance()) {         // CHGITEM
+        p.itemIndex = o.changeTo();
+        p.identified = false;
+    }
+    c.say(l);
+    return true;
+}
+
 // A monster's turn -- CUTIL's action priority: spell > breath > yell for
 // help > flee > melee.
 void monsterTurn(CombatCtx &c, int g, int m) {
@@ -205,11 +277,17 @@ bool round(CombatCtx &c, CombatResult &out, bool partyActs = true,
             t.clearRect(0, 22, 40, 2);
             t.gotoXY(0, 22);
             bool dispel = canDispel(ch);
-            t.write(ch.name + ": F)IGHT  C)AST  P)ARRY  R)UN" +
-                    std::string(dispel ? "  D)ISPEL" : ""));
+            t.write(ch.name + ": F)IGHT C)AST P)ARRY R)UN U)SE" +
+                    std::string(dispel ? " D)ISPEL" : ""));
             int k = c.ui.getKey();
             if (c.ui.quit()) { out = CombatResult::WindowClosed; return true; }
             if (k == 'P') break;
+            if (k == 'U') {
+                bool q = false;
+                if (doUseItem(c, ch, q)) break;
+                if (q) { out = CombatResult::WindowClosed; return true; }
+                continue;
+            }
             if (k == 'D' && dispel) {
                 bool q = false;
                 int g = pickGroup(c, q);            // WHICHGRP 'DISPELL WHICH GROUP# ?'

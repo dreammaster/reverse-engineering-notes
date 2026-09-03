@@ -93,6 +93,13 @@ per conscious monster the chance is `50 + 5·casterLevel − 10·monsterLevel`
 dissolves — `MonGroup::dispelled++`, removed with no XP (like a flee).  A
 non-undead group just prints `TO NO AVAIL!`.  Test `combat_dispel`.
 
+`U)SE` an item (`CUTIL` `USEITEM` P010604): `doUseItem` lists packed items
+whose `SPELLPWR` names a spell and which are a `SPECIAL` or equipped, then
+invokes that spell for free (targeted per the spell's own targeting — no
+pool cost) and rolls `rand%100 < CHGCHANC` to transform the item to
+`CHANGETO` (a spent scroll → object 0, `IDENTIF` cleared).  Test
+`combat_useitem`.
+
 Party casters: `doCast` lists the caster's known spells whose group pool
 (`mageSpells` / `priestSpells`, refilled by `setSpells` at rest / combat
 start) is > 0, prompts for a target, decrements the pool and calls
@@ -159,12 +166,13 @@ the surprise roll (`rand%100 > 80` → **1** the party surprised the monsters,
 a free party round; else a second roll → **2** the monsters surprised the
 party, a free monster round; else **0**) → `FRIENDLY` (below).  The round: each
 conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY`
-/ `R)UN` (≈75 % escape) / `D)ISPEL` (casters only, below), then every living
-(awake, unparalysed) monster acts.
+/ `R)UN` (≈75 % escape) / `U)SE` an item / `D)ISPEL` (casters only, below),
+then every living (awake, unparalysed) monster acts.
 `wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]
-[attk012] [parleyThresh] [mazeLevel]` (headless; prints the fight transcript
-+ a `summary:` line; tests `combat_fight` / `combat_spell` / `reward_drop` /
-`combat_dispel` / `friendly_leave` / `friendly_fight`).  Wired into the maze: an `ENCOUNTE`
+[attk012] [parleyThresh] [mazeLevel] [grants m:i,…]` (headless; prints the
+fight transcript + a `summary:` line; tests `combat_fight` / `combat_spell`
+/ `reward_drop` / `combat_dispel` / `combat_useitem` / `friendly_leave` /
+`friendly_fight`).  Wired into the maze: an `ENCOUNTE`
 square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought room / a
 kick into a fight square) calls `runCombat`.
 
@@ -181,7 +189,7 @@ and each `GOOD` member has a `rand%2000 == 565` chance to turn `EVIL`.
 The weak PC RNG rarely lands `z` in the window on its own, so
 `combat-test`'s `parleyThresh` arg overrides `thresh` for the tests.
 
-**Not ported:** in-combat item use (`U)SE`).  Spell
+**Not ported:** spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`
