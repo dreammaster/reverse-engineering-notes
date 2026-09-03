@@ -159,15 +159,17 @@ Decided direction (2026-09-02):
       `ENCOUNTR`. `FRIENDLY` parley + surprise (a free party or monster round, `INITATTK`).
       `monsterTurn` = `CUTIL`'s action priority: spell → `DOBREATH` →
       `YELLHELP` → `DORUN` → melee. `ENGROUPS` builds up to 4 allied groups
-      (`ENMYTEAM`/`TEAMPERC`, gated by the maze level). `wiz1 combat-test`
-      (13 CMake tests incl. `combat_breath` / `combat_yell` / `combat_flee`
-      / `combat_groups` / `friendly_*`). TODO: `DODISPEL`.
+      (`ENMYTEAM`/`TEAMPERC`, gated by the maze level). Party `D)ISPEL`
+      (`DODISPEL` — Priest / Lord>8 / Bishop>3 dissolve undead, no XP).
+      `wiz1 combat-test` (14 CMake tests incl. `combat_breath` /
+      `combat_yell` / `combat_flee` / `combat_groups` / `combat_dispel` /
+      `friendly_*`).
 - [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
       (`MazeState`) resumes an interrupted delve; `Character` models
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: `DODISPEL` → Phase 4.
+- [ ] Continue: in-combat `U)SE` an item → Phase 4.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

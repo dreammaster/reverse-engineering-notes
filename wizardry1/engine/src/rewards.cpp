@@ -60,7 +60,7 @@ int64_t giveExp(const Battle &bt, const Scenario &sc, Party &party,
     for (int g = 0; g < bt.nGroups; ++g) {
         const MonGroup &mg = bt.grp[g];
         if (mg.enemyId < 0) continue;
-        int killed = mg.count - mg.alive - mg.fled;       // fled monsters earn nothing
+        int killed = mg.count - mg.alive - mg.fled - mg.dispelled;  // fled / dispelled earn nothing
         if (killed <= 0) continue;
         total += killExp(mg.rec(sc)) * killed;
     }

@@ -257,6 +257,41 @@ void monsterYell(Battle &bt, const Scenario &sc, int gi, Rng &rng, CombatLog &lo
     log.push_back("AND IT IS HEARD!");
 }
 
+// ---- DODISPEL (P010913): dissolve an undead group ----------------
+
+bool canDispel(const Character &ch) {
+    return ch.cls == Class::Priest ||
+           (ch.cls == Class::Lord   && ch.charLevel > 8) ||
+           (ch.cls == Class::Bishop && ch.charLevel > 3);
+}
+
+void partyDispel(Battle &bt, const Scenario &sc, Character &caster, int gi,
+                 Rng &rng, CombatLog &log) {
+    if (gi < 0 || gi >= bt.nGroups) return;
+    MonGroup &mg = bt.grp[gi];
+    MonsterRec r = mg.rec(sc);
+
+    log.push_back(caster.name + " DISPELLS!");
+    int chance = 50 + 5 * caster.charLevel - 10 * r.hpDice();   // HPREC.LEVEL
+    if (caster.cls == Class::Lord)        chance -= 40;
+    else if (caster.cls == Class::Bishop) chance -= 20;
+
+    int dissolved = 0;
+    for (int ii = 0; ii < mg.count; ++ii) {
+        if (mg.status[ii] != Status::OK) continue;
+        if (rng.mod(100) >= chance) continue;
+        if (r.cls() != 10) continue;               // only undead dissolve
+        mg.status[ii] = Status::Dead;
+        mg.hp[ii] = 0;
+        mg.alive--;
+        mg.dispelled++;
+        ++dissolved;
+    }
+    if (dissolved == 0)      log.push_back("TO NO AVAIL!");
+    else if (dissolved == 1) log.push_back("1 DISSOLVES!");
+    else                     log.push_back(std::to_string(dissolved) + " DISSOLVE!");
+}
+
 // ---- outcome / rewards ----------------------------------------------
 
 bool allMonstersDead(const Battle &bt) {

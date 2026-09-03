@@ -86,6 +86,13 @@ party outnumbers the group, `rand%100 < 65` → `DORUN`: the instance leaves,
 `MonGroup::fled++` so it earns no XP) → **melee** (`DAM2ME`).  Tests
 `combat_breath` / `combat_yell` / `combat_flee`.
 
+`D)ISPEL` (`SWINGASW` `DODISPEL` P010913): offered to a `PRIEST` (any
+level), a `LORD` over level 8 or a `BISHOP` over level 3.  Pick a group;
+per conscious monster the chance is `50 + 5·casterLevel − 10·monsterLevel`
+(`LORD −40`, `BISHOP −20`), and on a hit an **undead** monster (`CLASS 10`)
+dissolves — `MonGroup::dispelled++`, removed with no XP (like a flee).  A
+non-undead group just prints `TO NO AVAIL!`.  Test `combat_dispel`.
+
 Party casters: `doCast` lists the caster's known spells whose group pool
 (`mageSpells` / `priestSpells`, refilled by `setSpells` at rest / combat
 start) is > 0, prompts for a target, decrements the pool and calls
@@ -152,11 +159,12 @@ the surprise roll (`rand%100 > 80` → **1** the party surprised the monsters,
 a free party round; else a second roll → **2** the monsters surprised the
 party, a free monster round; else **0**) → `FRIENDLY` (below).  The round: each
 conscious member picks `F)IGHT` (+ group letter if >1) / `C)AST` / `P)ARRY`
-/ `R)UN` (≈75 % escape), then every living (awake, unparalysed) monster acts.
+/ `R)UN` (≈75 % escape) / `D)ISPEL` (casters only, below), then every living
+(awake, unparalysed) monster acts.
 `wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monIdx> <keyscript> [ASCII.KRN]
-[attk012] [parleyThresh]` (headless; prints the fight transcript + a
-`summary:` line; tests `combat_fight` / `combat_spell` / `reward_drop` /
-`friendly_leave` / `friendly_fight`).  Wired into the maze: an `ENCOUNTE`
+[attk012] [parleyThresh] [mazeLevel]` (headless; prints the fight transcript
++ a `summary:` line; tests `combat_fight` / `combat_spell` / `reward_drop` /
+`combat_dispel` / `friendly_leave` / `friendly_fight`).  Wired into the maze: an `ENCOUNTE`
 square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought room / a
 kick into a fight square) calls `runCombat`.
 
@@ -173,8 +181,7 @@ and each `GOOD` member has a `rand%2000 == 565` chance to turn `EVIL`.
 The weak PC RNG rarely lands `z` in the window on its own, so
 `combat-test`'s `parleyThresh` arg overrides `thresh` for the tests.
 
-**Not ported:** `DODISPEL` (a Lord/Bishop monster dissolving *summoned*
-allies) and in-combat item use.  Spell
+**Not ported:** in-combat item use (`U)SE`).  Spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`

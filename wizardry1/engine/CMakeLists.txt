@@ -235,6 +235,17 @@ add_test(NAME combat_groups
 # (ENMYTEAM chain + the TEAMPERC roll).
 set_tests_properties(combat_groups PROPERTIES
     PASS_REGULAR_EXPRESSION "2 GROUPS OF MONSTERS(.|\n)*B. 3 GIANTS")
+add_test(NAME combat_dispel
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 3
+                 "\\rPPPPPDA\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\rFFFFFF\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
+# SWINGASW DODISPEL: NOBAL (PRIEST) dissolves 1 of the 2 undead; the party
+# melees the other.  The dissolved monster grants no XP -- 1 kill -> 38 E.P.
+# (both would be 76).
+set_tests_properties(combat_dispel PROPERTIES
+    PASS_REGULAR_EXPRESSION "1 DISSOLVES!(.|\n)*EACH SURVIVOR GETS 38 E")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

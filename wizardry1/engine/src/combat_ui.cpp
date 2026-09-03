@@ -204,10 +204,22 @@ bool round(CombatCtx &c, CombatResult &out, bool partyActs = true,
             t.resetWindow();
             t.clearRect(0, 22, 40, 2);
             t.gotoXY(0, 22);
-            t.write(ch.name + ": F)IGHT  C)AST  P)ARRY  R)UN");
+            bool dispel = canDispel(ch);
+            t.write(ch.name + ": F)IGHT  C)AST  P)ARRY  R)UN" +
+                    std::string(dispel ? "  D)ISPEL" : ""));
             int k = c.ui.getKey();
             if (c.ui.quit()) { out = CombatResult::WindowClosed; return true; }
             if (k == 'P') break;
+            if (k == 'D' && dispel) {
+                bool q = false;
+                int g = pickGroup(c, q);            // WHICHGRP 'DISPELL WHICH GROUP# ?'
+                if (q) { out = CombatResult::WindowClosed; return true; }
+                if (g < 0) continue;
+                CombatLog l;
+                partyDispel(c.bt, c.sc, ch, g, c.rng, l);
+                c.say(l);
+                break;
+            }
             if (k == 'C') {
                 bool q = false;
                 if (doCast(c, ch, q)) break;

@@ -20,6 +20,7 @@ struct MonGroup {
     bool identified = false;
     int  count = 0, alive = 0;
     int  fled = 0;              // DORUN -- fled, not killed (no XP for these)
+    int  dispelled = 0;        // DODISPEL -- dissolved undead (no XP either)
     int  hp[9] = {};
     Status status[9] = {};      // OK / Asleep / Dead
     int  acMod[9] = {};
@@ -69,6 +70,15 @@ void monsterBreath(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
                    Rng &rng, CombatLog &log);
 void monsterFlee(Battle &bt, int gi, int ii, CombatLog &log);
 void monsterYell(Battle &bt, const Scenario &sc, int gi, Rng &rng, CombatLog &log);
+
+// D)ISPELL (SWINGASW DODISPEL P010913): a Priest (any level), a Lord over
+// level 8 or a Bishop over level 3 may try to dissolve an undead group
+// (monster CLASS 10).  Per conscious monster:
+//   chance = 50 + 5·casterLevel − 10·monsterLevel   (Lord −40, Bishop −20)
+// Dissolved monsters are removed with no experience.
+bool canDispel(const Character &ch);
+void partyDispel(Battle &bt, const Scenario &sc, Character &caster, int gi,
+                 Rng &rng, CombatLog &log);
 
 bool allMonstersDead(const Battle &bt);
 bool partyCanFight(const Party &party);          // any OK / Afraid member
