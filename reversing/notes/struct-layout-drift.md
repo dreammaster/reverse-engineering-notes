@@ -10172,3 +10172,52 @@ not a smaller version of 2011's unified one -- it happens to produce
 the same net behavior for the three click-target cases this build
 supports (character/object/hotspot), just arrived at differently.
 `ProcessClick` is now fully documented end to end.
+
+### `new_room` closes cleanly, resolving a false-alarm suspected bug and confirming one real feature absence
+
+Picked next specifically because it's the direct caller of the
+extensively-documented `load_new_room`, and its own `matches.json`
+entry was still a bare linker-symbol match with zero field evidence.
+Turns out to be a short, clean 4-call wrapper: `sub_40C335(8)` (a
+room-level `EventBlock` helper, this build's `run_room_event`
+equivalent, already matched but left unnamed), `run_on_event(1,
+newnum)`, `EndSkippingUntilCharStops()`, then
+`load_new_room(newnum,forchar)`.
+
+The `run_on_event` call's second argument looked, on a first read,
+like a real bug: it appeared to pass the room being ENTERED where
+2011's own `new_room()` (`Engine/AC.CPP:4625-4644`) passes
+`displayed_room` -- the room being LEFT -- to
+`run_on_event(GE_LEAVE_ROOM, displayed_room)`. Caught before writing
+it up: this function's own stack frame declares a LOCAL parameter
+also named `newnum` (`newnum = dword ptr 8`), and the disassembler
+distinguishes a bracketed local access (`[ebp+newnum]`) from a bare
+global reference with the identical display name (`newnum`, no
+brackets) -- a naming coincidence between IDA's auto-naming of the
+local parameter and IDA's auto-naming of the previously-identified
+standalone global this project already decisively confirmed as
+`displayed_room` (via `load_new_room`'s own opening
+`displayed_room=newnum` assignment, found several sessions ago). A
+scoped grep across just this function's own line range confirms
+`[ebp+newnum]` (the bracketed, LOCAL form) appears exactly ONCE, at
+the `load_new_room` call -- the earlier `run_on_event` call reads the
+bare, GLOBAL form. So this build's call is
+`run_on_event(GE_LEAVE_ROOM, displayed_room)` after all, matching
+2011 exactly -- no bug, just a name collision that needed bracket-
+notation disambiguation to see through, the same discipline this
+project has applied repeatedly to `ifnum`/`play_want_music`/`newnum`-
+as-`displayed_room` itself in earlier rounds ("always verify by usage,
+never by name alone").
+
+One genuine, confirmable drift remains: 2011's own `new_room()`
+additionally calls `WriteDebugString`/`update_polled_stuff()`, and --
+more significantly -- writes the room number about to be left into a
+global `in_leaves_screen` BEFORE firing the leave-room events, then
+re-reads `newnum=in_leaves_screen` AFTER them, letting an
+`OnRoomLeave`-equivalent script REDIRECT the actual destination room
+by changing `in_leaves_screen` mid-handler. None of that exists in
+this build's `new_room` -- no such global write or re-read appears
+anywhere in the function. This build's leave-room event hook cannot
+redirect the destination room the way 2011's later version can; a
+real, confirmed feature absence, not merely a smaller/inlined version
+of the same behavior.

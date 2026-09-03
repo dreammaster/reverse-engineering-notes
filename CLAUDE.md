@@ -2875,6 +2875,22 @@ disassembly work.
   — a genuinely different, more ad-hoc try-each-handler dispatch than
   2011's unified compute-once-then-switch design, not a smaller
   version of the same mechanism.
+- **`new_room` closes cleanly — a suspected bug turns out to be a name
+  collision, plus one real confirmed feature absence.** Its
+  `run_on_event(1,newnum)` call looked at first like it passed the
+  wrong room (the one being entered, not left) — resolved by noticing
+  the function's OWN local parameter is also auto-named `newnum` and
+  displays as bracketed `[ebp+newnum]` when actually accessed (as it
+  correctly is, later, for the `load_new_room` call); the `run_on_event`
+  call itself reads the BARE, unbracketed `newnum`, which is the
+  already-established standalone global == `displayed_room` — so this
+  build's call is `run_on_event(GE_LEAVE_ROOM,displayed_room)` after
+  all, matching 2011 exactly, no bug. Real drift found instead: 2011's
+  `new_room()` (`AC.CPP:4625-4644`) saves the target room into a global
+  `in_leaves_screen` before firing leave-room events and re-reads it
+  after, letting an OnRoomLeave-equivalent script redirect the actual
+  destination room — CONFIRMED ABSENT here, no such write/re-read
+  exists anywhere in this build's `new_room`.
 
 ## Third-party library identification (Task #10)
 
