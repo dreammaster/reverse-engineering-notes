@@ -288,25 +288,31 @@ void doTrade(CampCtx &c, int fromIdx) {
 // ---- CASTSPEL (P010C06): the in-camp (non-combat) spell set -------
 // Effect kinds -- the DOS dispatch keyed by spell hash.
 enum CampSpellKind { CS_HEAL, CS_FULLHEAL, CS_LIGHT, CS_UNPOISON, CS_CURE,
-                     CS_PROTECT, CS_RESURRECT };
+                     CS_PROTECT, CS_RESURRECT, CS_LOCATE, CS_KANDI };
 struct CampSpell {
-    int no; const char *name; int group; CampSpellKind kind; int a; int b;
+    int no; const char *name; bool priest; int group; CampSpellKind kind; int a; int b;
 };
-// group per inn.h minPri (priest 1:22-26 2:27-30 3:31-34 4:35-38 5:39-44
-// 6:45-48 7:49-50).  a/b = healing dice; CS_LIGHT a = LIGHT value.
+// group = spell level -> mageSpells[]/priestSpells[] pool.  a/b = healing
+// dice; CS_LIGHT a = LIGHT value.
 const CampSpell kCampSpells[] = {
-    {23, "DIOS",     1, CS_HEAL,      1, 8},
-    {25, "MILWA",    1, CS_LIGHT,    15, 0},
-    {31, "LOMILWA",  3, CS_LIGHT, 32000, 0},
-    {32, "DIALKO",   3, CS_CURE,      0, 0},
-    {35, "DIAL",     4, CS_HEAL,      2, 8},
-    {37, "LATUMOFI", 4, CS_UNPOISON,  0, 0},
-    {38, "MAPORFIC", 4, CS_PROTECT,   0, 0},
-    {39, "DIALMA",   5, CS_HEAL,      3, 8},
-    {43, "DI",       5, CS_RESURRECT, 5, 0},   // from DEAD
-    {46, "MADI",     6, CS_FULLHEAL,  0, 0},
-    {50, "KADORTO",  7, CS_RESURRECT, 7, 0},   // from DEAD or ASHES
+    { 4, "DUMAPIC",  false, 1, CS_LOCATE,     0, 0},   // DUMAPIC (P01010D)
+    {23, "DIOS",     true,  1, CS_HEAL,       1, 8},
+    {25, "MILWA",    true,  1, CS_LIGHT,     15, 0},
+    {31, "LOMILWA",  true,  3, CS_LIGHT,  32000, 0},
+    {32, "DIALKO",   true,  3, CS_CURE,       0, 0},
+    {35, "DIAL",     true,  4, CS_HEAL,       2, 8},
+    {37, "LATUMOFI", true,  4, CS_UNPOISON,   0, 0},
+    {38, "MAPORFIC", true,  4, CS_PROTECT,    0, 0},
+    {39, "DIALMA",   true,  5, CS_HEAL,       3, 8},
+    {42, "KANDI",    true,  5, CS_KANDI,      0, 0},   // KANDIFND (P01010A)
+    {43, "DI",       true,  5, CS_RESURRECT,  5, 0},   // from DEAD
+    {46, "MADI",     true,  6, CS_FULLHEAL,   0, 0},
+    {50, "KADORTO",  true,  7, CS_RESURRECT,  7, 0},   // from DEAD or ASHES
 };
+
+int &campPool(Character &c, const CampSpell &s) {
+    return s.priest ? c.priestSpells[s.group] : c.mageSpells[s.group];
+}
 
 // DODIKADO / DIKADORT: resurrection.  `mode` 5 = DI (-> 1 HP), 7 = KADORTO
 // (-> full HP, also from ASHES).
@@ -333,6 +339,58 @@ void resurrect(CampCtx &c, Character &v, int mode) {
     }
 }
 
+// ---- DUMAPIC (UTILITIE P01010D): tell the party where it is ---------
+void dumapic(CampCtx &c) {
+    auto &t = c.t();
+    t.putChar(12);
+    if (c.st.level >= 10) {
+        t.gotoXY(0, 0); t.write("ENCHANTMENTS PREVENT SPELL FROM WORKING");
+        c.ui.pressAnyKey("PRESS ANY KEY");
+        return;
+    }
+    static const char *dir[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
+    t.gotoXY(0, 0);  t.write("PARTY LOCATION:");
+    t.gotoXY(0, 2);  t.write(std::string("THE PARTY IS FACING ") + dir[c.st.pos.dir & 3] + ".");
+    char b[64];
+    std::snprintf(b, sizeof b, "YOU ARE %d SQUARES EAST AND", c.st.pos.x);
+    t.gotoXY(0, 4); t.write(b);
+    std::snprintf(b, sizeof b, "%d SQUARES NORTH OF THE STAIRS", c.st.pos.y);
+    t.gotoXY(0, 5); t.write(b);
+    std::snprintf(b, sizeof b, "TO THE CASTLE, AND %d LEVELS BELOW IT.", c.st.level);
+    t.gotoXY(0, 6); t.write(b);
+    std::printf("DUMAPIC| L%d (%d,%d) facing %s\n", c.st.level, c.st.pos.x, c.st.pos.y,
+                dir[c.st.pos.dir & 3]);
+    c.ui.pressAnyKey("L)EAVE WHEN READY");
+}
+
+// ---- KANDIFND (UTILITIE P01010A): locate a fallen companion --------
+void kandiFind(CampCtx &c) {
+    auto &t = c.t();
+    t.putChar(12);
+    t.gotoXY(0, 0); t.write("LOCATE BODIES");
+    t.gotoXY(0, 2); t.write("FIND WHO ? >");
+    std::string want = c.ui.getLine(15);
+    t.putChar(12);
+    t.gotoXY(0, 0); t.write("THE SOUL OF " + want + " IS..");
+
+    std::string res = "LOST FOREVER!";
+    for (int i = 0; i < c.roster.count(); ++i) {
+        const Character &r = c.roster.slot(i);
+        if (r.name != want) continue;
+        if (r.status == Status::Lost) { res = "LOST FOREVER!"; break; }
+        if (int(r.status) < int(Status::Dead)) { res = "STILL WITH US!"; break; }
+        if (r.lostX == 0 && r.lostY == 0 && r.lostLevel == 0) res = "IN THE MORGUE";
+        else if (r.lostLevel <= 0) res = "UNREACHABLE!";
+        else res = std::string("IN THE ") + (r.lostY > 9 ? "NORTH " : "SOUTH ") +
+                   (r.lostX > 9 ? "EAST" : "WEST") + " OF LEVEL " +
+                   std::to_string(r.lostLevel);
+        break;
+    }
+    t.gotoXY(0, 2); t.write(res);
+    std::printf("KANDI| %s: %s\n", want.c_str(), res.c_str());
+    c.ui.pressAnyKey("L)EAVE WHEN READY");
+}
+
 // `viaItem` -> USE an item: skip the spell-point / known check and cost.
 void campCast(CampCtx &c, Character &caster, int forcedNo) {
     struct Avail { const CampSpell *s; };
@@ -340,7 +398,7 @@ void campCast(CampCtx &c, Character &caster, int forcedNo) {
     for (const CampSpell &s : kCampSpells) {
         bool viaItem = forcedNo > 0;
         if (viaItem ? s.no != forcedNo
-                    : (!caster.spellKnown[s.no] || caster.priestSpells[s.group] <= 0))
+                    : (!caster.spellKnown[s.no] || campPool(caster, s) <= 0))
             continue;
         av[n++] = {&s};
         if (viaItem) break;
@@ -360,10 +418,12 @@ void campCast(CampCtx &c, Character &caster, int forcedNo) {
         int pick = k - '1';
         if (pick < 0 || pick >= n) return;
         sp = av[pick].s;
-        --caster.priestSpells[sp->group];                  // DECPRIEST
+        --campPool(caster, *sp);                           // DECPRIEST / DECMAGE
     }
     std::printf("CAMPCAST| %s casts %s\n", caster.name.c_str(), sp->name);
 
+    if (sp->kind == CS_LOCATE) { dumapic(c); return; }     // DUMAPIC
+    if (sp->kind == CS_KANDI)  { kandiFind(c); return; }   // KANDIFND
     if (sp->kind == CS_LIGHT) {
         c.st.light = sp->a + (sp->a < 100 ? c.rng.mod(15) : 0);
         c.ui.pressAnyKey("DONE!");

@@ -1,6 +1,7 @@
 // Combat core -- the COMBAT / CINIT / CUTIL / MELEE / SWINGASW family
-// (P010401 .. P010901).  Data model + one-round melee resolution; spell-
-// casting and monster spell AI are not ported yet.  See docs/combat.md.
+// (P010401 .. P010901).  Data model, the round loop, spell effects
+// (CASTASPE), the monster action AI, allied groups, FRIENDLY, D)ISPEL and
+// U)SE are all here / in combat_ui.cpp.  See docs/combat.md.
 #pragma once
 #include "wiz/scenario.h"
 #include "wiz/party.h"

@@ -19,19 +19,21 @@
 
 namespace wiz {
 
+// WIZ1 only uses kinds 1/2/4/5 plus one 8 and one 9 (see `maze-scan`);
+// 3/6/7/10/11 never appear in this scenario.
 enum ScnMsgKind {
     SCN_NONE     = 0,   // nothing
     SCN_PLAIN    = 1,   // just show the text  (AUX0 = fire count, <0 = always)
     SCN_GIVE     = 2,   // text + give item AUX0 to the first able member (TRYGET)
-    SCN_WADE     = 3,   // text + WHOWADE   (status worsening)   -- not ported
-    SCN_YESNO    = 4,   // text + Y/N -> CHKAUX0                 -- not ported
-    SCN_NEEDITEM = 5,   // ITM2PASS  (no DOMSG)                  -- not ported
-    SCN_ALIGN    = 6,   // CHKALIGN  (no DOMSG)                  -- not ported
+    SCN_WADE     = 3,   // text + WHOWADE   (status worsening)   -- absent in WIZ1
+    SCN_YESNO    = 4,   // text + Y/N -> search (fight AUX0 / give |AUX0|)  (GETYN)
+    SCN_NEEDITEM = 5,   // ITM2PASS: pass iff a member holds AUX0, else BOUNCEBK
+    SCN_ALIGN    = 6,   // CHKALIGN  (no DOMSG)                  -- absent in WIZ1
     SCN_CHKAUX0  = 7,
-    SCN_BACKSHOP = 8,   // text + bounce to a shop              -- not ported
-    SCN_LOOKOUT  = 9,
-    SCN_RIDDLE   = 10,  // text + a typed answer                -- not ported
-    SCN_FEE      = 11,  // text + pay a fee                     -- not ported
+    SCN_BACKSHOP = 8,   // text + bounce to a shop              -- not handled (1 sq)
+    SCN_LOOKOUT  = 9,   //                                      -- not handled (1 sq)
+    SCN_RIDDLE   = 10,  // text + a typed answer                -- absent in WIZ1
+    SCN_FEE      = 11,  // text + pay a fee                     -- absent in WIZ1
 };
 
 inline int scnMsgKey(int msgNo, int line) { return 15000 + 50 * msgNo + line; }

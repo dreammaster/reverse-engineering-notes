@@ -855,10 +855,10 @@ static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
     return p;
 }
 
-// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c]
+// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c|learn=m:s]
 //   grants: "m:i[:u],..."  give member m (0-based) object i (u=0 -> unidentified)
 static int cmdCampTest(int argc, char **argv) {
-    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c]"); return 2; }
+    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants] [wound=m:hp:st|cls=m:c|learn=m:s]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -866,6 +866,14 @@ static int cmdCampTest(int argc, char **argv) {
     Party party = scratchParty(sc, roster);
     StringPool sp;
     bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
+
+    {                                          // plant a body for KANDI to find
+        Character &body = roster.slot(19);
+        body.name = "GHOST";
+        body.status = Status::Dead;
+        body.inMaze = false;
+        body.lostX = 12; body.lostY = 3; body.lostLevel = 2;
+    }
 
     if (argc > 6) {
         std::string g = argv[6];
@@ -904,6 +912,13 @@ static int cmdCampTest(int argc, char **argv) {
             party.member(m).cls = Class(cl);
             deriveStats(party.member(m));
             setSpells(party.member(m));
+        }
+        m = -1; int spno = 0;
+        if (std::sscanf(argv[7], "learn=%d:%d", &m, &spno) == 2 &&
+            m >= 0 && m < party.count() && spno >= 1 && spno <= 50) {
+            Character &ch = party.member(m);
+            ch.spellKnown[spno] = true;
+            for (int g = 1; g <= 7; ++g) { ch.mageSpells[g] += 9; ch.priestSpells[g] += 9; }
         }
     }
 

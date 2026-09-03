@@ -2,8 +2,8 @@
 //
 // Ports the menu flow of CASTLE (P010A01) and SHOPS (P010201); see
 // docs/town.md.  Ported: the Castle hub, Gilgamesh's Tavern, the Adventurer's
-// Inn, Boltac's Trading Post, and the Edge of Town.  The Temple of Cant is
-// still a stub.
+// Inn, Boltac's Trading Post, the Temple of Radiant Cant (wiz/temple.h), and
+// the Edge of Town.
 #pragma once
 #include "wiz/roller_ui.h"          // Ui
 #include "wiz/party.h"

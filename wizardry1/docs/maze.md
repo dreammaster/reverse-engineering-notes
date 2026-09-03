@@ -188,15 +188,21 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   the item's true `CURSED` flag bites and a now-cursed item sticks to the
   hand (DOS falls through to the equipment display).
 * **`CASTSPEL`** (`P010C06`) — the in-camp (non-combat) spell set.
-  `S)PELL` lists the caster's known spells whose priest pool is > 0;
-  `U)SE` an item invokes its `SPELLPWR` spell for free (skipping the pool
-  check) and rolls `CHGCHANC` to transform the item to `CHANGETO` (a
-  spent scroll → object 0).  Effects: `DIOS`/`DIAL`/`DIALMA` heal `Nd8`,
-  `MADI` full heal + un-KO, `MILWA`/`LOMILWA` set `LIGHT`, `LATUMOFI`
-  unpoison, `DIALKO` cure sleep/paralysis, `MAPORFIC` `PROTECT := 2`,
-  `DI`/`KADORTO` resurrect (`DIKADORT`: `rand%100 <= 4·VIT` → OK at 1 /
-  full HP, `VIT−1` or `LOST` at VIT 3; botch worsens the status).
-  `DUMAPIC`/`KANDI`/`MALOR` delegate to `CAMPSTF` — not ported.
+  `S)PELL` lists the caster's known spells whose pool (mage or priest,
+  by spell level) is > 0; `U)SE` an item invokes its `SPELLPWR` spell for
+  free (skipping the pool check) and rolls `CHGCHANC` to transform the item
+  to `CHANGETO` (a spent scroll → object 0).  Effects: `DIOS`/`DIAL`/`DIALMA`
+  heal `Nd8`, `MADI` full heal + un-KO, `MILWA`/`LOMILWA` set `LIGHT`,
+  `LATUMOFI` unpoison, `DIALKO` cure sleep/paralysis, `MAPORFIC`
+  `PROTECT := 2`, `DI`/`KADORTO` resurrect (`DIKADORT`: `rand%100 <= 4·VIT`
+  → OK at 1 / full HP, `VIT−1` or `LOST` at VIT 3; botch worsens the
+  status).  `DUMAPIC` (`P01010D`) prints the party's facing + `(MAZEX east,
+  MAZEY north, MAZELEV down)` (level 10 → "ENCHANTMENTS PREVENT…").
+  `KANDI` (`KANDIFND` `P01010A`) reads a name and reports a fallen roster
+  character's `LOSTXYL.LOCATION` ("STILL WITH US!" / "IN THE MORGUE" /
+  "UNREACHABLE!" / "IN THE ⟨N/S⟩ ⟨E/W⟩ OF LEVEL n" / "LOST FOREVER!").
+  Still delegated to `CAMPSTF`, not ported: `MALOR` (party teleport),
+  `LOKTOFEIT` (emergency recall), `CHSPCPOW`.
 * **`EQUIP`** (`EQUIPCHR` / `ARMORPOW`, `UTILITIE` procs P010119 / P01011E —
   `engine/wiz/equip.h`).  `DOEQUIP` walks the slot types
   (weapon / armor / shield / helmet / gauntlet / misc) — for each it lists
@@ -220,12 +226,13 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   `AGE += 25`), written back to the roster, and the party empties.
 
 `wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]
-[wound=idx:hp[:status] | cls=idx:class]` (`grants` = `m:i[:u],…` gives
-member `m` object `i`, `u=0` = unidentified) dumps the final screen +
+[wound=idx:hp[:status] | cls=idx:class | learn=idx:spell]` (`grants` =
+`m:i[:u],…` gives member `m` object `i`, `u=0` = unidentified; `learn`
+teaches one spell and tops up the pools) dumps the final screen +
 `camp exit: … | order: …` and a per-member line (tests `camp_sheet` /
-`camp_flow` / `camp_disband` / `camp_equip` / `camp_cast` / `camp_trade` /
-`camp_use` / `camp_identify`).  Not ported: `CHSPCPOW` (invoke an item's
-special power), the delegating camp spells (`DUMAPIC`/`KANDI`/`MALOR`),
+`camp_flow` / `camp_disband` / `camp_equip` / `camp_cast` / `camp_dumapic`
+/ `camp_kandi` / `camp_trade` / `camp_use` / `camp_identify`).  Not ported:
+`CHSPCPOW` (invoke an item's special power), `MALOR` / `LOKTOFEIT`,
 chevrons/medals.
 `StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
 (`5001` = `HALITO`).

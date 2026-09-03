@@ -330,6 +330,22 @@ add_test(NAME camp_cast
 # CASTSPEL: the priest casts DIOS on the wounded fighter, healing him to full.
 set_tests_properties(camp_cast PROPERTIES
     PASS_REGULAR_EXPRESSION "CAMPCAST. NOBAL casts DIOS(.|\n)*1 THESUS       HP8/8")
+add_test(NAME camp_dumapic
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "2S1xLL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "" "learn=1:4")
+# DUMAPIC: the mage reads the party's location off MazeState (5,5 level 1).
+set_tests_properties(camp_dumapic PROPERTIES
+    PASS_REGULAR_EXPRESSION "DUMAPIC. L1 .5,5. facing NORTH")
+add_test(NAME camp_kandi
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "6S2GHOST\\rxLL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "" "learn=5:42")
+# KANDIFND: the priest locates the planted body (roster slot 19, level 2 NE).
+set_tests_properties(camp_kandi PROPERTIES
+    PASS_REGULAR_EXPRESSION "KANDI. GHOST: IN THE SOUTH EAST OF LEVEL 2")
 add_test(NAME camp_trade
          COMMAND wiz1 camp-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

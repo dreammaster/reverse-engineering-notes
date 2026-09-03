@@ -141,11 +141,12 @@ Decided direction (2026-09-02):
       (`engine/wiz/cemetery.h` `BADSTUFF`: die, halve gold, break items,
       empty the party, tombstone). Runs from the Edge of Town (`M`).
       `SETTIME` (`T`) tunes `TIMEDLAY` (kept in `MazeState`). Runs from the
-      camp `TRADE` / `S)PELL` (non-combat `CASTSPEL`) / `U)SE` an item /
-      `I)DENT` (`IDITEM` — Bishop identify, `rand%100 < 10+5·lvl`, curse
-      backfire). Edge of Town (`M`). `wiz1 maze` / `maze-sdl` /
-      `maze-play-test` / `maze-scan` / `camp-test` / `cemetery-test` /
-      `pickup-test`. TODO: camp `CHSPCPOW`, the delegating camp spells.
+      camp `TRADE` / `S)PELL` (non-combat `CASTSPEL`, incl. `DUMAPIC`
+      locate + `KANDI` locate-the-fallen) / `U)SE` an item / `I)DENT`
+      (`IDITEM` — Bishop identify, `rand%100 < 10+5·lvl`, curse backfire).
+      Edge of Town (`M`). `wiz1 maze` / `maze-sdl` / `maze-play-test` /
+      `maze-scan` / `camp-test` / `cemetery-test` / `pickup-test`.
+      TODO: camp `CHSPCPOW`, `MALOR` / `LOKTOFEIT` (teleport/recall).
 - [x] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
