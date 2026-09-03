@@ -30,6 +30,7 @@ add_library(wizcore STATIC
   src/combat.cpp
   src/combat_ui.cpp
   src/rewards.cpp
+  src/camp_ui.cpp
   src/town_ui.cpp
   src/platform_null.cpp
   src/platform_sdl.cpp
@@ -187,3 +188,26 @@ add_test(NAME scnmsg_room
 # the party the BLUE RIBBON (object 100).
 set_tests_properties(scnmsg_room PROPERTIES
     PASS_REGULAR_EXPRESSION "SCNMSG. AS THE PARTY ENTERS(.|\n)*poss1 #100")
+add_test(NAME camp_sheet
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# inspect member 1: DSPSTATS renders the sheet with real stats.
+set_tests_properties(camp_sheet PROPERTIES
+    PASS_REGULAR_EXPRESSION "STRENGTH 17   GOLD 185")
+add_test(NAME camp_flow
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "R23456L"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# REORDER moves THESUS to the back, then leave to the maze.
+set_tests_properties(camp_flow PROPERTIES
+    PASS_REGULAR_EXPRESSION "camp exit: TO-MAZE . order: TEMPEST,LYSANDER,TREON,FLAMUS,NOBAL,THESUS")
+add_test(NAME camp_disband
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "DYY"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+set_tests_properties(camp_disband PROPERTIES
+    PASS_REGULAR_EXPRESSION "camp exit: DISBANDED")

@@ -18,7 +18,7 @@ public:
     // Positional key helpers (keys are not stored in the scenario records).
     static int monsterNameKey(int idx, int field = 2) { return 13000 + 4 * idx + field; }
     static int objectNameKey(int idx, int field = 1)  { return 14000 + 2 * idx + field; }
-    static int spellNameKey(int idx)                  { return 5001 + idx; }
+    static int spellNameKey(int idx)                  { return 5000 + idx; }  // 5001 = HALITO
     static int messageKey(int msgNo, int line)        { return 20000 + 50 * msgNo + line; }
 
     int keyLo() const { return keyLo_; }

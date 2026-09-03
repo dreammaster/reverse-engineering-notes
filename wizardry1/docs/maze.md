@@ -100,13 +100,13 @@ ASCII after every step (CMake test `maze_3d`).
 it (via `Ui::setOverlay`) top-left, the command list at col 13, and `PRSTATS`
 (party panel: `# NAME  A-CLS  AC  HP  HPMAX/STATUS`, sorted alive-first) on
 rows 18-23.  Movement: `F`/`W`/↑ forward, `K` kick, `L`/`A`/← left, `R`/`D`/→
-right, `S` re-list party, `Q` quick-plot, `Esc` leave.  `SPECSQAR` handles
-stairs (Y/N → change level; target level 0 → back to town), chutes,
-teleporters, spinners, darkness, pits/damage (`ROCKWATR`: agility check vs
-`rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`), the river
-(`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`), and `SCNMSG`.
-Not ported: `UPDATEHP` poison/regen, `SETTIME`, camp/inspect (`C`/`I` return
-to town).
+right, `S` re-list party, `Q` quick-plot, `C` camp (below), `Esc` leave.
+`SPECSQAR` handles stairs (Y/N → change level; target level 0 → back to
+town), chutes, teleporters, spinners, darkness, pits/damage (`ROCKWATR`:
+agility check vs `rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`),
+the river (`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`), and
+`SCNMSG`.  Not ported: `UPDATEHP` poison/regen, `SETTIME`, `I` inspect
+(`SPECIALS.INSPECT` — look for secret doors).
 
 Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET>
 <SCENARIO.DATA> [level]` (SDL) / `wiz1 maze-play-test <CHARSET> <SCENARIO.DATA>
@@ -136,3 +136,31 @@ fee (message shown, side effect **not ported**).  The `AUX0` fire counter
 holds `SCENARIO.DATA` read-only.  Tests `scnmsg_text` / `scnmsg_room`
 (stepping into L4's reward room shows Trebor's speech and hands the party
 the **BLUE RIBBON**, object 100).
+
+## CAMP  (`CAMP` P010C01 — `engine/wiz/camp_ui.{h,cpp}`)
+
+Maze `C` → `runCamp` → `CampExit {ToMaze, Disbanded, WindowClosed}` (in the
+DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
+
+* **`CAMPMEN2`** — the party list (`# NAME  A-CLS  AC  HITS  ±  MAX/STATUS`,
+  the `±` from `HEALPTS − POISNAMT`) and `R)EORDER  E)QUIP  D)ISBAND
+  #) INSPECT  L)EAVE`.
+* **`INSPECT` / `DSPSTATS`** — the full sheet: the six attributes, gold /
+  exp / level / age (`AGE div 52`), HP / AC / status (`& POISONED`),
+  `DSPSPELS` (the 7 mage + 7 priest slot counts) and `DSPITEMS` (the pack in
+  two columns with the `* - ? #` flag from equipped / cursed / identified /
+  `CLASSUSE`).  Sub-menu by status: OK gets `E)QUIP D)ROP T)RADE R)EAD
+  S)PELL U)SE I)DENT L)EAVE`, otherwise the short form.  Ported: `R)EAD`
+  (list known spell names) and `D)ROP` (`DROPITEM` — refuses cursed /
+  equipped).  `E`/`T`/`S`/`U`/`I` say "not available in camp yet".
+* **`REORDER`** (`UTILITIE` proc 27) — type the current slot numbers in the
+  new order; a selection sort by that permutation swaps the party members
+  (`Party::swapMembers` moves the character copy and roster index together).
+* **`DISBAND`** — confirm twice → leave the maze for town.
+
+`wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]` dumps the
+final screen + `camp exit: … | order: …` (tests `camp_sheet` / `camp_flow`
+/ `camp_disband`).  Not ported: `EQUIP` (`GAMEUTIL`), `USEITEM`, `DOTRADE`,
+`IDENTIFY`, `CASTSPEL` (the non-combat spell set), chevrons/medals.
+`StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
+(`5001` = `HALITO`).

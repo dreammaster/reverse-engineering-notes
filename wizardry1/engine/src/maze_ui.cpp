@@ -4,6 +4,7 @@
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/specials.h"
+#include "wiz/camp_ui.h"
 #include "wiz/combat_ui.h"
 
 #include <algorithm>
@@ -437,8 +438,14 @@ MazeExit runMaze(Ui &ui, Party &party, const Scenario &sc, const StringPool *sp,
             st.quickPlot = !st.quickPlot;
             msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
             c.needDraw = true;
-        } else if (k == 'C' || k == 'I') {
-            return MazeExit::ToTown;                 // CAMP / INSPECT not ported
+        } else if (k == 'C') {
+            switch (runCamp(c.ui, c.party, c.sc, c.sp, c.rng)) {
+                case CampExit::WindowClosed: return MazeExit::WindowClosed;
+                case CampExit::Disbanded:    return MazeExit::ToTown;
+                case CampExit::ToMaze:       runInit(c); c.needDraw = true; break;
+            }
+        } else if (k == 'I') {
+            return MazeExit::ToTown;                 // SPECIALS.INSPECT not ported
         }
     }
 }

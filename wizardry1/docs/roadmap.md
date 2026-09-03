@@ -130,9 +130,12 @@ Decided direction (2026-09-02):
       = `FIGHTS`/`CLROOMFG`; stairs/chutes/teleport/spinner/dark/pit/river/
       buttons; `SCNMSG` scripted messages — `engine/wiz/specials.h`, text in
       ASCII.KRN at `15000 + 50*msgNo + line`, subtype 2 `TRYGET` item grant
-      ported). Runs from the Edge of Town (`M`). `wiz1 maze` / `maze-sdl` /
-      `maze-play-test` / `maze-scan`. Combat hand-off done. TODO: `UPDATEHP`
-      regen/poison, `SETTIME`, camp, the other `SCNMSG` side effects.
+      ported; **`CAMP`** — `engine/wiz/camp_ui.{h,cpp}`: `CAMPMEN2` party
+      list, `DSPSTATS` sheet, `REORDER`, `DROP`, `READ` spellbooks,
+      `DISBAND`). Runs from the Edge of Town (`M`). `wiz1 maze` / `maze-sdl`
+      / `maze-play-test` / `maze-scan` / `camp-test`. Combat hand-off done.
+      TODO: `UPDATEHP` regen/poison, `SETTIME`, camp `EQUIP`/`USE`/`TRADE`/
+      `IDENTIFY`/non-combat spells, the other `SCNMSG` side effects.
 - [~] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
@@ -146,8 +149,9 @@ Decided direction (2026-09-02):
       `ENCOUNTR`. `wiz1 combat-test` (CMake tests `combat_fight` /
       `combat_spell` / `reward_drop`). TODO: breath, allied-group summons,
       `FRIENDLY` parley, the cemetery scene.
-- [ ] Continue: `CAMP` → save/restore (`PLAYER.DATA`) → the `XCEMETRY` scene
-      → the remaining `SCNMSG` side effects (`WHOWADE`/`GETYN`/riddles/fees).
+- [ ] Continue: camp `EQUIP` (`GAMEUTIL`) → save/restore (`PLAYER.DATA`) →
+      the `XCEMETRY` scene → the remaining `SCNMSG` side effects
+      (`WHOWADE`/`GETYN`/riddles/fees).
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

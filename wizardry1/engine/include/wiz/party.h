@@ -39,6 +39,9 @@ public:
     // UPDCHARS: everyone leaves (used by Edge of Town -> Training / Leave).
     void disband(Roster &roster);
 
+    // REORDER: swap two members (character copy + roster index together).
+    void swapMembers(int a, int b);
+
     // After the Temple heals a roster record, refresh any party member that
     // maps to it -- keeping the party copy's gold (tithe deductions) and
     // in-maze flag.  (DOS CANT brackets its work with proc 12 / proc 13.)

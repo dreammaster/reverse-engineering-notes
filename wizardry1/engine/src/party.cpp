@@ -2,6 +2,7 @@
 #include "wiz/roster.h"
 
 #include <cstdio>
+#include <utility>
 
 namespace wiz {
 
@@ -32,6 +33,12 @@ void Party::remove(Roster &roster, int i) {
     }
     --count_;
     disk_[count_] = -1;
+}
+
+void Party::swapMembers(int a, int b) {
+    if (a < 0 || b < 0 || a >= count_ || b >= count_ || a == b) return;
+    std::swap(chars_[a], chars_[b]);
+    std::swap(disk_[a], disk_[b]);
 }
 
 void Party::disband(Roster &roster) {

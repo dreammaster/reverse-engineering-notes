@@ -23,6 +23,7 @@
 #include "wiz/maze3d.h"
 #include "wiz/maze_ui.h"
 #include "wiz/specials.h"
+#include "wiz/camp_ui.h"
 #include "wiz/combat_ui.h"
 
 #include <algorithm>
@@ -837,6 +838,42 @@ static Party scratchParty(const Scenario &sc, Roster &roster, int n = 6) {
     return p;
 }
 
+// wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]
+static int cmdCampTest(int argc, char **argv) {
+    if (argc < 5) { std::puts("camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN]"); return 2; }
+    Font font;
+    Scenario sc;
+    if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    Roster roster;
+    Party party = scratchParty(sc, roster);
+    StringPool sp;
+    bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
+
+    auto plat = makeNullPlatform(unescape(argv[4]), "");
+    Rng rng;
+    Ui ui(*plat, font);
+    CampExit e = runCamp(ui, party, sc, haveSp ? &sp : nullptr, rng);
+
+    TextScreen &t = ui.ts();
+    for (int y = 0; y < 24; ++y) {
+        std::string row;
+        for (int x = 0; x < 40; ++x) row += t.at(x, y);
+        while (!row.empty() && row.back() == ' ') row.pop_back();
+        std::printf("|%s\n", row.c_str());
+    }
+    static const char *ex[] = {"TO-MAZE", "DISBANDED", "WINDOW-CLOSED"};
+    std::string order;
+    for (int i = 0; i < party.count(); ++i) {
+        if (i) order += ',';
+        order += party.member(i).name;
+    }
+    std::printf("camp exit: %s | order: %s\n", ex[int(e)], order.c_str());
+    for (int i = 0; i < party.count(); ++i)
+        std::printf("  %d %-12s poss%d\n", i + 1, party.member(i).name.c_str(),
+                    party.member(i).possCount);
+    return 0;
+}
+
 // wiz1 maze-sdl <CHARSET> <SCENARIO.DATA> [level] -- play the maze with the HUD.
 static int cmdMazeSdl(int argc, char **argv) {
     if (argc < 4) { std::puts("maze-sdl <CHARSET> <SCENARIO.DATA> [level]"); return 2; }
@@ -938,6 +975,7 @@ int main(int argc, char **argv) {
     if (cmd == "maze-sdl") return cmdMazeSdl(argc, argv);
     if (cmd == "maze-play-test") return cmdMazePlayTest(argc, argv);
     if (cmd == "combat-test") return cmdCombatTest(argc, argv);
+    if (cmd == "camp-test") return cmdCampTest(argc, argv);
     if (cmd == "rng") return cmdRng(argc, argv);
     if (cmd == "roll") return cmdRoll(argc, argv);
     if (cmd == "roster") return cmdRoster(argv[2]);
