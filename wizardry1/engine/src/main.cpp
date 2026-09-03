@@ -22,6 +22,7 @@
 #include "wiz/runner.h"
 #include "wiz/maze3d.h"
 #include "wiz/maze_ui.h"
+#include "wiz/specials.h"
 #include "wiz/combat_ui.h"
 
 #include <algorithm>
@@ -741,6 +742,51 @@ static void printCell(const MazeLevel &m, const MazePos &p) {
 }
 
 // wiz1 maze <SCENARIO.DATA> [level 1-10] [keyscript F/L/R/K/Q]
+// wiz1 maze-scan <SCENARIO.DATA> [ASCII.KRN] -- list every special-square
+// descriptor across all maze levels (SCNMSG descriptors resolve their text).
+static int cmdMazeScan(int argc, char **argv) {
+    if (argc < 3) { std::puts("maze-scan <SCENARIO.DATA> [ASCII.KRN]"); return 2; }
+    Scenario sc;
+    if (!sc.load(readFile(argv[2]))) return 1;
+    StringPool sp;
+    bool haveSp = argc > 3 && sp.load(readFile(argv[3]));
+    for (int lv = 0; lv < sc.count(Scenario::Maze); ++lv) {
+        MazeLevel m;
+        if (!m.load(sc.record(Scenario::Maze, lv))) continue;
+        for (int d = 0; d < 16; ++d) {
+            Square ty = m.squareType(d);
+            if (ty == Square::Normal) continue;
+            int cells = 0, cx = -1, cy = -1;
+            for (int y = 0; y < 20; ++y)
+                for (int x = 0; x < 20; ++x)
+                    if (m.squareExtra(x, y) == d && m.squareAt(x, y) == ty) {
+                        ++cells; if (cx < 0) { cx = x; cy = y; }
+                    }
+            if (!cells) continue;
+            std::printf("L%d d%-2d ty=%-2d aux0=%-6d aux1=%-6d aux2=%-4d  x%d,y%d (%d cells)\n",
+                        lv + 1, d, int(ty), m.aux0(d), m.aux1(d), m.aux2(d), cx, cy, cells);
+            if (ty == Square::ScnMsg && haveSp) {
+                auto lines = scnMsgLines(sp, m.aux1(d));
+                for (auto &ln : lines) std::printf("       | %s\n", ln.text.c_str());
+            }
+        }
+    }
+    return 0;
+}
+
+// wiz1 scnmsg-test <ASCII.KRN> <msgNo> -- print one scripted message.
+static int cmdScnMsgTest(int argc, char **argv) {
+    if (argc < 4) { std::puts("scnmsg-test <ASCII.KRN> <msgNo>"); return 2; }
+    StringPool sp;
+    if (!sp.load(readFile(argv[2]))) return 1;
+    int no = std::atoi(argv[3]);
+    auto lines = scnMsgLines(sp, no);
+    std::printf("msg %d: %d line(s), key base %d\n", no, int(lines.size()), scnMsgKey(no, 0));
+    for (auto &ln : lines)
+        std::printf("%s| %s\n", ln.center ? "C" : " ", ln.text.c_str());
+    return 0;
+}
+
 static int cmdMaze(int argc, char **argv) {
     if (argc < 3) { std::puts("maze <SCENARIO.DATA> [level] [keyscript]"); return 2; }
     Scenario sc;
@@ -812,24 +858,34 @@ static int cmdMazeSdl(int argc, char **argv) {
 
 // Headless: script a walk through the maze and print the ending state.
 static int cmdMazePlayTest(int argc, char **argv) {
-    if (argc < 5) { std::puts("maze-play-test <CHARSET> <SCENARIO.DATA> <keyscript>"); return 2; }
+    if (argc < 5) { std::puts("maze-play-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [level x y dir]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
     Roster roster;
     Party party = scratchParty(sc, roster);
 
-    auto plat = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
+    StringPool sp;
+    bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
+
+    auto plat = makeNullPlatform(unescape(argv[4]), "");
     Rng rng;
     Ui ui(*plat, font);
     MazeState st;
-    MazeExit e = runMaze(ui, party, sc, nullptr, rng, st);
+    if (argc > 9) {
+        st.level = std::atoi(argv[6]);
+        st.pos = MazePos{std::atoi(argv[7]), std::atoi(argv[8]), std::atoi(argv[9])};
+    }
+    MazeExit e = runMaze(ui, party, sc, haveSp ? &sp : nullptr, rng, st);
     static const char *ex[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
     std::printf("exit: %s   pos (%d,%d) %s  level %d\n", ex[int(e)],
                 st.pos.x, st.pos.y, dirName(st.pos.dir), st.level);
     for (int i = 0; i < party.count(); ++i) {
         const Character &c = party.member(i);
-        std::printf("  %s HP %d/%d  status %d\n", c.name.c_str(), c.hpLeft, c.hpMax, int(c.status));
+        std::printf("  %s HP %d/%d  status %d  poss%d", c.name.c_str(),
+                    c.hpLeft, c.hpMax, int(c.status), c.possCount);
+        for (int k = 0; k < c.possCount; ++k) std::printf(" #%d", c.poss[k].itemIndex);
+        std::printf("\n");
     }
     return 0;
 }
@@ -877,6 +933,8 @@ int main(int argc, char **argv) {
     if (argc < 2) return usage();
     std::string cmd = argv[1];
     if (cmd == "maze") return cmdMaze(argc, argv);
+    if (cmd == "maze-scan") return cmdMazeScan(argc, argv);
+    if (cmd == "scnmsg-test") return cmdScnMsgTest(argc, argv);
     if (cmd == "maze-sdl") return cmdMazeSdl(argc, argv);
     if (cmd == "maze-play-test") return cmdMazePlayTest(argc, argv);
     if (cmd == "combat-test") return cmdCombatTest(argc, argv);

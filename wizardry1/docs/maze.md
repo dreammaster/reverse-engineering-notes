@@ -59,7 +59,7 @@ through open edges) and `CLROOMFG` clears the room you spawn in.
 | BUTTONZ | `BUTTONS` | pick a letter A..(A+AUX1-AUX2) → go to level `AUX2 + letter` |
 | ROCKWATE | — | `MAZELEV := -99; XGOTO := XNEWMAZE` (river — kicks you out) |
 | FIZZLE | — | `FIZZLES := 1` (spells fail here) |
-| SCNMSG | `DOSCNMSG` | `XGOTO := XSCNMSG` (`SPECIALS` shows a scripted message) |
+| SCNMSG | `DOSCNMSG` → `SPCMISC` | scripted message (ported, see below): `AUX2` = subtype, `AUX1` = message #, `AUX0` = fire counter / payload |
 | ENCOUNTE | `CHENCOUN` | fixed fight from `AUX2` (+ `rand mod AUX1`), `AUX0` = remaining count |
 
 `QUIETXFR` only changes level (via `EXITRUN` → `XNEWMAZE`) when
@@ -104,12 +104,35 @@ right, `S` re-list party, `Q` quick-plot, `Esc` leave.  `SPECSQAR` handles
 stairs (Y/N → change level; target level 0 → back to town), chutes,
 teleporters, spinners, darkness, pits/damage (`ROCKWATR`: agility check vs
 `rand%25 + level`, damage `AUX0 + AUX2·(rand%AUX1 + 1)`), the river
-(`ROCKWATE` → level 1), and buttons.  Encounters are detected (`rand%99=35`,
-an unfought room, a kick into a `FIGHTS` square) but combat is not ported yet
-— the room is just cleared and the walk continues.  Not ported: `UPDATEHP`
-poison/regen (needs `POISNAMT`/`HEALPTS` on `Character`), `SETTIME`, the
-`SCNMSG` scripted messages, and camp/inspect (`C`/`I` return to town).
+(`ROCKWATE` → level 1), buttons, encounters (→ `runCombat`), and `SCNMSG`.
+Not ported: `UPDATEHP` poison/regen, `SETTIME`, camp/inspect (`C`/`I` return
+to town).
 
 Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET>
 <SCENARIO.DATA> [level]` (SDL) / `wiz1 maze-play-test <CHARSET> <SCENARIO.DATA>
-<keyscript>` (headless; tests `maze_play`, `town_to_maze`).
+<keyscript> [ASCII.KRN] [level x y dir]` (headless; tests `maze_play`,
+`town_to_maze`, `scnmsg_room`).  `wiz1 maze-scan <SCENARIO.DATA> [ASCII.KRN]`
+lists every special-square descriptor (with SCNMSG text) across all levels.
+
+## SCNMSG — scripted messages  (`SPECIALS` `SPCMISC` / `DOMSG`)
+
+`engine/wiz/specials.h` + `maze_ui.cpp runScnMsg`.  `DOSCNMSG` just stashes
+the square's descriptor index and exits to `SPECIALS`; the DOS `SPCMISC`
+reads `AUX2` = subtype, `AUX1` = message number, `AUX0` = a counter/payload.
+
+The text lives in **`ASCII.KRN`** (not the Apple build's `SCENARIO.MESGS`
+disk file) at **`key = 15000 + 50·msgNo + line`** — recovered from DOS
+`SPECIALS` proc 14 (`LDCI 15000; SLDC 50; …; MPI; ADI`).  `DOMSG` (proc 16)
+reads lines from that base until `GetStr` answers `**ERR**` (an absent key).
+A leading `@` / `^` centres the line, `$` forces it left; all are stripped.
+`showScrollText` pages 12 lines at a time (`[RET] FOR MORE`).
+
+Subtypes (`AUX2`): `0` none · `1` plain · `2` `TRYGET` — give object `AUX0`
+to the first member who can carry it (ported) · `3` `WHOWADE` · `4` `GETYN`
+· `5` item-gate · `6` align-gate · `8` bounce-to-shop · `10` riddle · `11`
+fee (message shown, side effect **not ported**).  The `AUX0` fire counter
+(kinds 1/4/8: `0` dead, `N>0` fires `N`× then the square goes `NORMAL`,
+`N<0` persistent) is tracked in `MazeState::scnMsgFired` since the engine
+holds `SCENARIO.DATA` read-only.  Tests `scnmsg_text` / `scnmsg_room`
+(stepping into L4's reward room shows Trebor's speech and hands the party
+the **BLUE RIBBON**, object 100).

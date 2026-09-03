@@ -83,8 +83,10 @@ plain[k] = (raw[k] - 67*(KN mod 51) - 23*k) mod 256
 
 Key ranges: `600–1500` UI / combat templates, `5000+` spell names,
 `10000+` class names, `13000 + 4*monsterIdx + {0 unidSing,1 unidPlur,2
-sing,3 plur}`, `14000 + 2*objIdx + {0 unid,1 real}`, `20000 + 50*msgNo +
-line` scenario messages. Full dump: [`docs/strings.txt`](strings.txt).
+sing,3 plur}`, `14000 + 2*objIdx + {0 unid,1 real}`, and **`15000 + 50*msgNo + line`**
+scripted `SCNMSG` messages (`SPECIALS` proc 14; one string per line, read
+until an absent key → DOS `GetStr` answers `"**ERR**"`; a leading `@`/`^`
+centres the line, `$` left-aligns). Full dump: [`docs/strings.txt`](strings.txt).
 
 *Open:* a few quest-item names carry an embedded token byte (post-decipher
 `0x77`) for word-join / " OF " — not yet mapped; everything else is clean.

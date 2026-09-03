@@ -171,3 +171,19 @@ add_test(NAME reward_drop
 # win, open the ZREWARD chest: real CALCKILL xp, an item drop, a gold share.
 set_tests_properties(reward_drop PROPERTIES
     PASS_REGULAR_EXPRESSION "FOUND - SWORD(.|\n)*summary: result=WON[^\n]*items=[1-9]")
+add_test(NAME scnmsg_text
+         COMMAND wiz1 scnmsg-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)
+# message 107 (key 20350+) = Trebor's speech, 16 lines gathered until absent.
+set_tests_properties(scnmsg_text PROPERTIES
+    PASS_REGULAR_EXPRESSION "msg 107: 16 line.s., key base 20350(.|\n)*BLUE RIBBON")
+add_test(NAME scnmsg_room
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "\\r\\r\\r\\r\\e"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 4 11 10 0)
+# step into L4's reward room: the scripted message shows and TRYGET hands
+# the party the BLUE RIBBON (object 100).
+set_tests_properties(scnmsg_room PROPERTIES
+    PASS_REGULAR_EXPRESSION "SCNMSG. AS THE PARTY ENTERS(.|\n)*poss1 #100")

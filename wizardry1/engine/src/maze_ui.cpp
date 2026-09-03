@@ -2,11 +2,14 @@
 #include "wiz/maze.h"
 #include "wiz/maze3d.h"
 #include "wiz/scenario.h"
+#include "wiz/string_pool.h"
+#include "wiz/specials.h"
 #include "wiz/combat_ui.h"
 
 #include <algorithm>
 #include <cstdio>
 #include <string>
+#include <vector>
 
 namespace wiz {
 namespace {
@@ -177,6 +180,94 @@ bool quietXfr(MazeCtx &c, int sq, MazeExit &out) {
     return false;
 }
 
+// ---- SCNMSG (SPECIALS SPCMISC / DOMSG) ------------------------------
+
+// DOMSG: page a scripted message over the text area.  Rows 3..14, 12 lines
+// per page; '@'/'^' lines are centred in the 40-col grid.  The maze view is
+// hidden for the duration; every page ends on a keypress.
+void showScrollText(MazeCtx &c, const std::vector<ScnLine> &lines, bool /*pressRet*/) {
+    auto &t = c.t();
+    c.ui.setOverlay(nullptr);
+    constexpr int kTop = 3, kRows = 12;
+    int shown = 0;
+    do {
+        t.resetWindow();
+        t.putChar(12);
+        int n = std::min(kRows, int(lines.size()) - shown);
+        for (int i = 0; i < n; ++i) {
+            const ScnLine &ln = lines[shown + i];
+            int col = ln.center ? std::max(0, (40 - int(ln.text.size())) / 2) : 1;
+            t.gotoXY(col, kTop + i);
+            t.write(ln.text.substr(0, 39));
+            std::printf("SCNMSG| %s\n", ln.text.c_str());
+        }
+        shown += n;
+        bool more = shown < int(lines.size());
+        t.gotoXY(12, kTop + kRows + 2);
+        t.write(more ? "[RET] FOR MORE" : "PRESS [RET]");
+        c.ui.refresh();
+        c.ui.pressAnyKey("");
+        if (c.ui.quit()) return;
+    } while (shown < int(lines.size()));
+    runInit(c);                 // repaint the HUD frame the message covered
+    c.needDraw = true;
+}
+
+// TRYGET: hand item `itemIdx` to the first member who can carry it.
+void scnGiveItem(MazeCtx &c, int itemIdx) {
+    int nObj = c.sc.count(Scenario::Object);
+    if (itemIdx < 0 || itemIdx >= nObj) return;
+    for (int i = 0; i < c.party.count(); ++i) {
+        Character &ch = c.party.member(i);
+        if (ch.possCount >= 8) continue;
+        bool dup = false;
+        for (int k = 0; k < ch.possCount; ++k) dup = dup || ch.poss[k].itemIndex == itemIdx;
+        if (dup) continue;
+        ch.poss[ch.possCount++] = Possession{false, false, false, itemIdx};
+        std::string nm;
+        bool ok = false;
+        if (c.sp) nm = c.sp->get(StringPool::objectNameKey(itemIdx, 0), &ok);
+        msg(c, ch.name + " GOT " + (ok ? nm : "AN ITEM"));
+        return;
+    }
+}
+
+// SPCMISC for a ScnMsg descriptor.  Returns true (out set) only if the maze
+// session ends (it never does here, but keep the specSquare contract).
+bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
+    (void)out;
+    int kind  = c.m.aux2(sq);
+    int msgNo = c.m.aux1(sq);
+    int aux0  = c.m.aux0(sq);
+    if (kind == SCN_NONE) return false;
+
+    // SPCMISC's AUX0 gate (one-shot / countdown / persistent), session-tracked
+    // since the engine holds SCENARIO.DATA read-only.
+    int fkey = c.st.level * 100 + sq;
+    int fired = c.st.scnMsgFired.count(fkey) ? c.st.scnMsgFired[fkey] : 0;
+    if (!scnMsgMayFire(kind, aux0, fired)) return false;
+    if (scnMsgCounts(kind)) c.st.scnMsgFired[fkey] = fired + 1;
+
+    if (c.sp) {
+        std::vector<ScnLine> lines = scnMsgLines(*c.sp, msgNo);
+        if (!lines.empty()) showScrollText(c, lines, true);
+    }
+
+    switch (kind) {
+        case SCN_PLAIN:
+            break;
+        case SCN_GIVE:
+            scnGiveItem(c, aux0);        // AUX0 = the item index (TRYGET)
+            break;
+        default:
+            // WHOWADE / GETYN / bounce-to-shop / riddle / fee side effects
+            // are not ported yet -- the message itself is shown.
+            msg(c, "(SCNMSG action " + std::to_string(kind) + " not handled)");
+            break;
+    }
+    return false;
+}
+
 // ---- SPECSQAR (P010E10) ---------------------------------------------
 
 // Returns true (with `out` set) if the square ends the maze session.
@@ -246,7 +337,8 @@ bool specSquare(MazeCtx &c, bool initTurn, MazeExit &out) {
             break;
         }
         case Square::ScnMsg:
-            msg(c, "THERE IS WRITING ON THE WALL... (unhandled)");
+            if (!initTurn) break;
+            if (runScnMsg(c, sq, out)) return true;
             break;
         case Square::Encounter: {
             // CHENCOUN: a fixed fight, ENEMYINX = AUX2 + rand%AUX1
