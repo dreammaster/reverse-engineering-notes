@@ -13,7 +13,10 @@ class Scenario;
 class StringPool;
 class Roster;
 
-enum class CampExit { ToMaze, Disbanded, WindowClosed };
+// ToMaze also covers a MALOR teleport that landed on a valid square (the
+// caller must reload the level when `st.level` changed); ToTown is a MALOR
+// that dumped the party at the castle (or the moat / shops).
+enum class CampExit { ToMaze, Disbanded, WindowClosed, ToTown };
 
 // Runs the camp menu until the player leaves (L) or disbands (D).  The party
 // is mutated in place (equip / drop / trade / cast).  On DISBAND every member

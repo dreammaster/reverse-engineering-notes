@@ -936,13 +936,14 @@ static int cmdCampTest(int argc, char **argv) {
         while (!row.empty() && row.back() == ' ') row.pop_back();
         std::printf("|%s\n", row.c_str());
     }
-    static const char *ex[] = {"TO-MAZE", "DISBANDED", "WINDOW-CLOSED"};
+    static const char *ex[] = {"TO-MAZE", "DISBANDED", "WINDOW-CLOSED", "TO-TOWN"};
     std::string order;
     for (int i = 0; i < party.count(); ++i) {
         if (i) order += ',';
         order += party.member(i).name;
     }
-    std::printf("camp exit: %s | order: %s\n", ex[int(e)], order.c_str());
+    std::printf("camp exit: %s | order: %s | pos: %d,%d L%d\n", ex[int(e)], order.c_str(),
+                mst.pos.x, mst.pos.y, mst.level);
     for (int i = 0; i < party.count(); ++i) {
         const Character &ch = party.member(i);
         std::printf("  %d %-12s HP%d/%d st%d %lldgp poss%d AC%d", i + 1, ch.name.c_str(),

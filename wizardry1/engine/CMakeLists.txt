@@ -346,6 +346,22 @@ add_test(NAME camp_kandi
 # KANDIFND: the priest locates the planted body (roster slot 19, level 2 NE).
 set_tests_properties(camp_kandi PROPERTIES
     PASS_REGULAR_EXPRESSION "KANDI. GHOST: IN THE SOUTH EAST OF LEVEL 2")
+add_test(NAME camp_malor
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "2S1EED\\rxLL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "" "learn=1:19")
+# MALOR: the mage teleports the party +2 east / +1 down -> (7,5) level 2.
+set_tests_properties(camp_malor PROPERTIES
+    PASS_REGULAR_EXPRESSION "MALOR. .5,5,L1. -> .7,5,L2.(.|\n)*camp exit: TO-MAZE[^\n]*pos: 7,5 L2")
+add_test(NAME camp_malor_moat
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "2S1U\\rxLL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "" "learn=1:19")
+# MALOR straight up -> level 0 away from the origin = the castle moat -> town.
+set_tests_properties(camp_malor_moat PROPERTIES
+    PASS_REGULAR_EXPRESSION "CASTLE MOAT(.|\n)*camp exit: TO-TOWN")
 add_test(NAME camp_trade
          COMMAND wiz1 camp-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

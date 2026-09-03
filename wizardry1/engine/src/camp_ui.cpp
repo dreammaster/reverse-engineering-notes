@@ -22,6 +22,8 @@ struct CampCtx {
     const StringPool *sp;
     Rng &rng;
     MazeState &st;
+    bool done = false;                  // MALOR ended the delve
+    CampExit exit = CampExit::ToMaze;
     TextScreen &t() { return ui.ts(); }
 };
 
@@ -288,7 +290,7 @@ void doTrade(CampCtx &c, int fromIdx) {
 // ---- CASTSPEL (P010C06): the in-camp (non-combat) spell set -------
 // Effect kinds -- the DOS dispatch keyed by spell hash.
 enum CampSpellKind { CS_HEAL, CS_FULLHEAL, CS_LIGHT, CS_UNPOISON, CS_CURE,
-                     CS_PROTECT, CS_RESURRECT, CS_LOCATE, CS_KANDI };
+                     CS_PROTECT, CS_RESURRECT, CS_LOCATE, CS_KANDI, CS_MALOR };
 struct CampSpell {
     int no; const char *name; bool priest; int group; CampSpellKind kind; int a; int b;
 };
@@ -296,6 +298,7 @@ struct CampSpell {
 // dice; CS_LIGHT a = LIGHT value.
 const CampSpell kCampSpells[] = {
     { 4, "DUMAPIC",  false, 1, CS_LOCATE,     0, 0},   // DUMAPIC (P01010D)
+    {19, "MALOR",    false, 7, CS_MALOR,      0, 0},   // MALOR   (P01010E)
     {23, "DIOS",     true,  1, CS_HEAL,       1, 8},
     {25, "MILWA",    true,  1, CS_LIGHT,     15, 0},
     {31, "LOMILWA",  true,  3, CS_LIGHT,  32000, 0},
@@ -391,6 +394,84 @@ void kandiFind(CampCtx &c) {
     c.ui.pressAnyKey("L)EAVE WHEN READY");
 }
 
+// ---- MALOR (UTILITIE P01010E): party teleport by displacement ------
+void malor(CampCtx &c) {
+    auto &t = c.t();
+    const int nLevels = c.sc.count(Scenario::Maze);     // 10 -- MALOR can't reach it
+    int de = 0, dn = 0, du = 0;                         // east / north / down
+    for (;;) {
+        t.putChar(12);
+        t.gotoXY(0, 0); t.write("PARTY TELEPORT:");
+        t.gotoXY(0, 2); t.write("N S E W U D SET DISPLACEMENT,");
+        t.gotoXY(0, 3); t.write("[RETURN] TELEPORT, [ESC] CHICKEN OUT");
+        char b[32];
+        std::snprintf(b, sizeof b, "# SQUARES EAST  = %d", de); t.gotoXY(0, 5); t.write(b);
+        std::snprintf(b, sizeof b, "# SQUARES NORTH = %d", dn); t.gotoXY(0, 6); t.write(b);
+        std::snprintf(b, sizeof b, "# SQUARES DOWN  = %d", du); t.gotoXY(0, 7); t.write(b);
+        c.ui.refresh();
+        int k = c.ui.getKey();
+        if (c.ui.quit()) { c.done = true; c.exit = CampExit::WindowClosed; return; }
+        if (k == KEY_ESC) return;                       // chicken out -- no move
+        if (k == KEY_RETURN) break;
+        switch (k) {
+            case 'N': ++dn; break;  case 'S': --dn; break;
+            case 'E': ++de; break;  case 'W': --de; break;
+            case 'D': ++du; break;  case 'U': --du; break;
+        }
+    }
+
+    if (c.st.level + du == nLevels) {                   // BOUNCE
+        c.ui.pressAnyKey("YOU BOUNCED BACK TO WHERE YOU WERE!");
+        return;
+    }
+    int nx = c.st.pos.x + de, ny = c.st.pos.y + dn, nl = c.st.level + du;
+    std::printf("MALOR| (%d,%d,L%d) -> (%d,%d,L%d)\n",
+                c.st.pos.x, c.st.pos.y, c.st.level, nx, ny, nl);
+
+    auto wipe = [&](const char *l1, const char *l2, Status s) {
+        t.putChar(12);
+        t.gotoXY(0, 0); t.write(l1);
+        t.gotoXY(0, 1); t.write(l2);
+        for (int i = 0; i < c.party.count(); ++i) {
+            Character &m = c.party.member(i);
+            m.inMaze = false;
+            if (int(m.status) < int(s)) m.status = s;
+        }
+        c.ui.pressAnyKey("PRESS ANY KEY");
+    };
+
+    if ((nx < 0 || nx > 19 || ny < 0 || ny > 19 || nl > nLevels) && nl > 0) {
+        wipe("YOU LANDED IN SOLID ROCK OUTSIDE THE",
+             "DUNGEON - YOU ARE LOST FOREVER!", Status::Lost);
+        c.done = true; c.exit = CampExit::ToMaze;       // -> loop-top -> CEMETARY
+        return;
+    }
+    if (nl < 0) {
+        wipe("YOU MATERIALIZED IN MID-AIR AND FELL", "TO A PAINFUL DEATH!", Status::Dead);
+        c.done = true; c.exit = CampExit::ToMaze;
+        return;
+    }
+    if (nl == 0) {
+        if (nx == 0 && ny == 0) {
+            c.ui.pressAnyKey("YOU RETURN TO THE CASTLE.");
+        } else {
+            t.putChar(12);
+            t.gotoXY(0, 0); t.write("YOU APPEARED IN THE CASTLE MOAT AND");
+            t.gotoXY(0, 1); t.write("PROBABLY DROWNED!");
+            for (int i = 0; i < c.party.count(); ++i) {
+                Character &m = c.party.member(i);
+                if (int(m.status) < int(Status::Dead) && c.rng.mod(25) > m.attrib[AGI])
+                    m.status = Status::Dead;
+            }
+            c.ui.pressAnyKey("PRESS ANY KEY");
+        }
+        c.done = true; c.exit = CampExit::ToTown;
+        return;
+    }
+    c.st.pos.x = nx; c.st.pos.y = ny; c.st.level = nl;  // valid landing (1 .. 9)
+    c.done = true; c.exit = CampExit::ToMaze;
+}
+
 // `viaItem` -> USE an item: skip the spell-point / known check and cost.
 void campCast(CampCtx &c, Character &caster, int forcedNo) {
     struct Avail { const CampSpell *s; };
@@ -424,6 +505,7 @@ void campCast(CampCtx &c, Character &caster, int forcedNo) {
 
     if (sp->kind == CS_LOCATE) { dumapic(c); return; }     // DUMAPIC
     if (sp->kind == CS_KANDI)  { kandiFind(c); return; }   // KANDIFND
+    if (sp->kind == CS_MALOR)  { malor(c); return; }       // MALOR
     if (sp->kind == CS_LIGHT) {
         c.st.light = sp->a + (sp->a < 100 ? c.rng.mod(15) : 0);
         c.ui.pressAnyKey("DONE!");
@@ -531,8 +613,8 @@ bool inspectChar(CampCtx &c, int idx) {
         if (k == 'D') { dropItem(c, ch); continue; }
         if (k == 'E') { runEquip(c, ch); continue; }
         if (k == 'T') { doTrade(c, idx); continue; }
-        if (ok && k == 'S') { campCast(c, ch, 0); continue; }
-        if (ok && k == 'U') { doUse(c, ch); continue; }
+        if (ok && k == 'S') { campCast(c, ch, 0); if (c.done) return true; continue; }
+        if (ok && k == 'U') { doUse(c, ch); if (c.done) return true; continue; }
         if (ok && k == 'I') { doIdentify(c, ch); continue; }
     }
 }
@@ -577,6 +659,7 @@ CampExit runCamp(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
         if (k == 'L') return CampExit::ToMaze;
         if (k >= '1' && k <= '0' + party.count()) {
             if (!inspectChar(c, k - '1')) return CampExit::WindowClosed;
+            if (c.done) return c.exit;          // MALOR teleported the party
             continue;
         }
         if (k == 'R') { reorder(c); continue; }

@@ -201,8 +201,14 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   `KANDI` (`KANDIFND` `P01010A`) reads a name and reports a fallen roster
   character's `LOSTXYL.LOCATION` ("STILL WITH US!" / "IN THE MORGUE" /
   "UNREACHABLE!" / "IN THE ⟨N/S⟩ ⟨E/W⟩ OF LEVEL n" / "LOST FOREVER!").
-  Still delegated to `CAMPSTF`, not ported: `MALOR` (party teleport),
-  `LOKTOFEIT` (emergency recall), `CHSPCPOW`.
+  `MALOR` (`P01010E`) reads an `N/S/E/W/U/D` displacement then `TELEPORT`:
+  a new level equal to the level count bounces; out of bounds with
+  `level > 0` → `ROCK` (whole party `LOST` → cemetery); `level < 0` →
+  `VOLCANO` (all `DEAD`); `level = 0` → the castle at the origin, else
+  the `MOAT` (`rand%25 > AGI` drowns) — both return to town.  `camp_ui`
+  signals these with `CampExit::ToTown` / a level-crossing `ToMaze` (the
+  maze reloads the level + fight map).  Still delegated to `CAMPSTF`, not
+  ported: `LOKTOFEIT` (emergency recall), `CHSPCPOW`.
 * **`EQUIP`** (`EQUIPCHR` / `ARMORPOW`, `UTILITIE` procs P010119 / P01011E —
   `engine/wiz/equip.h`).  `DOEQUIP` walks the slot types
   (weapon / armor / shield / helmet / gauntlet / misc) — for each it lists
@@ -231,9 +237,9 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
 teaches one spell and tops up the pools) dumps the final screen +
 `camp exit: … | order: …` and a per-member line (tests `camp_sheet` /
 `camp_flow` / `camp_disband` / `camp_equip` / `camp_cast` / `camp_dumapic`
-/ `camp_kandi` / `camp_trade` / `camp_use` / `camp_identify`).  Not ported:
-`CHSPCPOW` (invoke an item's special power), `MALOR` / `LOKTOFEIT`,
-chevrons/medals.
+/ `camp_kandi` / `camp_malor` / `camp_malor_moat` / `camp_trade` /
+`camp_use` / `camp_identify`).  Not ported: `CHSPCPOW` (invoke an item's
+special power), `LOKTOFEIT`, chevrons/medals.
 `StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
 (`5001` = `HALITO`).
 

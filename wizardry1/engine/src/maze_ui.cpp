@@ -683,10 +683,19 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
             msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
             c.needDraw = true;
         } else if (k == 'C') {
+            int wasLevel = st.level;
             switch (runCamp(c.ui, c.party, c.roster, c.sc, c.sp, c.rng, st)) {
                 case CampExit::WindowClosed: return MazeExit::WindowClosed;
                 case CampExit::Disbanded:    return MazeExit::ToTown;
-                case CampExit::ToMaze:       runInit(c); c.needDraw = true; break;
+                case CampExit::ToTown:       return MazeExit::ToTown;   // MALOR to the castle / moat
+                case CampExit::ToMaze:
+                    if (st.level != wasLevel) {            // MALOR crossed levels
+                        c.m.load(c.sc.record(Scenario::Maze, st.level - 1));
+                        c.fm.build(c.m, c.rng);
+                        c.fm.clearRoom(c.m, st.pos.x, st.pos.y);
+                    }
+                    runInit(c); c.needDraw = true;
+                    break;
             }
         } else if (k == 'I') {
             runInspect(c);                           // SPECIALS INSPECT / PICKUP
