@@ -10251,3 +10251,69 @@ matching each of `RunInventoryInteraction`'s own `modd` branches one
 for one. This build's `RunInventoryInteraction` has no separate
 existence, the same historical-fusion pattern already found repeatedly
 elsewhere (`cc_run_code`/`offset_over_inv`/`unload_old_room`/etc.).
+
+### `MergeObject`'s two open leads close: `construct_object_gfx`/`put_sprite_256`, plus `actsps`/`trans_mode`
+
+`MergeObject`'s own entry had two unmatched helpers flagged as
+"candidates for a future round": `sub_410AFA(obn)` (guessed as
+"plausibly this build's simpler predecessor of `construct_object_gfx`,
+not chased further") and `sub_410771(x,y,array1[obn])` (an unmatched
+draw helper, `array1` itself only guessed at as "plausibly `actsps[]`,
+not independently confirmed by name"). Both close this round, and both
+turn out to be much closer matches to their 2011 namesakes than the
+original hedge suggested.
+
+`sub_410AFA` is `construct_object_gfx(int aa, int*, int*, bool)`
+(`AC.CPP:7933-8155`) -- confirmed first by an exact caller match (both
+of THIS build's two call sites, `MergeObject` and
+`prepare_characters_for_drawing`, land on 2011's own exact two
+non-recursive callers), then by full algorithm-shape confirmation: a
+cache-validity check (`array1[aa]` bitmap present and dimension-matched
+against `spritewidth[]`/`spriteheight[]` indexed by
+`RoomObject.num`@+0x0C) that recreates the cached bitmap via
+`create_bitmap_ex`+`clear_to_color` only when needed, then blits the
+current sprite in via the already-confirmed `SpriteCache::operator[]`.
+This is exactly 2011's own `objcache[aa].image`/`objs[aa].num`
+validity check, minus FIVE entire subsystems 2011 additionally has:
+object room-scaling (`OBJF_USEROOMSCALING`), tinting
+(`OBJF_HASTINT`/`get_local_tint`), sprite mirroring (`VFLG_FLIPSPRITE`),
+the whole `gfxDriver`/hardware-accelerated branch, and the
+`objcache[]`/`actsps[]` split itself (this build fuses both roles into
+one array). This resolves MergeObject's own "unconfirmed scaling
+behavior" caution outright: object scaling is now CONFIRMED ABSENT,
+joining character scaling as another already-established absence.
+
+`sub_410771` is `put_sprite_256(int xxx,int yyy,block piccy)`
+(`AC.CPP:7472-7521`) -- an unusually thorough match given the function
+predates the `#ifdef USE_15BIT_FIX` label's own later addition in
+2011's history: the depth-mismatch conversion branch (create a
+depth-matched temp bitmap, blit the sprite in, punch mask-color holes
+through an 8-bit sprite's transparent pixels via a `getpixel`/`putpixel`
+loop, then `wputblock` the result) matches source instruction group for
+instruction group, and the "depths already match" fallback matches
+source's own implicit else-branch: a `trans_mode`-gated
+`set_trans_blender`+`draw_trans_sprite` call vs. a plain `wputblock`.
+Identifies three new Allegro library-boundary functions in one pass
+(`bmp_bpp`, `set_trans_blender`, `draw_trans_sprite` -- all left at the
+public-API-boundary per this project's third-party scope rule, their
+own internals not chased) and one new AGS global, `trans_mode`
+(`dword_523348`, checked against literal `0xFF` and `0`, matching
+source's own `trans_mode>=255`/`trans_mode!=0` checks). One drift
+point: this build's trans-blend condition tests only `bmp_bpp(piccy)>1`,
+dropping 2011's 4th guard `bmp_bpp(abuf)>1`. `dword_51D2F0` (tested
+`>1` in the same chain, plausibly `GameSetupStructBase.color_depth`
+matching source's `game.color_depth>1`) is left as a plausible but
+NOT independently confirmed lead -- not checked against that field's
+own established `+0x9FD8` struct offset this round.
+
+`array1` renames to `actsps` accordingly (its role at both of its own
+draw-call sites -- `MergeObject`'s direct `put_sprite_256` call and
+`prepare_characters_for_drawing`'s `add_to_sprite_list` call -- matches
+2011's own `actsps[]`/`actspsbmp[]` indexing one for one, even though
+here it also silently does `objcache[]`'s caching job since that split
+doesn't exist yet). Bonus capacity finding from the post-rename
+re-export: `actsps` is declared as a FIXED 60-slot array
+(`dd 3Ch dup(?)`), unlike 2011's dynamically `malloc`'d `block *actsps`
+pointer -- another fixed-vs-dynamic architectural drift matching this
+project's broader pattern, the specific rationale for 60 not chased
+further this round.

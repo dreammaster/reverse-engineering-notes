@@ -1050,9 +1050,9 @@
   "is_named": true
  },
  {
-  "name": "sub_410771",
+  "name": "put_sprite_256",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_410913",
@@ -1065,9 +1065,9 @@
   "is_named": false
  },
  {
-  "name": "sub_410AFA",
+  "name": "construct_object_gfx",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_410C6A",

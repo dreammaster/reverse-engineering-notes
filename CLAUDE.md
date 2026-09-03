@@ -2902,6 +2902,20 @@ disassembly work.
   `RunInventoryInteraction(iit,modd)` (`AC.CPP:5616-5633`) fused
   inline rather than called separately — `iii=iit` matches
   `evblocknum=iit;` (`AC.CPP:5620`) exactly.
+- **`MergeObject`'s two open leads close: `construct_object_gfx`/
+  `put_sprite_256`, plus `actsps`/`trans_mode`.** `sub_410AFA` is
+  `construct_object_gfx` — exact caller match (both call sites match
+  2011's own two exactly) plus full algorithm-shape confirmation,
+  minus five subsystems (object scaling, tinting, mirroring, hardware
+  accel, the `objcache`/`actsps` split) — resolving MergeObject's own
+  "unconfirmed scaling" caution: object scaling is CONFIRMED ABSENT.
+  `sub_410771` is `put_sprite_256` — an unusually thorough match to
+  2011's `#ifdef USE_15BIT_FIX` color-depth-conversion path, picking
+  up 3 new Allegro boundary functions (`bmp_bpp`/`set_trans_blender`/
+  `draw_trans_sprite`) and a new global, `trans_mode`. `array1` renames
+  to `actsps`, confirmed as a FIXED 60-slot array (`dd 3Ch dup(?)`)
+  vs. 2011's dynamically `malloc`'d pointer — another fixed-vs-dynamic
+  drift.
 
 ## Third-party library identification (Task #10)
 
