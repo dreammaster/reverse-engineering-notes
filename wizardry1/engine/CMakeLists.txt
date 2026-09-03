@@ -232,6 +232,24 @@ add_test(NAME scnmsg_room
 # the party the BLUE RIBBON (object 100).
 set_tests_properties(scnmsg_room PROPERTIES
     PASS_REGULAR_EXPRESSION "SCNMSG. AS THE PARTY ENTERS(.|\n)*poss1 #100")
+add_test(NAME scnmsg_getyn
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "\\rY\\e"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 1 13 3 0)
+# GETYN: SEARCH the chicken-cat statue -> TRYGET grants object 97.
+set_tests_properties(scnmsg_getyn PROPERTIES
+    PASS_REGULAR_EXPRESSION "THESUS[^\n]*poss1 #97")
+add_test(NAME scnmsg_gate
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "\\r\\e"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 8 7 0)
+# ITM2PASS: no quest item -> BOUNCEBK shoves the party back to (8,6).
+set_tests_properties(scnmsg_gate PROPERTIES
+    PASS_REGULAR_EXPRESSION "BRONZE SMOKE(.|\n)*pos .8,6. NORTH  level 2")
 add_test(NAME camp_sheet
          COMMAND wiz1 camp-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

@@ -146,15 +146,23 @@ reads lines from that base until `GetStr` answers `**ERR**` (an absent key).
 A leading `@` / `^` centres the line, `$` forces it left; all are stripped.
 `showScrollText` pages 12 lines at a time (`[RET] FOR MORE`).
 
-Subtypes (`AUX2`): `0` none · `1` plain · `2` `TRYGET` — give object `AUX0`
-to the first member who can carry it (ported) · `3` `WHOWADE` · `4` `GETYN`
-· `5` item-gate · `6` align-gate · `8` bounce-to-shop · `10` riddle · `11`
-fee (message shown, side effect **not ported**).  The `AUX0` fire counter
-(kinds 1/4/8: `0` dead, `N>0` fires `N`× then the square goes `NORMAL`,
-`N<0` persistent) is tracked in `MazeState::scnMsgFired` since the engine
-holds `SCENARIO.DATA` read-only.  Tests `scnmsg_text` / `scnmsg_room`
-(stepping into L4's reward room shows Trebor's speech and hands the party
-the **BLUE RIBBON**, object 100).
+Subtypes (`AUX2`), all that appear in WIZ1 ported:
+* `0` none · `1` plain
+* `2` `TRYGET` — give object `AUX0` to the first member who can carry it
+* `4` `GETYN` — show the message, then `SEARCH (Y/N)?`; `Y` → if `AUX0 > 0`
+  a fight against monster `AUX0` (`attk012 = 0`), else `TRYGET(|AUX0|)`
+* `5` `ITM2PASS` — a quest-item gate: silently pass if any member holds
+  object `AUX0`, else `BOUNCEBK` (shoved back one square) + the message
+* `3` `WHOWADE` · `6` align-gate · `8` bounce-to-shop · `9` lookout · `10`
+  riddle · `11` fee — **not ported** (none occur in WIZ1)
+
+`AUX0` fixups from `SPCMISC`: the counter (kinds 1/4/8: `0` dead, `N>0`
+fires `N`× then `NORMAL`, `N<0` persistent) is tracked in
+`MazeState::scnMsgFired`; a persistently-encoded `AUX0 ≤ -1000` carries its
+real payload at `AUX0 + 1000`.  Tests `scnmsg_text` / `scnmsg_room` (L4's
+reward room → Trebor's speech + the **BLUE RIBBON**) / `scnmsg_getyn`
+(searching the chicken-cat statue grants object 97) / `scnmsg_gate` (no
+quest item → bounced back).
 
 ## CAMP  (`CAMP` P010C01 — `engine/wiz/camp_ui.{h,cpp}`)
 

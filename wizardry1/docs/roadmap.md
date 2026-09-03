@@ -131,8 +131,9 @@ Decided direction (2026-09-02):
       loop + HUD** (`engine/wiz/maze_ui.h`: `runMaze` → `MazeExit`; `FightMap`
       = `FIGHTS`/`CLROOMFG`; stairs/chutes/teleport/spinner/dark/pit/river/
       buttons; `SCNMSG` scripted messages — `engine/wiz/specials.h`, text in
-      ASCII.KRN at `15000 + 50*msgNo + line`, subtype 2 `TRYGET` item grant
-      ported; **`CAMP`** — `engine/wiz/camp_ui.{h,cpp}`: `CAMPMEN2` party
+      ASCII.KRN at `15000 + 50*msgNo + line`; all WIZ1 subtypes ported —
+      plain, `TRYGET`, `GETYN` (search → fight / item), `ITM2PASS` (quest-
+      item gate + `BOUNCEBK`); **`CAMP`** — `engine/wiz/camp_ui.{h,cpp}`: `CAMPMEN2` party
       list, `DSPSTATS` sheet, `REORDER`, `DROP`, `READ` spellbooks,
       `DISBAND`, **`EQUIP`** — `engine/wiz/equip.h` `EQUIPCHR`/`ARMORPOW`,
       DOS `TOBJREC` equip tail decoded, run on entering the maze too).
@@ -166,8 +167,8 @@ Decided direction (2026-09-02):
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [ ] Continue: the remaining `SCNMSG` side effects → camp `IDENTIFY`
-      (`CAMPSTF`) → allied combat *groups* (`ENMYTEAM`).
+- [ ] Continue: camp `IDENTIFY` (`CAMPSTF`) → allied combat *groups*
+      (`ENMYTEAM`) → the surprise free round → `DODISPEL`.
 - [ ] Validate against the real interpreter: same PRNG, same seeded outcomes.
 
 ## Phase 4 — ScummVM engine

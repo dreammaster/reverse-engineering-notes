@@ -346,10 +346,24 @@ void scnGiveItem(MazeCtx &c, int itemIdx) {
     }
 }
 
-// SPCMISC for a ScnMsg descriptor.  Returns true (out set) only if the maze
-// session ends (it never does here, but keep the specSquare contract).
+// BOUNCEBK: shove the party back one square (opposite their facing) and show
+// the descriptor's message.
+void bounceBack(MazeCtx &c, int msgNo) {
+    static const int dx[4] = {0, -1, 0, 1};      // N,E,S,W -> step backward
+    static const int dy[4] = {-1, 0, 1, 0};
+    c.st.pos.x = wrap20(c.st.pos.x + dx[c.st.pos.dir]);
+    c.st.pos.y = wrap20(c.st.pos.y + dy[c.st.pos.dir]);
+    c.needDraw = true;
+    if (c.sp) {
+        std::vector<ScnLine> lines = scnMsgLines(*c.sp, msgNo);
+        if (!lines.empty()) showScrollText(c, lines, true);
+    }
+    runInit(c);
+}
+
+// SPCMISC for a ScnMsg descriptor.  Returns true (out set) if the maze
+// session ends (a GETYN "search" that leads into a fight).
 bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
-    (void)out;
     int kind  = c.m.aux2(sq);
     int msgNo = c.m.aux1(sq);
     int aux0  = c.m.aux0(sq);
@@ -362,6 +376,20 @@ bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
     if (!scnMsgMayFire(kind, aux0, fired)) return false;
     if (scnMsgCounts(kind)) c.st.scnMsgFired[fkey] = fired + 1;
 
+    // SPCMISC's fixup: a persistently-encoded AUX0 (<= -1000) carries its real
+    // payload at AUX0 + 1000.
+    int eff = (scnMsgCounts(kind) && aux0 <= -1000) ? aux0 + 1000 : aux0;
+
+    // ITM2PASS: no message unless the party lacks item `eff` and is bounced.
+    if (kind == SCN_NEEDITEM) {
+        bool have = false;
+        for (int i = 0; i < c.party.count() && !have; ++i)
+            for (int k = 0; k < c.party.member(i).possCount; ++k)
+                if (c.party.member(i).poss[k].itemIndex == eff) have = true;
+        if (!have) bounceBack(c, msgNo);
+        return false;
+    }
+
     if (c.sp) {
         std::vector<ScnLine> lines = scnMsgLines(*c.sp, msgNo);
         if (!lines.empty()) showScrollText(c, lines, true);
@@ -371,11 +399,26 @@ bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
         case SCN_PLAIN:
             break;
         case SCN_GIVE:
-            scnGiveItem(c, aux0);        // AUX0 = the item index (TRYGET)
+            scnGiveItem(c, eff);                 // AUX0 = the item index (TRYGET)
             break;
+        case SCN_YESNO: {                        // GETYN
+            auto &t = c.t();
+            t.resetWindow();
+            t.gotoXY(0, 22); t.write("SEARCH (Y/N) ?");
+            c.ui.refresh();
+            if (c.ui.menu("YN") == 'Y') {
+                if (eff > 0) {                   // AUX0 -> ENEMYINX, into combat
+                    if (runFight(c, eff, out, 0)) return true;
+                } else {
+                    scnGiveItem(c, eff < 0 ? -eff : eff);
+                }
+            }
+            runInit(c);
+            c.needDraw = true;
+            break;
+        }
         default:
-            // WHOWADE / GETYN / bounce-to-shop / riddle / fee side effects
-            // are not ported yet -- the message itself is shown.
+            // bounce-to-shop / lookout / riddle / fee -- none appear in WIZ1.
             msg(c, "(SCNMSG action " + std::to_string(kind) + " not handled)");
             break;
     }
