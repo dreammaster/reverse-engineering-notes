@@ -190,6 +190,67 @@ void monsterAttack(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
     }
 }
 
+// ---- DOBREATH (P010906): a breath weapon hits the whole party -------
+
+void monsterBreath(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
+                   Rng &rng, CombatLog &log) {
+    if (gi < 0 || gi >= bt.nGroups) return;
+    MonGroup &mg = bt.grp[gi];
+    if (ii < 0 || ii >= mg.count) return;
+    (void)sc;
+    log.push_back("IT BREATHES!");
+    int base = mg.hp[ii] / 2;                        // TEMP04[BATI].HPLEFT DIV 2
+    for (int i = 0; i < party.count(); ++i) {
+        Character &v = party.member(i);
+        if (int(v.status) >= int(Status::Dead)) continue;
+        int dam = base;
+        if (rng.mod(20) >= v.luckSkill[3]) dam = (dam + 1) / 2;   // luck save
+        // WEPVSTY3[1][BREATHE] breath-type resist is not modelled
+        v.hpLeft -= dam;
+        char b[48];
+        std::snprintf(b, sizeof b, "%s TAKES %d", v.name.c_str(), dam);
+        log.push_back(b);
+        if (v.hpLeft <= 0) {
+            v.hpLeft = 0;
+            if (int(v.status) < int(Status::Dead)) v.status = Status::Dead;
+            log.push_back(v.name + " IS SLAIN!");
+        }
+    }
+}
+
+// ---- DORUN (P010912): the monster instance flees -------------------
+
+void monsterFlee(Battle &bt, int gi, int ii, CombatLog &log) {
+    if (gi < 0 || gi >= bt.nGroups) return;
+    MonGroup &mg = bt.grp[gi];
+    if (ii < 0 || ii >= mg.count || int(mg.status[ii]) >= int(Status::Dead)) return;
+    mg.status[ii] = Status::Dead;
+    mg.hp[ii] = 0;
+    mg.alive--;
+    mg.fled++;
+    log.push_back("IT FLEES!");
+}
+
+// ---- YELLHELP (P010910): call an ally into the group --------------
+
+void monsterYell(Battle &bt, const Scenario &sc, int gi, Rng &rng, CombatLog &log) {
+    if (gi < 0 || gi >= bt.nGroups) return;
+    MonGroup &mg = bt.grp[gi];
+    MonsterRec r = mg.rec(sc);
+    log.push_back("IT CALLS FOR HELP!");
+    if (mg.count >= 9 || rng.mod(200) > 10 * r.hpDice()) {
+        log.push_back("BUT NONE COMES!");
+        return;
+    }
+    int k = mg.count;
+    mg.hp[k] = std::max(1, calcHp(r.hpDice(), r.hpFac(), r.hpAdd(), rng));
+    mg.status[k] = Status::OK;
+    mg.acMod[k] = 0;
+    ++mg.count;
+    ++mg.alive;
+    log.push_back("AND IT IS HEARD!");
+}
+
 // ---- outcome / rewards ----------------------------------------------
 
 bool allMonstersDead(const Battle &bt) {

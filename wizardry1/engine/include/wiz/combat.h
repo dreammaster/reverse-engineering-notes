@@ -19,6 +19,7 @@ struct MonGroup {
     int  enemyId = -1;
     bool identified = false;
     int  count = 0, alive = 0;
+    int  fled = 0;              // DORUN -- fled, not killed (no XP for these)
     int  hp[9] = {};
     Status status[9] = {};      // OK / Asleep / Dead
     int  acMod[9] = {};
@@ -59,6 +60,15 @@ void partyAttack(Battle &bt, const Scenario &sc, Character &atk, int tg,
 // living party member.
 void monsterAttack(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
                    Rng &rng, CombatLog &log);
+
+// SWINGASW monster actions:
+//   DOBREATH  -- (HPLEFT/2) to every party member, halved by a luck save
+//   DORUN     -- the instance flees (removed, not counted as a kill)
+//   YELLHELP  -- add a fresh ally to the group (if there is room + it is heard)
+void monsterBreath(Battle &bt, const Scenario &sc, Party &party, int gi, int ii,
+                   Rng &rng, CombatLog &log);
+void monsterFlee(Battle &bt, int gi, int ii, CombatLog &log);
+void monsterYell(Battle &bt, const Scenario &sc, int gi, Rng &rng, CombatLog &log);
 
 bool allMonstersDead(const Battle &bt);
 bool partyCanFight(const Party &party);          // any OK / Afraid member

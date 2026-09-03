@@ -69,9 +69,16 @@ all-enemies) and an effect `kind`:
 | `K_ACSELF` / `K_ACPARTY` / `K_ACPEN` | AC buff (`bt.pAcMod`/`bt.acMod2`) / enemy AC penalty (`grp.acMod`) | `MODAC` |
 | `K_CUREPARA` / `K_UNPOISON` / `K_SETHP` | cure paralysis / poison / `MABADI` set-HP | — |
 
-Monster casters: `combat_ui.cpp monsterTurn` — a monster with `MAGSPELS` /
-`PRISPELS` > 0 casts (`rand%3==0`) a level-appropriate offensive spell instead
-of meleeing; effects land on the party and are resisted by `LUCKSKIL`.
+Monster turn: `combat_ui.cpp monsterTurn` follows `CUTIL`'s action priority
+— **spell** (a `MAGSPELS`/`PRISPELS` monster, `rand%3==0`, a
+level-appropriate offensive spell resisted by `LUCKSKIL`) → **breath**
+(`BREATHE > 0`, `rand%100 < 60` → `DOBREATH`: `HPLEFT/2` to every party
+member, halved on a `rand%20 ≥ LUCKSKIL[3]` save) → **yell for help**
+(`SPPC[6]`, `<5` alive, `rand%100 < 75` → `YELLHELP`: add a fresh ally
+unless the group is 9 or `rand%200 > 10·HD`) → **flee** (`SPPC[5]`, the
+party outnumbers the group, `rand%100 < 65` → `DORUN`: the instance leaves,
+`MonGroup::fled++` so it earns no XP) → **melee** (`DAM2ME`).  Tests
+`combat_breath` / `combat_yell` / `combat_flee`.
 
 Party casters: `doCast` lists the caster's known spells whose group pool
 (`mageSpells` / `priestSpells`, refilled by `setSpells` at rest / combat
@@ -160,8 +167,9 @@ and each `GOOD` member has a `rand%2000 == 565` chance to turn `EVIL`.
 The weak PC RNG rarely lands `z` in the window on its own, so
 `combat-test`'s `parleyThresh` arg overrides `thresh` for the tests.
 
-**Not ported:** `DOBREATH` (dragon breath), allied-group summons / `YELLHELP`,
-item use in combat, and the cemetery scene.  Spell
+**Not ported:** `DODISPEL` (a Lord/Bishop monster dissolving *summoned*
+allies), allied *groups* (`ENMYTEAM` chaining — only a single group is
+built), the `SURPRISE` free round, in-combat item use.  Spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
 opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
 `MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`

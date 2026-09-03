@@ -147,22 +147,41 @@ bool doCast(CombatCtx &c, Character &ch, bool &quit) {
     return true;
 }
 
-// A monster's turn: cast (if a spellcaster) or melee.
+// A monster's turn -- CUTIL's action priority: spell > breath > yell for
+// help > flee > melee.
 void monsterTurn(CombatCtx &c, int g, int m) {
     MonsterRec r = c.bt.grp[g].rec(c.sc);
+    CombatLog l;
+
     int ml = std::max(r.magSpels(), r.priSpels());
-    if (ml > 0 && c.rng.mod(3) == 0) {
-        // pick a rough offensive spell for the monster's caster level
+    if (ml > 0 && c.rng.mod(3) == 0) {              // ENEMYSPL
         int sp = r.priSpels() > 0
-                     ? (ml >= 4 ? 41 /*LITOKAN*/ : ml >= 2 ? 24 /*BADIOS*/ : 24)
+                     ? (ml >= 4 ? 41 /*LITOKAN*/ : 24 /*BADIOS*/)
                      : (ml >= 3 ? 7 /*MAHALITO*/ : ml >= 1 ? 3 /*KATINO*/ : 1);
-        CombatLog l;
         l.push_back("A MONSTER CASTS A SPELL!");
         castSpell(c.bt, c.sc, c.party, true, r.hpDice(), sp, 0, -1, -1, c.rng, l);
         c.say(l);
         return;
     }
-    CombatLog l;
+    if (r.breathe() > 0 && c.rng.mod(100) < 60) {   // BREATHES
+        monsterBreath(c.bt, c.sc, c.party, g, m, c.rng, l);
+        c.say(l);
+        return;
+    }
+    if (((r.sppc() >> 6) & 1) && c.bt.grp[g].alive < 5 && c.rng.mod(100) < 75) {  // YELLHELP
+        monsterYell(c.bt, c.sc, g, c.rng, l);
+        c.say(l);
+        return;
+    }
+    int partyStanding = 0;
+    for (int i = 0; i < c.party.count(); ++i)
+        if (int(c.party.member(i).status) < int(Status::Dead)) ++partyStanding;
+    if (((r.sppc() >> 5) & 1) && partyStanding > c.bt.grp[g].alive &&
+        c.rng.mod(100) < 65) {                      // RUNENMY
+        monsterFlee(c.bt, g, m, l);
+        c.say(l);
+        return;
+    }
     monsterAttack(c.bt, c.sc, c.party, g, m, c.rng, l);
     c.say(l);
 }
