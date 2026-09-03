@@ -100,6 +100,12 @@ pool cost) and rolls `rand%100 < CHGCHANC` to transform the item to
 `CHANGETO` (a spent scroll → object 0, `IDENTIF` cleared).  Test
 `combat_useitem`.
 
+`LOKTOFEIT` (`SWINGASW` `SLOKTOFE` P010818, a priest-6 spell, `K_RECALL`):
+`rand%100 > 2·casterLevel` → "LOKTOFEIT FAILS!"; otherwise every member
+drops their whole pack and all but the low 16 bits of their gold, and the
+fight ends — `Battle::recalled`, `CombatResult::Recalled`, and the maze
+maps it to `MazeExit::ToTown`.  Test `combat_loktofeit`.
+
 Party casters: `doCast` lists the caster's known spells whose group pool
 (`mageSpells` / `priestSpells`, refilled by `setSpells` at rest / combat
 start) is > 0, prompts for a target, decrements the pool and calls
@@ -161,7 +167,7 @@ by class; teleport and alarm bubble back to the caller.  Tests
 
 `runCombat(Ui&, Party&, Scenario&, StringPool*, Rng&, enemyInx, mazeLevel,
 attk012=2, transcript=nullptr, parleyThresh=-1)` → `CombatResult {Won, Fled,
-PartyWiped, WindowClosed, Friendly}`.  `INITATTK` order: `buildEncounter` →
+PartyWiped, WindowClosed, Friendly, Recalled}`.  `INITATTK` order: `buildEncounter` →
 the surprise roll (`rand%100 > 80` → **1** the party surprised the monsters,
 a free party round; else a second roll → **2** the monsters surprised the
 party, a free monster round; else **0**) → `FRIENDLY` (below).  The round: each
@@ -191,8 +197,10 @@ The weak PC RNG rarely lands `z` in the window on its own, so
 
 **Not ported:** spell
 effects are modelled from `DOMAGE`/`DOPRIEST` behaviour, not yet diffed
-opcode-for-opcode against `CASTASPE`; a few utility spells (`DUMAPIC`,
-`MALOR`, `CALFO`, `LATUMAPI`, `KANDI`) are `K_NOP`.  `ENMYREWD`'s `UNIQUE`
+opcode-for-opcode against `CASTASPE`; a few spells do nothing **in a fight**
+(`MILWA`/`LOMILWA` light, `CALFO` trap-ID — handled in the chest UI,
+`LATUMAPI` monster-ID, and `DUMAPIC`/`MALOR`/`KANDI` — cast these from
+camp).  `ENMYREWD`'s `UNIQUE`
 decrement/write-back (a killed unique monster becoming its non-unique form)
 is skipped — the engine holds `SCENARIO.DATA` read-only.  The chest `ALARM`
 re-fight recurses into `runCombat` once rather than looping via `CHSTALRM`.

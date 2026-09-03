@@ -146,15 +146,18 @@ reads lines from that base until `GetStr` answers `**ERR**` (an absent key).
 A leading `@` / `^` centres the line, `$` forces it left; all are stripped.
 `showScrollText` pages 12 lines at a time (`[RET] FOR MORE`).
 
-Subtypes (`AUX2`), all that appear in WIZ1 ported:
+Subtypes (`AUX2`), every one that appears in WIZ1 is ported:
 * `0` none · `1` plain
 * `2` `TRYGET` — give object `AUX0` to the first member who can carry it
 * `4` `GETYN` — show the message, then `SEARCH (Y/N)?`; `Y` → if `AUX0 > 0`
   a fight against monster `AUX0` (`attk012 = 0`), else `TRYGET(|AUX0|)`
 * `5` `ITM2PASS` — a quest-item gate: silently pass if any member holds
   object `AUX0`, else `BOUNCEBK` (shoved back one square) + the message
-* `3` `WHOWADE` · `6` align-gate · `8` bounce-to-shop · `9` lookout · `10`
-  riddle · `11` fee — **not ported** (none occur in WIZ1)
+* `8` `BCK2SHOP` — show the message, then `MAZELEV := 0` (straight to town)
+* `9` `LOOKOUT` — no message; seed `FIGHTMAP` over a `(2·AUX0+1)²` block
+  around the party (wrapping), then clear the party's own cell
+* `3` `WHOWADE` · `6` align-gate · `10` riddle · `11` fee — **not ported**
+  (none occur in WIZ1)
 
 `AUX0` fixups from `SPCMISC`: the counter (kinds 1/4/8: `0` dead, `N>0`
 fires `N`× then `NORMAL`, `N<0` persistent) is tracked in
@@ -162,11 +165,12 @@ fires `N`× then `NORMAL`, `N<0` persistent) is tracked in
 real payload at `AUX0 + 1000`.  Tests `scnmsg_text` / `scnmsg_room` (L4's
 reward room → Trebor's speech + the **BLUE RIBBON**) / `scnmsg_getyn`
 (searching the chicken-cat statue grants object 97) / `scnmsg_gate` (no
-quest item → bounced back).
+quest item → bounced back) / `scnmsg_backshop` (L1's `(9,19)` → straight
+to town).
 
 ## CAMP  (`CAMP` P010C01 — `engine/wiz/camp_ui.{h,cpp}`)
 
-Maze `C` → `runCamp` → `CampExit {ToMaze, Disbanded, WindowClosed}` (in the
+Maze `C` → `runCamp` → `CampExit {ToMaze, Disbanded, WindowClosed, ToTown}` (in the
 DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
 
 * **`CAMPMEN2`** — the party list (`# NAME  A-CLS  AC  HITS  ±  MAX/STATUS`,
@@ -207,8 +211,7 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   `VOLCANO` (all `DEAD`); `level = 0` → the castle at the origin, else
   the `MOAT` (`rand%25 > AGI` drowns) — both return to town.  `camp_ui`
   signals these with `CampExit::ToTown` / a level-crossing `ToMaze` (the
-  maze reloads the level + fight map).  Still delegated to `CAMPSTF`, not
-  ported: `LOKTOFEIT` (emergency recall), `CHSPCPOW`.
+  maze reloads the level + fight map).
 * **`EQUIP`** (`EQUIPCHR` / `ARMORPOW`, `UTILITIE` procs P010119 / P01011E —
   `engine/wiz/equip.h`).  `DOEQUIP` walks the slot types
   (weapon / armor / shield / helmet / gauntlet / misc) — for each it lists
@@ -224,6 +227,13 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   (`HPCALCMD −1`, `ARMORCL +1`).  A still-unarmed ninja gets
   `ARMORCL −= level/3 + 2`.  `DOS TOBJREC` equip tail decoded at words
   13–22 (verified: LONG SWORD 1d8 / SHORT SWORD 1d6 / LEATHER `ARMORMOD` 2).
+  A single-character `E)QUIP` ends with **`CHSPCPOW`** (`P01011A`): for each
+  carried item with `SPECIAL > 0`, "WILL YOU INVOKE THE SPECIAL POWER OF
+  YOUR ⟨item⟩ (Y/N)?"; on Y the `CHGCHANC` roll may consume it, then the
+  one-shot effect fires — `SPECIAL` 1‑6 / 7‑12 raise / lower an attribute
+  (clamped 3‑18), 13/14 age ∓52 wks, 15‑17 become Samurai/Lord/Ninja, 18
+  +50000 gold, 19 +50000 exp, 20 `LOST`, 21 full-restore, 22 `HPMAX +1`,
+  23 heal the whole party.  The party-wide `E)QUIP` (`ARM4CHAR`) skips it.
 * **`REORDER`** (`UTILITIE` proc 27) — type the current slot numbers in the
   new order; a selection sort by that permutation swaps the party members
   (`Party::swapMembers` moves the character copy and roster index together).
@@ -237,9 +247,8 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
 teaches one spell and tops up the pools) dumps the final screen +
 `camp exit: … | order: …` and a per-member line (tests `camp_sheet` /
 `camp_flow` / `camp_disband` / `camp_equip` / `camp_cast` / `camp_dumapic`
-/ `camp_kandi` / `camp_malor` / `camp_malor_moat` / `camp_trade` /
-`camp_use` / `camp_identify`).  Not ported: `CHSPCPOW` (invoke an item's
-special power), `LOKTOFEIT`, chevrons/medals.
+/ `camp_kandi` / `camp_malor` / `camp_malor_moat` / `camp_chspcpow` /
+`camp_trade` / `camp_use` / `camp_identify`).  Not ported: chevrons/medals.
 `StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
 (`5001` = `HALITO`).
 

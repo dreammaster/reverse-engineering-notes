@@ -1120,7 +1120,7 @@ static int cmdMazePlayTest(int argc, char **argv) {
 
 // wiz1 combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012]
 static int cmdCombatTest(int argc, char **argv) {
-    if (argc < 6) { std::puts("combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012] [parleyThresh] [mazeLevel] [grants m:i,...]"); return 2; }
+    if (argc < 6) { std::puts("combat-test <CHARSET> <SCENARIO.DATA> <monsterIdx> <keyscript> [ASCII.KRN] [attk012] [parleyThresh] [mazeLevel] [m:i,... | learn=m:s]"); return 2; }
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
@@ -1133,20 +1133,23 @@ static int cmdCombatTest(int argc, char **argv) {
     int parleyThresh = argc > 8 ? std::atoi(argv[8]) : -1;
     int mazeLevel = argc > 9 ? std::atoi(argv[9]) : 1;
 
-    if (argc > 10) {                            // grants: "m:i,m:i,..." (identified)
+    if (argc > 10) {                            // "m:i,...  learn=m:s" (comma list)
         std::string g = argv[10];
         size_t pos = 0;
         while (pos < g.size()) {
             size_t comma = g.find(',', pos);
             std::string tok = g.substr(pos, comma == std::string::npos ? comma : comma - pos);
-            size_t colon = tok.find(':');
-            if (colon != std::string::npos) {
-                int m = std::atoi(tok.substr(0, colon).c_str());
-                int it = std::atoi(tok.substr(colon + 1).c_str());
-                if (m >= 0 && m < party.count() && party.member(m).possCount < 8) {
-                    Character &ch = party.member(m);
-                    ch.poss[ch.possCount++] = Possession{false, false, true, it};
-                }
+            int lm = -1, ls = 0, m = -1, it = 0;
+            if (std::sscanf(tok.c_str(), "learn=%d:%d", &lm, &ls) == 2 &&
+                lm >= 0 && lm < party.count() && ls >= 1 && ls <= 50) {
+                Character &ch = party.member(lm);
+                ch.spellKnown[ls] = true;
+                ch.charLevel = 50;             // clear the 2*level chance gates
+                for (int gr = 1; gr <= 7; ++gr) { ch.mageSpells[gr] += 9; ch.priestSpells[gr] += 9; }
+            } else if (std::sscanf(tok.c_str(), "%d:%d", &m, &it) == 2 &&
+                       m >= 0 && m < party.count() && party.member(m).possCount < 8) {
+                Character &ch = party.member(m);
+                ch.poss[ch.possCount++] = Possession{false, false, true, it};
             }
             if (comma == std::string::npos) break;
             pos = comma + 1;
@@ -1159,7 +1162,7 @@ static int cmdCombatTest(int argc, char **argv) {
     std::vector<std::string> transcript;
     CombatResult r = runCombat(ui, party, sc, haveSp ? &sp : nullptr, rng, mon,
                                mazeLevel, attk012, &transcript, parleyThresh);
-    static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED", "FRIENDLY"};
+    static const char *rn[] = {"WON", "FLED", "PARTY-WIPED", "WINDOW-CLOSED", "FRIENDLY", "RECALLED"};
     std::printf("result: %s\n", rn[int(r)]);
     int casts = 0, healed = 0;
     for (const auto &l : transcript) {

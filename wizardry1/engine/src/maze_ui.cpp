@@ -183,6 +183,7 @@ bool runFight(MazeCtx &c, int enemyInx, MazeExit &out, int attk012 = 2) {
     c.needDraw = true;
     if (r == CombatResult::WindowClosed) { out = MazeExit::WindowClosed; return true; }
     if (r == CombatResult::PartyWiped)   { out = MazeExit::PartyWiped;   return true; }
+    if (r == CombatResult::Recalled)     { out = MazeExit::ToTown;       return true; }  // LOKTOFEIT
     return false;
 }
 
@@ -390,7 +391,7 @@ bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
         return false;
     }
 
-    if (c.sp) {
+    if (c.sp && kind != SCN_LOOKOUT) {           // DOS DOMSGs every kind but LOOKOUT
         std::vector<ScnLine> lines = scnMsgLines(*c.sp, msgNo);
         if (!lines.empty()) showScrollText(c, lines, true);
     }
@@ -417,8 +418,19 @@ bool runScnMsg(MazeCtx &c, int sq, MazeExit &out) {
             c.needDraw = true;
             break;
         }
+        case SCN_BACKSHOP:                       // BCK2SHOP (P01031E)
+            out = MazeExit::ToTown;              // MAZELEV := 0; XGOTO := XNEWMAZE
+            return true;
+        case SCN_LOOKOUT: {                      // LOOKOUT (P010324)
+            int r = eff;                        // AUX0 = the block radius
+            for (int dx = -r; dx <= r; ++dx)
+                for (int dy = -r; dy <= r; ++dy)
+                    c.fm.cell[wrap20(c.st.pos.x + dx)][wrap20(c.st.pos.y + dy)] = true;
+            c.fm.cell[c.st.pos.x][c.st.pos.y] = false;   // not on our own tile
+            break;
+        }
         default:
-            // bounce-to-shop / lookout / riddle / fee -- none appear in WIZ1.
+            // WHOWADE / align / riddle / fee -- none appear in WIZ1.
             msg(c, "(SCNMSG action " + std::to_string(kind) + " not handled)");
             break;
     }

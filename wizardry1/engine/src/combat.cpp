@@ -313,7 +313,7 @@ bool partyCanFight(const Party &party) {
 namespace {
 // kind codes for the compact table below
 enum { K_DMG1, K_DMGG, K_HEAL, K_HEALF, K_ACSELF, K_ACPARTY, K_ACPEN, K_SLEEP,
-       K_HOLD, K_SILENCE, K_DEATH, K_CUREPARA, K_UNPOISON, K_SETHP, K_NOP };
+       K_HOLD, K_SILENCE, K_DEATH, K_CUREPARA, K_UNPOISON, K_SETHP, K_RECALL, K_NOP };
 struct SpRow { const char *name; int lvl; bool pri; SpTarg targ; bool off;
                int kind, a, b, elem; };
 const SpRow kTable[51] = {
@@ -365,7 +365,7 @@ const SpRow kTable[51] = {
     {"LORTO",   6,1,SP_ENEMY_GROUP, 1,K_DMGG,   6, 6,0},
     {"MADI",    6,1,SP_ONE_ALLY,    0,K_HEALF,  0, 0,0},
     {"MABADI",  6,1,SP_ONE_ENEMY,   1,K_SETHP,  1, 8,0},
-    {"LOKTOFEI",6,1,SP_SELF,        0,K_NOP,    0, 0,0},
+    {"LOKTOFEI",6,1,SP_SELF,        0,K_RECALL, 0, 0,0},
     {"MALIKTO", 7,1,SP_ALL_ENEMIES, 1,K_DMGG,   12,6,0},
     {"KADORTO", 7,1,SP_ONE_ALLY,    0,K_NOP,    0, 0,0},
 };
@@ -533,6 +533,16 @@ void castSpell(Battle &bt, const Scenario &sc, Party &party, bool casterMon,
                 if (i >= 0) { bt.grp[tgGroup].hp[i] = 1 + rng.mod(8);
                               log.push_back("IT IS HIT BY MABADI!"); }
             }
+            break;
+        case K_RECALL:                                    // SLOKTOFE (P010818)
+            if (rng.mod(100) > 2 * casterLevel) { log.push_back("LOKTOFEIT FAILS!"); break; }
+            for (int i = 0; i < party.count(); ++i) {
+                Character &m = party.member(i);
+                m.possCount = 0;                          // drop everything carried
+                m.gold.v &= 0xFFFF;                       // keep only GOLD.LOW
+            }
+            bt.recalled = true;
+            log.push_back("YOU ARE WHISKED TO THE CASTLE!");
             break;
         default:
             log.push_back("NOTHING HAPPENS");

@@ -284,7 +284,9 @@ bool round(CombatCtx &c, CombatResult &out, bool partyActs = true,
             if (k == 'P') break;
             if (k == 'U') {
                 bool q = false;
-                if (doUseItem(c, ch, q)) break;
+                bool used = doUseItem(c, ch, q);
+                if (c.bt.recalled) { c.pause(); out = CombatResult::Recalled; return true; }
+                if (used) break;
                 if (q) { out = CombatResult::WindowClosed; return true; }
                 continue;
             }
@@ -300,7 +302,9 @@ bool round(CombatCtx &c, CombatResult &out, bool partyActs = true,
             }
             if (k == 'C') {
                 bool q = false;
-                if (doCast(c, ch, q)) break;
+                bool cast = doCast(c, ch, q);
+                if (c.bt.recalled) { c.pause(); out = CombatResult::Recalled; return true; }
+                if (cast) break;
                 if (q) { out = CombatResult::WindowClosed; return true; }
                 continue;
             }

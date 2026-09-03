@@ -234,8 +234,57 @@ void doEquipSlot(CampCtx &c, Character &ch, ObjType ot, const char *label) {
     }
 }
 
+// ---- CHSPCPOW (UTILITIE P01011A): invoke an equipped item's SPECIAL ----
+// Runs at the tail of a single-character EQUIP.  For each carried item with
+// SPECIAL > 0 the player is asked Y/N; on Y the CHGCHANC roll may consume
+// the item, then the one-shot effect fires.
+void chSpcPow(CampCtx &c, Character &ch) {
+    auto &t = c.t();
+    for (int pi = 0; pi < ch.possCount; ++pi) {
+        Possession &p = ch.poss[pi];
+        ObjectRec o{c.sc.record(Scenario::Object, p.itemIndex)};
+        int sp = o.special();
+        if (sp <= 0) continue;
+
+        t.putChar(12);
+        t.gotoXY(0, 0); t.write("WILL YOU INVOKE THE SPECIAL POWER OF");
+        t.gotoXY(0, 1); t.write("YOUR " + objName(c, p.itemIndex, p.identified) + " (Y/N) ?");
+        c.ui.refresh();
+        if (c.ui.menu("YN") != 'Y') continue;
+
+        if (c.rng.mod(100) < o.chgChance()) p.itemIndex = o.changeTo();   // may consume
+        std::printf("CHSPCPOW| %s invokes special %d\n", ch.name.c_str(), sp);
+
+        auto bumpAttr = [&](int idx, int d) {
+            int v = ch.attrib[idx] + d;
+            if (v > 2 && v < 19) ch.attrib[idx] = v;
+        };
+        if (sp >= 1 && sp <= 6)       bumpAttr(sp - 1, +1);
+        else if (sp >= 7 && sp <= 12) bumpAttr(sp - 7, -1);
+        else switch (sp) {
+            case 13: if (ch.age > 1040) ch.age -= 52; break;
+            case 14: ch.age += 52; break;
+            case 15: ch.cls = Class::Samurai; break;
+            case 16: ch.cls = Class::Lord;    break;
+            case 17: ch.cls = Class::Ninja;   break;
+            case 18: ch.gold.v += 50000; break;
+            case 19: ch.exp.v  += 50000; break;
+            case 20: ch.status = Status::Lost; break;
+            case 21: ch.status = Status::OK; ch.hpLeft = ch.hpMax; ch.poison = 0; break;
+            case 22: ch.hpMax += 1; break;
+            case 23:
+                for (int m = 0; m < c.party.count(); ++m)
+                    c.party.member(m).hpLeft = c.party.member(m).hpMax;
+                break;
+        }
+        c.ui.pressAnyKey("DONE!");
+    }
+}
+
 // EQUIP1: strip everything, walk the slot types, recompute the tail.
-void runEquip(CampCtx &c, Character &ch) {
+// `single` = the interactive one-character path (also runs CHSPCPOW); the
+// party-wide E)QUIP passes false (DOS: ARM4CHAR, no CHSPCPOW).
+void runEquip(CampCtx &c, Character &ch, bool single = true) {
     for (int i = 0; i < ch.possCount; ++i) ch.poss[i].equipped = false;
     doEquipSlot(c, ch, ObjType::Weapon,   "WEAPON");
     doEquipSlot(c, ch, ObjType::Armor,    "ARMOR");
@@ -243,6 +292,7 @@ void runEquip(CampCtx &c, Character &ch) {
     doEquipSlot(c, ch, ObjType::Helmet,   "HELMET");
     doEquipSlot(c, ch, ObjType::Gauntlet, "GAUNTLETS");
     doEquipSlot(c, ch, ObjType::Misc,     "MISC. ITEM");
+    if (single) chSpcPow(c, ch);
     equipRecalc(ch, c.sc);
     std::printf("EQUIP| %s AC %d swings %d dmg %dd%d+%d slay %#x\n", ch.name.c_str(),
                 ch.armorClass, ch.swingCnt, ch.hpDamRc[0], ch.hpDamRc[1],
@@ -664,7 +714,7 @@ CampExit runCamp(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
         }
         if (k == 'R') { reorder(c); continue; }
         if (k == 'E') {                          // EQUIP1(-1): every member
-            for (int i = 0; i < party.count(); ++i) runEquip(c, party.member(i));
+            for (int i = 0; i < party.count(); ++i) runEquip(c, party.member(i), false);
             continue;
         }
         if (k == 'D') {

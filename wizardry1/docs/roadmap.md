@@ -144,10 +144,11 @@ Decided direction (2026-09-02):
       camp `TRADE` / `S)PELL` (non-combat `CASTSPEL`, incl. `DUMAPIC`
       locate + `KANDI` locate-the-fallen + `MALOR` party teleport with the
       `ROCK`/`VOLCANO`/`MOAT`/castle outcomes) / `U)SE` an item / `I)DENT`
-      (`IDITEM` — Bishop identify, `rand%100 < 10+5·lvl`, curse backfire).
+      (`IDITEM` — Bishop identify) / `CHSPCPOW` at the tail of a single-
+      character `E)QUIP` (invoke an item's `SPECIAL` — stat swaps, class
+      changes, gold/exp, …).  `SCNMSG` `BCK2SHOP` + `LOOKOUT` handled.
       Edge of Town (`M`). `wiz1 maze` / `maze-sdl` / `maze-play-test` /
       `maze-scan` / `camp-test` / `cemetery-test` / `pickup-test`.
-      TODO: camp `CHSPCPOW`, `LOKTOFEIT` (emergency recall).
 - [x] `COMBAT` family — ported (`docs/combat.md`): `engine/wiz/combat.{h,cpp}`
       (TENEMY decode, `buildEncounter` = CINIT, `partyAttack`/`monsterAttack`
       = DAM2ENMY/DAM2ME with the real to-hit / damage / status / drain / crit
@@ -162,11 +163,12 @@ Decided direction (2026-09-02):
       `monsterTurn` = `CUTIL`'s action priority: spell → `DOBREATH` →
       `YELLHELP` → `DORUN` → melee. `ENGROUPS` builds up to 4 allied groups
       (`ENMYTEAM`/`TEAMPERC`, gated by the maze level). Party `D)ISPEL`
-      (`DODISPEL` — Priest / Lord>8 / Bishop>3 dissolve undead, no XP) and
-      `U)SE` an item (`USEITEM` — invoke its `SPELLPWR`, roll `CHGCHANC`).
-      `wiz1 combat-test` (15 CMake tests incl. `combat_breath` /
+      (`DODISPEL` — Priest / Lord>8 / Bishop>3 dissolve undead, no XP),
+      `U)SE` an item (`USEITEM` — invoke its `SPELLPWR`, roll `CHGCHANC`)
+      and `LOKTOFEIT` (`SLOKTOFE` — drop the packs + high gold, warp to
+      town).  `wiz1 combat-test` (16 CMake tests incl. `combat_breath` /
       `combat_yell` / `combat_flee` / `combat_groups` / `combat_dispel` /
-      `combat_useitem` / `friendly_*`).
+      `combat_useitem` / `combat_loktofeit` / `friendly_*`).
 - [x] save/restore: `roster.dat` = the `ZCHAR` save; `maze.dat`
       (`MazeState`) resumes an interrupted delve; `Character` models
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the

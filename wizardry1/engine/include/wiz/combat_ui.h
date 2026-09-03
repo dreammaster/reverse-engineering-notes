@@ -11,7 +11,7 @@ namespace wiz {
 class Scenario;
 class StringPool;
 
-enum class CombatResult { Won, Fled, PartyWiped, WindowClosed, Friendly };
+enum class CombatResult { Won, Fled, PartyWiped, WindowClosed, Friendly, Recalled };
 
 // Run one fight against scenario monster index `enemyInx` on maze level
 // `mazeLevel`.  The party's HP / status are mutated in place; on `Won` the

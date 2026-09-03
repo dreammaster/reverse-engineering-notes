@@ -256,6 +256,17 @@ add_test(NAME combat_useitem
 # group; CHGCHANC 100 consumes it to object 0.
 set_tests_properties(combat_useitem PROPERTIES
     PASS_REGULAR_EXPRESSION "THESUS USES [a-z]*HALITO!(.|\n)*poss1 #0")
+add_test(NAME combat_loktofeit
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 3
+                 "\\rPPPPPC3xxxx"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2 -1 1
+                 "learn=5:48,0:5,0:5")
+# SLOKTOFE (P010818): NOBAL casts LOKTOFEIT -- the fight ends, the party is
+# whisked to the castle and THESUS's two granted items are gone.
+set_tests_properties(combat_loktofeit PROPERTIES
+    PASS_REGULAR_EXPRESSION "WHISKED TO THE CASTLE(.|\n)*result=RECALLED[^\n]*\n  THESUS[^\n]* poss0")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)
@@ -290,6 +301,15 @@ add_test(NAME scnmsg_gate
 # ITM2PASS: no quest item -> BOUNCEBK shoves the party back to (8,6).
 set_tests_properties(scnmsg_gate PROPERTIES
     PASS_REGULAR_EXPRESSION "BRONZE SMOKE(.|\n)*pos .8,6. NORTH  level 2")
+add_test(NAME scnmsg_backshop
+         COMMAND wiz1 maze-play-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "x"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 1 9 19 0)
+# BCK2SHOP (SCNMSG kind 8) at L1 (9,19): MAZELEV := 0 -> straight back to town.
+set_tests_properties(scnmsg_backshop PROPERTIES
+    PASS_REGULAR_EXPRESSION "exit: TO-TOWN[^\n]*level 1")
 add_test(NAME camp_sheet
          COMMAND wiz1 camp-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
@@ -362,6 +382,15 @@ add_test(NAME camp_malor_moat
 # MALOR straight up -> level 0 away from the origin = the castle moat -> town.
 set_tests_properties(camp_malor_moat PROPERTIES
     PASS_REGULAR_EXPRESSION "CASTLE MOAT(.|\n)*camp exit: TO-TOWN")
+add_test(NAME camp_chspcpow
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1EYx1"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "0:86")
+# CHSPCPOW: THESUS invokes object 86 (SPECIAL 1) at the end of E)QUIP; STR 17
+# -> 18 (camp_sheet shows the un-bumped "STRENGTH 17   GOLD 185").
+set_tests_properties(camp_chspcpow PROPERTIES
+    PASS_REGULAR_EXPRESSION "STRENGTH 18   GOLD 185")
 add_test(NAME camp_trade
          COMMAND wiz1 camp-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
