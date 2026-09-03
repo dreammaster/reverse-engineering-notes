@@ -2822,14 +2822,24 @@ disassembly work.
   predecessor implementation.
 - **`ProcessClick`'s walk-mode branch gives `hswalkto[]` a read-side
   confirmation, and is missing one real gate.** Only the opening
-  `MODE_WALK` early-return branch was read (the function is much
-  longer; the rest is an open continuation). Confirms
+  `MODE_WALK` early-return branch was read at first (CORRECTION, see
+  next bullet: the rest of the function turned out to be short, not
+  the large continuation initially assumed). Confirms
   `options[12]`=`OPT_NOWALKMODE` and gives `RoomStruct.hswalkto[]` its
   first read-side confirmation. Gap: 2011 additionally gates the walk-
   to-point override behind `play.auto_use_walkto_points==0`; this
   build's branch applies a valid walk-to point unconditionally —
   confirmed absent from this call site only, not searched for
   elsewhere in `GameState` yet.
+- **Immediate follow-up closes `ProcessClick` entirely, resolving the
+  missing-`GetLocationType` question.** The rest of the function past
+  the walk-mode branch is short: try `check_click_on_character` (new
+  match), then `check_click_on_object` (new match), then fall back to
+  a fresh `get_hotspot_at()` + `RunHotspotInteraction`. This build's
+  `ProcessClick` never calls `GetLocationType`/caches a loctype at all
+  — a genuinely different, more ad-hoc try-each-handler dispatch than
+  2011's unified compute-once-then-switch design, not a smaller
+  version of the same mechanism.
 
 ## Third-party library identification (Task #10)
 

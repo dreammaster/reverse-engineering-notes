@@ -10144,3 +10144,31 @@ visible `GetLocationType` call before its own early return -- plausibly
 just deferred to later in the function (not needed for this specific
 branch) rather than genuinely restructured, but not resolved without
 reading the rest of the function.
+
+### Immediate follow-up closes `ProcessClick` entirely, resolving the `GetLocationType` question
+
+Picked the "not resolved without reading the rest of the function"
+thread back up right away -- and it turned out to BE the rest of the
+function, which is short. Past the walk-mode branch, `ProcessClick`'s
+remaining body is just: `"play_usedmode=mood; if(check_click_on_"
+"character(xx,yy,mood)) return; if(check_click_on_object(xx,yy,mood)) "
+"return; RunHotspotInteraction(get_hotspot_at(xx,yy),mood);"` -- two
+newly-matched functions (`check_click_on_character`/
+`check_click_on_object`, both matched by exact call-shape/role against
+2011's own `AC.CPP:16688-16696`, neither traced into its own body this
+round) tried in sequence, falling back to a FRESH `get_hotspot_at()`
+call for the hotspot/background case.
+
+This decisively resolves last round's open question: this build's
+`ProcessClick` does NOT call `GetLocationType`/cache a
+`loctype`+`getloctype_index` pair anywhere in the function, full stop
+-- not deferred, genuinely absent. Where 2011 computes the click's
+location type ONCE up front and then switches on the cached result
+(`AC.CPP:16661-16696`), this build tries each handler in turn, relying
+on each one's own internal hit-testing and a nonzero-return-means-
+handled convention, only falling back to a direct hotspot lookup at
+the very end. A genuinely different, more ad-hoc dispatch mechanism,
+not a smaller version of 2011's unified one -- it happens to produce
+the same net behavior for the three click-target cases this build
+supports (character/object/hotspot), just arrived at differently.
+`ProcessClick` is now fully documented end to end.
