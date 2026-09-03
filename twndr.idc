@@ -630,6 +630,35 @@ static Bytes_0(void) {
 	create_insn	(0X112BB);
 	create_insn	(0X112C6);
 	create_insn	(0X112CB);
+	set_cmt	(0X112D8,	"ON..GOSUB arm count",	0);
+	create_byte	(0X112D8);
+	create_word	(x=0X112D9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112DB);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112DD);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112DF);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112E1);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112E3);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112E5);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112E7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X112E9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X112EB);
 	set_cmt	(0X112F8,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X112F8);
@@ -1131,7 +1160,15 @@ static Bytes_0(void) {
 	create_insn	(0X12992);
 	set_cmt	(0X12995,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X12995);
-	create_insn	(0X129A4);
+	set_cmt	(0X129A4,	"ON..GOSUB arm count",	0);
+	create_byte	(0X129A4);
+	create_word	(x=0X129A5);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X129A7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X129AC);
 	create_insn	(0X129B3);
 	create_insn	(0X129C2);
 	create_insn	(0X129CA);
@@ -1958,8 +1995,9 @@ static Bytes_0(void) {
 	create_insn	(0X14A91);
 	create_insn	(0X14AA0);
 	create_byte	(0X14ADC);
-	create_insn	(0X14ADD);
+	set_cmt	(0X14ADD,	"the debt collector: \"LENDING ASSOCIATION\", \"YOU OWE:  GOLD!\", \"DUE DATE: \", \"PAY HOW MUCH? (AT LEAST  GOLD)\", \"LOAN REPAID.\". ~1.5 KB.",	1);
 	set_name	(0X14ADD,	"loanRepayment");
+	set_name	(0X14AE0,	"onArm_12D3_4AE0");
 	create_insn	(0X14AE2);
 	create_insn	(0X14AF3);
 	create_insn	(0X14AF6);
@@ -2963,6 +3001,15 @@ static Bytes_0(void) {
 	create_insn	(0X1820B);
 	create_insn	(0X18213);
 	set_cmt	(0X1822C,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X18240);
 	set_cmt	(0X1824C,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	create_insn	(0X18255);
@@ -2986,15 +3033,6 @@ static Bytes_0(void) {
 	create_insn	(0X18342);
 	set_cmt	(0X18348,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
 	set_cmt	(0X1834E,	"\\x14@\\x0fD6I KNOW NO MORE.\\xf4\\x19X6\\n  READ YOUR FORTUNE FOR \\xf4\\x1cv6",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X18358);
 	create_insn	(0X18365);
 	create_insn	(0X1836B);
@@ -5184,6 +5222,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A48);
 	op_hex		(x,	0);
 	set_name	(0X18A48,	"rt_FE20");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X18A4A);
 	make_array	(0X18A4A,	0X2);
 	set_cmt	(0X18A4C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5205,15 +5252,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X18A54);
 	op_hex		(x,	0);
 	set_name	(0X18A54,	"rt_FE23");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X18A56);
 	make_array	(0X18A56,	0X2);
 	set_cmt	(0X18A58,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -6302,9 +6340,6 @@ static Functions_0(void) {
 	set_frame_size(0X14A56, 0, 0, 0);
 	add_func    (0X14A91,0X14AA0);
 	set_func_flags(0X14A91,0x1401);
-	add_func    (0X14ADD,0X150C4);
-	set_func_flags(0X14ADD,0x1401);
-	set_func_cmt(0X14ADD,	"the debt collector: \"LENDING ASSOCIATION\", \"YOU OWE:  GOLD!\", \"DUE DATE: \", \"PAY HOW MUCH? (AT LEAST  GOLD)\", \"LOAN REPAID.\". ~1.5 KB.", 1);
 	add_func    (0X150C4,0X152C5);
 	set_func_flags(0X150C4,0x1401);
 	set_func_cmt(0X150C4,	"the loan office: \"MONEY AT 'FRIENDLY' RATES\", \"YOU MAY BORROW UP TO  GOLD\", \"BORROW HOW MUCH?\", \" GOLD BORROWED.\", \"YOU'LL OWE \".", 1);

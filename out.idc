@@ -207,11 +207,65 @@ static Bytes_0(void) {
 	create_insn	(0X1097E);
 	set_name	(0X109CB,	"j_rt_FE01");
 	create_insn	(0X109D3);
-	create_insn	(0X109DD);
-	create_insn	(x=0X109E2);
-	op_hex		(x,	1);
-	create_insn	(x=0X109EA);
-	op_hex		(x,	1);
+	set_cmt	(0X109DD,	"ON..GOSUB arm count",	0);
+	create_byte	(0X109DD);
+	create_word	(x=0X109DE);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E0);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E2);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E4);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E6);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109E8);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109EA);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109EC);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109EE);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109F0);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109F2);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109F4);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109F6);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109F8);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109FA);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109FC);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X109FE);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A00);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A02);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X10A04);
 	set_name	(0X10A04,	"nullsub_47");
 	set_cmt	(0X10A05,	"(ds:2156,2158) := (0x0F, 2)  -- quitOrTalk / tryDisengage.",	1);
@@ -330,9 +384,33 @@ static Bytes_0(void) {
 	create_insn	(0X10D74);
 	create_insn	(0X10D7F);
 	create_insn	(0X10D84);
-	create_insn	(0X10D8D);
-	create_insn	(0X10D9B);
-	create_insn	(0X10D9D);
+	set_cmt	(0X10D8D,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10D8D);
+	create_word	(x=0X10D8E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D90);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D92);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D94);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D96);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D98);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D9A);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10D9C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X10D9E);
 	set_cmt	(0X10DA8,	"THE RAFT MUST STAY IN THE WATER.",	0);
 	create_insn	(0X10DA8);
 	create_insn	(0X10DB5);
@@ -1102,11 +1180,35 @@ static Bytes_0(void) {
 	set_name	(0X138C9,	"nullsub_18");
 	create_insn	(0X138CA);
 	set_name	(0X138CA,	"chainToTown");
+	set_cmt	(0X138D6,	"ON..GOSUB arm count",	0);
+	create_byte	(0X138D6);
+	create_word	(x=0X138D7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X138D9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X138DB);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X138DD);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X138DF);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X138E1);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X138E3);
+	create_insn	(0X138F0);
 	create_insn	(x=0X138F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X138F6);
 	op_hex		(x,	1);
+	create_insn	(0X13908);
 	set_cmt	(0X1390E,	"TWNDR.EXE",	0);
+	create_insn	(0X1391B);
 	set_cmt	(0X13922,	"A CASTLE",	0);
 	create_insn	(0X13922);
 	set_name	(0X13922,	"chainToCastle");
@@ -2899,6 +3001,15 @@ static Bytes_0(void) {
 	set_name	(0X16A90,	"rt_FF36");
 	create_byte	(0X16A92);
 	make_array	(0X16A92,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X16A94,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	set_cmt	(0X16A94,	"-> rtm_FF37  (leglib seg004:0x21aea)",	1);
 	create_insn	(x=0X16A94);
@@ -2946,15 +3057,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X16AAC);
 	op_hex		(x,	0);
 	set_name	(0X16AAC,	"rt_FF3D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X16AAE);
 	make_array	(0X16AAE,	0X2);
 	set_cmt	(0X16AB0,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5112,7 +5214,7 @@ static Functions_0(void) {
 	set_func_flags(0X10199,0x1401);
 	set_func_cmt(0X10199,	"overworld first-time setup: 9x basScreenInit (screen regions), loads the overworld data via the engine, calls doMovement. ~2 KB, called once from out_entry.", 1);
 	add_func    (0X109D3,0X10A02);
-	set_func_flags(0X109D3,0x1401);
+	set_func_flags(0X109D3,0x1001);
 	add_func    (0X10A04,0X10A05);
 	set_func_flags(0X10A04,0x5440);
 	set_frame_size(0X10A04, 0, 0, 0);
@@ -6077,7 +6179,6 @@ static SegRegs(void) {
 	split_sreg_range(0X174C0,"ss",BADSEL,3);
 	split_sreg_range(0X1A690,"ss",BADSEL,3);
 	split_sreg_range(0X10000,"ds",BADSEL,3);
-	split_sreg_range(0X109EA,"ds",BADSEL,3);
 	split_sreg_range(0X167E0,"ds",BADSEL,3);
 	split_sreg_range(0X16E80,"ds",BADSEL,3);
 	split_sreg_range(0X16F5F,"ds",0XFF0,3);

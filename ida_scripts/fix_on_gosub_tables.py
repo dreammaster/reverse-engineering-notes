@@ -33,7 +33,9 @@ import ida_auto
 import ida_xref
 import ida_name
 
-RT_FC_NAMES = ("rt_FC", "rtm_FC", "j_rt_FC")
+RT_FC_NAMES = ("rt_FC", "rtm_FC", "j_rt_FC",
+               "rt_FD", "rtm_FD", "j_rt_FD")   # FC = ON..GOSUB, FD = ON..GOTO;
+                                               # identical inline db count/dw arm[] layout
 LOG = None
 
 

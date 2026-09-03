@@ -69,11 +69,13 @@ dun_entry       endp
 
 ; Attributes: noreturn thunk
 
-sub_10033       proc near
+sub_10033       proc near               ; CODE XREF: sub_102CC+5↓j
+                                        ; DATA XREF: seg000:02E7↓o ...
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
 
-nullsub_1:                              ; CODE XREF: monsterAttack+4D↓j
-                                        ; DATA XREF: monsterAttack+53↓o ...
+nullsub_1:                              ; CODE XREF: sub_102CC+5↓j
+                                        ; monsterAttack+4D↓j
+                                        ; DATA XREF: ...
                 retn
 sub_10033       endp
 
@@ -470,60 +472,54 @@ dunMain         endp
 sub_102CC       proc near               ; CODE XREF: dunMain:loc_100EA↑p
                 mov     bx, ds:1E20h
                 inc     bx
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; actionPhase := 1 (runtime-dispatched stub).
 sub_102CC       endp
 
+; ---------------------------------------------------------------------------
+                db 13h                  ; ON..GOSUB arm count
+                dw offset setActionPhase_2 ; actionPhase := 2 (runtime-dispatched stub).
+                dw offset climbUp       ; "NOTHING TO CLIMB", "UP".
+                dw offset sub_102FD
+                dw offset lookOrSearch  ; "NOTHING UNUSUAL IS IN SIGHT.", "HIDDEN OBJECTS DETECTED!!!"; chains SAVER.EXE on quit. (IDA: j_rt_FE5B_3.)
+                dw offset checkAttackTarget ; "NOTHING TO FIGHT", " IS OUT-OF-RANGE OF YOUR ", "HIT ".
+                dw offset changeGameSpeed ; "ENTER GAME SPEED (1 IS FASTEST)". (IDA named it j_rt_FE5B.)
+                dw offset setActionPhase_3 ; actionPhase := 3 (runtime-dispatched stub).
+                dw offset j_rt_FE3C
+                dw offset sub_10033
+                dw offset useMagicMenu  ; "USE WHICH MAGIC?", "YOU HAVE NO ", "SHOOT ", "THERE IS NO EFFECT.", "ATTACK FIZZLES", "SELECT NO MAGIC". ~0.9 KB.
+                dw offset openNothing   ; "NOTHING TO OPEN" stub.
+                dw offset nullsub_1
+                dw offset sub_10033
+                dw offset sub_10033
+                dw offset sub_10033
+                dw offset j_rt_FE5B_7
+                dw offset sub_10033
+                dw offset setActionPhase_1 ; actionPhase := 1 (runtime-dispatched stub).
+                dw offset loc_10B32
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_102D6       proc near
-                adc     si, [di]
-                pop     es
-                fild    word ptr [bx]
-                std
-                add     ah, ch
-                or      ch, ds:7C1Bh
-                pop     es
-                db      3Eh
-                pop     es
-                jz      short near ptr sub_102EB+3
-                xor     ax, [bx+si]
-                jnp     short near ptr loc_10308+1
-sub_102D6       endp ; sp-analysis failed
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_102EB       proc near               ; CODE XREF: sub_102D6+F↑j
-                xor     cx, ds:38h
-                xor     ax, [bx+si]
-                xor     ax, [bx+si]
-                xor     ax, [bx+si]
-                ficom   word ptr [bp+di]
-                xor     ax, [bx+si]
-                sub     al, 7
-                xor     cl, [bp+di]
+sub_102FD       proc near               ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02DB↑o
                 call    loadDungeonLevel ; loads a dungeon level ("level", "monst" -- DUNM*.BSV / DUNMON*.BSV). ~0.7 KB, called from an init helper.
+; ---------------------------------------------------------------------------
 
 loc_10302:                              ; CODE XREF: describeSurroundings+A3↓j
                                         ; describeSurroundings:loc_10CCF↓j ...
                 mov     word ptr ds:20A2h, 0Ah
-
-loc_10308:                              ; CODE XREF: sub_102D6+13↑j
                 mov     word ptr ds:20A4h, 2
                 mov     ax, 20A2h
                 push    ax
                 mov     ax, 20A4h
                 push    ax
                 call    far ptr rt_FE4A ; -> rtm_FE4A  (leglib seg008:0x27d92)
+; ---------------------------------------------------------------------------
 
 nullsub_2:
                 retn
-sub_102EB       endp
+sub_102FD       endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -551,7 +547,7 @@ redrawDungeonView endp
 ; Attributes: noreturn
 
 sub_10336       proc near               ; CODE XREF: moveHazards+78↓p
-                                        ; spellResult+B2↓j
+                                        ; seg000:23B8↓j
                 mov     word ptr ds:20AAh, 32h ; '2'
                 mov     word ptr ds:20ACh, 2
                 mov     ax, 20AAh
@@ -1230,7 +1226,8 @@ drawDungeonHud  endp
 ; actionPhase := 1 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-setActionPhase_1 proc near
+setActionPhase_1 proc near              ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02F9↑o
                 mov     word ptr ds:20ECh, 1 ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 jmp     selectAbove     ; "- SELECT ABOVE" menu helper.
 setActionPhase_1 endp
@@ -1241,7 +1238,8 @@ setActionPhase_1 endp
 ; actionPhase := 2 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-setActionPhase_2 proc near
+setActionPhase_2 proc near              ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02D7↑o
                 mov     word ptr ds:20ECh, 2
                 jmp     selectAbove     ; "- SELECT ABOVE" menu helper.
 setActionPhase_2 endp
@@ -1252,7 +1250,8 @@ setActionPhase_2 endp
 ; actionPhase := 3 (runtime-dispatched stub).
 ; Attributes: noreturn
 
-setActionPhase_3 proc near
+setActionPhase_3 proc near              ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02E3↑o
                 mov     word ptr ds:20ECh, 3
 setActionPhase_3 endp
 
@@ -1300,7 +1299,8 @@ selectAbove     endp
 ; "NOTHING TO CLIMB", "UP".
 ; Attributes: noreturn
 
-climbUp         proc near
+climbUp         proc near               ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02D9↑o
                 cmp     word ptr ds:20C2h, 0Ah
                 mov     ax, 0
                 jz      short loc_107EA
@@ -1910,7 +1910,7 @@ describeSurroundings endp
 ; Attributes: noreturn
 
 clearTurnFlag   proc near               ; CODE XREF: checkAttackTarget↓p
-                                        ; useMagicMenu+1CA↓p
+                                        ; useMagicMenu+1CA↓p ...
                 mov     word ptr ds:212Eh, 0
                 jmp     loc_10CE1
 clearTurnFlag   endp
@@ -2113,7 +2113,8 @@ doLookSearch    endp
 ; "NOTHING TO OPEN" stub.
 ; Attributes: noreturn
 
-openNothing     proc near
+openNothing     proc near               ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02EB↑o
                 cmp     word ptr ds:20C2h, 0Eh
                 jl      short loc_10E3D
                 jmp     loc_10E6A
@@ -3679,7 +3680,8 @@ j_rt_FF4C_1     db  9Ah
 ; "NOTHING TO FIGHT", " IS OUT-OF-RANGE OF YOUR ", "HIT ".
 ; Attributes: noreturn thunk
 
-checkAttackTarget proc near
+checkAttackTarget proc near             ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02DF↑o
                 call    clearTurnFlag   ; turnActionFlag := 0 (before a non-turn action).
 ; ---------------------------------------------------------------------------
 
@@ -4150,7 +4152,8 @@ doAttack        endp
 ; "USE WHICH MAGIC?", "YOU HAVE NO ", "SHOOT ", "THERE IS NO EFFECT.", "ATTACK FIZZLES", "SELECT NO MAGIC". ~0.9 KB.
 ; Attributes: noreturn
 
-useMagicMenu    proc near
+useMagicMenu    proc near               ; CODE XREF: sub_102CC+5↑j
+                                        ; DATA XREF: seg000:02E9↑o
                 mov     word ptr ds:1F08h, 0
                 mov     ax, 23B2h       ; NOTHING
                 push    ax
@@ -4541,16 +4544,19 @@ castSpell       proc near
                 mov     ax, 2202h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_121E7:
                 mov     ax, 2202h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_121F0:
                 mov     ax, 2202h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_121F9:
                 mov     si, 1BC4h
@@ -4587,9 +4593,11 @@ loc_121F9:
 
 j_rt_FE5B_15:                           ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
+; ---------------------------------------------------------------------------
 
 j_rt_FE5B_16:                           ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
+; ---------------------------------------------------------------------------
 
 loc_12266:
                 mov     si, 1BC4h
@@ -4630,52 +4638,50 @@ loc_122A0:                              ; CODE XREF: castSpell+C1↑j
                 push    ax
                 mov     bx, ds:1E24h
 
-loc_122C8:                              ; CODE XREF: spellResult+6↓j
+loc_122C8:                              ; CODE XREF: seg000:230C↓j
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 shl     bx, 1           ; )?\x01\x10)*\x01\x16)0R\x0f\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT
                 mov     si, 1D66h
                 add     bx, [si+0Ah]
                 push    bx
                 call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
 
 loc_122D8:
                 push    ax
                 mov     ax, 2206h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_122E2:
                 mov     ax, 2206h
                 push    ax
                 call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
 
 loc_122EB:
                 mov     ax, 2206h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
 
 loc_122F4:
                 mov     bx, ds:1E24h
                 add     bx, 0FFE7h
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; "ALREADY IN EFFECT", "YOU FEEL VERY STRONG!". (IDA: j_rt_FE5B_17.)
 castSpell       endp
 
-                add     ax, [bx]
-                and     dx, [bx+si+24h]
 ; ---------------------------------------------------------------------------
+                db 3                    ; ON..GOSUB arm count
+                dw offset j_clearTurnFlag
+                dw offset psychoStrengthSpell ; "ALREADY IN EFFECT", "YOU FEEL VERY STRONG!". (IDA: j_rt_FE5B_17.)
                 db 0FEh
-
-; =============== S U B R O U T I N E =======================================
-
-; "THE SPELL BACKFIRES!", " LOOKS CONFUSED.".
-; Attributes: noreturn bp-based frame
-
-spellResult     proc near
-
-var_C           = word ptr -0Ch
-
-                and     al, 0E8h
-                enter   0E8E9h, 0Fh
+spellResult     db  24h ; $             ; "THE SPELL BACKFIRES!", " LOOKS CONFUSED.".
+; [00000003 BYTES: COLLAPSED FUNCTION j_clearTurnFlag. PRESS NUMPAD+ TO EXPAND]
+                db 0E8h
+                db  0Fh
+; ---------------------------------------------------------------------------
                 loopne  near ptr loc_122C8+1
                 push    dx
                 daa
@@ -4688,7 +4694,7 @@ loc_12315:
 
 loc_12322:
                 mov     bx, ax
-                mov     [bp+var_C], bx
+                mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
 
 loc_1232C:                              ; -> rtm_FF1F  (leglib seg004:0x21b5e)
@@ -4699,20 +4705,20 @@ loc_12331:
                 jnb     short loc_12337
                 dec     ax
 
-loc_12337:                              ; CODE XREF: spellResult+2E↑j
+loc_12337:                              ; CODE XREF: seg000:2334↑j
                 cmp     word ptr ds:1ADAh, 0FAh
                 mov     cx, 0
                 jge     short loc_12343
                 dec     cx
 
-loc_12343:                              ; CODE XREF: spellResult+3A↑j
+loc_12343:                              ; CODE XREF: seg000:2340↑j
                 or      cx, ax
                 and     cx, cx
                 jz      short loc_1234C
                 jmp     loc_123BB
 ; ---------------------------------------------------------------------------
 
-loc_1234C:                              ; CODE XREF: spellResult+41↑j
+loc_1234C:                              ; CODE XREF: seg000:2347↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     ax, 2756h       ; THE SPELL BACKFIRES!
@@ -4736,7 +4742,7 @@ loc_1234C:                              ; CODE XREF: spellResult+41↑j
                 push    word ptr ds:2274h
                 call    far ptr rt_B8   ; -> rtm_B8  (leglib seg003:0x1a1ba)
                 mov     bx, ax
-                mov     [bp+var_C], bx
+                mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
                 mov     bx, 24E6h
                 call    far ptr rt_FF4E ; -> rtm_FF4E  (leglib seg004:0x21a1a)
@@ -4746,7 +4752,7 @@ loc_1234C:                              ; CODE XREF: spellResult+41↑j
                 jmp     sub_10336
 ; ---------------------------------------------------------------------------
 
-loc_123BB:                              ; CODE XREF: spellResult+43↑j
+loc_123BB:                              ; CODE XREF: seg000:2349↑j
                 mov     cx, 2
                 mov     ax, ds:1AE6h
                 cwd
@@ -4760,7 +4766,7 @@ loc_123C9:
 
 loc_123D6:
                 mov     bx, ax
-                mov     [bp+var_C], bx
+                mov     [bp-0Ch], bx
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
 
 loc_123E0:
@@ -4787,7 +4793,7 @@ loc_123FF:
                 jmp     locret_1244F
 ; ---------------------------------------------------------------------------
 
-loc_1240C:                              ; CODE XREF: spellResult+101↑j
+loc_1240C:                              ; CODE XREF: seg000:2407↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
                 mov     ax, 25B2h       ; THE
                 push    ax
@@ -4813,10 +4819,8 @@ loc_1240C:                              ; CODE XREF: spellResult+101↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-locret_1244F:                           ; CODE XREF: spellResult+103↑j
+locret_1244F:                           ; CODE XREF: seg000:2409↑j
                 retn
-spellResult     endp ; sp-analysis failed
-
 ; [0000005D BYTES: COLLAPSED FUNCTION psychoStrengthSpell. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
@@ -4870,7 +4874,7 @@ sub_124AD       endp
 
 ; Attributes: noreturn
 
-sub_124FE       proc near
+sub_124FE       proc near               ; CODE XREF: castSpell+121↑j
                 mov     word ptr ds:221Eh, 6
                 mov     ax, 221Eh
                 push    ax
@@ -5281,9 +5285,15 @@ findJewel       proc far                ; CODE XREF: openChest:loc_10EC2↑P
                 mov     bx, ds:1ACAh
                 call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
 ; ---------------------------------------------------------------------------
-                add     si, [bp+si]
-                sub     ds:1129h, cl
-                sub     [bx+di+2228h], sp
+                db 3                    ; ON..GOSUB arm count
+                dw offset loc_12832
+                dw offset loc_1290E
+                dw offset loc_12911
+; ---------------------------------------------------------------------------
+
+loc_12832:                              ; CODE XREF: findJewel+12↑j
+                                        ; DATA XREF: findJewel+18↑o
+                mov     ax, ds:2228h
                 cmp     ax, ds:1AE2h
                 mov     cx, 0
                 jnz     short loc_1283F
@@ -5388,9 +5398,14 @@ loc_128C8:                              ; CODE XREF: findJewel+AF↑j
                 jmp     loc_12976
 ; ---------------------------------------------------------------------------
 
-loc_1290E:                              ; CODE XREF: findJewel+B1↑j
+loc_1290E:                              ; CODE XREF: findJewel+12↑j
+                                        ; findJewel+B1↑j
+                                        ; DATA XREF: ...
                 jmp     loc_1298F
 ; ---------------------------------------------------------------------------
+
+loc_12911:                              ; CODE XREF: findJewel+12↑j
+                                        ; DATA XREF: findJewel+1C↑o
                 mov     si, 1BC4h
                 mov     bx, 1Ch
                 add     bx, [si+0Ah]
@@ -7065,7 +7080,7 @@ loc_1356E:                              ; CODE XREF: showHitPoints:loc_1345A↑j
 ; loads a dungeon level ("level", "monst" -- DUNM*.BSV / DUNMON*.BSV). ~0.7 KB, called from an init helper.
 ; Attributes: noreturn
 
-loadDungeonLevel proc far               ; CODE XREF: sub_102EB+12↑P
+loadDungeonLevel proc far               ; CODE XREF: sub_102FD↑P
                 mov     cx, 18h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
@@ -10648,7 +10663,7 @@ rt_FF50         endp
 ; Attributes: noreturn
 
 rt_FF51         proc near               ; CODE XREF: drawDungeonHud:j_rt_FF51↑P
-                                        ; spellResult+A5↑P
+                                        ; seg000:23AB↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -12218,7 +12233,7 @@ rt_FE49         endp
 ; -> rtm_FE4A  (leglib seg008:0x27d92)
 ; Attributes: noreturn
 
-rt_FE4A         proc near               ; CODE XREF: sub_102EB+2B↑P
+rt_FE4A         proc near               ; CODE XREF: sub_102FD+19↑P
                                         ; redrawDungeonView+14↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)

@@ -101,8 +101,9 @@ loc_1007B:                              ; CODE XREF: out_entry+37↑j
                 jmp     loc_10181
 ; ---------------------------------------------------------------------------
 
-outCmd_bad:                             ; bad commd
-                mov     ax, 2460h
+outCmd_bad:                             ; CODE XREF: sub_109D3+5↓j
+                                        ; DATA XREF: sub_109D3+1B↓o ...
+                mov     ax, 2460h       ; bad commd
                 push    ax
                 call    far ptr rt_98   ; -> rtm_98  (leglib seg003:0x1b0d8)  [mid-func]
                 retn
@@ -1225,38 +1226,30 @@ outInit         endp
 sub_109D3       proc near               ; CODE XREF: outInit+205↑p
                 mov     bx, ds:1E20h
                 inc     bx
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; " RAFT", "NOTHING TO ", "WHICH DIRECTION?"
 ; ---------------------------------------------------------------------------
-
-loc_109DD:
-                adc     bx, bx
-                daa
-                add     al, 0Ah
-                shl     word ptr [di], 1
-                imul    bp, [bx+di], 3CF1h
-                lds     bp, [bx+si]
-                in      al, 27h
-                mov     dl, 28h ; '('
-                jle     short $+2
-
-loc_109F0:                              ; CODE XREF: sub_109D3+1B↑j
-                mov     ch, 39h ; '9'
-                jle     short $+2
-
-loc_109F4:                              ; CODE XREF: sub_109D3+1F↑j
-                add     al, 0Ah
-                jle     short $+2
-
-loc_109F8:                              ; CODE XREF: sub_109D3+23↑j
-                mov     di, 7E29h
-                add     [bx+di+7E35h], dh
-                add     dl, dl
-                daa
+                db 13h                  ; ON..GOSUB arm count
+                dw offset setMode_2     ; ds:2146h := 2, then jmp j_rt_FE4E.
+                dw offset nullsub_47
+                dw offset promptDirection ; " RAFT", "NOTHING TO ", "WHICH DIRECTION?"
+                dw offset quitOrTalk    ; "Can't quit now", "NO ONE IS THERE / ... FAR AWAY TO HEAR YOU.", chains SAVER.EXE on quit. Dispatches on ds:1F2Ah.
+                dw offset j_rt_FE5B_7
+                dw offset changeGameSpeed ; "** CHANGE GAME SPEED ** / (1 IS FASTEST) / GAMESPEED IS: "
+                dw offset setMode_3     ; ds:2146h := 3.
+                dw offset j_rt_FE4E_0
+                dw offset outCmd_bad
+                dw offset lookupSpellSlot ; scan for a spell/item by id (loop comparing against ds:1E24). TENTATIVE.
+                dw offset outCmd_bad
+                dw offset nullsub_47
+                dw offset outCmd_bad
+                dw offset j_rt_FE5B_3
+                dw offset outCmd_bad
+                dw offset showIndexedRemark ; display the flavour string picked by ds:1ADC (x4 into a string array) -- shared "random remark" helper.
+                dw offset outCmd_bad
+                dw offset setMode_1     ; ds:2146h := 1, then jmp j_rt_FE4E.
 sub_109D3       endp
 
-; ---------------------------------------------------------------------------
-                db    5
-                db  37h ; 7
+                dw offset j_rt_FE5B_5
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_47. PRESS NUMPAD+ TO EXPAND]
 stageSfx_talk   db 0C7h                 ; CODE XREF: tryDisengage+107↓j
                                         ; quitOrTalk:loc_129C9↓p ...
@@ -1735,6 +1728,8 @@ loc_10C96:                              ; CODE XREF: doMovement+18C↑j
 ; ---------------------------------------------------------------------------
 
 loc_10D6A:                              ; CODE XREF: doMovement+AE↑j
+                                        ; doMovement+282↓j
+                                        ; DATA XREF: ...
                 cmp     word ptr ds:1F04h, 6 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 jnz     short loc_10D74
                 jmp     loc_10BB7
@@ -1747,20 +1742,22 @@ loc_10D74:                              ; CODE XREF: doMovement+269↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:1F04h
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; board/enter a map location: "ENTER ", "RETURN TO ", "ONLY RUBBLE IS LEFT."
 ; ---------------------------------------------------------------------------
-                or      [bp+5E0Dh], bl
-                push    cs
-                cld
-                adc     [si], bp
-                pcmpeqd mm1, qword ptr [bx]
-                push    0Dh
+                db 8                    ; ON..GOSUB arm count
+                dw offset loc_10D9E
+                dw offset loc_10E5E
+                dw offset enterLocation ; board/enter a map location: "ENTER ", "RETURN TO ", "ONLY RUBBLE IS LEFT."
+                dw offset loc_10F2C
+                dw offset loc_10F76
+                dw offset loc_10D6A
+                dw offset loc_10FC6
+                dw offset loc_11007
 ; ---------------------------------------------------------------------------
-                db 0C6h
-; ---------------------------------------------------------------------------
-                sysret
-; ---------------------------------------------------------------------------
-                adc     [bx+di+212Eh], ah
+
+loc_10D9E:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+288↑o
+                mov     ax, ds:212Eh
                 and     ax, ax
                 jnz     short loc_10DA8
                 jmp     loc_10DD7
@@ -1854,6 +1851,9 @@ loc_10E2F:                              ; CODE XREF: doMovement+2D8↑j
 ; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_10E5E:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+28A↑o
                 mov     si, 1B96h
                 mov     bx, 18h
                 add     bx, [si+0Ah]
@@ -1940,6 +1940,9 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
                 mov     word ptr ds:2182h, 7
                 jmp     loc_10BB7
 ; ---------------------------------------------------------------------------
+
+loc_10F2C:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+28E↑o
                 mov     word ptr ds:21C2h, 0Ah
                 mov     word ptr ds:21C4h, 8
                 mov     ax, 21C2h
@@ -1969,6 +1972,9 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
 ; ---------------------------------------------------------------------------
                 jmp     loc_1109D
 ; ---------------------------------------------------------------------------
+
+loc_10F76:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+290↑o
                 mov     word ptr ds:21CCh, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:21CEh, 3Ch ; '<'
                 mov     ax, 21CCh
@@ -1999,6 +2005,9 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
                 mov     word ptr ds:21D6h, 0
                 jmp     loc_1109D
 ; ---------------------------------------------------------------------------
+
+loc_10FC6:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+294↑o
                 mov     word ptr ds:21D8h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 mov     word ptr ds:21DAh, 3Ch ; '<'
                 mov     ax, 21D8h
@@ -2024,6 +2033,9 @@ loc_10EFE:                              ; CODE XREF: doMovement+3EE↑j
 ; ---------------------------------------------------------------------------
                 jmp     loc_1109D
 ; ---------------------------------------------------------------------------
+
+loc_11007:                              ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+296↑o
                 mov     word ptr ds:21E2h, 1
                 mov     word ptr ds:21E4h, 96h
                 mov     ax, 21E2h
@@ -2278,7 +2290,8 @@ tryDisengage    endp
 ; board/enter a map location: "ENTER ", "RETURN TO ", "ONLY RUBBLE IS LEFT."
 ; Attributes: noreturn
 
-enterLocation   proc near
+enterLocation   proc near               ; CODE XREF: doMovement+282↑j
+                                        ; DATA XREF: doMovement+28C↑o
                 mov     ax, ds:2182h
                 mov     ds:1F02h, ax
                 call    chainToTown     ; chains to TWNDR.EXE (town driver).
@@ -4670,7 +4683,8 @@ beginEncounterView endp
 ; " RAFT", "NOTHING TO ", "WHICH DIRECTION?"
 ; Attributes: noreturn
 
-promptDirection proc near
+promptDirection proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+F↑o
                 mov     ax, 2912h
                 push    ax
                 mov     ax, 22B2h
@@ -4931,7 +4945,8 @@ enterFixedLocation endp
 ; ds:2146h := 1, then jmp j_rt_FE4E.
 ; Attributes: noreturn
 
-setMode_1       proc near
+setMode_1       proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+2D↑o
                 mov     word ptr ds:2146h, 1
                 jmp     j_rt_FE4E
 setMode_1       endp
@@ -4942,7 +4957,8 @@ setMode_1       endp
 ; ds:2146h := 2, then jmp j_rt_FE4E.
 ; Attributes: noreturn
 
-setMode_2       proc near
+setMode_2       proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+B↑o
                 mov     word ptr ds:2146h, 2 ; \x161noGood\x13 1Enter museum access\xf4\x1381code & hit <
                 jmp     j_rt_FE4E
 setMode_2       endp
@@ -4953,7 +4969,8 @@ setMode_2       endp
 ; ds:2146h := 3.
 ; Attributes: noreturn
 
-setMode_3       proc near
+setMode_3       proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+17↑o
                 mov     word ptr ds:2146h, 3
 setMode_3       endp
 
@@ -5057,7 +5074,8 @@ sub_12823       endp
 
 ; Attributes: noreturn thunk
 
-j_rt_FE4E_0     proc far
+j_rt_FE4E_0     proc far                ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+19↑o
                 call    far ptr rt_FE4E ; -> rtm_FE4E  (leglib seg007:0x25c5c)
 
 j_rt_FE3C:                              ; -> rtm_FE3C  (leglib seg007:0x25ca3)
@@ -5074,7 +5092,8 @@ j_rt_FE4E_0     endp
 ; "** CHANGE GAME SPEED ** / (1 IS FASTEST) / GAMESPEED IS: "
 ; Attributes: noreturn
 
-changeGameSpeed proc near
+changeGameSpeed proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+15↑o
                 mov     ax, 2978h       ; @\n** CHANGE GAME SPEED **
                 push    ax
                 mov     ax, 22D8h
@@ -5163,7 +5182,8 @@ changeGameSpeed endp
 ; "Can't quit now", "NO ONE IS THERE / ... FAR AWAY TO HEAR YOU.", chains SAVER.EXE on quit. Dispatches on ds:1F2Ah.
 ; Attributes: noreturn
 
-quitOrTalk      proc near
+quitOrTalk      proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+11↑o
                 mov     ax, ds:1F2Ah
                 and     ax, ax
                 jnz     short loc_12973
@@ -5207,8 +5227,9 @@ loc_129B6:
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 
-j_rt_FE5B_3:                            ; -> screenRefresh  (leglib seg008:0x28861)
-                call    far ptr rt_FE5B
+j_rt_FE5B_3:                            ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+25↑o
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 
 j_rt_FE5B_4:                            ; -> screenRefresh  (leglib seg008:0x28861)
                 call    far ptr rt_FE5B
@@ -6636,7 +6657,8 @@ drawFoodGauge   endp
 ; display the flavour string picked by ds:1ADC (x4 into a string array) -- shared "random remark" helper.
 ; Attributes: noreturn
 
-showIndexedRemark proc near
+showIndexedRemark proc near             ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+29↑o
                 mov     ax, 27DCh
                 push    ax
                 mov     bx, ds:1ADCh
@@ -6818,7 +6840,8 @@ sub_136F2       endp
 
 ; Attributes: noreturn thunk
 
-j_rt_FE5B_5     proc near
+j_rt_FE5B_5     proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: seg000:0A02↑o
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 ; ---------------------------------------------------------------------------
 
@@ -7115,20 +7138,25 @@ chainToTown     proc near               ; CODE XREF: enterLocation+6↑p
                                         ; j_rt_FE5B_5+18E↑p
                 mov     bx, ds:1F02h
                 add     bx, 0FFF9h
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; "A CASTLE" -> chains to CASDR.EXE.
+; ---------------------------------------------------------------------------
+                db 6                    ; ON..GOSUB arm count
+                dw offset loc_138E3
+                dw offset chainToCastle ; "A CASTLE" -> chains to CASDR.EXE.
+                dw offset chainToMuseum ; "THE MUSEUM" -> chains to MUS.EXE.
+                dw offset chainToDungeon ; "A DUNGEON" -> chains to DUN.EXE.
+                dw offset chainToCastle ; "A CASTLE" -> chains to CASDR.EXE.
+                dw offset chainToMuseum ; "THE MUSEUM" -> chains to MUS.EXE.
+; ---------------------------------------------------------------------------
 
-loc_138D6:
-                push    es
-                jcxz    short loc_13911
-                and     bh, [bx+di]
-                popa
-                cmp     [bp+si+2239h], ax
-                cmp     [bx+di+39h], sp
+loc_138E3:                              ; CODE XREF: chainToTown+7↑j
+                                        ; DATA XREF: chainToTown+D↑o
                 mov     ax, 208Ch
                 push    ax
                 mov     ax, 208Ah
                 push    ax
                 call    resolveTownEntry ; chainToTown helper: writes the town id into enteredLocationId before the hand-off. TENTATIVE.
+; ---------------------------------------------------------------------------
                 mov     bx, ds:1F02h
                 shl     bx, 1
                 shl     bx, 1
@@ -7138,20 +7166,20 @@ loc_138D6:
                 mov     ax, 2210h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, ds:1F02h
                 mov     ds:1F22h, ax
                 mov     ax, 2D5Ah       ; TWNDR.EXE
-
-loc_13911:                              ; CODE XREF: chainToTown+D↑j
                 push    ax
                 mov     ax, 2136h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
 
 loc_1391B:
                 mov     word ptr ds:1F16h, 3
                 retn
-chainToTown     endp ; sp-analysis failed
+chainToTown     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7159,7 +7187,8 @@ chainToTown     endp ; sp-analysis failed
 ; "A CASTLE" -> chains to CASDR.EXE.
 ; Attributes: noreturn
 
-chainToCastle   proc near
+chainToCastle   proc near               ; CODE XREF: chainToTown+7↑j
+                                        ; DATA XREF: chainToTown+F↑o ...
                 mov     ax, 2D68h       ; A CASTLE
                 push    ax
                 mov     ax, 2210h
@@ -7198,7 +7227,8 @@ chainToCastle   endp
 ; "THE MUSEUM" -> chains to MUS.EXE.
 ; Attributes: noreturn
 
-chainToMuseum   proc near
+chainToMuseum   proc near               ; CODE XREF: chainToTown+7↑j
+                                        ; DATA XREF: chainToTown+11↑o ...
                 mov     ax, 2D82h       ; THE MUSEUM
                 push    ax
                 mov     ax, 2210h
@@ -7223,7 +7253,8 @@ chainToMuseum   endp
 ; "A DUNGEON" -> chains to DUN.EXE.
 ; Attributes: noreturn
 
-chainToDungeon  proc near
+chainToDungeon  proc near               ; CODE XREF: chainToTown+7↑j
+                                        ; DATA XREF: chainToTown+13↑o
                 mov     ax, 2D90h       ; A DUNGEON
                 push    ax
                 mov     ax, 2210h
@@ -7251,7 +7282,8 @@ chainToDungeon  endp
 ; scan for a spell/item by id (loop comparing against ds:1E24). TENTATIVE.
 ; Attributes: noreturn
 
-lookupSpellSlot proc near
+lookupSpellSlot proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; DATA XREF: sub_109D3+1D↑o
                 mov     ax, 1Ah
                 jmp     loc_13A02
 ; ---------------------------------------------------------------------------
@@ -7620,7 +7652,9 @@ mainDispatch    endp
 
 ; Attributes: noreturn thunk
 
-j_rt_FE5B_7     proc near               ; CODE XREF: quitOrTalk+29↑j
+j_rt_FE5B_7     proc near               ; CODE XREF: sub_109D3+5↑j
+                                        ; quitOrTalk+29↑j
+                                        ; DATA XREF: ...
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 
 j_rt_FE5B_8:                            ; -> screenRefresh  (leglib seg008:0x28861)

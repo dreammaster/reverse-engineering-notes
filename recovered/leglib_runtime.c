@@ -130,6 +130,11 @@ static Single leg_rnd1(LegRng *r)
  *  lands past the table), then `push CS ; push arm ; retf` into the arm.
  *  Selector < 1 or > count  ==>  no-op (fall through past the table).
  *
+ *  rt_FD (leglib 0x1ca6a, rt_FC entered +1 with a different `ah`) is the
+ *  ON..GOTO sibling: SAME inline `db count / dw arm[]` layout, but the arms
+ *  do NOT return -- they jump on to other code.  Used for e.g. dun
+ *  castSpell's spell-effect dispatch (`ON selectedSpell-25 GOTO ...`).
+ *
  *  IDA does not know this convention and mis-decodes every table as code.
  *  ida_scripts/fix_on_gosub_tables.py repairs the representation.
  *

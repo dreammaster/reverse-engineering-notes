@@ -201,8 +201,68 @@ static Bytes_0(void) {
 	create_insn	(0X102B2);
 	set_cmt	(0X102C3,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(0X102CC);
-	create_insn	(0X102D6);
-	create_insn	(0X102EB);
+	set_cmt	(0X102D6,	"ON..GOSUB arm count",	0);
+	create_byte	(0X102D6);
+	create_word	(x=0X102D7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102D9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102DB);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102DD);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102DF);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102E1);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102E3);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102E5);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102E7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102E9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102EB);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102ED);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102EF);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102F1);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102F3);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102F5);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102F7);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102F9);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X102FB);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X102FD);
+	create_insn	(0X10302);
+	create_insn	(0X1031B);
 	set_name	(0X1031B,	"nullsub_2");
 	create_insn	(0X1031C);
 	set_name	(0X1031C,	"redrawDungeonView");
@@ -997,9 +1057,14 @@ static Bytes_0(void) {
 	set_cmt	(0X121DA,	"OTHER MAGIC ",	0);
 	create_insn	(0X121DA);
 	set_name	(0X121DA,	"castSpell");
+	create_insn	(0X121E7);
+	create_insn	(0X121F0);
+	create_insn	(0X121F9);
 	create_insn	(0X1225C);
 	set_name	(0X1225C,	"j_rt_FE5B_15");
+	create_insn	(0X12261);
 	set_name	(0X12261,	"j_rt_FE5B_16");
+	create_insn	(0X12266);
 	create_insn	(0X122A0);
 	set_cmt	(0X122A4,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X122A4);
@@ -1011,21 +1076,26 @@ static Bytes_0(void) {
 	set_cmt	(0X122CA,	")?\\x01\\x10)*\\x01\\x16)0R\\x0f\\x1c)POISON GAS VENT0)FLOOR HOLE>)SLIME SPLOT",	0);
 	create_insn	(x=0X122CA);
 	op_hex		(x,	1);
-	create_insn	(x=0X12306);
-	op_hex		(x,	1);
+	create_insn	(0X122D8);
+	create_insn	(0X122E2);
+	create_insn	(0X122EB);
+	create_insn	(0X122F4);
+	set_cmt	(0X12300,	"ON..GOSUB arm count",	0);
+	create_byte	(0X12300);
+	create_word	(x=0X12301);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X12303);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	set_cmt	(0X12306,	"\"THE SPELL BACKFIRES!\", \" LOOKS CONFUSED.\".",	1);
 	set_name	(0X12306,	"spellResult");
-	create_insn	(x=0X12308);
-	op_hex		(x,	0);
-	op_hex		(x,	1);
-	create_insn	(x=0X12324);
-	op_stkvar	(x,	0);
+	create_insn	(0X12307);
+	set_name	(0X12307,	"j_clearTurnFlag");
+	create_insn	(0X1230C);
 	create_insn	(0X1234C);
 	set_cmt	(0X12356,	"THE SPELL BACKFIRES!",	0);
-	create_insn	(x=0X1239B);
-	op_stkvar	(x,	0);
 	create_insn	(0X123BB);
-	create_insn	(x=0X123D8);
-	op_stkvar	(x,	0);
 	set_name	(0X123F5,	"j_rt_FF42_1");
 	create_insn	(0X1240C);
 	set_cmt	(0X12411,	"THE ",	0);
@@ -1117,9 +1187,18 @@ static Bytes_0(void) {
 	create_insn	(0X12814);
 	set_name	(0X12814,	"findJewel");
 	create_insn	(0X1281C);
-	create_insn	(0X1282B);
-	create_insn	(x=0X12831);
-	op_hex		(x,	0);
+	set_cmt	(0X1282B,	"ON..GOSUB arm count",	0);
+	create_byte	(0X1282B);
+	create_word	(x=0X1282C);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X1282E);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X12830);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_insn	(0X12832);
 	create_insn	(0X12860);
 	create_insn	(0X12877);
 	create_insn	(0X1287A);
@@ -2906,6 +2985,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X14708);
 	op_hex		(x,	0);
 	set_name	(0X14708,	"rt_FF38");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X1470A);
 	make_array	(0X1470A,	0X2);
 	set_cmt	(0X1470C,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -2941,15 +3029,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1471C);
 	op_hex		(x,	0);
 	set_name	(0X1471C,	"rt_FF3D");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X1471E);
 	make_array	(0X1471E,	0X2);
 	set_cmt	(0X14720,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5093,10 +5172,9 @@ static Functions_0(void) {
 	set_func_cmt(0X10039,	"main dungeon loop (called from entry): status effects (\"YOU ARE BEFUDDLED.\"), death (\"YOU DIED!\"), dispatches to the movement / combat / magic / search handlers.", 1);
 	add_func    (0X102CC,0X102D6);
 	set_func_flags(0X102CC,0x1401);
-	add_func    (0X102D6,0X102EB);
-	set_func_flags(0X102D6,0x1401);
-	add_func    (0X102EB,0X1031C);
-	set_func_flags(0X102EB,0x1401);
+	add_func    (0X102FD,0X1031C);
+	set_func_flags(0X102FD,0x5401);
+	set_frame_size(0X102FD, 0, 0, 0);
 	add_func    (0X1031C,0X10336);
 	set_func_flags(0X1031C,0x1401);
 	set_func_cmt(0X1031C,	"repaint the dungeon viewport (called from climb / describe / doAttack / the FE5B path). TENTATIVE.", 1);
@@ -5198,10 +5276,8 @@ static Functions_0(void) {
 	add_func    (0X121DA,0X12300);
 	set_func_flags(0X121DA,0x1401);
 	set_func_cmt(0X121DA,	"\"OTHER MAGIC \", \"CAST \".", 1);
-	add_func    (0X12306,0X12450);
-	set_func_flags(0X12306,0x1411);
-	set_func_cmt(0X12306,	"\"THE SPELL BACKFIRES!\", \" LOOKS CONFUSED.\".", 1);
-	set_frame_size(0X12306, 0XC, 0, 0);
+	add_func    (0X12307,0X1230A);
+	set_func_flags(0X12307,0x14c1);
 	add_func    (0X12450,0X124AD);
 	set_func_flags(0X12450,0x14c1);
 	set_func_cmt(0X12450,	"\"ALREADY IN EFFECT\", \"YOU FEEL VERY STRONG!\". (IDA: j_rt_FE5B_17.)", 1);
@@ -5642,9 +5718,6 @@ static SegRegs(void) {
 	split_sreg_range(0X1027C,"es",BADSEL,3);
 	split_sreg_range(0X10298,"es",BADSEL,3);
 	split_sreg_range(0X102BE,"es",BADSEL,3);
-	split_sreg_range(0X102D9,"es",BADSEL,3);
-	split_sreg_range(0X102E3,"es",BADSEL,3);
-	split_sreg_range(0X102E5,"es",BADSEL,3);
 	split_sreg_range(0X103E1,"es",BADSEL,3);
 	split_sreg_range(0X10533,"es",BADSEL,3);
 	split_sreg_range(0X10938,"es",BADSEL,3);

@@ -78,8 +78,7 @@ twndr_entry     endp
 ; Attributes: noreturn thunk
 
 sub_10113       proc near               ; CODE XREF: doWalk+170↓j
-                                        ; doWalk+19A↓j
-                                        ; DATA XREF: ...
+                                        ; doWalk+19A↓j ...
                 call    far ptr rt_FF0D ; -> rtm_FF0D  (leglib seg003:0x151b6)
 ; ---------------------------------------------------------------------------
 
@@ -1872,27 +1871,18 @@ loc_112C6:                              ; CODE XREF: seg000:12C1↑j
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:1F02h
                 add     bx, 0FF39h
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; the provisioner: "FOOD & WATER", "WE SELL FOOD FOR TRAVEL", "COST IS  GOLD PER 'DAY'", "MAXIMUM PURCHASE:  DAYS", "THANKS FOR THE LETTER DELIVERY". ~1 KB.
 ; ---------------------------------------------------------------------------
-                db    9
-                db  62h ; b
-                db  1Ah
-                db  80h
-                db  1Bh
-                db  13h
-                db    1
-                db 0C2h
-                db  13h
-                db 0B3h
-                db  3Eh ; >
-                db  4Ah ; J
-                db  22h ; "
-                db 0FCh
-                db  2Fh ; /
-                db  4Eh ; N
-                db  27h ; '
-                db 0E0h
-                db  4Ah ; J
+                db 9                    ; ON..GOSUB arm count
+                dw offset weaponShopEntry ; "WEAPONS".
+                dw offset loc_11B80
+                dw offset sub_10113
+                dw offset foodShop      ; the provisioner: "FOOD & WATER", "WE SELL FOOD FOR TRAVEL", "COST IS  GOLD PER 'DAY'", "MAXIMUM PURCHASE:  DAYS", "THANKS FOR THE LETTER DELIVERY". ~1 KB.
+                dw offset buyBackShop   ; "BUY-BACK SHOP", "1. WEAPONS / 2. ARMOR", "SELECT (0 TO CANCEL)", "TOO HIGH!", "I'LL GIVE ". (IDA: j_rt_FE2C_4.) ~2.4 KB.
+                dw offset loc_1224A
+                dw offset loc_12FFC
+                dw offset loc_1274E
+                dw offset onArm_12D3_4AE0
 ; ---------------------------------------------------------------------------
 
 loc_112EB:                              ; CODE XREF: seg000:11D2↑j
@@ -2089,7 +2079,8 @@ loc_113A0:                              ; CODE XREF: seg000:128C↑j
 ; the provisioner: "FOOD & WATER", "WE SELL FOOD FOR TRAVEL", "COST IS  GOLD PER 'DAY'", "MAXIMUM PURCHASE:  DAYS", "THANKS FOR THE LETTER DELIVERY". ~1 KB.
 ; Attributes: noreturn
 
-foodShop        proc near
+foodShop        proc near               ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12DF↑o
                 mov     word ptr ds:209Eh, 1
                 mov     si, 1F2Ch
                 xor     bx, bx
@@ -3166,7 +3157,8 @@ mailDeliveryJob endp
 ; "WEAPONS".
 ; Attributes: noreturn
 
-weaponShopEntry proc near
+weaponShopEntry proc near               ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12D9↑o
                 mov     word ptr ds:209Eh, 1
                 mov     si, 1F2Ch
                 mov     bx, 4
@@ -3329,6 +3321,9 @@ loc_11B54:                              ; CODE XREF: armorShopEntry+3D↑j
                 mov     word ptr ds:1F10h, 4
                 jmp     loc_11C9B
 ; ---------------------------------------------------------------------------
+
+loc_11B80:                              ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12DB↑o
                 mov     word ptr ds:209Eh, 1
                 mov     si, 1F2Ch
                 mov     bx, 8
@@ -4263,6 +4258,9 @@ loc_12200:                              ; CODE XREF: townServiceDispatch:loc_121
 ; ---------------------------------------------------------------------------
                 jmp     sub_13BD4
 ; ---------------------------------------------------------------------------
+
+loc_1224A:                              ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12E3↑o
                 mov     word ptr ds:209Eh, 2
                 mov     si, 1F2Ch
                 mov     bx, 0Ch
@@ -4933,6 +4931,9 @@ loc_126C3:                              ; CODE XREF: seg000:loc_15C91↓j
 ; ---------------------------------------------------------------------------
                 jmp     loc_10118
 ; ---------------------------------------------------------------------------
+
+loc_1274E:                              ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12E7↑o
                 mov     ax, ds:1AC2h
                 mov     dx, ds:1AC4h
                 mov     ds:2298h, ax
@@ -5195,12 +5196,14 @@ loc_12995:                              ; CODE XREF: townServiceDispatch+8CA↑j
                 mov     bx, ds:1E22h
                 call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
 ; ---------------------------------------------------------------------------
-                add     ah, [bx+di]
-                sub     bl, [bp+di]
-
-loc_129A8:                              ; CODE XREF: townServiceDispatch+A72↓j
+                db 2                    ; ON..GOSUB arm count
+                dw offset loc_12A21
+                dw offset loc_12B1B
+unk_129A9       db  83h                 ; CODE XREF: townServiceDispatch+A72↓j
                                         ; townServiceDispatch+BBF↓j
-                sub     ax, [bp+di+23Eh]
+                db  3Eh ; >
+                db    2
+; ---------------------------------------------------------------------------
                 pop     ds
                 add     [bx+3], bh
                 jmp     loc_129C2
@@ -5253,6 +5256,9 @@ loc_129C2:                              ; CODE XREF: townServiceDispatch+90A↑j
 ; ---------------------------------------------------------------------------
                 jmp     j_rt_FE2C
 ; ---------------------------------------------------------------------------
+
+loc_12A21:                              ; CODE XREF: townServiceDispatch+8F9↑j
+                                        ; DATA XREF: townServiceDispatch+8FF↑o
                 push    word ptr ds:1AD4h
                 push    word ptr ds:1AD2h
                 mov     ax, 1
@@ -5367,8 +5373,11 @@ loc_12AE4:                              ; CODE XREF: townServiceDispatch+A39↑j
                 adc     dx, [bp-0Ch]
                 mov     ds:1AC2h, ax
                 mov     ds:1AC4h, dx
-                jmp     near ptr loc_129A8+1
+                jmp     near ptr unk_129A9
 ; ---------------------------------------------------------------------------
+
+loc_12B1B:                              ; CODE XREF: townServiceDispatch+8F9↑j
+                                        ; DATA XREF: townServiceDispatch+901↑o
                 push    word ptr ds:1AC4h
                 push    word ptr ds:1AC2h
                 mov     ax, 1
@@ -5520,7 +5529,7 @@ loc_12BFF:                              ; CODE XREF: townServiceDispatch+B54↑j
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
-                jmp     near ptr loc_129A8+1
+                jmp     near ptr unk_129A9
 ; ---------------------------------------------------------------------------
 
 loc_12C68:                              ; CODE XREF: seg000:1297↑j
@@ -5931,6 +5940,9 @@ loc_12FB0:                              ; CODE XREF: townServiceDispatch+F05↑j
 ; ---------------------------------------------------------------------------
                 jmp     purchaseOrSteal ; " PURCHASED.", " STOLEN.". (IDA: j_rt_FE5B.)
 ; ---------------------------------------------------------------------------
+
+loc_12FFC:                              ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12E5↑o
                 mov     word ptr ds:209Eh, 1
                 mov     si, 1F2Ch
                 mov     bx, 14h
@@ -5974,8 +5986,6 @@ loc_12FB0:                              ; CODE XREF: townServiceDispatch+F05↑j
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
 ; ---------------------------------------------------------------------------
-
-loc_1305D:                              ; CODE XREF: loanRepayment↓P
                 mov     ax, 230Ah
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
@@ -7355,7 +7365,7 @@ promptQuantity  endp
 ; Attributes: noreturn
 
 pressKeyToContinue proc near            ; CODE XREF: mailDeliveryJob+268↑p
-                                        ; loanRepayment+22F↓p
+                                        ; seg000:4D0C↓p
                 mov     ax, 8
                 push    ax
                 call    far ptr rt_CD   ; -> rtm_CD  (leglib seg003:0x1b774)
@@ -8163,14 +8173,12 @@ sub_14A91       endp
                 db  3Ch ; <
                 db 0B6h
                 db 0E8h
-
-; =============== S U B R O U T I N E =======================================
-
-; the debt collector: "LENDING ASSOCIATION", "YOU OWE:  GOLD!", "DUE DATE: ", "PAY HOW MUCH? (AT LEAST  GOLD)", "LOAN REPAID.". ~1.5 KB.
-; Attributes: noreturn
-
-loanRepayment   proc near
-                call    far ptr loc_1305D+2
+loanRepayment   db  9Ah                 ; the debt collector: "LENDING ASSOCIATION", "YOU OWE:  GOLD!", "DUE DATE: ", "PAY HOW MUCH? (AT LEAST  GOLD)", "LOAN REPAID.". ~1.5 KB.
+                db 0EFh
+                db 0C3h
+onArm_12D3_4AE0 db 0C7h                 ; CODE XREF: seg000:12D3↑j
+                                        ; DATA XREF: seg000:12E9↑o
+                db    6
 ; ---------------------------------------------------------------------------
                 sahf
                 and     [bx+di], al
@@ -8235,13 +8243,13 @@ loc_14B2F:
                 jmp     loc_14B54
 ; ---------------------------------------------------------------------------
 
-loc_14B46:                              ; CODE XREF: loanRepayment+64↑j
+loc_14B46:                              ; CODE XREF: seg000:4B41↑j
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     word ptr es:[bx], 0 ; \x14@\x0fD6I KNOW NO MORE.\xf4\x19X6\n  READ YOUR FORTUNE FOR \xf4\x1cv6
 
-loc_14B54:                              ; CODE XREF: loanRepayment+66↑j
+loc_14B54:                              ; CODE XREF: seg000:4B43↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8252,7 +8260,7 @@ loc_14B54:                              ; CODE XREF: loanRepayment+66↑j
                 jmp     loc_150B7
 ; ---------------------------------------------------------------------------
 
-loc_14B6B:                              ; CODE XREF: loanRepayment+89↑j
+loc_14B6B:                              ; CODE XREF: seg000:4B66↑j
                 mov     ax, 3472h
                 push    ax
                 mov     ax, 9
@@ -8348,7 +8356,7 @@ loc_14B6B:                              ; CODE XREF: loanRepayment+89↑j
                 jmp     loc_14C5F
 ; ---------------------------------------------------------------------------
 
-loc_14C40:                              ; CODE XREF: loanRepayment+15E↑j
+loc_14C40:                              ; CODE XREF: seg000:4C3B↑j
                 mov     ax, 34A0h       ; NOW!!
                 push    ax
                 mov     ax, 24B4h
@@ -8364,7 +8372,7 @@ loc_14C40:                              ; CODE XREF: loanRepayment+15E↑j
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
 
-loc_14C5F:                              ; CODE XREF: loanRepayment+160↑j
+loc_14C5F:                              ; CODE XREF: seg000:4C3D↑j
                 mov     bx, 1AF4h
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
 ; ---------------------------------------------------------------------------
@@ -8382,7 +8390,7 @@ loc_14C5F:                              ; CODE XREF: loanRepayment+160↑j
                 jmp     loc_14CE4
 ; ---------------------------------------------------------------------------
 
-loc_14C88:                              ; CODE XREF: loanRepayment+1A6↑j
+loc_14C88:                              ; CODE XREF: seg000:4C83↑j
                 mov     bx, 0Ch
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
@@ -8423,7 +8431,7 @@ loc_14C88:                              ; CODE XREF: loanRepayment+1A6↑j
                 jmp     loc_14D89
 ; ---------------------------------------------------------------------------
 
-loc_14CE4:                              ; CODE XREF: loanRepayment+1A8↑j
+loc_14CE4:                              ; CODE XREF: seg000:4C85↑j
                 call    sub_148E7
                 push    word ptr ds:1AD4h
                 push    word ptr ds:1AD2h
@@ -8437,7 +8445,7 @@ loc_14CE4:                              ; CODE XREF: loanRepayment+1A8↑j
                 jmp     loc_14D12
 ; ---------------------------------------------------------------------------
 
-loc_14CFF:                              ; CODE XREF: loanRepayment+21D↑j
+loc_14CFF:                              ; CODE XREF: seg000:4CFA↑j
                 call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
 ; ---------------------------------------------------------------------------
                 call    loc_1506D
@@ -8449,7 +8457,7 @@ loc_14CFF:                              ; CODE XREF: loanRepayment+21D↑j
                 jmp     j_rt_FE2C
 ; ---------------------------------------------------------------------------
 
-loc_14D12:                              ; CODE XREF: loanRepayment+21F↑j
+loc_14D12:                              ; CODE XREF: seg000:4CFC↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8480,7 +8488,7 @@ loc_14D12:                              ; CODE XREF: loanRepayment+21F↑j
                 jmp     loc_14D89
 ; ---------------------------------------------------------------------------
 
-loc_14D5B:                              ; CODE XREF: loanRepayment+279↑j
+loc_14D5B:                              ; CODE XREF: seg000:4D56↑j
                 mov     ax, ds:1AD2h
                 mov     ds:1F16h, ax
                 push    word ptr ds:1AD4h
@@ -8495,15 +8503,15 @@ loc_14D5B:                              ; CODE XREF: loanRepayment+279↑j
                 jmp     loc_14D89
 ; ---------------------------------------------------------------------------
 
-loc_14D79:                              ; CODE XREF: loanRepayment+297↑j
+loc_14D79:                              ; CODE XREF: seg000:4D74↑j
                 mov     ax, ds:1AD2h
                 mov     dx, ds:1AD4h
                 add     ax, 0FFF6h
                 adc     dx, 0FFFFh
                 mov     ds:1F16h, ax
 
-loc_14D89:                              ; CODE XREF: loanRepayment+204↑j
-                                        ; loanRepayment+27B↑j ...
+loc_14D89:                              ; CODE XREF: seg000:4CE1↑j
+                                        ; seg000:4D58↑j ...
                 mov     ax, 34AAh       ;          PAY HOW MUCH?
                 push    ax
                 mov     ax, 24BCh
@@ -8535,7 +8543,7 @@ loc_14D89:                              ; CODE XREF: loanRepayment+204↑j
                 jmp     loc_14E0A
 ; ---------------------------------------------------------------------------
 
-loc_14DD1:                              ; CODE XREF: loanRepayment+2EF↑j
+loc_14DD1:                              ; CODE XREF: seg000:4DCC↑j
                 mov     ax, 34C4h       ;      (AT LEAST
                 push    ax
                 push    word ptr ds:1F16h
@@ -8563,7 +8571,7 @@ loc_14DD1:                              ; CODE XREF: loanRepayment+2EF↑j
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
 ; ---------------------------------------------------------------------------
 
-loc_14E0A:                              ; CODE XREF: loanRepayment+2F1↑j
+loc_14E0A:                              ; CODE XREF: seg000:4DCE↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8594,7 +8602,7 @@ loc_14E0A:                              ; CODE XREF: loanRepayment+2F1↑j
                 jmp     loc_1395F
 ; ---------------------------------------------------------------------------
 
-loc_14E55:                              ; CODE XREF: loanRepayment+373↑j
+loc_14E55:                              ; CODE XREF: seg000:4E50↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8605,14 +8613,14 @@ loc_14E55:                              ; CODE XREF: loanRepayment+373↑j
                 jmp     loc_14E7C
 ; ---------------------------------------------------------------------------
 
-loc_14E6D:                              ; CODE XREF: loanRepayment+38B↑j
+loc_14E6D:                              ; CODE XREF: seg000:4E68↑j
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     ax, es:[bx]
                 mov     ds:1F02h, ax
 
-loc_14E7C:                              ; CODE XREF: loanRepayment+38D↑j
+loc_14E7C:                              ; CODE XREF: seg000:4E6A↑j
                 mov     ax, ds:1F02h
                 cwd
                 sub     ax, ds:1AD2h
@@ -8633,7 +8641,7 @@ loc_14E7C:                              ; CODE XREF: loanRepayment+38D↑j
                 jmp     loc_14F09
 ; ---------------------------------------------------------------------------
 
-loc_14EB0:                              ; CODE XREF: loanRepayment+3CE↑j
+loc_14EB0:                              ; CODE XREF: seg000:4EAB↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8685,7 +8693,7 @@ loc_14EB0:                              ; CODE XREF: loanRepayment+3CE↑j
                 jmp     j_rt_FE2C
 ; ---------------------------------------------------------------------------
 
-loc_14F09:                              ; CODE XREF: loanRepayment+3D0↑j
+loc_14F09:                              ; CODE XREF: seg000:4EAD↑j
                 mov     si, 1B96h
                 mov     bx, 0Ah
                 add     bx, [si+0Ah]
@@ -8724,7 +8732,7 @@ loc_14F09:                              ; CODE XREF: loanRepayment+3D0↑j
                 jmp     loc_15015
 ; ---------------------------------------------------------------------------
 
-loc_14F6C:                              ; CODE XREF: loanRepayment+48A↑j
+loc_14F6C:                              ; CODE XREF: seg000:4F67↑j
                 mov     word ptr ds:24CEh, 10h
                 mov     ax, 24CEh
                 push    ax
@@ -8870,14 +8878,14 @@ loc_14F6C:                              ; CODE XREF: loanRepayment+48A↑j
                 jmp     j_rt_FE2C
 ; ---------------------------------------------------------------------------
 
-loc_15015:                              ; CODE XREF: loanRepayment+48C↑j
+loc_15015:                              ; CODE XREF: seg000:4F69↑j
                 mov     ax, ds:1F16h
                 cmp     ax, ds:1F02h
                 jle     short loc_15021
                 jmp     loc_15036
 ; ---------------------------------------------------------------------------
 
-loc_15021:                              ; CODE XREF: loanRepayment+53F↑j
+loc_15021:                              ; CODE XREF: seg000:501C↑j
                 mov     word ptr ds:24D8h, 10h
                 mov     ax, 24D8h
                 push    ax
@@ -8888,7 +8896,7 @@ loc_15021:                              ; CODE XREF: loanRepayment+53F↑j
                 jmp     loc_15067
 ; ---------------------------------------------------------------------------
 
-loc_15036:                              ; CODE XREF: loanRepayment+541↑j
+loc_15036:                              ; CODE XREF: seg000:501E↑j
                 mov     ax, 3518h       ; \n\nBETTER PAY UP!
                 push    ax
                 mov     ax, 24DAh
@@ -8911,15 +8919,15 @@ loc_15036:                              ; CODE XREF: loanRepayment+541↑j
                 jmp     $+3
 ; ---------------------------------------------------------------------------
 
-loc_15067:                              ; CODE XREF: loanRepayment+556↑j
-                                        ; loanRepayment+587↑j
+loc_15067:                              ; CODE XREF: seg000:5033↑j
+                                        ; seg000:5064↑j
                 call    loc_10118
 ; ---------------------------------------------------------------------------
                 jmp     j_rt_FE2C
 ; ---------------------------------------------------------------------------
 
-loc_1506D:                              ; CODE XREF: loanRepayment+227↑p
-                                        ; loanRepayment+553↑p
+loc_1506D:                              ; CODE XREF: seg000:4D04↑p
+                                        ; seg000:5030↑p
                 mov     ax, 352Ch       ; \n\n\nYOU HAVE 14 DAYS TO PAY THE REST!
                 push    ax
                 mov     ax, 24E0h
@@ -8951,14 +8959,12 @@ loc_1506D:                              ; CODE XREF: loanRepayment+227↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_150B7:                              ; CODE XREF: loanRepayment+8B↑j
+loc_150B7:                              ; CODE XREF: seg000:4B68↑j
                 mov     ax, 3558h       ; \n\n\n\n      WE'D BE HAPPY TO LOAN YOU
                 push    ax
                 mov     ax, 24E4h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
-loanRepayment   endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -18289,7 +18295,7 @@ rt_D3           endp
 ; Attributes: noreturn
 
 rt_D6           proc near               ; CODE XREF: foodShop+221↑P
-                                        ; loanRepayment+1D6↑P
+                                        ; seg000:4CB3↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -19144,7 +19150,7 @@ rt_FF52:                                ; Overlay manager interrupt
 ; -> rtm_FF53  (leglib seg004:0x219ea)
 ; Attributes: noreturn
 
-rt_FF53         proc near               ; CODE XREF: loanRepayment+1C2↑P
+rt_FF53         proc near               ; CODE XREF: seg000:4C9F↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

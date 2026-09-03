@@ -209,7 +209,7 @@ in play-module code, `[?]` inferred from the template value + usage:
 | `+0x36` | `1AE8` | 0 | `[C]` dungeon spell-effect timer (counts down to 0) |
 | `+0x38` | `1AEA` | 5 | `[C]` **equipped armour slot** — index into `S0()`/`S1()` (`< 8` guard); `ComputeEquippedPower` reads `S1(1AEA)` for the armour condition (`out.asm:4346`). |
 | `+0x3A` | `1AEC` | 9 | `[C]` **equipped armour id** (9..13); `playerDefense += armorId - 9` = armour tier (`out.asm:4357`). |
-| `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom: if INT < 30, a win gives +2 else +1, a loss −1 (cap `0x1C`=28). |
+| `+0x3E` | `1AF0` | 15 | `[P]` **INTELLIGENCE** — Stones of Wisdom (`STDRV`): win `+3/+2/+1/0` (INT below 15/30/60), loss `−3/−2/−1/0` (INT above 49/39/9); cap 60, floor ~9. See game-logic.md §2. |
 | `+0x4A` | `1AFC` | 99 | `[C]` **equipped weapon slot** — index into `S0()`/`S1()` (`< 8` guard, 99 = unarmed); `ComputeEquippedPower` reads `S1(1AFC)` for the weapon condition (`out.asm:4373`). |
 | `+0x4C` | `1AFE` | 0 | `[C]` **equipped weapon id** (0..8; indexes `Weapon$()`). `weaponPower = INT(weaponId + S1(weaponSlot)/2.8)`; also the value combat compares against `creatureWeak`. |
 | `+0x50` | `1B02` | 178 | `[P]` **overworld X** (new game 40; `PAULA` 14) |

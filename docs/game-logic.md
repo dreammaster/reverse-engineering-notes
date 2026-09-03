@@ -58,11 +58,21 @@ Five attributes, all start at **15**, stored in the CHAR.DAT scalar block
 
 | stat | `ds:` | raised by |
 |---|---|---|
-| Dexterity | `1AC0` | quest rewards |
-| Endurance | `1ACC` | SDEFENDR training (`13+4x` / `14+4x` / `15+4x` per wave of level *x*), potion wizard +5 (cap 28) |
+| Dexterity | `1AC0` | quest rewards; **SDEFENDR** training (DEXTERITY discipline) |
+| Endurance | `1ACC` | **SDEFENDR** training (ENDURANCE discipline); potion wizard +5 (cap `0x24`=36) |
 | Charm | `1ADE` | Tulip quest +10, Casandra +15 |
-| Intelligence | `1AF0` | Stones of Wisdom: if INT < 30 a win gives **+2** else **+1**, a loss **−1** (cap 28); potion wizard +5 |
-| Strength | `1B08` | pirates cave +10, Armaz +15, third challenge +10 |
+| Intelligence | `1AF0` | **STDRV** "Stones of Wisdom" (see below) |
+| Strength | `1B08` | pirates cave +10, Armaz +15, third challenge +10; `psychoStrengthSpell` +50 % melee buff (`ds:1AE8`, DUN only) |
+
+**STDRV — Stones of Wisdom** ([`stdrv_dice.bas`](../recovered/stdrv_dice.bas),
+constants read from `STDRV.EXE`): a Perudo match; INT changes **once per
+match**, keyed on current INT:
+- **win** → `+3` (INT < 15) / `+2` (< 30) / `+1` (< 60) / `0` (≥ 60, cap)
+- **loss** → `−3` (INT > 49) / `−2` (> 39) / `−1` (> 9) / `0` (≤ 9, floor)
+
+**SDEFENDR — training school** ([`sdefendr_training.bas`](../recovered/sdefendr_training.bas)):
+`attribute += (thisSessionScore − yourPreviousBest)` for the chosen
+discipline — a worse-than-best run subtracts the difference.
 
 **Character level** `ds:1AE0` (1..~10) — raised **only by the museum
 caretaker**, never in combat. There is **no experience stat** (the

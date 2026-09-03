@@ -216,7 +216,12 @@ anchor). The combat pool it prints is quoted at the top of
       `chestBase = (10*dungeonNumber + dungeonLevel)*20 + 20`; a per-level
       gold high-water mark stops re-farming; the quest jewel is a level-7
       chest granted once.
-- [ ] DUN monster movement, climb up/down, `CastSpell`
+- [~] `castSpell` (`dun.asm:4538`) — a thin wrapper: decrements the
+      chosen spell's `S2()` charge, then `ON (selectedSpell − 25) GOTO`
+      (`rt_FD`) to the effect. `psychoStrengthSpell` = "YOU FEEL VERY
+      STRONG!" sets the `ds:1AE8` buff (the +50% melee in `dun_combat.bas`).
+      Full per-spell effect table still open.
+- [ ] DUN monster movement, climb up/down, full spell list
 
 ## TWNDR.EXE
 

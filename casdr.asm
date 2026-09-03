@@ -169,7 +169,7 @@ sub_100CC       endp
 ; Attributes: noreturn
 
 sub_100D2       proc near               ; CODE XREF: sub_100C3+6↑j
-                                        ; privateLevelWarn+155↓p ...
+                                        ; seg000:0B67↓p ...
                 mov     word ptr ds:20A0h, 2
                 mov     ax, 209Eh
                 push    ax
@@ -285,7 +285,7 @@ sub_101D3       endp
 ; Attributes: noreturn
 
 facePlayerDirection proc near           ; CODE XREF: j_rt_FE4E:loc_10267↓p
-                                        ; privateLevelWarn+E4↓p ...
+                                        ; seg000:0AF6↓p ...
                 mov     word ptr ds:20C6h, 0
                 mov     ax, 20C0h
                 push    ax
@@ -417,7 +417,7 @@ checkLineOfSight endp
 
 
 sub_102F5       proc near               ; CODE XREF: j_rt_FE01+9B↑p
-                                        ; privateLevelWarn:loc_10AD8↓p
+                                        ; seg000:loc_10AD8↓p
                 mov     ax, ds:1F04h
                 mov     ds:20DCh, ax
                 mov     ax, ds:209Eh
@@ -564,6 +564,8 @@ sub_10396       endp
 ; Attributes: noreturn
 
 doWalk          proc near               ; CODE XREF: doWalk+F4↓j
+                                        ; seg000:071B↓j
+                                        ; DATA XREF: ...
 
 ; FUNCTION CHUNK AT 0725 SIZE 00000009 BYTES
 
@@ -708,6 +710,8 @@ loc_104E1:                              ; CODE XREF: doWalk+EB↑j
 ; ---------------------------------------------------------------------------
 
 loc_104E7:                              ; CODE XREF: doWalk:loc_10601↓j
+                                        ; seg000:071B↓j
+                                        ; DATA XREF: ...
                 mov     ax, 1F24h
                 push    ax
                 call    far ptr rt_FE44 ; -> rtm_FE44  (leglib seg007:0x2502d)
@@ -1104,13 +1108,11 @@ loc_10712:                              ; CODE XREF: seg000:070C↑j
                 call    sub_16181
 ; ---------------------------------------------------------------------------
                 mov     bx, ds:20C0h
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; "WALK " -- castle movement.
 ; ---------------------------------------------------------------------------
-                db    2
-                db 0F0h
-                db    3
-                db 0E7h
-                db    4
+                db 2                    ; ON..GOSUB arm count
+                dw offset doWalk        ; "WALK " -- castle movement.
+                dw offset loc_104E7
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR doWalk
 
@@ -1508,41 +1510,40 @@ loc_109DE:                              ; CODE XREF: moveBlocked+126↑j
 loc_10A06:                              ; CODE XREF: moveBlocked+DC↑j
                 mov     bx, ds:1F02h
                 add     bx, 0FFFEh
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; "GAS TRAP!".
 moveBlocked     endp
 
+; ---------------------------------------------------------------------------
+privateLevelWarn db 0Dh                 ; ON..GOSUB arm count
+                dw offset exitCastle    ; "GO OUTSIDE.", "* YOU FORGOT THE ", "THE FORTRESS EXPLODES BEHIND" -- chains to OUT.EXE.
+                dw offset sub_10A2D
+                dw offset sub_10EB8
+                dw offset sub_10EB8
+                dw offset gasTrap       ; "GAS TRAP!".
+                dw offset sub_10F94
+                dw offset sub_10F94
+                dw offset sub_1124D
+                dw offset sub_112D4
+                dw offset guardsWary    ; "THE GUARDS EYE YOU WARILY.".
+                dw offset j_rt_FE4E_3
+                dw offset sub_113EB
+                dw offset sub_113EB
 
 ; =============== S U B R O U T I N E =======================================
 
-; "PRIVATE LEVEL!".
 ; Attributes: noreturn
 
-privateLevelWarn proc near
-                or      ax, 0C7Fh
-                sub     ax, 0B80Ah
-                push    cs
-                mov     ax, 720Eh
-                or      dx, [si-6BF1h]
-                cmovge  dx, [bp+si]
-                aam     12h
-                lock adc dl, [si+13h]
-                jmp     short loc_10A3E
-; ---------------------------------------------------------------------------
-                jmp     short near ptr loc_10A3F+1
-; ---------------------------------------------------------------------------
+sub_10A2D       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A15↑o
                 cmp     word ptr ds:20C0h, 2
                 mov     ax, 0
                 jnz     short loc_10A38
                 dec     ax
 
-loc_10A38:                              ; CODE XREF: privateLevelWarn+23↑j
+loc_10A38:                              ; CODE XREF: sub_10A2D+8↑j
                 mov     ds:214Ch, ax
                 mov     ax, 1B00h
-
-loc_10A3E:                              ; CODE XREF: privateLevelWarn+17↑j
                 push    ax
-
-loc_10A3F:                              ; CODE XREF: privateLevelWarn+19↑j
                 mov     ax, 1B04h
                 push    ax
                 mov     ax, 214Ch
@@ -1550,6 +1551,8 @@ loc_10A3F:                              ; CODE XREF: privateLevelWarn+19↑j
                 mov     ax, 1F2Ah
                 push    ax
                 call    scanLineOfSight ; step outward from a position calling tileAt, accumulating in ds:262Ch -- line-of-sight / nearest-blocker scan. Called from doWalk, jailScene, the NPC code.
+sub_10A2D       endp
+
 ; ---------------------------------------------------------------------------
 
 j_rt_FE4E_2:                            ; -> rtm_FE4E  (leglib seg007:0x25c5c)
@@ -1576,7 +1579,7 @@ loc_10A62:
                 jmp     loc_10A9D
 ; ---------------------------------------------------------------------------
 
-loc_10A6C:                              ; CODE XREF: privateLevelWarn+55↑j
+loc_10A6C:                              ; CODE XREF: seg000:0A67↑j
                 mov     word ptr ds:1B00h, 25h ; '%'
                 mov     word ptr ds:1B04h, 6
                 mov     word ptr ds:214Eh, 1
@@ -1590,13 +1593,13 @@ loc_10A6C:                              ; CODE XREF: privateLevelWarn+55↑j
                 mov     word ptr ds:209Eh, 1Dh
                 mov     word ptr ds:1F04h, 29h ; ')'
 
-loc_10A9D:                              ; CODE XREF: privateLevelWarn+57↑j
+loc_10A9D:                              ; CODE XREF: seg000:0A69↑j
                 cmp     word ptr ds:2084h, 1
                 jz      short loc_10AA7
                 jmp     loc_10AD8
 ; ---------------------------------------------------------------------------
 
-loc_10AA7:                              ; CODE XREF: privateLevelWarn+90↑j
+loc_10AA7:                              ; CODE XREF: seg000:0AA2↑j
                 mov     word ptr ds:1B00h, 2Dh ; '-'
                 mov     word ptr ds:1B04h, 4
                 mov     word ptr ds:2152h, 1
@@ -1610,7 +1613,7 @@ loc_10AA7:                              ; CODE XREF: privateLevelWarn+90↑j
                 mov     word ptr ds:209Eh, 0
                 mov     word ptr ds:1F04h, 1Ch
 
-loc_10AD8:                              ; CODE XREF: privateLevelWarn+92↑j
+loc_10AD8:                              ; CODE XREF: seg000:0AA4↑j
                 call    sub_102F5
                 mov     word ptr ds:2156h, 0
                 mov     ax, 1B00h
@@ -1639,20 +1642,20 @@ loc_10B08:
                 jnz     short loc_10B13
                 dec     ax
 
-loc_10B13:                              ; CODE XREF: privateLevelWarn+FE↑j
+loc_10B13:                              ; CODE XREF: seg000:0B10↑j
                 cmp     word ptr ds:20ACh, 1
                 mov     cx, 0
                 jnz     short loc_10B1E
                 dec     cx
 
-loc_10B1E:                              ; CODE XREF: privateLevelWarn+109↑j
+loc_10B1E:                              ; CODE XREF: seg000:0B1B↑j
                 and     cx, ax
                 and     cx, cx
                 jnz     short loc_10B27
                 jmp     loc_10B6A
 ; ---------------------------------------------------------------------------
 
-loc_10B27:                              ; CODE XREF: privateLevelWarn+110↑j
+loc_10B27:                              ; CODE XREF: seg000:0B22↑j
                 mov     ax, 258Ch       ; \n\nPRIVATE LEVEL!
                 push    ax
                 mov     ax, 215Ah
@@ -1682,21 +1685,20 @@ loc_10B27:                              ; CODE XREF: privateLevelWarn+110↑j
                 call    sub_100D2
 ; ---------------------------------------------------------------------------
 
-loc_10B6A:                              ; CODE XREF: privateLevelWarn+112↑j
+loc_10B6A:                              ; CODE XREF: seg000:0B24↑j
                 call    far ptr rt_FE01 ; -> rtm_FE01  (leglib seg008:0x27c25)
 ; ---------------------------------------------------------------------------
 
 j_j_rt_FE4E_3:
                 jmp     j_rt_FE4E
-privateLevelWarn endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
 ; "GAS TRAP!".
 ; Attributes: noreturn
 
-gasTrap         proc near
+gasTrap         proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A1B↑o
                 mov     ax, 25A0h       ; @\nGAS TRAP!
                 push    ax
                 mov     ax, 2160h
@@ -1828,7 +1830,9 @@ gasTrap         endp
 ; "GO OUTSIDE.", "* YOU FORGOT THE ", "THE FORTRESS EXPLODES BEHIND" -- chains to OUT.EXE.
 ; Attributes: noreturn thunk
 
-exitCastle      proc near               ; CODE XREF: attackHit+FB↓j
+exitCastle      proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; attackHit+FB↓j
+                                        ; DATA XREF: ...
                 call    sub_16181
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:216Ah, 0
@@ -2139,7 +2143,8 @@ sub_10E86       endp
 
 ; Attributes: noreturn thunk
 
-sub_10EB8       proc near
+sub_10EB8       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A17↑o ...
                 call    refreshView     ; rebuild + blit the whole interior view: drawInteriorTiles then rtm_FE69. Called after any state change.
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:1F0Ah, 48F0h
@@ -2255,7 +2260,8 @@ loc_10F84:                              ; CODE XREF: seg000:0F81↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10F94       proc near
+sub_10F94       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A1D↑o ...
                 mov     si, 1B96h
                 mov     bx, 22h ; '"'
                 add     bx, [si+0Ah]
@@ -2601,7 +2607,8 @@ sub_111A1       endp
 
 ; Attributes: noreturn
 
-sub_1124D       proc near
+sub_1124D       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A21↑o
                 mov     word ptr ds:1F24h, 0FFh
                 mov     word ptr ds:2176h, 0C030h
                 mov     word ptr ds:209Eh, 0Dh
@@ -2672,7 +2679,8 @@ sub_112BA       endp
 
 ; Attributes: noreturn thunk
 
-sub_112D4       proc near
+sub_112D4       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A23↑o
                 call    checkLineOfSight ; line-of-sight test to a target (-> bmTNCALB scanLineOfSight).
 ; ---------------------------------------------------------------------------
 
@@ -2696,7 +2704,8 @@ sub_112D4       endp
 
 ; "THE GUARDS EYE YOU WARILY.".
 
-guardsWary      proc near
+guardsWary      proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A25↑o
                 cmp     word ptr ds:1F2Ah, 0
                 mov     ax, 0
                 jle     short loc_112FB
@@ -2769,7 +2778,8 @@ sub_11330       endp
 
 ; Attributes: noreturn
 
-sub_113EB       proc near
+sub_113EB       proc near               ; CODE XREF: moveBlocked+164↑j
+                                        ; DATA XREF: seg000:0A29↑o ...
                 cmp     word ptr ds:1F02h, 0Fh
                 mov     ax, 0
                 jnz     short loc_113F6
@@ -14008,7 +14018,7 @@ refreshView     endp
 ; Attributes: noreturn
 
 setViewport     proc far                ; CODE XREF: j_rt_FE01+81↑P
-                                        ; privateLevelWarn+7A↑P ...
+                                        ; seg000:0A8C↑P ...
                 mov     cx, 0Ah
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 
@@ -17555,7 +17565,7 @@ rt_FE48:                                ; Overlay manager interrupt
 ; -> rtm_FE49  (leglib seg007:0x25248)
 ; Attributes: noreturn
 
-rt_FE49         proc near               ; CODE XREF: privateLevelWarn+F1↑P
+rt_FE49         proc near               ; CODE XREF: seg000:0B03↑P
                                         ; j_rt_FE4E_3+73↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)

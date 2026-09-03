@@ -101,8 +101,7 @@ mus_entry       endp
 ; Attributes: noreturn thunk
 
 sub_1006C       proc near               ; CODE XREF: mus_entry:loc_10069↑j
-                                        ; useCommand+270↓j
-                                        ; DATA XREF: ...
+                                        ; sub_10123+5↓j ...
                 call    sub_124AC
 ; ---------------------------------------------------------------------------
 
@@ -214,46 +213,35 @@ sub_1006C       endp
 sub_10123       proc near               ; CODE XREF: sub_1006C:loc_1011D↑p
                 mov     bx, ds:1E20h
                 inc     bx
-                call    far ptr rt_FD   ; -> rtm_FD  (leglib seg003:0x1ca6a)  [mid-func]
+                call    far ptr rt_FD   ; "- SELECT ABOVE".
 sub_10123       endp
 
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_1012D       proc near
-                adc     dx, [si+4]
-                insb
-                add     [si+0], ch
-                push    bp
-                add     dx, sp
-                and     [bx+di+5404h], si
-                add     al, 0A4h
-                add     al, 6Ch ; 'l'
-                add     [si+0], ch
-                insb
-                add     [si+1], dl
-                sbb     sp, [bp+si]
-                loope   near ptr loc_10169+3
-sub_1012D       endp ; sp-analysis failed
-
-
-; =============== S U B R O U T I N E =======================================
-
-; Attributes: noreturn
-
-sub_1014A       proc near
-                sbb     sp, [bp+si]
-                dec     bx
-                and     [si+0], ch
-                push    sp
-                add     al, 4Ah ; 'J'
-
-loc_10153:                              ; CODE XREF: changeGameSpeed:loc_10547↓j
-                                        ; useCommand↓p ...
-                add     ax, 0C7C3h
-                push    es
+; ---------------------------------------------------------------------------
+                db 13h                  ; ON..GOSUB arm count
+                dw offset selectAbove   ; "- SELECT ABOVE".
+                dw offset sub_1006C
+                dw offset sub_1006C
+                dw offset unk_10155
+                dw offset loc_121E2
+                dw offset changeGameSpeed ; "SELECT GAME SPEED (1 IS FASTEST)".
+                dw offset selectAbove   ; "- SELECT ABOVE".
+                dw offset j_rt_FE2C_0
+                dw offset sub_1006C
+                dw offset sub_1006C
+                dw offset sub_1006C
+                dw offset nullsub_49
+                dw offset loc_1221B
+                dw offset loc_122E1
+                dw offset loc_1221B
+                dw offset showExhibitResult ; display the message string indexed by ds:1ADC (from the array at the ds:1D38 descriptor) and add to hitPoints. TENTATIVE.
+                dw offset sub_1006C
+                dw offset selectAbove   ; "- SELECT ABOVE".
+                dw offset describeMuseumRoom ; "YOU ARE IN AN ANCIENT MUSEUM", "YOU SEE A DOOR WITHOUT A KNOB", "A DISPLAY CASE PULSES NEARBY", "A TORCH CRACKLES NEARBY.".
+; [00000001 BYTES: COLLAPSED FUNCTION nullsub_49. PRESS NUMPAD+ TO EXPAND]
+unk_10155       db 0C7h                 ; CODE XREF: sub_10123+5↑j
+                                        ; changeGameSpeed:loc_10547↓j ...
+                db    6
+; ---------------------------------------------------------------------------
                 xchg    ax, dx
                 and     [bx], cl
                 add     bh, al
@@ -264,14 +252,10 @@ loc_10153:                              ; CODE XREF: changeGameSpeed:loc_10547�
                 push    ax
                 mov     ax, 2094h
                 push    ax
-
-loc_10169:                              ; CODE XREF: sub_1012D+1B↑j
                 call    far ptr rt_FE4A ; -> rtm_FE4A  (leglib seg008:0x27d92)
 
 nullsub_3:
                 retn
-sub_1014A       endp
-
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -697,7 +681,8 @@ sub_10441       endp
 ; "- SELECT ABOVE".
 ; Attributes: noreturn
 
-selectAbove     proc near
+selectAbove     proc near               ; CODE XREF: sub_10123+5↑j
+                                        ; DATA XREF: seg000:012E↑o ...
                 cmp     word ptr ds:1E20h, 6
                 mov     ax, 0
                 jnz     short loc_1045F
@@ -761,7 +746,8 @@ j_rt_FE3C:                              ; -> rtm_FE3C  (leglib seg007:0x25ca3)
 ; "YOU ARE IN AN ANCIENT MUSEUM", "YOU SEE A DOOR WITHOUT A KNOB", "A DISPLAY CASE PULSES NEARBY", "A TORCH CRACKLES NEARBY.".
 ; Attributes: noreturn
 
-describeMuseumRoom proc near
+describeMuseumRoom proc near            ; CODE XREF: sub_10123+5↑j
+                                        ; DATA XREF: seg000:0152↑o
                 mov     ax, ds:20A8h
                 and     ax, 0F0h
                 cmp     ax, 40h ; '@'
@@ -4776,7 +4762,8 @@ sub_11FEA       endp
 ; display the message string indexed by ds:1ADC (from the array at the ds:1D38 descriptor) and add to hitPoints. TENTATIVE.
 ; Attributes: noreturn
 
-showExhibitResult proc near
+showExhibitResult proc near             ; CODE XREF: sub_10123+5↑j
+                                        ; DATA XREF: seg000:014C↑o
                 mov     bx, ds:1ADCh
                 shl     bx, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 shl     bx, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
@@ -4891,7 +4878,7 @@ showExhibitResult endp
 ; Attributes: noreturn
 
 useCommand      proc near
-                call    near ptr loc_10153+2
+                call    near ptr unk_10155
 ; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1ADCh, 0Bh
                 jz      short loc_1213A
@@ -4984,6 +4971,9 @@ loc_121CD:                              ; CODE XREF: useCommand+5E↑j
                 mov     word ptr ds:1B06h, 1Eh
                 jmp     loc_1233B
 ; ---------------------------------------------------------------------------
+
+loc_121E2:                              ; CODE XREF: sub_10123+5↑j
+                                        ; DATA XREF: seg000:0136↑o
                 cmp     word ptr ds:20A8h, 73h ; 's'
                 jz      short loc_121EC
                 jmp     loc_1221B
@@ -5012,7 +5002,9 @@ loc_121EC:                              ; CODE XREF: useCommand+BA↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1221B:                              ; CODE XREF: useCommand+BC↑j
+loc_1221B:                              ; CODE XREF: sub_10123+5↑j
+                                        ; useCommand+BC↑j
+                                        ; DATA XREF: ...
                 mov     ax, ds:20A8h
                 and     ax, 0F0h
                 mov     ds:211Ch, ax
@@ -5022,7 +5014,7 @@ loc_1221B:                              ; CODE XREF: useCommand+BC↑j
 ; ---------------------------------------------------------------------------
 
 loc_1222C:                              ; CODE XREF: useCommand+FA↑j
-                call    near ptr loc_10153+2
+                call    near ptr unk_10155
 ; ---------------------------------------------------------------------------
                 mov     ax, 27D8h       ; THERE IS NOTHING TO
                 push    ax
@@ -5111,6 +5103,9 @@ loc_1228B:                              ; CODE XREF: useCommand+153↑j
 ; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
+
+loc_122E1:                              ; CODE XREF: sub_10123+5↑j
+                                        ; DATA XREF: seg000:0148↑o
                 cmp     word ptr ds:20FEh, 0Eh
                 mov     ax, 0
                 jnz     short loc_122EC
@@ -5130,7 +5125,7 @@ loc_122F7:                              ; CODE XREF: useCommand+1C7↑j
 ; ---------------------------------------------------------------------------
 
 loc_12300:                              ; CODE XREF: useCommand+1CE↑j
-                call    near ptr loc_10153+2
+                call    near ptr unk_10155
 ; ---------------------------------------------------------------------------
                 mov     ax, 281Eh       ; THERE IS NO REPLY.
                 push    ax
@@ -10831,7 +10826,7 @@ rt_FE49         endp
 ; -> rtm_FE4A  (leglib seg008:0x27d92)
 ; Attributes: noreturn
 
-rt_FE4A         proc near               ; CODE XREF: sub_1014A:loc_10169↑P
+rt_FE4A         proc near               ; CODE XREF: seg000:0169↑P
                                         ; sub_1016F+14↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)

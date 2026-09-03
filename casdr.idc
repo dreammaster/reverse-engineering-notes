@@ -313,6 +313,14 @@ static Bytes_0(void) {
 	create_insn	(0X1070F);
 	create_insn	(0X10712);
 	create_insn	(0X10717);
+	set_cmt	(0X10720,	"ON..GOSUB arm count",	0);
+	create_byte	(0X10720);
+	create_word	(x=0X10721);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10723);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X10725);
 	create_insn	(0X1072E);
 	create_insn	(0X1076D);
@@ -370,10 +378,49 @@ static Bytes_0(void) {
 	create_insn	(0X109D2);
 	create_insn	(0X10A05);
 	create_insn	(0X10A06);
-	create_insn	(x=0X10A12);
-	op_hex		(x,	1);
+	set_cmt	(0X10A12,	"ON..GOSUB arm count",	0);
+	set_cmt	(0X10A12,	"\"PRIVATE LEVEL!\".",	1);
+	create_byte	(0X10A12);
 	set_name	(0X10A12,	"privateLevelWarn");
-	create_insn	(0X10A2B);
+	create_word	(x=0X10A13);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A15);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A17);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A19);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A1B);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A1D);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A1F);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A21);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A23);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A25);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A27);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A29);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
+	create_word	(x=0X10A2B);
+	op_plain_offset	(x,	0,	0X10000);
+	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X10A2D);
 	create_insn	(0X10A50);
 	set_name	(0X10A50,	"j_rt_FE4E_2");
@@ -3262,6 +3309,15 @@ static Bytes_0(void) {
 	set_name	(0X16980,	"rt_FF4A");
 	create_byte	(0X16982);
 	make_array	(0X16982,	0X2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X16984,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
 	create_insn	(x=0X16984);
 	op_hex		(x,	0);
@@ -3285,15 +3341,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X16990);
 	op_hex		(x,	0);
 	set_name	(0X16990,	"rt_FF4E");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X16992);
 	make_array	(0X16992,	0X2);
 	set_cmt	(0X16994,	"Overlay manager interrupt\n(Microsoft LINK.EXE, Borland TLINK VROOMM)",	0);
@@ -5215,9 +5262,8 @@ static Functions_0(void) {
 	add_func    (0X108A9,0X10A12);
 	set_func_flags(0X108A9,0x1401);
 	set_func_cmt(0X108A9,	"\"MOVE NOWHERE\".", 1);
-	add_func    (0X10A12,0X10B72);
-	set_func_flags(0X10A12,0x1401);
-	set_func_cmt(0X10A12,	"\"PRIVATE LEVEL!\".", 1);
+	add_func    (0X10A2D,0X10A50);
+	set_func_flags(0X10A2D,0x1401);
 	add_func    (0X10B72,0X10C7F);
 	set_func_flags(0X10B72,0x1401);
 	set_func_cmt(0X10B72,	"\"GAS TRAP!\".", 1);
