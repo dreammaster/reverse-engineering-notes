@@ -887,10 +887,21 @@ static int cmdCampTest(int argc, char **argv) {
         }
     }
 
+    if (argc > 7) {                             // wound=idx:hp[:status]
+        int m = -1, hp = 1, s = 0;
+        std::sscanf(argv[7], "wound=%d:%d:%d", &m, &hp, &s);
+        if (m >= 0 && m < party.count()) {
+            party.member(m).hpLeft = hp;
+            if (s > 0) party.member(m).status = Status(s);
+        }
+    }
+
     auto plat = makeNullPlatform(unescape(argv[4]), "");
     Rng rng;
     Ui ui(*plat, font);
-    CampExit e = runCamp(ui, party, roster, sc, haveSp ? &sp : nullptr, rng, 5, 5, 1);
+    MazeState mst;
+    mst.level = 1; mst.pos = MazePos{5, 5, 0};
+    CampExit e = runCamp(ui, party, roster, sc, haveSp ? &sp : nullptr, rng, mst);
 
     TextScreen &t = ui.ts();
     for (int y = 0; y < 24; ++y) {
@@ -908,7 +919,9 @@ static int cmdCampTest(int argc, char **argv) {
     std::printf("camp exit: %s | order: %s\n", ex[int(e)], order.c_str());
     for (int i = 0; i < party.count(); ++i) {
         const Character &ch = party.member(i);
-        std::printf("  %d %-12s poss%d AC%d", i + 1, ch.name.c_str(), ch.possCount, ch.armorClass);
+        std::printf("  %d %-12s HP%d/%d st%d %lldgp poss%d AC%d", i + 1, ch.name.c_str(),
+                    ch.hpLeft, ch.hpMax, int(ch.status), (long long)ch.gold.v,
+                    ch.possCount, ch.armorClass);
         for (int k = 0; k < ch.possCount; ++k)
             std::printf(" %s#%d", ch.poss[k].equipped ? "E" : "", ch.poss[k].itemIndex);
         std::printf("\n");

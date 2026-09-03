@@ -220,6 +220,31 @@ add_test(NAME camp_equip
 # EQUIPCHR -> AC 8, damage 1d8 + the STR bonus.
 set_tests_properties(camp_equip PROPERTIES
     PASS_REGULAR_EXPRESSION "EQUIP. THESUS AC 8 swings 1 dmg 1d8.2")
+add_test(NAME camp_cast
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "6S11"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "" "wound=0:2")
+# CASTSPEL: the priest casts DIOS on the wounded fighter, healing him to full.
+set_tests_properties(camp_cast PROPERTIES
+    PASS_REGULAR_EXPRESSION "CAMPCAST. NOBAL casts DIOS(.|\n)*1 THESUS       HP8/8")
+add_test(NAME camp_trade
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1T250\\r\\rL"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN")
+# DOTRADE: THESUS hands TEMPEST 50 gold.
+set_tests_properties(camp_trade PROPERTIES
+    PASS_REGULAR_EXPRESSION "1 THESUS       HP8/8 st0 135gp(.|\n)*2 TEMPEST      HP8/8 st0 240gp")
+add_test(NAME camp_use
+         COMMAND wiz1 camp-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" "1U11L"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" "0:16")
+# USEITEM: a LATUMOFI scroll (obj 16, SPELLPWR 37) casts LATUMOFI and is
+# consumed (changeTo 0).
+set_tests_properties(camp_use PROPERTIES
+    PASS_REGULAR_EXPRESSION "CAMPCAST. THESUS casts LATUMOFI(.|\n)*THESUS[^\n]*#0")
 add_test(NAME maze_poison
          COMMAND wiz1 maze-play-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

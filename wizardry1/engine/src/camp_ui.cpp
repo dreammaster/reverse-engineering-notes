@@ -1,4 +1,5 @@
 #include "wiz/camp_ui.h"
+#include "wiz/roster.h"
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/equip.h"
@@ -16,11 +17,24 @@ const char *nameOf(const std::vector<std::string> &v, int i) {
 struct CampCtx {
     Ui &ui;
     Party &party;
+    Roster &roster;
     const Scenario &sc;
     const StringPool *sp;
     Rng &rng;
+    MazeState &st;
     TextScreen &t() { return ui.ts(); }
 };
+
+// GETCHARX: pick a party member by number (1..count); -1 on [RET] / quit.
+int pickMember(CampCtx &c, const char *prompt) {
+    auto &t = c.t();
+    t.gotoXY(0, 18); t.putChar(11);
+    t.write(std::string(prompt) + " (#) >");
+    int k = c.ui.getKey();
+    if (c.ui.quit() || k == KEY_RETURN) return -1;
+    int i = k - '1';
+    return (i >= 0 && i < c.party.count()) ? i : -1;
+}
 
 std::string objName(const CampCtx &c, int idx, bool identified) {
     if (c.sp) {
@@ -233,6 +247,173 @@ void runEquip(CampCtx &c, Character &ch) {
                 ch.hpDamRc[2], ch.wepSlay);
 }
 
+// ---- DOTRADE (P010C17): hand gold / items to another member -------
+void doTrade(CampCtx &c, int fromIdx) {
+    int to = pickMember(c, "TRADE WITH");
+    if (to < 0 || to == fromIdx) return;
+    Character &from = c.party.member(fromIdx);
+    Character &dst  = c.party.member(to);
+    auto &t = c.t();
+
+    // TRADGOLD
+    t.gotoXY(0, 18); t.putChar(11);
+    t.write("AMT OF GOLD ? >");
+    std::string g = c.ui.getLine(12);
+    int64_t amt = 0;
+    bool bad = g.empty();
+    for (char ch : g) { if (ch < '0' || ch > '9') { bad = true; break; } amt = amt * 10 + (ch - '0'); }
+    if (bad) { c.ui.pressAnyKey("** BAD AMT **"); }
+    else if (amt > from.gold.v) { c.ui.pressAnyKey("** NOT ENOUGH $ **"); }
+    else if (amt > 0) { from.gold.v -= amt; dst.gold.v += amt; }
+
+    // TRADITEM -- loop until [RET]
+    for (;;) {
+        dspItems(c, from);
+        t.gotoXY(0, 18); t.putChar(11);
+        t.write("WHAT ITEM ([RET] EXITS) ? >");
+        int k = c.ui.getKey();
+        if (c.ui.quit() || k == KEY_RETURN) return;
+        int n = k - '0';
+        if (n < 1 || n > from.possCount) continue;
+        Possession &p = from.poss[n - 1];
+        if (dst.possCount >= 8) { c.ui.pressAnyKey("** FULL **"); return; }
+        if (p.cursed)   { c.ui.pressAnyKey("** CURSED **"); return; }
+        if (p.equipped) { c.ui.pressAnyKey("** EQUIPPED **"); return; }
+        dst.poss[dst.possCount++] = p;
+        for (int j = n; j < from.possCount; ++j) from.poss[j - 1] = from.poss[j];
+        --from.possCount;
+    }
+}
+
+// ---- CASTSPEL (P010C06): the in-camp (non-combat) spell set -------
+// Effect kinds -- the DOS dispatch keyed by spell hash.
+enum CampSpellKind { CS_HEAL, CS_FULLHEAL, CS_LIGHT, CS_UNPOISON, CS_CURE,
+                     CS_PROTECT, CS_RESURRECT };
+struct CampSpell {
+    int no; const char *name; int group; CampSpellKind kind; int a; int b;
+};
+// group per inn.h minPri (priest 1:22-26 2:27-30 3:31-34 4:35-38 5:39-44
+// 6:45-48 7:49-50).  a/b = healing dice; CS_LIGHT a = LIGHT value.
+const CampSpell kCampSpells[] = {
+    {23, "DIOS",     1, CS_HEAL,      1, 8},
+    {25, "MILWA",    1, CS_LIGHT,    15, 0},
+    {31, "LOMILWA",  3, CS_LIGHT, 32000, 0},
+    {32, "DIALKO",   3, CS_CURE,      0, 0},
+    {35, "DIAL",     4, CS_HEAL,      2, 8},
+    {37, "LATUMOFI", 4, CS_UNPOISON,  0, 0},
+    {38, "MAPORFIC", 4, CS_PROTECT,   0, 0},
+    {39, "DIALMA",   5, CS_HEAL,      3, 8},
+    {43, "DI",       5, CS_RESURRECT, 5, 0},   // from DEAD
+    {46, "MADI",     6, CS_FULLHEAL,  0, 0},
+    {50, "KADORTO",  7, CS_RESURRECT, 7, 0},   // from DEAD or ASHES
+};
+
+// DODIKADO / DIKADORT: resurrection.  `mode` 5 = DI (-> 1 HP), 7 = KADORTO
+// (-> full HP, also from ASHES).
+void resurrect(CampCtx &c, Character &v, int mode) {
+    if (v.status == Status::Lost) { c.ui.pressAnyKey("** LOST **"); return; }
+    if (mode == 5 && v.status != Status::Dead) {
+        c.ui.pressAnyKey(v.status == Status::Ashes ? "** KADORTO NEEDED **" : "** NOT DEAD **");
+        return;
+    }
+    if (mode == 7 && v.status != Status::Dead && v.status != Status::Ashes) {
+        c.ui.pressAnyKey("** NOT DEAD **"); return;
+    }
+    int vit = v.attrib[VIT];
+    if (c.rng.mod(100) <= 4 * vit) {                       // success
+        v.status = Status::OK;
+        v.hpLeft = (mode == 5) ? 1 : v.hpMax;
+        v.poison = 0;
+        if (vit == 3) v.status = Status::Lost;
+        else v.attrib[VIT] = vit - 1;
+        c.ui.pressAnyKey(v.status == Status::OK ? "EXCELSIOR!" : "OOPS!");
+    } else {                                               // botch -> worse
+        if (int(v.status) < int(Status::Lost)) v.status = Status(int(v.status) + 1);
+        c.ui.pressAnyKey("OOPS!");
+    }
+}
+
+// `viaItem` -> USE an item: skip the spell-point / known check and cost.
+void campCast(CampCtx &c, Character &caster, int forcedNo) {
+    struct Avail { const CampSpell *s; };
+    Avail av[16]; int n = 0;
+    for (const CampSpell &s : kCampSpells) {
+        bool viaItem = forcedNo > 0;
+        if (viaItem ? s.no != forcedNo
+                    : (!caster.spellKnown[s.no] || caster.priestSpells[s.group] <= 0))
+            continue;
+        av[n++] = {&s};
+        if (viaItem) break;
+    }
+    if (n == 0) { c.ui.pressAnyKey("** YOU CAN'T CAST IT **"); return; }
+
+    const CampSpell *sp;
+    if (forcedNo > 0) sp = av[0].s;
+    else {
+        auto &t = c.t();
+        t.gotoXY(0, 18); t.putChar(11);
+        std::string line = "CAST: ";
+        for (int i = 0; i < n; ++i) { line += char('1' + i); line += ')'; line += av[i].s->name; line += ' '; }
+        t.write(line.substr(0, 39));
+        int k = c.ui.getKey();
+        if (c.ui.quit()) return;
+        int pick = k - '1';
+        if (pick < 0 || pick >= n) return;
+        sp = av[pick].s;
+        --caster.priestSpells[sp->group];                  // DECPRIEST
+    }
+    std::printf("CAMPCAST| %s casts %s\n", caster.name.c_str(), sp->name);
+
+    if (sp->kind == CS_LIGHT) {
+        c.st.light = sp->a + (sp->a < 100 ? c.rng.mod(15) : 0);
+        c.ui.pressAnyKey("DONE!");
+        return;
+    }
+    if (sp->kind == CS_PROTECT) { c.st.protect = 2; c.ui.pressAnyKey("DONE!"); return; }
+
+    int who = pickMember(c, "CAST ON WHO");
+    if (who < 0) return;
+    Character &v = c.party.member(who);
+    switch (sp->kind) {
+        case CS_HEAL: {
+            int h = 0;
+            for (int i = 0; i < sp->a; ++i) h += c.rng.mod(sp->b) + 1;
+            v.hpLeft = std::min(v.hpMax, v.hpLeft + h);
+            c.ui.pressAnyKey(("CURED " + std::to_string(h) + " HP").c_str());
+            break;
+        }
+        case CS_FULLHEAL:
+            v.hpLeft = v.hpMax; v.poison = 0;
+            if (int(v.status) < int(Status::Dead)) v.status = Status::OK;
+            c.ui.pressAnyKey("FULLY HEALED");
+            break;
+        case CS_UNPOISON: v.poison = 0; c.ui.pressAnyKey("DONE!"); break;
+        case CS_CURE:
+            if (v.status == Status::Paralyzed || v.status == Status::Asleep) v.status = Status::OK;
+            c.ui.pressAnyKey("DONE!");
+            break;
+        case CS_RESURRECT: resurrect(c, v, sp->a); break;
+        default: break;
+    }
+}
+
+// ---- USEITEM (P010C11): invoke an item's SPELLPWR ----------------
+void doUse(CampCtx &c, Character &ch) {
+    auto &t = c.t();
+    t.gotoXY(0, 18); t.putChar(11);
+    t.write("USE ITEM (0=EXIT) ? >");
+    int k = c.ui.getKey();
+    if (c.ui.quit()) return;
+    int n = k - '0';
+    if (n < 1 || n > ch.possCount) return;
+    Possession &p = ch.poss[n - 1];
+    ObjectRec o{c.sc.record(Scenario::Object, p.itemIndex)};
+    if (o.spellPwr() == 0) { c.ui.pressAnyKey("** POWERLESS **"); return; }
+    if (o.type() != ObjType::Special && !p.equipped) { c.ui.pressAnyKey("** NOT EQUIPPED **"); return; }
+    if (c.rng.mod(100) < o.chgChance()) p.itemIndex = o.changeTo();   // item transforms
+    campCast(c, ch, o.spellPwr());                        // SPELLPWR -> spell number
+}
+
 // ---- CAMPMENU: one character's inspect sub-menu --------------------
 // Returns false only if the window closed.
 bool inspectChar(CampCtx &c, int idx) {
@@ -250,8 +431,12 @@ bool inspectChar(CampCtx &c, int idx) {
         if (k == 'R') { readBooks(c, ch); continue; }
         if (k == 'D') { dropItem(c, ch); continue; }
         if (k == 'E') { runEquip(c, ch); continue; }
-        if (k == 'T' || (ok && (k == 'S' || k == 'U' || k == 'I'))) {
-            c.ui.pressAnyKey("-- NOT AVAILABLE IN CAMP YET --");
+        if (k == 'T') { doTrade(c, idx); continue; }
+        if (ok && k == 'S') { campCast(c, ch, 0); continue; }
+        if (ok && k == 'U') { doUse(c, ch); continue; }
+        if (ok && k == 'I') {
+            c.ui.pressAnyKey(ch.cls == Class::Bishop ? "-- IDENTIFY NEEDS THE SPELLBOOK SCREEN --"
+                                                     : "** NOT BISHOP **");
             continue;
         }
     }
@@ -288,9 +473,8 @@ void campList(CampCtx &c) {
 } // namespace
 
 CampExit runCamp(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
-                 const StringPool *sp, Rng &rng,
-                 int mazeX, int mazeY, int mazeLevel) {
-    CampCtx c{ui, party, sc, sp, rng};
+                 const StringPool *sp, Rng &rng, MazeState &st) {
+    CampCtx c{ui, party, roster, sc, sp, rng, st};
     for (;;) {
         campList(c);
         int k = ui.getKey();
@@ -316,7 +500,7 @@ CampExit runCamp(Ui &ui, Party &party, Roster &roster, const Scenario &sc,
             for (int i = 0; i < party.count(); ++i) {
                 Character &m = party.member(i);
                 m.inMaze = false;
-                m.lostX = mazeX; m.lostY = mazeY; m.lostLevel = mazeLevel;
+                m.lostX = st.pos.x; m.lostY = st.pos.y; m.lostLevel = st.level;
                 m.age += 25;
             }
             party.disband(roster);          // persist the bodies + empty the party

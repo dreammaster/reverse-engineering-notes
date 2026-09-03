@@ -170,8 +170,21 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   two columns with the `* - ? #` flag from equipped / cursed / identified /
   `CLASSUSE`).  Sub-menu by status: OK gets `E)QUIP D)ROP T)RADE R)EAD
   S)PELL U)SE I)DENT L)EAVE`, otherwise the short form.  Ported: `E)QUIP`
-  (below), `R)EAD` (list known spell names) and `D)ROP` (`DROPITEM` —
-  refuses cursed / equipped).  `T`/`S`/`U`/`I` say "not available yet".
+  (below), `R)EAD` (list known spells), `D)ROP` (`DROPITEM` — refuses cursed
+  / equipped), `T)RADE` (`DOTRADE` — hand gold and non-cursed/unequipped
+  items to another member), `S)PELL` / `U)SE` (`CASTSPEL` / `USEITEM`,
+  below).  `I)DENT` needs the Bishop spellbook screen (`CAMPSTF`), not
+  ported — says `** NOT BISHOP **` otherwise.
+* **`CASTSPEL`** (`P010C06`) — the in-camp (non-combat) spell set.
+  `S)PELL` lists the caster's known spells whose priest pool is > 0;
+  `U)SE` an item invokes its `SPELLPWR` spell for free (skipping the pool
+  check) and rolls `CHGCHANC` to transform the item to `CHANGETO` (a
+  spent scroll → object 0).  Effects: `DIOS`/`DIAL`/`DIALMA` heal `Nd8`,
+  `MADI` full heal + un-KO, `MILWA`/`LOMILWA` set `LIGHT`, `LATUMOFI`
+  unpoison, `DIALKO` cure sleep/paralysis, `MAPORFIC` `PROTECT := 2`,
+  `DI`/`KADORTO` resurrect (`DIKADORT`: `rand%100 <= 4·VIT` → OK at 1 /
+  full HP, `VIT−1` or `LOST` at VIT 3; botch worsens the status).
+  `DUMAPIC`/`KANDI`/`MALOR` delegate to `CAMPSTF` — not ported.
 * **`EQUIP`** (`EQUIPCHR` / `ARMORPOW`, `UTILITIE` procs P010119 / P01011E —
   `engine/wiz/equip.h`).  `DOEQUIP` walks the slot types
   (weapon / armor / shield / helmet / gauntlet / misc) — for each it lists
@@ -194,13 +207,15 @@ DOS RUNNER, `C` sets `XGOTO := XINSPCT2`).
   current room (`INMAZE := FALSE`, `LOSTXYL.LOCATION := (x,y,level)`,
   `AGE += 25`), written back to the roster, and the party empties.
 
-`wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]`
-(`grants` = `m:i,…` gives member `m` object `i`) dumps the final screen +
-`camp exit: … | order: …` (tests `camp_sheet` / `camp_flow` / `camp_disband`
-/ `camp_equip`).  Not ported: `USEITEM`, `DOTRADE`, `IDENTIFY`, `CASTSPEL`
-(the non-combat spell set), `CHSPCPOW` (invoke an item's special power),
-chevrons/medals.  `StringPool::spellNameKey` was off by one — fixed to
-`5000 + idx` (`5001` = `HALITO`).
+`wiz1 camp-test <CHARSET> <SCENARIO.DATA> <keyscript> [ASCII.KRN] [grants]
+[wound=idx:hp[:status]]` (`grants` = `m:i,…` gives member `m` object `i`)
+dumps the final screen + `camp exit: … | order: …` and a per-member line
+(tests `camp_sheet` / `camp_flow` / `camp_disband` / `camp_equip` /
+`camp_cast` / `camp_trade` / `camp_use`).  Not ported: `IDENTIFY`
+(`CAMPSTF`), `CHSPCPOW` (invoke an item's special power), the delegating
+camp spells (`DUMAPIC`/`KANDI`/`MALOR`), chevrons/medals.
+`StringPool::spellNameKey` was off by one — fixed to `5000 + idx`
+(`5001` = `HALITO`).
 
 ## `I`nspect — body recovery  (`SPECIALS` `INSPECT` / `EXPLROOM` / `LOOKLOST` / `PICKUP`, P010302-05)
 

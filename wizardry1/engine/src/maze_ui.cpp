@@ -640,8 +640,7 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
             msg(c, std::string("QUICK PLOT ") + (st.quickPlot ? "ON" : "OFF"));
             c.needDraw = true;
         } else if (k == 'C') {
-            switch (runCamp(c.ui, c.party, c.roster, c.sc, c.sp, c.rng,
-                            st.pos.x, st.pos.y, st.level)) {
+            switch (runCamp(c.ui, c.party, c.roster, c.sc, c.sp, c.rng, st)) {
                 case CampExit::WindowClosed: return MazeExit::WindowClosed;
                 case CampExit::Disbanded:    return MazeExit::ToTown;
                 case CampExit::ToMaze:       runInit(c); c.needDraw = true; break;
