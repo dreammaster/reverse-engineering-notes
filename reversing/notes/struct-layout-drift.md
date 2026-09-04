@@ -10710,3 +10710,28 @@ to `wsetcolor` in source) and `sub_4395A0` as Allegro's public
 trailing `if(wantColDep>16) ctset[0]|=0xff000000;` alpha-channel
 visibility fixup is also confirmed absent -- no such OR appears after
 the `makecol_depth` call here.
+
+### `cant_skip_speech` resolved: this build stores the raw option value, not a converted bitmask
+
+`main`'s own init-block entry had left `GameState.cant_skip_speech`
+at "reinforcing but not fully closing" -- its write site looked
+SHAPE-consistent with source's `play.cant_skip_speech = user_to_
+internal_skip_speech(game.options[OPT_NOSKIPTEXT]);` (a computed value
+from a game-options byte, not a fixed literal), but the earlier round
+never checked whether a real conversion call actually happens.
+Rereading the write site settles it decisively: it's a plain "movsx
+ecx,byte_51333D; cant_skip_speech=ecx" -- a DIRECT COPY of the raw
+`OPT_NOSKIPTEXT` byte, with NO call to any conversion function at all.
+Checking all four of this field's own read sites (`check_controls`
+twice, `update_stuff` twice) confirms this isn't an oversight: every
+comparison tests the RAW 0-4 `userval` range directly (`cant_skip_
+speech==2` matching source's own "can't skip at all" case comment,
+`cant_skip_speech==3` matching "only on keypress, no auto timer",
+a `0 < x < 3` range test matching "not click-anytime and not
+keypress/mouse-only") -- none test a `SKIP_AUTOTIMER`/`SKIP_KEYPRESS`/
+`SKIP_MOUSECLICK` bit anywhere. This CONFIRMS `user_to_internal_skip_
+speech()` (`AC.CPP:12790-12809`) doesn't exist as a function in this
+build at all -- every call site that would use its converted bitmask
+output instead tests the raw option value directly. Same field as
+2011's own `cant_skip_speech`, just a different (raw, unconverted)
+representation -- renamed accordingly, upgraded to high confidence.

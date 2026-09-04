@@ -3699,18 +3699,22 @@ struct GameState {
                             // matching 2011's "if (play.want_speech<0)
                             // play.want_speech=(-newmod)-1; else play.want_speech=newmod;"
                             // (AC.CPP:13500-13503).
-  int cant_skip_speech;         // +0x830, medium-high confidence (UPGRADED from tentative):
+  int cant_skip_speech;         // +0x830, high confidence (RESOLVED, follow-up round):
                             // positionally exactly where 2011 declares `cant_skip_speech`
-                            // (immediately after `want_speech`); `check_controls`'s own check
-                            // there ("0 < dword_4EF248 < 3") doesn't cleanly read as a simple
-                            // boolean on its own, but `main`'s init block sets it via
-                            // "movsx ecx, byte_51333D; dword_4EF248=ecx" -- a COMPUTED value
-                            // from a game-options byte, matching the SHAPE of 2011's
-                            // "play.cant_skip_speech = user_to_internal_skip_speech(game.
-                            // options[OPT_NOSKIPTEXT]);" (AC.CPP:26333) rather than a fixed
-                            // literal, reinforcing the identification without fully closing
-                            // it (this build's version doesn't visibly call a conversion
-                            // function matching user_to_internal_skip_speech's name).
+                            // (immediately after `want_speech`). `main`'s init block sets it
+                            // via a plain "movsx ecx,byte_51333D; cant_skip_speech=ecx" --
+                            // a DIRECT COPY of the raw OPT_NOSKIPTEXT game-options byte, with
+                            // NO call to any conversion function. This means
+                            // user_to_internal_skip_speech() (AC.CPP:12790-12809, converting
+                            // the raw 0-4 userval into a SKIP_AUTOTIMER/SKIP_KEYPRESS/
+                            // SKIP_MOUSECLICK bitmask) does NOT exist in this build at all --
+                            // confirmed by all 4 of this field's own read sites (check_controls
+                            // x2, update_stuff x2), every one of which tests the RAW 0-4 value
+                            // directly (e.g. "cmp cant_skip_speech,2" matching source's own
+                            // "userval==2 -> can't skip at all" case, "cmp cant_skip_speech,3"
+                            // matching "only on keypress, no auto timer") rather than testing
+                            // any SKIP_* bit. Same field as 2011's, just a different (raw,
+                            // unconverted) representation.
   int stop_dialog_at_end;       // +0x834, medium-high confidence: pre-existing IDA name
                             // (`play_stop_dialog_at_end`), XREF'd from `RunDialog`/`NewRoom`
                             // (both already correctly named) in a role plausibly matching

@@ -153782,6 +153782,7 @@ static Bytes_27(void) {
 	create_dword	(0X4EF244);
 	set_name	(0X4EF244,	"play_want_speech");
 	create_dword	(0X4EF248);
+	set_name	(0X4EF248,	"cant_skip_speech");
 	create_dword	(0X4EF24C);
 	set_name	(0X4EF24C,	"play_stop_dialog_at_end");
 	create_dword	(0X4EF250);

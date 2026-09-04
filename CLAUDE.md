@@ -3032,6 +3032,12 @@ disassembly work.
   just pass through unconverted), and the trailing alpha-channel
   visibility fixup. Identifies `col_lookups[]` and Allegro's
   `makecol_depth`.
+- **`cant_skip_speech` resolved: raw option value, not a converted
+  bitmask.** Its write site is a plain copy of the raw `OPT_NOSKIPTEXT`
+  byte, no conversion call. All four read sites test the raw 0-4 range
+  directly, confirming `user_to_internal_skip_speech()` doesn't exist
+  in this build — every use site tests the raw value instead of a
+  converted `SKIP_*` bit. Renamed, upgraded to high confidence.
 
 ## Third-party library identification (Task #10)
 
