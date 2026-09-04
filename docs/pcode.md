@@ -1,8 +1,12 @@
 # SYSTEM.PASCAL — p-code codefile & disassembler
 
-`tools/pcode_dis.py`. Disassembles the game's linked p-code. Dialect and
-operand formats: [`docs/pmachine.md`](pmachine.md). Runs clean over all 16
-segments / 587 procedures — no decode desyncs, no unknown opcodes.
+The codefile *format* is engine-wide; the segment/proc counts and examples
+below are Wizardry I's (`wizardry1/`).  `tools/pcode_dis.py`, `sources/`,
+`extracted/` paths are under `wizardry1/`.
+
+`tools/pcode_dis.py` disassembles the game's linked p-code. Dialect and
+operand formats: [`pmachine.md`](pmachine.md). Runs clean over all 16
+segments / 587 procedures of Wiz I — no decode desyncs, no unknown opcodes.
 
 ```
 python tools/pcode_dis.py segments extracted/wiz1/SYSTEM.PASCAL
@@ -92,7 +96,7 @@ the low teens (procedures inserted/removed in the 1987 rewrite), so the
 | WIZARDRY 3 | `GETREC` | scenario block cache; `CGP 65/66` = read/write-retry helpers |
 | WIZARDRY 4 | `GETRECW` | `GETREC` + `CACHEWRI := TRUE` |
 | WIZARDRY 38 | `GetStr(KN, VAR s)` | binary search over `strTree` (globals 44 node / 45 root / 46 strOffsets / 47 strTree) |
-| WIZARDRY 82 | *(GetStr inner)* | `ASCII.KRN` block fetch + decipher (see `docs/file-formats.md`) |
+| WIZARDRY 82 | *(GetStr inner)* | `ASCII.KRN` block fetch + decipher (see `file-formats.md`) |
 | WIZARDRY 64 | `CheckCache(head, tail, key)` | LRU-ish node cache; 518-B `d` nodes, 86-B `s` nodes |
 | WIZARDRY 17 | dispose / free RAM block | |
 | WIZARDRY 59 | open file on unit, return first block | data=2090 |

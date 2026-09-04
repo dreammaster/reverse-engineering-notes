@@ -190,7 +190,7 @@ This is the notoriously weak PC-Wizardry RNG.  Reproduced in
 `engine/wiz/rng.h` (`nextIntended()` = the store-BX version for comparison).
 
 **Validated against a live DOSBox capture (2026‑09‑04) — bit-exact.**  See
-`docs/rng-validation.md`.  Findings:
+`rng-validation.md`.  Findings:
 
 * The `0x221E` code, the four LCG constants and the `0x143F` increment
   table (`{3619, FF8B, 0183, 7FC9}`) match the image byte-for-byte.

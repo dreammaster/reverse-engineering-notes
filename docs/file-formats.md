@@ -1,13 +1,23 @@
-# Wizardry I (DOS) — file formats
+# Wizardry (DOS) — file formats
 
-Files carved from `WIZ1.DSK` with `tools/ucsd_disk.py`. Guide structures come
-from the Apple Pascal source in `sources/` (`Wiz1WizardryPascal.txt`); the DOS
-records are an evolved, more tightly packed variant of the same layout, so
-field *order* transfers but *sizes/packing* must be checked against the data.
+The disk / container / cipher / bitmap **mechanisms** below are engine-wide
+(Wiz I–V; I/II/III share `SYSTEM.INTERP` byte-for-byte — see
+[`engine.md`](engine.md)).  The specific **record field layouts** are
+Wizardry I's best-known values, carved from `WIZ1.DSK` with
+`wizardry1/tools/ucsd_disk.py` and guided by the Apple Pascal source in
+`wizardry1/sources/` (`Wiz1WizardryPascal.txt`); the DOS records are an
+evolved, more tightly packed variant of the same layout, so field *order*
+transfers but *sizes/packing* must be checked against the data.  Wiz II/III
+should match closely — re-verify per game.
 
 All multi-byte integers are little-endian. "STRING[n]" = 1 length byte then
 `n` chars (UCSD `STRING`); inside records it is often followed by pad bytes to
 the declared width + word alignment.
+
+> Unqualified `tools/`, `engine/`, `sources/`, `extracted/` paths and
+> `docs/combat.md` / `docs/maze.md` / `docs/strings.txt` references below are
+> under `wizardry1/`.  `pmachine.md` / `pcode.md` / `rng-validation.md` are
+> siblings of this file.
 
 ---
 

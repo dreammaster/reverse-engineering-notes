@@ -1,11 +1,15 @@
 # Wizardry I — reverse engineering / reimplementation
 
-Working repo for dissecting *Wizardry: Proving Grounds of the Mad Overlord*
-(DOS "Ultimate Wizardry Archives" release) and rebuilding it as a standalone
-C++ program, en route to a ScummVM engine.
+Dissecting *Wizardry: Proving Grounds of the Mad Overlord* (DOS "Ultimate
+Wizardry Archives" release) and rebuilding it as a standalone C++ program,
+en route to a shared ScummVM engine for Wizardry I–V.
 
-Start with [`docs/overview.md`](docs/overview.md) and
-[`docs/roadmap.md`](docs/roadmap.md).
+Engine-wide reference (the UCSD p-System stack, disk / file formats, the
+p-machine, the RNG — all shared with Wiz II/III) lives one level up in
+[`../docs/`](../docs/).  This folder holds the Wizardry I-specific work.
+
+Start with [`../docs/engine.md`](../docs/engine.md), then
+[`docs/overview.md`](docs/overview.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Layout
 
@@ -14,7 +18,8 @@ Start with [`docs/overview.md`](docs/overview.md) and
 | `sources/` | Thomas Ewers' 2014 byte-exact Apple II Pascal reconstruction (reference) |
 | `tools/` | `ucsd_disk.py` — reader/extractor for the UCSD p-System `.DSK` images |
 | `ida_scripts/` | headless IDA (`idat.exe`) driver + analysis scripts |
-| `docs/` | findings: overview, roadmap, file formats, p-machine |
+| `docs/` | Wiz1-specific findings: overview, roadmap, combat / maze / town, decoded tables, strings |
+| `engine/` | the standalone C++ engine (`wizcore` lib + `wiz1` CLI) |
 | `extracted/` | files carved out of the game disks *(gitignored, regenerable)* |
 | `*.asm` / `*.idc` | committed IDA analysis backups |
 

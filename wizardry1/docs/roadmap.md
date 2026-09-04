@@ -23,7 +23,7 @@ Decided direction (2026-09-02):
             heap `ds:[604h]/[602h]`.
       - [ ] `HAS.STROPS` native-call ABI (deferred to Phase 1).
       - [ ] CSP 0, 7–9, 12, 21–24 exact semantics.
-- [x] Document the p-machine in `docs/pmachine.md`.
+- [x] Document the p-machine in `../../docs/pmachine.md`.
 
 ## Phase 1 — data formats
 
@@ -38,19 +38,19 @@ Decided direction (2026-09-02):
 - [x] `200/400.TITLE` — 320×64 2bpp CGA; `engine/wiz/bitmap.h` (`wiz1 show title`).
 - [~] `200.MONSTERS` — 29 records × 512 B, `TENEMY.PIC` indexed. Load path +
       `CONUNIT` subfn table mapped; payload is compressed (raw geometry = noise),
-      decompressor is native code in `SYSTEM.INTERP`. See `docs/file-formats.md`.
+      decompressor is native code in `SYSTEM.INTERP`. See `../../docs/file-formats.md`.
 - [ ] `HAS.CACHE`, `KANA.KEYMAP` — identify (share a 512-byte prefix).
 - [x] `SAVEn.DSK` — **no `PLAYER.DATA`**: each is a full bootable UCSD disk
       image (one slot per scenario); the save IS `SCENARIO.DATA` written back
-      in place. `docs/file-formats.md`.
-- [x] `docs/file-formats.md` started with the above.
+      in place. `../../docs/file-formats.md`.
+- [x] `../../docs/file-formats.md` started with the above.
 
 ## Phase 2 — p-code map
 
 - [x] p-code disassembler `tools/pcode_dis.py` — codefile dir, segment table,
       per-segment proc dictionary + PATs, full opcode/operand decode incl.
       forward/backward/XJP jumps. Clean over all 16 segments / 587 procs.
-      `docs/pcode.md`.
+      `../../docs/pcode.md`.
 - [x] Codefile layout documented; activation-record model from `pm_proc_entry`.
 - [x] Validated: DOS `WIZARDRY` procs 2/3/4 = Apple `PRINTBEL`/`GETREC`/`GETRECW`.
 - [x] Recover `GetStr(KN)` + the `ASCII.KRN` cipher — `tools/strpool.py`,
@@ -91,7 +91,7 @@ Decided direction (2026-09-02):
       LCG states in BX but returns AX = `byteswap(s3) & 0x700F` (128 values,
       period 65536 — the weak PC-Wizardry RNG). `engine/wiz/rng.h` reproduces
       it exactly — **confirmed bit-exact against a live DOSBox capture**
-      (`docs/rng-validation.md`), including an 11-call in-combat trace.
+      (`../../docs/rng-validation.md`), including an 11-call in-combat trace.
 - [x] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
       +289 layout; maze bit-packing validated by rendering level 1.
 - [x] Platform layer: `engine/wiz/surface.h` (8bpp framebuffer + primitives),
@@ -121,7 +121,7 @@ Decided direction (2026-09-02):
       `wiz1 town-test` + `wiz1 inn-test` + `wiz1 temple-test` (headless, CMake
       tests). **The town is complete.**
 - [~] `RUNNER` — the maze. `docs/maze.md` maps the whole segment. The
-      **`TMAZE` bit packing is cracked** (`docs/file-formats.md`) and validated
+      **`TMAZE` bit packing is cracked** (`../../docs/file-formats.md`) and validated
       by rendering level 1. Ported: `engine/wiz/maze.h`/`.cpp` (`MazeLevel`
       reader), `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
       `DOTURN`, FRWD/LEFT/RIGH view helpers), and **`engine/wiz/maze3d.h`/`.cpp`
@@ -177,7 +177,7 @@ Decided direction (2026-09-02):
       full loop (roster → town → maze → combat → camp → save) with the whole
       `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` / `SHOPS` families ported.
 - [x] Validate the PRNG against the real interpreter — **done, bit-exact**
-      (DOSBox capture 2026-09-04, `docs/rng-validation.md`).  Outcome rolls
+      (DOSBox capture 2026-09-04, `../../docs/rng-validation.md`).  Outcome rolls
       advance by exactly `rng.h next()`; the keyboard "stir" only touches
       throwaway cursor-blink rolls, so a whole session isn't replayable but
       each resolution is exact given its starting `s3`.

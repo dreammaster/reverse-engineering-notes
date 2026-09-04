@@ -125,7 +125,7 @@ Runs from the town: Edge of Town → `M` → `runMaze`.  `wiz1 maze-sdl <CHARSET
 <SCENARIO.DATA> [ASCII.KRN]` lists every special-square descriptor.
 
 **Save / resume.**  DOS Wizardry has no `PLAYER.DATA` — the save is
-`SCENARIO.DATA` in place (see `docs/file-formats.md`).  The engine keeps
+`SCENARIO.DATA` in place (see `../../docs/file-formats.md`).  The engine keeps
 `MazeState::save/load` (`maze.dat`, magic `WZM2`): closing the window
 mid-delve (`MazeExit::WindowClosed`) writes level / `MAZEX,Y` / `DIRECTIO` /
 `LIGHT` / `ACMOD2` / `QUICKPLT` / `FIGHTMAP`-less `scnMsgFired`, and the

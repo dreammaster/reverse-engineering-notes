@@ -1,7 +1,7 @@
 # RNG validation — live capture vs `engine/wiz/rng.h`
 
 Goal: confirm the reproduced PRNG (`engine/wiz/rng.h`, decoded in
-`docs/pmachine.md` §RANDOM) matches the shipped interpreter bit-for-bit —
+`pmachine.md` §RANDOM) matches the shipped interpreter bit-for-bit —
 seed, recurrence, and output — and find out whether anything **other than**
 a `RANDOM` call advances the state during real play.
 
