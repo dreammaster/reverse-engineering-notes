@@ -137,7 +137,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches 2011's setup_for_dialog (AC.CPP:2808-2815) closely -- calls sub_409756() (an unnamed screen-compositing helper, see its own new note below) in place of source's wsetscreen(virtual_screen), sets oldmouse=cur_cursor, then SetMouseCursor(6) matching CURS_ARROW. CONFIRMED ABSENT: source's \"if(!play.mouse_cursor_hidden) domouse(1);\" gate -- this build calls domouse(1) UNCONDITIONALLY, with no visible check of any mouse_cursor_hidden-equivalent field at this call site (mirrored in restore_after_dialog's own domouse(2) call, also unconditional) -- a genuine, confirmable behavioral difference, though not proof the field itself is entirely absent elsewhere."
   },
   {
     "kind": "function",
@@ -147,7 +147,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches 2011's restore_after_dialog (AC.CPP:2816-2821) closely -- SetMouseCursor(oldmouse), then domouse(2) UNCONDITIONALLY (same confirmed-absent mouse_cursor_hidden gate as setup_for_dialog, see its own entry), then calls sub_40976A() in place of source's construct_virtual_screen(true). RESOLVES the standing 'worth another look later' note on sub_40976A/sub_4096B5/sub_409756: these three form a small, undocumented (in 2011) virtual-screen-to-real-screen compositing trio that predates construct_virtual_screen's own gfxDriver-based rewrite entirely. sub_409756 (called from setup_for_dialog and _display_main) does \"abuf=screen; sub_4096B5();\" -- pointing the draw target at the real Allegro screen bitmap before compositing. sub_4096B5 is the actual composite step: if the room's screen tint (play_scren_tint) is active AND a dirty flag (dword_523200, new global) is set AND no complete overlay is showing (dword_523168=is_complete_overlay, already established) AND color depth>8, it applies a tint blend (set_trans_blender, already matched) then a tinted composite via an unnamed 5-argument vtable-dispatched drawing primitive (sub_425200, dispatched at BITMAP vtable+0x5C -- plausibly Allegro's own draw_lit_sprite, not independently confirmed this round; dword_523200 is the new dirty-flag global, distinct from the already-established dword_523168=is_complete_overlay checked in the same condition chain) and clears the dirty flag; either way, it always finishes with a plain wputblock composite of the virtual screen onto the current draw target. sub_40976A (called from restore_after_dialog and _display_main) does the same sub_4096B5 composite step, then wsetscreen(virtual_scren) to point drawing back at the virtual screen -- i.e. 'flush virtual screen to the real screen, then switch back to drawing on the virtual screen', a coherent role even without a single clean 2011 name to attach (2011's own equivalent concept, write_screen()+render_to_screen(), is built entirely around gfxDriver and doesn't correspond closely enough to force a rename). Deliberately left unnamed per this project's convention for functions whose role is understood but whose architecture diverges too much from any single 2011 identifier."
   },
   {
     "kind": "function",
@@ -667,7 +667,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's core write, \"objs[obn].baseline=basel;\" (AC.CPP:14712), exactly -- an unconditional \"RoomObject[obn].baseline@+0x0E = (short)basel\" write, further reconfirming that field. CONFIRMED ABSENT: source's leading \"if(objs[obn].baseline!=basel)\" guard and its own body, \"objcache[obn].ywas=-9999;\" (a render-cache invalidation step) -- this build writes baseline unconditionally with no cache-invalidation logic at all, consistent with this project's already-extensive evidence that no objcache/render-cache system exists in this build (RoomObject's own construct_object_gfx round found the same objcache/actsps split absent)."
   },
   {
     "kind": "function",

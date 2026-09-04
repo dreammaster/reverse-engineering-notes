@@ -3038,6 +3038,16 @@ disassembly work.
   directly, confirming `user_to_internal_skip_speech()` doesn't exist
   in this build — every use site tests the raw value instead of a
   converted `SKIP_*` bit. Renamed, upgraded to high confidence.
+- **Fresh vein opened: 113 bare mechanical matches never read for
+  field evidence.** `SetObjectBaseline` confirms no `objcache`
+  cache-invalidation logic exists (unconditional write, reinforcing
+  the already-established `objcache`/`actsps` split absence).
+  `setup_for_dialog`/`restore_after_dialog` confirm `mouse_cursor_
+  hidden` doesn't gate their `domouse()` calls, and resolve a
+  long-standing placeholder note: their `sub_409756`/`sub_4096B5`/
+  `sub_40976A` callees form a coherent virtual-screen-to-real-screen
+  tint-compositing trio with no single clean 2011 name (predates
+  `gfxDriver` entirely) — documented, deliberately left unnamed.
 
 ## Third-party library identification (Task #10)
 

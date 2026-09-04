@@ -10735,3 +10735,44 @@ build at all -- every call site that would use its converted bitmask
 output instead tests the raw option value directly. Same field as
 2011's own `cant_skip_speech`, just a different (raw, unconverted)
 representation -- renamed accordingly, upgraded to high confidence.
+
+### A fresh sweep of never-investigated bare mechanical matches begins: `SetObjectBaseline`'s `objcache` absence, and the `setup_for_dialog`/`restore_after_dialog`/screen-compositing trio
+
+With the medium-confidence pool and the open-thread backlog both
+essentially exhausted, this round pivots to a new vein: 113 functions
+that `build_matches.py` had already correctly matched via exact
+linker-symbol identity, but whose bodies were never actually read for
+field evidence (the "mechanical match, zero behavioral confirmation"
+gap this project's own "retroactive documentation" rounds have
+repeatedly found productive elsewhere).
+
+`SetObjectBaseline` closes cleanly: its core write matches source's
+`objs[obn].baseline=basel;` exactly, but CONFIRMS ABSENT the entire
+leading `if(objs[obn].baseline!=basel) { objcache[obn].ywas=-9999;
+...}` cache-invalidation guard -- this build writes unconditionally,
+consistent with (and reinforcing) the already-substantial evidence
+that no `objcache`/render-cache system exists here at all
+(`construct_object_gfx`'s own round found the same split absent).
+
+`setup_for_dialog`/`restore_after_dialog` also close cleanly on their
+own top-level bodies, CONFIRMING ABSENT source's `if(!play.mouse_
+cursor_hidden)` gate around both `domouse(1)` and `domouse(2)` --
+this build calls both unconditionally. Chasing their own callees
+(`sub_409756`/`sub_4096B5`/`sub_40976A`) resolved a long-standing
+"worth another look later" placeholder note (left after an earlier
+round correctly REVERTED a wrong FLIRT-guessed name off `sub_40976A`):
+these three form a small, coherent virtual-screen-to-real-screen
+compositing trio -- `sub_409756` points the draw target at the real
+screen then composites; `sub_40976A` does the same composite then
+points drawing back at the virtual screen; the shared composite step
+(`sub_4096B5`) applies the room's screen tint via a manual blend
+(`set_trans_blender`, already matched, plus an unnamed 5-argument
+vtable-dispatched drawing primitive at `BITMAP` vtable`+0x5C`,
+plausibly Allegro's `draw_lit_sprite` but not independently confirmed)
+before a plain `wputblock` composite. This is a real, understood role
+with no single clean 2011 counterpart to name it after (2011's own
+conceptual equivalent, `write_screen()`+`render_to_screen()`, is built
+entirely around the `gfxDriver` hardware abstraction this build
+predates) -- left deliberately unnamed, documented instead, per this
+project's established convention for exactly this situation. New
+global identified: `dword_523200`, a tint-composite dirty flag.
