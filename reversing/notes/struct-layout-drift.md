@@ -10608,3 +10608,41 @@ branch with no `else` counterpart at all; every list item is always
 left-aligned. `apply_structs.py`'s own `GUIListBox` comment updated to
 reflect all three as behavioral confirmations, not just save-format
 inferences.
+
+### `GUIInv::Draw` upgraded to high confidence, and a `source_file` mislabel corrected
+
+The last of this session's GUI-family `Draw()` methods. Its own entry
+had carried a wrong `source_file` all along -- "defined in Engine/
+acgui.cpp", which turns out not to be true at all: `GUIInv::Draw`
+actually lives in `Engine/AC.CPP:7194-7242` (inventory-window drawing
+needs game/character globals `acgui.cpp` doesn't have visibility into)
+-- corrected in place.
+
+The body is a near-complete match, and decisively upgrades an earlier
+round's "no per-object itemsPerLine/itemWidth/itemHeight/topIndex
+fields found" from mere non-discovery to full positive confirmation:
+EVERY grid-layout computation routes through the already-established
+GLOBAL `GameState` fields (`play_inv_numinline`/`play_inv_numdisp`/
+`play_inv_top`/`play_inv_numorder`/`play_invorder[]`/`inv_item_wid`/
+`inv_item_hit`) instead of any per-`GUIInv`-object field -- lazily
+recomputing `play_inv_numinline`/`play_inv_numdisp` from `wid`/`hit`
+only when `play_inv_numdisp==0` (source instead does an unconditional
+per-frame "backwards compatibility" copy from `itemsPerLine`/
+`numLines`, fields this build's `GUIInv` simply never had), calling
+the already-matched `update_invorder` when `play_inv_numorder<0`, then
+a drawing loop bounded by both `play_inv_numorder` and `play_inv_top+
+play_inv_numdisp` -- matching source's dual-bound `lastItem` clamp in
+shape, just computed inline rather than via a single `min()`. The
+item-draw/advance/row-wrap sequence matches source's `cxp`/`cyp`
+advance logic field for field, substituting this build's already-
+established single-character globals for source's per-character
+`charextra[]`/`CharToDisplay()` indirection throughout.
+
+CONFIRMED ABSENT: the entire trailing `IsDisabled()&&GUIDIS_GREYOUT&&
+inventory_greys_out` darkening effect (source's own putpixel-based
+checkerboard dither over the disabled control) -- the function simply
+returns after the draw loop, no darkening step exists at all. This
+closes out this session's full sweep of the six `GUIObject`-derived
+classes' `Draw()` methods (`GUIButton`/`GUISlider`/`GUILabel`/
+`GUITextBox`/`GUIListBox`/`GUIInv`) -- all six are now at HIGH
+confidence.

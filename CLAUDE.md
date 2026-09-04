@@ -3002,6 +3002,15 @@ disassembly work.
   confirmation of this pattern), `selectedbgcol` is never read (the
   selection highlight always uses `textcol`/`backcol` instead), and
   `alignment` is never read (every list item is always left-aligned).
+- **`GUIInv::Draw` upgraded to high confidence, closing this session's
+  full sweep of all six `GUIObject`-derived `Draw()` methods.** Also
+  corrects a wrong `source_file` (it's `Engine/AC.CPP:7194`, not
+  `acgui.cpp`). Decisively confirms an earlier round's "no per-object
+  grid fields found" as a full positive result: every layout
+  computation routes through the already-established GLOBAL
+  `play_inv_*`/`inv_item_*` fields instead of any per-`GUIInv`-object
+  field. CONFIRMED ABSENT: the entire disabled/greyed-out darkening
+  effect.
 
 ## Third-party library identification (Task #10)
 
