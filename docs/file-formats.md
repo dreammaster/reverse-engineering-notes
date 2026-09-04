@@ -257,25 +257,36 @@ compressed image.**
   `{7,15,23}` / `{3,11,19,27}` by group count).  Each cell's char = a tile
   index; its **attribute byte** carries `tile+1` in bits 0‑4 and `g` in
   bits 4‑5.  It then loads the 4 groups' records into a 4-slot cache
-  (`sub_1A63`, `word_13E0` = 3072 B/slot).
+  (`sub_1A63`): block `= (PIC-1)*word_13DE + word_1419`, `word_13E0`
+  bytes each.
 * The cell renderer's per-attribute blitter (`0x1E9A`) draws each tile as
-  **16 × 8 px, 1bpp** (`movsw`, CGA-mono interleave) from
-  `recordBuffer[g] + cs:[0x59F2 + tile*2]`, where `cs:0x59F2` is a
-  **30-entry** offset table with uniform stride `word_13DC << 1`.
+  **16 × 8 px, 1bpp** — `es = 0xB800` (CGA 640×200 mono, mode 6), `di`
+  from a per-cell screen-address table `cs:[cell*2 + 0x3D02]`, then 8 ×
+  `movsw` with the CGA even/odd bank interleave (`add di,0x1FFE` = net
+  `+0x2000`; `sub di,0x1FB2` = back to bank 0 `+80`).  Source is plain
+  1bpp, MSB = leftmost pixel, byte 0 = left 8 px of the row, 2 bytes/row,
+  8 rows contiguous — **no planar layout, no compression.**  Source
+  pointer = `recordBuffer[g] + cs:[0x59F2 + tile*2]`; `cs:0x59F2` is a
+  **30-entry** offset table, stride `word_13DC << 1`.  (`0x208A` is the
+  same routine with `es = 0xB000` for Hercules.)
 
-So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**, and the
-tile stride is **16 bytes** — tile `n` is at record offset `n*16`, 30 tiles
-= 480 B, padded to the 512-B record.  **Confirmed by DOSBox, 2026-09-04**
-(during a fight): `word_13DC` = `0x0008` (→ `<<1` = 16), and `cs:0x59F2`
-holds exactly `00 00 10 00 20 00 … D0 01 00 00` — 30 entries `0x000,
-0x010 … 0x1D0` then a `0x0000` terminator.  The 16-B stride is also the
-main `*.CHARSET`'s glyph stride (8192 / 16 = 512 glyphs).  `word_13DC`
-(and the sibling geometry words `word_13D8..13E2`) is 0 in the image
-because it is filled at init: a 12-byte block copy at `INTERP:0x1B08`
-from a parameter block at `cs:0x13E4` that is itself read from disk by
-the `int 18h` loader at `INTERP:0x7E0A` (routine `0x02BB`).
-`(PIC-1)*word_13DE(=4)` in the block calc is still unexplained (records
-read fine as 1 block each).
+So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**, tile `n`
+at record offset `n*16` (30 tiles = 480 B, padded to the 512-B record).
+
+**Confirmed 2026-09-04.**  DOSBox during a fight: `word_13DC` = `0x0008`
+(→ `<<1` = 16 B stride), `cs:0x59F2` = `00 00 10 00 20 00 … D0 01 00 00`
+(30 entries `0x000, 0x010 … 0x1D0`, then a `0x0000` terminator).  And
+`tools/monsters.py` renders all 27 portraits as coherent monster art at
+this geometry (PIC 4 = a skull, etc.); PIC 1 is a heavily stipple-dithered
+amorphous creature.  The geometry words are 0 / stale in the static image
+because init copies 12 bytes (`rep movsb`, `cx=0x0C`) at `INTERP:0x1B08`
+from a config block at `cs:0x13E4` → `cs:0x13D8`, giving the runtime
+values `word_13DC=8` (stride ×2 = 16), **`word_13DE=1`** (so the block
+calc `(PIC-1)*1` = one 512-B record per PIC — this is why the `*4` in the
+static image never made sense), `word_13E0=0x200` (= 512, bytes/record).
+The 16-B stride is also `*.CHARSET`'s glyph stride (8192 / 16 = 512
+glyphs).  `int 18h` loader `0x02BB` (from `INTERP:0x7E0A`) reads that
+config block from disk.
 
 ---
 

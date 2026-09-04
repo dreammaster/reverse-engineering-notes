@@ -257,9 +257,15 @@ per-attribute cell blitter at `0x1E9A` draws one tile as **16 × 8 px 1bpp**
 tile*2]`, a 30-entry table built with stride `word_13DC << 1` = **16 B**
 (→ a 96 × 40 px portrait).  `word_13DC` = 8 and the `0x59F2` table
 (`0x000, 0x010 … 0x1D0`, then a `0` terminator) were **confirmed live in
-DOSBox, 2026-09-04**; `word_13DC` reads 0 in the static image only because
-it is copied at init from a disk-loaded parameter block at `cs:0x13E4`
-(`int 18h` loader `0x02BB`, called from `0x7E0A`).  See `file-formats.md`.
+DOSBox, 2026-09-04**, and `tools/monsters.py` renders all 27 portraits as
+coherent monster art at this geometry.  The geometry words read 0 / stale
+in the static image because init `rep movsb`-copies 12 bytes at
+`INTERP:0x1B08` from a config block at `cs:0x13E4` → `cs:0x13D8`
+(`int 18h` loader `0x02BB` fills `0x13E4` from disk), giving runtime
+`word_13DC=8`, `word_13DE=1` (block calc `(PIC-1)*1`), `word_13E0=512`
+(bytes/record).  The blitter is CGA mode 6 (`es=0xB800`; `0x208A` = the
+`es=0xB000` Hercules twin), plain 1bpp MSB-first, no planar/compression.
+See `file-formats.md`.
 
 ## Native / SBIOS interface
 
