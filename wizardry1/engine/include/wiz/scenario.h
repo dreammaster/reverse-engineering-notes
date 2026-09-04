@@ -1,6 +1,6 @@
 // Reader for SCENARIO.DATA -- the Wizardry scenario database (mazes, monsters,
 // items, rewards, roster, xp table).  Container format decoded in
-// docs/file-formats.md; record field layouts follow the Apple structs (+289
+// /docs/file-formats.md; record field layouts follow the Apple structs (+289
 // global-word rule) and are still being validated.
 #pragma once
 #include "wiz/types.h"
@@ -40,7 +40,7 @@ private:
 
 // ---- record views -------------------------------------------------------
 // Thin accessors over the raw record bytes; only the fields that are pinned
-// down so far. Extend as docs/file-formats.md fills in.
+// down so far. Extend as /docs/file-formats.md fills in.
 
 // TENEMY -- 94 bytes / 47 words.  DOS drops Apple's four leading STRING[15]
 // names (they live in ASCII.KRN: monsterNameKey(idx, {0 unk-sing, 1 unk-plur,

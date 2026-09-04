@@ -2,7 +2,7 @@
 //
 // Native C++ model plus a reader/writer for the 208-byte (104-word) roster
 // record.  Field word-offsets recovered from the DOS ROLLER p-code
-// (docs/file-formats.md): NAME 0, PASSWORD 8, INMAZE 16, RACE 17, CLASS 18,
+// (/docs/file-formats.md): NAME 0, PASSWORD 8, INMAZE 16, RACE 17, CLASS 18,
 // AGE 19, STATUS 20, ALIGN 21, ATTRIB 22-23 (packed IXP 3,5), LUCKSKIL 24-25
 // (packed), GOLD 26-28, POSS 29 (POSSCNT) + 30-61 (8 x 4-word slots),
 // EXP 62-64, MAXLEVAC 65, CHARLEV 66, HPLEFT 67, HPMAX 68, SPELLKN 69-72

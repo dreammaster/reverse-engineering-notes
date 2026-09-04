@@ -1,7 +1,7 @@
 // TMAZE -- one maze level (894 bytes / 447 words).
 //
 // Layout confirmed from DOS RUNNER p-code (procs 13/19) and the UCSD packed-
-// array rules; see docs/file-formats.md.  All grids are [x][y], x = MAZEX
+// array rules; see /docs/file-formats.md.  All grids are [x][y], x = MAZEX
 // (east), y = MAZEY (north); both wrap mod 20.
 //
 //   word  field

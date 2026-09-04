@@ -1,6 +1,6 @@
 // Decoder for the DOS Wizardry string pool (ASCII.KRN).
 // Algorithm recovered from SYSTEM.PASCAL (WIZARDRY procs 38 GETSTR / 82 loader);
-// see docs/file-formats.md and docs/strings.txt.
+// see /docs/file-formats.md and wizardry1/docs/strings.txt.
 #pragma once
 #include "wiz/types.h"
 

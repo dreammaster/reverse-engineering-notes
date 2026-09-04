@@ -20,7 +20,7 @@
 // is the notoriously weak PC-Wizardry RNG; we reproduce it exactly.
 //
 // Validated bit-exact against a live DOSBox capture -- see
-// docs/rng-validation.md.  During outcome rolls (combat resolution etc.) the
+// /docs/rng-validation.md.  During outcome rolls (combat resolution etc.) the
 // state advances by exactly next() below.  A separate keyboard "stir" runs
 // only in cursor-blink / prompt-wait loops and consumes throwaway rolls, so
 // a whole real session is not deterministically replayable -- but given the
