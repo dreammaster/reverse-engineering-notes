@@ -3775,9 +3775,9 @@
   "is_named": true
  },
  {
-  "name": "sub_431ECC",
+  "name": "line_callback",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "print_welcome_text",
@@ -3785,9 +3785,9 @@
   "is_named": true
  },
  {
-  "name": "sub_431F99",
+  "name": "can_see_from",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "is_route_possible",

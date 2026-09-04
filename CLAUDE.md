@@ -3078,6 +3078,14 @@ disassembly work.
   script-object wrapper layer doesn't exist — these call straight into
   `GUIListBox`'s own member functions or do inline field reads, one
   layer flatter throughout.
+- **`MoveCharacterStraight` names `can_see_from`/`line_callback`.** A
+  genuine self-contained implementation (2011's own `Character_
+  WalkStraight` wrapper has no body in this repo to compare against),
+  fully recovered: validate character, `StopMoving`, try a straight
+  line via the newly-matched `can_see_from`, fall back to the last
+  reachable point if blocked. `can_see_from`/`line_callback` are both
+  complete, essentially instruction-for-instruction matches to
+  `routefnd.cpp`. Renamed `line_failed`/`lastcx`/`lastcy`/`wallscreen`.
 
 ## Third-party library identification (Task #10)
 

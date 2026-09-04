@@ -10851,3 +10851,33 @@ matched `GUIListBox::Clear`/`::AddItem` member functions, or do their
 own inline field reads (`ListBoxGetSelected`'s bounds-checked `selected`
 read, `ListBoxGetNumItems`'s plain `numItems` read), one abstraction
 layer flatter than 2011 throughout.
+
+### `MoveCharacterStraight` names `can_see_from`/`line_callback` -- a complete, decisive line-of-sight match
+
+`MoveCharacterStraight` turned out to be a genuine, self-contained
+implementation, not a thin delegate to a script-object wrapper (2011's
+own `Character_WalkStraight`, which this AC.CPP-level function calls,
+has no body present anywhere in this repo's `Engine/` tree to compare
+against -- but the substance it must contain is fully recovered here
+instead): validate the character, confirm it's in the current room,
+`StopMoving` any in-progress move, then try a straight line to the
+target via a newly-identified `can_see_from(x1,y1,x2,y2)` call,
+falling back to the last reachable point along that line if the
+direct line is blocked, before finally calling the already-established
+`walk_character(...,ignwal=1,autoWalkAnims=false)`.
+
+`sub_431F99` closes as `can_see_from` (`Engine/routefnd.cpp:119-133`)
+with a complete, essentially instruction-for-instruction match --
+`line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2&&y1==y2) return 1;
+do_line(wallscreen,x1,y1,x2,y2,0,line_callback); if(line_failed)
+return 0; return 1;` matches source verbatim, including the exact
+already-at-target shortcut. Its own callback, `sub_431ECC`, closes as
+`line_callback` (`routefnd.cpp:72-81`) with an equally exact match:
+`if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0)
+{lastcx=x; lastcy=y;}` -- even correctly missing source's own dead,
+commented-out bounds-check branch. Both `do_line` and `getpixel` are
+Allegro's own public API (already matched). Renamed `dword_536C1C`
+->`line_failed`, `dword_5358F8`/`5358FC`->`lastcx`/`lastcy`, and the
+pre-existing `wss` global (an IDA auto-name collision with an
+unrelated local stack variable elsewhere) ->`wallscreen`, matching
+2011's own file-scope global names throughout `routefnd.cpp`.

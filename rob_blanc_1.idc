@@ -51132,6 +51132,7 @@ static Bytes_8(void) {
 	create_insn	(x=0X431EC2);
 	op_hex		(x,	1);
 	create_insn	(0X431ECC);
+	set_name	(0X431ECC,	"line_callback");
 	create_insn	(x=0X431ECF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X431ED3);
@@ -51195,6 +51196,7 @@ static Bytes_8(void) {
 	toggle_sign		(x,	6);
 	toggle_sign		(x,	7);
 	create_insn	(0X431F99);
+	set_name	(0X431F99,	"can_see_from");
 	create_insn	(x=0X431FA6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X431FAE);
@@ -52505,12 +52507,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43348E);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X433493);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X433496);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43349F);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52520,6 +52516,12 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X433493);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X433496);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43349F);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4334A2);
 	op_stkvar	(x,	0);
 	create_insn	(0X4334AD);
@@ -58395,9 +58397,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439763);
 	op_hex		(x,	1);
-	set_cmt	(0X43976B,	"jumptable 004396E8 case 24",	1);
-	create_insn	(x=0X43976B);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58407,6 +58406,9 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X43976B,	"jumptable 004396E8 case 24",	1);
+	create_insn	(x=0X43976B);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X439775);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43978B);
@@ -64149,12 +64151,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F5BA);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X43F5BE);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F5D4);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F5D8);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -64164,6 +64160,12 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F5BE);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F5D4);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F5D8);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F5F6);
 	op_hex		(x,	1);
 	set_cmt	(0X43F5FB,	"Size",	0);
@@ -70201,14 +70203,6 @@ static Bytes_11(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X446BA3);
 	op_hex		(x,	1);
-	create_insn	(x=0X446BAD);
-	op_hex		(x,	1);
-	create_insn	(x=0X446BB0);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X446BB6);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -70218,6 +70212,14 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446BAD);
+	op_hex		(x,	1);
+	create_insn	(x=0X446BB0);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_insn	(x=0X446BB6);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X446BBC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -76408,14 +76410,6 @@ static Bytes_12(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X44ED76);
 	op_hex		(x,	1);
-	create_insn	(x=0X44EDAB);
-	op_hex		(x,	1);
-	create_insn	(x=0X44EDBB);
-	op_hex		(x,	1);
-	make_array	(0X44EDC8,	0X8);
-	create_insn	(0X44EDD0);
-	create_insn	(x=0X44EDD9);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -76425,6 +76419,14 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44EDAB);
+	op_hex		(x,	1);
+	create_insn	(x=0X44EDBB);
+	op_hex		(x,	1);
+	make_array	(0X44EDC8,	0X8);
+	create_insn	(0X44EDD0);
+	create_insn	(x=0X44EDD9);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X44EDE3);
 	op_hex		(x,	1);
 	create_insn	(x=0X44EDEB);
@@ -81691,15 +81693,6 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X456FEB);
 	op_hex		(x,	1);
-	create_insn	(x=0X45700F);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X45703A);
-	op_hex		(x,	1);
-	create_insn	(x=0X457046);
-	op_hex		(x,	1);
-	create_insn	(x=0X45704D);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81709,6 +81702,15 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X45700F);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X45703A);
+	op_hex		(x,	1);
+	create_insn	(x=0X457046);
+	op_hex		(x,	1);
+	create_insn	(x=0X45704D);
+	op_hex		(x,	1);
 	create_insn	(x=0X45705F);
 	op_hex		(x,	1);
 	create_insn	(x=0X457075);
@@ -87843,13 +87845,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X4636C9);
 	op_hex		(x,	1);
 	create_insn	(0X4636D0);
-	create_insn	(x=0X4636EB);
-	op_hex		(x,	1);
-	make_array	(0X4636F2,	0XE);
-	create_insn	(0X463700);
-	create_insn	(x=0X463709);
-	op_stkvar	(x,	1);
-	set_cmt	(0X463723,	"Block",	0);
 }
 
 //------------------------------------------------------------------------
@@ -87859,6 +87854,13 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4636EB);
+	op_hex		(x,	1);
+	make_array	(0X4636F2,	0XE);
+	create_insn	(0X463700);
+	create_insn	(x=0X463709);
+	op_stkvar	(x,	1);
+	set_cmt	(0X463723,	"Block",	0);
 	create_insn	(x=0X463726);
 	op_hex		(x,	1);
 	set_cmt	(0X463739,	"Block",	0);
@@ -93674,13 +93676,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BEC5);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46BED4);
-	op_hex		(x,	1);
-	make_array	(0X46BEDB,	0X5);
-	create_insn	(x=0X46BEE0);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X46BEE4);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -93690,6 +93685,13 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BED4);
+	op_hex		(x,	1);
+	make_array	(0X46BEDB,	0X5);
+	create_insn	(x=0X46BEE0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X46BEE4);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X46BEF0);
 	op_hex		(x,	1);
 	make_array	(0X46BEF4,	0XC);
@@ -99616,12 +99618,6 @@ static Bytes_16(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X474121);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X47412A);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X47412E);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X474138);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99631,6 +99627,12 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47412A);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X47412E);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X474138);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X474140);
 	op_hex		(x,	1);
 	set_cmt	(0X474144,	"jumptable 00473ED5 case 24",	1);
@@ -105458,12 +105460,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47B66A);
 	op_hex		(x,	1);
-	create_insn	(x=0X47B66F);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X47B673);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X47B67A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -105473,6 +105469,12 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47B66F);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X47B673);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X47B67A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X47B67E);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X47B682);
@@ -111616,14 +111618,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X485AC9);
 	op_hex		(x,	1);
-	create_insn	(x=0X485ADF);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X485AE3);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X485B1F);
-	op_hex		(x,	1);
-	create_insn	(x=0X485B2B);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111633,6 +111627,14 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X485ADF);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X485AE3);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X485B1F);
+	op_hex		(x,	1);
+	create_insn	(x=0X485B2B);
+	op_hex		(x,	1);
 	make_array	(0X485B42,	0XE);
 	create_insn	(0X485B50);
 	create_insn	(x=0X485B51);
@@ -117922,12 +117924,6 @@ static Bytes_19(void) {
 	op_hex		(x,	1);
 	make_array	(0X48F0D4,	0XC);
 	create_insn	(0X48F0E0);
-	create_insn	(0X48F10D);
-	create_insn	(0X48F111);
-	make_array	(0X48F115,	0XB);
-	create_insn	(0X48F120);
-	create_insn	(x=0X48F150);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117937,6 +117933,12 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(0X48F10D);
+	create_insn	(0X48F111);
+	make_array	(0X48F115,	0XB);
+	create_insn	(0X48F120);
+	create_insn	(x=0X48F150);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X48F15A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48F16D);
@@ -124374,11 +124376,6 @@ static Bytes_20(void) {
 	make_array	(0X498168,	0X8);
 	create_insn	(x=0X498170);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X49817B);
-	op_stkvar	(x,	1);
-	create_insn	(0X49818A);
-	make_array	(0X49818D,	0X3);
-	create_insn	(0X498190);
 }
 
 //------------------------------------------------------------------------
@@ -124388,6 +124385,11 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X49817B);
+	op_stkvar	(x,	1);
+	create_insn	(0X49818A);
+	make_array	(0X49818D,	0X3);
+	create_insn	(0X498190);
 	make_array	(0X4981B4,	0XC);
 	create_insn	(x=0X4981C0);
 	op_stkvar	(x,	1);
@@ -130346,12 +130348,6 @@ static Bytes_21(void) {
 	create_insn	(x=0X4A13C3);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X4A13D0);
-	op_hex		(x,	1);
-	create_insn	(x=0X4A13D7);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A13F1);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130361,6 +130357,12 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A13D0);
+	op_hex		(x,	1);
+	create_insn	(x=0X4A13D7);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A13F1);
+	op_hex		(x,	1);
 	create_insn	(x=0X4A13F6);
 	op_hex		(x,	1);
 	create_insn	(x=0X4A13FB);
@@ -136431,11 +136433,6 @@ static Bytes_22(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4AA335);
 	op_hex		(x,	1);
-	create_insn	(x=0X4AA342);
-	op_hex		(x,	1);
-	create_insn	(x=0X4AA354);
-	op_stkvar	(x,	0);
-	create_insn	(0X4AA367);
 }
 
 //------------------------------------------------------------------------
@@ -136445,6 +136442,11 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4AA342);
+	op_hex		(x,	1);
+	create_insn	(x=0X4AA354);
+	op_stkvar	(x,	0);
+	create_insn	(0X4AA367);
 	create_insn	(x=0X4AA369);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4AA371);
@@ -141531,9 +141533,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF228);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF22C);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141543,6 +141542,9 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF22C);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF230);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -154309,7 +154311,9 @@ static Bytes_27(void) {
 	create_dword	(0X5358F0);
 	create_dword	(0X5358F4);
 	create_dword	(0X5358F8);
+	set_name	(0X5358F8,	"lastcx");
 	create_dword	(0X5358FC);
+	set_name	(0X5358FC,	"lastcy");
 	create_dword	(0X535900);
 	make_array	(0X535904,	0X3C);
 	create_dword	(0X535940);
@@ -154323,8 +154327,9 @@ static Bytes_27(void) {
 	set_name	(0X536C10,	"welcome_text_validated");
 	make_array	(0X536C14,	0X4);
 	create_dword	(0X536C18);
-	set_name	(0X536C18,	"wss");
+	set_name	(0X536C18,	"wallscreen");
 	create_dword	(0X536C1C);
+	set_name	(0X536C1C,	"line_failed");
 	create_dword	(0X536C20);
 	create_dword	(0X536C24);
 	create_dword	(0X536C28);
@@ -157549,13 +157554,17 @@ static Functions_4(void) {
 	add_func    (0X41B860,0X41B939);
 	set_func_flags(0X41B860,0x5410);
 	SetType(0X41B860, "void __stdcall MoveCharacterStraight(int cc, int xx, int yy);");
-	set_func_cmt(0X41B860,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41B860,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- this build implements MoveCharacterStraight's actual logic directly, NOT via a Character_WalkStraight script-object wrapper the way 2011's own AC.CPP-level function does; that wrapper's own body isn't present anywhere in this repo's Engine/ tree to compare against, but the substance of what it must do is fully recovered here instead): validates via is_valid_character (already matched), then checks the character is in the currently-displayed room (chars[cc].room@+0x0C==newnum/displayed_room, both already established), calls StopMoving (already matched) to cancel any in-progress move, defaults tox/toy to the requested xx/yy, sets `wss` (a global, matching the already-established RoomStruct's walkable-areas mask field) to that mask, then calls the newly-matched can_see_from(chars[cc].x,chars[cc]" ".y,xx,yy) (sub_431F99, see its own entry) -- if it returns false (li", 1);
 	set_frame_size(0X41B860, 0X8, 4, 0XC);
 	define_local_var(0X41B860, 0X41B939, "[bp-0X8]", "toy");
 	define_local_var(0X41B860, 0X41B939, "[bp-0X4]", "tox");
 	define_local_var(0X41B860, 0X41B939, "[bp+0X8]", "cc");
 	define_local_var(0X41B860, 0X41B939, "[bp+0XC]", "xx");
 	define_local_var(0X41B860, 0X41B939, "[bp+0X10]", "yy");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41B939,0X41BA63);
 	set_func_flags(0X41B939,0x5410);
 	SetType(0X41B939, "void __stdcall MoveCharacterPath(int chac, int tox, int toy);");
@@ -157582,10 +157591,6 @@ static Functions_4(void) {
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0XC]", "xx");
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0X10]", "yy");
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0X14]", "spp");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41BAA1,0X41BAAB);
 	set_func_flags(0X41BAA1,0x5410);
 	SetType(0X41BAA1, "int GetPlayerCharacter(void);");
@@ -158234,6 +158239,10 @@ static Functions_5(void) {
 	set_func_flags(0X424A00,0x5410);
 	set_func_cmt(0X424A00,	"[reversing] confirmed match\nsource: Common/acruntim.h\nconfidence: high\nevidence: ExecutingScript::init(), the AGS-style zero-initializer called on every scripts[] slot before it is (re)used (the flat-C++-member-function naming convention used throughout this project for this build's __thiscall class methods -- see FLAT_CPP_NAMES in extract_prototypes.py). Body is exactly 8 field-initialization writes through `this` (ecx), in struct-offset order, and matches every field independently confirmed elsewhere in ExecutingScript (see the merged evidence on the post_script_cleanup/sub_409B1A entry for the full derivation of each field's role): [this+0x00]=0 (inst), [this+0x68]=0 (forked), [this+0x60]=0 (numanother), [this+0x04]=-1 (newnum), [this+0x08]=0 (invscreen-flag), [this+0x0C]=-1 (ooo / pending restore-game slot), [this+0x10]=-1 (dlgnum), [this+0x64]=0 (pending restart-game flag). This is the clinching cross-confirmation for the whole struct: an independent constructor-style function that touches precisely the" " same 8 offsets the usage-site analysis found, in the same order, with s", 1);
 	set_frame_size(0X424A00, 0X4, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X424A60,0X424A7F);
 	set_func_flags(0X424A60,0x5410);
 	set_frame_size(0X424A60, 0X4, 4, 0);
@@ -158267,10 +158276,6 @@ static Functions_5(void) {
 	add_func    (0X424CE0,0X424D26);
 	set_func_flags(0X424CE0,0x5410);
 	set_frame_size(0X424CE0, 0X4, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X424D30,0X424D78);
 	set_func_flags(0X424D30,0x5410);
 	set_frame_size(0X424D30, 0X4, 4, 0X4);
@@ -159117,6 +159122,7 @@ static Functions_6(void) {
 	set_frame_size(0X431EA3, 0, 4, 0);
 	add_func    (0X431ECC,0X431F10);
 	set_func_flags(0X431ECC,0x5410);
+	set_func_cmt(0X431ECC,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`.", 1);
 	set_frame_size(0X431ECC, 0, 4, 0);
 	add_func    (0X431F10,0X431F99);
 	set_func_flags(0X431F10,0x5410);
@@ -159127,6 +159133,7 @@ static Functions_6(void) {
 	define_local_var(0X431F10, 0X431F99, "[bp+0XC]", "aciverno");
 	add_func    (0X431F99,0X432008);
 	set_func_flags(0X431F99,0x5410);
+	set_func_cmt(0X431F99,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int can_see_from(int x1,int y1,int x2,int y2) at routefnd.cpp:119-133 -- a complete, essentially instruction-for-instruction match. \"line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2 && y1==y2) return 1; do_line(wss,x1,y1,x2,y2,0,line_callback); if(line_failed!=0) return 0; return 1;\" matches source verbatim, including the exact same early-return-on-identical-points shortcut before the general do_line/callback path. Identifies dword_536C1C as `line_failed`, dword_5358F8/5358FC as `lastcx`/`lastcy` (all file-scope globals in 2011's routefnd.cpp), confirms `wss` as `wallscreen` (already set by MoveCharacterStraight, its own caller, right before this call -- matching source's own convention of `wallscreen` being set by callers rather than passed as a parameter), and identifies sub_431ECC as `line_callback` (see its own entry). `do_line` itself is Allegro's own public API (already matched, exact linker-symbol match, alleg_s_crt:gfx.o" "bj).", 1);
 	set_frame_size(0X431F99, 0, 4, 0);
 	add_func    (0X432008,0X432459);
 	set_func_flags(0X432008,0x5410);
@@ -159280,6 +159287,10 @@ static Functions_6(void) {
 	set_func_flags(0X434361,0x5410);
 	set_func_cmt(0X434361,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_play_from(int track) at libcdaWin.C:95-100: \"cd_stop(); end_pos[0]=0; return command(\\\"play cdaudio from %lu\\\", startof(track));\". Exact match: calls cd_stop (sub_434464, matched below), zeroes byte_536E4C (end_pos[0]=0), then command() with the matched \"play cdaudio from %lu\" string and the track arg. CODE XREF: CDAudio+50 (the CDAudio interface dispatch table, already an IDA-recognized named symbol).", 1);
 	set_frame_size(0X434361, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X434388,0X4343DA);
 	set_func_flags(0X434388,0x5410);
 	set_func_cmt(0X434388,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_current_track(void) at libcdaWin.C:103-112. Exact match: command(\"status cdaudio mode\") -> if nonzero return 0; strcmp(ret,\"playing\") -> if !=0 return 0; command(\"status cdaudio current track\") -> if nonzero return 0; return atoi(ret). All four matched strings/calls appear in the exact source order. CODE XREF: CDAudio+2C.", 1);
@@ -159300,10 +159311,6 @@ static Functions_6(void) {
 	set_func_flags(0X434464,0x5410);
 	set_func_cmt(0X434464,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_stop(void) at libcdaWin.C:145-149: \"command(\\\"stop cdaudio wait\\\"); paused=0;\". Exact match. Called internally from the not-yet-function-bounded cd_play/cd_play_range blocks (matching source's cd_play/cd_play_range both starting with cd_stop()), plus external callers via the CDAudio dispatch table.", 1);
 	set_frame_size(0X434464, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X434480,0X4344D5);
 	set_func_flags(0X434480,0x5410);
 	SetType(0X434480, "int __usercall cd_get_tracks@<eax>(char@<cl>, int, int);");
@@ -160757,6 +160764,10 @@ static Functions_7(void) {
 	add_func    (0X454D70,0X454DD0);
 	set_func_flags(0X454D70,0x5400);
 	set_frame_size(0X454D70, 0X8, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X454DD0,0X454E83);
 	set_func_flags(0X454DD0,0x5400);
 	set_frame_size(0X454DD0, 0X10, 0, 0);
@@ -160860,10 +160871,6 @@ static Functions_7(void) {
 	set_func_flags(0X4562D0,0x5400);
 	set_frame_size(0X4562D0, 0X1C, 0, 0);
 	define_local_var(0X4562D0, 0X45635A, "[bp-0X4]", "lpDD");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X456360,0X456387);
 	set_func_flags(0X456360,0x5400);
 	set_frame_size(0X456360, 0, 0, 0);
@@ -162825,6 +162832,10 @@ static Functions_8(void) {
 	add_func    (0X485320,0X48538D);
 	set_func_flags(0X485320,0x5400);
 	set_frame_size(0X485320, 0X8, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X485390,0X4853F8);
 	set_func_flags(0X485390,0x5400);
 	set_frame_size(0X485390, 0X4, 0, 0);
@@ -162962,10 +162973,6 @@ static Functions_8(void) {
 	add_func    (0X488830,0X4889EE);
 	set_func_flags(0X488830,0x5c10);
 	set_frame_size(0X488830, 0X40, 4, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X4889F0,0X4889FA);
 	set_func_flags(0X4889F0,0x5400);
 	set_frame_size(0X4889F0, 0, 0, 0);
@@ -165322,6 +165329,10 @@ static Functions_9(void) {
 	add_func    (0X4AC244,0X4AC245);
 	set_func_flags(0X4AC244,0x5402);
 	set_frame_size(0X4AC244, 0, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AC590,0X4AC596);
 	set_func_flags(0X4AC590,0x5480);
 	SetType(0X4AC590, "HRESULT __stdcall DirectSoundEnumerateA(LPDSENUMCALLBACKA pDSEnumCallback, LPVOID pContext);");
@@ -165358,6 +165369,7 @@ static Functions(void) {
 	Functions_7();
 	Functions_8();
 	Functions_9();
+	Functions_10();
 }
 
 //------------------------------------------------------------------------

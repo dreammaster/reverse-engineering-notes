@@ -1777,7 +1777,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- this build implements MoveCharacterStraight's actual logic directly, NOT via a Character_WalkStraight script-object wrapper the way 2011's own AC.CPP-level function does; that wrapper's own body isn't present anywhere in this repo's Engine/ tree to compare against, but the substance of what it must do is fully recovered here instead): validates via is_valid_character (already matched), then checks the character is in the currently-displayed room (chars[cc].room@+0x0C==newnum/displayed_room, both already established), calls StopMoving (already matched) to cancel any in-progress move, defaults tox/toy to the requested xx/yy, sets `wss` (a global, matching the already-established RoomStruct's walkable-areas mask field) to that mask, then calls the newly-matched can_see_from(chars[cc].x,chars[cc].y,xx,yy) (sub_431F99, see its own entry) -- if it returns false (line of sight blocked), falls back to the last reachable point along that line (dword_5358F8/5358FC, can_see_from's own lastcx/lastcy globals) instead of the originally requested target. Finally calls walk_character(cc,tox,toy,ignwal=1,autoWalkAnims=false) -- matching MoveCharacterDirect's own ignwal/autoWalkAnims argument shape exactly, confirming this build's straight-line movement walks with wall-ignoring enabled (matching the 'move directly, not via the walkable-area pathfinder' semantics MoveCharacterStraight is meant to have)."
   },
   {
     "kind": "function",
@@ -6133,5 +6133,23 @@
     "source_line": 3988,
     "confidence": "high",
     "evidence": "void check_viewport_coords() at AC.CPP:3988-3999 -- a complete, zero-drift, line-for-line match. \"if(offsetx<0) offsetx=0; if(offsety<0) offsety=0;\" matches verbatim. \"if(offsetx+usetup_base_width > word_522F08*mult_x) offsetx=word_522F08*mult_x-usetup_base_width;\" matches \"if(offsetx+scrnwid>roomWidth) offsetx=roomWidth-scrnwid;\" exactly, with roomWidth computed inline as multiply_up_coordinate(thisroom.width) (word_522F08, already established RoomStruct.width) -- identifying usetup_base_width as this build's scrnwid. The height check mirrors this exactly using word_522F0A (already established RoomStruct.height) and usetup_base_height (scrnhit). Called from SetViewport (already matched, see its own entry) and prepare_characters_for_drawing (already matched) -- the latter call site not itself investigated further this round, but consistent with 2011's own second caller, update_viewport()."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_431F99",
+    "new_name": "can_see_from",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 119,
+    "confidence": "high",
+    "evidence": "int can_see_from(int x1,int y1,int x2,int y2) at routefnd.cpp:119-133 -- a complete, essentially instruction-for-instruction match. \"line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2 && y1==y2) return 1; do_line(wss,x1,y1,x2,y2,0,line_callback); if(line_failed!=0) return 0; return 1;\" matches source verbatim, including the exact same early-return-on-identical-points shortcut before the general do_line/callback path. Identifies dword_536C1C as `line_failed`, dword_5358F8/5358FC as `lastcx`/`lastcy` (all file-scope globals in 2011's routefnd.cpp), confirms `wss` as `wallscreen` (already set by MoveCharacterStraight, its own caller, right before this call -- matching source's own convention of `wallscreen` being set by callers rather than passed as a parameter), and identifies sub_431ECC as `line_callback` (see its own entry). `do_line` itself is Allegro's own public API (already matched, exact linker-symbol match, alleg_s_crt:gfx.obj)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_431ECC",
+    "new_name": "line_callback",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 72,
+    "confidence": "high",
+    "evidence": "void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`."
   }
 ]
