@@ -1280,7 +1280,15 @@ struct GUIListBox {
   int exflags;                   // +0x1D8, high confidence, see numItems above.
   // DRIFT: 2011 declares 3 more fields right after exflags (selectedbgcol, alignment, reserved1,
   // acgui.h:391-392) that are NOT part of this build's WriteToFile bulk write -- absent or not yet
-  // persisted in this 2002 build. Confirmed size so far: 0x1DC (minimum).
+  // persisted in this 2002 build. CONFIRMED ABSENT (GUIListBox::Draw round, behavioral not just
+  // save-format evidence): Draw's own body never checks exflags' GLF_NOBORDER/GLF_NOARROWS bits
+  // (border/scrollbar drawing is unconditional -- a third independent confirmation of the same
+  // pattern already found in GUIListBox::MouseDown), never reads selectedbgcol (the selected-row
+  // highlight is drawn unconditionally via wtextcolor(backcol)/wsetcolor(textcol) instead of a
+  // separate configurable fill color), and never reads alignment (only ONE wouttext_outline call
+  // exists in the whole function, matching source's GALIGN_LEFT branch with no GALIGN_CENTRE/
+  // RIGHT counterpart at all -- every item is always left-aligned). Confirmed size so far: 0x1DC
+  // (minimum).
 };
 
 struct GUIInv {

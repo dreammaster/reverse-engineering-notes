@@ -4515,9 +4515,9 @@
   "is_named": false
  },
  {
-  "name": "sub_43CB80",
+  "name": "wrectangle",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_43CC40",

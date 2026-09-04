@@ -61299,6 +61299,7 @@ static Bytes_10(void) {
 	op_hex		(x,	1);
 	make_array	(0X43CB75,	0XB);
 	create_insn	(0X43CB80);
+	set_name	(0X43CB80,	"wrectangle");
 	create_insn	(x=0X43CB81);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43CB88);
@@ -64160,8 +64161,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F610);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F614);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -64171,6 +64170,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F614);
+	op_hex		(x,	1);
 	create_insn	(x=0X43F61C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F62E);
@@ -155441,7 +155442,7 @@ static Functions_0(void) {
 	set_frame_size(0X406399, 0X8, 4, 0);
 	add_func    (0X40649A,0X406950);
 	set_func_flags(0X40649A,0x5410);
-	set_func_cmt(0X40649A,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: medium\nevidence: GUIListBox::Draw() (source body not yet located/traced in Engine/acgui.cpp). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD578 table pinned by GUIListBox__MouseMove/WriteToFile/ReadFromFile (DATA XREF .rdata:004AD590). Body reads and temporarily decrements [this+0x10]/[this+0x14] (wid/hit, GUIObject base fields), consistent with drawing within an inset border, but not independently confirmed field-by-field.", 1);
+	set_func_cmt(0X40649A,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIListBox::Draw() (source body not yet located/traced in Engine/acgui.cpp). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD578 table pinned by GUIListBox__MouseMove/WriteToFile/ReadFromFile (DATA XREF .rdata:004AD590). Body reads and temporarily decrements [this+0x10]/[this+0x14] (wid/hit, GUIObject base fields), consistent with drawing within an inset border, but not independently confirmed field-by-field. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): matches acgui.cpp:611-693 (GUIListBox::Draw) essentially completely. wid--/hit-- (matching source's own temporary-decrement convention, restored via wid++/hit++ at the very end) bracket the whole function exactly. check_font(&font)/wtextcolor(textcol)/wsetcolor(textcol) match verbatim. The border rectangles use a newly-matched sub_43CB80 (named `wrectangle`, an AGS drawing wrapper distinct from Allegro's rectfill), matching so" "urce's own two-rectangle border draw (outer + inner when pixel_size>1) ", 1);
 	set_frame_size(0X40649A, 0X1C, 4, 0);
 	add_func    (0X406950,0X406A4A);
 	set_func_flags(0X406950,0x5410);
@@ -159685,6 +159686,7 @@ static Functions_7(void) {
 	set_frame_size(0X43CAE0, 0X400, 0, 0);
 	add_func    (0X43CB80,0X43CC3B);
 	set_func_flags(0X43CB80,0x5400);
+	set_func_cmt(0X43CB80,	"[reversing] confirmed match\nsource: Common/Wgt2allg.h\nconfidence: high\nevidence: void wrectangle(int x1,int y1,int x2,int y2) -- AGS's own rectangle-OUTLINE drawing wrapper (distinct from Allegro's public rectfill, already matched). Called from GUIListBox::Draw (already matched) for its border rectangles, matching source's own \"wrectangle(x,y,x+wid+(pixel_size-1),y+hit+(pixel_size-1)); if(pixel_size>1) wrectangle(x+1,y+1,x+wid,y+hit);\" call shape and role exactly (a 4-coordinate rectangle-outline draw using the current `currentcolor` state, no separate color argument).", 1);
 	set_frame_size(0X43CB80, 0X10, 0, 0);
 	add_func    (0X43CC40,0X43CD11);
 	set_func_flags(0X43CC40,0x5400);
@@ -161274,6 +161276,10 @@ static Functions_7(void) {
 	set_frame_size(0X464A30, 0XCC, 0, 0);
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC8]", "Handles");
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC4]", "hThread");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X464B10,0X464B7B);
 	set_func_flags(0X464B10,0x5400);
 	SetType(0X464B10, "void __cdecl sub_464B10(void *);");
@@ -161303,10 +161309,6 @@ static Functions_7(void) {
 	set_func_flags(0X4654A0,0x5404);
 	SetType(0X4654A0, "void __cdecl __CxxRestoreUnhandledExceptionFilter();");
 	set_frame_size(0X4654A0, 0, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X4655A0,0X4655FA);
 	set_func_flags(0X4655A0,0x5400);
 	set_frame_size(0X4655A0, 0, 0, 0);
@@ -163538,6 +163540,10 @@ static Functions_8(void) {
 	add_func    (0X491410,0X491439);
 	set_func_flags(0X491410,0x5400);
 	set_frame_size(0X491410, 0, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X491440,0X4915CA);
 	set_func_flags(0X491440,0x5400);
 	SetType(0X491440, "int __cdecl sub_491440(int, int, char *Str1, int);");
@@ -163567,10 +163573,6 @@ static Functions_8(void) {
 	add_func    (0X491B70,0X491BC5);
 	set_func_flags(0X491B70,0x5400);
 	set_frame_size(0X491B70, 0X4, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X491BD0,0X491C33);
 	set_func_flags(0X491BD0,0x5400);
 	set_frame_size(0X491BD0, 0X10, 0, 0);

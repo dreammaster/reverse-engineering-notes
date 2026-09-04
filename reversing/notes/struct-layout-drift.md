@@ -10569,3 +10569,42 @@ inlined logic" pattern already found repeatedly elsewhere in this
 project (`call_function`/`cc_run_code`, `run_text_script_iparam`/`run_
 script_function_if_exist`), just newly confirmed for GUI label
 word-wrapping specifically.
+
+### `GUIListBox::Draw` upgraded to high confidence: three clean, confirmed-absent architectural simplifications
+
+The fourth and last of this session's GUI-family `Draw()` methods to
+close. The full body matches `acgui.cpp:611-693` almost completely:
+the `wid--`/`hit--` bracket (restored via `wid++`/`hit++` at the very
+end), `check_font`/`wtextcolor`/`wsetcolor`, the border rectangles
+(newly matched `sub_43CB80` as `wrectangle`, an AGS drawing wrapper
+distinct from Allegro's `rectfill`), and the scrollbar-arrow block
+(`triangle()`, already matched) all match source's shape closely.
+
+The decisive confirmation that `ChangeFont(font)` is FUSED inline
+rather than called separately: source's own `GUIListBox::ChangeFont`
+uses a distinctive calibration string, `"YpyjIHgMNWQ"` (different from
+`GUILabel::Draw`'s own `"ZhypjIHQFb"`), and that exact string appears
+verbatim right where this build recomputes `rowheight`/`num_items_fit`
+-- the same "later refactor extracted a reusable helper" pattern as
+`GUILabel::Draw`'s word-wrap fusion, now confirmed a second time in
+the same GUI-family sweep.
+
+Three clean, confirmed-absent simplifications fall out of reading the
+rest: (1) `exflags`' `GLF_NOBORDER`/`GLF_NOARROWS` bits are never
+checked anywhere in this function -- border and scrollbar drawing are
+unconditional, a THIRD independent confirmation of the exflags-absence
+pattern first found in `GUIListBox::MouseDown`'s own round; (2)
+`selectedbgcol` (2011's separate configurable selection-highlight
+color, already noted in `apply_structs.py` as absent from the
+`WriteToFile` bulk-write) is confirmed absent behaviorally too -- the
+selected row is drawn UNCONDITIONALLY via `wtextcolor(backcol);
+wsetcolor(textcol); rectfill(...)` (called directly, bypassing a
+`wbar` wrapper), an inverted highlight using only the two
+always-present color fields rather than a third dedicated one; (3)
+`alignment` (2011's `GALIGN_LEFT`/`CENTRE`/`RIGHT` field, also already
+noted absent) is confirmed absent too -- only ONE `wouttext_outline`
+call exists in the whole function, matching source's `GALIGN_LEFT`
+branch with no `else` counterpart at all; every list item is always
+left-aligned. `apply_structs.py`'s own `GUIListBox` comment updated to
+reflect all three as behavioral confirmations, not just save-format
+inferences.

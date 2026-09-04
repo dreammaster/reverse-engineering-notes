@@ -4488,8 +4488,8 @@
     "new_name": "GUIListBox__Draw",
     "source_file": "Engine/acgui.cpp",
     "source_line": null,
-    "confidence": "medium",
-    "evidence": "GUIListBox::Draw() (source body not yet located/traced in Engine/acgui.cpp). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD578 table pinned by GUIListBox__MouseMove/WriteToFile/ReadFromFile (DATA XREF .rdata:004AD590). Body reads and temporarily decrements [this+0x10]/[this+0x14] (wid/hit, GUIObject base fields), consistent with drawing within an inset border, but not independently confirmed field-by-field."
+    "confidence": "high",
+    "evidence": "GUIListBox::Draw() (source body not yet located/traced in Engine/acgui.cpp). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD578 table pinned by GUIListBox__MouseMove/WriteToFile/ReadFromFile (DATA XREF .rdata:004AD590). Body reads and temporarily decrements [this+0x10]/[this+0x14] (wid/hit, GUIObject base fields), consistent with drawing within an inset border, but not independently confirmed field-by-field. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): matches acgui.cpp:611-693 (GUIListBox::Draw) essentially completely. wid--/hit-- (matching source's own temporary-decrement convention, restored via wid++/hit++ at the very end) bracket the whole function exactly. check_font(&font)/wtextcolor(textcol)/wsetcolor(textcol) match verbatim. The border rectangles use a newly-matched sub_43CB80 (named `wrectangle`, an AGS drawing wrapper distinct from Allegro's rectfill), matching source's own two-rectangle border draw (outer + inner when pixel_size>1) exactly. `ChangeFont(font)` is CONFIRMED FUSED inline rather than called as a separate function -- the decisive giveaway is source's own distinctive calibration string \"YpyjIHgMNWQ\" (GUIListBox::ChangeFont's OWN literal, different from GUILabel::Draw's \"ZhypjIHQFb\") appearing verbatim right where rowheight/num_items_fit get recomputed, matching `rowheight=wgettextheight(\"YpyjIHgMNWQ\",font)+get_fixed_pixel_size(2); num_items_fit=hit/rowheight;` exactly -- the same 'later AGS refactor extracted a reusable helper' pattern as GUILabel::Draw's word-wrap fusion. The scrollbar-arrow block (triangle() calls, already matched) and the selected-item highlight loop both match source's shape closely, with THREE clean, confirmed-absent architectural simplifications: (1) `exflags` GLF_NOBORDER/GLF_NOARROWS gating is CONFIRMED ABSENT everywhere in this function -- border/scrollbar drawing is unconditional, a THIRD independent confirmation of the same exflags-absence pattern already found in GUIListBox::MouseDown's own round; (2) `selectedbgcol` (2011's conditional selection-bar color, `Common/acgui.h:391`, already noted in apply_structs.py as absent from this build's WriteToFile bulk-write) is CONFIRMED ABSENT behaviorally too -- the selected-row highlight is drawn UNCONDITIONALLY via `wtextcolor(backcol); wsetcolor(textcol); rectfill(...)` (rectfill called directly, bypassing a `wbar` wrapper) rather than gated on a separate color field; (3) `alignment` (2011's GALIGN_LEFT/CENTRE/RIGHT field, also already noted as absent from the bulk-write) is CONFIRMED ABSENT too -- only ONE `wouttext_outline` call exists in the whole function, matching source's `if(alignment==GALIGN_LEFT)` branch exactly with no `else` counterpart at all; every list item is always left-aligned."
   },
   {
     "kind": "manual",
@@ -6096,5 +6096,14 @@
     "source_line": 328,
     "confidence": "high",
     "evidence": "void GUILabel::printtext_align(int yy, char *teptr) at acgui.cpp:328-337 -- called from GUILabel::Draw (already matched) three times (once per broken-off line, once for the final trailing remainder), matching the exact thiscall 2-explicit-argument shape (yy first, teptr second) and role (the actual per-line text draw call inside the word-wrap loop). Internal alignment-offset math (GALIGN_CENTRE/GALIGN_RIGHT branches using wgettextwidth) not independently traced this round -- named by call-shape/role match, not a full internal body read."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43CB80",
+    "new_name": "wrectangle",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "void wrectangle(int x1,int y1,int x2,int y2) -- AGS's own rectangle-OUTLINE drawing wrapper (distinct from Allegro's public rectfill, already matched). Called from GUIListBox::Draw (already matched) for its border rectangles, matching source's own \"wrectangle(x,y,x+wid+(pixel_size-1),y+hit+(pixel_size-1)); if(pixel_size>1) wrectangle(x+1,y+1,x+wid,y+hit);\" call shape and role exactly (a 4-coordinate rectangle-outline draw using the current `currentcolor` state, no separate color argument)."
   }
 ]

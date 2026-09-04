@@ -2992,6 +2992,16 @@ disassembly work.
   via the newly-matched `GUILabel::printtext_align` as it's found. The
   same "later refactor extracted a reusable helper" pattern seen
   elsewhere, now confirmed for GUI label word-wrap too.
+- **`GUIListBox::Draw` upgraded to high confidence: three clean,
+  confirmed-absent simplifications.** Matches source closely
+  throughout, including a second confirmed case of `ChangeFont`
+  fused inline (via its own distinctive calibration string). Three
+  behavioral confirmations of fields already suspected absent from
+  save-format evidence: `exflags`' `GLF_NOBORDER`/`GLF_NOARROWS` bits
+  are never checked (unconditional border/scrollbar draw — a third
+  confirmation of this pattern), `selectedbgcol` is never read (the
+  selection highlight always uses `textcol`/`backcol` instead), and
+  `alignment` is never read (every list item is always left-aligned).
 
 ## Third-party library identification (Task #10)
 
