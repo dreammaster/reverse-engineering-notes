@@ -10646,3 +10646,23 @@ closes out this session's full sweep of the six `GUIObject`-derived
 classes' `Draw()` methods (`GUIButton`/`GUISlider`/`GUILabel`/
 `GUITextBox`/`GUIListBox`/`GUIInv`) -- all six are now at HIGH
 confidence.
+
+### `find_next_enabled_cursor` named, a further confirmation that `numcursors` doesn't exist
+
+`sub_40D2F4` had sat unmatched-by-name for a while despite already
+supplying real field evidence (the `MouseCursor.flags` bit values
+`MCF_DISABLED`/`MCF_STANDARD`) -- its own entry explicitly deferred
+naming pending confirmation. Reading it in full closes that: it's a
+complete, essentially line-for-line match to `find_next_enabled_
+cursor(int startwith)` (`AC.CPP:5188-5213`), including the exact
+do-while loop shape, the `testing==MODE_USE`/`activeinv>0` special
+case, and the final `if(testing!=startwith) SetCursorMode(testing);
+return testing;` tail. The bound check (`startwith>=game.numcursors`
+in source) uses a HARDCODED literal `10` here instead -- a THIRD
+independent site confirming `numcursors` doesn't exist as a field in
+this build (the fixed `MouseCursor mcurs[10]` capacity IS the bound,
+with no separate "how many are actually used" count). One harmless
+instruction-order swap noted (checks `MCF_STANDARD` before `testing==
+MODE_USE`, source does the reverse) -- functionally equivalent since
+the two conditions are mutually exclusive in practice. Renamed with
+high confidence.

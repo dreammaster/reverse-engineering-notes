@@ -12778,6 +12778,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X40D2EF);
 	op_hex		(x,	1);
 	create_insn	(0X40D2F4);
+	set_name	(0X40D2F4,	"find_next_enabled_cursor");
 	create_insn	(x=0X40D2F8);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40D2FE);
@@ -17493,8 +17494,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X412CE9);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X412CF3);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -17504,6 +17503,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X412CF3);
+	op_hex		(x,	1);
 	create_insn	(x=0X412CF6);
 	op_stkvar	(x,	1);
 	create_insn	(0X412D05);
@@ -23441,8 +23442,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418A04);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X418A0E);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23452,6 +23451,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X418A0E);
+	op_hex		(x,	1);
 	create_insn	(x=0X418A1A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418A23);
@@ -29148,8 +29149,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X41E439);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X41E43F);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -29159,6 +29158,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41E43F);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X41E446);
 	op_stkvar	(x,	1);
 	set_cmt	(0X41E449,	"Stream",	0);
@@ -34841,9 +34842,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X422DC7);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X422DCC);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34853,6 +34851,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X422DCC);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X422DD6);
 	op_hex		(x,	1);
 	create_insn	(x=0X422DD9);
@@ -155997,7 +155998,7 @@ static Functions_1(void) {
 	define_local_var(0X40D28E, 0X40D2F4, "[bp+0X10]", "y");
 	add_func    (0X40D2F4,0X40D382);
 	set_func_flags(0X40D2F4,0x5410);
-	set_func_cmt(0X40D2F4,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: medium\nevidence: Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup.", 1);
+	set_func_cmt(0X40D2F4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup. NAMED (follow-up round): int find_next_enabled_cursor(int startwith) at AC.CPP:5188-5213 -- a complete, essentially line-for-line match once fully read. The `startwith>=game.numcursors` bound check uses a HARDCODED literal `10` in place of `game.numcursors` (already CONFIRMED ABSENT from this build's GameS" "etupStructBase in an earlier round) -- a further, independent confir", 1);
 	set_frame_size(0X40D2F4, 0X4, 4, 0);
 	add_func    (0X40D382,0X40D3A1);
 	set_func_flags(0X40D382,0x5410);
@@ -156043,15 +156044,15 @@ static Functions_1(void) {
 	set_func_cmt(0X40D919,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol; apply_structs.py's CharacterInfo.activeinv comment already cited this function's iit==-1 branch, but this matches.json entry itself was never updated with the full behavioral evidence until now). Body: if iit==-1 (deselect), sets playerchar->activeinv@+0x34=-1 and, if the current cursor mode is MODE_USE(4), resets it to MODE_WALK(0) via SetCursorMode -- matching source's \"player.activeinv=-1; if (GetCursorMode()==MODE_USE) SetCursorMode(0);\" (AC.CPP) exactly. Otherwise validates iit in [1,100) (quitting \"!SetActiveInventory: invalid inventory number\" otherwise, matching MAX_INV=100), validates playerchar->inv[iit]@+0x44 (a SHORT array, read via movsx) >=1 (quitting \"!SetActiveInventory: player doesn't have this item\" otherwise -- the player must actually own at least one of the item), calls the already-matched sub_40CF16 (applies the item's cursor g" "raphic/hotspot to the MODE_USE cursor), sets playerchar->activeinv@+", 1);
 	set_frame_size(0X40D919, 0, 4, 0X4);
 	define_local_var(0X40D919, 0X40D9B7, "[bp+0X8]", "iit");
+}
+
+static Functions_2(void) {
+
 	add_func    (0X40D9B7,0X40D9CE);
 	set_func_flags(0X40D9B7,0x5410);
 	SetType(0X40D9B7, "int IsGamePaused(void);");
 	set_func_cmt(0X40D9B7,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-instruction body: \"return (game_paused>0);\" -- exact match to 2011's own trivial \"return (game_paused>0);\" -- a further confirmation of the already-established standalone game_paused global from a new call site (check_controls, already matched, calls it twice).", 1);
 	set_frame_size(0X40D9B7, 0, 4, 0);
-}
-
-static Functions_2(void) {
-
 	add_func    (0X40D9CE,0X40DA08);
 	set_func_flags(0X40D9CE,0x5410);
 	SetType(0X40D9CE, "int __stdcall IsButtonDown(int which);");

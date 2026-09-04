@@ -920,9 +920,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40D2F4",
+  "name": "find_next_enabled_cursor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SetNextCursorMode",

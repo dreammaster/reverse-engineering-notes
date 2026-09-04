@@ -4944,11 +4944,11 @@
   {
     "kind": "manual",
     "asm_name": "sub_40D2F4",
-    "new_name": null,
-    "source_file": "Common/acroom.h",
-    "source_line": 2450,
-    "confidence": "medium",
-    "evidence": "Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup."
+    "new_name": "find_next_enabled_cursor",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5188,
+    "confidence": "high",
+    "evidence": "Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup. NAMED (follow-up round): int find_next_enabled_cursor(int startwith) at AC.CPP:5188-5213 -- a complete, essentially line-for-line match once fully read. The `startwith>=game.numcursors` bound check uses a HARDCODED literal `10` in place of `game.numcursors` (already CONFIRMED ABSENT from this build's GameSetupStructBase in an earlier round) -- a further, independent confirmation that this build's mouse-cursor table is a fixed 10-slot array (matching the already-established MouseCursor mcurs[10]) with no separate 'how many are actually used' count field, both at the initial clamp AND the do-while loop's own wraparound check (`testing>=10 -> testing=0`). The do-while body matches \"if((flags&MCF_DISABLED)==0){ if(testing==MODE_USE){if(activeinv>0)break;} else if(flags&MCF_STANDARD)break; }\" -- MINOR STRUCTURAL NOTE: this build checks the MCF_STANDARD flag BEFORE the testing==MODE_USE(4) check (source checks MODE_USE first), a harmless instruction-order swap since MODE_USE's own cursor slot and MCF_STANDARD are mutually exclusive in practice (no functional difference). Loop increment/wraparound and the final \"if(testing!=startwith) SetCursorMode(testing); return testing;\" both match verbatim, with SetCursorMode itself being the already-matched script-API wrapper. Confidence upgraded to HIGH."
   },
   {
     "kind": "manual",

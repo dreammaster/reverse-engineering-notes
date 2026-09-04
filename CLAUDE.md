@@ -3011,6 +3011,14 @@ disassembly work.
   `play_inv_*`/`inv_item_*` fields instead of any per-`GUIInv`-object
   field. CONFIRMED ABSENT: the entire disabled/greyed-out darkening
   effect.
+- **`find_next_enabled_cursor` named, a further confirmation that
+  `numcursors` doesn't exist.** A complete, near line-for-line match
+  once fully read. The bound check uses a hardcoded literal `10`
+  instead of `game.numcursors` — a third independent site confirming
+  that field doesn't exist here (the fixed `mcurs[10]` capacity IS the
+  bound). One harmless instruction-order swap noted (`MCF_STANDARD`
+  checked before `testing==MODE_USE`, source does the reverse) —
+  functionally equivalent since the two are mutually exclusive.
 
 ## Third-party library identification (Task #10)
 
