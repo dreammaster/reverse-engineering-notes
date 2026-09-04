@@ -1907,7 +1907,7 @@
     "source_obj": "acchars.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- a genuine self-contained implementation; 2011's own Character_FaceLocation wrapper this function calls has no body present anywhere in this repo's Engine/ tree, so there's no source to diff against instruction-by-instruction, but the algorithm itself is fully recovered): validates via is_valid_character, computes dx=xx-chars[cha].x/dy=yy-chars[cha].y, then checks whether diagonal facing loops are usable -- either views[chars[cha].view].numloops@+0x00 (already established ViewStruct272.numloops) is <8, OR the already-established CHF_NODIAGONAL(8) bit is set on chars[cha].flags -- and if either holds, forces cardinal-only-facing mode. The rest of the function is a classic 8-direction octant classifier: repeated abs(dx)/abs(dy) magnitude comparisons (using the standard 'is the angle within 22.5 degrees of an axis' tan-approximation idiom, abs(dy)<=(abs(dx)-abs(dy))/2 and its mirror) to pick one of up to 8 loop indices (0/1/2/4/5/7 confirmed via direct literal assignments spread across the function's several branches; 3/6 -- the remaining two of the 8 -- not individually spotted but implied by the classifier's own symmetry), finally writing the result into chars[cha].loop@+0x38 and resetting frame@+0x3A=0. Confidence high on the overall role and algorithm shape; not traced to 100% per-branch completeness given the function's size (~280 lines) and the lack of a 2011 body to check against."
   },
   {
     "kind": "function",
@@ -1917,7 +1917,7 @@
     "source_obj": "acchars.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates both characters via is_valid_character (twice), then checks they're in the SAME room (chars[cha].room@+0x0C==chars[toface].room@+0x0C, both already established), quitting \"!FaceCharacter: characters are in different rooms\" otherwise -- matching source's own presumed check (no body available for Character_FaceCharacter directly, but this guard is characteristic of the role). Finally calls the already-matched FaceLocation(cha,chars[toface].x,chars[toface].y) directly -- this build's own two-hop delegation (FaceCharacter straight to the already-matched script-level FaceLocation) fuses what 2011 does via two script-object wrapper hops (Character_FaceCharacter -> Character_FaceLocation), the same 'flatter than 2011' pattern already established repeatedly elsewhere in this project."
   },
   {
     "kind": "function",

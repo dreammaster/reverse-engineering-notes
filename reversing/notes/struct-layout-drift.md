@@ -11039,3 +11039,25 @@ rather than silently no-op. `MoveCharacterBlocking` is missing BOTH
 from hanging the game when "Hide Player Character" is ticked) -- this
 build has neither check. Both are genuine, confirmable robustness
 regressions relative to 2011, not just smaller/simpler predecessors.
+
+### `FaceLocation`/`FaceCharacter` close, revealing a genuine 8-direction facing implementation
+
+`FaceLocation` (2011's own `Character_FaceLocation` wrapper has no
+body in this repo to compare against) turns out to be a substantial,
+self-contained implementation of AGS's classic 8-direction facing
+algorithm: after validating the character, it computes `dx`/`dy`
+toward the target, checks whether diagonal facing is even usable
+(`views[view].numloops<8` OR the already-established `CHF_NODIAGONAL`
+bit set -- either forces cardinal-only mode), then runs a series of
+`abs(dx)`/`abs(dy)` magnitude comparisons (the standard "within 22.5
+degrees of an axis" tan-approximation idiom) to classify the direction
+into one of up to 8 loop indices, finally writing the result into
+`loop` and resetting `frame`. Characterized at the algorithm-shape
+level (role and overall structure decisively confirmed; not traced to
+100% per-branch completeness given the function's size and the lack
+of a 2011 body to check line-for-line). `FaceCharacter` closes cleanly:
+validates both characters, checks they share the same room, then calls
+the already-matched `FaceLocation` directly -- fusing what 2011 does
+via two script-object wrapper hops (`Character_FaceCharacter` ->
+`Character_FaceLocation`) into one direct call, the same "flatter than
+2011" pattern found repeatedly elsewhere in this project.

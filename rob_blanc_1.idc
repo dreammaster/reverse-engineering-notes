@@ -157661,7 +157661,7 @@ static Functions_5(void) {
 	add_func    (0X41C0AD,0X41C2D7);
 	set_func_flags(0X41C0AD,0x5410);
 	SetType(0X41C0AD, "void __stdcall FaceLocation(int cha, int xx, int yy);");
-	set_func_cmt(0X41C0AD,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj", 1);
+	set_func_cmt(0X41C0AD,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- a genuine self-contained implementation; 2011's own Character_FaceLocation wrapper this function calls has no body present anywhere in this repo's Engine/ tree, so there's no source to diff against instruction-by-instruction, but the algorithm itself is fully recovered): validates via is_valid_character, computes dx=xx-chars[cha].x/dy=yy-chars[cha].y, then checks whether diagonal facing loops are usable -- either views[chars[cha].view].numloops@+0x00 (already established ViewStruct272.numloops) is <8, OR the already-established CHF_NODIAGONAL(8) bit is set on chars[cha].flags -- and if either holds, forces cardinal-only-facing mode. The rest of the function is a classic 8-direction octant classifier: repeated abs(dx)/abs(dy) magnitude comparisons (using the standard 'is the angle wi" "thin 22.5 degrees of an axis' tan-approximation idiom, abs(dy)<=(abs(dx)-", 1);
 	set_frame_size(0X41C0AD, 0X1C, 4, 0XC);
 	define_local_var(0X41C0AD, 0X41C2D7, "[bp-0XC]", "Number");
 	define_local_var(0X41C0AD, 0X41C2D7, "[bp+0X8]", "cha");
@@ -157670,7 +157670,7 @@ static Functions_5(void) {
 	add_func    (0X41C2D7,0X41C36A);
 	set_func_flags(0X41C2D7,0x5410);
 	SetType(0X41C2D7, "void __stdcall FaceCharacter(int cha, int toface);");
-	set_func_cmt(0X41C2D7,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj", 1);
+	set_func_cmt(0X41C2D7,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates both characters via is_valid_character (twice), then checks they're in the SAME room (chars[cha].room@+0x0C==chars[toface].room@+0x0C, both already established), quitting \"!FaceCharacter: characters are in different rooms\" otherwise -- matching source's own presumed check (no body available for Character_FaceCharacter directly, but this guard is characteristic of the role). Finally calls the already-matched FaceLocation(cha,chars[toface].x,chars[toface].y) directly -- this build's own two-hop delegation (FaceCharacter straight to the already-matched script-level FaceLocation) fuses what 2011 does via two script-object wrapper hops (Character_FaceCharacter -> Character_FaceLocation), the same 'flatter than 2011' pattern already established repeatedly elsewhere in this projec" "t.", 1);
 	set_frame_size(0X41C2D7, 0X8, 4, 0X8);
 	define_local_var(0X41C2D7, 0X41C36A, "[bp+0X8]", "cha");
 	define_local_var(0X41C2D7, 0X41C36A, "[bp+0XC]", "toface");
@@ -158115,6 +158115,10 @@ static Functions_5(void) {
 	set_func_flags(0X424120,0x5410);
 	set_func_cmt(0X424120,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual int GUIButton::MouseDown() at acgui.h:597: \"if (pushedpic>0) usepic=pushedpic; ispushed=1; return 0;\". Exact match: [this+0x5C]>0 -> [this+0x60]=[this+0x5C], then [this+0x64]=1. Found by reading the GUIButton vtable directly from .rdata (starting at off_4AD4A0, the same table GUIButton__Draw -- already matched -- lives in at slot 6/+0x18): this is slot 3/+0xC, which matches GUIMain::mouse_but_down's independently-confirmed \"objs[mouseover]->MouseDown() at vtable+0xC\" call -- two unrelated pieces of evidence agreeing on the same slot. Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424120, 0X4, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X424150,0X42415D);
 	set_func_flags(0X424150,0x5414);
 	set_func_cmt(0X424150,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIButton::KeyPress(int keycode) {} at acgui.h:606 -- empty inline body. Exact match: unknown_libname_2 does nothing but save `this` and return, with `retn 4` (1 int param). Vtable slot 5/+0x14, immediately before the already-matched Draw at slot 6/+0x18. Same FLIRT-mistag/COMDAT-folding situation as GUIButton__MouseMove above (also referenced from a second vtable location). Flat-named as a C++ virtual method.", 1);
@@ -158141,10 +158145,6 @@ static Functions_5(void) {
 	set_func_cmt(0X424290,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual void GUIInv::WriteToFile(FILE*) at acgui.h:474. In THIS build, the function does ONLY the base 28-byte fwrite @[this+4] (GUIObject::WriteToFile) -- no putw calls for charId/itemWidth/itemHeight/topIndex at all, unlike source's \"putw(charId,ooo); putw(itemWidth,ooo); ...\" tail. DRIFT: matches source's own version-gated ReadFromFile logic (\"if (version>=109) {...} else {charId=-1; itemWidth=40; itemHeight=22; topIndex=0;}\", acgui.h:486-497) -- this 2002 build predates format version 109, so these 4 fields are not part of the persisted format yet (and may not exist in the 2002 struct at all; not independently verified). Vtable slot 7/+0x1C of off_4AD50C (DATA XREF .rdata:004AD528). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424290, 0X4, 4, 0X4);
 	define_local_var(0X424290, 0X4242B4, "[bp+0X8]", "Stream");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X4242C0,0X4242E4);
 	set_func_flags(0X4242C0,0x5410);
 	SetType(0X4242C0, "int __stdcall GUIInv__ReadFromFile(FILE *Stream);");
@@ -159082,6 +159082,10 @@ static Functions_6(void) {
 	set_func_flags(0X43195E,0x5410);
 	set_func_cmt(0X43195E,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void msetcursorlimit(int x1,int y1,int x2,int y2) at MOUSEW32.CPP:120: \"boundx1=x1; boundy1=y1; boundx2=x2; boundy2=y2;\" -- no other side effects. Exact match to sub_43195E (4 args, direct assignment to the same 4 globals confirmed via mgetgraphpos, already matched). Resolves an old open item: called directly from SetMouseBounds (already matched) and restore_game_data (already matched), whereas the 2011 source has SetMouseBounds call a virtual filter->SetMouseLimit(...) instead -- consistent with the project's established pattern of later versions wrapping direct global writes behind a pluggable driver interface.", 1);
 	set_frame_size(0X43195E, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X431985,0X431C31);
 	set_func_flags(0X431985,0x5410);
 	SetType(0X431985, "void __stdcall domouse(int str);");
@@ -159099,10 +159103,6 @@ static Functions_6(void) {
 	set_func_flags(0X431DBF,0x5410);
 	set_func_cmt(0X431DBF,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void msetgraphpos(int,int) at MOUSEW32.CPP:254: \"position_mouse(xa,ya);\" -- exact 2-line match, just forwards both args to sub_4577C0 (matched below to position_mouse). Called from remove_popup_interface (already matched, source line \"filter->SetMousePosition(mousex, guis[ifacenum].popupyp+2);\" -- 2002 calls the low-level msetgraphpos directly instead of through a virtual filter driver) and main (already matched, likely initial cursor centering).", 1);
 	set_frame_size(0X431DBF, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X431DD4,0X431DEA);
 	set_func_flags(0X431DD4,0x5410);
 	set_frame_size(0X431DD4, 0, 4, 0);
@@ -160137,6 +160137,10 @@ static Functions_7(void) {
 	add_func    (0X4477D0,0X447829);
 	set_func_flags(0X4477D0,0x5400);
 	set_frame_size(0X4477D0, 0X4, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X447830,0X4478DF);
 	set_func_flags(0X447830,0x5400);
 	set_frame_size(0X447830, 0X8, 0, 0);
@@ -160217,10 +160221,6 @@ static Functions_7(void) {
 	add_func    (0X448B60,0X448C35);
 	set_func_flags(0X448B60,0x5400);
 	set_frame_size(0X448B60, 0X14, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X448C40,0X448D72);
 	set_func_flags(0X448C40,0x5400);
 	SetType(0X448C40, "int __cdecl sub_448C40(float, int, int);");
@@ -162263,6 +162263,10 @@ static Functions_8(void) {
 	add_func    (0X479330,0X479398);
 	set_func_flags(0X479330,0x5400);
 	set_frame_size(0X479330, 0, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X4793A0,0X4793A1);
 	set_func_flags(0X4793A0,0x5400);
 	set_frame_size(0X4793A0, 0, 0, 0);
@@ -162338,10 +162342,6 @@ static Functions_8(void) {
 	add_func    (0X47A020,0X47A08E);
 	set_func_flags(0X47A020,0x5400);
 	set_frame_size(0X47A020, 0X4, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X47A090,0X47A0ED);
 	set_func_flags(0X47A090,0x5400);
 	set_frame_size(0X47A090, 0, 0, 0);
@@ -164864,6 +164864,10 @@ static Functions_9(void) {
 	set_func_cmt(0X4AAF7E,	"[reversing] confirmed match\nsource obj (library): libucrtd:malloc.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:malloc.obj", 1);
 	set_frame_size(0X4AAF7E, 0, 0, 0);
 	define_local_var(0X4AAF7E, 0X4AAF84, "[bp+0X4]", "Size");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AAF84,0X4AAF8A);
 	set_func_flags(0X4AAF84,0x5480);
 	SetType(0X4AAF84, "char *__cdecl strstr(const char *Str, const char *SubStr);");
@@ -164897,10 +164901,6 @@ static Functions_9(void) {
 	set_func_cmt(0X4AAF9C,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj", 1);
 	set_frame_size(0X4AAF9C, 0, 0, 0);
 	define_local_var(0X4AAF9C, 0X4AAFA2, "[bp+0X4]", "Time");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AAFA2,0X4AAFA8);
 	set_func_flags(0X4AAFA2,0x5480);
 	SetType(0X4AAFA2, "void *__cdecl calloc(size_t Count, size_t Size);");

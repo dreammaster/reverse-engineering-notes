@@ -3135,6 +3135,13 @@ disassembly work.
   game-hanging call when "Hide Player Character" is ticked) don't
   exist here at all. `MoveCharacterToHotspot`/`StopMoving` both close
   as clean, exact matches.
+- **`FaceLocation`/`FaceCharacter` close cleanly.** `FaceLocation`
+  names a genuine self-contained 8-direction facing implementation (no
+  2011 wrapper body to compare against): `dx`/`dy` computation, a
+  `CHF_NODIAGONAL`/`numloops<8` cardinal-only check, then the classic
+  tan-approximation octant classifier writing the result into `loop`.
+  `FaceCharacter` closes cleanly, fusing two 2011 script-object wrapper
+  hops into one direct call to the already-matched `FaceLocation`.
 
 ## Third-party library identification (Task #10)
 
