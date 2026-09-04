@@ -242,25 +242,35 @@ each pic is **70 × 50 px, 1bpp**, stored as 50 rows × 10 bytes = 500 bytes
 ENEMYID += 10` — i.e. the file data is linear rows; only the *screen* address
 is hi-res-interleaved.
 
-**DOS status (2026-09-04, `ida_scripts/analyze_conunit.py`): the DOS
-portrait is tile-composed, not a compressed pixel image.**  The console
-driver's `UNITWRITE(unit 13, blk 18)` (`conunit_load_monsters`) just stashes
-the file number and inits a 4-slot record cache; `blk 13` (`conunit_blit13`,
-run from `CUTIL` proc 42's encounter-draw) reads up to 4 `TENEMY.PIC` ids,
-lays out a **5 × 6 grid of tile-glyph codes (1..30)** per monster group into
-the offscreen cell buffer, then loads each group's `200.MONSTERS` record.
-So a record is a **per-monster ~30-glyph sub-font** and the portrait is
-drawn by the ordinary cell renderer from those tiles — the "compressed
-1bpp image" reading (below) was wrong; the noise was font-row bytes.
+**DOS format (mostly cracked 2026-09-04, `ida_scripts/analyze_conunit.py`
++ `docs/pmachine.md` §CONUNIT): a tile-composed 1bpp portrait, not a
+compressed image.**
 
-Exact tile geometry / glyph size within the 512-byte record still to be
-pinned (the 8-word header `0, 4, 5, 13, 0x4001, 0x4003, 0xD001, …` gives
-cols/rows = 4/5 and offsets).  See `docs/pmachine.md` §CONUNIT.
+* **`PIC` is 1-based.**  WIZ1 uses values `1, 4..30` (27 distinct) — so
+  record `n` = bytes `(PIC-1)*512 .. +512`.  32 records; `30..31` are the
+  Mac-Pascal disk slack.
+* Drawn by `CUTIL` proc 42: `UNITWRITE(13, blk 17)` clear → `blk 13`
+  (`conunit_blit13`) → `blk 3` present.
+* `conunit_blit13` places, per monster group `g` (0..3), a **6-wide ×
+  5-tall block of cells** into `WINDOW1` (36-col window, starting at row
+  9, column from `cs:0x1423/1425/1429/142F` = `{15}` / `{11,19}` /
+  `{7,15,23}` / `{3,11,19,27}` by group count).  Each cell's char = a tile
+  index; its **attribute byte** carries `tile+1` in bits 0‑4 and `g` in
+  bits 4‑5.  It then loads the 4 groups' records into a 4-slot cache
+  (`sub_1A63`, `word_13E0` = 3072 B/slot).
+* The cell renderer's per-attribute blitter (`0x1E9A`) draws each tile as
+  **16 × 8 px, 1bpp** (`movsw`, CGA-mono interleave) from
+  `recordBuffer[g] + cs:[0x59F2 + tile*2]`, where `cs:0x59F2` is a
+  **30-entry** offset table with uniform stride `word_13DC << 1`.
 
-*(old reading, kept for reference: rendered as a raw 1bpp bitmap at every
-plausible geometry it is pure noise; byte histogram after the header is
-dominated by `0x00` then `0xAA 0x55 0xFF 0x11 …` — which is just how a
-tiny tile font looks.)*
+So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**.  Near-certain
+tile stride = **16 bytes** (→ tile `n` at record offset `n*16`, 30 tiles =
+480 B, padded to the 512-B record) — this also gives the main `*.CHARSET`
+its 16-B glyph stride (8192 / 16 = 512 glyphs).  Unconfirmed statically
+only because `word_13DC` is 0 in the image and set at run time; a DOSBox
+`d <INTERP>:13DC` + `d <INTERP>:59F2 L3C` during a fight settles it.
+`(PIC-1)*word_13DE(=4)` in the block calc is still unexplained (records
+read fine as 1 block each).
 
 ---
 

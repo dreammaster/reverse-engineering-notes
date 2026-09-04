@@ -247,10 +247,15 @@ CSP UNITWRITE (loc_2DB9) ─┘  → per-unit table  0x2CF7 (URD) / 0x2DDE (UWR)
 | 19 | `conunit_scanline19` (`0x2305`) | **the timed pause** (`SETTIME`/`TIMEDLAY`) — spin `word_1449` times, each iteration polling `int 1Ah` clock ticks and `int 16h` for a key to abort |
 
 **Monster portraits are tile-composed, not a compressed bitmap.**  Each
-`200.MONSTERS` record (512 B) is a small **per-monster sub-font** (~30 tile
-glyphs); `conunit_blit13` lays out char codes 1..30 in a 5×6 grid per
-group and the normal cell renderer draws them from that record.  This
-corrects the earlier "compressed 1bpp image" guess in `file-formats.md`.
+`200.MONSTERS` record (512 B, `PIC` **1-based**) is a per-monster tile
+sub-font.  `conunit_blit13` places a **6 × 5 cell block** per monster
+group into `WINDOW1` (col from `cs:0x1423/1425/1429/142F` by group count),
+each cell carrying `tile+1` in attr bits 0‑4 and the group in bits 4‑5;
+`sub_1A63` loads the 4 groups' records into a 4-slot cache.  The
+per-attribute cell blitter at `0x1E9A` draws one tile as **16 × 8 px 1bpp**
+(`movsw`, CGA-mono interleave) from `recordBuf[group] + cs:[0x59F2 +
+tile*2]`, a 30-entry table built with stride `word_13DC << 1` — almost
+certainly 16 B (→ a 96 × 40 px portrait).  See `file-formats.md`.
 
 ## Native / SBIOS interface
 
