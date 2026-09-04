@@ -10938,3 +10938,34 @@ is `walk_area_zone5`, matching source's write of the literal `1633`
 exactly. `init_pathfinder` closes with a rare ZERO-drift capacity
 match: two `malloc(4000)` calls into `pathbackx`/`pathbacky`, exactly
 matching `MAXPATHBACK=1000`*`sizeof(int)=4` with no reduction at all.
+
+### `SetCharacterClickable`/`SetCharacterIgnoreWalkbehinds`/`SetObjectClickable` close, confirming three more flag bits; `SetCharacterView`/`ChangeCharacterView` reveal a real behavioral drift
+
+Three small flag setters all close with decisive, exact matches. `Set
+ObjectClickable` reconfirms `RoomObject.flags` bit `OBJF_NOINTERACT=1`
+from a new site. `SetCharacterClickable` and `SetCharacterIgnoreWalk
+behinds` each confirm a NEW `CharacterInfo.flags` bit value with zero
+drift: `CHF_NOINTERACT=4` and `CHF_NOWALKBEHINDS=0x80` (`Common/
+acroom.h:2481,2486`), both matching the clear-then-conditionally-set
+pattern exactly (the latter with no `Character_SetIgnoreWalkbehinds`
+wrapper body available to compare against directly, but the bit value
+alone is decisive).
+
+`SetCharacterView`/`ChangeCharacterView` turn out to be two more
+genuine self-contained implementations (their own 2011 `Character_
+LockView`/`Character_ChangeView` wrapper bodies aren't present in this
+repo's `Engine/` tree). `SetCharacterView` bounds-checks against a
+pre-existing but never-renamed global, `ElementCount` -- already
+established elsewhere as `GameSetupStructBase.numviews` (via `load_
+ac2game_dta`'s own entry) but left un-renamed until now -- releases
+any active idle-view lock, sets the new view, resets `walking`/
+`animating`/`frame`/`wait`, clamps `loop` if invalid for the new view
+(a further confirmation of `ViewStruct272.numloops`), and sets a NEW
+confirmed flags bit, `CHF_FIXVIEW=2` (source's own comment: "between
+SetCharView and ReleaseCharView" -- an exact match to this function's
+own role). `ChangeCharacterView` does the equivalent reset but with a
+CONFIRMED real behavioral difference: it sets BOTH `defview` AND
+`view` to the new value (not just `view`), and never touches
+`CHF_FIXVIEW` -- meaning this build's "change view" doesn't preserve a
+distinct original view to revert to the way `SetCharacterView`'s own
+idle-view machinery implies is otherwise possible.

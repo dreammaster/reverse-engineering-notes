@@ -3102,6 +3102,17 @@ disassembly work.
   `routex1` and identified `walk_area_zone5`, both matching source's
   own equally obscure names. `init_pathfinder` closes with a rare
   zero-drift capacity match (`MAXPATHBACK=1000`, no reduction).
+- **Three flag setters confirm new bit values; `SetCharacterView`/
+  `ChangeCharacterView` reveal a real drift.** `SetCharacterClickable`/
+  `SetCharacterIgnoreWalkbehinds` confirm `CHF_NOINTERACT=4`/
+  `CHF_NOWALKBEHINDS=0x80` with zero drift; `SetObjectClickable`
+  reconfirms `OBJF_NOINTERACT=1`. Both View functions are genuine
+  self-contained implementations (no 2011 wrapper body to compare
+  against) — `SetCharacterView` names `numviews` (a stale un-renamed
+  global) and confirms a new bit, `CHF_FIXVIEW=2`; `ChangeCharacterView`
+  confirms a real behavioral difference — it sets both `defview` and
+  `view`, unlike `SetCharacterView`, so it can't preserve a distinct
+  original view to revert to later.
 
 ## Third-party library identification (Task #10)
 

@@ -1847,7 +1847,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- this build implements SetCharacterView's actual logic directly, not via a Character_LockView script-object wrapper the way 2011's own AC.CPP-level function does; that wrapper's own body isn't present anywhere in this repo's Engine/ tree, but the substance it must contain is fully recovered here): validates via is_valid_character, then bounds-checks vii against [1,ElementCount] -- ElementCount here is the pre-existing but never-renamed global already established as GameSetupStructBase.numviews (confirmed via load_ac2game_dta's own entry), renamed accordingly. Converts to 0-based, then: if idleleft@+0x2E<0 (already established, matching walk_character/animate_character's own idle-release pattern), calls ReleaseCharacterView (already matched) and resets idleleft=idletime (both already established). Sets view@+0x08=vii, clears walking@+0x3C/animating@+0x3E; if loop@+0x38 is out of range for the NEW view (>=views[vii].numloops, a further confirmation of ViewStruct272.numloops@+0x00 from a new site), resets loop to 0; clears frame@+0x3A and wait@+0x1C; finally sets flags@+0x20 bit `CHF_FIXVIEW=2` (Common/acroom.h:2480, 'between SetCharView and ReleaseCharView' per source's own comment -- an exact, decisive match to this function's own role) -- a NEW confirmed CharacterInfo.flags bit value, on top of CHF_NOINTERACT=4/CHF_NOWALKBEHINDS=0x80 confirmed this same round via SetCharacterClickable/SetCharacterIgnoreWalkbehinds."
   },
   {
     "kind": "function",
@@ -1867,7 +1867,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- another genuine self-contained implementation, not a Character_ChangeView wrapper delegate): validates via is_valid_character, converts vii to 0-based and bounds-checks against [0,numviews) (ElementCount, see SetCharacterView's own entry). CONFIRMED DRIFT: unlike SetCharacterView, this function sets BOTH defview@+0x00 AND view@+0x08 to the new vii (not just view) -- meaning this build's 'change view' does not preserve any distinct default/idle view to revert to later the way SetCharacterView's own idleleft/idletime-based logic implies is otherwise possible; it has no CHF_FIXVIEW-equivalent flag write either. Otherwise clears animating@+0x3E/frame@+0x3A/wait@+0x1C and applies the same loop-out-of-range-for-new-view reset (loop@+0x38 vs. views[vii].numloops) as SetCharacterView's own entry."
   },
   {
     "kind": "function",
@@ -1877,7 +1877,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"game.chars[cha].flags&=~CHF_NOINTERACT; if(clik==0) game.chars[cha].flags|=CHF_NOINTERACT;\" -- CONFIRMS CharacterInfo.flags bit `CHF_NOINTERACT=4` (Common/acroom.h:2481) with zero drift, a NEW confirmed bit value for this field (previously only CHF_NOLIGHTING=0x20 was confirmed here)."
   },
   {
     "kind": "function",
@@ -1887,7 +1887,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches the clear-then-conditionally-set bit pattern exactly (`flags&=~0x80; if(clik!=0) flags|=0x80;`), CONFIRMING CharacterInfo.flags bit `CHF_NOWALKBEHINDS=0x80` (Common/acroom.h:2486) with zero drift -- a second new confirmed bit value alongside SetCharacterClickable's own CHF_NOINTERACT=4 finding this same round. This build calls straight through with no intermediate Character_SetIgnoreWalkbehinds wrapper body to compare against (not present in this repo's Engine/ tree), but the exact bit value is independently decisive regardless."
   },
   {
     "kind": "function",
@@ -1897,7 +1897,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"objs[cha].flags&=~OBJF_NOINTERACT; if(clik==0) objs[cha].flags|=OBJF_NOINTERACT;\" -- a further, independent confirmation of RoomObject.flags bit `OBJF_NOINTERACT=1` (already established via GetObjectAt) from a new script-API site."
   },
   {
     "kind": "function",

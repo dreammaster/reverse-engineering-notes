@@ -153895,7 +153895,7 @@ static Bytes_27(void) {
 	make_array	(0X513B7D,	0X1CD7);
 	create_dword	(0X515854);
 	create_dword	(0X515858);
-	set_name	(0X515858,	"ElementCount");
+	set_name	(0X515858,	"numviews");
 	create_dword	(0X51585C);
 	create_word	(0X515860);
 	create_word	(0X515862);
@@ -157615,7 +157615,7 @@ static Functions_5(void) {
 	add_func    (0X41BBD8,0X41BCC0);
 	set_func_flags(0X41BBD8,0x5410);
 	SetType(0X41BBD8, "void __stdcall SetCharacterView(int chaa, int vii);");
-	set_func_cmt(0X41BBD8,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41BBD8,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- this build implements SetCharacterView's actual logic directly, not via a Character_LockView script-object wrapper the way 2011's own AC.CPP-level function does; that wrapper's own body isn't present anywhere in this repo's Engine/ tree, but the substance it must contain is fully recovered here): validates via is_valid_character, then bounds-checks vii against [1,ElementCount] -- ElementCount here is the pre-existing but never-renamed global already established as GameSetupStructBase.numviews (confirmed via load_ac2game_dta's own entry), renamed accordingly. Converts to 0-based, then: if idleleft@+0x2E<0 (already established, matching walk_character/animate_character's own idle-release pattern), calls ReleaseCharacterView (already matched) and resets idleleft=idletime (both already establishe" "d). Sets view@+0x08=vii, clears walking@+0x3C/animating@+0x3E; if lo", 1);
 	set_frame_size(0X41BBD8, 0X4, 4, 0X8);
 	define_local_var(0X41BBD8, 0X41BCC0, "[bp+0X8]", "chaa");
 	define_local_var(0X41BBD8, 0X41BCC0, "[bp+0XC]", "vii");
@@ -157628,28 +157628,28 @@ static Functions_5(void) {
 	add_func    (0X41BE22,0X41BEE1);
 	set_func_flags(0X41BE22,0x5410);
 	SetType(0X41BE22, "void __stdcall ChangeCharacterView(int chaa, int vii);");
-	set_func_cmt(0X41BE22,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41BE22,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- another genuine self-contained implementation, not a Character_ChangeView wrapper delegate): validates via is_valid_character, converts vii to 0-based and bounds-checks against [0,numviews) (ElementCount, see SetCharacterView's own entry). CONFIRMED DRIFT: unlike SetCharacterView, this function sets BOTH defview@+0x00 AND view@+0x08 to the new vii (not just view) -- meaning this build's 'change view' does not preserve any distinct default/idle view to revert to later the way SetCharacterView's own idleleft/idletime-based logic implies is otherwise possible; it has no CHF_FIXVIEW-equivalent flag write either. Otherwise clears animating@+0x3E/frame@+0x3A/wait@+0x1C and applies the same loop-out-of-range-for-new-view reset (loop@+0x38 vs. views[vii].numloops) as SetCharacterView's own entry.", 1);
 	set_frame_size(0X41BE22, 0X4, 4, 0X8);
 	define_local_var(0X41BE22, 0X41BEE1, "[bp+0X8]", "chaa");
 	define_local_var(0X41BE22, 0X41BEE1, "[bp+0XC]", "vii");
 	add_func    (0X41BEE1,0X41BF5A);
 	set_func_flags(0X41BEE1,0x5410);
 	SetType(0X41BEE1, "void __stdcall SetCharacterClickable(int cha, int clik);");
-	set_func_cmt(0X41BEE1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41BEE1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"game.chars[cha].flags&=~CHF_NOINTERACT; if(clik==0) game.chars[cha].flags|=CHF_NOINTERACT;\" -- CONFIRMS CharacterInfo.flags bit `CHF_NOINTERACT=4` (Common/acroom.h:2481) with zero drift, a NEW confirmed bit value for this field (previously only CHF_NOLIGHTING=0x20 was confirmed here).", 1);
 	set_frame_size(0X41BEE1, 0, 4, 0X8);
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0X8]", "cha");
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0XC]", "clik");
 	add_func    (0X41BF5A,0X41BFD3);
 	set_func_flags(0X41BF5A,0x5410);
 	SetType(0X41BF5A, "void __stdcall SetCharacterIgnoreWalkbehinds(int cha, int clik);");
-	set_func_cmt(0X41BF5A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41BF5A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches the clear-then-conditionally-set bit pattern exactly (`flags&=~0x80; if(clik!=0) flags|=0x80;`), CONFIRMING CharacterInfo.flags bit `CHF_NOWALKBEHINDS=0x80` (Common/acroom.h:2486) with zero drift -- a second new confirmed bit value alongside SetCharacterClickable's own CHF_NOINTERACT=4 finding this same round. This build calls straight through with no intermediate Character_SetIgnoreWalkbehinds wrapper body to compare against (not present in this repo's Engine/ tree), but the exact bit value is independently decisive regardless.", 1);
 	set_frame_size(0X41BF5A, 0, 4, 0X8);
 	define_local_var(0X41BF5A, 0X41BFD3, "[bp+0X8]", "cha");
 	define_local_var(0X41BF5A, 0X41BFD3, "[bp+0XC]", "clik");
 	add_func    (0X41BFD3,0X41C040);
 	set_func_flags(0X41BFD3,0x5410);
 	SetType(0X41BFD3, "void __stdcall SetObjectClickable(int cha, int clik);");
-	set_func_cmt(0X41BFD3,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41BFD3,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"objs[cha].flags&=~OBJF_NOINTERACT; if(clik==0) objs[cha].flags|=OBJF_NOINTERACT;\" -- a further, independent confirmation of RoomObject.flags bit `OBJF_NOINTERACT=1` (already established via GetObjectAt) from a new script-API site.", 1);
 	set_frame_size(0X41BFD3, 0, 4, 0X8);
 	define_local_var(0X41BFD3, 0X41C040, "[bp+0X8]", "cha");
 	define_local_var(0X41BFD3, 0X41C040, "[bp+0XC]", "clik");
@@ -158204,6 +158204,10 @@ static Functions_5(void) {
 	set_func_flags(0X424770,0x5410);
 	set_func_cmt(0X424770,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: FullAnimation::FullAnimation() default constructor at acroom.h:231. Called as the per-element callback for RoomStruct.anims[10]'s C++ array-of-objects default-construction (see roomstruct__roomstruct's own entry). Body: a nested `vector constructor iterator` call over [this+0] with ElementSize=0x18(24)/Count=0xA(10) (default-constructing stage[10], callback sub_4247A0/AnimationStruct__AnimationStruct -- matching this struct's own already-confirmed stage[]/AnimationStruct stride and capacity exactly, a third independent confirmation), followed by \"[this+0xF0]=0\" -- matching source's \"FullAnimation() { numstages = 0; }\" (acroom.h:231) exactly, reconfirming numstages@+0xF0 a third way. See FullAnimation's own entry in apply_structs.py for the complete writeup.", 1);
 	set_frame_size(0X424770, 0X4, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X4247A0,0X4247D0);
 	set_func_flags(0X4247A0,0x5410);
 	set_func_cmt(0X4247A0,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: AnimationStruct::AnimationStruct() default constructor at acroom.h:225. Called as the per-element callback for FullAnimation.stage[10]'s own C++ array-of-objects default-construction (see FullAnimation__FullAnimation's own entry). Entire body is four literal-value writes: \"[this+0x14]=0; [this+0xC]=0; [this+0x15]=1; [this+0x10]=5;\" -- matching source's \"AnimationStruct() { action=0; object=0; wait=1; speed=5; }\" (acroom.h:225) WORD FOR WORD AND VALUE FOR VALUE, hitting the same four fields (action@+0x14, object@+0xC, wait@+0x15, speed@+0x10) this project's earlier disassembly-only investigation (sub_40C3E0's dispatcher) had already, independently, matched to those exact roles. A full constructor-literal match -- the strongest possible confirmation of the EventBlockCmd->AnimationStruct rename made the previous round. See AnimationStruct's own entry in apply_structs.py for the complete writeup.", 1);
@@ -158228,10 +158232,6 @@ static Functions_5(void) {
 	add_func    (0X4248F0,0X424930);
 	set_func_flags(0X4248F0,0x5410);
 	set_frame_size(0X4248F0, 0X4, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X424930,0X42496B);
 	set_func_flags(0X424930,0x5410);
 	set_frame_size(0X424930, 0X4, 4, 0);
@@ -159175,6 +159175,10 @@ static Functions_6(void) {
 	set_func_flags(0X43378B,0x5410);
 	set_func_cmt(0X43378B,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void calculate_move_stage(MoveList*mlsp,int aaa) at routefnd.cpp:682-... -- a decisive match on its opening logic (the deeper fixed-point-trig speed-computation body past the special-case branches not individually traced this round). The exact 2-argument signature matches both real call sites: MoveCharacterPath (already matched, this round, calling calculate_move_stage(mls_ptr,numstage-1) when appending a waypoint) and find_route (already matched, calling calculate_move_stage(&mls[mlist],aaa) while building a computed route) -- matching source's own two call sites (routefnd.cpp:878 and AddWaypoint-equivalent code) exactly. The early-return branch matches verbatim: \"if(pos[aaa]==pos[aaa+1]) { xpermove[aaa]=0; ypermove[aaa]=0; return; }\" (both fields already established via do_movelist_move's own entry, now reconfirmed a third way). The XY-unpacking that follows -- \"ourx=pos[aaa]>>16&0xFFFF; oury=pos[aaa]&0xFFFF; destx=pos[aaa+1" "]>>16&0xFFFF; desty=pos[aaa+1]&0xFFFF;\" -- matches source's own packed-coo", 1);
 	set_frame_size(0X43378B, 0X28, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X4338F9,0X433DC8);
 	set_func_flags(0X4338F9,0x5410);
 	SetType(0X4338F9, "int __stdcall find_route(__int16 srcx, __int16 srcy, __int16 xx, __int16 yy, block onscreen, int movlst, int nocross, int ignore_walls);");
@@ -159204,10 +159208,6 @@ static Functions_6(void) {
 	add_func    (0X433E10,0X433E1B);
 	set_func_flags(0X433E10,0x5410);
 	set_frame_size(0X433E10, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X433E20,0X433E67);
 	set_func_flags(0X433E20,0x5410);
 	set_frame_size(0X433E20, 0XC, 4, 0);
@@ -160523,6 +160523,10 @@ static Functions_7(void) {
 	add_func    (0X44FC80,0X44FECF);
 	set_func_flags(0X44FC80,0x5400);
 	set_frame_size(0X44FC80, 0X10, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X44FED0,0X450126);
 	set_func_flags(0X44FED0,0x5400);
 	set_frame_size(0X44FED0, 0X10, 0, 0);
@@ -160613,10 +160617,6 @@ static Functions_7(void) {
 	add_func    (0X452290,0X452302);
 	set_func_flags(0X452290,0x5400);
 	set_frame_size(0X452290, 0X8, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X452310,0X4523B0);
 	set_func_flags(0X452310,0x5400);
 	set_frame_size(0X452310, 0X4, 0, 0);
@@ -162545,6 +162545,10 @@ static Functions_8(void) {
 	set_func_flags(0X47E3F0,0x5400);
 	set_func_cmt(0X47E3F0,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: ALMP3 library public API, ALMP3_MP3 *almp3_create_mp3(void *mp3, int mp3_length) -- referenced (not defined; no Engine/libsrc/almp3-2.0.5 header/source implements the public API surface itself in a way traceable here, but the call site is unambiguous) at Engine/acsound.cpp:465, \"thismp3->tune = almp3_create_mp3(mp3buffer, muslen);\" inside my_load_static_mp3 (already matched, see sub_4083FC's own entry). Exact 2-arg match: called with (buffer, size) immediately after the buffer is read in full, result stored and checked for NULL exactly as source does.", 1);
 	set_frame_size(0X47E3F0, 0XA6B4, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X47E730,0X47E752);
 	set_func_flags(0X47E730,0x5400);
 	set_frame_size(0X47E730, 0, 0, 0);
@@ -162596,10 +162600,6 @@ static Functions_8(void) {
 	set_frame_size(0X47ED10, 0XA6C4, 0, 0);
 	define_local_var(0X47ED10, 0X47F0D0, "[bp-0XA6AC]", "Block");
 	define_local_var(0X47ED10, 0X47F0D0, "[bp+0X8]", "Size");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X47F0D0,0X47F123);
 	set_func_flags(0X47F0D0,0x5400);
 	SetType(0X47F0D0, "int __cdecl sub_47F0D0(void *Block);");
@@ -165123,6 +165123,10 @@ static Functions_9(void) {
 	set_func_cmt(0X4AB08E,	"[reversing] confirmed match\nsource obj (library): libucrtd:tmpfile.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:tmpfile.obj", 1);
 	set_frame_size(0X4AB08E, 0, 0, 0);
 	define_local_var(0X4AB08E, 0X4AB094, "[bp+0X4]", "Buffer");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AB094,0X4AB09A);
 	set_func_flags(0X4AB094,0x5480);
 	SetType(0X4AB094, "int __cdecl filbuf(FILE *File);");
@@ -165164,10 +165168,6 @@ static Functions_9(void) {
 	set_func_flags(0X4AB2B0,0x5404);
 	set_func_cmt(0X4AB2B0,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullrem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj", 1);
 	set_frame_size(0X4AB2B0, 0X4, 0, 0X10);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AB330,0X4AB34F);
 	set_func_flags(0X4AB330,0x5404);
 	set_func_cmt(0X4AB330,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullshr.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj", 1);
