@@ -263,12 +263,17 @@ compressed image.**
   `recordBuffer[g] + cs:[0x59F2 + tile*2]`, where `cs:0x59F2` is a
   **30-entry** offset table with uniform stride `word_13DC << 1`.
 
-So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**.  Near-certain
-tile stride = **16 bytes** (→ tile `n` at record offset `n*16`, 30 tiles =
-480 B, padded to the 512-B record) — this also gives the main `*.CHARSET`
-its 16-B glyph stride (8192 / 16 = 512 glyphs).  Unconfirmed statically
-only because `word_13DC` is 0 in the image and set at run time; a DOSBox
-`d <INTERP>:13DC` + `d <INTERP>:59F2 L3C` during a fight settles it.
+So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**, and the
+tile stride is **16 bytes** — tile `n` is at record offset `n*16`, 30 tiles
+= 480 B, padded to the 512-B record.  **Confirmed by DOSBox, 2026-09-04**
+(during a fight): `word_13DC` = `0x0008` (→ `<<1` = 16), and `cs:0x59F2`
+holds exactly `00 00 10 00 20 00 … D0 01 00 00` — 30 entries `0x000,
+0x010 … 0x1D0` then a `0x0000` terminator.  The 16-B stride is also the
+main `*.CHARSET`'s glyph stride (8192 / 16 = 512 glyphs).  `word_13DC`
+(and the sibling geometry words `word_13D8..13E2`) is 0 in the image
+because it is filled at init: a 12-byte block copy at `INTERP:0x1B08`
+from a parameter block at `cs:0x13E4` that is itself read from disk by
+the `int 18h` loader at `INTERP:0x7E0A` (routine `0x02BB`).
 `(PIC-1)*word_13DE(=4)` in the block calc is still unexplained (records
 read fine as 1 block each).
 

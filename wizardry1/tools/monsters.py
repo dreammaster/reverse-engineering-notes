@@ -7,7 +7,8 @@ Layout (from SYSTEM.INTERP's CONUNIT driver, docs/pmachine.md §CONUNIT):
     30..31 are disk slack.  WIZ1 uses PIC {1, 4..30}.
   * A portrait is a 6-wide x 5-tall grid of 16x8 px 1bpp tiles = 96 x 40 px.
   * tile t of a record is at offset  t * STRIDE  (STRIDE = word_13DC<<1 in
-    the interpreter; = 16 unless a DOSBox check says otherwise).
+    the interpreter; = 16, confirmed live in DOSBox 2026-09-04 --
+    word_13DC = 8, and cs:59F2 = 0x000,0x010..0x1D0).
 
 Usage:
     python tools/monsters.py info   extracted/wiz1/200.MONSTERS

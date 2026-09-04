@@ -240,7 +240,7 @@ CSP UNITWRITE (loc_2DB9) ─┘  → per-unit table  0x2CF7 (URD) / 0x2DDE (UWR)
 | 2  | `loc_153E` | register / lay out a window (the cell dirty-map) |
 | 3  | `conunit_present` | flush dirty cells of every window to the screen (`int 10h`) |
 | 5  | `loc_18C1` | **`DRAWLINE`** — plot a run of `len` points `(dH,dV)` into the offscreen cell buffer (the 3-D wireframe primitive) |
-| 13 | `conunit_blit13` | **compose the combat monster portraits** — read up to 4 `PIC` ids, place a 5×6 block of tile-glyph codes per group into the offscreen buffer, then `sub_1A4A` loads their `200.MONSTERS` records (4-slot LRU cache) |
+| 13 | `conunit_blit13` | **compose the combat monster portraits** — read up to 4 `PIC` ids, place a 6×5 block of tile-glyph codes per group into the offscreen buffer, then `sub_1A4A` loads their `200.MONSTERS` records (4-slot LRU cache) |
 | 14 | `conunit_load_charset` | load `*.CHARSET` into a driver font slot (`word_13DC`) |
 | 17 | `conunit_blit17` | clear the offscreen cell buffer |
 | 18 | `conunit_load_monsters` | stash the `200.MONSTERS` file number (`word_1419`), init the 4-slot portrait-record cache |
@@ -254,8 +254,12 @@ each cell carrying `tile+1` in attr bits 0‑4 and the group in bits 4‑5;
 `sub_1A63` loads the 4 groups' records into a 4-slot cache.  The
 per-attribute cell blitter at `0x1E9A` draws one tile as **16 × 8 px 1bpp**
 (`movsw`, CGA-mono interleave) from `recordBuf[group] + cs:[0x59F2 +
-tile*2]`, a 30-entry table built with stride `word_13DC << 1` — almost
-certainly 16 B (→ a 96 × 40 px portrait).  See `file-formats.md`.
+tile*2]`, a 30-entry table built with stride `word_13DC << 1` = **16 B**
+(→ a 96 × 40 px portrait).  `word_13DC` = 8 and the `0x59F2` table
+(`0x000, 0x010 … 0x1D0`, then a `0` terminator) were **confirmed live in
+DOSBox, 2026-09-04**; `word_13DC` reads 0 in the static image only because
+it is copied at init from a disk-loaded parameter block at `cs:0x13E4`
+(`int 18h` loader `0x02BB`, called from `0x7E0A`).  See `file-formats.md`.
 
 ## Native / SBIOS interface
 
