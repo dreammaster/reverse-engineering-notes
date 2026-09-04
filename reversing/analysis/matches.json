@@ -5968,8 +5968,8 @@
     "new_name": "wouttext_outline",
     "source_file": "Engine/AC.CPP",
     "source_line": 12612,
-    "confidence": "medium-high",
-    "evidence": "Called from RawPrint (already matched, see its own entry) with 4 arguments (x,y,font,text) matching 2011's own \"wouttext_outline(xx,yy,play.normal_font,displbuf);\" (AC.CPP:14459) call shape exactly. Named by call-shape/role match this round, NOT independently traced through its own body -- 2011's own version (AC.CPP:12612-...) has real internal complexity (font-outline/speech-text-shadow handling) that may or may not be present in this build's simpler-era implementation; confidence kept at medium-high pending a dedicated internal read."
+    "confidence": "high",
+    "evidence": "Called from RawPrint (already matched, see its own entry) with 4 arguments (x,y,font,text) matching 2011's own \"wouttext_outline(xx,yy,play.normal_font,displbuf);\" (AC.CPP:14459) call shape exactly. Named by call-shape/role match this round, NOT independently traced through its own body -- 2011's own version (AC.CPP:12612-...) has real internal complexity (font-outline/speech-text-shadow handling) that may or may not be present in this build's simpler-era implementation; confidence kept at medium-high pending a dedicated internal read. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): the entire body matches AC.CPP:12612-12646 with just one confirmed feature absence. \"otextc=dword_4EDA70\" matches \"int otextc=textcol;\" -- identifying dword_4EDA70 as this build's GLOBAL `textcol` state variable (the AGS/Allegro current-text-color, distinct from any GUI object's own per-control textcol field). \"if(byte_51DAFA[usingfont]>=0) { wtextcolor(dword_4EEB20); sub_401E63(x,y,fontoutline_val,Str); }\" matches \"if(game.fontoutline[usingfont]>=0) { wtextcolor(play.speech_text_shadow); wouttextxy(...); }\" exactly, with dword_4EEB20 already independently confirmed as GameState.speech_text_shadow (main's own init-block round) and byte_51DAFA matching the already-established GameSetupStructBase.fontoutline[] role. Identifies sub_401E63 as wouttextxy (Common/Wgt2allg.h:702, exact 4-arg x/y/font/text signature, called twice in this function with the same shape). CONFIRMED ABSENT: source's `else if (game.fontoutline[usingfont]==FONT_OUTLINE_AUTO)` branch and its entire 8-direction blur outline block (AC.CPP:12620-12642, drawing the text 8 times at offset positions to fake an outline) -- this build's condition is a single `>=0` check with no `else if` at all, meaning the automatic font-outline feature simply doesn't exist yet, matching this project's broader pattern of later font/rendering refinements being absent. The final \"textcol=otextc; wouttextxy(x,y,font,Str);\" restore-and-draw tail matches source verbatim."
   },
   {
     "kind": "manual",
@@ -6105,5 +6105,14 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "void wrectangle(int x1,int y1,int x2,int y2) -- AGS's own rectangle-OUTLINE drawing wrapper (distinct from Allegro's public rectfill, already matched). Called from GUIListBox::Draw (already matched) for its border rectangles, matching source's own \"wrectangle(x,y,x+wid+(pixel_size-1),y+hit+(pixel_size-1)); if(pixel_size>1) wrectangle(x+1,y+1,x+wid,y+hit);\" call shape and role exactly (a 4-coordinate rectangle-outline draw using the current `currentcolor` state, no separate color argument)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401E63",
+    "new_name": "wouttextxy",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 702,
+    "confidence": "high",
+    "evidence": "void wouttextxy(int,int,int fontNumber,const char*) at Wgt2allg.h:702 -- exact 4-argument (x,y,font,text) signature match. Called twice from wouttext_outline (already matched) with the same argument shape, matching source's own two calls into wouttextxy exactly (the outline-color draw and the final foreground draw)."
   }
 ]

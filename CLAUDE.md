@@ -3019,6 +3019,12 @@ disassembly work.
   bound). One harmless instruction-order swap noted (`MCF_STANDARD`
   checked before `testing==MODE_USE`, source does the reverse) —
   functionally equivalent since the two are mutually exclusive.
+- **`wouttext_outline` upgraded to high confidence.** Called from many
+  already-matched functions but never independently traced. Matches
+  `AC.CPP:12612-12646` completely except one confirmed absence: source's
+  `FONT_OUTLINE_AUTO` 8-direction blur outline doesn't exist here — a
+  single `>=0` check with no `else if` counterpart. Identifies
+  `textcol` (the global text-color state) and `wouttextxy`.
 
 ## Third-party library identification (Task #10)
 

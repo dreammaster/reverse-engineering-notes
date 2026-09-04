@@ -10666,3 +10666,25 @@ instruction-order swap noted (checks `MCF_STANDARD` before `testing==
 MODE_USE`, source does the reverse) -- functionally equivalent since
 the two conditions are mutually exclusive in practice. Renamed with
 high confidence.
+
+### `wouttext_outline` upgraded to high confidence: automatic font-outline blur confirmed absent
+
+`wouttext_outline` had sat at medium-high confidence for several
+rounds -- called from many already-matched functions (`RawPrint`,
+`GUILabel::printtext_align`, `GUITextBox::Draw`, `GUIListBox::Draw`,
+`draw_screen_overlay`'s FPS tail) but never independently traced
+through its own body. Reading it in full closes that cleanly: it
+matches `AC.CPP:12612-12646` completely except for one confirmed
+absence. `otextc=textcol` identifies `dword_4EDA70` as this build's
+global `textcol` state (distinct from any GUI object's own per-control
+field of the same name); the `game.fontoutline[usingfont]>=0` branch
+matches exactly using the already-established `fontoutline[]`/
+`speech_text_shadow` fields, and identifies `sub_401E63` as
+`wouttextxy` (`Common/Wgt2allg.h:702`, exact 4-arg signature, both
+call sites matching). CONFIRMED ABSENT: source's entire `FONT_OUTLINE_
+AUTO` branch -- an 8-direction blur that draws the text eight times at
+small offsets to fake an outline effect -- this build's condition is a
+single `>=0` check with no `else if` counterpart at all, meaning
+automatic font outlining doesn't exist yet, consistent with this
+project's broader pattern of later font/rendering refinements being
+absent.
