@@ -3086,6 +3086,14 @@ disassembly work.
   reachable point if blocked. `can_see_from`/`line_callback` are both
   complete, essentially instruction-for-instruction matches to
   `routefnd.cpp`. Renamed `line_failed`/`lastcx`/`lastcy`/`wallscreen`.
+- **`MoveCharacterPath` names `calculate_move_stage`, confirming
+  `MoveList.pos[]`'s packed-XY encoding.** Another genuine self-
+  contained implementation. Appends a waypoint as a packed `(tox<<16)|
+  toy` dword, then calls the newly-matched `calculate_move_stage`
+  (two real callers, matching source's own two exactly) to compute
+  the new segment's per-move deltas — its early-return branch and
+  XY-unpacking both match verbatim, confirming the packed encoding
+  from two independent functions in the same round.
 
 ## Third-party library identification (Task #10)
 

@@ -3815,9 +3815,9 @@
   "is_named": true
  },
  {
-  "name": "sub_43378B",
+  "name": "calculate_move_stage",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "find_route",

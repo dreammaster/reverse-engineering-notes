@@ -1787,7 +1787,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- this build implements MoveCharacterPath's actual logic directly, not via a Character_AddWaypoint script-object wrapper, the same pattern as MoveCharacterStraight/can_see_from found the same round): validates via is_valid_character and the current-room check (both already established), then branches on chars[chac].walking@+0x3C (already established): if the character ISN'T currently walking (walking<=0), there's no existing route to append to, so it just calls the already-matched MoveCharacterDirect(cc,xx,yy) directly -- a sensible fallback with no clean 2011 equivalent phrase to compare against directly, but consistent with 'appending a waypoint to nothing starts a new one-point move'. Otherwise, decodes the character's own active MoveList slot via walking/1000 (matching the already-established packed walking-field-encodes-move-slot convention), bounds-checks numstage@+0xA0 against the literal 0x28(40) -- matching MoveList's own already-established pos[40]/numstage capacity exactly, a further confirmation from a new site -- quitting \"move is too complex\" if exceeded, then appends the new waypoint as a packed `(tox<<16)|toy` dword into pos[numstage] (matching the packed-XY-per-dword encoding independently confirmed this same round via calculate_move_stage's own unpacking code, see that function's entry), skips if it duplicates the previous waypoint, otherwise calls the newly-matched calculate_move_stage(mls_ptr,numstage-1) (sub_43378B, see its own entry) to compute the new segment's per-move X/Y deltas before incrementing numstage."
   },
   {
     "kind": "function",
@@ -6151,5 +6151,14 @@
     "source_line": 72,
     "confidence": "high",
     "evidence": "void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43378B",
+    "new_name": "calculate_move_stage",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 682,
+    "confidence": "high",
+    "evidence": "void calculate_move_stage(MoveList*mlsp,int aaa) at routefnd.cpp:682-... -- a decisive match on its opening logic (the deeper fixed-point-trig speed-computation body past the special-case branches not individually traced this round). The exact 2-argument signature matches both real call sites: MoveCharacterPath (already matched, this round, calling calculate_move_stage(mls_ptr,numstage-1) when appending a waypoint) and find_route (already matched, calling calculate_move_stage(&mls[mlist],aaa) while building a computed route) -- matching source's own two call sites (routefnd.cpp:878 and AddWaypoint-equivalent code) exactly. The early-return branch matches verbatim: \"if(pos[aaa]==pos[aaa+1]) { xpermove[aaa]=0; ypermove[aaa]=0; return; }\" (both fields already established via do_movelist_move's own entry, now reconfirmed a third way). The XY-unpacking that follows -- \"ourx=pos[aaa]>>16&0xFFFF; oury=pos[aaa]&0xFFFF; destx=pos[aaa+1]>>16&0xFFFF; desty=pos[aaa+1]&0xFFFF;\" -- matches source's own packed-coordinate unpacking exactly, and independently confirms MoveList.pos[]'s packed-XY-per-dword encoding (`(x<<16)|y`) already inferred from MoveCharacterPath's own writing side this same round. The subsequent abs()+itofix()-shaped calls (abs already matched; a new lead, sub_433E10, plausibly Allegro's own fixed-point itofix conversion, not chased further) are consistent with source's fixed-point angle/speed computation but not traced field-by-field to the end of the function."
   }
 ]

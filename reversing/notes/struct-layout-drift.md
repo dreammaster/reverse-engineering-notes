@@ -10881,3 +10881,33 @@ Allegro's own public API (already matched). Renamed `dword_536C1C`
 pre-existing `wss` global (an IDA auto-name collision with an
 unrelated local stack variable elsewhere) ->`wallscreen`, matching
 2011's own file-scope global names throughout `routefnd.cpp`.
+
+### `MoveCharacterPath` names `calculate_move_stage`, confirming `MoveList.pos[]`'s packed-XY encoding
+
+`MoveCharacterPath` closes the same round as `MoveCharacterStraight`,
+another genuine self-contained implementation rather than a delegate
+to a script-object wrapper. It branches on the character's own
+`walking` field: if not currently walking, there's no route to append
+to, so it just calls the already-matched `MoveCharacterDirect`
+directly; otherwise it decodes the character's active `MoveList` slot
+(via the already-established `walking/1000` packed-slot convention),
+bounds-checks `numstage` against the literal `40` (a further
+confirmation of `MoveList.pos[40]`'s already-established capacity from
+a brand new site), appends the new waypoint as a packed `(tox<<16)|
+toy` dword, and -- unless it duplicates the previous waypoint -- calls
+a newly-identified `calculate_move_stage(mls_ptr,numstage-1)` to
+compute the new segment's per-move deltas.
+
+`calculate_move_stage` (`sub_43378B`) closes with a decisive match on
+its opening logic: its early-return branch (`if(pos[aaa]==pos[aaa+1])
+{xpermove[aaa]=0; ypermove[aaa]=0; return;}`) matches source verbatim,
+giving `MoveList.xpermove[]`/`ypermove[]` (already established via
+`do_movelist_move`'s own entry) a third confirmation site, and its
+XY-unpacking logic (`ourx=pos[aaa]>>16&0xFFFF; oury=pos[aaa]&0xFFFF;`
+...) independently confirms the exact packed-XY-per-dword encoding
+`MoveCharacterPath`'s own writing side uses -- two sides of the same
+encoding, confirmed from two different functions in the same round.
+Bonus: this function has TWO real callers -- `MoveCharacterPath` and
+the already-matched `find_route` -- matching source's own two call
+sites exactly. The deeper fixed-point angle/speed-computation body
+past these opening branches wasn't individually traced this round.
