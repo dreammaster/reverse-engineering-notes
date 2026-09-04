@@ -2936,6 +2936,13 @@ disassembly work.
   `done_es_error` via the `debug_log` call's matching warning string.
   2011's intervening `play.room_changes++;` still has no counterpart
   here — a small, still-open detail.
+- **`GUIListBox::MouseDown` upgraded to high confidence.** A prior
+  medium-confidence vtable-position guess turns out to be a complete,
+  near-exact match to `MouseDown` fused with its own `IsInRightMargin`/
+  `GetIndexFromCoordinates` helpers once actually read. Real drift:
+  2011's `IsInRightMargin` additionally gates on `exflags &
+  GLF_NOBORDER`/`GLF_NOARROWS` — neither check exists here, so this
+  build always treats the right-margin zone as scroll-interactive.
 
 ## Third-party library identification (Task #10)
 

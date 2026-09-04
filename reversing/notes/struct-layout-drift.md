@@ -10375,3 +10375,28 @@ error` via the `debug_log` call's own matching warning string and the
 and `set_color_depth(8);` in source's own opening sequence) still has
 no visible counterpart in this build's `load_new_room` -- a small,
 still-open detail, not chased further this round.
+
+### `GUIListBox::MouseDown` upgraded to high confidence, and a real `exflags` drift confirmed
+
+A previously MEDIUM-confidence vtable match (`sub_406950`, pinned only
+by vtable-slot position and a rough shape guess, explicitly flagged as
+"not yet traced statement-by-statement") turns out to be a complete,
+near-exact match once actually read start to end: `GUIListBox::
+MouseDown` fused with its own two small helpers, `IsInRightMargin(int)`
+and `GetIndexFromCoordinates(int,int)` (`acgui.cpp:701-739`) -- the
+same small-helper-inlining pattern already seen throughout this
+project. Every field the function touches (`wid`, `hit`, `numItems`,
+`selected`, `topItem`, `mousexp`, `mouseyp`, `rowheight`,
+`num_items_fit`, `activated`) was already independently confirmed via
+`GUIListBox::WriteToFile`'s own bulk-fwrite evidence, so this round
+adds no new struct fields -- but it upgrades the FUNCTION match itself
+from a plausible guess to a decisive one, and surfaces one genuine
+drift: 2011's `IsInRightMargin` additionally gates on `(exflags &
+GLF_NOBORDER)==0` and `(exflags & GLF_NOARROWS)==0` before treating a
+click as landing in the scrollbar margin; neither check exists here --
+this build always treats the right-margin zone as scroll-interactive,
+regardless of those flag bits (which remain themselves unconfirmed as
+specific bit values for this build's `exflags`). Also confirms
+`get_fixed_pixel_size(6)` has no separate function call at this site --
+just an inlined multiply by the already-established
+`current_screen_resolution_multiplier_x`.
