@@ -153711,7 +153711,7 @@ static Bytes_27(void) {
 	create_dword	(0X4EEAF8);
 	set_name	(0X4EEAF8,	"play_usedinv?");
 	create_dword	(0X4EEAFC);
-	set_name	(0X4EEAFC,	"play_inv_top?");
+	set_name	(0X4EEAFC,	"play_inv_top");
 	create_dword	(0X4EEB00);
 	set_name	(0X4EEB00,	"play_inv_numdisp");
 	create_dword	(0X4EEB04);

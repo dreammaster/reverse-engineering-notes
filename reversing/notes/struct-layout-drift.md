@@ -10400,3 +10400,19 @@ specific bit values for this build's `exflags`). Also confirms
 `get_fixed_pixel_size(6)` has no separate function call at this site --
 just an inlined multiply by the already-established
 `current_screen_resolution_multiplier_x`.
+
+### Small housekeeping: `sub_40D80C`'s cross-reference gap closed, `play_inv_top?` renamed
+
+`sub_40D80C` (the `offset_over_inv`-equivalent grid-math helper, left
+deliberately unnamed several sessions ago pending "closer investigation
+of `dword_4B4234`/`dword_4B4238`'s role") turns out to have already had
+that exact question answered in `check_controls`' own entry a few
+rounds later -- both globals were identified there as `mouse_ifacebut_
+xoffs`/`mouse_ifacebut_yoffs`, just never linked back. Confirms the
+"single 2002 function later split, using shared globals instead of
+per-object parameters" theory rather than resolving the naming
+ambiguity -- this build's version does all of `offset_over_inv`'s grid
+math but none of `GetInvAt`'s GUI dispatch, so staying unnamed remains
+correct. Separately, `play_inv_top`'s IDB label still carried its
+original tentative `?` suffix from before this field was upgraded to
+high confidence in that same earlier round -- renamed to drop it.
