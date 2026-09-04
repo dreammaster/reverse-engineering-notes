@@ -184,10 +184,19 @@ Decided direction (2026-09-02):
 - [ ] Nice-to-haves, none blocking: `200.MONSTERS` art decompressor (native
       RE), `HAS.CACHE` / `KANA.KEYMAP` id, more proc names, chevrons/medals.
 
-## Phase 4 — ScummVM engine
+## Phase 4 — ScummVM engine  *(paused 2026-09-04)*
+
+Deferred until Wizardry 2 and 3 are reverse-engineered the same way (they
+share this `SYSTEM.INTERP` / p-code engine — 2 and 3 are essentially extra
+scenarios).  The aim is **one shared ScummVM engine across the trilogy**,
+with per-game code kept to the differences.  Wiz 3 has generated Apple
+Pascal sources like Wiz 1's `sources/`; Wiz 2 does not, so its sources get
+derived by diffing its p-code / data against Wiz 1.
 
 - [ ] Fold the platform layer onto ScummVM `OSystem`; engine skeleton,
       detection tables for the Archives disk set, metaengine.
+- [ ] Factor the common core (p-machine-derived logic, data formats, RNG)
+      from the per-game tables / maze / scripted content.
 
 ## Conventions
 
