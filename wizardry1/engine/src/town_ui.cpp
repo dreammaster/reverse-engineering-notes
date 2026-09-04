@@ -24,10 +24,11 @@ const char *statusName(const Scenario &sc, Status s) {
     return int(s) < int(sc.statuses().size()) ? sc.statuses()[int(s)].c_str() : "?";
 }
 
-// DOS town layout (docs/ui.md): a framed party panel over a framed menu
-// panel.  The building name is set into the party panel's top border.
-constexpr int kPtyY = 1, kPtyH = 12;             // party panel rows 1..12
-constexpr int kMenuY = 12, kMenuH = 12;          // menu panel rows 12..23
+// DOS town layout (from a DOSBox ref, docs/ui.md): inside the root frame,
+// a small "CASTLE" box straddles the top; a titled menu box holds the
+// options; the party roster is bare text across the lower area.
+constexpr int kMenuX = 4, kMenuY = 3, kMenuW = 32, kMenuBoxH = 10; // rows 3..12
+constexpr int kRosterY = 14;                                       // header row
 
 struct TownCtx {
     Ui &ui;
@@ -59,13 +60,13 @@ struct TownCtx {
     }
 };
 
-// DSPTITLE -- the building name centred on the party panel's top border.
+// DSPTITLE -- the building name centred on the menu box's top border.
 void dspTitle(TownCtx &c, const std::string &title) {
     std::string s = " " + title + " ";
-    c.ts().writeAt(20 - int(s.size()) / 2, kPtyY, s);
+    c.ts().writeAt(20 - int(s.size()) / 2, kMenuY, s);
 }
 
-// CHARINFO -- one party row inside the party panel (interior row 2 + x).
+// CHARINFO -- one party row in the bare roster area.
 void charInfo(TownCtx &c, int x) {
     auto &t = c.ts();
     const Character &ch = c.party.member(x);
@@ -75,23 +76,26 @@ void charInfo(TownCtx &c, int x) {
                   className(c.sc, ch.cls),
                   ch.armorClass > -10 ? ch.armorClass : -99, ch.hpLeft,
                   ch.status == Status::OK ? "OK" : statusName(c.sc, ch.status));
-    t.writeAt(2, kPtyY + 3 + x, std::string(b).substr(0, 36));
+    t.writeAt(1, kRosterY + 1 + x, std::string(b).substr(0, 37));
 }
 
-// DSPPARTY -- the framed party panel + the (empty) menu panel below it.
+// DSPPARTY -- the CASTLE box, the (empty, titled) menu box, the roster.
 void dspParty(TownCtx &c, const std::string &title) {
     auto &t = c.ts();
     t.resetWindow();
     t.putChar(12);
-    t.frame(0, kPtyY, 40, kPtyH);
-    t.frame(0, kMenuY, 40, kMenuH);
+    t.frame(13, 0, 14, 3);
+    t.writeAt(17, 1, "CASTLE");
+    t.frame(kMenuX, kMenuY, kMenuW, kMenuBoxH);
     dspTitle(c, title);
-    t.writeAt(2, kPtyY + 2, " # NAME          A-CLS  AC HITS STATUS");
+    t.writeAt(1, kRosterY, "# NAME           A-CLS AC HITS STATUS");
     for (int i = 0; i < c.party.count(); ++i) charInfo(c, i);
 }
 
-// The interior of the menu panel -- content coords relative to (1, kMenuY+1).
-void menuWin(TownCtx &c) { c.ts().setWindow(1, kMenuY + 1, 38, kMenuH - 2); }
+// The interior of the menu box -- content coords relative to (kMenuX+1, kMenuY+1).
+void menuWin(TownCtx &c) {
+    c.ts().setWindow(kMenuX + 1, kMenuY + 1, kMenuW - 2, kMenuBoxH - 2);
+}
 
 // GETCHARX -- pick a party member by number; -1 on RETURN.
 int getCharX(TownCtx &c, bool dspNames, const std::string &solicit) {
@@ -195,28 +199,19 @@ void removeMember(TownCtx &c) {
 // GILGMENU (P010A08).
 void gilgMenu(TownCtx &c) {
     auto &t = c.ts();
-    t.setWindow(0, 0, 40, 24);
-    t.gotoXY(0, 13); t.putChar(11);
-    t.write("YOU MAY ");
-    if (!c.party.full()) {
-        t.write("A)DD A MEMBER");
-        t.writeln(c.party.empty() ? "" : ",");
-        t.write("        ");
-    }
-    if (!c.party.empty()) {
-        t.writeln("R)EMOVE A MEMBER,");
-        t.write("        ");
-        t.writeln("#) SEE A MEMBER,");
-    } else {
-        t.writeln(""); t.writeln("");
-    }
-    t.writeln("");
-    t.writeln("OR PRESS [RETURN] TO LEAVE");
+    menuWin(c);
+    t.putChar(12);
+    int y = 1;
+    if (!c.party.full())  { t.gotoXY(2, y++); t.write("A)DD A MEMBER"); }
+    if (!c.party.empty()) { t.gotoXY(2, y++); t.write("R)EMOVE A MEMBER"); }
+    if (!c.party.empty()) { t.gotoXY(2, y++); t.write("#) SEE A MEMBER"); }
+    t.gotoXY(2, y + 1); t.write("[RETURN] TO LEAVE");
+    t.resetWindow();
 }
 
 // GILGAMSH (P010A06).
 void gilgamesh(TownCtx &c) {
-    dspTitle(c, "TAVERN");
+    dspTitle(c, "GILGAMESH'S TAVERN");
     for (;;) {
         gilgMenu(c);
         int k = c.ui.getKey();
@@ -227,8 +222,8 @@ void gilgamesh(TownCtx &c) {
             int i = k - '1';
             if (i < c.party.count()) seeMember(c, c.party.member(i));
         }
-        dspParty(c, "TAVERN");
-        dspTitle(c, "TAVERN");
+        dspParty(c, "GILGAMESH'S TAVERN");
+        dspTitle(c, "GILGAMESH'S TAVERN");
     }
 }
 
@@ -237,10 +232,11 @@ void hubMenu(TownCtx &c) {
     auto &t = c.ts();
     menuWin(c);
     t.putChar(12);
-    t.gotoXY(11, 1); t.write("YOU MAY GO TO:");
-    t.gotoXY(1, 3); t.write("THE A)DVENTURER'S INN, G)ILGAMESH'");
-    t.gotoXY(1, 4); t.write("TAVERN, B)OLTAC'S TRADING POST, THE");
-    t.gotoXY(1, 5); t.write("TEMPLE OF C)ANT, OR THE E)DGE OF TOWN.");
+    t.gotoXY(4, 1); t.write("G)ILGAMESH'S TAVERN");
+    t.gotoXY(4, 2); t.write("A)DVENTURER'S INN");
+    t.gotoXY(4, 3); t.write("T)EMPLE OF CANT");
+    t.gotoXY(4, 4); t.write("B)OLTAC'S TRADING POST");
+    t.gotoXY(4, 5); t.write("E)DGE OF TOWN");
     t.resetWindow();
 }
 
@@ -249,23 +245,22 @@ void hubMenu(TownCtx &c) {
 bool edgeOfTown(TownCtx &c, TownExit &out) {
     dspParty(c, "EDGE OF TOWN");
     auto &t = c.ts();
-    t.setWindow(0, 0, 40, 24);
-    t.gotoXY(0, 13); t.putChar(11);
-    if (c.party.empty()) {
-        t.writeln("YOU MAY GO TO THE T)RAINING GROUNDS,");
-        t.writeln("RETURN TO THE C)ASTLE, OR L)EAVE THE");
-        t.writeln("GAME.");
-    } else {
-        t.writeln("YOU MAY ENTER THE M)AZE, THE T)RAINING");
-        t.writeln("GROUNDS, C)ASTLE,  OR L)EAVE THE GAME.");
-    }
+    menuWin(c);
+    t.putChar(12);
+    int y = 1;
+    if (!c.party.empty()) { t.gotoXY(2, y++); t.write("M)AZE"); }
+    t.gotoXY(2, y++); t.write("T)RAINING GROUNDS");
+    t.gotoXY(2, y++); t.write("C)ASTLE");
+    t.gotoXY(2, y++); t.write("L)EAVE THE GAME");
+    t.resetWindow();
     for (;;) {
         int k = c.ui.getKey();
         if (c.ui.quit()) { out = TownExit::WindowClosed; return true; }
         if (k == 'M' && !c.party.empty()) {
-            t.gotoXY(0, 13); t.putChar(11);
-            t.writeCentered("ENTERING", 0);
-            t.writeCentered(c.sc.gameName(), 1);
+            menuWin(c); t.putChar(12);
+            t.writeCentered("ENTERING", 1);
+            t.writeCentered(c.sc.gameName(), 2);
+            t.resetWindow();
             out = TownExit::ToMaze;
             return true;
         }
@@ -702,7 +697,7 @@ TownExit runTown(Ui &ui, TownWorld &w) {
               w.rosterPath, w.partyPath, w.shopPath};
 
     for (;;) {
-        dspParty(c, "MARKET");
+        dspParty(c, "");
         hubMenu(c);
 
         int k = 0;

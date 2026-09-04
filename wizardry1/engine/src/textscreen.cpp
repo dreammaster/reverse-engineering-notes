@@ -26,7 +26,9 @@ void TextScreen::setupRoot() {
     for (auto &row : cell_) std::fill(std::begin(row), std::end(row), ' ');
     for (auto &row : attrCell_) std::fill(std::begin(row), std::end(row), u8(ATTR_NORMAL));
     frames_.clear();
-    frames_.push_back(Frame{0, 0, kCols, kRows, /*border*/false, false, {}, {}});
+    // every DOS screen sits inside a full-screen frame (rounded corners).
+    frames_.push_back(Frame{0, 0, kCols, kRows, /*border*/true, false, {}, {}});
+    paintBorder(frames_.back());
     resetWindow();
 }
 
@@ -147,12 +149,15 @@ void TextScreen::clear() {
     cx_ = cy_ = 0;
 }
 
+// CHR 12 within a bordered frame must not wipe the border -- keep the frame.
+// CHR 12 within a bordered frame must not wipe the border -- keep the frames.
 void TextScreen::clearWindow() {
     for (int r = 0; r < win_.h; ++r)
         for (int c = 0; c < win_.w; ++c) {
             cell_[win_.y + r][win_.x + c] = ' ';
             attrCell_[win_.y + r][win_.x + c] = ATTR_NORMAL;
         }
+    for (const Frame &f : frames_) paintBorder(f);
     cx_ = cy_ = 0;
 }
 

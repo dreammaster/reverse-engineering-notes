@@ -67,11 +67,11 @@ bool MazeState::load(const std::string &path) {
 }
 namespace {
 
-// --- HUD geometry (DOS RUNNER: menu bar + the WINDOW1 wireframe) --------
-// Menu bar (0,0,40,3); the wireframe window (1,2,38,22) whose 36x20 interior
-// is WINDOW1; the party strip (0,10,40,6) toggled over the lower view.
+// --- HUD geometry (DOS RUNNER, from a DOSBox ref) ----------------------
+// The root frame is the outer box; the menu text sits on row 1 with a rule
+// under it (row 2); the WINDOW1 wireframe fills rows 3..22 (36x20 interior).
+// The party strip (0,10,40,6) toggles over the lower view.
 constexpr int kViewX = 2, kViewY = 3;             // wireframe interior origin
-constexpr int kBarH  = 3;
 
 const char *alignName(const Scenario &sc, Align a) {
     return int(a) < int(sc.aligns().size()) ? sc.aligns()[int(a)].c_str() : "?";
@@ -111,22 +111,20 @@ struct MazeCtx {
         u8 grid[kMazeRows][kMazeCols];
         renderMazeCells(grid, m, st.pos, st.level, light, st.quickPlot, rng);
 
-        // full redraw: menu bar + framed wireframe window + strips
+        // full redraw inside the root frame: menu row + rule + wireframe
         tt.resetWindow();
         tt.putChar(12);
         bool haveMsg = !msg1.empty() || !msg2.empty();
-        tt.frame(0, 0, 40, kBarH);
-        tt.writeAt(2, 1, "C)AMP S)TAT I)NSP Q)PLOT T)IME  A W D K");
-        tt.frame(1, 2, 38, 22);
-        char hdr[40];
-        std::snprintf(hdr, sizeof hdr, " LEVEL %d   %d,%d %s ", st.level,
+        char hdr[24];
+        std::snprintf(hdr, sizeof hdr, "L%d %d,%d %s", st.level,
                       st.pos.x, st.pos.y, dirName(st.pos.dir));
-        tt.writeAt(4, 2, hdr);
+        tt.writeAt(1, 1, "C)AMP S)TAT I)NSP Q)PLOT T)IME  AWDK");
+        tt.writeAt(38 - int(std::strlen(hdr)), 1, hdr);
+        for (int c = 1; c <= 38; ++c) tt.writeAt(c, 2, std::string(1, char(BRD_TOP)));
         std::string ind;
-        if (st.light > 0)   ind += " LIGHT ";
-        if (st.protect > 0) ind += " PROTECT ";
-        if (st.quickPlot)   ind += " QUICK ";
-        if (!ind.empty()) tt.writeAt(4, 23, ind);
+        if (st.light > 0)   ind += " LIGHT";
+        if (st.protect > 0) ind += " PROT";
+        if (st.quickPlot)   ind += " QUICK";
         for (int r = 0; r < kMazeView; ++r)
             for (int c = 0; c < kMazeCols; ++c) {
                 int rr = kViewY + r, cc = kViewX + c;
@@ -135,10 +133,11 @@ struct MazeCtx {
                 char g = char(grid[r][c] ? grid[r][c] : ' ');
                 tt.writeAt(cc, rr, std::string(1, g));
             }
-        if (showStats) { tt.frame(0, 10, 40, 6); prStatsStrip(); }
+        if (!ind.empty()) tt.writeAt(2, 22, ind);
+        if (showStats) { tt.frame(0, 9, 40, 8); prStatsStrip(); }
         if (haveMsg) {
-            tt.frame(0, 20, 40, 4);
-            tt.writeAt(2, 22, msg2.empty() ? msg1.substr(0, 36) : (msg1 + " " + msg2).substr(0, 36));
+            tt.frame(0, 19, 40, 5);
+            tt.writeAt(2, 21, msg2.empty() ? msg1.substr(0, 36) : (msg1 + " " + msg2).substr(0, 36));
         }
         ui.refresh();
     }
@@ -157,9 +156,9 @@ void MazeCtx::prStatsStrip() {
             if (int(party.member(order[i]).status) > int(party.member(order[j]).status))
                 std::swap(order[i], order[j]);
 
-    for (int row = 0; row < party.count() && row < 4; ++row) {
+    for (int row = 0; row < party.count() && row < 6; ++row) {
         Character &ch = party.member(order[row]);
-        int y = 11 + row;
+        int y = 10 + row;
         char b[48];
         int ac = ch.armorClass - st.protect;
         if (int(ch.status) >= int(Status::Dead)) ch.hpLeft = 0;
