@@ -2964,6 +2964,15 @@ disassembly work.
   mechanism added so this correction survives a future regeneration.
   `prototypes.json` was badly stale (pre-rename names, missing several
   hundred matches) and is now fully caught up.
+- **`draw_screen_overlay`'s FPS-display tail resolved: `draw_fps`
+  really is fused, but as a much simpler predecessor.** The function's
+  own tail matches 2011's `if(display_fps) draw_fps();` gate exactly,
+  confirming `display_fps` behaviorally for the first time and
+  identifying `dword_523118` as `fps`. But this build draws the FPS
+  text directly onto the live screen via one `wouttext_outline` call —
+  no cached `fpsDisplay` bitmap, no `gfxDriver`/DDB machinery, no
+  second "Loop %ld" line — all CONFIRMED ABSENT. Upgraded to high
+  confidence.
 
 ## Third-party library identification (Task #10)
 

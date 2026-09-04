@@ -154002,6 +154002,7 @@ static Bytes_27(void) {
 	create_dword	(0X523114);
 	set_name	(0X523114,	"offsety");
 	create_dword	(0X523118);
+	set_name	(0X523118,	"fps");
 	create_dword	(0X52311C);
 	set_name	(0X52311C,	"display_fps");
 	create_dword	(0X523120);
@@ -156153,7 +156154,7 @@ static Functions_2(void) {
 	define_local_var(0X410D9D, 0X411940, "[bp-0X1C]", "Number");
 	add_func    (0X411940,0X411E2A);
 	set_func_flags(0X411940,0x5410);
-	set_func_cmt(0X411940,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: medium\nevidence: void draw_screen_overlay() at AC.CPP:8721. String match: \"!The player.activeinv variable has been corrupted...\" (8746), inside body. Also references \"FPS: %d\" (8700), which source has in a SEPARATE, small, single-call-site function draw_fps() (AC.CPP:8686) immediately preceding it -- most likely inlined into draw_screen_overlay by the compiler (small, called once). Caller matches: called from sub_42106D (mainloop), consistent with per-frame overlay drawing. Confidence medium rather than high because of the inlining uncertainty -- verify against actual disassembly instructions before treating draw_fps as fully absorbed.", 1);
+	set_func_cmt(0X411940,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void draw_screen_overlay() at AC.CPP:8721. String match: \"!The player.activeinv variable has been corrupted...\" (8746), inside body. Also references \"FPS: %d\" (8700), which source has in a SEPARATE, small, single-call-site function draw_fps() (AC.CPP:8686) immediately preceding it -- most likely inlined into draw_screen_overlay by the compiler (small, called once). Caller matches: called from sub_42106D (mainloop), consistent with per-frame overlay drawing. Confidence medium rather than high because of the inlining uncertainty -- verify against actual disassembly instructions before treating draw_fps as fully absorbed. UPGRADED TO HIGH CONFIDENCE (follow-up round -- the inlining question, explicitly flagged as needing disassembly verification, is now resolved): the function's own tail section (right before its final `retn`) is gated by `cmp display_fps,0; jz <skip>` -- matching 2011's own separate call site `if (display_fps) draw_fp" "s();` (AC.CPP:8868-8870) exactly, confirming `display_fps` (an alrea", 1);
 	set_frame_size(0X411940, 0X58, 4, 0);
 	define_local_var(0X411940, 0X411E2A, "[bp-0X58]", "Buffer");
 	add_func    (0X411E2A,0X411E70);

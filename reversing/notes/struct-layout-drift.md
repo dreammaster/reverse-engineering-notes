@@ -10479,3 +10479,29 @@ future re-run instead of being silently re-clobbered by the naive
 reference-source extraction -- the right place for a signature
 divergence like this to live, since prototypes.json itself is a
 regenerated, not hand-maintained, artifact.
+
+### `draw_screen_overlay`'s FPS-display tail resolved: `draw_fps` really is fused, but as a much simpler predecessor
+
+`draw_screen_overlay` had sat at MEDIUM confidence specifically because
+of an unverified "is `draw_fps` really inlined here" guess. Reading the
+function's own tail (right before its final `retn`) settles it: `cmp
+display_fps,0; jz <skip>` matches 2011's own separate call site `if
+(display_fps) draw_fps();` (`AC.CPP:8868-8870`) exactly -- the first
+behavioral confirmation for the already-IDA-named `display_fps` global.
+Inside the gate, `sprintf(Buffer,"FPS: %d",dword_523118)` matches
+source's `sprintf(tbuffer,"FPS: %d",fps)` exactly, identifying
+`dword_523118` as `fps` -- both globals matching 2011's own adjacent
+declared pair `int fps=0,display_fps=0;` (`AC.CPP:511`) -- and
+`wtextcolor(14)` matches source's `wtextcolor(14)` literally.
+
+`draw_fps` really is fused in, confirming the original guess -- but as
+a MUCH SIMPLER direct-draw implementation, not 2011's own body inlined
+verbatim: this build calls `wouttext_outline(1, usetup_base_height-
+current_screen_resolution_multiplier_y*10, fontid, Buffer)` straight
+onto the live screen buffer, with NO separate cached `fpsDisplay`
+bitmap, no `clear_to_color`/`create_bitmap_ex` staging step, no
+`gfxDriver`/`IDriverDependantBitmap` machinery, and no second "Loop
+%ld" line at all -- 2011's entire static-bitmap-caching/hardware-blit
+apparatus for this feature is CONFIRMED ABSENT, replaced by one direct
+text draw per frame. Upgraded to HIGH confidence; `dword_523118`
+renamed to `fps`.
