@@ -58278,6 +58278,7 @@ static Bytes_9(void) {
 	make_array	(0X439599,	0X7);
 	create_insn	(x=0X4395A0);
 	op_stkvar	(x,	1);
+	set_name	(0X4395A0,	"makecol_depth");
 	set_cmt	(0X4395A4,	"switch 25 cases",	0);
 	create_insn	(x=0X4395B2);
 	op_plain_offset	(x,	1,	0);
@@ -139808,6 +139809,7 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AD418);
 	op_hex		(x,	0);
 	create_dword	(0X4AD41C);
+	set_name	(0X4AD41C,	"col_lookups");
 	create_float	(0X4AD49C);
 	create_dword	(x=0X4AD4A0);
 	op_plain_offset	(x,	0,	0);
@@ -141543,9 +141545,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF23C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF240);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141555,6 +141554,9 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF240);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF244);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -155101,7 +155103,7 @@ static Functions_0(void) {
 	set_frame_size(0X40177C, 0, 4, 0);
 	add_func    (0X4017CF,0X40187F);
 	set_func_flags(0X4017CF,0x5410);
-	set_func_cmt(0X4017CF,	"[reversing] confirmed match\nsource: Common/Wgt2allg.h\nconfidence: medium\nevidence: void __my_setcolor(int *ctset, int newcol) at Wgt2allg.h:429-460 -- confirmed as wsetcolor's own callee (see wsetcolor's entry) via exact 2-argument call shape (a pointer target and a color value). Internal branching (8-bit vs. true-color vs. 15/16-bit paths, the SWAP_RB_HICOL-conditional color channel reordering) not individually traced this round -- named by caller-shape/role match only, medium confidence pending a dedicated internal read.", 1);
+	set_func_cmt(0X4017CF,	"[reversing] confirmed match\nsource: Common/Wgt2allg.h\nconfidence: high\nevidence: void __my_setcolor(int *ctset, int newcol) at Wgt2allg.h:429-460 -- confirmed as wsetcolor's own callee (see wsetcolor's entry) via exact 2-argument call shape (a pointer target and a color value). Internal branching (8-bit vs. true-color vs. 15/16-bit paths, the SWAP_RB_HICOL-conditional color channel reordering) not individually traced this round -- named by caller-shape/role match only, medium confidence pending a dedicated internal read. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): the entire body matches Wgt2allg.h:429-463 with THREE clean, confirmed-absent later additions. \"if(depth==8) ctset[0]=newcol;\" matches exactly. For newcol>=32: this build has NO check for source's `newcol&0x40000000` 'already calculated' caching flag at all (CONFIRMED ABSENT -- a later optimization for pre-resolved 32-bit colors), and NO separate true-color (`depth>16`) branch calling `makeacol32` (also CONFIRM" "ED ABSENT) -- this build's newcol>=32 handling is ONLY the 15-bit-conver", 1);
 	set_frame_size(0X4017CF, 0, 4, 0);
 	add_func    (0X40187F,0X401895);
 	set_func_flags(0X40187F,0x5410);
@@ -159486,7 +159488,12 @@ static Functions_6(void) {
 	set_frame_size(0X439490, 0X14, 0, 0);
 	add_func    (0X4395A0,0X439690);
 	set_func_flags(0X4395A0,0x5400);
+	set_func_cmt(0X4395A0,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public int makecol_depth(int color_depth, int r, int g, int b) API. Called from __my_setcolor (already matched) with the exact 4-argument shape (color_depth, r, g, b decoded from col_lookups[]), matching source's own makecol_depth(wantColDep, col_lookups[newcol]>>16, ...) call exactly. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): not chased further.", 1);
 	set_frame_size(0X4395A0, 0, 0, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X4396D0,0X4397CE);
 	set_func_flags(0X4396D0,0x5400);
 	set_frame_size(0X4396D0, 0, 0, 0);
@@ -159508,10 +159515,6 @@ static Functions_6(void) {
 	add_func    (0X439AC0,0X439AD5);
 	set_func_flags(0X439AC0,0x5400);
 	set_frame_size(0X439AC0, 0, 0, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X439AE0,0X439AF5);
 	set_func_flags(0X439AE0,0x5400);
 	set_frame_size(0X439AE0, 0, 0, 0);
@@ -161164,6 +161167,10 @@ static Functions_7(void) {
 	SetType(0X461920, "int __cdecl sub_461920(int, int, size_t Size);");
 	set_frame_size(0X461920, 0X8, 0, 0);
 	define_local_var(0X461920, 0X46197C, "[bp+0XC]", "Size");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X461980,0X462714);
 	set_func_flags(0X461980,0x5400);
 	SetType(0X461980, "int __cdecl sub_461980(int, int, void *Block);");
@@ -161182,10 +161189,6 @@ static Functions_7(void) {
 	add_func    (0X462B00,0X462C01);
 	set_func_flags(0X462B00,0x5400);
 	set_frame_size(0X462B00, 0X4, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X462C10,0X462D38);
 	set_func_flags(0X462C10,0x5400);
 	set_frame_size(0X462C10, 0XC, 0, 0);
@@ -163415,6 +163418,10 @@ static Functions_8(void) {
 	SetType(0X48E900, "int __cdecl sub_48E900(char *FileName, int);");
 	set_frame_size(0X48E900, 0XC, 0, 0);
 	define_local_var(0X48E900, 0X48E976, "[bp+0X4]", "FileName");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X48E980,0X48E99D);
 	set_func_flags(0X48E980,0x5400);
 	set_frame_size(0X48E980, 0X4, 0, 0);
@@ -163428,10 +163435,6 @@ static Functions_8(void) {
 	set_func_cmt(0X48EA00,	"[reversing] confirmed match\nsource obj (library): alfont_mt:ftsystem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj", 1);
 	set_frame_size(0X48EA00, 0, 0, 0);
 	define_local_var(0X48EA00, 0X48EA0E, "[bp+0X8]", "Size");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X48EA10,0X48EA23);
 	set_func_flags(0X48EA10,0x5400);
 	set_func_cmt(0X48EA10,	"[reversing] confirmed match\nsource obj (library): alfont_mt:ftsystem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftsystem.obj", 1);

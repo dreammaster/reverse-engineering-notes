@@ -6048,8 +6048,8 @@
     "new_name": "__my_setcolor",
     "source_file": "Common/Wgt2allg.h",
     "source_line": 429,
-    "confidence": "medium",
-    "evidence": "void __my_setcolor(int *ctset, int newcol) at Wgt2allg.h:429-460 -- confirmed as wsetcolor's own callee (see wsetcolor's entry) via exact 2-argument call shape (a pointer target and a color value). Internal branching (8-bit vs. true-color vs. 15/16-bit paths, the SWAP_RB_HICOL-conditional color channel reordering) not individually traced this round -- named by caller-shape/role match only, medium confidence pending a dedicated internal read."
+    "confidence": "high",
+    "evidence": "void __my_setcolor(int *ctset, int newcol) at Wgt2allg.h:429-460 -- confirmed as wsetcolor's own callee (see wsetcolor's entry) via exact 2-argument call shape (a pointer target and a color value). Internal branching (8-bit vs. true-color vs. 15/16-bit paths, the SWAP_RB_HICOL-conditional color channel reordering) not individually traced this round -- named by caller-shape/role match only, medium confidence pending a dedicated internal read. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): the entire body matches Wgt2allg.h:429-463 with THREE clean, confirmed-absent later additions. \"if(depth==8) ctset[0]=newcol;\" matches exactly. For newcol>=32: this build has NO check for source's `newcol&0x40000000` 'already calculated' caching flag at all (CONFIRMED ABSENT -- a later optimization for pre-resolved 32-bit colors), and NO separate true-color (`depth>16`) branch calling `makeacol32` (also CONFIRMED ABSENT) -- this build's newcol>=32 handling is ONLY the 15-bit-conversion-or-passthrough logic: \"if(depth==15) ctset[0]=(newcol&0x1F)|((newcol>>1)&0x7FE0); else ctset[0]=newcol;\" matching source's own #else (non-SWAP_RB_HICOL) 15-bit branch exactly, but with no true-color path for depths above 16bpp at all -- colors >=32 at those depths are simply passed through unconverted, a genuine limitation this build predates fixing. The palette-index branch (newcol<32) matches completely: \"makecol_depth(depth, dword_4AD41C[newcol]>>16, (dword_4AD41C[newcol]>>8)&0xFF, dword_4AD41C[newcol]&0xFF)\" -- identifying dword_4AD41C as `col_lookups[]` (the 32-entry hardcoded RGB table declared right next to wsetcolor in source, Wgt2allg.h:421-427) and sub_4395A0 as Allegro's public `makecol_depth` (third-party boundary, not chased further). CONFIRMED ABSENT: source's trailing `if(wantColDep>16) ctset[0]|=0xff000000;` alpha-channel visibility fixup -- no such OR appears after the makecol_depth call here."
   },
   {
     "kind": "manual",
@@ -6114,5 +6114,15 @@
     "source_line": 702,
     "confidence": "high",
     "evidence": "void wouttextxy(int,int,int fontNumber,const char*) at Wgt2allg.h:702 -- exact 4-argument (x,y,font,text) signature match. Called twice from wouttext_outline (already matched) with the same argument shape, matching source's own two calls into wouttextxy exactly (the outline-color draw and the final foreground draw)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4395A0",
+    "new_name": "makecol_depth",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public int makecol_depth(int color_depth, int r, int g, int b) API. Called from __my_setcolor (already matched) with the exact 4-argument shape (color_depth, r, g, b decoded from col_lookups[]), matching source's own makecol_depth(wantColDep, col_lookups[newcol]>>16, ...) call exactly. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): not chased further."
   }
 ]

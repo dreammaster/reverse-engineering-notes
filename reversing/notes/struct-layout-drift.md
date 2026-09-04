@@ -10688,3 +10688,25 @@ single `>=0` check with no `else if` counterpart at all, meaning
 automatic font outlining doesn't exist yet, consistent with this
 project's broader pattern of later font/rendering refinements being
 absent.
+
+### `__my_setcolor` upgraded to high confidence: three clean, confirmed-absent later additions
+
+The `wsetcolor` round had left `__my_setcolor` itself at medium
+confidence, its internal branching not individually traced. Reading it
+in full closes that: the whole body matches `Wgt2allg.h:429-463`
+except for three clean, confirmed-absent later additions. The
+`newcol&0x40000000` "already calculated" caching check (a later
+optimization letting a pre-resolved 32-bit color skip re-conversion)
+doesn't exist at all; the entire separate true-color (`depth>16`)
+`makeacol32` branch is likewise absent -- this build's `newcol>=32`
+handling is ONLY the 15-bit-conversion-or-passthrough logic, meaning
+colors >=32 at depths above 16bpp are passed through unconverted
+rather than properly composed into a 32-bit ARGB value, a genuine
+limitation this build predates fixing. The palette-index branch
+(`newcol<32`) matches completely, identifying `dword_4AD41C` as
+`col_lookups[]` (the 32-entry hardcoded RGB table declared right next
+to `wsetcolor` in source) and `sub_4395A0` as Allegro's public
+`makecol_depth` (left at the library boundary). Finally, source's
+trailing `if(wantColDep>16) ctset[0]|=0xff000000;` alpha-channel
+visibility fixup is also confirmed absent -- no such OR appears after
+the `makecol_depth` call here.

@@ -3025,6 +3025,13 @@ disassembly work.
   `FONT_OUTLINE_AUTO` 8-direction blur outline doesn't exist here — a
   single `>=0` check with no `else if` counterpart. Identifies
   `textcol` (the global text-color state) and `wouttextxy`.
+- **`__my_setcolor` upgraded to high confidence.** Matches source
+  except three clean, confirmed-absent later additions: the
+  "already calculated" 32-bit-color caching check, the entire true-
+  color (`depth>16`) `makeacol32` branch (colors ≥32 at those depths
+  just pass through unconverted), and the trailing alpha-channel
+  visibility fixup. Identifies `col_lookups[]` and Allegro's
+  `makecol_depth`.
 
 ## Third-party library identification (Task #10)
 
