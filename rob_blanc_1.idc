@@ -145310,6 +145310,7 @@ static Bytes_24(void) {
 	create_dword	(0X4B4220);
 	set_name	(0X4B4220,	"newnum");
 	create_dword	(0X4B4224);
+	set_name	(0X4B4224,	"starting_room");
 	create_dword	(0X4B4228);
 	create_dword	(0X4B422C);
 	create_dword	(0X4B4230);
@@ -154038,6 +154039,7 @@ static Bytes_27(void) {
 	create_dword	(0X523194);
 	set_name	(0X523194,	"in_enters_screen");
 	create_dword	(0X523198);
+	set_name	(0X523198,	"done_es_error");
 	create_dword	(0X52319C);
 	create_dword	(0X5231A0);
 	set_name	(0X5231A0,	"debug_15bit_mode");

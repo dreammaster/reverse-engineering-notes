@@ -2926,6 +2926,16 @@ disassembly work.
   scan), and missing the "edge-widening" tweak for a character already
   past a room boundary. Bonus: second confirmation route for
   `RoomStruct.height`@+0x3882 (`word_522F0A`, zero slack).
+- **`starting_room`/`done_es_error` close a small `load_new_room`
+  caveat.** `mainloop` contains a near-literal match to 2011's `"if
+  ((in_enters_screen!=0) & (displayed_room==starting_room)) quit(...);
+  if ((in_enters_screen!=0) && (done_es_error==0)) {debug_log(...);
+  done_es_error=1;}"` (`AC.CPP:25421-25424`) — the disassembly's
+  `setnz`/`setz`+`and` sequence matches source's own unusual bitwise
+  `&` literally. Identifies `starting_room` (new global) and confirms
+  `done_es_error` via the `debug_log` call's matching warning string.
+  2011's intervening `play.room_changes++;` still has no counterpart
+  here — a small, still-open detail.
 
 ## Third-party library identification (Task #10)
 

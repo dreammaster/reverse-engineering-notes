@@ -10354,3 +10354,24 @@ confirmation route (previously only confirmed via its own literal
 init value) -- read directly as `word_522F0A`, landing on
 `rstruc+0x3882` with zero slack, right next to the already-established
 `width`@+0x3880/`word_522F08`.
+
+### `starting_room`/`done_es_error` close a small open caveat from `load_new_room`'s own entry
+
+`load_new_room`'s own entry had one small loose end: `dword_523198`'s
+`=0` write was "plausibly `done_es_error=0`, position-matched but not
+independently confirmed." `mainloop` (already matched) settles it
+decisively: a near-literal match to 2011's own `"if ((in_enters_screen
+!= 0) & (displayed_room == starting_room)) quit(...); if ((in_enters_
+screen != 0) && (done_es_error == 0)) { debug_log(...); done_es_error =
+1; }"` (`AC.CPP:25421-25424`) -- the disassembly's `setnz`/`setz`+`and`
+sequence for the first condition matches source's own unusual BITWISE
+`&` (not the more natural `&&`) literally, not just its boolean intent,
+a nice extra-strength confirmation. `dword_4B4224` is `starting_room`
+(a genuinely new global, checked against the already-confirmed
+`newnum`==`displayed_room`); `dword_523198` is confirmed `done_es_
+error` via the `debug_log` call's own matching warning string and the
+`=1` write immediately after, matching source exactly. Both renamed.
+2011's intervening `play.room_changes++;` (between `done_es_error=0;`
+and `set_color_depth(8);` in source's own opening sequence) still has
+no visible counterpart in this build's `load_new_room` -- a small,
+still-open detail, not chased further this round.
