@@ -126,10 +126,10 @@ add_test(NAME maze_3d
          COMMAND wiz1 maze
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 1
                  "FFFR")
-# Facing the dead-end wall east of (0,3): DRAWFRNT fills the top of the
-# 82x79 pic with a solid wall edge.
+# Facing the dead-end wall east of (0,3): DRAWFRNT draws a solid front-wall
+# box (glyph 7 = horizontal rule) across the middle of the 36x20 cell grid.
 set_tests_properties(maze_3d PROPERTIES
-    PASS_REGULAR_EXPRESSION "###################################")
+    PASS_REGULAR_EXPRESSION "####################")
 add_test(NAME maze_play
          COMMAND wiz1 maze-play-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

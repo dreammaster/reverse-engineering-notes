@@ -131,8 +131,9 @@ Decided direction (2026-09-02):
       by rendering level 1. Ported: `engine/wiz/maze.h`/`.cpp` (`MazeLevel`
       reader), `engine/wiz/runner.h` (`MazePos`, `SHFTPOS`, `FORWRD`/`KICK`/
       `DOTURN`, FRWD/LEFT/RIGH view helpers), and **`engine/wiz/maze3d.h`/`.cpp`
-      — `DRAWMAZE`, the first-person wireframe** (Apple halving loop into an
-      82×79 pic), and **`RUNMAIN`/`RUNINIT`/`PRSTATS`/`SPECSQAR` — the turn
+      — `DRAWMAZE`, the first-person wireframe** (the DOS 36×20 cell-glyph
+      grid, `RUNNER` procs 3/21-44; geometry approximated), and
+      **`RUNMAIN`/`RUNINIT`/`PRSTATS`/`SPECSQAR` — the turn
       loop + HUD** (`engine/wiz/maze_ui.h`: `runMaze` → `MazeExit`; `FightMap`
       = `FIGHTS`/`CLROOMFG`; stairs/chutes/teleport/spinner/dark/pit/river/
       buttons; `SCNMSG` scripted messages — `engine/wiz/specials.h`, text in

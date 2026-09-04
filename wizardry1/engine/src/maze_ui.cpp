@@ -67,8 +67,11 @@ bool MazeState::load(const std::string &path) {
 }
 namespace {
 
-// --- HUD geometry (640x192 text surface, 16x8 font) --------------------
-constexpr int kPicX = 6, kPicY = 2, kPicScale = 2, kPicClipH = 134;
+// --- HUD geometry (DOS RUNNER: menu bar + the WINDOW1 wireframe) --------
+// Menu bar (0,0,40,3); the wireframe window (1,2,38,22) whose 36x20 interior
+// is WINDOW1; the party strip (0,10,40,6) toggled over the lower view.
+constexpr int kViewX = 2, kViewY = 3;             // wireframe interior origin
+constexpr int kBarH  = 3;
 
 const char *alignName(const Scenario &sc, Align a) {
     return int(a) < int(sc.aligns().size()) ? sc.aligns()[int(a)].c_str() : "?";
@@ -90,9 +93,9 @@ struct MazeCtx {
     MazeState &st;
     MazeLevel m;
     FightMap fm;
-    Surface pic{kPicW, kPicH};
-    Surface pane{kPicW * kPicScale, std::min(kPicH * kPicScale, kPicClipH)};
     bool needDraw = true;
+    bool showStats = false;            // S)TATUS toggle -- the party strip
+    std::string msg1, msg2;            // the message strip over the lower view
 
     TextScreen &t() { return ui.ts(); }
 
@@ -102,77 +105,79 @@ struct MazeCtx {
     void pause1() { ui.delayMs(std::max(1, st.timeDelay / 5)); }
 
     void present() {
-        // wireframe into the pic buffer (a redraw must not spend LIGHT)
+        auto &tt = t();
+        // the wireframe cells (a redraw must not spend LIGHT)
         int light = st.light;
-        drawMazeView(pic, m, st.pos, st.level, light, st.quickPlot, rng);
-        for (int y = 0; y < pane.height(); ++y)
-            for (int x = 0; x < pane.width(); ++x)
-                pane.set(x, y, pic.get(x / kPicScale, y / kPicScale));
-        ui.setOverlay(&pane, kPicX, kPicY);
+        u8 grid[kMazeRows][kMazeCols];
+        renderMazeCells(grid, m, st.pos, st.level, light, st.quickPlot, rng);
+
+        // full redraw: menu bar + framed wireframe window + strips
+        tt.resetWindow();
+        tt.putChar(12);
+        bool haveMsg = !msg1.empty() || !msg2.empty();
+        tt.frame(0, 0, 40, kBarH);
+        tt.writeAt(2, 1, "C)AMP S)TAT I)NSP Q)PLOT T)IME  A W D K");
+        tt.frame(1, 2, 38, 22);
+        char hdr[40];
+        std::snprintf(hdr, sizeof hdr, " LEVEL %d   %d,%d %s ", st.level,
+                      st.pos.x, st.pos.y, dirName(st.pos.dir));
+        tt.writeAt(4, 2, hdr);
+        std::string ind;
+        if (st.light > 0)   ind += " LIGHT ";
+        if (st.protect > 0) ind += " PROTECT ";
+        if (st.quickPlot)   ind += " QUICK ";
+        if (!ind.empty()) tt.writeAt(4, 23, ind);
+        for (int r = 0; r < kMazeView; ++r)
+            for (int c = 0; c < kMazeCols; ++c) {
+                int rr = kViewY + r, cc = kViewX + c;
+                if (showStats && rr >= 10 && rr <= 15) continue;      // party strip
+                if (haveMsg   && rr >= 20) continue;                  // message strip
+                char g = char(grid[r][c] ? grid[r][c] : ' ');
+                tt.writeAt(cc, rr, std::string(1, g));
+            }
+        if (showStats) { tt.frame(0, 10, 40, 6); prStatsStrip(); }
+        if (haveMsg) {
+            tt.frame(0, 20, 40, 4);
+            tt.writeAt(2, 22, msg2.empty() ? msg1.substr(0, 36) : (msg1 + " " + msg2).substr(0, 36));
+        }
         ui.refresh();
     }
+
+    void prStatsStrip();
 };
 
-// ---- PRSTATS (P010E0B): the party panel, rows 18..23 -------------------
+// ---- PRSTATS (P010E0B): the party strip, toggled over the lower view ----
 
-void prStats(MazeCtx &c) {
-    auto &t = c.t();
-    t.resetWindow();
-    t.clearRect(0, 18, 40, 6);
-    // sort a view of the party by status (alive first) -- indices only
+void MazeCtx::prStatsStrip() {
+    auto &t = this->t();
     int order[Party::kMax];
-    for (int i = 0; i < c.party.count(); ++i) order[i] = i;
-    for (int i = 0; i < c.party.count() - 1; ++i)
-        for (int j = i + 1; j < c.party.count(); ++j)
-            if (int(c.party.member(order[i]).status) > int(c.party.member(order[j]).status))
+    for (int i = 0; i < party.count(); ++i) order[i] = i;
+    for (int i = 0; i < party.count() - 1; ++i)
+        for (int j = i + 1; j < party.count(); ++j)
+            if (int(party.member(order[i]).status) > int(party.member(order[j]).status))
                 std::swap(order[i], order[j]);
 
-    bool anyAlive = false;
-    for (int row = 0; row < c.party.count(); ++row) {
-        Character &ch = c.party.member(order[row]);
-        int y = 18 + row;
+    for (int row = 0; row < party.count() && row < 4; ++row) {
+        Character &ch = party.member(order[row]);
+        int y = 11 + row;
         char b[48];
-        t.gotoXY(0, y);
-        std::snprintf(b, sizeof b, "%d %s", row + 1, ch.name.c_str());
-        t.write(b);
-
-        t.gotoXY(15, y);
-        std::snprintf(b, sizeof b, "%c-%.3s", alignName(c.sc, ch.align)[0],
-                      className(c.sc, ch.cls));
-        t.write(b);
-
-        int ac = ch.armorClass - c.st.protect;
-        t.gotoXY(21, y);
-        if (ac >= 0)            std::snprintf(b, sizeof b, "%3d", ac);
-        else if (ac > -10)      std::snprintf(b, sizeof b, " -%d", -ac);
-        else                    std::snprintf(b, sizeof b, " LO");
-        t.write(b);
-
+        int ac = ch.armorClass - st.protect;
         if (int(ch.status) >= int(Status::Dead)) ch.hpLeft = 0;
-        t.gotoXY(25, y);
-        std::snprintf(b, sizeof b, "%4d ", ch.hpLeft);
-        t.write(b);
-
-        t.gotoXY(31, y);
-        if (ch.status == Status::OK) {
-            anyAlive = true;
-            std::snprintf(b, sizeof b, "%4d", ch.hpMax);
-            t.write(b);
-        } else {
-            t.write(statusName(c.sc, ch.status));
-        }
+        std::snprintf(b, sizeof b, "%d %-10s %c-%.3s AC%3d %4d %s",
+                      row + 1, ch.name.c_str(), alignName(sc, ch.align)[0],
+                      className(sc, ch.cls), ac, ch.hpLeft,
+                      ch.status == Status::OK ? "OK" : statusName(sc, ch.status));
+        t.writeAt(2, y, std::string(b).substr(0, 36));
     }
-    (void)anyAlive;
 }
 
-void msgClear(MazeCtx &c) {
-    c.t().resetWindow();
-    c.t().clearRect(0, 15, 40, 3);
-}
+void prStats(MazeCtx &c) { c.needDraw = true; }   // present() redraws the strip
+
+void msgClear(MazeCtx &c) { c.msg1.clear(); c.msg2.clear(); c.needDraw = true; }
 void msg(MazeCtx &c, const std::string &s) {
-    msgClear(c);
-    c.t().gotoXY(1, 17);
-    c.t().write(s.substr(0, 38));
+    c.msg1 = s.substr(0, 36);
+    c.msg2 = s.size() > 36 ? s.substr(36, 36) : "";
+    c.needDraw = true;
 }
 
 // Hand off to combat.  Returns true (with `out` set) if the maze session
@@ -189,17 +194,7 @@ bool runFight(MazeCtx &c, int enemyInx, MazeExit &out, int attk012 = 2) {
 
 // ---- RUNINIT (P010E25): the fixed HUD frame ---------------------------
 
-void runInit(MazeCtx &c) {
-    auto &t = c.t();
-    t.resetWindow();
-    t.putChar(12);
-    t.gotoXY(13, 1); t.write("F)ORWARD  C)AMP    S)TATUS");
-    t.gotoXY(13, 2); t.write("L)EFT     Q)UICK   A<-W->D");
-    t.gotoXY(13, 3); t.write("R)IGHT    T)IME");
-    t.gotoXY(13, 4); t.write("K)ICK     I)NSPECT");
-    t.gotoXY(13, 7); t.write("SPELLS :");
-    prStats(c);
-}
+void runInit(MazeCtx &c) { c.needDraw = true; }   // present() draws the HUD
 
 // ---- SETTIME (P010E22): tune the message delay ----------------------
 
@@ -645,12 +640,6 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
     for (;;) {
         auto &t = c.t();
         t.resetWindow();
-        char hdr[40];
-        std::snprintf(hdr, sizeof hdr, "LEVEL %d   %2d,%-2d  %-5s", st.level,
-                      st.pos.x, st.pos.y, dirName(st.pos.dir));
-        t.gotoXY(14, 0); t.write(hdr);
-        t.gotoXY(22, 7); t.write(st.light > 0 ? "LIGHT  " : "       ");
-        t.gotoXY(22, 8); t.write(st.protect > 0 ? "PROTECT" : "       ");
 
         Square here = c.m.squareAt(st.pos.x, st.pos.y);
         if (here != Square::Normal && initTurn) {
@@ -671,7 +660,6 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
         if (initTurn) updateHp(c);
         if (!anyConscious(party)) return MazeExit::PartyWiped;
 
-        prStats(c);
         c.present();
         initTurn = false;
 
@@ -688,7 +676,7 @@ static MazeExit runMazeImpl(Ui &ui, Party &party, Roster &roster,
             else { msg(c, "OUCH!  A WALL."); }
         } else if (k == 'L' || k == 'A' || k == KEY_LEFT) { turn(st.pos, 3); c.needDraw = true; msgClear(c); }
         else if (k == 'R' || k == 'D' || k == KEY_RIGHT)  { turn(st.pos, 1); c.needDraw = true; msgClear(c); }
-        else if (k == 'S') { prStats(c); }
+        else if (k == 'S') { c.showStats = !c.showStats; c.needDraw = true; }
         else if (k == 'T') { runSetTime(c); }
         else if (k == 'Q') {
             st.quickPlot = !st.quickPlot;

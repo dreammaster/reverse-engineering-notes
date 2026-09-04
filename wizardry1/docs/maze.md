@@ -65,43 +65,53 @@ through open edges) and `CLROOMFG` clears the room you spawn in.
 `QUIETXFR` only changes level (via `EXITRUN` → `XNEWMAZE`) when
 `MAZELEV <> AUX0[SQTYPE]`.
 
-## The 3D view — `DRAWMAZE` (`P010E02`)  (ported: `engine/wiz/maze3d.h`)
+## The 3D view — `DRAWMAZE` (`RUNNER` proc 3)  (ported: `engine/wiz/maze3d.h`)
 
-A wireframe drawn with `DRAWLINE(x, y, dH, dV, len)` — a run of `len` points
-from `(x,y)` stepping `(dH, dV)` (each ∈ {−1,0,1}) — into an **82 × 79**
-picture area, origin top-left.  The DOS build precomputes the shape into 4
-fixed depth layers (`RUNNER` procs 21/27/33/39; `DRAWLINE` = `CONUNIT`
-`UNITWRITE` subfn 5); the port reproduces the Apple halving loop, which is
-equivalent and fully specified in the Pascal.
+**The DOS wireframe is character-cell line-art, not pixel lines.**  It is
+composed into `WINDOW1` — a **36 × 20 cell grid** (≈ 576 × 160 px, near the
+full screen width) — by `DRAWLINE` (`CONUNIT` `UNITWRITE` blk 5, native
+`INTERP:0x18C1`): `DRAWLINE(glyph, count, dRow, dCol, row, col)` writes a run
+of `count` (0 = to the window edge) identical `CHARSET` glyphs stepping
+`(dRow, dCol)`, clipped to `col ∈ [X4DRAW_lo, X4DRAW_hi]`.  The line-art
+glyphs are `200.CHARSET` codes 0–24 (see `../../docs/ui.md`).
 
-`LIGHTDIS` squares deep (2 unlit / 3–5 with `LIGHT`, or 3 with `QUICKPLT`; a
-lit draw decrements `LIGHT`).  Start geometry `UL=8 LR=72 WALWIDTH=32
-DOORWIDT=16 DOORFRAM=8 WALHEIGH=64`; each step halves `WALWIDTH` (→16→8…) and
-insets `UL += WALWIDTH`, `LR -= WALWIDTH`.  Per depth, at the drawing cursor
-`(X4DRAW, Y4DRAW)` (advanced one square forward each iteration by `SHFTPOS`):
+`RUNNER` proc 3 draws **4 depth layers** (procs 21 / 27 / 33 / 39; 2 shown
+unlit, 4 with `LIGHT`).  `proc 12` steps the cursor one square forward
+(`SHFTPOS`) and `proc 17` reads `leftView` / `frwdView` / `righView` (procs
+13/14/15) + door reveal before each; then per layer:
 
-* `CLRPICT(XLOWER, 0, XUPPER, 79)` sets the horizontal clip for this depth's
-  `DRAWLINE`s (nearer walls have already narrowed it).
-* `LEFTVIEW(0) ≠ OPEN` → `DRAWLEFT` (a receding trapezoid; `XLOWER := UL`);
-  else if `FRWDVIEW(−1) ≠ OPEN` → `DRAWFRNT(wt, −2·WW)` (the face one square
-  to the left).  `RIGHVIEW`/`FRWDVIEW(+1)` are the mirror.
-* `FRWDVIEW(0) ≠ OPEN` → `DRAWFRNT(wt, 0)` and **stop**.
-* Door cut-outs are drawn for a real `DOOR`, or a `HIDEDOOR` that is lit or
-  passes `RANDOM mod 6 = 3`.
-* `DARK` stops the draw; a same-level `TRANSFER` jumps the cursor to
-  `(AUX2, AUX1)`.
+* left wall solid → proc 22/28/34/40 · left open → proc 23/29/35 ·
+  right → 24/30/36/41 · right open → 25/31/37 · front → 26/32/38 (checks
+  `frwdView` internally); a `DOOR` adds a door-frame overlay
+  (`if wallVal == 2`).
+* `FRWDVIEW(0) ≠ OPEN` → draw the front wall and **stop** (`CIP 4`).
+* `DARKNESS` stops the draw; a same-level `TRANSFER` jumps the cursor.
 
-`wiz1 maze <SCENARIO.DATA> [level] [F/L/R/K/Q script]` prints the wireframe as
-ASCII after every step (CMake test `maze_3d`).
+**Port status:** `engine/wiz/maze3d.cpp` renders into the 36 × 20 cell grid
+with the line-art glyphs and the verified `leftView`/`frwdView`/`righView` +
+door logic, but with **approximated receding-trapezoid geometry** (the DOS
+per-depth `DRAWLINE` coordinate tables — procs 22–44 — are transcribed in
+the source but the exact `DRAWLINE` arg encoding needs a live DOSBox trace
+to pin; the current geometry is close, not glyph-exact).  `maze_ui.cpp`
+frames it as the DOS RUNNER screen: menu bar `(0,0,40,3)`, the wireframe
+window `(1,2,38,22)`, the party strip `(0,10,40,6)` toggled by `S`, a
+message strip along the bottom.
+
+`wiz1 maze <SCENARIO.DATA> [level] [F/L/R/K/Q script]` prints the grid as
+ASCII after every step (CMake test `maze_3d`); `WIZ1_MAZE_DUMP=<dir>
+wiz1 maze-play-test …` dumps the HUD per frame.
 
 ## The HUD  (`engine/wiz/maze_ui.cpp`)
 
-640×192 text surface (40×24, 16×8 font) with the wireframe pane blitted over
-it (via `Ui::setOverlay`) top-left, the command list at col 13, and `PRSTATS`
-(party panel: `# NAME  A-CLS  AC  HP  HPMAX/STATUS`, sorted alive-first) on
-rows 18-23.  Movement: `F`/`W`/↑ forward, `K` kick, `L`/`A`/← left, `R`/`D`/→
-right, `S` re-list party, `Q` quick-plot, `C` camp (below), `I` inspect
-(below), `Esc` leave.  `SPECSQAR` handles stairs (Y/N → change level; target
+640×192 text surface (40×24, 16×8 font).  DOS RUNNER screen: the menu bar
+window `(0,0,40,3)`, the framed wireframe window `(1,2,38,22)` (its 36×20
+interior is the cell grid drawn by `renderMazeCells`), level/facing set into
+its top border and `LIGHT`/`PROTECT`/`QUICK` into its bottom border, and a
+message strip along rows 20-23.  `PRSTATS` (party panel: `# NAME  A-CLS  AC
+HP STATUS`, sorted alive-first) is toggled by `S` into a `(0,10,40,6)`
+window over the lower view.  Movement: `F`/`W`/↑ forward, `K` kick,
+`L`/`A`/← left, `R`/`D`/→ right, `S` toggle party, `Q` quick-plot, `C` camp
+(below), `I` inspect (below), `Esc` leave.  `SPECSQAR` handles stairs (Y/N → change level; target
 level 0 → back to town), chutes, teleporters, spinners, darkness,
 pits/damage (`ROCKWATR`: agility check vs `rand%25 + level`, damage
 `AUX0 + AUX2·(rand%AUX1 + 1)`), the river (`ROCKWATE` → level 1), buttons,

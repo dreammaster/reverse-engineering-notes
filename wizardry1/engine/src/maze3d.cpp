@@ -1,123 +1,142 @@
 #include "wiz/maze3d.h"
 
+#include <algorithm>
+
 namespace wiz {
 namespace {
 
-// DRAWLINE(x, y, dh, dv, len): plot `len` points from (x,y) stepping (dh,dv),
-// clipped to x in [clipLo, clipHi] and the 82x79 picture.
-struct Pic {
-    Surface &s;
-    int clipLo = 0, clipHi = kPicW - 1;
-    u8 ink;
-    void line(int x, int y, int dh, int dv, int len) {
-        for (int i = 0; i < len; ++i) {
-            if (x >= clipLo && x <= clipHi && x >= 0 && x < kPicW && y >= 0 && y < kPicH)
-                s.set(x, y, ink);
-            x += dh; y += dv;
+// The DOS wireframe is chunky character-cell line-art (CHARSET glyphs) in a
+// 36x20 grid, not thin pixel lines.  We keep the verified Apple DRAWMAZE
+// geometry (receding trapezoids, halving each depth) and render its edges as
+// glyph runs: vertical -> 15, horizontal -> 7, the two diagonals -> 13/14,
+// door cut -> 17/19.
+enum : u8 { GV = 15, GH = 7, GDU = 13, GDD = 14, GDOOR = 17 };
+
+struct Cells {
+    u8 (*g)[kMazeCols];
+    int clipLo = 0, clipHi = kMazeCols - 1;
+    void put(int c, int r, u8 gl) {
+        if (r >= 0 && r < kMazeRows && c >= clipLo && c <= clipHi &&
+            c >= 0 && c < kMazeCols && g[r][c] == 0)
+            g[r][c] = gl;
+    }
+    // Bresenham from (c0,r0) to (c1,r1) inclusive.
+    void line(int c0, int r0, int c1, int r1, u8 gl) {
+        int dc = std::abs(c1 - c0), dr = -std::abs(r1 - r0);
+        int sc = c0 < c1 ? 1 : -1, sr = r0 < r1 ? 1 : -1, err = dc + dr;
+        for (;;) {
+            put(c0, r0, gl);
+            if (c0 == c1 && r0 == r1) break;
+            int e2 = 2 * err;
+            if (e2 >= dr) { err += dr; c0 += sc; }
+            if (e2 <= dc) { err += dc; r0 += sr; }
         }
     }
+    void vline(int c, int r0, int r1, u8 gl) { line(c, r0, c, r1, gl); }
+    void hline(int c0, int c1, int r, u8 gl) { line(c0, r, c1, r, gl); }
 };
 
-struct Geom { int ul, lr, ww, wh, dw, df; };
+// Wall geometry for one depth, in cell units.  `ulX`/`lrX` = the near-edge
+// columns (left / right walls sit here); `topY`/`botY` = the near-edge rows;
+// the far edge is the next depth's `ulX`/`lrX` inset toward the centre.
+struct Geom { int ulX, lrX, topY, botY, ww; };
 
-// EXIT test shared by DRAWLEFT/DRAWRIGH/DRAWFRNT: draw the door cut-out only
-// for a real DOOR, or a HIDEDOOR that is revealed (lit, or a 1-in-6 glimpse).
-bool noDoor(Wall w, bool gotLight, Rng &rng) {
-    if (w == Wall::Open || w == Wall::Wall) return true;
-    if (w == Wall::HiddenDoor) return !(gotLight || rng.mod(6) == 3);
-    return false;                                   // Wall::Door
+bool wallOpen(Wall w) { return w == Wall::Open; }
+bool wallDoor(Wall w, bool lit, Rng &rng) {
+    if (w == Wall::Door) return true;
+    if (w == Wall::HiddenDoor) return lit || rng.mod(6) == 3;
+    return false;
 }
 
-void drawLeft(Pic &p, const Geom &g, Wall wt, bool gotLight, Rng &rng, int &xLower) {
-    xLower = g.ul;
-    p.line(g.ul, g.ul, -1, -1, g.ww);
-    p.line(g.ul, g.ul, 0, 1, g.wh);
-    p.line(g.ul, g.lr, -1, 1, g.ww);
-    p.line(g.ul - g.ww, g.ul - g.ww, 0, 1, g.wh + g.wh);
-    if (noDoor(wt, gotLight, rng)) return;
-    p.line(g.ul - g.df, g.ul, -1, -1, g.dw);
-    p.line(g.ul - g.df, g.ul, 0, 1, g.wh + g.df);
-    p.line(g.ul - g.df - g.dw, g.ul - g.dw, 0, 1, g.wh + g.ww + g.df);
+// LEFT wall: near vertical edge at g.ulX (full height) receding to the far
+// edge n.ulX; top + bottom diagonals close the trapezoid.  DOS DRAWLEFT.
+void drawLeft(Cells &p, const Geom &g, const Geom &n, Wall w, bool lit, Rng &rng) {
+    p.vline(g.ulX, g.topY, g.botY, GV);
+    p.vline(n.ulX, n.topY, n.botY, GV);
+    p.line(g.ulX, g.topY, n.ulX, n.topY, GDD);
+    p.line(g.ulX, g.botY, n.ulX, n.botY, GDU);
+    if (!wallDoor(w, lit, rng)) return;
+    int a = g.ulX + (n.ulX - g.ulX) / 3, b = g.ulX + 2 * (n.ulX - g.ulX) / 3;
+    int t = (g.topY + n.topY) / 2, u = (g.botY + n.botY) / 2;
+    p.vline(a, t, g.botY, GDOOR);
+    p.vline(b, (t + n.topY) / 2, u, GDOOR);
 }
 
-void drawRigh(Pic &p, const Geom &g, Wall wt, bool gotLight, Rng &rng, int &xUpper) {
-    xUpper = g.lr;
-    p.line(g.lr, g.ul, 1, -1, g.ww);
-    p.line(g.lr, g.ul, 0, 1, g.wh);
-    p.line(g.lr, g.lr, 1, 1, g.ww);
-    p.line(g.lr + g.ww, g.ul - g.ww, 0, 1, g.wh + g.wh);
-    if (noDoor(wt, gotLight, rng)) return;
-    p.line(g.lr + g.df, g.ul, 1, -1, g.dw);
-    p.line(g.lr + g.df, g.ul, 0, 1, g.wh + g.df);
-    p.line(g.lr + g.df + g.dw, g.ul - g.dw, 0, 1, g.wh + g.ww + g.df);
+void drawRigh(Cells &p, const Geom &g, const Geom &n, Wall w, bool lit, Rng &rng) {
+    p.vline(g.lrX, g.topY, g.botY, GV);
+    p.vline(n.lrX, n.topY, n.botY, GV);
+    p.line(g.lrX, g.topY, n.lrX, n.topY, GDU);
+    p.line(g.lrX, g.botY, n.lrX, n.botY, GDD);
+    if (!wallDoor(w, lit, rng)) return;
+    int a = g.lrX - (g.lrX - n.lrX) / 3, b = g.lrX - 2 * (g.lrX - n.lrX) / 3;
+    int t = (g.topY + n.topY) / 2, u = (g.botY + n.botY) / 2;
+    p.vline(a, t, g.botY, GDOOR);
+    p.vline(b, (t + n.topY) / 2, u, GDOOR);
 }
 
-void drawFrnt(Pic &p, const Geom &g, Wall wt, int lrCent, bool gotLight, Rng &rng) {
-    p.line(g.ul + lrCent, g.ul, 1, 0, g.wh);
-    p.line(g.ul + lrCent, g.ul, 0, 1, g.wh);
-    p.line(g.ul + lrCent + g.wh, g.ul, 0, 1, g.wh + 1);
-    p.line(g.ul + lrCent, g.ul + g.wh, 1, 0, g.wh);
-    if (noDoor(wt, gotLight, rng)) return;
-    p.line(g.ul + lrCent + g.df, g.lr, 0, -1, g.ww + g.dw + g.df);
-    p.line(g.ul + lrCent + g.ww + g.dw + g.df, g.lr, 0, -1, g.ww + g.dw + g.df);
-    p.line(g.ul + lrCent + g.df, g.lr - g.ww - g.dw - g.df, 1, 0, g.ww + g.dw + 1);
+// FRONT wall: the rectangle at depth `g` (already the far geom).
+void drawFrnt(Cells &p, const Geom &g, Wall w, bool lit, Rng &rng) {
+    p.hline(g.ulX, g.lrX, g.topY, GH);
+    p.hline(g.ulX, g.lrX, g.botY, GH);
+    p.vline(g.ulX, g.topY, g.botY, GV);
+    p.vline(g.lrX, g.topY, g.botY, GV);
+    if (!wallDoor(w, lit, rng)) return;
+    int cx = (g.ulX + g.lrX) / 2, dw = std::max(1, (g.lrX - g.ulX) / 5);
+    int dy = g.topY + (g.botY - g.topY) / 3;
+    p.vline(cx - dw, dy, g.botY, GV);
+    p.vline(cx + dw, dy, g.botY, GV);
+    p.hline(cx - dw, cx + dw, dy, GH);
 }
+
+// The receding-depth Geoms (cell units, centre column 17-18, 20 rows).
+const Geom kDepth[5] = {
+    { 1, 34,  0, 19, 8 },      // depth 0  -- fills the frame
+    { 6, 29,  4, 15, 6 },      // depth 1
+    { 9, 26,  7, 12, 4 },      // depth 2
+    {11, 24,  9, 10, 2 },      // depth 3
+    {12, 23, 10, 10, 1 },      // vanishing point
+};
 
 } // namespace
 
-void drawMazeView(Surface &pic, const MazeLevel &m, const MazePos &pos,
-                  int level, int &light, bool quickPlot, Rng &rng, u8 ink) {
-    bool gotLight = light > 0;
-    int lightDis;
-    if (gotLight) { lightDis = quickPlot ? 3 : 5; light -= 1; }
-    else lightDis = 2;
+void renderMazeCells(u8 grid[kMazeRows][kMazeCols], const MazeLevel &m,
+                     const MazePos &pos, int level, int &light,
+                     bool quickPlot, Rng &rng) {
+    for (int r = 0; r < kMazeRows; ++r)
+        for (int c = 0; c < kMazeCols; ++c) grid[r][c] = 0;
 
-    Geom g{8, 72, 32, 64, 16, 8};
+    bool lit = light > 0;
+    int maxDepth;
+    if (lit) { maxDepth = quickPlot ? 3 : 4; light -= 1; }
+    else     maxDepth = 2;
+
+    Cells p{grid};
     int x4 = pos.x, y4 = pos.y, dir = pos.dir;
 
-    pic.fillRect(0, 0, kPicW, kPicH, 0);            // CLEARPIC
-    Pic p{pic, 0, kPicW - 1, ink};
-    int xLower = 0, xUpper = kPicW - 1;
-
-    while (lightDis > 0) {
+    for (int depth = 0; depth < maxDepth; ++depth) {
         int sq = m.squareExtra(x4, y4);
         Square st = m.squareType(sq);
-        if (st == Square::Darkness) return;
+        if (st == Square::Darkness) break;
         if (st == Square::Teleport && m.aux0(sq) == level) {
             x4 = wrap20(m.aux2(sq));
             y4 = wrap20(m.aux1(sq));
         }
-        p.clipLo = xLower;
-        p.clipHi = xUpper;
 
-        Wall wt = leftView(m, x4, y4, dir, 0);
-        if (wt != Wall::Open) drawLeft(p, g, wt, gotLight, rng, xLower);
-        else {
-            wt = frwdView(m, x4, y4, dir, -1);
-            if (wt != Wall::Open) { drawFrnt(p, g, wt, -(2 * g.ww), gotLight, rng); xLower = g.ul; }
-        }
+        const Geom &g = kDepth[depth], &n = kDepth[depth + 1];
+        p.clipLo = g.ulX; p.clipHi = g.lrX;
 
-        wt = righView(m, x4, y4, dir, 0);
-        if (wt != Wall::Open) drawRigh(p, g, wt, gotLight, rng, xUpper);
-        else {
-            wt = frwdView(m, x4, y4, dir, 1);
-            if (wt != Wall::Open) { drawFrnt(p, g, wt, 2 * g.ww, gotLight, rng); xUpper = g.lr; }
-        }
+        Wall lw = leftView(m, x4, y4, dir, 0);
+        if (!wallOpen(lw)) drawLeft(p, g, n, lw, lit, rng);
 
-        wt = frwdView(m, x4, y4, dir, 0);
-        if (wt != Wall::Open) { drawFrnt(p, g, wt, 0, gotLight, rng); return; }
+        Wall rw = righView(m, x4, y4, dir, 0);
+        if (!wallOpen(rw)) drawRigh(p, g, n, rw, lit, rng);
 
-        g.ww /= 2;
-        g.dw = g.ww / 2;
-        g.wh = g.ww * 2;
-        g.df = g.ww / 4;
-        g.ul += g.ww;
-        g.lr -= g.ww;
+        Wall fw = frwdView(m, x4, y4, dir, 0);
+        if (!wallOpen(fw)) { drawFrnt(p, n, fw, lit, rng); break; }
 
         int nx = x4, ny = y4;
-        shftPos(nx, ny, dir, 0, 1);                 // step forward
+        shftPos(nx, ny, dir, 0, 1);
         x4 = nx; y4 = ny;
-        --lightDis;
     }
 }
 

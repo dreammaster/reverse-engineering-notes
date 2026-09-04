@@ -777,19 +777,16 @@ static void drawMazeTop(const MazeLevel &m, const MazePos &p) {
     std::printf("%s\n", bottom.c_str());
 }
 
-// ASCII rendering of the 82x79 wireframe pic (2x2 blocks -> 41x40 chars).
+// ASCII rendering of the 36x20 DOS wireframe cell grid.
 static void printMaze3d(const MazeLevel &m, const MazePos &p, int level) {
-    Surface pic(kPicW, kPicH);
+    u8 grid[kMazeRows][kMazeCols];
     int light = 0;
     Rng rng;
-    drawMazeView(pic, m, p, level, light, false, rng);
-    for (int y = 0; y < kPicH; y += 2) {
+    renderMazeCells(grid, m, p, level, light, false, rng);
+    for (int y = 0; y < kMazeView; ++y) {
         std::string row;
-        for (int x = 0; x < kPicW; x += 2) {
-            bool on = pic.get(x, y) || pic.get(x + 1, y) ||
-                      pic.get(x, y + 1) || pic.get(x + 1, y + 1);
-            row += on ? '#' : ' ';
-        }
+        for (int x = 0; x < kMazeCols; ++x)
+            row += grid[y][x] ? '#' : ' ';
         std::printf("  |%s|\n", row.c_str());
     }
 }
@@ -1151,7 +1148,8 @@ static int cmdMazePlayTest(int argc, char **argv) {
     StringPool sp;
     bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
 
-    auto plat = makeNullPlatform(unescape(argv[4]), "");
+    const char *dd = std::getenv("WIZ1_MAZE_DUMP");
+    auto plat = makeNullPlatform(unescape(argv[4]), dd ? dd : "");
     Rng rng;
     Ui ui(*plat, font);
     MazeState st;

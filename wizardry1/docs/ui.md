@@ -64,13 +64,16 @@ Every `WIZARDRY,19(x, y, w, h, prio, border, 0, 0)` call in the p-code
 | generic Y/N / prompt | `UTILITIE 31`, `ROLLER 15` | 0 | 4 | 40 | 3 | |
 | generic dialog | `UTILITIE 25` | 8 | 8 | 24 | 15 | |
 
-The maze **wireframe** window itself is created in `RUNINIT` from computed
-args (not literal `SLDC`s) — it is the `WINDOW1` 36×20 cell grid
-(≈ `(2, 3, 36, 20)`); see `maze.md`.
+The maze **wireframe** window is the `WINDOW1` 36×20 cell grid; the engine
+frames it as `(1, 2, 38, 22)` under the menu bar.  Its content is
+line-art glyphs, not text — see `maze.md`.
 
 ## Status
 
-* Primitive (`openWindow`/`closeWindow`, border glyphs) — **done**.
-* Per-screen conversion — in progress, verified against DOSBox one screen
-  at a time (the p-code gives geometry; DOSBox confirms embedded titles,
-  overlap/restore order, and colour).
+* Primitive (`openWindow`/`closeWindow`/`frame`, border glyphs) — **done**.
+* **Combat** screen — converted (3 framed panels).
+* **Maze** screen — converted (menu bar + framed wireframe window +
+  toggled party strip + message strip); the wireframe is now the DOS
+  36×20 cell-glyph grid, geometry approximated (`maze.md`).
+* Town / roller / camp / cemetery / title — pending DOSBox refs for the
+  embedded titles + window overlap/restore order.
