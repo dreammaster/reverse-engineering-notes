@@ -70,10 +70,18 @@ line-art glyphs, not text — see `maze.md`.
 
 ## Status
 
-* Primitive (`openWindow`/`closeWindow`/`frame`, border glyphs) — **done**.
-* **Combat** screen — converted (3 framed panels).
-* **Maze** screen — converted (menu bar + framed wireframe window +
-  toggled party strip + message strip); the wireframe is now the DOS
-  36×20 cell-glyph grid, geometry approximated (`maze.md`).
-* Town / roller / camp / cemetery / title — pending DOSBox refs for the
-  embedded titles + window overlap/restore order.
+* Primitive (`openWindow`/`closeWindow`/`frame`/`writeAt`, border glyphs)
+  — **done**.
+* **Combat** — 3 framed panels.
+* **Maze** — menu bar + framed wireframe window (DOS 36×20 cell-glyph
+  grid, geometry approximated — `maze.md`) + toggled party strip + msg
+  strip.
+* **Town** — framed party panel (building name on its border) + framed
+  menu panel; the `+-----+` fakes are gone.
+* **Camp** — one framed panel, "CAMP" on the border.
+* **Roller** — Training Grounds menu + MAKECHAR scroll area framed.
+* Still absolute-positioned (frame added around, content not yet inset):
+  Boltac inventory, Inn room list, Temple, roller point-alloc, camp
+  inspect/identify, cemetery, title.  Exact per-screen insets +
+  embedded-title placement + window overlap/restore order need DOSBox
+  refs.
