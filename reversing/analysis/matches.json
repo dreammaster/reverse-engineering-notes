@@ -67,7 +67,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's intent -- validate the channel, then stop-and-destroy the active clip and clear the handle -- but DRIFT confirmed: this build hard-validates `channel==1` exactly (not a `[0,MAX_SOUND_CHANNELS)` range check), matching the already-established single-ambient-channel design (PlayAmbientSound's own entry: this build supports exactly ONE ambient channel, backed by scalar globals, not an indexable `ambient[]` array). If the already-confirmed single ambient handle (dword_4EDA58) is set: calls its vtable SLOT+4 (a third independent confirmation of the already-established SOUNDCLIP-family 'stop/destructor-style method' at this slot, see the sound-effect-loader entry) then `operator delete` and clears the handle. CONFIRMED ABSENT: source's separate `stop_and_destroy_channel(channel)` free function -- folded directly into a vtable call + delete here instead, consistent with this build's drastically smaller SOUNDCLIP base class (`{vtable;int done;}`, already established) needing no separate helper."
   },
   {
     "kind": "function",
@@ -277,7 +277,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): calls the already-matched misbuttondown(which-1) and converts its -1/0 result to 1/0, matching source's shape exactly. DRIFT confirmed: the bounds check is `which<1 || which>2` (only LEFT/RIGHT accepted), not source's `which<1 || which>3` (which additionally allows eMouseMiddle=3) -- and the error string itself differs to match, reading \"!IsButtonDown: requires LEFT or RIGHT as...\" rather than source's \"...eMouseLeft, eMouseRight, eMouseMiddle\". This build's IsButtonDown genuinely has no middle-mouse-button support at all, not just an unread branch -- a real, confirmable feature absence consistent with this project's broader pattern of later input-handling refinements being absent."
   },
   {
     "kind": "function",

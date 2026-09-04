@@ -10776,3 +10776,18 @@ entirely around the `gfxDriver` hardware abstraction this build
 predates) -- left deliberately unnamed, documented instead, per this
 project's established convention for exactly this situation. New
 global identified: `dword_523200`, a tint-composite dirty flag.
+
+Two more close the same round: `StopAmbientSound` matches source's
+overall intent but confirms its `channel` bounds check is a hard
+`==1` (not a `[0,MAX_SOUND_CHANNELS)` range), matching the already-
+established single-ambient-channel design, and its stop-and-clear
+step is a direct vtable-slot+destructor-call + `operator delete`
+rather than a separate `stop_and_destroy_channel()` free function --
+a THIRD independent confirmation of the already-established SOUNDCLIP-
+family "stop/destructor-style method" at that vtable slot. `IsButton
+Down` matches source's overall shape (delegates to the already-matched
+`misbuttondown`) but its own bounds check accepts only LEFT/RIGHT
+(`which>2` rejects), not source's LEFT/RIGHT/MIDDLE (`which>3`) --
+confirmed by the error string itself reading differently ("requires
+LEFT or RIGHT" vs. source's three-button listing) -- this build's
+`IsButtonDown` genuinely has no middle-mouse-button support at all.

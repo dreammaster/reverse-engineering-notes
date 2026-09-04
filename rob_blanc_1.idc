@@ -155654,7 +155654,7 @@ static Functions_1(void) {
 	add_func    (0X408AA3,0X408AF5);
 	set_func_flags(0X408AA3,0x5410);
 	SetType(0X408AA3, "void __stdcall StopAmbientSound(int channel);");
-	set_func_cmt(0X408AA3,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X408AA3,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's intent -- validate the channel, then stop-and-destroy the active clip and clear the handle -- but DRIFT confirmed: this build hard-validates `channel==1` exactly (not a `[0,MAX_SOUND_CHANNELS)` range check), matching the already-established single-ambient-channel design (PlayAmbientSound's own entry: this build supports exactly ONE ambient channel, backed by scalar globals, not an indexable `ambient[]` array). If the already-confirmed single ambient handle (dword_4EDA58) is set: calls its vtable SLOT+4 (a third independent confirmation of the already-established SOUNDCLIP-family 'stop/destructor-style method' at this slot, see the sound-effect-loader entry) then `operator delete` and clears the handle. CONFIRMED ABSENT: source's separate `stop_and_destroy_channel(channel)` fre" "e function -- folded directly into a vtable call + delete here inste", 1);
 	set_frame_size(0X408AA3, 0X4, 4, 0X4);
 	define_local_var(0X408AA3, 0X408AF5, "[bp+0X8]", "channel");
 	add_func    (0X408AF5,0X408C10);
@@ -156033,14 +156033,14 @@ static Functions_1(void) {
 	set_frame_size(0X40D738, 0X10, 4, 0XC);
 	define_local_var(0X40D738, 0X40D80C, "[bp+0XC]", "btn");
 	define_local_var(0X40D738, 0X40D80C, "[bp+0X10]", "mbut");
-	add_func    (0X40D80C,0X40D8A9);
-	set_func_flags(0X40D80C,0x5410);
-	set_func_cmt(0X40D80C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: medium\nevidence: GameState/inventory-grid hit-test helper -- found while chasing GameState's dword_4EEB08 lead. Instruction-for-instruction algorithmic match to 2011's offset_over_inv(GUIInv*) (AC.CPP:5394-5409): \"mover = xoffs/itemWidth; if (mover>=itemsPerLine) return -1; mover += (yoffs/itemHeight)*itemsPerLine; if (mover>=itemsPerLine*numLines) return -1; mover += topIndex; if (mover<0 || mover>=invorder_count) return -1; return invorder[mover];\" matches the disassembly line for line, using globals dword_4B4234/dword_4B4238 (presumably mouse-relative x/y, not yet matched) in place of 2011's per-GUIInv-object xoffs/yoffs parameters. NOT given a name: this build's callers (check_controls, GetLocationName, both already matched) match 2011's GetInvAt() callers, but GetInvAt's own 2011 body (AC.CPP:20544, GUI-dispatch through find_object_under_mouse) looks nothing like this function -- this looks like a single 2002 function later split into GetInvA" "t (GUI dispatch) + offset_over_inv (grid math), with the grid-math hal", 1);
-	set_frame_size(0X40D80C, 0X4, 4, 0);
 }
 
 static Functions_2(void) {
 
+	add_func    (0X40D80C,0X40D8A9);
+	set_func_flags(0X40D80C,0x5410);
+	set_func_cmt(0X40D80C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: medium\nevidence: GameState/inventory-grid hit-test helper -- found while chasing GameState's dword_4EEB08 lead. Instruction-for-instruction algorithmic match to 2011's offset_over_inv(GUIInv*) (AC.CPP:5394-5409): \"mover = xoffs/itemWidth; if (mover>=itemsPerLine) return -1; mover += (yoffs/itemHeight)*itemsPerLine; if (mover>=itemsPerLine*numLines) return -1; mover += topIndex; if (mover<0 || mover>=invorder_count) return -1; return invorder[mover];\" matches the disassembly line for line, using globals dword_4B4234/dword_4B4238 (presumably mouse-relative x/y, not yet matched) in place of 2011's per-GUIInv-object xoffs/yoffs parameters. NOT given a name: this build's callers (check_controls, GetLocationName, both already matched) match 2011's GetInvAt() callers, but GetInvAt's own 2011 body (AC.CPP:20544, GUI-dispatch through find_object_under_mouse) looks nothing like this function -- this looks like a single 2002 function later split into GetInvA" "t (GUI dispatch) + offset_over_inv (grid math), with the grid-math hal", 1);
+	set_frame_size(0X40D80C, 0X4, 4, 0);
 	add_func    (0X40D8A9,0X40D919);
 	set_func_flags(0X40D8A9,0x5410);
 	SetType(0X40D8A9, "void __stdcall run_event_block_inv(int invNum, int aaa);");
@@ -156062,7 +156062,7 @@ static Functions_2(void) {
 	add_func    (0X40D9CE,0X40DA08);
 	set_func_flags(0X40D9CE,0x5410);
 	SetType(0X40D9CE, "int __stdcall IsButtonDown(int which);");
-	set_func_cmt(0X40D9CE,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X40D9CE,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): calls the already-matched misbuttondown(which-1) and converts its -1/0 result to 1/0, matching source's shape exactly. DRIFT confirmed: the bounds check is `which<1 || which>2` (only LEFT/RIGHT accepted), not source's `which<1 || which>3` (which additionally allows eMouseMiddle=3) -- and the error string itself differs to match, reading \"!IsButtonDown: requires LEFT or RIGHT as...\" rather than source's \"...eMouseLeft, eMouseRight, eMouseMiddle\". This build's IsButtonDown genuinely has no middle-mouse-button support at all, not just an unread branch -- a real, confirmable feature absence consistent with this project's broader pattern of later input-handling refinements being absent.", 1);
 	set_frame_size(0X40D9CE, 0, 4, 0X4);
 	define_local_var(0X40D9CE, 0X40DA08, "[bp+0X8]", "which");
 	add_func    (0X40DA08,0X40DAF2);
@@ -156512,6 +156512,10 @@ static Functions_2(void) {
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X8]", "srcmes");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0XC]", "destm");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X10]", "maxlen");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X4152D4,0X4152F7);
 	set_func_flags(0X4152D4,0x5410);
 	set_frame_size(0X4152D4, 0, 4, 0);
@@ -156526,10 +156530,6 @@ static Functions_2(void) {
 	set_func_flags(0X41547C,0x5410);
 	set_func_cmt(0X41547C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
 	set_frame_size(0X41547C, 0X4, 4, 0);
-}
-
-static Functions_3(void) {
-
 	add_func    (0X4154ED,0X415542);
 	set_func_flags(0X4154ED,0x5410);
 	set_func_cmt(0X4154ED,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
@@ -156977,6 +156977,10 @@ static Functions_3(void) {
 	SetType(0X418CAD, "void scr_StopMusic(void);");
 	set_func_cmt(0X418CAD,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD/ARCHITECTURE EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-cleanup branch -- 'if (dword_5231B4!=0) { set_volume(-1,0); stop_midi(); destroy_midi(dword_5231B4); dword_5231B4=0; }' -- matches 2011's MYMIDI::destroy() ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:940-945) exactly in call order and role, but operates directly on the bare global dword_5231B4 rather than a MYMIDI object's own tune field -- confirming this build has NO MYMIDI wrapper class at all (see PlayMusic's own entry for the complete architectural writeup). Also matches MYMIDI::set_volume's own 'set_volume(-1, newvol)' Allegro call (acsound.cpp:937) in shape (2 args, first literal -1 meaning \"all voices\"). MOD/JGMOD FIELD EVIDENCE (found this round, following up the MYMIDI architecture finding): the MOD-cleanup branch -- 'if (opts_mod_player!=0 && is_mod_playing(" ")) stop_mod(); if (dword_5231B8!=0) destroy_mod(dword_5231B8); dword", 1);
 	set_frame_size(0X418CAD, 0, 4, 0);
+}
+
+static Functions_4(void) {
+
 	add_func    (0X418D6B,0X418DEC);
 	set_func_flags(0X418D6B,0x5410);
 	SetType(0X418D6B, "int IsMusicPlaying(void);");
@@ -156988,10 +156992,6 @@ static Functions_3(void) {
 	set_func_cmt(0X418DEC,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
 	set_frame_size(0X418DEC, 0, 4, 0X4);
 	define_local_var(0X418DEC, 0X418E0F, "[bp+0X8]", "patnum");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X418E0F,0X418E30);
 	set_func_flags(0X418E0F,0x5410);
 	SetType(0X418E0F, "void __stdcall SeekMP3PosMillis(int posn);");
@@ -157624,6 +157624,10 @@ static Functions_4(void) {
 	set_frame_size(0X41BEE1, 0, 4, 0X8);
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0X8]", "cha");
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0XC]", "clik");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41BF5A,0X41BFD3);
 	set_func_flags(0X41BF5A,0x5410);
 	SetType(0X41BF5A, "void __stdcall SetCharacterIgnoreWalkbehinds(int cha, int clik);");
@@ -157642,10 +157646,6 @@ static Functions_4(void) {
 	set_func_flags(0X41C040,0x5410);
 	set_func_cmt(0X41C040,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void SetObjectIgnoreWalkbehinds(int cha,int clik) at AC.CPP:20911-20919. Exact match (minus a trailing cache-invalidation line this build predates): validates the object number via the newly-renamed is_valid_object (sub_4256E0, see its own entry), quitting with the function's own \"!SetObjectIgnoreWalkbehinds: Invalid object specified\" otherwise; unconditionally clears RoomObject.flags@+0x1D bit 1 (\"and al,0FDh\"), then sets it back if clik!=0 (\"or dl,2\") -- matching source's \"objs[cha].flags&=~OBJF_NOWALKBEHINDS; if(clik) objs[cha].flags|=OBJF_NOWALKBEHINDS;\" exactly, giving RoomObject.flags bit 1 (OBJF_NOWALKBEHINDS=2, already confirmed via prepare_characters_for_drawing) a third independent confirmation. DRIFT CONFIRMED ABSENT: source's trailing \"objcache[cha].ywas=-9999;\" (invalidating a hardware-acceleration drawing cache) has no counterpart here -- consistent with this build's established, repeated lack of the objcache/actsps dr" "awing-cache abstraction found absent elsewhere (e.g. CharacterInfo.a", 1);
 	set_frame_size(0X41C040, 0, 4, 0);
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41C0AD,0X41C2D7);
 	set_func_flags(0X41C0AD,0x5410);
 	SetType(0X41C0AD, "void __stdcall FaceLocation(int cha, int xx, int yy);");
@@ -158366,6 +158366,10 @@ static Functions_5(void) {
 	set_func_flags(0X425570,0x5410);
 	set_func_cmt(0X425570,	"[reversing] confirmed match\nconfidence: high\nevidence: Matches Allegro's canonical macro/function pair \"#define acquire_screen() acquire_bitmap(screen)\": disasm pushes the global `screen` bitmap and calls a single sub-function (sub_425250, presumably acquire_bitmap, a library primitive). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: acquire_screen, obj=acwavi.obj) even though 2011's Engine/acwavi.cpp source only shows it being CALLED (as a no-arg call), not defined -- consistent with it being an Allegro library-provided function/macro instantiated wherever first used. Called from process_event and __GetLocationType (already matched), consistent with locking the screen surface around direct pixel access.", 1);
 	set_frame_size(0X425570, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X425590,0X4255A3);
 	set_func_flags(0X425590,0x5410);
 	set_func_cmt(0X425590,	"[reversing] confirmed match\nconfidence: high\nevidence: Same pattern as acquire_screen (see sub_425570 above) -- pushes `screen`, calls a single sub-function (sub_425280, presumably release_bitmap). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: release_screen, obj=acwavi.obj). Called from process_event and __GetLocationType (already matched), pairing with acquire_screen around the same drawing operations.", 1);
@@ -158396,10 +158400,6 @@ static Functions_5(void) {
 	set_func_flags(0X4256E0,0x5410);
 	set_func_cmt(0X4256E0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Unnamed helper, called from SetObjectView and SetObjectFrame (both already matched) to validate an object number: \"return (arg_0<0 || arg_0>=croom->numobj) ? 1 : 0\" -- an exact bounds check against RoomStatus.numobj (dword_523128+4, see load_new_room's entry). Likely a small internal helper resembling 2011's inline object-number validation (no distinct standalone source-file match attempted this round). Documented purely for the RoomStatus.numobj cross-confirmation it contributed. NAMED (this round): confirmed as is_valid_object (inline int is_valid_object(int obtest) at AC.CPP:2610-2613) -- \"if(obtest<0 || obtest>=croom->numobj) return 0; return 1;\", an exact match once the code is actually read (correcting this entry's own earlier paraphrase of the return polarity -- the code returns 1 for VALID/0 for INVALID, matching source's convention exactly, not the inverted formula previously written here). Also called from SetObjectIgnoreW" "alkbehinds (newly matched this round, see its own entry).", 1);
 	set_frame_size(0X4256E0, 0X4, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X425710,0X42571E);
 	set_func_flags(0X425710,0x5410);
 	set_frame_size(0X425710, 0, 4, 0);
@@ -159407,6 +159407,10 @@ static Functions_6(void) {
 	add_func    (0X435660,0X4358B8);
 	set_func_flags(0X435660,0x5400);
 	set_frame_size(0X435660, 0X258, 0, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X4358C0,0X4358FF);
 	set_func_flags(0X4358C0,0x5400);
 	set_frame_size(0X4358C0, 0X8, 0, 0);
@@ -159484,10 +159488,6 @@ static Functions_6(void) {
 	add_func    (0X439310,0X439487);
 	set_func_flags(0X439310,0x5400);
 	set_frame_size(0X439310, 0X10, 0, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X439490,0X439599);
 	set_func_flags(0X439490,0x5400);
 	set_frame_size(0X439490, 0X14, 0, 0);
@@ -161113,6 +161113,10 @@ static Functions_7(void) {
 	set_func_flags(0X460820,0x5400);
 	set_func_cmt(0X460820,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: int get_config_int(AL_CONST char *section, AL_CONST char *name, int def) (Common/libinclude/allegro/config.h:42, AL_FUNC declaration). sub_460820's own prologue declares exactly 3 dword parameters (arg_0, arg_4, arg_8), matching this 3-argument shape precisely. Called from the already-matched mouse_directx_init (sub_464A30) with the two uconvert() results (section, name) plus a default value, matching source's \"get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT)\" argument order exactly. Body has a local 0x100-byte buffer and walks a linked list via dword_5429AC/[esi] pointer-chasing, consistent with searching a parsed config-file structure for a matching section+key. Confidence medium: the actual implementation (Allegro's config.c) is not present in this checkout, so not traced statement-by-statement against real source -- this match rests on parameter-c" "ount shape + call-site correlation + plausible body structure only. UPGRADED to high confidence", 1);
 	set_frame_size(0X460820, 0X104, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X460910,0X460991);
 	set_func_flags(0X460910,0x5400);
 	set_frame_size(0X460910, 0X44, 0, 0);
@@ -161150,10 +161154,6 @@ static Functions_7(void) {
 	set_func_flags(0X461370,0x5400);
 	set_func_cmt(0X461370,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: AL_CONST char *get_config_text(AL_CONST char *msg) at src/config.c:1304. Matched via the unique string \"[language]\" (uconvert_ascii(\"[language]\", tmp1), the section name used to look up a translated message) -- this literal appears nowhere else in the source tree. sub_461370 takes exactly one argument, matching get_config_text's single-parameter signature. Called with a driver-description field ([eax+0Ch]) from the not-yet-named driver-search loop that also calls detect_digi_driver (sub_443500's caller) -- consistent with translating a digital sound driver's display name via the [language] config section, a common Allegro pattern for user-facing driver descriptions.", 1);
 	set_frame_size(0X461370, 0X314, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X461520,0X461530);
 	set_func_flags(0X461520,0x5404);
 	SetType(0X461520, "__time32_t __cdecl _mkgmtime_1(struct tm *const Tm);");
@@ -163345,6 +163345,10 @@ static Functions_8(void) {
 	add_func    (0X48DC70,0X48DCF3);
 	set_func_flags(0X48DC70,0x5400);
 	set_frame_size(0X48DC70, 0XC, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X48DD00,0X48DD84);
 	set_func_flags(0X48DD00,0x5400);
 	set_frame_size(0X48DD00, 0XC, 0, 0);
@@ -163414,10 +163418,6 @@ static Functions_8(void) {
 	set_func_cmt(0X48E8D0,	"[reversing] confirmed match\nsource obj (library): alfont_mt:ftinit.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alfont_mt:ftinit.obj", 1);
 	set_frame_size(0X48E8D0, 0, 0, 0);
 	define_local_var(0X48E8D0, 0X48E8F1, "[bp+0X4]", "library");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X48E900,0X48E976);
 	set_func_flags(0X48E900,0x5400);
 	SetType(0X48E900, "int __cdecl sub_48E900(char *FileName, int);");

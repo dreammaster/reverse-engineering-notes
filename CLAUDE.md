@@ -3048,6 +3048,11 @@ disassembly work.
   `sub_40976A` callees form a coherent virtual-screen-to-real-screen
   tint-compositing trio with no single clean 2011 name (predates
   `gfxDriver` entirely) — documented, deliberately left unnamed.
+  `StopAmbientSound` confirms a hard `channel==1` check (not a range)
+  and a third confirmation of the SOUNDCLIP "stop/destructor" vtable
+  slot. `IsButtonDown` confirms no middle-mouse-button support at all
+  (bounds check and error string both differ from source's LEFT/
+  RIGHT/MIDDLE).
 
 ## Third-party library identification (Task #10)
 
