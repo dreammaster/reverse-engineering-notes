@@ -2951,6 +2951,19 @@ disassembly work.
   offsets is gated by `cmp control_type,3`, confirming `GOBJ_
   INVENTORY=3` with zero drift. All six `GOBJ_*` values are now
   individually confirmed.
+- **`_display_main`'s assumed "10-parameter signature" was wrong —
+  genuinely 7 parameters.** Checking `CreateTextOverlay`'s long-open
+  "7 args vs. 10-param signature" detail for the first time (rather
+  than continuing to treat it as settled) found the frame declaration
+  itself has only 7 slots, matching both real callers exactly — no
+  mismatch ever existed. 2011's trailing `isThought`/`allowShrink`/
+  `overlayPositionFixed` are CONFIRMED ABSENT. Also fixed a real
+  `extract_prototypes.py` bug found in the process: 9 library matches
+  had a directory as `source_file` instead of `is_library:true`,
+  crashing the extractor — fixed, and a new `KNOWN_SIGNATURE_OVERRIDES`
+  mechanism added so this correction survives a future regeneration.
+  `prototypes.json` was badly stale (pre-rename names, missing several
+  hundred matches) and is now fully caught up.
 
 ## Third-party library identification (Task #10)
 

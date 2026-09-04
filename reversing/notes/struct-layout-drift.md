@@ -10432,3 +10432,50 @@ helper is reached only when the clicked control's type equals literal
 with zero drift. All six `GOBJ_*` values are now individually
 confirmed via live script-API or internal engine dispatch checks, none
 left as an inferred gap.
+
+### `_display_main`'s "10-parameter signature" claim was wrong -- genuinely 7 parameters, and a `prototypes.json`/`extract_prototypes.py` gap found in the process
+
+Revisiting `CreateTextOverlay`'s own long-standing "open detail" (its
+call to `_display_main` pushes only 7 arguments, apparently short of a
+10-parameter signature "established elsewhere") led to actually
+checking that claim for the first time, rather than continuing to
+treat it as settled. It was wrong: `_display_main`'s own stack frame
+(read directly from the disassembly) declares exactly SEVEN argument
+slots (`+8` through `+0x20`), and an exhaustive grep for every `call
+_display_main` site in the whole binary finds exactly two callers
+(`_display_at`, `CreateTextOverlay`) -- both pushing exactly 7
+arguments, matching the frame declaration and each other with zero
+discrepancy. There was never a mismatch to explain; the "10-parameter"
+figure in the original entry was an unchecked assumption carried over
+from skimming 2011's own declaration (`AC.CPP:12819`) rather than
+counting real pushes. This build's `_display_main` genuinely has only
+7 parameters -- 2011's trailing `isThought`/`allowShrink`/
+`overlayPositionFixed` are CONFIRMED ABSENT, not merely defaulted.
+Corrected in place in both entries with the error kept visible.
+
+Fixing this surfaced a real tooling gap worth recording for future
+sessions: `reversing/analysis/prototypes.json` (aim #3's
+"prepare-for-C-reconstruction" prototype extraction) had never actually
+been re-run since a large fraction of this session's own renames landed
+-- attempting to regenerate it hit an unrelated pre-existing bug first
+(9 hand-investigated `Common/`/`Engine/`-adjacent library matches had a
+`source_file` pointing at a whole library DIRECTORY, e.g.
+`Engine/libsrc/allegro-4.2.2`, instead of being flagged `is_library:
+true` the way 357 other library matches already are -- `extract_
+prototypes.py` tries to `read_text()` that path as a file and crashes).
+Fixed by adding the missing `is_library: true` flag to all 9 (`load_
+sample`/`play_sample`/`almp3_create_mp3stream`/`load_midi`/`play_midi`/
+`stop_midi`/`destroy_midi`/`set_color_depth`/`triangle`), matching this
+project's own established convention for library matches with no
+single readable reference file. With that fixed, the regeneration ran
+clean and turned out to be genuinely overdue -- the committed
+`prototypes.json` was still carrying pre-rename names like `run_
+dialog_request`/`stop_fast_forwarding` gone stale from this session's
+own earlier IDB-sync work, on top of not having several hundred newer
+matches at all. A new `KNOWN_SIGNATURE_OVERRIDES` mechanism was added
+to `extract_prototypes.py` itself (parallel to the existing
+`FLAT_CPP_NAMES` map) so the `_display_main` correction survives a
+future re-run instead of being silently re-clobbered by the naive
+reference-source extraction -- the right place for a signature
+divergence like this to live, since prototypes.json itself is a
+regenerated, not hand-maintained, artifact.

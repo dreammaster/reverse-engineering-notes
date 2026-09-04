@@ -53,6 +53,35 @@ FLAT_CPP_NAMES = {
     "GUIListBox__AddItem": ("GUIListBox::AddItem", "AddItem"),
 }
 
+# Functions where this build's ACTUAL disassembly parameter count/types are
+# independently confirmed (via the stack-frame declaration + every real call
+# site's own push count -- not just an assumption) to genuinely diverge from
+# the naive reference-source-extracted signature above. Applying the naive
+# extraction here via apply_prototypes.py would misread argument slots or
+# assert parameters that don't exist in this 2002 build. Keyed by display
+# name (same key as `results`); each override REPLACES the auto-extracted
+# entry wholesale after the main extraction loop, so it survives a fresh
+# `extract_prototypes.py` re-run rather than being silently clobbered by it.
+KNOWN_SIGNATURE_OVERRIDES = {
+    "_display_main": {
+        "status": "ok",
+        "prototype": "int _display_main(int xx, int yy, int wii, char *todis, int blocking, int usingfont, int asspch)",
+        "source_symbol": "_display_main",
+        "source_file": "Engine/AC.CPP",
+        "note": (
+            "2011 declares 10 params (AC.CPP:12819), but this build's own stack frame "
+            "has exactly 7 argument slots (+8..+0x20), and BOTH real call sites "
+            "(_display_at, CreateTextOverlay -- the only two callers) push exactly 7 "
+            "arguments each, matching 2011's first 7 params in order. The trailing "
+            "isThought/allowShrink/overlayPositionFixed parameters are CONFIRMED ABSENT "
+            "from this build entirely, not merely defaulted. See matches.json's own "
+            "sub_4136F6 entry and reversing/notes/struct-layout-drift.md for the full "
+            "correction writeup (a prior round had wrongly assumed a 10-param signature "
+            "without checking the frame declaration)."
+        ),
+    },
+}
+
 
 def flat_to_source_symbol(name):
     if name in FLAT_CPP_NAMES:
@@ -241,6 +270,10 @@ def main():
             "source_symbol": search_name,
             "source_file": source_file,
         }
+
+    for display_name, override in KNOWN_SIGNATURE_OVERRIDES.items():
+        if display_name in results:
+            results[display_name] = override
 
     ANALYSIS.mkdir(parents=True, exist_ok=True)
     (ANALYSIS / "prototypes.json").write_text(json.dumps(results, indent=1), encoding="utf-8")

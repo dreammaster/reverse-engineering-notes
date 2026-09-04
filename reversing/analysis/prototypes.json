@@ -548,12 +548,6 @@
   "source_symbol": "GetCharacterAt",
   "source_file": "Engine/AC.CPP"
  },
- "RunCharacterInteraction": {
-  "status": "ok",
-  "prototype": "void RunCharacterInteraction(int cc, int mood)",
-  "source_symbol": "RunCharacterInteraction",
-  "source_file": "Engine/AC.CPP"
- },
  "GetObjectX": {
   "status": "ok",
   "prototype": "int GetObjectX(int objj)",
@@ -992,12 +986,6 @@
   "source_symbol": "StopDialog",
   "source_file": "Engine/AC.CPP"
  },
- "SetDialogOption": {
-  "status": "ok",
-  "prototype": "void SetDialogOption(int dlg, int opt, int onoroff)",
-  "source_symbol": "SetDialogOption",
-  "source_file": "Engine/AC.CPP"
- },
  "ShakeScreen": {
   "status": "ok",
   "prototype": "void ShakeScreen(int severe)",
@@ -1056,12 +1044,6 @@
   "status": "ok",
   "prototype": "void GetLocationName(int xxx, int yyy, char*tempo)",
   "source_symbol": "GetLocationName",
-  "source_file": "Engine/AC.CPP"
- },
- "GetInvName": {
-  "status": "ok",
-  "prototype": "void GetInvName(int indx, char*buff)",
-  "source_symbol": "GetInvName",
   "source_file": "Engine/AC.CPP"
  },
  "MoveCharacter": {
@@ -1710,10 +1692,10 @@
   "source_symbol": "check_valid_file_handle",
   "source_file": "Engine/AC.CPP"
  },
- "run_dialog_request": {
+ "run_dialog_script": {
   "status": "ok",
-  "prototype": "int run_dialog_request(int parmtr)",
-  "source_symbol": "run_dialog_request",
+  "prototype": "int run_dialog_script(DialogTopic*dtpp, int dialogID, int offse, int optionIndex)",
+  "source_symbol": "run_dialog_script",
   "source_file": "Engine/AC.CPP"
  },
  "do_conversation": {
@@ -1842,10 +1824,10 @@
   "source_symbol": "EndSkippingUntilCharStops",
   "source_file": "Engine/AC.CPP"
  },
- "stop_fast_forwarding": {
+ "remove_screen_overlay": {
   "status": "ok",
-  "prototype": "void stop_fast_forwarding(void)",
-  "source_symbol": "stop_fast_forwarding",
+  "prototype": "void remove_screen_overlay(int type)",
+  "source_symbol": "remove_screen_overlay",
   "source_file": "Engine/AC.CPP"
  },
  "generate_light_table": {
@@ -1895,9 +1877,10 @@
  },
  "_display_main": {
   "status": "ok",
-  "prototype": "int _display_main(int xx, int yy, int wii, char*todis, int blocking, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed)",
+  "prototype": "int _display_main(int xx, int yy, int wii, char *todis, int blocking, int usingfont, int asspch)",
   "source_symbol": "_display_main",
-  "source_file": "Engine/AC.CPP"
+  "source_file": "Engine/AC.CPP",
+  "note": "2011 declares 10 params (AC.CPP:12819), but this build's own stack frame has exactly 7 argument slots (+8..+0x20), and BOTH real call sites (_display_at, CreateTextOverlay -- the only two callers) push exactly 7 arguments each, matching 2011's first 7 params in order. The trailing isThought/allowShrink/overlayPositionFixed parameters are CONFIRMED ABSENT from this build entirely, not merely defaulted. See matches.json's own sub_4136F6 entry and reversing/notes/struct-layout-drift.md for the full correction writeup (a prior round had wrongly assumed a 10-param signature without checking the frame declaration)."
  },
  "wsetscreen": {
   "status": "ok",
@@ -2054,5 +2037,747 @@
   "prototype": "int __thiscall GUIMain__get_control_type(GUIMain *this, int indx)",
   "source_symbol": "GUIMain::get_control_type",
   "source_file": "Engine/acgui.cpp"
+ },
+ "GUITextBox__KeyPress": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUITextBox__Draw": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUITextBox__WriteToFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUITextBox__ReadFromFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUILabel__WriteToFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUILabel__ReadFromFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acgui.cpp"
+ },
+ "GUIListBox__MouseMove": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIListBox__MouseDown": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIListBox__WriteToFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIListBox__ReadFromFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIInv__MouseOver": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIInv__MouseLeave": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIInv__MouseUp": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIInv__WriteToFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUIInv__ReadFromFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUISlider__MouseMove": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUISlider__MouseDown": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUISlider__MouseUp": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUISlider__WriteToFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "GUISlider__ReadFromFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acgui.h"
+ },
+ "cd_exit": {
+  "status": "ok",
+  "prototype": "void cd_exit(void)",
+  "source_symbol": "cd_exit",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "lengthof": {
+  "status": "ok",
+  "prototype": "static char * lengthof(int track)",
+  "source_symbol": "lengthof",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_play_from": {
+  "status": "ok",
+  "prototype": "int cd_play_from(int track)",
+  "source_symbol": "cd_play_from",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_current_track": {
+  "status": "ok",
+  "prototype": "int cd_current_track(void)",
+  "source_symbol": "cd_current_track",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_pause": {
+  "status": "ok",
+  "prototype": "void cd_pause(void)",
+  "source_symbol": "cd_pause",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_resume": {
+  "status": "ok",
+  "prototype": "void cd_resume(void)",
+  "source_symbol": "cd_resume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_stop": {
+  "status": "ok",
+  "prototype": "void cd_stop(void)",
+  "source_symbol": "cd_stop",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_get_tracks": {
+  "status": "ok",
+  "prototype": "int cd_get_tracks(int *first, int *last)",
+  "source_symbol": "cd_get_tracks",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_eject": {
+  "status": "ok",
+  "prototype": "void cd_eject(void)",
+  "source_symbol": "cd_eject",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_close": {
+  "status": "ok",
+  "prototype": "void cd_close(void)",
+  "source_symbol": "cd_close",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "init_directx_window": {
+  "status": "ok",
+  "prototype": "int init_directx_window(void)",
+  "source_symbol": "init_directx_window",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c"
+ },
+ "create_directx_window": {
+  "status": "ok",
+  "prototype": "static HWND create_directx_window(void)",
+  "source_symbol": "create_directx_window",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c"
+ },
+ "directx_wnd_proc": {
+  "status": "ok",
+  "prototype": "static LRESULT CALLBACK directx_wnd_proc(HWND wnd, UINT message, WPARAM wparam, LPARAM lparam)",
+  "source_symbol": "directx_wnd_proc",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c"
+ },
+ "wnd_thread_proc": {
+  "status": "ok",
+  "prototype": "static void wnd_thread_proc(HANDLE setup_event)",
+  "source_symbol": "wnd_thread_proc",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c"
+ },
+ "cd_play_range": {
+  "status": "ok",
+  "prototype": "int cd_play_range(int start, int end)",
+  "source_symbol": "cd_play_range",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_is_paused": {
+  "status": "ok",
+  "prototype": "int cd_is_paused(void)",
+  "source_symbol": "cd_is_paused",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_is_audio": {
+  "status": "ok",
+  "prototype": "int cd_is_audio(int track)",
+  "source_symbol": "cd_is_audio",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_get_volume": {
+  "status": "ok",
+  "prototype": "void cd_get_volume(int *c0, int *c1)",
+  "source_symbol": "cd_get_volume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "cd_set_volume": {
+  "status": "ok",
+  "prototype": "void cd_set_volume(int c0, int c1)",
+  "source_symbol": "cd_set_volume",
+  "source_file": "Engine/libsrc/libcda-0.4/libcdaWin.C"
+ },
+ "mouse_directx_init": {
+  "status": "ok",
+  "prototype": "static int mouse_directx_init(void)",
+  "source_symbol": "mouse_directx_init",
+  "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/win/wmouse.c"
+ },
+ "uconvert": {
+  "status": "ok",
+  "prototype": "char * uconvert(AL_CONST char *s, int type, char *buf, int newtype, int size)",
+  "source_symbol": "uconvert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c"
+ },
+ "get_config_int": {
+  "status": "ok",
+  "prototype": "int get_config_int(AL_CONST char *section, AL_CONST char *name, int def)",
+  "source_symbol": "get_config_int",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c"
+ },
+ "need_uconvert": {
+  "status": "ok",
+  "prototype": "int need_uconvert(AL_CONST char *s, int type, int newtype)",
+  "source_symbol": "need_uconvert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c"
+ },
+ "read_sound_config": {
+  "status": "ok",
+  "prototype": "static void read_sound_config(void)",
+  "source_symbol": "read_sound_config",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "read_keyboard_config": {
+  "status": "ok",
+  "prototype": "static void read_keyboard_config(void)",
+  "source_symbol": "read_keyboard_config",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
+ },
+ "sys_directx_init": {
+  "status": "ok",
+  "prototype": "static int sys_directx_init(void)",
+  "source_symbol": "sys_directx_init",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wsystem.c"
+ },
+ "get_config_text": {
+  "status": "ok",
+  "prototype": "AL_CONST char * get_config_text(AL_CONST char *msg)",
+  "source_symbol": "get_config_text",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c"
+ },
+ "al_assert": {
+  "status": "ok",
+  "prototype": "void al_assert(AL_CONST char *file, int line)",
+  "source_symbol": "al_assert",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+ },
+ "al_trace": {
+  "status": "ok",
+  "prototype": "void al_trace(AL_CONST char *msg, ...)",
+  "source_symbol": "al_trace",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+ },
+ "debug_exit": {
+  "status": "ok",
+  "prototype": "static void debug_exit(void)",
+  "source_symbol": "debug_exit",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+ },
+ "init_directx_ovl": {
+  "status": "ok",
+  "prototype": "static struct BITMAP * init_directx_ovl(int w, int h, int v_w, int v_h, int color_depth)",
+  "source_symbol": "init_directx_ovl",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c"
+ },
+ "init_directx_win": {
+  "status": "ok",
+  "prototype": "static struct BITMAP * init_directx_win(int w, int h, int v_w, int v_h, int color_depth)",
+  "source_symbol": "init_directx_win",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c"
+ },
+ "SpriteCache__initFile": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/sprcache.cpp"
+ },
+ "is_valid_character": {
+  "status": "ok",
+  "prototype": "int is_valid_character(int newchar)",
+  "source_symbol": "is_valid_character",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetMouseCursor": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ExecutingScript__run_another": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ExecutingScript__init": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acruntim.h"
+ },
+ "run_event_block": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "RunCharacterInteraction": {
+  "status": "ok",
+  "prototype": "void RunCharacterInteraction(int cc, int mood)",
+  "source_symbol": "RunCharacterInteraction",
+  "source_file": "Engine/AC.CPP"
+ },
+ "load_ac2game_dta": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "main": {
+  "status": "ok",
+  "prototype": "int main(int argc, char*argv[])",
+  "source_symbol": "main",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetInvItemPic": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "sub_40CF16": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetDialogOption": {
+  "status": "ok",
+  "prototype": "void SetDialogOption(int dlg, int opt, int onoroff)",
+  "source_symbol": "SetDialogOption",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SaveGameSlot": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetTranslation": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "is_valid_object": {
+  "status": "ok",
+  "prototype": "inline int is_valid_object(int obtest)",
+  "source_symbol": "is_valid_object",
+  "source_file": "Engine/AC.CPP"
+ },
+ "decrypt_text": {
+  "status": "ok",
+  "prototype": "void decrypt_text(char*toenc)",
+  "source_symbol": "decrypt_text",
+  "source_file": "Common/acroom.h"
+ },
+ "read_string_decrypt": {
+  "status": "ok",
+  "prototype": "void read_string_decrypt(FILE *ooo, char *sss)",
+  "source_symbol": "read_string_decrypt",
+  "source_file": "Common/acroom.h"
+ },
+ "read_dictionary": {
+  "status": "ok",
+  "prototype": "void read_dictionary(WordsDictionary *dict, FILE *writeto)",
+  "source_symbol": "read_dictionary",
+  "source_file": "Common/acroom.h"
+ },
+ "load_mod": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "play_mod": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "almp3_create_mp3": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "pack_fopen": {
+  "status": "ok",
+  "prototype": "PACKFILE * pack_fopen(AL_CONST char *filename, AL_CONST char *mode)",
+  "source_symbol": "pack_fopen",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/file.c"
+ },
+ "pack_fread": {
+  "status": "ok",
+  "prototype": "long pack_fread(void *p, long n, PACKFILE *f)",
+  "source_symbol": "pack_fread",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/file.c"
+ },
+ "pack_fclose": {
+  "status": "ok",
+  "prototype": "int pack_fclose(PACKFILE *f)",
+  "source_symbol": "pack_fclose",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/file.c"
+ },
+ "SetWalkBehindBase": {
+  "status": "ok",
+  "prototype": "void SetWalkBehindBase(int wa, int bl)",
+  "source_symbol": "SetWalkBehindBase",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ccGetCurrentInstance": {
+  "status": "ok",
+  "prototype": "ccInstance * ccGetCurrentInstance(void)",
+  "source_symbol": "ccGetCurrentInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "replace_macro_tokens": {
+  "status": "ok",
+  "prototype": "void replace_macro_tokens(char*statusbarformat, char*cur_stb_text)",
+  "source_symbol": "replace_macro_tokens",
+  "source_file": "Engine/AC.CPP"
+ },
+ "cancel_all_scripts": {
+  "status": "ok",
+  "prototype": "void cancel_all_scripts(void)",
+  "source_symbol": "cancel_all_scripts",
+  "source_file": "Engine/AC.CPP"
+ },
+ "ccAbortInstance": {
+  "status": "ok",
+  "prototype": "void ccAbortInstance(ccInstance * cinst)",
+  "source_symbol": "ccAbortInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "ccAbortAndDestroyInstance": {
+  "status": "ok",
+  "prototype": "void ccAbortAndDestroyInstance(ccInstance * inst)",
+  "source_symbol": "ccAbortAndDestroyInstance",
+  "source_file": "Common/CSRUN.CPP"
+ },
+ "update_ambient_sound_vol": {
+  "status": "ok",
+  "prototype": "void update_ambient_sound_vol(void)",
+  "source_symbol": "update_ambient_sound_vol",
+  "source_file": "Engine/AC.CPP"
+ },
+ "play_speech": {
+  "status": "ok",
+  "prototype": "int play_speech(int charid, int sndid)",
+  "source_symbol": "play_speech",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetTextDisplayTime": {
+  "status": "ok",
+  "prototype": "int GetTextDisplayTime(char *text, int canberel)",
+  "source_symbol": "GetTextDisplayTime",
+  "source_file": "Engine/AC.CPP"
+ },
+ "find_overlay_of_type": {
+  "status": "ok",
+  "prototype": "int find_overlay_of_type(int typ)",
+  "source_symbol": "find_overlay_of_type",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wputblock": {
+  "status": "ok",
+  "prototype": "*/   void wputblock(int xx, int yy, block bll, int xray)",
+  "source_symbol": "wputblock",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "update_music_volume": {
+  "status": "ok",
+  "prototype": "void update_music_volume(void)",
+  "source_symbol": "update_music_volume",
+  "source_file": "Engine/AC.CPP"
+ },
+ "my_load_wave": {
+  "status": "ok",
+  "prototype": "SOUNDCLIP * my_load_wave(const char *filename, int voll, int loop)",
+  "source_symbol": "my_load_wave",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "my_load_mp3": {
+  "status": "ok",
+  "prototype": "SOUNDCLIP * my_load_mp3(const char *filname, int voll)",
+  "source_symbol": "my_load_mp3",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "voice_set_volume": {
+  "status": "ok",
+  "prototype": "void voice_set_volume(int voice, int volume)",
+  "source_symbol": "voice_set_volume",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "voice_set_pan": {
+  "status": "ok",
+  "prototype": "void voice_set_pan(int voice, int pan)",
+  "source_symbol": "voice_set_pan",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "voice_set_playmode": {
+  "status": "ok",
+  "prototype": "void voice_set_playmode(int voice, int playmode)",
+  "source_symbol": "voice_set_playmode",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "voice_start": {
+  "status": "ok",
+  "prototype": "void voice_start(int voice)",
+  "source_symbol": "voice_start",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "release_voice": {
+  "status": "ok",
+  "prototype": "void release_voice(int voice)",
+  "source_symbol": "release_voice",
+  "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c"
+ },
+ "my_load_static_mp3": {
+  "status": "ok",
+  "prototype": "SOUNDCLIP * my_load_static_mp3(const char *filname, int voll, bool loop)",
+  "source_symbol": "my_load_static_mp3",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "roomstruct__roomstruct": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acroom.h"
+ },
+ "sprstruc__sprstruc": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acroom.h"
+ },
+ "FullAnimation__FullAnimation": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acroom.h"
+ },
+ "AnimationStruct__AnimationStruct": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acroom.h"
+ },
+ "PolyPoints__PolyPoints": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/acroom.h"
+ },
+ "run_text_script_2iparam": {
+  "status": "ok",
+  "prototype": "int run_text_script_2iparam(ccInstance*sci, char*tsname, int iparam, int param2)",
+  "source_symbol": "run_text_script_2iparam",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wtextcolor": {
+  "status": "failed",
+  "reason": "source file not found: Common/wgt2allg.cpp"
+ },
+ "PlayMusic": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "is_mod_playing": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "stop_mod": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "destroy_mod": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/acsound.cpp"
+ },
+ "GetInvName": {
+  "status": "ok",
+  "prototype": "void GetInvName(int indx, char*buff)",
+  "source_symbol": "GetInvName",
+  "source_file": "Engine/AC.CPP"
+ },
+ "find_looporder_index": {
+  "status": "ok",
+  "prototype": "int find_looporder_index(int curloop)",
+  "source_symbol": "find_looporder_index",
+  "source_file": "Engine/acchars.cpp"
+ },
+ "ccFreeScript": {
+  "status": "ok",
+  "prototype": "void ccFreeScript(ccScript * ccs)",
+  "source_symbol": "ccFreeScript",
+  "source_file": "Common/cscommon.cpp"
+ },
+ "main_loop_until": {
+  "status": "ok",
+  "prototype": "void main_loop_until(int untilwhat, int udata, int mousestuff)",
+  "source_symbol": "main_loop_until",
+  "source_file": "Engine/AC.CPP"
+ },
+ "isTimerExpired": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "add_to_sprite_list": {
+  "status": "ok",
+  "prototype": "void add_to_sprite_list(IDriverDependantBitmap* spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind)",
+  "source_symbol": "add_to_sprite_list",
+  "source_file": "Engine/AC.CPP"
+ },
+ "clear_sprite_list": {
+  "status": "ok",
+  "prototype": "void clear_sprite_list(void)",
+  "source_symbol": "clear_sprite_list",
+  "source_file": "Engine/AC.CPP"
+ },
+ "redo_walkable_areas": {
+  "status": "ok",
+  "prototype": "void redo_walkable_areas(void)",
+  "source_symbol": "redo_walkable_areas",
+  "source_file": "Engine/AC.CPP"
+ },
+ "SetObjectIgnoreWalkbehinds": {
+  "status": "ok",
+  "prototype": "void SetObjectIgnoreWalkbehinds(int cha, int clik)",
+  "source_symbol": "SetObjectIgnoreWalkbehinds",
+  "source_file": "Engine/AC.CPP"
+ },
+ "GetTime": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "LoseInventory": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "update_events": {
+  "status": "ok",
+  "prototype": "void update_events(void)",
+  "source_symbol": "update_events",
+  "source_file": "Engine/AC.CPP"
+ },
+ "processallevents": {
+  "status": "ok",
+  "prototype": "void processallevents(int numev, EventHappened*evlist)",
+  "source_symbol": "processallevents",
+  "source_file": "Engine/AC.CPP"
+ },
+ "PlaySound": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wsetrgb": {
+  "status": "ok",
+  "prototype": "void wsetrgb(int coll, int r, int g, int b, color * pall)",
+  "source_symbol": "wsetrgb",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "wcolrotate": {
+  "status": "ok",
+  "prototype": "void wcolrotate(unsigned char start, unsigned char finish, int dir, color * pall)",
+  "source_symbol": "wcolrotate",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "wnewblock": {
+  "status": "ok",
+  "prototype": "block wnewblock(int x1, int y1, int x2, int y2)",
+  "source_symbol": "wnewblock",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "RestartGame": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Engine/AC.CPP"
+ },
+ "wtexttransparent": {
+  "status": "failed",
+  "reason": "definition not found in source",
+  "source_file": "Common/Wgt2allg.h"
+ },
+ "GetMaxScreenHeight": {
+  "status": "ok",
+  "prototype": "int GetMaxScreenHeight(void)",
+  "source_symbol": "GetMaxScreenHeight",
+  "source_file": "Engine/AC.CPP"
+ },
+ "check_click_on_character": {
+  "status": "ok",
+  "prototype": "int check_click_on_character(int xx, int yy, int mood)",
+  "source_symbol": "check_click_on_character",
+  "source_file": "Engine/AC.CPP"
+ },
+ "check_click_on_object": {
+  "status": "ok",
+  "prototype": "int check_click_on_object(int xx, int yy, int mood)",
+  "source_symbol": "check_click_on_object",
+  "source_file": "Engine/AC.CPP"
+ },
+ "construct_object_gfx": {
+  "status": "ok",
+  "prototype": "0 otherwise int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware)",
+  "source_symbol": "construct_object_gfx",
+  "source_file": "Engine/AC.CPP"
+ },
+ "put_sprite_256": {
+  "status": "ok",
+  "prototype": "void put_sprite_256(int xxx, int yyy, block piccy)",
+  "source_symbol": "put_sprite_256",
+  "source_file": "Engine/AC.CPP"
+ },
+ "find_nearest_walkable_area": {
+  "status": "ok",
+  "prototype": "void find_nearest_walkable_area(int *xx, int *yy)",
+  "source_symbol": "find_nearest_walkable_area",
+  "source_file": "Engine/acchars.cpp"
  }
 }
