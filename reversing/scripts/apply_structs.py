@@ -1375,7 +1375,11 @@ struct GUISlider {
                             // plus agrees exactly with the WriteToFile bulk-write offset.
   // DRIFT: the 3 fields declared right after mpressed in 2011 (handlepic, handleoffset, bgimage,
   // Common/acgui.h:218) are NOT part of this build's WriteToFile bulk write -- absent or persisted
-  // differently. Confirmed size so far: 0x30 (minimum).
+  // differently. CONFIRMED ABSENT (GUISlider::Draw round, behavioral not just save-format
+  // evidence): Draw's own body never checks handlepic>0, never reads bgimage, and never adds
+  // handleoffset anywhere in its bar/handle coordinate math -- all three drawing-time behaviors
+  // 2011 gates on these fields are simply not present, not just unpersisted. Confirmed size so
+  // far: 0x30 (minimum).
 };
 
 struct SpriteCache {

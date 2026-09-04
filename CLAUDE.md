@@ -2973,6 +2973,15 @@ disassembly work.
   no cached `fpsDisplay` bitmap, no `gfxDriver`/DDB machinery, no
   second "Loop %ld" line — all CONFIRMED ABSENT. Upgraded to high
   confidence.
+- **`GUISlider::Draw` upgraded to high confidence, plus `wsetcolor`/
+  `rectfill`/`currentcolor` identified.** A prior medium-confidence
+  vtable match turns out to be byte-perfect through its floating-point
+  handle-position formula (`fild`/`fidiv`/`fimul`/`fsub 2.0`/`ftol`
+  matching source's cast expression exactly). Draws via `wsetcolor`+
+  `rectfill`/`line()` (a 3D-bevel rectangle), newly identifying all
+  three plus the `currentcolor` global. CONFIRMED ABSENT (upgrading a
+  save-format-only inference to a full behavioral one): `handlepic`/
+  `bgimage`/`handleoffset` custom-graphic support.
 
 ## Third-party library identification (Task #10)
 

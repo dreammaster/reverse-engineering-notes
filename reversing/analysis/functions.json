@@ -40,14 +40,14 @@
   "is_named": true
  },
  {
-  "name": "sub_4017CF",
+  "name": "__my_setcolor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_40187F",
+  "name": "wsetcolor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_401895",
@@ -2480,9 +2480,9 @@
   "is_named": true
  },
  {
-  "name": "sub_423EF0",
+  "name": "rectfill",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "getpixel",

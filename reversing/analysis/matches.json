@@ -4614,8 +4614,8 @@
     "new_name": "GUISlider__Draw",
     "source_file": "Common/acgui.h",
     "source_line": 226,
-    "confidence": "medium",
-    "evidence": "void GUISlider::Draw() (declared acgui.h:226, body in Engine/acgui.cpp:127). Confidence medium (positional + first-field match, not fully traced): vtable slot 6/+0x18 of off_4AD530, pinned by the already-confirmed MouseMove/MouseDown/MouseUp/WriteToFile/ReadFromFile in the same table (DATA XREF .rdata:004AD548). Has a large local frame (0x40/64 bytes, ~16 int locals) consistent with source's many bar/handle coordinate locals (bartlx,bartly,barbrx,barbry,handtlx,handtly,handbrx,handbry,thickness), and its first real operation reads [this+0x20] (min, matching source's opening \"if (min>=max) max=min+1;\" check)."
+    "confidence": "high",
+    "evidence": "void GUISlider::Draw() (declared acgui.h:226, body in Engine/acgui.cpp:127). Confidence medium (positional + first-field match, not fully traced): vtable slot 6/+0x18 of off_4AD530, pinned by the already-confirmed MouseMove/MouseDown/MouseUp/WriteToFile/ReadFromFile in the same table (DATA XREF .rdata:004AD548). Has a large local frame (0x40/64 bytes, ~16 int locals) consistent with source's many bar/handle coordinate locals (bartlx,bartly,barbrx,barbry,handtlx,handtly,handbrx,handbry,thickness), and its first real operation reads [this+0x20] (min, matching source's opening \"if (min>=max) max=min+1;\" check). UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): the opening three clamp checks (\"if(min>=max) max=min+1; if(value>max) value=max; if(value<min) value=min;\") match exactly. The horizontal/vertical branch dispatch (wid>hit) and the ENTIRE floating-point handle-position formula match with zero deviation -- \"fild(value-min); fidiv(max-min); fimul(wid-4); fsub 2.0; ftol\" is a byte-perfect match to source's \"(int)(((float)(value-min)/(float)(max-min))*(float)(wid-4)-2)\" (and its vertical-orientation mirror using hit instead of wid), including every bar/handle coordinate (bartlx/bartly/barbrx/barbry/handtlx/handtly/handbrx/handbry, all matching source's own variable roles exactly). Draws via a sequence of wsetcolor(sub_40187F, newly matched)+rectfill(sub_423EF0, newly matched, Allegro's public vtable-dispatched API)/line() calls forming a classic Windows 3D-bevel rectangle (bar fill, then dark/light edge lines, then the handle rectangle drawn the same way) -- a genuinely different, simpler rendering technique than source's own (2011 also supports drawing this as a solid rect but the shape is broadly recognizable). CONFIRMED ABSENT (behavioral confirmation, upgrading the prior save-format-only inference in apply_structs.py to a decisive one): the ENTIRE `handlepic>0` custom-handle-graphic branch (source lines ~153-159/173-179, the hand-centering adjustment), the `handleoffset` scripted offset addition, and the entire `bgimage>0` tiled-background-image drawing block (source lines ~182-206+, including its draw_sprite_compensate loop) are ALL absent -- this build's slider rendering has no per-instance custom graphics at all, just the fixed 3D-bevel look. Also identifies dword_4F0734 as `currentcolor` (Common/Wgt2allg.h's own global color state) via wsetcolor's own body."
   },
   {
     "kind": "manual",
@@ -6032,5 +6032,33 @@
     "source_line": 335,
     "confidence": "high",
     "evidence": "void find_nearest_walkable_area(int*,int*) at acchars.cpp:392-407, FUSED with its own callee find_nearest_walkable_area_within(int*,int*,int range,int step) at acchars.cpp:335-390 -- MoveToWalkableArea's own long-open lead, closed this round. The outer check matches exactly: getpixel(rstruc.object [really the walkable-areas mask, see RoomStruct's own struct-label-shift correction], [arg_0],[arg_4]); if nonzero (already on a walkable area), skip straight to the end leaving *arg_0/*arg_4 UNCHANGED -- matching source's `if(pixValue==0){search}` (inverted-sense early-out) exactly. The search body is a near line-for-line match to `find_nearest_walkable_area_within`'s own whole-screen fallback pass specifically (range=-1, step=5): nearest=99999 (var_18=0x1869F, exact), a nested 2D scan from (0,14) to (width,height) in steps of 5 (var_4/var_C, bounded by word_522F08/word_522F0A -- the former already confirmed RoomStruct.width, the latter now confirmed RoomStruct.height via the SAME zero-slack address arithmetic, rstruc+0x3882 = 0x522F0A, a further usage-site confirmation on top of its existing literal-init-value evidence), skipping non-walkable pixels (getpixel==0) and out-of-bounds candidates (checked against the already-confirmed RoomStruct.left/right/top/bottom, word_51FF4E/50/52/54) exactly matching source's own boundary test, computing squared-distance via imul+imul+add then sqrt+_ftol (an exact match to source's `(int)sqrt((double)((ex-xLowRes)^2+(ey-yLowRes)^2))`), keeping the closest valid candidate, and writing it back into *arg_0/*arg_4 only if the final nearest distance is under 90000 (0x15F90, exact literal match to source's own threshold). CONFIRMED ABSENT (two real, confirmable drifts): (1) this build does ONLY the single whole-screen 5px-step pass -- 2011's own two-stage optimization (a fast, fine-grained 20px-radius/2px-step search tried FIRST, falling back to the expensive whole-room 5px-step scan only if that fails) is nowhere in this function; every MoveToWalkableArea call here pays the full whole-room scan cost, never the cheap local one. (2) source's own leading 'tweak because people forget to move the edges sometimes' adjustment (if the starting position is already past an edge, that edge is widened to the room's own full extent before the bounds check) is absent -- the boundary comparisons read left/right/top/bottom directly with no such widening step. Also confirms this function performs NO low-res/hi-res coordinate scaling anywhere (no convert_to_low_res/convert_back_to_high_res-equivalent calls, and the already-established current_screen_resolution_multiplier_x/y globals are untouched here) -- operates directly in the mask's own pixel coordinate space throughout, consistent with this build's simpler, single-resolution-concept room-coordinate handling elsewhere."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40187F",
+    "new_name": "wsetcolor",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 470,
+    "confidence": "high",
+    "evidence": "void wsetcolor(int nval) at Wgt2allg.h:470-473: \"__my_setcolor(&currentcolor,nval);\" -- exact match: this function's entire 3-instruction body is \"push arg_0; push offset dword_4F0734; call sub_4017CF\", matching the call shape precisely (a 2-argument forward to a setter function, second argument being the pointer to a fixed global). Identifies dword_4F0734 as `currentcolor` and sub_4017CF as `__my_setcolor`. Called from GUISlider::Draw (already matched, several sites) and __actual_invscreen (already matched, whose own entry already suspected this exact function as 'a wsetcolor-equivalent wrapper' without giving it a name)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4017CF",
+    "new_name": "__my_setcolor",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": 429,
+    "confidence": "medium",
+    "evidence": "void __my_setcolor(int *ctset, int newcol) at Wgt2allg.h:429-460 -- confirmed as wsetcolor's own callee (see wsetcolor's entry) via exact 2-argument call shape (a pointer target and a color value). Internal branching (8-bit vs. true-color vs. 15/16-bit paths, the SWAP_RB_HICOL-conditional color channel reordering) not individually traced this round -- named by caller-shape/role match only, medium confidence pending a dedicated internal read."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_423EF0",
+    "new_name": "rectfill",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's public rectfill(BITMAP*,x1,y1,x2,y2,color) API -- exact 6-argument vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x38=rectfill slot), matching the same BITMAP_METHODS-dispatch pattern already established for getpixel(+0x20)/putpixel(+0x24). Called from GUISlider::Draw (already matched) to fill both the slider bar and handle rectangles. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its vtable target implementation not chased further."
   }
 ]

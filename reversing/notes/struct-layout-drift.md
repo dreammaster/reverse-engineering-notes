@@ -10505,3 +10505,36 @@ bitmap, no `clear_to_color`/`create_bitmap_ex` staging step, no
 apparatus for this feature is CONFIRMED ABSENT, replaced by one direct
 text draw per frame. Upgraded to HIGH confidence; `dword_523118`
 renamed to `fps`.
+
+### `GUISlider::Draw` upgraded to high confidence, plus `wsetcolor`/`rectfill`/`currentcolor` identified
+
+Another MEDIUM-confidence vtable match (pinned only by slot position
+and a first-field check) turns out, once fully read, to be a
+byte-perfect match through its most distinctive part: the floating-
+point handle-position formula. This build's `fild`/`fidiv`/`fimul`/
+`fsub 2.0`/`ftol` sequence matches source's `(int)(((float)(value-min)/
+(float)(max-min))*(float)(wid-4)-2)` (and its vertical-orientation
+mirror) exactly, along with every bar/handle coordinate variable
+(`bartlx`/`bartly`/`barbrx`/`barbry`/`handtlx`/`handtly`/`handbrx`/
+`handbry`) matching source's own roles one for one. The opening
+`min>=max`/`value>max`/`value<min` clamp trio also matches verbatim.
+
+Drawing itself uses a genuinely different technique than a literal
+reading of source suggests: a sequence of `wsetcolor`+`rectfill`/
+`line()` calls forming a classic Windows 3D-bevel rectangle (fill,
+dark edge, light edge) for both the bar and the handle -- newly
+identifying `sub_40187F` as `wsetcolor` (`Common/Wgt2allg.h:470-473`,
+an exact 3-instruction match forwarding to `__my_setcolor`), its own
+callee `sub_4017CF` as `__my_setcolor` (medium confidence, internal
+branching not individually traced), the global it targets as
+`currentcolor`, and `sub_423EF0` as Allegro's public `rectfill`
+(vtable-dispatched at `+0x38`, the same `BITMAP_METHODS` pattern
+already established for `getpixel`/`putpixel` -- left at the library
+boundary per this project's own scope rule).
+
+CONFIRMED ABSENT, upgrading a previously save-format-only inference to
+a full behavioral one: `GUISlider::Draw` never checks `handlepic>0`,
+never reads `bgimage`, and never adds `handleoffset` anywhere in its
+coordinate math -- `apply_structs.py`'s own `GUISlider` comment
+(originally inferred only from `WriteToFile`'s bulk-write NOT covering
+these three fields) is updated to reflect this stronger evidence.
