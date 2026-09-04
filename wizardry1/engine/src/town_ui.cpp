@@ -738,4 +738,45 @@ TownExit runTown(Ui &ui, TownWorld &w) {
     }
 }
 
+// ---- CHK4WIN (SHOPS P01021D) + CONGRATS (P01021E) --------------------
+bool endgameCheck(Ui &ui, Party &party) {
+    bool won = false;
+    for (int i = 0; i < party.count() && !won; ++i) {
+        const Character &m = party.member(i);
+        for (int k = 0; k < m.possCount; ++k)
+            if (m.poss[k].itemIndex == 94) { won = true; break; }   // Amulet of Werdna
+    }
+    if (!won) return false;
+
+    for (int i = 0; i < party.count(); ++i) {                // CONGRATS
+        Character &m = party.member(i);
+        m.possCount = 0;                                     // surrender all equipment
+        m.gold.v %= 10000;                                   // ... and most of the gold
+        m.exp.v += 250000;                                   // the Overlord's boon
+        // LOSTXYL.AWARDS bit 0 (the Honor Guard chevron) is cosmetic, not modelled
+    }
+
+    static const char *kLines[] = {
+        "        *** CONGRATULATIONS ***",             "",
+        "YOU HAVE COMPLETED YOUR QUEST AND THE",
+        "AMULET IS NOW BACK IN THE HANDS OF",
+        "YOUR BENIFICENT RULER, TREBOR.",              "",
+        "IN RETURN, HE GRANTS YOU A BOON OF",
+        "250,000 EXPERIENCE POINTS EACH, AND",
+        "INITIATION INTO THE OVERLORD'S HONOR GUARD.", "",
+        "YOU MUST GIVE UP YOUR EQUIPMENT AND MOST",
+        "OF YOUR MONEY TO PAY FOR YOUR INITIATION.",
+    };
+    TextScreen &t = ui.ts();
+    t.resetWindow();
+    t.putChar(12);
+    for (int i = 0; i < int(sizeof kLines / sizeof kLines[0]); ++i) {
+        t.gotoXY(0, i); t.write(kLines[i]);
+    }
+    t.gotoXY(0, 23);
+    ui.pressAnyKey("PRESS ANY KEY, HONORED ONES");
+    std::printf("CHK4WIN| the Amulet of Werdna is recovered -- the quest is won\n");
+    return true;
+}
+
 } // namespace wiz

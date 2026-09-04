@@ -114,12 +114,14 @@ Decided direction (2026-09-02):
       **Boltac's Trading Post** (buy / sell / uncurse / identify; per-object
       stock in `shop.dat`; `TOBJREC` decoded — `engine/wiz/shop.h`), the
       **Temple of Radiant Cant** (cure / resurrect roster characters, paid by
-      a party member; `engine/wiz/temple.h`), and the Edge of Town.
+      a party member; `engine/wiz/temple.h`), the Edge of Town, and
+      **`CHK4WIN`** (`endgameCheck` — the Amulet of Werdna → the
+      CONGRATULATIONS ending + the 250,000-XP boon).
       `engine/wiz/party.{h,cpp}` (`Party` = 6 slots + roster indices +
       `GETALIGN` + `resyncFromRoster`), `engine/wiz/town_ui.{h,cpp}`
       (`runTown(Ui&, TownWorld&)` → `TownExit`). `wiz1 town` (SDL) /
       `wiz1 town-test` + `wiz1 inn-test` + `wiz1 temple-test` (headless, CMake
-      tests). **The town is complete.**
+      tests incl. `chk4win`). **The town is complete.**
 - [~] `RUNNER` — the maze. `docs/maze.md` maps the whole segment. The
       **`TMAZE` bit packing is cracked** (`../../docs/file-formats.md`) and validated
       by rendering level 1. Ported: `engine/wiz/maze.h`/`.cpp` (`MazeLevel`
@@ -173,9 +175,12 @@ Decided direction (2026-09-02):
       `LOSTXYL.LOCATION` — a death / camp `DISBAND` leaves a body in the
       dungeon, and the maze `I` command (`EXPLROOM`/`LOOKLOST`/`PICKUP`)
       carries it out for resurrection at the Temple.
-- [x] **Phase 3 is functionally complete** — the standalone engine plays a
-      full loop (roster → town → maze → combat → camp → save) with the whole
-      `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` / `SHOPS` families ported.
+- [x] **Phase 3 is functionally complete** — the standalone engine plays the
+      whole game, character creation through the Werdna kill and the
+      CONGRATULATIONS ending (`CHK4WIN`): roster → town → maze → combat →
+      camp → save, with the whole `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` /
+      `SHOPS` families ported.  Only visible gap: monster illustrations
+      (the `200.MONSTERS` art is compressed; combat shows monster names).
 - [x] Validate the PRNG against the real interpreter — **done, bit-exact**
       (DOSBox capture 2026-09-04, `../../docs/rng-validation.md`).  Outcome rolls
       advance by exactly `rng.h next()`; the keyboard "stir" only touches

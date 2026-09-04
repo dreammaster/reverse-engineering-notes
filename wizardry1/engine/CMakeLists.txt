@@ -97,7 +97,7 @@ add_test(NAME shop_buy_sell
 # buy #1 (25 gp) + #2 (15 gp), sell #1 back unidentified-safe (identified: 12 gp):
 # 185 - 25 - 15 + 12 = 157, keeping item #2.
 set_tests_properties(shop_buy_sell PROPERTIES
-    PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*157gp poss: #2")
+    PASS_REGULAR_EXPRESSION "exit: MAZE(.|\n)*157gp [0-9]+ep poss: #2")
 add_test(NAME temple_rules COMMAND wiz1 temple-test)
 set_tests_properties(temple_rules PROPERTIES
     PASS_REGULAR_EXPRESSION "paralyzed.*CURED(.|\n)*ashes-lo-vit.*WORSENED(.|\n)*WILL BE BURIED")
@@ -145,6 +145,15 @@ add_test(NAME town_to_maze
 # form a party, Edge of Town -> Maze, decline stairs, step twice, leave:
 set_tests_properties(town_to_maze PROPERTIES
     PASS_REGULAR_EXPRESSION "maze exit: TO-TOWN  pos .0,2. NORTH")
+add_test(NAME chk4win
+         COMMAND wiz1 town-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA"
+                 "GATHESUS\\r\\r\\rEMNFF\\ex" "" "" "grant=0:94")
+# CHK4WIN: THESUS carries the Amulet of Werdna (obj 94) out of the maze ->
+# the quest is won: +250000 EXP each, all equipment surrendered ("poss:" empty).
+set_tests_properties(chk4win PROPERTIES
+    PASS_REGULAR_EXPRESSION "the quest is won(.|\n)*250000ep poss:[^#]")
 add_test(NAME combat_fight
          COMMAND wiz1 combat-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"

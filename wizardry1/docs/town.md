@@ -160,6 +160,22 @@ HAS BEEN SLAUGHTERED") waits for RETURN.  A recoverable body is carried out
 by a later party's maze `I`nspect (see `docs/maze.md`) and resurrected at
 the Temple.  `wiz1 cemetery-test` (test `cemetery`).
 
+### CHK4WIN / CONGRATS — `P01021D` / `P01021E`  (ported: `endgameCheck`, `engine/wiz/town_ui.h`)
+
+`XCHK4WIN` is reached every time the party returns to the Castle from the
+maze — the stairs to level 0 (`NEWMAZE`: `IF MAZELEV = 0`), a `MALOR` that
+lands in the moat / volcano / at the castle, and a combat `LOKTOFEIT`.
+`CHK4WIN` scans every member's pack for **object 94, the Amulet of Werdna**;
+if it is there, `CONGRATS` runs: `POSSCNT := 0` (surrender all equipment),
+`GOLD.MID/HIGH := 0` (keep only the low base-10000 limb — "most of your
+money"), `EXP += 250000` each, set the Honor-Guard chevron award bit
+(`LOSTXYL.AWARDS` bit 0 — cosmetic, not modelled), and show the
+CONGRATULATIONS screen.  Then the game continues at the Castle.
+
+The engine calls `endgameCheck(ui, party)` from `playTownLoop` (and
+`town-test`) on any non-wiped maze exit.  `grant=S:OBJ` in `town-test`
+plants an item for the `chk4win` test.
+
 ### Edge of Town — `EDGETOWN` `P01021A`
 
 Menu depends on `PARTYCNT`:

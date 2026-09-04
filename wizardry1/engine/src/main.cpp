@@ -492,6 +492,8 @@ static void playTownLoop(Ui &ui, TownWorld &world, bool startInTown) {
             if (me == MazeExit::PartyWiped)          // XGOTO := XCEMETRY
                 runCemetery(ui, world.party, world.roster,
                             mst.pos.x, mst.pos.y, mst.level, world.rng);
+            else                                     // XGOTO := XCHK4WIN
+                endgameCheck(ui, world.party);
             // Persist the delve's outcome (deaths, disband-in-dungeon, HP,
             // recovered bodies) right away.
             if (!world.rosterPath.empty()) world.roster.save(world.rosterPath);
@@ -548,7 +550,7 @@ static int cmdTown(int argc, char **argv) {
 // sets roster slot 7 to status 5 (DEAD), HP 0.
 static int cmdTownTest(int argc, char **argv) {
     if (argc < 5) {
-        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir] [ASCII.KRN] [wound=S:ST]");
+        std::puts("town-test <CHARSET> <SCENARIO.DATA> <keyscript> [dumpdir] [ASCII.KRN] [wound=S:ST | grant=S:OBJ]");
         return 2;
     }
     Font font;
@@ -572,6 +574,15 @@ static int cmdTownTest(int argc, char **argv) {
                         slot, roster.slot(slot).name.c_str(), st);
         }
     }
+    if (argc > 7 && std::strncmp(argv[7], "grant=", 6) == 0) {
+        int slot = -1, obj = 0;
+        if (std::sscanf(argv[7] + 6, "%d:%d", &slot, &obj) == 2 &&
+            slot >= 0 && slot < roster.count() && roster.slot(slot).possCount < 8) {
+            Character &r = roster.slot(slot);
+            r.poss[r.possCount++] = Possession{false, false, true, obj};
+            std::printf("granted roster slot %d object #%d\n", slot, obj);
+        }
+    }
 
     auto p = makeNullPlatform(unescape(argv[4]), argc > 5 ? argv[5] : "");
     Rng rng;
@@ -584,6 +595,7 @@ static int cmdTownTest(int argc, char **argv) {
         static const char *mx[] = {"TO-TOWN", "PARTY-WIPED", "WINDOW-CLOSED"};
         std::printf("maze exit: %s  pos (%d,%d) %s level %d\n", mx[int(me)],
                     mst.pos.x, mst.pos.y, dirName(mst.pos.dir), mst.level);
+        if (me == MazeExit::ToTown) endgameCheck(ui, party);   // XGOTO := XCHK4WIN
     }
 
     static const char *kExit[] = {"ROLLER", "MAZE", "LEAVE", "WINDOW-CLOSED"};
@@ -591,9 +603,10 @@ static int cmdTownTest(int argc, char **argv) {
     std::printf("party (%d):\n", party.count());
     for (int i = 0; i < party.count(); ++i) {
         const Character &c = party.member(i);
-        std::printf("  %d) %-16s slot=%d A%d %s HP%d/%d %lldgp poss:",
+        std::printf("  %d) %-16s slot=%d A%d %s HP%d/%d %lldgp %lldep poss:",
                     i + 1, c.name.c_str(), party.rosterSlot(i), int(c.align),
-                    c.inMaze ? "OUT" : "in", c.hpLeft, c.hpMax, (long long)c.gold.v);
+                    c.inMaze ? "OUT" : "in", c.hpLeft, c.hpMax,
+                    (long long)c.gold.v, (long long)c.exp.v);
         for (int j = 0; j < c.possCount; ++j)
             std::printf(" #%d%s", c.poss[j].itemIndex, c.poss[j].identified ? "" : "?");
         std::printf("\n");

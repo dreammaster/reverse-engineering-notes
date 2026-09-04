@@ -37,4 +37,11 @@ struct TownWorld {
 // Run the Castle hub until the player leaves via the Edge of Town.
 TownExit runTown(Ui &ui, TownWorld &world);
 
+// CHK4WIN (SHOPS P01021D / CONGRATS P01021E) -- call once the party is back
+// in the Castle.  If any member carries the Amulet of Werdna (object 94) the
+// quest is complete: show the CONGRATULATIONS screen, grant +250,000 XP each,
+// and take the party's equipment and all but a little gold as the price of
+// initiation into the Overlord's Honor Guard.  Returns true if it fired.
+bool endgameCheck(Ui &ui, Party &party);
+
 } // namespace wiz
