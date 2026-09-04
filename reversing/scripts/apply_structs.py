@@ -4632,7 +4632,12 @@ struct RoomStruct {
                             // literal 320 (`0x140`), matching source's "rstruc->width = 320;"
                             // (`acroom.h:1611`) exactly.
   short height;                  // +0x3882, high confidence: inits to the literal 200 (`0xC8`),
-                            // matching "rstruc->height = 200;" (`acroom.h:1612`) exactly.
+                            // matching "rstruc->height = 200;" (`acroom.h:1612`) exactly. SECOND
+                            // confirmation (find_nearest_walkable_area round): read directly as
+                            // `word_522F0A`, an outer-loop bound for the whole-room walkable-area
+                            // scan -- matches `rstruc+0x3882` with zero slack (`0x51F688+0x3882=
+                            // 0x522F0A`), and matches source's own `yheight=roomHeightLowRes`
+                            // (`acchars.cpp:341`) role exactly.
   short resolution;              // +0x3884, high confidence: inits to the literal 1, matching
                             // "rstruc->resolution = 1;" (`acroom.h:1613`) exactly. SECOND
                             // confirmation (this round): `load_new_room` (already matched)

@@ -10932,6 +10932,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X40AE6A);
 	op_stkvar	(x,	1);
 	create_insn	(0X40AE7D);
+	set_name	(0X40AE7D,	"find_nearest_walkable_area");
 	create_insn	(x=0X40AE80);
 	op_hex		(x,	1);
 	create_insn	(x=0X40AE84);
@@ -11493,10 +11494,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X40BA30);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X40BA37);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X40BA40);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -11506,6 +11503,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X40BA37);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X40BA40);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X40BA46);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X40BA49);
@@ -17502,9 +17503,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X412D3D);
 	set_name	(0X412D3D,	"update_polled_stuff");
-	create_insn	(x=0X412D91);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -17514,6 +17512,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X412D91);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X412D9B);
 	op_hex		(x,	1);
 	create_insn	(x=0X412DC5);
@@ -23455,8 +23456,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X418A51);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X418A5A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23466,6 +23465,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X418A5A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X418A69);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418A73);
@@ -29158,7 +29159,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X41E45A);
 	op_stkvar	(x,	1);
 	set_cmt	(0X41E45D,	"ElementCount",	0);
-	set_cmt	(0X41E45E,	"ElementSize",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29168,6 +29168,7 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X41E45E,	"ElementSize",	0);
 	set_cmt	(0X41E469,	"Buffer",	0);
 	create_insn	(x=0X41E46F);
 	op_hex		(x,	1);
@@ -34853,9 +34854,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X422DF7);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X422DFC);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34865,6 +34863,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X422DFC);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X422E06);
 	op_hex		(x,	1);
 	create_insn	(x=0X422E0D);
@@ -40754,7 +40755,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X42891A);
 	op_stkvar	(x,	1);
 	set_cmt	(0X428920,	"lpWideCharStr",	0);
-	set_cmt	(0X428921,	"cbMultiByte",	0);
 }
 
 //------------------------------------------------------------------------
@@ -40764,6 +40764,7 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X428921,	"cbMultiByte",	0);
 	create_insn	(x=0X428923);
 	op_stkvar	(x,	1);
 	set_cmt	(0X428926,	"lpMultiByteStr",	0);
@@ -46332,8 +46333,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DC13);
 	op_hex		(x,	1);
-	create_insn	(x=0X42DC17);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46343,6 +46342,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DC17);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42DC20);
 	op_hex		(x,	1);
 	create_insn	(0X42DC28);
@@ -52530,8 +52531,6 @@ static Bytes_8(void) {
 	create_insn	(0X43350B);
 	create_insn	(x=0X433511);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43352B);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52541,6 +52540,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43352B);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43355B);
 	op_stkvar	(x,	1);
 	set_cmt	(0X433561,	"Block",	0);
@@ -155865,6 +155866,7 @@ static Functions_1(void) {
 	define_local_var(0X40AE31, 0X40AE7D, "[bp+0XC]", "brightness");
 	add_func    (0X40AE7D,0X40AFC7);
 	set_func_flags(0X40AE7D,0x5410);
+	set_func_cmt(0X40AE7D,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: void find_nearest_walkable_area(int*,int*) at acchars.cpp:392-407, FUSED with its own callee find_nearest_walkable_area_within(int*,int*,int range,int step) at acchars.cpp:335-390 -- MoveToWalkableArea's own long-open lead, closed this round. The outer check matches exactly: getpixel(rstruc.object [really the walkable-areas mask, see RoomStruct's own struct-label-shift correction], [arg_0],[arg_4]); if nonzero (already on a walkable area), skip straight to the end leaving *arg_0/*arg_4 UNCHANGED -- matching source's `if(pixValue==0){search}` (inverted-sense early-out) exactly. The search body is a near line-for-line match to `find_nearest_walkable_area_within`'s own whole-screen fallback pass specifically (range=-1, step=5): nearest=99999 (var_18=0x1869F, exact), a nested 2D scan from (0,14) to (width,height) in steps of 5 (var_4/var_C, bounded by word_522F08/word_522F0A -- the former already confirmed RoomStruct.width, the lat" "ter now confirmed RoomStruct.height via the SAME zero-slack address arith", 1);
 	set_frame_size(0X40AE7D, 0X28, 4, 0);
 	define_local_var(0X40AE7D, 0X40AFC7, "[bp-0X28]", "X");
 	add_func    (0X40AFC7,0X40B019);
@@ -156064,6 +156066,10 @@ static Functions_1(void) {
 	define_local_var(0X40DDB7, 0X40EB43, "[bp-0X18]", "iit");
 	define_local_var(0X40DDB7, 0X40EB43, "[bp-0XC]", "ev2");
 	define_local_var(0X40DDB7, 0X40EB43, "[bp-0X8]", "wparam");
+}
+
+static Functions_2(void) {
+
 	add_func    (0X40EB43,0X40EB7B);
 	set_func_flags(0X40EB43,0x5410);
 	set_func_cmt(0X40EB43,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: int find_looporder_index(int curloop) -- referenced at Engine/AC.CPP:6531, \"int wantloop = find_looporder_index(chi->loop) + 1;\" inside update_stuff's (already matched) 'turning around before walking' branch. Confirmed via exact call shape: called with the single argument 'word[this+0x38]' (CharacterInfo.loop, already confirmed), its result incremented by 1 and used to index the newly-identified turnlooporder[8] global (dword_4B42C8) -- matching source's role (reverse-lookup a loop number's position within the turnlooporder direction table) and call-site shape exactly. See CharacterInfo.loop's own entry in apply_structs.py for the complete writeup.", 1);
@@ -156080,10 +156086,6 @@ static Functions_1(void) {
 	define_local_var(0X40EF0D, 0X41024B, "[bp-0X34]", "index");
 	define_local_var(0X40EF0D, 0X41024B, "[bp-0X30]", "loopn");
 	define_local_var(0X40EF0D, 0X41024B, "[bp-0X4]", "chat");
-}
-
-static Functions_2(void) {
-
 	add_func    (0X41024B,0X410472);
 	set_func_flags(0X41024B,0x5410);
 	SetType(0X41024B, "int __cdecl replace_macro_tokens(char *Str, char *Destination);");
@@ -156551,6 +156553,10 @@ static Functions_2(void) {
 	define_local_var(0X415772, 0X4157F9, "[bp+0X14]", "y2");
 	define_local_var(0X415772, 0X4157F9, "[bp+0X18]", "x3");
 	define_local_var(0X415772, 0X4157F9, "[bp+0X1C]", "y3");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X4157F9,0X415846);
 	set_func_flags(0X4157F9,0x5410);
 	SetType(0X4157F9, "int __cdecl SaveScreenshot(char *Str);");
@@ -156572,10 +156578,6 @@ static Functions_2(void) {
 	define_local_var(0X415920, 0X415A12, "[bp+0XC]", "viw");
 	define_local_var(0X415920, 0X415A12, "[bp+0X10]", "lop");
 	define_local_var(0X415920, 0X415A12, "[bp+0X14]", "fra");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X415A12,0X415AB3);
 	set_func_flags(0X415A12,0x5410);
 	SetType(0X415A12, "void __stdcall SetObjectTransparency(int obn, int trans);");
@@ -157017,15 +157019,15 @@ static Functions_3(void) {
 	set_func_cmt(0X418FF4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj GAMESTATE FIELD EVIDENCE (this round, closing the +0x60C..+0x614 pad): this function's one-line body ('mov eax,[ebp+loopflag]; mov dword_4EF028,eax;') matches 2011's ENTIRE function body verbatim -- 'void SetMusicRepeat(int loopflag) { play.music_repeat=loopflag; }' (AC.CPP:17753-17755) -- identifying dword_4EF028 as GameState.music_repeat. Sits with ZERO gap immediately after the newly-identified cur_music_number@+0x60C (see GetCurrentMusic's own entry), matching 2011's exact declared adjacency 'int cur_music_number,music_repeat;' (acruntim.h:553) with zero drift. PlayMusic (already matched) reads this same global as the repeat argument it passes down to its MP3-stream-creation helper (sub_4083FC), and main initializes it to 1 at startup. CORRECTION: the previous round's music_master_volume field entry incorrectly claimed cur_music_number/music_repeat were 'co" "nfirmed absent' via a zero-slack argument -- that argument only prov", 1);
 	set_frame_size(0X418FF4, 0, 4, 0X4);
 	define_local_var(0X418FF4, 0X419001, "[bp+0X8]", "loopflag");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X419001,0X41927A);
 	set_func_flags(0X419001,0x5410);
 	set_func_cmt(0X419001,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive struct-field documentation (PlayMusic itself was already named in the IDB via exact linker-symbol match, long before this entry existed -- no prior matches.json record of it at all). Fresh survey target: this build's MIDI-music handling, picked up while investigating whether a MYMIDI wrapper class (Engine/acsound.cpp:916, this build's other SOUNDCLIP-family siblings MYWAVE/MYMP3/MYSTATICMP3 already formalized) exists here too. It does NOT: PlayMusic's own MIDI-format attempt -- 'sprintf(Buffer,\"music%d.mid\",musicnum); dword_5231B4=sub_44AFC0(Buffer); if (dword_5231B4!=0) { dword_5231BC=musicnum; if (sub_44B580(dword_5231B4,dword_4EF028)) quit(\"!Couldn't play MIDI file\"); }' -- calls Allegro's load_midi/play_midi APIs (see sub_44AFC0/sub_44B580's own entries) DIRECTLY on bare globals, with no intervening object allocation, vtable, or virtual dispatch at all. This matches the SAME 'no wrapper object, just scalar globals' a" "rchitecture already found for AmbientSound -- a genuine predecessor ", 1);
 	set_frame_size(0X419001, 0X28, 4, 0);
 	define_local_var(0X419001, 0X41927A, "[bp-0X28]", "Buffer");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X41927A,0X4192EE);
 	set_func_flags(0X41927A,0x5410);
 	SetType(0X41927A, "void __stdcall SetPlayerCharacter(int newchar);");
@@ -157773,6 +157775,10 @@ static Functions_4(void) {
 	set_func_flags(0X41CD6D,0x5410);
 	set_func_cmt(0X41CD6D,	"[reversing] confirmed match\nconfidence: high\nevidence: Graph-script flag GETTER, called only from sub_41CDC3's IF_FLAG/IF_NOT_FLAG opcodes (cases 14/15). Signature (int flagnum): if flagnum<100, returns RoomStatus.flagstates[flagnum] (dword_523128=croom, already confirmed, +flagnum*2+0x148 -- the SAME already-confirmed RoomStatus.flagstates[15] field); else returns dword_4EE89C[flagnum] (a full-int-stride global array, capacity unconfirmed, distinct from GameState.globalscriptvars[300] -- no other reader/writer anywhere in the binary references it). Confirms flag numbers 0-14 are per-room (RoomStatus.flagstates, MAX_FLAGS=15) and >=100 are global -- matching sub_41CDC3's own SET_FLAG/CLEAR_FLAG range validation (errors on the 15-99 gap) exactly. Left unnamed: a private helper with no textual self-identification and no 2011 counterpart to compare against.", 1);
 	set_frame_size(0X41CD6D, 0, 4, 0);
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41CD95,0X41CDC3);
 	set_func_flags(0X41CD95,0x5410);
 	set_func_cmt(0X41CD95,	"[reversing] confirmed match\nconfidence: high\nevidence: Graph-script flag SETTER -- exact mirror of sub_41CD6D (see its own entry), called only from sub_41CDC3's SET_FLAG/CLEAR_FLAG opcodes (cases 11/12). Signature (int flagnum, int value): if flagnum<100, writes RoomStatus.flagstates[flagnum]=value (as a short); else writes dword_4EE89C[flagnum]=value (as a full int). Left unnamed for the same reason as sub_41CD6D.", 1);
@@ -157782,10 +157788,6 @@ static Functions_4(void) {
 	set_func_cmt(0X41CDC3,	"[reversing] confirmed match\nconfidence: high\nevidence: Unnamed (no 2011 counterpart exists, living or dead -- the entire 'Graphical Script' subsystem it belongs to has zero trace in the 2011 reference source beyond one comment line, see run_graph_script's own entry). This is run_graph_script's per-slot command-list interpreter: signature (void *table, int slotIndex), bails out immediately returning 0 if GameState.restrict_until (dword_523180) is already nonzero (a blocking wait already in progress), else reads table[slotIndex*0xFE] as a command count and loops over up to that many 0x19(25)-byte command records starting at table[slotIndex*0xFE+4], dispatching each record's own leading type byte (1-based; type-1 used as a 26-entry jump-table index, 0..0x19) via a switch. Confirmed opcodes so far: type 1 -> NewRoom(record[+5]), also setting dword_5231C4=record[+9]; type 2 -> GiveScore(record[+5]); type 3 -> StopMoving(playerchar); type 4 -> unhandled (falls to the shared default/error case, 'run_graph_script: u" "nknown evnt %d'); type 5 -> run_animation(&unk", 1);
 	set_frame_size(0X41CDC3, 0X10C, 4, 0);
 	define_local_var(0X41CDC3, 0X41D2BB, "[bp-0X104]", "Buffer");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41D323,0X41D342);
 	set_func_flags(0X41D323,0x5410);
 	SetType(0X41D323, "int __cdecl sub_41D323(FILE *Stream);");
@@ -158633,6 +158635,10 @@ static Functions_5(void) {
 	set_func_cmt(0X42A187,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj", 1);
 	set_frame_size(0X42A187, 0X4, 4, 0X4);
 	define_local_var(0X42A187, 0X42A1B3, "[bp+0X8]", "String2");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X42A1B3,0X42A204);
 	set_func_flags(0X42A1B3,0x5410);
 	SetType(0X42A1B3, "int __cdecl sub_42A1B3(char *String2);");
@@ -158661,10 +158667,6 @@ static Functions_5(void) {
 	define_local_var(0X42A400, 0X42A494, "[bp-0X3EC]", "ArgList");
 	define_local_var(0X42A400, 0X42A494, "[bp-0X3E8]", "Buffer");
 	define_local_var(0X42A400, 0X42A494, "[bp+0X8]", "Format");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X42A494,0X42A4C1);
 	set_func_flags(0X42A494,0x5410);
 	SetType(0X42A494, "void __stdcall ccSetOption(int optbit, int onoroff);");
@@ -159638,6 +159640,10 @@ static Functions_6(void) {
 	set_func_flags(0X43C840,0x5400);
 	set_func_cmt(0X43C840,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public get_palette(PALETTE p) convenience wrapper: \"return get_palette_range(p,0,255);\" -- matches exactly, calling the newly-matched get_palette_range (sub_43C860) with the full 0-255 range, the same relationship as Allegro's own header declares (get_palette is a macro/inline wrapper around get_palette_range in the real library). Called from sub_40A358 (FadeOut's own fade-to-black helper, see its own entry) and EndSkippingUntilCharStops (already matched). THIRD-PARTY LIBRARY BOUNDARY -- not chased further.", 1);
 	set_frame_size(0X43C840, 0, 0, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X43C860,0X43C89F);
 	set_func_flags(0X43C860,0x5400);
 	set_func_cmt(0X43C860,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further.", 1);
@@ -159652,10 +159658,6 @@ static Functions_6(void) {
 	define_local_var(0X43C990, 0X43CAA3, "[bp-0X400]", "p");
 	define_local_var(0X43C990, 0X43CAA3, "[bp+0X10]", "from");
 	define_local_var(0X43C990, 0X43CAA3, "[bp+0X14]", "to");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X43CAB0,0X43CAD2);
 	set_func_flags(0X43CAB0,0x15400);
 	SetType(0X43CAB0, "int __cdecl BIO_dump_indent_fp(_iobuf *fp, const char *s, int len, int indent);");
@@ -161508,6 +161510,10 @@ static Functions_7(void) {
 	add_func    (0X46A090,0X46A187);
 	set_func_flags(0X46A090,0x5400);
 	set_frame_size(0X46A090, 0X2C, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X46A190,0X46A36E);
 	set_func_flags(0X46A190,0x5400);
 	set_frame_size(0X46A190, 0X28, 0, 0);
@@ -161597,10 +161603,6 @@ static Functions_7(void) {
 	add_func    (0X46B530,0X46B54A);
 	set_func_flags(0X46B530,0x5400);
 	set_frame_size(0X46B530, 0X4, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X46B550,0X46B61B);
 	set_func_flags(0X46B550,0x5400);
 	set_frame_size(0X46B550, 0X20, 0, 0);
@@ -163812,6 +163814,10 @@ static Functions_8(void) {
 	add_func    (0X4984E0,0X49854C);
 	set_func_flags(0X4984E0,0x5400);
 	set_frame_size(0X4984E0, 0X10, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X498590,0X4985B0);
 	set_func_flags(0X498590,0x5400);
 	set_frame_size(0X498590, 0X4, 0, 0);
@@ -163902,10 +163908,6 @@ static Functions_8(void) {
 	add_func    (0X49AAB0,0X49AAFD);
 	set_func_flags(0X49AAB0,0x5400);
 	set_frame_size(0X49AAB0, 0XC, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X49AB00,0X49AB52);
 	set_func_flags(0X49AB00,0x5400);
 	set_frame_size(0X49AB00, 0X8, 0, 0);

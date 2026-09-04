@@ -820,9 +820,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40AE7D",
+  "name": "find_nearest_walkable_area",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "MoveToWalkableArea",

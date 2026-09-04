@@ -10317,3 +10317,40 @@ re-export: `actsps` is declared as a FIXED 60-slot array
 pointer -- another fixed-vs-dynamic architectural drift matching this
 project's broader pattern, the specific rationale for 60 not chased
 further this round.
+
+### `MoveToWalkableArea`'s open lead closes: `find_nearest_walkable_area`, fused with its own `_within` helper
+
+`sub_40AE7D` -- flagged several rounds ago as "plausibly `find_nearest_
+walkable_area` fused with `find_nearest_walkable_area_within`, not
+chased further" -- closes this round as exactly that. The outer guard
+matches 2011's `find_nearest_walkable_area(int*,int*)`
+(`acchars.cpp:392-407`) exactly: a single `getpixel` against the
+walkable-areas mask (`rstruc.object`, i.e. the field the earlier
+`RoomStruct`-label-shift correction identified as the mask, not a
+literal "object" field), early-returning unchanged if the point is
+already walkable. The search body matches `find_nearest_walkable_area_
+within`'s own whole-screen fallback pass (`range=-1,step=5`) near line
+for line -- `nearest=99999`, a nested scan from `(0,14)` to
+`(width,height)` in steps of 5, skipping non-walkable pixels and points
+outside the already-confirmed `RoomStruct.left/right/top/bottom`, a
+squared-distance-then-`sqrt` comparison, and a final `<90000` gate
+before writing the best candidate back -- every literal constant in
+source (`99999`, `14`, `5`, `90000`) matches the disassembly's own
+literals with zero deviation.
+
+Two real, confirmable drifts fall out: this build does ONLY the
+expensive whole-room 5px-step scan, missing 2011's own two-stage
+optimization (a fast 20px-radius/2px-step search tried first, cutting
+the common case's cost dramatically) entirely; and it's missing
+source's leading "edge-widening" tweak (if the character is already
+past the room's left/right/top/bottom, that edge is treated as the
+room's own full extent before the bounds check) -- both are later
+refinements this build predates, not merely unread code. Also confirms
+this function does no low-res/hi-res coordinate scaling at all
+(`convert_to_low_res`/`convert_back_to_high_res` have no counterpart
+here), consistent with this build's simpler room-coordinate model.
+Bonus: gives `RoomStruct.height`@+0x3882 a second, independent
+confirmation route (previously only confirmed via its own literal
+init value) -- read directly as `word_522F0A`, landing on
+`rstruc+0x3882` with zero slack, right next to the already-established
+`width`@+0x3880/`word_522F08`.

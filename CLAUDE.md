@@ -2916,6 +2916,16 @@ disassembly work.
   to `actsps`, confirmed as a FIXED 60-slot array (`dd 3Ch dup(?)`)
   vs. 2011's dynamically `malloc`'d pointer — another fixed-vs-dynamic
   drift.
+- **`MoveToWalkableArea`'s open lead closes: `find_nearest_walkable_
+  area`, fused with its own `_within` helper.** `sub_40AE7D` matches
+  2011's `find_nearest_walkable_area`+`find_nearest_walkable_area_
+  within`'s whole-screen fallback pass (`range=-1,step=5`) near line
+  for line, every literal constant (99999/14/5/90000) matching
+  exactly. Two confirmed drifts: missing 2011's fast 20px-radius/2px-
+  step first-pass optimization (always pays the expensive whole-room
+  scan), and missing the "edge-widening" tweak for a character already
+  past a room boundary. Bonus: second confirmation route for
+  `RoomStruct.height`@+0x3882 (`word_522F0A`, zero slack).
 
 ## Third-party library identification (Task #10)
 
