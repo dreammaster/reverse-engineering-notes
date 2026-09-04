@@ -669,32 +669,33 @@ bool inspectChar(CampCtx &c, int idx) {
     }
 }
 
-// ---- CAMPMEN2: the top camp screen -------------------------------
+// ---- CAMPMEN2: the top camp screen (DOS CAMP proc 5: a (0,4,40,17)
+//      window; here a framed panel with "CAMP" on its top border) -----
 void campList(CampCtx &c) {
     auto &t = c.t();
     t.resetWindow();
     t.putChar(12);
-    t.gotoXY(18, 0); t.write("CAMP");
-    t.gotoXY(0, 2);  t.write(" # CHARACTER NAME  CLASS AC HITS STATUS");
+    t.frame(0, 1, 40, 22);
+    t.writeAt(18, 1, " CAMP ");
+    t.writeAt(2, 3, " # NAME          A-CLS  AC HITS STATUS");
     for (int i = 0; i < c.party.count(); ++i) {
         const Character &ch = c.party.member(i);
         char b[80];
-        std::snprintf(b, sizeof b, "%d %-15.15s %c-%-3.3s %3d %4d",
+        std::snprintf(b, sizeof b, "%d %-13.13s %c-%-3.3s %3d %4d",
                       i + 1, ch.name.c_str(),
                       nameOf(c.sc.aligns(), int(ch.align))[0],
                       nameOf(c.sc.classes(), int(ch.cls)),
                       ch.armorClass, ch.hpLeft);
-        t.gotoXY(0, 3 + i); t.write(b);
-        std::string tail;
+        std::string line = b;
         if (ch.status == Status::OK)
-            tail = ch.poison ? " POISON" : ("/" + std::to_string(ch.hpMax));
+            line += ch.poison ? " POISON" : ("/" + std::to_string(ch.hpMax));
         else
-            tail = std::string(" ") + nameOf(c.sc.statuses(), int(ch.status));
-        t.write(tail);
+            line += std::string(" ") + nameOf(c.sc.statuses(), int(ch.status));
+        t.writeAt(2, 4 + i, line.substr(0, 36));
     }
-    t.gotoXY(0, 12); t.write("YOU MAY R)EORDER, E)QUIP, D)ISBAND,");
-    t.gotoXY(8, 13); t.write("#) TO INSPECT, OR");
-    t.gotoXY(8, 14); t.write("L)EAVE THE CAMP.");
+    t.writeAt(2, 13, "YOU MAY R)EORDER, E)QUIP, D)ISBAND,");
+    t.writeAt(9, 14, "#) TO INSPECT, OR");
+    t.writeAt(9, 15, "L)EAVE THE CAMP.");
 }
 
 } // namespace

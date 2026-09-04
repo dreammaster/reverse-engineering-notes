@@ -24,8 +24,10 @@ const char *statusName(const Scenario &sc, Status s) {
     return int(s) < int(sc.statuses().size()) ? sc.statuses()[int(s)].c_str() : "?";
 }
 
-const std::string kBorder     = "+--------------------------------------+";
-const std::string kPartyBorder = "+----------- CURRENT PARTY: -----------+";
+// DOS town layout (docs/ui.md): a framed party panel over a framed menu
+// panel.  The building name is set into the party panel's top border.
+constexpr int kPtyY = 1, kPtyH = 12;             // party panel rows 1..12
+constexpr int kMenuY = 12, kMenuH = 12;          // menu panel rows 12..23
 
 struct TownCtx {
     Ui &ui;
@@ -57,50 +59,39 @@ struct TownCtx {
     }
 };
 
-// DSPTITLE -- row 1 banner.
+// DSPTITLE -- the building name centred on the party panel's top border.
 void dspTitle(TownCtx &c, const std::string &title) {
-    auto &t = c.ts();
-    t.gotoXY(0, 1);
-    t.write("! CASTLE");
-    t.writeField(title, 30);
-    t.write(" !");
+    std::string s = " " + title + " ";
+    c.ts().writeAt(20 - int(s.size()) / 2, kPtyY, s);
 }
 
-// CHARINFO -- one party row at y = 5 + x.
+// CHARINFO -- one party row inside the party panel (interior row 2 + x).
 void charInfo(TownCtx &c, int x) {
     auto &t = c.ts();
     const Character &ch = c.party.member(x);
-    t.gotoXY(0, 5 + x);
-    t.putChar(29);                                   // clear to end of line
-    t.writeField(std::to_string(x + 1), 2);
-    t.write(" ");
-    t.write(ch.name);
-    t.gotoXY(19, 5 + x);
-    t.write(std::string(1, alignName(c.sc, ch.align)[0]));
-    t.write("-");
-    t.write(std::string(className(c.sc, ch.cls)).substr(0, 3));
-    t.write(" ");
-    if (ch.armorClass > -10) t.writeField(std::to_string(ch.armorClass), 2);
-    else                     t.write("LO");
-    t.writeField(std::to_string(ch.hpLeft), 5);
-    t.write(" ");
-    if (ch.status == Status::OK) t.writeField(std::to_string(ch.hpMax), 4);
-    else                         t.write(statusName(c.sc, ch.status));
+    char b[48];
+    std::snprintf(b, sizeof b, "%d %-14s %c-%.3s %3d %4d %s",
+                  x + 1, ch.name.c_str(), alignName(c.sc, ch.align)[0],
+                  className(c.sc, ch.cls),
+                  ch.armorClass > -10 ? ch.armorClass : -99, ch.hpLeft,
+                  ch.status == Status::OK ? "OK" : statusName(c.sc, ch.status));
+    t.writeAt(2, kPtyY + 3 + x, std::string(b).substr(0, 36));
 }
 
-// DSPPARTY -- the box across the top of the screen (rows 0..11).
+// DSPPARTY -- the framed party panel + the (empty) menu panel below it.
 void dspParty(TownCtx &c, const std::string &title) {
     auto &t = c.ts();
     t.resetWindow();
     t.putChar(12);
-    t.gotoXY(0, 0); t.write(kBorder);
-    dspTitle(c, title);                              // row 1
-    t.gotoXY(0, 2); t.write(kPartyBorder);
-    t.gotoXY(0, 4); t.write(" # CHARACTER NAME  CLASS AC HITS STATUS");
-    for (int i = 0; i < c.party.count(); ++i) charInfo(c, i);   // rows 5..10
-    t.gotoXY(0, 11); t.write(kBorder);
-    t.gotoXY(0, 13); t.putChar(11);                  // clear the menu area
+    t.frame(0, kPtyY, 40, kPtyH);
+    t.frame(0, kMenuY, 40, kMenuH);
+    dspTitle(c, title);
+    t.writeAt(2, kPtyY + 2, " # NAME          A-CLS  AC HITS STATUS");
+    for (int i = 0; i < c.party.count(); ++i) charInfo(c, i);
 }
+
+// The interior of the menu panel -- content coords relative to (1, kMenuY+1).
+void menuWin(TownCtx &c) { c.ts().setWindow(1, kMenuY + 1, 38, kMenuH - 2); }
 
 // GETCHARX -- pick a party member by number; -1 on RETURN.
 int getCharX(TownCtx &c, bool dspNames, const std::string &solicit) {
@@ -244,13 +235,13 @@ void gilgamesh(TownCtx &c) {
 // The Castle hub menu text (P010A26).
 void hubMenu(TownCtx &c) {
     auto &t = c.ts();
-    t.setWindow(0, 0, 40, 24);
-    t.gotoXY(0, 13); t.putChar(11);
-    t.gotoXY(13, 13); t.writeln("YOU MAY GO TO:");
-    t.writeln("");
-    t.writeln("THE A)DVENTURER'S INN, G)ILGAMESH'");
-    t.writeln("TAVERN, B)OLTAC'S TRADING POST, THE");
-    t.writeln("TEMPLE OF C)ANT, OR THE E)DGE OF TOWN.");
+    menuWin(c);
+    t.putChar(12);
+    t.gotoXY(11, 1); t.write("YOU MAY GO TO:");
+    t.gotoXY(1, 3); t.write("THE A)DVENTURER'S INN, G)ILGAMESH'");
+    t.gotoXY(1, 4); t.write("TAVERN, B)OLTAC'S TRADING POST, THE");
+    t.gotoXY(1, 5); t.write("TEMPLE OF C)ANT, OR THE E)DGE OF TOWN.");
+    t.resetWindow();
 }
 
 // EDGETOWN (P01021A, in SHOPS).  Returns the town's next destination, or

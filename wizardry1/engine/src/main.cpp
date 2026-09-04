@@ -571,6 +571,9 @@ static int cmdTownTest(int argc, char **argv) {
     Roster roster;
     roster.seedFrom(sc);
     Party party;
+    if (std::getenv("WIZ1_TOWN_PARTY"))            // a scratch party for screenshots
+        for (int i = 0; i < roster.count() && party.count() < 6; ++i)
+            if (roster.slot(i).status != Status::Lost) party.add(roster, i);
     Shop shop;
     shop.seedFrom(sc);
     StringPool sp;

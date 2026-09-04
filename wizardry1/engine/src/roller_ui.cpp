@@ -106,11 +106,14 @@ struct RollerCtx {
     void dirty() { roster.save(path); }
 };
 
-// The character-sheet frame shared by MAKECHAR.
+// The character-sheet frame shared by MAKECHAR -- DOS ROLLER opens the
+// sheet as a window over a (0,14,40,10) scroll area.  We keep the content
+// at its existing rows and frame the two regions around it.
 void makeMenuFrame(RollerCtx &c, const Character &ch) {
     auto &t = c.ts();
     t.resetWindow();
     t.putChar(12);
+    t.frame(0, 14, 40, 10);                          // the scroll area
     t.gotoXY(0, 0);  t.writeField("NAME ", 10); t.write(ch.name);
     t.gotoXY(0, 1);  t.writeField("PASSWORD", 9);
     t.gotoXY(0, 2);  t.writeField("RACE", 9);
@@ -458,13 +461,14 @@ void runRoller(Ui &ui, Roster &roster, const Scenario &sc, Rng &rng,
     while (!ui.quit()) {
         t.resetWindow();
         t.putChar(12);
-        t.writeCentered("TRAINING GROUNDS", 0);
-        t.gotoXY(0, 2); t.writeln("YOU MAY ENTER A CHARACTER NAME TO ADD,");
-        t.gotoXY(8, 3);  t.writeln("INSPECT OR EDIT,");
-        t.gotoXY(8, 5);  t.writeln("\"*ROSTER\" TO SEE ROSTER,");
-        t.gotoXY(0, 7);  t.writeln("OR PRESS [RET] FOR CASTLE.");
-
-        t.gotoXY(13, 9); t.write("NAME >");
+        t.frame(0, 8, 40, 11);                          // DOS ROLLER menu box
+        t.writeAt(12, 8, " TRAINING GROUNDS ");
+        t.setWindow(1, 9, 38, 9);
+        t.gotoXY(0, 0); t.write("YOU MAY ENTER A CHARACTER NAME TO");
+        t.gotoXY(2, 1); t.write("ADD, INSPECT OR EDIT,");
+        t.gotoXY(2, 3); t.write("\"*ROSTER\" TO SEE ROSTER,");
+        t.gotoXY(0, 5); t.write("OR PRESS [RET] FOR CASTLE.");
+        t.gotoXY(12, 7); t.write("NAME >");
         std::string name = ui.getLine(15);
         if (ui.quit()) return;
         if (name.empty()) return;                       // -> castle
