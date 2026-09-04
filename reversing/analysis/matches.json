@@ -1967,7 +1967,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive, zero-drift match to AC.CPP:20981-20987. \"offsetx=offsx*current_screen_resolution_multiplier_x; offsety=offsy*current_screen_resolution_multiplier_y; call sub_410D04(); word_4EF236=1;\" matches \"offsetx=multiply_up_coordinate(offsx); offsety=multiply_up_coordinate(offsy); check_viewport_coords(); play.offsets_locked=1;\" exactly, identifying sub_410D04 as check_viewport_coords (new match, see its own entry) and giving GameState.offsets_locked (word_4EF236, already established via EndSkippingUntilCharStops's own zero-write evidence) a THIRD independent confirmation -- this time a write-side one, directly from its own script-API setter."
   },
   {
     "kind": "function",
@@ -1977,7 +1977,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a one-line exact match, \"word_4EF236=0;\" matching source's \"play.offsets_locked=0;\" exactly -- a FOURTH independent confirmation of GameState.offsets_locked."
   },
   {
     "kind": "function",
@@ -1987,7 +1987,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): \"eax=offsetx; idiv current_screen_resolution_multiplier_x;\" matches source's \"return divide_down_coordinate(offsetx);\" exactly (the inverse of multiply_up_coordinate, confirming that helper too is just inlined division by the resolution multiplier, matching the already-established inlining pattern for multiply_up_coordinate/get_fixed_pixel_size)."
   },
   {
     "kind": "function",
@@ -1997,7 +1997,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"return divide_down_coordinate(offsety);\" exactly, the same inlined-division pattern as GetViewportX's own entry."
   },
   {
     "kind": "function",
@@ -6124,5 +6124,14 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "Allegro's public int makecol_depth(int color_depth, int r, int g, int b) API. Called from __my_setcolor (already matched) with the exact 4-argument shape (color_depth, r, g, b decoded from col_lookups[]), matching source's own makecol_depth(wantColDep, col_lookups[newcol]>>16, ...) call exactly. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_410D04",
+    "new_name": "check_viewport_coords",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 3988,
+    "confidence": "high",
+    "evidence": "void check_viewport_coords() at AC.CPP:3988-3999 -- a complete, zero-drift, line-for-line match. \"if(offsetx<0) offsetx=0; if(offsety<0) offsety=0;\" matches verbatim. \"if(offsetx+usetup_base_width > word_522F08*mult_x) offsetx=word_522F08*mult_x-usetup_base_width;\" matches \"if(offsetx+scrnwid>roomWidth) offsetx=roomWidth-scrnwid;\" exactly, with roomWidth computed inline as multiply_up_coordinate(thisroom.width) (word_522F08, already established RoomStruct.width) -- identifying usetup_base_width as this build's scrnwid. The height check mirrors this exactly using word_522F0A (already established RoomStruct.height) and usetup_base_height (scrnhit). Called from SetViewport (already matched, see its own entry) and prepare_characters_for_drawing (already matched) -- the latter call site not itself investigated further this round, but consistent with 2011's own second caller, update_viewport()."
   }
 ]

@@ -1075,9 +1075,9 @@
   "is_named": false
  },
  {
-  "name": "sub_410D04",
+  "name": "check_viewport_coords",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "prepare_characters_for_drawing",

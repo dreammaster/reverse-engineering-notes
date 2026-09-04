@@ -10811,3 +10811,18 @@ rare ZERO-drift capacity match: 10 slots, exactly `MAX_OPEN_SCRIPT_
 FILES=10`, unlike this project's usual smaller-capacity pattern).
 `FileClose` closes the same round with a second, independent
 confirmation of `valid_handles[]` via its own exact one-line match.
+
+### `SetViewport`/`ReleaseViewport`/`GetViewportX`/`GetViewportY` close, naming `check_viewport_coords`
+
+All four close as complete, zero-drift matches to `AC.CPP:20981-20997`.
+`SetViewport` identifies `sub_410D04` as `check_viewport_coords` (a new
+match, itself a complete line-for-line match: the `offsetx`/`offsety`
+negative-clamp pair, then a room-width/height overflow clamp using the
+already-established `RoomStruct.width`/`.height` and a newly-confirmed
+`usetup_base_width`/`_height` = `scrnwid`/`scrnhit`) and gives
+`GameState.offsets_locked` a THIRD independent confirmation (a write-
+side one, from its own script-API setter). `ReleaseViewport` gives it
+a FOURTH. `GetViewportX`/`GetViewportY` both confirm `divide_down_
+coordinate` is just inlined division by the resolution multiplier,
+matching the same inlining pattern already established for `multiply_
+up_coordinate`/`get_fixed_pixel_size` elsewhere in this project.

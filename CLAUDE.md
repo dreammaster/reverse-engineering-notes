@@ -3062,6 +3062,13 @@ disassembly work.
   straight to `fopen` with no prefix handling, worth flagging for the
   ScummVM port. Identifies `num_open_script_files`/`valid_handles[]`
   (10 slots, zero drift from `MAX_OPEN_SCRIPT_FILES=10`).
+- **`SetViewport`/`ReleaseViewport`/`GetViewportX`/`GetViewportY`
+  close, naming `check_viewport_coords`.** All four are complete,
+  zero-drift matches. `SetViewport` identifies `check_viewport_coords`
+  (itself a complete match) and gives `offsets_locked` a third
+  confirmation; `ReleaseViewport` a fourth. Confirms `divide_down_
+  coordinate` is just inlined division, matching the same pattern
+  already established for `multiply_up_coordinate`.
 
 ## Third-party library identification (Task #10)
 
