@@ -242,22 +242,25 @@ each pic is **70 × 50 px, 1bpp**, stored as 50 rows × 10 bytes = 500 bytes
 ENEMYID += 10` — i.e. the file data is linear rows; only the *screen* address
 is hi-res-interleaved.
 
-**Status: the DOS payload is compressed / transformed — not raw pixels.**
-Rendered as a raw 1bpp bitmap at every plausible geometry (widths
-32/40/48/56/64/70/80 × 50 rows, both bit orders; 64×64; a full 320×200 2bpp
-CGA page) it is pure noise. Each 512-byte record starts with a small control
-block — record 0 is `00 00 | 04 00 05 00 0d 00 | 01 40 03 40 01 d0 00 00 …`
-(words `0, 4, 5, 13, 0x4001, 0x4003, 0xD001, …`; the `0x4000`/`0xD000` high
-bits look like RLE run/literal tags). Byte histogram after the header is
-dominated by `0x00` then the dither/bitmask bytes `0xAA 0x55 0xFF 0x11 0x22
-0x44 0x88 0x20 0x40 0x80` — consistent with a compressed 1bpp image.
-Zero-run RLE (`00 <count>`) decodes to ~4.3 KB/record — not a clean pic size,
-so the scheme is more than plain zero-RLE.
+**DOS status (2026-09-04, `ida_scripts/analyze_conunit.py`): the DOS
+portrait is tile-composed, not a compressed pixel image.**  The console
+driver's `UNITWRITE(unit 13, blk 18)` (`conunit_load_monsters`) just stashes
+the file number and inits a 4-slot record cache; `blk 13` (`conunit_blit13`,
+run from `CUTIL` proc 42's encounter-draw) reads up to 4 `TENEMY.PIC` ids,
+lays out a **5 × 6 grid of tile-glyph codes (1..30)** per monster group into
+the offscreen cell buffer, then loads each group's `200.MONSTERS` record.
+So a record is a **per-monster ~30-glyph sub-font** and the portrait is
+drawn by the ordinary cell renderer from those tiles — the "compressed
+1bpp image" reading (below) was wrong; the noise was font-row bytes.
 
-**To finish:** the decompressor is native x86 inside `SYSTEM.INTERP` (only
-16384 bytes — fully covered by `wiz1_interp.asm`), in the `CONUNIT` driver's
-subfn-18 / portrait-blit path. Needs a focused static RE of that driver or a
-live DOSBox trace. **Not on the critical path** for `CASTLE`/`SHOPS`/`RUNNER`.
+Exact tile geometry / glyph size within the 512-byte record still to be
+pinned (the 8-word header `0, 4, 5, 13, 0x4001, 0x4003, 0xD001, …` gives
+cols/rows = 4/5 and offsets).  See `docs/pmachine.md` §CONUNIT.
+
+*(old reading, kept for reference: rendered as a raw 1bpp bitmap at every
+plausible geometry it is pure noise; byte histogram after the header is
+dominated by `0x00` then `0xAA 0x55 0xFF 0x11 …` — which is just how a
+tiny tile font looks.)*
 
 ---
 

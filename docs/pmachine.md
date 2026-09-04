@@ -207,6 +207,51 @@ This is the notoriously weak PC-Wizardry RNG.  Reproduced in
   screen (the stir ran during boot); the seed doesn't matter to the model.
 * Unit 1/2 subfn is the real keyboard (`int 16h`), used by `GETKEY`.
 
+## CONUNIT — unit 13, the console / graphics driver
+
+`CONUNIT` (global word 60) is fixed to **unit 13** (`WIZARDRY` proc 1:
+`SLDC 13; SRO 60`).  Every screen operation and `RANDOM` go through it as
+`UNITREAD/UNITWRITE(13, buf, len, blocknumber, mode, 0)` — the p-code's
+"blocknumber" argument is really the **sub-function selector**.
+
+Dispatch (analysed 2026-09-04, `ida_scripts/analyze_conunit.py`):
+
+```
+CSP UNITREAD  (loc_2CCF) ─┐  pop mode,blk,len,buf,unit
+CSP UNITWRITE (loc_2DB9) ─┘  → per-unit table  0x2CF7 (URD) / 0x2DDE (UWR),
+                               unit 13 → native  0x144B (URD) / 0x145B (UWR)
+0x144B/0x145B: bx = blk*2; jmp [table + bx]
+   URD table 0x134E     UWR table = jpt_1466
+```
+
+**URD (read) blocknumbers**
+
+| blk | handler | effect |
+|--:|---|---|
+| 10 | `0x221E` | `RANDOM` — the 4×LCG generator (above) |
+| 11 | `0x22CD` | "is a key buffered?" — `int 16h,AH=1`; also `s0*=k, s1*=-k` |
+| 12 | `0x22FD` | returns 1 |
+| 16 | `0x23E4` | `sub_1210` — ? |
+
+**UWR (write) blocknumbers** — `jpt_1466`, 35 entries; the non-`noop` ones:
+
+| blk | handler | effect |
+|--:|---|---|
+| 2  | `loc_153E` | register / lay out a window (the cell dirty-map) |
+| 3  | `conunit_present` | flush dirty cells of every window to the screen (`int 10h`) |
+| 5  | `loc_18C1` | **`DRAWLINE`** — plot a run of `len` points `(dH,dV)` into the offscreen cell buffer (the 3-D wireframe primitive) |
+| 13 | `conunit_blit13` | **compose the combat monster portraits** — read up to 4 `PIC` ids, place a 5×6 block of tile-glyph codes per group into the offscreen buffer, then `sub_1A4A` loads their `200.MONSTERS` records (4-slot LRU cache) |
+| 14 | `conunit_load_charset` | load `*.CHARSET` into a driver font slot (`word_13DC`) |
+| 17 | `conunit_blit17` | clear the offscreen cell buffer |
+| 18 | `conunit_load_monsters` | stash the `200.MONSTERS` file number (`word_1419`), init the 4-slot portrait-record cache |
+| 19 | `conunit_scanline19` (`0x2305`) | **the timed pause** (`SETTIME`/`TIMEDLAY`) — spin `word_1449` times, each iteration polling `int 1Ah` clock ticks and `int 16h` for a key to abort |
+
+**Monster portraits are tile-composed, not a compressed bitmap.**  Each
+`200.MONSTERS` record (512 B) is a small **per-monster sub-font** (~30 tile
+glyphs); `conunit_blit13` lays out char codes 1..30 in a 5×6 grid per
+group and the normal cell renderer draws them from that record.  This
+corrects the earlier "compressed 1bpp image" guess in `file-formats.md`.
+
 ## Native / SBIOS interface
 
 `WIZ1.COM` stays resident and hooks **`INT 18h`** (the PC cassette/ROM-BASIC

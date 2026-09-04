@@ -56,7 +56,8 @@ interp_reloc    proc near               ; CODE XREF: interp_start↑j
                 mov     cs:word_3CC2, ax
                 mov     cs:word_3CC0, ax
 
-loc_3F:                                 ; DATA XREF: INTERP:38F8↓r
+loc_3F:                                 ; DATA XREF: conunit_uwr+6E4↓r
+                                        ; sub_1B97+C↓r ...
                 call    pm_init_regs
 
 loc_42:                                 ; DATA XREF: pm_build_drive_table+1↓r
@@ -103,6 +104,7 @@ loc_62:                                 ; CODE XREF: sub_2AAC+F↓j
 ; ---------------------------------------------------------------------------
 
 loc_67:                                 ; CODE XREF: INTERP:27BB↓j
+                                        ; DATA XREF: conunit_uwr+EB3↓r ...
                 mov     bx, 3C1h
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
@@ -156,7 +158,7 @@ loc_90:                                 ; CODE XREF: sub_B33+48↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_9C:                                 ; CODE XREF: INTERP:08D7↓j
+loc_9C:                                 ; CODE XREF: sub_838+9F↓j
                 mov     bx, 4E7h
                 jmp     short loc_AE
 ; ---------------------------------------------------------------------------
@@ -631,6 +633,8 @@ aStackOverflow  db 'Stack overflow!!',0
 aUserIOError    db 'User I/O error',0
 aSystemIOError  db 'System I/O error',0
 aExitToUncalled db 'EXIT to uncalled procedure',0
+                                        ; DATA XREF: sub_1B97+19↓r
+                                        ; sub_1B97+1E↓w ...
 aRangeError     db 'Range Error',0
 aNoBootUpFileEx db 'No boot-up file exists',0
 aVolumeIOError  db 'Volume I/O Error',0
@@ -1130,17 +1134,17 @@ loc_7D4:                                ; CODE XREF: sub_702+20↑j
 ; END OF FUNCTION CHUNK FOR sub_702
 ; ---------------------------------------------------------------------------
 byte_7DC        db 0                    ; DATA XREF: pm_disk_setup+34↓w
-                                        ; INTERP:loc_8EF↓w ...
+                                        ; sub_838:loc_8EF↓w ...
 word_7DD        dw 0                    ; DATA XREF: pm_disk_setup+25↓w
-                                        ; INTERP:loc_901↓r
+                                        ; sub_838:loc_901↓r
 word_7DF        dw 0                    ; DATA XREF: pm_disk_setup+29↓w
-                                        ; INTERP:loc_856↓r ...
+                                        ; sub_838:loc_856↓r ...
 word_7E1        dw 0                    ; DATA XREF: pm_disk_setup+2D↓w
-                                        ; INTERP:0883↓r ...
+                                        ; sub_838+4B↓r ...
 word_7E3        dw 0                    ; DATA XREF: pm_disk_setup+F↓w
                                         ; pm_disk_setup+19↓r ...
-byte_7E5        db 4 dup(0)             ; DATA XREF: INTERP:0879↓w
-                                        ; INTERP:08B5↓r ...
+byte_7E5        db 4 dup(0)             ; DATA XREF: sub_838+41↓w
+                                        ; sub_838+7D↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -1177,39 +1181,43 @@ loc_82D:                                ; CODE XREF: pm_disk_setup+4A↓j
                 retn
 pm_disk_setup   endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_838         proc near               ; CODE XREF: conunit_uwr+F7E↓p
                 mov     ax, [di]
                 inc     ax
                 jnz     short loc_840
                 jmp     loc_8EF
 ; ---------------------------------------------------------------------------
 
-loc_840:                                ; CODE XREF: INTERP:083B↑j
+loc_840:                                ; CODE XREF: sub_838+3↑j
                 inc     ax
                 jnz     short loc_846
                 jmp     loc_8F8
 ; ---------------------------------------------------------------------------
 
-loc_846:                                ; CODE XREF: INTERP:0841↑j
+loc_846:                                ; CODE XREF: sub_838+9↑j
                 inc     ax
                 jnz     short loc_84C
                 jmp     loc_901
 ; ---------------------------------------------------------------------------
 
-loc_84C:                                ; CODE XREF: INTERP:0847↑j
+loc_84C:                                ; CODE XREF: sub_838+F↑j
                 push    di
                 cmp     word ptr [di+2], 0
                 jnz     short loc_856
                 jmp     loc_8E7
 ; ---------------------------------------------------------------------------
 
-loc_856:                                ; CODE XREF: INTERP:0851↑j
+loc_856:                                ; CODE XREF: sub_838+19↑j
                 cmp     cs:word_7DF, 0
                 jnz     short loc_861
                 jmp     loc_8E7
 ; ---------------------------------------------------------------------------
 
-loc_861:                                ; CODE XREF: INTERP:085C↑j
+loc_861:                                ; CODE XREF: sub_838+24↑j
                 push    ds
                 push    es
                 push    si
@@ -1219,7 +1227,7 @@ loc_861:                                ; CODE XREF: INTERP:085C↑j
                 jb      short loc_875
                 mov     bx, cs:word_7DF
 
-loc_875:                                ; CODE XREF: INTERP:086E↑j
+loc_875:                                ; CODE XREF: sub_838+36↑j
                 mov     word ptr cs:byte_7E5+2, ax
                 mov     word ptr cs:byte_7E5, bx
                 sub     cs:word_7DF, bx
@@ -1230,14 +1238,14 @@ loc_875:                                ; CODE XREF: INTERP:086E↑j
                 add     di, ax
                 mov     cx, bx
 
-loc_897:                                ; CODE XREF: INTERP:089D↓j
+loc_897:                                ; CODE XREF: sub_838+65↓j
                 mov     cs:[di], dx
                 inc     dx
                 inc     di
                 inc     di
                 loop    loc_897
 
-loc_89F:                                ; CODE XREF: INTERP:08E0↓j
+loc_89F:                                ; CODE XREF: sub_838+A8↓j
                 mov     ax, cs:word_125E
                 mov     bx, word ptr cs:byte_7E5+2
                 call    sub_A4B
@@ -1249,7 +1257,7 @@ loc_89F:                                ; CODE XREF: INTERP:08E0↓j
                 jb      short loc_8C2
                 mov     cx, 3Fh ; '?'
 
-loc_8C2:                                ; CODE XREF: INTERP:08BD↑j
+loc_8C2:                                ; CODE XREF: sub_838+85↑j
                 sub     word ptr cs:byte_7E5, cx
                 add     word ptr cs:byte_7E5+2, cx
                 mov     ch, cl
@@ -1260,7 +1268,7 @@ loc_8C2:                                ; CODE XREF: INTERP:08BD↑j
                 jmp     loc_9C
 ; ---------------------------------------------------------------------------
 
-loc_8DA:                                ; CODE XREF: INTERP:08D5↑j
+loc_8DA:                                ; CODE XREF: sub_838+9D↑j
                 cmp     word ptr cs:byte_7E5, 0
                 jnz     short loc_89F
                 xor     ax, ax
@@ -1268,27 +1276,27 @@ loc_8DA:                                ; CODE XREF: INTERP:08D5↑j
                 pop     es
                 pop     ds
 
-loc_8E7:                                ; CODE XREF: INTERP:0853↑j
-                                        ; INTERP:085E↑j
+loc_8E7:                                ; CODE XREF: sub_838+1B↑j
+                                        ; sub_838+26↑j
                 pop     di
                 mov     ax, cs:word_7DF
                 mov     [di], ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_8EF:                                ; CODE XREF: INTERP:083D↑j
+loc_8EF:                                ; CODE XREF: sub_838+5↑j
                 mov     cs:byte_7DC, 0
                 xor     ax, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_8F8:                                ; CODE XREF: INTERP:0843↑j
+loc_8F8:                                ; CODE XREF: sub_838+B↑j
                 mov     cs:byte_7DC, 0FFh
                 xor     ax, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_901:                                ; CODE XREF: INTERP:0849↑j
+loc_901:                                ; CODE XREF: sub_838+11↑j
                 mov     ax, cs:word_7DD
                 mov     cs:word_7DF, ax
                 xor     ax, ax
@@ -1297,12 +1305,14 @@ loc_901:                                ; CODE XREF: INTERP:0849↑j
                 lea     bx, ds:44D2h
                 mov     ax, 0FFFFh
 
-loc_919:                                ; CODE XREF: INTERP:091E↓j
+loc_919:                                ; CODE XREF: sub_838+E6↓j
                 mov     cs:[bx], ax
                 inc     bx
                 inc     bx
                 loop    loc_919
                 retn
+sub_838         endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -1481,7 +1491,7 @@ sub_9F8         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_A3A         proc near               ; CODE XREF: INTERP:08AB↑p
+sub_A3A         proc near               ; CODE XREF: sub_838+73↑p
                                         ; pm_read_blocks+AD↑p
                 push    cx
                 mov     cx, 5
@@ -1497,7 +1507,7 @@ sub_A3A         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_A4B         proc near               ; CODE XREF: INTERP:08A8↑p
+sub_A4B         proc near               ; CODE XREF: sub_838+70↑p
                                         ; pm_read_blocks+AA↑p
                 add     bx, bx
                 lea     bx, [bx+44D2h]
@@ -1506,22 +1516,27 @@ sub_A4B         proc near               ; CODE XREF: INTERP:08A8↑p
 sub_A4B         endp
 
 ; ---------------------------------------------------------------------------
-word_A55        dw 0                    ; DATA XREF: INTERP:loc_A8E↓w
+word_A55        dw 0                    ; DATA XREF: sub_A6C:loc_A8E↓w
                                         ; sub_B33+71↓w ...
 word_A57        dw 0                    ; DATA XREF: sub_B33↓w
                                         ; sub_B33:loc_B3D↓w ...
-word_A59        dw 0                    ; DATA XREF: INTERP:loc_AFF↓w
-                                        ; INTERP:loc_B09↓w ...
-byte_A5B        db 8 dup(0)             ; DATA XREF: INTERP:0A95↓w
-word_A63        dw 0                    ; DATA XREF: INTERP:0A9C↓w
+word_A59        dw 0                    ; DATA XREF: sub_A6C:loc_AFF↓w
+                                        ; sub_A6C:loc_B09↓w ...
+byte_A5B        db 8 dup(0)             ; DATA XREF: sub_A6C+29↓w
+word_A63        dw 0                    ; DATA XREF: sub_A6C+30↓w
                                         ; sub_B33+B5↓r ...
-word_A65        dw 0                    ; DATA XREF: INTERP:loc_AF3↓w
+word_A65        dw 0                    ; DATA XREF: sub_A6C:loc_AF3↓w
                                         ; sub_D3E+26↓r
 word_A67        dw 0                    ; DATA XREF: sub_C0D+C↓w
                                         ; sub_C0D:loc_C50↓r ...
 word_A69        dw 0                    ; DATA XREF: sub_C0D+70↓w
                                         ; sub_C0D:loc_C84↓r ...
                 align 2
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_A6C         proc near               ; CODE XREF: conunit_uwr:loc_23CE↓p
                 mov     ax, [di]
                 test    ax, ax
                 jz      short loc_A8E
@@ -1530,30 +1545,30 @@ word_A69        dw 0                    ; DATA XREF: sub_C0D+70↓w
                 jmp     loc_AFF
 ; ---------------------------------------------------------------------------
 
-loc_A78:                                ; CODE XREF: INTERP:0A73↑j
+loc_A78:                                ; CODE XREF: sub_A6C+7↑j
                 dec     ax
                 jnz     short loc_A7E
                 jmp     loc_B09
 ; ---------------------------------------------------------------------------
 
-loc_A7E:                                ; CODE XREF: INTERP:0A79↑j
+loc_A7E:                                ; CODE XREF: sub_A6C+D↑j
                 dec     ax
                 jnz     short loc_A84
                 jmp     loc_B2B
 ; ---------------------------------------------------------------------------
 
-loc_A84:                                ; CODE XREF: INTERP:0A7F↑j
+loc_A84:                                ; CODE XREF: sub_A6C+13↑j
                 dec     ax
                 jnz     short loc_A8A
                 jmp     loc_B21
 ; ---------------------------------------------------------------------------
 
-loc_A8A:                                ; CODE XREF: INTERP:0A85↑j
+loc_A8A:                                ; CODE XREF: sub_A6C+19↑j
                 mov     ax, 2
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_A8E:                                ; CODE XREF: INTERP:0A70↑j
+loc_A8E:                                ; CODE XREF: sub_A6C+4↑j
                 mov     cs:word_A55, 1
                 mov     word ptr cs:byte_A5B, 1
                 mov     cs:word_A63, 0
@@ -1577,18 +1592,18 @@ loc_A8E:                                ; CODE XREF: INTERP:0A70↑j
                 cmp     ax, 4
                 jb      short loc_AC9
 
-loc_AC7:                                ; CODE XREF: INTERP:loc_AC7↓j
+loc_AC7:                                ; CODE XREF: sub_A6C:loc_AC7↓j
                 jmp     short loc_AC7
 ; ---------------------------------------------------------------------------
 
-loc_AC9:                                ; CODE XREF: INTERP:0AC5↑j
+loc_AC9:                                ; CODE XREF: sub_A6C+59↑j
                 push    si
                 push    di
                 lea     si, ds:6252h
                 lea     di, ds:6230h
                 xor     dx, dx
 
-loc_AD5:                                ; CODE XREF: INTERP:0AF1↓j
+loc_AD5:                                ; CODE XREF: sub_A6C+85↓j
                 test    word ptr [si], 0FFFFh
                 jz      short loc_AF3
                 inc     si
@@ -1608,7 +1623,7 @@ loc_AD5:                                ; CODE XREF: INTERP:0AF1↓j
                 jmp     short loc_AD5
 ; ---------------------------------------------------------------------------
 
-loc_AF3:                                ; CODE XREF: INTERP:0AD9↑j
+loc_AF3:                                ; CODE XREF: sub_A6C+6D↑j
                 mov     cs:word_A65, dx
                 pop     di
                 pop     si
@@ -1618,41 +1633,43 @@ loc_AF3:                                ; CODE XREF: INTERP:0AD9↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_AFF:                                ; CODE XREF: INTERP:0A75↑j
+loc_AFF:                                ; CODE XREF: sub_A6C+9↑j
                 mov     cs:word_A59, 0FFh
                 xor     ax, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_B09:                                ; CODE XREF: INTERP:0A7B↑j
+loc_B09:                                ; CODE XREF: sub_A6C+F↑j
                 mov     cs:word_A59, 0
                 xor     ax, ax
                 mov     bx, 0A5Bh
                 mov     cx, 4
 
-loc_B18:                                ; CODE XREF: INTERP:0B1E↓j
+loc_B18:                                ; CODE XREF: sub_A6C+B2↓j
                 mov     cs:[bx], ax
                 add     bx, 2
                 loop    loc_B18
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_B21:                                ; CODE XREF: INTERP:0A87↑j
+loc_B21:                                ; CODE XREF: sub_A6C+1B↑j
                 mov     cs:word_A59, 0
                 xor     ax, ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_B2B:                                ; CODE XREF: INTERP:0A81↑j
+loc_B2B:                                ; CODE XREF: sub_A6C+15↑j
                 mov     bx, dx
                 call    sub_C0D
                 xor     ax, ax
                 retn
+sub_A6C         endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_B33         proc near               ; CODE XREF: INTERP:08D2↑p
+sub_B33         proc near               ; CODE XREF: sub_838+9A↑p
                                         ; pm_read_blocks:loc_934↑j ...
                 mov     cs:word_A57, 0DC3h
                 jmp     short loc_B44
@@ -1777,7 +1794,7 @@ sub_B33         endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_C0D         proc near               ; CODE XREF: INTERP:0B2D↑p
+sub_C0D         proc near               ; CODE XREF: sub_A6C+C1↑p
                                         ; sub_B33+7A↑p
                 push    es
                 push    ds
@@ -2434,7 +2451,7 @@ word_1063       dw 0                    ; DATA XREF: sub_C0D+34↑r
 
 
 sub_1065        proc near               ; CODE XREF: sub_FEA+58↑p
-                                        ; INTERP:loc_10FF↓p
+                                        ; sub_10CA:loc_10FF↓p
                 push    si
                 lea     si, byte_104D
                 mov     al, ah
@@ -2489,10 +2506,21 @@ loc_10C2:                               ; CODE XREF: sub_1065+1D↑j
                 retn
 sub_1065        endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_10C5        proc near               ; CODE XREF: conunit_uwr+6C8↓p
+                                        ; conunit_uwr+709↓p ...
                 mov     cs:word_1063, ax
                 retn
-; ---------------------------------------------------------------------------
+sub_10C5        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_10CA        proc near               ; CODE XREF: conunit_uwr:loc_2353↓p
                 mov     bx, dx
                 cmp     bx, 4
                 jb      short loc_10FF
@@ -2504,7 +2532,7 @@ sub_1065        endp
                 ja      short loc_10FF
                 sub     bx, 3
 
-loc_10E3:                               ; CODE XREF: INTERP:10D4↑j
+loc_10E3:                               ; CODE XREF: sub_10CA+A↑j
                 sub     bx, 4
                 shl     bx, 1
                 shl     bx, 1
@@ -2515,21 +2543,23 @@ loc_10E3:                               ; CODE XREF: INTERP:10D4↑j
                 call    sbios_disk_io
                 jnb     short loc_1105
 
-loc_10FF:                               ; CODE XREF: INTERP:10CF↑j
-                                        ; INTERP:10D9↑j ...
+loc_10FF:                               ; CODE XREF: sub_10CA+5↑j
+                                        ; sub_10CA+F↑j ...
                 call    sub_1065
                 mov     ah, 0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1105:                               ; CODE XREF: INTERP:10FD↑j
+loc_1105:                               ; CODE XREF: sub_10CA+33↑j
                 xor     ax, ax
                 retn
+sub_10CA        endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sbios_disk_io   proc near               ; CODE XREF: INTERP:10FA↑p
+sbios_disk_io   proc near               ; CODE XREF: sub_10CA+30↑p
                 push    si
                 mov     dx, ax
                 push    word ptr cs:byte_545+4
@@ -2720,7 +2750,11 @@ loc_120D:                               ; CODE XREF: sub_1186+77↑j
                 jmp     short loc_11ED
 sub_1186        endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1210        proc near               ; CODE XREF: INTERP:2341↓p
                 test    cs:word_125C, 4000h
                 jnz     short loc_1225
                 test    byte ptr cs:word_125E, 80h
@@ -2729,10 +2763,12 @@ sub_1186        endp
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1225:                               ; CODE XREF: INTERP:1217↑j
-                                        ; INTERP:121F↑j
+loc_1225:                               ; CODE XREF: sub_1210+7↑j
+                                        ; sub_1210+F↑j
                 mov     ax, 278h
                 retn
+sub_1210        endp
+
 ; ---------------------------------------------------------------------------
 word_1229       dw 0                    ; DATA XREF: pm_scan_boot_volume+4↑w
                                         ; sub_EA5+8C↑r ...
@@ -2744,9 +2780,9 @@ word_122F       dw 0                    ; DATA XREF: sub_702↑w
 word_1233       dw 0                    ; DATA XREF: sub_702+5↑w
                                         ; sub_702+19↑r ...
                 db 27h dup(0)
-word_125C       dw 4                    ; DATA XREF: INTERP:1210↑r
-word_125E       dw 0                    ; DATA XREF: INTERP:loc_89F↑r
-                                        ; INTERP:1219↑r
+word_125C       dw 4                    ; DATA XREF: sub_1210↑r
+word_125E       dw 0                    ; DATA XREF: sub_838:loc_89F↑r
+                                        ; sub_1210+9↑r
                 db 5, 3 dup(0), 9, 3 dup(0), 0Ah, 5 dup(0)
 word_126E       dw 0                    ; DATA XREF: sub_C0D+60↑r
                                         ; sub_C0D+BF↑r ...
@@ -2889,271 +2925,1925 @@ pm_build_drive_table endp
                 popf
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
-                align 10h
-                db 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 0A2h
-                db 14h, 0A2h, 14h, 0A2h, 14h, 15h, 22h, 1Eh, 22h, 0CDh
-                db 22h, 0FDh, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 0E4h
-                db 23h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 41h, 23h
-                db 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h
-                db 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h, 15h, 22h
-                db 15h, 22h, 15h, 22h, 0E6h, 1Ah, 3Eh, 15h, 77h, 15h, 0C4h
-                db 14h, 0C1h, 18h, 15h, 22h, 15h, 22h, 15h, 22h, 0A2h
-                db 14h, 15h, 22h, 15h, 22h, 15h, 22h, 58h, 19h, 6Bh, 14h
-                db 59h, 1Bh, 15h, 22h, 50h, 19h, 96h, 14h, 5, 23h, 53h
-                db 23h, 15h, 22h, 4Ah, 23h, 0E1h, 1Ah, 5Dh, 23h, 0D8h
-                db 23h, 4Ah, 24h, 15h, 22h, 15h, 22h, 7Bh, 24h, 0A5h, 14h
-                db 0CEh, 23h, 0D5h, 24h, 0F4h, 24h, 15h, 22h, 6 dup(0)
-                db 4, 2 dup(0), 0Ch, 4 dup(0), 0C8h, 0, 8, 0, 1, 2 dup(0)
-                db 2, 38h, 3 dup(0)
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                dw 0
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 14A2h
+                dw 14A2h
+                dw 14A2h
+                dw 2215h
+                dw 221Eh
+                dw 22CDh
+                dw 22FDh
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 23E4h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2341h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+                dw 2215h
+jpt_1466        dw offset conunit_noop  ; DATA XREF: conunit_uwr+B↓r
+                dw offset loc_1AE6      ; jump table for switch statement
+                dw offset loc_153E
+                dw offset conunit_present
+                dw offset loc_14C4
+                dw offset loc_18C1
+                dw offset conunit_noop
+                dw offset conunit_noop
+                dw offset conunit_noop
+                dw offset loc_14A2
+                dw offset conunit_noop
+                dw offset conunit_noop
+                dw offset conunit_noop
+                dw offset conunit_blit13
+                dw offset conunit_load_charset
+                dw offset loc_1B59
+                dw offset conunit_noop
+                dw offset conunit_blit17
+                dw offset conunit_load_monsters
+                dw offset conunit_scanline19
+                dw offset loc_2353
+                dw offset conunit_noop
+                dw offset loc_234A
+                dw offset loc_1AE1
+                dw offset loc_235D
+                dw offset loc_23D8
+                dw offset loc_244A
+                dw offset conunit_noop
+                dw offset conunit_noop
+                dw offset loc_247B
+                dw offset loc_14A5
+                dw offset loc_23CE
+                dw offset loc_24D5
+                dw offset loc_24F4
+                dw offset conunit_noop
+                dw 0
+word_13DA       dw 0                    ; DATA XREF: sub_1C8E+6↓r
+word_13DC       dw 0                    ; DATA XREF: conunit_uwr+1F↓r
+                                        ; sub_1C8E+12↓r ...
+word_13DE       dw 4                    ; DATA XREF: sub_1A63+3D↓r
+word_13E0       dw 0C00h                ; DATA XREF: sub_1A12+A↓r
+                                        ; sub_1A63+37↓r
+                db    0
+                db    0
+                db    0
+                db    0
+                db 0C8h
+                db    0
+                db    8
+                db    0
+                db    1
+                db    0
+                db    0
+                db    2
+                db  38h ; 8
+                db    0
+word_13F0       dw 0                    ; DATA XREF: sub_1B97+F↓r
+                                        ; sub_1BC8+39↓w
 byte_13F2       db 0                    ; DATA XREF: sub_741+5F↑w
                                         ; sub_741+64↑r ...
 word_13F3       dw 0                    ; DATA XREF: sub_741+4A↑r
-byte_13F5       db 35h, 2Dh, 2Eh, 7, 5Bh, 2, 2 dup(57h), 2, 3, 2 dup(0)
-                db 61h, 50h, 52h, 0Fh, 19h, 6, 2 dup(19h), 2, 0Dh, 0Bh
-                db 0Ch, 0Eh dup(0), 23h, 14h, 25h, 14h, 29h, 14h, 2Fh
-                db 14h, 0Fh, 0, 0Bh, 0, 13h, 0, 7, 0, 0Fh, 0, 17h, 0, 3
-                db 0, 0Bh, 0, 13h, 0, 1Bh, 0, 0ABh, 5Bh, 2Bh, 0D0h, 15h
-                db 7Eh, 51h, 73h, 19h, 36h, 8Bh, 0FFh, 83h, 1, 0C9h, 7Fh
-                db 4 dup(0), 0C7h, 6, 0DEh, 0E0h, 2 dup(0), 0FCh, 8Bh
-                db 0D9h, 0D1h, 0E3h, 2Eh, 0FFh, 0A7h, 4Eh, 13h, 0C7h, 6
-                db 0DEh, 0E0h, 2 dup(0), 0FCh, 8Bh, 0D9h, 0D1h, 0E3h, 2Eh
-                db 0FFh, 0A7h, 92h, 13h, 1Eh, 6, 8Bh, 0CAh, 33h, 0C0h
-                db 50h, 0A1h, 0E2h, 0E0h, 50h, 0B8h, 0DAh, 85h, 50h, 2Eh
-                db 0A1h, 0DCh, 13h, 0BBh, 40h, 1, 0D1h, 0E3h, 0F7h, 0EBh
-                db 50h, 51h, 8Ch, 0C8h, 8Eh, 0C0h, 8Eh, 0D8h, 0E8h, 0A9h
-                db 0F1h, 7, 1Fh, 0FCh, 0E9h, 51h, 0ECh, 2Eh, 89h, 16h
-                db 19h, 14h, 0E8h, 74h, 5, 0FCh, 0E9h, 45h, 0ECh, 0E9h
-                db 70h, 0Dh, 56h, 8Bh, 0F2h, 32h, 0EDh, 0ACh, 8Ah, 0C8h
-                db 0E3h, 10h, 0ACh, 32h, 0E4h, 8Bh, 0D0h, 51h, 56h, 57h
-                db 0E8h, 11h, 0, 5Fh, 5Eh, 59h, 0E2h, 0F0h, 5Eh, 0FCh
-                db 0E9h, 23h, 0ECh, 0E8h, 4, 0, 0FCh, 0E9h, 1Ch, 0ECh
-                db 56h, 8Bh, 0DFh, 8Ah, 47h, 7, 8Ah, 4Fh, 4, 80h, 0E9h
-                db 2, 0F6h, 0E1h, 8Ah, 4Fh, 6, 32h, 0EDh, 3, 0C1h, 0D1h
-                db 0E0h, 8Bh, 0F0h, 89h, 50h, 0Ah, 8Ah, 4Fh, 8, 0F6h, 0C1h
-                db 80h, 75h, 2Ch, 8Ah, 47h, 7, 2, 47h, 3, 0FEh, 0C0h, 32h
-                db 0E4h, 8Bh, 0F0h, 0D1h, 0E6h, 2Eh, 8Bh, 0B4h, 0D0h, 3Ch
-                db 8Ah, 47h, 6, 2, 47h, 2, 0FEh, 0C0h, 3, 0F0h, 3Ah, 8Ch
-                db 0, 0E9h, 72h, 9, 88h, 8Ch, 0, 0E9h, 8Bh, 0C2h, 0E8h
-                db 38h, 3, 8Bh, 45h, 6, 8Bh, 55h, 4, 0FEh, 0C0h, 0FEh
-                db 0CAh, 0FEh, 0CAh, 3Ah, 0C2h, 75h, 0Eh, 32h, 0C0h, 0FEh
-                db 0C4h, 0FEh, 0CEh, 0FEh, 0CEh, 3Ah, 0E6h, 75h, 2, 32h
-                db 0E4h, 89h, 45h, 6, 5Eh, 0C3h, 89h, 3Eh, 0, 2 dup(0E8h)
-                db 4, 0, 0FCh, 0E9h, 9Eh, 0EBh, 56h, 57h, 0E8h, 3Ch, 6
-                db 5Fh, 0F6h, 45h, 8, 80h, 75h, 17h, 8Ah, 5Dh, 3, 32h
-                db 0FFh, 0D1h, 0E3h, 2Eh, 8Bh, 0B7h, 0D0h, 3Ch, 8Ah, 5Dh
-                db 2, 3, 0F3h, 0E8h, 31h, 0, 0E8h, 86h, 1, 8Bh, 3Dh, 0Bh
-                db 0FFh, 75h, 0DDh, 2 dup(0E8h), 1, 5Eh, 0C3h, 0F6h, 45h
-                db 8, 80h, 75h, 19h, 56h, 8Ah, 5Dh, 3, 32h, 0FFh, 0D1h
-                db 0E3h, 2Eh, 8Bh, 0B7h, 0D0h, 3Ch, 8Ah, 5Dh, 2, 3, 0F3h
-                db 0E8h, 5, 2, 0E8h, 69h, 2, 5Eh, 0FCh, 0E9h, 4Dh, 0EBh
-                db 80h, 7Dh, 8, 3Fh, 74h, 6Ah, 56h, 0B0h, 1, 0E8h, 0CEh
-                db 0, 56h, 46h, 8Ah, 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h, 74h
-                db 8, 0B0h, 2, 0BAh, 1, 0, 0E8h, 0F0h, 0, 0B0h, 3, 0E8h
-                db 0B6h, 0, 5Eh, 83h, 0C6h, 28h, 8Ah, 4Dh, 5, 0FEh, 0C9h
-                db 0FEh, 0C9h, 74h, 21h, 56h, 0BAh, 28h, 0, 0B0h, 4, 51h
-                db 0E8h, 0D4h, 0, 59h, 8Bh, 0C6h, 5Eh, 50h, 8Ah, 5Dh, 4
-                db 0FEh, 0CBh, 32h, 0FFh, 3, 0F3h, 0B0h, 5, 0BAh, 28h
-                db 0, 0E8h, 0BEh, 0, 5Eh, 0B0h, 6, 0E8h, 83h, 0, 46h, 8Ah
-                db 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h, 74h, 8, 0B0h, 7, 0BAh
-                db 1, 0, 0E8h, 0A6h, 0, 0B0h, 8, 0E8h, 6Ch, 0, 5Eh, 0C3h
-                db 56h, 0B0h
-                db 0Dh, 0E8h, 64h, 0, 56h, 46h, 8Ah, 4Dh, 4, 0FEh, 0C9h
-                db 0FEh, 0C9h, 74h, 8, 0B0h, 0Ah, 0BAh, 1, 0, 0E8h, 86h
-                db 0, 0B0h, 0Eh, 0E8h, 4Ch, 0, 5Eh, 83h, 0C6h, 28h, 8Ah
-                db 4Dh, 5, 0FEh, 0C9h, 0FEh, 0C9h, 74h, 21h, 56h, 0BAh
-                db 28h, 0, 0B0h, 0Bh, 51h, 0E8h, 6Ah, 0, 59h, 8Bh, 0C6h
-                db 5Eh, 50h, 8Ah, 5Dh, 4, 0FEh, 0CBh, 32h, 0FFh, 3, 0F3h
-                db 0B0h, 0Ch, 0BAh, 28h, 0, 0E8h, 54h, 0, 5Eh, 0B0h, 0Eh
-                db 0E8h, 19h, 0, 46h, 8Ah, 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h
-                db 74h, 8, 0B0h, 9, 0BAh, 1, 0, 0E8h, 3Ch, 0, 0B0h, 0Dh
-                db 0E8h, 2, 0, 5Eh, 0C3h, 8Bh, 0DEh, 0D1h, 0E3h, 32h, 0E4h
-                db 8Ah, 55h, 8, 8Ah, 0B4h, 0, 0E9h, 80h, 0E6h, 3Fh, 3Ah
-                db 0D6h, 74h, 6, 72h, 1Eh, 88h, 94h, 0, 0E9h, 8Bh, 8Fh
-                db 0, 0EDh, 3Bh, 0C1h, 74h, 12h, 89h, 87h, 0, 0EDh, 0B1h
-                db 80h, 0Ah, 0EDh, 74h, 4, 78h, 2, 0B1h, 0C0h, 8, 8Ch
-                db 0, 0E9h, 0C3h, 32h, 0EDh, 55h, 57h, 8Bh, 0EEh, 0D1h
-                db 0E5h, 8Ah, 65h, 8, 8Bh, 0FAh, 8Ah, 0D4h, 32h, 0E4h
-                db 8Ah, 0B4h, 0, 0E9h, 80h, 0E6h, 3Fh, 3Ah, 0D6h, 74h
-                db 6, 72h, 20h, 88h, 94h, 0, 0E9h, 3Eh, 8Bh, 9Eh, 0, 0EDh
-                db 3Bh, 0C3h, 74h, 13h, 0B3h, 80h, 0Ah, 0FFh, 74h, 4, 78h
-                db 2, 0B3h, 0C0h, 3Eh, 89h, 86h, 0, 0EDh, 8, 9Ch, 0, 0E9h
-                db 3, 0F7h, 3, 0EFh, 3, 0EFh, 0E2h, 0CBh, 5Fh, 5Dh, 0C3h
-                db 55h, 57h, 33h, 0DBh, 83h, 0C6h, 29h, 8Bh, 0EEh, 0D1h
-                db 0E5h, 32h, 0EDh, 8Ah, 4Dh, 5, 0FEh, 0C9h, 0FEh, 0C9h
-                db 55h, 56h, 51h, 8Ah, 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h
-                db 8Ah, 45h, 8, 8Ah, 0A4h, 0, 0E9h, 80h, 0E4h, 3Fh, 3Ah
-                db 0C4h, 72h, 2Ah, 88h, 84h, 0, 0E9h, 8Bh, 41h, 0Ah, 3Eh
-                db 8Bh, 96h, 0, 0EDh, 3Bh, 0C2h, 74h, 1Ah, 3Eh, 89h, 86h
-                db 0, 0EDh, 80h, 8Ch, 0, 0E9h, 80h, 84h, 0F6h, 74h, 0Ch
-                db 78h, 0Ah, 80h, 0FEh, 20h, 74h, 5, 80h, 8Ch, 0, 0E9h
-                db 40h, 2 dup(43h), 46h, 2 dup(45h), 0E2h, 0C1h, 59h, 5Eh
-                db 5Dh, 83h, 0C6h, 28h, 83h, 0C5h, 50h, 0E2h, 0ACh, 5Fh
-                db 5Dh, 0C3h, 56h, 33h, 0F6h, 0B9h, 0E8h, 3, 8Ah, 84h
-                db 0, 0E9h, 0Ah, 0C0h, 74h, 21h, 79h, 25h, 0BAh, 2 dup(0FFh)
-                db 0A8h, 40h, 74h, 3, 0BAh, 0, 7Fh, 80h, 0A4h, 0, 0E9h
-                db 3Fh, 0D1h, 0E6h, 8Bh, 84h, 0, 0EDh, 0D1h, 0EEh, 51h
-                db 0E8h, 0FAh, 0, 59h, 0EBh, 7, 90h, 0BAh, 2 dup(0FFh)
-                db 0E8h, 13h, 1, 46h, 0E2h, 0CEh, 5Eh, 0C3h, 56h, 0B0h
-                db 1, 0E8h, 0A5h, 0, 56h, 46h, 8Ah, 4Dh, 4, 0FEh, 0C9h
-                db 0FEh, 0C9h, 74h, 8, 0B0h, 2, 0BAh, 1, 0, 0E8h, 0FFh
-                db 0, 0B0h, 3, 0E8h, 8Dh, 0, 5Eh, 83h, 0C6h, 28h, 8Ah
-                db 4Dh, 5, 0FEh, 0C9h, 0FEh, 0C9h, 74h, 1Eh, 56h, 0BAh
-                db 28h, 0, 0B0h, 4, 51h, 0E8h, 0E3h, 0, 59h, 8Bh, 0C6h
-                db 5Eh, 50h, 8Ah, 5Dh, 4, 0FEh, 0CBh, 32h, 0FFh, 3, 0F3h
-                db 0B0h, 5, 0E8h, 0D0h, 0, 5Eh, 0B0h, 6, 0E8h, 5Dh, 0
-                db 46h, 8Ah, 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h, 74h, 8, 0B0h
-                db 7, 0BAh, 1, 0, 0E8h, 0B8h, 0, 0B0h, 8, 0E8h, 46h, 0
-                db 5Eh, 0C3h, 57h, 33h, 0DBh, 83h, 0C6h, 29h, 32h, 0EDh
-                db 8Ah, 4Dh, 5, 0FEh, 0C9h, 0FEh, 0C9h, 56h, 51h, 8Ah
-                db 4Dh, 4, 0FEh, 0C9h, 0FEh, 0C9h, 8Ah, 45h, 8, 3Ah, 84h
-                db 0, 0E9h, 72h, 0Eh, 88h, 84h, 0, 0E9h, 8Bh, 41h, 0Ah
-                db 51h, 53h, 0E8h, 28h, 0, 5Bh, 59h, 2 dup(43h), 46h, 0E2h
-                db 0E4h, 59h, 5Eh, 83h, 0C6h, 28h, 0E2h, 0D4h, 5Fh, 0C3h
-                db 0EBh, 56h, 90h, 0EBh, 65h, 90h, 0C3h, 32h, 0E4h, 8Ah
-                db 5Dh, 8, 3Ah, 9Ch, 0, 0E9h, 74h, 6, 72h, 0F2h, 88h, 9Ch
-                db 0, 0E9h, 0D1h, 0E6h, 8Bh, 94h, 0, 0EDh, 89h, 84h, 0
-                db 0EDh, 0D1h, 0EEh, 81h, 0FAh, 2 dup(20h), 74h, 8, 83h
-                db 0FAh, 20h, 74h, 3, 0EBh, 3, 90h, 33h, 0D2h, 3Dh, 2 dup(20h)
-                db 74h, 8, 3Dh, 20h, 0, 74h, 3, 0EBh, 3, 90h, 33h, 0C0h
-                db 3Bh, 0D0h, 74h, 0BFh, 0Ah, 0E4h, 75h, 0B5h, 0Ah, 0C0h
-                db 74h, 0B4h, 3Ch, 20h, 74h, 0B0h, 2Eh, 0FFh, 26h, 0Dh
-                db 14h, 80h, 0FCh, 20h, 74h, 0Dh, 80h, 0FCh, 80h, 73h
-                db 3, 0EBh, 0Bh, 90h, 2Eh, 0FFh, 26h, 0Fh, 14h, 2Eh, 0FFh
-                db 26h, 11h, 14h, 2Eh, 0FFh, 26h, 13h, 14h, 32h, 0EDh
-                db 32h, 0E4h, 50h, 51h, 52h, 0E8h, 8Bh, 0FFh, 5Ah, 59h
-                db 58h, 3, 0F2h, 0E2h, 0F3h, 0C3h, 55h, 56h, 8Bh, 0EFh
-                db 8Bh, 0FAh, 8Bh, 55h, 4, 80h, 0EAh, 2, 80h, 0EEh, 2
-                db 8Ah, 46h, 6, 0F6h, 0E2h, 3, 46h, 4, 8Dh, 75h, 0Ah, 0D1h
-                db 0E0h, 3, 0F0h, 32h, 0C0h, 8Ah, 66h, 2 dup(0Ah), 0E4h
-                db 74h, 8, 8Ah, 0C2h, 0D0h, 0E4h, 73h, 2, 0F6h, 0D8h, 2
-                db 46h, 8, 98h, 0D1h, 0E0h, 8Ah, 5Eh, 8, 8Ah, 7Eh, 0Ah
-                db 89h, 46h, 0Ah, 8Ah, 46h, 4, 8Ah, 66h, 6, 8Ah, 4Eh, 0
-                db 8Ah, 6Eh, 2, 8Bh, 7Eh, 0Eh, 3Ah, 0C1h, 72h, 6, 3Ah
-                db 0C5h, 77h, 2, 89h, 3Ch, 3, 76h, 0Ah, 2, 0C3h, 78h, 11h
-                db 2, 0E7h, 78h, 0Dh, 3Ah, 0C2h, 74h, 9, 3Ah, 0E6h, 74h
-                db 5, 0FFh, 4Eh, 0Ch, 75h, 0DEh, 5Eh, 5Dh, 0FCh, 0E9h
-                db 0B1h, 0E7h, 2 dup(0), 0C3h, 52h, 56h, 8Dh, 75h, 0Ah
-                db 0B9h, 0D0h, 2, 32h, 0C0h, 0BAh, 2, 0, 46h, 88h, 4, 3
-                db 0F2h, 0E2h, 0FAh, 5Eh, 5Ah, 0C3h, 8Bh, 0FAh, 0E8h, 0E4h
-                db 0FFh, 0E9h, 8Fh, 0E7h, 87h, 0D7h, 56h, 0E8h, 0DBh, 0FFh
-                db 8Bh, 0F7h, 0BFh, 30h, 0E8h, 0FCh, 0B9h, 4, 0, 0B8h
-                db 2 dup(0FFh), 0F3h, 0ABh, 0BFh, 30h, 0E8h, 8Bh, 0DAh
-                db 0B2h, 0FFh, 32h, 0E4h, 33h, 0C9h, 8Ah, 7, 3Ah, 0C2h
-                db 74h, 2, 0ABh, 41h, 8Ah, 47h, 1, 3Ah, 0C2h, 74h, 2, 0ABh
-                db 41h, 8Ah, 47h, 2, 3Ah, 0C2h, 74h, 2, 0ABh, 41h, 8Ah
-                db 47h, 3, 3Ah, 0C2h, 74h, 2, 0ABh, 41h, 8Bh, 0D9h, 0D1h
-                db 0E3h, 33h, 0C0h, 2Eh, 8Bh, 9Fh, 19h, 14h, 50h, 53h
-                db 8Dh, 7Ch, 0Ah, 2Eh, 8Bh, 1Fh, 81h, 0C3h, 44h, 1, 0D1h
-                db 0E3h, 3, 0FBh, 0D1h, 0E0h, 0D1h, 0E0h, 0D1h, 0E0h, 0D1h
-                db 0E0h, 0D1h, 0E0h, 0BAh, 5, 0, 0FEh, 0C0h, 88h, 45h
-                db 1, 0FEh, 0C0h, 88h, 45h, 3, 0FEh, 0C0h, 88h, 45h, 5
-                db 0FEh, 0C0h, 88h, 45h, 7, 0FEh, 0C0h, 88h, 45h, 9, 0FEh
-                db 0C0h, 88h, 45h, 0Bh, 83h, 0C7h, 48h, 4Ah, 75h, 0DCh
-                db 5Bh, 58h, 40h, 2 dup(43h), 0E2h, 0B8h, 0E8h, 5Ah, 0
-                db 8Dh, 36h, 0, 0EDh, 46h, 0B9h, 0E8h, 3, 0B0h, 1Fh, 80h
-                db 3Ch, 0, 74h, 9, 78h, 7, 80h, 3Ch, 20h, 74h, 2, 88h
-                db 4, 83h, 0C6h, 2, 0E2h, 0EDh, 5Eh, 0FCh, 0E9h, 0D5h
-                db 0E6h, 56h, 0B8h, 2 dup(0FFh), 0BEh, 52h
-                db 72h, 0BFh, 38h, 0E8h, 2Eh, 8Bh, 16h, 0E0h, 13h, 0B9h
-                db 4, 0, 0C7h, 5, 2 dup(0FFh), 2 dup(47h), 8Ch, 0C8h, 0D1h
-                db 0E0h, 0D1h, 0E0h, 0D1h, 0E0h, 0D1h, 0E0h, 3, 0C6h, 8Bh
-                db 0D8h, 3, 0C2h, 33h, 0C3h, 79h, 2, 3, 0F2h, 89h, 35h
-                db 2 dup(47h), 3, 0F2h, 0E2h, 0DCh, 5Eh, 0C3h, 0BFh, 2 dup(0)
-                db 0E8h, 13h, 0, 0BFh, 1, 0, 0E8h, 0Dh, 0, 0BFh, 2, 0
-                db 0E8h, 7, 0, 0BFh, 3, 0, 0E8h, 1, 0, 0C3h, 0B9h, 4, 0
-                db 2Bh, 0CFh, 0D1h, 0E7h, 8Bh, 85h, 30h, 0E8h, 0Bh, 0C0h
-                db 78h, 0F0h, 0D1h, 0E7h, 8Bh, 0DFh, 3Bh, 87h, 38h, 0E8h
-                db 74h, 3Eh, 83h, 0C3h, 4, 0E2h, 0F5h, 1Eh, 6, 33h, 0C9h
-                db 51h, 8Bh, 0Eh, 0E2h, 0E0h, 51h, 8Bh, 95h, 3Ah, 0E8h
-                db 89h, 85h, 38h, 0E8h, 0D1h, 0EFh, 89h, 95h, 30h, 0E8h
-                db 52h, 2Eh, 8Bh, 0Eh, 0E0h, 13h, 51h, 2Eh, 8Bh, 1Eh, 0DEh
-                db 13h, 48h, 0F7h, 0EBh, 2Eh, 3, 6, 19h, 14h, 50h, 8Ch
-                db 0C8h, 8Eh, 0C0h, 8Eh, 0D8h, 0E8h, 82h, 0EBh, 7, 1Fh
-                db 0C3h, 8Bh, 85h, 38h, 0E8h, 8Bh, 97h, 38h, 0E8h, 89h
-                db 87h, 38h, 0E8h, 89h, 95h, 38h, 0E8h, 8Bh, 85h, 3Ah
-                db 0E8h, 8Bh, 97h, 3Ah, 0E8h, 89h, 87h, 3Ah, 0E8h, 89h
-                db 95h, 3Ah, 0E8h, 0D1h, 0EFh, 89h, 95h, 30h, 0E8h, 0C3h
-                db 2Eh, 0FFh, 26h, 17h, 14h, 57h, 0F7h, 6, 0FEh, 0E8h
-                db 0FFh, 0, 75h, 2Bh, 0C7h, 6, 0FEh, 0E8h, 0FFh, 0, 56h
-                db 0BEh, 0E4h, 13h, 0BFh, 0D8h, 13h, 6, 1Eh, 8Ch, 0C8h
-                db 8Eh, 0C0h, 8Eh, 0D8h, 0B9h, 0Ch, 0, 0FCh, 0F3h, 0A4h
-                db 1Fh, 7, 5Eh, 8Dh, 1Eh, 0DAh, 85h, 53h, 8Dh, 1Eh, 0
-                db 0E9h, 53h, 0E8h, 51h, 0, 0BBh, 71h, 25h, 0E8h, 5, 1Ch
-                db 0B8h, 1, 0, 0E8h, 9Fh, 0F5h, 5Fh, 8Bh, 5, 0A3h, 22h
-                db 2 dup(0E8h), 0E2h, 6, 50h, 0BBh, 2 dup(0), 2Eh, 0F7h
-                db 6, 0F3h, 13h, 2 dup(0FFh), 75h, 10h, 0B4h, 0Fh, 55h
-                db 0CDh, 10h, 5Dh, 0BBh, 2 dup(0), 3Ch, 6, 74h, 3, 0BBh
-                db 10h, 0, 58h, 0Bh, 0C3h, 0D1h, 0E3h, 0Bh, 0C3h, 89h
-                db 5, 0FCh, 0E9h, 8Eh, 0E5h, 0E8h, 2Ah, 0, 0E8h, 0CCh
-                db 1Bh, 33h, 0C0h, 0A3h, 0FEh, 2 dup(0E8h), 5Eh, 0F5h
-                db 0FCh, 0E9h, 7Ch, 0E5h, 5Fh, 5Bh, 5Ah, 57h, 89h, 1Eh
-                db 16h, 0E8h, 89h, 16h, 1Ah, 2 dup(0E8h), 10h, 0, 0E8h
-                db 4Bh, 0, 0E8h, 0Eh, 1, 32h, 0C0h, 0E8h, 0F1h, 1, 0C3h
-                db 0E8h, 0Eh, 0, 0C3h, 0B9h, 0F4h, 1, 8Bh, 3Eh, 16h, 0E8h
-                db 0FCh, 33h, 0C0h, 0F3h, 0ABh, 0C3h, 2Eh, 0A1h, 0F3h
-                db 13h, 85h, 0C0h, 75h, 25h, 0B8h, 2, 0, 55h, 0CDh, 10h
-                db 5Dh, 2Eh, 0A1h, 0F0h, 13h, 6, 0BBh, 40h, 0, 8Eh, 0C3h
-                db 26h, 3Bh, 6, 10h, 0, 26h, 0A3h, 10h, 0, 7, 74h, 7, 0B8h
-                db 2, 0, 55h, 0CDh, 10h, 5Dh, 0C3h, 0E8h, 0D4h, 1, 0C3h
-                db 57h, 0BFh, 95h, 3Ah, 0E8h, 7Dh, 1Bh, 5Fh, 0BAh, 0BFh
-                db 3, 0B0h, 1, 0EEh, 0BAh, 0D4h, 3, 0B0h, 0Fh, 0EEh, 42h
-                db 0B0h, 55h, 0EEh, 0ECh, 3Ch, 55h, 75h, 63h, 0B0h, 0AAh
-                db 0EEh, 0ECh, 3Ch, 0AAh, 75h, 5Bh, 0B0h, 0, 0EEh, 2Eh
-                db 0C7h, 6, 0F3h, 13h, 2 dup(0), 6, 0BBh, 40h, 0, 8Eh
-                db 0C3h, 26h, 0A1h, 10h, 0, 2Eh, 0A3h, 0F0h, 13h, 25h
-                db 0CFh, 0FFh, 0Dh, 10h, 0, 26h, 0A3h, 10h, 0, 7, 0B4h
-                db 2, 0CDh, 16h, 0A8h, 8, 75h, 0Dh, 0A8h, 4, 0B8h, 5, 0
-                db 74h, 9, 0B8h, 4, 0, 0EBh
-                db 4, 90h, 0B8h, 6, 0, 55h, 0CDh, 10h, 0B4h, 0Bh, 0BBh
-                db 2 dup(1), 0CDh, 10h, 5Dh, 6, 33h, 0DBh, 8Eh, 0C3h, 0BBh
-                db 74h, 0, 26h, 0C4h, 1Fh, 26h, 8Ah, 47h, 22h, 7, 2Eh
-                db 0A2h, 0F2h, 13h, 0C3h, 2Eh, 0C7h, 6, 0F3h, 13h, 2 dup(0FFh)
-                db 2 dup(0BAh), 3, 0ECh, 8Ah, 0E0h, 33h, 0C9h, 0ECh, 32h
-                db 0C4h, 0A8h, 80h, 75h, 2Ch, 0E2h, 0F7h, 57h, 0BFh, 0C9h
-                db 3Ah, 0E8h, 0E5h, 1Ah, 5Fh, 57h, 0BFh, 2, 3Bh, 0E8h
-                db 0DDh, 1Ah, 5Fh, 57h, 0BFh, 2Dh, 3Bh, 0E8h, 0D5h, 1Ah
-                db 5Fh, 57h, 0BFh, 61h, 3Bh, 0E8h, 0CDh, 1Ah, 5Fh, 57h
-                db 0BFh, 86h, 3Bh, 0E8h, 0C5h, 1Ah, 5Fh, 0EBh, 0FEh, 0E8h
-                db 0F8h, 0, 0C3h, 0BBh, 2 dup(0), 0B8h, 50h, 0, 2Eh, 8Bh
-                db 0Eh, 0DAh, 13h, 0F7h, 0E9h, 8Bh, 0D0h, 6, 0Eh, 7, 2Eh
-                db 8Bh, 16h, 0DCh, 13h, 0D1h, 0E2h, 0B9h, 40h, 1, 0BFh
-                db 72h, 57h, 33h, 0C0h, 0E8h, 0BDh, 0, 2Eh, 0A1h, 0DCh
-                db 13h, 0D1h, 0E0h, 8Bh, 0D0h, 0BFh, 0F2h, 59h, 33h, 0C0h
-                db 0B9h, 1Eh, 0, 0E8h, 0AAh, 0, 33h, 0C0h, 0B9h, 19h, 0
-                db 0BAh, 28h, 0, 0BFh, 0D0h, 3Ch, 0E8h, 9Dh, 0, 0FCh, 2Eh
-                db 0A1h, 0F3h, 13h, 85h, 0C0h, 75h, 3Fh, 2Eh, 0C7h, 6
-                db 0Dh, 14h, 0E7h, 1Dh, 2Eh, 0C7h, 6, 0Fh, 14h, 2Eh, 1Eh
-                db 2Eh, 0C7h, 6, 11h, 14h, 62h, 1Eh, 2Eh, 0C7h, 6, 13h
-                db 14h, 9Ah, 1Eh, 2Eh, 0C7h, 6, 15h, 14h, 0BCh, 1Fh, 2Eh
-                db 0C7h, 6, 17h, 14h, 0F8h, 1Eh, 0B9h, 19h, 0, 2Eh, 0A1h
-                db 0DCh, 13h, 0D1h, 0E8h, 0BBh, 50h, 0, 0F6h, 0EBh, 8Bh
-                db 0D0h, 33h, 0C0h, 0EBh, 40h, 90h, 2Eh, 0C7h, 6, 0Dh
-                db 14h, 0D8h, 1Fh, 2Eh, 0C7h, 6, 0Fh, 14h, 1Eh, 20h, 2Eh
-                db 0C7h, 6, 11h, 14h, 52h, 20h, 2Eh, 0C7h, 6, 13h, 14h
-                db 8Ah, 20h, 2Eh, 0C7h, 6, 15h, 14h, 0CFh, 21h, 2Eh, 0C7h
-                db 6, 17h, 14h, 0E8h, 20h, 0B9h, 19h, 0, 2Eh, 0A1h, 0DCh
-                db 13h, 0D1h, 0E8h, 0D1h, 0E8h, 0BBh, 5Ah, 0, 0F6h, 0EBh
-                db 8Bh, 0D0h, 0B8h, 59h, 6, 0BFh, 2, 3Dh, 51h, 0B9h, 28h
-                db 0, 50h, 0ABh, 2 dup(40h), 0E2h, 0FBh, 58h, 3, 0C2h
-                db 59h, 0E2h, 0F0h, 7, 0C3h, 0FCh, 0ABh, 3, 0C2h, 0E2h
-                db 0FBh, 0C3h, 0B9h, 0E8h, 3, 0BFh, 0, 0EDh, 33h, 0C0h
-                db 0F3h, 0ABh, 2Eh, 0FFh, 26h, 15h, 14h, 6, 1Eh, 56h, 0B0h
-                db 2, 8Dh, 36h, 0F5h, 13h, 0BBh, 2 dup(0), 0B9h, 0, 40h
-                db 0E8h, 1Ah, 0, 5Eh, 1Fh, 7, 0C3h, 6, 1Eh, 56h, 0B0h
-                db 20h, 8Dh, 36h, 1, 14h, 0BBh, 20h, 7, 0B9h, 0D0h, 7
-                db 0E8h, 4, 0, 5Eh, 7, 1Fh, 0C3h, 1Eh, 6, 50h, 53h, 51h
-                db 0BAh, 0B8h, 3, 0EEh, 8Ch, 0C8h, 8Eh, 0D8h, 0BAh, 0B4h
-                db 3, 0B9h, 0Ch, 0, 32h, 0E4h, 8Ah, 0C4h, 0EEh, 42h, 0ACh
-                db 0EEh, 0FEh, 0C4h, 4Ah, 0E2h, 0F5h, 59h, 0B8h, 0, 0B0h
-                db 0FCh, 8Eh, 0C0h, 33h, 0FFh, 58h, 0F3h, 0ABh, 0BAh, 0B8h
-                db 3, 58h, 4, 8, 0EEh, 7, 1Fh, 0C3h, 56h, 57h, 6, 32h
-                db 0FFh, 8Ah, 0D8h, 0D1h, 0E6h, 2Eh, 8Bh, 0BCh, 2, 3Dh
-                db 0D1h, 0E3h, 2Eh, 8Bh, 0B7h, 72h, 57h, 3, 36h, 1Ah, 0E8h
-                db 1Eh, 55h, 0Eh, 1Fh, 0B8h, 0, 0B8h, 8Eh, 0C0h, 0BAh
-                db 0FEh, 1Fh, 0BDh, 0B2h, 1Fh, 90h, 0A5h, 3, 0FAh, 0A5h
-                db 2Bh, 0FDh, 0A5h, 3, 0FAh, 0A5h, 2Bh, 0FDh, 0A5h, 3
-                db 0FAh, 0A5h, 2Bh, 0FDh, 0A5h, 3, 0FAh, 0A5h, 2Bh, 0FDh
-                db 5Dh
+                                        ; conunit_uwr+6D8↓r ...
+unk_13F5        db  35h ; 5             ; DATA XREF: sub_1D85+5↓o
+                db  2Dh ; -
+                db  2Eh ; .
+                db    7
+                db  5Bh ; [
+                db    2
+                db  57h ; W
+                db  57h ; W
+                db    2
+                db    3
+                db    0
+                db    0
+unk_1401        db  61h ; a             ; DATA XREF: sub_1D9B+5↓o
+                db  50h ; P
+                db  52h ; R
+                db  0Fh
+                db  19h
+                db    6
+                db  19h
+                db  19h
+                db    2
+                db  0Dh
+                db  0Bh
+                db  0Ch
+word_140D       dw 0                    ; DATA XREF: sub_1882+C↓r
+                                        ; sub_1C8E+4E↓w ...
+word_140F       dw 0                    ; DATA XREF: sub_1882:loc_18A0↓r
+                                        ; sub_1C8E+55↓w ...
+word_1411       dw 0                    ; DATA XREF: sub_18A5↓r
+                                        ; sub_1C8E+5C↓w ...
+word_1413       dw 0                    ; DATA XREF: sub_18AA↓r
+                                        ; sub_1C8E+63↓w ...
+word_1415       dw 0                    ; DATA XREF: sub_1C8E+6A↓w
+                                        ; sub_1C8E+A9↓w ...
+word_1417       dw 0                    ; DATA XREF: conunit_uwr:loc_1AE1↓r
+                                        ; sub_1C8E+71↓w ...
+word_1419       dw 0                    ; DATA XREF: conunit_uwr:conunit_load_monsters↓w
+                                        ; sub_1A63+45↓r
+                db  23h ; #
+                db  14h
+                db  25h ; %
+                db  14h
+                db  29h ; )
+                db  14h
+                db  2Fh ; /
+                db  14h
+                db  0Fh
+                db    0
+                db  0Bh
+                db    0
+                db  13h
+                db    0
+                db    7
+                db    0
+                db  0Fh
+                db    0
+                db  17h
+                db    0
+                db    3
+                db    0
+                db  0Bh
+                db    0
+                db  13h
+                db    0
+                db  1Bh
+                db    0
+word_1437       dw 5BABh                ; DATA XREF: conunit_random↓r
+                                        ; conunit_random+E↓w ...
+word_1439       dw 0D02Bh               ; DATA XREF: conunit_random+12↓r
+                                        ; conunit_random+20↓w ...
+word_143B       dw 7E15h                ; DATA XREF: conunit_random+24↓r
+                                        ; conunit_random+32↓w ...
+word_143D       dw 7351h                ; DATA XREF: conunit_random+36↓r
+                                        ; conunit_random+44↓w ...
+word_143F       dw 3619h                ; DATA XREF: conunit_random+9↓r
+                                        ; sub_229D+4↓r
+word_1441       dw 0FF8Bh               ; DATA XREF: conunit_random+1B↓r
+                                        ; sub_229D+8↓r
+word_1443       dw 183h                 ; DATA XREF: conunit_random+2D↓r
+                                        ; sub_229D+D↓r
+word_1445       dw 7FC9h                ; DATA XREF: conunit_random+3F↓r
+                                        ; sub_229D+12↓r
+word_1447       dw 0                    ; DATA XREF: conunit_uwr+EB5↓w
+                                        ; conunit_uwr+ECF↓r ...
+word_1449       dw 0                    ; DATA XREF: conunit_uwr+EAC↓w
+                                        ; conunit_uwr+EDB↓w
+
+; =============== S U B R O U T I N E =======================================
+
+
+conunit_urd     proc near
+                mov     word ptr ds:0E0DEh, 0
+                cld
+                mov     bx, cx
+                shl     bx, 1
+                jmp     word ptr cs:[bx+134Eh]
+conunit_urd     endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+conunit_uwr     proc near
+
+; FUNCTION CHUNK AT 153E SIZE 0000000B BYTES
+; FUNCTION CHUNK AT 1577 SIZE 00000023 BYTES
+; FUNCTION CHUNK AT 18C1 SIZE 00000075 BYTES
+; FUNCTION CHUNK AT 1950 SIZE 000000C2 BYTES
+; FUNCTION CHUNK AT 1AE1 SIZE 0000008A BYTES
+; FUNCTION CHUNK AT 2215 SIZE 00000009 BYTES
+; FUNCTION CHUNK AT 2305 SIZE 0000003C BYTES
+; FUNCTION CHUNK AT 234A SIZE 0000002F BYTES
+; FUNCTION CHUNK AT 237A SIZE 00000006 BYTES
+; FUNCTION CHUNK AT 2381 SIZE 0000000E BYTES
+; FUNCTION CHUNK AT 23CB SIZE 00000019 BYTES
+; FUNCTION CHUNK AT 244A SIZE 0000001E BYTES
+; FUNCTION CHUNK AT 247B SIZE 0000004F BYTES
+; FUNCTION CHUNK AT 24CB SIZE 0000004C BYTES
+
+                mov     word ptr ds:0E0DEh, 0
+                cld
+                mov     bx, cx
+                shl     bx, 1           ; switch 35 cases
+                jmp     cs:jpt_1466[bx] ; switch jump
+; ---------------------------------------------------------------------------
+
+conunit_load_charset:                   ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    ds              ; jumptable 00001466 case 14
+                push    es
+                mov     cx, dx
+                xor     ax, ax
+                push    ax
+                mov     ax, ds:0E0E2h
+                push    ax
+                mov     ax, 85DAh
+                push    ax
+                mov     ax, cs:word_13DC
+                mov     bx, 140h
+                shl     bx, 1
+                imul    bx
+                push    ax
+                push    cx
+                mov     ax, cs
+                mov     es, ax
+                mov     ds, ax
+                assume ds:nothing
+                call    pm_load_startup_seg
+                pop     es
+                pop     ds
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+conunit_load_monsters:                  ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                mov     cs:word_1419, dx ; jumptable 00001466 case 18
+                call    sub_1A12
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_14A2:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                jmp     conunit_noop    ; jumptable 00001466 case 9
+; ---------------------------------------------------------------------------
+
+loc_14A5:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    si              ; jumptable 00001466 case 30
+                mov     si, dx
+                xor     ch, ch
+                lodsb
+                mov     cl, al
+                jcxz    short loc_14BF
+
+loc_14AF:                               ; CODE XREF: conunit_uwr+62↓j
+                lodsb
+                xor     ah, ah
+                mov     dx, ax
+                push    cx
+                push    si
+                push    di
+                call    sub_14CB
+                pop     di
+                pop     si
+                pop     cx
+                loop    loc_14AF
+
+loc_14BF:                               ; CODE XREF: conunit_uwr+52↑j
+                pop     si
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_14C4:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                call    sub_14CB        ; jumptable 00001466 case 4
+                cld
+                jmp     interp_fetch
+conunit_uwr     endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_14CB        proc near               ; CODE XREF: conunit_uwr+5C↑p
+                                        ; conunit_uwr:loc_14C4↑p
+                push    si
+                mov     bx, di
+                mov     al, [bx+7]
+                mov     cl, [bx+4]
+                sub     cl, 2
+                mul     cl
+                mov     cl, [bx+6]
+                xor     ch, ch
+                add     ax, cx
+                shl     ax, 1
+                mov     si, ax
+                mov     [bx+si+0Ah], dx
+                mov     cl, [bx+8]
+                test    cl, 80h
+                jnz     short loc_151B
+                mov     al, [bx+7]
+                add     al, [bx+3]
+                inc     al
+                xor     ah, ah
+                mov     si, ax
+                shl     si, 1
+                mov     si, cs:[si+3CD0h]
+                mov     al, [bx+6]
+                add     al, [bx+2]
+                inc     al
+                add     si, ax
+                cmp     cl, [si-1700h]
+                jb      short loc_151B
+                mov     [si-1700h], cl
+                mov     ax, dx
+                call    sub_1853
+
+loc_151B:                               ; CODE XREF: sub_14CB+22↑j
+                                        ; sub_14CB+45↑j
+                mov     ax, [di+6]
+                mov     dx, [di+4]
+                inc     al
+                dec     dl
+                dec     dl
+                cmp     al, dl
+                jnz     short loc_1539
+                xor     al, al
+                inc     ah
+                dec     dh
+                dec     dh
+                cmp     ah, dh
+                jnz     short loc_1539
+                xor     ah, ah
+
+loc_1539:                               ; CODE XREF: sub_14CB+5E↑j
+                                        ; sub_14CB+6A↑j
+                mov     [di+6], ax
+                pop     si
+                retn
+sub_14CB        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_153E:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                mov     ds:0E800h, di   ; jumptable 00001466 case 2
+                call    sub_1549
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1549        proc near               ; CODE XREF: conunit_uwr+E7↑p
+                push    si
+                push    di
+                call    sub_1B8A
+                pop     di
+
+loc_154F:                               ; CODE XREF: sub_1549+27↓j
+                test    byte ptr [di+8], 80h
+                jnz     short loc_156C
+                mov     bl, [di+3]
+                xor     bh, bh
+                shl     bx, 1
+                mov     si, cs:[bx+3CD0h]
+                mov     bl, [di+2]
+                add     si, bx
+                call    sub_159A
+                call    sub_16F2
+
+loc_156C:                               ; CODE XREF: sub_1549+A↑j
+                mov     di, [di]
+                or      di, di
+                jnz     short loc_154F
+                call    sub_175D
+                pop     si
+                retn
+sub_1549        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+conunit_present:                        ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                test    byte ptr [di+8], 80h ; jumptable 00001466 case 3
+                jnz     short loc_1596
+                push    si
+                mov     bl, [di+3]
+                xor     bh, bh
+                shl     bx, 1
+                mov     si, cs:[bx+3CD0h]
+                mov     bl, [di+2]
+                add     si, bx
+                call    sub_1797
+                call    sub_17FE
+                pop     si
+
+loc_1596:                               ; CODE XREF: conunit_uwr+120↑j
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_159A        proc near               ; CODE XREF: sub_1549+1D↑p
+                cmp     byte ptr [di+8], 3Fh ; '?'
+                jz      short loc_160A
+                push    si
+                mov     al, 1
+                call    sub_1674
+                push    si
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_15B9
+                mov     al, 2
+                mov     dx, 1
+                call    sub_16A9
+
+loc_15B9:                               ; CODE XREF: sub_159A+15↑j
+                mov     al, 3
+                call    sub_1674
+                pop     si
+                add     si, 28h ; '('
+                mov     cl, [di+5]
+                dec     cl
+                dec     cl
+                jz      short loc_15EC
+                push    si
+                mov     dx, 28h ; '('
+                mov     al, 4
+                push    cx
+                call    sub_16A9
+                pop     cx
+                mov     ax, si
+                pop     si
+                push    ax
+                mov     bl, [di+4]
+                dec     bl
+                xor     bh, bh
+                add     si, bx
+                mov     al, 5
+                mov     dx, 28h ; '('
+                call    sub_16A9
+                pop     si
+
+loc_15EC:                               ; CODE XREF: sub_159A+2F↑j
+                mov     al, 6
+                call    sub_1674
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_1603
+                mov     al, 7
+                mov     dx, 1
+                call    sub_16A9
+
+loc_1603:                               ; CODE XREF: sub_159A+5F↑j
+                mov     al, 8
+                call    sub_1674
+                pop     si
+                retn
+; ---------------------------------------------------------------------------
+
+loc_160A:                               ; CODE XREF: sub_159A+4↑j
+                push    si
+                mov     al, 0Dh
+                call    sub_1674
+                push    si
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_1623
+                mov     al, 0Ah
+                mov     dx, 1
+                call    sub_16A9
+
+loc_1623:                               ; CODE XREF: sub_159A+7F↑j
+                mov     al, 0Eh
+                call    sub_1674
+                pop     si
+                add     si, 28h ; '('
+                mov     cl, [di+5]
+                dec     cl
+                dec     cl
+                jz      short loc_1656
+                push    si
+                mov     dx, 28h ; '('
+                mov     al, 0Bh
+                push    cx
+                call    sub_16A9
+                pop     cx
+                mov     ax, si
+                pop     si
+                push    ax
+                mov     bl, [di+4]
+                dec     bl
+                xor     bh, bh
+                add     si, bx
+                mov     al, 0Ch
+                mov     dx, 28h ; '('
+                call    sub_16A9
+                pop     si
+
+loc_1656:                               ; CODE XREF: sub_159A+99↑j
+                mov     al, 0Eh
+                call    sub_1674
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_166D
+                mov     al, 9
+                mov     dx, 1
+                call    sub_16A9
+
+loc_166D:                               ; CODE XREF: sub_159A+C9↑j
+                mov     al, 0Dh
+                call    sub_1674
+                pop     si
+                retn
+sub_159A        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1674        proc near               ; CODE XREF: sub_159A+9↑p
+                                        ; sub_159A+21↑p ...
+                mov     bx, si
+                shl     bx, 1
+                xor     ah, ah
+                mov     dl, [di+8]
+                mov     dh, [si-1700h]
+                and     dh, 3Fh
+                cmp     dl, dh
+                jz      short loc_168E
+                jb      short locret_16A8
+                mov     [si-1700h], dl
+
+loc_168E:                               ; CODE XREF: sub_1674+12↑j
+                mov     cx, [bx-1300h]
+                cmp     ax, cx
+                jz      short locret_16A8
+                mov     [bx-1300h], ax
+                mov     cl, 80h
+                or      ch, ch
+                jz      short loc_16A4
+                js      short loc_16A4
+                mov     cl, 0C0h
+
+loc_16A4:                               ; CODE XREF: sub_1674+2A↑j
+                                        ; sub_1674+2C↑j
+                or      [si-1700h], cl
+
+locret_16A8:                            ; CODE XREF: sub_1674+14↑j
+                                        ; sub_1674+20↑j
+                retn
+sub_1674        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16A9        proc near               ; CODE XREF: sub_159A+1C↑p
+                                        ; sub_159A+38↑p ...
+                xor     ch, ch
+                push    bp
+                push    di
+                mov     bp, si
+                shl     bp, 1
+                mov     ah, [di+8]
+                mov     di, dx
+                mov     dl, ah
+                xor     ah, ah
+
+loc_16BA:                               ; CODE XREF: sub_16A9+44↓j
+                mov     dh, [si-1700h]
+                and     dh, 3Fh
+                cmp     dl, dh
+                jz      short loc_16CB
+                jb      short loc_16E7
+                mov     [si-1700h], dl
+
+loc_16CB:                               ; CODE XREF: sub_16A9+1A↑j
+                mov     bx, ds:[bp-1300h]
+                cmp     ax, bx
+                jz      short loc_16E7
+                mov     bl, 80h
+                or      bh, bh
+                jz      short loc_16DE
+                js      short loc_16DE
+                mov     bl, 0C0h
+
+loc_16DE:                               ; CODE XREF: sub_16A9+2F↑j
+                                        ; sub_16A9+31↑j
+                mov     ds:[bp-1300h], ax
+                or      [si-1700h], bl
+
+loc_16E7:                               ; CODE XREF: sub_16A9+1C↑j
+                                        ; sub_16A9+29↑j
+                add     si, di
+                add     bp, di
+                add     bp, di
+                loop    loc_16BA
+                pop     di
+                pop     bp
+                retn
+sub_16A9        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_16F2        proc near               ; CODE XREF: sub_1549+20↑p
+                push    bp
+                push    di
+                xor     bx, bx
+                add     si, 29h ; ')'
+                mov     bp, si
+                shl     bp, 1
+                xor     ch, ch
+                mov     cl, [di+5]
+                dec     cl
+                dec     cl
+
+loc_1706:                               ; CODE XREF: sub_16F2+66↓j
+                push    bp
+                push    si
+                push    cx
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+
+loc_1710:                               ; CODE XREF: sub_16F2+5B↓j
+                mov     al, [di+8]
+                mov     ah, [si-1700h]
+                and     ah, 3Fh
+                cmp     al, ah
+                jb      short loc_1748
+                mov     [si-1700h], al
+                mov     ax, [bx+di+0Ah]
+                mov     dx, ds:[bp-1300h]
+                cmp     ax, dx
+                jz      short loc_1748
+                mov     ds:[bp-1300h], ax
+                or      byte ptr [si-1700h], 80h
+                test    dh, dh
+                jz      short loc_1748
+                js      short loc_1748
+                cmp     dh, 20h ; ' '
+                jz      short loc_1748
+                or      byte ptr [si-1700h], 40h
+
+loc_1748:                               ; CODE XREF: sub_16F2+2A↑j
+                                        ; sub_16F2+3A↑j ...
+                inc     bx
+                inc     bx
+                inc     si
+                inc     bp
+                inc     bp
+                loop    loc_1710
+                pop     cx
+                pop     si
+                pop     bp
+                add     si, 28h ; '('
+                add     bp, 50h ; 'P'
+                loop    loc_1706
+                pop     di
+                pop     bp
+                retn
+sub_16F2        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_175D        proc near               ; CODE XREF: sub_1549+29↑p
+                push    si
+                xor     si, si
+                mov     cx, 3E8h
+
+loc_1763:                               ; CODE XREF: sub_175D+36↓j
+                mov     al, [si-1700h]
+                or      al, al
+                jz      short loc_178C
+                jns     short loc_1792
+                mov     dx, 0FFFFh
+                test    al, 40h
+                jz      short loc_1777
+                mov     dx, 7F00h
+
+loc_1777:                               ; CODE XREF: sub_175D+15↑j
+                and     byte ptr [si-1700h], 3Fh
+                shl     si, 1
+                mov     ax, [si-1300h]
+                shr     si, 1
+                push    cx
+                call    sub_1882
+                pop     cx
+                jmp     short loc_1792
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_178C:                               ; CODE XREF: sub_175D+C↑j
+                mov     dx, 0FFFFh
+                call    sub_18A5
+
+loc_1792:                               ; CODE XREF: sub_175D+E↑j
+                                        ; sub_175D+2C↑j
+                inc     si
+                loop    loc_1763
+                pop     si
+                retn
+sub_175D        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1797        proc near               ; CODE XREF: conunit_uwr+134↑p
+                push    si
+                mov     al, 1
+                call    sub_1842
+                push    si
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_17B0
+                mov     al, 2
+                mov     dx, 1
+                call    sub_18AF
+
+loc_17B0:                               ; CODE XREF: sub_1797+F↑j
+                mov     al, 3
+                call    sub_1842
+                pop     si
+                add     si, 28h ; '('
+                mov     cl, [di+5]
+                dec     cl
+                dec     cl
+                jz      short loc_17E0
+                push    si
+                mov     dx, 28h ; '('
+                mov     al, 4
+                push    cx
+                call    sub_18AF
+                pop     cx
+                mov     ax, si
+                pop     si
+                push    ax
+                mov     bl, [di+4]
+                dec     bl
+                xor     bh, bh
+                add     si, bx
+                mov     al, 5
+                call    sub_18AF
+                pop     si
+
+loc_17E0:                               ; CODE XREF: sub_1797+29↑j
+                mov     al, 6
+                call    sub_1842
+                inc     si
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+                jz      short loc_17F7
+                mov     al, 7
+                mov     dx, 1
+                call    sub_18AF
+
+loc_17F7:                               ; CODE XREF: sub_1797+56↑j
+                mov     al, 8
+                call    sub_1842
+                pop     si
+                retn
+sub_1797        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_17FE        proc near               ; CODE XREF: conunit_uwr+137↑p
+                push    di
+                xor     bx, bx
+                add     si, 29h ; ')'
+                xor     ch, ch
+                mov     cl, [di+5]
+                dec     cl
+                dec     cl
+
+loc_180D:                               ; CODE XREF: sub_17FE+39↓j
+                push    si
+                push    cx
+                mov     cl, [di+4]
+                dec     cl
+                dec     cl
+
+loc_1816:                               ; CODE XREF: sub_17FE+32↓j
+                mov     al, [di+8]
+                cmp     al, [si-1700h]
+                jb      short loc_182D
+                mov     [si-1700h], al
+                mov     ax, [bx+di+0Ah]
+                push    cx
+                push    bx
+                call    sub_1853
+                pop     bx
+                pop     cx
+
+loc_182D:                               ; CODE XREF: sub_17FE+1F↑j
+                inc     bx
+                inc     bx
+                inc     si
+                loop    loc_1816
+                pop     cx
+                pop     si
+                add     si, 28h ; '('
+                loop    loc_180D
+                pop     di
+                retn
+sub_17FE        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR sub_1882
+
+loc_183B:                               ; CODE XREF: sub_1882+2↓j
+                jmp     short loc_1893
+; END OF FUNCTION CHUNK FOR sub_1882
+; ---------------------------------------------------------------------------
+                align 2
+; START OF FUNCTION CHUNK FOR sub_1882
+
+loc_183E:                               ; CODE XREF: sub_1882+6↓j
+                                        ; sub_1882+A↓j
+                jmp     short sub_18A5
+; END OF FUNCTION CHUNK FOR sub_1882
+; ---------------------------------------------------------------------------
+                db 90h
+; [00000001 BYTES: COLLAPSED FUNCTION nullsub_5. PRESS NUMPAD+ TO EXPAND]
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1842        proc near               ; CODE XREF: sub_1797+3↑p
+                                        ; sub_1797+1B↑p ...
+                xor     ah, ah
+sub_1842        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1844        proc near               ; CODE XREF: sub_18AF+7↓p
+                mov     bl, [di+8]
+                cmp     bl, [si-1700h]
+                jz      short sub_1853
+                jb      short nullsub_5
+                mov     [si-1700h], bl
+sub_1844        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1853        proc near               ; CODE XREF: sub_14CB+4D↑p
+                                        ; sub_17FE+2A↑p ...
+                shl     si, 1
+                mov     dx, [si-1300h]
+                mov     [si-1300h], ax
+                shr     si, 1
+                cmp     dx, 2020h
+                jz      short loc_186D
+                cmp     dx, 20h ; ' '
+                jz      short loc_186D
+                jmp     short loc_186F
+; ---------------------------------------------------------------------------
+                db 90h
+; ---------------------------------------------------------------------------
+
+loc_186D:                               ; CODE XREF: sub_1853+10↑j
+                                        ; sub_1853+15↑j
+                xor     dx, dx
+
+loc_186F:                               ; CODE XREF: sub_1853+17↑j
+                cmp     ax, 2020h
+                jz      short loc_187C
+                cmp     ax, 20h ; ' '
+                jz      short loc_187C
+                jmp     short loc_187E
+; ---------------------------------------------------------------------------
+                align 2
+
+loc_187C:                               ; CODE XREF: sub_1853+1F↑j
+                                        ; sub_1853+24↑j
+                xor     ax, ax
+
+loc_187E:                               ; CODE XREF: sub_1853+26↑j
+                cmp     dx, ax
+                jz      short nullsub_5
+sub_1853        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1882        proc near               ; CODE XREF: sub_175D+28↑p
+
+; FUNCTION CHUNK AT 183B SIZE 00000002 BYTES
+; FUNCTION CHUNK AT 183E SIZE 00000002 BYTES
+; FUNCTION CHUNK AT 18A0 SIZE 00000005 BYTES
+
+                or      ah, ah
+                jnz     short loc_183B
+                or      al, al
+                jz      short loc_183E
+                cmp     al, 20h ; ' '
+                jz      short loc_183E
+                jmp     cs:word_140D
+; ---------------------------------------------------------------------------
+
+loc_1893:                               ; CODE XREF: sub_1882:loc_183B↑j
+                cmp     ah, 20h ; ' '
+                jz      short sub_18A5
+                cmp     ah, 80h
+                jnb     short loc_18A0
+                jmp     short sub_18AA
+sub_1882        endp
+
+; ---------------------------------------------------------------------------
+                align 2
+; START OF FUNCTION CHUNK FOR sub_1882
+
+loc_18A0:                               ; CODE XREF: sub_1882+19↑j
+                jmp     cs:word_140F
+; END OF FUNCTION CHUNK FOR sub_1882
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: thunk
+
+sub_18A5        proc near               ; CODE XREF: sub_175D+32↑p
+                                        ; sub_1882:loc_183E↑j ...
+                jmp     cs:word_1411
+sub_18A5        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: thunk
+
+sub_18AA        proc near               ; CODE XREF: sub_1882+1B↑j
+                jmp     cs:word_1413
+sub_18AA        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_18AF        proc near               ; CODE XREF: sub_1797+16↑p
+                                        ; sub_1797+32↑p ...
+                xor     ch, ch
+                xor     ah, ah
+
+loc_18B3:                               ; CODE XREF: sub_18AF+F↓j
+                push    ax
+                push    cx
+                push    dx
+                call    sub_1844
+                pop     dx
+                pop     cx
+                pop     ax
+                add     si, dx
+                loop    loc_18B3
+                retn
+sub_18AF        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_18C1:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    bp              ; jumptable 00001466 case 5
+                push    si
+                mov     bp, di
+                mov     di, dx
+                mov     dx, [di+4]
+                sub     dl, 2
+                sub     dh, 2
+                mov     al, [bp+6]
+                mul     dl
+                add     ax, [bp+4]
+                lea     si, [di+0Ah]
+                shl     ax, 1
+                add     si, ax
+                xor     al, al
+                mov     ah, [bp+0Ah]
+                or      ah, ah
+                jz      short loc_18F0
+                mov     al, dl
+                shl     ah, 1
+                jnb     short loc_18F0
+                neg     al
+
+loc_18F0:                               ; CODE XREF: conunit_uwr+48B↑j
+                                        ; conunit_uwr+491↑j
+                add     al, [bp+8]
+                cbw
+                shl     ax, 1
+                mov     bl, [bp+8]
+                mov     bh, [bp+0Ah]
+                mov     [bp+0Ah], ax
+                mov     al, [bp+4]
+                mov     ah, [bp+6]
+                mov     cl, [bp+0]
+                mov     ch, [bp+2]
+                mov     di, [bp+0Eh]
+
+loc_190E:                               ; CODE XREF: conunit_uwr+4D3↓j
+                cmp     al, cl
+                jb      short loc_1918
+                cmp     al, ch
+                ja      short loc_1918
+                mov     [si], di
+
+loc_1918:                               ; CODE XREF: conunit_uwr+4B5↑j
+                                        ; conunit_uwr+4B9↑j
+                add     si, [bp+0Ah]
+                add     al, bl
+                js      short loc_1930
+                add     ah, bh
+                js      short loc_1930
+                cmp     al, dl
+                jz      short loc_1930
+                cmp     ah, dh
+                jz      short loc_1930
+                dec     word ptr [bp+0Ch]
+                jnz     short loc_190E
+
+loc_1930:                               ; CODE XREF: conunit_uwr+4C2↑j
+                                        ; conunit_uwr+4C6↑j ...
+                pop     si
+                pop     bp
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
+                align 4
+                retn
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1939        proc near               ; CODE XREF: conunit_uwr+4F7↓p
+                                        ; conunit_uwr+500↓p
+                push    dx
+                push    si
+                lea     si, [di+0Ah]
+                mov     cx, 2D0h
+                xor     al, al
+                mov     dx, 2
+                inc     si
+
+loc_1947:                               ; CODE XREF: sub_1939+12↓j
+                mov     [si], al
+                add     si, dx
+                loop    loc_1947
+                pop     si
+                pop     dx
+                retn
+sub_1939        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+conunit_blit17:                         ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                mov     di, dx          ; jumptable 00001466 case 17
+                call    sub_1939
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+conunit_blit13:                         ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                xchg    dx, di          ; jumptable 00001466 case 13
+                push    si
+                call    sub_1939
+                mov     si, di
+                mov     di, 0E830h
+                cld
+                mov     cx, 4
+                mov     ax, 0FFFFh
+                rep stosw
+                mov     di, 0E830h
+                mov     bx, dx
+                mov     dl, 0FFh
+                xor     ah, ah
+                xor     cx, cx
+                mov     al, [bx]
+                cmp     al, dl
+                jz      short loc_197F
+                stosw
+                inc     cx
+
+loc_197F:                               ; CODE XREF: conunit_uwr+520↑j
+                mov     al, [bx+1]
+                cmp     al, dl
+                jz      short loc_1988
+                stosw
+                inc     cx
+
+loc_1988:                               ; CODE XREF: conunit_uwr+529↑j
+                mov     al, [bx+2]
+                cmp     al, dl
+                jz      short loc_1991
+                stosw
+                inc     cx
+
+loc_1991:                               ; CODE XREF: conunit_uwr+532↑j
+                mov     al, [bx+3]
+                cmp     al, dl
+                jz      short loc_199A
+                stosw
+                inc     cx
+
+loc_199A:                               ; CODE XREF: conunit_uwr+53B↑j
+                mov     bx, cx
+                shl     bx, 1
+                xor     ax, ax
+                mov     bx, cs:[bx+1419h]
+
+loc_19A5:                               ; CODE XREF: conunit_uwr+590↓j
+                push    ax
+                push    bx
+                lea     di, [si+0Ah]
+                mov     bx, cs:[bx]
+                add     bx, 144h
+                shl     bx, 1
+                add     di, bx
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                mov     dx, 5
+
+loc_19C2:                               ; CODE XREF: conunit_uwr+589↓j
+                inc     al
+                mov     [di+1], al
+                inc     al
+                mov     [di+3], al
+                inc     al
+                mov     [di+5], al
+                inc     al
+                mov     [di+7], al
+                inc     al
+                mov     [di+9], al
+                inc     al
+                mov     [di+0Bh], al
+                add     di, 48h ; 'H'
+                dec     dx
+                jnz     short loc_19C2
+                pop     bx
+                pop     ax
+                inc     ax
+                inc     bx
+                inc     bx
+                loop    loc_19A5
+                call    sub_1A4A
+                lea     si, ds:0ED00h
+                inc     si
+                mov     cx, 3E8h
+                mov     al, 1Fh
+
+loc_19FA:                               ; CODE XREF: conunit_uwr+5B0↓j
+                cmp     byte ptr [si], 0
+                jz      short loc_1A08
+                js      short loc_1A08
+                cmp     byte ptr [si], 20h ; ' '
+                jz      short loc_1A08
+                mov     [si], al
+
+loc_1A08:                               ; CODE XREF: conunit_uwr+5A2↑j
+                                        ; conunit_uwr+5A4↑j ...
+                add     si, 2
+                loop    loc_19FA
+                pop     si
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1A12        proc near               ; CODE XREF: conunit_uwr+40↑p
+                push    si
+                mov     ax, 0FFFFh
+                mov     si, 7252h
+                mov     di, 0E838h
+                mov     dx, cs:word_13E0
+                mov     cx, 4
+
+loc_1A24:                               ; CODE XREF: sub_1A12+34↓j
+                mov     word ptr [di], 0FFFFh
+                inc     di
+                inc     di
+                mov     ax, cs
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                shl     ax, 1
+                add     ax, si
+                mov     bx, ax
+                add     ax, dx
+                xor     ax, bx
+                jns     short loc_1A40
+                add     si, dx
+
+loc_1A40:                               ; CODE XREF: sub_1A12+2A↑j
+                mov     [di], si
+                inc     di
+                inc     di
+                add     si, dx
+                loop    loc_1A24
+                pop     si
+                retn
+sub_1A12        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1A4A        proc near               ; CODE XREF: conunit_uwr+592↑p
+                mov     di, 0
+                call    sub_1A63
+                mov     di, 1
+                call    sub_1A63
+                mov     di, 2
+                call    sub_1A63
+                mov     di, 3
+                call    sub_1A63
+
+locret_1A62:                            ; CODE XREF: sub_1A63+D↓j
+                retn
+sub_1A4A        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1A63        proc near               ; CODE XREF: sub_1A4A+3↑p
+                                        ; sub_1A4A+9↑p ...
+                mov     cx, 4
+                sub     cx, di
+                shl     di, 1
+                mov     ax, [di-17D0h]
+                or      ax, ax
+                js      short locret_1A62
+                shl     di, 1
+                mov     bx, di
+
+loc_1A76:                               ; CODE XREF: sub_1A63+1C↓j
+                cmp     ax, [bx-17C8h]
+                jz      short loc_1ABA
+                add     bx, 4
+                loop    loc_1A76
+                push    ds
+                push    es
+                xor     cx, cx
+                push    cx
+                mov     cx, ds:0E0E2h
+                push    cx
+                mov     dx, [di-17C6h]
+                mov     [di-17C8h], ax
+                shr     di, 1
+                mov     [di-17D0h], dx
+                push    dx
+                mov     cx, cs:word_13E0
+                push    cx
+                mov     bx, cs:word_13DE
+                dec     ax
+                imul    bx
+                add     ax, cs:word_1419
+                push    ax
+                mov     ax, cs
+                mov     es, ax
+                mov     ds, ax
+                call    pm_load_startup_seg
+                pop     es
+                pop     ds
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1ABA:                               ; CODE XREF: sub_1A63+17↑j
+                mov     ax, [di-17C8h]
+                mov     dx, [bx-17C8h]
+                mov     [bx-17C8h], ax
+                mov     [di-17C8h], dx
+                mov     ax, [di-17C6h]
+                mov     dx, [bx-17C6h]
+                mov     [bx-17C6h], ax
+                mov     [di-17C6h], dx
+                shr     di, 1
+                mov     [di-17D0h], dx
+                retn
+sub_1A63        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_1AE1:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                jmp     cs:word_1417    ; jumptable 00001466 case 23
+; ---------------------------------------------------------------------------
+
+loc_1AE6:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    di              ; jumptable 00001466 case 1
+                test    word ptr ds:0E8FEh, 0FFh
+                jnz     short loc_1B1A
+                mov     word ptr ds:0E8FEh, 0FFh
+                push    si
+                mov     si, 13E4h
+                mov     di, 13D8h
+                push    es
+                push    ds
+                mov     ax, cs
+                mov     es, ax
+                mov     ds, ax
+                mov     cx, 0Ch
+                cld
+                rep movsb
+                pop     ds
+                pop     es
+                pop     si
+                lea     bx, ds:85DAh
+                push    bx
+                lea     bx, ds:0E900h
+                push    bx
+                call    sub_1B6B
+
+loc_1B1A:                               ; CODE XREF: conunit_uwr+692↑j
+                mov     bx, 2571h
+                call    sub_3725
+                mov     ax, 1
+                call    sub_10C5
+                pop     di
+                mov     ax, [di]
+                mov     ds:0E822h, ax
+                call    sub_2211
+                push    ax
+                mov     bx, 0
+                test    cs:word_13F3, 0FFFFh
+                jnz     short loc_1B4C
+                mov     ah, 0Fh
+                push    bp
+                int     10h             ; - VIDEO - GET CURRENT VIDEO MODE
+                                        ; Return: AH = number of columns on screen
+                                        ; AL = current video mode
+                                        ; BH = current active display page
+                pop     bp
+                mov     bx, 0
+                cmp     al, 6
+                jz      short loc_1B4C
+                mov     bx, 10h
+
+loc_1B4C:                               ; CODE XREF: conunit_uwr+6DF↑j
+                                        ; conunit_uwr+6EC↑j
+                pop     ax
+                or      ax, bx
+                shl     bx, 1
+                or      ax, bx
+                mov     [di], ax
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_1B59:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                call    sub_1B86        ; jumptable 00001466 case 15
+                call    sub_372B
+                xor     ax, ax
+                mov     ds:0E8FEh, ax
+                call    sub_10C5
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1B6B        proc near               ; CODE XREF: conunit_uwr+6BC↑p
+                pop     di
+                pop     bx
+                pop     dx
+                push    di
+                mov     ds:0E816h, bx
+                mov     ds:0E81Ah, dx
+                call    sub_1B8A
+                call    sub_1BC8
+                call    sub_1C8E
+                xor     al, al
+                call    sub_1D76
+                retn
+sub_1B6B        endp ; sp-analysis failed
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1B86        proc near               ; CODE XREF: conunit_uwr:loc_1B59↑p
+                call    sub_1B97
+                retn
+sub_1B86        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1B8A        proc near               ; CODE XREF: sub_1549+2↑p
+                                        ; sub_1B6B+C↑p
+                mov     cx, 1F4h
+                mov     di, ds:0E816h
+                cld
+                xor     ax, ax
+                rep stosw
+                retn
+sub_1B8A        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1B97        proc near               ; CODE XREF: sub_1B86↑p
+                mov     ax, cs:word_13F3
+                test    ax, ax
+                jnz     short loc_1BC4
+                mov     ax, 2
+                push    bp
+                int     10h             ; - VIDEO - SET VIDEO MODE
+                                        ; AL = mode
+                pop     bp
+                mov     ax, cs:word_13F0
+                push    es
+                mov     bx, 40h ; '@'
+                mov     es, bx
+                assume es:nothing
+                cmp     ax, word ptr es:aExitToUncalled+3 ; "T to uncalled procedure"
+                mov     word ptr es:aExitToUncalled+3, ax ; "T to uncalled procedure"
+                pop     es
+                assume es:nothing
+                jz      short locret_1BC3
+                mov     ax, 2
+                push    bp
+                int     10h             ; - VIDEO - SET VIDEO MODE
+                                        ; AL = mode
+                pop     bp
+
+locret_1BC3:                            ; CODE XREF: sub_1B97+23↑j
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1BC4:                               ; CODE XREF: sub_1B97+6↑j
+                call    sub_1D9B
+                retn
+sub_1B97        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1BC8        proc near               ; CODE XREF: sub_1B6B+F↑p
+                push    di
+                mov     di, 3A95h
+                call    pm_format_msg
+                pop     di
+                mov     dx, 3BFh
+                mov     al, 1
+                out     dx, al          ; Printer Status Bits:
+                                        ; 3: 0=printer signals an error
+                                        ; 4: 1=printer is selected
+                                        ; 5: 1=out of paper
+                                        ; 6: 0=ready for next character
+                                        ; 7: 0=busy or offline or error
+                mov     dx, 3D4h
+                mov     al, 0Fh
+                out     dx, al          ; Video: CRT cntrlr addr
+                                        ; Cursor location (low)
+                inc     dx
+                mov     al, 55h ; 'U'
+                out     dx, al          ; Video: CRT controller internal registers
+                in      al, dx          ; Video: CRT controller internal registers
+                cmp     al, 55h ; 'U'
+                jnz     short loc_1C48
+                mov     al, 0AAh
+                out     dx, al          ; Video: CRT controller internal registers
+                in      al, dx          ; Video: CRT controller internal registers
+                cmp     al, 0AAh
+                jnz     short loc_1C48
+                mov     al, 0
+                out     dx, al          ; Video: CRT controller internal registers
+                mov     cs:word_13F3, 0
+                push    es
+                mov     bx, 40h ; '@'
+                mov     es, bx
+                assume es:nothing
+                mov     ax, word ptr es:aExitToUncalled+3 ; "T to uncalled procedure"
+                mov     cs:word_13F0, ax
+                and     ax, 0FFCFh
+                or      ax, 10h
+                mov     word ptr es:aExitToUncalled+3, ax ; "T to uncalled procedure"
+                pop     es
+                assume es:nothing
+                mov     ah, 2
+                int     16h             ; KEYBOARD - GET SHIFT STATUS
+                                        ; AL = shift status bits
+                test    al, 8
+                jnz     short loc_1C25
+                test    al, 4
+                mov     ax, 5
+                jz      short loc_1C28
+                mov     ax, 4
+                jmp     short loc_1C28
+; ---------------------------------------------------------------------------
+                db  90h
+; ---------------------------------------------------------------------------
+
+loc_1C25:                               ; CODE XREF: sub_1BC8+4E↑j
+                mov     ax, 6
+
+loc_1C28:                               ; CODE XREF: sub_1BC8+55↑j
+                                        ; sub_1BC8+5A↑j
+                push    bp
+                int     10h             ; - VIDEO - SET VIDEO MODE
+                                        ; AL = mode
+                mov     ah, 0Bh
+                mov     bx, 101h
+                int     10h             ; - VIDEO - SET COLOR PALETTE
+                                        ; BH = 00h, BL = border color
+                                        ; BH = 01h, BL = palette (0-3)
+                pop     bp
+                push    es
+                xor     bx, bx
+                mov     es, bx
+                mov     bx, 74h ; 't'
+                les     bx, es:[bx]
+                mov     al, es:[bx+22h]
+                pop     es
+                mov     cs:byte_13F2, al
+                retn
+; ---------------------------------------------------------------------------
+
+loc_1C48:                               ; CODE XREF: sub_1BC8+1B↑j
+                                        ; sub_1BC8+23↑j
+                mov     cs:word_13F3, 0FFFFh
+                mov     dx, 3BAh
+                in      al, dx          ; Video status bits:
+                                        ; 0: retrace.  1=display is in vert or horiz retrace.
+                                        ; 1: 1=light pen is triggered; 0=armed
+                                        ; 2: 1=light pen switch is open; 0=closed
+                                        ; 3: 1=vertical sync pulse is occurring.
+                mov     ah, al
+                xor     cx, cx
+
+loc_1C57:                               ; CODE XREF: sub_1BC8+96↓j
+                in      al, dx          ; Video status bits:
+                                        ; 0: retrace.  1=display is in vert or horiz retrace.
+                                        ; 1: 1=light pen is triggered; 0=armed
+                                        ; 2: 1=light pen switch is open; 0=closed
+                                        ; 3: 1=vertical sync pulse is occurring.
+                xor     al, ah
+                test    al, 80h
+                jnz     short loc_1C8A
+                loop    loc_1C57
+                push    di
+                mov     di, 3AC9h
+                call    pm_format_msg
+                pop     di
+                push    di
+                mov     di, 3B02h
+                call    pm_format_msg
+                pop     di
+                push    di
+                mov     di, 3B2Dh
+                call    pm_format_msg
+                pop     di
+                push    di
+                mov     di, 3B61h
+                call    pm_format_msg
+                pop     di
+                push    di
+                mov     di, 3B86h
+                call    pm_format_msg
+                pop     di
+
+loc_1C88:                               ; CODE XREF: sub_1BC8:loc_1C88↓j
+                jmp     short loc_1C88
+; ---------------------------------------------------------------------------
+
+loc_1C8A:                               ; CODE XREF: sub_1BC8+94↑j
+                call    sub_1D85
+                retn
+sub_1BC8        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1C8E        proc near               ; CODE XREF: sub_1B6B+12↑p
+                mov     bx, 0
+                mov     ax, 50h ; 'P'
+                mov     cx, cs:word_13DA
+                imul    cx
+                mov     dx, ax
+                push    es
+                push    cs
+                pop     es
+                mov     dx, cs:word_13DC
+                shl     dx, 1
+                mov     cx, 140h
+                mov     di, 5772h
+                xor     ax, ax
+                call    sub_1D6F
+                mov     ax, cs:word_13DC
+                shl     ax, 1
+                mov     dx, ax
+                mov     di, 59F2h
+                xor     ax, ax
+                mov     cx, 1Eh
+                call    sub_1D6F
+                xor     ax, ax
+                mov     cx, 19h
+                mov     dx, 28h ; '('
+                mov     di, 3CD0h
+                call    sub_1D70
+                cld
+                mov     ax, cs:word_13F3
+                test    ax, ax
+                jnz     short loc_1D1B
+                mov     cs:word_140D, 1DE7h
+                mov     cs:word_140F, 1E2Eh
+                mov     cs:word_1411, 1E62h
+                mov     cs:word_1413, 1E9Ah
+                mov     cs:word_1415, 1FBCh
+                mov     cs:word_1417, 1EF8h
+                mov     cx, 19h
+                mov     ax, cs:word_13DC
+                shr     ax, 1
+                mov     bx, 50h ; 'P'
+                imul    bl
+                mov     dx, ax
+                xor     ax, ax
+                jmp     short loc_1D5A
+; ---------------------------------------------------------------------------
+                db  90h
+; ---------------------------------------------------------------------------
+
+loc_1D1B:                               ; CODE XREF: sub_1C8E+4C↑j
+                mov     cs:word_140D, 1FD8h
+                mov     cs:word_140F, 201Eh
+                mov     cs:word_1411, 2052h
+                mov     cs:word_1413, 208Ah
+                mov     cs:word_1415, 21CFh
+                mov     cs:word_1417, 20E8h
+                mov     cx, 19h
+                mov     ax, cs:word_13DC
+                shr     ax, 1
+                shr     ax, 1
+                mov     bx, 5Ah ; 'Z'
+                imul    bl
+                mov     dx, ax
+                mov     ax, 659h
+
+loc_1D5A:                               ; CODE XREF: sub_1C8E+8A↑j
+                mov     di, 3D02h
+
+loc_1D5D:                               ; CODE XREF: sub_1C8E+DD↓j
+                push    cx
+                mov     cx, 28h ; '('
+                push    ax
+
+loc_1D62:                               ; CODE XREF: sub_1C8E+D7↓j
+                stosw
+                inc     ax
+                inc     ax
+                loop    loc_1D62
+                pop     ax
+                add     ax, dx
+                pop     cx
+                loop    loc_1D5D
+                pop     es
+                retn
+sub_1C8E        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1D6F        proc near               ; CODE XREF: sub_1C8E+21↑p
+                                        ; sub_1C8E+34↑p
+                cld
+sub_1D6F        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1D70        proc near               ; CODE XREF: sub_1C8E+42↑p
+                                        ; sub_1D70+3↓j
+                stosw
+                add     ax, dx
+                loop    sub_1D70
+                retn
+sub_1D70        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1D76        proc near               ; CODE XREF: sub_1B6B+17↑p
+                mov     cx, 3E8h
+                mov     di, 0ED00h
+                xor     ax, ax
+                rep stosw
+                jmp     cs:word_1415
+sub_1D76        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1D85        proc near               ; CODE XREF: sub_1BC8:loc_1C8A↑p
+                push    es
+                push    ds
+                push    si
+                mov     al, 2
+                lea     si, unk_13F5
+                mov     bx, 0
+                mov     cx, 4000h
+                call    sub_1DB1
+                pop     si
+                pop     ds
+                pop     es
+                retn
+sub_1D85        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1D9B        proc near               ; CODE XREF: sub_1B97:loc_1BC4↑p
+                push    es
+                push    ds
+                push    si
+                mov     al, 20h ; ' '
+                lea     si, unk_1401
+                mov     bx, 720h
+                mov     cx, 7D0h
+                call    sub_1DB1
+                pop     si
+                pop     es
+                pop     ds
+                retn
+sub_1D9B        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_1DB1        proc near               ; CODE XREF: sub_1D85+F↑p
+                                        ; sub_1D9B+F↑p
+                push    ds
+                push    es
+                push    ax
+                push    bx
+                push    cx
+                mov     dx, 3B8h
+                out     dx, al
+                mov     ax, cs
+                mov     ds, ax
+                mov     dx, 3B4h
+                mov     cx, 0Ch
+                xor     ah, ah
+
+loc_1DC6:                               ; CODE XREF: sub_1DB1+1E↓j
+                mov     al, ah
+                out     dx, al          ; Video: CRT cntrlr addr
+                                        ; horizontal total
+                inc     dx
+                lodsb
+                out     dx, al          ; Video: CRT controller internal registers
+                inc     ah
+                dec     dx
+                loop    loc_1DC6
+                pop     cx
+                mov     ax, 0B000h
+                cld
+                mov     es, ax
+                assume es:nothing
+                xor     di, di
+                pop     ax
+                rep stosw
+                mov     dx, 3B8h
+                pop     ax
+                add     al, 8
+                out     dx, al
+                pop     es
+                assume es:nothing
+                pop     ds
+                retn
+sub_1DB1        endp
+
+; ---------------------------------------------------------------------------
+                db  56h ; V
+                db  57h ; W
+                db    6
+                db  32h ; 2
+                db 0FFh
+                db  8Ah
+                db 0D8h
+                db 0D1h
+                db 0E6h
+                db  2Eh ; .
+                db  8Bh
+                db 0BCh
+                db    2
+                db  3Dh ; =
+                db 0D1h
+                db 0E3h
+                db  2Eh ; .
+                db  8Bh
+                db 0B7h
+                db  72h ; r
+                db  57h ; W
+                db    3
+                db  36h ; 6
+                db  1Ah
+                db 0E8h
+                db  1Eh
+                db  55h ; U
+                db  0Eh
+                db  1Fh
+                db 0B8h
+                db    0
+                db 0B8h
+                db  8Eh
+                db 0C0h
+                db 0BAh
+                db 0FEh
+                db  1Fh
+                db 0BDh
+                db 0B2h
+                db  1Fh
+                db  90h
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db 0A5h
+                db    3
+                db 0FAh
+                db 0A5h
+                db  2Bh ; +
+                db 0FDh
+                db  5Dh ; ]
                 db 1Fh, 7, 5Fh, 5Eh, 0C3h, 56h, 57h, 6, 0D1h, 0E6h, 0B8h
                 db 2 dup(0FFh), 2Eh, 8Bh, 0BCh, 2, 3Dh, 0BBh, 0, 0B8h
                 db 8Eh, 0C3h, 0BBh, 0FEh, 1Fh, 0BAh, 0B2h, 1Fh, 0ABh, 3
@@ -3670,70 +5360,64 @@ byte_13F5       db 35h, 2Dh, 2Eh, 7, 5Bh, 2, 2 dup(57h), 2, 3, 2 dup(0)
                 db 0FBh
                 db 0B9h
                 db  28h ; (
-                db    0
-                db 0F3h
-                db 0ABh
-                db    3
-                db 0FBh
-                db 0B9h
-                db  28h ; (
-                db    0
-                db 0F3h
-                db 0ABh
-                db  2Bh ; +
-                db 0FAh
-                db  59h ; Y
-                db 0E2h
-                db 0E0h
-                db    7
-                db 0C3h
-                db 0B8h
-                db    1
-                db    0
-                db 0C3h
-                db 0C7h
-                db    6
-                db 0DEh
-                db 0E0h
-                db    3
-                db    0
-                db 0E9h
-                db 0C9h
-                db 0DEh
+                db 0, 0F3h, 0ABh, 3, 0FBh, 0B9h, 28h, 0, 0F3h, 0ABh, 2Bh
+                db 0FAh, 59h, 0E2h, 0E0h, 7, 0C3h
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2211        proc near               ; CODE XREF: conunit_uwr+6D1↑p
+                mov     ax, 1
+                retn
+sub_2211        endp
+
 ; ---------------------------------------------------------------------------
-                mov     ax, word ptr cs:byte_13F5+42h
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+conunit_noop:                           ; CODE XREF: conunit_uwr+B↑j
+                                        ; conunit_uwr:loc_14A2↑j
+                                        ; DATA XREF: ...
+                mov     word ptr ds:0E0DEh, 3 ; jumptable 00001466 cases 0,6-8,10-12,16,21,27,28,34
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+conunit_random  proc near
+                mov     ax, cs:word_1437
                 mov     bx, 6A2Dh
                 mul     bx
-                add     ax, word ptr cs:byte_13F5+4Ah
-                mov     word ptr cs:byte_13F5+42h, ax
-                mov     ax, word ptr cs:byte_13F5+44h
+                add     ax, cs:word_143F
+                mov     cs:word_1437, ax
+                mov     ax, cs:word_1439
                 mov     bx, 0FFF1h
                 mul     bx
-                add     ax, word ptr cs:byte_13F5+4Ch
-                mov     word ptr cs:byte_13F5+44h, ax
-                mov     ax, word ptr cs:byte_13F5+46h
+                add     ax, cs:word_1441
+                mov     cs:word_1439, ax
+                mov     ax, cs:word_143B
                 mov     bx, 0FFAFh
                 mul     bx
-                add     ax, word ptr cs:byte_13F5+4Eh
-                mov     word ptr cs:byte_13F5+46h, ax
-                mov     ax, word ptr cs:byte_13F5+48h
+                add     ax, cs:word_1443
+                mov     cs:word_143B, ax
+                mov     ax, cs:word_143D
                 mov     bx, 0FFD9h
                 mul     bx
-                add     ax, word ptr cs:byte_13F5+50h
-                mov     word ptr cs:byte_13F5+48h, ax
+                add     ax, cs:word_1445
+                mov     cs:word_143D, ax
                 mov     cx, 4
-                mov     ax, word ptr cs:byte_13F5+42h
+                mov     ax, cs:word_1437
                 shl     ax, cl
                 and     ax, 0FF00h
                 mov     bx, ax
-                mov     ax, word ptr cs:byte_13F5+46h
+                mov     ax, cs:word_143B
                 shr     ax, cl
                 and     ax, 0FFh
                 xor     bx, ax
-                mov     ax, word ptr cs:byte_13F5+44h
+                mov     ax, cs:word_1439
                 and     ax, 0FF0h
                 xor     bx, ax
-                mov     ax, word ptr cs:byte_13F5+48h
+                mov     ax, cs:word_143D
                 mov     cl, 8
                 rol     ax, cl
                 and     ax, 0F00Fh
@@ -3741,430 +5425,836 @@ byte_13F5       db 35h, 2Dh, 2Eh, 7, 5Bh, 2, 2 dup(57h), 2, 3, 2 dup(0)
                 and     ax, 7FFFh
                 mov     [di], ax
                 jmp     interp_fetch
-; ---------------------------------------------------------------------------
+conunit_random  endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_229D        proc near               ; CODE XREF: sub_22CD↓p
+                                        ; conunit_uwr:loc_2315↓p
                 push    ax
                 push    bx
                 push    cx
                 push    dx
-                mov     ax, word ptr cs:byte_13F5+4Ah
-                mov     bx, word ptr cs:byte_13F5+4Ch
-                mov     cx, word ptr cs:byte_13F5+4Eh
-                mov     dx, word ptr cs:byte_13F5+50h
-                add     word ptr cs:byte_13F5+48h, bx
-                add     word ptr cs:byte_13F5+42h, cx
-                add     word ptr cs:byte_13F5+44h, dx
-                add     word ptr cs:byte_13F5+46h, ax
+                mov     ax, cs:word_143F
+                mov     bx, cs:word_1441
+                mov     cx, cs:word_1443
+                mov     dx, cs:word_1445
+                add     cs:word_143D, bx
+                add     cs:word_1437, cx
+                add     cs:word_1439, dx
+                add     cs:word_143B, ax
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 retn
+sub_229D        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_22CD        proc near
+                call    sub_229D
+                mov     ah, 1
+                int     16h             ; KEYBOARD - CHECK BUFFER, DO NOT CLEAR
+                                        ; Return: ZF clear if character in buffer
+                                        ; AH = scan code, AL = character
+                                        ; ZF set if no character in buffer
+                mov     ax, 0
+                jz      short loc_22DF
+                mov     ax, 1
+                jmp     short loc_22F7
 ; ---------------------------------------------------------------------------
-                db 0E8h
-                db 0CDh
-                db 0FFh
-                db 0B4h
-                db    1
-                db 0CDh
-                db  16h
-                db 0B8h
-                db    0
-                db    0
-                db  74h ; t
-                db    6
-                db 0B8h
-                db    1
-                db    0
-                db 0EBh
-                db  19h
+                db 90h
+; ---------------------------------------------------------------------------
+
+loc_22DF:                               ; CODE XREF: sub_22CD+A↑j
+                mov     bx, ax
+                mov     ax, cs:word_1437
+                mul     bx
+                mov     cs:word_1437, ax
+                neg     bx
+                mov     ax, cs:word_1439
+                mul     bx
+                mov     cs:word_1439, ax
+
+loc_22F7:                               ; CODE XREF: sub_22CD+F↑j
+                mov     [di], ax
+                cld
+                jmp     interp_fetch
+sub_22CD        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_22FD        proc near
+                mov     word ptr [di], 1
+                cld
+                jmp     interp_fetch
+sub_22FD        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+conunit_scanline19:                     ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                shl     dx, 1           ; jumptable 00001466 case 19
+                mov     cs:word_1449, dx
+                mov     ah, 0
+                int     1Ah             ; CLOCK - GET TIME OF DAY
+                                        ; Return: CX:DX = clock count
+                                        ; AL = 00h if clock was read or written (via AH=0,1) since the previous
+                                        ; midnight
+                                        ; Otherwise, AL > 0
+                mov     cs:word_1447, dx
+
+loc_2315:                               ; CODE XREF: conunit_uwr+ED4↓j
+                                        ; conunit_uwr+EE0↓j
+                call    sub_229D
+                mov     ah, 1
+                int     16h             ; KEYBOARD - CHECK BUFFER, DO NOT CLEAR
+                                        ; Return: ZF clear if character in buffer
+                                        ; AH = scan code, AL = character
+                                        ; ZF set if no character in buffer
+                jnz     short loc_233D
+                mov     ah, 2
+                int     16h             ; KEYBOARD - GET SHIFT STATUS
+                                        ; AL = shift status bits
+                and     al, 1Fh
+                jnz     short loc_233D
+                mov     ah, 0
+                int     1Ah             ; CLOCK - GET TIME OF DAY
+                                        ; Return: CX:DX = clock count
+                                        ; AL = 00h if clock was read or written (via AH=0,1) since the previous
+                                        ; midnight
+                                        ; Otherwise, AL > 0
+                cmp     dx, cs:word_1447
+                jz      short loc_2315
+                mov     cs:word_1447, dx
+                dec     cs:word_1449
+                jnz     short loc_2315
+
+loc_233D:                               ; CODE XREF: conunit_uwr+EC1↑j
+                                        ; conunit_uwr+EC9↑j
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
+                call    sub_1210
+                mov     [di], ax
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_234A:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                mov     ax, dx          ; jumptable 00001466 case 22
+                call    sub_10C5
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_2353:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                call    sub_10CA        ; jumptable 00001466 case 20
+                mov     ds:0E0DEh, ax
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_235D:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                mov     ah, 2           ; jumptable 00001466 case 24
+                int     16h             ; KEYBOARD - GET SHIFT STATUS
+                                        ; AL = shift status bits
+                and     al, 40h
+                jnz     short loc_236F
+                or      dx, dx
+                jz      short loc_2373
+                dec     dx
+                jz      short loc_237A
+                dec     dx
+                jz      short loc_2381
+
+loc_236F:                               ; CODE XREF: conunit_uwr+F08↑j
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_2373:                               ; CODE XREF: conunit_uwr+F0C↑j
+                call    sub_2390
+                cld
+                jmp     short loc_23CB
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
+                align 2
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_237A:                               ; CODE XREF: conunit_uwr+F0F↑j
+                call    sub_239A
+                cld
+                jmp     short loc_23CB
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
+                db 90h
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_2381:                               ; CODE XREF: conunit_uwr+F12↑j
+                call    sub_239A
+                mov     cx, 8000h
+                call    sub_23AD
+                call    sub_239A
+                jmp     short loc_23CB
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2390        proc near               ; CODE XREF: conunit_uwr:loc_2373↑p
+                call    sub_23B0
+                call    sub_23A4
+                call    sub_23C4
+                retn
+sub_2390        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_239A        proc near               ; CODE XREF: conunit_uwr:loc_237A↑p
+                                        ; conunit_uwr:loc_2381↑p ...
+                call    sub_23B0
+                call    sub_23AA
+                call    sub_23C4
+                retn
+sub_239A        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23A4        proc near               ; CODE XREF: sub_2390+3↑p
+                mov     cx, 2000h
+                jmp     short sub_23AD
+sub_23A4        endp
+
+; ---------------------------------------------------------------------------
+                align 2
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23AA        proc near               ; CODE XREF: sub_239A+3↑p
+                mov     cx, 400h
+sub_23AA        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23AD        proc near               ; CODE XREF: conunit_uwr+F2C↑p
+                                        ; sub_23A4+3↑j ...
+                loop    sub_23AD
+                retn
+sub_23AD        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23B0        proc near               ; CODE XREF: sub_2390↑p
+                                        ; sub_239A↑p
+                mov     al, 0B6h
+                out     43h, al         ; Timer 8253-5 (AT: 8254.2).
+                mov     ax, 215h
+                out     42h, al         ; Timer 8253-5 (AT: 8254.2).
+                mov     al, ah
+                out     42h, al         ; Timer 8253-5 (AT: 8254.2).
+                in      al, 61h         ; PC/XT PPI port B bits:
+                                        ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
+                                        ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
+                                        ; 3: 1=read high switches
+                                        ; 4: 0=enable RAM parity checking
+                                        ; 5: 0=enable I/O channel check
+                                        ; 6: 0=hold keyboard clock low
+                                        ; 7: 0=enable kbrd
+                or      al, 3
+                out     61h, al         ; PC/XT PPI port B bits:
+                                        ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
+                                        ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
+                                        ; 3: 1=read high switches
+                                        ; 4: 0=enable RAM parity checking
+                                        ; 5: 0=enable I/O channel check
+                                        ; 6: 0=hold keyboard clock low
+                                        ; 7: 0=enable kbrd
+                retn
+sub_23B0        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23C4        proc near               ; CODE XREF: sub_2390+6↑p
+                                        ; sub_239A+6↑p
+                in      al, 61h         ; PC/XT PPI port B bits:
+                                        ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
+                                        ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
+                                        ; 3: 1=read high switches
+                                        ; 4: 0=enable RAM parity checking
+                                        ; 5: 0=enable I/O channel check
+                                        ; 6: 0=hold keyboard clock low
+                                        ; 7: 0=enable kbrd
+                and     al, 0FCh
+                out     61h, al         ; PC/XT PPI port B bits:
+                                        ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
+                                        ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
+                                        ; 3: 1=read high switches
+                                        ; 4: 0=enable RAM parity checking
+                                        ; 5: 0=enable I/O channel check
+                                        ; 6: 0=hold keyboard clock low
+                                        ; 7: 0=enable kbrd
+                retn
+sub_23C4        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_23CB:                               ; CODE XREF: conunit_uwr+F1C↑j
+                                        ; conunit_uwr+F23↑j ...
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_23CE:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                call    sub_A6C         ; jumptable 00001466 case 31
+                mov     ds:0E0DEh, ax
+                cld
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_23D8:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    es              ; jumptable 00001466 case 25
+                call    sub_838
+                pop     es
+                mov     ds:0E0DEh, ax
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_23E4        proc near
+                push    si
+                mov     bx, [di]
+
+loc_23E7:                               ; CODE XREF: sub_23E4+3F↓j
+                or      bx, bx
+                jz      short loc_2425
+                cmp     [bx], dx
+                jnz     short loc_2420
+                cmp     bx, [di]
+                jz      short loc_2446
+                mov     ax, [bx+2]
+                mov     si, [bx+4]
+                mov     [si+2], ax
+                cmp     bx, [di+2]
+                jnz     short loc_2407
+                mov     [di+2], si
+                jmp     short loc_240F
+; ---------------------------------------------------------------------------
                 db  90h
-                db  8Bh
-                db 0D8h
-                db  2Eh ; .
-                db 0A1h
-                db  37h ; 7
-                db  14h
-                db 0F7h
-                db 0E3h
-                db  2Eh ; .
-                db 0A3h
-                db  37h ; 7
-                db  14h
-                db 0F7h
-                db 0DBh
-                db  2Eh ; .
-                db 0A1h
-                db  39h ; 9
-                db  14h
-                db 0F7h
-                db 0E3h
-                db  2Eh ; .
-                db 0A3h
-                db  39h ; 9
-                db  14h
-                db  89h
-                db    5
-                db 0FCh
-                db 0E9h
-                db 0EAh
-                db 0DDh
-                db 0C7h
-                db    5
-                db    1
-                db    0
-                db 0FCh
-                db 0E9h
-                db 0E2h
-                db 0DDh
-                db 0D1h
-                db 0E2h
-                db  2Eh ; .
-                db  89h
-                db  16h
-                db  49h ; I
-                db  14h
-                db 0B4h
-                db    0
-                db 0CDh
-                db  1Ah
-                db  2Eh ; .
-                db  89h
-                db  16h
-                db  47h ; G
-                db  14h
-                db 0E8h
-                db  85h
-                db 0FFh
-                db 0B4h
-                db    1
-                db 0CDh
-                db  16h
-                db  75h ; u
-                db  1Fh
-                db 0B4h
-                db    2
-                db 0CDh
-                db  16h
-                db  24h ; $
-                db  1Fh
-                db  75h ; u
-                db  17h
-                db 0B4h
-                db    0
-                db 0CDh
-                db  1Ah
-                db  2Eh ; .
-                db  3Bh ; ;
-                db  16h
-                db  47h ; G
-                db  14h
-                db  74h ; t
-                db 0E4h
-                db  2Eh ; .
-                db  89h
-                db  16h
-                db  47h ; G
-                db  14h
-                db  2Eh ; .
-                db 0FFh
-                db  0Eh
-                db  49h ; I
-                db  14h
-                db  75h ; u
-                db 0D8h
-                db 0FCh
-                db 0E9h
-                db 0A6h
-                db 0DDh
-                db 0E8h
-                db 0CCh
-                db 0EEh
-                db  89h
-                db    5
-                db 0FCh
-                db 0E9h
-                db  9Dh
-                db 0DDh
-                db  8Bh
-                db 0C2h
-                db 0E8h
-                db  76h ; v
-                db 0EDh
-                db 0FCh
-                db 0E9h
-                db  94h
-                db 0DDh
-                db 0E8h
-                db  74h ; t
-                db 0EDh
-                db 0A3h
-                db 0DEh
-                db 0E0h
-                db 0FCh
-                db 0E9h
-                db  8Ah
-                db 0DDh
-                db 0B4h
-                db    2
-                db 0CDh
-                db  16h
-                db  24h ; $
-                db  40h ; @
-                db  75h ; u
-                db  0Ah
-                db  0Bh
-                db 0D2h
-                db  74h ; t
-                db  0Ah
-                db  4Ah ; J
-                db  74h ; t
-                db  0Eh
-                db  4Ah ; J
-                db  74h ; t
-                db  12h
-                db 0FCh
-                db 0E9h
-                db  74h ; t
-                db 0DDh
-                db 0E8h
-                db  1Ah
-                db    0
-                db 0FCh
-                db 0EBh
-                db  52h ; R
+; ---------------------------------------------------------------------------
+
+loc_2407:                               ; CODE XREF: sub_23E4+1B↑j
+                mov     cx, si
+                mov     si, [bx+2]
+                mov     [si+4], cx
+
+loc_240F:                               ; CODE XREF: sub_23E4+20↑j
+                mov     word ptr [bx+4], 0
+                mov     si, [di]
+                mov     [bx+2], si
+                mov     [si+4], bx
+                mov     [di], bx
+                jmp     short loc_2446
+; ---------------------------------------------------------------------------
+
+loc_2420:                               ; CODE XREF: sub_23E4+9↑j
+                mov     bx, [bx+2]
+                jmp     short loc_23E7
+; ---------------------------------------------------------------------------
+
+loc_2425:                               ; CODE XREF: sub_23E4+5↑j
+                mov     bx, [di+2]
+                mov     si, [bx+4]
+                mov     [di+2], si
+                mov     word ptr [si+2], 0
+                mov     word ptr [bx+4], 0
+                mov     si, [di]
+                mov     [bx+2], si
+                mov     word ptr [bx], 8000h
+                mov     [si+4], bx
+                mov     [di], bx
+
+loc_2446:                               ; CODE XREF: sub_23E4+D↑j
+                                        ; sub_23E4+3A↑j
+                pop     si
+                jmp     interp_fetch
+sub_23E4        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_244A:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                cld                     ; jumptable 00001466 case 26
+                push    si
+                push    es
+                push    ds
+                pop     es
+                test    dx, dx
+                jz      short loc_2463
+                push    ax
+                push    di
+                mov     si, dx
+                call    sub_2468
+                pop     di
+                pop     si
+                test    si, si
+                jz      short loc_2463
+                call    sub_2468
+
+loc_2463:                               ; CODE XREF: conunit_uwr+FF6↑j
+                                        ; conunit_uwr+1003↑j
+                pop     es
+                pop     si
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2468        proc near               ; CODE XREF: conunit_uwr+FFC↑p
+                                        ; conunit_uwr+1005↑p
+                xor     ah, ah
+                mov     al, [di]
+                mov     bx, ax
+                add     al, [si]
+                mov     [di], al
+                add     di, bx
+                inc     di
+                lodsb
+                mov     cx, ax
+                rep movsb
+                retn
+sub_2468        endp
+
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_247B:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                cld                     ; jumptable 00001466 case 29
+                push    es
+                push    si
+                push    di
+                push    ds
+                pop     es
+                mov     si, dx
+                mov     di, ax
+                xor     dh, dh
+                mov     dl, [si]
+                cmp     dl, 0
+                jz      short loc_24CB
+                dec     dx
+                inc     si
+                xor     ch, ch
+                mov     cl, [di]
+                cmp     cl, 0
+                jz      short loc_24CB
+                dec     cx
+                mov     bx, cx
+                inc     di
+                lodsb
+                scasb
+                jz      short loc_24B1
+
+loc_24A1:                               ; CODE XREF: conunit_uwr+1054↓j
+                                        ; conunit_uwr+1066↓j
+                jcxz    short loc_24CB
+                repne scasb
+                jnz     short loc_24CB
+                cmp     cl, dl
+                jb      short loc_24CB
+                cmp     byte ptr [di-2], 0
+                js      short loc_24A1
+
+loc_24B1:                               ; CODE XREF: conunit_uwr+1044↑j
+                test    dx, dx
+                jz      short loc_24C3
+                push    cx
+                push    di
+                push    si
+                mov     cx, dx
+                repe cmpsb
+                pop     si
+                pop     di
+                pop     cx
+                jz      short loc_24C3
+                jmp     short loc_24A1
+; ---------------------------------------------------------------------------
+
+loc_24C3:                               ; CODE XREF: conunit_uwr+1058↑j
+                                        ; conunit_uwr+1064↑j
+                sub     bx, cx
+                mov     ax, bx
+                inc     ax
+                jmp     short loc_24CD
+; END OF FUNCTION CHUNK FOR conunit_uwr
+; ---------------------------------------------------------------------------
                 db  90h
-                db 0E8h
-                db  1Dh
+; ---------------------------------------------------------------------------
+; START OF FUNCTION CHUNK FOR conunit_uwr
+
+loc_24CB:                               ; CODE XREF: conunit_uwr+1031↑j
+                                        ; conunit_uwr+103C↑j ...
+                xor     ax, ax
+
+loc_24CD:                               ; CODE XREF: conunit_uwr+106D↑j
+                pop     di
+                pop     si
+                pop     es
+                mov     [di], ax
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_24D5:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    es              ; jumptable 00001466 case 32
+                push    si
+                push    di
+                push    cs
+                pop     es
+                mov     si, di
+                lea     di, ds:5472h
+                mov     cx, 100h
+
+loc_24E3:                               ; CODE XREF: conunit_uwr+108C↓j
+                lodsb
+                and     al, 3
+                stosb
+                loop    loc_24E3
+                mov     cx, 100h
+                rep movsw
+                pop     di
+                pop     si
+                pop     es
+                jmp     interp_fetch
+; ---------------------------------------------------------------------------
+
+loc_24F4:                               ; CODE XREF: conunit_uwr+B↑j
+                                        ; DATA XREF: INTERP:jpt_1466↑o
+                push    si              ; jumptable 00001466 case 33
+                push    di
+                push    bp
+                mov     si, di
+                mov     di, dx
+                call    sub_2517
+                mov     [di], bl
+                inc     di
+                mov     bp, bx
+                test    bp, bp
+                jz      short loc_2510
+
+loc_2507:                               ; CODE XREF: conunit_uwr+10B3↓j
+                call    sub_251F
+                mov     [di], bl
+                inc     di
+                dec     bp
+                jnz     short loc_2507
+
+loc_2510:                               ; CODE XREF: conunit_uwr+10AA↑j
+                pop     bp
+                pop     di
+                pop     si
+                cld
+                jmp     interp_fetch
+; END OF FUNCTION CHUNK FOR conunit_uwr
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_2517        proc near               ; CODE XREF: conunit_uwr+10A0↑p
+                mov     dl, 0
+                lodsb
+                xor     bh, bh
+                mov     cx, 8
+sub_2517        endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_251F        proc near               ; CODE XREF: conunit_uwr:loc_2507↑p
+                mov     bl, dl
+
+loc_2521:                               ; CODE XREF: sub_251F+13↓j
+                                        ; sub_251F+19↓j ...
+                shr     al, 1
+                jb      short loc_2543
+                test    byte ptr cs:[bx+5472h], 2
+                jnz     short loc_253A
+                mov     bl, cs:[bx+5672h]
+                loop    loc_2521
+                lodsb
+                mov     cx, 8
+                jmp     short loc_2521
+; ---------------------------------------------------------------------------
+
+loc_253A:                               ; CODE XREF: sub_251F+C↑j
+                mov     bl, cs:[bx+5672h]
+                dec     cx
+                jz      short loc_2561
+                retn
+; ---------------------------------------------------------------------------
+
+loc_2543:                               ; CODE XREF: sub_251F+4↑j
+                test    byte ptr cs:[bx+5472h], 1
+                jnz     short loc_2558
+                mov     bl, cs:[bx+5572h]
+                loop    loc_2521
+                lodsb
+                mov     cx, 8
+                jmp     short loc_2521
+; ---------------------------------------------------------------------------
+
+loc_2558:                               ; CODE XREF: sub_251F+2A↑j
+                mov     bl, cs:[bx+5572h]
+                dec     cx
+                jz      short loc_2561
+                retn
+; ---------------------------------------------------------------------------
+
+loc_2561:                               ; CODE XREF: sub_251F+21↑j
+                                        ; sub_251F+3F↑j
+                lodsb
+                mov     cx, 8
+                retn
+sub_251F        endp
+
+; ---------------------------------------------------------------------------
                 db    0
-                db 0FCh
-                db 0EBh
-                db  4Bh ; K
-                db  90h
-                db 0E8h
-                db  16h
                 db    0
-                db 0B9h
                 db    0
-                db  80h
-                db 0E8h
-                db  23h ; #
                 db    0
-                db 0E8h
-                db  0Dh
                 db    0
-                db 0EBh
-                db  3Ch ; <
-                db  90h
-                db 0E8h
-                db  1Dh
                 db    0
-                db 0E8h
-                db  0Eh
                 db    0
-                db 0E8h
-                db  2Bh ; +
                 db    0
-                db 0C3h
-                db 0E8h
-                db  13h
                 db    0
-                db 0E8h
-                db  0Ah
                 db    0
-                db 0E8h
-                db  21h ; !
                 db    0
-                db 0C3h
-                db 0B9h
-                db    0
-                db  20h
-                db 0EBh
-                db    4
-                db  90h
-                db 0B9h
-                db    0
-                db    4
-                db 0E2h
-                db 0FEh
-                db 0C3h
-                db 0B0h
-                db 0B6h
-                db 0E6h
-                db  43h ; C
-                db 0B8h
-                db  15h
-                db    2
-                db 0E6h
-                db  42h ; B
-                db  8Ah
-                db 0C4h
-                db 0E6h
-                db  42h ; B
-                db 0E4h
-                db  61h ; a
-                db  0Ch
-                db    3
-                db 0E6h
-                db  61h ; a
-                db 0C3h
-                db 0E4h
-                db  61h ; a
-                db  24h ; $
-                db 0FCh
-                db 0E6h
-                db  61h ; a
-                db 0C3h
-                db 0E9h
-                db  19h
-                db 0DDh
-                db 0E8h
-                db  9Bh
-                db 0E6h
-                db 0A3h
-                db 0DEh
-                db 0E0h
-                db 0FCh
-                db 0E9h
-                db  0Fh
-                db 0DDh
-                db    6
-                db 0E8h
-                db  5Ch ; \
-                db 0E4h
-                db    7
-                db 0A3h
-                db 0DEh
-                db 0E0h
-                db 0FCh
-                db 0E9h
-                db    3
-                db 0DDh
-                db  56h ; V
-                db  8Bh
-                db  1Dh
-                db  0Bh
-                db 0DBh
-                db  74h ; t
-                db  3Ah ; :
-                db  39h ; 9
-                db  17h
-                db  75h ; u
-                db  31h ; 1
-                db  3Bh ; ;
-                db  1Dh
-                db  74h ; t
                 db  53h ; S
-                db  8Bh
-                db  47h ; G
-                db    2
-                db  8Bh
-                db  77h ; w
-                db    4
-                db  89h
-                db  44h ; D
-                db    2
-                db  3Bh ; ;
-                db  5Dh ; ]
-                db    2
-                db  75h ; u
                 db    6
-                db  89h
-                db  75h ; u
-                db    2
-                db 0EBh
-                db    9
-                db  90h
-                db  8Bh
-                db 0CEh
-                db  8Bh
-                db  77h ; w
-                db    2
-                db  89h
-                db  4Ch ; L
-                db    4
-                db 0C7h
-                db  47h ; G
-                db    4
-                db    0
-                db    0
-                db  8Bh
-                db  35h ; 5
-                db  89h
-                db  77h ; w
-                db    2
-                db  89h
-                db  5Ch ; \
-                db    4
-                db  89h
-                db  1Dh
-                db 0EBh
-                db  26h ; &
-                db  8Bh
-                db  5Fh ; _
-                db    2
-                db 0EBh
+                db  8Ch
+                db 0DAh
+                db  8Eh
                 db 0C2h
-                db  8Bh
-                db  5Dh ; ]
-                db    2
-                db  8Bh
+                db  2Eh ; .
+                db  8Ah
+                db  26h ; &
+                db  70h ; p
+                db  25h ; %
+                db  0Ah
+                db 0E4h
+                db  75h ; u
+                db  0Ch
+                db  0Ah
+                db 0C0h
+                db  79h ; y
+                db  0Bh
+                db  2Eh ; .
+                db 0A2h
+                db  70h ; p
+                db  25h ; %
+                db    7
+                db  5Bh ; [
+                db 0FCh
+                db 0C3h
+                db 0E9h
+                db  86h
+                db    0
+                db  3Ch ; <
+                db  7Eh ; ~
+                db  74h ; t
+                db  3Dh ; =
+                db  3Ch ; <
+                db  7Bh ; {
+                db  74h ; t
+                db  6Bh ; k
+                db  3Ch ; <
+                db  7Dh ; }
+                db  74h ; t
+                db  70h ; p
+                db  3Ch ; <
+                db  0Ah
+                db  74h ; t
+                db 0E9h
+                db  3Ch ; <
+                db  0Dh
+                db  74h ; t
+                db  0Fh
+                db  3Ch ; <
+                db  61h ; a
+                db  72h ; r
+                db    6
+                db  3Ch ; <
+                db  7Ah ; z
                 db  77h ; w
-                db    4
-                db  89h
+                db    2
+                db  2Ch ; ,
+                db  20h
+                db 0E8h
+                db  71h ; q
+                db    0
+                db 0EBh
+                db 0D6h
+                db 0BFh
+                db    0
+                db 0F5h
+                db 0C6h
+                db  45h ; E
+                db    6
+                db    0
+                db  8Ah
+                db  45h ; E
+                db    7
+                db 0FEh
+                db 0C0h
+                db  8Ah
+                db  65h ; e
+                db    5
+                db 0FEh
+                db 0CCh
+                db 0FEh
+                db 0CCh
+                db  3Ah ; :
+                db 0C4h
                 db  75h ; u
                 db    2
-                db 0C7h
-                db  44h ; D
+                db  32h ; 2
+                db 0C0h
+                db  88h
+                db  45h ; E
+                db    7
+                db 0EBh
+                db 0B8h
+                db 0BFh
+                db    0
+                db 0F5h
+                db 0A1h
+                db    0
+                db 0E8h
+                db  89h
+                db    5
+                db 0C6h
+                db  45h ; E
+                db    8
+                db  3Fh ; ?
+                db 0C6h
+                db  45h ; E
                 db    2
                 db    0
+                db 0C6h
+                db  45h ; E
+                db    3
+                db  0Ah
+                db 0C6h
+                db  45h ; E
+                db    4
+                db  28h ; (
+                db 0C6h
+                db  45h ; E
+                db    5
+                db    5
+                db 0C6h
+                db  45h ; E
+                db    6
                 db    0
-                db 0C7h
-                db 47h, 4, 2 dup(0), 8Bh, 35h, 89h, 77h, 2, 0C7h, 7, 0
-                db 80h, 89h, 5Ch, 4, 89h, 1Dh, 5Eh, 0E9h, 9Dh, 0DCh, 0FCh
-                db 56h, 6, 1Eh, 7, 85h, 0D2h, 74h, 10h, 50h, 57h, 8Bh
-                db 0F2h, 0E8h, 0Eh, 0, 5Fh, 5Eh, 85h, 0F6h, 74h, 3, 0E8h
-                db 5, 0, 7, 5Eh, 0E9h, 7Fh, 0DCh, 32h, 0E4h, 8Ah, 5, 8Bh
-                db 0D8h, 2, 4, 88h, 5, 3, 0FBh, 47h, 0ACh, 8Bh, 0C8h, 0F3h
-                db 0A4h, 0C3h, 0FCh, 6, 56h, 57h, 1Eh, 7, 8Bh, 0F2h, 8Bh
-                db 0F8h, 32h, 0F6h, 8Ah, 14h, 80h, 0FAh, 0, 74h, 3Dh, 4Ah
-                db 46h, 32h, 0EDh, 8Ah, 0Dh, 80h, 0F9h, 0, 74h, 32h, 49h
-                db 8Bh, 0D9h, 47h, 0ACh, 0AEh, 74h, 10h, 0E3h, 28h, 0F2h
-                db 0AEh, 75h, 24h, 3Ah, 0CAh, 72h, 20h, 80h, 7Dh, 0FEh
-                db 0, 78h, 0F0h, 85h, 0D2h, 74h, 0Eh, 51h, 57h, 56h, 8Bh
-                db 0CAh, 0F3h, 0A6h, 5Eh, 5Fh, 59h, 74h, 2, 0EBh, 0DEh
-                db 2Bh, 0D9h, 8Bh, 0C3h, 40h, 0EBh, 3, 90h, 33h, 0C0h
-                db 5Fh, 5Eh, 7, 89h, 5, 0E9h, 12h, 0DCh, 6, 56h, 57h, 0Eh
-                db 7, 8Bh, 0F7h, 8Dh, 3Eh, 72h, 54h, 0B9h, 0, 1, 0ACh
-                db 24h, 3, 0AAh, 0E2h, 0FAh, 0B9h, 0, 1, 0F3h, 0A5h, 5Fh
-                db 5Eh, 7, 0E9h, 0F3h, 0DBh, 56h, 57h, 55h, 8Bh, 0F7h
-                db 8Bh, 0FAh, 0E8h, 19h, 0, 88h, 1Dh, 47h, 8Bh, 0EBh, 85h
-                db 0EDh, 74h, 9, 0E8h, 15h, 0, 88h, 1Dh, 47h, 4Dh, 75h
-                db 0F7h, 5Dh, 5Fh, 5Eh, 0FCh, 0E9h, 0D0h, 0DBh, 0B2h, 0
-                db 0ACh, 32h, 0FFh, 0B9h, 8, 0, 8Ah, 0DAh, 0D0h, 0E8h
-                db 72h, 1Eh, 2Eh, 0F6h, 87h, 72h, 54h, 2, 75h, 0Dh, 2Eh
-                db 8Ah, 9Fh, 72h, 56h, 0E2h, 0EDh, 0ACh, 0B9h, 8, 0, 0EBh
-                db 0E7h, 2Eh, 8Ah, 9Fh, 72h, 56h, 49h, 74h, 1Fh, 0C3h
-                db 2Eh, 0F6h, 87h, 72h, 54h, 1, 75h, 0Dh, 2Eh, 8Ah, 9Fh
-                db 72h, 55h, 0E2h, 0CFh, 0ACh, 0B9h, 8, 0, 0EBh, 0C9h
-                db 2Eh, 8Ah, 9Fh, 72h, 55h, 49h, 74h, 1, 0C3h, 0ACh, 0B9h
-                db 8, 0, 0C3h, 0Bh dup(0), 53h, 6, 8Ch, 0DAh, 8Eh, 0C2h
-                db 2Eh, 8Ah, 26h, 70h, 25h, 0Ah, 0E4h, 75h, 0Ch, 0Ah, 0C0h
-                db 79h, 0Bh, 2Eh, 0A2h, 70h, 25h, 7, 5Bh, 0FCh, 0C3h, 0E9h
-                db 86h, 0, 3Ch, 7Eh, 74h, 3Dh, 3Ch, 7Bh, 74h, 6Bh, 3Ch
-                db 7Dh, 74h, 70h, 3Ch, 0Ah, 74h, 0E9h, 3Ch, 0Dh, 74h, 0Fh
-                db 3Ch, 61h, 72h, 6, 3Ch, 7Ah, 77h, 2, 2Ch, 20h, 0E8h
-                db 71h, 0, 0EBh, 0D6h, 0BFh, 0, 0F5h, 0C6h, 45h, 6, 0
-                db 8Ah, 45h, 7, 0FEh, 0C0h, 8Ah, 65h, 5, 0FEh, 0CCh, 0FEh
-                db 0CCh, 3Ah, 0C4h, 75h, 2, 32h, 0C0h, 88h, 45h, 7, 0EBh
-                db 0B8h, 0BFh, 0, 0F5h, 0A1h, 0, 0E8h, 89h, 5, 0C6h, 45h
-                db 8, 3Fh, 0C6h, 45h, 2, 0, 0C6h, 45h, 3, 0Ah, 0C6h, 45h
-                db 4, 28h, 0C6h, 45h, 2 dup(5), 0C6h, 45h, 6, 0, 0C6h
-                db 45h, 7, 0, 8Dh, 7Dh, 0Ah, 0B9h, 72h, 0, 0B8h, 2 dup(20h)
-                db 0FCh, 0F3h, 0ABh, 0EBh, 86h, 0BFh, 0, 0F5h, 0E8h, 41h
-                db 0EFh, 0E9h, 7Dh, 0FFh, 8Bh, 3Eh, 0, 2 dup(0E8h), 37h
-                db 0EFh, 0E9h, 73h, 0FFh, 2Eh, 0C6h, 6, 70h, 25h, 0, 0E8h
-                db 3, 0, 0E9h, 67h, 0FFh, 8Bh, 0D0h, 0BFh, 0, 0F5h, 0E9h
-                db 0A2h, 0EEh, 7 dup(0)
+                db 0C6h
+                db  45h ; E
+                db    7
+                db    0
+                db  8Dh
+                db  7Dh ; }
+                db  0Ah
+                db 0B9h
+                db  72h ; r
+                db    0
+                db 0B8h
+                db  20h
+                db  20h
+                db 0FCh
+                db 0F3h
+                db 0ABh
+                db 0EBh
+                db  86h
+                db 0BFh
+                db    0
+                db 0F5h
+                db 0E8h
+                db  41h ; A
+                db 0EFh
+                db 0E9h
+                db  7Dh ; }
+                db 0FFh
+                db  8Bh
+                db  3Eh ; >
+                db    0
+                db 0E8h
+                db 0E8h
+                db  37h ; 7
+                db 0EFh
+                db 0E9h
+                db  73h ; s
+                db 0FFh
+                db  2Eh ; .
+                db 0C6h
+                db    6
+                db  70h ; p
+                db  25h ; %
+                db    0
+                db 0E8h
+                db    3
+                db    0
+                db 0E9h
+                db  67h ; g
+                db 0FFh
+                db  8Bh
+                db 0D0h
+                db 0BFh
+                db    0
+                db 0F5h
+                db 0E9h
+                db 0A2h
+                db 0EEh
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -4337,7 +6427,7 @@ op_SLDO:                                ; CODE XREF: interp_reloc+DA↑j
                 shr     ax, 1
                 inc     ax
                 pop     ax
-                mov     bx, ds:600h
+                mov     bx, ds:word_600
                 add     bx, ax
                 push    word ptr [bx+0Ch]
                 jmp     interp_fetch
@@ -4346,7 +6436,7 @@ op_SLDO:                                ; CODE XREF: interp_reloc+DA↑j
 op_LDO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F3↑o
                 call    pm_fetch_big    ; p-code opcode 0xa9 LDO
-                mov     bx, ds:600h
+                mov     bx, ds:word_600
                 add     bx, ax
                 push    word ptr [bx+0Ah]
                 jmp     interp_fetch
@@ -4355,7 +6445,7 @@ op_LDO:                                 ; CODE XREF: interp_reloc+DA↑j
 op_LAO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02EB↑o
                 call    pm_fetch_big    ; p-code opcode 0xa5 LAO
-                mov     bx, ds:600h
+                mov     bx, ds:word_600
                 add     bx, ax
                 lea     ax, [bx+0Ah]
                 push    ax
@@ -4365,7 +6455,7 @@ op_LAO:                                 ; CODE XREF: interp_reloc+DA↑j
 op_SRO:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:02F7↑o
                 call    pm_fetch_big    ; p-code opcode 0xab SRO
-                mov     bx, ds:600h
+                mov     bx, ds:word_600
                 add     bx, ax
                 pop     ax
                 mov     [bx+0Ah], ax
@@ -4538,7 +6628,7 @@ op_UJP:                                 ; CODE XREF: interp_reloc+DA↑j
 
 loc_27E7:                               ; CODE XREF: INTERP:27DE↑j
                 cbw
-                mov     bx, ds:608h
+                mov     bx, ds:word_608
                 add     bx, ax
                 sub     bx, [bx]
                 mov     si, bx
@@ -4595,7 +6685,7 @@ loc_2828:                               ; CODE XREF: INTERP:281F↑j
                 mov     cx, [bx+632h]
                 shr     bx, 1
                 call    pm_proc_entry
-                mov     bx, ds:608h
+                mov     bx, ds:word_608
                 mov     al, [bx+1]
                 or      al, al
                 jz      short loc_2849
@@ -4616,7 +6706,7 @@ op_CLP:                                 ; CODE XREF: interp_reloc+DA↑j
                 mov     al, [si]        ; p-code opcode 0xce CLP
                 inc     si
                 mov     bl, 0FFh
-                mov     cx, ds:606h
+                mov     cx, ds:word_606
                 call    pm_proc_entry
                 mov     dx, [bp+2]
                 mov     [bp+0], dx
@@ -4628,11 +6718,11 @@ op_CIP:                                 ; CODE XREF: interp_reloc+DA↑j
                 mov     al, [si]        ; p-code opcode 0xae CIP
                 inc     si
                 mov     bl, 0FFh
-                mov     cx, ds:606h
+                mov     cx, ds:word_606
                 call    pm_proc_entry
 
 loc_286D:                               ; CODE XREF: INTERP:2846↑j
-                mov     bx, ds:608h
+                mov     bx, ds:word_608
                 mov     al, [bx+1]
                 dec     al
                 mov     bx, bp
@@ -4656,9 +6746,9 @@ op_CGP:                                 ; CODE XREF: interp_reloc+DA↑j
                 mov     al, [si]        ; p-code opcode 0xcf CGP
                 inc     si
                 mov     bl, 0FFh
-                mov     cx, ds:606h
+                mov     cx, ds:word_606
                 call    pm_proc_entry
-                mov     dx, ds:600h
+                mov     dx, ds:word_600
                 mov     [bp+0], dx
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
@@ -4668,21 +6758,21 @@ op_CBP:                                 ; CODE XREF: interp_reloc+DA↑j
                 mov     al, [si]        ; p-code opcode 0xc2 CBP
                 inc     si
                 mov     bl, 0FFh
-                mov     cx, ds:606h
+                mov     cx, ds:word_606
                 call    pm_proc_entry
 
 loc_28B0:                               ; CODE XREF: INTERP:loc_2849↑j
-                mov     bx, ds:60Ah
+                mov     bx, ds:word_60A
                 push    bx
-                mov     bx, ds:600h
+                mov     bx, ds:word_600
                 push    bx
                 mov     [bp+0Ah], sp
                 mov     dx, [bx]
                 mov     [bp+0], dx
-                mov     ds:600h, bp
+                mov     ds:word_600, bp
                 mov     ds:0E0EAh, bp
-                mov     ax, ds:608h
-                mov     ds:60Ah, ax
+                mov     ax, ds:word_608
+                mov     ds:word_60A, ax
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
@@ -4690,10 +6780,10 @@ op_RBP:                                 ; CODE XREF: interp_reloc+DA↑j
                                         ; DATA XREF: INTERP:0323↑o
                 mov     sp, [bp+0Ah]    ; p-code opcode 0xc1 RBP
                 pop     dx
-                mov     ds:600h, dx
+                mov     ds:word_600, dx
                 mov     ds:0E0EAh, dx
                 pop     dx
-                mov     ds:60Ah, dx
+                mov     ds:word_60A, dx
                 jmp     short loc_28E9
 ; ---------------------------------------------------------------------------
 
@@ -4703,7 +6793,7 @@ op_RNP:                                 ; CODE XREF: interp_reloc+DA↑j
 
 loc_28E9:                               ; CODE XREF: INTERP:28E4↑j
                 mov     dx, [bp-2]
-                mov     ds:602h, dx
+                mov     ds:word_602, dx
                 mov     cl, [si]
                 xor     ch, ch
                 jcxz    short loc_2905
@@ -4721,19 +6811,19 @@ loc_28FF:                               ; CODE XREF: INTERP:2903↓j
 
 loc_2905:                               ; CODE XREF: INTERP:28F4↑j
                 mov     bx, [bp+6]
-                mov     di, ds:606h
+                mov     di, ds:word_606
                 mov     al, [di]
                 cmp     al, [bx]
                 jz      short loc_2921
                 cbw
                 call    pm_release_code_segment
                 mov     bx, [bp+6]
-                mov     ds:606h, bx
+                mov     ds:word_606, bx
                 mov     ds:0E0F0h, bx
 
 loc_2921:                               ; CODE XREF: INTERP:2910↑j
                 mov     dx, [bp+4]
-                mov     ds:608h, dx
+                mov     ds:word_608, dx
                 mov     ds:0E0EEh, dx
                 mov     si, [bp+8]
                 mov     dx, [bp+2]
@@ -4759,11 +6849,11 @@ pm_proc_entry   proc near               ; CODE XREF: pm_bootstrap_pascal+BA↑p
                 jz      short loc_293B
                 xchg    ax, bx
                 cbw
-                mov     ds:60Eh, ax
+                mov     word ptr ds:loc_60D+1, ax
                 mov     al, bl
                 cbw
-                mov     ds:60Ch, ax
-                mov     ds:610h, cx
+                mov     word ptr ds:loc_60C, ax
+                mov     word ptr ds:loc_610, cx
                 pop     cs:word_2B32
                 mov     bx, cx
                 shl     ax, 1
@@ -4772,7 +6862,7 @@ pm_proc_entry   proc near               ; CODE XREF: pm_bootstrap_pascal+BA↑p
                 mov     al, [bx]
                 or      al, al
                 jnz     short loc_2984
-                mov     ax, ds:60Eh
+                mov     ax, word ptr ds:loc_60D+1
                 or      ax, ax
                 jns     short loc_2978
                 jmp     loc_7B
@@ -4791,18 +6881,18 @@ loc_2978:                               ; CODE XREF: pm_proc_entry+2B↑j
 ; ---------------------------------------------------------------------------
 
 loc_2984:                               ; CODE XREF: pm_proc_entry+24↑j
-                mov     di, ds:602h
+                mov     di, ds:word_602
                 sub     bx, 8
                 sub     di, [bx]
                 sub     di, [bx+2]
                 sub     di, 0Ch
                 call    sub_2AAC
-                mov     dx, ds:600h
+                mov     dx, ds:word_600
                 mov     [di], dx
                 mov     [di+2], bp
-                mov     dx, ds:608h
+                mov     dx, ds:word_608
                 mov     [di+4], dx
-                mov     dx, ds:606h
+                mov     dx, ds:word_606
                 mov     [di+6], dx
                 mov     [di+8], si
                 mov     cx, [bx+2]
@@ -4824,17 +6914,17 @@ loc_29C5:                               ; CODE XREF: pm_proc_entry+75↑j
                 lea     si, [bx+6]
                 sub     si, [si]
                 add     bx, 8
-                mov     ds:608h, bx
+                mov     ds:word_608, bx
                 mov     ds:0E0EEh, bx
                 mov     bp, di
                 mov     ds:0E0ECh, di
                 dec     di
                 dec     di
-                mov     dx, ds:602h
+                mov     dx, ds:word_602
                 mov     [di], dx
-                mov     ds:602h, di
-                mov     dx, ds:610h
-                mov     ds:606h, dx
+                mov     ds:word_602, di
+                mov     dx, word ptr ds:loc_610
+                mov     ds:word_606, dx
                 mov     ds:0E0F0h, dx
                 mov     bx, cs:word_2B32
                 jmp     bx
@@ -4846,7 +6936,7 @@ pm_proc_entry   endp ; sp-analysis failed
 
 pm_load_code_segment proc near          ; CODE XREF: pm_bootstrap_pascal+99↑p
                                         ; pm_bootstrap_pascal+A7↑p ...
-                mov     ds:60Eh, ax
+                mov     word ptr ds:loc_60D+1, ax
                 mov     bx, ax
                 shl     bx, 1
                 mov     dx, [bx+6B2h]
@@ -4859,7 +6949,7 @@ pm_load_code_segment proc near          ; CODE XREF: pm_bootstrap_pascal+99↑p
 
 loc_2A12:                               ; CODE XREF: pm_load_code_segment+D↑j
                 push    si
-                mov     di, ds:602h
+                mov     di, ds:word_602
                 mov     [bx+672h], di
                 mov     word ptr [bx+6B2h], 1
                 mov     cx, bx
@@ -4886,7 +6976,7 @@ loc_2A43:                               ; CODE XREF: pm_load_code_segment+35↑j
                 push    dx
                 call    sub_2A59
                 pop     bx
-                mov     di, ds:602h
+                mov     di, ds:word_602
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
@@ -4915,10 +7005,10 @@ sub_2A59        proc near               ; CODE XREF: pm_bootstrap_pascal+8A↑p
                 push    dx
                 mov     dl, [bx]
                 push    dx
-                mov     di, ds:602h
+                mov     di, ds:word_602
                 sub     di, [bx+4]
                 call    sub_2AAC
-                mov     ds:602h, di
+                mov     ds:word_602, di
                 push    di
                 push    word ptr [bx+4]
                 push    word ptr [bx+2]
@@ -4932,7 +7022,7 @@ sub_2A59        proc near               ; CODE XREF: pm_bootstrap_pascal+8A↑p
 
 loc_2A97:                               ; CODE XREF: sub_2A59+39↑j
                 shl     bx, 1
-                mov     ax, ds:602h
+                mov     ax, ds:word_602
                 mov     [bx+6F2h], ax
                 retn
 ; ---------------------------------------------------------------------------
@@ -4951,10 +7041,10 @@ sub_2A59        endp
 
 sub_2AAC        proc near               ; CODE XREF: pm_proc_entry+55↑p
                                         ; sub_2A59+21↑p
-                cmp     di, ds:604h
+                cmp     di, ds:word_604
                 ja      short locret_2ABE
                 call    pm_flush_pending_seg
-                cmp     di, ds:604h
+                cmp     di, ds:word_604
                 ja      short locret_2ABE
                 jmp     loc_62
 ; ---------------------------------------------------------------------------
@@ -4976,7 +7066,7 @@ pm_release_code_segment proc near       ; CODE XREF: INTERP:2913↑p
                 dec     word ptr [bx+6B2h]
                 jnz     short locret_2AD3
                 mov     dx, [bx+672h]
-                mov     ds:602h, dx
+                mov     ds:word_602, dx
 
 locret_2AD3:                            ; CODE XREF: pm_release_code_segment+4↑j
                                         ; pm_release_code_segment+A↑j
@@ -4989,7 +7079,7 @@ loc_2AD4:                               ; CODE XREF: INTERP:jpt_CSP↓j
                                         ; DATA XREF: INTERP:jpt_2B4D↓o
                 pop     cx              ; jumptable 00002B4D case 4
                 pop     dx
-                mov     bx, ds:608h
+                mov     bx, ds:word_608
                 mov     al, [bx+1]
                 or      al, al
                 jns     short loc_2AE4
@@ -5001,7 +7091,7 @@ loc_2AE4:                               ; CODE XREF: INTERP:2ADF↑j
                 sub     si, [si]
                 cmp     [bx], cl
                 jnz     short loc_2AF8
-                mov     bx, ds:606h
+                mov     bx, ds:word_606
                 cmp     [bx], dl
                 jnz     short loc_2AF8
                 jmp     interp_fetch
@@ -5147,16 +7237,16 @@ loc_2BBD:                               ; CODE XREF: INTERP:jpt_CSP↑j
                 pop     cx
                 pop     bx
                 shl     cx, 1
-                mov     di, ds:604h
+                mov     di, ds:word_604
                 mov     [bx], di
                 add     di, cx
-                cmp     ds:602h, di
+                cmp     ds:word_602, di
                 ja      short loc_2BD5
                 jmp     loc_62
 ; ---------------------------------------------------------------------------
 
 loc_2BD5:                               ; CODE XREF: INTERP:2BD0↑j
-                mov     ds:604h, di
+                mov     ds:word_604, di
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
 
@@ -5164,7 +7254,7 @@ loc_2BDC:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 call    pm_flush_pending_seg ; jumptable 00002B4D case 32
                 pop     bx
-                mov     dx, ds:604h
+                mov     dx, ds:word_604
                 mov     [bx], dx
                 jmp     interp_fetch
 ; ---------------------------------------------------------------------------
@@ -5173,7 +7263,7 @@ loc_2BE9:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
                 pop     bx              ; jumptable 00002B4D case 33
                 mov     dx, [bx]
-                mov     ds:604h, dx
+                mov     ds:word_604, dx
                 xor     ax, ax
                 mov     ds:0E0E6h, ax
                 jmp     interp_fetch
@@ -5434,7 +7524,7 @@ word_2CF7       dw 0Dh                  ; DATA XREF: INTERP:2CDD↑r
 
 
 sub_2D1F        proc near               ; CODE XREF: INTERP:2D19↑p
-                mov     bl, ds:630h
+                mov     bl, byte ptr ds:loc_630
                 mov     ds:0E21Ch, bl
                 retn
 sub_2D1F        endp
@@ -5446,24 +7536,24 @@ sub_2D1F        endp
 sub_2D28        proc near               ; CODE XREF: INTERP:2D13↑p
                 push    ax
                 mov     al, ds:0E21Ch
-                mov     ds:630h, al
+                mov     byte ptr ds:loc_630, al
                 shr     al, 1
                 shr     al, 1
                 shr     al, 1
                 shr     al, 1
                 and     al, 3
                 or      ds:0E21Ch, al
-                mov     byte ptr ds:623h, 0
-                mov     byte ptr ds:622h, 0
+                mov     byte ptr ds:loc_621+2, 0
+                mov     byte ptr ds:loc_621+1, 0
                 pop     ax
                 test    ax, 8
                 jnz     short loc_2D52
-                mov     byte ptr ds:623h, 0FFh
+                mov     byte ptr ds:loc_621+2, 0FFh
 
 loc_2D52:                               ; CODE XREF: sub_2D28+23↑j
                 test    ax, 4
                 jnz     short locret_2D5C
-                mov     byte ptr ds:622h, 0FFh
+                mov     byte ptr ds:loc_621+1, 0FFh
 
 locret_2D5C:                            ; CODE XREF: sub_2D28+2D↑j
                 retn
@@ -5477,7 +7567,7 @@ sub_2D5D        proc near               ; CODE XREF: INTERP:2D16↑p
                                         ; sub_2D5D+28↓j
                 call    sub_2D8B
                 mov     [di], al
-                test    byte ptr ds:623h, 0FFh
+                test    byte ptr ds:loc_621+2, 0FFh
                 jz      short loc_2D7C
                 cmp     al, ds:0E130h
                 jnz     short loc_2D7C
@@ -5634,7 +7724,7 @@ word_2DDE       dw 0Dh                  ; DATA XREF: INTERP:2DC7↑r
 ; ---------------------------------------------------------------------------
 
 loc_2E11:                               ; CODE XREF: sub_2D5D+24↑p
-                test    byte ptr ds:623h, 0FFh
+                test    byte ptr ds:loc_621+2, 0FFh
                 jz      short near ptr byte_2E41
                 test    byte ptr [bx+624h], 0FFh
                 jz      short loc_2E37
@@ -5709,7 +7799,7 @@ loc_2E6B:                               ; CODE XREF: INTERP:jpt_CSP↑j
 
 loc_2E6E:                               ; CODE XREF: INTERP:jpt_CSP↑j
                                         ; DATA XREF: INTERP:jpt_2B4D↑o
-                mov     ax, ds:602h     ; jumptable 00002B4D case 40
+                mov     ax, ds:word_602 ; jumptable 00002B4D case 40
                 mov     bx, ds:0E0E6h
                 or      bx, bx
                 jz      short loc_2E7E
@@ -5719,7 +7809,7 @@ loc_2E6E:                               ; CODE XREF: INTERP:jpt_CSP↑j
                 align 2
 
 loc_2E7E:                               ; CODE XREF: INTERP:2E77↑j
-                sub     ax, ds:604h
+                sub     ax, ds:word_604
 
 loc_2E82:                               ; CODE XREF: INTERP:2E7B↑j
                 shr     ax, 1
@@ -6646,16 +8736,16 @@ loc_3523:                               ; CODE XREF: INTERP:34FE↑j
                 pop     dx
                 or      dh, dh
                 jnz     short loc_3534
-                mov     byte ptr ds:61Ch, 1
-                mov     ds:61Dh, dl
+                mov     byte ptr ds:loc_61B+1, 1
+                mov     byte ptr ds:loc_61B+2, dl
                 mov     dx, 61Ch
 
 loc_3534:                               ; CODE XREF: INTERP:3526↑j
                 pop     ax
                 or      ah, ah
                 jnz     short loc_3544
-                mov     byte ptr ds:61Ah, 1
-                mov     ds:61Bh, al
+                mov     byte ptr ds:pm_open_file+1, 1
+                mov     byte ptr ds:loc_61B, al
                 mov     ax, 61Ah
 
 loc_3544:                               ; CODE XREF: INTERP:3537↑j
@@ -7049,7 +9139,7 @@ word_3710       dw 1                    ; DATA XREF: INTERP:3734↓r
                                         ; INTERP:373C↓w ...
 word_3712       dw 0                    ; DATA XREF: pm_trace_init↓w
 word_3714       dw 1BBh                 ; DATA XREF: pm_trace_init+A↓w
-                                        ; INTERP:3725↓w ...
+                                        ; sub_3725↓w ...
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -7061,14 +9151,21 @@ pm_trace_init   proc near               ; CODE XREF: interp_reloc+10↑p
                 retn
 pm_trace_init   endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+sub_3725        proc near               ; CODE XREF: conunit_uwr+6C2↑p
                 mov     cs:word_3714, bx
                 retn
+sub_3725        endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_372B        proc near               ; CODE XREF: interp_reloc+94↑p
+                                        ; conunit_uwr+701↑p
                 mov     bx, 38F2h
                 mov     cs:word_3714, bx
                 retn
@@ -7308,7 +9405,6 @@ sub_384B        endp
 loc_387F:                               ; CODE XREF: pm_format_msg:loc_378A↑j
                 pop     es
                 pop     ds
-                assume ds:nothing
                 pop     bp
                 pop     si
                 mov     ax, cs:word_3984
