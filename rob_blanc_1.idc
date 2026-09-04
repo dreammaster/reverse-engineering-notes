@@ -154325,13 +154325,14 @@ static Bytes_27(void) {
 	create_dword	(0X536C0C);
 	set_name	(0X536C0C,	"pathbacky");
 	create_dword	(0X536C10);
-	set_name	(0X536C10,	"welcome_text_validated");
+	set_name	(0X536C10,	"routex1");
 	make_array	(0X536C14,	0X4);
 	create_dword	(0X536C18);
 	set_name	(0X536C18,	"wallscreen");
 	create_dword	(0X536C1C);
 	set_name	(0X536C1C,	"line_failed");
 	create_dword	(0X536C20);
+	set_name	(0X536C20,	"walk_area_zone5");
 	create_dword	(0X536C24);
 	create_dword	(0X536C28);
 	create_dword	(0X536C2C);
@@ -159109,17 +159110,17 @@ static Functions_6(void) {
 	add_func    (0X431E30,0X431E79);
 	set_func_flags(0X431E30,0x5410);
 	SetType(0X431E30, "int get_route_composition(void);");
-	set_func_cmt(0X431E30,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj", 1);
+	set_func_cmt(0X431E30,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match to source's copyright/anti-tamper CRC sum -- \"for(aaa=0;aaa<66;aaa++) crctotal += ac_engine_copyright[aaa]*(aaa+1); return crctotal;\" matches the disassembly's own 66-iteration loop over the ac_engine_copyright string exactly, including the (index+1) weighting. Source's own comment calls this 'stupid name, to deter hackers' -- a deliberately misleading function name for what is really a copyright-string checksum, not anything route-related.", 1);
 	set_frame_size(0X431E30, 0X8, 4, 0);
 	add_func    (0X431E79,0X431EA3);
 	set_func_flags(0X431E79,0x5410);
 	SetType(0X431E79, "int route_script_link(void);");
-	set_func_cmt(0X431E79,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj", 1);
+	set_func_cmt(0X431E79,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"if(COPYRIGHT_CRC!=get_route_composition()) return 1; if(routex1!=-10) return 1; return 0;\" -- the literal comparison constant 0x2A27C(172668) matches COPYRIGHT_CRC exactly. Identifies the pre-existing IDA global `welcome_text_validated` as this build's `routex1` (source's own equally obscure name for the same anti-tamper 'has print_welcome_text already run and validated the copyright string' flag) -- renamed to match 2011's literal name per this project's usual convention, though `welcome_text_validated`'s own role-description was, if anything, more transparent than source's own deliberately-confusing choice. This function is itself another deliberately-misleading name (source's own comment marks the whole trio as anti-hacker obfuscation) -- its real job" " is 'has the engine's copyright/identity been validated', not anything abo", 1);
 	set_frame_size(0X431E79, 0, 4, 0);
 	add_func    (0X431EA3,0X431ECC);
 	set_func_flags(0X431EA3,0x5410);
 	SetType(0X431EA3, "void init_pathfinder(void);");
-	set_func_cmt(0X431EA3,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj", 1);
+	set_func_cmt(0X431EA3,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, ZERO-DRIFT exact match -- two malloc(4000) calls into pathbackx/pathbacky, matching source's \"malloc(sizeof(int)*MAXPATHBACK)\" with MAXPATHBACK=1000 and sizeof(int)=4 (4*1000=4000) precisely -- an unusually clean case where this project's typical smaller-capacity-in-2002 pattern does NOT apply at all.", 1);
 	set_frame_size(0X431EA3, 0, 4, 0);
 	add_func    (0X431ECC,0X431F10);
 	set_func_flags(0X431ECC,0x5410);
@@ -159128,7 +159129,7 @@ static Functions_6(void) {
 	add_func    (0X431F10,0X431F99);
 	set_func_flags(0X431F10,0x5410);
 	SetType(0X431F10, "void __stdcall print_welcome_text(char *verno, char *aciverno);");
-	set_func_cmt(0X431F10,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj", 1);
+	set_func_cmt(0X431F10,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive, near-exact match to source's own three-stage anti-tamper copyright check (strcmp against the exact copyright string with exit(77) on mismatch, strlen==66 check with exit(88) on mismatch, get_route_composition()==172668 check with exit(89) on mismatch, then routex1=-10 to mark validation complete) -- every literal exit code and comparison constant matches verbatim. Identifies dword_536C20 as `walk_area_zone5` (source's own deliberately-misleading name for this same anti-tamper flag, set to the literal 1633 here matching source exactly) and confirms `welcome_text_validated`= `routex1` (see route_script_link's own entry) via its final write-side assignment. This build's version omits source's own \"#ifndef _MSC_VER printf(...)\" console-banner block -- expected, no" "t a real feature absence, since that branch is itself conditionally compil", 1);
 	set_frame_size(0X431F10, 0, 4, 0X8);
 	define_local_var(0X431F10, 0X431F99, "[bp+0X8]", "verno");
 	define_local_var(0X431F10, 0X431F99, "[bp+0XC]", "aciverno");
@@ -159203,6 +159204,10 @@ static Functions_6(void) {
 	add_func    (0X433E10,0X433E1B);
 	set_func_flags(0X433E10,0x5410);
 	set_frame_size(0X433E10, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X433E20,0X433E67);
 	set_func_flags(0X433E20,0x5410);
 	set_frame_size(0X433E20, 0XC, 4, 0);
@@ -159277,10 +159282,6 @@ static Functions_6(void) {
 	set_func_flags(0X4342A2,0x5410);
 	set_func_cmt(0X4342A2,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_exit(void) at libcdaWin.C:62-65: \"command(\\\"close cdaudio\\\");\" -- exact match (single command() call with the \"close cdaudio\" string, already-matched via string evidence). CODE XREF: quit+28 (already-matched quit() calls this as part of shutdown cleanup) -- consistent with cd_exit being an engine-shutdown hook. Confirmed match already carried by the existing \"call command\" comment block; this entry just gives the wrapper itself its real name.", 1);
 	set_frame_size(0X4342A2, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X4342FD,0X434318);
 	set_func_flags(0X4342FD,0x5410);
 	set_func_cmt(0X4342FD,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: static char *lengthof(int track) at libcdaWin.C:72-76: \"command(\\\"status cdaudio length track %u\\\", track); return ret;\". Exact match: command() called with the matched \"status cdaudio length track %u\" string and the single int arg, then returns `offset strReturnString` (the static `ret` buffer). CODE XREF confirms two callers at .text:004342C0 and .text:00434324 -- the not-yet-function-bounded cd_play/cd_play_range blocks (see reversing/notes for the pending-function-boundary list), matching source's cd_play/cd_play_range both calling lengthof(). Kept as the exact static source name (file-local, no collision risk).", 1);
@@ -160612,6 +160613,10 @@ static Functions_7(void) {
 	add_func    (0X452290,0X452302);
 	set_func_flags(0X452290,0x5400);
 	set_frame_size(0X452290, 0X8, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X452310,0X4523B0);
 	set_func_flags(0X452310,0x5400);
 	set_frame_size(0X452310, 0X4, 0, 0);
@@ -160673,10 +160678,6 @@ static Functions_7(void) {
 	set_func_flags(0X452910,0x15400);
 	set_func_cmt(0X452910,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:unicode.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj", 1);
 	set_frame_size(0X452910, 0, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X4531C0,0X4535BF);
 	set_func_flags(0X4531C0,0x15400);
 	set_func_cmt(0X4531C0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:unicode.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj", 1);
@@ -162595,6 +162596,10 @@ static Functions_8(void) {
 	set_frame_size(0X47ED10, 0XA6C4, 0, 0);
 	define_local_var(0X47ED10, 0X47F0D0, "[bp-0XA6AC]", "Block");
 	define_local_var(0X47ED10, 0X47F0D0, "[bp+0X8]", "Size");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X47F0D0,0X47F123);
 	set_func_flags(0X47F0D0,0x5400);
 	SetType(0X47F0D0, "int __cdecl sub_47F0D0(void *Block);");
@@ -162729,10 +162734,6 @@ static Functions_8(void) {
 	add_func    (0X483190,0X483314);
 	set_func_flags(0X483190,0x5400);
 	set_frame_size(0X483190, 0X10, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X483320,0X483343);
 	set_func_flags(0X483320,0x5400);
 	set_frame_size(0X483320, 0, 0, 0);
@@ -165163,6 +165164,10 @@ static Functions_9(void) {
 	set_func_flags(0X4AB2B0,0x5404);
 	set_func_cmt(0X4AB2B0,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullrem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj", 1);
 	set_frame_size(0X4AB2B0, 0X4, 0, 0X10);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AB330,0X4AB34F);
 	set_func_flags(0X4AB330,0x5404);
 	set_func_cmt(0X4AB330,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullshr.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj", 1);
@@ -165247,10 +165252,6 @@ static Functions_9(void) {
 	define_local_var(0X4AB4A4, 0X4AB4AA, "[bp+0X4]", "FileHandle");
 	define_local_var(0X4AB4A4, 0X4AB4AA, "[bp+0X8]", "Offset");
 	define_local_var(0X4AB4A4, 0X4AB4AA, "[bp+0XC]", "Origin");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AB4AA,0X4AB4B0);
 	set_func_flags(0X4AB4AA,0x5480);
 	SetType(0X4AB4AA, "int __cdecl dup(int FileHandle);");

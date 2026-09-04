@@ -3094,6 +3094,14 @@ disassembly work.
   the new segment's per-move deltas — its early-return branch and
   XY-unpacking both match verbatim, confirming the packed encoding
   from two independent functions in the same round.
+- **Anti-tamper/copyright-check cluster closes.**
+  `get_route_composition`/`route_script_link`/`print_welcome_text` are
+  2011's own deliberately-misleadingly-named copyright-validation
+  functions (nothing route-related at all) — all match verbatim
+  including literal exit codes. Renamed `welcome_text_validated`→
+  `routex1` and identified `walk_area_zone5`, both matching source's
+  own equally obscure names. `init_pathfinder` closes with a rare
+  zero-drift capacity match (`MAXPATHBACK=1000`, no reduction).
 
 ## Third-party library identification (Task #10)
 

@@ -2327,7 +2327,7 @@
     "source_obj": "routefnd.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match to source's copyright/anti-tamper CRC sum -- \"for(aaa=0;aaa<66;aaa++) crctotal += ac_engine_copyright[aaa]*(aaa+1); return crctotal;\" matches the disassembly's own 66-iteration loop over the ac_engine_copyright string exactly, including the (index+1) weighting. Source's own comment calls this 'stupid name, to deter hackers' -- a deliberately misleading function name for what is really a copyright-string checksum, not anything route-related."
   },
   {
     "kind": "function",
@@ -2337,7 +2337,7 @@
     "source_obj": "routefnd.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"if(COPYRIGHT_CRC!=get_route_composition()) return 1; if(routex1!=-10) return 1; return 0;\" -- the literal comparison constant 0x2A27C(172668) matches COPYRIGHT_CRC exactly. Identifies the pre-existing IDA global `welcome_text_validated` as this build's `routex1` (source's own equally obscure name for the same anti-tamper 'has print_welcome_text already run and validated the copyright string' flag) -- renamed to match 2011's literal name per this project's usual convention, though `welcome_text_validated`'s own role-description was, if anything, more transparent than source's own deliberately-confusing choice. This function is itself another deliberately-misleading name (source's own comment marks the whole trio as anti-hacker obfuscation) -- its real job is 'has the engine's copyright/identity been validated', not anything about script linking."
   },
   {
     "kind": "function",
@@ -2347,7 +2347,7 @@
     "source_obj": "routefnd.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, ZERO-DRIFT exact match -- two malloc(4000) calls into pathbackx/pathbacky, matching source's \"malloc(sizeof(int)*MAXPATHBACK)\" with MAXPATHBACK=1000 and sizeof(int)=4 (4*1000=4000) precisely -- an unusually clean case where this project's typical smaller-capacity-in-2002 pattern does NOT apply at all."
   },
   {
     "kind": "function",
@@ -2357,7 +2357,7 @@
     "source_obj": "routefnd.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive, near-exact match to source's own three-stage anti-tamper copyright check (strcmp against the exact copyright string with exit(77) on mismatch, strlen==66 check with exit(88) on mismatch, get_route_composition()==172668 check with exit(89) on mismatch, then routex1=-10 to mark validation complete) -- every literal exit code and comparison constant matches verbatim. Identifies dword_536C20 as `walk_area_zone5` (source's own deliberately-misleading name for this same anti-tamper flag, set to the literal 1633 here matching source exactly) and confirms `welcome_text_validated`= `routex1` (see route_script_link's own entry) via its final write-side assignment. This build's version omits source's own \"#ifndef _MSC_VER printf(...)\" console-banner block -- expected, not a real feature absence, since that branch is itself conditionally compiled out under MSC_VER in 2011's own source too."
   },
   {
     "kind": "function",

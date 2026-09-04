@@ -10911,3 +10911,30 @@ Bonus: this function has TWO real callers -- `MoveCharacterPath` and
 the already-matched `find_route` -- matching source's own two call
 sites exactly. The deeper fixed-point angle/speed-computation body
 past these opening branches wasn't individually traced this round.
+
+### The anti-tamper/copyright-check cluster closes: `get_route_composition`/`route_script_link`/`init_pathfinder`/`print_welcome_text`
+
+Four more `routefnd.cpp` bare matches close in one pass, all as
+complete, decisive matches. `get_route_composition` and `print_welcome_
+text` are 2011's OWN deliberately-misleadingly-named anti-tamper/
+copyright-check functions (source's own comment calls the former "a
+stupid name, to deter hackers") -- their real job is validating the
+compiled-in copyright string and computing a checksum over it, nothing
+route- or pathfinding-related at all. Both match source's exact
+literal constants: `get_route_composition`'s 66-iteration weighted
+checksum loop over `ac_engine_copyright[]`; `print_welcome_text`'s
+three-stage check (`strcmp` against the exact copyright string with
+`exit(77)` on mismatch, `strlen==66` with `exit(88)`, checksum`==172668`
+with `exit(89)`) all matching verbatim, literal exit codes included.
+`route_script_link` (itself another deliberately-obscure name)
+matches the same `COPYRIGHT_CRC`/`routex1==-10` double-check exactly.
+
+Two globals renamed to match: the pre-existing IDA name `welcome_text_
+validated` (a genuinely more transparent label than source's own
+choice) is this build's `routex1` -- kept per this project's usual
+"match 2011's literal name" convention even though the existing name
+described the role more clearly than source's own does. `dword_536C20`
+is `walk_area_zone5`, matching source's write of the literal `1633`
+exactly. `init_pathfinder` closes with a rare ZERO-drift capacity
+match: two `malloc(4000)` calls into `pathbackx`/`pathbacky`, exactly
+matching `MAXPATHBACK=1000`*`sizeof(int)=4` with no reduction at all.
