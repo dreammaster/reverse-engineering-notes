@@ -3053,6 +3053,15 @@ disassembly work.
   slot. `IsButtonDown` confirms no middle-mouse-button support at all
   (bounds check and error string both differ from source's LEFT/
   RIGHT/MIDDLE).
+- **`FileOpen`/`FileClose`: a security-relevant absence, and a rare
+  zero-drift capacity.** `FileOpen`'s own traversal-protection checks
+  (rejecting `/`, `\`, `..`, `:`) match `validate_user_file_path`'s
+  `currentDirOnly` block exactly, fused directly in rather than a
+  separate function — but source's `$SAVEGAMEDIR$`/`$APPDATADIR$`
+  special-path-prefix resolution is CONFIRMED ABSENT: filenames go
+  straight to `fopen` with no prefix handling, worth flagging for the
+  ScummVM port. Identifies `num_open_script_files`/`valid_handles[]`
+  (10 slots, zero drift from `MAX_OPEN_SCRIPT_FILES=10`).
 
 ## Third-party library identification (Task #10)
 

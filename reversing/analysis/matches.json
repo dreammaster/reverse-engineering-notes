@@ -1247,7 +1247,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match. The leading four checks -- strchr(Str,'/'), strchr(Str,'\\\\'), strstr(Str,\"..\"), strchr(Str,':'), each rejecting on match with a debug_log call reading \"Attempt to open file '%s' denied (not c[urrent directory])\" -- are an exact, same-order match to validate_user_file_path's own `currentDirOnly` traversal-protection block (AC.CPP:18336-18341: \"strchr(fnmm,'/')!=NULL || strchr(fnmm,'\\\\')!=NULL || strstr(fnmm,\"..\")!=NULL || strchr(fnmm,':')!=NULL\", debug_log wording nearly identical bar 'open' vs. 'access'). CONFIRMS this build's version FUSES that security check directly into FileOpen -- no separate validate_user_file_path function exists -- and CONFIRMS ABSENT source's entire `$SAVEGAMEDIR$`/`$APPDATADIR$` special virtual-path-prefix resolution (AC.CPP:18307-18333, a later portability addition letting scripts address the save-game/app-data directories symbolically) -- this build passes the filename straight to fopen with no prefix handling of any kind, a real, security-relevant feature absence worth flagging for the eventual ScummVM port. The rest of the function matches source's free-handle-slot search and bookkeeping exactly: \"for(useindx=0;useindx<num_open_script_files;useindx++) if(valid_handles[useindx]==0) break;\" then \"valid_handles[useindx]=fopen(...); if(useindx>=num_open_script_files) { if(num_open_script_files>=10) quit(...); num_open_script_files++; }\" -- identifying dword_523418 as num_open_script_files and dword_4F0738 as the valid_handles[] array (10-slot capacity, matching MAX_OPEN_SCRIPT_FILES=10 with zero drift, a rare case where this project's usual smaller-capacity pattern doesn't apply)."
   },
   {
     "kind": "function",
@@ -1257,7 +1257,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): an exact, complete match to source's \"valid_handles[check_valid_file_handle(hha,\\\"FileClose\\\")]=NULL; fclose(hha);\" -- a second, independent confirmation of dword_4F0738 as valid_handles[] (see FileOpen's own entry)."
   },
   {
     "kind": "function",

@@ -10791,3 +10791,23 @@ Down` matches source's overall shape (delegates to the already-matched
 confirmed by the error string itself reading differently ("requires
 LEFT or RIGHT" vs. source's three-button listing) -- this build's
 `IsButtonDown` genuinely has no middle-mouse-button support at all.
+
+### `FileOpen`/`FileClose`: a security-relevant absence, and a rare zero-drift capacity
+
+`FileOpen` closes completely and decisively. Its own leading four path
+checks -- rejecting `/`, `\`, `..`, `:` with a matching `debug_log`
+warning -- are an exact, same-order match to `validate_user_file_path`'s
+own `currentDirOnly` traversal-protection block (`AC.CPP:18336-18341`).
+This confirms the security check itself is FUSED directly into
+`FileOpen` here (no standalone `validate_user_file_path` function
+exists), and -- more interesting for the eventual ScummVM port --
+CONFIRMS ABSENT source's entire `$SAVEGAMEDIR$`/`$APPDATADIR$` special
+virtual-path-prefix resolution (a later portability addition letting
+scripts address the save-game/app-data directories symbolically): this
+build passes the filename straight to `fopen` with no prefix handling
+of any kind. The rest matches source's free-slot search and bookkeeping
+exactly, identifying `num_open_script_files` and `valid_handles[]` (a
+rare ZERO-drift capacity match: 10 slots, exactly `MAX_OPEN_SCRIPT_
+FILES=10`, unlike this project's usual smaller-capacity pattern).
+`FileClose` closes the same round with a second, independent
+confirmation of `valid_handles[]` via its own exact one-line match.

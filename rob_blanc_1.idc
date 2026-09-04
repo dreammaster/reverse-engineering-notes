@@ -153825,6 +153825,7 @@ static Bytes_27(void) {
 	create_dword	(0X4F0734);
 	set_name	(0X4F0734,	"currentcolor");
 	create_dword	(0X4F0738);
+	set_name	(0X4F0738,	"valid_handles");
 	make_array	(0X4F073C,	0X44);
 	create_dword	(0X4F0780);
 	set_name	(0X4F0780,	"printfworkingspace");
@@ -154136,6 +154137,7 @@ static Bytes_27(void) {
 	create_dword	(0X523410);
 	create_dword	(0X523414);
 	create_dword	(0X523418);
+	set_name	(0X523418,	"num_open_script_files");
 	create_byte	(0X52341C);
 	make_array	(0X52341C,	0X4);
 	set_name	(0X52341C,	"passw");
@@ -157148,14 +157150,14 @@ static Functions_4(void) {
 	add_func    (0X41996B,0X419A70);
 	set_func_flags(0X41996B,0x5410);
 	SetType(0X41996B, "FILE *__stdcall FileOpen(const char *fnmm, const char *mode);");
-	set_func_cmt(0X41996B,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41996B,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match. The leading four checks -- strchr(Str,'/'), strchr(Str,'\\\\'), strstr(Str,\"..\"), strchr(Str,':'), each rejecting on match with a debug_log call reading \"Attempt to open file '%s' denied (not c[urrent directory])\" -- are an exact, same-order match to validate_user_file_path's own `currentDirOnly` traversal-protection block (AC.CPP:18336-18341: \"strchr(fnmm,'/')!=NULL || strchr(fnmm,'\\\\')!=NULL || strstr(fnmm,\"..\")!=NULL || strchr(fnmm,':')!=NULL\", debug_log wording nearly identical bar 'open' vs. 'access'). CONFIRMS this build's version FUSES that security check directly into FileOpen -- no separate validate_user_file_path function exists -- and CONFIRMS ABSENT source's entire `$SAVEGAMEDIR$`/`$APPDATADIR$` special virtual-path-prefix resolution (AC.CPP:18307-18333, a" " later portability addition letting scripts address the save-game/ap", 1);
 	set_frame_size(0X41996B, 0X4, 4, 0X8);
 	define_local_var(0X41996B, 0X419A70, "[bp+0X8]", "Str");
 	define_local_var(0X41996B, 0X419A70, "[bp+0XC]", "Mode");
 	add_func    (0X419A70,0X419A9D);
 	set_func_flags(0X419A70,0x5410);
 	SetType(0X419A70, "void __stdcall FileClose(FILE *hha);");
-	set_func_cmt(0X419A70,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X419A70,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): an exact, complete match to source's \"valid_handles[check_valid_file_handle(hha,\\\"FileClose\\\")]=NULL; fclose(hha);\" -- a second, independent confirmation of dword_4F0738 as valid_handles[] (see FileOpen's own entry).", 1);
 	set_frame_size(0X419A70, 0, 4, 0X4);
 	define_local_var(0X419A70, 0X419A9D, "[bp+0X8]", "Stream");
 	add_func    (0X419A9D,0X419AF1);
@@ -157597,6 +157599,10 @@ static Functions_4(void) {
 	set_frame_size(0X41BB2F, 0, 4, 0X8);
 	define_local_var(0X41BB2F, 0X41BBD8, "[bp+0X8]", "chaa");
 	define_local_var(0X41BB2F, 0X41BBD8, "[bp+0XC]", "ncol");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41BBD8,0X41BCC0);
 	set_func_flags(0X41BBD8,0x5410);
 	SetType(0X41BBD8, "void __stdcall SetCharacterView(int chaa, int vii);");
@@ -157624,10 +157630,6 @@ static Functions_4(void) {
 	set_frame_size(0X41BEE1, 0, 4, 0X8);
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0X8]", "cha");
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0XC]", "clik");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41BF5A,0X41BFD3);
 	set_func_flags(0X41BF5A,0x5410);
 	SetType(0X41BF5A, "void __stdcall SetCharacterIgnoreWalkbehinds(int cha, int clik);");
@@ -158356,6 +158358,10 @@ static Functions_5(void) {
 	set_func_flags(0X4254D0,0x5410);
 	set_func_cmt(0X4254D0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int is_valid_character(int newchar) at AC.CPP:3820: \"if ((newchar<0) || (newchar>=game.numcharacters)) return 0; return 1;\". Exact match: \"cmp arg_0,0; setl al\" (newchar<0), \"cmp ecx,dword_515950; setnl dl\" (newchar>=numcharacters), \"or eax,edx\" combining both conditions, returning 0 if either is true. Called from SetCharacterBaseline (already matched) exactly matching source's \"if (!is_valid_character(obn)) quit(\\\"!SetCharacterBaseline: invalid object number specified\\\");\". New field evidence: dword_515950 = numcharacters (GameSetupStructBase field, see matches/notes).", 1);
 	set_frame_size(0X4254D0, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X425500,0X425567);
 	set_func_flags(0X425500,0x5410);
 	SetType(0X425500, "int __stdcall ExecutingScript__run_another(char *Source, int, int);");
@@ -158366,10 +158372,6 @@ static Functions_5(void) {
 	set_func_flags(0X425570,0x5410);
 	set_func_cmt(0X425570,	"[reversing] confirmed match\nconfidence: high\nevidence: Matches Allegro's canonical macro/function pair \"#define acquire_screen() acquire_bitmap(screen)\": disasm pushes the global `screen` bitmap and calls a single sub-function (sub_425250, presumably acquire_bitmap, a library primitive). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: acquire_screen, obj=acwavi.obj) even though 2011's Engine/acwavi.cpp source only shows it being CALLED (as a no-arg call), not defined -- consistent with it being an Allegro library-provided function/macro instantiated wherever first used. Called from process_event and __GetLocationType (already matched), consistent with locking the screen surface around direct pixel access.", 1);
 	set_frame_size(0X425570, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X425590,0X4255A3);
 	set_func_flags(0X425590,0x5410);
 	set_func_cmt(0X425590,	"[reversing] confirmed match\nconfidence: high\nevidence: Same pattern as acquire_screen (see sub_425570 above) -- pushes `screen`, calls a single sub-function (sub_425280, presumably release_bitmap). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: release_screen, obj=acwavi.obj). Called from process_event and __GetLocationType (already matched), pairing with acquire_screen around the same drawing operations.", 1);
@@ -159358,6 +159360,10 @@ static Functions_6(void) {
 	define_local_var(0X434B20, 0X434C0A, "[bp-0X200]", "Buffer");
 	define_local_var(0X434B20, 0X434C0A, "[bp+0X4]", "Format");
 	define_local_var(0X434B20, 0X434C0A, "[bp+0X8]", "ArgList");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X434C10,0X434C1A);
 	set_func_flags(0X434C10,0x5400);
 	set_frame_size(0X434C10, 0, 0, 0);
@@ -159407,10 +159413,6 @@ static Functions_6(void) {
 	add_func    (0X435660,0X4358B8);
 	set_func_flags(0X435660,0x5400);
 	set_frame_size(0X435660, 0X258, 0, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X4358C0,0X4358FF);
 	set_func_flags(0X4358C0,0x5400);
 	set_frame_size(0X4358C0, 0X8, 0, 0);
@@ -161081,6 +161083,10 @@ static Functions_7(void) {
 	add_func    (0X45FE90,0X45FFAF);
 	set_func_flags(0X45FE90,0x5400);
 	set_frame_size(0X45FE90, 0X480, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X45FFB0,0X460068);
 	set_func_flags(0X45FFB0,0x5400);
 	set_frame_size(0X45FFB0, 0X8, 0, 0);
@@ -161113,10 +161119,6 @@ static Functions_7(void) {
 	set_func_flags(0X460820,0x5400);
 	set_func_cmt(0X460820,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: int get_config_int(AL_CONST char *section, AL_CONST char *name, int def) (Common/libinclude/allegro/config.h:42, AL_FUNC declaration). sub_460820's own prologue declares exactly 3 dword parameters (arg_0, arg_4, arg_8), matching this 3-argument shape precisely. Called from the already-matched mouse_directx_init (sub_464A30) with the two uconvert() results (section, name) plus a default value, matching source's \"get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT)\" argument order exactly. Body has a local 0x100-byte buffer and walks a linked list via dword_5429AC/[esi] pointer-chasing, consistent with searching a parsed config-file structure for a matching section+key. Confidence medium: the actual implementation (Allegro's config.c) is not present in this checkout, so not traced statement-by-statement against real source -- this match rests on parameter-c" "ount shape + call-site correlation + plausible body structure only. UPGRADED to high confidence", 1);
 	set_frame_size(0X460820, 0X104, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X460910,0X460991);
 	set_func_flags(0X460910,0x5400);
 	set_frame_size(0X460910, 0X44, 0, 0);
@@ -163238,6 +163240,10 @@ static Functions_8(void) {
 	add_func    (0X48CF10,0X48CF57);
 	set_func_flags(0X48CF10,0x5400);
 	set_frame_size(0X48CF10, 0X4, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X48CF60,0X48CF84);
 	set_func_flags(0X48CF60,0x5400);
 	set_frame_size(0X48CF60, 0, 0, 0);
@@ -163345,10 +163351,6 @@ static Functions_8(void) {
 	add_func    (0X48DC70,0X48DCF3);
 	set_func_flags(0X48DC70,0x5400);
 	set_frame_size(0X48DC70, 0XC, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X48DD00,0X48DD84);
 	set_func_flags(0X48DD00,0x5400);
 	set_frame_size(0X48DD00, 0XC, 0, 0);
