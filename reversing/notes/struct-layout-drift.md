@@ -10826,3 +10826,28 @@ a FOURTH. `GetViewportX`/`GetViewportY` both confirm `divide_down_
 coordinate` is just inlined division by the resolution multiplier,
 matching the same inlining pattern already established for `multiply_
 up_coordinate`/`get_fixed_pixel_size` elsewhere in this project.
+
+### `SetBackgroundFrame`/`GetBackgroundFrame` close, and the `ListBox*` cluster confirms a flattened abstraction layer
+
+`SetBackgroundFrame` matches source closely -- its bounds check gives
+`RoomStruct.num_bscenes` a further read-side confirmation from a new
+script-API site, and its `frnum<0`/normal-set paths both match
+`bg_frame_locked`/`bg_frame` exactly -- but CONFIRMS ABSENT source's
+"already on this frame, do nothing" early-out and its entire trailing
+`on_background_frame_change()` call (screen/walkbehind-cache
+invalidation plus 256-color palette update): this build sets the two
+fields unconditionally with no housekeeping call at all, consistent
+with its already-established predates-caching architecture.
+`GetBackgroundFrame` closes with a trivial exact match.
+
+The `ListBoxClear`/`ListBoxAdd`/`ListBoxGetSelected`/`ListBoxGetNumItems`
+cluster all confirm the same structural finding: 2011's own script-API
+functions delegate through an intermediate `ListBox_XXX(GUIListBox*)`
+wrapper layer (`ListBox_Clear`, `ListBox_AddItem`, etc. -- a later
+script-object-API abstraction whose own bodies aren't present anywhere
+in this repo's `Engine/` tree to compare against directly), but this
+build's script-exported functions call straight into the already-
+matched `GUIListBox::Clear`/`::AddItem` member functions, or do their
+own inline field reads (`ListBoxGetSelected`'s bounds-checked `selected`
+read, `ListBoxGetNumItems`'s plain `numItems` read), one abstraction
+layer flatter than 2011 throughout.

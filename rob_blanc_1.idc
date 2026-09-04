@@ -157262,14 +157262,14 @@ static Functions_4(void) {
 	add_func    (0X41A201,0X41A224);
 	set_func_flags(0X41A201,0x5410);
 	SetType(0X41A201, "void __stdcall ListBoxClear(int guin, int objn);");
-	set_func_cmt(0X41A201,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41A201,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then calls GUIListBox::Clear (already matched) DIRECTLY -- source's own intermediate ListBox_Clear(GUIListBox*) wrapper (a later script-object-API abstraction layer, its own body not present anywhere in this repo's Engine/ tree) does not exist here; the script-exported function calls straight into the member function itself, one layer flatter than 2011.", 1);
 	set_frame_size(0X41A201, 0X4, 4, 0X8);
 	define_local_var(0X41A201, 0X41A224, "[bp+0X8]", "guin");
 	define_local_var(0X41A201, 0X41A224, "[bp+0XC]", "objn");
 	add_func    (0X41A224,0X41A25C);
 	set_func_flags(0X41A224,0x5410);
 	SetType(0X41A224, "void __stdcall ListBoxAdd(int guin, int objn, const char *newitem);");
-	set_func_cmt(0X41A224,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41A224,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then calls GUIListBox::AddItem (already matched) DIRECTLY, checking its returned index for <0 (overflow) before quitting with the matching error string -- the same 'no intermediate ListBox_AddItem wrapper' flattening already found in ListBoxClear's own entry.", 1);
 	set_frame_size(0X41A224, 0X4, 4, 0XC);
 	define_local_var(0X41A224, 0X41A25C, "[bp+0X8]", "guin");
 	define_local_var(0X41A224, 0X41A25C, "[bp+0XC]", "objn");
@@ -157277,14 +157277,14 @@ static Functions_4(void) {
 	add_func    (0X41A25C,0X41A2A5);
 	set_func_flags(0X41A25C,0x5410);
 	SetType(0X41A25C, "int __stdcall ListBoxGetSelected(int guin, int objn);");
-	set_func_cmt(0X41A25C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41A25C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then does its own inline bounds-checked read -- \"if(selected<0 || selected>=numItems) return -1; else return selected;\" -- directly against GUIListBox.selected@+0x1B4/numItems@+0x1B0 (both already established), rather than delegating to a separate ListBox_GetSelectedIndex(GUIListBox*) wrapper (whose own body isn't present anywhere in this repo's Engine/ tree to compare against directly) -- the same flattened-abstraction pattern as ListBoxClear/ListBoxAdd.", 1);
 	set_frame_size(0X41A25C, 0X4, 4, 0X8);
 	define_local_var(0X41A25C, 0X41A2A5, "[bp+0X8]", "guin");
 	define_local_var(0X41A25C, 0X41A2A5, "[bp+0XC]", "objn");
 	add_func    (0X41A2A5,0X41A2C9);
 	set_func_flags(0X41A2A5,0x5410);
 	SetType(0X41A2A5, "int __stdcall ListBoxGetNumItems(int guin, int objn);");
-	set_func_cmt(0X41A2A5,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41A2A5,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then returns GUIListBox.numItems@+0x1B0 (already established) directly -- a plain field read with no intermediate ListBox_GetItemCount wrapper, the same flattened-abstraction pattern as its siblings in this cluster.", 1);
 	set_frame_size(0X41A2A5, 0X4, 4, 0X8);
 	define_local_var(0X41A2A5, 0X41A2C9, "[bp+0X8]", "guin");
 	define_local_var(0X41A2A5, 0X41A2C9, "[bp+0XC]", "objn");
@@ -157582,6 +157582,10 @@ static Functions_4(void) {
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0XC]", "xx");
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0X10]", "yy");
 	define_local_var(0X41BA82, 0X41BAA1, "[bp+0X14]", "spp");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41BAA1,0X41BAAB);
 	set_func_flags(0X41BAA1,0x5410);
 	SetType(0X41BAA1, "int GetPlayerCharacter(void);");
@@ -157601,10 +157605,6 @@ static Functions_4(void) {
 	set_frame_size(0X41BB2F, 0, 4, 0X8);
 	define_local_var(0X41BB2F, 0X41BBD8, "[bp+0X8]", "chaa");
 	define_local_var(0X41BB2F, 0X41BBD8, "[bp+0XC]", "ncol");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41BBD8,0X41BCC0);
 	set_func_flags(0X41BBD8,0x5410);
 	SetType(0X41BBD8, "void __stdcall SetCharacterView(int chaa, int vii);");
@@ -157720,13 +157720,13 @@ static Functions_5(void) {
 	add_func    (0X41C51F,0X41C572);
 	set_func_flags(0X41C51F,0x5410);
 	SetType(0X41C51F, "void __stdcall SetBackgroundFrame(int frnum);");
-	set_func_cmt(0X41C51F,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41C51F,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): the bounds check \"(frnum<-1) || (frnum>=dword_523088)\" matches source's \"(frnum<-1)|(frnum>=thisroom.num_bscenes)\" exactly, giving RoomStruct.num_bscenes (dword_523088, already established via load_room's own fread-count evidence) a further READ-side confirmation from a new, script-API-level site. \"if(frnum<0){dword_4EEB70=0;return;}\" matches \"if(frnum<0){play.bg_frame_locked=0;return;}\" exactly; \"dword_4EEB70=1;dword_4EEB58=frnum;\" matches \"play.bg_frame_locked=1;...play.bg_frame=frnum;\" exactly (both fields already established). CONFIRMED ABSENT: source's \"if(frnum==play.bg_frame) return;\" already-on-this-frame early-out AND its entire on_background_frame_change() call (screen/walkbehind-cache invalidation plus 256-color palette update) -- this build sets bg_frame/bg_frame_locked uncondition" "ally with no follow-up housekeeping call at all, consistent with (an", 1);
 	set_frame_size(0X41C51F, 0, 4, 0X4);
 	define_local_var(0X41C51F, 0X41C572, "[bp+0X8]", "frnum");
 	add_func    (0X41C572,0X41C57C);
 	set_func_flags(0X41C572,0x5410);
 	SetType(0X41C572, "int GetBackgroundFrame(void);");
-	set_func_cmt(0X41C572,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41C572,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a one-line exact match, \"return dword_4EEB58;\" matching source's \"return play.bg_frame;\" exactly -- a further confirmation of that field from a new site.", 1);
 	set_frame_size(0X41C572, 0, 4, 0);
 	add_func    (0X41C57C,0X41CA4F);
 	set_func_flags(0X41C57C,0x5410);
@@ -158267,6 +158267,10 @@ static Functions_5(void) {
 	add_func    (0X424CE0,0X424D26);
 	set_func_flags(0X424CE0,0x5410);
 	set_frame_size(0X424CE0, 0X4, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X424D30,0X424D78);
 	set_func_flags(0X424D30,0x5410);
 	set_frame_size(0X424D30, 0X4, 4, 0X4);
@@ -158356,10 +158360,6 @@ static Functions_5(void) {
 	set_func_flags(0X425490,0x5410);
 	set_func_cmt(0X425490,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's internal 8-bit-specific getpixel fast path (Allegro's own _getpixel8-equivalent): acquires a scanline pointer via a line-lock helper (sub_425430), reads one byte directly, then releases the line (sub_4253D0) -- bypassing the generic vtable dispatch entirely. Called only from redo_walkable_areas (already matched this session), matching that function's own 2011 source comment verbatim: \"since this is an 8-bit memory bitmap, we can just use direct memory access\" (AC.CPP:3705-3706) -- redo_walkable_areas deliberately bypasses the generic getpixel/putpixel used elsewhere (e.g. sub_410631/get_hotspot_at) because it already knows the walkable-areas mask is always 8-bit. THIRD-PARTY LIBRARY INTERNAL: per this project's scope rule, its own callees (sub_425430/sub_4253D0, line-lock/unlock helpers) are not chased further -- documented here only for the boundary fact and the confirmation it supplies of redo_walkable_areas's own source comment.", 1);
 	set_frame_size(0X425490, 0X8, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X4254D0,0X4254FB);
 	set_func_flags(0X4254D0,0x5410);
 	set_func_cmt(0X4254D0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int is_valid_character(int newchar) at AC.CPP:3820: \"if ((newchar<0) || (newchar>=game.numcharacters)) return 0; return 1;\". Exact match: \"cmp arg_0,0; setl al\" (newchar<0), \"cmp ecx,dword_515950; setnl dl\" (newchar>=numcharacters), \"or eax,edx\" combining both conditions, returning 0 if either is true. Called from SetCharacterBaseline (already matched) exactly matching source's \"if (!is_valid_character(obn)) quit(\\\"!SetCharacterBaseline: invalid object number specified\\\");\". New field evidence: dword_515950 = numcharacters (GameSetupStructBase field, see matches/notes).", 1);
@@ -159300,6 +159300,10 @@ static Functions_6(void) {
 	set_func_flags(0X434464,0x5410);
 	set_func_cmt(0X434464,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_stop(void) at libcdaWin.C:145-149: \"command(\\\"stop cdaudio wait\\\"); paused=0;\". Exact match. Called internally from the not-yet-function-bounded cd_play/cd_play_range blocks (matching source's cd_play/cd_play_range both starting with cd_stop()), plus external callers via the CDAudio dispatch table.", 1);
 	set_frame_size(0X434464, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X434480,0X4344D5);
 	set_func_flags(0X434480,0x5410);
 	SetType(0X434480, "int __usercall cd_get_tracks@<eax>(char@<cl>, int, int);");
@@ -159354,10 +159358,6 @@ static Functions_6(void) {
 	set_func_flags(0X434AC0,0x5400);
 	set_func_cmt(0X434AC0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/allegro.c\nconfidence: high\nevidence: static void debug_exit(void) at src/allegro.c:556. Identified by construction: it is the exact same function address (sub_434AC0) registered via _add_exit_func from BOTH the already-matched al_assert and al_trace -- source has exactly one function, debug_exit, registered from both places (allegro.c:606 and :662), and no other candidate fits both call sites simultaneously. Not independently body-traced this round.", 1);
 	set_frame_size(0X434AC0, 0X4, 0, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X434B20,0X434C0A);
 	set_func_flags(0X434B20,0x5400);
 	SetType(0X434B20, "int __cdecl al_trace(char *Format, char ArgList);");
@@ -160860,6 +160860,10 @@ static Functions_7(void) {
 	set_func_flags(0X4562D0,0x5400);
 	set_frame_size(0X4562D0, 0X1C, 0, 0);
 	define_local_var(0X4562D0, 0X45635A, "[bp-0X4]", "lpDD");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X456360,0X456387);
 	set_func_flags(0X456360,0x5400);
 	set_frame_size(0X456360, 0, 0, 0);
@@ -161044,10 +161048,6 @@ static Functions_7(void) {
 	add_func    (0X45BC24,0X45BC25);
 	set_func_flags(0X45BC24,0x5400);
 	set_frame_size(0X45BC24, 0, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X45BE70,0X45BE71);
 	set_func_flags(0X45BE70,0x5400);
 	set_frame_size(0X45BE70, 0, 0, 0);
@@ -162962,6 +162962,10 @@ static Functions_8(void) {
 	add_func    (0X488830,0X4889EE);
 	set_func_flags(0X488830,0x5c10);
 	set_frame_size(0X488830, 0X40, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X4889F0,0X4889FA);
 	set_func_flags(0X4889F0,0x5400);
 	set_frame_size(0X4889F0, 0, 0, 0);
@@ -163203,10 +163207,6 @@ static Functions_8(void) {
 	add_func    (0X48C5C0,0X48C63E);
 	set_func_flags(0X48C5C0,0x5400);
 	set_frame_size(0X48C5C0, 0X8, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X48C640,0X48C688);
 	set_func_flags(0X48C640,0x5400);
 	set_frame_size(0X48C640, 0X20, 0, 0);

@@ -3069,6 +3069,15 @@ disassembly work.
   confirmation; `ReleaseViewport` a fourth. Confirms `divide_down_
   coordinate` is just inlined division, matching the same pattern
   already established for `multiply_up_coordinate`.
+- **`SetBackgroundFrame`/`GetBackgroundFrame` close, and `ListBox*`
+  confirms a flattened abstraction layer.** `SetBackgroundFrame`
+  matches closely but confirms absent the "already on this frame"
+  early-out and the entire `on_background_frame_change()` cache/
+  palette housekeeping call. The `ListBoxClear`/`Add`/`GetSelected`/
+  `GetNumItems` cluster all confirm 2011's intermediate `ListBox_XXX`
+  script-object wrapper layer doesn't exist — these call straight into
+  `GUIListBox`'s own member functions or do inline field reads, one
+  layer flatter throughout.
 
 ## Third-party library identification (Task #10)
 

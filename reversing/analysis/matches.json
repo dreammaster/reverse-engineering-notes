@@ -1407,7 +1407,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then calls GUIListBox::Clear (already matched) DIRECTLY -- source's own intermediate ListBox_Clear(GUIListBox*) wrapper (a later script-object-API abstraction layer, its own body not present anywhere in this repo's Engine/ tree) does not exist here; the script-exported function calls straight into the member function itself, one layer flatter than 2011."
   },
   {
     "kind": "function",
@@ -1417,7 +1417,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then calls GUIListBox::AddItem (already matched) DIRECTLY, checking its returned index for <0 (overflow) before quitting with the matching error string -- the same 'no intermediate ListBox_AddItem wrapper' flattening already found in ListBoxClear's own entry."
   },
   {
     "kind": "function",
@@ -1427,7 +1427,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then does its own inline bounds-checked read -- \"if(selected<0 || selected>=numItems) return -1; else return selected;\" -- directly against GUIListBox.selected@+0x1B4/numItems@+0x1B0 (both already established), rather than delegating to a separate ListBox_GetSelectedIndex(GUIListBox*) wrapper (whose own body isn't present anywhere in this repo's Engine/ tree to compare against directly) -- the same flattened-abstraction pattern as ListBoxClear/ListBoxAdd."
   },
   {
     "kind": "function",
@@ -1437,7 +1437,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): validates via is_valid_listbox (already matched) then returns GUIListBox.numItems@+0x1B0 (already established) directly -- a plain field read with no intermediate ListBox_GetItemCount wrapper, the same flattened-abstraction pattern as its siblings in this cluster."
   },
   {
     "kind": "function",
@@ -2007,7 +2007,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): the bounds check \"(frnum<-1) || (frnum>=dword_523088)\" matches source's \"(frnum<-1)|(frnum>=thisroom.num_bscenes)\" exactly, giving RoomStruct.num_bscenes (dword_523088, already established via load_room's own fread-count evidence) a further READ-side confirmation from a new, script-API-level site. \"if(frnum<0){dword_4EEB70=0;return;}\" matches \"if(frnum<0){play.bg_frame_locked=0;return;}\" exactly; \"dword_4EEB70=1;dword_4EEB58=frnum;\" matches \"play.bg_frame_locked=1;...play.bg_frame=frnum;\" exactly (both fields already established). CONFIRMED ABSENT: source's \"if(frnum==play.bg_frame) return;\" already-on-this-frame early-out AND its entire on_background_frame_change() call (screen/walkbehind-cache invalidation plus 256-color palette update) -- this build sets bg_frame/bg_frame_locked unconditionally with no follow-up housekeeping call at all, consistent with (and reinforcing) this build's already-established predates-caching architecture."
   },
   {
     "kind": "function",
@@ -2017,7 +2017,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a one-line exact match, \"return dword_4EEB58;\" matching source's \"return play.bg_frame;\" exactly -- a further confirmation of that field from a new site."
   },
   {
     "kind": "function",
