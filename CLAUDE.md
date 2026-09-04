@@ -3121,6 +3121,13 @@ disassembly work.
   game speed, not a mere capacity reduction — and both `SetGameSpeed`/
   `GetGameSpeed` confirm the `game_speed_modifier` adjustment is
   entirely absent.
+- **`StopDialog` shows a hard-crash-vs-soft-warning drift.** Source's
+  "not in a dialog" case is a soft warning that returns gracefully;
+  this build's version calls `quit()` instead — a real behavioral
+  regression, not just a missing feature. `GetHotspotAt`/`GetPlayer
+  Character`/`RefreshMouse` all close cleanly; the last directly
+  confirms `mgetgraphpos`'s own entry (previously only inferred) and
+  identifies `scmouse_y`.
 
 ## Third-party library identification (Task #10)
 

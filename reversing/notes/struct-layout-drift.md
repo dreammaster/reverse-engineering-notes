@@ -10997,3 +10997,26 @@ array-capacity pattern. Also confirms absent the `frames_per_second==
 `GetGameSpeed` (which drops source's `-play.game_speed_modifier`
 subtraction) agree: this build's game speed has no separate "user-
 requested vs. modifier-adjusted" distinction at all.
+
+### `StopDialog` shows a hard-crash-vs-soft-warning drift; `GetHotspotAt`/`GetPlayerCharacter`/`RefreshMouse` close cleanly
+
+`StopDialog` is the standout find: source's own "not currently in a
+dialog" case is a soft warning (`debug_log`+`DEBUG_CONSOLE`, then
+returns gracefully), but this build's equivalent check calls `quit(
+"!StopDialog: not in a dialog script")` instead -- a HARD ERROR that
+terminates the game outright. Calling `StopDialog()` outside a dialog
+script crashes this build where 2011 handles it gracefully -- a real,
+confirmable behavioral regression/stricter-validation difference (not
+just a missing feature). The success path confirms `play_stop_dialog_
+at_end=DIALOG_STOP(2)` exactly, giving that field -- the one with the
+still-open field-order-mismatch puzzle versus 2011 -- a further
+confirmation of both its identity and this specific value.
+
+`GetHotspotAt` closes as a complete, zero-drift match, further
+confirming `RoomStruct.width`/`.height` from new sites. `GetPlayer
+Character` is a trivial exact one-liner. `RefreshMouse` closes cleanly
+and, more usefully, DIRECTLY confirms `mgetgraphpos`'s own entry
+(previously only inferred by role/position, never actually confirmed
+from this exact call site) -- and identifies `dword_4CD1BC` as
+`ScreenMousePos.y` (renamed `scmouse_y`), the already-named `scmouse`
+global's own `.x` field getting a further confirmation alongside it.

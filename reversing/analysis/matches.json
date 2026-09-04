@@ -1647,7 +1647,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED REAL BEHAVIORAL DRIFT -- source's \"if(play.stop_dialog_at_end==DIALOG_NONE) { debug_log(...); DEBUG_CONSOLE(...); return; }\" is a soft warning that returns gracefully, but this build's equivalent check (\"cmp play_stop_dialog_at_end,0; jnz <ok>\") calls quit(\"!StopDialog: not in a dialog script\") instead -- a HARD ERROR that terminates the game, not a warning. Calling StopDialog() outside a dialog script crashes this build where 2011 handles it gracefully. The success path, \"play_stop_dialog_at_end=2;\", matches DIALOG_STOP=2 (Common/acruntim.h:428) exactly, giving that already-established field (the one with the still-open field-order-mismatch puzzle vs. 2011, see load_new_room's own entry) a further confirmation of both its identity and this specific value."
   },
   {
     "kind": "function",
@@ -1697,7 +1697,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): DIRECTLY confirms mgetgraphpos's own entry (previously inferred by role/position rather than confirmed from this exact call site) -- RefreshMouse calls mgetgraphpos directly rather than the full domouse(DOMOUSE_NOCURSOR) wrapper 2011 calls, matching mgetgraphpos's own already-confirmed role as domouse's first-statement equivalent, just called more directly here. \"scmouse.x=dword_5358CC(mousex)/mult_x;\" and \"dword_4CD1BC=dword_5358D0(mousey)/mult_y;\" match \"scmouse.x=divide_down_coordinate(mousex); scmouse.y=divide_down_coordinate(mousey);\" exactly -- confirming the pre-existing global `scmouse` is this build's ScreenMousePos.x and identifying dword_4CD1BC as ScreenMousePos.y (a new field confirmation, offset +4 from scmouse's own base)."
   },
   {
     "kind": "function",
@@ -1727,7 +1727,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, zero-drift, exact match to AC.CPP:20438-20444 -- the divide_down_coordinate(offsetx/offsety) adjustment and the four-way out-of-bounds check against RoomStruct.width/height (word_522F08/522F0A, both already established, each getting a further confirmation from a new site) match verbatim, falling back to the already-matched get_hotspot_at(xxx,yyy) exactly."
   },
   {
     "kind": "function",
@@ -1817,7 +1817,7 @@
     "source_obj": "acplatfm.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a trivial, exact one-line match, \"return game_playercharacter;\", matching source's \"return game.playercharacter;\" exactly (already-established field, further confirmed)."
   },
   {
     "kind": "function",

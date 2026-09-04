@@ -153627,6 +153627,7 @@ static Bytes_27(void) {
 	create_dword	(0X4CD1B8);
 	set_name	(0X4CD1B8,	"scmouse");
 	create_dword	(0X4CD1BC);
+	set_name	(0X4CD1BC,	"scmouse_y");
 	create_dword	(0X4CD1C0);
 	set_name	(0X4CD1C0,	"virtual_scren");
 	create_dword	(0X4CD1C4);
@@ -157452,7 +157453,7 @@ static Functions_4(void) {
 	add_func    (0X41AF40,0X41AF65);
 	set_func_flags(0X41AF40,0x5410);
 	SetType(0X41AF40, "void StopDialog(void);");
-	set_func_cmt(0X41AF40,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41AF40,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED REAL BEHAVIORAL DRIFT -- source's \"if(play.stop_dialog_at_end==DIALOG_NONE) { debug_log(...); DEBUG_CONSOLE(...); return; }\" is a soft warning that returns gracefully, but this build's equivalent check (\"cmp play_stop_dialog_at_end,0; jnz <ok>\") calls quit(\"!StopDialog: not in a dialog script\") instead -- a HARD ERROR that terminates the game, not a warning. Calling StopDialog() outside a dialog script crashes this build where 2011 handles it gracefully. The success path, \"play_stop_dialog_at_end=2;\", matches DIALOG_STOP=2 (Common/acruntim.h:428) exactly, giving that already-established field (the one with the still-open field-order-mismatch puzzle vs. 2011, see load_new_room's own entry) a further confirmation of both its identity and this specific value.", 1);
 	set_frame_size(0X41AF40, 0, 4, 0);
 	add_func    (0X41AF65,0X41B0BD);
 	set_func_flags(0X41AF65,0x5410);
@@ -157495,7 +157496,7 @@ static Functions_4(void) {
 	add_func    (0X41B23D,0X41B269);
 	set_func_flags(0X41B23D,0x5410);
 	SetType(0X41B23D, "void RefreshMouse(void);");
-	set_func_cmt(0X41B23D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41B23D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): DIRECTLY confirms mgetgraphpos's own entry (previously inferred by role/position rather than confirmed from this exact call site) -- RefreshMouse calls mgetgraphpos directly rather than the full domouse(DOMOUSE_NOCURSOR) wrapper 2011 calls, matching mgetgraphpos's own already-confirmed role as domouse's first-statement equivalent, just called more directly here. \"scmouse.x=dword_5358CC(mousex)/mult_x;\" and \"dword_4CD1BC=dword_5358D0(mousey)/mult_y;\" match \"scmouse.x=divide_down_coordinate(mousex); scmouse.y=divide_down_coordinate(mousey);\" exactly -- confirming the pre-existing global `scmouse` is this build's ScreenMousePos.x and identifying dword_4CD1BC as ScreenMousePos.y (a new field confirmation, offset +4 from scmouse's own base).", 1);
 	set_frame_size(0X41B23D, 0, 4, 0);
 	add_func    (0X41B269,0X41B273);
 	set_func_flags(0X41B269,0x5410);
@@ -157511,10 +157512,14 @@ static Functions_4(void) {
 	add_func    (0X41B2BE,0X41B339);
 	set_func_flags(0X41B2BE,0x5410);
 	SetType(0X41B2BE, "int __stdcall GetHotspotAt(int xxx, int yyy);");
-	set_func_cmt(0X41B2BE,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41B2BE,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, zero-drift, exact match to AC.CPP:20438-20444 -- the divide_down_coordinate(offsetx/offsety) adjustment and the four-way out-of-bounds check against RoomStruct.width/height (word_522F08/522F0A, both already established, each getting a further confirmation from a new site) match verbatim, falling back to the already-matched get_hotspot_at(xxx,yyy) exactly.", 1);
 	set_frame_size(0X41B2BE, 0, 4, 0X8);
 	define_local_var(0X41B2BE, 0X41B339, "[bp+0X8]", "xxx");
 	define_local_var(0X41B2BE, 0X41B339, "[bp+0XC]", "yyy");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41B339,0X41B423);
 	set_func_flags(0X41B339,0x5410);
 	SetType(0X41B339, "int __stdcall GetLocationType(int xxx, int yyy);");
@@ -157530,10 +157535,6 @@ static Functions_4(void) {
 	define_local_var(0X41B423, 0X41B7C2, "[bp+0X8]", "xxx");
 	define_local_var(0X41B423, 0X41B7C2, "[bp+0XC]", "yyy");
 	define_local_var(0X41B423, 0X41B7C2, "[bp+0X10]", "Destination");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41B7C2,0X41B826);
 	set_func_flags(0X41B7C2,0x5410);
 	SetType(0X41B7C2, "void __stdcall GetInvName(int indx, char *buff);");
@@ -157596,7 +157597,7 @@ static Functions_5(void) {
 	add_func    (0X41BAA1,0X41BAAB);
 	set_func_flags(0X41BAA1,0x5410);
 	SetType(0X41BAA1, "int GetPlayerCharacter(void);");
-	set_func_cmt(0X41BAA1,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj", 1);
+	set_func_cmt(0X41BAA1,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a trivial, exact one-line match, \"return game_playercharacter;\", matching source's \"return game.playercharacter;\" exactly (already-established field, further confirmed).", 1);
 	set_frame_size(0X41BAA1, 0, 4, 0);
 	add_func    (0X41BAAB,0X41BB2F);
 	set_func_flags(0X41BAAB,0x5410);
@@ -158154,6 +158155,10 @@ static Functions_5(void) {
 	set_func_flags(0X424310,0x5410);
 	set_func_cmt(0X424310,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseLeave() at acgui.h:525: \"isover=0;\". Exact match: [this+0x20]=0. Same table/isover field as GUIInv__MouseOver (vtable slot 2/+0x08 of off_4AD50C, DATA XREF .rdata:004AD514). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424310, 0X4, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X424330,0X42434E);
 	set_func_flags(0X424330,0x5410);
 	set_func_cmt(0X424330,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseUp() at acgui.h:530: \"if (isover) activated=1;\". Exact match: cmp [this+0x20],0; jz; [this+0x1C]=1 -- reconfirms isover@+0x20 (see GUIInv__MouseOver) and activated@+0x1C (GUIObject base field, now independently confirmed across 5 classes: GUIButton, GUITextBox, GUISlider-pending, GUIMain[different struct], and now GUIInv). Vtable slot 4/+0x10 of off_4AD50C (DATA XREF .rdata:004AD51C). Flat-named as a C++ virtual method.", 1);
@@ -158185,10 +158190,6 @@ static Functions_5(void) {
 	set_func_flags(0X424490,0x5410);
 	set_func_cmt(0X424490,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIListBox::MouseMove(int nx,int ny) at acgui.h:406: \"mousexp=nx-x; mouseyp=ny-y;\". Exact match: [this+0x1BC]=arg_0-[this+8] (mousexp=nx-x), [this+0x1C0]=arg_4-[this+0xC] (mouseyp=ny-y) -- using the already-confirmed GUIObject base x@+8/y@+0xC. This is vtable slot 0/+0x00 of the table at off_4AD578 (DATA XREF .rdata:off_4AD578), which RESOLVES a mislabeling risk: this table was initially suspected to be GUISlider (superficial vtable-slot-shape resemblance: non-empty MouseMove/MouseDown, empty KeyPress), but GUISlider::MouseMove has a \"mpressed==0 return\" guard plus floating-point ratio math (acgui.h:252) that this function's body does not contain at all -- this exact mousexp/mouseyp assignment pattern is unique to GUIListBox. New field evidence: mousexp@+0x1BC, mouseyp@+0x1C0. Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424490, 0X4, 4, 0X8);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X4244D0,0X42454D);
 	set_func_flags(0X4244D0,0x5410);
 	set_frame_size(0X4244D0, 0X4, 4, 0);
@@ -159117,6 +159118,10 @@ static Functions_6(void) {
 	SetType(0X431E79, "int route_script_link(void);");
 	set_func_cmt(0X431E79,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"if(COPYRIGHT_CRC!=get_route_composition()) return 1; if(routex1!=-10) return 1; return 0;\" -- the literal comparison constant 0x2A27C(172668) matches COPYRIGHT_CRC exactly. Identifies the pre-existing IDA global `welcome_text_validated` as this build's `routex1` (source's own equally obscure name for the same anti-tamper 'has print_welcome_text already run and validated the copyright string' flag) -- renamed to match 2011's literal name per this project's usual convention, though `welcome_text_validated`'s own role-description was, if anything, more transparent than source's own deliberately-confusing choice. This function is itself another deliberately-misleading name (source's own comment marks the whole trio as anti-hacker obfuscation) -- its real job" " is 'has the engine's copyright/identity been validated', not anything abo", 1);
 	set_frame_size(0X431E79, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X431EA3,0X431ECC);
 	set_func_flags(0X431EA3,0x5410);
 	SetType(0X431EA3, "void init_pathfinder(void);");
@@ -159133,10 +159138,6 @@ static Functions_6(void) {
 	set_frame_size(0X431F10, 0, 4, 0X8);
 	define_local_var(0X431F10, 0X431F99, "[bp+0X8]", "verno");
 	define_local_var(0X431F10, 0X431F99, "[bp+0XC]", "aciverno");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X431F99,0X432008);
 	set_func_flags(0X431F99,0x5410);
 	set_func_cmt(0X431F99,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int can_see_from(int x1,int y1,int x2,int y2) at routefnd.cpp:119-133 -- a complete, essentially instruction-for-instruction match. \"line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2 && y1==y2) return 1; do_line(wss,x1,y1,x2,y2,0,line_callback); if(line_failed!=0) return 0; return 1;\" matches source verbatim, including the exact same early-return-on-identical-points shortcut before the general do_line/callback path. Identifies dword_536C1C as `line_failed`, dword_5358F8/5358FC as `lastcx`/`lastcy` (all file-scope globals in 2011's routefnd.cpp), confirms `wss` as `wallscreen` (already set by MoveCharacterStraight, its own caller, right before this call -- matching source's own convention of `wallscreen` being set by callers rather than passed as a parameter), and identifies sub_431ECC as `line_callback` (see its own entry). `do_line` itself is Allegro's own public API (already matched, exact linker-symbol match, alleg_s_crt:gfx.o" "bj).", 1);
@@ -160335,6 +160336,10 @@ static Functions_7(void) {
 	add_func    (0X44AF30,0X44AF77);
 	set_func_flags(0X44AF30,0x5400);
 	set_frame_size(0X44AF30, 0X4, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X44AF80,0X44AFA1);
 	set_func_flags(0X44AF80,0x5400);
 	set_frame_size(0X44AF80, 0, 0, 0);
@@ -160394,10 +160399,6 @@ static Functions_7(void) {
 	add_func    (0X44C210,0X44C2BB);
 	set_func_flags(0X44C210,0x5400);
 	set_frame_size(0X44C210, 0X8, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X44C2C0,0X44C36C);
 	set_func_flags(0X44C2C0,0x5400);
 	set_frame_size(0X44C2C0, 0XC, 0, 0);
@@ -162418,6 +162419,10 @@ static Functions_8(void) {
 	SetType(0X47B360, "int __cdecl sub_47B360(size_t Size);");
 	set_frame_size(0X47B360, 0, 0, 0);
 	define_local_var(0X47B360, 0X47B370, "[bp+0X4]", "Size");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X47B370,0X47B405);
 	set_func_flags(0X47B370,0x5400);
 	set_frame_size(0X47B370, 0X8, 0, 0);
@@ -162468,10 +162473,6 @@ static Functions_8(void) {
 	set_func_flags(0X47D400,0x5400);
 	set_func_cmt(0X47D400,	"[reversing] confirmed match\nconfidence: medium\nevidence: JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name agains" "t. See reversing/notes/third-party-library-ident", 1);
 	set_frame_size(0X47D400, 0X10, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X47D4D0,0X47D521);
 	set_func_flags(0X47D4D0,0x5400);
 	set_func_cmt(0X47D4D0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
@@ -164943,6 +164944,10 @@ static Functions_9(void) {
 	set_frame_size(0X4AAFC6, 0, 0, 0);
 	define_local_var(0X4AAFC6, 0X4AAFCC, "[bp+0X8]", "Val");
 	define_local_var(0X4AAFC6, 0X4AAFCC, "[bp+0XC]", "Size");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AAFCC,0X4AAFD2);
 	set_func_flags(0X4AAFCC,0x5481);
 	SetType(0X4AAFCC, "void __cdecl __noreturn exit(int Code);");
@@ -165036,10 +165041,6 @@ static Functions_9(void) {
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0X4]", "Str1");
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0X8]", "Str2");
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0XC]", "MaxCount");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AB03A,0X4AB040);
 	set_func_flags(0X4AB03A,0x5480);
 	SetType(0X4AB03A, "char *__cdecl strchr(const char *Str, int Val);");
