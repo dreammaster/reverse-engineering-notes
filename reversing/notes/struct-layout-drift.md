@@ -10538,3 +10538,34 @@ never reads `bgimage`, and never adds `handleoffset` anywhere in its
 coordinate math -- `apply_structs.py`'s own `GUISlider` comment
 (originally inferred only from `WriteToFile`'s bulk-write NOT covering
 these three fields) is updated to reflect this stronger evidence.
+
+### `GUILabel::Draw` upgraded to high confidence: word-wrap is fused directly into `Draw()`, no separate helper function exists
+
+A third GUI-family MEDIUM-confidence match closes the same session as
+`GUISlider::Draw`. The full body is a complete, decisive match: `check_
+font(&font)` (`sub_424040`, newly matched, exact 1-pointer-arg
+signature against `Engine/acfonts.cpp:78`), `GetTranslation`+`replace_
+macro_tokens` (both already matched), then `wgettextheight("ZhypjIHQFb"
+,font)+1` (`sub_401DBB`, newly matched -- source's own distinctive
+tall/descender-heavy calibration string appears verbatim, decisive
+naming evidence by itself), `wtextcolor(textcol)` (already matched).
+
+The interesting structural finding: source's own `#ifdef THIS_IS_THE_
+ENGINE` branch delegates word-wrapping to a separate reusable `break_
+up_text_into_lines()` function that fills a `lines[]` array, which
+`Draw()` then loops over calling `printtext_align()` per line. This
+build has NO such separate function at all -- the entire word-wrap
+job is fused directly into `Draw()`'s own body as a single-pass byte-
+by-byte scan, breaking a line at either an explicit `[` literal-
+newline marker or the last space before `wgettextwidth(line,font)`
+(`sub_401D17`, newly matched) exceeds `wid`@+0x10, calling `sub_405A70`
+(newly matched as `GUILabel::printtext_align`, confirmed via its exact
+2-explicit-argument thiscall shape and a bonus cross-confirmation --
+`printtext_align`'s own body calls `wgettextwidth` too, matching
+source's `GALIGN_CENTRE`/`GALIGN_RIGHT` centering math) to draw each
+line as it's found, with no intermediate buffer array at all. The same
+"later AGS refactor extracted a reusable helper from what used to be
+inlined logic" pattern already found repeatedly elsewhere in this
+project (`call_function`/`cc_run_code`, `run_text_script_iparam`/`run_
+script_function_if_exist`), just newly confirmed for GUI label
+word-wrapping specifically.

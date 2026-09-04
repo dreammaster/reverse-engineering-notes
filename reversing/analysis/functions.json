@@ -75,14 +75,14 @@
   "is_named": false
  },
  {
-  "name": "sub_401D17",
+  "name": "wgettextwidth",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_401DBB",
+  "name": "wgettextheight",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_401E63",
@@ -300,9 +300,9 @@
   "is_named": true
  },
  {
-  "name": "sub_405A70",
+  "name": "GUILabel__printtext_align",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUILabel__Draw",
@@ -2510,9 +2510,9 @@
   "is_named": false
  },
  {
-  "name": "sub_424040",
+  "name": "check_font",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_424050",

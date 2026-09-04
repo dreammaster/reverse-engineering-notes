@@ -4461,8 +4461,8 @@
     "new_name": "GUILabel__Draw",
     "source_file": "Engine/acgui.cpp",
     "source_line": 339,
-    "confidence": "medium",
-    "evidence": "void GUILabel::Draw() at acgui.cpp:339. Positionally confirmed via vtable slot 6/+0x18 of off_4AD4E8 (DATA XREF .rdata:004AD500), the same table pinned as GUILabel's by the already-confirmed WriteToFile/ReadFromFile at slots 7/8. Body is large (0xE8-byte local frame, consistent with source's \"char oritext[MAX_GUILABEL_TEXT_LEN]\" stack buffer for word-wrap/alignment) and calls check_font on [this+0xE8] (font), matching source's \"check_font(&font);\" as the first statement. Confidence medium rather than high: the word-wrap/alignment body itself (printtext_align calls, GALIGN_LEFT/CENTRE/RIGHT branching) was not individually traced statement-by-statement the way the other three GUILabel/GUITextBox methods were. Flat-named as a C++ virtual method."
+    "confidence": "high",
+    "evidence": "void GUILabel::Draw() at acgui.cpp:339. Positionally confirmed via vtable slot 6/+0x18 of off_4AD4E8 (DATA XREF .rdata:004AD500), the same table pinned as GUILabel's by the already-confirmed WriteToFile/ReadFromFile at slots 7/8. Body is large (0xE8-byte local frame, consistent with source's \"char oritext[MAX_GUILABEL_TEXT_LEN]\" stack buffer for word-wrap/alignment) and calls check_font on [this+0xE8] (font), matching source's \"check_font(&font);\" as the first statement. Confidence medium rather than high: the word-wrap/alignment body itself (printtext_align calls, GALIGN_LEFT/CENTRE/RIGHT branching) was not individually traced statement-by-statement the way the other three GUILabel/GUITextBox methods were. Flat-named as a C++ virtual method. UPGRADED TO HIGH CONFIDENCE (follow-up round, complete statement-by-statement trace): the full body matches source's sequence exactly -- check_font(&font) (sub_424040, newly matched, AC.CPP-equivalent acfonts.cpp:78, exact 1-pointer-arg signature), GetTranslation(text) into a local buffer with a strcpy fallback when the returned pointer differs from that buffer (matching the '#ifdef THIS_IS_THE_ENGINE... else strcpy' shape, engine build always taking the GetTranslation branch), replace_macro_tokens(...) (already matched), wgettextheight(\"ZhypjIHQFb\",font)+1 (sub_401DBB, newly matched -- the exact same distinctive tall/descender-heavy calibration string as source, decisive naming evidence on its own), wtextcolor(textcol) (already matched). CONFIRMS the ENTIRE word-wrap-and-draw loop is genuinely FUSED into Draw() itself, not delegated to a separate break_up_text_into_lines/split_lines_leftright helper the way source's #ifdef machinery does: a single-pass byte-by-byte scan breaks a line at either an explicit '[' literal-newline marker OR the last space before wgettextwidth(line,font) (sub_401D17, newly matched) exceeds wid@+0x10 -- functionally equivalent to source's own two line-break triggers, but architecturally simpler (no lines[] buffer, no reusable standalone word-wrap function -- a genuine predecessor of the later-generalized helper, matching this project's repeated 'later AGS refactor extracted a reusable function from what used to be inlined logic' pattern, e.g. call_function/cc_run_code, run_text_script_iparam/run_script_function_if_exist). Each broken-off line (plus the final trailing remainder) is drawn via sub_405A70(this,yy,teptr), newly matched as GUILabel::printtext_align (exact thiscall 2-explicit-arg shape: yy then teptr) -- its own body not independently traced this round (the alignment-offset math for GALIGN_CENTRE/GALIGN_RIGHT specifically), but its 3 call sites/argument shape are a decisive match on their own."
   },
   {
     "kind": "manual",
@@ -6060,5 +6060,41 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "Allegro's public rectfill(BITMAP*,x1,y1,x2,y2,color) API -- exact 6-argument vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x38=rectfill slot), matching the same BITMAP_METHODS-dispatch pattern already established for getpixel(+0x20)/putpixel(+0x24). Called from GUISlider::Draw (already matched) to fill both the slider bar and handle rectangles. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its vtable target implementation not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_424040",
+    "new_name": "check_font",
+    "source_file": "Engine/acfonts.cpp",
+    "source_line": 78,
+    "confidence": "high",
+    "evidence": "void check_font(int *fontnum) at acfonts.cpp:78 -- exact signature match (single pointer argument). Called from GUILabel::Draw (already matched) as check_font(&this->font), matching source's own opening statement exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401DBB",
+    "new_name": "wgettextheight",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "int wgettextheight(const char*txt,int fontnum) -- called from GUILabel::Draw (already matched) as wgettextheight(\"ZhypjIHQFb\",font), matching source's own identical, highly distinctive calibration string (a tall/descender-heavy sample used to measure a font's line height) verbatim -- decisive naming evidence on its own, independent of the surrounding call shape."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401D17",
+    "new_name": "wgettextwidth",
+    "source_file": "Common/Wgt2allg.h",
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "int wgettextwidth(const char*txt,int fontnum) -- called from GUILabel::Draw (already matched) inside its own word-wrap loop as wgettextwidth(line,font), with the result compared directly against GUILabel.wid@+0x10 to decide where to break the current line -- matching source's own printtext_align/word-wrap role for this function exactly (GUILabel::printtext_align itself also calls wgettextwidth to center/right-align text, a second consistent role)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_405A70",
+    "new_name": "GUILabel__printtext_align",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 328,
+    "confidence": "high",
+    "evidence": "void GUILabel::printtext_align(int yy, char *teptr) at acgui.cpp:328-337 -- called from GUILabel::Draw (already matched) three times (once per broken-off line, once for the final trailing remainder), matching the exact thiscall 2-explicit-argument shape (yy first, teptr second) and role (the actual per-line text draw call inside the word-wrap loop). Internal alignment-offset math (GALIGN_CENTRE/GALIGN_RIGHT branches using wgettextwidth) not independently traced this round -- named by call-shape/role match, not a full internal body read."
   }
 ]

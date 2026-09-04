@@ -2982,6 +2982,16 @@ disassembly work.
   three plus the `currentcolor` global. CONFIRMED ABSENT (upgrading a
   save-format-only inference to a full behavioral one): `handlepic`/
   `bgimage`/`handleoffset` custom-graphic support.
+- **`GUILabel::Draw` upgraded to high confidence: word-wrap is fused
+  directly into `Draw()`.** The full body matches source exactly
+  (`check_font`/`GetTranslation`/`replace_macro_tokens`/`wgettextheight`
+  /`wtextcolor`), but source's separate `break_up_text_into_lines()` +
+  `lines[]` array has no counterpart here — this build does a
+  single-pass byte-by-byte scan fused directly into `Draw()`, breaking
+  on `[` markers or `wgettextwidth` exceeding `wid`, drawing each line
+  via the newly-matched `GUILabel::printtext_align` as it's found. The
+  same "later refactor extracted a reusable helper" pattern seen
+  elsewhere, now confirmed for GUI label word-wrap too.
 
 ## Third-party library identification (Task #10)
 
