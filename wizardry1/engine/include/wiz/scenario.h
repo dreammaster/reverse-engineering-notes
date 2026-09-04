@@ -13,6 +13,15 @@ public:
 
     bool load(std::vector<u8> scenarioData);
 
+    // Optional companion art file `200.MONSTERS` (monster combat portraits;
+    // /docs/file-formats.md).  Not part of SCENARIO.DATA -- loaded separately
+    // when available.  `monsterArtRecord(pic)` returns the raw 512-byte
+    // record for a 1-based `PIC` (empty if unloaded / out of range / blank);
+    // decode it with `blitPortrait` (wiz/monster_art.h).
+    bool loadMonsterArt(std::vector<u8> monstersFile);
+    bool haveMonsterArt() const { return !monsterArt_.empty(); }
+    Bytes monsterArtRecord(int pic) const;
+
     const std::string &gameName() const { return gameName_; }
     int count(Type t) const { return count_[t]; }
     int recSize(Type t) const { return recSize_[t]; }
@@ -30,6 +39,7 @@ public:
 
 private:
     std::vector<u8> data_;
+    std::vector<u8> monsterArt_;
     std::string gameName_;
     u16 recPer2b_[TypeCount] = {};
     u16 count_[TypeCount] = {};

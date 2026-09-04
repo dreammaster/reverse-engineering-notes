@@ -40,6 +40,22 @@ bool Scenario::load(std::vector<u8> scenarioData) {
     return true;
 }
 
+bool Scenario::loadMonsterArt(std::vector<u8> monstersFile) {
+    if (monstersFile.size() < 512) return false;      // at least one record
+    monsterArt_ = std::move(monstersFile);
+    return true;
+}
+
+Bytes Scenario::monsterArtRecord(int pic) const {
+    if (pic < 1) return {};
+    size_t off = size_t(pic - 1) * 512;
+    if (off + 512 > monsterArt_.size()) return {};
+    const u8 *rec = monsterArt_.data() + off;
+    for (int i = 0; i < 512; ++i)
+        if (rec[i]) return {rec, 512};                 // non-blank
+    return {};
+}
+
 Bytes Scenario::record(Type t, int r) const {
     if (t < 0 || t >= TypeCount || r < 0 || r >= count_[t] || recPer2b_[t] == 0)
         return {};

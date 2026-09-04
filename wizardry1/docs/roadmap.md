@@ -36,9 +36,12 @@ Decided direction (2026-09-02):
       Phase 2 (`tools/strpool.py`, `engine/wiz/string_pool.h`).
 - [x] `200/400.CHARSET` — 16×8, 512 glyphs; `engine/wiz/font.h` (`wiz1 mockup`).
 - [x] `200/400.TITLE` — 320×64 2bpp CGA; `engine/wiz/bitmap.h` (`wiz1 show title`).
-- [~] `200.MONSTERS` — 29 records × 512 B, `TENEMY.PIC` indexed. Load path +
-      `CONUNIT` driver fully mapped (`analyze_conunit.py`); a record is a per-monster
-      ~30-glyph tile sub-font, portrait composed by `conunit_blit13`. See `../../docs/file-formats.md`.
+- [x] `200.MONSTERS` — 32 × 512 B records, `TENEMY.PIC` (1-based) indexed.
+      `CONUNIT` driver fully mapped (`analyze_conunit.py`); a record is a
+      6×5 grid of 16×8 px 1bpp tiles = a 96×40 px portrait (stride 16,
+      DOSBox-confirmed).  `engine/wiz/monster_art.h` (`blitPortrait`),
+      `Scenario::loadMonsterArt`; **rendered in combat** (`buildPortraits`,
+      test `combat_portrait`).  See `../../docs/file-formats.md`.
 - [ ] `HAS.CACHE`, `KANA.KEYMAP` — identify (share a 512-byte prefix).
 - [x] `SAVEn.DSK` — **no `PLAYER.DATA`**: each is a full bootable UCSD disk
       image (one slot per scenario); the save IS `SCENARIO.DATA` written back
@@ -104,8 +107,9 @@ Decided direction (2026-09-02):
 - [x] `200/400.TITLE` decoded — 320×64 2bpp CGA (the "Wizardry" logo).
       `engine/wiz/bitmap.h` (`loadCga2bpp`/`loadTitle`); `wiz1 show title`;
       shown at boot by `wiz1 roller`.
-- [~] `200.MONSTERS` — grid + CONUNIT driver mapped; records are per-monster
-      tile sub-fonts (not compressed images) -- tile geometry still to pin.
+- [x] `200.MONSTERS` — CONUNIT driver mapped, tile geometry pinned
+      (6×5 of 16×8 px 1bpp, DOSBox-confirmed) and **rendered in combat**
+      (`engine/wiz/monster_art.h`, `buildPortraits`).
 - [~] `CASTLE`/`SHOPS` — the town. `docs/town.md` maps the `XGOTO` state
       machine + both segments. Ported so far: the Castle hub menu, Gilgamesh's
       Tavern (add / remove / see a member, alignment + password gates), the
@@ -179,17 +183,14 @@ Decided direction (2026-09-02):
       whole game, character creation through the Werdna kill and the
       CONGRATULATIONS ending (`CHK4WIN`): roster → town → maze → combat →
       camp → save, with the whole `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` /
-      `SHOPS` families ported.  Only visible gap: monster portraits —
-      `200.MONSTERS` = per-monster ~30-glyph tile sub-fonts, the CONUNIT
-      draw path is mapped (`docs/pmachine.md` §CONUNIT) but not yet
-      rendered, so combat shows monster names as text for now.
+      `SHOPS` families ported, and the `200.MONSTERS` combat portraits
+      rendered (`CONUNIT` blk 13 -> `engine/wiz/monster_art.h`).
 - [x] Validate the PRNG against the real interpreter — **done, bit-exact**
       (DOSBox capture 2026-09-04, `../../docs/rng-validation.md`).  Outcome rolls
       advance by exactly `rng.h next()`; the keyboard "stir" only touches
       throwaway cursor-blink rolls, so a whole session isn't replayable but
       each resolution is exact given its starting `s3`.
-- [ ] Nice-to-haves, none blocking: `200.MONSTERS` tile rendering (tile
-      geometry within the record), `HAS.CACHE` / `KANA.KEYMAP` id, `CSP`
+- [ ] Nice-to-haves, none blocking: `HAS.CACHE` / `KANA.KEYMAP` id, `CSP`
       0/7-9/12/21-24 semantics, `HAS.STROPS` ABI, more proc names,
       chevrons/medals.
 

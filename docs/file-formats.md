@@ -272,6 +272,9 @@ compressed image.**
 
 So a portrait = **6 × 5 tiles of 16 × 8 px = 96 × 40 px, 1bpp**, tile `n`
 at record offset `n*16` (30 tiles = 480 B, padded to the 512-B record).
+Decoded + rendered by the engine in `wizardry1/engine/wiz/monster_art.h`
+(`blitPortrait`), shown as the combat picture band (`combat_ui.cpp`
+`buildPortraits`, test `combat_portrait`).
 
 **Confirmed 2026-09-04.**  DOSBox during a fight: `word_13DC` = `0x0008`
 (→ `<<1` = 16 B stride), `cs:0x59F2` = `00 00 10 00 20 00 … D0 01 00 00`

@@ -47,6 +47,16 @@ static std::vector<u8> readFile(const char *path) {
     return v;
 }
 
+// Attach the optional 200.MONSTERS portrait file that ships beside
+// SCENARIO.DATA (combat shows the pictures when it is present).
+static void attachMonsterArt(Scenario &sc, const char *scenarioPath) {
+    std::string p = scenarioPath ? scenarioPath : "";
+    size_t slash = p.find_last_of("/\\");
+    std::string dir = slash == std::string::npos ? std::string() : p.substr(0, slash + 1);
+    auto bytes = readFile((dir + "200.MONSTERS").c_str());
+    if (!bytes.empty()) sc.loadMonsterArt(std::move(bytes));
+}
+
 static int usage() {
     std::puts(
         "wiz1 <command> <args>\n"
@@ -512,6 +522,7 @@ static int cmdTown(int argc, char **argv) {
     if (!font.load(readFile(argv[2]))) { std::fprintf(stderr, "bad charset\n"); return 1; }
     Scenario sc;
     if (!sc.load(readFile(argv[3]))) { std::fprintf(stderr, "bad scenario\n"); return 1; }
+    attachMonsterArt(sc, argv[3]);
     auto title = argc > 4 ? readFile(argv[4]) : std::vector<u8>{};
     StringPool sp;
     bool haveSp = argc > 5 && sp.load(readFile(argv[5]));
@@ -556,6 +567,7 @@ static int cmdTownTest(int argc, char **argv) {
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    attachMonsterArt(sc, argv[3]);
     Roster roster;
     roster.seedFrom(sc);
     Party party;
@@ -1004,6 +1016,7 @@ static int cmdMazeSdl(int argc, char **argv) {
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    attachMonsterArt(sc, argv[3]);
     Roster roster;
     Party party = scratchParty(sc, roster);
 
@@ -1057,6 +1070,7 @@ static int cmdGameTest(int argc, char **argv) {
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    attachMonsterArt(sc, argv[3]);
     Roster roster;
     Party party = scratchParty(sc, roster);
     Rng rng;
@@ -1130,6 +1144,7 @@ static int cmdMazePlayTest(int argc, char **argv) {
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    attachMonsterArt(sc, argv[3]);
     Roster roster;
     Party party = scratchParty(sc, roster);
 
@@ -1166,6 +1181,7 @@ static int cmdCombatTest(int argc, char **argv) {
     Font font;
     Scenario sc;
     if (!font.load(readFile(argv[2])) || !sc.load(readFile(argv[3]))) return 1;
+    attachMonsterArt(sc, argv[3]);
     Roster roster;
     Party party = scratchParty(sc, roster);
     StringPool sp;
@@ -1198,7 +1214,8 @@ static int cmdCombatTest(int argc, char **argv) {
         }
     }
 
-    auto plat = makeNullPlatform(unescape(argv[5]), "");
+    const char *dumpDir = std::getenv("WIZ1_COMBAT_DUMP");
+    auto plat = makeNullPlatform(unescape(argv[5]), dumpDir ? dumpDir : "");
     Rng rng;
     Ui ui(*plat, font);
     std::vector<std::string> transcript;

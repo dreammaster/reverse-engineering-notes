@@ -18,6 +18,7 @@ add_library(wizcore STATIC
   src/character.cpp
   src/surface.cpp
   src/bitmap.cpp
+  src/monster_art.cpp
   src/font.cpp
   src/textscreen.cpp
   src/roster.cpp
@@ -276,6 +277,17 @@ add_test(NAME combat_loktofeit
 # whisked to the castle and THESUS's two granted items are gone.
 set_tests_properties(combat_loktofeit PROPERTIES
     PASS_REGULAR_EXPRESSION "WHISKED TO THE CASTLE(.|\n)*result=RECALLED[^\n]*\n  THESUS[^\n]* poss0")
+add_test(NAME combat_portrait
+         COMMAND wiz1 combat-test
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/200.CHARSET"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/SCENARIO.DATA" 68
+                 "\\r\\r\\rPPPPPP\\r\\r\\r"
+                 "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 2)
+# CONUNIT blk 13: the 200.MONSTERS picture band.  Monster 68 has PIC 4 (the
+# skull record); attachMonsterArt finds 200.MONSTERS beside SCENARIO.DATA
+# and buildPortraits composes the overlay.
+set_tests_properties(combat_portrait PROPERTIES
+    PASS_REGULAR_EXPRESSION "PORTRAIT. A. pic 4")
 add_test(NAME scnmsg_text
          COMMAND wiz1 scnmsg-test
                  "${CMAKE_CURRENT_SOURCE_DIR}/../extracted/wiz1/ASCII.KRN" 107)

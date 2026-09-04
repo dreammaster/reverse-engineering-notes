@@ -4,6 +4,7 @@
 #include "wiz/scenario.h"
 #include "wiz/string_pool.h"
 #include "wiz/roller.h"          // deriveStats
+#include "wiz/monster_art.h"     // blitPortrait -- 200.MONSTERS
 
 #include <cctype>
 #include <cstdio>
@@ -13,6 +14,19 @@
 
 namespace wiz {
 namespace {
+
+// --- monster-portrait band (CONUNIT blk 13: a row of 96x40 px pictures) ---
+// The DOS driver centres the group pictures in a 36-col window at row 9; the
+// per-group-count start columns (cell = 16 px) are cs:0x1423/25/29/2F.  Our
+// text surface is 40 cols wide, so the same numbers fit; we sit the band at
+// text row 1 (just under the "*** ENCOUNTER ***" header).
+constexpr int kPortRow = 1;                     // text row  -> y = row*Font::kH
+const int kPortStartCell[4][4] = {
+    {15,  0,  0,  0},                           // 1 group
+    {11, 19,  0,  0},                           // 2 groups
+    { 7, 15, 23,  0},                           // 3 groups
+    { 3, 11, 19, 27},                           // 4 groups
+};
 
 const char *className(const Scenario &sc, Class c) {
     return int(c) < int(sc.classes().size()) ? sc.classes()[int(c)].c_str() : "?";
@@ -34,7 +48,29 @@ struct CombatCtx {
     int mazeLevel = 1;
     int parleyThresh = -1;
 
+    Surface portraits;                 // the picture band, an overlay
+    bool havePortraits = false;
+
     TextScreen &t() { return ui.ts(); }
+
+    // Compose the monster-portrait band from 200.MONSTERS (once -- the groups
+    // are fixed for the fight).  No-op when the art file was not supplied.
+    void buildPortraits() {
+        havePortraits = false;
+        if (!sc.haveMonsterArt()) return;
+        const int scrW = TextScreen::kCols * Font::kW;
+        portraits.resize(scrW, kPortraitH);
+        portraits.fill(0);
+        int n = bt.nGroups < 1 ? 1 : bt.nGroups > 4 ? 4 : bt.nGroups;
+        for (int g = 0; g < n; ++g) {
+            int pic = bt.grp[g].rec(sc).pic();
+            Bytes rec = sc.monsterArtRecord(pic);
+            if (rec.n < 512) continue;
+            blitPortrait(portraits, rec, kPortStartCell[n - 1][g] * Font::kW, 0, 10);
+            havePortraits = true;
+            std::printf("PORTRAIT| %c) pic %d\n", char('A' + g), pic);
+        }
+    }
 
     void say(const CombatLog &lines) {
         for (const auto &l : lines) log.push_back(l);
@@ -52,12 +88,20 @@ struct CombatCtx {
         t.resetWindow();
         t.putChar(12);
         t.gotoXY(0, 0); t.write("*** ENCOUNTER ***");
+        // Group roster.  With the picture band up the names are clipped to
+        // the space left of the first portrait (as the DOS screen does -- the
+        // full name still scrolls through the message area).
+        int nameCap = 40;
+        if (havePortraits) {
+            int n = bt.nGroups < 1 ? 1 : bt.nGroups > 4 ? 4 : bt.nGroups;
+            nameCap = kPortStartCell[n - 1][0];
+        }
         for (int g = 0; g < bt.nGroups; ++g) {
             t.gotoXY(0, 1 + g);
             char b[48];
             std::snprintf(b, sizeof b, "%c) %s", 'A' + g,
                           groupName(sc, sp, bt.grp[g]).c_str());
-            t.write(b);
+            t.write(std::string(b).substr(0, nameCap));
         }
         t.gotoXY(0, 6); t.write(" # NAME            CLASS  HP    STATUS");
         for (int i = 0; i < party.count(); ++i) {
@@ -72,6 +116,7 @@ struct CombatCtx {
         t.clearRect(0, 15, 40, 7);
         int row = 0;
         for (const auto &l : log) { t.gotoXY(0, 15 + row++); t.write(l.substr(0, 39)); }
+        ui.setOverlay(havePortraits ? &portraits : nullptr, 0, kPortRow * Font::kH);
         ui.refresh();
     }
 
@@ -579,6 +624,7 @@ CombatResult runCombat(Ui &ui, Party &party, const Scenario &sc,
     c.mazeLevel = mazeLevel;
     c.parleyThresh = parleyThresh;
     buildEncounter(c.bt, sc, enemyInx, mazeLevel, rng);
+    c.buildPortraits();                 // the 200.MONSTERS picture band
 
     // INITATTK's surprise roll: 1 = the party surprised the monsters (a free
     // party round), 2 = the monsters surprised the party (a free monster

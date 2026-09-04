@@ -178,9 +178,25 @@ then every living (awake, unparalysed) monster acts.
 [attk012] [parleyThresh] [mazeLevel] [grants m:i,…]` (headless; prints the
 fight transcript + a `summary:` line; tests `combat_fight` / `combat_spell`
 / `reward_drop` / `combat_dispel` / `combat_useitem` / `friendly_leave` /
-`friendly_fight`).  Wired into the maze: an `ENCOUNTE`
+`friendly_fight` / `combat_portrait`).  `WIZ1_COMBAT_DUMP=<dir>` makes it
+write a PPM per frame.  Wired into the maze: an `ENCOUNTE`
 square or the random `ENCOUNTR` roll (`rand%99=35` / an unfought room / a
 kick into a fight square) calls `runCombat`.
+
+### Monster portraits — `CONUNIT` blk 13
+
+`buildEncounter` is followed by `CombatCtx::buildPortraits`, which composes
+the `200.MONSTERS` picture band (`wiz/monster_art.h` `blitPortrait`;
+geometry in `/docs/file-formats.md`).  Each group's `PIC` (`TENEMY` word 0,
+1-based) selects a 512-byte record = a 6×5 grid of 16×8 px 1bpp tiles =
+a 96×40 px portrait; the band is drawn as a `Ui` overlay at text row 1,
+with the per-group-count start columns the DOS driver uses
+(`cs:0x1423/25/29/2F` = {15}/{11,19}/{7,15,23}/{3,11,19,27}).  When the band
+is up the group-name lines are clipped to the space left of the first
+portrait (the full names still scroll through the message area), matching
+the DOS screen.  `Scenario::loadMonsterArt` holds the file; `main.cpp`'s
+`attachMonsterArt` auto-loads `200.MONSTERS` from beside `SCENARIO.DATA`,
+so combat silently falls back to names-only when it is absent.
 
 ## FRIENDLY — the parley  (`COMBAT` P010509)
 
