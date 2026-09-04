@@ -2943,6 +2943,14 @@ disassembly work.
   2011's `IsInRightMargin` additionally gates on `exflags &
   GLF_NOBORDER`/`GLF_NOARROWS` — neither check exists here, so this
   build always treats the right-margin zone as scroll-interactive.
+- **`GOBJ_INVENTORY=3` confirmed, closing the full `GOBJ_*` enum.**
+  The last open constant (flagged several rounds ago as having no
+  individual confirmation site) turns out to already be sitting in
+  already-transcribed `check_controls` disassembly from the
+  `mouse_ifacebut_xoffs`/`yoffs` round: the branch computing those
+  offsets is gated by `cmp control_type,3`, confirming `GOBJ_
+  INVENTORY=3` with zero drift. All six `GOBJ_*` values are now
+  individually confirmed.
 
 ## Third-party library identification (Task #10)
 

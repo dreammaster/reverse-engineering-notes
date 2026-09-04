@@ -10416,3 +10416,19 @@ math but none of `GetInvAt`'s GUI dispatch, so staying unnamed remains
 correct. Separately, `play_inv_top`'s IDB label still carried its
 original tentative `?` suffix from before this field was upgraded to
 high confidence in that same earlier round -- renamed to drop it.
+
+### `GOBJ_INVENTORY=3` confirmed, closing the full `GOBJ_*` enum
+
+The last open `GOBJ_*` constant -- flagged several rounds ago as "the
+only constant with no individually-read confirmation site" after the
+other five were each nailed down via live script-API validators
+(`SetButtonPic`/`SetLabelText`/`SetSliderValue`/`SetTextBoxText`/
+`is_valid_listbox`) -- turns out to already be sitting, unremarked, in
+already-transcribed `check_controls` disassembly from the round that
+identified `mouse_ifacebut_xoffs`/`mouse_ifacebut_yoffs`: the branch
+computing those offsets and calling the `offset_over_inv`-equivalent
+helper is reached only when the clicked control's type equals literal
+`3`, decisively confirming `GOBJ_INVENTORY=3` (`Common/acgui.h:658`)
+with zero drift. All six `GOBJ_*` values are now individually
+confirmed via live script-API or internal engine dispatch checks, none
+left as an inferred gap.
