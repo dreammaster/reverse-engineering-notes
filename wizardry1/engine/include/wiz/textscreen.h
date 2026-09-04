@@ -9,19 +9,43 @@
 #include "wiz/surface.h"
 #include "wiz/font.h"
 
+#include <vector>
+
 namespace wiz {
 
 enum : u8 { ATTR_NORMAL = 0, ATTR_INVERSE = 1 };
+
+// DOS window-border glyphs -- CHARSET codes 1..8 (WIZARDRY proc 19 /
+// CONUNIT sub_159A: rounded single-line box).  The emphasis style is 9..0x0E.
+enum : u8 {
+    BRD_TL = 1, BRD_TOP = 2, BRD_TR = 3, BRD_LEFT = 4,
+    BRD_RIGHT = 5, BRD_BL = 6, BRD_BOT = 7, BRD_BR = 8,
+};
 
 class TextScreen {
 public:
     static constexpr int kCols = 40, kRows = 24;
 
-    TextScreen() { setWindow(0, 0, kCols, kRows); clear(); }
+    TextScreen() { setupRoot(); }
+
+    // --- framed windows (DOS WIZARDRY proc 19 / CONUNIT sub_159A) ---------
+    // A bordered rectangle in absolute screen cells; the interior becomes
+    // the active window and writes are relative to it.  DOS screens compose
+    // 2-4 of these to fill the screen -- their borders line up at the edges.
+    // `closeWindow` restores whatever the window covered.
+    void openWindow(int x, int y, int w, int h, bool emphasis = false);
+    void closeWindow();
+    int  windowDepth() const { return int(frames_.size()) - 1; }
+
+    // Paint just a border (glyphs 1..8, or 9..0x0E emphasised) into the cell
+    // buffer -- no stack, no save/restore.  For screens that redraw wholesale
+    // each frame and manage their own layout; `openWindow` is for transient
+    // dialogs stacked over a persistent screen.
+    void frame(int x, int y, int w, int h, bool emphasis = false);
 
     // --- window (viewport) -------------------------------------------------
     void setWindow(int x, int y, int w, int h);
-    void resetWindow() { setWindow(0, 0, kCols, kRows); }
+    void resetWindow();      // active window := interior of the innermost frame
 
     // --- cursor / output (coords are window-relative) --------------------
     void gotoXY(int x, int y);
@@ -33,6 +57,10 @@ public:
 
     void setAttr(u8 a) { attr_ = a; }
     u8 attr() const { return attr_; }
+
+    // Absolute-position write (ignores the active window) -- for titles set
+    // into a border row, DOS-style.
+    void writeAt(int x, int y, const std::string &s);
 
     // --- bulk ops -------------------------------------------------------
     void clear();                         // whole screen
@@ -50,11 +78,23 @@ public:
     char at(int x, int y) const { return in(x, y) ? cell_[y][x] : ' '; }
 
 private:
+    struct Frame {
+        int x, y, w, h;
+        bool border = true;
+        bool emphasis = false;
+        std::vector<char> savedC;        // cells covered when opened
+        std::vector<u8>   savedA;
+    };
+    std::vector<Frame> frames_;          // frames_[0] = the (unbordered) screen
+
     struct { int x = 0, y = 0, w = kCols, h = kRows; } win_;
     bool in(int x, int y) const { return x >= 0 && y >= 0 && x < kCols && y < kRows; }
     int  absX() const { return win_.x + cx_; }
     int  absY() const { return win_.y + cy_; }
     void newline();
+    void setupRoot();                    // clear + open the root frame
+    void paintBorder(const Frame &f);
+    void putGlyph(int x, int y, u8 g) { if (in(x, y)) { cell_[y][x] = char(g); attrCell_[y][x] = ATTR_NORMAL; } }
 
     char cell_[kRows][kCols];
     u8   attrCell_[kRows][kCols];

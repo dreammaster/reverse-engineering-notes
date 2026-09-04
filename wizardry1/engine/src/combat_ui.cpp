@@ -15,11 +15,15 @@
 namespace wiz {
 namespace {
 
-// --- monster-portrait band (CONUNIT blk 13: a row of 96x40 px pictures) ---
-// The DOS driver centres the group pictures in a 36-col window at row 9; the
-// per-group-count start columns (cell = 16 px) are cs:0x1423/25/29/2F.  Our
-// text surface is 40 cols wide, so the same numbers fit; we sit the band at
-// text row 1 (just under the "*** ENCOUNTER ***" header).
+// --- combat screen windows (COMBAT proc 1 + CUTIL) --------------------
+// Three stacked framed panels, DOS-style (see docs/ui.md): the monster /
+// encounter window, the party-status window, the scrolling message window.
+constexpr int kEncY = 0,  kEncH = 7;            // rows 0..6   (interior 1..5)
+constexpr int kPtyY = 6,  kPtyH = 9;            // rows 6..14  (interior 7..13)
+constexpr int kMsgY = 14, kMsgH = 8;            // rows 14..21 (interior 15..20)
+// rows 21..23 stay a free prompt strip (the DOS action-menu window).
+
+// The portrait band sits in the encounter window's interior (rows 1..5).
 constexpr int kPortRow = 1;                     // text row  -> y = row*Font::kH
 const int kPortStartCell[4][4] = {
     {15,  0,  0,  0},                           // 1 group
@@ -87,35 +91,39 @@ struct CombatCtx {
         auto &t = this->t();
         t.resetWindow();
         t.putChar(12);
-        t.gotoXY(0, 0); t.write("*** ENCOUNTER ***");
-        // Group roster.  With the picture band up the names are clipped to
-        // the space left of the first portrait (as the DOS screen does -- the
-        // full name still scrolls through the message area).
-        int nameCap = 40;
+        t.frame(0, kEncY, 40, kEncH);
+        t.frame(0, kPtyY, 40, kPtyH);
+        t.frame(0, kMsgY, 40, kMsgH);
+        t.writeAt(15, kEncY, " ENCOUNTER ");
+
+        // Group roster (encounter window, rows 1..).  With the picture band
+        // up the names are clipped to the space left of the first portrait
+        // (as the DOS screen does -- the full name still scrolls the log).
+        int nameCap = 37;
         if (havePortraits) {
             int n = bt.nGroups < 1 ? 1 : bt.nGroups > 4 ? 4 : bt.nGroups;
-            nameCap = kPortStartCell[n - 1][0];
+            nameCap = kPortStartCell[n - 1][0] - 1;
         }
-        for (int g = 0; g < bt.nGroups; ++g) {
-            t.gotoXY(0, 1 + g);
+        for (int g = 0; g < bt.nGroups && g < 4; ++g) {
             char b[48];
             std::snprintf(b, sizeof b, "%c) %s", 'A' + g,
                           groupName(sc, sp, bt.grp[g]).c_str());
-            t.write(std::string(b).substr(0, nameCap));
+            t.writeAt(2, kEncY + 1 + g, std::string(b).substr(0, nameCap));
         }
-        t.gotoXY(0, 6); t.write(" # NAME            CLASS  HP    STATUS");
+
+        t.writeAt(2, kPtyY + 1, "# NAME           CLASS HP     STATUS");
         for (int i = 0; i < party.count(); ++i) {
             const Character &c = party.member(i);
-            t.gotoXY(0, 7 + i);
             char b[64];
-            std::snprintf(b, sizeof b, "%d %-15s %-6.3s %3d/%-3d %s",
+            std::snprintf(b, sizeof b, "%d %-14s %-5.3s %3d/%-3d %s",
                           i + 1, c.name.c_str(), className(sc, c.cls),
                           c.hpLeft, c.hpMax, statusName(sc, c.status));
-            t.write(b);
+            t.writeAt(2, kPtyY + 2 + i, std::string(b).substr(0, 36));
         }
-        t.clearRect(0, 15, 40, 7);
+
         int row = 0;
-        for (const auto &l : log) { t.gotoXY(0, 15 + row++); t.write(l.substr(0, 39)); }
+        for (const auto &l : log) t.writeAt(2, kMsgY + 1 + row++, l.substr(0, 36));
+
         ui.setOverlay(havePortraits ? &portraits : nullptr, 0, kPortRow * Font::kH);
         ui.refresh();
     }
