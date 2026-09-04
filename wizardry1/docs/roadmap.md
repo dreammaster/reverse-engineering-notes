@@ -90,8 +90,8 @@ Decided direction (2026-09-02):
       subfn 10)` → generator at `0x221E`. Found a **shipped bug**: it mixes 4
       LCG states in BX but returns AX = `byteswap(s3) & 0x700F` (128 values,
       period 65536 — the weak PC-Wizardry RNG). `engine/wiz/rng.h` reproduces
-      it exactly (matches a byte-accurate sim). A live sequence diff vs the
-      real interpreter would be the final confirmation.
+      it exactly — **confirmed bit-exact against a live DOSBox capture**
+      (`docs/rng-validation.md`), including an 11-call in-combat trace.
 - [x] Record field structs (`TMAZE`, `TENEMY`, `TOBJREC`, `TCHAR`) per the
       +289 layout; maze bit-packing validated by rendering level 1.
 - [x] Platform layer: `engine/wiz/surface.h` (8bpp framebuffer + primitives),
@@ -176,8 +176,11 @@ Decided direction (2026-09-02):
 - [x] **Phase 3 is functionally complete** — the standalone engine plays a
       full loop (roster → town → maze → combat → camp → save) with the whole
       `COMBAT` / `RUNNER` / `CAMP` / `CASTLE` / `SHOPS` families ported.
-- [ ] Validate against the real interpreter: same PRNG, same seeded outcomes
-      (needs `SYSTEM.INTERP` running — a Phase 0 loose end).
+- [x] Validate the PRNG against the real interpreter — **done, bit-exact**
+      (DOSBox capture 2026-09-04, `docs/rng-validation.md`).  Outcome rolls
+      advance by exactly `rng.h next()`; the keyboard "stir" only touches
+      throwaway cursor-blink rolls, so a whole session isn't replayable but
+      each resolution is exact given its starting `s3`.
 - [ ] Nice-to-haves, none blocking: `200.MONSTERS` art decompressor (native
       RE), `HAS.CACHE` / `KANA.KEYMAP` id, more proc names, chevrons/medals.
 

@@ -186,12 +186,26 @@ result := ax                  ; *** stores AX, not the mixed BX -- shipped bug *
 
 So the four LCGs all advance but **only `s3` reaches the output**:
 `RANDOM = byteswap(s3) & 0x700F` — **128 distinct values**, period 65536.
-This is the notoriously weak PC-Wizardry RNG. Ship seed
-`{s0,s1,s2,s3} = {0x5BAB, 0xD02B, 0x7E15, 0x7351}` (fixed in the image; a
-keyboard-poll path adds a fixed-constant "stir" but no clock entropy).
-Reproduced in `engine/wiz/rng.h` (with `nextIntended()` = the store-BX
-version for comparison). Unit 1/2 subfn is the real keyboard (`int 16h`),
-used by `GETKEY` — not RANDOM.
+This is the notoriously weak PC-Wizardry RNG.  Reproduced in
+`engine/wiz/rng.h` (`nextIntended()` = the store-BX version for comparison).
+
+**Validated against a live DOSBox capture (2026‑09‑04) — bit-exact.**  See
+`docs/rng-validation.md`.  Findings:
+
+* The `0x221E` code, the four LCG constants and the `0x143F` increment
+  table (`{3619, FF8B, 0183, 7FC9}`) match the image byte-for-byte.
+* During **outcome rolls** (combat resolution etc.) the state advances by
+  a pure 4×LCG step — `rng.h next()` exactly.  An 11-call live combat
+  trace matched `wiz1 rng-trace` on every state word.
+* A **keyboard "stir"** at `0x229D` (`s0+=0183, s1+=7FC9, s2+=3619,
+  s3+=FF8B`) runs once per iteration of the cursor-blink / prompt-wait
+  loop, and the same loop's empty `int 16h` peek zeroes `s0`/`s1`.  Those
+  rolls are thrown away — they never reach game state — but they mean the
+  `s3` entering a resolution depends on player timing, so a whole real
+  session is **not** deterministically replayable.  The documented ship
+  seed `{5BAB, D02B, 7E15, 7351}` was already off-orbit by the title
+  screen (the stir ran during boot); the seed doesn't matter to the model.
+* Unit 1/2 subfn is the real keyboard (`int 16h`), used by `GETKEY`.
 
 ## Native / SBIOS interface
 

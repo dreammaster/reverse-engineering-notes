@@ -19,8 +19,16 @@
 // only s3 matters, giving 128 distinct values on a period-65536 cycle.  This
 // is the notoriously weak PC-Wizardry RNG; we reproduce it exactly.
 //
-// No keyboard / timer entropy feeds this path (that is unit 1/2, used by
-// GETKEY).  The image ships fixed initial state {0x5BAB,0xD02B,0x7E15,0x7351}.
+// Validated bit-exact against a live DOSBox capture -- see
+// docs/rng-validation.md.  During outcome rolls (combat resolution etc.) the
+// state advances by exactly next() below.  A separate keyboard "stir" runs
+// only in cursor-blink / prompt-wait loops and consumes throwaway rolls, so
+// a whole real session is not deterministically replayable -- but given the
+// s3 entering a resolution, the sequence is exact.  No timer entropy.
+//
+// {0x5BAB,0xD02B,0x7E15,0x7351} is the documented image seed, but the boot
+// path's keyboard stir has already knocked the state off that orbit before
+// the title screen -- the seed is not observable and does not matter here.
 #pragma once
 #include "wiz/types.h"
 

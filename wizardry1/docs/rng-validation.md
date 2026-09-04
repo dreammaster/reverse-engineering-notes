@@ -107,8 +107,44 @@ engine) produces; `bx=` is the "intended" mix the ROM throws away.
 ## Pass criteria
 
 1. `c0..c3 == {3619, FF8B, 0183, 7FC9}` and constant across the run.
-2. Seed (first pre-roll state) `== {5BAB, D02B, 7E15, 7351}`.
-3. Every `state[i+1]` equals `rng-trace`'s advance of `state[i]` — i.e.
-   nothing but `RANDOM` moves the state during play (or: the exceptions
-   are exactly the `<CS>:229D` stir hits, and we then model them).
-4. Each call's `AX` at `<CS>:2298` equals `rng-trace`'s `out=` column.
+2. Every `state[i+1]` equals `rng-trace`'s advance of `state[i]` **during a
+   keyboard-free burst** (combat resolution, encounter build, …).
+3. Each call's `AX` at `<CS>:2298` equals `rng-trace`'s `out=` column.
+
+## Result — DOSBox capture, 2026‑09‑04  ✅ bit‑exact
+
+Captured at `1213:221E` (INTERP loaded at `1213:0000`; `CS` constant).
+
+**Code** — `D 1213:221E` matched the disassembly byte‑for‑byte: the four
+LCG multipliers `{6A2D, FFF1, FFAF, FFD9}`, the mix, `and ax,7FFFh`,
+`mov [di],ax` (stores AX, discards the BX mix — the shipped bug), and the
+stir routine at `1213:229D`.
+
+**Increments** — `D 1213:1437` word 5‑8 = `19 36 8B FF 83 01 C9 7F` =
+`{3619, FF8B, 0183, 7FC9}`, constant for the whole session.
+
+**Two regimes**, both confirmed:
+
+| regime | per `RANDOM` call | matches |
+|---|---|---|
+| **outcome rolls** (combat resolution, and any compute loop with no keyboard poll between rolls) | pure 4×LCG advance | `rng.h next()` exactly |
+| **cursor‑blink / prompt‑wait loops** | 4×LCG advance **+ one stir** (`s0+=0183 s1+=7FC9 s2+=3619 s3+=FF8B`) then **`s0,s1 := 0`** (empty `int 16h` peek) | throwaway rolls — never reach game state |
+
+**Live combat trace** (skeletons attacking the party, 12 consecutive
+`RANDOM` calls, no keyboard between them):
+
+```
+capture[0] = {379C 7F54 930F 13F9}
+wiz1 rng-trace 379C 7F54 930F 13F9
+  ->  9485 899F 79C4 74DA   ... 3C03 05BD 3994 2B4C
+```
+
+Every one of the 11 following states matched the DOSBox capture exactly.
+
+**Caveat for whole‑session replay.** Between meaningful rolls the game
+sits in blink loops that stir `s3` once per iteration, so the `s3` value
+*entering* each resolution depends on how long the player lingered at the
+preceding prompt.  The DOS RNG is therefore **not** deterministically
+replayable across a real session — but given the `s3` at the start of a
+resolution, the sequence is exact, which is all `rng.h` claims.  The
+"weak" reputation stands: 128 distinct outputs, s3 period 65536.
