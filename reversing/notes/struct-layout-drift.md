@@ -11020,3 +11020,22 @@ and, more usefully, DIRECTLY confirms `mgetgraphpos`'s own entry
 from this exact call site) -- and identifies `dword_4CD1BC` as
 `ScreenMousePos.y` (renamed `scmouse_y`), the already-named `scmouse`
 global's own `.x` field getting a further confirmation alongside it.
+
+### Two confirmed robustness gaps: `MoveCharacterToObject`/`MoveCharacterBlocking` are missing their leading validation guards
+
+`MoveCharacterToHotspot`/`StopMoving` both close as clean, exact
+matches (the latter a genuine self-contained implementation of what
+2011 delegates to `Character_StopMoving`, resetting `walking`/`frame`
+directly). `MoveCharacterToObject` and `MoveCharacterBlocking` are more
+interesting: both are CONFIRMED MISSING their leading validation
+checks entirely. Source's own `MoveCharacterToObject` has an explicit
+`if(!is_valid_object(obbj)) return;` guard, with a comment noting it's
+deliberate (to tolerate a failed `GetObjectAt(...)` being passed
+straight through) -- this build has no such check at all, so an
+invalid object index would read out-of-bounds `RoomObject` memory
+rather than silently no-op. `MoveCharacterBlocking` is missing BOTH
+`is_valid_character(chaa)` and, more notably, `game.chars[chaa].on!=1`
+(source's own comment: this guard exists specifically to stop a call
+from hanging the game when "Hide Player Character" is ticked) -- this
+build has neither check. Both are genuine, confirmable robustness
+regressions relative to 2011, not just smaller/simpler predecessors.

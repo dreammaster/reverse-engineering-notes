@@ -157677,21 +157677,21 @@ static Functions_5(void) {
 	add_func    (0X41C36A,0X41C3C4);
 	set_func_flags(0X41C36A,0x5410);
 	SetType(0X41C36A, "void __stdcall MoveCharacterToObject(int chaa, int obbj);");
-	set_func_cmt(0X41C36A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41C36A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED ABSENT -- source's own leading `if(!is_valid_object(obbj)) return;` guard (its own comment explains this is deliberate, to allow `MoveCharacterToObject(EGO,GetObjectAt(...))` idioms where GetObjectAt might return an invalid/negative index) does not exist here at all -- this build goes straight to computing `RoomObject[obbj].x+5`/`.y+6` with no bounds check, a real robustness gap (an invalid obbj would read out-of-bounds RoomObject memory rather than silently no-op). Otherwise matches source exactly: walk_character(chaa,objs[obbj].x+5,objs[obbj].y+6,0,true) (the +5/+6 offset constants match literally) then do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) (already matched, with its own already-recorded field evidence).", 1);
 	set_frame_size(0X41C36A, 0, 4, 0X8);
 	define_local_var(0X41C36A, 0X41C3C4, "[bp+0X8]", "chaa");
 	define_local_var(0X41C36A, 0X41C3C4, "[bp+0XC]", "obbj");
 	add_func    (0X41C3C4,0X41C43A);
 	set_func_flags(0X41C3C4,0x5410);
 	SetType(0X41C3C4, "void __stdcall MoveCharacterToHotspot(int chaa, int hotsp);");
-	set_func_cmt(0X41C3C4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41C3C4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, zero-drift match. `hotsp<0||hotsp>=0x14(20)` matches MAX_HOTSPOTS=20 (already established) exactly; `if(hswalkto[hotsp].x<1) return;` (word_521A4C[hotsp*4], already-established RoomStruct.hswalkto[]) matches source's identical check exactly; walk_character(chaa,hswalkto[hotsp].x,hswalkto[hotsp].y,0,true) then do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) both match verbatim.", 1);
 	set_frame_size(0X41C3C4, 0, 4, 0X8);
 	define_local_var(0X41C3C4, 0X41C43A, "[bp+0X8]", "chaa");
 	define_local_var(0X41C3C4, 0X41C43A, "[bp+0XC]", "hotsp");
 	add_func    (0X41C43A,0X41C48D);
 	set_func_flags(0X41C43A,0x5410);
 	SetType(0X41C43A, "void __stdcall MoveCharacterBlocking(int chaa, int xx, int yy, int direct);");
-	set_func_cmt(0X41C43A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41C43A,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED ABSENT -- BOTH of source's leading guards are missing entirely: `if(!is_valid_character(chaa)) quit(...);` and, more notably, `if(game.chars[chaa].on!=1) quit(\"...cannot be moved\");` (source's own comment: this check exists specifically to stop moving a character when 'Hide Player Character' is ticked, since 'otherwise this will hang the game'). This build has neither check -- a genuine, confirmable robustness gap matching the same pattern as MoveCharacterToObject's own missing is_valid_object check this same round. The direct/non-direct dispatch (calling the already-matched MoveCharacterDirect/MoveCharacter) and the trailing do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) call both match source exactly otherwise.", 1);
 	set_frame_size(0X41C43A, 0, 4, 0X10);
 	define_local_var(0X41C43A, 0X41C48D, "[bp+0X8]", "Size");
 	define_local_var(0X41C43A, 0X41C48D, "[bp+0XC]", "Alignment");
@@ -157700,7 +157700,7 @@ static Functions_5(void) {
 	add_func    (0X41C48D,0X41C4BD);
 	set_func_flags(0X41C48D,0x5410);
 	SetType(0X41C48D, "void __stdcall StopMoving(int chaa);");
-	set_func_cmt(0X41C48D,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj", 1);
+	set_func_cmt(0X41C48D,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- a genuine self-contained implementation, no Character_StopMoving wrapper body available to compare against): a clean two-field reset, \"chars[chaa].walking@+0x3C=0; chars[chaa].frame@+0x3A=0;\" -- both already-established fields, each getting a further confirmation from a new site (this function is itself widely called -- from load_new_room, _displayspeech, and many others already matched).", 1);
 	set_frame_size(0X41C48D, 0, 4, 0X4);
 	define_local_var(0X41C48D, 0X41C4BD, "[bp+0X8]", "chaa");
 	add_func    (0X41C4BD,0X41C4EF);
@@ -158141,6 +158141,10 @@ static Functions_5(void) {
 	set_func_cmt(0X424290,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual void GUIInv::WriteToFile(FILE*) at acgui.h:474. In THIS build, the function does ONLY the base 28-byte fwrite @[this+4] (GUIObject::WriteToFile) -- no putw calls for charId/itemWidth/itemHeight/topIndex at all, unlike source's \"putw(charId,ooo); putw(itemWidth,ooo); ...\" tail. DRIFT: matches source's own version-gated ReadFromFile logic (\"if (version>=109) {...} else {charId=-1; itemWidth=40; itemHeight=22; topIndex=0;}\", acgui.h:486-497) -- this 2002 build predates format version 109, so these 4 fields are not part of the persisted format yet (and may not exist in the 2002 struct at all; not independently verified). Vtable slot 7/+0x1C of off_4AD50C (DATA XREF .rdata:004AD528). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424290, 0X4, 4, 0X4);
 	define_local_var(0X424290, 0X4242B4, "[bp+0X8]", "Stream");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X4242C0,0X4242E4);
 	set_func_flags(0X4242C0,0x5410);
 	SetType(0X4242C0, "int __stdcall GUIInv__ReadFromFile(FILE *Stream);");
@@ -158155,10 +158159,6 @@ static Functions_5(void) {
 	set_func_flags(0X424310,0x5410);
 	set_func_cmt(0X424310,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseLeave() at acgui.h:525: \"isover=0;\". Exact match: [this+0x20]=0. Same table/isover field as GUIInv__MouseOver (vtable slot 2/+0x08 of off_4AD50C, DATA XREF .rdata:004AD514). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424310, 0X4, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X424330,0X42434E);
 	set_func_flags(0X424330,0x5410);
 	set_func_cmt(0X424330,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseUp() at acgui.h:530: \"if (isover) activated=1;\". Exact match: cmp [this+0x20],0; jz; [this+0x1C]=1 -- reconfirms isover@+0x20 (see GUIInv__MouseOver) and activated@+0x1C (GUIObject base field, now independently confirmed across 5 classes: GUIButton, GUITextBox, GUISlider-pending, GUIMain[different struct], and now GUIInv). Vtable slot 4/+0x10 of off_4AD50C (DATA XREF .rdata:004AD51C). Flat-named as a C++ virtual method.", 1);
@@ -159099,6 +159099,10 @@ static Functions_6(void) {
 	set_func_flags(0X431DBF,0x5410);
 	set_func_cmt(0X431DBF,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void msetgraphpos(int,int) at MOUSEW32.CPP:254: \"position_mouse(xa,ya);\" -- exact 2-line match, just forwards both args to sub_4577C0 (matched below to position_mouse). Called from remove_popup_interface (already matched, source line \"filter->SetMousePosition(mousex, guis[ifacenum].popupyp+2);\" -- 2002 calls the low-level msetgraphpos directly instead of through a virtual filter driver) and main (already matched, likely initial cursor centering).", 1);
 	set_frame_size(0X431DBF, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X431DD4,0X431DEA);
 	set_func_flags(0X431DD4,0x5410);
 	set_frame_size(0X431DD4, 0, 4, 0);
@@ -159118,10 +159122,6 @@ static Functions_6(void) {
 	SetType(0X431E79, "int route_script_link(void);");
 	set_func_cmt(0X431E79,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"if(COPYRIGHT_CRC!=get_route_composition()) return 1; if(routex1!=-10) return 1; return 0;\" -- the literal comparison constant 0x2A27C(172668) matches COPYRIGHT_CRC exactly. Identifies the pre-existing IDA global `welcome_text_validated` as this build's `routex1` (source's own equally obscure name for the same anti-tamper 'has print_welcome_text already run and validated the copyright string' flag) -- renamed to match 2011's literal name per this project's usual convention, though `welcome_text_validated`'s own role-description was, if anything, more transparent than source's own deliberately-confusing choice. This function is itself another deliberately-misleading name (source's own comment marks the whole trio as anti-hacker obfuscation) -- its real job" " is 'has the engine's copyright/identity been validated', not anything abo", 1);
 	set_frame_size(0X431E79, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X431EA3,0X431ECC);
 	set_func_flags(0X431EA3,0x5410);
 	SetType(0X431EA3, "void init_pathfinder(void);");
@@ -160217,6 +160217,10 @@ static Functions_7(void) {
 	add_func    (0X448B60,0X448C35);
 	set_func_flags(0X448B60,0x5400);
 	set_frame_size(0X448B60, 0X14, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X448C40,0X448D72);
 	set_func_flags(0X448C40,0x5400);
 	SetType(0X448C40, "int __cdecl sub_448C40(float, int, int);");
@@ -160336,10 +160340,6 @@ static Functions_7(void) {
 	add_func    (0X44AF30,0X44AF77);
 	set_func_flags(0X44AF30,0x5400);
 	set_frame_size(0X44AF30, 0X4, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X44AF80,0X44AFA1);
 	set_func_flags(0X44AF80,0x5400);
 	set_frame_size(0X44AF80, 0, 0, 0);
@@ -162338,6 +162338,10 @@ static Functions_8(void) {
 	add_func    (0X47A020,0X47A08E);
 	set_func_flags(0X47A020,0x5400);
 	set_frame_size(0X47A020, 0X4, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X47A090,0X47A0ED);
 	set_func_flags(0X47A090,0x5400);
 	set_frame_size(0X47A090, 0, 0, 0);
@@ -162419,10 +162423,6 @@ static Functions_8(void) {
 	SetType(0X47B360, "int __cdecl sub_47B360(size_t Size);");
 	set_frame_size(0X47B360, 0, 0, 0);
 	define_local_var(0X47B360, 0X47B370, "[bp+0X4]", "Size");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X47B370,0X47B405);
 	set_func_flags(0X47B370,0x5400);
 	set_frame_size(0X47B370, 0X8, 0, 0);
@@ -164897,6 +164897,10 @@ static Functions_9(void) {
 	set_func_cmt(0X4AAF9C,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj", 1);
 	set_frame_size(0X4AAF9C, 0, 0, 0);
 	define_local_var(0X4AAF9C, 0X4AAFA2, "[bp+0X4]", "Time");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AAFA2,0X4AAFA8);
 	set_func_flags(0X4AAFA2,0x5480);
 	SetType(0X4AAFA2, "void *__cdecl calloc(size_t Count, size_t Size);");
@@ -164944,10 +164948,6 @@ static Functions_9(void) {
 	set_frame_size(0X4AAFC6, 0, 0, 0);
 	define_local_var(0X4AAFC6, 0X4AAFCC, "[bp+0X8]", "Val");
 	define_local_var(0X4AAFC6, 0X4AAFCC, "[bp+0XC]", "Size");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AAFCC,0X4AAFD2);
 	set_func_flags(0X4AAFCC,0x5481);
 	SetType(0X4AAFCC, "void __cdecl __noreturn exit(int Code);");

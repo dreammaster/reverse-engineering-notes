@@ -3128,6 +3128,13 @@ disassembly work.
   Character`/`RefreshMouse` all close cleanly; the last directly
   confirms `mgetgraphpos`'s own entry (previously only inferred) and
   identifies `scmouse_y`.
+- **Two confirmed robustness gaps.** `MoveCharacterToObject` and
+  `MoveCharacterBlocking` are both missing their leading validation
+  guards entirely — source's own `is_valid_object`/`is_valid_
+  character`/`on!=1` checks (the last specifically guarding against a
+  game-hanging call when "Hide Player Character" is ticked) don't
+  exist here at all. `MoveCharacterToHotspot`/`StopMoving` both close
+  as clean, exact matches.
 
 ## Third-party library identification (Task #10)
 

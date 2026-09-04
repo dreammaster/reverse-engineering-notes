@@ -1927,7 +1927,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED ABSENT -- source's own leading `if(!is_valid_object(obbj)) return;` guard (its own comment explains this is deliberate, to allow `MoveCharacterToObject(EGO,GetObjectAt(...))` idioms where GetObjectAt might return an invalid/negative index) does not exist here at all -- this build goes straight to computing `RoomObject[obbj].x+5`/`.y+6` with no bounds check, a real robustness gap (an invalid obbj would read out-of-bounds RoomObject memory rather than silently no-op). Otherwise matches source exactly: walk_character(chaa,objs[obbj].x+5,objs[obbj].y+6,0,true) (the +5/+6 offset constants match literally) then do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) (already matched, with its own already-recorded field evidence)."
   },
   {
     "kind": "function",
@@ -1937,7 +1937,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, zero-drift match. `hotsp<0||hotsp>=0x14(20)` matches MAX_HOTSPOTS=20 (already established) exactly; `if(hswalkto[hotsp].x<1) return;` (word_521A4C[hotsp*4], already-established RoomStruct.hswalkto[]) matches source's identical check exactly; walk_character(chaa,hswalkto[hotsp].x,hswalkto[hotsp].y,0,true) then do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) both match verbatim."
   },
   {
     "kind": "function",
@@ -1947,7 +1947,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): CONFIRMED ABSENT -- BOTH of source's leading guards are missing entirely: `if(!is_valid_character(chaa)) quit(...);` and, more notably, `if(game.chars[chaa].on!=1) quit(\"...cannot be moved\");` (source's own comment: this check exists specifically to stop moving a character when 'Hide Player Character' is ticked, since 'otherwise this will hang the game'). This build has neither check -- a genuine, confirmable robustness gap matching the same pattern as MoveCharacterToObject's own missing is_valid_object check this same round. The direct/non-direct dispatch (calling the already-matched MoveCharacterDirect/MoveCharacter) and the trailing do_main_cycle(UNTIL_MOVEEND=2,&chars[chaa].walking) call both match source exactly otherwise."
   },
   {
     "kind": "function",
@@ -1957,7 +1957,7 @@
     "source_obj": "acchars.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- a genuine self-contained implementation, no Character_StopMoving wrapper body available to compare against): a clean two-field reset, \"chars[chaa].walking@+0x3C=0; chars[chaa].frame@+0x3A=0;\" -- both already-established fields, each getting a further confirmation from a new site (this function is itself widely called -- from load_new_room, _displayspeech, and many others already matched)."
   },
   {
     "kind": "function",
