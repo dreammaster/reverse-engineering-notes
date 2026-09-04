@@ -3113,6 +3113,14 @@ disassembly work.
   confirms a real behavioral difference — it sets both `defview` and
   `view`, unlike `SetCharacterView`, so it can't preserve a distinct
   original view to revert to later.
+- **Six more bare matches close, including a genuine 10x speed-cap
+  drift.** `NewRoomEx`/`ResetRoom`/`SetRestartPoint`/`CallRoomScript`
+  all close cleanly (the first three each give an already-established
+  field/global a further confirmation). `SetGameSpeed` clamps its
+  upper bound to `100`, not source's `1000` — a real 10x lower max
+  game speed, not a mere capacity reduction — and both `SetGameSpeed`/
+  `GetGameSpeed` confirm the `game_speed_modifier` adjustment is
+  entirely absent.
 
 ## Third-party library identification (Task #10)
 

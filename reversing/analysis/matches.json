@@ -1587,7 +1587,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- another genuine self-contained implementation, not a Character_ChangeRoom script-object wrapper delegate): resets the already-established global new_room_pos (dword_5231C4, from the entered_edge round) to 0, sets playerchar->x@+0x14/y@+0x18 directly to newx/newy, then calls the already-matched NewRoom(nrnum). The new_room_pos=0 reset is a fresh confirmation angle for that global -- consistent with 'arriving at an explicit position bypasses the normal room-edge entry-position calculation' semantics."
   },
   {
     "kind": "function",
@@ -1597,7 +1597,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match. \"nrnum==newnum(displayed_room)\" and \"nrnum<0||nrnum>=0x12C(300)\" (MAX_ROOMS, already established with zero drift) both match verbatim; the tsdata/tsdatasize free-and-clear block (both already established RoomStatus fields) and the trailing beenhere=0 write both match source exactly, giving RoomStatus's own 0x1390-byte stride a further confirmation from a new multiplication site. CONFIRMED ABSENT: source's trailing DEBUG_CONSOLE(\"Room %d reset...\") call -- no debug-console output happens here at all."
   },
   {
     "kind": "function",
@@ -1607,7 +1607,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): calls the already-matched SaveGameSlot(999,\"restart game position\") directly -- matching RESTART_POINT_SAVE_GAME_NUMBER=999(0x3E7) exactly, and confirming (again) that this build has no separate save_game() wrapper layer, SaveGameSlot itself serving both script-API and internal callers. Minor string-text difference noted: this build's description string reads \"restart game position\", not source's \"Restart Game Auto-Save\" -- same role, different wording."
   },
   {
     "kind": "function",
@@ -1617,7 +1617,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): the `inside_script` check and the run_another(\"$on_call\",value,0) call (via the already-established curscript pointer) both match source exactly. dword_4EEB3C=0 matches \"play.roomscript_finished=0;\" -- a further, independent confirmation of that field (already established via post_script_cleanup) from a new site. CONFIRMED ABSENT: source's leading can_run_delayed_command() call -- no such call exists here at all, this build validates inside_script directly with no delayed-command-queueing check first."
   },
   {
     "kind": "function",
@@ -1627,7 +1627,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's overall clamp-then-set_game_speed shape, but with a CONFIRMED, genuinely significant capacity drift: this build clamps the upper bound to 100(0x64), not source's 1000 -- a 10x lower maximum game speed, not merely a smaller array/buffer limit like most drift found elsewhere in this project. The lower bound (10) matches exactly. CONFIRMED ABSENT: source's leading \"if(frames_per_second==1000 && display_fps==2) return;\" Ctrl+E-max-speed-lock special case, and the \"newspd += play.game_speed_modifier;\" adjustment (no game_speed_modifier field touched anywhere in this function) -- consistent with GetGameSpeed's own matching absence (see its own entry) -- plus the trailing DEBUG_CONSOLE call, the same absence pattern as ResetRoom's own entry."
   },
   {
     "kind": "function",
@@ -1637,7 +1637,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): \"return frames_per_second;\" -- matches source's \"return frames_per_second - play.game_speed_modifier;\" MINUS the modifier subtraction. CONFIRMED ABSENT: game_speed_modifier is never read here, consistent with SetGameSpeed's own matching absence -- this build's game speed has no separate 'user-requested vs. modifier-adjusted' distinction at all."
   },
   {
     "kind": "function",

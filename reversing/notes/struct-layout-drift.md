@@ -10969,3 +10969,31 @@ CONFIRMED real behavioral difference: it sets BOTH `defview` AND
 `CHF_FIXVIEW` -- meaning this build's "change view" doesn't preserve a
 distinct original view to revert to the way `SetCharacterView`'s own
 idle-view machinery implies is otherwise possible.
+
+### `NewRoomEx`/`ResetRoom`/`SetRestartPoint`/`CallRoomScript`/`SetGameSpeed`/`GetGameSpeed` close, including a genuine 10x speed-cap drift
+
+Six more bare matches close in one pass. `NewRoomEx` is another
+self-contained implementation (no `Character_ChangeRoom` wrapper body
+to compare against): resets the already-established `new_room_pos`
+global to 0, sets the player's `x`/`y` directly, then calls the
+already-matched `NewRoom` -- the reset gives `new_room_pos` a fresh
+confirmation angle ("arriving at an explicit position bypasses the
+normal room-edge entry-position calculation"). `ResetRoom` matches
+completely, further confirming `RoomStatus`'s `0x1390`-byte stride
+from a new site, but confirms absent the trailing `DEBUG_CONSOLE` call.
+`SetRestartPoint` confirms (again) there's no separate `save_game()`
+wrapper -- `SaveGameSlot` itself serves script-API and internal
+callers alike -- with one minor string-wording difference from source.
+`CallRoomScript` matches exactly and gives `GameState.roomscript_
+finished` a further confirmation, but confirms absent source's leading
+`can_run_delayed_command()` call.
+
+The most interesting find: `SetGameSpeed` clamps its upper bound to
+`100`, not source's `1000` -- a genuine 10x lower maximum game speed,
+a real behavioral limit difference rather than the usual smaller-
+array-capacity pattern. Also confirms absent the `frames_per_second==
+1000 && display_fps==2` "Ctrl+E max speed lock" special case and the
+`game_speed_modifier` adjustment entirely -- both `SetGameSpeed` and
+`GetGameSpeed` (which drops source's `-play.game_speed_modifier`
+subtraction) agree: this build's game speed has no separate "user-
+requested vs. modifier-adjusted" distinction at all.
