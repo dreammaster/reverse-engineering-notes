@@ -3080,9 +3080,9 @@
   "is_named": false
  },
  {
-  "name": "sub_426FC0",
+  "name": "PushButton__PushButton",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_427030",

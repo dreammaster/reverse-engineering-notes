@@ -3488,6 +3488,13 @@ disassembly work.
   rare struct that survived completely unchanged from 2002 to 2011.
   One confirmed drift: this build's `domouse` calls around window
   creation are live, where source has them commented out.
+- **`CSCICreateControl` upgraded to high confidence, naming
+  `PushButton`'s own constructor.** Header/`CNT_PUSHBUTTON` branch/tail
+  all match source instruction for instruction, including the
+  free-slot search starting at index 1 and the already-established
+  `NewControl.typeandflags`/`.wlevel` field writes. Names `PushButton::
+  PushButton` via its decisive 5-argument constructor call shape. Same
+  live-`domouse`-where-source-comments-it-out drift found again.
 
 ## Third-party library identification (Task #10)
 

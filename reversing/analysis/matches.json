@@ -6213,10 +6213,10 @@
     "kind": "manual",
     "asm_name": "sub_425D18",
     "new_name": "CSCICreateControl",
-    "source_file": "Engine/acdialog.cpp",
-    "source_line": null,
-    "confidence": "medium-high",
-    "evidence": "int CSCICreateControl(int,int,int,int,int,char*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox (this round's new match), each with literal CNT_*/CNF_* flag combinations matching source's three CSCICreateControl calls exactly (see myscimessagebox's own entry for the complete constant-by-constant breakdown) -- identified via call-signature/literal-argument evidence at 3 independent, internally-consistent call sites, medium-high confidence pending a full body trace."
+    "source_file": "Engine/acdialog.h",
+    "source_line": 818,
+    "confidence": "high",
+    "evidence": "int CSCICreateControl(int,int,int,int,int,char*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox (this round's new match), each with literal CNT_*/CNF_* flag combinations matching source's three CSCICreateControl calls exactly (see myscimessagebox's own entry for the complete constant-by-constant breakdown) -- identified via call-signature/literal-argument evidence at 3 independent, internally-consistent call sites, medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, header/CNT_PUSHBUTTON branch/tail all read in full against its real source, Engine/acdialog.h:818-855): matches instruction for instruction throughout the parts read. Header: multiply_up(&xx,&yy,&wii,&hii) (already matched); the free-slot search loop starts at hh=1 (not 0), matching source's own unusual \"for(hh=1;hh<MAXCONTROLS;hh++)\" starting index exactly, zero drift; quit(\"Too many controls created\") matches the literal string exactly. type=typeandflags&0xFF matches exactly, and the CNT_PUSHBUTTON(1, already-confirmed enum value) branch's \"if(wii==-1) wii=wgettextwidth(title,cbuttfont)+20;\" matches literally (a new global, cbuttfont, identified; +20 exact). operator new(0x44=68 bytes) then a 5-argument call (this,xx,yy,wii,hii,title) to sub_426FC0 -- decisively PushButton::PushButton(int,int,int,int,char*)'s own constructor, matching source's \"new PushButton(xx,yy,wii,hii,title)\" call shape exactly (named separately, see its own new entry). Tail: vobjs[usec]->typeandflags(+0x18)=typeandflags matches exactly (NewControl.typeandflags@+0x18, already established); wtexttransparent(0) matches; vobjs[usec]->wlevel(+0x1C)=topwindowhandle matches exactly (NewControl.wlevel@+0x1C, already established); a vtable-slot-0 call (matching source's \"vobjs[usec]->draw();\", identifying vtable slot 0 as NewControl's own draw() method) is bracketed by LIVE domouse(2)/domouse(1) calls where source has them commented out -- a further instance of the same confirmed drift already found in CSCIDrawWindow's own entry; returns usec exactly. The CNT_LISTBOX/CNT_LABEL/CNT_TEXTBOX branches (each presumably doing an analogous operator-new-plus-constructor call for MyListBox/MyLabel/MyTextBox) were NOT independently re-traced this round given the function's size (314 lines total), but the confirmed header/one-branch/tail already put the identity and overall shape beyond doubt."
   },
   {
     "kind": "manual",
@@ -6615,5 +6615,14 @@
     "source_line": 98,
     "confidence": "high",
     "evidence": "void __my_wbutt(int,int,int,int) at acdialog.h:98-104 (macro-aliased to the name \"wbutt\" at acdialog.h:106, shadowing Common/Wgt2allg.h's own standalone wbutt for this translation unit): \"wsetcolor(COL254); wbar(x1,y1,x2,y2); wsetcolor(0); wrectangle(x1,y1,x2,y2);\". A complete, exact, zero-drift match: wsetcolor(7) (COL254=7, acdialog.h:95, exact literal match), then wbar's own job fused inline as a direct rectfill(abuf,x1,y1,x2,y2,currentcolor) call (all already matched) rather than through a separate wbar function, then wsetcolor(0), then wrectangle(x1,y1,x2,y2) (already matched). Called from CSCIDrawWindow (already matched, this round's own updated entry) with the identical computed coordinates as source's own \"wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1);\" call."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_426FC0",
+    "new_name": "PushButton__PushButton",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 837,
+    "confidence": "high",
+    "evidence": "PushButton::PushButton(int,int,int,int,char*) -- the CSCI dialog system's push-button control constructor, called from CSCICreateControl (already matched, this round's own updated entry) as \"new PushButton(xx,yy,wii,hii,title);\" -- decisively identified via the exact 5-argument call shape (this + xx/yy/wii/hii/title) immediately following an operator new(0x44) allocation sized for a NewControl-derived object (NewControl's own base layout: vtbl+7 ints+2 chars, already established via finddefaultcontrol's entry). Own body not independently traced this round (a genuine C++ constructor, presumably initializing the NewControl base fields plus PushButton-specific state) -- named by call-site/allocation-shape evidence only."
   }
 ]

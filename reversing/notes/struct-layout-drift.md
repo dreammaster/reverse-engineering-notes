@@ -12021,3 +12021,23 @@ a struct surviving completely unchanged from 2002 to 2011, now
 formalized in `apply_structs.py`. One confirmed behavioral difference:
 this build's `domouse(2)`/`domouse(1)` calls around window creation are
 LIVE, where source has them commented out.
+
+### CSCICreateControl upgraded to high confidence, naming PushButton's own constructor
+
+Its header, `CNT_PUSHBUTTON` branch, and tail were all read against its
+real source (`Engine/acdialog.h:818-855`) and match instruction for
+instruction: the free-slot search starts at `hh=1` (not 0, matching
+source's own unusual starting index exactly), `wgettextwidth(title,
+cbuttfont)+20` for an auto-sized button matches literally, and
+`vobjs[usec]->typeandflags`/`.wlevel` (already-established `NewControl`
+fields @+0x18/+0x1C) both get written exactly as source specifies.
+Names `PushButton::PushButton`'s own constructor (`sub_426FC0`) via its
+decisive 5-argument call shape right after an `operator new(0x44)`
+allocation. Another instance of the same drift already found in
+`CSCIDrawWindow`: this build's `domouse(2)`/`domouse(1)` calls
+bracketing the control's initial `draw()` are LIVE, where source has
+them commented out. The `CNT_LISTBOX`/`CNT_LABEL`/`CNT_TEXTBOX`
+branches (each presumably an analogous `new`+constructor call for
+`MyListBox`/`MyLabel`/`MyTextBox`) weren't individually re-traced this
+round given the function's size, but the confirmed header/one-branch/
+tail already puts the identity and overall shape beyond doubt.
