@@ -3266,6 +3266,13 @@ disassembly work.
   layers (`AGSWin32::PlayVideo` + `dxmedia_play_video`) into one flat
   function with no `gfxDriver`/platform indirection and no file-
   existence pre-check.
+- **`FadeIn` closes: a second confirmed fast_forward-gating gap, and a
+  third confirmation of the missing skip-cutscene subsystem.** Reduces
+  to a single direct call to its own fade-in helper, missing both of
+  source's leading checks: no `EndSkippingUntilCharStops()` call (third
+  confirmation the whole subsystem is absent) and no `fast_forward`
+  guard (proceeds during fast-forward, joining `UpdatePalette`'s own
+  already-established finding).
 
 ## Third-party library identification (Task #10)
 

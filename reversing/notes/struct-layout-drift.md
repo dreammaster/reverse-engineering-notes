@@ -11441,3 +11441,16 @@ pre-check before playing (CONFIRMED ABSENT: source's `fopen`/`fclose`
 "File not found" check). `dword_4EEB54`(`fast_forward`) gates the WHOLE
 function — if fast-forwarding, `PlayVideo` does nothing at all, not
 even the trailing `set_palette_range` call.
+
+### FadeIn closes: a second confirmed fast_forward-gating gap, and a third confirmation of the missing skip-cutscene subsystem
+
+Source's `FadeIn` (`AC.CPP:20354-20361`) is `EndSkippingUntilCharStops();
+if(play.fast_forward) return; my_fade_in(palette,sppd);` -- this
+build's version is a single direct call to its own fade-in helper, with
+BOTH leading checks confirmed absent. No `EndSkippingUntilCharStops()`
+call at all -- a third independent confirmation (after `StartCutscene`/
+`EndCutscene`'s own already-established finding) that this build's
+entire skip-cutscene subsystem doesn't exist. And no `fast_forward`
+guard -- this build's `FadeIn` proceeds even during a fast-forwarded
+skip, joining `UpdatePalette`'s own already-established finding as a
+second confirmed instance of the same player-visible drift.

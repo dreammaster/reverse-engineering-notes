@@ -1688,7 +1688,7 @@
     "source_obj": "ali3dsw.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj FIELD EVIDENCE (follow-up round, full body read for the first time): source's \"EndSkippingUntilCharStops(); if(play.fast_forward) return; my_fade_in(palette,sppd);\" (AC.CPP:20354-20361) reduces here to a single, direct call to sub_40A6D8(&palette,sppd) -- CONFIRMED ABSENT on BOTH counts. (1) No EndSkippingUntilCharStops() call at all -- a THIRD independent confirmation (after StartCutscene/EndCutscene's own already-established finding) that this build's entire SkipUntilCharacterStops/EndSkippingUntilCharStops/stop_fast_forwarding subsystem doesn't exist. (2) No `if(play.fast_forward) return;` guard -- meaning this build's FadeIn proceeds unconditionally even during a fast-forwarded cutscene skip, joining this project's already-established UpdatePalette finding (also missing its own fast_forward gate) as a second confirmed instance of the same player-visible drift: this build keeps performing palette/fade operations during fast-forward that 2011 explicitly skips."
   },
   {
     "kind": "function",
