@@ -12539,6 +12539,21 @@ than a directly provable fact from disassembly evidence alone -- but
 it resolves a puzzle that had stood open since a very early round of
 this project's `GameState` work.
 
+### process_event's own dissolve-effect "mystery flag" resolves to color_depth, no drift at all
+
+A small loose end from `process_event`'s own `FADE_DISSOLVE` round:
+its palette-interpolation gate, `cmp dword_51D2F0,1`, had been flagged
+as "an unidentified flag" controlling 8-bit-mode palette blending.
+`dword_51D2F0` turns out to already be independently confirmed
+elsewhere in this project as `GameSetupStructBase.color_depth` -- just
+never connected back to this specific site. The check itself
+(`game.color_depth==1`) is a routine, extremely common AGS idiom
+(dozens of call sites throughout `AC.CPP`) for "is this an 8-bit-
+paletted-color-depth game" -- AGS encodes `color_depth` as a small
+integer CODE (1=8-bit), not a raw bits-per-pixel value, so `==1` is
+exactly source's own gate for this exact situation. Not a mystery at
+all, just a previously-unconnected cross-reference -- zero drift.
+
 `InitRenderToSurface`'s own `vscreen`-creation call names one more
 function at medium confidence: `gfx_directx_create_system_bitmap`
 (`sub_456210`), identified primarily by call site/role rather than a

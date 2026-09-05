@@ -3651,6 +3651,12 @@ disassembly work.
   marks exactly where that block ends) — this build's own position is
   plausibly the field's ORIGINAL 2002 site, later moved (not newly
   added) when script-level access was introduced.
+- **`process_event`'s own dissolve-effect "mystery flag" resolves to
+  `color_depth`, no drift at all.** Its palette-interpolation gate
+  (`dword_51D2F0==1`) is `GameSetupStructBase.color_depth` — already
+  independently confirmed elsewhere, just not connected back here.
+  `color_depth==1` is AGS's own routine idiom for "8-bit paletted
+  game" (dozens of call sites in `AC.CPP`), not a mystery flag.
 
 ## Third-party library identification (Task #10)
 
