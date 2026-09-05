@@ -11482,3 +11482,12 @@ build's `domouse` inlines that one branch directly rather than calling
 a separate `drawCursor()` function at all, since the feature that
 function exists to gate away doesn't exist yet here -- joining this
 project's many other confirmed-absent transparency/alpha features.
+
+### cd_player_init closes as a near-exact match
+
+Matches `Engine/acplatfm.cpp:918-924` exactly (`cd_init()` gate,
+`numcddrives=1`/`use_cdplayer=1` on success) plus one harmless extra
+defensive step (zeroing `usecdplayer` before the call, with no
+behavioral effect). Called directly from `main`, with no
+`platform->InitializeCDPlayer()` indirection at all -- another instance
+of this project's now-many confirmed no-platform-abstraction findings.

@@ -3281,6 +3281,8 @@ disassembly work.
   alpha-blend branch exactly, but with the entire `alpha_blend_cursor`
   check/branch confirmed absent: this build inlines that one branch
   since the feature it gates doesn't exist here yet.
+- **`cd_player_init` closes as a near-exact match**, called directly
+  from `main` with no `platform->InitializeCDPlayer()` indirection.
 
 ## Third-party library identification (Task #10)
 
