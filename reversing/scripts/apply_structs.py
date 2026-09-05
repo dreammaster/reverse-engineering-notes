@@ -3732,16 +3732,31 @@ struct GameState {
                             // matching "only on keypress, no auto timer") rather than testing
                             // any SKIP_* bit. Same field as 2011's, just a different (raw,
                             // unconverted) representation.
-  int stop_dialog_at_end;       // +0x834, medium-high confidence: pre-existing IDA name
-                            // (`play_stop_dialog_at_end`), XREF'd from `RunDialog`/`NewRoom`
-                            // (both already correctly named) in a role plausibly matching
-                            // 2011's dialog-stop-request flag -- but its POSITION here does
-                            // NOT match 2011's declared order (2011 places
-                            // stop_dialog_at_end much earlier, adjacent to reserved[10] near
-                            // the game.-exposed section boundary, acruntim.h:536, not next to
-                            // want_speech/entered_edge at acruntim.h:560-561) -- a genuine,
-                            // not-yet-explained architectural difference, flagged rather than
-                            // silently assumed consistent.
+  int stop_dialog_at_end;       // +0x834, high confidence (RESOLVED, follow-up round):
+                            // identity fully confirmed -- `run_dialog_script`'s own opcode 7
+                            // handler (the fused-in `run_dialog_request` body, already matched)
+                            // sets it to DIALOG_RUNNING(1) before calling
+                            // run_text_script_iparam("dialog_request",...), then checks it
+                            // against DIALOG_STOP(2) and DIALOG_NEWROOM(100=0x64) -- both
+                            // literal comparisons match acruntim.h:427-429 exactly, zero drift,
+                            // on top of the already-established DIALOG_STOP=2 write from
+                            // StopDialog. The POSITION puzzle (2011 declares this field much
+                            // earlier, adjacent to `reserved[10]` near the "game."-script-
+                            // exposed section boundary, acruntim.h:536, not next to
+                            // want_speech/cant_skip_speech/script_timers as here) is best
+                            // explained by a later REORGANIZATION, not a naming mistake: 2011's
+                            // own surrounding fields at that earlier position are grouped
+                            // specifically because they're accessible from script code via the
+                            // "game." object (the comment at acruntim.h:538 marks exactly where
+                            // that script-exposed block ends). This build's own position --
+                            // squeezed into the one-dword gap between the already-confirmed
+                            // cant_skip_speech and script_timers[], with zero slack on either
+                            // side -- is plausibly this field's ORIGINAL 2002 declaration site,
+                            // later MOVED (not newly added) when script-level access to
+                            // `game.stop_dialog_at_end` was introduced, requiring it to be
+                            // grouped with the other script-exposed fields near reserved[10].
+                            // A plausible, well-supported explanation rather than a directly
+                            // provable one from disassembly evidence alone.
   int script_timers[21];       // +0x838..0x88C (84 bytes), high confidence: `update_stuff`
                             // (already matched)'s own OPENING lines loop "for(chat=0;chat<15h;
                             // chat++) if(dword_4EF250[chat]>1) dword_4EF250[chat]--;" matching

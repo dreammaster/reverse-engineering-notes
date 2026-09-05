@@ -12507,6 +12507,38 @@ and final `HRESULT` values (`E_FAIL`/`NOERROR`) both match source
 exactly. Also names `get_bitmap_surface` (`acwavi.cpp:90-95`), an
 exact 6-instruction match reading `bmp->extra`@+0x30's own first field.
 
+### GameState.stop_dialog_at_end's long-standing position puzzle gets a plausible resolution
+
+A years-old open thread, flagged since `load_new_room`'s own round:
+this build's `stop_dialog_at_end` sits at `+0x834`, squeezed into the
+single-dword gap between the already-confirmed `cant_skip_speech`
+(`+0x830`) and `script_timers[21]` (`+0x838`) with zero slack on
+either side -- but 2011's own `acruntim.h:536` declares
+`stop_dialog_at_end` far EARLIER in `GameState`, immediately before
+`reserved[10]` and a comment marking "up to here is referenced in the
+script 'game.' object" (`:538`). The field's IDENTITY was never
+actually in doubt -- `run_dialog_script`'s own opcode 7 handler (the
+fused-in `run_dialog_request` body, already matched) checks it against
+`DIALOG_STOP`(2) and `DIALOG_NEWROOM`(100=`0x64`), both matching
+`acruntim.h:427-429` with zero drift, on top of `StopDialog`'s own
+already-confirmed `DIALOG_STOP` write -- only its POSITION was
+unexplained.
+
+The likely explanation: 2011's grouping of `stop_dialog_at_end` right
+before `reserved[10]` isn't arbitrary -- that whole preceding block is
+specifically the set of `GameState` fields exposed to script code via
+the `game.` object, and the comment marks exactly where that exposed
+block ends. This build's own position (tucked between
+`cant_skip_speech`/`script_timers[]`, both fields with no script-
+exposure implications) is plausibly this field's ORIGINAL 2002
+declaration site -- later MOVED, not newly added, when script-level
+access to `game.stop_dialog_at_end` was introduced, requiring it to be
+regrouped with the other script-exposed fields near `reserved[10]`. A
+plausible, well-supported reading of the source's own structure rather
+than a directly provable fact from disassembly evidence alone -- but
+it resolves a puzzle that had stood open since a very early round of
+this project's `GameState` work.
+
 `InitRenderToSurface`'s own `vscreen`-creation call names one more
 function at medium confidence: `gfx_directx_create_system_bitmap`
 (`sub_456210`), identified primarily by call site/role rather than a

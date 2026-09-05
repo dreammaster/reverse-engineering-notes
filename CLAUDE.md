@@ -3640,6 +3640,17 @@ disassembly work.
   body doesn't closely resemble the 4.2.2 reference tree's version —
   the same "older/simpler Allegro" caution already established for
   `al_findfirst`/`al_findnext`/`al_findclose`.
+- **`GameState.stop_dialog_at_end`'s long-standing position puzzle
+  gets a plausible resolution.** Its identity was never in doubt
+  (`run_dialog_script`'s own opcode 7 handler checks it against
+  `DIALOG_STOP`/`DIALOG_NEWROOM` with zero drift) — only why this
+  build has it squeezed between `cant_skip_speech`/`script_timers[]`
+  where 2011 declares it far earlier, next to `reserved[10]`. Likely
+  explanation: 2011 groups it there specifically because that whole
+  block is exposed to script code via the `game.` object (a comment
+  marks exactly where that block ends) — this build's own position is
+  plausibly the field's ORIGINAL 2002 site, later moved (not newly
+  added) when script-level access was introduced.
 
 ## Third-party library identification (Task #10)
 
