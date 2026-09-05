@@ -11666,3 +11666,23 @@ also matched a real `acwin.map` symbol, letting `build_matches.py`'s
 purely mechanical matching "confirm" an identity that was never
 behaviorally checked -- the same trap that produced the
 `VALIDATE_STRING` mislabel.
+
+### quit()'s last open lead closes: gamescript/thisroom.compiled_script identified, plus a stale-rename gap fixed
+
+Chasing `quit()`'s own long-standing open lead (the two globals its
+"Global"/"Room %d"/"Unknown" script-identity check compares against)
+resolved cleanly. `dword_523130` is `gamescript` (the compiled GLOBAL
+script) -- confirmed via `load_ac2game_dta`'s own sequence:
+`gamescript=fread_script(...)` immediately followed by
+`gameinst=ccCreateInstance(gamescript)` (`gameinst` already
+established), an exact match to source. `dword_523080` is
+`thisroom.compiled_script` (`RoomStruct`'s own already-confirmed field
+@+0x39F8, accessed via absolute address) -- confirmed with ZERO SLACK
+arithmetic (`thisroom`'s established base, `0x51F688`, `+0x39F8 =
+0x523080` exactly) and behaviorally via `compile_room_script`'s own
+`ccCreateInstance(thisroom.compiled_script)` call producing `roominst`
+(already established). Along the way, `compile_room_script` itself
+turned out to still be sitting in the live IDB as `sub_421957` despite
+already having a "confirmed match" comment -- another instance of the
+"documented in prose, never actually pushed to the IDB" gap this
+project has hit a few times before; now fixed.

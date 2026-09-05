@@ -3350,6 +3350,16 @@ disassembly work.
   instead, matching source's backward path-separator scan and its
   caller (`main`) exactly. CONFIRMED ABSENT: the `/`-as-separator
   alternative — this build's scan checks only `\`.
+- **`quit()`'s last open lead closes: `gamescript`/`thisroom.
+  compiled_script` confirmed, plus a stale-rename gap fixed.**
+  `dword_523130` is `gamescript`, confirmed via `load_ac2game_dta`'s own
+  `fread_script`→`ccCreateInstance` sequence producing `gameinst`.
+  `dword_523080` is `thisroom.compiled_script`, confirmed via zero-slack
+  address arithmetic against `thisroom`'s established base and
+  behaviorally via `compile_room_script` producing `roominst`. Along
+  the way, `compile_room_script` itself was still `sub_421957` in the
+  live IDB despite an existing "confirmed match" comment — another
+  "documented in prose, never pushed to the IDB" gap, now fixed.
 
 ## Third-party library identification (Task #10)
 

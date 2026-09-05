@@ -154045,6 +154045,7 @@ static Bytes_27(void) {
 	create_dword	(0X523128);
 	create_dword	(0X52312C);
 	create_dword	(0X523130);
+	set_name	(0X523130,	"gamescript");
 	create_dword	(0X523134);
 	create_dword	(0X523138);
 	create_dword	(0X52313C);
@@ -155331,7 +155332,7 @@ static Functions_0(void) {
 	define_local_var(0X403AD9, 0X404948, "[bp+0X10]", "Stream");
 	add_func    (0X404948,0X404959);
 	set_func_flags(0X404948,0x5410);
-	set_func_cmt(0X404948,	"[reversing] confirmed match\nsource: Engine/ali3dsw.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj", 1);
+	set_func_cmt(0X404948,	"[reversing] confirmed match\nsource: Engine/ali3dsw.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj FIELD EVIDENCE (follow-up round, first look at this function): a thin one-argument wrapper delegating entirely to sub_43C400(bmp) -- matching Allegro's own clear(bmp) macro role (clear_to_color(bmp,bitmap_mask_color(bmp))), but NOT calling the already-separately-matched clear_to_color/bitmap_mask_color functions directly -- sub_43C400 is plausibly Allegro's own internal single-argument clear helper. Per this project's third-party-library scope rule, left unnamed/not chased further -- a ScummVM reimplementation replaces Allegro's whole bitmap-clearing machinery wholesale.", 1);
 	set_frame_size(0X404948, 0, 4, 0);
 	add_func    (0X404959,0X404E92);
 	set_func_flags(0X404959,0x5410);
@@ -155652,14 +155653,14 @@ static Functions_0(void) {
 	set_func_flags(0X4084E0,0x5410);
 	set_func_cmt(0X4084E0,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: This build's own MP3-crossfade-continuation check, called from FadeOut (already matched) and sub_40A21C (also unmatched, a candidate for a future round). Operates on dword_523214, the already-confirmed PlayMusic MP3 stream handle: if the stream has finished (checked via sub_47E990, plausibly ALMP3's own is-playing/poll API, not individually confirmed) and GameState.music_repeat@ (dword_4EF028, already confirmed) is 0, calls the already-matched sub_408392 to stop/cleanup and returns -1; otherwise, if still relevant, calls sub_47E7A0 (same (handle,0x4000,dword_4B42A0,0x80,0x3E8,arg) shape as sub_4083FC's own second ALMP3 call -- plausibly ALMP3's volume/pan/speed/loop adjustment entry point) to continue/restart playback. No clean 1:1 match exists in 2011 source: this build's crossfading is a much simpler single-stream design (one MP3 handle) predating 2011's entire channels[]-array-based multi-channel crossfade refactor (AC.CPP:480-486, 12377-12398," " 17632-17667) -- left unnamed rather than force a 201", 1);
 	set_frame_size(0X4084E0, 0, 4, 0);
-	add_func    (0X408556,0X408623);
-	set_func_flags(0X408556,0x5410);
-	set_func_cmt(0X408556,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: SOUNDCLIP *my_load_wave(const char *filename, int voll, int loop) at acsound.cpp:152-170. Called from play_speech (sub_4141B8, already matched) with (finame, speech_volume, 0) and from PlayAmbientSound (already matched) with (sprintf-built \"sound%d.wav\" filename, vol, -1) -- both 3-arg calls matching the exact signature, and the loop argument's semantic role fits perfectly in both contexts (0=play once for speech, -1=loop forever for ambient sound). Body matches source instruction for instruction: calls sub_4444C0 (this round's new match, load_sample) on the filename, returns NULL if that fails ('if (new_sample==NULL) return NULL;'), otherwise 'operator new(0x10)' allocates a small wrapper object (matching 'thiswave = new MYWAVE();', 16 bytes plausible for this build's simpler MYWAVE class) into a GLOBAL (dword_4CCC80, matching 2011's own `thiswave` being a file-scope global, not a local), calls a constructor (sub_424A60) on it" ", stores the loaded SAMPLE* into +8, then calls sub_444AF0 (this round's ", 1);
-	set_frame_size(0X408556, 0X1C, 4, 0);
 }
 
 static Functions_1(void) {
 
+	add_func    (0X408556,0X408623);
+	set_func_flags(0X408556,0x5410);
+	set_func_cmt(0X408556,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: SOUNDCLIP *my_load_wave(const char *filename, int voll, int loop) at acsound.cpp:152-170. Called from play_speech (sub_4141B8, already matched) with (finame, speech_volume, 0) and from PlayAmbientSound (already matched) with (sprintf-built \"sound%d.wav\" filename, vol, -1) -- both 3-arg calls matching the exact signature, and the loop argument's semantic role fits perfectly in both contexts (0=play once for speech, -1=loop forever for ambient sound). Body matches source instruction for instruction: calls sub_4444C0 (this round's new match, load_sample) on the filename, returns NULL if that fails ('if (new_sample==NULL) return NULL;'), otherwise 'operator new(0x10)' allocates a small wrapper object (matching 'thiswave = new MYWAVE();', 16 bytes plausible for this build's simpler MYWAVE class) into a GLOBAL (dword_4CCC80, matching 2011's own `thiswave` being a file-scope global, not a local), calls a constructor (sub_424A60) on it" ", stores the loaded SAMPLE* into +8, then calls sub_444AF0 (this round's ", 1);
+	set_frame_size(0X408556, 0X1C, 4, 0);
 	add_func    (0X408623,0X408811);
 	set_func_flags(0X408623,0x5410);
 	set_func_cmt(0X408623,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: SOUNDCLIP *my_load_mp3(const char *filname, int voll) at acsound.cpp:296-330. Called from play_speech (sub_4141B8, already matched) with (finame, speech_volume) -- an exact 2-arg match to the signature, on the WAV-load-failure fallback path exactly where source has 'speechmp3 = my_load_mp3(finame, play.speech_volume);' (AC.CPP:13396). Body is an overwhelming, complete, instruction-for-instruction match to source: 'sub_408E49(\"rb\",filename)' = pack_fopen(filname,\"rb\") into a GLOBAL (dword_4EF384, matching 2011's own `mp3in` being a file-scope global) -- return NULL if it fails; 'malloc(0x186A0)' matches MP3CHUNKSIZE's OLD/commented-out value of 100000 in source ('//#define MP3CHUNKSIZE 100000' / '#define MP3CHUNKSIZE 32768' -- this build genuinely uses the older 100000 constant, a real drift point matching an explicit version-history artifact left in the source comments themselves) -- on malloc failure, calls sub_42EE9A(mp3in) =" " pack_fclose(mp3in); 'operator new(0x18)' = new MYMP3() (24 bytes) into a", 1);
@@ -156027,14 +156028,14 @@ static Functions_1(void) {
 	define_local_var(0X40D28E, 0X40D2F4, "[bp+0X8]", "curs");
 	define_local_var(0X40D28E, 0X40D2F4, "[bp+0XC]", "x");
 	define_local_var(0X40D28E, 0X40D2F4, "[bp+0X10]", "y");
-	add_func    (0X40D2F4,0X40D382);
-	set_func_flags(0X40D2F4,0x5410);
-	set_func_cmt(0X40D2F4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup. NAMED (follow-up round): int find_next_enabled_cursor(int startwith) at AC.CPP:5188-5213 -- a complete, essentially line-for-line match once fully read. The `startwith>=game.numcursors` bound check uses a HARDCODED literal `10` in place of `game.numcursors` (already CONFIRMED ABSENT from this build's GameS" "etupStructBase in an earlier round) -- a further, independent confir", 1);
-	set_frame_size(0X40D2F4, 0X4, 4, 0);
 }
 
 static Functions_2(void) {
 
+	add_func    (0X40D2F4,0X40D382);
+	set_func_flags(0X40D2F4,0x5410);
+	set_func_cmt(0X40D2F4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Not renamed -- exact source function identity not independently confirmed, only its ROLE and the field evidence it provides. Called from the already-matched SetNextCursorMode and SetCursorMode (script API cursor-mode-cycling functions), consistent with a helper that skips over disabled/non-standard cursor modes. Body checks \"byte_515870[curs*0x18] & 2\" and \"& 4\", matching 2011's MouseCursor flag constants MCF_DISABLED=2 and MCF_STANDARD=4 (Common/acroom.h:2451-2452) exactly. New field evidence: byte_515870 = MouseCursor.flags, at struct offset +0x14 -- see reversing/scripts/apply_structs.py for the full MouseCursor struct writeup. NAMED (follow-up round): int find_next_enabled_cursor(int startwith) at AC.CPP:5188-5213 -- a complete, essentially line-for-line match once fully read. The `startwith>=game.numcursors` bound check uses a HARDCODED literal `10` in place of `game.numcursors` (already CONFIRMED ABSENT from this build's GameS" "etupStructBase in an earlier round) -- a further, independent confir", 1);
+	set_frame_size(0X40D2F4, 0X4, 4, 0);
 	add_func    (0X40D382,0X40D3A1);
 	set_func_flags(0X40D382,0x5410);
 	set_frame_size(0X40D382, 0, 4, 0);
@@ -156473,6 +156474,10 @@ static Functions_2(void) {
 	define_local_var(0X414E24, 0X414EA6, "[bp+0X10]", "wii");
 	define_local_var(0X414E24, 0X414EA6, "[bp+0X14]", "aschar");
 	define_local_var(0X414E24, 0X414EA6, "[bp+0X18]", "Str");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X414EA6,0X414EE0);
 	set_func_flags(0X414EA6,0x5410);
 	SetType(0X414EA6, "void __stdcall SetGlobalInt(int index, int valu);");
@@ -156480,10 +156485,6 @@ static Functions_2(void) {
 	set_frame_size(0X414EA6, 0, 4, 0X8);
 	define_local_var(0X414EA6, 0X414EE0, "[bp+0X8]", "index");
 	define_local_var(0X414EA6, 0X414EE0, "[bp+0XC]", "valu");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X414EE0,0X414F17);
 	set_func_flags(0X414EE0,0x5410);
 	SetType(0X414EE0, "int __stdcall GetGlobalInt(int index);");
@@ -156922,6 +156923,10 @@ static Functions_3(void) {
 	set_func_cmt(0X4182D5,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objj via the already-matched is_valid_object, then returns the already-confirmed RoomObject.moving@+0x18 (read as a SHORT via movsx) compared >0 as a 0/1 boolean. Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return (objs[objj].moving>0)?1:0;\" (AC.CPP:16415-16418), zero drift.", 1);
 	set_frame_size(0X4182D5, 0, 4, 0X4);
 	define_local_var(0X4182D5, 0X418311, "[bp+0X8]", "objj");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X418311,0X418401);
 	set_func_flags(0X418311,0x5410);
 	SetType(0X418311, "void __stdcall move_object(int objj, int tox, int toy, int spee, int ignwal);");
@@ -156942,10 +156947,6 @@ static Functions_3(void) {
 	define_local_var(0X418401, 0X41855A, "[bp+0X10]", "toy");
 	define_local_var(0X418401, 0X41855A, "[bp+0X14]", "ignwal");
 	define_local_var(0X418401, 0X41855A, "[bp+0X18]", "autoWalkAnims");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X41855A,0X418698);
 	set_func_flags(0X41855A,0x5410);
 	SetType(0X41855A, "void __stdcall RunHotspotInteraction(int hotspothere, int mood);");
@@ -157385,6 +157386,10 @@ static Functions_4(void) {
 	define_local_var(0X41A990, 0X41AA47, "[bp+0X8]", "guin");
 	define_local_var(0X41A990, 0X41AA47, "[bp+0XC]", "objn");
 	define_local_var(0X41A990, 0X41AA47, "[bp+0X10]", "valn");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41AA47,0X41AAC9);
 	set_func_flags(0X41AA47,0x5410);
 	SetType(0X41AA47, "int __stdcall GetSliderValue(int guin, int objn);");
@@ -157399,10 +157404,6 @@ static Functions_4(void) {
 	set_frame_size(0X41AAC9, 0, 4, 0X8);
 	define_local_var(0X41AAC9, 0X41AB18, "[bp+0X8]", "guin");
 	define_local_var(0X41AAC9, 0X41AB18, "[bp+0XC]", "slotn");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41AB18,0X41AC79);
 	set_func_flags(0X41AB18,0x5410);
 	SetType(0X41AB18, "void __stdcall SetButtonPic(int guin, int objn, int ptype, int slotn);");
@@ -157835,6 +157836,10 @@ static Functions_5(void) {
 	set_func_flags(0X41CD95,0x5410);
 	set_func_cmt(0X41CD95,	"[reversing] confirmed match\nconfidence: high\nevidence: Graph-script flag SETTER -- exact mirror of sub_41CD6D (see its own entry), called only from sub_41CDC3's SET_FLAG/CLEAR_FLAG opcodes (cases 11/12). Signature (int flagnum, int value): if flagnum<100, writes RoomStatus.flagstates[flagnum]=value (as a short); else writes dword_4EE89C[flagnum]=value (as a full int). Left unnamed for the same reason as sub_41CD6D.", 1);
 	set_frame_size(0X41CD95, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41CDC3,0X41D2BB);
 	set_func_flags(0X41CDC3,0x5410);
 	set_func_cmt(0X41CDC3,	"[reversing] confirmed match\nconfidence: high\nevidence: Unnamed (no 2011 counterpart exists, living or dead -- the entire 'Graphical Script' subsystem it belongs to has zero trace in the 2011 reference source beyond one comment line, see run_graph_script's own entry). This is run_graph_script's per-slot command-list interpreter: signature (void *table, int slotIndex), bails out immediately returning 0 if GameState.restrict_until (dword_523180) is already nonzero (a blocking wait already in progress), else reads table[slotIndex*0xFE] as a command count and loops over up to that many 0x19(25)-byte command records starting at table[slotIndex*0xFE+4], dispatching each record's own leading type byte (1-based; type-1 used as a 26-entry jump-table index, 0..0x19) via a switch. Confirmed opcodes so far: type 1 -> NewRoom(record[+5]), also setting dword_5231C4=record[+9]; type 2 -> GiveScore(record[+5]); type 3 -> StopMoving(playerchar); type 4 -> unhandled (falls to the shared default/error case, 'run_graph_script: u" "nknown evnt %d'); type 5 -> run_animation(&unk", 1);
@@ -157847,10 +157852,6 @@ static Functions_5(void) {
 	set_frame_size(0X41D323, 0X4, 4, 0);
 	define_local_var(0X41D323, 0X41D342, "[bp-0X4]", "Buffer");
 	define_local_var(0X41D323, 0X41D342, "[bp+0X8]", "Stream");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41D342,0X41D49B);
 	set_func_flags(0X41D342,0x5410);
 	set_func_cmt(0X41D342,	"[reversing] confirmed match\nconfidence: high\nevidence: Named directly from its own FOUR self-identifying error strings -- \"Run_Graph_script: temp file '%s' not found\", \"run_graph_script: invalid script version\", \"run_graph_script: invalid block version\", and (inside its own callee, sub_41CDC3) \"run_graph_script: unknown evnt %d\" -- the classic AGS convention of an internal function's error text carrying its own name (same standard already used for SetInvItemPic, RawSaveScreen, etc.), here doing double duty as decisive evidence since NO 2011 counterpart exists to compare against at all. Implements AGS's ORIGINAL 'Graphical Script' feature -- the whataction[]=10/GRAPHSCRIPT action documented ONLY as a comment in 2011's own source (Common/acroom.h:100, \"v1.00 SR-1: 10: Run graphical script\") -- an entirely-forgotten-by-2011 subsystem with zero other trace (no function, no struct, no string) anywhere in the 2011 reference build. Called from run_event_block (already matched) on respond[i]==0Ah(10), passed respond" "val[i] as arg_0 (the graph-script number) -- s", 1);
@@ -157998,7 +157999,7 @@ static Functions_6(void) {
 	add_func    (0X421957,0X4219BB);
 	set_func_flags(0X421957,0x5410);
 	SetType(0X421957, "void compile_room_script(void);");
-	set_func_cmt(0X421957,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void compile_room_script() at AC.CPP:25789. String match: \"Unable to create local script: %s\" (25796). Caller matches exactly: load_new_room (already matched), which compiles the room script after loading room data. NEW FIELD EVIDENCE (CharacterInfo struct recovery, OldCharacterInfo round): confirms CharacterInfo.scrname@+0x12E -- \"movsx edx,byte[game_chars+aa*140h+12Eh]; test edx,edx; jz <skip>\" (checking scrname[0]==0) then \"lea edx,[game_chars+aa*140h+12Eh]; push edx; call strcat\" -- matching 2011's \"if (game.chars[aa].scrname[0]==0) continue; ... strcat(temphdr,game.chars[aa].scrname);\" exactly, building \"#define cEgo 0\r\n\"-style macros mapping character script names to indices for room-script compilation. Upgrades scrname from MEDIUM (positional) to HIGH confidence. See reversing/notes/struct-layout-drift.md for the complete writeup.", 1);
+	set_func_cmt(0X421957,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void compile_room_script() at AC.CPP:25789. Already correctly named via linker symbol (string match: \"Unable to create local script: %s\"), but no dedicated matches.json entry existed until this round. FIELD EVIDENCE (full leading body read): opens with `ccError=0` (dword_5347F8, already established), then `roominst=ccCreateInstance(thisroom.compiled_script)` -- matching disasm's `dword_523138 = ccCreateInstance(dword_523080)` exactly, where dword_523080 is decisively `thisroom.compiled_script` (RoomStruct's own already-confirmed field@+0x39F8, confirmed this round via zero-slack address arithmetic against thisroom's established base -- see quit()'s own entry for the complete cross-reference) and dword_523138 is the already-established `roominst` global. This closes the loop on both of quit()'s previously-unidentified comparison globals from a second, independent call site.", 1);
 	set_frame_size(0X421957, 0X190, 4, 0);
 	define_local_var(0X421957, 0X4219BB, "[bp-0X190]", "Buffer");
 	add_func    (0X4219BB,0X421A57);
@@ -158494,6 +158495,10 @@ static Functions_6(void) {
 	set_frame_size(0X42657F, 0X24, 4, 0);
 	define_local_var(0X42657F, 0X426693, "[bp+0X8]", "Source");
 	define_local_var(0X42657F, 0X426693, "[bp+0XC]", "Destination");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X426693,0X4266C2);
 	set_func_flags(0X426693,0x5410);
 	SetType(0X426693, "int __stdcall enternumberwindow(char *prompttext);");
@@ -158512,10 +158517,6 @@ static Functions_6(void) {
 	set_func_cmt(0X426D80,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: int myscimessagebox(char*lpprompt,char*btn1,char*btn2) at acdialog.cpp:1240-1274. A complete, fully decisive, zero-drift match -- every single literal constant checks out exactly: CSCIDrawWindow(80,80,240-80,120-80)=CSCIDrawWindow(80,80,160,40) matches this round's new sub_425836 call with args (80,80,160,40) exactly; CSCICreateControl(CNT_LABEL=3,90,85,150,0,lpprompt) matches sub_425D18's first call exactly (Engine/acdialog.h:118-120: CNT_PUSHBUTTON=1, CNT_LABEL=3); the btflag OR-in logic (\"btflag|=CNF_DEFAULT|CNF_CANCEL\" if btn2==NULL else \"btflag|=CNF_DEFAULT\") matches the disasm's byte-level or ch,3 / or dh,1 on a btflag initialized to 1(CNT_PUSHBUTTON) exactly, given CNF_DEFAULT=0x100/CNF_CANCEL=0x200 (acdialog.h:123-124); CSCICreateControl(btflag,90,105,60,10,btn1) and the conditional CSCICreateControl(CNT_PUSHBUTTON|CNF_CANCEL=0x201,165,105,60,10,btn2) both match sub_425D18's remaining two calls exactly. The CSCIWaitMes" "sage loop (\"do{CSCIWaitMessage(&smes);}while(smes.code!=CM_COMMAND);\", CM_", 1);
 	set_frame_size(0X426D80, 0X14, 4, 0);
 	define_local_var(0X426D80, 0X426E8E, "[bp+0X8]", "Source");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X426E8E,0X426EEA);
 	set_func_flags(0X426E8E,0x5410);
 	set_func_cmt(0X426E8E,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: int quitdialog() at acdialog.cpp:1276-1282: \"strcpy(quitbut,get_global_message(MSG_QUITBUTTON)); strcpy(playbut,get_global_message(MSG_PLAYBUTTON)); return myscimessagebox(get_global_message(MSG_QUITDIALOG),quitbut,playbut);\". Decisive, exact match: three calls to sub_4152D4 (this round's new match, get_global_message) with literal arguments 0x3E1/0x3E2/0x3E3 (993/994/995), matching MSG_QUITBUTTON/MSG_PLAYBUTTON/MSG_QUITDIALOG (Engine/acdialog.h:50-52) exactly, followed by a call to sub_426D80 (this round's new match, myscimessagebox) with the three resulting strings in the same order. Called from QuitGame (already matched).", 1);
@@ -159293,6 +159294,10 @@ static Functions_7(void) {
 	define_local_var(0X4340F5, 0X4341ED, "[bp-0X4]", "Buffer");
 	define_local_var(0X4340F5, 0X4341ED, "[bp+0X8]", "Stream");
 	define_local_var(0X4340F5, 0X4341ED, "[bp+0XC]", "rst");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X4341F0,0X43422B);
 	set_func_flags(0X4341F0,0x5410);
 	SetType(0X4341F0, "int cd_init(void);");
@@ -159319,10 +159324,6 @@ static Functions_7(void) {
 	set_func_flags(0X434318,0x5410);
 	set_func_cmt(0X434318,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_play_range(int start,int end) at libcdaWin.C:87-92: \"cd_stop(); sprintf(end_pos,\\\"%u:%s\\\", end,lengthof(end)); return command(\\\"play cdaudio from %lu to %s\\\", startof(start),end_pos);\". Exact match: calls cd_stop, then lengthof(arg_4/end), sprintf with matched string aUS_0/\"%u:%s\" into byte_536E4C (end_pos), then command() with matched string aPlayCdaudioFro_0/\"play cdaudio from %lu to %s\" using arg_0(start) and arg_4(end). This function newly received an IDA function boundary (previously bodiless raw code between lengthof and cd_play_from) at exactly the address predicted by byte-counting lengthof's own instruction lengths in the prior investigation round -- see reversing/notes/third-party-library-identification.md.", 1);
 	set_frame_size(0X434318, 0, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X434361,0X434388);
 	set_func_flags(0X434361,0x5410);
 	set_func_cmt(0X434361,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_play_from(int track) at libcdaWin.C:95-100: \"cd_stop(); end_pos[0]=0; return command(\\\"play cdaudio from %lu\\\", startof(track));\". Exact match: calls cd_stop (sub_434464, matched below), zeroes byte_536E4C (end_pos[0]=0), then command() with the matched \"play cdaudio from %lu\" string and the track arg. CODE XREF: CDAudio+50 (the CDAudio interface dispatch table, already an IDA-recognized named symbol).", 1);
@@ -160662,6 +160663,10 @@ static Functions_8(void) {
 	add_func    (0X452430,0X452465);
 	set_func_flags(0X452430,0x5400);
 	set_frame_size(0X452430, 0, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X452470,0X4524C9);
 	set_func_flags(0X452470,0x5400);
 	set_func_cmt(0X452470,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:unicode.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj", 1);
@@ -160712,10 +160717,6 @@ static Functions_8(void) {
 	set_func_flags(0X4531C0,0x15400);
 	set_func_cmt(0X4531C0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:unicode.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:unicode.obj", 1);
 	set_frame_size(0X4531C0, 0, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X453BB0,0X453C05);
 	set_func_flags(0X453BB0,0x5400);
 	set_frame_size(0X453BB0, 0, 0, 0);
@@ -162630,6 +162631,10 @@ static Functions_9(void) {
 	set_frame_size(0X47ED10, 0XA6C4, 0, 0);
 	define_local_var(0X47ED10, 0X47F0D0, "[bp-0XA6AC]", "Block");
 	define_local_var(0X47ED10, 0X47F0D0, "[bp+0X8]", "Size");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X47F0D0,0X47F123);
 	set_func_flags(0X47F0D0,0x5400);
 	SetType(0X47F0D0, "int __cdecl sub_47F0D0(void *Block);");
@@ -162779,10 +162784,6 @@ static Functions_9(void) {
 	add_func    (0X483C90,0X483E22);
 	set_func_flags(0X483C90,0x5400);
 	set_frame_size(0X483C90, 0X10, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X483E30,0X484164);
 	set_func_flags(0X483E30,0x5400);
 	set_frame_size(0X483E30, 0X10, 0, 0);
@@ -165198,6 +165199,10 @@ static Functions_10(void) {
 	set_func_flags(0X4AB2B0,0x5404);
 	set_func_cmt(0X4AB2B0,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullrem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj", 1);
 	set_frame_size(0X4AB2B0, 0X4, 0, 0X10);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4AB330,0X4AB34F);
 	set_func_flags(0X4AB330,0x5404);
 	set_func_cmt(0X4AB330,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullshr.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj", 1);
@@ -165293,10 +165298,6 @@ static Functions_10(void) {
 	set_frame_size(0X4AB4B0, 0, 0, 0);
 	define_local_var(0X4AB4B0, 0X4AB4B6, "[bp+0X4]", "FileName");
 	define_local_var(0X4AB4B0, 0X4AB4B6, "[bp+0X8]", "OpenFlag");
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4AB4B6,0X4AB4BC);
 	set_func_flags(0X4AB4B6,0x5480);
 	SetType(0X4AB4B6, "int __cdecl close(int FileHandle);");
