@@ -11942,3 +11942,17 @@ own body has no `saveGameIndex[numItems]=-1;` write at all, meaning
 this 2002 build predates the field itself, not just its persistence.
 `apply_structs.py` updated to declare `char *items[100];` in place of
 the old `_pad_items[0x190]` placeholder.
+
+### CSCIDeleteControl/CSCIEraseWindow upgraded to high confidence
+
+Both were left at medium-high confidence (call-signature match only)
+from the `myscimessagebox` round earlier this session. Reading their
+full bodies confirms both decisively: `CSCIDeleteControl(handle)` looks
+up a control-handle table (`dword_523578[]`, a new global -- the array
+of live CSCI control objects) and calls a genuine C++ `operator delete`
+on it. `CSCIEraseWindow(handle)` hides the mouse, restores the screen
+area under the window from a saved background bitmap (a 16-byte-per-
+window slot table of new globals), destroys that bitmap, re-shows the
+mouse, and decrements an active-window counter -- exactly the expected
+"tear down a CSCI window" role, with `domouse`/`wputblock` both
+reconfirmed from a further independent call site.

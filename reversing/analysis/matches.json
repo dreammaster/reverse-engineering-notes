@@ -6233,8 +6233,8 @@
     "new_name": "CSCIDeleteControl",
     "source_file": "Engine/acdialog.cpp",
     "source_line": null,
-    "confidence": "medium-high",
-    "evidence": "void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace."
+    "confidence": "high",
+    "evidence": "void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIDeleteControl(int handle) { operator delete(dword_523578[handle]); dword_523578[handle]=NULL; }\" -- a control-handle-table lookup (dword_523578[], a new global -- the array of live CSCI control objects, indexed by handle) followed by a genuine C++ operator delete call and a slot-clear. Matches the expected role (free a control created by CSCICreateControl) exactly."
   },
   {
     "kind": "manual",
@@ -6242,8 +6242,8 @@
     "new_name": "CSCIEraseWindow",
     "source_file": "Engine/acdialog.cpp",
     "source_line": null,
-    "confidence": "medium-high",
-    "evidence": "void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace."
+    "confidence": "high",
+    "evidence": "void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new global). domouse (already matched) and wputblock (already matched) both confirmed from a further independent call site. Matches the expected role (tear down a CSCI window, restoring what was underneath) exactly."
   },
   {
     "kind": "manual",
