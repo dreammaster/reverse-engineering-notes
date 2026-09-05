@@ -3193,6 +3193,15 @@ disassembly work.
   `FileOpen`'s own confirmed inline protection) — a real path-traversal
   security gap — and uses raw CRT `_findfirst`/`_findnext`/`_findclose`
   instead of Allegro's `al_find*` wrappers.
+- **`MoveObject`/`MoveObjectDirect` close as zero-drift matches;
+  `MoveCharacter`/`MoveCharacterDirect` find an exhaustive
+  `autoWalkAnims` absence.** Both `MoveCharacter`/`MoveCharacterDirect`
+  match `walk_character`'s first four arguments exactly, but push a
+  literal `0` for the fifth (`autoWalkAnims`) where source passes
+  `true` — checked against all 9 `walk_character` call sites anywhere
+  in the disassembly, none ever pass a nonzero value. That argument
+  gates automatically clearing a character's custom animation when a
+  new walk starts (`acchars.cpp:56-57`) — never happens in this build.
 
 ## Third-party library identification (Task #10)
 

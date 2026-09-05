@@ -11217,3 +11217,27 @@ CRT `_findfirst`/`_findnext`/`_findclose` instead of Allegro's own
 adopted. (The missing trailing `guis_need_update=1` is NOT a real gap —
 `GUIListBox::Clear`/`AddItem`, both already matched, already set it as
 their own side effect.)
+
+### MoveCharacter/MoveCharacterDirect/MoveObject/MoveObjectDirect close, an exhaustive `autoWalkAnims` absence found
+
+All four are thin one-call wrappers in both builds, closing quickly
+against `Engine/AC.CPP:20711-20738`. `MoveObject`/`MoveObjectDirect`
+are complete, exact, zero-drift matches — `move_object(objj,xx,yy,spp,
+0/1)`, every argument lining up including the `ignwal` literal.
+
+`MoveCharacter`/`MoveCharacterDirect` match source's first four
+`walk_character` arguments exactly (`chac`/`tox`/`toy`/`ignwal`), but
+source's fifth argument, `autoWalkAnims`, is `true` in both — while
+this build pushes a literal `0` in both. Checked exhaustively against
+every one of `walk_character`'s 9 call sites anywhere in the
+disassembly (also covering `MoveCharacterStraight`/
+`MoveCharacterToObject`/`MoveCharacterToHotspot`/`ProcessClick`/
+`update_stuff`'s turning-around branch/the graph-script interpreter) —
+every single one pushes a literal `0`, none ever pass true. Source's
+`autoWalkAnims` gates one specific branch inside `walk_character`
+itself: `if (chin->animating && autoWalkAnims) chin->animating=0;`
+(`acchars.cpp:56-57`) — clearing a character's custom/locked animation
+automatically when a new walk starts. With the argument hardcoded false
+at every call site in this build, that automatic clear never happens
+here at all — a real, exhaustively-confirmed (not just locally
+observed) behavioral gap, worth flagging for the eventual ScummVM port.

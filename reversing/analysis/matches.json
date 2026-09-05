@@ -1757,7 +1757,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"walk_character(cc,xx,yy,0,true);\" (AC.CPP:20711-20712) exactly for the first four arguments (chac/tox/toy/ignwal=0) -- but REAL, EXHAUSTIVELY CONFIRMED DRIFT on the fifth: this build pushes a literal `0` for autoWalkAnims where source passes `true`. Checked against EVERY call site of walk_character anywhere in the disassembly (9 total, spanning MoveCharacter/MoveCharacterDirect/MoveCharacterStraight/MoveCharacterToObject/MoveCharacterToHotspot/ProcessClick/update_stuff's turning-around branch/the graph-script interpreter) -- every single one pushes a literal `0`, none ever pass a nonzero value. Source's autoWalkAnims controls one branch in walk_character itself: \"if(chin->animating && autoWalkAnims) chin->animating=0;\" (acchars.cpp:56-57) -- with the argument hardcoded false everywhere in this build, a character's custom/locked animation is NEVER automatically cleared when a new walk starts, unlike 2011 where MoveCharacter/MoveCharacterDirect explicitly request that clear. A genuine, exhaustively-confirmed (not just locally observed) behavioral gap worth flagging for the ScummVM port."
   },
   {
     "kind": "function",
@@ -1767,7 +1767,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"walk_character(cc,xx,yy,1,true);\" (AC.CPP:20714-20715) exactly for chac/tox/toy/ignwal=1 -- and shares the SAME autoWalkAnims=0-always drift documented in MoveCharacter's own entry (see there for the full exhaustive 9-call-site confirmation); this build's walk_character calls, including this one, never pass a nonzero autoWalkAnims."
   },
   {
     "kind": "function",
@@ -1797,7 +1797,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"move_object(objj,xx,yy,spp,0);\" (AC.CPP:20733-20735) -- every argument (objj/xx/yy/spp/ignwal=0) lines up exactly, unlike MoveCharacter's own sibling finding -- move_object's own 5th argument (ignwal) is genuinely 0/1 here matching source, not a constant-false drift."
   },
   {
     "kind": "function",
@@ -1807,7 +1807,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"move_object(objj,xx,yy,spp,1);\" (AC.CPP:20736-20738) -- the ignwal=1 argument, matching MoveObject's own entry's confirmation that this pair carries no drift, unlike the MoveCharacter/MoveCharacterDirect pair's autoWalkAnims gap."
   },
   {
     "kind": "function",
