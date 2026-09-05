@@ -156278,6 +156278,7 @@ static Functions_2(void) {
 	define_local_var(0X410771, 0X410913, "[bp-0X8]", "Block");
 	add_func    (0X410913,0X410937);
 	set_func_flags(0X410913,0x5410);
+	set_func_cmt(0X410913,	"[reversing] confirmed match\nconfidence: high\nevidence: GUIButton::Draw's own private draw-one-sprite helper (called twice from GUIButton::Draw, already matched). A thin 3-argument composition of two already-matched pieces: fetches spriteset[index] via SpriteCache::operator[] then calls put_sprite_256(x,y,sprite) -- no logic of its own beyond that. 2011's own GUIButton::Draw (acgui.cpp) has no call to put_sprite_256 at all (it delegates through gfxDriver/DrawSprite instead, the usual 'predates gfxDriver' architectural gap already established throughout this project) -- no 2011 declaration exists to name this specific glue function against. Left unnamed per this project's usual convention for small role-only helpers with no source counterpart.", 1);
 	set_frame_size(0X410913, 0, 4, 0);
 	define_local_var(0X410913, 0X410937, "[bp+0X8]", "index");
 	add_func    (0X410937,0X410AFA);
@@ -156357,15 +156358,15 @@ static Functions_2(void) {
 	define_local_var(0X412562, 0X412D3D, "[bp-0X10]", "ElementSize");
 	define_local_var(0X412562, 0X412D3D, "[bp-0XC]", "Stream");
 	define_local_var(0X412562, 0X412D3D, "[bp-0X4]", "Offset");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X412D3D,0X412DFB);
 	set_func_flags(0X412D3D,0x5410);
 	SetType(0X412D3D, "void update_polled_stuff(void);");
 	set_func_cmt(0X412D3D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void update_polled_stuff(bool) at AC.CPP:12353. String match: \"||exit!\" (12358). Caller matches exactly: called from load_main_block (already matched) at a label mid-function, consistent with polling input/sound during a potentially slow room-data load.", 1);
 	set_frame_size(0X412D3D, 0, 4, 0);
-}
-
-static Functions_3(void) {
-
 	add_func    (0X412DFB,0X412E50);
 	set_func_flags(0X412DFB,0x5410);
 	set_frame_size(0X412DFB, 0X4, 4, 0);

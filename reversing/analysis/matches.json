@@ -7345,5 +7345,14 @@
     "source_line": 244,
     "confidence": "high",
     "evidence": "void SpriteCache::removeOldest() (sprcache.cpp:244-306) -- called from SpriteCache::loadSprite (already matched). Confirmed at a decisive structural level, with three real drifts found along the way. `if(liststart<0) return;` matches the leading `cmp [this+0x1C],0; jge <continue>` exactly, identifying liststart@+0x1C. `if((images[sprnum]!=NULL)&&(offsets[sprnum]!=SPRITE_LOCKED))` matches the two guard checks exactly -- `images[]`@+0x08 (already established) and a newly-identified `offsets[]`@+0x00, compared against the literal -1(0xFFFFFFFF), confirming `SPRITE_LOCKED=-1`. DRIFT #1: rather than reading a precomputed `sizes[sprnum]` array entry to decrement `cachesize`, this build recomputes the byte size fresh at eviction time (`spritewidth[sprnum]*spriteheight[sprnum]*((bitmap_color_depth+7)/8)`, the same ceiling-division-by-8 idiom already seen in serialize_bitmap/convert_16_to_15) -- no `sizes[]` array exists in this build at all. `wfreeblock(images[sprnum]); images[sprnum]=NULL;` matches the disassembly's own `destroy_bitmap(...); images[sprnum]=0;` in role (this build's SpriteCache uses destroy_bitmap directly rather than a wfreeblock wrapper elsewhere too). DRIFT #2: source's `if(liststart==listend){...cache now empty...} else {...unlink...}` branch has NO counterpart here -- this build ALWAYS executes the unconditional 'unlink from doubly-linked list' step (`oldstart=liststart; liststart=mrulist[oldstart]; mrulist[oldstart]=0; mrubacklink[liststart]=START_OF_LIST;`), confirming two more arrays: `mrulist[]`@+0x14, `mrubacklink[]`@+0x18 (both already-established-by-pattern SpriteCache parallel arrays, now individually confirmed). DRIFT #3: source's recursive-link self-healing/error-detection block (`if(oldstart==liststart){...write_log...removeAll();}`) is CONFIRMED ABSENT -- this build has no equivalent safety net for that corruption case. Flat-named as a C++ member function per this project's established convention."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_410913",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "GUIButton::Draw's own private draw-one-sprite helper (called twice from GUIButton::Draw, already matched). A thin 3-argument composition of two already-matched pieces: fetches spriteset[index] via SpriteCache::operator[] then calls put_sprite_256(x,y,sprite) -- no logic of its own beyond that. 2011's own GUIButton::Draw (acgui.cpp) has no call to put_sprite_256 at all (it delegates through gfxDriver/DrawSprite instead, the usual 'predates gfxDriver' architectural gap already established throughout this project) -- no 2011 declaration exists to name this specific glue function against. Left unnamed per this project's usual convention for small role-only helpers with no source counterpart."
   }
 ]

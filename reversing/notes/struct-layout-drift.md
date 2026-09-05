@@ -13402,3 +13402,16 @@ handling the "cache emptied completely" special case. DRIFT #3:
 source's recursive-link self-healing/error-detection block (`write_
 log`+`removeAll()` on cache corruption) is CONFIRMED ABSENT -- this
 build has no equivalent safety net.
+
+### `GUIButton::Draw`'s own private sprite-draw helper documented,
+### closing out this round's keyword-scored sweep
+
+The last lead this round: `sub_410913`, called twice from `GUIButton::
+Draw` (already matched). A trivial 3-argument composition of two
+already-matched pieces -- `spriteset[index]` via `SpriteCache::
+operator[]`, then `put_sprite_256(x,y,sprite)` -- with no logic of its
+own. 2011's own `GUIButton::Draw` has no call to `put_sprite_256` at
+all (it delegates through `gfxDriver`/`DrawSprite` instead, the usual
+"predates `gfxDriver`" architectural gap found throughout this
+project) -- no 2011 declaration exists to name this specific glue
+function against. Left unnamed, role documented.

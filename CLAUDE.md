@@ -3907,6 +3907,10 @@ disassembly work.
   completely" special case (confirming two new arrays, `mrulist[]`/
   `mrubacklink[]`); and has no recursive-link self-healing/error-
   detection safety net at all.
+- **`GUIButton::Draw`'s own private sprite-draw helper documented.** A
+  trivial `spriteset[index]`+`put_sprite_256` composition with no 2011
+  counterpart (2011 delegates through `gfxDriver` instead) — left
+  unnamed, role documented.
 
 ## Third-party library identification (Task #10)
 
