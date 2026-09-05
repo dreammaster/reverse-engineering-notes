@@ -12649,6 +12649,30 @@ simplification predating this later feature. This also confirms
 either -- the feature gate that would call it simply doesn't exist,
 not merely a case of it being inlined away.
 
+### A data-hygiene fix: found and removed two duplicate matches.json entries
+
+Re-investigating `check_click_on_character`/`check_click_on_object`
+(prompted by their bare, unusually-short evidence text) reproduced work
+already done: a much earlier round (see "check_click_on_character/
+check_click_on_object get their own matches.json entries" above) had
+already fully traced both to exact, zero-drift matches against their
+real 5-6-line `AC.CPP` bodies, including the same `sub_417ECD`
+architectural-fusion finding (this build uses ONE shared helper for
+both `GetCharacterAt`'s own internal loop and source's separate
+`is_pos_on_character()`). That round's entries are keyed by the
+already-applied literal names (`check_click_on_character`/
+`check_click_on_object`, confirmed already live in the IDB several
+rounds before this one -- `apply_matches.py`'s own log prints
+"renamed ->" on every successful match regardless of whether the name
+actually changes, which is what misleadingly suggested a pending-
+rename bug at first; there wasn't one). The short-evidence entries
+this round found and initially re-traced were leftover duplicates
+keyed by the original `sub_417E77`/`sub_4181FF` addresses, predating
+that rename. Removed as pure duplicates with no unique information
+(the same pattern this project hit once before, for
+`RunCharacterInteraction`/`SetDialogOption`/`GetInvName`) rather than
+padded with redundant re-confirmation text.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

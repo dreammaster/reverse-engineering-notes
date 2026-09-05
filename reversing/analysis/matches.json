@@ -5993,24 +5993,6 @@
   },
   {
     "kind": "manual",
-    "asm_name": "sub_4181FF",
-    "new_name": "check_click_on_character",
-    "source_file": "Engine/AC.CPP",
-    "source_line": 16689,
-    "confidence": "high",
-    "evidence": "Called from ProcessClick (already matched, see its own updated entry) as \"check_click_on_character(xx,yy,mood)\", matching 2011's own call shape and role exactly: \"if(loctype==LOCTYPE_CHAR) {if(check_click_on_character(xx,yy,mood)) return;}\" (AC.CPP:16688-16690) -- a nonzero return short-circuits ProcessClick with no further dispatch. Not independently traced through its own body this round (its own internal character-hit-test logic, presumably built on the already-matched GetCharacterAt, is a candidate for a future round)."
-  },
-  {
-    "kind": "manual",
-    "asm_name": "sub_417E77",
-    "new_name": "check_click_on_object",
-    "source_file": "Engine/AC.CPP",
-    "source_line": 16692,
-    "confidence": "high",
-    "evidence": "Called from ProcessClick (already matched, see its own updated entry) as \"check_click_on_object(xx,yy,mood)\", matching 2011's own call shape and role exactly: \"else if(loctype==LOCTYPE_OBJ) {if(check_click_on_object(xx,yy,mood)) return;}\" (AC.CPP:16691-16693) -- a nonzero return short-circuits ProcessClick with no further dispatch. Not independently traced through its own body this round (its own internal object-hit-test logic, presumably built on the already-matched GetObjectAt, is a candidate for a future round)."
-  },
-  {
-    "kind": "manual",
     "asm_name": "sub_410AFA",
     "new_name": "construct_object_gfx",
     "source_file": "Engine/AC.CPP",

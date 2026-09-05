@@ -3690,6 +3690,14 @@ disassembly work.
   `do_main_cycle`) has no trace anywhere in the now-fully-read body.
   This build's characters always snap instantly to a new facing
   direction, no gradual turning exists at all.
+- **A data-hygiene fix: found and removed two duplicate `matches.json`
+  entries.** `check_click_on_character`/`check_click_on_object` each
+  had a stale, short bare entry (keyed by their pre-rename `sub_`
+  addresses) sitting alongside an already-complete entry (keyed by the
+  applied name, live in the IDB for several rounds already) from a
+  much earlier round — the same duplicate-entry pattern this project
+  hit once before. Removed with no information loss; both functions
+  were already fully closed as exact matches.
 
 ## Third-party library identification (Task #10)
 
