@@ -3592,12 +3592,14 @@ disassembly work.
   direct `fopen`/`fseek`/`fgetc`/`fclose` rather than calling the
   shared `load_game()`. Its trailing date-order bubble sort matches
   source exactly.
-- **`savegamedialog` closes at header/main-flow level.** `SaveGameDialog`'s
-  own dialog-invocation call site — header (`get_global_message`
-  constants, box geometry, `CSCIDrawWindow`/`CSCICreateControl` calls)
-  matches source with zero drift; the `toomanygames`-gated swap, main
-  message loop, and nested "confirm overwrite" sub-dialog were read at
-  a structural level only, a candidate for a future deeper pass.
+- **`savegamedialog` closes completely, finding the same missing-
+  directory-prefix drift twice more.** `SaveGameDialog`'s own dialog-
+  invocation call site, now traced end to end: the header, the nested
+  "confirm overwrite" sub-dialog, and the final cleanup all match
+  source exactly with zero drift. Source's three `get_save_game_path`
+  calls in this function are ALL inlined as a bare `sprintf` with no
+  directory prefix/suffix — the same drift as `loadgamedialog`, now
+  confirmed at four independent call sites across two functions.
 
 ## Third-party library identification (Task #10)
 

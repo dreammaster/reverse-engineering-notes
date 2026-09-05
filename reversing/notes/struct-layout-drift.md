@@ -12346,21 +12346,43 @@ swapping listbox item text via `CLB_GETTEXT`/`CLB_SETTEXT` message
 pairs) matches source's own nested-loop bubble sort (`:922-937`)
 exactly, including the literal `mcode` constants.
 
-### savegamedialog closes at header/main-flow level
+### savegamedialog closes completely, finding two more instances of the missing-directory-prefix drift
 
 `SaveGameDialog`'s own long-unidentified helper call (`sub_4266C2`)
-turns out to be `savegamedialog()` (`acdialog.cpp:1106-1220ish`) --
-called between `setup_for_dialog()` and `restore_after_dialog()`,
-exactly matching source's own call site. Confirmed at a decisive,
-zero-drift level for the header/main-flow shape (a ~750-line function,
-not exhaustively traced given its size): `get_global_message(0x3DB=
-987=MSG_SAVEBUTTON)`/`get_global_message(0x3DC=988=MSG_SAVEDIALOG)`
-(both zero drift) copied into local buffers exactly matching source;
-`boxleft`/`boxtop`/`buttonhit`/`labeltop` computed identically to
+turns out to be `savegamedialog()` (`acdialog.cpp:1106-1237`) -- called
+between `setup_for_dialog()` and `restore_after_dialog()`, exactly
+matching source's own call site. An immediate follow-up round traced
+this ~750-line function to completion; every branch matches source
+exactly with zero drift outside the one recurring pattern below.
+Header: `get_global_message(0x3DB=987=MSG_SAVEBUTTON)`/`(0x3DC=988=
+MSG_SAVEDIALOG)` (zero drift) copied into local buffers; `boxleft`/
+`boxtop`/`buttonhit`/`labeltop` computed identically to
 `loadgamedialog`'s own already-confirmed formulas; `CSCIDrawWindow`/
-the `ctrlcancel`/`ctrllist` `CSCICreateControl` calls all match source
-exactly. The remainder -- the `toomanygames`-gated button/label-text
-swap, the main message loop, and the nested "confirm overwrite"
-sub-dialog -- was read at a structural level confirming the same
-overall shape as source but not traced instruction-by-instruction,
-left as a candidate for a future round's deeper pass.
+`ctrlcancel`/`ctrllist` all match exactly; the `toomanygames`-gated
+button/label-text swap (`MSG_REPLACE`/`MSG_MUSTREPLACE`, zero drift)
+matches exactly.
+
+The main message loop: `mes.id==ctrlok` triggers `CLB_GETCURSEL`/
+`CTB_GETTEXT` reads, then (if `toomanygames`) a nested confirm-
+overwrite sub-dialog whose own `CSCIDrawWindow`/three-`CSCICreateControl`
+/`do-while(CSCIWaitMessage)`-loop/`CTB_GETTEXT`/six-`CSCIDeleteControl`-
+in-source-order/`CSCIEraseWindow` sequence matches source exactly,
+including every `get_global_message` literal (`MSG_REPLACEWITH1`=991,
+`MSG_REPLACEWITH2`=992, `MSG_REPLACE`=989, `MSG_CANCEL`=985, all zero
+drift). The "create a new game" branch (`strcmp(buffer2,bufTemp)!=0`)
+computes `highestnum` over `filenumbers[]`/`numsaves` exactly matching
+source, quits with the literal `"Save game directory overflow"` string
+if `highestnum>90`(zero drift), and sets `toret=highestnum+1`. REAL
+DRIFT, CONFIRMED (a THIRD and FOURTH occurrence of the SAME pattern
+already found in `loadgamedialog`): source calls `get_save_game_path`
+THREE times in this function (`acdialog.cpp:1205`/`1213`); ALL of them
+are inlined here as a bare `sprintf(bufTemp,"agssave.%03d",toret)` with
+no `saveGameDirectory` prefix or `saveGameSuffix` -- this build's save-
+path handling has now been shown missing its directory prefix/suffix
+at FOUR independent call sites across two functions, about as
+thoroughly confirmed as a drift gets in this project. Identifies a new
+global, `lpTemp2` (set alongside `lpTemp`). The `CM_SELCHANGE` branch
+and the final six-call cleanup sequence (`ctrltbox`,`ctrltex1`,
+`ctrllist`,`ctrlok`,`ctrlcancel`,then `CSCIEraseWindow`) both match
+source's exact order with zero drift. This function has no remaining
+unexamined branches.
