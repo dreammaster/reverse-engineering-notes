@@ -11572,3 +11572,24 @@ exactly. Both confirm, for a THIRD time this cluster, that `ci_fopen()`
 (the case-insensitive-path wrapper) doesn't exist anywhere in this
 build's CLIB subsystem -- every file-open attempt uses the plain CRT
 `fopen()` directly.
+
+### load_graphical_scripts found: the missing loader half of the graphical-scripts subsystem
+
+No 2011 source counterpart exists (the whole "graphical scripts"
+AGS-Editor feature, per `run_graph_script`'s own much earlier entry,
+has no trace in 2011 beyond one dead `CHANGES.TXT`-documented comment
+line), but this function's own behavior directly connects two
+previously-separate pieces of the same subsystem. Opens with the same
+`route_script_link` anti-tamper gate seen elsewhere this session, then
+loops: read a 4-byte block marker (checking for -1 or the stream's own
+EOF/error flag to end the loop), read a 4-byte size, build a temp
+filename via `sprintf(FileName,"~acsc%d.tmp",marker)` -- the EXACT SAME
+filename pattern `run_graph_script`'s own loader reads back later, at
+actual graph-script-execution time -- then `malloc`+`fread`+`fwrite`
+that block straight into the numbered temp file. This is the LOADER
+half: called from `load_main_block` during room loading, it extracts
+each embedded graph-script block from the room file into its own temp
+file, which `run_graph_script` reads back by the same filename pattern
+when a room event actually triggers it. Closes the loop on this
+project's entire graphical-scripts investigation -- loader and reader
+are now both identified and connected.

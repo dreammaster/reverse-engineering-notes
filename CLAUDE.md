@@ -3313,6 +3313,14 @@ disassembly work.
   `data_filenames[]` access confirms a second independent 20-byte
   stride matching the OLD `MultiFileLib` struct. Both functions use
   plain CRT `fopen()` everywhere instead of a case-insensitive wrapper.
+- **`load_graphical_scripts` found: the missing loader half of the
+  graphical-scripts subsystem.** No 2011 counterpart exists, but its
+  own behavior connects directly to `run_graph_script`'s own already-
+  matched reader: called from `load_main_block` during room loading, it
+  extracts embedded graph-script blocks from the room file into
+  numbered `"~acsc%d.tmp"` temp files — the exact same filename pattern
+  `run_graph_script` reads back later at execution time. Loader and
+  reader are now both identified and connected.
 
 ## Third-party library identification (Task #10)
 
