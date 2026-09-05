@@ -11388,3 +11388,13 @@ writes `display_fps` unconditionally, missing source's guard against
 overwriting a locked value. `cmdd==99` (`ccSetOption(SCOPT_DEBUGRUN,...)`
 , `0x10`, zero drift) and the final `quit("unknown command code")`
 fallback both match source exactly.
+
+### atexit_handler closes: a second independent confirmation of the binary's own version string
+
+A complete, exact, zero-drift match to `Engine/AC.CPP:9070-9078` -- the
+literal error text and the `ACI_VERSION_TEXT` macro (resolving to the
+literal string `"2.40.325"`) both match verbatim. This is a SECOND
+independent confirmation, from a completely different code path and
+string literal, of the exact self-reported ACI version this session's
+`script_debug` round already found -- the binary states its own version
+in at least two unrelated places, both agreeing.

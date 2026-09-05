@@ -3249,6 +3249,10 @@ disassembly work.
   areas debug view missing `prepare_walkable_areas()`, a room-teleport
   command missing the room-list-selector alternative, and an
   unconditional `display_fps` write missing source's locked-value guard.
+- **`atexit_handler` closes as a zero-drift match** — its literal error
+  text and `ACI_VERSION_TEXT` (`"2.40.325"`) provide a second,
+  independent confirmation of the binary's self-reported version from
+  a different code path than `script_debug`'s own finding.
 
 ## Third-party library identification (Task #10)
 

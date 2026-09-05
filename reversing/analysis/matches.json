@@ -317,7 +317,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"if(proper_exit==0){sprintf(pexbuf,\\\"...Program pointer: %+03d (write this number down), ACI version \\\" ACI_VERSION_TEXT \\\"...\\\", our_eip); platform->DisplayAlert(pexbuf);}\" (AC.CPP:9070-9078) -- the literal error text (\"the program has exited without requesting it\"/\"write this number down\"/\"contact Chris Jones\") matches verbatim, and the ACI_VERSION_TEXT macro resolves to the literal string \"2.40.325\" -- a SECOND independent confirmation (after script_debug's cmdd==1 engine-info string, this session's own new finding) of the binary's exact self-reported ACI version, from a completely different code path/string literal. platform_DisplayAlert stands in for platform->DisplayAlert with no platform-object indirection, as expected."
   },
   {
     "kind": "function",
