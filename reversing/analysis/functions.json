@@ -3005,9 +3005,9 @@
   "is_named": true
  },
  {
-  "name": "sub_425A22",
+  "name": "checkcontrols",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "finddefaultcontrol",

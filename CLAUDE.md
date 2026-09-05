@@ -3562,6 +3562,13 @@ disassembly work.
   — this build's loop spins as fast as the CPU allows while a CSCI
   dialog button is held down, rather than pacing itself to the game's
   timer tick. Names `NewControl::mouseisinarea()`, a zero-drift match.
+- **`checkcontrols` closes, cross-confirming `NewControl`'s vtable slot
+  ordering from a third call site.** An exact, zero-drift match — loops
+  `vobjs[]` over `MAXCONTROLS`(20), calling each control's non-virtual
+  `mouseisinarea()` and, on a hit, returning `pressedon()`'s result via
+  vtable slot 1 — reconfirming `draw()`=0/`pressedon()`=1/
+  `processmessage()`=2 alongside the derived-class evidence already
+  gathered this session.
 
 ## Third-party library identification (Task #10)
 

@@ -6777,5 +6777,14 @@
     "source_line": 218,
     "confidence": "high",
     "evidence": "NewControl::mouseisinarea() (acdialog.h:218-227) -- an exact, zero-drift match: \"if(topwindowhandle != wlevel) return 0;\" (dword_4BA93C=topwindowhandle vs [this+0x1C]=wlevel, already-confirmed field) then \"if((mousex>x)&(mousex<x+wid)&(mousey>y)&(mousey<y+hit)) return 1; return 0;\" using the already-confirmed mousex/mousey globals (dword_5358CC/dword_5358D0) and NewControl's own x/y/wid/hit field offsets, matching source's bitwise-AND (not short-circuit &&) style exactly. Called from PushButton::pressedon (this round's own new match) and one other, not yet individually characterized, caller (sub_425A22)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425A22",
+    "new_name": "checkcontrols",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 715,
+    "confidence": "high",
+    "evidence": "checkcontrols() (acdialog.h:715-727) -- a complete, exact, zero-drift match: smcode(dword_523704)=0; for(kk=0;kk<MAXCONTROLS(0x14=20, zero drift, matching this build's own already-confirmed MAXCONTROLS value); if(vobjs[kk](dword_523578[kk], already established via CSCISendControlMessage's own entry)!=NULL); if(vobjs[kk]->mouseisinarea() (vtable slot 0, already matched this round as NewControl::mouseisinarea)); controlid(dword_523710)=kk; return vobjs[kk]->pressedon() (vtable slot 1, called via [edx+4] -- cross-confirming the vtable slot ordering draw()=0/pressedon()=1/processmessage()=2 already established from the pressedon()/processmessage() side, now confirmed from this call site too). Called from CSCIWaitMessage (already matched) as part of its own message-polling loop."
   }
 ]

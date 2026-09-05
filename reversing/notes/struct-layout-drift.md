@@ -12264,3 +12264,20 @@ button-hold loop has NO frame-rate throttling at all, spinning as fast
 as the CPU allows rather than pacing itself to the game's own timer
 tick -- worth flagging for the eventual ScummVM port as a potential
 busy-loop/CPU-usage difference during a held-down CSCI dialog button.
+
+### checkcontrols closes, cross-confirming the NewControl vtable slot ordering
+
+`NewControl::mouseisinarea()`'s own second, not-yet-characterized
+caller (`sub_425A22`) turns out to be `checkcontrols()` (`acdialog.h:
+715-727`) -- a complete, exact, zero-drift match: `smcode=0;` then a
+loop over `vobjs[kk]` for `kk<MAXCONTROLS`(`0x14`=20, zero drift,
+matching this build's own already-confirmed `MAXCONTROLS`), calling
+each populated control's `mouseisinarea()` (a direct, non-virtual call,
+matching source's own non-virtual method) and, on a hit, setting
+`controlid` and returning `vobjs[kk]->pressedon()`'s
+result directly (called via vtable slot 1, i.e. `[edx+4]`) -- cross-
+confirming, from a THIRD call site, the vtable slot ordering `draw()`=
+0/`pressedon()`=1/`processmessage()`=2 already established from the
+`pressedon()`/`processmessage()` side of several derived classes this
+session. Called from `CSCIWaitMessage` (already matched) as part of
+its own message-polling loop.

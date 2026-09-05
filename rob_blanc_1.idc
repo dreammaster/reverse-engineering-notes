@@ -37512,6 +37512,7 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
 	create_insn	(0X425A22);
+	set_name	(0X425A22,	"checkcontrols");
 	create_insn	(x=0X425A30);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X425A39);
@@ -40676,8 +40677,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4286D0);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4286D3);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40687,6 +40686,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4286D3);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4286DB);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -46226,8 +46227,6 @@ static Bytes_7(void) {
 	create_insn	(0X42D8B6);
 	create_insn	(x=0X42D8C0);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42D8CC);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46237,6 +46236,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D8CC);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42D8D5);
 	op_hex		(x,	1);
 	set_cmt	(0X42D8D8,	"FileName",	0);
@@ -52433,8 +52434,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4332C1);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4332C4);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52444,6 +52443,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4332C4);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4332CA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4332D0);
@@ -158508,6 +158509,7 @@ static Functions_7(void) {
 	set_frame_size(0X425988, 0, 4, 0);
 	add_func    (0X425A22,0X425A93);
 	set_func_flags(0X425A22,0x5410);
+	set_func_cmt(0X425A22,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: checkcontrols() (acdialog.h:715-727) -- a complete, exact, zero-drift match: smcode(dword_523704)=0; for(kk=0;kk<MAXCONTROLS(0x14=20, zero drift, matching this build's own already-confirmed MAXCONTROLS value); if(vobjs[kk](dword_523578[kk], already established via CSCISendControlMessage's own entry)!=NULL); if(vobjs[kk]->mouseisinarea() (vtable slot 0, already matched this round as NewControl::mouseisinarea)); controlid(dword_523710)=kk; return vobjs[kk]->pressedon() (vtable slot 1, called via [edx+4] -- cross-confirming the vtable slot ordering draw()=0/pressedon()=1/processmessage()=2 already established from the pressedon()/processmessage() side, now confirmed from this call site too). Called from CSCIWaitMessage (already matched) as part of its own message-polling loop.", 1);
 	set_frame_size(0X425A22, 0X4, 4, 0);
 	add_func    (0X425A93,0X425AF7);
 	set_func_flags(0X425A93,0x5410);
@@ -158801,6 +158803,10 @@ static Functions_7(void) {
 	set_frame_size(0X42A2D8, 0, 4, 0X8);
 	define_local_var(0X42A2D8, 0X42A3FC, "[bp+0X8]", "FileName");
 	define_local_var(0X42A2D8, 0X42A3FC, "[bp+0XC]", "Mode");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42A400,0X42A494);
 	set_func_flags(0X42A400,0x5410);
 	SetType(0X42A400, "void cc_error(char *descr, ...);");
@@ -158809,10 +158815,6 @@ static Functions_7(void) {
 	define_local_var(0X42A400, 0X42A494, "[bp-0X3EC]", "ArgList");
 	define_local_var(0X42A400, 0X42A494, "[bp-0X3E8]", "Buffer");
 	define_local_var(0X42A400, 0X42A494, "[bp+0X8]", "Format");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42A494,0X42A4C1);
 	set_func_flags(0X42A494,0x5410);
 	SetType(0X42A494, "void __stdcall ccSetOption(int optbit, int onoroff);");
@@ -159608,6 +159610,10 @@ static Functions_8(void) {
 	add_func    (0X439310,0X439487);
 	set_func_flags(0X439310,0x5400);
 	set_frame_size(0X439310, 0X10, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X439490,0X439599);
 	set_func_flags(0X439490,0x5400);
 	set_frame_size(0X439490, 0X14, 0, 0);
@@ -159651,10 +159657,6 @@ static Functions_8(void) {
 	add_func    (0X439C60,0X439CB6);
 	set_func_flags(0X439C60,0x5400);
 	set_frame_size(0X439C60, 0, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X439CC0,0X439EBC);
 	set_func_flags(0X439CC0,0x5400);
 	SetType(0X439CC0, "int __cdecl sub_439CC0(float, float, float, int, int, int);");
@@ -161238,6 +161240,10 @@ static Functions_9(void) {
 	set_func_flags(0X460820,0x5400);
 	set_func_cmt(0X460820,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: int get_config_int(AL_CONST char *section, AL_CONST char *name, int def) (Common/libinclude/allegro/config.h:42, AL_FUNC declaration). sub_460820's own prologue declares exactly 3 dword parameters (arg_0, arg_4, arg_8), matching this 3-argument shape precisely. Called from the already-matched mouse_directx_init (sub_464A30) with the two uconvert() results (section, name) plus a default value, matching source's \"get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT)\" argument order exactly. Body has a local 0x100-byte buffer and walks a linked list via dword_5429AC/[esi] pointer-chasing, consistent with searching a parsed config-file structure for a matching section+key. Confidence medium: the actual implementation (Allegro's config.c) is not present in this checkout, so not traced statement-by-statement against real source -- this match rests on parameter-c" "ount shape + call-site correlation + plausible body structure only. UPGRADED to high confidence", 1);
 	set_frame_size(0X460820, 0X104, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X460910,0X460991);
 	set_func_flags(0X460910,0x5400);
 	set_frame_size(0X460910, 0X44, 0, 0);
@@ -161275,10 +161281,6 @@ static Functions_9(void) {
 	set_func_flags(0X461370,0x5400);
 	set_func_cmt(0X461370,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: AL_CONST char *get_config_text(AL_CONST char *msg) at src/config.c:1304. Matched via the unique string \"[language]\" (uconvert_ascii(\"[language]\", tmp1), the section name used to look up a translated message) -- this literal appears nowhere else in the source tree. sub_461370 takes exactly one argument, matching get_config_text's single-parameter signature. Called with a driver-description field ([eax+0Ch]) from the not-yet-named driver-search loop that also calls detect_digi_driver (sub_443500's caller) -- consistent with translating a digital sound driver's display name via the [language] config section, a common Allegro pattern for user-facing driver descriptions.", 1);
 	set_frame_size(0X461370, 0X314, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X461520,0X461530);
 	set_func_flags(0X461520,0x5404);
 	SetType(0X461520, "__time32_t __cdecl _mkgmtime_1(struct tm *const Tm);");
@@ -163432,6 +163434,10 @@ static Functions_10(void) {
 	add_func    (0X48D850,0X48D8D4);
 	set_func_flags(0X48D850,0x5400);
 	set_frame_size(0X48D850, 0XC, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X48D8E0,0X48D90C);
 	set_func_flags(0X48D8E0,0x15400);
 	set_frame_size(0X48D8E0, 0X4, 0, 0);
@@ -163505,10 +163511,6 @@ static Functions_10(void) {
 	add_func    (0X48E580,0X48E5DE);
 	set_func_flags(0X48E580,0x5400);
 	set_frame_size(0X48E580, 0XC, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X48E5E0,0X48E66D);
 	set_func_flags(0X48E5E0,0x5400);
 	set_frame_size(0X48E5E0, 0X4, 0, 0);
