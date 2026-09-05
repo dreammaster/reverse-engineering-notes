@@ -12600,6 +12600,33 @@ closest this struct's own total size can be pinned down without a
 `load_main_block`'s, and `roomstruct::roomstruct()`'s own read/write
 sequences reference has now been mapped or ruled out.
 
+### fix_player_sprite named, closing a callgraph thread from update_stuff/walk_character
+
+A fresh callgraph-following pass off `update_stuff`/`walk_character`
+(both already matched) turned up a ~430-line, previously-unnamed
+shared callee (`sub_40EB7B`) invoked from both -- `fix_player_sprite
+(MoveList*cmls,CharacterInfo*chinf)` (`acchars.cpp:206-267`), the per-
+frame walking-direction/loop-selection routine. Confirmed at a
+structural level (header and tail read directly; the branchy middle
+not traced instruction-by-instruction given the function's size): its
+opening reads `cmls->xpermove[onstage]`/`ypermove[onstage]` (both
+already-confirmed `MoveList` fields) exactly matching source; its
+`useDiagonal`-equivalent check matches source's own two-condition OR
+(`numLoops<8` via the already-confirmed `views` global, OR `chinf->
+flags&CHF_NODIAGONAL`) with the literal bitmask `8` matching
+`CHF_NODIAGONAL` (`acroom.h:2482`) with ZERO drift; and the branch
+structure matches source's own distinctive `CHECK_DIAGONAL` macro
+shape (used four times for right/left/up/down base directions, each
+with its own diagonal-override pair) closely. Both known call sites
+match source's own `(cmls,chinf)` argument order exactly, including
+`update_stuff`'s own `&mls[chinf->walking]` computation via the
+already-confirmed `0x200`-byte `MoveList` stride. The function's own
+tail calls what is plausibly `start_character_turning` (`acchars.cpp:
+158-195`) fully inlined -- its own two `find_looporder_index` calls
+(fromidx/toidx) match that smaller function's own distinctive shape,
+though not independently confirmed as a separately-inlined unit this
+round.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

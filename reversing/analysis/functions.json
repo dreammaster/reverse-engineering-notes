@@ -1010,9 +1010,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40EB7B",
+  "name": "fix_player_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "update_stuff",

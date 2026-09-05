@@ -3677,6 +3677,12 @@ disassembly work.
   compiled footprint therefore ends at `+0x3A20` as far as any
   reachable code path ever touches it, the closest this struct's total
   size can be pinned without a `sizeof`/malloc-literal anchor.
+- **`fix_player_sprite` named**, closing a callgraph thread from
+  `update_stuff`/`walk_character`. Confirmed structurally: the
+  per-frame walking-direction/loop-selection routine, matching
+  source's `useDiagonal`/`CHECK_DIAGONAL` logic with `CHF_NODIAGONAL`
+  (zero drift) and both known call sites' `(cmls,chinf)` argument
+  shape. Its own tail plausibly inlines `start_character_turning`.
 
 ## Third-party library identification (Task #10)
 
