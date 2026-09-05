@@ -1060,9 +1060,9 @@
   "is_named": false
  },
  {
-  "name": "sub_410937",
+  "name": "draw_sprite_list",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "construct_object_gfx",

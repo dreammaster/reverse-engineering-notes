@@ -3732,6 +3732,15 @@ disassembly work.
   three times, each flipping a just-rendered bitmap vertically into the
   `actsps[]` character-sprite cache — the specific role wasn't traced
   further this round.
+- **`draw_sprite_list` found: this build's own sort predates 2011's
+  "convert horrid bubble sort to use qsort" refactor.** This build's
+  own O(n²) insertion sort, fused with the actual per-sprite draw call
+  (which 2011 splits into a separate function), IS the pre-2.60.672
+  predecessor algorithm that 2011's own source comment at this exact
+  spot explicitly dismisses — preserved as a historical artifact in
+  the reference source's own text. Also confirms `SpriteListEntry`'s
+  base address for the first time, and a third independent route to
+  the already-established sprite-list capacity.
 
 ## Third-party library identification (Task #10)
 

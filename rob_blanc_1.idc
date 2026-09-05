@@ -15514,6 +15514,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X410932);
 	op_hex		(x,	1);
 	create_insn	(0X410937);
+	set_name	(0X410937,	"draw_sprite_list");
 	create_insn	(x=0X41093A);
 	op_hex		(x,	1);
 	create_insn	(x=0X410940);
@@ -17471,8 +17472,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X412C8A);
 	op_stkvar	(x,	1);
 	set_cmt	(0X412C8D,	"int",	0);
-	create_insn	(x=0X412C8E);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -17482,6 +17481,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X412C8E);
+	op_stkvar	(x,	1);
 	set_cmt	(0X412C91,	"Str",	0);
 	create_insn	(x=0X412C97);
 	op_hex		(x,	1);
@@ -23416,8 +23417,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X41897F);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X41898A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23427,6 +23426,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41898A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X418991);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418997);
@@ -29128,8 +29129,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X41E36D);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X41E370);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29139,6 +29138,8 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41E370);
+	op_stkvar	(x,	1);
 	set_cmt	(0X41E373,	"Stream",	0);
 	create_insn	(x=0X41E374);
 	op_stkvar	(x,	1);
@@ -34816,9 +34817,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X422D38);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X422D3D);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34828,6 +34826,9 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X422D3D);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X422D47);
 	op_hex		(x,	1);
 	create_insn	(x=0X422D4A);
@@ -40645,8 +40646,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X428645);
 	op_hex		(x,	1);
-	create_insn	(x=0X428649);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -40656,6 +40655,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X428649);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X42864D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X428658);
@@ -46188,9 +46189,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42D7B7);
 	op_hex		(x,	1);
-	create_insn	(x=0X42D7BE);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -46200,6 +46198,9 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D7BE);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X42D7C3);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42D7CC);
@@ -52398,8 +52399,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4331AC);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4331B2);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52409,6 +52408,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4331B2);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4331B8);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4331C4);
@@ -58326,8 +58327,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439573);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43957A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58337,6 +58336,8 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43957A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X439582);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439590);
@@ -64037,8 +64038,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F344);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X43F348);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -64048,6 +64047,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F348);
+	op_hex		(x,	1);
 	create_insn	(x=0X43F34B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F354);
@@ -156238,6 +156239,7 @@ static Functions_2(void) {
 	define_local_var(0X410913, 0X410937, "[bp+0X8]", "index");
 	add_func    (0X410937,0X410AFA);
 	set_func_flags(0X410937,0x5410);
+	set_func_cmt(0X410937,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: draw_sprite_list() (AC.CPP:7579-7602ish) -- a decisive, historically-anchored match. This build's own implementation is a hand-rolled INSERTION SORT (init two 40-slot scratch arrays -- sortarray[i]=0xFF, distarray[i]=9999(0x270F) sentinel -- then, for each of sprlistsize(dword_5231DC) sprites, find its insertion position by baseline via a linear scan, shift later entries down by one slot, insert), followed immediately by iterating the now-sorted array and calling put_sprite_256(x,y,bmp) (already matched) per entry -- matching source's own sort-then-draw role EXACTLY, but this build fuses what 2011 splits across two functions (draw_sprite_list's own qsort, and a SEPARATE later drawing loop inside draw_screen_overlay, already matched) into one. DECISIVE, HISTORICALLY-ANCHORED CONFIRMATION: source's own comment at this exact point reads \"// 2.60.672 - convert horrid bubble sort to use qsort instead\" -- this build's own O(n^2) insertion" " sort (not literally bubble sort, but the same complexity class the ", 1);
 	set_frame_size(0X410937, 0XD8, 4, 0);
 	add_func    (0X410AFA,0X410C6A);
 	set_func_flags(0X410AFA,0x5410);
@@ -156434,6 +156436,10 @@ static Functions_2(void) {
 	define_local_var(0X414018, 0X41407A, "[bp+0X8]", "ovrid");
 	define_local_var(0X414018, 0X41407A, "[bp+0XC]", "newx");
 	define_local_var(0X414018, 0X41407A, "[bp+0X10]", "newy");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X41407A,0X4140FD);
 	set_func_flags(0X41407A,0x5410);
 	SetType(0X41407A, "int __stdcall DisplaySpeechBackground(int charid, char *speel);");
@@ -156441,10 +156447,6 @@ static Functions_2(void) {
 	set_frame_size(0X41407A, 0X8, 4, 0X8);
 	define_local_var(0X41407A, 0X4140FD, "[bp+0X8]", "charid");
 	define_local_var(0X41407A, 0X4140FD, "[bp+0XC]", "Str");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X4140FD,0X4141B8);
 	set_func_flags(0X4140FD,0x5410);
 	SetType(0X4140FD, "void DisplayAt(int xxp, int yyp, int widd, char *texx, ...);");
@@ -156869,6 +156871,10 @@ static Functions_3(void) {
 	set_frame_size(0X416CE3, 0X1C, 4, 0);
 	define_local_var(0X416CE3, 0X416E23, "[bp-0X18]", "Block");
 	define_local_var(0X416CE3, 0X416E23, "[bp-0X14]", "Buffer");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X416E23,0X416ED8);
 	set_func_flags(0X416E23,0x5410);
 	SetType(0X416E23, "void __stdcall add_inventory(int inum);");
@@ -156876,10 +156882,6 @@ static Functions_3(void) {
 	set_frame_size(0X416E23, 0X4, 4, 0X4);
 	define_local_var(0X416E23, 0X416ED8, "[bp-0X4]", "ee");
 	define_local_var(0X416E23, 0X416ED8, "[bp+0X8]", "inum");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X416ED8,0X417021);
 	set_func_flags(0X416ED8,0x5410);
 	set_func_cmt(0X416ED8,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Already correctly named in the IDB (matching 2011's own script-facing LoseInventory name), previously with no matches.json entry at all. Validates the inventory number (0-99), decrements CharacterInfo.inv[]@+0x44 (already confirmed) on playerchar, clears activeinv@+0x34 and resets the cursor if the now-empty item was the active inventory item; if the item count reached zero, searches play_invorder[0..inv_numorder) for the item, and if found, decrements GameState.inv_numorder@+0xEC then shifts every later entry down by one: \"play_invorder[i]=word_4EF02E[i]\" for i from the found index onward -- decisively confirmed as play_invorder[i]=play_invorder[i+1] (word_4EF02E is play_invorder's own address +2 bytes/+1 element, verified via their adjacent data-label addresses in the disassembly with zero bytes between). Finally sets guis_need_update=1 and calls run_on_event(GE_LOSE_INV=8,wparam) -- see that function's own now-complete event-type" " table. A second function, alongside add_inventory, treating play_in", 1);
@@ -157304,16 +157306,16 @@ static Functions_4(void) {
 	set_func_cmt(0X419C73,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj ADDITIONAL FIELD EVIDENCE (found later, same investigation thread): the invalid-GUI-number check \"if ((ifn<0) | (ifn>=game.numgui)) quit(...);\" matches disasm's \"cmp ifn,0; setl al; cmp ecx,dword_51DB04; setnl dl; or eax,edx\" pattern exactly -- independently re-confirmed by the sibling function InterfaceOff (AC.CPP:18618-18619), which has the identical check against the same dword_51DB04. New field evidence: dword_51DB04 = GameSetupStructBase.numgui, at +0xA7EC relative to game_gamename -- see reversing/scripts/apply_structs.py and struct-layout-drift.md for the struct-level writeup. [Offset corrected: this citation originally used a pre-correction relative offset that was later found to be off by +8 bytes due to an alignment-rounding bug in the byte-offset-counting script -- see the OFFSET CORRECTION section in struct-layout-drift.md and apply_structs.py for t" "he full story. The corrected offset is shown above.]", 1);
 	set_frame_size(0X419C73, 0, 4, 0X4);
 	define_local_var(0X419C73, 0X419D35, "[bp+0X8]", "ifn");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X419D35,0X419E99);
 	set_func_flags(0X419D35,0x5410);
 	SetType(0X419D35, "void __stdcall InterfaceOff(int ifn);");
 	set_func_cmt(0X419D35,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates ifn<numgui (dword_51DB04), then does the De Morgan-negated equivalent of 2011's early-return guard: \"if ((on!=0)||(popup==1)) {...turn off...}\" matches \"if((on==0)&&(popup!=POPUP_MOUSEY)) return;\" (AC.CPP:18618-18623) exactly, reconfirming both GUIMain.on@+0x90 and POPUP_MOUSEY=1 (already established) from a new site. The turn-off body: sets on@+0x90=0; if mouseover@+0x54>=0, calls objs[mouseover]->vtbl[2]() then sets mouseover=-1 -- vtable SLOT 2 is already independently established as MouseLeave (from the GUIButton vtable-recovery round), so this is a clean, new confirmation of both GUIMain.mouseover@+0x54 AND the shared GUIObject vtable slot order, matching 2011's \"guis[ifn].objs[guis[ifn].mouseover]->MouseLeave(); guis[ifn].mouseover=-1;\" exactly. DRIFT: no `control_positions_changed()` call anywhere" " in the function -- CONFIRMED ABSENT, a later addition. Then guis_ne", 1);
 	set_frame_size(0X419D35, 0X4, 4, 0X4);
 	define_local_var(0X419D35, 0X419E99, "[bp+0X8]", "ifn");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X419E99,0X419F49);
 	set_func_flags(0X419E99,0x5410);
 	SetType(0X419E99, "void __stdcall SetGUIPosition(int ifn, int xx, int yy);");
@@ -157743,6 +157745,10 @@ static Functions_5(void) {
 	set_func_flags(0X41C040,0x5410);
 	set_func_cmt(0X41C040,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void SetObjectIgnoreWalkbehinds(int cha,int clik) at AC.CPP:20911-20919. Exact match (minus a trailing cache-invalidation line this build predates): validates the object number via the newly-renamed is_valid_object (sub_4256E0, see its own entry), quitting with the function's own \"!SetObjectIgnoreWalkbehinds: Invalid object specified\" otherwise; unconditionally clears RoomObject.flags@+0x1D bit 1 (\"and al,0FDh\"), then sets it back if clik!=0 (\"or dl,2\") -- matching source's \"objs[cha].flags&=~OBJF_NOWALKBEHINDS; if(clik) objs[cha].flags|=OBJF_NOWALKBEHINDS;\" exactly, giving RoomObject.flags bit 1 (OBJF_NOWALKBEHINDS=2, already confirmed via prepare_characters_for_drawing) a third independent confirmation. DRIFT CONFIRMED ABSENT: source's trailing \"objcache[cha].ywas=-9999;\" (invalidating a hardware-acceleration drawing cache) has no counterpart here -- consistent with this build's established, repeated lack of the objcache/actsps dr" "awing-cache abstraction found absent elsewhere (e.g. CharacterInfo.a", 1);
 	set_frame_size(0X41C040, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41C0AD,0X41C2D7);
 	set_func_flags(0X41C0AD,0x5410);
 	SetType(0X41C0AD, "void __stdcall FaceLocation(int cha, int xx, int yy);");
@@ -157752,10 +157758,6 @@ static Functions_5(void) {
 	define_local_var(0X41C0AD, 0X41C2D7, "[bp+0X8]", "cha");
 	define_local_var(0X41C0AD, 0X41C2D7, "[bp+0XC]", "xx");
 	define_local_var(0X41C0AD, 0X41C2D7, "[bp+0X10]", "yy");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41C2D7,0X41C36A);
 	set_func_flags(0X41C2D7,0x5410);
 	SetType(0X41C2D7, "void __stdcall FaceCharacter(int cha, int toface);");
@@ -158252,6 +158254,10 @@ static Functions_6(void) {
 	set_func_flags(0X424330,0x5410);
 	set_func_cmt(0X424330,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseUp() at acgui.h:530: \"if (isover) activated=1;\". Exact match: cmp [this+0x20],0; jz; [this+0x1C]=1 -- reconfirms isover@+0x20 (see GUIInv__MouseOver) and activated@+0x1C (GUIObject base field, now independently confirmed across 5 classes: GUIButton, GUITextBox, GUISlider-pending, GUIMain[different struct], and now GUIInv). Vtable slot 4/+0x10 of off_4AD50C (DATA XREF .rdata:004AD51C). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424330, 0X4, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X424350,0X424377);
 	set_func_flags(0X424350,0x5410);
 	set_frame_size(0X424350, 0X4, 4, 0);
@@ -158269,10 +158275,6 @@ static Functions_6(void) {
 	add_func    (0X424400,0X424427);
 	set_func_flags(0X424400,0x5410);
 	set_frame_size(0X424400, 0X4, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X424430,0X42445C);
 	set_func_flags(0X424430,0x5410);
 	set_frame_size(0X424430, 0X4, 4, 0);
@@ -158703,6 +158705,10 @@ static Functions_7(void) {
 	set_func_flags(0X4280C0,0x5410);
 	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
 	set_frame_size(0X4280C0, 0, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42810D,0X428477);
 	set_func_flags(0X42810D,0x5410);
 	SetType(0X42810D, "int __cdecl qgimport(char *FileName, char *Str1);");
@@ -158713,10 +158719,6 @@ static Functions_7(void) {
 	define_local_var(0X42810D, 0X428477, "[bp-0X4]", "Stream");
 	define_local_var(0X42810D, 0X428477, "[bp+0X8]", "FileName");
 	define_local_var(0X42810D, 0X428477, "[bp+0XC]", "Str1");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X428477,0X4284A8);
 	set_func_flags(0X428477,0x5410);
 	set_frame_size(0X428477, 0X4, 4, 0);
@@ -159337,6 +159339,10 @@ static Functions_8(void) {
 	define_local_var(0X4338F9, 0X433DC8, "[bp+0X1C]", "movlst");
 	define_local_var(0X4338F9, 0X433DC8, "[bp+0X20]", "noredx");
 	define_local_var(0X4338F9, 0X433DC8, "[bp+0X24]", "ignore_walls");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X433DC8,0X433DDD);
 	set_func_flags(0X433DC8,0x5410);
 	set_frame_size(0X433DC8, 0, 4, 0);
@@ -159391,10 +159397,6 @@ static Functions_8(void) {
 	set_frame_size(0X434000, 0X4, 4, 0);
 	define_local_var(0X434000, 0X43401F, "[bp-0X4]", "Buffer");
 	define_local_var(0X434000, 0X43401F, "[bp+0X8]", "Stream");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X434031,0X4340E3);
 	set_func_flags(0X434031,0x5410);
 	SetType(0X434031, "void __stdcall load_script_configuration(FILE *iii);");
@@ -160565,6 +160567,10 @@ static Functions_9(void) {
 	set_func_flags(0X44C670,0x15400);
 	set_func_cmt(0X44C670,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:midi.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:midi.obj", 1);
 	set_frame_size(0X44C670, 0X110, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X44C8C0,0X44C92E);
 	set_func_flags(0X44C8C0,0x5400);
 	set_frame_size(0X44C8C0, 0XC, 0, 0);
@@ -160601,10 +160607,6 @@ static Functions_9(void) {
 	add_func    (0X44DB40,0X44DB46);
 	set_func_flags(0X44DB40,0x5400);
 	set_frame_size(0X44DB40, 0, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X44DBA0,0X44DC4D);
 	set_func_flags(0X44DBA0,0x5400);
 	set_frame_size(0X44DBA0, 0X8, 0, 0);
@@ -162607,6 +162609,10 @@ static Functions_10(void) {
 	set_func_flags(0X47C360,0x5400);
 	set_func_cmt(0X47C360,	"[reversing] confirmed match\nconfidence: medium\nevidence: JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C3FA0, bytes C1 83 2A 9E, NOT printable ASCII -- IDENTICAL to a constant checked first in sub_47D400, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"Extended Module: \" (aExtendedModule) -- an XM-format-adjacent check, structurally different from sub_47C4C0's simple fixed-offset XM check (this one scans for the signature at a non-fixed position within the first several bytes rather than a single fixed read). The fact that the SAME leading 4-byte constant appears in both this function AND sub_47D400 (which does an equivalent sliding-window scan for \"IMPM\"/IT instead) strongly suggests both are instances of a shared, generic JGMOD-internal helper pattern (a common \"packed/wrapped module\" pre-check applied identically be" "fore several different format-specific text scan", 1);
 	set_frame_size(0X47C360, 0X24, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X47C4C0,0X47C51A);
 	set_func_flags(0X47C4C0,0x5400);
 	set_frame_size(0X47C4C0, 0X18, 0, 0);
@@ -162621,10 +162627,6 @@ static Functions_10(void) {
 	set_func_flags(0X47D400,0x5400);
 	set_func_cmt(0X47D400,	"[reversing] confirmed match\nconfidence: medium\nevidence: JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C41E4, bytes C1 83 2A 9E, NOT printable ASCII -- identical to a constant checked first in sub_47C360, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"IMPM\" (aImpm) -- an IT-format-adjacent check, but structurally different from sub_47D4D0's simple fixed-offset IT check (this one returns a position/index rather than a boolean, used by the caller as an argument to the load function rather than a plain yes/no gate -- possibly indexing into a multi-module container or archive format). MEDIUM confidence: the IT-adjacent role is clear, but the leading 4-byte constant's purpose and the returned-index semantics are not resolved. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name agains" "t. See reversing/notes/third-party-library-ident", 1);
 	set_frame_size(0X47D400, 0X10, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X47D4D0,0X47D521);
 	set_func_flags(0X47D4D0,0x5400);
 	set_func_cmt(0X47D4D0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-2 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes, compares against the matched string \"IMPM\" (aImpm_0) -- the standard Impulse Tracker (.it) file format magic signature. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
@@ -165155,6 +165157,10 @@ static Functions_11(void) {
 	SetType(0X4AB010, "int __cdecl rand();");
 	set_func_cmt(0X4AB010,	"[reversing] confirmed match\nsource obj (library): libucrtd:rand.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:rand.obj", 1);
 	set_frame_size(0X4AB010, 0, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4AB016,0X4AB01C);
 	set_func_flags(0X4AB016,0x5480);
 	SetType(0X4AB016, "char *__cdecl strcat(char *Destination, const char *Source);");
@@ -165189,10 +165195,6 @@ static Functions_11(void) {
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0X4]", "Str1");
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0X8]", "Str2");
 	define_local_var(0X4AB034, 0X4AB03A, "[bp+0XC]", "MaxCount");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4AB03A,0X4AB040);
 	set_func_flags(0X4AB03A,0x5480);
 	SetType(0X4AB03A, "char *__cdecl strchr(const char *Str, int Val);");

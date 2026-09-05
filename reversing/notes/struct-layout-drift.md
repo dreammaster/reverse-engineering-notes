@@ -12761,6 +12761,42 @@ cache slot. The specific role (why a vertical, not horizontal, flip is
 needed at this particular call site) wasn't independently traced
 against source this round -- a candidate for a future look.
 
+### draw_sprite_list found: this build's own sort predates 2011's "convert horrid bubble sort to use qsort" refactor
+
+The last substantial unnamed callee from `prepare_characters_for_
+drawing`'s own sweep, `sub_410937`, closes with a decisive,
+historically-anchored match: `draw_sprite_list()` (`AC.CPP:7579-`).
+This build's own implementation is a hand-rolled O(n^2) insertion sort
+(init two 40-slot scratch arrays, find each sprite's insertion
+position by baseline via a linear scan, shift, insert) immediately
+followed by iterating the sorted array and calling `put_sprite_256`
+(already matched) per entry -- matching source's own sort-then-draw
+role exactly, though fusing what 2011 splits across two functions
+(`draw_sprite_list`'s own `qsort`, and a separate later drawing loop
+inside `draw_screen_overlay`) into one. The decisive anchor: source's
+own comment sitting at this exact point reads `// 2.60.672 - convert
+horrid bubble sort to use qsort instead` -- this build's own O(n^2)
+sort genuinely IS that pre-2.60.672 predecessor algorithm the comment
+dismisses, still preserved as a historical artifact in the reference
+source's own text, the SAME "matches a historical artifact preserved
+in source comments" pattern already found for almp3's `MP3CHUNKSIZE`
+and the `bpalettes` predecessor line. AGS 2.60 postdates this binary's
+own pinned 2.4b/July-2002 version by roughly a year, fully consistent.
+
+Also confirms, via the array's own literal 40-slot capacity, a THIRD
+independent route to the already-established `MAX_SPRITES_ON_SCREEN`-
+equivalent capacity (roughly half of 2011's declared 76). CONFIRMED
+ABSENT: source's own leading `walkBehindMethod==DrawAsSeparateSprite`
+preliminary loop -- no such mode exists in this build, consistent with
+the already-established finding that this build's ONLY walk-behind
+masking method is direct pixel-masking via `sort_out_walk_behinds`
+(this session's own earlier new match), not a separate-sprite
+compositing mode. Field evidence from the final draw pass also pins
+down `SpriteListEntry`'s own base address (`0x4DC870`) for the first
+time: `bmp`@+0x00/`baseline`@+0x04 (confirmed a further way as the sort
+key)/`x`@+0x08/`y`@+0x0C/`transparent`@+0x10 (feeding the already-
+established `trans_mode` global).
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`
