@@ -12281,3 +12281,25 @@ confirming, from a THIRD call site, the vtable slot ordering `draw()`=
 `pressedon()`/`processmessage()` side of several derived classes this
 session. Called from `CSCIWaitMessage` (already matched) as part of
 its own message-polling loop.
+
+### CSCIDeleteControl's full body confirms a genuine, latent AGS engine bug: MyListBox's own destructor is dead code
+
+`CSCIDeleteControl` (already matched, but body not previously traced)
+closes with a genuinely interesting, real finding -- NOT a build-
+specific drift, but a bug shared unchanged by both eras. The
+disassembly calls `operator delete(void*)` DIRECTLY on `vobjs[haa]`
+with NO destructor call and NO vtable dispatch of any kind beforehand.
+Checking why: `NewControl` (`acdialog.h:194-243`) declares no
+destructor at all, virtual or otherwise, and of its four derived
+classes only `MyListBox` declares its own (`~MyListBox(){clearlist();}`,
+`:352-354`) -- but NON-virtually. Deleting through a `NewControl*` (as
+`vobjs[]` always is) can therefore never invoke it polymorphically in
+EITHER build. This confirms a genuine, latent AGS engine bug, present
+unchanged in this build and the 2011 reference source alike: every
+`CSCIDeleteControl(haa)` call on a `MyListBox`-backed control (the
+save/restore-game file-selector) leaks every string in its own
+`itemnames[]` array -- `clearlist()` is effectively dead code that this
+control-deletion path never reaches. Worth noting for the eventual
+ScummVM reimplementation: the leak itself need not be replicated, but a
+from-scratch `MyListBox`-equivalent shouldn't assume the original
+engine ever actually exercised its own listbox destructor path.

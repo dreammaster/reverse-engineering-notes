@@ -3569,6 +3569,16 @@ disassembly work.
   vtable slot 1 — reconfirming `draw()`=0/`pressedon()`=1/
   `processmessage()`=2 alongside the derived-class evidence already
   gathered this session.
+- **`CSCIDeleteControl`'s full body confirms a genuine, shared AGS
+  engine bug, not a build drift.** It calls `operator delete` directly
+  on `vobjs[haa]` with no destructor call at all — because `NewControl`
+  declares no destructor and `MyListBox`'s own `~MyListBox()` (the only
+  derived destructor that exists) is non-virtual, deleting through a
+  `NewControl*` can never reach it in either era. Every
+  `CSCIDeleteControl` call on the save/restore file-selector leaks its
+  `itemnames[]` strings — `clearlist()` is dead code this path never
+  runs. Not something the ScummVM port needs to replicate, but worth
+  knowing the original engine never actually exercised it.
 
 ## Third-party library identification (Task #10)
 
