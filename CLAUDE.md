@@ -3378,6 +3378,17 @@ disassembly work.
   by writing `curscript->ooo=1000`, decisively confirming that field's
   already-known "sentinel 1000 = show restore dialog" role from a new
   angle. `SaveGameDialog` has no equivalent deferral at all.
+- **A sweep for self-identifying error strings not yet tied to a
+  matched entry closes six more script-API functions.** `Random`
+  matches source's rand()%upto exactly but is missing its own
+  `if(upto<1) quit(...)` validation. `RawClearScreen`/`SaveScreenshot`
+  have no 2011 source counterpart under these names but are
+  unambiguous from their own bodies. `PlaySpeech` is a fun exact match
+  — both builds, nine years apart, still have it as a bare
+  `quit("PlaySpeech not yet implemented")` stub. `InputBox` closes as
+  an exact match to `sc_inputbox`. `InventoryScreen`'s single-field
+  write cross-confirms `post_script_cleanup`'s own already-documented
+  invscreen flag from the opposite (write) direction.
 
 ## Third-party library identification (Task #10)
 

@@ -11738,3 +11738,25 @@ simpler, consistent with save not needing the same script-execution-
 order guarantees a mid-script restore would. Both otherwise bracket a
 CSCI-style selector dialog around the real save/restore call
 (`restore_game_data`/`SaveGameSlot`, both already matched).
+
+### A sweep for self-identifying error strings not yet tied to a matched entry closes six more script-API functions
+
+`Random` matches source's `upto++; return rand()%upto;` exactly but is
+missing the leading `if(upto<1) quit(...)` validation entirely --
+another confirmed missing-guard case. `RawClearScreen`/`SaveScreenshot`
+have no 2011 source counterpart under these names at all, but both are
+unambiguous: `RawClearScreen` fits the established `RAW_START`-macro
+pattern exactly (`clear_to_color(ebscene[bg_frame], get_col8_lookup(clr))`
+); `SaveScreenshot` appends `.bmp` if no extension is given, then calls
+an Allegro-shaped `save_bitmap`-style 3-arg function (left unnamed per
+the third-party scope rule).
+
+`PlaySpeech` closes as a fun, exact, zero-drift match -- both builds,
+nine years apart, have this function as a bare `quit("PlaySpeech not
+yet implemented")` stub, standing TODO comment and all. `InputBox`
+closes as a complete, exact match to `sc_inputbox` (`VALIDATE_STRING`/
+`setup_for_dialog`/`enterstringwindow`/`restore_after_dialog`, in
+order). `InventoryScreen` closes as `sc_invscreen()`'s net-effect
+match -- this build's `curscript[+8]=1` write is the WRITE side of the
+same dedicated invscreen-flag field `post_script_cleanup`'s own entry
+already documented from the READ side, a clean cross-confirmation.

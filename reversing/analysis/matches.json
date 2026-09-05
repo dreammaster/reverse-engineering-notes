@@ -6389,5 +6389,59 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "No 2011 source counterpart exists under this name, same as RestoreGameDialog's own entry -- this build's hardcoded CSCI-dialog-based save/restore UI predates 2011's later redesign entirely. Confirmed a genuine 2002 script-API function via its own setup_script_exports DATA XREF. Mirrors RestoreGameDialog's own leading disabled_user_interface(byte_51FFCA)==1 check and translated \"Sorry, not now.\" message exactly, but does NOT defer when called mid-script (no inside_script/curscript.ooo check at all -- genuinely simpler than its restore counterpart, consistent with save-game not needing the same script-execution-order guarantees a mid-script restore would). Otherwise brackets a CSCI-style save-slot-selector dialog (setup_for_dialog/sub_4266C2/restore_after_dialog) around SaveGameSlot(slot,\"\") (already matched) on success."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "Random",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 20363,
+    "confidence": "high",
+    "evidence": "int __Rand(int upto) at AC.CPP:20363-20368 (script-exported as \"Random\", AC.CPP:25072): \"upto++; if(upto<1) quit(\\\"!Random: invalid parameter passed -- must be at least 0.\\\"); return rand()%upto;\". This build's version matches \"upto+=1; return rand()%upto;\" exactly -- CONFIRMED ABSENT: the leading `if(upto<1) quit(...)` validation entirely. Calling Random with a sufficiently negative argument (upto<=-2) has no guard here at all, unlike source."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "RawClearScreen",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "No 2011 source counterpart exists under this exact name (not found anywhere in Engine/AC.CPP), but the body is unambiguous and fits the same already-established RAW_START-macro pattern as every other RawXxx function this project has matched (RawSetColor/RawDrawImage/RawSaveScreen/RawRestoreScreen/RawDrawLine/RawDrawTriangle/RawPrint): \"clear_to_color(thisroom.ebscene[play.bg_frame], get_col8_lookup(clr));\" -- ebscene[]/bg_frame (dword_523094[dword_4EEB58*4]) and get_col8_lookup all already established. A genuine 2002 script-API function this project's own RAW_* survey hadn't specifically covered until now."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SaveScreenshot",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "No 2011 source counterpart exists under this name. Body: if the caller-supplied filename has no '.' extension, appends \".bmp\" via strcat; then calls a 3-argument function (filename, virtual_scren [already established], &palette) matching Allegro's own save_bitmap(filename,bmp,palette)-shaped API (a different address from the already-separately-matched save_bmp -- plausibly the generic extension-dispatching save_bitmap() wrapper, not independently confirmed or chased further per this project's third-party-library scope rule); returns 1 on success, 0 on failure (inverted from the callee's own 0-on-success convention)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "PlaySpeech",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 13486,
+    "confidence": "high",
+    "evidence": "void __scr_play_speech(int,int) at AC.CPP:13486-13490 (script-exported as \"PlaySpeech\"). A complete, exact, zero-drift match -- and a fun one: this function is a STUB in BOTH builds, nine years apart. Source's entire body is \"quit(\\\"PlaySpeech not yet implemented\\\");\" (with a standing comment, \"*** implement this - needs to call stop_speech as well to reset the volume\", apparently never acted on) -- this build's version is the identical single quit() call with the identical literal string, no arguments even read."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "InputBox",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 18000,
+    "confidence": "high",
+    "evidence": "void sc_inputbox(const char*msg,char*bufr) at AC.CPP:18000-18005 (script-exported as \"InputBox\"): \"VALIDATE_STRING(bufr); setup_for_dialog(); enterstringwindow(get_translation(msg),bufr); restore_after_dialog();\". A complete, exact, zero-drift match -- the leading null check on Destination (matching VALIDATE_STRING's own text, the same narrower literal-==0 inline pattern already established elsewhere), setup_for_dialog, GetTranslation(=get_translation), enterstringwindow (this session's own new match), and restore_after_dialog all line up exactly in order."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "InventoryScreen",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 24101,
+    "confidence": "high",
+    "evidence": "void sc_invscreen() at AC.CPP:24101-24103: \"curscript->queue_action(ePSAInvScreen,0,\\\"InventoryScreen\\\");\". This build has no generic action-queue mechanism at all (already established -- 2002 gives each PostScriptAction its own dedicated ExecutingScript field, 2011 unifies them into one queue array); this function's entire body is \"curscript[+8]=1\" -- setting the dedicated invscreen-request flag directly, matching source's queue_action call in NET EFFECT exactly. This is the WRITE side of a field post_script_cleanup's own entry already documented from the READ side (its own +0x08 boolean flag, gating a call to __actual_invscreen()) -- a clean cross-confirmation from the opposite direction."
   }
 ]
