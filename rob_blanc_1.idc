@@ -81219,6 +81219,7 @@ static Bytes_13(void) {
 	create_insn	(0X4561F0);
 	make_array	(0X45620D,	0X3);
 	create_insn	(0X456210);
+	set_name	(0X456210,	"gfx_directx_create_system_bitmap");
 	create_insn	(x=0X456216);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X45621B);
@@ -81584,9 +81585,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X456AC2);
 	op_stkvar	(x,	1);
 	set_cmt	(0X456AD6,	"FindHandle",	0);
-	set_cmt	(0X456ADD,	"Block",	0);
-	create_insn	(x=0X456AE4);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81596,6 +81594,9 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X456ADD,	"Block",	0);
+	create_insn	(x=0X456AE4);
+	op_hex		(x,	1);
 	make_array	(0X456AF4,	0XC);
 	create_insn	(0X456B00);
 	make_array	(0X456B14,	0XC);
@@ -87747,9 +87748,6 @@ static Bytes_14(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X463401);
 	op_stkvar	(x,	0);
-	set_cmt	(0X46341E,	"Size",	0);
-	create_insn	(x=0X463427);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87759,6 +87757,9 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X46341E,	"Size",	0);
+	create_insn	(x=0X463427);
+	op_hex		(x,	1);
 	create_insn	(x=0X463438);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X463441);
@@ -93576,8 +93577,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BC86);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46BC8A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -93587,6 +93586,8 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BC8A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X46BC8E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BC92);
@@ -99519,8 +99520,6 @@ static Bytes_16(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X473EB1);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X473EBD);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99530,6 +99529,8 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X473EBD);
+	op_hex		(x,	1);
 	set_cmt	(0X473EC1,	"switch 25 cases",	0);
 	create_insn	(0X473EC1);
 	create_insn	(x=0X473ECF);
@@ -161002,6 +161003,7 @@ static Functions_10(void) {
 	set_frame_size(0X4561F0, 0, 0, 0);
 	add_func    (0X456210,0X456246);
 	set_func_flags(0X456210,0x5400);
+	set_func_cmt(0X456210,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c\nconfidence: medium\nevidence: gfx_directx_create_system_bitmap(int width,int height) -- identified primarily by call site and role: InitRenderToSurface (already matched) calls it exactly where source calls this named function (\"vscreen = gfx_directx_create_system_bitmap(ddsd.dwWidth,ddsd.dwHeight);\", acwavi.cpp:137), on the vscreen==NULL/first-use path. CAUTION: this build own body (calls sub_455B80(width,height,color_depth,4), falling back to sub_455E20(result,width,height,0x40000000) if that returns NULL/0 -- neither callee independently confirmed or chased further, per this project own third-party-library scope rule) does NOT closely resemble the 4.2.2 reference tree own gfx_directx_create_system_bitmap (wddbmp.c:632-650, which calls gfx_directx_create_surface/gfx_directx_make_bitmap_from_surface/gfx_directx_destroy_surface -- a DDRAW_SURFACE-wrapper abstraction with no counterpart visible here) -- consistent with this 2002 bi" "nary linking a genuinely older/simpler Allegro DirectX driver implementation than the 4.2.2 tree, the", 1);
 	set_frame_size(0X456210, 0X8, 0, 0);
 	add_func    (0X4562D0,0X45635A);
 	set_func_flags(0X4562D0,0x5400);
@@ -162894,6 +162896,10 @@ static Functions_10(void) {
 	add_func    (0X484630,0X4846B6);
 	set_func_flags(0X484630,0x5400);
 	set_frame_size(0X484630, 0X10, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4846C0,0X48472A);
 	set_func_flags(0X4846C0,0x5400);
 	set_frame_size(0X4846C0, 0X4, 0, 0);
@@ -162951,10 +162957,6 @@ static Functions_10(void) {
 	add_func    (0X485020,0X48508A);
 	set_func_flags(0X485020,0x5400);
 	set_frame_size(0X485020, 0X4, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X485090,0X4850FD);
 	set_func_flags(0X485090,0x5400);
 	set_frame_size(0X485090, 0X8, 0, 0);
@@ -165405,6 +165407,10 @@ static Functions_11(void) {
 	define_local_var(0X4AB4BC, 0X4AB4C2, "[bp+0X4]", "FileHandle");
 	define_local_var(0X4AB4BC, 0X4AB4C2, "[bp+0X8]", "DstBuf");
 	define_local_var(0X4AB4BC, 0X4AB4C2, "[bp+0XC]", "MaxCharCount");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4AB4C2,0X4AB4C8);
 	set_func_flags(0X4AB4C2,0x5480);
 	SetType(0X4AB4C2, "int __cdecl write(int FileHandle, const void *Buf, unsigned int MaxCharCount);");
@@ -165454,10 +165460,6 @@ static Functions_11(void) {
 	set_func_flags(0X4AB580,0x5480);
 	set_func_cmt(0X4AB580,	"[reversing] confirmed match\nsource obj (library): dinput:DINPUT.dll\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=dinput:DINPUT.dll", 1);
 	set_frame_size(0X4AB580, 0, 0, 0X10);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4AC1B4,0X4AC1B7);
 	set_func_flags(0X4AC1B4,0x5400);
 	set_frame_size(0X4AC1B4, 0, 0, 0);

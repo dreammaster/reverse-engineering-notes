@@ -12506,3 +12506,15 @@ specificity, though the overall early-return-on-failure control flow
 and final `HRESULT` values (`E_FAIL`/`NOERROR`) both match source
 exactly. Also names `get_bitmap_surface` (`acwavi.cpp:90-95`), an
 exact 6-instruction match reading `bmp->extra`@+0x30's own first field.
+
+`InitRenderToSurface`'s own `vscreen`-creation call names one more
+function at medium confidence: `gfx_directx_create_system_bitmap`
+(`sub_456210`), identified primarily by call site/role rather than a
+body-level match -- its own body (a `sub_455B80(width,height,depth,4)`
+call, falling back to `sub_455E20(result,width,height,0x40000000)` on
+failure, neither callee chased further per this project's third-party
+scope rule) does NOT closely resemble the `allegro-4.2.2` reference
+tree's own version (`wddbmp.c:632-650`, a `DDRAW_SURFACE`-wrapper
+abstraction with no counterpart visible here) -- the SAME "genuinely
+older/simpler Allegro DirectX driver" caution already established for
+`al_findfirst`/`al_findnext`/`al_findclose`.

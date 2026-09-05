@@ -6880,5 +6880,15 @@
     "source_line": 90,
     "confidence": "high",
     "evidence": "LPDIRECTDRAWSURFACE get_bitmap_surface(BITMAP*bmp) (acwavi.cpp:90-95): \"BMP_EXTRA_INFO*bei=(BMP_EXTRA_INFO*)bmp->extra; return (LPDIRECTDRAWSURFACE)bei->surf;\" -- an exact, zero-drift, 6-instruction match: reads bmp->extra@+0x30 (BITMAP's own platform-specific extra-data pointer field), then dereferences its first field (bei->surf,acwavi.cpp:83's BMP_EXTRA_INFO.surf, declared first in that struct) and returns it directly. Called from InitRenderToSurface (already matched, this round's own full-body confirmation) as \"g_pDDSOffscreen = get_bitmap_surface(vscreen);\"."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_456210",
+    "new_name": "gfx_directx_create_system_bitmap",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c",
+    "source_line": 632,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "gfx_directx_create_system_bitmap(int width,int height) -- identified primarily by call site and role: InitRenderToSurface (already matched) calls it exactly where source calls this named function (\"vscreen = gfx_directx_create_system_bitmap(ddsd.dwWidth,ddsd.dwHeight);\", acwavi.cpp:137), on the vscreen==NULL/first-use path. CAUTION: this build own body (calls sub_455B80(width,height,color_depth,4), falling back to sub_455E20(result,width,height,0x40000000) if that returns NULL/0 -- neither callee independently confirmed or chased further, per this project own third-party-library scope rule) does NOT closely resemble the 4.2.2 reference tree own gfx_directx_create_system_bitmap (wddbmp.c:632-650, which calls gfx_directx_create_surface/gfx_directx_make_bitmap_from_surface/gfx_directx_destroy_surface -- a DDRAW_SURFACE-wrapper abstraction with no counterpart visible here) -- consistent with this 2002 binary linking a genuinely older/simpler Allegro DirectX driver implementation than the 4.2.2 tree, the same caution already established for al_findfirst/al_findnext/al_findclose. Confidence kept at medium (call-site/role match only, not a body-level source comparison) given the reference body own divergence."
   }
 ]

@@ -3635,7 +3635,11 @@ disassembly work.
   (`RenderToSurface`'s own finding), it's never created here either.
   Also confirmed: this build uses one generic error string for all
   four COM-call failures, not source's four distinct messages. Names
-  `get_bitmap_surface`, an exact match.
+  `get_bitmap_surface`, an exact match, and (medium confidence,
+  call-site/role only) `gfx_directx_create_system_bitmap`, whose own
+  body doesn't closely resemble the 4.2.2 reference tree's version —
+  the same "older/simpler Allegro" caution already established for
+  `al_findfirst`/`al_findnext`/`al_findclose`.
 
 ## Third-party library identification (Task #10)
 

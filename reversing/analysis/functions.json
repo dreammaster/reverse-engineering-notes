@@ -6285,9 +6285,9 @@
   "is_named": false
  },
  {
-  "name": "sub_456210",
+  "name": "gfx_directx_create_system_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4562D0",
