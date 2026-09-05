@@ -2238,7 +2238,7 @@
     "source_obj": "acdialog.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acdialog.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=acdialog.obj FIELD EVIDENCE (follow-up round, full body read for the first time): calls sub_42657F (this round's new match, enterstringwindow) then atoi(String) directly -- CONFIRMED ABSENT: source's own \"if(ourbuf[0]==0) return -9999;\" empty-input sentinel check (acdialog.cpp:1024-1030) -- this build always calls atoi() regardless of whether the user entered anything, so a cancelled/empty dialog and an actual entered \"0\" are indistinguishable here, unlike source's dedicated -9999 sentinel for that case."
   },
   {
     "kind": "function",
@@ -6280,5 +6280,14 @@
     "source_line": 220,
     "confidence": "medium-high",
     "evidence": "void RenderToSurface(BITMAP*) at acwavi.cpp:220. Called once per iteration of dxmedia_play_video's (this round's corrected match) main playback loop with vscreen (dword_523920) as its sole argument, matching source's own \"RenderToSurface(vscreen);\" call exactly in both position and argument -- own body not independently traced this round."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42657F",
+    "new_name": "enterstringwindow",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": 987,
+    "confidence": "high",
+    "evidence": "void enterstringwindow(char*,char*) at acdialog.cpp:987-1022. Decisive match: calls CSCIDrawWindow(60,80,200,40) (0x3C/0x50/0xC8/0x28, this session's own new match) with literal arguments matching source's \"boxleft=60,boxtop=80; CSCIDrawWindow(boxleft,boxtop,200,40);\" exactly, followed by a CSCICreateControl call building an \"OK\" push-button, matching source's ctrlok setup. Called from two sites -- InputBox and enternumberwindow (this round's own bare match) -- matching source's own two callers (sc_inputbox and enternumberwindow) exactly. The remaining body (cancel-button/textbox/label controls, the CSCIWaitMessage polling loop, cleanup) was not independently traced instruction by instruction this round, but the leading CSCIDrawWindow literal-argument match plus the two-caller correspondence are decisive on their own."
   }
 ]

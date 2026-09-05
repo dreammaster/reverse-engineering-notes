@@ -3283,6 +3283,13 @@ disassembly work.
   since the feature it gates doesn't exist here yet.
 - **`cd_player_init` closes as a near-exact match**, called directly
   from `main` with no `platform->InitializeCDPlayer()` indirection.
+- **`enternumberwindow` closes, naming `enterstringwindow` and finding
+  a real empty-input ambiguity.** Its call target decisively matches
+  `enterstringwindow` via an exact `CSCIDrawWindow` literal-argument
+  match plus a two-caller correspondence. `enternumberwindow` then
+  calls `atoi()` directly with no empty-input sentinel check — a
+  cancelled/empty dialog and the user entering `"0"` are
+  indistinguishable here.
 
 ## Third-party library identification (Task #10)
 

@@ -11491,3 +11491,15 @@ defensive step (zeroing `usecdplayer` before the call, with no
 behavioral effect). Called directly from `main`, with no
 `platform->InitializeCDPlayer()` indirection at all -- another instance
 of this project's now-many confirmed no-platform-abstraction findings.
+
+### enternumberwindow closes, naming enterstringwindow and finding a real empty-input ambiguity
+
+Its own call target decisively matches `enterstringwindow` (`Engine/
+acdialog.cpp:987-1022`) via an exact `CSCIDrawWindow(60,80,200,40)`
+literal-argument match plus a two-caller correspondence (`InputBox`/
+`enternumberwindow`, matching source's own `sc_inputbox`/
+`enternumberwindow` pair exactly). `enternumberwindow` itself then
+calls `atoi()` directly on the result -- CONFIRMED ABSENT: source's own
+`if(ourbuf[0]==0) return -9999;` empty-input sentinel check. This build
+has no way to distinguish a cancelled/empty dialog from the user
+actually entering `"0"` -- both produce the same return value.
