@@ -3725,6 +3725,13 @@ disassembly work.
   and the trailing `copyPixelsFrom`/`checkPixelsFrom`/`zoom` parameters.
   Also names `bmp_bpp` (Allegro's public bytes-per-pixel helper),
   already cited by name elsewhere but never given its own entry.
+- **Names `draw_sprite_v_flip` via exact vtable-slot arithmetic.**
+  Another callee from the same `prepare_characters_for_drawing` sweep —
+  a 4-argument `(bmp,sprite,x,y)` vtable dispatch landing exactly on
+  `GFX_VTABLE`'s own `draw_sprite_v_flip` slot with zero slack. Called
+  three times, each flipping a just-rendered bitmap vertically into the
+  `actsps[]` character-sprite cache — the specific role wasn't traced
+  further this round.
 
 ## Third-party library identification (Task #10)
 

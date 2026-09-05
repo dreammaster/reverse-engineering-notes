@@ -2945,9 +2945,9 @@
   "is_named": false
  },
  {
-  "name": "sub_425650",
+  "name": "draw_sprite_v_flip",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_425680",

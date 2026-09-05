@@ -12741,6 +12741,26 @@ behavior exactly (15-bit special-cased to 2 bytes, else round up to
 bytes) -- already cited by name in `put_sprite_256`'s own entry
 without ever getting its own dedicated record until now.
 
+### Names draw_sprite_v_flip via exact vtable-slot arithmetic
+
+Continuing the same sweep of `prepare_characters_for_drawing`'s own
+remaining unnamed callees: `sub_425650` is a thin 4-argument vtable
+dispatch (`bmp`'s own vtable pointer@+0x1C, slot `[+0x4C]`/4=19).
+Counting `GFX_VTABLE`'s own declared field order from `gfx.h:153`
+(`color_depth`/`mask_color`/`unwrite_bank`/`set_clip`/`acquire`/
+`release`/`create_sub_bitmap`/`created_sub_bitmap`/`getpixel`/
+`putpixel`/`vline`/`hline`/`hfill`/`line`/`fastline`/`rectfill`/
+`triangle`/`draw_sprite`/`draw_256_sprite`/`draw_sprite_v_flip`) lands
+EXACTLY on `+0x4C` for `draw_sprite_v_flip`, zero slack, with the
+correct 4-argument `(bmp,sprite,x,y)` shape (no color argument, ruling
+out `draw_lit_sprite`'s own already-matched 5-arg shape at a different
+slot). Called three times from `prepare_characters_for_drawing`, each
+as `draw_sprite_v_flip(actsps[idx],Block,0,0)` -- flipping a just-
+rendered source bitmap vertically into the `actsps[]` character-sprite
+cache slot. The specific role (why a vertical, not horizontal, flip is
+needed at this particular call site) wasn't independently traced
+against source this round -- a candidate for a future look.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

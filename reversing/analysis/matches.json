@@ -6948,5 +6948,15 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "bmp_bpp(BITMAP*bmp) -- Allegro's public bytes-per-pixel helper. Body: calls bitmap_color_depth(bmp) (already matched); if the result is exactly 15, returns the literal 2 (15-bit still occupies 2 bytes); otherwise returns (depth+7)/8, the standard round-up-to-bytes computation -- matching bmp_bpp's own well-known behavior exactly (its exact source text isn't present in this repo's own partial allegro-4.2.2 tree, but the algorithm is Allegro's own documented, unambiguous public API). Called from sub_410C6A (a black-to-maskcolor sprite-conversion helper, not independently named this round) and put_sprite_256 (already matched, whose own entry already cited 'bmp_bpp' by name for this exact call without previously recording a dedicated matches.json entry for it). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425650",
+    "new_name": "draw_sprite_v_flip",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 172,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "draw_sprite_v_flip(BITMAP*bmp,BITMAP*sprite,int x,int y) -- Allegro public vertically-flipped sprite-blit API. A thin 4-argument vtable-dispatch wrapper (bmp own vtable pointer@+0x1C, slot [+0x4C]/4=19) -- counting GFX_VTABLE own declared field order from gfx.h:153 (color_depth/mask_color/unwrite_bank/set_clip/acquire/release/create_sub_bitmap/created_sub_bitmap/getpixel/putpixel/vline/hline/hfill/line/fastline/rectfill/triangle/draw_sprite/draw_256_sprite/draw_sprite_v_flip) lands EXACTLY on +0x4C for draw_sprite_v_flip, zero slack, with the correct 4-argument (bmp,sprite,x,y) shape (no color argument, ruling out draw_lit_sprite own 5-arg shape already matched at a different slot). Called from prepare_characters_for_drawing (already matched) three times, in each case as draw_sprite_v_flip(actsps[idx],Block,0,0) -- flipping a just-rendered source bitmap (Block) vertically into the actsps[] character-sprite cache slot. The specific role (why a vertical, not horizontal, flip is needed at this call site) was not independently traced against source this round -- a candidate for a future look. THIRD-PARTY LIBRARY BOUNDARY (per this project own scope rule), not chased further."
   }
 ]
