@@ -3298,6 +3298,16 @@ disassembly work.
 - **`render_to_screen` has a genuinely expanded signature, not just a
   predates-`gfxDriver` gap** — takes 6 parameters, not 2011's 3, fusing
   a separate stretch/scale step directly into its own call shape.
+- **The CLIB asset-library format supports only versions 6/10, and the
+  live `mflib` global uses the OLD struct layout directly.** `csetlib`'s
+  version check is `if(lib_version!=6 && lib_version!=10) return -3;`
+  — only two valid values, where source accepts six (6/10/11/15/20/21).
+  `clibfindindex`'s own 25-byte filename stride confirms the live
+  `mflib` global is declared as the OLD, smaller `MultiFileLib` struct
+  directly, not 2011's `MultiFileLibNew` — CONFIRMED ABSENT is the
+  entire old-to-new-format conversion machinery 2011 carries for
+  backward compatibility; this build has no newer format to bridge to.
+  Also confirms `ci_fopen()`'s case-insensitive-path wrapper is absent.
 
 ## Third-party library identification (Task #10)
 

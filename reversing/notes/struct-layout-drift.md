@@ -11533,3 +11533,29 @@ unnamed lower-level primitive (`sub_43E8A0`, plausibly Allegro's own
 (`circlefill` checked but left alone -- a well-known Allegro library
 function already correctly named; per this project's third-party scope
 rule, its own internal rasterization algorithm isn't worth chasing.)
+
+### The CLIB asset-library format: only versions 6/10 supported, old struct layout confirmed live
+
+Continuing the AGS-side (non-third-party) asset-library sweep, this
+round names `clibfindindex` and closes its two thin callers,
+`clibfilesize`/`cliboffset`, both complete zero-drift matches to
+`Common/Clib32.cpp:388-402`.
+
+The headline finding is in `clibfindindex`'s own leading match:
+`csetlib` (the CLIB file-header parser, 518 lines, leading ~240 read
+in full this round) validates `lib_version` with `if(lib_version!=6 &&
+lib_version!=10) return -3;` -- only TWO valid values, where source
+accepts SIX (`6,10,11,15,20,21`, `Clib32.cpp:259-262`). This build's
+engine only understands the earliest two CLIB format versions; the
+later `read_new_new_format_clib`/`read_new_new_enc_format_clib` layouts
+are confirmed absent/unsupported entirely. `clibfindindex`'s own
+25-byte filename stride (`0x19`, matching the OLD `MultiFileLib.
+filenames[MAX_FILES][25]` declaration exactly, not 2011's live
+`MultiFileLibNew.filenames[MAX_FILES][100]`) confirms this build's
+LIVE `mflib` global itself is the smaller, old-format struct directly
+-- CONFIRMED ABSENT is the entire "parse into a temporary old-format
+struct, then convert into a separate new-format live struct" bridging
+machinery 2011 carries purely for backward file-format compatibility;
+this build has no newer format to bridge to, so no conversion step
+exists. `csetlib` also confirms `ci_fopen()`'s case-insensitive-path
+wrapper is absent -- this build calls the CRT `fopen()` directly.

@@ -3255,9 +3255,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42A0FE",
+  "name": "clibfindindex",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "clibfilesize",

@@ -42529,6 +42529,7 @@ static Bytes_7(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(0X42A0F1);
 	create_insn	(0X42A0FE);
+	set_name	(0X42A0FE,	"clibfindindex");
 	create_insn	(x=0X42A10E);
 	op_hex		(x,	1);
 	create_insn	(x=0X42A113);
@@ -46287,8 +46288,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DB10);
 	op_hex		(x,	1);
-	create_insn	(x=0X42DB1D);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46298,6 +46297,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DB1D);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42DB29);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -52487,8 +52488,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4333D9);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4333DF);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52498,6 +52497,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4333DF);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4333EB);
 	op_stkvar	(x,	1);
 	set_cmt	(0X4333F1,	"Block",	0);
@@ -158018,7 +158019,7 @@ static Functions_6(void) {
 	add_func    (0X421DB0,0X421DE1);
 	set_func_flags(0X421DB0,0x5411);
 	SetType(0X421DB0, "int __stdcall malloc_fail_handler(size_t amountwanted);");
-	set_func_cmt(0X421DB0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X421DB0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"free(printfworkingspace); sprintf(tempmsg,...,amountwanted,our_eip); quit(tempmsg);\" (AC.CPP:26132-26137) closely, but the actual format string (confirmed via aOutOfMemoryFai) reads \"Out of memory: failed to allocate %ld bytes\" -- CONFIRMED ABSENT: source's trailing \" (at PP=%d)\" our_eip diagnostic suffix entirely, matching the single argument (amountwanted only) actually pushed to sprintf.", 1);
 	set_frame_size(0X421DB0, 0, 4, 0X4);
 	define_local_var(0X421DB0, 0X421DE1, "[bp+0X8]", "amountwanted");
 	add_func    (0X421DE8,0X421F22);
@@ -158037,7 +158038,7 @@ static Functions_6(void) {
 	add_func    (0X422232,0X422245);
 	set_func_flags(0X422232,0x5410);
 	SetType(0X422232, "void winclosehook(void);");
-	set_func_cmt(0X422232,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X422232,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"want_exit=1; abort_engine=1; check_dynamic_sprites_at_exit=0;\" (AC.CPP:26181-26184) on its first two assignments exactly (byte_5231AC/byte_5231AD, consecutive bytes matching source's own consecutive \"volatile char want_exit=0, abort_engine=0;\" declaration, AC.CPP:631) -- CONFIRMED ABSENT: the third assignment, check_dynamic_sprites_at_exit=0, consistent with this project's already-established finding that the entire dynamic-sprite-leak-detection check is absent from this build's quit() -- nothing to reset here since the feature it gates doesn't exist.", 1);
 	set_frame_size(0X422232, 0, 4, 0);
 	add_func    (0X422245,0X423E38);
 	set_func_flags(0X422245,0x5410);
@@ -158592,6 +158593,10 @@ static Functions_6(void) {
 	SetType(0X427FB0, "int __stdcall sub_427FB0(int, int, char *Source);");
 	set_frame_size(0X427FB0, 0X4, 4, 0XC);
 	define_local_var(0X427FB0, 0X4280C0, "[bp+0X10]", "Source");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X4280C0,0X42810D);
 	set_func_flags(0X4280C0,0x5410);
 	set_frame_size(0X4280C0, 0, 4, 0);
@@ -158621,10 +158626,6 @@ static Functions_6(void) {
 	set_func_flags(0X428720,0x5410);
 	set_func_cmt(0X428720,	"[reversing] confirmed match\nsource: Engine/acwavi.cpp\nconfidence: high\nevidence: void ExitCode() at acwavi.cpp:62-80: releases 4 DirectShow COM interface pointers (g_pMMStream/g_pSample/g_pDDStream/g_pPrimaryVidStream) if non-null, nulling each after Release(). Called from dxmedia_play_video (this round's corrected match) at every one of its error-exit points plus its final success tail, matching source's own call pattern exactly (a no-argument cleanup helper called right before CoUninitialize() in every case).", 1);
 	set_frame_size(0X428720, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X4287B5,0X4287CB);
 	set_func_flags(0X4287B5,0x5410);
 	set_frame_size(0X4287B5, 0X4, 4, 0);
@@ -158681,7 +158682,7 @@ static Functions_7(void) {
 	add_func    (0X429C9A,0X42A0FE);
 	set_func_flags(0X429C9A,0x5410);
 	SetType(0X429C9A, "int __stdcall csetlib(char *namm, char *passw);");
-	set_func_cmt(0X429C9A,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj", 1);
+	set_func_cmt(0X429C9A,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, leading ~240 lines of this 518-line function read in full -- the remaining version==10-branch field-population body not traced instruction by instruction, but the header/version-dispatch logic below is decisive on its own): matches source's opening CLIB-signature/end-of-file-signature detection (Common/Clib32.cpp:227-256) closely, with one confirmed drift -- calls fopen(namm,\"rb\") directly, CONFIRMED ABSENT is source's ci_fopen() case-insensitive-path-resolution wrapper. MAJOR FINDING: the version-validity check is \"if(lib_version!=6 && lib_version!=10) return -3;\" -- only TWO valid values, where source accepts SIX (6,10,11,15,20,21, Clib32.cpp:259-262). This build's engine only understands the earliest two CLIB format versions; versions 11/15/20/21 (read_new_new_format_clib/read_new_new_enc_format_clib and their own new" "er field layouts) are CONFIRMED ABSENT/unsupported, consistent with this", 1);
 	set_frame_size(0X429C9A, 0X20, 4, 0X8);
 	define_local_var(0X429C9A, 0X42A0FE, "[bp-0X18]", "fff");
 	define_local_var(0X429C9A, 0X42A0FE, "[bp-0X14]", "nammwas");
@@ -158692,19 +158693,20 @@ static Functions_7(void) {
 	define_local_var(0X429C9A, 0X42A0FE, "[bp+0XC]", "passwd");
 	add_func    (0X42A0FE,0X42A15B);
 	set_func_flags(0X42A0FE,0x5410);
-	SetType(0X42A0FE, "int __cdecl sub_42A0FE(char *String2);");
+	SetType(0X42A0FE, "int __cdecl clibfindindex(char *String2);");
+	set_func_cmt(0X42A0FE,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: int clibfindindex(char*fill) at Clib32.cpp:375-386: \"if(lib_file_name[0]==' ') return -1; for(bb=0;bb<mflib.num_files;bb++) if(stricmp(mflib.filenames[bb],fill)==0) return bb; return -1;\". Exact match: the leading lib_file_name[0]==' ' guard, the mflib_num_files-bounded loop, and a _stricmp(mflib_filenames[bb*STRIDE],fill) call all line up. MAJOR STRUCT FINDING: STRIDE is confirmed as 0x19(25) bytes here (\"imul ecx,19h; add ecx,offset mflib_filenames\"), matching the OLD `MultiFileLib.filenames[MAX_FILES][25]` declaration (Clib32.cpp:57) exactly -- NOT 2011's live `MultiFileLibNew.filenames[MAX_FILES][100]` (Clib32.cpp:68, 100-byte stride). This build's live `mflib` global is declared as the OLD, smaller struct directly -- see csetlib's own entry for the complete architectural writeup (only lib_version 6/10 supported, no old-to-new-format conversion step exists because there's no 'new' format to convert to here).", 1);
 	set_frame_size(0X42A0FE, 0X4, 4, 0);
 	define_local_var(0X42A0FE, 0X42A15B, "[bp+0X8]", "String2");
 	add_func    (0X42A15B,0X42A187);
 	set_func_flags(0X42A15B,0x5410);
 	SetType(0X42A15B, "int __stdcall clibfilesize(char *fill);");
-	set_func_cmt(0X42A15B,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj", 1);
+	set_func_cmt(0X42A15B,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"int idxx=clibfindindex(fill); if(idxx>=0) return mflib.length[idxx]; return -1;\" (Clib32.cpp:388-394) -- mflib_length[] (already an established global) confirmed via this exact indexed-return pattern.", 1);
 	set_frame_size(0X42A15B, 0X4, 4, 0X4);
 	define_local_var(0X42A15B, 0X42A187, "[bp+0X8]", "String2");
 	add_func    (0X42A187,0X42A1B3);
 	set_func_flags(0X42A187,0x5410);
 	SetType(0X42A187, "int __stdcall cliboffset(char *fill);");
-	set_func_cmt(0X42A187,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj", 1);
+	set_func_cmt(0X42A187,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"int idxx=clibfindindex(fill); if(idxx>=0) return mflib.offset[idxx]; return -1;\" (Clib32.cpp:396-402) -- mflib_offset[] (already an established global) confirmed via this exact indexed-return pattern.", 1);
 	set_frame_size(0X42A187, 0X4, 4, 0X4);
 	define_local_var(0X42A187, 0X42A1B3, "[bp+0X8]", "String2");
 	add_func    (0X42A1B3,0X42A204);
@@ -159135,7 +159137,7 @@ static Functions_7(void) {
 	add_func    (0X431DEA,0X431E2A);
 	set_func_flags(0X431DEA,0x5410);
 	SetType(0X431DEA, "int minstalled(void);");
-	set_func_cmt(0X431DEA,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj", 1);
+	set_func_cmt(0X431DEA,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source (Common/MOUSEW32.CPP:265-276): \"if((nbuts=install_mouse())<1) return 0; mgraphconfine(0,0,319,199); if(nbuts<2) nbuts=2; return nbuts;\" -- the literal 319(0x13F)/199(0xC7) mgraphconfine bounds (already matched) match exactly.", 1);
 	set_frame_size(0X431DEA, 0X4, 4, 0);
 	define_local_var(0X431DEA, 0X431E2A, "[bp-0X4]", "numBtns");
 	add_func    (0X431E30,0X431E79);
@@ -159358,6 +159360,10 @@ static Functions_7(void) {
 	set_func_flags(0X43452E,0x5410);
 	set_func_cmt(0X43452E,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_set_volume(int,int) at libcdaWin.C:183-185: empty body. Exact match: \"push ebp; mov ebp,esp; pop ebp; retn\" -- no-op. Newly received an IDA function boundary (previously bodiless raw code right after cd_get_volume).", 1);
 	set_frame_size(0X43452E, 0, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X434533,0X43454F);
 	set_func_flags(0X434533,0x5410);
 	set_func_cmt(0X434533,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_eject(void) at libcdaWin.C:188-192: \"command(\\\"set cdaudio door open\\\"); paused=0;\". Exact match. CODE XREF: CDAudio+AD.", 1);
@@ -159414,10 +159420,6 @@ static Functions_7(void) {
 	SetType(0X434C30, "void __cdecl operator_delete(size_t Size);");
 	set_frame_size(0X434C30, 0, 0, 0);
 	define_local_var(0X434C30, 0X434C3F, "[bp+0X4]", "Size");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X434C80,0X434C81);
 	set_func_flags(0X434C80,0x5400);
 	set_frame_size(0X434C80, 0, 0, 0);
@@ -159822,7 +159824,7 @@ static Functions_8(void) {
 	add_func    (0X443010,0X443044);
 	set_func_flags(0X443010,0x5400);
 	SetType(0X443010, "void __stdcall render_to_screen(BITMAP *toRender, int atx, int aty);");
-	set_func_cmt(0X443010,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X443010,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, first look at this function's own body): source's version (AC.CPP:2725-2744+) takes only 3 parameters (toRender,atx,aty) and is entirely gfxDriver-based (SetRenderOffset/DrawSprite(AGSE_FINALSCREENDRAW)/screen_is_faded_out checks) -- CONFIRMED ABSENT here (the by-now-familiar predates-gfxDriver pattern). This build's own version instead takes 6 parameters, confirmed via its own callers this session (script_debug's cmdd==2/cmdd==5 branches: render_to_screen(toRender,atx,aty,aty2,width,height), the last two already-scaled by current_screen_resolution_multiplier_x/y) -- fusing what 2011 keeps as a separate stretch/scale step into render_to_screen's own signature. Delegates to an unnamed lower-level primitive (sub_43E8A0, plausibly Allegro's own stretch_blit given its argument shape, not independently confirmed or chased further thi" "s round).", 1);
 	set_frame_size(0X443010, 0, 0, 0XC);
 	define_local_var(0X443010, 0X443044, "[bp+0X4]", "toRender");
 	define_local_var(0X443010, 0X443044, "[bp+0X8]", "atx");
@@ -160929,6 +160931,10 @@ static Functions_8(void) {
 	add_func    (0X456730,0X456740);
 	set_func_flags(0X456730,0x5400);
 	set_frame_size(0X456730, 0, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X456740,0X456813);
 	set_func_flags(0X456740,0x5400);
 	set_frame_size(0X456740, 0XC, 0, 0);
@@ -161111,10 +161117,6 @@ static Functions_8(void) {
 	set_func_flags(0X45FB70,0x5400);
 	set_frame_size(0X45FB70, 0, 0, 0);
 	define_local_var(0X45FB70, 0X45FB84, "[bp+0X4]", "Block");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X45FB90,0X45FCF3);
 	set_func_flags(0X45FB90,0x5400);
 	SetType(0X45FB90, "int __cdecl sub_45FB90(int, void *Block, int);");
@@ -163031,6 +163033,10 @@ static Functions_9(void) {
 	add_func    (0X4891C0,0X4892DB);
 	set_func_flags(0X4891C0,0x5400);
 	set_frame_size(0X4891C0, 0X8C, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4892E0,0X4893AD);
 	set_func_flags(0X4892E0,0x5400);
 	set_frame_size(0X4892E0, 0X50, 0, 0);
@@ -163269,10 +163275,6 @@ static Functions_9(void) {
 	add_func    (0X48CC30,0X48CC7C);
 	set_func_flags(0X48CC30,0x5400);
 	set_frame_size(0X48CC30, 0, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X48CC80,0X48CD70);
 	set_func_flags(0X48CC80,0x5400);
 	set_frame_size(0X48CC80, 0XC, 0, 0);

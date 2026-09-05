@@ -2248,7 +2248,7 @@
     "source_obj": "Clib32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, leading ~240 lines of this 518-line function read in full -- the remaining version==10-branch field-population body not traced instruction by instruction, but the header/version-dispatch logic below is decisive on its own): matches source's opening CLIB-signature/end-of-file-signature detection (Common/Clib32.cpp:227-256) closely, with one confirmed drift -- calls fopen(namm,\"rb\") directly, CONFIRMED ABSENT is source's ci_fopen() case-insensitive-path-resolution wrapper. MAJOR FINDING: the version-validity check is \"if(lib_version!=6 && lib_version!=10) return -3;\" -- only TWO valid values, where source accepts SIX (6,10,11,15,20,21, Clib32.cpp:259-262). This build's engine only understands the earliest two CLIB format versions; versions 11/15/20/21 (read_new_new_format_clib/read_new_new_enc_format_clib and their own newer field layouts) are CONFIRMED ABSENT/unsupported, consistent with this build's own 2002 vintage predating all of them. ARCHITECTURAL FINDING: the version-10 branch populates mflib_filenames[] directly at a 25-byte stride (see clibfindindex's own corrected entry) -- this build's live `mflib` global itself uses the OLD, smaller `MultiFileLib` struct layout (Clib32.cpp:53-62, char filenames[MAX_FILES][25]) rather than 2011's `MultiFileLibNew` (char filenames[MAX_FILES][100]) -- CONFIRMED ABSENT is the entire 'load into a temporary old-format struct, then memcpy/strcpy-convert into a separate new-format live struct' machinery (Clib32.cpp:293-306) that exists purely to bridge old- and new-format files in 2011; this build has no new format to bridge to at all, so no conversion step is needed or present."
   },
   {
     "kind": "function",
@@ -2258,7 +2258,7 @@
     "source_obj": "Clib32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"int idxx=clibfindindex(fill); if(idxx>=0) return mflib.length[idxx]; return -1;\" (Clib32.cpp:388-394) -- mflib_length[] (already an established global) confirmed via this exact indexed-return pattern."
   },
   {
     "kind": "function",
@@ -2268,7 +2268,7 @@
     "source_obj": "Clib32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"int idxx=clibfindindex(fill); if(idxx>=0) return mflib.offset[idxx]; return -1;\" (Clib32.cpp:396-402) -- mflib_offset[] (already an established global) confirmed via this exact indexed-return pattern."
   },
   {
     "kind": "function",
@@ -6289,5 +6289,14 @@
     "source_line": 987,
     "confidence": "high",
     "evidence": "void enterstringwindow(char*,char*) at acdialog.cpp:987-1022. Decisive match: calls CSCIDrawWindow(60,80,200,40) (0x3C/0x50/0xC8/0x28, this session's own new match) with literal arguments matching source's \"boxleft=60,boxtop=80; CSCIDrawWindow(boxleft,boxtop,200,40);\" exactly, followed by a CSCICreateControl call building an \"OK\" push-button, matching source's ctrlok setup. Called from two sites -- InputBox and enternumberwindow (this round's own bare match) -- matching source's own two callers (sc_inputbox and enternumberwindow) exactly. The remaining body (cancel-button/textbox/label controls, the CSCIWaitMessage polling loop, cleanup) was not independently traced instruction by instruction this round, but the leading CSCIDrawWindow literal-argument match plus the two-caller correspondence are decisive on their own."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42A0FE",
+    "new_name": "clibfindindex",
+    "source_file": "Common/Clib32.cpp",
+    "source_line": 375,
+    "confidence": "high",
+    "evidence": "int clibfindindex(char*fill) at Clib32.cpp:375-386: \"if(lib_file_name[0]==' ') return -1; for(bb=0;bb<mflib.num_files;bb++) if(stricmp(mflib.filenames[bb],fill)==0) return bb; return -1;\". Exact match: the leading lib_file_name[0]==' ' guard, the mflib_num_files-bounded loop, and a _stricmp(mflib_filenames[bb*STRIDE],fill) call all line up. MAJOR STRUCT FINDING: STRIDE is confirmed as 0x19(25) bytes here (\"imul ecx,19h; add ecx,offset mflib_filenames\"), matching the OLD `MultiFileLib.filenames[MAX_FILES][25]` declaration (Clib32.cpp:57) exactly -- NOT 2011's live `MultiFileLibNew.filenames[MAX_FILES][100]` (Clib32.cpp:68, 100-byte stride). This build's live `mflib` global is declared as the OLD, smaller struct directly -- see csetlib's own entry for the complete architectural writeup (only lib_version 6/10 supported, no old-to-new-format conversion step exists because there's no 'new' format to convert to here)."
   }
 ]
