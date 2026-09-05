@@ -11333,3 +11333,22 @@ immediately after the DOWN/`2_PAD` check with an unconditional `return
 0`. Also CONFIRMED ABSENT throughout the whole function: `rec_
 iskeypressed()` as a distinct recording-aware wrapper — this build
 reads Allegro's `key[]` array directly everywhere.
+
+### check_write_access closes, finding a real minimum-free-space drop and a save-directory-location drift
+
+Matches source's overall shape (`Engine/AC.CPP:25616-25641`) -- disk-
+free-space check, then write-test-file-then-unlink -- with two real,
+confirmed drifts. First: this build computes free disk space directly
+via `_getdiskfree(0,...)` (no `platform->GetDiskFreeSpaceMB()`
+indirection, as expected) and compares it against a literal `0x30D40`
+(200000 bytes, ~195KB) where source requires a full 2MB -- an order-of-
+magnitude-smaller minimum free-space requirement, not a rounding
+artifact. Second: the write-test file is the bare literal
+`"~tmptest.tmp"` with no directory prefix at all, unlike source's
+`saveGameDirectory`-prefixed path -- this build tests write access in
+the current working directory rather than a dedicated save-game
+directory, consistent with the already-established `$SAVEGAMEDIR$`-
+prefix absence from `FileOpen`'s own earlier entry this session. The
+actual write/fwrite(literal ElementSize=30, matching source's own
+identical literal despite the ~33-character test string, a pre-existing
+quirk preserved as-is)/close/unlink sequence otherwise matches exactly.

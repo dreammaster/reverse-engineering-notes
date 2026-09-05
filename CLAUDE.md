@@ -3229,6 +3229,15 @@ disassembly work.
   source instruction for instruction via Allegro's own `key[]` array —
   but stop there; 3 more pairs 2011 checks (PGUP/PGDN/HOME/END/INSERT/
   DEL numpad equivalents) are confirmed absent.
+- **`check_write_access` closes, finding a real minimum-free-space drop
+  and a save-directory-location drift.** Computes free disk space
+  directly (no platform indirection, as expected) but requires only
+  ~195KB free where source requires 2MB — an order-of-magnitude-smaller
+  threshold, not a rounding artifact. The write-test file is a bare
+  `"~tmptest.tmp"` with no directory prefix, testing the current working
+  directory rather than a dedicated save-game directory — consistent
+  with `FileOpen`'s own already-established `$SAVEGAMEDIR$`-prefix
+  absence.
 
 ## Third-party library identification (Task #10)
 
