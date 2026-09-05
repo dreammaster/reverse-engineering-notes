@@ -75021,6 +75021,7 @@ static Bytes_12(void) {
 	op_plain_offset	(x,	129,	0);
 	make_array	(0X44C9BB,	0X5);
 	create_insn	(0X44C9C0);
+	set_name	(0X44C9C0,	"_soft_floodfill");
 	create_insn	(x=0X44C9C1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X44C9CB);
@@ -160601,6 +160602,7 @@ static Functions_10(void) {
 	set_frame_size(0X44C9B0, 0, 0, 0);
 	add_func    (0X44C9C0,0X44CBAB);
 	set_func_flags(0X44C9C0,0x5400);
+	set_func_cmt(0X44C9C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/flood.c\nconfidence: high\nevidence: _soft_floodfill(BITMAP*bmp,int x,int y,int color) (flood.c:209-277) -- Allegro own public flood-fill implementation. A near-exhaustive, field-for-field match: the opening clip-bounds check (\"if(x<bmp->cl||x>=bmp->cr||y<bmp->ct||y>=bmp->cb) return;\") matches the disasm own 4-way comparison against bmp own cl/cr@+0x0C/+0x10 and ct/cb@+0x14/+0x18 exactly; acquire_bitmap(bmp) matches the conditional vtable-slot-0x10 call; \"src_color=getpixel(bmp,x,y); if(src_color==color) {release_bitmap(bmp); return;}\" matches the vtable-slot-0x20(getpixel)-then-compare-then-conditional-slot-0x14(release) sequence exactly; \"_grow_scratch_mem(sizeof(FLOODED_LINE)*bmp->cb)\" matches the realloc-based scratch-buffer-growing logic against dword_536FA0/dword_536FA4 (matching Allegro own internal _scratch_mem/_scratch_mem_size globals); the FLOODED_LINE initialization loop (\"p[c].flags=0; p[c].lpos=SHRT_MAX; p[c].rpos=SHRT_MIN; p[c]." "y=y; p[c].next=0;\") matches the disasm own 5-word-per-entry init loop field for field. GENUINE", 1);
 	set_frame_size(0X44C9C0, 0X10, 0, 0);
 	add_func    (0X44CBB0,0X44CF0A);
 	set_func_flags(0X44CBB0,0x5410);
@@ -162341,6 +162343,10 @@ static Functions_10(void) {
 	set_func_flags(0X477790,0x5400);
 	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
 	set_frame_size(0X477790, 0X4, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X477870,0X4778A9);
 	set_func_flags(0X477870,0x5400);
 	set_frame_size(0X477870, 0, 0, 0);
@@ -162348,10 +162354,6 @@ static Functions_10(void) {
 	set_func_flags(0X4778B0,0x5400);
 	set_func_cmt(0X4778B0,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, int is_mod_playing(void) -- referenced at Engine/acsound.cpp:1040/1062/1068 (MYMOD::poll/seek/get_pos, all gating their real work on this check). No local JGMOD source tree exists in this repo to verify the exact name against (same caveat already recorded on load_mod/play_mod's own entries), so identified by call-shape/role alone: 0 arguments, boolean-style return (checked via 'test eax,eax'), called from TWO already-matched sites -- scr_StopMusic (gating whether to call stop_mod, see its own entry) and IsMusicPlaying (as one leg of its 'is ANY music format currently active' OR-chain, alongside the already-established MIDI check) -- both matching the exact role `is_mod_playing()` plays in source.", 1);
 	set_frame_size(0X4778B0, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X477990,0X4779A0);
 	set_func_flags(0X477990,0x5400);
 	set_frame_size(0X477990, 0, 0, 0);
@@ -164958,6 +164960,10 @@ static Functions_11(void) {
 	add_func    (0X4AAEF0,0X4AAF05);
 	set_func_flags(0X4AAEF0,0x5400);
 	set_frame_size(0X4AAEF0, 0, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4AAF10,0X4AAF3C);
 	set_func_flags(0X4AAF10,0x5404);
 	SetType(0X4AAF10, "_onexit_t __cdecl _onexit(_onexit_t Func);");
@@ -164984,10 +164990,6 @@ static Functions_11(void) {
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X8]", "ElementSize");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0XC]", "ElementCount");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X10]", "Stream");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4AAF5A,0X4AAF60);
 	set_func_flags(0X4AAF5A,0x5480);
 	SetType(0X4AAF5A, "int __cdecl fseek(FILE *Stream, int Offset, int Origin);");

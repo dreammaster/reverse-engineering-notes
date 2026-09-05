@@ -12952,6 +12952,33 @@ difference rather than a genuine source difference. Called twice from
 `do_movelist_move` (already matched), converting `MoveList.xpermove`/
 `ypermove` fixed-point per-move deltas to floating point.
 
+### _soft_floodfill found: another historically-anchored short-vs-int drift
+
+Chasing the previously-inconclusive `sub_44C9C0` (called from
+`is_route_possible` and `__actual_invscreen`) all the way through
+closes with a near-exhaustive match to Allegro's own `_soft_floodfill
+(BITMAP*bmp,int x,int y,int color)` (`flood.c:209-277`). The opening
+clip-bounds check, the `acquire_bitmap`/`getpixel`-then-compare/
+`release_bitmap` early-out, the `_grow_scratch_mem`-based scratch-
+buffer growth (matching Allegro's own `_scratch_mem`/`_scratch_mem_
+size` internal globals), the `FLOODED_LINE` initialization loop, and
+the trailing `FLOOD_TODO_BELOW`/`FLOOD_TODO_ABOVE` bit-flag-driven
+do-while loop all match source's own structure field for field.
+
+GENUINE DRIFT, HISTORICALLY ANCHORED: this build's own `FLOODED_LINE`
+packs its `next` field as a SHORT (2 bytes, a 10-byte total stride)
+rather than source's declared `int next` (12 bytes) -- matching
+source's own comment VERBATIM: "Note: a `short` is not sufficient for
+`next` above in some corner cases." This build predates that later
+int-upgrade bugfix -- the SAME "historical artifact preserved in a
+source comment" pattern already found for the qsort/bubble-sort
+refactor (`draw_sprite_list`) and almp3's `MP3CHUNKSIZE`, now found a
+third time. Calls two further internal helpers (`flooder`/`check_
+flood_line`) not independently named per this project's own third-
+party-library scope rule, since neither is ever called directly by
+AGS code. `is_route_possible` using flood-fill for its own walkable-
+area connectivity check is a natural, sensible use of this algorithm.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

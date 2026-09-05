@@ -5605,9 +5605,9 @@
   "is_named": false
  },
  {
-  "name": "sub_44C9C0",
+  "name": "_soft_floodfill",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_44CBB0",

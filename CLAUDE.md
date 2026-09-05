@@ -3796,6 +3796,14 @@ disassembly work.
   `fild`/`fdiv 65536.0` matches source's `(double)x/65536.0` exactly.
   Called twice from `do_movelist_move`, converting `MoveList`'s own
   fixed-point per-move deltas to floating point.
+- **`_soft_floodfill` found, another historically-anchored short-vs-int
+  drift.** A near-exhaustive match to Allegro's own flood-fill
+  implementation. This build's own `FLOODED_LINE` packs its `next`
+  field as a short rather than source's declared `int` — matching
+  source's own comment verbatim: "a `short` is not sufficient for
+  `next` ... in some corner cases." The third instance this session of
+  a historical artifact preserved in a reference-source comment. Used
+  by `is_route_possible` for its own walkable-area connectivity check.
 
 ## Third-party library identification (Task #10)
 
