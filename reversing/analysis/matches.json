@@ -6443,5 +6443,14 @@
     "source_line": 24101,
     "confidence": "high",
     "evidence": "void sc_invscreen() at AC.CPP:24101-24103: \"curscript->queue_action(ePSAInvScreen,0,\\\"InventoryScreen\\\");\". This build has no generic action-queue mechanism at all (already established -- 2002 gives each PostScriptAction its own dedicated ExecutingScript field, 2011 unifies them into one queue array); this function's entire body is \"curscript[+8]=1\" -- setting the dedicated invscreen-request flag directly, matching source's queue_action call in NET EFFECT exactly. This is the WRITE side of a field post_script_cleanup's own entry already documented from the READ side (its own +0x08 boolean flag, gating a call to __actual_invscreen()) -- a clean cross-confirmation from the opposite direction."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "PlayFlic",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "CONFIRMED ABSENT from 2011's reference source ENTIRELY -- no trace of PlayFlic, play_flc, or any .FLI/.FLC-related identifier anywhere in Engine/. This build supports an OLDER, self-contained FLIC-format animation player alongside its separate DirectShow/AVI-based PlayVideo (already matched) -- a genuine feature this project's own apeg/PlayVideo investigation had already established as absent from 2002, now shown to have a real predecessor of its own that 2011 dropped entirely (the opposite direction from most findings in this project, joining quit()'s own agssave.999-cleanup finding as a rare 2002-feature-removed-by-2011 case). Gated by the already-established fast_forward global (dword_4EEB54) at entry -- does nothing at all during a fast-forwarded sequence. Saves the current screen palette via get_palette_range (already matched) before loading, builds a filename via the caller-supplied index (\"flic%d.flc\") and opens it via clibfopen (already matched), falling back to \"flic%d.fli\" if the .flc variant isn't found, and logs a not-found warning via debug_log (already matched) if neither exists. Leading ~90 of 284 lines read; not traced to completion given the function's size."
   }
 ]

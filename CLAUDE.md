@@ -3389,6 +3389,14 @@ disassembly work.
   an exact match to `sc_inputbox`. `InventoryScreen`'s single-field
   write cross-confirms `post_script_cleanup`'s own already-documented
   invscreen flag from the opposite (write) direction.
+- **`PlayFlic` found: a whole undocumented AGS subsystem 2011 has
+  completely forgotten.** Confirmed absent from 2011's reference
+  source entirely — this build supports an older, self-contained
+  FLIC-format (`.FLI`/`.FLC`) animation player alongside its separate
+  DirectShow/AVI-based `PlayVideo`, a real predecessor subsystem 2011
+  dropped, the opposite direction from most findings in this project.
+  Gated by `fast_forward`, tries `"flic%d.flc"` then falls back to
+  `"flic%d.fli"`.
 
 ## Third-party library identification (Task #10)
 

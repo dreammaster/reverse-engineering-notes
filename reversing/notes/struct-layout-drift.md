@@ -11760,3 +11760,22 @@ order). `InventoryScreen` closes as `sc_invscreen()`'s net-effect
 match -- this build's `curscript[+8]=1` write is the WRITE side of the
 same dedicated invscreen-flag field `post_script_cleanup`'s own entry
 already documented from the READ side, a clean cross-confirmation.
+
+### PlayFlic found: a whole undocumented AGS subsystem 2011 has completely forgotten
+
+Confirmed absent from 2011's reference source ENTIRELY -- no trace of
+`PlayFlic`, `play_flc`, or any `.FLI`/`.FLC`-related identifier
+anywhere in `Engine/`. This build supports an OLDER, self-contained
+FLIC-format animation player alongside its separate DirectShow/AVI-
+based `PlayVideo` (already matched) -- a real predecessor subsystem
+2011 dropped entirely, the opposite direction from most findings in
+this project (joining `quit()`'s own `agssave.999`-cleanup finding as a
+rare "2002 feature removed by 2011" case). Gated by the already-
+established `fast_forward` global at entry, saves the screen palette
+via `get_palette_range` before loading, builds a `"flic%d.flc"`
+filename and opens it via `clibfopen`, falling back to `"flic%d.fli"`
+if not found. Also formalizes `PlayFlic`'s own matches.json entry --
+it had already been cited by name in other functions' evidence text
+(`get_palette_range`'s own entry, etc.) but never given its own
+dedicated record, another "documented in passing, never formalized"
+gap now closed.
