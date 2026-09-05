@@ -11178,3 +11178,42 @@ guards -- but here it's harmless. Both just return `fgetc(haa)`/
 surfaces EOF as -1 through its own normal return path -- coincidental
 behavioral equivalence, not a real gap, and NOT worth "fixing" for the
 port the way the other two are.
+
+### ListBoxGetItemText/ListBoxSetSelected/ListBoxDirList close, finding a real overrun, a real validation gap, and a real security gap
+
+Continuing the `ListBox*` script-API sweep (`ListBoxClear`/`ListBoxAdd`/
+`ListBoxGetSelected`/`ListBoxGetNumItems` already confirmed a flattened
+"no intermediate `ListBox_*` wrapper" abstraction layer in an earlier
+round) — the three remaining bare matches in this cluster close, each
+turning up a genuinely different kind of drift.
+
+`ListBoxGetItemText`: matches 2011's `ListBox_GetItemText`'s bounds
+check exactly (`item<0 || item>=numItems`, matching error string
+included) and reads `items[item]`@+0x20 directly, one layer flatter as
+usual. But the actual copy is a raw, unbounded `strcpy` — CONFIRMED
+ABSENT is 2011's own later safety hardening, a length-capped
+`strncpy(buffer,...,198); buffer[199]=0;`. A genuine buffer-overrun risk
+2011 specifically added protection against, not present here.
+
+`ListBoxSetSelected`: a real behavioral simplification, not just a
+flattened wrapper. 2011's `ListBox_SetSelectedIndex` clamps an
+out-of-range `newsel` to -1, skips the write entirely if unchanged, and
+auto-scrolls `topItem` to keep a new selection visible. This build does
+ONE unconditional write and nothing else — no clamp, no unchanged-value
+skip, no auto-scroll. A caller passing a wildly out-of-range value gets
+it written into `selected` completely unvalidated, creating a real (if
+narrow) asymmetry with `ListBoxGetSelected`'s own already-matched
+read-side bounds check, which will mask the bad value on the very next
+read but not before.
+
+`ListBoxDirList`: two separate findings. First, a genuine security gap
+— 2011's `ListBox_FillDirList` sanitizes the caller-supplied file mask
+via `validate_user_file_path` before searching; this build passes it
+straight to `_findfirst` with no path-traversal protection at all
+(unlike `FileOpen`'s own already-confirmed inline traversal check).
+Second, a library-API predecessor difference: this build uses the raw
+CRT `_findfirst`/`_findnext`/`_findclose` instead of Allegro's own
+`al_findfirst`/`al_findnext`/`al_findclose` wrappers 2011 has since
+adopted. (The missing trailing `guis_need_update=1` is NOT a real gap —
+`GUIListBox::Clear`/`AddItem`, both already matched, already set it as
+their own side effect.)

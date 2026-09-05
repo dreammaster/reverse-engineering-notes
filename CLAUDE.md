@@ -3181,6 +3181,18 @@ disassembly work.
   `FileReadRawChar`/`FileReadRawInt` are missing the same guard too, but
   harmlessly — `fgetc()`/`getw()` already surface EOF as -1 through
   their own normal return path, so nothing is actually lost there.
+- **`ListBoxGetItemText`/`ListBoxSetSelected`/`ListBoxDirList` close,
+  finding three different kinds of drift.** `ListBoxGetItemText`
+  matches 2011's bounds check exactly but copies via a raw, unbounded
+  `strcpy` — CONFIRMED ABSENT is 2011's own later length-capped
+  `strncpy`/null-terminate safety hardening, a real overrun risk.
+  `ListBoxSetSelected` does one unconditional write with none of 2011's
+  out-of-range clamping, unchanged-value skip, or `topItem` auto-scroll
+  — a real validation gap against the read side's own bounds check.
+  `ListBoxDirList` has no `validate_user_file_path` call at all (unlike
+  `FileOpen`'s own confirmed inline protection) — a real path-traversal
+  security gap — and uses raw CRT `_findfirst`/`_findnext`/`_findclose`
+  instead of Allegro's `al_find*` wrappers.
 
 ## Third-party library identification (Task #10)
 
