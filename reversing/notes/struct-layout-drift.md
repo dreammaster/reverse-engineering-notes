@@ -11352,3 +11352,39 @@ prefix absence from `FileOpen`'s own earlier entry this session. The
 actual write/fwrite(literal ElementSize=30, matching source's own
 identical literal despite the ~33-character test string, a pre-existing
 quirk preserved as-is)/close/unlink sequence otherwise matches exactly.
+
+### script_debug closes, with a major bonus: the binary's own embedded version/build-date string
+
+Matches source's overall `cmdd` dispatch shape (`Engine/AC.CPP:21050-
+21151`) with several confirmed drifts and one major bonus finding.
+`cmdd==0` (refresh inventory display) and `cmdd==5` (visualize a
+character's move path) both close as complete, zero-drift matches --
+the latter exercising `MoveList`'s already-confirmed 0x200-byte stride
+and packed `pos[]` XY encoding end to end.
+
+The headline: `cmdd==1`'s "show engine info" debug command builds its
+string from a literal format (`aAdventureGameS_0`) that reads, verbatim,
+`"...ACI version 2.40.325|Compiled on Jul 20 2002 at 18:56:30..."` --
+the binary directly self-reports its own exact ACI version and compile
+timestamp, one day before the PE header's own 2002-07-21 link date.
+This upgrades this project's already-established "2.4b, July 2002"
+version pinning from a tightly-bounded inference to a direct,
+self-reported fact -- see the new top-level section added to
+`reversing/notes/ags-archives-cross-reference.md` for the complete
+writeup. The same format string also confirms, via its own simpler
+shape (no GFX-driver-name field, only 2 sprite-cache stats not 3), that
+this build predates `gfxDriver` and per-sprite lock-tracking -- and
+identifies a new global, `dword_4F7460`=`spriteset.cachesize`.
+
+Three further confirmed drifts: `cmdd==1`'s displayed text says
+`"[MUSIC.VOX enabled"` where source says `"[AUDIO.VOX enabled"` (a real
+string-text difference, not just a field-name coincidence), and its
+trailing `"(mod/xm player discarded)"` branch is confirmed absent
+entirely; `cmdd==2`'s walkable-areas visualizer blits the raw mask
+bitmap directly with no `prepare_walkable_areas(-1)` call, unlike
+source; `cmdd==3`'s room-teleport command has no `roomSelectorWindow`
+alternative, only ever the plain number-entry dialog; and `cmdd==4`
+writes `display_fps` unconditionally, missing source's guard against
+overwriting a locked value. `cmdd==99` (`ccSetOption(SCOPT_DEBUGRUN,...)`
+, `0x10`, zero drift) and the final `quit("unknown command code")`
+fallback both match source exactly.

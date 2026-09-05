@@ -100,6 +100,35 @@ inside 2.4b's own release month) that should inform every future
 unless it's part of 2.4b's own additions) before assuming a fact needs
 fresh disassembly investigation.
 
+## Direct confirmation: the binary's own embedded version/build-date string
+
+Found while investigating `script_debug`'s `cmdd==1` "engine info" debug
+command (a fresh-survey round, not itself part of the `ags-archives/`
+detour, but a decisive upgrade to everything above). The literal format
+string this build's `script_debug` passes to `sprintf` (confirmed via
+`aAdventureGameS_0` in `rob_blanc_1.asm`'s own `.data` section) reads,
+verbatim:
+
+```
+Adventure Game Studio run-time engine|ACI version 2.40.325|Compiled
+on Jul 20 2002 at 18:56:30|Running %d x %d at %d-bit %s|Sprite cache
+size: %d KB (limit %d KB)
+```
+
+This turns the previous section's "extremely tightly-bounded inference"
+into a near-certainty: the binary states its own exact ACI version
+(`2.40.325`, not just "2.4b") and its own exact compile timestamp
+(`Jul 20 2002 at 18:56:30`) directly, one day before the PE header's
+own 2002-07-21 link date -- fully consistent with a same-day-or-next-day
+compile-then-link. No inference chain needed for this one fact; it's
+printed by the engine itself. The format string is also simpler than
+2011's own equivalent debug-info string (`AC.CPP:21062-21063`): no
+`gfxDriver->GetDriverName()`/`filter->GetVersionBoxText()` fields and
+only 2 sprite-cache stats (size/limit) rather than 3 (size/limit/
+locked) -- consistent with this build predating `gfxDriver` and
+per-sprite lock-tracking entirely, both already established repeatedly
+elsewhere in this project.
+
 ## `TECHINFO.TXT`'s CHARACTER FILE format confirms `CharacterInfo`
 
 `ags240/docs/TECHINFO.TXT` section 1.2 (dated "26 December 2001",

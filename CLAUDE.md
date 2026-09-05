@@ -3238,6 +3238,17 @@ disassembly work.
   directory rather than a dedicated save-game directory — consistent
   with `FileOpen`'s own already-established `$SAVEGAMEDIR$`-prefix
   absence.
+- **`script_debug` closes, with a major bonus: the binary's own
+  embedded version/build-date string.** Its `cmdd==1` "show engine
+  info" debug command's literal format string reads, verbatim, `"...ACI
+  version 2.40.325|Compiled on Jul 20 2002 at 18:56:30..."` — a direct,
+  self-reported confirmation of this project's "2.4b, July 2002"
+  version pinning, one day before the PE header's own link date. See
+  the new section in `reversing/notes/ags-archives-cross-reference.md`.
+  Also finds: a differently-worded VOX-enabled message, a walkable-
+  areas debug view missing `prepare_walkable_areas()`, a room-teleport
+  command missing the room-list-selector alternative, and an
+  unconditional `display_fps` write missing source's locked-value guard.
 
 ## Third-party library identification (Task #10)
 
