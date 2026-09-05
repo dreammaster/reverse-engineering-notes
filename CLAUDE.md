@@ -3879,6 +3879,27 @@ disassembly work.
   parser was removed once AGS switched to Allegro's own `config.c`-
   based API. No 2011 name exists to adopt — left unnamed, documented
   by role and full error-code table instead.
+- **`fputstring`/`write_gui`/`serialize_bitmap` close `SaveGameSlot`'s
+  three remaining unmatched callees.** `write_gui` lands a rare ZERO-
+  DRIFT constant find (`GUIMAGIC=0xCAFEBEEF`/`GUI_VERSION=0x66`, no
+  change at all) alongside a real drift: this build bulk-`fwrite`s the
+  entire `guis[]` array as a raw blob rather than calling each
+  `GUIMain`'s own `WriteToFile()`, confirming 6 new globals
+  (`numguibuts`/`numguilabels`/`numguiinv`/`numguislider`/`numguitext`/
+  `numguilist`) along the way. `serialize_bitmap` and `fputstring` both
+  close as exact, zero-drift matches.
+- **`isposinbox`/`is_pos_in_sprite` close, with a genuine parameter-
+  order drift and a zero-slack `OPT_PIXPERFECT` confirmation.**
+  `isposinbox` is an exact match; `is_pos_in_sprite` closes at a
+  decisive structural level — this build's 5th parameter is a sprite
+  slot number (indexing `spritewidth[]`/`spriteheight[]`) rather than a
+  dereferenced bitmap pointer for size defaults, and its parameter
+  order interleaves `flipped` before `spww`/`sphh`, unlike source's
+  declared order. `byte_513341` is confirmed as `GameSetupStructBase.
+  options[11]`(`OPT_PIXPERFECT`) via zero-slack arithmetic against the
+  already-established `options[10]`(`OPT_SPEECHTYPE`). CONFIRMED
+  ABSENT: the `gfxDriver`-gated hardware-acceleration size-adjustment
+  branch, the usual pattern.
 
 ## Third-party library identification (Task #10)
 

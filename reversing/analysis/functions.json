@@ -165,9 +165,9 @@
   "is_named": false
  },
  {
-  "name": "sub_402FD9",
+  "name": "fputstring",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "fgetstring",
@@ -495,9 +495,9 @@
   "is_named": true
  },
  {
-  "name": "sub_407FAB",
+  "name": "write_gui",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "rstruc__dynamic_initializer_entry",
@@ -1550,14 +1550,14 @@
   "is_named": true
  },
  {
-  "name": "sub_417AD9",
+  "name": "isposinbox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_417B1B",
+  "name": "is_pos_in_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GetObjectAt",
@@ -2330,9 +2330,9 @@
   "is_named": true
  },
  {
-  "name": "sub_41E1C1",
+  "name": "serialize_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SaveGameSlot",

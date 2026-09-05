@@ -7291,5 +7291,50 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "INIreaditem's own private fatal-error reporter, called from 2 sites inside INIreaditem (already matched). Takes a single error-code argument (0-7), indexes an 8-entry local table of distinct error-message strings (\"No sections in file\"/\"Need ']' to end section line\"/\"Missing '=' in definition\"/\"Unexpected EOF\"/\"Parse Error\"/\"Disk full\"/\"Temporary file error\"/\"Out of memory\") and prints `printf(\"\\n\\nINI_Lib (E1%02d): %s\\n\", code+50, message)` before hard-exiting via `exit(10)` -- no cleanup, no quit() call, nothing recoverable. The literal \"INI_Lib\" wording in the format string is a real library-heritage marker: this decisively is (or is directly copied from) a small, public-domain-style INI-parsing library's own error-reporting convention, distinct from AGS's own later error-handling style. Searched for and NOT FOUND anywhere in the 2011 reference source (no \"INI_Lib\"/\"IniError\"/\"E1%02d\" string exists in Engine/ at all) -- this entire error-code-based custom INI parser is CONFIRMED ABSENT/removed by 2011, consistent with AGS eventually switching wholesale to Allegro's own config.c-based config-reading API (get_config_string/get_config_int/set_config_string, all already matched as genuine Allegro library functions elsewhere in this project) rather than a custom bundled parser. No 2011 source declaration exists to name this function against -- left unnamed per this project's usual convention, its role and the whole error-code table fully documented here instead."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_402FD9",
+    "new_name": "fputstring",
+    "source_file": "Common/cscommon.cpp",
+    "source_line": 174,
+    "confidence": "high",
+    "evidence": "void fputstring(char*sss,FILE*ddd) { int b=0; while(sss[b]!=0){fputc(sss[b],ddd);b++;} fputc(0,ddd); } (cscommon.cpp:174-181) -- a complete, exact, zero-drift match: a byte-by-byte fputc loop over the string until the null terminator, then a final fputc(0) to write the terminator itself. `fgetstring`'s own natural write-side counterpart. Called from SaveGameSlot (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_407FAB",
+    "new_name": "write_gui",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 1559,
+    "confidence": "high",
+    "evidence": "void write_gui(FILE*ooo,GUIMain*guiwrite,GameSetupStruct*gss) (acgui.cpp:1559-1595) -- a complete, exhaustive, exact match across the entire function. `putw(GUIMAGIC,ooo); putw(GUI_VERSION,ooo);` matches the disassembly's own literal `_putw(0xCAFEBEEF); _putw(0x66);` EXACTLY -- confirming GUIMAGIC=0xCAFEBEEF and GUI_VERSION=0x66(102) with ZERO drift (a rare case for a version-marker constant in this project). `putw(gss->numgui,ooo);` matches `_putw([eax+0xA7EC])` -- a further confirmation route for GameSetupStructBase.numgui. REAL DRIFT: source's per-GUIMain loop (`for(...) guiwrite[iteratorCount].WriteToFile(ooo);`) has NO counterpart here -- this build instead does ONE BULK `fwrite` of the entire guis[] array as a raw memory blob (ElementSize=0x184=sizeof(GUIMain), ElementCount=numgui) -- meaning either GUIMain::WriteToFile doesn't exist yet in this build, or write_gui itself predates the later per-object virtual-dispatch save design, consistent with the broader 'bulk raw-blob save, not yet virtual-method-based' pattern found elsewhere in this project's save-format work. The remaining 6 putw-count-then-WriteToFile-loop blocks all match source's own 6 GUIObject-derived-class loops exactly, in the same order, confirming 6 new globals: dword_5230F4=numguibuts (GUIButton), dword_5230F8=numguilabels (GUILabel), dword_5230FC=numguiinv (GUIInv), dword_523100=numguislider (GUISlider), dword_523104=numguitext (GUITextBox), dword_523108=numguilist (GUIListBox) -- each already-matched *__WriteToFile method confirmed a further time via this call site. Called from SaveGameSlot (already matched) at exactly the call site source's own `write_gui(ooo,guis,&game);` (AC.CPP:22765) appears at."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_41E1C1",
+    "new_name": "serialize_bitmap",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 22607,
+    "confidence": "high",
+    "evidence": "void serialize_bitmap(block thispic,FILE*ooo) (AC.CPP:22607-22615) -- a complete, exact, zero-drift match. `if(thispic!=NULL)` matches the disassembly's own leading `cmp arg_0,0; jz <end>` (writing NOTHING at all for a NULL bitmap, not even a sentinel -- matching source's own silent no-op exactly). `putw(w,ooo); putw(h,ooo); putw(bitmap_color_depth(thispic),ooo);` matches the three leading `_putw` calls exactly (the third via the already-matched bitmap_color_depth). The per-row loop's `fwrite(&thispic->line[cc][0],thispic->w,bitmap_color_depth(thispic)/8,ooo)` matches the disassembly's own fwrite call exactly -- `bitmap_color_depth(Block)` computed again and divided by 8 via the standard MSVC signed-division-by-constant-8 instruction idiom (`cdq;and edx,7;add eax,edx;sar eax,3`) supplies ElementCount, and `Block->w`(the already-established `w` field at +0x00) supplies ElementSize -- matching source's own (perhaps unusual-looking, but literal) ElementSize=w/ElementCount=bpp/8 split exactly, not a w*bpp/8 product. Called from SaveGameSlot (already matched) -- one of `serialize_bitmap`'s 7 call sites in source (screenshot, sprites, overlays, dynamic surfaces, room backgrounds, raw-saved-screen); the specific call site(s) reached from SaveGameSlot were not individually cross-checked against source's own multiple call sites this round."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_417AD9",
+    "new_name": "isposinbox",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 16154,
+    "confidence": "high",
+    "evidence": "int isposinbox(int mmx,int mmy,int lf,int tp,int rt,int bt) (AC.CPP:16154-16157) -- a complete, exact, zero-drift match: `(mmx>=lf)&(mmx<=rt)&(mmy>=tp)&(mmy<=bt)` matches the disassembly's own 4 `setnl`/`setle`-based comparisons ANDed together exactly (6 arguments, same order). Called from the newly-matched is_pos_in_sprite (sub_417B1B, see its own entry) exactly where source calls `isposinbox(xx,yy,arx,ary,arx+spww,ary+sphh)`."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_417B1B",
+    "new_name": "is_pos_in_sprite",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 16161,
+    "confidence": "high",
+    "evidence": "int is_pos_in_sprite(int xx,int yy,int arx,int ary,block sprit,int spww,int sphh,int flipped=0) (AC.CPP:16161-16193ish) -- a decisive structural match, called from GetObjectAt and sub_417ECD (GetCharacterAt's own internal hit-test helper, already matched). Both width/height defaulting steps match source's `if(spww==0) spww=divide_down_coordinate(sprit->w)-1;`/`if(sphh==0) sphh=divide_down_coordinate(sprit->h)-1;` exactly in SHAPE (zero-check, divide-by-multiplier, subtract 1) but read from the GLOBAL spritewidth[]/spriteheight[] arrays (dword_4CD2E8/dword_4E787C, both already established) indexed by a sprite SLOT NUMBER rather than dereferencing a `block`/BITMAP* pointer's own `w`/`h` fields directly -- a genuine, confirmed parameter-shape drift: this build's 5th parameter (IDA-named `index`) is a sprite slot number, not a bitmap pointer, for the purposes of default-size computation (the ACTUAL bitmap is still fetched separately, via SpriteCache::operator[], for the pixel-transparency check below). A second confirmed drift: this build's parameter order interleaves differently -- the two size-defaulting checks read the 7th/8th physical stack slots (matching spww/sphh's role) while the 6th slot is read AFTER `isposinbox` succeeds as the `flipped`-equivalent gate, unlike source's declared trailing position for `flipped` -- a real signature-order difference, not just a naming cosmetic (documented but not further investigated this round). The core logic matches decisively: `isposinbox(xx,yy,arx,ary,arx+spww,ary+sphh)` matches the newly-matched isposinbox call exactly (early-return false on failure); the transparency check is gated on `byte_513341` -- CONFIRMED as `GameSetupStructBase.options[11]` (`OPT_PIXPERFECT=11`, Common/acroom.h:2717) via zero-slack address arithmetic against the already-established `byte_513340`=`options[10]`(`OPT_SPEECHTYPE`, from SetSpeechStyle's own round) -- landing exactly one byte later with zero gap, matching source's `if(game.options[OPT_PIXPERFECT])` exactly. Inside that gate: fetches the sprite via SpriteCache::operator[](index) (already matched), calls the already-matched `getpixel` at `((xx-arx)*multiplier_x, (yy-ary)*multiplier_y)`, and compares against `bitmap_mask_color` (already matched) -- matching source's own transparent-pixel-rejection logic in role (the specific hardware-acceleration-adjustment branch immediately following in source, gated on `gfxDriver->HasAcceleratedStretchAndFlip()`, has no counterpart here -- CONFIRMED ABSENT, consistent with this build predating `gfxDriver` entirely, the same finding made repeatedly elsewhere in this project)."
   }
 ]

@@ -13313,3 +13313,70 @@ wholesale to Allegro's own `config.c`-based API (`get_config_string`/
 Allegro library functions) rather than keeping a custom bundled parser.
 No 2011 declaration exists to name this function against -- left
 unnamed, its role and full error-code table documented instead.
+
+### `fputstring`/`write_gui`/`serialize_bitmap` close three more
+### `SaveGameSlot` callees, with a rare zero-drift magic-number find
+
+A keyword-scored variant of the callgraph-ranking sweep (prioritizing
+unmatched leads called from GUI/Character/Room/Sprite/Save-sounding
+already-matched names) surfaced `SaveGameSlot`'s own three remaining
+unmatched callees.
+
+**`fputstring` (`sub_402FD9`)** closes as `fgetstring`'s exact write-
+side mirror (`Common/cscommon.cpp:174-181`) -- a byte-by-byte `fputc`
+loop plus a final null-terminator `fputc`.
+
+**`write_gui` (`sub_407FAB`)** closes as a complete, exhaustive match to
+`Engine/acgui.cpp:1559-1595` -- and lands a rare ZERO-DRIFT constant
+find: `putw(GUIMAGIC,ooo); putw(GUI_VERSION,ooo);` matches the
+disassembly's own literal `_putw(0xCAFEBEEF); _putw(0x66);` exactly,
+confirming `GUIMAGIC=0xCAFEBEEF`/`GUI_VERSION=0x66`(102) with no
+reduction or change at all -- unusual for a version-marker constant in
+this project, where capacities/version numbers almost always drift.
+REAL DRIFT found alongside it: source's per-`GUIMain` loop (calling each
+object's own `WriteToFile()`) has NO counterpart here -- this build
+instead does ONE BULK `fwrite` of the entire `guis[]` array as a raw
+memory blob, meaning either `GUIMain::WriteToFile` doesn't exist yet in
+this build or `write_gui` itself predates the later per-object virtual-
+dispatch save design. The remaining 6 `putw`-count-then-`WriteToFile`-
+loop blocks (Button/Label/Inv/Slider/TextBox/ListBox, all already
+matched) all confirm 6 new globals (`numguibuts`/`numguilabels`/
+`numguiinv`/`numguislider`/`numguitext`/`numguilist`) in the same order
+source declares them.
+
+**`serialize_bitmap` (`sub_41E1C1`)** closes as a complete, exact,
+zero-drift match to `AC.CPP:22607-22615` -- including source's own
+slightly unusual `fwrite(...,ElementSize=w,ElementCount=bpp/8,...)`
+split (not a `w*bpp/8` product), matched via the standard MSVC signed-
+division-by-8 instruction idiom for the `bitmap_color_depth/8` count.
+
+### `isposinbox`/`is_pos_in_sprite` close, with a genuine parameter-
+### order drift and a zero-slack `OPT_PIXPERFECT` confirmation
+
+Two more from the same sweep, called from `GetObjectAt` and
+`GetCharacterAt`'s own internal hit-test helper (both already matched).
+
+**`isposinbox` (`sub_417AD9`)** closes as a complete, exact, zero-drift
+match to `AC.CPP:16154-16157` -- a plain 4-condition bounding-box test.
+
+**`is_pos_in_sprite` (`sub_417B1B`)** closes at a decisive structural
+level, with two genuine, confirmed drifts. First: this build's 5th
+parameter (IDA-named `index`) is used as a sprite SLOT NUMBER for
+computing default width/height (indexing the already-established global
+`spritewidth[]`/`spriteheight[]` arrays), not a dereferenced `block`/
+BITMAP* pointer's own `w`/`h` fields as source's `sprit` parameter is --
+the actual bitmap is still separately fetched via `SpriteCache::
+operator[]` for the real pixel-transparency test below. Second: this
+build's parameter order interleaves `flipped` BEFORE `spww`/`sphh`
+rather than after, a genuine signature-order difference from source's
+declared `(xx,yy,arx,ary,sprit,spww,sphh,flipped=0)` order (not
+independently investigated further this round). The core logic matches
+decisively otherwise: the `isposinbox(...)` early-out call matches
+exactly, and the pixel-transparency check is gated on `byte_513341` --
+CONFIRMED as `GameSetupStructBase.options[11]`(`OPT_PIXPERFECT=11`) via
+ZERO-SLACK address arithmetic against the already-established
+`byte_513340`=`options[10]`(`OPT_SPEECHTYPE`, from an earlier
+`SetSpeechStyle` round) -- landing exactly one byte later with zero
+gap. CONFIRMED ABSENT: source's `gfxDriver->HasAcceleratedStretchAndFlip
+()`-gated hardware-acceleration size-adjustment branch -- the usual
+"predates `gfxDriver`" finding, once again.
