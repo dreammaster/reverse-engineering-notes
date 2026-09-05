@@ -12570,6 +12570,36 @@ registered entry point the CRT's own startup code calls before
 common single-level pattern -- plausibly a build/optimization
 artifact, not further explained. Both named accordingly.
 
+### RoomStruct's last remaining open-territory candidate closes: ebpalShared confirmed absent, footprint pinned at +0x3A20
+
+RoomStruct's own investigation had been left with one small piece of
+genuinely open territory past `+0x3A20`: `bpalettes`, `localvars`/
+`numLocalVars`, and the `lastLoadNum*` trio were all already confirmed
+absent, leaving only `ebpalShared[MAX_BSCENE]` (`acroom.h:870`) and
+the already-ruled-out `CustomProperties hsProps[]`/`gameId` as 2011-
+declared candidates for that space. Re-reading `load_room`'s own
+already-fully-read opening cleanup sequence closes the loop: it runs
+directly from the `ebscene[]` destroy-loop straight into resetting
+`num_bscenes`/`bscene_anim_speed` and the `objectnames[10][30]` memset,
+then straight into `clibfopen` opening the room file -- with no
+`regionScripts`-delete, no `localvars`-free, and critically no
+`memset(&rstruc->ebpalShared[0],0,MAX_BSCENE)` anywhere in that
+sequence (source's own equivalent cleanup block, `acroom.h:2050-2059`,
+sits at exactly this point in the analogous flow). A direct positive
+absence, not merely an unfound access site -- and one that makes
+architectural sense: this build already shares ONE palette across
+every background frame (`bpalettes` confirmed absent), so a per-frame
+"is this palette shared" flag array would be meaningless here anyway.
+
+With every 2011-declared field for that region now ruled out, this
+build's own `RoomStruct` compiled footprint ends at `+0x3A20` as far
+as any reachable code path in this binary ever touches it -- the
+closest this struct's own total size can be pinned down without a
+`sizeof`/malloc-literal anchor (unlike `GameState`'s own
+`SaveGameSlot`-fwrite-based confirmation). Every field `load_room`'s,
+`load_main_block`'s, and `roomstruct::roomstruct()`'s own read/write
+sequences reference has now been mapped or ruled out.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

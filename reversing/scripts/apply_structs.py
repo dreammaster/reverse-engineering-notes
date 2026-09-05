@@ -4959,17 +4959,29 @@ struct RoomStruct {
   // speak to them directly, but both are already independently confirmed absent via round 8's
   // version-ceiling argument (`CustomProperties` gated version>=21, `gameId` version>=25).
   //
-  // Everything past +0x3A20 remains unexplored territory -- the struct's own total size is still
-  // not established -- but every 2011-declared field known to occupy that region specifically
-  // (`bpalettes`, `localvars`/`numLocalVars`, and now `lastLoadNumHotspots`/`lastLoadNumObjects`/
-  // `lastLoadNumRegions`) is confirmed absent, narrowing what could still be there considerably:
-  // only `ebpalShared[MAX_BSCENE]` (`acroom.h:870`, "used internally by engine atm" per 2011's own
-  // comment -- plausibly a later addition itself, unconfirmed either way) and `CustomProperties
-  // hsProps[MAX_HOTSPOTS]`/`gameId` (both already confirmed absent) remain as 2011-declared
-  // candidates for this space at all. Every field `load_room`'s, `load_main_block`'s, and
-  // `roomstruct__roomstruct`'s own read/write sequences reference has now been mapped; further
-  // progress needs either a genuinely new evidence source (a different already-matched function
-  // touching `rstruc`) or independently confirming `ebscene[]`'s real capacity for this build.
+  // `ebpalShared[MAX_BSCENE]` (`acroom.h:870`, the last remaining 2011-declared candidate for
+  // territory past +0x3A20) is now CONFIRMED ABSENT too (follow-up round): `load_room`'s own
+  // opening cleanup sequence -- already fully read start to end -- runs directly from the
+  // `ebscene[]` destroy-loop (already matched) straight into resetting `num_bscenes`/
+  // `bscene_anim_speed` and the `objectnames[10][30]` memset (already confirmed), then straight
+  // into `clibfopen` opening the room file -- with NO `regionScripts`-delete, NO `localvars`-free,
+  // and critically no `memset(&rstruc->ebpalShared[0],0,MAX_BSCENE)` anywhere in that sequence
+  // (source's own equivalent cleanup block, acroom.h:2050-2059, sits at exactly this point). A
+  // direct positive absence, not merely an unfound access site -- fully consistent with this
+  // build's own already-established single-shared-palette-for-every-background-frame behavior
+  // (`bpalettes` confirmed absent several rounds ago), which makes a per-frame "is this palette
+  // shared" flag array meaningless here: there is only ever ONE shared palette, never a choice.
+  // With `bpalettes`, `localvars`/`numLocalVars`, `lastLoadNumHotspots`/`lastLoadNumObjects`/
+  // `lastLoadNumRegions`, `CustomProperties hsProps[MAX_HOTSPOTS]`/`gameId`, and now
+  // `ebpalShared[MAX_BSCENE]` ALL confirmed absent, EVERY 2011-declared field known to occupy
+  // territory past +0x3A20 has been ruled out -- `load_room`'s own opening sequence (the last
+  // function with any further business on `rstruc` before opening the file) touches nothing
+  // beyond +0x3A20 at all. This build's own `RoomStruct` compiled footprint therefore ends at
+  // +0x3A20 as far as any reachable code path in this binary ever touches it -- the closest this
+  // struct's own total size can be pinned down without a `sizeof`/malloc-literal anchor (unlike
+  // `GameState`'s own `SaveGameSlot`-fwrite-based confirmation). Every field `load_room`'s,
+  // `load_main_block`'s, and `roomstruct__roomstruct`'s own read/write sequences reference has now
+  // been mapped or ruled out.
 };
 
 // AmbientSound (this build's version) -- FRESH SURVEY, picked as the next target after

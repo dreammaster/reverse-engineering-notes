@@ -3669,6 +3669,14 @@ disassembly work.
   DirectShow functions — this build's video playback has no dedicated
   pause/resume hook for window-focus changes at all, consistent with
   it predating the `AGSWin32` platform-abstraction layer.
+- **`RoomStruct`'s last remaining open-territory candidate closes**:
+  `load_room`'s own already-fully-read opening cleanup sequence has no
+  `memset(&rstruc->ebpalShared[0],...)` anywhere in it, confirming
+  `ebpalShared[MAX_BSCENE]` absent — the last 2011-declared field that
+  could occupy territory past `+0x3A20`. This build's own `RoomStruct`
+  compiled footprint therefore ends at `+0x3A20` as far as any
+  reachable code path ever touches it, the closest this struct's total
+  size can be pinned without a `sizeof`/malloc-literal anchor.
 
 ## Third-party library identification (Task #10)
 
