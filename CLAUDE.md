@@ -3757,6 +3757,13 @@ disassembly work.
   auto-redirecting to `draw_256_sprite` internally for 8-bit sprites —
   named at the role/call-site level rather than by slot arithmetic,
   given the now-demonstrated layout uncertainty.
+- **A black-to-maskcolor sprite-conversion helper turns out to be dead
+  code.** `sub_410C6A` converts an 8-bit sprite's black pixels to
+  Allegro's `MASK_COLOR_16` after a depth conversion — but its own
+  gating global (`dword_523090`) has no write site anywhere in the
+  binary, so the required `==1` condition can never be true. This
+  function's own body is structurally unreachable in the shipped
+  binary. Left unnamed given the low payoff of chasing dead code.
 
 ## Third-party library identification (Task #10)
 

@@ -12839,6 +12839,29 @@ build, this is named at the ROLE/call-site level: it's plain
 own entry already cited this exact call by name without ever getting
 its own dedicated match).
 
+### A black-to-maskcolor sprite-conversion helper turns out to be dead code
+
+The last of `prepare_characters_for_drawing`'s own unnamed callees,
+`sub_410C6A`, closes with a genuinely interesting negative result. Its
+role is clear: call `bmp_bpp` (this session's own new match) on a
+bitmap, and if the result differs from a stored global
+(`dword_523090`) AND that global equals exactly 1 (8-bit), scan every
+pixel via `getpixel`/`putpixel` (both already matched) and replace any
+BLACK pixel with the literal `0xF81F` -- Allegro's own classic
+`MASK_COLOR_16` constant -- converting an originally-8-bit sprite's
+black background/outline into a proper hi-color transparency mask
+after a depth conversion. GENUINE FINDING: `dword_523090` (a BSS
+global, never explicitly initialized) has NO WRITE SITE anywhere in
+the entire 932K-line disassembly -- only this one read site exists.
+Since the function's own gate requires `dword_523090==1` to do
+anything at all, and nothing anywhere ever sets it, this function's
+pixel-masking body can never actually execute in this compiled binary
+as shipped -- genuine DEAD CODE, not merely unreached in testing but
+structurally unreachable given the binary's own data. Left unnamed: no
+specific 2011 counterpart was confidently identified, and since it
+never runs, further chasing its exact source correspondence has low
+payoff for the eventual ScummVM reimplementation.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`
