@@ -238,7 +238,19 @@ anchor). The combat pool it prints is quoted at the top of
       LotA has no XP stat.  Interest =
       `MIN(1500, MIN(5000, balance) * daysElapsed \ 999)` (`ds:2C3C` is an
       8-byte double = 999.0).  Moneylender = flat 50% loan.
-- [ ] shop counters, guard fight, item-grab, mail routes, robbery event
+- [x] `twndr_services.bas` (v1) — `WeaponArmorShop` / `FoodShop`,
+      `MailDeliveryJob`, `GuardAttack` / `FightGuard`, `StealGold` /
+      `OfferGuardBribe` / `ArrestedByGuards`.  Shop **buy** prices are
+      per-slot `TOWN<n>.BSV` data (not a formula); **sell**
+      `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
+      `offer = INT(MIN(baseValue, baseValue*Charm^0.7/11) * 0.8)`.  Guard
+      combat mirrors the castle (armour + Endurance denominator).  Mail
+      job picks a random other town; payout credit point still *partial*.
+- [ ] armour-sell polynomial exact assembly; mail payout credit;
+      `StealGold` fine split; `robberyEvent`; food-shop price/quantity.
+      *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
+      that reflows the whole `.asm` on export — `twndr.asm` is left
+      un-updated; the math above was read from the coerced idb.)*
 
 ## CASDR.EXE
 

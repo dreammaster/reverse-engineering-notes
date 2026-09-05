@@ -441,11 +441,55 @@ partyGold += goldFound
 A per-level gold high-water mark blocks re-farming. The quest jewel is a
 level-7 chest, granted once (`S2(20)` gate).
 
-### Casino / mail — *not yet located*
+### Town shops / guard / mail — [`twndr_services.bas`](../recovered/twndr_services.bas) — *derived*
 
-GMB1 (BlackJack) / GMB2 (Flip-Flop Parlour) payouts scale by
-`imul ds:1AE0` (character level). Mail routes cost 95 / 110 / 125 gold
-per the guide; not yet found in `twndr.asm`.
+**Buy.** Shop stock is *data, not a formula*: each menu slot's item id /
+condition / price is read straight from the town's `TOWN<n>.BSV` record
+(`viewObjectArray` `ds:1C7C`, elem offsets `0x48`/`0x5A`/`0x6C`). A
+`townType == 0x0C` shop also rolls `RND(1) < 0.3` "…IS NOT FOR SALE".
+`partyGold -= price` (32-bit), item drops into the first free inventory slot.
+
+**Sell** (`sub_11F51` → `sub_1200B`, item id `ds:1F04`, condition `ds:1F06`):
+```
+' weapons (id 0..8)
+baseValue = INT( ((weaponId^1.05 + condition/2.8 + 2) ^ 2.1) * 4 - 10 )
+' armour  (id 9..13) -- same shape, consts 3.2 / 1.02 / 3.5 / -6 (ds:2B66..2B72)
+
+raw   = baseValue * (Charm ^ 0.7) / 11            ' ds:2B76, ds:2B7A
+offer = INT( MIN(raw, baseValue) * 0.8 )          ' ds:2878 ; never above base
+```
+Charm 15 → ~47 % of base, Charm 30 → ~77 % — high Charm haggles better.
+
+**Guard → player** (`guardAttack`, twndr.asm:2507 — castle-style denominator):
+```
+' auto-arrest instead of fighting when you are strong and outnumbered
+IF hitPoints >= 90 AND guardCount > 1 AND ds:2194 > 0 THEN ArrestedByGuards
+miss  when RND(1) * 70 < Dexterity                        ' ds:285C
+raw       = guardAtk * (RND(1) * 25 + 12)                 ' ds:21A2, ds:2870/2874
+armorTerm = 10 * armorId - 50   (or 30 when bare)
+dmg       = INT( raw \ (armorTerm ^ 0.8 * Endurance ^ 0.8) ) + 3   ' ds:2878
+```
+
+**Player → guard** (`fightGuard`, twndr.asm:1407):
+```
+base = (weaponId + 2) * Strength \ 8 + 4
+dmg  = INT( base * (RND(1) + 0.5) )       ' "GUARD STRUCK n H.P. BLOW" / "GUARD KILLED"
+```
+
+**Mail job** (`mailDeliveryJob`, from the food shop): pick a random other
+town — `destTown = INT((currentTown-1) + RND(1)*k)` (`ds:2940`), re-rolled
+while `< 0`, `> 10`, or `== currentTown` — hold a "mail" item (`S2(9)++`);
+guide payout 95 / 110 / 125 gold by route, credited on arrival (that check
+is in the town-entry path, not yet traced).
+
+**Steal / bribe.** `StealGold` (rob a till): `partyGold += S4(0)` then
+`S4(0) *= 0.8` (till refills slower each time), with a `spendGold` fine if
+caught. `OfferGuardBribe`: pay `ds:216E` (amount set by the caller), guard
+leaves. `ArrestedByGuards`: "THE GUARDS OVERWHELM YOU!" → jail (lose a turn
+/ some gold, teleport to the jail tile — not a death).
+
+**Casino** (GMB1 BlackJack / GMB2 Flip-Flop Parlour): payouts scale by
+`imul ds:1AE0` (character level) — see [`gmb_casino.bas`](../recovered/gmb_casino.bas).
 
 ---
 

@@ -60,8 +60,17 @@ the per-executable breakdown this tracks against.
       spell cast `RND(1)·6 < Int^0.53`, dmg `INT((selSpell−22.5)·28·
       (RND+1))` then `\5` castle then `\range`. `EnemyAttack` (non-Warlord)
       still partial (32-bit, entered mid-expr).
-- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR
-      shops/guard/mail; CASDR chest loot / locked doors / self-destruct;
+- [x] **TWNDR shops/guard/mail** (`twndr_services.bas` v1) — shop BUY
+      prices are per-slot `TOWN<n>.BSV` data; SELL
+      `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
+      `offer = INT(MIN(baseValue, baseValue·Charm^0.7/11)·0.8)`; guard
+      combat mirrors the castle (armour+Endurance denominator); mail job
+      picks a random other town. `ida_scripts/fix_twndr_guard.py` coerces
+      the 4 small handlers (NOT `townServiceDispatch` — it reflows the
+      whole `.asm`, so `twndr.asm` is intentionally left un-updated).
+- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR armour-
+      sell polynomial / mail payout credit / `StealGold` fine / robbery
+      event; CASDR chest loot / locked doors / self-destruct;
       DUN monster movement; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
 

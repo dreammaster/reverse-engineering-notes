@@ -2,9 +2,12 @@
 '  TWNDR.EXE  --  town services                                       [v1]
 '  reconstructed from twndr.asm ; see recovered/README.md for the model + tags
 '
-'  SUBs: SpendGold  (shared "pay N gold")
-'        TownServiceDispatch  (the ~6 KB SELECT CASE on townServiceId --
-'                              bank, item-grab, shop counters, guard)
+'  SUBs: SpendGold  (shared "pay N gold"), Bank,
+'        WeaponArmorShop / FoodShop / MailDeliveryJob (shops + jobs),
+'        GuardAttack / FightGuard / StealGold / OfferGuardBribe /
+'        ArrestedByGuards (the town-guard system).
+'        townServiceDispatch (ds:1F22) is the ~6 KB SELECT CASE that the
+'        shop entries route the actual buy/sell transaction through.
 '
 '  TWNDR DGROUP:0 = TWNDR.EXE file offset 0xAE60.
 ' ==========================================================================
@@ -69,17 +72,109 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
-'  TownServiceDispatch -- the other cases (summary; full reconstruction TODO)
+SUB WeaponArmorShop                     ' asm: weaponShopEntry / armorShopEntry
+'                                              / townServiceDispatch / sub_11FFA
 ' --------------------------------------------------------------------------
-'   case 0/0x0B  food shop         -- rations at the S5() price table
-'   case 2       weapon shop       -- ShopConfirmBuy-style, price scales
-'   case 4       armour shop
-'   case 9       item grab / "YOU COULDN'T GRAB THE ..." / "YOU GET n GOLD."
-'   case 0x0A    ??? (moneylender?)
-'   guard fight  guardAttack/fightGuard -- guardHitPoints (ds:216E) as the
-'                accumulator; pay-off prompt via SpendGold
-'   mail routes  (guide: 95 / 110 / 125 gold) -- not yet located; may be a
-'                townServiceDispatch stage or a per-town NPC
+' Menu: 1 BUY  2 SELL  (3 LEAVE).
+'
+' ---- BUY ----  townServiceDispatch, case reached from the shop entry.
+'   The shop's STOCK is per-slot DATA, not a formula: each menu slot holds
+'   an item id  = S4viewArray(0x24 + slot)      [ds:1C7C elem 0x48/2 + n]
+'   a condition = S4viewArray(0x2D + slot)      [       elem 0x5A/2 + n]
+'   a PRICE     = S4viewArray(0x36 + slot)      [       elem 0x6C/2 + n]
+'   -- all loaded from the town's TOWN<n>.BSV shop record.
+'     IF townType = &h0C AND RND(1) < 0.3 THEN             ' ds:1E20, ds:2B84
+'         PRINT "THE "; Weapon$(itemId); " IS NOT FOR SALE." : EXIT SUB
+'     END IF
+'     IF partyGold < price THEN NotEnoughGold : EXIT SUB
+'     partyGold = partyGold - price                        ' 32-bit
+'     S0(freeSlot) = itemId : S1(freeSlot) = condition     ' add to inventory
+'
+' ---- SELL ----  sub_11F51 (base value) then sub_1200B (haggled price).
+'   itemId = ds:1F04   condition = ds:1F06 (0..4)
+'   IF itemId <= 8 THEN   ' WEAPON
+'       baseValue = INT( ((itemId^1.05 + condition/2.8 + 2) ^ 2.1) * 4 - 10 )
+'   ELSE                  ' ARMOUR (itemId 9..13)
+'       baseValue = INT( ((itemId^3.2  + condition/3.5 + <k>) ^ <e>) * <m> - 6 )
+'       ' (the armour branch's 4 consts: ds:2B66 3.2, ds:2B6A 1.02,
+'       '  ds:2B6E 3.5, ds:2B72 -6 -- exact assembly of the polynomial
+'       '  not fully pinned; same shape as the weapon branch)
+'   END IF
+'   raw       = baseValue * (Charm ^ 0.7) / 11             ' ds:2B76, ds:2B7A
+'   offer     = INT( MIN(raw, baseValue) * 0.8 )           ' ds:2878 ; cap at base
+'   PRINT "I'LL PAY EXACTLY "; offer; " GOLD FOR YOUR "; Item$(itemId)
+'   IF YesNo() THEN partyGold = partyGold + offer : <remove item>
+'  -- Charm 15 -> ~47% of base ; Charm 30 -> ~77% ; higher Charm haggles better.
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB FoodShop                                         ' asm: twndr.asm foodShop
+' --------------------------------------------------------------------------
+' "RATIONS" -- buy food.  Price is per-slot shop data (as the weapon shop);
+' the quantity prompt is PromptQuantity, capped at what you can afford.
+' Also the entry point that offers the mail-delivery job (below).
+
+
+' --------------------------------------------------------------------------
+SUB MailDeliveryJob                                  ' asm: twndr.asm mailDeliveryJob
+' --------------------------------------------------------------------------
+' Reached from the food shop.  "WOULD YOU LIKE TO EARN SOME GOLD?"
+'     DO
+'         destTown = INT( (currentTown - 1) + RND(1) * <k> )     ' ds:2940
+'     LOOP WHILE destTown < 0 OR destTown > 10 OR destTown = currentTown
+'     PRINT "HERE'S SOME MAIL TO DELIVER TO "; Town$(destTown)
+'     S2(9) = S2(9) + 1                              ' "mail" item held
+' Payment (guide: 95 / 110 / 125 gold, presumably by route distance) is
+' credited when you next enter destTown carrying the mail -- that check
+' lives in the town-arrival path, not fully traced here.  *partial*
+
+
+' --------------------------------------------------------------------------
+SUB GuardAttack                                      ' asm: twndr.asm:2507 (guardAttack)
+' --------------------------------------------------------------------------
+' A town guard's turn (you get guards by fighting NPCs / robbing / etc.).
+'
+'   IF hitPoints >= 90 AND guardCount > 1 AND ds:2194 > 0 THEN
+'       ArrestedByGuards            ' "THE GUARDS OVERWHELM YOU!" (jail, not death)
+'   END IF
+'   PRINT "ATTACKED BY GUARD!"
+'   ' ---- to-hit ---------------------------------------- asm:loc_10FCA
+'   IF RND(1) * 70 < Dexterity THEN PRINT " -- MISSED" : EXIT SUB   ' ds:285C 70
+'   ' ---- damage --------------------------------------- asm:loc_1104B
+'   raw = guardAtk * (RND(1) * 25 + 12)                  ' ds:21A2, ds:2870, ds:2874
+'   armorTerm = 10 * armorId - 50                        ' with armour (id 9..13)
+'   IF armorId = 0 THEN armorTerm = 30                   ' bare
+'   dmg = INT( raw \ (armorTerm ^ 0.8 * Endurance ^ 0.8) ) + 3   ' ds:2878 0.8
+'   hitPoints = hitPoints - dmg
+'   PRINT " -- BLOW "; dmg
+' -- defensive DENOMINATOR scaling (armour + Endurance), like the castle.
+
+
+' --------------------------------------------------------------------------
+SUB FightGuard                                        ' asm: twndr.asm:1407 (fightGuard)
+' --------------------------------------------------------------------------
+' Your attack on a guard.
+'   IF attackMode = 0 THEN    ' weapon
+'       base = (weaponId + 2) * Strength \ 8 + 4
+'       dmg  = INT( base * (RND(1) + 0.5) )
+'   ELSE                     ' spell -- as useMagicMenu, not re-derived here
+'   END IF
+'   guardHitPoints(cell in viewObjectArray) -= dmg
+'   PRINT "GUARD STRUCK "; dmg; " H.P. BLOW"   /   "GUARD KILLED" at <= 0
+
+
+' --------------------------------------------------------------------------
+SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
+' --------------------------------------------------------------------------
+'   StealGold  ("Rob" a shop till): partyGold += S4(0) ; then S4(0) *= 0.8
+'              (the till refills slower each time) ; a spendGold follow-up
+'              (the fine if caught) -- exact split *partial*.
+'   OfferGuardBribe: the demanded amount is `ds:216E` (set by the caller);
+'              if partyGold >= it, partyGold -= it and the guard leaves.
+'              Also takes / marks an item (S2 slot from ds:1AEE).  *partial*
+'   ArrestedByGuards: "THE GUARDS OVERWHELM YOU!" -> jailPlayer (loses a
+'              turn / some gold, teleport to the jail tile -- not a death).
 
 
 ' ==========================================================================
@@ -91,6 +186,21 @@ END SUB
 '   * moneylender = flat 50% loan (borrow 200 -> owe 300), computed once
 '   * SpendGold(amount): partyGold -= amount   (shared by every vendor)
 '   * deposit/withdraw move gold between partyGold and bankBalance 1:1
+'   * SHOP BUY: prices are per-slot TOWN<n>.BSV data (not a formula); a
+'     0.3 "not for sale" roll in townType 0x0C
+'   * SHOP SELL: baseValue = INT( ((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10 )
+'     (weapons); offer = INT( MIN(baseValue, baseValue*Charm^0.7/11) * 0.8 )
+'   * GUARD -> player: miss when RND*70 < Dex; dmg = INT( guardAtk*(RND*25
+'     + 12) \ (armorTerm^0.8 * End^0.8) ) + 3, armorTerm = 10*armorId - 50
+'     (or 30 bare)
+'   * player -> GUARD: dmg = INT( ((weaponId+2)*Str\8 + 4) * (RND + 0.5) )
+'   * MAIL: pick a random other town (0..10, != current); guide payout
+'     95/110/125 gold by route
 '
 '  OPEN
-'   * the shop counters' price rolls, guard combat, mail routes, robberyEvent
+'   * armour SELL polynomial exact assembly (consts 3.2/1.02/3.5/-6)
+'   * mail payout credit point ; bribe amount origin ; StealGold fine split
+'   * robberyEvent ; the food-shop price/quantity exact
+'   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
+'   the whole .asm on export -- the .asm is intentionally left un-updated;
+'   findings above were read from the coerced idb.
