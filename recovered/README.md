@@ -253,8 +253,18 @@ anchor). The combat pool it prints is quoted at the top of
       test, corrected).  Each exhibit chains to a driver EXE and consumes
       its required gem coin; responses gated on quest-flag bits — full
       table in `quest_flags.bas`.  Stones-of-Wisdom INT maths are in STDRV.
-- [ ] the caretaker level-up write (`ds:1AE0`) and bit `0x2000`'s setter —
-      both believed to be in the same untraced `caretakerOffer` region
+- [x] `mus_caretaker.bas` — **the character-LEVEL mechanism, fully solved.**
+      `ds:1AE0` is written in exactly one place (`sub_12CAC`), set to
+      whichever exhibit-coin-group rank `useCommand` just found you
+      qualify for (1..7 via `caretakerPraise`; rank 8 = the final offer,
+      consumes the Compendium, HP=3000, gold capped 50000, level -> 10).
+      Found by coercing 5 functions' un-decoded `db` runs
+      (`ida_scripts/fix_mus_caretaker_gaps.py`, the same "IDA chops the
+      block after every far call" issue as the DUN coerce-gap fixes).
+      Also nails max HP exactly: `200 + 50*L*(L-1) - (100 if L>5)`.
+- [ ] bit `0x2000`'s setter (NOT in any of the now-fully-decoded caretaker
+      functions — still open, elsewhere) ; the `S3(0)>=2` branch
+      (`sub_12AF4`, loads exhibit graphics — a separate, later interaction)
 
 ## leglib — the shared runtime / engine primitives
 

@@ -1275,8 +1275,6 @@ loc_1090B:                              ; CODE XREF: enterExhibit+208↑j
 loc_1090E:                              ; CODE XREF: enterExhibit+20A↑j
                 call    sub_12C67
 ; ---------------------------------------------------------------------------
-
-loc_10913:                              ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 mov     word ptr ds:20B4h, 1
                 cmp     word ptr ds:2106h, 0
                 jl      short locret_10923
@@ -1288,7 +1286,7 @@ locret_10923:                           ; CODE XREF: enterExhibit+220↑j
 ; ---------------------------------------------------------------------------
 
 loc_10924:                              ; CODE XREF: enterExhibit+222↑j
-                cmp     word ptr ds:20FEh, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
+                cmp     word ptr ds:20FEh, 1
                 mov     ax, 0
                 jge     short loc_1092F
                 dec     ax
@@ -1308,12 +1306,12 @@ loc_1093A:                              ; CODE XREF: enterExhibit+239↑j
 
 loc_10943:                              ; CODE XREF: enterExhibit+240↑j
                 mov     bx, ds:2104h
-                shl     bx, 1           ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
+                shl     bx, 1
                 mov     si, 1BC4h
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     si, bx
-                cmp     word ptr es:[bx], 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
+                cmp     word ptr es:[bx], 1
                 mov     ax, 0
                 jge     short loc_1095E
                 dec     ax
@@ -3129,12 +3127,21 @@ loc_1149C:                              ; CODE XREF: caretakerOffer+11↑j
                 call    loc_11D05
 ; ---------------------------------------------------------------------------
                 call    sub_12AF4
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:214Ch, 1Bh
                 mov     ax, 214Ch
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
-                mov     word ptr ds:20B6h, 48h ; 'H'
-                call    loc_11D05
+; ---------------------------------------------------------------------------
+                db 0C7h
+                db    6
+                db 0B6h
+                db  20h
+                db  48h ; H
+                db    0
+                db 0E8h
+                db  43h ; C
+                db    8
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:213Ch, 6
                 jmp     loc_12323
@@ -3174,7 +3181,8 @@ loc_114FA:                              ; CODE XREF: caretakerOffer+6F↑j
 ; ---------------------------------------------------------------------------
 
 loc_11504:                              ; CODE XREF: caretakerOffer+79↑j
-                call    caretakerPraise ; "YOU HAVE DONE WELL SINCE I ".
+                call    caretakerPraise
+; ---------------------------------------------------------------------------
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -3197,6 +3205,7 @@ loc_1150A:                              ; CODE XREF: caretakerOffer+7B↑j
                 push    dx
                 push    ax
                 call    far ptr rt_EE   ; -> rtm_EE  (leglib seg003:0x1c9d3)
+; ---------------------------------------------------------------------------
                 jl      short loc_1154A
                 jmp     loc_11551
 ; ---------------------------------------------------------------------------
@@ -3211,11 +3220,13 @@ loc_11551:                              ; CODE XREF: caretakerOffer+C1↑j
                 mov     ax, 214Eh
                 push    ax
                 call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:20B6h, 4Ah ; 'J'
                 call    loc_11D05
 ; ---------------------------------------------------------------------------
                 mov     word ptr ds:20B6h, 0Ah
-                call    sub_12CAC
+                call    far ptr sub_12CAC
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:20B6h, 4Bh ; 'K'
                 jmp     loc_11D05
 ; ---------------------------------------------------------------------------
@@ -3257,23 +3268,29 @@ loc_115C4:                              ; CODE XREF: caretakerOffer+139↑j
                 mov     ax, 2150h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2150h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 2150h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     ax, 2656h       ; CARETAKER'S OFFER?
                 push    ax
                 mov     ax, 2154h
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
                 mov     ax, 2154h
                 push    ax
                 call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
                 mov     ax, 2154h
                 push    ax
                 call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
                 mov     word ptr ds:2158h, 0
                 mov     word ptr ds:215Ah, 2
                 mov     word ptr ds:215Ch, 3
@@ -3287,6 +3304,7 @@ loc_115C4:                              ; CODE XREF: caretakerOffer+139↑j
                 mov     ax, 215Eh
                 push    ax
                 call    far ptr rt_FE57 ; -> rtm_FE57  (leglib seg007:0x24f84)
+; ---------------------------------------------------------------------------
                 cmp     word ptr ds:1E22h, 1 ; B'\n\x01H'=\x01N'#\x16T'@\nWOULD YOU LIKE TO GO\x03n'TO \xf4\x11v'\n\nDO
                 jz      short locret_1163C
                 jmp     loc_1163D
@@ -3358,10 +3376,14 @@ loc_116BE:                              ; CODE XREF: caretakerOffer+235↑j
                 mov     ax, cx
                 mov     [bp-10h], cx
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 mov     bx, 23FCh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF2B ; -> rtm_FF2B  (leglib seg004:0x21e15)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF23 ; -> rtm_FF23  (leglib seg004:0x218ee)
+; ---------------------------------------------------------------------------
                 or      ax, [bp-0Eh]
                 or      dx, [bp-0Ch]
                 mov     bx, 6
@@ -3407,10 +3429,14 @@ loc_1173A:                              ; CODE XREF: caretakerOffer+2B1↑j
                 mov     ax, cx
                 mov     [bp-10h], cx
                 call    far ptr rt_FF20 ; -> rtm_FF20  (leglib seg004:0x21767)  [mid-func]
+; ---------------------------------------------------------------------------
                 mov     bx, 23FCh
                 call    far ptr rt_FF4B ; -> rtm_FF4B  (leglib seg004:0x21690)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF2B ; -> rtm_FF2B  (leglib seg004:0x21e15)
+; ---------------------------------------------------------------------------
                 call    far ptr rt_FF23 ; -> rtm_FF23  (leglib seg004:0x218ee)
+; ---------------------------------------------------------------------------
                 or      ax, [bp-0Eh]
                 or      dx, [bp-0Ch]
                 mov     bx, 46h ; 'F'
@@ -4244,10 +4270,8 @@ loc_11D05:                              ; CODE XREF: doWalk+142↑p
 loc_11D08:
                 mov     ax, 20B6h
                 push    ax
-                call    sub_12DA7
+                call    far ptr sub_12DA7
 ; ---------------------------------------------------------------------------
-
-loc_11D11:
                 mov     ax, 2428h
                 push    ax
                 mov     ax, 210Ch
@@ -6394,75 +6418,31 @@ sub_12AF4       proc far                ; CODE XREF: caretakerOffer+1F↑P
                 mov     [bp-0Eh], ax
                 call    far ptr rt_FE2C ; -> rtm_FE2C  (leglib seg007:0x24fe3)
 ; ---------------------------------------------------------------------------
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  24h ; $
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Bh
-                db  46h ; F
-                db 0F2h
-                db 0D1h
-                db 0E0h
-                db  8Bh
-                db 0D8h
-                db    5
-                db  0Ah
-                db    0
-                db  8Bh
-                db 0D3h
-                db  8Bh
-                db 0D8h
-                db 0BEh
-                db  58h ; X
-                db  1Eh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db  89h
-                db  46h ; F
-                db 0F0h
-                db  83h
-                db 0C2h
-                db  0Ch
-                db  8Bh
-                db 0DAh
-                db    3
-                db  5Ch ; \
-                db  0Ah
-                db  8Eh
-                db  44h ; D
-                db    2
-                db  26h ; &
-                db  8Bh
-                db    7
-                db  89h
-                db  46h ; F
-                db 0EEh
-                db 0C7h
-                db    6
-                db 0FEh
-                db  1Eh
-                db  64h ; d
-                db    0
-                db  9Ah
-                db 0EEh
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0CAh
-                db    0
-                db    0
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FE2B ; -> rtm_FE2B  (leglib seg008:0x289a9)
+; ---------------------------------------------------------------------------
+                mov     ax, [bp-0Eh]
+                shl     ax, 1
+                mov     bx, ax
+                add     ax, 0Ah
+                mov     dx, bx
+                mov     bx, ax
+                mov     si, 1E58h
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     [bp-10h], ax
+                add     dx, 0Ch
+                mov     bx, dx
+                add     bx, [si+0Ah]
+                mov     es, word ptr [si+2]
+                mov     ax, es:[bx]
+                mov     [bp-12h], ax
+                mov     word ptr ds:1EFEh, 64h ; 'd'
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
 loc_12B61:                              ; CODE XREF: loadExhibitData:loc_12AF1↑j
@@ -6472,7 +6452,6 @@ sub_12AF4       endp
 
 ; =============== S U B R O U T I N E =======================================
 
-; "YOU HAVE DONE WELL SINCE I ".
 ; Attributes: noreturn
 
 caretakerPraise proc far                ; CODE XREF: caretakerOffer:loc_11504↑P
@@ -6480,74 +6459,39 @@ caretakerPraise proc far                ; CODE XREF: caretakerOffer:loc_11504↑
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 ; ---------------------------------------------------------------------------
                 mov     word ptr [bp-10h], 64h ; 'd'
-                mov     ax, 28B2h       ; @YOU HAVE DONE WELL SINCE I LAST SAW
+                mov     ax, 28B2h
                 push    ax
                 lea     ax, [bp-0Eh]
                 push    ax
                 call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
 ; ---------------------------------------------------------------------------
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  10h
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0B8h
-                db 0DAh
-                db  28h ; (
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db  0Ch
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0ECh
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  9Ah
-                db 0ACh
-                db  2Ch ; ,
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0CAh
-                db    0
-                db    0
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     ax, 28DAh
+                push    ax
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-14h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                call    far ptr sub_12CAC
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
 loc_12BBC:                              ; CODE XREF: sub_12AF4:loc_12B61↑j
@@ -6734,63 +6678,35 @@ sub_12C67       proc far                ; CODE XREF: enterExhibit:loc_1090E↑P
 j_rt_FE02:                              ; -> rtm_FE02  (leglib seg008:0x28af8)
                 call    far ptr rt_FE02
 ; ---------------------------------------------------------------------------
-                db 0C7h
-                db    6
-                db  98h
-                db  21h ; !
-                db    0
-                db    0
-                db 0B8h
-                db  1Bh
-                db    0
-                db  50h ; P
-                db  9Ah
-                db  9Bh
-                db    0
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db  20h
-                db    2
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  74h ; t
-                db    3
-                db 0E9h
-                db    6
-                db    0
-                db 0C7h
-                db    6
-                db  98h
-                db  21h ; !
-                db    1
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0F2h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  9Ah
-                db 0EEh
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0CAh
-                db    0
-                db    0
+                mov     word ptr ds:2198h, 0
+                mov     ax, 1Bh
+                push    ax
+                call    far ptr rt_32   ; -> rtm_32  (leglib seg003:0x1b627)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_FF0A ; -> rtm_FF0A  (leglib seg003:0x1b5e8)
+; ---------------------------------------------------------------------------
+                jz      short loc_12C92
+                jmp     loc_12C98
+; ---------------------------------------------------------------------------
+
+loc_12C92:                              ; CODE XREF: sub_12C67+26↑j
+                mov     word ptr ds:2198h, 1
+
+loc_12C98:                              ; CODE XREF: sub_12C67+28↑j
+                lea     ax, [bp-0Eh]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
+; ---------------------------------------------------------------------------
+                retf    0
 ; ---------------------------------------------------------------------------
 
 loc_12CA9:                              ; CODE XREF: loadMuseumData:loc_12C64↑j
-                jmp     loc_12DA4
+                jmp     j_j_rt_ED
 sub_12C67       endp
 
 
@@ -6798,184 +6714,92 @@ sub_12C67       endp
 
 ; Attributes: noreturn
 
-sub_12CAC       proc far                ; CODE XREF: caretakerOffer+EC↑P
+sub_12CAC       proc near               ; CODE XREF: caretakerOffer+EC↑P
+                                        ; caretakerPraise+4B↑P
                 mov     cx, 16h
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
+sub_12CAC       endp
+
 ; ---------------------------------------------------------------------------
                 mov     word ptr [bp-0Ch], 1F4h
                 lea     ax, [bp-0Ch]
                 push    ax
                 call    far ptr rt_FE54 ; -> rtm_FE54  (leglib seg008:0x2869c)
 ; ---------------------------------------------------------------------------
-                db 0A1h
-                db 0B6h
-                db  20h
-                db 0A3h
-                db 0E0h
-                db  1Ah
-                db 0B8h
-                db    2
-                db  29h ; )
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db  10h
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0F0h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0C7h
-                db  46h ; F
-                db 0EEh
-                db  1Bh
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0EEh
-                db  50h ; P
-                db  9Ah
-                db  14h
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0C7h
-                db  46h ; F
-                db 0ECh
-                db 0FFh
-                db    0
-                db  9Ah
-                db 0E4h
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0B8h
-                db  22h ; "
-                db  29h ; )
-                db  50h ; P
-                db 0FFh
-                db  36h ; 6
-                db 0E0h
-                db  1Ah
-                db  9Ah
-                db 0A3h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  50h ; P
-                db 0B8h
-                db  38h ; 8
-                db  29h ; )
-                db  50h ; P
-                db  9Ah
-                db  88h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  50h ; P
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  85h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db  0Ch
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  8Dh
-                db  46h ; F
-                db 0E8h
-                db  50h ; P
-                db  9Ah
-                db 0A0h
-                db    1
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db 0C7h
-                db  46h ; F
-                db 0E6h
-                db  1Bh
-                db    0
-                db  8Dh
-                db  46h ; F
-                db 0E6h
-                db  50h ; P
-                db  9Ah
-                db  14h
-                db    5
-                db  4Dh ; M SEG16 SEGDEF [seg002,0]
-                db  13h
-                db  9Ah
-                db  67h ; g
-                db  2Ch ; ,
-                db    0 ; SEG16 SEGDEF [seg000,0]
-                db  10h
-                db 0C7h
-                db    6
-                db 0B6h
-                db  20h
-                db 0C8h
-                db    0
-                db 0C7h
-                db  46h ; F
-                db 0E4h
-                db    0
-                db    0
-                db 0A1h
-                db 0E0h
-                db  1Ah
-                db  89h
-                db  46h ; F
-                db 0E2h
-                db 0B8h
-                db    1
-                db    0
-                db 0E9h
-                db  11h
-                db    0
+                mov     ax, ds:20B6h
+                mov     ds:1AE0h, ax
+                mov     ax, 2902h
+                push    ax
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_FE26 ; -> drawString  (leglib seg007:0x26967)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-10h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     word ptr [bp-12h], 1Bh
+                lea     ax, [bp-12h]
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+                mov     word ptr [bp-14h], 0FFh
+                call    far ptr rt_FE5B ; -> screenRefresh  (leglib seg008:0x28861)
+; ---------------------------------------------------------------------------
+                mov     ax, 2922h
+                push    ax
+                push    word ptr ds:1AE0h
+                call    far ptr rt_D2   ; -> rtm_D2  (leglib seg003:0x1b870)
+; ---------------------------------------------------------------------------
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                mov     ax, 2938h
+                push    ax
+                call    far ptr rt_C3   ; -> basStrConcat  (leglib seg003:0x1b5ab)
+; ---------------------------------------------------------------------------
+                push    ax
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_C2   ; -> basStrAssign  (leglib seg003:0x1b572)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_FE25 ; -> drawStringInner  (leglib seg008:0x28bd2)
+; ---------------------------------------------------------------------------
+                lea     ax, [bp-18h]
+                push    ax
+                call    far ptr rt_D1   ; -> basStrClear  (leglib seg003:0x1b9b0)
+; ---------------------------------------------------------------------------
+                mov     word ptr [bp-1Ah], 1Bh
+                lea     ax, [bp-1Ah]
+                push    ax
+                call    far ptr rt_FE27 ; -> rtm_FE27  (leglib seg007:0x253ad)
+; ---------------------------------------------------------------------------
+                call    sub_12C67
+; ---------------------------------------------------------------------------
+                mov     word ptr ds:20B6h, 0C8h
+                mov     word ptr [bp-1Ch], 0
+                mov     ax, ds:1AE0h
+                mov     [bp-1Eh], ax
+                mov     ax, 1
+                jmp     loc_12D73
 ; ---------------------------------------------------------------------------
 
-loc_12D62:                              ; CODE XREF: sub_12CAC+CD↓j
+loc_12D62:                              ; CODE XREF: seg000:2D79↓j
                 mov     ax, [bp-1Ch]
                 add     ds:20B6h, ax
                 add     word ptr [bp-1Ch], 64h ; 'd'
                 mov     cx, [bp-20h]
                 inc     cx
                 mov     ax, cx
+
+loc_12D73:                              ; CODE XREF: seg000:2D5F↑j
                 mov     [bp-20h], ax
                 cmp     ax, [bp-1Eh]
                 jle     short loc_12D62
@@ -6984,10 +6808,10 @@ loc_12D62:                              ; CODE XREF: sub_12CAC+CD↓j
                 jmp     loc_12D8A
 ; ---------------------------------------------------------------------------
 
-loc_12D85:                              ; CODE XREF: sub_12CAC+D4↑j
+loc_12D85:                              ; CODE XREF: seg000:2D80↑j
                 add     word ptr ds:20B6h, 0FF9Ch
 
-loc_12D8A:                              ; CODE XREF: sub_12CAC+D6↑j
+loc_12D8A:                              ; CODE XREF: seg000:2D82↑j
                 mov     si, 1B96h
                 mov     bx, 26h ; '&'
                 add     bx, [si+0Ah]
@@ -6997,18 +6821,13 @@ loc_12D8A:                              ; CODE XREF: sub_12CAC+D6↑j
                 call    far ptr rt_F4   ; -> basProcLeave  (leglib seg003:0x1bb7c)
 ; ---------------------------------------------------------------------------
                 retf    0
-; ---------------------------------------------------------------------------
-
-loc_12DA4:                              ; CODE XREF: sub_12C67:loc_12CA9↑j
-                jmp     j_rt_ED
-sub_12CAC       endp
-
+; [00000003 BYTES: COLLAPSED FUNCTION j_j_rt_ED. PRESS NUMPAD+ TO EXPAND]
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-sub_12DA7       proc far                ; CODE XREF: sub_11D02+A↑P
+sub_12DA7       proc near               ; CODE XREF: sub_11D02+A↑P
                 mov     cx, 6
                 call    far ptr rt_F0   ; -> basProcEnter  (leglib seg003:0x1bba7)  [mid-func]
 sub_12DA7       endp
@@ -8186,6 +8005,7 @@ rt_17:                                  ; Overlay manager interrupt
 ; Attributes: noreturn
 
 rt_32           proc near               ; CODE XREF: sub_11D02+CB↑P
+                                        ; sub_12C67+17↑P
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------
@@ -10557,7 +10377,7 @@ rt_FE2A         endp
 ; Attributes: noreturn
 
 rt_FE2B         proc near               ; CODE XREF: sub_12823+126↑P
-                                        ; renderExhibitView+14B↑P ...
+                                        ; sub_12AF4+2C↑P ...
                 int     3Fh             ; Overlay manager interrupt
                                         ; (Microsoft LINK.EXE, Borland TLINK VROOMM)
 ; ---------------------------------------------------------------------------

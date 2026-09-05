@@ -74,13 +74,32 @@ match**, keyed on current INT:
 `attribute += (thisSessionScore − yourPreviousBest)` for the chosen
 discipline — a worse-than-best run subtracts the difference.
 
-**Character level** `ds:1AE0` (1..~10) — raised **only by the museum
+**Character level** `ds:1AE0` (1..10) — raised **only by the museum
 caretaker**, never in combat. There is **no experience stat** (the
 CHAR.DAT `+0x10` dword long thought to be XP is the **bank balance**).
+**Fully solved** — [`mus_caretaker.bas`](../recovered/mus_caretaker.bas):
+`useCommand`'s `sub_10B59` re-checks the exhibit-coin-group rank ladder
+(§7's `S4(10)`) each visit; the moment your level is *below* the rank
+you now qualify for, the caretaker's dialogue (`caretakerOffer`) sets
+`ds:1AE0` to that rank directly (`sub_12CAC`, the only place in the game
+that writes it) — ranks 1..7 via `caretakerPraise`, rank 8 (all 7 coin
+groups cleared) via a final-offer branch that also consumes the
+Compendium, sets current HP to 3000, and caps gold at 50000, finalizing
+level at **10**.
 
-**Max HP is a level lookup**, not a stored field (from the Apple guide,
-applies to DOS): L1 200, L2 300, L3 500, L4 800, L5 1200, L6 1600,
-L7 2200, L10 3000. `ds:1ADA` = current HP.
+**Max HP IS a stored field** — `S4(19)` (`ds:1B96` elem `0x13`) —
+recomputed by the same `sub_12CAC` every time level changes, **exact
+formula**: `maxHP = 200 + 50·L·(L−1) − (100 if L > 5)`. `ds:1ADA` =
+current HP; `outInit` copies `S4(19)` into it as the cap `buyFood`
+healing respects. Matches every value below exactly:
+
+| level | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10 |
+|---|---|---|---|---|---|---|---|---|
+| max HP | 200 | 300 | 500 | 800 | 1200 | 1600 | 2200 | 4600 |
+
+(An earlier note had "L10 3000" — that was the *ascension heal*
+`ds:1ADA = 3000` granted at the moment of ascending, not the true max-HP
+baseline, which the formula puts at 4600.)
 
 **Equipped gear** — `ds:1AFC` weapon slot, `ds:1AFE` weapon id (0..8,
 indexes `Weapon$()`); `ds:1AEA` armour slot, `ds:1AEC` armour id (9..13).
@@ -437,9 +456,12 @@ Summary:
   gate is `0x2B` = Jade's bits plus part of Topaz's own), and two ranks
   (Turquoise, Diamond) gate on a plain counter/item check instead of the
   bitfield at all.
-- Bit `0x2000` = "already took the caretaker's final offer"; its setter
-  (inside `caretakerOffer`) and the character-level increment it likely
-  sits beside are the one still-open piece.
+- Bit `0x2000` = "already took the caretaker's final offer". The
+  character-level increment itself is fully solved (§2,
+  [`mus_caretaker.bas`](../recovered/mus_caretaker.bas)) and turned out
+  *not* to touch this bit — `caretakerOffer`/`Praise`/`sub_12CAC` are now
+  fully decoded end-to-end with no bit-0x2000 write in any of them, so
+  its setter is still open, elsewhere.
 
 **Found items** (`AwardFoundItem`, `out.asm:8315`): `S2(droppedItemId)
 += 1`, "YOU FIND A `<item>`". `droppedItemId` = `ds:1AEE`.

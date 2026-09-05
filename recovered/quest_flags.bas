@@ -158,13 +158,17 @@
 '      7     (terminal)         always true
 '
 '  A SECOND, independent gate exists purely on bit 0x2000 (checkFlag_2000,
-'  called directly from enterExhibit / the U-se command, not through the
-'  rank ladder above): if set, show a fixed "already done" line; if NOT
-'  set, invoke caretakerOffer (the level-up dialogue). So bit 13 (0x2000)
-'  reads as "have you already taken the caretaker's FINAL offer" -- its
-'  SETTER is inside caretakerOffer's accept branch, which this pass did
-'  not fully trace (see recovered/README.md's MUS open items: the
-'  character-LEVEL increment write is in the same unexamined region).
+'  called directly from useCommand, not through the rank ladder above):
+'  if set, show a fixed "already done" line; if NOT set, invoke
+'  caretakerOffer (the level-up dialogue). So bit 13 (0x2000) reads as
+'  "have you already taken the caretaker's FINAL offer".  **The caretaker
+'  / character-level mechanism is now FULLY solved** -- see
+'  recovered/mus_caretaker.bas: ds:1AE0 (level) = ds:20B6 (the rank you
+'  just qualified for), written in exactly one place (sub_12CAC), with an
+'  exact max-HP formula alongside it.  Bit 0x2000's own setter turned out
+'  to be a SEPARATE, still-unlocated site -- caretakerOffer/Praise/
+'  sub_12CAC/sub_12AF4/sub_12C67 are now fully decoded end-to-end and none
+'  of them touch it.
 '
 '
 '  ==========================================================================
@@ -187,8 +191,9 @@
 '     counter/item checks instead)
 '
 '  OPEN
-'   * bit 0x2000's setter (inside caretakerOffer's untraced accept branch
-'     -- likely the SAME code that increments character level, ds:1AE0)
+'   * bit 0x2000's setter (NOT inside caretakerOffer/Praise/sub_12CAC --
+'     see recovered/mus_caretaker.bas, which fully closes the level-up
+'     side of this)
 '   * S4(37) override in the Topaz-rank gate
 '   * S4(18) threshold semantics for the Turquoise rank (">= 2" of what?)
 '   * dungeon-3-exit's item-consumption consequence (mirrors dungeon 1's

@@ -31,10 +31,18 @@ the per-executable breakdown this tracks against.
       required coin's index (14 exhibits / 7 coins, table in the file);
       `testExhibitFlag` is an ALL-BITS-SET test driving a progressive
       per-coin unlock ladder (`S4(10)`, 8 ranks).
-- [ ] Still open: `ds:1AE0` (character level) increment site + bit
-      `0x2000`'s setter (both believed to be in `caretakerOffer`'s
-      untraced accept branch); `S4(37)` / `S4(18)` rank-gate overrides;
-      DUN full spell table; TWNDR shops/guard/mail; CASDR player-attack/loot.
+- [x] **Character-level / caretaker mechanism closed**
+      (`recovered/mus_caretaker.bas`) — `ds:1AE0` is written in exactly
+      one place (`sub_12CAC`), found by coercing 5 un-decoded `db` runs
+      inside `caretakerOffer`'s callees
+      (`ida_scripts/fix_mus_caretaker_gaps.py`). Level = the highest
+      exhibit-coin-group rank you qualify for (§7's `S4(10)` ladder);
+      rank 8 finalizes it at 10. Max HP formula pinned exactly:
+      `200 + 50*L*(L-1) - (100 if L>5)`.
+- [ ] Still open: bit `0x2000`'s setter (confirmed NOT in any of the
+      caretaker functions — elsewhere); `S4(37)` / `S4(18)` rank-gate
+      overrides; DUN full spell table; TWNDR shops/guard/mail; CASDR
+      player-attack/loot.
 
 ## Infra (done, 2026-08-30)
 
