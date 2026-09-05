@@ -11628,3 +11628,14 @@ but with a harmless leftover development-machine default instead of
 overwritten before any real read happens, but a fun artifact of the
 original developer's own Turbo C build environment surviving in the
 shipped binary's static data.
+
+### getshort/get_col8_lookup/_sc_sprintf close, a third confirmation of my_sprintf/my_strncpy's absence
+
+`getshort`/`get_col8_lookup` both close as complete, zero-drift matches
+to `Common/Wgt2allg.h:213-218`/`475-480`. `_sc_sprintf` matches source's
+`VALIDATE_STRING`/`check_strlen`/`get_translation` sequence exactly, but
+CONFIRMED ABSENT (a third confirmation of this project's already-
+established finding, after `_sc_strcat`/`_sc_strcpy`): `my_sprintf`/
+`my_strncpy` don't exist as separate functions here -- this build calls
+`vsprintf` directly, then a raw `strncpy` followed by manual
+null-termination.

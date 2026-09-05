@@ -7,7 +7,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source (Common/Wgt2allg.h:213-218): \"short sss; fread(&sss,2,1,fff); return sss;\""
   },
   {
     "kind": "function",
@@ -17,7 +17,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source (Common/Wgt2allg.h:475-480): \"int tmpv; __my_setcolor(&tmpv,nval); return tmpv;\" -- __my_setcolor already matched."
   },
   {
     "kind": "function",
@@ -2088,7 +2088,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"VALIDATE_STRING(destt); check_strlen(destt); my_sprintf(displbuf,get_translation(texx),ap); my_strncpy(destt,displbuf,MAXSTRLEN-1);\" (AC.CPP:21363-21373) in net effect -- the inline null check (matching VALIDATE_STRING's own text), check_strlen, and GetTranslation (=get_translation) calls all match exactly. CONFIRMED ABSENT (a THIRD confirmation of this project's already-established finding, after _sc_strcat/_sc_strcpy): my_sprintf and my_strncpy both don't exist as separate functions here -- this build calls vsprintf directly, then a raw strncpy(Destination,Buffer,MAXSTRLEN) followed by manual Destination[MAXSTRLEN-1]=0 null-termination."
   },
   {
     "kind": "function",

@@ -3333,6 +3333,14 @@ disassembly work.
   `filetouse`'s own default value is the literal string
   `"C:\TC\CHRISJ.INI"` — a harmless leftover from the original
   developer's own build environment, always overwritten before real use.
+- **`getshort`/`get_col8_lookup`/`_sc_sprintf` close, a third
+  confirmation of `my_sprintf`/`my_strncpy`'s absence.** The first two
+  are complete, zero-drift matches. `_sc_sprintf` matches source's
+  `VALIDATE_STRING`/`check_strlen`/`get_translation` sequence exactly,
+  but confirms (a third time, after `_sc_strcat`/`_sc_strcpy`) that
+  `my_sprintf`/`my_strncpy` don't exist as separate functions — this
+  build calls `vsprintf` directly, then a raw `strncpy` plus manual
+  null-termination.
 
 ## Third-party library identification (Task #10)
 
