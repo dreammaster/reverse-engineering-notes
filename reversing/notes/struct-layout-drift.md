@@ -11639,3 +11639,30 @@ established finding, after `_sc_strcat`/`_sc_strcpy`): `my_sprintf`/
 `my_strncpy` don't exist as separate functions here -- this build calls
 `vsprintf` directly, then a raw `strncpy` followed by manual
 null-termination.
+
+### A mislabeled function found and fixed: fix_filename_case is really INIgetdirec
+
+A second stale-mechanical-match correction this session, distinct in
+kind from `VALIDATE_STRING`/`dxmedia_abort_video` (those were `sub_*`
+placeholders wrongly renamed): this address already carried a REAL
+name, `fix_filename_case`, matched via an exact linker-symbol hit
+against the reference `acwin.map`. But 2011's actual `fix_filename_case`
+(`Engine/libsrc/allegro-4.2.2-agspatch/file.c:107`) is a trivial
+one-argument Allegro function (`if(!ALLEGRO_LFN) ustrupr(filename);
+return filename;`) that doesn't remotely match this address's real,
+two-argument body. Reading it in full decisively identifies it as
+`INIgetdirec(char*,char*)` instead (`AC.CPP:26426-26445`): a backward
+scan for a path separator, then splicing a replacement filename in
+after it via `memcpy`. Matches source's own loop and its caller
+(`main`'s own inlined `read_config_file`-fusion, see `INIreaditem`'s
+entry) exactly, argument-for-argument. REAL DRIFT: this build's scan
+checks only `'\'`, CONFIRMED ABSENT is the `||wasgv[u]=='/'` forward-
+slash alternative, and the no-separator-found fallback is a single
+shared numbered-error report (the same `sub_404E92` helper
+`INIreaditem`'s own entry documents) rather than source's more
+forgiving colon-path/bare-filename handling. Likely root cause of the
+original mislabel: this address's pre-project auto-name coincidentally
+also matched a real `acwin.map` symbol, letting `build_matches.py`'s
+purely mechanical matching "confirm" an identity that was never
+behaviorally checked -- the same trap that produced the
+`VALIDATE_STRING` mislabel.

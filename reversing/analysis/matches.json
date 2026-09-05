@@ -52,12 +52,13 @@
   {
     "kind": "function",
     "asm_name": "fix_filename_case",
-    "new_name": null,
-    "source_file": "Engine/libsrc/allegro-4.2.2-agspatch/file.c",
+    "new_name": "INIgetdirec",
+    "source_file": "Engine/AC.CPP",
     "source_obj": "file.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=file.obj"
+    "evidence": "CORRECTION (this round): previously matched as fix_filename_case (Engine/libsrc/allegro-4.2.2-agspatch/file.c:107) via a mechanical exact-linker-symbol match -- wrong. 2011's real fix_filename_case is a trivial one-argument Allegro function (\"if(!ALLEGRO_LFN) ustrupr(filename); return filename;\") that doesn't remotely match this address's actual TWO-argument body. Reading the full body decisively identifies it as INIgetdirec(char*wasgv,char*inifil) instead (AC.CPP:26426-26445): \"for(u=strlen(wasgv)-1;u>=0;u--) if(wasgv[u]=='\\\\'||wasgv[u]=='/') {memcpy(&wasgv[u+1],inifil,strlen(inifil)+1); break;} if(u<=0){ if(strchr(wasgv,':')!=NULL) memcpy(strchr(wasgv,':')+1,inifil,strlen(inifil)+1); else strcpy(wasgv,inifil); }\" -- the disasm's backward scan for a path separator followed by memcpy(&Str[var_4+1],arg_4,strlen(arg_4)+1) matches the loop body exactly. Called from main (already matched) as \"fix_filename_case(conffilebuf,ac_config_file)\" during main's own inlined fusion of 2011's separate read_config_file() (see INIreaditem's own entry for the complete writeup of that fusion) -- matching source's own \"INIgetdirec(conffilebuf,ac_config_file);\" call (AC.CPP:26518) exactly, both in argument count and role. REAL DRIFT: this build's backward-scan loop checks ONLY '\\\\' (backslash), CONFIRMED ABSENT is the '||wasgv[u]=='/'' forward-slash alternative -- and the u<=0 fallback is simplified to a single shared error-code report (call sub_404E92(4), the same numbered-error helper INIreaditem's own entry documents) rather than source's more forgiving colon-path/bare-filename handling. The likely root cause of the original mislabel: this address's pre-project auto-name (from FLIRT or earlier manual work) happened to coincidentally also appear as a real symbol in the reference acwin.map, letting build_matches.py's purely mechanical name-matching \"confirm\" a match that was never behaviorally checked -- the same trap that produced the VALIDATE_STRING mislabel earlier this session.",
+    "source_line": 26426
   },
   {
     "kind": "function",

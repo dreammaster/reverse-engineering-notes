@@ -3341,6 +3341,15 @@ disassembly work.
   `my_sprintf`/`my_strncpy` don't exist as separate functions — this
   build calls `vsprintf` directly, then a raw `strncpy` plus manual
   null-termination.
+- **A mislabeled function found and fixed: `fix_filename_case` is
+  really `INIgetdirec`.** Unlike earlier `sub_*`-placeholder
+  corrections, this address already carried a real name, matched via
+  an exact linker-symbol hit — but 2011's actual `fix_filename_case` is
+  a trivial one-argument Allegro function that doesn't match this
+  address's real two-argument body at all. Decisively `INIgetdirec`
+  instead, matching source's backward path-separator scan and its
+  caller (`main`) exactly. CONFIRMED ABSENT: the `/`-as-separator
+  alternative — this build's scan checks only `\`.
 
 ## Third-party library identification (Task #10)
 
