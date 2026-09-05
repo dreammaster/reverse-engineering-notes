@@ -37531,6 +37531,7 @@ static Bytes_6(void) {
 	create_insn	(0X425A8B);
 	create_insn	(0X425A8D);
 	create_insn	(0X425A93);
+	set_name	(0X425A93,	"finddefaultcontrol");
 	create_insn	(x=0X425A97);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X425AA0);
@@ -40714,8 +40715,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42883E);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X428853);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -40725,6 +40724,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X428853);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X428859);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428867);
@@ -46276,8 +46277,6 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X42DAD3);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42DADC);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46287,6 +46286,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DADC);
+	op_hex		(x,	1);
 	create_insn	(x=0X42DAEB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DAF4);
@@ -52476,8 +52477,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4333A6);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4333AC);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52487,6 +52486,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4333AC);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4333B6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4333BC);
@@ -158481,17 +158482,18 @@ static Functions_7(void) {
 	set_frame_size(0X425836, 0X8, 4, 0);
 	add_func    (0X425988,0X425A22);
 	set_func_flags(0X425988,0x5410);
-	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: medium-high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace.", 1);
+	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new " "global). domouse (already matched) and wputblock (already matched) both co", 1);
 	set_frame_size(0X425988, 0, 4, 0);
 	add_func    (0X425A22,0X425A93);
 	set_func_flags(0X425A22,0x5410);
 	set_frame_size(0X425A22, 0X4, 4, 0);
 	add_func    (0X425A93,0X425AF7);
 	set_func_flags(0X425A93,0x5410);
+	set_func_cmt(0X425A93,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int finddefaultcontrol(int flagmask) at acdialog.h:729-743: \"for(ff=0;ff<MAXCONTROLS;ff++){ if(vobjs[ff]==NULL) continue; if(vobjs[ff]->wlevel!=topwindowhandle) continue; if(vobjs[ff]->typeandflags&flagmask) return ff; } return -1;\". A complete, exact, zero-drift match: the loop bound is a literal 0x14(20), matching MAXCONTROLS=20 with ZERO capacity reduction (a rare full match in this project); vobjs[]=dword_523578 (already established); vobjs[ff]->wlevel@+0x1C compared against dword_4BA93C, decisively identifying that global as topwindowhandle (previously only informally characterized as \"the active window\" via CSCIEraseWindow's own citation); vobjs[ff]->typeandflags@+0x18 ANDed with flagmask, matching the already-confirmed CNT_PUSHBUTTON/CNF_DEFAULT/CNF_CANCEL bit values from myscimessagebox's own entry exactly. Called from CSCIWaitMessage (already matched, see its own updated entry) with literal CNF_DEFAULT(0x100)/CNF_CANCEL" "(0x200) on Enter/Escape, matching source's own two call sites exactly.", 1);
 	set_frame_size(0X425A93, 0X4, 4, 0);
 	add_func    (0X425AF7,0X425D18);
 	set_func_flags(0X425AF7,0x5410);
-	set_func_cmt(0X425AF7,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: medium-high\nevidence: void CSCIWaitMessage(SCIMESSAGE*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox's polling loop (this round's new match) with &smes, matching source's \"CSCIWaitMessage(&smes)\" exactly, with the SCIMESSAGE.code field it's expected to populate (dword_5235C8) independently confirmed via the loop's own exit condition -- medium-high confidence pending a full body trace.", 1);
+	set_func_cmt(0X425AF7,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: void CSCIWaitMessage(SCIMESSAGE*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox's polling loop (this round's new match) with &smes, matching source's \"CSCIWaitMessage(&smes)\" exactly, with the SCIMESSAGE.code field it's expected to populate (dword_5235C8) independently confirmed via the loop's own exit condition -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, leading ~130 of 228 lines read): CSCIWaitMessage(SCIMESSAGE*mes) opens by redrawing every live control (looping the 20-slot control-handle table, dword_523578[], already established -- domouse(2)/sub_426F80(control)[a new, plausible per-control-draw lead, not independently confirmed or chased further this round]/domouse(1) per slot), then resets *mes to {code=0,id=-1} -- matching the already-established SCIMESSAGE{int code;int id;} layout (dword_5235C8/CC) from" " a THIRD independent site (myscimessagebox's own polling loop, CSCIWaitM", 1);
 	set_frame_size(0X425AF7, 0X14, 4, 0);
 	add_func    (0X425D18,0X425FC7);
 	set_func_flags(0X425D18,0x5010);
@@ -158501,7 +158503,7 @@ static Functions_7(void) {
 	define_local_var(0X425D18, 0X425FC7, "[bp+0X1C]", "Source");
 	add_func    (0X425FC7,0X425FF6);
 	set_func_flags(0X425FC7,0x5410);
-	set_func_cmt(0X425FC7,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: medium-high\nevidence: void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace.", 1);
+	set_func_cmt(0X425FC7,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIDeleteControl(int handle) { operator delete(dword_523578[handle]); dword_523578[handle]=NULL; }\" -- a control-handle-table lookup (dword_523578[], a new global -- the array of live CSCI control objects, indexed by handle) followed by a genuine C++ operator delete call and a slot-clear. Matches the expected role (free a control created by CSCICreateControl) exactly.", 1);
 	set_frame_size(0X425FC7, 0X4, 4, 0);
 	add_func    (0X425FF6,0X426032);
 	set_func_flags(0X425FF6,0x5410);
@@ -158910,6 +158912,10 @@ static Functions_7(void) {
 	set_frame_size(0X42C318, 0X4, 4, 0);
 	define_local_var(0X42C318, 0X42C337, "[bp-0X4]", "Buffer");
 	define_local_var(0X42C318, 0X42C337, "[bp+0X8]", "Stream");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42C337,0X42C639);
 	set_func_flags(0X42C337,0x5410);
 	SetType(0X42C337, "int __cdecl fread_script(FILE *Stream);");
@@ -159006,10 +159012,6 @@ static Functions_7(void) {
 	set_func_cmt(0X42EE9A,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/file.c\nconfidence: high\nevidence: Allegro library, int pack_fclose(PACKFILE *f) -- exact 1-arg match, called immediately after `pack_fread` (see its own entry) in my_load_static_mp3's (already matched) file-loading preamble, matching source's `pack_fclose(mp3in);` exactly. Same confidence caveat as `pack_fopen`'s own entry. UPGRADED TO HIGH (this round): `my_load_mp3` (`sub_408623`, new match this round) independently confirms the exact same 1-arg call shape and role (`pack_fclose(mp3in)` on the malloc-failure early-out path) from a second, unrelated caller.", 1);
 	set_frame_size(0X42EE9A, 0, 4, 0);
 	define_local_var(0X42EE9A, 0X42EF4B, "[bp+0X8]", "Block");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42EF4B,0X42F21B);
 	set_func_flags(0X42EF4B,0x5410);
 	set_frame_size(0X42EF4B, 0X414, 4, 0);
@@ -159947,6 +159949,10 @@ static Functions_8(void) {
 	set_func_flags(0X4444C0,0x5400);
 	set_func_cmt(0X4444C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library, SAMPLE *load_sample(AL_CONST char *filename) -- well-known third-party API, dispatches by file extension. Called from sub_408556 (this round's new match, my_load_wave) and PlayMusic (already matched). Body is a decisive, complete match to Allegro's real implementation: uconvert's (already matched) two call sites build \"wav\"/\"voc\" extension-comparison buffers, each followed by a comparison helper (sub_42D018/sub_454010) and, on match, a direct call to the already-matched `load_wav`/`load_voc` (both exact linker-symbol matches, alleg_s_crt:sound.obj) -- exactly Allegro's own load_sample() extension-dispatch logic, with load_wav and load_voc as its only two real loaders and NULL as the unrecognized-extension fallback.", 1);
 	set_frame_size(0X4444C0, 0X24, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X444560,0X4447EC);
 	set_func_flags(0X444560,0x15400);
 	set_func_cmt(0X444560,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -159987,10 +159993,6 @@ static Functions_8(void) {
 	set_func_flags(0X445050,0x5400);
 	set_func_cmt(0X445050,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void release_voice(int voice) at sound.c:1478-1482 -- the final call in play_sample's chain (see voice_set_volume's entry; play_sample's own source, sound.c:1205, calls 'release_voice(voice);' as its literal last statement before returning, matching this function being the last thing sub_444AF0/play_sample calls before its own return). Trivial one-line body, but the value written is the clincher: 'dword_550048[voice*5*4]=0xFFFFFFFF' (dword_550048 = virt_voice[].autokill, one dword after the established .num offset, matching VOICE's declared field order 'num; autokill;' exactly) matches 'virt_voice[voice].autokill = TRUE;' EXACTLY -- Allegro's own TRUE is #defined as -1 (base.h:59), not 1, so the seemingly-odd 0xFFFFFFFF literal is not a coincidence, it's TRUE's actual value in this codebase.", 1);
 	set_frame_size(0X445050, 0, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X445070,0X4450AD);
 	set_func_flags(0X445070,0x5400);
 	set_func_cmt(0X445070,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void voice_start(int voice) at sound.c:1491-1500 -- part of the same play_sample call chain (see voice_set_volume's entry). Body is a decisive, complete match: num-check, a vtable dispatch at +0x44 matching 'digi_driver->start_voice(virt_voice[voice].num)', then an UNCONDITIONAL write of a global (dword_537E8C) into virt_voice[voice]'s time field -- identifies dword_537E8C as the well-known Allegro global `retrace_count`, matching 'virt_voice[voice].time = retrace_count;' exactly (an unconditional statement outside the num>=0 guard in source too, matching the disassembly's control flow precisely).", 1);
@@ -161927,6 +161929,10 @@ static Functions_9(void) {
 	set_func_flags(0X470340,0x5400);
 	set_func_cmt(0X470340,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c\nconfidence: high\nevidence: static void read_keyboard_config(void) at src/misc/pckeys.c:666. Exact match: opens with uconvert_ascii(\"keyboard\",...) and uconvert_ascii(\"system\",...) followed by a call to sub_460620 (probable get_config_string, see separate lower-confidence lead) -- matches source's \"name = get_config_string(uconvert_ascii(\\\"system\\\",tmp1), uconvert_ascii(\\\"keyboard\\\",tmp2), _keyboard_layout);\". Body later contains exactly 8 get_config_int(uconvert_ascii(\"key_escape\",...), uconvert_ascii(<accentN[_flag]>,...), 0) calls -- matching source's 8 consecutive accent1..accent4 + accent1_flag..accent4_flag reads at pckeys.c:706-714 exactly (\"key_escape\" is used as the section name here, not a scancode-remap key as originally guessed -- resolves the earlier dead-end noted in reversing/notes/third-party-library-identification.md, once the full non-Windows-patch-subset Allegro 4.2.2 source was added to the repo at Engine/lib" "src/allegro-4.2.2/). CODE XREF: sub_4701D0+167 (caller not yet identified, plausible future lead).", 1);
 	set_frame_size(0X470340, 0X504, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4708D0,0X470975);
 	set_func_flags(0X4708D0,0x5400);
 	set_frame_size(0X4708D0, 0X154, 0, 0);
@@ -162059,10 +162065,6 @@ static Functions_9(void) {
 	add_func    (0X473CD0,0X473D53);
 	set_func_flags(0X473CD0,0x5400);
 	set_frame_size(0X473CD0, 0X4, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X473D60,0X473DC4);
 	set_func_flags(0X473D60,0x5400);
 	SetType(0X473D60, "int __cdecl sub_473D60(HPALETTE hpal, int);");
@@ -164388,6 +164390,10 @@ static Functions_10(void) {
 	add_func    (0X49FBA0,0X49FC1C);
 	set_func_flags(0X49FBA0,0x5400);
 	set_frame_size(0X49FBA0, 0X8, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X49FC20,0X49FD20);
 	set_func_flags(0X49FC20,0x5400);
 	set_frame_size(0X49FC20, 0X1B8, 0, 0);
@@ -164527,10 +164533,6 @@ static Functions_10(void) {
 	set_func_flags(0X4A2D10,0x5400);
 	set_frame_size(0X4A2D10, 0X68, 0, 0);
 	define_local_var(0X4A2D10, 0X4A2D8E, "[bp-0X18]", "Str1");
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4A2D90,0X4A2F09);
 	set_func_flags(0X4A2D90,0x5400);
 	set_frame_size(0X4A2D90, 0X120, 0, 0);

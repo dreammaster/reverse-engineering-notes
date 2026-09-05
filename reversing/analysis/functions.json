@@ -3010,9 +3010,9 @@
   "is_named": false
  },
  {
-  "name": "sub_425A93",
+  "name": "finddefaultcontrol",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "CSCIWaitMessage",

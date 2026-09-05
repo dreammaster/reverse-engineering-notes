@@ -3471,6 +3471,15 @@ disassembly work.
   `getch` for Enter/Escape and dispatches via the already-confirmed
   `CNF_DEFAULT`/`CNF_CANCEL` constants, setting `code=CM_COMMAND` — all
   matching exactly.
+- **The `finddefaultcontrol` lead closes, plus a whole undocumented
+  CSCI dialog subsystem.** `sub_425A93` is a complete, zero-drift match
+  to `Engine/acdialog.h:729-743` — MAXCONTROLS=20 with zero reduction,
+  and decisively identifies `topwindowhandle` plus two new CSCI
+  control-object fields. Also found `CSCIWaitMessage`'s own real
+  source (assumed missing, actually inline in `acdialog.h`): source
+  uses `gfxDriver`-based double-buffering and a timer-synced redraw
+  loop, both confirmed absent here — this build redraws each control
+  directly with no double-buffering at all.
 
 ## Third-party library identification (Task #10)
 

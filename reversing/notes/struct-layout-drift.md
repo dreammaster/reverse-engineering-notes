@@ -11972,3 +11972,26 @@ already-confirmed `CNF_DEFAULT=0x100`/`CNF_CANCEL=0x200` constants,
 setting `mes->code=1` -- matching the already-confirmed `CM_COMMAND=1`
 exactly. `sub_425A93` is plausibly a "find the control carrying this
 flag" helper, not chased further given the function's remaining size.
+
+### finddefaultcontrol named, and CSCIWaitMessage's real source turns up
+
+`sub_425A93` closes as `finddefaultcontrol(int flagmask)` -- a
+complete, exact, zero-drift match to `Engine/acdialog.h:729-743`: loop
+over `vobjs[]` filtered on `wlevel==topwindowhandle` and `typeandflags
+& flagmask`. MAXCONTROLS=20 matches with ZERO capacity reduction (a
+rare full match in this project), and this decisively identifies
+`dword_4BA93C` as `topwindowhandle` (previously only informally
+characterized via `CSCIEraseWindow`'s own citation), plus two new CSCI
+control-object fields: `wlevel`@+0x1C, `typeandflags`@+0x18.
+
+This also turned up `CSCIWaitMessage`'s own real source -- previously
+assumed to have no body in this repo, it's actually present inline in
+`Engine/acdialog.h:745-816`. Comparing directly: source's version is
+substantially more elaborate, using `gfxDriver`-based double-buffering
+(`ConvertBitmapToSupportedColourDepth`/`CreateDDBFromBitmap`) and a
+real timer-synced redraw loop -- ALL CONFIRMED ABSENT from this build's
+version, which just calls `domouse(2)`/draw/`domouse(1)` directly per
+control with no double-buffering or timer sync at all, extending the
+by-now-familiar predates-`gfxDriver` pattern to the dialog-redraw
+mechanism itself, not just game-screen rendering. `dword_523704`
+(already reset alongside `*mes`) is decisively `smcode`.
