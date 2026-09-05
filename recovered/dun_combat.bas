@@ -3,7 +3,7 @@
 '  reconstructed from dun.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoAttack (player)   MonsterAttack + MonsterSpecialAttack (monsters)
-'        CastSpell (dungeon spells)
+'        (dungeon spells are fully reconstructed in recovered/dun_spells.bas)
 '
 '  DUN uses a DIFFERENT combat model from OUT -- simpler linear formulas,
 '  no weapon-weakness system, no per-encounter "creatureHP" scalar.
@@ -132,5 +132,5 @@ END SUB
 '     -- so a well-armoured party shrinks the monsters' rolls at level load
 '
 '  OPEN
-'   * CastSpell (dun.asm:4696)
 '   * confirm the /450 and the `k` in the monsterAtk formula with a trace
+'   (dungeon spells: SOLVED -- recovered/dun_spells.bas)

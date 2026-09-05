@@ -47,8 +47,15 @@ the per-executable breakdown this tracks against.
       a dead "already set" branch. Verified the whole game has exactly 4
       `questFlagWord` writers and read every caretaker-graph function
       end-to-end.
-- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; DUN full spell
-      table; TWNDR shops/guard/mail; CASDR player-attack/loot.
+- [x] **DUN spell table** (`recovered/dun_spells.bas`) — all 6 spells:
+      Magic flame / Firebolt (attack, `INT((45/(range+1)+18)·(RND+1)·
+      (Firebolt?2:1))`, fizzle `RND ≤ (Int+15)/45 AND RND ≥ 0.05`),
+      Befuddle (confuse `INT(old\2+RND·10+25)` turns, 0.93 backfire at
+      full HP), Psycho strength (`+50%` melee `INT(RND·10+20)` turns),
+      Kill flash (`clearViewObjects` — wipes all monsters). Seek unused
+      in DUN. `ida_scripts/fix_dun_spells.py` coerced/unfolded the arms.
+- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR
+      shops/guard/mail; CASDR player-attack/loot; DUN monster movement.
 
 ## Infra (done, 2026-08-30)
 

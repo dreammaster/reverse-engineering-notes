@@ -266,6 +266,25 @@ so a well-armoured party makes the monsters' rolls smaller at level load.
 - **armour-eater** — "THE `<monster>` ATE YOUR `<armour>`" — destroys equipped armour
 - **DANGLER** — `Endurance -= INT( RND(1)*3 + 1 )`
 
+**Dungeon spells** — [`dun_spells.bas`](../recovered/dun_spells.bas) —
+*derived*. The 6 LEGACY spells map to `S2()` charge slots 24–29; every
+cast does `S2(slot) -= 1`. Seek (29) is not implemented in the dungeon
+(overworld-only).
+
+| spell | slot | effect |
+|---|---|---|
+| Magic flame | 24 | attack, `INT( (45/(range+1) + 18)·(RND(1)+1) )` |
+| Firebolt | 25 | as Magic flame **×2** + a longer stun |
+| Befuddle | 26 | confuse a monster `INT( old\2 + RND(1)·10 + 25 )` turns; at full HP a `0.93` roll **backfires** → *you* are befuddled `~5` turns |
+| Psycho strength | 27 | `+50 %` melee for `INT( RND(1)·10 + 20 )` turns (`ds:1AE8`); refunds the charge if already active; cleared on every level change |
+| Kill flash | 28 | `clearViewObjects` — wipes **all** visible monsters, no roll |
+
+Attack-spell fizzle (both must pass): `RND(1) ≤ (Int+15)/45` and
+`RND(1) ≥ 0.05` — so success rises with Intelligence, ~67 % at Int 15,
+~95 % (capped) at Int 30+. `confuseTimer` (`ds:1AE6`) is signed: `> 0`
+the monster skips turns, `< 0` "YOU ARE BEFUDDLED."; it steps toward 0
+one per turn.
+
 ### 3c. CASTLE (CASDR) — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 
 **Incoming melee** — *derived* — `casdr.asm:4166` (`attackHit`):

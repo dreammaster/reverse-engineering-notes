@@ -221,12 +221,15 @@ anchor). The combat pool it prints is quoted at the top of
       `chestBase = (10*dungeonNumber + dungeonLevel)*20 + 20`; a per-level
       gold high-water mark stops re-farming; the quest jewel is a level-7
       chest granted once.
-- [~] `castSpell` (`dun.asm:4538`) — a thin wrapper: decrements the
-      chosen spell's `S2()` charge, then `ON (selectedSpell − 25) GOTO`
-      (`rt_FD`) to the effect. `psychoStrengthSpell` = "YOU FEEL VERY
-      STRONG!" sets the `ds:1AE8` buff (the +50% melee in `dun_combat.bas`).
-      Full per-spell effect table still open.
-- [ ] DUN monster movement, climb up/down, full spell list
+- [x] `dun_spells.bas` — **the full 6-spell table.** `useMagicMenu` for
+      the two attack spells (Magic flame 24 / Firebolt 25 — damage
+      `INT((45/(range+1)+18)·(RND+1)·(Firebolt?2:1))`, fizzle
+      `RND ≤ (Int+15)/45 AND RND ≥ 0.05`), `castSpell` (fell-through from
+      the "OTHER" option) `ON (selectedSpell−25) GOTO` for Befuddle 26 /
+      Psycho strength 27 / Kill flash 28. Seek (29) is overworld-only,
+      unimplemented here. Constants read from `DUN.EXE`; tables coerced +
+      unfolded via `ida_scripts/fix_dun_spells.py`.
+- [ ] DUN monster movement, climb up/down
 
 ## TWNDR.EXE
 
