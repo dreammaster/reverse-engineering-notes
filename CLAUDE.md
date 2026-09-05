@@ -3773,6 +3773,15 @@ disassembly work.
   — `draw_256_sprite`/`draw_sprite_h_flip` — get named via vtable-slot
   arithmetic, both safely before the already-established vtable-shift
   boundary so genuinely zero-drift this time.
+- **`break_up_text_into_lines` named via its own distinctive `'&'`-
+  prefix scan.** Chasing `_display_main`'s own remaining unnamed
+  callee found a decisive match: the same narrow auto-speech-prefix
+  safety-net check that also independently appears inside `_display_at`
+  matches instruction for instruction. This build's own version
+  (~340 lines) plausibly fuses source's own `split_lines_leftright`
+  call inline — a distinctive `quit()` error string absent from the
+  reference source's own exact wording plausibly belongs to that fused
+  loop, not traced further this round.
 
 ## Third-party library identification (Task #10)
 

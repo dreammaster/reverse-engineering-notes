@@ -17753,6 +17753,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X4130CD);
 	op_hex		(x,	1);
 	create_insn	(0X4130D4);
+	set_name	(0X4130D4,	"break_up_text_into_lines");
 	create_insn	(x=0X4130D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X4130DA);
@@ -23410,8 +23411,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418969);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X41896E);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23421,6 +23420,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41896E);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X418974);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X41897D);
@@ -29124,7 +29125,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X41E352);
 	op_stkvar	(x,	1);
-	set_cmt	(0X41E355,	"Stream",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29134,6 +29134,7 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X41E355,	"Stream",	0);
 	set_cmt	(0X41E35B,	"Ch",	0);
 	create_insn	(x=0X41E361);
 	op_hex		(x,	1);
@@ -156337,6 +156338,7 @@ static Functions_2(void) {
 	set_frame_size(0X412E74, 0X4, 4, 0);
 	add_func    (0X4130D4,0X4133F7);
 	set_func_flags(0X4130D4,0x5410);
+	set_func_cmt(0X4130D4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: break_up_text_into_lines(int wii,int fonnt,char*todis) (AC.CPP:9476-9510) -- a decisive match on its own opening: \"if(todis[0]=='&') {while((todis[0]!=' ')&(todis[0]!=0)) todis++; if(todis[0]==' ') todis++;}\" matches this function's own '&'-prefix scan instruction for instruction (the same narrow auto-speech-prefix safety-net check that also independently appears inside _display_at, already matched -- source genuinely has this same small check duplicated in both places). This build's own version (~340 lines, consistent with fusing source's own split_lines_leftright call inline rather than as a separate function -- the distinctive 'single word longer than window' quit() error string, absent from this exact wording anywhere in the reference source, plausibly belongs to this fused word-wrap loop) computes numlines/longestline (both already-established globals) via a wgettextwidth-based line-splitting loop, matching source's own overall" " role exactly. Not independently traced past the header/error-string", 1);
 	set_frame_size(0X4130D4, 0X20, 4, 0);
 	define_local_var(0X4130D4, 0X4133F7, "[bp-0X10]", "Str");
 	add_func    (0X4133F7,0X41344E);
@@ -156408,6 +156410,10 @@ static Functions_2(void) {
 	define_local_var(0X413DD5, 0X413E97, "[bp+0XC]", "yy");
 	define_local_var(0X413DD5, 0X413E97, "[bp+0X10]", "slott");
 	define_local_var(0X413DD5, 0X413E97, "[bp+0X14]", "trans");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X413E97,0X413F8B);
 	set_func_flags(0X413E97,0x5410);
 	SetType(0X413E97, "int CreateTextOverlay(int xx, int yy, int wii, int fontid, int clr, char *texx, ...);");
@@ -156421,10 +156427,6 @@ static Functions_2(void) {
 	define_local_var(0X413E97, 0X413F8B, "[bp+0X14]", "fontid");
 	define_local_var(0X413E97, 0X413F8B, "[bp+0X18]", "clr");
 	define_local_var(0X413E97, 0X413F8B, "[bp+0X1C]", "Str");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X413F8B,0X414018);
 	set_func_flags(0X413F8B,0x5410);
 	SetType(0X413F8B, "void SetTextOverlay(int ovrid, int xx, int yy, int wii, int fontid, int clr, char *texx, ...);");
@@ -156861,16 +156863,16 @@ static Functions_3(void) {
 	set_func_cmt(0X416B75,	"[reversing] confirmed match\nsource: Engine/acplwin.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- ALSO RESOLVES a mislabeling this same round found on its own call target (sub_428B70, see its corrected entry below): PlayVideo itself matches the general shape of 2011's AGSWin32::PlayVideo (Engine/acplwin.cpp:646-674) fused directly with dxmedia_play_video's own flag-parsing (rather than keeping them as two separate layers -- this build's 3-parameter script API PlayVideo(name,skip,flags) calls straight into the DirectShow video subsystem with no gfxDriver/platform indirection at all, the by-now-familiar predates-hardware-abstraction pattern). CONFIRMED ABSENT: source's own fopen/fclose file-existence pre-check (\"File not found: %s\") -- this build has no such check, it goes straight to the play call and relies on that call's own internal failure handling instead. The music/sound-s" "hutdown-then-restore bracket (scr_StopMusic+remove_sound before, install_", 1);
 	set_frame_size(0X416B75, 0X4, 4, 0);
 	define_local_var(0X416B75, 0X416C18, "[bp+0X8]", "lpMultiByteStr");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X416C18,0X416CC1);
 	set_func_flags(0X416C18,0x5410);
 	SetType(0X416C18, "int __cdecl sub_416C18(char *Str);");
 	set_func_cmt(0X416C18,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: This build's own sound-effect load-and-play helper, called only from PlaySound (see its own entry) with an already-resolved filename. Destroys any existing sound-effect handle (dword_523220) via its vtable slot+4 (a stop/destructor-style method, matching the SOUNDCLIP-family vtable shape already confirmed elsewhere), loads the new file via the already-matched my_load_mp3 (sub_408623, for .mp3) or my_load_wave (sub_408556, otherwise) using GameState.sound_volume (dword_4EF2A4, already confirmed) as the playback volume, stores the result in dword_523220, and logs \"Sound sample load failure: '%s'\" via debug_log (already matched) on failure. No clean 2011 identifier exists -- 2011's play_sound_priority-based system has no directly comparable single-function loader to compare against. Left unnamed per the usual convention. Identifies dword_523220 as this build's single sound-effect channel handle -- polled once per frame in mainloop/FadeOut/new_room (a" "lready matched) via its vtable slot 0, the same 'poll", 1);
 	set_frame_size(0X416C18, 0X4, 4, 0);
 	define_local_var(0X416C18, 0X416CC1, "[bp+0X8]", "Str");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X416CC1,0X416CE3);
 	set_func_flags(0X416CC1,0x5410);
 	SetType(0X416CC1, "int IsSoundPlaying(void);");
@@ -157295,16 +157297,16 @@ static Functions_4(void) {
 	set_func_cmt(0X419BEF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- a SECOND instance of the same missing-feof-guard regression found in FileRead's own entry this round. Source: \"check_valid_file_handle(...); if(feof(haa)) return -1; if(fgetc(haa)!='I') quit(\\\"!FileReadInt: File read back in wrong order\\\"); return getw(haa);\". This build's version matches check_valid_file_handle, the 'I'(0x49) tag-byte comparison, the quit() call, and the final getw() exactly -- but CONFIRMED ABSENT: the leading `if(feof(haa)) return -1;` early-return, no feof call anywhere in the body. Net effect: calling FileReadInt() at EOF makes fgetc() return EOF(-1), which fails the `!='I'` comparison and CRASHES via quit(\\\"!FileReadInt: File read back in wrong order\\\") -- again a misleading hard crash where source gracefully returns -1.", 1);
 	set_frame_size(0X419BEF, 0, 4, 0X4);
 	define_local_var(0X419BEF, 0X419C2F, "[bp+0X8]", "Stream");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X419C2F,0X419C51);
 	set_func_flags(0X419C2F,0x15410);
 	SetType(0X419C2F, "char __stdcall FileReadRawChar(FILE *haa);");
 	set_func_cmt(0X419C2F,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- CONFIRMED ABSENT: same as FileRead/FileReadInt, no `if(feof(haa)) return -1;` guard exists in this body either (source: AC.CPP:18429-18434). Unlike those two, this one is NOT a real behavioral regression: this build's version is just `check_valid_file_handle(...); return fgetc(haa);` -- and Allegro/CRT's own fgetc() already returns EOF(-1) when called past end-of-file, the exact same value source's explicit feof-guarded early-return supplies. The missing guard is redundant here, not a gap -- coincidental behavioral equivalence, not a fix needed for the eventual ScummVM port.", 1);
 	set_frame_size(0X419C2F, 0, 4, 0X4);
 	define_local_var(0X419C2F, 0X419C51, "[bp+0X8]", "Stream");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X419C51,0X419C73);
 	set_func_flags(0X419C51,0x15410);
 	SetType(0X419C51, "int __stdcall FileReadRawInt(FILE *haa);");
@@ -157734,6 +157736,10 @@ static Functions_5(void) {
 	set_frame_size(0X41BEE1, 0, 4, 0X8);
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0X8]", "cha");
 	define_local_var(0X41BEE1, 0X41BF5A, "[bp+0XC]", "clik");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41BF5A,0X41BFD3);
 	set_func_flags(0X41BF5A,0x5410);
 	SetType(0X41BF5A, "void __stdcall SetCharacterIgnoreWalkbehinds(int cha, int clik);");
@@ -157741,10 +157747,6 @@ static Functions_5(void) {
 	set_frame_size(0X41BF5A, 0, 4, 0X8);
 	define_local_var(0X41BF5A, 0X41BFD3, "[bp+0X8]", "cha");
 	define_local_var(0X41BF5A, 0X41BFD3, "[bp+0XC]", "clik");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41BFD3,0X41C040);
 	set_func_flags(0X41BFD3,0x5410);
 	SetType(0X41BFD3, "void __stdcall SetObjectClickable(int cha, int clik);");
@@ -158222,6 +158224,10 @@ static Functions_6(void) {
 	set_func_flags(0X424150,0x5414);
 	set_func_cmt(0X424150,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIButton::KeyPress(int keycode) {} at acgui.h:606 -- empty inline body. Exact match: unknown_libname_2 does nothing but save `this` and return, with `retn 4` (1 int param). Vtable slot 5/+0x14, immediately before the already-matched Draw at slot 6/+0x18. Same FLIRT-mistag/COMDAT-folding situation as GUIButton__MouseMove above (also referenced from a second vtable location). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424150, 0X4, 4, 0X4);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X424160,0X4241E0);
 	set_func_flags(0X424160,0x5410);
 	set_frame_size(0X424160, 0X4, 4, 0);
@@ -158244,10 +158250,6 @@ static Functions_6(void) {
 	set_func_cmt(0X424290,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual void GUIInv::WriteToFile(FILE*) at acgui.h:474. In THIS build, the function does ONLY the base 28-byte fwrite @[this+4] (GUIObject::WriteToFile) -- no putw calls for charId/itemWidth/itemHeight/topIndex at all, unlike source's \"putw(charId,ooo); putw(itemWidth,ooo); ...\" tail. DRIFT: matches source's own version-gated ReadFromFile logic (\"if (version>=109) {...} else {charId=-1; itemWidth=40; itemHeight=22; topIndex=0;}\", acgui.h:486-497) -- this 2002 build predates format version 109, so these 4 fields are not part of the persisted format yet (and may not exist in the 2002 struct at all; not independently verified). Vtable slot 7/+0x1C of off_4AD50C (DATA XREF .rdata:004AD528). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424290, 0X4, 4, 0X4);
 	define_local_var(0X424290, 0X4242B4, "[bp+0X8]", "Stream");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X4242C0,0X4242E4);
 	set_func_flags(0X4242C0,0x5410);
 	SetType(0X4242C0, "int __stdcall GUIInv__ReadFromFile(FILE *Stream);");
@@ -158683,15 +158685,15 @@ static Functions_7(void) {
 	set_func_cmt(0X427C50,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyLabel::MyLabel(int,int,int,char*) -- the CSCI dialog system's label control constructor, called from CSCICreateControl (already matched) as \"new MyLabel(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x74) allocation. Own body (a strncpy(text,tee,150) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:500-508): calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD5FC), then x@+4/y@+8/wid@+0xC all written directly from arguments, and hit@+0x10=dword_5230C0 (TEXT_HT) matches \"hit = TEXT_HT;\" exactly. REAL DRIFT, CONFIRMED ABSENT: source own \"strncpy(text,tee,150); text[149]=0;\" (bounded copy plus explicit null-termination) is NOT what this build does -- it cal" "ls a plain, unbounded strcpy(text, tee) into the same 150-byte text[] bu", 1);
 	set_frame_size(0X427C50, 0X4, 4, 0X10);
 	define_local_var(0X427C50, 0X427CAB, "[bp+0X14]", "Source");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X427CB0,0X427DF5);
 	set_func_flags(0X427CB0,0x5410);
 	set_func_cmt(0X427CB0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyLabel::draw() -- a decisive match, but NOT to source's own LIVE draw() body (acdialog.h:510-520, break_up_text_into_lines/wouttext_outline). Instead this function is an exact, complete, instruction-for-instruction match to source's own COMMENTED-OUT predecessor implementation (acdialog.h:521-545, the manual per-character word-wrap loop kept as a dead /* */ block right below the live code): teptr[curofs]==' '||teptr[curofs]==0 check, save/restore the char, wgettextwidth(...)>wid test, wouttextxy(x,cyp,cbuttfont,teptr) line-break draw, space-reinsertion, cyp+=TEXT_HT (dword_5230C0), and the final trailing wouttextxy call -- all present and in the same order as the dead code, using cbuttfont (dword_4F7424) exactly as the commented block specifies. This build predates the break_up_text_into_lines() refactor entirely and still runs the OLD word-wrap algorithm live, the same 'dead-in-2011-but-live-here' pattern already found repeate" "dly elsewhere in this project (RoomStatus/EventBlock's hscond/objcond/mi", 1);
 	set_frame_size(0X427CB0, 0X18, 4, 0);
 	define_local_var(0X427CB0, 0X427DF5, "[bp-0X4]", "Str");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X427E00,0X427E0D);
 	set_func_flags(0X427E00,0x5414);
 	set_func_cmt(0X427E00,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: medium\nevidence: virtual int GUIObject::MouseDown() { return 0; } at acgui.h:140 -- the base class's default (non-pure) implementation, inherited by any GUIObject-derived class that doesn't override it. Matches exactly: \"xor eax,eax; retn\" (return 0, no side effects, no stack args). Referenced from multiple vtable slots (.rdata:004AD600, 004AD60C, and more per the truncated xref list), consistent with being a shared default used across several GUI control types that aren't independently clickable (e.g. GUILabel). Confidence medium rather than high since the exact concrete class(es) using this specific vtable slot instance aren't individually identified.", 1);
@@ -159294,14 +159296,14 @@ static Functions_8(void) {
 	set_frame_size(0X431F10, 0, 4, 0X8);
 	define_local_var(0X431F10, 0X431F99, "[bp+0X8]", "verno");
 	define_local_var(0X431F10, 0X431F99, "[bp+0XC]", "aciverno");
-	add_func    (0X431F99,0X432008);
-	set_func_flags(0X431F99,0x5410);
-	set_func_cmt(0X431F99,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int can_see_from(int x1,int y1,int x2,int y2) at routefnd.cpp:119-133 -- a complete, essentially instruction-for-instruction match. \"line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2 && y1==y2) return 1; do_line(wss,x1,y1,x2,y2,0,line_callback); if(line_failed!=0) return 0; return 1;\" matches source verbatim, including the exact same early-return-on-identical-points shortcut before the general do_line/callback path. Identifies dword_536C1C as `line_failed`, dword_5358F8/5358FC as `lastcx`/`lastcy` (all file-scope globals in 2011's routefnd.cpp), confirms `wss` as `wallscreen` (already set by MoveCharacterStraight, its own caller, right before this call -- matching source's own convention of `wallscreen` being set by callers rather than passed as a parameter), and identifies sub_431ECC as `line_callback` (see its own entry). `do_line` itself is Allegro's own public API (already matched, exact linker-symbol match, alleg_s_crt:gfx.o" "bj).", 1);
-	set_frame_size(0X431F99, 0, 4, 0);
 }
 
 static Functions_9(void) {
 
+	add_func    (0X431F99,0X432008);
+	set_func_flags(0X431F99,0x5410);
+	set_func_cmt(0X431F99,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int can_see_from(int x1,int y1,int x2,int y2) at routefnd.cpp:119-133 -- a complete, essentially instruction-for-instruction match. \"line_failed=0; lastcx=x1; lastcy=y1; if(x1==x2 && y1==y2) return 1; do_line(wss,x1,y1,x2,y2,0,line_callback); if(line_failed!=0) return 0; return 1;\" matches source verbatim, including the exact same early-return-on-identical-points shortcut before the general do_line/callback path. Identifies dword_536C1C as `line_failed`, dword_5358F8/5358FC as `lastcx`/`lastcy` (all file-scope globals in 2011's routefnd.cpp), confirms `wss` as `wallscreen` (already set by MoveCharacterStraight, its own caller, right before this call -- matching source's own convention of `wallscreen` being set by callers rather than passed as a parameter), and identifies sub_431ECC as `line_callback` (see its own entry). `do_line` itself is Allegro's own public API (already matched, exact linker-symbol match, alleg_s_crt:gfx.o" "bj).", 1);
+	set_frame_size(0X431F99, 0, 4, 0);
 	add_func    (0X432008,0X432459);
 	set_func_flags(0X432008,0x5410);
 	SetType(0X432008, "int __stdcall is_route_possible(int fromx, int fromy, int tox, int toy, block wss);");
@@ -160427,6 +160429,10 @@ static Functions_9(void) {
 	add_func    (0X449AC0,0X449B02);
 	set_func_flags(0X449AC0,0x5400);
 	set_frame_size(0X449AC0, 0X4, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X449B10,0X449B3F);
 	set_func_flags(0X449B10,0x5400);
 	set_frame_size(0X449B10, 0, 0, 0);
@@ -160481,10 +160487,6 @@ static Functions_9(void) {
 	add_func    (0X44A750,0X44A885);
 	set_func_flags(0X44A750,0x5400);
 	set_frame_size(0X44A750, 0X14, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X44A890,0X44AADE);
 	set_func_flags(0X44A890,0x5400);
 	set_frame_size(0X44A890, 0X20, 0, 0);
@@ -162449,6 +162451,10 @@ static Functions_10(void) {
 	add_func    (0X479690,0X47976A);
 	set_func_flags(0X479690,0x5400);
 	set_frame_size(0X479690, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X479770,0X4797D8);
 	set_func_flags(0X479770,0x5400);
 	set_frame_size(0X479770, 0, 0, 0);
@@ -162503,10 +162509,6 @@ static Functions_10(void) {
 	add_func    (0X47A020,0X47A08E);
 	set_func_flags(0X47A020,0x5400);
 	set_frame_size(0X47A020, 0X4, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X47A090,0X47A0ED);
 	set_func_flags(0X47A090,0x5400);
 	set_frame_size(0X47A090, 0, 0, 0);
@@ -165036,6 +165038,10 @@ static Functions_11(void) {
 	set_frame_size(0X4AAF84, 0, 0, 0);
 	define_local_var(0X4AAF84, 0X4AAF8A, "[bp+0X4]", "Str");
 	define_local_var(0X4AAF84, 0X4AAF8A, "[bp+0X8]", "SubStr");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4AAF8A,0X4AAF90);
 	set_func_flags(0X4AAF8A,0x5480);
 	SetType(0X4AAF8A, "size_t __cdecl strlen(const char *Str);");
@@ -165062,10 +165068,6 @@ static Functions_11(void) {
 	set_func_cmt(0X4AAF9C,	"[reversing] confirmed match\nsource: Engine/acplatfm.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acplatfm.obj", 1);
 	set_frame_size(0X4AAF9C, 0, 0, 0);
 	define_local_var(0X4AAF9C, 0X4AAFA2, "[bp+0X4]", "Time");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4AAFA2,0X4AAFA8);
 	set_func_flags(0X4AAFA2,0x5480);
 	SetType(0X4AAFA2, "void *__cdecl calloc(size_t Count, size_t Size);");

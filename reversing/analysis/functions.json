@@ -1140,9 +1140,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4130D4",
+  "name": "break_up_text_into_lines",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4133F7",

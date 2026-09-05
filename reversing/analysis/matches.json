@@ -7024,5 +7024,14 @@
     "source_line": 1268,
     "confidence": "high",
     "evidence": "GUIMain::find_object_under_mouse() (acgui.cpp:1268-1271) -- the zero-argument overload: \"return find_object_under_mouse(0,true);\". Matches exactly: a thin thiscall stub (no stack arguments of its own) pushing the literal 0 and calling the already-matched GUIMain__find_object_under_mouse (that function's own entry already documented this exact call site, describing this wrapper informally without a dedicated matches.json record until now). Given GUIMain__find_object_under_mouse's own already-confirmed absence of any mustBeClickable-driven filtering logic, this build's own true 2-argument implementation behaves as a 1-argument one in practice, consistent with only a single literal being pushed here. Named with an '_0arg' suffix (matching this project's convention for otherwise-ambiguous overload flat-naming) since 'GUIMain__find_object_under_mouse' is already taken by the 2-arg implementation."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4130D4",
+    "new_name": "break_up_text_into_lines",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 9476,
+    "confidence": "high",
+    "evidence": "break_up_text_into_lines(int wii,int fonnt,char*todis) (AC.CPP:9476-9510) -- a decisive match on its own opening: \"if(todis[0]=='&') {while((todis[0]!=' ')&(todis[0]!=0)) todis++; if(todis[0]==' ') todis++;}\" matches this function's own '&'-prefix scan instruction for instruction (the same narrow auto-speech-prefix safety-net check that also independently appears inside _display_at, already matched -- source genuinely has this same small check duplicated in both places). This build's own version (~340 lines, consistent with fusing source's own split_lines_leftright call inline rather than as a separate function -- the distinctive 'single word longer than window' quit() error string, absent from this exact wording anywhere in the reference source, plausibly belongs to this fused word-wrap loop) computes numlines/longestline (both already-established globals) via a wgettextwidth-based line-splitting loop, matching source's own overall role exactly. Not independently traced past the header/error-string level given the function's size -- source's own right-to-left (OPT_RIGHTLEFTWRITE-gated reverse_text/split_lines_rightleft) branch specifically wasn't checked this round. Called from _display_main (already matched, matching source's own \"break_up_text_into_lines(wii-6,usingfont,todis);\" call at AC.CPP:12823 exactly) and sub_41D7F7 (called from do_conversation, not independently investigated this round)."
   }
 ]

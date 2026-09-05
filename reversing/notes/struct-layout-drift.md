@@ -12892,6 +12892,30 @@ the 4.2.2 reference with genuine zero drift: `draw_256_sprite` (slot
 `0x48`) and `draw_sprite_h_flip` (slot `0x50`), both called from
 `__GetLocationType`/`__actual_invscreen`.
 
+### break_up_text_into_lines named via its own distinctive '&'-prefix scan
+
+Chasing `_display_main`'s own remaining unnamed callee (`sub_4130D4`)
+closes with a decisive match: `break_up_text_into_lines(int wii,int
+fonnt,char*todis)` (`AC.CPP:9476-9510`). Its own opening `'&'`-prefix
+scan ("if(todis[0]=='&') {while((todis[0]!=' ')&(todis[0]!=0)) todis++;
+if(todis[0]==' ') todis++;}") matches this function's own body
+instruction for instruction -- the SAME narrow auto-speech-prefix
+safety-net check that ALSO independently appears inside `_display_at`
+(already matched) -- source genuinely duplicates this small check in
+both places, and this build does too. This build's own version (~340
+lines) plausibly fuses source's own `split_lines_leftright` call
+inline rather than keeping it separate -- a distinctive `quit()` error
+string, "single word longer than window", absent from this exact
+wording anywhere in the reference source, plausibly belongs to this
+fused word-wrap loop. Computes `numlines`/`longestline` (both already-
+established globals) via a `wgettextwidth`-based line-splitting loop,
+matching source's own overall role. Not traced past the header/error-
+string level given the function's size -- source's own right-to-left
+(`OPT_RIGHTLEFTWRITE`-gated) branch specifically wasn't checked this
+round. Called from `_display_main` (matching source's own call site
+exactly) and `sub_41D7F7` (called from `do_conversation`, not
+independently investigated this round -- a candidate for a future look).
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`
