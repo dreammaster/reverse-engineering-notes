@@ -12673,6 +12673,43 @@ that rename. Removed as pure duplicates with no unique information
 `RunCharacterInteraction`/`SetDialogOption`/`GetInvName`) rather than
 padded with redundant re-confirmation text.
 
+### The virtual-screen-tint-compositing trio finally gets its own matches.json entries; the stale construct_virtual_screen? re-revert loop is fixed
+
+`setup_for_dialog`/`restore_after_dialog`'s own evidence text had
+extensively described a small trio of helper functions
+(`sub_4096B5`/`sub_409756`/`sub_40976A`) for many rounds now, but none
+of the three had ever received its own dedicated `matches.json` entry
+-- closing that gap. `sub_4096B5` is this build's own room-screen-tint
+compositing helper: when a room tint is active and a dirty flag is
+set, it extracts the tint's RGB components and calls
+`set_trans_blender` (this round's own new match, `sub_4492D0`) then
+`draw_lit_sprite` (this round's own new match, `sub_425200` -- a
+5-argument vtable dispatch whose `(bmp,sprite,x,y,color)` shape
+uniquely identifies it among Allegro's own drawing methods), then
+unconditionally calls the already-matched `wputblock` to blit the
+virtual screen plainly -- an ordering (tinted draw, then plain
+overdraw) not independently reconciled against source this round, a
+candidate for a future look. `sub_409756`/`sub_40976A` are a matching
+enter/exit pair around dialog-drawing contexts: the first points the
+draw target at the real screen and composites, the second composites
+and restores the draw target to the virtual screen. None of the three
+has a clean 2011 identifier to adopt -- 2011's own equivalent logic is
+entirely fused into `gfxDriver`-based rendering -- so all three stay
+unnamed per this project's convention, but are now properly documented
+in their own right rather than only described inside other functions'
+evidence text.
+
+As a side effect, this closes a small standing annoyance: `sub_40976A`
+had once carried a WRONG FLIRT-guessed name, `construct_virtual_screen?`
+(caught and reverted in an earlier round), but the standalone
+`matches.json` entry recording that revert kept showing up as
+"SKIP (name not found in IDB)" in every single `apply_all_and_export.py`
+run since (the reverted name no longer exists in the IDB for later
+runs to find). That entry's own unique information is now folded into
+`sub_40976A`'s own proper entry, and the stale standalone one removed
+-- the log's own skip count drops from 2 to 1, leaving only the other
+known-baseline `SpriteCache__initFile` skip.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

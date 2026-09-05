@@ -2820,9 +2820,9 @@
   "is_named": false
  },
  {
-  "name": "sub_425200",
+  "name": "draw_lit_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_425230",
@@ -5310,9 +5310,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4492D0",
+  "name": "set_trans_blender",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4496A0",

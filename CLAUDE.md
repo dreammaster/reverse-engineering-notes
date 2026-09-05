@@ -3698,6 +3698,20 @@ disassembly work.
   much earlier round — the same duplicate-entry pattern this project
   hit once before. Removed with no information loss; both functions
   were already fully closed as exact matches.
+- **The virtual-screen-tint-compositing trio (`sub_4096B5`/
+  `sub_409756`/`sub_40976A`) finally gets its own `matches.json`
+  entries**, closing a gap where they'd only ever been described in
+  passing inside other functions' evidence text. Names two new Allegro
+  boundary functions along the way: `draw_lit_sprite` (a 5-argument
+  vtable dispatch, uniquely identified by its `(bmp,sprite,x,y,color)`
+  shape) and `set_trans_blender`. None of the trio itself gets a real
+  name — no clean 2011 identifier exists, since that logic is now
+  fused into `gfxDriver`-based rendering — but they're properly
+  documented rather than left as passing mentions. Side effect: fixes
+  the stale `construct_virtual_screen?` revert entry that had been
+  showing up as a "SKIP (name not found in IDB)" line in every single
+  `apply_all_and_export.py` run since an earlier round reverted that
+  wrong FLIRT guess.
 
 ## Third-party library identification (Task #10)
 

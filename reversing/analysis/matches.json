@@ -4119,14 +4119,6 @@
   },
   {
     "kind": "manual",
-    "asm_name": "construct_virtual_screen?",
-    "new_name": null,
-    "revert_name": true,
-    "confidence": "confirmed wrong",
-    "evidence": "This IDA-guessed FLIRT/manual name (tagged \"?\" by IDA itself, meaning uncertain) is INCORRECT. The real construct_virtual_screen(bool fullRedraw) at Engine/AC.CPP:25343 is a large function (gfxDriver->ClearDrawList(), draw_screen_background(), etc.) taking one bool parameter. This disassembly function is only 10 instructions, takes ZERO parameters, and just calls an unknown helper (sub_4096B5) then wsetscreen(virtual_screen) -- no bool argument is ever pushed at either of its two call sites (restore_after_dialog+1B, _display_main+5C7), which rules out the real construct_virtual_screen entirely (it would require an arg push at every call site). Reverted to an unnamed sub_ label rather than leave a misleading name in place. No confident replacement name found yet -- role appears to be a small \"restore drawing target to virtual screen\" helper, possibly the true 2002 wsetscreen(virtual_screen)-equivalent that later got folded into the larger construct_virtual_screen. Worth another look later."
-  },
-  {
-    "kind": "manual",
     "asm_name": "sub_42B054",
     "new_name": "ccFreeInstance",
     "source_file": "Common/CSRUN.CPP",
@@ -6899,5 +6891,52 @@
     "source_line": 206,
     "confidence": "high",
     "evidence": "fix_player_sprite(MoveList*cmls,CharacterInfo*chinf) (acchars.cpp:206-267) -- the per-frame walking-direction/loop-selection routine, confirmed at a structural level against its own distinctive algorithm shape (a large, ~430-line function; header and tail confirmed, the middle branch structure not traced instruction-by-instruction given its size). Header: reads xpmove=cmls->xpermove[cmls->onstage]/ypmove=cmls->ypermove[cmls->onstage] via [cmls+onstage*4+0xA4]/[cmls+onstage*4+0x144] -- both fields already independently confirmed via do_movelist_move's own entry -- matching source's opening two lines exactly. The useDiagonal(chinf)-equivalent check (numLoops<8 via the already-confirmed `views` global's per-view stride, OR chinf->flags&CHF_NODIAGONAL) matches source's \"(views[char1->view].numLoops<8) || ((char1->flags&CHF_NODIAGONAL)!=0)\" exactly, with the literal bitmask 8 matching CHF_NODIAGONAL (acroom.h:2482) with ZERO drift. The branch structure matches the CHECK_DIAGONAL macro's own distinctive shape (abs(maindir)>abs(othdir)/2 comparisons selecting among loop values 0-7, with sign-based codea/codeb selection) used four times in source (right/left/up/down base directions, each with its own diagonal override pair) -- the disassembly's own var_1C write values (1,2,4,5, etc.) match source's useloop=1/2/3/0 plus the diagonal-override loop numbers (4/5/6/7) exactly. Called with the exact argument order (cmls,chinf) matching source's own signature from BOTH its known 2011 call sites: update_stuff (\"push chinf; push &mls[chinf->walking]\" -- chinf->walking@+0x3C indexing the shared mls[] array via the already-confirmed 0x200-byte MoveList stride) and walk_character. The function's own tail calls start_character_turning(chinf,useloop,no_diagonal) (acchars.cpp:158-195) -- this build's own two find_looporder_index calls inside this same function (rather than a separate callee) are plausibly that small function fully inlined at this call site, matching its own distinctive fromidx/toidx-via-find_looporder_index shape, though not independently confirmed as a distinct inlined unit this round."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425200",
+    "new_name": "draw_lit_sprite",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 180,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "draw_lit_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y,int color) -- Allegro's public lighting-tinted sprite-blit API. A thin 5-argument vtable-dispatch wrapper (bmp's own vtable pointer@+0x1C, slot [+0x5C]/4=23) -- the 5-argument (bmp,sprite,x,y,color) shape matches draw_lit_sprite's own unique signature exactly (the only other Allegro drawing method taking a 5th 'color' argument, draw_lit_rle_sprite, takes an RLE_SPRITE* not a BITMAP*, ruling it out). Called from sub_4096B5 (this round's own new entry, the room-screen-tint compositing helper) right after set_trans_blender (this round's own new match, sub_4492D0) sets up the tint color -- matching the expected 'set the blend color, then draw tinted' call pair exactly -- and from prepare_characters_for_drawing (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API, its vtable target implementation not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4492D0",
+    "new_name": "set_trans_blender",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/color.h",
+    "source_line": 1,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "set_trans_blender(int r,int g,int b,int a) -- Allegro's public API for configuring the current alpha/lighting blend color. Body extracts 4 color-component arguments and forwards them, plus THREE hardcoded blend-function pointers (sub_4580E4/sub_4477D0/sub_448550, plausibly the 15/16/32-bit-depth trans-blender function table entries; none independently chased further per this project's own third-party scope rule), into a call to sub_43C1B0 (plausibly Allegro's own internal set_blender_mode, also not chased further). Called from sub_4096B5 (this round's own new entry) right before draw_lit_sprite (this round's own new match) with the RGB components extracted from play_scren_tint (already-confirmed GameState.rtint-equivalent global) -- matching the expected 'set the tint color, then draw with it' call pair exactly -- and from put_sprite_256 (already matched, its own entry's 'set_trans_blender' citation refers to this same address). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4096B5",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "This build's own room-screen-tint compositing helper -- no clean 2011 identifier exists (2011's equivalent logic is fused into gfxDriver-based rendering with no narrow standalone function to compare against, the same 'no 2011 source at all' situation already documented for sub_40A6D8/sub_40A21C's own fade-related helpers) -- left unnamed per this project's convention rather than force an invented identifier. Role, fully confirmed: if a room screen tint is active (play_scren_tint>=0, already confirmed global) AND a dirty flag (dword_523200) is set AND another flag (dword_523168) is clear AND the game is running in hi-color mode (final_col_dep>8, already-confirmed global) -- extracts the tint's R/G/B components (packed into play_scren_tint, matching the same byte-packing convention used elsewhere for tint colors), calls set_trans_blender(r,g,b,0) (this round's own new match) then draw_lit_sprite(abuf,virtual_scren,0,0,0x80) (this round's own new match, drawing the virtual screen onto the current draw target tinted at 50% (0x80/255) lit strength), and clears the dirty flag. Unconditionally afterward, calls wputblock(0,0,virtual_scren,0) (already matched) to blit the virtual screen onto abuf plainly -- meaning the tinted draw above happens BEFORE, and is then overdrawn by, the plain blit; this ordering (tint draw first, unconditional plain blit second) was not independently reconciled against source's own equivalent behavior this round, a candidate for a future closer look. Called from sub_409756 and sub_40976A (this round's own new entries, a matching enter/exit pair around dialog-drawing contexts)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_409756",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "\"abuf=screen; sub_4096B5();\" -- points the current draw target at the real Allegro screen bitmap (bypassing the virtual screen), then composites/tints as needed via sub_4096B5 (this round's own new entry). Called from setup_for_dialog (already matched, in place of source's wsetscreen(virtual_screen) -- CONFIRMED ABSENT there, this build instead re-points at the REAL screen for CSCI-dialog drawing) and _display_main (already matched). No clean single 2011 identifier exists for this narrow a helper -- left unnamed per this project's convention, forming half of a matched enter/exit pair with sub_40976A (this round's own new entry)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40976A",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "\"sub_4096B5(); wsetscreen(virtual_scren);\" -- composites/tints as needed (this round's own new entry for sub_4096B5) then restores the draw target back to the virtual screen via the already-matched wsetscreen. Called from restore_after_dialog (already matched, in place of source's construct_virtual_screen(true) -- this build's own much narrower predecessor of that later, gfxDriver-based function) and _display_main. This address had previously carried a WRONG FLIRT-guessed name, 'construct_virtual_screen?' (tagged uncertain by IDA itself) -- already caught and reverted in an earlier round (see the IDA comment at this address for the full rejection reasoning: this function takes zero parameters and is only 10 instructions, ruling out the real 2011 construct_virtual_screen(bool) entirely). No clean 2011 identifier replaces it -- left unnamed, forming the other half of the enter/exit pair with sub_409756 (this round's own new entry)."
   }
 ]
