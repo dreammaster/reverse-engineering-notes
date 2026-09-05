@@ -3321,6 +3321,18 @@ disassembly work.
   numbered `"~acsc%d.tmp"` temp files — the exact same filename pattern
   `run_graph_script` reads back later at execution time. Loader and
   reader are now both identified and connected.
+- **`set_game_speed`/`dj_timer_handler` close; `INIreaditem` turns out
+  to be a genuinely different implementation behind the same identity.**
+  `set_game_speed` is an exact match; `dj_timer_handler` is missing its
+  leading `timerloop++`. `INIreaditem` is decisively the same function
+  (confirmed via matching config section/key names at every call site)
+  but with a completely different 4-parameter, binary-mode,
+  character-by-character implementation, not source's clean 2-parameter
+  fgets-loop rewrite. Chasing its `filetouse` global found a bonus:
+  `main` fuses all of 2011's separate `read_config_file()` inline, and
+  `filetouse`'s own default value is the literal string
+  `"C:\TC\CHRISJ.INI"` — a harmless leftover from the original
+  developer's own build environment, always overwritten before real use.
 
 ## Third-party library identification (Task #10)
 

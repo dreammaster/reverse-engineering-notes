@@ -11593,3 +11593,38 @@ file, which `run_graph_script` reads back by the same filename pattern
 when a room event actually triggers it. Closes the loop on this
 project's entire graphical-scripts investigation -- loader and reader
 are now both identified and connected.
+
+### set_game_speed/dj_timer_handler close; a small confirmed-absent field
+
+`set_game_speed` is a complete, exact, zero-drift match to `AC.CPP:2146
+-2150` (the literal `1193` multiplier confirms `MSEC_TO_TIMER`). Its
+own timer callback, `dj_timer_handler`, matches two of source's three
+statements exactly (`globalTimerCounter++`, the `mvolcounter` bump) --
+CONFIRMED ABSENT: the leading `timerloop++` increment.
+
+### INIreaditem: a genuinely different implementation behind the same identity, and a fun artifact
+
+`INIreaditem` is decisively the SAME function identity as source
+(confirmed via caller-site section/key names -- `"misc"/"datadir"`,
+`"sound"/"digiwin"`, etc., matching 2011's own real config keys
+exactly) but with a COMPLETELY different internal implementation. This
+build's version takes FOUR parameters (source has two), opens the
+config file in binary mode (not source's `"rt"`), seeks to a caller-
+given offset, and parses character-by-character via a hand-rolled state
+machine with numbered error codes -- a genuinely older, more manual
+ini-parser with no line-for-line correspondence to source's clean
+fgets-loop rewrite. `INIreadint`'s own wrapper closes as an exact
+net-effect match around it.
+
+Chasing `INIreaditem`'s `filetouse` global surfaced a bonus: `main`
+(already matched) fuses ALL of 2011's separate `read_config_file()`
+directly inline -- the acsetup.cfg resolution logic and the decisive
+`strcpy(filetouse,ac_config_file)` call all appear directly in `main`'s
+own body, another instance of the "later refactor extracted a reusable
+helper" pattern. And `filetouse`'s own static initializer in this build
+is the literal string `"C:\TC\CHRISJ.INI"` (matching 2011's own global,
+but with a harmless leftover development-machine default instead of
+2011's placeholder `"nofile"`) -- confirmed harmless since it's always
+overwritten before any real read happens, but a fun artifact of the
+original developer's own Turbo C build environment surviving in the
+shipped binary's static data.
