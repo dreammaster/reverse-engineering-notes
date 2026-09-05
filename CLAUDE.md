@@ -3657,6 +3657,12 @@ disassembly work.
   independently confirmed elsewhere, just not connected back here.
   `color_depth==1` is AGS's own routine idiom for "8-bit paletted
   game" (dozens of call sites in `AC.CPP`), not a mystery flag.
+- **`rstruc`'s own dynamic initializer identified**, closing a small
+  loose end from the RoomStruct constructor round: a two-instruction
+  function whose entire body constructs the global `rstruc` object
+  (calling its already-matched constructor), itself called through a
+  trivial pass-through wrapper registered in a static-initializer
+  table entry — the CRT's own pre-`main()` startup entry point.
 
 ## Third-party library identification (Task #10)
 

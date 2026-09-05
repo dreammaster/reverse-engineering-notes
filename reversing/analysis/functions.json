@@ -500,14 +500,14 @@
   "is_named": false
  },
  {
-  "name": "sub_4081BB",
+  "name": "rstruc__dynamic_initializer_entry",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4081C5",
+  "name": "rstruc__dynamic_initializer",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4081D4",

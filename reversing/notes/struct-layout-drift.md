@@ -12554,6 +12554,22 @@ integer CODE (1=8-bit), not a raw bits-per-pixel value, so `==1` is
 exactly source's own gate for this exact situation. Not a mystery at
 all, just a previously-unconnected cross-reference -- zero drift.
 
+### rstruc's own dynamic initializer identified, closing a small loose end from the RoomStruct constructor round
+
+`roomstruct::roomstruct()`'s own entry had flagged its caller,
+`sub_4081C5`, as "referenced as a DATA XREF callee ... not yet itself
+characterized." It's a two-instruction function whose entire body is
+`ecx=&rstruc; call roomstruct::roomstruct();` -- the compiler-generated
+C++ dynamic initializer for the global `rstruc` object, matching
+MSVC's standard "dynamic initializer for '&lt;global&gt;'" pattern for
+an object with a non-trivial constructor. It's itself called through a
+trivial pass-through wrapper (`sub_4081BB`) referenced directly from a
+static-initializer table entry (`.data:004B401C`) -- the actual table-
+registered entry point the CRT's own startup code calls before
+`main()`. Two levels of indirection here rather than MSVC's more
+common single-level pattern -- plausibly a build/optimization
+artifact, not further explained. Both named accordingly.
+
 `InitRenderToSurface`'s own `vscreen`-creation call names one more
 function at medium confidence: `gfx_directx_create_system_bitmap`
 (`sub_456210`), identified primarily by call site/role rather than a

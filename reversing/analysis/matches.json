@@ -6890,5 +6890,23 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "gfx_directx_create_system_bitmap(int width,int height) -- identified primarily by call site and role: InitRenderToSurface (already matched) calls it exactly where source calls this named function (\"vscreen = gfx_directx_create_system_bitmap(ddsd.dwWidth,ddsd.dwHeight);\", acwavi.cpp:137), on the vscreen==NULL/first-use path. CAUTION: this build own body (calls sub_455B80(width,height,color_depth,4), falling back to sub_455E20(result,width,height,0x40000000) if that returns NULL/0 -- neither callee independently confirmed or chased further, per this project own third-party-library scope rule) does NOT closely resemble the 4.2.2 reference tree own gfx_directx_create_system_bitmap (wddbmp.c:632-650, which calls gfx_directx_create_surface/gfx_directx_make_bitmap_from_surface/gfx_directx_destroy_surface -- a DDRAW_SURFACE-wrapper abstraction with no counterpart visible here) -- consistent with this 2002 binary linking a genuinely older/simpler Allegro DirectX driver implementation than the 4.2.2 tree, the same caution already established for al_findfirst/al_findnext/al_findclose. Confidence kept at medium (call-site/role match only, not a body-level source comparison) given the reference body own divergence."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4081C5",
+    "new_name": "rstruc__dynamic_initializer",
+    "source_file": "Common/acroom.h",
+    "source_line": 878,
+    "confidence": "high",
+    "evidence": "This is the C++ dynamic initializer for the global RoomStruct instance (`rstruc`): a two-instruction function whose entire body is \"ecx=&rstruc; call roomstruct::roomstruct();\" -- i.e. the compiler-generated glue that invokes rstruc's own default constructor (already matched, acroom.h:878-901) before main() runs, matching MSVC's standard \"dynamic initializer for '<global>'\" pattern for a global object with a non-trivial constructor. Resolves the previously-flagged \"referenced as a DATA XREF callee from sub_4081C5, not yet itself characterized\" note on roomstruct::roomstruct()'s own entry."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4081BB",
+    "new_name": "rstruc__dynamic_initializer_entry",
+    "source_file": "Common/acroom.h",
+    "source_line": 878,
+    "confidence": "high",
+    "evidence": "A trivial pass-through wrapper (\"call rstruc__dynamic_initializer; retn\") referenced directly from a static-initializer table entry (.data:004B401C) -- this is the actual table-registered entry point the CRT's own static/dynamic-initialization startup code calls before main(), which in turn invokes rstruc's own dynamic initializer (this round's own new match). Two levels of indirection here rather than MSVC's more common single-level \"??__Erstruc@@YAXXZ\"-style dynamic initializer -- plausibly an optimization/linking artifact of this specific build, not independently explained further."
   }
 ]
