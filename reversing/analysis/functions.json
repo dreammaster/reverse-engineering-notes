@@ -3195,9 +3195,9 @@
   "is_named": true
  },
  {
-  "name": "sub_428720",
+  "name": "ExitCode",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4287B5",
@@ -3205,9 +3205,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4287CB",
+  "name": "InitRenderToSurface",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "RenderFileToMMStream",
@@ -3215,12 +3215,12 @@
   "is_named": true
  },
  {
-  "name": "sub_428A9E",
+  "name": "RenderToSurface",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "dxmedia_abort_video",
+  "name": "dxmedia_play_video",
   "addr_hint": null,
   "is_named": true
  },

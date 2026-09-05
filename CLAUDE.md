@@ -3253,6 +3253,19 @@ disassembly work.
   text and `ACI_VERSION_TEXT` (`"2.40.325"`) provide a second,
   independent confirmation of the binary's self-reported version from
   a different code path than `script_debug`'s own finding.
+- **A mislabeled function found and fixed: `dxmedia_abort_video` is
+  really `dxmedia_play_video`.** `PlayVideo`'s own call target had been
+  named `dxmedia_abort_video` based on a real but misleading string
+  match — the full 241-line body is far too large for that ~15-line
+  source function, and turns out to decisively be `dxmedia_play_video`
+  instead, with `dxmedia_abort_video`'s own logic (including that same
+  `"Played successfully."` string) fused into its own tail — this build
+  has no standalone `dxmedia_abort_video` at all. Renamed, with the
+  correction documented. Also names `ExitCode`/`InitRenderToSurface`/
+  `RenderToSurface`, and confirms `PlayVideo` itself fuses two 2011
+  layers (`AGSWin32::PlayVideo` + `dxmedia_play_video`) into one flat
+  function with no `gfxDriver`/platform indirection and no file-
+  existence pre-check.
 
 ## Third-party library identification (Task #10)
 

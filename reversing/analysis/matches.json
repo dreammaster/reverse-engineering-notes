@@ -833,11 +833,12 @@
     "kind": "function",
     "asm_name": "PlayVideo",
     "new_name": null,
-    "source_file": "Engine/ali3dsw.cpp",
+    "source_file": "Engine/acplwin.cpp",
     "source_obj": "ali3dsw.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- ALSO RESOLVES a mislabeling this same round found on its own call target (sub_428B70, see its corrected entry below): PlayVideo itself matches the general shape of 2011's AGSWin32::PlayVideo (Engine/acplwin.cpp:646-674) fused directly with dxmedia_play_video's own flag-parsing (rather than keeping them as two separate layers -- this build's 3-parameter script API PlayVideo(name,skip,flags) calls straight into the DirectShow video subsystem with no gfxDriver/platform indirection at all, the by-now-familiar predates-hardware-abstraction pattern). CONFIRMED ABSENT: source's own fopen/fclose file-existence pre-check (\"File not found: %s\") -- this build has no such check, it goes straight to the play call and relies on that call's own internal failure handling instead. The music/sound-shutdown-then-restore bracket (scr_StopMusic+remove_sound before, install_sound+update_music_volume+PlayMusic after, gated on arg_8<10 matching AGSWin32::PlayVideo's own \"flags>=10 -> no sound\" convention) and the final set_palette_range(palette,0,0xFF,0) call both match source's overall intent closely, though 2011's own equivalent code for this specific bracket lives in the platform-specific AGSWin32 class rather than as a single flat function, so this isn't claimed as a line-for-line match. dword_4EEB54 (fast_forward, already established) gates the WHOLE function -- if fast-forwarding, PlayVideo does nothing at all, not even the trailing set_palette_range call, matching this project's well-established `if(play.fast_forward) return;` idiom.",
+    "source_line": 646
   },
   {
     "kind": "function",
@@ -3945,11 +3946,11 @@
   {
     "kind": "manual",
     "asm_name": "sub_428B70",
-    "new_name": "dxmedia_abort_video",
+    "new_name": "dxmedia_play_video",
     "source_file": "Engine/acwavi.cpp",
-    "source_line": 274,
+    "source_line": 295,
     "confidence": "high",
-    "evidence": "void dxmedia_abort_video() at acwavi.cpp:274. String match: \"Played successfully.\" (290). Caller matches exactly: PlayVideo (already-named script API function), cleaning up DirectShow state after video playback ends. This is also the caller of sub_428905 (already matched to RenderFileToMMStream) via a sibling function, tying together the whole video-playback subsystem."
+    "evidence": "CORRECTION (this round): previously matched as `dxmedia_abort_video` -- wrong. Reading the FULL body (241 lines, far too large for dxmedia_abort_video's own ~15-line source function, AC.CPP acwavi.cpp:274-293) shows this is decisively `dxmedia_play_video(const char*,bool,int,int)` (acwavi.cpp:295-385) instead, with `dxmedia_abort_video()`'s own body FUSED inline at the tail rather than called separately (this build has no separate callable dxmedia_abort_video at all). Matches point for point: the 3-parameter (not source's 4) signature drops the later `stretch` parameter, with AGSWin32::PlayVideo's own \"if(flags>=10){flags-=10;useSound=false;}\" flag-decoding fused in as this function's OWN leading logic (byte_4BAA5C=useSound) -- an architectural fusion of two 2011-separate layers (the platform-specific PlayVideo and the internal dxmedia_play_video) into one. CoInitialize(NULL), the two update_polled_stuff() calls bracketing RenderFileToMMStream (matching source's identical bracketing exactly), RenderFileToMMStream(filename) itself (already matched, error path calls ExitCode+CoUninitialize+return -1 matching source exactly), InitRenderToSurface (this round's new match, same error-handling shape), the vscreen->w/h -> newWidth/newHeight assignment (dword_523920=vscreen, matching BITMAP's w@+0x00/h@+0x04 layout), the main playback loop (kbhit/getch-based skip-key checks against arg_4==1/2, matching canskip==1/canskip>=2; CONFIRMED ABSENT: this build calls plain `kbhit`/an unnamed getch-equivalent directly, not a `rec_kbhit`/`rec_getch` recording-aware wrapper -- consistent with IsKeyPressed's own already-established finding that this build's whole `rec_*` input-recording layer doesn't exist), and finally dxmedia_abort_video's own fused-in tail (SetState(STOP) via a vtable call, ExitCode+CoUninitialize, destroy_bitmap(vscreen)+vscreen=NULL, and the decisive `strcpy(lastError,\"Played successfully.\")` -- the exact string this project's OWN earlier, now-corrected match cited as its evidence) all match exactly, ending in `return 0` matching source's own success return. Old name/evidence kept visible in this project's usual retraction convention rather than silently overwritten."
   },
   {
     "kind": "manual",
@@ -6251,5 +6252,32 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "int keyboard_needs_poll(void) at keyboard.c:572-575: \"return keyboard_polled;\". Exact, trivial match: \"mov eax,dword_537E54; retn\" -- a bare global return, zero drift. Allegro library function (third-party scope: public API called directly from AGS's own IsKeyPressed, this round's new field evidence -- not chased further into the driver's own internals per the third-party-library scope rule)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_428720",
+    "new_name": "ExitCode",
+    "source_file": "Engine/acwavi.cpp",
+    "source_line": 62,
+    "confidence": "high",
+    "evidence": "void ExitCode() at acwavi.cpp:62-80: releases 4 DirectShow COM interface pointers (g_pMMStream/g_pSample/g_pDDStream/g_pPrimaryVidStream) if non-null, nulling each after Release(). Called from dxmedia_play_video (this round's corrected match) at every one of its error-exit points plus its final success tail, matching source's own call pattern exactly (a no-argument cleanup helper called right before CoUninitialize() in every case)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4287CB",
+    "new_name": "InitRenderToSurface",
+    "source_file": "Engine/acwavi.cpp",
+    "source_line": 103,
+    "confidence": "high",
+    "evidence": "HRESULT InitRenderToSurface() at acwavi.cpp:103-157. Called from dxmedia_play_video (this round's corrected match) immediately after RenderFileToMMStream succeeds, with its HRESULT return checked via the same >=0-success COM convention (\"cmp var_4,0; jge success\") and the same ExitCode+CoUninitialize error-exit pattern as its sibling call -- matching source's own call site and error handling exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_428A9E",
+    "new_name": "RenderToSurface",
+    "source_file": "Engine/acwavi.cpp",
+    "source_line": 220,
+    "confidence": "medium-high",
+    "evidence": "void RenderToSurface(BITMAP*) at acwavi.cpp:220. Called once per iteration of dxmedia_play_video's (this round's corrected match) main playback loop with vscreen (dword_523920) as its sole argument, matching source's own \"RenderToSurface(vscreen);\" call exactly in both position and argument -- own body not independently traced this round."
   }
 ]

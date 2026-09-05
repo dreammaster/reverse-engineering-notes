@@ -11398,3 +11398,46 @@ independent confirmation, from a completely different code path and
 string literal, of the exact self-reported ACI version this session's
 `script_debug` round already found -- the binary states its own version
 in at least two unrelated places, both agreeing.
+
+### A mislabeled function found and fixed: dxmedia_abort_video is really dxmedia_play_video
+
+`PlayVideo`'s own call target (`sub_428B70`) had been named
+`dxmedia_abort_video` in an earlier session, based on a real but
+misleading piece of evidence: its body genuinely contains the
+`"Played successfully."` string. Reading the FULL 241-line body (far
+too large for `dxmedia_abort_video`'s own ~15-line source function,
+`Engine/acwavi.cpp:274-293`) shows why: this is decisively
+`dxmedia_play_video(const char*,bool,int,int)` (`acwavi.cpp:295-385`)
+instead, with `dxmedia_abort_video()`'s own logic (COM stream stop,
+`ExitCode()`/`CoUninitialize()`, `destroy_bitmap(vscreen)`, and that
+same `"Played successfully."` string) fused directly into its own tail
+rather than called as a separate function — this build has no standalone
+`dxmedia_abort_video` at all. Renamed, old evidence kept visible per
+this project's usual retraction convention.
+
+Every remaining piece of the corrected match lines up cleanly: a
+3-parameter signature (missing 2011's later `stretch` parameter), with
+`AGSWin32::PlayVideo`'s own "if(flags>=10){flags-=10;useSound=false;}"
+flag-decoding fused in as this function's own leading logic — a genuine
+architectural fusion of two layers 2011 keeps separate. `CoInitialize`,
+the two `update_polled_stuff()` calls bracketing `RenderFileToMMStream`
+(already matched), the `vscreen->w/h` → `newWidth`/`newHeight`
+assignment, and the main playback loop (skip-key checks against
+`canskip==1`/`>=2`) all match source exactly. This round also names
+three of its callees: `ExitCode` (a 4-COM-pointer-release cleanup
+helper), `InitRenderToSurface`, and `RenderToSurface` (the last at
+medium-high confidence, own body not independently traced). One more
+confirmed absence, reinforcing an existing finding: this build calls
+plain `kbhit`/an unnamed getch-equivalent directly in the playback
+loop, not a `rec_kbhit`/`rec_getch` recording-aware wrapper — consistent
+with `IsKeyPressed`'s own already-established finding that this build's
+whole `rec_*` input-recording layer doesn't exist.
+
+`PlayVideo` itself closes alongside this correction: it fuses
+`AGSWin32::PlayVideo`'s shape with `dxmedia_play_video`'s own
+flag-parsing into one flat function, with no `gfxDriver`/platform
+indirection at all (the by-now-familiar pattern) and no file-existence
+pre-check before playing (CONFIRMED ABSENT: source's `fopen`/`fclose`
+"File not found" check). `dword_4EEB54`(`fast_forward`) gates the WHOLE
+function — if fast-forwarding, `PlayVideo` does nothing at all, not
+even the trailing `set_palette_range` call.
