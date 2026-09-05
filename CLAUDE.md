@@ -3151,6 +3151,13 @@ disassembly work.
   of 2011's later `channels[]`/`crossFading` multi-format dispatch,
   reinforcing the single-channel predecessor pattern already found
   across the music subsystem.
+- **`IsTranslationAvailable`/`ParseText`/`Said` close, directly
+  confirming `comparetonum`/`compareto`.** Both text-parser functions
+  match source exactly, and directly confirm (from their own bodies,
+  not just positional inference) that these two standalone globals
+  replace `GameState.num_parsed_words`/`parsed_words` — closing the
+  loop on that field's earlier confirmed-absent finding: the feature
+  isn't missing, it's just not a `GameState` member here.
 
 ## Third-party library identification (Task #10)
 

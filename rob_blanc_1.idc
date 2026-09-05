@@ -155723,7 +155723,7 @@ static Functions_1(void) {
 	add_func    (0X40932B,0X409342);
 	set_func_flags(0X40932B,0x5410);
 	SetType(0X40932B, "int IsTranslationAvailable(void);");
-	set_func_cmt(0X40932B,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X40932B,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a trivial exact match, \"return transtree!=0;\", matching source's \"if(transtree!=NULL) return 1; return 0;\" exactly (already-established global, further confirmed).", 1);
 	set_frame_size(0X40932B, 0, 4, 0);
 	add_func    (0X409342,0X40936C);
 	set_func_flags(0X409342,0x5410);
@@ -157138,13 +157138,13 @@ static Functions_4(void) {
 	add_func    (0X4198BB,0X4198DA);
 	set_func_flags(0X4198BB,0x5410);
 	SetType(0X4198BB, "void __stdcall ParseText(char *text);");
-	set_func_cmt(0X4198BB,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X4198BB,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): confirms, directly from this function's own body (previously the comparetonum/compareto identity was only inferred positionally via SaidUnknownWord's own DATA-XREF evidence), that \"call parse_sentence(String,&comparetonum,compareto,NULL,0)\" matches source's \"parse_sentence(text,&play.num_parsed_words,play.parsed_words,NULL,0)\" structurally exactly -- using the standalone globals comparetonum/compareto in place of GameState.num_parsed_words/parsed_words (both already confirmed CONFIRMED ABSENT from GameState itself), decisively closing the loop on that earlier finding: the functionality isn't missing from the game, it's simply implemented via separate globals rather than GameState members here.", 1);
 	set_frame_size(0X4198BB, 0, 4, 0X4);
 	define_local_var(0X4198BB, 0X4198DA, "[bp+0X8]", "String");
 	add_func    (0X4198DA,0X41990A);
 	set_func_flags(0X4198DA,0x5410);
 	SetType(0X4198DA, "int __cdecl Said(char *String);");
-	set_func_cmt(0X4198DA,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X4198DA,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to source's \"int numword=0; short words[MAX_PARSED_WORDS]; return parse_sentence(checkwords,&numword,&words[0],play.parsed_words,play.num_parsed_words);\" -- this build's local numword/wordarray match source's local numword/words[] exactly, and the already-established globals comparetonum/compareto (see ParseText's own entry) are passed as the 4th/5th arguments in place of play.num_parsed_words/parsed_words, confirming ParseText and Said share the same replacement globals for the sentence previously parsed by ParseText.", 1);
 	set_frame_size(0X4198DA, 0X24, 4, 0);
 	define_local_var(0X4198DA, 0X41990A, "[bp-0X24]", "wordarray");
 	define_local_var(0X4198DA, 0X41990A, "[bp-0X4]", "numwords");
@@ -157486,6 +157486,10 @@ static Functions_4(void) {
 	define_local_var(0X41B1D5, 0X41B20E, "[bp+0XC]", "rr");
 	define_local_var(0X41B1D5, 0X41B20E, "[bp+0X10]", "gg");
 	define_local_var(0X41B1D5, 0X41B20E, "[bp+0X14]", "bb");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41B20E,0X41B224);
 	set_func_flags(0X41B20E,0x5410);
 	set_func_cmt(0X41B20E,	"[reversing] confirmed match\nsource: Engine/ali3dsw.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj", 1);
@@ -157498,10 +157502,6 @@ static Functions_4(void) {
 	SetType(0X41B23D, "void RefreshMouse(void);");
 	set_func_cmt(0X41B23D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): DIRECTLY confirms mgetgraphpos's own entry (previously inferred by role/position rather than confirmed from this exact call site) -- RefreshMouse calls mgetgraphpos directly rather than the full domouse(DOMOUSE_NOCURSOR) wrapper 2011 calls, matching mgetgraphpos's own already-confirmed role as domouse's first-statement equivalent, just called more directly here. \"scmouse.x=dword_5358CC(mousex)/mult_x;\" and \"dword_4CD1BC=dword_5358D0(mousey)/mult_y;\" match \"scmouse.x=divide_down_coordinate(mousex); scmouse.y=divide_down_coordinate(mousey);\" exactly -- confirming the pre-existing global `scmouse` is this build's ScreenMousePos.x and identifying dword_4CD1BC as ScreenMousePos.y (a new field confirmation, offset +4 from scmouse's own base).", 1);
 	set_frame_size(0X41B23D, 0, 4, 0);
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41B269,0X41B273);
 	set_func_flags(0X41B269,0x5410);
 	SetType(0X41B269, "int GetCursorMode(void);");
@@ -158067,6 +158067,10 @@ static Functions_5(void) {
 	set_func_flags(0X423EC0,0x5410);
 	set_func_cmt(0X423EC0,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public putpixel(BITMAP*,x,y,color) API: signature \"bmp->vtable->putpixel(bmp,x,y,color);\" via the vtable slot immediately after getpixel's (+0x24 vs. +0x20), matching Allegro's declared BITMAP_METHODS field order exactly. Used by sub_410631 (already characterized) to mask out walk-behind-occluded pixels. THIRD-PARTY LIBRARY BOUNDARY -- see getpixel's own entry. Also called from process_event (already matched) inside its FADE_DISSOLVE screen-transition effect, writing to the live screen bitmap.", 1);
 	set_frame_size(0X423EC0, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X423EF0,0X423F19);
 	set_func_flags(0X423EF0,0x5410);
 	set_func_cmt(0X423EF0,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public rectfill(BITMAP*,x1,y1,x2,y2,color) API -- exact 6-argument vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x38=rectfill slot), matching the same BITMAP_METHODS-dispatch pattern already established for getpixel(+0x20)/putpixel(+0x24). Called from GUISlider::Draw (already matched) to fill both the slider bar and handle rectangles. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its vtable target implementation not chased further.", 1);
@@ -158075,10 +158079,6 @@ static Functions_5(void) {
 	set_func_flags(0X423F20,0x5410);
 	set_func_cmt(0X423F20,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public getpixel(BITMAP*,x,y) API: signature \"return bmp->vtable->getpixel(bmp,x,y);\" -- an exact vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x20=getpixel slot), matching Allegro's own BITMAP_METHODS layout. Used by sub_410631 and get_hotspot_at (already matched) to read RoomStruct's walk-behind/hotspot masks generically across color depths. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): this is Allegro's public API surface -- do not chase its vtable target implementations further, they are wholesale-replaced by a ScummVM reimplementation regardless of how they work internally. Also called from process_event (already matched) inside its FADE_DISSOLVE screen-transition effect, reading from a temp pre-fade screen copy.", 1);
 	set_frame_size(0X423F20, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X423F40,0X423F65);
 	set_func_flags(0X423F40,0x5410);
 	set_frame_size(0X423F40, 0, 4, 0);
@@ -158984,6 +158984,10 @@ static Functions_6(void) {
 	set_func_flags(0X42F8FC,0x5410);
 	set_func_cmt(0X42F8FC,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/file.c\nconfidence: high\nevidence: Allegro library, long pack_fread(void *p, long n, PACKFILE *f) -- exact 3-arg match AND matching argument ORDER (buffer, size, file-handle, verified via cdecl push order in the disassembly) in my_load_static_mp3's (already matched) file-loading preamble, right after the size-field read and malloc, matching source's `pack_fread(mp3buffer, muslen, mp3in);` exactly. Same confidence caveat as `pack_fopen`'s own entry (PACKFILE layout drift, not function-identity doubt). UPGRADED TO HIGH (this round): `my_load_mp3` (`sub_408623`, new match this round) independently confirms the exact same 3-arg call shape and role (`pack_fread(tmpbuffer, thistune->chunksize, mp3in)`) from a second, unrelated caller.", 1);
 	set_frame_size(0X42F8FC, 0XC, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X42F995,0X42FA36);
 	set_func_flags(0X42F995,0x5410);
 	set_frame_size(0X42F995, 0X8, 4, 0);
@@ -159016,10 +159020,6 @@ static Functions_6(void) {
 	add_func    (0X430709,0X43076D);
 	set_func_flags(0X430709,0x5410);
 	set_frame_size(0X430709, 0X4, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X43076D,0X4309A3);
 	set_func_flags(0X43076D,0x5410);
 	set_frame_size(0X43076D, 0X1C, 4, 0);
@@ -159968,6 +159968,10 @@ static Functions_7(void) {
 	set_func_flags(0X445770,0x5400);
 	set_func_cmt(0X445770,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
 	set_frame_size(0X445770, 0X10, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X4458A0,0X4458AC);
 	set_func_flags(0X4458A0,0x5400);
 	set_frame_size(0X4458A0, 0, 0, 0);
@@ -159995,10 +159999,6 @@ static Functions_7(void) {
 	add_func    (0X445DD0,0X445E09);
 	set_func_flags(0X445DD0,0x5400);
 	set_frame_size(0X445DD0, 0, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X445E10,0X445E4A);
 	set_func_flags(0X445E10,0x5400);
 	set_frame_size(0X445E10, 0, 0, 0);
@@ -162167,14 +162167,14 @@ static Functions_8(void) {
 	set_func_flags(0X477470,0x5400);
 	set_func_cmt(0X477470,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly. Confirms dword_4EF028 (already-established GameState.music_repeat) as play_mod's second argument, matching source's 'play_mod(tune,repeat);' (acsound.cpp:1103) exactly -- the same global MYMIDI's own play_midi call uses in the identical role (see PlayMusic's own entry).", 1);
 	set_frame_size(0X477470, 0X8, 0, 0);
-	add_func    (0X477790,0X4777FE);
-	set_func_flags(0X477790,0x5400);
-	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
-	set_frame_size(0X477790, 0X4, 0, 0);
 }
 
 static Functions_9(void) {
 
+	add_func    (0X477790,0X4777FE);
+	set_func_flags(0X477790,0x5400);
+	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
+	set_frame_size(0X477790, 0X4, 0, 0);
 	add_func    (0X477870,0X4778A9);
 	set_func_flags(0X477870,0x5400);
 	set_frame_size(0X477870, 0, 0, 0);
@@ -164758,6 +164758,10 @@ static Functions_9(void) {
 	add_func    (0X4AA7D0,0X4AA823);
 	set_func_flags(0X4AA7D0,0x5400);
 	set_frame_size(0X4AA7D0, 0X8, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AA830,0X4AA89B);
 	set_func_flags(0X4AA830,0x5400);
 	set_frame_size(0X4AA830, 0X8, 0, 0);
@@ -164788,10 +164792,6 @@ static Functions_9(void) {
 	add_func    (0X4AAEF0,0X4AAF05);
 	set_func_flags(0X4AAEF0,0x5400);
 	set_frame_size(0X4AAEF0, 0, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AAF10,0X4AAF3C);
 	set_func_flags(0X4AAF10,0x5404);
 	SetType(0X4AAF10, "_onexit_t __cdecl _onexit(_onexit_t Func);");

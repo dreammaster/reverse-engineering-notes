@@ -11083,3 +11083,23 @@ work to unnamed library calls in the same address ranges as this
 project's already-confirmed JGMOD/ALMP3 boundary functions -- left
 unnamed per the usual Task #10 scope convention, not individually
 chased further.
+
+### `IsTranslationAvailable`/`ParseText`/`Said` close, directly confirming `comparetonum`/`compareto` from their own bodies
+
+`IsTranslationAvailable` closes as a trivial exact match. `ParseText`
+and `Said` both close as complete matches to source, and directly
+confirm (from their own bodies for the first time, rather than the
+earlier positional-only DATA-XREF inference via `SaidUnknownWord`)
+that the globals `comparetonum`/`compareto` play the exact role
+2011's `GameState.num_parsed_words`/`parsed_words` play -- `ParseText`
+calls `parse_sentence(text,&comparetonum,compareto,NULL,0)` matching
+source's `parse_sentence(text,&play.num_parsed_words,play.parsed_
+words,NULL,0)` structurally exactly, and `Said` passes the same two
+globals as its own 4th/5th arguments, matching source's `parse_
+sentence(checkwords,&numword,&words[0],play.parsed_words,play.num_
+parsed_words)` exactly. This decisively closes the loop on the earlier
+finding that `num_parsed_words`/`parsed_words` are confirmed absent
+from `GameState` itself: the functionality isn't missing from the
+game, it's simply implemented via these two standalone globals instead
+of `GameState` members -- the same "later consolidated into one
+struct" pattern found repeatedly elsewhere in this project.

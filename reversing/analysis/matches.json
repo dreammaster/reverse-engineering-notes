@@ -97,7 +97,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a trivial exact match, \"return transtree!=0;\", matching source's \"if(transtree!=NULL) return 1; return 0;\" exactly (already-established global, further confirmed)."
   },
   {
     "kind": "function",
@@ -1227,7 +1227,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): confirms, directly from this function's own body (previously the comparetonum/compareto identity was only inferred positionally via SaidUnknownWord's own DATA-XREF evidence), that \"call parse_sentence(String,&comparetonum,compareto,NULL,0)\" matches source's \"parse_sentence(text,&play.num_parsed_words,play.parsed_words,NULL,0)\" structurally exactly -- using the standalone globals comparetonum/compareto in place of GameState.num_parsed_words/parsed_words (both already confirmed CONFIRMED ABSENT from GameState itself), decisively closing the loop on that earlier finding: the functionality isn't missing from the game, it's simply implemented via separate globals rather than GameState members here."
   },
   {
     "kind": "function",
@@ -1237,7 +1237,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to source's \"int numword=0; short words[MAX_PARSED_WORDS]; return parse_sentence(checkwords,&numword,&words[0],play.parsed_words,play.num_parsed_words);\" -- this build's local numword/wordarray match source's local numword/words[] exactly, and the already-established globals comparetonum/compareto (see ParseText's own entry) are passed as the 4th/5th arguments in place of play.num_parsed_words/parsed_words, confirming ParseText and Said share the same replacement globals for the sentence previously parsed by ParseText."
   },
   {
     "kind": "function",
