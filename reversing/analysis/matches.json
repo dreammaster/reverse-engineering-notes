@@ -7062,5 +7062,25 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "_soft_floodfill(BITMAP*bmp,int x,int y,int color) (flood.c:209-277) -- Allegro own public flood-fill implementation. A near-exhaustive, field-for-field match: the opening clip-bounds check (\"if(x<bmp->cl||x>=bmp->cr||y<bmp->ct||y>=bmp->cb) return;\") matches the disasm own 4-way comparison against bmp own cl/cr@+0x0C/+0x10 and ct/cb@+0x14/+0x18 exactly; acquire_bitmap(bmp) matches the conditional vtable-slot-0x10 call; \"src_color=getpixel(bmp,x,y); if(src_color==color) {release_bitmap(bmp); return;}\" matches the vtable-slot-0x20(getpixel)-then-compare-then-conditional-slot-0x14(release) sequence exactly; \"_grow_scratch_mem(sizeof(FLOODED_LINE)*bmp->cb)\" matches the realloc-based scratch-buffer-growing logic against dword_536FA0/dword_536FA4 (matching Allegro own internal _scratch_mem/_scratch_mem_size globals); the FLOODED_LINE initialization loop (\"p[c].flags=0; p[c].lpos=SHRT_MAX; p[c].rpos=SHRT_MIN; p[c].y=y; p[c].next=0;\") matches the disasm own 5-word-per-entry init loop field for field. GENUINE DRIFT, HISTORICALLY ANCHORED: this build own FLOODED_LINE packs  as a SHORT (2 bytes, giving a 10-byte stride total) rather than source declared int next (would be 12 bytes) -- matching source own comment verbatim: \"Note: a short is not sufficient for next above in some corner cases\" -- this build predates that later int-upgrade bugfix, the SAME kind of historical-artifact-preserved-in-a-comment pattern already found for the qsort/bubble-sort refactor and almp3 MP3CHUNKSIZE. The trailing do-while loop (checking FLOOD_TODO_BELOW=4/FLOOD_TODO_ABOVE=2 bit flags, calling check_flood_line) matches source own structure too. Calls two further internal helpers (flooder/sub_44CBB0, check_flood_line/sub_44CF40) -- both genuine Allegro-internal-only callees of this one library function, not independently named per this project own third-party-library scope rule (they are never called directly by AGS code). Called from is_route_possible (already matched -- AGS own pathfinding connectivity check, a natural use of flood-fill) and __actual_invscreen (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4255D0",
+    "new_name": "fixfloor",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": 158,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixfloor(fixed x) -- Allegro public fixed-point floor-to-int conversion (fmaths.inl:158-165). This build's own compiled body is a single instruction, \"sar eax,0x10\" (arithmetic shift right by 16) -- matching source's own portable-C fallback's net effect (\"if(x>=0) return x>>16; else return ~((~x)>>16);\", a branch-based workaround for platforms where plain >> isn't guaranteed to sign-extend correctly) exactly, since on x86 a single SAR instruction already sign-extends correctly for both positive and negative values -- consistent with Allegro's own comment \"(x>>16) is not portable\" implying a faster non-portable i386 path exists elsewhere that this build's compiler used/inlined instead of the portable branch. Called from fixtoi (this round's own new match, sub_4255B0). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4255B0",
+    "new_name": "fixtoi",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": 187,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixtoi(fixed x) { return fixfloor(x) + ((x & 0x8000) >> 15); } -- Allegro public fixed-point-to-int (round-to-nearest) conversion (fmaths.inl:187-190). A complete, exact, zero-drift match: calls fixfloor (this round's own new match, sub_4255D0) then \"and ecx,0x8000; sar ecx,0xF; add eax,ecx\" -- matching source's own \"+ ((x & 0x8000) >> 15)\" literal expression instruction for instruction. Called from fix_player_sprite (already matched, twice, converting xpermove/ypermove fixed-point values to plain integers) and sub_433F80 (a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi -- not independently named this round). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

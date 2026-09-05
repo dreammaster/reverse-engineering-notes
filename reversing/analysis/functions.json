@@ -2925,14 +2925,14 @@
   "is_named": true
  },
  {
-  "name": "sub_4255B0",
+  "name": "fixtoi",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4255D0",
+  "name": "fixfloor",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "bitmap_mask_color",

@@ -12979,6 +12979,27 @@ party-library scope rule, since neither is ever called directly by
 AGS code. `is_route_possible` using flood-fill for its own walkable-
 area connectivity check is a natural, sensible use of this algorithm.
 
+### fixtoi/fixfloor named, closing is_route_possible's own remaining lead
+
+Checking `is_route_possible`'s own remaining callees names two more
+Allegro fixed-point helpers. `fixfloor(fixed x)` (`fmaths.inl:158-165`)
+compiles down to a single `sar eax,0x10` -- matching the NET EFFECT of
+source's own portable-C fallback (a branch-based workaround for
+platforms where plain `>>` isn't guaranteed to sign-extend negative
+values correctly) exactly, since x86's own `SAR` already sign-extends
+correctly, consistent with source's own comment ("`(x>>16)` is not
+portable") implying a faster non-portable i386 path exists elsewhere
+that this build's compiler used instead. `fixtoi(fixed x)`
+(`fmaths.inl:187-190`, `"return fixfloor(x) + ((x&0x8000)>>15);"`)
+closes as a complete, exact, zero-drift match calling `fixfloor` then
+matching the `+((x&0x8000)>>15)` rounding-correction literally. Called
+from `fix_player_sprite` (already matched, converting `xpermove`/
+`ypermove` to plain integers) and a thin thiscall wrapper inside
+`is_route_possible`'s own domain (not independently named). A sibling
+callee (`sub_433FA0`) turned out to be unrelated MSVC STL/Concurrency-
+Runtime template glue coincidentally sitting nearby in memory --
+correctly out of scope, not chased further.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

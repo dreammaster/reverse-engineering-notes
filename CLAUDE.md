@@ -3804,6 +3804,14 @@ disassembly work.
   `next` ... in some corner cases." The third instance this session of
   a historical artifact preserved in a reference-source comment. Used
   by `is_route_possible` for its own walkable-area connectivity check.
+- **`fixtoi`/`fixfloor` named, closing `is_route_possible`'s own
+  remaining lead.** Both Allegro fixed-point helpers match source
+  exactly — `fixfloor` compiles to a single `sar` matching the
+  portable fallback's net effect, and `fixtoi` matches its own
+  rounding-correction expression literally. A sibling callee inside
+  `is_route_possible`'s own domain turned out to be unrelated MSVC
+  STL/Concurrency-Runtime template glue coincidentally sitting
+  nearby — correctly out of scope.
 
 ## Third-party library identification (Task #10)
 
