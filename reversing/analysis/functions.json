@@ -3055,9 +3055,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4266C2",
+  "name": "savegamedialog",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "myscimessagebox",

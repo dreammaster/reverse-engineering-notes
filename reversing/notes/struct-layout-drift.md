@@ -12345,3 +12345,22 @@ order bubble sort (comparing a `filedates[]` scratch array and
 swapping listbox item text via `CLB_GETTEXT`/`CLB_SETTEXT` message
 pairs) matches source's own nested-loop bubble sort (`:922-937`)
 exactly, including the literal `mcode` constants.
+
+### savegamedialog closes at header/main-flow level
+
+`SaveGameDialog`'s own long-unidentified helper call (`sub_4266C2`)
+turns out to be `savegamedialog()` (`acdialog.cpp:1106-1220ish`) --
+called between `setup_for_dialog()` and `restore_after_dialog()`,
+exactly matching source's own call site. Confirmed at a decisive,
+zero-drift level for the header/main-flow shape (a ~750-line function,
+not exhaustively traced given its size): `get_global_message(0x3DB=
+987=MSG_SAVEBUTTON)`/`get_global_message(0x3DC=988=MSG_SAVEDIALOG)`
+(both zero drift) copied into local buffers exactly matching source;
+`boxleft`/`boxtop`/`buttonhit`/`labeltop` computed identically to
+`loadgamedialog`'s own already-confirmed formulas; `CSCIDrawWindow`/
+the `ctrlcancel`/`ctrllist` `CSCICreateControl` calls all match source
+exactly. The remainder -- the `toomanygames`-gated button/label-text
+swap, the main message loop, and the nested "confirm overwrite"
+sub-dialog -- was read at a structural level confirming the same
+overall shape as source but not traced instruction-by-instruction,
+left as a candidate for a future round's deeper pass.

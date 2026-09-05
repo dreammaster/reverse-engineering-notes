@@ -3592,6 +3592,12 @@ disassembly work.
   direct `fopen`/`fseek`/`fgetc`/`fclose` rather than calling the
   shared `load_game()`. Its trailing date-order bubble sort matches
   source exactly.
+- **`savegamedialog` closes at header/main-flow level.** `SaveGameDialog`'s
+  own dialog-invocation call site — header (`get_global_message`
+  constants, box geometry, `CSCIDrawWindow`/`CSCICreateControl` calls)
+  matches source with zero drift; the `toomanygames`-gated swap, main
+  message loop, and nested "confirm overwrite" sub-dialog were read at
+  a structural level only, a candidate for a future deeper pass.
 
 ## Third-party library identification (Task #10)
 
