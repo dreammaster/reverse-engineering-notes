@@ -54,8 +54,16 @@ the per-executable breakdown this tracks against.
       full HP), Psycho strength (`+50%` melee `INT(RND·10+20)` turns),
       Kill flash (`clearViewObjects` — wipes all monsters). Seek unused
       in DUN. `ida_scripts/fix_dun_spells.py` coerced/unfolded the arms.
+- [x] **CASDR player attack** (`DoFight`, `casdr_castle.bas`) — weapon
+      HIT `RND(1) < (11·wid + 99)·(Dex+13) / (7500·K)` (K = Dex/26 castle
+      / 1.0 fort); weapon dmg `INT( ((wid\2+1)·Str\7)·(1 + 2·RND) )`;
+      spell cast `RND(1)·6 < Int^0.53`, dmg `INT((selSpell−22.5)·28·
+      (RND+1))` then `\5` castle then `\range`. `EnemyAttack` (non-Warlord)
+      still partial (32-bit, entered mid-expr).
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR
-      shops/guard/mail; CASDR player-attack/loot; DUN monster movement.
+      shops/guard/mail; CASDR chest loot / locked doors / self-destruct;
+      DUN monster movement; the FF1F / FF49 operand-order polarity
+      (one DOSBox trace settles it for the whole codebase).
 
 ## Infra (done, 2026-08-30)
 

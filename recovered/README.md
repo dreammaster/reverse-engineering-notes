@@ -242,13 +242,18 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## CASDR.EXE
 
-- [x] `casdr_castle.bas` — `AttackHit`, `GasDamage`, `WarlordAttack`,
+- [x] `casdr_castle.bas` — `DoFight` (**player attack**), `EnemyAttack`
+      (*partial*), `AttackHit`, `GasDamage`, `WarlordAttack`,
       `DescribeRoom`.  Castle incoming melee mitigates via **Endurance and
       armour in the denominator**: `dmg = INT(enemyAtk^1.8 * (RND*600+300)
       * difficulty / (armorVal * Endurance^0.9) + 2)`.  Warlord blow =
-      `INT(RND(1)*99 + 80)` (80..178).
-- [ ] `doFight`/`enemyAttack` (player's castle attack), chest loot, locked
-      doors, `WarlordConfrontation`, `FortressSelfDestruct`
+      `INT(RND(1)*99 + 80)` (80..178).  Player attack:
+      weapon HIT `RND(1) < (11·wid + 99)·(Dex+13) / (7500·K)`; weapon dmg
+      `INT( ((wid\2+1)·Str\7) · (1 + 2·RND(1)) )`; spell cast succeeds
+      `RND(1)·6 < Int^0.53`, spell dmg `INT((selSpell−22.5)·28·(RND+1))`
+      then `\5` in the castle then `\range`.
+- [ ] `enemyAttack` exact formula (32-bit, entered mid-expr); chest loot,
+      locked doors, `WarlordConfrontation`, `FortressSelfDestruct`
 
 ## MUS.EXE
 

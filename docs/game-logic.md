@@ -298,6 +298,29 @@ without. `difficulty` (`ds:226E`, set by `loadCastleLevel` `casdr.asm:10033`):
 **`3.5` inside the castle, `1.0` inside the fort** (constants `ds:31A8` /
 `ds:25B0`).
 
+**Player attack** — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
+`DoFight` — *derived*. "F"ight then "ENTER DIRECTION:"; a sub-menu can
+switch to a spell (`attackMode` `ds:1AEE`). `traceCombatLine` projects
+along the direction to find the target.
+```
+weapon HIT   when  RND(1) < (11·weaponId + 99)·(Dex + 13) / (7500·K)
+                   K = Dexterity/26 (castle)  or  1.0 (fort)   [ds:2214]
+weapon dmg   INT( base · (1 + 2·RND(1)) ),  base = (weaponId\2 + 1)·Str \ 7
+spell cast   succeeds when  RND(1)·6 < Intelligence^0.53   (else FIZZLES)
+spell dmg    INT( (selectedSpell − 22.5)·28·(RND(1)+1) ), then \5 in the
+             castle, then \range
+```
+Damage subtracts from `viewObjectArray(tileHit)`; "`<n>` H.P. BLOW",
+"`<enemy>` KILLED" at ≤ 0. *(The `K = Dex/26` castle term makes higher
+Dex slightly **lower** the hit-rate — either an original quirk or an
+`FF49` operand-order mis-read; flagged for a trace, as is the `FF1F`
+compare polarity — the reversed reading that made the DUN spell rates
+sane is the one used here.)*
+
+**Non-Warlord enemy blow** — `EnemyAttack` (`casdr.asm:5683`) — *partial*:
+"`<enemy>` ATTACK - BLOW `<n>`"; 32-bit math from a per-enemy stat
+(`ds:20B8`), caller subtracts.
+
 **Warlord blow** — *derived* — `casdr.asm:6034`: `INT( RND(1)*99 + 80 )`
 (80..178). Applied by the caller.
 
