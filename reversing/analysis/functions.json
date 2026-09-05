@@ -3140,9 +3140,9 @@
   "is_named": true
  },
  {
-  "name": "sub_427CB0",
+  "name": "MyLabel__draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIObject__MouseDown_default",
@@ -3160,14 +3160,14 @@
   "is_named": true
  },
  {
-  "name": "sub_427E90",
+  "name": "MyTextBox__draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427FB0",
+  "name": "MyTextBox__processmessage",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "setup_qg_exports",

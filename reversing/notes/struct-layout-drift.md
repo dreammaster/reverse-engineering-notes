@@ -12189,3 +12189,43 @@ from the `CTB_KEYPRESS` branch, closes too -- an unconditional
 (not-`needredraw`-gated) `draw()` vtable call, with the SAME
 live-domouse-where-source-comments-it-out drift found throughout this
 session's CSCI-dialog-subsystem work.
+
+### MyLabel::draw() turns out to run source's own commented-out predecessor implementation
+
+Tracing `MyLabel`'s own vtable slot 0 (`sub_427CB0`) finds something new
+for this project: it does NOT match source's own LIVE `draw()` body
+(`acdialog.h:510-520`, which calls `break_up_text_into_lines()`/
+`wouttext_outline()`) at all. Instead it's a complete, instruction-for-
+instruction match to source's own COMMENTED-OUT predecessor
+implementation sitting right below it in a dead `/* */` block
+(`:521-545`) -- the manual per-character word-wrap loop (space/null
+detection, save-and-restore the character, `wgettextwidth(...)>wid`
+line-break test, `wouttextxy` per broken line, space-reinsertion,
+`cyp += TEXT_HT`, final trailing `wouttextxy`), using `cbuttfont`
+exactly as the dead code specifies. This build predates the
+`break_up_text_into_lines()` refactor entirely and is still running the
+OLD word-wrap algorithm live -- the same "dead-in-2011-but-live-here"
+pattern already found repeatedly this project (`RoomStatus`/
+`EventBlock`'s `hscond`/`objcond`/`misccond`, JGMOD's old
+`MP3CHUNKSIZE` value, `AnimationStruct`/`FullAnimation`, etc), now found
+for the first time in the GUI-drawing code rather than game-logic code.
+
+`MyLabel`'s own `pressedon()`/`processmessage()` vtable slots turn out
+to point at the ALREADY-established shared trivial-stub folded
+functions (`GUIObject__MouseDown_default` for `return 0;`, and a symbol
+labeled `?seekoff@streambuf@@...` for `return -1;`) -- genuine linker
+identical-code-folding of MyLabel's own one-instruction bodies with
+unrelated functions from other classes/the C++ runtime, not evidence of
+any real relationship between `MyLabel` and either `GUIObject` or
+`streambuf`.
+
+`MyTextBox`'s own remaining vtable methods close as complete, exact,
+zero-drift matches: `draw()` (`sub_427E90`, `:576-587`) draws the
+background/border/text then a 2-byte `"_"` cursor-blink indicator via
+`wouttextxy` positioned past the text's own `wgettextwidth`; `processmessage()`
+(`sub_427FB0`, `:594-622`) matches every branch exactly --
+`CTB_SETTEXT`/`CTB_GETTEXT`/`CTB_KEYPRESS`'s backspace/no-op-guards/
+character-append logic, including a literal `0x30`(48) bounds check
+confirming `TEXTBOX_MAXLEN=49` (`:559`) with ZERO drift. `MyTextBox`'s
+own `pressedon()` slot points at the same shared
+`GUIObject__MouseDown_default` stub as `MyLabel`'s.

@@ -6723,5 +6723,32 @@
     "source_line": 237,
     "confidence": "high",
     "evidence": "NewControl::drawandmouse() (acdialog.h:237-242) -- calls the object's own vtable slot 0 (draw()) unconditionally (not gated on needredraw, matching source's own unconditional call, distinct from the separate drawifneeded() method which DOES gate on it). REAL DRIFT, CONFIRMED: this build's domouse(2)/domouse(1) calls bracketing the draw() call are LIVE, where source has BOTH commented out entirely (\"//domouse(2); draw(); //domouse(1);\") -- the same confirmed drift pattern already found at CSCICreateControl/CSCIDrawWindow/MyListBox::pressedon. Called from MyListBox::processmessage's own CTB_KEYPRESS branch (this round's own new match)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427CB0",
+    "new_name": "MyLabel__draw",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 510,
+    "confidence": "high",
+    "evidence": "MyLabel::draw() -- a decisive match, but NOT to source's own LIVE draw() body (acdialog.h:510-520, break_up_text_into_lines/wouttext_outline). Instead this function is an exact, complete, instruction-for-instruction match to source's own COMMENTED-OUT predecessor implementation (acdialog.h:521-545, the manual per-character word-wrap loop kept as a dead /* */ block right below the live code): teptr[curofs]==' '||teptr[curofs]==0 check, save/restore the char, wgettextwidth(...)>wid test, wouttextxy(x,cyp,cbuttfont,teptr) line-break draw, space-reinsertion, cyp+=TEXT_HT (dword_5230C0), and the final trailing wouttextxy call -- all present and in the same order as the dead code, using cbuttfont (dword_4F7424) exactly as the commented block specifies. This build predates the break_up_text_into_lines() refactor entirely and still runs the OLD word-wrap algorithm live, the same 'dead-in-2011-but-live-here' pattern already found repeatedly elsewhere in this project (RoomStatus/EventBlock's hscond/objcond/misccond, JGMOD's old MP3CHUNKSIZE value, GameAnimation's own AnimationStruct/FullAnimation, etc). MyLabel's own pressedon()/processmessage() vtable slots (off_4AD5FC+4/+8) point at the already-established shared trivial-stub folded functions GUIObject__MouseDown_default (return 0) and a symbol labeled ?seekoff@streambuf@@... (return -1) respectively -- genuine linker identical-code-folding of MyLabel's own trivial 'return 0;'/'return -1;' bodies (acdialog.h:548-556) with unrelated one-instruction functions from other classes/the C++ runtime, not evidence of any real relationship."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427E90",
+    "new_name": "MyTextBox__draw",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 576,
+    "confidence": "high",
+    "evidence": "MyTextBox::draw() (acdialog.h:576-587) -- a complete, exact, zero-drift match: wsetcolor(windowbackgroundcolor)+wbar-equivalent-rectfill background fill, wsetcolor(0)+wrectangle border, wtextcolor(0), wouttextxy(x+2,y+1,cbuttfont,text) for the text itself, then a 2-byte local buffer (word_4BAA10, the literal string \"_\") drawn via wouttextxy(x+2+wgettextwidth(text,cbuttfont),y+1,cbuttfont,tbu) as the trailing cursor-blink indicator -- matching source's own char tbu[2]=\"_\" call shape exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427FB0",
+    "new_name": "MyTextBox__processmessage",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 594,
+    "confidence": "high",
+    "evidence": "MyTextBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:594-622) -- a complete, exact, zero-drift match to every branch: mcode==CTB_SETTEXT(2,:150) does strcpy(text,(char*)lParam) then needredraw@+0x22=1; mcode==CTB_GETTEXT(1,:149) does strcpy((char*)lParam,text); mcode==CTB_KEYPRESS(0x5B=91, already-confirmed) dispatches on wParam: ==8(backspace) truncates text by one char (text[strlen-1]=0, guarded on text[0]!=0) then calls NewControl::drawandmouse() (already matched); strlen(text)>=0x30(48, matching TEXTBOX_MAXLEN-1=49-1 EXACTLY, zero drift) is a no-op; wgettextwidth(text,cbuttfont)>=wid-5 is a no-op; wParam>0x7F(127, 'font only has 128 chars') is a no-op; otherwise appends the character (text[strlen+1]=0; text[strlen]=wParam;) and calls drawandmouse() again. The final else branch returns -1, matching source's own default case exactly. TEXTBOX_MAXLEN=49 (acdialog.h:559) is directly confirmed via this function's own literal 0x30 bounds check with zero drift -- this build's single-line text-entry box (used by enterstringwindow/InputBox/enternumberwindow) has the SAME 49-character limit as the 2011 reference. MyTextBox's own pressedon() vtable slot (off_4AD608+4) points at the already-established shared trivial-stub GUIObject__MouseDown_default (return 0), the same linker identical-code-folding already noted for MyLabel::pressedon()."
   }
 ]

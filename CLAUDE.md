@@ -3540,6 +3540,18 @@ disassembly work.
   not source's 300) is a third independent confirmation of this
   build's 20-entry `MyListBox` capacity. Bonus: names `NewControl::
   drawandmouse()`, another instance of the live-domouse drift.
+- **`MyLabel::draw()` runs source's own COMMENTED-OUT predecessor
+  implementation, not its live one.** Matches the dead `/* */` manual
+  word-wrap loop sitting right below source's live `draw()` body
+  instruction for instruction — this build predates the
+  `break_up_text_into_lines()` refactor entirely, the "dead-in-2011-
+  but-live-here" pattern found for the first time in GUI-drawing code
+  rather than game logic. `MyLabel`/`MyTextBox`'s own trivial
+  `pressedon()` bodies (`return 0;`) both fold, via ordinary linker
+  identical-code-folding, into the same already-established shared
+  stub used elsewhere — not a real relationship. `MyTextBox::draw()`/
+  `processmessage()` close as exact, zero-drift matches, the latter
+  confirming `TEXTBOX_MAXLEN=49` via a literal bounds check.
 
 ## Third-party library identification (Task #10)
 

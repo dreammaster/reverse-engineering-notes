@@ -39893,6 +39893,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X427CAB,	0X5);
 	create_insn	(0X427CB0);
+	set_name	(0X427CB0,	"MyLabel__draw");
 	create_insn	(x=0X427CB3);
 	op_hex		(x,	1);
 	create_insn	(x=0X427CB6);
@@ -40058,6 +40059,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X427E8D,	0X3);
 	create_insn	(0X427E90);
+	set_name	(0X427E90,	"MyTextBox__draw");
 	create_insn	(x=0X427E93);
 	op_hex		(x,	1);
 	create_insn	(x=0X427E97);
@@ -40130,6 +40132,7 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	make_array	(0X427FAD,	0X3);
 	create_insn	(0X427FB0);
+	set_name	(0X427FB0,	"MyTextBox__processmessage");
 	create_insn	(x=0X427FB4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X427FB7);
@@ -40682,13 +40685,6 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4286EE);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4286F1,	"Stream",	0);
-	set_cmt	(0X4286F2,	"Character",	0);
-	create_insn	(x=0X4286F9);
-	op_hex		(x,	1);
-	create_insn	(x=0X4286FC);
-	op_stkvar	(x,	1);
-	set_cmt	(0X4286FF,	"Stream",	0);
 }
 
 //------------------------------------------------------------------------
@@ -40698,6 +40694,13 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4286F1,	"Stream",	0);
+	set_cmt	(0X4286F2,	"Character",	0);
+	create_insn	(x=0X4286F9);
+	op_hex		(x,	1);
+	create_insn	(x=0X4286FC);
+	op_stkvar	(x,	1);
+	set_cmt	(0X4286FF,	"Stream",	0);
 	create_insn	(x=0X428705);
 	op_hex		(x,	1);
 	make_array	(0X428712,	0XE);
@@ -46232,6 +46235,15 @@ static Bytes_7(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X42D918);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_8(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X42D932);
 	create_insn	(x=0X42D93B);
 	op_hex		(x,	1);
@@ -46244,15 +46256,6 @@ static Bytes_7(void) {
 	create_insn	(x=0X42D9D5);
 	op_hex		(x,	1);
 	create_insn	(0X42D9E4);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_8(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X42D9FF);
 	op_hex		(x,	1);
 	create_insn	(x=0X42DA12);
@@ -52439,6 +52442,15 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4332E6);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_9(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4332EC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4332F4);
@@ -52449,15 +52461,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X433308);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_9(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X43330F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43331A);
@@ -58359,13 +58362,6 @@ static Bytes_9(void) {
 	set_cmt	(0X43963B,	"jumptable 004395B8 case 24",	1);
 	create_insn	(x=0X43963B);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X439645);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43965B);
-	op_stkvar	(x,	1);
-	set_cmt	(0X439664,	"jumptable 004395B8 case 32",	1);
-	create_insn	(x=0X439664);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58375,6 +58371,13 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X439645);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43965B);
+	op_stkvar	(x,	1);
+	set_cmt	(0X439664,	"jumptable 004395B8 case 32",	1);
+	create_insn	(x=0X439664);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43966E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439684);
@@ -64085,6 +64088,15 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F43C);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_11(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X43F443);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F447);
@@ -64095,15 +64107,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F459);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_11(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X43F463);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F467);
@@ -70140,13 +70143,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4469FD);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X446A0A);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X446A10);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	make_array	(0X446A1B,	0X5);
 }
 
 //------------------------------------------------------------------------
@@ -70156,6 +70152,13 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446A0A);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_insn	(x=0X446A10);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	make_array	(0X446A1B,	0X5);
 	create_insn	(x=0X446A20);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X446A26);
@@ -76335,15 +76338,6 @@ static Bytes_12(void) {
 	create_insn	(0X44E979);
 	create_insn	(x=0X44E991);
 	op_hex		(x,	1);
-	create_insn	(0X44E999);
-	create_insn	(x=0X44E9AA);
-	op_hex		(x,	1);
-	create_insn	(x=0X44EA22);
-	op_hex		(x,	1);
-	create_insn	(0X44EA2A);
-	create_insn	(x=0X44EA42);
-	op_hex		(x,	1);
-	create_insn	(0X44EA4A);
 }
 
 //------------------------------------------------------------------------
@@ -76353,6 +76347,15 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(0X44E999);
+	create_insn	(x=0X44E9AA);
+	op_hex		(x,	1);
+	create_insn	(x=0X44EA22);
+	op_hex		(x,	1);
+	create_insn	(0X44EA2A);
+	create_insn	(x=0X44EA42);
+	op_hex		(x,	1);
+	create_insn	(0X44EA4A);
 	create_insn	(x=0X44EA4D);
 	op_stkvar	(x,	1);
 	create_insn	(0X44EA70);
@@ -81614,15 +81617,6 @@ static Bytes_13(void) {
 	create_insn	(0X456BEB);
 	create_insn	(x=0X456C0E);
 	op_hex		(x,	1);
-	create_insn	(x=0X456C78);
-	op_hex		(x,	1);
-	create_insn	(x=0X456C80);
-	op_hex		(x,	1);
-	create_insn	(x=0X456C85);
-	op_hex		(x,	1);
-	create_insn	(x=0X456C8E);
-	op_hex		(x,	1);
-	create_insn	(0X456C93);
 }
 
 //------------------------------------------------------------------------
@@ -81632,6 +81626,15 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X456C78);
+	op_hex		(x,	1);
+	create_insn	(x=0X456C80);
+	op_hex		(x,	1);
+	create_insn	(x=0X456C85);
+	op_hex		(x,	1);
+	create_insn	(x=0X456C8E);
+	op_hex		(x,	1);
+	create_insn	(0X456C93);
 	create_insn	(x=0X456C97);
 	op_hex		(x,	1);
 	create_insn	(x=0X456CA0);
@@ -87781,11 +87784,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X463516);
 	op_stkvar	(x,	1);
 	set_cmt	(0X46351A,	"Block",	0);
-	create_insn	(x=0X463520);
-	op_hex		(x,	1);
-	create_insn	(x=0X463523);
-	op_stkvar	(x,	1);
-	set_cmt	(0X463532,	"Block",	0);
 }
 
 //------------------------------------------------------------------------
@@ -87795,6 +87793,11 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X463520);
+	op_hex		(x,	1);
+	create_insn	(x=0X463523);
+	op_stkvar	(x,	1);
+	set_cmt	(0X463532,	"Block",	0);
 	create_insn	(x=0X463539);
 	op_hex		(x,	1);
 	create_insn	(x=0X463548);
@@ -93610,11 +93613,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BD23);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46BD34);
-	op_hex		(x,	1);
-	create_insn	(x=0X46BD3B);
-	op_hex		(x,	1);
-	make_array	(0X46BD42,	0XE);
 }
 
 //------------------------------------------------------------------------
@@ -93624,6 +93622,11 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BD34);
+	op_hex		(x,	1);
+	create_insn	(x=0X46BD3B);
+	op_hex		(x,	1);
+	make_array	(0X46BD42,	0XE);
 	create_insn	(x=0X46BD50);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BD54);
@@ -99547,10 +99550,6 @@ static Bytes_16(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X473F6F);
 	op_hex		(x,	1);
-	create_insn	(x=0X473F74);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X473F78);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99560,6 +99559,10 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X473F74);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X473F78);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X473F84);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X473F88);
@@ -105387,11 +105390,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X47B489);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X47B494);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X47B499);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -105401,6 +105399,11 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47B494);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X47B499);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X47B4A5);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47B4A9);
@@ -111547,12 +111550,6 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4856A4);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4856DD);
-	op_hex		(x,	1);
-	create_insn	(x=0X4856E9);
-	op_hex		(x,	1);
-	create_insn	(x=0X485702);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111562,6 +111559,12 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4856DD);
+	op_hex		(x,	1);
+	create_insn	(x=0X4856E9);
+	op_hex		(x,	1);
+	create_insn	(x=0X485702);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X485706);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X485742);
@@ -117845,10 +117848,6 @@ static Bytes_19(void) {
 	create_insn	(x=0X48EE09);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X48EE16);
-	op_hex		(x,	1);
-	create_insn	(x=0X48EE21);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -117858,6 +117857,10 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48EE16);
+	op_hex		(x,	1);
+	create_insn	(x=0X48EE21);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X48EE33);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48EE37);
@@ -158627,6 +158630,7 @@ static Functions_7(void) {
 	define_local_var(0X427C50, 0X427CAB, "[bp+0X14]", "Source");
 	add_func    (0X427CB0,0X427DF5);
 	set_func_flags(0X427CB0,0x5410);
+	set_func_cmt(0X427CB0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyLabel::draw() -- a decisive match, but NOT to source's own LIVE draw() body (acdialog.h:510-520, break_up_text_into_lines/wouttext_outline). Instead this function is an exact, complete, instruction-for-instruction match to source's own COMMENTED-OUT predecessor implementation (acdialog.h:521-545, the manual per-character word-wrap loop kept as a dead /* */ block right below the live code): teptr[curofs]==' '||teptr[curofs]==0 check, save/restore the char, wgettextwidth(...)>wid test, wouttextxy(x,cyp,cbuttfont,teptr) line-break draw, space-reinsertion, cyp+=TEXT_HT (dword_5230C0), and the final trailing wouttextxy call -- all present and in the same order as the dead code, using cbuttfont (dword_4F7424) exactly as the commented block specifies. This build predates the break_up_text_into_lines() refactor entirely and still runs the OLD word-wrap algorithm live, the same 'dead-in-2011-but-live-here' pattern already found repeate" "dly elsewhere in this project (RoomStatus/EventBlock's hscond/objcond/mi", 1);
 	set_frame_size(0X427CB0, 0X18, 4, 0);
 	define_local_var(0X427CB0, 0X427DF5, "[bp-0X4]", "Str");
 	add_func    (0X427E00,0X427E0D);
@@ -158644,11 +158648,13 @@ static Functions_7(void) {
 	define_local_var(0X427E20, 0X427E8D, "[bp+0X14]", "Source");
 	add_func    (0X427E90,0X427FAD);
 	set_func_flags(0X427E90,0x5410);
+	set_func_cmt(0X427E90,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::draw() (acdialog.h:576-587) -- a complete, exact, zero-drift match: wsetcolor(windowbackgroundcolor)+wbar-equivalent-rectfill background fill, wsetcolor(0)+wrectangle border, wtextcolor(0), wouttextxy(x+2,y+1,cbuttfont,text) for the text itself, then a 2-byte local buffer (word_4BAA10, the literal string \"_\") drawn via wouttextxy(x+2+wgettextwidth(text,cbuttfont),y+1,cbuttfont,tbu) as the trailing cursor-blink indicator -- matching source's own char tbu[2]=\"_\" call shape exactly.", 1);
 	set_frame_size(0X427E90, 0XC, 4, 0);
 	define_local_var(0X427E90, 0X427FAD, "[bp-0X4]", "Str");
 	add_func    (0X427FB0,0X4280C0);
 	set_func_flags(0X427FB0,0x5410);
-	SetType(0X427FB0, "int __stdcall sub_427FB0(int, int, char *Source);");
+	SetType(0X427FB0, "int __stdcall MyTextBox__processmessage(int, int, char *Source);");
+	set_func_cmt(0X427FB0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:594-622) -- a complete, exact, zero-drift match to every branch: mcode==CTB_SETTEXT(2,:150) does strcpy(text,(char*)lParam) then needredraw@+0x22=1; mcode==CTB_GETTEXT(1,:149) does strcpy((char*)lParam,text); mcode==CTB_KEYPRESS(0x5B=91, already-confirmed) dispatches on wParam: ==8(backspace) truncates text by one char (text[strlen-1]=0, guarded on text[0]!=0) then calls NewControl::drawandmouse() (already matched); strlen(text)>=0x30(48, matching TEXTBOX_MAXLEN-1=49-1 EXACTLY, zero drift) is a no-op; wgettextwidth(text,cbuttfont)>=wid-5 is a no-op; wParam>0x7F(127, 'font only has 128 chars') is a no-op; otherwise appends the character (text[strlen+1]=0; text[strlen]=wParam;) and calls drawandmouse() again. The final else branch returns -1, matching source's own default case exactly. TEXTBOX_MAXLEN=49 (acdialog.h:559) is directly confirmed via this function'" "s own literal 0x30 bounds check with zero drift -- this build's single-l", 1);
 	set_frame_size(0X427FB0, 0X4, 4, 0XC);
 	define_local_var(0X427FB0, 0X4280C0, "[bp+0X10]", "Source");
 	add_func    (0X4280C0,0X42810D);
@@ -158812,6 +158818,10 @@ static Functions_7(void) {
 	set_func_flags(0X42A4DB,0x5410);
 	set_func_cmt(0X42A4DB,	"[reversing] confirmed match\nsource: Common/cscommon.cpp\nconfidence: high\nevidence: void ccFreeScript(ccScript*) at Common/cscommon.cpp:116. Exact, line-for-line match: conditionally frees globaldata@+0x00/code@+0x08/strings@+0x10/fixuptypes@+0x18/fixups@+0x1C (each null-checked individually) then zeroes all five; then \"for(aa=0;aa<numimports;aa++) if(imports[aa]) free(imports[aa]);\" (cscommon.cpp:140-143) and \"for(aa=0;aa<numexports;aa++) free(exports[aa]);\" (cscommon.cpp:145-146, no null check in source either -- matches this build's unconditional free exactly); then zeroes numimports@+0x984/numexports@+0x1C48 and returns. Called from load_room (already matched) right at the start, passed RoomStruct.compiled_script@+0x39F8 -- matches source's role as the ccScript destructor called before loading a new room's own compiled script. This build's version stops immediately after the exports loop, with NO third loop over numSections/sectionNames and no free(imports)/free(exports)/free(export_addr) calls for the ar" "rays themselves (cscommon.cpp:148-167) -- confirms ccScript.imports[600]/e", 1);
 	set_frame_size(0X42A4DB, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42A620,0X42A7D3);
 	set_func_flags(0X42A620,0x5410);
 	SetType(0X42A620, "void __stdcall dump_instruction(unsigned int *codeptr, int cps, int spp);");
@@ -158833,10 +158843,6 @@ static Functions_7(void) {
 	set_func_cmt(0X42A885,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: char* SystemImports::get_addr_of(char*) at CSRUN.CPP:651. 2011 delegates to get_index_of, but this disasm does the linear strcmp scan inline (same pattern seen in the already-matched SystemImports::get_index_of, whose 2011 body also shows the old inline-scan version preserved as a dead comment) -- consistent with 2002 having simpler, more duplicated implementations before being refactored to share a common helper. Loop bounded by [this+0xE10] (numimports), returns [this+idx*4+0x640] (addr[idx], matching SystemImports::add's confirmed offset) or 0/NULL if not found. Called from ccCreateInstanceEx (already matched). Flat-named as a C++ member function.", 1);
 	set_frame_size(0X42A885, 0X8, 4, 0X4);
 	define_local_var(0X42A885, 0X42A8E1, "[bp+0X8]", "Str2");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42A8E1,0X42A934);
 	set_func_flags(0X42A8E1,0x5410);
 	SetType(0X42A8E1, "int __stdcall SystemImports__get_index_of(char *Str2);");
@@ -159717,6 +159723,10 @@ static Functions_8(void) {
 	define_local_var(0X43B9B0, 0X43BE30, "[bp+0X8]", "Msg");
 	define_local_var(0X43B9B0, 0X43BE30, "[bp+0XC]", "wParam");
 	define_local_var(0X43B9B0, 0X43BE30, "[bp+0X10]", "lParam");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X43BE90,0X43BF17);
 	set_func_flags(0X43BE90,0x5400);
 	SetType(0X43BE90, "void __cdecl wnd_thread_proc(void *);");
@@ -159729,10 +159739,6 @@ static Functions_8(void) {
 	set_func_cmt(0X43BF20,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c\nconfidence: high\nevidence: static HWND create_directx_window(void) at wwnd.c:391. Exact match: builds a WNDCLASSA with lpfnWndProc=sub_43B9B0 (directx_wnd_proc, see below), LoadIconA with the matched string \"allegro_icon\" (IconName), falling back to LoadIconA(0, 0x7F00/IDI_APPLICATION) if that fails -- matches source's \"LoadIcon(allegro_inst,\\\"allegro_icon\\\"); if (!wnd_class.hIcon) wnd_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);\" exactly -- then LoadCursorA(0, 0x7F00/IDC_ARROW). DRIFT: this build calls CreateSolidBrush() for hbrBackground, where the 2011 source has \"wnd_class.hbrBackground = NULL;\" (wwnd.c:409) -- this build paints an actual background brush instead of leaving it unset. CODE XREF: StartAddress+11 (StartAddress is IDA's auto-recognized name for the CreateThread-callback-shaped function that is almost certainly wnd_thread_proc, wwnd.c:450, which calls create_directx_window() near its start when wnd_create_pr" "oc is unset -- matches structurally but not yet formally renamed).", 1);
 	set_frame_size(0X43BF20, 0X42C, 0, 0);
 	define_local_var(0X43BF20, 0X43C089, "[bp-0X428]", "WndClass");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X43C090,0X43C0EF);
 	set_func_flags(0X43C090,0x5400);
 	set_frame_size(0X43C090, 0, 0, 0);
@@ -161382,6 +161388,10 @@ static Functions_9(void) {
 	add_func    (0X464840,0X464894);
 	set_func_flags(0X464840,0x5400);
 	set_frame_size(0X464840, 0, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4648A0,0X4648E3);
 	set_func_flags(0X4648A0,0x5400);
 	set_frame_size(0X4648A0, 0, 0, 0);
@@ -161457,10 +161467,6 @@ static Functions_9(void) {
 	set_frame_size(0X4658D0, 0XC, 0, 0);
 	define_local_var(0X4658D0, 0X465962, "[bp-0X8]", "Handles");
 	define_local_var(0X4658D0, 0X465962, "[bp-0X4]", "hThread");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X465970,0X4659E8);
 	set_func_flags(0X465970,0x5400);
 	SetType(0X465970, "void __cdecl sub_465970(void *);");
@@ -163598,6 +163604,10 @@ static Functions_10(void) {
 	add_func    (0X48F850,0X48F909);
 	set_func_flags(0X48F850,0x5400);
 	set_frame_size(0X48F850, 0X14, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X48F910,0X48F921);
 	set_func_flags(0X48F910,0x5400);
 	set_frame_size(0X48F910, 0, 0, 0);
@@ -163722,10 +163732,6 @@ static Functions_10(void) {
 	add_func    (0X4925E0,0X492718);
 	set_func_flags(0X4925E0,0x5400);
 	set_frame_size(0X4925E0, 0X54, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X492720,0X4927DE);
 	set_func_flags(0X492720,0x5400);
 	set_frame_size(0X492720, 0X10, 0, 0);
