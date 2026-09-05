@@ -1585,6 +1585,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X402599);
 	op_stkvar	(x,	1);
 	create_insn	(0X4025A6);
+	set_name	(0X4025A6,	"SpriteCache__removeOldest");
 	create_insn	(x=0X4025A9);
 	op_hex		(x,	1);
 	create_insn	(x=0X4025AD);
@@ -5583,9 +5584,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X405A9C);
 	op_stkvar	(x,	1);
-	set_cmt	(0X405AAC,	"int",	0);
-	create_insn	(x=0X405AAD);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -5595,6 +5593,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X405AAC,	"int",	0);
+	create_insn	(x=0X405AAD);
+	op_stkvar	(x,	1);
 	set_cmt	(0X405AB0,	"Str",	0);
 	create_insn	(x=0X405AB6);
 	op_hex		(x,	1);
@@ -11456,10 +11457,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X40B92B);
 	op_hex		(x,	1);
-	create_insn	(x=0X40B93A);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X40B93D);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -11469,6 +11466,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X40B93A);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X40B93D);
+	op_hex		(x,	1);
 	create_insn	(x=0X40B94D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X40B950);
@@ -17455,10 +17456,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X412C44);
 	op_stkvar	(x,	1);
 	set_cmt	(0X412C47,	"Buffer",	0);
-	create_insn	(x=0X412C4D);
-	op_hex		(x,	1);
-	create_insn	(x=0X412C50);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -17468,6 +17465,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X412C4D);
+	op_hex		(x,	1);
+	create_insn	(x=0X412C50);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X412C55);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -23391,10 +23392,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X418919);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X41891C);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X418922);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23404,6 +23401,10 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41891C);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X418922);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X418926);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X41892B);
@@ -29106,11 +29107,6 @@ static Bytes_4(void) {
 	create_insn	(x=0X41E2F4);
 	op_stkvar	(x,	1);
 	set_cmt	(0X41E2F7,	"Stream",	0);
-	set_cmt	(0X41E2FE,	"Ch",	0);
-	create_insn	(x=0X41E304);
-	op_hex		(x,	1);
-	create_insn	(x=0X41E307);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29120,6 +29116,11 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X41E2FE,	"Ch",	0);
+	create_insn	(x=0X41E304);
+	op_hex		(x,	1);
+	create_insn	(x=0X41E307);
+	op_stkvar	(x,	1);
 	set_cmt	(0X41E30A,	"Stream",	0);
 	set_cmt	(0X41E311,	"Ch",	0);
 	create_insn	(x=0X41E317);
@@ -34800,8 +34801,6 @@ static Bytes_5(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X422CB9);
 	op_stroff	(x,	2,	GetStrucIdByName("RoomStatus"),	0);
-	create_insn	(x=0X422CCB);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -34811,6 +34810,8 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X422CCB);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X422CD1);
 	op_stroff	(x,	2,	GetStrucIdByName("RoomStatus"),	0);
 	create_insn	(x=0X422CDD);
@@ -40605,8 +40606,6 @@ static Bytes_6(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X42859C);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4285A5);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40616,6 +40615,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4285A5);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4285AB);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4285AE);
@@ -46146,8 +46147,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D6A2);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42D6B3);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46157,6 +46156,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D6B3);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42D6BF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42D6CB);
@@ -52358,8 +52359,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4330AA);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4330B3);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52369,6 +52368,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4330B3);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4330B9);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4330C7);
@@ -58285,8 +58286,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439431);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X439436);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58296,6 +58295,8 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X439436);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43943B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439440);
@@ -63996,8 +63997,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F28B);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F291);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -64007,6 +64006,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F291);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F295);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F29B);
@@ -70048,9 +70049,6 @@ static Bytes_11(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X446639);
 	op_hex		(x,	1);
-	create_insn	(x=0X446678);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -70060,6 +70058,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446678);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X446682);
 	op_hex		(x,	1);
 	make_array	(0X446687,	0X9);
@@ -76238,9 +76239,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E672);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E683);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76250,6 +76248,9 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E683);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44E689);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81512,7 +81513,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X456820);
 	op_hex		(x,	1);
 	set_name	(0X456820,	"?underflow@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEHXZ_4");
-	make_array	(0X456824,	0XC);
 }
 
 //------------------------------------------------------------------------
@@ -81522,6 +81522,7 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	make_array	(0X456824,	0XC);
 	create_insn	(x=0X456830);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X456834);
@@ -155281,6 +155282,7 @@ static Functions_0(void) {
 	define_local_var(0X402447, 0X4025A6, "[bp+0X8]", "index");
 	add_func    (0X4025A6,0X402696);
 	set_func_flags(0X4025A6,0x5410);
+	set_func_cmt(0X4025A6,	"[reversing] confirmed match\nsource: Common/sprcache.cpp\nconfidence: high\nevidence: void SpriteCache::removeOldest() (sprcache.cpp:244-306) -- called from SpriteCache::loadSprite (already matched). Confirmed at a decisive structural level, with three real drifts found along the way. `if(liststart<0) return;` matches the leading `cmp [this+0x1C],0; jge <continue>` exactly, identifying liststart@+0x1C. `if((images[sprnum]!=NULL)&&(offsets[sprnum]!=SPRITE_LOCKED))` matches the two guard checks exactly -- `images[]`@+0x08 (already established) and a newly-identified `offsets[]`@+0x00, compared against the literal -1(0xFFFFFFFF), confirming `SPRITE_LOCKED=-1`. DRIFT #1: rather than reading a precomputed `sizes[sprnum]` array entry to decrement `cachesize`, this build recomputes the byte size fresh at eviction time (`spritewidth[sprnum]*spriteheight[sprnum]*((bitmap_color_depth+7)/8)`, the same ceiling-division-by-8 idiom already seen in serialize_bitmap/convert_16_to_15) -- no `sizes[]` array exists in this build " "at all. `wfreeblock(images[sprnum]); images[sprnum]=NULL;` matches the dis", 1);
 	set_frame_size(0X4025A6, 0X10, 4, 0);
 	add_func    (0X402696,0X4026CD);
 	set_func_flags(0X402696,0x5410);
@@ -155644,14 +155646,14 @@ static Functions_0(void) {
 	set_func_flags(0X40794C,0x5410);
 	set_func_cmt(0X40794C,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: int GUIMain::find_object_under_mouse(int extrawid, bool mustBeClickable) at acgui.cpp:1250-1267. Matches source's overall shape: loops idx from 0 to numobjs(this+0x3C, already established) over objs[idx](this+idx*4+0x94, already established), bounding-box-testing mousex/mousey (dword_5358CC/D0, already established) against objs[idx].x/.y/.wid/.hit (all already established, +0x08/+0x0C/+0x10/+0x14) with extrawid(arg_0) slack added to width/height, returning the first matching index or -1. CONFIRMED ABSENT: the entire mustBeClickable-driven GUIF_NOCLICK filtering logic -- no such check appears anywhere in this function's body, so it behaves as if mustBeClickable were always false (finds ANY object under the mouse, clickable or not), unlike source where the caller can request either behavior. Called (via the 1-arg overload wrapper, sub_407A27, a thin thiscall stub passing extrawid=0 -- matching source's own \"find_object_under_mouse(" "int extrawid) { return find_object_under_mouse(extrawid,true); }\" one-a", 1);
 	set_frame_size(0X40794C, 0X10, 4, 0X4);
-	add_func    (0X407A27,0X407A3C);
-	set_func_flags(0X407A27,0x5410);
-	set_func_cmt(0X407A27,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIMain::find_object_under_mouse() (acgui.cpp:1268-1271) -- the zero-argument overload: \"return find_object_under_mouse(0,true);\". Matches exactly: a thin thiscall stub (no stack arguments of its own) pushing the literal 0 and calling the already-matched GUIMain__find_object_under_mouse (that function's own entry already documented this exact call site, describing this wrapper informally without a dedicated matches.json record until now). Given GUIMain__find_object_under_mouse's own already-confirmed absence of any mustBeClickable-driven filtering logic, this build's own true 2-argument implementation behaves as a 1-argument one in practice, consistent with only a single literal being pushed here. Named with an '_0arg' suffix (matching this project's convention for otherwise-ambiguous overload flat-naming) since 'GUIMain__find_object_under_mouse' is already taken by the 2-arg implementation.", 1);
-	set_frame_size(0X407A27, 0X4, 4, 0);
 }
 
 static Functions_1(void) {
 
+	add_func    (0X407A27,0X407A3C);
+	set_func_flags(0X407A27,0x5410);
+	set_func_cmt(0X407A27,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: GUIMain::find_object_under_mouse() (acgui.cpp:1268-1271) -- the zero-argument overload: \"return find_object_under_mouse(0,true);\". Matches exactly: a thin thiscall stub (no stack arguments of its own) pushing the literal 0 and calling the already-matched GUIMain__find_object_under_mouse (that function's own entry already documented this exact call site, describing this wrapper informally without a dedicated matches.json record until now). Given GUIMain__find_object_under_mouse's own already-confirmed absence of any mustBeClickable-driven filtering logic, this build's own true 2-argument implementation behaves as a 1-argument one in practice, consistent with only a single literal being pushed here. Named with an '_0arg' suffix (matching this project's convention for otherwise-ambiguous overload flat-naming) since 'GUIMain__find_object_under_mouse' is already taken by the 2-arg implementation.", 1);
+	set_frame_size(0X407A27, 0X4, 4, 0);
 	add_func    (0X407A3C,0X407BCA);
 	set_func_flags(0X407A3C,0x5410);
 	set_frame_size(0X407A3C, 0X14, 4, 0);
@@ -156020,16 +156022,16 @@ static Functions_1(void) {
 	set_func_cmt(0X40AFC7,	"[reversing] confirmed match\nsource: Engine/acchars.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acchars.obj ADDENDUM (field evidence): validates charid via the already-matched is_valid_character, then calls sub_40AE7D(&chars[charid].x, &chars[charid].y) -- passing POINTERS to the already-confirmed CharacterInfo.x@+0x14/y@+0x18 for in-place modification. This matches 2011's own signature exactly: MoveToWalkableArea delegates through Character_PlaceOnWalkableArea to find_nearest_walkable_area(int*,int*) (Engine/acchars.cpp:392-405, called as \"find_nearest_walkable_area(&chap->x,&chap->y)\" at acchars.cpp:953) -- this build calls the equivalent 2-pointer-argument function DIRECTLY, without 2011's intervening Character_PlaceOnWalkableArea wrapper layer, the same 'later AGS added a script-object-oriented wrapper' pattern seen repeatedly elsewhere this session. sub_40AE7D itself (a substantial ~90-line function with an 8-variable local frame, plausibly find_neares" "t_walkable_area fused with find_nearest_walkable_area_within) is NOT inde", 1);
 	set_frame_size(0X40AFC7, 0, 4, 0X4);
 	define_local_var(0X40AFC7, 0X40B019, "[bp+0X8]", "charid");
+}
+
+static Functions_2(void) {
+
 	add_func    (0X40B019,0X40B05D);
 	set_func_flags(0X40B019,0x5410);
 	SetType(0X40B019, "void __stdcall run_on_event(int evtype, int wparam);");
 	set_func_cmt(0X40B019,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void run_on_event(int evtype,int wparam) at AC.CPP:3827-3833. String matches: \"on_event\"/\"#on_event\" (3829, 3832), the function's own global-script hook name. FULL EVENT-TYPE TABLE CLOSED (this round): an exhaustive count finds exactly 8 call sites for this function anywhere in the binary (not just one, correcting an earlier round's \"called only from new_room\" claim), matching 8 of 2011's 9 declared GE_* constants (Common/acruntim.h:1018-1026) exactly: evtype=1 (GE_LEAVE_ROOM) in new_room; evtype=2 (GE_ENTER_ROOM) in process_event's queued-event dispatch; evtype=3 (GE_MAN_DIES) in run_event_block's respond[i]==3 branch; evtype=4 (GE_GOT_SCORE) in GiveScore; evtype=5 (GE_GUI_MOUSEDOWN) and evtype=6 (GE_GUI_MOUSEUP) both in check_controls; evtype=7 (GE_ADD_INV) in add_inventory; evtype=8 (GE_LOSE_INV) in LoseInventory. GE_RESTORE_GAME(9) is CONFIRMED ABSENT: with all 8 call sites in the entire binary accounted for and none passing 9, " "and restore_game_data (already matched) never calling run_on_event a", 1);
 	set_frame_size(0X40B019, 0, 4, 0X8);
 	define_local_var(0X40B019, 0X40B05D, "[bp+0XC]", "wparam");
-}
-
-static Functions_2(void) {
-
 	add_func    (0X40B05D,0X40B194);
 	set_func_flags(0X40B05D,0x5410);
 	SetType(0X40B05D, "void __stdcall SetMouseBounds(int x1, int y1, int x2, int y2);");
@@ -156360,6 +156362,10 @@ static Functions_2(void) {
 	SetType(0X412D3D, "void update_polled_stuff(void);");
 	set_func_cmt(0X412D3D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void update_polled_stuff(bool) at AC.CPP:12353. String match: \"||exit!\" (12358). Caller matches exactly: called from load_main_block (already matched) at a label mid-function, consistent with polling input/sound during a potentially slow room-data load.", 1);
 	set_frame_size(0X412D3D, 0, 4, 0);
+}
+
+static Functions_3(void) {
+
 	add_func    (0X412DFB,0X412E50);
 	set_func_flags(0X412DFB,0x5410);
 	set_frame_size(0X412DFB, 0X4, 4, 0);
@@ -156375,10 +156381,6 @@ static Functions_2(void) {
 	set_func_cmt(0X4130D4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: break_up_text_into_lines(int wii,int fonnt,char*todis) (AC.CPP:9476-9510) -- a decisive match on its own opening: \"if(todis[0]=='&') {while((todis[0]!=' ')&(todis[0]!=0)) todis++; if(todis[0]==' ') todis++;}\" matches this function's own '&'-prefix scan instruction for instruction (the same narrow auto-speech-prefix safety-net check that also independently appears inside _display_at, already matched -- source genuinely has this same small check duplicated in both places). This build's own version (~340 lines, consistent with fusing source's own split_lines_leftright call inline rather than as a separate function -- the distinctive 'single word longer than window' quit() error string, absent from this exact wording anywhere in the reference source, plausibly belongs to this fused word-wrap loop) computes numlines/longestline (both already-established globals) via a wgettextwidth-based line-splitting loop, matching source's own overall" " role exactly. Not independently traced past the header/error-string", 1);
 	set_frame_size(0X4130D4, 0X20, 4, 0);
 	define_local_var(0X4130D4, 0X4133F7, "[bp-0X10]", "Str");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X4133F7,0X41344E);
 	set_func_flags(0X4133F7,0x5410);
 	set_func_cmt(0X4133F7,	"[reversing] confirmed match\nsource: Engine/acfonts.cpp\nconfidence: high\nevidence: WFNFontRenderer::EnsureTextValidForFont(char*text,int fontNumber) (acfonts.cpp:195-205) fused together with TTFFontRenderer::EnsureTextValidForFont(char*text,int fontNumber) (acfonts.cpp:385-388, \"do nothing, TTF can handle all characters\") into ONE flat dispatcher -- a decisive, complete match on both halves at once. This build checks a per-font type-tag byte (dword_4F7424[fontNumber][0]=='T'(0x54)) and, if set, returns the text pointer completely unchanged -- matching TTFFontRenderer's own empty no-op body exactly. Otherwise it scans the string character by character, testing each byte against the literal 0x7E(126, '~') -- matching WFNFontRenderer's own `if((unsigned char)text[0]>126)` check exactly (same threshold constant, same per-character loop structure, same null-terminator loop exit). ARCHITECTURAL FINDING: this build has no FontRenderer class hierarchy at all (no virtual dispatch through a fontRenderers[] array of WFN" "FontRenderer/ TTFFontRenderer objects) -- it's a single flat function gat", 1);
@@ -156825,6 +156827,10 @@ static Functions_3(void) {
 	set_frame_size(0X416073, 0XC, 4, 0X8);
 	define_local_var(0X416073, 0X4161FA, "[bp+0X8]", "obj1");
 	define_local_var(0X416073, 0X4161FA, "[bp+0XC]", "obj2");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X4161FA,0X4163C4);
 	set_func_flags(0X4161FA,0x5410);
 	SetType(0X4161FA, "int __stdcall AreCharObjColliding(int charid, int objid);");
@@ -156832,10 +156838,6 @@ static Functions_3(void) {
 	set_frame_size(0X4161FA, 0X18, 4, 0X8);
 	define_local_var(0X4161FA, 0X4163C4, "[bp+0X8]", "charid");
 	define_local_var(0X4161FA, 0X4163C4, "[bp+0XC]", "objid");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X4163C4,0X41658F);
 	set_func_flags(0X4163C4,0x5410);
 	SetType(0X4163C4, "int __stdcall AreCharactersColliding(int cchar1, int cchar2);");
@@ -157229,16 +157231,16 @@ static Functions_4(void) {
 	define_local_var(0X419401, 0X419496, "[bp+0X8]", "who");
 	define_local_var(0X419401, 0X419496, "[bp+0XC]", "flag");
 	define_local_var(0X419401, 0X419496, "[bp+0X10]", "yesorno");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X419496,0X4194CB);
 	set_func_flags(0X419496,0x5410);
 	SetType(0X419496, "void __stdcall QuitGame(int dialog);");
 	set_func_cmt(0X419496,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to source's \"if(dialog){setup_for_dialog(); rcode=quitdialog(); restore_after_dialog(); if(rcode==0) return;} quit(\\\"|You have exited.\\\");\" (AC.CPP:17989-17997) -- setup_for_dialog/restore_after_dialog (both already matched) bracket a call to sub_426E8E, decisively identified this round as quitdialog (see its own new entry) via an exact match on its literal MSG_QUITBUTTON/MSG_PLAYBUTTON/MSG_QUITDIALOG (993/994/995, 0x3E1/0x3E2/0x3E3) constants.", 1);
 	set_frame_size(0X419496, 0X4, 4, 0X4);
 	define_local_var(0X419496, 0X4194CB, "[bp+0X8]", "dialog");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X4194CB,0X419506);
 	set_func_flags(0X4194CB,0x5410);
 	SetType(0X4194CB, "int __cdecl InputBox(char *Str, int);");

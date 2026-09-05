@@ -120,9 +120,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4025A6",
+  "name": "SpriteCache__removeOldest",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SpriteCache__precache",

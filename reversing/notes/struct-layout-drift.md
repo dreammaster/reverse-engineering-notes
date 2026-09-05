@@ -13380,3 +13380,25 @@ ZERO-SLACK address arithmetic against the already-established
 gap. CONFIRMED ABSENT: source's `gfxDriver->HasAcceleratedStretchAndFlip
 ()`-gated hardware-acceleration size-adjustment branch -- the usual
 "predates `gfxDriver`" finding, once again.
+
+### `SpriteCache::removeOldest` closes with three real drifts
+
+The keyword-scored sweep's next lead: `sub_4025A6`, called from
+`SpriteCache::loadSprite` (already matched). Closes at a decisive
+structural level as `SpriteCache::removeOldest()` (`Common/sprcache.
+cpp:244-306`) -- confirming `liststart`@+0x1C and a new `offsets[]`@
++0x00 (compared against a literal -1, confirming `SPRITE_LOCKED=-1`)
+via its two leading guard checks -- but with three real drifts along
+the way. DRIFT #1: rather than reading a precomputed `sizes[sprnum]`
+array entry to decrement `cachesize`, this build recomputes the byte
+size fresh at eviction time (`spritewidth*spriteheight*((bpp+7)/8)`,
+the same ceiling-division idiom already seen in `serialize_bitmap`/
+`convert_16_to_15`) -- no `sizes[]` array exists in this build at all.
+DRIFT #2: source's `if(liststart==listend){...cache now empty...}
+else{...unlink...}` branch has no counterpart here -- this build
+ALWAYS executes the unconditional list-unlink step, confirming two
+more arrays (`mrulist[]`@+0x14, `mrubacklink[]`@+0x18) but never
+handling the "cache emptied completely" special case. DRIFT #3:
+source's recursive-link self-healing/error-detection block (`write_
+log`+`removeAll()` on cache corruption) is CONFIRMED ABSENT -- this
+build has no equivalent safety net.

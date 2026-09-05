@@ -3900,6 +3900,13 @@ disassembly work.
   already-established `options[10]`(`OPT_SPEECHTYPE`). CONFIRMED
   ABSENT: the `gfxDriver`-gated hardware-acceleration size-adjustment
   branch, the usual pattern.
+- **`SpriteCache::removeOldest` closes with three real drifts.** This
+  build recomputes each evicted sprite's byte size fresh rather than
+  reading a precomputed `sizes[]` array (none exists here); always
+  executes the unconditional list-unlink step with no "cache emptied
+  completely" special case (confirming two new arrays, `mrulist[]`/
+  `mrubacklink[]`); and has no recursive-link self-healing/error-
+  detection safety net at all.
 
 ## Third-party library identification (Task #10)
 
