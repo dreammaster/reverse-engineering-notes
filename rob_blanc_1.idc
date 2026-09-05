@@ -37916,6 +37916,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X425FE4);
 	op_stkvar	(x,	1);
 	create_insn	(0X425FF6);
+	set_name	(0X425FF6,	"CSCISendControlMessage");
 	create_insn	(x=0X425FF9);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X426006);
@@ -40700,9 +40701,6 @@ static Bytes_6(void) {
 	create_insn	(x=0X4287D4);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X4287D9);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -40712,6 +40710,9 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4287D9);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X4287EF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4287F5);
@@ -46261,11 +46262,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DA83);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42DA87);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X42DA8B);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -46275,6 +46271,11 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DA87);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X42DA8B);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X42DA90);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DA94);
@@ -52463,10 +52464,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X433361);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X43336A);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X433373);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52476,6 +52473,10 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43336A);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X433373);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X433379);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43337F);
@@ -158515,6 +158516,7 @@ static Functions_7(void) {
 	set_frame_size(0X425FC7, 0X4, 4, 0);
 	add_func    (0X425FF6,0X426032);
 	set_func_flags(0X425FF6,0x5410);
+	set_func_cmt(0X425FF6,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int CSCISendControlMessage(int haa,int mess,int wPar,long lPar) at acdialog.h:863-868: \"if(vobjs[haa]==NULL) return -1; return vobjs[haa]->processmessage(mess,wPar,lPar);\". A complete, exact, zero-drift match: null-checks dword_523578[haa] (already established control-handle table), returns -1 if empty, else calls vobjs[haa]->vtbl[2](mess,wPar,lPar) -- decisively identifying NewControl's vtable slot 2 as processmessage(int,int,long) (alongside slot 0=draw(), already established via CSCICreateControl's own entry). Called from enterstringwindow (already matched, this round's own updated entry) as \"CSCISendControlMessage(ctrltbox,CTB_GETTEXT,0,(long)&buffer2[0]);\" -- the literal CTB_GETTEXT=1 (acdialog.h:149) matches the disasm's own literal argument exactly.", 1);
 	set_frame_size(0X425FF6, 0, 4, 0);
 	add_func    (0X426032,0X426357);
 	set_func_flags(0X426032,0x5410);
@@ -158528,7 +158530,7 @@ static Functions_7(void) {
 	add_func    (0X42657F,0X426693);
 	set_func_flags(0X42657F,0x5410);
 	SetType(0X42657F, "int __cdecl enterstringwindow(char *Source, char *Destination);");
-	set_func_cmt(0X42657F,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void enterstringwindow(char*,char*) at acdialog.cpp:987-1022. Decisive match: calls CSCIDrawWindow(60,80,200,40) (0x3C/0x50/0xC8/0x28, this session's own new match) with literal arguments matching source's \"boxleft=60,boxtop=80; CSCIDrawWindow(boxleft,boxtop,200,40);\" exactly, followed by a CSCICreateControl call building an \"OK\" push-button, matching source's ctrlok setup. Called from two sites -- InputBox and enternumberwindow (this round's own bare match) -- matching source's own two callers (sc_inputbox and enternumberwindow) exactly. The remaining body (cancel-button/textbox/label controls, the CSCIWaitMessage polling loop, cleanup) was not independently traced instruction by instruction this round, but the leading CSCIDrawWindow literal-argument match plus the two-caller correspondence are decisive on their own.", 1);
+	set_func_cmt(0X42657F,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void enterstringwindow(char*,char*) at acdialog.cpp:987-1022. Decisive match: calls CSCIDrawWindow(60,80,200,40) (0x3C/0x50/0xC8/0x28, this session's own new match) with literal arguments matching source's \"boxleft=60,boxtop=80; CSCIDrawWindow(boxleft,boxtop,200,40);\" exactly, followed by a CSCICreateControl call building an \"OK\" push-button, matching source's ctrlok setup. Called from two sites -- InputBox and enternumberwindow (this round's own bare match) -- matching source's own two callers (sc_inputbox and enternumberwindow) exactly. The remaining body (cancel-button/textbox/label controls, the CSCIWaitMessage polling loop, cleanup) was not independently traced instruction by instruction this round, but the leading CSCIDrawWindow literal-argument match plus the two-caller correspondence are decisive on their own. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:987-1022): every rema" "ining call matches exactly -- CSCICreateControl(CNT_TEXTBOX=4,boxleft+10,b", 1);
 	set_frame_size(0X42657F, 0X24, 4, 0);
 	define_local_var(0X42657F, 0X426693, "[bp+0X8]", "Source");
 	define_local_var(0X42657F, 0X426693, "[bp+0XC]", "Destination");
@@ -158873,6 +158875,10 @@ static Functions_7(void) {
 	set_func_cmt(0X42B054,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: void ccFreeInstance(ccInstance*) at CSRUN.CPP:1042. RESOLVES an old open lead (see reversing/notes/open-lead-sub_42B054-forked-instance-refcounting.md) originally left unmatched because a suspected refcount decrement did not match 2011's simplified \"if (forked) ccFreeInstance(...)\" cleanup in post_script_cleanup. Found via ccInstance struct-offset recovery work: ccCreateInstanceEx stores the source ccScript* at instance offset +0x9A4 (matching the newly confirmed \"instanceof\" field) and increments that script's own +0x1C4C field (\"instances\"). sub_42B054 does the exact inverse -- \"if (cinst->instanceof != NULL) { cinst->instanceof->instances--; if (...==0) { simp.remove_range(globaldata,globaldatasize); simp.remove_range(code,codesize*4); } }\" matches the disassembly line for line, including the exact field offsets (+4=globaldata, +8=globaldatasize, +0xC=code, +0x10=codesize) and the two calls to a shared helper (sub_42A969, like" "ly simp.remove_range) with those exact argument pairs.", 1);
 	set_frame_size(0X42B054, 0, 4, 0);
 	define_local_var(0X42B054, 0X42B11D, "[bp+0X8]", "Block");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42B11D,0X42B17F);
 	set_func_flags(0X42B11D,0x5410);
 	SetType(0X42B11D, "int __cdecl sub_42B11D(int, char *Str2);");
@@ -158887,10 +158893,6 @@ static Functions_7(void) {
 	define_local_var(0X42B17F, 0X42B394, "[bp+0XC]", "numparm");
 	define_local_var(0X42B17F, 0X42B394, "[bp+0X10]", "parms");
 	define_local_var(0X42B17F, 0X42B394, "[bp+0X14]", "offset");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42B394,0X42BEEC);
 	set_func_flags(0X42B394,0x5410);
 	set_func_cmt(0X42B394,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: medium\nevidence: Closest role/file match is cc_run_code (Common/CSRUN.CPP:1287), the bytecode-interpreter switch loop -- string matches (stack overflow x4 via PUSH_CALL_STACK macro sites, \"invalid instruction %d found in code stream\", \"specified code offset is not valid\", \"stack corrupt after function call\") all fall within its 1287-1878 source range. HOWEVER: sub_42B394 is directly SELF-RECURSIVE (calls itself at two sites), whereas in the 2011 reference source, cc_run_code never recurses into itself for script-to-script calls -- it calls a separate trampoline call_function() (line 1217) which invokes a native function pointer, not the interpreter. This looks like a real architectural divergence: in the 2002 Rob Blanc 1 build, script-to-script AGS function calls appear to be handled by the interpreter loop calling itself directly, later refactored (by 2011) into a separate call_function/ccCallInstance dispatch layer. Do not blindly rename to c" "c_run_code without accounting for this -- see reversing/notes/csrun-inter", 1);
@@ -159839,6 +159841,10 @@ static Functions_8(void) {
 	set_func_flags(0X43E7D0,0x5400);
 	set_func_cmt(0X43E7D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library API function. Called from RawDrawTriangle (already matched) with 8 arguments (bitmap,x1,y1,x2,y2,x3,y3,color) -- an exact match to Allegro's own triangle() signature (declared in libsrc/allegro-4.2.2/include/allegro/draw.h) and to 2011's own call, \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14601). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule.", 1);
 	set_frame_size(0X43E7D0, 0X28, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X43E860,0X43E89D);
 	set_func_flags(0X43E860,0x5400);
 	set_frame_size(0X43E860, 0, 0, 0);
@@ -159874,10 +159880,6 @@ static Functions_8(void) {
 	define_local_var(0X443010, 0X443044, "[bp+0X4]", "toRender");
 	define_local_var(0X443010, 0X443044, "[bp+0X8]", "atx");
 	define_local_var(0X443010, 0X443044, "[bp+0XC]", "aty");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X443050,0X44319C);
 	set_func_flags(0X443050,0x5400);
 	set_frame_size(0X443050, 0X10, 0, 0);
@@ -161746,6 +161748,10 @@ static Functions_9(void) {
 	add_func    (0X46BA80,0X46BAAF);
 	set_func_flags(0X46BA80,0x5400);
 	set_frame_size(0X46BA80, 0, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X46BAB0,0X46BAE9);
 	set_func_flags(0X46BAB0,0x5400);
 	set_frame_size(0X46BAB0, 0X8, 0, 0);
@@ -161825,10 +161831,6 @@ static Functions_9(void) {
 	SetType(0X46CB20, "int __cdecl sub_46CB20(void *Block);");
 	set_frame_size(0X46CB20, 0, 0, 0);
 	define_local_var(0X46CB20, 0X46CB31, "[bp+0X4]", "Block");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X46CB40,0X46CBE4);
 	set_func_flags(0X46CB40,0x5400);
 	set_frame_size(0X46CB40, 0X10, 0, 0);
@@ -164051,6 +164053,10 @@ static Functions_10(void) {
 	add_func    (0X49AF50,0X49B09A);
 	set_func_flags(0X49AF50,0x5400);
 	set_frame_size(0X49AF50, 0X10, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X49B0D0,0X49B13E);
 	set_func_flags(0X49B0D0,0x5400);
 	set_frame_size(0X49B0D0, 0XC, 0, 0);
@@ -164138,10 +164144,6 @@ static Functions_10(void) {
 	add_func    (0X49CA50,0X49CAF7);
 	set_func_flags(0X49CA50,0x5400);
 	set_frame_size(0X49CA50, 0X10, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X49CB00,0X49CB9E);
 	set_func_flags(0X49CB00,0x5400);
 	set_frame_size(0X49CB00, 0X7C, 0, 0);

@@ -12060,3 +12060,43 @@ entries, vs. 2011's declared `MAXLISTITEM=300` (`acdialog.h:325`) -- a
 DRASTIC 15x capacity reduction. This build's CSCI listbox (used in the
 save/restore-game file-selector dialog) can only show 20 save slots at
 once, not 300.
+
+### enterstringwindow's full body closes; CSCISendControlMessage names NewControl's second vtable slot
+
+`enterstringwindow` had only been partially traced in an earlier round;
+reading its complete body against its real source (`acdialog.h:
+987-1022`) confirms every remaining call matches exactly:
+`CSCICreateControl(CNT_TEXTBOX=4,boxleft+10,boxtop+29,120,0,NULL)` and
+`CSCICreateControl(CNT_LABEL=3,boxleft+10,boxtop+5,120,0,prompttext)`
+both match literally (both enum values already independently confirmed
+elsewhere); the `CSCIWaitMessage` polling loop matches `while(1)
+CSCIWaitMessage(&mes); if(mes.code==CM_COMMAND) break;` exactly; the
+three `CSCIDeleteControl` calls and the final `CSCIEraseWindow` match
+source's own cleanup sequence in both count and identity.
+
+The one call left unidentified turns out to be a new function:
+`sub_425FF6` matches `int CSCISendControlMessage(int haa,int mess,int
+wPar,long lPar)` (`acdialog.h:863-868`) exactly -- `if(vobjs[haa]==NULL)
+return -1; return vobjs[haa]->processmessage(mess,wPar,lPar);` -- a
+complete, zero-drift match: null-checks the already-established
+control-handle table, returns -1 if empty, else calls the object's own
+vtable slot 2. This decisively identifies `NewControl`'s vtable slot 2
+as `processmessage(int,int,long)`, alongside the already-established
+slot 0 (`draw()`). `enterstringwindow`'s own call matches literally:
+`CSCISendControlMessage(ctrltbox,CTB_GETTEXT,0,(long)&buffer2[0]);` --
+the literal `CTB_GETTEXT=1` (`acdialog.h:149`) matches the disassembly's
+own literal argument exactly.
+
+REAL DRIFT, CONFIRMED ABSENT: source's entire `wantCancel`/`'!'`-prefix
+feature (`if(prompttext[0]=='!') {wantCancel=1;prompttext++;} ...
+if(wantCancel) ctrlcancel=CSCICreateControl(CNT_PUSHBUTTON|CNF_CANCEL,
+...);`) -- this build's version ALWAYS creates exactly 3 controls (OK
+button, textbox, label) with no conditional cancel-button branch
+anywhere, and consequently never checks `prompttext[0]=='!'` at all.
+This build's `enterstringwindow`-based dialogs (`InputBox`,
+`enternumberwindow`) have no way to add a Cancel button -- every such
+dialog can only be confirmed, never explicitly cancelled via a
+dedicated button. This closes the loop on `enternumberwindow`'s own
+already-confirmed missing `-9999` empty-input sentinel from several
+rounds ago -- consistent with this whole code path predating the
+cancel-support feature entirely.

@@ -3502,6 +3502,19 @@ disassembly work.
   allocation-size evidence. `MyListBox`'s own allocation size confirms
   its `itemnames[]` capacity at 20 entries vs. 2011's declared 300 —
   this build's save/restore file-selector can only show 20 slots.
+- **`enterstringwindow`'s full body closes; `CSCISendControlMessage`
+  names `NewControl`'s second vtable slot.** Every remaining call
+  (both `CSCICreateControl` calls, the `CSCIWaitMessage` poll loop, the
+  cleanup sequence) matches source exactly. The one previously-
+  unidentified call is a new match, `CSCISendControlMessage` —
+  `if(vobjs[haa]==NULL) return -1; return vobjs[haa]->processmessage(
+  mess,wPar,lPar);` — decisively naming vtable slot 2 as
+  `processmessage(int,int,long)`. REAL DRIFT: source's entire
+  `wantCancel`/`'!'`-prefix Cancel-button feature is CONFIRMED ABSENT —
+  this build's `enterstringwindow`-based dialogs (`InputBox`,
+  `enternumberwindow`) always create exactly 3 controls with no way to
+  add a Cancel button at all, tying together `enternumberwindow`'s own
+  earlier-found missing `-9999` empty-input sentinel.
 
 ## Third-party library identification (Task #10)
 
