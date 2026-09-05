@@ -6623,7 +6623,7 @@
     "source_file": "Engine/acdialog.h",
     "source_line": 837,
     "confidence": "high",
-    "evidence": "PushButton::PushButton(int,int,int,int,char*) -- the CSCI dialog system's push-button control constructor, called from CSCICreateControl (already matched, this round's own updated entry) as \"new PushButton(xx,yy,wii,hii,title);\" -- decisively identified via the exact 5-argument call shape (this + xx/yy/wii/hii/title) immediately following an operator new(0x44) allocation sized for a NewControl-derived object (NewControl's own base layout: vtbl+7 ints+2 chars, already established via finddefaultcontrol's entry). Own body not independently traced this round (a genuine C++ constructor, presumably initializing the NewControl base fields plus PushButton-specific state) -- named by call-site/allocation-shape evidence only."
+    "evidence": "PushButton::PushButton(int,int,int,int,char*) -- the CSCI dialog system's push-button control constructor, called from CSCICreateControl (already matched, this round's own updated entry) as \"new PushButton(xx,yy,wii,hii,title);\" -- decisively identified via the exact 5-argument call shape (this + xx/yy/wii/hii/title) immediately following an operator new(0x44) allocation sized for a NewControl-derived object (NewControl's own base layout: vtbl+7 ints+2 chars, already established via finddefaultcontrol's entry). Own body not independently traced this round (a genuine C++ constructor, presumably initializing the NewControl base fields plus PushButton-specific state) -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:251-260): calls NewControl::NewControl() (already matched), sets its own vtable (off_4AD5D8), then x@+4/y@+8/wid@+0xC written directly from arguments, hit@+0x10=hi+1 matches \"hit = hi + 1;\" exactly (source's own commented-out \"//hit=hi;\" alternative confirmed absent, as expected), state@+0x14=0 matches exactly. REAL DRIFT, CONFIRMED ABSENT: source's own \"strncpy(text,tex,50); text[49]=0;\" (bounded copy plus explicit null-termination) is NOT what this build does -- it calls a plain, unbounded strcpy(text,tex) into the same 50-byte text[] buffer, no length check, no null-termination safeguard -- the SAME drift pattern already found in MyLabel::MyLabel's own constructor (a buffer-overflow risk if a button's own title text ever exceeds 49 characters)."
   },
   {
     "kind": "manual",
@@ -6750,5 +6750,32 @@
     "source_line": 594,
     "confidence": "high",
     "evidence": "MyTextBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:594-622) -- a complete, exact, zero-drift match to every branch: mcode==CTB_SETTEXT(2,:150) does strcpy(text,(char*)lParam) then needredraw@+0x22=1; mcode==CTB_GETTEXT(1,:149) does strcpy((char*)lParam,text); mcode==CTB_KEYPRESS(0x5B=91, already-confirmed) dispatches on wParam: ==8(backspace) truncates text by one char (text[strlen-1]=0, guarded on text[0]!=0) then calls NewControl::drawandmouse() (already matched); strlen(text)>=0x30(48, matching TEXTBOX_MAXLEN-1=49-1 EXACTLY, zero drift) is a no-op; wgettextwidth(text,cbuttfont)>=wid-5 is a no-op; wParam>0x7F(127, 'font only has 128 chars') is a no-op; otherwise appends the character (text[strlen+1]=0; text[strlen]=wParam;) and calls drawandmouse() again. The final else branch returns -1, matching source's own default case exactly. TEXTBOX_MAXLEN=49 (acdialog.h:559) is directly confirmed via this function's own literal 0x30 bounds check with zero drift -- this build's single-line text-entry box (used by enterstringwindow/InputBox/enternumberwindow) has the SAME 49-character limit as the 2011 reference. MyTextBox's own pressedon() vtable slot (off_4AD608+4) points at the already-established shared trivial-stub GUIObject__MouseDown_default (return 0), the same linker identical-code-folding already noted for MyLabel::pressedon()."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427060",
+    "new_name": "PushButton__draw",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 262,
+    "confidence": "high",
+    "evidence": "PushButton::draw() (acdialog.h:262-287) -- a complete, exact, zero-drift match throughout: wtextcolor(0); wsetcolor(COL254=7 in this build's own non-DJGPP branch, matching the disasm's literal \"push 7\" exactly); a wbar-equivalent inlined rectfill background fill; a state@+0x14==0 ? pushbuttondarkcolor(dword_4BA934) : pushbuttonlightcolor(dword_4BA938) color choice for the wrectangle border, then the REVERSED choice (light-if-unpressed/dark-if-pressed) for the two highlight wline() calls (top edge, left edge) -- matching source's own two independent state-based color swaps exactly; a centered wouttextxy(...) draw using wid/2-wgettextwidth(text,cbuttfont)/2 exactly matching source's centering formula; a final typeandflags@+0x18 & CNF_DEFAULT(0x100, acdialog.h:123, zero drift) check choosing wsetcolor(0) vs wsetcolor(windowbackgroundcolor) for the outer highlight-border wrectangle. Called from CSCICreateControl (already matched) via PushButton's own vtable slot 0."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427290",
+    "new_name": "PushButton__pressedon",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 289,
+    "confidence": "high",
+    "evidence": "PushButton::pressedon() (acdialog.h:289-317) -- matches source's overall shape (a hold-until-released polling loop, redrawing on state change, then a final state=0/draw()/return) but with one REAL, CONFIRMED-ABSENT drift: this build's loop body contains ONLY misbuttondown(0) (matching source's LEFT-button check, though via a different-named function than source's own mbutrelease -- functionally equivalent as the loop's exit condition, converting misbuttondown's TRUE/FALSE result via a neg/sbb/inc sequence into \"keep looping while the button is still down\"), NewControl::mouseisinarea() (this round's own new match, called via 'this' to set state@+0x14, matching source's \"state = mouseisinarea();\"), update_polled_stuff() (already matched), and a conditional domouse(2)/vtable-slot-0(draw())/domouse(1) redraw gated on wasstat!=state. Source's own \"timerloop=0; next_iteration();\" (at the top of the loop) and \"refresh_screen(); while(timerloop==0);\" (frame-rate-throttling wait, at the bottom) are ENTIRELY ABSENT from this build's loop -- no timerloop reference of any kind appears anywhere in this function. This build's button-hold loop has no frame-rate throttling at all, spinning as fast as the CPU allows rather than pacing itself to the game's own timer tick -- a genuine, player-relevant difference (potential busy-loop/CPU-usage behavior during a held-down CSCI dialog button) worth flagging for the eventual ScummVM port. The final tail (wasstat=state; state=0; domouse(2)/draw()/domouse(1); return wasstat;) matches source exactly, including the same LIVE-domouse-where-source-comments-it-out drift already found repeatedly elsewhere this session."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_426EF0",
+    "new_name": "NewControl__mouseisinarea",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 218,
+    "confidence": "high",
+    "evidence": "NewControl::mouseisinarea() (acdialog.h:218-227) -- an exact, zero-drift match: \"if(topwindowhandle != wlevel) return 0;\" (dword_4BA93C=topwindowhandle vs [this+0x1C]=wlevel, already-confirmed field) then \"if((mousex>x)&(mousex<x+wid)&(mousey>y)&(mousey<y+hit)) return 1; return 0;\" using the already-confirmed mousex/mousey globals (dword_5358CC/dword_5358D0) and NewControl's own x/y/wid/hit field offsets, matching source's bitwise-AND (not short-circuit &&) style exactly. Called from PushButton::pressedon (this round's own new match) and one other, not yet individually characterized, caller (sub_425A22)."
   }
 ]

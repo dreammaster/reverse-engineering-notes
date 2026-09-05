@@ -3070,9 +3070,9 @@
   "is_named": true
  },
  {
-  "name": "sub_426EF0",
+  "name": "NewControl__mouseisinarea",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_426F80",
@@ -3090,14 +3090,14 @@
   "is_named": true
  },
  {
-  "name": "sub_427060",
+  "name": "PushButton__draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427290",
+  "name": "PushButton__pressedon",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "MyListBox__MyListBox",

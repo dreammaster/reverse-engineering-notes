@@ -3552,6 +3552,16 @@ disassembly work.
   stub used elsewhere — not a real relationship. `MyTextBox::draw()`/
   `processmessage()` close as exact, zero-drift matches, the latter
   confirming `TEXTBOX_MAXLEN=49` via a literal bounds check.
+- **`PushButton`'s own constructor/`draw()`/`pressedon()` close,
+  finding a confirmed-absent frame-rate throttle.** The constructor's
+  own `strncpy`+null-terminate is CONFIRMED ABSENT (a plain unbounded
+  `strcpy` instead), the same drift already found in `MyLabel`'s
+  constructor. `draw()` is a zero-drift exact match. `pressedon()`'s
+  button-hold loop is missing source's entire `timerloop`/
+  `next_iteration()`/`refresh_screen()` frame-rate-throttling machinery
+  — this build's loop spins as fast as the CPU allows while a CSCI
+  dialog button is held down, rather than pacing itself to the game's
+  timer tick. Names `NewControl::mouseisinarea()`, a zero-drift match.
 
 ## Third-party library identification (Task #10)
 

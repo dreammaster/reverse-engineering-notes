@@ -12229,3 +12229,38 @@ character-append logic, including a literal `0x30`(48) bounds check
 confirming `TEXTBOX_MAXLEN=49` (`:559`) with ZERO drift. `MyTextBox`'s
 own `pressedon()` slot points at the same shared
 `GUIObject__MouseDown_default` stub as `MyLabel`'s.
+
+### PushButton's own draw()/pressedon() close, finding a confirmed-absent frame-rate throttle
+
+`PushButton::PushButton`'s own constructor (already matched by call-
+shape/allocation-size, body not yet independently traced) closes
+completely against its real source (`acdialog.h:251-260`): `x`/`y`/
+`wid` writes, `hit=hi+1` (matching source's own live line, with its
+commented-out `//hit=hi;` alternative confirmed absent as expected),
+`state=0` -- but ANOTHER instance of the same drift already found in
+`MyLabel::MyLabel`: source's bounded `strncpy(text,tex,50); text[49]=0;`
+is CONFIRMED ABSENT, replaced by a plain, unbounded `strcpy(text,tex)`
+into the same 50-byte buffer.
+
+`PushButton::draw()` (`sub_427060`, `:262-287`) closes as a complete,
+exact, zero-drift match -- the background fill, the TWO independent
+state-based color swaps (border color and highlight-line color, which
+are REVERSED relative to each other, matching source's own two separate
+`if(state==0)` branches exactly), the centered text draw, and the final
+`typeandflags & CNF_DEFAULT`(`0x100`, zero drift) check choosing the
+outer border's color.
+
+`PushButton::pressedon()` (`sub_427290`, `:289-317`) finds a genuine,
+player-relevant drift: this build's button-hold loop contains ONLY
+`misbuttondown(0)` (functionally equivalent to source's `mbutrelease
+(LEFT)` as the loop's exit condition, via a differently-named function),
+`NewControl::mouseisinarea()` (this round's own new match, a complete
+zero-drift match to `acdialog.h:218-227`), `update_polled_stuff()`, and
+a conditional redraw. Source's own `timerloop=0;`/`next_iteration();`
+(loop top) and `refresh_screen(); while(timerloop==0);` (loop bottom,
+the frame-rate-throttling wait) are ENTIRELY ABSENT -- no `timerloop`
+reference of any kind appears anywhere in this function. This build's
+button-hold loop has NO frame-rate throttling at all, spinning as fast
+as the CPU allows rather than pacing itself to the game's own timer
+tick -- worth flagging for the eventual ScummVM port as a potential
+busy-loop/CPU-usage difference during a held-down CSCI dialog button.
