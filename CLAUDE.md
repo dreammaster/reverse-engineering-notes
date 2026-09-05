@@ -3856,6 +3856,21 @@ disassembly work.
   16bgr` closes as a zero-drift in-place match, reusing the same two
   newly-identified scale tables and confirming its `MASK_COLOR_16`
   (0xF81F) skip-check exactly.
+- **`load_lzw`/`lzwexpand_to_mem`/`lzwexpand` close the room-background
+  LZW-decompression chain end to end**, and finally name the long-
+  mysterious `recalced` global (`RoomStruct`'s own "working cache of
+  the active background bitmap", tracked since a much earlier round
+  that could only describe its behavior, never its identity) — `load_
+  lzw`'s own `recalced=bmm;` assignment, confirmed twice in the same
+  function. Every remaining step matches `Common/acroom.h:1339-1422`
+  exactly (CONFIRMED ABSENT: source's own NULL-check and its acquire_
+  bitmap/release_bitmap locking pair, the usual pattern). `lzwexpand_
+  to_mem` closes exactly; `lzwexpand` itself (genuinely AGS-owned code,
+  `Common/lzw.cpp`, not a scope-rule exclusion) closes at a header/
+  structural level — `malloc(N=4096)` with zero drift, an inlined CRT
+  `getc` macro expansion rather than a real call, and one real drift:
+  its out-of-memory path calls `printf`+`exit()` directly rather than
+  going through `quit()`, skipping engine-shutdown cleanup.
 
 ## Third-party library identification (Task #10)
 

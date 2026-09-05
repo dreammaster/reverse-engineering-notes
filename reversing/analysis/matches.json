@@ -7255,5 +7255,32 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "Allegro's internal 6-bit-to-8-bit RGB channel intensity-scaling lookup table (64 entries). Confirmed via convert_16_to_15/convert_16_to_16bgr (both already matched) indexing it with a 0x3F(63)-masked, 5-bit-shifted value for the green-channel extraction, matching source's own `_rgb_scale_6[(c>>5)&0x3F]` call exactly. THIRD-PARTY LIBRARY BOUNDARY, not chased further (table contents not individually verified)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40365D",
+    "new_name": "load_lzw",
+    "source_file": "Common/acroom.h",
+    "source_line": 1339,
+    "confidence": "high",
+    "evidence": "long load_lzw(FILE*iii,BITMAP*bmm,color*pall) (acroom.h:1339-1422) -- a complete, exact match end to end. `recalced=bmm;` matches `dword_4EDA3C=Block`(arg2) exactly, identifying dword_4EDA3C as the already-suspected `recalced` global (this project's earlier RoomStruct rounds had left its own +0x00 field's exact role as a 'working cache of the active background bitmap' unconfirmed -- this decisively names the underlying global it caches into). `fread(&pall[0],1,sizeof(color)*256,iii)` matches the disassembly's own `fread(Buffer,4,0x100,Stream)` (256 4-byte color entries). `fread(&maxsize,4,1,iii)`/`fread(&uncompsiz,4,1,iii)` match the next two single-dword freads exactly, identifying dword_535864 as `maxsize`. `uncompsiz+=ftell(iii);` matches exactly. `outbytes=0;putbytes=0;` matches `dword_535860=0;dword_535868=0;` exactly, identifying both globals. `update_polled_stuff();membuffer=lzwexpand_to_mem(iii);` matches the call to the newly-matched lzwexpand_to_mem (sub_43186F, see its own entry) -- NOTE: this build's version has no separate update_polled_stuff() call visible around it (either inlined away or genuinely simpler here, not confirmed either way this round). `loptr=(long*)&membuffer[0]; membuffer+=8;` matches the disassembly's own var_C=var_4(loptr) then var_4+=8 exactly (the big-endian byte-swap block right after in source, #ifdef ALLEGRO_BIG_ENDIAN, is naturally absent on this x86 build). `if(bmm!=NULL) destroy_bitmap(bmm);` matches exactly. `bmm=create_bitmap_ex(_acroom_bpp*8,(loptr[0]/_acroom_bpp),loptr[1]);` matches the disassembly's own `create_bitmap_ex(dword_4B4178*8,eax/dword_4B4178,ecx)` call exactly, identifying dword_4B4178 as `_acroom_bpp`. CONFIRMED ABSENT: source's own `if(bmm==NULL) quit(...)` NULL-check and its acquire_bitmap/release_bitmap pair around the copy loop (this build predates that hardware-acceleration-locking pattern, the same finding made repeatedly elsewhere this project). The row-copy loop `for(arin=0;arin<loptr[1];arin++) memcpy(&bmm->line[arin][0],&membuffer[arin*loptr[0]],loptr[0]);` matches the disassembly's own loop exactly (re-confirming recalced/dword_4EDA3C a second time via the post-copy `dword_4EDA3C=ecx` write). `free(membuffer-8); if(ftell(iii)!=uncompsiz) fseek(iii,uncompsiz,SEEK_SET); return uncompsiz;` matches the disassembly's own tail exactly (the `sub ecx,8` before the free call precisely undoes the earlier `+=8`). Called from load_main_block and load_room (both already matched), at exactly the call sites source's own `load_lzw(...)` calls appear at (acroom.h:1926/2163)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43186F",
+    "new_name": "lzwexpand_to_mem",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 265,
+    "confidence": "high",
+    "evidence": "unsigned char *lzwexpand_to_mem(FILE*ii) (lzw.cpp:265-272) -- a complete, exact match: `malloc(maxsize+10)` matches `malloc(dword_535864+0x0A)` exactly; `expand_to_mem=1;` matches `dword_53586C=1` exactly, identifying that global; `membfptr=membuff;` matches `dword_535870=eax`(the malloc result) exactly, identifying that global; `lzwexpand(ii,NULL);` matches `push 0; push File; call sub_43167B` exactly, identifying sub_43167B as `lzwexpand` (see its own entry); `return membuff;` matches the tail exactly. Called from the newly-matched load_lzw (sub_40365D) at exactly the call site source's own `membuffer=lzwexpand_to_mem(iii);` appears at."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43167B",
+    "new_name": "lzwexpand",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 214,
+    "confidence": "high",
+    "evidence": "void lzwexpand(FILE*f,FILE*out) (lzw.cpp:214-263) -- AGS's own bundled LZW/LZSS decompression engine (genuinely part of Common/, not a third-party library -- in scope for full identification, though not exhaustively bit-traced given its size). Confirmed at the header/structural level: `putbytes=0;` matches `dword_535868=0` (a second, independent confirmation of that global, after load_lzw's own outbytes/putbytes reset). `lzbuffer=(char*)malloc(N);` matches `malloc(0x1000)` exactly, confirming N=4096(0x1000) with zero drift; the `if(lzbuffer==NULL) quit(\"compress.cpp: unable to decompress: insufficient memory\");` NULL-check is present in ROLE (a distinct \"insufficient memory\" printf followed by exit(4)) but DRIFTS in mechanism -- this build calls printf+exit() directly rather than going through AGS's own quit() wrapper, a real behavioral difference (no engine-shutdown cleanup runs on this specific out-of-memory path). The outer `while((bits=getc(f))!=-1)` loop's `getc` call is entirely INLINED as the classic MSVC CRT `getc` macro expansion (`--stream->_cnt>=0 ? *stream->_ptr++ : _filbuf(stream)`) -- decrementing the FILE struct's own `_cnt` field, testing `<0` to call the newly-confirmed-by-linker-symbol `_filbuf`, else reading+advancing `_ptr` directly -- matching the exact macro-expansion shape rather than a real function call, consistent with source's own plain `getc(f)` C-library-macro usage. The remaining bit-mask/LZSS-window manipulation body (N/F/THRESHOLD-based sliding-window match-length decoding) was not traced instruction-by-instruction this round -- the header match alone (malloc(N) size, putbytes reset, inlined-getc shape) is decisive enough to identify the function, and further bit-level tracing would mostly re-verify a well-known, unremarkable LZSS-variant algorithm already fully present in this repo's own Common/lzw.cpp. Called from the newly-matched lzwexpand_to_mem (sub_43186F) with a literal NULL second argument, matching source's own `lzwexpand(ii,NULL)` call exactly."
   }
 ]

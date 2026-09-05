@@ -13237,3 +13237,57 @@ Both conversion functions are called from `initialize_sprite` and
 source's own equivalent calls appear at (`AC.CPP:26000`/`4137` and
 `26005`/`4141` respectively), each gated by the already-established
 `convert_16bit_bgr` global for the BGR path.
+
+### `load_lzw`/`lzwexpand_to_mem`/`lzwexpand` close the room-background
+### LZW-decompression chain end to end
+
+The callgraph-ranking sweep's next AGS-side (non-Allegro) lead:
+`sub_40365D`, called from `load_main_block` and `load_room` (both
+already matched). This closes as `long load_lzw(FILE*iii,BITMAP*bmm,
+color*pall)` (`Common/acroom.h:1339-1422`) -- a complete, exact match
+end to end, and finally names the long-mysterious `dword_4EDA3C`
+global (RoomStruct's own "working cache of the active background
+bitmap", tracked since a much earlier `RoomStruct` round that could
+only describe its BEHAVIOR, never its real identity) as `recalced` --
+`load_lzw`'s own `recalced=bmm;` assignment, confirmed TWICE in the
+same function (once on entry with the caller's `bmm` argument, again
+after the real bitmap is created). Every remaining step matches source
+exactly: the 256-color palette `fread`, the `maxsize`/`uncompsiz`
+single-dword reads, `outbytes=0;putbytes=0;`, the call into the newly-
+matched `lzwexpand_to_mem` (see below), the `membuffer+=8`/`loptr`
+pointer-cast dance (the `#ifdef ALLEGRO_BIG_ENDIAN` byte-swap block
+naturally has no counterpart on this x86 build), `create_bitmap_ex(
+_acroom_bpp*8,loptr[0]/_acroom_bpp,loptr[1])` (identifying dword_4B4178
+as `_acroom_bpp`), the per-row `memcpy` copy loop, and the final
+`free`/`ftell`-vs-`uncompsiz`-check/`fseek`/return sequence. CONFIRMED
+ABSENT: source's own `if(bmm==NULL) quit(...)` NULL-check and its
+`acquire_bitmap`/`release_bitmap` pair around the copy loop -- the same
+"predates hardware-acceleration locking" pattern found repeatedly
+elsewhere in this project.
+
+**`lzwexpand_to_mem` (`sub_43186F`)** closes as a complete, exact match
+to `Common/lzw.cpp:265-272` -- `malloc(maxsize+10)`, `expand_to_mem=1`
+(newly identifying `dword_53586C`), `membfptr=membuff` (newly
+identifying `dword_535870`), then a call into the newly-matched
+`lzwexpand` with a literal NULL second argument, matching source's own
+`lzwexpand(ii,NULL)` exactly.
+
+**`lzwexpand` (`sub_43167B`)** closes at a structural/header level as
+`Common/lzw.cpp:214-263` -- genuinely AGS-owned code (Common/lzw.cpp
+IS present in this repo, unlike JGMOD/ALMP3/etc., so this isn't a
+third-party-scope-rule exclusion, just a size/effort tradeoff). Confirms
+`malloc(N)` with `N=4096(0x1000)` and zero drift, a second independent
+confirmation of `putbytes=0` (`dword_535868`), and finds one genuine
+behavioral drift: source's `if(lzbuffer==NULL) quit("compress.cpp: "
+"unable to decompress: insufficient memory")` is present in ROLE but
+not mechanism -- this build calls `printf`+`exit(4)` directly rather
+than going through AGS's own `quit()` wrapper on this specific out-of-
+memory path, meaning no engine-shutdown cleanup runs here. The outer
+`getc(f)` call is entirely INLINED as the classic MSVC CRT `getc` macro
+expansion (decrement `_cnt`, test negative, call `_filbuf` or read
+`_ptr` directly) rather than a real function call, matching source's
+own plain macro-based `getc(f)` usage exactly. The remaining bit-mask/
+LZSS-window match-length decoding body was not traced instruction-by-
+instruction -- the header match is decisive enough on its own, and
+further tracing would mostly re-verify a well-known, unremarkable
+LZSS-variant algorithm whose full source already sits in this repo.

@@ -190,9 +190,9 @@
   "is_named": true
  },
  {
-  "name": "sub_40365D",
+  "name": "load_lzw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_403846",
@@ -3705,14 +3705,14 @@
   "is_named": false
  },
  {
-  "name": "sub_43167B",
+  "name": "lzwexpand",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_43186F",
+  "name": "lzwexpand_to_mem",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "mgraphconfine",
