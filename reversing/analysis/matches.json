@@ -27,7 +27,7 @@
     "source_obj": "ali3dsw.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=ali3dsw.obj FIELD EVIDENCE (follow-up round, first look at this function): a thin one-argument wrapper delegating entirely to sub_43C400(bmp) -- matching Allegro's own clear(bmp) macro role (clear_to_color(bmp,bitmap_mask_color(bmp))), but NOT calling the already-separately-matched clear_to_color/bitmap_mask_color functions directly -- sub_43C400 is plausibly Allegro's own internal single-argument clear helper. Per this project's third-party-library scope rule, left unnamed/not chased further -- a ScummVM reimplementation replaces Allegro's whole bitmap-clearing machinery wholesale."
   },
   {
     "kind": "function",
