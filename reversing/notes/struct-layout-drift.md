@@ -12041,3 +12041,22 @@ branches (each presumably an analogous `new`+constructor call for
 `MyListBox`/`MyLabel`/`MyTextBox`) weren't individually re-traced this
 round given the function's size, but the confirmed header/one-branch/
 tail already puts the identity and overall shape beyond doubt.
+
+### CSCICreateControl's full dispatch closes, finding a real 15x listbox-capacity reduction
+
+Reading the remaining `CNT_LISTBOX`/`CNT_LABEL`/`CNT_TEXTBOX` branches
+closes this function's entire dispatch chain, matching source's own
+exhaustive if/elseif/quit structure exactly. Each branch does an
+`operator new` sized for its own class immediately followed by the
+matching constructor call (`MyListBox::MyListBox`/`MyLabel::MyLabel`/
+`MyTextBox::MyTextBox`, all three newly named this round via decisive
+call-shape/allocation-size evidence, bodies not independently traced).
+
+The `MyListBox` allocation size gives a genuine, well-evidenced
+capacity finding: `0x84`(132) bytes, minus `NewControl`'s own confirmed
+`0x24`(36)-byte base and `MyListBox`'s own 4 leading ints, leaves
+exactly `0x50`(80) bytes for `itemnames[]` at a 4-byte stride -- 20
+entries, vs. 2011's declared `MAXLISTITEM=300` (`acdialog.h:325`) -- a
+DRASTIC 15x capacity reduction. This build's CSCI listbox (used in the
+save/restore-game file-selector dialog) can only show 20 save slots at
+once, not 300.

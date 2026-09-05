@@ -3495,6 +3495,13 @@ disassembly work.
   `NewControl.typeandflags`/`.wlevel` field writes. Names `PushButton::
   PushButton` via its decisive 5-argument constructor call shape. Same
   live-`domouse`-where-source-comments-it-out drift found again.
+- **`CSCICreateControl`'s full dispatch closes, finding a real 15x
+  listbox-capacity reduction.** The remaining branches match source's
+  exhaustive if/elseif/quit chain exactly, naming three more
+  constructors (`MyListBox`/`MyLabel`/`MyTextBox`) via call-shape/
+  allocation-size evidence. `MyListBox`'s own allocation size confirms
+  its `itemnames[]` capacity at 20 entries vs. 2011's declared 300 —
+  this build's save/restore file-selector can only show 20 slots.
 
 ## Third-party library identification (Task #10)
 

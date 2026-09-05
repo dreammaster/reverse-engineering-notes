@@ -3100,9 +3100,9 @@
   "is_named": false
  },
  {
-  "name": "sub_427340",
+  "name": "MyListBox__MyListBox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4273E0",
@@ -3135,9 +3135,9 @@
   "is_named": false
  },
  {
-  "name": "sub_427C50",
+  "name": "MyLabel__MyLabel",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_427CB0",
@@ -3155,9 +3155,9 @@
   "is_named": true
  },
  {
-  "name": "sub_427E20",
+  "name": "MyTextBox__MyTextBox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_427E90",
