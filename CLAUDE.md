@@ -3712,6 +3712,19 @@ disassembly work.
   showing up as a "SKIP (name not found in IDB)" line in every single
   `apply_all_and_export.py` run since an earlier round reverted that
   wrong FLIRT guess.
+- **CORRECTION: `sub_410631` is `sort_out_walk_behinds`, not "no
+  confirmed 2011 counterpart" after all.** A sweep of `prepare_
+  characters_for_drawing`'s own remaining unnamed callees found a real
+  2011 match for the walk-behind-occlusion helper this project had
+  explicitly left unnamed a few rounds ago. `sort_out_walk_behinds`
+  (`AC.CPP:7264`) matches its confirmed 4-parameter signature and role
+  exactly, but this build's own version is a much simpler predecessor —
+  missing source's entire precomputed-optimization-array fast path
+  (`walkBehindExists`/`walkBehindStartY`/`walkBehindEndY`), the
+  `noWalkBehindsAtAll` early-out, the `is_memory_bitmap` validation,
+  and the trailing `copyPixelsFrom`/`checkPixelsFrom`/`zoom` parameters.
+  Also names `bmp_bpp` (Allegro's public bytes-per-pixel helper),
+  already cited by name elsewhere but never given its own entry.
 
 ## Third-party library identification (Task #10)
 

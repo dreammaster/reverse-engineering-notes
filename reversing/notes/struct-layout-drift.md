@@ -12710,6 +12710,37 @@ runs to find). That entry's own unique information is now folded into
 -- the log's own skip count drops from 2 to 1, leaving only the other
 known-baseline `SpriteCache__initFile` skip.
 
+### CORRECTION: sub_410631 is sort_out_walk_behinds, not "no confirmed 2011 counterpart" after all
+
+A sweep of `prepare_characters_for_drawing`'s own remaining unnamed
+callees found a real 2011 counterpart for `sub_410631` -- the walk-
+behind-occlusion masking helper this project had explicitly left
+unnamed a few rounds ago, citing "no confirmed 2011 counterpart
+function name." `sort_out_walk_behinds(block sprit,int xx,int yy,int
+basel,block copyPixelsFrom=NULL,block checkPixelsFrom=NULL,int
+zoom=100)` (`AC.CPP:7264`) matches this function's own confirmed
+4-parameter signature and role exactly (mask sprite pixels occluded by
+a walk-behind area whose own `walkbehind_base` exceeds the passed
+baseline). REAL DRIFT, CONFIRMED: this build's own implementation is a
+much simpler predecessor -- missing source's entire `walkBehindExists`/
+`walkBehindStartY`/`walkBehindEndY` precomputed-optimization-array fast
+path entirely (this build does a brute-force nested `getpixel`/
+`putpixel` scan over the whole sprite with no shortcut at all), missing
+the `noWalkBehindsAtAll` early-out, missing the `is_memory_bitmap`
+linearity validation, and missing the trailing `copyPixelsFrom`/
+`checkPixelsFrom`/`zoom` parameters (all unneeded here). Renamed
+accordingly -- a genuine case where a function once correctly
+characterized as having no 2011 counterpart turned out to have one
+after all, just found by actually reading `AC.CPP` around its
+confirmed role rather than trusting the earlier round's own negative
+conclusion.
+
+Also names `bmp_bpp` (`sub_40347F`, called from the same sweep):
+Allegro's public bytes-per-pixel helper, matching its well-known
+behavior exactly (15-bit special-cased to 2 bytes, else round up to
+bytes) -- already cited by name in `put_sprite_256`'s own entry
+without ever getting its own dedicated record until now.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`
