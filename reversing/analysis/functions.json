@@ -4595,9 +4595,9 @@
   "is_named": true
  },
  {
-  "name": "sub_43E860",
+  "name": "stretch_blit",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_43E8A0",

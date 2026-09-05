@@ -3617,6 +3617,15 @@ disassembly work.
   edge-triggered "report a new click once" mouse-button poller. The
   loop-back tail reconfirms this build's missing `timerloop` frame
   throttle, the same pattern already found in `PushButton::pressedon`.
+- **`RenderToSurface` closes, finding a missing software-rendering
+  fallback and a missing `render_to_screen` call.** This build's
+  DirectShow video-frame renderer always assumes `screen` is a video
+  bitmap — `is_video_bitmap(screen)`'s check and its entire non-video
+  fallback path (`blit`-then-`stretch_blit` via `vsMemory`) are
+  confirmed absent. Its own trailing `render_to_screen` call is also
+  missing, sensibly — `stretch_blit` already draws onto the real
+  `screen` directly in this path. Names `stretch_blit`, an Allegro
+  public API.
 
 ## Third-party library identification (Task #10)
 

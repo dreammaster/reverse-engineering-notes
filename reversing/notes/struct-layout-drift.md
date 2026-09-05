@@ -12461,3 +12461,24 @@ CONFIRMED: source's very opening `next_iteration(); wtexttransparent
 (TEXTFG);` loses its `next_iteration()` call here -- only
 `wtexttransparent(0)` runs at the function's start. `CSCIWaitMessage`
 has no remaining unexamined branches.
+
+### RenderToSurface closes, finding a missing software-rendering fallback and a missing render_to_screen call
+
+`RenderToSurface(BITMAP*vscreen)` (`acwavi.cpp:220-254`, the DirectShow
+video-playback frame-render step) closes with two real, confirmed
+drifts. The `g_pSample->Update()`-fails branch matches source's
+`g_bAppactive=FALSE; g_pMMStream->SetState(STREAMSTATE_STOP);` exactly
+via direct COM vtable dispatches. The success branch calls a single
+`stretch_blit(vscreen,screen,...)` (this round's own new match, an
+Allegro public API) matching ONLY source's `is_video_bitmap(screen)`
+TRUE branch. REAL DRIFT, CONFIRMED ABSENT: the `is_video_bitmap(screen)`
+check itself and its ENTIRE else-branch fallback (a `blit`-then-
+`stretch_blit`-via-`vsMemory` path for non-video, software-filtered
+screen bitmaps) -- this build always assumes `screen` is a video
+bitmap, with no software-rendering fallback for video playback at all.
+SECOND REAL DRIFT, CONFIRMED ABSENT: source's own trailing
+`render_to_screen(screen,0,0);` call is missing entirely --
+architecturally sensible here, since `stretch_blit` already draws
+directly onto the real `screen` bitmap in the video-bitmap path,
+unlike normal room rendering which composites a separate virtual
+screen first. This function has no remaining unexamined branches.

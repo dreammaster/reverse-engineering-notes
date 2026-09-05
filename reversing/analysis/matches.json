@@ -6279,8 +6279,8 @@
     "new_name": "RenderToSurface",
     "source_file": "Engine/acwavi.cpp",
     "source_line": 220,
-    "confidence": "medium-high",
-    "evidence": "void RenderToSurface(BITMAP*) at acwavi.cpp:220. Called once per iteration of dxmedia_play_video's (this round's corrected match) main playback loop with vscreen (dword_523920) as its sole argument, matching source's own \"RenderToSurface(vscreen);\" call exactly in both position and argument -- own body not independently traced this round."
+    "confidence": "high",
+    "evidence": "void RenderToSurface(BITMAP*) at acwavi.cpp:220. Called once per iteration of dxmedia_play_video's (this round's corrected match) main playback loop with vscreen (dword_523920) as its sole argument, matching source's own \"RenderToSurface(vscreen);\" call exactly in both position and argument -- own body not independently traced this round. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acwavi.cpp:220-254): matches closely with two real, confirmed drifts. \"g_pSample->Update(0,NULL,NULL,0)\" matches a direct COM vtable dispatch on dword_52391C (g_pSample) via slot [ecx+0x18] exactly; the failure branch matches \"g_bAppactive=FALSE; g_pMMStream->SetState(STREAMSTATE_STOP);\" (dword_523910=g_pMMStream, vtable slot [ecx+0x1C]) exactly. The success branch: g_bAppactive=TRUE, acquire_screen() (already matched), then a single stretch_blit(vscreen,screen,0,0,vscreen->w,vscreen->h,screen->w/2-newWidth/2,screen->h/2-newHeight/2,newWidth,newHeight) call (sub_43E860, this round's own new match) -- matching ONLY source's is_video_bitmap(screen)==true branch. REAL DRIFT, CONFIRMED ABSENT: the is_video_bitmap(screen) CHECK ITSELF, and its else-branch fallback (blit(vscreen,vsMemory,...); stretch_blit(vsMemory,screen,...);) for non-video (software-filtered) screen bitmaps -- this build ALWAYS assumes screen is a video bitmap, with no software-rendering fallback path at all. release_screen() (already matched) matches exactly, then \"if(!useSound) update_polled_stuff_and_crossfade();\" matches via byte_4BAA5C(useSound, already established) and a plain update_polled_stuff() call (this build's own simpler naming, already established elsewhere as the non-'_and_crossfade' variant). SECOND REAL DRIFT, CONFIRMED ABSENT: source's own trailing \"render_to_screen(screen,0,0);\" call is missing entirely -- architecturally sensible here since stretch_blit already draws directly onto the real `screen` bitmap in the video-bitmap path, unlike normal room rendering which composites a separate virtual screen first. This function has no remaining unexamined branches."
   },
   {
     "kind": "manual",
@@ -6861,5 +6861,15 @@
     "source_line": 65,
     "confidence": "high",
     "evidence": "rec_mgetbutton() -- declared \"extern int rec_mgetbutton();\" in Engine/acdialog.cpp:65 (and acwavi.cpp:24/acwavi3d.cpp:79) with no body anywhere in this repo (implemented in a source file this project doesn't have). Identified by role/behavior match at its only reachable call site (CSCIWaitMessage's own \"if(rec_mgetbutton()!=NONE)\" check, acdialog.h:792): polls the mouse (poll_mouse(), already matched), reads Allegro's own mouse_b bitmask (dword_5427FC), and returns -1 (matching the expected NONE constant) if a button is STILL held from the previous poll (edge-triggered debounce via a remembered previous-state global, dword_5358F4) -- otherwise decodes which single bit is set into 0/1/2 (LEFT/RIGHT/MIDDLE) and updates the remembered state. This is exactly the semantics a dialog-polling loop needs: report a NEWLY pressed button once, not a continuously-held one. Also called from load_new_room and check_controls (both already matched, not independently re-verified against this specific callee this round)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43E860",
+    "new_name": "stretch_blit",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 1,
+    "confidence": "medium-high",
+    "is_library": true,
+    "evidence": "stretch_blit(BITMAP*src,BITMAP*dst,int sx,int sy,int sw,int sh,int dx,int dy,int dw,int dh) -- Allegro's public bitmap-scaling blit API. Identified via call-shape evidence: a 10-argument call matching stretch_blit's own signature exactly, called from RenderToSurface (already matched, this round's own full-body confirmation) as the video-frame-to-screen scaling step. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its internal implementation not chased further. Two other call sites (not independently examined this round) exist elsewhere in the disassembly."
   }
 ]
