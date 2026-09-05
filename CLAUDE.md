@@ -3445,6 +3445,13 @@ disassembly work.
   loop over `objs[]` exactly — but CONFIRMED ABSENT is the entire
   `mustBeClickable`/`GUIF_NOCLICK` filtering logic; this build finds
   any object under the mouse regardless of clickability.
+- **`acwsetup` found and named, closing the setup-dialog subsystem.**
+  The function `platform_RunSetup` calls to launch the setup dialog is
+  this build's own `acwsetup` — no source body exists to diff against,
+  but it decisively pre-loads every setting `DialogFunc`'s OK-handler
+  writes back, then launches the dialog via the standard
+  `DialogBoxParamA` idiom. `platform_RunSetup` → `acwsetup` →
+  `DialogFunc` is now fully mapped end to end.
 
 ## Third-party library identification (Task #10)
 

@@ -3235,9 +3235,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4299E9",
+  "name": "acwsetup",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "setWindowIcon",

@@ -6579,5 +6579,14 @@
     "source_line": 1250,
     "confidence": "high",
     "evidence": "int GUIMain::find_object_under_mouse(int extrawid, bool mustBeClickable) at acgui.cpp:1250-1267. Matches source's overall shape: loops idx from 0 to numobjs(this+0x3C, already established) over objs[idx](this+idx*4+0x94, already established), bounding-box-testing mousex/mousey (dword_5358CC/D0, already established) against objs[idx].x/.y/.wid/.hit (all already established, +0x08/+0x0C/+0x10/+0x14) with extrawid(arg_0) slack added to width/height, returning the first matching index or -1. CONFIRMED ABSENT: the entire mustBeClickable-driven GUIF_NOCLICK filtering logic -- no such check appears anywhere in this function's body, so it behaves as if mustBeClickable were always false (finds ANY object under the mouse, clickable or not), unlike source where the caller can request either behavior. Called (via the 1-arg overload wrapper, sub_407A27, a thin thiscall stub passing extrawid=0 -- matching source's own \"find_object_under_mouse(int extrawid) { return find_object_under_mouse(extrawid,true); }\" one-arg overload in shape, though the mustBeClickable distinction is moot here since it's never checked) from GetGUIObjectAt (already matched, this session's own new entry)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4299E9",
+    "new_name": "acwsetup",
+    "source_file": "Engine/acplwin.cpp",
+    "source_line": 45,
+    "confidence": "high",
+    "evidence": "This build's own implementation of acwsetup(const char*,const char*) -- declared extern at acplwin.cpp:45 with no body anywhere in this repo's checkout, so no direct 2011 source exists to diff against, but the role is unambiguous and decisively matches: called from platform_RunSetup (already matched) with the setup-dialog title string as its sole argument (source's own version takes a second engineVersion argument this build's single-parameter version has no visible use for). Checks whether the config file (ac_config_file, already established) exists; if so, closes it and pre-loads every setting the dialog needs via INIreadint (\"misc\"/\"screenres\", \"sound\"/\"digiwinindx\"+\"midiwinindx\"+\"windowed\"+\"cachemax\"+\"usevox\"+\"usespeech\" -- exactly the same key set DialogFunc's own OK-handler writes back, already matched) plus \"language\"/\"translation\" via the raw Win32 GetPrivateProfileStringA API, clamping screenres to [0,2] and cachemax/usevox/usespeech to sane defaults if the INI value was missing or invalid. Finally launches the actual dialog via the standard Win32 DialogBoxParamA(hInstance,MAKEINTRESOURCE(0x66),hWndParent,DialogFunc,0) idiom (DialogFunc already matched) -- the classic modal-setup-dialog invocation pattern."
   }
 ]

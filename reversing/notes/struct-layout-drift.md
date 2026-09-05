@@ -11904,3 +11904,19 @@ in this function, so it behaves as if `mustBeClickable` were always
 itself mirrors source's own 1-argument overload wrapper in shape (just
 forwarding `extrawid`), though the `mustBeClickable` distinction it
 would normally select is moot here since neither value changes behavior.
+
+### acwsetup found and named, closing the loop on the whole setup-dialog subsystem
+
+The function `platform_RunSetup` calls to actually launch the setup
+dialog turns out to be this build's own `acwsetup` implementation --
+no source body exists to diff against (it's declared `extern` with no
+implementation anywhere in this repo), but the role is unambiguous.
+Checks whether the config file exists; if so, pre-loads every setting
+`DialogFunc`'s own OK-handler later writes back (`screenres`/
+`digiwinindx`/`midiwinindx`/`windowed`/`cachemax`/`usevox`/`usespeech`,
+plus `language`/`translation` via the raw `GetPrivateProfileStringA`
+API) via `INIreadint`, clamping a few to sane defaults, then launches
+the dialog via the standard `DialogBoxParamA(...,DialogFunc,0)` idiom.
+This closes the entire setup-dialog investigative thread this session
+opened: `platform_RunSetup` -> `acwsetup` -> `DialogFunc`, with the
+config-key read/write round-trip now fully mapped end to end.
