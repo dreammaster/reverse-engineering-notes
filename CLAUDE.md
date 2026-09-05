@@ -3426,6 +3426,19 @@ disassembly work.
   2011's own `ACI_VERSION_TEXT="3.21.1115"`, matching the reference
   build's documented version exactly. `setWindowTitle` is Allegro's own
   driver-vtable hook; `setWindowIcon` fuses `set_icon()` inline.
+- **`DialogFunc` closes: the Windows setup dialog's message handler,
+  finishing the earlier INI-config-key survey.** No 2011 source exists
+  to compare against (`acwsetup()` itself is `extern`, no body in this
+  repo). This is the classic Win32 `DialogProc` for AGS's audio/video
+  setup dialog — `WM_INITDIALOG` populates device combo-boxes and
+  pre-selects the screen-resolution radio button using the already-
+  established `screenres` INI value; `WM_COMMAND`'s OK handler writes
+  every setting back via `WritePrivateProfileStringA`, the WRITE side
+  of the same config keys this project's earlier `INIreadint` survey
+  already found being READ at startup. One real drift: writes both the
+  cross-platform and Windows-specific digi/midi key pairs
+  unconditionally, where 2011's read side picks one via a compile-time
+  `#ifdef`.
 
 ## Third-party library identification (Task #10)
 

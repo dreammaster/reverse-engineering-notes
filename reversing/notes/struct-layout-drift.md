@@ -11855,3 +11855,36 @@ Allegro's own `set_window_title` (a driver-vtable-hook delegator, third-
 party boundary, not chased further). `setWindowIcon` fuses `set_icon()`
 's own job (a standard `GetModuleHandleA`/`LoadIconA`/`SetClassLongA`
 idiom) directly inline rather than calling a separate function.
+
+### DialogFunc: the Windows setup dialog's message handler, closing the loop on the earlier INIreadint config-key survey
+
+No 2011 source exists to compare against at all -- `acwsetup()` itself
+(the function `platform_RunSetup`/`sub_4299E9` call to launch this
+dialog) is declared `extern` in `Engine/acplwin.cpp` with no
+implementation file included anywhere in this repo's checkout. Surveyed
+structurally (958 lines) rather than traced instruction by instruction,
+but every major section is unambiguous.
+
+`DialogFunc` is the classic Win32 `DialogProc` callback for AGS's own
+Windows audio/video setup dialog. `WM_INITDIALOG` populates the sound/
+music device combo-boxes with literal device-name strings and
+pre-selects a screen-resolution radio button using the already-
+established `dword_4BAB8C` (the `INIreadint("misc","screenres")`
+result from this project's own earlier config-key survey).
+`WM_COMMAND`'s OK-button handler reads back every dialog control and
+writes each setting straight to the INI file via `WritePrivateProfile
+StringA`, covering exactly the same `"misc"/"screenres"`, `"sound"/
+"digiid"+"midiid"+"digiindx"+"midiindx"+"digiwin"+"digiwinindx"+
+"midiwinindx"+"usevox"+"usespeech"`, and `"misc"/"windowed"` keys
+already found being READ at startup -- this function is the WRITE side
+of that same config round-trip, closing the loop on that earlier
+survey. One genuine drift: it writes BOTH the cross-platform
+(`"digiid"/"midiid"`) and Windows-specific (`"digiwinindx"/
+"midiwinindx"`) key pairs unconditionally, where 2011's own read-side
+logic only reads one or the other behind an `#ifdef WINDOWS_VERSION`
+compile-time split -- this build's setup dialog keeps both in sync
+regardless, a simpler, no-compile-time-branch approach. Digital-sound-
+driver selection writes Allegro's own packed-4-char driver-ID constants
+directly (`0x41584120`/`0x574F4120`/`0x44584120`, matching Allegro's
+`AL_ID`-style `'AXA '`/`'WOA '`/`'DXA '` DirectSound/WaveOut/DirectX
+identifiers).
