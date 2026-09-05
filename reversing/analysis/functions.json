@@ -465,9 +465,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40794C",
+  "name": "GUIMain__find_object_under_mouse",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_407A27",

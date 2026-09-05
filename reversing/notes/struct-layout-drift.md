@@ -11888,3 +11888,19 @@ driver selection writes Allegro's own packed-4-char driver-ID constants
 directly (`0x41584120`/`0x574F4120`/`0x44584120`, matching Allegro's
 `AL_ID`-style `'AXA '`/`'WOA '`/`'DXA '` DirectSound/WaveOut/DirectX
 identifiers).
+
+### GUIMain::find_object_under_mouse named, closing GetGUIObjectAt's own open callee
+
+Following up on `GetGUIObjectAt`'s own newly-matched call to
+`sub_407A27` (left unnamed at the time): that function is a thin
+thiscall stub passing `extrawid=0` into `sub_40794C`, decisively
+matched as `GUIMain::find_object_under_mouse(int,bool)` (`Engine/
+acgui.cpp:1250-1267`) -- the bounding-box hit-test loop over `objs[]`
+against `mousex`/`mousey` (all fields already established) matches
+source's shape exactly. CONFIRMED ABSENT: the entire `mustBeClickable`-
+driven `GUIF_NOCLICK` filtering logic -- no such check exists anywhere
+in this function, so it behaves as if `mustBeClickable` were always
+`false` regardless of which overload the caller intends. `sub_407A27`
+itself mirrors source's own 1-argument overload wrapper in shape (just
+forwarding `extrawid`), though the `mustBeClickable` distinction it
+would normally select is moot here since neither value changes behavior.

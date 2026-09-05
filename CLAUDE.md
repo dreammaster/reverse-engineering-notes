@@ -3439,6 +3439,12 @@ disassembly work.
   cross-platform and Windows-specific digi/midi key pairs
   unconditionally, where 2011's read side picks one via a compile-time
   `#ifdef`.
+- **`GUIMain::find_object_under_mouse` named, closing `GetGUIObjectAt`'s
+  own open callee.** Its 1-arg wrapper (`sub_407A27`) forwards into the
+  real 2-arg implementation, matching source's bounding-box hit-test
+  loop over `objs[]` exactly — but CONFIRMED ABSENT is the entire
+  `mustBeClickable`/`GUIF_NOCLICK` filtering logic; this build finds
+  any object under the mouse regardless of clickability.
 
 ## Third-party library identification (Task #10)
 
