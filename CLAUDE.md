@@ -3397,6 +3397,13 @@ disassembly work.
   dropped, the opposite direction from most findings in this project.
   Gated by `fast_forward`, tries `"flic%d.flc"` then falls back to
   `"flic%d.fli"`.
+- **`platform_DisplayAlert`/`scAdd_External_Symbol` get entries; a
+  small IDB typo (`GetGUIObectAt`) fixed.** `platform_DisplayAlert`
+  matches `AGSWin32::DisplayAlert` closely but uses the wrong message-
+  box icon (`MB_ICONINFORMATION` vs. source's `MB_ICONEXCLAMATION`) — a
+  real, confirmed drift. `GetGUIObectAt`'s label was missing a 'j',
+  confirmed against the reference `acwin.map` directly and renamed —
+  a plain pre-project typo, not a wrong-identity mislabel.
 
 ## Third-party library identification (Task #10)
 

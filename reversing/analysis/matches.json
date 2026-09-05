@@ -6452,5 +6452,32 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "CONFIRMED ABSENT from 2011's reference source ENTIRELY -- no trace of PlayFlic, play_flc, or any .FLI/.FLC-related identifier anywhere in Engine/. This build supports an OLDER, self-contained FLIC-format animation player alongside its separate DirectShow/AVI-based PlayVideo (already matched) -- a genuine feature this project's own apeg/PlayVideo investigation had already established as absent from 2002, now shown to have a real predecessor of its own that 2011 dropped entirely (the opposite direction from most findings in this project, joining quit()'s own agssave.999-cleanup finding as a rare 2002-feature-removed-by-2011 case). Gated by the already-established fast_forward global (dword_4EEB54) at entry -- does nothing at all during a fast-forwarded sequence. Saves the current screen palette via get_palette_range (already matched) before loading, builds a filename via the caller-supplied index (\"flic%d.flc\") and opens it via clibfopen (already matched), falling back to \"flic%d.fli\" if the .flc variant isn't found, and logs a not-found warning via debug_log (already matched) if neither exists. Leading ~90 of 284 lines read; not traced to completion given the function's size."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "platform_DisplayAlert",
+    "new_name": null,
+    "source_file": "Engine/acplwin.cpp",
+    "source_line": 585,
+    "confidence": "high",
+    "evidence": "void AGSWin32::DisplayAlert(const char*,...) at acplwin.cpp:585-592: \"vsprintf(displbuf,text,ap); MessageBox(allegro_wnd,displbuf,\"Adventure Game Studio\",MB_OK|MB_ICONEXCLAMATION);\". Matches closely -- vsprintf into a stack buffer, then MessageBoxA with the identical literal caption \"Adventure Game Studio\" -- but the icon differs: this build passes a literal 0x40 (MB_ICONINFORMATION, the \"i\" icon) where source uses MB_OK(0)|MB_ICONEXCLAMATION(0x30)=0x30 (the \"!\" icon) -- a real, confirmed UI drift, not just a naming difference. Called from quit()/atexit_handler (both already matched) and many other error-reporting sites throughout the binary; already correctly named via linker symbol but never given its own dedicated matches.json entry until now."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "scAdd_External_Symbol",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 24236,
+    "confidence": "high",
+    "evidence": "ccAddExternalSymbol is a macro (\"#define scAdd_External_Symbol ccAddExternalSymbol\", AC.CPP:24236) whose expansion target IS this function's own literal linked-symbol name -- decisively identifying it. A thin one-line wrapper: \"SystemImports::add(name,addr,NULL);\" (already matched, see its own entry for the complete fixed-400-entry-array-vs-dynamic-realloc drift writeup). Called from setup_script_exports and load_ac2game_dta (both already matched) to register every script-visible global symbol -- already correctly named via linker symbol but never given its own dedicated matches.json entry until now."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "GetGUIObectAt",
+    "new_name": "GetGUIObjectAt",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 16126,
+    "confidence": "high",
+    "evidence": "TYPO CORRECTION (this round): the live IDB's own label, GetGUIObectAt, is missing the 'j' -- checked against the reference acwin.map directly ('?GetGUIObjectAt@@YAHHH@Z' at 0001:00088e40, correctly spelled), confirming the pre-existing IDB name (inherited from before this project's own tracking began) was simply a typo, not a wrong-identity mislabel like VALIDATE_STRING's own correction -- the underlying function identity was already correct. int GetGUIObjectAt(int,int) at AC.CPP:16126+ matches closely: calls GetGUIAt(xx,yy) (already matched) first; if -1, returns -1; otherwise scales xx/yy by the resolution multiplier, temporarily substitutes them into the shared mousex/mousey globals (dword_5358CC/D0, already established), calls an unnamed per-GUI control-hit-test helper (sub_407A27, plausibly GUIMain's own find-control-under-mouse method, not independently confirmed or renamed this round) against guis[idx] (dword_52312C, already established, 0x184-byte stride), then restores mousex/mousey before returning -- a classic reuse-the-mouse-position-hit-test-code-with-a-substituted-position trick. Renamed in the IDB to match the correct spelling."
   }
 ]

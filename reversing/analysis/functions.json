@@ -1540,7 +1540,7 @@
   "is_named": true
  },
  {
-  "name": "GetGUIObectAt",
+  "name": "GetGUIObjectAt",
   "addr_hint": null,
   "is_named": true
  },

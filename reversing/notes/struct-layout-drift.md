@@ -11779,3 +11779,23 @@ it had already been cited by name in other functions' evidence text
 (`get_palette_range`'s own entry, etc.) but never given its own
 dedicated record, another "documented in passing, never formalized"
 gap now closed.
+
+### platform_DisplayAlert/scAdd_External_Symbol get entries; a small IDB typo (GetGUIObectAt) fixed
+
+`platform_DisplayAlert` (cited by name in dozens of other functions'
+evidence text this session but never given its own record) matches
+`AGSWin32::DisplayAlert` (`acplwin.cpp:585-592`) closely -- but passes
+a literal `MB_ICONINFORMATION`(0x40) where source uses `MB_ICONEXCLAMATION`
+(0x30) -- a real, confirmed icon-choice drift, not just cosmetic.
+`scAdd_External_Symbol` is decisively identified via its own defining
+macro (`#define scAdd_External_Symbol ccAddExternalSymbol`,
+`AC.CPP:24236`) -- a thin wrapper around the already-matched
+`SystemImports::add`.
+
+Separately: `GetGUIObectAt`'s own IDB label turned out to be missing a
+'j' -- checked directly against the reference `acwin.map` (`?
+GetGUIObjectAt@@YAHHH@Z`, correctly spelled there), confirming this was
+a plain typo inherited from before this project's own tracking began,
+not a wrong-identity mislabel like `VALIDATE_STRING`'s own earlier
+correction -- the underlying function identity was already right.
+Renamed to the correct spelling.
