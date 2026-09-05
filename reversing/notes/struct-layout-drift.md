@@ -12386,3 +12386,35 @@ and the final six-call cleanup sequence (`ctrltbox`,`ctrltex1`,
 `ctrllist`,`ctrlok`,`ctrlcancel`,then `CSCIEraseWindow`) both match
 source's exact order with zero drift. This function has no remaining
 unexamined branches.
+
+### SELF-CORRECTION: preparesavegamelist's own "raw CRT vs Allegro" claim was wrong
+
+Naming the three helper functions `preparesavegamelist`/
+`ListBoxSaveGameList` share (`sub_41A356`/`sub_41A3DA`/`sub_41A3B4`)
+overturns a claim made in `preparesavegamelist`'s own entry just two
+rounds ago. Reading all three bodies in full shows they ARE Allegro's
+own `al_findfirst`/`al_findnext`/`al_findclose` -- just a genuinely
+older/simpler implementation than the `allegro-4.2.2` reference tree's
+own version (`libsrc/allegro-4.2.2/src/win/wfile.c:149-201`, which
+mallocs an `FF_DATA` struct and handles Unicode paths). This build's
+own version calls the raw CRT `_findfirst`/`_findnext`/`_findclose`
+internally (an entirely normal implementation strategy for
+`al_findfirst` on Windows -- 4.2.2's own version does exactly the same
+thing internally), copies just `.name`/a time value into the caller's
+`al_ffblk`-shaped struct via a single shared global `_finddata_t`
+buffer, and ignores the `attrib` argument entirely (both callers pass
+0 anyway) -- consistent with this 2002 binary linking a much older
+Allegro version than the 4.2.2 reference tree, per this project's own
+standing caution about that tree.
+
+This means `preparesavegamelist` carries NO "raw CRT instead of
+Allegro" drift after all -- it correctly uses Allegro's own wrapper,
+matching source's architecture. **That drift claim, and the direct
+comparison drawn to `ListBoxDirList`'s own entry, was the actual
+mistake** -- `ListBoxDirList`'s own SEPARATE, independently-confirmed
+call site really does call the raw CRT `_findfirst` directly, with
+no `al_findfirst` wrapper in between at all, so ITS finding stands
+completely unchanged; the two functions were wrongly treated as the
+same case. Corrected in place on `preparesavegamelist`'s own entry,
+old evidence kept visible per this project's usual retraction
+convention.

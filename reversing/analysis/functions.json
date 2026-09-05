@@ -1920,19 +1920,19 @@
   "is_named": true
  },
  {
-  "name": "sub_41A356",
+  "name": "al_findfirst",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_41A3B4",
+  "name": "al_findclose",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_41A3DA",
+  "name": "al_findnext",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "ListBoxSaveGameList",

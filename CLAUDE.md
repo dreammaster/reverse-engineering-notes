@@ -3586,12 +3586,17 @@ disassembly work.
   `saveGameDirectory` prefix or `saveGameSuffix` appended — the same
   missing-directory-prefix pattern already confirmed for `FileOpen`,
   now found a second, independent time. `preparesavegamelist` matches
-  closely too, but uses raw CRT `_findfirst`/`_findnext`/`_findclose`
-  instead of Allegro's `al_find*` wrappers (the same drift already
-  found for `ListBoxDirList`), and reads a save's description via
-  direct `fopen`/`fseek`/`fgetc`/`fclose` rather than calling the
-  shared `load_game()`. Its trailing date-order bubble sort matches
-  source exactly.
+  closely too, and reads a save's description via direct `fopen`/
+  `fseek`/`fgetc`/`fclose` rather than calling the shared `load_game()`.
+  Its trailing date-order bubble sort matches source exactly. **SELF-
+  CORRECTION**: an earlier version of this bullet claimed
+  `preparesavegamelist` uses raw CRT `_findfirst`/`_findnext`/
+  `_findclose` instead of Allegro's `al_find*` wrappers, the same
+  drift as `ListBoxDirList` — wrong. Naming its three helper functions
+  shows they ARE Allegro's own `al_findfirst`/`al_findnext`/
+  `al_findclose`, just an older/simpler implementation than the 4.2.2
+  reference tree. `ListBoxDirList`'s own separate finding (it really
+  does call raw `_findfirst` directly) is unaffected and still stands.
 - **`savegamedialog` closes completely, finding the same missing-
   directory-prefix drift twice more.** `SaveGameDialog`'s own dialog-
   invocation call site, now traced end to end: the header, the nested

@@ -25008,6 +25008,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X41A349);
 	op_stkvar	(x,	1);
 	create_insn	(0X41A356);
+	set_name	(0X41A356,	"al_findfirst");
 	create_insn	(x=0X41A35A);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -25037,10 +25038,12 @@ static Bytes_4(void) {
 	create_insn	(x=0X41A3AB);
 	op_hex		(x,	1);
 	create_insn	(0X41A3B4);
+	set_name	(0X41A3B4,	"al_findclose");
 	set_cmt	(0X41A3C5,	"FindHandle",	0);
 	create_insn	(x=0X41A3CB);
 	op_hex		(x,	1);
 	create_insn	(0X41A3DA);
+	set_name	(0X41A3DA,	"al_findnext");
 	create_insn	(x=0X41A3DE);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -29136,12 +29139,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X41E389,	"ElementSize",	0);
 	set_cmt	(0X41E393,	"Buffer",	0);
-	create_insn	(x=0X41E399);
-	op_hex		(x,	1);
-	set_cmt	(0X41E3D7,	"Block",	0);
-	create_insn	(x=0X41E3DD);
-	op_hex		(x,	1);
-	set_cmt	(0X41E3EE,	"Size",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29151,6 +29148,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X41E399);
+	op_hex		(x,	1);
+	set_cmt	(0X41E3D7,	"Block",	0);
+	create_insn	(x=0X41E3DD);
+	op_hex		(x,	1);
+	set_cmt	(0X41E3EE,	"Size",	0);
 	create_insn	(x=0X41E3F4);
 	op_hex		(x,	1);
 	set_cmt	(0X41E40E,	"Size",	0);
@@ -34829,11 +34832,6 @@ static Bytes_5(void) {
 	create_insn	(x=0X422D6D);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X422D77);
-	op_hex		(x,	1);
-	create_insn	(x=0X422D7E);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -34843,6 +34841,11 @@ static Bytes_6(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X422D77);
+	op_hex		(x,	1);
+	create_insn	(x=0X422D7E);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X422D88);
 	op_hex		(x,	1);
 	set_cmt	(0X422D95,	"passw",	0);
@@ -40666,10 +40669,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42869F);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4286AB);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4286AE);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40679,6 +40678,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4286AB);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4286AE);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4286B8);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4286C1);
@@ -46213,10 +46216,6 @@ static Bytes_7(void) {
 	create_insn	(0X42D83F);
 	create_insn	(x=0X42D848);
 	op_hex		(x,	1);
-	create_insn	(0X42D853);
-	create_insn	(x=0X42D85C);
-	op_hex		(x,	1);
-	create_insn	(0X42D861);
 }
 
 //------------------------------------------------------------------------
@@ -46226,6 +46225,10 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(0X42D853);
+	create_insn	(x=0X42D85C);
+	op_hex		(x,	1);
+	create_insn	(0X42D861);
 	create_insn	(x=0X42D864);
 	op_hex		(x,	1);
 	create_insn	(x=0X42D877);
@@ -52421,10 +52424,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X433262);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X433268);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43327D);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52434,6 +52433,10 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X433268);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43327D);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43328F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X433294);
@@ -157378,15 +157381,18 @@ static Functions_5(void) {
 	define_local_var(0X41A32F, 0X41A356, "[bp+0X10]", "newsel");
 	add_func    (0X41A356,0X41A3B4);
 	set_func_flags(0X41A356,0x5410);
-	SetType(0X41A356, "int __cdecl sub_41A356(int, char *Destination);");
+	SetType(0X41A356, "int __cdecl al_findfirst(int, char *Destination);");
+	set_func_cmt(0X41A356,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wfile.c\nconfidence: high\nevidence: al_findfirst(const char*pattern,struct al_ffblk*info,int attrib) -- Allegro's public directory-search-start API. This build's own implementation is a much simpler predecessor of the 4.2.2 reference (wfile.c:149-201, which mallocs an FF_DATA struct and handles Unicode paths): calls the raw CRT _findfirst directly into a single shared global _finddata_t-shaped buffer (unk_4D30A8), stores the handle in a shared global FindHandle, and on success copies just two fields into the caller-supplied al_ffblk (Destination): .name (strcpy from the finddata buffer's own name field) and a time value (dword_4D30B4, matching _finddata_t.time_write) into Destination+0x100. The attrib argument is accepted but never read (both of this build's own callers, preparesavegamelist and ListBoxSaveGameList's own ListBox_FillSaveGameList-equivalent, pass 0). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro'" "s own public API surface; its own internal _findfirst/_finddata_t usage not chased further. Called", 1);
 	set_frame_size(0X41A356, 0X4, 4, 0);
 	define_local_var(0X41A356, 0X41A3B4, "[bp+0XC]", "Destination");
 	add_func    (0X41A3B4,0X41A3DA);
 	set_func_flags(0X41A3B4,0x5410);
+	set_func_cmt(0X41A3B4,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wfile.c\nconfidence: high\nevidence: al_findclose(struct al_ffblk*info) -- Allegro's public directory-search-cleanup API: checks the shared global FindHandle!=-1, calls the raw CRT _findclose if so, then resets FindHandle to -1 unconditionally. THIRD-PARTY LIBRARY BOUNDARY, not chased further internally. Called from al_findnext's own failure path and directly from preparesavegamelist/ListBoxSaveGameList after their own search loops end.", 1);
 	set_frame_size(0X41A3B4, 0, 4, 0);
 	add_func    (0X41A3DA,0X41A437);
 	set_func_flags(0X41A3DA,0x5410);
-	SetType(0X41A3DA, "int __cdecl sub_41A3DA(char *Destination);");
+	SetType(0X41A3DA, "int __cdecl al_findnext(char *Destination);");
+	set_func_cmt(0X41A3DA,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wfile.c\nconfidence: high\nevidence: al_findnext(struct al_ffblk*info) -- Allegro's public directory-search-continue API, mirroring al_findfirst's own structure exactly (this round's own new match): raw CRT _findnext into the same shared global _finddata_t buffer/FindHandle, copying the same two fields (.name/.time_write-equivalent) into Destination on success, and calling al_findclose (this round's own new match) to clean up the handle on failure/end-of-search. THIRD-PARTY LIBRARY BOUNDARY, not chased further internally.", 1);
 	set_frame_size(0X41A3DA, 0X4, 4, 0);
 	define_local_var(0X41A3DA, 0X41A437, "[bp+0X8]", "Destination");
 	add_func    (0X41A437,0X41A6ED);
@@ -157770,6 +157776,10 @@ static Functions_5(void) {
 	set_frame_size(0X41C4BD, 0, 4, 0X8);
 	define_local_var(0X41C4BD, 0X41C4EF, "[bp+0X8]", "offsx");
 	define_local_var(0X41C4BD, 0X41C4EF, "[bp+0XC]", "offsy");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41C4EF,0X41C4FD);
 	set_func_flags(0X41C4EF,0x5410);
 	SetType(0X41C4EF, "void ReleaseViewport(void);");
@@ -157785,10 +157795,6 @@ static Functions_5(void) {
 	SetType(0X41C50E, "int GetViewportY(void);");
 	set_func_cmt(0X41C50E,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"return divide_down_coordinate(offsety);\" exactly, the same inlined-division pattern as GetViewportX's own entry.", 1);
 	set_frame_size(0X41C50E, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41C51F,0X41C572);
 	set_func_flags(0X41C51F,0x5410);
 	SetType(0X41C51F, "void __stdcall SetBackgroundFrame(int frnum);");
@@ -158281,6 +158287,10 @@ static Functions_6(void) {
 	set_func_flags(0X4247D0,0x5410);
 	set_func_cmt(0X4247D0,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: PolyPoints::PolyPoints() default constructor at acroom.h:264. Called as the per-element callback for RoomStruct.wallpoints[15]'s own C++ array-of-objects default-construction (ElementSize=0xF4(244)/Count=0xF(15), see roomstruct__roomstruct's own entry -- matching wallpoints[]'s already-confirmed address/stride/capacity from load_main_block's fread evidence exactly, a second independent confirmation of the same). Entire body is a single 4-byte write, \"[this+0xF0]=0\", matching source's \"PolyPoints() { numpoints = 0; }\" (acroom.h:264) exactly -- directly confirms PolyPoints.numpoints@+0xF0, the one field this struct's own runtime-side (fread-only) evidence could not independently pin down (walkable-area polygon vertex data being purely an AGS-editor concern with zero Engine/ usage). See the new PolyPoints struct in apply_structs.py for the complete writeup.", 1);
 	set_frame_size(0X4247D0, 0X4, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X4247F0,0X424806);
 	set_func_flags(0X4247F0,0x5410);
 	set_frame_size(0X4247F0, 0X4, 4, 0);
@@ -158310,10 +158320,6 @@ static Functions_6(void) {
 	set_func_flags(0X424A00,0x5410);
 	set_func_cmt(0X424A00,	"[reversing] confirmed match\nsource: Common/acruntim.h\nconfidence: high\nevidence: ExecutingScript::init(), the AGS-style zero-initializer called on every scripts[] slot before it is (re)used (the flat-C++-member-function naming convention used throughout this project for this build's __thiscall class methods -- see FLAT_CPP_NAMES in extract_prototypes.py). Body is exactly 8 field-initialization writes through `this` (ecx), in struct-offset order, and matches every field independently confirmed elsewhere in ExecutingScript (see the merged evidence on the post_script_cleanup/sub_409B1A entry for the full derivation of each field's role): [this+0x00]=0 (inst), [this+0x68]=0 (forked), [this+0x60]=0 (numanother), [this+0x04]=-1 (newnum), [this+0x08]=0 (invscreen-flag), [this+0x0C]=-1 (ooo / pending restore-game slot), [this+0x10]=-1 (dlgnum), [this+0x64]=0 (pending restart-game flag). This is the clinching cross-confirmation for the whole struct: an independent constructor-style function that touches precisely the" " same 8 offsets the usage-site analysis found, in the same order, with s", 1);
 	set_frame_size(0X424A00, 0X4, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X424A60,0X424A7F);
 	set_func_flags(0X424A60,0x5410);
 	set_frame_size(0X424A60, 0X4, 4, 0);
@@ -158759,6 +158765,10 @@ static Functions_7(void) {
 	set_frame_size(0X429BB0, 0, 4, 0);
 	define_local_var(0X429BB0, 0X429C9A, "[bp+0X8]", "Buffer");
 	define_local_var(0X429BB0, 0X429C9A, "[bp+0XC]", "Stream");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X429C9A,0X42A0FE);
 	set_func_flags(0X429C9A,0x5410);
 	SetType(0X429C9A, "int __stdcall csetlib(char *namm, char *passw);");
@@ -158777,10 +158787,6 @@ static Functions_7(void) {
 	set_func_cmt(0X42A0FE,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: int clibfindindex(char*fill) at Clib32.cpp:375-386: \"if(lib_file_name[0]==' ') return -1; for(bb=0;bb<mflib.num_files;bb++) if(stricmp(mflib.filenames[bb],fill)==0) return bb; return -1;\". Exact match: the leading lib_file_name[0]==' ' guard, the mflib_num_files-bounded loop, and a _stricmp(mflib_filenames[bb*STRIDE],fill) call all line up. MAJOR STRUCT FINDING: STRIDE is confirmed as 0x19(25) bytes here (\"imul ecx,19h; add ecx,offset mflib_filenames\"), matching the OLD `MultiFileLib.filenames[MAX_FILES][25]` declaration (Clib32.cpp:57) exactly -- NOT 2011's live `MultiFileLibNew.filenames[MAX_FILES][100]` (Clib32.cpp:68, 100-byte stride). This build's live `mflib` global is declared as the OLD, smaller struct directly -- see csetlib's own entry for the complete architectural writeup (only lib_version 6/10 supported, no old-to-new-format conversion step exists because there's no 'new' format to convert to here).", 1);
 	set_frame_size(0X42A0FE, 0X4, 4, 0);
 	define_local_var(0X42A0FE, 0X42A15B, "[bp+0X8]", "String2");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42A15B,0X42A187);
 	set_func_flags(0X42A15B,0x5410);
 	SetType(0X42A15B, "int __stdcall clibfilesize(char *fill);");
@@ -159473,6 +159479,10 @@ static Functions_8(void) {
 	add_func    (0X434920,0X434965);
 	set_func_flags(0X434920,0x5400);
 	set_frame_size(0X434920, 0, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X434970,0X434AB6);
 	set_func_flags(0X434970,0x5400);
 	set_func_cmt(0X434970,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/allegro.c\nconfidence: high\nevidence: void al_assert(AL_CONST char *file, int line) at src/allegro.c:579. Exact match: sprintf(buf, \"Assert failed at line %d of %s\", line, file) using the matched string aAssertFailedAt, then getenv(\"ALLEGRO_ASSERT\") using the matched string aAllegroAssert, fopen(s,\"w\") if set. Calls _add_exit_func(sub_434AC0) -- matches source's \"_add_exit_func(debug_exit, \\\"debug_exit\\\");\" (single-arg call here vs source's two-arg call -- the debug-name string argument appears to be compiled out or absent in this build's _add_exit_func signature; not further investigated). This directly resolves the caller cited by _add_exit_func's own \"CODE XREF: sub_434970+A6\" comment from earlier this session.", 1);
@@ -159501,10 +159511,6 @@ static Functions_8(void) {
 	SetType(0X434C30, "void __cdecl operator_delete(size_t Size);");
 	set_frame_size(0X434C30, 0, 0, 0);
 	define_local_var(0X434C30, 0X434C3F, "[bp+0X4]", "Size");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X434C80,0X434C81);
 	set_func_flags(0X434C80,0x5400);
 	set_frame_size(0X434C80, 0, 0, 0);
@@ -161080,6 +161086,10 @@ static Functions_9(void) {
 	set_func_flags(0X4577C0,0x5400);
 	set_func_cmt(0X4577C0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mouse.obj\nconfidence: high\nevidence: Allegro library function, confirmed via refmap_symbols.json exact match (_position_mouse, alleg_s_crt:mouse.obj). Called from msetgraphpos (matched above), matching Common/MOUSEW32.CPP:256 exactly.", 1);
 	set_frame_size(0X4577C0, 0X4, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X457850,0X4578A9);
 	set_func_flags(0X457850,0x5400);
 	set_func_cmt(0X457850,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mouse.obj\nconfidence: high\nevidence: Allegro library function, confirmed via refmap_symbols.json exact match (_set_mouse_range, alleg_s_crt:mouse.obj). Called from mgraphconfine (matched above), matching Common/MOUSEW32.CPP:84 exactly.", 1);
@@ -161155,10 +161165,6 @@ static Functions_9(void) {
 	add_func    (0X45A560,0X45A5CA);
 	set_func_flags(0X45A560,0x5410);
 	set_frame_size(0X45A560, 0XC, 4, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X45A5D0,0X45A65C);
 	set_func_flags(0X45A5D0,0x5410);
 	set_frame_size(0X45A5D0, 0XC, 4, 0);
@@ -163158,6 +163164,10 @@ static Functions_10(void) {
 	add_func    (0X48A350,0X48A510);
 	set_func_flags(0X48A350,0x5400);
 	set_frame_size(0X48A350, 0X14, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X48A510,0X48A67F);
 	set_func_flags(0X48A510,0x5400);
 	set_frame_size(0X48A510, 0X10, 0, 0);
@@ -163273,10 +163283,6 @@ static Functions_10(void) {
 	add_func    (0X48BCD0,0X48BD20);
 	set_func_flags(0X48BCD0,0x5400);
 	set_frame_size(0X48BCD0, 0X8, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X48BD20,0X48BDA4);
 	set_func_flags(0X48BD20,0x5400);
 	set_frame_size(0X48BD20, 0XC, 0, 0);
