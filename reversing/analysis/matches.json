@@ -327,7 +327,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- a substantial function, compared against source's quit(char*) at AC.CPP:9213-9382): this build's quit() is a drastically simpler predecessor, missing nearly ALL of 2011's engine-shutdown elaboration -- CONFIRMED ABSENT: editor_debugging_initialized/send_exception_to_editor/send_message_to_editor (no editor-debugger protocol at all), ccUnregisterAllObjects(), platform->AboutToQuitGame()/platform->ShutdownPlugins() (no plugin system, no platform abstraction layer), the dynamic-sprite-leak-detection loop, close_translation(), gfxDriver->UnInit()/delete gfxDriver (predates gfxDriver entirely, consistent with every other rendering-pipeline finding this project has made), platform->PostAllegroExit(), the roomstats[]/troom post-exit memset, and write_log_debug(\"***** ENGINE HAS SHUTDOWN\"). What IS present, matching source closely: the CD-audio/MIDI/MOD/sound shutdown sequence (CDAudio/cd_exit/scr_StopMusic/mod-player-stop, all already matched), an inlined message-classification block matching source's !/|/% prefix dispatch (\"Abort key pressed\"/\"An error has occured...\"/\"An internal error has occured...\" strings all match verbatim), set_gfx_mode, allegro_exit(), and a final ~ac*.tmp temp-file cleanup + exit(3). FOUR further confirmed drifts: (1) Debugger::CloseDebugger (a mangled C++ static method) is called UNCONDITIONALLY here, where 2011's equivalent (editor_debugger->Shutdown()) is gated behind editor_debugging_initialized -- a real, differently-structured debugger integration, not simply absent. (2) set_gfx_mode(GFX_TEXT,80,25,0,0) -- matching Allegro's own GFX_TEXT=-1 constant exactly for the first argument, but passing literal classic-text-mode dimensions (80x25) for width/height where 2011 passes 0,0. (3) The temp-file cleanup uses raw CRT _findfirst/_findnext/_findclose/_unlink instead of Allegro's own al_findfirst/al_findnext/al_findclose/unlink wrappers -- a THIRD independent instance of the same raw-CRT-vs-Allegro-wrapper drift already found in ListBoxDirList's own entry. (4) An extra, ADDITIONAL cleanup step not present in 2011 at all: _unlink(\"agssave.999\") -- deleting the restart-point save slot (matching RESTART_POINT_SAVE_GAME_NUMBER=999, already confirmed via RestartGame's own entry) on every engine shutdown -- a rare case in this project of a 2002 feature REMOVED by 2011, rather than a later addition. ARCHITECTURAL FINDING: this build's own inlined \"(%s script line %d)\\n\" error-context formatter (matching that exact literal string) distinguishes the currently-executing script instance as \"Global\"/\"Room %d\"/\"Unknown\" by comparing ccGetCurrentInstance()'s own +0x9A4 field (a new, plausible ccInstance tail field -- this struct's own confirmed 0x9A8 total size leaves exactly this one dword unaccounted for right after the confirmed line_number@+0x9A0) against two globals, dword_523130 (\"Global\" match) and dword_523080 (\"Room %d\" match, formatted with newnum -- and independently also read by load_new_room to gate calling compile_room_script(), consistent with being the room's own compiled script identity). This is DECISIVELY a much simpler predecessor of 2011's get_cur_script()/ccGetCallStack() (AC.CPP:1316-1323) -- consistent with, and independently reinforcing from a second, unrelated code path, this project's earlier finding that this build's interpreter uses native C recursion with no callStackLineNumber/callStackAddr array at all (see csrun-interpreter-evolution.md) -- there is no real call-stack walk here, just a single current-instance identity check. dword_523130/dword_523080's own precise identities (plausibly gamescript/a room-script-identity global, given their adjacency/role) are left as an open lead for a future round, not independently confirmed by name."
   },
   {
     "kind": "function",
@@ -517,7 +517,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"if((newval<0)||(newval>3)) quit(\\\"!SetSkipSpeech: invalid skip mode specified\\\"); play.cant_skip_speech=newval;\" (AC.CPP:14050-14054) -- the [0,3] bounds check and the direct write to the already-confirmed cant_skip_speech global both match exactly."
   },
   {
     "kind": "function",
@@ -1207,7 +1207,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to source's \"if(dialog){setup_for_dialog(); rcode=quitdialog(); restore_after_dialog(); if(rcode==0) return;} quit(\\\"|You have exited.\\\");\" (AC.CPP:17989-17997) -- setup_for_dialog/restore_after_dialog (both already matched) bracket a call to sub_426E8E, decisively identified this round as quitdialog (see its own new entry) via an exact match on its literal MSG_QUITBUTTON/MSG_PLAYBUTTON/MSG_QUITDIALOG (993/994/995, 0x3E1/0x3E2/0x3E3) constants."
   },
   {
     "kind": "function",
@@ -6169,5 +6169,77 @@
     "source_line": 18279,
     "confidence": "high",
     "evidence": "void check_strlen(char *ptt) at AC.CPP:18279-18285 -- a CORRECTED, decisive match. This function was previously auto-named `VALIDATE_STRING` (a pre-existing, misleading label from before this project's own tracking began -- 2011's actual VALIDATE_STRING is a MACRO, `#define VALIDATE_STRING(strin) if((unsigned long)strin<=4096) quit(\"!String argument was null...\");`, AC.CPP:1750, inlined at every call site, not a real function). Reading this function's own body shows it is decisively check_strlen instead: \"MAXSTRLEN=200(0xC8, matching MAX_MAXSTRLEN=200, Common/acruntim.h:20, with zero drift); charstart=game_chars; charend=charstart+numcharacters*0x140(CharacterInfo's own already-confirmed 320-byte size, exact match); if(ptt>=charstart && ptt<=charend) MAXSTRLEN=30;\" -- matches source's \"MAXSTRLEN=MAX_MAXSTRLEN; charstart=&game.chars[0]; charend=charstart+sizeof(CharacterInfo)*game.numcharacters; if((ptt>=charstart)&&(ptt<=charend)) MAXSTRLEN=30;\" instruction for instruction. Renamed accordingly; the global `Count` (this function's own generic auto-name, also a local-variable-name collision elsewhere) is `MAXSTRLEN` itself. This build has NO separate VALIDATE_STRING function or macro-equivalent reusable helper -- callers that need that specific null/range check (see _sc_strlower/_sc_strupper's own entries) do it with their own inline code instead."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_426E8E",
+    "new_name": "quitdialog",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": 1276,
+    "confidence": "high",
+    "evidence": "int quitdialog() at acdialog.cpp:1276-1282: \"strcpy(quitbut,get_global_message(MSG_QUITBUTTON)); strcpy(playbut,get_global_message(MSG_PLAYBUTTON)); return myscimessagebox(get_global_message(MSG_QUITDIALOG),quitbut,playbut);\". Decisive, exact match: three calls to sub_4152D4 (this round's new match, get_global_message) with literal arguments 0x3E1/0x3E2/0x3E3 (993/994/995), matching MSG_QUITBUTTON/MSG_PLAYBUTTON/MSG_QUITDIALOG (Engine/acdialog.h:50-52) exactly, followed by a call to sub_426D80 (this round's new match, myscimessagebox) with the three resulting strings in the same order. Called from QuitGame (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4152D4",
+    "new_name": "get_global_message",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 14243,
+    "confidence": "high",
+    "evidence": "char *get_global_message(int msnum) at AC.CPP:14243-14247: \"if (game.messages[msnum-500]==NULL) return \\\"\\\"; return get_translation(game.messages[msnum-500]);\". This build's version reads dword_51CB50[msnum*4] -- the same compiler-folded-base address (base-500*4) already established for messages[500] via DisplayMessage's own entry -- matching game.messages[msnum-500] exactly. REAL DRIFT: returns the literal string \"nomsg\" instead of \"\" when the message is null, and CONFIRMED ABSENT: the get_translation() call entirely -- this build returns the raw message pointer directly with no translation-lookup step, unlike source. Called from quitdialog (this round's new match) with literal message-ID constants confirming the identification (see quitdialog's own entry)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_426D80",
+    "new_name": "myscimessagebox",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": 1240,
+    "confidence": "high",
+    "evidence": "int myscimessagebox(char*lpprompt,char*btn1,char*btn2) at acdialog.cpp:1240-1274. A complete, fully decisive, zero-drift match -- every single literal constant checks out exactly: CSCIDrawWindow(80,80,240-80,120-80)=CSCIDrawWindow(80,80,160,40) matches this round's new sub_425836 call with args (80,80,160,40) exactly; CSCICreateControl(CNT_LABEL=3,90,85,150,0,lpprompt) matches sub_425D18's first call exactly (Engine/acdialog.h:118-120: CNT_PUSHBUTTON=1, CNT_LABEL=3); the btflag OR-in logic (\"btflag|=CNF_DEFAULT|CNF_CANCEL\" if btn2==NULL else \"btflag|=CNF_DEFAULT\") matches the disasm's byte-level or ch,3 / or dh,1 on a btflag initialized to 1(CNT_PUSHBUTTON) exactly, given CNF_DEFAULT=0x100/CNF_CANCEL=0x200 (acdialog.h:123-124); CSCICreateControl(btflag,90,105,60,10,btn1) and the conditional CSCICreateControl(CNT_PUSHBUTTON|CNF_CANCEL=0x201,165,105,60,10,btn2) both match sub_425D18's remaining two calls exactly. The CSCIWaitMessage loop (\"do{CSCIWaitMessage(&smes);}while(smes.code!=CM_COMMAND);\", CM_COMMAND=1, acdialog.h:127) matches sub_425AF7's call and the dword_5235C8(smes.code)/dword_5235CC(smes.id) 2-field layout exactly (SCIMESSAGE declared as {int code; int id;}, acdialog.h:174-175). The cleanup (CSCIDeleteControl x3 via sub_425FC7, CSCIEraseWindow via sub_425988) and final \"return (smes.id==btnQuit)?1:0;\" both match exactly. This round also newly identifies sub_425836=CSCIDrawWindow, sub_425D18=CSCICreateControl, sub_425AF7=CSCIWaitMessage, sub_425FC7=CSCIDeleteControl, sub_425988=CSCIEraseWindow via this call-signature/literal-argument evidence (their own internal bodies not independently traced this round -- see their own separate entries)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425836",
+    "new_name": "CSCIDrawWindow",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425D18",
+    "new_name": "CSCICreateControl",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "int CSCICreateControl(int,int,int,int,int,char*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox (this round's new match), each with literal CNT_*/CNF_* flag combinations matching source's three CSCICreateControl calls exactly (see myscimessagebox's own entry for the complete constant-by-constant breakdown) -- identified via call-signature/literal-argument evidence at 3 independent, internally-consistent call sites, medium-high confidence pending a full body trace."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425AF7",
+    "new_name": "CSCIWaitMessage",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "void CSCIWaitMessage(SCIMESSAGE*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox's polling loop (this round's new match) with &smes, matching source's \"CSCIWaitMessage(&smes)\" exactly, with the SCIMESSAGE.code field it's expected to populate (dword_5235C8) independently confirmed via the loop's own exit condition -- medium-high confidence pending a full body trace."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425FC7",
+    "new_name": "CSCIDeleteControl",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "void CSCIDeleteControl(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called 3 times from myscimessagebox's cleanup sequence (this round's new match) with the 3 control handles created earlier in the same function (btnPlay/btnQuit/lbl1), matching source's 3 CSCIDeleteControl calls exactly in both count and argument identity -- medium-high confidence pending a full body trace."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425988",
+    "new_name": "CSCIEraseWindow",
+    "source_file": "Engine/acdialog.cpp",
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace."
   }
 ]

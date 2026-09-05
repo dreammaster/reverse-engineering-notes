@@ -1315,9 +1315,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4152D4",
+  "name": "get_global_message",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "DisplayMessage",
@@ -2995,14 +2995,14 @@
   "is_named": false
  },
  {
-  "name": "sub_425836",
+  "name": "CSCIDrawWindow",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_425988",
+  "name": "CSCIEraseWindow",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_425A22",
@@ -3015,19 +3015,19 @@
   "is_named": false
  },
  {
-  "name": "sub_425AF7",
+  "name": "CSCIWaitMessage",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_425D18",
+  "name": "CSCICreateControl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_425FC7",
+  "name": "CSCIDeleteControl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_425FF6",
@@ -3060,14 +3060,14 @@
   "is_named": false
  },
  {
-  "name": "sub_426D80",
+  "name": "myscimessagebox",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_426E8E",
+  "name": "quitdialog",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_426EF0",

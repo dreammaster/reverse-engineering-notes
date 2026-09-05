@@ -11241,3 +11241,60 @@ automatically when a new walk starts. With the argument hardcoded false
 at every call site in this build, that automatic clear never happens
 here at all — a real, exhaustively-confirmed (not just locally
 observed) behavioral gap, worth flagging for the eventual ScummVM port.
+
+### QuitGame/SetSkipSpeech/quit close, and an 8-function bonus cluster falls out of QuitGame's own call chain
+
+`SetSkipSpeech`/`QuitGame` both close as complete, exact matches against
+`Engine/AC.CPP:14050-17997` -- the former a simple bounds-checked write
+to the already-confirmed `cant_skip_speech` global, the latter a thin
+`setup_for_dialog()`/`?`/`restore_after_dialog()` wrapper whose own
+unnamed `?` call turned into this round's headline find.
+
+That call, `sub_426E8E`, is a complete, decisive, zero-drift match to
+`quitdialog()` (`acdialog.cpp:1276-1282`) -- every literal message-ID
+constant it passes (`0x3E1`/`0x3E2`/`0x3E3`) matches `MSG_QUITBUTTON`/
+`MSG_PLAYBUTTON`/`MSG_QUITDIALOG` (993/994/995, `acdialog.h:50-52`)
+exactly. Following its own two callees closed the whole chain: `sub_
+4152D4` is `get_global_message` (matching `game.messages[msnum-500]`
+via the same base-address-folding trick already established for
+`DisplayMessage`'s own entry -- but CONFIRMED ABSENT here is the
+`get_translation()` call, and the null-message placeholder is the
+literal string `"nomsg"` instead of `""`), and `sub_426D80` is
+`myscimessagebox()` (`acdialog.cpp:1240-1274`) -- an exceptionally
+clean match where literally every constant lines up: `CSCIDrawWindow
+(80,80,160,40)`, `CNT_LABEL=3`/`CNT_PUSHBUTTON=1`, the `CNF_DEFAULT
+(0x100)`/`CNF_CANCEL(0x200)` OR-in logic (matched down to the exact
+byte-level `or ch,3`/`or dh,1` instructions), `CM_COMMAND=1`, and the
+`SCIMESSAGE{code;id;}` two-field struct layout. Five more previously-
+unnamed CSCI-primitive functions fall out of this same call chain by
+call-signature/literal-argument evidence (`CSCIDrawWindow`/
+`CSCICreateControl`/`CSCIWaitMessage`/`CSCIDeleteControl`/
+`CSCIEraseWindow`) -- their own internal bodies not independently
+traced this round, kept at medium-high rather than high confidence.
+
+`quit()` itself (`AC.CPP:9213-9382`) turns out to be a drastically
+simpler predecessor of its already-elaborate 2011 counterpart --
+CONFIRMED ABSENT: the entire editor-debugger protocol, the plugin
+shutdown hooks, `ccUnregisterAllObjects()`, the dynamic-sprite-leak
+check, `gfxDriver` cleanup (consistent with every other rendering-
+pipeline finding this project has made), and the final debug-log line.
+Four further drifts found: `Debugger::CloseDebugger()` is called
+UNCONDITIONALLY here rather than gated behind an editor-debugging flag;
+`set_gfx_mode(GFX_TEXT,80,25,0,0)` passes literal 80x25 text-mode
+dimensions where 2011 passes `0,0`; the temp-file cleanup uses raw CRT
+`_findfirst`/`_findnext`/`_findclose`/`_unlink` instead of Allegro's
+`al_find*` wrappers (a THIRD instance of this exact drift, after
+`ListBoxDirList`); and, notably, this build ADDS a cleanup step 2011
+doesn't have at all -- deleting `"agssave.999"` (the restart-point save
+slot) on every shutdown, a rare case of a 2002 feature later REMOVED
+rather than a later addition. An architectural bonus: this build's own
+inlined "(%s script line %d)\n" error-context formatter identifies the
+running script as "Global"/"Room %d"/"Unknown" via a single current-
+instance identity check against two still-unnamed globals
+(`dword_523130`/`dword_523080`) rather than any real call-stack walk --
+independently reinforcing, from a second unrelated code path, this
+project's earlier finding that this build's interpreter uses native C
+recursion with no `callStackLineNumber`/`callStackAddr` array at all.
+`ccGetCurrentInstance()`'s own struct also picks up a plausible new
+tail field, `+0x9A4`, right after the confirmed `line_number@+0x9A0` --
+not yet named, left as an open lead alongside the two comparison globals.

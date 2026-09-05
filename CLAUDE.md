@@ -3202,6 +3202,21 @@ disassembly work.
   in the disassembly, none ever pass a nonzero value. That argument
   gates automatically clearing a character's custom animation when a
   new walk starts (`acchars.cpp:56-57`) — never happens in this build.
+- **`QuitGame`/`SetSkipSpeech`/`quit` close, with an 8-function bonus
+  cluster falling out of `QuitGame`'s own call chain.** `sub_426E8E` is
+  a decisive, zero-drift match to `quitdialog()` (its literal message-ID
+  constants match `MSG_QUITBUTTON`/`PLAYBUTTON`/`QUITDIALOG` exactly),
+  which in turn names `get_global_message` (CONFIRMED ABSENT: the
+  `get_translation()` call) and `myscimessagebox` — an exceptionally
+  clean match where every `CNT_*`/`CNF_*`/`CM_COMMAND` constant lines
+  up — plus 5 more CSCI-primitive functions by call-signature evidence.
+  `quit()` itself is a drastically simpler predecessor of its already-
+  elaborate 2011 counterpart (no editor-debugger protocol, no plugin
+  hooks, no `gfxDriver` cleanup), with 4 further drifts: an
+  unconditional `Debugger::CloseDebugger()` call, `set_gfx_mode`
+  passing literal 80×25 text-mode dimensions, a third instance of the
+  raw-CRT-vs-Allegro-wrapper drift, and — rare in this project — an
+  ADDED cleanup step (`agssave.999` deletion) 2011 later removed.
 
 ## Third-party library identification (Task #10)
 
