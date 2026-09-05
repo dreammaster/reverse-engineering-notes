@@ -39079,6 +39079,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X427025,	0XB);
 	create_insn	(0X427030);
+	set_name	(0X427030,	"NewControl__NewControl");
 	create_insn	(x=0X427034);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X427037);
@@ -40698,9 +40699,6 @@ static Bytes_6(void) {
 	set_name	(0X4287CB,	"InitRenderToSurface");
 	create_insn	(x=0X4287CE);
 	op_hex		(x,	1);
-	create_insn	(x=0X4287D4);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -40710,6 +40708,9 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4287D4);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X4287D9);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -46260,8 +46261,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DA7F);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42DA83);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46271,6 +46270,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DA83);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42DA87);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42DA8B);
@@ -52462,8 +52463,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X433357);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X433361);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52473,6 +52472,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X433361);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43336A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X433373);
@@ -158571,6 +158572,7 @@ static Functions_7(void) {
 	define_local_var(0X426FC0, 0X427025, "[bp+0X18]", "Source");
 	add_func    (0X427030,0X427055);
 	set_func_flags(0X427030,0x5410);
+	set_func_cmt(0X427030,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: NewControl::NewControl() (the no-arg base constructor, acdialog.h:214-217): \"visible=1; enabled=1;\" -- an exact, zero-drift match. Sets the vtable pointer to off_4AD5E4 (a base/stub vtable, consistent with draw()/pressedon()/processmessage() being pure virtual in this base class) then writes visible@+0x20=1, enabled@+0x21=1 -- confirming NewControl own base layout ends at +0x20/+0x21 (needredraw@+0x22 uninitialized here, matching source leaving it unset in this constructor overload too), consistent with the already-established 0x24-byte total base size. Called from all three known derived-class constructors (PushButton::PushButton, MyListBox::MyListBox, MyLabel::MyLabel, MyTextBox::MyTextBox), each of which supplies x/y/wid/hit itself afterward rather than via NewControl own 4-argument constructor overload -- this build always uses the no-arg base constructor plus derived-class field writes, never the acdialog.h:203-213 4-arg ov" "erload.", 1);
 	set_frame_size(0X427030, 0X4, 4, 0);
 	add_func    (0X427060,0X42728B);
 	set_func_flags(0X427060,0x5410);
@@ -158580,7 +158582,7 @@ static Functions_7(void) {
 	set_frame_size(0X427290, 0X8, 4, 0);
 	add_func    (0X427340,0X4273D7);
 	set_func_flags(0X427340,0x5410);
-	set_func_cmt(0X427340,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::MyListBox(int,int,int,int) -- the CSCI dialog system's listbox control constructor, called from CSCICreateControl (already matched) as \"new MyListBox(xx,yy,wii,hii);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/hii) immediately following an operator new(0x84) allocation. That allocation size also confirms this build's own MyListBox.itemnames[] capacity at 20 entries vs. 2011's declared MAXLISTITEM=300 -- see CSCICreateControl's own entry for the full arithmetic. Own body (field inits plus source's TEXT_HT-based height-rounding logic) not independently traced this round -- named by call-site/allocation-shape evidence only.", 1);
+	set_func_cmt(0X427340,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::MyListBox(int,int,int,int) -- the CSCI dialog system's listbox control constructor, called from CSCICreateControl (already matched) as \"new MyListBox(xx,yy,wii,hii);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/hii) immediately following an operator new(0x84) allocation. That allocation size also confirms this build's own MyListBox.itemnames[] capacity at 20 entries vs. 2011's declared MAXLISTITEM=300 -- see CSCICreateControl's own entry for the full arithmetic. Own body (field inits plus source's TEXT_HT-based height-rounding logic) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:331-342): calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD5F0), then x@+4/y@+8/wid@+0xC/hit@+0x10 all written directly from arguments -- mat" "ching NewControl own confirmed field layout exactly. \"hit -= (hit-4) % T", 1);
 	set_frame_size(0X427340, 0X4, 4, 0X10);
 	add_func    (0X4273E0,0X4277ED);
 	set_func_flags(0X4273E0,0x5410);
@@ -158608,7 +158610,7 @@ static Functions_7(void) {
 	add_func    (0X427C50,0X427CAB);
 	set_func_flags(0X427C50,0x5410);
 	SetType(0X427C50, "int __stdcall MyLabel__MyLabel(int, int, int, char *Source);");
-	set_func_cmt(0X427C50,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyLabel::MyLabel(int,int,int,char*) -- the CSCI dialog system's label control constructor, called from CSCICreateControl (already matched) as \"new MyLabel(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x74) allocation. Own body (a strncpy(text,tee,150) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only.", 1);
+	set_func_cmt(0X427C50,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyLabel::MyLabel(int,int,int,char*) -- the CSCI dialog system's label control constructor, called from CSCICreateControl (already matched) as \"new MyLabel(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x74) allocation. Own body (a strncpy(text,tee,150) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:500-508): calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD5FC), then x@+4/y@+8/wid@+0xC all written directly from arguments, and hit@+0x10=dword_5230C0 (TEXT_HT) matches \"hit = TEXT_HT;\" exactly. REAL DRIFT, CONFIRMED ABSENT: source own \"strncpy(text,tee,150); text[149]=0;\" (bounded copy plus explicit null-termination) is NOT what this build does -- it cal" "ls a plain, unbounded strcpy(text, tee) into the same 150-byte text[] bu", 1);
 	set_frame_size(0X427C50, 0X4, 4, 0X10);
 	define_local_var(0X427C50, 0X427CAB, "[bp+0X14]", "Source");
 	add_func    (0X427CB0,0X427DF5);
@@ -158625,7 +158627,7 @@ static Functions_7(void) {
 	add_func    (0X427E20,0X427E8D);
 	set_func_flags(0X427E20,0x5410);
 	SetType(0X427E20, "int __stdcall MyTextBox__MyTextBox(int, int, int, char *Source);");
-	set_func_cmt(0X427E20,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::MyTextBox(int,int,int,char*) -- the CSCI dialog system's textbox control constructor, called from CSCICreateControl (already matched) as \"new MyTextBox(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x58) allocation. Own body (a NULL-checked strcpy(text,tee) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only.", 1);
+	set_func_cmt(0X427E20,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::MyTextBox(int,int,int,char*) -- the CSCI dialog system's textbox control constructor, called from CSCICreateControl (already matched) as \"new MyTextBox(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x58) allocation. Own body (a NULL-checked strcpy(text,tee) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:563-574): an exact, zero-drift match throughout -- calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD608), then x@+4/y@+8/wid@+0xC written directly from arguments; a NULL-checked branch on the tee argument either calls strcpy(text,tee) (matching source own NULL-checked call exactly, tee!=NULL branch) or writes text[0]=0 (tee==NULL branch); hi" "t@+0x10=dword_5230C0(TEXT_HT)+1 matches \"hit = TEXT_HT + 1;\" exactly. Un", 1);
 	set_frame_size(0X427E20, 0X4, 4, 0X10);
 	define_local_var(0X427E20, 0X427E8D, "[bp+0X14]", "Source");
 	add_func    (0X427E90,0X427FAD);
@@ -158862,6 +158864,10 @@ static Functions_7(void) {
 	set_func_cmt(0X42AAAB,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: Exact string matches within function body span (787-976 in source): \"null pointer passed\" (line 796), \"unresolved import %s\" (871), \"internal fixup index error\" (926). Role matches: instance loader that resolves imports. NEW FIELD EVIDENCE (ccScript struct recovery, found while investigating ccInstance's own unexplored region): the fixup-processing loop confirms ccScript.fixuptypes@+0x18 (char*, read as \"[[scri+0x18]+i]\"), ccScript.fixups@+0x1C (long*, read as \"[[scri+0x1C]+i*4]\"), and ccScript.numfixups@+0x20 (int, the loop bound) -- all three UPGRADED from a single tentative, positional-only \"_pad_18\" guess in an earlier round. The switch on fixup TYPE (1-6) matches 2011's declared FIXUP_* constants (Common/CSCOMP.H:165-170) exactly: case 1 (FIXUP_GLOBALDATA) adds the new instance's globaldata@+0x04 to code[fixups[i]]; case 3 (FIXUP_STRING) adds strings@+0x14; case 4 (FIXUP_IMPORT) resolves via the already-matched SystemImports" "::is_script_import. See reversing/notes/struct-layout-drift.md for the ", 1);
 	set_frame_size(0X42AAAB, 0X20, 4, 0);
 	define_local_var(0X42AAAB, 0X42B00E, "[bp-0X4]", "Block");
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42B026,0X42B039);
 	set_func_flags(0X42B026,0x5410);
 	set_func_cmt(0X42B026,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: ccInstance *ccCreateInstance(ccScript *scri) at CSRUN.CPP:1032 -- a thin wrapper: \"return ccCreateInstanceEx(scri, NULL);\". Disassembly matches exactly: passes its single arg through plus a hardcoded 0/NULL second arg to ccCreateInstanceEx (already matched). Called from load_ac2game_dta (already matched, loading the global script) and compile_room_script (already matched, loading the room script) -- both are exactly where a fresh ccInstance would be created from a freshly-compiled/loaded ccScript.", 1);
@@ -158875,10 +158881,6 @@ static Functions_7(void) {
 	set_func_cmt(0X42B054,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: void ccFreeInstance(ccInstance*) at CSRUN.CPP:1042. RESOLVES an old open lead (see reversing/notes/open-lead-sub_42B054-forked-instance-refcounting.md) originally left unmatched because a suspected refcount decrement did not match 2011's simplified \"if (forked) ccFreeInstance(...)\" cleanup in post_script_cleanup. Found via ccInstance struct-offset recovery work: ccCreateInstanceEx stores the source ccScript* at instance offset +0x9A4 (matching the newly confirmed \"instanceof\" field) and increments that script's own +0x1C4C field (\"instances\"). sub_42B054 does the exact inverse -- \"if (cinst->instanceof != NULL) { cinst->instanceof->instances--; if (...==0) { simp.remove_range(globaldata,globaldatasize); simp.remove_range(code,codesize*4); } }\" matches the disassembly line for line, including the exact field offsets (+4=globaldata, +8=globaldatasize, +0xC=code, +0x10=codesize) and the two calls to a shared helper (sub_42A969, like" "ly simp.remove_range) with those exact argument pairs.", 1);
 	set_frame_size(0X42B054, 0, 4, 0);
 	define_local_var(0X42B054, 0X42B11D, "[bp+0X8]", "Block");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42B11D,0X42B17F);
 	set_func_flags(0X42B11D,0x5410);
 	SetType(0X42B11D, "int __cdecl sub_42B11D(int, char *Str2);");
@@ -159800,6 +159802,10 @@ static Functions_8(void) {
 	add_func    (0X43D010,0X43D14E);
 	set_func_flags(0X43D010,0x5400);
 	set_frame_size(0X43D010, 0X10, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X43D150,0X43D340);
 	set_func_flags(0X43D150,0x5400);
 	set_frame_size(0X43D150, 0X30, 0, 0);
@@ -159841,10 +159847,6 @@ static Functions_8(void) {
 	set_func_flags(0X43E7D0,0x5400);
 	set_func_cmt(0X43E7D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library API function. Called from RawDrawTriangle (already matched) with 8 arguments (bitmap,x1,y1,x2,y2,x3,y3,color) -- an exact match to Allegro's own triangle() signature (declared in libsrc/allegro-4.2.2/include/allegro/draw.h) and to 2011's own call, \"triangle(thisroom.ebscene[play.bg_frame],x1,y1,x2,y2,x3,y3,play.raw_color);\" (AC.CPP:14601). Third-party library boundary call, not chased into Allegro's own internals per this project's scope rule.", 1);
 	set_frame_size(0X43E7D0, 0X28, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X43E860,0X43E89D);
 	set_func_flags(0X43E860,0x5400);
 	set_frame_size(0X43E860, 0, 0, 0);
@@ -161647,6 +161649,10 @@ static Functions_9(void) {
 	add_func    (0X46A480,0X46A664);
 	set_func_flags(0X46A480,0x5400);
 	set_frame_size(0X46A480, 0X18, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X46A670,0X46A737);
 	set_func_flags(0X46A670,0x5400);
 	set_frame_size(0X46A670, 0X24, 0, 0);
@@ -161748,10 +161754,6 @@ static Functions_9(void) {
 	add_func    (0X46BA80,0X46BAAF);
 	set_func_flags(0X46BA80,0x5400);
 	set_frame_size(0X46BA80, 0, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X46BAB0,0X46BAE9);
 	set_func_flags(0X46BAB0,0x5400);
 	set_frame_size(0X46BAB0, 0X8, 0, 0);
@@ -163951,6 +163953,10 @@ static Functions_10(void) {
 	add_func    (0X4985F0,0X4986B1);
 	set_func_flags(0X4985F0,0x5400);
 	set_frame_size(0X4985F0, 0X18, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4986C0,0X498A77);
 	set_func_flags(0X4986C0,0x5400);
 	set_frame_size(0X4986C0, 0X14, 0, 0);
@@ -164053,10 +164059,6 @@ static Functions_10(void) {
 	add_func    (0X49AF50,0X49B09A);
 	set_func_flags(0X49AF50,0x5400);
 	set_frame_size(0X49AF50, 0X10, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X49B0D0,0X49B13E);
 	set_func_flags(0X49B0D0,0x5400);
 	set_frame_size(0X49B0D0, 0XC, 0, 0);

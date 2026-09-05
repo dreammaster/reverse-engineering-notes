@@ -12100,3 +12100,46 @@ dedicated button. This closes the loop on `enternumberwindow`'s own
 already-confirmed missing `-9999` empty-input sentinel from several
 rounds ago -- consistent with this whole code path predating the
 cancel-support feature entirely.
+
+### MyListBox/MyLabel/MyTextBox's own constructor bodies close, finding two real drifts and NewControl's own base constructor
+
+An immediate follow-up traced all three previously call-shape-only
+constructors (`MyListBox::MyListBox`, `MyLabel::MyLabel`,
+`MyTextBox::MyTextBox`) in full, each against its real source
+(`acdialog.h:331-342`/`500-508`/`563-574`). All three open with a call
+to `sub_427030`, decisively identified as `NewControl`'s own no-arg
+base constructor (`acdialog.h:214-217`, `visible=1; enabled=1;`) --
+sets a base/stub vtable (consistent with `draw()`/`pressedon()`/
+`processmessage()` being pure virtual in the base class) then writes
+`visible`@+0x20/`enabled`@+0x21, confirming `NewControl`'s own base
+layout ends exactly there (matching the already-established 0x24-byte
+total). All three derived constructors call this SAME no-arg overload,
+never `NewControl`'s own 4-argument `x`/`y`/`wid`/`hit` overload
+(`acdialog.h:203-213`) -- each supplies those fields itself afterward
+instead.
+
+`MyListBox::MyListBox` matches source almost exactly -- `x`/`y`/`wid`/
+`hit` writes, the `hit -= (hit-4) % TEXT_HT` and `numonscreen =
+(hit-4)/TEXT_HT` computations (both via `idiv dword_5230C0`, the
+already-confirmed `TEXT_HT` global), `items=0`/`topitem=0` -- but one
+REAL DRIFT: source's `selected = -1;` (no selection) is NOT what this
+build does; it writes `selected@+0x30 = 0`, a literal zero. This
+build's `MyListBox` (the save/restore-game file-selector) starts with
+its first entry pre-selected/highlighted rather than no selection at
+all -- a genuine, player-visible behavioral difference.
+
+`MyLabel::MyLabel` matches its `x`/`y`/`wid`/`hit=TEXT_HT` writes
+exactly, but finds a second REAL DRIFT: source's `strncpy(text,tee,
+150); text[149]=0;` (bounded copy plus explicit null-termination) is
+CONFIRMED ABSENT -- this build calls a plain, unbounded `strcpy(text,
+tee)` into the same 150-byte buffer, no length check, no null-
+termination safeguard. A genuine buffer-overflow risk if a label
+title ever exceeds 149 characters, joining this project's several
+other confirmed-absent bounds-check findings (e.g. `ListBoxGetItemText`).
+
+`MyTextBox::MyTextBox` closes as a complete, ZERO-drift match --
+`x`/`y`/`wid` writes, a NULL-checked branch calling `strcpy(text,tee)`
+or writing `text[0]=0`, and `hit=TEXT_HT+1`. Its own `strcpy` is
+unbounded in BOTH builds (source itself has no length check in the
+constructor either, `TEXTBOX_MAXLEN=49` is enforced only elsewhere) --
+not a new drift, source and disassembly genuinely agree here.

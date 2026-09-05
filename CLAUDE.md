@@ -3515,6 +3515,19 @@ disassembly work.
   `enternumberwindow`) always create exactly 3 controls with no way to
   add a Cancel button at all, tying together `enternumberwindow`'s own
   earlier-found missing `-9999` empty-input sentinel.
+- **`MyListBox`/`MyLabel`/`MyTextBox`'s own constructors close, finding
+  two real drifts plus `NewControl`'s own base constructor.** All three
+  call the same newly-named `NewControl::NewControl()` no-arg base
+  constructor (never the 4-arg `x`/`y`/`wid`/`hit` overload), confirming
+  the base's own `0x24`-byte layout ends at `visible`@+0x20/`enabled`
+  @+0x21. `MyListBox` matches source closely but initializes
+  `selected@+0x30=0`, not source's `-1` — this build's save/restore
+  file-selector starts with its first entry pre-selected, not
+  unselected. `MyLabel` calls a plain unbounded `strcpy` into its
+  150-byte `text[]` where source uses a bounded `strncpy`+null-
+  terminate — a real overflow risk. `MyTextBox` is a zero-drift exact
+  match (its own unbounded `strcpy` matches source, which has no bound
+  there either).
 
 ## Third-party library identification (Task #10)
 

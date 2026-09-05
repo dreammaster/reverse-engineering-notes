@@ -6632,7 +6632,7 @@
     "source_file": "Engine/acdialog.h",
     "source_line": 331,
     "confidence": "high",
-    "evidence": "MyListBox::MyListBox(int,int,int,int) -- the CSCI dialog system's listbox control constructor, called from CSCICreateControl (already matched) as \"new MyListBox(xx,yy,wii,hii);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/hii) immediately following an operator new(0x84) allocation. That allocation size also confirms this build's own MyListBox.itemnames[] capacity at 20 entries vs. 2011's declared MAXLISTITEM=300 -- see CSCICreateControl's own entry for the full arithmetic. Own body (field inits plus source's TEXT_HT-based height-rounding logic) not independently traced this round -- named by call-site/allocation-shape evidence only."
+    "evidence": "MyListBox::MyListBox(int,int,int,int) -- the CSCI dialog system's listbox control constructor, called from CSCICreateControl (already matched) as \"new MyListBox(xx,yy,wii,hii);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/hii) immediately following an operator new(0x84) allocation. That allocation size also confirms this build's own MyListBox.itemnames[] capacity at 20 entries vs. 2011's declared MAXLISTITEM=300 -- see CSCICreateControl's own entry for the full arithmetic. Own body (field inits plus source's TEXT_HT-based height-rounding logic) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:331-342): calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD5F0), then x@+4/y@+8/wid@+0xC/hit@+0x10 all written directly from arguments -- matching NewControl own confirmed field layout exactly. \"hit -= (hit-4) % TEXT_HT;\" and \"numonscreen = (hit-4)/TEXT_HT;\" both match literally via two idiv dword_5230C0 (TEXT_HT) operations, writing numonscreen@+0x2C. items@+0x24=0 and topitem@+0x28=0 both match exactly. REAL DRIFT, CONFIRMED: source own \"selected = -1;\" (no selection) is NOT what this build does -- it writes selected@+0x30=0 (a literal zero), not -1. This build own MyListBox starts with its first entry (index 0) pre-selected/highlighted rather than no selection at all -- a genuine, player-visible behavioral difference in the save/restore-game file-selector dialog own initial state."
   },
   {
     "kind": "manual",
@@ -6641,7 +6641,7 @@
     "source_file": "Engine/acdialog.h",
     "source_line": 500,
     "confidence": "high",
-    "evidence": "MyLabel::MyLabel(int,int,int,char*) -- the CSCI dialog system's label control constructor, called from CSCICreateControl (already matched) as \"new MyLabel(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x74) allocation. Own body (a strncpy(text,tee,150) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only."
+    "evidence": "MyLabel::MyLabel(int,int,int,char*) -- the CSCI dialog system's label control constructor, called from CSCICreateControl (already matched) as \"new MyLabel(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x74) allocation. Own body (a strncpy(text,tee,150) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:500-508): calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD5FC), then x@+4/y@+8/wid@+0xC all written directly from arguments, and hit@+0x10=dword_5230C0 (TEXT_HT) matches \"hit = TEXT_HT;\" exactly. REAL DRIFT, CONFIRMED ABSENT: source own \"strncpy(text,tee,150); text[149]=0;\" (bounded copy plus explicit null-termination) is NOT what this build does -- it calls a plain, unbounded strcpy(text, tee) into the same 150-byte text[] buffer with no length check and no null-termination safeguard at all. A real buffer-overflow risk if a label title string ever exceeds 149 characters, joining this project own several other confirmed-absent bounds-check findings (ListBoxGetItemText, etc)."
   },
   {
     "kind": "manual",
@@ -6650,7 +6650,7 @@
     "source_file": "Engine/acdialog.h",
     "source_line": 563,
     "confidence": "high",
-    "evidence": "MyTextBox::MyTextBox(int,int,int,char*) -- the CSCI dialog system's textbox control constructor, called from CSCICreateControl (already matched) as \"new MyTextBox(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x58) allocation. Own body (a NULL-checked strcpy(text,tee) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only."
+    "evidence": "MyTextBox::MyTextBox(int,int,int,char*) -- the CSCI dialog system's textbox control constructor, called from CSCICreateControl (already matched) as \"new MyTextBox(xx,yy,wii,title);\" -- decisively identified via the exact 4-argument call shape (this+xx/yy/wii/title) immediately following an operator new(0x58) allocation. Own body (a NULL-checked strcpy(text,tee) plus field inits) not independently traced this round -- named by call-site/allocation-shape evidence only. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acdialog.h:563-574): an exact, zero-drift match throughout -- calls NewControl::NewControl() (this round own new match), sets its own vtable (off_4AD608), then x@+4/y@+8/wid@+0xC written directly from arguments; a NULL-checked branch on the tee argument either calls strcpy(text,tee) (matching source own NULL-checked call exactly, tee!=NULL branch) or writes text[0]=0 (tee==NULL branch); hit@+0x10=dword_5230C0(TEXT_HT)+1 matches \"hit = TEXT_HT + 1;\" exactly. Unlike its MyLabel sibling, this constructor own strcpy call is unbounded in BOTH builds (source itself has no length check here either, since TEXTBOX_MAXLEN=49 is only ever enforced elsewhere, not in the constructor) -- not a new drift finding, source and disassembly agree."
   },
   {
     "kind": "manual",
@@ -6660,5 +6660,14 @@
     "source_line": 863,
     "confidence": "high",
     "evidence": "int CSCISendControlMessage(int haa,int mess,int wPar,long lPar) at acdialog.h:863-868: \"if(vobjs[haa]==NULL) return -1; return vobjs[haa]->processmessage(mess,wPar,lPar);\". A complete, exact, zero-drift match: null-checks dword_523578[haa] (already established control-handle table), returns -1 if empty, else calls vobjs[haa]->vtbl[2](mess,wPar,lPar) -- decisively identifying NewControl's vtable slot 2 as processmessage(int,int,long) (alongside slot 0=draw(), already established via CSCICreateControl's own entry). Called from enterstringwindow (already matched, this round's own updated entry) as \"CSCISendControlMessage(ctrltbox,CTB_GETTEXT,0,(long)&buffer2[0]);\" -- the literal CTB_GETTEXT=1 (acdialog.h:149) matches the disasm's own literal argument exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427030",
+    "new_name": "NewControl__NewControl",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 214,
+    "confidence": "high",
+    "evidence": "NewControl::NewControl() (the no-arg base constructor, acdialog.h:214-217): \"visible=1; enabled=1;\" -- an exact, zero-drift match. Sets the vtable pointer to off_4AD5E4 (a base/stub vtable, consistent with draw()/pressedon()/processmessage() being pure virtual in this base class) then writes visible@+0x20=1, enabled@+0x21=1 -- confirming NewControl own base layout ends at +0x20/+0x21 (needredraw@+0x22 uninitialized here, matching source leaving it unset in this constructor overload too), consistent with the already-established 0x24-byte total base size. Called from all three known derived-class constructors (PushButton::PushButton, MyListBox::MyListBox, MyLabel::MyLabel, MyTextBox::MyTextBox), each of which supplies x/y/wid/hit itself afterward rather than via NewControl own 4-argument constructor overload -- this build always uses the no-arg base constructor plus derived-class field writes, never the acdialog.h:203-213 4-arg overload."
   }
 ]

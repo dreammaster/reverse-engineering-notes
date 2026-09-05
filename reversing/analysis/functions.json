@@ -3085,9 +3085,9 @@
   "is_named": true
  },
  {
-  "name": "sub_427030",
+  "name": "NewControl__NewControl",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_427060",
