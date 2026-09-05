@@ -11838,3 +11838,20 @@ initializes the CD player eagerly at startup (already confirmed called
 directly from `main`) rather than lazily on the first `CDAudio()` call.
 `install_mp3_player` is a genuine, deliberate no-op -- an entirely
 empty function body, no trace of it anywhere in 2011's source.
+
+### platform_RunSetup gives a THIRD independent confirmation of the binary's version string
+
+`platform_RunSetup` matches `AGSWin32::RunSetup()` (`acplwin.cpp:705
+-710`) but passes a compile-time-baked literal, `"Adventure Game
+Studio v2.40.325 setup"`, rather than building the title dynamically
+via `sprintf`+`get_engine_version()` -- a THIRD independent confirmation
+of this project's own established self-reported version pinning (after
+`script_debug`'s engine-info string and `atexit_handler`'s error
+message), cross-checked against 2011's own `ACI_VERSION_TEXT=
+"3.21.1115"` matching this project's documented reference-build version
+exactly. Also calls its setup-dialog function with one argument where
+source's `acwsetup()` takes two. `setWindowTitle` is confirmed as
+Allegro's own `set_window_title` (a driver-vtable-hook delegator, third-
+party boundary, not chased further). `setWindowIcon` fuses `set_icon()`
+'s own job (a standard `GetModuleHandleA`/`LoadIconA`/`SetClassLongA`
+idiom) directly inline rather than calling a separate function.

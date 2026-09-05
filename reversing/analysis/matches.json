@@ -6524,5 +6524,32 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "A genuine, deliberate no-op: \"push ebp; mov ebp,esp; pop ebp; retn\" -- an empty function body with no work at all, called from main (already matched). No trace of this name anywhere in 2011's reference source. Plausibly a placeholder retained from an earlier build where the mp3-playback library (ALMP3) needed an explicit install step that was later found unnecessary, or simply a stub that was never filled in -- not independently determined which."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "platform_RunSetup",
+    "new_name": null,
+    "source_file": "Engine/acplwin.cpp",
+    "source_line": 705,
+    "confidence": "high",
+    "evidence": "int AGSWin32::RunSetup() at acplwin.cpp:705-710: \"const char*engineVersion=get_engine_version(); sprintf(titleBuffer,\\\"Adventure Game Studio v%s setup\\\",engineVersion); return acwsetup(titleBuffer,engineVersion);\". This build's version passes a single, compile-time-baked literal string, \"Adventure Game Studio v2.40.325 setup\" -- A THIRD independent confirmation of this project's own established self-reported version pinning (after script_debug's cmdd==1 engine-info string and atexit_handler's error message), and cross-checked against 2011's own ACI_VERSION_TEXT=\"3.21.1115\" (AC.CPP:30), matching this project's documented AGS 3.2.1.1115 reference build version exactly. REAL DRIFT: this build builds the title string statically rather than via sprintf+get_engine_version() at runtime, and calls its setup-dialog function (sub_4299E9, the large setup-dialog UI logic already touched via several INIreadint calls this session) with only ONE argument (the title) where source's acwsetup() takes two (titleBuffer, engineVersion separately) -- consistent with this build's simpler setup dialog not needing the version string a second time."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "setWindowTitle",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "Allegro's own set_window_title(const char*) -- checks a graphics-driver vtable slot (dword_536F68+0x20, the same driver-object global identified via install_allegro's own setup sequence) and calls through it if present, matching Allegro's standard \"delegate to the active gfx driver's set_window_title hook, no-op if the driver doesn't support it\" pattern. Third-party library boundary -- not chased further; the driver-side hook implementation is Allegro-internal."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "setWindowIcon",
+    "new_name": null,
+    "source_file": "Engine/acplwin.cpp",
+    "source_line": 712,
+    "confidence": "medium-high",
+    "evidence": "void AGSWin32::SetGameWindowIcon() at acplwin.cpp:712-714: \"set_icon();\" -- set_icon() itself is declared extern (acplwin.cpp:46) with no body present in this repo's checkout, so a direct line-for-line comparison isn't possible. This build's version fuses set_icon()'s own job directly inline instead of calling a separate function: GetModuleHandleA(NULL) -> LoadIconA(hInstance,101) -> SetClassLongA(hWndParent,GCL_HICON(-14,0xFFFFFFF2),hIcon) -- a standard, well-known Win32 idiom for setting a window's icon from a resource, matching the expected role exactly. Another instance of this project's now-frequent 'later refactor extracted a reusable helper' pattern."
   }
 ]

@@ -3419,6 +3419,13 @@ disassembly work.
   missing its lazy-initialization gate — this build initializes the CD
   player eagerly at startup instead. `install_mp3_player` is a genuine,
   deliberate no-op with no trace in 2011's source.
+- **`platform_RunSetup` gives a third independent confirmation of the
+  binary's version string.** Matches `AGSWin32::RunSetup()` but passes
+  a compile-time-baked literal, `"Adventure Game Studio v2.40.325
+  setup"`, rather than building it dynamically — cross-checked against
+  2011's own `ACI_VERSION_TEXT="3.21.1115"`, matching the reference
+  build's documented version exactly. `setWindowTitle` is Allegro's own
+  driver-vtable hook; `setWindowIcon` fuses `set_icon()` inline.
 
 ## Third-party library identification (Task #10)
 
