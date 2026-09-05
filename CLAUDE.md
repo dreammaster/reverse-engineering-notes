@@ -3365,6 +3365,12 @@ disassembly work.
   described in passing via their callees' own evidence text, but
   neither had a dedicated entry until now. Both close as complete,
   exact, zero-drift matches.
+- **The cursor-mode cluster gets full `matches.json` entries, finding a
+  real validation gap and a new `GUIObject.flags` bit.**
+  `SetDefaultCursor`/`SetNextCursorMode` are exact one-liners.
+  `SetCursorMode` is missing its own leading bounds check on `newmode`.
+  `EnableCursorMode`/`DisableCursorMode` both close as exact mirror-
+  image matches, confirming a new bit value: `GUIF_DISABLED=4`.
 
 ## Third-party library identification (Task #10)
 

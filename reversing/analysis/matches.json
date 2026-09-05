@@ -6326,5 +6326,50 @@
     "source_line": 16378,
     "confidence": "high",
     "evidence": "int check_click_on_character(int,int,int) at AC.CPP:16378-16385. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"lowestwas=is_pos_on_character(xx,yy); if(lowestwas>=0) {RunCharacterInteraction(lowestwas,mood); return 1;} return 0;\" -- is_pos_on_character's own role is carried by the already-documented unnamed internal helper sub_417ECD (see its own inline comment, cited from GetCharacterAt's entry), and RunCharacterInteraction is already matched. Called from ProcessClick (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SetDefaultCursor",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5137,
+    "confidence": "high",
+    "evidence": "void set_default_cursor() at AC.CPP:5137-5139: \"set_mouse_cursor(cur_mode);\". A complete, exact, zero-drift one-line match: \"call SetMouseCursor(dword_4EDA7C)\" -- dword_4EDA7C already established as cur_mode (main_loop_until's own entry). Already correctly named in the IDB but never given its own matches.json entry."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SetCursorMode",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5220,
+    "confidence": "high",
+    "evidence": "void set_cursor_mode(int newmode) at AC.CPP:5220-5237. Matches source's body closely -- MCF_DISABLED check (byte_515870[mode*0x18]&2) -> find_next_enabled_cursor+return; MODE_USE(4) check with playerchar->activeinv(+0x34)==-1 -> find_next_enabled_cursor(0)+return, else calls sub_40CF16 (already documented, matching the inventory-cursor-update logic inline at AC.CPP:5228-5234); finally cur_mode=newmode (dword_4EDA7C) + SetDefaultCursor() -- all match exactly. REAL DRIFT: CONFIRMED ABSENT is source's own leading bounds check, \"if((newmode<0)||(newmode>=game.numcursors)) quit(\\\"!SetCursorMode: invalid cursor mode specified\\\");\" -- this build has NO validation on the newmode argument at all, a genuine robustness gap consistent with this project's many other confirmed-missing-guard findings."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "EnableCursorMode",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5304,
+    "confidence": "high",
+    "evidence": "void enable_cursor_mode(int modd) at AC.CPP:5304-5319. A complete, exact, zero-drift match: clears MCF_DISABLED on mcurs[modd].flags (byte_515870[modd*0x18]&=~2), then double-loops every GUI (dword_51DB04=numgui, already established) and every control (guis[uu].numobjs@+0x3C, already established) filtering on objrefptr[ww]>>16==GOBJ_BUTTON(1, already-confirmed enum value) via the packed field at guis-relative +0x10C, then on that GUIButton's own leftclick@+0x74==IBACT_SETMODE(1) and lclickdata@+0x7C==modd -- both NEW field confirmations, landing exactly on GUIButton's already-established leftclick/rightclick/lclickdata/rclickdata block (+0x74/+0x78/+0x7C/+0x80) -- before clearing bit 2 (0x04) of that button's own GUIObject.flags@+0x04. Matches GUIObject::Enable()'s own \"flags &= ~GUIF_DISABLED;\" exactly, with GUIF_DISABLED=4 (Common/acgui.h:113) confirmed with zero drift -- a NEW bit-value confirmation for GUIObject.flags."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "DisableCursorMode",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5321,
+    "confidence": "high",
+    "evidence": "void disable_cursor_mode(int modd) at AC.CPP:5321-5337. A complete, exact, zero-drift mirror of EnableCursorMode's own entry -- sets MCF_DISABLED on mcurs[modd].flags, the same GOBJ_BUTTON/leftclick/lclickdata-filtered double loop, then SETS bit 2 (0x04) of the matching GUIButton's GUIObject.flags@+0x04 (matching GUIObject::Disable()'s \"flags |= GUIF_DISABLED;\" exactly, reconfirming GUIF_DISABLED=4 from the write side too), and finally \"if(cur_mode==modd) find_next_enabled_cursor(modd);\" (dword_4EDA7C==arg_0 check) -- matching source's own trailing statement exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SetNextCursorMode",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5215,
+    "confidence": "high",
+    "evidence": "void SetNextCursor() at AC.CPP:5215-5217: \"set_cursor_mode(find_next_enabled_cursor(cur_mode+1));\". A complete, exact, zero-drift match: \"call find_next_enabled_cursor(dword_4EDA7C+1); call SetCursorMode(result);\" -- both callees already matched."
   }
 ]

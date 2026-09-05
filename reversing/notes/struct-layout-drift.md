@@ -11698,3 +11698,25 @@ bookkeeping gap. Both are complete, exact, zero-drift matches:
 `RunObjectInteraction`), `check_click_on_character` to `AC.CPP:16378
 -16385` (`is_pos_on_character`'s own already-documented unnamed helper
 + `RunCharacterInteraction`).
+
+### The cursor-mode cluster gets full matches.json entries, finding a real validation gap and a new GUIObject.flags bit
+
+`SetDefaultCursor`/`SetCursorMode`/`EnableCursorMode`/
+`DisableCursorMode`/`SetNextCursorMode` were all already correctly
+named in the IDB (their roles already described in passing via `find_
+next_enabled_cursor`'s own citations) but none had a dedicated
+`matches.json` entry. `SetDefaultCursor` and `SetNextCursorMode` close
+as complete, exact, zero-drift one-liners. `SetCursorMode` matches
+source's body closely but is missing its own leading bounds check --
+CONFIRMED ABSENT: `if((newmode<0)||(newmode>=game.numcursors)) quit(...)`
+-- this build validates nothing on its `newmode` argument.
+
+`EnableCursorMode`/`DisableCursorMode` both close as complete, exact,
+mirror-image matches to `AC.CPP:5304-5337` -- the same GUI/control
+double-loop, filtered on `GOBJ_BUTTON`/`leftclick==IBACT_SETMODE`/
+`lclickdata==modd` (all landing exactly on `GUIButton`'s already-
+established `leftclick`/`lclickdata` field positions), before setting
+or clearing bit 2 (`0x04`) of the matching button's own `GUIObject.
+flags`. This is a NEW bit-value confirmation: `GUIF_DISABLED=4`
+(`Common/acgui.h:113`), matching `GUIObject::Enable()`/`Disable()`
+exactly, zero drift.
