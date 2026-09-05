@@ -7188,5 +7188,72 @@
     "source_line": 195,
     "confidence": "high",
     "evidence": "WFNFontRenderer::EnsureTextValidForFont(char*text,int fontNumber) (acfonts.cpp:195-205) fused together with TTFFontRenderer::EnsureTextValidForFont(char*text,int fontNumber) (acfonts.cpp:385-388, \"do nothing, TTF can handle all characters\") into ONE flat dispatcher -- a decisive, complete match on both halves at once. This build checks a per-font type-tag byte (dword_4F7424[fontNumber][0]=='T'(0x54)) and, if set, returns the text pointer completely unchanged -- matching TTFFontRenderer's own empty no-op body exactly. Otherwise it scans the string character by character, testing each byte against the literal 0x7E(126, '~') -- matching WFNFontRenderer's own `if((unsigned char)text[0]>126)` check exactly (same threshold constant, same per-character loop structure, same null-terminator loop exit). ARCHITECTURAL FINDING: this build has no FontRenderer class hierarchy at all (no virtual dispatch through a fontRenderers[] array of WFNFontRenderer/ TTFFontRenderer objects) -- it's a single flat function gated by a raw type-tag byte, this build's own predecessor of the later per-renderer-class virtual-method design, matching the same 'later abstraction not yet present' pattern already found repeatedly this session (GUIObject::Draw fusion, EventBlockCmd predating NewInteraction, etc.). REAL BEHAVIORAL DRIFT: where 2011's WFNFontRenderer silently substitutes '?' for each extended character and continues rendering, this build's own extended-character branch calls quit() with the matched error string \"Cannot display message with extended characters in a non-TT font\" -- a hard crash instead of a graceful degradation, the opposite direction from most drift findings in this project (a LATER version made behavior more forgiving, not less). Called from GUILabel::Draw and GUIButton::Draw (both already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_421A57",
+    "new_name": "get_new_size_for_sprite",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 25808,
+    "confidence": "high",
+    "evidence": "void get_new_size_for_sprite(int ee,int ww,int hh,int&newwid,int&newhit) (AC.CPP:25808-25827) -- a complete, exact match. Unconditionally scales both dimensions by the resolution multiplier (`newwid=ww*current_screen_resolution_multiplier; newhit=hh*...`), then checks `game.spriteflags[ee]&SPF_640x400` -- matching the disassembly's own `byte_51DB2C[ecx]&1` check exactly, CONFIRMING SPF_640x400=1(bit 0) and identifying byte_51DB2C as GameSetupStructBase.spriteflags[] (already an independently-established field -- a further confirmation route). If set: when the multiplier==2, copies ww/hh through completely unscaled (matching source's `newwid=ww;newhit=hh;` exactly); otherwise halves each dimension first via `sar eax,1` (matching C's `ww/2` signed-integer division after a `cdq` sign-extend) then scales, clamping each result to a minimum of 1 (matching source's own \"just make sure - could crash if wid or hit is 0\" guard exactly). DRIFT: this build reads TWO separate globals, current_screen_resolution_multiplier_x/_y, where 2011 uses one shared current_screen_resolution_multiplier for both axes -- this build's own resolution-multiplier scheme supports independent horizontal/vertical scaling (or is simply an earlier, not-yet-unified pair of globals; not further disambiguated this round). Called from initialize_sprite (via sub_4093A1/convert_16_to_15's own sibling call site) and SpriteCache::initFile (both already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4093A1",
+    "new_name": "convert_16_to_15",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 2157,
+    "confidence": "high",
+    "evidence": "block convert_16_to_15(block iii) (AC.CPP:2157-2231) -- a complete, decisive match on its own \"we want a 16-to-15 conversion\" branch (source's own leading `bitmap_color_depth(iii)>16` branch, the 32-to-24 conversion path, has NO counterpart anywhere in this function's body -- CONFIRMED ABSENT, this build's version handles only the 16-to-15 case, consistent with a build predating 32-bit truecolor/alpha-channel sprite support, the same pattern already found repeatedly elsewhere -- CharacterInfo's tint fields, ScreenOverlay's alpha fields, etc.). `create_bitmap_ex(15,iwid,ihit)` matches the disassembly's own literal `push h; push w; push 0Fh; call create_bitmap_ex` exactly. `GFX_VTABLE*vtable=_get_vtable(15); if(vtable==NULL) quit(\"unable to get 15-bit bitmap vtable\");` matches the newly-identified sub_434F00 (`_get_vtable`, an Allegro-internal helper, per this project's scope rule not chased further) plus the matched quit-string \"unable to get bitmap vtable\" exactly; `tempbl->vtable=vtable;` matches the disassembly's own `[eax+1Ch]=ecx` write (the BITMAP struct's own already-established vtable-pointer field offset). The per-row/per-pixel conversion loop is a complete, zero-drift match: `c=p16[x]; b=_rgb_scale_5[c&0x1F]; g=_rgb_scale_6[(c>>5)&0x3F]; r=_rgb_scale_5[(c>>11)&0x1F]; p15[x]=makecol15(r,g,b);` matches the disassembly's own bit-masking/shifting sequence and its two newly-identified lookup-table globals (dword_4BCEF8=_rgb_scale_5, reused for BOTH the b and r components exactly as source does; dword_4BCF78=_rgb_scale_6) plus a newly-identified sub_4251C0=makecol15 (called with the exact (r,g,b) argument order source uses). Called from initialize_sprite and load_new_room (both already matched, at exactly the two call sites source's own `convert_16_to_15(oldsprite)`/`convert_16_to_15(oldblock)` calls appear at -- AC.CPP:26000/4137 respectively). Confirms `#define USE_15BIT_FIX` is active in this build (already suspected from put_sprite_256's own earlier-matched #ifdef branch)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4094EC",
+    "new_name": "convert_16_to_16bgr",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 2236,
+    "confidence": "high",
+    "evidence": "block convert_16_to_16bgr(block tempbl) (AC.CPP:2236-2260) -- a complete, exact, zero-drift in-place match (single BITMAP* argument, modified and implicitly returned, consistent with no create_bitmap_ex call anywhere in the disassembled body -- unlike its sibling convert_16_to_15). The per-row/per-pixel loop matches source's own `c=p16[x]; if(c!=MASK_COLOR_16) {...}` skip-check exactly -- the disassembly's own literal `cmp eax,0F81Fh; jz` matches MASK_COLOR_16's well-known RGB565 magenta-mask value (0xF81F: R=11111,G=000000,B=11111) precisely, and the conversion body reuses the same already-identified dword_4BCEF8(_rgb_scale_5)/dword_4BCF78(_rgb_scale_6) lookup tables confirmed via convert_16_to_15's own sibling round. Called from initialize_sprite and load_new_room (both already matched), at exactly the two call sites source's own `convert_16_to_16bgr(...)` calls appear at (AC.CPP:26005/4141) -- both gated on the already-established `convert_16bit_bgr==1` global check."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_434F00",
+    "new_name": "_get_vtable",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "GFX_VTABLE *_get_vtable(int color_depth) -- Allegro's public API for looking up the generic software-blitting vtable for a given color depth. Called from the newly-matched convert_16_to_15 (sub_4093A1) with the exact literal argument (15) source's own `_get_vtable(15)` call uses, immediately followed by the same NULL-check-then-quit pattern source uses. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4251C0",
+    "new_name": "makecol15",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int makecol15(int r,int g,int b) -- Allegro's public RGB-to-15-bit-pixel-value packing API. Called from the newly-matched convert_16_to_15 (sub_4093A1) with the exact (r,g,b) argument order and shape source's own `makecol15(r,g,b)` call uses, immediately after the three _rgb_scale_5/_rgb_scale_6 lookups. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "dword_4BCEF8",
+    "new_name": "_rgb_scale_5",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's internal 5-bit-to-8-bit RGB channel intensity-scaling lookup table (32 entries). Confirmed via convert_16_to_15/convert_16_to_16bgr (both already matched) both indexing it with a 0x1F(31)-masked value for BOTH the blue and red channel extractions, matching source's own `_rgb_scale_5[c&0x1F]`/`_rgb_scale_5[(c>>11)&0x1F]` calls exactly (the same table reused for both channels, as source itself does). THIRD-PARTY LIBRARY BOUNDARY, not chased further (table contents not individually verified)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "dword_4BCF78",
+    "new_name": "_rgb_scale_6",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's internal 6-bit-to-8-bit RGB channel intensity-scaling lookup table (64 entries). Confirmed via convert_16_to_15/convert_16_to_16bgr (both already matched) indexing it with a 0x3F(63)-masked, 5-bit-shifted value for the green-channel extraction, matching source's own `_rgb_scale_6[(c>>5)&0x3F]` call exactly. THIRD-PARTY LIBRARY BOUNDARY, not chased further (table contents not individually verified)."
   }
 ]

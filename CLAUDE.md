@@ -3841,6 +3841,21 @@ disassembly work.
   and finds a rare "less forgiving than its descendant" drift: this
   build hard-crashes via `quit()` on an extended character in a non-TT
   font, where 2011 silently substitutes `'?'` and keeps rendering.
+- **Continuing the callgraph-ranking sweep, filtered to AGS-side-only
+  leads, closes three more in the sprite-color-depth-conversion
+  subsystem.** `get_new_size_for_sprite` closes exactly, confirming
+  `SPF_640x400=1` via `GameSetupStructBase.spriteflags[]` from a new
+  site (DRIFT: separate x/y resolution-multiplier globals vs. 2011's
+  one shared multiplier). `convert_16_to_15` closes with a genuine
+  feature-absence finding: source's own leading 32-to-24-bit conversion
+  branch is entirely missing here, going straight to the 16-to-15 path
+  — consistent with predating 32-bit truecolor/alpha sprite support —
+  while confirming `USE_15BIT_FIX` is active via a second, independent
+  piece of evidence (a `_get_vtable`/`makecol15`/`_rgb_scale_5`/
+  `_rgb_scale_6` call chain, all newly identified). `convert_16_to_
+  16bgr` closes as a zero-drift in-place match, reusing the same two
+  newly-identified scale tables and confirming its `MASK_COLOR_16`
+  (0xF81F) skip-check exactly.
 
 ## Third-party library identification (Task #10)
 

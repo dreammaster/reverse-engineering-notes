@@ -670,14 +670,14 @@
   "is_named": true
  },
  {
-  "name": "sub_4093A1",
+  "name": "convert_16_to_15",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4094EC",
+  "name": "convert_16_to_16bgr",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "TintScreen",
@@ -2425,9 +2425,9 @@
   "is_named": true
  },
  {
-  "name": "sub_421A57",
+  "name": "get_new_size_for_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "initialize_sprite",
@@ -2815,9 +2815,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4251C0",
+  "name": "makecol15",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "draw_lit_sprite",
@@ -4100,9 +4100,9 @@
   "is_named": false
  },
  {
-  "name": "sub_434F00",
+  "name": "_get_vtable",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "set_gfx_mode",

@@ -13182,3 +13182,58 @@ crash instead of a graceful degradation. Most drift findings this
 session have been a LATER version adding validation/leniency a 2002
 predecessor lacks; this is a case of the 2002 build being LESS forgiving
 than its 2011 descendant.
+
+### `get_new_size_for_sprite`/`convert_16_to_15`/`convert_16_to_16bgr`
+### close out the callgraph-ranking sweep's remaining AGS-side leads
+
+Continuing the callgraph-ranking technique (unmatched `sub_*` functions
+ranked by distinct already-matched caller count), filtering out results
+whose callers are ALL third-party-library functions (correctly out of
+scope per this project's own rule -- Allegro config/DirectX/mouse/MIDI
+internals dominate the raw ranking, and are left alone) surfaced three
+clean AGS-side matches, all inside the sprite-initialization/color-
+depth-conversion subsystem.
+
+**`get_new_size_for_sprite` (`sub_421A57`)** closes as a complete, exact
+match to `Engine/AC.CPP:25808-25827` -- scales a sprite's dimensions by
+the resolution multiplier, with a `SPF_640x400`-gated special case for
+legacy low-res sprites (CONFIRMING `SPF_640x400=1`, bit 0, via a direct
+match against the already-established `GameSetupStructBase.spriteflags[]`
+field -- a further confirmation route for that array). DRIFT: this
+build reads two SEPARATE globals, `current_screen_resolution_
+multiplier_x`/`_y`, where 2011 uses one shared multiplier for both axes.
+
+**`convert_16_to_15` (`sub_4093A1`)** closes with a genuine, decisive
+feature-absence finding: source's own `convert_16_to_15` (`AC.CPP:
+2157-2231`) opens with a `bitmap_color_depth(iii)>16` branch handling a
+32-to-24-bit conversion case entirely separate from the 16-to-15 case
+the function is named for -- but this build's compiled body has NO such
+branch at all, going straight into the 16-to-15 path unconditionally.
+CONFIRMED ABSENT: the entire 32-to-24 conversion capability, consistent
+with this build predating 32-bit truecolor/alpha-channel sprite support
+(the same pattern found repeatedly this project -- `CharacterInfo`'s
+tint fields, `ScreenOverlay`'s alpha fields, etc., all similarly absent).
+What IS present matches source's 16-to-15 path with zero drift: the
+literal `create_bitmap_ex(15,...)` call, a newly-identified `_get_vtable`
+(`sub_434F00`) Allegro helper with the exact `quit("unable to get
+15-bit bitmap vtable")` failure path, and a per-pixel RGB565-to-15-bit
+conversion loop using two newly-identified Allegro lookup tables
+(`_rgb_scale_5`/`_rgb_scale_6`, `dword_4BCEF8`/`dword_4BCF78`) and a
+newly-identified `makecol15` (`sub_4251C0`) -- confirming `#define
+USE_15BIT_FIX` is genuinely active in this build (already suspected
+from `put_sprite_256`'s own earlier-matched `#ifdef` branch, now backed
+by a second, independent piece of evidence).
+
+**`convert_16_to_16bgr` (`sub_4094EC`)** closes as a complete, exact,
+zero-drift IN-PLACE match to `AC.CPP:2236-2260` (a single `BITMAP*`
+argument, modified and implicitly returned, matching the absence of any
+`create_bitmap_ex` call in its own body) -- its `MASK_COLOR_16`(0xF81F,
+the classic RGB565 magenta transparency-mask value) skip-check and its
+reuse of the same two newly-identified `_rgb_scale_5`/`_rgb_scale_6`
+tables both match source exactly.
+
+Both conversion functions are called from `initialize_sprite` and
+`load_new_room` (both already matched) at exactly the call sites
+source's own equivalent calls appear at (`AC.CPP:26000`/`4137` and
+`26005`/`4141` respectively), each gated by the already-established
+`convert_16bit_bgr` global for the BGR path.
