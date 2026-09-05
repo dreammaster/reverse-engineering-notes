@@ -6843,5 +6843,14 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "al_findclose(struct al_ffblk*info) -- Allegro's public directory-search-cleanup API: checks the shared global FindHandle!=-1, calls the raw CRT _findclose if so, then resets FindHandle to -1 unconditionally. THIRD-PARTY LIBRARY BOUNDARY, not chased further internally. Called from al_findnext's own failure path and directly from preparesavegamelist/ListBoxSaveGameList after their own search loops end."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_426F80",
+    "new_name": "NewControl__drawifneeded",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 228,
+    "confidence": "high",
+    "evidence": "NewControl::drawifneeded() (acdialog.h:228-236) -- an exact, zero-drift match: \"if(topwindowhandle != wlevel) return;\" (dword_4BA93C=topwindowhandle vs [this+0x1C]=wlevel, already-confirmed field) then \"if(needredraw) {needredraw=0; draw();}\" ([this+0x22]=needredraw, already-confirmed field, cleared before the vtable slot 0 (draw()) call, matching source exactly). Called from CSCIWaitMessage own per-control redraw loop (already matched) -- CSCIWaitMessage calls domouse(2)/drawifneeded(control)/domouse(1) per live control slot, matching source own redraw pass. The last of NewControl own four base methods to be individually confirmed (mouseisinarea/drawandmouse/drawifneeded/the constructors), completing this struct own method set."
   }
 ]

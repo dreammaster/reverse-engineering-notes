@@ -3605,6 +3605,10 @@ disassembly work.
   calls in this function are ALL inlined as a bare `sprintf` with no
   directory prefix/suffix — the same drift as `loadgamedialog`, now
   confirmed at four independent call sites across two functions.
+- **`NewControl::drawifneeded()` closes, completing the base class's
+  method set.** An exact, zero-drift match — the last of `NewControl`'s
+  four base methods (`mouseisinarea`/`drawandmouse`/`drawifneeded`,
+  plus the constructors) to be individually confirmed.
 
 ## Third-party library identification (Task #10)
 

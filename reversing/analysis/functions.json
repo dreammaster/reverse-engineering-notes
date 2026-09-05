@@ -3075,9 +3075,9 @@
   "is_named": true
  },
  {
-  "name": "sub_426F80",
+  "name": "NewControl__drawifneeded",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "PushButton__PushButton",

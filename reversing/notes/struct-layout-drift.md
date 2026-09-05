@@ -12418,3 +12418,16 @@ completely unchanged; the two functions were wrongly treated as the
 same case. Corrected in place on `preparesavegamelist`'s own entry,
 old evidence kept visible per this project's usual retraction
 convention.
+
+### NewControl::drawifneeded() closes, completing the base class's own method set
+
+`CSCIWaitMessage`'s own per-control redraw loop had already flagged
+`sub_426F80` as "a new, plausible per-control-draw lead" without
+confirming it. It closes cleanly: `NewControl::drawifneeded()`
+(`acdialog.h:228-236`) -- `if(topwindowhandle != wlevel) return;` then
+`if(needredraw) {needredraw=0; draw();}`, an exact, zero-drift match
+using the already-confirmed `wlevel`/`needredraw` fields and calling
+`draw()` via vtable slot 0. This is the last of `NewControl`'s four
+base methods to be individually confirmed (`mouseisinarea`/
+`drawandmouse`/`drawifneeded`, plus the constructors) -- the base
+class's own method set is now complete.
