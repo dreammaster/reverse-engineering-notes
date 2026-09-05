@@ -12431,3 +12431,33 @@ using the already-confirmed `wlevel`/`needredraw` fields and calling
 base methods to be individually confirmed (`mouseisinarea`/
 `drawandmouse`/`drawifneeded`, plus the constructors) -- the base
 class's own method set is now complete.
+
+### CSCIWaitMessage closes completely, adding a new SCIMESSAGE field and naming rec_mgetbutton
+
+`CSCIWaitMessage` had only been traced through its leading ~130 of
+~250 lines several rounds ago. The remaining body (`acdialog.h:
+761-816`) closes with every branch matching source exactly: the
+`keywas` dispatch (Enter/Escape via `finddefaultcontrol`, a control-
+character no-op, the `CNT_LISTBOX`/`CNT_TEXTBOX` key-forwarding
+branches both calling the resolved control's `processmessage(
+CTB_KEYPRESS,...)` via vtable slot 2) all match with zero drift. The
+final `if(cscim->id<0) {cscim->code=CM_KEYPRESS; cscim->wParam=keywas;}`
+match IDENTIFIES A NEW FIELD: `CSCIMessage`/`SCIMESSAGE` has a third
+field, `wParam`@+0x08, right after the already-confirmed `code`@+0x00/
+`id`@+0x04. `rec_mgetbutton()` (declared `extern`, no body anywhere in
+this repo) is identified by role/behavior at its only call site: polls
+the mouse, decodes Allegro's own `mouse_b` bitmask into 0/1/2 (LEFT/
+RIGHT/MIDDLE), and returns -1 (`NONE`) if the button was ALREADY held
+on the previous poll (an edge-triggered debounce via a remembered
+previous-state global) -- exactly the "report a new click once"
+semantics a dialog-polling loop needs.
+
+The loop-back tail (`domouse(0); update_polled_stuff(); loop`)
+confirms, a SECOND time, this build's already-established absence of
+any `timerloop`-synced frame-rate wait -- the SAME missing-throttle
+pattern already found in `PushButton::pressedon`'s own button-hold
+loop, now shown in the dialog message-wait loop too. SMALL DRIFT,
+CONFIRMED: source's very opening `next_iteration(); wtexttransparent
+(TEXTFG);` loses its `next_iteration()` call here -- only
+`wtexttransparent(0)` runs at the function's start. `CSCIWaitMessage`
+has no remaining unexamined branches.

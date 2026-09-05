@@ -3609,6 +3609,14 @@ disassembly work.
   method set.** An exact, zero-drift match — the last of `NewControl`'s
   four base methods (`mouseisinarea`/`drawandmouse`/`drawifneeded`,
   plus the constructors) to be individually confirmed.
+- **`CSCIWaitMessage` closes completely.** Its remaining `keywas`
+  dispatch (Enter/Escape, `CNT_LISTBOX`/`CNT_TEXTBOX` key-forwarding)
+  matches source exactly, and identifies a new field —
+  `CSCIMessage.wParam`@+0x08, after `code`/`id`. Names
+  `rec_mgetbutton()` by role (no source body exists in this repo): an
+  edge-triggered "report a new click once" mouse-button poller. The
+  loop-back tail reconfirms this build's missing `timerloop` frame
+  throttle, the same pattern already found in `PushButton::pressedon`.
 
 ## Third-party library identification (Task #10)
 
