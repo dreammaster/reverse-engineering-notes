@@ -3826,6 +3826,21 @@ disassembly work.
   confirming this build's DirectX-version detection cascade predates
   the later DSETUP.DLL/DX8-9 probing entirely (caps out at DX5), the
   same "older/simpler Allegro" pattern already established elsewhere.
+- **A callgraph-ranking sweep (rank unmatched `sub_*` functions by how
+  many already-matched callers reference them) closes two more, one
+  with a genuine self-correction.** `fgetstring` CORRECTS an earlier
+  session's own prose-only claim (never actually given a `matches.json`
+  entry) that had named the wrong one of two candidates — all 4 real
+  call sites push exactly 2 arguments, decisively matching `fgetstring`
+  itself rather than the 3-argument `fgetstring_limit` it delegates to
+  in 2011; this build's own version is directly self-contained with NO
+  length cap at all, a real unbounded-write risk. `EnsureTextValidForFont`
+  fuses TWO 2011 virtual methods (`WFNFontRenderer`'s extended-character
+  check and `TTFFontRenderer`'s no-op) into one flat, type-tag-gated
+  function — this build has no `FontRenderer` class hierarchy at all —
+  and finds a rare "less forgiving than its descendant" drift: this
+  build hard-crashes via `quit()` on an extended character in a non-TT
+  font, where 2011 silently substitutes `'?'` and keeps rendering.
 
 ## Third-party library identification (Task #10)
 

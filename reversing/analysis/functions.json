@@ -170,9 +170,9 @@
   "is_named": false
  },
  {
-  "name": "sub_403024",
+  "name": "fgetstring",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_403239",
@@ -1145,9 +1145,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4133F7",
+  "name": "EnsureTextValidForFont",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "draw_text_window",

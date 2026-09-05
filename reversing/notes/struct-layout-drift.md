@@ -13127,3 +13127,58 @@ specific Allegro driver files never linked into this Windows binary,
 and one dumb-0.9.2-adjacent false positive already explained by JGMOD
 sharing a similar string) are low-value or dead ends, not pursued
 further this round.
+
+### `fgetstring`/`EnsureTextValidForFont` close out a callgraph-ranking
+### sweep, one with a genuine self-correction
+
+A fresh technique this round: rank every still-unmatched `sub_*`
+function by how many DISTINCT already-matched functions call it (rather
+than string evidence), surfacing two clean, high-value leads whose
+`CODE XREF` callers were exclusively already-resolved names.
+
+**`fgetstring` (`sub_403024`) closes, CORRECTING an earlier session's
+own prose-only claim.** A much earlier round (see the "sub_403024
+resolved as necessarily `fgetstring_limit`, not `read_string_decrypt`"
+bullet, several hundred lines up) never actually got its own
+`matches.json` entry -- and, worse, named the WRONG one of the two
+remaining candidates. All 4 real call sites (`load_main_block`,
+`load_ac2game_dta` twice, `restore_game_data`) push exactly 2 arguments
+(buffer, stream), never a 3rd `bufsize` -- decisively matching
+`fgetstring(char*sss,FILE*ddd)` (`Common/cscommon.cpp:194-196`), not
+`fgetstring_limit(char*sss,FILE*ddd,int bufsize)` (`cscommon.cpp:
+183-192`), which 2011's own `fgetstring` merely delegates to with a
+practically-unbounded literal (50000000). This build's own `fgetstring`
+is instead DIRECTLY self-contained (increment index, `fgetc` into the
+buffer, test the stream's own `FILE.flags` bit `0x10` -- the standard
+MSVC CRT `_IOEOF` bit -- for an `feof`-equivalent early return, else
+loop while the just-read byte is nonzero) with NO length-cap check
+anywhere -- a real, confirmed unbounded-write risk at all 4 call sites,
+not merely a smaller-capacity version of the 2011 function.
+
+**`EnsureTextValidForFont` (`sub_4133F7`) closes, fusing TWO 2011
+virtual methods into one flat function.** Called from `GUILabel::Draw`/
+`GUIButton::Draw` (both already matched). A decisive, complete match on
+both halves of 2011's `FontRenderer` class hierarchy at once: checking
+a per-font type-tag byte (`dword_4F7424[fontNumber][0]=='T'`) and, if
+set, returning the text pointer completely UNCHANGED -- matching
+`TTFFontRenderer::EnsureTextValidForFont`'s own empty no-op body
+("`// do nothing, TTF can handle all characters`", `acfonts.cpp:
+385-388`) exactly. Otherwise scanning character by character against
+the literal `0x7E`(126, `'~'`) -- matching `WFNFontRenderer::
+EnsureTextValidForFont`'s own `if((unsigned char)text[0]>126)` check
+(`acfonts.cpp:195-205`) exactly, same threshold, same loop shape.
+ARCHITECTURAL FINDING: this build has NO `FontRenderer` class hierarchy
+at all -- no virtual dispatch through a `fontRenderers[]` array of
+per-renderer-class objects -- just one flat function gated by a raw
+type-tag byte, this build's own predecessor of the later per-class
+virtual-method design (the same "later abstraction not yet present"
+pattern already found repeatedly this session). REAL BEHAVIORAL DRIFT,
+notably in the OPPOSITE direction from most drift findings in this
+project: where 2011's `WFNFontRenderer` silently substitutes `'?'` for
+each extended character and keeps rendering, this build's own extended-
+character branch calls `quit()` with the matched error string "Cannot
+display message with extended characters in a non-TT font" -- a hard
+crash instead of a graceful degradation. Most drift findings this
+session have been a LATER version adding validation/leniency a 2002
+predecessor lacks; this is a case of the 2002 build being LESS forgiving
+than its 2011 descendant.
