@@ -157001,19 +157001,19 @@ static Functions_4(void) {
 	add_func    (0X418DEC,0X418E0F);
 	set_func_flags(0X418DEC,0x5410);
 	SetType(0X418DEC, "void __stdcall SeekMODPattern(int patnum);");
-	set_func_cmt(0X418DEC,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X418DEC,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established `opts_mod_player` flag, then calls the already-matched is_mod_playing() before calling sub_477870(patnum) -- plausibly JGMOD's own pattern-seek API (third-party library boundary, not chased further per this project's Task #10 scope rule). CONFIRMED ABSENT: source's `current_music_type`/`channels[SCHAN_MUSIC]`-based dispatch (a later multi-format audio-channel abstraction) and the trailing DEBUG_CONSOLE call -- this build gates directly on the single already-established `opts_mod_player`/`is_mod_playing()` pair instead, matching this project's broader single-channel-predecessor pattern for the music subsystem.", 1);
 	set_frame_size(0X418DEC, 0, 4, 0X4);
 	define_local_var(0X418DEC, 0X418E0F, "[bp+0X8]", "patnum");
 	add_func    (0X418E0F,0X418E30);
 	set_func_flags(0X418E0F,0x5410);
 	SetType(0X418E0F, "void __stdcall SeekMP3PosMillis(int posn);");
-	set_func_cmt(0X418E0F,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X418E0F,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established dword_523214 (PlayMusic's own single MP3 stream handle) directly, then calls sub_47E970(handle,posn) -- plausibly ALMP3's own seek API (same address range as the library's other already-confirmed boundary functions, not individually confirmed, per Task #10 scope). CONFIRMED ABSENT: source's `current_music_type`/`crossFading`/`channels[]`-based dispatch and DEBUG_CONSOLE call -- another instance of the single-MP3-handle predecessor pattern already established for PlayMusic/FadeOut's own MP3 crossfade helpers.", 1);
 	set_frame_size(0X418E0F, 0, 4, 0X4);
 	define_local_var(0X418E0F, 0X418E30, "[bp+0X8]", "posn");
 	add_func    (0X418E30,0X418E50);
 	set_func_flags(0X418E30,0x5410);
 	SetType(0X418E30, "int GetMP3PosMillis(void);");
-	set_func_cmt(0X418E30,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X418E30,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established dword_523214 directly (returning 0 if unset), then calls sub_47EBD0(handle) -- plausibly ALMP3's own position-query API (same address-range boundary as the library's other confirmed functions, not individually chased). CONFIRMED ABSENT: source's leading `if(play.fast_forward) return 999999;` guard and its `current_music_type`/`channels[]`-based dispatch -- consistent with the same single-handle predecessor pattern found across this whole music-position API cluster this round.", 1);
 	set_frame_size(0X418E30, 0, 4, 0);
 	add_func    (0X418E50,0X418E6A);
 	set_func_flags(0X418E50,0x5410);
@@ -157498,6 +157498,10 @@ static Functions_4(void) {
 	SetType(0X41B23D, "void RefreshMouse(void);");
 	set_func_cmt(0X41B23D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): DIRECTLY confirms mgetgraphpos's own entry (previously inferred by role/position rather than confirmed from this exact call site) -- RefreshMouse calls mgetgraphpos directly rather than the full domouse(DOMOUSE_NOCURSOR) wrapper 2011 calls, matching mgetgraphpos's own already-confirmed role as domouse's first-statement equivalent, just called more directly here. \"scmouse.x=dword_5358CC(mousex)/mult_x;\" and \"dword_4CD1BC=dword_5358D0(mousey)/mult_y;\" match \"scmouse.x=divide_down_coordinate(mousex); scmouse.y=divide_down_coordinate(mousey);\" exactly -- confirming the pre-existing global `scmouse` is this build's ScreenMousePos.x and identifying dword_4CD1BC as ScreenMousePos.y (a new field confirmation, offset +4 from scmouse's own base).", 1);
 	set_frame_size(0X41B23D, 0, 4, 0);
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41B269,0X41B273);
 	set_func_flags(0X41B269,0x5410);
 	SetType(0X41B269, "int GetCursorMode(void);");
@@ -157516,10 +157520,6 @@ static Functions_4(void) {
 	set_frame_size(0X41B2BE, 0, 4, 0X8);
 	define_local_var(0X41B2BE, 0X41B339, "[bp+0X8]", "xxx");
 	define_local_var(0X41B2BE, 0X41B339, "[bp+0XC]", "yyy");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41B339,0X41B423);
 	set_func_flags(0X41B339,0x5410);
 	SetType(0X41B339, "int __stdcall GetLocationType(int xxx, int yyy);");
@@ -157921,7 +157921,7 @@ static Functions_5(void) {
 	add_func    (0X41FEF7,0X41FF17);
 	set_func_flags(0X41FEF7,0x5410);
 	SetType(0X41FEF7, "void __stdcall SetInvDimensions(int ww, int hh);");
-	set_func_cmt(0X41FEF7,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41FEF7,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a clean, exact match to source's first three statements -- \"inv_item_wid=ww; inv_item_hit=hh; play_inv_numdisp=0;\" (all three already-established GameState fields, each getting a further confirmation from a new site). CONFIRMED ABSENT: source's entire trailing \"for(i=0;i<numguiinv;i++) { guiinv[i].itemWidth=ww; ...; guiinv[i].Resized(); } guis_need_update=1;\" loop -- a DIRECT behavioral confirmation (previously only inferred via GUIInv::Draw's own analysis) that this build has no multiple-inventory-window (`numguiinv`/`guiinv[]`) system at all; inventory display dimensions are purely global.", 1);
 	set_frame_size(0X41FEF7, 0, 4, 0X8);
 	define_local_var(0X41FEF7, 0X41FF17, "[bp+0X8]", "ww");
 	define_local_var(0X41FEF7, 0X41FF17, "[bp+0XC]", "hh");
@@ -158075,6 +158075,10 @@ static Functions_5(void) {
 	set_func_flags(0X423F20,0x5410);
 	set_func_cmt(0X423F20,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public getpixel(BITMAP*,x,y) API: signature \"return bmp->vtable->getpixel(bmp,x,y);\" -- an exact vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x20=getpixel slot), matching Allegro's own BITMAP_METHODS layout. Used by sub_410631 and get_hotspot_at (already matched) to read RoomStruct's walk-behind/hotspot masks generically across color depths. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): this is Allegro's public API surface -- do not chase its vtable target implementations further, they are wholesale-replaced by a ScummVM reimplementation regardless of how they work internally. Also called from process_event (already matched) inside its FADE_DISSOLVE screen-transition effect, reading from a temp pre-fade screen copy.", 1);
 	set_frame_size(0X423F20, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X423F40,0X423F65);
 	set_func_flags(0X423F40,0x5410);
 	set_frame_size(0X423F40, 0, 4, 0);
@@ -158115,10 +158119,6 @@ static Functions_5(void) {
 	set_func_flags(0X424120,0x5410);
 	set_func_cmt(0X424120,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual int GUIButton::MouseDown() at acgui.h:597: \"if (pushedpic>0) usepic=pushedpic; ispushed=1; return 0;\". Exact match: [this+0x5C]>0 -> [this+0x60]=[this+0x5C], then [this+0x64]=1. Found by reading the GUIButton vtable directly from .rdata (starting at off_4AD4A0, the same table GUIButton__Draw -- already matched -- lives in at slot 6/+0x18): this is slot 3/+0xC, which matches GUIMain::mouse_but_down's independently-confirmed \"objs[mouseover]->MouseDown() at vtable+0xC\" call -- two unrelated pieces of evidence agreeing on the same slot. Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424120, 0X4, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X424150,0X42415D);
 	set_func_flags(0X424150,0x5414);
 	set_func_cmt(0X424150,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIButton::KeyPress(int keycode) {} at acgui.h:606 -- empty inline body. Exact match: unknown_libname_2 does nothing but save `this` and return, with `retn 4` (1 int param). Vtable slot 5/+0x14, immediately before the already-matched Draw at slot 6/+0x18. Same FLIRT-mistag/COMDAT-folding situation as GUIButton__MouseMove above (also referenced from a second vtable location). Flat-named as a C++ virtual method.", 1);
@@ -159016,6 +159016,10 @@ static Functions_6(void) {
 	add_func    (0X430709,0X43076D);
 	set_func_flags(0X430709,0x5410);
 	set_frame_size(0X430709, 0X4, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X43076D,0X4309A3);
 	set_func_flags(0X43076D,0x5410);
 	set_frame_size(0X43076D, 0X1C, 4, 0);
@@ -159082,10 +159086,6 @@ static Functions_6(void) {
 	set_func_flags(0X43195E,0x5410);
 	set_func_cmt(0X43195E,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void msetcursorlimit(int x1,int y1,int x2,int y2) at MOUSEW32.CPP:120: \"boundx1=x1; boundy1=y1; boundx2=x2; boundy2=y2;\" -- no other side effects. Exact match to sub_43195E (4 args, direct assignment to the same 4 globals confirmed via mgetgraphpos, already matched). Resolves an old open item: called directly from SetMouseBounds (already matched) and restore_game_data (already matched), whereas the 2011 source has SetMouseBounds call a virtual filter->SetMouseLimit(...) instead -- consistent with the project's established pattern of later versions wrapping direct global writes behind a pluggable driver interface.", 1);
 	set_frame_size(0X43195E, 0, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X431985,0X431C31);
 	set_func_flags(0X431985,0x5410);
 	SetType(0X431985, "void __stdcall domouse(int str);");
@@ -159995,6 +159995,10 @@ static Functions_7(void) {
 	add_func    (0X445DD0,0X445E09);
 	set_func_flags(0X445DD0,0x5400);
 	set_frame_size(0X445DD0, 0, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X445E10,0X445E4A);
 	set_func_flags(0X445E10,0x5400);
 	set_frame_size(0X445E10, 0, 0, 0);
@@ -160137,10 +160141,6 @@ static Functions_7(void) {
 	add_func    (0X4477D0,0X447829);
 	set_func_flags(0X4477D0,0x5400);
 	set_frame_size(0X4477D0, 0X4, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X447830,0X4478DF);
 	set_func_flags(0X447830,0x5400);
 	set_frame_size(0X447830, 0X8, 0, 0);
@@ -162171,6 +162171,10 @@ static Functions_8(void) {
 	set_func_flags(0X477790,0x5400);
 	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
 	set_frame_size(0X477790, 0X4, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X477870,0X4778A9);
 	set_func_flags(0X477870,0x5400);
 	set_frame_size(0X477870, 0, 0, 0);
@@ -162263,10 +162267,6 @@ static Functions_8(void) {
 	add_func    (0X479330,0X479398);
 	set_func_flags(0X479330,0x5400);
 	set_frame_size(0X479330, 0, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X4793A0,0X4793A1);
 	set_func_flags(0X4793A0,0x5400);
 	set_frame_size(0X4793A0, 0, 0, 0);
@@ -164788,6 +164788,10 @@ static Functions_9(void) {
 	add_func    (0X4AAEF0,0X4AAF05);
 	set_func_flags(0X4AAEF0,0x5400);
 	set_frame_size(0X4AAEF0, 0, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4AAF10,0X4AAF3C);
 	set_func_flags(0X4AAF10,0x5404);
 	SetType(0X4AAF10, "_onexit_t __cdecl _onexit(_onexit_t Func);");
@@ -164864,10 +164868,6 @@ static Functions_9(void) {
 	set_func_cmt(0X4AAF7E,	"[reversing] confirmed match\nsource obj (library): libucrtd:malloc.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=libucrtd:malloc.obj", 1);
 	set_frame_size(0X4AAF7E, 0, 0, 0);
 	define_local_var(0X4AAF7E, 0X4AAF84, "[bp+0X4]", "Size");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AAF84,0X4AAF8A);
 	set_func_flags(0X4AAF84,0x5480);
 	SetType(0X4AAF84, "char *__cdecl strstr(const char *Str, const char *SubStr);");

@@ -1057,7 +1057,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established `opts_mod_player` flag, then calls the already-matched is_mod_playing() before calling sub_477870(patnum) -- plausibly JGMOD's own pattern-seek API (third-party library boundary, not chased further per this project's Task #10 scope rule). CONFIRMED ABSENT: source's `current_music_type`/`channels[SCHAN_MUSIC]`-based dispatch (a later multi-format audio-channel abstraction) and the trailing DEBUG_CONSOLE call -- this build gates directly on the single already-established `opts_mod_player`/`is_mod_playing()` pair instead, matching this project's broader single-channel-predecessor pattern for the music subsystem."
   },
   {
     "kind": "function",
@@ -1067,7 +1067,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established dword_523214 (PlayMusic's own single MP3 stream handle) directly, then calls sub_47E970(handle,posn) -- plausibly ALMP3's own seek API (same address range as the library's other already-confirmed boundary functions, not individually confirmed, per Task #10 scope). CONFIRMED ABSENT: source's `current_music_type`/`crossFading`/`channels[]`-based dispatch and DEBUG_CONSOLE call -- another instance of the single-MP3-handle predecessor pattern already established for PlayMusic/FadeOut's own MP3 crossfade helpers."
   },
   {
     "kind": "function",
@@ -1077,7 +1077,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): gates on the already-established dword_523214 directly (returning 0 if unset), then calls sub_47EBD0(handle) -- plausibly ALMP3's own position-query API (same address-range boundary as the library's other confirmed functions, not individually chased). CONFIRMED ABSENT: source's leading `if(play.fast_forward) return 999999;` guard and its `current_music_type`/`channels[]`-based dispatch -- consistent with the same single-handle predecessor pattern found across this whole music-position API cluster this round."
   },
   {
     "kind": "function",
@@ -2097,7 +2097,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a clean, exact match to source's first three statements -- \"inv_item_wid=ww; inv_item_hit=hh; play_inv_numdisp=0;\" (all three already-established GameState fields, each getting a further confirmation from a new site). CONFIRMED ABSENT: source's entire trailing \"for(i=0;i<numguiinv;i++) { guiinv[i].itemWidth=ww; ...; guiinv[i].Resized(); } guis_need_update=1;\" loop -- a DIRECT behavioral confirmation (previously only inferred via GUIInv::Draw's own analysis) that this build has no multiple-inventory-window (`numguiinv`/`guiinv[]`) system at all; inventory display dimensions are purely global."
   },
   {
     "kind": "function",

@@ -11061,3 +11061,25 @@ the already-matched `FaceLocation` directly -- fusing what 2011 does
 via two script-object wrapper hops (`Character_FaceCharacter` ->
 `Character_FaceLocation`) into one direct call, the same "flatter than
 2011" pattern found repeatedly elsewhere in this project.
+
+### `SetInvDimensions` confirms no multiple-inventory-window support; the MP3/MOD position-query cluster confirms the single-handle predecessor pattern once more
+
+`SetInvDimensions` matches source's first three statements exactly
+(`inv_item_wid`/`inv_item_hit`/`play_inv_numdisp`, all further
+confirmed), but CONFIRMS ABSENT source's entire trailing `numguiinv`/
+`guiinv[]` backwards-compatibility loop -- a direct behavioral
+confirmation (previously only inferred from `GUIInv::Draw`'s own
+analysis) that this build has no multiple-inventory-window system at
+all; inventory display dimensions are purely global.
+
+`SeekMODPattern`/`SeekMP3PosMillis`/`GetMP3PosMillis` all gate directly
+on the already-established single global handles (`opts_mod_player`/
+`is_mod_playing()` for MOD, `dword_523214` -- PlayMusic's own MP3
+stream handle -- for MP3) rather than source's later `current_music_
+type`/`crossFading`/`channels[]`-based multi-format dispatch, and
+`GetMP3PosMillis` additionally confirms absent the `play.fast_forward`
+early-return guard. All three delegate their real seek/position-query
+work to unnamed library calls in the same address ranges as this
+project's already-confirmed JGMOD/ALMP3 boundary functions -- left
+unnamed per the usual Task #10 scope convention, not individually
+chased further.

@@ -3142,6 +3142,15 @@ disassembly work.
   tan-approximation octant classifier writing the result into `loop`.
   `FaceCharacter` closes cleanly, fusing two 2011 script-object wrapper
   hops into one direct call to the already-matched `FaceLocation`.
+- **`SetInvDimensions` confirms no multiple-inventory-window support.**
+  Matches source's first three statements exactly, but confirms absent
+  the entire trailing `numguiinv`/`guiinv[]` backwards-compatibility
+  loop — inventory display dimensions are purely global here. The
+  `SeekMODPattern`/`SeekMP3PosMillis`/`GetMP3PosMillis` cluster all
+  gate on the already-established single music-format handles instead
+  of 2011's later `channels[]`/`crossFading` multi-format dispatch,
+  reinforcing the single-channel predecessor pattern already found
+  across the music subsystem.
 
 ## Third-party library identification (Task #10)
 
