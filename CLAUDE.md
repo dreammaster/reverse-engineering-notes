@@ -3663,6 +3663,12 @@ disassembly work.
   (calling its already-matched constructor), itself called through a
   trivial pass-through wrapper registered in a static-initializer
   table entry — the CRT's own pre-`main()` startup entry point.
+- **`dxmedia_pause_video`/`resume_video` confirmed absent entirely.**
+  Every reference to `g_pMMStream` (a single non-indexed global, so
+  the check is exhaustive) falls inside the three already-matched
+  DirectShow functions — this build's video playback has no dedicated
+  pause/resume hook for window-focus changes at all, consistent with
+  it predating the `AGSWin32` platform-abstraction layer.
 
 ## Third-party library identification (Task #10)
 

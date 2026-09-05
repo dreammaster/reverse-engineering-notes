@@ -12570,6 +12570,22 @@ registered entry point the CRT's own startup code calls before
 common single-level pattern -- plausibly a build/optimization
 artifact, not further explained. Both named accordingly.
 
+### dxmedia_pause_video/resume_video confirmed absent entirely
+
+An exhaustive check of every reference to `g_pMMStream`
+(`dword_523910`, a single non-indexed global, so the check is
+exhaustive rather than a sample) shows all of them fall inside the
+three already-matched functions (`InitRenderToSurface`,
+`RenderToSurface`, `dxmedia_play_video` itself) -- `dxmedia_pause_
+video()`/`dxmedia_resume_video()` (`acwavi.cpp:256-272`, called from
+`AGSWin32::DisplaySwitchOut`/`In` on Alt-Tab/window-focus-change,
+`acplwin.cpp:573-579`) don't exist anywhere in this binary. This
+build's video playback has no dedicated pause/resume hook for window-
+focus changes at all -- consistent with this build predating the
+whole `AGSWin32` platform-abstraction layer, already established
+repeatedly elsewhere (though it doesn't rule out some other,
+differently-implemented mechanism for the same purpose).
+
 `InitRenderToSurface`'s own `vscreen`-creation call names one more
 function at medium confidence: `gfx_directx_create_system_bitmap`
 (`sub_456210`), identified primarily by call site/role rather than a
