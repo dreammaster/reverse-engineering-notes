@@ -2278,7 +2278,7 @@
     "source_obj": "Clib32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to source's \"for(bb=0;bb<mflib.num_files;bb++) if(stricmp(mflib.filenames[bb],filly)==0){sprintf(actfilename,\\\"%s\\\\%s\\\",base_path,mflib.data_filenames[mflib.file_datafile[bb]]); tfil=ci_fopen(actfilename,readmode); if(tfil==NULL) return NULL; fseek(tfil,mflib.offset[bb],SEEK_SET); return tfil;} return ci_fopen(filly,readmode);\" (Clib32.cpp:424-439) -- mflib_data_filenames[] confirmed at a 20-byte stride (0x14), a SECOND independent confirmation (alongside clibfindindex's own filenames[]@25-byte finding) that the live mflib global uses the OLD MultiFileLib.data_filenames[MAXMULTIFILES][20] layout, not 2011's MultiFileLibNew.data_filenames[MAXMULTIFILES][50]. byte_533DF0[] confirmed as mflib.file_datafile[] (a char array, matching its declared type). CONFIRMED ABSENT (a second instance of csetlib's own already-established finding): ci_fopen() -- both fopen calls in this function (the per-file match, and the final fallback) use the plain CRT fopen() directly."
   },
   {
     "kind": "function",
@@ -2288,7 +2288,7 @@
     "source_obj": "Clib32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=Clib32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's PR_FILEFIRST/PR_DATAFIRST dual-priority dispatch (Clib32.cpp:445-466+) closely and exactly in control flow -- the PR_FILEFIRST branch's \"if(fmt[0]!='r') tfil=ci_fopen(...); else {tfil=ci_fopen(...); if(tfil==NULL && lib_file_name[0]!=' ') {tfil=clibopenfile(...); last_opened_size=clibfilesize(...);}}\" and the PR_DATAFIRST branch's \"if((cliboffset(filnamm)<1)|(fmt[0]!='r'))\" gate (both already-matched callees, clibopenfile/clibfilesize/cliboffset, all confirmed this session) both match exactly. CONFIRMED ABSENT (a THIRD instance of the same finding): ci_fopen() -- every one of this function's own direct file-open attempts uses the plain CRT fopen() instead, with no case-insensitive-path resolution wrapper anywhere in this whole CLIB subsystem."
   },
   {
     "kind": "function",

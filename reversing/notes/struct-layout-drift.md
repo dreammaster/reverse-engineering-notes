@@ -11559,3 +11559,16 @@ machinery 2011 carries purely for backward file-format compatibility;
 this build has no newer format to bridge to, so no conversion step
 exists. `csetlib` also confirms `ci_fopen()`'s case-insensitive-path
 wrapper is absent -- this build calls the CRT `fopen()` directly.
+
+### clibopenfile/clibfopen close the CLIB cluster, with a third confirmation of ci_fopen's absence
+
+`clibopenfile` matches `Common/Clib32.cpp:424-439` exactly, and its own
+`mflib.data_filenames[]` access confirms a SECOND independent stride
+(20 bytes, matching the OLD `MultiFileLib` declaration, not 2011's
+50-byte `MultiFileLibNew` one) -- reinforcing last round's `mflib`
+old-struct finding from a completely different field. `clibfopen`
+matches source's `PR_FILEFIRST`/`PR_DATAFIRST` dual-priority dispatch
+exactly. Both confirm, for a THIRD time this cluster, that `ci_fopen()`
+(the case-insensitive-path wrapper) doesn't exist anywhere in this
+build's CLIB subsystem -- every file-open attempt uses the plain CRT
+`fopen()` directly.

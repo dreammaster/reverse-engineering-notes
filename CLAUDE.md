@@ -3308,6 +3308,11 @@ disassembly work.
   entire old-to-new-format conversion machinery 2011 carries for
   backward compatibility; this build has no newer format to bridge to.
   Also confirms `ci_fopen()`'s case-insensitive-path wrapper is absent.
+- **`clibopenfile`/`clibfopen` close the CLIB cluster, finding a third
+  confirmation of `ci_fopen`'s absence.** `clibopenfile`'s own
+  `data_filenames[]` access confirms a second independent 20-byte
+  stride matching the OLD `MultiFileLib` struct. Both functions use
+  plain CRT `fopen()` everywhere instead of a case-insensitive wrapper.
 
 ## Third-party library identification (Task #10)
 
