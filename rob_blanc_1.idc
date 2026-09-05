@@ -155425,6 +155425,7 @@ static Functions_0(void) {
 	define_local_var(0X404959, 0X404E92, "[bp+0X10]", "gameIsHighRes");
 	add_func    (0X404E92,0X404EF3);
 	set_func_flags(0X404E92,0x5411);
+	set_func_cmt(0X404E92,	"[reversing] confirmed match\nconfidence: high\nevidence: INIreaditem's own private fatal-error reporter, called from 2 sites inside INIreaditem (already matched). Takes a single error-code argument (0-7), indexes an 8-entry local table of distinct error-message strings (\"No sections in file\"/\"Need ']' to end section line\"/\"Missing '=' in definition\"/\"Unexpected EOF\"/\"Parse Error\"/\"Disk full\"/\"Temporary file error\"/\"Out of memory\") and prints `printf(\"\\n\\nINI_Lib (E1%02d): %s\\n\", code+50, message)` before hard-exiting via `exit(10)` -- no cleanup, no quit() call, nothing recoverable. The literal \"INI_Lib\" wording in the format string is a real library-heritage marker: this decisively is (or is directly copied from) a small, public-domain-style INI-parsing library's own error-reporting convention, distinct from AGS's own later error-handling style. Searched for and NOT FOUND anywhere in the 2011 reference source (no \"INI_Lib\"/\"IniError\"/\"E1%02d\" string exists in Engine/ at all) -- this entire error-code-based cu" "stom INI parser is CONFIRMED ABSENT/removed by", 1);
 	set_frame_size(0X404E92, 0X20, 4, 0);
 	add_func    (0X404EF7,0X404F12);
 	set_func_flags(0X404EF7,0x5410);
@@ -155648,14 +155649,14 @@ static Functions_0(void) {
 	set_func_flags(0X407BCA,0x5410);
 	set_func_cmt(0X407BCA,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIMain::mouse_but_down() at acgui.cpp:1325. Matches: \"objs[mouseover]->MouseDown();\" (indexes objs[] at +0x94 using the +0x54 \"mouseover\" field, calls vtable slot +0xC -- adjacent to MouseUp's +0x10, consistent vtable ordering), \"mousedownon = mouseover;\" (copies +0x54 into +0x60, matching mouse_but_up's already-confirmed mousedownon field), then computes (mousex - x, mousey - y) using globals dword_5358CC/dword_5358D0 (mousex/mousey) minus fields at +0x28/+0x2C -- matching \"objs[mousedownon]->MouseMove(mousex - x, mousey - y);\" exactly. New GUIMain field evidence: x at +0x28, y at +0x2C, MouseDown at vtable slot +0xC. Caller matches: check_controls (already matched).", 1);
 	set_frame_size(0X407BCA, 0X4, 4, 0);
-	add_func    (0X407C58,0X407CA7);
-	set_func_flags(0X407C58,0x5410);
-	set_func_cmt(0X407C58,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIMain::mouse_but_up() at acgui.cpp:1342. Matches: \"if (mousedownon < 0) return;\" (this+0x60 >= 0 guard), \"objs[mousedownon]->MouseUp();\" (indexes the objs[] array at +0x94 using the +0x60 field, then calls a virtual method at vtable slot +0x10), \"mousedownon = -1; guis_need_update = 1;\" (matches exactly). New GUIMain field evidence: mousedownon at +0x60, objs[] pointer array at +0x94, MouseUp at vtable slot +0x10. Caller matches: check_controls (already matched).", 1);
-	set_frame_size(0X407C58, 0X4, 4, 0);
 }
 
 static Functions_1(void) {
 
+	add_func    (0X407C58,0X407CA7);
+	set_func_flags(0X407C58,0x5410);
+	set_func_cmt(0X407C58,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIMain::mouse_but_up() at acgui.cpp:1342. Matches: \"if (mousedownon < 0) return;\" (this+0x60 >= 0 guard), \"objs[mousedownon]->MouseUp();\" (indexes the objs[] array at +0x94 using the +0x60 field, then calls a virtual method at vtable slot +0x10), \"mousedownon = -1; guis_need_update = 1;\" (matches exactly). New GUIMain field evidence: mousedownon at +0x60, objs[] pointer array at +0x94, MouseUp at vtable slot +0x10. Caller matches: check_controls (already matched).", 1);
+	set_frame_size(0X407C58, 0X4, 4, 0);
 	add_func    (0X407CA7,0X407FAB);
 	set_func_flags(0X407CA7,0x5410);
 	SetType(0X407CA7, "int __cdecl read_gui(FILE *Stream, void *Buffer, int);");

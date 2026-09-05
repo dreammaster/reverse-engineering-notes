@@ -13291,3 +13291,25 @@ LZSS-window match-length decoding body was not traced instruction-by-
 instruction -- the header match is decisive enough on its own, and
 further tracing would mostly re-verify a well-known, unremarkable
 LZSS-variant algorithm whose full source already sits in this repo.
+
+### `INIreaditem`'s own private fatal-error reporter documents a whole
+### removed subsystem: the "INI_Lib" custom config parser
+
+One more callgraph-ranking lead, `sub_404E92` (called from INIreaditem,
+already matched): a self-contained fatal-error reporter, taking a
+single 0-7 error code, indexing an 8-entry table of distinct messages
+("No sections in file"/"Need ']' to end section line"/"Missing '=' in "
+"definition"/"Unexpected EOF"/"Parse Error"/"Disk full"/"Temporary "
+"file error"/"Out of memory"), and printing `"\n\nINI_Lib (E1%02d): "
+"%s\n"` before a hard `exit(10)` -- no cleanup, no `quit()` call. The
+literal "INI_Lib" wording is a real library-heritage marker: a small,
+public-domain-style INI-parsing library's own error-reporting
+convention, either linked in directly or copied wholesale into AGS's
+own source. Searched for and NOT FOUND anywhere in the 2011 reference
+source (no "INI_Lib"/"IniError"/"E1%02d" string exists in `Engine/` at
+all) -- CONFIRMED ABSENT/removed by 2011, consistent with AGS switching
+wholesale to Allegro's own `config.c`-based API (`get_config_string`/
+`get_config_int`/`set_config_string`, all already matched as genuine
+Allegro library functions) rather than keeping a custom bundled parser.
+No 2011 declaration exists to name this function against -- left
+unnamed, its role and full error-code table documented instead.

@@ -3871,6 +3871,14 @@ disassembly work.
   `getc` macro expansion rather than a real call, and one real drift:
   its out-of-memory path calls `printf`+`exit()` directly rather than
   going through `quit()`, skipping engine-shutdown cleanup.
+- **`INIreaditem`'s own private fatal-error reporter documents a whole
+  removed subsystem.** Its error-code table and literal "INI_Lib"
+  format-string wording mark it as a small, public-domain-style custom
+  INI parser's own error-reporting convention — searched for and NOT
+  FOUND anywhere in 2011 (`Engine/`), confirming this entire custom
+  parser was removed once AGS switched to Allegro's own `config.c`-
+  based API. No 2011 name exists to adopt — left unnamed, documented
+  by role and full error-code table instead.
 
 ## Third-party library identification (Task #10)
 
