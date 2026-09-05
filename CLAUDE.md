@@ -3295,6 +3295,9 @@ disassembly work.
   second is missing its third assignment (consistent with the
   dynamic-sprite-leak check being absent from `quit()`), and the third
   is a complete, zero-drift match.
+- **`render_to_screen` has a genuinely expanded signature, not just a
+  predates-`gfxDriver` gap** — takes 6 parameters, not 2011's 3, fusing
+  a separate stretch/scale step directly into its own call shape.
 
 ## Third-party library identification (Task #10)
 

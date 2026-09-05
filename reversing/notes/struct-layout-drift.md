@@ -11517,3 +11517,19 @@ consistent with this project's already-established finding that the
 whole dynamic-sprite-leak check is absent from this build's `quit()`.
 `minstalled` closes as a complete, zero-drift match to `Common/
 MOUSEW32.CPP:265-276`.
+
+### render_to_screen: a genuinely expanded signature, not just a predates-gfxDriver gap
+
+Source's version (`AC.CPP:2725-2744+`) takes only 3 parameters and is
+entirely `gfxDriver`-based (`SetRenderOffset`/`DrawSprite(AGSE_
+FINALSCREENDRAW)`/`screen_is_faded_out`) -- confirmed absent here, the
+familiar pattern. But this build's own version isn't just a smaller
+subset of that -- it genuinely takes 6 parameters (confirmed via its
+own callers this session, `script_debug`'s `cmdd==2`/`cmdd==5`
+branches), fusing what 2011 keeps as a separate stretch/scale step
+directly into `render_to_screen`'s own signature. Delegates to an
+unnamed lower-level primitive (`sub_43E8A0`, plausibly Allegro's own
+`stretch_blit` by argument shape, not independently confirmed).
+(`circlefill` checked but left alone -- a well-known Allegro library
+function already correctly named; per this project's third-party scope
+rule, its own internal rasterization algorithm isn't worth chasing.)

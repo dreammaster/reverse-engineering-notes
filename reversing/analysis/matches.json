@@ -2539,7 +2539,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, first look at this function's own body): source's version (AC.CPP:2725-2744+) takes only 3 parameters (toRender,atx,aty) and is entirely gfxDriver-based (SetRenderOffset/DrawSprite(AGSE_FINALSCREENDRAW)/screen_is_faded_out checks) -- CONFIRMED ABSENT here (the by-now-familiar predates-gfxDriver pattern). This build's own version instead takes 6 parameters, confirmed via its own callers this session (script_debug's cmdd==2/cmdd==5 branches: render_to_screen(toRender,atx,aty,aty2,width,height), the last two already-scaled by current_screen_resolution_multiplier_x/y) -- fusing what 2011 keeps as a separate stretch/scale step into render_to_screen's own signature. Delegates to an unnamed lower-level primitive (sub_43E8A0, plausibly Allegro's own stretch_blit given its argument shape, not independently confirmed or chased further this round)."
   },
   {
     "kind": "function",
