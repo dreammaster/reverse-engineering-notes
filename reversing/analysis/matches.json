@@ -1267,7 +1267,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"check_valid_file_handle(haa,\\\"FileWrite\\\"); putw(strlen(towrite)+1,haa); fwrite(towrite,strlen(towrite)+1,1,haa);\" -- every instruction, argument, and literal (+1 for the null terminator, twice) lines up exactly."
   },
   {
     "kind": "function",
@@ -1277,7 +1277,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"check_valid_file_handle(...); fwrite(towrite,strlen(towrite),1,haa); fputc(13,haa); fputc(10,haa);\" -- CRLF line ending included, instruction for instruction."
   },
   {
     "kind": "function",
@@ -1287,7 +1287,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- confirms a real crash-vs-graceful-return regression, matching this session's established pattern (see StopDialog's own entry). Source: \"VALIDATE_STRING(toread); check_valid_file_handle(...); if(feof(haa)){toread[0]=0;return;} int lle=getw(haa); if((lle>=200)|(lle<1)) quit(\\\"!FileRead: file was not written by FileWrite\\\"); fread(toread,lle,1,haa);\". This build's null check (\"if(Buffer==0) quit(aStringArgument_2)\", matching the exact same string as VALIDATE_STRING's own text) reuses the narrower literal-NULL-only pattern already established for this build's other inline VALIDATE_STRING-equivalent checks (see _sc_strlower/_sc_strupper's own entries) rather than the macro's actual `<=4096` low-address heuristic -- consistent, not an isolated one-off. check_valid_file_handle matches next. CONFIRMED ABSENT: the entire `if(feof(haa)){toread[0]=0;return;}` early-return -- no feof call exists anywhere in this function's body at all. The bounds check on the read-back length (`lle>=0C8h(200) | lle<1`, matching source's `200`/`1` literals exactly, coincidentally the same numeric value as check_strlen's own MAXSTRLEN global but NOT tied to it -- a separate hardcoded literal here) then `fread` proceed unconditionally. Net effect: calling FileRead() on a file already at EOF makes `getw()` read past end-of-file (returning EOF/-1 in practice), which fails the `lle<1` bounds check and CRASHES via quit(\\\"!FileRead: file was not written by FileWrite\\\") -- a confusing, misleading hard crash where source gracefully returns an empty string."
   },
   {
     "kind": "function",
@@ -1297,7 +1297,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source's \"check_valid_file_handle(...); fputc('I',haa); putw(into,haa);\" -- the literal 'I'(0x49) tag-byte marker matches exactly, setting up FileReadInt's own matching check."
   },
   {
     "kind": "function",
@@ -1307,7 +1307,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- a SECOND instance of the same missing-feof-guard regression found in FileRead's own entry this round. Source: \"check_valid_file_handle(...); if(feof(haa)) return -1; if(fgetc(haa)!='I') quit(\\\"!FileReadInt: File read back in wrong order\\\"); return getw(haa);\". This build's version matches check_valid_file_handle, the 'I'(0x49) tag-byte comparison, the quit() call, and the final getw() exactly -- but CONFIRMED ABSENT: the leading `if(feof(haa)) return -1;` early-return, no feof call anywhere in the body. Net effect: calling FileReadInt() at EOF makes fgetc() return EOF(-1), which fails the `!='I'` comparison and CRASHES via quit(\\\"!FileReadInt: File read back in wrong order\\\") -- again a misleading hard crash where source gracefully returns -1."
   },
   {
     "kind": "function",
@@ -1317,7 +1317,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- CONFIRMED ABSENT: same as FileRead/FileReadInt, no `if(feof(haa)) return -1;` guard exists in this body either (source: AC.CPP:18429-18434). Unlike those two, this one is NOT a real behavioral regression: this build's version is just `check_valid_file_handle(...); return fgetc(haa);` -- and Allegro/CRT's own fgetc() already returns EOF(-1) when called past end-of-file, the exact same value source's explicit feof-guarded early-return supplies. The missing guard is redundant here, not a gap -- coincidental behavioral equivalence, not a fix needed for the eventual ScummVM port."
   },
   {
     "kind": "function",
@@ -1327,7 +1327,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time) -- the same coincidental-equivalence case as FileReadRawChar's own entry, not FileRead/FileReadInt's real regression: source is `check_valid_file_handle(...); if(feof(haa)) return -1; return getw(haa);` (AC.CPP:18435-18440), and this build's `check_valid_file_handle(...); return _getw(Stream);` omits the feof guard -- but getw()'s own implementation (four chained fgetc() calls) already surfaces EOF as -1 through the same return path, so the guard is redundant rather than missing functionality."
   },
   {
     "kind": "function",

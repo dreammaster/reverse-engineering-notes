@@ -3170,6 +3170,17 @@ disassembly work.
   instead of via a shared function. All four confirm `my_strncpy`
   doesn't exist as a separate function — each inlines its own
   null-termination step after a raw CRT `strncpy` call instead.
+- **The `FileWrite`/`FileRead` script-API cluster closes, with two real
+  crash regressions found.** `FileWrite`/`FileWriteRawLine`/
+  `FileWriteInt` all close as complete, zero-drift matches. `FileRead`/
+  `FileReadInt` are both missing source's leading `if(feof(haa))
+  {...return early...;}` guard entirely — reading either at EOF hits
+  their own bounds/tag-byte check instead and CRASHES via `quit()` with
+  a misleading "file was not written by FileWrite"/"read back in wrong
+  order" message, rather than gracefully returning an empty string/-1.
+  `FileReadRawChar`/`FileReadRawInt` are missing the same guard too, but
+  harmlessly — `fgetc()`/`getw()` already surface EOF as -1 through
+  their own normal return path, so nothing is actually lost there.
 
 ## Third-party library identification (Task #10)
 

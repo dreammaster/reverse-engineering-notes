@@ -11136,3 +11136,45 @@ in this build at all). All four also confirm `my_strncpy` (2011's
 bounds-checked, always-null-terminating wrapper) doesn't exist as a
 separate function here -- each caller inlines the equivalent
 null-termination step directly after a raw CRT `strncpy` call instead.
+
+### The FileWrite/FileRead script-API cluster closes, with two real crash regressions found
+
+A coherent block of 7 previously-bare mechanical matches
+(`FileWrite`/`FileWriteRawLine`/`FileRead`/`FileWriteInt`/`FileReadInt`/
+`FileReadRawChar`/`FileReadRawInt`, all sitting contiguously in the
+disassembly right after the already-matched `FileOpen`/`FileClose`)
+read in full and compared against `Engine/AC.CPP:18378-18440`.
+
+Three close as complete, exact, zero-drift matches: `FileWrite`
+(`check_valid_file_handle` + `putw(strlen+1)` + `fwrite(...,strlen+1,...)`,
+the null-terminator `+1` included twice), `FileWriteRawLine` (raw
+`fwrite` + explicit `fputc(13)`/`fputc(10)` CRLF), and `FileWriteInt`
+(the `'I'`(0x49) tag-byte marker + `putw`, setting up `FileReadInt`'s
+own matching read-back check).
+
+Two real, confirmed behavioral regressions -- crash-instead-of-graceful-
+return, the same class of finding as `StopDialog`'s own earlier entry:
+source guards both `FileRead`/`FileReadInt` with a leading
+`if(feof(haa)) { ...return early...; }` check before doing the actual
+read; this build has NEITHER guard in either function. In `FileRead`,
+reading at EOF makes `getw()` return -1, which fails the `lle<1` bounds
+check and CRASHES via `quit("!FileRead: file was not written by
+FileWrite")` instead of returning an empty string. In `FileReadInt`,
+reading at EOF makes `fgetc()` return EOF, which fails the `!='I'` tag-
+byte comparison and CRASHES via `quit("!FileReadInt: File read back in
+wrong order")` instead of returning -1. Both are confusing, misleading
+crash messages blaming a "wrong file" when the real cause is reading
+past the end of a valid one -- worth flagging for the eventual ScummVM
+port. `FileRead`'s own leading null-check also reuses this build's
+established narrower "literal `==0`" inline pattern instead of
+`VALIDATE_STRING`'s actual `<=4096` low-address heuristic (matching the
+same finding already made for `_sc_strlower`/`_sc_strupper` last round --
+consistent project-wide, not a one-off).
+
+Two more LOOK like the same gap but aren't: `FileReadRawChar`/
+`FileReadRawInt` are also missing their own `if(feof(haa)) return -1;`
+guards -- but here it's harmless. Both just return `fgetc(haa)`/
+`getw(haa)` directly, and each of those library functions already
+surfaces EOF as -1 through its own normal return path -- coincidental
+behavioral equivalence, not a real gap, and NOT worth "fixing" for the
+port the way the other two are.
