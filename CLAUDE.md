@@ -3452,6 +3452,14 @@ disassembly work.
   writes back, then launches the dialog via the standard
   `DialogBoxParamA` idiom. `platform_RunSetup` → `acwsetup` →
   `DialogFunc` is now fully mapped end to end.
+- **`GUIListBox`'s long-standing `items[]`/`saveGameIndex[]` split
+  question closes.** The `+0x20..+0x1B0` span had been left as opaque
+  padding, guessing it held both arrays side by side (a split that
+  never divided evenly). `GUIListBox::Clear`/`AddItem` (both already
+  matched) settle it: the whole span is `items[]` alone, a plain
+  4-byte-stride `char*[100]` array — `saveGameIndex[]` is CONFIRMED
+  ABSENT entirely, this 2002 build predates the field itself, not just
+  its persistence.
 
 ## Third-party library identification (Task #10)
 

@@ -165,6 +165,16 @@ fields named and its size (0x10) exactly matches the reference source's
     an integer N), so this region is left as opaque padding pending real
     per-field evidence rather than a guessed split.
 
+    RESOLVED (much later round, found while chasing GUIListBox::Clear/
+    AddItem's own real per-field evidence for an unrelated GUIObject.flags
+    investigation): the naive split above assumed BOTH arrays exist here.
+    They don't -- items[]@+0x20 occupies the ENTIRE +0x20..+0x1B0 span
+    alone, at a plain 4-byte stride, dividing evenly into exactly 100
+    entries with zero remainder. saveGameIndex[] is CONFIRMED ABSENT: 2002
+    predates that field entirely (AddItem's own body has no matching write
+    at all, not just an unpersisted one). See the struct declaration below
+    for the full evidence.
+
   - `GUITextBox` / `GUILabel`: two NEW structs, recovered together by pinning
     two adjacent 9-slot vtables directly in .rdata (off_4AD554 and off_4AD4E8)
     via DATA XREF addresses on their own already-matched methods (e.g.
@@ -1257,12 +1267,19 @@ struct GUIListBox {
                             // exact base-class layout.
   int activated;                // +0x1C, positional (GUIObject base field, see GUITextBox above --
                             // not independently re-verified for GUIListBox specifically this round).
-  char _pad_items[0x190];     // +0x20..0x1B0, unknown: this is `items[MAX_LISTBOX_ITEMS]` (char*) and
-                            // `saveGameIndex[MAX_LISTBOX_ITEMS]` (short) per source (acgui.h:386-387), but
-                            // the two arrays are NOT individually split out here -- naive 6-byte-per-entry
-                            // (4-byte ptr + 2-byte short) arithmetic against this region's size doesn't
-                            // divide evenly, so the exact 2002 MAX_LISTBOX_ITEMS/layout isn't pinned down
-                            // yet. Left as opaque padding rather than a guessed split.
+  char *items[100];            // +0x20..0x1B0 (100 entries), high confidence: RESOLVED (previously left as
+                            // opaque padding, guessing this might also hold source's parallel
+                            // `saveGameIndex[MAX_LISTBOX_ITEMS]` short array, acgui.h:386-387). Confirmed
+                            // via GUIListBox::Clear ("for(aa=0;aa<numItems;aa++) free(items[aa]);", exact
+                            // match: frees items[aa]@[this+aa*4+0x20]) AND GUIListBox::AddItem
+                            // ("items[numItems]=malloc(...)", same array, same stride) -- both agree the
+                            // WHOLE +0x20..+0x1B0 span (0x190 bytes) is `items[]` alone, at a plain 4-byte
+                            // (char*) stride, dividing evenly into exactly 100 entries with zero remainder.
+                            // CONFIRMED ABSENT: `saveGameIndex[]` entirely -- AddItem's own body has no
+                            // "saveGameIndex[numItems]=-1;" line at all (source has one immediately after
+                            // the items[] assignment) -- this 2002 build predates that field, not just its
+                            // persistence. MAX_LISTBOX_ITEMS=100 here vs 2011's 200 -- the familiar 2x
+                            // capacity-reduction pattern, cross-confirmed independently by both methods.
   int numItems;                 // +0x1B0, high confidence: first field of an 11-int block confirmed via
                             // GUIListBox::WriteToFile's 44-byte bulk fwrite (ElementSize=0xB,Count=4)
                             // starting here, matching source's declared order exactly (acgui.h:388-390).

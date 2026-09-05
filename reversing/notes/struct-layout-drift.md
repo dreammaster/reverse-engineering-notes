@@ -11920,3 +11920,25 @@ the dialog via the standard `DialogBoxParamA(...,DialogFunc,0)` idiom.
 This closes the entire setup-dialog investigative thread this session
 opened: `platform_RunSetup` -> `acwsetup` -> `DialogFunc`, with the
 config-key read/write round-trip now fully mapped end to end.
+
+### GUIListBox's long-standing "minimum size" caveat closes
+
+A genuinely old open item, revisited: `apply_structs.py`'s own
+`GUIListBox` declaration had left `+0x20..+0x1B0` (0x190 bytes) as
+opaque padding, guessing it might hold BOTH source's `items[]` (char*)
+and `saveGameIndex[]` (short) arrays side by side -- but that split
+never divided evenly (6 bytes/entry doesn't fit 0x190 for any integer
+entry count), so it was left unresolved rather than forced.
+
+`GUIListBox::Clear`/`AddItem` (both already matched, with rich field
+evidence already sitting in their own `matches.json` entries from an
+earlier round -- this round just connected that evidence back to the
+struct declaration itself) already settle it decisively: `Clear`'s own
+`free(items[aa])` loop and `AddItem`'s own `malloc`/assignment both
+treat the WHOLE `+0x20..+0x1B0` span as `items[]` alone, at a plain
+4-byte stride, dividing evenly into exactly 100 entries with zero
+remainder. `saveGameIndex[]` is CONFIRMED ABSENT entirely -- `AddItem`'s
+own body has no `saveGameIndex[numItems]=-1;` write at all, meaning
+this 2002 build predates the field itself, not just its persistence.
+`apply_structs.py` updated to declare `char *items[100];` in place of
+the old `_pad_items[0x190]` placeholder.
