@@ -6308,5 +6308,23 @@
     "source_line": 25789,
     "confidence": "high",
     "evidence": "void compile_room_script() at AC.CPP:25789. Already correctly named via linker symbol (string match: \"Unable to create local script: %s\"), but no dedicated matches.json entry existed until this round. FIELD EVIDENCE (full leading body read): opens with `ccError=0` (dword_5347F8, already established), then `roominst=ccCreateInstance(thisroom.compiled_script)` -- matching disasm's `dword_523138 = ccCreateInstance(dword_523080)` exactly, where dword_523080 is decisively `thisroom.compiled_script` (RoomStruct's own already-confirmed field@+0x39F8, confirmed this round via zero-slack address arithmetic against thisroom's established base -- see quit()'s own entry for the complete cross-reference) and dword_523138 is the already-established `roominst` global. This closes the loop on both of quit()'s previously-unidentified comparison globals from a second, independent call site."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "check_click_on_object",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 16280,
+    "confidence": "high",
+    "evidence": "int check_click_on_object(int,int,int) at AC.CPP:16280-16285. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"aa=GetObjectAt(xx-divide_down_coordinate(offsetx),yy-divide_down_coordinate(offsety)); if(aa<0) return 0; RunObjectInteraction(aa,mood); return 1;\" -- both GetObjectAt and RunObjectInteraction already matched, divide_down_coordinate confirmed as an inlined division by current_screen_resolution_multiplier_x/y. Called from ProcessClick (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "check_click_on_character",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 16378,
+    "confidence": "high",
+    "evidence": "int check_click_on_character(int,int,int) at AC.CPP:16378-16385. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"lowestwas=is_pos_on_character(xx,yy); if(lowestwas>=0) {RunCharacterInteraction(lowestwas,mood); return 1;} return 0;\" -- is_pos_on_character's own role is carried by the already-documented unnamed internal helper sub_417ECD (see its own inline comment, cited from GetCharacterAt's entry), and RunCharacterInteraction is already matched. Called from ProcessClick (already matched)."
   }
 ]

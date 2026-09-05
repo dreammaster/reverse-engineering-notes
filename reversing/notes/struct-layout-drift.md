@@ -11686,3 +11686,15 @@ turned out to still be sitting in the live IDB as `sub_421957` despite
 already having a "confirmed match" comment -- another instance of the
 "documented in prose, never actually pushed to the IDB" gap this
 project has hit a few times before; now fixed.
+
+### check_click_on_character/check_click_on_object get their own matches.json entries
+
+Both were already correctly named in the live IDB (from the earlier
+`ProcessClick` round) and their behavior was already described in
+passing via their own callees' evidence text, but neither had ever
+received its own dedicated `matches.json` entry -- closing that small
+bookkeeping gap. Both are complete, exact, zero-drift matches:
+`check_click_on_object` to `AC.CPP:16280-16285` (`GetObjectAt` +
+`RunObjectInteraction`), `check_click_on_character` to `AC.CPP:16378
+-16385` (`is_pos_on_character`'s own already-documented unnamed helper
++ `RunCharacterInteraction`).

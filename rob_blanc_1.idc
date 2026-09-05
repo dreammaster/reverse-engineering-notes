@@ -156871,7 +156871,7 @@ static Functions_3(void) {
 	define_local_var(0X417D60, 0X417E77, "[bp+0XC]", "mood");
 	add_func    (0X417E77,0X417ECD);
 	set_func_flags(0X417E77,0x5410);
-	set_func_cmt(0X417E77,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Called from ProcessClick (already matched, see its own updated entry) as \"check_click_on_object(xx,yy,mood)\", matching 2011's own call shape and role exactly: \"else if(loctype==LOCTYPE_OBJ) {if(check_click_on_object(xx,yy,mood)) return;}\" (AC.CPP:16691-16693) -- a nonzero return short-circuits ProcessClick with no further dispatch. Not independently traced through its own body this round (its own internal object-hit-test logic, presumably built on the already-matched GetObjectAt, is a candidate for a future round).", 1);
+	set_func_cmt(0X417E77,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int check_click_on_object(int,int,int) at AC.CPP:16280-16285. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"aa=GetObjectAt(xx-divide_down_coordinate(offsetx),yy-divide_down_coordinate(offsety)); if(aa<0) return 0; RunObjectInteraction(aa,mood); return 1;\" -- both GetObjectAt and RunObjectInteraction already matched, divide_down_coordinate confirmed as an inlined division by current_screen_resolution_multiplier_x/y. Called from ProcessClick (already matched).", 1);
 	set_frame_size(0X417E77, 0X4, 4, 0);
 	define_local_var(0X417E77, 0X417ECD, "[bp-0X4]", "aa");
 	define_local_var(0X417E77, 0X417ECD, "[bp+0X10]", "mood");
@@ -156895,7 +156895,7 @@ static Functions_3(void) {
 	define_local_var(0X4180F6, 0X4181FF, "[bp+0XC]", "mood");
 	add_func    (0X4181FF,0X418239);
 	set_func_flags(0X4181FF,0x5410);
-	set_func_cmt(0X4181FF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Called from ProcessClick (already matched, see its own updated entry) as \"check_click_on_character(xx,yy,mood)\", matching 2011's own call shape and role exactly: \"if(loctype==LOCTYPE_CHAR) {if(check_click_on_character(xx,yy,mood)) return;}\" (AC.CPP:16688-16690) -- a nonzero return short-circuits ProcessClick with no further dispatch. Not independently traced through its own body this round (its own internal character-hit-test logic, presumably built on the already-matched GetCharacterAt, is a candidate for a future round).", 1);
+	set_func_cmt(0X4181FF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int check_click_on_character(int,int,int) at AC.CPP:16378-16385. Already correctly named in the live IDB (from an earlier ProcessClick round) but never given its own matches.json entry. A complete, exact, zero-drift match: \"lowestwas=is_pos_on_character(xx,yy); if(lowestwas>=0) {RunCharacterInteraction(lowestwas,mood); return 1;} return 0;\" -- is_pos_on_character's own role is carried by the already-documented unnamed internal helper sub_417ECD (see its own inline comment, cited from GetCharacterAt's entry), and RunCharacterInteraction is already matched. Called from ProcessClick (already matched).", 1);
 	set_frame_size(0X4181FF, 0X4, 4, 0);
 	define_local_var(0X4181FF, 0X418239, "[bp-0X4]", "cc");
 	define_local_var(0X4181FF, 0X418239, "[bp+0X10]", "mood");

@@ -3360,6 +3360,11 @@ disassembly work.
   the way, `compile_room_script` itself was still `sub_421957` in the
   live IDB despite an existing "confirmed match" comment — another
   "documented in prose, never pushed to the IDB" gap, now fixed.
+- **`check_click_on_character`/`check_click_on_object` get their own
+  `matches.json` entries** — both already correctly named and
+  described in passing via their callees' own evidence text, but
+  neither had a dedicated entry until now. Both close as complete,
+  exact, zero-drift matches.
 
 ## Third-party library identification (Task #10)
 
