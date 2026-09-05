@@ -3404,6 +3404,15 @@ disassembly work.
   real, confirmed drift. `GetGUIObectAt`'s label was missing a 'j',
   confirmed against the reference `acwin.map` directly and renamed —
   a plain pre-project typo, not a wrong-identity mislabel.
+- **`setup_qg_exports`/`qgimport`/`qg2export`: AGS's own hidden Quest
+  For Glory cross-promotion feature.** `Engine/acqgimp.cpp` is a
+  dedicated, explicitly "privileged" 2011 source file implementing
+  character import/export for Sierra's *Quest For Glory* series — a
+  hidden feature callable from any AGS game's own scripts.
+  `setup_qg_exports` matches `QGRegisterFunctions()` exactly; `qgimport`
+  /`qg2export` are decisively identified via the literal password
+  string `"root/ade"` and matching buffer-size guards. This file's own
+  2002 copyright date matches Rob Blanc 1's release year exactly.
 
 ## Third-party library identification (Task #10)
 

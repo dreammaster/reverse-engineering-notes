@@ -6479,5 +6479,32 @@
     "source_line": 16126,
     "confidence": "high",
     "evidence": "TYPO CORRECTION (this round): the live IDB's own label, GetGUIObectAt, is missing the 'j' -- checked against the reference acwin.map directly ('?GetGUIObjectAt@@YAHHH@Z' at 0001:00088e40, correctly spelled), confirming the pre-existing IDB name (inherited from before this project's own tracking began) was simply a typo, not a wrong-identity mislabel like VALIDATE_STRING's own correction -- the underlying function identity was already correct. int GetGUIObjectAt(int,int) at AC.CPP:16126+ matches closely: calls GetGUIAt(xx,yy) (already matched) first; if -1, returns -1; otherwise scales xx/yy by the resolution multiplier, temporarily substitutes them into the shared mousex/mousey globals (dword_5358CC/D0, already established), calls an unnamed per-GUI control-hit-test helper (sub_407A27, plausibly GUIMain's own find-control-under-mouse method, not independently confirmed or renamed this round) against guis[idx] (dword_52312C, already established, 0x184-byte stride), then restores mousex/mousey before returning -- a classic reuse-the-mouse-position-hit-test-code-with-a-substituted-position trick. Renamed in the IDB to match the correct spelling."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "setup_qg_exports",
+    "new_name": null,
+    "source_file": "Engine/acqgimp.cpp",
+    "source_line": 277,
+    "confidence": "high",
+    "evidence": "void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release -- almost certainly ships with this exact feature live and callable from its own scripts."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "qgimport",
+    "new_name": null,
+    "source_file": "Engine/acqgimp.cpp",
+    "source_line": 80,
+    "confidence": "high",
+    "evidence": "static int importQFGChar(char*,char*) at acqgimp.cpp:80-150. Decisively confirmed via the literal password string \"root/ade\" (matching source's qgpassword exactly) checked via strcmp against the caller-supplied usrpass, and the subsequent file-parsing loop's exact `i>=50` bound (matching source's `if(i>=50) {fclose(inp);return 0;}` for the 50-byte name-buffer overflow guard). Not traced instruction-by-instruction to completion (a long, obfuscation/checksum-heavy 324-line function -- convByte/convWord-style byte-descrambling and two running-checksum accumulators over a QFG1Stats-shaped short array), but the password-string + file-format-structure match already puts the identity beyond reasonable doubt."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "qg2export",
+    "new_name": null,
+    "source_file": "Engine/acqgimp.cpp",
+    "source_line": 223,
+    "confidence": "high",
+    "evidence": "static int exportQFG2Char(char*,char*) at acqgimp.cpp:223-275. Sibling of qgimport's own match (see its entry) -- same \"root/ade\" password-string identification approach expected at this function's own entry (not independently re-verified this round given the size, 229 lines), matching source's own checksum/obfuscation shape for the QFG2 export format (fixed bogus-marker bytes 0xa0/0x3e/0x2f/0x90/0x19/0xa3, a two-pass running checksum over a QFG2Stats-shaped short array, then a final XOR-obfuscation pass written out as hex-pair text via fprintf(\\\"%2x\\\",...)). Named alongside qgimport via setup_qg_exports's own decisive registration-call match."
   }
 ]

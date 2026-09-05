@@ -11799,3 +11799,29 @@ a plain typo inherited from before this project's own tracking began,
 not a wrong-identity mislabel like `VALIDATE_STRING`'s own earlier
 correction -- the underlying function identity was already right.
 Renamed to the correct spelling.
+
+### setup_qg_exports/qgimport/qg2export: AGS's own hidden Quest For Glory cross-promotion feature
+
+A genuinely fun discovery. `Engine/acqgimp.cpp` is a dedicated,
+self-contained, explicitly marked "privileged" file in the 2011
+reference source ("NOTE: This file contains privileged information and
+should NOT be distributed. If the AGS source code is released, this
+file should NOT be released with it. This file (c) 2002 Chris Jones,
+QFG is (c) 1989-1990 Sierra On-line.") implementing character import/
+export for Sierra's *Quest For Glory* RPG series -- a hidden
+cross-promotion feature available to any AGS game's own scripts.
+
+`setup_qg_exports` matches `QGRegisterFunctions()` (`acqgimp.cpp:277
+-282`) exactly -- all four registered symbol names (`"QGImport"`/
+`"qgstats"`/`"QG2Export"`/`"qg2stats"`) and their order match precisely.
+`qgimport` is decisively confirmed via the literal password string
+`"root/ade"` (matching source's `qgpassword` exactly) plus a matching
+50-byte name-buffer overflow guard; `qg2export` is its sibling,
+matching source's checksum/obfuscation shape for the QFG2 export
+format. Neither was traced to full instruction-by-instruction
+completion given their size and heavy checksum/obfuscation logic, but
+the password-string and file-format-structure matches put both
+identities beyond reasonable doubt. Given this file's own 2002
+copyright date matches Rob Blanc 1's own release year exactly, this
+feature is almost certainly live and callable from Rob Blanc 1's own
+scripts, whether or not the game actually uses it.
