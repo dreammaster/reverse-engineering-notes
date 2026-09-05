@@ -3413,6 +3413,12 @@ disassembly work.
   /`qg2export` are decisively identified via the literal password
   string `"root/ade"` and matching buffer-size guards. This file's own
   2002 copyright date matches Rob Blanc 1's release year exactly.
+- **`CDAudio`/`install_mp3_player` close, another eager-vs-lazy-init
+  drift.** `CDAudio` fuses `cd_manager` with `platform->CDPlayerCommand`
+  's real dispatch (`cd_player_control`) directly inline, but is
+  missing its lazy-initialization gate — this build initializes the CD
+  player eagerly at startup instead. `install_mp3_player` is a genuine,
+  deliberate no-op with no trace in 2011's source.
 
 ## Third-party library identification (Task #10)
 

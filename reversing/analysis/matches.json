@@ -6506,5 +6506,23 @@
     "source_line": 223,
     "confidence": "high",
     "evidence": "static int exportQFG2Char(char*,char*) at acqgimp.cpp:223-275. Sibling of qgimport's own match (see its entry) -- same \"root/ade\" password-string identification approach expected at this function's own entry (not independently re-verified this round given the size, 229 lines), matching source's own checksum/obfuscation shape for the QFG2 export format (fixed bogus-marker bytes 0xa0/0x3e/0x2f/0x90/0x19/0xa3, a two-pass running checksum over a QFG2Stats-shaped short array, then a final XOR-obfuscation pass written out as hex-pair text via fprintf(\\\"%2x\\\",...)). Named alongside qgimport via setup_qg_exports's own decisive registration-call match."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "CDAudio",
+    "new_name": null,
+    "source_file": "Engine/AC.CPP",
+    "source_line": 21160,
+    "confidence": "high",
+    "evidence": "int cd_manager(int cmdd,int datt) at AC.CPP:21160-21171 (script-exported as \"CDAudio\", AC.CPP:24887): \"if(!triedToUseCdAudioCommand){triedToUseCdAudioCommand=true;init_cd_player();} if(cmdd==0) return use_cdplayer; if(use_cdplayer==0) return 0; return platform->CDPlayerCommand(cmdd,datt);\". This build's version matches the cmdd==0/use_cdplayer==0 gates exactly (usecdplayer, already established), then fuses platform->CDPlayerCommand's real dispatch (already independently confirmed elsewhere this session as matching cd_player_control's own AC.CPP:926-951 body, cd_current_track/cd_play_from/cd_pause/cd_resume/etc.) DIRECTLY inline, with no platform-object indirection at all -- the by-now-familiar predates-platform-abstraction pattern. CONFIRMED ABSENT: the leading lazy-initialization block (\"if(!triedToUseCdAudioCommand){...init_cd_player();}\") -- this build initializes the CD player EAGERLY at startup (cd_player_init is already confirmed called directly from main), rather than lazily on the first CDAudio() script call."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "install_mp3_player",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "A genuine, deliberate no-op: \"push ebp; mov ebp,esp; pop ebp; retn\" -- an empty function body with no work at all, called from main (already matched). No trace of this name anywhere in 2011's reference source. Plausibly a placeholder retained from an earlier build where the mp3-playback library (ALMP3) needed an explicit install step that was later found unnecessary, or simply a stub that was never filled in -- not independently determined which."
   }
 ]

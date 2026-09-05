@@ -11825,3 +11825,16 @@ identities beyond reasonable doubt. Given this file's own 2002
 copyright date matches Rob Blanc 1's own release year exactly, this
 feature is almost certainly live and callable from Rob Blanc 1's own
 scripts, whether or not the game actually uses it.
+
+### CDAudio/install_mp3_player close, another confirmed eager-vs-lazy-init drift
+
+`CDAudio` (script-exported name) is `cd_manager` (`AC.CPP:21160-21171`)
+fused directly with `platform->CDPlayerCommand`'s real dispatch
+(already independently confirmed elsewhere this session as
+`cd_player_control`) -- no platform-object indirection, the familiar
+pattern. CONFIRMED ABSENT: the leading lazy-initialization block
+(`if(!triedToUseCdAudioCommand){...init_cd_player();}`) -- this build
+initializes the CD player eagerly at startup (already confirmed called
+directly from `main`) rather than lazily on the first `CDAudio()` call.
+`install_mp3_player` is a genuine, deliberate no-op -- an entirely
+empty function body, no trace of it anywhere in 2011's source.
