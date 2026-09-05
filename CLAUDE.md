@@ -3782,6 +3782,14 @@ disassembly work.
   call inline — a distinctive `quit()` error string absent from the
   reference source's own exact wording plausibly belongs to that fused
   loop, not traced further this round.
+- **`do_conversation`'s last open lead closes**: its own private per-
+  dialog-option rendering helper (12 parameters, called twice — a
+  layout/measurement pass and a real draw pass). Loops over options,
+  sets text color from the player's own packed `talkcolor` byte, calls
+  `GetTranslation`/`break_up_text_into_lines` per option, draws the
+  dialog-bullet sprite beside each. Left unnamed — this build's
+  `do_conversation` already predates 2011's drastically different
+  `show_dialog_options` with nothing comparable to compare against.
 
 ## Third-party library identification (Task #10)
 

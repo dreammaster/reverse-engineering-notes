@@ -12916,6 +12916,27 @@ round. Called from `_display_main` (matching source's own call site
 exactly) and `sub_41D7F7` (called from `do_conversation`, not
 independently investigated this round -- a candidate for a future look).
 
+### do_conversation's last open lead closes: its own private per-option rendering helper
+
+The remaining thread from the `break_up_text_into_lines` round --
+`sub_41D7F7`, called twice from `do_conversation` -- closes at a role
+level. It's `do_conversation`'s own private per-dialog-option
+rendering helper (12 parameters): loops over the dialog's options,
+sets the text color from the player character's own packed
+`talkcolor` byte, calls `GetTranslation` on each option's text, then
+`break_up_text_into_lines` (this session's own new match, a further
+confirmation from a second independent call site) to word-wrap it,
+and draws the dialog-bullet sprite beside each option via `SpriteCache::
+operator[]`/`wputblock` (both already matched). The two call sites
+plausibly correspond to a layout/height-measurement pass and the real
+draw pass -- the classic two-pass text-layout idiom. Left unnamed: this
+build's `do_conversation` is already established as a genuine pre-
+refactor predecessor of 2011's drastically different, `gfxDriver`-based
+`show_dialog_options`, which has no comparable private per-option-
+drawing helper of this shape to compare against -- `do_conversation`'s
+own already-recorded architectural-fusion status covers this
+function's general role adequately without forcing an invented name.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`
