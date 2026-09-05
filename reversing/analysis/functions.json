@@ -2465,9 +2465,9 @@
   "is_named": true
  },
  {
-  "name": "sub_423E60",
+  "name": "draw_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "bitmap_color_depth",

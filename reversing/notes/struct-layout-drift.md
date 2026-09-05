@@ -12797,6 +12797,48 @@ time: `bmp`@+0x00/`baseline`@+0x04 (confirmed a further way as the sort
 key)/`x`@+0x08/`y`@+0x0C/`transparent`@+0x10 (feeding the already-
 established `trans_mode` global).
 
+### MAJOR SELF-CAUGHT ERROR: draw_lit_sprite's own "zero slack" vtable-slot claim was wrong
+
+Re-verifying the earlier `draw_lit_sprite` identification (prompted by
+investigating a genuinely puzzling neighbor, `sub_423E60`) found a real
+mistake: recounting `GFX_VTABLE`'s own declared field order in the
+4.2.2 reference header precisely shows `draw_lit_sprite` sits at field
+index 24 (offset `0x60`), one slot AFTER `draw_trans_rgba_sprite`
+(index 23, offset `0x5C`) -- NOT at `0x5C` as the earlier round
+claimed. The disassembly's own literal slot genuinely IS `+0x5C`, and
+the 5-argument `(bmp,sprite,x,y,color)` shape still uniquely identifies
+`draw_lit_sprite` (no other Allegro drawing method takes a 5th color
+argument at this shape) -- so the FUNCTION identification stands, but
+the "exact vtable-slot arithmetic, zero slack" REASONING was wrong.
+
+The likely explanation, consistent with this project's own established
+caution that this 2002 binary links a genuinely OLDER Allegro version
+than the 4.2.2 reference tree (already shown for `al_findfirst`/
+`al_findnext`/`al_findclose` and `gfx_directx_create_system_bitmap`):
+`draw_trans_rgba_sprite` (an RGBA/alpha-channel-specific method,
+plausibly a LATER Allegro addition than this build's own era) simply
+doesn't exist yet in this build's own older `GFX_VTABLE` layout, so
+every slot from `draw_trans_sprite` (`0x58`) onward sits one 4-byte
+position EARLIER than in the 4.2.2 reference -- putting `draw_lit_
+sprite` at `0x5C` here instead of 4.2.2's own `0x60`. Corrected in
+place; role/arg-count identification (the actually load-bearing
+evidence) was never in doubt.
+
+This also resolves `sub_423E60`, which had looked confusing under the
+now-corrected slot-arithmetic assumption: it checks the SPRITE
+argument's own color depth and dispatches to one of two different
+vtable slots on the destination bitmap depending on whether it's
+8-bit -- matching Allegro's own well-documented public `draw_sprite()`
+behavior exactly ("automatically uses `draw_256_sprite()` internally
+if the sprite is 256-color and the destination is truecolor"). Rather
+than force a specific slot-to-name mapping for its own two branches
+given the now-demonstrated vtable-layout uncertainty in this older
+build, this is named at the ROLE/call-site level: it's plain
+`draw_sprite`, matching `wputblock`'s own already-established call
+("`if(xray) draw_sprite(abuf,bll,xx,yy); else blit(...);`" -- `wputblock`'s
+own entry already cited this exact call by name without ever getting
+its own dedicated match).
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

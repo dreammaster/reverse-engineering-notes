@@ -3741,6 +3741,22 @@ disassembly work.
   the reference source's own text. Also confirms `SpriteListEntry`'s
   base address for the first time, and a third independent route to
   the already-established sprite-list capacity.
+- **MAJOR SELF-CAUGHT ERROR: `draw_lit_sprite`'s own "zero slack"
+  vtable-slot claim was wrong.** Recounting `GFX_VTABLE`'s own declared
+  field order in the 4.2.2 reference header shows `draw_lit_sprite`
+  really sits at offset `0x60`, one slot after `draw_trans_rgba_sprite`
+  (`0x5C`) — not at `0x5C` as originally claimed. The disassembly's own
+  literal slot IS `+0x5C`, and the 5-argument shape still uniquely
+  identifies the function, so the identification itself stands; only
+  the slot-arithmetic reasoning was wrong. Likely explanation:
+  `draw_trans_rgba_sprite` doesn't exist yet in this build's own older
+  Allegro vtable, shifting every later slot one position earlier — the
+  same "older Allegro version" caution already established elsewhere.
+  This also resolves `sub_423E60`'s own puzzling two-way dispatch: it's
+  plain `draw_sprite`, matching Allegro's documented behavior of
+  auto-redirecting to `draw_256_sprite` internally for 8-bit sprites —
+  named at the role/call-site level rather than by slot arithmetic,
+  given the now-demonstrated layout uncertainty.
 
 ## Third-party library identification (Task #10)
 

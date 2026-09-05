@@ -35583,6 +35583,7 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	make_array	(0X423E5C,	0X4);
 	create_insn	(0X423E60);
+	set_name	(0X423E60,	"draw_sprite");
 	create_insn	(x=0X423E63);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X423E6E);
@@ -40642,10 +40643,6 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X42863D);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X428641);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X428645);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40655,6 +40652,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X428641);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X428645);
+	op_hex		(x,	1);
 	create_insn	(x=0X428649);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42864D);
@@ -46185,10 +46186,6 @@ static Bytes_7(void) {
 	create_insn	(0X42D7A6);
 	create_insn	(x=0X42D7A9);
 	op_hex		(x,	1);
-	create_insn	(x=0X42D7AE);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X42D7B7);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46198,6 +46195,10 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D7AE);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X42D7B7);
+	op_hex		(x,	1);
 	create_insn	(x=0X42D7BE);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -52395,10 +52396,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X433197);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4331A3);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4331AC);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52408,6 +52405,10 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4331A3);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4331AC);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4331B2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4331B8);
@@ -58323,10 +58324,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43954D);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43955C);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X439573);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58336,6 +58333,10 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43955C);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X439573);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43957A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439582);
@@ -64034,10 +64035,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F33C);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F340);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43F344);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -64047,6 +64044,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F340);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43F344);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F348);
 	op_hex		(x,	1);
 	create_insn	(x=0X43F34B);
@@ -70087,9 +70088,6 @@ static Bytes_11(void) {
 	create_insn	(0X4468B0);
 	create_insn	(x=0X4468B9);
 	op_stkvar	(x,	1);
-	make_array	(0X4468C9,	0X7);
-	create_insn	(0X4468D0);
-	make_array	(0X4468D6,	0XA);
 }
 
 //------------------------------------------------------------------------
@@ -70099,6 +70097,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	make_array	(0X4468C9,	0X7);
+	create_insn	(0X4468D0);
+	make_array	(0X4468D6,	0XA);
 	create_insn	(x=0X4468E0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4468F2);
@@ -76280,9 +76281,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E781);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E789);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76292,6 +76290,9 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E789);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44E797);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81560,10 +81561,6 @@ static Bytes_13(void) {
 	create_insn	(0X4569C1);
 	create_insn	(x=0X4569D5);
 	op_hex		(x,	1);
-	create_insn	(x=0X4569E2);
-	op_hex		(x,	1);
-	create_insn	(x=0X4569E5);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81573,6 +81570,10 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4569E2);
+	op_hex		(x,	1);
+	create_insn	(x=0X4569E5);
+	op_hex		(x,	1);
 	create_insn	(x=0X4569EB);
 	op_hex		(x,	1);
 	create_insn	(0X4569F2);
@@ -87722,9 +87723,6 @@ static Bytes_14(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46330D);
 	op_hex		(x,	1);
-	create_insn	(x=0X46331B);
-	op_stkvar	(x,	1);
-	set_cmt	(0X463322,	"Size",	0);
 }
 
 //------------------------------------------------------------------------
@@ -87734,6 +87732,9 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46331B);
+	op_stkvar	(x,	1);
+	set_cmt	(0X463322,	"Size",	0);
 	create_insn	(x=0X463323);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46332F);
@@ -93550,10 +93551,6 @@ static Bytes_15(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X46BBD9);
 	op_hex		(x,	1);
-	create_insn	(x=0X46BBE0);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X46BBE4);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -93563,6 +93560,10 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BBE0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X46BBE4);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X46BBF4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BBFB);
@@ -99497,10 +99498,6 @@ static Bytes_16(void) {
 	set_cmt	(0X473E23,	"hdc",	0);
 	set_cmt	(0X473E2A,	"hDC",	0);
 	set_cmt	(0X473E2B,	"hWnd",	0);
-	create_insn	(x=0X473E2D);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X473E37);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99510,6 +99507,10 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X473E2D);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X473E37);
+	op_stkvar	(x,	1);
 	set_cmt	(0X473E3B,	"bForceBkgd",	0);
 	set_cmt	(0X473E3D,	"hPal",	0);
 	set_cmt	(0X473E3E,	"hdc",	0);
@@ -105331,9 +105332,6 @@ static Bytes_17(void) {
 	make_array	(0X47B32D,	0X3);
 	create_insn	(x=0X47B330);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X47B33A);
-	op_stkvar	(x,	1);
-	create_insn	(0X47B354);
 }
 
 //------------------------------------------------------------------------
@@ -105343,6 +105341,9 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47B33A);
+	op_stkvar	(x,	1);
+	create_insn	(0X47B354);
 	make_array	(0X47B358,	0X8);
 	create_insn	(x=0X47B360);
 	op_stkvar	(x,	1);
@@ -111487,8 +111488,6 @@ static Bytes_18(void) {
 	make_array	(0X4853F8,	0X8);
 	create_insn	(x=0X485400);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48540E);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111498,6 +111497,8 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48540E);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X485413);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X485418);
@@ -117777,8 +117778,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48EB06);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48EB11);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117788,6 +117787,8 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48EB11);
+	op_hex		(x,	1);
 	make_array	(0X48EB27,	0X9);
 	create_insn	(0X48EB30);
 	create_insn	(x=0X48EB33);
@@ -124293,8 +124294,6 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X497DFD);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X497E09);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -124304,6 +124303,8 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497E09);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X497E1B);
 	op_hex		(x,	1);
 	create_insn	(x=0X497E2E);
@@ -130211,9 +130212,6 @@ static Bytes_21(void) {
 	create_insn	(x=0X4A0E5B);
 	op_hex		(x,	1);
 	create_insn	(0X4A0E5F);
-	create_insn	(x=0X4A0E68);
-	op_hex		(x,	1);
-	make_array	(0X4A0E6C,	0X4);
 }
 
 //------------------------------------------------------------------------
@@ -130223,6 +130221,9 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0E68);
+	op_hex		(x,	1);
+	make_array	(0X4A0E6C,	0X4);
 	create_insn	(x=0X4A0E70);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0E77);
@@ -136300,12 +136301,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9E91);
 	op_hex		(x,	1);
-	create_insn	(x=0X4A9EA3);
-	op_hex		(x,	1);
-	create_insn	(x=0X4A9EC0);
-	op_hex		(x,	1);
-	create_insn	(x=0X4A9EC3);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -136315,6 +136310,12 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A9EA3);
+	op_hex		(x,	1);
+	create_insn	(x=0X4A9EC0);
+	op_hex		(x,	1);
+	create_insn	(x=0X4A9EC3);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9ED1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9EEB);
@@ -141418,12 +141419,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF140);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF144);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF148);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141433,6 +141428,12 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF144);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4AF148);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF14C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145694,8 +145695,6 @@ static Bytes_24(void) {
 	set_name	(0X4B4A6C,	"aLoadroomUnknow");
 	create_strlit	(0X4B4AA0,	0X14);
 	set_name	(0X4B4AA0,	"aNoSectionsInFi");
-	create_strlit	(0X4B4AB4,	0X1D);
-	set_name	(0X4B4AB4,	"aNeedToEndSecti");
 }
 
 //------------------------------------------------------------------------
@@ -145705,6 +145704,8 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4B4AB4,	0X1D);
+	set_name	(0X4B4AB4,	"aNeedToEndSecti");
 	make_array	(0X4B4AD1,	0X3);
 	create_strlit	(0X4B4AD4,	0X1A);
 	set_name	(0X4B4AD4,	"aMissingInDefin");
@@ -149125,9 +149126,6 @@ static Bytes_25(void) {
 	create_strlit	(0X4BBED4,	0X6);
 	set_name	(0X4BBED4,	"aGte_3");
 	make_array	(0X4BBEDA,	0X2);
-	create_strlit	(0X4BBEDC,	0X6);
-	set_name	(0X4BBEDC,	"aLte_3");
-	make_array	(0X4BBEE2,	0X2);
 }
 
 //------------------------------------------------------------------------
@@ -149137,6 +149135,9 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4BBEDC,	0X6);
+	set_name	(0X4BBEDC,	"aLte_3");
+	make_array	(0X4BBEE2,	0X2);
 	create_strlit	(0X4BBEE4,	0X6);
 	set_name	(0X4BBEE4,	"aAnd_3");
 	make_array	(0X4BBEEA,	0X2);
@@ -152646,8 +152647,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB5F8,	"aAdieresissmall");
 	create_strlit	(0X4CB608,	0XC);
 	set_name	(0X4CB608,	"aAtildesmall");
-	create_strlit	(0X4CB614,	0X11);
-	set_name	(0X4CB614,	"aAcircumflexsma");
 }
 
 //------------------------------------------------------------------------
@@ -152657,6 +152656,8 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4CB614,	0X11);
+	set_name	(0X4CB614,	"aAcircumflexsma");
 	make_array	(0X4CB625,	0X3);
 	create_strlit	(0X4CB628,	0XC);
 	set_name	(0X4CB628,	"aAacutesmall");
@@ -158153,6 +158154,7 @@ static Functions_6(void) {
 	define_local_var(0X423E38, 0X423E5C, "[bp+0X14]", "nShowCmd");
 	add_func    (0X423E60,0X423EAA);
 	set_func_flags(0X423E60,0x5410);
+	set_func_cmt(0X423E60,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: draw_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y) -- Allegro own public general-purpose sprite-blit API. Body checks the SPRITE argument own color depth (via its own vtable pointer@+0x1C, dereferencing the leading color_depth field) and dispatches to one of two DIFFERENT vtable slots on the DESTINATION bitmap own vtable depending on whether it is 8-bit -- matching Allegro own well-documented behavior for the public draw_sprite() call: \"automatically uses draw_256_sprite() internally if the sprite is 256-color and the destination bitmap is truecolor.\" The exact two vtable slot numbers involved (0x44/0x40 in this build) were not cleanly reconciled against the 4.2.2 reference header own declared offsets this round -- consistent with the already-established finding (see draw_lit_sprite own corrected entry) that this build older Allegro vtable layout is shifted relative to 4.2.2 starting around the dra" "w_trans_sprite/draw_trans_rgba_sprite region -- so identification here rests on ROLE and call-site match", 1);
 	set_frame_size(0X423E60, 0, 4, 0);
 	add_func    (0X423EB0,0X423EBD);
 	set_func_flags(0X423EB0,0x5410);
@@ -158246,6 +158248,10 @@ static Functions_6(void) {
 	set_func_flags(0X4242F0,0x5410);
 	set_func_cmt(0X4242F0,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseOver() at acgui.h:520: \"isover=1;\". Exact match: [this+0x20]=1. New field evidence: isover@+0x20 -- GUIInv's own first declared field (acgui.h:467 \"int isover;\"), landing immediately after the GUIObject base ends at +0x20, consistent with the same pattern already confirmed for GUIButton::text, GUIListBox::items[], and GUITextBox::text. Vtable slot 1/+0x04 of the table at off_4AD50C (DATA XREF .rdata:004AD510). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X4242F0, 0X4, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X424310,0X424325);
 	set_func_flags(0X424310,0x5410);
 	set_func_cmt(0X424310,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseLeave() at acgui.h:525: \"isover=0;\". Exact match: [this+0x20]=0. Same table/isover field as GUIInv__MouseOver (vtable slot 2/+0x08 of off_4AD50C, DATA XREF .rdata:004AD514). Flat-named as a C++ virtual method.", 1);
@@ -158254,10 +158260,6 @@ static Functions_6(void) {
 	set_func_flags(0X424330,0x5410);
 	set_func_cmt(0X424330,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: void GUIInv::MouseUp() at acgui.h:530: \"if (isover) activated=1;\". Exact match: cmp [this+0x20],0; jz; [this+0x1C]=1 -- reconfirms isover@+0x20 (see GUIInv__MouseOver) and activated@+0x1C (GUIObject base field, now independently confirmed across 5 classes: GUIButton, GUITextBox, GUISlider-pending, GUIMain[different struct], and now GUIInv). Vtable slot 4/+0x10 of off_4AD50C (DATA XREF .rdata:004AD51C). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X424330, 0X4, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X424350,0X424377);
 	set_func_flags(0X424350,0x5410);
 	set_frame_size(0X424350, 0X4, 4, 0);
@@ -158411,7 +158413,7 @@ static Functions_7(void) {
 	set_frame_size(0X4251C0, 0, 4, 0);
 	add_func    (0X425200,0X425225);
 	set_func_flags(0X425200,0x5410);
-	set_func_cmt(0X425200,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: draw_lit_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y,int color) -- Allegro's public lighting-tinted sprite-blit API. A thin 5-argument vtable-dispatch wrapper (bmp's own vtable pointer@+0x1C, slot [+0x5C]/4=23) -- the 5-argument (bmp,sprite,x,y,color) shape matches draw_lit_sprite's own unique signature exactly (the only other Allegro drawing method taking a 5th 'color' argument, draw_lit_rle_sprite, takes an RLE_SPRITE* not a BITMAP*, ruling it out). Called from sub_4096B5 (this round's own new entry, the room-screen-tint compositing helper) right after set_trans_blender (this round's own new match, sub_4492D0) sets up the tint color -- matching the expected 'set the blend color, then draw tinted' call pair exactly -- and from prepare_characters_for_drawing (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API, its vtable target implementati" "on not chased further.", 1);
+	set_func_cmt(0X425200,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: draw_lit_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y,int color) -- Allegro's public lighting-tinted sprite-blit API. A thin 5-argument vtable-dispatch wrapper (bmp's own vtable pointer@+0x1C, slot [+0x5C]/4=23) -- the 5-argument (bmp,sprite,x,y,color) shape matches draw_lit_sprite's own unique signature exactly (the only other Allegro drawing method taking a 5th 'color' argument, draw_lit_rle_sprite, takes an RLE_SPRITE* not a BITMAP*, ruling it out). Called from sub_4096B5 (this round's own new entry, the room-screen-tint compositing helper) right after set_trans_blender (this round's own new match, sub_4492D0) sets up the tint color -- matching the expected 'set the blend color, then draw tinted' call pair exactly -- and from prepare_characters_for_drawing (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API, its vtable target implementati" "on not chased further. SELF-CORRECTION (follow-up round): the earlier zero-slack vtable-slot claim was w", 1);
 	set_frame_size(0X425200, 0, 4, 0);
 	add_func    (0X425230,0X425244);
 	set_func_flags(0X425230,0x5410);
@@ -158701,14 +158703,14 @@ static Functions_7(void) {
 	set_func_cmt(0X427FB0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:594-622) -- a complete, exact, zero-drift match to every branch: mcode==CTB_SETTEXT(2,:150) does strcpy(text,(char*)lParam) then needredraw@+0x22=1; mcode==CTB_GETTEXT(1,:149) does strcpy((char*)lParam,text); mcode==CTB_KEYPRESS(0x5B=91, already-confirmed) dispatches on wParam: ==8(backspace) truncates text by one char (text[strlen-1]=0, guarded on text[0]!=0) then calls NewControl::drawandmouse() (already matched); strlen(text)>=0x30(48, matching TEXTBOX_MAXLEN-1=49-1 EXACTLY, zero drift) is a no-op; wgettextwidth(text,cbuttfont)>=wid-5 is a no-op; wParam>0x7F(127, 'font only has 128 chars') is a no-op; otherwise appends the character (text[strlen+1]=0; text[strlen]=wParam;) and calls drawandmouse() again. The final else branch returns -1, matching source's own default case exactly. TEXTBOX_MAXLEN=49 (acdialog.h:559) is directly confirmed via this function'" "s own literal 0x30 bounds check with zero drift -- this build's single-l", 1);
 	set_frame_size(0X427FB0, 0X4, 4, 0XC);
 	define_local_var(0X427FB0, 0X4280C0, "[bp+0X10]", "Source");
-	add_func    (0X4280C0,0X42810D);
-	set_func_flags(0X4280C0,0x5410);
-	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
-	set_frame_size(0X4280C0, 0, 4, 0);
 }
 
 static Functions_8(void) {
 
+	add_func    (0X4280C0,0X42810D);
+	set_func_flags(0X4280C0,0x5410);
+	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
+	set_frame_size(0X4280C0, 0, 4, 0);
 	add_func    (0X42810D,0X428477);
 	set_func_flags(0X42810D,0x5410);
 	SetType(0X42810D, "int __cdecl qgimport(char *FileName, char *Str1);");
