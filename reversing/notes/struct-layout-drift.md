@@ -11995,3 +11995,29 @@ control with no double-buffering or timer sync at all, extending the
 by-now-familiar predates-`gfxDriver` pattern to the dialog-redraw
 mechanism itself, not just game-screen rendering. `dword_523704`
 (already reset alongside `*mes`) is decisively `smcode`.
+
+### CSCIDrawWindow upgraded to high confidence; names multiply_up/wbutt and the OnScreenWindow struct
+
+Following up directly on `finddefaultcontrol`'s own discovery that
+`CSCIWaitMessage`'s real source lives inline in `Engine/acdialog.h`:
+`CSCIDrawWindow` (previously medium-high, call-signature only) turns
+out to have real source there too (`acdialog.h:667-700`), and the full
+body matches instruction for instruction: `ignore_bounds++` (decisively
+identifying `byte_5358E4`, independently cross-confirmed by
+`CSCIEraseWindow`'s own matching decrement), `multiply_up(&xx,&yy,&wid,
+&hit)` (this round's new match -- this build fuses `multiply_up_to_
+game_res`'s own job inline and CONFIRMS ABSENT the entire `GetBaseWidth
+()`-based 800x600/1024 special-case scaling), a free-slot search over
+`oswi[MAXSCREENWINDOWS=5]` (ZERO drift on the capacity), `wnewblock`,
+and `wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1)` (this round's new match --
+`Engine/acdialog.h`'s own macro-aliased `__my_wbutt`, matching its
+`wsetcolor(7)`/`wbar`(fused inline as `rectfill`)/`wsetcolor(0)`/
+`wrectangle` body exactly, `COL254=7` included).
+
+The `oswi[]` array itself turns out to be a real, STILL-DECLARED 2011
+struct: `OnScreenWindow{block buffer;int x,y;int oldtop;}`
+(`acdialog.h:187-192`) -- a rare case (like `MouseCursor`/`MoveList`) of
+a struct surviving completely unchanged from 2002 to 2011, now
+formalized in `apply_structs.py`. One confirmed behavioral difference:
+this build's `domouse(2)`/`domouse(1)` calls around window creation are
+LIVE, where source has them commented out.

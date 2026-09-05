@@ -3480,6 +3480,14 @@ disassembly work.
   uses `gfxDriver`-based double-buffering and a timer-synced redraw
   loop, both confirmed absent here — this build redraws each control
   directly with no double-buffering at all.
+- **`CSCIDrawWindow` upgraded to high confidence; closes with new
+  `multiply_up`/`wbutt` matches and a real, still-2011-declared
+  `OnScreenWindow` struct.** Full body matches source instruction for
+  instruction, including `MAXSCREENWINDOWS=5` with zero drift. Names
+  two new functions along the way and formalizes `OnScreenWindow` — a
+  rare struct that survived completely unchanged from 2002 to 2011.
+  One confirmed drift: this build's `domouse` calls around window
+  creation are live, where source has them commented out.
 
 ## Third-party library identification (Task #10)
 

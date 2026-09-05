@@ -5367,6 +5367,32 @@ struct EventHappened {
 };                          // Total confirmed size 0x14 (20 bytes), matching the stride used to
                             // index all five backing globals (`dword_4F7480`/`7484`/`7488`/`748C`/
                             // `7490`) with zero slack.
+
+struct OnScreenWindow {
+  // A genuine NEW-to-2002 struct, but unlike most others in this file it still exists in the
+  // 2011 reference source verbatim -- `Engine/acdialog.h:187-192`, part of the CSCI built-in-
+  // dialog widget system (setup/save/restore/message-box screens), a completely separate class
+  // hierarchy from the in-game `GUIMain`/`GUIObject` GUI system elsewhere in this file. Recovered
+  // via `CSCIDrawWindow`/`CSCIEraseWindow` (both already matched) reading/writing a 5-element
+  // array (`oswi[MAXSCREENWINDOWS=5]`, acdialog.h:630, matching this build's own confirmed
+  // MAXSCREENWINDOWS=5 loop bound with ZERO drift) at a 16-byte (0x10) stride. Field order and
+  // types match source's own declaration exactly, zero drift throughout -- a rare case (like
+  // `MouseCursor`/`MoveList`) of a struct surviving completely unchanged from 2002 to 2011.
+  void *buffer;                 // +0x00, high confidence: the saved-background bitmap block,
+                            // confirmed via CSCIDrawWindow's own "oswi[slot].buffer=wnewblock(...)"
+                            // and CSCIEraseWindow's own "wputblock(...,oswi[handle].buffer,0);
+                            // destroy_bitmap(oswi[handle].buffer);" -- both already-matched
+                            // functions independently confirm this field from opposite (write/
+                            // read) directions.
+  int x;                        // +0x04, high confidence, see buffer above (same two functions).
+  int y;                        // +0x08, high confidence, see buffer above (same two functions).
+  int oldtop;                   // +0x0C, high confidence: confirmed via CSCIDrawWindow's own
+                            // "oswi[slot].oldtop=topwindowhandle; topwindowhandle=slot;" and
+                            // CSCIEraseWindow's own inverse "topwindowhandle=oswi[handle].oldtop;"
+                            // -- a simple window-stack (LIFO) implementation, both directions
+                            // independently confirmed.
+};                          // Total confirmed size 0x10 (16 bytes), matching the stride used to
+                            // index the oswi[] array with zero slack.
 """
 
 
@@ -5397,7 +5423,7 @@ def main():
               "MoveList, ViewFrame272, ViewStruct272, RoomObject, AnimationStruct, "
               "FullAnimation, RoomStatus, WordsDictionary, GameState, ScreenOverlay, "
               "RoomStruct, SOUNDCLIP, MYWAVE, MYMP3, MYSTATICMP3, sprstruc, "
-              "PolyPoints).")
+              "PolyPoints, OnScreenWindow).")
     else:
         print(f"parse_decls reported {err_count} error(s) -- check the declarations above.")
 

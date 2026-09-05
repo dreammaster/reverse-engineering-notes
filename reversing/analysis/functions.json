@@ -2985,14 +2985,14 @@
   "is_named": true
  },
  {
-  "name": "sub_425780",
+  "name": "wbutt",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4257ED",
+  "name": "multiply_up",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "CSCIDrawWindow",

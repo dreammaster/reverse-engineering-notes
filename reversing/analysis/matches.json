@@ -6204,10 +6204,10 @@
     "kind": "manual",
     "asm_name": "sub_425836",
     "new_name": "CSCIDrawWindow",
-    "source_file": "Engine/acdialog.cpp",
-    "source_line": null,
-    "confidence": "medium-high",
-    "evidence": "int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace."
+    "source_file": "Engine/acdialog.h",
+    "source_line": 667,
+    "confidence": "high",
+    "evidence": "int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read against its real source, Engine/acdialog.h:667-700): \"ignore_bounds++; multiply_up(&xx,&yy,&wid,&hit); find a free slot in oswi[MAXSCREENWINDOWS]; if none, quit(\\\"Too many windows created.\\\"); windowcount++; xx-=2;yy-=2;wid+=4;hit+=4; oswi[slot].buffer=wnewblock(xx,yy,xx+wid,yy+hit); oswi[slot].x=xx; oswi[slot].y=yy; wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1); oswi[slot].oldtop=topwindowhandle; topwindowhandle=slot; return slot;\" -- matches instruction for instruction, including the literal MAXSCREENWINDOWS=5 loop bound (Engine/acdialog.h:630, ZERO drift) and every computed coordinate. byte_5358E4++ decisively identifies that global as ignore_bounds (independently reconfirmed by CSCIEraseWindow's own ignore_bounds-- decrement, see its entry). sub_4257ED (this round's new match, multiply_up) and sub_425780 (this round's new match, wbutt) both confirmed via this call site. dword_523528/52352C/523530/523534, all at a 16-byte (0x10) stride, decisively confirmed as the real declared struct OnScreenWindow{block buffer;int x,y;int oldtop;} (Engine/acdialog.h:187-192) -- buffer@+0x00, x@+0x04, y@+0x08, oldtop@+0x0C, matching this build's own confirmed stride and field order with ZERO drift. ONE confirmed difference: this build's domouse(2)/domouse(1) calls (already matched) are LIVE here, where source has them commented out -- this build actively hides/shows the mouse cursor around window creation, unlike 2011 which apparently relies on a different (gfxDriver-based) compositing mechanism to make that unnecessary."
   },
   {
     "kind": "manual",
@@ -6597,5 +6597,23 @@
     "source_line": 729,
     "confidence": "high",
     "evidence": "int finddefaultcontrol(int flagmask) at acdialog.h:729-743: \"for(ff=0;ff<MAXCONTROLS;ff++){ if(vobjs[ff]==NULL) continue; if(vobjs[ff]->wlevel!=topwindowhandle) continue; if(vobjs[ff]->typeandflags&flagmask) return ff; } return -1;\". A complete, exact, zero-drift match: the loop bound is a literal 0x14(20), matching MAXCONTROLS=20 with ZERO capacity reduction (a rare full match in this project); vobjs[]=dword_523578 (already established); vobjs[ff]->wlevel@+0x1C compared against dword_4BA93C, decisively identifying that global as topwindowhandle (previously only informally characterized as \"the active window\" via CSCIEraseWindow's own citation); vobjs[ff]->typeandflags@+0x18 ANDed with flagmask, matching the already-confirmed CNT_PUSHBUTTON/CNF_DEFAULT/CNF_CANCEL bit values from myscimessagebox's own entry exactly. Called from CSCIWaitMessage (already matched, see its own updated entry) with literal CNF_DEFAULT(0x100)/CNF_CANCEL(0x200) on Enter/Escape, matching source's own two call sites exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4257ED",
+    "new_name": "multiply_up",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 645,
+    "confidence": "high",
+    "evidence": "void multiply_up(int*x1,int*y1,int*x2,int*y2) at acdialog.h:645-663+. Matches the NET EFFECT of source's leading \"multiply_up_to_game_res(x1,y1); multiply_up_to_game_res(x2,y2);\" pair exactly -- this build's version does \"*x1*=current_screen_resolution_multiplier_x; *x2*=...; *y1*=current_screen_resolution_multiplier_y; *y2*=...;\" directly inline, with no separate multiply_up_to_game_res call. CONFIRMED ABSENT: the entire trailing GetBaseWidth()-based 800x600/1024 special-case scaling adjustment (acdialog.h:650-660+) -- this build has only the one resolution-multiplier tier, no extra per-resolution correction factors. Called from CSCIDrawWindow and CSCICreateControl (both already matched), matching source's own two call sites exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425780",
+    "new_name": "wbutt",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 98,
+    "confidence": "high",
+    "evidence": "void __my_wbutt(int,int,int,int) at acdialog.h:98-104 (macro-aliased to the name \"wbutt\" at acdialog.h:106, shadowing Common/Wgt2allg.h's own standalone wbutt for this translation unit): \"wsetcolor(COL254); wbar(x1,y1,x2,y2); wsetcolor(0); wrectangle(x1,y1,x2,y2);\". A complete, exact, zero-drift match: wsetcolor(7) (COL254=7, acdialog.h:95, exact literal match), then wbar's own job fused inline as a direct rectfill(abuf,x1,y1,x2,y2,currentcolor) call (all already matched) rather than through a separate wbar function, then wsetcolor(0), then wrectangle(x1,y1,x2,y2) (already matched). Called from CSCIDrawWindow (already matched, this round's own updated entry) with the identical computed coordinates as source's own \"wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1);\" call."
   }
 ]

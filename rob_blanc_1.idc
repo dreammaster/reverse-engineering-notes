@@ -37283,6 +37283,7 @@ static Bytes_6(void) {
 	create_insn	(x=0X42577B);
 	op_hex		(x,	1);
 	create_insn	(0X425780);
+	set_name	(0X425780,	"wbutt");
 	create_insn	(x=0X42578A);
 	op_hex		(x,	1);
 	create_insn	(x=0X425793);
@@ -37309,6 +37310,7 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	create_insn	(0X4257E3);
 	create_insn	(0X4257ED);
+	set_name	(0X4257ED,	"multiply_up");
 	create_insn	(x=0X4257F0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4257FC);
@@ -40711,10 +40713,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428823);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X428831);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X42883E);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40724,6 +40722,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X428831);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X42883E);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X428853);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X428859);
@@ -46273,10 +46275,6 @@ static Bytes_7(void) {
 	create_insn	(x=0X42DAC5);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X42DACF);
-	op_hex		(x,	1);
-	create_insn	(x=0X42DAD3);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46286,6 +46284,10 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42DACF);
+	op_hex		(x,	1);
+	create_insn	(x=0X42DAD3);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42DADC);
 	op_hex		(x,	1);
 	create_insn	(x=0X42DAEB);
@@ -52475,8 +52477,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4333A0);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4333A6);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52486,6 +52486,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4333A6);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4333AC);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4333B6);
@@ -58371,7 +58373,6 @@ static Bytes_9(void) {
 	make_array	(0X4396C1,	0XF);
 	create_insn	(x=0X4396D0);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4396D4,	"switch 25 cases",	0);
 }
 
 //------------------------------------------------------------------------
@@ -58381,6 +58382,7 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4396D4,	"switch 25 cases",	0);
 	create_insn	(x=0X4396E2);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -64116,8 +64118,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F4D4);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F4E6);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -64127,6 +64127,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F4E6);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F4EC);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F4F0);
@@ -158472,13 +158474,15 @@ static Functions_7(void) {
 	set_frame_size(0X425760, 0, 4, 0);
 	add_func    (0X425780,0X4257E3);
 	set_func_flags(0X425780,0x5410);
+	set_func_cmt(0X425780,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: void __my_wbutt(int,int,int,int) at acdialog.h:98-104 (macro-aliased to the name \"wbutt\" at acdialog.h:106, shadowing Common/Wgt2allg.h's own standalone wbutt for this translation unit): \"wsetcolor(COL254); wbar(x1,y1,x2,y2); wsetcolor(0); wrectangle(x1,y1,x2,y2);\". A complete, exact, zero-drift match: wsetcolor(7) (COL254=7, acdialog.h:95, exact literal match), then wbar's own job fused inline as a direct rectfill(abuf,x1,y1,x2,y2,currentcolor) call (all already matched) rather than through a separate wbar function, then wsetcolor(0), then wrectangle(x1,y1,x2,y2) (already matched). Called from CSCIDrawWindow (already matched, this round's own updated entry) with the identical computed coordinates as source's own \"wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1);\" call.", 1);
 	set_frame_size(0X425780, 0, 4, 0);
 	add_func    (0X4257ED,0X425836);
 	set_func_flags(0X4257ED,0x5410);
+	set_func_cmt(0X4257ED,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: void multiply_up(int*x1,int*y1,int*x2,int*y2) at acdialog.h:645-663+. Matches the NET EFFECT of source's leading \"multiply_up_to_game_res(x1,y1); multiply_up_to_game_res(x2,y2);\" pair exactly -- this build's version does \"*x1*=current_screen_resolution_multiplier_x; *x2*=...; *y1*=current_screen_resolution_multiplier_y; *y2*=...;\" directly inline, with no separate multiply_up_to_game_res call. CONFIRMED ABSENT: the entire trailing GetBaseWidth()-based 800x600/1024 special-case scaling adjustment (acdialog.h:650-660+) -- this build has only the one resolution-multiplier tier, no extra per-resolution correction factors. Called from CSCIDrawWindow and CSCICreateControl (both already matched), matching source's own two call sites exactly.", 1);
 	set_frame_size(0X4257ED, 0, 4, 0);
 	add_func    (0X425836,0X425988);
 	set_func_flags(0X425836,0x5410);
-	set_func_cmt(0X425836,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: medium-high\nevidence: int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace.", 1);
+	set_func_cmt(0X425836,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read against its real source, Engine/acdialog.h:667-700): \"ignore_bounds++; multiply_up(&xx,&yy,&wid,&hit); find a free slot in oswi[MAXSCREENWINDOWS]; if none, quit(\\\"Too many windows created.\\\"); windowcount++; xx-=2;yy-=2;wid+=4;hit+=4; oswi[slot].buffer=wnewblock(xx,yy,xx+wid,yy+hit); oswi[slot].x=xx; oswi[slot].y=yy; wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1); oswi[slot].oldtop=topwindowhandle; topwindowhandle=slot; return slot;\" -- matches instruction for instruction, including the literal MAXSCRE" "ENWINDOWS=5 loop bound (Engine/acdialog.h:630, ZERO drift) and every com", 1);
 	set_frame_size(0X425836, 0X8, 4, 0);
 	add_func    (0X425988,0X425A22);
 	set_func_flags(0X425988,0x5410);
@@ -158895,6 +158899,10 @@ static Functions_7(void) {
 	set_func_flags(0X42C24C,0x5410);
 	set_func_cmt(0X42C24C,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: void ccAbortInstance(ccInstance*cinst) at CSRUN.CPP:1991-1995. Exact match: \"if (cinst!=NULL && cinst->pc!=0) cinst->flags |= INSTF_ABORTED;\" matches the disassembly's \"if (arg_0!=0 && [arg_0+0x99C]!=0) [arg_0] |= 2\" exactly, using the already-confirmed ccInstance.pc@+0x99C and ccInstance.flags@+0x00, and 2011's own INSTF_ABORTED=2 constant (Common/CSCOMP.H:236). Found via sub_409A9C/cancel_all_scripts (new match, see its own entry). Called from sub_42C270 (new match: ccAbortAndDestroyInstance) and sub_409A9C directly.", 1);
 	set_frame_size(0X42C24C, 0, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X42C270,0X42C294);
 	set_func_flags(0X42C270,0x5410);
 	set_func_cmt(0X42C270,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: void ccAbortAndDestroyInstance(ccInstance*inst) at CSRUN.CPP:1997-2003. Exact match: \"if (inst!=NULL) { ccAbortInstance(inst); inst->flags |= INSTF_FREE; }\" matches the disassembly's \"if (arg_0!=0) { sub_42C24C(arg_0); [arg_0] |= 4; }\" exactly, using 2011's own INSTF_FREE=4 constant (Common/CSCOMP.H:237) and calling the already-confirmed sub_42C24C/ccAbortInstance internally, matching source's own delegation exactly. Found via sub_409A9C/cancel_all_scripts (new match, see its own entry).", 1);
@@ -158912,10 +158920,6 @@ static Functions_7(void) {
 	set_frame_size(0X42C318, 0X4, 4, 0);
 	define_local_var(0X42C318, 0X42C337, "[bp-0X4]", "Buffer");
 	define_local_var(0X42C318, 0X42C337, "[bp+0X8]", "Stream");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X42C337,0X42C639);
 	set_func_flags(0X42C337,0x5410);
 	SetType(0X42C337, "int __cdecl fread_script(FILE *Stream);");
@@ -159923,6 +159927,10 @@ static Functions_8(void) {
 	set_frame_size(0X4437E0, 0, 0, 0);
 	define_local_var(0X4437E0, 0X4437F4, "[bp+0X4]", "digi_voices");
 	define_local_var(0X4437E0, 0X4437F4, "[bp+0X8]", "midi_voices");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X443800,0X443F6F);
 	set_func_flags(0X443800,0x15400);
 	set_func_cmt(0X443800,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -159949,10 +159957,6 @@ static Functions_8(void) {
 	set_func_flags(0X4444C0,0x5400);
 	set_func_cmt(0X4444C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library, SAMPLE *load_sample(AL_CONST char *filename) -- well-known third-party API, dispatches by file extension. Called from sub_408556 (this round's new match, my_load_wave) and PlayMusic (already matched). Body is a decisive, complete match to Allegro's real implementation: uconvert's (already matched) two call sites build \"wav\"/\"voc\" extension-comparison buffers, each followed by a comparison helper (sub_42D018/sub_454010) and, on match, a direct call to the already-matched `load_wav`/`load_voc` (both exact linker-symbol matches, alleg_s_crt:sound.obj) -- exactly Allegro's own load_sample() extension-dispatch logic, with load_wav and load_voc as its only two real loaders and NULL as the unrecognized-extension fallback.", 1);
 	set_frame_size(0X4444C0, 0X24, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X444560,0X4447EC);
 	set_func_flags(0X444560,0x15400);
 	set_func_cmt(0X444560,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -161890,6 +161894,10 @@ static Functions_9(void) {
 	set_func_cmt(0X46EF10,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wddwin.c\nconfidence: high\nevidence: static struct BITMAP *init_directx_win(int w,int h,int v_w,int v_h,int color_depth) at src/win/wddwin.c:655 -- the DirectDraw windowed-mode graphics-driver init function, sibling to the already-matched init_directx_ovl (same 5-arg signature, same DATA-XREF-in-driver-struct pattern). Matched via the matched string \"Windowed mode not supported\" (get_config_text call inside create_offscreen()'s failure path, src/win/wddwin.c:709-710) which appears nowhere else in the single-candidate form once the BeOS/misc noise is excluded on Windows-only grounds (same reasoning as init_directx_ovl).", 1);
 	set_frame_size(0X46EF10, 0X1C, 0, 0);
 	define_local_var(0X46EF10, 0X46F2C3, "[bp-0X10]", "Rect");
+}
+
+static Functions_10(void) {
+
 	add_func    (0X46F2D0,0X46F32C);
 	set_func_flags(0X46F2D0,0x5400);
 	set_frame_size(0X46F2D0, 0X8, 0, 0);
@@ -161929,10 +161937,6 @@ static Functions_9(void) {
 	set_func_flags(0X470340,0x5400);
 	set_func_cmt(0X470340,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c\nconfidence: high\nevidence: static void read_keyboard_config(void) at src/misc/pckeys.c:666. Exact match: opens with uconvert_ascii(\"keyboard\",...) and uconvert_ascii(\"system\",...) followed by a call to sub_460620 (probable get_config_string, see separate lower-confidence lead) -- matches source's \"name = get_config_string(uconvert_ascii(\\\"system\\\",tmp1), uconvert_ascii(\\\"keyboard\\\",tmp2), _keyboard_layout);\". Body later contains exactly 8 get_config_int(uconvert_ascii(\"key_escape\",...), uconvert_ascii(<accentN[_flag]>,...), 0) calls -- matching source's 8 consecutive accent1..accent4 + accent1_flag..accent4_flag reads at pckeys.c:706-714 exactly (\"key_escape\" is used as the section name here, not a scancode-remap key as originally guessed -- resolves the earlier dead-end noted in reversing/notes/third-party-library-identification.md, once the full non-Windows-patch-subset Allegro 4.2.2 source was added to the repo at Engine/lib" "src/allegro-4.2.2/). CODE XREF: sub_4701D0+167 (caller not yet identified, plausible future lead).", 1);
 	set_frame_size(0X470340, 0X504, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4708D0,0X470975);
 	set_func_flags(0X4708D0,0x5400);
 	set_frame_size(0X4708D0, 0X154, 0, 0);
@@ -164294,6 +164298,10 @@ static Functions_10(void) {
 	add_func    (0X49E690,0X49E6CC);
 	set_func_flags(0X49E690,0x5400);
 	set_frame_size(0X49E690, 0X8, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X49E6D0,0X49E76F);
 	set_func_flags(0X49E6D0,0x5400);
 	set_frame_size(0X49E6D0, 0X10, 0, 0);
@@ -164390,10 +164398,6 @@ static Functions_10(void) {
 	add_func    (0X49FBA0,0X49FC1C);
 	set_func_flags(0X49FBA0,0x5400);
 	set_frame_size(0X49FBA0, 0X8, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X49FC20,0X49FD20);
 	set_func_flags(0X49FC20,0x5400);
 	set_frame_size(0X49FC20, 0X1B8, 0, 0);
