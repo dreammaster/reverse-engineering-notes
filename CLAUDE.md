@@ -3371,6 +3371,13 @@ disassembly work.
   `SetCursorMode` is missing its own leading bounds check on `newmode`.
   `EnableCursorMode`/`DisableCursorMode` both close as exact mirror-
   image matches, confirming a new bit value: `GUIF_DISABLED=4`.
+- **`RestoreGameDialog`/`SaveGameDialog` get entries, cross-confirming
+  `ExecutingScript.ooo` from the write side.** Neither has a 2011
+  counterpart under this name — both are genuine pre-refactor 2002
+  script-API functions. `RestoreGameDialog`, called mid-script, defers
+  by writing `curscript->ooo=1000`, decisively confirming that field's
+  already-known "sentinel 1000 = show restore dialog" role from a new
+  angle. `SaveGameDialog` has no equivalent deferral at all.
 
 ## Third-party library identification (Task #10)
 

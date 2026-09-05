@@ -11720,3 +11720,21 @@ or clearing bit 2 (`0x04`) of the matching button's own `GUIObject.
 flags`. This is a NEW bit-value confirmation: `GUIF_DISABLED=4`
 (`Common/acgui.h:113`), matching `GUIObject::Enable()`/`Disable()`
 exactly, zero drift.
+
+### RestoreGameDialog/SaveGameDialog get matches.json entries, cross-confirming ExecutingScript.ooo from the write side
+
+Neither has a 2011 source counterpart under this name at all (this
+build's hardcoded CSCI-dialog-based save/restore UI predates whatever
+later redesign replaced it), but both are unambiguous, real 2002
+script-API functions confirmed via their own `setup_script_exports`
+DATA XREFs. Both share a leading `disabled_user_interface==1` ->
+translated "Sorry, not now." early-out. `RestoreGameDialog` then, if
+called mid-script, DEFERS by writing `curscript->ooo=1000` -- a
+decisive cross-confirmation of `ExecutingScript.ooo`'s own already-
+documented "sentinel 1000 means show the restore dialog" finding, this
+time from the WRITE side rather than `post_script_cleanup`'s read side.
+`SaveGameDialog` has no equivalent deferral check at all -- genuinely
+simpler, consistent with save not needing the same script-execution-
+order guarantees a mid-script restore would. Both otherwise bracket a
+CSCI-style selector dialog around the real save/restore call
+(`restore_game_data`/`SaveGameSlot`, both already matched).

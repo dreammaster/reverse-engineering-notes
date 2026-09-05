@@ -6371,5 +6371,23 @@
     "source_line": 5215,
     "confidence": "high",
     "evidence": "void SetNextCursor() at AC.CPP:5215-5217: \"set_cursor_mode(find_next_enabled_cursor(cur_mode+1));\". A complete, exact, zero-drift match: \"call find_next_enabled_cursor(dword_4EDA7C+1); call SetCursorMode(result);\" -- both callees already matched."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "RestoreGameDialog",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "No 2011 source counterpart exists under this name (this build's own hardcoded CSCI-dialog-based save/restore UI predates 2011's later, presumably script/GUI-template-based redesign entirely) -- confirmed a genuine 2002 script-API function via its own setup_script_exports DATA XREF. Body is unambiguous and ties directly into several already-established globals/fields: if play.disabled_user_interface(byte_51FFCA)==1, shows a translated \"Sorry, not now.\" message via Display (matching the already-documented DisplayAtY-based Display implementation) and returns. Otherwise, if called mid-script (inside_script, already established), it DEFERS rather than acting immediately: writes curscript->ooo(dword_52314C+0xC, already-confirmed ExecutingScript.ooo field)=0x3E8(1000) -- an exact, decisive cross-confirmation of that field's own already-documented \"sentinel 1000 means show the restore-game dialog\" finding, this time from the WRITE side rather than post_script_cleanup's read side. When not deferred, brackets a CSCI-style file-selector dialog (setup_for_dialog/sub_426357/restore_after_dialog, all already matched or self-explanatory) around a real restore attempt via restore_game_data(ooo,NULL) (already matched), displaying a translated error message on failure via the already-established load_game_errors[] string table."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "SaveGameDialog",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "No 2011 source counterpart exists under this name, same as RestoreGameDialog's own entry -- this build's hardcoded CSCI-dialog-based save/restore UI predates 2011's later redesign entirely. Confirmed a genuine 2002 script-API function via its own setup_script_exports DATA XREF. Mirrors RestoreGameDialog's own leading disabled_user_interface(byte_51FFCA)==1 check and translated \"Sorry, not now.\" message exactly, but does NOT defer when called mid-script (no inside_script/curscript.ooo check at all -- genuinely simpler than its restore counterpart, consistent with save-game not needing the same script-execution-order guarantees a mid-script restore would). Otherwise brackets a CSCI-style save-slot-selector dialog (setup_for_dialog/sub_4266C2/restore_after_dialog) around SaveGameSlot(slot,\"\") (already matched) on success."
   }
 ]
