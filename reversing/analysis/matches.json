@@ -6669,5 +6669,59 @@
     "source_line": 214,
     "confidence": "high",
     "evidence": "NewControl::NewControl() (the no-arg base constructor, acdialog.h:214-217): \"visible=1; enabled=1;\" -- an exact, zero-drift match. Sets the vtable pointer to off_4AD5E4 (a base/stub vtable, consistent with draw()/pressedon()/processmessage() being pure virtual in this base class) then writes visible@+0x20=1, enabled@+0x21=1 -- confirming NewControl own base layout ends at +0x20/+0x21 (needredraw@+0x22 uninitialized here, matching source leaving it unset in this constructor overload too), consistent with the already-established 0x24-byte total base size. Called from all three known derived-class constructors (PushButton::PushButton, MyListBox::MyListBox, MyLabel::MyLabel, MyTextBox::MyTextBox), each of which supplies x/y/wid/hit itself afterward rather than via NewControl own 4-argument constructor overload -- this build always uses the no-arg base constructor plus derived-class field writes, never the acdialog.h:203-213 4-arg overload."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4273E0",
+    "new_name": "MyListBox__draw",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 357,
+    "confidence": "high",
+    "evidence": "MyListBox::draw() (acdialog.h:357-401) -- a complete, confirmed structural/behavioral match throughout its ~450-line body (not re-verified instruction-by-instruction given its size, but every distinct step traced): wsetcolor(windowbackgroundcolor) then a wbar-equivalent rectfill(abuf,x,y,x+wid,y+hit,currentcolor) call (wbar itself fully inlined as a direct Allegro rectfill call, no separate wbar wrapper visible at this call site); wsetcolor(0) then wrectangle(x,y,x+wid,y+hit) (both already-matched wrappers); the ARROWWIDTH(8)-based up/down-arrow line-drawing sequence; a per-item loop over numonscreen entries indexing itemnames[tt+topitem]@+0x34 (already-confirmed field/capacity) via wouttextxy(x+2,thisypos,cbuttfont,itemnames[inum]) with selected-item highlighting (wsetcolor(0)/wbar/wtextcolor(7) vs plain wtextcolor(0)); ends with \"wid = widwas;\" ([this+0xC]=saved width), matching source's own final line exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4277F0",
+    "new_name": "MyListBox__pressedon",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 403,
+    "confidence": "high",
+    "evidence": "MyListBox::pressedon() (acdialog.h:403-423) -- a complete, exact match. Tests mousex > x+wid-ARROWWIDTH(8) to distinguish the arrow-click zone from the list-item zone, matching source's branch condition exactly; the arrow zone adjusts topitem-- / topitem++ gated on the same (mousey-y vs hit/2) and bounds checks as source; the list-item zone computes selected=((mousey-y)-2)/TEXT_HT+topitem then clamps to items-1, matching source's formula exactly. Calls the object's own vtable slot 0 (draw()) directly, bracketed by LIVE domouse(2)/domouse(1) calls where source has them commented out -- the same confirmed drift already found at CSCICreateControl/CSCIDrawWindow. Ends with smcode(dword_523704)=3, matching CM_SELCHANGE=3 (acdialog.h:129) exactly, then returns 0."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427910",
+    "new_name": "MyListBox__processmessage",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 435,
+    "confidence": "high",
+    "evidence": "MyListBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:435-494) -- an if/elseif dispatch on mcode matching source's own constants with zero drift: mcode==CLB_ADDITEM(1, acdialog.h:142) calls additem(lParam) (this round's own MyListBox__additem); mcode==CLB_CLEAR(2,:143) calls clearlist() (this round's own MyListBox__clearlist); mcode==CLB_GETCURSEL(3,:144) returns selected@+0x30 directly; mcode==CLB_GETTEXT(4,:145) does strcpy((char*)lParam,itemnames[wParam]) exactly; mcode==CLB_SETTEXT(5,:146) does the free-old/malloc-new/strcpy-new sequence exactly (with wParam<items guarding the free, matching source's own guard). REAL DRIFT, CONFIRMED ABSENT: mcode==CLB_SETCURSEL(6,:147) has NO handler at all here -- the dispatch chain jumps directly from the CLB_SETTEXT(5) branch's end to the CTB_KEYPRESS(0x5B=91, already-confirmed) check, skipping mcode==6 entirely. This build's MyListBox cannot have its selection set programmatically via processmessage at all -- any such call falls through to the final unhandled-mcode branch and returns -1. The CTB_KEYPRESS branch itself matches source's key-code checks with zero drift (wParam==380/372/373/381, i.e. 0x17C/0x174/0x175/0x17D, for down/up/pgdn/pgup) including the topitem/selected clamping logic, then calls drawandmouse() (this round's own NewControl__drawandmouse) and sets smcode=CM_SELCHANGE(3) exactly. The final else branch returns -1, matching source's own default case exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427B80",
+    "new_name": "MyListBox__clearlist",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 344,
+    "confidence": "high",
+    "evidence": "MyListBox::clearlist() (acdialog.h:344-350) -- an exact, zero-drift match: a loop freeing itemnames[kk]@+0x34 for kk from 0 to items@+0x24, then items=0. Called from MyListBox::processmessage's own CLB_CLEAR branch (this round's own new match) and presumably from ~MyListBox() (the destructor, not independently located this round)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427BD0",
+    "new_name": "MyListBox__additem",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 425,
+    "confidence": "high",
+    "evidence": "MyListBox::additem(char*) (acdialog.h:425-433) -- an exact match, and a THIRD independent confirmation of this build's own MyListBox capacity: the overflow check is a literal \"cmp [this+0x24],14h\" (items>=0x14=20), not source's items>=MAXLISTITEM(300) -- directly confirming, via a bounds-check literal rather than arithmetic, the 20-entry capacity already inferred twice before (CSCICreateControl's own operator-new(0x84) allocation-size arithmetic, and this same literal's own consistency with that arithmetic). The quit() call's literal string, \"!CSCIUSER16: Too many items added to listbox\", matches source's own error string exactly (source's identical wording, just gated on a 15x larger threshold). Otherwise an exact match: malloc(strlen(texx)+1), strcpy(itemnames[items],texx), items++, needredraw@+0x22=1."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_427B50",
+    "new_name": "NewControl__drawandmouse",
+    "source_file": "Engine/acdialog.h",
+    "source_line": 237,
+    "confidence": "high",
+    "evidence": "NewControl::drawandmouse() (acdialog.h:237-242) -- calls the object's own vtable slot 0 (draw()) unconditionally (not gated on needredraw, matching source's own unconditional call, distinct from the separate drawifneeded() method which DOES gate on it). REAL DRIFT, CONFIRMED: this build's domouse(2)/domouse(1) calls bracketing the draw() call are LIVE, where source has BOTH commented out entirely (\"//domouse(2); draw(); //domouse(1);\") -- the same confirmed drift pattern already found at CSCICreateControl/CSCIDrawWindow/MyListBox::pressedon. Called from MyListBox::processmessage's own CTB_KEYPRESS branch (this round's own new match)."
   }
 ]

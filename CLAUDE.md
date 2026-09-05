@@ -3528,6 +3528,18 @@ disassembly work.
   terminate — a real overflow risk. `MyTextBox` is a zero-drift exact
   match (its own unbounded `strcpy` matches source, which has no bound
   there either).
+- **`MyListBox`'s remaining vtable methods close, finding a confirmed-
+  absent `CLB_SETCURSEL` and a third capacity confirmation.** `draw()`/
+  `pressedon()` match source closely (the latter with the same live-
+  domouse drift found repeatedly this session). `processmessage()`
+  matches every `CLB_*`/`CTB_KEYPRESS` branch except one REAL DRIFT:
+  `CLB_SETCURSEL`(6) has NO handler at all — this build's listbox
+  cannot have its selection set programmatically, any such call falls
+  through to the unhandled-mcode `-1` return. `clearlist()` closes
+  exactly; `additem()`'s own overflow check (`items>=20`, a literal,
+  not source's 300) is a third independent confirmation of this
+  build's 20-entry `MyListBox` capacity. Bonus: names `NewControl::
+  drawandmouse()`, another instance of the live-domouse drift.
 
 ## Third-party library identification (Task #10)
 

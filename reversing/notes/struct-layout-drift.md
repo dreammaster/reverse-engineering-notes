@@ -12143,3 +12143,49 @@ or writing `text[0]=0`, and `hit=TEXT_HT+1`. Its own `strcpy` is
 unbounded in BOTH builds (source itself has no length check in the
 constructor either, `TEXTBOX_MAXLEN=49` is enforced only elsewhere) --
 not a new drift, source and disassembly genuinely agree here.
+
+### MyListBox's remaining vtable methods close, finding a confirmed-absent CLB_SETCURSEL and a third capacity confirmation
+
+An immediate follow-up traced `MyListBox`'s remaining vtable/helper
+methods, referenced right after its own constructor in the
+disassembly. `draw()` (`sub_4273E0`, `acdialog.h:357-401`) is confirmed
+at a structural/behavioral level throughout its ~450-line body: the
+`wsetcolor`/`wbar`-equivalent-`rectfill`/`wrectangle` background/border
+draw (`wbar` itself fully inlined as a direct Allegro `rectfill` call
+here, no separate wrapper visible at this call site), the
+`ARROWWIDTH`(8)-based up/down-arrow drawing, the per-item
+`itemnames[tt+topitem]`@+0x34 loop with selected-item highlighting, and
+the final `wid = widwas;` restore -- all matching source exactly.
+
+`pressedon()` (`sub_4277F0`, `:403-423`) is a complete, exact match --
+the arrow-zone-vs-list-zone mouse-position test, `topitem`
+increment/decrement, and `selected` computation all match source's own
+formulas exactly, bracketed by the same LIVE-domouse-where-source-
+comments-it-out drift already found repeatedly this session, and
+setting `smcode=CM_SELCHANGE`(3, `:129`) with zero drift.
+
+`processmessage()` (`sub_427910`, `:435-494`) closes as an if/elseif
+dispatch matching source's own `CLB_*` constants (`:142-147`) with one
+REAL DRIFT, CONFIRMED ABSENT: `CLB_SETCURSEL`(6) has NO handler at all
+-- the dispatch jumps directly from the `CLB_SETTEXT`(5) branch's end to
+the `CTB_KEYPRESS`(0x5B=91, already-confirmed) check, skipping `mcode
+==6` entirely. This build's `MyListBox` cannot have its selection set
+programmatically at all; any such call falls through to the unhandled-
+mcode branch and returns -1. Every other branch (`CLB_ADDITEM`/`CLEAR`/
+`GETCURSEL`/`GETTEXT`/`SETTEXT`, plus the full `CTB_KEYPRESS` key-code
+dispatch) matches source with zero drift.
+
+`clearlist()` (`sub_427B80`, `:344-350`) closes as an exact, zero-drift
+match. `additem()` (`sub_427BD0`, `:425-433`) supplies a THIRD
+independent confirmation of `MyListBox`'s own 20-entry capacity -- its
+own overflow check is a literal `cmp [this+0x24],14h` (20), not
+source's `MAXLISTITEM`(300), directly confirming the capacity via a
+bounds-check literal rather than allocation-size arithmetic, with the
+`quit()` error string matching source's own wording exactly (just
+gated on a 15x smaller threshold).
+
+Bonus: `NewControl::drawandmouse()` (`sub_427B50`, `:237-242`), called
+from the `CTB_KEYPRESS` branch, closes too -- an unconditional
+(not-`needredraw`-gated) `draw()` vtable call, with the SAME
+live-domouse-where-source-comments-it-out drift found throughout this
+session's CSCI-dialog-subsystem work.

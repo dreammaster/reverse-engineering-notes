@@ -3105,34 +3105,34 @@
   "is_named": true
  },
  {
-  "name": "sub_4273E0",
+  "name": "MyListBox__draw",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4277F0",
+  "name": "MyListBox__pressedon",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427910",
+  "name": "MyListBox__processmessage",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427B50",
+  "name": "NewControl__drawandmouse",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427B80",
+  "name": "MyListBox__clearlist",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_427BD0",
+  "name": "MyListBox__additem",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "MyLabel__MyLabel",
