@@ -135,16 +135,18 @@ END SUB
 '     4600 by the same formula (the "3000" in the old note was the
 '     ascension heal amount, not the true max-HP baseline)
 '
-'  OPEN
-'   * questFlagWord bit 0x2000's setter (gates "already took the final
-'     offer" vs re-running caretakerOffer) -- the MECHANISM is now known
-'     (recovered/quest_flags.bas S3c: every museum exhibit gets its own
-'     bit via sub_11C38, `2^(exhibitId-1)`; exhibit 14 = "INFORMATION" =
-'     the caretaker's own desk = checkFlag_2000, and 2^13 = 0x2000
-'     exactly) but the literal first-time trigger for THAT exhibit's own
-'     bit is not -- checkFlag_2000's only call into the setter is gated
-'     behind the bit already being set. Most likely inside useCommand's
-'     large, un-swept main tile/object dispatch.
+'  RESOLVED (was open)
+'   * questFlagWord bit 0x2000 ("already took the caretaker's final
+'     offer") is NEVER SET -- a latent bug, no gameplay effect.  Every
+'     other exhibit's handler ends with `call sub_11D02` (which ORs in
+'     `2^(exhibitId-1)`); `checkFlag_2000` (exhibit 14's handler) omits
+'     that on its success path, and its only call into the setter is a
+'     dead "bit already set" branch.  So `checkFlag_2000` always routes
+'     to `caretakerOffer`, and the level-up logic is monotonic, so
+'     re-offering is harmless.  Full evidence in
+'     recovered/quest_flags.bas section 3c.  A port drops the branch.
+'   * caretakerOffer's `S3(0) >= 2` fast-path is dead the same way
+'     (`S3(0)` is only ever written to 1).
 '   * the `S3(0) >= 2` branch (sub_12AF4, loads exhibit graphics) --
 '     a separate late-game caretaker interaction, not traced
 ' ==========================================================================

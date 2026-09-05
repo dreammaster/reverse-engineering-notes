@@ -1528,8 +1528,6 @@ loc_10AF2:                              ; CODE XREF: enterExhibit+3F0↑j
                 mov     ax, es:[bx]
                 dec     ax
                 mov     bx, dx
-
-loc_10B09:                              ; CODE XREF: seg000:0B49↓j
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     es:[bx], ax
@@ -1560,13 +1558,10 @@ enterExhibit    endp
                 dw offset climbCommand  ; "CLIMB ON".
                 dw offset checkFlag_2000 ; flagTestMask := 0x2000, then testExhibitFlag.
                 dw offset sub_11B14
-                db  8Bh
-                db  1Eh
-                db 0FEh
 ; ---------------------------------------------------------------------------
-                and     cl, dl
-                jcxz    short loc_10B09
-                cmp     bl, [bp+di]
+                mov     bx, ds:20FEh
+                shl     bx, 1
+                mov     si, 1B3Ah
                 add     bx, [si+0Ah]
                 mov     es, word ptr [si+2]
                 mov     ax, ds:2106h

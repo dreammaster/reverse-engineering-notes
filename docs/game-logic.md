@@ -456,20 +456,20 @@ Summary:
   gate is `0x2B` = Jade's bits plus part of Topaz's own), and two ranks
   (Turquoise, Diamond) gate on a plain counter/item check instead of the
   bitfield at all.
-- Bit `0x2000` = "already took the caretaker's final offer". The
-  character-level increment itself is fully solved (§2,
-  [`mus_caretaker.bas`](../recovered/mus_caretaker.bas)) and turned out
-  *not* to touch this bit. The MECHANISM behind `0x2000` is now known too
-  — every one of MUS's 16 exhibit slots gets its own permanent bit via
-  `sub_11C38` (`questFlagWord OR= 2^(exhibitId−1)`), verified exact
-  against 5 already-known coin bits; exhibit 14 is named **"INFORMATION"**
-  and its own outcome-handler *is* `checkFlag_2000` — i.e. exhibit 14 is
-  the caretaker's desk, and `2^13 = 0x2000` is exactly its bit. What's
-  still open is the literal first-time trigger: `checkFlag_2000`'s only
-  call into the setter fires only when the bit is *already* set
-  (circular), and every other caretaker function is confirmed clean —
-  the real site is most likely inside `useCommand`'s much larger,
-  un-swept tile/object dispatch.
+- Bit `0x2000` = "already took the caretaker's final offer" — **and it is
+  never set** (a latent bug; no gameplay effect). Every one of MUS's 16
+  exhibit slots is *meant* to get its own permanent bit via `sub_11C38`
+  (`questFlagWord OR= 2^(exhibitId−1)` — verified exact against 5 known
+  coin bits; `eatFruitCommand` inlines the literal `or ax,8` for exhibit
+  4). Exhibit 14 ("INFORMATION" — the caretaker's desk, handler
+  `checkFlag_2000`) would be `2^13 = 0x2000`, but `checkFlag_2000` omits
+  the `sub_11D02` tail call that every other exhibit makes; its only
+  path to the setter is a dead "bit already set" branch. So
+  `checkFlag_2000` always routes to `caretakerOffer`, the "already done"
+  message is unreachable, and since the level-up logic is monotonic that
+  has no consequence. Exhaustively verified — the whole game has exactly
+  4 writers of `questFlagWord`, and every function in the caretaker call
+  graph was read end-to-end. Details: [`quest_flags.bas`](../recovered/quest_flags.bas) §3c.
 
 **Found items** (`AwardFoundItem`, `out.asm:8315`): `S2(droppedItemId)
 += 1`, "YOU FIND A `<item>`". `droppedItemId` = `ds:1AEE`.

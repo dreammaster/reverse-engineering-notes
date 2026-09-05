@@ -262,13 +262,14 @@ anchor). The combat pool it prints is quoted at the top of
       (`ida_scripts/fix_mus_caretaker_gaps.py`, the same "IDA chops the
       block after every far call" issue as the DUN coerce-gap fixes).
       Also nails max HP exactly: `200 + 50*L*(L-1) - (100 if L>5)`.
-- [~] bit `0x2000`'s setter — mechanism found (every exhibit gets its own
-      `2^(exhibitId-1)` bit via `sub_11C38`; exhibit 14 = "INFORMATION" =
-      the caretaker's own desk, so `2^13=0x2000` is exactly its bit), but
-      the first-time trigger is circular in every caretaker function —
-      most likely inside `useCommand`'s large, un-swept tile dispatch.
-- [ ] the `S3(0)>=2` branch (`sub_12AF4`, loads exhibit graphics — a
-      separate, later interaction)
+- [x] bit `0x2000` — **RESOLVED: it is never set** (latent bug, no
+      gameplay effect). Every exhibit's handler is meant to OR in its own
+      `2^(exhibitId-1)` bit via `sub_11C38`; `checkFlag_2000` (exhibit 14
+      = "INFORMATION" = the caretaker's desk) omits the tail call, so its
+      only path to the setter is a dead "already set" branch. Verified
+      the whole game has exactly 4 `questFlagWord` writers and read every
+      caretaker-graph function end-to-end. `caretakerOffer`'s `S3(0)>=2`
+      fast-path is dead the same way. `quest_flags.bas` §3c.
 
 ## leglib — the shared runtime / engine primitives
 

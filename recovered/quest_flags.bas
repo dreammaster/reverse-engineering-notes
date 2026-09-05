@@ -160,16 +160,36 @@
 '  outcome-arm is `checkFlag_2000` itself -- i.e. exhibit #14 IS the
 '  caretaker's desk.  Its bit under this formula is
 '  `2^(14-1) = 2^13 = 0x2000` -- the EXACT bit `checkFlag_2000` tests.
-'  **The mechanism is confirmed; the literal first-time SETTER is not.**
-'  `checkFlag_2000`'s only call into the setter (`sub_11D02` -> `sub_11C38`)
-'  is in its "bit ALREADY set" branch -- circular, cannot be the initial
-'  trigger.  Exhaustively ruled out as the setter: `caretakerOffer` (every
-'  branch), `caretakerPraise`, `sub_12CAC`, `sub_10D3F`, `sub_11B45`,
-'  `sub_12AF4`, and `loc_10B64`/`sub_10B59` -- none of them call the full
-'  `sub_11D02` entry or write the bit directly.  `sub_11C38` has exactly
-'  ONE call site in the whole file, so the real trigger must be inside
-'  `useCommand`'s much larger main tile/object SELECT CASE (the tile-0xE0
-'  dispatch leading to `loc_12323`), which this pass did not fully sweep.
+'
+'  *** bit 0x2000 IS NEVER SET -- a latent bug in the shipped game. ***
+'  Every other exhibit's outcome handler ends with `call sub_11D02` (full
+'  entry -> `sub_11C38` -> OR in its own bit); `eatFruitCommand` even
+'  inlines the literal `or ax, 8` (= 2^(4-1)) for exhibit 4.  But
+'  `checkFlag_2000` (exhibit 14's handler) OMITS that tail call on its
+'  success path (bit-not-set -> `caretakerOffer` -> return).  Its ONLY
+'  call into the setter is `jmp sub_11D02` in the "bit ALREADY set"
+'  branch -- which can never run, because nothing sets the bit.
+'  Exhaustively verified: the whole codebase has exactly 4 writers of
+'  questFlagWord (fruitEffect / sub_11C38 / OUT applyGameFlag / DUN
+'  climbDownOrExit), `sub_11C38` has exactly ONE caller (`sub_11D02`),
+'  `sub_11D02`'s full entry has 9 call sites -- 8 are exhibit arms 1/2/3/
+'  6/7/8/10/11 (each runs with its own exhibitId, never 14; no arm writes
+'  ds:20FE), and the 9th is that dead `checkFlag_2000` branch.  Every
+'  function in the caretaker graph was read end-to-end
+'  (`caretakerOffer` all branches, `caretakerPraise`, `sub_12CAC`,
+'  `sub_10D3F`, `sub_11B45`, `sub_12C67`, `sub_12AF4`, `loc_10B64`/
+'  `sub_10B59`, `enterExhibit` full body, `readPlaque`, `sub_12823`, the
+'  post-dispatch resume block) -- none writes questFlagWord.
+'
+'  Gameplay impact: NONE.  `checkFlag_2000` always routes to
+'  `caretakerOffer`; the "you already took the offer" message
+'  (dialog ':' / 0x3A) is simply unreachable.  The level-up logic is
+'  monotonic (raises level only up to the qualifying exhibit-rank, does
+'  nothing if you're already there), so re-offering is harmless.  A port
+'  can just drop the bit-0x2000 branch and always run the offer.
+'
+'  (`caretakerOffer`'s `S3(0) >= 2` fast-path branch is dead the same way
+'  -- `S3(0)` is only ever written to 1.)
 '
 '  Two OTHER parallel exhibit-bit arrays exist, both tested (not set) via
 '  the SAME `2^(exhibitId-1)` formula: `S4(2)` (`enterExhibit`'s own entry
@@ -255,17 +275,8 @@
 '     outcome-arm IS checkFlag_2000).
 '
 '  OPEN
-'   * bit 0x2000's literal setter. The MECHANISM is now known (it would be
-'     sub_11C38 firing with exhibitId=14, giving exactly 2^13=0x2000) but
-'     the trigger is not: checkFlag_2000's only call into the setter is
-'     gated behind the bit ALREADY being set (circular -- can't be the
-'     first trigger). caretakerOffer (every branch), caretakerPraise,
-'     sub_12CAC, sub_10D3F, sub_11B45, sub_12AF4, and loc_10B64/sub_10B59
-'     are ALL fully read and NONE of them call the setter or write the
-'     bit directly -- sub_11C38 has exactly one call site in the whole
-'     file. The real trigger is most likely inside useCommand's much
-'     larger main tile/object dispatch (thousands of un-swept bytes
-'     leading to loc_12323), not in the caretaker-specific functions.
+'   * bit 0x2000: RESOLVED -- it is never set (latent bug, no gameplay
+'     effect). See section 3c above.
 '   * S4(2) and S4(35): two OTHER arrays tested (not set) via the same
 '     2^(exhibitId-1) scheme (entry-permission gate and an unidentified
 '     threshold, respectively) -- a third parallel bitfield family,

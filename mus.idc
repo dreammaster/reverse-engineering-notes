@@ -590,7 +590,9 @@ static Bytes_0(void) {
 	create_word	(x=0X10B42);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	create_insn	(0X10B47);
+	create_insn	(0X10B44);
+	create_insn	(x=0X10B48);
+	op_hex		(x,	1);
 	create_insn	(0X10B59);
 	create_insn	(0X10B63);
 	create_insn	(0X10B64);
