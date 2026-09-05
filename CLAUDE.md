@@ -3158,6 +3158,18 @@ disassembly work.
   replace `GameState.num_parsed_words`/`parsed_words` — closing the
   loop on that field's earlier confirmed-absent finding: the feature
   isn't missing, it's just not a `GameState` member here.
+- **A mislabeled function found and fixed.** A function auto-named
+  `VALIDATE_STRING` (a real 2011 identifier, but one that's actually a
+  MACRO there, never a real function) turns out to be a decisive,
+  complete match to `check_strlen` instead: matches
+  source instruction for instruction, including its literal `200`/`30`
+  MAXSTRLEN constants. Renamed, with the mismatch documented in case it
+  recurs elsewhere. `_sc_strcpy` closes as a zero-drift match; `_sc_
+  strcat` confirms absent the separate `VALIDATE_STRING(s2)` safety
+  check; `_sc_strlower`/`_sc_strupper` do that same check inline
+  instead of via a shared function. All four confirm `my_strncpy`
+  doesn't exist as a separate function — each inlines its own
+  null-termination step after a raw CRT `strncpy` call instead.
 
 ## Third-party library identification (Task #10)
 

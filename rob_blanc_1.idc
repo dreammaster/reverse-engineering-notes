@@ -27476,7 +27476,7 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X41CBA1);
 	create_insn	(0X41CBA5);
-	set_name	(0X41CBA5,	"VALIDATE_STRING");
+	set_name	(0X41CBA5,	"check_strlen");
 	create_insn	(x=0X41CBA8);
 	op_hex		(x,	1);
 	create_insn	(x=0X41CBAB);
@@ -29145,6 +29145,8 @@ static Bytes_4(void) {
 	set_cmt	(0X41E40E,	"Size",	0);
 	set_cmt	(0X41E418,	"Src",	0);
 	set_cmt	(0X41E425,	"void *",	0);
+	create_insn	(x=0X41E42B);
+	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -29154,8 +29156,6 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
-	create_insn	(x=0X41E42B);
-	op_hex		(x,	1);
 	create_insn	(x=0X41E436);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X41E439);
@@ -145382,7 +145382,7 @@ static Bytes_24(void) {
 	set_name	(0X4B42F4,	"FindHandle");
 	create_dword	(0X4B42F8);
 	create_dword	(0X4B42FC);
-	set_name	(0X4B42FC,	"Count");
+	set_name	(0X4B42FC,	"MAXSTRLEN");
 	create_dword	(x=0X4B4300);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -157774,11 +157774,12 @@ static Functions_5(void) {
 	set_frame_size(0X41CB63, 0, 4, 0);
 	add_func    (0X41CBA5,0X41CBEF);
 	set_func_flags(0X41CBA5,0x5410);
+	set_func_cmt(0X41CBA5,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void check_strlen(char *ptt) at AC.CPP:18279-18285 -- a CORRECTED, decisive match. This function was previously auto-named `VALIDATE_STRING` (a pre-existing, misleading label from before this project's own tracking began -- 2011's actual VALIDATE_STRING is a MACRO, `#define VALIDATE_STRING(strin) if((unsigned long)strin<=4096) quit(\"!String argument was null...\");`, AC.CPP:1750, inlined at every call site, not a real function). Reading this function's own body shows it is decisively check_strlen instead: \"MAXSTRLEN=200(0xC8, matching MAX_MAXSTRLEN=200, Common/acruntim.h:20, with zero drift); charstart=game_chars; charend=charstart+numcharacters*0x140(CharacterInfo's own already-confirmed 320-byte size, exact match); if(ptt>=charstart && ptt<=charend) MAXSTRLEN=30;\" -- matches source's \"MAXSTRLEN=MAX_MAXSTRLEN; charstart=&game.chars[0]; charend=charstart+sizeof(CharacterInfo)*game.numcharacters; if((ptt>=charstart)&&(ptt<=charend)) M" "AXSTRLEN=30;\" instruction for instruction. Renamed accordingly; the ", 1);
 	set_frame_size(0X41CBA5, 0X8, 4, 0);
 	add_func    (0X41CBEF,0X41CC4C);
 	set_func_flags(0X41CBEF,0x5410);
 	SetType(0X41CBEF, "void __stdcall sc_strcat(char *s1, char *s2);");
-	set_func_cmt(0X41CBEF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41CBEF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- also RESOLVES a naming confusion this same round: the call previously displayed as `VALIDATE_STRING(Str)` is actually `check_strlen(Str)`, see that function's own corrected entry): matches source's `check_strlen(s1)` call exactly (correct argument -- `Str` is this build's own s1/destination parameter). CONFIRMED ABSENT: source's own leading `VALIDATE_STRING(s2)` call (the safety check specifically guarding against passing a raw char/int as the string-to-append, per source's own comment) -- neither a function call nor equivalent inline code exists for it here at all; this build has no protection against that specific documented mistake. `mosttocopy=MAXSTRLEN-strlen(Str)-1;` (MAXSTRLEN the global, per check_strlen's own entry) then a raw CRT `strncpy` call (already matched) with manual null-ter" "mination at `Str[MAXSTRLEN-1]=0` afterward -- matching source's `my_", 1);
 	set_frame_size(0X41CBEF, 0X4, 4, 0X8);
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp-0X4]", "Count");
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp+0X8]", "Str");
@@ -157786,20 +157787,20 @@ static Functions_5(void) {
 	add_func    (0X41CC4C,0X41CC84);
 	set_func_flags(0X41CC4C,0x5410);
 	SetType(0X41CC4C, "void __stdcall sc_strcpy(char *s1, char *s2);");
-	set_func_cmt(0X41CC4C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41CC4C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- also benefits from this same round's `VALIDATE_STRING`->`check_strlen` correction): a complete, exact, zero-drift match to source's entire body, \"check_strlen(s1); my_strncpy(s1,s2,MAXSTRLEN-1);\" -- `check_strlen(Destination)` matches exactly (source's `_sc_strcpy` calls ONLY check_strlen, no VALIDATE_STRING at all, so this call site needed no correction the way _sc_strcat's did), and the raw CRT `strncpy(Destination,Source,MAXSTRLEN-1)` plus manual `Destination[MAXSTRLEN-1]=0` null-termination again confirms `my_strncpy` doesn't exist as a separate function, matching _sc_strcat's own finding.", 1);
 	set_frame_size(0X41CC4C, 0, 4, 0X8);
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0X8]", "Destination");
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0XC]", "Source");
 	add_func    (0X41CC84,0X41CCB4);
 	set_func_flags(0X41CC84,0x5410);
 	SetType(0X41CC84, "void __stdcall sc_strlower(char *desbuf);");
-	set_func_cmt(0X41CC84,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41CC84,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's two-step validation, \"VALIDATE_STRING(desbuf); check_strlen(desbuf);\", exactly in SUBSTANCE -- but with VALIDATE_STRING's own job done via this build's OWN inline `if(String==0) quit(\"!String argument was null...\");` check rather than a separate function/macro call (consistent with check_strlen's own entry: no reusable VALIDATE_STRING helper exists in this build at all). The subsequent call (previously displayed as `VALIDATE_STRING`, now corrected to `check_strlen`, see its own entry) then `_strlwr` (already matched) complete the match with zero net drift from source's intent, just a different (inline vs. reusable-macro) implementation of the null check.", 1);
 	set_frame_size(0X41CC84, 0, 4, 0X4);
 	define_local_var(0X41CC84, 0X41CCB4, "[bp+0X8]", "String");
 	add_func    (0X41CCB4,0X41CCE4);
 	set_func_flags(0X41CCB4,0x5410);
 	SetType(0X41CCB4, "void __stdcall sc_strupper(char *desbuf);");
-	set_func_cmt(0X41CCB4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41CCB4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): an exact mirror of _sc_strlower's own entry -- inline null check, `check_strlen` (see its own corrected entry), then `_strupr` (already matched) -- same zero-net-drift conclusion.", 1);
 	set_frame_size(0X41CCB4, 0, 4, 0X4);
 	define_local_var(0X41CCB4, 0X41CCE4, "[bp+0X8]", "String");
 	add_func    (0X41CCE4,0X41CD6D);
@@ -158002,6 +158003,10 @@ static Functions_5(void) {
 	set_func_cmt(0X421DB0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
 	set_frame_size(0X421DB0, 0, 4, 0X4);
 	define_local_var(0X421DB0, 0X421DE1, "[bp+0X8]", "amountwanted");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X421DE8,0X421F22);
 	set_func_flags(0X421DE8,0x5410);
 	set_frame_size(0X421DE8, 0X4, 4, 0);
@@ -158067,10 +158072,6 @@ static Functions_5(void) {
 	set_func_flags(0X423EC0,0x5410);
 	set_func_cmt(0X423EC0,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public putpixel(BITMAP*,x,y,color) API: signature \"bmp->vtable->putpixel(bmp,x,y,color);\" via the vtable slot immediately after getpixel's (+0x24 vs. +0x20), matching Allegro's declared BITMAP_METHODS field order exactly. Used by sub_410631 (already characterized) to mask out walk-behind-occluded pixels. THIRD-PARTY LIBRARY BOUNDARY -- see getpixel's own entry. Also called from process_event (already matched) inside its FADE_DISSOLVE screen-transition effect, writing to the live screen bitmap.", 1);
 	set_frame_size(0X423EC0, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X423EF0,0X423F19);
 	set_func_flags(0X423EF0,0x5410);
 	set_func_cmt(0X423EF0,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public rectfill(BITMAP*,x1,y1,x2,y2,color) API -- exact 6-argument vtable-dispatch shape (bmp+0x1C=vtable pointer, +0x38=rectfill slot), matching the same BITMAP_METHODS-dispatch pattern already established for getpixel(+0x20)/putpixel(+0x24). Called from GUISlider::Draw (already matched) to fill both the slider bar and handle rectangles. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its vtable target implementation not chased further.", 1);
@@ -158855,6 +158856,10 @@ static Functions_6(void) {
 	define_local_var(0X42C337, 0X42C639, "[bp-0XC]", "Buffer");
 	define_local_var(0X42C337, 0X42C639, "[bp-0X4]", "Block");
 	define_local_var(0X42C337, 0X42C639, "[bp+0X8]", "Stream");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X42C640,0X42C65B);
 	set_func_flags(0X42C640,0x5410);
 	set_frame_size(0X42C640, 0X4, 4, 0);
@@ -158984,10 +158989,6 @@ static Functions_6(void) {
 	set_func_flags(0X42F8FC,0x5410);
 	set_func_cmt(0X42F8FC,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/file.c\nconfidence: high\nevidence: Allegro library, long pack_fread(void *p, long n, PACKFILE *f) -- exact 3-arg match AND matching argument ORDER (buffer, size, file-handle, verified via cdecl push order in the disassembly) in my_load_static_mp3's (already matched) file-loading preamble, right after the size-field read and malloc, matching source's `pack_fread(mp3buffer, muslen, mp3in);` exactly. Same confidence caveat as `pack_fopen`'s own entry (PACKFILE layout drift, not function-identity doubt). UPGRADED TO HIGH (this round): `my_load_mp3` (`sub_408623`, new match this round) independently confirms the exact same 3-arg call shape and role (`pack_fread(tmpbuffer, thistune->chunksize, mp3in)`) from a second, unrelated caller.", 1);
 	set_frame_size(0X42F8FC, 0XC, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X42F995,0X42FA36);
 	set_func_flags(0X42F995,0x5410);
 	set_frame_size(0X42F995, 0X8, 4, 0);
@@ -159928,6 +159929,10 @@ static Functions_7(void) {
 	set_func_flags(0X445070,0x5400);
 	set_func_cmt(0X445070,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void voice_start(int voice) at sound.c:1491-1500 -- part of the same play_sample call chain (see voice_set_volume's entry). Body is a decisive, complete match: num-check, a vtable dispatch at +0x44 matching 'digi_driver->start_voice(virt_voice[voice].num)', then an UNCONDITIONAL write of a global (dword_537E8C) into virt_voice[voice]'s time field -- identifies dword_537E8C as the well-known Allegro global `retrace_count`, matching 'virt_voice[voice].time = retrace_count;' exactly (an unconditional statement outside the num>=0 guard in source too, matching the disassembly's control flow precisely).", 1);
 	set_frame_size(0X445070, 0X4, 0, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X4450B0,0X4450CE);
 	set_func_flags(0X4450B0,0x5400);
 	set_frame_size(0X4450B0, 0, 0, 0);
@@ -159968,10 +159973,6 @@ static Functions_7(void) {
 	set_func_flags(0X445770,0x5400);
 	set_func_cmt(0X445770,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
 	set_frame_size(0X445770, 0X10, 0, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X4458A0,0X4458AC);
 	set_func_flags(0X4458A0,0x5400);
 	set_frame_size(0X4458A0, 0, 0, 0);
@@ -162084,6 +162085,10 @@ static Functions_8(void) {
 	add_func    (0X475470,0X4755D5);
 	set_func_flags(0X475470,0x5400);
 	set_frame_size(0X475470, 0X8C, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X4755E0,0X475745);
 	set_func_flags(0X4755E0,0x5400);
 	set_frame_size(0X4755E0, 0X8C, 0, 0);
@@ -162167,10 +162172,6 @@ static Functions_8(void) {
 	set_func_flags(0X477470,0x5400);
 	set_func_cmt(0X477470,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void play_mod(JGMOD *j, int loop) -- referenced at Engine/acsound.cpp:1103, \"play_mod(tune, repeat);\" inside MYMOD::play() (JGMOD_MOD_PLAYER branch). Confirmed via a distinctive literal error string, \"Can't play a JGMOD pointer with null value\", guarding a NULL check on its first argument -- exactly the kind of defensive check a public \"play this tune\" API would have. Called from PlayMusic (already matched) immediately after a successful load_mod (sub_477320, see its own entry) call, matching the source's load-then-play sequence exactly. Confirms dword_4EF028 (already-established GameState.music_repeat) as play_mod's second argument, matching source's 'play_mod(tune,repeat);' (acsound.cpp:1103) exactly -- the same global MYMIDI's own play_midi call uses in the identical role (see PlayMusic's own entry).", 1);
 	set_frame_size(0X477470, 0X8, 0, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X477790,0X4777FE);
 	set_func_flags(0X477790,0x5400);
 	set_func_cmt(0X477790,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void stop_mod(void) -- referenced at Engine/acsound.cpp:1055 inside MYMOD::destroy() ('stop_mod(); destroy_mod(tune); tune=NULL;'). Called from scr_StopMusic (already matched) with ZERO arguments, immediately after is_mod_playing() (sub_4778B0, see its own entry) returns true, and immediately before destroy_mod (sub_4779A0, see its own entry) -- matching source's exact call order and arg count.", 1);
@@ -164565,6 +164566,10 @@ static Functions_9(void) {
 	add_func    (0X4A4960,0X4A49A6);
 	set_func_flags(0X4A4960,0x5400);
 	set_frame_size(0X4A4960, 0X8, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4A49B0,0X4A4D19);
 	set_func_flags(0X4A49B0,0x5400);
 	set_frame_size(0X4A49B0, 0X18, 0, 0);
@@ -164758,10 +164763,6 @@ static Functions_9(void) {
 	add_func    (0X4AA7D0,0X4AA823);
 	set_func_flags(0X4AA7D0,0x5400);
 	set_frame_size(0X4AA7D0, 0X8, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4AA830,0X4AA89B);
 	set_func_flags(0X4AA830,0x5400);
 	set_frame_size(0X4AA830, 0X8, 0, 0);

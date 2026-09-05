@@ -2255,7 +2255,7 @@
   "is_named": true
  },
  {
-  "name": "VALIDATE_STRING",
+  "name": "check_strlen",
   "addr_hint": null,
   "is_named": true
  },

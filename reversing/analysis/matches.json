@@ -2047,7 +2047,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- also RESOLVES a naming confusion this same round: the call previously displayed as `VALIDATE_STRING(Str)` is actually `check_strlen(Str)`, see that function's own corrected entry): matches source's `check_strlen(s1)` call exactly (correct argument -- `Str` is this build's own s1/destination parameter). CONFIRMED ABSENT: source's own leading `VALIDATE_STRING(s2)` call (the safety check specifically guarding against passing a raw char/int as the string-to-append, per source's own comment) -- neither a function call nor equivalent inline code exists for it here at all; this build has no protection against that specific documented mistake. `mosttocopy=MAXSTRLEN-strlen(Str)-1;` (MAXSTRLEN the global, per check_strlen's own entry) then a raw CRT `strncpy` call (already matched) with manual null-termination at `Str[MAXSTRLEN-1]=0` afterward -- matching source's `my_strncpy(&s1[strlen(s1)],s2,mosttocopy)` in NET EFFECT, but CONFIRMING `my_strncpy` (2011's own bounds-checked-and-always-null-terminates wrapper) does not exist as a separate function here -- this build inlines the equivalent null-termination step directly at each call site instead."
   },
   {
     "kind": "function",
@@ -2057,7 +2057,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- also benefits from this same round's `VALIDATE_STRING`->`check_strlen` correction): a complete, exact, zero-drift match to source's entire body, \"check_strlen(s1); my_strncpy(s1,s2,MAXSTRLEN-1);\" -- `check_strlen(Destination)` matches exactly (source's `_sc_strcpy` calls ONLY check_strlen, no VALIDATE_STRING at all, so this call site needed no correction the way _sc_strcat's did), and the raw CRT `strncpy(Destination,Source,MAXSTRLEN-1)` plus manual `Destination[MAXSTRLEN-1]=0` null-termination again confirms `my_strncpy` doesn't exist as a separate function, matching _sc_strcat's own finding."
   },
   {
     "kind": "function",
@@ -2067,7 +2067,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's two-step validation, \"VALIDATE_STRING(desbuf); check_strlen(desbuf);\", exactly in SUBSTANCE -- but with VALIDATE_STRING's own job done via this build's OWN inline `if(String==0) quit(\"!String argument was null...\");` check rather than a separate function/macro call (consistent with check_strlen's own entry: no reusable VALIDATE_STRING helper exists in this build at all). The subsequent call (previously displayed as `VALIDATE_STRING`, now corrected to `check_strlen`, see its own entry) then `_strlwr` (already matched) complete the match with zero net drift from source's intent, just a different (inline vs. reusable-macro) implementation of the null check."
   },
   {
     "kind": "function",
@@ -2077,7 +2077,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): an exact mirror of _sc_strlower's own entry -- inline null check, `check_strlen` (see its own corrected entry), then `_strupr` (already matched) -- same zero-net-drift conclusion."
   },
   {
     "kind": "function",
@@ -6160,5 +6160,14 @@
     "source_line": 682,
     "confidence": "high",
     "evidence": "void calculate_move_stage(MoveList*mlsp,int aaa) at routefnd.cpp:682-... -- a decisive match on its opening logic (the deeper fixed-point-trig speed-computation body past the special-case branches not individually traced this round). The exact 2-argument signature matches both real call sites: MoveCharacterPath (already matched, this round, calling calculate_move_stage(mls_ptr,numstage-1) when appending a waypoint) and find_route (already matched, calling calculate_move_stage(&mls[mlist],aaa) while building a computed route) -- matching source's own two call sites (routefnd.cpp:878 and AddWaypoint-equivalent code) exactly. The early-return branch matches verbatim: \"if(pos[aaa]==pos[aaa+1]) { xpermove[aaa]=0; ypermove[aaa]=0; return; }\" (both fields already established via do_movelist_move's own entry, now reconfirmed a third way). The XY-unpacking that follows -- \"ourx=pos[aaa]>>16&0xFFFF; oury=pos[aaa]&0xFFFF; destx=pos[aaa+1]>>16&0xFFFF; desty=pos[aaa+1]&0xFFFF;\" -- matches source's own packed-coordinate unpacking exactly, and independently confirms MoveList.pos[]'s packed-XY-per-dword encoding (`(x<<16)|y`) already inferred from MoveCharacterPath's own writing side this same round. The subsequent abs()+itofix()-shaped calls (abs already matched; a new lead, sub_433E10, plausibly Allegro's own fixed-point itofix conversion, not chased further) are consistent with source's fixed-point angle/speed computation but not traced field-by-field to the end of the function."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "VALIDATE_STRING",
+    "new_name": "check_strlen",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 18279,
+    "confidence": "high",
+    "evidence": "void check_strlen(char *ptt) at AC.CPP:18279-18285 -- a CORRECTED, decisive match. This function was previously auto-named `VALIDATE_STRING` (a pre-existing, misleading label from before this project's own tracking began -- 2011's actual VALIDATE_STRING is a MACRO, `#define VALIDATE_STRING(strin) if((unsigned long)strin<=4096) quit(\"!String argument was null...\");`, AC.CPP:1750, inlined at every call site, not a real function). Reading this function's own body shows it is decisively check_strlen instead: \"MAXSTRLEN=200(0xC8, matching MAX_MAXSTRLEN=200, Common/acruntim.h:20, with zero drift); charstart=game_chars; charend=charstart+numcharacters*0x140(CharacterInfo's own already-confirmed 320-byte size, exact match); if(ptt>=charstart && ptt<=charend) MAXSTRLEN=30;\" -- matches source's \"MAXSTRLEN=MAX_MAXSTRLEN; charstart=&game.chars[0]; charend=charstart+sizeof(CharacterInfo)*game.numcharacters; if((ptt>=charstart)&&(ptt<=charend)) MAXSTRLEN=30;\" instruction for instruction. Renamed accordingly; the global `Count` (this function's own generic auto-name, also a local-variable-name collision elsewhere) is `MAXSTRLEN` itself. This build has NO separate VALIDATE_STRING function or macro-equivalent reusable helper -- callers that need that specific null/range check (see _sc_strlower/_sc_strupper's own entries) do it with their own inline code instead."
   }
 ]

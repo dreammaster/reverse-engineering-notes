@@ -11103,3 +11103,36 @@ from `GameState` itself: the functionality isn't missing from the
 game, it's simply implemented via these two standalone globals instead
 of `GameState` members -- the same "later consolidated into one
 struct" pattern found repeatedly elsewhere in this project.
+
+### A mislabeled function found and fixed, and `check_strlen`'s callers close cleanly
+
+A function auto-named `VALIDATE_STRING` -- a real 2011 identifier, but
+one that's actually a MACRO there (`#define VALIDATE_STRING(strin) if
+((unsigned long)strin<=4096) quit(...)`, inlined at every call site,
+never a real function) -- turned out, once its own body was actually
+read, to be a decisive, complete match to `check_strlen` instead:
+"MAXSTRLEN=200 (matching `MAX_MAXSTRLEN=200` with zero drift);
+charstart=game_chars; charend=charstart+numcharacters*0x140 (matching
+`CharacterInfo`'s own confirmed 320-byte size exactly); if(ptt in
+range) MAXSTRLEN=30;" matches source's `check_strlen` instruction for
+instruction. Renamed accordingly, with the mismatch documented in case
+the same auto-name misattribution recurs elsewhere. Its own global,
+`Count` (itself a generic auto-name reused as a local variable
+elsewhere too), is `MAXSTRLEN` -- confirmed a second way by its own
+static initializer, `MAXSTRLEN dd 0C8h` (200), matching source's `int
+MAXSTRLEN=MAX_MAXSTRLEN;` declaration exactly.
+
+With `check_strlen` correctly identified, its own callers close
+cleanly: `_sc_strcpy` is a complete, zero-drift match to source's
+entire body. `_sc_strcat` matches its own `check_strlen(s1)` call
+exactly but CONFIRMS ABSENT source's separate `VALIDATE_STRING(s2)`
+safety check (guarding against passing a raw char/int as the string to
+append) -- neither a function call nor equivalent inline code exists
+for it here. `_sc_strlower`/`_sc_strupper` both match source's two-step
+validation in substance, just with `VALIDATE_STRING`'s own job done via
+each function's own inline null check rather than a shared macro/
+function (consistent with there being no standalone `VALIDATE_STRING`
+in this build at all). All four also confirm `my_strncpy` (2011's
+bounds-checked, always-null-terminating wrapper) doesn't exist as a
+separate function here -- each caller inlines the equivalent
+null-termination step directly after a raw CRT `strncpy` call instead.
