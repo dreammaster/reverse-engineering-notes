@@ -3579,6 +3579,19 @@ disassembly work.
   `itemnames[]` strings — `clearlist()` is dead code this path never
   runs. Not something the ScummVM port needs to replicate, but worth
   knowing the original engine never actually exercised it.
+- **`loadgamedialog`/`preparesavegamelist` close, finding two
+  independent missing-directory-prefix drifts.** `loadgamedialog` is
+  an exact match throughout, but its own `get_save_game_path` call is
+  inlined as a bare `sprintf("agssave.%03d",...)` with no
+  `saveGameDirectory` prefix or `saveGameSuffix` appended — the same
+  missing-directory-prefix pattern already confirmed for `FileOpen`,
+  now found a second, independent time. `preparesavegamelist` matches
+  closely too, but uses raw CRT `_findfirst`/`_findnext`/`_findclose`
+  instead of Allegro's `al_find*` wrappers (the same drift already
+  found for `ListBoxDirList`), and reads a save's description via
+  direct `fopen`/`fseek`/`fgetc`/`fclose` rather than calling the
+  shared `load_game()`. Its trailing date-order bubble sort matches
+  source exactly.
 
 ## Third-party library identification (Task #10)
 

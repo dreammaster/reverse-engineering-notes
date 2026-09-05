@@ -3035,14 +3035,14 @@
   "is_named": true
  },
  {
-  "name": "sub_426032",
+  "name": "preparesavegamelist",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_426357",
+  "name": "loadgamedialog",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "enterstringwindow",

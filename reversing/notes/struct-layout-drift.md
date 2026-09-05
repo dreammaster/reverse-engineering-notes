@@ -12303,3 +12303,45 @@ control-deletion path never reaches. Worth noting for the eventual
 ScummVM reimplementation: the leak itself need not be replicated, but a
 from-scratch `MyListBox`-equivalent shouldn't assume the original
 engine ever actually exercised its own listbox destructor path.
+
+### loadgamedialog and preparesavegamelist close, finding two independent missing-directory-prefix drifts
+
+`RestoreGameDialog`'s own long-unidentified helper call between
+`setup_for_dialog()` and `restore_after_dialog()` (`sub_426357`) turns
+out to be `loadgamedialog()` (`acdialog.cpp:940-985`) -- a complete,
+exact, zero-drift match across its entire body: every
+`CSCICreateControl` call matches source's literal `CNT_*`/`CNF_*`
+flags and coordinates exactly, and all three `get_global_message()`
+calls match source's literal message-ID constants with ZERO drift
+(`0x3D8`=`MSG_RESTORE`, `0x3D9`=`MSG_CANCEL`, `0x3DA`=`MSG_SELECTLOAD`,
+`acdialog.h:41-43`). The `CSCIWaitMessage` polling loop matches
+exactly, including `CLB_GETCURSEL`'s bounds check against `numsaves`
+and `filenumbers[cursel]` (a THIRD independent confirmation of the
+already-established `GameState.filenumbers[20]`). REAL DRIFT,
+CONFIRMED: `get_save_game_path(toret,bufTemp)` is INLINED directly as
+a bare `sprintf(bufTemp,"agssave.%03d",toret)` with NO
+`saveGameDirectory` prefix and NO `saveGameSuffix` appended -- source's
+real `get_save_game_path` (`AC.CPP:2835-2839`) prepends the directory
+and appends the suffix. This is the SAME missing-directory-prefix
+pattern already confirmed absent for `FileOpen` many rounds ago, now
+found a SECOND time in a completely independent code path -- strong
+reinforcement that this build's save-file path handling has no
+directory-prefix/suffix machinery anywhere.
+
+`loadgamedialog`'s own call into `preparesavegamelist(ctrllist)`
+(`sub_426032`, `:874-938`) closes too -- a decisive, near-complete
+match across its entire ~200-line body: the directory-scan loop over
+`"agssave.*"` matches `MAXSAVEGAMES`(20, zero drift) as the overflow
+bound and the same `".0"` filter as source. REAL DRIFT, CONFIRMED: the
+scan uses a raw CRT `_findfirst`/`_findnext`/`_findclose`-equivalent
+triple rather than source's Allegro `al_findfirst`/`al_findnext`/
+`al_findclose` wrappers -- the SAME "raw CRT vs Allegro wrapper" drift
+already found for `ListBoxDirList`, now confirmed a second time.
+SECOND REAL DRIFT, CONFIRMED: this build's own "get description" step
+opens the save file directly (`fopen`/`fseek`/a `fgetc`-loop-until-
+null/`fclose`) rather than calling the shared `load_game(sgNumber,buff,
+NULL)` function source uses for the same purpose. The trailing date-
+order bubble sort (comparing a `filedates[]` scratch array and
+swapping listbox item text via `CLB_GETTEXT`/`CLB_SETTEXT` message
+pairs) matches source's own nested-loop bubble sort (`:922-937`)
+exactly, including the literal `mcode` constants.
