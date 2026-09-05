@@ -12627,6 +12627,28 @@ tail calls what is plausibly `start_character_turning` (`acchars.cpp:
 though not independently confirmed as a separately-inlined unit this
 round.
 
+### FaceLocation's own tail confirms the whole gradual-turning feature is absent
+
+Chasing `fix_player_sprite`'s own likely-inlined `start_character_
+turning` thread led to checking `FaceLocation`'s tail directly (its
+octant classifier was previously read only up to "high confidence on
+role/shape," not to full completeness). Its own shared epilogue --
+`chars[cha].loop=useloop; chars[cha].frame=0; return;` -- is ALL that
+happens after the classifier picks a direction. REAL DRIFT, CONFIRMED
+ABSENT: source's own `OPT_TURNTOFACELOC`-gated gradual-turning feature
+(`Character_StopMoving`+`start_character_turning`+`do_main_cycle(
+UNTIL_MOVEEND)`, run when the option is enabled and the character
+isn't hidden) has no trace anywhere in this function's now-fully-read
+~280-line body -- no reference to `game_options[OPT_TURNTOFACELOC]`,
+`highestLoopForTurning`, `in_enters_screen`, `Character_StopMoving`, or
+anything resembling `start_character_turning`/`do_main_cycle`. This
+build's characters always snap INSTANTLY to a new facing direction --
+no gradual turning animation exists at all, a genuine player-visible
+simplification predating this later feature. This also confirms
+`start_character_turning` isn't a distinct callee reached from here
+either -- the feature gate that would call it simply doesn't exist,
+not merely a case of it being inlined away.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

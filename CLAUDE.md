@@ -3683,6 +3683,13 @@ disassembly work.
   source's `useDiagonal`/`CHECK_DIAGONAL` logic with `CHF_NODIAGONAL`
   (zero drift) and both known call sites' `(cmls,chinf)` argument
   shape. Its own tail plausibly inlines `start_character_turning`.
+- **`FaceLocation`'s own tail confirms the whole gradual-turning
+  feature is absent.** Its octant classifier ends by writing `loop`/
+  `frame` directly and returning — source's own `OPT_TURNTOFACELOC`-
+  gated turn-to-face animation (`start_character_turning`+
+  `do_main_cycle`) has no trace anywhere in the now-fully-read body.
+  This build's characters always snap instantly to a new facing
+  direction, no gradual turning exists at all.
 
 ## Third-party library identification (Task #10)
 
