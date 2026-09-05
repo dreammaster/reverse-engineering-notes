@@ -11503,3 +11503,17 @@ calls `atoi()` directly on the result -- CONFIRMED ABSENT: source's own
 `if(ourbuf[0]==0) return -9999;` empty-input sentinel check. This build
 has no way to distinguish a cancelled/empty dialog from the user
 actually entering `"0"` -- both produce the same return value.
+
+### malloc_fail_handler/winclosehook/minstalled close, two small confirmed-absent messages/fields
+
+`malloc_fail_handler` matches source's `free`+`sprintf`+`quit` sequence
+(`AC.CPP:26132-26137`) closely, but the actual error string is
+`"Out of memory: failed to allocate %ld bytes"` -- CONFIRMED ABSENT:
+source's trailing `" (at PP=%d)"` `our_eip` diagnostic suffix.
+`winclosehook` matches source's first two assignments
+(`want_exit=1; abort_engine=1;`, `AC.CPP:26181-26184`) exactly, but
+CONFIRMED ABSENT is the third (`check_dynamic_sprites_at_exit=0`) --
+consistent with this project's already-established finding that the
+whole dynamic-sprite-leak check is absent from this build's `quit()`.
+`minstalled` closes as a complete, zero-drift match to `Common/
+MOUSEW32.CPP:265-276`.

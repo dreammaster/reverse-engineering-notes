@@ -2168,7 +2168,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"free(printfworkingspace); sprintf(tempmsg,...,amountwanted,our_eip); quit(tempmsg);\" (AC.CPP:26132-26137) closely, but the actual format string (confirmed via aOutOfMemoryFai) reads \"Out of memory: failed to allocate %ld bytes\" -- CONFIRMED ABSENT: source's trailing \" (at PP=%d)\" our_eip diagnostic suffix entirely, matching the single argument (amountwanted only) actually pushed to sprintf."
   },
   {
     "kind": "function",
@@ -2178,7 +2178,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's \"want_exit=1; abort_engine=1; check_dynamic_sprites_at_exit=0;\" (AC.CPP:26181-26184) on its first two assignments exactly (byte_5231AC/byte_5231AD, consecutive bytes matching source's own consecutive \"volatile char want_exit=0, abort_engine=0;\" declaration, AC.CPP:631) -- CONFIRMED ABSENT: the third assignment, check_dynamic_sprites_at_exit=0, consistent with this project's already-established finding that the entire dynamic-sprite-leak-detection check is absent from this build's quit() -- nothing to reset here since the feature it gates doesn't exist."
   },
   {
     "kind": "function",
@@ -2319,7 +2319,7 @@
     "source_obj": "MOUSEW32.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source (Common/MOUSEW32.CPP:265-276): \"if((nbuts=install_mouse())<1) return 0; mgraphconfine(0,0,319,199); if(nbuts<2) nbuts=2; return nbuts;\" -- the literal 319(0x13F)/199(0xC7) mgraphconfine bounds (already matched) match exactly."
   },
   {
     "kind": "function",

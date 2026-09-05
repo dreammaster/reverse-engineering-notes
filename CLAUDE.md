@@ -3290,6 +3290,11 @@ disassembly work.
   calls `atoi()` directly with no empty-input sentinel check — a
   cancelled/empty dialog and the user entering `"0"` are
   indistinguishable here.
+- **`malloc_fail_handler`/`winclosehook`/`minstalled` close** — the
+  first is missing its error message's `our_eip` diagnostic suffix, the
+  second is missing its third assignment (consistent with the
+  dynamic-sprite-leak check being absent from `quit()`), and the third
+  is a complete, zero-drift match.
 
 ## Third-party library identification (Task #10)
 
