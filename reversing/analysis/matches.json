@@ -6986,5 +6986,43 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "This build own black-to-maskcolor sprite-conversion helper, called from prepare_characters_for_drawing (already matched). Body: calls bmp_bpp(bmp) (this session own new match, sub_40347F) and proceeds only when bmp_bpp(bmp) != dword_523090 AND dword_523090==1 -- meaning \"the bitmap own current bytes-per-pixel differs from a stored ORIGINAL-depth value, and that stored value is exactly 1 byte (8-bit)\". If both hold, scans every pixel of the bitmap via nested getpixel/putpixel (both already matched) calls, replacing any BLACK (0) pixel with the literal 0xF81F -- the classic Allegro MASK_COLOR_16 constant -- converting an originally-8-bit sprite own black background/outline pixels into a proper hi-color transparency mask color after depth conversion. GENUINE FINDING: dword_523090 (a BSS global, never explicitly initialized) has NO WRITE SITE anywhere in the entire disassembly -- only this one read site exists. Since the function own gate requires dword_523090==1 to do anything at all, and nothing anywhere sets it to 1 (or any other value), this function own pixel-masking body can never actually execute in this compiled binary as shipped -- a genuine piece of DEAD/INERT CODE, not merely unreached-in-testing but structurally unreachable given the binary own own data. Left unnamed: no specific 2011 AC.CPP counterpart was confidently identified for this narrow a helper, and since it never actually runs, further chasing its own exact source correspondence has low payoff for the ScummVM-reimplementation goal."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425130",
+    "new_name": "TreeMap__findValue",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 1850,
+    "confidence": "high",
+    "evidence": "TreeMap::findValue(const char*key) (AC.CPP:1850-1868) -- a complete, exact, zero-drift recursive match: \"if(text==NULL) return NULL; if(strcmp(key,text)==0) return translation; if(strcmp(key,text)<0) {if(left==NULL) return NULL; return left->findValue(key);} else {if(right==NULL) return NULL; return right->findValue(key);}\" -- matches the disassembly's own recursive structure instruction for instruction, including the binary-search-tree recursion into left@+0x00/right@+0x04 (both self-calls, confirmed via the function calling itself). Confirms TreeMap's own field layout: left@+0x00, right@+0x04, text@+0x08 (the NULL-checked key), translation@+0x0C (the returned value on match). Called from GetTranslation (already matched, as \"transtree->findValue(text)\") and GetLocationName (already matched). Flat-named as a C++ member function, matching this project's established convention."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425680",
+    "new_name": "draw_256_sprite",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 174,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "draw_256_sprite(BITMAP*bmp,BITMAP*sprite,int x,int y) -- Allegro's public 256-color-sprite-onto-truecolor-destination blit API. A thin 4-argument vtable dispatch (bmp's own vtable pointer@+0x1C, slot [+0x48]/4=18) -- this slot sits well before the already-established vtable-layout-shift boundary (the missing draw_trans_rgba_sprite affects only slots from 0x58 onward in this build's own older Allegro, see draw_lit_sprite's own corrected entry), so this offset should match the 4.2.2 reference exactly with zero drift. Called from __GetLocationType and __actual_invscreen (both already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4256B0",
+    "new_name": "draw_sprite_h_flip",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 176,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "draw_sprite_h_flip(BITMAP*bmp,BITMAP*sprite,int x,int y) -- Allegro's public horizontally-flipped sprite-blit API. A thin 4-argument vtable dispatch (slot [+0x50]/4=20), also before the vtable-shift boundary, so expected to match the 4.2.2 reference exactly. Called from __GetLocationType (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_407A27",
+    "new_name": "GUIMain__find_object_under_mouse_0arg",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 1268,
+    "confidence": "high",
+    "evidence": "GUIMain::find_object_under_mouse() (acgui.cpp:1268-1271) -- the zero-argument overload: \"return find_object_under_mouse(0,true);\". Matches exactly: a thin thiscall stub (no stack arguments of its own) pushing the literal 0 and calling the already-matched GUIMain__find_object_under_mouse (that function's own entry already documented this exact call site, describing this wrapper informally without a dedicated matches.json record until now). Given GUIMain__find_object_under_mouse's own already-confirmed absence of any mustBeClickable-driven filtering logic, this build's own true 2-argument implementation behaves as a 1-argument one in practice, consistent with only a single literal being pushed here. Named with an '_0arg' suffix (matching this project's convention for otherwise-ambiguous overload flat-naming) since 'GUIMain__find_object_under_mouse' is already taken by the 2-arg implementation."
   }
 ]

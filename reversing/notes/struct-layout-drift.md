@@ -12862,6 +12862,36 @@ specific 2011 counterpart was confidently identified, and since it
 never runs, further chasing its exact source correspondence has low
 payoff for the eventual ScummVM reimplementation.
 
+### A fresh sweep of GetLocationName/__GetLocationType/GetTranslation's own remaining callees closes four more
+
+Extending the same "sweep an already-matched central function's own
+remaining unnamed callees" technique to `run_event_block`/`_display_
+main`/`_displayspeech`/`do_conversation`/`GetLocationName`/`__GetLocation
+Type` turned up four genuinely fresh, previously-undocumented targets.
+
+`TreeMap::findValue(const char*key)` (`AC.CPP:1850-1868`) closes as a
+complete, exact, zero-drift recursive match: a binary-search-tree
+lookup comparing the key against each node's own `text`, returning
+`translation` on a match or recursing into `left`/`right` -- pins down
+`TreeMap`'s own field layout (`left`@+0x00/`right`@+0x04/`text`@+0x08/
+`translation`@+0x0C) for the first time. Called from `GetTranslation`
+and `GetLocationName` (both already matched).
+
+`GUIMain::find_object_under_mouse()` (`acgui.cpp:1268-1271`, the zero-
+argument overload) closes too -- a thin thiscall stub forwarding a
+literal `0` into the already-matched 2-argument implementation,
+exactly matching source's own `return find_object_under_mouse(0,true);`
+(this function's own already-matched entry had already described this
+exact wrapper informally, just without giving it its own record).
+
+Two more Allegro boundary functions get named via vtable-slot
+arithmetic, both safely BEFORE the already-established vtable-shift
+boundary (the missing `draw_trans_rgba_sprite` only affects slots from
+`0x58` onward in this build's own older Allegro) so both should match
+the 4.2.2 reference with genuine zero drift: `draw_256_sprite` (slot
+`0x48`) and `draw_sprite_h_flip` (slot `0x50`), both called from
+`__GetLocationType`/`__actual_invscreen`.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

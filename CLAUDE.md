@@ -3764,6 +3764,15 @@ disassembly work.
   binary, so the required `==1` condition can never be true. This
   function's own body is structurally unreachable in the shipped
   binary. Left unnamed given the low payoff of chasing dead code.
+- **A fresh sweep of several central functions' own remaining unnamed
+  callees closes four more.** `TreeMap::findValue` closes as a
+  complete, exact, zero-drift recursive binary-search-tree lookup,
+  pinning down `TreeMap`'s own field layout for the first time.
+  `GUIMain::find_object_under_mouse()` (the zero-argument overload)
+  closes as a thin forwarding stub. Two more Allegro boundary functions
+  — `draw_256_sprite`/`draw_sprite_h_flip` — get named via vtable-slot
+  arithmetic, both safely before the already-established vtable-shift
+  boundary so genuinely zero-drift this time.
 
 ## Third-party library identification (Task #10)
 

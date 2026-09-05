@@ -470,9 +470,9 @@
   "is_named": true
  },
  {
-  "name": "sub_407A27",
+  "name": "GUIMain__find_object_under_mouse_0arg",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_407A3C",
@@ -2810,9 +2810,9 @@
   "is_named": false
  },
  {
-  "name": "sub_425130",
+  "name": "TreeMap__findValue",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4251C0",
@@ -2950,14 +2950,14 @@
   "is_named": true
  },
  {
-  "name": "sub_425680",
+  "name": "draw_256_sprite",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4256B0",
+  "name": "draw_sprite_h_flip",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "is_valid_object",
