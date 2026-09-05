@@ -12482,3 +12482,27 @@ architecturally sensible here, since `stretch_blit` already draws
 directly onto the real `screen` bitmap in the video-bitmap path,
 unlike normal room rendering which composites a separate virtual
 screen first. This function has no remaining unexamined branches.
+
+### InitRenderToSurface closes, cross-confirming RenderToSurface's own missing software-fallback finding
+
+`InitRenderToSurface()` (`acwavi.cpp:103-157`, the DirectShow/DirectDraw
+setup sequence `dxmedia_play_video` calls before video playback
+begins) closes completely: every COM call matches source's own vtable-
+slot shape exactly -- `GetMediaStream`(slot 4), `QueryInterface`(slot
+0), `GetFormat`(slot 9, with `ddsd.dwSize` set to a literal `0x6C`=108
+matching `sizeof(DDSURFACEDESC)` exactly), the `rect` field
+assignments, and `CreateSample`(slot 13). REAL DRIFT, CONFIRMED
+ABSENT: source's own `vscreen==NULL` error check and its ENTIRE
+`vsMemory=create_bitmap_ex(...)` step are both missing -- a clean
+CROSS-CONFIRMATION of `RenderToSurface`'s own already-established
+finding that this build never uses `vsMemory`'s software-rendering
+fallback path at all: it's not just unused at render time, it's never
+even CREATED here either. SECOND REAL DRIFT, CONFIRMED: rather than
+source's four distinct per-step error messages, this build uses ONE
+single generic error string ("Initialization failure in
+InitRenderToSurface...") at a shared failure-landing point, regardless
+of which COM call actually failed -- a real loss of diagnostic
+specificity, though the overall early-return-on-failure control flow
+and final `HRESULT` values (`E_FAIL`/`NOERROR`) both match source
+exactly. Also names `get_bitmap_surface` (`acwavi.cpp:90-95`), an
+exact 6-instruction match reading `bmp->extra`@+0x30's own first field.

@@ -6271,7 +6271,7 @@
     "source_file": "Engine/acwavi.cpp",
     "source_line": 103,
     "confidence": "high",
-    "evidence": "HRESULT InitRenderToSurface() at acwavi.cpp:103-157. Called from dxmedia_play_video (this round's corrected match) immediately after RenderFileToMMStream succeeds, with its HRESULT return checked via the same >=0-success COM convention (\"cmp var_4,0; jge success\") and the same ExitCode+CoUninitialize error-exit pattern as its sibling call -- matching source's own call site and error handling exactly."
+    "evidence": "HRESULT InitRenderToSurface() at acwavi.cpp:103-157. Called from dxmedia_play_video (this round's corrected match) immediately after RenderFileToMMStream succeeds, with its HRESULT return checked via the same >=0-success COM convention (\"cmp var_4,0; jge success\") and the same ExitCode+CoUninitialize error-exit pattern as its sibling call -- matching source's own call site and error handling exactly. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acwavi.cpp:103-157): every COM call matches source's own sequence and vtable-slot shape exactly -- g_pMMStream->GetMediaStream(MSPID_PrimaryVideo,&g_pPrimaryVidStream) (vtable slot 4), g_pPrimaryVidStream->QueryInterface(IID_IDirectDrawMediaStream,&g_pDDStream) (vtable slot 0), g_pDDStream->GetFormat(&ddsd,NULL,NULL,NULL) (vtable slot 9, with ddsd.dwSize set to a literal 0x6C=108 matching sizeof(DDSURFACEDESC) exactly), the rect.top/left/bottom/right assignment from ddsd.dwHeight/dwWidth, and g_pDDStream->CreateSample(g_pDDSOffscreen,&rect,0,&g_pSample) (vtable slot 13) with dword_523920=vscreen (already established via RenderToSurface's own confirmed match) conditionally created via a new lead, sub_456210 (plausibly gfx_directx_create_system_bitmap, a DirectX/Allegro platform boundary function, not independently confirmed or chased further). REAL DRIFT, CONFIRMED ABSENT: source's own \"if(vscreen==NULL) {strcpy(lastError,\\\"Unable to create the DX Video System Bitmap\\\"); return E_FAIL;}\" check and its ENTIRE \"vsMemory=create_bitmap_ex(...)\" step are both missing -- consistent with RenderToSurface's own already-confirmed absence of the whole vsMemory-based software-rendering fallback path: this build never creates vsMemory in the first place, matching its own confirmed non-use of it. SECOND REAL DRIFT, CONFIRMED: rather than source's four DISTINCT per-step error messages (each its own strcpy(lastError,\"...\") call at the point of failure), this build uses ONE single, generic error string at a shared failure landing point: \"Initialization failure in InitRenderToSurface...\" (matching aInitialization literally), regardless of which of the four COM calls actually failed -- a real loss of diagnostic specificity, though the function's own control flow (early-return-on-failure via a shared HRESULT check chain) and its final return value (a literal 0x80004005=E_FAIL on any failure, 0=NOERROR on success) both match source exactly. Also identifies get_bitmap_surface (this round's own new match, sub_4287B5)."
   },
   {
     "kind": "manual",
@@ -6871,5 +6871,14 @@
     "confidence": "medium-high",
     "is_library": true,
     "evidence": "stretch_blit(BITMAP*src,BITMAP*dst,int sx,int sy,int sw,int sh,int dx,int dy,int dw,int dh) -- Allegro's public bitmap-scaling blit API. Identified via call-shape evidence: a 10-argument call matching stretch_blit's own signature exactly, called from RenderToSurface (already matched, this round's own full-body confirmation) as the video-frame-to-screen scaling step. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its internal implementation not chased further. Two other call sites (not independently examined this round) exist elsewhere in the disassembly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4287B5",
+    "new_name": "get_bitmap_surface",
+    "source_file": "Engine/acwavi.cpp",
+    "source_line": 90,
+    "confidence": "high",
+    "evidence": "LPDIRECTDRAWSURFACE get_bitmap_surface(BITMAP*bmp) (acwavi.cpp:90-95): \"BMP_EXTRA_INFO*bei=(BMP_EXTRA_INFO*)bmp->extra; return (LPDIRECTDRAWSURFACE)bei->surf;\" -- an exact, zero-drift, 6-instruction match: reads bmp->extra@+0x30 (BITMAP's own platform-specific extra-data pointer field), then dereferences its first field (bei->surf,acwavi.cpp:83's BMP_EXTRA_INFO.surf, declared first in that struct) and returns it directly. Called from InitRenderToSurface (already matched, this round's own full-body confirmation) as \"g_pDDSOffscreen = get_bitmap_surface(vscreen);\"."
   }
 ]

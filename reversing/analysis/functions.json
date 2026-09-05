@@ -3200,9 +3200,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4287B5",
+  "name": "get_bitmap_surface",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "InitRenderToSurface",

@@ -3626,6 +3626,16 @@ disassembly work.
   missing, sensibly — `stretch_blit` already draws onto the real
   `screen` directly in this path. Names `stretch_blit`, an Allegro
   public API.
+- **`InitRenderToSurface` closes, cross-confirming the missing
+  `vsMemory` fallback from the creation side.** Every COM call
+  (`GetMediaStream`/`QueryInterface`/`GetFormat`/`CreateSample`)
+  matches source's vtable slots exactly. Source's `vscreen==NULL`
+  check and its `vsMemory=create_bitmap_ex(...)` step are both
+  confirmed absent — `vsMemory` isn't just unused at render time
+  (`RenderToSurface`'s own finding), it's never created here either.
+  Also confirmed: this build uses one generic error string for all
+  four COM-call failures, not source's four distinct messages. Names
+  `get_bitmap_surface`, an exact match.
 
 ## Third-party library identification (Task #10)
 
