@@ -2298,7 +2298,7 @@
     "source_obj": "cscommon.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=cscommon.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=cscommon.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact, zero-drift match to source (Common/cscommon.cpp:63-69): \"if(onoroff) ccCompOptions|=optbit; else ccCompOptions&=~optbit;\" -- dword_5347F0 (already established as ccCompOptions via ccGetOption's own entry) is set/cleared via the identical or/and-not bitwise pattern. Called from script_debug's cmdd==99 branch this session (SCOPT_DEBUGRUN=0x10) and load_ac2game_dta at startup."
   },
   {
     "kind": "function",

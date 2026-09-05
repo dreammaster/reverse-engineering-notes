@@ -11454,3 +11454,10 @@ entire skip-cutscene subsystem doesn't exist. And no `fast_forward`
 guard -- this build's `FadeIn` proceeds even during a fast-forwarded
 skip, joining `UpdatePalette`'s own already-established finding as a
 second confirmed instance of the same player-visible drift.
+
+### ccSetOption closes as a zero-drift match
+
+`Common/cscommon.cpp:63-69`'s bitwise or/and-not pattern matches exactly
+against the already-established `ccCompOptions` global (`dword_5347F0`,
+via `ccGetOption`'s own entry) -- confirmed anew via this session's own
+`script_debug` cmdd==99 call site (`SCOPT_DEBUGRUN=0x10`).
