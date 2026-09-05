@@ -11461,3 +11461,24 @@ second confirmed instance of the same player-visible drift.
 against the already-established `ccCompOptions` global (`dword_5347F0`,
 via `ccGetOption`'s own entry) -- confirmed anew via this session's own
 `script_debug` cmdd==99 call site (`SCOPT_DEBUGRUN=0x10`).
+
+### domouse closes, confirming which reference file applies and finding the alpha-blend-cursor feature absent
+
+Matches `Common/MOUSEW32.CPP:140-189` (the Windows-linked reference,
+not the older DOS-era `Common/mouse32.cpp` sharing the same function
+name) closely: the screen-edge clamp, `wclip`/`wputblock`/`wnewblock`
+sequence for saving/restoring the background under the cursor, and the
+`str==2` "turning off" branch's `if(savebk!=0)` guard all match
+MOUSEW32.CPP's specific structure -- decisively settling which of the
+two same-named source files is the right comparison point (mouse32.cpp
+has no such guard at all).
+
+The headline: for the actual cursor draw, this build calls
+`put_sprite_256(mousex,mousey,mousecurs[cursor])` directly, matching
+`drawCursor()`'s (`MOUSEW32.CPP:130-137`) own non-alpha-blend ELSE
+branch exactly -- but with the entire `alpha_blend_cursor` check/branch
+(`set_alpha_blender()`+`draw_trans_sprite()`) CONFIRMED ABSENT. This
+build's `domouse` inlines that one branch directly rather than calling
+a separate `drawCursor()` function at all, since the feature that
+function exists to gate away doesn't exist yet here -- joining this
+project's many other confirmed-absent transparency/alpha features.

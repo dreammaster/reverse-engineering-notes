@@ -3273,6 +3273,14 @@ disassembly work.
   confirmation the whole subsystem is absent) and no `fast_forward`
   guard (proceeds during fast-forward, joining `UpdatePalette`'s own
   already-established finding).
+- **`domouse` closes, confirming which reference file applies and
+  finding the alpha-blend-cursor feature absent.** Matches
+  `Common/MOUSEW32.CPP` (not the older, same-named `mouse32.cpp`) via
+  its specific `savebk!=0` null-check guard. For the cursor draw itself,
+  calls `put_sprite_256` directly — matching `drawCursor()`'s own non-
+  alpha-blend branch exactly, but with the entire `alpha_blend_cursor`
+  check/branch confirmed absent: this build inlines that one branch
+  since the feature it gates doesn't exist here yet.
 
 ## Third-party library identification (Task #10)
 
