@@ -6551,5 +6551,15 @@
     "source_line": 712,
     "confidence": "medium-high",
     "evidence": "void AGSWin32::SetGameWindowIcon() at acplwin.cpp:712-714: \"set_icon();\" -- set_icon() itself is declared extern (acplwin.cpp:46) with no body present in this repo's checkout, so a direct line-for-line comparison isn't possible. This build's version fuses set_icon()'s own job directly inline instead of calling a separate function: GetModuleHandleA(NULL) -> LoadIconA(hInstance,101) -> SetClassLongA(hWndParent,GCL_HICON(-14,0xFFFFFFF2),hIcon) -- a standard, well-known Win32 idiom for setting a window's icon from a resource, matching the expected role exactly. Another instance of this project's now-frequent 'later refactor extracted a reusable helper' pattern."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "fixup_datafile",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Confirmed as Allegro's own datafile (.dat) object-fixup routine via its own internal dispatch on Allegro's well-known 4-byte object-type tag constants (0x424D5020=\"BMP \"/DAT_BITMAP, 0x524C4520=\"RLE \"/DAT_RLE_SPRITE, and presumably others further in -- not individually enumerated). A large (772-line) third-party library function; per this project's scope rule, not chased further -- a ScummVM reimplementation replaces Allegro's whole datafile-loading system wholesale, and this project's own earlier survey work already established Rob Blanc 1 doesn't use Allegro .dat files for its own game assets (it uses the CLIB format instead, see csetlib's own entry) -- this function is plausibly linked in but unused, or used only for a minor internal Allegro resource."
   }
 ]
