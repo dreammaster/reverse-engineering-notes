@@ -4670,9 +4670,9 @@
   "is_named": true
  },
  {
-  "name": "sub_443360",
+  "name": "_dummy_init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "nullsub_14",
@@ -5500,9 +5500,9 @@
   "is_named": false
  },
  {
-  "name": "sub_44B410",
+  "name": "midi_init",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "play_midi",
@@ -5595,7 +5595,7 @@
   "is_named": false
  },
  {
-  "name": "nullsub_11",
+  "name": "midi_lock_mem",
   "addr_hint": null,
   "is_named": true
  },
@@ -6115,9 +6115,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4543D0",
+  "name": "ustrtol",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_454440",
@@ -6710,9 +6710,9 @@
   "is_named": false
  },
  {
-  "name": "sub_460AB0",
+  "name": "get_config_argv",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "set_config_string",
@@ -7065,9 +7065,9 @@
   "is_named": true
  },
  {
-  "name": "sub_465CD0",
+  "name": "register_datafile_object",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_465D50",
@@ -7360,9 +7360,9 @@
   "is_named": false
  },
  {
-  "name": "sub_46AB30",
+  "name": "get_dx_ver",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_46AD30",

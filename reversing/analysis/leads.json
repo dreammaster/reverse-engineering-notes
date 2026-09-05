@@ -6,8 +6,15 @@
   ],
   "evidence": [
    {
-    "label": "aStackCorruptAf",
-    "text": "stack corrupt after function call",
+    "label": "aStackOverflow_1",
+    "text": "stack overflow",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
+    "label": "aStackOverflow_2",
+    "text": "stack overflow",
     "files": [
      "Common/CSRUN.CPP"
     ]
@@ -27,13 +34,6 @@
     ]
    },
    {
-    "label": "aStackOverflow_0",
-    "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
     "label": "aSpecifiedCodeO",
     "text": "specified code offset is not valid",
     "files": [
@@ -41,14 +41,14 @@
     ]
    },
    {
-    "label": "aStackOverflow_1",
-    "text": "stack overflow",
+    "label": "aStackCorruptAf",
+    "text": "stack corrupt after function call",
     "files": [
      "Common/CSRUN.CPP"
     ]
    },
    {
-    "label": "aStackOverflow_2",
+    "label": "aStackOverflow_0",
     "text": "stack overflow",
     "files": [
      "Common/CSRUN.CPP"
@@ -63,27 +63,6 @@
   ],
   "evidence": [
    {
-    "label": "aDdrawDll_0",
-    "text": "DDRAW.DLL",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
-    ]
-   },
-   {
-    "label": "aDirectinputcre_0",
-    "text": "DirectInputCreateA",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
-    ]
-   },
-   {
-    "label": "aDinputDll_1",
-    "text": "DINPUT.DLL",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
-    ]
-   },
-   {
     "label": "aDirectinputcre",
     "text": "DirectInputCreateA",
     "files": [
@@ -96,49 +75,26 @@
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
     ]
-   }
-  ]
- },
- {
-  "func": "sub_434970",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/allegro.c"
-  ],
-  "evidence": [
+   },
    {
-    "label": "aAllegroAssert",
-    "text": "ALLEGRO_ASSERT",
+    "label": "aDinputDll_1",
+    "text": "DINPUT.DLL",
     "files": [
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
     ]
    },
    {
-    "label": "aAssertFailedAt",
-    "text": "Assert failed at line %d of %s",
+    "label": "aDdrawDll_0",
+    "text": "DDRAW.DLL",
     "files": [
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_434B20",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/allegro.c"
-  ],
-  "evidence": [
-   {
-    "label": "aAllegroLog",
-    "text": "allegro.log",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
     ]
    },
    {
-    "label": "aAllegroTrace",
-    "text": "ALLEGRO_TRACE",
+    "label": "aDirectinputcre_0",
+    "text": "DirectInputCreateA",
     "files": [
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c"
+     "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c"
     ]
    }
   ]
@@ -150,15 +106,15 @@
   ],
   "evidence": [
    {
-    "label": "a0123456789abcd_0",
-    "text": "0123456789abcdef",
+    "label": "a0123456789abcd",
+    "text": "0123456789ABCDEF",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/unicode.c"
     ]
    },
    {
-    "label": "a0123456789abcd",
-    "text": "0123456789ABCDEF",
+    "label": "a0123456789abcd_0",
+    "text": "0123456789abcdef",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/unicode.c"
     ]
@@ -172,15 +128,15 @@
   ],
   "evidence": [
    {
-    "label": "aWaveout22050hz",
-    "text": "WaveOut 22050hz 8bit mono",
+    "label": "aWaveout44100hz",
+    "text": "WaveOut 44100hz 16bit stereo",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wsndwo.c"
     ]
    },
    {
-    "label": "aWaveout44100hz",
-    "text": "WaveOut 44100hz 16bit stereo",
+    "label": "aWaveout22050hz",
+    "text": "WaveOut 22050hz 8bit mono",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wsndwo.c"
     ]
@@ -213,36 +169,6 @@
     "text": "midimap",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/midi.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_455490",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/win/wsystem.c"
-  ],
-  "evidence": [
-   {
-    "label": "aDirectxUX",
-    "text": "DirectX %u.%x",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wsystem.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_461370",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/config.c"
-  ],
-  "evidence": [
-   {
-    "label": "aLanguage_4",
-    "text": "[language]",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
     ]
    }
   ]
@@ -353,1118 +279,6 @@
   ]
  },
  {
-  "func": "sub_470340",
-  "candidate_files": [
-   "Common/acruntim.h",
-   "Common/libinclude/allegro.h",
-   "Common/libinclude/allegro/alinline.h",
-   "Common/libinclude/allegro/system.h",
-   "Engine/AC.CPP",
-   "Engine/acplwin.cpp",
-   "Engine/acwavi.cpp",
-   "Engine/libsrc/allegro-4.2.2-agspatch/win/wkeybd.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exgui.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exkeys.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-   "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exupdate.c",
-   "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-   "Engine/libsrc/allegro-4.2.2/include/allegro/alinline.h",
-   "Engine/libsrc/allegro-4.2.2/include/allegro/system.h",
-   "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-   "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-   "Engine/libsrc/allegro-4.2.2/src/allegro.c",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bkeyapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/config.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/dkeybd.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/gripjoy.c",
-   "Engine/libsrc/allegro-4.2.2/src/graphics.c",
-   "Engine/libsrc/allegro-4.2.2/src/gui.c",
-   "Engine/libsrc/allegro-4.2.2/src/keyboard.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/lkeybd.c",
-   "Engine/libsrc/allegro-4.2.2/src/mac/madb.c",
-   "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qkeydrv.c",
-   "Engine/libsrc/allegro-4.2.2/src/sound.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wjoydx.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wjoyw32.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wkeybd.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wthread.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xkeyboard.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xsystem.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-   "Engine/libsrc/allegro-4.2.2/tests/afinfo.c",
-   "Engine/libsrc/allegro-4.2.2/tests/play.c",
-   "Engine/libsrc/allegro-4.2.2/tests/test.c",
-   "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
-   "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-   "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
-   "Engine/libsrc/apeg-1.2.1/audio/readers.c",
-   "Engine/libsrc/apeg-1.2.1/getbits.c"
-  ],
-  "evidence": [
-   {
-    "label": "aKeyboardDat",
-    "text": "keyboard.dat",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_4",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAscii",
-    "text": "key_ascii",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAltgr",
-    "text": "key_altgr",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent1",
-    "text": "accent1",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_2",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent4Flag",
-    "text": "accent4_flag",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_6",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent4Uppe",
-    "text": "key_accent4_upper",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aSystem_4",
-    "text": "system",
-    "files": [
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Common/libinclude/allegro/alinline.h",
-     "Common/libinclude/allegro/system.h",
-     "Engine/AC.CPP",
-     "Engine/acplwin.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exupdate.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/include/allegro/alinline.h",
-     "Engine/libsrc/allegro-4.2.2/include/allegro/system.h",
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/gripjoy.c",
-     "Engine/libsrc/allegro-4.2.2/src/graphics.c",
-     "Engine/libsrc/allegro-4.2.2/src/gui.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wjoydx.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wjoyw32.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xsystem.c",
-     "Engine/libsrc/allegro-4.2.2/tests/afinfo.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/test.c",
-     "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
-     "Engine/libsrc/apeg-1.2.1/audio/readers.c",
-     "Engine/libsrc/apeg-1.2.1/getbits.c"
-    ]
-   },
-   {
-    "label": "aKeyboard",
-    "text": "keyboard",
-    "files": [
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/libsrc/allegro-4.2.2-agspatch/win/wkeybd.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exgui.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exkeys.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bkeyapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/dos/dkeybd.c",
-     "Engine/libsrc/allegro-4.2.2/src/keyboard.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/lkeybd.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/madb.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qkeydrv.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wkeybd.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xkeyboard.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/allegro-4.2.2/tests/test.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent3Uppe",
-    "text": "key_accent3_upper",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent2",
-    "text": "accent2",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyControl",
-    "text": "key_control",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyShift",
-    "text": "key_shift",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/examples/exkeys.c",
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent4",
-    "text": "accent4",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent1Flag",
-    "text": "accent1_flag",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_3",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_0",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyCapslock",
-    "text": "key_capslock",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_1",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAltgr_0",
-    "text": "key_altgr",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent2Flag",
-    "text": "accent2_flag",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAltgrUpper",
-    "text": "key_altgr_upper",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent3Flag",
-    "text": "accent3_flag",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAltgrLower",
-    "text": "key_altgr_lower",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent1Lowe",
-    "text": "key_accent1_lower",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent3Lowe",
-    "text": "key_accent3_lower",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent1Uppe",
-    "text": "key_accent1_upper",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent4Lowe",
-    "text": "key_accent4_lower",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent2Lowe",
-    "text": "key_accent2_lower",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aAccent3",
-    "text": "accent3",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyAccent2Uppe",
-    "text": "key_accent2_upper",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   },
-   {
-    "label": "aKeyEscape_5",
-    "text": "key_escape",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_4299E9",
-  "candidate_files": [
-   "Common/acplatfm.h",
-   "Common/acroom.h",
-   "Common/acruntim.h",
-   "Common/libinclude/allegro.h",
-   "Engine/AC.CPP",
-   "Engine/ACWSETUP.CPP",
-   "Engine/acaudio.cpp",
-   "Engine/acplatfm.cpp",
-   "Engine/acplwin.cpp",
-   "Engine/acsound.cpp",
-   "Engine/acwavi.cpp",
-   "Engine/ali3dd3d.cpp",
-   "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-   "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exconfig.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-   "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-   "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-   "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/config.c",
-   "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-   "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-   "Engine/libsrc/allegro-4.2.2/src/modesel.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-   "Engine/libsrc/allegro-4.2.2/src/sound.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-   "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/gfxinfo.c",
-   "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/play.c",
-   "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-   "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-   "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c",
-   "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-  ],
-  "evidence": [
-   {
-    "label": "aSound_16",
-    "text": "sound",
-    "files": [
-     "Common/acplatfm.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acplwin.cpp",
-     "Engine/acsound.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-     "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aWindowed_3",
-    "text": "windowed",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/ali3dd3d.cpp",
-     "Engine/libsrc/allegro-4.2.2/examples/exconfig.c",
-     "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
-     "Engine/libsrc/allegro-4.2.2/src/modesel.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/tests/gfxinfo.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c"
-    ]
-   },
-   {
-    "label": "aDigiwinindx_0",
-    "text": "digiwinindx",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP"
-    ]
-   },
-   {
-    "label": "aLanguage_1",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
-    "label": "aUsespeech_2",
-    "text": "usespeech",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP"
-    ]
-   },
-   {
-    "label": "aScreenres_1",
-    "text": "screenres",
-    "files": [
-     "Engine/ACWSETUP.CPP"
-    ]
-   },
-   {
-    "label": "aSound_17",
-    "text": "sound",
-    "files": [
-     "Common/acplatfm.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acplwin.cpp",
-     "Engine/acsound.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-     "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aMidiwinindx_0",
-    "text": "midiwinindx",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP"
-    ]
-   },
-   {
-    "label": "aSound_18",
-    "text": "sound",
-    "files": [
-     "Common/acplatfm.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acplwin.cpp",
-     "Engine/acsound.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-     "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aSound_15",
-    "text": "sound",
-    "files": [
-     "Common/acplatfm.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acplwin.cpp",
-     "Engine/acsound.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-     "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aTranslation_3",
-    "text": "translation",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP"
-    ]
-   },
-   {
-    "label": "aCachemax_1",
-    "text": "cachemax",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_443500",
-  "candidate_files": [
-   "Common/acplatfm.h",
-   "Common/acroom.h",
-   "Common/acruntim.h",
-   "Common/libinclude/allegro.h",
-   "Engine/AC.CPP",
-   "Engine/ACWSETUP.CPP",
-   "Engine/acaudio.cpp",
-   "Engine/acplatfm.cpp",
-   "Engine/acplwin.cpp",
-   "Engine/acsound.cpp",
-   "Engine/acwavi.cpp",
-   "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-   "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-   "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-   "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-   "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-   "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-   "Engine/libsrc/allegro-4.2.2/src/sound.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-   "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-   "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-   "Engine/libsrc/allegro-4.2.2/tests/play.c",
-   "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-   "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-   "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-  ],
-  "evidence": [
-   {
-    "label": "aFlipPan",
-    "text": "flip_pan",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSoundFreq",
-    "text": "sound_freq",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c"
-    ]
-   },
-   {
-    "label": "aMidiVolume",
-    "text": "midi_volume",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSoundPort",
-    "text": "sound_port",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aQuality",
-    "text": "quality",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aDigiVolume",
-    "text": "digi_volume",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSoundBits",
-    "text": "sound_bits",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSoundIrq",
-    "text": "sound_irq",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSound_20",
-    "text": "sound",
-    "files": [
-     "Common/acplatfm.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acplwin.cpp",
-     "Engine/acsound.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/demo/demo.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exstream.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bmidiapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/adlib.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/mpu.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/sb.c",
-     "Engine/libsrc/allegro-4.2.2/src/mac/msnd.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa5.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsa9.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/alsamidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/jack.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsndmix.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wdsound.c",
-     "Engine/libsrc/allegro-4.2.2/tests/akaitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/digitest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/miditest.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/win/dibsound.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aSoundDma",
-    "text": "sound_dma",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c"
-    ]
-   },
-   {
-    "label": "aSoundStereo",
-    "text": "sound_stereo",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsndapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/unix/uoss.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_417088",
-  "candidate_files": [
-   "Common/CSPARSER.CPP",
-   "Common/CSRUN.CPP",
-   "Common/acgui.h",
-   "Common/acroom.h",
-   "Common/acruntim.h",
-   "Engine/AC.CPP",
-   "Engine/acaudio.cpp",
-   "Engine/acchars.cpp",
-   "Engine/acgui.cpp",
-   "Engine/acplatfm.cpp",
-   "Engine/acwavi.cpp",
-   "Engine/libsrc/allegro-4.2.2-agspatch/file.c",
-   "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makechm.c",
-   "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-   "Engine/libsrc/allegro-4.2.2/src/file.c",
-   "Engine/libsrc/allegro-4.2.2/src/misc/runner.c",
-   "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
-   "Engine/libsrc/allegro-4.2.2/tools/dat.c",
-   "Engine/libsrc/allegro-4.2.2/tools/dat2c.c",
-   "Engine/libsrc/allegro-4.2.2/tools/dat2s.c",
-   "Engine/libsrc/allegro-4.2.2/tools/datedit.c",
-   "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-   "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
-   "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datalpha.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datfname.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datfont.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrab.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrid.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datitype.c",
-   "Engine/libsrc/allegro-4.2.2/tools/win/wfixicon.c",
-   "Engine/libsrc/allegro-4.2.2/tools/x11/xf2pcx.c",
-   "Engine/libsrc/dumb-0.9.2/CORE/REGISTER.C"
-  ],
-  "evidence": [
-   {
-    "label": "aUnhandledEvent",
-    "text": "#unhandled_event",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   },
-   {
-    "label": "aInventory",
-    "text": "inventory",
-    "files": [
-     "Common/acroom.h",
-     "Engine/AC.CPP",
-     "Engine/acchars.cpp"
-    ]
-   },
-   {
-    "label": "aCharacter_1",
-    "text": "character",
-    "files": [
-     "Common/CSPARSER.CPP",
-     "Common/acroom.h",
-     "Engine/AC.CPP",
-     "Engine/acchars.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/misc/runner.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datfont.c",
-     "Engine/libsrc/allegro-4.2.2/tools/x11/xf2pcx.c",
-     "Engine/libsrc/dumb-0.9.2/CORE/REGISTER.C"
-    ]
-   },
-   {
-    "label": "aInventory_0",
-    "text": "inventory",
-    "files": [
-     "Common/acroom.h",
-     "Engine/AC.CPP",
-     "Engine/acchars.cpp"
-    ]
-   },
-   {
-    "label": "aUnhandledEvent_0",
-    "text": "unhandled_event",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   },
-   {
-    "label": "aObject",
-    "text": "object",
-    "files": [
-     "Common/CSRUN.CPP",
-     "Common/acgui.h",
-     "Common/acroom.h",
-     "Common/acruntim.h",
-     "Engine/AC.CPP",
-     "Engine/acaudio.cpp",
-     "Engine/acchars.cpp",
-     "Engine/acgui.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2-agspatch/file.c",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makechm.c",
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/file.c",
-     "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
-     "Engine/libsrc/allegro-4.2.2/tools/dat.c",
-     "Engine/libsrc/allegro-4.2.2/tools/dat2c.c",
-     "Engine/libsrc/allegro-4.2.2/tools/dat2s.c",
-     "Engine/libsrc/allegro-4.2.2/tools/datedit.c",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datalpha.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datfname.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrab.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrid.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datitype.c",
-     "Engine/libsrc/allegro-4.2.2/tools/win/wfixicon.c",
-     "Engine/libsrc/allegro-4.2.2/tools/x11/xf2pcx.c"
-    ]
-   },
-   {
-    "label": "aCharacter_0",
-    "text": "character",
-    "files": [
-     "Common/CSPARSER.CPP",
-     "Common/acroom.h",
-     "Engine/AC.CPP",
-     "Engine/acchars.cpp",
-     "Engine/acplatfm.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/misc/runner.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datfont.c",
-     "Engine/libsrc/allegro-4.2.2/tools/x11/xf2pcx.c",
-     "Engine/libsrc/dumb-0.9.2/CORE/REGISTER.C"
-    ]
-   },
-   {
-    "label": "aHotspot",
-    "text": "hotspot",
-    "files": [
-     "Common/acroom.h",
-     "Engine/AC.CPP"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_41024B",
-  "candidate_files": [
-   "Common/acroom.h",
-   "Engine/AC.CPP",
-   "Engine/acplwin.cpp",
-   "Engine/libsrc/allegro-4.2.2/demo/game.c",
-   "Engine/libsrc/allegro-4.2.2/demo/title.c",
-   "Engine/libsrc/allegro-4.2.2/tools/plugins/datworms.c"
-  ],
-  "evidence": [
-   {
-    "label": "aScoretext",
-    "text": "scoretext",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   },
-   {
-    "label": "aScore",
-    "text": "score",
-    "files": [
-     "Common/acroom.h",
-     "Engine/AC.CPP",
-     "Engine/libsrc/allegro-4.2.2/demo/game.c",
-     "Engine/libsrc/allegro-4.2.2/demo/title.c",
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datworms.c"
-    ]
-   },
-   {
-    "label": "aGamename",
-    "text": "gamename",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/acplwin.cpp"
-    ]
-   },
-   {
-    "label": "aTotalscore",
-    "text": "totalscore",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   },
-   {
-    "label": "aOverhotspot",
-    "text": "overhotspot",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   },
-   {
-    "label": "aDOfD",
-    "text": "%d of %d",
-    "files": [
-     "Engine/AC.CPP"
-    ]
-   }
-  ]
- },
- {
   "func": "sub_461170",
   "candidate_files": [
    "Common/acruntim.h",
@@ -1510,10 +324,77 @@
   ],
   "evidence": [
    {
+    "label": "aLanguage_2",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
+    ]
+   },
+   {
     "label": "aTextCfg",
     "text": "text.cfg",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/config.c"
+    ]
+   },
+   {
+    "label": "aLanguage_3",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
+    ]
+   },
+   {
+    "label": "aSystem_3",
+    "text": "system",
+    "files": [
+     "Common/acruntim.h",
+     "Common/libinclude/allegro.h",
+     "Common/libinclude/allegro/alinline.h",
+     "Common/libinclude/allegro/system.h",
+     "Engine/AC.CPP",
+     "Engine/acplwin.cpp",
+     "Engine/acwavi.cpp",
+     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
+     "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
+     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
+     "Engine/libsrc/allegro-4.2.2/examples/exupdate.c",
+     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
+     "Engine/libsrc/allegro-4.2.2/include/allegro/alinline.h",
+     "Engine/libsrc/allegro-4.2.2/include/allegro/system.h",
+     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/allegro.c",
+     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/src/dos/gripjoy.c",
+     "Engine/libsrc/allegro-4.2.2/src/graphics.c",
+     "Engine/libsrc/allegro-4.2.2/src/gui.c",
+     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
+     "Engine/libsrc/allegro-4.2.2/src/sound.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wjoydx.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wjoyw32.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c",
+     "Engine/libsrc/allegro-4.2.2/src/x/xsystem.c",
+     "Engine/libsrc/allegro-4.2.2/tests/afinfo.c",
+     "Engine/libsrc/allegro-4.2.2/tests/play.c",
+     "Engine/libsrc/allegro-4.2.2/tests/test.c",
+     "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
+     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
+     "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
+     "Engine/libsrc/apeg-1.2.1/audio/readers.c",
+     "Engine/libsrc/apeg-1.2.1/getbits.c"
     ]
    },
    {
@@ -1566,184 +447,6 @@
      "Engine/libsrc/apeg-1.2.1/audio/readers.c",
      "Engine/libsrc/apeg-1.2.1/getbits.c"
     ]
-   },
-   {
-    "label": "aSystem_3",
-    "text": "system",
-    "files": [
-     "Common/acruntim.h",
-     "Common/libinclude/allegro.h",
-     "Common/libinclude/allegro/alinline.h",
-     "Common/libinclude/allegro/system.h",
-     "Engine/AC.CPP",
-     "Engine/acplwin.cpp",
-     "Engine/acwavi.cpp",
-     "Engine/libsrc/allegro-4.2.2/examples/exmidi.c",
-     "Engine/libsrc/allegro-4.2.2/examples/expackf.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exsample.c",
-     "Engine/libsrc/allegro-4.2.2/examples/exupdate.c",
-     "Engine/libsrc/allegro-4.2.2/include/allegro.h",
-     "Engine/libsrc/allegro-4.2.2/include/allegro/alinline.h",
-     "Engine/libsrc/allegro-4.2.2/include/allegro/system.h",
-     "Engine/libsrc/allegro-4.2.2/setup/keyconf.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/allegro.c",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bsysapi.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/src/dos/gripjoy.c",
-     "Engine/libsrc/allegro-4.2.2/src/graphics.c",
-     "Engine/libsrc/allegro-4.2.2/src/gui.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/pckeys.c",
-     "Engine/libsrc/allegro-4.2.2/src/sound.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wjoydx.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wjoyw32.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xsystem.c",
-     "Engine/libsrc/allegro-4.2.2/tests/afinfo.c",
-     "Engine/libsrc/allegro-4.2.2/tests/play.c",
-     "Engine/libsrc/allegro-4.2.2/tests/test.c",
-     "Engine/libsrc/allegro-4.2.2/tools/beos/bfixicon.cpp",
-     "Engine/libsrc/allegro-4.2.2/tools/grabber.c",
-     "Engine/libsrc/allegro-4.2.2/tools/macosx/fixbundle.c",
-     "Engine/libsrc/apeg-1.2.1/audio/readers.c",
-     "Engine/libsrc/apeg-1.2.1/getbits.c"
-    ]
-   },
-   {
-    "label": "aLanguage_2",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
-    "label": "aLanguage_3",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_46E820",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-   "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddraw.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-   "Engine/libsrc/apeg-1.2.1/display.c"
-  ],
-  "evidence": [
-   {
-    "label": "aUnsupportedVir_0",
-    "text": "Unsupported virtual resolution",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddraw.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c"
-    ]
-   },
-   {
-    "label": "aResolutionNotS",
-    "text": "Resolution not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c"
-    ]
-   },
-   {
-    "label": "aResolutionNotS_0",
-    "text": "Resolution not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c"
-    ]
-   },
-   {
-    "label": "aResolutionNotS_1",
-    "text": "Resolution not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c"
-    ]
-   },
-   {
-    "label": "aUnsupportedCol",
-    "text": "Unsupported color depth",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/apeg-1.2.1/display.c"
-    ]
-   },
-   {
-    "label": "aOverlaysNotSup",
-    "text": "Overlays not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c"
-    ]
    }
   ]
  },
@@ -1795,6 +498,32 @@
    "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
   ],
   "evidence": [
+   {
+    "label": "aDefaultCfg",
+    "text": "default.cfg",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
+    "label": "aPatches",
+    "text": "patches",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
+    "label": "aUltradir",
+    "text": "ULTRADIR",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
+    ]
+   },
    {
     "label": "aSound_22",
     "text": "sound",
@@ -1851,32 +580,6 @@
      "Engine/libsrc/allegro-4.2.2/src/digmid.c",
      "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
     ]
-   },
-   {
-    "label": "aUltradir",
-    "text": "ULTRADIR",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
-    ]
-   },
-   {
-    "label": "aDefaultCfg",
-    "text": "default.cfg",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aPatches",
-    "text": "patches",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
    }
   ]
  },
@@ -1897,6 +600,20 @@
   ],
   "evidence": [
    {
+    "label": "aDcomNotFound",
+    "text": "DCOM not found",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
+    "label": "aOle32DllCanTBe",
+    "text": "OLE32.DLL can't be loaded.",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
     "label": "aWarning_0",
     "text": "Warning",
     "files": [
@@ -1914,101 +631,10 @@
     ]
    },
    {
-    "label": "aOle32DllCanTBe",
-    "text": "OLE32.DLL can't be loaded.",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
-    "label": "aDcomNotFound",
-    "text": "DCOM not found",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
     "label": "aMicrosoftDistr",
     "text": "Microsoft Distributed COM is not installed on this system. If you",
     "files": [
      "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_46EF10",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-   "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-   "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-   "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddraw.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-   "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c",
-   "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-   "Engine/libsrc/apeg-1.2.1/display.c"
-  ],
-  "evidence": [
-   {
-    "label": "aUnsupportedVir_1",
-    "text": "Unsupported virtual resolution",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddraw.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c"
-    ]
-   },
-   {
-    "label": "aUnsupportedCol_0",
-    "text": "Unsupported color depth",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/apeg-1.2.1/display.c"
-    ]
-   },
-   {
-    "label": "aResolutionNotS_2",
-    "text": "Resolution not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/boverlay.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bwscreen.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/dos/vesa.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/svgalib.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/vbeaf.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphfull.c",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wgdi.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xdga2.c"
-    ]
-   },
-   {
-    "label": "aWindowedModeNo",
-    "text": "Windowed mode not supported",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c"
     ]
    }
   ]
@@ -2053,6 +679,20 @@
   ],
   "evidence": [
    {
+    "label": "aSDbpp",
+    "text": "%s_%dbpp",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
+    ]
+   },
+   {
+    "label": "aSDxDxD",
+    "text": "%s_%dx%dx%d",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
+    ]
+   },
+   {
     "label": "aGraphics",
     "text": "graphics",
     "files": [
@@ -2091,20 +731,6 @@
      "Engine/libsrc/allegro-4.2.2/tests/win/dxwindow.c",
      "Engine/libsrc/allegro-4.2.2/tools/grabber.c"
     ]
-   },
-   {
-    "label": "aSDbpp",
-    "text": "%s_%dbpp",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
-    ]
-   },
-   {
-    "label": "aSDxDxD",
-    "text": "%s_%dx%dx%d",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
-    ]
    }
   ]
  },
@@ -2120,15 +746,6 @@
    "Engine/libsrc/allegro-4.2.2/tools/dat.c"
   ],
   "evidence": [
-   {
-    "label": "aColorConversio",
-    "text": "color conversion",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
-     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
-    ]
-   },
    {
     "label": "aDirectdrawInSD",
     "text": "DirectDraw, in %s, %d bpp window",
@@ -2147,55 +764,14 @@
      "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
      "Engine/libsrc/allegro-4.2.2/src/x/xwin.c"
     ]
-   }
-  ]
- },
- {
-  "func": "sub_425D18",
-  "candidate_files": [
-   "Engine/acdialog.cpp",
-   "Engine/acdialog.h"
-  ],
-  "evidence": [
-   {
-    "label": "aUnknownControl",
-    "text": "Unknown control type requested",
-    "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
-    ]
    },
    {
-    "label": "aTooManyControl",
-    "text": "Too many controls created",
+    "label": "aColorConversio",
+    "text": "color conversion",
     "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_4266C2",
-  "candidate_files": [
-   "Engine/acdialog.cpp",
-   "Engine/acdialog.h"
-  ],
-  "evidence": [
-   {
-    "label": "aNosavegamename",
-    "text": "_NOSAVEGAMENAME",
-    "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
-    ]
-   },
-   {
-    "label": "aSaveGameDirect",
-    "text": "Save game directory overflow",
-    "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
+     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
+     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
+     "Engine/libsrc/allegro-4.2.2/tools/dat.c"
     ]
    }
   ]
@@ -2314,59 +890,6 @@
      "Engine/AC.CPP",
      "Engine/libsrc/allegro-4.2.2/examples/exswitch.c",
      "Engine/libsrc/allegro-4.2.2/tests/test.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_425836",
-  "candidate_files": [
-   "Engine/acdialog.cpp",
-   "Engine/acdialog.h"
-  ],
-  "evidence": [
-   {
-    "label": "aTooManyWindows",
-    "text": "Too many windows created.",
-    "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_426032",
-  "candidate_files": [
-   "Engine/AC.CPP",
-   "Engine/acdialog.cpp",
-   "Engine/acdialog.h"
-  ],
-  "evidence": [
-   {
-    "label": "aAgssave_0",
-    "text": "agssave.*",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_427BD0",
-  "candidate_files": [
-   "Engine/acdialog.cpp",
-   "Engine/acdialog.h"
-  ],
-  "evidence": [
-   {
-    "label": "aCsciuser16TooM",
-    "text": "!CSCIUSER16: Too many items added to listbox",
-    "files": [
-     "Engine/acdialog.cpp",
-     "Engine/acdialog.h"
     ]
    }
   ]
@@ -2507,31 +1030,6 @@
      "Engine/libsrc/allegro-4.2.2/src/unix/uesd.c",
      "Engine/libsrc/allegro-4.2.2/src/unix/uossmidi.c",
      "Engine/libsrc/allegro-4.2.2/src/win/wsndwo.c"
-    ]
-   }
-  ]
- },
- {
-  "func": "sub_477320",
-  "candidate_files": [
-   "Engine/libsrc/allegro-4.2.2/src/linux/lconsole.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/ljoy.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/lmseev.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/lmsegpmd.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/lmsems.c",
-   "Engine/libsrc/allegro-4.2.2/src/linux/lmseps2.c"
-  ],
-  "evidence": [
-   {
-    "label": "aUnableToOpenS",
-    "text": "Unable to open %s",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/linux/lconsole.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/ljoy.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/lmseev.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/lmsegpmd.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/lmsems.c",
-     "Engine/libsrc/allegro-4.2.2/src/linux/lmseps2.c"
     ]
    }
   ]

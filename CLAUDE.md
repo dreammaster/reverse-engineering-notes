@@ -3812,6 +3812,20 @@ disassembly work.
   `is_route_possible`'s own domain turned out to be unrelated MSVC
   STL/Concurrency-Runtime template glue coincidentally sitting
   nearby — correctly out of scope.
+- **A fresh `build_leads.py` re-run closes six more leads.**
+  `sub_47C4C0`/`sub_47C520` (the JGMOD cascade's XM check/load pair,
+  already informally described inside `load_mod`'s own evidence text
+  several rounds ago) get their own dedicated entries at last — another
+  instance of the "documented in prose, never given its own record"
+  gap. `_dummy_init` and `midi_init` both close as complete, exact,
+  zero-drift matches to `Engine/libsrc/allegro-4.2.2/src/sound.c`/
+  `midi.c`, the latter bringing four more Allegro internals into view
+  (`midi_lock_mem`/`get_config_argv`/`ustrtol`/`register_datafile_
+  object`) via its own `midimap` config-parsing loop and MIDI_CHANNEL/
+  MIDI_VOICES init sequences. `get_dx_ver` closes at a structural level,
+  confirming this build's DirectX-version detection cascade predates
+  the later DSETUP.DLL/DX8-9 probing entirely (caps out at DX5), the
+  same "older/simpler Allegro" pattern already established elsewhere.
 
 ## Third-party library identification (Task #10)
 

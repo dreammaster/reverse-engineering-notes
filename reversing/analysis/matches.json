@@ -7082,5 +7082,93 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "fixtoi(fixed x) { return fixfloor(x) + ((x & 0x8000) >> 15); } -- Allegro public fixed-point-to-int (round-to-nearest) conversion (fmaths.inl:187-190). A complete, exact, zero-drift match: calls fixfloor (this round's own new match, sub_4255D0) then \"and ecx,0x8000; sar ecx,0xF; add eax,ecx\" -- matching source's own \"+ ((x & 0x8000) >> 15)\" literal expression instruction for instruction. Called from fix_player_sprite (already matched, twice, converting xpermove/ypermove fixed-point values to plain integers) and sub_433F80 (a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi -- not independently named this round). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47C4C0",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47C520",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "JGMOD library, format-5 (XM) LOADER in the load_mod (already matched) cascade -- called immediately after sub_47C4C0's own magic-string check passes (\"sub_47C4C0(check)/sub_47C520(load) for XM\", per load_mod's own evidence text, formalized as its own entry here). A large (~1200-line) function doing the actual XM-format parse/load (pattern data, instrument/sample tables, etc.) -- per this project's own third-party-library scope rule, this is exactly the kind of library-internal parsing logic a ScummVM reimplementation would replace wholesale with its own XM loader, so it is not traced further than confirming its role as the check-then-load pair's LOAD half. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_443360",
+    "new_name": "_dummy_init",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+    "source_line": 34,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int _dummy_init(int input, int voices) { digi_none.desc = _midi_none.desc = get_config_text(\"The sound of silence\"); return 0; } (sound.c:34) -- a complete, exact, zero-drift match: pushes the matched string \"The sound of silence\" (aTheSoundOfSile) into the already-matched get_config_text, then stores the SAME returned pointer into TWO separate globals (off_4BD4F0 and off_4BD438), matching source's own single-expression double-assignment (digi_none.desc = _midi_none.desc = ...) exactly -- identifying off_4BD4F0 as DIGI_DRIVER digi_none's own `desc` field and off_4BD438 as MIDI_DRIVER _midi_none's own `desc` field (both third-party Allegro driver-descriptor structs, per this project's scope rule not chased further). Reached via a DATA XREF only (a driver-init function-pointer table entry), no direct CODE XREF caller -- consistent with being invoked through Allegro's own DIGI_DRIVER/MIDI_DRIVER vtable `init` slot rather than called directly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44B410",
+    "new_name": "midi_init",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/midi.c",
+    "source_line": 1040,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "static int midi_init(void) (midi.c:1040-1086) -- a complete, exact, zero-drift match across every step: `midi_loaded_patches=FALSE` (dword_541494=0), `midi_lock_mem()` (a call to the already-present empty stub nullsub_11 -- this platform's lock-memory macro is a no-op, formalized as a new match this round), the 16-iteration MIDI_CHANNEL init loop (`volume=new_volume=128; pitch_bend=new_pitch_bend=0x2000; for c2<128 for c3<MIDI_LAYERS note[c2][c3]=-1`) matching the 0x818-byte-stride loop over dword_53917C..unk_5412FC exactly (a `rep stosd` of 0x200(512)=128*MIDI_LAYERS(4) dwords of -1, confirming MIDI_LAYERS=4 with zero drift), the MIDI_VOICES init loop (`note=-1; time=0`) matching the 0x10-byte-stride loop over dword_53856C..dword_53896C exactly, and -- the decisive section -- the 128-iteration midimap config-parsing loop: builds \"p%d\"(aPD)/c+1 via the already-matched uconvert, looks up the matched string \"midimap\" (aMidimap) via a newly-identified get_config_argv (sub_460AB0), and on argc==4 parses all 4 fields via a newly-identified ustrtol (sub_4543D0, called with the exact (s,NULL,0) argument pattern `ustrtol(argv[c],NULL,0)` uses) into patch_table[c].bank1/bank2/prog/pitch (dword_538974 array, -4/0/+4/+8 stride); the else branch's exact literal values (`bank1=bank2=-1; prog=c; pitch=0`) match source's own else-branch defaults instruction for instruction, with the loop counter register (ebp) itself supplying `prog=c` at exactly the right pre-increment moment. Tail confirms `register_datafile_object(DAT_MIDI,NULL,destroy_midi)` (a newly-identified sub_465CD0, called with the already-matched destroy_midi and the literal 0x4D494449 -- read as the 4-char code \"MIDI\" -- matching DAT_MIDI exactly). Reached via a DATA XREF (a MIDI_DRIVER vtable `init` slot), not a direct CODE XREF -- consistent with being Allegro's own MIDI-driver-vtable entry point rather than an AGS-called function. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule): the four newly-surfaced callees (midi_lock_mem/get_config_argv/ustrtol/register_datafile_object) are recorded at this identification level only, not chased into their own internals."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "nullsub_11",
+    "new_name": "midi_lock_mem",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/midi.c",
+    "source_line": 1049,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "midi_lock_mem() -- an empty-body stub (\"retn\" only), matching this platform's own no-op definition of Allegro's lock-memory-for-interrupt-safety macro (a DOS/real-mode concern not applicable to a Windows build). Called once, as the very first step of the newly-matched midi_init (sub_44B410), exactly where source calls `midi_lock_mem()`. THIRD-PARTY LIBRARY BOUNDARY, not chased further (nothing to chase -- the body is empty)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_460AB0",
+    "new_name": "get_config_argv",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/config.c",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "char **get_config_argv(...) -- Allegro's public config-file API for reading a space/quote-tokenized config value as an argv-style array. Called from the newly-matched midi_init (sub_44B410) exactly where source calls `get_config_argv(uconvert_ascii(\"midimap\",tmp),buf,&argc)`, immediately after building the \"midimap\"/\"p%d\" strings via the already-matched uconvert, with the argc-style out-parameter checked against the literal 4 right after the call -- matching source's own `if((argv)&&(argc==4))` check exactly. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4543D0",
+    "new_name": "ustrtol",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "long ustrtol(const char*,char**,int) -- Allegro's Unicode-aware strtol wrapper. Called 4 times in a row from the newly-matched midi_init (sub_44B410), each time with the exact 3-argument pattern `ustrtol(argv[c],NULL,0)` uses (a string pointer, a literal 0 matching NULL for the endptr out-parameter, and a literal 0 matching the auto-detect radix) -- matching source's own `patch_table[c].bank1=ustrtol(argv[0],NULL,0);` (and the 3 sibling fields) instruction for instruction. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_465CD0",
+    "new_name": "register_datafile_object",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "void register_datafile_object(int type,void(*load)(...),void(*destroy)(void*)) -- Allegro's public API for registering a custom datafile-object type's load/destroy callbacks. Called from the newly-matched midi_init (sub_44B410) with the exact 3-argument pattern `register_datafile_object(DAT_MIDI,NULL,(void(*)(void*))destroy_midi)` uses -- the already-matched destroy_midi as the third (destroy) argument, a literal 0 for the second (load) argument, and the literal 0x4D494449 (read as the 4-character code \"MIDI\") for the first (type) argument, matching Allegro's own DAT_MIDI constant. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_46AB30",
+    "new_name": "get_dx_ver",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wdxver.c",
+    "source_line": 62,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int get_dx_ver(void) (wdxver.c:62-260+) -- Allegro's own DirectX-version-detection helper, called once from sys_directx_init (already IDA-named). Structural match confirmed step by step: GetVersionExA into an OSVERSIONINFOA-shaped local (dwOSVersionInfoSize=0x94 written directly, matching sizeof(OSVERSIONINFO)), a failure early-return matching `if(!GetVersionEx(&os_version)) return dx_version;`, a `dwPlatformId==VER_PLATFORM_WIN32_NT(2)` check and a `dwMajorVersion<4` early-return matching source's own NT-version gate exactly (`if(os_version.dwPlatformId==VER_PLATFORM_WIN32_NT){if(os_version.dwMajorVersion<4) return dx_version;...}`), then a progressive dx_version upgrade scheme via a running `ebx` value written 0x100/0x200/0x300/0x500 at successive detection stages -- matching source's own hex DirectX-version constants (0x500=\"DX5\", etc.) exactly. Confirms the matched strings \"DINPUT.DLL\"/\"DirectInputCreateA\"/\"DDRAW.DLL\"/\"DirectDrawCreate\" (aDinputDll_1/aDirectinputcre_0/aDdrawDll_0/aDirectdrawcrea) as this function's own successive LoadLibraryA/GetProcAddress probes for DirectInput and DirectDraw availability, matching source's own probing sequence in shape and order. DRIFT (a simpler predecessor, consistent with this build's already-established older/simpler Allegro): source's own leading DSETUP.DLL/DirectXSetupGetVersion probe (the DX8/DX9-specific detection path, `case 0x00040005: dx_version=0x500;` etc.) has no counterpart here at all -- this build's cascade goes straight from the NT-version gate to the DirectInput/DirectDraw-based detection, capping out at 0x500(DX5) with no path to a higher version code, matching this build's own 2002-era release date predating DX8/9 detection logic entirely. Not traced past this structural/behavioral level given the function's size (~215 lines) and confirmed third-party-library status; every individual QueryInterface/vtable-slot call inside the DirectDraw-object-chain probing (directdraw->QueryInterface/GetCaps-equivalent slots) was not individually named. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
   }
 ]

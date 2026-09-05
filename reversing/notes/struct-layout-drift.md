@@ -13027,3 +13027,103 @@ tree's own version (`wddbmp.c:632-650`, a `DDRAW_SURFACE`-wrapper
 abstraction with no counterpart visible here) -- the SAME "genuinely
 older/simpler Allegro DirectX driver" caution already established for
 `al_findfirst`/`al_findnext`/`al_findclose`.
+
+### JGMOD's XM check/load pair, `fixtof`-adjacent Allegro helpers, and
+### `midi_init` all close out a `build_leads.py` re-run's remaining
+### single-candidate strings
+
+A fresh `build_leads.py` run (the string-vs-source cross-reference
+technique that originally seeded much of this project, re-run to check
+for any leads its own earlier passes hadn't yet consumed) found several
+genuinely new, previously-uninvestigated matches among its 13
+single-candidate-file results.
+
+**`sub_47C4C0`/`sub_47C520` formalized as their own `matches.json`
+entries** -- both had been informally described inside `load_mod`'s own
+evidence text ("sub_47C4C0(check)/sub_47C520(load) for XM") several
+rounds ago, but neither had its own dedicated record -- the same
+"documented in prose, never given its own entry" gap this project has
+hit and fixed several times before. `sub_47C4C0` is the JGMOD cascade's
+XM-format check (opens the file, reads 17 bytes, compares against the
+matched string "Extended Module: " at a fixed offset -- the simpler of
+the two XM-adjacent checks in this cascade, contrasting with the
+sliding-window `sub_47D400` already on record). `sub_47C520` is its
+LOAD counterpart, called immediately after the check passes -- a large
+(~1200-line) JGMOD-internal XM-format parser. Per this project's own
+third-party-library scope rule, `sub_47C520`'s own internals (pattern
+data, instrument/sample table parsing) are not traced further -- a
+ScummVM port would replace this wholesale with its own XM loader
+regardless of exactly how JGMOD's version works internally. Neither
+function is renamed (no JGMOD source tree exists in this repo to verify
+an exact name against), matching this cascade's established convention.
+
+**`_dummy_init` (`sub_443360`) closes as a complete, exact match** to
+`Engine/libsrc/allegro-4.2.2/src/sound.c:34` -- `int _dummy_init(int
+input, int voices) { digi_none.desc = _midi_none.desc = get_config_text(
+"The sound of silence"); return 0; }`. The disassembly's own single
+`get_config_text` call (on the matched string "The sound of silence")
+stores its return value into TWO separate globals in one pass, matching
+source's own double-assignment expression exactly -- identifying
+`off_4BD4F0`/`off_4BD438` as `digi_none.desc`/`_midi_none.desc`
+respectively (Allegro's own silent-driver descriptor structs). Reached
+only via a DATA XREF (a driver-init function-pointer table slot), no
+direct CODE XREF caller -- consistent with being invoked through
+Allegro's own `DIGI_DRIVER`/`MIDI_DRIVER` vtable `init` slot rather than
+called directly by AGS code.
+
+**`midi_init` (`sub_44B410`) closes as a complete, exact, zero-drift
+match** to `midi.c:1040-1086`, and brought four more Allegro internals
+into view along the way. Every step lines up: `midi_loaded_patches=
+FALSE`, a call to `midi_lock_mem()` (matching the disassembly's own
+pre-existing empty stub `nullsub_11` -- this platform's lock-memory
+macro is a no-op, formalized as a new match), the 16-iteration
+`MIDI_CHANNEL` init loop (an 0x818-byte stride, ending in a `rep stosd`
+of exactly 0x200(512) dwords of -1 -- confirming `MIDI_LAYERS=4` with
+zero drift, since 512=128*4), the `MIDI_VOICES` init loop (0x10-byte
+stride, `note=-1;time=0`), and -- the decisive section -- the
+128-iteration `midimap` config-parsing loop: builds "p%d"/`c+1` and
+looks up the matched string "midimap" via a newly-identified
+`get_config_argv` (`sub_460AB0`), and on `argc==4` parses all four
+fields via a newly-identified `ustrtol` (`sub_4543D0`, called with the
+exact `(s,NULL,0)` argument pattern source's own `ustrtol(argv[0],NULL,
+0)` uses) into `patch_table[c].bank1/bank2/prog/pitch`; the else
+branch's literal defaults (`bank1=bank2=-1;prog=c;pitch=0`) match
+source instruction for instruction, with the loop-counter register
+itself supplying `prog=c` at exactly the right pre-increment moment.
+The tail confirms `register_datafile_object(DAT_MIDI,NULL,destroy_midi)`
+(a newly-identified `sub_465CD0`, called with the already-matched
+`destroy_midi` and the literal `0x4D494449` read as the 4-character
+code "MIDI", matching `DAT_MIDI` exactly). Reached via a DATA XREF (a
+`MIDI_DRIVER` vtable `init` slot), consistent with being Allegro's own
+entry point rather than an AGS-called function. Per the scope rule, the
+four newly-surfaced callees are recorded at this identification level
+only, not chased into their own internals.
+
+**`get_dx_ver` (`sub_46AB30`) closes at a structural/behavioral level**,
+matching `Engine/libsrc/allegro-4.2.2/src/win/wdxver.c:62` -- Allegro's
+DirectX-version-detection helper, called once from `sys_directx_init`
+(already IDA-named). Confirms the `GetVersionExA`/`dwPlatformId==
+VER_PLATFORM_WIN32_NT`/`dwMajorVersion<4` NT-version gate exactly, and a
+progressive `dx_version`-upgrade scheme (a running register written
+0x100/0x200/0x300/0x500 at successive detection stages) matching
+source's own hex DirectX-version constants. Confirms the matched
+strings "DINPUT.DLL"/"DirectInputCreateA"/"DDRAW.DLL"/"DirectDrawCreate"
+as this function's own successive `LoadLibraryA`/`GetProcAddress`
+probes, in the same order source uses them. DRIFT (a further instance
+of this build's already-established older/simpler Allegro): source's
+own leading DSETUP.DLL/`DirectXSetupGetVersion` probe (the DX8/DX9-
+specific detection path) has no counterpart here at all -- this build's
+cascade goes straight from the NT-version gate to the DirectInput/
+DirectDraw-based checks, capping out at 0x500(DX5) with no path to a
+higher version code, consistent with this build's 2002-era release
+predating DX8/9 detection entirely. Not traced past this level given
+the function's size (~215 lines) and confirmed third-party-library
+status -- individual QueryInterface/vtable-slot calls inside the
+DirectDraw-object-chain probing were not individually named.
+
+A `build_leads.py` re-run's remaining unmatched single-candidate leads
+(datgrid.c's generic "Regular" string, several Linux/BeOS/Unix-platform-
+specific Allegro driver files never linked into this Windows binary,
+and one dumb-0.9.2-adjacent false positive already explained by JGMOD
+sharing a similar string) are low-value or dead ends, not pursued
+further this round.
