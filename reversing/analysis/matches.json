@@ -7042,5 +7042,15 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "do_conversation own private per-dialog-option rendering helper (12 parameters), called TWICE from do_conversation (already matched, at two distinct points -- plausibly once for a layout/height-measurement pass and once for the real draw, matching the classic two-pass text-layout idiom). Body: loops over arg_8 options, for each one sets wtextcolor from playerchar own packed talkcolor byte (playerchar->flags&0xFF000000>>24, the already-established CharacterInfo.talkcolor packed-into-flags convention), calls GetTranslation (already matched) on the option own text, break_up_text_into_lines (this session own new match) to word-wrap it, SpriteCache::operator[] (already matched) plus wputblock (already matched) to draw the dialog-bullet sprite (matching GameSetupStructBase.dialog_bullet, already established) beside each option, and get_col8_lookup (already matched) for palette-aware color selection. This build own do_conversation is already established as a genuine pre-refactor predecessor of 2011 own drastically different, gfxDriver-based show_dialog_options (which has no comparable private per-option-drawing helper with this argument shape to compare against) -- left unnamed per this project own convention rather than force an invented name, given do_conversation own already-recorded architectural-fusion status covers this function own general role adequately. Also called break_up_text_into_lines (this session own new match) as a further confirmation of that identification from a second, independent call site."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425710",
+    "new_name": "fixtof",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": 48,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixtof(fixed x) { return (double)x / 65536.0; } -- Allegro public fixed-point-to-double conversion inline function (fmaths.inl:48-51). A complete, exact, zero-drift 3-instruction match: \"fild [arg_0]; fdiv dbl_4AD5D0;\" where dbl_4AD5D0 is a literal 65536.0 double constant, matching source own division exactly. Unlike most Allegro AL_INLINE functions (normally expanded inline at every call site), this build keeps it as a real, separately-compiled function -- plausibly a compiler/optimization-level difference rather than a genuine source difference. Called twice from do_movelist_move (already matched), converting MoveList.xpermove/ypermove fixed-point per-move deltas to floating point for further calculation. THIRD-PARTY LIBRARY BOUNDARY (per this project own scope rule), not chased further."
   }
 ]

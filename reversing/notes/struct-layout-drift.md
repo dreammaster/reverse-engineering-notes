@@ -12937,6 +12937,21 @@ drawing helper of this shape to compare against -- `do_conversation`'s
 own already-recorded architectural-fusion status covers this
 function's general role adequately without forcing an invented name.
 
+### fixtof named, an exact 3-instruction Allegro match
+
+A quick sweep of other central functions' own remaining unnamed
+callees (`do_movelist_move`, `__actual_invscreen`) turned up `fixtof`
+(`sub_425710`): Allegro's own public fixed-point-to-double conversion
+inline (`fmaths.inl:48-51`, `"return (double)x / 65536.0;"`) matches
+this function's entire 3-instruction body exactly -- `fild [arg_0];
+fdiv dbl_4AD5D0;` where `dbl_4AD5D0` is a literal `65536.0` double
+constant. Unlike most Allegro `AL_INLINE` functions (normally expanded
+at every call site), this build keeps it as a real, separately-
+compiled function -- plausibly a compiler/optimization-level
+difference rather than a genuine source difference. Called twice from
+`do_movelist_move` (already matched), converting `MoveList.xpermove`/
+`ypermove` fixed-point per-move deltas to floating point.
+
 ### dxmedia_pause_video/resume_video confirmed absent entirely
 
 An exhaustive check of every reference to `g_pMMStream`

@@ -3790,6 +3790,12 @@ disassembly work.
   dialog-bullet sprite beside each. Left unnamed — this build's
   `do_conversation` already predates 2011's drastically different
   `show_dialog_options` with nothing comparable to compare against.
+- **`fixtof` named, an exact 3-instruction Allegro match.** A quick
+  sweep of `do_movelist_move`/`__actual_invscreen`'s own remaining
+  callees found Allegro's public fixed-point-to-double conversion —
+  `fild`/`fdiv 65536.0` matches source's `(double)x/65536.0` exactly.
+  Called twice from `do_movelist_move`, converting `MoveList`'s own
+  fixed-point per-move deltas to floating point.
 
 ## Third-party library identification (Task #10)
 

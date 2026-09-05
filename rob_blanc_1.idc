@@ -37282,6 +37282,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X425708);
 	create_insn	(0X425710);
+	set_name	(0X425710,	"fixtof");
 	create_insn	(x=0X425713);
 	op_stkvar	(x,	1);
 	make_array	(0X42571E,	0X2);
@@ -40634,8 +40635,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X428617);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42861F);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40645,6 +40644,8 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42861F);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X428622);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X428625);
@@ -46176,8 +46177,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D75B);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42D762);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -46187,6 +46186,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D762);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X42D76B);
 	op_hex		(x,	1);
 	create_insn	(x=0X42D773);
@@ -52386,10 +52387,6 @@ static Bytes_8(void) {
 	create_insn	(x=0X433160);
 	op_stkvar	(x,	1);
 	set_cmt	(0X433166,	"Block",	0);
-	create_insn	(x=0X43316C);
-	op_hex		(x,	1);
-	create_insn	(x=0X43316F);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52399,6 +52396,10 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43316C);
+	op_hex		(x,	1);
+	create_insn	(x=0X43316F);
+	op_stkvar	(x,	1);
 	set_cmt	(0X433175,	"Block",	0);
 	create_insn	(x=0X43317B);
 	op_hex		(x,	1);
@@ -58315,10 +58316,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4394F6);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43950A);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X439510);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58328,6 +58325,10 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43950A);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X439510);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43951F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43952A);
@@ -64026,10 +64027,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F318);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F31F);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F323);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -64039,6 +64036,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F31F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F323);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F329);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F32D);
@@ -70080,11 +70081,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X44683F);
 	op_hex		(x,	1);
 	make_array	(0X446866,	0XA);
-	create_insn	(0X446870);
-	make_array	(0X44687C,	0X4);
-	create_insn	(x=0X446880);
-	op_stkvar	(x,	1);
-	set_name	(0X446880,	"__mkgmtime");
 }
 
 //------------------------------------------------------------------------
@@ -70094,6 +70090,11 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(0X446870);
+	make_array	(0X44687C,	0X4);
+	create_insn	(x=0X446880);
+	op_stkvar	(x,	1);
+	set_name	(0X446880,	"__mkgmtime");
 	create_insn	(x=0X44688C);
 	op_hex		(x,	1);
 	create_insn	(0X446890);
@@ -76269,15 +76270,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E746);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E74C);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E75A);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E764);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76287,6 +76279,15 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E74C);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X44E75A);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X44E764);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44E76E);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81546,6 +81547,15 @@ static Bytes_13(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X45692C);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_14(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X456939);
 	op_hex		(x,	1);
 	create_insn	(x=0X456956);
@@ -81556,15 +81566,6 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X456988);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_14(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X45699E,	"Block",	0);
 	create_insn	(x=0X4569A7);
 	op_hex		(x,	1);
@@ -87709,15 +87710,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X463272);
 	op_hex		(x,	1);
 	set_cmt	(0X463275,	"Size",	0);
-	create_insn	(x=0X463280);
-	op_hex		(x,	1);
-	create_insn	(x=0X463285);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X46329D);
-	op_hex		(x,	1);
-	create_insn	(0X4632A4);
-	create_insn	(x=0X4632C2);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87727,6 +87719,15 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X463280);
+	op_hex		(x,	1);
+	create_insn	(x=0X463285);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X46329D);
+	op_hex		(x,	1);
+	create_insn	(0X4632A4);
+	create_insn	(x=0X4632C2);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4632D5);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4632E2);
@@ -93538,14 +93539,6 @@ static Bytes_15(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X46BB89);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46BB99);
-	op_hex		(x,	1);
-	create_insn	(x=0X46BB9E);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X46BBA4);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X46BBAB);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -93555,6 +93548,14 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BB99);
+	op_hex		(x,	1);
+	create_insn	(x=0X46BB9E);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X46BBA4);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X46BBAB);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X46BBB2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BBBA);
@@ -99493,11 +99494,6 @@ static Bytes_16(void) {
 	set_cmt	(0X473E09,	"hPal",	0);
 	set_cmt	(0X473E0A,	"hdc",	0);
 	set_cmt	(0X473E11,	"hdc",	0);
-	create_insn	(x=0X473E12);
-	op_stkvar	(x,	0);
-	set_cmt	(0X473E1C,	"iUsage",	0);
-	set_cmt	(0X473E1E,	"pbmi",	0);
-	set_cmt	(0X473E1F,	"pjBits",	0);
 }
 
 //------------------------------------------------------------------------
@@ -99507,6 +99503,11 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X473E12);
+	op_stkvar	(x,	0);
+	set_cmt	(0X473E1C,	"iUsage",	0);
+	set_cmt	(0X473E1E,	"pbmi",	0);
+	set_cmt	(0X473E1F,	"pjBits",	0);
 	set_cmt	(0X473E20,	"flInit",	0);
 	set_cmt	(0X473E22,	"pbmih",	0);
 	set_cmt	(0X473E23,	"hdc",	0);
@@ -105319,15 +105320,6 @@ static Bytes_17(void) {
 	create_insn	(x=0X47B2C3);
 	op_hex		(x,	1);
 	create_insn	(0X47B2CD);
-	create_insn	(x=0X47B2D5);
-	op_hex		(x,	1);
-	create_insn	(x=0X47B2E8);
-	op_hex		(x,	1);
-	create_insn	(x=0X47B2F5);
-	op_hex		(x,	1);
-	create_insn	(x=0X47B305);
-	op_hex		(x,	1);
-	set_cmt	(0X47B30E,	"Block",	0);
 }
 
 //------------------------------------------------------------------------
@@ -105337,6 +105329,15 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47B2D5);
+	op_hex		(x,	1);
+	create_insn	(x=0X47B2E8);
+	op_hex		(x,	1);
+	create_insn	(x=0X47B2F5);
+	op_hex		(x,	1);
+	create_insn	(x=0X47B305);
+	op_hex		(x,	1);
+	set_cmt	(0X47B30E,	"Block",	0);
 	create_insn	(x=0X47B314);
 	op_hex		(x,	1);
 	set_cmt	(0X47B31F,	"Block",	0);
@@ -111476,12 +111477,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X485377);
 	op_hex		(x,	1);
-	make_array	(0X48538D,	0X3);
-	create_insn	(0X485390);
-	create_insn	(x=0X485391);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48539A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111491,6 +111486,12 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	make_array	(0X48538D,	0X3);
+	create_insn	(0X485390);
+	create_insn	(x=0X485391);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48539A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X48539F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4853A4);
@@ -117764,13 +117765,6 @@ static Bytes_19(void) {
 	create_insn	(x=0X48EA69);
 	op_hex		(x,	1);
 	make_array	(0X48EA76,	0XA);
-	create_insn	(0X48EA80);
-	create_insn	(x=0X48EA81);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48EA90);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X48EAA1);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117780,6 +117774,13 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(0X48EA80);
+	create_insn	(x=0X48EA81);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48EA90);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X48EAA1);
+	op_hex		(x,	1);
 	create_insn	(x=0X48EAB7);
 	op_hex		(x,	1);
 	create_insn	(x=0X48EABE);
@@ -124281,10 +124282,6 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X497D86,	"jumptable 004978DD case 6",	1);
 	create_insn	(0X497D86);
-	create_insn	(x=0X497D8E);
-	op_hex		(x,	1);
-	create_insn	(x=0X497D91);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -124294,6 +124291,10 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497D8E);
+	op_hex		(x,	1);
+	create_insn	(x=0X497D91);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X497DA3);
 	op_hex		(x,	1);
 	create_insn	(x=0X497DCC);
@@ -130202,8 +130203,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0E13);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A0E17);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130213,6 +130212,8 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0E17);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0E1D);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A0E32);
@@ -136291,8 +136292,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A9E53);
 	op_hex		(x,	1);
-	create_insn	(x=0X4A9E5C);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -136302,6 +136301,8 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A9E5C);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9E60);
 	op_stkvar	(x,	0);
 	create_insn	(0X4A9E6F);
@@ -158525,6 +158526,7 @@ static Functions_7(void) {
 	set_frame_size(0X4256E0, 0X4, 4, 0);
 	add_func    (0X425710,0X42571E);
 	set_func_flags(0X425710,0x5410);
+	set_func_cmt(0X425710,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl\nconfidence: high\nevidence: fixtof(fixed x) { return (double)x / 65536.0; } -- Allegro public fixed-point-to-double conversion inline function (fmaths.inl:48-51). A complete, exact, zero-drift 3-instruction match: \"fild [arg_0]; fdiv dbl_4AD5D0;\" where dbl_4AD5D0 is a literal 65536.0 double constant, matching source own division exactly. Unlike most Allegro AL_INLINE functions (normally expanded inline at every call site), this build keeps it as a real, separately-compiled function -- plausibly a compiler/optimization-level difference rather than a genuine source difference. Called twice from do_movelist_move (already matched), converting MoveList.xpermove/ypermove fixed-point per-move deltas to floating point for further calculation. THIRD-PARTY LIBRARY BOUNDARY (per this project own scope rule), not chased further.", 1);
 	set_frame_size(0X425710, 0, 4, 0);
 	add_func    (0X425720,0X425739);
 	set_func_flags(0X425720,0x5410);
@@ -158674,16 +158676,16 @@ static Functions_7(void) {
 	set_func_flags(0X427B80,0x5410);
 	set_func_cmt(0X427B80,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::clearlist() (acdialog.h:344-350) -- an exact, zero-drift match: a loop freeing itemnames[kk]@+0x34 for kk from 0 to items@+0x24, then items=0. Called from MyListBox::processmessage's own CLB_CLEAR branch (this round's own new match) and presumably from ~MyListBox() (the destructor, not independently located this round).", 1);
 	set_frame_size(0X427B80, 0X8, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X427BD0,0X427C48);
 	set_func_flags(0X427BD0,0x5410);
 	SetType(0X427BD0, "int __stdcall MyListBox__additem(char *Str);");
 	set_func_cmt(0X427BD0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::additem(char*) (acdialog.h:425-433) -- an exact match, and a THIRD independent confirmation of this build's own MyListBox capacity: the overflow check is a literal \"cmp [this+0x24],14h\" (items>=0x14=20), not source's items>=MAXLISTITEM(300) -- directly confirming, via a bounds-check literal rather than arithmetic, the 20-entry capacity already inferred twice before (CSCICreateControl's own operator-new(0x84) allocation-size arithmetic, and this same literal's own consistency with that arithmetic). The quit() call's literal string, \"!CSCIUSER16: Too many items added to listbox\", matches source's own error string exactly (source's identical wording, just gated on a 15x larger threshold). Otherwise an exact match: malloc(strlen(texx)+1), strcpy(itemnames[items],texx), items++, needredraw@+0x22=1.", 1);
 	set_frame_size(0X427BD0, 0X4, 4, 0X4);
 	define_local_var(0X427BD0, 0X427C48, "[bp+0X8]", "Str");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X427C50,0X427CAB);
 	set_func_flags(0X427C50,0x5410);
 	SetType(0X427C50, "int __stdcall MyLabel__MyLabel(int, int, int, char *Source);");
@@ -159281,15 +159283,15 @@ static Functions_8(void) {
 	SetType(0X431E79, "int route_script_link(void);");
 	set_func_cmt(0X431E79,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, exact match to \"if(COPYRIGHT_CRC!=get_route_composition()) return 1; if(routex1!=-10) return 1; return 0;\" -- the literal comparison constant 0x2A27C(172668) matches COPYRIGHT_CRC exactly. Identifies the pre-existing IDA global `welcome_text_validated` as this build's `routex1` (source's own equally obscure name for the same anti-tamper 'has print_welcome_text already run and validated the copyright string' flag) -- renamed to match 2011's literal name per this project's usual convention, though `welcome_text_validated`'s own role-description was, if anything, more transparent than source's own deliberately-confusing choice. This function is itself another deliberately-misleading name (source's own comment marks the whole trio as anti-hacker obfuscation) -- its real job" " is 'has the engine's copyright/identity been validated', not anything abo", 1);
 	set_frame_size(0X431E79, 0, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X431EA3,0X431ECC);
 	set_func_flags(0X431EA3,0x5410);
 	SetType(0X431EA3, "void init_pathfinder(void);");
 	set_func_cmt(0X431EA3,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, ZERO-DRIFT exact match -- two malloc(4000) calls into pathbackx/pathbacky, matching source's \"malloc(sizeof(int)*MAXPATHBACK)\" with MAXPATHBACK=1000 and sizeof(int)=4 (4*1000=4000) precisely -- an unusually clean case where this project's typical smaller-capacity-in-2002 pattern does NOT apply at all.", 1);
 	set_frame_size(0X431EA3, 0, 4, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X431ECC,0X431F10);
 	set_func_flags(0X431ECC,0x5410);
 	set_func_cmt(0X431ECC,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`.", 1);
@@ -160341,6 +160343,10 @@ static Functions_9(void) {
 	set_func_flags(0X448090,0x5400);
 	SetType(0X448090, "int __cdecl sub_448090(float, int, int);");
 	set_frame_size(0X448090, 0X28, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4481D0,0X4482C4);
 	set_func_flags(0X4481D0,0x5400);
 	set_frame_size(0X4481D0, 0X18, 0, 0);
@@ -160373,10 +160379,6 @@ static Functions_9(void) {
 	set_func_flags(0X448910,0x5400);
 	SetType(0X448910, "int __cdecl sub_448910(float, int, int);");
 	set_frame_size(0X448910, 0X28, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X448A60,0X448B25);
 	set_func_flags(0X448A60,0x5400);
 	set_frame_size(0X448A60, 0X10, 0, 0);
@@ -162346,6 +162348,10 @@ static Functions_10(void) {
 	set_func_flags(0X4778B0,0x5400);
 	set_func_cmt(0X4778B0,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, int is_mod_playing(void) -- referenced at Engine/acsound.cpp:1040/1062/1068 (MYMOD::poll/seek/get_pos, all gating their real work on this check). No local JGMOD source tree exists in this repo to verify the exact name against (same caveat already recorded on load_mod/play_mod's own entries), so identified by call-shape/role alone: 0 arguments, boolean-style return (checked via 'test eax,eax'), called from TWO already-matched sites -- scr_StopMusic (gating whether to call stop_mod, see its own entry) and IsMusicPlaying (as one leg of its 'is ANY music format currently active' OR-chain, alongside the already-established MIDI check) -- both matching the exact role `is_mod_playing()` plays in source.", 1);
 	set_frame_size(0X4778B0, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X477990,0X4779A0);
 	set_func_flags(0X477990,0x5400);
 	set_frame_size(0X477990, 0, 0, 0);
@@ -162355,10 +162361,6 @@ static Functions_10(void) {
 	set_func_cmt(0X4779A0,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: JGMOD library public API, void destroy_mod(JGMOD *j) -- referenced at Engine/acsound.cpp:1056 inside MYMOD::destroy(). Called from scr_StopMusic (already matched) as 'sub_4779A0(dword_5231B8)' -- 1 arg (the bare JGMOD* handle, see load_mod/play_mod's own entries), immediately after stop_mod, immediately before 'dword_5231B8=0' -- matching source's exact call order ('stop_mod(); destroy_mod(tune); tune=NULL;', acsound.cpp:1055-1057), just operating on a bare global instead of a MYMOD object's own tune field (this build has no MYMOD wrapper class at all -- see load_mod's own entry for the complete architectural writeup).", 1);
 	set_frame_size(0X4779A0, 0X4, 0, 0);
 	define_local_var(0X4779A0, 0X477A61, "[bp+0X4]", "Block");
-}
-
-static Functions_11(void) {
-
 	add_func    (0X477A70,0X477AC6);
 	set_func_flags(0X477A70,0x5400);
 	set_frame_size(0X477A70, 0, 0, 0);
@@ -164982,6 +164984,10 @@ static Functions_11(void) {
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X8]", "ElementSize");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0XC]", "ElementCount");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X10]", "Stream");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4AAF5A,0X4AAF60);
 	set_func_flags(0X4AAF5A,0x5480);
 	SetType(0X4AAF5A, "int __cdecl fseek(FILE *Stream, int Offset, int Origin);");
@@ -164999,10 +165005,6 @@ static Functions_11(void) {
 	define_local_var(0X4AAF60, 0X4AAF66, "[bp+0X8]", "ElementSize");
 	define_local_var(0X4AAF60, 0X4AAF66, "[bp+0XC]", "ElementCount");
 	define_local_var(0X4AAF60, 0X4AAF66, "[bp+0X10]", "Stream");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4AAF66,0X4AAF6C);
 	set_func_flags(0X4AAF66,0x5480);
 	SetType(0X4AAF66, "void *__cdecl memcpy(void *, const void *Src, size_t Size);");
