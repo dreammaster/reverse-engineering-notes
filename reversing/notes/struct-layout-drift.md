@@ -11956,3 +11956,19 @@ window slot table of new globals), destroys that bitmap, re-shows the
 mouse, and decrements an active-window counter -- exactly the expected
 "tear down a CSCI window" role, with `domouse`/`wputblock` both
 reconfirmed from a further independent call site.
+
+### CSCIWaitMessage upgraded to high confidence, a third SCIMESSAGE confirmation
+
+Reading the leading ~130 of 228 lines settles it decisively. Opens by
+redrawing every live control in the 20-slot control-handle table
+(`domouse`/a new per-control-draw lead, `sub_426F80`, not chased
+further), then resets `*mes` to `{code=0,id=-1}` -- a THIRD independent
+confirmation of the already-established `SCIMESSAGE{code;id;}` layout,
+this time via the function's own parameter rather than the global
+`smes` instance. Polls `kbhit`/`getch`, decoding extended-key sequences
+via the same `+300` convention already established in `IsKeyPressed`'s
+own round, and on Enter/Escape calls a new lead (`sub_425A93`) with the
+already-confirmed `CNF_DEFAULT=0x100`/`CNF_CANCEL=0x200` constants,
+setting `mes->code=1` -- matching the already-confirmed `CM_COMMAND=1`
+exactly. `sub_425A93` is plausibly a "find the control carrying this
+flag" helper, not chased further given the function's remaining size.

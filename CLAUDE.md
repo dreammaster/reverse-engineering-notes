@@ -3465,6 +3465,12 @@ disassembly work.
   round; their full bodies now confirm the control-handle-table
   `delete` and the saved-background-bitmap window-teardown sequence
   exactly.
+- **`CSCIWaitMessage` upgraded to high confidence, a third `SCIMESSAGE`
+  confirmation.** Resets `*mes` to `{code=0,id=-1}`, matching the
+  already-established struct layout from a new site. Polls `kbhit`/
+  `getch` for Enter/Escape and dispatches via the already-confirmed
+  `CNF_DEFAULT`/`CNF_CANCEL` constants, setting `code=CM_COMMAND` — all
+  matching exactly.
 
 ## Third-party library identification (Task #10)
 
