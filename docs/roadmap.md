@@ -39,10 +39,15 @@ the per-executable breakdown this tracks against.
       exhibit-coin-group rank you qualify for (§7's `S4(10)` ladder);
       rank 8 finalizes it at 10. Max HP formula pinned exactly:
       `200 + 50*L*(L-1) - (100 if L>5)`.
-- [ ] Still open: bit `0x2000`'s setter (confirmed NOT in any of the
-      caretaker functions — elsewhere); `S4(37)` / `S4(18)` rank-gate
-      overrides; DUN full spell table; TWNDR shops/guard/mail; CASDR
-      player-attack/loot.
+- [~] bit `0x2000` — mechanism found (`recovered/quest_flags.bas` S3c):
+      every museum exhibit gets its own `2^(exhibitId-1)` bit via
+      `sub_11C38` (verified exact against 5 known coin bits); exhibit 14
+      = "INFORMATION" = the caretaker's own desk, so `2^13=0x2000` is
+      exactly its bit — but the first-time trigger is circular in every
+      caretaker function; likely inside `useCommand`'s large, un-swept
+      tile/object dispatch.
+- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; DUN full spell
+      table; TWNDR shops/guard/mail; CASDR player-attack/loot.
 
 ## Infra (done, 2026-08-30)
 

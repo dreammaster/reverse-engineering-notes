@@ -137,10 +137,14 @@ END SUB
 '
 '  OPEN
 '   * questFlagWord bit 0x2000's setter (gates "already took the final
-'     offer" vs re-running caretakerOffer) -- NOT inside caretakerOffer/
-'     caretakerPraise/sub_12CAC/sub_12AF4/sub_12C67 (all now fully
-'     decoded and read end-to-end); still unlocated elsewhere in mus.asm
-'     or possibly OUT/DUN (not yet swept for it the way S4(11) was)
+'     offer" vs re-running caretakerOffer) -- the MECHANISM is now known
+'     (recovered/quest_flags.bas S3c: every museum exhibit gets its own
+'     bit via sub_11C38, `2^(exhibitId-1)`; exhibit 14 = "INFORMATION" =
+'     the caretaker's own desk = checkFlag_2000, and 2^13 = 0x2000
+'     exactly) but the literal first-time trigger for THAT exhibit's own
+'     bit is not -- checkFlag_2000's only call into the setter is gated
+'     behind the bit already being set. Most likely inside useCommand's
+'     large, un-swept main tile/object dispatch.
 '   * the `S3(0) >= 2` branch (sub_12AF4, loads exhibit graphics) --
 '     a separate late-game caretaker interaction, not traced
 ' ==========================================================================

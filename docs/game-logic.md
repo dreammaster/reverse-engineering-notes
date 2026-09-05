@@ -459,9 +459,17 @@ Summary:
 - Bit `0x2000` = "already took the caretaker's final offer". The
   character-level increment itself is fully solved (§2,
   [`mus_caretaker.bas`](../recovered/mus_caretaker.bas)) and turned out
-  *not* to touch this bit — `caretakerOffer`/`Praise`/`sub_12CAC` are now
-  fully decoded end-to-end with no bit-0x2000 write in any of them, so
-  its setter is still open, elsewhere.
+  *not* to touch this bit. The MECHANISM behind `0x2000` is now known too
+  — every one of MUS's 16 exhibit slots gets its own permanent bit via
+  `sub_11C38` (`questFlagWord OR= 2^(exhibitId−1)`), verified exact
+  against 5 already-known coin bits; exhibit 14 is named **"INFORMATION"**
+  and its own outcome-handler *is* `checkFlag_2000` — i.e. exhibit 14 is
+  the caretaker's desk, and `2^13 = 0x2000` is exactly its bit. What's
+  still open is the literal first-time trigger: `checkFlag_2000`'s only
+  call into the setter fires only when the bit is *already* set
+  (circular), and every other caretaker function is confirmed clean —
+  the real site is most likely inside `useCommand`'s much larger,
+  un-swept tile/object dispatch.
 
 **Found items** (`AwardFoundItem`, `out.asm:8315`): `S2(droppedItemId)
 += 1`, "YOU FIND A `<item>`". `droppedItemId` = `ds:1AEE`.

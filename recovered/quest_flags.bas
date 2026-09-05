@@ -121,6 +121,62 @@
 '
 '
 '  ------------------------------------------------------------------------
+'  3b.  A SECOND OUT source: eating the museum's fruit                [SOLID]
+'  ------------------------------------------------------------------------
+'  `eatFruitCommand` ("EAT THE FRUIT", the Herb-of-Life exhibit's action)
+'  unconditionally ORs bit 3 (mask 0x08) into questFlagWord -- independent
+'  of any coin.  Bit 3 is also part of Topaz's mask (0x38 = bits 3-5), so
+'  eating the fruit and holding the Topaz coin both light the same bit.
+'
+'  ------------------------------------------------------------------------
+'  3c.  MUS: a THIRD source -- per-exhibit "you finished THIS one" bits
+'                                                                    [SOLID
+'       mechanism, one leaf (bit 0x2000) still open]
+'  ------------------------------------------------------------------------
+'  Independent of the coin system, MUS gives every one of its 16 exhibit
+'  slots (`exhibitId` 0..15, tile codes 0xE0..0xEF) its OWN permanent bit
+'  in questFlagWord: `sub_11C38` computes
+'      mask = INT( 2.0 ^ (exhibitId - 1) )        ' rt_FF2B = `^`, ds:23FC=2.0
+'      questFlagWord = questFlagWord OR mask
+'  and is called (via the shared wrapper `sub_11D02`) from 9 different
+'  per-exhibit "outcome" handlers -- one per exhibit's own arm of the
+'  `ON (exhibitId+1) GOSUB` dispatch that follows `enterExhibit`.
+'
+'  This is independently verified against 5 of the already-known coin
+'  bits -- EXACT match every time:
+'      exhibitId 4,5,6   (Topaz group)     -> bits 3,4,5   = 0x38  [Topaz]
+'      exhibitId 7,8     (Amethyst group)  -> bits 6,7     = 0xC0  [Amethyst]
+'      exhibitId 9,10    (Sapphire group)  -> bits 8,9     = 0x0300[Sapphire]
+'      exhibitId 12      (Ruby, "Four Jewels")  -> bit 11  = 0x0800[Ruby]
+'      exhibitId 13      ("Flight of Fancy")    -> bit 12  = 0x1000[Diamond]
+'  i.e. visiting/completing every exhibit in a coin's group, ONE AT A
+'  TIME, sets exactly the bits that OUT's "hold the coin" scan sets all
+'  at once -- the two systems are two paths to the SAME bits.
+'  exhibitId 3 (the 4th, unnamed Jade-group exhibit) additionally sets
+'  bit 2 (0x04), which is NOT part of Jade's own mask (0x03) -- a bonus/
+'  secret bit with no other known consumer yet.
+'
+'  exhibitId 14's own name is **"INFORMATION"** (`sub_110A8`) and its
+'  outcome-arm is `checkFlag_2000` itself -- i.e. exhibit #14 IS the
+'  caretaker's desk.  Its bit under this formula is
+'  `2^(14-1) = 2^13 = 0x2000` -- the EXACT bit `checkFlag_2000` tests.
+'  **The mechanism is confirmed; the literal first-time SETTER is not.**
+'  `checkFlag_2000`'s only call into the setter (`sub_11D02` -> `sub_11C38`)
+'  is in its "bit ALREADY set" branch -- circular, cannot be the initial
+'  trigger.  Exhaustively ruled out as the setter: `caretakerOffer` (every
+'  branch), `caretakerPraise`, `sub_12CAC`, `sub_10D3F`, `sub_11B45`,
+'  `sub_12AF4`, and `loc_10B64`/`sub_10B59` -- none of them call the full
+'  `sub_11D02` entry or write the bit directly.  `sub_11C38` has exactly
+'  ONE call site in the whole file, so the real trigger must be inside
+'  `useCommand`'s much larger main tile/object SELECT CASE (the tile-0xE0
+'  dispatch leading to `loc_12323`), which this pass did not fully sweep.
+'
+'  Two OTHER parallel exhibit-bit arrays exist, both tested (not set) via
+'  the SAME `2^(exhibitId-1)` formula: `S4(2)` (`enterExhibit`'s own entry
+'  gate -- can you even walk into this exhibit) and `S4(35)` (`sub_10D3F`,
+'  purpose not traced). All three arrays share one bit-assignment scheme.
+'
+'  ------------------------------------------------------------------------
 '  4.  MUS: THE STORY-BIT GATE PER EXHIBIT GROUP                   [SOLID
 '      structure; two leaf sources still open]
 '  ------------------------------------------------------------------------
@@ -189,17 +245,38 @@
 '   * MUS's per-coin-group unlock ladder (S4(10) rank counter, 8 arms) and
 '     its exact gates (mostly bitfield AND-equality, two are plain
 '     counter/item checks instead)
+'   * eatFruitCommand ORs bit 3 (0x08) unconditionally -- a 2nd non-coin
+'     bit source (Turquoise-holding is the 1st, which sets none)
+'   * the per-exhibit "own bit" mechanism: sub_11C38 ORs
+'     `INT(2.0 ^ (exhibitId-1))` into questFlagWord, called from 9 of the
+'     16 exhibits' own outcome-arms -- verified exact against 5 already-
+'     known coin bits (Topaz/Amethyst/Sapphire/Ruby/Diamond groups).
+'     exhibitId 14 = "INFORMATION" = the caretaker's own desk (its
+'     outcome-arm IS checkFlag_2000).
 '
 '  OPEN
-'   * bit 0x2000's setter (NOT inside caretakerOffer/Praise/sub_12CAC --
-'     see recovered/mus_caretaker.bas, which fully closes the level-up
-'     side of this)
+'   * bit 0x2000's literal setter. The MECHANISM is now known (it would be
+'     sub_11C38 firing with exhibitId=14, giving exactly 2^13=0x2000) but
+'     the trigger is not: checkFlag_2000's only call into the setter is
+'     gated behind the bit ALREADY being set (circular -- can't be the
+'     first trigger). caretakerOffer (every branch), caretakerPraise,
+'     sub_12CAC, sub_10D3F, sub_11B45, sub_12AF4, and loc_10B64/sub_10B59
+'     are ALL fully read and NONE of them call the setter or write the
+'     bit directly -- sub_11C38 has exactly one call site in the whole
+'     file. The real trigger is most likely inside useCommand's much
+'     larger main tile/object dispatch (thousands of un-swept bytes
+'     leading to loc_12323), not in the caretaker-specific functions.
+'   * S4(2) and S4(35): two OTHER arrays tested (not set) via the same
+'     2^(exhibitId-1) scheme (entry-permission gate and an unidentified
+'     threshold, respectively) -- a third parallel bitfield family,
+'     purpose of the latter two not traced
 '   * S4(37) override in the Topaz-rank gate
 '   * S4(18) threshold semantics for the Turquoise rank (">= 2" of what?)
 '   * dungeon-3-exit's item-consumption consequence (mirrors dungeon 1's
 '     Crown+Sapphire spend, not confirmed byte-for-byte)
-'   * bits 10, 14, 15 of questFlagWord: unaccounted for (may simply be
-'     unused / reserved)
-'   * the 4 unnamed exhibit slots (sub_1100D, sub_110D0, sub_1111A,
-'     sub_110A8) -- likely duplicate/placeholder display cases; not traced
+'   * bits 10, 15 of questFlagWord: unaccounted for (bit 14 -- exhibitId
+'     15's own bit via sub_11C38 -- and bit 2 -- exhibitId 3's bonus bit
+'     -- are now explained by the per-exhibit mechanism above)
+'   * exhibitId 3, 8, 10 (sub_1100D/sub_110D0/sub_1111A) -- the other
+'     unnamed exhibit slots; not traced
 ' ==========================================================================
