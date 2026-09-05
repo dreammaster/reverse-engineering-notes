@@ -3217,6 +3217,18 @@ disassembly work.
   passing literal 80×25 text-mode dimensions, a third instance of the
   raw-CRT-vs-Allegro-wrapper drift, and — rare in this project — an
   ADDED cleanup step (`agssave.999` deletion) 2011 later removed.
+- **`IsKeyPressed` closes: a genuinely simpler predecessor with several
+  confirmed key-handling gaps.** Names a new Allegro match,
+  `keyboard_needs_poll` (trivial global return). The ASCII-key path
+  remaps `'A'-'Z'`/`'0'-'9'`/TAB/ENTER/SPACE/ESC to exact `KEY_*`
+  constants, but ENTER has no numpad-Enter fallback, and any OTHER
+  ASCII key in range (`-`/`+`/`/`/`=`) unconditionally reports "not
+  pressed" — CONFIRMED ABSENT is source's own dual-check-then-numpad-
+  fallback logic for all of those. The function-key path's numpad-
+  equivalence checks (`LEFT`/`RIGHT`/`UP`/`DOWN`↔`4/6/8/2_PAD`) match
+  source instruction for instruction via Allegro's own `key[]` array —
+  but stop there; 3 more pairs 2011 checks (PGUP/PGDN/HOME/END/INSERT/
+  DEL numpad equivalents) are confirmed absent.
 
 ## Third-party library identification (Task #10)
 

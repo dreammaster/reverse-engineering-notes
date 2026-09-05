@@ -11298,3 +11298,38 @@ recursion with no `callStackLineNumber`/`callStackAddr` array at all.
 `ccGetCurrentInstance()`'s own struct also picks up a plausible new
 tail field, `+0x9A4`, right after the confirmed `line_number@+0x9A0` --
 not yet named, left as an open lead alongside the two comparison globals.
+
+### IsKeyPressed closes: a genuinely simpler predecessor with several confirmed key-handling gaps
+
+A large (~270-line) function, matched against `Engine/AC.CPP:5455-5560+`.
+The overall shape lines up (a poll gate, an ASCII-to-scancode remap
+block, a keycode>=300 special-key remap block, a final `key[]` state
+check with numpad-equivalence fallbacks) but several real gaps surface.
+
+The leading poll gate names a new Allegro library match:
+`keyboard_needs_poll` (a trivial one-line global return, `keyboard.c:
+572-575`) gating `poll_keyboard` (already matched), exactly matching
+source. In the ASCII path, `'A'-'Z'`/`'0'-'9'`/TAB/ENTER/SPACE/ESC all
+remap to their exact Allegro `KEY_*` constants with zero drift — but
+ENTER goes straight to `KEY_ENTER` with no fallback, CONFIRMED ABSENT
+is source's own check-both-Enter-and-numpad-Enter dual logic, and any
+OTHER ASCII character in this range (`-`/`+`/`/`/`=`, all individually
+handled by source with their own dual-check-then-numpad-fallback logic)
+falls straight through to an unconditional `return 0` — a real,
+confirmed gap where this build simply reports those keys as never
+pressed regardless of actual state.
+
+The final `key[]`-array check (`byte_54FF40[keycode]`, decisively
+identified as Allegro's own `key[]` state array via 4 numpad-equivalence
+sub-checks whose own addresses are `byte_54FF40` plus the exact
+`KEY_4_PAD`/`KEY_6_PAD`/`KEY_8_PAD`/`KEY_2_PAD` offsets, zero slack —
+the same compiler-folded-array-index-as-separate-global pattern already
+seen for `ebscene[]`/`messages[]`/`comparetonum`) matches source's
+`KEY_LEFT`/`RIGHT`/`UP`/`DOWN` numpad-equivalence checks instruction for
+instruction, in the same order — but stops there. CONFIRMED ABSENT:
+source's remaining 3 pairs (`9_PAD`/PGUP, `3_PAD`/PGDN, `7_PAD`/HOME,
+`1_PAD`/END, INSERT/`0_PAD`, DEL/`DEL_PAD`) — this build's chain ends
+immediately after the DOWN/`2_PAD` check with an unconditional `return
+0`. Also CONFIRMED ABSENT throughout the whole function: `rec_
+iskeypressed()` as a distinct recording-aware wrapper — this build
+reads Allegro's `key[]` array directly everywhere.

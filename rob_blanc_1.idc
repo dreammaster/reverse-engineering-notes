@@ -69943,6 +69943,7 @@ static Bytes_11(void) {
 	op_plain_offset	(x,	128,	0);
 	make_array	(0X44649D,	0X3);
 	create_insn	(0X4464A0);
+	set_name	(0X4464A0,	"keyboard_needs_poll");
 	make_array	(0X4464A6,	0XA);
 	create_insn	(0X4464B0);
 	create_insn	(x=0X4464C3);
@@ -70185,10 +70186,6 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X446B2B);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X446B35);
-	op_hex		(x,	1);
-	create_insn	(x=0X446B3F);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -70198,6 +70195,10 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446B35);
+	op_hex		(x,	1);
+	create_insn	(x=0X446B3F);
+	op_hex		(x,	1);
 	create_insn	(x=0X446B42);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -76391,10 +76392,6 @@ static Bytes_12(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X44EC6C);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X44EC77);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X44EC80);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76404,6 +76401,10 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44EC77);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X44EC80);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X44EC86);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X44EC90);
@@ -81673,10 +81674,6 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X456EB6);
 	op_hex		(x,	1);
-	create_insn	(x=0X456EC3);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	make_array	(0X456ED2,	0XE);
 }
 
 //------------------------------------------------------------------------
@@ -81686,6 +81683,10 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X456EC3);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	make_array	(0X456ED2,	0XE);
 	create_insn	(0X456EE0);
 	make_array	(0X456F07,	0X9);
 	create_insn	(0X456F10);
@@ -87826,11 +87827,6 @@ static Bytes_14(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X463641);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X463650);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X463654);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -87840,6 +87836,11 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X463650);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X463654);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X463661);
 	op_hex		(x,	1);
 	create_insn	(x=0X46366C);
@@ -93656,13 +93657,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46BE50);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46BE55);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X46BE64);
-	op_hex		(x,	1);
-	make_array	(0X46BE6B,	0X5);
-	create_insn	(x=0X46BE70);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -93672,6 +93666,13 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46BE55);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X46BE64);
+	op_hex		(x,	1);
+	make_array	(0X46BE6B,	0X5);
+	create_insn	(x=0X46BE70);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X46BE74);
 	op_hex		(x,	1);
 	create_insn	(x=0X46BE7A);
@@ -99593,14 +99594,6 @@ static Bytes_16(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X474085);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X474089);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X474091);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4740B8);
-	op_hex		(x,	1);
-	create_insn	(x=0X4740C2);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99610,6 +99603,14 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X474089);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X474091);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4740B8);
+	op_hex		(x,	1);
+	create_insn	(x=0X4740C2);
+	op_hex		(x,	1);
 	create_insn	(x=0X4740C5);
 	op_hex		(x,	1);
 	create_insn	(x=0X4740D1);
@@ -105434,14 +105435,6 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	create_insn	(0X47B59B);
 	make_array	(0X47B5A5,	0XB);
-	create_insn	(x=0X47B5B0);
-	op_hex		(x,	1);
-	create_insn	(x=0X47B5B5);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X47B5BD);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X47B5C1);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -105451,6 +105444,14 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47B5B0);
+	op_hex		(x,	1);
+	create_insn	(x=0X47B5B5);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X47B5BD);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X47B5C1);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X47B5C7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X47B5D3);
@@ -111596,13 +111597,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X48599D);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4859A1);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4859DD);
-	op_hex		(x,	1);
-	create_insn	(x=0X4859E9);
-	op_hex		(x,	1);
-	make_array	(0X4859FD,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -111612,6 +111606,13 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4859A1);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4859DD);
+	op_hex		(x,	1);
+	create_insn	(x=0X4859E9);
+	op_hex		(x,	1);
+	make_array	(0X4859FD,	0X3);
 	create_insn	(0X485A00);
 	create_insn	(x=0X485A01);
 	op_stkvar	(x,	1);
@@ -117899,14 +117900,6 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48EFD6);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48EFE0);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48EFE4);
-	op_hex		(x,	1);
-	create_insn	(x=0X48F002);
-	op_hex		(x,	1);
-	create_insn	(x=0X48F017);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117916,6 +117909,14 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48EFE0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48EFE4);
+	op_hex		(x,	1);
+	create_insn	(x=0X48F002);
+	op_hex		(x,	1);
+	create_insn	(x=0X48F017);
+	op_hex		(x,	1);
 	create_insn	(0X48F01B);
 	create_insn	(x=0X48F026);
 	op_hex		(x,	1);
@@ -124371,10 +124372,6 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X498119,	"jumptable 0049807B case 10",	1);
 	create_insn	(0X498119);
-	create_insn	(x=0X498123);
-	op_hex		(x,	1);
-	set_cmt	(0X498129,	"jumptable 0049807B default case, cases 1,3,5,7,9,11",	1);
-	set_name	(0X498129,	"def_49807B");
 }
 
 //------------------------------------------------------------------------
@@ -124384,6 +124381,10 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X498123);
+	op_hex		(x,	1);
+	set_cmt	(0X498129,	"jumptable 0049807B default case, cases 1,3,5,7,9,11",	1);
+	set_name	(0X498129,	"def_49807B");
 	make_array	(0X498132,	0X2);
 	set_cmt	(0X498134,	"jump table for switch statement",	0);
 	create_dword	(x=0X498134);
@@ -130329,6 +130330,15 @@ static Bytes_21(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4A132D);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_22(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A1334);
 	op_hex		(x,	1);
 	create_insn	(0X4A133D);
@@ -130339,15 +130349,6 @@ static Bytes_21(void) {
 	create_insn	(x=0X4A136B);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_22(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A1376);
 	op_hex		(x,	1);
 	create_insn	(x=0X4A1395);
@@ -136414,14 +136415,6 @@ static Bytes_22(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4AA2B0);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4AA2B4);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4AA2B8);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4AA2BC);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X4AA2D3);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -136431,6 +136424,14 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4AA2B4);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4AA2B8);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4AA2BC);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X4AA2D3);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4AA2DD);
 	op_hex		(x,	1);
 	create_insn	(x=0X4AA2E5);
@@ -141518,12 +141519,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF208);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF20C);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF210);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141533,6 +141528,12 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF20C);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4AF210);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF214);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145728,8 +145729,6 @@ static Bytes_24(void) {
 	set_name	(0X4B4D30,	"aPlayambientsou_0");
 	create_strlit	(0X4B4D5C,	0XC);
 	set_name	(0X4B4D5C,	"aSoundDMp3");
-	create_strlit	(0X4B4D68,	0XC);
-	set_name	(0X4B4D68,	"aSoundDWav");
 }
 
 //------------------------------------------------------------------------
@@ -145739,6 +145738,8 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4B4D68,	0XC);
+	set_name	(0X4B4D68,	"aSoundDWav");
 	create_strlit	(0X4B4D74,	0X1F);
 	set_name	(0X4B4D74,	"texx");
 	create_strlit	(0X4B4D94,	0X3);
@@ -149167,7 +149168,6 @@ static Bytes_25(void) {
 	make_array	(0X4BC09A,	0X2);
 	create_strlit	(0X4BC09C,	0X1D);
 	set_name	(0X4BC09C,	"aSetCdaudioTime");
-	make_array	(0X4BC0B9,	0X3);
 }
 
 //------------------------------------------------------------------------
@@ -149177,6 +149177,7 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	make_array	(0X4BC0B9,	0X3);
 	create_strlit	(0X4BC0BC,	0XE);
 	set_name	(0X4BC0BC,	"aCloseCdaudio");
 	make_array	(0X4BC0CA,	0X2);
@@ -152679,7 +152680,6 @@ static Bytes_26(void) {
 	make_array	(0X4CB7CE,	0X2);
 	create_strlit	(0X4CB7D0,	0X12);
 	set_name	(0X4CB7D0,	"aQuestiondownsm");
-	make_array	(0X4CB7E2,	0X2);
 }
 
 //------------------------------------------------------------------------
@@ -152689,6 +152689,7 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	make_array	(0X4CB7E2,	0X2);
 	create_strlit	(0X4CB7E4,	0XD);
 	set_name	(0X4CB7E4,	"aCedillasmall");
 	make_array	(0X4CB7F1,	0X3);
@@ -156095,7 +156096,7 @@ static Functions_2(void) {
 	add_func    (0X40DAF2,0X40DD7C);
 	set_func_flags(0X40DAF2,0x5410);
 	SetType(0X40DAF2, "int __stdcall IsKeyPressed(int keycode);");
-	set_func_cmt(0X40DAF2,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X40DAF2,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- compared against source's IsKeyPressed(int) at AC.CPP:5455-5560+): a genuinely simpler predecessor that still matches source's overall SHAPE (poll gate, keycode>=300 special-key remap block, ASCII-to-scancode remap block, final key[] state check with numpad-equivalence fallbacks) with several confirmed drifts. Leading poll gate: sub_4464A0 (this round's new match, keyboard_needs_poll -- Allegro library, see its own entry) gates a call to poll_keyboard (already matched), matching source's \"if(keyboard_needs_poll()) poll_keyboard();\" exactly. For keycode<300 (ASCII path): 'A'-'Z' -> keycode-0x40 (matches KEY_A=1: 'A'(0x41)-0x40=1, Engine/libsrc/allegro-4.2.2/include/allegro/keyboard.h:104, zero drift -- CONFIRMED ABSENT: the separate platform->ConvertKeycodeToScanCode() indirection, this build " "does the arithmetic directly). '0'-'9' -> keycode-21 (matches KEY_0=", 1);
 	set_frame_size(0X40DAF2, 0, 4, 0X4);
 	define_local_var(0X40DAF2, 0X40DD7C, "[bp+0X8]", "keycode");
 	add_func    (0X40DD7C,0X40DDB7);
@@ -160037,6 +160038,7 @@ static Functions_8(void) {
 	set_frame_size(0X446260, 0X4, 0, 0);
 	add_func    (0X4464A0,0X4464A6);
 	set_func_flags(0X4464A0,0x5400);
+	set_func_cmt(0X4464A0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/keyboard.c\nconfidence: high\nevidence: int keyboard_needs_poll(void) at keyboard.c:572-575: \"return keyboard_polled;\". Exact, trivial match: \"mov eax,dword_537E54; retn\" -- a bare global return, zero drift. Allegro library function (third-party scope: public API called directly from AGS's own IsKeyPressed, this round's new field evidence -- not chased further into the driver's own internals per the third-party-library scope rule).", 1);
 	set_frame_size(0X4464A0, 0, 0, 0);
 	add_func    (0X4464D0,0X4465D1);
 	set_func_flags(0X4464D0,0x5400);
@@ -161468,15 +161470,15 @@ static Functions_8(void) {
 	set_func_flags(0X467660,0x15400);
 	set_func_cmt(0X467660,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:tga.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:tga.obj", 1);
 	set_frame_size(0X467660, 0X708, 0, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X467CC0,0X468587);
 	set_func_flags(0X467CC0,0x15400);
 	set_func_cmt(0X467CC0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:lbm.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:lbm.obj", 1);
 	set_frame_size(0X467CC0, 0X450, 0, 0);
 	define_local_var(0X467CC0, 0X468587, "[bp-0X438]", "Size");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X468590,0X46872A);
 	set_func_flags(0X468590,0x5400);
 	set_frame_size(0X468590, 0X430, 0, 0);
@@ -163753,6 +163755,10 @@ static Functions_9(void) {
 	add_func    (0X494A80,0X494A9A);
 	set_func_flags(0X494A80,0x5400);
 	set_frame_size(0X494A80, 0, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X494AA0,0X494C79);
 	set_func_flags(0X494AA0,0x5400);
 	set_frame_size(0X494AA0, 0X14, 0, 0);
@@ -163768,10 +163774,6 @@ static Functions_9(void) {
 	add_func    (0X494FE0,0X49515E);
 	set_func_flags(0X494FE0,0x5400);
 	set_frame_size(0X494FE0, 0X10, 0, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X4951F0,0X49545B);
 	set_func_flags(0X4951F0,0x5400);
 	set_frame_size(0X4951F0, 0X164, 0, 0);

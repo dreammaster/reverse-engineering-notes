@@ -4965,9 +4965,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4464A0",
+  "name": "keyboard_needs_poll",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "install_keyboard",

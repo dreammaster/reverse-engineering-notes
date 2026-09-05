@@ -297,7 +297,7 @@
     "source_obj": "AC.obj",
     "is_library": false,
     "confidence": "high",
-    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj"
+    "evidence": "exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- compared against source's IsKeyPressed(int) at AC.CPP:5455-5560+): a genuinely simpler predecessor that still matches source's overall SHAPE (poll gate, keycode>=300 special-key remap block, ASCII-to-scancode remap block, final key[] state check with numpad-equivalence fallbacks) with several confirmed drifts. Leading poll gate: sub_4464A0 (this round's new match, keyboard_needs_poll -- Allegro library, see its own entry) gates a call to poll_keyboard (already matched), matching source's \"if(keyboard_needs_poll()) poll_keyboard();\" exactly. For keycode<300 (ASCII path): 'A'-'Z' -> keycode-0x40 (matches KEY_A=1: 'A'(0x41)-0x40=1, Engine/libsrc/allegro-4.2.2/include/allegro/keyboard.h:104, zero drift -- CONFIRMED ABSENT: the separate platform->ConvertKeycodeToScanCode() indirection, this build does the arithmetic directly). '0'-'9' -> keycode-21 (matches KEY_0=27: '0'(0x30)-21=27, keyboard.h:130, zero drift). keycode==9 -> KEY_TAB(0x40=64, keyboard.h:167, exact). keycode==13 -> keycode=KEY_ENTER(0x43=67, keyboard.h:170) directly -- CONFIRMED ABSENT: source's own \"if(rec_iskeypressed(KEY_ENTER)) return 1; keycode=KEY_ENTER_PAD;\" dual-check-then-numpad-fallback logic (AC.CPP:5535-5539) -- this build only ever checks the main Enter key, never falls back to checking the numeric-pad Enter too. keycode==' '(0x20) -> KEY_SPACE(0x4B=75, keyboard.h:178, exact). keycode==27(ESC) -> KEY_ESC(0x3B=59, keyboard.h:162, exact). ANY OTHER keycode in this range (including '-'/'+'/'/'/'=' , all individually handled by source with their own dual-check-then-numpad-fallback logic, AC.CPP:5545-5567+) falls straight through to an unconditional `return 0` -- a real, confirmed feature/robustness gap: this build simply reports those keys as never pressed, no matter their actual state. For keycode>=300 (function/special-key path): after applying a chain of individual keycode remaps (F-keys, F11/F12, arrows, numpad, insert/delete, shift/ctrl/alt) matching source's own remap chain closely (not exhaustively diffed value-by-value, but the overall shape/count of remap branches lines up), the final check reads `byte_54FF40[keycode]` directly -- decisively identified as Allegro's own `key[]` array (`extern volatile char key[KEY_MAX]`) via the four numpad-equivalence checks right after it: `byte_54FF69`/`_6B`/`_6D`/`_67` are `byte_54FF40+0x29/0x2B/0x2D/0x27` respectively (IDA's usual compiler-folded-array-index-as-separate-global pattern, same as ebscene[]/messages[]/comparetonum), matching KEY_4_PAD=41(0x29)/KEY_6_PAD=43(0x2B)/KEY_8_PAD=45(0x2D)/KEY_2_PAD=39(0x27) (keyboard.h:141/146/148/139) with ZERO slack, gated by keycode==KEY_LEFT(82,0x52)/KEY_RIGHT(83,0x53)/KEY_UP(84,0x54)/KEY_DOWN(85,0x55) (keyboard.h:185-188) in that exact order -- matching source's \"if((keycode==KEY_LEFT)&&(rec_iskeypressed(KEY_4_PAD)!=0)) return 1;\" x4 (AC.CPP:5498-5505) instruction for instruction, including the check order. CONFIRMED ABSENT: 2011's remaining 3 numpad-equivalence pairs (9_PAD/PGUP, 3_PAD/PGDN, 7_PAD/HOME, 1_PAD/END, INSERT/0_PAD, DEL/DEL_PAD, AC.CPP:5507-5520) -- this build's chain ends immediately after the DOWN/2_PAD check with an unconditional `return 0`. Also CONFIRMED ABSENT throughout: `rec_iskeypressed()` as a distinct recording-aware wrapper function -- this build reads Allegro's `key[]` array directly everywhere, no separate wrapper layer."
   },
   {
     "kind": "function",
@@ -6241,5 +6241,15 @@
     "source_line": null,
     "confidence": "medium-high",
     "evidence": "void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4464A0",
+    "new_name": "keyboard_needs_poll",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/keyboard.c",
+    "source_line": 572,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int keyboard_needs_poll(void) at keyboard.c:572-575: \"return keyboard_polled;\". Exact, trivial match: \"mov eax,dword_537E54; retn\" -- a bare global return, zero drift. Allegro library function (third-party scope: public API called directly from AGS's own IsKeyPressed, this round's new field evidence -- not chased further into the driver's own internals per the third-party-library scope rule)."
   }
 ]
