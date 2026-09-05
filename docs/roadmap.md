@@ -24,8 +24,17 @@ the per-executable breakdown this tracks against.
       `menu_saver.bas` (starting stats: all attrs 15 / HP 200 / 0 gold /
       Studded hide / bare hands), `stdrv_dice.bas`, `sdefendr_training.bas`,
       `gmb_casino.bas`, `misc_drivers.bas`.
-- [ ] Still open: `ds:1AE0` (character level) increment site; DUN full
-      spell table; TWNDR shops/guard/mail; CASDR player-attack/loot.
+- [x] **Quest-flag semantics closed** (`recovered/quest_flags.bas`) — the
+      7 gem coins each map to a bit in the shared `S4(11)` story bitfield;
+      DUN's dungeon-exit side quests add 2 more bits + a Strength floor
+      (25/40/50); MUS's `exhibitId -> chainTargetIdx` staircase IS the
+      required coin's index (14 exhibits / 7 coins, table in the file);
+      `testExhibitFlag` is an ALL-BITS-SET test driving a progressive
+      per-coin unlock ladder (`S4(10)`, 8 ranks).
+- [ ] Still open: `ds:1AE0` (character level) increment site + bit
+      `0x2000`'s setter (both believed to be in `caretakerOffer`'s
+      untraced accept branch); `S4(37)` / `S4(18)` rank-gate overrides;
+      DUN full spell table; TWNDR shops/guard/mail; CASDR player-attack/loot.
 
 ## Infra (done, 2026-08-30)
 

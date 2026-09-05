@@ -25,9 +25,12 @@ SUB EnterExhibit                                      ' asm: mus.asm:985 (enterE
 ' --------------------------------------------------------------------------
 ' The player steps up to display case `exhibitId`.
 
-    ' ---- which driver EXE does this exhibit run? ---------------- asm:998-1044
-    '   a staircase of threshold tests on exhibitId picks chainTargetIdx:
-    '   exhibitId > 3 / > 6 / > 8 / > 0x0A / > 0x0B / > 0x0C each shift it.
+    ' ---- which driver EXE / which coin does this exhibit need? --- asm:998-1044
+    '   a staircase of threshold tests on exhibitId picks chainTargetIdx,
+    '   which turns out to be EXACTLY the required coin's S2()/Item$()
+    '   index (17..23) -- see recovered/quest_flags.bas S3 for the full
+    '   exhibitId -> exhibit name -> coin table (0..13 -> 14 exhibits,
+    '   7 coins, verified against the Amethyst/Stones-of-Wisdom save-diff).
     chainTargetIdx = 17
     IF exhibitId > 3  THEN chainTargetIdx = chainTargetIdx + 1
     IF exhibitId > 6  THEN chainTargetIdx = chainTargetIdx + 1
@@ -38,12 +41,14 @@ SUB EnterExhibit                                      ' asm: mus.asm:985 (enterE
 
     exhibitProgress = S3(exhibitId)                   ' ds:2106          ' asm:1045-1051
 
-    ' ---- "(INSERT <coin>" prompt ---------------------------------- asm:1052-1072
-    '   each exhibit requires a specific gem coin (World- / Stone- flavour
-    '   names).  The coin is CONSUMED on use -- confirmed in-game: an
-    '   Amethyst coin (S2 slot) went 1 -> 0 after one Stones-of-Wisdom game;
-    '   Jade / Topaz coins survived (different exhibits).
-    PRINT "(INSERT "; Coin$(chainTargetIdx); ")"
+    ' ---- "(INSERT <coin>)" prompt ---------------------------------- asm:1052-1072
+    '   Coin$(chainTargetIdx) IS Item$(chainTargetIdx) -- the literal gem
+    '   name (Jade/Topaz/Amethyst/Sapphire/Turquoise/Ruby/Diamond coin),
+    '   not a random flavour string.  The coin is CONSUMED on use --
+    '   confirmed in-game: an Amethyst coin (S2 slot 19) went 1 -> 0 after
+    '   one Stones-of-Wisdom game (exhibitId 7 -> chainTargetIdx 19); Jade
+    '   / Topaz coins survived (different exhibits).
+    PRINT "(INSERT "; Item$(chainTargetIdx); ")"
 
     RandomizeStep exhibitId + 1                       ' rtm_FC           ' asm:1075-1077
     ' ... "WOULD YOU LIKE TO GO TO <exhibit>?" ...
@@ -56,12 +61,16 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
-SUB TestExhibitFlag                                   ' asm: mus.asm:1815 (testExhibitFlag)
+SUB TestExhibitFlag                                   ' asm: mus.asm:1857 (testExhibitFlag)
 ' --------------------------------------------------------------------------
-' flagTestResult = museumFlagWord AND flagTestMask.  The checkFlag_* family
-' stage a mask first: 0x03 / 0x2B / 0xD0 / 0x0300 / 0x0800 / 0x1000 / 0x2000
-' -- the quest / story-progress bits that gate which exhibits respond.
-    flagTestResult = MuseumFlagWord AND flagTestMask                     ' asm:1815-1832
+' An ALL-BITS-SET test, not a raw AND: flagTestResult is true only when
+' EVERY bit in flagTestMask is set in questFlagWord (S4(11)).  The
+' checkFlag_* family stage a mask first: 0x03 / 0x2B / 0xD0 / 0x0300 /
+' 0x0800 / 0x1000 / 0x2000 -- the quest / story-progress bits that gate
+' the museum's per-coin-group unlock ladder.  Full bit-by-bit mapping
+' (which action sets which bit, which gate needs which) is in
+' recovered/quest_flags.bas.
+    flagTestResult = ( (questFlagWord AND flagTestMask) = flagTestMask )  ' asm:1857-1873
 END SUB
 
 
@@ -74,7 +83,9 @@ END SUB
 '   * exhibit responses gated on quest-flag bits (testExhibitFlag)
 '
 '  OPEN
-'   * the exhibitId -> required-coin mapping (needs the OUTDAT/museum data)
-'   * Stones of Wisdom INT maths live in STDRV (see the memory notes:
-'     resolveChallenge adjusts ds:1AF0 -- INT<30 -> +2/win else +1, -1/loss)
-'   * the museum caretaker level-up (raises ds:1AE0) -- locate it
+'   * bit 0x2000's setter -- inside caretakerOffer's untraced accept
+'     branch, likely alongside the character-LEVEL increment (ds:1AE0),
+'     still not located (see recovered/quest_flags.bas S4)
+'   * Stones of Wisdom INT maths live in STDRV -- see recovered/stdrv_dice.bas
+'   (the exhibitId -> required-coin mapping and the per-bit story-flag
+'   gating are now SOLVED -- recovered/quest_flags.bas)

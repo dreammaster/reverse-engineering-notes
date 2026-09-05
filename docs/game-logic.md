@@ -404,14 +404,42 @@ Walking onto a hidden trap (`dun.asm:1040`, `moveHazards`):
 
 ---
 
-## 7. Quest flags & items — [`out_flags_items.bas`](../recovered/out_flags_items.bas)
+## 7. Quest flags & items — [`out_flags_items.bas`](../recovered/out_flags_items.bas), [`quest_flags.bas`](../recovered/quest_flags.bas)
 
-**Quest flags** = one 16-bit story bitfield, **`S4(11)`** (`ds:1B96` elem
-`0x16`). The overworld `SetFlag_*` family ORs a fixed mask into it
-(`0x03` / `0x38` / `0xC0` / `0x0300` / `0x0800` / `0x1000`); MUS's
-`testExhibitFlag` masks the same word (`0x03` / `0x2B` / `0xD0` /
-`0x0300` / `0x0800` / `0x1000` / `0x2000`) so exhibits react to overworld
-progress. **Per-bit meaning is still an open cross-module trace.**
+**Quest flags** = one 16-bit story bitfield, **`questFlagWord` = `S4(11)`**
+(`ds:1B96` elem `0x16`), OR-only (never cleared), shared verbatim OUT /
+DUN / MUS (TWNDR and CASDR never touch it). **Per-bit meaning is now
+solved** — full writeup in [`quest_flags.bas`](../recovered/quest_flags.bas).
+Summary:
+
+- The **7 gem coins** (`S2`/`Item$` index 17..23 = Jade/Topaz/Amethyst/
+  Sapphire/Turquoise/Ruby/Diamond coin) each map to a fixed bit-mask
+  (`0x03`/`0x38`/`0xC0`/`0x0300`/*none*/`0x0800`/`0x1000`); OUT re-fires
+  the mask for every coin you currently hold, once per step
+  (`setupLocationDisplay`). "Currently hold" only matters the first time
+  — the bit stays set forever after, even once the coin is spent.
+- **DUN adds two more sources** on dungeon exit (`climbDownOrExit`):
+  bit 4 (dungeon 1, only if holding both the Crown **and** the Sapphire
+  coin) and bit 8 (dungeon 2, unconditional); bit 11 doubles as "hold
+  the Ruby coin" **or** "exit dungeon 3 holding > 3 Guard jewels". The
+  same exit also sets a **Strength floor**: `10*dungeonNumber +
+  (dungeonNumber > 1 ? 20 : 15)` (25/40/50), only when that dungeon's
+  condition just fired.
+- **MUS gates on it two ways**: `enterExhibit`'s `exhibitId` (0..13, 14
+  named display cases) maps via a threshold staircase to `chainTargetIdx`
+  17..23, which **is** the required coin's index directly (Jade covers
+  exhibits 0-3, Topaz 4-6, Amethyst 7-8 *(Stones of Wisdom = 7)*, Sapphire
+  9-10, Turquoise 11, Ruby 12, Diamond 13 — verified against the Amethyst/
+  Stones-of-Wisdom save-diff). Separately, `testExhibitFlag` does an
+  **ALL-BITS-SET** test (`flagWord AND mask = mask`, not "any bit") to gate
+  a *rank ladder* (`S4(10)`, 8 arms) that progressively unlocks each coin
+  group — several ranks require the *previous* rank's bits too (Topaz's
+  gate is `0x2B` = Jade's bits plus part of Topaz's own), and two ranks
+  (Turquoise, Diamond) gate on a plain counter/item check instead of the
+  bitfield at all.
+- Bit `0x2000` = "already took the caretaker's final offer"; its setter
+  (inside `caretakerOffer`) and the character-level increment it likely
+  sits beside are the one still-open piece.
 
 **Found items** (`AwardFoundItem`, `out.asm:8315`): `S2(droppedItemId)
 += 1`, "YOU FIND A `<item>`". `droppedItemId` = `ds:1AEE`.

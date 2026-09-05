@@ -194,8 +194,13 @@ anchor). The combat pool it prints is quoted at the top of
 - [x] `out_flags_items.bas` — `ApplyGameFlag` + `SetFlag_*` (the story
       bitfield `S4(11)`, shared with MUS), `AwardFoundItem`
       (`S2(droppedItemId) += 1`)
-- [ ] `enterOverworld` / `loadOverworldData`, mail routes, per-bit meaning
-      of the quest flags (cross-module trace)
+- [x] `quest_flags.bas` — **the full cross-module quest-flag semantics**
+      (OUT sets, DUN sets + tests, MUS tests): the 7 gem coins each map to
+      a fixed bit; DUN's dungeon-exit side quests add 2 more bits + a
+      Strength floor (25/40/50); MUS's `exhibitId -> chainTargetIdx`
+      staircase IS the required coin's index; `testExhibitFlag` is an
+      ALL-BITS-SET test driving a progressive per-coin unlock ladder.
+- [ ] `enterOverworld` / `loadOverworldData`, mail routes
 
 ## DUN.EXE
 
@@ -244,10 +249,12 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## MUS.EXE
 
-- [x] `mus_exhibits.bas` — `EnterExhibit`, `TestExhibitFlag`.  Each exhibit
-      chains to a driver EXE and consumes its required gem coin; responses
-      gated on quest-flag bits.  Stones-of-Wisdom INT maths are in STDRV.
-- [ ] exhibitId -> coin mapping, the caretaker level-up
+- [x] `mus_exhibits.bas` — `EnterExhibit`, `TestExhibitFlag` (an ALL-BITS-SET
+      test, corrected).  Each exhibit chains to a driver EXE and consumes
+      its required gem coin; responses gated on quest-flag bits — full
+      table in `quest_flags.bas`.  Stones-of-Wisdom INT maths are in STDRV.
+- [ ] the caretaker level-up write (`ds:1AE0`) and bit `0x2000`'s setter —
+      both believed to be in the same untraced `caretakerOffer` region
 
 ## leglib — the shared runtime / engine primitives
 

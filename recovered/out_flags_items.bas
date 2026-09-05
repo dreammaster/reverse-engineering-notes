@@ -32,8 +32,8 @@ END SUB
 '   MUS tests the same word (testExhibitFlag) with masks
 '   &h03 / &h2B / &hD0 / &h0300 / &h0800 / &h1000 / &h2000 -- so the
 '   overworld sets story bits and the museum exhibits react to them.
-'   The per-bit meaning (which event sets which, which exhibit needs which)
-'   is a cross-module trace: TODO.
+'   FULL per-bit mapping (which coin sets which bit, which exhibit/rank
+'   needs which, DUN's two extra bits) -- see recovered/quest_flags.bas.
 
 
 ' --------------------------------------------------------------------------
@@ -57,6 +57,5 @@ END SUB
 '   * AwardFoundItem: S2(droppedItemId) += 1  ("YOU FIND A <item>")
 '
 '  OPEN
-'   * per-bit meaning of the story flags (cross-module: OUT/STDRV set,
-'     MUS/DUN/CASDR test)
 '   * which creatures / events set droppedItemId, and to what
+'   (per-bit story-flag meaning is now SOLVED -- recovered/quest_flags.bas)
