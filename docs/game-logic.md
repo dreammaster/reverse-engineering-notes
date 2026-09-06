@@ -750,16 +750,22 @@ Broke mid-session → *"Rotten luck. Here's five"* (`+5` pity stake) if
 you started with > 9 gold, else *"Come back when you have some gold."*
 
 **Flip-Flop** — ball drops into bucket 1–8; `win = multTable(bucket)·bet`
-with `multTable ∈ {1 (buckets 1–2), 2 (3–4), 5 (5–6), 0 (7–8)}`, plus a
-colour bonus `INT(win · ds:2AA6)` if the ball's colour matched your call.
+with `multTable ∈ {1 (buckets 1–2), 2 (3–4), 5 (5–6), 0 (7–8)}`. (A
+"COLOR BONUS" is *advertised* but dead — its multiplier `ds:2AA6` doesn't
+hold a real value in the packed EXE, so `INT(win·ds:2AA6) = 0`.)
+
 **The parlour is rigged** — `computePayout` (`gmb2.asm:4626`) runs before
-the ball is scored:
+the ball is scored (`FF1F` confirmed reversed):
 ```
 ratio = S4(14) / S4(15)          ' realised payback = totalWon / totalWagered
-IF ratio > 0.94        THEN reset ledger to 99/99, bucket += 1  ' toward a 7–8 LOSS
-ELSEIF ratio < ds:2B40 THEN reset ledger to 99/99, bucket −= 1  ' toward a 1–2 small win
+IF ratio > 0.94  (ds:2B3C)  THEN  reset ledger to 99/99 ; bucket += 1   ' toward a 7–8 LOSS
+ELSEIF ratio < ds:2B40      THEN  reset ledger to 99/99 ; bucket −= 1   ' DEAD -- see below
 ```
-so your realised payback is dragged toward ~94 %.
+`ds:2B40` also reads as ≈ 0 in the packed image, and `ratio` (won/wagered)
+is always ≥ 0, so the `ratio < ds:2B40` branch **never fires** — the "give
+the player who's behind a break" nudge is dead code. The rig is
+**one-directional**: whenever your realised payback exceeds ~94 %, it
+shoves your bucket one step toward a loss; it never helps you.
 
 ---
 

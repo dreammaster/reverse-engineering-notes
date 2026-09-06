@@ -82,10 +82,15 @@ END SUB
 '         else   -> no win          (buckets 7-8 / miss)
 '      baseWin = mult * bet
 '      IF ballColour = calledColour THEN                       ' ds:2092 vs [bp-14]
-'          colourBonus = INT( baseWin * ds:2AA6 )              ' a fractional kicker
+'          colourBonus = INT( baseWin * ds:2AA6 )              ' ds:2AA6 ~= 0 (see below)
 '      ELSE
 '          colourBonus = 0
 '      END IF
+'      ' *** ds:2AA6 does NOT hold a clean single in the packed EXE (reads
+'      '     ~2.8e-13) -- so INT(baseWin * ds:2AA6) = 0 always.  The
+'      '     advertised "COLOR BONUS" (playRound only prints it when the
+'      '     value > 0) is effectively DEAD -- a zeroed / never-initialised
+'      '     constant.  ds:2AA2 = 0.5 sits just before it in the pool. ***
 '      totalWin  = baseWin + colourBonus
 '      partyGold = partyGold + totalWin                        ' gmb2.asm:loc_1202A
 '      sessionWon (ds:209A) += totalWin
@@ -95,18 +100,24 @@ END SUB
 '  Then the break-the-bank check (sessionWon vs 250*level + 750).
 '
 '  *** THE PARLOUR IS RIGGED ***  --  computePayout (gmb2.asm:4626), run
-'  BEFORE the ball is scored:
+'  BEFORE the ball is scored.  FF1F is CONFIRMED reversed (Jcc tests
+'  TOS <cmp> TOS1), so with the stack [const, ratio]:
 '      ratio = S4(14) / S4(15)              ' realised payback = won / wagered
-'      IF ratio > 0.94 THEN                 ' ds:2B3C -- you are getting too much back
+'      IF ratio > 0.94  (ds:2B3C)  THEN     ' you're getting too much back  [ja]
 '          S4(14) = 99 : S4(15) = 99        ' wipe the ledger (ratio -> 1.0)
-'          IF landingBucket < 8 THEN landingBucket = landingBucket + 1  ' nudge toward 7-8 (a LOSS)
-'      ELSEIF ratio < ds:2B40 THEN          ' lower band (a bit under 1; not read cleanly)
+'          IF landingBucket < 8 THEN landingBucket += 1   ' nudge toward the 7-8 LOSS zone
+'      ELSEIF ratio < ds:2B40  THEN         ' [jb]
 '          S4(14) = 99 : S4(15) = 99
-'          IF landingBucket > 1 THEN landingBucket = landingBucket - 1  ' nudge toward 1-2 (a small win, stay hooked)
+'          IF landingBucket > 1 THEN landingBucket -= 1    ' nudge toward the 1-2 small-win zone
 '      END IF
-'  i.e. the landing bucket is shoved +-1 to drag your realised payback
-'  toward ~94 %.  The NPC even hints at it ("...pretend you chose bucket 6.
-'  BETTER LUCK NEXT TIME.").  ds:2B38 = 1.4 sits next to 2B3C in the pool.
+'  *** ds:2B40 also does NOT hold a clean single (reads ~7e-13 ~= 0), and
+'  `ratio` (won/wagered) is always >= 0, so `ratio < ds:2B40` is NEVER
+'  true -- the "player is behind, give them a break" branch is DEAD.
+'  The rig is ONE-DIRECTIONAL: it only ever shoves your bucket toward a
+'  loss, whenever your realised payback exceeds ~94 %.  ds:2B38 = 1.4 and
+'  ds:2B3C = 0.94 are the only two clean band constants in the pool. ***
+'  The NPC hints at it ("...pretend you chose bucket 6.  BETTER LUCK NEXT
+'  TIME.").
 '
 '  playPracticeRound -- a free no-stakes mode ("WANT PRACTICE?");
 '  computePayout is skipped and gold never moves.
@@ -121,14 +132,15 @@ END SUB
 '   * blackjack net settlement: -bet loss/bust, +bet win/5-card,
 '     +2*bet natural, 0 tie ; bet never escrowed
 '   * blackjack broke: +5 "here's five" pity stake if startGold > 9
-'   * flip-flop payout = multTable{1,2,5}(bucket) * bet + colour bonus
-'   * flip-flop computePayout nudges the bucket +-1 to hold realised
-'     payback (S4(14)/S4(15)) inside [ds:2B40, 0.94]; ledger resets to 99/99
+'   * flip-flop payout = multTable{1,2,5}(bucket) * bet  (the "COLOR
+'     BONUS" is dead -- ds:2AA6 ~= 0 in the packed EXE)
+'   * flip-flop computePayout: ONE-DIRECTIONAL rig -- when realised
+'     payback S4(14)/S4(15) > 0.94 (ds:2B3C) it shoves the bucket +1
+'     toward a loss ; the "player behind -> nudge -1" branch is dead
+'     (ds:2B40 ~= 0, ratio always >= 0).  ledger resets to 99/99.
 '   * flip-flop ledger accumulation is scaled by ds:2ABC = 99.0
 '
 '  OPEN
-'   * flip-flop lower band ds:2B40 (didn't decode as a clean single) and
-'     the colour-bonus constant ds:2AA6
 '   * exactly when the flip-flop bet leaves your gold (win adds totalWin;
 '     the losing-drop deduction path / sub_12A25 not fully split) -- the
 '     NET effects above are what the strings + the gold writes imply

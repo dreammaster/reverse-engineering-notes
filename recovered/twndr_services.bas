@@ -235,13 +235,24 @@ SUB RobCommand                                       ' asm: twndr.asm:15b77 (rob
 '           PRINT "THE MERCHANT WON'T LET YOU ROB."     ' ds:2204 = 1, exit
 '       END IF
 '
-' *** THE "CAUGHT" MECHANISM IS A TURN TIMER, NOT A ROLL. ***  Once a
-' robbery is "in progress" (heat = ds:20B0 becomes > 0 -- set in a `db`
-' blob on the first successful theft), doWalk ticks it every town-turn,
-' and at heat > &h13 (20 turns):
+' *** THE "CAUGHT" MECHANISM IS A TURN TIMER, NOT A ROLL. ***
+'
+' The rob-outcome resolution (twndr.asm:0x10AAF, after refreshView) arms
+' the heat counter from the outcome code ds:1F04, but ONLY if you are not
+' already in a fight/caught state (contextMode == 0):
+'       IF ds:1F04 = 0 AND contextMode = 0 THEN heat(ds:20B0) = &h12 (18)
+'       IF ds:1F04 = 1 AND contextMode = 0 THEN heat(ds:20B0) = 1
+' So a "brazen" rob (ds:1F04 = 0) starts the heat at 18 -> DISCOVERED in
+' ~2 town-turns ; a "quiet" rob (ds:1F04 = 1) starts it at 1 -> ~19 turns
+' to get clear.  (ds:1F04 is the rob-outcome code from the robCommand /
+' resolveMoveTarget path.)
+'
+' Then, every town-turn, doWalk (twndr.asm:0x10254): IF heat > 0 THEN
+'   heat++ ; IF heat > &h13 (i.e. reaches 20) THEN
 '       sub_1046A ; PRINT "...DISCOVERED!!" ; contextMode = 1 ; heat = 0
 '       PlayAlarm &hBB8   ' -> the guards attack (contextMode = 1 gates it)
 ' While heat > 0 the SPEAK command also answers "NOBODY ANSWERS".
+' (heat is also zeroed on town (re-)entry and in a couple of guard paths.)
 
 
 ' --------------------------------------------------------------------------
@@ -370,9 +381,10 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     StealGold (grab S4(0), *0.8) ; loose gold at a merchant ->
 '     INT(RND*100 + 150) = 150..250 gold ; merchant refuses unless
 '     contextMode > 0 or heat(ds:20B0) > 0
-'   * CAUGHT = a TURN TIMER: heat (ds:20B0) ticks each town-turn once a
-'     robbery is in progress ; at 20 turns -> "DISCOVERED!!" + alarm +
-'     contextMode = 1 (guards attack).  Not a die roll.
+'   * CAUGHT = a TURN TIMER, not a roll.  The rob outcome ds:1F04 arms
+'     heat (ds:20B0): outcome 0 -> heat 18 (DISCOVERED in ~2 turns) ;
+'     outcome 1 -> heat 1 (~19 turns).  doWalk then heat++ each town-turn ;
+'     at 20 -> "DISCOVERED!!" + alarm + contextMode = 1 (guards attack).
 '   * GUARD HP == demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 * (RND + 1) )
 '   * OfferGuardBribe: pay `demand` gold -> S2(ds:1AEE) += 1 ("YOU GOT A[N]
 '     <item>!") ; a corrupt guard SELLING you an item, not a "pay to leave"
@@ -382,8 +394,8 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
 '
 '  OPEN
-'   * exactly where heat (ds:20B0) is first set to 1 (a `db` blob -- but
-'     the timer mechanism above is fully traced)
+'   * what puts 0 vs 1 in the rob-outcome code ds:1F04 (-> heat 18 vs 1);
+'     that split is in the robCommand / resolveMoveTarget path
 '   * what sets ds:1AEE to a non-default item in the guard-encounter path
 '     (the `== 19` branch implies it varies; only ever seen = 1)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows

@@ -173,9 +173,12 @@ the per-executable breakdown this tracks against.
       command is **deterministic** — no die roll. Mint (tile `0xD2`) →
       `stealGold`; loose gold at a merchant → `INT(RND·100 + 150)` =
       150–250 g; merchant refuses unless `contextMode > 0` or heat
-      (`ds:20B0`) `> 0`. **Caught = a turn timer**: `doWalk` ticks
-      `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
-      → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
+      (`ds:20B0`) `> 0`. **Caught = a turn timer**: the rob-outcome code
+      `ds:1F04` arms `ds:20B0` (`twndr.asm:0x10AAF`, gated on
+      `contextMode == 0`) — outcome `0` → heat `18` (DISCOVERED in ~2
+      turns), outcome `1` → heat `1` (~19 turns); `doWalk` then heat`++`
+      each town-turn, and at 20 → "DISCOVERED!!" + alarm +
+      `contextMode = 1` (guards attack).
 - [x] **CASDR `enemyAttack`** — traced to the limit of static analysis.
       The `db`-blob fragment (no `basProcEnter`, entered mid-expression)
       reaches its `FF28` (`TOS − TOS1`) with only one operand on the FP
@@ -199,9 +202,16 @@ the per-executable breakdown this tracks against.
       (`selectedSpell`) or 0. The byte-level computed-jump dispatch is
       LEGLIB list plumbing — a port reimplements the picker; the contract
       is all `castSpell` needs.
-- [ ] Cosmetic / not blocking a port: the exact first-set of `ds:20B0`
-      (a `db` blob; timer path traced); a live `[ds:0FAC]` dump for
-      `enemyAttack`; gmb2 `ds:2B40` / `ds:2AA6`; the OUTM1 trigger tile.
+- [x] **gmb2 `ds:2B40` / `ds:2AA6`** — neither holds a real single in the
+      packed EXE (both read ≈ 0). So the Flip-Flop "COLOR BONUS"
+      (`INT(win·ds:2AA6)`) is always 0 = dead, and `computePayout`'s
+      `ratio < ds:2B40` branch never fires (`ratio ≥ 0`) = dead. The rig
+      is one-directional: only the `ratio > 0.94` (`ds:2B3C`) "nudge
+      toward a loss" branch is live.
+- [ ] Cosmetic / not blocking a port: what sets the rob-outcome code
+      `ds:1F04` to 0 vs 1 (heat 18 vs 1) inside the un-coerced
+      `robCommand` / `resolveMoveTarget` path; a live `[ds:0FAC]` dump for
+      `enemyAttack`; the OUTM1 trigger tile (same `resolveMoveTarget`).
 
 ## Infra (done, 2026-08-30)
 
@@ -616,10 +626,13 @@ reimplementation.
       (`imul ds:1AE0`, gmb1.asm:1132 / gmb2.asm:148). The gold dword
       (`ds:1AD2:1AD4`) is LEGLIB-resident and rides the chain back to
       `TWNDR` → the normal save path (no direct `CHAR.DAT` write here).
-- [ ] `gmb2` flip-flop lower band `ds:2B40` + colour const `ds:2AA6`
-      didn't decode as clean singles; the bucket-geometry DATA tables
-      (`ds:2100/210C/211C`) and the ball physics remain open (not
-      RPG-relevant).
+- [x] `gmb2` flip-flop `ds:2B40` (lower band) + `ds:2AA6` (colour const)
+      hold no real single in the packed EXE (both ≈ 0) — so the "COLOR
+      BONUS" and `computePayout`'s "player behind" nudge are both dead
+      code; the rig only ever pushes you toward a loss (`ratio > 0.94`,
+      `ds:2B3C`).
+- [ ] Not RPG-relevant: the bucket-geometry DATA tables
+      (`ds:2100/210C/211C`) and the ball physics.
 
 ## CONFIGUR.EXE — open questions
 
@@ -1087,8 +1100,9 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
-- [ ] The OUTM1 trigger tile (in the un-coerced `resolveMoveTarget`);
-      flip-flop `ds:2B40` / `ds:2AA6`.
+- [ ] The OUTM1 trigger tile (in OUT's un-coerced `resolveMoveTarget`,
+      `out.asm:10263`); what sets the TWNDR rob-outcome code `ds:1F04`
+      to 0 vs 1 (heat 18 vs 1) in the `robCommand` dispatch.
 
 ## ScummVM engine (future)
 

@@ -325,10 +325,10 @@ anchor). The combat pool it prints is quoted at the top of
       Mint (tile `0xD2`) → `stealGold`; loose gold at a merchant →
       `INT(RND·100 + 150)` = 150–250 g; merchant refuses unless
       `contextMode > 0` or heat `ds:20B0 > 0`.  **Caught = a turn timer**:
-      once a robbery is in progress `doWalk` ticks `ds:20B0` each
-      town-turn; at 20 turns → "DISCOVERED!!" + alarm + `contextMode = 1`
-      (guards attack).  (The exact first set of `ds:20B0` is in a `db`
-      blob; the timer path is fully traced.)
+      the rob outcome `ds:1F04` arms `ds:20B0` (outcome 0 → 18 → caught in
+      ~2 turns; outcome 1 → 1 → ~19 turns), then `doWalk` ticks it each
+      town-turn; at 20 → "DISCOVERED!!" + alarm + `contextMode = 1`
+      (guards attack).
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*
