@@ -69,15 +69,24 @@ Five attributes, all start at **15**, stored in the CHAR.DAT scalar block
 | Intelligence | `1AF0` | **STDRV** "Stones of Wisdom" (see below) |
 | Strength | `1B08` | pirates cave +10, Armaz +15, third challenge +10; `psychoStrengthSpell` +50 % melee buff (`ds:1AE8`, DUN only) |
 
-**STDRV — Stones of Wisdom** ([`stdrv_dice.bas`](../recovered/stdrv_dice.bas),
-constants read from `STDRV.EXE`): a Perudo match; INT changes **once per
+**STDRV — Stones of Wisdom** ([`stdrv_dice.bas`](../recovered/stdrv_dice.bas)):
+**Perudo / Liar's Dice with 1s wild** — 5 d6/hand (`INT(RND(1)·6+1)`),
+bid "N dice showing F across both hands" (must beat the last: more count,
+or equal count + higher face), CHALLENGE reveals all dice; tally =
+`count(die == F or die == 1)`; `tally ≥ bidCount` → bidder wins. Round
+loser drops a die; 0 dice → loses the match. INT changes **once per
 match**, keyed on current INT:
 - **win** → `+3` (INT < 15) / `+2` (< 30) / `+1` (< 60) / `0` (≥ 60, cap)
 - **loss** → `−3` (INT > 49) / `−2` (> 39) / `−1` (> 9) / `0` (≤ 9, floor)
 
 **SDEFENDR — training school** ([`sdefendr_training.bas`](../recovered/sdefendr_training.bas)):
-`attribute += (thisSessionScore − yourPreviousBest)` for the chosen
-discipline — a worse-than-best run subtracts the difference.
+a **town** building (50 gold/session), **two modes**: ARMOR → **Endurance**,
+WEAPONS → **Dexterity**. `sessionRating = staircase(3·levelReached +
+hitScore − 4)` (staircase +1 per threshold 0/3/6). Then vs your stored
+best `S4(20 + mode)`: `rating == best` → no change; `rating < best` →
+`stat −= (best − rating)`; `rating > best` → `stat += (rating − best)`;
+either way the stored best is overwritten with `rating`. So the stat
+tracks your best-ever arena run for that mode, ±the margin.
 
 **Character level** `ds:1AE0` (1..10) — raised **only by the museum
 caretaker**, never in combat. There is **no experience stat** (the

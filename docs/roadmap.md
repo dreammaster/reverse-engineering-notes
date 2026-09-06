@@ -602,11 +602,22 @@ reimplementation.
       fireballs at ~6 scale steps, explosion frames, cyan directional
       shot arrows, a horned enemy head. Still open: the per-sprite tile
       grouping / index table (needs the arena blit routine in `seg001`).
-- [ ] Confirm the stat-change math: the "40, 31, 22, 19, 16, 14, 12"
-      table (per-level hit thresholds?) vs. the " INCREASE: + / DECREASE:
-      -" applied to `ARMOR,WEAPON,ENDUR`.
-- [ ] Which town building launches it, and how the trained stat writes
-      back to `CHAR.DAT`.
+- [x] **SDEFENDR stat math SOLVED (2026-09-07)** — 2 modes only:
+      **ARMOR TRAINING → Endurance (`ds:1ACC`)**, **WEAPONS TRAINING →
+      Dexterity (`ds:1AC0`)**. `sessionRating = staircase(3·levelReached
+      (`ds:1F18`) + hitScore (`ds:1F1A`) − 4)` (staircase: +1 per
+      threshold at 0/3/6). Then vs the stored best `S4(20 + mode)`
+      (**new: `S4(20)` = armour rating, `S4(21)` = weapon rating**):
+      equal → "no real gains"; `rating < best` → "wasted our time",
+      `stat -= (best − rating)`, best overwritten; `rating > best` →
+      "gone well", `stat += (rating − best)`. The `{40,31,22,19,16,14,12}`
+      DATA = the 7 per-level fireball counts (arena difficulty ramp,
+      cosmetic). Written up in [`sdefendr_training.bas`](../recovered/sdefendr_training.bas).
+- [x] **Launched from a TOWN** — the training-school building
+      (`townServiceDispatch` in TWNDR, "SESSION COST: 50 GOLD."). TWNDR
+      deducts 50 g, sets `ds:1F20` = mode, chains `SDEFENDR.EXE`;
+      SDEFENDR applies `ds:1ACC`/`ds:1AC0` + `S4(20/21)` and chains back
+      to TWNDR → **the normal save path** (no direct `CHAR.DAT` write).
 
 ## GMB1.EXE / GMB2.EXE — open questions
 
