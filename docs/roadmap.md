@@ -114,10 +114,17 @@ the per-executable breakdown this tracks against.
       player's cell (map byte = `bit7 | class<<4 | wall/floor`).
       Confirmed the Befuddle gate: `confuseTimer > 0` skips the whole
       monster phase, `< 0` skips the player's turn.
+- [x] **DUN climb / dungeon exit** (`climbUp` → `climbDownOrExit`,
+      `dun_traps.bas` v2). `CLIMB` only on a staircase (`0x0A` down /
+      `0x0D` up); `ds:1AE2 += ±0x100`, stair tiles toggle, level reloads.
+      Exit (climb up off level 0): quest bit per dungeon (D1 `0x10` if
+      `S2(16)&S2(20)`, D2 `0x100` always, D3 `0x800` if `S2(14)>3`), and
+      if a bit was awarded raises Strength to a floor of 25/40/50
+      (`10·dn + 15/20/20`); chains D1→OUT, D2/D3→MUS.
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
       CASDR `enemyAttack` formula / per-turn `ds:20BC` cost;
-      DUN climb up/down; the FF1F / FF49 operand-order polarity
+      the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
 
 ## Infra (done, 2026-08-30)

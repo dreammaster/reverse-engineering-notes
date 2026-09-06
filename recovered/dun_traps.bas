@@ -1,9 +1,11 @@
 ' ==========================================================================
-'  DUN.EXE  --  traps + hazards                                       [v1]
+'  DUN.EXE  --  traps + hazards + stairs                              [v2]
 '  reconstructed from dun.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: MoveHazards (trap triggered by walking onto it)
 '        DoLookSearch (the Look / Search command -- reveals hidden traps)
+'        Climb (the "CLIMB" command -- climbUp -> climbDownOrExit) +
+'        DungeonExit (climbing up off level 0)
 '  ProcessTileFeature (dun.asm:5065) = level-entry setup + feature dispatch,
 '  partly reconstructed.
 ' ==========================================================================
@@ -77,13 +79,80 @@ SUB DoLookSearch                                      ' asm: dun.asm:1916 (doLoo
 END SUB
 
 
+' --------------------------------------------------------------------------
+SUB Climb                                             ' asm: dun.asm:1369 climbUp -> :1422 climbDownOrExit
+' --------------------------------------------------------------------------
+' The "CLIMB" command.  featureUnderfoot = ds:20C2 ; dungeonPos = ds:1AE2
+' (packed  level<<8 | cell) ; dungeonNumber = ds:1ACA (1..3).
+'
+'   IF featureUnderfoot <> &h0A AND featureUnderfoot <> &h0D THEN
+'       PRINT "NOTHING TO CLIMB" : EXIT SUB
+'   END IF
+'
+'   ' -- direction from which staircase you are on --
+'   IF featureUnderfoot = &h0A THEN               ' stairs DOWN
+'       PRINT "DOWN" : step = +&h100               ' one level deeper
+'   ELSE                                          ' &h0D = stairs UP
+'       PRINT "UP"   : step = -&h100               ' one level shallower
+'   END IF
+'
+'   dungeonPos = dungeonPos + step                ' == the FLOOR HOLE trap's path too
+'   IF dungeonPos < 0 THEN DungeonExit : EXIT SUB ' climbed up off level 0
+'
+'   ' -- ordinary level change --
+'   PRINT "YOU ARE NOW AT LEVEL "; (dungeonPos \ &h100 + 1)
+'   LoadDungeonMonsters                           ' reload the sprite band for the new level
+'   featureUnderfoot = &h0A + &h0D - featureUnderfoot   ' toggle &h0A <-> &h0D
+'                                                 ' (you arrive on the reciprocal staircase)
+'   LoadDungeonData                               ' sub_12E7D -- the new level's map
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB DungeonExit                                       ' asm: dun.asm:1527 (climbDownOrExit loc_108F7)
+' --------------------------------------------------------------------------
+' Reached only by climbing UP off dungeon level 0.
+'
+'   PRINT "YOU CLIMB OUT OF THE DUNGEON."
+'
+'   ' --- award this dungeon's quest-flag bit (ON dungeonNumber GOSUB) ---
+'   flagBits = 0
+'   SELECT CASE dungeonNumber
+'   CASE 1 : IF S2(16) > 0 AND S2(20) > 0 THEN flagBits = &h0010   ' bit 4
+'   CASE 2 :                                    flagBits = &h0100   ' bit 8 (unconditional)
+'   CASE 3 : IF S2(14) > 3               THEN flagBits = &h0800   ' bit 11 (all 4 guard jewels)
+'   END SELECT
+'   questFlagWord(S4(11)) = questFlagWord OR flagBits              ' byte 0x16 ; also -> ds:20D2
+'
+'   ' --- the STRENGTH FLOOR (only when this dungeon awarded a bit) ---
+'   IF flagBits <> 0 THEN
+'       strFloor = 10*dungeonNumber + IIF(dungeonNumber > 1, 20, 15)   ' 25 / 40 / 50
+'       IF strFloor > Strength(ds:1B08) THEN
+'           PRINT "STRENGTH:  +"; (strFloor - Strength)
+'           PlayFanfare 2000                                          ' rt_FE54 ; Delay &h1B
+'           Strength = strFloor
+'       END IF
+'   END IF
+'
+'   ' --- chain out (ON dungeonNumber GOSUB) ---
+'   '   dungeon 1 -> OUT.EXE  ;  dungeons 2 & 3 -> MUS.EXE
+END SUB
+
+
 ' ==========================================================================
 '  SOLID
 '   * trap tile codes 1..7 hidden, +8 = revealed/sprung; Search springs
 '   * FLOOR HOLE (2): "YOU FALL THROUGH A HIDDEN HOLE" -> fall damage +
-'     drop one dungeon level
+'     drop one dungeon level  (shares climbDownOrExit's level-change path)
 '   * every other hidden trap -> "YOU'RE AMBUSHED BY A <monster>"
 '   * fall damage scales as dungeonLevel ^ 1.6  (deep = deadly)
+'   * CLIMB: only on a staircase tile (&h0A down / &h0D up) ; dungeonPos
+'     (ds:1AE2) += &h100 ; the two stair tiles toggle so you land on the
+'     reciprocal staircase ; LoadDungeonMonsters + LoadDungeonData per level
+'   * DUNGEON EXIT (climb up off level 0): awards a quest-flag bit
+'     (D1 bit 4 if S2(16)&S2(20) held, D2 bit 8 always, D3 bit 11 if
+'     S2(14) > 3) ; if a bit was awarded, raises Strength to a FLOOR of
+'     25 / 40 / 50 (= 10*dn + 15/20/20) ; chains D1->OUT, D2/D3->MUS
 '
 '  OPEN
 '   * exact fall-damage tail (ds:2274 / ds:230A / the 20C2==10 mask)

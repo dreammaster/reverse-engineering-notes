@@ -238,9 +238,16 @@ anchor). The combat pool it prints is quoted at the top of
       `checkMonsterAdjacent` → attack direction 0/1–4 → `ds:2188`.
       Confirmed the Befuddle gate: `confuseTimer (ds:1AE6) > 0` skips the
       whole monster phase, `< 0` skips the player's turn.
-- [x] `dun_traps.bas` — `MoveHazards`, `FallThroughDamage`, `DoLookSearch`.
+- [x] `dun_traps.bas` (v2) — `MoveHazards`, `FallThroughDamage`,
+      `DoLookSearch`, **`Climb` / `DungeonExit`**.
       Trap tiles 1..7 hidden / +8 revealed; FLOOR HOLE drops a level; other
       traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.
+      **Climb** works only on a staircase (`0x0A` down / `0x0D` up);
+      `ds:1AE2 += ±0x100`, stair tiles toggle, level map + monster band
+      reload.  **Dungeon exit** (climb up off level 0) awards a quest bit
+      (D1 `0x10` if `S2(16)&S2(20)`, D2 `0x100` always, D3 `0x800` if
+      `S2(14) > 3`) and — if a bit was awarded — raises Strength to a
+      floor of **25 / 40 / 50**.  Chains D1→OUT, D2/D3→MUS.
 - [x] `dun_chest.bas` — `OpenChest`, `RollChestContents`, `FindJewel`.
       Chest gold = `INT(chestBase*RND(1) + 60)`,
       `chestBase = (10*dungeonNumber + dungeonLevel)*20 + 20`; a per-level
@@ -259,7 +266,6 @@ anchor). The combat pool it prints is quoted at the top of
       unimplemented here. Constants read from `DUN.EXE`; tables coerced +
       unfolded via `ida_scripts/fix_dun_spells.py`. Open: `selectAbove`
       mode-4 row→slot math (inside LEGLIB).
-- [ ] DUN climb up/down (`climbUp` / `climbDownOrExit` mechanics)
 
 ## TWNDR.EXE
 

@@ -684,6 +684,27 @@ Walking onto a hidden trap (`dun.asm:1040`, `moveHazards`):
 - **every other hidden trap** — "YOU'RE AMBUSHED BY A `<monster>`" → spawns
   a monster ambush.
 
+**Stairs & the dungeon exit** — `climbUp` → `climbDownOrExit`
+(`dun.asm:1369` / `1422`). `CLIMB` works only on a staircase tile —
+`0x0A` (down) or `0x0D` (up); anything else → *"NOTHING TO CLIMB"*.
+It adds `±0x100` to the packed dungeon position `ds:1AE2`
+(`level<<8 | cell`) — the same code path the FLOOR HOLE trap uses to drop
+you — reloads the level's map + monster band, and toggles the two stair
+tiles (`0x0A ↔ 0x0D`) so you land on the reciprocal staircase.
+
+Climbing **up off level 0** exits: *"YOU CLIMB OUT OF THE DUNGEON."* Then:
+
+| dungeon | quest bit | condition | chains to |
+|---|---|---|---|
+| 1 | `0x0010` (4) | hold `S2(16)` **and** `S2(20)` | `OUT.EXE` |
+| 2 | `0x0100` (8) | *(always)* | `MUS.EXE` |
+| 3 | `0x0800` (11) | `S2(14) > 3` (all 4 guard jewels) | `MUS.EXE` |
+
+The bit is OR'd into the quest-flag word `S4(11)`. **If a bit was
+awarded**, Strength is raised to a floor of `10·dungeonNumber + (15 for
+dungeon 1, else 20)` = **25 / 40 / 50** — *"STRENGTH: +`<amount>`"* — never
+lowered. (See §7 and [`quest_flags.bas`](../recovered/quest_flags.bas).)
+
 ---
 
 ## 7. Quest flags & items — [`out_flags_items.bas`](../recovered/out_flags_items.bas), [`quest_flags.bas`](../recovered/quest_flags.bas)
