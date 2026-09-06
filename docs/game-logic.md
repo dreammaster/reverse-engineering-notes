@@ -508,9 +508,12 @@ condition / price is read straight from the town's `TOWN<n>.BSV` record
 ```
 ' weapons (id 0..8)
 baseValue = INT( ((weaponId^1.05 + condition/2.8 + 2) ^ 2.1) * 4 - 10 )
-' armour  (id 9..13) -- same shape, consts 3.2 / 1.02 / 3.5 / -6 (ds:2B66..2B72)
+' armour  (id 9..13) -- ends on the outer power, NO trailing *m - k
+baseValue = INT( (armourId^1.02 + condition/3.5 - 6) ^ 3.2 )
+'   (consts ds:2B66 3.2 / 2B6A 1.02 / 2B6E 3.5 / 2B72 -6 ;
+'    e.g. Studded hide cond 2 -> ~82, Mythan plate cond 4 -> ~1060)
 
-raw   = baseValue * (Charm ^ 0.7) / 11            ' ds:2B76, ds:2B7A
+raw   = INT( baseValue * (Charm ^ 0.7) / 11 )     ' ds:2B76 0.7, ds:2B7A 11
 offer = INT( MIN(raw, baseValue) * 0.8 )          ' ds:2878 ; never above base
 ```
 Charm 15 → ~47 % of base, Charm 30 → ~77 % — high Charm haggles better.

@@ -91,17 +91,24 @@ SUB WeaponArmorShop                     ' asm: weaponShopEntry / armorShopEntry
 '     S0(freeSlot) = itemId : S1(freeSlot) = condition     ' add to inventory
 '
 ' ---- SELL ----  sub_11F51 (base value) then sub_1200B (haggled price).
-'   itemId = ds:1F04   condition = ds:1F06 (0..4)
-'   IF itemId <= 8 THEN   ' WEAPON
+'   itemId = ds:1F04   condition = ds:1F06 (0..4)   -- both branches now exact
+'
+'   ' --- sub_11F51 : baseValue (-> ds:209E) ---
+'   ' WEAPON (itemId 0..8) -- always computed:
 '       baseValue = INT( ((itemId^1.05 + condition/2.8 + 2) ^ 2.1) * 4 - 10 )
-'   ELSE                  ' ARMOUR (itemId 9..13)
-'       baseValue = INT( ((itemId^3.2  + condition/3.5 + <k>) ^ <e>) * <m> - 6 )
-'       ' (the armour branch's 4 consts: ds:2B66 3.2, ds:2B6A 1.02,
-'       '  ds:2B6E 3.5, ds:2B72 -6 -- exact assembly of the polynomial
-'       '  not fully pinned; same shape as the weapon branch)
-'   END IF
-'   raw       = baseValue * (Charm ^ 0.7) / 11             ' ds:2B76, ds:2B7A
-'   offer     = INT( MIN(raw, baseValue) * 0.8 )           ' ds:2878 ; cap at base
+'       ' consts: ds:2B4E 2.1  2B52 1.05  2B56 2.8  2B5A 2  2B5E 4  2B62 -10
+'   ' ARMOUR (itemId > 8, i.e. 9..13) -- OVERWRITES baseValue:
+'       baseValue = INT( (itemId^1.02 + condition/3.5 - 6) ^ 3.2 )
+'       ' consts: ds:2B66 3.2 (outer exponent)  2B6A 1.02 (inner exponent)
+'       '         2B6E 3.5 (condition divisor)  2B72 -6 (offset)
+'       ' NOTE the armour branch has NO trailing "* m - k" -- it ends on the
+'       ' outer power.  e.g. Studded hide (9) cond 2 -> ~82 ; Mythan plate
+'       ' (13) cond 4 -> ~1060.
+'
+'   ' --- sub_1200B : haggle to the final offer (-> ds:1F12) ---
+'   raw   = INT( baseValue * (Charm ^ 0.7) / 11 )          ' ds:2B76 0.7, 2B7A 11
+'   raw   = MIN(raw, baseValue)                            ' never above base value
+'   offer = INT( raw * 0.8 )                               ' ds:2878 0.8
 '   PRINT "I'LL PAY EXACTLY "; offer; " GOLD FOR YOUR "; Item$(itemId)
 '   IF YesNo() THEN partyGold = partyGold + offer : <remove item>
 '  -- Charm 15 -> ~47% of base ; Charm 30 -> ~77% ; higher Charm haggles better.
@@ -224,8 +231,10 @@ SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
 '   * deposit/withdraw move gold between partyGold and bankBalance 1:1
 '   * SHOP BUY: prices are per-slot TOWN<n>.BSV data (not a formula); a
 '     0.3 "not for sale" roll in townType 0x0C
-'   * SHOP SELL: baseValue = INT( ((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10 )
-'     (weapons); offer = INT( MIN(baseValue, baseValue*Charm^0.7/11) * 0.8 )
+'   * SHOP SELL baseValue: weapons INT( ((wid^1.05 + cond/2.8 + 2)^2.1)*4
+'     - 10 ) ; ARMOUR (id>8) INT( (id^1.02 + cond/3.5 - 6)^3.2 ) -- no
+'     trailing scale/offset.  offer = INT( MIN(baseValue,
+'     baseValue*Charm^0.7/11) * 0.8 )
 '   * GUARD -> player: miss when RND*70 < Dex; dmg = INT( guardAtk*(RND*25
 '     + 12) \ (armorTerm^0.8 * End^0.8) ) + 3, armorTerm = 10*armorId - 50
 '     (or 30 bare)
@@ -239,7 +248,6 @@ SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
 '     maxDays = MIN(1000, partyGold / pricePerDay) ; food is runtime-only
 '
 '  OPEN
-'   * armour SELL polynomial exact assembly (consts 3.2/1.02/3.5/-6)
 '   * bribe amount origin ; StealGold fine split ; robberyEvent
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;

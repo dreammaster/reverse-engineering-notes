@@ -262,8 +262,9 @@ anchor). The combat pool it prints is quoted at the top of
 - [x] `twndr_services.bas` (v2) — `WeaponArmorShop` / `FoodShop`,
       `MailDeliveryJob`, `GuardAttack` / `FightGuard`, `StealGold` /
       `OfferGuardBribe` / `ArrestedByGuards`.  Shop **buy** prices are
-      per-slot `TOWN<n>.BSV` data (not a formula); **sell**
-      `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
+      per-slot `TOWN<n>.BSV` data (not a formula); **sell** base value
+      weapons `INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`, armour
+      `INT((id^1.02 + cond/3.5 - 6)^3.2)` (no trailing scale);
       `offer = INT(MIN(baseValue, baseValue*Charm^0.7/11) * 0.8)`.  Guard
       combat mirrors the castle (armour + Endurance denominator).  **Mail**
       job always routes ±1 town (`S4(7)` = pending, `S2(9)` = letter);
@@ -274,8 +275,7 @@ anchor). The combat pool it prints is quoted at the top of
       partyGold/pricePerDay)`; food is runtime-only.
       (`foodShop` coerced + dumped read-only via
       `ida_scripts/dump_twndr_foodshop.py -NoExport`.)
-- [ ] armour-sell polynomial exact assembly; `StealGold` fine split;
-      `robberyEvent`; the bribe amount's origin.
+- [ ] `StealGold` fine split; `robberyEvent`; the bribe amount's origin.
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*

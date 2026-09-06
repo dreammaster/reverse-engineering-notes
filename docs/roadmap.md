@@ -83,8 +83,13 @@ the per-executable breakdown this tracks against.
       food price: `pricePerDay = INT(13 − Charm/7)·0.1`.
       `ida_scripts/dump_twndr_foodshop.py` coerces + dumps `foodShop`
       read-only (`-NoExport`).
-- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR armour-
-      sell polynomial / `StealGold` fine / robbery event / bribe amount;
+- [x] **TWNDR armour-sell polynomial** (`sub_11F51` armour branch,
+      twndr.asm:3908) — `baseValue = INT( (armourId^1.02 + condition/3.5
+      − 6) ^ 3.2 )`, consts `ds:2B66` 3.2 / `2B6A` 1.02 / `2B6E` 3.5 /
+      `2B72` −6. Ends on the outer power — no trailing `·m − k` like the
+      weapon branch. Confirmed `rtm_FF2B` = `TOS ^ TOS1` (top = base).
+- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR
+      `StealGold` fine / robbery event / bribe amount;
       CASDR chest loot / locked doors / self-destruct;
       DUN monster movement; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
@@ -974,7 +979,7 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
 - [ ] `selectAbove` mode-4 internals (LEGLIB), `OUTM1`'s role,
-      flip-flop `ds:2B40` / `ds:2AA6`, TWNDR armour-sell polynomial.
+      flip-flop `ds:2B40` / `ds:2AA6`.
 
 ## ScummVM engine (future)
 
