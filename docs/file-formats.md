@@ -781,7 +781,17 @@ directives:
 |---|---|---|
 | `%` | `0x25` | newline. A leading run (`%%%`) positions the text N lines down; mid-string `%` breaks a line. |
 | `@` | `0x40` | column / cursor-position marker (leading). |
-| `!` `#` `$` `&` | `0x21` `0x23` `0x24` `0x26` | trailing paragraph / page-break / wait-for-key directives (exact split TBD). |
+| `!` | `0x21` | trailing: **end paragraph** — wait for a key, then clear the text area. |
+| `#` | `0x23` | trailing: **page break**. |
+| `$` | `0x24` | trailing: **wait for key** (with the prompt glyph). |
+| `&` | `0x26` | trailing: **wait for key, no prompt glyph**. |
+
+The `drawStringInner` **position-coded** variant (used by the museum /
+CELDRV screens and `dgroup_consts`-style pools) instead reads `<posByte>
+0x07 " row, col, \"TEXT\" " [,"P",scrollPixels,pageNo] ,0` — a leading
+one-byte pool index, then `0x07`, then an ASCII `row, col, "text"` tuple,
+optionally a `,"P",n,p` scroll/page directive, `0`-terminated. `"N"` in
+the text is replaced by the hero's name.
 
 What looks like a 2-byte prefix in a hex dump (`N,` `j-` `B.` `F'`) is
 just the low+high byte of the *previous* record's `dgroup_ptr` shown as

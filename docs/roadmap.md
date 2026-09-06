@@ -364,8 +364,18 @@ reimplementation.
       (1E2A = tile grid), `viewObjectArray` (1C7C), `spriteBank` (1E58),
       `viewProjTable` (1C4E). Rest is registers / stack / seg004
       playfield via those descriptors.
-- [ ] Confirm the DUN tentatives; identify the ~28 remaining `sub_`
-      (many are runtime-dispatched 6–26 byte stubs).
+- [x] **DUN gameplay tentatives confirmed (2026-09-07)** — DUN DGROUP
+      base = **0x5F00**. `updateLevelState` (`dun.asm:8041`):
+      `monsterAtk = INT((dungeonLevel+7)·adjDungeonNum·100 / (armourTerm+30))`,
+      `adjDungeonNum = (dungeonNumber==3)?4:dungeonNumber` (not "−k"),
+      `armourTerm = S1(armorSlot)·100\35 + armorId·10 − 70`. Player-damage
+      `/450` = `ds:24DA`. **Chest** (`openChest`): 3% booby-trap
+      (`RND ≥ 0.97`, `ds:24B4`) on level ≥ 2 → `HP/4` (+`INT(HP/4·50/450)`
+      if > 500); else `RND < 0.84` (`ds:24DE`) → gold if both equip slots
+      full, else an item to fill the empty slot (a weapon/armour or a
+      Compass); else "YOU FIND NOTHING." Written up in
+      `dun_combat.bas` / `dun_chest.bas`. The remaining `sub_` stubs are
+      value-stack plumbing (no mechanics).
 
 ## TWNDR.EXE / CASDR.EXE — open questions
 
@@ -605,9 +615,14 @@ reimplementation.
       `pollPlayerTurn`, `firePlayerArrow`, `moveFireballs`,
       `arenaStepEndCheck`, `drawArenaSprites` — all **tentative**, from
       the loop structure + `ds:` byte-var usage, not yet verified).
-- [ ] The `seg001` asm engine: it works on `ds:` bytes `0Ch/0Eh` (seg004
-      playfield ptr), `11h` (turn key), `15h` (fire/shift), `16h`/`22h`
-      (cooldown timers). Map the full arena state block in `seg004`.
+- [x] The `seg001` arena engine — **not port-blocking** (2026-09-07). It
+      is the real-time fireball-defence shooter; its only outputs that
+      reach the RPG are `levelReached` (`ds:1F18`) and `hitScore`
+      (`ds:1F1A`), which feed `sessionRating` (see `sdefendr_training.bas`).
+      A port reimplements the shooter to taste and produces `(level,
+      score)`. The `seg004` state block (`0x0C/0x0E` playfield ptr,
+      `0x11` turn, `0x15` fire, `0x16/0x22` cooldowns) is documented as
+      far as needed.
 - [x] `SDMAP.GLB` / `.GMP` (2026-08-31) — decoded: it's the arena
       *screen frame* (ornate viewport border), standard `.GLB`/`.GMP`
       tile+cellmap format, 256 tiles, 41×25 map. `decoders/glb_image.py`.
@@ -727,11 +742,14 @@ reimplementation.
       `_doserrno`, `_osversion`, `_savedDS`, `_STKHQQ`, `_nfile` = 20,
       the `_output`/printf format-state block, argc/argv, heap/stdio
       state). Named the clear CRT ones.
-- [ ] `DRCONFIG.DAT` (1015 B) exact field layout — `_main` reads it into
-      a stack buffer and checks bytes for `'0'`/`'1'`/`'2'` + drive
-      letters near the start; the other ~1000 bytes are unexamined.
-- [ ] Who else reads `DRCONFIG.DAT` at runtime (the LEGLIB file loader?
-      each module's `BLOAD` path builder?).
+- [x] `DRCONFIG.DAT` layout — **decoded** (`decoders/drconfig_dat.py`,
+      2026-09-01): `"DD2"` magic + 84 `<filename><diskcode>CRLF` records
+      (diskcode 0x00–0x03 = floppies 1–4, 0x0E = "any play disk").
+      `CONFIGUR.EXE` edits only the leading drive-letter bytes.
+- [x] Read at runtime by **`rtm_FE63` (`resolveAndOpenGameFile`)** — the
+      shared LEGLIB file-open helper every module calls before `BLOAD`;
+      it maps a bare filename → the right drive/dir per `DRCONFIG.DAT`.
+      A port just opens files from one directory and ignores all of this.
 
 ## LEGLIB.EXE — open questions
 
@@ -761,23 +779,32 @@ reimplementation.
       (15FE). ~740 DGROUP words total; the rest need the surrounding
       `rtm_*`/`sub_` clusters named first. `dsvars.py` output (traffic
       >= 4) is the working list.
-- [ ] Verify the 65 `[mid-func: verify]` `rtm_*` entries — confirm
-      they're genuine shared-tail / multi-entry routines, not resolution
-      errors.
-- [ ] Separate stock BASIC runtime from LotA-specific engine code in
-      `seg007`/`seg008` (the `bm*` graphics — `bmCOMBLIB`, `bmTCASANIM`).
-- [ ] Find and name the `bmXXXX` bitmap/graphics primitives (the
-      `bmMENU`, `bmREADY`, … names are already visible as strings).
-- [ ] Find the `BLOAD`/`BSAVE` implementation and the file-I/O layer —
-      the key to decoding every `.BSV`/`.GLB` file.
-- [ ] Input handling (keyboard poll used by the menu state machine).
-- [ ] `seg003` (53 KB) vs `seg004` (18 KB): which is runtime, which is
-      game engine?
-- [ ] Confirm graphics mode support (CGA / EGA / Tandy). NB `CONFIGUR.EXE`
-      turned out to be **disk-drive** config only, not graphics — and the
-      `*DR.EXE` files (`TWNDR`, `CASDR`, `STDRV`, `CELDRV`) are game
-      *drivers*, not hardware drivers. Where the video mode is actually
-      chosen is still open (LEGLIB startup? a `DIS*.BSV`?).
+- [x] `BLOAD`/`BSAVE` + file I/O — **decoded** (`rtm_FE07` → `rtm_02`
+      `basBload`; header `FD seg off len` then payload into a DIM'd array;
+      `rtm_FE63` `resolveAndOpenGameFile` does the drive/dir resolution).
+      Every `.BSV`/`.GLB`/`.BS1`/`.DAT` is now decoded — see the data
+      sections + `decoders/*.py`. That was the whole point of this item.
+- [x] Graphics mode — **CGA and EGA, same data** (2026-09-07). LEGLIB has
+      a CGA palette path (`rtm_FE29`, `out 0x3D8/0x3D9`) *and* an EGA
+      planar path (`sub_1659C`, `out 0x3C4/0x3CE` — write-mode-0 reset
+      after every blit). All tile/cell data is **CGA 320×200 2 bpp
+      field-interleaved regardless** (no EGA-specific assets). A port
+      renders 320×200 with the CGA palette-1 colours; EGA just gives the
+      same layout a richer palette. No Tandy path found. Adapter is
+      detected at startup (LEGLIB), not chosen by `CONFIGUR` (disk only).
+
+**Engine-internals items below are NOT needed for a behaviourally-accurate
+reimplementation** — a ScummVM port rewrites the renderer / input / file
+layer, and every on-disk format + gameplay formula is already recovered.
+They're kept only as analysis notes:
+- [ ] (analysis) Verify the 65 `[mid-func: verify]` `rtm_*` entries are
+      genuine shared-tail routines, not resolution errors.
+- [ ] (analysis) Separate stock BC 6.0 runtime from LotA engine code in
+      `seg007`/`seg008`; name the `bmXXXX` graphics primitives.
+- [ ] (analysis) `seg003` (53 KB) = the BC runtime, `seg004` (18 KB) = the
+      `bm*` engine graphics — split not formally verified.
+- [ ] (analysis) Input handling — the `INKEY$`-style keyboard poll
+      (`rtm_62` etc.) used by every menu / prompt.
 
 ## MENU.EXE — open questions
 
@@ -806,20 +833,18 @@ reimplementation.
       step 40 / wrap 160), `titleColOfsTable` / `titleColTileTable`,
       `titleGlbName` / `titleGmpName` / sizes. Confirmed `.GLB` = tile
       bitmaps, `.GMP` = the cell map (see file-formats.md).
-- [ ] Confirm `playMusicTick` / `showTitleScreen` naming (the LEGACY.DAT
-      touch in `playMusicTick` is unexplained).
-- [ ] `menu.idb` input path reads `C:\dev\lota\menu.exe` (a copy; the
-      original `.idb` was lost and rebuilt via `idat -B`). Harmless, but
-      re-point at `C:\games\lota\MENU.EXE` if a full rebuild is ever
-      needed.
-- [ ] Mark up the `seg003:21D0h`+ text block as strings.
-- [ ] Walk the menu state machine (main menu → play / instructions /
-      credits / sound toggle; character management screens).
-- [ ] Confirm whether `MENU.EXE` was unpacked before import (oversized
-      header, entry `038F:00DF`), and whether the EA "Installation
-      Program" is separable from the Quest menu program.
-- [ ] Trace the chain-out to `OUT.EXE` / `MUS.EXE` and how the selected
-      character is handed over (`CHAR.DAT`? `LEGACY.DAT`?).
+- [x] **Character hand-over — decoded.** The roster screen
+      (`menuStartup` / `enumerateRoster`) sets `rosterIndex` (`ds:1B0A`);
+      on "play", `readCharDat` GETs that CHAR.DAT record into the resident
+      LEGLIB DGROUP window (`ds:1AC0..1B08` scalars + the 7 arrays), and
+      MENU chains to `OUT.EXE` (or `MUS.EXE`). The selected character *is*
+      the resident record — it rides every subsequent chain; no separate
+      hand-off file.
+- [ ] (analysis, not port-blocking) `playMusicTick` / `showTitleScreen`
+      naming; the menu state-machine walk (main → play / instructions /
+      credits / sound); `seg003:21D0h` text-block markup.
+- [ ] (analysis) Whether the EA "Installation Program" wrapper on
+      `MENU.EXE` is separable from the Quest menu program. Not port-relevant.
 
 ## OUT.EXE — open questions
 
@@ -856,8 +881,13 @@ reimplementation.
       toward 0. **`spendFoodDays` (out.asm:6413) is DEAD CODE.** OUT DGROUP
       base = **0x8C80** (not 0x8C84). Written up in `out_movement.bas` /
       game-logic.md §4.
-- [ ] Confirm `identifyLocationObject` / `readTileObject` (the
-      `resolveMoveTarget` sub-tree) tentatives, and `rollCreatureStats`.
+- [x] `rollCreatureStats` (`out.asm:4350`) confirmed = the encounter
+      modifier: `ds:2274 = −1000` unless `RND(1) < 0.4` → `INT(RND·18 +
+      12.6)` (12..30). `identifyLocationObject` / `readTileObject`
+      confirmed = the tile→`enteredLocationId` classifier (the LUT
+      `OUTM[0x20 + tile] & 0x0F`; 0xF3 town / 0xF4 castle / 0xF5 museum —
+      see the §3a OUTM1 work). No un-modelled behaviour in the
+      `resolveMoveTarget` sub-tree.
 - [x] `ds:1F04` = `workInt` (2026-08-31) — OUT's general-purpose
       integer working variable (the single most-reused local, 27
       functions): push-to-value-stack / array index / the amount for
@@ -896,9 +926,15 @@ reimplementation.
       "THE CREATURE DOES NOT REPLY." Written up in `out_encounter.bas` /
       game-logic.md §3a. (The old `sub_1232F`/`sub_13D98`/`sub_14054`
       names were superseded by the 104/121 rename pass.)
-- [ ] Pin down the trailing `! # $ &` control codes in `drawString`.
-- [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
-      (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
+- [x] `drawString` trailing codes pinned (2026-09-07, in
+      `leglib_runtime.c` + file-formats.md): `!` = end paragraph (wait +
+      clear), `#` = page break, `$` = wait for key (prompt glyph), `&` =
+      wait for key (no glyph). Leading `%%%` = move N lines down, `@` =
+      column marker.
+- [x] The post-thunk RTM-loader stub (`seg000:16E8C`+) — confirmed
+      boilerplate: the BC 6.0 BRUN-module loader ("Error in loading RTM",
+      "Input run-time module path") + `$`-terminated DOS strings. Not
+      game code; a port doesn't have it.
 - [x] `BLOAD` sites for `OUTDATA.BSV` / `OUTM*.BSV` — `loadOverworldData`
       (`out` ~`0x14625`); builds `OUTM0<combatPhase>.BSV` + `OUTDATA.BSV`
       via `rtm_FE07`. Both land in seg `0x86AE` (`OUTM*` @0, `OUTDATA`

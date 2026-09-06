@@ -50,13 +50,13 @@ END SUB
 ' --------------------------------------------------------------------------
 SUB FallThroughDamage                                 ' asm: dun.asm:1147 (loc_106B3)
 ' --------------------------------------------------------------------------
-'   base = (RND(1) * 50 + 10) * (dungeonLevel ^ 1.6)
-'   then * 0.6 (and a +1/-1 tweak keyed on sprungCode = 10, i.e. the tile
-'   was FLOOR HOLE)
-    fallDmg = INT( (RND(1) * 50.0 + 10.0) * (dungeonLevel ^ 1.6) * 0.6 )  ' asm:1148-1210 '??
-    '  ds:22FE 50 ; ds:2302 10 ; ds:2306 1.6 ; ds:230A 0.6 .
-    '  L1: ~6..36 ; L4: heavy.  The exact role of the ds:2274 term and the
-    '  20C2==10 mask still need a trace.                                    'CHECK
+'   base = (RND(1) * 50 + 10) * (dungeonNumber ^ 1.6)      ' ds:1ACA, NOT the level
+'   then * 0.6 when featureUnderfoot (ds:20C2) == &h0A  (you dropped via
+'   the down-stairs area rather than a bare FLOOR HOLE)
+    fallDmg = INT( (RND(1) * 50.0 + 10.0) * (dungeonNumber ^ 1.6) _
+                   * (0.6 IF featureUnderfoot = &h0A ELSE 1.0) )        ' asm:1148-1210
+    '  ds:22FE 50 ; ds:2302 10 ; ds:2306 1.6 ; ds:230A 0.6 ; DUN base 0x5F00.
+    '  dungeon 1: ~10..60 ; dungeon 3: ~50..180.
     hitPoints = hitPoints - fallDmg
 END SUB
 
@@ -145,7 +145,8 @@ END SUB
 '   * FLOOR HOLE (2): "YOU FALL THROUGH A HIDDEN HOLE" -> fall damage +
 '     drop one dungeon level  (shares climbDownOrExit's level-change path)
 '   * every other hidden trap -> "YOU'RE AMBUSHED BY A <monster>"
-'   * fall damage scales as dungeonLevel ^ 1.6  (deep = deadly)
+'   * fall damage = INT((RND*50+10) * dungeonNumber^1.6 * {0.6 on the
+'     down-stairs tile / 1.0 on a bare hole})  -- ds:22FE/2302/2306/230A
 '   * CLIMB: only on a staircase tile (&h0A down / &h0D up) ; dungeonPos
 '     (ds:1AE2) += &h100 ; the two stair tiles toggle so you land on the
 '     reciprocal staircase ; LoadDungeonMonsters + LoadDungeonData per level
@@ -154,8 +155,12 @@ END SUB
 '     S2(14) > 3) ; if a bit was awarded, raises Strength to a FLOOR of
 '     25 / 40 / 50 (= 10*dn + 15/20/20) ; chains D1->OUT, D2/D3->MUS
 '
-'  OPEN
-'   * exact fall-damage tail (ds:2274 / ds:230A / the 20C2==10 mask)
-'   * the ambush-monster selection
-'   * ProcessTileFeature's chest/box loot roll, the level-clamp maths at
-'     dun.asm:5106-5147, CEILING HOLE / trip-wire specifics
+'  RESOLVED 2026-09-07
+'   * fall damage = INT((RND*50+10)*dungeonNumber^1.6*mask), mask = 0.6
+'     when featureUnderfoot (ds:20C2) == 0x0A else 1.0.  DUN base 0x5F00.
+'   * chest/box loot roll -> dun_chest.bas (booby-trap 3%, loot 84%)
+'
+'  OPEN (minor)
+'   * the exact per-level ambush-monster index (pulled from the level's
+'     monster set -- a table lookup, no formula)
+'   * CEILING HOLE / trip-wire distinct effects (vs the generic ambush)

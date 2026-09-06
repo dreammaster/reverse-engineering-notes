@@ -259,9 +259,11 @@ you slip past (`RND(1) ≤ 0.65` under one condition, `RND(1) ≤ 0.30` if a
   `<weapon/armour>` …"* → *"PURCHASE COMPLETED"* etc. Non-pedlar creatures
   → *"THE CREATURE DOES NOT REPLY."*
 
-**Encounter modifier** (`RollEncounterMod`, `rollCreatureStats`) — *derived*
-— `out.asm:3723`: `−1000` sentinel most of the time; otherwise
-`INT( RND(1)*18 + 12.6 )` (12..30). Consumed by CreatureAttack.
+**Encounter modifier** (`rollCreatureStats`, `out.asm:4350`) — *derived*
+(consts confirmed): `ds:2274 = −1000` (sentinel) unless `RND(1) < 0.4`
+(`ds:2476`), in which case `ds:2274 = INT( RND(1)·18 + 12.6 )` (12..30,
+`ds:2906`/`ds:290A`). So ~40 % of encounters carry the modifier, consumed
+by `CreatureAttack`.
 
 **Creature defeated** — `out_combat.bas` — `out.asm:7023`:
 ```

@@ -214,15 +214,17 @@ END SUB
 '   * BEFUDDLE gate: confuseTimer (ds:1AE6) < 0 skips YOUR turn, > 0 skips
 '     the whole MONSTER phase ; steps toward 0 each turn
 '
-'  DERIVED (both in updateLevelState, dun.asm:7638 / 7670 -- static, no
-'  runtime constants):
+'  DERIVED / CONFIRMED (updateLevelState, dun.asm:8041 -- static consts;
+'  DUN DGROUP base = 0x5F00) :
 '   * weaponPower (ds:21CE) = weaponId*10 + 10 + (S1(weaponSlot) * 100 \ 28)
 '     (weaponSlot 99 -> no condition bonus)
-'   * monsterAtk (ds:2192) = (dungeonLevel + 7) * (dungeonNumber - k) * 100
-'                            \ (armorDefenseTerm + 30),
+'   * monsterAtk (ds:2192) = INT( (dungeonLevel + 7) * adjDungeonNum * 100
+'                                 \ (armorDefenseTerm + 30) )
+'     adjDungeonNum   = (dungeonNumber == 3) ? 4 : dungeonNumber   ' NOT "- k"
 '     armorDefenseTerm = (S1(armorSlot) * 100 \ 35) + armorId*10 - 70
-'     -- so a well-armoured party shrinks the monsters' rolls at level load
+'                        (armorSlot 99 -> stays at the default 10)
+'     -- a well-armoured party shrinks the monsters' rolls at level load
+'   * the player-damage /450 is ds:24DA = 450.0 (confirmed)
 '
 '  OPEN
-'   * confirm the /450 and the `k` in the monsterAtk formula with a trace
 '   (dungeon spells: SOLVED -- recovered/dun_spells.bas)

@@ -32,7 +32,32 @@ SUB OpenChest                                         ' asm: dun.asm:2145 (openC
         GOTO Done
     END IF
 
-    RollChestContents
+    ' ---- BOOBY TRAP (2026-09-07) ------------------------------ asm:2444-2523
+    '   trapped when  RND(1) >= 0.97 (ds:24B4)  AND  dungeonPos >= &h200
+    '   (i.e. level >= 2 -- levels 0-1 chests are never trapped)
+    IF RND(1) >= 0.97 AND dungeonPos >= &h200 THEN
+        trapDmg = hitPoints \ 4                       ' ds:20EA           ' asm:2476-2481
+        IF trapDmg > 500 THEN                                             ' asm:2496
+            trapDmg = INT( trapDmg * 50.0 / 450.0 )   ' ds:22FE=50 ds:24DA=450 ' asm:2501-2518
+        END IF
+        hitPoints = hitPoints - trapDmg
+        PRINT "THE CHEST IS BOOBY TRAPPED!!!" : PRINT "H.P. -"; trapDmg
+        GOTO Done
+    END IF
+
+    ' ---- otherwise: loot or nothing -------------------------- asm:2526-2640
+    IF RND(1) < 0.84 (ds:24DE) THEN
+        IF weaponSlot AND armourSlot both filled THEN                    ' S0(4), S0(7)
+            RollChestContents                        ' -> gold
+        ELSE
+            ' drop an item to fill the empty slot: (kind, value) =
+            '   (10, 600)  or  (6, 1133)   -- a weapon / armour piece,
+            '   or a COMPASS ("YOU FIND A COMPASS!")                     ' asm:2612-2639
+            grant that item ; partyGold += 0   ' item, not gold
+        END IF
+    ELSE
+        PRINT "YOU FIND NOTHING."
+    END IF
 Done:
 END SUB
 
@@ -73,6 +98,14 @@ END SUB
 '   * a per-level gold high-water mark stops chest re-farming
 '   * the quest jewel is a level-7 chest, granted once (S2(20) gate)
 '
+'  RESOLVED 2026-09-07
+'   * BOOBY TRAP: 3% (RND >= 0.97, ds:24B4) on level >= 2 -> lose HP/4,
+'     plus INT(HP/4 * 50/450) more if HP/4 > 500
+'   * loot roll: RND < 0.84 (ds:24DE) -> gold if both equip slots full,
+'     else an item to fill the empty slot ((kind 10 / value 600) or
+'     (kind 6 / value 1133), or a COMPASS) ; else "YOU FIND NOTHING."
+'   * DUN DGROUP base = 0x5F00 (not 0x5F04) ; ds:24DA = 450 is also the
+'     /450 divisor in the monsterAtk formula (dun_combat.bas)
+'
 '  OPEN
 '   * lastLootMark exact update (rtm_FE56); atJewelCell position test
-'   * whether non-gold items (potions, gear) can drop from a chest
