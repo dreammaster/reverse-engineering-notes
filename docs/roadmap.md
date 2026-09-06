@@ -173,8 +173,17 @@ the per-executable breakdown this tracks against.
       (`ds:20B0`) `> 0`. **Caught = a turn timer**: `doWalk` ticks
       `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
       → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
-- [ ] Still open: the exact first-set of `ds:20B0` (a `db` blob; timer
-      path traced); CASDR `enemyAttack` FP-stack shape (magnitude solid).
+- [x] **CASDR `enemyAttack`** — traced to the limit of static analysis.
+      The `db`-blob fragment (no `basProcEnter`, entered mid-expression)
+      reaches its `FF28` (`TOS − TOS1`) with only one operand on the FP
+      stack → it reads the stack base node `ds:0FAC`, a stale value from
+      a prior statement. **Looks like an original bug.** Port as
+      `INT(enemyAtk·(1−RND)/2)`. A live `[ds:0FAC]` dump is the only way
+      to observe the real game.
+- [ ] Cosmetic / not blocking a port: the exact first-set of `ds:20B0`
+      (a `db` blob; timer path traced); a live `[ds:0FAC]` dump for
+      `enemyAttack`; `selectAbove` mode-4 LEGLIB internals; `OUTM1`'s
+      role; gmb2 `ds:2B40` / `ds:2AA6`.
 
 ## Infra (done, 2026-08-30)
 

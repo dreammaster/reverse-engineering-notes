@@ -368,8 +368,12 @@ anchor). The combat pool it prints is quoted at the top of
       facing a gas tile (`ds:1F02 ∈ 0x17..0x19`) =
       `INT( maxHP\4 + RND(1)·50 )` (`ds:20AA = S4(19)\4`, set by `gasTrap`;
       `ds:28DA = 50`) — ~¼ max HP/turn, so ~3–4 turns before it kills you.
-- [ ] `enemyAttack`'s exact FP-stack shape (magnitude solid; needs a
-      live dump).
+- [x] `enemyAttack` — traced to the limit of static analysis.  The
+      `db`-blob fragment reaches its `FF28` (`TOS − TOS1`) with **one**
+      operand on the FP stack, so it reads the stack base node
+      (`ds:0FAC`) — a stale value.  **Likely an original bug.**  Port as
+      `INT(enemyAtk·(1−RND)/2)` (matches observed play); a live
+      `[ds:0FAC]` dump is the only way to see the real game's behaviour.
 
 ## MUS.EXE
 

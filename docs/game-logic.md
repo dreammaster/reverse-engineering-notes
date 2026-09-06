@@ -358,15 +358,21 @@ without. `difficulty` (`ds:226E`, set by `loadCastleLevel` `casdr.asm:10033`):
 `enemyAtk (ds:20B8) = 140`; otherwise the enemy strikes:
 ```
 raw    = RND(1) * enemyAtk
-damage = INT( raw − INT(raw)\2 − enemyAtk\2 )     ' ≈ enemyAtk·(1−RND)/2  →  0..enemyAtk\2
+damage ≈ INT( enemyAtk·(1 − RND(1)) / 2 )     ' 0..enemyAtk\2
 ```
 So a fresh guard (`enemyAtk 140`) hits for **~0–70**, mean ~35 — **no
 armour or Endurance mitigation** (unlike the Warlord blow). The Weaken
-item cuts `enemyAtk` by 4 %/cast until it drops to ≤ `0x50`. (`FF23`/`FF28`
-operand order is now settled, but `enemyAttack` is entered mid-expression
-and the FP stack is one operand short at the `FF28` call — a leftover from
-the caller's expression — so the exact `raw − INT(raw)\2 − …` shape still
-needs a live FP-stack dump. The magnitude is solid.)
+item cuts `enemyAtk` by 4 %/cast until it drops to ≤ `0x50`.
+
+The full `doWalk → sub_127C8 → enemyAttack` path is traced: the two
+building blocks are `INT(raw)\2` and `enemyAtk\2`, but `enemyAttack` (a
+hand-assembled `db`-blob fragment with no `basProcEnter`, entered
+mid-expression) reaches its `FF28` — a binary `TOS − TOS1` — with only
+*one* operand on the FP stack, so it reads the **stack base node
+(`ds:0FAC`)**, a stale value from a prior statement. **This looks like an
+original bug.** A port should use `INT(enemyAtk·(1−RND)/2)` (matches
+observed play); a live `[ds:0FAC]` dump would show what the real game does
+with the stale slot.
 
 **Player attack** — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 `DoFight` — *derived*. "F"ight then "ENTER DIRECTION:"; a sub-menu can

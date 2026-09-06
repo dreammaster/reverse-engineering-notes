@@ -211,13 +211,26 @@ SUB EnemyAttack                                       ' asm: casdr.asm:5683 (ene
 '   Delay &h17
 '   hitPoints = hitPoints - damage              ' (message tail / caller)
 '
-' NOTE: the value-stack ops are now settled -- FF23 POPS, FF28 = TOS-TOS1
-' (see leglib_runtime.c).  But this SUB is entered mid-expression and the
-' FP stack has ONE operand where FF28 wants two, so a leftover operand from
-' the caller's expression is unaccounted for.  The magnitude
-' (~ enemyAtk*(1-RND)/2) is the sane reading ; the exact `raw - INT(raw)\2
-' - half` shape needs a live dump of the FP stack at the FF28 call.
-' *derived, shape-uncertain*
+' NOTE: chased as far as static analysis can go.  The value-stack ops are
+' all settled (FF4C mul pop-2, FF23 -> int32 & POP, FF21 push, FF28 =
+' 32-bit `TOS - TOS1` pop-2, FF22 -> int16 & POP).  Traced the whole
+' doWalk -> sub_127C8 -> enemyAttack path: NO FP push reaches the FF28
+' call except `FF21(half + INT(raw)\2)` -- one operand, where FF28 needs
+' two.  sub_127C8 / enemyAttack are hand-assembled `db`-blob fragments
+' with NO basProcEnter, entered by fall-through mid-expression, so FF28
+' reads the FP-stack BASE node (ds:0FAC) -- a stale value left by a prior
+' statement.  This looks like an ORIGINAL BUG in a hand-written routine;
+' what the stale slot holds at runtime can only be seen with a live
+' [ds:0FAC] dump (DOSBox).
+'
+' The two solid building blocks are  INT(raw)\2  and  enemyAtk\2  (raw =
+' RND(1)*enemyAtk).  Observed play (a fresh 140-atk guard hitting for tens
+' of HP, never hundreds, never negative, no armour mitigation) bounds the
+' blow to the order of  enemyAtk*(1-RND)/2  ->  0 .. enemyAtk\2  (fresh
+' guard 0..70).  *** A PORT SHOULD MODEL IT AS:
+'       damage = INT( enemyAtk * (1 - RND(1)) / 2 )
+' *** -- matches observed behaviour and avoids reproducing the leftover-
+' slot bug.  *derived; combining op reads a stale FP slot (likely a bug)*
 
 
 ' --------------------------------------------------------------------------
@@ -393,7 +406,8 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '   * FF22 / FF23 pop their operand
 '
 '  OPEN
-'   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape -- FP stack is
-'     one operand short at the FF28 call (a leftover from the caller's
-'     mid-expression entry) ; needs a live FP-stack dump
+'   * EnemyAttack's FF28 reads a stale FP-stack slot (ds:0FAC) -- traced
+'     to the limit of static analysis ; looks like an original bug.  Port
+'     as INT( enemyAtk*(1-RND(1))/2 ).  A live [ds:0FAC] dump would say
+'     what the real game does with the stale value.
 '   * ds:230C = INT(S2(3)\9) purpose (written, not obviously read)
