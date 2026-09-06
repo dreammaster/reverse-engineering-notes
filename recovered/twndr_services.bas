@@ -272,13 +272,33 @@ SUB InitGuardCombat                                  ' asm: twndr.asm:10f37 (ini
 
 
 ' --------------------------------------------------------------------------
-SUB OfferGuardBribe                                  ' asm: twndr.asm:1549+ (offerGuardBribe)
+SUB OfferGuardBribe                                  ' asm: twndr.asm:15a2d (offerGuardBribe)
 ' --------------------------------------------------------------------------
-'   demand = ds:216E                             ' == the guard's rolled HP
-'   IF partyGold >= demand THEN
-'       partyGold = partyGold - demand           ' the guard pockets it and leaves
+' A corrupt guard sells you an item for gold.  offeredItem = ds:1AEE (the
+' item id ; InitGuardCombat sets it to 1 = Gold armband, and the code has
+' a live `== 19` branch, so it varies) ; demand = ds:216E (= the guard's
+' rolled HP, from InitGuardCombat).
+'
+'   PRINT demand; " GOLD?"                        ' ds:2DB6
+'   choice = Menu3()                              ' rt_FE57 (rows 0/2/3/0) -> ds:1E22
+'   IF choice = 1 THEN GOTO Highlight             ' declined
+'   IF partyGold <= demand THEN
+'       PRINT "YOU'RE SHORT ON GOLD." : GOTO Highlight   ' notEnoughGold
 '   END IF
-'   (also marks / takes an S2 item slot indexed by ds:1AEE)  *partial*
+'   ' -- pay & receive the item --
+'   PRINT "YOU GOT A"; IIF(offeredItem = 19, "N", ""); " "; Item$(offeredItem); "!"
+'                                                  ' 37AE / 37BC / 2B7E / 37C2
+'   S2(offeredItem) = S2(offeredItem) + 1         ' <<< the item goes INTO inventory
+'   Delay &h10
+'   partyGold = partyGold - demand                ' -> SpendGold
+' Highlight:  (loc_15B63, both paths)
+'   ds:2596 = 1 : rt_FE38(1, offeredItem)         ' flash / highlight the item slot
+'
+' So OfferGuardBribe is NOT "pay the guard to leave" -- it is a purchase:
+' *** pay `demand` gold -> S2(ds:1AEE) += 1 (you gain the item). ***
+' "YOU GOT A[N] <item>!"  -- the guard is selling you contraband.  With
+' ds:1AEE defaulting to 1 (Gold armband), the usual case is: pay
+' the guard's demand, get a Gold armband.
 
 
 ' --------------------------------------------------------------------------
@@ -353,8 +373,10 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '   * CAUGHT = a TURN TIMER: heat (ds:20B0) ticks each town-turn once a
 '     robbery is in progress ; at 20 turns -> "DISCOVERED!!" + alarm +
 '     contextMode = 1 (guards attack).  Not a die roll.
-'   * GUARD HP == BRIBE demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 *
-'     (RND + 1) ) ; OfferGuardBribe pays exactly that
+'   * GUARD HP == demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 * (RND + 1) )
+'   * OfferGuardBribe: pay `demand` gold -> S2(ds:1AEE) += 1 ("YOU GOT A[N]
+'     <item>!") ; a corrupt guard SELLING you an item, not a "pay to leave"
+'     (ds:1AEE defaults to 1 = Gold armband)
 '   * JAIL bail: partyGold > 149 -> lose HALF ; 1..149 -> lose ALL + one
 '     equipped weapon confiscated ; broke+itemless -> forced 100-gold loan
 '     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
@@ -362,10 +384,11 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '  OPEN
 '   * exactly where heat (ds:20B0) is first set to 1 (a `db` blob -- but
 '     the timer mechanism above is fully traced)
-'   * OfferGuardBribe's S2 item marking (ds:1AEE index)
+'   * what sets ds:1AEE to a non-default item in the guard-encounter path
+'     (the `== 19` branch implies it varies; only ever seen = 1)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;
 '   findings above were read from the coerced idb.  foodShop / stealGold /
-'   robberyEvent / initGuardCombat / jailRelease were coerced + dumped
-'   read-only via ida_scripts/dump_twndr_foodshop.py + dump_twndr_crime.py
-'   (both -NoExport).
+'   robberyEvent / initGuardCombat / jailRelease / robCommand /
+'   offerGuardBribe were coerced + dumped read-only via
+'   ida_scripts/dump_twndr_*.py (all -NoExport)

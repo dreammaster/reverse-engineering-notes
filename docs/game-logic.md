@@ -682,10 +682,13 @@ runtime-only (never saved).
   **20 turns** → *"…DISCOVERED!!"*, an alarm, `contextMode = 1` → the
   guards attack. (While the heat is on, `SPEAK` answers *"NOBODY
   ANSWERS"*.)
-- **Guard HP = bribe demand** (`initGuardCombat`, `ds:216E`):
-  `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 =
-  22`). `offerGuardBribe` pays exactly that; if you can't afford it the
-  guards fight.
+- **Guard HP / demand** (`initGuardCombat`, `ds:216E`):
+  `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 = 22`).
+- **`offerGuardBribe`** is *not* "pay the guard to leave" — it's a corrupt
+  guard **selling** you an item. *"`<demand>` GOLD?"* → yes → *"YOU GOT
+  A[N] `<Item$(ds:1AEE)>`!"*, **`S2(ds:1AEE) += 1`**, `partyGold −= demand`.
+  `ds:1AEE` defaults to `1` (Gold armband). *"YOU'RE SHORT ON GOLD."* if
+  `partyGold ≤ demand`.
 - **Jail bail** (`jailRelease`, "I'LL LET YOU OUT FOR A PRICE"):
   `partyGold > 149` → lose **half**; `1–149` → lose **all** *and* one
   equipped weapon is confiscated (`S0(slot)=0`, unequipped); dead broke

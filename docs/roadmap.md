@@ -104,6 +104,11 @@ the per-executable breakdown this tracks against.
       `1–149` all + weapon confiscated / broke+itemless → forced 100-gold
       loan (`S4(5)+=100`, `S4(6)` deadline). `ida_scripts/dump_twndr_crime.py`
       coerces + dumps read-only (`-NoExport`).
+- [x] **`offerGuardBribe`** (`twndr.asm:15a2d`, coerced read-only) — a
+      corrupt guard *selling* you an item, not "pay to leave":
+      *"`<ds:216E>` GOLD?"* → yes → *"YOU GOT A[N] `<Item$(ds:1AEE)>`!"*,
+      `S2(ds:1AEE) += 1`, `partyGold −= ds:216E`. `ds:1AEE` defaults to
+      1 (Gold armband). "YOU'RE SHORT ON GOLD." if you can't afford it.
 - [x] **CASDR chest / doors / self-destruct** (`casdr_castle.bas` v2).
       Castle box: `OPEN` (tile 0xC3) reveals a 2×2 group, `TAKE` (tile
       0xDF) grants `Item$(15)` = the Compendium, gated once by `S2(15)`;
