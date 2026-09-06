@@ -358,22 +358,26 @@ castle L1, End 17, `ds:1AEC` 10, `ds:226E` = `0x3F800000` = 1.0): three
 paired `(raw → dmg)` blows — **426→10, 855→19, 532→12** — each an exact
 fit to `round(raw / (4·17^0.9) + 2)` = `round(raw/51.22 + 2)` (pre-round
 nodes 10.317 / 18.695 / 12.387; `FF22` **rounds**, not truncates).
-`loadCastleLevel` (`casdr.asm:14254`) sets `ds:226E`: **castle → `ds:25B0`
-= 1.0, fort → `ds:31A8` = 3.5** (the earlier note had this *backwards*).
-So in the castle: `dmg = round(INT(RND·600+300)/(4·End^0.9)+2)` ≈ **8–20 HP**
-for End 17; the fort's ×3.5 makes it far nastier.
+`loadCastleLevel` (`casdr.asm:14254`) sets `ds:226E` from one constant:
+**castle → `ds:25B0` = 1.0, fort → `ds:31A8` = 3.5** — *both live-confirmed*
+(castle L1 `ds:226E` = `0x3F800000` = 1.0; fortress `ds:226E` =
+`0x40600000` = 3.5, `ds:20C0` = 2). So in the castle `dmg ≈ **8–20 HP**`
+for End 17; the fort's ×3.5 (and higher `castleLevel`) make it far nastier —
+a fortress basement blow is `round(INT(2^1.8·(RND·600+300)·3.5)/(4·End^0.9)+2)`
+≈ 180+ HP.
 
-**`enemyAttack` / `ds:20B8` path — dormant on the public level.** `casdr.asm:5621`
-(`sub_127C8`) → `5683` (`enemyAttack`) is a *separate* enemy system
-(`enemyAtk = ds:20B8 = 140` when armed; Weaken item cuts it 4%/cast to
-≤ `0x50`). Live testing 2026-09-06: `ds:20B8` never armed while fighting
-ordinary guards on the castle's first level — it's a deeper-level / special
-state (alarm or capture). `enemyAttack` is a hand-assembled `db`-blob
-fragment entered mid-expression; its `FF28` (`TOS − TOS1`) reaches with
-only one FP operand and reads the **stack base node `ds:0FAC`** (a stale
-value) — an apparent original bug. Best port guess `INT(enemyAtk·(1−RND)/2)`,
-but this is **not** the common-case guard formula (that's `attackHit`
-above); a live `[ds:0FAC]` dump on a deeper level would settle it.
+**`enemyAttack` / `ds:20B8` path — CONFIRMED DEAD CODE (2026-09-06).**
+`casdr.asm:5621` (`sub_127C8`) → `5683` (`enemyAttack`) is a *separate*,
+older enemy system (`enemyAtk = ds:20B8`). Live testing exhausted every
+guard situation in the shipped game — **castle ground floor, castle
+basement (`castleLevel` = 2), the fortress, hostile guards, before and
+after the capture/escape sequence** — and `ds:20B8` **never** left `0`.
+The engaged-guard state is `ds:20AC` (`== 1` spotted, `spottedByGuard`;
+`== 0x0B` disengaged), and every guard blow runs through `attackHit`
+(above). `enemyAttack` is never entered, so its hand-assembled `FF28`
+that would read the stale stack-base node `ds:0FAC` is moot — **there is
+nothing left to dump.** A port can omit `sub_127C8` / `enemyAttack`
+entirely.
 
 **Player attack** — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 `DoFight` — *derived*. "F"ight then "ENTER DIRECTION:"; a sub-menu can
@@ -903,10 +907,11 @@ the `ON (rawTile+1) GOSUB` in `creatureApproach`, and the five arms
 The earlier field samples (museum 0/0, west 0.22/0.40, NW 0.35/0.55) are
 presets *(none)* / A / C respectively.
 
-Nearly everything here is now closed. The regular castle guard blow
-(`attackHit`), `ds:226E`/`ds:2214` (castle 1.0 / fort 3.5), and `ds:20C0`
-(1 = castle) are all **live-confirmed** (§3c). Remaining gaps (not blocking
-a port): CASDR `enemyAttack`'s FP-stack shape (a deeper-level / special
-path, not the common guard hit — the common hit is fully solved),
-a handful of runtime-only display constants (and a live `[ds:0FAC]` dump
-for CASDR `enemyAttack` on a deeper level — not the common guard blow).
+**Everything gameplay-relevant is now closed.** The regular castle/fort
+guard blow (`attackHit`), `ds:226E`/`ds:2214` (castle 1.0 / fort 3.5),
+`ds:20C0` (1 = castle, 2 = fort), and `castleLevel^1.8` scaling are all
+**live-confirmed** (§3c). CASDR `enemyAttack` / `ds:20B8` is **dead code**
+(never arms in the shipped game — verified across every guard situation),
+so the `ds:0FAC` question is moot. The only residuals are cosmetic:
+runtime-only display constants, the OUT.EXE anti-tamper checksum record
+layout, and the GMB2 ball-physics tables (not RPG-relevant).

@@ -369,10 +369,11 @@ anchor). The combat pool it prints is quoted at the top of
       `dmg = round( INT(castleLvl^1.8·(RND·600+300)·diff) /
       ((ds:1AEC−6)·Endurance^0.9) + 2 )`.  `diff` (`ds:226E`) = **1.0
       castle / 3.5 fort** (`ds:25B0` / `ds:31A8` — earlier note was
-      backwards); `castleLvl` (`ds:2084`) = 1 on the public level.  Three
-      paired blows `426→10, 855→19, 532→12` fit exactly; `FF22` rounds.
-      `sub_127C8` → `enemyAttack` (`enemyAtk = ds:20B8 = 140`) is a
-      *separate* path — `ds:20B8` never armed vs ordinary castle guards.
+      backwards) — **both live-confirmed** (castle L1 = 1.0; fortress =
+      `0x40600000` = 3.5, `ds:20C0` = 2).  `castleLvl` (`ds:2084`) = the
+      floor number (2 in the basement).  Castle L1 paired blows `426→10,
+      855→19, 532→12` fit exactly; `FF22` rounds.  Engaged-guard state =
+      `ds:20AC` (`== 1` spotted, `== 0x0B` disengaged).
 - [x] `casdr_castle.bas` (v3) — the **Warlord fight**.  `warlordHP`
       (`ds:20BA`) = **800** (`0x320`), set by `TakeChestItem` the moment
       you grab the Compendium (this spawns him).  `DoFight` hits subtract
@@ -385,13 +386,13 @@ anchor). The combat pool it prints is quoted at the top of
       facing a gas tile (`ds:1F02 ∈ 0x17..0x19`) =
       `INT( maxHP\4 + RND(1)·50 )` (`ds:20AA = S4(19)\4`, set by `gasTrap`;
       `ds:28DA = 50`) — ~¼ max HP/turn, so ~3–4 turns before it kills you.
-- [x] `enemyAttack` — traced to the limit of static analysis, **and
-      2026-09-06 live testing showed `ds:20B8` never arms vs ordinary
-      castle guards** → this is *not* the common guard blow (that's
-      `attackHit`, now verified above).  A deeper-level / special-state
-      path.  The `db`-blob fragment reaches its `FF28` (`TOS − TOS1`) one
-      operand short → reads the stack base node (`ds:0FAC`), a stale
-      value.  Port guess `INT(enemyAtk·(1−RND)/2)`; no longer port-blocking.
+- [x] `enemyAttack` / `ds:20B8` — **CONFIRMED DEAD CODE (2026-09-06).**
+      Live testing exhausted every guard situation in the shipped game
+      (castle ground floor, castle basement `castleLvl` 2, the fortress
+      `fort.bs`, hostile guards, before and after the capture/escape) and
+      `ds:20B8` never left `0`.  `enemyAttack` is never entered, so its
+      `FF28` reading the stale `ds:0FAC` slot is moot.  **A port can drop
+      `sub_127C8` / `enemyAttack`.**
 
 ## MUS.EXE
 

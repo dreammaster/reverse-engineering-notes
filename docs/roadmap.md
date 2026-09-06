@@ -74,12 +74,12 @@ the per-executable breakdown this tracks against.
       `enemyAttack`: `dmg = round( INT(castleLvl^1.8·(RND·600+300)·diff) /
       ((ds:1AEC−6)·Endurance^0.9) + 2 )`. Castle: `diff` (`ds:226E`) = 1.0
       (`ds:25B0`); fort = 3.5 (`ds:31A8`) — earlier note was **backwards**.
-      Same const also sets the to-hit `K` (`ds:2214`). Three paired blows
-      `426→10, 855→19, 532→12` fit exactly. `ds:20C0` = 1 confirms castle.
-      `sub_127C8` → `enemyAttack` (`enemyAtk = ds:20B8 = 140`) is a
-      *separate* path — `ds:20B8` never armed vs ordinary guards on the
-      castle public level; deeper-level / special-state only, still
-      un-observed but no longer the common-case formula.
+      Same const also sets the to-hit `K` (`ds:2214`). Castle L1 paired
+      blows `426→10, 855→19, 532→12` fit exactly; **fortress live-confirmed**
+      too (`ds:20C0` = 2, `ds:226E` = `0x40600000` = 3.5). `castleLevel`
+      (`ds:2084`) = the floor number (`2` in the basement), so a fortress
+      basement blow is ≈ 180+ HP.
+      `sub_127C8` → `enemyAttack` (`ds:20B8`) is **dead code** — see below.
 - [x] **TWNDR shops/guard/mail** (`twndr_services.bas` v1) — shop BUY
       prices are per-slot `TOWN<n>.BSV` data; SELL
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
@@ -186,15 +186,15 @@ the per-executable breakdown this tracks against.
       and sets it to `1` if the ray passes a solid tile (`rtm_FE18` != 0,
       != 0xFF). So **clear line to the loot → brazen (heat 18); something
       in the way → quiet (heat 1)**.
-- [x] **CASDR `enemyAttack`** — traced to the limit of static analysis;
-      **and 2026-09-06 live testing showed `ds:20B8` never arms vs
-      ordinary castle guards**, so this is NOT the common guard blow (that
-      is `attackHit`, now live-verified — see above). It stays a
-      deeper-level / special-state path. The `db`-blob fragment reaches
-      its `FF28` (`TOS − TOS1`) one FP operand short → reads the stack
-      base node `ds:0FAC` (stale). Port guess `INT(enemyAtk·(1−RND)/2)`;
-      a live `[ds:0FAC]` dump on a deeper level would settle it, but it no
-      longer blocks anything.
+- [x] **CASDR `enemyAttack` / `ds:20B8` — CONFIRMED DEAD CODE (2026-09-06).**
+      Live testing exhausted every guard situation in the shipped game —
+      castle ground floor, castle basement (`castleLevel` 2), the fortress
+      (`fort.bs`), hostile guards, before and after the capture/escape —
+      and `ds:20B8` never left `0`. The engaged-guard state is `ds:20AC`
+      (`== 1` spotted, `== 0x0B` disengaged) and every blow runs through
+      `attackHit`. `enemyAttack` is never entered, so its `FF28` that would
+      read the stale stack-base node `ds:0FAC` is moot — **there is nothing
+      to dump.** A port can omit `sub_127C8` / `enemyAttack` entirely.
 - [x] **OUTM1's role + the S4(12) trigger — SOLVED (2026-09-06)**.
       `OUTM1` = **The Pirate's Lair**, a pirate-island overworld reached
       **only from the museum**. `mus.asm sub_1134E` (fall-through from the
@@ -227,10 +227,12 @@ the per-executable breakdown this tracks against.
       brazen, obstructed = quiet.
 - [x] Pirate's Lair / "CLIMB ON" exhibits gate on the Topaz / Diamond
       coin respectively (standard `EnterExhibit` coin spend, no extra flag).
-- [ ] Not port-blocking: a live `[ds:0FAC]` dump for `enemyAttack` on a
-      deeper castle level (the common guard blow `attackHit` is
-      live-verified); the OUT.EXE anti-tamper checksum record layout;
-      GMB2 bucket geometry / ball physics (not RPG-relevant).
+- [x] `enemyAttack` / `ds:0FAC` — moot: `ds:20B8` is dead code (verified
+      live across castle floors + basement + fortress). Nothing to dump.
+- [ ] Cosmetic only, not port-blocking: the OUT.EXE anti-tamper checksum
+      record layout; GMB2 bucket geometry / ball physics (not RPG-relevant);
+      the fortress "guard armor" disguise gate (keeps `ds:20AC` out of the
+      spotted state — exact equip check not traced).
 
 ## Infra (done, 2026-08-30)
 

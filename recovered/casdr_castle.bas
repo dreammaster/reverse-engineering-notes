@@ -20,7 +20,9 @@
 '     ds:28B2 1.8   ds:28B6 600   ds:28BA 300   ds:28BE 0.9   ds:2744 2
 '     ds:28DA 50    ds:28A0 99    ds:2B94 80    ds:2084 enemyAtk (runtime)
 '     ds:226E  difficulty = 1.0 (CASTLE, ds:25B0) / 3.5 (FORT, ds:31A8)
-'              [verified live 2026-09-06 -- was previously noted backwards]
+'              [BOTH verified live 2026-09-06: castle L1 ds:226E = 1.0,
+'               fortress ds:226E = 0x40600000 = 3.5, ds:20C0 = 2.
+'               Was previously noted backwards.]
 '     DoFight consts: ds:2724 7500  ds:2742 7  ds:2744 2  ds:270E 0.53
 '                     ds:2712 6  ds:27C4 -7.5  ds:27C8 28  ds:31A4 26
 '     ds:2214  = 1.0 (CASTLE, ds:25B0) / Dexterity/26 (FORT)  [loadCastleLevel]
@@ -238,13 +240,16 @@ SUB EnemyAttack                                       ' asm: casdr.asm:5683 (ene
 '   Delay &h17
 '   hitPoints = hitPoints - damage              ' (message tail / caller)
 '
-' *** LIVE STATUS 2026-09-06 *** : with PAULA fighting guards on the castle
-' "public" level, ds:20B8 NEVER goes hot -- walking around in a guard's
-' line of sight does not arm this path.  The regular guard blow you take
-' there is AttackHit (via AttackMiss), not EnemyAttack.  EnemyAttack /
-' ds:20B8 is a deeper-level or special-state path (alarm / capture?) and
-' is still un-observed; the ds:0FAC question below is unresolved but is
-' NOT the common-case guard-damage formula.
+' *** CONFIRMED DEAD CODE, 2026-09-06 *** : live testing exhausted every
+' guard situation in the shipped game -- castle ground floor, castle
+' BASEMENT (castleLevel ds:2084 = 2), the FORTRESS (fort.bs, ds:20C0 = 2),
+' hostile guards, and both before and after the capture/escape sequence --
+' and ds:20B8 NEVER left 0.  The engaged-guard state is ds:20AC (== 1
+' spotted [spottedByGuard], == 0x0B disengaged) and every guard blow runs
+' through AttackHit (via AttackMiss).  EnemyAttack is never entered, so
+' its FF28 that would read the stale stack-base node ds:0FAC is moot.
+' A PORT CAN OMIT CastleEnemyTurn / EnemyAttack ENTIRELY.  The notes below
+' record the trace for completeness only.
 '
 ' NOTE: chased as far as static analysis can go.  The value-stack ops are
 ' all settled (FF4C mul pop-2, FF23 -> int32 & POP, FF21 push, FF28 =
@@ -434,11 +439,19 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '   * REGULAR GUARD BLOW = AttackHit (via AttackMiss), *** live-verified
 '     2026-09-06 *** : dmg = round( INT(castleLvl^1.8 * (RND*600+300) *
 '     difficulty) / ((ds:1AEC-6) * Endurance^0.9) + 2 ) .  Castle L1
-'     (castleLvl 1, difficulty 1.0, End 17): ~8..20 HP.  See SUB AttackHit.
-'   * sub_127C8 / EnemyAttack (ds:20B8 = 140) is a SEPARATE, deeper-level /
-'     special path -- ds:20B8 never armed vs ordinary guards on the public
-'     castle level (live-checked).  Best guess INT(enemyAtk*(1-RND)/2);
-'     its FF28 reads a stale FP slot -- still un-observed, NOT the common hit.
+'     (castleLvl 1, difficulty 1.0, End 17): ~8..20 HP.  Fortress
+'     basement (castleLvl 2, difficulty 3.5): ~180+ HP/blow.  See AttackHit.
+'   * Engaged-guard state = ds:20AC (== 1 spotted via spottedByGuard,
+'     == 0x0B disengaged).  sub_11D3D gates the guard's attack on
+'     ds:20AC != 0x0B AND ds:20BA <= 0.
+'   * sub_127C8 / EnemyAttack (ds:20B8) is DEAD CODE -- ds:20B8 never
+'     arms anywhere in the shipped game (castle floors + basement +
+'     fortress, hostile guards, capture/escape all live-checked).
+'     A port can drop it.  The ds:0FAC / FF28 question is moot.
+'   * FORTRESS "guard armor" chest (post-capture): "YOU SEE GUARD ARMOR
+'     IN THE BOX" (ds:30B0) ; wearing it makes guards ignore you.  The
+'     equip -> "guards ignore" gate is not fully traced (it keeps
+'     ds:20AC out of the "spotted" state) -- cosmetic, not port-blocking.
 '
 '  RESOLVED (leglib static, 2026-09-06 -- see leglib_runtime.c)
 '   * FF1F compare = reversed (Jcc tests TOS <cmp> TOS1) -- confirmed
