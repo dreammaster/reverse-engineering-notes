@@ -364,7 +364,12 @@ anchor). The combat pool it prints is quoted at the top of
       `hitPoints −= INT(RND·99 + 80)` = 80–178.  `WarlordConfrontation`
       (walk into the final wall) is a *mid-fight* cinematic that forces
       `hitPoints = 28` — it never touches `ds:20BA`.
-- [ ] gas-room `base`; `enemyAttack`'s exact FP-stack shape.
+- [x] `casdr_castle.bas` — **gas room**: `gasDamage` per turn while
+      facing a gas tile (`ds:1F02 ∈ 0x17..0x19`) =
+      `INT( maxHP\4 + RND(1)·50 )` (`ds:20AA = S4(19)\4`, set by `gasTrap`;
+      `ds:28DA = 50`) — ~¼ max HP/turn, so ~3–4 turns before it kills you.
+- [ ] `enemyAttack`'s exact FP-stack shape (magnitude solid; needs a
+      live dump).
 
 ## MUS.EXE
 

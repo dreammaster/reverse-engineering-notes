@@ -49,13 +49,20 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
-SUB GasDamage                                         ' asm: casdr.asm:4376 (gasDamage)
+SUB GasDamage                                         ' asm: casdr.asm:4390 (gasDamage)
 ' --------------------------------------------------------------------------
-' The cloudy-air trap rooms tick this each turn spent inside.
-    dmg = INT( RND(1) * 50.0 + base )      ' ds:28DA 50 ; base from stack   ' asm:4377-4397 '??
-    hitPoints = hitPoints - dmg                                           ' asm:4414 -> loc_11EB7
-    PRINT "GAS DAMAGE: -"; dmg
-END SUB
+' Ticked each castle turn while the tile ahead is a gas-cloud tile
+' (ds:1F02 in &h17..&h19).  Entered mid-expression: the caller (loc_11F41)
+' has already pushed  gasPotency = ds:20AA  onto the FP stack.
+'
+'   gasPotency (ds:20AA) = maxHP \ 4          ' = S4(19) \ 4, set by gasTrap
+'   dmg = INT( gasPotency + RND(1) * 50 )     ' FF4B RND; FF4E ds:28DA=50; FF42; FF22
+'   hitPoints = hitPoints - dmg               ' -> loc_11EB7 (shared apply)
+'   PRINT "GAS DAMAGE "; dmg                  ' ds:28DE
+'
+' So the gas does ~ maxHP/4 + 0..50 per turn -- roughly a quarter of your
+' max HP every turn (L1 maxHP 200 -> 50..100 ; L10 maxHP 4600 -> 1150..1200).
+' You survive ~3-4 turns in the cloud ; the point of the trap is to leave.
 
 
 ' --------------------------------------------------------------------------
@@ -339,7 +346,8 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '       * difficulty / (armorVal * Endurance^0.9) + 2 )
 '     -- Endurance and armour mitigate as a DENOMINATOR term
 '   * Warlord blow: INT( RND(1)*99 + 80 )   (80..178)
-'   * gas room: ~INT( RND(1)*50 + base )    per turn inside
+'   * gas room: dmg = INT( maxHP\4 + RND(1)*50 )  per turn while facing a
+'     gas tile (ds:1F02 in 0x17..0x19) ; ds:20AA = maxHP\4 set by gasTrap
 '   * FLOOR-plan rooms are a SELECT CASE; effects are separate handlers
 '   * PLAYER attack (DoFight):
 '       weapon to-hit  RND(1) < (11*weaponId + 99)*(Dex + 13) / (7500*K)
@@ -385,7 +393,6 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '   * FF22 / FF23 pop their operand
 '
 '  OPEN
-'   * gas damage `base` (stack leftover)
 '   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape -- FP stack is
 '     one operand short at the FF28 call (a leftover from the caller's
 '     mid-expression entry) ; needs a live FP-stack dump

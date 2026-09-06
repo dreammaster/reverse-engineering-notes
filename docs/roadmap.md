@@ -120,6 +120,10 @@ the per-executable breakdown this tracks against.
       **cosmetic** countdown gauge (ticked −28/turn while > `0x898`,
       freezes there) — no fail condition. `ida_scripts/dump_casdr_castle.py`
       coerces + dumps read-only.
+- [x] **CASDR gas room** (`gasDamage`, `casdr.asm:4390`). Applied per
+      castle turn while facing a gas tile (`ds:1F02 ∈ 0x17..0x19`):
+      `dmg = INT( maxHP\4 + RND(1)·50 )` (`ds:20AA = S4(19)\4`, set by
+      `gasTrap`; `ds:28DA = 50`) — ~¼ max HP/turn.
 - [x] **DUN monster movement** (`moveMonsters` / `sub_139FC` /
       `stepMonsterToward`, `dun_combat.bas` v2). Greedy Manhattan chase
       every turn — one orthogonal step toward the player, dominant axis
@@ -170,7 +174,7 @@ the per-executable breakdown this tracks against.
       `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
       → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
 - [ ] Still open: the exact first-set of `ds:20B0` (a `db` blob; timer
-      path traced); CASDR `enemyAttack` FP-stack shape / gas-room `base`.
+      path traced); CASDR `enemyAttack` FP-stack shape (magnitude solid).
 
 ## Infra (done, 2026-08-30)
 

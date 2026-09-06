@@ -404,8 +404,13 @@ MAGIC… I'LL USE THIS SCROLL TO CAST THE SPELL OF DEATH…"*. It **forces
 worn the 800-HP Warlord well down before cornering him at the wall; the
 cinematic then leaves you at 28 HP for the finish.
 
-**Gas room** — *partial* — `casdr.asm:4376`: `~INT( RND(1)*50 + base )`
-per turn spent in a cloudy room.
+**Gas room** — *derived* — `gasDamage` (`casdr.asm:4390`), applied every
+castle turn while you face a gas-cloud tile (`ds:1F02 ∈ 0x17..0x19`):
+```
+dmg = INT( maxHP\4 + RND(1)·50 )     ' ds:20AA = S4(19)\4 (set by gasTrap), ds:28DA = 50
+```
+So the cloud does ~¼ of your max HP per turn (L1 → 50–100, L10 → 1150–1200)
+— you last ~3–4 turns; the trap's whole point is to leave fast.
 
 **Potion wizard** — the CASDR room reward is +5 Endurance / +36 Dexterity
 (and the guide's +5 END / +36 DEX quest).
