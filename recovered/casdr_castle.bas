@@ -300,13 +300,24 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     Pager "OUR LEADER HAS BEEN KILLED.  BLOCK"'   a keypress skips it (with a beep)
 '     Pager "ALL DOORS.  EXPLOSIVE CHARGES SET. "
 '     Pager "SELF-DESTRUCTION IN 5 MINUTES!"
-'     ds:20BC = &h5F00                          ' the escape allowance (turn units)
-'     Sub_14F0C &hBE
+'     ds:20BC = &h5F00 (24320)                  ' the countdown-gauge value
+'     DrawCountdownGauge &hBE                    ' sub_14F0C(0x5F00 \ 128 = 190)
 '     FacePlayerDirection
-' After this you must reach the castle exit before the allowance runs out;
-' the guards "block all doors" (the door state flags flip).  The "5
-' MINUTES" is the on-screen text -- the real limit is the ds:20BC budget
-' decremented per turn (exact per-turn cost not pinned).
+'
+' THE COUNTDOWN IS COSMETIC.  ds:20BC is a per-room "pressure" value
+' (normally &h1194 / &h1D4C = 4500 / 7500, set by moveBlocked on entering
+' a zone).  Every castle turn doWalk (casdr.asm:890):
+'     IF ds:20BC > &h898 (2200) THEN
+'         ds:20BC = ds:20BC - &h1C   (28 per turn)
+'         DrawCountdownGauge( ds:20BC \ 128 )    ' the on-screen "SELF-DESTRUCT IN n"
+'     END IF
+' So after the Warlord dies the gauge counts &h5F00 -> &h898 over
+' (24320 - 2200)\28 ~= 790 castle turns, then FREEZES.  *** There is NO
+' `IF ds:20BC <= x THEN <die>` check anywhere (all 5 refs accounted for). ***
+' Nothing happens when it "runs out".  The "5 MINUTES" is pure atmosphere;
+' the real endgame pressure is escaping the guard-blockaded castle at the
+' 28 HP warlordConfrontation left you with.  exitCastle calls
+' DrawCountdownGauge(0) to clear it on the way out.
 
 
 ' ==========================================================================
@@ -339,8 +350,9 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     questMarkState = &hFF ; ds:20B6 = 1 ; spawns the Warlord for melee.
 '     Warlord blow (warlordAttack) = INT( RND(1)*99 + 80 ) = 80..178.
 '   * SELF-DESTRUCT: Warlord death -> "** WARLORD KILLED **" cinematic +
-'     "SELF-DESTRUCTION IN 5 MINUTES!" ; ds:20BC = &h5F00 escape budget,
-'     ticked down per turn ; guards block the doors
+'     "SELF-DESTRUCTION IN 5 MINUTES!" ; ds:20BC = &h5F00, ticked -28/turn
+'     while > &h898 (~790 turns to the floor), drives a COSMETIC on-screen
+'     countdown gauge -- NO fail condition when it runs out
 '   * Weaken item: enemy attack (ds:20B8) *= 0.96 per cast (ds:3162)
 '   * noisy-door spot roll: RND(1) < 0.15 (ds:3054)
 '   * CASTLE ENEMY: sub_127C8 spawns a guard (enemyAtk = 140) when none
@@ -357,7 +369,6 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '
 '  OPEN
 '   * gas damage `base` (stack leftover)
-'   * the per-turn ds:20BC decrement (self-destruct budget cost)
 '   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape -- FP stack is
 '     one operand short at the FF28 call (a leftover from the caller's
 '     mid-expression entry) ; needs a live FP-stack dump

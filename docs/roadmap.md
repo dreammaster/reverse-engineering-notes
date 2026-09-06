@@ -116,9 +116,10 @@ the per-executable breakdown this tracks against.
       LOCKED"; `USE` key 4–7 → per-tile match (`0xC0→4`, `0xC1/DA→7`,
       `0xCB→8`, `0xE6→5`, `0xE7→6`) → "UNLOCK DOOR." `S5` (`ds:1BF2`) is
       a live per-tile door table in CASDR. Self-destruct: Warlord death →
-      "SELF-DESTRUCTION IN 5 MINUTES!" cinematic + `ds:20BC = 0x5F00`
-      escape budget. `ida_scripts/dump_casdr_castle.py` coerces + dumps
-      read-only.
+      "SELF-DESTRUCTION IN 5 MINUTES!" cinematic; `ds:20BC` is a
+      **cosmetic** countdown gauge (ticked −28/turn while > `0x898`,
+      freezes there) — no fail condition. `ida_scripts/dump_casdr_castle.py`
+      coerces + dumps read-only.
 - [x] **DUN monster movement** (`moveMonsters` / `sub_139FC` /
       `stepMonsterToward`, `dun_combat.bas` v2). Greedy Manhattan chase
       every turn — one orthogonal step toward the player, dominant axis
@@ -165,8 +166,8 @@ the per-executable breakdown this tracks against.
       `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
       → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
 - [ ] Still open: the exact first-set of `ds:20B0` (a `db` blob; timer
-      path traced); CASDR `enemyAttack` FP-stack shape / per-turn
-      `ds:20BC` cost / Warlord combat HP / gas-room `base`.
+      path traced); CASDR `enemyAttack` FP-stack shape / Warlord combat
+      HP / gas-room `base`.
 
 ## Infra (done, 2026-08-30)
 

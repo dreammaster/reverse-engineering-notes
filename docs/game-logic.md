@@ -438,11 +438,19 @@ table in CASDR** (it's only dead data in TWNDR). Other `USE` items:
 **Fortress self-destruct** — `fortressSelfDestruct` (`casdr.asm:11bc8`).
 Killing the Warlord triggers *"** WARLORD KILLED **"* → a klaxon and the
 paged sequence *"SECURITY ALERT… / OUR LEADER HAS BEEN KILLED. BLOCK ALL
-DOORS. EXPLOSIVE CHARGES SET. / SELF-DESTRUCTION IN 5 MINUTES!"*. It sets
-`ds:20BC = 0x5F00` — the escape budget, decremented per turn — and the
-guards lock the doors behind you; reach the exit before it runs out. (The
-"5 MINUTES" is flavour text; the real limit is the `ds:20BC` budget, whose
-per-turn cost isn't pinned.)
+DOORS. EXPLOSIVE CHARGES SET. / SELF-DESTRUCTION IN 5 MINUTES!"*, and the
+guards lock the doors behind you.
+
+**The countdown is cosmetic.** `ds:20BC` is a per-room "pressure" value
+(normally `0x1194`/`0x1D4C` = 4500/7500, set by `moveBlocked` on entering
+a zone); the Warlord's death slams it to `0x5F00` (24320). Each castle
+turn `doWalk` (`casdr.asm:890`) does `if ds:20BC > 0x898 (2200): ds:20BC
+−= 28`, redrawing an on-screen "SELF-DESTRUCT IN `ds:20BC \ 128`" gauge —
+so it counts down over ~790 turns, then **freezes at 2200**. There is
+**no `if ds:20BC ≤ x then …` check anywhere** — nothing happens when it
+"runs out". The real endgame pressure is escaping the guard-blockaded
+castle at the 28 HP the confrontation left you with. `exitCastle` clears
+the gauge on the way out.
 
 ---
 
