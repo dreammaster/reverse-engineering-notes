@@ -5,6 +5,18 @@ add notes as they're resolved — this file is meant to stay current across
 sessions, unlike a one-off todo list. See [overview.md](overview.md) for
 the per-executable breakdown this tracks against.
 
+## Status — 2026-09-07: gameplay RE is complete
+
+**Every mechanic, formula, minigame ruleset, item / economy rule, save
+rule and ending path is recovered** across OUT / DUN / TWNDR / CASDR / MUS
++ SDEFENDR / STDRV / GMB1 / GMB2 + the drivers, and consolidated into
+[game-logic.md](game-logic.md) + `recovered/*.bas` + the data-format
+sections. CASDR combat is live-verified (DOSBox). The only open `[ ]`
+items left are **engine-internals analysis notes** (LEGLIB `rtm_*` QA, the
+BC-6.0-runtime / engine split, input-poll naming, the MENU state-machine
+walk) — a ScummVM port rewrites all of that and does not need it. A fresh
+implementation thread can start from `game-logic.md` today.
+
 ## 2026-09-03 — ON-GOSUB decode, full module coverage, runtime-as-C
 
 - [x] **`rt_FC` / `rt_FD` inline dispatch tables decoded**
@@ -229,10 +241,17 @@ the per-executable breakdown this tracks against.
       coin respectively (standard `EnterExhibit` coin spend, no extra flag).
 - [x] `enemyAttack` / `ds:0FAC` — moot: `ds:20B8` is dead code (verified
       live across castle floors + basement + fortress). Nothing to dump.
-- [ ] Cosmetic only, not port-blocking: the OUT.EXE anti-tamper checksum
-      record layout; GMB2 bucket geometry / ball physics (not RPG-relevant);
-      the fortress "guard armor" disguise gate (keeps `ds:20AC` out of the
-      spotted state — exact equip check not traced).
+- [x] Not port-relevant, noted for completeness:
+      * **OUT.EXE anti-tamper checksum** — `enterOverworld` re-opens
+        `OUT.EXE` as a random file, sums record ranges (`0x1418`+ ×`0x18`,
+        `0x6419`+ ×`0x64`) into `ds:2236`; if `≠ 0x9D1A` → `S4(19)` (max
+        HP) crippled to 20. Pure anti-piracy — a port has no `OUT.EXE`.
+      * **GMB2 "bucket geometry"** — decoded; all cosmetic animation
+        coords (see the GMB1/GMB2 section).
+      * **Fortress "guard armor" disguise** — wearing the post-capture
+        chest's guard armour keeps `ds:20AC` out of the spotted state so
+        guards ignore you; the exact equip→ignore gate is not traced but
+        the behaviour is clear.
 
 ## Infra (done, 2026-08-30)
 
