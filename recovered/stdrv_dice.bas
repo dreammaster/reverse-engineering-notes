@@ -8,14 +8,25 @@
 '  player's INTELLIGENCE.  This is the game's main way to raise INT (the
 '  others are quests / Stones-of-Wisdom gems).
 '
-'  Rules (from the in-game help text):
-'    - both players start a match with 5 dice
-'    - each round both roll secretly; players alternate BIDS ("N dice
-'      showing face F"); each bid must exceed the last (higher count, or
-'      same count + higher face; 1s are wild in the tally)
-'    - "CHALLENGE" ends the round: reveal all dice, count face F (+wilds).
-'      >= bid  -> the challenger loses the round ; < bid -> the bidder does
-'    - round loser gives up one die ; a player at 0 dice loses the MATCH
+'  Rules (from the in-game help text -- FULL text is in stdrv.asm:~22195;
+'  it is complete and player-facing, and the code confirms every point):
+'    - both players start a match with 5 dice, rolled secretly
+'    - dice roll = INT( RND(1) * 6 + 1 )   uniform d6      ' sub_10448
+'      (ds:2958 = 6 faces, ds:2954 = 5 dice/hand, both set at match start)
+'    - players alternate BIDS ("N dice showing face F") = "I expect AT
+'      LEAST N dice showing F between BOTH hands (all 10 dice)"
+'    - each bid must exceed the last: MORE count of any face, OR the SAME
+'      count of a HIGHER face  ("four ones beats three sixes";
+'      "two fours beats two threes")
+'    - "CHALLENGE" ends the round: reveal all dice; tally =
+'          count of ( die = F  OR  die = 1 )         ' *** 1s ARE WILD ***
+'      confirmed in scoreDiceHand (loc_120E2): inc when
+'      (die == bidFace) OR (die <= 1).
+'      tally >= bidCount  -> the BIDDER wins the round
+'      tally <  bidCount  -> the CHALLENGER wins ("caught overbidding")
+'    - the round LOSER gives up one die ; the loser bids first next round ;
+'      a player reduced to 0 dice LOSES THE MATCH
+'    - INTELLIGENCE changes once, at match end (see ResolveChallenge)
 '
 '  SUBs: stonesOfWisdomMain  (the match loop, ~1.1 KB, mostly presentation
 '                             + STDRVSCR.DAT screen)
@@ -95,7 +106,18 @@ END SUB
 '   * match = Perudo to zero dice ; INT changes ONCE per match, not per round
 '   * the changed INT rides ds:1AF0 (resident char record) back to the museum
 '
-'  OPEN
-'   * dealer bid/challenge thresholds (evalDiceOdds constants)
-'   * whether a coin is consumed win-or-lose (looks like: yes, on entry)
-'   * exact "matchLostByPlayer" flag origin in resolveChallenge
+'  RESOLVED 2026-09-07
+'   * dice roll = INT(RND(1)*6+1) uniform d6 (sub_10448)
+'   * challenge tally counts (die == bidFace) OR (die == 1) -- 1s wild,
+'     confirmed in scoreDiceHand
+'   * bid ordering: strictly-more count wins; equal count needs higher face
+'   * challenge outcome: tally >= bidCount -> bidder wins, else challenger
+'   * coin: EnterExhibit spends the gem coin on entry (win or lose), like
+'     every museum exhibit
+'
+'  OPEN (feel, not mechanics -- a standard Perudo-with-wilds AI is faithful)
+'   * the exact dealer P-formula + raise/challenge thresholds live in
+'     evalDiceOdds (stdrv.asm:4281, ~600 lines of value-stack binomial
+'     math). Model: expectedF = ownWildCount + INT(hiddenDice/3), raise
+'     while bidCount <= expectedF, challenge when bidCount exceeds it by a
+'     margin that widens as the dealer's dice dwindle.

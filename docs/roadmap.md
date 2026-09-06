@@ -471,10 +471,17 @@ reimplementation.
       (2108) / `dealerBid` (2106), `gameScore` (1EF2 dword, role
       unclear). Most of the other 30-odd DGROUP words are one-function
       drawString layout params.
-- [ ] The ~30 remaining `sub_` helpers are all value-stack number
-      crunching for the dice math -- no distinguishing text. `diceCount`
-      / `stdrvArrayPtr` split them into "tally" and "table lookup"
-      groups; naming each precisely needs the dice ruleset traced.
+- [x] **Stones of Wisdom ruleset SOLVED (2026-09-07)** — it's Perudo /
+      Liar's Dice with **1s wild**. `sub_10448` rolls `INT(RND(1)*6+1)`
+      (uniform d6), 5 dice/hand. `scoreDiceHand` tallies `(die == bidFace)
+      OR (die == 1)`. Challenge: `tally >= bidCount` → bidder wins, else
+      challenger. Round loser drops a die; 0 dice → loses the match. Full
+      player-facing rules text at `stdrv.asm:~22195`. Written up in
+      [`stdrv_dice.bas`](../recovered/stdrv_dice.bas). The ~30 remaining
+      `sub_` helpers are the dealer-AI probability math in `evalDiceOdds`
+      (stdrv.asm:4281) — a *feel* residual: exact P-formula/thresholds
+      unpinned, but the ruleset + a standard Perudo-with-wilds AI
+      (P(hidden die helps) = 1/3) is faithful.
 - [x] `STDRVSCR.DAT` (2026-09-01) — **not text**: `0xAA`-filled CGA screen
       graphics for the Stones-of-Wisdom table (`word[0]`=640 payload
       start). STDRV narrates its rules from strings in the EXE.
