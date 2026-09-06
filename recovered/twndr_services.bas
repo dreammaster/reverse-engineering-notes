@@ -1,5 +1,5 @@
 ' ==========================================================================
-'  TWNDR.EXE  --  town services                                       [v1]
+'  TWNDR.EXE  --  town services                                       [v2]
 '  reconstructed from twndr.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: SpendGold  (shared "pay N gold"), Bank,
@@ -109,25 +109,61 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
-SUB FoodShop                                         ' asm: twndr.asm foodShop
+SUB FoodShop                                          ' asm: twndr.asm:2082 (foodShop)
 ' --------------------------------------------------------------------------
-' "RATIONS" -- buy food.  Price is per-slot shop data (as the weapon shop);
-' the quantity prompt is PromptQuantity, capped at what you can afford.
-' Also the entry point that offers the mail-delivery job (below).
+' The provisioner ("FOOD & WATER", "WE SELL FOOD FOR TRAVEL").
+'
+' ---- ON ENTRY: deliver mail if this is the destination town -------------
+'   currentTown = ds:1F22 (0..11) ; mail job = S4(7) (S4 byte 0x0E ;
+'   -1/&hFFFF = no job) ; the mail item = S2(9) (S2 byte 0x12).
+'
+'     IF S4(7) = currentTown AND locationType(ds:1E20) <> &h0C THEN
+'         Delay &h13
+'         PRINT "THANKS FOR THE LETTER DELIVERY"
+'         payment   = INT( INT(RND(1) * 3) * 15 + 95 )    ' ds:2940/2944/2948
+'         partyGold = partyGold + payment                 ' 32-bit add
+'         S4(7)  = -1                                      ' clear the job
+'         S2(9)  = 0                                       ' drop the letter
+'         PRINT "HERE'S "; payment; " GOLD."
+'         PressKeyToContinue
+'         EXIT SUB
+'     END IF
+'   -- payment is 95, 110 or 125 gold (INT(RND*3) is 0/1/2 ; the 140 case
+'      needs RND exactly 1.0).  Matches the hint-book's 95/110/125.  Since
+'      the job only ever routes +-1 town (see MailDeliveryJob) the payout
+'      is NOT distance-scaled -- it is just the flat random roll.
+'
+' ---- otherwise: buy rations -------------------------------------------
+'     pricePerDay = INT( 13 - Charm/7 ) * 0.1            ' ds:2A06/2A0A/2A0E
+'                   ' Charm 15 -> ~1.0 g/day ; Charm 30 -> ~0.8 g/day
+'     PRINT "COST IS "; pricePerDay; " GOLD PER 'DAY'"
+'     maxDays = MIN( 1000, INT(partyGold / pricePerDay) )
+'     PRINT "MAXIMUM PURCHASE: "; maxDays; " DAYS"
+'     n = PromptQuantity()                              ' clamped to maxDays
+'     partyGold = partyGold - INT(n * pricePerDay)
+'     food      = food + n                              ' runtime-only, not saved
+'   The provisioner is also where MailDeliveryJob is offered (a chance
+'   roll when you have no job pending).
 
 
 ' --------------------------------------------------------------------------
-SUB MailDeliveryJob                                  ' asm: twndr.asm mailDeliveryJob
+SUB MailDeliveryJob                                  ' asm: twndr.asm:2722 / loc_11905
 ' --------------------------------------------------------------------------
-' Reached from the food shop.  "WOULD YOU LIKE TO EARN SOME GOLD?"
+' Offered by the provisioner.  "WOULD YOU LIKE TO EARN SOME GOLD?" ->
+' "HERE'S SOME MAIL TO DELIVER TO <town>".
+'
 '     DO
-'         destTown = INT( (currentTown - 1) + RND(1) * <k> )     ' ds:2940
+'         destTown = INT( INT(RND(1) * 3) + (currentTown - 1) )   ' ds:2940 = 3.0
 '     LOOP WHILE destTown < 0 OR destTown > 10 OR destTown = currentTown
+'     ' -> destTown is ALWAYS an adjacent town: currentTown +- 1
 '     PRINT "HERE'S SOME MAIL TO DELIVER TO "; Town$(destTown)
-'     S2(9) = S2(9) + 1                              ' "mail" item held
-' Payment (guide: 95 / 110 / 125 gold, presumably by route distance) is
-' credited when you next enter destTown carrying the mail -- that check
-' lives in the town-arrival path, not fully traced here.  *partial*
+'     S4(7) = destTown                          ' the pending job (byte 0x0E)
+'     S2(9) = 1                                 ' hold the letter  (byte 0x12)
+'     Item$(spare) = Town$(destTown) + " MAIL"  ' inventory display label (ds:1D66)
+'     PressKeyToContinue
+'
+' Payment is credited on arrival -- see FoodShop's on-entry block above
+' (INT(RND*3)*15 + 95  =  95 / 110 / 125 gold).
 
 
 ' --------------------------------------------------------------------------
@@ -194,13 +230,18 @@ SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
 '     + 12) \ (armorTerm^0.8 * End^0.8) ) + 3, armorTerm = 10*armorId - 50
 '     (or 30 bare)
 '   * player -> GUARD: dmg = INT( ((weaponId+2)*Str\8 + 4) * (RND + 0.5) )
-'   * MAIL: pick a random other town (0..10, != current); guide payout
-'     95/110/125 gold by route
+'   * MAIL: job (S4(7), -1 = none) always routes to an ADJACENT town
+'     (currentTown +- 1, re-rolled while <0 / >10 / == current); the letter
+'     is S2(9).  PAID on entering the destination provisioner:
+'     payment = INT( INT(RND*3)*15 + 95 )  =  95 / 110 / 125 gold
+'     (partyGold += payment ; S4(7) = -1 ; S2(9) = 0) -- NOT distance-scaled
+'   * FOOD: pricePerDay = INT(13 - Charm/7) * 0.1  (~1 g/day, less w/ Charm);
+'     maxDays = MIN(1000, partyGold / pricePerDay) ; food is runtime-only
 '
 '  OPEN
 '   * armour SELL polynomial exact assembly (consts 3.2/1.02/3.5/-6)
-'   * mail payout credit point ; bribe amount origin ; StealGold fine split
-'   * robberyEvent ; the food-shop price/quantity exact
+'   * bribe amount origin ; StealGold fine split ; robberyEvent
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;
-'   findings above were read from the coerced idb.
+'   findings above were read from the coerced idb.  foodShop was coerced +
+'   dumped read-only via ida_scripts/dump_twndr_foodshop.py (-NoExport).

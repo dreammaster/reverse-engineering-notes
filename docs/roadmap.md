@@ -71,13 +71,21 @@ the per-executable breakdown this tracks against.
       prices are per-slot `TOWN<n>.BSV` data; SELL
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
       `offer = INT(MIN(baseValue, baseValue·Charm^0.7/11)·0.8)`; guard
-      combat mirrors the castle (armour+Endurance denominator); mail job
-      picks a random other town. `ida_scripts/fix_twndr_guard.py` coerces
-      the 4 small handlers (NOT `townServiceDispatch` — it reflows the
-      whole `.asm`, so `twndr.asm` is intentionally left un-updated).
+      combat mirrors the castle (armour+Endurance denominator).
+      `ida_scripts/fix_twndr_guard.py` coerces the 4 small handlers (NOT
+      `townServiceDispatch` — it reflows the whole `.asm`, so `twndr.asm`
+      is intentionally left un-updated).
+- [x] **TWNDR mail payout** (`twndr_services.bas` v2) — the job always
+      routes `currentTown ± 1` (`S4(7)` pending, `S2(9)` letter); paid on
+      entering the destination provisioner (`foodShop`, twndr.asm:2082):
+      `payment = INT(INT(RND*3)*15 + 95)` = **95 / 110 / 125 gold**
+      (`partyGold += payment`, `S4(7) = −1`, `S2(9) = 0`). Also got the
+      food price: `pricePerDay = INT(13 − Charm/7)·0.1`.
+      `ida_scripts/dump_twndr_foodshop.py` coerces + dumps `foodShop`
+      read-only (`-NoExport`).
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR armour-
-      sell polynomial / mail payout credit / `StealGold` fine / robbery
-      event; CASDR chest loot / locked doors / self-destruct;
+      sell polynomial / `StealGold` fine / robbery event / bribe amount;
+      CASDR chest loot / locked doors / self-destruct;
       DUN monster movement; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
 
@@ -965,8 +973,8 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
-- [ ] mail-route payout credit, `selectAbove` mode-4 internals (LEGLIB),
-      `OUTM1`'s role, flip-flop `ds:2B40` / `ds:2AA6`.
+- [ ] `selectAbove` mode-4 internals (LEGLIB), `OUTM1`'s role,
+      flip-flop `ds:2B40` / `ds:2AA6`, TWNDR armour-sell polynomial.
 
 ## ScummVM engine (future)
 

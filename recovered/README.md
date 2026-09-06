@@ -215,7 +215,8 @@ anchor). The combat pool it prints is quoted at the top of
       `200 + 50·L·(L−1) − (100 if L>5)` on every entry. A tamper check
       (`ds:2236 ≠ 0x9D1A` → `S4(19) = 20`) crashes max HP on a patched
       EXE. Open: `OUTM1`'s role; the checksum record layout.
-- [ ] mail routes
+- [x] mail routes — see the TWNDR `MailDeliveryJob` / `FoodShop` entry
+      below (job always routes ±1 town, paid 95/110/125 on arrival).
 
 ## DUN.EXE
 
@@ -258,16 +259,23 @@ anchor). The combat pool it prints is quoted at the top of
       LotA has no XP stat.  Interest =
       `MIN(1500, MIN(5000, balance) * daysElapsed \ 999)` (`ds:2C3C` is an
       8-byte double = 999.0).  Moneylender = flat 50% loan.
-- [x] `twndr_services.bas` (v1) — `WeaponArmorShop` / `FoodShop`,
+- [x] `twndr_services.bas` (v2) — `WeaponArmorShop` / `FoodShop`,
       `MailDeliveryJob`, `GuardAttack` / `FightGuard`, `StealGold` /
       `OfferGuardBribe` / `ArrestedByGuards`.  Shop **buy** prices are
       per-slot `TOWN<n>.BSV` data (not a formula); **sell**
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
       `offer = INT(MIN(baseValue, baseValue*Charm^0.7/11) * 0.8)`.  Guard
-      combat mirrors the castle (armour + Endurance denominator).  Mail
-      job picks a random other town; payout credit point still *partial*.
-- [ ] armour-sell polynomial exact assembly; mail payout credit;
-      `StealGold` fine split; `robberyEvent`; food-shop price/quantity.
+      combat mirrors the castle (armour + Endurance denominator).  **Mail**
+      job always routes ±1 town (`S4(7)` = pending, `S2(9)` = letter);
+      **paid on entering the destination provisioner**:
+      `payment = INT(INT(RND*3)*15 + 95)` = **95 / 110 / 125 gold**
+      (`partyGold += payment`, `S4(7) = -1`, `S2(9) = 0`).  Food:
+      `pricePerDay = INT(13 - Charm/7)·0.1`, `maxDays = MIN(1000,
+      partyGold/pricePerDay)`; food is runtime-only.
+      (`foodShop` coerced + dumped read-only via
+      `ida_scripts/dump_twndr_foodshop.py -NoExport`.)
+- [ ] armour-sell polynomial exact assembly; `StealGold` fine split;
+      `robberyEvent`; the bribe amount's origin.
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*

@@ -531,11 +531,28 @@ base = (weaponId + 2) * Strength \ 8 + 4
 dmg  = INT( base * (RND(1) + 0.5) )       ' "GUARD STRUCK n H.P. BLOW" / "GUARD KILLED"
 ```
 
-**Mail job** (`mailDeliveryJob`, from the food shop): pick a random other
-town — `destTown = INT((currentTown-1) + RND(1)*k)` (`ds:2940`), re-rolled
-while `< 0`, `> 10`, or `== currentTown` — hold a "mail" item (`S2(9)++`);
-guide payout 95 / 110 / 125 gold by route, credited on arrival (that check
-is in the town-entry path, not yet traced).
+**Mail job** (`mailDeliveryJob`, offered by the provisioner):
+```
+destTown = INT( INT(RND(1)*3) + (currentTown − 1) )     ' ds:2940 = 3.0
+' re-rolled while < 0, > 10, or == currentTown
+```
+so the job **always routes to an adjacent town** (`currentTown ± 1`). It
+sets `S4(7) = destTown` (the pending job; `−1` = none) and `S2(9) = 1`
+(hold the letter). **Payment is credited on entering the destination
+town's provisioner** (`foodShop`, `twndr.asm:2082`):
+```
+IF S4(7) = currentTown AND locationType ≠ 0x0C THEN
+    payment   = INT( INT(RND(1)*3) * 15 + 95 )    ' = 95 / 110 / 125 gold
+    partyGold += payment  ;  S4(7) = −1  ;  S2(9) = 0
+```
+`INT(RND·3)` is 0/1/2 → the three payout tiers (the guide's 95/110/125).
+Since every route is ±1 town, the payout is *not* distance-scaled — it is
+just the flat random roll.
+
+**Rations** (same `foodShop`, when not delivering mail):
+`pricePerDay = INT(13 − Charm/7)·0.1` (≈ 1 gold/day, cheaper with high
+Charm); `maxDays = MIN(1000, partyGold / pricePerDay)`. Food itself is
+runtime-only (never saved).
 
 **Steal / bribe.** `StealGold` (rob a till): `partyGold += S4(0)` then
 `S4(0) *= 0.8` (till refills slower each time), with a `spendGold` fine if
