@@ -19,32 +19,55 @@
 '     playerX/Y (castle grid)   destructTimer (0x14 / 8)
 '     ds:28B2 1.8   ds:28B6 600   ds:28BA 300   ds:28BE 0.9   ds:2744 2
 '     ds:28DA 50    ds:28A0 99    ds:2B94 80    ds:2084 enemyAtk (runtime)
-'     ds:226E  difficulty = 3.5 (castle, ds:31A8) / 1.0 (fort, ds:25B0)
+'     ds:226E  difficulty = 1.0 (CASTLE, ds:25B0) / 3.5 (FORT, ds:31A8)
+'              [verified live 2026-09-06 -- was previously noted backwards]
 '     DoFight consts: ds:2724 7500  ds:2742 7  ds:2744 2  ds:270E 0.53
 '                     ds:2712 6  ds:27C4 -7.5  ds:27C8 28  ds:31A4 26
-'     ds:2214  = Dexterity/26 (castle) / 1.0 (fort)   [loadCastleLevel]
+'     ds:2214  = 1.0 (CASTLE, ds:25B0) / Dexterity/26 (FORT)  [loadCastleLevel]
 '     ds:1F02 tileHit   ds:1F04 targetCode   ds:1F06 rangeToTarget
 '     ds:1AEE attackMode (0 weapon / 1 spell)   ds:1E24 selectedSpell (0..5)
 
 
 ' --------------------------------------------------------------------------
-SUB AttackHit                                         ' asm: casdr.asm:4166 (attackHit)
+SUB AttackHit                                         ' asm: casdr.asm:4180 (attackHit)
 ' --------------------------------------------------------------------------
-' A castle enemy's melee blow lands.  Endurance and armour both mitigate,
-' in the DENOMINATOR (so they scale defensively, not linearly).
+' *** THE REGULAR CASTLE GUARD BLOW *** (NOT the Warlord -- he uses
+' WarlordAttack).  Reached from AttackMiss (casdr.asm:4080): the castle
+' turn handler runs the guard's attack roll while a guard is engaged
+' (ds:20AC <> &h0B) and NOT during the Warlord fight (ds:20BA <= 0).
+' Endurance and armour both mitigate, in the DENOMINATOR.
+'
+' *** FULLY LIVE-VERIFIED, DOSBox 2026-09-06 *** (PAULA, castle level 1,
+' End 17, ds:1AEC 10, castleLevel ds:2084 = 1, difficulty ds:226E = 1.0).
+' Three paired (raw -> finalDmg) captures, exact fit:
+'     raw 426 -> 10   (pre-round node 10.317 = 426/51.22 + 2)
+'     raw 855 -> 19   (18.695         = 855/51.22 + 2)
+'     raw 532 -> 12   (12.387         = 532/51.22 + 2)
+' FF22 ROUNDS (10.317->10, 18.695->19, 12.387->12), it does NOT truncate.
 
-    raw = (enemyAtk ^ 1.8) * (RND(1) * 600 + 300) * difficulty            ' asm:4167-4212
-    '  ds:28B2 1.8 ; ds:28B6 600 ; ds:28BA 300
-    '  difficulty (ds:226E, set by loadCastleLevel casdr.asm:10033):
-    '     3.5 inside the castle (ds:31A8) ; 1.0 inside the fort (ds:25B0)
+    raw = INT( (castleLevel ^ 1.8) * (RND(1) * 600 + 300) * difficulty )  ' asm:4181-4225 (part 1)
+    '  ds:2084 castleLevel (=1 on the public level -> castleLevel^1.8 = 1,
+    '     so on level 1 this term drops out; deeper levels scale it ^1.8)
+    '  ds:28B2 1.8 ; ds:28B6 600 (FF4E *) ; ds:28BA 300 (FF44 +)
+    '  difficulty = ds:226E, set by loadCastleLevel (casdr.asm:14254):
+    '     CASTLE -> ds:25B0 = 1.0   ;   FORT -> ds:31A8 = 3.5
+    '     (the earlier "3.5 castle / 1.0 fort" note had it BACKWARDS)
+    '  raw is an integer in [300, 900) on level 1.
 
-    IF armorId > 0 THEN armorVal = armorId - 6 ELSE armorVal = armorId + 2 ' asm:4221-4231
-    '  (mask*8 + armorId + 2 : with armour  armorId-6, without  2)
+    armorVal = armorId - 6                                                ' asm:4227-4238
+    '  ds:1AEC ("armorId": tmpl 9, live 10) ; with armour  armorId-6,
+    '  bare  2 .  Live armorVal = 10 - 6 = 4.
 
-    dmg = INT( raw / (armorVal * Endurance ^ 0.9) + 2 )                   ' asm:4235-4267
-    '  ds:28BE 0.9 ; ds:2744 2 .  Higher Endurance / armour -> smaller dmg.
-    hitPoints = hitPoints - dmg                                           ' asm:4270-4271
-    PRINT "HIT POINTS: -"; dmg                                            ' asm:4272-...
+    dmg = CINT( raw / (armorVal * Endurance ^ 0.9) + 2 )                  ' asm:4239-4283
+    '  ds:28BE 0.9 (Endurance exponent) ; ds:2744 2 (FF44 +) .
+    '  FP-stack: FF20 pushes raw(=ds:2222) ; build armorVal*End^0.9 ;
+    '  FF47 divides raw/that ; FF44 adds 2 ; FF22 rounds.  No subtraction.
+    '  Live denominator = 4 * 17^0.9 = 51.22.
+    '  On level 1: dmg = round( INT(RND*600+300) / (4*End^0.9) + 2 )
+    '  = ~8..20 HP for End 17 (observed 10 / 19 / 12).
+    hitPoints = hitPoints - dmg                                           ' asm:4405-4406 (loc_11EB4/11EBA)
+    PRINT "HIT POINTS: -"; dmg                                            ' ds:28C2 / ds:28D0
+    IF hitPoints <= 0 THEN ExitCastle                                     ' asm:4335-4338
 END SUB
 
 
@@ -133,12 +156,16 @@ SUB DoFight                                           ' asm: casdr.asm:2808 (doF
 '   weaponId    ds:1AFE   (0..8 ; ids 6 & 8 are the two bows)
 '   spell slot  = menuChoice + 15  ->  S2(24..29) charge, like DUN.
 '                 selectedSpell (ds:1E24) = menuChoice - 9  (0..5)
-'   K           ds:2214   loaded by loadCastleLevel (casdr.asm:10040):
-'                 castle -> Dexterity / 26      fort -> 1.0
-'                 [FF49 = TOS / const CONFIRMED (leglib static) ; so
-'                  K = Dex/26 is real, and with K in the DENOMINATOR of
-'                  toHit below, higher Dex genuinely LOWERS the castle
-'                  hit-rate -- an apparent original quirk, not a mis-read]
+'   K           ds:2214   loaded by loadCastleLevel (casdr.asm:14254):
+'                 CASTLE -> ds:25B0 = 1.0     FORT -> Dexterity / ds:31A4(=26)
+'                 (this mapping was BACKWARDS in earlier notes -- verified
+'                  2026-09-06: castle sets BOTH ds:2214 and ds:226E to the
+'                  same const ds:25B0 = 1.0 ; the fort path sets ds:2214 =
+'                  Dex/26 and ds:226E = 3.5)
+'                 [FF49 = TOS / const CONFIRMED (leglib static) ; so in the
+'                  FORT, K = Dex/26 is a real division, and with K in the
+'                  DENOMINATOR of toHit, higher Dex LOWERS the fort hit-rate
+'                  -- an apparent original quirk, not a mis-read]
 
     IF attackMode = 0 THEN
         ' ---- WEAPON to-hit ---------------------------------- asm:loc_1176C
@@ -210,6 +237,14 @@ SUB EnemyAttack                                       ' asm: casdr.asm:5683 (ene
 '   PRINT enemyName$; " ATTACK - BLOW "; damage; " H.P."     ' ds:2B5C / ds:28D0
 '   Delay &h17
 '   hitPoints = hitPoints - damage              ' (message tail / caller)
+'
+' *** LIVE STATUS 2026-09-06 *** : with PAULA fighting guards on the castle
+' "public" level, ds:20B8 NEVER goes hot -- walking around in a guard's
+' line of sight does not arm this path.  The regular guard blow you take
+' there is AttackHit (via AttackMiss), not EnemyAttack.  EnemyAttack /
+' ds:20B8 is a deeper-level or special-state path (alarm / capture?) and
+' is still un-observed; the ds:0FAC question below is unresolved but is
+' NOT the common-case guard-damage formula.
 '
 ' NOTE: chased as far as static analysis can go.  The value-stack ops are
 ' all settled (FF4C mul pop-2, FF23 -> int32 & POP, FF21 push, FF28 =
@@ -355,16 +390,19 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 
 ' ==========================================================================
 '  SOLID
-'   * castle incoming melee: dmg = INT( enemyAtk^1.8 * (RND*600 + 300)
-'       * difficulty / (armorVal * Endurance^0.9) + 2 )
-'     -- Endurance and armour mitigate as a DENOMINATOR term
+'   * REGULAR GUARD BLOW (attackHit) -- LIVE-VERIFIED 2026-09-06:
+'       raw = INT( castleLvl^1.8 * (RND*600 + 300) * difficulty )
+'       dmg = round( raw / ((ds:1AEC-6) * Endurance^0.9) + 2 )
+'     castleLvl = ds:2084 (1 public level) ; difficulty = 1.0 castle /
+'     3.5 fort (ds:25B0 / ds:31A8) ; Endurance + armour mitigate as a
+'     DENOMINATOR term.  Fits raw 426/855/532 -> 10/19/12 exactly.
 '   * Warlord blow: INT( RND(1)*99 + 80 )   (80..178)
 '   * gas room: dmg = INT( maxHP\4 + RND(1)*50 )  per turn while facing a
 '     gas tile (ds:1F02 in 0x17..0x19) ; ds:20AA = maxHP\4 set by gasTrap
 '   * FLOOR-plan rooms are a SELECT CASE; effects are separate handlers
 '   * PLAYER attack (DoFight):
 '       weapon to-hit  RND(1) < (11*weaponId + 99)*(Dex + 13) / (7500*K)
-'                      K = Dex/26 (castle) or 1.0 (fort)   [ds:2214]
+'                      K = 1.0 (CASTLE) or Dex/26 (FORT)   [ds:2214]
 '       weapon damage  INT( base * (1 + 2*RND(1)) ),
 '                      base = (weaponId\2 + 1) * Strength \ 7
 '       spell  cast succeeds when RND(1)*6 < Intelligence^0.53
@@ -393,9 +431,14 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     countdown gauge -- NO fail condition when it runs out
 '   * Weaken item: enemy attack (ds:20B8) *= 0.96 per cast (ds:3162)
 '   * noisy-door spot roll: RND(1) < 0.15 (ds:3054)
-'   * CASTLE ENEMY: sub_127C8 spawns a guard (enemyAtk = 140) when none
-'     is active ; EnemyAttack blow ~= INT( enemyAtk * (1 - RND(1)) / 2 )
-'     -> 0..70 for a fresh guard (mean ~35), no armour/Endurance mitigation
+'   * REGULAR GUARD BLOW = AttackHit (via AttackMiss), *** live-verified
+'     2026-09-06 *** : dmg = round( INT(castleLvl^1.8 * (RND*600+300) *
+'     difficulty) / ((ds:1AEC-6) * Endurance^0.9) + 2 ) .  Castle L1
+'     (castleLvl 1, difficulty 1.0, End 17): ~8..20 HP.  See SUB AttackHit.
+'   * sub_127C8 / EnemyAttack (ds:20B8 = 140) is a SEPARATE, deeper-level /
+'     special path -- ds:20B8 never armed vs ordinary guards on the public
+'     castle level (live-checked).  Best guess INT(enemyAtk*(1-RND)/2);
+'     its FF28 reads a stale FP slot -- still un-observed, NOT the common hit.
 '
 '  RESOLVED (leglib static, 2026-09-06 -- see leglib_runtime.c)
 '   * FF1F compare = reversed (Jcc tests TOS <cmp> TOS1) -- confirmed

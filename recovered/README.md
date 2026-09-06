@@ -360,12 +360,15 @@ anchor). The combat pool it prints is quoted at the top of
       `ds:20BC \ 128`) — **no fail condition** when it runs out; the real
       pressure is escaping at 28 HP with the doors blockaded.  Coerced +
       dumped read-only via `ida_scripts/dump_casdr_castle.py -NoExport`.
-- [x] `casdr_castle.bas` — **regular guard blow** (`sub_127C8` →
-      `enemyAttack`).  `sub_127C8` = the per-turn enemy update; spawns a
-      guard (`enemyAtk = 140`) when none active.  Blow ≈
-      `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
-      armour/Endurance mitigation** (contrast the Warlord blow).  Exact
-      `raw − INT(raw)\2 − half` shape pending the `FF23`/`FF28` trace.
+- [x] `casdr_castle.bas` — **regular guard blow** = `attackHit` (via
+      `attackMiss`), **LIVE-VERIFIED (DOSBox, 2026-09-06)**:
+      `dmg = round( INT(castleLvl^1.8·(RND·600+300)·diff) /
+      ((ds:1AEC−6)·Endurance^0.9) + 2 )`.  `diff` (`ds:226E`) = **1.0
+      castle / 3.5 fort** (`ds:25B0` / `ds:31A8` — earlier note was
+      backwards); `castleLvl` (`ds:2084`) = 1 on the public level.  Three
+      paired blows `426→10, 855→19, 532→12` fit exactly; `FF22` rounds.
+      `sub_127C8` → `enemyAttack` (`enemyAtk = ds:20B8 = 140`) is a
+      *separate* path — `ds:20B8` never armed vs ordinary castle guards.
 - [x] `casdr_castle.bas` (v3) — the **Warlord fight**.  `warlordHP`
       (`ds:20BA`) = **800** (`0x320`), set by `TakeChestItem` the moment
       you grab the Compendium (this spawns him).  `DoFight` hits subtract
@@ -378,12 +381,13 @@ anchor). The combat pool it prints is quoted at the top of
       facing a gas tile (`ds:1F02 ∈ 0x17..0x19`) =
       `INT( maxHP\4 + RND(1)·50 )` (`ds:20AA = S4(19)\4`, set by `gasTrap`;
       `ds:28DA = 50`) — ~¼ max HP/turn, so ~3–4 turns before it kills you.
-- [x] `enemyAttack` — traced to the limit of static analysis.  The
-      `db`-blob fragment reaches its `FF28` (`TOS − TOS1`) with **one**
-      operand on the FP stack, so it reads the stack base node
-      (`ds:0FAC`) — a stale value.  **Likely an original bug.**  Port as
-      `INT(enemyAtk·(1−RND)/2)` (matches observed play); a live
-      `[ds:0FAC]` dump is the only way to see the real game's behaviour.
+- [x] `enemyAttack` — traced to the limit of static analysis, **and
+      2026-09-06 live testing showed `ds:20B8` never arms vs ordinary
+      castle guards** → this is *not* the common guard blow (that's
+      `attackHit`, now verified above).  A deeper-level / special-state
+      path.  The `db`-blob fragment reaches its `FF28` (`TOS − TOS1`) one
+      operand short → reads the stack base node (`ds:0FAC`), a stale
+      value.  Port guess `INT(enemyAtk·(1−RND)/2)`; no longer port-blocking.
 
 ## MUS.EXE
 

@@ -69,15 +69,17 @@ the per-executable breakdown this tracks against.
       / 1.0 fort); weapon dmg `INT( ((wid\2+1)·Str\7)·(1 + 2·RND) )`;
       spell cast `RND(1)·6 < Int^0.53`, dmg `INT((selSpell−22.5)·28·
       (RND+1))` then `\5` castle then `\range`.
-- [x] **CASDR regular guard blow** (`sub_127C8` → `enemyAttack`,
-      `casdr_castle.bas`). `sub_127C8` = the per-turn enemy update;
-      spawns a guard (`enemyAtk = 140`) when none is active. Blow ≈
-      `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
-      armour/Endurance mitigation** (unlike the Warlord blow). The
-      value-stack ops are now settled (below); `enemyAttack` is still
-      entered mid-expression with the FP stack one operand short at the
-      `FF28` call, so the exact `raw − INT(raw)\2 − half` shape needs a
-      live FP-stack dump. Magnitude solid.
+- [x] **CASDR regular guard blow** — **LIVE-VERIFIED (DOSBox, 2026-09-06)**.
+      The real per-guard blow is `attackHit` (via `attackMiss`), *not*
+      `enemyAttack`: `dmg = round( INT(castleLvl^1.8·(RND·600+300)·diff) /
+      ((ds:1AEC−6)·Endurance^0.9) + 2 )`. Castle: `diff` (`ds:226E`) = 1.0
+      (`ds:25B0`); fort = 3.5 (`ds:31A8`) — earlier note was **backwards**.
+      Same const also sets the to-hit `K` (`ds:2214`). Three paired blows
+      `426→10, 855→19, 532→12` fit exactly. `ds:20C0` = 1 confirms castle.
+      `sub_127C8` → `enemyAttack` (`enemyAtk = ds:20B8 = 140`) is a
+      *separate* path — `ds:20B8` never armed vs ordinary guards on the
+      castle public level; deeper-level / special-state only, still
+      un-observed but no longer the common-case formula.
 - [x] **TWNDR shops/guard/mail** (`twndr_services.bas` v1) — shop BUY
       prices are per-slot `TOWN<n>.BSV` data; SELL
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
@@ -179,13 +181,15 @@ the per-executable breakdown this tracks against.
       turns), outcome `1` → heat `1` (~19 turns); `doWalk` then heat`++`
       each town-turn, and at 20 → "DISCOVERED!!" + alarm +
       `contextMode = 1` (guards attack).
-- [x] **CASDR `enemyAttack`** — traced to the limit of static analysis.
-      The `db`-blob fragment (no `basProcEnter`, entered mid-expression)
-      reaches its `FF28` (`TOS − TOS1`) with only one operand on the FP
-      stack → it reads the stack base node `ds:0FAC`, a stale value from
-      a prior statement. **Looks like an original bug.** Port as
-      `INT(enemyAtk·(1−RND)/2)`. A live `[ds:0FAC]` dump is the only way
-      to observe the real game.
+- [x] **CASDR `enemyAttack`** — traced to the limit of static analysis;
+      **and 2026-09-06 live testing showed `ds:20B8` never arms vs
+      ordinary castle guards**, so this is NOT the common guard blow (that
+      is `attackHit`, now live-verified — see above). It stays a
+      deeper-level / special-state path. The `db`-blob fragment reaches
+      its `FF28` (`TOS − TOS1`) one FP operand short → reads the stack
+      base node `ds:0FAC` (stale). Port guess `INT(enemyAtk·(1−RND)/2)`;
+      a live `[ds:0FAC]` dump on a deeper level would settle it, but it no
+      longer blocks anything.
 - [x] **OUTM1's role** (`out_overworld.bas`). The three overworld maps:
       `OUTM0` = main land; `OUTM2` = the pegasus fly-across, a one-way
       fast-travel *back to the museum* (*"PEGASUS SETS YOU DOWN … IN THE
@@ -211,7 +215,9 @@ the per-executable breakdown this tracks against.
 - [ ] Cosmetic / not blocking a port: what sets the rob-outcome code
       `ds:1F04` to 0 vs 1 (heat 18 vs 1) inside the un-coerced
       `robCommand` / `resolveMoveTarget` path; a live `[ds:0FAC]` dump for
-      `enemyAttack`; the OUTM1 trigger tile (same `resolveMoveTarget`).
+      `enemyAttack` (a deeper-castle-level path — the common guard blow
+      `attackHit` is now live-verified); the OUTM1 trigger tile (same
+      `resolveMoveTarget`).
 
 ## Infra (done, 2026-08-30)
 
@@ -1082,7 +1088,8 @@ there for the port. See also [recovered/README.md](../recovered/README.md).
 **Constants — ALL resolved statically** (2026-09-02). The formulas' ~7
 "runtime-loaded" constants each turned out to be an `OUTDAT.DAT` byte, a
 `*.EXE` constant read at the wrong width (`ds:2C3C` is an 8-byte double =
-999.0; `ds:226E` = 3.5 castle / 1.0 fort), or a formula. Operand order
+999.0; `ds:226E` = **1.0 castle / 3.5 fort** — live-corrected 2026-09-06,
+`ds:25B0`/`ds:31A8`), or a formula. Operand order
 confirmed by the verified to-hit + damage traces. No DOSBox dumps needed
 to implement the mechanics. `ds:2092`/`ds:2096` (OUT region encounter
 gates) still merit a per-region table for tuning — 3 samples so far.
