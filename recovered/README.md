@@ -200,7 +200,17 @@ anchor). The combat pool it prints is quoted at the top of
       Strength floor (25/40/50); MUS's `exhibitId -> chainTargetIdx`
       staircase IS the required coin's index; `testExhibitFlag` is an
       ALL-BITS-SET test driving a progressive per-coin unlock ladder.
-- [ ] `enterOverworld` / `loadOverworldData`, mail routes
+- [x] `out_overworld.bas` — `EnterOverworld` / `LoadOverworldData` (+
+      `initOverworldViewport` / `initOverworldState` / `sub_12823` /
+      the OUT.EXE self-checksum). Map layer = `MIN(S4(12), 2)` picks
+      `OUTM0/1/2.BSV` (layer 2 also loads `PEGASUS.BSV`); `OUTDATA.BSV`
+      → `overworldArray[0x2B22]`, `OUTOBJ.BSV` → `spriteBank[0]`. The
+      OUTM header carries the CGA mode/palette (→ `rt_FE29`).
+      `initOverworldState` recomputes `S4(19)` max HP =
+      `200 + 50·L·(L−1) − (100 if L>5)` on every entry. A tamper check
+      (`ds:2236 ≠ 0x9D1A` → `S4(19) = 20`) crashes max HP on a patched
+      EXE. Open: `OUTM1`'s role; the checksum record layout.
+- [ ] mail routes
 
 ## DUN.EXE
 

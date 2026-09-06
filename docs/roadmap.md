@@ -941,8 +941,14 @@ to implement the mechanics. `ds:2092`/`ds:2096` (OUT region encounter
 gates) still merit a per-region table for tuning — 3 samples so far.
 
 **Still open** (not blocking a first implementation):
-- [ ] `enterOverworld` / `loadOverworldData` (OUT), casino payouts,
-      mail-route payout credit, `selectAbove` mode-4 internals (LEGLIB).
+- [x] **OUT enterOverworld / loadOverworldData** (`out_overworld.bas`) —
+      map layer = `MIN(S4(12), 2)` → `OUTM0/1/2.BSV` (+`PEGASUS.BSV` on
+      layer 2); `OUTDATA` → `overworldArray[0x2B22]`, `OUTOBJ` →
+      `spriteBank[0]`. OUTM header = CGA mode/palette. `initOverworldState`
+      recomputes `S4(19)` max HP each entry. Found an OUT.EXE self-checksum
+      (`ds:2236 ≠ 0x9D1A` → max HP crippled to 20).
+- [ ] casino payouts, mail-route payout credit, `selectAbove` mode-4
+      internals (LEGLIB), `OUTM1`'s role.
 
 ## ScummVM engine (future)
 

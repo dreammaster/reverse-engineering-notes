@@ -407,6 +407,52 @@ and level 2..7.
 `ResolveMoveTarget` / `ReadTileObject` are viewport clipping + the 13×13
 map-window copy (`array[0x120 + Y*95 + X]` from `ds:1E2A`), not game logic.
 
+### Overworld setup & map loading — [`out_overworld.bas`](../recovered/out_overworld.bas) — *derived*
+
+`EnterOverworld` runs once from `outInit` and again each time a chained
+module hands control back. It picks the **map layer** from `S4(12)` (a
+"pending transition" slot `resolveMoveTarget` writes after every step):
+
+| `MIN(S4(12), 2)` | file(s) loaded | notes |
+|---|---|---|
+| 0 | `OUTM0.BSV` | main overworld |
+| 1 | `OUTM1.BSV` | secondary area (role unconfirmed) |
+| 2 | `OUTM2.BSV` + `PEGASUS.BSV` | pegasus-flight view |
+
+`S4(12) > 2` is a re-entry sentinel → teleport to `(7, 5)` and run the
+arrival handler. Layers 1/2 are **one-shot** — `initOverworldViewport`
+resets `S4(12)` to 0 after drawing, so the next entry is the main map.
+
+`LoadOverworldData` (`out.asm` `loadOverworldData`) BLOADs, via
+`rt_FE63` (resolve drive per `DRCONFIG.DAT` + open) then `rt_FE07`
+(BSAVE-header + payload):
+
+```
+OUTM<layer>.BSV -> overworldArray[0]          (ds:1E2A)
+OUTDATA.BSV     -> overworldArray[0x2B22]
+OUTOBJ.BSV      -> spriteBank[0]              (ds:1E58, seg 0x140D)
+PEGASUS.BSV     -> spriteBank + spriteBank[8]  (layer 2 only)
+```
+
+The **OUTM header** carries the CGA video mode (array word 4) and
+colour/palette (word 2), pushed straight to `rt_FE29`.
+
+`EnterOverworld` then resets the per-turn state (`contextMode = 0`,
+`locationType = 0x0B` "open overworld", `turnActionFlag <- S4(9)`,
+`S4(34) = 0`), clamps the two per-step accumulators (`ds:1AF8`, `ds:1AF4`)
+to a **25000** ceiling, and calls `initOverworldState` — which recomputes
+`S4(19)` max HP = `200 + 50·L·(L−1) − (100 if L>5)` (same formula as the
+museum caretaker, so a level-up takes effect on the next overworld step).
+
+`sub_12823` derives two equipment ratings the overworld combat code reads:
+`armourRating = INT( S1(cond)/3.5 + armourId − 9 )`,
+`weaponRating = INT( weaponId + S1(cond)/2.8 )`.
+
+**Anti-tamper.** `EnterOverworld` re-opens `OUT.EXE` as a random-access
+file, checksums two byte ranges into `ds:2236`, and `sub_116E1` sets
+`S4(19) = 20` (max HP collapses to 20) unless the sum is exactly
+`0x9D1A`. A copy-protection trap, no gameplay role.
+
 ---
 
 ## 5. Economy
