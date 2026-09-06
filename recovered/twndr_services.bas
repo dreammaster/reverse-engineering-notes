@@ -4,9 +4,9 @@
 '
 '  SUBs: SpendGold  (shared "pay N gold"), Bank,
 '        WeaponArmorShop / FoodShop / MailDeliveryJob (shops + jobs),
-'        GuardAttack / FightGuard / InitGuardCombat / StealGold /
-'        OfferGuardBribe / ArrestedByGuards / JailRelease / RobberyEvent
-'        (the town-guard + crime system).
+'        GuardAttack / FightGuard / InitGuardCombat / RobCommand /
+'        StealGold / OfferGuardBribe / ArrestedByGuards / JailRelease /
+'        RobberyEvent  (the town-guard + crime system).
 '        townServiceDispatch (ds:1F22) is the ~6 KB SELECT CASE that the
 '        shop entries route the actual buy/sell transaction through.
 '
@@ -209,14 +209,49 @@ SUB FightGuard                                        ' asm: twndr.asm:1407 (fig
 
 
 ' --------------------------------------------------------------------------
+SUB RobCommand                                       ' asm: twndr.asm:15b77 (robCommand)
+' --------------------------------------------------------------------------
+' The "ROB" command.  DETERMINISTIC -- no probabilistic "caught" roll.
+' Dispatches on tileAhead (ds:1F02):
+'
+'   tile < &hC8           : "NOTHING TO ROB"  (tone, exit)
+'   tile = &hD2  (THE MINT):
+'       IF mintRobbed(ds:25A8) = 1 THEN PRINT "THE MINT IS EMPTY" : EXIT
+'       PRINT "YOU FIND "; (S4(0)\99 + 1); " BAGS OF GOLD!"
+'       -> StealGold                          ' grab the mint's stash S4(0)
+'   tile = &hCF           : sub_16748 breaks the tile open ; contextMode = 1
+'                           -> guard-fight setup
+'   tile = &hCC or &hD0   : PRINT "THERE'S NOTHING TO REALLY GRAB HERE."
+'   tile &hC8 / &hC9 / &hCB, or ELSE:  MerchantRefuses --
+'       IF contextMode(ds:1F2A) > 0 OR heat(ds:20B0) > 0 THEN     ' allowed
+'           ELSE case  : grab loose gold --
+'               grabbed = INT( RND(1) * 10*10 + 150 )   ' ds:2C26=10, ds:2C2A=150
+'               partyGold = partyGold + grabbed         ' -> 150..250 gold
+'               PRINT "YOU GET "; grabbed; " GOLD."
+'               robAttempts(ds:25A6) = robAttempts + 1
+'               IF robAttempts > 1 THEN PRINT "NO ITEMS WITHIN REACH HERE."
+'           &hC8..&hCB : just ENTER the shop normally
+'       ELSE
+'           PRINT "THE MERCHANT WON'T LET YOU ROB."     ' ds:2204 = 1, exit
+'       END IF
+'
+' *** THE "CAUGHT" MECHANISM IS A TURN TIMER, NOT A ROLL. ***  Once a
+' robbery is "in progress" (heat = ds:20B0 becomes > 0 -- set in a `db`
+' blob on the first successful theft), doWalk ticks it every town-turn,
+' and at heat > &h13 (20 turns):
+'       sub_1046A ; PRINT "...DISCOVERED!!" ; contextMode = 1 ; heat = 0
+'       PlayAlarm &hBB8   ' -> the guards attack (contextMode = 1 gates it)
+' While heat > 0 the SPEAK command also answers "NOBODY ANSWERS".
+
+
+' --------------------------------------------------------------------------
 SUB StealGold                                        ' asm: twndr.asm:15cf0 (stealGold)
 ' --------------------------------------------------------------------------
-' The "ROB" command's SUCCESS branch ("<n> BAGS OF GOLD!").  The shop till
-' is S4(0) (S4 byte 0 ; each shop keeps its own running till there).
+' The mint-rob payoff ("<n> BAGS OF GOLD!").  The mint's stash is S4(0).
 '     Delay &h1B
-'     partyGold = partyGold + S4(0)             ' 32-bit ; grab the whole till
+'     partyGold = partyGold + S4(0)             ' 32-bit ; grab the whole stash
 '     PlayCoinFx 8                              ' ds:25B4 = 8 ; rt_FE56
-'     S4(0) = INT( S4(0) * 0.8 )                ' till refills to 80% (ds:2878)
+'     S4(0) = INT( S4(0) * 0.8 )                ' refills to 80% (ds:2878)
 '     SpendGold                                 ' gold-gauge repaint only
 '     ds:25A8 = 1 : contextMode = 1             ' -> exit to the main loop
 ' rtm_FF22 POPS its operand (confirmed -- leglib_runtime.c), so by the
@@ -311,8 +346,13 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     (partyGold += payment ; S4(7) = -1 ; S2(9) = 0) -- NOT distance-scaled
 '   * FOOD: pricePerDay = INT(13 - Charm/7) * 0.1  (~1 g/day, less w/ Charm);
 '     maxDays = MIN(1000, partyGold / pricePerDay) ; food is runtime-only
-'   * ROB success (stealGold): partyGold += S4(0) (the shop till) ;
-'     S4(0) = INT(S4(0) * 0.8) (till shrinks 20% per theft, ds:2878)
+'   * ROB (robCommand): deterministic, no roll.  Mint (tile &hD2) ->
+'     StealGold (grab S4(0), *0.8) ; loose gold at a merchant ->
+'     INT(RND*100 + 150) = 150..250 gold ; merchant refuses unless
+'     contextMode > 0 or heat(ds:20B0) > 0
+'   * CAUGHT = a TURN TIMER: heat (ds:20B0) ticks each town-turn once a
+'     robbery is in progress ; at 20 turns -> "DISCOVERED!!" + alarm +
+'     contextMode = 1 (guards attack).  Not a die roll.
 '   * GUARD HP == BRIBE demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 *
 '     (RND + 1) ) ; OfferGuardBribe pays exactly that
 '   * JAIL bail: partyGold > 149 -> lose HALF ; 1..149 -> lose ALL + one
@@ -320,10 +360,9 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
 '
 '  OPEN
-'   * robCommand's caught roll + the item-grab (still a `db` blob)
+'   * exactly where heat (ds:20B0) is first set to 1 (a `db` blob -- but
+'     the timer mechanism above is fully traced)
 '   * OfferGuardBribe's S2 item marking (ds:1AEE index)
-'   (stealGold's trailing SpendGold is now confirmed a no-op repaint --
-'    rtm_FF22 pops, leglib_runtime.c)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;
 '   findings above were read from the coerced idb.  foodShop / stealGold /

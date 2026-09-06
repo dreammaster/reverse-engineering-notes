@@ -664,13 +664,24 @@ just the flat random roll.
 Charm); `maxDays = MIN(1000, partyGold / pricePerDay)`. Food itself is
 runtime-only (never saved).
 
-**Crime & jail** — `stealGold` / `initGuardCombat` / `jailRelease`:
+**Crime & jail** — `robCommand` / `stealGold` / `initGuardCombat` /
+`jailRelease`:
 
-- **Rob a shop** (`stealGold`, "*n* BAGS OF GOLD!"): `partyGold += S4(0)`
-  (the shop's till, kept in `S4(0)`); then `S4(0) = INT(S4(0)·0.8)` — the
-  till only refills to 80 % for the next theft. The trailing `spendGold`
-  is just a gold-gauge repaint (`rtm_FF22` pops, so its FP stack is
-  already spent). **Net: you keep the full till.**
+- **`robCommand`** — the "ROB" command, **deterministic** (no die roll).
+  Dispatches on the tile ahead: **the Mint** (`0xD2`) → `stealGold`;
+  **loose gold at a merchant** → `INT( RND(1)·10² + 150 )` = **150–250
+  gold** (*"YOU GET n GOLD."*); *"THERE'S NOTHING TO REALLY GRAB HERE."*
+  for a couple of tiles; a merchant tile → *"THE MERCHANT WON'T LET YOU
+  ROB."* unless `contextMode > 0` or the heat counter `ds:20B0 > 0`.
+- **`stealGold`** (the Mint payoff, *"n BAGS OF GOLD!"*): `partyGold +=
+  S4(0)` (the Mint's stash); then `S4(0) = INT(S4(0)·0.8)`. The trailing
+  `spendGold` is just a gold-gauge repaint (`rtm_FF22` pops). **Net: keep
+  the full stash.**
+- **Getting caught is a *turn timer*, not a roll.** Once a robbery is in
+  progress (heat `ds:20B0 > 0`), `doWalk` ticks it each town-turn, and at
+  **20 turns** → *"…DISCOVERED!!"*, an alarm, `contextMode = 1` → the
+  guards attack. (While the heat is on, `SPEAK` answers *"NOBODY
+  ANSWERS"*.)
 - **Guard HP = bribe demand** (`initGuardCombat`, `ds:216E`):
   `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 =
   22`). `offerGuardBribe` pays exactly that; if you can't afford it the

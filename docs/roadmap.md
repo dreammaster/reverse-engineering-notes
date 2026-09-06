@@ -152,9 +152,16 @@ the per-executable breakdown this tracks against.
       `encFreq` a 1-or-2-bucket threshold → ~10–20 %/step at L1, tapering);
       `stealGold`'s trailing `spendGold` is a no-op repaint (keep the full
       till); CASDR `K = Dex/26` in the to-hit denominator is a real quirk.
-- [ ] Still open:
-      `robCommand` caught roll (db blob); CASDR `enemyAttack` FP-stack
-      shape / per-turn `ds:20BC` cost / Warlord combat HP / gas-room `base`.
+- [x] **`robCommand`** (`twndr.asm:15b77`, coerced read-only). The "ROB"
+      command is **deterministic** — no die roll. Mint (tile `0xD2`) →
+      `stealGold`; loose gold at a merchant → `INT(RND·100 + 150)` =
+      150–250 g; merchant refuses unless `contextMode > 0` or heat
+      (`ds:20B0`) `> 0`. **Caught = a turn timer**: `doWalk` ticks
+      `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
+      → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
+- [ ] Still open: the exact first-set of `ds:20B0` (a `db` blob; timer
+      path traced); CASDR `enemyAttack` FP-stack shape / per-turn
+      `ds:20BC` cost / Warlord combat HP / gas-room `base`.
 
 ## Infra (done, 2026-08-30)
 

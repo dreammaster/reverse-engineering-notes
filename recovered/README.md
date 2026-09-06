@@ -305,11 +305,18 @@ anchor). The combat pool it prints is quoted at the top of
       bribe demand `ds:216E = INT((ds:1E22 − 7.5)·22·(RND+1))`. Jail bail:
       `>149 g` → lose half; `1–149` → lose all + one weapon confiscated;
       broke+itemless → forced 100-gold loan (`S4(5) += 100`).
-      (`foodShop`/`stealGold`/`robberyEvent`/`initGuardCombat`/`jailRelease`
-      coerced + dumped read-only via `ida_scripts/dump_twndr_*.py
+      (`foodShop`/`stealGold`/`robberyEvent`/`initGuardCombat`/`jailRelease`/
+      `robCommand` coerced + dumped read-only via `ida_scripts/dump_twndr_*.py
       -NoExport`.)
-- [ ] `stealGold`'s FF22-pop question; `robCommand`'s caught roll (still a
-      `db` blob); `offerGuardBribe`'s S2 item marking.
+- [x] `robCommand` — the "ROB" command, **deterministic** (no roll).
+      Mint (tile `0xD2`) → `stealGold`; loose gold at a merchant →
+      `INT(RND·100 + 150)` = 150–250 g; merchant refuses unless
+      `contextMode > 0` or heat `ds:20B0 > 0`.  **Caught = a turn timer**:
+      once a robbery is in progress `doWalk` ticks `ds:20B0` each
+      town-turn; at 20 turns → "DISCOVERED!!" + alarm + `contextMode = 1`
+      (guards attack).  (The exact first set of `ds:20B0` is in a `db`
+      blob; the timer path is fully traced.)
+- [ ] `offerGuardBribe`'s S2 item marking (`ds:1AEE` index).
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*
