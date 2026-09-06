@@ -3,7 +3,8 @@
 '  reconstructed from casdr.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoFight (player attack), CastleEnemyTurn / EnemyAttack,
-'        AttackHit (incoming melee), GasDamage, WarlordAttack,
+'        AttackHit (incoming melee), GasDamage,
+'        WarlordConfrontation / WarlordAttack,
 '        DescribeRoom + DescribeChest / DescribeGasRoom /
 '        DescribePotionShop / DescribeLockedDoor,
 '        OpenCommand / UseKey / ResolveUseKey / TakeChestItem (doors +
@@ -58,13 +59,43 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
-SUB WarlordAttack                                     ' asm: casdr.asm:6034 (warlordAttack)
+SUB WarlordConfrontation                              ' asm: casdr.asm:5104 (warlordConfrontation)
 ' --------------------------------------------------------------------------
-' The Warlord's blow -- announced ("WARLORD ATTACK - BLOW n"); the
-' subtraction from hitPoints is applied by the caller (doWalk /
-' castleTurnUpdate) with this value.
-    warlordBlow = INT( RND(1) * 99.0 + 80.0 )     ' ds:28A0 99 ; ds:2B94 80 ' asm:6036-6066
-    '  80 .. 178 damage per blow.
+' The climactic scene -- triggered by moveBlocked when you walk into the
+' final wall on the fort's last level.  A scripted cinematic, then the
+' boss fight.
+'
+'   targetSlot(ds:1F24) = &hFF
+'   PRINT "YOU SEE THE "; warlord$
+'   ' -- the monologue, one line per Pager() call (sub_1270F = print+hold),
+'   '    interleaved with rt_FE54 tones + rt_FE28 flashes:
+'   '      "SONIC MAGIC..."   "YOU CAN'T MOVE."
+'   '      "THE WARLORD APPEARS AT THE WALL."   (patches map tiles to show him)
+'   *** hitPoints(ds:1ADA) = 28  (&h1C) ***       ' the sonic paralysis leaves
+'                                                 ' you at near-death
+'   '      "YOU FOOL!"  "YOU CAN'T STOP ME!"  "AS YOU"
+'   '      "STAND HELPLESS, I'LL USE THIS SCROLL"
+'   '      "TO CAST THE SPELL OF DEATH.  ALL LIFE"
+'   '      "OUTSIDE THIS FORTRESS WILL CEASE."
+'   questMarkState(ds:22E6) = &hFF                ' the forearm-mark quest state
+'   ' -- draw the Warlord sprite (sub_13E33 with ds:1F04..1F12 screen params),
+'   '    run the approach animation loops --
+'   ds:20B6 = 1                                   ' the "Warlord fight active" flag
+'
+' You now fight the Warlord in melee at 28 HP (DoFight in / WarlordAttack
+' out).  Winning -> FortressSelfDestruct.
+
+
+' --------------------------------------------------------------------------
+SUB WarlordAttack                                     ' asm: casdr.asm:6048 (warlordAttack)
+' --------------------------------------------------------------------------
+' The Warlord's blow during that fight -- announced ("WARLORD ATTACK -
+' BLOW n"); the subtraction from hitPoints is applied by the caller
+' (doWalk / castleTurnUpdate) with this value.
+    warlordBlow = INT( RND(1) * 99.0 + 80.0 )     ' ds:28A0 99 ; ds:2B94 80 ' asm:6050-6076
+    '  80 .. 178 damage per blow  (confirmed: RND -> FF4E 99 -> FF44 80 -> INT).
+    '  -- at 28 HP a single blow can one-shot you: the fight is meant to be
+    '     won fast (Invisibility / Weaken / a big first strike).
     PRINT "WARLORD ATTACK - BLOW "; warlordBlow
 END SUB
 
@@ -299,6 +330,10 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     (&hC0->4, &hC1/&hDA->7, &hCB->8, &hE6->5, &hE7->6) -> "UNLOCK DOOR."
 '   * S5 (ds:1BF2) IS live in CASDR -- the per-tile door/lock data table
 '     (it is only dead in TWNDR)
+'   * WARLORD CONFRONTATION (moveBlocked -> the final wall): scripted
+'     monologue ("SPELL OF DEATH...") ; FORCES hitPoints = 28 (&h1C) ;
+'     questMarkState = &hFF ; ds:20B6 = 1 ; spawns the Warlord for melee.
+'     Warlord blow (warlordAttack) = INT( RND(1)*99 + 80 ) = 80..178.
 '   * SELF-DESTRUCT: Warlord death -> "** WARLORD KILLED **" cinematic +
 '     "SELF-DESTRUCTION IN 5 MINUTES!" ; ds:20BC = &h5F00 escape budget,
 '     ticked down per turn ; guards block the doors

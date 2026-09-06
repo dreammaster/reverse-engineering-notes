@@ -127,9 +127,15 @@ the per-executable breakdown this tracks against.
       `S2(16)&S2(20)`, D2 `0x100` always, D3 `0x800` if `S2(14)>3`), and
       if a bit was awarded raises Strength to a floor of 25/40/50
       (`10·dn + 15/20/20`); chains D1→OUT, D2/D3→MUS.
+- [x] **CASDR WarlordConfrontation** (`casdr.asm:5104`). Walking into the
+      final wall → the villain monologue ("SPELL OF DEATH…"); **forces
+      `hitPoints = 28`** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF`
+      / `ds:20B6 = 1`, spawns the Warlord for melee (blow `INT(RND·99+80)`
+      = 80–178, confirmed). Winning → `fortressSelfDestruct`.
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
-      CASDR `WarlordConfrontation` / per-turn `ds:20BC` cost;
+      CASDR per-turn `ds:20BC` self-destruct cost / Warlord combat HP /
+      gas-room `base`;
       the FF1F / FF23 / FF28 / FF49 value-stack operand-order polarities
       (one DOSBox trace settles them for the whole codebase).
 

@@ -333,8 +333,13 @@ anchor). The combat pool it prints is quoted at the top of
       `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
       armour/Endurance mitigation** (contrast the Warlord blow).  Exact
       `raw − INT(raw)\2 − half` shape pending the `FF23`/`FF28` trace.
-- [ ] `WarlordConfrontation`; the per-turn `ds:20BC` self-destruct cost;
-      gas-room `base`; `enemyAttack` FF23/FF28 operand order.
+- [x] `casdr_castle.bas` — `WarlordConfrontation` (`casdr.asm:5104`).
+      Walking into the final wall → the villain monologue; **forces
+      `hitPoints = 28`** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF`
+      / `ds:20B6 = 1`, spawns the Warlord.  Warlord blow (confirmed) =
+      `INT( RND(1)·99 + 80 )` = 80–178.  Winning → `FortressSelfDestruct`.
+- [ ] the per-turn `ds:20BC` self-destruct cost; gas-room `base`;
+      `enemyAttack` FF23/FF28 operand order; Warlord combat HP.
 
 ## MUS.EXE
 

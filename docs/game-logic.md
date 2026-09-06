@@ -357,12 +357,19 @@ Dex slightly **lower** the hit-rate — either an original quirk or an
 compare polarity — the reversed reading that made the DUN spell rates
 sane is the one used here.)*
 
-**Non-Warlord enemy blow** — `EnemyAttack` (`casdr.asm:5683`) — *partial*:
-"`<enemy>` ATTACK - BLOW `<n>`"; 32-bit math from a per-enemy stat
-(`ds:20B8`), caller subtracts.
+**Warlord confrontation** — `warlordConfrontation` (`casdr.asm:5104`) —
+*derived*. Walking into the final wall triggers the villain scene:
+*"SONIC MAGIC… YOU CAN'T MOVE… I'LL USE THIS SCROLL TO CAST THE SPELL OF
+DEATH. ALL LIFE OUTSIDE THIS FORTRESS WILL CEASE."* It **forces
+`hitPoints` to 28** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF` and
+`ds:20B6 = 1`, and spawns the Warlord for melee. So the final fight starts
+at 28 HP.
 
-**Warlord blow** — *derived* — `casdr.asm:6034`: `INT( RND(1)*99 + 80 )`
-(80..178). Applied by the caller.
+**Warlord blow** — *derived* — `casdr.asm:6048` (`warlordAttack`):
+`INT( RND(1)·99 + 80 )` (**80–178**, `ds:28A0 = 99` / `ds:2B94 = 80`) —
+confirmed. At 28 HP one blow can kill you: the fight is meant to be won
+fast (Invisibility / Weaken / a big first strike). Winning →
+`fortressSelfDestruct`.
 
 **Gas room** — *partial* — `casdr.asm:4376`: `~INT( RND(1)*50 + base )`
 per turn spent in a cloudy room.
