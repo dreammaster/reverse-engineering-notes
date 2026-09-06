@@ -221,14 +221,19 @@ anchor). The combat pool it prints is quoted at the top of
       `chestBase = (10*dungeonNumber + dungeonLevel)*20 + 20`; a per-level
       gold high-water mark stops re-farming; the quest jewel is a level-7
       chest granted once.
-- [x] `dun_spells.bas` — **the full 6-spell table.** `useMagicMenu` for
-      the two attack spells (Magic flame 24 / Firebolt 25 — damage
-      `INT((45/(range+1)+18)·(RND+1)·(Firebolt?2:1))`, fizzle
-      `RND ≤ (Int+15)/45 AND RND ≥ 0.05`), `castSpell` (fell-through from
-      the "OTHER" option) `ON (selectedSpell−25) GOTO` for Befuddle 26 /
-      Psycho strength 27 / Kill flash 28. Seek (29) is overworld-only,
+- [x] `dun_spells.bas` (v2) — **the full 6-spell table + both
+      dispatchers.** `UseMagicMenu` (the "M" command): a 3-row
+      `rt_FE57` picker, row 9 → Magic flame (S2 24), row 10 → Firebolt
+      (S2 25) via `selectedSpell = row + 15`, row 11 → OTHER. Attack
+      damage `INT((45/(range+1)+18)·(RND+1)·(Firebolt?2:1))`, fizzle
+      `RND ≤ (Int+15)/45 AND RND ≥ 0.05`. `CastSpell` (row 11, shown
+      only if a Befuddle/Psycho/Kill-flash charge is held): zeroes the
+      flame/Firebolt/Seek charges around a second `selectAbove` picker,
+      then `ON (selectedSpell−25) GOTO` for Befuddle 26 / Psycho
+      strength 27 / Kill flash 28. Seek (29) is overworld-only,
       unimplemented here. Constants read from `DUN.EXE`; tables coerced +
-      unfolded via `ida_scripts/fix_dun_spells.py`.
+      unfolded via `ida_scripts/fix_dun_spells.py`. Open: `selectAbove`
+      mode-4 row→slot math (inside LEGLIB).
 - [ ] DUN monster movement, climb up/down
 
 ## TWNDR.EXE

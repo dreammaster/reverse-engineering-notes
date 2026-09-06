@@ -271,6 +271,15 @@ so a well-armoured party makes the monsters' rolls smaller at level load.
 cast does `S2(slot) -= 1`. Seek (29) is not implemented in the dungeon
 (overworld-only).
 
+The **"M"** command (`useMagicMenu`) shows one 3-row picker
+(`rt_FE57`, `firstRow = 9`): row 9 → Magic flame, row 10 → Firebolt
+(`selectedSpell = row + 15`), row 11 → **OTHER**. Row 11 is a real
+sub-menu only when a Befuddle / Psycho / Kill flash charge is held —
+`castSpell` then temporarily zeroes the flame / Firebolt / Seek charges
+so the second picker (`selectAbove` mode 4) offers only those three, and
+dispatches with `ON (selectedSpell − 25) GOTO` {1 Befuddle, 2 Psycho,
+3 Kill flash}. Otherwise row 11 is a "SELECT NO MAGIC" cancel.
+
 | spell | slot | effect |
 |---|---|---|
 | Magic flame | 24 | attack, `INT( (45/(range+1) + 18)·(RND(1)+1) )` |

@@ -54,6 +54,13 @@ the per-executable breakdown this tracks against.
       full HP), Psycho strength (`+50%` melee `INT(RND·10+20)` turns),
       Kill flash (`clearViewObjects` — wipes all monsters). Seek unused
       in DUN. `ida_scripts/fix_dun_spells.py` coerced/unfolded the arms.
+- [x] **DUN CastSpell dispatch** (`dun_spells.bas` v2) — the "M" command
+      `useMagicMenu` = a 3-row `rt_FE57` picker (row 9 → S2 24, row 10 →
+      S2 25, `selectedSpell = row + 15`); row 11 → OTHER falls through to
+      `castSpell`, shown only if a Befuddle/Psycho/Kill-flash charge is
+      held. `castSpell` zeroes the flame/Firebolt/Seek charges around a
+      second `selectAbove` picker, then `ON (selectedSpell−25) GOTO`.
+      Open: `selectAbove` mode-4 row→slot math (inside LEGLIB).
 - [x] **CASDR player attack** (`DoFight`, `casdr_castle.bas`) — weapon
       HIT `RND(1) < (11·wid + 99)·(Dex+13) / (7500·K)` (K = Dex/26 castle
       / 1.0 fort); weapon dmg `INT( ((wid\2+1)·Str\7)·(1 + 2·RND) )`;
@@ -934,8 +941,8 @@ to implement the mechanics. `ds:2092`/`ds:2096` (OUT region encounter
 gates) still merit a per-region table for tuning — 3 samples so far.
 
 **Still open** (not blocking a first implementation):
-- [ ] `CastSpell` (DUN), `enterOverworld` / `loadOverworldData` (OUT),
-      casino payouts, mail routes, per-bit quest-flag semantics.
+- [ ] `enterOverworld` / `loadOverworldData` (OUT), casino payouts,
+      mail-route payout credit, `selectAbove` mode-4 internals (LEGLIB).
 
 ## ScummVM engine (future)
 

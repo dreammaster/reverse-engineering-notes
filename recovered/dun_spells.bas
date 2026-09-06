@@ -1,15 +1,22 @@
 ' ==========================================================================
-'  DUN.EXE  --  the dungeon spell system                             [v1]
+'  DUN.EXE  --  the dungeon spell system                             [v2]
 '  reconstructed from dun.asm (useMagicMenu / castSpell + the effect arms)
 '  ; see recovered/README.md for the model + tags
 '
-'  The "M"agic command -> useMagicMenu.  Two menus:
-'    - the DIRECT list: Magic flame, Firebolt   (attack spells)
-'    - an "OTHER" option (shown only if you hold a Befuddle / Psycho
-'      strength / Kill flash charge) -> falls through into castSpell.
+'  The "M"agic command -> useMagicMenu (dun.asm:4505).  ONE 3-row menu:
+'      row 9  = Magic flame     (S2 slot 24)   -- attack, handled inline
+'      row 10 = Firebolt        (S2 slot 25)   -- attack, handled inline
+'      row 11 = "OTHER"  -> falls through into castSpell (dun.asm:4891)
+'                          -- shown ONLY if you hold a Befuddle / Psycho
+'                             strength / Kill flash charge; otherwise
+'                             row 11 reads "SELECT NO MAGIC" (a cancel).
+'  castSpell then pops a 2nd picker (selectAbove, mode 4) over just
+'  Befuddle / Psycho strength / Kill flash and dispatches with an
+'  ON (selectedSpell - 25) GOTO (rt_FD): 1=Befuddle 2=Psycho 3=Kill flash.
 '  Seek (LEGACY spell index 5, S2 slot 29) is NOT implemented in the
-'  dungeon -- it is an overworld-only spell; castSpell just hides its
-'  charge from the OTHER menu.
+'  dungeon -- it is overworld-only; castSpell explicitly zeroes its
+'  charge (and slots 24/25) while the OTHER picker is up so it can't
+'  be chosen, then restores them.
 '
 '  Spells map 1:1 to S2() charge slots (S2 = ds:1BC4, the item+spell
 '  bitmap/count array; slots 24..29 = the 6 spell charges):
@@ -19,7 +26,10 @@
 '  S2(selectedSpell) -= 1.
 '
 '  DGROUP vars:
-'     selectedSpell 1E24     Intelligence 1AF0     hitPoints 1ADA (cap 250)
+'     selectedSpell 1E24     menuChoice 1E22     Intelligence 1AF0
+'     hitPoints 1ADA (cap 250)
+'     otherAvail    1F08  (1 = the OTHER row is a real sub-menu, 0 = cancel)
+'     menuMode      20EC  (selectAbove mode: 1/2/3 = act/look/..., 4 = OTHER magic)
 '     targetRange   2140  (tiles to the current target; 5 = none/max)
 '     monsterInView 20BE  (>= 0x10 means a monster is targetable)
 '     confuseTimer  1AE6  ( >0 monster befuddled, <0 PLAYER befuddled;
@@ -29,6 +39,70 @@
 '  constants (DUN.EXE DGROUP base 0x5F00):
 '     ds:26F2 45.0   ds:270E 18.0   ds:22A2 0.05
 '     ds:2302 10.0   ds:2772 25.0   ds:2516 20.0   ds:276E -5.0   ds:2752 0.93
+
+
+' --------------------------------------------------------------------------
+SUB UseMagicMenu                                      ' asm: dun.asm:4505 (useMagicMenu)
+' --------------------------------------------------------------------------
+' The "M" command.
+    otherAvail = 0
+    Item$(0) = "NOTHING"                              ' default row-3 label   asm:4507-4514
+
+    ' ---- clamp the previously-cast spell to a menu default row (0..2) ---- asm:loc_11E94
+    menuDefault = selectedSpell - 24                  ' 0=flame 1=Firebolt 2=other
+    IF menuDefault < 0 OR menuDefault > 2 THEN menuDefault = 2
+
+    ' ---- offer row 3 as "OTHER" only if a non-attack charge is held ------ asm:loc_11EBD
+    IF S2(26) > 0 OR S2(27) > 0 OR S2(28) > 0 THEN
+        otherAvail = 1
+        Item$(0) = "OTHER"                            ' asm:loc_11F0A
+    END IF
+
+    PRINT "USE WHICH MAGIC?"                          ' asm:loc_11F2D
+
+    ' ---- 3-row picker: rows 9,10,11 ; default = menuDefault -------------- asm:loc_11F51
+    menuChoice = Menu(firstRow := 9, count := 3, default := menuDefault)  ' rt_FE57
+
+    IF menuChoice = 11 THEN                            ' asm:loc_11F7D
+        IF otherAvail = 1 THEN CastSpell ELSE PRINT "SELECT NO MAGIC"      ' asm:loc_121AB
+        EXIT SUB
+    END IF
+
+    ' ---- rows 9 / 10 : the two attack spells --------------------------- asm:loc_11F87
+    selectedSpell = menuChoice + 15                    ' 9->24 (flame), 10->25 (Firebolt)
+    IF S2(selectedSpell) < 1 THEN
+        PRINT "YOU HAVE NO "; Spell$(selectedSpell)    ' asm:loc_11FA8
+        EXIT SUB
+    END IF
+    CastAttackSpell                                    ' asm:loc_11FE7
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB CastSpell                                        ' asm: dun.asm:4891 (castSpell)
+' --------------------------------------------------------------------------
+' The "OTHER MAGIC" branch -- Befuddle / Psycho strength / Kill flash.
+    PRINT "OTHER MAGIC"                                ' asm:4892-4902
+
+    ' ---- hide the attack spells + Seek from the picker ----------------- asm:loc_121F9
+    saveFlame = S2(24) : saveBolt = S2(25) : saveSeek = S2(29)
+    S2(24) = 0 : S2(25) = 0 : S2(29) = 0
+    menuMode = 4
+    selectAbove                                       ' picker over slots 26/27/28 -> selectedSpell
+    S2(24) = saveFlame : S2(25) = saveBolt : S2(29) = saveSeek   ' asm:loc_12266
+
+    IF selectedSpell = 0 THEN PRINT "SELECT NO MAGIC" : EXIT SUB  ' asm:cmp 1E24,0
+
+    S2(selectedSpell) = S2(selectedSpell) - 1          ' consume a charge   asm:loc_122A0
+    PRINT "CAST "; Spell$(selectedSpell)
+
+    ' ---- ON (selectedSpell - 25) GOTO  (rt_FD, 1-based) --------------- asm:loc_122F4
+    SELECT CASE selectedSpell - 25
+    CASE 1 : CastBefuddle          ' 26  (asm arm 1 = j_clearTurnFlag resume)
+    CASE 2 : CastPsychoStrength     ' 27  (asm arm 2 = psychoStrengthSpell)
+    CASE 3 : CastKillFlash          ' 28  (asm arm 3 = sub_124FE)
+    END SELECT                       ' out-of-range selector = no-op (rt_FD semantics)
+END SUB
 
 
 ' --------------------------------------------------------------------------
@@ -140,7 +214,13 @@ END SUB
 '  SOLID
 '   * spell <-> S2 slot: 24 flame / 25 Firebolt / 26 Befuddle /
 '     27 Psycho strength / 28 Kill flash / 29 Seek (Seek unused in DUN)
-'   * every cast: S2(slot) -= 1
+'   * "M" menu = rt_FE57(firstRow=9, count=3, default=clamp(prevSpell-24,0,2));
+'     row 9 -> S2 slot 24, row 10 -> slot 25 (selectedSpell = row + 15);
+'     row 11 -> OTHER (castSpell) if S2(26)|S2(27)|S2(28) > 0, else cancel
+'   * castSpell: zeroes S2(24)/S2(25)/S2(29) around the OTHER picker so only
+'     Befuddle/Psycho/Kill flash are offered, then restores them; dispatch =
+'     ON (selectedSpell - 25) GOTO  {1 Befuddle, 2 Psycho, 3 Kill flash}
+'   * every cast: S2(slot) -= 1  (Psycho refunds if already active)
 '   * attack-spell fizzle: RND(1) > (Int+15)/45  OR  RND(1) < 0.05
 '   * attack-spell damage: INT( (45/(range+1) + 18) * (RND(1)+1)
 '                               * (Firebolt ? 2 : 1) )
@@ -152,9 +232,9 @@ END SUB
 '   * Kill flash: clearViewObjects -- wipes all 8 monster slots, no roll
 '
 '  OPEN
-'   * the exact rt_FE57 menu row<->spell mapping (menuChoice + 15 = slot;
-'     row 9=flame, 10=Firebolt, 11=OTHER/cancel -- inferred, not traced
-'     through selectAbove)
+'   * selectAbove mode-4 internals: how the OTHER picker rows map to
+'     selectedSpell = 26/27/28 (the shared rtm_FE4C/FE5A list helper; the
+'     row->slot math is inside LEGLIB, not yet traced)
 '   * ds:208C = 0 on an adjacent-target fizzle -- purpose unclear
 '   * whether Befuddle's backfire condition is really "hitPoints >= 250"
 '     (the DUN HP cap) or the compare polarity is flipped
