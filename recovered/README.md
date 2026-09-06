@@ -282,8 +282,11 @@ anchor). The combat pool it prints is quoted at the top of
       then `ON (selectedSpell−25) GOTO` for Befuddle 26 / Psycho
       strength 27 / Kill flash 28. Seek (29) is overworld-only,
       unimplemented here. Constants read from `DUN.EXE`; tables coerced +
-      unfolded via `ida_scripts/fix_dun_spells.py`. Open: `selectAbove`
-      mode-4 row→slot math (inside LEGLIB).
+      unfolded via `ida_scripts/fix_dun_spells.py`. `selectAbove` mode 4
+      = the shared LEGLIB scrollable-list widget (`rt_FE4C` → `rt_FE5A`):
+      scans `S2[24..29]`, lists `Spell$(slot)` per held charge, writes the
+      picked slot into `selectedSpell` (`ds:1E24`) — same widget modes
+      1/2/3 use over `S0`.
 
 ## TWNDR.EXE
 

@@ -60,7 +60,10 @@ the per-executable breakdown this tracks against.
       `castSpell`, shown only if a Befuddle/Psycho/Kill-flash charge is
       held. `castSpell` zeroes the flame/Firebolt/Seek charges around a
       second `selectAbove` picker, then `ON (selectedSpell−25) GOTO`.
-      Open: `selectAbove` mode-4 row→slot math (inside LEGLIB).
+      `selectAbove` mode 4 = the shared LEGLIB scrollable-list widget
+      (`rt_FE4C` → `rt_FE5A`): scans `S2[24..29]`, lists the held
+      spell charges, writes the picked slot into `selectedSpell`
+      (`ds:1E24`) — same widget modes 1/2/3 use over `S0`.
 - [x] **CASDR player attack** (`DoFight`, `casdr_castle.bas`) — weapon
       HIT `RND(1) < (11·wid + 99)·(Dex+13) / (7500·K)` (K = Dex/26 castle
       / 1.0 fort); weapon dmg `INT( ((wid\2+1)·Str\7)·(1 + 2·RND) )`;
@@ -188,10 +191,17 @@ the per-executable breakdown this tracks against.
       certainly the open-ocean / sailing map you reach by rafting past
       the coast. Exact trigger tile is in the un-coerced
       `resolveMoveTarget`.
+- [x] **`selectAbove` mode 4** — the shared LEGLIB scrollable-list widget
+      (`rt_FE4C` → `rt_FE5A`). Modes 1/2/3 drive it over `S0` / `ds:1AFC`
+      (weapon / act / look lists); mode 4 scans `S2[24..29]` (spell-charge
+      counts), lists `Spell$(slot)` per held charge, runs the up/down
+      "- SELECT ABOVE" cursor, writes the chosen S2 slot into `ds:1E24`
+      (`selectedSpell`) or 0. The byte-level computed-jump dispatch is
+      LEGLIB list plumbing — a port reimplements the picker; the contract
+      is all `castSpell` needs.
 - [ ] Cosmetic / not blocking a port: the exact first-set of `ds:20B0`
       (a `db` blob; timer path traced); a live `[ds:0FAC]` dump for
-      `enemyAttack`; `selectAbove` mode-4 LEGLIB internals; gmb2
-      `ds:2B40` / `ds:2AA6`; the OUTM1 trigger tile.
+      `enemyAttack`; gmb2 `ds:2B40` / `ds:2AA6`; the OUTM1 trigger tile.
 
 ## Infra (done, 2026-08-30)
 
@@ -1077,7 +1087,7 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
-- [ ] `selectAbove` mode-4 internals (LEGLIB), the OUTM1 trigger tile,
+- [ ] The OUTM1 trigger tile (in the un-coerced `resolveMoveTarget`);
       flip-flop `ds:2B40` / `ds:2AA6`.
 
 ## ScummVM engine (future)

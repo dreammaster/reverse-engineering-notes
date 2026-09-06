@@ -88,7 +88,15 @@ SUB CastSpell                                        ' asm: dun.asm:4891 (castSp
     saveFlame = S2(24) : saveBolt = S2(25) : saveSeek = S2(29)
     S2(24) = 0 : S2(25) = 0 : S2(29) = 0
     menuMode = 4
-    selectAbove                                       ' picker over slots 26/27/28 -> selectedSpell
+    ' selectAbove(mode 4) = the shared LEGLIB scrollable list widget
+    ' (dun.asm:1264 -> rt_FE4C(ds:20EC) -> rt_FE5A).  For mode 4 it scans
+    ' S2 slots 24..29 (the 6 spell-charge counts), lists Spell$(slot) for
+    ' each slot whose count > 0, runs the up/down "- SELECT ABOVE" cursor,
+    ' and writes the CHOSEN S2 SLOT INDEX into selectedSpell (ds:1E24), or
+    ' 0 on cancel.  (Modes 1/2/3 drive the same widget over S0/ds:1AFC for
+    ' the weapon/act/look lists.)  Because S2(24)/S2(25)/S2(29) are 0 here,
+    ' the list only ever shows Befuddle(26)/Psycho(27)/Kill flash(28).
+    selectAbove                                       ' -> selectedSpell = 26/27/28 or 0
     S2(24) = saveFlame : S2(25) = saveBolt : S2(29) = saveSeek   ' asm:loc_12266
 
     IF selectedSpell = 0 THEN PRINT "SELECT NO MAGIC" : EXIT SUB  ' asm:cmp 1E24,0
@@ -232,10 +240,16 @@ END SUB
 '     +50% melee; refunds the charge if already active; cleared per level
 '   * Kill flash: clearViewObjects -- wipes all 8 monster slots, no roll
 '
+'  RESOLVED
+'   * selectAbove mode 4 = the shared LEGLIB scrollable-list widget
+'     (rt_FE4C -> rt_FE5A): scans S2[24..29], lists Spell$(slot) for the
+'     held charges, writes the picked S2 slot into selectedSpell (ds:1E24)
+'     or 0.  Same widget as modes 1/2/3 over S0.  The byte-level dispatch
+'     is LEGLIB list plumbing -- a port reimplements the picker ; the
+'     contract (in: S2[24..29] + cursor ; out: chosen slot in ds:1E24) is
+'     all castSpell needs.
+'
 '  OPEN
-'   * selectAbove mode-4 internals: how the OTHER picker rows map to
-'     selectedSpell = 26/27/28 (the shared rtm_FE4C/FE5A list helper; the
-'     row->slot math is inside LEGLIB, not yet traced)
 '   * ds:208C = 0 on an adjacent-target fizzle -- purpose unclear
 '   (FF1F compare polarity is now CONFIRMED reversed -- leglib_runtime.c)
 ' ==========================================================================
