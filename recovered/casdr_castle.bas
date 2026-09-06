@@ -2,9 +2,10 @@
 '  CASDR.EXE  --  castle / fortress interiors                         [v2]
 '  reconstructed from casdr.asm ; see recovered/README.md for the model + tags
 '
-'  SUBs: DoFight (player attack), EnemyAttack, AttackHit (incoming melee),
-'        GasDamage, WarlordAttack, DescribeRoom + DescribeChest /
-'        DescribeGasRoom / DescribePotionShop / DescribeLockedDoor,
+'  SUBs: DoFight (player attack), CastleEnemyTurn / EnemyAttack,
+'        AttackHit (incoming melee), GasDamage, WarlordAttack,
+'        DescribeRoom + DescribeChest / DescribeGasRoom /
+'        DescribePotionShop / DescribeLockedDoor,
 '        OpenCommand / UseKey / ResolveUseKey / TakeChestItem (doors +
 '        the castle box), FortressSelfDestruct, WarlordConfrontation
 '
@@ -127,13 +128,42 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
+SUB CastleEnemyTurn                                   ' asm: casdr.asm:5621 (sub_127C8)
+' --------------------------------------------------------------------------
+' The per-turn castle-enemy update -- doWalk calls it after the player
+' moves (CASDR's answer to DUN's moveMonsters).  enemyAtk = ds:20B8.
+'
+'   IF S2(15) > 0 THEN EXIT SUB                 ' hold the Compendium -> no guards
+'   IF enemyAtk = 0 THEN                        ' no enemy -> SPAWN one
+'       enemyAtk = 140                          ' ds:20B8 <- &h8C
+'       guardScale(ds:230C) = INT( S2(3) \ 9 )  ' a castle-progress scaled value
+'       EXIT SUB                                ' (no blow the turn it appears)
+'   END IF
+'   EnemyAttack                                 ' the enemy is here -> it hits you
+' A guard is "killed" / leaves elsewhere by zeroing ds:20B8 ; the Weaken
+' item multiplies ds:20B8 by 0.96 per cast (see UseKey) until it drops
+' to <= &h50, then "THE ATTACK STOPS."
+
+
+' --------------------------------------------------------------------------
 SUB EnemyAttack                                       ' asm: casdr.asm:5683 (enemyAttack)
 ' --------------------------------------------------------------------------
-' A non-Warlord castle enemy's blow.  "<enemy> ATTACK - BLOW <n>"; the
-' caller subtracts <n> from hitPoints (same shape as WarlordAttack).
-' Computed with 32-bit math (rt_14 / rt_FF21 / rt_FF28) from a per-enemy
-' attack stat (ds:20B8) and a running accumulator -- exact formula not
-' fully pinned (the function is entered mid-expression).  *partial*
+' A non-Warlord castle enemy's blow.  Entered mid-expression from
+' CastleEnemyTurn, which has already computed  half = enemyAtk \ 2.
+'
+'   r      = RND(1)
+'   raw    = r * enemyAtk                       ' FF4C
+'   damage = INT( raw - INT(raw)\2 - half )     ' rt_14 halves INT(raw); FF21/FF28/FF22
+'          ' ~= enemyAtk * (1 - r) / 2   ->   0 .. enemyAtk\2
+'          ' enemyAtk 140 (fresh guard) -> damage 0..70, mean ~35
+'   PRINT enemyName$; " ATTACK - BLOW "; damage; " H.P."     ' ds:2B5C / ds:28D0
+'   Delay &h17
+'   hitPoints = hitPoints - damage              ' (message tail / caller)
+'
+' NOTE: the exact `raw - INT(raw)\2 - half` shape depends on rtm_FF23 /
+' rtm_FF28 operand order (the same value-stack question as FF1F / FF49 --
+' one DOSBox trace).  The magnitude (~ enemyAtk*(1-RND)/2) is the reading
+' that gives sane blows.  *derived, polarity-flagged*
 
 
 ' --------------------------------------------------------------------------
@@ -274,11 +304,16 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     ticked down per turn ; guards block the doors
 '   * Weaken item: enemy attack (ds:20B8) *= 0.96 per cast (ds:3162)
 '   * noisy-door spot roll: RND(1) < 0.15 (ds:3054)
+'   * CASTLE ENEMY: sub_127C8 spawns a guard (enemyAtk = 140) when none
+'     is active ; EnemyAttack blow ~= INT( enemyAtk * (1 - RND(1)) / 2 )
+'     -> 0..70 for a fresh guard (mean ~35), no armour/Endurance mitigation
 '
 '  OPEN
 '   * gas damage `base` (stack leftover)
 '   * the per-turn ds:20BC decrement (self-destruct budget cost)
-'   * enemyAttack (non-Warlord blow) -- 32-bit math, entered mid-expression
+'   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape (rtm_FF23 /
+'     FF28 operand order -- one DOSBox trace) ; ds:230C = INT(S2(3)\9)
+'     purpose (written, not obviously read)
 '   * ds:2214 = Dex/26 in the castle makes higher Dex slightly WORSE at
 '     hitting -- verify the FF49 operand order / whether this is an
 '     original bug (one DOSBox trace)

@@ -313,7 +313,7 @@ one per turn.
 
 ### 3c. CASTLE (CASDR) — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 
-**Incoming melee** — *derived* — `casdr.asm:4166` (`attackHit`):
+**Warlord melee** — *derived* — `casdr.asm:4166` (`attackHit`):
 ```
 raw = enemyAtk^1.8 * (RND(1)*600 + 300) * difficulty
 dmg = INT( raw / (armorVal * Endurance^0.9) + 2 )
@@ -323,6 +323,20 @@ scaling, not subtraction). `armorVal` = `armorId - 6` with armour, `2`
 without. `difficulty` (`ds:226E`, set by `loadCastleLevel` `casdr.asm:10033`):
 **`3.5` inside the castle, `1.0` inside the fort** (constants `ds:31A8` /
 `ds:25B0`).
+
+**Regular guard blow** — *derived* — `casdr.asm:5621` (`sub_127C8`) →
+`5683` (`enemyAttack`). `sub_127C8` is the per-turn enemy update (DUN's
+`moveMonsters` analogue): while no enemy is active it **spawns** one with
+`enemyAtk (ds:20B8) = 140`; otherwise the enemy strikes:
+```
+raw    = RND(1) * enemyAtk
+damage = INT( raw − INT(raw)\2 − enemyAtk\2 )     ' ≈ enemyAtk·(1−RND)/2  →  0..enemyAtk\2
+```
+So a fresh guard (`enemyAtk 140`) hits for **0–70**, mean ~35 — **no
+armour or Endurance mitigation** (unlike the Warlord blow). The Weaken
+item cuts `enemyAtk` by 4 %/cast until it drops to ≤ `0x50`. (The exact
+`raw − INT(raw)\2 − …` shape rides on the `rtm_FF23`/`FF28` operand
+order — one DOSBox trace — but the magnitude is solid.)
 
 **Player attack** — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 `DoFight` — *derived*. "F"ight then "ENTER DIRECTION:"; a sub-menu can

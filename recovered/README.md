@@ -327,9 +327,14 @@ anchor). The combat pool it prints is quoted at the top of
       "SELF-DESTRUCTION IN 5 MINUTES!" cinematic, `ds:20BC = 0x5F00`
       escape budget ticked per turn.  Coerced + dumped read-only via
       `ida_scripts/dump_casdr_castle.py -NoExport`.
-- [ ] `enemyAttack` exact formula (32-bit, entered mid-expr);
-      `WarlordConfrontation`; the per-turn `ds:20BC` self-destruct cost;
-      gas-room `base`.
+- [x] `casdr_castle.bas` — **regular guard blow** (`sub_127C8` →
+      `enemyAttack`).  `sub_127C8` = the per-turn enemy update; spawns a
+      guard (`enemyAtk = 140`) when none active.  Blow ≈
+      `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
+      armour/Endurance mitigation** (contrast the Warlord blow).  Exact
+      `raw − INT(raw)\2 − half` shape pending the `FF23`/`FF28` trace.
+- [ ] `WarlordConfrontation`; the per-turn `ds:20BC` self-destruct cost;
+      gas-room `base`; `enemyAttack` FF23/FF28 operand order.
 
 ## MUS.EXE
 

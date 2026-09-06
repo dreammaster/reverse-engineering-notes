@@ -65,8 +65,14 @@ the per-executable breakdown this tracks against.
       HIT `RND(1) < (11·wid + 99)·(Dex+13) / (7500·K)` (K = Dex/26 castle
       / 1.0 fort); weapon dmg `INT( ((wid\2+1)·Str\7)·(1 + 2·RND) )`;
       spell cast `RND(1)·6 < Int^0.53`, dmg `INT((selSpell−22.5)·28·
-      (RND+1))` then `\5` castle then `\range`. `EnemyAttack` (non-Warlord)
-      still partial (32-bit, entered mid-expr).
+      (RND+1))` then `\5` castle then `\range`.
+- [x] **CASDR regular guard blow** (`sub_127C8` → `enemyAttack`,
+      `casdr_castle.bas`). `sub_127C8` = the per-turn enemy update;
+      spawns a guard (`enemyAtk = 140`) when none is active. Blow ≈
+      `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
+      armour/Endurance mitigation** (unlike the Warlord blow). Exact
+      `raw − INT(raw)\2 − half` shape rides on the `FF23`/`FF28` operand
+      order (same DOSBox-trace family as FF1F/FF49).
 - [x] **TWNDR shops/guard/mail** (`twndr_services.bas` v1) — shop BUY
       prices are per-slot `TOWN<n>.BSV` data; SELL
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
@@ -123,9 +129,9 @@ the per-executable breakdown this tracks against.
       (`10·dn + 15/20/20`); chains D1→OUT, D2/D3→MUS.
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
-      CASDR `enemyAttack` formula / per-turn `ds:20BC` cost;
-      the FF1F / FF49 operand-order polarity
-      (one DOSBox trace settles it for the whole codebase).
+      CASDR `WarlordConfrontation` / per-turn `ds:20BC` cost;
+      the FF1F / FF23 / FF28 / FF49 value-stack operand-order polarities
+      (one DOSBox trace settles them for the whole codebase).
 
 ## Infra (done, 2026-08-30)
 
