@@ -166,6 +166,41 @@ SUB BeginEncounterView                               ' asm: out.asm:4386 (beginE
 END SUB
 
 
+' --------------------------------------------------------------------------
+'  ONCE A CREATURE APPROACHES -- your options       (2026-09-07)
+' --------------------------------------------------------------------------
+'  CreatureApproach first tries to let you SLIP PAST, two RND rolls:
+'      IF <cond1> AND RND(1) <= 0.65 (ds:278C) THEN  "YOU AVOID THE CREATURE"
+'      IF combatPhase <> 0 AND RND(1) <= 0.30 (ds:272A) THEN  ditto
+'  Otherwise BeginEncounterView opens the parley/combat screen.
+'
+'  FIGHT  -- the combat loop (out_combat.bas).
+'
+'  AVOID (player, TryDisengage, out.asm:2131) -- a Dex-vs-creature power
+'  roll ( RND(1) <= f(Dex, creatureAtk) built from FF2B ^ / FF4C * /
+'  FF4E / FF47 ) ; success ends the encounter, failure gives the creature
+'  a free turn.
+'
+'  TALK (player, QuitOrTalk 2nd entry, out.asm:~5230) -- reads the encounter
+'  kind in ds:1F2A:
+'      ds:1F2A = 0            -> "NO ONE IS THERE"
+'      creature out of range  -> "THE CREATURE(S) ... FAR AWAY TO HEAR YOU."
+'      RND(1) > 0.70 (ds:29FA) -> the parley fails, BeginEncounterView (it
+'                                 attacks)
+'      RND(1) <= 0.70 AND it is a MERCHANT type (ds:1F2A = 0x0C) -> a trade:
+'         * "DO YOU WANT TO BUY A POTION WORTH <n> HIT POINTS FOR <g> GOLD?"
+'         * "DO YOU WANT TO BUY <n> DAYS OF FOOD FOR <g> GOLD?"
+'         * "WOULD YOU LIKE TO BUY A MUSEUM COIN FOR <g>"
+'         * "DO YOU WANT TO BUY A <WELL CRAFTED|SPARKLING NEW|WONDERFUL|
+'            MAGNIFICENT|FORMERLY OWNED> <weapon/armour> FOR <g>"
+'         -> "PURCHASE COMPLETED" / "YOU DON'T HAVE THE GOLD!" /
+'            "MAYBE LATER..." / "YOU PASSED UP A GOOD DEAL!" / "USE THIS
+'            <item> WELL!"  (partyGold -= price ; item / potion / food /
+'            coin credited)
+'      otherwise -> "THE CREATURE DOES NOT REPLY."
+'  So some wandering "creatures" are travelling pedlars -- talk to trade.
+
+
 ' ==========================================================================
 '  SOLID
 '   * encGate1 (2092) / encGate2 (2096) / encFreq (208E): a 5-row constant

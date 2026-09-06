@@ -244,6 +244,21 @@ hitPoints = INT( RND(1)*50 + 60 )      ' revive at 60..110
 ' + a food-penalty roll, + teleport toward the nearest town
 ```
 
+**Encounter options** — *derived* (`creatureApproach` / `tryDisengage` /
+`quitOrTalk`). Before the encounter opens, two auto-avoid rolls can let
+you slip past (`RND(1) ≤ 0.65` under one condition, `RND(1) ≤ 0.30` if a
+`combatPhase` is active). Then:
+- **FIGHT** → the combat loop.
+- **AVOID** (`tryDisengage`) — a Dex-vs-creature power roll; failure gives
+  the creature a free turn.
+- **TALK** (`quitOrTalk`) — `RND(1) > 0.70` → the parley fails and it
+  attacks. `≤ 0.70` and the creature is a **pedlar** type (`ds:1F2A ==
+  0x0C`) → a trade: *"DO YOU WANT TO BUY A POTION WORTH `<n>` HIT POINTS
+  FOR `<g>` GOLD?"* / *"… `<n>` DAYS OF FOOD …"* / *"… A MUSEUM COIN …"* /
+  *"… A `<WELL CRAFTED|SPARKLING NEW|WONDERFUL|MAGNIFICENT|FORMERLY OWNED>`
+  `<weapon/armour>` …"* → *"PURCHASE COMPLETED"* etc. Non-pedlar creatures
+  → *"THE CREATURE DOES NOT REPLY."*
+
 **Encounter modifier** (`RollEncounterMod`, `rollCreatureStats`) — *derived*
 — `out.asm:3723`: `−1000` sentinel most of the time; otherwise
 `INT( RND(1)*18 + 12.6 )` (12..30). Consumed by CreatureAttack.

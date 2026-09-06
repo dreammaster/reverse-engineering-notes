@@ -871,9 +871,16 @@ reimplementation.
       `tileAhead` / `activeCreaturePtr` / `targetSlot` tentative. The
       remaining ~200 are per-call BASIC scratch temps. Next: use these to
       name the ~55 `sub_` helpers, and confirm the tentative three.
-- [ ] Combat helper cluster: `sub_1232F` / `sub_13D98` / `sub_14054`
-      (all poke `activeCreaturePtr` + `combatPhase`) — the encounter
-      resolution / talk / trade routines.
+- [x] **Encounter options SOLVED (2026-09-07)** — `creatureApproach` does
+      two auto-avoid rolls (`RND(1) ≤ 0.65` / `≤ 0.30`), then FIGHT
+      (`beginEncounterView`), AVOID (`tryDisengage`, a Dex-vs-creature
+      power roll), or **TALK** (`quitOrTalk` 2nd entry): `RND(1) > 0.70`
+      → parley fails and it attacks; else if the creature is a **pedlar**
+      (`ds:1F2A == 0x0C`) → a trade dialogue (potion / days-of-food /
+      museum coin / equipment, with condition adjectives). Non-pedlar →
+      "THE CREATURE DOES NOT REPLY." Written up in `out_encounter.bas` /
+      game-logic.md §3a. (The old `sub_1232F`/`sub_13D98`/`sub_14054`
+      names were superseded by the 104/121 rename pass.)
 - [ ] Pin down the trailing `! # $ &` control codes in `drawString`.
 - [ ] The post-thunk RTM-loader stub (`seg000:16E8C`+) is left unswept
       (`$`-terminated DOS strings + boilerplate) — disassemble if needed.
