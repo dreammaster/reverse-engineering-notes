@@ -329,7 +329,10 @@ anchor). The combat pool it prints is quoted at the top of
       the rob outcome `ds:1F04` arms `ds:20B0` (outcome 0 → 18 → caught in
       ~2 turns; outcome 1 → 1 → ~19 turns), then `doWalk` ticks it each
       town-turn; at 20 → "DISCOVERED!!" + alarm + `contextMode = 1`
-      (guards attack).
+      (guards attack).  **`ds:1F04` solved (2026-09-06):** `robCommand`
+      fires `traceCombatLine` along the facing direction — it seeds `0`
+      and sets `1` if the ray hits a solid tile.  So a **clear line** to
+      the loot = brazen (heat 18); **obstructed** = quiet (heat 1).
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*

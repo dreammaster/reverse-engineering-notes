@@ -244,8 +244,18 @@ SUB RobCommand                                       ' asm: twndr.asm:15b77 (rob
 '       IF ds:1F04 = 1 AND contextMode = 0 THEN heat(ds:20B0) = 1
 ' So a "brazen" rob (ds:1F04 = 0) starts the heat at 18 -> DISCOVERED in
 ' ~2 town-turns ; a "quiet" rob (ds:1F04 = 1) starts it at 1 -> ~19 turns
-' to get clear.  (ds:1F04 is the rob-outcome code from the robCommand /
-' resolveMoveTarget path.)
+' to get clear.
+'
+' *** ds:1F04 (the 0/1 outcome) = "was the line to the robbed tile
+' obstructed?"  SOLVED 2026-09-06 (dump_twndr_rob1f04.py): robCommand at
+' 0x10A00 calls traceCombatLine (twndr.asm:16921) along the facing
+' direction.  traceCombatLine seeds ds:1F04 = 0 (loc_1821C) and, for each
+' step of the ray, if rtm_FE18 reports a solid tile (return != 0 and
+' != 0xFF) it sets ds:1F04 = 1 (loc_182E7).  So:
+'     clear line to the loot  ->  ds:1F04 = 0  ->  BRAZEN, heat 18
+'     something in the way    ->  ds:1F04 = 1  ->  QUIET,  heat 1
+' (tile 0xD7 in the path -> ds:1F02 = 0xFE, ds:1F04 = 0xBF -> "CAN'T
+' REACH THAT" and no rob.)
 '
 ' Then, every town-turn, doWalk (twndr.asm:0x10254): IF heat > 0 THEN
 '   heat++ ; IF heat > &h13 (i.e. reaches 20) THEN
@@ -385,6 +395,9 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     heat (ds:20B0): outcome 0 -> heat 18 (DISCOVERED in ~2 turns) ;
 '     outcome 1 -> heat 1 (~19 turns).  doWalk then heat++ each town-turn ;
 '     at 20 -> "DISCOVERED!!" + alarm + contextMode = 1 (guards attack).
+'     ds:1F04 = "line to the loot obstructed?" -- traceCombatLine seeds 0,
+'     sets 1 if the facing ray passes a solid tile.  Clear line = brazen
+'     (heat 18) ; something in the way = quiet (heat 1).  [SOLVED 2026-09-06]
 '   * GUARD HP == demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 * (RND + 1) )
 '   * OfferGuardBribe: pay `demand` gold -> S2(ds:1AEE) += 1 ("YOU GOT A[N]
 '     <item>!") ; a corrupt guard SELLING you an item, not a "pay to leave"
@@ -394,8 +407,6 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
 '
 '  OPEN
-'   * what puts 0 vs 1 in the rob-outcome code ds:1F04 (-> heat 18 vs 1);
-'     that split is in the robCommand / resolveMoveTarget path
 '   * what sets ds:1AEE to a non-default item in the guard-encounter path
 '     (the `== 19` branch implies it varies; only ever seen = 1)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows

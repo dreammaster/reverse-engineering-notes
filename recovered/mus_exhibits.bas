@@ -96,6 +96,13 @@ SUB TravelToExhibitWorld                              ' asm: mus.asm:5166 (loc_1
 '
 ' So OUTM1 / OUTM2 are ONLY reachable through this path -- there is no
 ' overworld tile or item that switches maps (verified in out.asm 2026-09-06).
+'
+' GATE: like every exhibit, EnterExhibit computes chainTargetIdx from the
+' exhibitId staircase and does the "(INSERT <Item$(chainTargetIdx)>)"
+' prompt, then S2(chainTargetIdx) -= 1 on YES.  For "THE PIRATE'S LAIR"
+' (exhibitId 5) chainTargetIdx = 18 = the TOPAZ coin ; for "CLIMB ON"
+' (exhibitId 13) chainTargetIdx = 23 = the DIAMOND coin.  No extra quest
+' flag -- holding + spending the coin is the whole gate.
 
 
 ' --------------------------------------------------------------------------

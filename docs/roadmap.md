@@ -180,7 +180,12 @@ the per-executable breakdown this tracks against.
       `contextMode == 0`) — outcome `0` → heat `18` (DISCOVERED in ~2
       turns), outcome `1` → heat `1` (~19 turns); `doWalk` then heat`++`
       each town-turn, and at 20 → "DISCOVERED!!" + alarm +
-      `contextMode = 1` (guards attack).
+      `contextMode = 1` (guards attack). **`ds:1F04` SOLVED (2026-09-06,
+      `dump_twndr_rob1f04.py`):** `robCommand` at `0x10A00` fires
+      `traceCombatLine` along the facing direction; it seeds `ds:1F04 = 0`
+      and sets it to `1` if the ray passes a solid tile (`rtm_FE18` != 0,
+      != 0xFF). So **clear line to the loot → brazen (heat 18); something
+      in the way → quiet (heat 1)**.
 - [x] **CASDR `enemyAttack`** — traced to the limit of static analysis;
       **and 2026-09-06 live testing showed `ds:20B8` never arms vs
       ordinary castle guards**, so this is NOT the common guard blow (that
@@ -217,12 +222,15 @@ the per-executable breakdown this tracks against.
       `ratio < ds:2B40` branch never fires (`ratio ≥ 0`) = dead. The rig
       is one-directional: only the `ratio > 0.94` (`ds:2B3C`) "nudge
       toward a loss" branch is live.
-- [ ] Cosmetic / not blocking a port: what sets the rob-outcome code
-      `ds:1F04` to 0 vs 1 (heat 18 vs 1) inside the un-coerced
-      `robCommand` path; a live `[ds:0FAC]` dump for `enemyAttack` (a
-      deeper-castle-level path — the common guard blow `attackHit` is
-      live-verified); whether the Pirate's Lair / "CLIMB ON" museum
-      exhibits gate on a specific gem coin or quest flag.
+- [x] The rob-outcome code `ds:1F04` (heat 18 vs 1): `traceCombatLine`
+      seeds 0, sets 1 if the facing ray hits a solid tile — clear line =
+      brazen, obstructed = quiet.
+- [x] Pirate's Lair / "CLIMB ON" exhibits gate on the Topaz / Diamond
+      coin respectively (standard `EnterExhibit` coin spend, no extra flag).
+- [ ] Not port-blocking: a live `[ds:0FAC]` dump for `enemyAttack` on a
+      deeper castle level (the common guard blow `attackHit` is
+      live-verified); the OUT.EXE anti-tamper checksum record layout;
+      GMB2 bucket geometry / ball physics (not RPG-relevant).
 
 ## Infra (done, 2026-08-30)
 
@@ -1115,8 +1123,13 @@ gates) still merit a per-region table for tuning — 3 samples so far.
 - [x] OUTM1 = **The Pirate's Lair**, entered from the museum's
       *"THE PIRATE'S LAIR"* exhibit (`mus.asm sub_1134E` → `S4(12) = 1`).
       No overworld tile is involved (2026-09-06). See §3a / `out_overworld.bas`.
-- [ ] What sets the TWNDR rob-outcome code `ds:1F04` to 0 vs 1 (heat 18
-      vs 1) in the `robCommand` dispatch. Cosmetic, not port-blocking.
+- [x] The Pirate's Lair / "CLIMB ON" exhibits gate exactly like every
+      other exhibit — `EnterExhibit` does `(INSERT <coin>)` then
+      `S2(chainTargetIdx) -= 1`. Pirate's Lair → coin 18 (Topaz), CLIMB ON
+      → coin 23 (Diamond). No extra quest flag.
+- [x] TWNDR rob-outcome code `ds:1F04` (heat 18 vs 1): set by
+      `traceCombatLine` — 0 when the facing ray reaches the loot cleanly,
+      1 when a solid tile is in the way. (2026-09-06, `dump_twndr_rob1f04.py`.)
 
 ## ScummVM engine (future)
 

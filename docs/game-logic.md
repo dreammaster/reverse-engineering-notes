@@ -718,11 +718,16 @@ runtime-only (never saved).
   S4(0)` (the Mint's stash); then `S4(0) = INT(S4(0)·0.8)`. The trailing
   `spendGold` is just a gold-gauge repaint (`rtm_FF22` pops). **Net: keep
   the full stash.**
-- **Getting caught is a *turn timer*, not a roll.** Once a robbery is in
-  progress (heat `ds:20B0 > 0`), `doWalk` ticks it each town-turn, and at
-  **20 turns** → *"…DISCOVERED!!"*, an alarm, `contextMode = 1` → the
-  guards attack. (While the heat is on, `SPEAK` answers *"NOBODY
-  ANSWERS"*.)
+- **Getting caught is a *turn timer*, not a roll.** The robbery arms the
+  heat counter `ds:20B0` from `ds:1F04`: a **clear line** to the loot →
+  `ds:1F04 = 0` → heat **18** (≈ 2 town-turns to *DISCOVERED*); a line
+  **obstructed** by a solid tile → `ds:1F04 = 1` → heat **1** (≈ 19
+  turns). `ds:1F04` comes from `traceCombatLine` (the facing-direction ray
+  `robCommand` fires at `0x10A00`): it seeds `0`, then sets `1` if any
+  step's `rtm_FE18` reports a solid tile. Then `doWalk` ticks the heat
+  each town-turn, and at **20** → *"…DISCOVERED!!"*, an alarm,
+  `contextMode = 1` → the guards attack. (While the heat is on, `SPEAK`
+  answers *"NOBODY ANSWERS"*.)
 - **Guard HP / demand** (`initGuardCombat`, `ds:216E`):
   `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 = 22`).
 - **`offerGuardBribe`** is *not* "pay the guard to leave" — it's a corrupt
@@ -903,4 +908,5 @@ Nearly everything here is now closed. The regular castle guard blow
 (1 = castle) are all **live-confirmed** (§3c). Remaining gaps (not blocking
 a port): CASDR `enemyAttack`'s FP-stack shape (a deeper-level / special
 path, not the common guard hit — the common hit is fully solved),
-`robCommand`'s caught roll, a handful of runtime-only display constants.
+a handful of runtime-only display constants (and a live `[ds:0FAC]` dump
+for CASDR `enemyAttack` on a deeper level — not the common guard blow).
