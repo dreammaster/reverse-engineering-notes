@@ -77,6 +77,17 @@ reversed**. Verified against two independent expressions: `rollCreatureStats`
 OUT combat damage = `INT(Str*(wp/6 + 0.5)/(2*RND + 1))` (matches Paul's
 DOSBox "BLOW OF 6").
 
+**Operand order — fully settled** (from the `seg004` dispatch, 2026-09-06):
+`rtm_FF1F` (index `0x1C`) does `xchg si,di` at `loc_21BC0` **before** the
+compare, so relative to the plain compare (`0x18`) its operands are
+swapped — a following `Jcc` therefore tests **`TOS <cmp> TOS1`** (the
+"reversed" reading used in every `.bas` file). `rtm_FF22` / `rtm_FF23`
+(SINGLE→INT16 / INT32) **pop** their operand (`loc_2193E`:
+`sub si,0Ch ; mov ds:111Ch,si`). `rtm_FF28` (the 32-bit subtract) =
+**`TOS − TOS1`** (from the `spendGold` precedent). Knock-on: the OUT
+encounter trigger is `INT(RND·(level+9)) ≤ encFreq`; `stealGold`'s
+trailing `spendGold` is a no-op gauge repaint.
+
 **`\`, `MOD`, `^`, and the relational ops** are separate thunks with their
 own leglib handlers, *not* entries in this table. `rtm_FF2B`
 (-> `seg004:0x3954`) = **`^` with operands reversed** (`TOS ^ TOS1`): it

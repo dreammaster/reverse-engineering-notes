@@ -115,8 +115,9 @@ SUB CastAttackSpell
     ClearTurnFlag
 
     ' ---- fizzle rolls (both must pass) --------------------------
-    '   NOTE: leglib FF1F compares TOS vs the deeper operand (reversed
-    '   from the arithmetic thunks).
+    '   NOTE: leglib FF1F compares TOS vs the deeper operand (reversed) --
+    '   CONFIRMED from the leglib dispatch (loc_21BC0 does `xchg si,di`
+    '   before the compare) ; see leglib_runtime.c.
     IF RND(1) > (Intelligence + 15) / 45.0 THEN GOTO Fizzle   ' Int 15 -> ~67% ok
     IF RND(1) < 0.05                        THEN GOTO Fizzle   ' flat 5% misfire
 
@@ -236,6 +237,5 @@ END SUB
 '     selectedSpell = 26/27/28 (the shared rtm_FE4C/FE5A list helper; the
 '     row->slot math is inside LEGLIB, not yet traced)
 '   * ds:208C = 0 on an adjacent-target fizzle -- purpose unclear
-'   * whether Befuddle's backfire condition is really "hitPoints >= 250"
-'     (the DUN HP cap) or the compare polarity is flipped
+'   (FF1F compare polarity is now CONFIRMED reversed -- leglib_runtime.c)
 ' ==========================================================================

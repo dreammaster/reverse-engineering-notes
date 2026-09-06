@@ -42,19 +42,35 @@
  *  Every such run is ONE C expression.  You never need a stack.  The only
  *  thing that matters is getting the operator and the OPERAND ORDER right,
  *  because the leglib op table (ds:0F7C, read from the EXE) is NOT canonical
- *  BASIC order and has separate "reversed" thunks:
+ *  BASIC order and has separate "reversed" thunks.
+ *
+ *  OPERAND ORDER -- resolved by reading the leglib dispatch (seg004),
+ *  2026-09-06, NOT a trace (the dispatcher is authoritative for order):
+ *    - op table stride 4, indices  0 +  / 1 -  / 2 -rev / 3 *  / 4 /
+ *      / 5 /rev / 6 cmp  (bx offsets 0x00 / 0x10 / 0x14 / 0x18 for the ones
+ *      the game uses; +/- are the same handler via the -rev index).
+ *    - rt_FF22 / rt_FF23  DO POP  (loc_2193E: `sub si,0Ch ; mov ds:111Ch,si`).
+ *    - rt_FF1F: at loc_21BC0 it does `xchg si,di` BEFORE calling the compare
+ *      handler -- i.e. it compares the SWAPPED operands vs the plain compare
+ *      (sub_21B63).  So after rt_FF1F the caller's Jcc tests  TOS <cmp> TOS1
+ *      (top vs deeper) -- the "reversed" reading used in every .bas file is
+ *      correct.
+ *    - rt_FF49 = the /rev index -> its immediate/const form is  TOS / const.
+ *    - rt_FF28 (the 32-bit subtract, loc_2364A) = TOS - TOS1  (from the
+ *      spendGold precedent: FF21(partyGold) then FF28 gives partyGold-amount).
  *
  *   thunk(s)            operation                         C
  *   -----------------   ------------------------------    --------------------
  *   rt_FF44 / rt_FF42   +                                 a + b
  *   sub_21A02           -   (deeper - top)                a - b
- *   rt_FF53             -   reversed (top - deeper)       b - a
+ *   rt_FF53 / rt_FF28   -   reversed (top - deeper)       tos - tos1
  *   rt_FF4E / rt_FF4C   *                                 a * b
  *   sub_21A4A / rt_FF47 /   (deeper / top)                a / b
- *   rt_FF49             /   reversed; as immediate:       tos / imm
- *   rt_FF1F            compare -> CPU flags, then a       (a <=> b); the
- *                      Jcc encodes the actual operator     Jcc picks < > = etc
+ *   rt_FF49            /rev; immediate/const form:        tos / const
+ *   rt_FF1F            compare (operands swapped) ->       Jcc tests
+ *                      CPU flags; Jcc encodes the op       tos <cmp> tos1
  *   rt_FF2B            ^   (own thunk seg004:0x3954)      pow(tos, tos1)
+ *   rt_FF22 / rt_FF23  SINGLE -> INT16 / INT32, and POP
  *
  *  rt_FF20 push-int does `cwd` first (sign-extends).  rt_FF4B push-single is
  *  also used right after B$RND with the pointer B$RND returned.

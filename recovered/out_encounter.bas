@@ -67,15 +67,22 @@ SUB CreatureApproach                                 ' asm: out.asm:3101 (creatu
         CASE ELSE : ' rawTileType >= 8 : ON GOSUB out of range, no change
     END SELECT
 
-    ' ---- the encounter trigger --------------------------------- asm:3145-3159
-    '   leglib compare (FF1F) of  encFreq  vs  RND(1) * (characterLevel + 9);
-    '   the `ja` returns with no encounter.  Best reading (gives sane rates
-    '   and matches terrain: roads encFreq .51, rough terrain 1.25):
-    '        encounter this step  <=>  RND(1) * (characterLevel + 9) <= encFreq
-    '   i.e. per-step chance ~ encFreq / (characterLevel + 9).
-    '   [POLARITY: one DOSBox observation of the jump at creatureApproach+0x83
-    '    would confirm vs. the reverse `encFreq > RND*(level+9)`.]
-    IF RND(1) * (characterLevel + 9) > encFreq THEN EXIT SUB              ' asm:3145-3159
+    ' ---- the encounter trigger --------------------------------- asm:3160-3175
+    '   asm:  FF4B encFreq ; RND ; FF4B ; ax = level+9 ; FF20 ; FF4C (mul) ;
+    '         FF27 (INT/FIX!) ; FF1F ; ja -> return (no encounter)
+    '   FF1F is CONFIRMED reversed (leglib loc_21BC0 `xchg si,di`), so the
+    '   `ja` tests  TOS > TOS1  =  INT(RND*(level+9)) > encFreq :
+    '        NO encounter  <=>  INT( RND(1) * (characterLevel + 9) ) > encFreq
+    '        encounter     <=>  INT( RND(1) * (characterLevel + 9) ) <= encFreq
+    '   INT(...) is a NON-NEGATIVE INTEGER and encFreq is 0.40..1.25, so:
+    '     encFreq < 1  (0.40 / 0.51 / 0.67 / 0.90)  ->  encounter iff INT == 0
+    '                                                   -> per-step ~ 1/(level+9)
+    '     encFreq 1.25 (rough terrain / preset D)    ->  encounter iff INT in {0,1}
+    '                                                   -> per-step ~ 2/(level+9)
+    '   So encFreq is really just "1 or 2 buckets count", and higher level
+    '   (bigger level+9) means FEWER encounters.  L1 road ~10%/step, L1
+    '   rough ~20%/step, tapering as you level.
+    IF INT( RND(1) * (characterLevel + 9) ) > encFreq THEN EXIT SUB       ' asm:3160-3175
 
     ' ---- rare scripted / tougher encounter --------------------- asm:3167-3227
     '   holding S2(15) AND stepCounter > 500 AND 2 <= level <= 7
@@ -172,6 +179,7 @@ END SUB
 '   * rare special = S2(15) + stepCounter>500 + level 2..7 + RND<0.06
 '
 '  OPEN
-'   * encounter-trigger comparison POLARITY (one DOSBox jump observation)
+'   (encounter-trigger polarity is now RESOLVED -- FF1F confirmed reversed;
+'    the FF27 INT truncation makes encFreq a 1-or-2-bucket threshold)
 '   * groupSize's exact rt_14 divisor (2500 assumed from ds:09C4)
 '   * whether creatureTypeBase gets a story-phase (S4(12)) bump anywhere

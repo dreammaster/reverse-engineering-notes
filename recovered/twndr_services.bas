@@ -217,11 +217,12 @@ SUB StealGold                                        ' asm: twndr.asm:15cf0 (ste
 '     partyGold = partyGold + S4(0)             ' 32-bit ; grab the whole till
 '     PlayCoinFx 8                              ' ds:25B4 = 8 ; rt_FE56
 '     S4(0) = INT( S4(0) * 0.8 )                ' till refills to 80% (ds:2878)
-'     SpendGold                                 ' gold-gauge repaint
+'     SpendGold                                 ' gold-gauge repaint only
 '     ds:25A8 = 1 : contextMode = 1             ' -> exit to the main loop
-' NOTE: whether the trailing SpendGold also deducts INT(S4(0)*0.8) depends
-' on whether rtm_FF22 pops its operand (unresolved -- one DOSBox trace).
-' If it does not pop, the net is partyGold += INT(0.2 * oldTill) per rob.
+' rtm_FF22 POPS its operand (confirmed -- leglib_runtime.c), so by the
+' `call spendGold` the FP stack is already spent : spendGold subtracts a
+' base/zero slot -> ~0.  So the trailing SpendGold is just the gold-gauge
+' repaint.  NET: partyGold += the FULL till ; S4(0) drops to 80%.
 
 
 ' --------------------------------------------------------------------------
@@ -319,10 +320,10 @@ SUB RobberyEvent                                     ' asm: twndr.asm:11cac (rob
 '     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
 '
 '  OPEN
-'   * whether stealGold's trailing SpendGold deducts INT(S4(0)*0.8)
-'     (rtm_FF22 pop semantics -- one DOSBox trace settles it)
 '   * robCommand's caught roll + the item-grab (still a `db` blob)
 '   * OfferGuardBribe's S2 item marking (ds:1AEE index)
+'   (stealGold's trailing SpendGold is now confirmed a no-op repaint --
+'    rtm_FF22 pops, leglib_runtime.c)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;
 '   findings above were read from the coerced idb.  foodShop / stealGold /

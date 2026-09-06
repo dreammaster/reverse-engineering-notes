@@ -70,9 +70,11 @@ the per-executable breakdown this tracks against.
       `casdr_castle.bas`). `sub_127C8` = the per-turn enemy update;
       spawns a guard (`enemyAtk = 140`) when none is active. Blow ≈
       `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
-      armour/Endurance mitigation** (unlike the Warlord blow). Exact
-      `raw − INT(raw)\2 − half` shape rides on the `FF23`/`FF28` operand
-      order (same DOSBox-trace family as FF1F/FF49).
+      armour/Endurance mitigation** (unlike the Warlord blow). The
+      value-stack ops are now settled (below); `enemyAttack` is still
+      entered mid-expression with the FP stack one operand short at the
+      `FF28` call, so the exact `raw − INT(raw)\2 − half` shape needs a
+      live FP-stack dump. Magnitude solid.
 - [x] **TWNDR shops/guard/mail** (`twndr_services.bas` v1) — shop BUY
       prices are per-slot `TOWN<n>.BSV` data; SELL
       `baseValue = INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`,
@@ -140,12 +142,19 @@ the per-executable breakdown this tracks against.
       to 1) → gates rank 2. `S4(18)` (byte `0x24`) = main-quest stage
       (`kingConfides` advances; `exitCastle` → 4; TWNDR reads `== 3`) →
       rank 5 needs `S4(18) ≥ 2`.
+- [x] **Value-stack operand order** — resolved from the `seg004` dispatch
+      (`recovered/leglib_runtime.c`), no trace needed: `rtm_FF1F` swaps
+      operands (`loc_21BC0` `xchg si,di`) → a following `Jcc` tests
+      `TOS <cmp> TOS1` (the "reversed" reading used everywhere is right);
+      `rtm_FF22`/`FF23` **pop**; `rtm_FF49` const-form = `TOS / const`;
+      `rtm_FF28` = `TOS − TOS1`. Knock-on: the **OUT encounter trigger**
+      is `INT(RND·(level+9)) ≤ encFreq` (the `FF27` truncation makes
+      `encFreq` a 1-or-2-bucket threshold → ~10–20 %/step at L1, tapering);
+      `stealGold`'s trailing `spendGold` is a no-op repaint (keep the full
+      till); CASDR `K = Dex/26` in the to-hit denominator is a real quirk.
 - [ ] Still open:
-      `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
-      CASDR per-turn `ds:20BC` self-destruct cost / Warlord combat HP /
-      gas-room `base`;
-      the FF1F / FF23 / FF28 / FF49 value-stack operand-order polarities
-      (one DOSBox trace settles them for the whole codebase).
+      `robCommand` caught roll (db blob); CASDR `enemyAttack` FP-stack
+      shape / per-turn `ds:20BC` cost / Warlord combat HP / gas-room `base`.
 
 ## Infra (done, 2026-08-30)
 

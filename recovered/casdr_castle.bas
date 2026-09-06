@@ -116,9 +116,10 @@ SUB DoFight                                           ' asm: casdr.asm:2808 (doF
 '                 selectedSpell (ds:1E24) = menuChoice - 9  (0..5)
 '   K           ds:2214   loaded by loadCastleLevel (casdr.asm:10040):
 '                 castle -> Dexterity / 26      fort -> 1.0
-'                 [FF49 imm = TOS / imm, per the beginEncounterView
-'                  precedent -- but that makes higher Dex slightly LOWER
-'                  the castle hit-rate, which is odd; flagged for a trace]
+'                 [FF49 = TOS / const CONFIRMED (leglib static) ; so
+'                  K = Dex/26 is real, and with K in the DENOMINATOR of
+'                  toHit below, higher Dex genuinely LOWERS the castle
+'                  hit-rate -- an apparent original quirk, not a mis-read]
 
     IF attackMode = 0 THEN
         ' ---- WEAPON to-hit ---------------------------------- asm:loc_1176C
@@ -191,10 +192,13 @@ SUB EnemyAttack                                       ' asm: casdr.asm:5683 (ene
 '   Delay &h17
 '   hitPoints = hitPoints - damage              ' (message tail / caller)
 '
-' NOTE: the exact `raw - INT(raw)\2 - half` shape depends on rtm_FF23 /
-' rtm_FF28 operand order (the same value-stack question as FF1F / FF49 --
-' one DOSBox trace).  The magnitude (~ enemyAtk*(1-RND)/2) is the reading
-' that gives sane blows.  *derived, polarity-flagged*
+' NOTE: the value-stack ops are now settled -- FF23 POPS, FF28 = TOS-TOS1
+' (see leglib_runtime.c).  But this SUB is entered mid-expression and the
+' FP stack has ONE operand where FF28 wants two, so a leftover operand from
+' the caller's expression is unaccounted for.  The magnitude
+' (~ enemyAtk*(1-RND)/2) is the sane reading ; the exact `raw - INT(raw)\2
+' - half` shape needs a live dump of the FP stack at the FF28 call.
+' *derived, shape-uncertain*
 
 
 ' --------------------------------------------------------------------------
@@ -343,13 +347,18 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     is active ; EnemyAttack blow ~= INT( enemyAtk * (1 - RND(1)) / 2 )
 '     -> 0..70 for a fresh guard (mean ~35), no armour/Endurance mitigation
 '
+'  RESOLVED (leglib static, 2026-09-06 -- see leglib_runtime.c)
+'   * FF1F compare = reversed (Jcc tests TOS <cmp> TOS1) -- confirmed
+'   * FF49 = /rev, immediate form = TOS / const -- confirmed.  So
+'     ds:2214 = Dex/26 IS a genuine division ; whether it lands in the
+'     numerator or denominator of the to-hit ratio (making higher Dex
+'     better or worse) is a placement question, not an FF49 polarity one
+'   * FF22 / FF23 pop their operand
+'
 '  OPEN
 '   * gas damage `base` (stack leftover)
 '   * the per-turn ds:20BC decrement (self-destruct budget cost)
-'   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape (rtm_FF23 /
-'     FF28 operand order -- one DOSBox trace) ; ds:230C = INT(S2(3)\9)
-'     purpose (written, not obviously read)
-'   * ds:2214 = Dex/26 in the castle makes higher Dex slightly WORSE at
-'     hitting -- verify the FF49 operand order / whether this is an
-'     original bug (one DOSBox trace)
-'   * FF1F compare polarity (same reversed reading as DUN gives sane rates)
+'   * EnemyAttack's exact `raw - INT(raw)\2 - half` shape -- FP stack is
+'     one operand short at the FF28 call (a leftover from the caller's
+'     mid-expression entry) ; needs a live FP-stack dump
+'   * ds:230C = INT(S2(3)\9) purpose (written, not obviously read)

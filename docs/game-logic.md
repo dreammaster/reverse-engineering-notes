@@ -27,14 +27,19 @@ Binary operators dispatch through a table at `ds:0F7C` (read out of
 |---|---|
 | `rtm_FF44` / `rtm_FF42` | `+` |
 | `sub_21A02` | `-` (a−b) |
-| `rtm_FF53` | `-` reversed (b−a) |
+| `rtm_FF53` / `rtm_FF28` | `-` reversed (`TOS − TOS1`) |
 | `rtm_FF4E` / `rtm_FF4C` | `*` |
 | `rtm_FF47` | `/` (deeper ÷ top) |
-| `rtm_FF49` | `/` reversed (top ÷ deeper; as immediate: `TOS / imm`) |
+| `rtm_FF49` | `/` reversed; immediate/const form = `TOS / const` |
 | `rtm_FF2B` | `^` (own thunk `seg004:0x3954`; `TOS ^ TOS1`) |
-| `rtm_FF1F` | compare (sets flags for `jb`/`jnb`) |
+| `rtm_FF1F` | compare with operands **swapped** (`loc_21BC0` does `xchg si,di`) → a following `Jcc` tests `TOS <cmp> TOS1` |
+| `rtm_FF22` / `rtm_FF23` | SINGLE → INT16 / INT32, **and pop** |
 
-`\`, `MOD` and the 32-bit ops are separate integer thunks.
+**Operand order is settled** (read from the `seg004` dispatch, 2026-09-06
+— the dispatcher is authoritative for order, no trace needed): `FF1F`
+swaps then compares; `FF22`/`FF23` pop; `FF49` const-form is `TOS / const`;
+`FF28` is `TOS − TOS1`. `\`, `MOD` and the 32-bit ops are separate integer
+thunks.
 
 `RND(1)` = `push ds:<seg> : push ds:<off> : call rtm_B8` where the arg is
 each module's SINGLE constant `1.0` (OUT `ds:24E6`, DUN `ds:2274`, CASDR
@@ -355,11 +360,13 @@ without. `difficulty` (`ds:226E`, set by `loadCastleLevel` `casdr.asm:10033`):
 raw    = RND(1) * enemyAtk
 damage = INT( raw − INT(raw)\2 − enemyAtk\2 )     ' ≈ enemyAtk·(1−RND)/2  →  0..enemyAtk\2
 ```
-So a fresh guard (`enemyAtk 140`) hits for **0–70**, mean ~35 — **no
+So a fresh guard (`enemyAtk 140`) hits for **~0–70**, mean ~35 — **no
 armour or Endurance mitigation** (unlike the Warlord blow). The Weaken
-item cuts `enemyAtk` by 4 %/cast until it drops to ≤ `0x50`. (The exact
-`raw − INT(raw)\2 − …` shape rides on the `rtm_FF23`/`FF28` operand
-order — one DOSBox trace — but the magnitude is solid.)
+item cuts `enemyAtk` by 4 %/cast until it drops to ≤ `0x50`. (`FF23`/`FF28`
+operand order is now settled, but `enemyAttack` is entered mid-expression
+and the FP stack is one operand short at the `FF28` call — a leftover from
+the caller's expression — so the exact `raw − INT(raw)\2 − …` shape still
+needs a live FP-stack dump. The magnitude is solid.)
 
 **Player attack** — [`casdr_castle.bas`](../recovered/casdr_castle.bas)
 `DoFight` — *derived*. "F"ight then "ENTER DIRECTION:"; a sub-menu can
@@ -374,11 +381,10 @@ spell dmg    INT( (selectedSpell − 22.5)·28·(RND(1)+1) ), then \5 in the
              castle, then \range
 ```
 Damage subtracts from `viewObjectArray(tileHit)`; "`<n>` H.P. BLOW",
-"`<enemy>` KILLED" at ≤ 0. *(The `K = Dex/26` castle term makes higher
-Dex slightly **lower** the hit-rate — either an original quirk or an
-`FF49` operand-order mis-read; flagged for a trace, as is the `FF1F`
-compare polarity — the reversed reading that made the DUN spell rates
-sane is the one used here.)*
+"`<enemy>` KILLED" at ≤ 0. *(`FF49` = `TOS / const` and `FF1F` reversed
+are now both confirmed from the leglib dispatch — so `K = Dex/26` is a
+real division, and with `K` in the denominator higher Dex genuinely
+lowers the castle hit-rate: an apparent original quirk, not a mis-read.)*
 
 **Warlord confrontation** — `warlordConfrontation` (`casdr.asm:5104`) —
 *derived*. Walking into the final wall triggers the villain scene:
@@ -487,17 +493,19 @@ stepCounter += 1                              ' ds:1AF8
 RND roll: `hitPoints -= INT( hitPoints / (3 * (RND(1) + 1)) )`, then
 "YOU GROW SICK FROM SOMETHING YOU ATE!".
 
-**Encounter trigger** (`CreatureApproach`) — *derived*:
+**Encounter trigger** (`CreatureApproach`) — *derived* (`FF1F`/`FF27`
+resolved):
 ```
-no encounter this step when   encFreq  >  RND(1) * (characterLevel + 9)
+' asm: FF4B encFreq ; RND ; ax = level+9 ; FF20 ; FF4C ; FF27 (INT!) ; FF1F ; ja
+encounter this step  when   INT( RND(1) * (characterLevel + 9) )  <=  encFreq
 ```
-i.e. per-step chance ≈ `encFreq / (characterLevel + 9)` — roads (encFreq
-0.51) are safer than rough terrain (1.25), higher level slightly reduces
-the rate. **Comparison polarity is one DOSBox jump-observation from
-confirmed** (`creatureApproach` +0x83, the `ja`); the reverse reading
-(`encFreq <= RND*(level+9)`) is possible but gives ~90 %/step. A rare
-scripted ambush (`RND < 0.06`) needs `S2(15)` held, `stepCounter > 500`,
-and level 2..7.
+`INT(…)` is a non-negative integer and `encFreq ∈ {0.40, 0.51, 0.67,
+0.90, 1.25}`, so `encFreq` is really just a **bucket count**: for the
+four sub-1 presets an encounter needs `INT(…) == 0` → `1 / (level+9)`
+per step; for preset D (`1.25`, rough terrain) `INT(…) ∈ {0,1}` →
+`2 / (level+9)`. So at level 1: ~10 %/step on roads, ~20 % on rough
+terrain, tapering as you level. A rare scripted ambush (`RND < 0.06`)
+needs `S2(15)` held, `stepCounter > 500`, and level 2..7.
 
 `encGate1` / `encGate2` are then consumed by `BeginEncounterView` as a
 3-way cascade choosing the creature band — see §3a and
@@ -660,9 +668,9 @@ runtime-only (never saved).
 
 - **Rob a shop** (`stealGold`, "*n* BAGS OF GOLD!"): `partyGold += S4(0)`
   (the shop's till, kept in `S4(0)`); then `S4(0) = INT(S4(0)·0.8)` — the
-  till only refills to 80 % for the next theft. A trailing `spendGold`
-  repaints the gold gauge (whether it also deducts `INT(S4(0)·0.8)`
-  hinges on `rtm_FF22` pop semantics — unresolved).
+  till only refills to 80 % for the next theft. The trailing `spendGold`
+  is just a gold-gauge repaint (`rtm_FF22` pops, so its FP stack is
+  already spent). **Net: you keep the full till.**
 - **Guard HP = bribe demand** (`initGuardCombat`, `ds:216E`):
   `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 =
   22`). `offerGuardBribe` pays exactly that; if you can't afford it the
@@ -828,6 +836,6 @@ the `ON (rawTile+1) GOSUB` in `creatureApproach`, and the five arms
 The earlier field samples (museum 0/0, west 0.22/0.40, NW 0.35/0.55) are
 presets *(none)* / A / C respectively.
 
-Also open (not blocking): the encounter-trigger comparison polarity (one
-DOSBox jump obs), `CastSpell` (DUN), the casino payout math, the per-bit
-quest-flag semantics.
+Nearly everything here is now closed. Remaining gaps (not blocking a
+port): CASDR `enemyAttack`'s exact FP-stack shape (magnitude solid),
+`robCommand`'s caught roll, a handful of runtime-only display constants.
