@@ -4,8 +4,9 @@
 '
 '  SUBs: SpendGold  (shared "pay N gold"), Bank,
 '        WeaponArmorShop / FoodShop / MailDeliveryJob (shops + jobs),
-'        GuardAttack / FightGuard / StealGold / OfferGuardBribe /
-'        ArrestedByGuards (the town-guard system).
+'        GuardAttack / FightGuard / InitGuardCombat / StealGold /
+'        OfferGuardBribe / ArrestedByGuards / JailRelease / RobberyEvent
+'        (the town-guard + crime system).
 '        townServiceDispatch (ds:1F22) is the ~6 KB SELECT CASE that the
 '        shop entries route the actual buy/sell transaction through.
 '
@@ -208,16 +209,79 @@ SUB FightGuard                                        ' asm: twndr.asm:1407 (fig
 
 
 ' --------------------------------------------------------------------------
-SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
+SUB StealGold                                        ' asm: twndr.asm:15cf0 (stealGold)
 ' --------------------------------------------------------------------------
-'   StealGold  ("Rob" a shop till): partyGold += S4(0) ; then S4(0) *= 0.8
-'              (the till refills slower each time) ; a spendGold follow-up
-'              (the fine if caught) -- exact split *partial*.
-'   OfferGuardBribe: the demanded amount is `ds:216E` (set by the caller);
-'              if partyGold >= it, partyGold -= it and the guard leaves.
-'              Also takes / marks an item (S2 slot from ds:1AEE).  *partial*
-'   ArrestedByGuards: "THE GUARDS OVERWHELM YOU!" -> jailPlayer (loses a
-'              turn / some gold, teleport to the jail tile -- not a death).
+' The "ROB" command's SUCCESS branch ("<n> BAGS OF GOLD!").  The shop till
+' is S4(0) (S4 byte 0 ; each shop keeps its own running till there).
+'     Delay &h1B
+'     partyGold = partyGold + S4(0)             ' 32-bit ; grab the whole till
+'     PlayCoinFx 8                              ' ds:25B4 = 8 ; rt_FE56
+'     S4(0) = INT( S4(0) * 0.8 )                ' till refills to 80% (ds:2878)
+'     SpendGold                                 ' gold-gauge repaint
+'     ds:25A8 = 1 : contextMode = 1             ' -> exit to the main loop
+' NOTE: whether the trailing SpendGold also deducts INT(S4(0)*0.8) depends
+' on whether rtm_FF22 pops its operand (unresolved -- one DOSBox trace).
+' If it does not pop, the net is partyGold += INT(0.2 * oldTill) per rob.
+
+
+' --------------------------------------------------------------------------
+SUB InitGuardCombat                                  ' asm: twndr.asm:10f37 (initGuardCombat)
+' --------------------------------------------------------------------------
+' Rolls the guard's hit points AND the bribe demand -- they are the SAME
+' number, stored in ds:216E (guardHitPoints).
+'     guardHitPoints = INT( (ds:1E22 - 7.5) * 22 * (RND(1) + 1) )
+'         ' ds:283C = -7.5   ds:2840 = 22.0
+'         ' ds:1E22 = the menu selection that triggered the guards; the
+'         '   -7.5 shift is the same one CASDR uses for its spell index.
+
+
+' --------------------------------------------------------------------------
+SUB OfferGuardBribe                                  ' asm: twndr.asm:1549+ (offerGuardBribe)
+' --------------------------------------------------------------------------
+'   demand = ds:216E                             ' == the guard's rolled HP
+'   IF partyGold >= demand THEN
+'       partyGold = partyGold - demand           ' the guard pockets it and leaves
+'   END IF
+'   (also marks / takes an S2 item slot indexed by ds:1AEE)  *partial*
+
+
+' --------------------------------------------------------------------------
+SUB ArrestedByGuards / JailRelease                   ' asm: arrestedByGuards / jailRelease:15607
+' --------------------------------------------------------------------------
+'   ArrestedByGuards: "THE GUARDS OVERWHELM YOU!" -> sets the jailed flag
+'       (ds:2194) and drops you in the cell.  Not a death.
+'
+'   JailRelease ("I'LL LET YOU OUT FOR A PRICE") -- the bail ladder:
+'     IF partyGold > 149 THEN
+'         partyGold = partyGold \ 2              ' half your gold
+'         PRINT "IT HAS COST "; (partyGold\2); " GOLD TO GET OUT."
+'     ELSEIF partyGold > 0 THEN
+'         PRINT "I'VE TAKEN ALL YOUR GOLD."
+'         partyGold = 0
+'         ' then CONFISCATE the first non-empty weapon slot (S0 slots 7..0):
+'         S0(slot) = 0                           ' item destroyed
+'         weaponSlotCursor = 99 : weaponId = 0   ' unequipped
+'         armourCursor     = 99 : armourId = 0
+'     ELSE  ' totally broke, nothing to take
+'         PRINT "I'VE GOTTEN 100 GOLD FROM THE LENDER - IN YOUR NAME."
+'         S4(5) = S4(5) + 100                    ' a FORCED loan (debt slot)
+'         S4(6) = INT( terrainWear(ds:1AF4) + 120 )   ' repayment deadline (ds:35F0)
+'     END IF
+'     ds:2194 = 0                                ' released
+'     S4(31) = currentTown                       ' the jail is in this town
+
+
+' --------------------------------------------------------------------------
+SUB RobberyEvent                                     ' asm: twndr.asm:11cac (robberyEvent)
+' --------------------------------------------------------------------------
+' The " ROBBERY IN PROGRESS " event (from the ROB command on a shop).
+' Walks the shop's stock -- viewObjectArray (ds:1C7C) slots 0..8, the same
+' id/condition/price triples the buy counter uses (elem +0x4A/+0x5C/+0x6E)
+' -- and for each occupied slot calls sub_11F51 to appraise it, writing the
+' value back to the price cell, then lists "<n>. <item>" + value: the loot
+' manifest.  `ds:1E20 = 0x0C` shops instead show "THE MERCHANT WON'T LET
+' YOU ..." (merchantRefuses).  The actual item-grab / caught roll is in the
+' ROB dispatch (robCommand), still a `db` blob.  *partial*
 
 
 ' ==========================================================================
@@ -246,10 +310,22 @@ SUB StealGold / OfferGuardBribe / ArrestedByGuards    ' asm: twndr.asm 12x
 '     (partyGold += payment ; S4(7) = -1 ; S2(9) = 0) -- NOT distance-scaled
 '   * FOOD: pricePerDay = INT(13 - Charm/7) * 0.1  (~1 g/day, less w/ Charm);
 '     maxDays = MIN(1000, partyGold / pricePerDay) ; food is runtime-only
+'   * ROB success (stealGold): partyGold += S4(0) (the shop till) ;
+'     S4(0) = INT(S4(0) * 0.8) (till shrinks 20% per theft, ds:2878)
+'   * GUARD HP == BRIBE demand = ds:216E = INT( (ds:1E22 - 7.5) * 22 *
+'     (RND + 1) ) ; OfferGuardBribe pays exactly that
+'   * JAIL bail: partyGold > 149 -> lose HALF ; 1..149 -> lose ALL + one
+'     equipped weapon confiscated ; broke+itemless -> forced 100-gold loan
+'     (S4(5) += 100, S4(6) = INT(terrainWear + 120) deadline)
 '
 '  OPEN
-'   * bribe amount origin ; StealGold fine split ; robberyEvent
+'   * whether stealGold's trailing SpendGold deducts INT(S4(0)*0.8)
+'     (rtm_FF22 pop semantics -- one DOSBox trace settles it)
+'   * robCommand's caught roll + the item-grab (still a `db` blob)
+'   * OfferGuardBribe's S2 item marking (ds:1AEE index)
 '   NOTE: twndr.idb has a local coerce of townServiceDispatch that reflows
 '   the whole .asm on export -- the .asm is intentionally left un-updated;
-'   findings above were read from the coerced idb.  foodShop was coerced +
-'   dumped read-only via ida_scripts/dump_twndr_foodshop.py (-NoExport).
+'   findings above were read from the coerced idb.  foodShop / stealGold /
+'   robberyEvent / initGuardCombat / jailRelease were coerced + dumped
+'   read-only via ida_scripts/dump_twndr_foodshop.py + dump_twndr_crime.py
+'   (both -NoExport).

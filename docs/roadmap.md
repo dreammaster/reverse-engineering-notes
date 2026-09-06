@@ -88,8 +88,16 @@ the per-executable breakdown this tracks against.
       − 6) ^ 3.2 )`, consts `ds:2B66` 3.2 / `2B6A` 1.02 / `2B6E` 3.5 /
       `2B72` −6. Ends on the outer power — no trailing `·m − k` like the
       weapon branch. Confirmed `rtm_FF2B` = `TOS ^ TOS1` (top = base).
-- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides; TWNDR
-      `StealGold` fine / robbery event / bribe amount;
+- [x] **TWNDR crime / jail** (`stealGold` / `initGuardCombat` /
+      `jailRelease`, `twndr_services.bas` v2). ROB success:
+      `partyGold += S4(0)` (shop till), `S4(0) = INT(S4(0)·0.8)`. Guard HP
+      == bribe demand `ds:216E = INT((ds:1E22 − 7.5)·22·(RND+1))`
+      (`ds:283C` −7.5 / `2840` 22). Jail bail ladder: `>149 g` half /
+      `1–149` all + weapon confiscated / broke+itemless → forced 100-gold
+      loan (`S4(5)+=100`, `S4(6)` deadline). `ida_scripts/dump_twndr_crime.py`
+      coerces + dumps read-only (`-NoExport`).
+- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
+      `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
       CASDR chest loot / locked doors / self-destruct;
       DUN monster movement; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).

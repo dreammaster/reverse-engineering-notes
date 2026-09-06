@@ -557,11 +557,24 @@ just the flat random roll.
 Charm); `maxDays = MIN(1000, partyGold / pricePerDay)`. Food itself is
 runtime-only (never saved).
 
-**Steal / bribe.** `StealGold` (rob a till): `partyGold += S4(0)` then
-`S4(0) *= 0.8` (till refills slower each time), with a `spendGold` fine if
-caught. `OfferGuardBribe`: pay `ds:216E` (amount set by the caller), guard
-leaves. `ArrestedByGuards`: "THE GUARDS OVERWHELM YOU!" → jail (lose a turn
-/ some gold, teleport to the jail tile — not a death).
+**Crime & jail** — `stealGold` / `initGuardCombat` / `jailRelease`:
+
+- **Rob a shop** (`stealGold`, "*n* BAGS OF GOLD!"): `partyGold += S4(0)`
+  (the shop's till, kept in `S4(0)`); then `S4(0) = INT(S4(0)·0.8)` — the
+  till only refills to 80 % for the next theft. A trailing `spendGold`
+  repaints the gold gauge (whether it also deducts `INT(S4(0)·0.8)`
+  hinges on `rtm_FF22` pop semantics — unresolved).
+- **Guard HP = bribe demand** (`initGuardCombat`, `ds:216E`):
+  `INT( (ds:1E22 − 7.5)·22·(RND(1)+1) )` (`ds:283C = −7.5`, `ds:2840 =
+  22`). `offerGuardBribe` pays exactly that; if you can't afford it the
+  guards fight.
+- **Jail bail** (`jailRelease`, "I'LL LET YOU OUT FOR A PRICE"):
+  `partyGold > 149` → lose **half**; `1–149` → lose **all** *and* one
+  equipped weapon is confiscated (`S0(slot)=0`, unequipped); dead broke
+  with nothing to take → a forced **100-gold loan** in your name
+  (`S4(5) += 100`, `S4(6) = INT(terrainWear + 120)` repayment deadline).
+- **`robberyEvent`** (" ROBBERY IN PROGRESS ") appraises every shop-stock
+  slot with `sub_11F51` and lists the haul; `townType 0x0C` shops refuse.
 
 ### Casino — [`gmb_casino.bas`](../recovered/gmb_casino.bas) — *derived*
 

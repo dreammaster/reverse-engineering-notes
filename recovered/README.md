@@ -260,8 +260,9 @@ anchor). The combat pool it prints is quoted at the top of
       `MIN(1500, MIN(5000, balance) * daysElapsed \ 999)` (`ds:2C3C` is an
       8-byte double = 999.0).  Moneylender = flat 50% loan.
 - [x] `twndr_services.bas` (v2) — `WeaponArmorShop` / `FoodShop`,
-      `MailDeliveryJob`, `GuardAttack` / `FightGuard`, `StealGold` /
-      `OfferGuardBribe` / `ArrestedByGuards`.  Shop **buy** prices are
+      `MailDeliveryJob`, `GuardAttack` / `FightGuard` / `InitGuardCombat`,
+      `StealGold` / `OfferGuardBribe` / `ArrestedByGuards` / `JailRelease`
+      / `RobberyEvent`.  Shop **buy** prices are
       per-slot `TOWN<n>.BSV` data (not a formula); **sell** base value
       weapons `INT(((wid^1.05 + cond/2.8 + 2)^2.1)*4 - 10)`, armour
       `INT((id^1.02 + cond/3.5 - 6)^3.2)` (no trailing scale);
@@ -273,9 +274,16 @@ anchor). The combat pool it prints is quoted at the top of
       (`partyGold += payment`, `S4(7) = -1`, `S2(9) = 0`).  Food:
       `pricePerDay = INT(13 - Charm/7)·0.1`, `maxDays = MIN(1000,
       partyGold/pricePerDay)`; food is runtime-only.
-      (`foodShop` coerced + dumped read-only via
-      `ida_scripts/dump_twndr_foodshop.py -NoExport`.)
-- [ ] `StealGold` fine split; `robberyEvent`; the bribe amount's origin.
+      **Crime:** `stealGold` — `partyGold += S4(0)` (shop till),
+      `S4(0) = INT(S4(0)·0.8)` (till shrinks 20 %/theft). Guard HP ==
+      bribe demand `ds:216E = INT((ds:1E22 − 7.5)·22·(RND+1))`. Jail bail:
+      `>149 g` → lose half; `1–149` → lose all + one weapon confiscated;
+      broke+itemless → forced 100-gold loan (`S4(5) += 100`).
+      (`foodShop`/`stealGold`/`robberyEvent`/`initGuardCombat`/`jailRelease`
+      coerced + dumped read-only via `ida_scripts/dump_twndr_*.py
+      -NoExport`.)
+- [ ] `stealGold`'s FF22-pop question; `robCommand`'s caught roll (still a
+      `db` blob); `offerGuardBribe`'s S2 item marking.
       *(NOTE: `twndr.idb` has a local coerce of `townServiceDispatch`
       that reflows the whole `.asm` on export — `twndr.asm` is left
       un-updated; the math above was read from the coerced idb.)*
