@@ -106,10 +106,18 @@ the per-executable breakdown this tracks against.
       "SELF-DESTRUCTION IN 5 MINUTES!" cinematic + `ds:20BC = 0x5F00`
       escape budget. `ida_scripts/dump_casdr_castle.py` coerces + dumps
       read-only.
+- [x] **DUN monster movement** (`moveMonsters` / `sub_139FC` /
+      `stepMonsterToward`, `dun_combat.bas` v2). Greedy Manhattan chase
+      every turn — one orthogonal step toward the player, dominant axis
+      first, other axis as a single fallback. No aggro range, no
+      randomness, no path-finding. Blocked by map byte `≥ 0x10` or the
+      player's cell (map byte = `bit7 | class<<4 | wall/floor`).
+      Confirmed the Befuddle gate: `confuseTimer > 0` skips the whole
+      monster phase, `< 0` skips the player's turn.
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
       CASDR `enemyAttack` formula / per-turn `ds:20BC` cost;
-      DUN monster movement; the FF1F / FF49 operand-order polarity
+      DUN climb up/down; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
 
 ## Infra (done, 2026-08-30)

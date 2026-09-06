@@ -1,5 +1,5 @@
 ' ==========================================================================
-'  DUN.EXE  --  dungeon combat                                        [v1]
+'  DUN.EXE  --  dungeon combat                                        [v2]
 '  reconstructed from dun.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoAttack (player)   MonsterAttack + MonsterSpecialAttack (monsters)
@@ -87,6 +87,91 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
+SUB MoveMonsters                                      ' asm: dun.asm:7006 (moveMonsters, far SUB)
+' --------------------------------------------------------------------------
+' The per-turn monster phase.  dunMain calls it AFTER the player's action,
+' but SKIPS the whole phase (move + attack) while confuseTimer > 0.
+'
+' viewObjectArray = ds:1C7C, 8 monster slots.  Per slot s (element e = s*2):
+'     [e+0]    occupied (> 0 = a monster is here)
+'     [e+0x10] monsterX          [e+0x18] monsterY
+'     [e+0x20] packedCell        (index into the map array ds:1E2A)
+'     [e+0x28] attackDir         (0 = not adjacent, else 1..4 -- see below)
+'
+'   monstersReached (ds:2188) = 0
+'   FOR s = 0 TO 7
+'     IF viewObjectArray(s).occupied <= 0 THEN attackDir = 0 : GOTO nextSlot
+'     dx = monsterX - playerX(ds:20CE)                ' step is toward the player
+'     dy = monsterY - playerY(ds:20D0)
+'     xStep = SGN(-dx)  (0 if dx = 0)     ' packed cell delta -/+1
+'     yStep = SGN(-dy)  (0 if dy = 0)     ' packed cell delta -/+0x10
+'     IF ABS(dx) < ABS(dy) THEN
+'         IF StepMonster(yStep) <> 0 THEN StepMonster(xStep)   ' Y first, X fallback
+'     ELSE
+'         IF StepMonster(xStep) <> 0 THEN StepMonster(yStep)   ' X first, Y fallback
+'     END IF
+'     ' write monsterX / monsterY / packedCell back to the slot
+'     attackDir = CheckMonsterAdjacent(s)             ' 0 / 1 / 2 / 3 / 4
+'     viewObjectArray(s).attackDir = attackDir
+'     IF attackDir > 0 THEN monstersReached = monstersReached + 1
+'   NEXT
+'   ' dunMain then calls MonsterAttack, which resolves the monstersReached slots.
+'
+' *** There is NO aggro range and NO random element -- every monster does a
+'     greedy Manhattan chase every turn (one orthogonal step, dominant axis
+'     first, the other axis as a single fallback ; no diagonal, no real
+'     path-finding around obstacles). ***
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB StepMonster                                       ' asm: dun.asm:8136 (sub_139FC, far SUB)
+' --------------------------------------------------------------------------
+' StepMonster(delta) -- move the current monster one cell.  Returns 0 if it
+' moved, 1 if blocked.  (delta = +-1 for X, +-0x10 for Y in packed units.)
+'
+'   oldTile   = mapByte(packedCell)                  ' map array ds:1E2A
+'   classBits = oldTile AND &h70                     ' bits 4-6 = monster class
+'   mapByte(packedCell) = oldTile AND &h8F           ' lift the monster off the cell
+'   target    = packedCell + delta
+'   IF mapByte(target) >= &h10 THEN RETURN 1         ' wall / object / revealed feature
+'   IF target = playerCell(ds:1AE2) THEN RETURN 1    ' can't step onto the player
+'   packedCell = target
+'   <the paired X or Y coordinate> += <step sign>
+'   result = 0
+' finally (moved or not):
+'   mapByte(packedCell) = mapByte(packedCell) OR classBits   ' re-stamp the monster
+'   RETURN result
+'
+' Map byte layout:  bit7 flag | bits4-6 class<<4 | bits0-3 wall/floor
+'   -- floor = &h00 ; anything >= &h10 blocks a moving monster.
+
+
+' --------------------------------------------------------------------------
+SUB CheckMonsterAdjacent                              ' asm: dun.asm:6319 (stepMonsterToward)
+' --------------------------------------------------------------------------
+' Returns the direction the monster now sits relative to the player, or 0:
+'     monster at (playerX,   playerY+1) -> 1
+'     monster at (playerX+1, playerY)   -> 2
+'     monster at (playerX,   playerY-1) -> 3
+'     monster at (playerX-1, playerY)   -> 4
+'     not orthogonally adjacent          -> 0
+' MonsterAttack uses this both to gate the attack and to pick the "HIT BY
+' BLOW OF <monster>" side / sprite.
+
+
+' --------------------------------------------------------------------------
+'  BEFUDDLE  --  the confuseTimer (ds:1AE6) gate, in dunMain     [confirmed]
+' --------------------------------------------------------------------------
+' One shared SIGNED counter, stepped one toward 0 every turn:
+'     confuseTimer < 0  ->  "YOU ARE BEFUDDLED."  + Delay &h12 ; your action
+'                           is skipped this turn (confuseTimer++)
+'     confuseTimer > 0  ->  the ENTIRE monster phase (MoveMonsters +
+'                           MonsterAttack) is skipped this turn (confuseTimer--)
+' (Cast by the Befuddle spell -- see dun_spells.bas.)
+
+
+' --------------------------------------------------------------------------
 SUB MonsterSpecialAttack                              ' asm: dun.asm (monsterSpecialAttack)
 ' --------------------------------------------------------------------------
 ' The named nasties.  Each fires ~3% of the time (RND(1) >= 0.97, ds:24B4).
@@ -121,6 +206,13 @@ END SUB
 '   * DANGLER drain  : INT( RND(1) * 3 + 1 )  from Endurance
 '   * KNUCKLES / armour-eater : destroy the equipped weapon / armour
 '   * specials fire at ~3% (ds:24B4 = 0.97)
+'   * MONSTER MOVEMENT (moveMonsters + sub_139FC): greedy Manhattan chase,
+'     every monster every turn -- one orthogonal step toward the player,
+'     dominant axis first, other axis as a single fallback.  No aggro
+'     range, no randomness, no path-finding.  Blocked by any map byte
+'     >= &h10 or the player's cell.
+'   * BEFUDDLE gate: confuseTimer (ds:1AE6) < 0 skips YOUR turn, > 0 skips
+'     the whole MONSTER phase ; steps toward 0 each turn
 '
 '  DERIVED (both in updateLevelState, dun.asm:7638 / 7670 -- static, no
 '  runtime constants):

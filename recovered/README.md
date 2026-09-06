@@ -229,6 +229,15 @@ anchor). The combat pool it prints is quoted at the top of
       DANGLER drains `INT(RND*3+1)` Endurance; KNUCKLES / armour-eater
       destroy equipment.  (`monsterAttack` un-folded/coerced via
       `ida_scripts/fix_dun_monsterattack.py`.)
+- [x] `dun_combat.bas` (v2) — **monster movement** (`moveMonsters` /
+      `sub_139FC` / `stepMonsterToward`).  Greedy Manhattan chase every
+      turn: one orthogonal step toward the player, dominant axis first,
+      other axis as a single fallback — **no aggro range, no randomness,
+      no path-finding**.  Blocked by any map byte `≥ 0x10` or the
+      player's cell.  Map byte = `bit7 flag | class<<4 | wall/floor`.
+      `checkMonsterAdjacent` → attack direction 0/1–4 → `ds:2188`.
+      Confirmed the Befuddle gate: `confuseTimer (ds:1AE6) > 0` skips the
+      whole monster phase, `< 0` skips the player's turn.
 - [x] `dun_traps.bas` — `MoveHazards`, `FallThroughDamage`, `DoLookSearch`.
       Trap tiles 1..7 hidden / +8 revealed; FLOOR HOLE drops a level; other
       traps spawn a monster ambush; fall damage ~ `dungeonLevel^1.6`.
@@ -250,7 +259,7 @@ anchor). The combat pool it prints is quoted at the top of
       unimplemented here. Constants read from `DUN.EXE`; tables coerced +
       unfolded via `ida_scripts/fix_dun_spells.py`. Open: `selectAbove`
       mode-4 row→slot math (inside LEGLIB).
-- [ ] DUN monster movement, climb up/down
+- [ ] DUN climb up/down (`climbUp` / `climbDownOrExit` mechanics)
 
 ## TWNDR.EXE
 

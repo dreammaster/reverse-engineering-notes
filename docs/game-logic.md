@@ -266,6 +266,23 @@ so a well-armoured party makes the monsters' rolls smaller at level load.
 - **armour-eater** — "THE `<monster>` ATE YOUR `<armour>`" — destroys equipped armour
 - **DANGLER** — `Endurance -= INT( RND(1)*3 + 1 )`
 
+**Monster movement** — `moveMonsters` / `sub_139FC` (`dun.asm:7006` / `8136`).
+Every turn (after the player acts), each of the 8 `viewObjectArray`
+(`ds:1C7C`) slots does a **greedy Manhattan chase**: one orthogonal step
+toward `(playerX, playerY)` along whichever axis has the larger distance,
+and if that step is blocked the *other* axis is tried once. No diagonal
+movement, **no aggro range, no randomness, no path-finding around
+obstacles.** A step is blocked when the target map byte is `≥ 0x10` (wall /
+another object / a sprung feature — floor is `0x00`) or is the player's own
+cell. `sub_139FC` carries the monster's *class bits* (`0x70`, bits 4–6) as
+it re-stamps the map. After moving, `checkMonsterAdjacent` records the
+attack direction (`0` = not adjacent, else `1–4`) in the slot and bumps
+`ds:2188`; `monsterAttack` then resolves those.
+
+The whole monster phase is **skipped while `confuseTimer (ds:1AE6) > 0`**
+(Befuddle on the monsters); `confuseTimer < 0` skips the *player's* turn
+(*"YOU ARE BEFUDDLED."*). The counter steps one toward 0 each turn.
+
 **Dungeon spells** — [`dun_spells.bas`](../recovered/dun_spells.bas) —
 *derived*. The 6 LEGACY spells map to `S2()` charge slots 24–29; every
 cast does `S2(slot) -= 1`. Seek (29) is not implemented in the dungeon
