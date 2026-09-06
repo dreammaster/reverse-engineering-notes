@@ -485,7 +485,19 @@ reimplementation.
       and how `computePayout` (struct at `ds:1B96h`) maps bucket → odds.
 - [ ] `gmb2`: does it read a data file for the bumper layout, or is the
       whole board the hard-coded DRAW-macro set in `drawBumpers`?
-- [ ] Both games: how the gold delta is written back to `CHAR.DAT`.
+- [x] Both games: **payout accounting** — `recovered/gmb_casino.bas` v2.
+      BlackJack settles net (`±bet`, `+2·bet` natural, `0` tie; bet not
+      escrowed); Flip-Flop `win = multTable{1,2,5}(bucket)·bet` + colour
+      bonus, `computePayout` rigs the bucket ±1 toward realised payback
+      `S4(14)/S4(15)` ≈ 0.94 (ledger resets to 99/99). Both stop the
+      session at `gold − startGold > 250·characterLevel + 750`
+      (`imul ds:1AE0`, gmb1.asm:1132 / gmb2.asm:148). The gold dword
+      (`ds:1AD2:1AD4`) is LEGLIB-resident and rides the chain back to
+      `TWNDR` → the normal save path (no direct `CHAR.DAT` write here).
+- [ ] `gmb2` flip-flop lower band `ds:2B40` + colour const `ds:2AA6`
+      didn't decode as clean singles; the bucket-geometry DATA tables
+      (`ds:2100/210C/211C`) and the ball physics remain open (not
+      RPG-relevant).
 
 ## CONFIGUR.EXE — open questions
 
@@ -947,8 +959,14 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       `spriteBank[0]`. OUTM header = CGA mode/palette. `initOverworldState`
       recomputes `S4(19)` max HP each entry. Found an OUT.EXE self-checksum
       (`ds:2236 ≠ 0x9D1A` → max HP crippled to 20).
-- [ ] casino payouts, mail-route payout credit, `selectAbove` mode-4
-      internals (LEGLIB), `OUTM1`'s role.
+- [x] **casino payouts** (`gmb_casino.bas` v2) — BlackJack net settle
+      (`±bet`, `+2·bet` natural); Flip-Flop `multTable{1,2,5}·bet` +
+      colour bonus, `computePayout` rigs the bucket ±1 toward realised
+      payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
+      cut you off at `gold − startGold > 250·characterLevel + 750`
+      (`imul ds:1AE0`).
+- [ ] mail-route payout credit, `selectAbove` mode-4 internals (LEGLIB),
+      `OUTM1`'s role, flip-flop `ds:2B40` / `ds:2AA6`.
 
 ## ScummVM engine (future)
 

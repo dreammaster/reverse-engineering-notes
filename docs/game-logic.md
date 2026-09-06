@@ -543,8 +543,42 @@ caught. `OfferGuardBribe`: pay `ds:216E` (amount set by the caller), guard
 leaves. `ArrestedByGuards`: "THE GUARDS OVERWHELM YOU!" → jail (lose a turn
 / some gold, teleport to the jail tile — not a death).
 
-**Casino** (GMB1 BlackJack / GMB2 Flip-Flop Parlour): payouts scale by
-`imul ds:1AE0` (character level) — see [`gmb_casino.bas`](../recovered/gmb_casino.bas).
+### Casino — [`gmb_casino.bas`](../recovered/gmb_casino.bas) — *derived*
+
+`GMB1.EXE` (BlackJack) and `GMB2.EXE` (Flip-Flop Parlour) are standalone
+EXEs chained from a town casino. Both share only the party-gold dword
+(`ds:1AD2:1AD4`) with the caller.
+
+**Break-the-bank cap** (both games): each snapshots your gold at session
+start and computes `winCap = 250·characterLevel + 750` (`gmb1.asm:1132`,
+`gmb2.asm:148` — `imul ds:1AE0`). After any settled round, if
+`gold − startGold > winCap` → *"You broke the bank! The house is closed."*
+— you keep everything and it chains back to `TWNDR.EXE`. (Level 1 → cut
+off at +1000 net; level 10 → +3250.)
+
+**BlackJack** — bet is *not* escrowed; settled net at round end:
+
+| outcome | Δ party gold |
+|---|---|
+| loss / bust | `− bet` |
+| tie / push | `0` |
+| ordinary win / 5-card Charlie | `+ bet` |
+| natural BlackJack | `+ 2·bet` |
+
+Broke mid-session → *"Rotten luck. Here's five"* (`+5` pity stake) if
+you started with > 9 gold, else *"Come back when you have some gold."*
+
+**Flip-Flop** — ball drops into bucket 1–8; `win = multTable(bucket)·bet`
+with `multTable ∈ {1 (buckets 1–2), 2 (3–4), 5 (5–6), 0 (7–8)}`, plus a
+colour bonus `INT(win · ds:2AA6)` if the ball's colour matched your call.
+**The parlour is rigged** — `computePayout` (`gmb2.asm:4626`) runs before
+the ball is scored:
+```
+ratio = S4(14) / S4(15)          ' realised payback = totalWon / totalWagered
+IF ratio > 0.94        THEN reset ledger to 99/99, bucket += 1  ' toward a 7–8 LOSS
+ELSEIF ratio < ds:2B40 THEN reset ledger to 99/99, bucket −= 1  ' toward a 1–2 small win
+```
+so your realised payback is dragged toward ~94 %.
 
 ---
 

@@ -158,11 +158,16 @@ anchor). The combat pool it prints is quoted at the top of
 
 ## GMB1.EXE / GMB2.EXE — casino
 
-- [x] `gmb_casino.bas` — Blackjack (`GMB1`, standard rules + 5-card Charlie
-      + natural-pays-double) and Flip-Flop (`GMB2`, a rigged Plinko:
-      baskets pay 1×/2×/5× the bet, but `computePayout` nudges the landing
-      basket ±1 to drag `totalWon/totalWagered` back inside a band).  Both
-      only move party gold (`ds:1AD2:1AD4`).
+- [x] `gmb_casino.bas` (v2) — Blackjack (`GMB1`) net settlement
+      (`−bet` loss, `+bet` win / 5-card, `+2·bet` natural, `0` tie; bet
+      not escrowed; `+5` pity stake when broke) and Flip-Flop (`GMB2`, a
+      rigged Plinko: buckets pay 1×/2×/5× the bet + a colour bonus, but
+      `computePayout` nudges the landing bucket ±1 to drag realised
+      payback `S4(14)/S4(15)` toward ~0.94).  **Both** end the session
+      (*"You broke the bank!"* → `TWNDR`) once `gold − startGold >
+      250·characterLevel + 750` (`imul ds:1AE0`).  Only move party gold
+      (`ds:1AD2:1AD4`) + `GMB2`'s `S4(14)/S4(15)` ledger.  Open: the
+      flip-flop lower band `ds:2B40` / colour const `ds:2AA6`.
 
 ## CELDRV.EXE / CONFIGUR.EXE
 
