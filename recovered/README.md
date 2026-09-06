@@ -300,8 +300,21 @@ anchor). The combat pool it prints is quoted at the top of
       `INT( ((wid\2+1)·Str\7) · (1 + 2·RND(1)) )`; spell cast succeeds
       `RND(1)·6 < Int^0.53`, spell dmg `INT((selSpell−22.5)·28·(RND+1))`
       then `\5` in the castle then `\range`.
-- [ ] `enemyAttack` exact formula (32-bit, entered mid-expr); chest loot,
-      locked doors, `WarlordConfrontation`, `FortressSelfDestruct`
+- [x] `casdr_castle.bas` (v2) — `OpenCommand` / `UseKey` / `ResolveUseKey`
+      / `TakeChestItem` / `FortressSelfDestruct`.  Castle **box**: `OPEN`
+      (tile `0xC3`) reveals a 2×2 group, `TAKE` (tile `0xDF`) grants
+      `Item$(15)` = the **Compendium**, gated once by `S2(15)`; **no
+      gold** (castle has no economy).  **Locked doors**: fort tiles
+      `0xC0..0xC2/0xCB/0xCC/0xDA` = "DOORS LOCKED"; `USE` key 4-7 →
+      per-tile match table (`0xC0→4`, `0xC1/0xDA→7`, `0xCB→8`, `0xE6→5`,
+      `0xE7→6`) → "UNLOCK DOOR."  `S5` (`ds:1BF2`) **is live** in CASDR
+      (per-tile door data).  **Self-destruct**: Warlord death → the
+      "SELF-DESTRUCTION IN 5 MINUTES!" cinematic, `ds:20BC = 0x5F00`
+      escape budget ticked per turn.  Coerced + dumped read-only via
+      `ida_scripts/dump_casdr_castle.py -NoExport`.
+- [ ] `enemyAttack` exact formula (32-bit, entered mid-expr);
+      `WarlordConfrontation`; the per-turn `ds:20BC` self-destruct cost;
+      gas-room `base`.
 
 ## MUS.EXE
 

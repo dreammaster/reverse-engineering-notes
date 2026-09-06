@@ -339,6 +339,44 @@ per turn spent in a cloudy room.
 **Potion wizard** — the CASDR room reward is +5 Endurance / +36 Dexterity
 (and the guide's +5 END / +36 DEX quest).
 
+**Castle box / chest** — `takeItem` (`casdr.asm:134f6`). You `OPEN` the box
+(`openDoor`, tile `0xC3`) — it reveals a 2×2 tile group — then walk onto it
+and `TAKE` (tile `0xDF`): *"YOU GRAB THE `<Item$(15)>`."* — one fixed quest
+item (`Item$` index 15 = the **Compendium**), gated once by `S2(15)`
+(*"NOTHING TO TAKE"* afterwards). Blocked while an enemy is active
+(*"YOU CAN'T HOLD IT."*). **The castle has no gold economy — chests never
+give gold.**
+
+**Locked doors** — `openDoor` / `useKey` / `resolveUseKey`. Fort door tiles
+`0xC0–0xC2`, `0xCB`, `0xCC`, `0xDA` answer a plain `OPEN` with
+*"DOORS LOCKED."*. `USE` a key (`ds:1ADC` = 4–7) → `resolveUseKey` matches
+the tile ahead to a required key kind:
+
+| door tile | needs key |
+|---|---|
+| `0xC0` | 4 |
+| `0xC1`, `0xDA` | 7 |
+| `0xCB` | 8 |
+| `0xE6` | 5 |
+| `0xE7` | 6 |
+
+Match → *"UNLOCK DOOR."* + open animation; mismatch → *"THIS KEY DOES
+NOTHING HERE."* Some ordinary doors open *noisily* → `spottedByGuard`
+(*"YOU ARE SPOTTED NOW!"*) plus a `RND(1) < 0.15` (`ds:3054`) reaction
+keyed on `S5(tileAhead)` — **`S5` (`ds:1BF2`) is a live per-tile door/lock
+table in CASDR** (it's only dead data in TWNDR). Other `USE` items:
+`3` = Healing herbs (`hitPoints += maxHP\2`, capped), `8` = Invisibility,
+`0xE` = Weaken (enemy attack `ds:20B8 *= 0.96` per cast until ≤ `0x50`).
+
+**Fortress self-destruct** — `fortressSelfDestruct` (`casdr.asm:11bc8`).
+Killing the Warlord triggers *"** WARLORD KILLED **"* → a klaxon and the
+paged sequence *"SECURITY ALERT… / OUR LEADER HAS BEEN KILLED. BLOCK ALL
+DOORS. EXPLOSIVE CHARGES SET. / SELF-DESTRUCTION IN 5 MINUTES!"*. It sets
+`ds:20BC = 0x5F00` — the escape budget, decremented per turn — and the
+guards lock the doors behind you; reach the exit before it runs out. (The
+"5 MINUTES" is flavour text; the real limit is the `ds:20BC` budget, whose
+per-turn cost isn't pinned.)
+
 ---
 
 ## 4. Movement & terrain — [`out_movement.bas`](../recovered/out_movement.bas)

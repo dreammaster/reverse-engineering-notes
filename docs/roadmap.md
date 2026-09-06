@@ -96,9 +96,19 @@ the per-executable breakdown this tracks against.
       `1–149` all + weapon confiscated / broke+itemless → forced 100-gold
       loan (`S4(5)+=100`, `S4(6)` deadline). `ida_scripts/dump_twndr_crime.py`
       coerces + dumps read-only (`-NoExport`).
+- [x] **CASDR chest / doors / self-destruct** (`casdr_castle.bas` v2).
+      Castle box: `OPEN` (tile 0xC3) reveals a 2×2 group, `TAKE` (tile
+      0xDF) grants `Item$(15)` = the Compendium, gated once by `S2(15)`;
+      no gold. Locked doors: fort tiles `0xC0..C2/CB/CC/DA` = "DOORS
+      LOCKED"; `USE` key 4–7 → per-tile match (`0xC0→4`, `0xC1/DA→7`,
+      `0xCB→8`, `0xE6→5`, `0xE7→6`) → "UNLOCK DOOR." `S5` (`ds:1BF2`) is
+      a live per-tile door table in CASDR. Self-destruct: Warlord death →
+      "SELF-DESTRUCTION IN 5 MINUTES!" cinematic + `ds:20BC = 0x5F00`
+      escape budget. `ida_scripts/dump_casdr_castle.py` coerces + dumps
+      read-only.
 - [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
-      CASDR chest loot / locked doors / self-destruct;
+      CASDR `enemyAttack` formula / per-turn `ds:20BC` cost;
       DUN monster movement; the FF1F / FF49 operand-order polarity
       (one DOSBox trace settles it for the whole codebase).
 

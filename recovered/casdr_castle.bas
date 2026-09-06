@@ -1,11 +1,12 @@
 ' ==========================================================================
-'  CASDR.EXE  --  castle / fortress interiors                         [v1]
+'  CASDR.EXE  --  castle / fortress interiors                         [v2]
 '  reconstructed from casdr.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoFight (player attack), EnemyAttack, AttackHit (incoming melee),
 '        GasDamage, WarlordAttack, DescribeRoom + DescribeChest /
 '        DescribeGasRoom / DescribePotionShop / DescribeLockedDoor,
-'        FortressSelfDestruct, WarlordConfrontation
+'        OpenCommand / UseKey / ResolveUseKey / TakeChestItem (doors +
+'        the castle box), FortressSelfDestruct, WarlordConfrontation
 '
 '  CASDR DGROUP:0 = CASDR.EXE file offset 0x84C0.
 '  RND(1) = `push ds:25B2 : push ds:25B0 : call B$RND`  (ds:25B0 = 1.0)
@@ -149,6 +150,100 @@ SUB DescribeRoom                                      ' asm: casdr.asm:6187 (des
 ' shop / chest handlers.
 
 
+' --------------------------------------------------------------------------
+SUB OpenCommand                                      ' asm: casdr.asm:13651 (openDoor)
+' --------------------------------------------------------------------------
+' The "OPEN" command -- handles doors, the big castle box, and boxes.
+' castleOrFort = ds:20C0 (1 = fort, 2 = castle).   tileAhead = ds:1F02.
+'
+'   ' --- permanently locked (need a key -- see UseKey) ---
+'   IF fort  AND tileAhead IN (&hC0..&hC2, &hCB, &hCC, &hDA) THEN
+'       PRINT "DOORS LOCKED." : EXIT SUB
+'   END IF
+'
+'   ' --- the big castle box (tile &hC3) : a 2x2 tile group ---
+'   IF castle AND tileAhead = &hC3 THEN
+'       IF bigBoxOpen(ds:20B2) > 0 THEN PRINT "BOX OPEN ALREADY." : EXIT SUB
+'       ' reveal the 4 cells (map words 52AC/52AD/531C/531D), Delay &hE
+'       bigBoxOpen = 1                       ' now walk up + TAKE (tile &hDF)
+'       EXIT SUB
+'   END IF
+'
+'   ' --- ordinary door ---
+'   ResolveOpenDoor                          ' rewrites the tile ; sets doorResult ds:1F04
+'   SELECT CASE doorResult
+'   CASE 0 : PRINT "NOTHING OPENS"           ' (castle only)
+'   CASE 1 : PRINT "... ALREADY OPEN."
+'   CASE 3 : PRINT "-TOO FAR."
+'   CASE 2 : ' a NOISY open --
+'       FacePlayerDirection : CheckLineOfSight
+'       SpottedByGuard                       ' "YOU ARE SPOTTED NOW!"
+'       IF RND(1) < 0.15 AND S5(tileAhead) > 99 AND S5(tileAhead) < 400 THEN
+'           ' S5 (ds:1BF2) IS used by CASDR -- the per-tile door/lock data
+'           ' table (NOT the dead shop-price table it is in TWNDR).
+'           ...                              ' a further reaction (rtm_FE38)
+'       END IF
+'   END SELECT
+END SUB
+
+
+' --------------------------------------------------------------------------
+SUB UseKey  /  ResolveUseKey                         ' asm: casdr.asm:13ad5 / 14f74
+' --------------------------------------------------------------------------
+' The "USE <item>" command.  itemKind = ds:1ADC :
+'     3   Healing herbs -> hitPoints = MIN(maxHP, hitPoints + maxHP\2)
+'     4..7 a KEY        -> ResolveUseKey  (match the door ahead)
+'     8   Invisibility  -> "YOU'RE INVISIBLE"
+'     &hC Compendium    -> (reveals info ; doorResult = 0)
+'     &hE Weaken        -> enemy attack (ds:20B8) *= 0.96 per cast until it
+'                          drops <= 0x50, then "THE ATTACK STOPS."
+'     else              -> "NO EFFECT"
+'   On use the charge is spent: S2(itemKind) -= 1  (0 clears the cursor).
+'
+' ResolveUseKey(x, y, keyKind) -- the door <-> key table (tileAhead ->
+' required key kind):
+'     &hC0 -> key 4      &hC1 -> key 7      &hDA -> key 7
+'     &hCB -> key 8      &hE6 -> key 5      &hE7 -> key 6
+'     (any other tile -> doorResult 0 -> "THIS KEY DOES NOTHING HERE.")
+'   keyKind = requiredKey  -> doorResult 1 -> "UNLOCK DOOR." + open anim
+'   keyKind <> requiredKey -> doorResult 2 -> "THIS KEY DOES NOTHING HERE."
+
+
+' --------------------------------------------------------------------------
+SUB TakeChestItem                                    ' asm: casdr.asm:134f6 (takeItem, tile &hDF)
+' --------------------------------------------------------------------------
+' After OpenCommand has revealed the castle box, walk onto it and "TAKE".
+'     IF S2(15) > 0 THEN PRINT "NOTHING TO TAKE" : EXIT SUB   ' already looted
+'     IF enemyActive(ds:20B8) > 0 THEN PRINT "YOU CAN'T HOLD IT." : EXIT SUB
+'     PRINT "YOU GRAB THE "; Item$(15); "."     ' Item$ index 15 = the Compendium
+'     ' a grab animation ; patch two map tiles ; big redraw
+'     S2(15) = 1                                ' the "holds Compendium" bit (once)
+'     ds:20BA = &h320                           ' (a post-grab timer / alarm)
+' The castle has NO gold economy -- the chest yields exactly this one
+' quest item, never gold.
+
+
+' --------------------------------------------------------------------------
+SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ sub_11CBA)
+' --------------------------------------------------------------------------
+' Triggered the moment the Warlord dies ("** WARLORD KILLED **").
+'     PRINT banner
+'     FOR i = 0 TO 4 : Delay &h13 : NEXT
+'     PlayKlaxon 900                            ' rt_FE54
+'     Delay &h1B
+'     Pager "SECURITY ALERT...** "              ' sub_11CBA = print line + hold,
+'     Pager "OUR LEADER HAS BEEN KILLED.  BLOCK"'   a keypress skips it (with a beep)
+'     Pager "ALL DOORS.  EXPLOSIVE CHARGES SET. "
+'     Pager "SELF-DESTRUCTION IN 5 MINUTES!"
+'     ds:20BC = &h5F00                          ' the escape allowance (turn units)
+'     Sub_14F0C &hBE
+'     FacePlayerDirection
+' After this you must reach the castle exit before the allowance runs out;
+' the guards "block all doors" (the door state flags flip).  The "5
+' MINUTES" is the on-screen text -- the real limit is the ds:20BC budget
+' decremented per turn (exact per-turn cost not pinned).
+
+
 ' ==========================================================================
 '  SOLID
 '   * castle incoming melee: dmg = INT( enemyAtk^1.8 * (RND*600 + 300)
@@ -166,10 +261,23 @@ SUB DescribeRoom                                      ' asm: casdr.asm:6187 (des
 '       spell damage   INT( (selectedSpell - 22.5) * 28 * (RND(1)+1) ),
 '                      then \5 in the castle, then \range
 '       damage -> viewObjectArray(tileHit) ; "<n> H.P. BLOW" / "KILLED"
+'   * CHEST (castle box): OPEN reveals a 2x2 tile group (tile &hC3),
+'     then TAKE (tile &hDF) grants Item$(15) = the Compendium, gated once
+'     by S2(15) ; blocked while an enemy is active ; NO gold ever
+'   * LOCKED DOORS: fort tiles &hC0..&hC2/&hCB/&hCC/&hDA = "DOORS LOCKED"
+'     on a plain OPEN ; UseKey matches a specific key kind per tile
+'     (&hC0->4, &hC1/&hDA->7, &hCB->8, &hE6->5, &hE7->6) -> "UNLOCK DOOR."
+'   * S5 (ds:1BF2) IS live in CASDR -- the per-tile door/lock data table
+'     (it is only dead in TWNDR)
+'   * SELF-DESTRUCT: Warlord death -> "** WARLORD KILLED **" cinematic +
+'     "SELF-DESTRUCTION IN 5 MINUTES!" ; ds:20BC = &h5F00 escape budget,
+'     ticked down per turn ; guards block the doors
+'   * Weaken item: enemy attack (ds:20B8) *= 0.96 per cast (ds:3162)
+'   * noisy-door spot roll: RND(1) < 0.15 (ds:3054)
 '
 '  OPEN
-'   * gas damage `base` (stack leftover), chest-loot roll, locked-door key
-'   * WarlordConfrontation script + FortressSelfDestruct countdown (0x14 / 8)
+'   * gas damage `base` (stack leftover)
+'   * the per-turn ds:20BC decrement (self-destruct budget cost)
 '   * enemyAttack (non-Warlord blow) -- 32-bit math, entered mid-expression
 '   * ds:2214 = Dex/26 in the castle makes higher Dex slightly WORSE at
 '     hitting -- verify the FF49 operand order / whether this is an
