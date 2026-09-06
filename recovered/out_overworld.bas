@@ -12,41 +12,55 @@
 '
 '  THE MAP LAYER  --  S4(12)  (S4 byte offset 0x18, ds:1B96 elem 12)
 '  ------------------------------------------------------------------
-'  resolveMoveTarget stashes a "pending map layer" in ds:2180 after every
-'  step (via readTileObject) ; doMovement copies it into S4(12).  On the
-'  next enterOverworld:  mapLayer (ds:2192) = MIN( S4(12), 2 ), which
-'  picks the OUTM file:
+'  *** SOLVED 2026-09-06: S4(12) is set ONLY by the MUSEUM (mus.asm) --
+'  NOT by any overworld tile.  OUT never changes it except to RESET it
+'  (initOverworldViewport -> 0) or pin it (handleOverworldArrival -> 2).
+'  The many "S4(12) := ds:2180 / ds:22C4 / ..." writes in doMovement /
+'  cantDoThat / enterFixedLocation are round-trips: the value is read
+'  from S4(12), passed by-ref to resolveMoveTarget (which never writes
+'  it -- verified) and stored straight back.  The old "readTileObject
+'  stashes a pending layer" note was WRONG.
 '
-'   S4(12)  file                    what it is
+'  enterOverworld:  mapLayer (ds:2192) = MIN( S4(12), 2 )  ->  filename
+'  "OUTM" + CHR$(mapLayer + ASC("0")) + ".BSV"  (loadOverworldData:14625).
+'
+'   S4(12)  file                    what it is / who sets it
 '   ------  ----------------------  ------------------------------------------
 '     0     OUTM0.BSV  (9962 B)     the MAIN overworld -- towns, museum,
 '                                   dungeon mouths ; tile 0x2C = ground.
-'                                   classifyMapFeature uses feature base 3.
-'                                   initOverworldViewport resets S4(12) -> 0.
-'     1     OUTM1.BSV  (4184 B)     a SECOND, smaller overworld map (~40% the
-'                                   size), mostly tile 0 (open water / void)
-'                                   with ~60 tile-0x63 features scattered.
-'                                   Still on-foot: bandit ambush can fire,
-'                                   the raft works.  classifyMapFeature uses
-'                                   feature base 0.  -- the "sail beyond the
-'                                   coast" / open-ocean-and-islands map.
-'                                   [exact trigger = whatever readTileObject
-'                                    writes 1 into *ds:2180 for ; that path
-'                                    is inside the big resolveMoveTarget SUB,
-'                                    not yet coerced -- CHECK]
-'     2     OUTM2.BSV  (2094 B)     the PEGASUS fly-across (+ PEGASUS.BSV
-'                                   sprite bank).  pegasusOrAmbush ->
-'                                   pegasusFlightAnim steps you east tile by
-'                                   tile -> showPegasusLanding "PEGASUS SETS
-'                                   YOU DOWN ... IN THE MUSEUM."  So the
-'                                   pegasus is a one-way FAST-TRAVEL BACK TO
-'                                   THE MUSEUM, not a place you roam.
+'                                   classifyMapFeature feature base 3.
+'                                   DEFAULT ; initOverworldViewport resets ->0.
+'     1     OUTM1.BSV  (4184 B)     *** THE PIRATE'S LAIR ***  -- a small
+'                                   (~40%) pirate-island overworld: mostly
+'                                   tile 0 (open ocean) around ~60 tile-0x63
+'                                   island features.  Still on-foot (bandit
+'                                   ambush fires, the raft works).
+'                                   classifyMapFeature feature base 0.
+'                                   SET BY: mus.asm sub_1134E, reached by
+'                                   fall-through from exhibitName_piratesLair
+'                                   ("THE PIRATE'S LAIR" time-machine
+'                                   exhibit) on confirm.  It does:
+'                                       ds:1B02 = 0x4A (74)   ' arrival X
+'                                       ds:1B06 = 0x19 (25)   ' arrival Y
+'                                       S4(12)  = 1
+'                                       ds:213C = 1  -> loc_12323 arm 1
+'                                       sub_12429 assigns "OUT" -> chain OUT.EXE
+'     2     OUTM2.BSV  (2094 B)     the PEGASUS fly-across (+ PEGASUS.BSV).
+'                                   pegasusOrAmbush -> pegasusFlightAnim
+'                                   steps you east tile by tile ->
+'                                   showPegasusLanding "PEGASUS SETS YOU
+'                                   DOWN ... IN THE MUSEUM" -- one-way
+'                                   fast-travel back to the museum.
 '                                   doMovement here prompts "RETURN TO
 '                                   MUSEUM?" and sets ds:1F1A.
+'     3     (transient)             SET BY: mus.asm climbCommand ("CLIMB ON"
+'                                   exhibit) -> S4(12) = 3, ds:213C = 1 ->
+'                                   chain OUT.  enterOverworld sees S4(12) > 2
+'                                   -> teleport to (7,5) + handleOverworldArrival
+'                                   -> S4(12) := 2 -> OUTM2 + PEGASUS.
 '
 '  All three OUTM files share the SAME header (mode/colour for rt_FE29).
-'  S4(12) > 2 is a "re-entry" sentinel: teleport to (7,5) and arrive.
-'  handleOverworldArrival pins S4(12) = 2 on that path.
+'  handleOverworldArrival pins S4(12) = 2 on the >2 path.
 '
 '  DGROUP vars:
 '     mapLayer      2192   (0..2, = MIN(S4(12),2); the notes' "combatPhase")
@@ -72,9 +86,9 @@ SUB EnterOverworld                                   ' asm: out.asm:9032 (enterO
     RollCreatureStats                                 ' pre-roll the wandering creature
     SetupLocationDisplay                              ' the 10..12 location-type indicators
 
-    ' ---- choose the map layer from the pending-transition slot ----------
+    ' ---- choose the map layer (S4(12), set only by the museum) ----------
     mapLayer = S4(12)                                 ' asm:loc_1487E
-    IF mapLayer > 2 THEN mapLayer = 2                 ' clamp for the filename / file set
+    IF mapLayer > 2 THEN mapLayer = 2                 ' clamp; >2 also -> teleport (7,5), see below
 
     LoadOverworldData                                 ' BLOAD OUTM<layer> / OUTDATA / OUTOBJ (/PEGASUS)
 
@@ -249,16 +263,17 @@ END SUB
 '     weaponRating = INT(weaponId + S1(cond)/2.8)
 '   * layer 1/2 are one-shot (initOverworldViewport snaps S4(12) back to 0)
 '   * OUT.EXE self-checksum: mismatch (ds:2236 <> 0x9D1A) -> S4(19) = 20
-'   * OUTM0 = the main land ; OUTM2 = the pegasus fly-back-to-museum
-'     sequence (one-way fast travel, NOT a roamable place) ; OUTM1 = a
-'     distinct second overworld map (mostly open water + islands),
-'     classifyMapFeature base 0 -- almost certainly the open-ocean /
-'     sailing map reached by rafting past the coast
+'   * OUTM0 = the main land ; OUTM1 = THE PIRATE'S LAIR (a pirate-island
+'     overworld reached ONLY from the museum's "THE PIRATE'S LAIR" exhibit
+'     -- mus.asm sub_1134E : S4(12)=1, arrive at (74,25), chain OUT.EXE) ;
+'     OUTM2 = the pegasus fly-back-to-museum sequence (one-way fast travel,
+'     from the museum's "CLIMB ON" exhibit : S4(12)=3 -> clamp/teleport).
+'     *** NO overworld tile switches maps -- S4(12) is museum-only. ***
 '
 '  OPEN
 '   * the exact record layout the checksum loop walks (rt_87/5E/5F/09
 '     semantics) -- only the verdict constant 0x9D1A is pinned
 '   * rt_FE6B(10,8) / rt_FE49(-2) exact effect (viewport window / cursor)
-'   * the precise tile / edge that makes readTileObject write 1 into
-'     *ds:2180 (-> S4(12) = 1 -> OUTM1) ; needs a resolveMoveTarget coerce
+'   * whether the Pirate's Lair / pegasus exhibits gate on a specific gem
+'     coin or quest flag (sub_11C82 / sub_11F6A checks -- minor)
 ' ==========================================================================

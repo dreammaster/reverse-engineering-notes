@@ -544,22 +544,32 @@ map-window copy (`array[0x120 + Y*95 + X]` from `ds:1E2A`), not game logic.
 ### Overworld setup & map loading — [`out_overworld.bas`](../recovered/out_overworld.bas) — *derived*
 
 `EnterOverworld` runs once from `outInit` and again each time a chained
-module hands control back. It picks the **map layer** from `S4(12)` (a
-"pending transition" slot `resolveMoveTarget` writes after every step):
+module hands control back. It picks the **map layer** from `S4(12)`, and
+`"OUTM" + CHR$(MIN(S4(12),2) + "0") + ".BSV"` is the map file:
 
 | `MIN(S4(12), 2)` | file (payload) | what it is |
 |---|---|---|
-| 0 | `OUTM0.BSV` (9962 B) | the **main overworld** — towns, museum, dungeon mouths. `classifyMapFeature` uses feature base 3. |
-| 1 | `OUTM1.BSV` (4184 B) | a **second, smaller overworld map** — ~40 % the size, mostly tile `0` (open water / void) with ~60 tile-`0x63` features. Still on-foot (bandit ambush fires, the raft works); `classifyMapFeature` base 0. **Almost certainly the open-ocean / island map** you get by rafting past the coast. |
+| 0 | `OUTM0.BSV` (9962 B) | the **main overworld** — towns, museum, dungeon mouths. `classifyMapFeature` uses feature base 3. The default. |
+| 1 | `OUTM1.BSV` (4184 B) | **The Pirate's Lair** — a small (~40 %) pirate-island overworld: mostly tile `0` (open ocean) around ~60 tile-`0x63` island features. Still on-foot (bandit ambush fires, the raft works); `classifyMapFeature` base 0. |
 | 2 | `OUTM2.BSV` (2094 B) + `PEGASUS.BSV` | the **pegasus fly-across**. `pegasusFlightAnim` steps you east tile-by-tile → `showPegasusLanding` *"PEGASUS SETS YOU DOWN … IN THE MUSEUM."* — a one-way **fast-travel back to the museum**, not a place you roam. Movement here prompts *"RETURN TO MUSEUM?"*. |
 
-`S4(12) > 2` is a re-entry sentinel → teleport to `(7, 5)` and run the
-arrival handler (which pins `S4(12) = 2`). Layers 1/2 are **one-shot** —
-`initOverworldViewport` resets `S4(12)` to 0 after drawing, so the next
-entry is the main map. All three OUTM files share the same header
-(mode/palette for `rt_FE29`). *(The precise tile/edge that makes
-`readTileObject` write `1` into `*ds:2180` — i.e. sends you to OUTM1 —
-is inside the large `resolveMoveTarget` SUB, not yet coerced.)*
+**`S4(12)` is set ONLY by the museum** (`MUS.EXE`) — *no overworld tile
+switches maps* (2026-09-06: verified `resolveMoveTarget` / `readTileObject`
+never write it; `doMovement`'s `S4(12) := ds:2180` etc. are read-back-write
+round-trips). The museum's **"THE PIRATE'S LAIR"** exhibit (`mus.asm`
+`sub_1134E`) does `S4(12) = 1`, arrival `(74, 25)`, then chains to `OUT.EXE`;
+the **"CLIMB ON"** exhibit (`climbCommand`) does `S4(12) = 3` → `EnterOverworld`
+sees `> 2` → teleport `(7, 5)` + `handleOverworldArrival` pins `S4(12) = 2`
+→ OUTM2 + pegasus. `initOverworldViewport` resets `S4(12)` to 0 after
+drawing, so layers 1/2 are **one-shot** — the next entry is the main map.
+All three OUTM files share the same header (mode/palette for `rt_FE29`).
+
+*(Caveat: `S4(12)` is **overloaded** — it also appears as `(S4(12)+2)` in
+the OUT/CASDR incoming-damage mitigation (§3a/§3c) and as the castle-vs-fort
+selector `ds:20C0 = (S4(12)==2)?2:1`. In the Pirate's Lair `S4(12)=1` so
+creatures there hit ~1.5× harder; entering the fortress while `S4(12)==2`
+loads `fort.bs`. Whether that cross-coupling is deliberate or an original
+overload is unclear.)*
 
 `LoadOverworldData` (`out.asm` `loadOverworldData`) BLOADs, via
 `rt_FE63` (resolve drive per `DRCONFIG.DAT` + open) then `rt_FE07`

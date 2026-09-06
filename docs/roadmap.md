@@ -190,14 +190,19 @@ the per-executable breakdown this tracks against.
       base node `ds:0FAC` (stale). Port guess `INT(enemyAtk·(1−RND)/2)`;
       a live `[ds:0FAC]` dump on a deeper level would settle it, but it no
       longer blocks anything.
-- [x] **OUTM1's role** (`out_overworld.bas`). The three overworld maps:
-      `OUTM0` = main land; `OUTM2` = the pegasus fly-across, a one-way
-      fast-travel *back to the museum* (*"PEGASUS SETS YOU DOWN … IN THE
-      MUSEUM."*); `OUTM1` = a distinct second overworld (~40 % the size,
-      mostly open water + islands, `classifyMapFeature` base 0) — almost
-      certainly the open-ocean / sailing map you reach by rafting past
-      the coast. Exact trigger tile is in the un-coerced
-      `resolveMoveTarget`.
+- [x] **OUTM1's role + the S4(12) trigger — SOLVED (2026-09-06)**.
+      `OUTM1` = **The Pirate's Lair**, a pirate-island overworld reached
+      **only from the museum**. `mus.asm sub_1134E` (fall-through from the
+      *"THE PIRATE'S LAIR"* time-machine exhibit) sets `S4(12) = 1`,
+      arrival `(74, 25)`, `ds:213C = 1` → `loc_12323` arm 1 → `sub_12429`
+      ("OUT") → chain `OUT.EXE`; `EnterOverworld` then loads `OUTM1`.
+      `OUTM2` (pegasus) = the *"CLIMB ON"* exhibit → `S4(12) = 3` →
+      `EnterOverworld` `> 2` clamp → teleport `(7,5)` + `handleOverworldArrival`
+      pins `S4(12) = 2`. **No overworld tile switches maps** —
+      `resolveMoveTarget` / `readTileObject` never write `S4(12)`; the
+      `doMovement` "`S4(12) := ds:2180`" writes are read-back-write
+      round-trips. `initOverworldViewport` resets `S4(12)` → 0, so layers
+      1/2 are one-shot.
 - [x] **`selectAbove` mode 4** — the shared LEGLIB scrollable-list widget
       (`rt_FE4C` → `rt_FE5A`). Modes 1/2/3 drive it over `S0` / `ds:1AFC`
       (weapon / act / look lists); mode 4 scans `S2[24..29]` (spell-charge
@@ -214,10 +219,10 @@ the per-executable breakdown this tracks against.
       toward a loss" branch is live.
 - [ ] Cosmetic / not blocking a port: what sets the rob-outcome code
       `ds:1F04` to 0 vs 1 (heat 18 vs 1) inside the un-coerced
-      `robCommand` / `resolveMoveTarget` path; a live `[ds:0FAC]` dump for
-      `enemyAttack` (a deeper-castle-level path — the common guard blow
-      `attackHit` is now live-verified); the OUTM1 trigger tile (same
-      `resolveMoveTarget`).
+      `robCommand` path; a live `[ds:0FAC]` dump for `enemyAttack` (a
+      deeper-castle-level path — the common guard blow `attackHit` is
+      live-verified); whether the Pirate's Lair / "CLIMB ON" museum
+      exhibits gate on a specific gem coin or quest flag.
 
 ## Infra (done, 2026-08-30)
 
@@ -1107,9 +1112,11 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
-- [ ] The OUTM1 trigger tile (in OUT's un-coerced `resolveMoveTarget`,
-      `out.asm:10263`); what sets the TWNDR rob-outcome code `ds:1F04`
-      to 0 vs 1 (heat 18 vs 1) in the `robCommand` dispatch.
+- [x] OUTM1 = **The Pirate's Lair**, entered from the museum's
+      *"THE PIRATE'S LAIR"* exhibit (`mus.asm sub_1134E` → `S4(12) = 1`).
+      No overworld tile is involved (2026-09-06). See §3a / `out_overworld.bas`.
+- [ ] What sets the TWNDR rob-outcome code `ds:1F04` to 0 vs 1 (heat 18
+      vs 1) in the `robCommand` dispatch. Cosmetic, not port-blocking.
 
 ## ScummVM engine (future)
 

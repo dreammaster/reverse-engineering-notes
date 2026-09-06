@@ -228,11 +228,12 @@ anchor). The combat pool it prints is quoted at the top of
       EXE.  **The three maps:** `OUTM0` = main land; `OUTM2` = the pegasus
       fly-across (a one-way fast-travel *back to the museum* —
       *"PEGASUS SETS YOU DOWN … IN THE MUSEUM."*, not a roamable place);
-      `OUTM1` = a distinct second overworld (~40 % the size, mostly open
-      water + islands, `classifyMapFeature` base 0) — almost certainly
-      the open-ocean / sailing map reached by rafting past the coast.
-      Open: the exact tile that sends you to OUTM1 (in the un-coerced
-      `resolveMoveTarget`); the checksum record layout.
+      `OUTM1` = **The Pirate's Lair** (a pirate-island overworld — mostly
+      open ocean around ~60 island features, `classifyMapFeature` base 0).
+      **`S4(12)` is set only by the museum** (2026-09-06): the *"THE
+      PIRATE'S LAIR"* exhibit (`mus.asm sub_1134E`) sets `S4(12) = 1` +
+      arrival `(74,25)`; *"CLIMB ON"* sets `S4(12) = 3` (→ pegasus). No
+      overworld tile switches maps. Open: the checksum record layout.
 - [x] mail routes — see the TWNDR `MailDeliveryJob` / `FoodShop` entry
       below (job always routes ±1 town, paid 95/110/125 on arrival).
 
@@ -392,9 +393,13 @@ anchor). The combat pool it prints is quoted at the top of
 ## MUS.EXE
 
 - [x] `mus_exhibits.bas` — `EnterExhibit`, `TestExhibitFlag` (an ALL-BITS-SET
-      test, corrected).  Each exhibit chains to a driver EXE and consumes
-      its required gem coin; responses gated on quest-flag bits — full
-      table in `quest_flags.bas`.  Stones-of-Wisdom INT maths are in STDRV.
+      test, corrected), `TravelToExhibitWorld`.  Each exhibit chains to a
+      driver EXE and consumes its required gem coin; responses gated on
+      quest-flag bits — full table in `quest_flags.bas`.  Stones-of-Wisdom
+      INT maths are in STDRV.  The **"GO TO" exhibits** (`loc_12323`) set an
+      OUT/DUN arrival position + `S4(12)` map layer and chain out — *"THE
+      PIRATE'S LAIR"* → `S4(12)=1` → OUTM1, *"CLIMB ON"* → `S4(12)=3` →
+      OUTM2 pegasus.  These are the **only** way to reach OUTM1 / OUTM2.
 - [x] `mus_caretaker.bas` — **the character-LEVEL mechanism, fully solved.**
       `ds:1AE0` is written in exactly one place (`sub_12CAC`), set to
       whichever exhibit-coin-group rank `useCommand` just found you

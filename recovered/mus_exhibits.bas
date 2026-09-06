@@ -5,6 +5,7 @@
 '  SUBs: EnterExhibit  (the display-case SELECT CASE)
 '        TestExhibitFlag + the checkFlag_* family (quest-flag gates)
 '        ChainToStory  (hand off to the sub-game driver EXE)
+'        TravelToExhibitWorld  (the "GO TO" exhibits -> chain OUT/DUN/TWNDR)
 '
 '  MUS is mostly dispatch + chaining -- little arithmetic.  The exhibits'
 '  actual mechanics live in the driver EXEs they chain to.
@@ -61,6 +62,43 @@ END SUB
 
 
 ' --------------------------------------------------------------------------
+SUB TravelToExhibitWorld                              ' asm: mus.asm:5166 (loc_12323)
+' --------------------------------------------------------------------------
+' The "WOULD YOU LIKE TO GO TO <place>?" exhibits (distinct from the
+' sub-game exhibits above) -- a per-exhibit handler sets an arrival
+' position + a destination code, then falls through here.
+'
+'   destCode = ds:213C   ' 1..6, set by the exhibit handler
+'
+'   ' each handler, on the player's YES, sets ds:1B02/ds:1B06 (the OUT/DUN
+'   ' arrival X/Y) and S4(12) (the OUT map layer -- see out_overworld.bas):
+'     "THE PIRATE'S LAIR"  (mus.asm sub_1134E, fall-through from
+'                           exhibitName_piratesLair):
+'         arrivalX = &h4A (74) : arrivalY = &h19 (25)
+'         S4(12)   = 1                       ' -> OUT loads OUTM1 (Pirate's Lair)
+'         destCode = 1
+'     "CLIMB ON" (mus.asm climbCommand -> sub_11AE9):
+'         S4(9)    = 1
+'         S4(12)   = 3                       ' -> OUT: >2 -> teleport (7,5),
+'                                            '    handleOverworldArrival pins 2
+'                                            '    -> OUTM2 + PEGASUS fly-across
+'         destCode = 1
+'
+'   ' loc_12323 common tail:
+'     S3(exhibitId) = ...                    ' flush museum progress ; sub_10B59 rank check
+'     S4(1) = (facing << 10) + museumPos     ' pack the museum walk position
+'     IF museumPos = &h1E OR museumPos = &hB4 THEN S4(1) = &h20
+'     ChainTargetName$ = ExeName$( ON destCode )      ' rtm_FC dispatch, mus.asm:5261
+'     '   1 -> sub_12429  ("OUT")   2 -> chainToTown ("TWNDR")
+'     '   3 -> sub_1006C            4 -> chainToDungeon ("DUN")
+'     '   5 -> chainToStory ("STDRV")   6 -> chainToCel ("CELDRV")
+'     ChainExec ChainTargetName$
+'
+' So OUTM1 / OUTM2 are ONLY reachable through this path -- there is no
+' overworld tile or item that switches maps (verified in out.asm 2026-09-06).
+
+
+' --------------------------------------------------------------------------
 SUB TestExhibitFlag                                   ' asm: mus.asm:1857 (testExhibitFlag)
 ' --------------------------------------------------------------------------
 ' An ALL-BITS-SET test, not a raw AND: flagTestResult is true only when
@@ -81,6 +119,10 @@ END SUB
 '   * each use CONSUMES the exhibit's required gem coin
 '   * S3(15) = museum entry count, bumped per entry
 '   * exhibit responses gated on quest-flag bits (testExhibitFlag)
+'   * the "GO TO" exhibits (TravelToExhibitWorld) set an OUT/DUN arrival
+'     position + S4(12) (map layer) and chain out. "THE PIRATE'S LAIR"
+'     -> S4(12)=1 -> OUTM1 ; "CLIMB ON" -> S4(12)=3 -> OUTM2 pegasus.
+'     These are the ONLY way to reach OUTM1 / OUTM2.
 '
 '  OPEN
 '   * bit 0x2000's setter -- inside caretakerOffer's untraced accept
