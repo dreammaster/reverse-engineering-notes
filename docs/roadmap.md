@@ -511,11 +511,19 @@ reimplementation.
       `celFrame` (20BE, 1..5), `displayDuration` (20F8). No shared
       LEGLIB slots -- CELDRV has no partyGold / hitPoints (pure
       cinematic). The rest of DGROUP is drawString layout scratch.
-- [ ] Confirm this is *only* the ending — does `MUS`'s `chainToCel` ever
-      invoke `CELDRV` for a mid-game exhibit animation, or is that path
-      dead? (All 54 string records here are ending / credits content.)
-- [ ] `DIS9.BSV` is loaded here (the `DIS*.BSV` set was "display screens?"
-      in file-formats — this ties one of them to the ending).
+- [x] **Confirmed: `CELDRV` is ONLY the ending (2026-09-07).** `MUS`'s
+      `chainToCel` (`loc_12323` arm 6, `ds:213C == 6`) is set in exactly
+      one place — `caretakerOffer` (`mus.asm:3141`), the **rank-8 final
+      offer** ("DO YOU ACCEPT THE CARETAKER'S OFFER?"): all 7 coin groups
+      cleared + the Compendium held → accept → `hitPoints = 3000`, gold
+      capped 50000, level finalised at 10 → `CELDRV.EXE` (victory
+      cinematic + credits). No mid-game exhibit animation. `CASDR`'s
+      `exitCastle` chains to `OUT.EXE`, not `CELDRV` — beating the Warlord
+      just gets you out of the fortress with the Compendium; the museum
+      turn-in is the real ending.
+- [x] `DIS9.BSV` — one of the **5 CELDRV cinematic frames** (`CEL0`–`CEL2`,
+      `DIS9`, `CEL3`); see the data-formats section. Not a museum
+      exhibit screen despite the `DIS*` name.
 - [x] The victory-story text (2026-09-01) — **~51 lines, embedded string
       constants** in CELDRV's data segment (from `celdrv.asm:12944`, the
       `~` = 0x7E position code onward). Each = `<posCode> 07 " <TEXT> "
@@ -546,10 +554,14 @@ reimplementation.
       "DUN" via `rtm_FF08` and folds the result through `sub ax,
       ds:1ACAh` before `rtm_FE05` execs. Everything else in DGROUP is
       one-function drawString layout scratch.
-- [ ] Still open: where `returnTarget` (`ds:1ACA`) gets its value in
-      `saver_entry` -- and whether saving from a town / castle / museum
-      is even possible (only `OUT.EXE` / `DUN.EXE` are chain targets).
-      `rtm_FF08` = ? (looks like a program-name / env test).
+- [x] **SOLVED (2026-09-07)** — you can save **only from the overworld
+      (OUT) or a dungeon (DUN)**: the "Q" command in each chains
+      `SAVER.EXE`; towns/castle/museum have no save command. `chainBackOrQuit`
+      picks the re-exec target from **`S4(34)`** (S4 byte 0x44) — `0` →
+      `OUT.EXE`, non-zero → `DUN.EXE` (every play module stamps `S4(34)`
+      on entry). `ds:1ACA` is folded through the module-name test
+      (`0x0A − ds:1ACA`, negated in `saver_entry`) via `rtm_FF08`
+      (a program-name test).
 - [~] `CHAR.DAT` (2026-08-31, fields mapped 2026-09-01) — container +
       write/read path + framing fully decoded. 6-byte header
       (`05 06 | 07 00` = 7 arrays | `7E 01` = reclen 382), 9 records ×
@@ -572,9 +584,12 @@ reimplementation.
       persisted** — runtime-only working vars (searched 4 saves). Still
       open: XP / character level, and the S4 map/state slots. (The 5 attributes
       Dex/End/Charm/Int/Str = scalars 1AC0/1ACC/1ADE/1AF0/1B08 -- all pinned.)
-- [ ] The "character disk" checks ("is not on this / character disk",
-      "empty") imply a multi-disk / per-character-slot save scheme —
-      confirm.
+- [x] The "character disk" checks — **confirmed floppy-era plumbing**
+      (2026-09-07): LotA shipped on multiple disks with `CHAR.DAT` on a
+      dedicated "character disk"; before writing, SAVER checks the target
+      slot's name field ("empty" / mismatch → "`<name>` is not on this
+      character disk", wait for the right floppy). A port ignores it
+      (single save file).
 
 ## SDEFENDR.EXE — open questions
 

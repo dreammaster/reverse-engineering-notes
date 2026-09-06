@@ -80,6 +80,22 @@
 '  word) in a loop from ds:1B08 down to ds:1AC0 -- i.e. the save format is
 '  literally "dump the resident DGROUP window".  A port keeps its character
 '  struct in the same field order and this stays a trivial serialise.
+'
+'  WHEN CAN YOU SAVE?  (2026-09-07)
+'  Only from the OVERWORLD (OUT) or a DUNGEON (DUN): the "Q" command in
+'  each ("quit now" prompt) chains SAVER.EXE.  Towns / castle / museum
+'  have no save command -- exit to the overworld first.  SAVER re-execs
+'  the caller: chainBackOrQuit reads S4(34) (S4 byte 0x44) -- 0 -> re-exec
+'  OUT.EXE, non-zero -> DUN.EXE (every play module stamps S4(34) with its
+'  own context on entry).  ds:1ACA is folded through the module-name test
+'  (`0x0A - ds:1ACA`, then negated in saver_entry) as part of that
+'  OUT-vs-DUN decision via rtm_FF08.
+'
+'  CHARACTER-DISK CHECK  --  floppy-era plumbing, a port ignores it.
+'  Before writing, SAVER checks the target slot's name field: if it is
+'  "empty" or does not match the loaded character it prompts "<name> is
+'  not on this character disk" and waits for the right floppy.  LotA
+'  shipped on multiple disks with CHAR.DAT on a dedicated "character disk".
 
 
 ' ==========================================================================

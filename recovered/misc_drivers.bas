@@ -10,7 +10,15 @@
 ' --------------------------------------------------------------------------
 '  CELDRV.EXE  --  the endgame ("AGAINST ALL ODDS!") cinematic
 ' --------------------------------------------------------------------------
-'  Reached from CASDR.EXE after the final boss (not a museum exhibit).
+'  Reached from MUS.EXE -- NOT CASDR.  (2026-09-07) The ONLY chain in is
+'  MUS's caretakerOffer (mus.asm:3141) setting ds:213C = 6 -> loc_12323
+'  arm 6 -> chainToCel: this is the caretaker's RANK-8 FINAL OFFER ("DO
+'  YOU ACCEPT THE CARETAKER'S OFFER?") -- all 7 gem-coin groups cleared +
+'  the Compendium held.  Accepting sets hitPoints = 3000, caps gold at
+'  50000, finalises level 10, and chains here.  Beating the Warlord in
+'  CASDR only chains back to OUT.EXE (exitCastle, "THE FORTRESS EXPLODES
+'  BEHIND") with the Compendium in hand -- the museum turn-in is the
+'  actual ending.  There is no mid-game exhibit cel.
 '    celdrv_entry:
 '      FOR celBank = 0 TO 4                          ' ON celBank GOSUB (rt_FC)
 '          BLOAD  "CEL0.BSV" / "CEL1.BSV" / "CEL2.BSV" / "DIS9.BSV" /
