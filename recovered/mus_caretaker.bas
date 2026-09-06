@@ -1,5 +1,5 @@
 ' ==========================================================================
-'  MUS.EXE  --  the museum caretaker: how character LEVEL actually works [v1]
+'  MUS.EXE  --  the museum caretaker: how character LEVEL actually works [v2]
 '  reconstructed from mus.asm (useCommand / sub_10B59 / checkFlag_2000 /
 '  caretakerOffer / caretakerPraise / sub_12CAC) ; see recovered/README.md
 '
@@ -23,16 +23,47 @@
 ' --------------------------------------------------------------------------
 '  Step 1 -- useCommand: "is a new rank ready?"      (calls sub_10B59)
 ' --------------------------------------------------------------------------
-'   sub_10B59 (mus.asm, quest_flags.bas S4) re-runs the rank-ladder gate
-'   for candidateRank = S4(10) + 1, decrementing it by 1 if the gate
-'   fails, then:
-        IF characterLevel < candidateRank THEN     ' ds:1AE0 < ds:1AEEh
-            museumWalkState = candidateRank         ' ds:1AC6h  <- KEY
-            S3(14) = 1                              ' "a rank is ready"
-        END IF
+'   sub_10B59 (mus.asm:10B59): if S4(10) (byte 0x14 = the persistent
+'   caretaker-rank counter, 0..7) is already 7 -> RETURN (no rank 8 here).
+'   Otherwise it runs  ON (S4(10) + 1) GOSUB {the 8 rank-check arms}  --
+'   each arm sets flagTestResult (ds:2138): 0 = requirements MET.
+'
+'        IF flagTestResult = 0 THEN S4(10) = S4(10) + 1     ' PROMOTE
+'        candidateRank = S4(10) + 1                          ' ds:1AEE
+'        IF (S3(3) = 0) OR flagTestResult <> 0 THEN candidateRank = candidateRank - 1
+'        IF characterLevel < candidateRank THEN     ' ds:1AE0 < ds:1AEEh
+'            museumWalkState = candidateRank         ' ds:1AC6h  <- KEY
+'            S3(14) = candidateRank                  ' parallel copy
+'        END IF
 '   i.e. ds:1AC6 only gets updated to a NEW value when you QUALIFY for a
 '   rank higher than your current level -- otherwise it's untouched (and
 '   checkFlag_2000, step 2, reads whatever stale value it already held).
+'
+' --- THE 8 RANK-CHECK ARMS (index = S4(10) + 1) ---------------------------
+'   -> rank 1  sub_10C1F     : questFlagWord(S4(11)) AND 3 <> 0   AND S3(3) <> 0
+'   -> rank 2  checkFlag_2B  : exhibit bits &h2B all set  AND S3(3) <> 0
+'                              AND  S4(37) <> 0     *** the "visited a dungeon" gate
+'   -> rank 3  checkFlag_D0  : exhibit bits &hD0 all set
+'   -> rank 4  checkFlag_0300: exhibit bits &h0300 all set  AND S2(12) <> 0
+'   -> rank 5  sub_10CCE     : S4(18) >= 2          *** the "main quest >= stage 2" gate
+'                              (NO exhibit flags -- this rank is purely quest-gated)
+'   -> rank 6  checkFlag_0800: exhibit bits &h0800 all set
+'   -> rank 7  sub_10CF3     : S2(15) <> 0          (hold the Compendium)
+'   -> rank 8  sub_10D0F     : flagTestResult := 1  -- ALWAYS BLOCKED
+'                              (rank 8 is never auto-promoted here; it is the
+'                               explicit rank-8 branch of CaretakerOffer)
+'
+' --- S4(37)  (S4 byte 0x4A = word 37)  "has entered a dungeon" -----------
+'   Set to 1 at the very top of dunMain (dun.asm:88) on EVERY dungeon turn;
+'   never cleared; rides the CHAR.DAT checkpoint.  So you cannot rank past
+'   1 with the caretaker until you have set foot in a dungeon.
+'
+' --- S4(18)  (S4 byte 0x24 = word 18)  main-quest stage counter ----------
+'   0 = not started ; advanced by the museum's kingConfides chain ; TWNDR's
+'   townServiceDispatch reads it (== 3 -> "FIND A WAY TO THE FORTRESS!") ;
+'   CASDR's exitCastle sets it to 4 on leaving the fortress.  Rank 5 needs
+'   S4(18) >= 2 -- the caretaker will not promote you to rank 5 until the
+'   main quest has reached at least stage 2.
 
 
 ' --------------------------------------------------------------------------
@@ -134,6 +165,14 @@ END SUB
 '     -- confirms every value in game-logic.md S2's level table; L10 =
 '     4600 by the same formula (the "3000" in the old note was the
 '     ascension heal amount, not the true max-HP baseline)
+'   * the 8 rank-check arms are fully mapped (see Step 1 above):
+'     ranks 1/2/3/4/6 gate on cumulative exhibit-flag bit groups
+'     (3 / 2B / D0 / 0300 / 0800), rank 7 on holding the Compendium,
+'     rank 8 is never auto-promoted
+'   * S4(37) (byte 0x4A) = "visited a dungeon" (dunMain sets it to 1);
+'     gates rank 2
+'   * S4(18) (byte 0x24) = main-quest stage counter (kingConfides advances
+'     it, exitCastle -> 4, TWNDR reads == 3); rank 5 needs S4(18) >= 2
 '
 '  RESOLVED (was open)
 '   * questFlagWord bit 0x2000 ("already took the caretaker's final

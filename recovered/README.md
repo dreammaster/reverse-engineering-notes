@@ -356,6 +356,15 @@ anchor). The combat pool it prints is quoted at the top of
       (`ida_scripts/fix_mus_caretaker_gaps.py`, the same "IDA chops the
       block after every far call" issue as the DUN coerce-gap fixes).
       Also nails max HP exactly: `200 + 50*L*(L-1) - (100 if L>5)`.
+- [x] `mus_caretaker.bas` (v2) — **the 8 rank-check arms fully mapped.**
+      Ranks 1/2/3/4/6 gate on cumulative exhibit-flag bit groups
+      (`0x03`/`0x2B`/`0xD0`/`0x0300`/`0x0800`), rank 7 needs the
+      Compendium, rank 8 is never auto-promoted.  Two cross-track gates:
+      **`S4(37)`** (byte `0x4A`) = "visited a dungeon" (`dunMain` sets it
+      to 1) gates rank 2; **`S4(18)`** (byte `0x24`) = the main-quest
+      stage counter (`kingConfides` advances it, `exitCastle` → 4, TWNDR
+      reads `== 3` → "FIND A WAY TO THE FORTRESS!") gates rank 5
+      (`S4(18) ≥ 2`).
 - [x] bit `0x2000` — **RESOLVED: it is never set** (latent bug, no
       gameplay effect). Every exhibit's handler is meant to OR in its own
       `2^(exhibitId-1)` bit via `sub_11C38`; `checkFlag_2000` (exhibit 14

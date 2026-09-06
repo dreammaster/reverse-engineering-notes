@@ -132,7 +132,15 @@ the per-executable breakdown this tracks against.
       `hitPoints = 28`** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF`
       / `ds:20B6 = 1`, spawns the Warlord for melee (blow `INT(RND·99+80)`
       = 80–178, confirmed). Winning → `fortressSelfDestruct`.
-- [ ] Still open: `S4(37)` / `S4(18)` rank-gate overrides;
+- [x] **S4(37) / S4(18) rank-gate overrides** (`mus_caretaker.bas` v2).
+      All 8 caretaker rank-check arms mapped: ranks 1/2/3/4/6 gate on
+      cumulative exhibit-flag groups (`0x03`/`0x2B`/`0xD0`/`0x0300`/
+      `0x0800`), rank 7 on the Compendium, rank 8 never auto-promotes.
+      `S4(37)` (byte `0x4A`) = "visited a dungeon" (`dunMain:88` sets it
+      to 1) → gates rank 2. `S4(18)` (byte `0x24`) = main-quest stage
+      (`kingConfides` advances; `exitCastle` → 4; TWNDR reads `== 3`) →
+      rank 5 needs `S4(18) ≥ 2`.
+- [ ] Still open:
       `stealGold` FF22-pop question; `robCommand` caught roll (db blob);
       CASDR per-turn `ds:20BC` self-destruct cost / Warlord combat HP /
       gas-room `base`;

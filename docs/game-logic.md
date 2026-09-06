@@ -87,6 +87,29 @@ groups cleared) via a final-offer branch that also consumes the
 Compendium, sets current HP to 3000, and caps gold at 50000, finalizing
 level at **10**.
 
+The 8 rank-check arms (`ON (S4(10)+1) GOSUB`), each returning "met/blocked":
+
+| → rank | requires |
+|---|---|
+| 1 | quest-flag bits `0x03` set **and** `S3(3) ≠ 0` |
+| 2 | exhibit bits `0x2B` **and** `S3(3) ≠ 0` **and `S4(37) ≠ 0`** |
+| 3 | exhibit bits `0xD0` |
+| 4 | exhibit bits `0x0300` **and** `S2(12) ≠ 0` |
+| 5 | **`S4(18) ≥ 2`** (no exhibit flags — purely quest-gated) |
+| 6 | exhibit bits `0x0800` |
+| 7 | hold the Compendium (`S2(15) ≠ 0`) |
+| 8 | *always blocked here* — rank 8 is the explicit final-offer branch |
+
+**`S4(37)`** (`ds:1B96` byte `0x4A`) = **"has entered a dungeon"** — set to
+`1` at the top of `dunMain` (`dun.asm:88`) every dungeon turn, never
+cleared. You can't rank past 1 until you've been in a dungeon.
+
+**`S4(18)`** (`ds:1B96` byte `0x24`) = the **main-quest stage counter**:
+`0` = not started; advanced by the museum `kingConfides` chain; TWNDR's
+`townServiceDispatch` reads it (`== 3` → *"FIND A WAY TO THE FORTRESS!"*);
+CASDR's `exitCastle` sets it to `4`. Rank 5 needs `S4(18) ≥ 2`, so the
+museum-rank track and the main-quest track are interleaved.
+
 **Max HP IS a stored field** — `S4(19)` (`ds:1B96` elem `0x13`) —
 recomputed by the same `sub_12CAC` every time level changes, **exact
 formula**: `maxHP = 200 + 50·L·(L−1) − (100 if L > 5)`. `ds:1ADA` =
