@@ -36,6 +36,29 @@
 '      "Five cards without going over 21!" (5-card Charlie, auto win) /
 '      "Natural BlackJack pays double."
 '
+'  DECK + SHUFFLE -- FULLY DECODED 2026-09-07, the game is FAIR (no rig):
+'    * The deck is 52 static (rank, suit) words in seg004 @ 0x101E, in
+'      fixed order K..A x suit for suits 3,2,1,0 (rank 1..13, suit 0..3).
+'    * shuffleDeck (sub_11966) = a real FISHER-YATES over all 52, using a
+'      per-game 32-bit rotate-add LCG sub_1199E:
+'          state = ((state <<< 1) + 0x39EF) ; return state>>1 ; state at
+'          seg004 [0x1018:0x101A]         (NOT B$RND -- its own generator)
+'      then resets the draw cursor and ds:1F1A (cards left) = 52.
+'    * drawFromDeck (sub_11934): take deck[cursor], cursor += 2,
+'      dec ds:1F1A ; if ds:1F1A hits 0 -> shuffleDeck ("Shuffling...").
+'
+'  HAND SCORING -- dealCardToHand (gmb1.asm:1708) :
+'      cardVal = MIN(rank, 10)                    ' J/Q/K -> 10
+'      IF rank = 1 (ACE) AND handTotal < 11 THEN  ' 11 would not bust
+'          handTotal = handTotal + 11             ' soft ace
+'      ELSE
+'          handTotal = handTotal + cardVal        ' ace as 1
+'      END IF
+'    (matches the rules screen: "Aces count as one or eleven.")
+'  The dealer's draw is a loop in the same SUB: keep hitting while
+'  handTotal <= 16 (i.e. stop at 17+), also guarded by "not already bust"
+'  and a cap (ds:20F6).  The player's HIT calls it once per keypress.
+'
 '  SETTLEMENT -- the bet is NOT escrowed; the round is settled net at the
 '  end against the gold value from the START of the round:
 '      loss / bust        partyGold = partyGold - bet        ' gmb1.asm:loc_10A08
@@ -68,11 +91,35 @@ END SUB
 '  GMB2.EXE  --  "Flip-Flop Parlour"   (a Plinko / bagatelle drop)
 '                    gmb2.asm : flipFlopMain / playRound / computePayout
 ' ==========================================================================
-'  "** FLIP-FLOP PARLOUR **".  Bet (ds:2098), pick a release bucket + a
-'  bucket COLOUR, a ball drops through flippers/bumpers (LT.BLUE bounce
-'  left, others right) and lands in bucket 1..8.  Three 8-entry tables are
-'  built at ds:2100 / ds:210C / ds:211C (multiplier / colour / spawn) from
-'  the DATA the loader reads.
+'  "** FLIP-FLOP PARLOUR **".  Bet an amount (ds:2098) on a bucket COLOUR
+'  (ds:2092), then in dropBallAndBounce type a bucket NUMBER to release
+'  the ball, WATCH the flip-flop bumpers, and STEER a 1..6 selector with
+'  the LEFT / RIGHT arrow keys, ENTER to lock in your guess.
+'
+'  *** THERE IS NO BALL PHYSICS ***  (2026-09-07)
+'  stepBallPhysics just copies (x,y) into display vars ds:20A4/ds:20A6 --
+'  it computes no bounce.  The landing bucket = whatever you steered
+'  ds:209C to (clamped 1..6).  drawBumpers is a static GW-BASIC DRAW-macro
+'  picture; the "flip-flop" is cosmetic animation only.  The instruction
+'  screen says so outright:  "FLIP-FLOP IS AS MUCH SKILL AS CHANCE. WATCH
+'  THE FLIPPERS AND CHOOSE BUCKETS CAREFULLY!"  and  "* IF TIME RUNS OUT,
+'  WE'LL DROP THE BALL AND PRETEND YOU CHOSE BUCKET 6."
+'
+'  TIMER:  the drop animation runs 6 frames ([bp-0Ch]=6, one dec/frame).
+'  If you don't press ENTER before it expires AND this is not the first
+'  drop -> forced landingBucket = 6.  The FIRST drop of a session is
+'  untimed ([bp-1Ah] = -1, set when S4(16) is still 0).
+'
+'  DATA TABLES (parsed from text by rtm_AD -- gmb2.asm:~9998):
+'    ds:2100(1..6) = 1, 1, 2, 2, 5, 5      ' *** the bucket payout multipliers ***
+'    ds:210C(1..8) = 245,224,203,182,168,147,126,112   ' ball-drop start X per
+'                                          '   bucket (screen px) -- COSMETIC
+'    ds:211C(1..8) = 26,22,17,14,12,10,9,8 ' bumper sprite X -- COSMETIC
+'    then ~15 more DATA lines: the triangular bumper (x,y) grid
+'    (rows at y = 16/32/48/64/80/96/112), two "flip-flop" state vectors
+'    (0/1 per bumper), the 5 drop-frame Y coords (250,315,380,445,510),
+'    and per-frame animation offset pairs -- ALL COSMETIC.
+'  Only ds:2100 matters to game logic.
 '
 '  PAYOUT  --  playRound, gmb2.asm:loc_11F4D :
 '      mult = multTable(landingBucket)          ' ds:2100(b) : 1 / 2 / 5 / 0
@@ -95,8 +142,17 @@ END SUB
 '      partyGold = partyGold + totalWin                        ' gmb2.asm:loc_1202A
 '      sessionWon (ds:209A) += totalWin
 '      '  feed the rigged ledger (scaled by ds:2ABC = 99.0):
-'      S4(14) = INT( S4(14) + totalWin / 99.0 )
-'      '  (S4(15) accumulates the wager side the same way)
+'      S4(14) = INT( S4(14) + totalWin / 99.0 )    ' won-side accumulator
+'
+'  LOSS (landingBucket <> betBucket)  --  playRound, gmb2.asm:loc_1219B :
+'      partyGold  = partyGold - bet                ' the bet is NOT escrowed
+'      sessionWon = sessionWon - bet
+'      S4(15) = INT( S4(15) + bet / 99.0 )         ' wagered-side accumulator
+'      IF S4(15) > 30000 THEN                      ' ledger overflow guard
+'          S4(14) = 99 : S4(15) = INT( bet/99 + ds:2AC0 )
+'      END IF
+'  (So: net win = bet*mult, net loss = -bet.  Buckets 1-2 are an even-money
+'   game, 3-4 pay 2:1, 5-6 pay 5:1.)
 '  Then the break-the-bank check (sessionWon vs 250*level + 750).
 '
 '  *** THE PARLOUR IS RIGGED ***  --  computePayout (gmb2.asm:4626), run
@@ -140,10 +196,18 @@ END SUB
 '     (ds:2B40 ~= 0, ratio always >= 0).  ledger resets to 99/99.
 '   * flip-flop ledger accumulation is scaled by ds:2ABC = 99.0
 '
-'  OPEN
-'   * exactly when the flip-flop bet leaves your gold (win adds totalWin;
-'     the losing-drop deduction path / sub_12A25 not fully split) -- the
-'     NET effects above are what the strings + the gold writes imply
-'   * the ds:2100 / 210C / 211C table source DATA (bucket geometry)
-'   * ball physics constants (stepBallPhysics / drawBumpers) -- not RPG-relevant
+'  RESOLVED 2026-09-07
+'   * BLACKJACK is FAIR: 52 static (rank,suit) words in seg004 @ 0x101E,
+'     real Fisher-Yates (sub_11966) via a per-game rotate-add LCG
+'     (sub_1199E: state=((state<<<1)+0x39EF)>>1, seed at seg004 0x1018).
+'     Ace = 11 if handTotal < 11 else 1 (dealCardToHand).  Dealer hits
+'     while handTotal <= 16.  No rig; only the break-the-bank cap.
+'   * FLIP-FLOP loss path: partyGold -= bet (loc_1219B) ; win path: += bet*mult
+'     (loc_1202A).  sub_12A25 = the right-justified gold-string redraw
+'     (rt_D3 STR$ + rt_42 LEN), not gameplay.
+'   * DATA tables: ds:2100 = {1,1,2,2,5,5} (multipliers) ; ds:210C / 211C /
+'     the rest = bumper-grid + flip-flop-state + animation coords, all
+'     COSMETIC.  There is NO ball-physics sim (stepBallPhysics only moves
+'     a display sprite) -- the outcome bucket is the player's steered pick,
+'     or 6 on a 6-frame timeout (first drop untimed).
 ' ==========================================================================

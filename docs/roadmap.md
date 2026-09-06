@@ -613,11 +613,21 @@ reimplementation.
       `dealCardToHand` / `dealInitialHands` / `revealDealerCard` /
       `drawGoldAndBet` / `drawDealerArea` / `clearPromptLine` /
       `drawHandSprites` (all **tentative** — no distinctive text).
-- [ ] `gmb1`: the hand-scoring logic — it leans hard on the `leglib`
-      `rtm_FF4B`/`FF27`/`FF44`/`FF22`/`FF1F` value-stack cluster.
-      Identifying those `B$…` primitives would clarify `dealCardToHand`.
-- [ ] `gmb1` `ds:` vars: `ds:1F1Ah` (shoe pointer), `ds:1F04h`,
-      `ds:21A4h`, the hand struct at `ds:1C7Ch`.
+- [x] `gmb1` hand-scoring **SOLVED (2026-09-07)** — `dealCardToHand`
+      (`gmb1.asm:1708`): `cardVal = MIN(rank,10)`; ace (`rank==1`) counts
+      **11 if `handTotal < 11` else 1**. Dealer's draw is a loop in the
+      same SUB: hits while `handTotal <= 16`. The deck is **52 static
+      `(rank,suit)` words in `seg004 @ 0x101E`** (K..A × suit, suits
+      3,2,1,0); `shuffleDeck`/`sub_11966` = a real **Fisher-Yates** using
+      a per-game rotate-add LCG `sub_1199E` (`state=((state<<<1)+0x39EF)`,
+      seed at `seg004 0x1018` — *not* `B$RND`); `drawFromDeck` reshuffles
+      at `ds:1F1A == 0`. **The game is fair** — no rig beyond the
+      break-the-bank cap.
+- [x] `gmb1` `ds:` vars: `ds:1F1A` = cards-left counter (set to 52 by
+      shuffle), `ds:1F1C`/`ds:1F1E` = drawn card rank/suit, `ds:1F12` =
+      `MIN(rank,10)`, `ds:2110` = running hand total, `ds:1C7C` = the hand
+      struct descriptor (`+0x64` count, `+0x68` total, `+0x6C` soft-ace
+      flag).
 - [~] `BJCHR.GLB` (2026-08-31) — tiles decoded: not 52 pre-drawn cards,
       but a rank/suit glyph font (`A 2..10 J Q K` + ♠♣♥♦, upright +
       180°-rotated) the renderer composites onto card frames, plus
@@ -633,11 +643,19 @@ reimplementation.
       `drawBumpers`, `playTune`; `promptYesNo` / `playBounceSound` /
       `playWinChime` / `drawBigNumberPanel` / `drawBallAnim` /
       `stepBallPhysics` (tentative).
-- [ ] `gmb2`: the ball-physics / bumper model in `dropBallAndBounce` +
-      `stepBallPhysics` — how "flip-flop" bumper state biases the drop,
-      and how `computePayout` (struct at `ds:1B96h`) maps bucket → odds.
-- [ ] `gmb2`: does it read a data file for the bumper layout, or is the
-      whole board the hard-coded DRAW-macro set in `drawBumpers`?
+- [x] `gmb2` ball model **SOLVED (2026-09-07): there is no ball physics.**
+      `stepBallPhysics` only copies `(x,y)` into display vars `ds:20A4/20A6`
+      — no bounce computation. The landing bucket = whatever the player
+      steered `ds:209C` to with the LEFT/RIGHT arrows (clamped 1..6), or
+      forced to **6** on a 6-frame timeout (first drop of a session is
+      untimed). `drawBumpers` = a static GW-BASIC `DRAW`-macro picture; the
+      "flip-flop" is cosmetic. `computePayout` (`gmb2.asm:4626`) is the
+      only rig — `ratio = S4(14)/S4(15)`; `> 0.94` → reset ledger to 99/99
+      and `S4(16) += 1` (toward the out-of-range 7/8 = a loss); the
+      `< ds:2B40` branch is dead. Win = `landedBucket == betBucket` →
+      `bet × mult`; loss → `-bet`.
+- [x] `gmb2` bumper layout = **hard-coded** (the `drawBumpers` `DRAW`
+      strings + the DATA tables, `gmb2.asm:~9998`). Not a data file.
 - [x] Both games: **payout accounting** — `recovered/gmb_casino.bas` v2.
       BlackJack settles net (`±bet`, `+2·bet` natural, `0` tie; bet not
       escrowed); Flip-Flop `win = multTable{1,2,5}(bucket)·bet` + colour
@@ -652,8 +670,15 @@ reimplementation.
       BONUS" and `computePayout`'s "player behind" nudge are both dead
       code; the rig only ever pushes you toward a loss (`ratio > 0.94`,
       `ds:2B3C`).
-- [ ] Not RPG-relevant: the bucket-geometry DATA tables
-      (`ds:2100/210C/211C`) and the ball physics.
+- [x] The `ds:2100/210C/211C` DATA tables **decoded (2026-09-07,
+      `gmb2.asm:~9998`)**: `ds:2100(1..6) = {1,1,2,2,5,5}` (the bucket
+      payout multipliers — the *only* gameplay-relevant one; matches the
+      instruction text "BUCKETS 1-2 … 3-4 DOUBLE … 5-6 FIVE TIMES");
+      `ds:210C = {245,224,203,182,168,147,126,112}` and `ds:211C =
+      {26,22,17,14,12,10,9,8}` = ball-drop / bumper-sprite screen X
+      (cosmetic); the remaining ~15 DATA lines = the triangular bumper
+      `(x,y)` grid + two flip-flop state vectors + animation frame offsets
+      (all cosmetic). No ball physics exists.
 
 ## CONFIGUR.EXE — open questions
 
