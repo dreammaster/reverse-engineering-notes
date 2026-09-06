@@ -180,10 +180,18 @@ the per-executable breakdown this tracks against.
       a prior statement. **Looks like an original bug.** Port as
       `INT(enemyAtk·(1−RND)/2)`. A live `[ds:0FAC]` dump is the only way
       to observe the real game.
+- [x] **OUTM1's role** (`out_overworld.bas`). The three overworld maps:
+      `OUTM0` = main land; `OUTM2` = the pegasus fly-across, a one-way
+      fast-travel *back to the museum* (*"PEGASUS SETS YOU DOWN … IN THE
+      MUSEUM."*); `OUTM1` = a distinct second overworld (~40 % the size,
+      mostly open water + islands, `classifyMapFeature` base 0) — almost
+      certainly the open-ocean / sailing map you reach by rafting past
+      the coast. Exact trigger tile is in the un-coerced
+      `resolveMoveTarget`.
 - [ ] Cosmetic / not blocking a port: the exact first-set of `ds:20B0`
       (a `db` blob; timer path traced); a live `[ds:0FAC]` dump for
-      `enemyAttack`; `selectAbove` mode-4 LEGLIB internals; `OUTM1`'s
-      role; gmb2 `ds:2B40` / `ds:2AA6`.
+      `enemyAttack`; `selectAbove` mode-4 LEGLIB internals; gmb2
+      `ds:2B40` / `ds:2AA6`; the OUTM1 trigger tile.
 
 ## Infra (done, 2026-08-30)
 
@@ -1069,7 +1077,7 @@ gates) still merit a per-region table for tuning — 3 samples so far.
       payback ~0.94 (`S4(14)/S4(15)` ledger, resets to 99/99). Both games
       cut you off at `gold − startGold > 250·characterLevel + 750`
       (`imul ds:1AE0`).
-- [ ] `selectAbove` mode-4 internals (LEGLIB), `OUTM1`'s role,
+- [ ] `selectAbove` mode-4 internals (LEGLIB), the OUTM1 trigger tile,
       flip-flop `ds:2B40` / `ds:2AA6`.
 
 ## ScummVM engine (future)

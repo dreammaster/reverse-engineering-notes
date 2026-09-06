@@ -543,15 +543,19 @@ map-window copy (`array[0x120 + Y*95 + X]` from `ds:1E2A`), not game logic.
 module hands control back. It picks the **map layer** from `S4(12)` (a
 "pending transition" slot `resolveMoveTarget` writes after every step):
 
-| `MIN(S4(12), 2)` | file(s) loaded | notes |
+| `MIN(S4(12), 2)` | file (payload) | what it is |
 |---|---|---|
-| 0 | `OUTM0.BSV` | main overworld |
-| 1 | `OUTM1.BSV` | secondary area (role unconfirmed) |
-| 2 | `OUTM2.BSV` + `PEGASUS.BSV` | pegasus-flight view |
+| 0 | `OUTM0.BSV` (9962 B) | the **main overworld** — towns, museum, dungeon mouths. `classifyMapFeature` uses feature base 3. |
+| 1 | `OUTM1.BSV` (4184 B) | a **second, smaller overworld map** — ~40 % the size, mostly tile `0` (open water / void) with ~60 tile-`0x63` features. Still on-foot (bandit ambush fires, the raft works); `classifyMapFeature` base 0. **Almost certainly the open-ocean / island map** you get by rafting past the coast. |
+| 2 | `OUTM2.BSV` (2094 B) + `PEGASUS.BSV` | the **pegasus fly-across**. `pegasusFlightAnim` steps you east tile-by-tile → `showPegasusLanding` *"PEGASUS SETS YOU DOWN … IN THE MUSEUM."* — a one-way **fast-travel back to the museum**, not a place you roam. Movement here prompts *"RETURN TO MUSEUM?"*. |
 
 `S4(12) > 2` is a re-entry sentinel → teleport to `(7, 5)` and run the
-arrival handler. Layers 1/2 are **one-shot** — `initOverworldViewport`
-resets `S4(12)` to 0 after drawing, so the next entry is the main map.
+arrival handler (which pins `S4(12) = 2`). Layers 1/2 are **one-shot** —
+`initOverworldViewport` resets `S4(12)` to 0 after drawing, so the next
+entry is the main map. All three OUTM files share the same header
+(mode/palette for `rt_FE29`). *(The precise tile/edge that makes
+`readTileObject` write `1` into `*ds:2180` — i.e. sends you to OUTM1 —
+is inside the large `resolveMoveTarget` SUB, not yet coerced.)*
 
 `LoadOverworldData` (`out.asm` `loadOverworldData`) BLOADs, via
 `rt_FE63` (resolve drive per `DRCONFIG.DAT` + open) then `rt_FE07`

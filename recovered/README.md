@@ -225,7 +225,14 @@ anchor). The combat pool it prints is quoted at the top of
       `initOverworldState` recomputes `S4(19)` max HP =
       `200 + 50·L·(L−1) − (100 if L>5)` on every entry. A tamper check
       (`ds:2236 ≠ 0x9D1A` → `S4(19) = 20`) crashes max HP on a patched
-      EXE. Open: `OUTM1`'s role; the checksum record layout.
+      EXE.  **The three maps:** `OUTM0` = main land; `OUTM2` = the pegasus
+      fly-across (a one-way fast-travel *back to the museum* —
+      *"PEGASUS SETS YOU DOWN … IN THE MUSEUM."*, not a roamable place);
+      `OUTM1` = a distinct second overworld (~40 % the size, mostly open
+      water + islands, `classifyMapFeature` base 0) — almost certainly
+      the open-ocean / sailing map reached by rafting past the coast.
+      Open: the exact tile that sends you to OUTM1 (in the un-coerced
+      `resolveMoveTarget`); the checksum record layout.
 - [x] mail routes — see the TWNDR `MailDeliveryJob` / `FoodShop` entry
       below (job always routes ±1 town, paid 95/110/125 on arrival).
 

@@ -13,13 +13,40 @@
 '  THE MAP LAYER  --  S4(12)  (S4 byte offset 0x18, ds:1B96 elem 12)
 '  ------------------------------------------------------------------
 '  resolveMoveTarget stashes a "pending map layer" in ds:2180 after every
-'  step; doMovement copies it into S4(12).  On the next enterOverworld:
-'      mapLayer (ds:2192) = MIN( S4(12), 2 )
-'  and that picks the OUTM file:
-'      0 -> OUTM0.BSV   (the main overworld)
-'      1 -> OUTM1.BSV   (a secondary area)
-'      2 -> OUTM2.BSV   (+ PEGASUS.BSV -- the pegasus-flight view)
+'  step (via readTileObject) ; doMovement copies it into S4(12).  On the
+'  next enterOverworld:  mapLayer (ds:2192) = MIN( S4(12), 2 ), which
+'  picks the OUTM file:
+'
+'   S4(12)  file                    what it is
+'   ------  ----------------------  ------------------------------------------
+'     0     OUTM0.BSV  (9962 B)     the MAIN overworld -- towns, museum,
+'                                   dungeon mouths ; tile 0x2C = ground.
+'                                   classifyMapFeature uses feature base 3.
+'                                   initOverworldViewport resets S4(12) -> 0.
+'     1     OUTM1.BSV  (4184 B)     a SECOND, smaller overworld map (~40% the
+'                                   size), mostly tile 0 (open water / void)
+'                                   with ~60 tile-0x63 features scattered.
+'                                   Still on-foot: bandit ambush can fire,
+'                                   the raft works.  classifyMapFeature uses
+'                                   feature base 0.  -- the "sail beyond the
+'                                   coast" / open-ocean-and-islands map.
+'                                   [exact trigger = whatever readTileObject
+'                                    writes 1 into *ds:2180 for ; that path
+'                                    is inside the big resolveMoveTarget SUB,
+'                                    not yet coerced -- CHECK]
+'     2     OUTM2.BSV  (2094 B)     the PEGASUS fly-across (+ PEGASUS.BSV
+'                                   sprite bank).  pegasusOrAmbush ->
+'                                   pegasusFlightAnim steps you east tile by
+'                                   tile -> showPegasusLanding "PEGASUS SETS
+'                                   YOU DOWN ... IN THE MUSEUM."  So the
+'                                   pegasus is a one-way FAST-TRAVEL BACK TO
+'                                   THE MUSEUM, not a place you roam.
+'                                   doMovement here prompts "RETURN TO
+'                                   MUSEUM?" and sets ds:1F1A.
+'
+'  All three OUTM files share the SAME header (mode/colour for rt_FE29).
 '  S4(12) > 2 is a "re-entry" sentinel: teleport to (7,5) and arrive.
+'  handleOverworldArrival pins S4(12) = 2 on that path.
 '
 '  DGROUP vars:
 '     mapLayer      2192   (0..2, = MIN(S4(12),2); the notes' "combatPhase")
@@ -222,11 +249,16 @@ END SUB
 '     weaponRating = INT(weaponId + S1(cond)/2.8)
 '   * layer 1/2 are one-shot (initOverworldViewport snaps S4(12) back to 0)
 '   * OUT.EXE self-checksum: mismatch (ds:2236 <> 0x9D1A) -> S4(19) = 20
+'   * OUTM0 = the main land ; OUTM2 = the pegasus fly-back-to-museum
+'     sequence (one-way fast travel, NOT a roamable place) ; OUTM1 = a
+'     distinct second overworld map (mostly open water + islands),
+'     classifyMapFeature base 0 -- almost certainly the open-ocean /
+'     sailing map reached by rafting past the coast
 '
 '  OPEN
 '   * the exact record layout the checksum loop walks (rt_87/5E/5F/09
 '     semantics) -- only the verdict constant 0x9D1A is pinned
 '   * rt_FE6B(10,8) / rt_FE49(-2) exact effect (viewport window / cursor)
-'   * what OUTM1 actually is (OUTM2 = pegasus; OUTM0 = main; OUTM1 unclear)
-'   * ds:2180 (resolveMoveTarget's pending-layer output) full value range
+'   * the precise tile / edge that makes readTileObject write 1 into
+'     *ds:2180 (-> S4(12) = 1 -> OUTM1) ; needs a resolveMoveTarget coerce
 ' ==========================================================================
