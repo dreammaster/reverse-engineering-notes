@@ -1,5 +1,5 @@
 ' ==========================================================================
-'  CASDR.EXE  --  castle / fortress interiors                         [v2]
+'  CASDR.EXE  --  castle / fortress interiors                         [v3]
 '  reconstructed from casdr.asm ; see recovered/README.md for the model + tags
 '
 '  SUBs: DoFight (player attack), CastleEnemyTurn / EnemyAttack,
@@ -81,9 +81,21 @@ SUB WarlordConfrontation                              ' asm: casdr.asm:5104 (war
 '   ' -- draw the Warlord sprite (sub_13E33 with ds:1F04..1F12 screen params),
 '   '    run the approach animation loops --
 '   ds:20B6 = 1                                   ' the "Warlord fight active" flag
+'   ' -- warlordConfrontation NEVER touches warlordHP (ds:20BA) --
 '
-' You now fight the Warlord in melee at 28 HP (DoFight in / WarlordAttack
-' out).  Winning -> FortressSelfDestruct.
+' THE WARLORD FIGHT:
+'   * warlordHP = ds:20BA, set to 800 (&h320) when you GRAB THE COMPENDIUM
+'     (TakeChestItem) -- that is what spawns him.  ds:20BA > 0 doubles as
+'     the "the current enemy is the Warlord" flag (enemy name = "WARLORD",
+'     else "GUARD").
+'   * every castle turn while ds:20BA > 0: warlordAttack ->
+'     hitPoints -= INT( RND(1)*99 + 80 )   (80..178)
+'   * your DoFight hits: ds:20BA = ds:20BA - <your rolled damage>
+'   * ds:20BA <= 0  ->  "WARLORD KILLED"  ->  FortressSelfDestruct ; then
+'     fortressSelfDestruct clears ds:20BA = 0.
+' So you fight an 800-HP Warlord from the moment you take the Compendium;
+' walking into the final wall fires this cinematic mid-fight and drops
+' you to 28 HP for the finish.
 
 
 ' --------------------------------------------------------------------------
@@ -283,9 +295,10 @@ SUB TakeChestItem                                    ' asm: casdr.asm:134f6 (tak
 '     PRINT "YOU GRAB THE "; Item$(15); "."     ' Item$ index 15 = the Compendium
 '     ' a grab animation ; patch two map tiles ; big redraw
 '     S2(15) = 1                                ' the "holds Compendium" bit (once)
-'     ds:20BA = &h320                           ' (a post-grab timer / alarm)
+'     warlordHP(ds:20BA) = &h320 (800)          ' *** SPAWNS THE WARLORD ***
 ' The castle has NO gold economy -- the chest yields exactly this one
-' quest item, never gold.
+' quest item, never gold.  Grabbing the Compendium ARMS the endgame: the
+' Warlord now has 800 HP and attacks every castle turn (see below).
 
 
 ' --------------------------------------------------------------------------
@@ -345,10 +358,14 @@ SUB FortressSelfDestruct                             ' asm: casdr.asm:11bc8 (+ s
 '     (&hC0->4, &hC1/&hDA->7, &hCB->8, &hE6->5, &hE7->6) -> "UNLOCK DOOR."
 '   * S5 (ds:1BF2) IS live in CASDR -- the per-tile door/lock data table
 '     (it is only dead in TWNDR)
-'   * WARLORD CONFRONTATION (moveBlocked -> the final wall): scripted
-'     monologue ("SPELL OF DEATH...") ; FORCES hitPoints = 28 (&h1C) ;
-'     questMarkState = &hFF ; ds:20B6 = 1 ; spawns the Warlord for melee.
-'     Warlord blow (warlordAttack) = INT( RND(1)*99 + 80 ) = 80..178.
+'   * WARLORD: warlordHP (ds:20BA) = 800 (&h320), set by TakeChestItem
+'     when you grab the Compendium (this is what spawns him).  DoFight
+'     hits subtract from ds:20BA ; at <= 0 -> FortressSelfDestruct.
+'     Every castle turn while ds:20BA > 0: warlordAttack ->
+'     hitPoints -= INT( RND(1)*99 + 80 ) = 80..178.
+'   * WARLORD CONFRONTATION (moveBlocked -> the final wall): a mid-fight
+'     cinematic ("SPELL OF DEATH...") ; FORCES hitPoints = 28 (&h1C) ;
+'     questMarkState = &hFF ; ds:20B6 = 1.  Does NOT touch ds:20BA.
 '   * SELF-DESTRUCT: Warlord death -> "** WARLORD KILLED **" cinematic +
 '     "SELF-DESTRUCTION IN 5 MINUTES!" ; ds:20BC = &h5F00, ticked -28/turn
 '     while > &h898 (~790 turns to the floor), drives a COSMETIC on-screen

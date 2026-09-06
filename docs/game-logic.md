@@ -386,19 +386,23 @@ are now both confirmed from the leglib dispatch — so `K = Dex/26` is a
 real division, and with `K` in the denominator higher Dex genuinely
 lowers the castle hit-rate: an apparent original quirk, not a mis-read.)*
 
-**Warlord confrontation** — `warlordConfrontation` (`casdr.asm:5104`) —
-*derived*. Walking into the final wall triggers the villain scene:
-*"SONIC MAGIC… YOU CAN'T MOVE… I'LL USE THIS SCROLL TO CAST THE SPELL OF
-DEATH. ALL LIFE OUTSIDE THIS FORTRESS WILL CEASE."* It **forces
-`hitPoints` to 28** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF` and
-`ds:20B6 = 1`, and spawns the Warlord for melee. So the final fight starts
-at 28 HP.
+**The Warlord fight** — *derived*. `warlordHP` (`ds:20BA`) is set to
+**800** (`0x320`) by `takeChestItem` **the moment you grab the
+Compendium** — that's what spawns him. `ds:20BA > 0` doubles as the "the
+current enemy is the Warlord" flag. Then:
+- every castle turn while `ds:20BA > 0` → `warlordAttack` → `hitPoints −=
+  INT(RND(1)·99 + 80)` (**80–178**, `ds:28A0 = 99` / `ds:2B94 = 80`);
+- your `DoFight` hits subtract your rolled damage from `ds:20BA`;
+- `ds:20BA ≤ 0` → *"WARLORD KILLED"* → `fortressSelfDestruct` (which then
+  clears `ds:20BA`).
 
-**Warlord blow** — *derived* — `casdr.asm:6048` (`warlordAttack`):
-`INT( RND(1)·99 + 80 )` (**80–178**, `ds:28A0 = 99` / `ds:2B94 = 80`) —
-confirmed. At 28 HP one blow can kill you: the fight is meant to be won
-fast (Invisibility / Weaken / a big first strike). Winning →
-`fortressSelfDestruct`.
+**Warlord confrontation** — `warlordConfrontation` (`casdr.asm:5104`) is a
+*mid-fight* cinematic, fired by walking into the final wall: *"SONIC
+MAGIC… I'LL USE THIS SCROLL TO CAST THE SPELL OF DEATH…"*. It **forces
+`hitPoints` to 28** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF` and
+`ds:20B6 = 1` — and does *not* touch `ds:20BA`. So you're expected to have
+worn the 800-HP Warlord well down before cornering him at the wall; the
+cinematic then leaves you at 28 HP for the finish.
 
 **Gas room** — *partial* — `casdr.asm:4376`: `~INT( RND(1)*50 + base )`
 per turn spent in a cloudy room.

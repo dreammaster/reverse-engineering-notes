@@ -356,13 +356,15 @@ anchor). The combat pool it prints is quoted at the top of
       `INT( enemyAtk·(1−RND(1))/2 )` → 0..70 for a fresh guard, **no
       armour/Endurance mitigation** (contrast the Warlord blow).  Exact
       `raw − INT(raw)\2 − half` shape pending the `FF23`/`FF28` trace.
-- [x] `casdr_castle.bas` — `WarlordConfrontation` (`casdr.asm:5104`).
-      Walking into the final wall → the villain monologue; **forces
-      `hitPoints = 28`** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF`
-      / `ds:20B6 = 1`, spawns the Warlord.  Warlord blow (confirmed) =
-      `INT( RND(1)·99 + 80 )` = 80–178.  Winning → `FortressSelfDestruct`.
-- [ ] gas-room `base`; `enemyAttack`'s exact FP-stack shape; Warlord
-      combat HP.
+- [x] `casdr_castle.bas` (v3) — the **Warlord fight**.  `warlordHP`
+      (`ds:20BA`) = **800** (`0x320`), set by `TakeChestItem` the moment
+      you grab the Compendium (this spawns him).  `DoFight` hits subtract
+      from `ds:20BA`; `≤ 0` → *"WARLORD KILLED"* → `FortressSelfDestruct`.
+      Every castle turn while `ds:20BA > 0`: `warlordAttack` →
+      `hitPoints −= INT(RND·99 + 80)` = 80–178.  `WarlordConfrontation`
+      (walk into the final wall) is a *mid-fight* cinematic that forces
+      `hitPoints = 28` — it never touches `ds:20BA`.
+- [ ] gas-room `base`; `enemyAttack`'s exact FP-stack shape.
 
 ## MUS.EXE
 

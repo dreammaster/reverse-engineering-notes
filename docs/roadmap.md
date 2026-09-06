@@ -135,11 +135,15 @@ the per-executable breakdown this tracks against.
       `S2(16)&S2(20)`, D2 `0x100` always, D3 `0x800` if `S2(14)>3`), and
       if a bit was awarded raises Strength to a floor of 25/40/50
       (`10·dn + 15/20/20`); chains D1→OUT, D2/D3→MUS.
-- [x] **CASDR WarlordConfrontation** (`casdr.asm:5104`). Walking into the
-      final wall → the villain monologue ("SPELL OF DEATH…"); **forces
-      `hitPoints = 28`** (`ds:1ADA = 0x1C`), sets `questMarkState = 0xFF`
-      / `ds:20B6 = 1`, spawns the Warlord for melee (blow `INT(RND·99+80)`
-      = 80–178, confirmed). Winning → `fortressSelfDestruct`.
+- [x] **CASDR Warlord fight** (`casdr_castle.bas` v3). `warlordHP`
+      (`ds:20BA`) = **800** (`0x320`), set by `takeChestItem` the moment
+      you grab the Compendium — that's what spawns him; `DoFight` hits
+      subtract from `ds:20BA`, `≤ 0` → "WARLORD KILLED" →
+      `fortressSelfDestruct`. Every castle turn while `ds:20BA > 0`:
+      `warlordAttack` → `hitPoints −= INT(RND·99 + 80)` = 80–178.
+      `warlordConfrontation` (walk into the final wall) is a *mid-fight*
+      cinematic: forces `hitPoints = 28`, `questMarkState = 0xFF`,
+      `ds:20B6 = 1` — never touches `ds:20BA`.
 - [x] **S4(37) / S4(18) rank-gate overrides** (`mus_caretaker.bas` v2).
       All 8 caretaker rank-check arms mapped: ranks 1/2/3/4/6 gate on
       cumulative exhibit-flag groups (`0x03`/`0x2B`/`0xD0`/`0x0300`/
@@ -166,8 +170,7 @@ the per-executable breakdown this tracks against.
       `ds:20B0` each town-turn while a robbery is in progress; at 20 turns
       → "DISCOVERED!!" + alarm + `contextMode = 1` (guards attack).
 - [ ] Still open: the exact first-set of `ds:20B0` (a `db` blob; timer
-      path traced); CASDR `enemyAttack` FP-stack shape / Warlord combat
-      HP / gas-room `base`.
+      path traced); CASDR `enemyAttack` FP-stack shape / gas-room `base`.
 
 ## Infra (done, 2026-08-30)
 
