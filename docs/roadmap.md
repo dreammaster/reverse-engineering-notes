@@ -830,9 +830,19 @@ reimplementation.
       `setScenePosY_1..5`, `useCompass`, `showIndexedRemark`,
       `handleOverworldArrival`, `setupPromptScreen`, the resolveMoveTarget
       sub-tree. ~17 obscure sub-20-byte helpers left `sub_`.
-- [ ] Confirm the tentatives: `addFoodDays` / `spendFoodDays` /
-      `drawFoodGauge` (1F04/231C usage), `identifyLocationObject` /
-      `readTileObject` (the `resolveMoveTarget` sub-tree), `rollCreatureStats`.
+- [x] **Food / ration mechanic SOLVED (2026-09-07)** — `ds:1AF8` =
+      ration-staleness clock, **+1 per overworld step** (`ds:24E6` = 1.0;
+      not terrain-scaled). Poisoning check fires only the step a `ds:2184`
+      window (armed to 10 by `creatureDefeated`) counts out: sick when
+      **`ds:1AF8 ≥ 500` (`ds:2552`) AND `RND(1) ≤ poisonP`** (`ds:2186` =
+      0.03 if kill-reward > 63 else 0.005). Effect:
+      `hitPoints −= INT(hitPoints / (3·(RND(1)+1)))` = 1/6–1/3 of current
+      HP. `addFoodDays` (buy food / creature drop) knocks `ds:1AF8` back
+      toward 0. **`spendFoodDays` (out.asm:6413) is DEAD CODE.** OUT DGROUP
+      base = **0x8C80** (not 0x8C84). Written up in `out_movement.bas` /
+      game-logic.md §4.
+- [ ] Confirm `identifyLocationObject` / `readTileObject` (the
+      `resolveMoveTarget` sub-tree) tentatives, and `rollCreatureStats`.
 - [x] `ds:1F04` = `workInt` (2026-08-31) — OUT's general-purpose
       integer working variable (the single most-reused local, 27
       functions): push-to-value-stack / array index / the amount for

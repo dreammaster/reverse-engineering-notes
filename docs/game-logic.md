@@ -523,15 +523,29 @@ formula.** Table and field-sample confirmation in
 
 **Per-step tick** — *derived* — `out.asm` `doMovement`:
 ```
-stepCost     = enteredLocationId / 20
-food        -= stepCost                       ' ds:1ACE
-terrainWear += stepCost                       ' ds:1AF4  (S4(36), fed to bank interest)
-stepCounter += 1                              ' ds:1AF8
+stepCost         = enteredLocationId / 20
+fatigue          <FF53>= stepCost            ' ds:1ACE
+terrainWear     += stepCost                  ' ds:1AF4  (S4(36), fed to bank interest)
+rationStaleness += 1                         ' ds:1AF8  *** the food clock ***
 ```
 
-**Food poisoning** — *partial*: gated on `stepCounter` passing 500 plus an
-RND roll: `hitPoints -= INT( hitPoints / (3 * (RND(1) + 1)) )`, then
-"YOU GROW SICK FROM SOMETHING YOU ATE!".
+**Food / rations** — the food you buy is a **ration-staleness clock**
+`ds:1AF8`: it climbs **+1 per overworld step** (regardless of terrain),
+starting near 18 on a new game. Buying "N days of food" at a TWNDR
+provisioner (`pricePerDay = INT(13 − Charm/7)·0.1`; `maxDays = MIN(1000,
+gold/pricePerDay)`) — or a defeated creature dropping "N DAYS OF FOOD" —
+calls `addFoodDays`, which knocks `ds:1AF8` back down toward 0 (fresh
+rations). Food is **not** in `CHAR.DAT` (runtime-only). `spendFoodDays`
+(`out.asm:6413`) is dead code.
+
+**Food poisoning** — *derived* — checked only the step a `ds:2184` window
+counts out (`ds:2184` is armed to **10** by `creatureDefeated`, else 0 —
+so a poisoning check fires ~10 steps after each fight). You get sick when
+**`ds:1AF8 ≥ 500` AND `RND(1) ≤ poisonP`** (`poisonP` = `ds:2186` =
+`0.03` if the last kill's reward code > 63 else `0.005`; `ds:2F00/2F04/2F08`
+= 0.005 / 0.03 / 0.01). Effect: *"YOU GROW SICK FROM SOMETHING YOU ATE!"* →
+`hitPoints −= INT( hitPoints / (3·(RND(1)+1)) )` — **loses 1/6 to 1/3 of
+current HP** — then `ds:2184 = 0`.
 
 **Encounter trigger** (`CreatureApproach`) — *derived* (`FF1F`/`FF27`
 resolved):

@@ -12,15 +12,26 @@
 '
 '  DGROUP vars:
 '     playerX 1B02   playerY 1B06     trialX 208C   trialY 208A
-'     facing  1E1E   hitPoints 1ADA   food 1ACE
+'     facing  1E1E   hitPoints 1ADA   fatigue 1ACE
 '     enteredTileType 2182 / 214A     enteredLocationId 1F02
 '     tileObjectType  1F04  (0 = plain terrain -> run the tick;
 '                            nonzero = a location/object -> chain out)
-'     terrainWear  1AF4  (accumulates enteredLocationId/20 per step)
-'     stepCounter  1AF8  (+1 per step; sickness when it passes 500)
-'     rollWindow   2184  (set to 10 after a kill, 0 after sickness/entry;
-'                         must be >= 1 for the per-step roll to fire)
+'     terrainWear     1AF4  (+= enteredLocationId/20 per step)
+'     rationStaleness 1AF8  (*** the food clock *** ; +1 per step ;
+'                            food-poisoning risk once it passes 500 ;
+'                            AddFoodDays knocks it back toward 0)
+'     sickWindow  2184  (armed to 10 by CreatureDefeated, else 0 ; the
+'                        poisoning roll fires only the step it counts out)
+'     poisonP     2186  (BSS ; CreatureDefeated sets 0.03 if reward>63 else
+'                        0.005 ; ds:2F00/2F04/2F08 = 0.005 / 0.03 / 0.01)
 '     ds:2584 = 3.0   ds:2552 = 500.0   ds:24EA = 20.0   ds:24E6 = 1.0
+'
+'  FOOD ECONOMY:  buy days of food at a TWNDR provisioner
+'  (pricePerDay = INT(13 - Charm/7)*0.1 ; maxDays = MIN(1000,
+'  partyGold/pricePerDay)) -> AddFoodDays reduces rationStaleness ;
+'  a defeated creature can also drop "N DAYS OF FOOD".  spendFoodDays
+'  (out.asm:6413) is DEAD CODE -- never called.  Food is NOT saved to
+'  CHAR.DAT; rationStaleness (ds:1AF8) is a resident working var.
 
 
 ' --------------------------------------------------------------------------
@@ -58,24 +69,34 @@ PlainStep:                                                                ' loc_
     playerX = trialX : playerY = trialY               ' commit the move   ' asm:1509-1512
     ClassifyLocationTile                                                  ' asm:1513
 
-    stepCost = enteredLocationId / 20.0                ' ds:24EA         ' asm:1514-1519
-    food     = food - stepCost                         ' food drain      ' asm:1520-1525 '?ord (FF53)
-    terrainWear = terrainWear + stepCost                                  ' asm:1526-1531
-    stepCounter = stepCounter + 1                                         ' asm:1532-1537
+    stepCost   = enteredLocationId / 20.0             ' ds:24EA = 20     ' asm:1514-1519
+    fatigue    = fatigue  <FF53> stepCost   ' ds:1ACE ; FF53 op          ' asm:1520-1525
+    terrainWear = terrainWear + stepCost              ' ds:1AF4          ' asm:1526-1531
+    rationStaleness = rationStaleness + 1.0           ' ds:1AF8 += 1     ' asm:1532-1537
+    '   ^ THE FOOD CLOCK.  +1 EVERY step (NOT scaled by terrain, NOT a
+    '     decrement).  Rises from ~18 (new game) toward 500.  buyFood /
+    '     "you gain N days of food" call AddFoodDays which knocks it back
+    '     down toward 0 (fresh rations).
 
-    workIntHi = -9                                     ' ds:1F06         ' asm:1538
-    IF rollWindow < 1 THEN EXIT SUB                                       ' asm:1539-1545
-    rollWindow = rollWindow - 1                                           ' asm:1549
+    workIntHi = -9                                    ' ds:1F06          ' asm:1538
+    IF sickWindow < 1 THEN EXIT SUB                   ' ds:2184          ' asm:1539-1545
+    sickWindow = sickWindow - 1                                          ' asm:1549
+    '   ^ sickWindow: only checked when >= 1 ; armed to 10 by
+    '     CreatureDefeated ("YOU GAIN N DAYS OF FOOD"), 0 elsewhere ->
+    '     a food-poisoning check fires ~10 steps after each fight.
 
-    ' ---- sickness roll (food poisoning from "flesh for food") ------
-    '   sick unless ( RND(1) < ds:2186 )  OR  ( stepCounter < 500 )
-    IF RND(1) >= ds2186 AND stepCounter >= 500.0 THEN     ' ds:2552 = 500 ' asm:1550-1578 '??
-        PRINT "YOU GROW SICK FROM SOMETHING YOU ATE!"                     ' asm:1586-1607
-        sickDmg  = INT( hitPoints / (3.0 * (RND(1) + 1.0)) )  ' ds:2584   ' asm:1608-1622
-        hitPoints = hitPoints - sickDmg                                   ' asm:1623
-        rollWindow = 0                                                    ' asm:1624
-        PRINT "HIT POINTS: -"; sickDmg                                    ' asm:1625-1640
-        Delay 3 : Tone 600 : StageSfx_Bump                                ' asm:1641-1649
+    ' ---- food-poisoning roll -----------------------------------------
+    '   SICK when  ( rationStaleness >= 500 )  AND  ( RND(1) <= poisonP )
+    IF rationStaleness >= 500.0 AND RND(1) <= poisonP THEN   ' ds:2552=500 ; ds:2186 ' asm:1550-1636
+        '  poisonP (ds:2186) = 0.03 if the last kill's reward code > 63,
+        '     else 0.005  (set by CreatureDefeated ; ds:2F00/2F04/2F08 =
+        '     0.005 / 0.03 / 0.01)
+        PRINT "YOU GROW SICK FROM SOMETHING YOU ATE!"                    ' asm:1643-1670
+        sickDmg  = INT( hitPoints / (3.0 * (RND(1) + 1.0)) ) ' ds:2584=3 ' asm:1672-1691
+        '   -> loses 1/6 .. 1/3 of CURRENT hit points
+        hitPoints = hitPoints - sickDmg                                  ' asm:1694
+        sickWindow = 0                                                   ' asm:1695
+        PRINT "HIT POINTS: -"; sickDmg                                   ' asm:1696-1704
     END IF
     EXIT SUB
 
