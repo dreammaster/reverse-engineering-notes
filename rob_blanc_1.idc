@@ -50321,6 +50321,7 @@ static Bytes_8(void) {
 	op_hex		(x,	1);
 	make_array	(0X430ECE,	0X2);
 	create_insn	(0X430ED0);
+	set_name	(0X430ED0,	"insert");
 	create_insn	(x=0X430ED3);
 	op_hex		(x,	1);
 	create_insn	(x=0X430ED7);
@@ -50447,6 +50448,7 @@ static Bytes_8(void) {
 	create_insn	(x=0X4310D5);
 	op_stkvar	(x,	1);
 	create_insn	(0X4310DD);
+	set_name	(0X4310DD,	"_delete");
 	create_insn	(x=0X4310E2);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4310F6);
@@ -52316,10 +52318,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432F83);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X432F89);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X432F90);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52329,6 +52327,10 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X432F89);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X432F90);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X432F99);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X432FA7);
@@ -58241,11 +58243,6 @@ static Bytes_9(void) {
 	create_insn	(x=0X439302);
 	op_hex		(x,	1);
 	make_array	(0X439306,	0XA);
-	create_insn	(0X439310);
-	create_insn	(x=0X439313);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X439318);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58255,6 +58252,11 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(0X439310);
+	create_insn	(x=0X439313);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X439318);
+	op_hex		(x,	1);
 	create_insn	(x=0X439321);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439325);
@@ -63953,10 +63955,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F1AE);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F1B4);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F1C5);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -63966,6 +63964,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F1B4);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F1C5);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F1CB);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F1CF);
@@ -70004,9 +70006,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X446433);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X446439);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -70016,6 +70015,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446439);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X446448);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -76192,7 +76194,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E54A);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(0X44E559);
 }
 
 //------------------------------------------------------------------------
@@ -76202,6 +76203,7 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(0X44E559);
 	create_insn	(x=0X44E55F);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81469,7 +81471,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X45667B);
 	op_hex		(x,	1);
 	make_array	(0X456688,	0X8);
-	create_insn	(0X456690);
 }
 
 //------------------------------------------------------------------------
@@ -81479,6 +81480,7 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(0X456690);
 	create_insn	(x=0X456691);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X456696);
@@ -87642,8 +87644,6 @@ static Bytes_14(void) {
 	create_insn	(x=0X462FBC);
 	op_stkvar	(x,	0);
 	create_insn	(0X462FDC);
-	create_insn	(x=0X462FE2);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87653,6 +87653,8 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X462FE2);
+	op_hex		(x,	1);
 	create_insn	(0X463003);
 	create_insn	(x=0X463009);
 	op_hex		(x,	1);
@@ -93460,8 +93462,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46B8E8);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X46B8EC);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -93471,6 +93471,8 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46B8EC);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X46B90D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X46B911);
@@ -99423,8 +99425,6 @@ static Bytes_16(void) {
 	create_insn	(x=0X473A3A);
 	op_hex		(x,	1);
 	make_array	(0X473A8C,	0X4);
-	create_insn	(0X473A90);
-	create_insn	(0X473AB1);
 }
 
 //------------------------------------------------------------------------
@@ -99434,6 +99434,8 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(0X473A90);
+	create_insn	(0X473AB1);
 	make_array	(0X473ACC,	0X4);
 	create_insn	(0X473AD0);
 	create_insn	(x=0X473AD6);
@@ -105220,8 +105222,6 @@ static Bytes_17(void) {
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
 	set_cmt	(0X47AEE6,	"Block",	0);
-	create_insn	(x=0X47AEEC);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -105231,6 +105231,8 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47AEEC);
+	op_hex		(x,	1);
 	create_insn	(x=0X47AEF5);
 	op_hex		(x,	1);
 	create_insn	(0X47AEF9);
@@ -159300,9 +159302,11 @@ static Functions_9(void) {
 	set_frame_size(0X430EC0, 0, 4, 0);
 	add_func    (0X430ED0,0X4310DD);
 	set_func_flags(0X430ED0,0x5410);
+	set_func_cmt(0X430ED0,	"[reversing] confirmed match\nsource: Common/lzw.cpp\nconfidence: medium-high\nevidence: int insert(int i,int run) (lzw.cpp:49-85) -- lzwcompress's own binary-tree node-insertion/longest-match-search helper, genuinely AGS-owned code. Identified at the signature/call-order level: exactly 2 parameters, matching `insert(int i,int run)`'s shape; called from the newly-matched lzwcompress (sub_4312CE) at the single call site source's own `match=insert(i,run);` predicts, positioned after both `_delete` calls in program order exactly as source's own sequential flow dictates. Not traced instruction-by-instruction -- the same well-known, unremarkable LZSS matching algorithm, zero ScummVM relevance, matching this project's own treatment of lzwcompress/_delete.", 1);
 	set_frame_size(0X430ED0, 0X24, 4, 0);
 	add_func    (0X4310DD,0X4312CE);
 	set_func_flags(0X4310DD,0x5410);
+	set_func_cmt(0X4310DD,	"[reversing] confirmed match\nsource: Common/lzw.cpp\nconfidence: medium-high\nevidence: void _delete(int z) (lzw.cpp:87-...) -- lzwcompress's own binary-tree node-removal helper, genuinely AGS-owned code (Common/lzw.cpp). Identified at the signature/call-order level: exactly 1 parameter, matching `_delete(int z)`'s single-argument shape; called from the newly-matched lzwcompress (sub_4312CE) at both of its own two call sites in the exact order source's `if(i>=N-F) _delete(i+F-N); else _delete(i+F);` predicts; and its own opening dereference (`dword_53585C[z*4+4]`) targets the same working-buffer region lzwcompress's own header already established (the malloc'd combined lzbuffer+node/dad/lson/rson arrays). Not traced instruction-by-instruction -- this is a well-known, unremarkable LZSS binary-tree removal algorithm whose exact internal mechanics have zero bearing on a ScummVM port (which would replace the whole compression scheme wholesale), matching this project's own treatment of lzwcompress itself.", 1);
 	set_frame_size(0X4310DD, 0X8, 4, 0);
 	add_func    (0X4312CE,0X43160D);
 	set_func_flags(0X4312CE,0x5410);
@@ -159583,6 +159587,10 @@ static Functions_9(void) {
 	SetType(0X434480, "int __usercall cd_get_tracks@<eax>(char@<cl>, int, int);");
 	set_func_cmt(0X434480,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_get_tracks(int *first, int *last) at libcdaWin.C:152-165. Exact match: command(\"status cdaudio number of tracks\") -> if err return -1; i=atoi(ret); if(first)*first=1; if(last)*last=i; return (i)?0:-1 -- the final \"(i)?0:-1\" compiles to a distinctive neg/sbb/neg/dec bit-trick sequence that matches exactly. CODE XREF: CDAudio+8C.", 1);
 	set_frame_size(0X434480, 0X4, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4344D5,0X43450B);
 	set_func_flags(0X4344D5,0x5410);
 	set_func_cmt(0X4344D5,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: int cd_is_audio(int track) at libcdaWin.C:168-173: \"command(\\\"status cdaudio type track %u\\\",track); if(err) return -1; return strcmp(ret,\\\"audio\\\")==0;\". Exact match: command() with matched string aStatusCdaudioT, then strcmp against matched string aAudio/\"audio\", with a neg/sbb/inc bit-trick computing the boolean result. Newly received an IDA function boundary (previously bodiless raw code right after cd_get_tracks).", 1);
@@ -159599,10 +159607,6 @@ static Functions_9(void) {
 	set_func_flags(0X434533,0x5410);
 	set_func_cmt(0X434533,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_eject(void) at libcdaWin.C:188-192: \"command(\\\"set cdaudio door open\\\"); paused=0;\". Exact match. CODE XREF: CDAudio+AD.", 1);
 	set_frame_size(0X434533, 0, 4, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X43454F,0X43456B);
 	set_func_flags(0X43454F,0x5410);
 	set_func_cmt(0X43454F,	"[reversing] confirmed match\nsource: Engine/libsrc/libcda-0.4/libcdaWin.C\nconfidence: high\nevidence: void cd_close(void) at libcdaWin.C:195-198: \"command(\\\"set cdaudio door closed\\\"); paused=0;\". Exact match. CODE XREF: CDAudio+BA.", 1);
@@ -160759,6 +160763,10 @@ static Functions_10(void) {
 	set_func_flags(0X44E120,0x5400);
 	set_func_cmt(0X44E120,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mixer.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:mixer.obj", 1);
 	set_frame_size(0X44E120, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X44E130,0X44E38A);
 	set_func_flags(0X44E130,0x15400);
 	set_frame_size(0X44E130, 0X14, 0, 0);
@@ -160834,10 +160842,6 @@ static Functions_10(void) {
 	add_func    (0X451A40,0X451AAB);
 	set_func_flags(0X451A40,0x5400);
 	set_frame_size(0X451A40, 0XC, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X451AB0,0X451AC6);
 	set_func_flags(0X451AB0,0x5400);
 	set_frame_size(0X451AB0, 0, 0, 0);
@@ -162715,6 +162719,10 @@ static Functions_11(void) {
 	set_func_flags(0X47B4E0,0x5400);
 	set_func_cmt(0X47B4E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
 	set_frame_size(0X47B4E0, 0X4, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X47B540,0X47B5A5);
 	set_func_flags(0X47B540,0x5400);
 	set_frame_size(0X47B540, 0XC, 0, 0);
@@ -162741,10 +162749,6 @@ static Functions_11(void) {
 	set_func_flags(0X47C360,0x5400);
 	set_func_cmt(0X47C360,	"[reversing] confirmed match\nconfidence: medium\nevidence: JGMOD library, format check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", reads 4 bytes and compares against an unidentified 4-byte binary constant (unk_4C3FA0, bytes C1 83 2A 9E, NOT printable ASCII -- IDENTICAL to a constant checked first in sub_47D400, see its own entry) before falling back to a byte-by-byte sliding-window scan for the matched string \"Extended Module: \" (aExtendedModule) -- an XM-format-adjacent check, structurally different from sub_47C4C0's simple fixed-offset XM check (this one scans for the signature at a non-fixed position within the first several bytes rather than a single fixed read). The fact that the SAME leading 4-byte constant appears in both this function AND sub_47D400 (which does an equivalent sliding-window scan for \"IMPM\"/IT instead) strongly suggests both are instances of a shared, generic JGMOD-internal helper pattern (a common \"packed/wrapped module\" pre-check applied identically be" "fore several different format-specific text scan", 1);
 	set_frame_size(0X47C360, 0X24, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X47C4C0,0X47C51A);
 	set_func_flags(0X47C4C0,0x5400);
 	set_func_cmt(0X47C4C0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-5 (XM) check in the load_mod (already matched) cascade -- opens the file \"rb\", reads 17 (0x11) bytes, compares against the matched string \"Extended Module: \" (aExtendedModule_0), the standard FastTracker II Extended Module (.xm) file magic signature at a fixed leading offset. Already referenced in load_mod's own evidence text (\"sub_47C4C0(check)/sub_47C520(load) for XM\") but had no dedicated entry of its own until now -- the same 'documented in prose, never given its own record' gap already found and fixed for several other functions this session. Structurally the simplest of the two XM-adjacent checks in this cascade (contrast sub_47D400, which does a sliding-window scan for this same string after first checking an unidentified leading 4-byte constant). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against -- see reversing/notes/third-party-library-identification.md.", 1);
@@ -165108,6 +165112,10 @@ static Functions_12(void) {
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X8]", "ElementSize");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0XC]", "ElementCount");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X10]", "Stream");
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4AAF5A,0X4AAF60);
 	set_func_flags(0X4AAF5A,0x5480);
 	SetType(0X4AAF5A, "int __cdecl fseek(FILE *Stream, int Offset, int Origin);");
@@ -165146,10 +165154,6 @@ static Functions_12(void) {
 	set_frame_size(0X4AAF72, 0, 0, 0);
 	define_local_var(0X4AAF72, 0X4AAF78, "[bp+0X4]", "Destination");
 	define_local_var(0X4AAF72, 0X4AAF78, "[bp+0X8]", "Source");
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4AAF78,0X4AAF7E);
 	set_func_flags(0X4AAF78,0x5480);
 	SetType(0X4AAF78, "void __cdecl free(void *Block);");

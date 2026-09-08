@@ -3685,14 +3685,14 @@
   "is_named": false
  },
  {
-  "name": "sub_430ED0",
+  "name": "insert",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4310DD",
+  "name": "_delete",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "lzwcompress",

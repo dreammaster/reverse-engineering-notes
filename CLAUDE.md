@@ -4029,6 +4029,12 @@ disassembly work.
   at the top-left corner only — predating the tiled-background-image
   feature for custom text-window GUIs entirely. `get_but_pic` is a
   zero-drift match; `do_corner` is missing a NULL-sprite fallback.
+- **`_delete`/`insert` close `lzwcompress`'s own two remaining
+  callees** (its binary-tree node-removal/insertion-and-longest-match-
+  search helpers), identified at the signature/call-order level —
+  1 and 2 parameters respectively, called in precisely the order
+  source predicts — but not traced instruction-by-instruction, per
+  this project's own established treatment of `lzwcompress` itself.
 
 ## Third-party library identification (Task #10)
 

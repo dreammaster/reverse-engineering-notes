@@ -7673,5 +7673,23 @@
     "source_line": 12430,
     "confidence": "high",
     "evidence": "void draw_button_background(int xx1,int yy1,int xx2,int yy2,GUIMain*iep) (AC.CPP:12430-12483) -- the tiled-border text-window/GUI-background drawing routine, closing with two real confirmed drifts. The `iep==NULL` (standard window) branch matches almost exactly: `rectfill(abuf,xx1,yy1,xx2,yy2,get_col8_lookup(15));` matches the disassembly's own rectfill+get_col8_lookup(0xF) call exactly, but the outline step (`rect(abuf,xx1,yy1,xx2,yy2,get_col8_lookup(16));` in source, using Allegro's own `rect()` API) is instead done via the already-matched `wrectangle` (AGS's own currentcolor-based outline wrapper) here -- a real, confirmed implementation difference, not just an inlining artifact, since `wrectangle` has its own distinct already-established identity. The `iep!=NULL` branch's `bgcol`-fill step matches exactly (`GUIMain.bgcol`@+0x48 sign-check and conditional wsetcolor, `GUIMain.bgpic`@+0x4C>0 gate before drawing). SECOND REAL DRIFT, more substantial: source's own background-picture step is a genuine TILING loop (nested `while` loops covering the whole area with `spriteset[iep->bgpic]` repeated copies, offset by half a sprite's dimensions, inside a `set_clip`-bounded region) -- this build's version does a SINGLE `wputblock` call at the top-left corner only, with no loop, no `set_clip` call, and no offset-by-half math at all -- this build predates the tiled-background-image feature for custom text-window GUIs entirely, drawing the picture only once. The remaining corner-tiling loops (calling the newly-matched get_but_pic/do_corner for all 8 border positions) match source's own loop structure and call pattern exactly. Called from draw_text_window (already matched) at both of its own call sites, matching source's own two call sites (the NULL-iep standard-window case and the GUI-based custom-textwindow case) exactly."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4310DD",
+    "new_name": "_delete",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 87,
+    "confidence": "medium-high",
+    "evidence": "void _delete(int z) (lzw.cpp:87-...) -- lzwcompress's own binary-tree node-removal helper, genuinely AGS-owned code (Common/lzw.cpp). Identified at the signature/call-order level: exactly 1 parameter, matching `_delete(int z)`'s single-argument shape; called from the newly-matched lzwcompress (sub_4312CE) at both of its own two call sites in the exact order source's `if(i>=N-F) _delete(i+F-N); else _delete(i+F);` predicts; and its own opening dereference (`dword_53585C[z*4+4]`) targets the same working-buffer region lzwcompress's own header already established (the malloc'd combined lzbuffer+node/dad/lson/rson arrays). Not traced instruction-by-instruction -- this is a well-known, unremarkable LZSS binary-tree removal algorithm whose exact internal mechanics have zero bearing on a ScummVM port (which would replace the whole compression scheme wholesale), matching this project's own treatment of lzwcompress itself."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_430ED0",
+    "new_name": "insert",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 49,
+    "confidence": "medium-high",
+    "evidence": "int insert(int i,int run) (lzw.cpp:49-85) -- lzwcompress's own binary-tree node-insertion/longest-match-search helper, genuinely AGS-owned code. Identified at the signature/call-order level: exactly 2 parameters, matching `insert(int i,int run)`'s shape; called from the newly-matched lzwcompress (sub_4312CE) at the single call site source's own `match=insert(i,run);` predicts, positioned after both `_delete` calls in program order exactly as source's own sequential flow dictates. Not traced instruction-by-instruction -- the same well-known, unremarkable LZSS matching algorithm, zero ScummVM relevance, matching this project's own treatment of lzwcompress/_delete."
   }
 ]

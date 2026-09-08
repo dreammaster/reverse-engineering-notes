@@ -13823,3 +13823,19 @@ loop, no `set_clip`, and no offset math at all -- predating the tiled-
 background-image feature for custom text-window GUIs entirely. The
 remaining corner-tiling loops (calling `get_but_pic`/`do_corner` for
 all 8 border positions) match source's own loop structure exactly.
+
+### `_delete`/`insert` close `lzwcompress`'s own two remaining callees
+
+The newly-matched `lzwcompress` (from an earlier round) unlocked two
+more genuinely AGS-owned leads: its own binary-tree node-removal/
+insertion-and-longest-match-search helpers, `_delete(int z)`/`int
+insert(int i,int run)` (`Common/lzw.cpp:87`/`49`). Both identified at
+the signature/call-order level -- 1 and 2 parameters respectively,
+matching each declared signature exactly, called from `lzwcompress`
+in precisely the order source's own `_delete`/`_delete`/`insert`
+sequence predicts -- but not traced instruction-by-instruction,
+matching this project's own established treatment of `lzwcompress`
+itself: a well-known, unremarkable LZSS binary-tree matching
+algorithm with zero bearing on a ScummVM port, which would replace
+the whole compression scheme wholesale regardless of these internals'
+exact behavior.
