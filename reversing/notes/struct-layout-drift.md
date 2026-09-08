@@ -13739,3 +13739,18 @@ into the real exported function), the same "compiler produced more
 than one copy of a small macro-expanded routine" situation already
 seen for `acquire_bitmap`/`release_bitmap` themselves, just with a real
 naming clash this time instead of a clean first occupation.
+
+### `invscreen` closes the loop between `InventoryScreen`'s write side
+### and `__actual_invscreen`'s core logic
+
+`sub_41FEA9`, called from `post_script_cleanup` (already matched)
+exactly where it checks its own dedicated invscreen-request flag,
+closes as a complete, exact, zero-drift match to `int invscreen()`
+(`AC.CPP:24092-24099`): calls the already-matched `__actual_
+invscreen()`, early-returns -1 on a negative result, else writes the
+result into `playerchar->activeinv`, sets `guis_need_update=1`, and
+calls the already-matched `SetCursorMode` with the literal `4`(`MODE_
+USE`). This is the deferred execution `InventoryScreen()`/`sc_
+invscreen()`'s own request-flag write (already matched from the
+opposite direction) was waiting for -- a clean, complete round-trip
+for this whole small subsystem.

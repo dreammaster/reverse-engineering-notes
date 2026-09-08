@@ -7610,5 +7610,14 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "clear_to_color(bmp,color) -- Allegro's public macro, compiled here into its own shared subroutine (the same treatment already found for acquire_bitmap/release_bitmap). Called from the already-matched `clear` (itself the compiled `clear(bmp)` macro, which per Allegro's own header is literally `#define clear(bmp) clear_to_color(bmp,0)` -- matching this function's own single caller passing a hardcoded 0). Dispatches through vtable slot +0x9C. Counting GFX_VTABLE's own declared field order from `color_depth` puts `clear_to_color` at slot index 40 (offset 0xA0) in the 4.2.2 reference -- but this build's own vtable is already established (via draw_lit_sprite's own corrected entry) to be missing the `draw_trans_rgba_sprite` slot entirely (an older Allegro predating that method), which shifts every subsequent slot back by one position/4 bytes -- landing `clear_to_color` at index 39/offset 0x9C exactly, matching the disassembly with zero remaining slack once the already-known vtable shift is accounted for. NAMING NOTE: a genuine, separate, mechanically-matched linker-symbol 'clear_to_color' already exists elsewhere in the IDB (obj=alleg_s_crt:gfx.obj, the real compiled library function) -- this is evidently a SECOND, independent compiled instance of the same conceptual operation (the vtable-dispatch macro-expansion path, not a call into the real exported function), so this one is disambiguated as clear_to_color_2 rather than colliding with the existing name. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_41FEA9",
+    "new_name": "invscreen",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 24092,
+    "confidence": "high",
+    "evidence": "int invscreen() { int selt=__actual_invscreen(); if(selt<0) return -1; playerchar->activeinv=selt; guis_need_update=1; set_cursor_mode(MODE_USE); return selt; } (AC.CPP:24092-24099) -- a complete, exact, zero-drift match. Calls the already-matched __actual_invscreen(), early-returns -1 on a negative result, else writes the result into playerchar->activeinv (+0x34, already established), sets guis_need_update=1, and calls the already-matched SetCursorMode with the literal 4 (MODE_USE). Called from post_script_cleanup (already matched) exactly where it checks its own dedicated invscreen-request flag (+0x08, already documented from the read side on post_script_cleanup's own entry) -- this is the deferred execution this build's InventoryScreen()/sc_invscreen() request flag was waiting for, distinct from (but calling) __actual_invscreen() itself. Closes the loop between InventoryScreen's already-matched WRITE side and __actual_invscreen's already-matched core logic."
   }
 ]

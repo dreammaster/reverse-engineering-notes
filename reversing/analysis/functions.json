@@ -2355,9 +2355,9 @@
   "is_named": true
  },
  {
-  "name": "sub_41FEA9",
+  "name": "invscreen",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "InventoryScreen",

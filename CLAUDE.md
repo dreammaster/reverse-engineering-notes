@@ -4001,6 +4001,12 @@ disassembly work.
   resolve (built for the string-literal case) couldn't handle a second
   FUNCTION collision and failed loudly rather than silently, so this
   instance was disambiguated as `clear_to_color_2`.
+- **`invscreen` closes the loop between `InventoryScreen`'s write side
+  and `__actual_invscreen`'s core logic.** Called from `post_script_
+  cleanup` exactly where it checks its own dedicated invscreen-request
+  flag, matching `AC.CPP:24092-24099` with zero drift — the deferred
+  execution `InventoryScreen()`/`sc_invscreen()`'s own request-flag
+  write was waiting for.
 
 ## Third-party library identification (Task #10)
 
