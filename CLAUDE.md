@@ -3946,6 +3946,17 @@ disassembly work.
   confirmation route for every field of the already-fully-confirmed
   `EventBlock` struct, landing exactly on its known 0x94-byte total
   size with zero remaining slack).
+- **A callgraph-ranking-script bug caught and fixed, plus
+  `acquire_bitmap`/`release_bitmap` named.** The sweep's own caller-
+  detection regex was matching `call sub_X` inside COMMENT text (quoted
+  disassembly fragments in `matches.json`'s own evidence strings), not
+  just real code — fixed by restricting the scan to each line's CODE
+  portion. No prior match was invalidated (every identification was
+  independently verified against the real disassembly), but some
+  caller counts were inflated. With the fix in place, `acquire_bitmap`/
+  `release_bitmap` (Allegro's own macros, compiled into shared
+  subroutines, called from `FadeOut`) close with zero drift via their
+  `GFX_VTABLE` `acquire`(+0x10)/`release`(+0x14) slot dispatch.
 
 ## Third-party library identification (Task #10)
 

@@ -2830,14 +2830,14 @@
   "is_named": false
  },
  {
-  "name": "sub_425250",
+  "name": "acquire_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_425280",
+  "name": "release_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4252B0",

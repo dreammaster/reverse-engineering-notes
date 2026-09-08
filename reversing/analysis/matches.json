@@ -7475,5 +7475,25 @@
     "source_line": 1578,
     "confidence": "high",
     "evidence": "void add_to_eventblock(EventBlock*evpt,int evnt,int whatac,int val1,int data,short scorr) (acroom.h:1578-1585) -- a complete, exact, zero-drift match, and a valuable new field-confirmation round for the already-established EventBlock struct (total size 0x94/148 bytes, previously confirmed via RoomStatus/RoomStruct's own hscond/objcond/misccond arrays). `evpt->list[evpt->numcmd]=evnt;` matches `[this+numcmd*4]=arg_4` exactly, confirming `list[]`@+0x00. `evpt->respond[evpt->numcmd]=whatac;` matches `[this+numcmd*4+0x20]=arg_8`, confirming `respond[]`@+0x20 (already independently established via run_event_block's own respond[i] dispatch -- a further confirmation). `evpt->respondval[evpt->numcmd]=val1;` matches `[this+numcmd*4+0x40]=arg_C`, confirming `respondval[]`@+0x40. `evpt->data[evpt->numcmd]=data;` matches `[this+numcmd*4+0x60]=arg_10`, confirming `data[]`@+0x60. `evpt->score[evpt->numcmd]=scorr;` matches `[this+numcmd*2+0x84]=arg_14` (a 2-byte stride, matching the `short scorr` parameter type), confirming `score[]`@+0x84 -- and closing the struct with ZERO remaining slack: 0x84 + 8*2(score[8], matching the other four arrays' shared 8-element capacity, since each of their own 0x20-byte spans holds 8 dwords) = 0x94, landing exactly on EventBlock's own already-confirmed total size. `evpt->numcmd++;` matches the final `[this+0x80]+=1`, confirming `numcmd`@+0x80. Called repeatedly from load_main_block (already matched), once per action-editor command being converted into the modern EventBlock format."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425250",
+    "new_name": "acquire_bitmap",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 160,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "acquire_bitmap(bmp) -- Allegro's public macro (`if((bmp)->vtable->acquire) (bmp)->vtable->acquire(bmp);`), compiled here into its own shared subroutine rather than inlined at each call site. Matches exactly: reads `bmp+0x1C`(vtable pointer, already established) then dispatches through slot `+0x10` if non-null -- GFX_VTABLE's own declared field order (`color_depth`,`mask_color`,`unwrite_bank`,`set_clip`,`acquire`) places `acquire` at exactly offset 0x10 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425280",
+    "new_name": "release_bitmap",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 161,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "release_bitmap(bmp) -- Allegro's public macro, `acquire_bitmap`'s exact mirror-image sibling (same compiled-subroutine treatment). Matches exactly, dispatching through vtable slot `+0x14` -- GFX_VTABLE's own declared `release` field, immediately after `acquire`, at exactly offset 0x14 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

@@ -13552,3 +13552,42 @@ modern format) for every field of the already-fully-confirmed
 closing the struct with zero remaining slack against its already-
 confirmed 0x94-byte total size. Called repeatedly from `load_main_block`,
 once per action-editor command being converted.
+
+### `acquire_bitmap`/`release_bitmap` named, and a ranking-script bug
+### caught and fixed along the way
+
+While re-running the callgraph-ranking sweep, a real methodology bug
+surfaced: the sweep's own caller-detection regex was scanning entire
+`.asm` LINES for `call sub_XXXXXX`, including inside COMMENT text --
+and since `matches.json`'s own evidence text (copied verbatim into
+`.asm` comments by `apply_matches.py`) routinely quotes disassembly
+fragments like "`call sub_401570`" when describing an OLDER, already-
+corrected identification, those quoted fragments were being counted as
+real callers. Fixed by restricting the scan to the CODE portion of each
+line (everything before the first `;`). This did not invalidate any
+actual match made this session -- every identification was independently
+verified by reading the real disassembly body, never by trusting the
+ranking alone -- but it did produce a few inflated "3 callers" rankings
+that turned out to have only 1 real caller on closer inspection (`sub_
+401895`, revisited below).
+
+With the fix in place, `sub_425250`/`sub_425280` (both called from
+`FadeOut`, already matched) close as Allegro's own `acquire_bitmap`/
+`release_bitmap` macros, compiled into shared subroutines rather than
+inlined at each call site. Both match with zero drift: a vtable-slot
+dispatch through `GFX_VTABLE`'s own declared `acquire`(+0x10)/`release`
+(+0x14) fields, guarded by a null-slot check.
+
+**`sub_401895` revisited**: the corrected ranking still shows it with 3
+real callers after all (`wgettextwidth`/`wgettextheight`/`wouttextxy`,
+plus `wtextcolor`/`sub_401AAC` not counted by the keyword filter) --
+IDA's own `.asm` export had simply TRUNCATED its CODE XREF comment to
+one entry with a trailing "..." that was easy to miss on a first read.
+Its actual body (`memcpy(&global,arg_0+4,4); return global;`) extracts
+the SECOND field of a per-font tagged-metadata entry (the same `dword_
+4F7424[fontnum]`-style array `EnsureTextValidForFont` already uses,
+gated by the same `'T'`-tag-byte check at +0) -- plausibly this build's
+flat, non-virtual stand-in for "get the underlying font-data pointer"
+in the absence of any `FontRenderer` class hierarchy. Not fully chased
+to a name this round -- the call chain it feeds into (`sub_48AF50` and
+beyond) would need further reading first.
