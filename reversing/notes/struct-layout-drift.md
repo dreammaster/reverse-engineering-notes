@@ -13456,3 +13456,50 @@ already-referenced `virt_voice[]` array's `sample` field at +0x00; and
 a newly-identified `deallocate_voice`, called with the exact single-
 voice-index argument shape). All four recorded at the identification
 level only, not chased into further internals.
+
+### A fresh `build_leads.py` re-run surfaces two more genuinely AGS-
+### side leads, one a real ancestor-format sprite-file writer
+
+Re-checking `leads.json` for still-unmatched functions whose ONLY
+candidate files are `Engine/`/`Common/` (rather than third-party
+library trees) turned up two worthwhile targets.
+
+**`sub_401570`** (matched via the string " Sprite File ") is a genuine
+sprite-file WRITER, but NOT `SpriteCache::saveToFile` -- the parameter
+shape is fundamentally different: 6 raw arguments (palette, filename,
+an `images[]`-style array, a last-element count, a total-elements
+count, a per-sprite compression-flags array) rather than a C++ `this`-
+bound 3-argument method. Writes a literal VERSION 4 (not source's
+version 6 -- a genuine format-version drift, consistent with
+`SpriteCache::initFile`'s own already-confirmed 4-6 acceptance range),
+the matched " Sprite File " signature, a 256-entry RGB palette dump, a
+lastslot scan, and per-sprite writes with a compression-type byte. Not
+traced to completion given its size and the significant parameter-
+shape mismatch against any single 2011 declaration -- left unnamed.
+Notably reached via an intermediate wrapper with NO formal IDA function
+boundary of its own (pushes 5 arguments plus a hardcoded literal 0 for
+a 6th, then calls straight through) -- the same "orphaned code between
+two named functions" pattern already found once before for `GUIMain::
+init`'s own equivalent block.
+
+**`sub_4312CE`** turned out, on closer inspection, to be `lzwcompress`
+(`Common/lzw.cpp:119-...`) -- `lzwexpand`'s write-side sibling, genuinely
+AGS-owned code. Confirmed at a decisive structural level: a single
+large working-buffer malloc with an out-of-memory printf+exit(3) path
+(mirroring `lzwexpand`'s own already-confirmed printf+exit(4) drift),
+then two hash-table-initialization loops (256 and 4096 entries, both
+set to -1/NIL) matching source's `root[]`/`dad[]` array setup exactly.
+Not traced past the header/setup level -- the well-known LZSS binary-
+tree match-finding algorithm it implements wasn't re-verified
+instruction by instruction. Also reached via the same kind of orphaned,
+boundary-less wrapper code as `sub_401570` above -- whether this
+compression path is genuinely reachable from any live game-engine code
+path (as opposed to linked-in-but-dead editor/tool code) was not
+established.
+
+**Bonus, found while reading `sub_4312CE`'s neighbor**: `sub_43160D` is
+`myputc` (`lzw.cpp:195-209`, source's own `#define putc myputc`
+redirection target used throughout `lzwexpand`'s body) -- a clean,
+decisive capstone confirmation reusing every global this project
+already established from the `load_lzw`/`lzwexpand_to_mem` round
+(`maxsize`/`putbytes`/`outbytes`/`expand_to_mem`).

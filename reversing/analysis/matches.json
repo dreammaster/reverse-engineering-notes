@@ -7412,5 +7412,32 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "int voice_get_position(int voice) (sound.c:1562-1569) -- Allegro's public API. Matches exactly: `if(virt_voice[voice].num>=0) return digi_driver->get_position(virt_voice[voice].num); else return -1;` -- the disassembly reads `virt_voice[voice].num`@+0x04 (dword_550044, 20-byte stride matching the already-established virt_voice[] array), tests negative (matches ASSERT-guarded `<0` check yielding -1), else calls a vtable dispatch through `off_4BD554`(newly identified as `digi_driver`) at slot +0x50 (`get_position`). Called from IsMusicPlaying (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401570",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "evidence": "A standalone (non-member-function) sprite-file WRITER, a genuine ancestor of SpriteCache::saveToFile (Common/sprcache.cpp:466-...) but NOT the same function -- the parameter shape is fundamentally different: 6 raw arguments (palette, filename, images[]-array, lastElement, elements-count, a per-sprite compression-flags array) rather than a C++ `this`-bound 3-argument method. Opens the file via the already-matched clibfopen (\"wb\" mode), writes a literal VERSION 4 (not source's version 6 -- a genuine format-version drift, this build's writer predates whatever added versions 5/6, consistent with SpriteCache::initFile's own already-confirmed acceptance range of vers 4-6), the matched \" Sprite File \" signature string (aSpriteFile), then a 256-entry RGB palette dump (3 bytes each, matching source's own leading palette write in spirit though source's exact byte layout wasn't cross-checked), a lastslot scan (find the highest non-NULL images[] index up to the elements bound), a 16-bit lastslot write, then per-sprite writes with a compression-type byte (1=uncompressed, 2=RLE-style, gated on a per-sprite flags-array bit) for every slot up to lastslot -- not traced past this point given the function's size (~250 lines) and the significant signature mismatch against any single 2011 declaration to verify further against. Reached via an intermediate wrapper with NO formal IDA function boundary of its own (pushes 5 arguments plus a hardcoded literal 0 for the 6th, then calls this function directly) -- the same \"orphaned code between two named functions, no proc/endp\" pattern already found once before for GUIMain::init's own equivalent block. That wrapper's own caller was not traced this round. Left unnamed: no single 2011 declaration matches this function's own distinct 6-raw-argument, non-member-function shape closely enough to justify adopting saveToFile's name for it."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_43160D",
+    "new_name": "myputc",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 195,
+    "confidence": "high",
+    "evidence": "void myputc(int ccc,FILE*ooo) (lzw.cpp:195-209) -- source's own `#define putc myputc` redirection target, called from lzwexpand's body wherever it writes decompressed output (already matched, its own 2 call sites at +0x130/+0x1BA). Matches exactly, reusing every global already established by the load_lzw/lzwexpand_to_mem round: `if(maxsize>0){putbytes++; if(putbytes>maxsize) return;}` matches dword_535864(maxsize)/dword_535868(putbytes); `outbytes++;` matches dword_535860(outbytes); the `if(expand_to_mem)` branch matches dword_53586C(expand_to_mem) gating a direct-memory-write path vs. a plain fputc(ccc,ooo) call. A clean capstone confirmation for this whole LZW-decompression global cluster."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4312CE",
+    "new_name": "lzwcompress",
+    "source_file": "Common/lzw.cpp",
+    "source_line": 119,
+    "confidence": "medium-high",
+    "evidence": "void lzwcompress(FILE*f,FILE*out) (lzw.cpp:119-...) -- the LZW/LZSS binary-tree-based COMPRESSOR, genuinely part of AGS's own Common/lzw.cpp (in scope, not a third-party-library exclusion), `lzwexpand`'s write-side sibling. Confirmed at a decisive structural level: a single large malloc (0xD414 bytes, this build's own working-buffer size for its lzbuffer+node/dad/lson/rson binary-tree arrays -- source's own comment cites a different figure, \"28.5k\", plausibly computed against different N/F constants than this build uses, not reconciled exactly this round) with an out-of-memory printf+exit(3) path (mirroring lzwexpand's own already-confirmed printf+exit(4) drift, rather than going through quit()); then TWO decisive hash-table initialization loops matching source's `for(i=0;i<256;i++) root[i]=NIL;`/`for(i=NIL;i<N;i++) dad[i]=NIL;` exactly -- a 256-entry loop and a 4096(0x1000=N)-entry loop, both setting every slot to the literal -1 (NIL), at the exact offsets source's own root[]/dad[] array layout would predict within one combined buffer. Not traced past the header/setup level given the function's size (~336 lines) and the well-known, unremarkable nature of the LZSS binary-tree match-finding algorithm it implements -- the header match alone is decisive enough for identification. Reached via an intermediate wrapper with NO formal IDA function boundary of its own (the same 'orphaned code, no proc/endp' pattern already found for GUIMain::init and this session's own undocumented sprite-file-writer, sub_401570) -- whether this compression path is genuinely reachable from any live game-engine code path (as opposed to being linked-in-but-dead editor/tool code) was not established this round."
   }
 ]

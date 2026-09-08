@@ -3921,6 +3921,18 @@ disassembly work.
   `deallocate_voice`/`voice_get_position` close a small Allegro voice-
   management cluster (`scr_StopMusic`/`IsMusicPlaying`'s own remaining
   callees), all recorded at the identification level per the scope rule.
+- **A fresh `build_leads.py` re-run finds two more genuinely AGS-side
+  leads.** `sub_401570` is a real sprite-file WRITER but NOT
+  `SpriteCache::saveToFile` — a standalone 6-raw-argument function
+  writing format VERSION 4 (not source's 6), reached via another
+  boundary-less orphaned wrapper (the same pattern already found for
+  `GUIMain::init`); left unnamed given the signature mismatch.
+  `sub_4312CE` turns out to be `lzwcompress` (`lzwexpand`'s write-side
+  sibling, genuinely AGS-owned code), confirmed via its malloc size and
+  two hash-table-init loops matching `root[]`/`dad[]` exactly — not
+  traced past the header/setup level. Bonus: `sub_43160D` is `myputc`
+  (`lzw.cpp`'s own `#define putc myputc` target), a clean capstone
+  confirmation reusing every global the `load_lzw` round established.
 
 ## Third-party library identification (Task #10)
 
