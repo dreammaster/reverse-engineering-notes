@@ -13775,3 +13775,51 @@ function name" fallback pass (`sprintf(altName,"%s$",symname);
 strncmp(exports[k],altName,strlen(altName))`) has no counterpart here
 at all -- this build's version only ever does the exact-name
 comparison.
+
+### `find_word_in_dictionary` closes, confirming a genuine absent
+### plural-matching fallback
+
+A fresh keyword-filtered callgraph sweep (excluding the by-now-familiar
+DirectX/config/ALMP3 caller clusters) turned up several new, genuinely
+AGS-side leads. `sub_419506`, called from `parse_sentence` (already
+matched), closes as `int find_word_in_dictionary(char*lookfor)`
+(`AC.CPP:18013-18036`) -- the primary lookup loop matches exactly
+(`WordsDictionary`'s own already-established `num_words`/`word[]`/
+`wordnum[]` layout, zero drift), but CONFIRMED ABSENT is source's own
+trailing plural/possessive-stripping recursive fallback (retry the
+lookup with a trailing `'s'`/`'S'`/`'`` stripped) -- this build returns
+-1 immediately on a failed lookup, with no such retry at all. A real,
+confirmed later-AGS-addition absence for the text parser subsystem.
+
+### `draw_button_background`/`get_but_pic`/`do_corner` close the
+### text-window tiled-border-drawing subsystem, with two real drifts
+
+The same sweep's biggest find: `draw_text_window`'s (already matched)
+own two remaining callees close the entire GUI-border-tiling picture.
+
+`get_but_pic` (`sub_412E50`) is a complete, exact, zero-drift match to
+`AC.CPP:12419-12421` -- a one-line `guibuts[]` lookup through the
+already-established `GUIMain.objrefptr[]` array.
+
+`do_corner` (`sub_412DFB`) matches `AC.CPP:12409-12417` almost exactly,
+with one confirmed absence: source's own `if(thisone==NULL) thisone=
+spriteset[0];` NULL-fallback has no counterpart here -- this build
+passes a `SpriteCache::operator[]` lookup straight through with no
+safety net for a missing sprite slot.
+
+`draw_button_background` (`sub_412E74`) itself matches at a decisive
+structural level, with TWO real, confirmed drifts. First: the standard
+(`iep==NULL`) window's outline step uses the already-matched
+`wrectangle` (AGS's own `currentcolor`-based outline wrapper) where
+source calls Allegro's own `rect()` API directly -- a genuine
+implementation difference, not just a compiler inlining artifact,
+since `wrectangle` carries its own distinct already-established
+identity. Second, more substantial: source's custom-GUI background-
+picture step is a genuine TILING loop (nested `while` loops covering
+the whole area with repeated sprite copies, inside a `set_clip`-bounded
+region, offset by half a sprite's dimensions) -- this build's version
+does a SINGLE `wputblock` call at the top-left corner only, with no
+loop, no `set_clip`, and no offset math at all -- predating the tiled-
+background-image feature for custom text-window GUIs entirely. The
+remaining corner-tiling loops (calling `get_but_pic`/`do_corner` for
+all 8 border positions) match source's own loop structure exactly.

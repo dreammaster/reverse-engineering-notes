@@ -4015,6 +4015,20 @@ disassembly work.
   primary lookup loop matches exactly, but source's own secondary
   "mangled function name" fallback pass has no counterpart here at
   all — this build only ever does the exact-name comparison.
+- **`find_word_in_dictionary` closes**, confirming a genuine absent
+  plural-matching fallback: the primary lookup matches exactly, but
+  source's own trailing plural/possessive-stripping recursive retry
+  has no counterpart here — this build returns -1 immediately on a
+  failed lookup.
+- **`draw_button_background`/`get_but_pic`/`do_corner` close the text-
+  window tiled-border-drawing subsystem, with two real drifts.** The
+  standard window's outline step uses `wrectangle` where source calls
+  Allegro's `rect()` directly. More substantial: source's custom-GUI
+  background-picture step tiles the image across the whole area in a
+  `set_clip`-bounded loop; this build does a single `wputblock` call
+  at the top-left corner only — predating the tiled-background-image
+  feature for custom text-window GUIs entirely. `get_but_pic` is a
+  zero-drift match; `do_corner` is missing a NULL-sprite fallback.
 
 ## Third-party library identification (Task #10)
 

@@ -7637,5 +7637,41 @@
     "source_line": 1071,
     "confidence": "high",
     "evidence": "char *ccGetSymbolAddr(ccInstance*inst,char*symname) (CSRUN.CPP:1071-1085) -- a complete match on its primary lookup path, with one confirmed absence. `for(k=0;k<inst->instanceof->numexports;k++) if(strcmp(inst->instanceof->exports[k],symname)==0) return inst->exportaddr[k];` matches the disassembly exactly: loop bound `[[arg_0+0x9A4]+0x1C48]` (instanceof_->numexports, both fields already established), `strcmp(Str2,[[arg_0+0x9A4]+idx*4+0x988])` (instanceof_->exports[idx]), returning `[arg_0+idx*4+0x1C]` (this instance's own already-established exportaddr[idx]) on a match, `return NULL` if the loop completes without one. CONFIRMED ABSENT: source's own 'mangled function name' fallback (`sprintf(altName,\"%s$\",symname); strncmp(exports[k],altName,strlen(altName))`) -- this build's version only ever does the exact-name comparison, with no secondary pass at all. Called from prepare_text_script (already matched) exactly where source calls `ccGetSymbolAddr(sci,tsname[0])` (AC.CPP:3044) to check a script function exists before running it."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_419506",
+    "new_name": "find_word_in_dictionary",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 18013,
+    "confidence": "high",
+    "evidence": "int find_word_in_dictionary(char*lookfor) (AC.CPP:18013-18036) -- closes with one real, confirmed drift. The primary lookup matches exactly: `if(game.dict==NULL) return -1;` matches the disassembly's own `cmp dword_51DB08,0; jnz <continue>; or eax,-1` (dword_51DB08 already established as WordsDictionary*); `for(j=0;j<game.dict->num_words;j++) if(stricmp(lookfor,game.dict->word[j])==0) return game.dict->wordnum[j];` matches the disassembly's own loop bound `[dict+0]`(num_words), the 0x1E(30)-byte-stride word[] array access at `dict+idx*0x1E+4`, and the wordnum[] short-array return at `dict+idx*2+0xAFCC` -- all matching WordsDictionary's own already-established layout exactly. CONFIRMED ABSENT: source's own trailing plural/possessive-stripping fallback (`if(lookfor[0]!=0){ char lastletter=...; if(lastletter=='s'||lastletter=='S'||lastletter=='\\'') { ...recursive call with the 's' stripped...} }`) -- this build's version returns -1 immediately when the loop completes without a match, with no such recursive retry at all. A real, confirmed later-AGS-addition absence, not merely unfound. Called from parse_sentence (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_412E50",
+    "new_name": "get_but_pic",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 12419,
+    "confidence": "high",
+    "evidence": "int get_but_pic(GUIMain*guo,int indx) { return guibuts[guo->objrefptr[indx]&0xFFFF].pic; } (AC.CPP:12419-12421) -- a complete, exact, zero-drift match: `[iep+idx*4+0x10C]` matches the already-established `GUIMain.objrefptr[]`@+0x10C exactly, `&0xFFFF` matches exactly, `*0x84`(132, GUIButton's own already-confirmed total size) matches `sizeof(GUIButton)` exactly, indexing into the already-established `guibuts[]` global array (dword_4FB0B4). Called repeatedly from the newly-matched draw_button_background (sub_412E74, see its own entry)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_412DFB",
+    "new_name": "do_corner",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 12409,
+    "confidence": "high",
+    "evidence": "void do_corner(int sprn,int xx1,int yy1,int typx,int typy) (AC.CPP:12409-12417) -- a complete, near-exact match with one confirmed absence. `if(sprn<0) return;` matches the leading `cmp index,0; jge <continue>` exactly; `block thisone=spriteset[sprn];` matches the SpriteCache::operator[] call exactly; `put_sprite_256(xx1+typx*spritewidth[sprn],yy1+typy*spriteheight[sprn],thisone);` matches the disassembly's own coordinate computation and put_sprite_256 call exactly (both already-established spritewidth[]/spriteheight[] arrays, dword_4CD2E8/dword_4E787C). CONFIRMED ABSENT: source's own `if(thisone==NULL) thisone=spriteset[0];` NULL-fallback -- this build passes the SpriteCache lookup's result straight through with no safety net for a missing sprite slot. Called repeatedly from the newly-matched draw_button_background (sub_412E74, see its own entry), matching source's own `do_corner(get_but_pic(iep,N),...)` call pattern for all 8 border-tile positions."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_412E74",
+    "new_name": "draw_button_background",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 12430,
+    "confidence": "high",
+    "evidence": "void draw_button_background(int xx1,int yy1,int xx2,int yy2,GUIMain*iep) (AC.CPP:12430-12483) -- the tiled-border text-window/GUI-background drawing routine, closing with two real confirmed drifts. The `iep==NULL` (standard window) branch matches almost exactly: `rectfill(abuf,xx1,yy1,xx2,yy2,get_col8_lookup(15));` matches the disassembly's own rectfill+get_col8_lookup(0xF) call exactly, but the outline step (`rect(abuf,xx1,yy1,xx2,yy2,get_col8_lookup(16));` in source, using Allegro's own `rect()` API) is instead done via the already-matched `wrectangle` (AGS's own currentcolor-based outline wrapper) here -- a real, confirmed implementation difference, not just an inlining artifact, since `wrectangle` has its own distinct already-established identity. The `iep!=NULL` branch's `bgcol`-fill step matches exactly (`GUIMain.bgcol`@+0x48 sign-check and conditional wsetcolor, `GUIMain.bgpic`@+0x4C>0 gate before drawing). SECOND REAL DRIFT, more substantial: source's own background-picture step is a genuine TILING loop (nested `while` loops covering the whole area with `spriteset[iep->bgpic]` repeated copies, offset by half a sprite's dimensions, inside a `set_clip`-bounded region) -- this build's version does a SINGLE `wputblock` call at the top-left corner only, with no loop, no `set_clip` call, and no offset-by-half math at all -- this build predates the tiled-background-image feature for custom text-window GUIs entirely, drawing the picture only once. The remaining corner-tiling loops (calling the newly-matched get_but_pic/do_corner for all 8 border positions) match source's own loop structure and call pattern exactly. Called from draw_text_window (already matched) at both of its own call sites, matching source's own two call sites (the NULL-iep standard-window case and the GUI-based custom-textwindow case) exactly."
   }
 ]

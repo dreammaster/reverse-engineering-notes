@@ -1125,19 +1125,19 @@
   "is_named": true
  },
  {
-  "name": "sub_412DFB",
+  "name": "do_corner",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_412E50",
+  "name": "get_but_pic",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_412E74",
+  "name": "draw_button_background",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "break_up_text_into_lines",
@@ -1775,9 +1775,9 @@
   "is_named": true
  },
  {
-  "name": "sub_419506",
+  "name": "find_word_in_dictionary",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SaidUnknownWord",
