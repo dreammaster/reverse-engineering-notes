@@ -3370,9 +3370,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42B039",
+  "name": "ccForkInstance",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "ccFreeInstance",
@@ -3380,9 +3380,9 @@
   "is_named": true
  },
  {
-  "name": "sub_42B11D",
+  "name": "ccGetSymbolAddr",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "call_function",

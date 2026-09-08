@@ -13754,3 +13754,24 @@ USE`). This is the deferred execution `InventoryScreen()`/`sc_
 invscreen()`'s own request-flag write (already matched from the
 opposite direction) was waiting for -- a clean, complete round-trip
 for this whole small subsystem.
+
+### `ccForkInstance`/`ccGetSymbolAddr` close, revisiting a lead
+### shelved last round
+
+Returning to `prepare_text_script`'s (already matched) own two
+remaining callees, previously left unresolved: both close cleanly once
+the already-established `ccInstance.instanceof_`@+0x9A4 field is
+recognized as the key to both.
+
+`ccForkInstance` (`sub_42B039`) is a trivial, exact match to `CSRUN.
+CPP:1037-1040` -- `return ccCreateInstanceEx(instoff->instanceof,
+instoff);` matches the disassembly's own two-argument call exactly.
+
+`ccGetSymbolAddr` (`sub_42B11D`) closes with one confirmed absence:
+the primary lookup loop (`for(k=0;k<inst->instanceof->numexports;k++)
+if(strcmp(inst->instanceof->exports[k],symname)==0) return inst->
+exportaddr[k];`) matches exactly, but source's own secondary "mangled
+function name" fallback pass (`sprintf(altName,"%s$",symname);
+strncmp(exports[k],altName,strlen(altName))`) has no counterpart here
+at all -- this build's version only ever does the exact-name
+comparison.

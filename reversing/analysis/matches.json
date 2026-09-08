@@ -7619,5 +7619,23 @@
     "source_line": 24092,
     "confidence": "high",
     "evidence": "int invscreen() { int selt=__actual_invscreen(); if(selt<0) return -1; playerchar->activeinv=selt; guis_need_update=1; set_cursor_mode(MODE_USE); return selt; } (AC.CPP:24092-24099) -- a complete, exact, zero-drift match. Calls the already-matched __actual_invscreen(), early-returns -1 on a negative result, else writes the result into playerchar->activeinv (+0x34, already established), sets guis_need_update=1, and calls the already-matched SetCursorMode with the literal 4 (MODE_USE). Called from post_script_cleanup (already matched) exactly where it checks its own dedicated invscreen-request flag (+0x08, already documented from the read side on post_script_cleanup's own entry) -- this is the deferred execution this build's InventoryScreen()/sc_invscreen() request flag was waiting for, distinct from (but calling) __actual_invscreen() itself. Closes the loop between InventoryScreen's already-matched WRITE side and __actual_invscreen's already-matched core logic."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42B039",
+    "new_name": "ccForkInstance",
+    "source_file": "Common/CSRUN.CPP",
+    "source_line": 1037,
+    "confidence": "high",
+    "evidence": "ccInstance *ccForkInstance(ccInstance*instoff) { return ccCreateInstanceEx(instoff->instanceof,instoff); } (CSRUN.CPP:1037-1040) -- a complete, exact, trivial match: `push arg_0; push [arg_0+0x9A4](already-established `instanceof_`); call ccCreateInstanceEx` matches the disassembly exactly (cdecl push order confirms `ccCreateInstanceEx(instoff->instanceof_, instoff)`, matching source's own argument order). Called from prepare_text_script (already matched) exactly where source calls `ccForkInstance(sci)` (AC.CPP:3059) to create a secondary script instance sharing globals with an already-running one."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42B11D",
+    "new_name": "ccGetSymbolAddr",
+    "source_file": "Common/CSRUN.CPP",
+    "source_line": 1071,
+    "confidence": "high",
+    "evidence": "char *ccGetSymbolAddr(ccInstance*inst,char*symname) (CSRUN.CPP:1071-1085) -- a complete match on its primary lookup path, with one confirmed absence. `for(k=0;k<inst->instanceof->numexports;k++) if(strcmp(inst->instanceof->exports[k],symname)==0) return inst->exportaddr[k];` matches the disassembly exactly: loop bound `[[arg_0+0x9A4]+0x1C48]` (instanceof_->numexports, both fields already established), `strcmp(Str2,[[arg_0+0x9A4]+idx*4+0x988])` (instanceof_->exports[idx]), returning `[arg_0+idx*4+0x1C]` (this instance's own already-established exportaddr[idx]) on a match, `return NULL` if the loop completes without one. CONFIRMED ABSENT: source's own 'mangled function name' fallback (`sprintf(altName,\"%s$\",symname); strncmp(exports[k],altName,strlen(altName))`) -- this build's version only ever does the exact-name comparison, with no secondary pass at all. Called from prepare_text_script (already matched) exactly where source calls `ccGetSymbolAddr(sci,tsname[0])` (AC.CPP:3044) to check a script function exists before running it."
   }
 ]

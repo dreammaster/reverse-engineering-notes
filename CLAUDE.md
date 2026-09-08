@@ -4007,6 +4007,14 @@ disassembly work.
   flag, matching `AC.CPP:24092-24099` with zero drift — the deferred
   execution `InventoryScreen()`/`sc_invscreen()`'s own request-flag
   write was waiting for.
+- **`ccForkInstance`/`ccGetSymbolAddr` close, revisiting a lead shelved
+  last round.** Both are `prepare_text_script`'s own remaining
+  callees, resolved once the already-established `ccInstance.
+  instanceof_`@+0x9A4 field is recognized as the key to both.
+  `ccForkInstance` is a trivial exact match. `ccGetSymbolAddr`'s
+  primary lookup loop matches exactly, but source's own secondary
+  "mangled function name" fallback pass has no counterpart here at
+  all — this build only ever does the exact-name comparison.
 
 ## Third-party library identification (Task #10)
 
