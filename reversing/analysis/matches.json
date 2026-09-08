@@ -7495,5 +7495,52 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "release_bitmap(bmp) -- Allegro's public macro, `acquire_bitmap`'s exact mirror-image sibling (same compiled-subroutine treatment). Matches exactly, dispatching through vtable slot `+0x14` -- GFX_VTABLE's own declared `release` field, immediately after `acquire`, at exactly offset 0x14 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "init_font?",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "evidence": "Already IDA-named via a tentative FLIRT match (the trailing '?' is IDA's own uncertainty marker) -- 'init_font' does not appear anywhere in the 2011 reference source (Engine/, Common/), so this name is NOT independently confirmed and may be a coincidental FLIRT byte-pattern match rather than a genuine identifier (the same kind of spurious match already caught once this project, for '_EVP_PBE_cleanup'). Not renamed for lack of a better alternative, but its actual ROLE is now fully understood from reading the body: this build's own pre-FontRenderer-class font loader, called once per game font from load_ac2game_dta (already matched). Checks the filename for a \".ttf\"/\".TTF\" substring (matched strings SubStr/aTtf_0); if present, opens it via clibfopen, reads the whole file into memory, and hands it to a newly-identified alfont_load_font_from_mem (sub_48B020, see its own entry) -- on success, mallocs a 20-byte wrapper, writes the literal 4-byte tag string \"TTF\\0\" at its start (a genuine IDA data-type-guessing artifact: the raw bytes 54h,54h,46h,00h happened to also decode as a valid code address, 0x465454, so IDA auto-labeled the global 'Source' as an offset-to-code reference instead of recognizing it as ASCII text -- confirmed by manually decoding the address's own bytes back into \"TTF\\0\"), then stores the alfont handle at +4. If the filename has no ttf extension, instead opens the file directly and checks its leading 15 bytes against the matched string \"WGT Font File  \" (aWgtFontFile, matching the already-known WFN_FILE_SIGNATURE constant exactly) -- on a match, reads the WHOLE file (including the signature) into a plain malloc'd buffer and returns it directly, with no wrapper struct at all (any WFN-format font naturally fails the later `[fontptr][0]=='T'` tag check since it starts with 'W', correctly falling through to this build's WFN-rendering path by elimination rather than an explicit tag). This confirms the whole architecture behind EnsureTextValidForFont's own `dword_4F7424[fontnum][0]=='T'` dispatch (already matched) -- a flat, non-virtual, tagged-union stand-in for what 2011 implements as a WFNFontRenderer/TTFFontRenderer class split."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401AAC",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "evidence": "This build's own font-load-and-size-adjust helper, called once per game font from load_ac2game_dta (already matched) with (filename, requestedSize). Calls init_font? (the tagged TTF/WFN loader just above) to load the font; on success, if a size was requested (arg_4!=0) AND the result's tag byte is 'T' (checked via the same `[ptr][0]=='T'` convention as EnsureTextValidForFont/init_font?'s own tag), extracts the wrapped alfont handle via a newly-identified sub_401895 (see its own entry) and calls a newly-identified alfont_set_font_size (sub_48AF50) on it with the requested size -- WFN (bitmap) fonts are naturally skipped since they have no adjustable size. ROLE matches 2011's `wloadfont_size(int fontNumber,int fsize)` (acfonts.cpp:140-154) closely -- 'load a font, and if it's TrueType, apply the requested point size' -- but the parameter shape is fundamentally different (a raw filename here vs. a font-number index there, since this build predates the fontRenderers[]-array-of-class-objects design entirely) and no single 2011 function body corresponds instruction-for-instruction, so left unnamed rather than force that specific 2011 name onto a structurally different predecessor."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_401895",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "A trivial one-line accessor: `memcpy(&global,ptr+4,4); return global;` -- extracts the wrapped alfont font-handle pointer (at offset +4) from this build's own tagged font-wrapper struct (see init_font?'s own entry for the full architecture: a 20-byte malloc'd block, tag string \"TTF\\0\" at +0, the real handle at +4). Called from sub_401AAC (the size-adjustment helper) and, per the caller-detection sweep, also from wgettextwidth/wgettextheight/wouttextxy/wtextcolor (all already matched) -- this build's simpler, non-virtual stand-in for what 2011 implements as `fontRenderers[fontNumber]`'s own class-polymorphic dispatch. No 2011 declaration corresponds to this specific accessor (2011 has no equivalent tagged-union unwrap step at all) -- left unnamed, role documented."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48AF50",
+    "new_name": "alfont_set_font_size",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own public font-size-setting API (the alfont library wraps FreeType; no local alfont source tree exists in this repo to verify the exact name against, so identified by call-shape/role only, matching this project's established convention for ALMP3/JGMOD). Takes 3 arguments (font handle, a literal 0, requested size) and opens with the classic \"already at this size, skip\" idiom -- comparing two cached fields (@+4/+8 on the font handle) against the two size-like arguments before doing any real work, matching FreeType's own `FT_Set_Pixel_Sizes(face,width,height)` convention (0 for width meaning \"derive it automatically from height\") that alfont's real `alfont_set_font_size` is known to wrap. Called from sub_401AAC (this build's own font-load-and-size-adjust helper) and from the newly-identified alfont_load_font_from_mem (sub_48B020, presumably applying a default size right after loading). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48B020",
+    "new_name": "alfont_load_font_from_mem",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own public API for loading a TrueType font from an in-memory buffer rather than a file path (no local alfont source tree exists in this repo to verify the exact name against -- identified by call-shape/role only). Takes 2 arguments (buffer, size); mallocs a small (0x1C/28-byte) handle struct, zeroes its leading 7 dwords, mallocs a second buffer of the given size and copies the source data into it (matching alfont's own documented behavior of taking ownership of a private copy of the font data rather than referencing the caller's buffer, since the caller here frees its own copy immediately after this call returns). Called from init_font? (this build's own tagged TTF/WFN font loader) exactly where a TrueType-extension filename's file contents get handed off. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

@@ -115250,6 +115250,7 @@ static Bytes_19(void) {
 	op_hex		(x,	1);
 	make_array	(0X48AF45,	0XB);
 	create_insn	(0X48AF50);
+	set_name	(0X48AF50,	"alfont_set_font_size");
 	create_insn	(x=0X48AF51);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48AF56);
@@ -115276,6 +115277,7 @@ static Bytes_19(void) {
 	op_hex		(x,	1);
 	make_array	(0X48B018,	0X8);
 	create_insn	(0X48B020);
+	set_name	(0X48B020,	"alfont_load_font_from_mem");
 	set_cmt	(0X48B022,	"Size",	0);
 	create_insn	(x=0X48B029);
 	op_stkvar	(x,	1);
@@ -117726,11 +117728,6 @@ static Bytes_19(void) {
 	set_cmt	(0X48E937,	"Offset",	0);
 	set_cmt	(0X48E939,	"Stream",	0);
 	set_cmt	(0X48E93F,	"Stream",	0);
-	set_cmt	(0X48E945,	"Origin",	0);
-	set_cmt	(0X48E947,	"Offset",	0);
-	set_cmt	(0X48E949,	"Stream",	0);
-	create_insn	(x=0X48E952);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117740,6 +117737,11 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X48E945,	"Origin",	0);
+	set_cmt	(0X48E947,	"Offset",	0);
+	set_cmt	(0X48E949,	"Stream",	0);
+	create_insn	(x=0X48E952);
+	op_hex		(x,	1);
 	create_insn	(x=0X48E962);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -124204,14 +124206,6 @@ static Bytes_20(void) {
 	create_insn	(x=0X497B57);
 	op_hex		(x,	1);
 	create_insn	(0X497B5C);
-	create_insn	(x=0X497B66);
-	op_hex		(x,	1);
-	create_insn	(x=0X497B69);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X497B74);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X497B78);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -124221,6 +124215,14 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497B66);
+	op_hex		(x,	1);
+	create_insn	(x=0X497B69);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X497B74);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X497B78);
+	op_hex		(x,	1);
 	create_insn	(x=0X497B7F);
 	op_hex		(x,	1);
 	set_cmt	(0X497B83,	"jumptable 004978DD case 4",	1);
@@ -130166,8 +130168,6 @@ static Bytes_21(void) {
 	set_cmt	(0X4A0ACE,	"jumptable 004A01EF default case, cases 21,25\njumptable 004A02CF default case, cases 3-5,8-11,13-15,18-32\njumptable 004A03FF default case, cases 4-11",	1);
 	create_insn	(0X4A0ACE);
 	set_name	(0X4A0ACE,	"def_4A01EF");
-	create_insn	(x=0X4A0AD7);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130177,6 +130177,8 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A0AD7);
+	op_hex		(x,	1);
 	set_cmt	(0X4A0ADC,	"jump table for switch statement",	0);
 	create_dword	(x=0X4A0ADC);
 	make_array	(x,	0X13);
@@ -136217,8 +136219,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9C63);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A9C6C);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -136228,6 +136228,8 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A9C6C);
+	op_hex		(x,	1);
 	create_insn	(x=0X4A9C6F);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9C86);
@@ -141350,9 +141352,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF0A8);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF0AC);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141362,6 +141361,9 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF0AC);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF0B0);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145672,8 +145674,6 @@ static Bytes_24(void) {
 	set_name	(0X4B4748,	"aAdventureGameS_5");
 	create_strlit	(0X4B4764,	0X3);
 	set_name	(0X4B4764,	"aRb_42");
-	create_strlit	(0X4B4768,	0X3);
-	set_name	(0X4B4768,	"aRb_43");
 }
 
 //------------------------------------------------------------------------
@@ -145683,6 +145683,8 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4B4768,	0X3);
+	set_name	(0X4B4768,	"aRb_43");
 	create_strlit	(0X4B476C,	0X3);
 	set_name	(0X4B476C,	"fmt");
 	create_strlit	(0X4B4770,	0X3);
@@ -149093,9 +149095,6 @@ static Bytes_25(void) {
 	create_dword	(x=0X4BBDB4);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4BBDB8);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -149105,6 +149104,9 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4BBDB8);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4BBDBC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -152632,8 +152634,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB47C,	"a001000");
 	create_strlit	(0X4CB484,	0XF);
 	set_name	(0X4CB484,	"aYdieresissmall");
-	create_strlit	(0X4CB494,	0XB);
-	set_name	(0X4CB494,	"aThornsmall");
 }
 
 //------------------------------------------------------------------------
@@ -152643,6 +152643,8 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4CB494,	0XB);
+	set_name	(0X4CB494,	"aThornsmall");
 	create_strlit	(0X4CB4A0,	0XC);
 	set_name	(0X4CB4A0,	"aYacutesmall");
 	create_strlit	(0X4CB4AC,	0XF);
@@ -155231,10 +155233,12 @@ static Functions_0(void) {
 	set_frame_size(0X40187F, 0, 4, 0);
 	add_func    (0X401895,0X4018B5);
 	set_func_flags(0X401895,0x5410);
+	set_func_cmt(0X401895,	"[reversing] confirmed match\nconfidence: high\nevidence: A trivial one-line accessor: `memcpy(&global,ptr+4,4); return global;` -- extracts the wrapped alfont font-handle pointer (at offset +4) from this build's own tagged font-wrapper struct (see init_font?'s own entry for the full architecture: a 20-byte malloc'd block, tag string \"TTF\\0\" at +0, the real handle at +4). Called from sub_401AAC (the size-adjustment helper) and, per the caller-detection sweep, also from wgettextwidth/wgettextheight/wouttextxy/wtextcolor (all already matched) -- this build's simpler, non-virtual stand-in for what 2011 implements as `fontRenderers[fontNumber]`'s own class-polymorphic dispatch. No 2011 declaration corresponds to this specific accessor (2011 has no equivalent tagged-union unwrap step at all) -- left unnamed, role documented.", 1);
 	set_frame_size(0X401895, 0, 4, 0);
 	add_func    (0X4018B5,0X401AAC);
 	set_func_flags(0X4018B5,0x5410);
 	SetType(0X4018B5, "int __cdecl init_font_(char *Str);");
+	set_func_cmt(0X4018B5,	"[reversing] confirmed match\nconfidence: medium\nevidence: Already IDA-named via a tentative FLIRT match (the trailing '?' is IDA's own uncertainty marker) -- 'init_font' does not appear anywhere in the 2011 reference source (Engine/, Common/), so this name is NOT independently confirmed and may be a coincidental FLIRT byte-pattern match rather than a genuine identifier (the same kind of spurious match already caught once this project, for '_EVP_PBE_cleanup'). Not renamed for lack of a better alternative, but its actual ROLE is now fully understood from reading the body: this build's own pre-FontRenderer-class font loader, called once per game font from load_ac2game_dta (already matched). Checks the filename for a \".ttf\"/\".TTF\" substring (matched strings SubStr/aTtf_0); if present, opens it via clibfopen, reads the whole file into memory, and hands it to a newly-identified alfont_load_font_from_mem (sub_48B020, see its own entry) -- on success, mallocs a 20-byte wrapper, writes the literal 4-byte tag string \"T" "TF\\0\" at its start (a genuine IDA data-type-gues", 1);
 	set_frame_size(0X4018B5, 0X24, 4, 0);
 	define_local_var(0X4018B5, 0X401AAC, "[bp-0X24]", "Src");
 	define_local_var(0X4018B5, 0X401AAC, "[bp-0X20]", "Stream");
@@ -155245,6 +155249,7 @@ static Functions_0(void) {
 	add_func    (0X401AAC,0X401B02);
 	set_func_flags(0X401AAC,0x5410);
 	SetType(0X401AAC, "int __cdecl sub_401AAC(char *Str, int);");
+	set_func_cmt(0X401AAC,	"[reversing] confirmed match\nconfidence: medium\nevidence: This build's own font-load-and-size-adjust helper, called once per game font from load_ac2game_dta (already matched) with (filename, requestedSize). Calls init_font? (the tagged TTF/WFN loader just above) to load the font; on success, if a size was requested (arg_4!=0) AND the result's tag byte is 'T' (checked via the same `[ptr][0]=='T'` convention as EnsureTextValidForFont/init_font?'s own tag), extracts the wrapped alfont handle via a newly-identified sub_401895 (see its own entry) and calls a newly-identified alfont_set_font_size (sub_48AF50) on it with the requested size -- WFN (bitmap) fonts are naturally skipped since they have no adjustable size. ROLE matches 2011's `wloadfont_size(int fontNumber,int fsize)` (acfonts.cpp:140-154) closely -- 'load a font, and if it's TrueType, apply the requested point size' -- but the parameter shape is fundamentally different (a raw filename here vs. a font-number index there, since this build predates the fon" "tRenderers[]-array-of-class-objects design entir", 1);
 	set_frame_size(0X401AAC, 0X4, 4, 0);
 	define_local_var(0X401AAC, 0X401B02, "[bp+0X8]", "Str");
 	add_func    (0X401B02,0X401B30);
@@ -155591,6 +155596,10 @@ static Functions_0(void) {
 	set_func_cmt(0X406A4A,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIButton::WriteToFile(FILE*) at acgui.cpp:746. CORRECTS an earlier guess (this slot was tentatively assumed to be IsOverControl based on 2011's declared vtable order -- wrong). Exact mirror of the already-matched GUIButton__ReadFromFile: three sequential fwrite calls at the identical three offsets ([this+4] 28 bytes, [this+0x54] 48 bytes, [this+0x20] 50 bytes), matching source's \"GUIObject::WriteToFile(ooo); fwrite(&pic,sizeof(int),12,ooo); fwrite(&text[0],sizeof(char),50,ooo); ...\" exactly. Sits at vtable slot 7/+0x1C, DIRECTLY after Draw (slot 6/+0x18) with no gap -- meaning IsOverControl does NOT occupy a slot between them in this 2002 vtable, unlike 2011's declared order (MouseMove,MouseOver,MouseLeave,MouseDown,MouseUp,KeyPress,Draw,IsOverControl,WriteToFile,...). Likely IsOverControl was added to GUIObject sometime after this build. Flat-named as a C++ virtual method. FOLLOW-UP (this round): read to completion end-to-" "end (not just the three fread/fwrite calls originally used to recover t", 1);
 	set_frame_size(0X406A4A, 0X4, 4, 0X4);
 	define_local_var(0X406A4A, 0X406A9C, "[bp+0X8]", "Stream");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X406A9C,0X406B01);
 	set_func_flags(0X406A9C,0x5410);
 	SetType(0X406A9C, "int __stdcall GUIButton__ReadFromFile(FILE *Stream);");
@@ -155606,10 +155615,6 @@ static Functions_0(void) {
 	set_func_flags(0X40723F,0x5410);
 	set_func_cmt(0X40723F,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIButton::MouseUp() at acgui.cpp:946. Exact match: \"if (isover) { usepic=overpic; if (!IsDisabled() && IsClickable()) activated++; } else usepic=pic; ispushed=0;\" -- disasm checks [this+0x68] (isover), sets [this+0x60]=[this+0x58] (usepic=overpic) or [this+0x60]=[this+0x54] (usepic=pic), conditionally increments [this+0x1C] (activated), always sets [this+0x64]=0 (ispushed). Vtable slot 4/+0x10, matching GUIMain::mouse_but_up's independently-confirmed MouseUp vtable slot. New field evidence: pic@+0x54, overpic@+0x58, isover@+0x68, activated@+0x1C (GUIObject base field), flags@+0x4 (via the IsDisabled/IsClickable check). Flat-named as a C++ virtual method.", 1);
 	set_frame_size(0X40723F, 0X4, 4, 0);
-}
-
-static Functions_1(void) {
-
 	add_func    (0X4072A3,0X4072AD);
 	set_func_flags(0X4072A3,0x5410);
 	set_frame_size(0X4072A3, 0, 4, 0);
@@ -156001,6 +156006,10 @@ static Functions_1(void) {
 	define_local_var(0X40A394, 0X40A6D8, "[bp+0XC]", "targetColourRed");
 	define_local_var(0X40A394, 0X40A6D8, "[bp+0X10]", "targetColourGreen");
 	define_local_var(0X40A394, 0X40A6D8, "[bp+0X14]", "targetColourBlue");
+}
+
+static Functions_2(void) {
+
 	add_func    (0X40A6D8,0X40A9FF);
 	set_func_flags(0X40A6D8,0x5410);
 	set_func_cmt(0X40A6D8,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: medium\nevidence: GameState field lead (fresh survey round): called from the already-matched `FadeIn` and `process_event`, this function gates a hi-color-depth-specific fast path -- \"if (color_depth>1) { if (dword_4EEB4C) { fast_path(sub_43C460); } else { full_fadein_path(); } }\" -- matching 2011's my_fade_in's role for `play.no_hicolor_fadein` (AC.CPP:3489-3501, \"if (game.color_depth>1) { ...; if (play.no_hicolor_fadein) return; } gfxDriver->FadeIn(...);\") closely but not as a clean line-for-line structural match (this build dispatches to a distinct helper function rather than an early return before a shared tail call). Identifies dword_4EEB4C as GameState.no_hicolor_fadein at medium-high confidence -- role match solid, structural match approximate. Function itself left unnamed pending a closer read to confirm/deny an exact 2011 counterpart. MAJOR ARCHITECTURAL FINDING (fresh survey follow-up, reading the full function): this is this build's OWN i" "mplementation of the CONCEPT/ROLE 2011 calls highcolor_fade_out(), but", 1);
@@ -156019,10 +156028,6 @@ static Functions_1(void) {
 	set_func_flags(0X40AD11,0x5410);
 	set_func_cmt(0X40AD11,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void redo_walkable_areas() at AC.CPP:3703-3721. Confirmed beyond doubt: blits a backup bitmap (dword_523148=walkareabackup) onto RoomStruct.walls@+0x04 (the walkable-areas mask), then loops every pixel calling getpixel (sub_425490) and, for each pixel where GameState.walkable_areas_on[pixel]==0 (byte_4EF224, already confirmed), calls putpixel (sub_425450) to zero it -- an exact, line-for-line match to source's \"blit(walkareabackup,thisroom.walls,...); for(hh...)for(ww...) if(play.walkable_areas_on[thisroom.walls->line[hh][ww]]==0) _putpixel(thisroom.walls,ww,hh,0);\" (AC.CPP:3710-3718). Called from load_new_room and RemoveWalkableArea (both already matched), matching 2011's own two callers of redo_walkable_areas exactly (RemoveWalkableArea/RestoreWalkableArea call it directly; load_new_room re-applies the current walkable-area on/off state on room entry). IMPORTANT: this function's target mask is DISPLAYED in the current rob_blanc_1." "asm export as \"rstruc.object\", not \"rstruc.walls\" -- decisive usage-", 1);
 	set_frame_size(0X40AD11, 0X8, 4, 0);
-}
-
-static Functions_2(void) {
-
 	add_func    (0X40ADC8,0X40AE31);
 	set_func_flags(0X40ADC8,0x5410);
 	set_func_cmt(0X40ADC8,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void generate_light_table() at AC.CPP:3723 -- no parameters (disasm confirms: no arg_ stack labels, only a local). Caller matches exactly: SetAreaLightLevel (already matched), which calls it right after setting thisroom.regionLightLevel/regionTintLevel, before the DEBUG_CONSOLE call, exactly matching source order (AC.CPP:3745). Also called from load_new_room (already matched) -- room loading also needs to regenerate the light table for the newly loaded room's tinted regions.", 1);
@@ -156317,6 +156322,10 @@ static Functions_2(void) {
 	set_func_flags(0X410D04,0x5410);
 	set_func_cmt(0X410D04,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void check_viewport_coords() at AC.CPP:3988-3999 -- a complete, zero-drift, line-for-line match. \"if(offsetx<0) offsetx=0; if(offsety<0) offsety=0;\" matches verbatim. \"if(offsetx+usetup_base_width > word_522F08*mult_x) offsetx=word_522F08*mult_x-usetup_base_width;\" matches \"if(offsetx+scrnwid>roomWidth) offsetx=roomWidth-scrnwid;\" exactly, with roomWidth computed inline as multiply_up_coordinate(thisroom.width) (word_522F08, already established RoomStruct.width) -- identifying usetup_base_width as this build's scrnwid. The height check mirrors this exactly using word_522F0A (already established RoomStruct.height) and usetup_base_height (scrnhit). Called from SetViewport (already matched, see its own entry) and prepare_characters_for_drawing (already matched) -- the latter call site not itself investigated further this round, but consistent with 2011's own second caller, update_viewport().", 1);
 	set_frame_size(0X410D04, 0, 4, 0);
+}
+
+static Functions_3(void) {
+
 	add_func    (0X410D9D,0X411940);
 	set_func_flags(0X410D9D,0x5410);
 	SetType(0X410D9D, "void prepare_characters_for_drawing(void);");
@@ -156338,10 +156347,6 @@ static Functions_2(void) {
 	set_frame_size(0X411E2A, 0X4, 4, 0X8);
 	define_local_var(0X411E2A, 0X411E70, "[bp+0X8]", "xpp");
 	define_local_var(0X411E2A, 0X411E70, "[bp+0XC]", "ypp");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X411E70,0X4121D0);
 	set_func_flags(0X411E70,0x5410);
 	SetType(0X411E70, "int __stdcall _GetLocationType(int xxx, int yyy, int allowHotspot0);");
@@ -156775,6 +156780,10 @@ static Functions_3(void) {
 	set_frame_size(0X415AB3, 0, 4, 0X8);
 	define_local_var(0X415AB3, 0X415AEA, "[bp+0X8]", "obn");
 	define_local_var(0X415AB3, 0X415AEA, "[bp+0XC]", "basel");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X415AEA,0X415B24);
 	set_func_flags(0X415AEA,0x5410);
 	SetType(0X415AEA, "void __stdcall SetCharacterBaseline(int obn, int basel);");
@@ -156810,10 +156819,6 @@ static Functions_3(void) {
 	define_local_var(0X415D37, 0X415E71, "[bp+0XC]", "loopn");
 	define_local_var(0X415D37, 0X415E71, "[bp+0X10]", "spdd");
 	define_local_var(0X415D37, 0X415E71, "[bp+0X14]", "rept");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X415E71,0X415F67);
 	set_func_flags(0X415E71,0x5410);
 	SetType(0X415E71, "void __stdcall MergeObject(int obn);");
@@ -157187,6 +157192,10 @@ static Functions_4(void) {
 	set_func_cmt(0X418F2B,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates newvol in [1,5] -- DRIFT: 2011's own bound is [-3,5] (\"if((newvol<-3)||(newvol>5)) quit(...);\", AC.CPP:17676-17678) -- this build's range excludes the negative \"quieter than room default\" values (-3 to -1) entirely, a real, confirmable validation-range difference, not just a smaller array capacity. Writes newvol directly to byte_51FFCD, decisively confirmed as RoomStruct.options[ST_VOLUME]@(thisroom+0x941+4) via exact absolute-address arithmetic (0x51F688+0x941+4=0x51FFCD, landing exactly on thisroom's own established base plus the already-confirmed options[10] array's start plus Common/acroom.h:139's ST_VOLUME=4 index) -- a further WRITE-side confirmation of that field from a new site (previously only confirmed via fread). Then calls the already-matched update_music_volume (sub_418E82), matching 2011's " "own \"thisroom.options[ST_VOLUME]=newvol; update_music_volume();\" exa", 1);
 	set_frame_size(0X418F2B, 0, 4, 0X4);
 	define_local_var(0X418F2B, 0X418F56, "[bp+0X8]", "newvol");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X418F56,0X418F91);
 	set_func_flags(0X418F56,0x5410);
 	SetType(0X418F56, "void __stdcall SetMusicMasterVolume(int newvol);");
@@ -157210,10 +157219,6 @@ static Functions_4(void) {
 	set_func_cmt(0X418FF4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj GAMESTATE FIELD EVIDENCE (this round, closing the +0x60C..+0x614 pad): this function's one-line body ('mov eax,[ebp+loopflag]; mov dword_4EF028,eax;') matches 2011's ENTIRE function body verbatim -- 'void SetMusicRepeat(int loopflag) { play.music_repeat=loopflag; }' (AC.CPP:17753-17755) -- identifying dword_4EF028 as GameState.music_repeat. Sits with ZERO gap immediately after the newly-identified cur_music_number@+0x60C (see GetCurrentMusic's own entry), matching 2011's exact declared adjacency 'int cur_music_number,music_repeat;' (acruntim.h:553) with zero drift. PlayMusic (already matched) reads this same global as the repeat argument it passes down to its MP3-stream-creation helper (sub_4083FC), and main initializes it to 1 at startup. CORRECTION: the previous round's music_master_volume field entry incorrectly claimed cur_music_number/music_repeat were 'co" "nfirmed absent' via a zero-slack argument -- that argument only prov", 1);
 	set_frame_size(0X418FF4, 0, 4, 0X4);
 	define_local_var(0X418FF4, 0X419001, "[bp+0X8]", "loopflag");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X419001,0X41927A);
 	set_func_flags(0X419001,0x5410);
 	set_func_cmt(0X419001,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive struct-field documentation (PlayMusic itself was already named in the IDB via exact linker-symbol match, long before this entry existed -- no prior matches.json record of it at all). Fresh survey target: this build's MIDI-music handling, picked up while investigating whether a MYMIDI wrapper class (Engine/acsound.cpp:916, this build's other SOUNDCLIP-family siblings MYWAVE/MYMP3/MYSTATICMP3 already formalized) exists here too. It does NOT: PlayMusic's own MIDI-format attempt -- 'sprintf(Buffer,\"music%d.mid\",musicnum); dword_5231B4=sub_44AFC0(Buffer); if (dword_5231B4!=0) { dword_5231BC=musicnum; if (sub_44B580(dword_5231B4,dword_4EF028)) quit(\"!Couldn't play MIDI file\"); }' -- calls Allegro's load_midi/play_midi APIs (see sub_44AFC0/sub_44B580's own entries) DIRECTLY on bare globals, with no intervening object allocation, vtable, or virtual dispatch at all. This matches the SAME 'no wrapper object, just scalar globals' a" "rchitecture already found for AmbientSound -- a genuine predecessor ", 1);
@@ -157636,6 +157641,10 @@ static Functions_5(void) {
 	set_frame_size(0X41B1A2, 0, 4, 0X8);
 	define_local_var(0X41B1A2, 0X41B1D5, "[bp+0X8]", "from");
 	define_local_var(0X41B1A2, 0X41B1D5, "[bp+0XC]", "to");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41B1D5,0X41B20E);
 	set_func_flags(0X41B1D5,0x5410);
 	SetType(0X41B1D5, "void __stdcall SetPalRGB(int inndx, int rr, int gg, int bb);");
@@ -157663,10 +157672,6 @@ static Functions_5(void) {
 	SetType(0X41B269, "int GetCursorMode(void);");
 	set_func_cmt(0X41B269,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). One-instruction body: \"return cur_mode;\" (dword_4EDA7C, already established as GetCursorMode's own global via main_loop_until's earlier round) -- a trivial getter, exact match.", 1);
 	set_frame_size(0X41B269, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41B273,0X41B2BE);
 	set_func_flags(0X41B273,0x5410);
 	SetType(0X41B273, "void __stdcall GiveScore(int amnt);");
@@ -158083,6 +158088,10 @@ static Functions_6(void) {
 	set_func_flags(0X41FEE6,0x5410);
 	set_func_cmt(0X41FEE6,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void sc_invscreen() at AC.CPP:24101-24103: \"curscript->queue_action(ePSAInvScreen,0,\\\"InventoryScreen\\\");\". This build has no generic action-queue mechanism at all (already established -- 2002 gives each PostScriptAction its own dedicated ExecutingScript field, 2011 unifies them into one queue array); this function's entire body is \"curscript[+8]=1\" -- setting the dedicated invscreen-request flag directly, matching source's queue_action call in NET EFFECT exactly. This is the WRITE side of a field post_script_cleanup's own entry already documented from the READ side (its own +0x08 boolean flag, gating a call to __actual_invscreen()) -- a clean cross-confirmation from the opposite direction.", 1);
 	set_frame_size(0X41FEE6, 0, 4, 0);
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41FEF7,0X41FF17);
 	set_func_flags(0X41FEF7,0x5410);
 	SetType(0X41FEF7, "void __stdcall SetInvDimensions(int ww, int hh);");
@@ -158111,10 +158120,6 @@ static Functions_6(void) {
 	set_func_cmt(0X42106D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void mainloop(bool checkControls, IDriverDependantBitmap*, int, int) at AC.CPP:25400. String match: \"Wait() was used in Player Enters Screen - use Enters Screen After...\" (25425). Very strong structural corroboration: this function calls check_controls (already matched) at the exact relative offset expected for the checkControls-guarded call, calls sub_40EF0D (matched above to update_stuff) and sub_411940 (matched above to draw_screen_overlay) -- three independent callee matches, all fitting a per-frame game loop body. Its own caller is DisplayAtY (already matched), consistent with AGS's blocking speech-display code pumping the main loop while waiting for the player to dismiss text. GAMESTATE STRUCT EVIDENCE (fresh survey follow-up): a background-animation-frame-advance block matches 2011's \"if (play.bg_anim_delay>0) play.bg_anim_delay--; else if (play.bg_frame_locked) ; else { play.bg_anim_delay=play.anim_background_speed; play.bg_" "frame++; if (play.bg_frame>=thisroom.num_bscenes) play.bg_frame=0; .", 1);
 	set_frame_size(0X42106D, 0X20, 4, 0);
 	define_local_var(0X42106D, 0X4214E3, "[bp-0X8]", "ev2");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X4214E3,0X42157B);
 	set_func_flags(0X4214E3,0x5410);
 	SetType(0X4214E3, "int check_write_access(void);");
@@ -158617,6 +158622,10 @@ static Functions_7(void) {
 	set_func_flags(0X425836,0x5410);
 	set_func_cmt(0X425836,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: int CSCIDrawWindow(int,int,int,int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox (this round's new match) with literal arguments (80,80,160,40) matching source's CSCIDrawWindow(80,80,240-80,120-80) exactly -- identified via call-signature/literal-argument evidence only, medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read against its real source, Engine/acdialog.h:667-700): \"ignore_bounds++; multiply_up(&xx,&yy,&wid,&hit); find a free slot in oswi[MAXSCREENWINDOWS]; if none, quit(\\\"Too many windows created.\\\"); windowcount++; xx-=2;yy-=2;wid+=4;hit+=4; oswi[slot].buffer=wnewblock(xx,yy,xx+wid,yy+hit); oswi[slot].x=xx; oswi[slot].y=yy; wbutt(xx+1,yy+1,xx+wid-1,yy+hit-1); oswi[slot].oldtop=topwindowhandle; topwindowhandle=slot; return slot;\" -- matches instruction for instruction, including the literal MAXSCRE" "ENWINDOWS=5 loop bound (Engine/acdialog.h:630, ZERO drift) and every com", 1);
 	set_frame_size(0X425836, 0X8, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X425988,0X425A22);
 	set_func_flags(0X425988,0x5410);
 	set_func_cmt(0X425988,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: void CSCIEraseWindow(int) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called once from myscimessagebox's cleanup sequence (this round's new match) with the window handle from the earlier CSCIDrawWindow call, matching source's \"CSCIEraseWindow(windl)\" exactly -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, full body read): \"CSCIEraseWindow(int handle) { domouse(2); mouse_hide_count--; wputblock(x[handle],y[handle],savedbg[handle],0); destroy_bitmap(savedbg[handle]); domouse(1); savedbg[handle]=NULL; window_count--; }\" -- hides the mouse cursor, restores the screen area under the CSCI window from a saved background bitmap (a 16-byte-per-window slot table: dword_523528=saved bitmap, dword_52352C/dword_523530=x/y, all new globals), destroys the saved bitmap, re-shows the mouse, and decrements an active-CSCI-window counter (dword_523708, a new " "global). domouse (already matched) and wputblock (already matched) both co", 1);
@@ -158633,10 +158642,6 @@ static Functions_7(void) {
 	set_func_flags(0X425AF7,0x5410);
 	set_func_cmt(0X425AF7,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: void CSCIWaitMessage(SCIMESSAGE*) (Engine/acdialog.h, body in acdialog.cpp -- not independently traced this round). Called from myscimessagebox's polling loop (this round's new match) with &smes, matching source's \"CSCIWaitMessage(&smes)\" exactly, with the SCIMESSAGE.code field it's expected to populate (dword_5235C8) independently confirmed via the loop's own exit condition -- medium-high confidence pending a full body trace. UPGRADED TO HIGH CONFIDENCE (follow-up round, leading ~130 of 228 lines read): CSCIWaitMessage(SCIMESSAGE*mes) opens by redrawing every live control (looping the 20-slot control-handle table, dword_523578[], already established -- domouse(2)/sub_426F80(control)[a new, plausible per-control-draw lead, not independently confirmed or chased further this round]/domouse(1) per slot), then resets *mes to {code=0,id=-1} -- matching the already-established SCIMESSAGE{int code;int id;} layout (dword_5235C8/CC) from" " a THIRD independent site (myscimessagebox's own polling loop, CSCIWaitM", 1);
 	set_frame_size(0X425AF7, 0X14, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X425D18,0X425FC7);
 	set_func_flags(0X425D18,0x5010);
 	SetType(0X425D18, "int __cdecl CSCICreateControl(int, int, int, int, int, char *Source);");
@@ -158976,6 +158981,10 @@ static Functions_8(void) {
 	set_func_cmt(0X42A8E1,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: int SystemImports::get_index_of(char*) at CSRUN.CPP:660. The 2011 body has been rewritten to use a btree, but the OLD implementation survives as a comment in the same function: \"for (o=0;o<numimports;o++) { if (strcmp(name[o],namw)==0) return o; ... }\". The disassembly matches that commented-out code line for line: loop bounded by [this+0xE10] (numimports, same offset confirmed via SystemImports::add above), strcmp against name[o] at [this+o*4], return o on match, -1 if the loop completes. Called from SystemImports::add (already matched) and sub_42A934 (a lead for a future round, likely SystemImports::is_valid_import or ccGetSymbolAddress-adjacent). Flat-named as a C++ member function.", 1);
 	set_frame_size(0X42A8E1, 0X8, 4, 0X4);
 	define_local_var(0X42A8E1, 0X42A934, "[bp+0X8]", "Str2");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X42A934,0X42A969);
 	set_func_flags(0X42A934,0x5410);
 	SetType(0X42A934, "int __stdcall SystemImports__is_script_import(char *Str2);");
@@ -159013,10 +159022,6 @@ static Functions_8(void) {
 	set_func_cmt(0X42AAAB,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: Exact string matches within function body span (787-976 in source): \"null pointer passed\" (line 796), \"unresolved import %s\" (871), \"internal fixup index error\" (926). Role matches: instance loader that resolves imports. NEW FIELD EVIDENCE (ccScript struct recovery, found while investigating ccInstance's own unexplored region): the fixup-processing loop confirms ccScript.fixuptypes@+0x18 (char*, read as \"[[scri+0x18]+i]\"), ccScript.fixups@+0x1C (long*, read as \"[[scri+0x1C]+i*4]\"), and ccScript.numfixups@+0x20 (int, the loop bound) -- all three UPGRADED from a single tentative, positional-only \"_pad_18\" guess in an earlier round. The switch on fixup TYPE (1-6) matches 2011's declared FIXUP_* constants (Common/CSCOMP.H:165-170) exactly: case 1 (FIXUP_GLOBALDATA) adds the new instance's globaldata@+0x04 to code[fixups[i]]; case 3 (FIXUP_STRING) adds strings@+0x14; case 4 (FIXUP_IMPORT) resolves via the already-matched SystemImports" "::is_script_import. See reversing/notes/struct-layout-drift.md for the ", 1);
 	set_frame_size(0X42AAAB, 0X20, 4, 0);
 	define_local_var(0X42AAAB, 0X42B00E, "[bp-0X4]", "Block");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X42B026,0X42B039);
 	set_func_flags(0X42B026,0x5410);
 	set_func_cmt(0X42B026,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: ccInstance *ccCreateInstance(ccScript *scri) at CSRUN.CPP:1032 -- a thin wrapper: \"return ccCreateInstanceEx(scri, NULL);\". Disassembly matches exactly: passes its single arg through plus a hardcoded 0/NULL second arg to ccCreateInstanceEx (already matched). Called from load_ac2game_dta (already matched, loading the global script) and compile_room_script (already matched, loading the room script) -- both are exactly where a fresh ccInstance would be created from a freshly-compiled/loaded ccScript.", 1);
@@ -159787,6 +159792,10 @@ static Functions_9(void) {
 	set_func_flags(0X439CC0,0x5400);
 	SetType(0X439CC0, "int __cdecl sub_439CC0(float, float, float, int, int, int);");
 	set_frame_size(0X439CC0, 0X4, 0, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X439EE0,0X43A063);
 	set_func_flags(0X439EE0,0x5400);
 	set_frame_size(0X439EE0, 0X4, 0, 0);
@@ -159868,10 +159877,6 @@ static Functions_9(void) {
 	set_frame_size(0X43BE90, 0X1C, 0, 0);
 	define_local_var(0X43BE90, 0X43BF17, "[bp-0X1C]", "Msg");
 	define_local_var(0X43BE90, 0X43BF17, "[bp+0X4]", "hEvent");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X43BF20,0X43C089);
 	set_func_flags(0X43BF20,0x5400);
 	set_func_cmt(0X43BF20,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c\nconfidence: high\nevidence: static HWND create_directx_window(void) at wwnd.c:391. Exact match: builds a WNDCLASSA with lpfnWndProc=sub_43B9B0 (directx_wnd_proc, see below), LoadIconA with the matched string \"allegro_icon\" (IconName), falling back to LoadIconA(0, 0x7F00/IDI_APPLICATION) if that fails -- matches source's \"LoadIcon(allegro_inst,\\\"allegro_icon\\\"); if (!wnd_class.hIcon) wnd_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);\" exactly -- then LoadCursorA(0, 0x7F00/IDC_ARROW). DRIFT: this build calls CreateSolidBrush() for hbrBackground, where the 2011 source has \"wnd_class.hbrBackground = NULL;\" (wwnd.c:409) -- this build paints an actual background brush instead of leaving it unset. CODE XREF: StartAddress+11 (StartAddress is IDA's auto-recognized name for the CreateThread-callback-shaped function that is almost certainly wnd_thread_proc, wwnd.c:450, which calls create_directx_window() near its start when wnd_create_pr" "oc is unset -- matches structurally but not yet formally renamed).", 1);
@@ -161121,6 +161126,10 @@ static Functions_10(void) {
 	set_func_flags(0X456210,0x5400);
 	set_func_cmt(0X456210,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c\nconfidence: medium\nevidence: gfx_directx_create_system_bitmap(int width,int height) -- identified primarily by call site and role: InitRenderToSurface (already matched) calls it exactly where source calls this named function (\"vscreen = gfx_directx_create_system_bitmap(ddsd.dwWidth,ddsd.dwHeight);\", acwavi.cpp:137), on the vscreen==NULL/first-use path. CAUTION: this build own body (calls sub_455B80(width,height,color_depth,4), falling back to sub_455E20(result,width,height,0x40000000) if that returns NULL/0 -- neither callee independently confirmed or chased further, per this project own third-party-library scope rule) does NOT closely resemble the 4.2.2 reference tree own gfx_directx_create_system_bitmap (wddbmp.c:632-650, which calls gfx_directx_create_surface/gfx_directx_make_bitmap_from_surface/gfx_directx_destroy_surface -- a DDRAW_SURFACE-wrapper abstraction with no counterpart visible here) -- consistent with this 2002 bi" "nary linking a genuinely older/simpler Allegro DirectX driver implementation than the 4.2.2 tree, the", 1);
 	set_frame_size(0X456210, 0X8, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4562D0,0X45635A);
 	set_func_flags(0X4562D0,0x5400);
 	set_frame_size(0X4562D0, 0X1C, 0, 0);
@@ -161276,10 +161285,6 @@ static Functions_10(void) {
 	add_func    (0X45A160,0X45A2E5);
 	set_func_flags(0X45A160,0x5400);
 	set_frame_size(0X45A160, 0XC, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X45A320,0X45A3F1);
 	set_func_flags(0X45A320,0x5400);
 	set_frame_size(0X45A320, 0X10, 0, 0);
@@ -162961,6 +162966,10 @@ static Functions_11(void) {
 	add_func    (0X482B50,0X482B85);
 	set_func_flags(0X482B50,0x5400);
 	set_frame_size(0X482B50, 0XC, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X482B90,0X482BB6);
 	set_func_flags(0X482B90,0x5400);
 	set_frame_size(0X482B90, 0X4, 0, 0);
@@ -163171,10 +163180,6 @@ static Functions_11(void) {
 	add_func    (0X486540,0X48654A);
 	set_func_flags(0X486540,0x5400);
 	set_frame_size(0X486540, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X486550,0X4865AF);
 	set_func_flags(0X486550,0x5400);
 	set_frame_size(0X486550, 0, 0, 0);
@@ -163335,6 +163340,7 @@ static Functions_12(void) {
 	set_frame_size(0X48AEF0, 0X4, 0, 0);
 	add_func    (0X48AF50,0X48AFCA);
 	set_func_flags(0X48AF50,0x5400);
+	set_func_cmt(0X48AF50,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public font-size-setting API (the alfont library wraps FreeType; no local alfont source tree exists in this repo to verify the exact name against, so identified by call-shape/role only, matching this project's established convention for ALMP3/JGMOD). Takes 3 arguments (font handle, a literal 0, requested size) and opens with the classic \"already at this size, skip\" idiom -- comparing two cached fields (@+4/+8 on the font handle) against the two size-like arguments before doing any real work, matching FreeType's own `FT_Set_Pixel_Sizes(face,width,height)` convention (0 for width meaning \"derive it automatically from height\") that alfont's real `alfont_set_font_size` is known to wrap. Called from sub_401AAC (this build's own font-load-and-size-adjust helper) and from the newly-identified alfont_load_font_from_mem (sub_48B020, presumably applying a default size right after loading). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule)" ", not chased further.", 1);
 	set_frame_size(0X48AF50, 0XC, 0, 0);
 	add_func    (0X48AFD0,0X48AFF0);
 	set_func_flags(0X48AFD0,0x5400);
@@ -163344,7 +163350,8 @@ static Functions_12(void) {
 	set_frame_size(0X48AFF0, 0, 0, 0);
 	add_func    (0X48B020,0X48B0E1);
 	set_func_flags(0X48B020,0x5400);
-	SetType(0X48B020, "int __cdecl sub_48B020(int, size_t Size);");
+	SetType(0X48B020, "int __cdecl alfont_load_font_from_mem(int, size_t Size);");
+	set_func_cmt(0X48B020,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public API for loading a TrueType font from an in-memory buffer rather than a file path (no local alfont source tree exists in this repo to verify the exact name against -- identified by call-shape/role only). Takes 2 arguments (buffer, size); mallocs a small (0x1C/28-byte) handle struct, zeroes its leading 7 dwords, mallocs a second buffer of the given size and copies the source data into it (matching alfont's own documented behavior of taking ownership of a private copy of the font data rather than referencing the caller's buffer, since the caller here frees its own copy immediately after this call returns). Called from init_font? (this build's own tagged TTF/WFN font loader) exactly where a TrueType-extension filename's file contents get handed off. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X48B020, 0X8, 0, 0);
 	define_local_var(0X48B020, 0X48B0E1, "[bp+0X8]", "Size");
 	add_func    (0X48B0F0,0X48B100);
@@ -165425,6 +165432,10 @@ static Functions_12(void) {
 	set_func_flags(0X4AB2B0,0x5404);
 	set_func_cmt(0X4AB2B0,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullrem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj", 1);
 	set_frame_size(0X4AB2B0, 0X4, 0, 0X10);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4AB330,0X4AB34F);
 	set_func_flags(0X4AB330,0x5404);
 	set_func_cmt(0X4AB330,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullshr.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj", 1);
@@ -165632,6 +165643,7 @@ static Functions(void) {
 	Functions_10();
 	Functions_11();
 	Functions_12();
+	Functions_13();
 }
 
 //------------------------------------------------------------------------

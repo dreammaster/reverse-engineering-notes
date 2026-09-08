@@ -9645,9 +9645,9 @@
   "is_named": false
  },
  {
-  "name": "sub_48AF50",
+  "name": "alfont_set_font_size",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "free_freetype2",
@@ -9660,9 +9660,9 @@
   "is_named": true
  },
  {
-  "name": "sub_48B020",
+  "name": "alfont_load_font_from_mem",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_48B0F0",

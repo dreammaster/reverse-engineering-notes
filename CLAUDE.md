@@ -3957,6 +3957,23 @@ disassembly work.
   `release_bitmap` (Allegro's own macros, compiled into shared
   subroutines, called from `FadeOut`) close with zero drift via their
   `GFX_VTABLE` `acquire`(+0x10)/`release`(+0x14) slot dispatch.
+- **The pre-`FontRenderer` font-loading cluster traced to a complete
+  picture.** `init_font?` (an uncertain FLIRT guess, "init_font" not
+  found anywhere in 2011) loads a font by filename, tagging the result
+  with a 4-byte `"TTF\0"` string for TrueType or returning a bare
+  buffer for WFN (bitmap) fonts — a flat tagged-union stand-in for
+  2011's `WFNFontRenderer`/`TTFFontRenderer` class split, matching
+  `EnsureTextValidForFont`'s own already-established dispatch
+  convention. Along the way, found a genuine IDA data-type-guessing
+  artifact: that tag string's own global was mislabeled as a code
+  reference because its raw bytes happened to also form a valid
+  address — decoding the address back into bytes confirms it really is
+  `"TTF\0"`. `alfont_set_font_size`/`alfont_load_font_from_mem` named
+  by role (no local alfont source to verify against); the two
+  filename-taking helpers around them (`sub_401AAC`/`sub_401895`) are
+  left unnamed — their role parallels `wloadfont_size` but the
+  parameter shape is fundamentally different, predating the
+  `fontRenderers[]`-array design entirely.
 
 ## Third-party library identification (Task #10)
 

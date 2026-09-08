@@ -13591,3 +13591,65 @@ flat, non-virtual stand-in for "get the underlying font-data pointer"
 in the absence of any `FontRenderer` class hierarchy. Not fully chased
 to a name this round -- the call chain it feeds into (`sub_48AF50` and
 beyond) would need further reading first.
+
+### A follow-up round completes the pre-`FontRenderer` font-loading
+### cluster: `alfont_set_font_size`/`alfont_load_font_from_mem`, and
+### the "TTF" tagged-union architecture
+
+Following up on the `EnsureTextValidForFont` finding above (this build
+fuses `WFNFontRenderer`/`TTFFontRenderer` into one flat, type-tag-gated
+function, with no class hierarchy at all), this round traced the
+corresponding font-LOADING side to a complete, satisfying picture.
+
+`sub_401AAC` (called once per game font from `load_ac2game_dta`,
+already matched) calls `init_font?` -- already IDA-named via a
+tentative FLIRT match (the trailing `?` is IDA's own uncertainty
+marker) -- but "init_font" does not appear anywhere in the 2011
+reference source, so the name is NOT independently confirmed and may
+be a coincidental byte-pattern match (the same kind of spurious FLIRT
+hit already caught once this project, for `_EVP_PBE_cleanup`). Left as
+is for lack of a better alternative, but its role is now fully
+understood: checks the filename for a `.ttf`/`.TTF` substring; if
+present, reads the whole file into memory and hands it to a newly-
+identified `alfont_load_font_from_mem` (`sub_48B020`) -- on success,
+mallocs a 20-byte wrapper, writes a 4-byte tag string `"TTF\0"` at its
+start, and stores the alfont handle at +4. **A neat side-discovery
+along the way**: that tag string is written via `strcpy(dest,Source)`
+where "Source" is a GLOBAL IDA had auto-labeled as an `offset`-to-CODE
+reference (`loc_465454`) rather than recognizing it as ASCII text --
+because the raw bytes `54h,54h,46h,00h` happen to ALSO decode as a
+valid code address. Decoding that address's own bytes back into
+characters confirms it really is the string `"TTF\0"` -- a genuine IDA
+data-type-guessing artifact, not a real code reference.
+
+If the filename has no ttf extension, `init_font?` instead checks the
+file's leading 15 bytes against the matched string "WGT Font File  "
+(the already-known `WFN_FILE_SIGNATURE` constant, exact match) and, on
+success, returns the WHOLE file as a plain buffer with NO wrapper
+struct at all -- any WFN font naturally fails the `[fontptr][0]=='T'`
+tag check later (since it starts with `'W'`), correctly falling
+through to the WFN-rendering path by elimination rather than an
+explicit tag.
+
+Back in `sub_401AAC`: if a size was requested and the loaded font's
+tag byte is `'T'`, it extracts the wrapped alfont handle via a newly-
+identified accessor (`sub_401895` -- a trivial `memcpy(&global,ptr+4,
+4); return global;`, also called from `wgettextwidth`/`wgettextheight`
+/`wouttextxy`/`wtextcolor`, all already matched) and calls a newly-
+identified `alfont_set_font_size` (`sub_48AF50`) on it, matching
+FreeType's own `FT_Set_Pixel_Sizes(face,width,height)` convention (a
+literal 0 for width, "derive it from height") that alfont's real API
+is known to wrap. WFN (bitmap) fonts are naturally skipped since they
+have no adjustable size.
+
+None of `sub_401AAC`/`sub_401895` were renamed -- their ROLE closely
+parallels 2011's `wloadfont_size(int fontNumber,int fsize)` (acfonts.
+cpp:140-154), but the parameter shape is fundamentally different (a
+raw filename here vs. a font-number index there, since this build
+predates the `fontRenderers[]`-array-of-class-objects design entirely)
+and no single 2011 function body corresponds instruction-for-
+instruction. `alfont_set_font_size`/`alfont_load_font_from_mem` are
+named at medium confidence by call-shape/role alone (no local alfont
+source tree exists in this repo to verify exact names against, the
+same standing caveat as ALMP3/JGMOD) and, per the third-party scope
+rule, not chased further into FreeType's own internals.
