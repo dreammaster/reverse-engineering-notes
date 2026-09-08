@@ -13503,3 +13503,40 @@ redirection target used throughout `lzwexpand`'s body) -- a clean,
 decisive capstone confirmation reusing every global this project
 already established from the `load_lzw`/`lzwexpand_to_mem` round
 (`maxsize`/`putbytes`/`outbytes`/`expand_to_mem`).
+
+### `loadcompressed_allegro`/`cunpackbitl` close the room-mask RLE-
+### decompression chain
+
+Continuing the callgraph-ranking sweep around `load_main_block`
+(already matched), `sub_403846` closes as a complete, exact match to
+`long loadcompressed_allegro(FILE*fpp,BITMAP**bimpp,color*pall,long
+ooo)` (`Common/acroom.h:1439-1463`) -- AGS's own shared room-mask
+(walls/walk-behind/hotspots/regions) loading helper, called multiple
+times from `load_main_block`, once per mask. Every step matches
+exactly: the NULL-check-then-`destroy_bitmap`, the width/height
+`fread`s, the literal 8-bpp `create_bitmap_ex`, the pointer-store-back,
+and the tail `fseek(fpp,768,SEEK_CUR); return ftell(fpp);` (768 bytes
+being the historical trailing per-mask palette block this format
+always skips) -- matching the literal `fseek(Stream,0x300,1)` exactly.
+CONFIRMED ABSENT: source's own `if(ii%20==0) update_polled_stuff();`
+progress-callback check inside the per-row decompression loop, a minor
+UI-responsiveness feature this build lacks during room-mask loading.
+
+The per-row decompression call itself, `sub_402EDA`, closes as AGS's
+own classic PackBits-style RLE row decoder, `cunpackbitl(unsigned
+char*line,int size,FILE*infile)` (`Common/compress.cpp:215-251`) --
+genuinely Common-owned code, not a third-party library. A decisive
+match: the `ferror(infile)` macro-expansion is inlined as a direct
+bit-test against the FILE struct's own `_flag` field (matching the
+standard MSVC CRT error bit, `0x20`), and the classic `cx==-128→0`
+run-length sentinel fix matches the literal `cmp edx,0FFFFFF80h` check
+exactly.
+
+Two smaller siblings in the same area, `sub_403A1A`/`sub_403A5C`
+(also called multiple times from `load_main_block`), read a different,
+smaller data shape (a short fread, then a large short-array fread,
+with two intervening shorts zeroed) not cleanly matching the already-
+identified "obsolete v2.00 action editor" cluster's known field sizes
+(`whataction`/`val1`/`val2`/`otcond`/`points`, capacity confirmed
+elsewhere) -- left uninvestigated this round, a candidate for a future
+pass.

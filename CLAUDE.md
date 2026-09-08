@@ -3933,6 +3933,16 @@ disassembly work.
   traced past the header/setup level. Bonus: `sub_43160D` is `myputc`
   (`lzw.cpp`'s own `#define putc myputc` target), a clean capstone
   confirmation reusing every global the `load_lzw` round established.
+- **`loadcompressed_allegro`/`cunpackbitl` close the room-mask RLE-
+  decompression chain.** `loadcompressed_allegro` (AGS's own shared
+  walls/walk-behind/hotspots/regions mask loader, called repeatedly
+  from `load_main_block`) matches exactly except a confirmed-absent
+  progress-callback check. `cunpackbitl` (its per-row PackBits-style
+  RLE decoder, genuinely `Common/compress.cpp` code) matches decisively
+  via its inlined `ferror()` bit-test and the classic `-128→0` run-
+  length sentinel fix. Two smaller siblings in the same area read a
+  data shape not cleanly matching any already-identified struct — left
+  uninvestigated, a candidate for a future round.
 
 ## Third-party library identification (Task #10)
 

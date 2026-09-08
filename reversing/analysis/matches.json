@@ -7439,5 +7439,23 @@
     "source_line": 119,
     "confidence": "medium-high",
     "evidence": "void lzwcompress(FILE*f,FILE*out) (lzw.cpp:119-...) -- the LZW/LZSS binary-tree-based COMPRESSOR, genuinely part of AGS's own Common/lzw.cpp (in scope, not a third-party-library exclusion), `lzwexpand`'s write-side sibling. Confirmed at a decisive structural level: a single large malloc (0xD414 bytes, this build's own working-buffer size for its lzbuffer+node/dad/lson/rson binary-tree arrays -- source's own comment cites a different figure, \"28.5k\", plausibly computed against different N/F constants than this build uses, not reconciled exactly this round) with an out-of-memory printf+exit(3) path (mirroring lzwexpand's own already-confirmed printf+exit(4) drift, rather than going through quit()); then TWO decisive hash-table initialization loops matching source's `for(i=0;i<256;i++) root[i]=NIL;`/`for(i=NIL;i<N;i++) dad[i]=NIL;` exactly -- a 256-entry loop and a 4096(0x1000=N)-entry loop, both setting every slot to the literal -1 (NIL), at the exact offsets source's own root[]/dad[] array layout would predict within one combined buffer. Not traced past the header/setup level given the function's size (~336 lines) and the well-known, unremarkable nature of the LZSS binary-tree match-finding algorithm it implements -- the header match alone is decisive enough for identification. Reached via an intermediate wrapper with NO formal IDA function boundary of its own (the same 'orphaned code, no proc/endp' pattern already found for GUIMain::init and this session's own undocumented sprite-file-writer, sub_401570) -- whether this compression path is genuinely reachable from any live game-engine code path (as opposed to being linked-in-but-dead editor/tool code) was not established this round."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_402EDA",
+    "new_name": "cunpackbitl",
+    "source_file": "Common/compress.cpp",
+    "source_line": 215,
+    "confidence": "high",
+    "evidence": "int cunpackbitl(unsigned char*line,int size,FILE*infile) (compress.cpp:215-251) -- AGS's own classic PackBits-style RLE row decoder, genuinely Common-owned code. A complete, decisive match: `n=0; while(n<size){ix=fgetc(infile); if(ferror(infile)) break; cx=ix; if(cx==-128) cx=0; if(cx<0){...run...}else{...seq...}}` matches the disassembly exactly -- the `ferror(infile)` macro-expansion is inlined as `[Stream+0xC]&0x20` (the standard MSVC CRT FILE._flag error bit), and the `cx==-128\u21920` sentinel fix matches the literal `cmp edx,0FFFFFF80h` check. Called from the newly-matched loadcompressed_allegro (sub_403846, see its own entry) exactly where source calls `cunpackbitl(&bim->line[ii][0],widd,fpp)`."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_403846",
+    "new_name": "loadcompressed_allegro",
+    "source_file": "Common/acroom.h",
+    "source_line": 1439,
+    "confidence": "high",
+    "evidence": "long loadcompressed_allegro(FILE*fpp,BITMAP**bimpp,color*pall,long ooo) (acroom.h:1439-1463) -- AGS's own shared room-mask (walls/walk-behind/hotspots/regions) loading helper. A complete, exact match: `BITMAP*bim=*bimpp; if(bim!=NULL) destroy_bitmap(bim);` matches the leading NULL-check-then-destroy sequence exactly; `fread(&widd,2,1,fpp); fread(&hitt,2,1,fpp); bim=create_bitmap_ex(8,widd,hitt);` matches the two shorts-freads plus the literal 8-bpp create_bitmap_ex call exactly; `*bimpp=bim;` matches the pointer-store-back. CONFIRMED ABSENT: source's own `if(ii%20==0) update_polled_stuff();` progress-callback check inside the per-row decompression loop (a minor UI-responsiveness feature this build lacks during room-mask loading) -- otherwise the loop `for(ii=0;ii<hitt;ii++) cunpackbitl(&bim->line[ii][0],widd,fpp);` matches exactly, calling the newly-matched cunpackbitl (sub_402EDA). The tail `fseek(fpp,768,SEEK_CUR); return ftell(fpp);` matches the literal `fseek(Stream,0x300(768),1); return ftell(Stream);` exactly (768 bytes = the historical trailing per-mask palette block this format always skips). Called multiple times from load_main_block (already matched), once per room mask."
   }
 ]
