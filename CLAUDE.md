@@ -3991,6 +3991,16 @@ disassembly work.
   exactly. REAL DRIFT: source substitutes `'?'` and keeps drawing for
   an out-of-range character; this build simply draws nothing and
   advances zero pixels for the same case.
+- **`roomstruct::freemessage` found; a genuine naming collision
+  resolved for a second `clear_to_color` instance.** `freemessage`
+  closes as an exact match, called from `load_room`'s own pre-reload
+  cleanup. `clear_to_color` (Allegro's macro, compiled into its own
+  shared subroutine) confirms the vtable-shift finding from a fresh
+  slot — but collided with an already-matched, genuinely separate
+  linker-symbol function of the same name; `apply_matches.py`'s auto-
+  resolve (built for the string-literal case) couldn't handle a second
+  FUNCTION collision and failed loudly rather than silently, so this
+  instance was disambiguated as `clear_to_color_2`.
 
 ## Third-party library identification (Task #10)
 

@@ -180,9 +180,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4033C3",
+  "name": "roomstruct__freemessage",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "bmp_bpp",
@@ -4445,9 +4445,9 @@
   "is_named": false
  },
  {
-  "name": "sub_43C400",
+  "name": "clear_to_color_2",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_43C420",

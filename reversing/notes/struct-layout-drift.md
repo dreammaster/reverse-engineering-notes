@@ -13705,3 +13705,37 @@ directly around `printchar`'s body rather than existing separately --
 consistent with this build predating the whole `WFNFontRenderer`/
 `TTFFontRenderer` class split, matching every other finding in this
 font-loading/rendering investigation.
+
+### `roomstruct::freemessage` found, and a genuine naming COLLISION
+### resolved for a second `clear_to_color` instance
+
+`sub_4033C3` closes as a complete, exact, zero-drift match to `void
+roomstruct::freemessage()` (`Common/acroom.h:1246-1251`) -- looping `f`
+from 0 to the already-established `nummes`, freeing each non-NULL
+`message[f]`. Called directly from `load_room` (already matched) as
+part of its pre-reload cleanup, and also via another orphaned wrapper
+with no formal IDA function boundary of its own -- the same pattern
+already found for `GUIMain::init` and this session's LZW-cluster leads.
+
+`sub_43C400` closes as `clear_to_color(bmp,color)` -- Allegro's public
+macro, compiled here into its own shared subroutine (the same
+treatment as `acquire_bitmap`/`release_bitmap`), dispatching through
+vtable slot +0x9C. Counting `GFX_VTABLE`'s own field order puts
+`clear_to_color` at offset 0xA0 in the 4.2.2 reference, but this
+build's already-established missing `draw_trans_rgba_sprite` slot
+shifts everything after it back by 4 bytes, landing exactly on 0x9C
+with zero remaining slack -- a further confirmation of that earlier
+vtable-shift finding, from a fresh slot. **A genuine naming collision
+surfaced applying this one**: a separate, already-mechanically-matched
+linker-symbol `clear_to_color` (the real, distinct compiled library
+function, obj=`alleg_s_crt:gfx.obj`) already occupies that name
+elsewhere in the IDB -- `apply_matches.py`'s own auto-resolve mechanism
+(built for the more common case of a string literal owning the target
+name) couldn't handle a second FUNCTION collision, so it failed loudly
+rather than silently. Resolved by disambiguating this instance as
+`clear_to_color_2` -- a second, independent compiled instance of the
+same conceptual operation (the vtable-macro-expansion path, not a call
+into the real exported function), the same "compiler produced more
+than one copy of a small macro-expanded routine" situation already
+seen for `acquire_bitmap`/`release_bitmap` themselves, just with a real
+naming clash this time instead of a clean first occupation.
