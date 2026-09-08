@@ -4049,6 +4049,9 @@ disassembly work.
   matching `play_speech`'s own `-60` decrement — could drift if music
   volume changes mid-speech. `curLipLine=-1` is confirmed absent,
   consistent with this build's unimplemented lip-sync subsystem.
+- **`create_light_table` named**, completing `generate_light_table`'s
+  own remaining callee — Allegro's public 6-argument API, matched by
+  call-shape, not chased into its own palette-blending internals.
 
 ## Third-party library identification (Task #10)
 

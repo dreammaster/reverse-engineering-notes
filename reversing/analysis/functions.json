@@ -4320,9 +4320,9 @@
   "is_named": true
  },
  {
-  "name": "sub_43AFB0",
+  "name": "create_light_table",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "create_trans_table",

@@ -13891,3 +13891,12 @@ unimplemented, matching earlier, independently-shelved lipsync-field
 findings elsewhere in this project. The trailing `no_textbg_when_voice`
 /`OPT_SPEECHTYPE` restoration matches exactly (both already
 established).
+
+### `create_light_table` named, completing `generate_light_table`'s
+### own remaining callee
+
+`generate_light_table` (already matched) calls Allegro's own public
+`create_light_table(COLOR_MAP*,PALETTE,int,int,int,callback)` API
+(`sub_43AFB0`) to build the 8-bit-mode room-tint light table -- a
+decisive 6-argument call-shape match, not traced into its own
+palette-blending internals per the third-party scope rule.

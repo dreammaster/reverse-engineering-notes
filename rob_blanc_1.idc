@@ -60005,6 +60005,7 @@ static Bytes_10(void) {
 	create_insn	(x=0X43AFA9);
 	op_hex		(x,	1);
 	create_insn	(0X43AFB0);
+	set_name	(0X43AFB0,	"create_light_table");
 	create_insn	(x=0X43AFB5);
 	op_hex		(x,	1);
 	create_insn	(x=0X43AFC6);
@@ -63944,10 +63945,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F18D);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X43F191);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43F197);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -63957,6 +63954,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F191);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43F197);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F19B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F1A1);
@@ -69994,9 +69995,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X44640D);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X446413);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -70006,6 +70004,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446413);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44641C);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -76180,9 +76181,6 @@ static Bytes_12(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44E510);
 	op_hex		(x,	1);
-	create_insn	(x=0X44E513);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76192,6 +76190,9 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E513);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X44E520);
 	op_hex		(x,	1);
 	create_insn	(x=0X44E525);
@@ -81454,11 +81455,6 @@ static Bytes_13(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X4565F2);
 	op_hex		(x,	1);
-	create_insn	(0X4565FC);
-	create_insn	(x=0X456605);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X45660F);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81468,6 +81464,11 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(0X4565FC);
+	create_insn	(x=0X456605);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X45660F);
+	op_hex		(x,	1);
 	create_insn	(x=0X456627);
 	op_hex		(x,	1);
 	create_insn	(0X456630);
@@ -87632,8 +87633,6 @@ static Bytes_14(void) {
 	op_stkvar	(x,	1);
 	set_cmt	(0X462F55,	"jumptable 00462E77 cases 24,32",	1);
 	create_insn	(0X462F55);
-	create_insn	(x=0X462F60);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -87643,6 +87642,8 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X462F60);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X462F6A);
 	op_hex		(x,	1);
 	create_insn	(0X462F86);
@@ -93450,8 +93451,6 @@ static Bytes_15(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46B8A9);
 	op_hex		(x,	1);
-	create_insn	(x=0X46B8AF);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -93461,6 +93460,8 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46B8AF);
+	op_hex		(x,	1);
 	create_insn	(x=0X46B8B2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46B8CE);
@@ -99416,7 +99417,6 @@ static Bytes_16(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X473A0A);
 	op_hex		(x,	1);
-	make_array	(0X473A0E,	0X2);
 }
 
 //------------------------------------------------------------------------
@@ -99426,6 +99426,7 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	make_array	(0X473A0E,	0X2);
 	create_insn	(x=0X473A10);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X473A1D);
@@ -105213,9 +105214,6 @@ static Bytes_17(void) {
 	create_insn	(0X47AEAF);
 	create_insn	(x=0X47AEBE);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X47AEC2);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -105225,6 +105223,9 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X47AEC2);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X47AECF);
 	op_hex		(x,	1);
 	create_insn	(x=0X47AED7);
@@ -111373,10 +111374,6 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484E7F);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X484E84);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X484EB8);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111386,6 +111383,10 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X484E84);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X484EB8);
+	op_hex		(x,	1);
 	create_insn	(x=0X484EC4);
 	op_hex		(x,	1);
 	make_array	(0X484EDA,	0X6);
@@ -117697,8 +117698,6 @@ static Bytes_19(void) {
 	make_array	(0X48E81A,	0X6);
 	create_insn	(x=0X48E820);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48E835);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117708,6 +117707,8 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48E835);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X48E843);
 	op_hex		(x,	1);
 	make_array	(0X48E84E,	0X2);
@@ -124159,8 +124160,6 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X497A17);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X497A1F);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -124170,6 +124169,8 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497A1F);
+	op_hex		(x,	1);
 	create_insn	(x=0X497A24);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X497A2D);
@@ -159838,6 +159839,7 @@ static Functions_10(void) {
 	set_frame_size(0X43A070, 0X10040, 0, 0);
 	add_func    (0X43AFB0,0X43B1A8);
 	set_func_flags(0X43AFB0,0x5400);
+	set_func_cmt(0X43AFB0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/color.h\nconfidence: high\nevidence: void create_light_table(COLOR_MAP*table,AL_CONST PALETTE pal,int r,int g,int b,void(*callback)(int)) -- Allegro's public 8-bit palette light-table generation API. Identified via exact call-shape match: 6 parameters, matching the disassembly's own arg_0..arg_14 declaration exactly, and called from the newly-matched generate_light_table (already matched) with the exact 6-argument shape source's own `create_light_table(&maincoltable,palette,0,0,0,NULL)` call uses. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule) -- its own internal palette-blending math (a substantial ~183-line function) was not traced instruction-by-instruction, consistent with this project's treatment of other third-party API bodies once identified at the signature/call-shape level.", 1);
 	set_frame_size(0X43AFB0, 0X20, 0, 0);
 	add_func    (0X43B1B0,0X43B44B);
 	set_func_flags(0X43B1B0,0x15400);
@@ -160714,6 +160716,10 @@ static Functions_10(void) {
 	set_func_flags(0X44C9A0,0x5400);
 	set_func_cmt(0X44C9A0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/midi.c\nconfidence: medium\nevidence: midi_lock_mem() -- an empty-body stub (\"retn\" only), matching this platform's own no-op definition of Allegro's lock-memory-for-interrupt-safety macro (a DOS/real-mode concern not applicable to a Windows build). Called once, as the very first step of the newly-matched midi_init (sub_44B410), exactly where source calls `midi_lock_mem()`. THIRD-PARTY LIBRARY BOUNDARY, not chased further (nothing to chase -- the body is empty).", 1);
 	set_frame_size(0X44C9A0, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X44C9B0,0X44C9BB);
 	set_func_flags(0X44C9B0,0x5400);
 	set_frame_size(0X44C9B0, 0, 0, 0);
@@ -160721,10 +160727,6 @@ static Functions_10(void) {
 	set_func_flags(0X44C9C0,0x5400);
 	set_func_cmt(0X44C9C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/flood.c\nconfidence: high\nevidence: _soft_floodfill(BITMAP*bmp,int x,int y,int color) (flood.c:209-277) -- Allegro own public flood-fill implementation. A near-exhaustive, field-for-field match: the opening clip-bounds check (\"if(x<bmp->cl||x>=bmp->cr||y<bmp->ct||y>=bmp->cb) return;\") matches the disasm own 4-way comparison against bmp own cl/cr@+0x0C/+0x10 and ct/cb@+0x14/+0x18 exactly; acquire_bitmap(bmp) matches the conditional vtable-slot-0x10 call; \"src_color=getpixel(bmp,x,y); if(src_color==color) {release_bitmap(bmp); return;}\" matches the vtable-slot-0x20(getpixel)-then-compare-then-conditional-slot-0x14(release) sequence exactly; \"_grow_scratch_mem(sizeof(FLOODED_LINE)*bmp->cb)\" matches the realloc-based scratch-buffer-growing logic against dword_536FA0/dword_536FA4 (matching Allegro own internal _scratch_mem/_scratch_mem_size globals); the FLOODED_LINE initialization loop (\"p[c].flags=0; p[c].lpos=SHRT_MAX; p[c].rpos=SHRT_MIN; p[c]." "y=y; p[c].next=0;\") matches the disasm own 5-word-per-entry init loop field for field. GENUINE", 1);
 	set_frame_size(0X44C9C0, 0X10, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X44CBB0,0X44CF0A);
 	set_func_flags(0X44CBB0,0x5410);
 	set_frame_size(0X44CBB0, 0X10, 4, 0);
@@ -162632,6 +162634,10 @@ static Functions_11(void) {
 	add_func    (0X479F20,0X47A01B);
 	set_func_flags(0X479F20,0x5400);
 	set_frame_size(0X479F20, 0, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X47A020,0X47A08E);
 	set_func_flags(0X47A020,0x5400);
 	set_frame_size(0X47A020, 0X4, 0, 0);
@@ -162692,10 +162698,6 @@ static Functions_11(void) {
 	add_func    (0X47A8E0,0X47AC03);
 	set_func_flags(0X47A8E0,0x5400);
 	set_frame_size(0X47A8E0, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X47AC60,0X47AC61);
 	set_func_flags(0X47AC60,0x5400);
 	set_frame_size(0X47AC60, 0, 0, 0);
@@ -164987,6 +164989,10 @@ static Functions_12(void) {
 	add_func    (0X4A8570,0X4A85F5);
 	set_func_flags(0X4A8570,0x5400);
 	set_frame_size(0X4A8570, 0X10, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4A8600,0X4A8742);
 	set_func_flags(0X4A8600,0x5400);
 	set_frame_size(0X4A8600, 0X1C, 0, 0);
@@ -165048,10 +165054,6 @@ static Functions_12(void) {
 	add_func    (0X4AA290,0X4AA429);
 	set_func_flags(0X4AA290,0x5400);
 	set_frame_size(0X4AA290, 0X30, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4AA430,0X4AA45E);
 	set_func_flags(0X4AA430,0x5400);
 	set_frame_size(0X4AA430, 0, 0, 0);
