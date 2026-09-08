@@ -4035,6 +4035,14 @@ disassembly work.
   1 and 2 parameters respectively, called in precisely the order
   source predicts — but not traced instruction-by-instruction, per
   this project's own established treatment of `lzwcompress` itself.
+- **`set_clip` named, and a room-mask resolution-scaling helper
+  characterized without a forced name.** `set_clip` is Allegro's real
+  implementation (not a macro-expansion), confirmed via its zero-args
+  special case plus the already-established `GFX_VTABLE` dispatch.
+  Its own caller (called from `load_new_room`) upscales a room-mask
+  bitmap to the resolution multiplier via `stretch_blit` — no single
+  2011 declaration matches this exact sequence, left open for a
+  future round.
 
 ## Third-party library identification (Task #10)
 

@@ -7691,5 +7691,24 @@
     "source_line": 49,
     "confidence": "medium-high",
     "evidence": "int insert(int i,int run) (lzw.cpp:49-85) -- lzwcompress's own binary-tree node-insertion/longest-match-search helper, genuinely AGS-owned code. Identified at the signature/call-order level: exactly 2 parameters, matching `insert(int i,int run)`'s shape; called from the newly-matched lzwcompress (sub_4312CE) at the single call site source's own `match=insert(i,run);` predicts, positioned after both `_delete` calls in program order exactly as source's own sequential flow dictates. Not traced instruction-by-instruction -- the same well-known, unremarkable LZSS matching algorithm, zero ScummVM relevance, matching this project's own treatment of lzwcompress/_delete."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4360D0",
+    "new_name": "set_clip",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 159,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "set_clip(bmp,x1,y1,x2,y2) -- Allegro's public clip-rectangle-setting API. This is the REAL implementation (not just a 1-line vtable-dispatch macro-expansion like acquire_bitmap/release_bitmap): manages the BITMAP's own clip-region fields directly (writes to offsets +0x08/+0x0C/+0x10/+0x14/+0x18, matching Allegro's own cl/cr/ct/cb-style layout), with a special-case branch for `set_clip(bmp,0,0,0,0)` resetting to the full-bitmap clip region -- matching Allegro's own documented \"all-zero arguments means no clipping\" convention -- before finally dispatching through the vtable's own `set_clip` slot (`[vtable+0xC]`, matching this project's already-established GFX_VTABLE field order exactly). Called from a room-mask resolution-scaling helper (sub_40A9FF, called from load_new_room, already matched) and domouse (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not traced instruction-by-instruction past this decisive structural confirmation."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40A9FF",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "evidence": "A room-mask resolution-scaling helper, called twice from load_new_room (already matched). Takes a BITMAP* argument, reads its original width/height, creates a NEW bitmap scaled by `current_screen_resolution_multiplier_x`/`_y` (using the already-established RoomStruct.width/height globals, word_522F08/word_522F0A) at the same color depth, sets the clip region on both the new and original bitmap to their own full extent (via the newly-matched set_clip, twice), clears the new bitmap, `stretch_blit`s the original into it at the new size, `destroy_bitmap`s the original, and returns the new (scaled) bitmap -- effectively 'upscale this low-res mask bitmap to match the game's resolution multiplier, replacing the original'. Not matched to a specific 2011 function name -- no obvious single 2011 declaration was found doing this exact create-scale-stretch_blit-destroy sequence on a room-mask bitmap; left unnamed pending a future round with more context on load_new_room's own two call sites (which specific room masks, at which of load_new_room's own version-gated branches, this helper is applied to)."
   }
 ]

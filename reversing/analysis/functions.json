@@ -4160,9 +4160,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4360D0",
+  "name": "set_clip",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4361E0",

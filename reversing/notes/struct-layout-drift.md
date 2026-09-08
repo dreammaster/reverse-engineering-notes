@@ -13839,3 +13839,31 @@ itself: a well-known, unremarkable LZSS binary-tree matching
 algorithm with zero bearing on a ScummVM port, which would replace
 the whole compression scheme wholesale regardless of these internals'
 exact behavior.
+
+### `set_clip` named, and a room-mask resolution-scaling helper
+### characterized without a forced name
+
+`sub_4360D0`, called from a room-mask resolution-scaling helper
+(itself called from `load_new_room`, already matched) and from
+`domouse` (already matched), closes as Allegro's own REAL `set_clip`
+implementation -- not a 1-line vtable-dispatch macro-expansion like
+`acquire_bitmap`/`release_bitmap`, but the actual function that
+manages the `BITMAP`'s own clip-region fields directly, with a
+special-case branch for `set_clip(bmp,0,0,0,0)` (Allegro's own
+documented "all-zero arguments means no clipping" convention) before
+finally dispatching through the vtable's own `set_clip` slot
+(`+0xC`, matching this project's already-established `GFX_VTABLE`
+field order exactly).
+
+Its own caller, `sub_40A9FF`, was characterized but left unnamed: it
+takes a `BITMAP*`, creates a new bitmap scaled by the resolution
+multiplier (using the already-established `RoomStruct.width`/`height`
+globals), sets the clip region on both bitmaps to their own full
+extent via the newly-matched `set_clip` (twice), clears the new
+bitmap, `stretch_blit`s the original into it, destroys the original,
+and returns the scaled replacement -- effectively "upscale this low-
+res room-mask bitmap to match the game's resolution multiplier". No
+single 2011 declaration was found doing this exact sequence on a
+room-mask bitmap; left open for a future round with more context on
+which of `load_new_room`'s own two call sites (and which specific
+masks) this applies to.

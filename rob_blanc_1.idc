@@ -55281,6 +55281,7 @@ static Bytes_9(void) {
 	make_array	(0X4360CB,	0X5);
 	create_insn	(x=0X4360D0);
 	op_stkvar	(x,	1);
+	set_name	(0X4360D0,	"set_clip");
 	create_insn	(x=0X4360D7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4360DC);
@@ -58242,7 +58243,6 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X439302);
 	op_hex		(x,	1);
-	make_array	(0X439306,	0XA);
 }
 
 //------------------------------------------------------------------------
@@ -58252,6 +58252,7 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	make_array	(0X439306,	0XA);
 	create_insn	(0X439310);
 	create_insn	(x=0X439313);
 	op_stkvar	(x,	1);
@@ -63953,8 +63954,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F1AA);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X43F1AE);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -63964,6 +63963,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F1AE);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F1B4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F1C5);
@@ -70003,9 +70004,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X446429);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X446433);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -70015,6 +70013,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446433);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X446439);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -76191,9 +76192,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E53B);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E54A);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -76203,6 +76201,9 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E54A);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(0X44E559);
 	create_insn	(x=0X44E55F);
 	op_plain_offset	(x,	1,	0);
@@ -81468,9 +81469,6 @@ static Bytes_13(void) {
 	create_insn	(x=0X45665E);
 	op_hex		(x,	1);
 	create_insn	(0X456668);
-	create_insn	(x=0X45667B);
-	op_hex		(x,	1);
-	make_array	(0X456688,	0X8);
 }
 
 //------------------------------------------------------------------------
@@ -81480,6 +81478,9 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X45667B);
+	op_hex		(x,	1);
+	make_array	(0X456688,	0X8);
 	create_insn	(0X456690);
 	create_insn	(x=0X456691);
 	op_stkvar	(x,	1);
@@ -87641,9 +87642,6 @@ static Bytes_14(void) {
 	create_insn	(0X462FB3);
 	create_insn	(x=0X462FB9);
 	op_hex		(x,	1);
-	create_insn	(x=0X462FBC);
-	op_stkvar	(x,	0);
-	create_insn	(0X462FDC);
 }
 
 //------------------------------------------------------------------------
@@ -87653,6 +87651,9 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X462FBC);
+	op_stkvar	(x,	0);
+	create_insn	(0X462FDC);
 	create_insn	(x=0X462FE2);
 	op_hex		(x,	1);
 	create_insn	(0X463003);
@@ -93460,8 +93461,6 @@ static Bytes_15(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X46B8E2);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46B8E8);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -93471,6 +93470,8 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46B8E8);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X46B8EC);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46B90D);
@@ -99424,7 +99425,6 @@ static Bytes_16(void) {
 	set_cmt	(0X473A33,	"Block",	0);
 	create_insn	(x=0X473A3A);
 	op_hex		(x,	1);
-	make_array	(0X473A8C,	0X4);
 }
 
 //------------------------------------------------------------------------
@@ -99434,6 +99434,7 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	make_array	(0X473A8C,	0X4);
 	create_insn	(0X473A90);
 	create_insn	(0X473AB1);
 	make_array	(0X473ACC,	0X4);
@@ -105221,7 +105222,6 @@ static Bytes_17(void) {
 	create_insn	(x=0X47AEDC);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	set_cmt	(0X47AEE6,	"Block",	0);
 }
 
 //------------------------------------------------------------------------
@@ -105231,6 +105231,7 @@ static Bytes_18(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X47AEE6,	"Block",	0);
 	create_insn	(x=0X47AEEC);
 	op_hex		(x,	1);
 	create_insn	(x=0X47AEF5);
@@ -111383,8 +111384,6 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484EF3);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X484EF8);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111394,6 +111393,8 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X484EF8);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X484EFF);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X484F03);
@@ -117705,8 +117706,6 @@ static Bytes_19(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X48E860);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X48E873);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117716,6 +117715,8 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X48E873);
+	op_hex		(x,	1);
 	make_array	(0X48E87D,	0X3);
 	create_insn	(0X48E880);
 	set_name	(0X48E880,	"FT_Init_FreeType");
@@ -124168,8 +124169,6 @@ static Bytes_20(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X497A47);
 	op_hex		(x,	1);
-	create_insn	(x=0X497A4A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -124179,6 +124178,8 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497A4A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X497A56);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X497A5F);
@@ -156035,6 +156036,7 @@ static Functions_2(void) {
 	add_func    (0X40A9FF,0X40AAE3);
 	set_func_flags(0X40A9FF,0x5410);
 	SetType(0X40A9FF, "int __cdecl sub_40A9FF(void *Block);");
+	set_func_cmt(0X40A9FF,	"[reversing] confirmed match\nconfidence: medium\nevidence: A room-mask resolution-scaling helper, called twice from load_new_room (already matched). Takes a BITMAP* argument, reads its original width/height, creates a NEW bitmap scaled by `current_screen_resolution_multiplier_x`/`_y` (using the already-established RoomStruct.width/height globals, word_522F08/word_522F0A) at the same color depth, sets the clip region on both the new and original bitmap to their own full extent (via the newly-matched set_clip, twice), clears the new bitmap, `stretch_blit`s the original into it at the new size, `destroy_bitmap`s the original, and returns the new (scaled) bitmap -- effectively 'upscale this low-res mask bitmap to match the game's resolution multiplier, replacing the original'. Not matched to a specific 2011 function name -- no obvious single 2011 declaration was found doing this exact create-scale-stretch_blit-destroy sequence on a room-mask bitmap; left unnamed pending a future round with more context on load_new" "_room's own two call sites (which specific room ", 1);
 	set_frame_size(0X40A9FF, 0XC, 4, 0);
 	define_local_var(0X40A9FF, 0X40AAE3, "[bp+0X8]", "Block");
 	add_func    (0X40AAE3,0X40AD11);
@@ -159729,6 +159731,7 @@ static Functions_10(void) {
 	define_local_var(0X436000, 0X4360CB, "[bp+0X4]", "Block");
 	add_func    (0X4360D0,0X4361DE);
 	set_func_flags(0X4360D0,0x5400);
+	set_func_cmt(0X4360D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: set_clip(bmp,x1,y1,x2,y2) -- Allegro's public clip-rectangle-setting API. This is the REAL implementation (not just a 1-line vtable-dispatch macro-expansion like acquire_bitmap/release_bitmap): manages the BITMAP's own clip-region fields directly (writes to offsets +0x08/+0x0C/+0x10/+0x14/+0x18, matching Allegro's own cl/cr/ct/cb-style layout), with a special-case branch for `set_clip(bmp,0,0,0,0)` resetting to the full-bitmap clip region -- matching Allegro's own documented \"all-zero arguments means no clipping\" convention -- before finally dispatching through the vtable's own `set_clip` slot (`[vtable+0xC]`, matching this project's already-established GFX_VTABLE field order exactly). Called from a room-mask resolution-scaling helper (sub_40A9FF, called from load_new_room, already matched) and domouse (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not traced inst" "ruction-by-instruction past this decisive structural confirmation.", 1);
 	set_frame_size(0X4360D0, 0X8, 0, 0);
 	add_func    (0X4361E0,0X4362B5);
 	set_func_flags(0X4361E0,0x5400);
@@ -160725,6 +160728,10 @@ static Functions_10(void) {
 	set_func_cmt(0X44CFC0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:pcx.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj", 1);
 	set_frame_size(0X44CFC0, 0X434, 0, 0);
 	define_local_var(0X44CFC0, 0X44D542, "[bp-0X420]", "Block");
+}
+
+static Functions_11(void) {
+
 	add_func    (0X44D550,0X44DAF3);
 	set_func_flags(0X44D550,0x15400);
 	set_func_cmt(0X44D550,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:pcx.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:pcx.obj", 1);
@@ -160763,10 +160770,6 @@ static Functions_10(void) {
 	set_func_flags(0X44E120,0x5400);
 	set_func_cmt(0X44E120,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:mixer.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:mixer.obj", 1);
 	set_frame_size(0X44E120, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X44E130,0X44E38A);
 	set_func_flags(0X44E130,0x15400);
 	set_frame_size(0X44E130, 0X14, 0, 0);
@@ -162695,6 +162698,10 @@ static Functions_11(void) {
 	set_func_flags(0X47AD30,0x5400);
 	set_func_cmt(0X47AD30,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
 	set_frame_size(0X47AD30, 0X4, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X47ADB0,0X47B2A7);
 	set_func_flags(0X47ADB0,0x5400);
 	set_frame_size(0X47ADB0, 0X1C, 0, 0);
@@ -162719,10 +162726,6 @@ static Functions_11(void) {
 	set_func_flags(0X47B4E0,0x5400);
 	set_func_cmt(0X47B4E0,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-3 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x2C(44), reads 4 bytes, compares against the matched string \"SCRM\" (aScrm_0) -- the standard Scream Tracker 3 (.s3m) file format magic signature, at its standard file offset. Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
 	set_frame_size(0X47B4E0, 0X4, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X47B540,0X47B5A5);
 	set_func_flags(0X47B540,0x5400);
 	set_frame_size(0X47B540, 0XC, 0, 0);
@@ -165086,6 +165089,10 @@ static Functions_12(void) {
 	add_func    (0X4AAEF0,0X4AAF05);
 	set_func_flags(0X4AAEF0,0x5400);
 	set_frame_size(0X4AAEF0, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4AAF10,0X4AAF3C);
 	set_func_flags(0X4AAF10,0x5404);
 	SetType(0X4AAF10, "_onexit_t __cdecl _onexit(_onexit_t Func);");
@@ -165112,10 +165119,6 @@ static Functions_12(void) {
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X8]", "ElementSize");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0XC]", "ElementCount");
 	define_local_var(0X4AAF54, 0X4AAF5A, "[bp+0X10]", "Stream");
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4AAF5A,0X4AAF60);
 	set_func_flags(0X4AAF5A,0x5480);
 	SetType(0X4AAF5A, "int __cdecl fseek(FILE *Stream, int Offset, int Origin);");
