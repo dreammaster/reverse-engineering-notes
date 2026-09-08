@@ -7738,5 +7738,15 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "void create_light_table(COLOR_MAP*table,AL_CONST PALETTE pal,int r,int g,int b,void(*callback)(int)) -- Allegro's public 8-bit palette light-table generation API. Identified via exact call-shape match: 6 parameters, matching the disassembly's own arg_0..arg_14 declaration exactly, and called from the newly-matched generate_light_table (already matched) with the exact 6-argument shape source's own `create_light_table(&maincoltable,palette,0,0,0,NULL)` call uses. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule) -- its own internal palette-blending math (a substantial ~183-line function) was not traced instruction-by-instruction, consistent with this project's treatment of other third-party API bodies once identified at the signature/call-shape level."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_449B10",
+    "new_name": "play_fli",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/fli.h",
+    "source_line": 36,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int play_fli(const char*filename,BITMAP*bmp,int loop,int(*callback)(void)) -- Allegro's public FLIC/FLI-format video playback API. A complete, exact 4-argument call-shape match, called from PlayFlic (already matched, this build's own undocumented-in-2011 FLI-format animation subsystem). Body matches the expected shape: calls an internal open/validate helper (sub_449C30, presumably open_fli or an inlined equivalent) first, returning a literal -2 (matching Allegro's own FLI-error-constant convention) on failure, else delegating to the real playback loop (sub_449B40) with (bmp,loop,callback). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule) -- sub_449C30/sub_449B40 are internal helpers called only from within this same library function, not chased further."
   }
 ]

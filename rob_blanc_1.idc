@@ -72955,6 +72955,7 @@ static Bytes_12(void) {
 	make_array	(0X449B02,	0XE);
 	create_insn	(x=0X449B10);
 	op_stkvar	(x,	1);
+	set_name	(0X449B10,	"play_fli");
 	create_insn	(x=0X449B1A);
 	op_hex		(x,	1);
 	create_insn	(x=0X449B27);
@@ -76179,8 +76180,6 @@ static Bytes_12(void) {
 	create_insn	(x=0X44E506);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E510);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -76190,6 +76189,8 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E510);
+	op_hex		(x,	1);
 	create_insn	(x=0X44E513);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81453,8 +81454,6 @@ static Bytes_13(void) {
 	op_plain_offset	(x,	128,	0);
 	create_insn	(x=0X4565E8);
 	op_hex		(x,	1);
-	create_insn	(x=0X4565F2);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81464,6 +81463,8 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4565F2);
+	op_hex		(x,	1);
 	create_insn	(0X4565FC);
 	create_insn	(x=0X456605);
 	op_stkvar	(x,	1);
@@ -160556,6 +160557,7 @@ static Functions_10(void) {
 	set_frame_size(0X449AC0, 0X4, 0, 0);
 	add_func    (0X449B10,0X449B3F);
 	set_func_flags(0X449B10,0x5400);
+	set_func_cmt(0X449B10,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/fli.h\nconfidence: high\nevidence: int play_fli(const char*filename,BITMAP*bmp,int loop,int(*callback)(void)) -- Allegro's public FLIC/FLI-format video playback API. A complete, exact 4-argument call-shape match, called from PlayFlic (already matched, this build's own undocumented-in-2011 FLI-format animation subsystem). Body matches the expected shape: calls an internal open/validate helper (sub_449C30, presumably open_fli or an inlined equivalent) first, returning a literal -2 (matching Allegro's own FLI-error-constant convention) on failure, else delegating to the real playback loop (sub_449B40) with (bmp,loop,callback). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule) -- sub_449C30/sub_449B40 are internal helpers called only from within this same library function, not chased further.", 1);
 	set_frame_size(0X449B10, 0, 0, 0);
 	add_func    (0X449B40,0X449BFF);
 	set_func_flags(0X449B40,0x5400);
@@ -160699,6 +160701,10 @@ static Functions_10(void) {
 	set_func_flags(0X44C610,0x5400);
 	set_func_cmt(0X44C610,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library: void stop_midi(void) (allegro/midi.h:122). Called from scr_StopMusic (already matched) with ZERO arguments, immediately before destroy_midi (see sub_44B130's own entry) -- matching 2011's MYMIDI::destroy() 'stop_midi(); destroy_midi(tune); tune=NULL;' (acsound.cpp:942-944) call order and arg-count exactly.", 1);
 	set_frame_size(0X44C610, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X44C620,0X44C64A);
 	set_func_flags(0X44C620,0x5400);
 	set_frame_size(0X44C620, 0, 0, 0);
@@ -160716,10 +160722,6 @@ static Functions_10(void) {
 	set_func_flags(0X44C9A0,0x5400);
 	set_func_cmt(0X44C9A0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/midi.c\nconfidence: medium\nevidence: midi_lock_mem() -- an empty-body stub (\"retn\" only), matching this platform's own no-op definition of Allegro's lock-memory-for-interrupt-safety macro (a DOS/real-mode concern not applicable to a Windows build). Called once, as the very first step of the newly-matched midi_init (sub_44B410), exactly where source calls `midi_lock_mem()`. THIRD-PARTY LIBRARY BOUNDARY, not chased further (nothing to chase -- the body is empty).", 1);
 	set_frame_size(0X44C9A0, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X44C9B0,0X44C9BB);
 	set_func_flags(0X44C9B0,0x5400);
 	set_frame_size(0X44C9B0, 0, 0, 0);
@@ -162580,6 +162582,10 @@ static Functions_11(void) {
 	add_func    (0X4795B0,0X47968F);
 	set_func_flags(0X4795B0,0x5400);
 	set_frame_size(0X4795B0, 0, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X479690,0X47976A);
 	set_func_flags(0X479690,0x5400);
 	set_frame_size(0X479690, 0, 0, 0);
@@ -162634,10 +162640,6 @@ static Functions_11(void) {
 	add_func    (0X479F20,0X47A01B);
 	set_func_flags(0X479F20,0x5400);
 	set_frame_size(0X479F20, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X47A020,0X47A08E);
 	set_func_flags(0X47A020,0x5400);
 	set_frame_size(0X47A020, 0X4, 0, 0);
@@ -164935,6 +164937,10 @@ static Functions_12(void) {
 	add_func    (0X4A61A0,0X4A6530);
 	set_func_flags(0X4A61A0,0x5400);
 	set_frame_size(0X4A61A0, 0X38C, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4A6530,0X4A658F);
 	set_func_flags(0X4A6530,0x5400);
 	set_frame_size(0X4A6530, 0XC, 0, 0);
@@ -164989,10 +164995,6 @@ static Functions_12(void) {
 	add_func    (0X4A8570,0X4A85F5);
 	set_func_flags(0X4A8570,0x5400);
 	set_frame_size(0X4A8570, 0X10, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4A8600,0X4A8742);
 	set_func_flags(0X4A8600,0x5400);
 	set_frame_size(0X4A8600, 0X1C, 0, 0);

@@ -5350,9 +5350,9 @@
   "is_named": false
  },
  {
-  "name": "sub_449B10",
+  "name": "play_fli",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_449B40",

@@ -4052,6 +4052,9 @@ disassembly work.
 - **`create_light_table` named**, completing `generate_light_table`'s
   own remaining callee — Allegro's public 6-argument API, matched by
   call-shape, not chased into its own palette-blending internals.
+- **`play_fli` named**, closing `PlayFlic`'s own remaining callee —
+  Allegro's public 4-argument FLI-playback API, matched by call-shape,
+  its own open/validate and playback internals left uninvestigated.
 
 ## Third-party library identification (Task #10)
 

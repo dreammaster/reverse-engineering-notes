@@ -13900,3 +13900,13 @@ established).
 (`sub_43AFB0`) to build the 8-bit-mode room-tint light table -- a
 decisive 6-argument call-shape match, not traced into its own
 palette-blending internals per the third-party scope rule.
+
+### `play_fli` named, closing `PlayFlic`'s own remaining callee
+
+`PlayFlic` (already matched, this build's own undocumented-in-2011
+FLI-format animation subsystem) calls Allegro's own public `play_fli
+(const char*filename,BITMAP*bmp,int loop,int(*callback)(void))` API
+(`sub_449B10`) -- a complete, exact 4-argument call-shape match,
+delegating internally to an open/validate helper and a real playback
+loop, both left uninvestigated as library-internal per the third-party
+scope rule.
