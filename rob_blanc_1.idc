@@ -115310,6 +115310,7 @@ static Bytes_19(void) {
 	make_array	(0X48B0E1,	0XF);
 	create_insn	(x=0X48B0F0);
 	op_stkvar	(x,	1);
+	set_name	(0X48B0F0,	"alfont_text_mode");
 	create_insn	(0X48B100);
 	create_insn	(x=0X48B101);
 	op_stkvar	(x,	1);
@@ -115429,8 +115430,10 @@ static Bytes_19(void) {
 	make_array	(0X48B317,	0X9);
 	create_insn	(x=0X48B320);
 	op_stkvar	(x,	1);
+	set_name	(0X48B320,	"alfont_get_font_height");
 	make_array	(0X48B328,	0X8);
 	create_insn	(0X48B330);
+	set_name	(0X48B330,	"alfont_text_length");
 	create_insn	(x=0X48B336);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48B340);
@@ -117723,11 +117726,6 @@ static Bytes_19(void) {
 	set_cmt	(0X48E91D,	"FileName",	0);
 	create_insn	(x=0X48E925);
 	op_hex		(x,	1);
-	set_cmt	(0X48E935,	"Origin",	0);
-	create_insn	(0X48E935);
-	set_cmt	(0X48E937,	"Offset",	0);
-	set_cmt	(0X48E939,	"Stream",	0);
-	set_cmt	(0X48E93F,	"Stream",	0);
 }
 
 //------------------------------------------------------------------------
@@ -117737,6 +117735,11 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X48E935,	"Origin",	0);
+	create_insn	(0X48E935);
+	set_cmt	(0X48E937,	"Offset",	0);
+	set_cmt	(0X48E939,	"Stream",	0);
+	set_cmt	(0X48E93F,	"Stream",	0);
 	set_cmt	(0X48E945,	"Origin",	0);
 	set_cmt	(0X48E947,	"Offset",	0);
 	set_cmt	(0X48E949,	"Stream",	0);
@@ -124199,13 +124202,6 @@ static Bytes_20(void) {
 	create_insn	(x=0X497B2E);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X497B3B);
-	op_hex		(x,	1);
-	create_insn	(x=0X497B3F);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X497B57);
-	op_hex		(x,	1);
-	create_insn	(0X497B5C);
 }
 
 //------------------------------------------------------------------------
@@ -124215,6 +124211,13 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X497B3B);
+	op_hex		(x,	1);
+	create_insn	(x=0X497B3F);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X497B57);
+	op_hex		(x,	1);
+	create_insn	(0X497B5C);
 	create_insn	(x=0X497B66);
 	op_hex		(x,	1);
 	create_insn	(x=0X497B69);
@@ -163356,6 +163359,7 @@ static Functions_12(void) {
 	define_local_var(0X48B020, 0X48B0E1, "[bp+0X8]", "Size");
 	add_func    (0X48B0F0,0X48B100);
 	set_func_flags(0X48B0F0,0x5400);
+	set_func_cmt(0X48B0F0,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API for setting the TrueType-text background/transparency mode (no local alfont source tree exists in this repo to verify the exact name against -- identified by call-shape/role). A trivial classic swap-and-return-previous accessor: `old=global; global=newval; return old;` on dword_54784C. Called from wtexttransparent (already matched) exactly where AGS's own text-transparency-mode setter would delegate to alfont's equivalent for TrueType rendering. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further.", 1);
 	set_frame_size(0X48B0F0, 0, 0, 0);
 	add_func    (0X48B100,0X48B135);
 	set_func_flags(0X48B100,0x5400);
@@ -163364,12 +163368,15 @@ static Functions_12(void) {
 	define_local_var(0X48B100, 0X48B135, "[bp+0X4]", "Block");
 	add_func    (0X48B140,0X48B317);
 	set_func_flags(0X48B140,0x5400);
+	set_func_cmt(0X48B140,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public TrueType text-output function (plausibly `alfont_textout_ex` or similar -- no local alfont source tree exists in this repo to pin an exact name, and the function's own size (~210 lines) wasn't fully traced this round). Opens by checking the already-identified `alfont_text_mode` global (dword_54784C); if it holds a real background color (not the 'opaque' sentinel), computes the text's bounding box via the newly-identified alfont_get_font_height/alfont_text_length and fills it via a vtable-dispatched call through slot +0x38 on the destination bitmap -- matching this project's own already-confirmed GFX_VTABLE `rectfill` slot exactly (Allegro's public rectfill API, third-party boundary, not chased further here either). Called from wouttextxy (already matched). THIRD-PARTY LIBRARY BOUNDARY, left unnamed and not traced to completion.", 1);
 	set_frame_size(0X48B140, 0X24, 0, 0);
 	add_func    (0X48B320,0X48B328);
 	set_func_flags(0X48B320,0x5400);
+	set_func_cmt(0X48B320,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public API returning a loaded TrueType font's line height (no local alfont source tree exists in this repo -- identified by call-shape/role). A trivial one-line accessor, `return font->height;` (offset +8 on the alfont font handle). Called from wgettextheight (already matched) and from the newly-identified alfont text-output helper (sub_48B140, see its own entry). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X48B320, 0, 0, 0);
 	add_func    (0X48B330,0X48B394);
 	set_func_flags(0X48B330,0x5400);
+	set_func_cmt(0X48B330,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed).", 1);
 	set_frame_size(0X48B330, 0X4, 0, 0);
 	add_func    (0X48B3A0,0X48B41C);
 	set_func_flags(0X48B3A0,0x5400);
@@ -165372,6 +165379,10 @@ static Functions_12(void) {
 	set_frame_size(0X4AB07C, 0, 0, 0);
 	define_local_var(0X4AB07C, 0X4AB082, "[bp+0X8]", "Src");
 	define_local_var(0X4AB07C, 0X4AB082, "[bp+0XC]", "Size");
+}
+
+static Functions_13(void) {
+
 	add_func    (0X4AB082,0X4AB088);
 	set_func_flags(0X4AB082,0x5480);
 	SetType(0X4AB082, "char *__cdecl getenv(const char *VarName);");
@@ -165432,10 +165443,6 @@ static Functions_12(void) {
 	set_func_flags(0X4AB2B0,0x5404);
 	set_func_cmt(0X4AB2B0,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullrem.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullrem.obj", 1);
 	set_frame_size(0X4AB2B0, 0X4, 0, 0X10);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4AB330,0X4AB34F);
 	set_func_flags(0X4AB330,0x5404);
 	set_func_cmt(0X4AB330,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:ullshr.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:ullshr.obj", 1);

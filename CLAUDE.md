@@ -3974,6 +3974,15 @@ disassembly work.
   left unnamed — their role parallels `wloadfont_size` but the
   parameter shape is fundamentally different, predating the
   `fontRenderers[]`-array design entirely.
+- **The alfont text-measurement/rendering quartet closes the loop.**
+  `wtexttransparent`/`wgettextheight`/`wgettextwidth`/`wouttextxy` each
+  delegate, for TrueType fonts, into `alfont_text_mode`/`alfont_get_
+  font_height`/`alfont_text_length` (all named by role/call-shape) —
+  the last confirmed decisively via FreeType's own unmistakable 26.6
+  fixed-point `advance.x>>6` convention. The fourth, `wouttextxy`'s own
+  rendering delegate, was characterized (background-fill via the
+  already-confirmed `GFX_VTABLE` `rectfill` slot) but left unnamed and
+  not traced to completion given its size.
 
 ## Third-party library identification (Task #10)
 

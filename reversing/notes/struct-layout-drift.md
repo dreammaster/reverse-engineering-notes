@@ -13653,3 +13653,31 @@ named at medium confidence by call-shape/role alone (no local alfont
 source tree exists in this repo to verify exact names against, the
 same standing caveat as ALMP3/JGMOD) and, per the third-party scope
 rule, not chased further into FreeType's own internals.
+
+### The alfont text-measurement/rendering quartet closes the loop
+
+Immediate follow-up on the font cluster above: `wtexttransparent`/
+`wgettextheight`/`wgettextwidth`/`wouttextxy` (all already matched)
+each delegate, for TrueType fonts, into one more alfont-internal
+function apiece.
+
+`alfont_text_mode` (`sub_48B0F0`) is a trivial classic swap-and-return-
+previous accessor on one global. `alfont_get_font_height` (`sub_
+48B320`) is a one-line `return font->height;` accessor. `alfont_text_
+length` (`sub_48B330`) iterates a string character by character via a
+decode-next-character function pointer, looks up each glyph, and
+accumulates `glyph->advance.x>>6` -- FreeType's own unmistakable 26.6
+fixed-point advance-width convention, a decisive identifying signature
+on its own. All three named at medium/medium-high confidence by call-
+shape/role (no local alfont source tree exists in this repo, the same
+standing caveat as ALMP3/JGMOD).
+
+The fourth, `sub_48B140` (`wouttextxy`'s own TrueType-rendering
+delegate, plausibly `alfont_textout_ex` or similar), was traced far
+enough to characterize but not fully to completion given its size
+(~210 lines): it opens by checking `alfont_text_mode`'s own global,
+and if a real (non-"opaque") background color is set, computes the
+text's bounding box via the other three newly-identified helpers and
+fills it via a vtable-dispatched call through slot +0x38 on the
+destination bitmap -- matching this project's own already-confirmed
+`GFX_VTABLE` `rectfill` slot exactly. Left unnamed, role documented.

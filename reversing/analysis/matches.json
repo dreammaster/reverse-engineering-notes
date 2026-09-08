@@ -7542,5 +7542,45 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "alfont's own public API for loading a TrueType font from an in-memory buffer rather than a file path (no local alfont source tree exists in this repo to verify the exact name against -- identified by call-shape/role only). Takes 2 arguments (buffer, size); mallocs a small (0x1C/28-byte) handle struct, zeroes its leading 7 dwords, mallocs a second buffer of the given size and copies the source data into it (matching alfont's own documented behavior of taking ownership of a private copy of the font data rather than referencing the caller's buffer, since the caller here frees its own copy immediately after this call returns). Called from init_font? (this build's own tagged TTF/WFN font loader) exactly where a TrueType-extension filename's file contents get handed off. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48B0F0",
+    "new_name": "alfont_text_mode",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "is_library": true,
+    "evidence": "alfont's own public API for setting the TrueType-text background/transparency mode (no local alfont source tree exists in this repo to verify the exact name against -- identified by call-shape/role). A trivial classic swap-and-return-previous accessor: `old=global; global=newval; return old;` on dword_54784C. Called from wtexttransparent (already matched) exactly where AGS's own text-transparency-mode setter would delegate to alfont's equivalent for TrueType rendering. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48B320",
+    "new_name": "alfont_get_font_height",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own public API returning a loaded TrueType font's line height (no local alfont source tree exists in this repo -- identified by call-shape/role). A trivial one-line accessor, `return font->height;` (offset +8 on the alfont font handle). Called from wgettextheight (already matched) and from the newly-identified alfont text-output helper (sub_48B140, see its own entry). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48B330",
+    "new_name": "alfont_text_length",
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "is_library": true,
+    "evidence": "alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_48B140",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "alfont's own public TrueType text-output function (plausibly `alfont_textout_ex` or similar -- no local alfont source tree exists in this repo to pin an exact name, and the function's own size (~210 lines) wasn't fully traced this round). Opens by checking the already-identified `alfont_text_mode` global (dword_54784C); if it holds a real background color (not the 'opaque' sentinel), computes the text's bounding box via the newly-identified alfont_get_font_height/alfont_text_length and fills it via a vtable-dispatched call through slot +0x38 on the destination bitmap -- matching this project's own already-confirmed GFX_VTABLE `rectfill` slot exactly (Allegro's public rectfill API, third-party boundary, not chased further here either). Called from wouttextxy (already matched). THIRD-PARTY LIBRARY BOUNDARY, left unnamed and not traced to completion."
   }
 ]

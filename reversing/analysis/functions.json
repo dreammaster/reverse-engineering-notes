@@ -9665,9 +9665,9 @@
   "is_named": true
  },
  {
-  "name": "sub_48B0F0",
+  "name": "alfont_text_mode",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_48B100",
@@ -9680,14 +9680,14 @@
   "is_named": false
  },
  {
-  "name": "sub_48B320",
+  "name": "alfont_get_font_height",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_48B330",
+  "name": "alfont_text_length",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_48B3A0",
