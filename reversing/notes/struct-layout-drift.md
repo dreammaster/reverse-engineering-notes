@@ -13681,3 +13681,27 @@ text's bounding box via the other three newly-identified helpers and
 fills it via a vtable-dispatched call through slot +0x38 on the
 destination bitmap -- matching this project's own already-confirmed
 `GFX_VTABLE` `rectfill` slot exactly. Left unnamed, role documented.
+
+### `WFNFontRenderer::RenderText` closes the bitmap-font half of the
+### text-rendering picture
+
+`wouttextxy`'s OTHER dispatch target (the WFN/bitmap-font path,
+alongside the just-closed TTF path) is `sub_401B30` -- and it closes as
+`WFNFontRenderer::RenderText` (`acfonts.cpp:263-278`) FUSED with its
+own callee `WFNFontRenderer::printchar` (`acfonts.cpp:280-...`), the
+same "later split into two methods" pattern already found repeatedly
+this project. `printchar`'s own classic WGT-font double-table-
+indirection opens decisively: `tabaddr=(short*)&foo[15]` matches the
+disassembly's own `foo+0xF` computation exactly, the two sequential
+`foo += *(short*)foo` indirections match exactly, and `bytewid=((
+charWidth-1)/8)+1` matches the disassembly's signed-division-by-8
+idiom on `charWidth-1` precisely. REAL DRIFT found in the bounds-check
+outcome: source's `if((charr>127)||(charr<0)) charr='?';` substitutes
+a literal question mark and keeps drawing for any out-of-range
+character, while this build's equivalent check simply returns 0
+(drawing nothing, advancing the cursor by zero pixels) for the same
+case. The outer per-character loop from `RenderText` itself is fused
+directly around `printchar`'s body rather than existing separately --
+consistent with this build predating the whole `WFNFontRenderer`/
+`TTFFontRenderer` class split, matching every other finding in this
+font-loading/rendering investigation.

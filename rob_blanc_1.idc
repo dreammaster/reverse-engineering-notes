@@ -953,6 +953,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X401B2B);
 	op_hex		(x,	1);
 	create_insn	(0X401B30);
+	set_name	(0X401B30,	"WFNFontRenderer__RenderText");
 	create_insn	(x=0X401B33);
 	op_hex		(x,	1);
 	create_insn	(x=0X401B36);
@@ -5572,10 +5573,6 @@ static Bytes_0(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X405A70);
 	set_name	(0X405A70,	"GUILabel__printtext_align");
-	create_insn	(x=0X405A73);
-	op_hex		(x,	1);
-	create_insn	(x=0X405A77);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -5585,6 +5582,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X405A73);
+	op_hex		(x,	1);
+	create_insn	(x=0X405A77);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X405A7A);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X405A80);
@@ -11446,8 +11447,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X40B8F9);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X40B8FF);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -11457,6 +11456,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X40B8FF);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X40B902);
 	op_hex		(x,	1);
 	create_insn	(x=0X40B90B);
@@ -17444,9 +17445,6 @@ static Bytes_2(void) {
 	set_cmt	(0X412BF3,	"optbit",	0);
 	create_insn	(x=0X412BFA);
 	op_hex		(x,	1);
-	create_insn	(0X412C10);
-	create_insn	(x=0X412C1A);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -17456,6 +17454,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X412C10);
+	create_insn	(x=0X412C1A);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X412C23);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X412C29);
@@ -23379,8 +23380,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4188D2);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4188DA);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -23390,6 +23389,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4188DA);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X4188E0);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4188E6);
@@ -155261,6 +155262,7 @@ static Functions_0(void) {
 	set_frame_size(0X401B02, 0, 4, 0);
 	add_func    (0X401B30,0X401D17);
 	set_func_flags(0X401B30,0x5410);
+	set_func_cmt(0X401B30,	"[reversing] confirmed match\nsource: Engine/acfonts.cpp\nconfidence: high\nevidence: WFNFontRenderer::RenderText(const char*text,int fontNumber,BITMAP*destination,int x,int y,int colour) (acfonts.cpp:263-278) FUSED with its own callee WFNFontRenderer::printchar(int xxx,int yyy,wgtfont foo,int charr) (acfonts.cpp:280-...) into one function -- the same 'later split into two methods' pattern already found repeatedly this project (offset_over_inv/GetInvAt, sub_42B394/cc_run_code, etc.). Called from wouttextxy (already matched) as the WFN (bitmap-font) counterpart to the TTF path's own sub_48B140. `printchar`'s own opening matches decisively: `tabaddr=(short*)&foo[15]` matches the disassembly's own `arg_8+0xF` computation exactly (`wgtfont`/`foo` is a `char*`, so `&foo[15]` is a literal +15 byte offset); the double table-indirection `tabaddr=(short*)&foo[tabaddr[0]]; tabaddr=(short*)&foo[tabaddr[charr]];` matches the two sequential `foo += *(short*)foo` steps exactly; `charWidth=tabaddr[0]; charHeight=tabaddr[1];` m" "atches the disassembly reading those two shorts directly after the second", 1);
 	set_frame_size(0X401B30, 0X18, 4, 0);
 	add_func    (0X401D17,0X401DBB);
 	set_func_flags(0X401D17,0x5410);
@@ -155593,16 +155595,16 @@ static Functions_0(void) {
 	set_func_flags(0X406950,0x5410);
 	set_func_cmt(0X406950,	"[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: high\nevidence: virtual int GUIListBox::MouseDown() (declared acgui.h:404, defined out-of-line in Engine/acgui.cpp -- not yet located in the reference source body). Confidence medium (positional + plausible shape only): vtable slot 3/+0x0C of the off_4AD578 table pinned by the already-confirmed GUIListBox__MouseMove (same table). Body performs row/item-selection geometry using [this+0x10] (wid, GUIObject base field) scaled by current_screen_resolution_multiplier_x and compared against [this+0x1BC] (mousexp, just confirmed above) -- consistent with \"which list row was clicked\" hit-testing, not yet traced statement-by-statement against the actual Engine/acgui.cpp body. UPGRADED TO HIGH CONFIDENCE (follow-up round, full statement-by-statement trace): the body is a complete, near-exact match to GUIListBox::MouseDown fused with its own two small helpers IsInRightMargin(int)/GetIndexFromCoordinates(int,int) (acgui.cpp:701-718,720-739), inlined rather th" "an called separately (the same small-helper-fusion pattern seen throu", 1);
 	set_frame_size(0X406950, 0XC, 4, 0);
+}
+
+static Functions_1(void) {
+
 	add_func    (0X406A4A,0X406A9C);
 	set_func_flags(0X406A4A,0x5410);
 	SetType(0X406A4A, "int __stdcall GUIButton__WriteToFile(FILE *Stream);");
 	set_func_cmt(0X406A4A,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIButton::WriteToFile(FILE*) at acgui.cpp:746. CORRECTS an earlier guess (this slot was tentatively assumed to be IsOverControl based on 2011's declared vtable order -- wrong). Exact mirror of the already-matched GUIButton__ReadFromFile: three sequential fwrite calls at the identical three offsets ([this+4] 28 bytes, [this+0x54] 48 bytes, [this+0x20] 50 bytes), matching source's \"GUIObject::WriteToFile(ooo); fwrite(&pic,sizeof(int),12,ooo); fwrite(&text[0],sizeof(char),50,ooo); ...\" exactly. Sits at vtable slot 7/+0x1C, DIRECTLY after Draw (slot 6/+0x18) with no gap -- meaning IsOverControl does NOT occupy a slot between them in this 2002 vtable, unlike 2011's declared order (MouseMove,MouseOver,MouseLeave,MouseDown,MouseUp,KeyPress,Draw,IsOverControl,WriteToFile,...). Likely IsOverControl was added to GUIObject sometime after this build. Flat-named as a C++ virtual method. FOLLOW-UP (this round): read to completion end-to-" "end (not just the three fread/fwrite calls originally used to recover t", 1);
 	set_frame_size(0X406A4A, 0X4, 4, 0X4);
 	define_local_var(0X406A4A, 0X406A9C, "[bp+0X8]", "Stream");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X406A9C,0X406B01);
 	set_func_flags(0X406A9C,0x5410);
 	SetType(0X406A9C, "int __stdcall GUIButton__ReadFromFile(FILE *Stream);");

@@ -3983,6 +3983,14 @@ disassembly work.
   rendering delegate, was characterized (background-fill via the
   already-confirmed `GFX_VTABLE` `rectfill` slot) but left unnamed and
   not traced to completion given its size.
+- **`WFNFontRenderer::RenderText` closes the bitmap-font half of the
+  text-rendering picture**, fused with its own callee `printchar` (the
+  same "later split into two methods" pattern found repeatedly this
+  project) — `wouttextxy`'s WFN-path counterpart to the just-closed TTF
+  path. The classic double-table-indirection glyph lookup matches
+  exactly. REAL DRIFT: source substitutes `'?'` and keeps drawing for
+  an out-of-range character; this build simply draws nothing and
+  advances zero pixels for the same case.
 
 ## Third-party library identification (Task #10)
 

@@ -70,9 +70,9 @@
   "is_named": true
  },
  {
-  "name": "sub_401B30",
+  "name": "WFNFontRenderer__RenderText",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "wgettextwidth",
