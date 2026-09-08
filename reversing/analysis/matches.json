@@ -7354,5 +7354,63 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "GUIButton::Draw's own private draw-one-sprite helper (called twice from GUIButton::Draw, already matched). A thin 3-argument composition of two already-matched pieces: fetches spriteset[index] via SpriteCache::operator[] then calls put_sprite_256(x,y,sprite) -- no logic of its own beyond that. 2011's own GUIButton::Draw (acgui.cpp) has no call to put_sprite_256 at all (it delegates through gfxDriver/DrawSprite instead, the usual 'predates gfxDriver' architectural gap already established throughout this project) -- no 2011 declaration exists to name this specific glue function against. Left unnamed per this project's usual convention for small role-only helpers with no source counterpart."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40CFC9",
+    "new_name": "putpixel_compensate",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 5018,
+    "confidence": "high",
+    "evidence": "void putpixel_compensate(block onto,int xx,int yy,int col) (AC.CPP:5018-5024) -- called twice from SetMouseCursor (already matched), inside its hotdot/hotdotouter mouse-cursor-crosshair-drawing block (GameSetupStructBase.hotdot/hotdotouter, already fully confirmed elsewhere in this project with zero drift -- this call site is the actual DRAWING code that consumes those fields, a further confirmation from a new angle). CONFIRMED ABSENT: source's leading `bitmap_color_depth(onto)==32`-gated alpha-channel-preservation branch (predates 32-bit alpha support, the usual pattern). What IS present matches exactly: `rectfill(onto,xx,yy,xx+get_fixed_pixel_size(1)-1,yy+get_fixed_pixel_size(1)-1,col)` matches the disassembly's own `rectfill(bmp,x,y,x+current_screen_resolution_multiplier_x-1,y+current_screen_resolution_multiplier_y-1,color)` call exactly (a single logical low-res pixel filled as a resolution-multiplier-sized block, keeping the crosshair dot's visual size constant regardless of game resolution)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_431DD4",
+    "new_name": "msethotspot",
+    "source_file": "Common/MOUSEW32.CPP",
+    "source_line": 259,
+    "confidence": "high",
+    "evidence": "void msethotspot(int xx,int yy) { hotx=xx; hoty=yy; } (MOUSEW32.CPP:259-263) -- a complete, exact, trivial 2-field-setter match, identifying `hotx`@dword_5358D4/`hoty`@dword_5358D8. Called from SetMouseCursor (already matched) exactly where source calls `msethotspot(hotspotx,hotspoty);` right after the hotdot-drawing block (AC.CPP:5116) -- a further confirmation that `domouse`'s own already-established reference file (`Common/MOUSEW32.CPP`, not the older same-named `mouse32.cpp`) is correct, this function sitting in the exact same source file."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_444AC0",
+    "new_name": "destroy_sample",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+    "source_line": 1148,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void destroy_sample(SAMPLE*spl) (sound.c:1148-1160) -- Allegro's public sample-destructor API. Matches exactly: `if(spl){stop_sample(spl); if(spl->data){...free(spl->data);} free(spl);}` -- the disassembly's own NULL check, call into the newly-matched stop_sample (sub_444C00, see its own entry), conditional free of `spl->data`@+0x20, then unconditional free of `spl` itself, all in the same order. Called from scr_StopMusic (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_444C00",
+    "new_name": "stop_sample",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+    "source_line": 1249,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void stop_sample(AL_CONST SAMPLE*spl) (sound.c:1249-1257) -- Allegro's public API to stop every voice currently playing a given sample. Matches exactly: `for(c=0;c<VIRTUAL_VOICES;c++) if(virt_voice[c].sample==spl) deallocate_voice(c);` -- the disassembly's own loop over a 20-byte-stride array (dword_550040, identified as `virt_voice[]`, its `sample` field at +0x00) comparing against the argument and calling a newly-identified `deallocate_voice` (sub_444F30) on a match. Called from the newly-matched destroy_sample (sub_444AC0). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_444F30",
+    "new_name": "deallocate_voice",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "Allegro's internal per-voice deallocation helper. Called from the newly-matched stop_sample (sub_444C00) with the exact single voice-index argument shape source's own `deallocate_voice(c)` call uses. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule, an internal helper called only by other library functions), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_445140",
+    "new_name": "voice_get_position",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+    "source_line": 1562,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int voice_get_position(int voice) (sound.c:1562-1569) -- Allegro's public API. Matches exactly: `if(virt_voice[voice].num>=0) return digi_driver->get_position(virt_voice[voice].num); else return -1;` -- the disassembly reads `virt_voice[voice].num`@+0x04 (dword_550044, 20-byte stride matching the already-established virt_voice[] array), tests negative (matches ASSERT-guarded `<0` check yielding -1), else calls a vtable dispatch through `off_4BD554`(newly identified as `digi_driver`) at slot +0x50 (`get_position`). Called from IsMusicPlaying (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

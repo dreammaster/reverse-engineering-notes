@@ -3911,6 +3911,16 @@ disassembly work.
   trivial `spriteset[index]`+`put_sprite_256` composition with no 2011
   counterpart (2011 delegates through `gfxDriver` instead) — left
   unnamed, role documented.
+- **`putpixel_compensate`/`msethotspot` close, confirming the mouse-
+  cursor hotdot-crosshair drawing code from a new angle.** Both called
+  from `SetMouseCursor` inside its
+  `hotdot`/`hotdotouter` block — `putpixel_compensate` matches exactly
+  minus a confirmed-absent 32-bit-alpha-preservation branch;
+  `msethotspot` is a trivial exact match, reconfirming `MOUSEW32.CPP`
+  as `domouse`'s own reference file. `destroy_sample`/`stop_sample`/
+  `deallocate_voice`/`voice_get_position` close a small Allegro voice-
+  management cluster (`scr_StopMusic`/`IsMusicPlaying`'s own remaining
+  callees), all recorded at the identification level per the scope rule.
 
 ## Third-party library identification (Task #10)
 

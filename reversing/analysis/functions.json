@@ -895,9 +895,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40CFC9",
+  "name": "putpixel_compensate",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SetMouseCursor",
@@ -3750,9 +3750,9 @@
   "is_named": true
  },
  {
-  "name": "sub_431DD4",
+  "name": "msethotspot",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "minstalled",
@@ -4785,9 +4785,9 @@
   "is_named": false
  },
  {
-  "name": "sub_444AC0",
+  "name": "destroy_sample",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "play_sample",
@@ -4800,9 +4800,9 @@
   "is_named": false
  },
  {
-  "name": "sub_444C00",
+  "name": "stop_sample",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "allocate_voice",
@@ -4810,9 +4810,9 @@
   "is_named": true
  },
  {
-  "name": "sub_444F30",
+  "name": "deallocate_voice",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_444F90",
@@ -4840,9 +4840,9 @@
   "is_named": false
  },
  {
-  "name": "sub_445140",
+  "name": "voice_get_position",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_445170",

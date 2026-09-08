@@ -13415,3 +13415,44 @@ all (it delegates through `gfxDriver`/`DrawSprite` instead, the usual
 "predates `gfxDriver`" architectural gap found throughout this
 project) -- no 2011 declaration exists to name this specific glue
 function against. Left unnamed, role documented.
+
+### `putpixel_compensate`/`msethotspot` close, confirming the mouse-
+### cursor hotdot-crosshair drawing code from a new angle
+
+Two leads from a fresh keyword-scored sweep, both called from
+`SetMouseCursor` (already matched) inside its `hotdot`/`hotdotouter`
+mouse-cursor-crosshair-drawing block -- `GameSetupStructBase.hotdot`/
+`.hotdotouter` were already fully confirmed elsewhere in this project
+with zero drift, purely from struct-layout evidence; these two closes
+confirm the actual DRAWING code that consumes those fields, from a
+genuinely new angle.
+
+**`putpixel_compensate` (`sub_40CFC9`)** closes as `AC.CPP:5018-5024` --
+CONFIRMED ABSENT is source's leading `bitmap_color_depth(onto)==32`-
+gated alpha-channel-preservation branch (predates 32-bit alpha, the
+usual pattern); what remains matches exactly: `rectfill(onto,xx,yy,xx+
+get_fixed_pixel_size(1)-1,yy+get_fixed_pixel_size(1)-1,col)` -- a
+single logical low-res pixel filled as a resolution-multiplier-sized
+block, keeping the crosshair dot's visual size constant regardless of
+game resolution.
+
+**`msethotspot` (`sub_431DD4`)** closes as a trivial, complete match to
+`Common/MOUSEW32.CPP:259-263` (`hotx=xx;hoty=yy;`) -- a further
+confirmation that `domouse`'s own already-established reference file
+(`MOUSEW32.CPP`, not the older same-named `mouse32.cpp`) is correct,
+this function sitting in the exact same source file.
+
+### `destroy_sample`/`stop_sample`/`deallocate_voice`/
+### `voice_get_position` close a small Allegro voice-management cluster
+
+Two more callgraph leads, both Allegro-internal (third-party library
+boundary, per this project's scope rule): `scr_StopMusic`'s own
+`destroy_sample` (`sub_444AC0`) call, and `IsMusicPlaying`'s own
+`voice_get_position` (`sub_445140`) call -- both matched exactly to
+`Engine/libsrc/allegro-4.2.2/src/sound.c` (`destroy_sample`:1148-1160,
+`voice_get_position`:1562-1569), and each pulling in one further
+internal callee along the way (`stop_sample`:1249-1257, confirming the
+already-referenced `virt_voice[]` array's `sample` field at +0x00; and
+a newly-identified `deallocate_voice`, called with the exact single-
+voice-index argument shape). All four recorded at the identification
+level only, not chased into further internals.
