@@ -13867,3 +13867,27 @@ single 2011 declaration was found doing this exact sequence on a
 room-mask bitmap; left open for a future round with more context on
 which of `load_new_room`'s own two call sites (and which specific
 masks) this applies to.
+
+### `SpriteCache::set`/`stop_speech` close, the latter with two real
+### confirmed drifts
+
+`SpriteCache::set` (`sub_40242B`, called from `initialize_sprite`)
+closes as a trivial, exact match to `sprcache.cpp:110-113` -- a single
+`images[index]=sprite;` write, distinguished from its sibling
+`setNonDiscardable` (which also writes `offsets[index]=SPRITE_LOCKED`)
+by having only the one write.
+
+`stop_speech` (`sub_41435E`, called from `_displayspeech`) closes with
+two real, confirmed drifts against `AC.CPP:13436-13452`. DRIFT #1:
+source's `play.music_master_volume=play.music_vol_was;` (restoring a
+SAVED prior value) is replaced by a blind `+=60` add-back -- the exact
+same 60 this build's own `play_speech` (already matched) subtracts
+when speech starts, rather than a real save/restore; this could drift
+if music volume changes mid-speech, where source's approach is robust
+to that. `update_music_at=20` is a newly-identified global, matching
+exactly. DRIFT #2: source's `curLipLine=-1;` reset is CONFIRMED ABSENT
+-- consistent with this build's lip-sync subsystem being
+unimplemented, matching earlier, independently-shelved lipsync-field
+findings elsewhere in this project. The trailing `no_textbg_when_voice`
+/`OPT_SPEECHTYPE` restoration matches exactly (both already
+established).

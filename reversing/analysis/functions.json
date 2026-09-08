@@ -110,9 +110,9 @@
   "is_named": false
  },
  {
-  "name": "sub_40242B",
+  "name": "SpriteCache__set",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SpriteCache__operator_index",
@@ -1215,9 +1215,9 @@
   "is_named": true
  },
  {
-  "name": "sub_41435E",
+  "name": "stop_speech",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "SetSpeechVolume",

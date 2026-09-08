@@ -4043,6 +4043,12 @@ disassembly work.
   bitmap to the resolution multiplier via `stretch_blit` — no single
   2011 declaration matches this exact sequence, left open for a
   future round.
+- **`SpriteCache::set`/`stop_speech` close, the latter with two real
+  drifts.** `stop_speech` replaces source's saved-value restore
+  (`music_master_volume=music_vol_was`) with a blind `+=60` add-back
+  matching `play_speech`'s own `-60` decrement — could drift if music
+  volume changes mid-speech. `curLipLine=-1` is confirmed absent,
+  consistent with this build's unimplemented lip-sync subsystem.
 
 ## Third-party library identification (Task #10)
 

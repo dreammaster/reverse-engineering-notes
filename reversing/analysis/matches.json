@@ -7710,5 +7710,23 @@
     "source_line": null,
     "confidence": "medium",
     "evidence": "A room-mask resolution-scaling helper, called twice from load_new_room (already matched). Takes a BITMAP* argument, reads its original width/height, creates a NEW bitmap scaled by `current_screen_resolution_multiplier_x`/`_y` (using the already-established RoomStruct.width/height globals, word_522F08/word_522F0A) at the same color depth, sets the clip region on both the new and original bitmap to their own full extent (via the newly-matched set_clip, twice), clears the new bitmap, `stretch_blit`s the original into it at the new size, `destroy_bitmap`s the original, and returns the new (scaled) bitmap -- effectively 'upscale this low-res mask bitmap to match the game's resolution multiplier, replacing the original'. Not matched to a specific 2011 function name -- no obvious single 2011 declaration was found doing this exact create-scale-stretch_blit-destroy sequence on a room-mask bitmap; left unnamed pending a future round with more context on load_new_room's own two call sites (which specific room masks, at which of load_new_room's own version-gated branches, this helper is applied to)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_40242B",
+    "new_name": "SpriteCache__set",
+    "source_file": "Common/sprcache.cpp",
+    "source_line": 110,
+    "confidence": "high",
+    "evidence": "void SpriteCache::set(int index,block sprite) { images[index]=sprite; } (sprcache.cpp:110-113) -- a complete, exact, trivial match: `this[+0x08][arg_0]=arg_4` matches exactly, writing only to the already-established `images[]`@+0x08 array. Distinguished from source's own sibling `setNonDiscardable` (which ALSO writes `offsets[index]=SPRITE_LOCKED`) by this function's single write only -- decisively the plain `set`, not `setNonDiscardable`. Called repeatedly from initialize_sprite (already matched)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_41435E",
+    "new_name": "stop_speech",
+    "source_file": "Engine/AC.CPP",
+    "source_line": 13436,
+    "confidence": "high",
+    "evidence": "void stop_speech() (AC.CPP:13436-13452) -- closes with two real, confirmed drifts. `if(channels[SCHAN_SPEECH]!=NULL)` matches the disassembly's `cmp dword_52321C,0; jz <skip>` exactly (dword_52321C already established as the speechmp3 handle). DRIFT #1: source's `play.music_master_volume=play.music_vol_was;` (restoring a SAVED prior value) is replaced here by `dword_4EF220 += 0x3C(60)` -- a blind add-back of the exact same 60 this build's own play_speech (already matched) subtracts when speech starts, rather than a real save/restore -- a genuine simplification that could drift if music volume changes mid-speech, where source's approach is robust to that. `update_music_at=20;` matches `dword_523334=0x14` exactly, newly identifying that global. `mvolcounter=1;` matches exactly (already established). `stop_and_destroy_channel(SCHAN_SPEECH);` is matched in NET EFFECT by an inlined vtable call (`speechmp3->vtable[1]()`, presumably `stop`) followed by `delete speechmp3; speechmp3=0;` -- this build fuses that helper directly rather than calling a separate function, consistent with its own already-established 'no channels[] array, direct globals' architecture. DRIFT #2: source's `curLipLine=-1;` reset is CONFIRMED ABSENT -- no such write exists anywhere in this function, consistent with this build's lip-sync subsystem being unimplemented (matching earlier, independently-shelved lipsync-field findings elsewhere in this project). The trailing `if(play.no_textbg_when_voice==2){play.no_textbg_when_voice=1;game.options[OPT_SPEECHTYPE]=2;}` matches exactly (`dword_4EEB44`/`byte_513340`, both already established). Called from _displayspeech (already matched)."
   }
 ]
