@@ -7457,5 +7457,23 @@
     "source_line": 1439,
     "confidence": "high",
     "evidence": "long loadcompressed_allegro(FILE*fpp,BITMAP**bimpp,color*pall,long ooo) (acroom.h:1439-1463) -- AGS's own shared room-mask (walls/walk-behind/hotspots/regions) loading helper. A complete, exact match: `BITMAP*bim=*bimpp; if(bim!=NULL) destroy_bitmap(bim);` matches the leading NULL-check-then-destroy sequence exactly; `fread(&widd,2,1,fpp); fread(&hitt,2,1,fpp); bim=create_bitmap_ex(8,widd,hitt);` matches the two shorts-freads plus the literal 8-bpp create_bitmap_ex call exactly; `*bimpp=bim;` matches the pointer-store-back. CONFIRMED ABSENT: source's own `if(ii%20==0) update_polled_stuff();` progress-callback check inside the per-row decompression loop (a minor UI-responsiveness feature this build lacks during room-mask loading) -- otherwise the loop `for(ii=0;ii<hitt;ii++) cunpackbitl(&bim->line[ii][0],widd,fpp);` matches exactly, calling the newly-matched cunpackbitl (sub_402EDA). The tail `fseek(fpp,768,SEEK_CUR); return ftell(fpp);` matches the literal `fseek(Stream,0x300(768),1); return ftell(Stream);` exactly (768 bytes = the historical trailing per-mask palette block this format always skips). Called multiple times from load_main_block (already matched), once per room mask."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_403A1A",
+    "new_name": "freadmissout",
+    "source_file": "Common/acroom.h",
+    "source_line": 1562,
+    "confidence": "high",
+    "evidence": "void freadmissout(short*pptr,FILE*opty) { fread(&pptr[0],2,5,opty); fread(&pptr[7],2,NUM_CONDIT-7,opty); pptr[5]=pptr[6]=0; } (acroom.h:1562-1566) -- a complete, exact, zero-drift match across every instruction and constant. `fread(&pptr[0],2,5,opty)` matches the disassembly's own `fread(Buffer,2,5,Stream)` exactly; `fread(&pptr[7],2,NUM_CONDIT-7,opty)` matches `fread(Buffer+0x0E,2,0x78,Stream)` exactly -- offset 0x0E=14 bytes=pptr[7] (7 shorts in), and the literal count 0x78=120=NUM_CONDIT(127, =120+NUMOTCON(7))-7, confirming NUM_CONDIT=127 with zero drift; `pptr[5]=pptr[6]=0;` matches the two zeroing writes at offsets 0x0A/0x0C exactly (5th/6th shorts). One of load_main_block's own per-array readers for the already-established 'obsolete v2.00 action editor' struct fields (whataction[]/val1[]/val2[]/otcond[], each NUM_CONDIT+3=130 elements declared, of which this function only fills the first 127 -- the trailing 3 slots are left unfilled by this specific reader, consistent with this project's common 'declared capacity slightly exceeds actually-used elements' pattern). Called repeatedly from load_main_block (already matched), once per array."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_403A5C",
+    "new_name": "add_to_eventblock",
+    "source_file": "Common/acroom.h",
+    "source_line": 1578,
+    "confidence": "high",
+    "evidence": "void add_to_eventblock(EventBlock*evpt,int evnt,int whatac,int val1,int data,short scorr) (acroom.h:1578-1585) -- a complete, exact, zero-drift match, and a valuable new field-confirmation round for the already-established EventBlock struct (total size 0x94/148 bytes, previously confirmed via RoomStatus/RoomStruct's own hscond/objcond/misccond arrays). `evpt->list[evpt->numcmd]=evnt;` matches `[this+numcmd*4]=arg_4` exactly, confirming `list[]`@+0x00. `evpt->respond[evpt->numcmd]=whatac;` matches `[this+numcmd*4+0x20]=arg_8`, confirming `respond[]`@+0x20 (already independently established via run_event_block's own respond[i] dispatch -- a further confirmation). `evpt->respondval[evpt->numcmd]=val1;` matches `[this+numcmd*4+0x40]=arg_C`, confirming `respondval[]`@+0x40. `evpt->data[evpt->numcmd]=data;` matches `[this+numcmd*4+0x60]=arg_10`, confirming `data[]`@+0x60. `evpt->score[evpt->numcmd]=scorr;` matches `[this+numcmd*2+0x84]=arg_14` (a 2-byte stride, matching the `short scorr` parameter type), confirming `score[]`@+0x84 -- and closing the struct with ZERO remaining slack: 0x84 + 8*2(score[8], matching the other four arrays' shared 8-element capacity, since each of their own 0x20-byte spans holds 8 dwords) = 0x94, landing exactly on EventBlock's own already-confirmed total size. `evpt->numcmd++;` matches the final `[this+0x80]+=1`, confirming `numcmd`@+0x80. Called repeatedly from load_main_block (already matched), once per action-editor command being converted into the modern EventBlock format."
   }
 ]

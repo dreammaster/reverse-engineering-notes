@@ -13532,11 +13532,23 @@ standard MSVC CRT error bit, `0x20`), and the classic `cx==-128→0`
 run-length sentinel fix matches the literal `cmp edx,0FFFFFF80h` check
 exactly.
 
-Two smaller siblings in the same area, `sub_403A1A`/`sub_403A5C`
-(also called multiple times from `load_main_block`), read a different,
-smaller data shape (a short fread, then a large short-array fread,
-with two intervening shorts zeroed) not cleanly matching the already-
-identified "obsolete v2.00 action editor" cluster's known field sizes
-(`whataction`/`val1`/`val2`/`otcond`/`points`, capacity confirmed
-elsewhere) -- left uninvestigated this round, a candidate for a future
-pass.
+**A follow-up round closed both remaining siblings.** `sub_403A1A` is
+`freadmissout(short*pptr,FILE*opty)` (`acroom.h:1562-1566`) -- a
+complete, exact, zero-drift match: `fread(&pptr[0],2,5,opty); fread(&"
+"pptr[7],2,NUM_CONDIT-7,opty); pptr[5]=pptr[6]=0;` matches the
+disassembly's own two freads and two zeroing writes exactly, with the
+literal count 120 confirming `NUM_CONDIT=127`(=120+`NUMOTCON`(7)) with
+zero drift -- one of `load_main_block`'s own per-array readers for the
+already-established "obsolete v2.00 action editor" fields, filling the
+first 127 of each array's 130-element declared capacity.
+
+`sub_403A5C` is `add_to_eventblock(EventBlock*evpt,int evnt,int
+whatac,int val1,int data,short scorr)` (`acroom.h:1578-1585`) -- a
+complete, exact match, and a valuable SECOND, independent confirmation
+route (the write side, converting action-editor commands into the
+modern format) for every field of the already-fully-confirmed
+`EventBlock` struct: `list[]`@+0x00, `respond[]`@+0x20, `respondval[]`
+@+0x40, `data[]`@+0x60, `numcmd`@+0x80, and `score[]`@+0x84 -- the last
+closing the struct with zero remaining slack against its already-
+confirmed 0x94-byte total size. Called repeatedly from `load_main_block`,
+once per action-editor command being converted.

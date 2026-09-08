@@ -3940,9 +3940,12 @@ disassembly work.
   progress-callback check. `cunpackbitl` (its per-row PackBits-style
   RLE decoder, genuinely `Common/compress.cpp` code) matches decisively
   via its inlined `ferror()` bit-test and the classic `-128→0` run-
-  length sentinel fix. Two smaller siblings in the same area read a
-  data shape not cleanly matching any already-identified struct — left
-  uninvestigated, a candidate for a future round.
+  length sentinel fix. Two smaller siblings in the same area close on
+  a follow-up round: `freadmissout` (confirms `NUM_CONDIT=127` with
+  zero drift) and `add_to_eventblock` (a second, independent write-side
+  confirmation route for every field of the already-fully-confirmed
+  `EventBlock` struct, landing exactly on its known 0x94-byte total
+  size with zero remaining slack).
 
 ## Third-party library identification (Task #10)
 

@@ -215,14 +215,14 @@
   "is_named": true
  },
  {
-  "name": "sub_403A1A",
+  "name": "freadmissout",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_403A5C",
+  "name": "add_to_eventblock",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "load_main_block",
