@@ -17002,7 +17002,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X41255D);
 	op_hex		(x,	1);
 	create_insn	(0X412562);
-	set_name	(0X412562,	"load_ac2game_dta");
+	set_name	(0X412562,	"load_game_file");
 	create_insn	(x=0X412565);
 	op_hex		(x,	1);
 	create_insn	(x=0X412568);

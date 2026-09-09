@@ -4159,8 +4159,33 @@ disassembly work.
   candidate (`0xCAFEBEEF`, MSVC divide-reciprocal constants,
   `sizeof`/`malloc`-literal struct anchors) — just not as a blind sweep.
   See `reversing/notes/struct-layout-drift.md` for the full writeup.
-  This leaves structural/size fingerprinting (avenue #3 below) as the
-  one genuinely untried technique.
+- **Tried structural/size fingerprinting (avenue #3), properly tooled
+  this time — still doesn't survive verification, but the process
+  found a real correction.** Used `dumpbin /DISASM` on the reference
+  build's own compiled `acwin.exe` (present alongside `acwin.map` under
+  `Engine/acwin___Win32_DebugWorking/`) plus the map's `Rva+Base`
+  addresses to compute byte-length/frame-size/branch-count for all 8831
+  reference functions, and the same three features for every
+  `rob_blanc_1.asm` function. Calibrating against 299 already-confirmed
+  matches showed branch-count is genuinely compiler/version-resistant
+  (median ratio exactly 1.0, unlike raw byte size) — real signal, not
+  nothing — but even after restricting candidates to AGS's own 37
+  `.obj` files (excluding the 2011 build's much larger third-party
+  dependency set: FreeType/libvorbis/Theora/zlib/JGMOD, none of which
+  existed near Rob Blanc 1's 2002 link set) and requiring bidirectional
+  uniqueness, only ONE candidate pair survived out of 375 — and it was
+  a false positive (`sub_466110`, a color-depth-dispatch function,
+  coincidentally branch/size-matching `load_game_file`). Verifying that
+  false lead found a genuine bonus: `load_ac2game_dta` (an
+  extensively-cited existing match, 17 evidence-text references) turns
+  out to BE 2011's `load_game_file` — its own entry's claim of being
+  "an exact linker-symbol match" was simply wrong (no such symbol
+  exists in the reference map), a legacy pre-project name mistakenly
+  annotated as verified. Corrected in place and re-applied to the IDB.
+  All four of CLAUDE.md's listed avenues (string-matching, callgraph-
+  ranking, numeric-constant matching, structural fingerprinting) are
+  now tried-and-exhausted as blind systematic sweeps this session —
+  see `reversing/notes/struct-layout-drift.md` for the full writeup.
 
 ## Third-party library identification (Task #10)
 

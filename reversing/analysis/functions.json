@@ -1115,7 +1115,7 @@
   "is_named": true
  },
  {
-  "name": "load_ac2game_dta",
+  "name": "load_game_file",
   "addr_hint": null,
   "is_named": true
  },

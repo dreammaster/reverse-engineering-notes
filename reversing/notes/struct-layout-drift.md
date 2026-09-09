@@ -14303,3 +14303,98 @@ makes string-matching reliable. This closes out CLAUDE.md's own
 worth using case-by-case); avenue #3 (structural/size fingerprinting --
 byte-length, frame size, branch count against the reference build) is
 now the one genuinely untried option left on that list.
+
+### Tried structural/size fingerprinting (CLAUDE.md's avenue #3) -- properly tooled this time, still doesn't survive rigorous verification, but the process found one real correction
+
+Unlike the numeric-constant attempt, this one had a genuine data source
+to work with: `Engine/acwin___Win32_DebugWorking/` holds not just
+`acwin.map` but the actual compiled reference build's `acwin.exe`
+itself (a 2024 Debug-build .exe, VS's own `dumpbin.exe /DISASM` can
+disassemble it directly with real addresses, no IDA needed for a
+second binary). Built a full pipeline: parse `acwin.map`'s "Publics by
+Value" section for every function symbol's absolute `Rva+Base` address
+(sorted), disassemble the whole exe via `dumpbin`, and merge the two
+address-ordered streams to compute per-function byte length, prologue
+`sub esp,N` frame size, and conditional-branch count for all 8831
+reference functions -- then compute the identical three features for
+every `rob_blanc_1.asm` function via the same discipline already
+established for this project's other scanners (code-portion-only,
+proc/endp-bounded).
+
+**Calibration against 299 already-confirmed matches (functions
+findable by name in both feature sets) gave real reason for optimism**:
+branch-count ratio (reference/actual) has a median of exactly 1.0 --
+control-flow shape survives the 22-year compiler/optimization-level
+gap far better than raw byte size does (instruction-count ratio median
+1.26, consistent with the reference being an unoptimized 2024 Debug
+build vs. Rob Blanc 1's own optimized 2002 Release build). But the
+collision risk at low branch counts is severe -- 3532 of the 8831
+reference functions have `branches==0`, 1315 have `branches==1` --
+so branch-count alone is only a plausible discriminator above roughly
+8-10 branches, where candidate pools shrink into the hundreds or fewer.
+
+Built the cross-reference restricted to `branches>=8`, filtered the
+reference-function candidate pool down to ONLY the 37 known AGS-own
+`.obj` files (`AC.obj`/`acgui.obj`/`CSRUN.obj`/etc., excluding the
+colon-qualified library-archive entries like `alleg_s_crt:*`/
+`alfont_mt:*`/`libucrtd:*` and the far larger set of loose third-party
+`.obj`s the 2011 reference build additionally links against --
+FreeType, libvorbis/Theora, zlib, JGMOD/DUMB tracker internals, mpg123
+-- none of which existed anywhere near Rob Blanc 1's own 2002 link
+set), and required BIDIRECTIONAL uniqueness (the unmatched function's
+own top candidate must be unique, AND that candidate must not be
+independently claimed as the top pick by any other unmatched function)
+to filter out the pervasive many-functions-share-branches=15/20/21/25
+collisions that dominated every looser tier tried.
+
+**Result: exactly ONE survivor, and it's a false positive.**
+`sub_466110` uniquely matched `load_game_file` (`Engine/AC.CPP:11587`)
+on branches (59/59) and a passable insn ratio (2.49, on the high side
+but within the calibrated range) -- but reading `sub_466110`'s actual
+body shows a color-depth/pixel-format dispatch function (literal
+15/16/24/32-bit RGB mask constants -- `0x7FFF`/`0xF7DE`/`0xF8F8F8`/
+etc. -- behind a large jump table), utterly unrelated to game-data-file
+loading. Coincidental branch/size similarity, nothing more.
+
+**A genuine bonus correction fell out of chasing that false lead down**:
+verifying `load_game_file` wasn't already claimed under a different
+name turned up `load_ac2game_dta` -- an already-matched, extensively
+cross-cited function (17 separate `matches.json` evidence-text
+mentions, much of `GameSetupStructBase`'s own multi-session field
+recovery built on it) whose OWN entry claimed to be "an exact
+linker-symbol match against acwin.map." That claim is simply wrong --
+no symbol by that name exists anywhere in the reference map (checked
+directly, case-insensitive, zero hits; the map's only nearby string is
+an unrelated literal, `"ac2game.dat"`, in `AC.obj`) -- a
+mis-annotated legacy name from before this project's AI-assisted phase,
+not a real 2011 identifier. `load_ac2game_dta` IS decisively
+`load_game_file` itself: its own opening sequence (`clibfopen("game28.
+dta","rb")`, the `teststr[30]`/`filever` header checks, the
+`fread(&game,sizeof(GameSetupStructBase),1,iii)` call) matches
+source exactly, and its sole caller (`main`, already matched) matches
+source's own call site. Corrected in place (`new_name` set to
+`load_game_file`, `source_line` added, the wrong claim struck through
+and explained per this project's visible-retraction convention) and
+pushed through a fresh `apply_all_and_export.py` round -- the live
+IDB now shows `load_game_file`, not the legacy label.
+
+**Conclusion**: structural fingerprinting is real and its core premise
+holds (branch-count really is compiler/version-resistant, unlike raw
+byte size or numeric immediates) -- but even with a properly-calibrated
+pipeline, an AGS-own-object-file filter, and a strict bidirectional-
+uniqueness requirement, the technique still produced zero genuine new
+leads out of 375 candidate pairs surveyed at the loosest tier. The
+fundamental problem: cyclomatic complexity alone is nowhere near a
+unique fingerprint even after every filter -- too many unrelated
+functions of "moderate complexity" exist for a bare (branches, size)
+tuple to pin one down without ALSO checking real content (call targets,
+literal constants, string references), at which point it's just this
+project's own established read-the-body verification step doing the
+actual work, same as always. All four of CLAUDE.md's listed avenues
+(string-matching, callgraph-ranking, numeric-constant matching, and
+now structural fingerprinting) have been tried this session as blind
+systematic sweeps and independently exhausted; none is being suggested
+as a technique to build tooling around going forward. The one
+concretely useful outcome of this round was the `load_ac2game_dta`
+correction above, found as a side effect of manually verifying the
+one candidate that survived every filter.
