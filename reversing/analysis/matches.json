@@ -7825,5 +7825,15 @@
     "source_line": 402,
     "confidence": "high",
     "evidence": "void round_down_coords(int&tmpx,int&tmpy) (routefnd.cpp:402-423) -- a decisive, complete match. `int startgran=walk_area_granularity[_getpixel(wallscreen,tmpx,tmpy)];` matches the disassembly's own call into the already-matched Allegro 8-bit `_getpixel` fast path (sub_425490) followed by `dword_535900[eax*4]`, newly identifying that global as `walk_area_granularity[]`. `tmpy=tmpy-tmpy%startgran; if(tmpy<0) tmpy=0;` matches the disassembly's own `idiv`/subtract-remainder/clamp-to-zero sequence exactly (and the same shape repeats for `tmpx`, read past this excerpt). Called TWICE from find_route_dijkstra (already matched), matching source's own two calls exactly (once on the start point, once on a temporary copy of the destination point)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425310",
+    "new_name": "getr16",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "getr16(c) -- Allegro's public 16-bit-color red-component-extraction macro. Decisively identified: shifts by the literal already-IDA-resolved global `_rgb_r_shift_16` (a real Allegro symbol name visible directly in this disassembly), masks with 0x1F(5 bits), and indexes the already-established `_rgb_scale_5[]` table -- matching Allegro's own `#define getr16(c) (_rgb_scale_5[((c)>>_rgb_r_shift_16)&0x1F])` exactly. Called from FadeOut and sub_40A6D8 (both already matched) inside their own manual high-color pixel-darkening loop. Six sibling functions at neighboring addresses (sub_425330/sub_4252B0/sub_4252D0/sub_4252F0/sub_425350/sub_43C420) are the same Allegro `getr`/`getg`/`getb`-family color-component extractors for other depths/generic-runtime variants, used by the same caller(s) -- left individually unnamed per this project's third-party-library scope rule, since disambiguating exactly which depth-specific or generic-runtime variant each one is has no payoff for a ScummVM port that replaces this whole color-conversion machinery wholesale. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

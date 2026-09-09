@@ -37030,6 +37030,7 @@ static Bytes_6(void) {
 	op_hex		(x,	1);
 	make_array	(0X42530A,	0X6);
 	create_insn	(0X425310);
+	set_name	(0X425310,	"getr16");
 	create_insn	(x=0X425313);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42531E);
@@ -40575,7 +40576,6 @@ static Bytes_6(void) {
 	set_cmt	(0X4284E8,	"Str2",	0);
 	create_insn	(x=0X4284E9);
 	op_stkvar	(x,	1);
-	set_cmt	(0X4284EC,	"Str1",	0);
 }
 
 //------------------------------------------------------------------------
@@ -40585,6 +40585,7 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4284EC,	"Str1",	0);
 	create_insn	(x=0X4284F2);
 	op_hex		(x,	1);
 	create_insn	(0X428500);
@@ -46100,8 +46101,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D5B5);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X42D5BE);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -46111,6 +46110,8 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D5BE);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X42D5CA);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X42D5D1);
@@ -52303,8 +52304,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432F2B);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X432F31);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -52314,6 +52313,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X432F31);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X432F3B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X432F4A);
@@ -58220,8 +58221,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439293);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X439298);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58231,6 +58230,8 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X439298);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43929F);
 	op_hex		(x,	1);
 	create_insn	(x=0X4392AE);
@@ -63934,8 +63935,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F153);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F159);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -63945,6 +63944,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F159);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F15D);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F163);
@@ -158554,6 +158555,7 @@ static Functions_7(void) {
 	set_frame_size(0X4252F0, 0, 4, 0);
 	add_func    (0X425310,0X42532A);
 	set_func_flags(0X425310,0x5410);
+	set_func_cmt(0X425310,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: getr16(c) -- Allegro's public 16-bit-color red-component-extraction macro. Decisively identified: shifts by the literal already-IDA-resolved global `_rgb_r_shift_16` (a real Allegro symbol name visible directly in this disassembly), masks with 0x1F(5 bits), and indexes the already-established `_rgb_scale_5[]` table -- matching Allegro's own `#define getr16(c) (_rgb_scale_5[((c)>>_rgb_r_shift_16)&0x1F])` exactly. Called from FadeOut and sub_40A6D8 (both already matched) inside their own manual high-color pixel-darkening loop. Six sibling functions at neighboring addresses (sub_425330/sub_4252B0/sub_4252D0/sub_4252F0/sub_425350/sub_43C420) are the same Allegro `getr`/`getg`/`getb`-family color-component extractors for other depths/generic-runtime variants, used by the same caller(s) -- left individually unnamed per this project's third-party-library scope rule, since disambiguating exactly which depth-specific or generic" "-runtime variant each one is has no payoff for a ScummVM port that replaces this w", 1);
 	set_frame_size(0X425310, 0, 4, 0);
 	add_func    (0X425330,0X42534A);
 	set_func_flags(0X425330,0x5410);
@@ -158610,14 +158612,14 @@ static Functions_7(void) {
 	set_func_flags(0X4255D0,0x5410);
 	set_func_cmt(0X4255D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl\nconfidence: high\nevidence: fixfloor(fixed x) -- Allegro public fixed-point floor-to-int conversion (fmaths.inl:158-165). This build's own compiled body is a single instruction, \"sar eax,0x10\" (arithmetic shift right by 16) -- matching source's own portable-C fallback's net effect (\"if(x>=0) return x>>16; else return ~((~x)>>16);\", a branch-based workaround for platforms where plain >> isn't guaranteed to sign-extend correctly) exactly, since on x86 a single SAR instruction already sign-extends correctly for both positive and negative values -- consistent with Allegro's own comment \"(x>>16) is not portable\" implying a faster non-portable i386 path exists elsewhere that this build's compiler used/inlined instead of the portable branch. Called from fixtoi (this round's own new match, sub_4255B0). THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule), not chased further.", 1);
 	set_frame_size(0X4255D0, 0XC, 4, 0);
-	add_func    (0X4255F0,0X4255FE);
-	set_func_flags(0X4255F0,0x5410);
-	set_func_cmt(0X4255F0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:blit.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:blit.obj", 1);
-	set_frame_size(0X4255F0, 0, 4, 0);
 }
 
 static Functions_8(void) {
 
+	add_func    (0X4255F0,0X4255FE);
+	set_func_flags(0X4255F0,0x5410);
+	set_func_cmt(0X4255F0,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:blit.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:blit.obj", 1);
+	set_frame_size(0X4255F0, 0, 4, 0);
 	add_func    (0X425600,0X42564A);
 	set_func_flags(0X425600,0x5410);
 	set_frame_size(0X425600, 0, 4, 0);

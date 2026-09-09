@@ -4069,6 +4069,13 @@ disassembly work.
   callee** — a decisive, complete match, newly identifying `walk_
   area_granularity[]`, called twice matching source's own two call
   sites precisely.
+- **`getr16` named, and six Allegro color-component-extractor siblings
+  documented as a group.** `FadeOut`/`sub_40A6D8`'s own pixel-darkening
+  loop calls a cluster of seven tiny functions; one is decisively
+  `getr16` (via the literal already-resolved `_rgb_r_shift_16` symbol),
+  the other six are clearly the same `getr`/`getg`/`getb`-family for
+  other depths/variants — left individually unnamed, no payoff in
+  disambiguating further per the third-party scope rule.
 
 ## Third-party library identification (Task #10)
 

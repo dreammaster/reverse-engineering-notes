@@ -13971,3 +13971,21 @@ already-matched Allegro 8-bit `_getpixel` fast path followed by a
 newly-identified global (`dword_535900`=`walk_area_granularity[]`),
 and the `tmpy-tmpy%startgran`/clamp-to-zero sequence matches exactly.
 Called twice, matching source's own two call sites precisely.
+
+### `getr16` named, and six Allegro color-component-extractor siblings
+### documented as a group
+
+`FadeOut`/`sub_40A6D8`'s own manual high-color pixel-darkening loop
+calls into a cluster of seven tiny (~6-line) functions. One,
+`sub_425310`, is decisively `getr16(c)` -- it shifts by the literal
+already-IDA-resolved global `_rgb_r_shift_16` (a real Allegro symbol
+name visible directly in this disassembly), masks with 0x1F, and
+indexes the already-established `_rgb_scale_5[]` table, matching
+Allegro's own macro exactly. The other six (`sub_425330`/`sub_4252B0`/
+`sub_4252D0`/`sub_4252F0`/`sub_425350`/`sub_43C420`) are clearly the
+same `getr`/`getg`/`getb`-family color-component extractors for other
+depths or generic-runtime variants (same shape, different shift
+globals/masks/tables) -- left individually unnamed rather than force a
+guess at exactly which depth-specific variant each one is, since
+disambiguating them further has zero payoff for a ScummVM port that
+replaces this whole color-conversion machinery wholesale.
