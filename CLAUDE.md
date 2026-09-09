@@ -4055,6 +4055,16 @@ disassembly work.
 - **`play_fli` named**, closing `PlayFlic`'s own remaining callee —
   Allegro's public 4-argument FLI-playback API, matched by call-shape,
   its own open/validate and playback internals left uninvestigated.
+- **`try_this_square`/`find_route_dijkstra` close `__find_route`'s own
+  two remaining callees** (genuinely AGS-owned pathfinding code,
+  `Engine/routefnd.cpp`) — both via decisive header matches, called in
+  the exact order source predicts, neither traced past their opening
+  guard checks given their size.
+- **The `calculate_move_stage` math-helper cluster closes**: five
+  Allegro fixed-point functions (`itofix`/`fixdiv`/`fixcos`/`fixsin`/
+  `fixatan`) reached through compiler-generated forwarding trampolines
+  — `fixcos`/`fixsin` decisively identify `_cos_tbl[512]`, `fixatan`
+  named at medium confidence by call-shape/role alone.
 
 ## Third-party library identification (Task #10)
 

@@ -7748,5 +7748,73 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "int play_fli(const char*filename,BITMAP*bmp,int loop,int(*callback)(void)) -- Allegro's public FLIC/FLI-format video playback API. A complete, exact 4-argument call-shape match, called from PlayFlic (already matched, this build's own undocumented-in-2011 FLI-format animation subsystem). Body matches the expected shape: calls an internal open/validate helper (sub_449C30, presumably open_fli or an inlined equivalent) first, returning a literal -2 (matching Allegro's own FLI-error-constant convention) on failure, else delegating to the real playback loop (sub_449B40) with (bmp,loop,callback). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule) -- sub_449C30/sub_449B40 are internal helpers called only from within this same library function, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4328A4",
+    "new_name": "find_route_dijkstra",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 425,
+    "confidence": "high",
+    "evidence": "int find_route_dijkstra(int fromx,int fromy,int destx,int desty) (routefnd.cpp:425-606) -- a decisive header match, genuinely AGS-owned pathfinding code (not a third-party library). `if(leftorright==1) return 0;` matches the disassembly's own `cmp dword_536C24,1; jnz <continue>; xor eax,eax; return;` exactly, confirming `leftorright`=dword_536C24. The following `for(i=0;i<wallscreen->h;i++) memset(&beenhere[i][0],0xff,wallscreen->w*BEENHERE_SIZE);` matches the disassembly's own loop (bound=`[wallscreen+4]`, `memset(dword_535948[i*4],0xFF,[wallscreen]*2)`) exactly, confirming `BEENHERE_SIZE=2` via the literal `shl ecx,1`. Called from __find_route (already matched) BEFORE the newly-matched try_this_square (sub_432459), matching source's own call order exactly (`else if(find_route_dijkstra(...)) return 1; ... try_this_square(...)`). This is a substantial (~885-line) Dijkstra-based pathfinding search implementing its own malloc'd `parent[]`/`visited[]` arrays and a granularity-based grid search -- not traced past this decisive structural/header confirmation, matching this project's treatment of other large already-identified algorithms."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_432459",
+    "new_name": "try_this_square",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 292,
+    "confidence": "high",
+    "evidence": "int try_this_square(int srcx,int srcy,int tox,int toy) (routefnd.cpp:292-401) -- a decisive match on its own opening two guard checks: `if(beenhere[srcy][srcx]&0x80) return 0;` matches the disassembly's own bit-0x80 test on a `beenhere`-array read exactly, and `if(nesting>7000) return 0;` matches the disassembly's own literal `cmp dword_536C28,0x1B58(7000); jle <continue>` exactly, identifying `nesting`=dword_536C28. Called from __find_route (already matched) as the fallback path AFTER find_route_dijkstra fails, matching source's own call order exactly. A recursive function (its own `try_again:` direction-retry loop, per source, includes a path that calls itself again -- matching the disassembly's own self-referencing CODE XREF). Not traced past the header given its size and the decisive match already in hand."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433E10",
+    "new_name": "itofix",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "itofix(int x) { return x<<16; } -- Allegro's public int-to-fixed-point conversion macro/inline. A complete, trivial, exact match: `eax<<16`. Called twice from calculate_move_stage (already matched), matching source's own two `itofix(abs(...))` calls exactly (`xdist=itofix(abs(ourx-destx)); ydist=itofix(abs(oury-desty));`). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433E20",
+    "new_name": "fixdiv",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixed fixdiv(fixed x,fixed y) (also aliased as `fdiv`, alcompat.h:47) -- Allegro's public 16.16 fixed-point division. Matches the well-known algorithm exactly: takes absolute values of both operands (tracking sign via an XOR-parity counter), does the shifted `(x<<16)/y` division, calls an overflow handler on overflow (returning 0x7FFFFFFF), then reapplies the sign. Reached via a thin forwarding trampoline (sub_433DC8, left unnamed/undocumented as a compiler-generated stub) called from calculate_move_stage (already matched) matching source's own `fixdiv(xdist,xdist+ydist)`/`fdiv(ydist,xdist)` call sites (the same underlying function, since `fdiv` is just `fixdiv`'s own alias). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own overflow-handler callee, sub_433E70, not chased)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433E80",
+    "new_name": "fixcos",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": 193,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixed fixcos(fixed x) { return _cos_tbl[((x+0x4000)>>15)&0x1FF]; } (fmaths.inl:193-196, aliased as `fcos`, alcompat.h:50) -- a complete, exact, zero-drift match: `(arg_0+0x4000)>>15 & 0x1FF` indexing `dword_4BE1F4[idx*4]` (identifying that global as Allegro's own `_cos_tbl[512]`, `src/math.c:25`). Reached via a thin forwarding trampoline (sub_433DDD, left unnamed as a compiler-generated stub) called from calculate_move_stage (already matched) matching source's own `fcos(angl)` call. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433EA0",
+    "new_name": "fixsin",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl",
+    "source_line": 199,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "fixed fixsin(fixed x) { return _cos_tbl[((x-0x400000+0x4000)>>15)&0x1FF]; } (fmaths.inl:199-202, aliased as `fsin`, alcompat.h:51) -- a complete, exact, zero-drift match: `(arg_0-0x3FC000)>>15 & 0x1FF` -- and `0x400000-0x4000=0x3FC000` exactly, confirming the combined-constant matches source's own two-step subtraction precisely, indexing the same already-identified `_cos_tbl[512]` (dword_4BE1F4). Reached via a thin forwarding trampoline (sub_433DEE, left unnamed) called from calculate_move_stage (already matched) matching source's own `fsin(angl)` call. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_457D60",
+    "new_name": "fixatan",
+    "source_file": "Engine/libsrc/allegro-4.2.2",
+    "source_line": null,
+    "confidence": "medium",
+    "is_library": true,
+    "evidence": "fixed fixatan(fixed x) (also aliased as `fatan`, alcompat.h:55) -- Allegro's public fixed-point arctangent. Identified by call-shape/role only (a 1-argument function at a different, more distant address than the sin/cos/div cluster, consistent with a larger/more complex lookup-plus-interpolation implementation typical of `fixatan`) -- reached via a thin forwarding trampoline (sub_433DFF, left unnamed) called from calculate_move_stage (already matched) matching source's own `fatan(fdiv(ydist,xdist))` call, the last of calculate_move_stage's math-helper call sites to be identified. THIRD-PARTY LIBRARY BOUNDARY, its own body not traced."
   }
 ]

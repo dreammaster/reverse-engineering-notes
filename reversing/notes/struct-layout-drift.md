@@ -13910,3 +13910,51 @@ FLI-format animation subsystem) calls Allegro's own public `play_fli
 delegating internally to an open/validate helper and a real playback
 loop, both left uninvestigated as library-internal per the third-party
 scope rule.
+
+### `try_this_square`/`find_route_dijkstra` close `__find_route`'s own
+### two remaining callees
+
+A fresh keyword-filtered sweep (this time targeting the pathfinding
+subsystem specifically) found `__find_route`'s (already matched) own
+two remaining unmatched callees, both genuinely AGS-owned code in
+`Engine/routefnd.cpp`.
+
+`find_route_dijkstra` (`sub_4328A4`, an 885-line function) closes via a
+decisive header match: `if(leftorright==1) return 0;` matches exactly,
+and the following `for(i=0;i<wallscreen->h;i++) memset(&beenhere[i][0],
+0xff,wallscreen->w*BEENHERE_SIZE);` matches exactly too, confirming
+`BEENHERE_SIZE=2` via the disassembly's own literal `shl ecx,1`.
+
+`try_this_square` (`sub_432459`, recursive) closes via its own two
+leading guard checks: the `beenhere[srcy][srcx]&0x80` bit test and the
+literal `nesting>7000`(`0x1B58`) check both match exactly. Both are
+called from `__find_route` in precisely the order source predicts
+(dijkstra first, `try_this_square` as the fallback) -- neither traced
+past this decisive structural confirmation, given their size and the
+strength of the header match already in hand.
+
+### The `calculate_move_stage` math-helper cluster closes: five
+### Allegro fixed-point functions, reached through compiler-generated
+### forwarding trampolines
+
+The same sweep's other big find: `calculate_move_stage`'s (already
+matched) own five remaining unmatched callees are all Allegro's public
+fixed-point math API, each reached through what appears to be a thin,
+compiler-generated forwarding trampoline (a separate address containing
+only a stack-shuffle-and-call, left unnamed/undocumented) rather than a
+direct call to the real implementation.
+
+`itofix` (`sub_433E10`) is a trivial, exact `x<<16` match, called
+twice matching source's own two `itofix(abs(...))` calls. `fixdiv`
+(`sub_433E20`, aliased as `fdiv`) matches Allegro's well-known sign-
+tracking shifted-division algorithm exactly. `fixcos`/`fixsin`
+(`sub_433E80`/`sub_433EA0`) both match `fmaths.inl`'s own inline
+definitions with zero drift -- decisively identifying `dword_4BE1F4`
+as Allegro's own `_cos_tbl[512]` (`src/math.c:25`), and `fixsin`'s own
+combined constant (`x-0x3FC000`) confirming source's two-step
+subtraction (`0x400000-0x4000=0x3FC000` exactly) precisely. `fixatan`
+(`sub_457D60`, aliased as `fatan`) is named at medium confidence by
+call-shape/role alone, sitting at a more distant address consistent
+with a larger lookup-plus-interpolation implementation -- its own body
+not traced. All five recorded at the identification level only, per
+the third-party scope rule.

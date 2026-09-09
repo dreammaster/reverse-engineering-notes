@@ -3795,9 +3795,9 @@
   "is_named": true
  },
  {
-  "name": "sub_432459",
+  "name": "try_this_square",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_432796",
@@ -3805,9 +3805,9 @@
   "is_named": false
  },
  {
-  "name": "sub_4328A4",
+  "name": "find_route_dijkstra",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "__find_route",
@@ -3845,14 +3845,14 @@
   "is_named": false
  },
  {
-  "name": "sub_433E10",
+  "name": "itofix",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_433E20",
+  "name": "fixdiv",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_433E70",
@@ -3860,14 +3860,14 @@
   "is_named": false
  },
  {
-  "name": "sub_433E80",
+  "name": "fixcos",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_433EA0",
+  "name": "fixsin",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "??0wxRichToolTip@@QAE@ABVwxString@@0@Z_0",
@@ -6480,9 +6480,9 @@
   "is_named": false
  },
  {
-  "name": "sub_457D60",
+  "name": "fixatan",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_457E90",
