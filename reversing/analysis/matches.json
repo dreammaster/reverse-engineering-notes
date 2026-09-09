@@ -7816,5 +7816,14 @@
     "confidence": "medium",
     "is_library": true,
     "evidence": "fixed fixatan(fixed x) (also aliased as `fatan`, alcompat.h:55) -- Allegro's public fixed-point arctangent. Identified by call-shape/role only (a 1-argument function at a different, more distant address than the sin/cos/div cluster, consistent with a larger/more complex lookup-plus-interpolation implementation typical of `fixatan`) -- reached via a thin forwarding trampoline (sub_433DFF, left unnamed) called from calculate_move_stage (already matched) matching source's own `fatan(fdiv(ydist,xdist))` call, the last of calculate_move_stage's math-helper call sites to be identified. THIRD-PARTY LIBRARY BOUNDARY, its own body not traced."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_432796",
+    "new_name": "round_down_coords",
+    "source_file": "Engine/routefnd.cpp",
+    "source_line": 402,
+    "confidence": "high",
+    "evidence": "void round_down_coords(int&tmpx,int&tmpy) (routefnd.cpp:402-423) -- a decisive, complete match. `int startgran=walk_area_granularity[_getpixel(wallscreen,tmpx,tmpy)];` matches the disassembly's own call into the already-matched Allegro 8-bit `_getpixel` fast path (sub_425490) followed by `dword_535900[eax*4]`, newly identifying that global as `walk_area_granularity[]`. `tmpy=tmpy-tmpy%startgran; if(tmpy<0) tmpy=0;` matches the disassembly's own `idiv`/subtract-remainder/clamp-to-zero sequence exactly (and the same shape repeats for `tmpx`, read past this excerpt). Called TWICE from find_route_dijkstra (already matched), matching source's own two calls exactly (once on the start point, once on a temporary copy of the destination point)."
   }
 ]

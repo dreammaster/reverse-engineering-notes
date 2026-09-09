@@ -13958,3 +13958,16 @@ call-shape/role alone, sitting at a more distant address consistent
 with a larger lookup-plus-interpolation implementation -- its own body
 not traced. All five recorded at the identification level only, per
 the third-party scope rule.
+
+### `round_down_coords` closes `find_route_dijkstra`'s own remaining
+### callee
+
+Re-running the sweep after the pathfinding round above unlocked one
+more lead: `find_route_dijkstra`'s own remaining unmatched callee.
+`round_down_coords(int&tmpx,int&tmpy)` (`routefnd.cpp:402-423`) closes
+as a decisive, complete match -- `walk_area_granularity[_getpixel(
+wallscreen,tmpx,tmpy)]` matches the disassembly's own call into the
+already-matched Allegro 8-bit `_getpixel` fast path followed by a
+newly-identified global (`dword_535900`=`walk_area_granularity[]`),
+and the `tmpy-tmpy%startgran`/clamp-to-zero sequence matches exactly.
+Called twice, matching source's own two call sites precisely.

@@ -4065,6 +4065,10 @@ disassembly work.
   `fixatan`) reached through compiler-generated forwarding trampolines
   — `fixcos`/`fixsin` decisively identify `_cos_tbl[512]`, `fixatan`
   named at medium confidence by call-shape/role alone.
+- **`round_down_coords` closes `find_route_dijkstra`'s own remaining
+  callee** — a decisive, complete match, newly identifying `walk_
+  area_granularity[]`, called twice matching source's own two call
+  sites precisely.
 
 ## Third-party library identification (Task #10)
 
