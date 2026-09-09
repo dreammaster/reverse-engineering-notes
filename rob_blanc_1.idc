@@ -156459,7 +156459,7 @@ static Functions_3(void) {
 	add_func    (0X41344E,0X413635);
 	set_func_flags(0X41344E,0x5410);
 	SetType(0X41344E, "void __stdcall draw_text_window(int *xins, int *yins, int *xx, int *yy, int *wii, int ovrheight, int ifnum);");
-	set_func_cmt(0X41344E,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void draw_text_window(int*,int*,int*,int*,int*,int,int) at AC.CPP:12533. String match: \"!Cannot use QFG4 style options without custom text window\" (12539).", 1);
+	set_func_cmt(0X41344E,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void draw_text_window(int*,int*,int*,int*,int*,int,int) at AC.CPP:12533. String match: \"!Cannot use QFG4 style options without custom text window\" (12539). FIELD EVIDENCE (full body read for the first time, returning to close-reading after a run of failed blind-sweep techniques): matches source (AC.CPP:12533-12571) closely. NEW FIELD CONFIRMED: `GameSetupStructBase.options[5]`=`OPT_TWCUSTOM` (Common/acroom.h:2711) -- the disassembly's own `movsx eax,byte_51333B; test eax,eax` gate matches source's `if(ifnum<0) ifnum=game.options[OPT_TWCUSTOM];` exactly, and `byte_51333B` lands with ZERO SLACK on the already-established `options[]` base (`0x513336`, from `options[1]`=OPT_SCORESOUND's own confirmed address) plus index 5. Also identifies `dword_52312C` as `guis[]`'s own base address directly (`imul edx,184h; mov eax,dword_52312C; ...[eax+edx+50h]` reading `guis[ifnum].fgcol`, matching source's `wtextcolor(guis[ifnum].fgcol)` exactly) -" "- useful going forward since GUIMain's own remaining MEDIUM-confiden", 1);
 	set_frame_size(0X41344E, 0XC, 4, 0X1C);
 	define_local_var(0X41344E, 0X413635, "[bp+0X8]", "xins");
 	define_local_var(0X41344E, 0X413635, "[bp+0XC]", "yins");
@@ -156738,14 +156738,14 @@ static Functions_3(void) {
 	set_func_flags(0X41547C,0x5410);
 	set_func_cmt(0X41547C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
 	set_frame_size(0X41547C, 0X4, 4, 0);
-	add_func    (0X4154ED,0X415542);
-	set_func_flags(0X4154ED,0x5410);
-	set_func_cmt(0X4154ED,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
-	set_frame_size(0X4154ED, 0X4, 4, 0);
 }
 
 static Functions_4(void) {
 
+	add_func    (0X4154ED,0X415542);
+	set_func_flags(0X4154ED,0x5410);
+	set_func_cmt(0X4154ED,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
+	set_frame_size(0X4154ED, 0X4, 4, 0);
 	add_func    (0X415542,0X415570);
 	set_func_flags(0X415542,0x5410);
 	set_func_cmt(0X415542,	"[reversing] confirmed match\nconfidence: high\nevidence: No 2011 source counterpart exists under this exact name (not found anywhere in Engine/AC.CPP), but the body is unambiguous and fits the same already-established RAW_START-macro pattern as every other RawXxx function this project has matched (RawSetColor/RawDrawImage/RawSaveScreen/RawRestoreScreen/RawDrawLine/RawDrawTriangle/RawPrint): \"clear_to_color(thisroom.ebscene[play.bg_frame], get_col8_lookup(clr));\" -- ebscene[]/bg_frame (dword_523094[dword_4EEB58*4]) and get_col8_lookup all already established. A genuine 2002 script-API function this project's own RAW_* survey hadn't specifically covered until now.", 1);
@@ -157162,6 +157162,10 @@ static Functions_4(void) {
 	set_func_cmt(0X418B54,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates areanum in [1,15] (matching MAX_WALK_AREAS=15, zero drift), then does \"GameState.walkable_areas_on[areanum]=0; redo_walkable_areas();\" -- an exact, instruction-for-instruction match to 2011's entire function body (AC.CPP:17439-17445, minus the compiled-out DEBUG_CONSOLE call). Both walkable_areas_on[] (already confirmed via a memset several sessions ago) and redo_walkable_areas (already matched) get a further, independent confirmation route from a new call site.", 1);
 	set_frame_size(0X418B54, 0, 4, 0X4);
 	define_local_var(0X418B54, 0X418B8D, "[bp+0X8]", "areanum");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X418B8D,0X418BC6);
 	set_func_flags(0X418B8D,0x5410);
 	SetType(0X418B8D, "void __stdcall RestoreWalkableArea(int areanum);");
@@ -157174,10 +157178,6 @@ static Functions_4(void) {
 	set_func_cmt(0X418BC6,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery): confirms RoomStatus.hotspot_enabled[20] @ +0x135C -- \"cmp hsnum,1; ...; cmp hsnum,14h(20); ...\" bounds-checks hsnum to 1 through 19 inclusive (giving MAX_HOTSPOTS=20 for this build -- matching 2011's documented ORIGINAL value before it was later increased to 30 then 50, Common/acroom.h:65 comment) before \"mov byte ptr[croom+0x135C+hsnum],0\". See reversing/notes/struct-layout-drift.md for the complete writeup.", 1);
 	set_frame_size(0X418BC6, 0, 4, 0X4);
 	define_local_var(0X418BC6, 0X418C00, "[bp+0X8]", "hsnum");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X418C00,0X418C3A);
 	set_func_flags(0X418C00,0x5410);
 	SetType(0X418C00, "void __stdcall EnableHotspot(int hsnum);");
@@ -157604,15 +157604,15 @@ static Functions_5(void) {
 	define_local_var(0X41AB18, 0X41AC79, "[bp+0XC]", "objn");
 	define_local_var(0X41AB18, 0X41AC79, "[bp+0X10]", "ptype");
 	define_local_var(0X41AB18, 0X41AC79, "[bp+0X14]", "slotn");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41AC79,0X41AC9F);
 	set_func_flags(0X41AC79,0x5410);
 	SetType(0X41AC79, "void DisableInterface(void);");
 	set_func_cmt(0X41AC79,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: increments GameState.disabled_user_interface (play_disabled_user_interface, a NESTING COUNTER not a boolean -- already established via main_loop_until's own entry, reconfirmed here), sets guis_need_update=1, then calls the already-matched SetMouseCursor(7) (CURS_WAIT). A simple, direct confirmation of the field's increment role at the script-API level.", 1);
 	set_frame_size(0X41AC79, 0, 4, 0);
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41AC9F,0X41ACD3);
 	set_func_flags(0X41AC9F,0x5410);
 	SetType(0X41AC9F, "void EnableInterface(void);");
@@ -158038,6 +158038,10 @@ static Functions_6(void) {
 	set_func_cmt(0X41CDC3,	"[reversing] confirmed match\nconfidence: high\nevidence: Unnamed (no 2011 counterpart exists, living or dead -- the entire 'Graphical Script' subsystem it belongs to has zero trace in the 2011 reference source beyond one comment line, see run_graph_script's own entry). This is run_graph_script's per-slot command-list interpreter: signature (void *table, int slotIndex), bails out immediately returning 0 if GameState.restrict_until (dword_523180) is already nonzero (a blocking wait already in progress), else reads table[slotIndex*0xFE] as a command count and loops over up to that many 0x19(25)-byte command records starting at table[slotIndex*0xFE+4], dispatching each record's own leading type byte (1-based; type-1 used as a 26-entry jump-table index, 0..0x19) via a switch. Confirmed opcodes so far: type 1 -> NewRoom(record[+5]), also setting dword_5231C4=record[+9]; type 2 -> GiveScore(record[+5]); type 3 -> StopMoving(playerchar); type 4 -> unhandled (falls to the shared default/error case, 'run_graph_script: u" "nknown evnt %d'); type 5 -> run_animation(&unk", 1);
 	set_frame_size(0X41CDC3, 0X10C, 4, 0);
 	define_local_var(0X41CDC3, 0X41D2BB, "[bp-0X104]", "Buffer");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41D323,0X41D342);
 	set_func_flags(0X41D323,0x5410);
 	SetType(0X41D323, "int __cdecl sub_41D323(FILE *Stream);");
@@ -158045,10 +158049,6 @@ static Functions_6(void) {
 	set_frame_size(0X41D323, 0X4, 4, 0);
 	define_local_var(0X41D323, 0X41D342, "[bp-0X4]", "Buffer");
 	define_local_var(0X41D323, 0X41D342, "[bp+0X8]", "Stream");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41D342,0X41D49B);
 	set_func_flags(0X41D342,0x5410);
 	set_func_cmt(0X41D342,	"[reversing] confirmed match\nconfidence: high\nevidence: Named directly from its own FOUR self-identifying error strings -- \"Run_Graph_script: temp file '%s' not found\", \"run_graph_script: invalid script version\", \"run_graph_script: invalid block version\", and (inside its own callee, sub_41CDC3) \"run_graph_script: unknown evnt %d\" -- the classic AGS convention of an internal function's error text carrying its own name (same standard already used for SetInvItemPic, RawSaveScreen, etc.), here doing double duty as decisive evidence since NO 2011 counterpart exists to compare against at all. Implements AGS's ORIGINAL 'Graphical Script' feature -- the whataction[]=10/GRAPHSCRIPT action documented ONLY as a comment in 2011's own source (Common/acroom.h:100, \"v1.00 SR-1: 10: Run graphical script\") -- an entirely-forgotten-by-2011 subsystem with zero other trace (no function, no struct, no string) anywhere in the 2011 reference build. Called from run_event_block (already matched) on respond[i]==0Ah(10), passed respond" "val[i] as arg_0 (the graph-script number) -- s", 1);
@@ -158578,6 +158578,10 @@ static Functions_7(void) {
 	add_func    (0X4253B0,0X4253C6);
 	set_func_flags(0X4253B0,0x5410);
 	set_frame_size(0X4253B0, 0XC, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X4253D0,0X4253E6);
 	set_func_flags(0X4253D0,0x5410);
 	set_frame_size(0X4253D0, 0XC, 4, 0);
@@ -158591,10 +158595,6 @@ static Functions_7(void) {
 	set_func_flags(0X425450,0x5410);
 	set_func_cmt(0X425450,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's internal 8-bit-specific putpixel fast path (Allegro's own _putpixel8-equivalent) -- exact mirror of sub_425490 (see its own entry): acquires a scanline pointer (sub_4253B0), writes one byte directly, releases the line (sub_4253D0). Called only from redo_walkable_areas, for the same 8-bit-fast-path reason. THIRD-PARTY LIBRARY INTERNAL -- not chased further.", 1);
 	set_frame_size(0X425450, 0X4, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X425490,0X4254C9);
 	set_func_flags(0X425490,0x5410);
 	set_func_cmt(0X425490,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's internal 8-bit-specific getpixel fast path (Allegro's own _getpixel8-equivalent): acquires a scanline pointer via a line-lock helper (sub_425430), reads one byte directly, then releases the line (sub_4253D0) -- bypassing the generic vtable dispatch entirely. Called only from redo_walkable_areas (already matched this session), matching that function's own 2011 source comment verbatim: \"since this is an 8-bit memory bitmap, we can just use direct memory access\" (AC.CPP:3705-3706) -- redo_walkable_areas deliberately bypasses the generic getpixel/putpixel used elsewhere (e.g. sub_410631/get_hotspot_at) because it already knows the walkable-areas mask is always 8-bit. THIRD-PARTY LIBRARY INTERNAL: per this project's scope rule, its own callees (sub_425430/sub_4253D0, line-lock/unlock helpers) are not chased further -- documented here only for the boundary fact and the confirmation it supplies of redo_walkable_areas's own source comment.", 1);

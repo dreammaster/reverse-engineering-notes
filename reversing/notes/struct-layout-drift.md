@@ -14398,3 +14398,67 @@ as a technique to build tooling around going forward. The one
 concretely useful outcome of this round was the `load_ac2game_dta`
 correction above, found as a side effect of manually verifying the
 one candidate that survived every filter.
+
+### Back to reading function bodies directly: `draw_text_window` gets full field evidence, confirming `GameSetupStructBase.options[5]`=`OPT_TWCUSTOM` and closing GUIMain's remaining MEDIUM fields with a real exhaustive search
+
+With all four blind-sweep techniques now exhausted, went back to this
+project's own consistently-productive method: pick an already-matched
+but thinly-documented function and read its full body. `draw_text_window`
+(`sub_41344E`, AC.CPP:12533) had sat since an earlier round with only a
+155-character string-match-only entry -- never read for field evidence
+despite being exactly the kind of function (draws the dialog/speech
+text-window box) that would touch several of `GUIMain`'s own still-open
+fields.
+
+Reading it in full pays off twice over. First, a genuinely new
+`GameSetupStructBase.options[]` index: the function's opening gate
+(`movsx eax,byte_51333B; test eax,eax; jnz <use-caller-supplied-ifnum>`)
+matches source's `if(ifnum<0) ifnum=game.options[OPT_TWCUSTOM];`
+exactly, and `byte_51333B` lands with zero slack on the array's own
+already-established base (`0x513336`) plus index 5 -- `OPT_TWCUSTOM=5`
+(`Common/acroom.h:2711`), joining this project's already-growing
+collection of confirmed `options[]` indices (1/9/10/11/12) with zero
+drift.
+
+Second, and more useful going forward: the custom-GUI branch's `guis
+[ifnum].fgcol` read (`imul edx,184h; mov eax,dword_52312C; ...
+[eax+edx+50h]`, matching source's `wtextcolor(guis[ifnum].fgcol)`
+exactly -- a further confirmation of `fgcol`@+0x50, already HIGH
+confidence) identifies `dword_52312C` as `guis[]`'s own concrete base
+address for the first time. Every prior GUIMain-field investigation
+(the whole `transparency`/`zorder`/`guiId`/`reserved[6]` MEDIUM-
+confidence cluster) had been checking specific already-matched callers
+one at a time (`read_gui`, `GetGUIAt`, `GUIMain::rebuild_array`)
+without ever having a base address to search FROM -- meaning the
+project's own "confirmed absent" standard (an exhaustive whole-binary
+search) had never actually been applied to these fields, only
+individual-function checks.
+
+With a real base address in hand, ran that exhaustive search this
+round: grepped the entire disassembly for every function touching
+`dword_52312C` at all (28 functions total, `DisableCursorMode` through
+`restore_game_data`), and checked each one for any `+0x6C`/`+0x70`/
+`+0x74`/`+0x78..+0x90` access relative to that SAME base register (not
+just a matching immediate anywhere in the function, which caught false
+leads on the first pass -- `DisableCursorMode`/`EnableCursorMode`/
+`process_interface_click` all touch `+0x74`/`+0x7C`, but relative to a
+DIFFERENT base, a `GUIButton*` fetched via `guis[ifnum].objs[idx]`,
+landing on that struct's own already-confirmed `leftclick`@+0x74/
+`lclickdata`@+0x78 fields instead). Zero genuine hits on GUIMain's own
+span across all 28 functions. This doesn't change any field's IDENTITY
+confidence (still MEDIUM -- no direct access site exists to confirm
+`transparency`/`zorder`/`guiId`/`reserved[6]` by name), but it upgrades
+their ABSENCE-OF-USE from "checked in a couple of specific callers" to
+this project's own real "checked everywhere, found nothing" standard --
+the strongest evidence yet that this whole 24-byte-plus-3-field span is
+genuinely inert in this build, consistent with the already-dated
+"z-order/guiId are 2.6 (Dec 2003) features" finding from several rounds
+ago.
+
+Both findings applied: `matches.json`'s `draw_text_window` entry
+extended with the field evidence, `apply_structs.py`'s `GameSetupStructBase.
+options[]` and `GUIMain` comments updated, pushed through a fresh
+`apply_all_and_export.py` round (no renames needed -- both `draw_text_
+window` and `dword_52312C` were already correctly identified/left as
+comment-only global notes per this project's established convention
+for globals that don't need an IDB-level rename to be useful).

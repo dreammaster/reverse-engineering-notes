@@ -615,7 +615,22 @@ struct GUIMain {
                            // only 2011 write/read sites are confirmed absent from their exact
                            // disassembly counterparts -- a real negative result, though not (yet)
                            // the exhaustive whole-binary search this project's "confirmed absent"
-                           // standard requires.
+                           // standard requires. THAT EXHAUSTIVE SEARCH NOW DONE (follow-up round,
+                           // enabled by `draw_text_window`'s own field-evidence round identifying
+                           // `dword_52312C` as `guis[]`'s concrete base address for the first
+                           // time): every one of the 28 functions anywhere in the disassembly that
+                           // touches `dword_52312C` at all was checked for a `+6Ch`/`+70h`/`+74h`/
+                           // `+78h..+90h` access relative to that same base -- zero hits. The only
+                           // `+74h`/`+7Ch` accesses found anywhere near a `guis[]`-derived pointer
+                           // (`DisableCursorMode`/`EnableCursorMode`/`process_interface_click`) turn
+                           // out to be relative to a DIFFERENT base entirely -- a `GUIButton*`
+                           // fetched via `guis[ifnum].objs[idx]`, landing on that struct's own
+                           // already-confirmed `leftclick`@+0x74/`lclickdata`@+0x78 fields, not
+                           // GUIMain's. `transparency`/`zorder`/`guiId`/`reserved[6]` stay MEDIUM
+                           // confidence for FIELD IDENTITY (no direct access site exists to name
+                           // them by), but their ABSENCE-OF-USE is now confirmed to this project's
+                           // own "checked everywhere, found nothing" standard, not just within
+                           // `read_gui`/`GUIMain::rebuild_array`.
   int reserved[6];             // +0x78..0x90 (24 bytes), MEDIUM confidence: positional/arithmetic
                            // fit only, boxed in with zero slack between the confirmed `guiId` and
                            // `on` fields -- plausible for genuinely unused reserved space, matching
@@ -1663,6 +1678,11 @@ struct GameSetupStructBase {
                             // landing exactly on 0x513337-1+9=0x51333F with zero slack.
                             // options[10]=OPT_SPEECHTYPE (acroom.h:2716) separately confirmed via
                             // SetSpeechStyle (already matched), landing on 0x513337-1+10=0x513340.
+                            // options[5]=OPT_TWCUSTOM (acroom.h:2711) confirmed via draw_text_window
+                            // (already matched, read in full for field evidence for the first time):
+                            // "movsx eax,byte_51333B; test eax,eax; jnz <use-arg-ifnum>" matches
+                            // source's "if(ifnum<0) ifnum=game.options[OPT_TWCUSTOM];" exactly, and
+                            // byte_51333B lands with zero slack on 0x513336(base)+5.
   unsigned char paluses[256];     // +0x32, high confidence: confirmed directly via a shared loop in
                             // `main` (also used for defpal below) -- "for (ee=0; ee<256; ee++) if
                             // (paluses[ee]!=2) palette[ee]=defpal[ee];" -- disasm's `cmp

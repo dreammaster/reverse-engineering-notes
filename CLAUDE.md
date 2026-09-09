@@ -4186,6 +4186,23 @@ disassembly work.
   ranking, numeric-constant matching, structural fingerprinting) are
   now tried-and-exhausted as blind systematic sweeps this session —
   see `reversing/notes/struct-layout-drift.md` for the full writeup.
+- **Back to reading function bodies directly: `draw_text_window`
+  closes a new `GameSetupStructBase.options[]` index and lets
+  `GUIMain`'s last MEDIUM fields get a real exhaustive search.**
+  Reading this previously-thin (string-match-only) entry in full
+  confirms `options[5]`=`OPT_TWCUSTOM` (zero drift) and identifies
+  `dword_52312C` as `guis[]`'s own concrete base address for the first
+  time. That address let this round run the exhaustive whole-binary
+  search `guiId`/`zorder`/`transparency`/`reserved[6]` had never
+  actually had (every prior check was one specific caller at a time):
+  zero hits anywhere across all 28 functions touching `guis[]` — the
+  only near-miss (`DisableCursorMode`/`EnableCursorMode`/`process_
+  interface_click`'s own `+0x74`/`+0x7C` accesses) turned out to be a
+  DIFFERENT base (a `GUIButton*`'s own already-confirmed `leftclick`/
+  `lclickdata` fields, not GUIMain's). Field identity for those four
+  stays MEDIUM, but their absence-of-use now meets this project's own
+  "checked everywhere" standard rather than "checked in a couple of
+  functions." See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
