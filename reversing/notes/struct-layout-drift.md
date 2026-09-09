@@ -14231,3 +14231,75 @@ now independently saturate on third-party-library internals** when
 re-run against the current, much-grown `matches.json` -- a strong,
 three-way-confirmed stopping point for these techniques specifically,
 not just a single script running dry.
+
+### Tried CLAUDE.md's own suggested "next avenue" (numeric-constant/struct-offset matching) as a blind systematic sweep -- doesn't work as a standalone technique, only as targeted verification
+
+Built a `cross_reference.py`-equivalent for numbers instead of strings:
+extract every numeric literal from `Engine/`+`Common/` (non-`libsrc`)
+source, attribute each to its containing function via a brace-depth
+heuristic scanner (no ctags available in this environment), keep only
+"distinctive" values used by <=2 distinct source functions (mirroring
+`build_leads.py`'s own string-rarity philosophy exactly), then scan
+every still-unmatched `sub_*` for immediate hex/decimal operands (code
+portion only, the same discipline as the callgraph-ranking script) and
+rank by how many distinctive constants point at the same single
+candidate source function.
+
+**Result, after three tuning passes and hands-on verification of every
+top hit: this doesn't work as a blind sweep, and the failure mode is
+instructive.** Unlike a string literal (unique application payload
+data), a bare numeric immediate gets reused throughout ANY compiled
+binary for structurally unrelated reasons, and no floor/rarity filter
+fully escapes this:
+- **Floor 16, no filtering**: dominated by small integers (18-46) that
+  are only "distinctive" in source because a single giant `switch`
+  (`get_nivalue`) enumerates them as case values -- meaningless as a
+  fingerprint, since ordinary loop counters/array indices elsewhere hit
+  the same small numbers by pure coincidence at massive scale.
+- **Floor 100**: dominated by `our_eip=NNN;` debug-checkpoint markers
+  (sequential bookkeeping counters scattered through big functions,
+  already known from this project's own `malloc_fail_handler` finding)
+  -- filtered these out explicitly, which helped, but version-gate
+  constants (`read_gui`'s own `gver>=101/102` checks) still produced
+  confirmed false positives: `read_gui` is ALREADY matched
+  (`sub_407CA7`), yet several genuinely-unrelated unmatched functions
+  "matched" its own 101/102/108/110/115 literals purely because those
+  small numbers recur as ordinary buffer sizes/offsets elsewhere.
+- **Floor 1000**: dominated by common round hex/power-of-two boundary
+  constants (`32767`/`0x7FFF`, `65536`/`0x10000`, `32768`/`0x8000`) that
+  recur everywhere as overflow checks/shift boundaries regardless of
+  domain -- zero actionable hits.
+- **Doubly-rare refinement** (require the value to ALSO be rare across
+  the ENTIRE disassembly -- <=4 functions total using it, not just
+  <=2 source functions): the cleanest tier, but every single hands-on-
+  verified candidate still turned out wrong. `sub_4708D0` (the
+  strongest "my_readkey" candidate, sharing 3 of its scancode-remap
+  literals) is actually called only from `read_keyboard_config`
+  (already-established Allegro-internal) -- a coincidental overlap in
+  the shared scancode-value domain, not a real match; `sub_42F6AE`/
+  `sub_42F85F` (matching `SetRegionTint`'s `0x00FF0000` RGB-channel
+  mask) are called from `save_bmp` (Allegro-internal bitmap I/O) --
+  `0xFF0000` is a generic red-channel-isolation mask reused constantly
+  in unrelated graphics code, not evidence of `SetRegionTint` specifically
+  (which, per this project's own repeated "tint subsystem confirmed
+  absent" findings on `SetAmbientTint`/`CharacterExtras.tint_*`, may not
+  even exist in this build). A bogus "defined" pseudo-function surfaced
+  too -- an artifact of the brace-depth scanner misparsing a
+  preprocessor `defined(...)` construct as a function signature, not a
+  disassembly-side problem.
+
+**Conclusion**: numeric-constant matching is exactly as valuable as this
+project has already been using it all along -- as a targeted
+CONFIRMATION tool once a candidate function is already suspected via
+callgraph position, string evidence, or a direct read (the successful
+prior hits: `GUIMAGIC=0xCAFEBEEF`, the `0x10624DD3` MSVC divide-by-1000
+reciprocal, `sizeof`/`malloc`-literal struct-size anchors, the 26.6
+fixed-point FreeType convention) -- but it does NOT work as a blind,
+`build_leads.py`-style systematic sweep across the ~1000+ remaining
+unmatched functions, because immediate values (unlike string literals)
+lack the "this exact payload is unique application data" property that
+makes string-matching reliable. This closes out CLAUDE.md's own
+"avenue #2" as a dead end for further blind sweeping (though still
+worth using case-by-case); avenue #3 (structural/size fingerprinting --
+byte-length, frame size, branch count against the reference build) is
+now the one genuinely untried option left on that list.

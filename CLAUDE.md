@@ -4141,6 +4141,26 @@ disassembly work.
   techniques now independently saturate on third-party-library
   internals for AGS-side code specifically — see
   `reversing/notes/struct-layout-drift.md` for the full writeup.
+- **Tried numeric-constant/struct-offset matching as a blind systematic
+  sweep — doesn't work as a standalone technique, only as targeted
+  verification.** Built a `cross_reference.py`-equivalent for numbers:
+  extract distinctive numeric literals (used by <=2 source functions)
+  from `Engine/`/`Common/`, then rank unmatched `sub_*` by how many such
+  constants they share with a single candidate. After three threshold
+  tuning passes and hands-on verification of every top hit, every
+  single candidate turned out to be a false positive from generic
+  bitmask/round-number/debug-checkpoint reuse (immediates lack the
+  "unique application payload" property that makes string-matching
+  work) — e.g. the strongest "my_readkey" candidate turned out to be
+  Allegro-internal `read_keyboard_config` code, and a "SetRegionTint"
+  candidate turned out to be `save_bmp`'s own generic RGB-mask
+  constant. Numeric-constant matching remains valuable exactly as this
+  project has always used it — confirming an already-suspected
+  candidate (`0xCAFEBEEF`, MSVC divide-reciprocal constants,
+  `sizeof`/`malloc`-literal struct anchors) — just not as a blind sweep.
+  See `reversing/notes/struct-layout-drift.md` for the full writeup.
+  This leaves structural/size fingerprinting (avenue #3 below) as the
+  one genuinely untried technique.
 
 ## Third-party library identification (Task #10)
 
