@@ -5855,7 +5855,7 @@
     "source_line": null,
     "confidence": "high",
     "is_library": true,
-    "evidence": "Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further."
+    "evidence": "Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further. CORRECTION (found while identifying sub_44DB00 as set_display_switch_mode, see its own entry): the checked hook at +0x50 is NOT 'plausibly a vsync-wait callback' as originally guessed -- it's decisively Allegro's `read_hardware_palette()` (a real SYSTEM_DRIVER method, 0 arguments, matching this call site's own 0-argument shape exactly and semantic-ally fitting perfectly: refresh the driver's cached palette state before copying it into `_current_palette`). `dword_536F68` is corrected from 'a video-driver'/'a graphics-driver' to specifically Allegro's `system_driver` global (`SYSTEM_DRIVER*`) -- confirmed via zero-drift cross-reference against set_window_title's OWN +0x20 slot (matching SYSTEM_DRIVER's own declared `set_window_title` position exactly) and set_display_switch_mode's own (shifted) +0x5C slot. VTABLE-SLOT DRIFT: `read_hardware_palette` sits at +0x50 here, one slot (4 bytes) later than the 4.2.2 reference's own +0x4C, the same shift found on set_display_switch_mode -- consistent with one field missing earlier in this build's own SYSTEM_DRIVER layout."
   },
   {
     "kind": "manual",
@@ -6515,7 +6515,7 @@
     "source_file": null,
     "source_line": null,
     "confidence": "medium-high",
-    "evidence": "Allegro's own set_window_title(const char*) -- checks a graphics-driver vtable slot (dword_536F68+0x20, the same driver-object global identified via install_allegro's own setup sequence) and calls through it if present, matching Allegro's standard \"delegate to the active gfx driver's set_window_title hook, no-op if the driver doesn't support it\" pattern. Third-party library boundary -- not chased further; the driver-side hook implementation is Allegro-internal."
+    "evidence": "Allegro's own set_window_title(const char*) -- checks a graphics-driver vtable slot (dword_536F68+0x20, the same driver-object global identified via install_allegro's own setup sequence) and calls through it if present, matching Allegro's standard \"delegate to the active gfx driver's set_window_title hook, no-op if the driver doesn't support it\" pattern. Third-party library boundary -- not chased further; the driver-side hook implementation is Allegro-internal. CORRECTION (found while identifying sub_44DB00 as set_display_switch_mode, see its own entry): 'a graphics-driver vtable slot' is corrected to specifically Allegro's `system_driver` global (`SYSTEM_DRIVER*`, not `GFX_DRIVER*`) -- `dword_536F68`'s own +0x20 slot matches SYSTEM_DRIVER's own declared `set_window_title` field position EXACTLY, zero drift, the anchor point that let the vtable-shift on two neighboring slots (get_palette_range's read_hardware_palette hook, set_display_switch_mode) be recognized as a genuine shift rather than a wrong-struct guess."
   },
   {
     "kind": "manual",
@@ -7853,5 +7853,25 @@
     "source_line": 1285,
     "confidence": "high",
     "evidence": "void GUIMain::poll() (acgui.cpp:1285-1244+) -- draw_screen_overlay's (already matched) own other remaining callee, closing right alongside GUIMain::draw_at (found in the same sweep, see its own entry) as GUIMain's other central per-frame method. A decisive, complete match on its whole opening sequence: `int mxwas=mousex,mywas=mousey;` matches saving the already-established `mousex`/`mousey` globals (dword_5358CC/dword_5358D0) into locals exactly; `mousex-=x; mousey-=y;` matches `dword_5358CC-=[this+0x28]`(x)/`dword_5358D0-=[this+0x2C]`(y), both already-established GUIMain fields; `if((mousex!=mousewasx)|(mousey!=mousewasy))` matches the disassembly's own two comparisons against `[this+0x58]`(mousewasx)/`[this+0x5C]`(mousewasy) ORed together exactly, both already-established fields. Inside that branch: `int newum=find_object_under_mouse();` matches the disassembly's own call to the already-matched GUIMain::find_object_under_mouse() (0-arg overload) exactly; the subsequent `mouseover`@+0x54 comparison and `objs[mouseover]->MouseLeave()` dispatch (via vtable slot +0x08/2, matching this project's already-established GUIObject vtable slot 2 exactly) both match source's own `if(newum!=mouseover){ if(mouseover>=0) objs[mouseover]->MouseLeave(); ...}` sequence precisely. The remaining ~90 lines (the `IsDisabled`/`IsClickable` filtering, `MouseOver`/`MouseMove` dispatch, and the mouse-button-state branches further down in source) were not individually traced this round, given the overwhelming confirmation already established from the opening sequence alone."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_435C10",
+    "new_name": "create_sub_bitmap",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h",
+    "source_line": 162,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "create_sub_bitmap(BITMAP*parent,int x,int y,int width,int height) -- Allegro's public sub-bitmap-creation API (a view onto a region of an existing bitmap, sharing pixel data). Already informally identified inside GUIMain::draw_at's own entry (this same round) via its exact 5-argument call shape (`create_sub_bitmap(abuf,xx,yy,wid,hit)`, matching GFX_VTABLE's own declared `create_sub_bitmap` method exactly) but never given its own dedicated record -- another instance of the 'documented in prose, never given its own entry' gap this project has hit and fixed several times before. Also called from `main` (already matched), plausibly for the same virtual-screen-region purpose during startup. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_44DB00",
+    "new_name": "set_display_switch_mode",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/dispsw.c",
+    "source_line": 61,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "int set_display_switch_mode(int mode) (dispsw.c:61-87) -- a decisive structural match, found sweeping `main`'s own remaining callees. `if(!system_driver) return -1;` matches the disassembly's own `test dword_536F68,0; jnz <continue>; or eax,-1; retn` exactly, identifying `dword_536F68` as Allegro's `system_driver` global (SEE CORRECTION on get_palette_range/set_window_title's own entries -- both had vaguely called this 'a video-driver'/'graphics-driver' vtable; it's specifically `SYSTEM_DRIVER*`). `if(!system_driver->set_display_switch_mode) { if(mode==SWITCH_NONE) return 0; else return -1; }` matches the disassembly's own null-hook check and its `neg eax; sbb eax,eax` idiom exactly (computing '-1 if arg_0 nonzero, else 0' -- precisely `mode==SWITCH_NONE(0)` logic). The success path (`ret=system_driver->set_display_switch_mode(mode); if(ret==0) {...switch_mode=mode;}`) is matched in ROLE (calls the hook with the argument, stores it into a newly-identified global `dword_4BD938`=`switch_mode` on success) but CONFIRMED ABSENT is source's own 'unregister all callbacks' loop (`for(i=0;i<MAX_SWITCH_CALLBACKS;i++) switch_in_cb[i]=switch_out_cb[i]=NULL;`) -- no such loop exists here at all, this build has no switch-callback registration mechanism yet. VTABLE-SLOT DRIFT: this build's own hook sits at SYSTEM_DRIVER+0x5C, one slot (4 bytes) later than the 4.2.2 reference's own declared position (+0x58) -- consistent with this build's own older/different SYSTEM_DRIVER lacking one earlier field, the same kind of vtable-shift pattern already established for GFX_VTABLE elsewhere in this project. Called from `main` (already matched) with the literal `1` (`SWITCH_PAUSE`). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
   }
 ]

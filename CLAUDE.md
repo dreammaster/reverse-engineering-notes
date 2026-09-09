@@ -4095,6 +4095,17 @@ disassembly work.
   `find_object_under_mouse()` call, `MouseLeave` dispatch through the
   already-established vtable slot 2) matches decisively, closing this
   central function's own callgraph sweep completely.
+- **`create_sub_bitmap` gets its own entry; `set_display_switch_mode`
+  corrects `dword_536F68`'s identity.** Sweeping `main` itself found
+  `create_sub_bitmap` was only ever informally identified in prose
+  (fixed) and `set_display_switch_mode` — the latter requiring
+  `dword_536F68` to be Allegro's `system_driver`, not the vague
+  "video-driver" wording two earlier entries used. Cross-checking
+  `SYSTEM_DRIVER`'s own field order confirms it precisely and
+  upgrades `get_palette_range`'s own hook from a guess ("plausibly
+  vsync-wait") to `read_hardware_palette` — both sitting one field
+  (4 bytes) later than the 4.2.2 reference, the same vtable-shift
+  pattern already found on `GFX_VTABLE`, now on `SYSTEM_DRIVER` too.
 
 ## Third-party library identification (Task #10)
 

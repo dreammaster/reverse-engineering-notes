@@ -14057,3 +14057,40 @@ source's opening block instruction for instruction. The remaining
 `MouseMove` dispatch, mouse-button-state handling) weren't traced
 individually given the strength of the opening match already in hand.
 `draw_screen_overlay`'s own callgraph sweep is now fully closed.
+
+### `create_sub_bitmap` finally gets its own entry; `main`'s own
+### `set_display_switch_mode` callee corrects `dword_536F68`'s identity
+
+Two loose ends closed while sweeping `main` itself as a fresh central
+function. First, a data-hygiene fix: `sub_435C10` had already been
+INFORMALLY identified as Allegro's `create_sub_bitmap` inside `GUIMain
+::draw_at`'s own entry (this same session), but never given its own
+dedicated record -- yet another instance of the "documented in prose,
+never given its own entry" gap this project has hit and fixed several
+times before.
+
+Second, a genuine correction: `sub_44DB00` (called from `main` with the
+literal `1`) is Allegro's `set_display_switch_mode(int mode)`
+(`dispsw.c:61-87`) -- its null-hook check, its `mode==SWITCH_NONE`
+fallback logic (matched via the disassembly's own `neg eax;sbb eax,eax`
+idiom), and its success-path field write all match, though source's own
+"unregister all switch callbacks" loop is CONFIRMED ABSENT. The
+decisive part: this identification REQUIRES `dword_536F68` to be
+Allegro's `system_driver` global, not the vague "video-driver"/
+"graphics-driver" wording two EARLIER entries (`get_palette_range`,
+`set_window_title`) had used for the same global. Cross-checking
+`SYSTEM_DRIVER`'s own declared field order confirms it precisely:
+`set_window_title`'s own already-matched +0x20 slot lines up with
+zero drift, and `get_palette_range`'s own +0x50 hook -- previously
+guessed as "plausibly a vsync-wait callback" -- is now decisively
+`read_hardware_palette()` (a real 0-argument `SYSTEM_DRIVER` method,
+semantically perfect for a function that copies palette data: refresh
+the driver's cache before reading it). Both `read_hardware_palette`
+(+0x50, not 4.2.2's own +0x4C) and `set_display_switch_mode` (+0x5C,
+not +0x58) sit exactly one field (4 bytes) later than the 4.2.2
+reference declares -- the same kind of vtable-shift pattern already
+established for `GFX_VTABLE` elsewhere in this project, now found on
+`SYSTEM_DRIVER` too, consistent with this build's own older/different
+Allegro missing one field somewhere earlier in that struct. Both
+older entries corrected in place with the new, more precise
+identification (not overwritten -- the original text stays visible).

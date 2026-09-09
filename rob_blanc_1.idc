@@ -55128,6 +55128,7 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	make_array	(0X435C0A,	0X6);
 	create_insn	(0X435C10);
+	set_name	(0X435C10,	"create_sub_bitmap");
 	create_insn	(x=0X435C14);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X435C23);
@@ -58215,10 +58216,6 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439273);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X439281);
-	op_hex		(x,	1);
-	create_insn	(x=0X439288);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58228,6 +58225,10 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X439281);
+	op_hex		(x,	1);
+	create_insn	(x=0X439288);
+	op_hex		(x,	1);
 	create_insn	(0X43928C);
 	create_insn	(x=0X43928D);
 	op_stkvar	(x,	1);
@@ -63930,8 +63931,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F132);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F138);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -63941,6 +63940,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F138);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F149);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F14F);
@@ -69981,9 +69982,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4463CF);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4463D9);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -69993,6 +69991,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4463D9);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(0X4463E2);
 	create_insn	(x=0X4463E4);
 	op_plain_offset	(x,	1,	0);
@@ -75760,6 +75761,7 @@ static Bytes_12(void) {
 	op_hex		(x,	1);
 	make_array	(0X44DAF3,	0XD);
 	create_insn	(0X44DB00);
+	set_name	(0X44DB00,	"set_display_switch_mode");
 	create_insn	(x=0X44DB09);
 	op_hex		(x,	1);
 	create_insn	(0X44DB0D);
@@ -76163,11 +76165,6 @@ static Bytes_12(void) {
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
 	set_name	(0X44E490,	"_mix_some_samples");
-	create_insn	(x=0X44E49A);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X44E4A6);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -76177,6 +76174,11 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X44E49A);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X44E4A6);
+	op_hex		(x,	1);
 	create_insn	(x=0X44E4B4);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -81436,12 +81438,6 @@ static Bytes_13(void) {
 	create_insn	(0X456530);
 	create_insn	(x=0X456560);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X456565);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X456574);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X456578);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -81451,6 +81447,12 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X456565);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X456574);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X456578);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X456584);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -87614,9 +87616,6 @@ static Bytes_14(void) {
 	create_insn	(0X462E7E);
 	create_insn	(x=0X462E89);
 	op_hex		(x,	1);
-	set_cmt	(0X462E91,	"jumptable 00462E77 cases 15,16",	1);
-	create_insn	(x=0X462E91);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87626,6 +87625,9 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X462E91,	"jumptable 00462E77 cases 15,16",	1);
+	create_insn	(x=0X462E91);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X462E9F);
 	op_hex		(x,	1);
 	create_insn	(x=0X462EAB);
@@ -93429,14 +93431,6 @@ static Bytes_15(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X46B803);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X46B810);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X46B81F);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X46B82A);
-	op_hex		(x,	1);
-	create_insn	(x=0X46B82D);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -93446,6 +93440,14 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46B810);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X46B81F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X46B82A);
+	op_hex		(x,	1);
+	create_insn	(x=0X46B82D);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X46B837);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X46B83F);
@@ -99392,14 +99394,6 @@ static Bytes_16(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4738D9);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4738DE);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4738F9);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X473906);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X47390A);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -99409,6 +99403,14 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4738DE);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4738F9);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X473906);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X47390A);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X473912);
 	op_stkvar	(x,	1);
 	create_insn	(0X473933);
@@ -105189,6 +105191,15 @@ static Bytes_17(void) {
 	create_insn	(x=0X47ADF9);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_18(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47AE03);
 	op_hex		(x,	1);
 	create_insn	(x=0X47AE0C);
@@ -105199,15 +105210,6 @@ static Bytes_17(void) {
 	set_cmt	(0X47AE16,	"Size",	0);
 	create_insn	(x=0X47AE1C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_18(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47AE26);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -111351,14 +111353,6 @@ static Bytes_18(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X484D74);
 	op_hex		(x,	1);
-	make_array	(0X484D88,	0X8);
-	create_insn	(0X484D90);
-	create_insn	(x=0X484D91);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X484D9A);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X484D9F);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -111368,6 +111362,14 @@ static Bytes_19(void) {
         auto x;
 #define id x
 
+	make_array	(0X484D88,	0X8);
+	create_insn	(0X484D90);
+	create_insn	(x=0X484D91);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X484D9A);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X484D9F);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X484DA4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484DD8);
@@ -117676,14 +117678,6 @@ static Bytes_19(void) {
 	create_insn	(x=0X48E6AB);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(0X48E6B7);
-	make_array	(0X48E6BE,	0X2);
-	create_insn	(x=0X48E6C0);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48E6CE);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X48E6DB);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -117693,6 +117687,14 @@ static Bytes_20(void) {
         auto x;
 #define id x
 
+	create_insn	(0X48E6B7);
+	make_array	(0X48E6BE,	0X2);
+	create_insn	(x=0X48E6C0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48E6CE);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X48E6DB);
+	op_hex		(x,	1);
 	create_insn	(x=0X48E6E0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E6E9);
@@ -124133,14 +124135,6 @@ static Bytes_20(void) {
 	create_insn	(0X497957);
 	create_insn	(x=0X497963);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X49796C);
-	op_hex		(x,	1);
-	create_insn	(x=0X49796F);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X497986);
-	op_hex		(x,	1);
-	create_insn	(x=0X497989);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -124150,6 +124144,14 @@ static Bytes_21(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X49796C);
+	op_hex		(x,	1);
+	create_insn	(x=0X49796F);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X497986);
+	op_hex		(x,	1);
+	create_insn	(x=0X497989);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X49799B);
 	op_hex		(x,	1);
 	create_insn	(x=0X49799E);
@@ -130135,11 +130137,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4A0978);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A097C);
-	op_stkvar	(x,	0);
-	set_cmt	(0X4A0985,	"jumptable 004A01EF case 24",	1);
-	create_insn	(x=0X4A0985);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -130149,6 +130146,11 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A097C);
+	op_stkvar	(x,	0);
+	set_cmt	(0X4A0985,	"jumptable 004A01EF case 24",	1);
+	create_insn	(x=0X4A0985);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4A09A0);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A09A4);
@@ -136139,14 +136141,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9997);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X4A99AD);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A99B7);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A99BE);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4A99C8);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -136156,6 +136150,14 @@ static Bytes_23(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4A99AD);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A99B7);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A99BE);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4A99C8);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4A99D6);
 	op_hex		(x,	1);
 	create_insn	(x=0X4A99FA);
@@ -141294,12 +141296,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF030);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF034);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF038);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141309,6 +141305,12 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF034);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4AF038);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF03C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145657,10 +145659,6 @@ static Bytes_24(void) {
 	make_array	(0X4B45BD,	0X3);
 	create_strlit	(0X4B45C0,	0X3);
 	set_name	(0X4B45C0,	"aSp");
-	create_strlit	(0X4B45C4,	0X4);
-	set_name	(0X4B45C4,	"aMar");
-	create_strlit	(0X4B45C8,	0X3);
-	set_name	(0X4B45C8,	"aAx");
 }
 
 //------------------------------------------------------------------------
@@ -145670,6 +145668,10 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4B45C4,	0X4);
+	set_name	(0X4B45C4,	"aMar");
+	create_strlit	(0X4B45C8,	0X3);
+	set_name	(0X4B45C8,	"aAx");
 	create_strlit	(0X4B45CC,	0X3);
 	set_name	(0X4B45CC,	"aBx");
 	create_strlit	(0X4B45D0,	0X3);
@@ -149037,12 +149039,6 @@ static Bytes_25(void) {
 	create_dword	(x=0X4BBD3C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4BBD40);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4BBD44);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -149052,6 +149048,12 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4BBD40);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4BBD44);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4BBD48);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -152612,10 +152614,6 @@ static Bytes_26(void) {
 	set_name	(0X4CB3B4,	"aChi_0");
 	create_strlit	(0X4CB3B8,	0XB);
 	set_name	(0X4CB3B8,	"aCdotaccent");
-	create_strlit	(0X4CB3C4,	0XC);
-	set_name	(0X4CB3C4,	"aCcircumflex");
-	create_strlit	(0X4CB3D0,	0X7);
-	set_name	(0X4CB3D0,	"aCcaron");
 }
 
 //------------------------------------------------------------------------
@@ -152625,6 +152623,10 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X4CB3C4,	0XC);
+	set_name	(0X4CB3C4,	"aCcircumflex");
+	create_strlit	(0X4CB3D0,	0X7);
+	set_name	(0X4CB3D0,	"aCcaron");
 	create_strlit	(0X4CB3D8,	0X6);
 	set_name	(0X4CB3D8,	"aCaron_0");
 	make_array	(0X4CB3DE,	0X2);
@@ -158653,7 +158655,7 @@ static Functions_8(void) {
 	set_frame_size(0X425720, 0, 4, 0);
 	add_func    (0X425740,0X425760);
 	set_func_flags(0X425740,0x5410);
-	set_func_cmt(0X425740,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: Allegro's own set_window_title(const char*) -- checks a graphics-driver vtable slot (dword_536F68+0x20, the same driver-object global identified via install_allegro's own setup sequence) and calls through it if present, matching Allegro's standard \"delegate to the active gfx driver's set_window_title hook, no-op if the driver doesn't support it\" pattern. Third-party library boundary -- not chased further; the driver-side hook implementation is Allegro-internal.", 1);
+	set_func_cmt(0X425740,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: Allegro's own set_window_title(const char*) -- checks a graphics-driver vtable slot (dword_536F68+0x20, the same driver-object global identified via install_allegro's own setup sequence) and calls through it if present, matching Allegro's standard \"delegate to the active gfx driver's set_window_title hook, no-op if the driver doesn't support it\" pattern. Third-party library boundary -- not chased further; the driver-side hook implementation is Allegro-internal. CORRECTION (found while identifying sub_44DB00 as set_display_switch_mode, see its own entry): 'a graphics-driver vtable slot' is corrected to specifically Allegro's `system_driver` global (`SYSTEM_DRIVER*`, not `GFX_DRIVER*`) -- `dword_536F68`'s own +0x20 slot matches SYSTEM_DRIVER's own declared `set_window_title` field position EXACTLY, zero drift, the anchor point that let the vtable-shift on two neighboring slots (get_palette_range's read_hardware_palette hook, set_display_switch_mode)" " be recognized as a genuine shift rather than a wrong", 1);
 	set_frame_size(0X425740, 0, 4, 0);
 	add_func    (0X425760,0X425780);
 	set_func_flags(0X425760,0x5410);
@@ -159744,6 +159746,7 @@ static Functions_10(void) {
 	set_frame_size(0X435BF0, 0, 0, 0);
 	add_func    (0X435C10,0X435DEC);
 	set_func_flags(0X435C10,0x5400);
+	set_func_cmt(0X435C10,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: create_sub_bitmap(BITMAP*parent,int x,int y,int width,int height) -- Allegro's public sub-bitmap-creation API (a view onto a region of an existing bitmap, sharing pixel data). Already informally identified inside GUIMain::draw_at's own entry (this same round) via its exact 5-argument call shape (`create_sub_bitmap(abuf,xx,yy,wid,hit)`, matching GFX_VTABLE's own declared `create_sub_bitmap` method exactly) but never given its own dedicated record -- another instance of the 'documented in prose, never given its own entry' gap this project has hit and fixed several times before. Also called from `main` (already matched), plausibly for the same virtual-screen-region purpose during startup. THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further.", 1);
 	set_frame_size(0X435C10, 0X10, 0, 0);
 	add_func    (0X435DF0,0X435ECF);
 	set_func_flags(0X435DF0,0x5400);
@@ -159993,7 +159996,7 @@ static Functions_10(void) {
 	set_frame_size(0X43C840, 0, 0, 0);
 	add_func    (0X43C860,0X43C89F);
 	set_func_flags(0X43C860,0x5400);
-	set_func_cmt(0X43C860,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further.", 1);
+	set_func_cmt(0X43C860,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's public get_palette_range(PALETTE p,int from,int to) API. Body matches exactly: checks a video-driver vtable slot (dword_536F68+0x50, plausibly a vsync-wait callback) and calls it if present, then copies Allegro's own internal current-palette global (dword_5538C0, matching Allegro's _current_palette) into the caller's buffer for the given [from,to] range. Called from sub_43C840 (get_palette, see its own entry) and PlayFlic (already matched, grabbing the screen palette before switching to the FLIC's own). THIRD-PARTY LIBRARY BOUNDARY -- not chased further. CORRECTION (found while identifying sub_44DB00 as set_display_switch_mode, see its own entry): the checked hook at +0x50 is NOT 'plausibly a vsync-wait callback' as originally guessed -- it's decisively Allegro's `read_hardware_palette()` (a real SYSTEM_DRIVER method, 0 arguments, matching this call site's own 0-argument shape exactly and semantic-ally fitting perfectly: refresh the driver's ca" "ched palette state before copying it into `_cu", 1);
 	set_frame_size(0X43C860, 0, 0, 0);
 	add_func    (0X43C8A0,0X43C988);
 	set_func_flags(0X43C8A0,0x5400);
@@ -160481,6 +160484,10 @@ static Functions_10(void) {
 	set_func_flags(0X447EC0,0x5400);
 	SetType(0X447EC0, "int __cdecl sub_447EC0(float, int, int);");
 	set_frame_size(0X447EC0, 0X28, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X448000,0X44808A);
 	set_func_flags(0X448000,0x5400);
 	set_frame_size(0X448000, 0X10, 0, 0);
@@ -160554,10 +160561,6 @@ static Functions_10(void) {
 	set_func_flags(0X4492D0,0x5400);
 	set_func_cmt(0X4492D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/color.h\nconfidence: high\nevidence: set_trans_blender(int r,int g,int b,int a) -- Allegro's public API for configuring the current alpha/lighting blend color. Body extracts 4 color-component arguments and forwards them, plus THREE hardcoded blend-function pointers (sub_4580E4/sub_4477D0/sub_448550, plausibly the 15/16/32-bit-depth trans-blender function table entries; none independently chased further per this project's own third-party scope rule), into a call to sub_43C1B0 (plausibly Allegro's own internal set_blender_mode, also not chased further). Called from sub_4096B5 (this round's own new entry) right before draw_lit_sprite (this round's own new match) with the RGB components extracted from play_scren_tint (already-confirmed GameState.rtint-equivalent global) -- matching the expected 'set the tint color, then draw with it' call pair exactly -- and from put_sprite_256 (already matched, its own entry's 'set_trans_blender' cita" "tion refers to this same address). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X4492D0, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4496A0,0X4496B3);
 	set_func_flags(0X4496A0,0x5400);
 	set_frame_size(0X4496A0, 0, 0, 0);
@@ -160768,6 +160771,7 @@ static Functions_11(void) {
 	set_frame_size(0X44D550, 0X414, 0, 0);
 	add_func    (0X44DB00,0X44DB34);
 	set_func_flags(0X44DB00,0x5400);
+	set_func_cmt(0X44DB00,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/dispsw.c\nconfidence: high\nevidence: int set_display_switch_mode(int mode) (dispsw.c:61-87) -- a decisive structural match, found sweeping `main`'s own remaining callees. `if(!system_driver) return -1;` matches the disassembly's own `test dword_536F68,0; jnz <continue>; or eax,-1; retn` exactly, identifying `dword_536F68` as Allegro's `system_driver` global (SEE CORRECTION on get_palette_range/set_window_title's own entries -- both had vaguely called this 'a video-driver'/'graphics-driver' vtable; it's specifically `SYSTEM_DRIVER*`). `if(!system_driver->set_display_switch_mode) { if(mode==SWITCH_NONE) return 0; else return -1; }` matches the disassembly's own null-hook check and its `neg eax; sbb eax,eax` idiom exactly (computing '-1 if arg_0 nonzero, else 0' -- precisely `mode==SWITCH_NONE(0)` logic). The success path (`ret=system_driver->set_display_switch_mode(mode); if(ret==0) {...switch_mode=mode;}`) is matched in ROLE (calls the hook wi" "th the argument, stores it into a newly-identified global `dword_4BD938`=`switch_mode` on succe", 1);
 	set_frame_size(0X44DB00, 0, 0, 0);
 	add_func    (0X44DB40,0X44DB46);
 	set_func_flags(0X44DB40,0x5400);
@@ -162251,6 +162255,10 @@ static Functions_11(void) {
 	add_func    (0X472930,0X47294F);
 	set_func_flags(0X472930,0x5400);
 	set_frame_size(0X472930, 0, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X472950,0X4729CB);
 	set_func_flags(0X472950,0x5400);
 	set_frame_size(0X472950, 0, 0, 0);
@@ -162408,10 +162416,6 @@ static Functions_11(void) {
 	add_func    (0X475470,0X4755D5);
 	set_func_flags(0X475470,0x5400);
 	set_frame_size(0X475470, 0X8C, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4755E0,0X475745);
 	set_func_flags(0X4755E0,0x5400);
 	set_frame_size(0X4755E0, 0X8C, 0, 0);
@@ -164376,6 +164380,10 @@ static Functions_12(void) {
 	add_func    (0X49C710,0X49C716);
 	set_func_flags(0X49C710,0x5400);
 	set_frame_size(0X49C710, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X49C770,0X49C7C3);
 	set_func_flags(0X49C770,0x5400);
 	set_frame_size(0X49C770, 0X8, 0, 0);
@@ -164556,10 +164564,6 @@ static Functions_12(void) {
 	add_func    (0X49E620,0X49E689);
 	set_func_flags(0X49E620,0x5400);
 	set_frame_size(0X49E620, 0X10, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X49E690,0X49E6CC);
 	set_func_flags(0X49E690,0x5400);
 	set_frame_size(0X49E690, 0X8, 0, 0);

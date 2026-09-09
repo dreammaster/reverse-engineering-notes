@@ -4140,9 +4140,9 @@
   "is_named": true
  },
  {
-  "name": "sub_435C10",
+  "name": "create_sub_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_435DF0",
@@ -5630,9 +5630,9 @@
   "is_named": true
  },
  {
-  "name": "sub_44DB00",
+  "name": "set_display_switch_mode",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_44DB40",
