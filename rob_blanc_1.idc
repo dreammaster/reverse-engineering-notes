@@ -159534,6 +159534,7 @@ static Functions_10(void) {
 	set_frame_size(0X433EF0, 0X8, 4, 0);
 	add_func    (0X433F80,0X433F99);
 	set_func_flags(0X433F80,0x5410);
+	set_func_cmt(0X433F80,	"[reversing] confirmed match\nconfidence: high\nevidence: A thin, this-based (thiscall) one-line accessor: reads a fixed-point value from `[this+0]` and converts it to a plain int via the already-matched `fixtoi` (already informally described inside `fixtoi`'s own entry as 'a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi' -- another instance of the 'documented in prose, never given its own dedicated entry' gap this project has hit and fixed several times before). Called once, from is_route_possible (already matched). The identity of the object this method belongs to (and therefore an exact 2011 name) was not established this round -- left unnamed.", 1);
 	set_frame_size(0X433F80, 0X4, 4, 0);
 	add_func    (0X433FA0,0X433FCE);
 	set_func_flags(0X433FA0,0x5410);
@@ -160442,6 +160443,10 @@ static Functions_10(void) {
 	add_func    (0X447540,0X4475E0);
 	set_func_flags(0X447540,0x5400);
 	set_frame_size(0X447540, 0XC, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4475E0,0X4476EF);
 	set_func_flags(0X4475E0,0x5400);
 	SetType(0X4475E0, "int __cdecl sub_4475E0(float, int, int);");
@@ -160484,10 +160489,6 @@ static Functions_10(void) {
 	set_func_flags(0X447EC0,0x5400);
 	SetType(0X447EC0, "int __cdecl sub_447EC0(float, int, int);");
 	set_frame_size(0X447EC0, 0X28, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X448000,0X44808A);
 	set_func_flags(0X448000,0x5400);
 	set_frame_size(0X448000, 0X10, 0, 0);
@@ -162214,6 +162215,10 @@ static Functions_11(void) {
 	add_func    (0X471BA0,0X471C89);
 	set_func_flags(0X471BA0,0x5400);
 	set_frame_size(0X471BA0, 0X4, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X471C90,0X471F1C);
 	set_func_flags(0X471C90,0x5400);
 	set_frame_size(0X471C90, 0X10, 0, 0);
@@ -162255,10 +162260,6 @@ static Functions_11(void) {
 	add_func    (0X472930,0X47294F);
 	set_func_flags(0X472930,0x5400);
 	set_frame_size(0X472930, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X472950,0X4729CB);
 	set_func_flags(0X472950,0x5400);
 	set_frame_size(0X472950, 0, 0, 0);
@@ -164338,6 +164339,10 @@ static Functions_12(void) {
 	add_func    (0X49BAA0,0X49BB3C);
 	set_func_flags(0X49BAA0,0x5400);
 	set_frame_size(0X49BAA0, 0X4, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X49BB40,0X49BCC4);
 	set_func_flags(0X49BB40,0x5400);
 	set_frame_size(0X49BB40, 0X10, 0, 0);
@@ -164380,10 +164385,6 @@ static Functions_12(void) {
 	add_func    (0X49C710,0X49C716);
 	set_func_flags(0X49C710,0x5400);
 	set_frame_size(0X49C710, 0, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X49C770,0X49C7C3);
 	set_func_flags(0X49C770,0x5400);
 	set_frame_size(0X49C770, 0X8, 0, 0);

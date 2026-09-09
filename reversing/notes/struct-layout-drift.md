@@ -14094,3 +14094,15 @@ established for `GFX_VTABLE` elsewhere in this project, now found on
 Allegro missing one field somewhere earlier in that struct. Both
 older entries corrected in place with the new, more precise
 identification (not overwritten -- the original text stays visible).
+
+### A data-hygiene fix while checking `is_route_possible`'s own
+### remaining callee
+
+`sub_433F80` (called once from `is_route_possible`, already matched)
+had already been informally described inside `fixtoi`'s own entry as
+"a thin thiscall wrapper inside `is_route_possible`'s own domain,
+reading a fixed-point struct field and converting it via `fixtoi`" --
+another instance of the "documented in prose, never given its own
+dedicated entry" gap. Given its own dedicated entry now; the identity
+of the object it operates on (and therefore an exact 2011 name) still
+isn't established, so it stays unnamed.

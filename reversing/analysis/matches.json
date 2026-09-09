@@ -7873,5 +7873,14 @@
     "confidence": "high",
     "is_library": true,
     "evidence": "int set_display_switch_mode(int mode) (dispsw.c:61-87) -- a decisive structural match, found sweeping `main`'s own remaining callees. `if(!system_driver) return -1;` matches the disassembly's own `test dword_536F68,0; jnz <continue>; or eax,-1; retn` exactly, identifying `dword_536F68` as Allegro's `system_driver` global (SEE CORRECTION on get_palette_range/set_window_title's own entries -- both had vaguely called this 'a video-driver'/'graphics-driver' vtable; it's specifically `SYSTEM_DRIVER*`). `if(!system_driver->set_display_switch_mode) { if(mode==SWITCH_NONE) return 0; else return -1; }` matches the disassembly's own null-hook check and its `neg eax; sbb eax,eax` idiom exactly (computing '-1 if arg_0 nonzero, else 0' -- precisely `mode==SWITCH_NONE(0)` logic). The success path (`ret=system_driver->set_display_switch_mode(mode); if(ret==0) {...switch_mode=mode;}`) is matched in ROLE (calls the hook with the argument, stores it into a newly-identified global `dword_4BD938`=`switch_mode` on success) but CONFIRMED ABSENT is source's own 'unregister all callbacks' loop (`for(i=0;i<MAX_SWITCH_CALLBACKS;i++) switch_in_cb[i]=switch_out_cb[i]=NULL;`) -- no such loop exists here at all, this build has no switch-callback registration mechanism yet. VTABLE-SLOT DRIFT: this build's own hook sits at SYSTEM_DRIVER+0x5C, one slot (4 bytes) later than the 4.2.2 reference's own declared position (+0x58) -- consistent with this build's own older/different SYSTEM_DRIVER lacking one earlier field, the same kind of vtable-shift pattern already established for GFX_VTABLE elsewhere in this project. Called from `main` (already matched) with the literal `1` (`SWITCH_PAUSE`). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433F80",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "A thin, this-based (thiscall) one-line accessor: reads a fixed-point value from `[this+0]` and converts it to a plain int via the already-matched `fixtoi` (already informally described inside `fixtoi`'s own entry as 'a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi' -- another instance of the 'documented in prose, never given its own dedicated entry' gap this project has hit and fixed several times before). Called once, from is_route_possible (already matched). The identity of the object this method belongs to (and therefore an exact 2011 name) was not established this round -- left unnamed."
   }
 ]

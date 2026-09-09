@@ -4106,6 +4106,10 @@ disassembly work.
   vsync-wait") to `read_hardware_palette` — both sitting one field
   (4 bytes) later than the 4.2.2 reference, the same vtable-shift
   pattern already found on `GFX_VTABLE`, now on `SYSTEM_DRIVER` too.
+- **A data-hygiene fix**: `sub_433F80` (`is_route_possible`'s own
+  remaining callee) gets its own dedicated entry, having only ever
+  been described in prose inside `fixtoi`'s own record — its exact
+  object identity still isn't established, so it stays unnamed.
 
 ## Third-party library identification (Task #10)
 
