@@ -7882,5 +7882,33 @@
     "source_line": null,
     "confidence": "high",
     "evidence": "A thin, this-based (thiscall) one-line accessor: reads a fixed-point value from `[this+0]` and converts it to a plain int via the already-matched `fixtoi` (already informally described inside `fixtoi`'s own entry as 'a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi' -- another instance of the 'documented in prose, never given its own dedicated entry' gap this project has hit and fixed several times before). Called once, from is_route_possible (already matched). The identity of the object this method belongs to (and therefore an exact 2011 name) was not established this round -- left unnamed."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_444B80",
+    "new_name": "adjust_sample",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/sound.c",
+    "source_line": 1224,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "void adjust_sample(AL_CONST SAMPLE*spl,int vol,int pan,int freq,int loop) (sound.c:1224-1238) -- a complete, exact, zero-drift match. `for(c=0;c<VIRTUAL_VOICES;c++) if(virt_voice[c].sample==spl) { voice_set_volume(c,vol); voice_set_pan(c,pan); voice_set_frequency(c,absolute_freq(freq,spl)); voice_set_playmode(c,loop?PLAYMODE_LOOP:PLAYMODE_PLAY); return; }` matches the disassembly's own search loop over the already-established `virt_voice[]` array (dword_550040, 20-byte stride) and its calls into the already-matched `voice_set_volume`/`voice_set_pan`/`voice_set_playmode` exactly. Called from update_music_volume (already matched, this build's own MP3-branch helper sub_408356 -- see its own entry) and from sub_47E7A0 (previously characterized, tentatively, as 'plausibly ALMP3's own volume/pan/speed/loop adjustment entry point' -- this new call site is worth revisiting in a future round, since a call into Allegro's own SAMPLE-based `adjust_sample` is inconsistent with sub_47E7A0 being purely an ALMP3-internal MP3-stream function; not resolved this round). THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_408356",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "high",
+    "evidence": "update_music_volume's (already matched) own MP3-branch helper: stores the caller-supplied volume into a global (dword_4B42A0, already established as ALMP3-adjacent from an earlier round), and if an MP3 music stream is currently active (dword_523214, already established as PlayMusic's own mp3ptr handle), calls an ALMP3-boundary function (sub_47EC70, same (handle,vol,0x80,0x3E8,loop) shape already flagged elsewhere as ALMP3's own volume/pan/speed/loop-adjustment API -- Task #10/ALMP3 internals, paused, not chased further) with the current `music_repeat` (dword_4EF028, already established) as the loop argument. This build's own MP3-specific counterpart to source's much more elaborate `channels[]`/crossfade-aware `update_music_volume` -- no clean 2011 name exists for this specific per-format helper given the architectural difference (this build predates the unified `channels[]` array entirely), left unnamed."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_477A70",
+    "new_name": null,
+    "source_file": null,
+    "source_line": null,
+    "confidence": "medium-high",
+    "evidence": "update_music_volume's (already matched) own JGMOD-branch helper: clamps the caller-supplied volume to [0,255], stores it into a global (dword_4C2B50), then loops over `dword_55D0C0` (a channel count) applying it per-channel via a further JGMOD call -- plausibly this build's own predecessor of JGMOD's `set_mod_volume`-style API, but taking a single global-current-module volume argument rather than an explicit `JGMOD*` handle. No JGMOD source tree exists in this repo to verify an exact name against (the same standing caveat as `is_mod_playing`/`stop_mod`/`destroy_mod`'s own entries) -- left unnamed rather than force a name; role documented instead."
   }
 ]

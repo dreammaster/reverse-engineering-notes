@@ -68847,6 +68847,7 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	make_array	(0X444B72,	0XE);
 	create_insn	(0X444B80);
+	set_name	(0X444B80,	"adjust_sample");
 	create_insn	(x=0X444B82);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X444B88);
@@ -155792,6 +155793,7 @@ static Functions_1(void) {
 	define_local_var(0X40829D, 0X408356, "[bp+0X8]", "Format");
 	add_func    (0X408356,0X408392);
 	set_func_flags(0X408356,0x5410);
+	set_func_cmt(0X408356,	"[reversing] confirmed match\nconfidence: high\nevidence: update_music_volume's (already matched) own MP3-branch helper: stores the caller-supplied volume into a global (dword_4B42A0, already established as ALMP3-adjacent from an earlier round), and if an MP3 music stream is currently active (dword_523214, already established as PlayMusic's own mp3ptr handle), calls an ALMP3-boundary function (sub_47EC70, same (handle,vol,0x80,0x3E8,loop) shape already flagged elsewhere as ALMP3's own volume/pan/speed/loop-adjustment API -- Task #10/ALMP3 internals, paused, not chased further) with the current `music_repeat` (dword_4EF028, already established) as the loop argument. This build's own MP3-specific counterpart to source's much more elaborate `channels[]`/crossfade-aware `update_music_volume` -- no clean 2011 name exists for this specific per-format helper given the architectural difference (this build predates the unified `channels[]` array entirely), left unnamed.", 1);
 	set_frame_size(0X408356, 0, 4, 0);
 	add_func    (0X408392,0X4083FC);
 	set_func_flags(0X408392,0x5410);
@@ -156010,6 +156012,10 @@ static Functions_1(void) {
 	set_func_flags(0X409FD4,0x5410);
 	set_func_cmt(0X409FD4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: CORRECTION (found during the ScreenOverlay fresh-survey round): this function was PREVIOUSLY matched to stop_fast_forwarding() on weak evidence -- \"found via callgraph: called from EndSkippingUntilCharStops at the exact position source calls it\" -- WITHOUT ever reading the callee's own body. That match was WRONG. Reading the actual disassembly shows an exact, complete match to void remove_screen_overlay(int type) with remove_screen_overlay_index(int cc) INLINED directly into it (AC.CPP:3404-3441, matching this project's repeated 'monolithic pre-refactor' pattern): \"for(cc=0;cc<numscreenover;cc++) { if (screenover[cc].type!=type && type!=-1) continue; if (screenover[cc].pic!=NULL) destroy_bitmap(...); screenover[cc].pic=NULL; if (screenover[cc].type==OVER_COMPLETE) is_complete_overlay--; if (screenover[cc].type==OVER_TEXTMSG) is_text_overlay--; numscreenover--; for(dd=cc;dd<numscreenover;dd++) screenover[dd]=screenover[dd+1]; cc--; }" "\" -- matches instruction for instruction, including the `rep movsd` ", 1);
 	set_frame_size(0X409FD4, 0X10, 4, 0);
+}
+
+static Functions_2(void) {
+
 	add_func    (0X40A0E9,0X40A129);
 	set_func_flags(0X40A0E9,0x5410);
 	set_func_cmt(0X40A0E9,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int find_overlay_of_type(int typ) at AC.CPP:3443-3449. Exact match: \"for(ww=0;ww<numscreenover;ww++) { if (screenover[ww].type==typ) return ww; } return -1;\" matches the disassembly's \"for(var_4=0;var_4<dword_52318C;var_4++) { if (dword_4CD224[var_4*0x14]==arg_0) return var_4; } return 0xFFFFFFFF;\" instruction for instruction, using the same ScreenOverlay.type@+0x04 field and numscreenover global confirmed via add_screen_overlay's own entry. Called from add_screen_overlay (already matched, for its OVER_CUSTOM unused-ID search) and RemoveOverlay (a real name already applied in this binary, not yet given its own matches.json entry).", 1);
@@ -156024,10 +156030,6 @@ static Functions_1(void) {
 	define_local_var(0X40A129, 0X40A21C, "[bp+0X10]", "type");
 	define_local_var(0X40A129, 0X40A21C, "[bp+0X14]", "piccy");
 	define_local_var(0X40A129, 0X40A21C, "[bp+0X18]", "alphaChannel");
-}
-
-static Functions_2(void) {
-
 	add_func    (0X40A21C,0X40A358);
 	set_func_flags(0X40A21C,0x5410);
 	set_func_cmt(0X40A21C,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: This build's own AGS-side palette-fade-over-N-steps helper, predating 2011's gfxDriver-based fade abstraction entirely (2011's my_fade_out/my_fade_in delegate to gfxDriver->FadeOut(), with no comparable manual palette loop left in the reference source to compare against). Copies a source palette into a local buffer, then loops \"for(step=0; step<0x40(64); step+=rate) { fade_interpolate(source,dest,&p,step,from,to); set_palette_range(&p,from,to,-1); check crossfading; }\" -- 64 total interpolation steps, matching fade_interpolate's own step-count convention (0-63) exactly. Also polls/continues the already-characterized MP3-crossfade cluster (sub_4084E0/sub_408392, see their own entries) once per fade step, and dword_52321C once more -- CORRECTION (found in a later round): this is NOT a generic plugin hook as originally guessed here, it's the already-confirmed speechmp3 handle (see play_speech's own entry), polled the same 'if handle set, call its vta" "ble slot 0' way as dword_523220 (this build's sound-e", 1);
@@ -156336,6 +156338,10 @@ static Functions_2(void) {
 	set_func_flags(0X4106EF,0x5410);
 	set_func_cmt(0X4106EF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void add_to_sprite_list(IDriverDependantBitmap*,int,int,int,int,int,bool) at AC.CPP:7441-7470. Named from its own overflow-quit string, \"ad_to_sprite_list: roo many sprite added\" (a genuine typo in the original 2002 source -- 'ad_to' for 'add_to', 'roo' for 'too' -- preserved verbatim as the compiled string, not a transcription error here). Called twice from prepare_characters_for_drawing (already matched), matching 2011's own two call sites into add_to_sprite_list from the same function (one drawing a room object, passing RoomObject.transparent@+0x08 already confirmed as the 5th argument; one drawing a character sprite). This build's version takes only 5 arguments (bmp,x,y,baseline,trans) and writes exactly 5 parallel-array slots (dword_4DC870/874/878/87C/880[dword_5231DC*0x14]) -- see the new SpriteListEntry struct in apply_structs.py for the full field recovery. Overflow check fires at count >=0x27(39), roughly half of 2011's MAX" "_SPRITES_ON_SCREEN=76 (AC.CPP:685) -- confirms 2011's hasAlphaChanne", 1);
 	set_frame_size(0X4106EF, 0, 4, 0);
+}
+
+static Functions_3(void) {
+
 	add_func    (0X410771,0X410913);
 	set_func_flags(0X410771,0x5410);
 	set_func_cmt(0X410771,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void put_sprite_256(int xxx,int yyy,block piccy) at AC.CPP:7472-7521. An extensive, near line-for-line match to source's own `#ifdef USE_15BIT_FIX` color-depth-mismatch handling: `if (bitmap_color_depth(piccy) < screen_depth)` matches the disasm's `cmp bmp_depth,screen_depth; jge <skip>` exactly (compares bitmap_color_depth(arg_8) against bitmap_color_depth(abuf)); the conversion branch creates `hctemp=create_bitmap_ex(screen_depth,piccy->w,piccy->h)` (matching disasm's create_bitmap_ex call using arg_8's own w/h fields at +0x00/+0x04 and abuf's own depth), `blit(piccy,hctemp,0,0,0,0,hctemp->w,hctemp->h)`, then a `mask_col=bitmap_mask_color(abuf)`-driven getpixel/putpixel loop (matching the two already-matched Allegro API calls, gated the same way -- only entered when the sprite depth is 8-bit, replacing transparent pixels with the destination's own mask color), followed by `wputblock(xxx,yyy,hctemp,1)` (already matched, exact call-" "shape match) and a destroy_bitmap of the temp bitmap. The 'depths al", 1);
@@ -156346,10 +156352,6 @@ static Functions_2(void) {
 	set_func_cmt(0X410913,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: GUIButton::Draw's own private draw-one-sprite helper (called twice from GUIButton::Draw, already matched). A thin 3-argument composition of two already-matched pieces: fetches spriteset[index] via SpriteCache::operator[] then calls put_sprite_256(x,y,sprite) -- no logic of its own beyond that. 2011's own GUIButton::Draw (acgui.cpp) has no call to put_sprite_256 at all (it delegates through gfxDriver/DrawSprite instead, the usual 'predates gfxDriver' architectural gap already established throughout this project) -- no 2011 declaration exists to name this specific glue function against. Left unnamed per this project's usual convention for small role-only helpers with no source counterpart. CORRECTION (found while sweeping draw_screen_overlay's own remaining callees, a fresh central-function sweep): this is NOT a GUIButton-specific private helper after all -- it's 2011's own real, shared `void draw_sprite_compensate(int picc,int xx,int" " yy,int useAlpha)` (AC.CPP:7542-7560+). Newly found second caller, G", 1);
 	set_frame_size(0X410913, 0, 4, 0);
 	define_local_var(0X410913, 0X410937, "[bp+0X8]", "index");
-}
-
-static Functions_3(void) {
-
 	add_func    (0X410937,0X410AFA);
 	set_func_flags(0X410937,0x5410);
 	set_func_cmt(0X410937,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: draw_sprite_list() (AC.CPP:7579-7602ish) -- a decisive, historically-anchored match. This build's own implementation is a hand-rolled INSERTION SORT (init two 40-slot scratch arrays -- sortarray[i]=0xFF, distarray[i]=9999(0x270F) sentinel -- then, for each of sprlistsize(dword_5231DC) sprites, find its insertion position by baseline via a linear scan, shift later entries down by one slot, insert), followed immediately by iterating the now-sorted array and calling put_sprite_256(x,y,bmp) (already matched) per entry -- matching source's own sort-then-draw role EXACTLY, but this build fuses what 2011 splits across two functions (draw_sprite_list's own qsort, and a SEPARATE later drawing loop inside draw_screen_overlay, already matched) into one. DECISIVE, HISTORICALLY-ANCHORED CONFIRMATION: source's own comment at this exact point reads \"// 2.60.672 - convert horrid bubble sort to use qsort instead\" -- this build's own O(n^2) insertion" " sort (not literally bubble sort, but the same complexity class the ", 1);
@@ -156740,6 +156742,10 @@ static Functions_3(void) {
 	set_func_flags(0X4154ED,0x5410);
 	set_func_cmt(0X4154ED,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (found this round, previously mechanically matched with no field evidence recorded): reads dword_523094[dword_4EEB58*4], matching 2011's own RAW_START macro/direct usage of \"thisroom.ebscene[play.bg_frame]\" (AC.CPP:14355/14361/14373 etc.) exactly -- dword_4EEB58 is the already-confirmed GameState.bg_frame; dword_523094 is RoomStruct.ebscene[0] (+0x3A0C) accessed via DIRECT GLOBAL ADDRESSING rather than through a struct-pointer parameter (this function, unlike load_room/load_main_block, doesn't receive rstruc as an argument, so it references the room-struct global's fields at their absolute addresses instead). This is confirmed beyond doubt by a decisive arithmetic cross-check: dword_523088/52308C/523090/523094 sit at consecutive +4-byte offsets from each other, exactly matching this project's own independently-confirmed RoomStruct.num_bscenes@+0x" "3A00/.bscene_anim_speed@+0x3A04/.bytes_per_pixel@+0x3A08/.ebscene[0]", 1);
 	set_frame_size(0X4154ED, 0X4, 4, 0);
+}
+
+static Functions_4(void) {
+
 	add_func    (0X415542,0X415570);
 	set_func_flags(0X415542,0x5410);
 	set_func_cmt(0X415542,	"[reversing] confirmed match\nconfidence: high\nevidence: No 2011 source counterpart exists under this exact name (not found anywhere in Engine/AC.CPP), but the body is unambiguous and fits the same already-established RAW_START-macro pattern as every other RawXxx function this project has matched (RawSetColor/RawDrawImage/RawSaveScreen/RawRestoreScreen/RawDrawLine/RawDrawTriangle/RawPrint): \"clear_to_color(thisroom.ebscene[play.bg_frame], get_col8_lookup(clr));\" -- ebscene[]/bg_frame (dword_523094[dword_4EEB58*4]) and get_col8_lookup all already established. A genuine 2002 script-API function this project's own RAW_* survey hadn't specifically covered until now.", 1);
@@ -156760,10 +156766,6 @@ static Functions_3(void) {
 	define_local_var(0X415586, 0X415636, "[bp+0X8]", "xx");
 	define_local_var(0X415586, 0X415636, "[bp+0XC]", "yy");
 	define_local_var(0X415586, 0X415636, "[bp+0X10]", "Str");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X415636,0X4156BD);
 	set_func_flags(0X415636,0x5410);
 	SetType(0X415636, "void __stdcall RawDrawImage(int xx, int yy, int slot);");
@@ -157172,6 +157174,10 @@ static Functions_4(void) {
 	set_func_cmt(0X418BC6,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj NEW FIELD EVIDENCE (RoomStatus struct recovery): confirms RoomStatus.hotspot_enabled[20] @ +0x135C -- \"cmp hsnum,1; ...; cmp hsnum,14h(20); ...\" bounds-checks hsnum to 1 through 19 inclusive (giving MAX_HOTSPOTS=20 for this build -- matching 2011's documented ORIGINAL value before it was later increased to 30 then 50, Common/acroom.h:65 comment) before \"mov byte ptr[croom+0x135C+hsnum],0\". See reversing/notes/struct-layout-drift.md for the complete writeup.", 1);
 	set_frame_size(0X418BC6, 0, 4, 0X4);
 	define_local_var(0X418BC6, 0X418C00, "[bp+0X8]", "hsnum");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X418C00,0X418C3A);
 	set_func_flags(0X418C00,0x5410);
 	SetType(0X418C00, "void __stdcall EnableHotspot(int hsnum);");
@@ -157193,10 +157199,6 @@ static Functions_4(void) {
 	SetType(0X418CAD, "void scr_StopMusic(void);");
 	set_func_cmt(0X418CAD,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD/ARCHITECTURE EVIDENCE (found this round, MYMIDI fresh-survey): the MIDI-cleanup branch -- 'if (dword_5231B4!=0) { set_volume(-1,0); stop_midi(); destroy_midi(dword_5231B4); dword_5231B4=0; }' -- matches 2011's MYMIDI::destroy() ('stop_midi(); destroy_midi(tune); tune=NULL;', acsound.cpp:940-945) exactly in call order and role, but operates directly on the bare global dword_5231B4 rather than a MYMIDI object's own tune field -- confirming this build has NO MYMIDI wrapper class at all (see PlayMusic's own entry for the complete architectural writeup). Also matches MYMIDI::set_volume's own 'set_volume(-1, newvol)' Allegro call (acsound.cpp:937) in shape (2 args, first literal -1 meaning \"all voices\"). MOD/JGMOD FIELD EVIDENCE (found this round, following up the MYMIDI architecture finding): the MOD-cleanup branch -- 'if (opts_mod_player!=0 && is_mod_playing(" ")) stop_mod(); if (dword_5231B8!=0) destroy_mod(dword_5231B8); dword", 1);
 	set_frame_size(0X418CAD, 0, 4, 0);
-}
-
-static Functions_5(void) {
-
 	add_func    (0X418D6B,0X418DEC);
 	set_func_flags(0X418D6B,0x5410);
 	SetType(0X418D6B, "int IsMusicPlaying(void);");
@@ -157607,6 +157609,10 @@ static Functions_5(void) {
 	SetType(0X41AC79, "void DisableInterface(void);");
 	set_func_cmt(0X41AC79,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Body: increments GameState.disabled_user_interface (play_disabled_user_interface, a NESTING COUNTER not a boolean -- already established via main_loop_until's own entry, reconfirmed here), sets guis_need_update=1, then calls the already-matched SetMouseCursor(7) (CURS_WAIT). A simple, direct confirmation of the field's increment role at the script-API level.", 1);
 	set_frame_size(0X41AC79, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41AC9F,0X41ACD3);
 	set_func_flags(0X41AC9F,0x5410);
 	SetType(0X41AC9F, "void EnableInterface(void);");
@@ -157631,10 +157637,6 @@ static Functions_5(void) {
 	define_local_var(0X41ADAD, 0X41ADDF, "[bp+0X8]", "nrnum");
 	define_local_var(0X41ADAD, 0X41ADDF, "[bp+0XC]", "newx");
 	define_local_var(0X41ADAD, 0X41ADDF, "[bp+0X10]", "newy");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41ADDF,0X41AEB9);
 	set_func_flags(0X41ADDF,0x5410);
 	SetType(0X41ADDF, "void __stdcall ResetRoom(int nrnum);");
@@ -158043,6 +158045,10 @@ static Functions_6(void) {
 	set_frame_size(0X41D323, 0X4, 4, 0);
 	define_local_var(0X41D323, 0X41D342, "[bp-0X4]", "Buffer");
 	define_local_var(0X41D323, 0X41D342, "[bp+0X8]", "Stream");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41D342,0X41D49B);
 	set_func_flags(0X41D342,0x5410);
 	set_func_cmt(0X41D342,	"[reversing] confirmed match\nconfidence: high\nevidence: Named directly from its own FOUR self-identifying error strings -- \"Run_Graph_script: temp file '%s' not found\", \"run_graph_script: invalid script version\", \"run_graph_script: invalid block version\", and (inside its own callee, sub_41CDC3) \"run_graph_script: unknown evnt %d\" -- the classic AGS convention of an internal function's error text carrying its own name (same standard already used for SetInvItemPic, RawSaveScreen, etc.), here doing double duty as decisive evidence since NO 2011 counterpart exists to compare against at all. Implements AGS's ORIGINAL 'Graphical Script' feature -- the whataction[]=10/GRAPHSCRIPT action documented ONLY as a comment in 2011's own source (Common/acroom.h:100, \"v1.00 SR-1: 10: Run graphical script\") -- an entirely-forgotten-by-2011 subsystem with zero other trace (no function, no struct, no string) anywhere in the 2011 reference build. Called from run_event_block (already matched) on respond[i]==0Ah(10), passed respond" "val[i] as arg_0 (the graph-script number) -- s", 1);
@@ -158062,10 +158068,6 @@ static Functions_6(void) {
 	set_func_flags(0X41D7F7,0x5410);
 	set_func_cmt(0X41D7F7,	"[reversing] confirmed match\nconfidence: high\nevidence: do_conversation own private per-dialog-option rendering helper (12 parameters), called TWICE from do_conversation (already matched, at two distinct points -- plausibly once for a layout/height-measurement pass and once for the real draw, matching the classic two-pass text-layout idiom). Body: loops over arg_8 options, for each one sets wtextcolor from playerchar own packed talkcolor byte (playerchar->flags&0xFF000000>>24, the already-established CharacterInfo.talkcolor packed-into-flags convention), calls GetTranslation (already matched) on the option own text, break_up_text_into_lines (this session own new match) to word-wrap it, SpriteCache::operator[] (already matched) plus wputblock (already matched) to draw the dialog-bullet sprite (matching GameSetupStructBase.dialog_bullet, already established) beside each option, and get_col8_lookup (already matched) for palette-aware color selection. This build own do_conversation is already established as a gen" "uine pre-refactor predecessor of 2011 own dras", 1);
 	set_frame_size(0X41D7F7, 0X8, 4, 0);
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41D95B,0X41E162);
 	set_func_flags(0X41D95B,0x5410);
 	SetType(0X41D95B, "void __stdcall do_conversation(int dlgnum);");
@@ -158589,6 +158591,10 @@ static Functions_7(void) {
 	set_func_flags(0X425450,0x5410);
 	set_func_cmt(0X425450,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's internal 8-bit-specific putpixel fast path (Allegro's own _putpixel8-equivalent) -- exact mirror of sub_425490 (see its own entry): acquires a scanline pointer (sub_4253B0), writes one byte directly, releases the line (sub_4253D0). Called only from redo_walkable_areas, for the same 8-bit-fast-path reason. THIRD-PARTY LIBRARY INTERNAL -- not chased further.", 1);
 	set_frame_size(0X425450, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X425490,0X4254C9);
 	set_func_flags(0X425490,0x5410);
 	set_func_cmt(0X425490,	"[reversing] confirmed match\nconfidence: high\nevidence: Allegro's internal 8-bit-specific getpixel fast path (Allegro's own _getpixel8-equivalent): acquires a scanline pointer via a line-lock helper (sub_425430), reads one byte directly, then releases the line (sub_4253D0) -- bypassing the generic vtable dispatch entirely. Called only from redo_walkable_areas (already matched this session), matching that function's own 2011 source comment verbatim: \"since this is an 8-bit memory bitmap, we can just use direct memory access\" (AC.CPP:3705-3706) -- redo_walkable_areas deliberately bypasses the generic getpixel/putpixel used elsewhere (e.g. sub_410631/get_hotspot_at) because it already knows the walkable-areas mask is always 8-bit. THIRD-PARTY LIBRARY INTERNAL: per this project's scope rule, its own callees (sub_425430/sub_4253D0, line-lock/unlock helpers) are not chased further -- documented here only for the boundary fact and the confirmation it supplies of redo_walkable_areas's own source comment.", 1);
@@ -158607,10 +158613,6 @@ static Functions_7(void) {
 	set_func_flags(0X425570,0x5410);
 	set_func_cmt(0X425570,	"[reversing] confirmed match\nconfidence: high\nevidence: Matches Allegro's canonical macro/function pair \"#define acquire_screen() acquire_bitmap(screen)\": disasm pushes the global `screen` bitmap and calls a single sub-function (sub_425250, presumably acquire_bitmap, a library primitive). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: acquire_screen, obj=acwavi.obj) even though 2011's Engine/acwavi.cpp source only shows it being CALLED (as a no-arg call), not defined -- consistent with it being an Allegro library-provided function/macro instantiated wherever first used. Called from process_event and __GetLocationType (already matched), consistent with locking the screen surface around direct pixel access.", 1);
 	set_frame_size(0X425570, 0, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X425590,0X4255A3);
 	set_func_flags(0X425590,0x5410);
 	set_func_cmt(0X425590,	"[reversing] confirmed match\nconfidence: high\nevidence: Same pattern as acquire_screen (see sub_425570 above) -- pushes `screen`, calls a single sub-function (sub_425280, presumably release_bitmap). Confirmed as a real linker symbol in the reference build (refmap_symbols.json: release_screen, obj=acwavi.obj). Called from process_event and __GetLocationType (already matched), pairing with acquire_screen around the same drawing operations.", 1);
@@ -158913,6 +158915,10 @@ static Functions_8(void) {
 	define_local_var(0X428E00, 0X4299E9, "[bp-0X108]", "Str");
 	define_local_var(0X428E00, 0X4299E9, "[bp-0X4]", "wParam");
 	define_local_var(0X428E00, 0X4299E9, "[bp+0X8]", "hDlg");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X4299E9,0X429B87);
 	set_func_flags(0X4299E9,0x5410);
 	set_func_cmt(0X4299E9,	"[reversing] confirmed match\nsource: Engine/acplwin.cpp\nconfidence: high\nevidence: This build's own implementation of acwsetup(const char*,const char*) -- declared extern at acplwin.cpp:45 with no body anywhere in this repo's checkout, so no direct 2011 source exists to diff against, but the role is unambiguous and decisively matches: called from platform_RunSetup (already matched) with the setup-dialog title string as its sole argument (source's own version takes a second engineVersion argument this build's single-parameter version has no visible use for). Checks whether the config file (ac_config_file, already established) exists; if so, closes it and pre-loads every setting the dialog needs via INIreadint (\"misc\"/\"screenres\", \"sound\"/\"digiwinindx\"+\"midiwinindx\"+\"windowed\"+\"cachemax\"+\"usevox\"+\"usespeech\" -- exactly the same key set DialogFunc's own OK-handler writes back, already matched) plus \"language\"/\"translation\" via the raw Win32 GetPrivateProfileStringA API, clamping screenres to [0,2] and cachemax/u" "sevox/usespeech to sane defaults if the INI value was missing or invalid.", 1);
@@ -158946,10 +158952,6 @@ static Functions_8(void) {
 	set_func_cmt(0X42A0FE,	"[reversing] confirmed match\nsource: Common/Clib32.cpp\nconfidence: high\nevidence: int clibfindindex(char*fill) at Clib32.cpp:375-386: \"if(lib_file_name[0]==' ') return -1; for(bb=0;bb<mflib.num_files;bb++) if(stricmp(mflib.filenames[bb],fill)==0) return bb; return -1;\". Exact match: the leading lib_file_name[0]==' ' guard, the mflib_num_files-bounded loop, and a _stricmp(mflib_filenames[bb*STRIDE],fill) call all line up. MAJOR STRUCT FINDING: STRIDE is confirmed as 0x19(25) bytes here (\"imul ecx,19h; add ecx,offset mflib_filenames\"), matching the OLD `MultiFileLib.filenames[MAX_FILES][25]` declaration (Clib32.cpp:57) exactly -- NOT 2011's live `MultiFileLibNew.filenames[MAX_FILES][100]` (Clib32.cpp:68, 100-byte stride). This build's live `mflib` global is declared as the OLD, smaller struct directly -- see csetlib's own entry for the complete architectural writeup (only lib_version 6/10 supported, no old-to-new-format conversion step exists because there's no 'new' format to convert to here).", 1);
 	set_frame_size(0X42A0FE, 0X4, 4, 0);
 	define_local_var(0X42A0FE, 0X42A15B, "[bp+0X8]", "String2");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X42A15B,0X42A187);
 	set_func_flags(0X42A15B,0x5410);
 	SetType(0X42A15B, "int __stdcall clibfilesize(char *fill);");
@@ -159475,6 +159477,10 @@ static Functions_9(void) {
 	set_func_flags(0X43378B,0x5410);
 	set_func_cmt(0X43378B,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void calculate_move_stage(MoveList*mlsp,int aaa) at routefnd.cpp:682-... -- a decisive match on its opening logic (the deeper fixed-point-trig speed-computation body past the special-case branches not individually traced this round). The exact 2-argument signature matches both real call sites: MoveCharacterPath (already matched, this round, calling calculate_move_stage(mls_ptr,numstage-1) when appending a waypoint) and find_route (already matched, calling calculate_move_stage(&mls[mlist],aaa) while building a computed route) -- matching source's own two call sites (routefnd.cpp:878 and AddWaypoint-equivalent code) exactly. The early-return branch matches verbatim: \"if(pos[aaa]==pos[aaa+1]) { xpermove[aaa]=0; ypermove[aaa]=0; return; }\" (both fields already established via do_movelist_move's own entry, now reconfirmed a third way). The XY-unpacking that follows -- \"ourx=pos[aaa]>>16&0xFFFF; oury=pos[aaa]&0xFFFF; destx=pos[aaa+1" "]>>16&0xFFFF; desty=pos[aaa+1]&0xFFFF;\" -- matches source's own packed-coo", 1);
 	set_frame_size(0X43378B, 0X28, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4338F9,0X433DC8);
 	set_func_flags(0X4338F9,0x5410);
 	SetType(0X4338F9, "int __stdcall find_route(__int16 srcx, __int16 srcy, __int16 xx, __int16 yy, block onscreen, int movlst, int nocross, int ignore_walls);");
@@ -159520,10 +159526,6 @@ static Functions_9(void) {
 	set_func_flags(0X433EA0,0x5410);
 	set_func_cmt(0X433EA0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fmaths.inl\nconfidence: high\nevidence: fixed fixsin(fixed x) { return _cos_tbl[((x-0x400000+0x4000)>>15)&0x1FF]; } (fmaths.inl:199-202, aliased as `fsin`, alcompat.h:51) -- a complete, exact, zero-drift match: `(arg_0-0x3FC000)>>15 & 0x1FF` -- and `0x400000-0x4000=0x3FC000` exactly, confirming the combined-constant matches source's own two-step subtraction precisely, indexing the same already-identified `_cos_tbl[512]` (dword_4BE1F4). Reached via a thin forwarding trampoline (sub_433DEE, left unnamed) called from calculate_move_stage (already matched) matching source's own `fsin(angl)` call. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X433EA0, 0, 4, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X433EC0,0X433EE5);
 	set_func_flags(0X433EC0,0x15410);
 	SetType(0X433EC0, "wxRichToolTip *__thiscall wxRichToolTip__wxRichToolTip(wxRichToolTip *this, const wxString *title, const wxString *message);");
@@ -160218,6 +160220,7 @@ static Functions_10(void) {
 	set_frame_size(0X444AF0, 0X8, 0, 0);
 	add_func    (0X444B80,0X444BFE);
 	set_func_flags(0X444B80,0x5400);
+	set_func_cmt(0X444B80,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: void adjust_sample(AL_CONST SAMPLE*spl,int vol,int pan,int freq,int loop) (sound.c:1224-1238) -- a complete, exact, zero-drift match. `for(c=0;c<VIRTUAL_VOICES;c++) if(virt_voice[c].sample==spl) { voice_set_volume(c,vol); voice_set_pan(c,pan); voice_set_frequency(c,absolute_freq(freq,spl)); voice_set_playmode(c,loop?PLAYMODE_LOOP:PLAYMODE_PLAY); return; }` matches the disassembly's own search loop over the already-established `virt_voice[]` array (dword_550040, 20-byte stride) and its calls into the already-matched `voice_set_volume`/`voice_set_pan`/`voice_set_playmode` exactly. Called from update_music_volume (already matched, this build's own MP3-branch helper sub_408356 -- see its own entry) and from sub_47E7A0 (previously characterized, tentatively, as 'plausibly ALMP3's own volume/pan/speed/loop adjustment entry point' -- this new call site is worth revisiting in a future round, since a call into Alleg" "ro's own SAMPLE-based `adjust_sample` is inconsistent with sub_47E7A0 being purely an ALMP3-in", 1);
 	set_frame_size(0X444B80, 0X8, 0, 0);
 	add_func    (0X444C00,0X444C2B);
 	set_func_flags(0X444C00,0x5400);
@@ -160266,6 +160269,10 @@ static Functions_10(void) {
 	set_func_flags(0X445260,0x5400);
 	set_func_cmt(0X445260,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void voice_set_volume(int voice, int volume) at sound.c:1640-1656 -- well-known third-party API, one of 5 voice-control functions this round confirms as part of the complete play_sample (sub_444AF0, already matched) call chain: allocate_voice -> voice_set_volume -> voice_set_pan -> voice_set_frequency -> voice_set_playmode -> voice_start -> release_voice, matching sound.c:1198-1205 exactly, call for call. Body matches source instruction for instruction: reads _digi_volume, and if >=0 computes 'volume=(volume*_digi_volume)/255' via a classic MSVC divide-by-255 reciprocal-multiplication magic constant (0x80808081, sar 7) -- an unmistakable compiler fingerprint; checks virt_voice[voice].num>=0 (dword_550044[voice*5], consistent with this round's established VOICE-array indexing convention), then sets _phys_voice[num].vol=volume<<12 and .dvol=0 before a vtable dispatch through digi_driver (off_" "4BD554) at slot +0x5C, matching 'digi_driver->set_volume(...)' exactly.", 1);
 	set_frame_size(0X445260, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4452D0,0X445384);
 	set_func_flags(0X4452D0,0x5400);
 	set_frame_size(0X4452D0, 0X4, 0, 0);
@@ -160443,10 +160450,6 @@ static Functions_10(void) {
 	add_func    (0X447540,0X4475E0);
 	set_func_flags(0X447540,0x5400);
 	set_frame_size(0X447540, 0XC, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4475E0,0X4476EF);
 	set_func_flags(0X4475E0,0x5400);
 	SetType(0X4475E0, "int __cdecl sub_4475E0(float, int, int);");
@@ -162086,6 +162089,10 @@ static Functions_11(void) {
 	SetType(0X46DC20, "int __cdecl sub_46DC20(void *Block);");
 	set_frame_size(0X46DC20, 0X4, 0, 0);
 	define_local_var(0X46DC20, 0X46DC57, "[bp+0X4]", "Block");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X46DD60,0X46DE65);
 	set_func_flags(0X46DD60,0x5400);
 	SetType(0X46DD60, "int __cdecl sub_46DD60(int xDest, int yDest, int);");
@@ -162215,10 +162222,6 @@ static Functions_11(void) {
 	add_func    (0X471BA0,0X471C89);
 	set_func_flags(0X471BA0,0x5400);
 	set_frame_size(0X471BA0, 0X4, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X471C90,0X471F1C);
 	set_func_flags(0X471C90,0x5400);
 	set_frame_size(0X471C90, 0X10, 0, 0);
@@ -162522,6 +162525,7 @@ static Functions_12(void) {
 	define_local_var(0X4779A0, 0X477A61, "[bp+0X4]", "Block");
 	add_func    (0X477A70,0X477AC6);
 	set_func_flags(0X477A70,0x5400);
+	set_func_cmt(0X477A70,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: update_music_volume's (already matched) own JGMOD-branch helper: clamps the caller-supplied volume to [0,255], stores it into a global (dword_4C2B50), then loops over `dword_55D0C0` (a channel count) applying it per-channel via a further JGMOD call -- plausibly this build's own predecessor of JGMOD's `set_mod_volume`-style API, but taking a single global-current-module volume argument rather than an explicit `JGMOD*` handle. No JGMOD source tree exists in this repo to verify an exact name against (the same standing caveat as `is_mod_playing`/`stop_mod`/`destroy_mod`'s own entries) -- left unnamed rather than force a name; role documented instead.", 1);
 	set_frame_size(0X477A70, 0, 0, 0);
 	add_func    (0X477AD0,0X477AD6);
 	set_func_flags(0X477AD0,0x5400);
@@ -164025,6 +164029,10 @@ static Functions_12(void) {
 	add_func    (0X493B20,0X493B4E);
 	set_func_flags(0X493B20,0x5400);
 	set_frame_size(0X493B20, 0X4, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X493B60,0X493BC1);
 	set_func_flags(0X493B60,0x5400);
 	set_frame_size(0X493B60, 0XC, 0, 0);
@@ -164339,10 +164347,6 @@ static Functions_12(void) {
 	add_func    (0X49BAA0,0X49BB3C);
 	set_func_flags(0X49BAA0,0x5400);
 	set_frame_size(0X49BAA0, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X49BB40,0X49BCC4);
 	set_func_flags(0X49BB40,0x5400);
 	set_frame_size(0X49BB40, 0X10, 0, 0);

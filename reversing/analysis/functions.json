@@ -4795,9 +4795,9 @@
   "is_named": true
  },
  {
-  "name": "sub_444B80",
+  "name": "adjust_sample",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "stop_sample",

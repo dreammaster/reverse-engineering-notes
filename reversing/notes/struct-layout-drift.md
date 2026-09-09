@@ -14106,3 +14106,30 @@ another instance of the "documented in prose, never given its own
 dedicated entry" gap. Given its own dedicated entry now; the identity
 of the object it operates on (and therefore an exact 2011 name) still
 isn't established, so it stays unnamed.
+
+### `update_music_volume`'s own three remaining callees close its
+### callgraph sweep completely
+
+`adjust_sample` (`sub_444B80`) closes as a complete, exact, zero-drift
+match to `sound.c:1224-1238` -- its `virt_voice[]` search loop and its
+calls into the already-matched `voice_set_volume`/`voice_set_pan`/
+`voice_set_playmode` all match precisely. **A loose end worth
+revisiting**: it's called from BOTH `update_music_volume`'s own MP3-
+branch helper (`sub_408356`, see below) AND from `sub_47E7A0` --
+previously characterized, tentatively, as "plausibly ALMP3's own
+volume/pan/speed/loop adjustment entry point." A call into Allegro's
+own SAMPLE-based `adjust_sample` is inconsistent with `sub_47E7A0`
+being purely ALMP3-internal (which operates on MP3 streams, not plain
+`SAMPLE` objects) -- not resolved this round, flagged for a future look.
+
+The other two callees are `update_music_volume`'s own per-format
+helpers, both left unnamed given the architectural gap (this build
+predates 2011's unified `channels[]`/crossfade design entirely, so no
+clean 2011 counterpart exists for either). `sub_408356` is the MP3-
+branch: stores the volume into an ALMP3-adjacent global, then calls an
+ALMP3-boundary function (already flagged elsewhere, Task #10/paused)
+if an MP3 stream is active. `sub_477A70` is the JGMOD-branch: clamps
+the volume to [0,255] and applies it per-channel via a further JGMOD
+call -- plausibly a predecessor of `set_mod_volume`, but no JGMOD
+source tree exists in this repo to verify an exact name against, the
+same standing caveat as `is_mod_playing`/`stop_mod`/`destroy_mod`.
