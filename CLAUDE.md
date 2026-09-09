@@ -4089,6 +4089,12 @@ disassembly work.
   missing context the earlier round didn't have. The control-
   iteration loop confirms `GUIObject`'s `Draw` vtable slot and
   `highlightobj` from a new angle.
+- **`GUIMain::poll` closes `draw_screen_overlay`'s OTHER remaining
+  callee**, right alongside `draw_at` — its opening sequence (`mousex`/
+  `mousey` adjustment, `mousewasx`/`mousewasy` comparison, the zero-arg
+  `find_object_under_mouse()` call, `MouseLeave` dispatch through the
+  already-established vtable slot 2) matches decisively, closing this
+  central function's own callgraph sweep completely.
 
 ## Third-party library identification (Task #10)
 

@@ -475,9 +475,9 @@
   "is_named": true
  },
  {
-  "name": "sub_407A3C",
+  "name": "GUIMain__poll",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIMain__mouse_but_down",

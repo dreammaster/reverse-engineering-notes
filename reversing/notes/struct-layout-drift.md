@@ -14043,3 +14043,17 @@ exactly) and checking `highlightobj`@+0x64 (already established) for
 the highlight-border trigger -- not traced past this point given the
 function's remaining size and the overwhelming confirmation already
 in hand.
+
+**Immediate follow-up closes `draw_screen_overlay`'s OTHER remaining
+callee too**: `sub_407A3C` is `GUIMain::poll()` (`acgui.cpp:1285-...`),
+closing right alongside `draw_at` as GUIMain's other central per-frame
+method. Its whole opening sequence matches decisively: saving `mousex`
+/`mousey` into locals, subtracting `x`/`y` from them, comparing against
+`mousewasx`/`mousewasy` (all already-established fields), calling the
+already-matched zero-arg `find_object_under_mouse()`, and dispatching
+`MouseLeave` through the already-established vtable slot 2 all match
+source's opening block instruction for instruction. The remaining
+~90 lines (`IsDisabled`/`IsClickable` filtering, `MouseOver`/
+`MouseMove` dispatch, mouse-button-state handling) weren't traced
+individually given the strength of the opening match already in hand.
+`draw_screen_overlay`'s own callgraph sweep is now fully closed.
