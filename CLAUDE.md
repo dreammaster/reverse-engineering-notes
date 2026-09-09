@@ -4119,6 +4119,20 @@ disassembly work.
   a sign of a wrong identification. The other two are `update_music_
   volume`'s own MP3/JGMOD per-format helpers, left unnamed given the
   architectural gap from 2011's unified `channels[]` design.
+- **A fresh `build_leads.py` pass (matches.json now 833 entries) finds
+  only Allegro/alfont-internal dead ends.** All 6 genuinely new
+  "single-candidate-file" leads trace to third-party-library-internal
+  code with no direct AGS-side caller: an Allegro `unicode.c` hex-table
+  helper, a WaveOut driver-descriptor builder, a DirectDraw-overlay
+  driver-descriptor helper, and four alfont font-style-name (`Regular`/
+  `Bold`/`Italic`/`Bold Italic`) selectors mismatched against Allegro's
+  own unrelated `datgrid.c` tool by a coincidental generic-string match.
+  None get a `matches.json` entry (no AGS-side boundary fact to
+  record). Combined with the earlier "fresh central function" sweep's
+  own saturation this session, both of this project's main lead-
+  generation techniques are now genuinely exhausted for AGS-side code —
+  see `reversing/notes/struct-layout-drift.md` for the full per-lead
+  writeup.
 
 ## Third-party library identification (Task #10)
 

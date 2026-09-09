@@ -14140,3 +14140,73 @@ the volume to [0,255] and applies it per-channel via a further JGMOD
 call -- plausibly a predecessor of `set_mod_volume`, but no JGMOD
 source tree exists in this repo to verify an exact name against, the
 same standing caveat as `is_mod_playing`/`stop_mod`/`destroy_mod`.
+
+### A fresh `build_leads.py` pass (matches.json now 833 entries) finds only Allegro/alfont-internal dead ends -- the AGS-side string pool is genuinely exhausted
+
+Re-ran `cross_reference.py`/`build_leads.py` from scratch now that
+`matches.json` has grown enormously since this technique was last tried
+(745 -> 833 entries across this whole session). Result: 32 `sub_*`
+functions have >=1 matched-string reference, 10 of which are
+"single-candidate-file" (the strongest tier) -- but only 6 of those 10
+are genuinely new (the other 4 were already matched: `sub_42B394`=
+`cc_run_code`, and `sub_47C360`/`sub_47C4C0` -- JGMOD's own XM-cascade
+functions, already matched a few rounds ago).
+
+All 6 new "best" leads turned out to be third-party-library-internal,
+each individually traced and ruled out rather than assumed:
+
+- **`sub_454FD0`** (`Engine/libsrc/allegro-4.2.2/src/unicode.c`,
+  matched on the hex-digit table strings `"0123456789ABCDEF"`/
+  `"0123456789abcdef"`) -- called ONLY from `sub_454630`, itself called
+  only from `sub_4544E0` (both unmatched) -- a pure Allegro-internal
+  chain (plausibly `unicode.c`'s own integer-to-hex-string helper used
+  by `ustrtol`/format routines), never reached from AGS/game code.
+- **`sub_472E10`** (`win/wsndwo.c`, matched on `"WaveOut 44100hz 16bit
+  stereo"`/`"WaveOut 22050hz 8bit mono"`) -- called via a DATA XREF
+  (function-pointer-table entry) from `sub_4697F0`, itself only reached
+  from another unmatched function's own driver-descriptor table --
+  Allegro's own WaveOut digital-sound-driver descriptor-string builder,
+  internal to the driver's own init sequence.
+- **`sub_46EB80`** (`win/wddovl.c`, matched on `"DirectDraw, in
+  matching, %d bpp overlay"`) -- called only from `init_directx_ovl`
+  (already matched, confirmed Allegro-internal DirectDraw-overlay
+  driver code from an earlier Task #10 round). Same category as the
+  other two: a driver-descriptor helper, not a public API surface.
+- **`sub_48EB30`/`sub_4A1170`/`sub_4A2B30`/`sub_4A49B0`** (all matched
+  on the single generic string `"Regular"`, candidate file
+  `Engine/libsrc/allegro-4.2.2/tools/plugins/datgrid.c`) -- read in
+  full for the first one: NOT datgrid.c at all (that candidate is a
+  coincidental match on a common word -- datgrid is Allegro's GRABBER
+  tool's data-grid-editor plugin, never linked into a game executable
+  at all, exactly the "low-value lead category" caution already on
+  file in this project's CLAUDE.md). The real body reads a loaded
+  font's bold/italic style bits and picks a face-name string from
+  `"Regular"`/`"Bold"`/`"Italic"`/`"Bold Italic"` -- classic
+  FreeType/alfont face-style-variant selection code, not Allegro's own.
+  This build's `alfont_load_font_from_mem`/`alfont_set_font_size`
+  boundary functions are already identified (an earlier round, no
+  local alfont source exists to verify names against) -- these four
+  are plausibly alfont's own internal per-style face loaders, called
+  indirectly (no direct CODE XREF for two of the four, consistent with
+  a dispatch-table call), never from AGS code directly.
+
+None of the six get a `matches.json` entry: per the "Third-party
+library scope" rule, a library-internal function with no direct
+AGS-side caller is a dead end to record only as "ruled out," not chase
+further -- and unlike earlier rounds (e.g. `getpixel`/`putpixel`,
+`draw_lit_sprite`), there's no AGS-side call site here to log as a
+boundary fact either. The remaining 20 "not-best" (multi-candidate-
+file) leads were surveyed too: several point at Linux input-driver
+files (`src/linux/lconsole.c`/`ljoy.c`/`lmse*.c` -- structurally
+impossible for a DirectDraw/DirectSound/DirectInput Windows binary to
+link, confirming those are coincidental string matches, not leads at
+all) and the rest carry 10+ candidate files each (too generic to
+action). **Conclusion, consistent with this session's earlier
+"fresh central function" sweep hitting the same wall from the
+callgraph-ranking side**: both of this project's main lead-generation
+techniques (string-matching and callgraph-ranking) are now genuinely
+saturated for AGS-side code specifically. Further progress on
+Engine/Common-side identification likely needs a new technique
+(numeric-constant matching, structural/size fingerprinting -- both
+already listed as "next productive avenues" in CLAUDE.md's own Task
+#10 section) rather than another re-run of either existing script.
