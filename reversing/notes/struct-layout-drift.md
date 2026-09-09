@@ -14210,3 +14210,24 @@ Engine/Common-side identification likely needs a new technique
 (numeric-constant matching, structural/size fingerprinting -- both
 already listed as "next productive avenues" in CLAUDE.md's own Task
 #10 section) rather than another re-run of either existing script.
+
+**Immediate follow-up: re-ran the callgraph-ranking technique fresh too
+(rank every unmatched `sub_*` by how many distinct already-matched
+functions call it directly, code-portion-only regex per the earlier
+bug fix) -- same conclusion, a third independent way.** The top 40
+results by matched-caller count are, without exception, called only by
+already-established third-party-library functions: JGMOD's own
+loader-cascade internals (`load_mod` and its `sub_47*` siblings),
+Allegro's `get_config_*`/DirectX-init/image-loader (`load_lbm`/
+`load_pcx`/`load_tga`/`load_voc`/`load_wav`)/mouse/MIDI internals,
+ALMP3's `almp3_create_mp3(stream)` internals, and alfont/FreeType's own
+internals (including two genuine FreeType library entry points,
+`FT_New_Library`/`FT_Done_Library`, surfacing for the first time --
+confirming FreeType itself, not just alfont's wrapper, is statically
+linked). Not one AGS-side lead survives in the top 40. Combined with
+the `build_leads.py` re-run and the earlier central-function sweep,
+**all three of this project's established identification techniques
+now independently saturate on third-party-library internals** when
+re-run against the current, much-grown `matches.json` -- a strong,
+three-way-confirmed stopping point for these techniques specifically,
+not just a single script running dry.

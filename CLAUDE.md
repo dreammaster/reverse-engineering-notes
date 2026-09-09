@@ -4128,11 +4128,19 @@ disassembly work.
   `Bold`/`Italic`/`Bold Italic`) selectors mismatched against Allegro's
   own unrelated `datgrid.c` tool by a coincidental generic-string match.
   None get a `matches.json` entry (no AGS-side boundary fact to
-  record). Combined with the earlier "fresh central function" sweep's
-  own saturation this session, both of this project's main lead-
-  generation techniques are now genuinely exhausted for AGS-side code —
-  see `reversing/notes/struct-layout-drift.md` for the full per-lead
-  writeup.
+  record). **A fresh re-run of the callgraph-ranking technique
+  confirms the same conclusion a third, independent way**: the top 40
+  unmatched functions by matched-caller count are, without exception,
+  reached only from already-established third-party-library code
+  (JGMOD/Allegro-config/DirectX-init/image-loader/mouse/MIDI/ALMP3/
+  alfont internals — including two genuine FreeType entry points,
+  `FT_New_Library`/`FT_Done_Library`, confirming FreeType itself is
+  statically linked, not just alfont's wrapper). Combined with the
+  earlier "fresh central function" sweep's own saturation this
+  session, all three of this project's established identification
+  techniques now independently saturate on third-party-library
+  internals for AGS-side code specifically — see
+  `reversing/notes/struct-layout-drift.md` for the full writeup.
 
 ## Third-party library identification (Task #10)
 
