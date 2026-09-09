@@ -4076,6 +4076,19 @@ disassembly work.
   the other six are clearly the same `getr`/`getg`/`getb`-family for
   other depths/variants — left individually unnamed, no payoff in
   disambiguating further per the third-party scope rule.
+- **Sweeping a fresh central function (`draw_screen_overlay`) finds
+  `GUIMain::draw_at` — and corrects an earlier round's own claim.**
+  `GUIMain::draw_at` (a long-standing lead this project had flagged but
+  never located) closes decisively — `wid`/`hit`/`fgcol`/`bgcol` gate
+  checks, `create_sub_bitmap` (new Allegro match), and a THIRD instance
+  of the `wrectangle`-not-`rect()` drift, all match. **Headline
+  correction**: its `draw_sprite_compensate(bgpic,0,0,0)` call proves
+  `sub_410913` — previously characterized as "GUIButton::Draw's own
+  private helper, no 2011 name" — is actually 2011's real, SHARED
+  `draw_sprite_compensate`; a second call site this round supplied the
+  missing context the earlier round didn't have. The control-
+  iteration loop confirms `GUIObject`'s `Draw` vtable slot and
+  `highlightobj` from a new angle.
 
 ## Third-party library identification (Task #10)
 

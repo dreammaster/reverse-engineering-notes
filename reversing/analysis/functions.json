@@ -460,9 +460,9 @@
   "is_named": false
  },
  {
-  "name": "sub_407650",
+  "name": "GUIMain__draw_at",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIMain__find_object_under_mouse",
@@ -1055,9 +1055,9 @@
   "is_named": true
  },
  {
-  "name": "sub_410913",
+  "name": "draw_sprite_compensate",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "draw_sprite_list",

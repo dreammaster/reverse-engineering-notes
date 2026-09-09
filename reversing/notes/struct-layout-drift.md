@@ -13989,3 +13989,57 @@ globals/masks/tables) -- left individually unnamed rather than force a
 guess at exactly which depth-specific variant each one is, since
 disambiguating them further has zero payoff for a ScummVM port that
 replaces this whole color-conversion machinery wholesale.
+
+### Sweeping a fresh central function (`draw_screen_overlay`) finds
+### `GUIMain::draw_at` -- and corrects an earlier round's own claim
+
+Picking `draw_screen_overlay` (already matched) as a fresh central
+function to sweep for its own remaining unmatched callees found the
+single richest result of this whole extended session: `sub_407650` is
+`GUIMain::draw_at(int xx,int yy)` (`acgui.cpp:1161-1244+`) -- GUIMain's
+own central draw method, a long-standing gap this project had
+identified as a promising lead for `transparency`/`zorder` several
+rounds ago but never actually located.
+
+Every piece confirms cleanly. `wtexttransparent(TEXTFG)` matches the
+disassembly's own literal `wtexttransparent(0)` call. `if((wid<1)||
+(hit<1)) return;` matches the disassembly's `wid@+0x30`/`hit@+0x34`
+gate exactly (De Morgan's equivalent), confirming both fields from a
+new angle. `create_sub_bitmap(abuf,xx,yy,wid,hit)` matches a 5-
+argument call exactly, newly identifying Allegro's public
+`create_sub_bitmap`. `if((fgcol==0)&&(bgcol!=0)) fgcol=16;` matches
+the disassembly's check on `fgcol@+0x50`/`bgcol@+0x48` exactly. `if
+(bgcol!=0) clear_to_color(...)` matches exactly. The border-outline
+step is matched in ROLE but with a REAL DRIFT: this build calls the
+already-matched `wrectangle` TWICE instead of Allegro's own `rect()`
+-- the THIRD instance this session of this exact drift (after `draw_
+button_background`'s own two outline calls).
+
+**The headline correction**: `if((bgpic>0)&&(spriteset[bgpic]!=NULL))
+draw_sprite_compensate(bgpic,0,0,0);` matches exactly -- and
+DECISIVELY CORRECTS `sub_410913`'s own earlier identity. That function
+had been characterized several rounds ago as "GUIButton::Draw's own
+private draw-one-sprite helper... no 2011 declaration exists to name
+this specific glue function against." It turns out to be 2011's own
+REAL, SHARED `void draw_sprite_compensate(int picc,int xx,int yy,int
+useAlpha)` (`AC.CPP:7542-7560+`) after all -- `GUIMain::draw_at`'s own
+call, `draw_sprite_compensate(bgpic,0,0,0)`, matches the disassembly's
+own 4-argument push sequence exactly, and the already-documented body
+(spriteset fetch + `put_sprite_256`) matches source's own `useAlpha==0`
+branch precisely. Renamed from an unnamed placeholder to its real
+identity -- the earlier round's conclusion wasn't wrong about the
+BEHAVIOR, just about there being "no 2011 name" for it; a second call
+site (from a function the earlier round hadn't reached yet) supplied
+the missing context. `draw_sprite_compensate`'s own `if(useAlpha)`
+alpha-blending branch remains unconfirmed present/absent -- both real
+call sites found so far pass a literal 0.
+
+The control-iteration loop closes the picture: `for(aa=0;aa<numobjs;
+aa++) { objs[aa]->Draw(); if(highlightobj==aa) wsetcolor(14); }`
+matches the disassembly's own loop over `objs[]`/`numobjs` (both
+already established), dispatching through vtable slot +0x18 (`Draw`,
+matching this project's already-established GUIObject vtable slot 6
+exactly) and checking `highlightobj`@+0x64 (already established) for
+the highlight-border trigger -- not traced past this point given the
+function's remaining size and the overwhelming confirmation already
+in hand.
