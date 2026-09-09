@@ -14118,9 +14118,16 @@ revisiting**: it's called from BOTH `update_music_volume`'s own MP3-
 branch helper (`sub_408356`, see below) AND from `sub_47E7A0` --
 previously characterized, tentatively, as "plausibly ALMP3's own
 volume/pan/speed/loop adjustment entry point." A call into Allegro's
-own SAMPLE-based `adjust_sample` is inconsistent with `sub_47E7A0`
-being purely ALMP3-internal (which operates on MP3 streams, not plain
-`SAMPLE` objects) -- not resolved this round, flagged for a future look.
+own SAMPLE-based `adjust_sample` looked, at first, inconsistent with
+`sub_47E7A0` being purely ALMP3-internal. **Resolved on reflection,
+same round**: ALMP3 (the real library) decodes MP3 data into PCM and
+plays it back through Allegro's own ordinary digital-voice/`SAMPLE`
+system under the hood, so an ALMP3-internal "start/adjust this
+stream's playback" function calling Allegro's own `adjust_sample` is
+architecturally normal -- not a sign `sub_47E7A0` is actually SAMPLE-
+based rather than MP3-stream-based. `sub_47E7A0`'s own characterization
+stands; downgraded from "flagged for a future look" to a settled non-
+issue.
 
 The other two callees are `update_music_volume`'s own per-format
 helpers, both left unnamed given the architectural gap (this build

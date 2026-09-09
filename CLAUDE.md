@@ -4111,13 +4111,14 @@ disassembly work.
   been described in prose inside `fixtoi`'s own record — its exact
   object identity still isn't established, so it stays unnamed.
 - **`update_music_volume`'s own three remaining callees close its
-  callgraph sweep.** `adjust_sample` is a complete, exact match — but
-  surfaces a loose end worth revisiting: it's also called from
-  `sub_47E7A0`, previously guessed as ALMP3-internal, which is
-  inconsistent with a call into Allegro's own SAMPLE-based API. The
-  other two are `update_music_volume`'s own MP3/JGMOD per-format
-  helpers, left unnamed given the architectural gap from 2011's
-  unified `channels[]` design.
+  callgraph sweep.** `adjust_sample` is a complete, exact match — an
+  apparent inconsistency with its OTHER caller (`sub_47E7A0`,
+  previously guessed as ALMP3-internal) resolves on reflection: ALMP3
+  plays MP3-decoded PCM through Allegro's own ordinary voice/`SAMPLE`
+  system under the hood, so this call is architecturally normal, not
+  a sign of a wrong identification. The other two are `update_music_
+  volume`'s own MP3/JGMOD per-format helpers, left unnamed given the
+  architectural gap from 2011's unified `channels[]` design.
 
 ## Third-party library identification (Task #10)
 
