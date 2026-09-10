@@ -14581,3 +14581,21 @@ pre-existing, benign quirk unrelated to this round's own
 `InterfaceElement` struct rewrite (which itself applied and renamed
 cleanly per the log's own `OK` lines) — not a new regression, not
 investigated further.
+
+### `initialize_sprite`: a local-vs-global drift, and a third confirmation of missing alpha-channel sprite support
+
+One more thin entry closed in the same sweep. `initialize_sprite`
+(`AC.CPP:25905`, ~306 disassembly lines) matches closely throughout,
+calling the already-matched `SpriteCache::operator[]`/`::set`/
+`get_new_size_for_sprite`/`convert_16_to_15`/`convert_16_to_16bgr` in
+source's own exact order. Two findings: source's own `newwid`/
+`newhit`/`tmpdbl` globals are this build's own plain LOCAL variables
+instead (proven by an `lea eax,[ebp+var_4]` address-of pattern, not
+just unfound) — a genuine drift, not a missing feature. More useful:
+source's leading `SPF_HADALPHACHANNEL`/`SPF_ALPHACHANNEL` flag-
+restoration branch (and the `curspr`/`eip_guinum`/`eip_guiobj`
+bookkeeping right after it) has no counterpart anywhere in this
+function's body — a THIRD independent confirmation (after `convert_
+16_to_15`'s own missing 32-to-24 branch and `ScreenOverlay`'s already-
+confirmed-absent alpha fields) that this build predates 32-bit
+truecolor/alpha-channel sprite support at every level checked so far.

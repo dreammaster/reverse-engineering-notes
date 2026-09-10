@@ -4238,6 +4238,13 @@ disassembly work.
   226-char entry) turns up three more new globals in one read:
   `pathbackstage`/`leftorright`/`waspossible`, all confirmed via exact
   control-flow matches. See `reversing/notes/struct-layout-drift.md`.
+- **`initialize_sprite`: a local-vs-global drift, and a third
+  confirmation of missing alpha-channel sprite support.** Source's
+  `newwid`/`newhit`/`tmpdbl` globals are this build's own plain LOCAL
+  variables instead (proven via address-of, not just unfound); its
+  leading `SPF_HADALPHACHANNEL`/`SPF_ALPHACHANNEL` branch has no
+  counterpart here at all — a third independent confirmation this
+  build predates 32-bit truecolor/alpha sprite support.
 
 ## Third-party library identification (Task #10)
 

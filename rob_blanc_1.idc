@@ -158215,7 +158215,7 @@ static Functions_7(void) {
 	add_func    (0X421AF1,0X421D54);
 	set_func_flags(0X421AF1,0x5410);
 	SetType(0X421AF1, "void __stdcall initialize_sprite(int ee);");
-	set_func_cmt(0X421AF1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void initialize_sprite(int) at AC.CPP:25905. String match: \"Not enough memory to load sprite graphics\" (25941). Caller matches: sub_4026CD (a sprite-cache-related lead, Common/sprcache.cpp), consistent with the sprite cache initializing a sprite on demand.", 1);
+	set_func_cmt(0X421AF1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void initialize_sprite(int) at AC.CPP:25905. String match: \"Not enough memory to load sprite graphics\" (25941). Caller matches: sub_4026CD (a sprite-cache-related lead, Common/sprcache.cpp), consistent with the sprite cache initializing a sprite on demand. FIELD EVIDENCE (full body read for the first time, ~306 lines): matches AC.CPP:25905-25980ish closely, calling the already-matched `SpriteCache__operator_index`/`SpriteCache__set`/`get_new_size_for_sprite`/`convert_16_to_15`/`convert_16_to_16bgr` in source's own exact order, and reading/writing the already-established `spritewidth[]`(`dword_4CD2E8`)/`spriteheight[]`(`dword_4E787C`) globals directly. TWO CONFIRMED FINDINGS: (1) source's own `newwid`/`newhit`/`tmpdbl` globals are this build's own plain LOCAL variables instead (`var_C`/`var_4`/`toRender`) -- a genuine drift, not merely unfound, since the disassembly's own `lea eax,[ebp+var_4]` address-of pattern proves they're stack-" "allocated. (2) source's leading `SPF_HADALPHACHANNEL`/`SPF_ALPHACHAN", 1);
 	set_frame_size(0X421AF1, 0X10, 4, 0X4);
 	define_local_var(0X421AF1, 0X421D54, "[bp-0X10]", "Block");
 	define_local_var(0X421AF1, 0X421D54, "[bp-0X8]", "toRender");
@@ -158545,14 +158545,14 @@ static Functions_7(void) {
 	set_func_flags(0X425230,0x5410);
 	set_func_cmt(0X425230,	"[reversing] confirmed match\nconfidence: high\nevidence: Trivial one-line __thiscall helper: \"return (*this != 0) ? 1 : 0;\" -- a null-check on a pointer-sized field. Called with &dword_4EDA58 (this build's single ambient-sound SOUNDCLIP* handle, already confirmed via PlayAmbientSound/update_ambient_sound_vol) from mainloop, FadeOut, and sub_40A21C (all already matched/characterized), each guarding a conditional call into the handle's own vtable slot 0 if set. This completes the picture of this build's per-frame/per-tick audio polling: THREE separate single-channel audio systems -- speech (dword_52321C=speechmp3), sound effects (dword_523220, PlaySound's channel), and ambient sound (dword_4EDA58, via this helper) -- are each polled the same way (null-check, then call vtable slot 0) from multiple otherwise-unrelated call sites. Left unnamed: too trivial and too generically-shaped to confidently attach a specific 2011 identifier to (2011's own equivalent audio-polling logic is folded into a much larger, channels[" "]-array-based update_polled_audio()-style rout", 1);
 	set_frame_size(0X425230, 0X4, 4, 0);
-	add_func    (0X425250,0X425271);
-	set_func_flags(0X425250,0x5410);
-	set_func_cmt(0X425250,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: acquire_bitmap(bmp) -- Allegro's public macro (`if((bmp)->vtable->acquire) (bmp)->vtable->acquire(bmp);`), compiled here into its own shared subroutine rather than inlined at each call site. Matches exactly: reads `bmp+0x1C`(vtable pointer, already established) then dispatches through slot `+0x10` if non-null -- GFX_VTABLE's own declared field order (`color_depth`,`mask_color`,`unwrite_bank`,`set_clip`,`acquire`) places `acquire` at exactly offset 0x10 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further.", 1);
-	set_frame_size(0X425250, 0, 4, 0);
 }
 
 static Functions_8(void) {
 
+	add_func    (0X425250,0X425271);
+	set_func_flags(0X425250,0x5410);
+	set_func_cmt(0X425250,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: acquire_bitmap(bmp) -- Allegro's public macro (`if((bmp)->vtable->acquire) (bmp)->vtable->acquire(bmp);`), compiled here into its own shared subroutine rather than inlined at each call site. Matches exactly: reads `bmp+0x1C`(vtable pointer, already established) then dispatches through slot `+0x10` if non-null -- GFX_VTABLE's own declared field order (`color_depth`,`mask_color`,`unwrite_bank`,`set_clip`,`acquire`) places `acquire` at exactly offset 0x10 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further.", 1);
+	set_frame_size(0X425250, 0, 4, 0);
 	add_func    (0X425280,0X4252A1);
 	set_func_flags(0X425280,0x5410);
 	set_func_cmt(0X425280,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: release_bitmap(bmp) -- Allegro's public macro, `acquire_bitmap`'s exact mirror-image sibling (same compiled-subroutine treatment). Matches exactly, dispatching through vtable slot `+0x14` -- GFX_VTABLE's own declared `release` field, immediately after `acquire`, at exactly offset 0x14 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
