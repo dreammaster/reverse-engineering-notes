@@ -14706,3 +14706,37 @@ negative-speed-becomes-reciprocal special case -- neither write site
 does anything but store the raw value. A single merged global works
 here because both callers always pass the same speed for both axes,
 so 2011's X/Y split was never exercised asymmetrically in this build.
+
+### `update_polled_stuff`/`prepare_text_script`: two more new globals, a zero-drift `MAX_SCRIPT_AT_ONCE`, and further reconfirmation of the missing editor-debugger protocol
+
+Two more thin entries closed.
+
+**`update_polled_stuff`** (`AC.CPP:12353-12370`) matches closely --
+the `UPDATE_MP3` macro and the three single-channel audio polls
+(speech/sound-effect/ambient, all already established) all confirm
+exactly. Identifies two new globals: `byte_5231AC`=`want_exit` and
+`dword_523334`=`update_music_at`, both via exact literal/string
+matches; also gives the pre-existing (already correctly named in the
+IDB, never behaviorally confirmed) global `mvolcounter` its first
+real confirmation via the same comparison. Three confirmed-absent
+drifts: this build's own function takes no `checkForDebugMessages`
+parameter and never checks `editor_debugging_initialized` at all --
+a further, independent confirmation of this project's much earlier
+finding (via `quit()`) that no editor-debugger protocol exists here
+whatsoever; source's `apply_volume_drop_modifier(false)` call has no
+counterpart; and source's `update_ambient_sound_vol()` call at this
+exact site is absent too (that function is separately matched and
+called elsewhere, just not from here).
+
+**`prepare_text_script`** (`AC.CPP:3041-3076`) is almost entirely
+cross-confirmation of already-established globals (`ccError`/
+`ExecutingScript.inst`/`.forked`/`curscript`/`num_scripts`/`mousex`/
+`mousey`/`scmouse`/`scmouse_y`/`inside_script`), but adds one new
+global (`byte_4F26C4`=`scfunctionname`, the 30-byte function-name
+backup buffer), confirms `MAX_SCRIPT_AT_ONCE=10` with genuinely ZERO
+drift (rare for a capacity constant in this project), confirms
+`update_script_mouse_coords()` is fused directly inline rather than
+called as a separate function, and finds one small wording drift:
+this build's "already running" error reads "room script is already
+in execution" where source's is the generic "script is already in
+execution".

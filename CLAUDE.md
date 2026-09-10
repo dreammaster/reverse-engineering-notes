@@ -4276,6 +4276,14 @@ disassembly work.
   predecessor of 2011's separate `move_speed_x`/`move_speed_y` -- the
   negative-speed-becomes-reciprocal special case is confirmed absent
   at both write sites. See `reversing/notes/struct-layout-drift.md`.
+- **`update_polled_stuff`/`prepare_text_script` close out this round's
+  sweep.** Two new globals (`want_exit`/`update_music_at`), plus a
+  first real confirmation for the pre-existing-but-unverified
+  `mvolcounter`; a further independent confirmation that no
+  editor-debugger protocol exists in this build at all. Separately,
+  `scfunctionname` (new global) and a zero-drift `MAX_SCRIPT_AT_ONCE
+  =10`; `update_script_mouse_coords()` confirmed fused inline. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

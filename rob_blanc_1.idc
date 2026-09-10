@@ -155971,7 +155971,7 @@ static Functions_1(void) {
 	set_frame_size(0X4098CE, 0X4, 4, 0);
 	add_func    (0X409923,0X409A9C);
 	set_func_flags(0X409923,0x5410);
-	set_func_cmt(0X409923,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int prepare_text_script(ccInstance*, char**) at AC.CPP:3041. String matches: \"no such function in script\" (3045), \"unable to fork instance for secondary script\" (3061), \"too many nested text script instances created\" (3067) -- all inside its 3041-3255 body span.", 1);
+	set_func_cmt(0X409923,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int prepare_text_script(ccInstance*, char**) at AC.CPP:3041. String matches: \"no such function in script\" (3045), \"unable to fork instance for secondary script\" (3061), \"too many nested text script instances created\" (3067) -- all inside its 3041-3255 body span. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:3041-3076 closely, touching ccError/ExecutingScript.inst/forked/ExecutingScript::init/ccGetSymbolAddr/ccForkInstance/curscript/num_scripts/mousex/mousey/scmouse/scmouse_y/inside_script -- all already established elsewhere, cross-confirmed again here. Confirms `MAX_SCRIPT_AT_ONCE=10` (`Common/acruntim.h:843`) with ZERO drift via the literal `cmp dword_523150,0Ah` overflow check. Identifies one new global, `byte_4F26C4`=`scfunctionname` (`char scfunctionname[30]`, AC.CPP:3040) -- the `strcpy(scfunctionname,tsname[0]); tsname[0]=&scfunctionname[0];` backup-copy step matches exactly. Confirms `update_script_mouse" "_coords()` is fused directly inline here (no separate call) -- the `", 1);
 	set_frame_size(0X409923, 0, 4, 0);
 	add_func    (0X409A9C,0X409B1A);
 	set_func_flags(0X409A9C,0x5410);
@@ -156434,7 +156434,7 @@ static Functions_3(void) {
 	add_func    (0X412D3D,0X412DFB);
 	set_func_flags(0X412D3D,0x5410);
 	SetType(0X412D3D, "void update_polled_stuff(void);");
-	set_func_cmt(0X412D3D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void update_polled_stuff(bool) at AC.CPP:12353. String match: \"||exit!\" (12358). Caller matches exactly: called from load_main_block (already matched) at a label mid-function, consistent with polling input/sound during a potentially slow room-data load.", 1);
+	set_func_cmt(0X412D3D,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void update_polled_stuff(bool) at AC.CPP:12353. String match: \"||exit!\" (12358). Caller matches exactly: called from load_main_block (already matched) at a label mid-function, consistent with polling input/sound during a potentially slow room-data load. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:12353-12370 closely -- the opening `UPDATE_MP3` macro expansion matches the already-matched MP3-crossfade-continuation helper (sub_4084E0) exactly, and the three vtable-slot-0 polls (speechmp3/PlaySound-channel/ambient-sound, all already established) match the already-documented three-single-channel-audio-systems picture. IDENTIFIES TWO NEW GLOBALS: `byte_5231AC`=`want_exit` (`if(byte_5231AC){byte_5231AC=0; quit(\"||exit!\");}` matches source's `if(want_exit){want_exit=0; quit(\"||exit!\");}` exactly, the same literal error string this function was originally matched on) and `dword_523334`=`update_music_at` (the `mvolcoun" "ter>update_music_at` comparison gating `update_music_volume`, matchi", 1);
 	set_frame_size(0X412D3D, 0, 4, 0);
 	add_func    (0X412DFB,0X412E50);
 	set_func_flags(0X412DFB,0x5410);
