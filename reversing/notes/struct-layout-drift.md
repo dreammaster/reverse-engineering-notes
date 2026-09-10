@@ -14902,3 +14902,68 @@ using a multi-word phrase as a comma-alternative, or one immediately
 followed by `]`, would behave differently here than in 2011 -- a real
 behavioral gap, not just a missing optimization. No new fields/
 globals; this closes out `parse_sentence` entirely.
+
+### `play_invorder`'s GameState-membership question settled, via a `sizeof(GameState)` argument -- and it reopens `CharacterExtras` too
+
+This project's own standing limitation on this question ("a struct
+member and a standalone global compile to identical code, so no
+purely-static technique can fully distinguish them here") turns out
+to have one real exception: a bulk `fwrite`/`fread` of the WHOLE
+object using `sizeof(TheStructType)` as its size argument. Checked
+the actual disassembly at both call sites directly -- `SaveGameSlot`'s
+write and `restore_game_data`'s read are each a bare
+`fwrite(&play, 0x964, 1, Stream)`/`fread(&play, 0x964, 1, Stream)`,
+the size argument a hardcoded immediate with no computation feeding
+it. Cross-checked against 2011's own source at these exact two call
+sites (`AC.CPP:22729`/`23236`): both read
+`fwrite(&play,sizeof(GameState),1,ooo);`/
+`fread(&play,sizeof(GameState),1,ooo);` verbatim -- the identical
+idiom, just with `sizeof(GameState)` spelled out instead of already
+folded to a number. Given this project's own extensively-demonstrated
+pattern of this exact kind of save/restore-boundary C idiom surviving
+unchanged across AGS's decade of evolution even as the struct's own
+content changes completely underneath it (found dozens of times this
+session alone -- `quit()`, `main()`, `SetMusicRepeat`, and many more),
+the far more likely explanation is that 2002's source ALSO wrote
+`sizeof(GameState)` at both sites, and the 2002 compiler folded it to
+`0x964` from the ACTUAL 2002 struct declaration -- not a hand-picked
+or rounded byte count.
+
+This matters because a `sizeof()` of a fully-defined struct type
+structurally CANNOT include memory belonging to an unrelated,
+separately-declared global by coincidence -- unlike "the whole span
+happens to be behaviorally accounted for" (this struct's own earlier,
+weaker argument for contiguity), which says nothing about what's
+declared vs. merely adjacent. A `sizeof()` argument settles the
+question outright, short of a few bytes of trailing alignment padding
+(nowhere near enough to explain the ~500 bytes in question here).
+Supporting circumstantial point: `filenumbers[20]`, this struct's
+independently-proven LAST field (behavioral confirmation, not
+positional), ends EXACTLY at `+0x964` with zero trailing slack --
+consistent with a tight, real `sizeof()` result, not a deliberately
+padded "leave room to grow" save-format constant (which would
+typically leave slack AFTER the last real field, not land exactly on
+it).
+
+Consequence: this settles, in favor of genuine struct membership,
+BOTH of this struct's two longest-standing "coincidentally-adjacent
+global, or real member?" questions at once. `play_invorder[100]`
+(+0x614) is promoted from a deliberately-neutral pad to a real
+declared field. More surprisingly, it OVERTURNS an earlier round's own
+"CONFIRMED NOT GameState" conclusion for this build's `CharacterExtras`
+equivalent (`char_width`/`char_height`/`char_zoom`, three parallel
+`short[50]` arrays at +0x6DC) -- that conclusion rested on a role-based
+assumption ("there'd be no reason to persist per-frame render caches
+across a save/load"), not actual evidence, and now faces real
+structural counter-evidence. Both are moved from pads/a separate
+documentation block into real fields inside `GameState` in
+`apply_structs.py`, with the previous reasoning kept visible and
+corrected in place per this project's usual convention -- this is an
+inference from idiom-stability, not an ironclad proof (2002's source
+could in principle have hand-typed a literal instead of using
+`sizeof()`), but it is considerably stronger than anything this
+question has had before. No IDB-visible change results from this
+edit: `GameState`/`play` has never had its type applied to the live
+global address (a documentation-only struct throughout, consistent
+with how this project has always treated it), so this is purely a
+type-declaration correction for the eventual C-reconstruction phase.

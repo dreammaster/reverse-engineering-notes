@@ -3423,6 +3423,46 @@ struct GameState {
   // 2404-byte object end to end. `ifnum` turned out to be a MISLABELED field, not a genuine
   // separate global -- see `speech_textwindow_gui` below. See reversing/notes/
   // struct-layout-drift.md for the full correction writeup.
+  //
+  // THE `play_invorder`/CharacterExtras GAMESTATE-MEMBERSHIP QUESTION, SETTLED (much later
+  // round, revisiting the "falling inside the fwrite span isn't sufficient evidence" caution
+  // recorded further down in this struct): checked the ACTUAL disassembly at both the
+  // `SaveGameSlot` write site and the matching `restore_game_data` read site directly --
+  // both are a bare, literal "push offset play / push 964h / push 1 / push Stream / call
+  // fwrite" (respectively `fread`), i.e. `fwrite(&play, 0x964, 1, Stream)` with NO computation
+  // feeding the size argument at all, just a hardcoded immediate. Cross-checked against 2011's
+  // OWN source at these exact two call sites (`AC.CPP:22729`/`23236`): both read
+  // "fwrite(&play,sizeof(GameState),1,ooo);"/"fread(&play,sizeof(GameState),1,ooo);" verbatim --
+  // the SAME idiom, just with `sizeof(GameState)` spelled out instead of pre-folded. This
+  // project has independently found, dozens of times this session alone, that this kind of
+  // save/restore-boundary C idiom survives essentially UNCHANGED across AGS's decade of
+  // evolution even as the struct's own content changes completely underneath it (`quit()`,
+  // `main()`, `SetMusicRepeat`, and many more). The far more likely explanation, consistent
+  // with that pattern, is that 2002's own source ALSO wrote `fwrite(&play,sizeof(GameState),1,
+  // ooo)`, and the 2002 compiler computed `sizeof(GameState)` from the ACTUAL 2002 struct
+  // declaration to be exactly 0x964 -- meaning 0x964 is a genuine compile-time-folded
+  // `sizeof(GameState)`, not a hand-picked/rounded byte count. This is a MEANINGFULLY STRONGER
+  // argument than "the whole span happens to be behaviorally accounted for": a `sizeof()` of a
+  // fully-defined struct type can only include the struct's own declared members (plus, at
+  // most, a few bytes of trailing alignment padding) -- it structurally CANNOT sweep in
+  // memory belonging to an unrelated, separately-declared global by coincidence the way a
+  // hand-picked buffer size or a loose block of `fwrite`s could. (Supporting circumstantial
+  // point: `filenumbers[20]`, this struct's proven LAST field by byte-for-byte behavioral
+  // confirmation, ends EXACTLY at +0x964 with zero trailing slack -- consistent with a tight,
+  // real `sizeof()` result, not a deliberately-padded "leave room to grow" save-format
+  // constant, which would typically leave unused bytes AFTER the last real field rather than
+  // landing exactly on it.) CONSEQUENCE: this settles, in favor of genuine struct membership,
+  // BOTH of this struct's two longest-standing "coincidentally-adjacent global, or real member?"
+  // open questions at once -- `play_invorder` (see its own field below) and the three
+  // CharacterExtras-equivalent arrays (`char_width`/`char_height`/`char_zoom`, previously
+  // documented as a separate, deliberately-NOT-a-member block after this struct's closing
+  // brace -- now moved inside it, see their own field comments below for the full retraction).
+  // This is an INFERENCE from idiom-stability, not an ironclad structural proof (it can't
+  // fully rule out the 2002 source having hand-typed a literal number instead of using
+  // `sizeof()`) -- but it is considerably stronger than anything this question has had before,
+  // and directly overturns the earlier role-based "there'd be no reason to persist per-frame
+  // render caches across a save" dismissal, which was an assumption about design intent, not
+  // actual evidence, now facing real structural counter-evidence.
   int score;                  // +0x00, high confidence: confirmed via `replace_macro_tokens`
                             // (new match this round, sub_41024B, AC.CPP:7104) -- the GUI label
                             // "@SCORE@"/"@SCORETEXT@" macro-substitution routine reads the `play`
@@ -3738,25 +3778,39 @@ struct GameState {
                             // away at +0x808 -- see its own entry and the correction noted there).
                             // `PlayMusic` (already matched) reads this as the repeat flag passed
                             // down to its MP3-stream-creation helper.
-  char _pad_invorder_maybe[0xC8]; // +0x614..0x6DC (200 bytes) -- NOT asserted as a struct
-                            // member; kept as a neutral pad (not a typed `play_invorder[100]`
-                            // declaration) since GameState membership here is genuinely
-                            // unresolved, consistent with this project's convention of only
-                            // giving real field declarations to confirmed members. This is
-                            // `play_invorder`, this build's inventory-order array (role
-                            // confirmed via `update_invorder`'s exact algorithmic match;
+  short play_invorder[100];     // +0x614..0x6DC (200 bytes). RESOLVED (see this struct's own
+                            // header comment for the full sizeof(GameState)-argument writeup):
+                            // upgraded from a deliberately-neutral pad to a real declared
+                            // field now that the GameState-membership question is settled in
+                            // favor of genuine membership. Role confirmed via `update_invorder`'s
+                            // exact algorithmic match (this build's single-GAME-WIDE-array
+                            // predecessor of 2011's per-character `charextra[].invorder[]`);
                             // capacity confirmed via a clean, zero-interruption 200-byte span
-                            // matching MAX_INV=100 with zero drift) -- but whether it's a
-                            // genuine GameState member or, like CharacterExtras immediately
-                            // after it, a coincidentally-adjacent separate global remains
-                            // UNRESOLVED. Neither neighbor (the unidentified pair above, or
-                            // CharacterExtras below) is itself a confirmed GameState field, so
-                            // there's no positional evidence either way -- unlike
-                            // bad_parsed_word/screen_tint, which each closed against an
-                            // independently-confirmed neighbor.
-  // CharacterExtras.width/height/zoom (this build's version) -- +0x6DC..0x808 (300 bytes),
-  // CONFIRMED NOT GameState -- see the dedicated CharacterExtras documentation block after this
-  // struct's closing brace for the full field-by-field writeup and evidence.
+                            // matching `MAX_INV`=100 with zero drift. Also behaviorally coupled,
+                            // in lockstep, with the already-confirmed `inv_numorder`@+0xEC via
+                            // two independent functions (`add_inventory`/`LoseInventory`, see
+                            // their own entries) -- evidence that predates and is now reinforced
+                            // by the structural sizeof() argument, not superseded by it.
+  // CharacterExtras.width/height/zoom (this build's version) -- +0x6DC..0x808 (300 bytes).
+  // RESOLVED the same way as `play_invorder` immediately above -- moved IN from the separate
+  // documentation block that used to sit after this struct's closing brace (still present below,
+  // now updated with the correction) into real declared fields here.
+  short char_width[50];          // +0x6DC..0x740 (100 bytes), high confidence: matches 2011's
+                            // "scale_sprite_size(sppic,zoom_level,&newwidth,&newheight);
+                            // charextra[aa].width=newwidth;" (AC.CPP:8392-8393) exactly, via
+                            // `prepare_characters_for_drawing` (already matched).
+  short char_height[50];         // +0x740..0x7A4 (100 bytes), high confidence: same source
+                            // call/statement pair as `char_width` above, "charextra[aa].
+                            // height=newheight;" (AC.CPP:8393-8394).
+  short char_zoom[50];           // +0x7A4..0x808 (100 bytes), high confidence: matches 2011's
+                            // "zoom_level=charextra[aa].zoom; if(zoom_level==0)
+                            // zoom_level=100;" (AC.CPP:8309-8312) read side, and the field's
+                            // own write-back after computation matches
+                            // "charextra[aa].zoom=zoom_level;". Also the one field
+                            // `wantMoveNow`'s xwas/ywas half-move-smoothing pair would need
+                            // to read -- its EXACTLY TWO xrefs (both right here) are the basis
+                            // for that pair's own confirmed-absent finding, see the retained
+                            // documentation block after this struct's closing brace.
   //
   // ADDITIONAL EVIDENCE toward `play_invorder`'s membership question (found this round, via
   // `add_inventory` -- newly given full field evidence, see its own matches.json entry): its
@@ -3786,7 +3840,17 @@ struct GameState {
   // functions (add/remove) now both treat this pair as a single synchronized unit -- still not
   // proof of physical struct membership, but a second, independent instance of the same
   // behavioral argument.
-  char _pad_characterextras[0x12C];
+  //
+  // RESOLVED (much later round -- see this struct's own header comment for the full writeup):
+  // the "doesn't by itself PROVE struct membership"/"still not proof of physical struct
+  // membership" hedges above no longer reflect this project's best evidence. A sizeof(GameState)
+  // argument from the `SaveGameSlot`/`restore_game_data` fwrite/fread call sites (both a bare
+  // literal `0x964` with no computation, matching 2011's own literal `sizeof(GameState)` at the
+  // identical two call sites) settles `play_invorder`'s membership decisively in favor of "yes,
+  // a genuine field" -- promoted from a neutral pad to a real declared field above. The two
+  // behavioral-coupling arguments in this comment block are NOT superseded by that -- they were
+  // independent, corroborating evidence gathered before the structural argument existed, and
+  // both still hold.
   int music_master_volume;      // +0x808, high confidence (RESOLVED, correcting the previous
                             // round's "plausibly lipsync/close-mouth-timing related" guess --
                             // WRONG, the real answer is music volume): `sub_418E82` (this round's
@@ -4050,13 +4114,32 @@ struct GameState {
 
 // CharacterExtras (this build's version) -- found while mapping GameState's unexplored tail,
 // initially misread as more render-time scratch before its actual role was confirmed (see
-// prepare_characters_for_drawing's matches.json entry for the full correction). NOT declared as
-// a single struct type here: unlike 2011's `CharacterExtras charextra[50]` (array-of-structs,
-// Common/acruntim.h:441-455), this build implements it as THREE SEPARATE PARALLEL short[50]
-// arrays (structure-of-arrays) -- a genuine memory-layout difference, matching the same
-// "flattened/simplified 2002 predecessor" pattern seen elsewhere in this project (e.g.
-// ExecutingScript, FullAnimation), just applied to array-of-structs vs. structure-of-arrays
-// rather than field count. Address range: 0x4EF0F4..0x4EF220 (300 bytes total, 3*50*2).
+// prepare_characters_for_drawing's matches.json entry for the full correction).
+//
+// CORRECTION/RESOLVED (much later round -- see GameState's own header comment for the full
+// sizeof(GameState)-argument writeup): this block used to open by declaring these three arrays
+// "CONFIRMED NOT GameState" and explicitly NOT part of the struct, on the reasoning that "there
+// would be no reason to persist per-frame render caches across a save/load." That was a
+// role-based ASSUMPTION about design intent, not actual evidence, and it's now overturned by a
+// real structural argument: the `SaveGameSlot`/`restore_game_data` fwrite/fread call sites both
+// pass a bare literal `0x964` with no computation, matching 2011's own literal
+// `sizeof(GameState)` at the identical two call sites -- meaning 0x964 is almost certainly a
+// genuine compile-time-folded `sizeof(GameState)` from the ACTUAL 2002 struct declaration, which
+// structurally cannot include memory outside the struct's own declared members (short of a
+// handful of alignment-padding bytes, not 300). These three arrays are now declared as real
+// GameState fields (`char_width`/`char_height`/`char_zoom`, see the struct body above, right
+// after `play_invorder` -- which the same argument resolves identically). Every field-level
+// finding below (roles, capacity, the xwas/ywas-absence argument) is UNCHANGED and still holds;
+// only the "NOT GameState, it's a separate/coincidentally-adjacent global" framing is retracted.
+// This block is kept here (rather than being fully merged into the struct body) purely for the
+// detailed capacity/absence writeup that follows -- the fields themselves are declared above.
+//
+// Unlike 2011's `CharacterExtras charextra[50]` (array-of-structs, Common/acruntim.h:441-455),
+// this build implements it as THREE SEPARATE PARALLEL short[50] arrays (structure-of-arrays) --
+// a genuine memory-layout difference, matching the same "flattened/simplified 2002 predecessor"
+// pattern seen elsewhere in this project (e.g. ExecutingScript, FullAnimation), just applied to
+// array-of-structs vs. structure-of-arrays rather than field count. Address range:
+// 0x4EF0F4..0x4EF220 (300 bytes total, 3*50*2; struct-relative +0x6DC..+0x808).
 //   short char_width[50];   // word_4EF0F4, high confidence: matches 2011's
 //                           // "scale_sprite_size(sppic,zoom_level,&newwidth,&newheight);
 //                           // charextra[aa].width=newwidth;" (AC.CPP:8392-8393) exactly.
@@ -4089,8 +4172,8 @@ struct GameState {
 // the same generic sentinel value in a totally different subsystem) and zero genuine
 // xwas/ywas-shaped hits. `invorder[MAX_INVORDER]`/`invorder_count` (2011's PER-CHARACTER
 // inventory-order pair, also declared in `CharacterExtras`) are likewise CONFIRMED ABSENT here:
-// this build's inventory-order tracking is `play_invorder`, a single GAME-WIDE array (see
-// GameState's own `_pad_invorder_maybe` comment above), and `update_invorder` (already matched)
+// this build's inventory-order tracking is `play_invorder`, a single GAME-WIDE array (now a
+// real declared GameState field, see the struct body above), and `update_invorder` (already matched)
 // is a genuinely simpler single-character predecessor with no per-character loop at all --
 // the whole per-character-invorder feature this pair belongs to doesn't exist yet.
 //

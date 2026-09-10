@@ -4335,6 +4335,23 @@ disassembly work.
   alternatives-skip with no multi-word-phrase re-check and no
   optional-clause-closing special case. See `reversing/notes/
   struct-layout-drift.md`.
+- **`play_invorder`'s long-open GameState-membership question settled
+  via a `sizeof(GameState)` argument -- and it reopens `CharacterExtras`
+  too.** `SaveGameSlot`/`restore_game_data`'s bulk `fwrite`/`fread` of
+  `play` both pass a bare literal `0x964` with no computation, matching
+  2011's own literal `sizeof(GameState)` at the identical two call
+  sites -- meaning 0x964 is almost certainly a genuine compile-time
+  `sizeof(GameState)` from the real 2002 struct declaration, which
+  structurally can't sweep in an unrelated global the way "the whole
+  span is behaviorally accounted for" could. Settles `play_invorder`
+  (now a real declared field, not a pad) and OVERTURNS an earlier
+  round's "CONFIRMED NOT GameState" call on this build's
+  `CharacterExtras` equivalent (three parallel `short[50]` arrays,
+  also now real fields) -- that call rested on an assumption about
+  design intent ("no reason to persist render caches"), not evidence.
+  No IDB-visible change: `GameState` has never had its type applied to
+  the live `play` global, documentation-only as always. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
