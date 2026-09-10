@@ -324,6 +324,28 @@ reversing/
                                      a disassembly-only investigation hits a
                                      wall a look at the real shipped data
                                      could resolve instead.
+    dump_gamesetup_from_data.py     - companion to parse_clib_manifest.py,
+                                     one level deeper: locates and parses
+                                     ac2game.dta's own small file header
+                                     (calibrated specifically to rb.exe's --
+                                     the Windows release's -- own header
+                                     shape, warns loudly if run against a
+                                     file whose header marker doesn't match)
+                                     to find where the raw
+                                     GameSetupStructBase blob begins, then
+                                     reads a hand-picked list of already-
+                                     confirmed field offsets straight out of
+                                     the real game data. Independent, real-
+                                     data VALIDATION of this project's own
+                                     struct mapping, not a new disassembly
+                                     technique -- used to confirm gamename
+                                     ("Rob Blanc I", verbatim) and numfonts
+                                     (3, matching the CLIB manifest's own
+                                     packaged .wfn count exactly), and to
+                                     notice numiface==4 (see struct-layout-
+                                     drift.md). Extend the FIELDS list as
+                                     new offsets get confirmed and are worth
+                                     spot-checking.
   analysis/                        - generated JSON artifacts (regeneratable,
                                      but keep committed since they're
                                      expensive to rebuild and are the working
@@ -4397,6 +4419,23 @@ disassembly work.
   installed locally, its real data can sometimes answer what no more
   disassembly reading could. See `reversing/notes/
   struct-layout-drift.md`.
+- **`GameSetupStructBase` -- the biggest struct-mapping effort in this
+  project -- validated end-to-end against the real, live game data.**
+  Same technique, aimed at its own header/struct blob this time.
+  `gamename`@+0x00 reads `"Rob Blanc I"` verbatim (the game's own real
+  title), and `numfonts`@+0x9FD4 reads `3`, matching the CLIB
+  manifest's own independently-counted 3 packaged `.wfn` files exactly
+  -- two independently cross-checkable exact matches. Every other
+  field checked (`numviews`/`numcharacters`/`numinvitems`/`numdialog`/
+  `color_depth`/`numgui`/`langcodes`/`options[]`) reads a small,
+  contextually sane value consistent with everything already
+  confirmed. One genuine surprise: `numiface`@+0x253C reads `4`, not
+  0 -- the compiled game DATA still carries 4 populated
+  `InterfaceElement` slots, even though an earlier round's exhaustive
+  disassembly search found the ENGINE CODE never reads any of those
+  elements' own remaining fields. Doesn't retract that code-side
+  finding, just adds nuance: data existing and code reading it are
+  different questions. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

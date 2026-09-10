@@ -15022,3 +15022,51 @@ disassembly-only investigation hits a "no way to check without the
 game's own data" wall, and the actual game happens to be installed
 locally, reading its real files directly can settle a question no
 amount of further disassembly reading could.
+
+### `GameSetupStructBase` validated end-to-end against the real, live-game data -- with a small surprise for `numiface`
+
+Same technique, aimed at the biggest single struct-mapping effort in
+this whole project. `load_game_file`'s own header (extracted from
+`ac2game.dta` via `parse_clib_manifest.py`, this time from the exact
+disassembled `rb.exe`'s own embedded copy) reads: 30-byte signature
+(`"Adventure Creator Game File v2"`, byte-for-byte, confirming the
+extraction offset before anything else), a 4-byte marker (`12`,
+matching the disassembly's own `cmp ...,0Ch` check exactly -- a live
+sanity check that this really is the file this exact binary expects),
+a 4-byte length-prefixed "engine needs" string (`"2.3"`, consistent
+with this build's own already-pinned "AGS 2.4b" identity), then the
+raw `GameSetupStructBase` blob itself, sized exactly to this project's
+own independently-confirmed `0xBF84` total.
+
+Reading that blob at every already-confirmed field offset gives a
+clean, across-the-board validation, including two independently
+cross-checkable exact matches: `gamename`@+0x00 reads **`"Rob Blanc
+I"`** verbatim -- the game's own real title, byte for byte -- and
+`numfonts`@+0x9FD4 reads **`3`**, matching the CLIB manifest's own
+independently-counted 3 packaged `.wfn` font files
+(`agsfnt0/1/2.wfn`) exactly. Every other field checked reads a small,
+contextually sane value: `numviews`=10, `numcharacters`=5,
+`numinvitems`=9, `numdialog`=2, `color_depth`=1 (matching the
+already-established "8-bit paletted" convention), `numgui`=5,
+`langcodes`=`"EN"`. `options[20]`'s raw bytes are consistent with
+every individually-confirmed index found so far (`options[5]`
+(`OPT_TWCUSTOM`)=3, matching `draw_text_window`'s own evidence).
+
+One genuine, mildly surprising data point: `numiface`@+0x253C reads
+**4**, not 0. An earlier round had searched exhaustively for code
+referencing any of `InterfaceElement`'s remaining unconfirmed fields
+(`x`/`y`/`x2`/`y2`/`vtextalign`/the `button[]` array's own individual
+fields) and found zero hits anywhere in the disassembly, concluding
+"Rob Blanc 1 most likely just doesn't use the old icon-bar interface
+system at all." That conclusion doesn't need retracting -- the CODE
+search was real and thorough, and this doesn't contradict it -- but
+it turns out the compiled game DATA still carries 4 populated
+`InterfaceElement` slots (out of the fixed 10-slot array), presumably
+written by the AGS Editor's own project defaults regardless of
+whether the game's scripts or engine ever actually display them.
+Data existing and code reading it are different questions; this
+resolves the former without touching the latter -- `InterfaceElement`
+stays exactly as thoroughly-searched-and-still-mostly-unconfirmed as
+before, just with a slightly less absolute framing ("the engine
+appears to never read most of these fields" rather than "this game
+doesn't use interfaces at all").
