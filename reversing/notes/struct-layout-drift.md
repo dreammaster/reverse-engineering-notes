@@ -14835,3 +14835,22 @@ is now a real struct declaration, not just scattered prose. (A
 false positive already flagged and correctly ignored elsewhere in this
 project -- not a real object, just exception-handling glue around the
 allocation.)
+
+### `GetObjectGraphic`/`parse_sentence`: a clean trivial confirmation and a partial read of a large text-parser function
+
+`GetObjectGraphic` (`AC.CPP:14990-14993`) is a clean, trivial, zero-
+drift match -- validates via `is_valid_object`, returns the already-
+established `RoomObject.num`@+0x0C. Nothing new, just closed out.
+
+`parse_sentence` (`AC.CPP:18104`, ~390 lines) was only read through
+its opening ~100 lines given its size, but that was enough to confirm
+one real architectural point: source's own `is_valid_word_char()`
+helper (a thin `isalnum()` wrapper in 2011) has no separate function
+here at all -- this build calls the CRT's `isalnum` directly inline,
+the same "later refactor extracted a reusable helper" pattern already
+found repeatedly elsewhere in this project. Also reconfirms `GameState.
+bad_parsed_word[100]` from a new write site (`play.bad_parsed_word[0]
+=0;` when `compareto==NULL`). The rest of the function (optional-word
+bracket handling, the `FindMatchingMultiWordWord`/`find_word_in_
+dictionary` dispatch, the final comparison loop) is left honestly
+untraced for a future round.

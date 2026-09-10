@@ -3574,7 +3574,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 18104,
     "confidence": "high",
-    "evidence": "int parse_sentence(char*,int*,short*,short*,int) at AC.CPP:18104. String matches: \"!Said: unexpected ']'\" (18120), \"!Said: nested optional words\" (18131), \"!Said: unterminated [optional]\" (18184). Caller matches exactly: called only from ParseText, an already-named function (ParseText is the script Said()-adjacent command that invokes sentence parsing)."
+    "evidence": "int parse_sentence(char*,int*,short*,short*,int) at AC.CPP:18104. String matches: \"!Said: unexpected ']'\" (18120), \"!Said: nested optional words\" (18131), \"!Said: unterminated [optional]\" (18184). Caller matches exactly: called only from ParseText, an already-named function (ParseText is the script Said()-adjacent command that invokes sentence parsing). PARTIAL FIELD EVIDENCE (opening ~100 lines read, out of ~390 total -- a large function, not traced to completion given its size): matches AC.CPP:18104-18131 closely on the opening zero-init/`strlwr`/`']'`-unexpected-check sequence. CONFIRMED: source's own `is_valid_word_char()` helper (a thin `isalnum()` wrapper in 2011) has no separate function here at all -- this build calls the CRT's `isalnum` directly inline, the same 'later refactor extracted a reusable helper' pattern already found repeatedly elsewhere in this project. `byte_4EF2EA` is set to 0 when `compareto==NULL`, matching source's `play.bad_parsed_word[0]=0;` -- consistent with the already-established `GameState.bad_parsed_word[100]` array (this write targets its own first element). The rest of the function (the optional-word-bracket handling, `FindMatchingMultiWordWord`/`find_word_in_dictionary` dispatch, and the final comparison loop) was not traced this round."
   },
   {
     "kind": "manual",
@@ -3763,7 +3763,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 14990,
     "confidence": "high",
-    "evidence": "int GetObjectGraphic(int) at AC.CPP:14990. String match: \"!GetObjectGraphic: invalid object specified\" (14991). Referenced via DATA XREF from setup_script_exports (a script-export function-pointer table), not a direct call site -- consistent with being a script API function registered by name rather than called directly from engine C++ code."
+    "evidence": "int GetObjectGraphic(int) at AC.CPP:14990. String match: \"!GetObjectGraphic: invalid object specified\" (14991). Referenced via DATA XREF from setup_script_exports (a script-export function-pointer table), not a direct call site -- consistent with being a script API function registered by name rather than called directly from engine C++ code. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:14990-14993 exactly -- validates via `is_valid_object` (already matched), then returns `RoomObject.num`@+0x0C (a 16-bit `movsx` read, matching the field's own established short type) from the already-established `croom->obj[]` array. No new fields; a clean, trivial, zero-drift match."
   },
   {
     "kind": "manual",

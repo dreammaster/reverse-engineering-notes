@@ -156895,7 +156895,7 @@ static Functions_4(void) {
 	add_func    (0X416040,0X416073);
 	set_func_flags(0X416040,0x5410);
 	SetType(0X416040, "int __stdcall GetObjectGraphic(int obn);");
-	set_func_cmt(0X416040,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int GetObjectGraphic(int) at AC.CPP:14990. String match: \"!GetObjectGraphic: invalid object specified\" (14991). Referenced via DATA XREF from setup_script_exports (a script-export function-pointer table), not a direct call site -- consistent with being a script API function registered by name rather than called directly from engine C++ code.", 1);
+	set_func_cmt(0X416040,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int GetObjectGraphic(int) at AC.CPP:14990. String match: \"!GetObjectGraphic: invalid object specified\" (14991). Referenced via DATA XREF from setup_script_exports (a script-export function-pointer table), not a direct call site -- consistent with being a script API function registered by name rather than called directly from engine C++ code. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:14990-14993 exactly -- validates via `is_valid_object` (already matched), then returns `RoomObject.num`@+0x0C (a 16-bit `movsx` read, matching the field's own established short type) from the already-established `croom->obj[]` array. No new fields; a clean, trivial, zero-drift match.", 1);
 	set_frame_size(0X416040, 0, 4, 0X4);
 	define_local_var(0X416040, 0X416073, "[bp+0X8]", "obn");
 	add_func    (0X416073,0X4161FA);
@@ -157337,7 +157337,7 @@ static Functions_5(void) {
 	add_func    (0X4195B1,0X4198BB);
 	set_func_flags(0X4195B1,0x5410);
 	SetType(0X4195B1, "int __stdcall parse_sentence(char *text, int *numwords, __int16 *wordarray, __int16 *compareto, int comparetonum);");
-	set_func_cmt(0X4195B1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int parse_sentence(char*,int*,short*,short*,int) at AC.CPP:18104. String matches: \"!Said: unexpected ']'\" (18120), \"!Said: nested optional words\" (18131), \"!Said: unterminated [optional]\" (18184). Caller matches exactly: called only from ParseText, an already-named function (ParseText is the script Said()-adjacent command that invokes sentence parsing).", 1);
+	set_func_cmt(0X4195B1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int parse_sentence(char*,int*,short*,short*,int) at AC.CPP:18104. String matches: \"!Said: unexpected ']'\" (18120), \"!Said: nested optional words\" (18131), \"!Said: unterminated [optional]\" (18184). Caller matches exactly: called only from ParseText, an already-named function (ParseText is the script Said()-adjacent command that invokes sentence parsing). PARTIAL FIELD EVIDENCE (opening ~100 lines read, out of ~390 total -- a large function, not traced to completion given its size): matches AC.CPP:18104-18131 closely on the opening zero-init/`strlwr`/`']'`-unexpected-check sequence. CONFIRMED: source's own `is_valid_word_char()` helper (a thin `isalnum()` wrapper in 2011) has no separate function here at all -- this build calls the CRT's `isalnum` directly inline, the same 'later refactor extracted a reusable helper' pattern already found repeatedly elsewhere in this project. `byte_4EF2EA` is set to 0 when `compareto==NULL`, matching " "source's `play.bad_parsed_word[0]=0;` -- consistent with the already", 1);
 	set_frame_size(0X4195B1, 0X80, 4, 0X14);
 	define_local_var(0X4195B1, 0X4198BB, "[bp-0X78]", "Source");
 	define_local_var(0X4195B1, 0X4198BB, "[bp+0X8]", "String");
@@ -157559,6 +157559,10 @@ static Functions_5(void) {
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0X8]", "guin");
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0XC]", "objn");
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0X10]", "filemask");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41A78C,0X41A8A6);
 	set_func_flags(0X41A78C,0x5410);
 	SetType(0X41A78C, "void __stdcall SetLabelText(int guin, int objn, char *newtx);");
@@ -157567,10 +157571,6 @@ static Functions_5(void) {
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0X8]", "guin");
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0XC]", "objn");
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0X10]", "Str");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41A8A6,0X41A990);
 	set_func_flags(0X41A8A6,0x5410);
 	SetType(0X41A8A6, "void __stdcall SetLabelFont(int guin, int objn, int fontnum);");
@@ -157999,6 +157999,10 @@ static Functions_6(void) {
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp-0X4]", "Count");
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp+0X8]", "Str");
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp+0XC]", "Source");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41CC4C,0X41CC84);
 	set_func_flags(0X41CC4C,0x5410);
 	SetType(0X41CC4C, "void __stdcall sc_strcpy(char *s1, char *s2);");
@@ -158006,10 +158010,6 @@ static Functions_6(void) {
 	set_frame_size(0X41CC4C, 0, 4, 0X8);
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0X8]", "Destination");
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0XC]", "Source");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41CC84,0X41CCB4);
 	set_func_flags(0X41CC84,0x5410);
 	SetType(0X41CC84, "void __stdcall sc_strlower(char *desbuf);");
@@ -158469,6 +158469,10 @@ static Functions_7(void) {
 	set_func_flags(0X424A00,0x5410);
 	set_func_cmt(0X424A00,	"[reversing] confirmed match\nsource: Common/acruntim.h\nconfidence: high\nevidence: ExecutingScript::init(), the AGS-style zero-initializer called on every scripts[] slot before it is (re)used (the flat-C++-member-function naming convention used throughout this project for this build's __thiscall class methods -- see FLAT_CPP_NAMES in extract_prototypes.py). Body is exactly 8 field-initialization writes through `this` (ecx), in struct-offset order, and matches every field independently confirmed elsewhere in ExecutingScript (see the merged evidence on the post_script_cleanup/sub_409B1A entry for the full derivation of each field's role): [this+0x00]=0 (inst), [this+0x68]=0 (forked), [this+0x60]=0 (numanother), [this+0x04]=-1 (newnum), [this+0x08]=0 (invscreen-flag), [this+0x0C]=-1 (ooo / pending restore-game slot), [this+0x10]=-1 (dlgnum), [this+0x64]=0 (pending restart-game flag). This is the clinching cross-confirmation for the whole struct: an independent constructor-style function that touches precisely the" " same 8 offsets the usage-site analysis found, in the same order, with s", 1);
 	set_frame_size(0X424A00, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X424A60,0X424A7F);
 	set_func_flags(0X424A60,0x5410);
 	set_frame_size(0X424A60, 0X4, 4, 0);
@@ -158484,10 +158488,6 @@ static Functions_7(void) {
 	add_func    (0X424B10,0X424B27);
 	set_func_flags(0X424B10,0x5410);
 	set_frame_size(0X424B10, 0X4, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X424B30,0X424B4F);
 	set_func_flags(0X424B30,0x5410);
 	set_frame_size(0X424B30, 0X4, 4, 0);

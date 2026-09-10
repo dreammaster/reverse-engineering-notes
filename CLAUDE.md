@@ -4312,6 +4312,13 @@ disassembly work.
   `replace_tokens` closed the rest of this batch with mostly
   reconfirmation, no new fields. See `reversing/notes/
   struct-layout-drift.md`.
+- **`GetObjectGraphic`/`parse_sentence` close another small batch.**
+  `GetObjectGraphic` is a clean, trivial, zero-drift match. `parse_
+  sentence` (partially read, ~390 lines) confirms `is_valid_word_
+  char()` has no separate function here -- inlined directly via `isalnum`
+  -- and reconfirms `GameState.bad_parsed_word[100]` from a new write
+  site; the rest of the function left honestly untraced for a future
+  round. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
