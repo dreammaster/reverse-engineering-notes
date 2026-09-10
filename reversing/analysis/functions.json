@@ -3900,9 +3900,9 @@
   "is_named": true
  },
  {
-  "name": "sub_434000",
+  "name": "getlong",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "load_script_configuration",

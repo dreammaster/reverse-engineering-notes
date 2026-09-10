@@ -14599,3 +14599,77 @@ function's body — a THIRD independent confirmation (after `convert_
 16_to_15`'s own missing 32-to-24 branch and `ScreenOverlay`'s already-
 confirmed-absent alpha fields) that this build predates 32-bit
 truecolor/alpha-channel sprite support at every level checked so far.
+
+### `getlong` named; and a MAJOR correction to `SpriteCache` -- its own struct declaration had been stale and self-contradicted for several rounds
+
+Two more thin entries from the pool, with the second turning into the
+most significant correction of this whole session.
+
+**`load_script_configuration`** (`scrptrt.cpp:40-51`) matches exactly
+and names a new function, `getlong` (`sub_434000`, `scrptrt.cpp:28`) --
+a trivial `fread(&tmm,4,1,iii); return tmm;` helper, called twice
+matching source's own two call sites. Confirms `SCRIPT_CONFIG_VERSION
+=1` with zero drift, and that the obsolete-variable-name-skip loop
+uses a raw CRT buffered-`getc`/`fseek(SEEK_CUR=1)` pair rather than a
+wrapped helper.
+
+**`SpriteCache::loadSprite`** (`sprcache.cpp:358`) is where this round
+turned into something much bigger. Reading its full ~220-line body
+confirms three new fields -- `cachesize`@+0x10/`maxCacheSize`@+0x28
+(the function's own opening `while(cachesize>maxCacheSize)
+removeOldest();` loop) and `lastLoad`@+0x24 (its own inlined
+`seekToSprite`-equivalent logic) -- and these land EXACTLY where the
+project's OWN already-matched `SpriteCache::removeOldest` entry
+(citing `liststart@+0x1C`/`mrulist[]@+0x14`/`mrubacklink[]@+0x18`
+explicitly) predicts, given 2011's declared field order with three
+fields removed (`sprite0InitialOffset`, `sizes[]`, `flags[]`).
+
+**The problem this exposed**: `apply_structs.py`'s own `SpriteCache`
+declaration had been sitting with an explicit, wrong claim --
+*"Total size EXACTLY 0x10 (16 bytes)... none of the LRU-eviction
+bookkeeping (mrulist, mrubacklink, liststart, listend, lastLoad,
+maxCacheSize, lockedSize)... exist in this 2002 build"* -- directly
+contradicted by `removeOldest`'s own `matches.json` entry, which had
+already individually confirmed `liststart`/`mrulist[]`/`mrubacklink[]`
+in an EARLIER round. The struct declaration was simply never
+reconciled back against that finding -- the "documented in prose,
+never pushed to the actual declaration" gap this project has hit
+several times before (`compile_room_script`, `curscript`'s own
+callers, etc.), just at struct scale this time rather than a single
+function rename, and apparently sitting unnoticed for a while since
+nothing in this project's own workflow cross-checks a struct's
+declared-absent claims against its own struct's already-matched
+member functions' evidence.
+
+**The corrected picture** (rewritten in `apply_structs.py`, four
+independently-confirmed offsets closing the chain with zero slack):
+this build's `SpriteCache` really does carry the full LRU-eviction
+subsystem (`cachesize`/`mrulist`/`mrubacklink`/`liststart`/`listend`/
+`lastLoad`/`maxCacheSize`/`lockedSize`, total size 0x30/48 bytes, not
+0x10) -- 2011 didn't ADD this subsystem after 2002, this build already
+has it. What's genuinely absent, each independently confirmed
+behaviorally rather than just by missing offsets: `sprite0InitialOffset`
+(purely positional), `sizes[]` (removeOldest recomputes each sprite's
+byte size fresh instead of reading a precomputed entry), `flags[]`
+(purely positional), and -- the standout finding -- `spritesAreCompressed`:
+this build's `loadSprite` has NO decompression branch at all, doing a
+single flat `fread` of raw pixel bytes regardless of format; sprite
+data is simply never RLE-compressed on disk in this build, even
+though the exact decompression functions it would need
+(`cunpackbitl`/`cunpackbitl16`/`cunpackbitl32`) exist and are actively
+used elsewhere in this same binary, just for room-mask data, not
+sprites. Also confirmed absent: `loadSprite`'s own `hh>1000`/
+`removeAll()` corruption-recovery safety net (a plain uncapped `while`
+loop instead), and (already known from `precache`'s own entry, now
+correctly understood as consistent rather than contradictory) the
+`maxCacheSize+=sprSize; lockedSize+=sprSize;` locked-sprite
+cache-limit-bypass step in `precache` specifically.
+
+**Process lesson, worth stating plainly**: this correction wasn't found
+by looking for it -- it fell out of ordinary "read a thin entry's full
+body" work, the same technique already used for `InterfaceElement`
+and `load_ac2game_dta` this session. A struct whose own top comment
+makes a sweeping "none of this exists" claim is worth a quick sanity
+check against its own sibling member functions' `matches.json`
+entries before trusting it, especially on a struct this project
+revisits only occasionally.

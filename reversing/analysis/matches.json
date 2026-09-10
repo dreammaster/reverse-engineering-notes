@@ -3925,7 +3925,7 @@
     "source_file": "Engine/scrptrt.cpp",
     "source_line": 40,
     "confidence": "high",
-    "evidence": "void load_script_configuration(FILE*) at scrptrt.cpp:40. String match: \"ScriptEdit: invliad config version\" (44, typo preserved from source). Caller matches exactly: load_main_block (already matched), validating the room's embedded compiled-script header."
+    "evidence": "void load_script_configuration(FILE*) at scrptrt.cpp:40. String match: \"ScriptEdit: invliad config version\" (44, typo preserved from source). Caller matches exactly: load_main_block (already matched), validating the room's embedded compiled-script header. FIELD EVIDENCE (full body read for the first time): matches scrptrt.cpp:40-51 exactly -- confirms SCRIPT_CONFIG_VERSION=1 via a literal `cmp eax,1` check, and the obsolete-variable-name-skip loop matches `getc(iii); fseek(iii,lenoft,SEEK_CUR);` exactly (SEEK_CUR=1 confirmed via a literal `push 1 ; Origin` immediately before the fseek call). Names its own two call sites of a new function, `getlong` (sub_434000, see its own entry) -- a trivial `fread(&tmm,4,1,iii); return tmm;` helper. This build inlines `getc(iii)` via a raw CRT buffered-read pattern (`_filbuf` fallback when the stream buffer is exhausted) rather than calling a wrapped `getc()` -- consistent with this project's other raw-CRT-vs-wrapper findings, though `getc` itself has no AGS-side wrapper to compare against here."
   },
   {
     "kind": "manual",
@@ -3934,7 +3934,7 @@
     "source_file": "Common/sprcache.cpp",
     "source_line": 358,
     "confidence": "high",
-    "evidence": "int SpriteCache::loadSprite(int) at sprcache.cpp:358. String match: \"sprite cache array index out of bounds\" (374). Callgraph: calls initialize_sprite (already matched), consistent with lazily loading a sprite into the cache. Flat-named as a C++ member function."
+    "evidence": "int SpriteCache::loadSprite(int) at sprcache.cpp:358. String match: \"sprite cache array index out of bounds\" (374). Callgraph: calls initialize_sprite (already matched), consistent with lazily loading a sprite into the cache. Flat-named as a C++ member function. MAJOR FIELD EVIDENCE (full body read for the first time -- ~220 lines): matches sprcache.cpp:358-430ish closely, calling the already-matched `removeOldest`/`getshort`/`initialize_sprite`/`create_bitmap_ex` in source's own order. CONFIRMS THREE NEW FIELDS, closing the loop this project's OWN `removeOldest` entry had already opened (that entry cites `liststart@+0x1C`/`mrulist[]@+0x14`/`mrubacklink[]@+0x18`, directly contradicting this struct's OWN stale declaration claiming 'total size EXACTLY 0x10, none of the LRU-eviction bookkeeping exists' -- now corrected, see apply_structs.py): `cachesize`@+0x10 and `maxCacheSize`@+0x28 (the function's own opening `while(cachesize>maxCacheSize) removeOldest();` loop condition), and `lastLoad`@+0x24 (the `seekToSprite`-equivalent `if(index-1!=lastLoad) fseek(...); lastLoad=index;` logic, fused inline rather than calling a separate method). TWO CONFIRMED-ABSENT DRIFTS: (1) source's own `hh>1000` corruption-recovery fallback (calling `removeAll()` if stuck) has NO counterpart in this build's loop at all -- a plain unconditional `while` with no iteration cap or escape hatch. (2) source's `spritesAreCompressed`-gated decompression branch (`cunpackbitl`/`cunpackbitl16`/`cunpackbitl32`, all real functions elsewhere in this binary for room-mask RLE data) has no counterpart here either -- this build's own sprite pixel data read is a single flat `fread(width*height*bytesPerPixel)` call with no compression check of any kind. Sprite data is simply never RLE-compressed on disk in this build."
   },
   {
     "kind": "manual",
@@ -7910,5 +7910,14 @@
     "source_line": null,
     "confidence": "medium-high",
     "evidence": "update_music_volume's (already matched) own JGMOD-branch helper: clamps the caller-supplied volume to [0,255], stores it into a global (dword_4C2B50), then loops over `dword_55D0C0` (a channel count) applying it per-channel via a further JGMOD call -- plausibly this build's own predecessor of JGMOD's `set_mod_volume`-style API, but taking a single global-current-module volume argument rather than an explicit `JGMOD*` handle. No JGMOD source tree exists in this repo to verify an exact name against (the same standing caveat as `is_mod_playing`/`stop_mod`/`destroy_mod`'s own entries) -- left unnamed rather than force a name; role documented instead."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_434000",
+    "new_name": "getlong",
+    "source_file": "Engine/scrptrt.cpp",
+    "source_line": 28,
+    "confidence": "high",
+    "evidence": "long getlong(FILE*iii) { long tmm; fread(&tmm,4,1,iii); return tmm; } (scrptrt.cpp:28-33) -- a complete, exact, zero-drift match: fread(Buffer,ElementSize=4,ElementCount=1,Stream) into a local, returning it directly. Called twice from load_script_configuration (already matched), matching source's own two getlong() calls exactly (the version check, then numvarnames)."
   }
 ]

@@ -1423,24 +1423,84 @@ struct GUISlider {
 };
 
 struct SpriteCache {
+  // MAJOR CORRECTION (found while reading SpriteCache::loadSprite in full for field evidence --
+  // this whole comment block, and the "total size EXACTLY 0x10, none of the LRU-eviction
+  // bookkeeping exists" claim it used to carry, is WRONG and had been directly contradicted by
+  // this project's OWN already-matched `SpriteCache::removeOldest` entry (which cites
+  // `liststart@+0x1C`/`mrulist[]@+0x14`/`mrubacklink[]@+0x18` explicitly) for some number of
+  // rounds without ever being reconciled back into this struct declaration -- the "documented
+  // in prose, never pushed to the actual declaration" gap this project has hit before, just at
+  // struct scale this time. The discardable LRU-cache subsystem is NOT a later addition; it is
+  // fully present here, just missing four of 2011's declared fields (see below).
   long *offsets;                // +0x00, high confidence: confirmed via SpriteCache::initFile's
                             // "offsets[vv]=0;" loop write (Common/sprcache.cpp:642).
   long elements;                 // +0x04, high confidence: confirmed as the loop bound in the same
-                            // initFile loop ("for (vv=0; vv<elements; vv++) ...").
+                            // initFile loop ("for (vv=0; vv<elements; vv++) ..."). Sits 4 bytes
+                            // earlier than 2011's own declared offset (+0x08) -- see
+                            // `sprite0InitialOffset` below.
   void **images;                 // +0x08, high confidence: confirmed via initFile's "images[vv]=NULL;"
                             // loop write (sprcache.cpp:641). (block == BITMAP*, already typedef'd above,
                             // used loosely here as void* since the exact block typedef isn't in scope
                             // at this point in the decl order -- functionally equivalent.)
   void *ff;                      // +0x0C, high confidence: confirmed via initFile's
-                            // "ff=clibfopen(filnam,\"rb\");" assignment (sprcache.cpp:645).
-  // Total size EXACTLY 0x10 (16 bytes), matching the IDB's pre-existing known struct size --
-  // this struct is COMPLETE, not a minimum/partial recovery. DRASTIC DRIFT from 2011's
-  // ~16-member class SpriteCache (Common/sprcache.h): none of the LRU-eviction bookkeeping
-  // (mrulist, mrubacklink, liststart, listend, lastLoad, maxCacheSize, lockedSize), per-sprite
-  // metadata (sizes, flags, spritesAreCompressed), or cache-size accounting (cachesize) exist in
-  // this 2002 build -- the whole discardable-cache subsystem is a later addition. 2002's
-  // SpriteCache is just two raw parallel arrays (offsets/images) plus a count and a file handle,
-  // with no size limit or eviction policy.
+                            // "ff=clibfopen(filnam,\"rb\");" assignment (sprcache.cpp:645). Sits 12
+                            // bytes earlier than 2011's own declared offset (+0x18) -- see
+                            // `sizes`/`flags` below.
+  // CONFIRMED ABSENT (positional/arithmetic -- see the zero-slack chain closing this struct
+  // below): `long sprite0InitialOffset;` (2011's own field between `offsets` and `elements`,
+  // sprcache.h:48) and `int *sizes; unsigned char *flags;` (2011's own fields between `images`
+  // and `ff`, sprcache.h:51-52) -- removing exactly these three 4-byte fields is what shifts
+  // `elements`/`images`/`ff` to their own confirmed offsets with zero slack. `sizes[]`'s absence
+  // is independently reinforced behaviorally too, not just arithmetically: `removeOldest`
+  // (already matched) recomputes each evicted sprite's byte size fresh at eviction time instead
+  // of reading a precomputed `sizes[sprnum]` entry.
+  long cachesize;                 // +0x10, high confidence: confirmed via `loadSprite`'s own
+                            // opening `while(cachesize>maxCacheSize) removeOldest();` loop,
+                            // matching source (sprcache.cpp:363-371) in shape (this build's own
+                            // version has no `hh>1000`/`removeAll()` safety-net fallback at all --
+                            // CONFIRMED ABSENT, that whole error-recovery branch has no
+                            // counterpart here). Sits immediately after `ff`, with zero room for
+                            // 2011's own `bool spritesAreCompressed;` (plus its trailing alignment
+                            // padding) -- CONFIRMED ABSENT, independently reinforced behaviorally:
+                            // `loadSprite`'s own pixel-data read is a single flat `fread` of
+                            // `width*height*bytesPerPixel` bytes with NO compression check and no
+                            // `cunpackbitl`/`cunpackbitl16`/`cunpackbitl32` call anywhere in its
+                            // body (those functions exist and ARE used elsewhere in this binary,
+                            // for room-mask RLE decompression -- just never for sprite data here).
+  int *mrulist;                   // +0x14, high confidence: confirmed via `removeOldest`'s own
+                            // unconditional list-unlink step (`mrulist[oldstart]=0;`).
+  int *mrubacklink;                // +0x18, high confidence: confirmed the same way
+                            // (`mrubacklink[liststart]=START_OF_LIST;`).
+  int liststart;                  // +0x1C, high confidence: confirmed via `removeOldest`'s own
+                            // leading `if(liststart<0) return;` guard.
+  int listend;                    // +0x20, MEDIUM confidence: positional only -- boxed in with
+                            // zero slack between the confirmed `liststart` and `lastLoad`,
+                            // matching 2011's own declared adjacency; no direct access site found
+                            // yet (this build's `removeOldest` never needs to compare against it,
+                            // per DRIFT #2 below).
+  int lastLoad;                   // +0x24, high confidence: confirmed via `loadSprite`'s own
+                            // `if(index-1 != lastLoad) fseek(...);`/`lastLoad=index;` pair
+                            // (`seekToSprite`'s own logic, fused inline rather than called as a
+                            // separate method).
+  long maxCacheSize;               // +0x28, high confidence: confirmed via the same `loadSprite`
+                            // opening loop condition that confirmed `cachesize` above.
+  long lockedSize;                 // +0x2C, MEDIUM confidence: positional only -- boxed in with
+                            // zero slack after the confirmed `maxCacheSize`, matching 2011's own
+                            // declared adjacency and closing the struct at exactly 0x30 (48
+                            // bytes); no direct access site found yet (this build's own
+                            // `precache`, already matched, is confirmed SIMPLER than 2011's --
+                            // it never does the `maxCacheSize+=sprSize; lockedSize+=sprSize;`
+                            // "let locked sprites bypass the cache limit" step at all, so this
+                            // field's only 2011 writer has no counterpart here to read from).
+  // Total confirmed size 0x30 (48 bytes) via the zero-slack chain above (four independently-
+  // confirmed offsets -- cachesize/mrulist/mrubacklink/liststart from one function, lastLoad/
+  // maxCacheSize from another -- land exactly where removing sprite0InitialOffset/sizes/flags/
+  // spritesAreCompressed from 2011's own declared layout predicts, with no gaps and no overlaps).
+  // DRIFT, all CONFIRMED ABSENT by direct behavioral evidence, not just missing fields:
+  // `sprite0InitialOffset`, `sizes[]`, `flags[]`, `spritesAreCompressed` (sprite data is never
+  // RLE-compressed in this build), the `hh>1000`/`removeAll()` corruption-recovery safety net in
+  // `loadSprite`, `removeOldest`'s own "cache emptied completely" special case and its
+  // recursive-link self-healing check, and `precache`'s own locked-sprite cache-limit bypass.
 };
 
 struct EventBlock {

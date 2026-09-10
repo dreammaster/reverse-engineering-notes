@@ -4245,6 +4245,27 @@ disassembly work.
   leading `SPF_HADALPHACHANNEL`/`SPF_ALPHACHANNEL` branch has no
   counterpart here at all — a third independent confirmation this
   build predates 32-bit truecolor/alpha sprite support.
+- **`getlong` named; MAJOR CORRECTION to `SpriteCache`.** `load_
+  script_configuration` names a new trivial helper, `getlong`.
+  `SpriteCache::loadSprite`, read in full, confirms three new fields
+  (`cachesize`@+0x10/`maxCacheSize`@+0x28/`lastLoad`@+0x24) that land
+  exactly where the project's OWN already-matched `removeOldest` entry
+  (citing `liststart`/`mrulist[]`/`mrubacklink[]`) predicts — directly
+  contradicting `SpriteCache`'s own struct declaration, which had been
+  sitting with an explicit wrong claim ("total size EXACTLY 0x10...
+  none of the LRU-eviction bookkeeping... exist") for several rounds,
+  never reconciled against `removeOldest`'s own findings. Corrected:
+  this build's `SpriteCache` DOES carry the full LRU-eviction
+  subsystem (0x30/48 bytes, not 0x10) — 2011 didn't add it later, this
+  build already has it. Genuinely absent, each independently confirmed
+  behaviorally: `sprite0InitialOffset`, `sizes[]` (recomputed fresh
+  instead), `flags[]`, and `spritesAreCompressed` — this build's
+  `loadSprite` has NO decompression branch at all; sprite data is
+  never RLE-compressed on disk here, even though the exact
+  decompression functions it would need exist and are used elsewhere
+  in this binary for room-mask data. See `reversing/notes/
+  struct-layout-drift.md` for the complete writeup and process
+  lesson.
 
 ## Third-party library identification (Task #10)
 
