@@ -159142,7 +159142,7 @@ static Functions_9(void) {
 	add_func    (0X42C337,0X42C639);
 	set_func_flags(0X42C337,0x5410);
 	SetType(0X42C337, "int __cdecl fread_script(FILE *Stream);");
-	set_func_cmt(0X42C337,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: ccScript *fread_script(FILE*) at CSRUN.CPP:2029. String matches: \"file was not written by fwrite_script or seek position is incorrect\" (2043), \"internal error rebuilding script\" (2117). Caller matches exactly: load_room (already matched) -- room files embed a compiled room script blob, deserialized via fread_script.", 1);
+	set_func_cmt(0X42C337,	"[reversing] confirmed match\nsource: Common/CSRUN.CPP\nconfidence: high\nevidence: ccScript *fread_script(FILE*) at CSRUN.CPP:2029. String matches: \"file was not written by fwrite_script or seek position is incorrect\" (2043), \"internal error rebuilding script\" (2117). Caller matches exactly: load_room (already matched) -- room files embed a compiled room script blob, deserialized via fread_script. MAJOR FIELD EVIDENCE (full body read for the first time -- ~390 lines): matches CSRUN.CPP:2029-2119 closely, populating every already-fully-confirmed `ccScript` field in source's own exact order (globaldata/globaldatasize/code/codesize/strings/stringssize/fixuptypes/fixups/numfixups/imports/numimports/exports/export_addr/numexports, all already established). TWO DECISIVE CONFIRMATIONS: (1) the opening `push 1C50h; call malloc` is a HARD ALLOCATION-SITE ANCHOR for `ccScript`'s own total size -- 0x1C50 lands EXACTLY on `instances`@+0x1C4C plus its own 4 bytes, upgrading the struct's total size from an arithmetic/positio" "nal fit to a direct allocation-size confirmation, the standard this pro", 1);
 	set_frame_size(0X42C337, 0X10, 4, 0);
 	define_local_var(0X42C337, 0X42C639, "[bp-0XC]", "Buffer");
 	define_local_var(0X42C337, 0X42C639, "[bp-0X4]", "Block");
@@ -159423,14 +159423,14 @@ static Functions_9(void) {
 	SetType(0X431EA3, "void init_pathfinder(void);");
 	set_func_cmt(0X431EA3,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, ZERO-DRIFT exact match -- two malloc(4000) calls into pathbackx/pathbacky, matching source's \"malloc(sizeof(int)*MAXPATHBACK)\" with MAXPATHBACK=1000 and sizeof(int)=4 (4*1000=4000) precisely -- an unusually clean case where this project's typical smaller-capacity-in-2002 pattern does NOT apply at all.", 1);
 	set_frame_size(0X431EA3, 0, 4, 0);
-	add_func    (0X431ECC,0X431F10);
-	set_func_flags(0X431ECC,0x5410);
-	set_func_cmt(0X431ECC,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`.", 1);
-	set_frame_size(0X431ECC, 0, 4, 0);
 }
 
 static Functions_10(void) {
 
+	add_func    (0X431ECC,0X431F10);
+	set_func_flags(0X431ECC,0x5410);
+	set_func_cmt(0X431ECC,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`.", 1);
+	set_frame_size(0X431ECC, 0, 4, 0);
 	add_func    (0X431F10,0X431F99);
 	set_func_flags(0X431F10,0x5410);
 	SetType(0X431F10, "void __stdcall print_welcome_text(char *verno, char *aciverno);");
@@ -160182,6 +160182,10 @@ static Functions_10(void) {
 	set_func_flags(0X443F70,0x15400);
 	set_func_cmt(0X443F70,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
 	set_frame_size(0X443F70, 0X90, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X444320,0X4443B1);
 	set_func_flags(0X444320,0x5400);
 	set_func_cmt(0X444320,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -160200,10 +160204,6 @@ static Functions_10(void) {
 	set_func_flags(0X4444C0,0x5400);
 	set_func_cmt(0X4444C0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2\nconfidence: high\nevidence: Allegro library, SAMPLE *load_sample(AL_CONST char *filename) -- well-known third-party API, dispatches by file extension. Called from sub_408556 (this round's new match, my_load_wave) and PlayMusic (already matched). Body is a decisive, complete match to Allegro's real implementation: uconvert's (already matched) two call sites build \"wav\"/\"voc\" extension-comparison buffers, each followed by a comparison helper (sub_42D018/sub_454010) and, on match, a direct call to the already-matched `load_wav`/`load_voc` (both exact linker-symbol matches, alleg_s_crt:sound.obj) -- exactly Allegro's own load_sample() extension-dispatch logic, with load_wav and load_voc as its only two real loaders and NULL as the unrecognized-extension fallback.", 1);
 	set_frame_size(0X4444C0, 0X24, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X444560,0X4447EC);
 	set_func_flags(0X444560,0x15400);
 	set_func_cmt(0X444560,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
@@ -161636,6 +161636,10 @@ static Functions_11(void) {
 	set_frame_size(0X464A30, 0XCC, 0, 0);
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC8]", "Handles");
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC4]", "hThread");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X464B10,0X464B7B);
 	set_func_flags(0X464B10,0x5400);
 	SetType(0X464B10, "void __cdecl sub_464B10(void *);");
@@ -161710,10 +161714,6 @@ static Functions_11(void) {
 	add_func    (0X465AD0,0X465BBB);
 	set_func_flags(0X465AD0,0x5400);
 	set_frame_size(0X465AD0, 0X2C, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X465C20,0X465C2D);
 	set_func_flags(0X465C20,0x5404);
 	SetType(0X465C20, "void __cdecl __CxxRestoreUnhandledExceptionFilter();");
@@ -163520,6 +163520,10 @@ static Functions_12(void) {
 	add_func    (0X48BEA0,0X48BEC1);
 	set_func_flags(0X48BEA0,0x5400);
 	set_frame_size(0X48BEA0, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X48BED0,0X48BF04);
 	set_func_flags(0X48BED0,0x5400);
 	set_frame_size(0X48BED0, 0X8, 0, 0);
@@ -163598,10 +163602,6 @@ static Functions_12(void) {
 	add_func    (0X48CEC0,0X48CF0F);
 	set_func_flags(0X48CEC0,0x5400);
 	set_frame_size(0X48CEC0, 0X8, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X48CF10,0X48CF57);
 	set_func_flags(0X48CF10,0x5400);
 	set_frame_size(0X48CF10, 0X4, 0, 0);

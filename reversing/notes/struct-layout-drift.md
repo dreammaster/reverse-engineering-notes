@@ -14777,3 +14777,30 @@ a FOURTH independent confirmation (after the CLIB-subsystem round's
 three) that `ci_fopen()`'s case-insensitive-path wrapper doesn't exist
 anywhere in this build. Also confirms a new reader of the
 already-established `sccmdnames[]` bytecode-mnemonic table.
+
+### `fread_script`: `ccScript`'s total size upgrades to a hard allocation-site anchor, plus a second confirmation of the missing Sections block
+
+Moved on to a fresh batch of thin entries; `fread_script`
+(`CSRUN.CPP:2029-2119`) was the standout. `ccScript` had already been
+completely field-mapped (via `ccCreateInstanceEx`/`ccCallInstance`/
+`ccFreeScript`), so this function's own body is mostly write-side
+reconfirmation of already-known offsets in source's exact order --
+but two things make it worth recording on its own.
+
+First, its opening `push 1C50h; call malloc` is a genuine allocation-
+site anchor for `ccScript`'s own total size, landing exactly on
+`instances`@+0x1C4C plus its own 4 bytes with zero remainder --
+upgrading the struct's total size from an arithmetic/positional fit
+to the kind of hard evidence this project's own struct-recovery
+methodology always prefers when available (the same standard
+`GameSetupStructBase`'s `spriteflags[6000]`/`ccInstance`'s
+`exportaddr[600]` closed on).
+
+Second, counting every `fget_long()` call in the function finds
+exactly 8 (`fileVer`/`globaldatasize`/`codesize`/`stringssize`/
+`numfixups`/`numimports`/`numexports`/the trailing `ENDFILESIG`
+check) -- with no 9th call for the `fileVer>=83`-gated `numSections`
+read. This gives `numSections`/`sectionNames`/`sectionOffsets`'s
+already-established absence (found via `ccFreeScript`'s own
+destructor-side evidence) a second, independent confirmation from the
+READ side instead.

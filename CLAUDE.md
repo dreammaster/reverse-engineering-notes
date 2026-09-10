@@ -4294,6 +4294,14 @@ disassembly work.
   against). `dump_instruction` confirms `SCMD_LINENUM=0x24` with zero
   drift and gives `ci_fopen()`'s absence a FOURTH independent
   confirmation. See `reversing/notes/struct-layout-drift.md`.
+- **`fread_script`: `ccScript`'s total size upgrades to a hard
+  allocation-site anchor.** Its opening `malloc(0x1C50)` lands exactly
+  on `instances`@+0x1C4C+4 with zero remainder — upgrading the
+  struct's total size from an arithmetic fit to a genuine allocation
+  anchor. Counting its 8 `fget_long()` calls (no 9th for `numSections`)
+  gives that field's already-established absence a second,
+  independent confirmation from the read side. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

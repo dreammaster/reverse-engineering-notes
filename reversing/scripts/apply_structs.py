@@ -1050,6 +1050,14 @@ struct ccScript {
                             // against 0 by ccFreeInstance -- this is what originally led to identifying
                             // ccFreeInstance (see reversing/notes/struct-layout-drift.md). Also confirmed
                             // set to 0 by fread_script right after allocation.
+  // Total size 0x1C50 (7248 bytes), high confidence -- UPGRADED from an arithmetic/positional fit to a
+  // direct ALLOCATION-SITE anchor: `fread_script` (already matched, read in full for field evidence)
+  // does `malloc(0x1C50)` for a brand-new ccScript right at its own opening, landing exactly on
+  // `instances`@+0x1C4C plus its own 4 bytes with zero remainder. The same round's read of
+  // `fread_script`'s own body also gives `numSections`/`sectionNames`/`sectionOffsets`'s absence a
+  // SECOND independent confirmation (after `ccFreeScript`'s own destructor-side finding): exactly 8
+  // `fget_long()` calls appear in the whole function, with no 9th call for the `fileVer>=83`-gated
+  // Sections block 2011 still reads.
 };
 
 struct GUIButton {
