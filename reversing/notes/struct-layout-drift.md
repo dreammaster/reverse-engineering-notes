@@ -14462,3 +14462,62 @@ options[]` and `GUIMain` comments updated, pushed through a fresh
 window` and `dword_52312C` were already correctly identified/left as
 comment-only global notes per this project's established convention
 for globals that don't need an IDB-level rename to be useful).
+
+### Three more thin/bare entries closed in the same sweep: `find_highest_room_entered`'s crash-on-legit-input regression, `make_ts_func_name`'s two globals, and `is_route_possible`'s own private `suggestx`/`suggesty` search
+
+Kept going through the short-evidence pool flagged at the end of the
+previous round.
+
+**`find_highest_room_entered`** (`AC.CPP:22597-22605`) matches closely
+in structure (`MAX_ROOMS`/`roomstats[].beenhere`, both already
+established, zero drift) but its trailing `if(fndas<0) quit(...)` check
+is LIVE here where 2011's own source has it commented out with an
+explicit reason: `"This is actually legal - they might start in room
+400 and save"`. This is the rare case of drift running the OPPOSITE
+direction from most findings in this project — a later safety fix 2011
+added that this build predates, not a missing feature. Concretely: this
+build's `SaveGameSlot` (the function's only caller) will crash via
+`quit()` on a save made after starting in a room >= `MAX_ROOMS`(300)
+without ever visiting a lower-numbered one, where 2011 explicitly
+allows it — worth flagging for the ScummVM port.
+
+**`make_ts_func_name`** (`AC.CPP:4604-4608`) matches exactly (two
+`sprintf` calls building a mangled function name) and identifies two
+new globals, `byte_4E459C`=`bname`/`byte_4CD180`=`bne` (the
+intermediate and final buffers). Its only caller is `run_event_block`
+(the EventBlock-era dispatcher, already matched) passing the
+already-confirmed `evblockbasename`/`evblocknum` globals — 2011's own
+call sites for this exact function sit inside the much later
+`NewInteraction`-based command-list runner instead, a real caller-side
+architectural difference this project has already established this
+build predates entirely (not merely a smaller version of the same
+mechanism).
+
+**`is_route_possible`** (its own callees were already fully chased in
+earlier rounds, but the function's own ~500-line body had never been
+read start to finish for its own field evidence) turns up the
+biggest find of the three: two new globals, `dword_535940`/
+`dword_535944` = `suggestx`/`suggesty` (`routefnd.cpp:24`), decisively
+confirmed via the function's own opening (`wallscreen=wss; suggestx=
+-1;`, matching the disassembly's `mov dword_535940,0FFFFFFFFh`
+immediately after the already-confirmed `wallscreen` write) and a
+later conditional overwrite inside the SAME function, gated by the
+identical `90000`(`0x15F90`) squared-distance threshold already
+confirmed in `find_nearest_walkable_area`'s (`sub_40AE7D`) own round.
+Cross-confirmed from the read side too: `__find_route` (already
+matched) reads both back via 16-bit (`word ptr`) loads, matching this
+build's established short-not-int route-coordinate convention.
+**Architectural finding**: this build's `is_route_possible` carries
+its OWN private nearest-walkable-point search fused directly into its
+body — the SAME algorithm and constants as the separately-matched
+`find_nearest_walkable_area` (called only from `MoveToWalkableArea`)
+— meaning this build has TWO independent implementations of the same
+search where 2011 factored it into one shared function called from
+both sites. (A sibling callee nearby, auto-named after an unrelated
+`wxRichToolTip::wxRichToolTip` C++ symbol, is the same known FLIRT/
+template-glue false positive already flagged and correctly ignored in
+an earlier round.)
+
+All three applied via a fresh `apply_all_and_export.py` round (no
+renames needed — all three functions were already correctly named,
+this was pure field-evidence enrichment).

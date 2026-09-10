@@ -4203,6 +4203,24 @@ disassembly work.
   stays MEDIUM, but their absence-of-use now meets this project's own
   "checked everywhere" standard rather than "checked in a couple of
   functions." See `reversing/notes/struct-layout-drift.md`.
+- **Three more thin entries closed in the same sweep.**
+  `find_highest_room_entered` finds a rare reverse-direction drift:
+  its `if(fndas<0) quit(...)` check is LIVE here where 2011's own
+  source has it commented out with an explicit "this is actually
+  legal" reason — a real crash-on-legitimate-save-data regression
+  this build predates the fix for, worth flagging for the ScummVM
+  port. `make_ts_func_name` identifies two new globals (`bname`/
+  `bne`) and confirms its only caller is the EventBlock-era
+  `run_event_block`, not 2011's later `NewInteraction`-based runner.
+  `is_route_possible` (its callees already fully chased, but its own
+  ~500-line body never read start to finish) turns up two new
+  globals, `suggestx`/`suggesty`, AND an architectural finding: this
+  build's own private nearest-walkable-point search is fused directly
+  into `is_route_possible`'s body — the same algorithm/constants as
+  the separately-matched `find_nearest_walkable_area` — meaning two
+  independent implementations of the same search exist here where
+  2011 factored it into one shared function. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
