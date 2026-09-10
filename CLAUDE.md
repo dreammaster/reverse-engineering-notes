@@ -4266,6 +4266,16 @@ disassembly work.
   in this binary for room-mask data. See `reversing/notes/
   struct-layout-drift.md` for the complete writeup and process
   lesson.
+- **`move_object`: an undocumented instant-teleport mode, a hardcoded
+  object-move cap, and a new merged `move_speed` global.** A leading
+  `if(spee==-1)` branch (no 2011 counterpart) writes `tox`/`toy`
+  directly into `RoomObject.x`/`.y`, skipping pathfinding entirely. A
+  hardcoded `objj>9` cap (also absent from 2011) ties to this build's
+  already-confirmed 10-slot `RoomObject.obj[10]`. New global
+  `dword_4B421C` is this build's own merged, not-pre-converted
+  predecessor of 2011's separate `move_speed_x`/`move_speed_y` -- the
+  negative-speed-becomes-reciprocal special case is confirmed absent
+  at both write sites. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

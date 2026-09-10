@@ -14673,3 +14673,36 @@ makes a sweeping "none of this exists" claim is worth a quick sanity
 check against its own sibling member functions' `matches.json`
 entries before trusting it, especially on a struct this project
 revisits only occasionally.
+
+### `move_object`: an undocumented instant-teleport mode, a hardcoded object-move cap, and a new merged `move_speed` global
+
+One more thin entry closed. `move_object` (`AC.CPP:16543-16569`)
+matches the normal pathfinding case closely (`find_route` call,
+`RoomObject.moving`@+0x18 write, both already established), but its
+full body carries two pieces of behavior with no 2011 counterpart at
+all, not merely a missing later feature:
+
+1. A leading `if(spee==-1)` branch writes the caller's `tox`/`toy`
+   DIRECTLY into `RoomObject.x`@+0x00/`.y`@+0x04 and returns
+   immediately, skipping pathfinding entirely -- an instant-teleport
+   mode. 2011's own `move_object` has no such branch anywhere.
+2. A hardcoded `if(objj>9) quit("Objects 10 and above can't move. Use
+   a character instead.");` cap, also absent from 2011 (which relies
+   solely on `is_valid_object`) -- ties directly to this build's own
+   already-confirmed 10-slot `RoomObject.obj[10]` capacity, since
+   `objj+1` becomes the object's own reserved slot in the shared
+   `MoveList` array.
+
+Also identifies a new global: `dword_4B421C` (default init value 3,
+this build's own merged predecessor of 2011's separate `move_speed_x`/
+`move_speed_y` fixed-point globals). This build writes the RAW
+caller-supplied speed here with no `itofix()` conversion at write
+time (both from `move_object` and from `walk_character`, its
+character-move counterpart) -- `calculate_move_stage` (already
+matched, whose own entry had explicitly left its "abs()+itofix()-
+shaped" tail untraced) reads it back and converts it at USE time
+instead. CONFIRMED ABSENT: source's own `set_route_move_speed`
+negative-speed-becomes-reciprocal special case -- neither write site
+does anything but store the raw value. A single merged global works
+here because both callers always pass the same speed for both axes,
+so 2011's X/Y split was never exercised asymmetrically in this build.
