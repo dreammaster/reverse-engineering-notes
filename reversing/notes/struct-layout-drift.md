@@ -14967,3 +14967,58 @@ edit: `GameState`/`play` has never had its type applied to the live
 global address (a documentation-only struct throughout, consistent
 with how this project has always treated it), so this is purely a
 type-declaration correction for the eventual C-reconstruction phase.
+
+### A genuinely new evidence source: reading the actual shipped game data, resolving `RoomStruct.whataction[]`'s "is this dead code?" question
+
+Every technique this project has used so far reads either the
+disassembly or the 2011 reference source -- never the game's own real
+*data*. `whataction[130]`/`val1[130]`/`val2[130]`/`otcond[130]`/
+`points[130]` (`RoomStruct`'s "obsolete v2.00 action editor" arrays,
+confirmed several rounds ago to have a real, version-gated
+room-file-versions-7/8 read path in `load_main_block`) had one
+question explicitly left open: is this fallback path genuinely
+exercised by Rob Blanc 1's own room files, or is it dead code the
+compiled engine merely carries, inherited unmodified from an older
+AGS version, that this specific game never triggers?
+
+That question is answerable directly, without touching IDA at all,
+because the actual game is installed locally (`C:\games\ags\
+robblanc1\` -- the DOS release -- and `C:\games\ags\robblanc1_win\` --
+the Windows release this whole project's disassembly is actually
+taken from). AGS packages a game's room files, sprites, fonts, and
+compiled script into one CLIB-format asset library (already
+reverse-engineered in this project via `csetlib`/`clibfindindex`/
+`clibopenfile`) -- either as a standalone `ac2game.dat`, or appended
+directly to the end of the game's own EXE (detected via a
+`CLIB\x01\x02\x03\x04SIGE` trailer signature, exactly the
+"appended-to-end-of-exe" branch `csetlib`'s own disassembly was
+already shown to implement). New script,
+`reversing/scripts/parse_clib_manifest.py`, parses this manifest
+directly (both the `lib_version` 6 format the DOS `ac2game.dat` uses,
+and the `lib_version` 10 format `rb.exe` itself uses) and locates
+every packaged file's exact byte offset -- no game engine, no IDA,
+just a plain Python read of the real file.
+
+Cross-referenced against `Common/acroom.h`'s own `room_file_header`
+declaration (a bare `short version;`, since its `#ifdef
+ALLEGRO_BIG_ENDIAN` alternate reader never applies on this x86
+target), reading the first two bytes of every one of Rob Blanc 1's 19
+real room files gives a clean, unanimous answer: **every room in the
+DOS release reports room-file version 11; every room in the Windows
+release (`rb.exe`, this project's actual disassembly target) reports
+version 13.** Both numbers sit comfortably inside this build's own
+already-confirmed-supported `[3,14]` version range (`load_main_block`'s
+own gapless run of version-gate checks, found several rounds ago) --
+but well ABOVE the `v7`/`v8` threshold `whataction[]`'s own fallback
+path exists for. This settles the question definitively: Rob Blanc 1
+itself NEVER shipped a room old enough to exercise that path -- it is
+CONFIRMED DEAD CODE for this specific game, not merely "not
+established." The array's own layout/capacity findings from several
+rounds ago are unaffected; only the open "is this actually exercised"
+question closes.
+
+Recorded as a technique worth remembering for future sessions: when a
+disassembly-only investigation hits a "no way to check without the
+game's own data" wall, and the actual game happens to be installed
+locally, reading its real files directly can settle a question no
+amount of further disassembly reading could.

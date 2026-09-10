@@ -298,6 +298,32 @@ reversing/
                                      .data region) rather than silently
                                      miscounting -- don't trust offsets past
                                      an unhandled line.
+    parse_clib_manifest.py         - a genuinely different evidence source
+                                     from everything else in this directory:
+                                     reads the CLIB asset-library manifest
+                                     directly out of an ACTUAL Rob Blanc 1
+                                     game install (locally at
+                                     C:\games\ags\robblanc1\ac2game.dat --
+                                     the DOS release -- and C:\games\ags\
+                                     robblanc1_win\rb.exe -- the Windows
+                                     release this project's own disassembly
+                                     is taken from, which has its game data
+                                     appended directly to the EXE), with NO
+                                     IDA/disassembly involved at all. Handles
+                                     both CLIB manifest shapes this project
+                                     has confirmed via csetlib/
+                                     read_new_format_clib (lib_version 6 and
+                                     10). Use `--versions` to also read each
+                                     packaged *.crm room file's own leading
+                                     room_file_header.version field. Written
+                                     to settle a "not established without
+                                     the game's own data" question about
+                                     RoomStruct.whataction[]'s pre-v9
+                                     fallback path (see struct-layout-
+                                     drift.md) -- worth remembering whenever
+                                     a disassembly-only investigation hits a
+                                     wall a look at the real shipped data
+                                     could resolve instead.
   analysis/                        - generated JSON artifacts (regeneratable,
                                      but keep committed since they're
                                      expensive to rebuild and are the working
@@ -4352,6 +4378,25 @@ disassembly work.
   No IDB-visible change: `GameState` has never had its type applied to
   the live `play` global, documentation-only as always. See
   `reversing/notes/struct-layout-drift.md`.
+- **A genuinely new evidence source: read the actual shipped game data
+  directly, settling whether `RoomStruct.whataction[]`'s pre-v9
+  fallback path is dead code.** New script,
+  `reversing/scripts/parse_clib_manifest.py`, parses the CLIB asset-
+  library manifest straight out of a real local Rob Blanc 1 install --
+  no IDA, no disassembly, just reading the actual game files. Checked
+  the `room_file_header.version` field of all 19 real room files in
+  BOTH the DOS release (`ac2game.dat`) and the Windows release
+  (`rb.exe`, this project's own actual disassembly target, whose game
+  data is appended directly to the EXE): version 11 (DOS) / 13
+  (Windows), both comfortably inside this build's own confirmed
+  `[3,14]` supported range but well above the `v7`/`v8` threshold the
+  fallback path exists for. Rob Blanc 1 itself never shipped a room
+  old enough to trigger it -- CONFIRMED DEAD CODE for this specific
+  game, not merely unestablished. Worth remembering as a technique:
+  when a disassembly-only question hits a wall, and the actual game is
+  installed locally, its real data can sometimes answer what no more
+  disassembly reading could. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

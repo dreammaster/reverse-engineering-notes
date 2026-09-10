@@ -2044,7 +2044,24 @@ struct GameSetupStructBase {
                             // declared order, acroom.h:2785, right after playercharacter) -- exact
                             // size match, but not independently confirmed via an access site this
                             // round (arithmetic fit only, per the defpal-retraction rule -- not
-                            // asserted as a typed field).
+                            // asserted as a typed field). EXHAUSTIVE NEGATIVE CHECK (later round,
+                            // `play_invorder`-membership-question follow-up): a previous note on
+                            // this same field elsewhere in this project only checked that 2011's
+                            // OWN source has zero usages of `__old_spriteflags` -- a real but
+                            // narrower check than this build's own code. Computed this field's
+                            // absolute address range (0x51B018..0x51B84C, from `totalscore`'s own
+                            // confirmed address minus this field's size) and grepped every
+                            // `byte_51B0*`..`byte_51B8*`/`word_...`/`dword_...` label anywhere in
+                            // the ENTIRE disassembly against that range: ZERO hits. Not one single
+                            // byte anywhere inside this 2100-byte span is ever named, read, or
+                            // written by ANY function in this binary, not just absent from 2011's
+                            // reference source -- the strongest possible negative result this
+                            // project's own label-existence technique can produce. Consistent with
+                            // (but not proof of) the arithmetic-fit identity above: whatever
+                            // exists here, this build's own compiled code never touches a single
+                            // byte of it, matching the same "dead 2002 field, unused even before
+                            // 2011 stopped reading it" pattern already found for
+                            // `OriGameSetupStruct2.reserved2[8]`.
   int totalscore;                 // +0x8534, high confidence: `dword_51B84C`. A PERFECT zero-slack
                             // positional fit (this field's whole 4 bytes exactly fills the gap
                             // between the __old_spriteflags-shaped span above and numinvitems
@@ -4620,11 +4637,25 @@ struct RoomStruct {
                             // and `points`'s start -- four consecutive zero-slack boundaries in
                             // a row, computing to 130 = `NUM_CONDIT+3` with `NUM_CONDIT=127`
                             // (matching the same-function's own `ElementCount=0x7F`(127) local
-                            // used by the sub-v7 conversion path). Whether this 2002 build's OWN
-                            // room files actually exercise this path (i.e. were compiled with a
-                            // pre-v9 room format) or only carries the dead-but-still-compiled
-                            // fallback code is not established -- either way, the array's own
-                            // layout is now confirmed.
+                            // used by the sub-v7 conversion path). RESOLVED (much later round,
+                            // via a genuinely different evidence source -- see
+                            // `reversing/scripts/parse_clib_manifest.py` and
+                            // `struct-layout-drift.md` for the full writeup): parsed the actual
+                            // shipped game data directly out of BOTH real Rob Blanc 1 installs
+                            // (the DOS `ac2game.dat` and, more importantly, the exact disassembled
+                            // `rb.exe` itself, whose game data is appended to the EXE per this
+                            // build's own confirmed CLIB "appended-to-end-of-exe" packaging mode)
+                            // and read every one of the 19 real `.crm` room files' own leading
+                            // `room_file_header.version` field directly. ALL of them report
+                            // version 11 (DOS release) / version 13 (Windows release, this
+                            // project's actual disassembly target) -- comfortably inside this
+                            // build's own confirmed-supported [3,14] version range, but well ABOVE
+                            // the v7/v8 threshold this fallback path exists for. This build's own
+                            // room files never exercise it: CONFIRMED DEAD CODE for this specific
+                            // game, not merely "not established" -- the compiled engine carries
+                            // the capability (inherited, unmodified, from whatever AGS version
+                            // this build's own engine was forked from), Rob Blanc 1 itself just
+                            // never shipped a room old enough to need it.
   short val1[130];               // +0x538..0x63C (260 bytes), high confidence: see `whataction`
                             // above for the shared evidence (zero-gap chain + version-gated
                             // read path). Matches 2011's declared adjacency
