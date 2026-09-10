@@ -4302,6 +4302,16 @@ disassembly work.
   gives that field's already-established absence a second,
   independent confirmation from the read side. See `reversing/notes/
   struct-layout-drift.md`.
+- **`TreeMap` finally formalized as a real struct declaration.** Had
+  already been fully field-confirmed via `findValue`'s own entry
+  rounds ago, but never actually pushed into `apply_structs.py`.
+  `TreeMap::addText`, read in full, reconfirms every field from the
+  write side and supplies a hard allocation-site anchor
+  (`operator new(0x10)` for a fresh child node) confirming
+  `sizeof(TreeMap)==0x10` with zero drift. `_display_at`/
+  `replace_tokens` closed the rest of this batch with mostly
+  reconfirmation, no new fields. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

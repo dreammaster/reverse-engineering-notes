@@ -3565,7 +3565,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 14200,
     "confidence": "high",
-    "evidence": "void replace_tokens(char*,char*,int) at AC.CPP:14200. String matches: \"!Display: special token not terminated\" (14214), \"!Display: invalid inv item specified in @IN@\" (14221), \"!Display: invalid global int index speicifed in @GI@\" (14226). Caller matches exactly: called only from DisplayMessage, an already-named function."
+    "evidence": "void replace_tokens(char*,char*,int) at AC.CPP:14200. String matches: \"!Display: special token not terminated\" (14214), \"!Display: invalid inv item specified in @IN@\" (14221), \"!Display: invalid global int index speicifed in @GI@\" (14226). Caller matches exactly: called only from DisplayMessage, an already-named function. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:14200-14241 exactly, including the redundant double bounds-check (both `replace_tokens`'s own `@GI@` validation AND `GetGlobalInt`'s own internal check independently test the same index against 300, matching source's own redundant structure with zero drift). Reconfirms `GameSetupStructBase.numinvitems`(`game_numinvitems`), `CharacterInfo.inv[]`@+0x44, `MAXGSVALUES=300`, and `GetGlobalInt`, all from new call sites -- no new fields or drift found, a clean documentation-only pass."
   },
   {
     "kind": "manual",
@@ -3718,7 +3718,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 13072,
     "confidence": "high",
-    "evidence": "void _display_at(int,int,int,char*,int,int,int,int,bool) at AC.CPP:13072. String match: \"Display: auto-voice symbol '&' not followed by valid...\" (13085). Caller matches exactly: DisplayAt (already-named), matching the leading-underscore internal-helper naming convention seen elsewhere (DisplaySpeech/_displayspeech)."
+    "evidence": "void _display_at(int,int,int,char*,int,int,int,int,bool) at AC.CPP:13072. String match: \"Display: auto-voice symbol '&' not followed by valid...\" (13085). Caller matches exactly: DisplayAt (already-named), matching the leading-underscore internal-helper naming convention seen elsewhere (DisplaySpeech/_displayspeech). FIELD EVIDENCE (full body read for the first time): matches AC.CPP:13072-13097 closely (the auto-speech '&' parsing, `play_speech`, `_display_main` call, all already established), with mostly reconfirmations rather than new fields. Source's own leading `EndSkippingUntilCharStops();` call has NO counterpart here at all -- a further, independent confirmation (this project's own already-established 'whole subsystem confirmed absent' finding) from yet another call site. Confirms `_display_main` is called with exactly 7 arguments here too (a second independent call site, after `CreateTextOverlay`'s own, both omitting `isThought`/`allowShrink`/`overlayPositionFixed`). Reconfirms `GameState.normal_font`(`dword_4EF2AC`) from a third read site."
   },
   {
     "kind": "manual",
@@ -3889,7 +3889,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 1869,
     "confidence": "high",
-    "evidence": "TreeMap::addText(const char*, char*) at AC.CPP:1869 (inline-defined struct method). String match: \"load_translation: out of memory\" (1879). Caller matches exactly: init_translation (already matched), which builds the translation binary tree by calling addText for each entry. Flat-named as a C++ member function, same convention as GUIButton__Draw / GUIMain__rebuild_array."
+    "evidence": "TreeMap::addText(const char*, char*) at AC.CPP:1869 (inline-defined struct method). String match: \"load_translation: out of memory\" (1879). Caller matches exactly: init_translation (already matched), which builds the translation binary tree by calling addText for each entry. Flat-named as a C++ member function, same convention as GUIButton__Draw / GUIMain__rebuild_array. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:1869-1890ish closely, reconfirming `text`@+0x08/`translation`@+0x0C (already established via `findValue`) from the WRITE side, and giving `TreeMap` a hard allocation-site anchor for the first time: its own `operator new(0x10)` call, creating a fresh child node, lands exactly on 4 pointer-sized fields with zero remainder -- `sizeof(TreeMap)==0x10`(16 bytes), zero drift. `TreeMap` itself has now been formalized in `apply_structs.py` (it was fully field-confirmed via `findValue`'s own entry several rounds ago, but never actually pushed into the struct file until now). A `??0wxRect@@...`/`operator new` pair inside a `__try` block right before the recursive self-call is the SAME kind of coincidental MSVC/wxWidgets SEH-scaffolding FLIRT signature match already flagged and correctly ignored elsewhere in this project (this is `new`'s own allocation-failure exception path, not a real wxRect object)."
   },
   {
     "kind": "manual",

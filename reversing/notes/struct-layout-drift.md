@@ -14804,3 +14804,34 @@ read. This gives `numSections`/`sectionNames`/`sectionOffsets`'s
 already-established absence (found via `ccFreeScript`'s own
 destructor-side evidence) a second, independent confirmation from the
 READ side instead.
+
+### A fresh sweep of the next thin-entry batch: mostly reconfirmation, plus `TreeMap` finally gets formalized
+
+Ran a fresh scan for the next batch of thin/bare entries. Three were
+mostly reconfirmation-only (`_display_at` reconfirms `_display_main`'s
+own 7-argument call shape from a second site and `GameState.
+normal_font` from a third, plus a further confirmation that
+`EndSkippingUntilCharStops()` has no counterpart here; `replace_tokens`
+matches exactly with no new fields, including a redundant double
+bounds-check against the already-established `MAXGSVALUES=300` that
+matches source's own redundant structure with zero drift), but the
+fourth turned up a small structural gap worth closing.
+
+**`TreeMap`** (`AC.CPP:1839-1849`, the translation-lookup binary tree)
+had already been fully field-confirmed, `left`/`right`/`text`/
+`translation` all HIGH confidence, via `TreeMap::findValue`'s own
+entry from several rounds ago -- but the struct itself was never
+actually formalized into `apply_structs.py`, the same "documented in
+prose, never pushed to the actual declaration" gap this project keeps
+finding on structs too, just small enough this time to have gone
+unnoticed until reading `TreeMap::addText` in full. That reading also
+supplies something `findValue` alone couldn't: a hard allocation-site
+anchor. `addText`'s own `operator new(0x10)` call (creating a fresh
+child node) lands exactly on 4 pointer-sized fields with zero
+remainder, confirming `sizeof(TreeMap)==0x10` with zero drift. `TreeMap`
+is now a real struct declaration, not just scattered prose. (A
+`wxRect::wxRect`-named SEH scaffolding call sitting right next to the
+`operator new` is the same kind of coincidental MSVC/wxWidgets FLIRT
+false positive already flagged and correctly ignored elsewhere in this
+project -- not a real object, just exception-handling glue around the
+allocation.)

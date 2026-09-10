@@ -156497,7 +156497,7 @@ static Functions_3(void) {
 	add_func    (0X413CE1,0X413DA7);
 	set_func_flags(0X413CE1,0x5410);
 	SetType(0X413CE1, "void __stdcall display_at(int xx, int yy, int wii, char *todis, int blocking, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);");
-	set_func_cmt(0X413CE1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void _display_at(int,int,int,char*,int,int,int,int,bool) at AC.CPP:13072. String match: \"Display: auto-voice symbol '&' not followed by valid...\" (13085). Caller matches exactly: DisplayAt (already-named), matching the leading-underscore internal-helper naming convention seen elsewhere (DisplaySpeech/_displayspeech).", 1);
+	set_func_cmt(0X413CE1,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void _display_at(int,int,int,char*,int,int,int,int,bool) at AC.CPP:13072. String match: \"Display: auto-voice symbol '&' not followed by valid...\" (13085). Caller matches exactly: DisplayAt (already-named), matching the leading-underscore internal-helper naming convention seen elsewhere (DisplaySpeech/_displayspeech). FIELD EVIDENCE (full body read for the first time): matches AC.CPP:13072-13097 closely (the auto-speech '&' parsing, `play_speech`, `_display_main` call, all already established), with mostly reconfirmations rather than new fields. Source's own leading `EndSkippingUntilCharStops();` call has NO counterpart here at all -- a further, independent confirmation (this project's own already-established 'whole subsystem confirmed absent' finding) from yet another call site. Confirms `_display_main` is called with exactly 7 arguments here too (a second independent call site, after `CreateTextOverlay`'s own, both omitting `isThou" "ght`/`allowShrink`/`overlayPositionFixed`). Reconfirms `GameState.no", 1);
 	set_frame_size(0X413CE1, 0X8, 4, 0X24);
 	define_local_var(0X413CE1, 0X413DA7, "[bp+0X8]", "xx");
 	define_local_var(0X413CE1, 0X413DA7, "[bp+0XC]", "yy");
@@ -156716,7 +156716,7 @@ static Functions_3(void) {
 	add_func    (0X4150F6,0X4152D4);
 	set_func_flags(0X4150F6,0x5410);
 	SetType(0X4150F6, "void __stdcall replace_tokens(char *srcmes, char *destm, int maxlen);");
-	set_func_cmt(0X4150F6,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void replace_tokens(char*,char*,int) at AC.CPP:14200. String matches: \"!Display: special token not terminated\" (14214), \"!Display: invalid inv item specified in @IN@\" (14221), \"!Display: invalid global int index speicifed in @GI@\" (14226). Caller matches exactly: called only from DisplayMessage, an already-named function.", 1);
+	set_func_cmt(0X4150F6,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void replace_tokens(char*,char*,int) at AC.CPP:14200. String matches: \"!Display: special token not terminated\" (14214), \"!Display: invalid inv item specified in @IN@\" (14221), \"!Display: invalid global int index speicifed in @GI@\" (14226). Caller matches exactly: called only from DisplayMessage, an already-named function. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:14200-14241 exactly, including the redundant double bounds-check (both `replace_tokens`'s own `@GI@` validation AND `GetGlobalInt`'s own internal check independently test the same index against 300, matching source's own redundant structure with zero drift). Reconfirms `GameSetupStructBase.numinvitems`(`game_numinvitems`), `CharacterInfo.inv[]`@+0x44, `MAXGSVALUES=300`, and `GetGlobalInt`, all from new call sites -- no new fields or drift found, a clean documentation-only pass.", 1);
 	set_frame_size(0X4150F6, 0X28, 4, 0XC);
 	define_local_var(0X4150F6, 0X4152D4, "[bp-0X20]", "Buffer");
 	define_local_var(0X4150F6, 0X4152D4, "[bp-0X14]", "index");
@@ -156725,14 +156725,14 @@ static Functions_3(void) {
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X8]", "srcmes");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0XC]", "destm");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X10]", "maxlen");
-	add_func    (0X4152D4,0X4152F7);
-	set_func_flags(0X4152D4,0x5410);
-	set_func_cmt(0X4152D4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: char *get_global_message(int msnum) at AC.CPP:14243-14247: \"if (game.messages[msnum-500]==NULL) return \\\"\\\"; return get_translation(game.messages[msnum-500]);\". This build's version reads dword_51CB50[msnum*4] -- the same compiler-folded-base address (base-500*4) already established for messages[500] via DisplayMessage's own entry -- matching game.messages[msnum-500] exactly. REAL DRIFT: returns the literal string \"nomsg\" instead of \"\" when the message is null, and CONFIRMED ABSENT: the get_translation() call entirely -- this build returns the raw message pointer directly with no translation-lookup step, unlike source. Called from quitdialog (this round's new match) with literal message-ID constants confirming the identification (see quitdialog's own entry).", 1);
-	set_frame_size(0X4152D4, 0, 4, 0);
 }
 
 static Functions_4(void) {
 
+	add_func    (0X4152D4,0X4152F7);
+	set_func_flags(0X4152D4,0x5410);
+	set_func_cmt(0X4152D4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: char *get_global_message(int msnum) at AC.CPP:14243-14247: \"if (game.messages[msnum-500]==NULL) return \\\"\\\"; return get_translation(game.messages[msnum-500]);\". This build's version reads dword_51CB50[msnum*4] -- the same compiler-folded-base address (base-500*4) already established for messages[500] via DisplayMessage's own entry -- matching game.messages[msnum-500] exactly. REAL DRIFT: returns the literal string \"nomsg\" instead of \"\" when the message is null, and CONFIRMED ABSENT: the get_translation() call entirely -- this build returns the raw message pointer directly with no translation-lookup step, unlike source. Called from quitdialog (this round's new match) with literal message-ID constants confirming the identification (see quitdialog's own entry).", 1);
+	set_frame_size(0X4152D4, 0, 4, 0);
 	add_func    (0X4152F7,0X41547C);
 	set_func_flags(0X4152F7,0x5410);
 	SetType(0X4152F7, "void __stdcall DisplayMessage(int msnum);");
@@ -157135,6 +157135,10 @@ static Functions_4(void) {
 	define_local_var(0X418401, 0X41855A, "[bp+0X10]", "toy");
 	define_local_var(0X418401, 0X41855A, "[bp+0X14]", "ignwal");
 	define_local_var(0X418401, 0X41855A, "[bp+0X18]", "autoWalkAnims");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X41855A,0X418698);
 	set_func_flags(0X41855A,0x5410);
 	SetType(0X41855A, "void __stdcall RunHotspotInteraction(int hotspothere, int mood);");
@@ -157142,10 +157146,6 @@ static Functions_4(void) {
 	set_frame_size(0X41855A, 0X8, 4, 0X8);
 	define_local_var(0X41855A, 0X418698, "[bp+0X8]", "hotspothere");
 	define_local_var(0X41855A, 0X418698, "[bp+0XC]", "mood");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X418698,0X418798);
 	set_func_flags(0X418698,0x5410);
 	SetType(0X418698, "void __stdcall ProcessClick(int xx, int yy, int mood);");
@@ -157567,6 +157567,10 @@ static Functions_5(void) {
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0X8]", "guin");
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0XC]", "objn");
 	define_local_var(0X41A78C, 0X41A8A6, "[bp+0X10]", "Str");
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41A8A6,0X41A990);
 	set_func_flags(0X41A8A6,0x5410);
 	SetType(0X41A8A6, "void __stdcall SetLabelFont(int guin, int objn, int fontnum);");
@@ -157575,10 +157579,6 @@ static Functions_5(void) {
 	define_local_var(0X41A8A6, 0X41A990, "[bp+0X8]", "guin");
 	define_local_var(0X41A8A6, 0X41A990, "[bp+0XC]", "objn");
 	define_local_var(0X41A8A6, 0X41A990, "[bp+0X10]", "fontnum");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41A990,0X41AA47);
 	set_func_flags(0X41A990,0x5410);
 	SetType(0X41A990, "void __stdcall SetSliderValue(int guin, int objn, int valn);");
@@ -158006,16 +158006,16 @@ static Functions_6(void) {
 	set_frame_size(0X41CC4C, 0, 4, 0X8);
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0X8]", "Destination");
 	define_local_var(0X41CC4C, 0X41CC84, "[bp+0XC]", "Source");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41CC84,0X41CCB4);
 	set_func_flags(0X41CC84,0x5410);
 	SetType(0X41CC84, "void __stdcall sc_strlower(char *desbuf);");
 	set_func_cmt(0X41CC84,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj FIELD EVIDENCE (follow-up round, full body read for the first time): matches source's two-step validation, \"VALIDATE_STRING(desbuf); check_strlen(desbuf);\", exactly in SUBSTANCE -- but with VALIDATE_STRING's own job done via this build's OWN inline `if(String==0) quit(\"!String argument was null...\");` check rather than a separate function/macro call (consistent with check_strlen's own entry: no reusable VALIDATE_STRING helper exists in this build at all). The subsequent call (previously displayed as `VALIDATE_STRING`, now corrected to `check_strlen`, see its own entry) then `_strlwr` (already matched) complete the match with zero net drift from source's intent, just a different (inline vs. reusable-macro) implementation of the null check.", 1);
 	set_frame_size(0X41CC84, 0, 4, 0X4);
 	define_local_var(0X41CC84, 0X41CCB4, "[bp+0X8]", "String");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41CCB4,0X41CCE4);
 	set_func_flags(0X41CCB4,0x5410);
 	SetType(0X41CCB4, "void __stdcall sc_strupper(char *desbuf);");
@@ -158484,6 +158484,10 @@ static Functions_7(void) {
 	add_func    (0X424B10,0X424B27);
 	set_func_flags(0X424B10,0x5410);
 	set_frame_size(0X424B10, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X424B30,0X424B4F);
 	set_func_flags(0X424B30,0x5410);
 	set_frame_size(0X424B30, 0X4, 4, 0);
@@ -158515,14 +158519,10 @@ static Functions_7(void) {
 	add_func    (0X424E20,0X424FF6);
 	set_func_flags(0X424E20,0x5010);
 	SetType(0X424E20, "int __stdcall TreeMap__addText(char *Str1, char *Str);");
-	set_func_cmt(0X424E20,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: TreeMap::addText(const char*, char*) at AC.CPP:1869 (inline-defined struct method). String match: \"load_translation: out of memory\" (1879). Caller matches exactly: init_translation (already matched), which builds the translation binary tree by calling addText for each entry. Flat-named as a C++ member function, same convention as GUIButton__Draw / GUIMain__rebuild_array.", 1);
+	set_func_cmt(0X424E20,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: TreeMap::addText(const char*, char*) at AC.CPP:1869 (inline-defined struct method). String match: \"load_translation: out of memory\" (1879). Caller matches exactly: init_translation (already matched), which builds the translation binary tree by calling addText for each entry. Flat-named as a C++ member function, same convention as GUIButton__Draw / GUIMain__rebuild_array. FIELD EVIDENCE (full body read for the first time): matches AC.CPP:1869-1890ish closely, reconfirming `text`@+0x08/`translation`@+0x0C (already established via `findValue`) from the WRITE side, and giving `TreeMap` a hard allocation-site anchor for the first time: its own `operator new(0x10)` call, creating a fresh child node, lands exactly on 4 pointer-sized fields with zero remainder -- `sizeof(TreeMap)==0x10`(16 bytes), zero drift. `TreeMap` itself has now been formalized in `apply_structs.py` (it was fully field-confirmed via `findValue`'s own entry several roun" "ds ago, but never actually pushed into the struct file until now). A", 1);
 	set_frame_size(0X424E20, 0X28, 4, 0X8);
 	define_local_var(0X424E20, 0X424FF6, "[bp+0X8]", "Str1");
 	define_local_var(0X424E20, 0X424FF6, "[bp+0XC]", "Str");
-}
-
-static Functions_8(void) {
-
 	add_func    (0X425000,0X42502E);
 	set_func_flags(0X425000,0x15410);
 	SetType(0X425000, "void *__thiscall CBase64___scalar_deleting_destructor_(CBase64 *this, unsigned int __flags);");
@@ -158847,6 +158847,10 @@ static Functions_8(void) {
 	set_func_flags(0X4280C0,0x5410);
 	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
 	set_frame_size(0X4280C0, 0, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X42810D,0X428477);
 	set_func_flags(0X42810D,0x5410);
 	SetType(0X42810D, "int __cdecl qgimport(char *FileName, char *Str1);");
@@ -158871,10 +158875,6 @@ static Functions_8(void) {
 	define_local_var(0X4284DC, 0X428712, "[bp-0XC]", "Stream");
 	define_local_var(0X4284DC, 0X428712, "[bp+0X8]", "FileName");
 	define_local_var(0X4284DC, 0X428712, "[bp+0XC]", "Str1");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X428720,0X4287B5);
 	set_func_flags(0X428720,0x5410);
 	set_func_cmt(0X428720,	"[reversing] confirmed match\nsource: Engine/acwavi.cpp\nconfidence: high\nevidence: void ExitCode() at acwavi.cpp:62-80: releases 4 DirectShow COM interface pointers (g_pMMStream/g_pSample/g_pDDStream/g_pPrimaryVidStream) if non-null, nulling each after Release(). Called from dxmedia_play_video (this round's corrected match) at every one of its error-exit points plus its final success tail, matching source's own call pattern exactly (a no-argument cleanup helper called right before CoUninitialize() in every case).", 1);
@@ -159413,6 +159413,10 @@ static Functions_9(void) {
 	SetType(0X431E30, "int get_route_composition(void);");
 	set_func_cmt(0X431E30,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match to source's copyright/anti-tamper CRC sum -- \"for(aaa=0;aaa<66;aaa++) crctotal += ac_engine_copyright[aaa]*(aaa+1); return crctotal;\" matches the disassembly's own 66-iteration loop over the ac_engine_copyright string exactly, including the (index+1) weighting. Source's own comment calls this 'stupid name, to deter hackers' -- a deliberately misleading function name for what is really a copyright-string checksum, not anything route-related.", 1);
 	set_frame_size(0X431E30, 0X8, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X431E79,0X431EA3);
 	set_func_flags(0X431E79,0x5410);
 	SetType(0X431E79, "int route_script_link(void);");
@@ -159423,10 +159427,6 @@ static Functions_9(void) {
 	SetType(0X431EA3, "void init_pathfinder(void);");
 	set_func_cmt(0X431EA3,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, ZERO-DRIFT exact match -- two malloc(4000) calls into pathbackx/pathbacky, matching source's \"malloc(sizeof(int)*MAXPATHBACK)\" with MAXPATHBACK=1000 and sizeof(int)=4 (4*1000=4000) precisely -- an unusually clean case where this project's typical smaller-capacity-in-2002 pattern does NOT apply at all.", 1);
 	set_frame_size(0X431EA3, 0, 4, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X431ECC,0X431F10);
 	set_func_flags(0X431ECC,0x5410);
 	set_func_cmt(0X431ECC,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void line_callback(block bmpp,int x,int y,int d) at routefnd.cpp:72-81 -- a complete, exact match: \"if(getpixel(bmpp,x,y)<1) line_failed=1; else if(line_failed==0) { lastcx=x; lastcy=y; }\" matches source verbatim (the commented-out bounds-check branch in source, \"if((x>=320)|(y>=200)|...)\", is correctly absent here too -- it was already dead code in 2011's own version). This build's disassembly shows only 3 explicit argument slots (bmpp,x,y), omitting the unused 4th `d` (distance-along-line) parameter Allegro's `do_line` callback signature supplies but which source's own body never reads either -- consistent, not a real signature difference. Called only from can_see_from (already matched, see its own entry) via Allegro's `do_line`.", 1);
@@ -160167,6 +160167,10 @@ static Functions_10(void) {
 	set_func_flags(0X443500,0x5400);
 	set_func_cmt(0X443500,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: static void read_sound_config(void) at src/sound.c:168-183. Exact match: 9 consecutive get_config_int(uconvert_ascii(\"sound\",...), uconvert_ascii(<key>,...), <default>) calls in exactly source's order -- flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume (the only key from source's sequence NOT present is sound_port, which uses get_config_hex not get_config_int -- consistent, since this match was found by grepping calls to the already-matched get_config_int specifically). Function boundary ends (endp at .asm:120581) right after the last call, matching source's function ending cleanly with no other logic. Called from an as-yet-boundary-less block starting right after nullsub_21 (.asm:120272) that opens with \"if (_sound_installed) return 0;\" -- exact match for detect_digi_driver's opening two lines (src/sound.c:198-201, \"if (_sound_installed) return 0; read" "_sound_config();\"). detect_digi_driver itself not matched this round (no IDA function boundary", 1);
 	set_frame_size(0X443500, 0X84, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4437E0,0X4437F4);
 	set_func_flags(0X4437E0,0x5400);
 	SetType(0X4437E0, "void __cdecl reserve_voices(int digi_voices, int midi_voices);");
@@ -160182,10 +160186,6 @@ static Functions_10(void) {
 	set_func_flags(0X443F70,0x15400);
 	set_func_cmt(0X443F70,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);
 	set_frame_size(0X443F70, 0X90, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X444320,0X4443B1);
 	set_func_flags(0X444320,0x5400);
 	set_func_cmt(0X444320,	"[reversing] confirmed match\nsource obj (library): alleg_s_crt:sound.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=alleg_s_crt:sound.obj", 1);

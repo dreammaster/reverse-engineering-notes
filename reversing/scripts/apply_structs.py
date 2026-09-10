@@ -1511,6 +1511,32 @@ struct SpriteCache {
   // recursive-link self-healing check, and `precache`'s own locked-sprite cache-limit bypass.
 };
 
+struct TreeMap {
+  // The translation-lookup binary tree (Engine/AC.CPP:1839-1849, an inline-defined struct with no
+  // separate .h declaration). Fully confirmed field-by-field several rounds ago via `TreeMap::
+  // findValue`'s own entry, but never actually formalized into this file until now -- the
+  // "documented in prose, never pushed to the actual struct declaration" gap this project has hit
+  // before, just on a struct too small to have been missed for long. `TreeMap::addText` (also
+  // already matched, read in full this round) reconfirms every field from the WRITE side and adds
+  // a hard allocation-site anchor for the struct's own total size: its own `operator new(0x10)`
+  // call (creating a fresh left/right child node) lands exactly on 4 pointer-sized fields with
+  // zero remainder -- `sizeof(TreeMap)==0x10`(16 bytes), zero drift from 2011's own 4-pointer
+  // declaration.
+  struct TreeMap *left;            // +0x00, high confidence: confirmed via `findValue`'s own
+                            // recursive `left->findValue(key)` call (a self-call, decisively
+                            // confirming the field) and via `addText`'s own tree-insertion branch.
+  struct TreeMap *right;           // +0x04, high confidence: same evidence pattern as `left`,
+                            // immediately adjacent.
+  char *text;                     // +0x08, high confidence: confirmed via `findValue`'s own
+                            // leading `if(text==NULL) return NULL;` guard and `addText`'s own
+                            // `malloc(strlen(ntx)+1)`+`strcpy` sequence populating it.
+  char *translation;               // +0x0C, high confidence: confirmed via `findValue`'s own
+                            // `return translation;` match-found case and `addText`'s own second
+                            // `malloc`+`strcpy` pair, with a further confirmation from its own
+                            // `if(translation==NULL) quit("load_translation: out of memory");`
+                            // check matching source's identical guard exactly.
+};
+
 struct EventBlock {
   int list[8];                    // +0x00, high confidence: MAXCOMMANDS=8 (Common/acroom.h:238).
                             // Confirmed via run_event_block (sub_417088), which loops
