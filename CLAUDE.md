@@ -4319,6 +4319,22 @@ disassembly work.
   -- and reconfirms `GameState.bad_parsed_word[100]` from a new write
   site; the rest of the function left honestly untraced for a future
   round. See `reversing/notes/struct-layout-drift.md`.
+- **`parse_sentence` closes completely, finding a real player-
+  triggerable crash bug.** The remaining ~290 lines confirm: a
+  100-byte `thisword` stack buffer (not source's 150 -- a new
+  category of drift, a plain local rather than a struct/global);
+  the `']'`/`'['` optional-word checks run unconditionally here,
+  unlike source's `compareto!=NULL`-gated versions, so a player
+  typing a literal `]` during ordinary text entry hits the same
+  `quit("!Said: unexpected ']'")` crash a malformed `Said()` script
+  literal would; `FindMatchingMultiWordWord` has no call site at all
+  (confirmed absent); the "not in dictionary" error is a static
+  string with no `%s` offending-word substitution; a zero-drift
+  triple confirmation of `RESTOFLINE`=30000/`ANYWORD`=29999/
+  `MAX_PARSED_WORDS`=15; and a much simpler, non-looping comma-
+  alternatives-skip with no multi-word-phrase re-check and no
+  optional-clause-closing special case. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

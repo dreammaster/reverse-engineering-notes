@@ -6,13 +6,6 @@
   ],
   "evidence": [
    {
-    "label": "aStackOverflow",
-    "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
     "label": "aInvalidInstruc",
     "text": "invalid instruction %d found in code stream",
     "files": [
@@ -20,22 +13,8 @@
     ]
    },
    {
-    "label": "aStackOverflow_1",
+    "label": "aStackOverflow",
     "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
-    "label": "aStackOverflow_0",
-    "text": "stack overflow",
-    "files": [
-     "Common/CSRUN.CPP"
-    ]
-   },
-   {
-    "label": "aSpecifiedCodeO",
-    "text": "specified code offset is not valid",
     "files": [
      "Common/CSRUN.CPP"
     ]
@@ -50,6 +29,27 @@
    {
     "label": "aStackCorruptAf",
     "text": "stack corrupt after function call",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
+    "label": "aSpecifiedCodeO",
+    "text": "specified code offset is not valid",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
+    "label": "aStackOverflow_1",
+    "text": "stack overflow",
+    "files": [
+     "Common/CSRUN.CPP"
+    ]
+   },
+   {
+    "label": "aStackOverflow_0",
+    "text": "stack overflow",
     "files": [
      "Common/CSRUN.CPP"
     ]
@@ -263,7 +263,27 @@
     ]
    },
    {
-    "label": "aSystem_2",
+    "label": "aLanguage_3",
+    "text": "language",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/ACWSETUP.CPP",
+     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c",
+     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
+    ]
+   },
+   {
+    "label": "aLanguageDat",
+    "text": "language.dat",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/config.c"
+    ]
+   },
+   {
+    "label": "aSystem_3",
     "text": "system",
     "files": [
      "Common/acruntim.h",
@@ -306,14 +326,6 @@
     ]
    },
    {
-    "label": "aLanguageDat",
-    "text": "language.dat",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c"
-    ]
-   },
-   {
     "label": "aTextCfg",
     "text": "text.cfg",
     "files": [
@@ -321,19 +333,7 @@
     ]
    },
    {
-    "label": "aLanguage_3",
-    "text": "language",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/ACWSETUP.CPP",
-     "Engine/libsrc/allegro-4.2.2/docs/src/makedoc/makedoc.c",
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/config.c",
-     "Engine/libsrc/allegro-4.2.2/tools/textconv.c"
-    ]
-   },
-   {
-    "label": "aSystem_3",
+    "label": "aSystem_2",
     "text": "system",
     "files": [
      "Common/acruntim.h",
@@ -426,6 +426,23 @@
   ],
   "evidence": [
    {
+    "label": "aUltradir",
+    "text": "ULTRADIR",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
+    ]
+   },
+   {
+    "label": "aPatches",
+    "text": "patches",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
+     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
+     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
+     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
+    ]
+   },
+   {
     "label": "aPatchesDat",
     "text": "patches.dat",
     "files": [
@@ -483,23 +500,6 @@
     ]
    },
    {
-    "label": "aPatches",
-    "text": "patches",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/setup/setup.c",
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c",
-     "Engine/libsrc/allegro-4.2.2/src/misc/fm_instr.h",
-     "Engine/libsrc/allegro-4.2.2/tools/pat2dat.c"
-    ]
-   },
-   {
-    "label": "aUltradir",
-    "text": "ULTRADIR",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/digmid.c"
-    ]
-   },
-   {
     "label": "aDefaultCfg",
     "text": "default.cfg",
     "files": [
@@ -527,6 +527,27 @@
   ],
   "evidence": [
    {
+    "label": "aDcomNotFound",
+    "text": "DCOM not found",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
+    "label": "aOle32DllCanTBe",
+    "text": "OLE32.DLL can't be loaded.",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
+    "label": "aMicrosoftDistr",
+    "text": "Microsoft Distributed COM is not installed on this system. If you",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
+    ]
+   },
+   {
     "label": "aWarning_0",
     "text": "Warning",
     "files": [
@@ -541,27 +562,6 @@
      "Engine/libsrc/allegro-4.2.2/tools/plugins/datfont.c",
      "Engine/libsrc/allegro-4.2.2/tools/textconv.c",
      "Engine/libsrc/apeg-1.2.1/audio/apegcommon.c"
-    ]
-   },
-   {
-    "label": "aMicrosoftDistr",
-    "text": "Microsoft Distributed COM is not installed on this system. If you",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
-    "label": "aDcomNotFound",
-    "text": "DCOM not found",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
-    ]
-   },
-   {
-    "label": "aOle32DllCanTBe",
-    "text": "OLE32.DLL can't be loaded.",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/win/wthread.c"
     ]
    }
   ]
@@ -605,13 +605,6 @@
    "Engine/libsrc/allegro-4.2.2/tools/grabber.c"
   ],
   "evidence": [
-   {
-    "label": "aSDbpp",
-    "text": "%s_%dbpp",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
-    ]
-   },
    {
     "label": "aSDxDxD",
     "text": "%s_%dx%dx%d",
@@ -658,6 +651,13 @@
      "Engine/libsrc/allegro-4.2.2/tests/win/dxwindow.c",
      "Engine/libsrc/allegro-4.2.2/tools/grabber.c"
     ]
+   },
+   {
+    "label": "aSDbpp",
+    "text": "%s_%dbpp",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/src/graphics.c"
+    ]
    }
   ]
  },
@@ -674,18 +674,6 @@
   ],
   "evidence": [
    {
-    "label": "aMatching",
-    "text": "matching",
-    "files": [
-     "Engine/AC.CPP",
-     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
-     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
-     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
-     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c"
-    ]
-   },
-   {
     "label": "aDirectdrawInSD",
     "text": "DirectDraw, in %s, %d bpp window",
     "files": [
@@ -699,6 +687,18 @@
      "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
      "Engine/libsrc/allegro-4.2.2/src/x/xwin.c",
      "Engine/libsrc/allegro-4.2.2/tools/dat.c"
+    ]
+   },
+   {
+    "label": "aMatching",
+    "text": "matching",
+    "files": [
+     "Engine/AC.CPP",
+     "Engine/libsrc/allegro-4.2.2/src/beos/bdwindow.cpp",
+     "Engine/libsrc/allegro-4.2.2/src/qnx/qphwin.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wddovl.c",
+     "Engine/libsrc/allegro-4.2.2/src/win/wddwin.c",
+     "Engine/libsrc/allegro-4.2.2/src/x/xwin.c"
     ]
    }
   ]
@@ -768,17 +768,17 @@
   ],
   "evidence": [
    {
-    "label": "aRegular",
-    "text": "Regular",
-    "files": [
-     "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrid.c"
-    ]
-   },
-   {
     "label": "aBlack",
     "text": "Black",
     "files": [
      "Common/libinclude/genre.h"
+    ]
+   },
+   {
+    "label": "aRegular",
+    "text": "Regular",
+    "files": [
+     "Engine/libsrc/allegro-4.2.2/tools/plugins/datgrid.c"
     ]
    }
   ]

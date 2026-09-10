@@ -14854,3 +14854,51 @@ bad_parsed_word[100]` from a new write site (`play.bad_parsed_word[0]
 bracket handling, the `FindMatchingMultiWordWord`/`find_word_in_
 dictionary` dispatch, the final comparison loop) is left honestly
 untraced for a future round.
+
+### `parse_sentence` closes completely: a player-triggerable crash-bug gate, a confirmed-absent multi-word matcher, and a zero-drift triple constant
+
+An immediate follow-up read the remaining ~290 lines to completion.
+Six findings. (1) The `thisword` stack buffer is only 100 bytes here
+(traced via its own zero-fill prologue: a 2-byte write followed by a
+`rep stosd`/`stosw` covering the rest), not source's declared
+`char thisword[150]` -- a genuine LOCAL stack-buffer-size reduction,
+a new category of drift for this project (every other capacity
+reduction found so far has been a struct field or global array, never
+a plain stack local). (2) A real, player-triggerable crash bug: the
+`']'`/`'['` optional-word-syntax checks are supposed to be scoped to
+`compareto != NULL` (i.e. only apply during `Said()`, never during
+plain `ParseText()` of raw player-typed text) -- source spells this
+out explicitly with an `&& (compareto != NULL)` clause on both checks.
+This build's disassembly reaches the exact same `if (!in_optional)
+quit("!Said: unexpected ']'")` check with NO such gate -- it runs
+unconditionally on every call including `ParseText()`. A player typing
+a literal `]` character in ordinary game text input would hit this
+quit() crash, not just a malformed `Said()` script literal. (3)
+`FindMatchingMultiWordWord` (source's "pick up"-as-one-token
+multi-word dictionary matcher) has NO call site anywhere in this
+function -- CONFIRMED ABSENT, not merely unfound: the disassembly
+goes straight from word-terminator handling to `find_word_in_
+dictionary`, with neither of source's two call sites for it (the
+primary word-completion check, and inside the comma-alternatives
+loop) present. (4) The "word not in dictionary" error path calls
+plain `quit()` with a static string (verified against the literal
+`aSaidSuppliedWo` string -- no `%s` placeholder at all), confirming
+source's `quitprintf(...,thisword)` diagnostic substitution of the
+actual offending word is absent here. (5) A clean triple zero-drift
+constant confirmation: `RESTOFLINE`==0x7530(30000) and `ANYWORD`==
+0x752F(29999) both match `Common/acroom.h:338-339` exactly, and the
+`numwords[0]` overflow check's literal `0Fh`(15) matches `Common/
+acruntim.h:432`'s `MAX_PARSED_WORDS=15` exactly -- all three
+completely unchanged from 2011. (6) The comma-separated-alternatives
+skip logic (when a matched word is immediately followed by `,`) is
+drastically simpler here: one non-looping forward scan over any run
+of `,`/`isalnum()` characters, then back up one character --
+CONFIRMED ABSENT is source's entire outer `continueSearching` retry
+loop, its nested `FindMatchingMultiWordWord` re-check on each
+alternative, and the special "un-close the optional clause if its
+last comma-alternative was the one that matched" step
+(`if((text[0]==']')&&in_optional){in_optional=0;text++;}`). A script
+using a multi-word phrase as a comma-alternative, or one immediately
+followed by `]`, would behave differently here than in 2011 -- a real
+behavioral gap, not just a missing optimization. No new fields/
+globals; this closes out `parse_sentence` entirely.
