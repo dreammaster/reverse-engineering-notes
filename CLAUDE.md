@@ -4221,6 +4221,23 @@ disassembly work.
   independent implementations of the same search exist here where
   2011 factored it into one shared function. See `reversing/notes/
   struct-layout-drift.md`.
+- **`InterfaceElement`, declared a dead end three separate times,
+  reopens completely via its own constructor.** `InterfaceElement__
+  InterfaceElement` (already correctly named, thin entry) turns out to
+  be a real default constructor matching 2011's own inline one
+  (`acroom.h:316-319`) with zero drift — closes 8 of the struct's 9
+  previously-opaque fields at once (`bgcol`/`fgcol`/`bordercol`/
+  `vtextxp`/`vtextyp`/`vtext`/`numbuttons`/`flags`), with `flags`
+  @+0x324 landing exactly where `button[MAXBUTTON=20]`'s own zero-
+  slack arithmetic predicts — giving that capacity a genuine, zero-
+  drift confirmation too, unusual for this project. Second struct this
+  project has cracked open almost entirely via its own constructor
+  after being written off by other means (after `RoomStruct`) — worth
+  specifically hunting for a constructor on any struct whose only
+  evidence is positional. Immediately after, `__find_route` (thin,
+  226-char entry) turns up three more new globals in one read:
+  `pathbackstage`/`leftorright`/`waspossible`, all confirmed via exact
+  control-flow matches. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

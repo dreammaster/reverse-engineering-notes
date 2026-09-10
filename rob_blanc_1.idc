@@ -158449,7 +158449,7 @@ static Functions_7(void) {
 	set_frame_size(0X424830, 0X4, 4, 0);
 	add_func    (0X424870,0X4248E5);
 	set_func_flags(0X424870,0x5410);
-	set_func_cmt(0X424870,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: InterfaceElement::InterfaceElement() constructor at acroom.h:316. String match: \"@SCORETEXT@$r@GAMENAME@\" (317), the default vtext value. Referenced via DATA XREF (from sub_424830, likely an array-of-objects default-construction loop), not a direct call site. Flat-named as a C++ constructor.", 1);
+	set_func_cmt(0X424870,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: InterfaceElement::InterfaceElement() constructor at acroom.h:316. String match: \"@SCORETEXT@$r@GAMENAME@\" (317), the default vtext value. Referenced via DATA XREF (from sub_424830, likely an array-of-objects default-construction loop), not a direct call site. Flat-named as a C++ constructor. MAJOR FIELD EVIDENCE (full body read for the first time): this constructor closes 8 of InterfaceElement's own previously-'opaque, declared a dead end three times' fields at once. Every literal it sets lands EXACTLY on that field's own 2011-declared offset with zero slack: bgcol@+0x10=8, fgcol@+0x14=15, bordercol@+0x18=0, vtextxp@+0x1C=0, vtextyp@+0x20=1, vtext@+0x28 (the strcpy target, matching 40-byte capacity), numbuttons@+0x50=0, flags@+0x324=0 -- the last landing exactly where button[MAXBUTTON=20]'s own zero-slack arithmetic fit (InterfaceButton, acroom.h:291-301, 8 ints+1 char padded to 0x24/36 bytes, times 20 = 0x2D0) predicts, giving `b" "utton[]`'s own capacity a real confirmation too (MAXBUTTON=20, zero dr", 1);
 	set_frame_size(0X424870, 0X4, 4, 0);
 	add_func    (0X4248F0,0X424930);
 	set_func_flags(0X4248F0,0x5410);
@@ -158549,14 +158549,14 @@ static Functions_7(void) {
 	set_func_flags(0X425250,0x5410);
 	set_func_cmt(0X425250,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: acquire_bitmap(bmp) -- Allegro's public macro (`if((bmp)->vtable->acquire) (bmp)->vtable->acquire(bmp);`), compiled here into its own shared subroutine rather than inlined at each call site. Matches exactly: reads `bmp+0x1C`(vtable pointer, already established) then dispatches through slot `+0x10` if non-null -- GFX_VTABLE's own declared field order (`color_depth`,`mask_color`,`unwrite_bank`,`set_clip`,`acquire`) places `acquire` at exactly offset 0x10 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY (per this project's scope rule), not chased further.", 1);
 	set_frame_size(0X425250, 0, 4, 0);
-	add_func    (0X425280,0X4252A1);
-	set_func_flags(0X425280,0x5410);
-	set_func_cmt(0X425280,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: release_bitmap(bmp) -- Allegro's public macro, `acquire_bitmap`'s exact mirror-image sibling (same compiled-subroutine treatment). Matches exactly, dispatching through vtable slot `+0x14` -- GFX_VTABLE's own declared `release` field, immediately after `acquire`, at exactly offset 0x14 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
-	set_frame_size(0X425280, 0, 4, 0);
 }
 
 static Functions_8(void) {
 
+	add_func    (0X425280,0X4252A1);
+	set_func_flags(0X425280,0x5410);
+	set_func_cmt(0X425280,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: high\nevidence: release_bitmap(bmp) -- Allegro's public macro, `acquire_bitmap`'s exact mirror-image sibling (same compiled-subroutine treatment). Matches exactly, dispatching through vtable slot `+0x14` -- GFX_VTABLE's own declared `release` field, immediately after `acquire`, at exactly offset 0x14 with zero drift. Called from FadeOut (already matched). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
+	set_frame_size(0X425280, 0, 4, 0);
 	add_func    (0X4252B0,0X4252CA);
 	set_func_flags(0X4252B0,0x5410);
 	set_frame_size(0X4252B0, 0, 4, 0);
@@ -158893,16 +158893,16 @@ static Functions_8(void) {
 	set_func_flags(0X428A9E,0x5410);
 	set_func_cmt(0X428A9E,	"[reversing] confirmed match\nsource: Engine/acwavi.cpp\nconfidence: high\nevidence: void RenderToSurface(BITMAP*) at acwavi.cpp:220. Called once per iteration of dxmedia_play_video's (this round's corrected match) main playback loop with vscreen (dword_523920) as its sole argument, matching source's own \"RenderToSurface(vscreen);\" call exactly in both position and argument -- own body not independently traced this round. FULL BODY CONFIRMED (follow-up round, complete trace against its real source, acwavi.cpp:220-254): matches closely with two real, confirmed drifts. \"g_pSample->Update(0,NULL,NULL,0)\" matches a direct COM vtable dispatch on dword_52391C (g_pSample) via slot [ecx+0x18] exactly; the failure branch matches \"g_bAppactive=FALSE; g_pMMStream->SetState(STREAMSTATE_STOP);\" (dword_523910=g_pMMStream, vtable slot [ecx+0x1C]) exactly. The success branch: g_bAppactive=TRUE, acquire_screen() (already matched), then a single stretch_blit(vscreen,screen,0,0,vscreen->w,vscreen->h,screen->w/2-newWidth/2,screen->" "h/2-newHeight/2,newWidth,newHeight) call (sub_43E860, this round's own n", 1);
 	set_frame_size(0X428A9E, 0, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X428B70,0X428DE0);
 	set_func_flags(0X428B70,0x5410);
 	SetType(0X428B70, "void dxmedia_play_video(void);");
 	set_func_cmt(0X428B70,	"[reversing] confirmed match\nsource: Engine/acwavi.cpp\nconfidence: high\nevidence: CORRECTION (this round): previously matched as `dxmedia_abort_video` -- wrong. Reading the FULL body (241 lines, far too large for dxmedia_abort_video's own ~15-line source function, AC.CPP acwavi.cpp:274-293) shows this is decisively `dxmedia_play_video(const char*,bool,int,int)` (acwavi.cpp:295-385) instead, with `dxmedia_abort_video()`'s own body FUSED inline at the tail rather than called separately (this build has no separate callable dxmedia_abort_video at all). Matches point for point: the 3-parameter (not source's 4) signature drops the later `stretch` parameter, with AGSWin32::PlayVideo's own \"if(flags>=10){flags-=10;useSound=false;}\" flag-decoding fused in as this function's OWN leading logic (byte_4BAA5C=useSound) -- an architectural fusion of two 2011-separate layers (the platform-specific PlayVideo and the internal dxmedia_play_video) into one. CoInitialize(NULL), the two update_polled_stuff() calls bracketing Rende" "rFileToMMStream (matching source's identical bracketing exactly), Render", 1);
 	set_frame_size(0X428B70, 0X10, 4, 0);
 	define_local_var(0X428B70, 0X428DE0, "[bp+0X8]", "lpMultiByteStr");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X428DE0,0X428DF1);
 	set_func_flags(0X428DE0,0x5410);
 	set_frame_size(0X428DE0, 0, 4, 0);
@@ -159457,20 +159457,20 @@ static Functions_9(void) {
 	set_func_flags(0X432796,0x5410);
 	set_func_cmt(0X432796,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: void round_down_coords(int&tmpx,int&tmpy) (routefnd.cpp:402-423) -- a decisive, complete match. `int startgran=walk_area_granularity[_getpixel(wallscreen,tmpx,tmpy)];` matches the disassembly's own call into the already-matched Allegro 8-bit `_getpixel` fast path (sub_425490) followed by `dword_535900[eax*4]`, newly identifying that global as `walk_area_granularity[]`. `tmpy=tmpy-tmpy%startgran; if(tmpy<0) tmpy=0;` matches the disassembly's own `idiv`/subtract-remainder/clamp-to-zero sequence exactly (and the same shape repeats for `tmpx`, read past this excerpt). Called TWICE from find_route_dijkstra (already matched), matching source's own two calls exactly (once on the start point, once on a temporary copy of the destination point).", 1);
 	set_frame_size(0X432796, 0X4, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4328A4,0X43358C);
 	set_func_flags(0X4328A4,0x5410);
 	set_func_cmt(0X4328A4,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int find_route_dijkstra(int fromx,int fromy,int destx,int desty) (routefnd.cpp:425-606) -- a decisive header match, genuinely AGS-owned pathfinding code (not a third-party library). `if(leftorright==1) return 0;` matches the disassembly's own `cmp dword_536C24,1; jnz <continue>; xor eax,eax; return;` exactly, confirming `leftorright`=dword_536C24. The following `for(i=0;i<wallscreen->h;i++) memset(&beenhere[i][0],0xff,wallscreen->w*BEENHERE_SIZE);` matches the disassembly's own loop (bound=`[wallscreen+4]`, `memset(dword_535948[i*4],0xFF,[wallscreen]*2)`) exactly, confirming `BEENHERE_SIZE=2` via the literal `shl ecx,1`. Called from __find_route (already matched) BEFORE the newly-matched try_this_square (sub_432459), matching source's own call order exactly (`else if(find_route_dijkstra(...)) return 1; ... try_this_square(...)`). This is a substantial (~885-line) Dijkstra-based pathfinding search implementing its own malloc'd " "`parent[]`/`visited[]` arrays and a granularity-based grid search -- not t", 1);
 	set_frame_size(0X4328A4, 0X250, 4, 0);
 	define_local_var(0X4328A4, 0X43358C, "[bp-0X158]", "Size");
 	define_local_var(0X4328A4, 0X43358C, "[bp-0X14C]", "Block");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X43358C,0X43378B);
 	set_func_flags(0X43358C,0x5410);
 	SetType(0X43358C, "int __stdcall _find_route(int srcx, int srcy, __int16 *tox, __int16 *toy, int noredx);");
-	set_func_cmt(0X43358C,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int __find_route(int,int,short*,short*,int) at routefnd.cpp:607. String match: \"Don't even try it.\" (618, another routefnd.cpp Easter-egg string). Caller matches exactly: find_route (already matched), which wraps __find_route.", 1);
+	set_func_cmt(0X43358C,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: int __find_route(int,int,short*,short*,int) at routefnd.cpp:607. String match: \"Don't even try it.\" (618, another routefnd.cpp Easter-egg string). Caller matches exactly: find_route (already matched), which wraps __find_route. FIELD EVIDENCE (full body read for the first time): matches routefnd.cpp:607-660 closely, calling `is_route_possible`/`find_route_dijkstra`/`try_this_square` (all already matched, in source's own exact call order) and reading the already-confirmed `suggestx`/`suggesty`/`wallscreen`/`beenhere`/`nesting` globals. IDENTIFIES THREE NEW GLOBALS: `dword_536C2C`=`pathbackstage` (set to 0 at the function's own opening, matching source's `pathbackstage=0;` right before the `routex1!=-10` anti-tamper check, and again right before the direct-hit early return, matching `pathbackstage=0; return 1;` exactly); `dword_536C24`=`leftorright` (checked `==0`/`==1` around the `is_route_possible`/dijkstra retry block, matchin" "g source's own `if(leftorright==0){...} if(leftorright==1){...}` structure", 1);
 	set_frame_size(0X43358C, 0X8, 4, 0X14);
 	define_local_var(0X43358C, 0X43378B, "[bp+0X8]", "srcx");
 	define_local_var(0X43358C, 0X43378B, "[bp+0XC]", "srcy");
@@ -160241,6 +160241,10 @@ static Functions_10(void) {
 	set_func_flags(0X445050,0x5400);
 	set_func_cmt(0X445050,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void release_voice(int voice) at sound.c:1478-1482 -- the final call in play_sample's chain (see voice_set_volume's entry; play_sample's own source, sound.c:1205, calls 'release_voice(voice);' as its literal last statement before returning, matching this function being the last thing sub_444AF0/play_sample calls before its own return). Trivial one-line body, but the value written is the clincher: 'dword_550048[voice*5*4]=0xFFFFFFFF' (dword_550048 = virt_voice[].autokill, one dword after the established .num offset, matching VOICE's declared field order 'num; autokill;' exactly) matches 'virt_voice[voice].autokill = TRUE;' EXACTLY -- Allegro's own TRUE is #defined as -1 (base.h:59), not 1, so the seemingly-odd 0xFFFFFFFF literal is not a coincidence, it's TRUE's actual value in this codebase.", 1);
 	set_frame_size(0X445050, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X445070,0X4450AD);
 	set_func_flags(0X445070,0x5400);
 	set_func_cmt(0X445070,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void voice_start(int voice) at sound.c:1491-1500 -- part of the same play_sample call chain (see voice_set_volume's entry). Body is a decisive, complete match: num-check, a vtable dispatch at +0x44 matching 'digi_driver->start_voice(virt_voice[voice].num)', then an UNCONDITIONAL write of a global (dword_537E8C) into virt_voice[voice]'s time field -- identifies dword_537E8C as the well-known Allegro global `retrace_count`, matching 'virt_voice[voice].time = retrace_count;' exactly (an unconditional statement outside the num>=0 guard in source too, matching the disassembly's control flow precisely).", 1);
@@ -160262,10 +160266,6 @@ static Functions_10(void) {
 	set_func_flags(0X4451A0,0x5400);
 	set_func_cmt(0X4451A0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: Allegro library, void voice_set_playmode(int voice, int playmode) at sound.c:1592-1604 -- part of the same play_sample call chain (see voice_set_volume's entry). Body is an exhaustive, complete match: num-check, stores the playmode field (dword_551444), a vtable dispatch at +0x4C matching 'digi_driver->loop_voice(...)', then 'test bl,2' matching 'if (playmode & PLAYMODE_BACKWARD)' (PLAYMODE_BACKWARD=2, digi.h:167, TRUE bitmask match) -- if set, reads dword_550040[voice*5] (one dword before the already-established virt_voice[].num offset, matching VOICE struct's declared field order 'sample; num;' exactly, identifying dword_550040 as virt_voice[].sample), reads [sample+0x10] matching SAMPLE.len, decrements it, and dispatches through the vtable at +0x54 matching 'digi_driver->set_position(num, sample->len-1)' exactly.", 1);
 	set_frame_size(0X4451A0, 0X4, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X445200,0X445260);
 	set_func_flags(0X445200,0x5400);
 	set_frame_size(0X445200, 0X4, 0, 0);
@@ -161917,6 +161917,10 @@ static Functions_11(void) {
 	set_func_cmt(0X46AB30,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wdxver.c\nconfidence: high\nevidence: int get_dx_ver(void) (wdxver.c:62-260+) -- Allegro's own DirectX-version-detection helper, called once from sys_directx_init (already IDA-named). Structural match confirmed step by step: GetVersionExA into an OSVERSIONINFOA-shaped local (dwOSVersionInfoSize=0x94 written directly, matching sizeof(OSVERSIONINFO)), a failure early-return matching `if(!GetVersionEx(&os_version)) return dx_version;`, a `dwPlatformId==VER_PLATFORM_WIN32_NT(2)` check and a `dwMajorVersion<4` early-return matching source's own NT-version gate exactly (`if(os_version.dwPlatformId==VER_PLATFORM_WIN32_NT){if(os_version.dwMajorVersion<4) return dx_version;...}`), then a progressive dx_version upgrade scheme via a running `ebx` value written 0x100/0x200/0x300/0x500 at successive detection stages -- matching source's own hex DirectX-version constants (0x500=\"DX5\", etc.) exactly. Confirms the matched strings \"DINPUT.DLL\"/\"DirectInput" "CreateA\"/\"DDRAW.DLL\"/\"DirectDrawCreate\" (aDinputDll_1/aDirectinputcre_0/aDdrawDll_0/aDirectdrawcrea", 1);
 	set_frame_size(0X46AB30, 0X154, 0, 0);
 	define_local_var(0X46AB30, 0X46AD2F, "[bp-0X94]", "VersionInformation");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X46AD30,0X46AD7A);
 	set_func_flags(0X46AD30,0x5400);
 	set_frame_size(0X46AD30, 0X4, 0, 0);
@@ -162032,10 +162036,6 @@ static Functions_11(void) {
 	add_func    (0X46BF20,0X46BF28);
 	set_func_flags(0X46BF20,0x5400);
 	set_frame_size(0X46BF20, 0, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X46BF30,0X46BF77);
 	set_func_flags(0X46BF30,0x5400);
 	set_frame_size(0X46BF30, 0X4, 0, 0);
@@ -163847,6 +163847,10 @@ static Functions_12(void) {
 	add_func    (0X48F910,0X48F921);
 	set_func_flags(0X48F910,0x5400);
 	set_frame_size(0X48F910, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X48F930,0X48F9E0);
 	set_func_flags(0X48F930,0x5400);
 	set_frame_size(0X48F930, 0X14, 0, 0);
@@ -163965,10 +163969,6 @@ static Functions_12(void) {
 	set_func_flags(0X492430,0x5400);
 	set_frame_size(0X492430, 0X18, 0, 0);
 	define_local_var(0X492430, 0X4925D6, "[bp-0XC]", "NumOfElements");
-}
-
-static Functions_13(void) {
-
 	add_func    (0X4925E0,0X492718);
 	set_func_flags(0X4925E0,0x5400);
 	set_frame_size(0X4925E0, 0X54, 0, 0);

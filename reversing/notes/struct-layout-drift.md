@@ -14521,3 +14521,63 @@ an earlier round.)
 All three applied via a fresh `apply_all_and_export.py` round (no
 renames needed — all three functions were already correctly named,
 this was pure field-evidence enrichment).
+
+### `InterfaceElement`, declared a dead end three separate times, reopens completely via its own constructor -- plus three new `__find_route` globals
+
+Continuing down the thin/bare-evidence list, `InterfaceElement__
+InterfaceElement` (already correctly named in the IDB via a DATA XREF
+from an array-of-objects default-construction loop, but with only a
+292-character string-match-only `matches.json` entry) turned out to be
+this build's own real default CONSTRUCTOR — and its body is a
+decisive, complete, ZERO-DRIFT match to 2011's own inline constructor
+(`Common/acroom.h:316-319`). This single ~14-instruction function
+closes 8 of the 9 fields this struct's own comment had explicitly
+declared opaque after three separate exhausted address-search rounds:
+every literal it sets lands EXACTLY on that field's 2011-declared
+offset with zero slack — `bgcol`@+0x10=8, `fgcol`@+0x14=15,
+`bordercol`@+0x18=0, `vtextxp`@+0x1C=0, `vtextyp`@+0x20=1, `vtext`@+0x28
+(the `strcpy` target, confirming the 40-byte capacity), `numbuttons`
+@+0x50=0, and `flags`@+0x324=0. That last one is the real capstone:
+`flags`@+0x324 landing exactly where `button[MAXBUTTON=20]`'s own
+arithmetic predicts (`InterfaceButton`, `acroom.h:291-301` — 8 ints +
+1 char, padded to 0x24/36 bytes — times 20 = 0x2D0, plus `numbuttons`
+@+0x50's own 4 bytes = 0x54+0x2D0=0x324) gives the button array's own
+capacity a genuine confirmation too, with ZERO drift from 2011's
+`MAXBUTTON=20` — unusual for this project, where fixed-capacity
+constants almost always shrink. `reserved_for_future`/`popupyp` are
+now boxed in with zero slack between the newly-confirmed `flags` and
+the long-since-confirmed `popup`/`on` pair, closing the struct's own
+layout end to end except for `x`/`y`/`x2`/`y2` (untouched by either
+build's constructor) and `button[]`'s own inner fields (still no
+individual access site, though the array's own bounds are now solid).
+The lesson already stated for `RoomStruct` several rounds ago holds
+again here: a constructor is worth specifically hunting for on any
+struct whose only apparent evidence is positional, since default-value
+inits tend to touch nearly every field at once with zero interpretive
+risk — this is now the SECOND struct this project has cracked open
+almost entirely via its own constructor after being declared a dead
+end by other means.
+
+Immediately after, `__find_route` (`sub_43358C`, `routefnd.cpp:
+607-660`) — already matched via its own "Don't even try it." Easter-egg
+string, but with only a 226-character entry — turns up three more new
+globals in one read, closing this thinned-out find in a single pass:
+`dword_536C2C`=`pathbackstage`, `dword_536C24`=`leftorright`, and
+`dword_4BBBB8`=`waspossible`, all confirmed via exact structural
+matches to source's own control flow (the `pathbackstage=0` resets
+bracketing the anti-tamper check and the direct-hit return; the
+`leftorright==0`/`==1` gating around the `is_route_possible`/dijkstra
+retry loop; `waspossible` holding `is_route_possible`'s own return
+value). Bonus: `leftorright`'s identity gets a second independent
+confirmation route (its own entry already cited a matching check
+inside `find_route_dijkstra`).
+
+Both applied via a fresh `apply_all_and_export.py` round. One
+housekeeping note: that round's log shows `parse_decls reported 1
+error(s)` and an `IDC export ... 1 lines` line — checked against the
+three most recent prior rounds' own logs (298/300/302) and confirmed
+this exact pair of lines is already present in ALL of them, i.e. a
+pre-existing, benign quirk unrelated to this round's own
+`InterfaceElement` struct rewrite (which itself applied and renamed
+cleanly per the log's own `OK` lines) — not a new regression, not
+investigated further.

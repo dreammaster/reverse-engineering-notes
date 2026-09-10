@@ -1529,19 +1529,64 @@ struct MouseCursor {
 struct InterfaceElement {
   // Total size 0x334 (820 bytes), high confidence -- independently confirmed via its own array
   // stride (`imul reg,334h` in load_ac2game_dta, RunCharacterInteraction-adjacent code) AND via
-  // the byte-for-byte match on the two fields below, matching 2011's `InterfaceElement`
-  // (Common/acroom.h:304-320) with zero drift on total size. Only the LAST two fields have
-  // independent access-site evidence so far -- the rest (x/y/x2/y2, bgcol/fgcol/bordercol,
-  // vtextxp/vtextyp/vtextalign, vtext[40], numbuttons, button[20], flags,
-  // reserved_for_future, popupyp) are NOT yet independently confirmed field-by-field, so are
-  // left as opaque padding rather than asserted -- per this project's "don't assert past your
-  // evidence" rule (unlike EventBlock, whose every field WAS independently confirmed via
-  // run_event_block before being fully typed). `button[MAXBUTTON=20]` alone would need its own
-  // `InterfaceButton` struct (acroom.h:291-301) to type properly, which has zero access-site
-  // evidence of its own yet -- left undefined until/unless a future round finds one.
-  char _unconfirmed[0x330];       // +0x00..0x330 (816 bytes), matches 2011's declared layout by
-                            // position (x/y/x2/y2 through popupyp, acroom.h:305-313) but no
-                            // field within it has independent access-site evidence yet.
+  // the byte-for-byte match on `popup`/`on` below, matching 2011's `InterfaceElement`
+  // (Common/acroom.h:304-320) with zero drift on total size.
+  // MAJOR UPDATE (found while sweeping thin/bare matches for field evidence -- this struct had
+  // been explicitly declared a dead end THREE separate times in earlier rounds, each an
+  // address-search for a specific unconfirmed field finding zero hits): `InterfaceElement__
+  // InterfaceElement` (already correctly named in the IDB, but with no matches.json entry until
+  // now) is this build's own real default CONSTRUCTOR, and its body is a decisive, complete,
+  // zero-drift match to 2011's OWN inline constructor (acroom.h:316-319: "vtextxp=0; vtextyp=1;
+  // strcpy(vtext,"@SCORETEXT@$r@GAMENAME@"); numbuttons=0; bgcol=8; fgcol=15; bordercol=0; on=1;
+  // flags=0;") -- every single literal it sets lands EXACTLY on that field's own declared
+  // offset with zero slack, closing 8 of the 9 previously-"opaque" fields at once. The button[]
+  // array's own capacity/stride is a zero-slack ARITHMETIC fit (not yet an access-site
+  // confirmation): `InterfaceButton` (acroom.h:291-301, 8 ints + 1 char, padded to 36/0x24
+  // bytes) times `MAXBUTTON=20` is exactly 0x2D0 (720) bytes, and `numbuttons`(+0x50, 4 bytes)
+  // + 0x2D0 lands EXACTLY on the newly-confirmed `flags`@+0x324 -- zero drift on capacity too,
+  // unlike almost everything else in this project.
+  int x, y, x2, y2;                // +0x00..+0x10, UNCONFIRMED -- the constructor doesn't touch
+                            // these (2011's own constructor doesn't either), and no other
+                            // already-matched function has been found reading/writing them.
+                            // Kept as typed fields (not opaque padding) purely for position;
+                            // stays open for a future round.
+  int bgcol;                       // +0x10, high confidence: constructor sets `[this+0x10]=8`,
+                            // matching source's `bgcol=8;` exactly.
+  int fgcol;                       // +0x14, high confidence: constructor sets `[this+0x14]=0xF`
+                            // (15), matching source's `fgcol=15;` exactly.
+  int bordercol;                   // +0x18, high confidence: constructor sets `[this+0x18]=0`,
+                            // matching source's `bordercol=0;` exactly.
+  int vtextxp;                     // +0x1C, high confidence: constructor sets `[this+0x1C]=0`,
+                            // matching source's `vtextxp=0;` exactly.
+  int vtextyp;                     // +0x20, high confidence: constructor sets `[this+0x20]=1`,
+                            // matching source's `vtextyp=1;` exactly.
+  int vtextalign;                  // +0x24, UNCONFIRMED -- source's own constructor doesn't set
+                            // this either (no `vtextalign=...` line), boxed in with zero slack
+                            // between the confirmed `vtextyp` and `vtext[]` fields.
+  char vtext[40];                  // +0x28, high confidence: constructor does
+                            // `strcpy([this+0x28], "@SCORETEXT@$r@GAMENAME@")`, matching
+                            // source's `strcpy(vtext,"@SCORETEXT@$r@GAMENAME@");` exactly --
+                            // both the address (right after vtextalign, matching 2011's declared
+                            // adjacency) and the literal string content.
+  int numbuttons;                  // +0x50, high confidence: constructor sets `[this+0x50]=0`,
+                            // matching source's `numbuttons=0;` exactly -- lands exactly at
+                            // vtext[40]'s own confirmed end (0x28+40=0x50), zero slack.
+  char button[0x2D0];              // +0x54..+0x324 (720 bytes = InterfaceButton[MAXBUTTON=20],
+                            // MEDIUM confidence -- zero-slack ARITHMETIC fit only, see the
+                            // struct-level note above; no individual InterfaceButton field has
+                            // its own access-site evidence yet, so left as a raw byte blob
+                            // rather than a typed array. A future round could type this properly
+                            // if a caller populating `button[i].x`/`.pic`/etc. is ever found.
+  int flags;                       // +0x324, high confidence: constructor sets `[this+0x324]=0`,
+                            // matching source's `flags=0;` exactly -- lands exactly where
+                            // `button[20]`'s own arithmetic fit predicts, zero slack.
+  int reserved_for_future;         // +0x328, MEDIUM confidence: positional only -- the
+                            // constructor doesn't set this (2011's own constructor doesn't
+                            // either), boxed in with zero slack between the confirmed `flags`
+                            // and `popupyp` fields.
+  int popupyp;                     // +0x32C, MEDIUM confidence: positional only -- same
+                            // reasoning as `reserved_for_future`, boxed in with zero slack
+                            // before the already-confirmed `popup`@+0x330.
   char popup;                     // +0x330, high confidence: `byte_513B7C`. Confirmed via
                             // load_ac2game_dta (already matched): "imul edx,334h;
                             // movsx eax,byte_513B7C[edx]; cmp eax,2" -- byte_513B7C's own
@@ -1556,7 +1601,9 @@ struct InterfaceElement {
                             // to 0 or 1 in load_ac2game_dta depending on whether the
                             // corresponding `popup` field equals 2, consistent with 2011's
                             // constructor default ("on = 1;", acroom.h:318) being conditionally
-                            // overridden during game-data load.
+                            // overridden during game-data load -- also independently confirmed
+                            // by the constructor itself setting `[this+0x331]=1` as its own
+                            // unconditional default, matching source's `on=1;` exactly.
   char _pad_align[2];             // +0x332..0x334, likely compiler alignment padding (not
                             // independently confirmed as real content) -- boxed in with zero
                             // slack by the confirmed total stride (0x334) and the confirmed `on`
