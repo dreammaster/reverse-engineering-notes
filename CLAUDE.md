@@ -346,6 +346,24 @@ reversing/
                                      drift.md). Extend the FIELDS list as
                                      new offsets get confirmed and are worth
                                      spot-checking.
+    dump_characters_from_data.py    - the deepest use yet of this technique:
+                                     walks load_game_file's own exact byte-
+                                     consumption sequence (main struct,
+                                     WordsDictionary, an unidentified skip,
+                                     the compiled global script via
+                                     fread_script's own field-by-field
+                                     format, the ViewStruct272 array, a
+                                     second skip) past FIVE variable-length
+                                     sections to reach the real
+                                     CharacterInfo array -- self-checked via
+                                     the script block's own "SCOM" signature
+                                     and 0xBEEFCAFE trailing sentinel, so a
+                                     wrong section-size computation upstream
+                                     can't silently produce garbage. Decodes
+                                     Rob Blanc 1's real 5 characters (see
+                                     struct-layout-drift.md). Extend past
+                                     the character array if a future round
+                                     needs to reach dialog topics/GUIs/etc.
   analysis/                        - generated JSON artifacts (regeneratable,
                                      but keep committed since they're
                                      expensive to rebuild and are the working
@@ -4436,6 +4454,23 @@ disassembly work.
   elements' own remaining fields. Doesn't retract that code-side
   finding, just adds nuance: data existing and code reading it are
   different questions. See `reversing/notes/struct-layout-drift.md`.
+- **The deepest use yet of the real-game-data technique: walked past
+  the whole game-file header to decode Rob Blanc 1's actual
+  `CharacterInfo` array.** New script,
+  `reversing/scripts/dump_characters_from_data.py`, replays
+  `load_game_file`'s own exact byte-consumption sequence (main struct,
+  `WordsDictionary`, an unidentified skip, the compiled global script
+  via `fread_script`'s own field-by-field format, the `ViewStruct272`
+  array, a second skip) to reach the real character records --
+  self-checked via the script block's own `"SCOM"` signature and
+  `0xBEEFCAFE` trailing sentinel, both passing cleanly. Decodes all 5
+  of the game's real, named characters: `"ROB"`, `"HIGH ONE"` (twice,
+  distinct script names `HIGHONE`/`HIGHTWO`), `"DROID"`,
+  `"HOLOGRAM"` -- fitting a sci-fi adventure exactly as the title
+  suggests -- plus sane `view`/`room`/`x`/`y` values throughout. A
+  clean, fully independent confirmation of `CharacterInfo`'s own field
+  layout, one of the most heavily-confirmed structs in this project.
+  See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

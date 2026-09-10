@@ -15070,3 +15070,44 @@ stays exactly as thoroughly-searched-and-still-mostly-unconfirmed as
 before, just with a slightly less absolute framing ("the engine
 appears to never read most of these fields" rather than "this game
 doesn't use interfaces at all").
+
+### The deepest use yet: walking past the whole header to reach the real `CharacterInfo` array -- and meeting Rob Blanc's actual cast
+
+One more level deeper with the same technique, this time aimed at
+`CharacterInfo` -- one of the most heavily-confirmed structs in the
+whole project (explicitly noted as having "no remaining open fields
+at all" after this session's own `actx`/`acty` round). Reaching the
+real character data requires correctly walking past FIVE variable-
+length sections first, each sized by a value read from earlier in the
+same file -- get any one wrong and every byte read afterward is
+garbage: the main `GameSetupStructBase` blob (fixed, `0xBF84` bytes),
+`WordsDictionary` (`num_words`, then that many length-prefixed
+encrypted words plus a 2-byte `wordnum` each), an unidentified
+`getw()`-sized forward skip, the compiled global script
+(`fread_script`'s own exact field-by-field format, replicated
+directly from its disassembly -- globaldata/code/strings/fixups/
+imports/exports, all already-confirmed sizes), the `ViewStruct272`
+array (`numviews * 0x8D4` bytes), and a second `getw()`-sized skip
+(this one scaled by `0x204` bytes/unit).
+
+New script, `reversing/scripts/dump_characters_from_data.py`, replays
+this whole sequence against the real `rb.exe`-embedded `ac2game.dta`.
+Two built-in checkpoints make a wrong alignment impossible to miss
+silently: the script block's own signature must read literal
+`"SCOM"`, and its own trailing sentinel must read exactly
+`0xBEEFCAFE` (`ENDFILESIG`) -- both passed on the first attempt,
+meaning every preceding section-size computation was correct.
+
+The payoff: **decoding all 5 of Rob Blanc 1's real, named
+characters.** `name`/`scrname`@+0x110/+0x12E read as genuine,
+sensible text -- `"ROB"` (the game's own title character), `"HIGH
+ONE"` (twice, with distinct script names `HIGHONE`/`HIGHTWO` -- two
+characters sharing one displayed name), `"DROID"`, `"HOLOGRAM"` --
+fitting a sci-fi-themed adventure exactly as the title suggests.
+Every other field checked (`defview`/`talkview`/`view`, all small
+indices safely within the confirmed `numviews`=10; `room`, matching
+real room numbers among the 19 that exist; `x`/`y`, plausible screen
+coordinates) reads a small, contextually sane value. A clean,
+completely independent, real-data confirmation of `CharacterInfo`'s
+own field layout -- the deepest and most satisfying use of this
+technique so far.
