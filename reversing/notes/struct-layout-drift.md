@@ -14740,3 +14740,40 @@ called as a separate function, and finds one small wording drift:
 this build's "already running" error reads "room script is already
 in execution" where source's is the generic "script is already in
 execution".
+
+### The last four thin entries from this pool: a wrong source-location correction, and a fourth `ci_fopen` absence confirmation
+
+Closed out the whole thin/bare-evidence pool this round.
+
+**`check_valid_file_handle`** (`AC.CPP:18291-18302`) matches closely,
+looping over the already-established `valid_handles[]`/`num_open_
+script_files` globals. One trivial equivalence-only difference: no
+explicit leading `if(hann!=NULL)` fast-path check, but since `NULL`
+can never equal a real open-file handle, the observable behavior is
+identical either way.
+
+**`check_font`** turned up a genuine correction, small but real: the
+existing entry cited `Engine/acfonts.cpp:78` as its source, but that
+body only compiles for the AGS EDITOR build (`#ifndef THIS_IS_THE_
+ENGINE`). The disassembly's own body is a complete no-op (`push ebp;
+mov ebp,esp; pop ebp; retn`, nothing else) -- this matches the real
+ENGINE-build definition instead, `Common/acgui.h:37-39`: `inline void
+check_font(int *fontnum) {}` (guarded by `#ifdef THIS_IS_THE_ENGINE`).
+A reminder that a header exposing two different bodies behind a
+build-mode `#ifdef` needs the RIGHT one checked, not just the first
+one a name search turns up.
+
+**`wtexttransparent`** has no local implementation in this repo to
+compare against (`Wgt2allg.h:711` is only a declaration) -- identified
+its two touched globals (a last-requested-mode cache and a
+non-transparent-default fallback) at the role level only, delegating
+straight to the already-matched `alfont_text_mode`.
+
+**`dump_instruction`** (`CSRUN.CPP:118-141`), traced through its
+opening SCMD_LINENUM special case and file-open sequence, confirms
+`SCMD_LINENUM=0x24`(36) with zero drift, identifies its own `static
+int line_num`, and calls plain `fopen("script.log","at")` directly --
+a FOURTH independent confirmation (after the CLIB-subsystem round's
+three) that `ci_fopen()`'s case-insensitive-path wrapper doesn't exist
+anywhere in this build. Also confirms a new reader of the
+already-established `sccmdnames[]` bytecode-mnemonic table.

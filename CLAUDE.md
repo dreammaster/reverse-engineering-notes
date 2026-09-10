@@ -4284,6 +4284,16 @@ disassembly work.
   `scfunctionname` (new global) and a zero-drift `MAX_SCRIPT_AT_ONCE
   =10`; `update_script_mouse_coords()` confirmed fused inline. See
   `reversing/notes/struct-layout-drift.md`.
+- **The last four thin entries closed out this pool.**
+  `check_valid_file_handle` matches closely (one trivial equivalence-
+  only difference). `check_font` gets a real correction: its cited
+  source location was the AGS EDITOR-only body; the disassembly's own
+  complete no-op matches the real ENGINE-build definition instead
+  (`Common/acgui.h:37-39`). `wtexttransparent` identified at the role
+  level (no local implementation exists in this repo to check
+  against). `dump_instruction` confirms `SCMD_LINENUM=0x24` with zero
+  drift and gives `ci_fopen()`'s absence a FOURTH independent
+  confirmation. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

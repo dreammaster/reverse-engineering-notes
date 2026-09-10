@@ -3655,7 +3655,7 @@
     "source_file": "Common/CSRUN.CPP",
     "source_line": 118,
     "confidence": "high",
-    "evidence": "void dump_instruction(unsigned long*,int,int) at CSRUN.CPP:118. String matches: \"script.log\" (127), \"Line %3d, IP:%8d (SP:%8d) \" (128). Caller: sub_42B394 (the unrenamed 2002-era interpreter predecessor of cc_run_code) -- matches a bytecode-dump debug helper being called from the interpreter loop."
+    "evidence": "void dump_instruction(unsigned long*,int,int) at CSRUN.CPP:118. String matches: \"script.log\" (127), \"Line %3d, IP:%8d (SP:%8d) \" (128). Caller: sub_42B394 (the unrenamed 2002-era interpreter predecessor of cc_run_code) -- matches a bytecode-dump debug helper being called from the interpreter loop. FIELD EVIDENCE (full body read in part -- a large debug-dump function, traced through its opening SCMD_LINENUM special case and file-open sequence): matches CSRUN.CPP:118-141 exactly. Identifies `dword_535744` as the function's own `static int line_num` (the `codeptr[0]==SCMD_LINENUM` check confirms `SCMD_LINENUM=0x24` (36) with ZERO drift). Uses plain `fopen(\"script.log\",\"at\")` directly, NOT `ci_fopen` -- a FOURTH independent confirmation (after the CLIB-subsystem round's three) that `ci_fopen()`'s case-insensitive-path wrapper doesn't exist anywhere in this build. `off_4BB300[thisop*4]` (IDA's own comment shows element 0 decoding to \"NULL\") is this project's own already-established `sccmdnames[]` bytecode-mnemonic table, confirming a further reader of that array from a genuinely new call site."
   },
   {
     "kind": "manual",
@@ -3808,7 +3808,7 @@
     "source_file": "Engine/AC.CPP",
     "source_line": 18291,
     "confidence": "high",
-    "evidence": "int check_valid_file_handle(FILE*,char*) at AC.CPP:18291. String match: \"!%s: invalid file handle; file not previously opened\" (18300). Caller matches exactly: FileClose (already-named script API function)."
+    "evidence": "int check_valid_file_handle(FILE*,char*) at AC.CPP:18291. String match: \"!%s: invalid file handle; file not previously opened\" (18300). Caller matches exactly: FileClose (already-named script API function). FIELD EVIDENCE (full body read for the first time): matches AC.CPP:18291-18302 closely, looping over the already-established `valid_handles[]`/`num_open_script_files` globals and falling through to the same `sprintf`+`quit` error path on no match. One trivial equivalence-only difference: this build's loop has no explicit leading `if(hann!=NULL)` fast-path check -- it always runs the search loop regardless, but since `NULL` can never equal a real open-file handle in `valid_handles[]`, the observable behavior is identical either way (falls through to the same error branch)."
   },
   {
     "kind": "manual",
@@ -5955,7 +5955,7 @@
     "source_file": "Common/Wgt2allg.h",
     "source_line": 711,
     "confidence": "high",
-    "evidence": "Called from RawPrint (already matched, see its own entry) as \"sub_401B02(0);\" -- matching 2011's \"wtexttransparent(TEXTFG);\" (AC.CPP:14453) where TEXTFG=0 (Common/Wgt2allg.h:62), an exact literal-argument match. Declared at Wgt2allg.h:711, not chased into its own body this round."
+    "evidence": "Called from RawPrint (already matched, see its own entry) as \"sub_401B02(0);\" -- matching 2011's \"wtexttransparent(TEXTFG);\" (AC.CPP:14453) where TEXTFG=0 (Common/Wgt2allg.h:62), an exact literal-argument match. Declared at Wgt2allg.h:711, not chased into its own body this round. FIELD EVIDENCE (full body read for the first time): a thin swap/delegate wrapper around the already-matched `alfont_text_mode`. No local implementation exists in this repo to check against (`Common/Wgt2allg.h:711` is only a declaration; the definition lives in a .cpp not present here), so identified at the role level only: `dword_5230E8` caches the caller's own last-requested transparency-mode value (written unconditionally on every call), and `dword_5230E4` supplies a 'non-transparent default' fallback read when the caller passes 0 -- both left as role-only globals, no specific 2011 name to attach given the missing source."
   },
   {
     "kind": "manual",
@@ -6042,10 +6042,10 @@
     "kind": "manual",
     "asm_name": "sub_424040",
     "new_name": "check_font",
-    "source_file": "Engine/acfonts.cpp",
-    "source_line": 78,
+    "source_file": "Common/acgui.h",
+    "source_line": 37,
     "confidence": "high",
-    "evidence": "void check_font(int *fontnum) at acfonts.cpp:78 -- exact signature match (single pointer argument). Called from GUILabel::Draw (already matched) as check_font(&this->font), matching source's own opening statement exactly."
+    "evidence": "void check_font(int *fontnum) at acfonts.cpp:78 -- exact signature match (single pointer argument). Called from GUILabel::Draw (already matched) as check_font(&this->font), matching source's own opening statement exactly. CORRECTION (full body read for the first time): the cited source location (`acfonts.cpp:78`) is WRONG -- that body only compiles for the AGS EDITOR build (guarded by `#ifndef THIS_IS_THE_ENGINE`). The disassembly's own body is a COMPLETE NO-OP (`push ebp; mov ebp,esp; pop ebp; retn`, nothing else at all) -- this matches the real ENGINE-build definition instead, `Common/acgui.h:37-39`: `inline void check_font(int *fontnum) {}` (guarded by `#ifdef THIS_IS_THE_ENGINE`). Corrected source_file/source_line accordingly; the call-site match (from GUILabel::Draw/GUITextBox::Draw, both already matched) still stands, just against the right definition."
   },
   {
     "kind": "manual",
