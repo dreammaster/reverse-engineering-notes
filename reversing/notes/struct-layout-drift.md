@@ -15454,3 +15454,119 @@ with this whole software-rendering-era startup code predating
 With these three, `main`'s own callgraph -- one of the largest and most
 thoroughly investigated functions in this project -- has zero remaining
 unidentified direct callees.
+
+### `_WinMain`: main's own caller identifies Allegro's "magic main" entry point
+
+One level up from `main` itself: `_WinMain@16` (this build's real
+Windows `WinMain` entry point) does almost nothing of its own -- it
+gathers its 4 standard arguments and makes exactly one call, passing
+`offset main` as a 5th argument. That call target, `sub_455980`,
+closes decisively as Allegro's own public `_WinMain(void *_main, void
+*hInst, void *hPrev, char *Cmd, int nShow)` (`Engine/libsrc/
+allegro-4.2.2/src/win/wsystem.c:489`) -- the well-known "magic main"
+mechanism (`allegro/platform/alwin.h:39-59`): the `END_OF_MAIN()` macro
+renames the program's own `main` to `_mangled_main` and generates a
+real `WinMain` that does exactly `return _WinMain((void*)_mangled_main,
+hInst, hPrev, Cmd, nShow);` -- an exact structural match, argument order
+included. The callee's own body confirms it beyond doubt: `GetCommandLine()`,
+`strlen+1`, `malloc`, `memcpy` (rebuilding the raw command line, since
+`WinMain` doesn't get one), then a growable `argv[]` array starting at
+exactly 64 slots -- matching source's own literal `argc_max=64` with
+zero drift. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule:
+this function IS the public boundary itself (the entry point
+`END_OF_MAIN()` wires up), so its own further internals (the command-
+line tokenizer, the eventual call into `_mangled_main`) aren't traced
+further.
+
+### `mainloop`'s own remaining callees: one real find, plus reconfirmation of three already-parked ones
+
+Followed the same "sweep a heavily-used, never-fully-swept function"
+instinct one level further: `mainloop` (called every frame) had 4
+distinct still-unnamed direct calls. Three were already investigated
+and deliberately left unnamed in earlier rounds (documented in their
+own `matches.json` entries, just not immediately obvious from a
+surface grep) -- the ALMP3 single-stream MP3-crossfade check/cleanup
+pair (`sub_408392`/`sub_4084E0`, no clean 2011 counterpart since 2011's
+crossfading needs a `channels[]` array this build predates) and the
+generic per-frame ambient-sound-poll helper (`sub_425230`, too trivial
+to confidently pin to a specific 2011 identifier). A same-named false
+positive also surfaced and was ruled out: a grep for `sub_40CE8A`
+inside `mainloop`'s address range matched only a COMMENT (evidence text
+quoting the pre-rename disassembly inside `update_events`'s own
+`matches.json` entry) -- the real call site already correctly reads
+`call processallevents`, no actual gap there. Worth remembering: a
+naive text grep across the `.asm` can be fooled by another function's
+own evidence-comment quoting an old call-site string verbatim, the
+same class of bug already caught once this project in the callgraph-
+ranking script.
+
+The one genuinely new find: **`sub_425720` closes as Allegro's
+`yield_timeslice`** (`allegro/alcompat.h:211-216`, `AL_INLINE_DEPRECATED
+(void, yield_timeslice, (void), { if (system_driver->yield_timeslice)
+system_driver->yield_timeslice(); })`) -- a 3-instruction null-check-
+then-call through the already-established `system_driver` global
+(`dword_536F68`) at offset `+0x74`, no arguments, result never
+examined, called once per `mainloop` iteration to be polite to the OS
+scheduler. THIRD-PARTY LIBRARY BOUNDARY, not chased further.
+
+### A proper callgraph-ranking re-run (with the comment-line bug fixed) finds four more real matches
+
+Re-ran this project's own callgraph-ranking technique properly this
+time -- tallying, for every ALREADY-NAMED function, its own direct
+`call sub_*` targets read strictly from CODE lines (never comment
+text, the exact class of false positive `mainloop`'s own sweep just
+caught) -- and cross-checked every target against a heuristic list of
+obviously-library caller names to separate "reached only from Allegro/
+JGMOD/ALMP3/alfont internals" (confirmed, once again, to be the vast
+majority -- CLAUDE.md's own "all four systematic techniques saturate on
+third-party internals" conclusion holds) from anything with a
+genuinely AGS-side or ambiguous caller worth a second look. Four real
+finds fell out:
+
+- **`sub_407618` closes as `GUIMain::draw_blob(int xp,int yp)`**
+  (`Engine/acgui.cpp:1156-1159`, `wbar(xp,yp,xp+get_fixed_pixel_size(1),
+  yp+get_fixed_pixel_size(1));`) -- called 4 times from `GUIMain::draw_at`
+  (already matched) inside its "mark each corner of the currently-
+  highlighted control" block, right after `wsetcolor(selectedColour)`,
+  matching source's own 4 `draw_blob(x,y)` calls exactly. Takes only
+  `(x,y)` via `__thiscall` with `this` saved but never read, matching
+  source's own body having no `this->` references at all.
+- **`sub_4345B0` closes as Allegro's own `_remove_exit_func`**
+  (`allegro-4.2.2/src/allegro.c:278-294`) -- found while sweeping
+  `debug_exit`'s own remaining callees. Walks the global `exit_func_
+  list` singly-linked list, unlinks the matching node, frees it --
+  matching source instruction for instruction. DRIFT: this build's node
+  is 2 fields (funcptr, next), one field smaller than source's 3-field
+  declared struct -- no debug description string carried.
+- **`sub_435610` closes as Allegro's own `shutdown_gfx`**
+  (`allegro-4.2.2/src/graphics.c:453-467`) -- the OTHER caller of
+  `_remove_exit_func`, registered via `_add_exit_func` inside
+  `set_gfx_mode` itself (confirmed via a DATA XREF pointing straight at
+  it). A complete match: null-checks `gfx_driver`, calls
+  `set_gfx_mode(GFX_TEXT,...)`, dispatches through `system_driver`'s
+  own `restore_console_state` slot (at `+0x38` -- one slot later than
+  the current header's own `+0x34`, a FURTHER independent confirmation
+  of the SYSTEM_DRIVER vtable-shift already established via
+  `set_window_title`/`read_hardware_palette`), self-unregisters via the
+  just-identified `_remove_exit_func`, and sets `gfx_virgin=TRUE` (as
+  Allegro's own `-1`, matching its `#define TRUE -1` convention already
+  seen at `release_voice`).
+- **`sub_477B80` closes as JGMOD's own `remove_mod`** -- the exact
+  mirror image of this session's own `install_mod` correction (see
+  above). Registered as this build's `atexit` callback inside
+  `install_mod` itself and ALSO called directly from `quit()` -- the
+  same "no separate AGS-side wrapper exists in this 2002 build" pattern
+  as `install_mod`, since 2011's own `remove_mod_player() { remove_mod();
+  }` is, once again, a later-added trivial indirection. Confirmed via
+  clean symmetry: calls the already-matched `stop_mod()` first,
+  deallocates every entry of the exact same per-voice array
+  `install_mod` populated, and clears the exact same `dword_5477F4`
+  "installed" sentinel `install_mod` sets.
+- Bonus data-hygiene fix: `INIreaditem`'s own two small private helpers
+  (`sub_404EF7`, an end-of-buffer check; `sub_404F12`, a position-
+  tracking `fgetc` wrapper) were fully understood but had never been
+  given their own `matches.json` records -- added, left unnamed (same
+  reason as `INIreaditem` itself: this whole custom INI-parser
+  subsystem was replaced outright by Allegro's `config.c` API by 2011,
+  with no source-derived identifier surviving to adopt for either
+  helper).

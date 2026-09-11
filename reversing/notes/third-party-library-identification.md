@@ -361,6 +361,20 @@ stay unchased per the scope rule. See
 `reversing/notes/struct-layout-drift.md`'s own writeup for the full
 correction detail.
 
+**A fourth, this one `install_mod`'s exact mirror image: `remove_mod`
+(void)`.** Found immediately after, via a callgraph-ranking re-run --
+`quit()` (already matched) calls it directly, and it's ALSO registered
+as this build's own `atexit` callback inside `install_mod` itself.
+Confirmed via clean symmetry with the just-corrected `install_mod`:
+calls the already-matched `stop_mod()` first (matching `acsound.cpp:
+1055`'s own `MYMOD::destroy()` sequence), deallocates every entry of
+the exact same per-voice array `install_mod` populated, and clears the
+exact same `dword_5477F4` "installed" sentinel `install_mod` checks at
+its own entry. Same pattern as `install_mod`: 2011's own `remove_mod_
+player() { remove_mod(); }` (`acsound.cpp:1132-1134`) is a later-added
+thin wrapper this 2002 build predates entirely -- no separate AGS-side
+function exists, `quit()` calls JGMOD's own uninstall routine directly.
+
 ## `apeg-1.2.1` is NOT LINKED into Rob Blanc 1 at all -- conclusively ruled out
 
 Went looking for `apeg` (the MPEG video/audio decoder) specifically and

@@ -4596,6 +4596,32 @@ disassembly work.
   `allegro/gfx.h`'s own declared constants) even though the AGS-side
   call site itself stays unnamed -- no 2011 counterpart references this
   global anywhere. See `reversing/notes/struct-layout-drift.md`.
+- **One level up (`_WinMain`) and one level over (`mainloop`'s own
+  callees) close too, plus a proper callgraph-ranking re-run finds four
+  more.** `main`'s own caller, `_WinMain@16`, makes exactly one call --
+  which closes decisively as Allegro's own public `_WinMain` (the
+  "magic main" `END_OF_MAIN()` entry point, `wsystem.c:489`), confirmed
+  via its own command-line-to-argv[] reconstruction matching source's
+  literal `argc_max=64` with zero drift. `mainloop`'s own remaining
+  direct calls turned out to be three already-investigated-and-
+  deliberately-unnamed cases (ALMP3 crossfade pair, generic ambient-
+  poll helper) plus one genuine new find: Allegro's own deprecated
+  `yield_timeslice` compat wrapper. Re-running the callgraph-ranking
+  technique properly (CODE-lines only this time, after catching a grep
+  matching evidence-COMMENT text quoting an old call site verbatim --
+  the same false-positive class already fixed once in the ranking
+  script) reconfirms CLAUDE.md's own "saturates on third-party
+  internals" finding for the vast majority of candidates, but surfaces
+  four real matches: `GUIMain::draw_blob` (a private corner-marker
+  helper of the already-matched `GUIMain::draw_at`), and three genuine
+  Allegro internals identified fully rather than just at the boundary
+  given their small size -- `_remove_exit_func`, `shutdown_gfx` (which
+  independently reconfirms the SYSTEM_DRIVER vtable-shift theory from a
+  new slot), and JGMOD's own `remove_mod` (this session's `install_mod`
+  correction's exact mirror image -- called directly from `quit()`,
+  registered via `atexit` inside `install_mod` itself, no separate
+  AGS-side wrapper exists in this 2002 build). See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

@@ -7965,5 +7965,79 @@
     "source_file": null,
     "confidence": "medium",
     "evidence": "Found while sweeping main()'s own remaining direct sub_* calls (called once, with the literal argument 0xEEEEF, right after the 16-bit-BGR/color-order correction block and right before set_display_switch_mode(1) -- i.e. at the tail end of main's own graphics-mode-initialization sequence). A 3-instruction leaf: writes its single int argument directly into dword_4BCECC, and unconditionally sets a second global, dword_537028, to -1. DECISIVE identification for dword_4BCECC: Allegro's own public gfx_capabilities global (Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h:151, 'AL_VAR(int, gfx_capabilities); /* current driver capabilities */'). Confirmed two ways: (1) its own default/BSS initializer in this binary's .data section is the literal 0xFFFFFF -- 'everything on' for the 24 capability bits gfx.h declares up through GFX_HW_VRAM_STRETCH_BLIT (bit 23); (2) at least 5 large, near-identical Allegro-internal blit-dispatch functions elsewhere in this binary (sub_436650 and its siblings, each with their own ~20-30-case jump table dispatching through a double-indirected vtable call, [ptr+0x1C]->[+8]()) test this SAME global against exactly the three highest-numbered capability bits gfx.h declares: 0x01000000=GFX_HW_VRAM_STRETCH_BLIT_MASKED, 0x02000000=GFX_HW_SYS_STRETCH_BLIT, 0x04000000=GFX_HW_SYS_STRETCH_BLIT_MASKED -- an exact, zero-ambiguity match to the header's own bit assignments. Per this project's third-party scope rule, those blit-dispatch functions themselves are genuine Allegro-internal code (not chased further -- ScummVM replaces this whole subsystem wholesale); only this AGS-side call site, which directly overwrites the library's own public capabilities flag with a hardcoded literal rather than letting a driver negotiate it normally, is recorded. NOT NAMED: no 2011 AC.CPP counterpart exists at all -- gfx_capabilities is never referenced anywhere in the 2011 reference source, consistent with this whole software-rendering-era code predating gfxDriver entirely (the same pattern found dozens of times elsewhere this project). dword_537028 (set to -1 here, and NOWHERE else in the entire binary --  zero other xrefs at all) is plausibly dead/vestigial write-only state; not chased further given zero readers exist to reveal its intended role."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_455980",
+    "new_name": "_WinMain",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/win/wsystem.c",
+    "source_line": 489,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "int _WinMain(void *_main, void *hInst, void *hPrev, char *Cmd, int nShow) at wsystem.c:484-489+. Found while checking _WinMain@16 (this build's real WinMain entry point, already matched against Engine/AC.CPP's own main()) for its own single call, made right after gathering the 4 real WinMain arguments: 'push offset main' pushed LAST (=1st cdecl argument), matching Allegro's own public `_WinMain(void *_main, void *hInst, void *hPrev, char *Cmd, int nShow)` signature exactly, argument order included -- this is the well-known Allegro 'magic main' mechanism (Engine/libsrc/allegro-4.2.2/include/allegro/platform/alwin.h:39-59): the END_OF_MAIN() macro renames the program's own main to _mangled_main via '#define main _mangled_main', and generates a real WinMain that does exactly 'return _WinMain((void*)_mangled_main, hInst, hPrev, Cmd, nShow);' -- an exact structural match to this build's own _WinMain@16 body. The callee's own body confirms it decisively: GetCommandLine(), strlen+1, malloc(len), memcpy (copying the raw command line -- source's own 'cmdline=GetCommandLine(); i=strlen(cmdline)+1; argbuf=_AL_MALLOC(i); memcpy(argbuf,cmdline,i);'), then a growable argv[] array starting at exactly 64 slots (source's own literal 'argc_max=64', matching this disassembly's own literal 0x40 exactly) -- Allegro's own argc/argv reconstruction for WinMain-based programs, since WinMain doesn't receive them the normal way. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule: this IS the public API boundary itself (the documented entry point the END_OF_MAIN() macro wires up), so its own further internals (the command-line tokenizer's quote/whitespace handling, the eventual call into _mangled_main/main, any SEH wrapping) are not traced further -- a ScummVM reimplementation needs its own entry point, not this one."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_425720",
+    "new_name": "yield_timeslice",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/alcompat.h",
+    "source_line": 211,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "AL_INLINE_DEPRECATED(void, yield_timeslice, (void), { if (system_driver->yield_timeslice) system_driver->yield_timeslice(); }) at alcompat.h:211-216. Found while sweeping mainloop's own remaining direct sub_* calls (called once per iteration, mainloop+46B). The whole body is a 3-instruction null-check-then-call through dword_536F68 (already confirmed this session as Allegro's own system_driver global, via set_window_title's own zero-drift +0x20 slot match) at offset +0x74, no arguments, return value never examined -- an exact structural match to this compat wrapper's body, and not a shape anything else in Allegro/AGS plausibly produces (a bare 'null-check-then-call-with-no-args-no-result' vtable dispatch through system_driver specifically). +0x74 doesn't land on this header's own currently-declared yield_timeslice slot (0x6C) with the SAME one-slot shift already established for read_hardware_palette -- consistent with this project's standing caution that this build's actual compiled Allegro version is older/simpler than the 4.2.2 reference tree and its SYSTEM_DRIVER vtable layout has diverged by more than one field in places, not just the one shift already pinned down; the exact arithmetic explaining the gap is not resolved, but the body's own distinctive shape leaves no real doubt about the function's identity. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- this IS the public boundary itself (an Allegro compat macro AGS calls once per game-loop iteration to be polite to the OS scheduler), not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_407618",
+    "new_name": "GUIMain__draw_blob",
+    "source_file": "Engine/acgui.cpp",
+    "source_line": 1156,
+    "confidence": "high",
+    "evidence": "void GUIMain::draw_blob(int xp,int yp) at acgui.cpp:1156-1159: 'wbar(xp,yp,xp+get_fixed_pixel_size(1),yp+get_fixed_pixel_size(1));'. Found while sweeping GUIMain::draw_at's (already matched) own remaining callees -- draw_at calls this 4 times inside its 'draw a highlight marker at each corner of the currently-highlighted control' block, right after wsetcolor(selectedColour), matching source's own 4 draw_blob(x,y) calls (one per corner) exactly. Decisive match: takes exactly 2 arguments (x,y) via __thiscall (a `this` pointer is saved into a local but never read anywhere in the body, matching source's own draw_blob having no `this->` references at all despite being a real member function), draws a small block using the ALREADY-SET currentcolor global (matching wbar's own implicit use of the color state wsetcolor just configured) onto abuf, sized x/y to x+1/y+1 -- this build's own get_fixed_pixel_size(1) apparently simplifies to the literal 1 (consistent with several other findings this project where a resolution-multiplier call is a no-op at this game's own resolution). wbar itself is AGS's own already-established thin `rectfill` wrapper (see GUISlider::Draw's own entry)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4345B0",
+    "new_name": "_remove_exit_func",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/allegro.c",
+    "source_line": 278,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "void _remove_exit_func(void (*func)(void)) at allegro.c:278-294. Found while sweeping debug_exit's (already matched) own remaining callees. Decisive match: walks a global singly-linked list (dword_536FF8 = Allegro's own static `exit_func_list`) comparing each node's first field against the argument (matching source's `iter->funcptr==func` check), unlinking the match via the previous node's `next` field (or updating the list head directly if it's the first node) and `free()`ing it -- matching source's unlink-then-_AL_FREE logic exactly, node-shape included. DRIFT: the disassembly's node is only 2 fields (funcptr@+0, next@+4), one field (8 bytes) smaller than source's declared 3-field `struct al_exit_func` (funcptr, desc, next) -- this build's exit-function registry doesn't carry the debug description string. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- genuine Allegro-internal cleanup-registry code, identified fully here rather than left as a boundary stub only because its small size made full identification cheap; not chased into `free`'s own internals."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_435610",
+    "new_name": "shutdown_gfx",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/graphics.c",
+    "source_line": 456,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "static void shutdown_gfx(void) at graphics.c:453-467: 'if (gfx_driver) set_gfx_mode(GFX_TEXT,0,0,0,0); if (system_driver->restore_console_state) system_driver->restore_console_state(); _remove_exit_func(shutdown_gfx); gfx_virgin=TRUE;'. Found as the OTHER caller of the newly-matched _remove_exit_func (sub_4345B0) -- registered via _add_exit_func inside set_gfx_mode (DATA XREF confirms exactly this: 'set_gfx_mode:loc_434FB7'), matching source's own 'if(gfx_virgin) _add_exit_func(shutdown_gfx,...)' registration site. Decisive, complete match: dword_536F74=`gfx_driver` (null-checked before calling set_gfx_mode(-1=GFX_TEXT,0,0,0,0)), the already-confirmed `system_driver` global's own vtable dispatched at +0x38 (restore_console_state -- one slot later than the current 4.2.2 header's own declared offset 0x34, the same one-slot SYSTEM_DRIVER shift already established via set_window_title/read_hardware_palette), a self-referential _remove_exit_func(shutdown_gfx) call (matching the function unregistering itself from the list it was found via), and a final dword_4BCEC0=-1 write matching source's `gfx_virgin=TRUE` (Allegro's own `#define TRUE -1` convention, already seen at release_voice). THIRD-PARTY LIBRARY BOUNDARY -- Allegro-internal cleanup code, fully identified here given its small size and the free confirmation it supplied for the SYSTEM_DRIVER vtable-shift theory."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_477B80",
+    "new_name": "remove_mod",
+    "source_file": null,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "JGMOD's own public uninstall API, remove_mod(void) -- the exact mirror image of the already-matched install_mod (see its own entry for the identical-pattern correction this round). Called directly from quit() (already matched) AND registered as this build's own atexit callback inside install_mod ('push offset sub_477B80; call _atexit', install_mod's own body) -- matching 2011's acsound.cpp:1132-1134 'void remove_mod_player() { remove_mod(); }' role, just with (per this build's now-established pattern) no separate thin AGS-side wrapper at all: main calls install_mod directly, quit() calls remove_mod directly. Body confirms the identity via clean symmetry with install_mod: calls the already-matched stop_mod() first (matching acsound.cpp:1055's own 'stop_mod(); destroy_mod(tune); tune=NULL;' MYMOD::destroy() sequence), unregisters a callback, deallocates every entry of the SAME per-voice array install_mod populated (unk_4C38D4, up to the already-established 'M.K.' sentinel address bound), and finally resets dword_5477F4=0 -- the exact same 'installed' sentinel install_mod checks against -1 at its own entry, this time cleared rather than set. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule; its own callees (stop_mod, deallocate_voice, sub_477E40) already matched or previously flagged as JGMOD/Allegro-internal, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_404EF7",
+    "new_name": null,
+    "source_file": null,
+    "confidence": "high",
+    "evidence": "INIreaditem's own private end-of-buffer check (INIreaditem, already matched -- see its own entry documenting this build's completely different, custom, 4-parameter binary-mode INI parser with no 2011 counterpart). Trivial: returns 1 if dword_5230A8 (a running byte-position counter, incremented by the sibling sub_404F12 below) exceeds dword_4D31C0 (plausibly the tracked file's own size/limit), else 0. Given an entire attempt was already made to find this custom INI parser's real identity in 2011 and came up empty (its own dedicated error-reporting convention was searched for and not found anywhere in Engine/), these two private helpers are left unnamed for the same reason -- no source-derived identifier exists to adopt for a subsystem 2011 replaced outright with Allegro's own config.c-based API."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_404F12",
+    "new_name": null,
+    "source_file": null,
+    "confidence": "high",
+    "evidence": "INIreaditem's own private counting-getc helper (see sub_404EF7's own entry, its paired end-of-buffer check, for the full context). Increments dword_5230A8 (the running byte-position counter sub_404EF7 checks) then calls fgetc(Stream) and returns its result directly -- a thin instrumented wrapper around the CRT's own fgetc, used throughout INIreaditem's own character-by-character parse loop instead of calling fgetc directly so the position counter stays in sync. Left unnamed for the same reason as sub_404EF7 -- no 2011 source exists for this removed custom INI-parser subsystem."
   }
 ]

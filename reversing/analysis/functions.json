@@ -455,9 +455,9 @@
   "is_named": true
  },
  {
-  "name": "sub_407618",
+  "name": "GUIMain__draw_blob",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "GUIMain__draw_at",
@@ -2970,9 +2970,9 @@
   "is_named": true
  },
  {
-  "name": "sub_425720",
+  "name": "yield_timeslice",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "setWindowTitle",
@@ -4005,9 +4005,9 @@
   "is_named": true
  },
  {
-  "name": "sub_4345B0",
+  "name": "_remove_exit_func",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "install_allegro",
@@ -4110,9 +4110,9 @@
   "is_named": true
  },
  {
-  "name": "sub_435610",
+  "name": "shutdown_gfx",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_435660",
@@ -6215,9 +6215,9 @@
   "is_named": false
  },
  {
-  "name": "sub_455980",
+  "name": "_WinMain",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_455B40",
@@ -8235,9 +8235,9 @@
   "is_named": false
  },
  {
-  "name": "sub_477B80",
+  "name": "remove_mod",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_477C90",

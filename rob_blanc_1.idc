@@ -7288,6 +7288,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X407611);
 	create_insn	(0X407618);
+	set_name	(0X407618,	"GUIMain__draw_blob");
 	create_insn	(x=0X40761C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X407625);
@@ -11432,11 +11433,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X40B8A9);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X40B8B0);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X40B8B6);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -11446,6 +11442,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X40B8B0);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X40B8B6);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X40B8CD);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X40B8D0);
@@ -17433,9 +17434,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X412B97);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X412BA1);
-	op_hex		(x,	1);
-	set_cmt	(0X412BC3,	"int",	0);
 }
 
 //------------------------------------------------------------------------
@@ -17445,6 +17443,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X412BA1);
+	op_hex		(x,	1);
+	set_cmt	(0X412BC3,	"int",	0);
 	create_insn	(x=0X412BC4);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -23358,8 +23359,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X41885E);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X418864);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -23369,6 +23368,8 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X418864);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X41886C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X418872);
@@ -29085,7 +29086,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X41E294);
 	op_stkvar	(x,	1);
-	set_cmt	(0X41E297,	"Stream",	0);
 }
 
 //------------------------------------------------------------------------
@@ -29095,6 +29095,7 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X41E297,	"Stream",	0);
 	set_cmt	(0X41E298,	"ElementCount",	0);
 	set_cmt	(0X41E2A0,	"ElementSize",	0);
 	set_cmt	(0X41E2A6,	"Buffer",	0);
@@ -37324,6 +37325,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X42571E,	0X2);
 	create_insn	(0X425720);
+	set_name	(0X425720,	"yield_timeslice");
 	make_array	(0X425739,	0X7);
 	create_insn	(0X425740);
 	set_name	(0X425740,	"setWindowTitle");
@@ -40570,10 +40572,6 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4284C1);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X4284CA);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X4284D3);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -40583,6 +40581,10 @@ static Bytes_7(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4284CA);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X4284D3);
+	op_stkvar	(x,	1);
 	create_insn	(0X4284DC);
 	set_name	(0X4284DC,	"qg2export");
 	create_insn	(x=0X4284DF);
@@ -46094,10 +46096,6 @@ static Bytes_7(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D587);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X42D591);
-	op_hex		(x,	1);
-	create_insn	(x=0X42D594);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -46107,6 +46105,10 @@ static Bytes_8(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X42D591);
+	op_hex		(x,	1);
+	create_insn	(x=0X42D594);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X42D59A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X42D5A3);
@@ -52299,8 +52301,6 @@ static Bytes_8(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432F00);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X432F06);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -52310,6 +52310,8 @@ static Bytes_9(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X432F06);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X432F0E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X432F1B);
@@ -53926,6 +53928,7 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	make_array	(0X4345AA,	0X6);
 	create_insn	(0X4345B0);
+	set_name	(0X4345B0,	"_remove_exit_func");
 	create_insn	(x=0X4345BB);
 	op_stkvar	(x,	1);
 	create_insn	(0X4345CD);
@@ -54891,6 +54894,7 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	make_array	(0X435604,	0XC);
 	create_insn	(0X435610);
+	set_name	(0X435610,	"shutdown_gfx");
 	create_insn	(x=0X435628);
 	op_hex		(x,	1);
 	create_insn	(x=0X435639);
@@ -58199,14 +58203,6 @@ static Bytes_9(void) {
 	create_insn	(x=0X439223);
 	op_hex		(x,	1);
 	create_insn	(0X439227);
-	create_insn	(x=0X439228);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43922E);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X439233);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43923A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58216,6 +58212,14 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X439228);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43922E);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X439233);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43923A);
+	op_hex		(x,	1);
 	create_insn	(x=0X439249);
 	op_hex		(x,	1);
 	create_insn	(x=0X439250);
@@ -63916,14 +63920,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F0F6);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F0FA);
-	op_hex		(x,	1);
-	create_insn	(x=0X43F10B);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X43F111);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F115);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -63933,6 +63929,14 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F0FA);
+	op_hex		(x,	1);
+	create_insn	(x=0X43F10B);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X43F111);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F115);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F11B);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F11F);
@@ -69967,13 +69971,6 @@ static Bytes_11(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X44638F);
 	op_hex		(x,	1);
-	create_insn	(x=0X446392);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X446398);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X44639C);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -69983,6 +69980,13 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X446392);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X446398);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X44639C);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X4463A6);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -76152,15 +76156,6 @@ static Bytes_12(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X44E3E4);
 	op_stkvar	(x,	1);
-	create_insn	(0X44E3F0);
-	create_insn	(x=0X44E418);
-	op_hex		(x,	1);
-	make_array	(0X44E41C,	0X4);
-	create_insn	(0X44E420);
-	create_insn	(x=0X44E436);
-	op_hex		(x,	1);
-	create_insn	(x=0X44E44B);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -76170,6 +76165,15 @@ static Bytes_13(void) {
         auto x;
 #define id x
 
+	create_insn	(0X44E3F0);
+	create_insn	(x=0X44E418);
+	op_hex		(x,	1);
+	make_array	(0X44E41C,	0X4);
+	create_insn	(0X44E420);
+	create_insn	(x=0X44E436);
+	op_hex		(x,	1);
+	create_insn	(x=0X44E44B);
+	op_hex		(x,	1);
 	create_insn	(x=0X44E460);
 	op_hex		(x,	1);
 	create_insn	(x=0X44E475);
@@ -80953,6 +80957,7 @@ static Bytes_13(void) {
 	make_array	(0X45597E,	0X2);
 	create_insn	(x=0X455980);
 	op_hex		(x,	1);
+	set_name	(0X455980,	"_WinMain");
 	create_insn	(x=0X45598F);
 	op_hex		(x,	1);
 	set_cmt	(0X4559A4,	"Size",	0);
@@ -81418,15 +81423,6 @@ static Bytes_13(void) {
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
 	set_name	(0X4564A2,	"__cfltcvt_init");
-	create_insn	(x=0X4564AC);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4564B6);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4564C0);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -81436,6 +81432,15 @@ static Bytes_14(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4564AC);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X4564B6);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
+	create_insn	(x=0X4564C0);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	make_array	(0X4564CE,	0X2);
 	create_insn	(0X4564D0);
 	create_insn	(x=0X4564D6);
@@ -87600,15 +87605,6 @@ static Bytes_14(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X462E12);
 	op_stkvar	(x,	0);
-	set_cmt	(0X462E28,	"Size",	0);
-	create_insn	(x=0X462E31);
-	op_hex		(x,	1);
-	create_insn	(x=0X462E36);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X462E4C);
-	op_hex		(x,	1);
-	create_insn	(x=0X462E50);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87618,6 +87614,15 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X462E28,	"Size",	0);
+	create_insn	(x=0X462E31);
+	op_hex		(x,	1);
+	create_insn	(x=0X462E36);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X462E4C);
+	op_hex		(x,	1);
+	create_insn	(x=0X462E50);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X462E54);
 	op_stkvar	(x,	1);
 	set_cmt	(0X462E5B,	"switch 25 cases",	0);
@@ -93411,14 +93416,6 @@ static Bytes_15(void) {
 	create_insn	(x=0X46B6DC);
 	op_hex		(x,	1);
 	create_insn	(0X46B6E1);
-	create_insn	(x=0X46B6EA);
-	op_hex		(x,	1);
-	set_cmt	(0X46B6ED,	"Size",	0);
-	set_cmt	(0X46B6EE,	"Block",	0);
-	create_insn	(x=0X46B6F4);
-	op_hex		(x,	1);
-	create_insn	(0X46B70D);
-	make_array	(0X46B748,	0X8);
 }
 
 //------------------------------------------------------------------------
@@ -93428,6 +93425,14 @@ static Bytes_16(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X46B6EA);
+	op_hex		(x,	1);
+	set_cmt	(0X46B6ED,	"Size",	0);
+	set_cmt	(0X46B6EE,	"Block",	0);
+	create_insn	(x=0X46B6F4);
+	op_hex		(x,	1);
+	create_insn	(0X46B70D);
+	make_array	(0X46B748,	0X8);
 	create_insn	(0X46B750);
 	create_insn	(x=0X46B751);
 	op_stkvar	(x,	1);
@@ -99373,14 +99378,6 @@ static Bytes_16(void) {
 	create_insn	(x=0X473796);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X4737A7);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_insn	(x=0X4737BC);
-	op_hex		(x,	1);
-	create_insn	(x=0X4737CF);
-	op_hex		(x,	1);
-	make_array	(0X4737D6,	0XA);
 }
 
 //------------------------------------------------------------------------
@@ -99390,6 +99387,14 @@ static Bytes_17(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4737A7);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_insn	(x=0X4737BC);
+	op_hex		(x,	1);
+	create_insn	(x=0X4737CF);
+	op_hex		(x,	1);
+	make_array	(0X4737D6,	0XA);
 	create_insn	(x=0X4737E0);
 	op_hex		(x,	1);
 	create_insn	(x=0X47382F);
@@ -102330,6 +102335,7 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	make_array	(0X477B7C,	0X4);
 	create_insn	(0X477B80);
+	set_name	(0X477B80,	"remove_mod");
 	create_insn	(x=0X477B87);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -105170,6 +105176,15 @@ static Bytes_17(void) {
 	create_insn	(x=0X47AD92);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_18(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X47AD9F);
 	op_hex		(x,	1);
 	create_insn	(0X47ADA4);
@@ -105181,15 +105196,6 @@ static Bytes_17(void) {
 	create_insn	(x=0X47ADC5);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_18(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X47ADCA);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -111332,6 +111338,15 @@ static Bytes_18(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X484C73);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_19(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X484CB9);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484CD8);
@@ -111344,15 +111359,6 @@ static Bytes_18(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X484D02);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_19(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X484D06);
 	op_stkvar	(x,	0);
 	make_array	(0X484D15,	0XB);
@@ -117653,6 +117659,15 @@ static Bytes_19(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X48E60A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_20(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X48E613);
 	op_hex		(x,	1);
 	create_insn	(x=0X48E61A);
@@ -117667,15 +117682,6 @@ static Bytes_19(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X48E64B);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_20(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X48E656);
 	op_hex		(x,	1);
 	create_insn	(x=0X48E659);
@@ -124116,6 +124122,15 @@ static Bytes_20(void) {
 	set_cmt	(0X4978E4,	"jumptable 004978DD case 0",	1);
 	create_insn	(x=0X4978E4);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_21(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4978EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X4978F4);
@@ -124126,15 +124141,6 @@ static Bytes_20(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X497918);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_21(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X497932);
 	op_hex		(x,	1);
 	create_insn	(x=0X497935);
@@ -130124,9 +130130,6 @@ static Bytes_21(void) {
 	op_stkvar	(x,	0);
 	set_cmt	(0X4A08AF,	"jumptable 004A01EF case 20",	1);
 	create_insn	(0X4A08AF);
-	set_cmt	(0X4A08C1,	"jumptable 004A01EF case 23",	1);
-	set_cmt	(0X4A08C9,	"jumptable 004A01EF case 22",	1);
-	create_insn	(0X4A08C9);
 }
 
 //------------------------------------------------------------------------
@@ -130136,6 +130139,9 @@ static Bytes_22(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X4A08C1,	"jumptable 004A01EF case 23",	1);
+	set_cmt	(0X4A08C9,	"jumptable 004A01EF case 22",	1);
+	create_insn	(0X4A08C9);
 	create_insn	(x=0X4A08CD);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A08E3);
@@ -136120,6 +136126,15 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A9930);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_23(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X4A9934);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A993A);
@@ -136130,15 +136145,6 @@ static Bytes_22(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X4A994D);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_23(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X4A9951);
 	op_hex		(x,	1);
 	create_insn	(x=0X4A9954);
@@ -141279,12 +141285,6 @@ static Bytes_23(void) {
 	create_dword	(x=0X4AF010);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF014);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4AF018);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -141294,6 +141294,12 @@ static Bytes_24(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4AF014);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
+	create_dword	(x=0X4AF018);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4AF01C);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -145652,9 +145658,6 @@ static Bytes_24(void) {
 	make_array	(0X4B4585,	0X3);
 	create_strlit	(0X4B4588,	0X9);
 	set_name	(0X4B4588,	"aFarsubsp");
-	make_array	(0X4B4591,	0X3);
-	create_strlit	(0X4B4594,	0XB);
-	set_name	(0X4B4594,	"aSourceline");
 }
 
 //------------------------------------------------------------------------
@@ -145664,6 +145667,9 @@ static Bytes_25(void) {
         auto x;
 #define id x
 
+	make_array	(0X4B4591,	0X3);
+	create_strlit	(0X4B4594,	0XB);
+	set_name	(0X4B4594,	"aSourceline");
 	create_strlit	(0X4B45A0,	0X9);
 	set_name	(0X4B45A0,	"aCallscr");
 	make_array	(0X4B45A9,	0X3);
@@ -149025,9 +149031,6 @@ static Bytes_25(void) {
 	create_dword	(x=0X4BBD20);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
-	create_dword	(x=0X4BBD24);
-	op_plain_offset	(x,	0,	0);
-	op_plain_offset	(x,	128,	0);
 }
 
 //------------------------------------------------------------------------
@@ -149037,6 +149040,9 @@ static Bytes_26(void) {
         auto x;
 #define id x
 
+	create_dword	(x=0X4BBD24);
+	op_plain_offset	(x,	0,	0);
+	op_plain_offset	(x,	128,	0);
 	create_dword	(x=0X4BBD28);
 	op_plain_offset	(x,	0,	0);
 	op_plain_offset	(x,	128,	0);
@@ -152609,9 +152615,6 @@ static Bytes_26(void) {
 	make_array	(0X4CB38E,	0X2);
 	create_strlit	(0X4CB390,	0X9);
 	set_name	(0X4CB390,	"aDieresis_0");
-	make_array	(0X4CB399,	0X3);
-	create_strlit	(0X4CB39C,	0X6);
-	set_name	(0X4CB39C,	"aDelta");
 }
 
 //------------------------------------------------------------------------
@@ -152621,6 +152624,9 @@ static Bytes_27(void) {
         auto x;
 #define id x
 
+	make_array	(0X4CB399,	0X3);
+	create_strlit	(0X4CB39C,	0X6);
+	set_name	(0X4CB39C,	"aDelta");
 	make_array	(0X4CB3A2,	0X2);
 	create_strlit	(0X4CB3A4,	0X7);
 	set_name	(0X4CB3A4,	"aDcroat");
@@ -155506,10 +155512,12 @@ static Functions_0(void) {
 	set_frame_size(0X404E92, 0X20, 4, 0);
 	add_func    (0X404EF7,0X404F12);
 	set_func_flags(0X404EF7,0x5410);
+	set_func_cmt(0X404EF7,	"[reversing] confirmed match\nconfidence: high\nevidence: INIreaditem's own private end-of-buffer check (INIreaditem, already matched -- see its own entry documenting this build's completely different, custom, 4-parameter binary-mode INI parser with no 2011 counterpart). Trivial: returns 1 if dword_5230A8 (a running byte-position counter, incremented by the sibling sub_404F12 below) exceeds dword_4D31C0 (plausibly the tracked file's own size/limit), else 0. Given an entire attempt was already made to find this custom INI parser's real identity in 2011 and came up empty (its own dedicated error-reporting convention was searched for and not found anywhere in Engine/), these two private helpers are left unnamed for the same reason -- no source-derived identifier exists to adopt for a subsystem 2011 replaced outright with Allegro's own config.c-based API.", 1);
 	set_frame_size(0X404EF7, 0, 4, 0);
 	add_func    (0X404F12,0X404F30);
 	set_func_flags(0X404F12,0x5410);
 	SetType(0X404F12, "int __cdecl sub_404F12(FILE *Stream);");
+	set_func_cmt(0X404F12,	"[reversing] confirmed match\nconfidence: high\nevidence: INIreaditem's own private counting-getc helper (see sub_404EF7's own entry, its paired end-of-buffer check, for the full context). Increments dword_5230A8 (the running byte-position counter sub_404EF7 checks) then calls fgetc(Stream) and returns its result directly -- a thin instrumented wrapper around the CRT's own fgetc, used throughout INIreaditem's own character-by-character parse loop instead of calling fgetc directly so the position counter stays in sync. Left unnamed for the same reason as sub_404EF7 -- no 2011 source exists for this removed custom INI-parser subsystem.", 1);
 	set_frame_size(0X404F12, 0, 4, 0);
 	define_local_var(0X404F12, 0X404F30, "[bp+0X8]", "Stream");
 	add_func    (0X404F30,0X40536A);
@@ -155617,16 +155625,16 @@ static Functions_0(void) {
 	set_frame_size(0X4061EA, 0X138, 4, 0X4);
 	define_local_var(0X4061EA, 0X40630B, "[bp-0X130]", "Str");
 	define_local_var(0X4061EA, 0X40630B, "[bp+0X8]", "Stream");
+}
+
+static Functions_1(void) {
+
 	add_func    (0X40630B,0X406399);
 	set_func_flags(0X40630B,0x5410);
 	SetType(0X40630B, "int __stdcall GUIListBox__AddItem(char *Str);");
 	set_func_cmt(0X40630B,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: int GUIListBox::AddItem(const char*) at acgui.cpp:525. Matches: \"if (numItems>=MAX_LISTBOX_ITEMS) return -1; guis_need_update=1; items[numItems]=malloc(strlen(toadd)+5); strcpy(items[numItems],toadd); numItems++; return numItems-1;\". Disasm matches exactly except lacks the \"saveGameIndex[numItems]=-1;\" line -- 2002 doesn't have the saveGameIndex[] feature yet, another small addition made later. Independently reconfirms the numItems cap at 100 (0x64), matching GUIListBox::Clear's already-derived array length exactly -- second confirmation of this size drift vs 2011's MAX_LISTBOX_ITEMS=200. Called from ListBoxAdd (already matched). Flat-named as a C++ member function.", 1);
 	set_frame_size(0X40630B, 0X4, 4, 0X4);
 	define_local_var(0X40630B, 0X406399, "[bp+0X8]", "Str");
-}
-
-static Functions_1(void) {
-
 	add_func    (0X406399,0X40640C);
 	set_func_flags(0X406399,0x5410);
 	set_func_cmt(0X406399,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIListBox::Clear() at acgui.cpp:577: \"for(aa=0;aa<numItems;aa++) free(items[aa]); numItems=0; selected=0; topItem=0; guis_need_update=1;\". Exact match: loop bounded by [this+0x1B0] (numItems), frees items[aa] at [this+aa*4+0x20] (items[] array), sets [this+0x1B0]=0, [this+0x1B4]=0 (selected), [this+0x1B8]=0 (topItem), guis_need_update=1. New field evidence: items[]@+0x20 (matches the same \"GUIObject base fields end at +0x20\" pattern already found for GUIButton::text), numItems@+0x1B0, selected@+0x1B4, topItem@+0x1B8 (consecutive, matching 2011's declared order exactly). Derived array length (0x1B0-0x20)/4 = 100 entries, vs 2011's MAX_LISTBOX_ITEMS=200 (Common/acgui.h:28) -- another confirmed 2002 fixed-capacity limit, consistent with the same drift pattern already seen for ccScript's imports/exports arrays. Called from ListBoxClear (already matched) and ListBoxSaveGameList (a lead for next round). Flat-named as a C++ member" " function.", 1);
@@ -155711,6 +155719,7 @@ static Functions_1(void) {
 	set_frame_size(0X407587, 0X8, 4, 0);
 	add_func    (0X407618,0X407650);
 	set_func_flags(0X407618,0x5410);
+	set_func_cmt(0X407618,	"[reversing] confirmed match\nsource: Engine/acgui.cpp\nconfidence: high\nevidence: void GUIMain::draw_blob(int xp,int yp) at acgui.cpp:1156-1159: 'wbar(xp,yp,xp+get_fixed_pixel_size(1),yp+get_fixed_pixel_size(1));'. Found while sweeping GUIMain::draw_at's (already matched) own remaining callees -- draw_at calls this 4 times inside its 'draw a highlight marker at each corner of the currently-highlighted control' block, right after wsetcolor(selectedColour), matching source's own 4 draw_blob(x,y) calls (one per corner) exactly. Decisive match: takes exactly 2 arguments (x,y) via __thiscall (a `this` pointer is saved into a local but never read anywhere in the body, matching source's own draw_blob having no `this->` references at all despite being a real member function), draws a small block using the ALREADY-SET currentcolor global (matching wbar's own implicit use of the color state wsetcolor just configured) onto abuf, sized x/y to x+1/y+1 -- this build's own get_fixed_pixel_size(1) apparently simplifies to the" " literal 1 (consistent with several other findings this project where a", 1);
 	set_frame_size(0X407618, 0X4, 4, 0X8);
 	add_func    (0X407650,0X40792B);
 	set_func_flags(0X407650,0x5410);
@@ -155993,6 +156002,10 @@ static Functions_1(void) {
 	define_local_var(0X409B1A, 0X409DC7, "[bp-0X60]", "ooo");
 	define_local_var(0X409B1A, 0X409DC7, "[bp-0X5C]", "dlgnum");
 	define_local_var(0X409B1A, 0X409DC7, "[bp-0X58]", "Source");
+}
+
+static Functions_2(void) {
+
 	add_func    (0X409DC7,0X409E9A);
 	set_func_flags(0X409DC7,0x5410);
 	SetType(0X409DC7, "int __cdecl run_script_function_if_exist(int, char *Str2);");
@@ -156008,10 +156021,6 @@ static Functions_1(void) {
 	set_frame_size(0X409E9A, 0XCC, 4, 0);
 	define_local_var(0X409E9A, 0X409F23, "[bp-0XCC]", "Buffer");
 	define_local_var(0X409E9A, 0X409F23, "[bp+0XC]", "Str2");
-}
-
-static Functions_2(void) {
-
 	add_func    (0X409F23,0X409FD4);
 	set_func_flags(0X409F23,0x5410);
 	SetType(0X409F23, "int __cdecl run_text_script_2iparam(int, char *String1, char, int);");
@@ -156329,6 +156338,10 @@ static Functions_2(void) {
 	set_func_cmt(0X410472,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj GAMESTATE STRUCT EVIDENCE (fresh survey round): this build's version is a MUCH simpler single-character predecessor of 2011's per-character-generalized update_invorder (AC.CPP:7161-7185) -- no per-character loop, no OPT_DUPLICATEINV duplicate handling, no MAX_INVORDER=500 bounds check/error. Disassembly: \"play_inv_numorder=0; for(ff=0; ff<game_numinvitems; ff++) { if (playerchar->inv[ff] > 0) { play_invorder[play_inv_numorder]=ff; play_inv_numorder++; } } guis_need_update=1;\" -- a direct structural ancestor of 2011's core per-character loop body, minus the generalization. CRITICAL FINDING: this PROVES play_inv_numorder (previously flagged as possibly matching 2011's `obsolete_inv_numorder`) is NOT obsolete in this build -- it's the LIVE, ACTIVELY-MAINTAINED counter that update_invorder itself increments; 2011 keeps the field only for \"backwards compatibility\" (" "a single mirroring assignment from the real per-character count), bu", 1);
 	set_frame_size(0X410472, 0X4, 4, 0);
 	define_local_var(0X410472, 0X4104E0, "[bp-0X4]", "ff");
+}
+
+static Functions_3(void) {
+
 	add_func    (0X4104E0,0X410631);
 	set_func_flags(0X4104E0,0x5410);
 	set_func_cmt(0X4104E0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void GUIInv::Draw() (declared acgui.h:514, defined in Engine/acgui.cpp, body not yet located/traced). Confidence medium (positional): vtable slot 6/+0x18 of the off_4AD50C table pinned by the three already-confirmed isover-field methods (MouseOver/MouseLeave/MouseUp) plus WriteToFile/ReadFromFile (DATA XREF .rdata:004AD524). Has a real multi-variable local frame (0x18 bytes) consistent with grid layout math for drawing inventory item cells, not yet independently confirmed field-by-field. ADDITIONAL FIELD EVIDENCE (found later, GameSetupStructBase.invinfo[100] investigation): the inventory-icon rendering loop does \"movsx eax,play_invorder[edx*2]; imul eax,44h; mov ecx,dword_51B870[eax]; push ecx /* index */; call SpriteCache__operator_index\" -- reading invinfo[itemid].pic (the same dword_51B870 field independently confirmed via SetInvItemPic and sub_40CF16) and using it as a sprite-cache index for icon display -- an exact match to in" "vinfo[].pic being the item's DISPLAY picture (as opposed to a separa", 1);
@@ -156337,10 +156350,6 @@ static Functions_2(void) {
 	set_func_flags(0X410631,0x5410);
 	set_func_cmt(0X410631,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Unnamed walk-behind-occlusion masking helper, called from prepare_characters_for_drawing (already matched) on the RoomObject.flags&OBJF_NOWALKBEHINDS-clear path (the walk-behind-aware sort branch, already documented on RoomObject.flags itself). Signature (block bmp, int roomX, int roomY, int baseline): a doubly-nested per-pixel loop over the bitmap's own w/h ([arg_0+0]/[arg_0+4]), calling getpixel (sub_423F20) on the field DISPLAYED as rstruc.lookat at (roomX+col, roomY+row); wherever the pixel is a valid walk-behind-area id (>=1) AND RoomStatus.walkbehind_base[pixel]@+0x1370 (already confirmed) exceeds the passed-in baseline, masks that pixel out of the object's own bitmap (bitmap_mask_color + a putpixel-style helper, sub_423EC0) so the walk-behind area draws in front of it. This is the classic AGS walk-behind-occlusion effect. IMPORTANT: the mask this function reads is DISPLAYED as \"rstruc.lookat\" in the current rob_blanc_1.asm ex" "port, but its role (a walk-behind-area-id mask feeding walkbehind_ba", 1);
 	set_frame_size(0X410631, 0XC, 4, 0);
-}
-
-static Functions_3(void) {
-
 	add_func    (0X4106E0,0X4106EF);
 	set_func_flags(0X4106E0,0x5410);
 	set_func_cmt(0X4106E0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: void clear_sprite_list() at AC.CPP:7438-7440. Verbatim match: \"mov dword_5231DC,0; retn\" against source's entire body, \"sprlistsize=0;\". Called from prepare_characters_for_drawing (already matched), matching 2011's own call site into clear_sprite_list at the start of the equivalent per-frame sprite-list-building pass. Identifies dword_5231DC as sprlistsize, the counter driving add_to_sprite_list's own indexing (see that entry).", 1);
@@ -156709,6 +156718,10 @@ static Functions_3(void) {
 	define_local_var(0X41502C, 0X415080, "[bp-0X388]", "ArgList");
 	define_local_var(0X41502C, 0X415080, "[bp-0X384]", "Buffer");
 	define_local_var(0X41502C, 0X415080, "[bp+0X8]", "Str");
+}
+
+static Functions_4(void) {
+
 	add_func    (0X415080,0X4150F6);
 	set_func_flags(0X415080,0x5410);
 	SetType(0X415080, "void __stdcall DisplaySpeech(char *texx, int aschar);");
@@ -156730,10 +156743,6 @@ static Functions_3(void) {
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X8]", "srcmes");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0XC]", "destm");
 	define_local_var(0X4150F6, 0X4152D4, "[bp+0X10]", "maxlen");
-}
-
-static Functions_4(void) {
-
 	add_func    (0X4152D4,0X4152F7);
 	set_func_flags(0X4152D4,0x5410);
 	set_func_cmt(0X4152D4,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: char *get_global_message(int msnum) at AC.CPP:14243-14247: \"if (game.messages[msnum-500]==NULL) return \\\"\\\"; return get_translation(game.messages[msnum-500]);\". This build's version reads dword_51CB50[msnum*4] -- the same compiler-folded-base address (base-500*4) already established for messages[500] via DisplayMessage's own entry -- matching game.messages[msnum-500] exactly. REAL DRIFT: returns the literal string \"nomsg\" instead of \"\" when the message is null, and CONFIRMED ABSENT: the get_translation() call entirely -- this build returns the raw message pointer directly with no translation-lookup step, unlike source. Called from quitdialog (this round's new match) with literal message-ID constants confirming the identification (see quitdialog's own entry).", 1);
@@ -157114,6 +157123,10 @@ static Functions_4(void) {
 	set_func_cmt(0X41829C,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: Retroactive field-evidence documentation (already correctly named via linker symbol, no field evidence recorded before). Validates objj via the already-matched is_valid_object, then returns the already-confirmed RoomObject.cycling@+0x1A normalized to a 0/1 boolean (via a branchless neg/sbb/neg idiom). Exact match to 2011's own \"if(!is_valid_object(objj)) quit(...); return (objs[objj].cycling!=0)?1:0;\" (AC.CPP:16406-16409), zero drift.", 1);
 	set_frame_size(0X41829C, 0, 4, 0X4);
 	define_local_var(0X41829C, 0X4182D5, "[bp+0X8]", "objj");
+}
+
+static Functions_5(void) {
+
 	add_func    (0X4182D5,0X418311);
 	set_func_flags(0X4182D5,0x5410);
 	SetType(0X4182D5, "int __stdcall IsObjectMoving(int objj);");
@@ -157140,10 +157153,6 @@ static Functions_4(void) {
 	define_local_var(0X418401, 0X41855A, "[bp+0X10]", "toy");
 	define_local_var(0X418401, 0X41855A, "[bp+0X14]", "ignwal");
 	define_local_var(0X418401, 0X41855A, "[bp+0X18]", "autoWalkAnims");
-}
-
-static Functions_5(void) {
-
 	add_func    (0X41855A,0X418698);
 	set_func_flags(0X41855A,0x5410);
 	SetType(0X41855A, "void __stdcall RunHotspotInteraction(int hotspothere, int mood);");
@@ -157538,6 +157547,10 @@ static Functions_5(void) {
 	set_func_flags(0X41A3B4,0x5410);
 	set_func_cmt(0X41A3B4,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wfile.c\nconfidence: high\nevidence: al_findclose(struct al_ffblk*info) -- Allegro's public directory-search-cleanup API: checks the shared global FindHandle!=-1, calls the raw CRT _findclose if so, then resets FindHandle to -1 unconditionally. THIRD-PARTY LIBRARY BOUNDARY, not chased further internally. Called from al_findnext's own failure path and directly from preparesavegamelist/ListBoxSaveGameList after their own search loops end.", 1);
 	set_frame_size(0X41A3B4, 0, 4, 0);
+}
+
+static Functions_6(void) {
+
 	add_func    (0X41A3DA,0X41A437);
 	set_func_flags(0X41A3DA,0x5410);
 	SetType(0X41A3DA, "int __cdecl al_findnext(char *Destination);");
@@ -157564,10 +157577,6 @@ static Functions_5(void) {
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0X8]", "guin");
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0XC]", "objn");
 	define_local_var(0X41A6ED, 0X41A78C, "[bp+0X10]", "filemask");
-}
-
-static Functions_6(void) {
-
 	add_func    (0X41A78C,0X41A8A6);
 	set_func_flags(0X41A78C,0x5410);
 	SetType(0X41A78C, "void __stdcall SetLabelText(int guin, int objn, char *newtx);");
@@ -157988,6 +157997,10 @@ static Functions_6(void) {
 	define_local_var(0X41CB38, 0X41CB63, "[bp+0XC]", "nIDEvent");
 	define_local_var(0X41CB38, 0X41CB63, "[bp+0X10]", "uElapse");
 	define_local_var(0X41CB38, 0X41CB63, "[bp+0X14]", "lpTimerFunc");
+}
+
+static Functions_7(void) {
+
 	add_func    (0X41CB63,0X41CBA5);
 	set_func_flags(0X41CB63,0x5410);
 	set_func_cmt(0X41CB63,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: int IsTimerExpired(int tnum) at AC.CPP:21179-21187. Exact match: same range validation as script_SetTimer (tnum in [1,MAX_TIMERS=21)), quitting \"!IsTimerExpired: invalid timer number\" otherwise; then \"if(script_timers[tnum]==1){script_timers[tnum]=0;return 1;} return 0;\" matches the disassembly instruction for instruction. Already correctly named in the live IDB (case-only difference from 2011's own \"IsTimerExpired\", not renamed) but had no matches.json entry at all until this round. Third independent confirmation of GameState.script_timers[21]@+0x838 and MAX_TIMERS=21.", 1);
@@ -158004,10 +158017,6 @@ static Functions_6(void) {
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp-0X4]", "Count");
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp+0X8]", "Str");
 	define_local_var(0X41CBEF, 0X41CC4C, "[bp+0XC]", "Source");
-}
-
-static Functions_7(void) {
-
 	add_func    (0X41CC4C,0X41CC84);
 	set_func_flags(0X41CC4C,0x5410);
 	SetType(0X41CC4C, "void __stdcall sc_strcpy(char *s1, char *s2);");
@@ -158431,6 +158440,10 @@ static Functions_7(void) {
 	set_func_flags(0X424570,0x5410);
 	set_func_cmt(0X424570,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: roomstruct::roomstruct() default constructor at acroom.h:878-901. Found while chasing RoomStruct's remaining unexplored gaps (referenced as a DATA XREF callee from sub_4081C5, not yet itself characterized). Body is an almost line-for-line match to source's constructor body: three `vector constructor iterator` calls default-construct rst+0x8D2 (ElementSize=0xA(10)/Count=0xA(10) -> sprs[10], callback sub_424750/sprstruc__sprstruc), rst+0xBC4 (ElementSize=0xF4(244)/Count=0xA(10) -> anims[10], callback sub_424770/FullAnimation__FullAnimation), and rst+0x1574 (ElementSize=0xF4(244)/Count=0xF(15) -> wallpoints[15], callback sub_4247D0/PolyPoints__PolyPoints) -- all three array addresses/strides/capacities matching RoomStruct's own already-confirmed fields exactly, a fully independent second confirmation route for each. This is followed by a long run of literal-value field inits matching source's own constructor assignments almost line f" "or line: [rst]/[rst+4]/[rst+8]/[rst+0xC]=0 (walls/object/lookat plus t", 1);
 	set_frame_size(0X424570, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X424750,0X424767);
 	set_func_flags(0X424750,0x5410);
 	set_func_cmt(0X424750,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: sprstruc::sprstruc() default constructor at acroom.h:186. Called as the per-element callback for RoomStruct.sprs[10]'s C++ array-of-objects default-construction (see roomstruct__roomstruct's own entry). Entire body is a single 2-byte write, \"[this+8]=0\", matching source's \"sprstruc() { on = 0; }\" exactly in both value and being the constructor's only action -- decisively confirms sprstruc.on@+0x08 (the struct's declared 5th/last field: sprnum,x,y,room,on, all packed shorts, acroom.h:181-198), boxing in the rest of the 10-byte layout with zero slack. See the new sprstruc struct in apply_structs.py for the complete writeup.", 1);
@@ -158443,10 +158456,6 @@ static Functions_7(void) {
 	set_func_flags(0X4247A0,0x5410);
 	set_func_cmt(0X4247A0,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: AnimationStruct::AnimationStruct() default constructor at acroom.h:225. Called as the per-element callback for FullAnimation.stage[10]'s own C++ array-of-objects default-construction (see FullAnimation__FullAnimation's own entry). Entire body is four literal-value writes: \"[this+0x14]=0; [this+0xC]=0; [this+0x15]=1; [this+0x10]=5;\" -- matching source's \"AnimationStruct() { action=0; object=0; wait=1; speed=5; }\" (acroom.h:225) WORD FOR WORD AND VALUE FOR VALUE, hitting the same four fields (action@+0x14, object@+0xC, wait@+0x15, speed@+0x10) this project's earlier disassembly-only investigation (sub_40C3E0's dispatcher) had already, independently, matched to those exact roles. A full constructor-literal match -- the strongest possible confirmation of the EventBlockCmd->AnimationStruct rename made the previous round. See AnimationStruct's own entry in apply_structs.py for the complete writeup.", 1);
 	set_frame_size(0X4247A0, 0X4, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X4247D0,0X4247EB);
 	set_func_flags(0X4247D0,0x5410);
 	set_func_cmt(0X4247D0,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: PolyPoints::PolyPoints() default constructor at acroom.h:264. Called as the per-element callback for RoomStruct.wallpoints[15]'s own C++ array-of-objects default-construction (ElementSize=0xF4(244)/Count=0xF(15), see roomstruct__roomstruct's own entry -- matching wallpoints[]'s already-confirmed address/stride/capacity from load_main_block's fread evidence exactly, a second independent confirmation of the same). Entire body is a single 4-byte write, \"[this+0xF0]=0\", matching source's \"PolyPoints() { numpoints = 0; }\" (acroom.h:264) exactly -- directly confirms PolyPoints.numpoints@+0xF0, the one field this struct's own runtime-side (fread-only) evidence could not independently pin down (walkable-area polygon vertex data being purely an AGS-editor concern with zero Engine/ usage). See the new PolyPoints struct in apply_structs.py for the complete writeup.", 1);
@@ -158663,6 +158672,7 @@ static Functions_8(void) {
 	set_frame_size(0X425710, 0, 4, 0);
 	add_func    (0X425720,0X425739);
 	set_func_flags(0X425720,0x5410);
+	set_func_cmt(0X425720,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/alcompat.h\nconfidence: high\nevidence: AL_INLINE_DEPRECATED(void, yield_timeslice, (void), { if (system_driver->yield_timeslice) system_driver->yield_timeslice(); }) at alcompat.h:211-216. Found while sweeping mainloop's own remaining direct sub_* calls (called once per iteration, mainloop+46B). The whole body is a 3-instruction null-check-then-call through dword_536F68 (already confirmed this session as Allegro's own system_driver global, via set_window_title's own zero-drift +0x20 slot match) at offset +0x74, no arguments, return value never examined -- an exact structural match to this compat wrapper's body, and not a shape anything else in Allegro/AGS plausibly produces (a bare 'null-check-then-call-with-no-args-no-result' vtable dispatch through system_driver specifically). +0x74 doesn't land on this header's own currently-declared yield_timeslice slot (0x6C) with the SAME one-slot shift already established for read_hardware_" "palette -- consistent with this project's standing caution that this build's actual compiled Allegro version ", 1);
 	set_frame_size(0X425720, 0, 4, 0);
 	add_func    (0X425740,0X425760);
 	set_func_flags(0X425740,0x5410);
@@ -158815,6 +158825,10 @@ static Functions_8(void) {
 	set_func_cmt(0X427BD0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::additem(char*) (acdialog.h:425-433) -- an exact match, and a THIRD independent confirmation of this build's own MyListBox capacity: the overflow check is a literal \"cmp [this+0x24],14h\" (items>=0x14=20), not source's items>=MAXLISTITEM(300) -- directly confirming, via a bounds-check literal rather than arithmetic, the 20-entry capacity already inferred twice before (CSCICreateControl's own operator-new(0x84) allocation-size arithmetic, and this same literal's own consistency with that arithmetic). The quit() call's literal string, \"!CSCIUSER16: Too many items added to listbox\", matches source's own error string exactly (source's identical wording, just gated on a 15x larger threshold). Otherwise an exact match: malloc(strlen(texx)+1), strcpy(itemnames[items],texx), items++, needredraw@+0x22=1.", 1);
 	set_frame_size(0X427BD0, 0X4, 4, 0X4);
 	define_local_var(0X427BD0, 0X427C48, "[bp+0X8]", "Str");
+}
+
+static Functions_9(void) {
+
 	add_func    (0X427C50,0X427CAB);
 	set_func_flags(0X427C50,0x5410);
 	SetType(0X427C50, "int __stdcall MyLabel__MyLabel(int, int, int, char *Source);");
@@ -158830,10 +158844,6 @@ static Functions_8(void) {
 	set_func_flags(0X427E00,0x5414);
 	set_func_cmt(0X427E00,	"Microsoft VisualC 2-14/net runtime\n\n[reversing] confirmed match\nsource: Common/acgui.h\nconfidence: medium\nevidence: virtual int GUIObject::MouseDown() { return 0; } at acgui.h:140 -- the base class's default (non-pure) implementation, inherited by any GUIObject-derived class that doesn't override it. Matches exactly: \"xor eax,eax; retn\" (return 0, no side effects, no stack args). Referenced from multiple vtable slots (.rdata:004AD600, 004AD60C, and more per the truncated xref list), consistent with being a shared default used across several GUI control types that aren't independently clickable (e.g. GUILabel). Confidence medium rather than high since the exact concrete class(es) using this specific vtable slot instance aren't individually identified.", 1);
 	set_frame_size(0X427E00, 0X4, 4, 0);
-}
-
-static Functions_9(void) {
-
 	add_func    (0X427E10,0X427E20);
 	set_func_flags(0X427E10,0x5414);
 	set_frame_size(0X427E10, 0X4, 4, 0XC);
@@ -159379,6 +159389,10 @@ static Functions_9(void) {
 	set_func_flags(0X4318B0,0x5410);
 	set_func_cmt(0X4318B0,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void mgraphconfine(int,int,int,int) at MOUSEW32.CPP:82: \"set_mouse_range(x1,y1,x2,y2);\" -- exact 4-arg passthrough match. Called from load_new_room and main (both already matched). Rounds out the mouse-bounds subsystem alongside msetcursorlimit (already matched) -- the same conceptual pair as 2011's source (one confines the OS/Allegro cursor directly, the other tracks AGS-internal bounds).", 1);
 	set_frame_size(0X4318B0, 0, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4318CD,0X43195E);
 	set_func_flags(0X4318CD,0x5410);
 	set_func_cmt(0X4318CD,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void mgetgraphpos() at MOUSEW32.CPP:87. Exact match: calls poll_mouse (already matched), copies mouse_x/mouse_y (Allegro globals) into mousex/mousey (dword_5358CC/D0), then bounds-clamps against boundx1/boundy1/boundx2/boundy2 -- matching dword_5358DC/5358E0/4BB8F8/4BB8FC exactly, the same four globals sub_43195E (an unmatched function from the earlier SetMouseBounds investigation) writes to. The byte_5358E4 flag check matches \"!ignore_bounds\" exactly. Called from RefreshMouse (already matched) as its literal first statement (RefreshMouse calls domouse(DOMOUSE_NOCURSOR), which itself calls mgetgraphpos as its own first statement in the 2011 source -- close enough in role/position that this direct match, rather than domouse's much larger cursor-drawing body, is clearly correct).", 1);
@@ -159393,10 +159407,6 @@ static Functions_9(void) {
 	set_func_cmt(0X431985,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=MOUSEW32.obj FIELD EVIDENCE (follow-up round, full body read for the first time -- compared against Common/MOUSEW32.CPP:140-189, the Windows-linked reference, not the older DOS-era Common/mouse32.cpp which shares the same function name but a meaningfully different body): matches source's overall shape closely -- poow/pooh read directly from mousecurs[currentcursor]'s own BITMAP.w/.h fields (dword_535878[]+byte_5358C9 index, inlining wgetblockwidth/height's own job rather than calling them), smx/smy=mousex-hotxwas/mousey-hotywas (dword_5358CC/D0 - dword_5358EC/F0), mgetgraphpos (already matched) call, mousex/mousey -= hotx/hoty (dword_5358D4/D8, new globals), the vesa_xres/vesa_yres screen-edge clamp (matching scrnwid/scrnhit exactly), and a wclip(0,0,scrnwid-1,scrnhit-1) call (new match, sub_4360D0 -- medium-high confidence via exact argument match, own body not" " independently traced) before the str==0/1/2 dispatch. The str==0 (\"moved\"", 1);
 	set_frame_size(0X431985, 0X10, 4, 0X4);
 	define_local_var(0X431985, 0X431C31, "[bp+0X8]", "str");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X431D1A,0X431D9A);
 	set_func_flags(0X431D1A,0x5410);
 	set_func_cmt(0X431D1A,	"[reversing] confirmed match\nsource: Engine/acdialog.cpp\nconfidence: high\nevidence: rec_mgetbutton() -- declared \"extern int rec_mgetbutton();\" in Engine/acdialog.cpp:65 (and acwavi.cpp:24/acwavi3d.cpp:79) with no body anywhere in this repo (implemented in a source file this project doesn't have). Identified by role/behavior match at its only reachable call site (CSCIWaitMessage's own \"if(rec_mgetbutton()!=NONE)\" check, acdialog.h:792): polls the mouse (poll_mouse(), already matched), reads Allegro's own mouse_b bitmask (dword_5427FC), and returns -1 (matching the expected NONE constant) if a button is STILL held from the previous poll (edge-triggered debounce via a remembered previous-state global, dword_5358F4) -- otherwise decodes which single bit is set into 0/1/2 (LEFT/RIGHT/MIDDLE) and updates the remembered state. This is exactly the semantics a dialog-polling loop needs: report a NEWLY pressed button once, not a continuously-held one. Also called from load_new_room and check_controls (both already mat" "ched, not independently re-verified against this specific callee this roun", 1);
@@ -159662,6 +159672,7 @@ static Functions_10(void) {
 	set_frame_size(0X434570, 0X4, 0, 0);
 	add_func    (0X4345B0,0X4345F6);
 	set_func_flags(0X4345B0,0x5400);
+	set_func_cmt(0X4345B0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/allegro.c\nconfidence: high\nevidence: void _remove_exit_func(void (*func)(void)) at allegro.c:278-294. Found while sweeping debug_exit's (already matched) own remaining callees. Decisive match: walks a global singly-linked list (dword_536FF8 = Allegro's own static `exit_func_list`) comparing each node's first field against the argument (matching source's `iter->funcptr==func` check), unlinking the match via the previous node's `next` field (or updating the list head directly if it's the first node) and `free()`ing it -- matching source's unlink-then-_AL_FREE logic exactly, node-shape included. DRIFT: the disassembly's node is only 2 fields (funcptr@+0, next@+4), one field (8 bytes) smaller than source's declared 3-field `struct al_exit_func` (funcptr, desc, next) -- this build's exit-function registry doesn't carry the debug description string. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- genuine Allegro-internal cleanup-regi" "stry code, identified fully here rather than left as a boundary stub only because its small size", 1);
 	set_frame_size(0X4345B0, 0, 0, 0);
 	add_func    (0X434600,0X434816);
 	set_func_flags(0X434600,0x15400);
@@ -159741,6 +159752,7 @@ static Functions_10(void) {
 	set_frame_size(0X434F50, 0X15C, 4, 0);
 	add_func    (0X435610,0X435651);
 	set_func_flags(0X435610,0x5400);
+	set_func_cmt(0X435610,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/graphics.c\nconfidence: high\nevidence: static void shutdown_gfx(void) at graphics.c:453-467: 'if (gfx_driver) set_gfx_mode(GFX_TEXT,0,0,0,0); if (system_driver->restore_console_state) system_driver->restore_console_state(); _remove_exit_func(shutdown_gfx); gfx_virgin=TRUE;'. Found as the OTHER caller of the newly-matched _remove_exit_func (sub_4345B0) -- registered via _add_exit_func inside set_gfx_mode (DATA XREF confirms exactly this: 'set_gfx_mode:loc_434FB7'), matching source's own 'if(gfx_virgin) _add_exit_func(shutdown_gfx,...)' registration site. Decisive, complete match: dword_536F74=`gfx_driver` (null-checked before calling set_gfx_mode(-1=GFX_TEXT,0,0,0,0)), the already-confirmed `system_driver` global's own vtable dispatched at +0x38 (restore_console_state -- one slot later than the current 4.2.2 header's own declared offset 0x34, the same one-slot SYSTEM_DRIVER shift already established via set_window_title/read_hardware_palette)," " a self-referential _remove_exit_func(shutdown_gfx) call (matching the function unregistering its", 1);
 	set_frame_size(0X435610, 0, 0, 0);
 	add_func    (0X435660,0X4358B8);
 	set_func_flags(0X435660,0x5400);
@@ -159964,6 +159976,10 @@ static Functions_10(void) {
 	add_func    (0X43C0F0,0X43C1A4);
 	set_func_flags(0X43C0F0,0x5400);
 	set_frame_size(0X43C0F0, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X43C1B0,0X43C2AA);
 	set_func_flags(0X43C1B0,0x5400);
 	set_frame_size(0X43C1B0, 0X10, 0, 0);
@@ -160027,10 +160043,6 @@ static Functions_10(void) {
 	set_func_flags(0X43CAB0,0x15400);
 	SetType(0X43CAB0, "int __cdecl BIO_dump_indent_fp(_iobuf *fp, const char *s, int len, int indent);");
 	set_frame_size(0X43CAB0, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X43CAE0,0X43CB1E);
 	set_func_flags(0X43CAE0,0x5400);
 	set_frame_size(0X43CAE0, 0X400, 0, 0);
@@ -161158,6 +161170,7 @@ static Functions_11(void) {
 	define_local_var(0X455970, 0X45597E, "[bp+0X4]", "lpOutputString");
 	add_func    (0X455980,0X455B10);
 	set_func_flags(0X455980,0x5400);
+	set_func_cmt(0X455980,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wsystem.c\nconfidence: high\nevidence: int _WinMain(void *_main, void *hInst, void *hPrev, char *Cmd, int nShow) at wsystem.c:484-489+. Found while checking _WinMain@16 (this build's real WinMain entry point, already matched against Engine/AC.CPP's own main()) for its own single call, made right after gathering the 4 real WinMain arguments: 'push offset main' pushed LAST (=1st cdecl argument), matching Allegro's own public `_WinMain(void *_main, void *hInst, void *hPrev, char *Cmd, int nShow)` signature exactly, argument order included -- this is the well-known Allegro 'magic main' mechanism (Engine/libsrc/allegro-4.2.2/include/allegro/platform/alwin.h:39-59): the END_OF_MAIN() macro renames the program's own main to _mangled_main via '#define main _mangled_main', and generates a real WinMain that does exactly 'return _WinMain((void*)_mangled_main, hInst, hPrev, Cmd, nShow);' -- an exact structural match to this build's own _WinMain@16 bod" "y. The callee's own body confirms it decisively: GetCommandLine(), strlen+1, malloc(len), memcpy (co", 1);
 	set_frame_size(0X455980, 0X20, 0, 0);
 	add_func    (0X455B40,0X455B73);
 	set_func_flags(0X455B40,0x5400);
@@ -161210,6 +161223,10 @@ static Functions_11(void) {
 	set_func_flags(0X456210,0x5400);
 	set_func_cmt(0X456210,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/win/wddbmp.c\nconfidence: medium\nevidence: gfx_directx_create_system_bitmap(int width,int height) -- identified primarily by call site and role: InitRenderToSurface (already matched) calls it exactly where source calls this named function (\"vscreen = gfx_directx_create_system_bitmap(ddsd.dwWidth,ddsd.dwHeight);\", acwavi.cpp:137), on the vscreen==NULL/first-use path. CAUTION: this build own body (calls sub_455B80(width,height,color_depth,4), falling back to sub_455E20(result,width,height,0x40000000) if that returns NULL/0 -- neither callee independently confirmed or chased further, per this project own third-party-library scope rule) does NOT closely resemble the 4.2.2 reference tree own gfx_directx_create_system_bitmap (wddbmp.c:632-650, which calls gfx_directx_create_surface/gfx_directx_make_bitmap_from_surface/gfx_directx_destroy_surface -- a DDRAW_SURFACE-wrapper abstraction with no counterpart visible here) -- consistent with this 2002 bi" "nary linking a genuinely older/simpler Allegro DirectX driver implementation than the 4.2.2 tree, the", 1);
 	set_frame_size(0X456210, 0X8, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4562D0,0X45635A);
 	set_func_flags(0X4562D0,0x5400);
 	set_frame_size(0X4562D0, 0X1C, 0, 0);
@@ -161355,10 +161372,6 @@ static Functions_11(void) {
 	set_func_flags(0X45813C,0x5410);
 	set_func_cmt(0X45813C,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/math.c\nconfidence: high\nevidence: Allegro's i386-optimized `fixsqrt(fixed x)` -- decisively confirmed via its own lookup table, `word_4BF5F8`, matching `Engine/libsrc/allegro-4.2.2/src/math.c`'s own `_sqrt_table[]` (declared right above the portable-C fallback at math.c:343, with the comment 'this table is used by the fixsqrt() and fixhypot() routines in imisc.s') byte-for-byte: 0x2D4, 0x103F, 0x16CD, 0x1BDB, ... every entry checked matches exactly. The disassembly's own algorithm -- `bsr` to find the input's highest set bit, an even-aligned shift, a table lookup indexed by the shifted value, then a re-scaling shift -- is the classic table-assisted fast integer square-root technique the reference source's comment describes as living in `imisc.s` (not included in this repo's C source tree, so the exact instruction-for-instruction i386 assembly can't be diff'd, but the shared table plus the negative-input error path -- setting `*allegro_errno`" " via `dword_536F6C`, matching the portable fallback's own `*allegro_errno = EDOM;` line right", 1);
 	set_frame_size(0X45813C, 0, 4, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X4583CC,0X4583CD);
 	set_func_flags(0X4583CC,0x5400);
 	set_frame_size(0X4583CC, 0, 0, 0);
@@ -162551,7 +162564,8 @@ static Functions_12(void) {
 	set_frame_size(0X477AF0, 0X8, 0, 0);
 	add_func    (0X477B80,0X477BCB);
 	set_func_flags(0X477B80,0x5400);
-	SetType(0X477B80, "void __cdecl sub_477B80();");
+	SetType(0X477B80, "void __cdecl remove_mod();");
+	set_func_cmt(0X477B80,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD's own public uninstall API, remove_mod(void) -- the exact mirror image of the already-matched install_mod (see its own entry for the identical-pattern correction this round). Called directly from quit() (already matched) AND registered as this build's own atexit callback inside install_mod ('push offset sub_477B80; call _atexit', install_mod's own body) -- matching 2011's acsound.cpp:1132-1134 'void remove_mod_player() { remove_mod(); }' role, just with (per this build's now-established pattern) no separate thin AGS-side wrapper at all: main calls install_mod directly, quit() calls remove_mod directly. Body confirms the identity via clean symmetry with install_mod: calls the already-matched stop_mod() first (matching acsound.cpp:1055's own 'stop_mod(); destroy_mod(tune); tune=NULL;' MYMOD::destroy() sequence), unregisters a callback, deallocates every entry of the SAME per-voice array install_mod populated (unk_4C38D4, up to the already-established" " 'M.K.' sentinel address bound), and finally r", 1);
 	set_frame_size(0X477B80, 0X8, 0, 0);
 	add_func    (0X477C90,0X477C9E);
 	set_func_flags(0X477C90,0x5400);
@@ -162894,6 +162908,10 @@ static Functions_12(void) {
 	add_func    (0X47E3C0,0X47E3F0);
 	set_func_flags(0X47E3C0,0x5400);
 	set_frame_size(0X47E3C0, 0X4, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X47E3F0,0X47E72C);
 	set_func_flags(0X47E3F0,0x5400);
 	set_func_cmt(0X47E3F0,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: ALMP3 library public API, ALMP3_MP3 *almp3_create_mp3(void *mp3, int mp3_length) -- referenced (not defined; no Engine/libsrc/almp3-2.0.5 header/source implements the public API surface itself in a way traceable here, but the call site is unambiguous) at Engine/acsound.cpp:465, \"thismp3->tune = almp3_create_mp3(mp3buffer, muslen);\" inside my_load_static_mp3 (already matched, see sub_4083FC's own entry). Exact 2-arg match: called with (buffer, size) immediately after the buffer is read in full, result stored and checked for NULL exactly as source does.", 1);
@@ -163167,10 +163185,6 @@ static Functions_12(void) {
 	add_func    (0X484FB0,0X48501A);
 	set_func_flags(0X484FB0,0x5400);
 	set_frame_size(0X484FB0, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X485020,0X48508A);
 	set_func_flags(0X485020,0x5400);
 	set_frame_size(0X485020, 0X4, 0, 0);
@@ -165333,6 +165347,10 @@ static Functions_13(void) {
 	set_frame_size(0X4AAFEC, 0, 0, 0);
 	define_local_var(0X4AAFEC, 0X4AAFF2, "[bp+0X4]", "Stream");
 	define_local_var(0X4AAFEC, 0X4AAFF2, "[bp+0X8]", "Format");
+}
+
+static Functions_14(void) {
+
 	add_func    (0X4AAFF2,0X4AAFF8);
 	set_func_flags(0X4AAFF2,0x5484);
 	SetType(0X4AAFF2, "void __cdecl operator_delete(void *);");
@@ -165511,10 +165529,6 @@ static Functions_13(void) {
 	define_local_var(0X4AB1FE, 0X4AB204, "[bp+0X10]", "CompareFunction");
 	add_func    (0X4AB204,0X4AB20A);
 	set_func_flags(0X4AB204,0x1480);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X4AB210,0X4AB23F);
 	set_func_flags(0X4AB210,0x5404);
 	set_func_cmt(0X4AB210,	"[reversing] confirmed match\nsource obj (library): LIBCMTD:chkstk.obj\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=LIBCMTD:chkstk.obj", 1);
