@@ -364,6 +364,23 @@ reversing/
                                      struct-layout-drift.md). Extend past
                                      the character array if a future round
                                      needs to reach dialog topics/GUIs/etc.
+    dump_interface_elements.py      - decodes the real `iface[10]`/
+                                     InterfaceElement array (no new file-walk
+                                     needed -- it sits inline within
+                                     GameSetupStructBase's own already-
+                                     reachable blob at +0x534). Used to
+                                     correct, not just validate, an earlier
+                                     round's "dead end" call: the DATA turns
+                                     out to be a real, coherent icon-bar UI
+                                     design (a status strip, a 9-button verb
+                                     icon bar with consecutive sprite
+                                     numbers, a window-border frame, a
+                                     bottom panel) even though the ENGINE
+                                     CODE was separately, exhaustively shown
+                                     to never read any of these fields (see
+                                     struct-layout-drift.md) -- data existing
+                                     and code reading it are, once again,
+                                     different questions.
   analysis/                        - generated JSON artifacts (regeneratable,
                                      but keep committed since they're
                                      expensive to rebuild and are the working
@@ -4471,6 +4488,24 @@ disassembly work.
   clean, fully independent confirmation of `CharacterInfo`'s own field
   layout, one of the most heavily-confirmed structs in this project.
   See `reversing/notes/struct-layout-drift.md`.
+- **A real correction, not just validation: `InterfaceElement`'s real
+  data reveals a coherent icon-bar UI design an earlier round's "dead
+  end" call never anticipated.** New script,
+  `reversing/scripts/dump_interface_elements.py`, decodes all 4
+  populated `iface[10]` slots (no new file-walk needed -- it sits
+  inline within `GameSetupStructBase`'s already-reachable blob). Not
+  empty defaults: a `320x14` top status strip
+  (`vtext="@GAMENAME@$n@OVERHOTSPOT@"`), a `320x35` strip with 9
+  evenly-35px-spaced buttons using 9 consecutive sprite numbers
+  (`2044-2048,2050-2053`) -- the classic AGS verb icon bar -- a
+  `100x60` 9-patch window-border frame (4 corners + 4 edges, sprites
+  `30`/`31`/`32`, the only slot with `flags` edited away from its
+  constructor default), and a bottom panel. Doesn't reverse the
+  earlier CODE-side finding (still true: the engine never reads any
+  of these fields) -- corrects the FRAMING: a real, deliberately laid
+  out icon-bar UI was designed for this game, just never wired up to
+  the compiled engine's actual (GUI-based) rendering. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

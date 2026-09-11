@@ -1639,11 +1639,20 @@ struct InterfaceElement {
   // bytes) times `MAXBUTTON=20` is exactly 0x2D0 (720) bytes, and `numbuttons`(+0x50, 4 bytes)
   // + 0x2D0 lands EXACTLY on the newly-confirmed `flags`@+0x324 -- zero drift on capacity too,
   // unlike almost everything else in this project.
-  int x, y, x2, y2;                // +0x00..+0x10, UNCONFIRMED -- the constructor doesn't touch
-                            // these (2011's own constructor doesn't either), and no other
-                            // already-matched function has been found reading/writing them.
-                            // Kept as typed fields (not opaque padding) purely for position;
-                            // stays open for a future round.
+  int x, y, x2, y2;                // +0x00..+0x10, UNCONFIRMED BY CODE, but real by DATA (see
+                            // reversing/scripts/dump_interface_elements.py and struct-layout-
+                            // drift.md): the constructor doesn't touch these and no already-
+                            // matched function reads/writes them (still true -- this isn't a
+                            // code-side reversal), but reading the real game's own compiled
+                            // `iface[10]` data (this field lands inline within
+                            // GameSetupStructBase, already reachable) shows plausible, coherent
+                            // bounding-box values across all 4 populated slots -- a 320x14 top
+                            // status strip, a 320x35 verb-icon-bar strip, a 100x60 window-frame
+                            // box, and a 318x60 bottom panel -- not zeroed/unused Editor
+                            // defaults. Kept as typed fields (not opaque padding) purely for
+                            // position; the CODE-side "never read anywhere" finding stands, only
+                            // the framing that the feature was never meaningfully designed is
+                            // corrected.
   int bgcol;                       // +0x10, high confidence: constructor sets `[this+0x10]=8`,
                             // matching source's `bgcol=8;` exactly.
   int fgcol;                       // +0x14, high confidence: constructor sets `[this+0x14]=0xF`
@@ -1666,11 +1675,19 @@ struct InterfaceElement {
                             // matching source's `numbuttons=0;` exactly -- lands exactly at
                             // vtext[40]'s own confirmed end (0x28+40=0x50), zero slack.
   char button[0x2D0];              // +0x54..+0x324 (720 bytes = InterfaceButton[MAXBUTTON=20],
-                            // MEDIUM confidence -- zero-slack ARITHMETIC fit only, see the
-                            // struct-level note above; no individual InterfaceButton field has
-                            // its own access-site evidence yet, so left as a raw byte blob
-                            // rather than a typed array. A future round could type this properly
-                            // if a caller populating `button[i].x`/`.pic`/etc. is ever found.
+                            // MEDIUM confidence -- zero-slack ARITHMETIC fit only from CODE
+                            // access-site evidence (none exists, see the struct-level note
+                            // above), left as a raw byte blob rather than a typed array for
+                            // that reason. DATA-CONTENT evidence is now available though (see
+                            // dump_interface_elements.py/struct-layout-drift.md): reading the
+                            // real game's 9-button verb-icon-bar slot at this exact `0x24`-byte
+                            // stride yields 9 entries whose leading 3 ints read as coherent
+                            // (x=5,40,75,...+35 each step; y constant; pic=9 consecutive sprite
+                            // numbers) -- real design content, not noise, at the stride/leading-
+                            // field-order this struct-level comment already predicted. This is
+                            // weaker than a code access site (data coherence, not a confirmed
+                            // reader) so confidence stays MEDIUM and the array stays untyped,
+                            // but it's no longer purely an arithmetic guess either.
   int flags;                       // +0x324, high confidence: constructor sets `[this+0x324]=0`,
                             // matching source's `flags=0;` exactly -- lands exactly where
                             // `button[20]`'s own arithmetic fit predicts, zero slack.

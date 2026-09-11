@@ -15111,3 +15111,55 @@ coordinates) reads a small, contextually sane value. A clean,
 completely independent, real-data confirmation of `CharacterInfo`'s
 own field layout -- the deepest and most satisfying use of this
 technique so far.
+
+### A real correction, not just validation: `InterfaceElement`'s data reveals a genuine, coherent icon-bar UI design the "dead end" call never anticipated
+
+Unlike the last several rounds (which validated already-confirmed
+layouts against real data), this one overturns part of an earlier
+conclusion. `InterfaceElement`'s `x`/`y`/`x2`/`y2`/`vtextalign` fields
+had resisted three separate exhaustive disassembly searches (zero
+code references to any of them anywhere), leading an earlier round to
+conclude "Rob Blanc 1 most likely just doesn't use the old icon-bar
+interface system at all... a genuine dead end." Last round's
+`numiface`==4 finding already put a small crack in that -- the compiled
+DATA carries 4 populated slots, even though the CODE never reads them.
+
+This round decoded all 4 of those slots in full (new script,
+`reversing/scripts/dump_interface_elements.py` -- no new file-format
+work needed, `iface[10]` sits inline within `GameSetupStructBase`'s
+own already-reachable blob at `+0x534`). The result is not "4 empty/
+default slots the Editor happens to allocate" -- it's a real,
+internally-coherent icon-bar UI design:
+
+- **Slot 0**: a thin `320x14` strip at the very top (`x=0,y=0,x2=319,
+  y2=13`) with `vtext="@GAMENAME@$n@OVERHOTSPOT@"` -- unmistakably a
+  classic Sierra-style status/title bar showing the game's name and
+  whatever's under the mouse cursor.
+- **Slot 1**: a `320x35` strip right below it (`y=14..48`) with 9
+  buttons, evenly spaced 35px apart (`x=5,40,75,110,145,180,215,250,
+  285`), using 9 CONSECUTIVE sprite numbers (`2044-2048,2050-2053` --
+  skipping 2049) -- exactly the shape of AGS's classic verb icon bar
+  (walk/look/talk/use/etc.).
+- **Slot 2**: a `100x60` box (`flags=1`, the only slot with a non-
+  default `flags` value -- meaning it was actually edited away from
+  the constructor's `flags=0` default) with 8 buttons at the four
+  corners and four edge-midpoints using sprites `30`(corners, one with
+  a `picdown`)/`31`/`32`(edges) -- the unmistakable shape of a tiled
+  9-patch window-border frame (4 corners + 4 edges + implied center).
+  `vtext="yuhlg"` looks like leftover placeholder/test text.
+- **Slot 3**: a `318x60` strip at the bottom (`y=139..199`, `popup=1`,
+  no buttons) -- plausibly an inventory-display panel background.
+
+None of this contradicts the earlier disassembly-side finding -- the
+ENGINE really was shown, exhaustively, to never read any of these
+fields at runtime, and that stands. What it corrects is the FRAMING:
+"this game doesn't use the icon-bar interface" implies the feature was
+never really engaged with, when the data shows the opposite -- a
+real, deliberately laid-out UI design exists, complete with real
+sprite references and hand-placed button coordinates, that this
+build's compiled code simply never wired up to anything (plausibly
+because the game shipped using the newer GUI system instead, and the
+old icon-bar was left as unused Editor-side legacy data rather than
+deleted). The same "data existing and code reading it are different
+questions" lesson `numiface` already taught, now shown at full
+richness rather than just a slot count.
