@@ -15366,3 +15366,91 @@ build's map attributes a statically-linked symbol to whichever AGS-side
 `.obj` requested it first, not the symbol's real defining file).
 Corrected in place so a future sweep doesn't mistake either for an
 unconfirmed AGS-side lead.
+
+### `main`'s own remaining direct callees: swept for the same reason -- found all three
+
+Following the same stock-take instinct one step further: `main` itself
+(64870-67218 in `rob_blanc_1.asm`, one of the biggest and most heavily
+worked functions in this project) had exactly THREE distinct still-
+unnamed `sub_*` addresses among its own direct calls (`sub_421F22`,
+`sub_421DE8` x6 plus one self-recursive call, `sub_434E70`) -- a small,
+well-scoped, high-value target precisely because `main` is AGS's own
+top-level startup sequence, not third-party code, and every other call
+in it was already resolved.
+
+**`sub_421DE8` closes decisively as `init_gfx_mode(int wid,int hit,int
+cdep)`** (`Engine/AC.CPP:26140-26179`). Four independent confirmations
+converge: the driver-ID literal selected by `usetup.windowed`
+(0/1/2 -> `0x44584143`/`0x4458_4F56`/`0x4458_574E`, Allegro's own
+`AL_ID('D','X','A','C'/'O','V'/'W','N')` = `GFX_DIRECTX`/`_OVL`/`_WIN`)
+matches source's own driver-selection intent; the three-argument writes
+into `final_scrn_wid`/`final_scrn_hit`/`final_col_dep` match source's
+own three assignment lines exactly; the `game.color_depth==1` branch
+(`dword_51D2F0`, already confirmed as `GameSetupStructBase.color_depth`)
+forcing `final_col_dep=8` and skipping `set_color_depth` entirely
+matches source's `if/else` with zero drift; and the failure-retry path
+-- increment `usetup.windowed`, wrap at `>2` back to `0`, self-
+recursively retry with the SAME arguments -- matches source's own
+`usetup.windowed++; if(usetup.windowed>2) usetup.windowed=0; return
+init_gfx_mode(wid,hit,cdep);` instruction for instruction, wraparound
+threshold included. DRIFT: this build calls Allegro's own
+`set_gfx_mode(driverID,w,h,0,0)` directly rather than delegating to
+`gfxDriver->Init(...)` -- the usual predates-gfxDriver pattern, purely
+cosmetic to the outcome. One small loose end: a 1-argument
+`sub_434CB0(0x55)` call sits between the driver-ID selection and the
+depth-forcing logic with no obvious source counterpart at that exact
+position; not chased given the overwhelming strength of the rest.
+
+**`sub_421F22` turns out to be a genuinely REMOVED feature, not a
+renamed one -- the ".ags" Explorer file-association self-registration.**
+Called once, right where 2011's own `AC.CPP:27221-27223` comment says
+"Update shell associations and exit" -- except 2011 no longer has
+anything doing what this function does. Its own body is an idempotent
+Windows registry check-then-write: reads `HKEY_CLASSES_ROOT\.ags`'s
+default value, `ACIVersion`, and `ACILocation`, and skips re-
+registering entirely if all three already match this build's own
+literal `"2.40.325"` version string (a further independent confirmation
+of this project's AGS 2.4b/July-2002 pin, joining `script_debug`/
+`atexit_handler`/`platform_RunSetup`) and the stored path still opens.
+Otherwise it writes the full association -- default value, "Adventure
+Game" description, `DefaultIcon`, `shell\open\command`, `shell\AGS Game
+Settings\command`, refreshed `ACIVersion`/`ACILocation` -- all built
+from `argv[0]`. CONFIRMED as a genuine, contemporary feature (not
+something to keep hunting a 2011 name for) via
+`ags-archives/ags240/docs/CHANGES.TXT` (ags240 = this build's own pinned
+2.4b version): *"AGSWin now integrates itsself into explorer so you can
+double-click .AGS files to run them."* 2011's own equivalent,
+`AGSWin32::RegisterGameWithGameExplorer` (`Engine/acplwin.cpp:445`), is
+a structurally incompatible, much later Vista-era Game-Explorer/XML
+mechanism -- this is the rare case of a 2002 feature 2011 actually
+REPLACED outright, rather than the usual "2002 predates a later
+addition" direction. Left unnamed per this project's "verify, don't
+invent" discipline -- no source-derived identifier survives to adopt.
+
+**`sub_434E70` identifies Allegro's own public `gfx_capabilities`
+global, though the AGS-side call site itself stays unnamed.** A trivial
+3-instruction leaf: writes its single literal argument (`0xEEEEF`)
+straight into `dword_4BCECC`, and separately sets an apparently dead,
+write-only global (`dword_537028`, zero other xrefs anywhere in the
+binary) to `-1`. `dword_4BCECC` decisively identifies as Allegro's
+`gfx_capabilities` (`Engine/libsrc/allegro-4.2.2/include/allegro/
+gfx.h:151`) two ways: its own BSS default is the literal `0xFFFFFF`
+("every capability bit gfx.h declares through bit 23, on"), and at
+least 5 large Allegro-internal blit-dispatch functions elsewhere in
+this binary (`sub_436650` and siblings, each its own 20-30-case jump
+table dispatching through a double-indirected vtable call) test this
+SAME global against exactly gfx.h's three highest bits --
+`0x01000000`=`GFX_HW_VRAM_STRETCH_BLIT_MASKED`, `0x02000000`=
+`GFX_HW_SYS_STRETCH_BLIT`, `0x04000000`=`GFX_HW_SYS_STRETCH_BLIT_MASKED`
+-- an exact match with zero ambiguity. Per the third-party scope rule,
+those blit-dispatch functions themselves are genuine Allegro internals
+and stay unchased; only this AGS-side call, which pokes the library's
+own public flag with a hardcoded value instead of letting a driver
+negotiate it, is recorded. No 2011 counterpart exists -- `gfx_
+capabilities` is never referenced anywhere in `Engine/`, consistent
+with this whole software-rendering-era startup code predating
+`gfxDriver` entirely.
+
+With these three, `main`'s own callgraph -- one of the largest and most
+thoroughly investigated functions in this project -- has zero remaining
+unidentified direct callees.

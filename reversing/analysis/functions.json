@@ -2440,9 +2440,9 @@
   "is_named": true
  },
  {
-  "name": "sub_421DE8",
+  "name": "init_gfx_mode",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_421F22",

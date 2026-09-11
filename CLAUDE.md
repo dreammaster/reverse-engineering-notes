@@ -4573,6 +4573,29 @@ disassembly work.
   false`, the same linker-map obj-attribution artifact already known
   from `printf`/`sprintf` -- already correctly named, just wrong
   bookkeeping). See `reversing/notes/struct-layout-drift.md`.
+- **`main`'s own remaining direct callees close out completely.**
+  Following the same sweep one step further found `main` had exactly
+  three still-unnamed `sub_*` addresses among its own direct calls --
+  a small, well-scoped target since `main` is AGS's own top-level
+  startup code, not third-party. `sub_421DE8` closes decisively as
+  `init_gfx_mode(int wid,int hit,int cdep)` (`AC.CPP:26140-26179`) via
+  four independent confirmations (driver-ID literal selection matching
+  `usetup.windowed`, the `final_scrn_*`/`final_col_dep` writes, the
+  `game.color_depth==1` branch, and the exact self-recursive retry-
+  with-wraparound failure path). `sub_421F22` turns out to be a
+  genuinely REMOVED feature rather than a renamed one -- Windows
+  Explorer ".ags" file-association self-registration, confirmed
+  contemporary via `ags-archives/ags240/docs/CHANGES.TXT`'s own "AGSWin
+  now integrates itsself into explorer..." changelog entry (and another
+  independent "2.40.325" version-string confirmation) -- 2011's own
+  replacement (`AGSWin32::RegisterGameWithGameExplorer`) is a
+  structurally incompatible later mechanism, so left unnamed rather
+  than force a name onto a function 2011 doesn't have an equivalent of
+  at all. `sub_434E70` identifies Allegro's own public `gfx_
+  capabilities` global (two independent bit-flag confirmations against
+  `allegro/gfx.h`'s own declared constants) even though the AGS-side
+  call site itself stays unnamed -- no 2011 counterpart references this
+  global anywhere. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
