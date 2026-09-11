@@ -4622,6 +4622,29 @@ disassembly work.
   registered via `atexit` inside `install_mod` itself, no separate
   AGS-side wrapper exists in this 2002 build). See `reversing/notes/
   struct-layout-drift.md`.
+- **`SaveScreenshot`'s own callee unravels into a 6-function Allegro
+  Unicode-string cluster, plus two genuine AGS-side finds elsewhere.**
+  A confusing-looking call site (two odd hex constants, an apparently
+  "unbalanced" stack cleanup) turned out to be perfectly ordinary once
+  read correctly -- the earlier pushed values were arguments to the
+  NEXT call, not the one right after them. That resolved a previously
+  medium-confidence `uconvert` match's own undecoded constants exactly
+  (`AL_ID('A','S','C','8')`=`U_ASCII`, `AL_ID('c','u','r','.')`=
+  `U_CURRENT`) and led to 6 decisive new Allegro matches: `save_bitmap`
+  (explaining why several small shared helpers are each called from
+  more than one of `save_bmp`/`save_pcx`/`save_tga` -- they're all
+  registered into the same `bitmap_type_list`), `get_extension`, and
+  four Unicode-API primitives (`ustrlen`/`ugetat`/`uoffset`/
+  `ustrsize`) it calls. Separately, `csetlib`'s own remaining callee
+  closes as `read_new_format_clib` (reconfirming the OLD `MultiFileLib`
+  struct's strides from the read side), and `qgimport`'s own remaining
+  callee unravels into two genuine AGS-side matches, `convWord`/
+  `convByte` (`Engine/acqgimp.cpp`, a source file actually present in
+  this repo, giving decisive rather than inferred matches). Three more
+  JGMOD/ALMP3-internal helpers (pattern-seek clamp, MP3 seek-to-frame,
+  MP3 position-in-milliseconds) were documented but left unnamed --
+  neither library has source in this repo to verify exact names
+  against. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

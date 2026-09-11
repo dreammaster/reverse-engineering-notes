@@ -3180,14 +3180,14 @@
   "is_named": true
  },
  {
-  "name": "sub_428477",
+  "name": "convWord",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4284A8",
+  "name": "convByte",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "qg2export",
@@ -3245,9 +3245,9 @@
   "is_named": true
  },
  {
-  "name": "sub_429BB0",
+  "name": "read_new_format_clib",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "csetlib",
@@ -3450,9 +3450,9 @@
   "is_named": false
  },
  {
-  "name": "sub_42D018",
+  "name": "get_extension",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_42D0BE",
@@ -5330,9 +5330,9 @@
   "is_named": false
  },
  {
-  "name": "sub_449830",
+  "name": "save_bitmap",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4498C0",
@@ -5970,14 +5970,14 @@
   "is_named": true
  },
  {
-  "name": "sub_452770",
+  "name": "uoffset",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
-  "name": "sub_4527D0",
+  "name": "ugetat",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_4527F0",
@@ -6025,9 +6025,9 @@
   "is_named": false
  },
  {
-  "name": "sub_453C60",
+  "name": "ustrsize",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_453C90",
@@ -6045,9 +6045,9 @@
   "is_named": false
  },
  {
-  "name": "sub_453DA0",
+  "name": "ustrlen",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_453DD0",

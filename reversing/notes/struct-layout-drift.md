@@ -15570,3 +15570,84 @@ finds fell out:
   subsystem was replaced outright by Allegro's `config.c` API by 2011,
   with no source-derived identifier surviving to adopt for either
   helper).
+
+### `SaveScreenshot`'s own callee unravels into a whole Allegro Unicode-string cluster
+
+Continuing to sweep already-matched functions' own still-unnamed
+callees: `SaveScreenshot` (append `.bmp` if no extension, then hand off
+to a helper) had one remaining callee whose confusing-looking call site
+-- two odd hex constants (`0x41534338`, `0x6375722E`) pushed alongside
+a stack-buffer address, with an "unbalanced" `add esp,4` right after the
+call that seemed to leave 4 extra pushed dwords sitting on the stack --
+turned out to be perfectly ordinary once read correctly: only the LAST
+push before the call is that call's own argument; the earlier 4 pushes
+stay on the stack to become arguments of the VERY NEXT call
+(`uconvert`, already matched at medium confidence). That resolved
+`uconvert`'s own two previously-undecoded constant arguments outright:
+`0x41534338`=`AL_ID('A','S','C','8')`=Allegro's own `U_ASCII`, and
+`0x6375722E`=`AL_ID('c','u','r','.')`=`U_CURRENT` (`unicode.h:28,32`)
+-- an exact, zero-ambiguity match to the `uconvert_toascii(s,buf)`
+macro's own expansion, upgrading that entry from an inferred shape-match
+to a fully decoded one.
+
+The callee itself, **`sub_449830`, closes as Allegro's public
+`save_bitmap(AL_CONST char*,BITMAP*,AL_CONST RGB*)`**
+(`readbmp.c:94-112`) -- a complete match: reserves a 32-byte stack
+buffer (matching source's own `tmp[32]` literally), calls
+`get_extension`+`uconvert_toascii` to get the file's extension, then
+walks a global linked list (`dword_537EA0`=Allegro's own
+`bitmap_type_list`) via `stricmp` against each registered extension,
+dispatching through the matching node's own save-function pointer --
+explaining, in one stroke, why several small already-seen helpers
+(`sub_42FFD1`/`sub_42F658`/`sub_439860`/`sub_439920`/`sub_4399E0`) are
+each called from more than one of `save_bmp`/`save_pcx`/`save_tga`:
+they're all individually registered into this SAME shared list.
+
+Its own first call, `get_extension(AL_CONST char*)` (`file.c:624-642`),
+closes just as cleanly -- a backward scan for `.`/`/`/`\`/`:` via
+repeated `ugetat` calls, returning the substring after the last `.`
+found (or the whole remaining string if none) -- and pulled in FOUR
+more genuine Allegro Unicode-API matches along the way, each confirmed
+by its own exact body match: **`ustrlen`** (repeatedly calls a
+global function-pointer encoding-dispatch slot until it returns 0,
+counting characters), **`ugetat`** (`s += uoffset(s,pos); return
+ugetc(s);`), **`uoffset`** (converts a character index to a byte
+offset, falling back to `ustrlen` for a negative index), and
+**`ustrsize`** (walks the SAME function-pointer dispatch as `ustrlen`
+but returns the raw byte distance traveled instead of the character
+count -- the exact `ustrlen`-vs-`ustrsize` character/byte distinction
+Allegro's own API documents). One small drift: this build's
+`get_extension` treats `#` as an additional path-boundary character
+(5 separators checked, not source's 4) -- matching Allegro's own
+documented `#`-as-datafile-object-separator convention from a
+neighboring function's comment, just applied one function earlier than
+source does. All six THIRD-PARTY LIBRARY BOUNDARY per the scope rule;
+none of their own encoding-dispatch-table internals traced further.
+
+### Two genuine AGS-side finds inside `qgimport`, and the OLD-format CLIB header reader gets a real name
+
+`csetlib` (already matched) had one remaining callee, closing
+decisively as **`read_new_format_clib(MultiFileLib*,FILE*,int)`**
+(`Common/Clib32.cpp:204-225`) -- a near-exact match reconfirming, from
+the READ side this time, the OLD `MultiFileLib` struct's own
+already-established 20-byte `data_filenames` and 25-byte `filenames`
+strides, plus `MAX_FILES=2000` with zero drift.
+
+`qgimport` (AGS's own hidden Quest For Glory character-import feature,
+`Engine/acqgimp.cpp` -- unusually for a lead surfaced this way, the
+actual source file IS present in this repo, giving a decisive rather
+than inferred match) had one remaining callee that unravels into two
+clean matches: **`convWord(short)`** (`acqgimp.cpp:76-78`,
+`convByte(word>>8) + convByte(word&0xff)*16`) and its own callee
+**`convByte(short)`** (`acqgimp.cpp:68-74`, a literal hex-digit-to-
+value decoder with exact constants 32/48/57/87) -- both genuine
+AGS-side code, renamed rather than left at a boundary.
+
+Three more JGMOD/ALMP3-internal helpers surfaced in the same sweep
+(`SeekMODPattern`'s own pattern-position-clamp helper, and
+`SeekMP3PosMillis`/`GetMP3PosMillis`'s own seek-to-frame and
+compute-position-in-milliseconds implementations) -- all left unnamed
+per this project's standing convention, since neither JGMOD nor ALMP3
+has source present in this repo to verify an exact name against, but
+each now has a real behavioral description on record instead of being
+an undifferentiated gap.

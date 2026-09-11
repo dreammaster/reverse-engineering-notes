@@ -4799,7 +4799,7 @@
     "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
     "source_line": 697,
     "confidence": "high",
-    "evidence": "char *uconvert(AL_CONST char*,int,char*,int,int) -- the underlying function the `uconvert_ascii(s,buf)` macro expands to: \"uconvert(s, U_ASCII, buf, U_CURRENT, sizeof(buf))\" (Common/libinclude/allegro/unicode.h:45). sub_452700's own prologue declares exactly 5 dword parameters (arg_0..arg_10), matching this 5-argument shape precisely. Called twice from the already-matched mouse_directx_init (sub_464A30) with the two matched strings \"mouse_accel_factor\"/\"mouse\" as the `s` argument, alongside constant operands plausibly corresponding to U_ASCII/U_CURRENT (not independently decoded/confirmed this round). Confidence medium rather than high: uconvert's actual implementation (Allegro's unicode.c) is not present in this checkout of Engine/libsrc/allegro-4.2.2-agspatch/ (only the Windows-platform-specific win/*.c patch files were kept, not the generic library core), so the body could not be traced statement-by-statement against real source -- this match rests on parameter-count shape + call-site correlation only. UPGRADED to high confidence: found ~24 consistent call sites across the disassembly, all following the identical \"push offset <config-key-string>; call sub_452700; ...; call sub_460820\" pattern with real Allegro config key names (flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume, digi_voices, midi_voices, mouse, key_escape, ...) -- overwhelming structural corroboration beyond the single mouse_directx_init call site this match was originally based on. UPDATE: the full (non-Windows-patch-subset) Allegro 4.2.2 source was added to the repo at Engine/libsrc/allegro-4.2.2/ and now directly confirms this: char *uconvert(AL_CONST char*,int,char*,int,int) at src/unicode.c:697 has exactly this 5-argument signature, and its early-return path (\"if (!need_uconvert(s,type,newtype)) return (char*)s;\") matches sub_452700's own internal call to sub_452560 with 3 args (see need_uconvert match) followed by a conditional return of the untouched first arg. Confidence unchanged at high (already corroborated by call-site volume)."
+    "evidence": "char *uconvert(AL_CONST char*,int,char*,int,int) -- the underlying function the `uconvert_ascii(s,buf)` macro expands to: \"uconvert(s, U_ASCII, buf, U_CURRENT, sizeof(buf))\" (Common/libinclude/allegro/unicode.h:45). sub_452700's own prologue declares exactly 5 dword parameters (arg_0..arg_10), matching this 5-argument shape precisely. Called twice from the already-matched mouse_directx_init (sub_464A30) with the two matched strings \"mouse_accel_factor\"/\"mouse\" as the `s` argument, alongside constant operands plausibly corresponding to U_ASCII/U_CURRENT (not independently decoded/confirmed this round). Confidence medium rather than high: uconvert's actual implementation (Allegro's unicode.c) is not present in this checkout of Engine/libsrc/allegro-4.2.2-agspatch/ (only the Windows-platform-specific win/*.c patch files were kept, not the generic library core), so the body could not be traced statement-by-statement against real source -- this match rests on parameter-count shape + call-site correlation only. UPGRADED to high confidence: found ~24 consistent call sites across the disassembly, all following the identical \"push offset <config-key-string>; call sub_452700; ...; call sub_460820\" pattern with real Allegro config key names (flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume, digi_voices, midi_voices, mouse, key_escape, ...) -- overwhelming structural corroboration beyond the single mouse_directx_init call site this match was originally based on. UPDATE: the full (non-Windows-patch-subset) Allegro 4.2.2 source was added to the repo at Engine/libsrc/allegro-4.2.2/ and now directly confirms this: char *uconvert(AL_CONST char*,int,char*,int,int) at src/unicode.c:697 has exactly this 5-argument signature, and its early-return path (\"if (!need_uconvert(s,type,newtype)) return (char*)s;\") matches sub_452700's own internal call to sub_452560 with 3 args (see need_uconvert match) followed by a conditional return of the untouched first arg. Confidence unchanged at high (already corroborated by call-site volume). FOLLOW-UP CONFIRMATION (found while identifying save_bitmap/get_extension this round): the two previously-undecoded constant operands are now independently confirmed exactly -- save_bitmap's own 'uconvert_toascii(get_extension(filename),tmp)' call site pushes literally 0x6375722E and 0x41534338, matching unicode.h's own '#define U_CURRENT AL_ID(\\'c\\',\\'u\\',\\'r\\',\\'.\\')' and '#define U_ASCII AL_ID(\\'A\\',\\'S\\',\\'C\\',\\'8\\')' byte for byte -- the exact uconvert_toascii(s,buf) macro expansion 'uconvert(s,U_CURRENT,buf,U_ASCII,sizeof(buf))', sizeof(buf)=0x20 matching save_bitmap's own tmp[32] too. No remaining ambiguity in this match at all."
   },
   {
     "kind": "manual",
@@ -8039,5 +8039,112 @@
     "source_file": null,
     "confidence": "high",
     "evidence": "INIreaditem's own private counting-getc helper (see sub_404EF7's own entry, its paired end-of-buffer check, for the full context). Increments dword_5230A8 (the running byte-position counter sub_404EF7 checks) then calls fgetc(Stream) and returns its result directly -- a thin instrumented wrapper around the CRT's own fgetc, used throughout INIreaditem's own character-by-character parse loop instead of calling fgetc directly so the position counter stays in sync. Left unnamed for the same reason as sub_404EF7 -- no 2011 source exists for this removed custom INI-parser subsystem."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_449830",
+    "new_name": "save_bitmap",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/readbmp.c",
+    "source_line": 94,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "int save_bitmap(AL_CONST char *filename,BITMAP *bmp,AL_CONST RGB *pal) at readbmp.c:94-112: 'char tmp[32],*aext; aext=uconvert_toascii(get_extension(filename),tmp); for(iter=bitmap_type_list;iter;iter=iter->next) if(stricmp(iter->ext,aext)==0){ if(iter->save) return iter->save(filename,bmp,pal); return 1;} return 1;'. Found via SaveScreenshot (already matched), whose own '(no extension found) append \".bmp\"; call sub_449830(filename,virtual_scren,&palette)' call shape decisively matches save_bitmap(filename,bmp,pal)'s signature. The callee's own body is a complete, exact match: reserves a 32-byte stack buffer (`sub esp,0x20`, matching source's tmp[32] literally), calls get_extension+uconvert_toascii (both independently confirmed -- see their own new entries below) to produce `aext`, then walks a global singly-linked list (dword_537EA0 = Allegro's own `bitmap_type_list`) doing a stricmp against each node's own extension string, and on a match dispatches through that node's own save-function-pointer slot (node+8) with (filename,bmp,pal) -- matching source's `iter->save(filename,bmp,pal)` exactly, including the 'return 1 if no save function registered for this extension' fallback. This is the shared dispatch infrastructure behind this project's own already-matched save_bmp/save_pcx/save_tga (each individually registered into the SAME bitmap_type_list, explaining why several small shared helpers -- sub_42FFD1/sub_42F658/sub_439860/sub_439920/sub_4399E0 -- are each called from multiple of those three). THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- the registry-walk mechanism itself and its own node-management helpers are not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_42D018",
+    "new_name": "get_extension",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/file.c",
+    "source_line": 624,
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "char *get_extension(AL_CONST char *filename) at file.c:624-642. Found as save_bitmap's own first call (see its entry). Decisive, near-exact match: `pos=ustrlen(filename)` (sub_453DA0, confirmed below), then a backward scan via `ugetat(filename,pos-1)` (sub_4527D0, confirmed below) checking against '.','/','\\\\',':' -- source's own OTHER_PATH_SEPARATOR/DEVICE_SEPARATOR set -- decrementing pos until a match or pos==0; then `if(pos>0 && ugetat(...)=='.') return filename+uoffset(filename,pos); else return filename+ustrsize(filename);` (sub_452770=uoffset, sub_453C60=ustrsize, both confirmed below), matching source's own two-branch return exactly. ONE DRIFT: this build's separator check ALSO includes '#' (5 characters checked, not source's 4) -- '#' is Allegro's own datafile-object-name separator convention (documented in put_backslash's own comment, file.c:646-648), so this build's get_extension additionally treats a 'datafile.dat#objname'-style compound path as ending its extension search at the '#', a minor behavioral difference from the reference source's own narrower check. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_453DA0",
+    "new_name": "ustrlen",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "Allegro's public ustrlen(AL_CONST char*) -- found as get_extension's own first call and uoffset's own negative-position fallback call. Body matches the well-known encoding-abstracted idiom exactly: repeatedly calls a global function pointer (off_4BDF64, this build's current-encoding 'get char, advance pointer' dispatch slot -- the same idiom `ugetxc`-style macros expand to) until it returns 0, counting iterations; returns the count (a CHARACTER count, as opposed to ustrsize's BYTE count below). THIRD-PARTY LIBRARY BOUNDARY, its own encoding-dispatch table not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4527D0",
+    "new_name": "ugetat",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "Allegro's public ugetat(AL_CONST char *s,int pos) -- `s += uoffset(s,pos); return ugetc(s);`. Found as get_extension's own backward-scan call. Exact match: calls uoffset (sub_452770, confirmed below) to get the byte offset for character index `pos`, adds it to `s`, then dispatches through a global function pointer (off_4BDF5C, this build's current-encoding plain 'get char at pointer, no advance' slot -- the sibling of ustrlen/ustrsize's off_4BDF64 advance-and-return variant) to read the character there. THIRD-PARTY LIBRARY BOUNDARY, its own encoding-dispatch table not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_452770",
+    "new_name": "uoffset",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "Allegro's public uoffset(AL_CONST char *s,int pos) -- converts a character index into a byte offset. Found as get_extension's own final-return call and ugetat's own call. Exact match: `if(pos<0) pos+=ustrlen(s);` (calling the already-confirmed sub_453DA0=ustrlen exactly when the input is negative), then a loop advancing `pos` characters through the string via the current encoding's character-width stepping. THIRD-PARTY LIBRARY BOUNDARY, its own per-character stepping loop not traced further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_453C60",
+    "new_name": "ustrsize",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/unicode.c",
+    "is_library": true,
+    "confidence": "high",
+    "evidence": "Allegro's public ustrsize(AL_CONST char*) -- the BYTE-length counterpart to ustrlen's CHARACTER-length. Found as get_extension's own final-return-path call. Body confirms the distinction directly: walks the string via the SAME off_4BDF64 advance-and-return function pointer ustrlen (sub_453DA0) uses, but returns the raw pointer DISTANCE traveled (bytes) rather than the iteration count (characters) -- exactly the ustrlen/ustrsize split Allegro's own Unicode API documents. THIRD-PARTY LIBRARY BOUNDARY, not chased further."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_429BB0",
+    "new_name": "read_new_format_clib",
+    "source_file": "Common/Clib32.cpp",
+    "source_line": 204,
+    "confidence": "high",
+    "evidence": "int read_new_format_clib(MultiFileLib*mfl,FILE*wout,int libver) at Clib32.cpp:204-225. Found while sweeping csetlib's (already matched) own remaining callee. A complete, decisive, near-zero-drift match: 'mfl->num_data_files=getw(wout); fread(&mfl->data_filenames[0][0],20,mfl->num_data_files,wout); mfl->num_files=getw(wout); if(mfl->num_files>MAX_FILES) return -1; fread(&mfl->filenames[0][0],25,mfl->num_files,wout);' matches the disassembly's own getw/fread(ElementSize=0x14=20)/getw/bounds-check/fread(ElementSize=0x19=25) sequence instruction for instruction, including MAX_FILES=0x7D0=2000 with zero drift -- reconfirming, from the READ side this time, the OLD-format MultiFileLib's own already-established 20-byte data_filenames stride and 25-byte filenames stride. DRIFT: source's trailing libver>=11 clib_decrypt_text loop and the offset/length/file_datafile freads immediately after are not yet independently traced in this function's own tail (the function continues past the code read this round) -- left for a future round if useful, though this project's own scope rule means it's low priority (CLIB manifest parsing is already well-covered game-data-format knowledge, not fresh AGS engine logic)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_428477",
+    "new_name": "convWord",
+    "source_file": "Engine/acqgimp.cpp",
+    "source_line": 76,
+    "confidence": "high",
+    "evidence": "static int convWord(short word) at acqgimp.cpp:76-78: 'return convByte(word>>8) + (convByte(word&0xff)*16);'. Found via qgimport's (already matched, AGS's own hidden Quest For Glory character-import feature) own remaining callee -- and, unusually for a third-party-adjacent lead, the actual acqgimp.cpp source IS present in this repo, giving a decisive rather than inferred match. Exact: calls the already-confirmed convByte (sub_4284A8, see its own entry) on the high byte (arg>>8) and the low byte (arg&0xFF), combines as low_result*16+high_result -- algebraically identical to source's own high_result+low_result*16 ordering. This is AGS's own code (Engine/acqgimp.cpp), not a third-party library -- both functions renamed per aim #1/#3 rather than left at a boundary."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_4284A8",
+    "new_name": "convByte",
+    "source_file": "Engine/acqgimp.cpp",
+    "source_line": 68,
+    "confidence": "high",
+    "evidence": "static int convByte(short ascii) at acqgimp.cpp:68-74: 'if(ascii==32) return 0; if((ascii>=48)&&(ascii<=57)) return ascii-48; return ascii-87;'. Found as convWord's own callee (see its entry) -- an exact, zero-drift, literal-for-literal match (32/48/57/87 all identical). Part of qgimport's simple hex-digit-decoding scheme for reading back a QFG1 character-stat checksum. Genuine AGS-side code (Engine/acqgimp.cpp)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_477870",
+    "new_name": null,
+    "source_file": null,
+    "confidence": "medium",
+    "evidence": "JGMOD's own internal pattern-seek implementation -- found while sweeping SeekMODPattern's (already matched) own remaining callee. Writes three internal fields (dword_55D10C/55D0FC/55D100 -- plausibly a 'seeking' busy-flag, a fixed value 1, and the clamped target pattern index) on a presumably-global JGMOD player-state structure, clamping the requested pattern position to a minimum of 1. Also called from sub_477E40 (JGMOD's own player-tick/update routine, per its other established callers). Left unnamed per this project's standing convention for JGMOD internals -- no JGMOD source exists in this repo to verify a real function name against."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47E970",
+    "new_name": null,
+    "source_file": null,
+    "confidence": "medium",
+    "evidence": "ALMP3's own internal 'seek to millisecond position' implementation -- found while sweeping SeekMP3PosMillis's (already matched) own remaining callee. Converts a millisecond offset to a frame index (via sub_47EC30, plausibly a 'milliseconds per frame' calculator) then calls sub_47E900 (plausibly a 'seek to frame index' primitive) with (handle,frame) -- matching ALMP3's documented public API role, almp3_seek_abs_msecs_mp3, at the behavioral level. Left unnamed per this project's standing convention for ALMP3 internals -- no ALMP3 source exists in this repo to verify exact names against."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_47EBD0",
+    "new_name": null,
+    "source_file": null,
+    "confidence": "medium",
+    "evidence": "ALMP3's own internal 'current playback position in milliseconds' implementation -- found while sweeping GetMP3PosMillis's (already matched) own remaining callee. Reads several fields deep inside a large structure (offsets +0xA6AC/+0xA6B8/+0xA698/+0xA6BC/+0xA6B4, plausibly frame count/bitrate/samples-per-frame-style MPEG stream-state fields), computes a floating-point seconds value, multiplies by a literal 1000.0 constant (flt_4AD860) to convert to milliseconds, and truncates via _ftol -- matching ALMP3's documented public API role, almp3_get_pos_msecs_mp3, at the behavioral level. Left unnamed per this project's standing convention for ALMP3 internals -- no ALMP3 source exists in this repo to verify exact field/function names against."
   }
 ]
