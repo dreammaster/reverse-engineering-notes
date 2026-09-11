@@ -4555,6 +4555,24 @@ disassembly work.
   coincidental FLIRT hit inside a function isn't license to write off
   the whole function -- the friend-function declarations were one
   grep away. See `reversing/notes/struct-layout-drift.md`.
+- **A broader stock-take sweep of bare mechanical matches closes two
+  more, plus a small metadata cleanup.** `setup_script_exports`'s own
+  full body (never previously read) turns out to be exactly what its
+  name says -- a flat 239-entry script-API registration table -- and
+  extracting every one of its 239 targets found ZERO still-unnamed
+  `sub_*` addresses: the entire script-callable surface is fully
+  identified, a genuine coverage milestone. `init_mod_player` gets a
+  real correction: its own ~150-line body (JGMOD-specific error
+  strings, real per-voice allocation bookkeeping) is JGMOD's own public
+  `install_mod(int numVoices)`, not the trivial 3-line AGS-side wrapper
+  2011's `acsound.cpp` declares under that name -- this 2002 build
+  predates the wrapper indirection entirely, `main` calls straight into
+  JGMOD's own function. Renamed accordingly; its own two callees stay
+  unchased per the third-party scope rule. Also fixed two mislabeled-
+  metadata entries (`install_allegro`/`circlefill` had `is_library:
+  false`, the same linker-map obj-attribution artifact already known
+  from `printf`/`sprintf` -- already correctly named, just wrong
+  bookkeeping). See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

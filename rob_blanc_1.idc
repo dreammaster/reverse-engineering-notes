@@ -102032,7 +102032,7 @@ static Bytes_17(void) {
 	op_hex		(x,	1);
 	make_array	(0X477119,	0X7);
 	create_insn	(0X477120);
-	set_name	(0X477120,	"init_mod_player");
+	set_name	(0X477120,	"install_mod");
 	create_insn	(x=0X477129);
 	op_hex		(x,	1);
 	create_insn	(x=0X477130);
@@ -158167,7 +158167,7 @@ static Functions_7(void) {
 	add_func    (0X41FF95,0X42106D);
 	set_func_flags(0X41FF95,0x5410);
 	SetType(0X41FF95, "void setup_script_exports(void);");
-	set_func_cmt(0X41FF95,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X41FF95,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj. FOLLOW-UP (this round): read the function's own full body (61107-62789 in rob_blanc_1.asm, ~1682 lines) in full -- it's exactly what its name says, a flat sequence of 239 `push offset <target>; push offset \"<Name>\"; call scAdd_External_Symbol` triples registering every script-visible AGS API function by name (matching Engine/AC.CPP's own setup_script_exports, which does the identical thing via repeated ccAddExternalSymbol/scAdd_External_Symbol calls). Extracted every one of the 239 `push offset <target>` operands immediately preceding a scAdd_External_Symbol call and checked each against this project's own naming: ZERO are still bare sub_XXXXXXXX addresses -- every single script-API function this build exports to game scripts is already named. A genuine coverage milestone: the entire script-callable API surface is fully identified, not just individually-confir" "med piecemeal. (The sibling registration call inside load_game_file ", 1);
 	set_frame_size(0X41FF95, 0, 4, 0);
 	add_func    (0X42106D,0X4214E3);
 	set_func_flags(0X42106D,0x5410);
@@ -158457,6 +158457,10 @@ static Functions_7(void) {
 	set_func_flags(0X424870,0x5410);
 	set_func_cmt(0X424870,	"[reversing] confirmed match\nsource: Common/acroom.h\nconfidence: high\nevidence: InterfaceElement::InterfaceElement() constructor at acroom.h:316. String match: \"@SCORETEXT@$r@GAMENAME@\" (317), the default vtext value. Referenced via DATA XREF (from sub_424830, likely an array-of-objects default-construction loop), not a direct call site. Flat-named as a C++ constructor. MAJOR FIELD EVIDENCE (full body read for the first time): this constructor closes 8 of InterfaceElement's own previously-'opaque, declared a dead end three times' fields at once. Every literal it sets lands EXACTLY on that field's own 2011-declared offset with zero slack: bgcol@+0x10=8, fgcol@+0x14=15, bordercol@+0x18=0, vtextxp@+0x1C=0, vtextyp@+0x20=1, vtext@+0x28 (the strcpy target, matching 40-byte capacity), numbuttons@+0x50=0, flags@+0x324=0 -- the last landing exactly where button[MAXBUTTON=20]'s own zero-slack arithmetic fit (InterfaceButton, acroom.h:291-301, 8 ints+1 char padded to 0x24/36 bytes, times 20 = 0x2D0) predicts, giving `b" "utton[]`'s own capacity a real confirmation too (MAXBUTTON=20, zero dr", 1);
 	set_frame_size(0X424870, 0X4, 4, 0);
+}
+
+static Functions_8(void) {
+
 	add_func    (0X4248F0,0X424930);
 	set_func_flags(0X4248F0,0x5410);
 	set_frame_size(0X4248F0, 0X4, 4, 0);
@@ -158473,10 +158477,6 @@ static Functions_7(void) {
 	set_func_flags(0X424A00,0x5410);
 	set_func_cmt(0X424A00,	"[reversing] confirmed match\nsource: Common/acruntim.h\nconfidence: high\nevidence: ExecutingScript::init(), the AGS-style zero-initializer called on every scripts[] slot before it is (re)used (the flat-C++-member-function naming convention used throughout this project for this build's __thiscall class methods -- see FLAT_CPP_NAMES in extract_prototypes.py). Body is exactly 8 field-initialization writes through `this` (ecx), in struct-offset order, and matches every field independently confirmed elsewhere in ExecutingScript (see the merged evidence on the post_script_cleanup/sub_409B1A entry for the full derivation of each field's role): [this+0x00]=0 (inst), [this+0x68]=0 (forked), [this+0x60]=0 (numanother), [this+0x04]=-1 (newnum), [this+0x08]=0 (invscreen-flag), [this+0x0C]=-1 (ooo / pending restore-game slot), [this+0x10]=-1 (dlgnum), [this+0x64]=0 (pending restart-game flag). This is the clinching cross-confirmation for the whole struct: an independent constructor-style function that touches precisely the" " same 8 offsets the usage-site analysis found, in the same order, with s", 1);
 	set_frame_size(0X424A00, 0X4, 4, 0);
-}
-
-static Functions_8(void) {
-
 	add_func    (0X424A60,0X424A7F);
 	set_func_flags(0X424A60,0x5410);
 	set_frame_size(0X424A60, 0X4, 4, 0);
@@ -158847,14 +158847,14 @@ static Functions_8(void) {
 	set_func_cmt(0X427FB0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyTextBox::processmessage(int mcode,int wParam,long lParam) (acdialog.h:594-622) -- a complete, exact, zero-drift match to every branch: mcode==CTB_SETTEXT(2,:150) does strcpy(text,(char*)lParam) then needredraw@+0x22=1; mcode==CTB_GETTEXT(1,:149) does strcpy((char*)lParam,text); mcode==CTB_KEYPRESS(0x5B=91, already-confirmed) dispatches on wParam: ==8(backspace) truncates text by one char (text[strlen-1]=0, guarded on text[0]!=0) then calls NewControl::drawandmouse() (already matched); strlen(text)>=0x30(48, matching TEXTBOX_MAXLEN-1=49-1 EXACTLY, zero drift) is a no-op; wgettextwidth(text,cbuttfont)>=wid-5 is a no-op; wParam>0x7F(127, 'font only has 128 chars') is a no-op; otherwise appends the character (text[strlen+1]=0; text[strlen]=wParam;) and calls drawandmouse() again. The final else branch returns -1, matching source's own default case exactly. TEXTBOX_MAXLEN=49 (acdialog.h:559) is directly confirmed via this function'" "s own literal 0x30 bounds check with zero drift -- this build's single-l", 1);
 	set_frame_size(0X427FB0, 0X4, 4, 0XC);
 	define_local_var(0X427FB0, 0X4280C0, "[bp+0X10]", "Source");
-	add_func    (0X4280C0,0X42810D);
-	set_func_flags(0X4280C0,0x5410);
-	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
-	set_frame_size(0X4280C0, 0, 4, 0);
 }
 
 static Functions_9(void) {
 
+	add_func    (0X4280C0,0X42810D);
+	set_func_flags(0X4280C0,0x5410);
+	set_func_cmt(0X4280C0,	"[reversing] confirmed match\nsource: Engine/acqgimp.cpp\nconfidence: high\nevidence: void QGRegisterFunctions() at Engine/acqgimp.cpp:277-282. A genuinely fun discovery: acqgimp.cpp is a dedicated, self-contained, explicitly marked \"privileged\" file (\"NOTE: This file contains privileged information and should NOT be distributed. If the AGS source code is released, this file should NOT be released with it. This file (c) 2002 Chris Jones, QFG is (c) 1989-1990 Sierra On-line.\") implementing AGS's own Quest For Glory character import/export cross-promotion feature -- QFG = Sierra's Quest For Glory RPG series. A complete, exact, zero-drift match: \"ccAddExternalSymbol(\\\"QGImport\\\",importQFGChar); ccAddExternalSymbol(\\\"qgstats\\\",&ourstats); ccAddExternalSymbol(\\\"QG2Export\\\",exportQFG2Char); ccAddExternalSymbol(\\\"qg2stats\\\",&qg2stats);\" -- all four registered names and their exact order match the disasm's four scAdd_External_Symbol calls precisely. Given this file's own 2002 copyright date and explicit note about being" " excluded from any AGS source release, Rob Blanc 1 -- also a 2002 release", 1);
+	set_frame_size(0X4280C0, 0, 4, 0);
 	add_func    (0X42810D,0X428477);
 	set_func_flags(0X42810D,0x5410);
 	SetType(0X42810D, "int __cdecl qgimport(char *FileName, char *Str1);");
@@ -159406,6 +159406,10 @@ static Functions_9(void) {
 	set_func_flags(0X431DD4,0x5410);
 	set_func_cmt(0X431DD4,	"[reversing] confirmed match\nsource: Common/MOUSEW32.CPP\nconfidence: high\nevidence: void msethotspot(int xx,int yy) { hotx=xx; hoty=yy; } (MOUSEW32.CPP:259-263) -- a complete, exact, trivial 2-field-setter match, identifying `hotx`@dword_5358D4/`hoty`@dword_5358D8. Called from SetMouseCursor (already matched) exactly where source calls `msethotspot(hotspotx,hotspoty);` right after the hotdot-drawing block (AC.CPP:5116) -- a further confirmation that `domouse`'s own already-established reference file (`Common/MOUSEW32.CPP`, not the older same-named `mouse32.cpp`) is correct, this function sitting in the exact same source file.", 1);
 	set_frame_size(0X431DD4, 0, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X431DEA,0X431E2A);
 	set_func_flags(0X431DEA,0x5410);
 	SetType(0X431DEA, "int minstalled(void);");
@@ -159417,10 +159421,6 @@ static Functions_9(void) {
 	SetType(0X431E30, "int get_route_composition(void);");
 	set_func_cmt(0X431E30,	"[reversing] confirmed match\nsource: Engine/routefnd.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=routefnd.obj FIELD EVIDENCE (follow-up round, full body read for the first time): a complete, decisive match to source's copyright/anti-tamper CRC sum -- \"for(aaa=0;aaa<66;aaa++) crctotal += ac_engine_copyright[aaa]*(aaa+1); return crctotal;\" matches the disassembly's own 66-iteration loop over the ac_engine_copyright string exactly, including the (index+1) weighting. Source's own comment calls this 'stupid name, to deter hackers' -- a deliberately misleading function name for what is really a copyright-string checksum, not anything route-related.", 1);
 	set_frame_size(0X431E30, 0X8, 4, 0);
-}
-
-static Functions_10(void) {
-
 	add_func    (0X431E79,0X431EA3);
 	set_func_flags(0X431E79,0x5410);
 	SetType(0X431E79, "int route_script_link(void);");
@@ -159662,7 +159662,7 @@ static Functions_10(void) {
 	set_frame_size(0X4345B0, 0, 0, 0);
 	add_func    (0X434600,0X434816);
 	set_func_flags(0X434600,0x15400);
-	set_func_cmt(0X434600,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X434600,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2 (genuine public Allegro API, called from AC.CPP)\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj CORRECTION (this round): is_library was incorrectly false and source_file pointed at AC.CPP -- this is one of the CRT/library-symbol linker-map artifacts already documented for printf/sprintf/etc. (build_matches.py's mechanical pass attributes a statically-linked symbol to whichever AGS-side .obj the reference linker map happens to show requesting it first, not the symbol's real defining file). install_allegro is genuinely Allegro's own public API (install_allegro()/circlefill(), both declared in allegro.h), called directly from AC.CPP -- already correctly named and at the right boundary per this project's third-party scope rule; not chased further.", 1);
 	set_frame_size(0X434600, 0X90, 0, 0);
 	add_func    (0X434820,0X434872);
 	set_func_flags(0X434820,0x5400);
@@ -160048,7 +160048,7 @@ static Functions_10(void) {
 	set_frame_size(0X43D340, 0X10, 0, 0);
 	add_func    (0X43D410,0X43D618);
 	set_func_flags(0X43D410,0x15400);
-	set_func_cmt(0X43D410,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj", 1);
+	set_func_cmt(0X43D410,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2 (genuine public Allegro API, called from AC.CPP)\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=AC.obj CORRECTION (this round): is_library was incorrectly false and source_file pointed at AC.CPP -- this is one of the CRT/library-symbol linker-map artifacts already documented for printf/sprintf/etc. (build_matches.py's mechanical pass attributes a statically-linked symbol to whichever AGS-side .obj the reference linker map happens to show requesting it first, not the symbol's real defining file). circlefill is genuinely Allegro's own public API (install_allegro()/circlefill(), both declared in allegro.h), called directly from AC.CPP -- already correctly named and at the right boundary per this project's third-party scope rule; not chased further.", 1);
 	set_frame_size(0X43D410, 0X24, 0, 0);
 	add_func    (0X43D620,0X43D9F7);
 	set_func_flags(0X43D620,0x15400);
@@ -160085,6 +160085,10 @@ static Functions_10(void) {
 	set_func_flags(0X43E860,0x5400);
 	set_func_cmt(0X43E860,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/gfx.h\nconfidence: medium-high\nevidence: stretch_blit(BITMAP*src,BITMAP*dst,int sx,int sy,int sw,int sh,int dx,int dy,int dw,int dh) -- Allegro's public bitmap-scaling blit API. Identified via call-shape evidence: a 10-argument call matching stretch_blit's own signature exactly, called from RenderToSurface (already matched, this round's own full-body confirmation) as the video-frame-to-screen scaling step. THIRD-PARTY LIBRARY BOUNDARY (per this project's own scope rule): Allegro's own public API surface, its internal implementation not chased further. Two other call sites (not independently examined this round) exist elsewhere in the disassembly.", 1);
 	set_frame_size(0X43E860, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X43E8A0,0X43EC19);
 	set_func_flags(0X43E8A0,0x5400);
 	set_frame_size(0X43E8A0, 0X14, 0, 0);
@@ -160138,10 +160142,6 @@ static Functions_10(void) {
 	set_func_flags(0X443360,0x5400);
 	set_func_cmt(0X443360,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: int _dummy_init(int input, int voices) { digi_none.desc = _midi_none.desc = get_config_text(\"The sound of silence\"); return 0; } (sound.c:34) -- a complete, exact, zero-drift match: pushes the matched string \"The sound of silence\" (aTheSoundOfSile) into the already-matched get_config_text, then stores the SAME returned pointer into TWO separate globals (off_4BD4F0 and off_4BD438), matching source's own single-expression double-assignment (digi_none.desc = _midi_none.desc = ...) exactly -- identifying off_4BD4F0 as DIGI_DRIVER digi_none's own `desc` field and off_4BD438 as MIDI_DRIVER _midi_none's own `desc` field (both third-party Allegro driver-descriptor structs, per this project's scope rule not chased further). Reached via a DATA XREF only (a driver-init function-pointer table entry), no direct CODE XREF caller -- consistent with being invoked through Allegro's own DIGI_DRIVER/MIDI_DRIVER vtable `init` " "slot rather than called directly.", 1);
 	set_frame_size(0X443360, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X443380,0X443381);
 	set_func_flags(0X443380,0x5400);
 	set_frame_size(0X443380, 0, 0, 0);
@@ -161469,6 +161469,10 @@ static Functions_11(void) {
 	set_func_flags(0X460820,0x5400);
 	set_func_cmt(0X460820,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/config.c\nconfidence: high\nevidence: int get_config_int(AL_CONST char *section, AL_CONST char *name, int def) (Common/libinclude/allegro/config.h:42, AL_FUNC declaration). sub_460820's own prologue declares exactly 3 dword parameters (arg_0, arg_4, arg_8), matching this 3-argument shape precisely. Called from the already-matched mouse_directx_init (sub_464A30) with the two uconvert() results (section, name) plus a default value, matching source's \"get_config_int(uconvert_ascii(\\\"mouse\\\",tmp1), uconvert_ascii(\\\"mouse_accel_factor\\\",tmp2), MAF_DEFAULT)\" argument order exactly. Body has a local 0x100-byte buffer and walks a linked list via dword_5429AC/[esi] pointer-chasing, consistent with searching a parsed config-file structure for a matching section+key. Confidence medium: the actual implementation (Allegro's config.c) is not present in this checkout, so not traced statement-by-statement against real source -- this match rests on parameter-c" "ount shape + call-site correlation + plausible body structure only. UPGRADED to high confidence", 1);
 	set_frame_size(0X460820, 0X104, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X460910,0X460991);
 	set_func_flags(0X460910,0x5400);
 	set_frame_size(0X460910, 0X44, 0, 0);
@@ -161540,10 +161544,6 @@ static Functions_11(void) {
 	set_func_flags(0X462970,0x5400);
 	set_frame_size(0X462970, 0X18, 0, 0);
 	define_local_var(0X462970, 0X462AF1, "[bp-0X8]", "Block");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X462B00,0X462C01);
 	set_func_flags(0X462B00,0x5400);
 	set_frame_size(0X462B00, 0X4, 0, 0);
@@ -162500,8 +162500,8 @@ static Functions_12(void) {
 	set_frame_size(0X476EF0, 0X1C, 4, 0);
 	add_func    (0X477120,0X47731B);
 	set_func_flags(0X477120,0x5400);
-	SetType(0X477120, "int __stdcall init_mod_player(int numVoices);");
-	set_func_cmt(0X477120,	"[reversing] confirmed match\nsource: Engine/acsound.cpp\nconfidence: high\nevidence: exact linker-symbol match vs reference build map (acwin.map), obj=acsound.obj", 1);
+	SetType(0X477120, "int __stdcall install_mod(int numVoices);");
+	set_func_cmt(0X477120,	"[reversing] confirmed match\nsource: Engine/acsound.cpp (2011's own thin wrapper); real body is JGMOD's own install_mod()\nconfidence: high\nevidence: CORRECTION (this round): originally matched mechanically against Engine/acsound.cpp's own init_mod_player(int numVoices) -- a trivial 3-line wrapper in BOTH the JGMOD_MOD_PLAYER branch (`return install_mod(numVoices);`, acsound.cpp:1128-1130) and the DUMB_MOD_PLAYER branch (dumb-0.9.2 already ruled out chronologically for this 2002 binary -- see third-party-library-identification.md -- so only the JGMOD branch applies). Reading this function's own ~150-line body in full shows it is NOT a thin wrapper here: it does real per-voice allocation bookkeeping directly (a numVoices>64 clamp, a malloc'd 0x24-byte init-sample struct, a numVoices-sized voice array with per-slot voice_set_volume/voice_start calls via the already-established Allegro voice-control chain, deallocate_voice cleanup on partial failure) and three distinctive JGMOD-only error strings (\"Unable to setu" "p initialization sample\", \"JGMOD : Not enough memory to setup initialization sample\", \"JGMOD : Unable to allocate enough voices\") that read", 1);
 	set_frame_size(0X477120, 0X10, 0, 0X4);
 	define_local_var(0X477120, 0X47731B, "[bp+0X4]", "numVoices");
 	add_func    (0X477320,0X477470);
@@ -163372,6 +163372,10 @@ static Functions_12(void) {
 	add_func    (0X489BC0,0X489D20);
 	set_func_flags(0X489BC0,0x5400);
 	set_frame_size(0X489BC0, 0X10, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X489D20,0X489E80);
 	set_func_flags(0X489D20,0x5400);
 	set_frame_size(0X489D20, 0X10, 0, 0);
@@ -163446,10 +163450,6 @@ static Functions_12(void) {
 	set_func_flags(0X48B140,0x5400);
 	set_func_cmt(0X48B140,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public TrueType text-output function (plausibly `alfont_textout_ex` or similar -- no local alfont source tree exists in this repo to pin an exact name, and the function's own size (~210 lines) wasn't fully traced this round). Opens by checking the already-identified `alfont_text_mode` global (dword_54784C); if it holds a real background color (not the 'opaque' sentinel), computes the text's bounding box via the newly-identified alfont_get_font_height/alfont_text_length and fills it via a vtable-dispatched call through slot +0x38 on the destination bitmap -- matching this project's own already-confirmed GFX_VTABLE `rectfill` slot exactly (Allegro's public rectfill API, third-party boundary, not chased further here either). Called from wouttextxy (already matched). THIRD-PARTY LIBRARY BOUNDARY, left unnamed and not traced to completion.", 1);
 	set_frame_size(0X48B140, 0X24, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X48B320,0X48B328);
 	set_func_flags(0X48B320,0x5400);
 	set_func_cmt(0X48B320,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public API returning a loaded TrueType font's line height (no local alfont source tree exists in this repo -- identified by call-shape/role). A trivial one-line accessor, `return font->height;` (offset +8 on the alfont font handle). Called from wgettextheight (already matched) and from the newly-identified alfont text-output helper (sub_48B140, see its own entry). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
@@ -165636,6 +165636,10 @@ static Functions_13(void) {
 	add_func    (0X4AB4C8,0X4AB4CE);
 	set_func_flags(0X4AB4C8,0x5480);
 	set_frame_size(0X4AB4C8, 0, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X4AB4CE,0X4AB4D4);
 	set_func_flags(0X4AB4CE,0x5480);
 	set_frame_size(0X4AB4CE, 0, 0, 0);
@@ -165727,6 +165731,7 @@ static Functions(void) {
 	Functions_11();
 	Functions_12();
 	Functions_13();
+	Functions_14();
 }
 
 //------------------------------------------------------------------------

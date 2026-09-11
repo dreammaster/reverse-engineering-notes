@@ -15285,3 +15285,84 @@ not license to write off the WHOLE function as unidentifiable --
 `class fix`'s own header had more than just constructors to check
 against, and the friend-function declarations (`sqrt`/`cos`/`sin`/
 etc., `fix.h:194` onward) were sitting one grep away the entire time.
+
+### `setup_script_exports`: swept the whole script-API export table for blind spots -- found none
+
+A broader stock-take of the project (930 named / 2586 total functions,
+836 `matches.json` entries) flagged this as one of several bare
+mechanical matches never actually read for its own content. Its full
+body (61107-62789 in `rob_blanc_1.asm`, ~1682 lines) is exactly what
+its name says: a flat sequence of 239 `push offset <target>; push
+offset "<Name>"; call scAdd_External_Symbol` triples, one per
+script-callable AGS API function, matching `Engine/AC.CPP`'s own
+`setup_script_exports` (itself a long, repetitive
+`ccAddExternalSymbol` call list) almost mechanically. Extracted every
+one of the 239 `push offset <target>` operands and checked each
+against this project's own naming work: **zero are still bare
+`sub_XXXXXXXX` addresses** -- every function this build exposes to
+game scripts is already identified. This is a genuine coverage
+milestone, distinct from "most functions are named" -- it specifically
+proves the *script-callable* surface, the part a ScummVM
+reimplementation's script VM binding layer most needs, has no
+remaining blind spots. (The sibling registration call inside
+`load_game_file` -- formerly `load_ac2game_dta`, see the "structural
+fingerprinting" section above for that rename's own correction -- was
+checked too: its 2 `scAdd_External_Symbol` calls push `eax`, registering
+the `"character"`/`"player"` global script objects, not functions, so
+there was no comparable table to sweep there.)
+
+### `init_mod_player` corrected: it's JGMOD's own `install_mod()`, not an AGS-side wrapper
+
+Same stock-take sweep, one entry over. This function had been
+mechanically matched against `Engine/acsound.cpp`'s own
+`init_mod_player(int numVoices)` -- but that 2011 function is a
+trivial 3-line wrapper in both of its `#ifdef` branches: the
+JGMOD_MOD_PLAYER branch is `return install_mod(numVoices);`
+(`acsound.cpp:1128-1130`; the DUMB_MOD_PLAYER branch is irrelevant --
+`dumb-0.9.2` is already ruled out for this 2002 binary on a
+chronological-impossibility basis, see
+`third-party-library-identification.md`). Reading this build's own
+~150-line body shows it's nothing like a thin wrapper: real per-voice
+allocation bookkeeping (a `numVoices>64` clamp, a `malloc`'d 0x24-byte
+init-sample struct, a `numVoices`-sized voice array driven through the
+already-established Allegro voice-control chain --
+`voice_set_volume`/`voice_start`, with `deallocate_voice` cleanup on
+partial failure), plus three distinctive, JGMOD-flavored error strings
+(`"Unable to setup initialization sample"`, `"JGMOD : Not enough
+memory to setup initialization sample"`, `"JGMOD : Unable to allocate
+enough voices"`). This reads as JGMOD's own library-internal error
+reporting, not AGS engine code. **Real identity: JGMOD's public
+`install_mod(int numVoices)`** -- called directly from `main` (CODE
+XREF: `main+E53`) with no separate AGS-side wrapper existing yet in
+this 2002 build at all; 2011's `init_mod_player` indirection is a later
+addition this build predates, the same "later AGS versions add a thin
+wrapper around a library call that used to be direct" pattern already
+seen elsewhere in this project (`load_mod`/`play_mod` themselves being
+the obvious sibling example). THIRD-PARTY LIBRARY BOUNDARY per this
+project's scope rule: its own two callees (`sub_477CB0`, `sub_47B360`,
+both JGMOD-internal helpers) are deliberately left unchased. Renamed
+`init_mod_player` -> `install_mod` to reflect the real identity, per
+this project's convention of preferring a library's own genuine name
+once confirmed over an AGS-side wrapper name that happens to be what a
+much later reference build calls it.
+
+While re-verifying this round's IDB re-export, also confirmed (via a
+name-set diff against the previous committed `functions.json`, not
+just the regeneration script's own summary line) that this was a clean
+930-named-before, 930-named-after rename with zero collateral
+regressions -- worth noting since the script's own printed summary
+line read "928 named" for reasons not otherwise investigated this
+round (a pre-existing minor inconsistency between the script's stdout
+summary and the JSON it actually writes, not a data problem).
+
+Also corrected two small, low-stakes metadata errors caught in the
+same sweep: `install_allegro` and `circlefill`'s own `matches.json`
+entries had `is_library: false` and `source_file: Engine/AC.CPP` --
+both are genuinely Allegro's own public API (declared in `allegro.h`),
+already correctly named and already at the right boundary; only their
+*metadata* was wrong, the same "linker-map obj-attribution artifact"
+category already documented for `printf`/`sprintf`/etc. (the reference
+build's map attributes a statically-linked symbol to whichever AGS-side
+`.obj` requested it first, not the symbol's real defining file).
+Corrected in place so a future sweep doesn't mistake either for an
+unconfirmed AGS-side lead.

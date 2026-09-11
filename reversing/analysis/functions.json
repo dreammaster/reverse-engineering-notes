@@ -8175,7 +8175,7 @@
   "is_named": false
  },
  {
-  "name": "init_mod_player",
+  "name": "install_mod",
   "addr_hint": null,
   "is_named": true
  },

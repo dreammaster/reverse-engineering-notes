@@ -344,6 +344,23 @@ JGMOD API names without a source to check would violate this project's
 tracker libraries), revisiting this cluster would likely unlock several
 more clean matches the same way the Allegro tree did earlier.
 
+**A third public API match, found later via a CORRECTION rather than a
+fresh lead: `install_mod(int numVoices)`.** Previously misnamed
+`init_mod_player` after a mechanical match against `Engine/
+acsound.cpp`'s own trivial 3-line wrapper of that name (`return
+install_mod(numVoices);`) -- but this build's actual ~150-line body
+(numVoices>64 clamp, malloc'd init-sample struct, per-voice
+`voice_set_volume`/`voice_start` setup with `deallocate_voice` cleanup
+on failure, three JGMOD-flavored error strings including `"JGMOD : Not
+enough memory to setup initialization sample"`) is unmistakably JGMOD's
+own `install_mod` doing its real voice-allocation work, called directly
+from `main` with no separate AGS-side wrapper existing yet in this 2002
+build. Its own two callees (`sub_477CB0`, `sub_47B360` -- the latter
+already flagged above as a shared JGMOD-internal I/O/allocation helper)
+stay unchased per the scope rule. See
+`reversing/notes/struct-layout-drift.md`'s own writeup for the full
+correction detail.
+
 ## `apeg-1.2.1` is NOT LINKED into Rob Blanc 1 at all -- conclusively ruled out
 
 Went looking for `apeg` (the MPEG video/audio decoder) specifically and
