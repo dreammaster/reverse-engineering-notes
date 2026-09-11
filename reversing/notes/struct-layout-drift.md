@@ -15163,3 +15163,40 @@ old icon-bar was left as unused Editor-side legacy data rather than
 deleted). The same "data existing and code reading it are different
 questions" lesson `numiface` already taught, now shown at full
 richness rather than just a slot count.
+
+### Back to disassembly: `sub_40A9FF` closes as `fix_bitmap_size`, and its two call sites' own masks are finally identified
+
+Switched back to pure disassembly work to close out a specific
+open lead: the room-mask resolution-scaling helper flagged several
+rounds ago as "not matched to a specific 2011 function name... left
+unnamed pending a future round with more context on `load_new_room`'s
+own two call sites." Reading `Engine/AC.CPP:3515-3531` directly turned
+up an exact match this project's earlier search had missed:
+`block fix_bitmap_size(block todubl)` -- computes the room's own
+resolution-scaled target size via `multiply_up_coordinate(thisroom.
+width/height)`, matching the disassembly's own `word_522F08/522F0A *
+current_screen_resolution_multiplier_x/_y` computation exactly, then
+does the identical `create_bitmap_ex`/`set_clip`(x2)/`clear`/
+`stretch_blit`/`destroy_bitmap` sequence already documented for
+`sub_40A9FF`. REAL DRIFT: source's leading `if((oldw==newWidth)&&
+(oldh==newHeight)) return todubl;` early-return (skip rescaling a
+bitmap that's already the right size) is CONFIRMED ABSENT -- this
+build's version unconditionally reallocates and rescales on every
+single call, even when a no-op would do. Minor (wasted work, not a
+correctness bug), but a genuine efficiency regression nonetheless.
+
+This also decisively answers the open "which masks, which call
+sites" question `load_new_room` itself was flagged for: the FIRST
+call (unconditional, right after the walkable-areas-restore step)
+rescales `RoomStruct.object` -- the real field behind this build's
+currently-mislabeled `rstruc.lookat` display (per the established
+rstruc-display-shift correction, this is the WALK-BEHIND mask, not
+hotspots) -- matching source's own `thisroom.object=
+fix_bitmap_size(thisroom.object);` (`AC.CPP:4229`) exactly. The
+SECOND call loops over EVERY entry of `RoomStruct.ebscene[]` (bounded
+by the already-confirmed `num_bscenes`), gated behind a resolution-
+multiplier-mismatch check -- matching source's own `for(cc=0;...)
+thisroom.ebscene[cc]=fix_bitmap_size(...)` loop (`AC.CPP:4236`)
+exactly, just with the "already right size" skip moved from inside
+the function (absent here) to gating the whole loop at the call site
+instead.

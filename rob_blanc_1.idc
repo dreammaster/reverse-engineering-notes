@@ -10733,6 +10733,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X40A9F8);
 	op_hex		(x,	1);
 	create_insn	(0X40A9FF);
+	set_name	(0X40A9FF,	"fix_bitmap_size");
 	create_insn	(x=0X40AA02);
 	op_hex		(x,	1);
 	create_insn	(x=0X40AA05);
@@ -156060,8 +156061,8 @@ static Functions_2(void) {
 	define_local_var(0X40A6D8, 0X40A9FF, "[bp-0X1C]", "Block");
 	add_func    (0X40A9FF,0X40AAE3);
 	set_func_flags(0X40A9FF,0x5410);
-	SetType(0X40A9FF, "int __cdecl sub_40A9FF(void *Block);");
-	set_func_cmt(0X40A9FF,	"[reversing] confirmed match\nconfidence: medium\nevidence: A room-mask resolution-scaling helper, called twice from load_new_room (already matched). Takes a BITMAP* argument, reads its original width/height, creates a NEW bitmap scaled by `current_screen_resolution_multiplier_x`/`_y` (using the already-established RoomStruct.width/height globals, word_522F08/word_522F0A) at the same color depth, sets the clip region on both the new and original bitmap to their own full extent (via the newly-matched set_clip, twice), clears the new bitmap, `stretch_blit`s the original into it at the new size, `destroy_bitmap`s the original, and returns the new (scaled) bitmap -- effectively 'upscale this low-res mask bitmap to match the game's resolution multiplier, replacing the original'. Not matched to a specific 2011 function name -- no obvious single 2011 declaration was found doing this exact create-scale-stretch_blit-destroy sequence on a room-mask bitmap; left unnamed pending a future round with more context on load_new" "_room's own two call sites (which specific room ", 1);
+	SetType(0X40A9FF, "int __cdecl fix_bitmap_size(void *Block);");
+	set_func_cmt(0X40A9FF,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: A room-mask resolution-scaling helper, called twice from load_new_room (already matched). Takes a BITMAP* argument, reads its original width/height, creates a NEW bitmap scaled by `current_screen_resolution_multiplier_x`/`_y` (using the already-established RoomStruct.width/height globals, word_522F08/word_522F0A) at the same color depth, sets the clip region on both the new and original bitmap to their own full extent (via the newly-matched set_clip, twice), clears the new bitmap, `stretch_blit`s the original into it at the new size, `destroy_bitmap`s the original, and returns the new (scaled) bitmap -- effectively 'upscale this low-res mask bitmap to match the game's resolution multiplier, replacing the original'. Not matched to a specific 2011 function name -- no obvious single 2011 declaration was found doing this exact create-scale-stretch_blit-destroy sequence on a room-mask bitmap; left unnamed pending a future round with more" " context on load_new_room's own two call sites (which specific room ", 1);
 	set_frame_size(0X40A9FF, 0XC, 4, 0);
 	define_local_var(0X40A9FF, 0X40AAE3, "[bp+0X8]", "Block");
 	add_func    (0X40AAE3,0X40AD11);

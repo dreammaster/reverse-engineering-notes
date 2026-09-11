@@ -4506,6 +4506,21 @@ disassembly work.
   out icon-bar UI was designed for this game, just never wired up to
   the compiled engine's actual (GUI-based) rendering. See
   `reversing/notes/struct-layout-drift.md`.
+- **Back to disassembly: `sub_40A9FF` closes as `fix_bitmap_size`,
+  finally naming the room-mask resolution-scaling helper flagged
+  several rounds ago.** `Engine/AC.CPP:3515-3531`'s
+  `fix_bitmap_size(block)` matches exactly -- the size computation,
+  and the `create_bitmap_ex`/`set_clip`(x2)/`clear`/`stretch_blit`/
+  `destroy_bitmap` sequence. REAL DRIFT: source's `if(oldw==newWidth
+  && oldh==newHeight) return todubl;` early-return is CONFIRMED
+  ABSENT -- this build always reallocates and rescales, even when a
+  no-op would do. Also answers the standing "which masks, which call
+  sites" question directly: `load_new_room`'s first call rescales
+  `RoomStruct.object` (the walk-behind mask, per the established
+  rstruc-display-shift correction) unconditionally; the second loops
+  over every `ebscene[]` entry, gated behind a resolution-mismatch
+  check -- both matching source's own two call sites exactly. See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
