@@ -53389,6 +53389,7 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	make_array	(0X433F99,	0X7);
 	create_insn	(0X433FA0);
+	set_name	(0X433FA0,	"fix__sqrt");
 	create_insn	(x=0X433FA4);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X433FAC);
@@ -58211,10 +58212,6 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X439254);
 	op_hex		(x,	1);
-	create_insn	(x=0X43925F);
-	op_hex		(x,	1);
-	create_insn	(x=0X439268);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58224,6 +58221,10 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43925F);
+	op_hex		(x,	1);
+	create_insn	(x=0X439268);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43926E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439273);
@@ -63926,10 +63927,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F11F);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F125);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X43F129);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -63939,6 +63936,10 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F125);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X43F129);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X43F12E);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F132);
@@ -69978,9 +69979,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4463AE);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4463B8);
-	op_plain_offset	(x,	1,	0);
-	op_plain_offset	(x,	129,	0);
 }
 
 //------------------------------------------------------------------------
@@ -69990,6 +69988,9 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4463B8);
+	op_plain_offset	(x,	1,	0);
+	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X4463CB);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X4463CF);
@@ -82403,6 +82404,7 @@ static Bytes_14(void) {
 	create_insn	(x=0X45812C);
 	op_hex		(x,	1);
 	create_insn	(0X45813C);
+	set_name	(0X45813C,	"fixsqrt");
 	create_insn	(x=0X45813F);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X458148);
@@ -87618,8 +87620,6 @@ static Bytes_14(void) {
 	op_plain_offset	(x,	128,	0);
 	set_cmt	(0X462E7E,	"jumptable 00462E77 case 8",	1);
 	create_insn	(0X462E7E);
-	create_insn	(x=0X462E89);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -87629,6 +87629,8 @@ static Bytes_15(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X462E89);
+	op_hex		(x,	1);
 	set_cmt	(0X462E91,	"jumptable 00462E77 cases 15,16",	1);
 	create_insn	(x=0X462E91);
 	op_stkvar	(x,	1);
@@ -159544,6 +159546,7 @@ static Functions_10(void) {
 	set_frame_size(0X433F80, 0X4, 4, 0);
 	add_func    (0X433FA0,0X433FCE);
 	set_func_flags(0X433FA0,0x5410);
+	set_func_cmt(0X433FA0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/inline/fix.inl\nconfidence: high\nevidence: RETRACTION of this same round's own earlier guess (see the immediately-preceding commit, which left this unnamed as 'plausibly unrelated compiler-generated scaffolding'): that was premature -- found the exact match on a second look. `inline fix sqrt(fix x) { fix t; t.v = fixsqrt(x.v); return t; }` (`fix.inl:128`) matches this function's body EXACTLY, once its two coincidental MSVC-runtime FLIRT hits are recognized for what they are (the same 'coincidental symbol match' pattern this project has hit repeatedly): the leading `unknown_libname_6`/`??0?$_Callable_base@...` calls are FLIRT false positives on the trivial default constructor `fix t;` (`fix() : v(0) {}`) being compiled to a generic-looking stub, NOT a real _Callable_base construction. What's left is a clean, decisive match: `mov eax,[arg_4]; push eax; call fixsqrt` (matching `fixsqrt(x.v)` exactly, `x` passed by value as a single d" "word since `fix` is just a 4-byte wrapper around `fixed`), the result stored into `[arg_0+0]` (`t.v = ...`, `arg_", 1);
 	set_frame_size(0X433FA0, 0X4, 4, 0);
 	add_func    (0X433FD0,0X433FDE);
 	set_func_flags(0X433FD0,0x5414);
@@ -160135,6 +160138,10 @@ static Functions_10(void) {
 	set_func_flags(0X443360,0x5400);
 	set_func_cmt(0X443360,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: int _dummy_init(int input, int voices) { digi_none.desc = _midi_none.desc = get_config_text(\"The sound of silence\"); return 0; } (sound.c:34) -- a complete, exact, zero-drift match: pushes the matched string \"The sound of silence\" (aTheSoundOfSile) into the already-matched get_config_text, then stores the SAME returned pointer into TWO separate globals (off_4BD4F0 and off_4BD438), matching source's own single-expression double-assignment (digi_none.desc = _midi_none.desc = ...) exactly -- identifying off_4BD4F0 as DIGI_DRIVER digi_none's own `desc` field and off_4BD438 as MIDI_DRIVER _midi_none's own `desc` field (both third-party Allegro driver-descriptor structs, per this project's scope rule not chased further). Reached via a DATA XREF only (a driver-init function-pointer table entry), no direct CODE XREF caller -- consistent with being invoked through Allegro's own DIGI_DRIVER/MIDI_DRIVER vtable `init` " "slot rather than called directly.", 1);
 	set_frame_size(0X443360, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X443380,0X443381);
 	set_func_flags(0X443380,0x5400);
 	set_frame_size(0X443380, 0, 0, 0);
@@ -160150,10 +160157,6 @@ static Functions_10(void) {
 	add_func    (0X4433C0,0X4433C1);
 	set_func_flags(0X4433C0,0x5400);
 	set_frame_size(0X4433C0, 0, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4433D0,0X4433D1);
 	set_func_flags(0X4433D0,0x5400);
 	set_frame_size(0X4433D0, 0, 0, 0);
@@ -161346,6 +161349,7 @@ static Functions_11(void) {
 	set_frame_size(0X4580E4, 0X4, 4, 0);
 	add_func    (0X45813C,0X45817C);
 	set_func_flags(0X45813C,0x5410);
+	set_func_cmt(0X45813C,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/math.c\nconfidence: high\nevidence: Allegro's i386-optimized `fixsqrt(fixed x)` -- decisively confirmed via its own lookup table, `word_4BF5F8`, matching `Engine/libsrc/allegro-4.2.2/src/math.c`'s own `_sqrt_table[]` (declared right above the portable-C fallback at math.c:343, with the comment 'this table is used by the fixsqrt() and fixhypot() routines in imisc.s') byte-for-byte: 0x2D4, 0x103F, 0x16CD, 0x1BDB, ... every entry checked matches exactly. The disassembly's own algorithm -- `bsr` to find the input's highest set bit, an even-aligned shift, a table lookup indexed by the shifted value, then a re-scaling shift -- is the classic table-assisted fast integer square-root technique the reference source's comment describes as living in `imisc.s` (not included in this repo's C source tree, so the exact instruction-for-instruction i386 assembly can't be diff'd, but the shared table plus the negative-input error path -- setting `*allegro_errno`" " via `dword_536F6C`, matching the portable fallback's own `*allegro_errno = EDOM;` line right", 1);
 	set_frame_size(0X45813C, 0, 4, 0);
 	add_func    (0X4583CC,0X4583CD);
 	set_func_flags(0X4583CC,0x5400);
@@ -161536,6 +161540,10 @@ static Functions_11(void) {
 	set_func_flags(0X462970,0x5400);
 	set_frame_size(0X462970, 0X18, 0, 0);
 	define_local_var(0X462970, 0X462AF1, "[bp-0X8]", "Block");
+}
+
+static Functions_12(void) {
+
 	add_func    (0X462B00,0X462C01);
 	set_func_flags(0X462B00,0x5400);
 	set_frame_size(0X462B00, 0X4, 0, 0);
@@ -161587,10 +161595,6 @@ static Functions_11(void) {
 	set_func_flags(0X463940,0x15400);
 	set_func_cmt(0X463940,	"[reversing] confirmed match\nconfidence: high\nevidence: Confirmed as Allegro's own datafile (.dat) object-fixup routine via its own internal dispatch on Allegro's well-known 4-byte object-type tag constants (0x424D5020=\"BMP \"/DAT_BITMAP, 0x524C4520=\"RLE \"/DAT_RLE_SPRITE, and presumably others further in -- not individually enumerated). A large (772-line) third-party library function; per this project's scope rule, not chased further -- a ScummVM reimplementation replaces Allegro's whole datafile-loading system wholesale, and this project's own earlier survey work already established Rob Blanc 1 doesn't use Allegro .dat files for its own game assets (it uses the CLIB format instead, see csetlib's own entry) -- this function is plausibly linked in but unused, or used only for a minor internal Allegro resource.", 1);
 	set_frame_size(0X463940, 0X18, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X464020,0X4640CA);
 	set_func_flags(0X464020,0x5410);
 	set_frame_size(0X464020, 0, 4, 0);
@@ -163442,6 +163446,10 @@ static Functions_12(void) {
 	set_func_flags(0X48B140,0x5400);
 	set_func_cmt(0X48B140,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public TrueType text-output function (plausibly `alfont_textout_ex` or similar -- no local alfont source tree exists in this repo to pin an exact name, and the function's own size (~210 lines) wasn't fully traced this round). Opens by checking the already-identified `alfont_text_mode` global (dword_54784C); if it holds a real background color (not the 'opaque' sentinel), computes the text's bounding box via the newly-identified alfont_get_font_height/alfont_text_length and fills it via a vtable-dispatched call through slot +0x38 on the destination bitmap -- matching this project's own already-confirmed GFX_VTABLE `rectfill` slot exactly (Allegro's public rectfill API, third-party boundary, not chased further here either). Called from wouttextxy (already matched). THIRD-PARTY LIBRARY BOUNDARY, left unnamed and not traced to completion.", 1);
 	set_frame_size(0X48B140, 0X24, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X48B320,0X48B328);
 	set_func_flags(0X48B320,0x5400);
 	set_func_cmt(0X48B320,	"[reversing] confirmed match\nconfidence: medium\nevidence: alfont's own public API returning a loaded TrueType font's line height (no local alfont source tree exists in this repo -- identified by call-shape/role). A trivial one-line accessor, `return font->height;` (offset +8 on the alfont font handle). Called from wgettextheight (already matched) and from the newly-identified alfont text-output helper (sub_48B140, see its own entry). THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
@@ -163450,10 +163458,6 @@ static Functions_12(void) {
 	set_func_flags(0X48B330,0x5400);
 	set_func_cmt(0X48B330,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed).", 1);
 	set_frame_size(0X48B330, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X48B3A0,0X48B41C);
 	set_func_flags(0X48B3A0,0x5400);
 	set_frame_size(0X48B3A0, 0X8, 0, 0);

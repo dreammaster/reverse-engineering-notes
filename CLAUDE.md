@@ -4535,6 +4535,26 @@ disassembly work.
   pattern (a real `wxRichToolTip` hit sits right next to it too, in
   the same already-recognized category). Left unnamed rather than
   forced. See `reversing/notes/struct-layout-drift.md`.
+- **RETRACTION, same session: `sub_433FA0` wasn't unresolvable after
+  all -- it's `fix::sqrt`, and its own callee closes as `fixsqrt`
+  too.** A second look past its constructors found `class fix`'s own
+  declared `sqrt` friend function (`fix.h:194`, body in `fix.inl:128`:
+  `inline fix sqrt(fix x) { fix t; t.v = fixsqrt(x.v); return t; }`)
+  matches exactly, once its own two FLIRT hits are recognized as the
+  same "coincidental MSVC symbol" false positives on a trivial default
+  constructor. Renamed `fix__sqrt`. Its own one-argument callee
+  (previously unnamed) closes decisively too: `sub_45813C` is
+  Allegro's i386-optimized `fixsqrt(fixed x)` -- its lookup table
+  matches `Engine/libsrc/allegro-4.2.2/src/math.c`'s own
+  `_sqrt_table[]` byte for byte, and that file's own comment right
+  above the table says exactly what this disassembly does with it
+  ("this table is used by the fixsqrt() and fixhypot() routines in
+  imisc.s"). Renamed `fixsqrt`. Closes the full chain
+  `is_route_possible` walks for its distance check: squared-distance
+  → `fix::sqrt` → `fixsqrt` → `fix::operator int()`. Lesson: one
+  coincidental FLIRT hit inside a function isn't license to write off
+  the whole function -- the friend-function declarations were one
+  grep away. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

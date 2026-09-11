@@ -15236,3 +15236,52 @@ genuine `fix` constructor. `is_route_possible`'s own private nearest-
 walkable-point search stays at its already-recorded level of
 characterization; this round closes one genuinely resolvable piece of
 it without forcing the unresolvable one.
+
+### RETRACTION, same session: `sub_433FA0` wasn't unresolvable after all -- it's `fix::sqrt`, and its own callee closes as `fixsqrt` too
+
+Immediately regretted leaving `sub_433FA0` unnamed and took a second
+look, this time chasing `class fix`'s OWN declared `sqrt` friend
+function (`fix.h:194`: `inline friend fix sqrt(fix x);`) instead of
+stopping at its constructors. Its actual inline body lives in
+`fix.inl:128`: `inline fix sqrt(fix x) { fix t; t.v = fixsqrt(x.v);
+return t; }` -- and this matches `sub_433FA0`'s real body perfectly
+once its own two "coincidental MSVC runtime symbol" FLIRT hits are
+recognized for what they are (this project's own well-established
+category, not a fresh judgment call): the leading `unknown_libname_6`/
+`??0?$_Callable_base@...` calls are false positives on the trivial
+default constructor `fix t;` (`fix() : v(0) {}`) compiling to a
+generic-looking stub -- not a real STL object being constructed. What
+remains is exactly `t.v = fixsqrt(x.v); return t;`: a one-argument
+call to a genuine fixed-point square-root routine, storing the result
+into the return-value object's own leading `fixed v;` member, then
+echoing the return-value pointer in `eax` (the standard MSVC
+convention for a simple-struct-by-value return). Renamed `fix__sqrt`.
+
+That one-argument callee (previously unnamed, called only from here)
+closes too, decisively: `sub_45813C` is Allegro's own i386-optimized
+`fixsqrt(fixed x)`. Its lookup table, `word_4BF5F8`, matches
+`Engine/libsrc/allegro-4.2.2/src/math.c`'s own `_sqrt_table[]` byte
+for byte (0x2D4, 0x103F, 0x16CD, 0x1BDB, ... -- every entry checked
+lines up exactly), and that source file's own comment sitting right
+above the table says precisely what this disassembly does with it:
+"this table is used by the fixsqrt() and fixhypot() routines in
+imisc.s" -- a `bsr`-plus-table-lookup fast integer square root, the
+i386-specific implementation math.c's own portable-C fallback exists
+to replace on platforms without it. The negative-input error path
+(`dword_536F6C[0] = 0x22`) matches the portable fallback's own
+`*allegro_errno = EDOM;` line immediately below the table, closing
+the loop. Renamed `fixsqrt`.
+
+This closes the full chain `is_route_possible` walks for its own
+private nearest-point distance check: compute an integer squared
+distance inline, convert it to `fix`, call `fix::sqrt` (`fix__sqrt`,
+which itself calls the real `fixsqrt`), then `fix::operator int()`
+(`fix__operator_int`) to get a plain int back for the "closest point
+so far" comparison -- three genuinely resolved library-boundary
+functions from what looked, one round ago, like an unresolvable
+tangle of coincidental symbol matches. Process lesson worth stating
+plainly: recognizing ONE coincidental FLIRT hit inside a function is
+not license to write off the WHOLE function as unidentifiable --
+`class fix`'s own header had more than just constructors to check
+against, and the friend-function declarations (`sqrt`/`cos`/`sin`/
+etc., `fix.h:194` onward) were sitting one grep away the entire time.

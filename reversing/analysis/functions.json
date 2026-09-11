@@ -3885,9 +3885,9 @@
   "is_named": true
  },
  {
-  "name": "sub_433FA0",
+  "name": "fix__sqrt",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "unknown_libname_6",
@@ -6510,9 +6510,9 @@
   "is_named": false
  },
  {
-  "name": "sub_45813C",
+  "name": "fixsqrt",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "nullsub_29",

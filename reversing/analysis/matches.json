@@ -7920,5 +7920,25 @@
     "source_line": 28,
     "confidence": "high",
     "evidence": "long getlong(FILE*iii) { long tmm; fread(&tmm,4,1,iii); return tmm; } (scrptrt.cpp:28-33) -- a complete, exact, zero-drift match: fread(Buffer,ElementSize=4,ElementCount=1,Stream) into a local, returning it directly. Called twice from load_script_configuration (already matched), matching source's own two getlong() calls exactly (the version check, then numvarnames)."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_45813C",
+    "new_name": "fixsqrt",
+    "source_file": "Engine/libsrc/allegro-4.2.2/src/math.c",
+    "source_line": 343,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "Allegro's i386-optimized `fixsqrt(fixed x)` -- decisively confirmed via its own lookup table, `word_4BF5F8`, matching `Engine/libsrc/allegro-4.2.2/src/math.c`'s own `_sqrt_table[]` (declared right above the portable-C fallback at math.c:343, with the comment 'this table is used by the fixsqrt() and fixhypot() routines in imisc.s') byte-for-byte: 0x2D4, 0x103F, 0x16CD, 0x1BDB, ... every entry checked matches exactly. The disassembly's own algorithm -- `bsr` to find the input's highest set bit, an even-aligned shift, a table lookup indexed by the shifted value, then a re-scaling shift -- is the classic table-assisted fast integer square-root technique the reference source's comment describes as living in `imisc.s` (not included in this repo's C source tree, so the exact instruction-for-instruction i386 assembly can't be diff'd, but the shared table plus the negative-input error path -- setting `*allegro_errno` via `dword_536F6C`, matching the portable fallback's own `*allegro_errno = EDOM;` line right next to the table -- leaves no doubt about the identity). Called from `fix::sqrt` (the C++ wrapper's own free-function overload, see its own entry, `fix__sqrt`) inside `is_route_possible`'s private nearest-walkable-point distance check. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- a leaf function with no further callees to chase."
+  },
+  {
+    "kind": "manual",
+    "asm_name": "sub_433FA0",
+    "new_name": "fix__sqrt",
+    "source_file": "Engine/libsrc/allegro-4.2.2/include/allegro/inline/fix.inl",
+    "source_line": 128,
+    "confidence": "high",
+    "is_library": true,
+    "evidence": "RETRACTION of this same round's own earlier guess (see the immediately-preceding commit, which left this unnamed as 'plausibly unrelated compiler-generated scaffolding'): that was premature -- found the exact match on a second look. `inline fix sqrt(fix x) { fix t; t.v = fixsqrt(x.v); return t; }` (`fix.inl:128`) matches this function's body EXACTLY, once its two coincidental MSVC-runtime FLIRT hits are recognized for what they are (the same 'coincidental symbol match' pattern this project has hit repeatedly): the leading `unknown_libname_6`/`??0?$_Callable_base@...` calls are FLIRT false positives on the trivial default constructor `fix t;` (`fix() : v(0) {}`) being compiled to a generic-looking stub, NOT a real _Callable_base construction. What's left is a clean, decisive match: `mov eax,[arg_4]; push eax; call fixsqrt` (matching `fixsqrt(x.v)` exactly, `x` passed by value as a single dword since `fix` is just a 4-byte wrapper around `fixed`), the result stored into `[arg_0+0]` (`t.v = ...`, `arg_0` being the hidden return-value pointer for the by-value `fix` return), and `mov eax,[arg_0]; retn` (echoing the return-value pointer in `eax`, the standard MSVC convention for returning a non-trivial-but-simple struct by value). Called from `is_route_possible`'s own private nearest-walkable-point distance check, feeding directly into the already-matched `fix::operator int()` (`fix__operator_int`) to get a plain int distance for comparison. THIRD-PARTY LIBRARY BOUNDARY per this project's scope rule -- named since it's genuinely called from AGS-side code, not chased further into its own `fixsqrt` callee."
   }
 ]
