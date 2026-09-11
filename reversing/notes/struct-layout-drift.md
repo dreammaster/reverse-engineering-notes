@@ -15200,3 +15200,39 @@ thisroom.ebscene[cc]=fix_bitmap_size(...)` loop (`AC.CPP:4236`)
 exactly, just with the "already right size" skip moved from inside
 the function (absent here) to gating the whole loop at the call site
 instead.
+
+### `sub_433F80` closes as Allegro's `fix::operator int()`, and a neighboring FLIRT-coincidence lead stays honestly open
+
+Kept digging in `is_route_possible`'s own domain. `sub_433F80` had
+been informally described (inside `fixtoi`'s own entry, never given
+its own dedicated record) as "a thin thiscall wrapper... reading a
+fixed-point struct field and converting it via `fixtoi`" with no
+object identity established. `Engine/libsrc/allegro-4.2.2/include/
+allegro/fix.h:27-41` supplies the answer directly: Allegro's own C++
+convenience wrapper, `class fix { public: fixed v; ...
+operator int() const { return fixtoi(v); } ... };` -- a single
+4-byte `fixed v;` member at offset 0. The disassembly's own `[this+0]`
+read followed by a `fixtoi` call matches this one-line operator
+body exactly, with zero ambiguity. Renamed `fix__operator_int`,
+recorded as a third-party library boundary function per the usual
+scope rule (named because it's genuinely called from AGS-side code,
+not chased further into its own `fixtoi` callee).
+
+The neighboring call this same investigation looked at, `sub_433FA0`
+(called immediately before, feeding `fix__operator_int`'s own `this`
+argument), looked at first like it might be the matching `fix::fix
+(const double)` constructor -- the calling sequence around it
+computes an integer squared-distance via `fild`/`fstp` into a double,
+exactly the kind of value that constructor would consume. Reading its
+own body closes that door instead of opening it: it constructs an
+unrelated `std::_Callable_base<...>`-shaped object and calls a
+different helper (`sub_45813C`), nothing resembling a simple `v=
+ftofix(x)` one-liner. Left unnamed rather than forced -- this is
+almost certainly another instance of this project's own already-
+established "coincidental MSVC C++ runtime symbol" pattern (the same
+function even has a `wxRichToolTip::wxRichToolTip` FLIRT hit sitting
+right next to it, already recognized and ignored) rather than a
+genuine `fix` constructor. `is_route_possible`'s own private nearest-
+walkable-point search stays at its already-recorded level of
+characterization; this round closes one genuinely resolvable piece of
+it without forcing the unresolvable one.

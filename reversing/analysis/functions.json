@@ -3880,9 +3880,9 @@
   "is_named": false
  },
  {
-  "name": "sub_433F80",
+  "name": "fix__operator_int",
   "addr_hint": null,
-  "is_named": false
+  "is_named": true
  },
  {
   "name": "sub_433FA0",

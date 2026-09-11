@@ -53380,6 +53380,7 @@ static Bytes_9(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X433F7E,	0X2);
 	create_insn	(0X433F80);
+	set_name	(0X433F80,	"fix__operator_int");
 	create_insn	(x=0X433F84);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X433F87);
@@ -58214,8 +58215,6 @@ static Bytes_9(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X439268);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43926E);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -58225,6 +58224,8 @@ static Bytes_10(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43926E);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X439273);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X439281);
@@ -63929,8 +63930,6 @@ static Bytes_10(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X43F129);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X43F12E);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -63940,6 +63939,8 @@ static Bytes_11(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X43F12E);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X43F132);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X43F138);
@@ -69980,8 +69981,6 @@ static Bytes_11(void) {
 	create_insn	(x=0X4463B8);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
-	create_insn	(x=0X4463CB);
-	op_stkvar	(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -69991,6 +69990,8 @@ static Bytes_12(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X4463CB);
+	op_stkvar	(x,	1);
 	create_insn	(x=0X4463CF);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
@@ -159539,7 +159540,7 @@ static Functions_10(void) {
 	set_frame_size(0X433EF0, 0X8, 4, 0);
 	add_func    (0X433F80,0X433F99);
 	set_func_flags(0X433F80,0x5410);
-	set_func_cmt(0X433F80,	"[reversing] confirmed match\nconfidence: high\nevidence: A thin, this-based (thiscall) one-line accessor: reads a fixed-point value from `[this+0]` and converts it to a plain int via the already-matched `fixtoi` (already informally described inside `fixtoi`'s own entry as 'a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi' -- another instance of the 'documented in prose, never given its own dedicated entry' gap this project has hit and fixed several times before). Called once, from is_route_possible (already matched). The identity of the object this method belongs to (and therefore an exact 2011 name) was not established this round -- left unnamed.", 1);
+	set_func_cmt(0X433F80,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/include/allegro/fix.h\nconfidence: high\nevidence: A thin, this-based (thiscall) one-line accessor: reads a fixed-point value from `[this+0]` and converts it to a plain int via the already-matched `fixtoi` (already informally described inside `fixtoi`'s own entry as 'a thin thiscall wrapper inside is_route_possible's own domain, reading a fixed-point struct field and converting it via fixtoi' -- another instance of the 'documented in prose, never given its own dedicated entry' gap this project has hit and fixed several times before). Called once, from is_route_possible (already matched). The identity of the object this method belongs to (and therefore an exact 2011 name) was not established this round -- left unnamed. RESOLVED (later round): decisively `fix::operator int() const` (Engine/libsrc/allegro-4.2.2/include/allegro/fix.h:27-41) -- Allegro's own C++ convenience wrapper class around the C fixed-point API (`class fix { public: fixed v; ... o" "perator int() const { return fixtoi(v); } ... };`), a single 4-byte `fixed v;` member at offset 0. Match", 1);
 	set_frame_size(0X433F80, 0X4, 4, 0);
 	add_func    (0X433FA0,0X433FCE);
 	set_func_flags(0X433FA0,0x5410);
@@ -160149,6 +160150,10 @@ static Functions_10(void) {
 	add_func    (0X4433C0,0X4433C1);
 	set_func_flags(0X4433C0,0x5400);
 	set_frame_size(0X4433C0, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X4433D0,0X4433D1);
 	set_func_flags(0X4433D0,0x5400);
 	set_frame_size(0X4433D0, 0, 0, 0);
@@ -160168,10 +160173,6 @@ static Functions_10(void) {
 	set_func_flags(0X443500,0x5400);
 	set_func_cmt(0X443500,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/sound.c\nconfidence: high\nevidence: static void read_sound_config(void) at src/sound.c:168-183. Exact match: 9 consecutive get_config_int(uconvert_ascii(\"sound\",...), uconvert_ascii(<key>,...), <default>) calls in exactly source's order -- flip_pan, quality, sound_dma, sound_irq, sound_freq, sound_bits, sound_stereo, digi_volume, midi_volume (the only key from source's sequence NOT present is sound_port, which uses get_config_hex not get_config_int -- consistent, since this match was found by grepping calls to the already-matched get_config_int specifically). Function boundary ends (endp at .asm:120581) right after the last call, matching source's function ending cleanly with no other logic. Called from an as-yet-boundary-less block starting right after nullsub_21 (.asm:120272) that opens with \"if (_sound_installed) return 0;\" -- exact match for detect_digi_driver's opening two lines (src/sound.c:198-201, \"if (_sound_installed) return 0; read" "_sound_config();\"). detect_digi_driver itself not matched this round (no IDA function boundary", 1);
 	set_frame_size(0X443500, 0X84, 0, 0);
-}
-
-static Functions_11(void) {
-
 	add_func    (0X4437E0,0X4437F4);
 	set_func_flags(0X4437E0,0x5400);
 	SetType(0X4437E0, "void __cdecl reserve_voices(int digi_voices, int midi_voices);");
@@ -161586,6 +161587,10 @@ static Functions_11(void) {
 	set_func_flags(0X463940,0x15400);
 	set_func_cmt(0X463940,	"[reversing] confirmed match\nconfidence: high\nevidence: Confirmed as Allegro's own datafile (.dat) object-fixup routine via its own internal dispatch on Allegro's well-known 4-byte object-type tag constants (0x424D5020=\"BMP \"/DAT_BITMAP, 0x524C4520=\"RLE \"/DAT_RLE_SPRITE, and presumably others further in -- not individually enumerated). A large (772-line) third-party library function; per this project's scope rule, not chased further -- a ScummVM reimplementation replaces Allegro's whole datafile-loading system wholesale, and this project's own earlier survey work already established Rob Blanc 1 doesn't use Allegro .dat files for its own game assets (it uses the CLIB format instead, see csetlib's own entry) -- this function is plausibly linked in but unused, or used only for a minor internal Allegro resource.", 1);
 	set_frame_size(0X463940, 0X18, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X464020,0X4640CA);
 	set_func_flags(0X464020,0x5410);
 	set_frame_size(0X464020, 0, 4, 0);
@@ -161637,10 +161642,6 @@ static Functions_11(void) {
 	set_frame_size(0X464A30, 0XCC, 0, 0);
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC8]", "Handles");
 	define_local_var(0X464A30, 0X464B0A, "[bp-0XC4]", "hThread");
-}
-
-static Functions_12(void) {
-
 	add_func    (0X464B10,0X464B7B);
 	set_func_flags(0X464B10,0x5400);
 	SetType(0X464B10, "void __cdecl sub_464B10(void *);");
@@ -163449,6 +163450,10 @@ static Functions_12(void) {
 	set_func_flags(0X48B330,0x5400);
 	set_func_cmt(0X48B330,	"[reversing] confirmed match\nconfidence: medium-high\nevidence: alfont's own public API measuring a string's rendered pixel width in a TrueType font (no local alfont source tree exists in this repo -- identified by call-shape/role). Iterates the string character by character via a decode-next-character function-pointer call (off_4B28F0, plausibly ugetc/a UTF-8-aware character iterator), looks up each character's glyph via an internal helper (sub_48AE80, not chased further per scope), and accumulates `glyph->advance.x>>6` into a running total -- the `>>6` shift is FreeType's own unmistakable 26.6 fixed-point advance-width convention, a decisive identifying signature. Called from wgettextwidth (already matched) and from the newly-identified alfont text-output helper (sub_48B140). THIRD-PARTY LIBRARY BOUNDARY, not chased further (its own internal glyph-cache helpers sub_48AE80/sub_48CF60 left unnamed).", 1);
 	set_frame_size(0X48B330, 0X4, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X48B3A0,0X48B41C);
 	set_func_flags(0X48B3A0,0x5400);
 	set_frame_size(0X48B3A0, 0X8, 0, 0);
@@ -163521,10 +163526,6 @@ static Functions_12(void) {
 	add_func    (0X48BEA0,0X48BEC1);
 	set_func_flags(0X48BEA0,0x5400);
 	set_frame_size(0X48BEA0, 0, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X48BED0,0X48BF04);
 	set_func_flags(0X48BED0,0x5400);
 	set_frame_size(0X48BED0, 0X8, 0, 0);

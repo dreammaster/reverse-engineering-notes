@@ -4521,6 +4521,20 @@ disassembly work.
   over every `ebscene[]` entry, gated behind a resolution-mismatch
   check -- both matching source's own two call sites exactly. See
   `reversing/notes/struct-layout-drift.md`.
+- **`sub_433F80` closes as Allegro's `fix::operator int()`, plus a
+  neighboring FLIRT-coincidence lead stays honestly open.**
+  `Engine/libsrc/allegro-4.2.2/include/allegro/fix.h:27-41`'s
+  `class fix { fixed v; ... operator int() const { return
+  fixtoi(v); } ... }` matches exactly -- a `[this+0]` read into
+  `fixtoi`, zero ambiguity. Renamed `fix__operator_int`, a third-
+  party boundary function. The neighboring call
+  (`sub_433FA0`) looked like a candidate `fix::fix(const double)`
+  constructor at first, but its own body constructs an unrelated
+  `std::_Callable_base<...>`-shaped object -- another instance of
+  this project's own "coincidental MSVC C++ runtime symbol" FLIRT
+  pattern (a real `wxRichToolTip` hit sits right next to it too, in
+  the same already-recognized category). Left unnamed rather than
+  forced. See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
