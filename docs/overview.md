@@ -597,21 +597,35 @@ unlit, the classic Ultima need-a-lit-torch mechanic.
 
 `DUNGEON_COMMAND_TABLE` shares many handlers directly with the
 overworld table (Pass, Cast Spell, Ignite Torch, Exchange, Toggle
-Sound all work identically in both places) but disables 9 letters
-outright (B, A, E, F, L, Q, T, U, X all route to one shared stub) —
-Board/Enter/eXit-vehicle/Quit-and-save disabled underground all make
-immediate sense; Attack/Fire/Locate/Transact/**Unlock** being disabled
-too is unexpected (Unlock specifically is odd — Ultima dungeons are
-full of locked doors) and not yet explained, flagged as open. The
-remaining 7 letters (**K**, **D**, all 4 arrow keys, **S**) point at
-genuinely dungeon-specific handlers — almost certainly Klimb/Descend
-and first-person relative-turn movement (matching classic Ultima
-dungeon navigation, distinct from the overworld's compass-direction
-movement) — but their addresses suffer the same data-misdecoded-as-code
-problem `OVERWORLD_COMMAND_KEYS` had, from an overlapping reference
-via a still-unidentified parallel table (`off_1778C`). Needs a
-structural fix (same technique as `fix_command_key_tables.py`) before
-they can be safely read and named — see [roadmap.md](roadmap.md).
+Sound all work identically in both places) but disables **10** letters
+outright — Board/Enter/eXit-vehicle/Quit-and-save/**Steal** disabled
+underground all make immediate sense; Attack/Fire/Locate/Transact/
+Unlock being disabled too is still unexplained.
+
+**Correction, same session**: an initial dump of the table's addresses
+for K/D/the arrow keys/S was wrong — a bug in a disposable exploratory
+script (not one of the accumulating `apply_renames_*.py` files, so
+nothing wrong was ever actually applied to an IDB) read past the
+table's real 33-entry boundary into the adjacent `off_1778C` table,
+producing plausible-looking but incorrect addresses. Caught and fixed
+by re-deriving both tables' contents fresh with a careful,
+double-checked script before writing anything down as fact — the
+**real** 6 dungeon-specific handlers (K, D, and both arrow-turn/arrow-
+move pairs; S turned out to be disabled, joining the shared stub) are
+a beautifully clean, fully-confirmed classic first-person Ultima
+dungeon movement system: `cmdKlimb`/`cmdDescend` (ladder-up/-down tile
+checks, matching `docs/file-formats.md`'s dungeon tile encoding
+exactly and confirming a new `_dungeonLevel` counter), `cmdTurnLeft`/
+`cmdTurnRight` (rotate `_facingDirection` mod 4, no position change),
+and `cmdMoveForward`/`cmdMoveBackward` (step in the facing direction
+via a confirmed 4-entry `_dungeonFacingDeltaX`/`_dungeonFacingDeltaY`
+table — `[0,1,0,-1]`/`[-1,0,1,0]`, a standard clockwise N/E/S/W
+convention — blocked by a Wall tile, matching the file-formats.md
+tile encoding again). **Lesson**: an exploratory one-off dump script
+is not held to the same rigor as the accumulating rename scripts, but
+its *output* still needs the same skepticism before being written into
+documentation as fact — a second, careful pass caught this before it
+became a permanent wrong claim.
 
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly

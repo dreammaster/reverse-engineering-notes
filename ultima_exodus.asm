@@ -119,7 +119,7 @@ _partyPosition  dw 0                    ; DATA XREF: sub_17B54-5F5E↓r
                                         ; sub_17B54-5F4A↓r ...
 byte_115CE      db 0                    ; DATA XREF: entryFromBootup+88↓w
                                         ; sub_17B54-1E6A↓w ...
-byte_115CF      db 0                    ; DATA XREF: sub_17B54-5D9A↓w
+_dungeonLevel   db 0                    ; DATA XREF: sub_17B54-5D9A↓w
                                         ; sub_128F2+B↓r ...
 _negateTimeDuration db 0                ; DATA XREF: sub_17B54-5F1A↓w
                                         ; sub_17B54-5E30↓w ...
@@ -171,275 +171,135 @@ loc_11719:                              ; DATA XREF: seg000:77A0↓o
                 push    si
                 outsw
                 insb
-                jnz     short near ptr loc_1178A+1
+                jnz     short near ptr aReadyFor+9 ; " # "
                 and     gs:[bx+si], al
 
 loc_11721:                              ; DATA XREF: seg000:77A6↓o
                 pop     dx
-                jz      short loc_11785
-                jz      short near ptr loc_11798+1
+                jz      short near ptr aReadyFor+3 ; "dy for # "
+                jz      short near ptr aWearFor+0Ah ; " "
                 and     [bp+6Fh], ah
-                jb      short near ptr loc_11749+2
+                jb      short near ptr aHandEquipmentF+16h ; "layer: "
                 and     sp, [bx+si]
                 add     [di+6Eh], al
-                jz      short near ptr loc_11796+1
-                jb      short loc_11754
-
-loc_11734:                              ; DATA XREF: seg000:7792↓o
-                add     [bx+si+61h], cl
-                outsb
-                and     fs:[di+71h], al
-                jnz     short loc_117A7
-                jo      short near ptr loc_117AA+3
-                outs    dx, byte ptr gs:[si]
-                jz      short loc_11765
-                or      al, [bp+72h]
-                outsw
-                insw
-
-loc_11749:                              ; CODE XREF: sub_17B54-642B↑j
-                and     [bx+si+6Ch], dl
-                popa
-                jns     short near ptr loc_117B0+4
-                jb      short near ptr loc_1178A+1
-                and     [bx+si], al
-                dec     sp
-
-loc_11754:                              ; CODE XREF: sub_17B54-6422↑j
-                outsw
-                outsw
-                imul    bp, [di], 0
-                push    di
-                push    206Fh
-                ja      short near ptr loc_117C6+2
-                insb
-                insb
-                or      dl, [si+72h]
-                popa
-
-loc_11765:                              ; CODE XREF: sub_17B54-6412↑j
-                outsb
-                jnb     short near ptr loc_117C6+3
-                arpl    [si+3Fh], si
-                and     [bx+si], al
-                push    bp
-                outsb
-                insb
-                outsw
-                arpl    [bp+di+2Dh], bp
-                add     [bx+di+75h], dl
-                imul    si, [si+20h], 2026h
-                push    bx
-                popa
-                jbe     short near ptr loc_117E4+1
-                or      al, [bx+si]
-
-loc_11782:                              ; DATA XREF: seg000:779E↓o
-                push    dx
-                db      65h
-                popa
-
-loc_11785:                              ; CODE XREF: sub_17B54-6432↑j
-                db      64h
-                jns     short near ptr loc_117A7+1
-                outsd
-
-loc_1178A:                              ; CODE XREF: sub_17B54-6438↑j
-                                        ; sub_17B54-6405↑j
-                jb      short near ptr loc_117AA+2
-                and     sp, [bx+si]
-
-loc_1178E:                              ; DATA XREF: seg000:77A2↓o
-                add     [bx+65h], dl
-                popa
-                jb      short near ptr loc_117B0+4
-                outsd
-
-loc_11796:                              ; CODE XREF: sub_17B54-6424↑j
-                jb      short near ptr loc_117B6+2
-
-loc_11798:                              ; CODE XREF: sub_17B54-6430↑j
-                and     sp, [bx+si]
-
-loc_1179A:                              ; DATA XREF: seg000:778E↓o
-                add     [bp+di+61h], al
-                jnb     short loc_11813
-                and     [bp+si+79h], ah
-                and     [bx+68h], dh
-                outsw
-                insw
-
-loc_117A7:                              ; CODE XREF: sub_17B54-6418↑j
-                                        ; sub_17B54:loc_11785↑j
-                sub     ax, 4600h
-
-loc_117AA:                              ; CODE XREF: sub_17B54:loc_1178A↑j
-                                        ; sub_17B54-6416↑j
-                                        ; DATA XREF: ...
-                imul    si, [bp+si+65h], 4A00h
-                outsw
-
-loc_117B0:                              ; CODE XREF: sub_17B54-6407↑j
-                                        ; sub_17B54-63C2↑j
-                imul    bp, [bp+20h], 6F67h
-                insb
-
-loc_117B6:                              ; CODE XREF: sub_17B54:loc_11796↑j
-                and     fs:[si+6Fh], dh
-                cmp     al, [bx+si]
-                inc     sp
-                db      65h
-                jnb     short near ptr loc_11822+1
-                outs    dx, byte ptr gs:[si]
-                add     fs:[bp+di+6Ch], cl
-
-loc_117C6:                              ; CODE XREF: sub_17B54-63F7↑j
-                                        ; sub_17B54-63EE↑j
-                                        ; DATA XREF: ...
-                imul    bp, [di+62h], 4900h
-                outs    dx, byte ptr [esi]
-                imul    si, [si+65h], 6120h
-                and     [si+6Fh], dh
-                jb      short loc_1183A
-                push    0Ah
-
-loc_117DA:                              ; DATA XREF: seg000:779A↓o
-                dec     si
-                db      65h, 67h
-                popa
-                jz      short near ptr loc_11844+1
-                and     [si+69h], dl
-                insw
-
-loc_117E4:                              ; CODE XREF: sub_17B54-63D6↑j
-                and     gs:[bp+si], cx
-                push    di
-                push    736Fh
-                and     gs:[bx+si+6Fh], dl
-                ja      short loc_11855
-                aas
-                and     [bx+si], al
-                inc     cx
-                jz      short near ptr loc_1186A+1
-                popa
-                arpl    [bp+di+2Dh], bp
-
-loc_117FB:                              ; DATA XREF: seg000:7798↓o
-                add     [di+6Fh], cl
-                imul    sp, fs:[bp+79h], 6F20h
-                jb      short loc_1186A
-                db      65h
-                jb      short loc_1182A
-                or      dl, [bx+si+6Ch]
-                popa
-                jns     short loc_11874
-                jb      short loc_1184B
-                and     [bx+si], al
-
-loc_11813:                              ; CODE XREF: sub_17B54-63B7↑j
-                                        ; DATA XREF: seg000:7790↓o
-                inc     di
-                db      65h
-                jz      short near ptr loc_11835+2
-                inc     bx
-                push    7365h
-                jz      short loc_1183E
-                or      dl, [bx+si+6Ch]
-                jb      short loc_11842
-
-loc_11822:                              ; CODE XREF: sub_17B54-6397↑j
-                jz      short near ptr OVERWORLD_COMMAND_KEYS+0Ch
-                and     [bp+di+65h], dh
-                popa
-                jb      short near ptr OVERWORLD_COMMAND_KEYS+6
-
-loc_1182A:                              ; CODE XREF: sub_17B54-634E↑j
-                push    2Dh ; '-'
-                push    ax
-                db      65h, 65h
-                jb      short near ptr loc_11851+1
-                popa
-                jz      short loc_11855
-
-loc_11835:                              ; CODE XREF: sub_17B54-6340↑j
-                db      65h
-                ins     word ptr es:[edi], dx
-                and     [bp+si], cx
-
-loc_1183A:                              ; CODE XREF: sub_17B54-637F↑j
-                push    di
-                push    736Fh
-
-loc_1183E:                              ; CODE XREF: sub_17B54-6339↑j
-                and     gs:[bx+65h], ah
-
-loc_11842:                              ; CODE XREF: sub_17B54-6334↑j
-                insw
-                aas
-
-loc_11844:                              ; CODE XREF: sub_17B54-6376↑j
-                and     [bx+si], al
-                push    bx
-                jz      short near ptr OVERWORLD_COMMAND_KEYS+27h
-                popa
-                insb
-
-loc_1184B:                              ; CODE XREF: sub_17B54-6345↑j
-                and     [bp+di+68h], al
-                db      65h
-                jnb     short near ptr OVERWORLD_COMMAND_KEYS+3Eh
-
-loc_11851:                              ; CODE XREF: sub_17B54-6326↑j
-                and     [bp+si], cx
-                push    ax
-                insb
-
-loc_11855:                              ; CODE XREF: sub_17B54-6365↑j
-                                        ; sub_17B54-6321↑j
-                popa
-                jns     short near ptr OVERWORLD_COMMAND_KEYS+36h
-                jb      short near ptr OVERWORLD_COMMAND_KEYS+12h
-                and     [bx+si], al
-
-loc_1185C:                              ; DATA XREF: seg000:77A4↓o
-                pop     cx
-                db      65h
-                insb
-                insb
-                sub     al, 20h ; ' '
-                ja      short loc_118CC
-                outsw
-                insw
-                aas
-                and     [bx+si], al
-
-loc_11869:                              ; DATA XREF: seg000:779C↓o
-                dec     di
-
-loc_1186A:                              ; CODE XREF: sub_17B54-6350↑j
-                                        ; sub_17B54-635F↑j
-                jz      short loc_118D4
-                db      65h
-                jb      short near ptr OVERWORLD_COMMAND_KEYS+8
-                arpl    [bx+6Dh], bp
-                insw
-                popa
-
-loc_11874:                              ; CODE XREF: sub_17B54-6347↑j
-                outsb
-                and     fs:[bp+si], cx
-                push    di
-                push    736Fh
-                and     gs:[bx+di+63h], ah
-                jz      short near ptr loc_118E9+2
-                outsw
-                outsb
-                aas
-                and     [bx+si], al
+                jz      short near ptr aWearFor+8 ; " # "
+                jb      short near ptr aLook+1 ; "ook-"
 ; ---------------------------------------------------------------------------
+                db    0
+aHandEquipmentF db 'Hand Equipment!',0Ah ; DATA XREF: seg000:7792↓o
+                db 'From Player: ',0
+aLook           db 'Look-',0            ; CODE XREF: sub_17B54-6422↑j
+aWhoWillTransac db 'Who will',0Ah
+                db 'Transact? ',0
+aUnlock         db 'Unlock-',0
+aQuitSave       db 'Quit & Save',0Ah,0
+aReadyFor       db 'Ready for # ',0     ; CODE XREF: sub_17B54-6432↑j
+                                        ; sub_17B54-6438↑j
+                                        ; DATA XREF: ...
+aWearFor        db 'Wear for # ',0      ; CODE XREF: sub_17B54-6424↑j
+                                        ; sub_17B54-6430↑j
+                                        ; DATA XREF: ...
+aCastByWhom     db 'Cast by whom-',0    ; DATA XREF: seg000:778E↓o
+aFire           db 'Fire',0
+aJoinGoldTo     db 'Join gold to:',0    ; DATA XREF: seg000:7796↓o
+aDescend        db 'Descend',0
+aKlimb          db 'Klimb',0
+aIgniteATorch   db 'Ignite a torch',0Ah,0 ; DATA XREF: seg000:7794↓o
+aNegateTimeWhos db 'Negate Time!',0Ah   ; DATA XREF: seg000:779A↓o
+                db 'Whose Powd? ',0
+aAttack         db 'Attack-',0
+aModifyOrderPla db 'Modify order!',0Ah  ; DATA XREF: seg000:7798↓o
+                db 'Player: ',0
+aGetChestPlrToS db 'Get Chest!',0Ah     ; DATA XREF: seg000:7790↓o
+                db 'Plr to search-',0
+                db 50h, 2 dup(65h), 72h, 20h
+                db  61h ; a
+                db  74h ; t
+                db  20h
+                db  67h ; g
+                db  65h ; e
+                db  6Dh ; m
+                db  21h ; !
+                db  0Ah
+                db  57h ; W
+                db  68h ; h
+                db  6Fh ; o
+                db  73h ; s
+                db  65h ; e
+                db  20h
+                db  67h ; g
+                db  65h ; e
+                db  6Dh ; m
+                db  3Fh ; ?
+                db  20h
+                db    0
+                db  53h ; S
+                db  74h ; t
+                db  65h ; e
+                db  61h ; a
+                db  6Ch ; l
+                db  20h
+                db  43h ; C
+                db  68h ; h
+                db  65h ; e
+                db  73h ; s
+                db  74h ; t
+                db  21h ; !
+                db  0Ah
+                db  50h ; P
+                db  6Ch ; l
+                db  61h ; a
+                db  79h ; y
+                db  65h ; e
+                db  72h ; r
+                db  3Fh ; ?
+                db  20h
+                db    0
+unk_1185C       db  59h ; Y             ; DATA XREF: seg000:77A4↓o
+                db  65h ; e
+                db  6Ch ; l
+                db  6Ch ; l
+                db  2Ch ; ,
+                db  20h
+                db  77h ; w
+                db  68h ; h
+                db  6Fh ; o
+                db  6Dh ; m
+                db  3Fh ; ?
+                db  20h
+                db    0
+unk_11869       db  4Fh ; O             ; DATA XREF: seg000:779C↓o
+                db  74h ; t
+                db  68h ; h
+                db  65h ; e
+                db  72h ; r
+                db  20h
+                db  63h ; c
+                db  6Fh ; o
+                db  6Dh ; m
+                db  6Dh ; m
+                db  61h ; a
+                db  6Eh ; n
+                db  64h ; d
+                db  21h ; !
+                db  0Ah
+                db  57h ; W
+                db  68h ; h
+                db  6Fh ; o
+                db  73h ; s
+                db  65h ; e
+                db  20h
+                db  61h ; a
+                db  63h ; c
+                db  74h ; t
+                db  69h ; i
+                db  6Fh ; o
+                db  6Eh ; n
+                db  3Fh ; ?
+                db  20h
+                db    0
 OVERWORLD_COMMAND_KEYS dw 4800h, 1E41h, 5000h, 4D00h, 4B00h, 3920h, 3042h, 2D58h
-                                        ; CODE XREF: sub_17B54-632C↑j
-                                        ; sub_17B54-62E8↑j ...
+                                        ; DATA XREF: sub_17B54-5F9A↓o
                 dw 2F56h, 1F00h, 2C5Ah, 1245h, 264Ch, 324Dh, 2F00h, 254Bh
                 dw 2348h, 1454h, 1655h, 1749h, 1051h, 1352h, 1157h, 2E43h
                 dw 2146h, 244Ah, 2044h, 314Eh, 2247h, 1950h, 1F53h, 1559h
@@ -447,39 +307,45 @@ OVERWORLD_COMMAND_KEYS dw 4800h, 1E41h, 5000h, 4D00h, 4B00h, 3920h, 3042h, 2D58h
                 db  4Dh ; M
                 db  1Bh
                 db 0F4h
-; ---------------------------------------------------------------------------
-
-loc_118CC:                              ; CODE XREF: sub_17B54-62F2↑j
-                pop     ss
-                push    sp
-                sbb     bx, [bp+di+1Bh]
-                popa
-                sbb     ax, [bx]
-
-loc_118D4:                              ; CODE XREF: sub_17B54:loc_1186A↑j
-                pop     ss
-                or      ax, 1317h
-                pop     ss
-                sbb     [bx], dx
-                sbb     [bx], dx
-                and     [bx], dx
-                db      2Eh
-                pop     ss
-                push    bx
-                pop     ss
-                cld
-                pop     ss
-                sbb     [bx], dx
-                les     dx, [bx]
-
-loc_118E9:                              ; CODE XREF: sub_17B54-62D4↑j
-                xor     ax, 5917h
-                pop     ss
-                insw
-                pop     ss
-                retf    7517h
+                db  17h
+                db  54h ; T
+                db  1Bh
+                db  5Bh ; [
+                db  1Bh
+                db  61h ; a
+                db  1Bh
+                db    7
+                db  17h
+                db  0Dh
+                db  17h
+                db  13h
+                db  17h
+                db  19h
+                db  17h
+                db  19h
+                db  17h
+                db  21h ; !
+                db  17h
+                db  2Eh ; .
+                db  17h
+                db  53h ; S
+                db  17h
+                db 0FCh
+                db  17h
+                db  19h
+                db  17h
+                db 0C4h
+                db  17h
+                db  35h ; 5
+                db  17h
+                db  59h ; Y
+                db  17h
+                db  6Dh ; m
+                db  17h
+                db 0CAh
+                db  17h
+                db  75h ; u
 ; END OF FUNCTION CHUNK FOR sub_17B54
-; ---------------------------------------------------------------------------
                 db 17h, 82h, 17h, 8Fh, 17h, 9Bh, 17h, 0A9h, 17h, 0AEh
                 db 17h, 0BCh, 17h, 0DAh, 17h, 13h, 18h, 2Dh, 18h, 46h
                 db 18h, 5Ch, 18h, 69h, 18h
@@ -915,9 +781,9 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
                 lea     si, aDungeon    ; "Dungeon!\n"
                 call    printGameText
                 mov     dl, 1
-                mov     byte_115CF, 0
+                mov     _dungeonLevel, 0
                 mov     _partyPosition, 101h
-                mov     byte_158CC, 1
+                mov     _facingDirection, 1
                 jmp     short loc_11E0A
 ; ---------------------------------------------------------------------------
 
@@ -2555,7 +2421,7 @@ sub_128F2       proc near               ; CODE XREF: sub_12909+16↓p
                 shl     bh, 1
                 shl     bh, 1
                 add     bl, bh
-                mov     bh, byte_115CF
+                mov     bh, _dungeonLevel
                 lea     bx, [bx+900h]
                 mov     al, [bx]
                 popf
@@ -4767,7 +4633,7 @@ playToneF5      endp
 aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: sub_16366+28↓o
 byte_158CB      db 0                    ; DATA XREF: sub_15B28:loc_15B46↓r
                                         ; sub_16B91+10↓r ...
-byte_158CC      db 0                    ; DATA XREF: sub_17B54-5D8F↑w
+_facingDirection db 0                   ; DATA XREF: sub_17B54-5D8F↑w
                                         ; sub_162FD+25↓r ...
 byte_158CD      db 48h, 45h, 44h, 42h, 46h, 5 dup(75h), 99h, 75h, 50h
                                         ; DATA XREF: sub_16366+59↓o
@@ -5589,9 +5455,9 @@ loc_15FD1:                              ; CODE XREF: seg000:5FA4↑j
                 cmp     byte_114BC, 1
                 jnz     short loc_16009
                 call    sub_15E89
-                cmp     byte_115CF, 7
+                cmp     _dungeonLevel, 7
                 jnb     short loc_16009
-                inc     byte_115CF
+                inc     _dungeonLevel
                 call    sub_15F7B
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
@@ -5603,9 +5469,9 @@ loc_16009:                              ; CODE XREF: seg000:5FF3↑j
                 cmp     byte_114BC, 1
                 jnz     short loc_16027
                 call    sub_15E89
-                cmp     byte_115CF, 0
+                cmp     _dungeonLevel, 0
                 jz      short loc_1602A
-                dec     byte_115CF
+                dec     _dungeonLevel
                 call    sub_15F7B
 
 loc_16024:                              ; CODE XREF: seg000:602D↓j
@@ -5984,13 +5850,13 @@ sub_162FD       proc near               ; CODE XREF: sub_17B54+7CA↓p
                 mov     dx, 9
                 lea     si, aLvl0       ; "LVL:0"
                 call    printStringAt
-                mov     al, byte_115CF
+                mov     al, _dungeonLevel
                 add     al, 31h ; '1'
                 call    writeCharacter
                 mov     dx, 1707h
                 lea     si, aHead       ; "Head-"
                 call    printStringAt
-                mov     bl, byte_158CC
+                mov     bl, _facingDirection
                 mov     bh, 0
                 shl     bx, 1
                 mov     si, [bx+598Bh]
@@ -6180,7 +6046,7 @@ sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
                 call    loadFile
                 call    sub_12097
-                mov     byte_115CF, 0
+                mov     _dungeonLevel, 0
                 call    sub_16C53
                 pop     si
                 pop     dx
@@ -8830,7 +8696,18 @@ loc_176C9:                              ; CODE XREF: sub_17B54-4CC↑j
                 jmp     short loc_176C6
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
-                db 0Bh dup(0), 1, 0, 2 dup(0FFh), 0, 1, 0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+                db    0
+_dungeonFacingDeltaX db 0, 1, 0, 0FFh
+_dungeonFacingDeltaY db 0FFh, 0, 1, 0
 jpt_183F0       dw offset loc_1941E     ; DATA XREF: sub_17B54+89C↓r
                 dw offset loc_19457     ; jump table for switch statement
                 dw offset loc_19517
@@ -8861,36 +8738,36 @@ DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset loc_12068
                 dw offset cmdToggleSound
                 dw offset cmdToggleSound
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_18472
-                dw offset loc_183F7
-                dw offset loc_1841C
-                dw offset loc_18438
-                dw offset loc_18455
-                dw offset loc_18472
-                dw offset loc_1847D
-                dw offset loc_184A9
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdDisabledInDungeon
+                dw offset cmdKlimb
+                dw offset cmdDescend
+                dw offset cmdTurnRight
+                dw offset cmdTurnLeft
+                dw offset cmdDisabledInDungeon
+                dw offset cmdMoveForward
+                dw offset cmdMoveBackward
                 dw offset cmdPeer
 off_1778C       dw offset loc_177EA     ; DATA XREF: sub_17B54+82F↓o
-                dw offset loc_1179A+1
-                dw offset loc_11813
-                dw offset loc_11734+1
-                dw offset loc_117C6+4
-                dw offset loc_117AA+4
-                dw offset loc_117FB+1
-                dw offset loc_117DA
-                dw offset loc_11869
-                dw offset loc_11782
+                dw offset aCastByWhom   ; "Cast by whom-"
+                dw offset aGetChestPlrToS ; "Get Chest!\nPlr to search-"
+                dw offset aHandEquipmentF ; "Hand Equipment!\nFrom Player: "
+                dw offset aIgniteATorch ; "Ignite a torch\n"
+                dw offset aJoinGoldTo   ; "Join gold to:"
+                dw offset aModifyOrderPla ; "Modify order!\nPlayer: "
+                dw offset aNegateTimeWhos ; "Negate Time!\nWhose Powd? "
+                dw offset unk_11869
+                dw offset aReadyFor     ; "Ready for # "
                 dw offset loc_11719
-                dw offset loc_1178E+1
-                dw offset loc_1185C
+                dw offset aWearFor      ; "Wear for # "
+                dw offset unk_1185C
                 dw offset loc_11721
                 dw offset loc_11719
                 dw offset loc_11719
@@ -10512,7 +10389,7 @@ loc_182D1:                              ; CODE XREF: sub_182C6+43↓j
                 and     dl, 77h
                 mov     al, dl
                 call    sub_16BC9
-                mov     al, byte_115CF
+                mov     al, _dungeonLevel
                 inc     al
                 shl     al, 1
                 shl     al, 1
@@ -10538,7 +10415,7 @@ sub_182C6       endp
 
 initDungeonState:                       ; CODE XREF: sub_17B54-5D02↑j
                 mov     byte_115CE, 0
-                mov     byte_115CF, 0
+                mov     _dungeonLevel, 0
                 call    sub_162FD
                 call    sub_128C6
                 jmp     short dungeonMainLoop
@@ -10627,11 +10504,11 @@ loc_183A1:                              ; CODE XREF: sub_17B54+847↑j
                 cmp     al, 0
                 jnz     short loc_183DD
                 mov     dh, 82h
-                add     dh, byte_115CF
+                add     dh, _dungeonLevel
                 call    stepTimeSeededPrng
                 shl     dl, 1
                 jnb     short loc_183F4
-                mov     dh, byte_115CF
+                mov     dh, _dungeonLevel
                 add     dh, 2
                 call    stepTimeSeededPrng
                 cmp     dl, 7
@@ -10663,16 +10540,16 @@ loc_183F4:                              ; CODE XREF: sub_17B54+869↑j
                 jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
-loc_183F7:                              ; CODE XREF: sub_17B54+835↑j
+cmdKlimb:                               ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 25
                 mov     bx, _partyPosition
                 call    sub_128F2
                 and     al, 10h
                 jz      short loc_18413
-                cmp     byte_115CF, 0
+                cmp     _dungeonLevel, 0
                 jz      short loc_18416
-                dec     byte_115CF
+                dec     _dungeonLevel
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10685,7 +10562,7 @@ loc_18416:                              ; CODE XREF: sub_17B54+8B6↑j
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
-loc_1841C:                              ; CODE XREF: sub_17B54+835↑j
+cmdDescend:                             ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 26
                 mov     bx, _partyPosition
@@ -10694,7 +10571,7 @@ loc_1841C:                              ; CODE XREF: sub_17B54+835↑j
                 js      short loc_18435
                 and     al, 20h
                 jz      short loc_18435
-                inc     byte_115CF
+                inc     _dungeonLevel
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10703,15 +10580,15 @@ loc_18435:                              ; CODE XREF: sub_17B54+8D4↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_18438:                              ; CODE XREF: sub_17B54+835↑j
+cmdTurnRight:                           ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 27
                 mov     bx, _partyPosition
                 call    sub_128F2
                 cmp     al, 0A0h
                 jnb     short loc_18452
-                inc     byte_158CC
-                and     byte_158CC, 3
+                inc     _facingDirection
+                and     _facingDirection, 3
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10719,15 +10596,15 @@ loc_18452:                              ; CODE XREF: sub_17B54+8F0↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_18455:                              ; CODE XREF: sub_17B54+835↑j
+cmdTurnLeft:                            ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 28
                 mov     bx, _partyPosition
                 call    sub_128F2
                 cmp     al, 0A0h
                 jnb     short loc_1846F
-                dec     byte_158CC
-                and     byte_158CC, 3
+                dec     _facingDirection
+                and     _facingDirection, 3
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10735,7 +10612,7 @@ loc_1846F:                              ; CODE XREF: sub_17B54+90D↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_18472:                              ; CODE XREF: sub_17B54+835↑j
+cmdDisabledInDungeon:                   ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 cases 16-24,29
                 mov     al, 0FFh
@@ -10743,10 +10620,10 @@ loc_18472:                              ; CODE XREF: sub_17B54+835↑j
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
-loc_1847D:                              ; CODE XREF: sub_17B54+835↑j
+cmdMoveForward:                         ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 30
-                mov     bl, byte_158CC
+                mov     bl, _facingDirection
                 mov     bh, 0
                 mov     dx, _partyPosition
                 add     dl, [bx+76F0h]
@@ -10764,10 +10641,10 @@ loc_184A6:                              ; CODE XREF: sub_17B54+949↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_184A9:                              ; CODE XREF: sub_17B54+835↑j
+cmdMoveBackward:                        ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 31
-                mov     bl, byte_158CC
+                mov     bl, _facingDirection
                 add     bl, 2
                 and     bl, 3
                 mov     bh, 0
@@ -12835,7 +12712,7 @@ loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
                 mov     byte ptr [bx], 0
                 lea     si, byte_18625+14h
                 call    printGameText
-                mov     bl, byte_115CF
+                mov     bl, _dungeonLevel
                 mov     bh, 0
                 shl     bx, 1
                 mov     si, [bx+1100h]
@@ -12855,8 +12732,8 @@ sub_19630       proc near               ; CODE XREF: sub_17B54+850↑p
                 call    sub_128C6
                 cmp     byte_115CE, 0
                 jz      short loc_1964B
-                mov     al, byte_158CC
-                mov     ah, byte_115CF
+                mov     al, _facingDirection
+                mov     ah, _dungeonLevel
                 mov     bx, _partyPosition
                 call    near ptr start
 

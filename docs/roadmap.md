@@ -245,28 +245,43 @@ Next-session priorities, roughly in order:
       message tying directly to `cmdIgniteTorch`'s own flag
       (`byte_115CE`) — not just structural similarity to the overworld
       loop. See overview.md for the full writeup.
-- [ ] **`DUNGEON_COMMAND_TABLE`'s 7 dungeon-specific handlers** (K, D,
-      the 4 arrow keys, S — almost certainly Klimb/Descend and
-      first-person relative-turn dungeon movement) suffer the same
-      data-misdecoded-as-code problem `OVERWORLD_COMMAND_KEYS` had.
-      Needs a structural fix (extend `fix_command_key_tables.py`, or a
-      new script following the same pattern: `del_items` + redefine as
-      code/data as appropriate) before they can be read safely — the
-      addresses cluster around `0x1173x`-`0x1182x`. The overlapping
-      reference causing the confusion comes from `off_1778C`, a
-      parallel per-command table (likely message pointers, one per
-      command) referenced alongside `DUNGEON_COMMAND_TABLE` at its
-      dispatch site — identifying `off_1778C` first might clarify the
-      boundary automatically.
+- [x] **`DUNGEON_COMMAND_TABLE`'s 6 dungeon-specific handlers** — done,
+      2026-09-14. An earlier note here (same session) had the wrong
+      addresses for these, from a disposable exploratory script's bug
+      reading past the table's real boundary — corrected before
+      anything wrong was applied to the IDB; see overview.md's
+      correction writeup. The real handlers form a complete, clean
+      first-person dungeon movement system: `cmdKlimb`/`cmdDescend`
+      (confirms a new `_dungeonLevel` field), `cmdTurnLeft`/
+      `cmdTurnRight` (rotate `_facingDirection`), `cmdMoveForward`/
+      `cmdMoveBackward` (via a confirmed `_dungeonFacingDeltaX`/`Y`
+      table). 'S' (Steal) turned out to be disabled in dungeons too,
+      not a 7th unique handler as first miscounted.
+- [ ] `off_1778C` (the parallel table that caused the earlier
+      confusion) still isn't itself identified — it's a genuine
+      33+-entry table, not code, addressed the same way as
+      `DUNGEON_COMMAND_TABLE`/`DUNGEON_COMMAND_KEYS` at the dispatch
+      site. A quick read (its entries are all inside a contiguous
+      string-literal block around `0x11730`-`0x11870`+, containing at
+      least "Hand Equipment!", "Look-", "Unlock-", "Quit & Save",
+      "Ready for #", "Wear for #", "Cast by whom-", "Descend",
+      "Klimb", "Ignite a torch", "Negate Time!", "Attack-", "Modify
+      order!", "Get Chest!") strongly suggests it's a per-command
+      PROMPT STRING table (one string per dungeon command, parallel to
+      `DUNGEON_COMMAND_TABLE`) — worth confirming and naming next, and
+      likely a fast way to independently double-check several of this
+      session's command identifications (e.g. "Modify order!" for
+      `cmdExchange`'s dungeon-context prompt, if the indices line up).
 - [ ] **Why is Unlock ('U') disabled in dungeons?** `DUNGEON_COMMAND_TABLE`
-      routes 9 letters (B, A, E, F, L, Q, T, U, X) to one shared
-      disabled-command stub — most make obvious sense (no vehicles/
-      locations-within-locations/surface-only-save underground), but
-      Unlock being disabled specifically is surprising given Ultima
-      dungeons are full of locked doors. Not explained this pass —
-      worth checking whether locked-door interaction in dungeons
-      happens automatically on movement instead of via a dedicated
-      command, or whether this finding needs re-verification.
+      routes 10 letters (B, A, E, F, L, Q, T, U, X, S — `cmdDisabledInDungeon`)
+      to one shared disabled-command stub — most make obvious sense (no
+      vehicles/locations-within-locations/surface-only-save/nothing to
+      steal underground), but Unlock being disabled specifically is
+      surprising given Ultima dungeons are full of locked doors. Not
+      explained this pass — worth checking whether locked-door
+      interaction in dungeons happens automatically on movement
+      instead of via a dedicated command, or whether this finding
+      needs re-verification.
 - [ ] Confirm whether `_locationTypeTable` (`byte_1259D`) is really a
       scalar or (more likely, given it's indexed alongside the
       19-entry `LOCATION_TILE_TABLE`) a 19-byte parallel array —
