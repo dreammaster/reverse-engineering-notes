@@ -754,7 +754,7 @@ cmdEnter:                               ; CODE XREF: sub_17B54-5F83↑j
                 call    getMapTileAt
                 cmp     al, 0F8h
                 jnz     short loc_11D8B
-                call    sub_16366
+                call    enterShrine
                 jmp     loc_11E37
 ; ---------------------------------------------------------------------------
 
@@ -3591,7 +3591,7 @@ getMenuChoice   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-promptForNumberEntry proc near          ; CODE XREF: sub_16366+7A↓p
+promptForNumberEntry proc near          ; CODE XREF: enterShrine+7A↓p
                                         ; sub_17B54+D9↓p ...
                 pushf
                 push    bx
@@ -4629,13 +4629,13 @@ playToneF5      endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
-aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: sub_16366+28↓o
+aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: enterShrine+28↓o
 byte_158CB      db 0                    ; DATA XREF: sub_15B28:loc_15B46↓r
                                         ; sub_16B91+10↓r ...
 _facingDirection db 0                   ; DATA XREF: sub_17B54-5D8F↑w
-                                        ; sub_162FD+25↓r ...
+                                        ; drawDungeonStatusBar+25↓r ...
 byte_158CD      db 48h, 45h, 44h, 42h, 46h, 5 dup(75h), 99h, 75h, 50h
-                                        ; DATA XREF: sub_16366+59↓o
+                                        ; DATA XREF: enterShrine+59↓o
                 db 99h, 75h, 50h, 2 dup(75h), 50h, 75h, 99h, 25h, 2 dup(99h)
                 db 75h
 aDirect_0       db 0Ah                  ; DATA XREF: sub_17B54:loc_15BDC↓o
@@ -4655,13 +4655,41 @@ WIZARD_SPELL_TABLE db 9Fh, 5Fh, 0D4h, 5Fh, 0E3h, 5Fh, 0EEh, 5Fh, 0Ch, 60h
                 db 2Fh, 60h, 34h, 60h, 6Ah, 60h, 8Ah, 60h, 95h, 60h, 0A5h
                 db 60h, 0BAh, 60h, 0BFh, 60h, 0CAh, 60h, 0FAh, 60h, 3Eh
                 db 61h
-CLERIC_SPELL_TABLE db 53h, 61h, 88h, 61h, 0DCh, 61h, 0E3h, 5Fh, 0Ch, 60h
-                                        ; DATA XREF: castSpell+B↓o
+CLERIC_SPELL_TABLE db  53h ; S          ; DATA XREF: castSpell+B↓o
                                         ; castSpell+5F↓o ...
-                db 0EEh, 5Fh, 0F6h, 61h, 9, 62h, 3Ch, 62h, 8Ah, 60h, 4Fh
-                db 62h, 69h, 62h, 0BAh, 60h, 88h, 62h, 3Eh, 61h, 0C4h
-                db 62h, 58h, 5Ah, 66h, 5Ah, 5Fh, 5Ah, 6Dh, 5Ah, 0A1h, 5Ah
-                db 0B0h, 5Ah, 0BFh, 5Ah, 93h, 5Ah
+                db  61h ; a
+                db  88h
+                db  61h ; a
+                db 0DCh
+                db  61h ; a
+                db 0E3h
+                db  5Fh ; _
+                db  0Ch
+                db  60h ; `
+                db 0EEh
+                db  5Fh ; _
+                db 0F6h
+                db  61h ; a
+                db    9
+                db  62h ; b
+                db  3Ch ; <
+                db  62h ; b
+                db  8Ah
+                db  60h ; `
+                db  4Fh ; O
+                db  62h ; b
+                db  69h ; i
+                db  62h ; b
+                db 0BAh
+                db  60h ; `
+                db  88h
+                db  62h ; b
+                db  3Eh ; >
+                db  61h ; a
+                db 0C4h
+                db  62h ; b
+FACING_DIRECTION_NAME_TABLE db 58h, 5Ah, 66h, 5Ah, 5Fh, 5Ah, 6Dh, 5Ah
+SHRINE_ATTRIBUTE_NAME_TABLE db 0A1h, 5Ah, 0B0h, 5Ah, 0BFh, 5Ah, 93h, 5Ah
 aNotAMage       db 'Not a mage!',0Ah,0  ; DATA XREF: castSpell+37↓o
 aSpellTypeWC    db 'Spell type W/C-',0  ; DATA XREF: castSpell:loc_15DC9↓o
 aClericSpell    db 'Cleric spell-',0    ; DATA XREF: castSpell+F↓o
@@ -4678,12 +4706,12 @@ aRecallWhom_0   db 'Recall whom? ',0    ; DATA XREF: seg000:62CD↓o
 aExitToSosariaP db 'Exit to Sosaria!',0Ah ; DATA XREF: sub_16458+10↓o
                 db 'Please wait...',0Ah,0
 aDirect_2       db 'Direct? ',0         ; DATA XREF: seg000:5F36↓o
-aLvl0           db 'LVL:0',0            ; DATA XREF: sub_162FD+C↓o
-aHead           db 'Head-',0            ; DATA XREF: sub_162FD+1E↓o
+aLvl0           db 'LVL:0',0            ; DATA XREF: drawDungeonStatusBar+C↓o
+aHead           db 'Head-',0            ; DATA XREF: drawDungeonStatusBar+1E↓o
                 db 4Eh, 6Fh, 72h, 74h, 68h, 11h, 0, 53h, 6Fh, 75h, 74h
                 db 68h, 11h, 0, 2Dh, 45h, 61h, 73h, 74h, 11h, 0, 2Dh, 57h
                 db 65h, 73h, 74h, 11h, 0
-aWelcomeToTheSh db 0Ah                  ; DATA XREF: sub_16366+38↓o
+aWelcomeToTheSh db 0Ah                  ; DATA XREF: enterShrine+38↓o
                 db ' Welcome to the',0Ah
                 db '   Shrine of',0Ah,0
 aWisdom         db '     Wisdom',0Ah
@@ -4694,15 +4722,15 @@ aDexterity      db '   Dexterity',0Ah
                 db 0Ah,0
 aIntelligence   db '  Intelligence',0Ah
                 db 0Ah,0
-aOffering100    db 'Offering*100-',0    ; DATA XREF: sub_16366+73↓o
-aThenBeOff      db 0Ah                  ; DATA XREF: sub_16366:loc_16441↓o
+aOffering100    db 'Offering*100-',0    ; DATA XREF: enterShrine+73↓o
+aThenBeOff      db 0Ah                  ; DATA XREF: enterShrine:loc_16441↓o
                 db 'Then be off!',0Ah,0
-aYouCanTCheatTh db 0Ah                  ; DATA XREF: sub_16366:loc_16433↓o
+aYouCanTCheatTh db 0Ah                  ; DATA XREF: enterShrine:loc_16433↓o
                 db 'You can',27h,'t cheat',0Ah
                 db 'the Gods!',0Ah,0
-aShazam         db 0Ah                  ; DATA XREF: sub_16366+A2↓o
+aShazam         db 0Ah                  ; DATA XREF: enterShrine+A2↓o
                 db 'Shazam!',0Ah,0
-aShrineWhoEnter db 'shrine!',0Ah        ; DATA XREF: sub_16366+5↓o
+aShrineWhoEnter db 'shrine!',0Ah        ; DATA XREF: enterShrine+5↓o
                 db 'Who enters? ',0
 
 ; =============== S U B R O U T I N E =======================================
@@ -5890,7 +5918,7 @@ loc_162FA:                              ; CODE XREF: seg000:62CB↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_162FD       proc near               ; CODE XREF: sub_17B54+7CA↓p
+drawDungeonStatusBar proc near          ; CODE XREF: sub_17B54+7CA↓p
                                         ; sub_17B54:loc_183A1↓p
                 pushf
                 push    ax
@@ -5919,7 +5947,7 @@ sub_162FD       proc near               ; CODE XREF: sub_17B54+7CA↓p
                 pop     ax
                 popf
                 retn
-sub_162FD       endp
+drawDungeonStatusBar endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5952,7 +5980,7 @@ sub_1633B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16366       proc near               ; CODE XREF: sub_17B54-5DCF↑p
+enterShrine     proc near               ; CODE XREF: sub_17B54-5DCF↑p
                 pushf
                 push    ax
                 push    bx
@@ -5965,7 +5993,7 @@ sub_16366       proc near               ; CODE XREF: sub_17B54-5DCF↑p
                 jmp     loc_16428
 ; ---------------------------------------------------------------------------
 
-loc_1637A:                              ; CODE XREF: sub_16366+F↑j
+loc_1637A:                              ; CODE XREF: enterShrine+F↑j
                 dec     al
                 mov     bp, ax
                 call    isCharacterAlive
@@ -5973,7 +6001,7 @@ loc_1637A:                              ; CODE XREF: sub_16366+F↑j
                 jmp     loc_1644A
 ; ---------------------------------------------------------------------------
 
-loc_16386:                              ; CODE XREF: sub_16366+1B↑j
+loc_16386:                              ; CODE XREF: enterShrine+1B↑j
                 push    bx
                 lea     bx, entryFromBootup
                 mov     cx, 79h ; 'y'
@@ -6024,10 +6052,10 @@ loc_16386:                              ; CODE XREF: sub_16366+1B↑j
                 cmp     al, cl
                 jbe     short loc_16405
 
-loc_16403:                              ; CODE XREF: sub_16366+97↑j
+loc_16403:                              ; CODE XREF: enterShrine+97↑j
                 mov     al, cl
 
-loc_16405:                              ; CODE XREF: sub_16366+9B↑j
+loc_16405:                              ; CODE XREF: enterShrine+9B↑j
                 mov     [bx+di+12h], al
                 lea     si, aShazam     ; "\nShazam!\n"
                 call    printGameText
@@ -6042,8 +6070,8 @@ loc_16405:                              ; CODE XREF: sub_16366+9B↑j
                 mov     ax, bp
                 call    sub_17176
 
-loc_16428:                              ; CODE XREF: sub_16366+11↑j
-                                        ; sub_16366+D9↓j ...
+loc_16428:                              ; CODE XREF: enterShrine+11↑j
+                                        ; enterShrine+D9↓j ...
                 mov     byte_114BC, 0FFh
                 pop     dx
                 pop     cx
@@ -6053,7 +6081,7 @@ loc_16428:                              ; CODE XREF: sub_16366+11↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16433:                              ; CODE XREF: sub_16366+84↑j
+loc_16433:                              ; CODE XREF: enterShrine+84↑j
                 lea     si, aYouCanTCheatTh ; "\nYou can't cheat\nthe Gods!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -6061,19 +6089,19 @@ loc_16433:                              ; CODE XREF: sub_16366+84↑j
                 jmp     short loc_16428
 ; ---------------------------------------------------------------------------
 
-loc_16441:                              ; CODE XREF: sub_16366+7F↑j
+loc_16441:                              ; CODE XREF: enterShrine+7F↑j
                 lea     si, aThenBeOff  ; "\nThen be off!\n"
                 call    printGameText
                 jmp     short loc_16428
 ; ---------------------------------------------------------------------------
 
-loc_1644A:                              ; CODE XREF: sub_16366+1D↑j
+loc_1644A:                              ; CODE XREF: enterShrine+1D↑j
                 lea     si, aIncapacitated ; "Incapacitated!\n"
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_16428
-sub_16366       endp
+enterShrine     endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9133,7 +9161,7 @@ aInvalidMove    db 'Invalid Move!',0Ah,0 ; CODE XREF: sub_17B54-23F↑j
 aNotHere        db 'Not Here!',0Ah,0    ; DATA XREF: seg000:loc_161CE↑o
                                         ; sub_17B54:loc_17DDE↓o
 aIncapacitated  db 'Incapacitated!',0Ah,0
-                                        ; DATA XREF: sub_16366:loc_1644A↑o
+                                        ; DATA XREF: enterShrine:loc_1644A↑o
                                         ; sub_17B54:loc_17DF0↓o
 aNoMoreRoom     db 'No more room!',0Ah,0 ; CODE XREF: sub_17B54-202↑j
                                         ; DATA XREF: sub_17B54:loc_15CB5↑o ...
@@ -10467,7 +10495,7 @@ sub_182C6       endp
 initDungeonState:                       ; CODE XREF: sub_17B54-5D02↑j
                 mov     byte_115CE, 0
                 mov     _dungeonLevel, 0
-                call    sub_162FD
+                call    drawDungeonStatusBar
                 call    sub_128C6
                 jmp     short dungeonMainLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
@@ -10548,7 +10576,7 @@ loc_1838D:                              ; CODE XREF: sub_17B54-5F6E↑j
                 dec     byte_115CE
 
 loc_183A1:                              ; CODE XREF: sub_17B54+847↑j
-                call    sub_162FD
+                call    drawDungeonStatusBar
                 call    sub_19630
                 mov     bx, _partyPosition
                 call    sub_128F2

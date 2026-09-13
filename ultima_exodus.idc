@@ -1348,9 +1348,13 @@ static Bytes_0(void) {
 	create_byte	(0X1594B);
 	make_array	(0X1594B,	0X20);
 	set_name	(0X1594B,	"WIZARD_SPELL_TABLE");
-	create_byte	(0X1596B);
-	make_array	(0X1596B,	0X30);
 	set_name	(0X1596B,	"CLERIC_SPELL_TABLE");
+	create_byte	(0X1598B);
+	make_array	(0X1598B,	0X8);
+	set_name	(0X1598B,	"FACING_DIRECTION_NAME_TABLE");
+	create_byte	(0X15993);
+	make_array	(0X15993,	0X8);
+	set_name	(0X15993,	"SHRINE_ATTRIBUTE_NAME_TABLE");
 	create_strlit	(0X1599B,	0XD);
 	set_name	(0X1599B,	"aNotAMage");
 	create_strlit	(0X159A8,	0X10);
@@ -1652,6 +1656,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X162FA);
 	create_insn	(0X162FD);
+	set_name	(0X162FD,	"drawDungeonStatusBar");
 	create_insn	(x=0X16309);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1666,6 +1671,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16360);
 	op_hex		(x,	1);
 	create_insn	(0X16366);
+	set_name	(0X16366,	"enterShrine");
 	create_insn	(x=0X1636B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

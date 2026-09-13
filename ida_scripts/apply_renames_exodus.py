@@ -1129,6 +1129,49 @@ RENAMES = [
      "table-by-table). BCD experience award per kill, values decode "
      "as valid BCD (1-20 XP) for every entry -- dumped via "
      "dump_monster_tables.py."),
+
+    # --- Shrines / dungeon status bar, 2026-09-14 --------------------
+    (0x1598B, "FACING_DIRECTION_NAME_TABLE",
+     "4-entry near-pointer table ('North', '-East', 'South', '-West' "
+     "-- confirmed via dump_small_tables.py), indexed by "
+     "`_facingDirection` (0-3) in sub_162FD/drawDungeonStatusBar's "
+     "`mov si,[bx+598Bh]` -- the dungeon HUD's 'Head-' heading "
+     "display. Sits immediately after CLERIC_SPELL_TABLE's real "
+     "16-entry end (0x1598B); an earlier, WRONG version of "
+     "dump_spell_tables.py mistakenly attributed this and the next "
+     "table to CLERIC_SPELL_TABLE by walking byte ranges instead of "
+     "trusting the letter-range bounds check -- see docs/overview.md."),
+    (0x15993, "SHRINE_ATTRIBUTE_NAME_TABLE",
+     "4-entry near-pointer table (aStrength/aDexterity/aIntelligence/"
+     "aWisdom, confirmed via dump_small_tables.py), indexed by "
+     "`_partyPosition & 3` in enterShrine (below) to print which "
+     "shrine the party is visiting -- Ultima III's 4 shrines "
+     "correspond 1:1 to the 4 primary attributes."),
+
+    (0x162FD, "drawDungeonStatusBar",
+     "Called from within sub_17B54 (twice). Prints 'LVL:'+"
+     "`_dungeonLevel`+1 and 'Head-'+FACING_DIRECTION_NAME_TABLE"
+     "[`_facingDirection`] -- the dungeon HUD line."),
+
+    (0x16366, "enterShrine",
+     "Called from within sub_17B54 (cmdEnter's shrine branch, per "
+     "docs/overview.md's location-type notes). Prompts 'shrine!\\n"
+     "Who enters? ' (player select + alive check), loads SHRINE.IMG, "
+     "sets `byte_114BC` (game mode) to 4, and prints the shrine's name "
+     "via SHRINE_ATTRIBUTE_NAME_TABLE[`_partyPosition & 3`]. Then "
+     "prompts 'Offering*100-' (a gold amount via promptForNumberEntry), "
+     "rejects an offering above a shrine-specific max ('You can't "
+     "cheat the Gods!'), BCD-subtracts the gold cost from "
+     "RosterEntry+0x24 (`_gold`), and BCD-adds a computed amount to "
+     "one of the character's 4 primary attributes (+0x12-+0x15) "
+     "before printing 'Shazam!'. CONFIRMED at this level of detail "
+     "only -- the exact formula selecting WHICH attribute is raised "
+     "(the code looks up the character's race, `[bx+16h]`, against a "
+     "5-entry table `byte_158CD` to compute an index `di`, combined "
+     "with the shrine index from SHRINE_ATTRIBUTE_NAME_TABLE's lookup "
+     "in a way not fully disentangled) and the per-shrine maximum "
+     "offering table (`[bx+di+58D2h]`) are NOT independently verified "
+     "-- flagged rather than guessed at further."),
 ]
 
 
