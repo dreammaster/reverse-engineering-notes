@@ -482,6 +482,67 @@ include several genuinely massive ones (`sub_17B54` spans thousands of
 bytes by itself) — full identification is a multi-session effort, not
 a single pass. See [roadmap.md](roadmap.md) for the prioritized plan.
 
+### Session 2026-09-13 (continued): combat, spellcasting, and the overworld main loop
+
+A single extended pass (65/144 named by the end) found and traced four
+major subsystems end to end:
+
+**The combat encounter system, in full.** `beginCombatEncounter`
+(triggered when `updateMonsterAI` moves a monster onto
+`_partyPosition`) selects and loads one of all 9 `CNFLCT_*.ULT` arena
+files via a decision tree on monster type, places party and monsters
+in the confirmed 11×11 arena, and hands off to `combatTurnLoop` —
+per-player turns dispatched through a genuine 33-entry
+`COMBAT_COMMAND_TABLE` (`readCombatCommandKey`), with 8 commands
+identified: Pass, 4 movement/flee directions, Ready a weapon, Ztats,
+Negate Time, Cast Spell, Attack (the large damage-resolution case), and
+an invalid-command catch-all.
+
+**Spellcasting, in full.** `castSpell` gates spell access by character
+class (Druid/Ranger choose Wizard-or-Cleric; Cleric/Paladin/Illusionist
+locked to Cleric; Wizard/Lark/Alchemist locked to Wizard; everyone else
+"Not a mage!"), charges a BCD magic-point cost against a newly-found
+`RosterEntry` field (`_magicPoints`, offset `0x19` — filled a real gap
+in the struct, confirmed here and back-filled into `ultima_bootup.idb`
+too, since IDA structs are per-database), and dispatches to one of two
+per-type spell-effect jump tables (`WIZARD_SPELL_TABLE`/
+`CLERIC_SPELL_TABLE`, individual spells not yet traced).
+
+**`printGameText`, the game's real text-output workhorse** — word-wrap
+and window-scroll logic distinct from the lower-level `writeString`,
+called from nearly every subsystem. Also found and named 3 BCD
+stat-arithmetic helpers (`healHitPoints`, `addExperienceClamped`,
+`addGoldClamped`) that independently confirm `_maxHitPoints`/
+`_experience`/`_gold`'s struct offsets via real arithmetic rather than
+just display code, and a per-turn party-upkeep function
+(`processPartyTurnEffects`: class-gated magic-point regeneration, plus
+poison/hunger effects not fully traced).
+
+**The overworld main game loop, found and largely mapped.**
+`mainGameLoop` is confirmed as the top-level "wait for a command,
+dispatch it" loop, driving a genuine 33-entry
+`OVERWORLD_COMMAND_TABLE`/`OVERWORLD_COMMAND_KEYS` pair (the key table
+was originally misdecoded by IDA as garbage x86 instructions — it's
+word-sized scancode:char entries, not bytes, fixed via
+`fix_command_key_tables.py`). 8 of the 33 slots are confirmed by
+key/letter:
+
+| Key | Handler | Role |
+|---|---|---|
+| Up/Down/Right/Left | `cmdMoveNorth` + 3 unconfirmed | movement (only North fully traced; South/East/West are `loc_11C9E`/`loc_11CBF`/`loc_11CE0`, same shape, not yet renamed) |
+| Space | `cmdPass` | end turn, no other effect |
+| B | `cmdBoard` | board a vehicle (confirmed via the "Mount Horse!"/"Board Frigate!" strings) |
+| X | `cmdExitVehicle` | dismount/disembark — confirms `_currentTransport` (formerly `byte_114BA`) and its `0x3F`=on-foot convention, matching the external PARTY.ULT "Transport" field exactly |
+| E | `cmdEnter` | enter a location — shrine entry confirmed (calls the already-known shrine function); dungeon/town/castle entry presumably shares this command, not traced past the shrine branch |
+| V (+2 alt bindings) | `cmdToggleSound` | mute toggle, shared with an unidentified menu screen's jump table |
+
+The other 25 command letters (A, C, D, F, G, H, I, J, K, L, M, N, O, P,
+Q, R, S, T, U, W, Y, Z) still point at unnamed `loc_XXXXX` handlers —
+a concrete, bounded checklist for continuing (see
+[roadmap.md](roadmap.md)), much more tractable than reading
+`sub_17B54` linearly since each handler's address and trigger key are
+now known.
+
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly
 `sub_123A5`) is **not** the combat command dispatcher the string scan

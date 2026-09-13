@@ -197,31 +197,83 @@ Next-session priorities, roughly in order:
       a tile *value*, not a pointer, from a packed coordinate — exact
       bit-level derivation not fully worked out) and `canMoveToTile`
       (movement-legality check, exact tile-code meanings unconfirmed).
-- [ ] **The real combat command dispatcher, around absolute address
-      `0x18D0B`** — this is now the actual next target for combat
-      (strings: Attack/Get/Ready/Cast Spell/Negate Time/Ztats/Pass).
-      Since it showed up as a "function chunk" of `updateMonsterAI`
-      rather than its own function, it may need its own
-      `ida_funcs.add_func()` boundary fix before it can be named
-      properly — check whether IDA already treats it as addressable at
-      that chunk's own start address, or whether it needs splitting out
-      from `updateMonsterAI` first.
-- [ ] **`sub_17B54`, the overworld command dispatcher** — the single
-      highest-value target for everything else (movement, town/dungeon
-      entry, NPC interaction, traps, the "Cmd: " prompt). Given its
-      size, don't try to read it start to finish in one pass: first
-      locate its internal command jump table (same pattern as
-      ultima2's `command_jump_table`) to split it into per-command
-      chunks, then work through those systematically. Cross-reference
-      LairWare's `UltimaMain.c` main loop and `ULTIMA3.TXT`'s command
-      list for the expected command set before assuming Ultima I/II's
-      exact letter mappings transfer unchanged.
+- [x] **Combat command dispatcher** — done. Was reachable as a
+      function chunk of `updateMonsterAI`, which turned out to be
+      correct/intentional (not a merge bug — see overview.md). Full
+      33-entry `COMBAT_COMMAND_TABLE` identified with 8 commands named:
+      `combatCmdPass`/`combatCmdReady`/`combatCmdZtats`/
+      `combatCmdNegateTime`/`combatCmdCastSpell`/`combatCmdAttack`/
+      `combatHandleMovement`/`combatCmdInvalid`.
+- [x] **`castSpell`** — done, class-gating and MP-cost/dispatch
+      mechanism fully traced. `WIZARD_SPELL_TABLE`/`CLERIC_SPELL_TABLE`
+      entries (the individual spell effects) are the natural
+      continuation — see below.
+- [x] **The overworld main game loop and its 33-entry command table**
+      — found (`mainGameLoop`, `OVERWORLD_COMMAND_TABLE`/
+      `OVERWORLD_COMMAND_KEYS`). 8 of 33 commands confirmed (see
+      overview.md's table). **25 remain, each a small, self-contained,
+      well-bounded target** — far more tractable now than reading
+      `sub_17B54` linearly, since every handler's address and trigger
+      key are already known:
+
+      | Key | Handler address | Key | Handler address |
+      |---|---|---|---|
+      | A | `loc_1888B` | N | `loc_15CF8` |
+      | C | `loc_11C9E`\* | O | `loc_174D5` |
+      | D | `loc_15CC3` | P | `loc_11EFD` |
+      | Down arrow | `loc_11C9E` | Q | `loc_11F25` |
+      | F | `loc_15BCF` | Right arrow | `loc_11CBF` |
+      | G | `loc_18190` | S | `loc_11F53` |
+      | H | `loc_11E55` | T | `loc_17FC6` |
+      | I | `loc_15CC9` | U | `loc_11FD6` |
+      | J | `loc_15C73` | W | `loc_17EE4` |
+      | K | `loc_15CC3`\* | Left arrow | `loc_11CE0` |
+      | L | `loc_11E7A` | Y | `loc_17458` |
+      | M | `loc_11E9B` | Z | `loc_12068` |
+      | R | `loc_17E33` | | |
+
+      \* D and K share `loc_15CC3` per the raw table dump — double-check
+      this isn't a transcription slip before relying on it (verify with
+      `ida_bytes.get_word()` against `OVERWORLD_COMMAND_TABLE` directly
+      rather than trusting this table by eye). South/East/West movement
+      (`loc_11C9E`/`loc_11CBF`/`loc_11CE0`) should be quick, high-
+      confidence renames (`cmdMoveSouth`/`cmdMoveEast`/`cmdMoveWest`)
+      given `cmdMoveNorth`'s already-confirmed shape.
+- [ ] Individual spell effects in `WIZARD_SPELL_TABLE`/
+      `CLERIC_SPELL_TABLE` — now that `castSpell`'s dispatch mechanism
+      is understood, each entry is a small, self-contained function.
+      Cross-reference `ULTIMA3.TXT`'s spell list and LairWare's
+      `UltimaSpellCombat.c` for expected spell names/effects.
+- [ ] `combatCmdAttack`'s damage-resolution helpers (`sub_18E46`,
+      `sub_18E7A`) — the actual to-hit/damage formula, not yet traced
+      past "the overall shape."
+- [ ] Resolve the **Level vs. Experience offset conflict**: `drawPartyStatusBar`
+      (`ultima_exodus.idb`) reads `+0x1Fh` alone as a "Level" byte
+      (BCD-displayed as value+1, clamped to 99), but
+      `ultima_bootup.idb`'s `showCharacterDetails` reads `+0x1Eh` as a
+      **2-byte word** for "Experience:" — these can't both be literally
+      true of the same on-disk record. Leading hypothesis, not yet
+      confirmed: the in-memory "live" combat/play copy of a character
+      record (the `[bx*40h+14CCh]`-style arrays) may cache a derived
+      Level byte at an offset the true ROSTER.ULT save-file format
+      doesn't have, overwriting what would otherwise be Experience's
+      high byte, with Level recomputed from Experience (and not
+      persisted) each time a fresh copy is loaded from the roster.
+      Confirm by finding wherever a live combat record gets populated
+      from a raw ROSTER.ULT/PARTY.ULT record (candidate:
+      `beginCombatEncounter`'s per-slot copy loop) and checking whether
+      `+0x1Fh` gets an explicit derived write there, distinct from
+      whatever raw byte the roster file itself holds at that offset.
 - [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
-      `sub_1232F`, compares against `word_115CC`) and `sub_1232F`
+      `sub_1232F`, compares against `_partyPosition`) and `sub_1232F`
       itself (the special-case handler for monster types `'t'`/`'<'`
-      in `updateMonsterAI`) and `sub_17F96`/`sub_128F2` (helpers
-      `canMoveToTile`/a `sub_12909`-family function call into) — all
-      found in passing this pass but not chased down.
+      in `updateMonsterAI`), `sub_17F96`/`sub_128F2` (helpers
+      `canMoveToTile` calls into), `sub_17233`/`sub_17254`
+      (movement-blocked checks `cmdMoveNorth` calls), `sub_16366`
+      (confirmed as shrine entry via its own strings, not yet renamed),
+      and `sub_15B28` (low confidence, checks `_gameMode`/`byte_158CB`/
+      `word_114C2` vs `byte_116E3` — read once, purpose not pinned
+      down) — all found in passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
