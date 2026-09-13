@@ -4722,6 +4722,23 @@ disassembly work.
   have no equivalent story -- they're referenced only from the script
   COMPILER (`CSPARSER.CPP`), never the shipped engine, in either era.
   See `reversing/notes/struct-layout-drift.md`.
+- **Fresh AGS-side subsystem: the `.tra` translation-file format, plus
+  a genuine self-caught retraction along the way.** A prior round's
+  own dismissal of a call site as "coincidental MSVC/wxWidgets FLIRT
+  scaffolding, not a real object" turns out to be wrong -- reading the
+  callee directly (found via `init_translation`'s own `new TreeMap()`
+  call) shows a real, zero-drift `TreeMap::TreeMap()` constructor
+  zeroing all 4 fields exactly as source declares. Renamed
+  `??0wxRect@@QAE@XZ_0` -> `TreeMap__TreeMap`; second instance of the
+  `fix__sqrt` lesson that a plausible-sounding dismissal still needs
+  the body actually read. Separately, `init_translation`'s own `.tra`
+  file format traced in full: block types 1 (text pairs) and 2 (the
+  already-known game-compatibility check) match source with zero
+  drift; block type 3 (2011's per-translation font/right-to-left-text
+  override) is CONFIRMED ABSENT -- dated via `ags-archives/` to AGS
+  2.56, the SAME release this session's own `INSTF_RUNNING` survey
+  already dated a different feature to. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

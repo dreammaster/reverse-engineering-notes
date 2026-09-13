@@ -15859,3 +15859,72 @@ era's shipped ENGINE binary would ever check -- grepping the full
 referenced ONLY from `Common/CSPARSER.CPP`, the script COMPILER, which
 was never part of the shipped game engine in either era. Not a finding
 so much as a confirmation that nothing was missed.
+
+### Fresh AGS-side subsystem: the `.tra` translation-file format, and a genuine self-caught retraction along the way
+
+Picked a genuinely untouched subsystem for a from-scratch survey:
+`init_translation`'s own `.tra` translation-file loader (already
+matched, but its full body -- the file-format details themselves, not
+just the string-match evidence that named it -- had never been traced
+start to finish). While reading it, a real correction fell out first.
+
+**Retraction: a prior round's own dismissal of a "coincidental FLIRT
+hit" was wrong.** `TreeMap::addText`'s own entry had described a
+`??0wxRect@@QAE@XZ_0`/`operator new` pair sitting right before its
+recursive self-calls as "the SAME kind of coincidental MSVC/wxWidgets
+SEH-scaffolding FLIRT signature match already flagged and correctly
+ignored elsewhere... this is new's own allocation-failure exception
+path, not a real wxRect object" -- a plausible-sounding explanation
+that was never actually checked against the callee's own body. Reading
+it directly (found via `init_translation`'s own `transtree = new
+TreeMap()` call, the same function) shows a plain, complete, zero-drift
+match to `TreeMap::TreeMap()` (`Engine/AC.CPP:1844-1849`): unconditionally
+zeroing all 4 pointer-sized fields (`left`/`right`/`text`/`translation`)
+in exactly source's declared order. This is a REAL constructor, not
+exception-handling scaffolding, called 3 times total across the
+binary -- once from `init_translation` (the root node) and twice more
+from `TreeMap::addText` itself, matching source's own `left=new
+TreeMap();`/`right=new TreeMap();` child-node-creation lines exactly.
+Renamed `??0wxRect@@QAE@XZ_0` -> `TreeMap__TreeMap`, and it supplies a
+SECOND independent confirmation of `sizeof(TreeMap)==0x10` (the first
+being `addText`'s own `operator new(0x10)` call). The trailing `_0` in
+its FLIRT-assigned name means IDA's own signature database collided
+this address against a genuinely unrelated `wxRect::wxRect()`
+byte-pattern elsewhere -- a coincidental NAME match, but (unlike the
+truly-inert `wxRichToolTip`-style scaffolding already documented
+elsewhere in this project) a real, correctly-identifiable function
+underneath it. Process lesson, a second instance of the one already
+recorded for `fix__sqrt`: a prior round's own dismissal of a call site
+as "surely just scaffolding" is a claim, not evidence -- it still needs
+the callee's body actually read before being trusted, even when a
+plausible generic reason is available to explain it away without
+looking.
+
+**The `.tra` file format itself closes with only one small gap.**
+`init_translation` (already thinly matched via 7 string hits) turns
+out to match `AC.CPP:1932-2036` almost line for line once fully traced:
+open `<lang>.tra`/`default.tra` via `clibfopen`, check a 15-byte
+`"AGSTranslation"` signature (silently bail if it doesn't match --
+not an error, just "no translation available"), allocate the
+`TreeMap` root, then loop reading a block-type `getw()` (with a
+`blockSize` `getw()` read right after and immediately discarded --
+matching source's own `/* int blockSize = */ getw(...)` dead-read,
+kept only to be able to skip the block header if needed) until EOF.
+Block type 1 (paired original/translation strings, added via `addText`
+until an empty pair) and block type 2 (the already-established
+`uniqueid`/`gamename` compatibility check, quitting with "!The
+translation file you have selected is not compatible with this game"
+on a mismatch) both match with zero drift. **CONFIRMED ABSENT**: block
+type 3 -- 2011's own "game settings" block (a per-translation normal-
+font override, speech-font override, and right-to-left text-direction
+flag) -- this build's dispatch only recognizes 1 and 2, falling
+through to the SAME "Unknown block type in translation file." quit()
+for a 3 that 2011 would handle gracefully. CORROBORATED via
+`ags-archives/`: *"Added preliminary support for right-to-left text
+writing"* first appears in `ags256/docs/CHANGES.TXT` -- the SAME
+version this session's own `SCMD_JMP`/`INSTF_RUNNING` survey already
+dated the "hung script detection" feature to, both safely after this
+build's own pinned 2.4b/July-2002. A satisfying double-corroboration:
+two entirely unrelated features (loop-hang detection, RTL text) landed
+in the very same AGS release, and this project's own two independent
+disassembly findings both point at exactly that release.

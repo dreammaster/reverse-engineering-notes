@@ -36654,7 +36654,7 @@ static Bytes_6(void) {
 	op_stkvar	(x,	1);
 	make_array	(0X424DDE,	0X2);
 	create_insn	(0X424DE0);
-	set_name	(0X424DE0,	"??0wxRect@@QAE@XZ_0");
+	set_name	(0X424DE0,	"TreeMap__TreeMap");
 	create_insn	(x=0X424DE4);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X424DE7);
@@ -158540,7 +158540,8 @@ static Functions_8(void) {
 	set_frame_size(0X424D80, 0X4, 4, 0);
 	add_func    (0X424DE0,0X424E15);
 	set_func_flags(0X424DE0,0x15410);
-	SetType(0X424DE0, "wxRect *__thiscall wxRect__wxRect(wxRect *this);");
+	SetType(0X424DE0, "wxRect *__thiscall TreeMap__TreeMap(wxRect *this);");
+	set_func_cmt(0X424DE0,	"[reversing] confirmed match\nsource: Engine/AC.CPP\nconfidence: high\nevidence: TreeMap::TreeMap() at AC.CPP:1844-1849: 'left=NULL; right=NULL; text=NULL; translation=NULL;'. RETRACTION of a dismissive claim in TreeMap__addText's own entry (this project's own earlier round called this exact call site 'the SAME kind of coincidental MSVC/wxWidgets SEH-scaffolding FLIRT signature match already flagged and correctly ignored elsewhere... this is new's own allocation-failure exception path, not a real wxRect object' -- WITHOUT actually reading this callee's own body first). Found while surveying init_translation (already matched) for a fresh AGS-side subsystem write-up: its own 'transtree = new TreeMap()' startup allocation calls this exact function immediately after `operator new(0x10)` -- and its body is a plain, complete, zero-drift match to TreeMap's real constructor, unconditionally zeroing all 4 pointer-sized fields (left@+0x00, right@+0x04, text@+0x08, translation@+0x0C -- all four already independently confir" "med via TreeMap::findValue/addText's own entries) in exactly that or", 1);
 	set_frame_size(0X424DE0, 0X4, 4, 0);
 	add_func    (0X424E20,0X424FF6);
 	set_func_flags(0X424E20,0x5010);
@@ -158825,6 +158826,10 @@ static Functions_8(void) {
 	set_func_flags(0X427B50,0x5410);
 	set_func_cmt(0X427B50,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: NewControl::drawandmouse() (acdialog.h:237-242) -- calls the object's own vtable slot 0 (draw()) unconditionally (not gated on needredraw, matching source's own unconditional call, distinct from the separate drawifneeded() method which DOES gate on it). REAL DRIFT, CONFIRMED: this build's domouse(2)/domouse(1) calls bracketing the draw() call are LIVE, where source has BOTH commented out entirely (\"//domouse(2); draw(); //domouse(1);\") -- the same confirmed drift pattern already found at CSCICreateControl/CSCIDrawWindow/MyListBox::pressedon. Called from MyListBox::processmessage's own CTB_KEYPRESS branch (this round's own new match).", 1);
 	set_frame_size(0X427B50, 0X4, 4, 0);
+}
+
+static Functions_9(void) {
+
 	add_func    (0X427B80,0X427BC9);
 	set_func_flags(0X427B80,0x5410);
 	set_func_cmt(0X427B80,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::clearlist() (acdialog.h:344-350) -- an exact, zero-drift match: a loop freeing itemnames[kk]@+0x34 for kk from 0 to items@+0x24, then items=0. Called from MyListBox::processmessage's own CLB_CLEAR branch (this round's own new match) and presumably from ~MyListBox() (the destructor, not independently located this round).", 1);
@@ -158835,10 +158840,6 @@ static Functions_8(void) {
 	set_func_cmt(0X427BD0,	"[reversing] confirmed match\nsource: Engine/acdialog.h\nconfidence: high\nevidence: MyListBox::additem(char*) (acdialog.h:425-433) -- an exact match, and a THIRD independent confirmation of this build's own MyListBox capacity: the overflow check is a literal \"cmp [this+0x24],14h\" (items>=0x14=20), not source's items>=MAXLISTITEM(300) -- directly confirming, via a bounds-check literal rather than arithmetic, the 20-entry capacity already inferred twice before (CSCICreateControl's own operator-new(0x84) allocation-size arithmetic, and this same literal's own consistency with that arithmetic). The quit() call's literal string, \"!CSCIUSER16: Too many items added to listbox\", matches source's own error string exactly (source's identical wording, just gated on a 15x larger threshold). Otherwise an exact match: malloc(strlen(texx)+1), strcpy(itemnames[items],texx), items++, needredraw@+0x22=1.", 1);
 	set_frame_size(0X427BD0, 0X4, 4, 0X4);
 	define_local_var(0X427BD0, 0X427C48, "[bp+0X8]", "Str");
-}
-
-static Functions_9(void) {
-
 	add_func    (0X427C50,0X427CAB);
 	set_func_flags(0X427C50,0x5410);
 	SetType(0X427C50, "int __stdcall MyLabel__MyLabel(int, int, int, char *Source);");
@@ -159368,6 +159369,10 @@ static Functions_9(void) {
 	set_func_flags(0X4310DD,0x5410);
 	set_func_cmt(0X4310DD,	"[reversing] confirmed match\nsource: Common/lzw.cpp\nconfidence: medium-high\nevidence: void _delete(int z) (lzw.cpp:87-...) -- lzwcompress's own binary-tree node-removal helper, genuinely AGS-owned code (Common/lzw.cpp). Identified at the signature/call-order level: exactly 1 parameter, matching `_delete(int z)`'s single-argument shape; called from the newly-matched lzwcompress (sub_4312CE) at both of its own two call sites in the exact order source's `if(i>=N-F) _delete(i+F-N); else _delete(i+F);` predicts; and its own opening dereference (`dword_53585C[z*4+4]`) targets the same working-buffer region lzwcompress's own header already established (the malloc'd combined lzbuffer+node/dad/lson/rson arrays). Not traced instruction-by-instruction -- this is a well-known, unremarkable LZSS binary-tree removal algorithm whose exact internal mechanics have zero bearing on a ScummVM port (which would replace the whole compression scheme wholesale), matching this project's own treatment of lzwcompress itself.", 1);
 	set_frame_size(0X4310DD, 0X8, 4, 0);
+}
+
+static Functions_10(void) {
+
 	add_func    (0X4312CE,0X43160D);
 	set_func_flags(0X4312CE,0x5410);
 	SetType(0X4312CE, "int __cdecl lzwcompress(FILE *File, FILE *Stream);");
@@ -159377,10 +159382,6 @@ static Functions_9(void) {
 	define_local_var(0X4312CE, 0X43160D, "[bp-0X4]", "ElementSize");
 	define_local_var(0X4312CE, 0X43160D, "[bp+0X8]", "File");
 	define_local_var(0X4312CE, 0X43160D, "[bp+0XC]", "Stream");
-}
-
-static Functions_10(void) {
-
 	add_func    (0X43160D,0X43167B);
 	set_func_flags(0X43160D,0x5410);
 	SetType(0X43160D, "int __cdecl myputc(int Character, FILE *Stream);");
@@ -159946,6 +159947,10 @@ static Functions_10(void) {
 	add_func    (0X43B800,0X43B818);
 	set_func_flags(0X43B800,0x5400);
 	set_frame_size(0X43B800, 0, 0, 0);
+}
+
+static Functions_11(void) {
+
 	add_func    (0X43B820,0X43B838);
 	set_func_flags(0X43B820,0x5400);
 	set_frame_size(0X43B820, 0, 0, 0);
@@ -159962,10 +159967,6 @@ static Functions_10(void) {
 	set_func_cmt(0X43B890,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2-agspatch/win/wwnd.c\nconfidence: high\nevidence: int init_directx_window(void) at wwnd.c:501. Exact match: sequential RegisterWindowMessageA calls for \"Allegro call proc\", \"Allegro keyboard acquire proc\", \"Allegro keyboard unacquire proc\", \"Allegro mouse acquire proc\", \"Allegro mouse unacquire proc\", \"Allegro mouse cursor proc\", \"Allegro window suicide\" (matches source's msg_call_proc/msg_suicide registration plus several sibling RegisterWindowMessage calls not captured by the original 2-string lead), followed by a check against dword_5376A0 (user_wnd) that, when set, calls SetWindowLongA(hWnd, -4/GWL_WNDPROC, sub_43B9B0) -- exact match for source's \"if (user_wnd) { ... user_wnd_proc = SetWindowLong(user_wnd, GWL_WNDPROC, (long)directx_wnd_proc); ... }\". New match as a side effect: sub_43B9B0 (the installed proc) is directx_wnd_proc (see separate matches.json entry). CODE XREF: sub_455490+139 (caller not yet identified -- likely the DirectX graphi" "cs-mode setup routine, a lead for a future round).", 1);
 	set_frame_size(0X43B890, 0XC, 0, 0);
 	define_local_var(0X43B890, 0X43B9B0, "[bp-0X8]", "Handles");
-}
-
-static Functions_11(void) {
-
 	add_func    (0X43B9B0,0X43BE30);
 	set_func_flags(0X43B9B0,0x5400);
 	SetType(0X43B9B0, "int __stdcall directx_wnd_proc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);");
@@ -161029,6 +161030,10 @@ static Functions_11(void) {
 	set_func_flags(0X4527D0,0x5400);
 	set_func_cmt(0X4527D0,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: Allegro's public ugetat(AL_CONST char *s,int pos) -- `s += uoffset(s,pos); return ugetc(s);`. Found as get_extension's own backward-scan call. Exact match: calls uoffset (sub_452770, confirmed below) to get the byte offset for character index `pos`, adds it to `s`, then dispatches through a global function pointer (off_4BDF5C, this build's current-encoding plain 'get char at pointer, no advance' slot -- the sibling of ustrlen/ustrsize's off_4BDF64 advance-and-return variant) to read the character there. THIRD-PARTY LIBRARY BOUNDARY, its own encoding-dispatch table not chased further.", 1);
 	set_frame_size(0X4527D0, 0X4, 0, 0);
+}
+
+static Functions_12(void) {
+
 	add_func    (0X4527F0,0X452852);
 	set_func_flags(0X4527F0,0x5400);
 	set_frame_size(0X4527F0, 0XC, 0, 0);
@@ -161062,10 +161067,6 @@ static Functions_11(void) {
 	set_func_flags(0X453C60,0x5400);
 	set_func_cmt(0X453C60,	"[reversing] confirmed match\nsource: Engine/libsrc/allegro-4.2.2/src/unicode.c\nconfidence: high\nevidence: Allegro's public ustrsize(AL_CONST char*) -- the BYTE-length counterpart to ustrlen's CHARACTER-length. Found as get_extension's own final-return-path call. Body confirms the distinction directly: walks the string via the SAME off_4BDF64 advance-and-return function pointer ustrlen (sub_453DA0) uses, but returns the raw pointer DISTANCE traveled (bytes) rather than the iteration count (characters) -- exactly the ustrlen/ustrsize split Allegro's own Unicode API documents. THIRD-PARTY LIBRARY BOUNDARY, not chased further.", 1);
 	set_frame_size(0X453C60, 0X8, 0, 0);
-}
-
-static Functions_12(void) {
-
 	add_func    (0X453C90,0X453CAF);
 	set_func_flags(0X453C90,0x5400);
 	set_frame_size(0X453C90, 0X4, 0, 0);
@@ -162731,6 +162732,10 @@ static Functions_12(void) {
 	add_func    (0X47A180,0X47A200);
 	set_func_flags(0X47A180,0x5400);
 	set_frame_size(0X47A180, 0, 0, 0);
+}
+
+static Functions_13(void) {
+
 	add_func    (0X47A200,0X47A257);
 	set_func_flags(0X47A200,0x5400);
 	set_frame_size(0X47A200, 0, 0, 0);
@@ -162789,10 +162794,6 @@ static Functions_12(void) {
 	set_func_flags(0X47AD30,0x5400);
 	set_func_cmt(0X47AD30,	"[reversing] confirmed match\nconfidence: high\nevidence: JGMOD library, format-4 check in the sub_477320 (load_mod, already matched) cascade -- opens the file \"rb\", seeks to offset 0x438(1080), reads 4 bytes, and loops comparing against a table of classic ProTracker-family MOD magic tags starting with the matched string \"M.K.\" (aMK), stepping 6 bytes per table entry -- the standard MOD file format magic signature at its standard file offset, checked against multiple known tag variants (M.K./M!K!/FLT4/etc., a well-known JGMOD/MOD-loader convention). Not renamed since no JGMOD source tree exists in this repo to verify an exact function name against. See reversing/notes/third-party-library-identification.md.", 1);
 	set_frame_size(0X47AD30, 0X4, 0, 0);
-}
-
-static Functions_13(void) {
-
 	add_func    (0X47ADB0,0X47B2A7);
 	set_func_flags(0X47ADB0,0x5400);
 	set_frame_size(0X47ADB0, 0X1C, 0, 0);
@@ -165013,6 +165014,10 @@ static Functions_13(void) {
 	add_func    (0X4A60E0,0X4A6125);
 	set_func_flags(0X4A60E0,0x5400);
 	set_frame_size(0X4A60E0, 0X10, 0, 0);
+}
+
+static Functions_14(void) {
+
 	add_func    (0X4A6130,0X4A6160);
 	set_func_flags(0X4A6130,0x5400);
 	set_frame_size(0X4A6130, 0X8, 0, 0);
@@ -165107,10 +165112,6 @@ static Functions_13(void) {
 	add_func    (0X4A9200,0X4A92EB);
 	set_func_flags(0X4A9200,0x5400);
 	set_frame_size(0X4A9200, 0X2C, 0, 0);
-}
-
-static Functions_14(void) {
-
 	add_func    (0X4A92F0,0X4A9396);
 	set_func_flags(0X4A92F0,0x5400);
 	set_frame_size(0X4A92F0, 0X10, 0, 0);
