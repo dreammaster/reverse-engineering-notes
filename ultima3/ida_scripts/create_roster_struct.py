@@ -77,6 +77,19 @@ MEMBERS = [
     (0x1E, "_experience", 2, 1, "showCharacterDetails (printHexWord/BCD); addExperienceClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999)."),
     (0x21, "_food", 2, 1, "showCharacterDetails (printHexWord/BCD), set to 150 (BCD) at creation."),
     (0x23, "_gold", 2, 1, "showCharacterDetails (printHexWord/BCD); addGoldClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999)."),
+    (0x25, "_gems", 1, 1,
+     "confirmed via ultima_exodus.idb's cmdPeer ('P'), which spends 1 "
+     "gem (BCD-borrow-checked decrement, 'None Left!' on underflow) to "
+     "peer at a dungeon layout or overworld view."),
+    (0x26, "_keys", 1, 1,
+     "confirmed via ultima_exodus.idb's cmdUnlock ('U'), which spends "
+     "1 key (BCD-borrow-checked decrement) to unlock a door (tile "
+     "0xB8) after prompting 'Whose key? '."),
+    (0x27, "_powder", 1, 1,
+     "confirmed via ultima_exodus.idb's combatCmdNegateTime, which "
+     "spends 1 Powder (BCD-borrow-checked decrement) to set "
+     "_negateTimeDuration=0x0A. Matches docs/file-formats.md's "
+     "externally-sourced 'Powders' field label."),
     (0x28, "_armourIndex", 1, 1, "currently-equipped armour type index, showCharacterDetails."),
     (0x29, "_armourOwned", 1, 7, "7-entry owned-quantity array (Cloth/Leather/Chain/Plate/+2 Chain/+2 Plate/Exotic per external doc) -- only [0] confirmed written (=1 at creation); the array bounds are from file-formats.md, not independently re-derived here."),
     (0x30, "_weaponIndex", 1, 1, "currently-equipped weapon type index, showCharacterDetails."),

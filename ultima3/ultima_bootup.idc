@@ -110,6 +110,9 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_gems",	0X25,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_keys",	0X26,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_powder",	0X27,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_armourIndex",	0X28,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_armourOwned",	0X29,	0x00000400,	-1,	7);
 	mid = add_struc_member(id,"_weaponIndex",	0X30,	0x00000400,	-1,	1);

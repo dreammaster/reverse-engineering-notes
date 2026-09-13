@@ -547,6 +547,49 @@ RENAMES = [
      "the overworld _partyPosition, saved by cmdEnter right before "
      "entering a dungeon/town/castle so it can be restored on exit."),
 
+    (0x11E9B, "cmdExchange",
+     "'M' (index 13): prompts 2 player selections (sub_16C76 x2) then "
+     "swaps their entire 0x40-byte combat records byte-for-byte, "
+     "prints 'Exchanged!' -- swap two party members' marching order/"
+     "positions."),
+
+    (0x11EFD, "cmdPeer",
+     "'P' (index 29): decrements the selected character's _gems "
+     "(RosterEntry +0x25, confirmed via this BCD-borrow-checked "
+     "decrement -- 'None Left!' on underflow) then, in a dungeon "
+     "(gameMode==1), calls sub_12909 (the nibble-coded-border map "
+     "renderer read early this session, previously unidentified) -- "
+     "'Peer' at the dungeon layout using a gem, classic Ultima "
+     "mechanic. On the overworld/towns, calls sub_1259E instead (not "
+     "yet identified, presumably an equivalent overworld peer view)."),
+
+    (0x11F25, "cmdQuit",
+     "'Q' (index 20): restricted to gameMode==0 (overworld surface --"
+     "'Only on surface!' otherwise) -- saves _partyPosition, calls "
+     "sub_1A46F and sub_1207D ('Please wait...') -- 'Quit & Save', "
+     "matching the classic Ultima restriction that saving only works "
+     "on the surface."),
+
+    (0x11F53, "cmdSteal",
+     "'S' (index 30): prompts a player and a direction, ~25% chance "
+     "of success (stepTimeSeededPrng &3==0, else 'Failed!' and a "
+     "guard-alert side effect setting an 0xC0 flag on 'H'-type map "
+     "slots -- same alert-guards-on-failed-crime pattern as ultima2's "
+     "alert_town_guards), checks the target tile is in a specific "
+     "range (0x94-0xE4) then a look-two-tiles-further check for a "
+     "'$'(0x24) marker, clears it and calls sub_180D9 (loot-message "
+     "printer, confirmed via its own 'and'/'and a ' string fragments) "
+     "-- classic Ultima 'Steal' from an NPC/shop."),
+
+    (0x11FD6, "cmdUnlock",
+     "'U' (index 18): prompts a direction, checks the target tile is "
+     "0xB8 ('locked door'), prompts 'Whose key? ' (player select), "
+     "decrements that character's _keys (RosterEntry +0x26, confirmed "
+     "via this BCD-borrow-checked decrement), and rewrites the tile "
+     "via _locationTypeTable-derived value -- 'Unlock' a door with a "
+     "key, confirming the _keys offset independently of external "
+     "documentation."),
+
     (0x11D4E, "cmdCastSpell",
      "'C' (index 23): the OVERWORLD cast-spell command (distinct from "
      "combatCmdCastSpell) -- prompts for which party member casts "

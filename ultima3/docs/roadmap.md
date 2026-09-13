@@ -210,26 +210,24 @@ Next-session priorities, roughly in order:
       continuation — see below.
 - [x] **The overworld main game loop and its 33-entry command table**
       — found (`mainGameLoop`, `OVERWORLD_COMMAND_TABLE`/
-      `OVERWORLD_COMMAND_KEYS`). 11 of 33 commands confirmed so far
+      `OVERWORLD_COMMAND_KEYS`). 16 of 33 commands confirmed so far
       (movement x4, Pass, Board, Exit vehicle, Toggle sound, Enter
-      (dungeon/town/castle/shrine), Cast Spell — see overview.md).
-      **22 remain, each a small, self-contained, well-bounded target**
-      — far more tractable now than reading `sub_17B54` linearly, since
-      every handler's address and trigger key are already known:
+      (dungeon/town/castle/shrine), Cast Spell, Exchange, Peer, Quit,
+      Steal, Unlock — see overview.md). **17 remain**, each a small,
+      self-contained, well-bounded target — far more tractable now
+      than reading `sub_17B54` linearly, since every handler's address
+      and trigger key are already known:
 
       | Key | Handler address | Key | Handler address |
       |---|---|---|---|
       | A | `loc_1888B` | N | `loc_15CF8` |
       | D | `loc_15CC3`\* | O | `loc_174D5` |
-      | F | `loc_15BCF` | P | `loc_11EFD` |
-      | G | `loc_18190` | Q | `loc_11F25` |
-      | H | `loc_11E55` | R | `loc_17E33` |
-      | I | `loc_15CC9` | S | `loc_11F53` |
-      | J | `loc_15C73` | T | `loc_17FC6` |
-      | K | `loc_15CC3`\* | U | `loc_11FD6` |
-      | L | `loc_11E7A` | W | `loc_17EE4` |
-      | M | `loc_11E9B` | Y | `loc_17458` |
-      | | | Z | `loc_12068` |
+      | F | `loc_15BCF` | R | `loc_17E33` |
+      | G | `loc_18190` | T | `loc_17FC6` |
+      | H | `loc_11E55` (partially read, see below) | W | `loc_17EE4` |
+      | I | `loc_15CC9` | Y | `loc_17458` |
+      | J | `loc_15C73` | Z | `loc_12068` |
+      | K | `loc_15CC3`\* | L | `loc_11E7A` |
 
       \* D and K genuinely share `loc_15CC3` — confirmed directly via
       `ida_bytes.get_word()` against `OVERWORLD_COMMAND_TABLE`, not a

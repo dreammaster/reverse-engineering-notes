@@ -110,6 +110,9 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_gems",	0X25,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_keys",	0X26,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_powder",	0X27,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_armourIndex",	0X28,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_armourOwned",	0X29,	0x00000400,	-1,	7);
 	mid = add_struc_member(id,"_weaponIndex",	0X30,	0x00000400,	-1,	1);
@@ -437,6 +440,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X11E9B,	"jumptable 00011BD1 case 13\njumptable 00018389 case 6",	1);
 	create_insn	(0X11E9B);
+	set_name	(0X11E9B,	"cmdExchange");
 	create_insn	(x=0X11EA9);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -448,10 +452,12 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X11EFD,	"jumptable 00011BD1 case 29\njumptable 00018389 case 32",	1);
 	create_insn	(0X11EFD);
+	set_name	(0X11EFD,	"cmdPeer");
 	create_insn	(0X11F1C);
 	create_insn	(0X11F22);
 	set_cmt	(0X11F25,	"jumptable 00011BD1 case 20",	1);
 	create_insn	(0X11F25);
+	set_name	(0X11F25,	"cmdQuit");
 	create_insn	(x=0X11F38);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -460,6 +466,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X11F53,	"jumptable 00011BD1 case 30",	1);
 	create_insn	(0X11F53);
+	set_name	(0X11F53,	"cmdSteal");
 	create_insn	(x=0X11F62);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -478,6 +485,7 @@ static Bytes_0(void) {
 	create_insn	(0X11FD3);
 	set_cmt	(0X11FD6,	"jumptable 00011BD1 case 18",	1);
 	create_insn	(0X11FD6);
+	set_name	(0X11FD6,	"cmdUnlock");
 	create_insn	(x=0X11FDE);
 	op_hex		(x,	1);
 	create_insn	(x=0X11FEA);
