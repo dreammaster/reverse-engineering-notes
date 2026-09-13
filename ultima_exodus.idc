@@ -2052,9 +2052,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X17229);
 	op_hex		(x,	1);
 	create_insn	(0X17233);
+	set_name	(0X17233,	"isShipMovementBlockedByWind");
 	create_insn	(0X1724C);
 	create_insn	(0X17252);
 	create_insn	(0X17254);
+	set_name	(0X17254,	"checkTerrainMovementBlocked");
 	create_insn	(0X17269);
 	create_insn	(0X172A5);
 	create_insn	(0X172B2);

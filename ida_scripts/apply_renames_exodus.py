@@ -1263,6 +1263,36 @@ RENAMES = [
      "overworld map itself hasn't changed). Confirms Ultima III "
      "permanently persists character death immediately, not just at "
      "an explicit Quit & Save."),
+
+    # --- Movement-blocked checks, 2026-09-14 -------------------------
+    (0x17233, "isShipMovementBlockedByWind",
+     "Called from cmdMoveNorth-family movement handlers with al=the "
+     "attempted movement direction. Only relevant when "
+     "`_currentTransport == 0x0Bh` (ship) -- always passable (al=0) "
+     "otherwise. Compares al against `word_12A92`'s LOW byte, which "
+     "`updateWindDisplay` confirms is the current wind direction "
+     "(0=calm, matching `WIND_DIRECTION_TABLE`'s convention): blocked "
+     "(al=0FFh) if the wind is calm (0) OR the attempted direction "
+     "equals the wind direction. This is Ultima III's classic "
+     "sailing-against-the-wind restriction -- a ship can't move at "
+     "all when becalmed, and can't sail directly into the wind. "
+     "Returns via `cmp al,0; retn`, ZF set = passable, matching "
+     "checkTerrainMovementBlocked's convention below."),
+
+    (0x17254, "checkTerrainMovementBlocked",
+     "Called from cmdMoveNorth-family movement handlers with "
+     "al=destination tile value. General terrain-passability check, "
+     "transport-dependent (`_currentTransport == 0x0Bh` for ship vs. "
+     "everything else): most out-of-range/specific tile values block "
+     "movement outright (al=0FFh on return); a few tile values "
+     "(0x22/0x3E off-ship, 0/0xC on-ship) instead play a distinctive "
+     "sound (0xF6) with a timed delay loop -- and an EXTRA sound+delay "
+     "specifically when mounted (`_currentTransport == 0x0Ah`, horse) "
+     "-- before still returning passable (al=0). Reads like a "
+     "hazard-terrain cue (e.g. entering a swamp/reef tile) that warns "
+     "the player audibly without actually blocking movement; the "
+     "specific tile-code-to-hazard-type mapping isn't independently "
+     "confirmed."),
 ]
 
 

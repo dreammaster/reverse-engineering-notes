@@ -1071,6 +1071,25 @@ by quitting without saving after a death.
 This also clarified `checkPartyWipedOut` (already named, from an
 earlier session): it's the actual game-over check, looping all 4
 party slots and, if every one is dead, printing "All Players Out!",
-calling `autoSaveOnDeath`, and jumping to a small 2-byte function
-chunk at `loc_17252` — presumably the real reset-to-title or
-re-chain-load point, not yet traced.
+calling `autoSaveOnDeath`, and jumping to `loc_17252` — which turns
+out to be nothing more than `jmp short loc_17252`, a literal
+self-jump. **Ultima III's game-over "screen" is a deliberate infinite
+hang**: after the message and auto-save, the game just loops forever
+in place, and the player has to reboot or restart `ULTIMA.COM` by
+hand. Authentically period-correct, and a fully resolved dead end —
+no further tracing needed there.
+
+**Movement-blocked checks named, same session**:
+`isShipMovementBlockedByWind` (`0x17233`) confirms one of Ultima
+III's best-known sailing mechanics directly from the disassembly: a
+ship can't move at all while becalmed, and can't sail directly into
+the wind — checked against `word_12A92`'s low byte, independently
+confirmed elsewhere (via `updateWindDisplay`) to be the live wind
+direction, matching `WIND_DIRECTION_TABLE`'s own convention.
+`checkTerrainMovementBlocked` (`0x17254`) is the more general,
+transport-dependent tile-passability check `cmdMoveNorth`'s handler
+family calls — most blocked tiles simply refuse the move, but a few
+specific values instead play a distinct warning sound with a timed
+delay (an extra one when mounted) while still allowing the move,
+reading like an audio hazard cue rather than a hard block; the exact
+tile-to-hazard mapping wasn't chased down further.
