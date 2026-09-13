@@ -13,26 +13,29 @@ This file is the entry point into `docs/`. See also:
   saves, dungeons, combat arenas, etc.), cross-referenced against the
   disassembly and the original data files in `C:\games\ultima3`.
 
-Status as of this pass (2026-09-13, via `ida_scripts/identify.py`): **57
-functions total, 57 named, 0 still placeholder `sub_XXXXX`** — the full
-function-naming sweep is complete. No structs defined yet (this
-executable turns out not to need any — see "ULTIMA.COM's real role"
-below). `ultima.asm` is ~113KB.
+Status as of this pass (2026-09-13, via `ida_scripts/identify.py`):
+**both IDBs 100% function-named** (`ultima.idb`: 58/58; `ultima_bootup.idb`:
+73/73). One struct defined so far (`RosterEntry`, in `ultima_bootup.idb`).
+A third executable, `EXODUS.BIN`, is now confirmed chained-to and holds
+the actual game-world engine (overworld/combat/dungeons) — see
+"Chained executables, now three deep" below and
+[roadmap.md](roadmap.md) for the next IDB to create.
 
-## Two executables, two IDBs
+## Three executables, three IDBs (one pending)
 
-Following the "ULTIMA.COM's real role" finding below, this project now
-has the same shape as `ultima1` (one IDB per DOS executable) rather
-than `ultima2`'s single-IDB shape it was originally scaffolded to
-match — `ida_scripts/run_ida_script.ps1`/`batch_run_and_export.py` were
+Following the "ULTIMA.COM's real role" finding below, this project has
+the same shape as `ultima1` (one IDB per DOS executable) rather than
+`ultima2`'s single-IDB shape it was originally scaffolded to match —
+`ida_scripts/run_ida_script.ps1`/`batch_run_and_export.py` were
 generalized 2026-09-13 to take a `-Idb` parameter (ported directly from
 `ultima1`'s equivalent driver) rather than staying hardcoded to
 `ultima.idb`.
 
 | IDB | Root file | Role | Functions named |
 |---|---|---|---|
-| `ultima.idb` | `ULTIMA.COM` | Title screen / boot loader, chains to BOOTUP.BIN | 57 / 57 (100%) |
-| `ultima_bootup.idb` | `BOOTUP.BIN` | The actual game (character creation, main loop, etc. — hypothesis, not yet confirmed) | 4 / 73 |
+| `ultima.idb` | `ULTIMA.COM` | Title screen / boot loader, chains to BOOTUP.BIN | 58 / 58 (100%) |
+| `ultima_bootup.idb` | `BOOTUP.BIN` | Character creation / party management, chains to EXODUS.BIN | 73 / 73 (100%) |
+| `ultima_exodus.idb` | `EXODUS.BIN` | The overworld/combat/dungeon engine (confirmed by elimination — neither of the above has any such code) | not yet created |
 
 `ultima_bootup.idb` was created 2026-09-13 by copying `BOOTUP.BIN` to a
 temporary `.com`-extensioned file so IDA's automatic loader detection
@@ -176,12 +179,15 @@ GUI is incompatible with this flow since it locks the `.idb`).
   respectively (separate files since they use different IDA APIs; one
   set per IDB since ultima1's precedent showed function/global renames
   don't carry across IDBs automatically even when the executables share
-  code, per the naming convention doc there). `apply_renames_ultima.py`
-  holds the full 54-entry `ULTIMA.COM` function-naming sweep plus 12
-  global/table/string renames (`DRY_RUN = False`, flipped once the
-  first batch verified clean — see roadmap.md); the `_bootup` variants
-  are freshly scaffolded, both empty (`DRY_RUN = True`), pending
-  `BOOTUP.BIN`'s own identification pass.
+  code, per the naming convention doc there). Both `apply_renames_ultima.py`
+  and `apply_renames_bootup.py` are complete (`DRY_RUN = False`) —
+  every function/global/table/string in both IDBs. `apply_structs_ultima.py`
+  is empty (this executable has no player-state data); `apply_structs_bootup.py`
+  is also currently empty since `RosterEntry` was created directly via
+  the one-off `create_roster_struct.py` (struct *creation* isn't in
+  scope for `apply_structs_*.py`, which only edits an existing struct's
+  members — see that script's docstring) — future `RosterEntry` member
+  edits belong in `apply_structs_bootup.py`.
 - **`ida_scripts/fix_wind_string_array.py`** — one-off structural fix,
   kept per the sibling-project convention of not deleting one-off
   scripts: splits the 5 wind-direction strings (see `updateWindDisplay`
@@ -314,13 +320,92 @@ disassembly evidence now says otherwise. Updated in file-formats.md.
 explicit uncertainty notes (`checkDebugModeFlag`, `adjustAnimSpeed`,
 `computeAnimTableByte`, and the 6 `drawTitleBoxN` wrappers' exact
 visual roles) rather than invented specific meanings — see each one's
-`note` in `apply_renames.py`. Additionally, at least 2-4 regions of
-code exist that IDA never recognized as functions at all (no `proc`/
-`endp` boundary) — a numeric hex/decimal-entry prompt (~`0x18C79`,
-partially named via `accumulateInputDigit`/`printHexByte`/
-`printHexNibble`, which it calls), a raw `INT 13h` disk-sector-read
-routine (~`0x1878C`, plausibly a copy-protection check, given the
-"Wrong Diskette!" theme elsewhere), and at least one FCB-write "save
-file" routine (~`0x18CD9`) mirroring `loadFile`. These need
-`ida_funcs.add_func()` structural fixes before they can be named — see
-[roadmap.md](roadmap.md).
+`note` in `apply_renames_ultima.py`. Additionally, 3 regions of code
+exist that IDA never recognized as functions at all (no `proc`/`endp`
+boundary) — a numeric hex/decimal-entry prompt (calls
+`accumulateInputDigit`/`readLine`), a raw `INT 13h` disk-sector-read
+routine (plausibly a copy-protection check, given the "Wrong
+Diskette!" theme elsewhere), and an FCB-write routine mirroring
+`loadFile`. One (`printHexWord`) has since been fixed via
+`ida_funcs.add_func()` and confirmed against `ultima_bootup.idb`'s
+identical, properly-bounded copy — see the next section and
+[roadmap.md](roadmap.md) for the other two, still open.
+
+### Session 2026-09-13: `ultima_bootup.idb` created and fully swept (73/73 named)
+
+Following the finding above, created a second IDB for `BOOTUP.BIN` (see
+"Two executables, two IDBs" above) and read the entire exported
+`ultima_bootup.asm` (4,058 lines) top to bottom. Headline results:
+
+**`BOOTUP.BIN` is the character-creation and party-management program**
+— its own title screen (same intro-story-plus-boot-animation shape as
+`ULTIMA.COM`'s, loading `CHARSET.ULT`/`SHAPES.ULT`/`DEMO.ULT`/
+`MOVES.ULT`/`ROSTER.ULT` this time instead of the `.IBM`/`ANIMATE.DAT`
+title assets) leads into `showMainMenu`: **Return to the View** / **Organize
+a Party** / **Journey Onward**. "Organize a Party" (`showPartyOrganizationMenu`)
+drills into `showRegister` (list all 20 roster entries), `handleCreateCharacter`,
+`handleFormParty`, `handleDisperseParty`, `handleTerminateCharacter`, and
+`showCharacterDetails` ("Look at a Character"). None of this is the
+overworld/combat/dungeon engine — see "Chained executables" below for
+where that actually lives.
+
+**The intro credits resolve a dating question**: `titleScreenAndMainMenuLoop`
+(formerly `start_0`) displays "(C)-1983 By James R. Van Artsdalen and
+Lord British" — James R. Van Artsdalen is a known Origin Systems-era DOS
+programmer, confirming this codebase's authorship dates to 1983 despite
+the 1991-10-01 file dates on disk (a later recompile/re-release, not a
+rewrite) — see [roadmap.md](roadmap.md)'s open questions.
+
+**Confirms the shared-runtime hypothesis completely.** Roughly 40 of
+`BOOTUP.BIN`'s 73 functions are structurally identical, line-for-line,
+to functions already named in `ultima.idb`: `writeString`/
+`writeCharacter`/`drawCharGlyph`/`drawTileGrid`/`readLine`/`loadFile`/
+`openFileWithRetry`/`printHexByte`/`printHexNibble`, the entire boot/idle
+animation cluster (`stepTimeSeededPrng`, `swapAnimTableRows`,
+`updateLogoAnimationA`-`D`, `runIdleAnimationTick`, `pollKeypressAndAnimate`,
+`getKeypressAndWaitRaw`), `updateWindDisplay`/`WIND_DIRECTION_TABLE`
+(same 5-string Calm/North/East/South/West mechanism, different
+addresses), and the full 12-entry `playSoundEffect`/`SOUND_EFFECT_TABLE`
+cluster. Same source, recompiled/relinked into a separate executable —
+not the same bytes at the same addresses, but the same logic verified
+line-by-line, not assumed from names alone. Two functions found here
+have **no proc boundary in `ultima.idb`** (`printHexWord`,
+`promptForNumberEntry`) but a real, confirmed caller here
+(`showCharacterDetails`'s stat display; `getEntryNumber`'s "Entry#"
+prompts respectively) — resolving those as genuine shared-runtime code
+rather than dead weight (see `ultima.idb`'s "hard-won lesson" section
+and [roadmap.md](roadmap.md)). `saveFile` (the FCB-write counterpart to
+`loadFile`) is new here — `ULTIMA.COM`'s title screen never writes a
+file, `BOOTUP.BIN` writes `PARTY.ULT`/`ROSTER.ULT` from 5 confirmed
+sites.
+
+**`RosterEntry` struct defined** (`ida_scripts/create_roster_struct.py`,
+64 bytes), every field confirmed against a real `[bx+N]` access in
+`showCharacterDetails` or `handleCreateCharacter` — matches
+[file-formats.md](file-formats.md)'s externally-sourced ROSTER.ULT byte
+layout exactly, field for field, for every offset checked (`_name`,
+`_partyMember`, `_status`, the 4 attributes, `_race`, `_class`, `_sex`,
+`_hitPoints`/`_maxHitPoints`, `_experience`, `_food`, `_gold`,
+`_armourIndex`/`_armourOwned`, `_weaponIndex`/`_weaponOwned`). This is
+the first time that external documentation has been confirmed against
+real code rather than just matched by file size. `handleCreateCharacter`
+also confirms the exact starting values for a new character: Status='G'
+(Good), HP=Max HP=Food=Gold=150 (BCD), Weapon=Armour=index 1 with 1
+owned, 50-point attribute pool with per-attribute min/max range checks
+(`gatherCharacterCreationInput`) — real, played-out Ultima III character
+creation rules, not guessed.
+
+**Chained executables, now three deep.** `handleJourneyOnward` (formerly
+`sub_11437`) confirms `EXODUS.BIN` is loaded and chained into exactly
+the way `ULTIMA.COM` chains to `BOOTUP.BIN` — DTA set to `0x100`, FCB
+opened, record size set to the whole file, self-modifying `INT 21h`
+stub — but with one twist: instead of falling straight through to
+offset `0x100` afterward, it does an **indirect** jump
+(`JMP WORD PTR [1328h]`) through a 2-byte vector stored at a fixed
+offset inside `EXODUS.BIN`'s own freshly-loaded bytes. `EXODUS.BIN`
+self-describes its own entry point rather than just starting at byte 0
+— worth keeping in mind when disassembling it (don't assume execution
+starts at the segment's first instruction). Since neither `ULTIMA.COM`
+nor `BOOTUP.BIN` contains any overworld/combat/dungeon code, `EXODUS.BIN`
+is now the clear next target and holds the actual game-world engine —
+see [roadmap.md](roadmap.md).

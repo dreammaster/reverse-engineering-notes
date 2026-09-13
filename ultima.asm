@@ -1577,18 +1577,24 @@ loc_18B2B:                              ; CODE XREF: getKeypressAndWaitRaw+27↑
                 retn
 getKeypressAndWaitRaw endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+printHexWord    proc near
                 xchg    al, ah
                 call    printHexByte
                 xchg    al, ah
                 call    printHexByte
                 retn
+printHexWord    endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
 
-printHexByte    proc near               ; CODE XREF: seg000:8B3A↑p
-                                        ; seg000:8B3F↑p
+printHexByte    proc near               ; CODE XREF: printHexWord+2↑p
+                                        ; printHexWord+7↑p
                 pushf
                 rol     al, 1
                 rol     al, 1

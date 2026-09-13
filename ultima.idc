@@ -506,6 +506,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18B2D);
 	op_hex		(x,	0);
 	create_insn	(0X18B38);
+	set_name	(0X18B38,	"printHexWord");
 	create_insn	(0X18B43);
 	set_name	(0X18B43,	"printHexByte");
 	create_insn	(x=0X18B44);
@@ -950,6 +951,9 @@ static Functions_0(void) {
 	add_func    (0X18ADD,0X18B38);
 	set_func_flags(0X18ADD,0x5400);
 	set_frame_size(0X18ADD, 0, 0, 0);
+	add_func    (0X18B38,0X18B43);
+	set_func_flags(0X18B38,0x5400);
+	set_frame_size(0X18B38, 0, 0, 0);
 	add_func    (0X18B43,0X18B5C);
 	set_func_flags(0X18B43,0x5400);
 	set_frame_size(0X18B43, 0, 0, 0);
