@@ -776,7 +776,7 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
                 shl     bx, 1
                 mov     ax, _partyPosition
                 mov     _savedOverworldPosition, ax
-                cmp     _locationTypeTable, 5
+                cmp     _locationType, 5
                 jnz     short loc_11DCC
                 lea     si, aDungeon    ; "Dungeon!\n"
                 call    printGameText
@@ -788,7 +788,7 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
 ; ---------------------------------------------------------------------------
 
 loc_11DCC:                              ; CODE XREF: sub_17B54-5DA5↑j
-                cmp     _locationTypeTable, 6
+                cmp     _locationType, 6
                 jnz     short loc_11DE9
                 lea     si, aTowne      ; "Towne!\n"
                 call    printGameText
@@ -799,7 +799,7 @@ loc_11DCC:                              ; CODE XREF: sub_17B54-5DA5↑j
 ; ---------------------------------------------------------------------------
 
 loc_11DE9:                              ; CODE XREF: sub_17B54-5D83↑j
-                cmp     _locationTypeTable, 7
+                cmp     _locationType, 7
                 jnz     short loc_11D8B
                 lea     si, aCastle     ; "Castle!\n"
                 call    printGameText
@@ -1083,7 +1083,7 @@ cmdUnlock:                              ; CODE XREF: sub_17B54-5F83↑j
                 das
                 jb      short loc_12015
                 mov     [bx+26h], al
-                mov     al, _locationTypeTable
+                mov     al, _locationType
                 shl     al, 1
                 shl     al, 1
                 mov     [si], al
@@ -1857,7 +1857,7 @@ byte_1259B      db 0                    ; DATA XREF: sub_17B54-5ECD↑r
                                         ; seg000:2835↓w
 byte_1259C      db 0                    ; DATA XREF: sub_17B54-5EAC↑r
                                         ; seg000:283B↓w
-_locationTypeTable db 0                 ; DATA XREF: sub_17B54-5DAA↑r
+_locationType   db 0                    ; DATA XREF: sub_17B54-5DAA↑r
                                         ; sub_17B54:loc_11DCC↑r ...
 
 ; =============== S U B R O U T I N E =======================================
@@ -2297,7 +2297,7 @@ loc_12821:                              ; CODE XREF: seg000:2800↑j
                 mov     al, byte ptr loc_124FF
                 mov     byte_1259A, al
                 mov     al, byte ptr loc_124FF+1
-                mov     _locationTypeTable, al
+                mov     _locationType, al
                 mov     al, _currentTransport
                 mov     byte ptr loc_124FF+1, al
                 mov     dh, 0Ah
@@ -8659,7 +8659,7 @@ loc_175F9:                              ; CODE XREF: sub_17B54-584↑j
 
 loc_17607:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6550↑o
-                cmp     _locationTypeTable, 3Eh ; '>'
+                cmp     _locationType, 3Eh ; '>'
                 jnz     short loc_17625
                 mov     cl, byte ptr _partyPosition
                 and     cl, 3
@@ -11005,7 +11005,7 @@ loc_18960:                              ; CODE XREF: updateMonsterAI+65A8↑j
                 jnb     short loc_189BD
 
 loc_18972:                              ; CODE XREF: updateMonsterAI+65C0↑j
-                mov     al, _locationTypeTable
+                mov     al, _locationType
                 cmp     al, 9
                 jnz     short loc_18986
                 mov     bx, _partyPosition

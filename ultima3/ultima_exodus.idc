@@ -702,7 +702,7 @@ static Bytes_0(void) {
 	create_byte	(0X1259B);
 	create_byte	(0X1259C);
 	create_byte	(0X1259D);
-	set_name	(0X1259D,	"_locationTypeTable");
+	set_name	(0X1259D,	"_locationType");
 	create_insn	(0X1259E);
 	create_insn	(0X125D6);
 	create_insn	(x=0X125D8);

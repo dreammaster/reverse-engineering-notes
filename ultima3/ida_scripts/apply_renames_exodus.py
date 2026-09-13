@@ -1363,6 +1363,22 @@ RENAMES = [
      "showTempleMenu choice 4 (\"Recalling's cost...\"). Same "
      "pay-then-act shape; presumably restores an ashed character to "
      "life, the temple counterpart to spellAnjuSermani."),
+
+    (0x1259D, "_locationType",
+     "RENAMED from the placeholder '_locationTypeTable' -- confirmed "
+     "2026-09-14 to be a plain SCALAR byte (`db 0`, never accessed "
+     "with an index anywhere in the binary), not the 19-entry "
+     "parallel array (alongside LOCATION_TILE_TABLE) that name "
+     "implied and that an earlier note flagged as needing "
+     "confirmation. Clean reads: `cmp _locationTypeTable,5/6/7` "
+     "(sub_17B54) and `mov al,_locationTypeTable; cmp al,9` "
+     "(beginCombatEncounter) match a simple 'current location type' "
+     "value. One write site (sub_17B54, part of a self-modifying-code "
+     "setup block that reads opcode bytes from several `loc_` "
+     "addresses as data) stores what looks like a code byte here "
+     "rather than a location type -- not fully explained, flagged "
+     "rather than papered over; may indicate this address doubles as "
+     "scratch storage in that one code path."),
 ]
 
 

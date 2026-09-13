@@ -1144,3 +1144,17 @@ presumably applying its effect. The actual character-state change past
 the payment gate wasn't independently re-traced against each
 corresponding spell's own code for this pass — assumed equivalent by
 name and structure, not confirmed byte-for-byte.
+
+**Two smaller loose ends addressed, same session**:
+`_locationTypeTable` was renamed to `_locationType` after confirming
+it's a plain scalar (`db 0`, never accessed with an index anywhere in
+the binary) — the 19-byte-parallel-array possibility an earlier note
+flagged for confirmation doesn't hold up. And the "why is Unlock
+disabled in dungeons?" question got a partial answer: `cmdUnlock`
+only ever checks for one hardcoded tile value,
+`getMapTileAt() == 0xB8`, which reads like an overworld/town-only
+tile ID — if dungeons simply never use that value, reusing the same
+handler there would always be a silent no-op, making it cheaper to
+just disable the letter outright. Doesn't confirm whether dungeon
+locked doors exist or how they'd open if so — left as a genuinely
+open question, just a better-informed one.
