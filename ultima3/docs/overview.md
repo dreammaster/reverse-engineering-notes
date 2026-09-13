@@ -920,13 +920,16 @@ Named 4 helpers:
   step, stopping when either axis reaches `0x0B` (leaving the 11×11
   arena — matches `drawTileGrid`'s confirmed dimensions) or a
   combatant is found.
-- **`applyCombatDamage`** (`0x18F5A`) — BCD-subtracts a damage amount
-  from a target slot's `+0x98` field; on death, prints "Killed!
-  Exp.+", clears the slot, and calls `addExperienceClamped` with an
-  amount read from an as-yet-unidentified table indexed by
-  `_conflictMonsterClass & 0xFh` (`[bx-79EBh]` — the table itself
-  isn't located/named). Has one unexplained special case: skipped
-  entirely when `_conflictMonsterClass == 0x13` — flagged, not
+- **`applyCombatDamage`** (`0x18F5A`) — subtracts a damage amount from
+  a target slot's `+0x98` field as **plain binary, not BCD**
+  (confirmed: no `das` follows the `sub`, and `beginCombatEncounter`
+  initializes this same field via `or dl, 0Fh` — an invalid BCD
+  nibble, ruling out a decimal interpretation); on death, prints
+  "Killed! Exp.+", clears the slot, and calls `addExperienceClamped`
+  with a BCD amount read from `MONSTER_EXP_TABLE` (see
+  `dump_monster_tables.py`, below) indexed by `_conflictMonsterClass &
+  0xFh` (`[bx-79EBh]`, linear `0x18615`). Has one unexplained special
+  case: skipped entirely when `_conflictMonsterClass == 0x13` — flagged, not
   investigated (possibly a scripted/indestructible monster, maybe
   Exodus itself, but not confirmed).
 - **`applyRandomGroupDamage`** (`0x15EAA`) — confirmed shared by

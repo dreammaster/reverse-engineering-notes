@@ -1074,17 +1074,20 @@ RENAMES = [
      "applyRandomGroupDamage (below), and from at least 2 spell "
      "effect routines (see their notes). Takes bx=arena-relative "
      "combatant pointer (base `[bx+24C4h]`-style, same 8-slot arena "
-     "as findCombatantAtPosition) and al=damage amount; BCD-subtracts "
-     "al from the slot's `+0x98` count/HP field. On reaching 0 (or "
-     "going negative, checked via the subtract's flags): prints "
-     "'Killed! Exp.+', clears the slot, looks up an experience award "
-     "from an unidentified table indexed by `_conflictMonsterClass & "
-     "0xFh` at a computed negative offset (`[bx-79EBh]`, table itself "
-     "not yet located/named), and calls addExperienceClamped. Has an "
-     "unexplained special case: entirely skipped when "
-     "`_conflictMonsterClass == 13h` -- flagged, not investigated "
-     "further (possibly an indestructible/scripted monster, e.g. a "
-     "boss)."),
+     "as findCombatantAtPosition) and al=damage amount; subtracts al "
+     "from the slot's `+0x98` count/HP field -- PLAIN BINARY, not "
+     "BCD (confirmed: no `das` follows the `sub`, and "
+     "beginCombatEncounter initializes this same field via `or dl, "
+     "0Fh`, which would be an invalid BCD nibble). On reaching 0 (or "
+     "going negative/borrowing, checked via the subtract's flags): "
+     "prints 'Killed! Exp.+', clears the slot, looks up a BCD "
+     "experience award from MONSTER_EXP_TABLE (see "
+     "dump_monster_tables.py) indexed by `_conflictMonsterClass & "
+     "0xFh` at a computed negative offset (`[bx-79EBh]`, linear "
+     "0x18615), and calls addExperienceClamped. Has an unexplained "
+     "special case: entirely skipped when `_conflictMonsterClass == "
+     "13h` -- flagged, not investigated further (possibly an "
+     "indestructible/scripted monster, e.g. a boss)."),
 
     (0x15EAA, "applyRandomGroupDamage",
      "Called from within spellRespond's body (`seg000:5FCBh` = linear "
@@ -1105,6 +1108,27 @@ RENAMES = [
      "NOT visible in this shared helper itself, so it must happen in "
      "spellRespond's own code before calling this, or the filtering "
      "claim in the manual is inexact; not fully resolved."),
+
+    (0x18605, "MONSTER_HP_TABLE",
+     "16-entry table (indexed by `_conflictMonsterClass & 0xFh`), "
+     "found via beginCombatEncounter's `[bx-79FBh]` (0x10000-0x79FB = "
+     "0x8605, +DS segment = linear 0x18605). Used as the upper bound "
+     "passed to stepTimeSeededPrng when rolling a fresh monster's "
+     "starting `+0x98` HP-like counter, then OR'd with 0x0Fh (a "
+     "PLAIN BINARY value, not BCD -- see applyCombatDamage's note). "
+     "Dumped via dump_monster_tables.py: values range 0x20-0xF0, "
+     "roughly correlating with expected monster toughness by class "
+     "index (not independently confirmed against specific monster "
+     "names, since no monster-name string table has been located "
+     "yet)."),
+    (0x18615, "MONSTER_EXP_TABLE",
+     "16-entry table (indexed by _conflictMonsterClass & 0xFh), found "
+     "via applyCombatDamage's `[bx-79EBh]` (0x10000-0x79EB = 0x8615, "
+     "linear 0x18615 -- exactly 0x10 bytes after MONSTER_HP_TABLE, "
+     "consistent with a small monster-class stat block laid out "
+     "table-by-table). BCD experience award per kill, values decode "
+     "as valid BCD (1-20 XP) for every entry -- dumped via "
+     "dump_monster_tables.py."),
 ]
 
 
