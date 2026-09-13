@@ -4708,6 +4708,20 @@ disassembly work.
   `THISBASE` implement the equivalent behavior without needing a
   dedicated register at all. See `reversing/notes/
   struct-layout-drift.md`.
+- **A third small enum closes: `INSTF_*` instance flags.**
+  `SHAREDATA`/`ABORTED`/`FREE` were already confirmed present with
+  zero drift in earlier rounds; the fourth, `INSTF_RUNNING`, closes
+  this round as CONFIRMED ABSENT -- 2011's own use of it is a "hung
+  script" / infinite-while-loop detector inside `SCMD_JMP`'s handler,
+  and this build's own `SCMD_JMP` case (already read for the opcode
+  survey) is a bare `pc+=arg1` with no such check at all, confirmed
+  further by an exhaustive string search (no "hung"/loop-error string
+  anywhere in the binary). Dated via `ags-archives/`: the feature
+  first appears in AGS 2.56, after this build's own 2.4b pin. A quick
+  side-check also confirmed `SCOPT_*`'s other 6 compiler-option bits
+  have no equivalent story -- they're referenced only from the script
+  COMPILER (`CSPARSER.CPP`), never the shipped engine, in either era.
+  See `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

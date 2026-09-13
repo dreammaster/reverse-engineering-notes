@@ -15822,3 +15822,40 @@ would consume the register) now agree with each other -- a
 satisfying capstone to both this round's opcode survey and the
 `ccInstance` struct's own long history in this project. Recorded as an
 update to `apply_structs.py`'s own `registers[6]` field comment.
+
+### A third small enum closes: `INSTF_*` instance flags, 3 present + 1 absent-and-dated
+
+Continuing down the same list of small `Common/CSCOMP.H`-declared
+enums this session has been sweeping: `INSTF_SHAREDATA`(1)/
+`INSTF_ABORTED`(2)/`INSTF_FREE`(4) were already independently
+confirmed present with zero drift in earlier rounds (via
+`ccCreateInstanceEx`/`ccAbortInstance`/`ccAbortAndDestroyInstance`).
+The fourth and last, `INSTF_RUNNING`(8), closes this round as
+CONFIRMED ABSENT. 2011's own use of it lives inside `SCMD_JMP`'s
+handler (`CSRUN.CPP:1551-1563`) as a "hung script" / infinite-while-
+loop detector: on any BACKWARD jump, increment a counter, and once it
+exceeds `maxWhileLoops` without the flag having been freshly set,
+raise `cc_error("!Script appears to be hung...")`. This build's own
+case 31 (`SCMD_JMP`, already fully read for the opcode-table survey
+above) is a bare `pc += arg1; continue;` -- no counter, no flag check,
+no branch on the jump's sign at all. An exhaustive string search
+confirms it further: no "hung"/loop-related error string exists
+anywhere in the 934K-line disassembly (the only "hung" hits are
+unrelated font-glyph names, `hungarumlaut`). CORROBORATED via
+`ags-archives/`: *"Added feature to detect hung scripts and abort the
+game"* first appears in `ags256/docs/CHANGES.TXT` -- a later version
+than this build's own pinned 2.4b/July-2002 -- the same
+changelog-dates-an-absence pattern this project has used repeatedly,
+now applied to the script VM's own opcode behavior rather than a
+struct field. All 4 `INSTF_*` bits are now individually resolved.
+
+A quick side-check confirmed there's no equivalent story to tell for
+`SCOPT_*` (the 8 compiler-option bits, `CSCOMP.H:126-133`): this
+build's own two `ccGetOption` call sites (`AUTOIMPORT`=8,
+`DEBUGRUN`=0x10, both already confirmed) are the ONLY two options any
+era's shipped ENGINE binary would ever check -- grepping the full
+2011 reference tree shows the other six (`EXPORTALL`/`SHOWWARNINGS`/
+`LINENUMBERS`/`NOIMPORTOVERRIDE`/`LEFTTORIGHT`/`OLDSTRINGS`) are
+referenced ONLY from `Common/CSPARSER.CPP`, the script COMPILER, which
+was never part of the shipped game engine in either era. Not a finding
+so much as a confirmation that nothing was missed.
