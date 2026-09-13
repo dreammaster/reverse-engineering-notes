@@ -73,18 +73,24 @@ Total `0x1228` = 4,648 bytes, matching `SOSARIA.ULT`'s size exactly (as
 expected — same base layout, town-specific fields swapped in for the
 overworld-specific whirlpool/moon fields).
 
-**Discrepancy, not yet resolved**: the external source lists this
-group as `BRITISH`, `DAWN`, `DEATH`, `DEVIL`, `EXODUS`, `FAWN`, `GREY`,
-`LCB`, `MONTOR_E`, `MONTOR_W`, `MOON`, `YEW` (12 names). Our actual
-`C:\games\ultima3` install has `BRITISH`, `DAWN`, `DEATH`, `DEVIL`,
-`GREY`, `LCB`, `MONTOR_E`, `MONTOR_W`, `MOON`, `YEW` **plus
-`AMBROSIA.ULT`**, and no separate `EXODUS.ULT` or `FAWN.ULT`. Possible
-explanations, none confirmed: a different release/version than the one
-the external doc was written against, or `AMBROSIA` is this version's
-name for what the doc calls `FAWN`/`EXODUS` is handled inside
-`EXODUS.BIN` instead of a `.ULT` file in this release. Worth resolving
-once the map-loading code is traced (look for the filename string
-table it indexes into).
+**Discrepancy, partially clarified 2026-09-13, not fully resolved**: the
+external source lists this group as `BRITISH`, `DAWN`, `DEATH`, `DEVIL`,
+`EXODUS`, `FAWN`, `GREY`, `LCB`, `MONTOR_E`, `MONTOR_W`, `MOON`, `YEW`
+(12 names). Our actual `C:\games\ultima3` install has `BRITISH`, `DAWN`,
+`DEATH`, `DEVIL`, `GREY`, `LCB`, `MONTOR_E`, `MONTOR_W`, `MOON`, `YEW`
+**plus `AMBROSIA.ULT`**, and no separate `EXODUS.ULT` or `FAWN.ULT` file
+on disk. `ultima_exodus.idb`'s string table (see
+[overview.md](overview.md)) references **both** `aAmbrosiaUlt` and
+`aFawnUlt`/`aExodusUlt` as literal filenames — so the executable's code
+expects all of them to potentially exist, but this particular release's
+data set only ships `AMBROSIA.ULT`. Best working hypothesis: `FAWN`
+and `EXODUS` (the Castle of Exodus, the endgame location) are real
+locations reachable in other releases/versions, and `AMBROSIA` is
+either a renamed version of one of them or a location added in this
+release — not yet confirmed which. Resolving this needs tracing
+whichever function actually calls these filenames (not yet identified
+— they weren't in the shared-runtime pass, so they're somewhere in the
+95 still-unnamed game-specific functions).
 
 ## Dungeons (`DARDIN`, `FIRE`, `M`, `MINE`, `P`, `PERINIAN`, `TIME` — 7 files)
 

@@ -1,21 +1,21 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\ultima3\ultima.idb
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
 [*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
 [*] reading identify.py
 [*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-root filename : ULTIMA.COM
-input file    : C:\games\ULTIMA3\ULTIMA.COM
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
 entry point   : 0x100 (cs=0x1000)
-input md5     : 7bea6bf20b7079b30f8ca5336b3805b2
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
 
 segments:
-  seg000       0x010100-0x019054  (36692 bytes)
+  seg000       0x010100-0x01adca  (44234 bytes)
 
-functions: 58 total, 58 named, 0 still sub_XXXXX
+functions: 142 total, 47 named, 95 still sub_XXXXX
 
 structs (0): 
 ----- end target script output -----

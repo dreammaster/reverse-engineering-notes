@@ -23,7 +23,8 @@ whichever list still needs fixing -- check docs/roadmap.md / the git log
 for which IDB(s) this has already been run against before re-running, and
 edit the active list by hand rather than combining them.
 
-Already applied: ULTIMA_STARTS (2026-09-13, ultima.idb).
+Already applied: ULTIMA_STARTS (2026-09-13, ultima.idb), BOOTUP_STARTS
+(2026-09-13, ultima_bootup.idb).
 
 Run once via run_ida_script.ps1 -Idb <target>, then re-run the matching
 apply_renames_*.py to apply the now-unblocked aNorthWind/aSouthWind/
@@ -35,11 +36,13 @@ import idc
 
 # ultima.idb's wind strings -- already applied, kept for reference only.
 ULTIMA_STARTS = [0x1623D, 0x1624A, 0x16257, 0x16264, 0x16271]
-# ultima_bootup.idb's wind strings (same shape, different addresses) --
-# this is the active list as of this script's last edit.
+# ultima_bootup.idb's wind strings -- already applied, kept for reference.
 BOOTUP_STARTS = [0x11F5D, 0x11F6A, 0x11F77, 0x11F84, 0x11F91]
+# ultima_exodus.idb's wind strings (same shape, different addresses) --
+# this is the active list as of this script's last edit.
+EXODUS_STARTS = [0x12AAD, 0x12ABA, 0x12AC7, 0x12AD4, 0x12AE1]
 
-STRING_STARTS = BOOTUP_STARTS
+STRING_STARTS = EXODUS_STARTS
 STRING_LEN = 13
 
 DRY_RUN = False
