@@ -351,23 +351,26 @@ Next-session priorities, roughly in order:
       — fixed before this was committed anywhere, per the same
       re-verification discipline as the earlier dungeon-table
       correction.
-- [ ] Resolve the **Level vs. Experience offset conflict**: `drawPartyStatusBar`
-      (`ultima_exodus.idb`) reads `+0x1Fh` alone as a "Level" byte
-      (BCD-displayed as value+1, clamped to 99), but
-      `ultima_bootup.idb`'s `showCharacterDetails` reads `+0x1Eh` as a
-      **2-byte word** for "Experience:" — these can't both be literally
-      true of the same on-disk record. Leading hypothesis, not yet
-      confirmed: the in-memory "live" combat/play copy of a character
-      record (the `[bx*40h+14CCh]`-style arrays) may cache a derived
-      Level byte at an offset the true ROSTER.ULT save-file format
-      doesn't have, overwriting what would otherwise be Experience's
-      high byte, with Level recomputed from Experience (and not
-      persisted) each time a fresh copy is loaded from the roster.
-      Confirm by finding wherever a live combat record gets populated
-      from a raw ROSTER.ULT/PARTY.ULT record (candidate:
-      `beginCombatEncounter`'s per-slot copy loop) and checking whether
-      `+0x1Fh` gets an explicit derived write there, distinct from
-      whatever raw byte the roster file itself holds at that offset.
+- [x] **Level vs. Experience offset conflict — RESOLVED, 2026-09-14**:
+      there is no conflict; the two functions read the same bytes for
+      different display purposes. `showCharacterDetails`
+      (`ultima_bootup.idb`) does `mov ax, [bx+1Eh]; call printHexWord`
+      — a plain 2-byte read of the *entire* `+0x1E`/`+0x1F` word,
+      confirming `_experience` really is a full word as already
+      modeled. `drawPartyStatusBar` (`ultima_exodus.idb`) separately
+      does `mov al, [bx+1Fh]; add al,1; daa; ...; call printHexByte`
+      labeled "L:" — this is just reading the **high byte of that same
+      word** (little-endian, so `+0x1F` is Experience's high BCD
+      digit-pair) and displaying it as a derived Level indicator: `Level
+      = high_byte_of_Experience + 1` (BCD, clamped to 99). No
+      "live copy caches a derived byte" mechanism exists (the
+      hypothesis floated earlier) — Level was never a separate stored
+      field, on disk or in memory; it's computed on the fly from
+      Experience's top digits every time the status bar redraws.
+      Sensible design too: with Experience clamped to 9999,
+      `floor(exp/100)+1` gives a 1-100 level range from a single
+      100-XP-per-level curve, all without spending a dedicated byte on
+      it in the 64-byte record.
 - [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
       `sub_1232F`, compares against `_partyPosition`) and `sub_1232F`
       itself (the special-case handler for monster types `'t'`/`'<'`

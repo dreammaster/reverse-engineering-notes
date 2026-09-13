@@ -964,3 +964,23 @@ damage   = 4 + weaponIndex*3 + floor(strength/2) + random(0 .. strength|1)
 (`weaponIndex` from `RosterEntry+0x30`), then applied via
 `applyCombatDamage`. This is a complete, evidence-based combat formula
 — a solid foundation for the eventual C++/ScummVM reimplementation.
+
+**"Level vs. Experience" offset conflict resolved, same session** —
+there was never a real conflict, just two different displays of the
+same bytes. `ultima_bootup.idb`'s `showCharacterDetails` does `mov ax,
+[bx+1Eh]; call printHexWord` under the label "Experience:" — a plain
+word read of the entire `+0x1E`/`+0x1F` pair, confirming `_experience`
+really is the full word already modeled in `RosterEntry`.
+`ultima_exodus.idb`'s `drawPartyStatusBar` separately does `mov al,
+[bx+1Fh]; add al,1; daa; ...clamp to 99h...; call printHexByte` under
+the label "L:" — reading only the **high byte** of that same word
+(little-endian, so `+0x1F` holds Experience's top BCD digit-pair) and
+showing it as a derived "Level" indicator, `Level = high-byte(
+Experience) + 1`. No separate stored Level field exists, on disk or in
+any "live" in-memory copy — Level is simply computed fresh from
+Experience's leading digits every time the status bar redraws (with
+Experience clamped to 9999, this is a clean `floor(exp/100)+1` curve,
+1-100, all without spending a dedicated byte on it). The originally
+floated hypothesis (a live-copy field overwriting Experience's high
+byte) doesn't hold up and wasn't needed — the two reads simply overlap
+by design.
