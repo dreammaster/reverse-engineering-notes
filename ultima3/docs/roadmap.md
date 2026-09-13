@@ -371,16 +371,45 @@ Next-session priorities, roughly in order:
       `floor(exp/100)+1` gives a 1-100 level range from a single
       100-XP-per-level curve, all without spending a dedicated byte on
       it in the 64-byte record.
+- [x] **`sub_16366` (shrine entry) renamed and fully traced**, done
+      2026-09-14: **`enterShrine`**. Prompts a player, loads
+      `SHRINE.IMG`, sets the game-mode byte to 4, and announces the
+      shrine's name via the newly-identified `SHRINE_ATTRIBUTE_NAME_TABLE`
+      (linear `0x15993`, 4 entries — 'Strength'/'Dexterity'/
+      'Intelligence'/'Wisdom' — indexed by `_partyPosition & 3`,
+      confirming Ultima III's 4 shrines correspond 1:1 to the 4
+      primary attributes). Then prompts an "Offering\*100-" gold
+      amount, rejects one above a shrine-specific max ("You can't
+      cheat the Gods!"), spends the gold, and raises an attribute
+      before printing "Shazam!". **Not fully resolved**: the exact
+      formula for *which* attribute gets raised involves a
+      character-race lookup (`[bx+16h]` against a 5-entry
+      `byte_158CD` table) combined with the shrine index in a way not
+      fully disentangled, and the per-shrine max-offering table
+      (`[bx+di+58D2h]`) isn't independently confirmed — flagged rather
+      than guessed at further.
+- [x] **`sub_162FD` renamed**: **`drawDungeonStatusBar`** — prints
+      "LVL:"+`_dungeonLevel`+1 and "Head-"+facing-direction name via
+      the newly-identified `FACING_DIRECTION_NAME_TABLE` (linear
+      `0x1598B`, 4 entries: 'North'/'-East'/'South'/'-West', indexed
+      by `_facingDirection`). Both this table and
+      `SHRINE_ATTRIBUTE_NAME_TABLE` sit immediately after
+      `CLERIC_SPELL_TABLE`'s real 16-entry end — the exact region an
+      earlier, wrong version of `dump_spell_tables.py` mistakenly
+      over-read (see the spell-table findings above); dumping them
+      properly by address, rather than by assumed table membership,
+      resolved both in one pass.
 - [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
       `sub_1232F`, compares against `_partyPosition`) and `sub_1232F`
       itself (the special-case handler for monster types `'t'`/`'<'`
       in `updateMonsterAI`), `sub_17F96`/`sub_128F2` (helpers
       `canMoveToTile` calls into), `sub_17233`/`sub_17254`
-      (movement-blocked checks `cmdMoveNorth` calls), `sub_16366`
-      (confirmed as shrine entry via its own strings, not yet renamed),
-      and `sub_15B28` (low confidence, checks `_gameMode`/`byte_158CB`/
-      `word_114C2` vs `byte_116E3` — read once, purpose not pinned
-      down) — all found in passing this pass but not chased down.
+      (movement-blocked checks `cmdMoveNorth` calls), and `sub_15B28`
+      (low confidence, checks `_gameMode`/`byte_158CB`/`word_114C2`
+      vs `byte_116E3` — read once, purpose not pinned down; also
+      called from `updateMonsterAI` and `beginCombatEncounter` when
+      deciding how many monsters to spawn in a new encounter) — all
+      found in passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a

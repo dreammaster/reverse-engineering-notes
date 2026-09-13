@@ -984,3 +984,38 @@ Experience clamped to 9999, this is a clean `floor(exp/100)+1` curve,
 floated hypothesis (a live-copy field overwriting Experience's high
 byte) doesn't hold up and wasn't needed — the two reads simply overlap
 by design.
+
+**Shrine entry traced and two small tables resolved, same session**:
+followed up on the earlier spell-table over-read bug by dumping the
+exact addresses it had wrongly attributed to `CLERIC_SPELL_TABLE`
+(`ida_scripts/dump_small_tables.py`), rather than assuming what they
+were. Both turned out to be real, useful tables: `0x1598B`
+(`FACING_DIRECTION_NAME_TABLE`, 4 entries — 'North'/'-East'/'South'/
+'-West') and `0x15993` (`SHRINE_ATTRIBUTE_NAME_TABLE`, 4 entries —
+'Strength'/'Dexterity'/'Intelligence'/'Wisdom'). Tracing their callers
+resolved two more roadmap items:
+
+- **`drawDungeonStatusBar`** (`0x162FD`) — the dungeon HUD line,
+  "LVL:"+`_dungeonLevel`+1 and "Head-"+`FACING_DIRECTION_NAME_TABLE`
+  [`_facingDirection`].
+- **`enterShrine`** (`0x16366`) — the shrine-visit handler. Prompts a
+  player, loads `SHRINE.IMG`, sets the game-mode byte to 4, and
+  announces the shrine by name via
+  `SHRINE_ATTRIBUTE_NAME_TABLE[_partyPosition & 3]` — confirming
+  Ultima III's 4 shrines map 1:1 to the 4 primary attributes (a nice,
+  clean design fact). It then prompts an "Offering*100-" gold amount,
+  refuses one above a shrine-specific maximum ("You can't cheat the
+  Gods!"), spends the gold from `_gold`, and raises one of the
+  character's 4 primary attributes before printing "Shazam!". **Left
+  open deliberately**: the code selects *which* attribute to raise via
+  a lookup of the character's race (`[bx+16h]`) against a 5-entry
+  table (`byte_158CD`) combined with the shrine index in a way this
+  pass didn't fully untangle, and the per-shrine maximum-offering
+  table (`[bx+di+58D2h]`) isn't independently confirmed either — noted
+  as unresolved rather than asserted from a partial read.
+
+`ida_scripts/fix_monster_tables.py` was generalized into
+`fix_array_boundaries.py` (a growing list of address/name/size
+entries) once it needed to fix these two tables' boundaries too, on
+top of the two monster tables from earlier — same
+`del_items`+`create_data` pattern each time.
