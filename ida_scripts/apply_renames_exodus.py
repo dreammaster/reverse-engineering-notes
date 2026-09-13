@@ -1172,6 +1172,25 @@ RENAMES = [
      "in a way not fully disentangled) and the per-shrine maximum "
      "offering table (`[bx+di+58D2h]`) are NOT independently verified "
      "-- flagged rather than guessed at further."),
+
+    (0x15B28, "isSpecialEncounterLocation",
+     "Called from beginCombatEncounter and updateMonsterAI when "
+     "deciding how many monsters to spawn for a new encounter. "
+     "Returns true (al=0FFh, via a `cmp al,0FFh` immediately before "
+     "`retn` whose flags the caller reads directly with `jz`/`jnz` -- "
+     "no separate flag needed) exactly when `_savedOverworldPosition`'s "
+     "LOW byte equals a fixed constant (`byte_116E3` = 0Ah, never "
+     "written anywhere else -- a true constant, not a variable) AND "
+     "either `byte_114BC` (game mode) == 3, or game mode == 80h "
+     "(combat) with `byte_158CB` == 3. In beginCombatEncounter, a TRUE "
+     "result here means the encounter always spawns a full, "
+     "randomly-sized group (up to 8); FALSE falls through to a "
+     "separate `byte_158CB`-based check that can instead force a "
+     "single monster. Functionally confirmed at this level; WHY "
+     "position 0Ah / game mode 3 is special (a specific named "
+     "location, e.g. a castle courtyard, is a plausible guess but not "
+     "confirmed) is not resolved -- named for the condition it "
+     "checks, not for an asserted purpose."),
 ]
 
 

@@ -157,7 +157,7 @@ aDardinUlt      db 'DARDIN.ULT',0
                 db 72h, 16h, 7Ch, 16h, 82h, 16h, 8Bh, 16h, 94h, 16h, 9Ah
                 db 16h, 0A7h, 16h, 0B0h, 16h
 LOCATION_TILE_TABLE db 2Dh, 12h         ; DATA XREF: sub_17B54-5DBD↓o
-byte_116E3      db 0Ah                  ; DATA XREF: sub_15B28+12↓r
+byte_116E3      db 0Ah                  ; DATA XREF: isSpecialEncounterLocation+12↓r
                 db 35h, 2Eh, 13h, 6, 0Dh, 22h, 10h, 31h, 3Ah, 2Fh, 3Ah
                 db 7, 2Ch, 25h, 35h, 12h, 1Fh, 1Eh, 2, 38h, 1Fh, 13h, 39h
                 db 31h, 22h, 3Ah, 1Eh, 3Ah, 2Ch, 38h, 6, 9, 1Ch, 2Eh, 7
@@ -565,7 +565,7 @@ loc_11C2E:                              ; CODE XREF: sub_17B54-5F39↑j
                 call    sub_12168
 
 loc_11C35:                              ; CODE XREF: sub_17B54-5F24↑j
-                call    sub_15B28
+                call    isSpecialEncounterLocation
                 jnz     short loc_11C74
                 mov     _negateTimeDuration, 0
                 mov     dh, 0Bh
@@ -4630,7 +4630,7 @@ playToneF5      endp
 ; ---------------------------------------------------------------------------
                 align 10h
 aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: enterShrine+28↓o
-byte_158CB      db 0                    ; DATA XREF: sub_15B28:loc_15B46↓r
+byte_158CB      db 0                    ; DATA XREF: isSpecialEncounterLocation:loc_15B46↓r
                                         ; sub_16B91+10↓r ...
 _facingDirection db 0                   ; DATA XREF: sub_17B54-5D8F↑w
                                         ; drawDungeonStatusBar+25↓r ...
@@ -4736,7 +4736,7 @@ aShrineWhoEnter db 'shrine!',0Ah        ; DATA XREF: enterShrine+5↓o
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15B28       proc near               ; CODE XREF: sub_17B54:loc_11C35↑p
+isSpecialEncounterLocation proc near    ; CODE XREF: sub_17B54:loc_11C35↑p
                                         ; updateMonsterAI+6690↓p ...
                 pushf
                 cmp     byte_114BC, 80h
@@ -4744,27 +4744,27 @@ sub_15B28       proc near               ; CODE XREF: sub_17B54:loc_11C35↑p
                 cmp     byte_114BC, 3
                 jnz     short loc_15B4D
 
-loc_15B37:                              ; CODE XREF: sub_15B28+23↓j
+loc_15B37:                              ; CODE XREF: isSpecialEncounterLocation+23↓j
                 mov     al, byte ptr _savedOverworldPosition
                 cmp     al, byte_116E3
                 jnz     short loc_15B4D
                 mov     al, 0FFh
 
-loc_15B42:                              ; CODE XREF: sub_15B28+27↓j
+loc_15B42:                              ; CODE XREF: isSpecialEncounterLocation+27↓j
                 popf
                 cmp     al, 0FFh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15B46:                              ; CODE XREF: sub_15B28+6↑j
+loc_15B46:                              ; CODE XREF: isSpecialEncounterLocation+6↑j
                 cmp     byte_158CB, 3
                 jz      short loc_15B37
 
-loc_15B4D:                              ; CODE XREF: sub_15B28+D↑j
-                                        ; sub_15B28+16↑j
+loc_15B4D:                              ; CODE XREF: isSpecialEncounterLocation+D↑j
+                                        ; isSpecialEncounterLocation+16↑j
                 mov     al, 0
                 jmp     short loc_15B42
-sub_15B28       endp
+isSpecialEncounterLocation endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11088,7 +11088,7 @@ loc_18A23:                              ; CODE XREF: updateMonsterAI+665D↑j
                 mov     cx, 8
                 mov     al, 0
                 rep stosb
-                call    sub_15B28
+                call    isSpecialEncounterLocation
                 jz      short loc_18A54
                 cmp     byte_158CB, 2
                 jb      short loc_18A59
@@ -11361,7 +11361,7 @@ combatAdvanceTurn:                      ; CODE XREF: sub_17B54-5F78↑j
                                         ; updateMonsterAI+67CE↑j ...
                 mov     al, 1
                 call    sub_17E02
-                call    sub_15B28
+                call    isSpecialEncounterLocation
                 jnz     short loc_18C0B
                 mov     _negateTimeDuration, 0
 
@@ -11783,7 +11783,7 @@ loc_18EBC:                              ; CODE XREF: updateMonsterAI:loc_18E3D�
                 mul     ah
                 mov     di, ax
                 lea     di, [di+14CCh]
-                call    sub_15B28
+                call    isSpecialEncounterLocation
                 jnz     short loc_18ED6
                 cmp     byte ptr [di+30h], 0Fh
                 jz      short loc_18ED6
@@ -12337,7 +12337,7 @@ loc_19262:                              ; CODE XREF: sub_19244+15↑j
                 mul     bl
                 mov     si, ax
                 lea     si, [si+14CCh]
-                call    sub_15B28
+                call    isSpecialEncounterLocation
                 jnz     short loc_1928A
                 cmp     byte ptr [si+28h], 7
                 jnz     short loc_192A1

@@ -399,17 +399,26 @@ Next-session priorities, roughly in order:
       over-read (see the spell-table findings above); dumping them
       properly by address, rather than by assumed table membership,
       resolved both in one pass.
+- [x] **`sub_15B28` renamed**: **`isSpecialEncounterLocation`**, done
+      2026-09-14. Fully traced its boolean formula: true exactly when
+      `_savedOverworldPosition`'s low byte equals a fixed constant
+      (`byte_116E3` = `0x0A`, confirmed a true constant — never
+      written anywhere else in the binary) AND either game mode
+      (`byte_114BC`) `== 3`, or game mode `== 0x80` (combat) with
+      `byte_158CB == 3`. In `beginCombatEncounter`, a true result
+      means the encounter always spawns a full, randomly-sized group
+      (up to 8 monsters); false falls through to a separate check that
+      can instead force a single monster. **Left open**: *why*
+      position `0x0A`/game mode 3 is special — i.e. what specific named
+      location this constant refers to — isn't confirmed; named for
+      the condition it checks, not for an asserted location identity.
 - [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
       `sub_1232F`, compares against `_partyPosition`) and `sub_1232F`
       itself (the special-case handler for monster types `'t'`/`'<'`
       in `updateMonsterAI`), `sub_17F96`/`sub_128F2` (helpers
-      `canMoveToTile` calls into), `sub_17233`/`sub_17254`
-      (movement-blocked checks `cmdMoveNorth` calls), and `sub_15B28`
-      (low confidence, checks `_gameMode`/`byte_158CB`/`word_114C2`
-      vs `byte_116E3` — read once, purpose not pinned down; also
-      called from `updateMonsterAI` and `beginCombatEncounter` when
-      deciding how many monsters to spawn in a new encounter) — all
-      found in passing this pass but not chased down.
+      `canMoveToTile` calls into), and `sub_17233`/`sub_17254`
+      (movement-blocked checks `cmdMoveNorth` calls) — all found in
+      passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
