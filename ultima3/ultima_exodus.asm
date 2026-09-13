@@ -8864,7 +8864,7 @@ DUNGEON_COMMAND_LABELS dw offset loc_177EA ; DATA XREF: sub_17B54+82F↓o
                 db 78h, 2Dh, 18h
 funcs_18028     dw offset sub_1A5AC     ; DATA XREF: sub_17B54+4D4↓r
                 dw offset sub_1A630
-                dw offset sub_1A692
+                dw offset showTempleMenu
                 dw offset sub_1A8A5
                 dw offset sub_1AA25
                 dw offset sub_1AB93
@@ -12827,9 +12827,9 @@ sub_19630       endp
 ; ---------------------------------------------------------------------------
                 align 2
                 db 59h, 65h, 73h, 0, 4Eh, 6Fh, 0
-byte_19657      db 59h, 4Eh, 51h, 1Bh   ; DATA XREF: sub_1A561+C↓o
+byte_19657      db 59h, 4Eh, 51h, 1Bh   ; DATA XREF: promptYesNo+C↓o
 byte_1965B      db 50h, 96h, 54h, 96h, 54h, 96h, 54h, 96h
-                                        ; DATA XREF: sub_1A561+8↓o
+                                        ; DATA XREF: promptYesNo+8↓o
 byte_19663      db 51h, 1Bh, 0, 42h, 43h, 44h, 45h, 46h, 47h, 48h, 49h
                                         ; DATA XREF: sub_1A8A5+61↓o
                                         ; sub_1A8A5+E5↓o
@@ -12922,7 +12922,7 @@ aTooMuchToCarry db 0Ah                  ; DATA XREF: sub_1A630:loc_1A680↓o
                                         ; sub_1AB93:loc_1AC50↓o
                 db 'Too much to',0Ah
                 db 'carry!',0Ah,0
-aClericalHealin db 0Ah                  ; DATA XREF: sub_1A692+5↓o
+aClericalHealin db 0Ah                  ; DATA XREF: showTempleMenu+5↓o
                 db 'Clerical Healing',0Ah
                 db 'Sacraments:',0Ah
                 db ' 1-Curing,',0Ah
@@ -12930,49 +12930,49 @@ aClericalHealin db 0Ah                  ; DATA XREF: sub_1A692+5↓o
                 db ' 3-Resurrection,',0Ah
                 db ' 4-Recallings.',0Ah
                 db 'Your needs: ',0
-aFareTheeWellMy db 0Ah                  ; DATA XREF: sub_1A692:loc_1A6C4↓o
+aFareTheeWellMy db 0Ah                  ; DATA XREF: showTempleMenu:loc_1A6C4↓o
                 db 'Fare thee well',0Ah
                 db 'my children.',0Ah,0
-aACuringWillCos db 0Ah                  ; DATA XREF: sub_1A692:loc_1A6D4↓o
+aACuringWillCos db 0Ah                  ; DATA XREF: showTempleMenu:templeCure↓o
                 db 'A curing will',0Ah
                 db 'cost 100 g.p.',0Ah
                 db 'Wilt thou pay?',0Ah,0
-aCureWhom       db 'Cure whom? ',0      ; DATA XREF: sub_1A692+57↓o
-aHealingsCost20 db 0Ah                  ; DATA XREF: sub_1A692:loc_1A761↓o
+aCureWhom       db 'Cure whom? ',0      ; DATA XREF: showTempleMenu+57↓o
+aHealingsCost20 db 0Ah                  ; DATA XREF: showTempleMenu:templeHeal↓o
                 db 'Healings cost',0Ah
                 db '200 g.p.  Wilt',0Ah
                 db 'thou pay? ',0
-aHealWhom       db 'Heal whom? ',0      ; DATA XREF: sub_1A692+E4↓o
-aResurrectionsC db 0Ah                  ; DATA XREF: sub_1A692:loc_1A7B6↓o
+aHealWhom       db 'Heal whom? ',0      ; DATA XREF: showTempleMenu+E4↓o
+aResurrectionsC db 0Ah                  ; DATA XREF: showTempleMenu:templeResurrect↓o
                 db 'Resurrections',0Ah
                 db 'cost 500 g.p.',0Ah
                 db 'Wilt thou pay?',0Ah,0
-aResurrectWhom  db 'Resurrect whom? ',0 ; DATA XREF: sub_1A692:loc_1A7D1↓o
-aRecallingsCost db 'Recallings',0Ah     ; DATA XREF: sub_1A692:loc_1A833↓o
+aResurrectWhom  db 'Resurrect whom? ',0 ; DATA XREF: showTempleMenu:loc_1A7D1↓o
+aRecallingsCost db 'Recallings',0Ah     ; DATA XREF: showTempleMenu:templeRecall↓o
                 db 'cost 900 g.p.',0Ah
                 db 'Wilt thou pay?',0Ah,0
-aRecallWhom     db 'Recall whom? ',0    ; DATA XREF: sub_1A692:loc_1A84E↓o
-aWithoutProperO db 0Ah                  ; DATA XREF: sub_1A692:loc_1A72C↓o
+aRecallWhom     db 'Recall whom? ',0    ; DATA XREF: showTempleMenu:loc_1A84E↓o
+aWithoutProperO db 0Ah                  ; DATA XREF: showTempleMenu:loc_1A72C↓o
                 db 'Without proper',0Ah
                 db 'offerings I',0Ah
                 db 'cannot help!',0Ah,0
 aIMSorryButThou db 'I',27h,'m sorry, but',0Ah
-                                        ; DATA XREF: sub_1A692:loc_1A735↓o
+                                        ; DATA XREF: showTempleMenu:loc_1A735↓o
                                         ; sub_1AD70:loc_1ADB1↓o
                 db 'thou hast not',0Ah
                 db 'gold enough.',0Ah,0
-aNotInjured     db 'Not injured!',0Ah,0 ; DATA XREF: sub_1A692:loc_1A743↓o
-aFailed_0       db 'Failed!',0Ah,0      ; DATA XREF: sub_1A692:loc_1A752↓o
-aNotDead        db 'Not dead!',0Ah,0    ; DATA XREF: sub_1A692:loc_1A824↓o
-aNotAshes       db 'Not ashes!',0Ah,0   ; DATA XREF: sub_1A692:loc_1A896↓o
-jpt_1A6C0       dw offset loc_1A6D4     ; DATA XREF: sub_1A692+2E↓r
-                dw offset loc_1A761     ; jump table for switch statement
-                dw offset loc_1A7B6
-                dw offset loc_1A833
+aNotInjured     db 'Not injured!',0Ah,0 ; DATA XREF: showTempleMenu:loc_1A743↓o
+aFailed_0       db 'Failed!',0Ah,0      ; DATA XREF: showTempleMenu:loc_1A752↓o
+aNotDead        db 'Not dead!',0Ah,0    ; DATA XREF: showTempleMenu:loc_1A824↓o
+aNotAshes       db 'Not ashes!',0Ah,0   ; DATA XREF: showTempleMenu:loc_1A896↓o
+jpt_1A6C0       dw offset templeCure    ; DATA XREF: showTempleMenu:TEMPLE_COMMAND_TABLE↓r
+                dw offset templeHeal    ; jump table for switch statement
+                dw offset templeResurrect
+                dw offset templeRecall
 byte_19BF4      db 31h, 32h, 33h, 34h, 51h, 1Bh
-                                        ; DATA XREF: sub_1A692+14↓o
+                                        ; DATA XREF: showTempleMenu+14↓o
 byte_19BFA      db 6, 9Ch, 8, 9Ch, 0Ah, 9Ch, 0Ch, 9Ch, 0Eh, 9Ch, 0Eh, 9Ch
-                                        ; DATA XREF: sub_1A692+10↓o
+                                        ; DATA XREF: showTempleMenu+10↓o
                 db 31h, 0, 32h, 0, 33h, 0, 34h, 0, 51h, 0
 aBsqBuy         db 'BSQ',1Bh,'Buy',0    ; DATA XREF: sub_1A8A5+27↓o
                                         ; sub_1AA25+27↓o
@@ -13323,8 +13323,8 @@ loc_1A556:                              ; CODE XREF: sub_17B54+2A05↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A561       proc near               ; CODE XREF: sub_1A5AC+53↓p
-                                        ; sub_1A692+49↓p ...
+promptYesNo     proc near               ; CODE XREF: sub_1A5AC+53↓p
+                                        ; showTempleMenu+49↓p ...
                 pushf
                 push    cx
                 push    ax
@@ -13339,7 +13339,7 @@ sub_1A561       proc near               ; CODE XREF: sub_1A5AC+53↓p
                 jz      short loc_1A57D
                 mov     al, 4Eh ; 'N'
 
-loc_1A57D:                              ; CODE XREF: sub_1A561+18↑j
+loc_1A57D:                              ; CODE XREF: promptYesNo+18↑j
                 pop     di
                 pop     si
                 mov     cl, al
@@ -13348,13 +13348,13 @@ loc_1A57D:                              ; CODE XREF: sub_1A561+18↑j
                 pop     cx
                 popf
                 retn
-sub_1A561       endp
+promptYesNo     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A587       proc near               ; CODE XREF: sub_1A5AC+3A↓p
+deductGoldIfAffordable proc near        ; CODE XREF: sub_1A5AC+3A↓p
                                         ; sub_1A630+31↓p ...
                 xchg    ax, [di+23h]
                 cmp     ax, [di+23h]
@@ -13371,10 +13371,10 @@ sub_1A587       proc near               ; CODE XREF: sub_1A5AC+3A↓p
                 jnb     short locret_1A5AB
                 mov     word ptr [di+23h], 0
 
-locret_1A5AB:                           ; CODE XREF: sub_1A587+9↑j
-                                        ; sub_1A587+1D↑j
+locret_1A5AB:                           ; CODE XREF: deductGoldIfAffordable+9↑j
+                                        ; deductGoldIfAffordable+1D↑j
                 retn
-sub_1A587       endp
+deductGoldIfAffordable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13411,7 +13411,7 @@ loc_1A5DC:                              ; CODE XREF: sub_1A5AC+20↑j
                 cmp     ax, [di+23h]
                 jnb     short loc_1A616
                 call    sub_126F4
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 mov     cl, 4
                 shr     ax, cl
                 mov     si, ax
@@ -13420,7 +13420,7 @@ loc_1A5DC:                              ; CODE XREF: sub_1A5AC+20↑j
                 call    printGameText
                 lea     si, aAnother    ; "\nAnother? "
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 call    sub_126F4
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1A5B8
@@ -13481,7 +13481,7 @@ sub_1A630       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 xchg    ax, [di+21h]
                 jb      short loc_1A680
                 add     sp, 2
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 call    drawPartyStatusBar
 
 loc_1A667:                              ; CODE XREF: sub_1A630+10↑j
@@ -13518,7 +13518,7 @@ sub_1A630       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A692       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showTempleMenu  proc near               ; CODE XREF: sub_17B54+4D4↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -13542,17 +13542,19 @@ sub_1A692       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 mov     ah, 0
                 mov     bx, ax
                 shl     bx, 1           ; switch 4 cases
-                jmp     jpt_1A6C0[bx]   ; switch jump
+
+TEMPLE_COMMAND_TABLE:                   ; switch jump
+                jmp     jpt_1A6C0[bx]
 ; ---------------------------------------------------------------------------
 
-loc_1A6C4:                              ; CODE XREF: sub_1A692+1E↑j
-                                        ; sub_1A692+22↑j ...
+loc_1A6C4:                              ; CODE XREF: showTempleMenu+1E↑j
+                                        ; showTempleMenu+22↑j ...
                 lea     si, aFareTheeWellMy ; "\nFare thee well\nmy children.\n"
                 call    printGameText
                 call    drawPartyStatusBar
 
-loc_1A6CE:                              ; CODE XREF: sub_1A692+61↓j
-                                        ; sub_1A692+A1↓j ...
+loc_1A6CE:                              ; CODE XREF: showTempleMenu+61↓j
+                                        ; showTempleMenu+A1↓j ...
                 pop     si
                 pop     cx
                 pop     bx
@@ -13561,11 +13563,11 @@ loc_1A6CE:                              ; CODE XREF: sub_1A692+61↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A6D4:                              ; CODE XREF: sub_1A692+2E↑j
+templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aACuringWillCos ; jumptable 0001A6C0 case 0
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
                 cmp     word ptr [di+23h], 100h
@@ -13594,19 +13596,19 @@ loc_1A6D4:                              ; CODE XREF: sub_1A692+2E↑j
                 jnz     short loc_1A752
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     ax, 100h
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jmp     short loc_1A6C4
 ; ---------------------------------------------------------------------------
 
-loc_1A72C:                              ; CODE XREF: sub_1A692+4E↑j
-                                        ; sub_1A692+DB↓j ...
+loc_1A72C:                              ; CODE XREF: showTempleMenu+4E↑j
+                                        ; showTempleMenu+DB↓j ...
                 lea     si, aWithoutProperO ; "\nWithout proper\nofferings I\ncannot h"...
                 call    printGameText
                 jmp     short loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A735:                              ; CODE XREF: sub_1A692+55↑j
-                                        ; sub_1A692+E2↓j ...
+loc_1A735:                              ; CODE XREF: showTempleMenu+55↑j
+                                        ; showTempleMenu+E2↓j ...
                 lea     si, aIMSorryButThou ; "I'm sorry, but\nthou hast not\ngold eno"...
                 call    printGameText
                 mov     al, 0FFh
@@ -13614,8 +13616,8 @@ loc_1A735:                              ; CODE XREF: sub_1A692+55↑j
                 jmp     short loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A743:                              ; CODE XREF: sub_1A692+6B↑j
-                                        ; sub_1A692+FD↓j ...
+loc_1A743:                              ; CODE XREF: showTempleMenu+6B↑j
+                                        ; showTempleMenu+FD↓j ...
                 lea     si, aNotInjured ; "Not injured!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -13623,8 +13625,8 @@ loc_1A743:                              ; CODE XREF: sub_1A692+6B↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A752:                              ; CODE XREF: sub_1A692+8C↑j
-                                        ; sub_1A692+182↓j
+loc_1A752:                              ; CODE XREF: showTempleMenu+8C↑j
+                                        ; showTempleMenu+182↓j
                 lea     si, aFailed_0   ; "Failed!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -13632,11 +13634,11 @@ loc_1A752:                              ; CODE XREF: sub_1A692+8C↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A761:                              ; CODE XREF: sub_1A692+2E↑j
+templeHeal:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aHealingsCost20 ; jumptable 0001A6C0 case 1
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
                 cmp     word ptr [di+23h], 200h
@@ -13648,7 +13650,7 @@ loc_1A761:                              ; CODE XREF: sub_1A692+2E↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A785:                              ; CODE XREF: sub_1A692+EE↑j
+loc_1A785:                              ; CODE XREF: showTempleMenu+EE↑j
                 dec     al
                 mov     cx, ax
                 mov     ax, [bx+1Ch]
@@ -13666,27 +13668,27 @@ loc_1A785:                              ; CODE XREF: sub_1A692+EE↑j
                 call    sub_17176
                 call    sub_171C1
                 mov     ax, 200h
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jmp     loc_1A6C4
 ; ---------------------------------------------------------------------------
 
-loc_1A7B6:                              ; CODE XREF: sub_1A692+2E↑j
+templeResurrect:                        ; CODE XREF: showTempleMenu:TEMPLE_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aResurrectionsC ; jumptable 0001A6C0 case 2
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jnz     short loc_1A7C7
                 jmp     loc_1A72C
 ; ---------------------------------------------------------------------------
 
-loc_1A7C7:                              ; CODE XREF: sub_1A692+130↑j
+loc_1A7C7:                              ; CODE XREF: showTempleMenu+130↑j
                 cmp     word ptr [di+23h], 500h
                 jnb     short loc_1A7D1
                 jmp     loc_1A735
 ; ---------------------------------------------------------------------------
 
-loc_1A7D1:                              ; CODE XREF: sub_1A692+13A↑j
+loc_1A7D1:                              ; CODE XREF: showTempleMenu+13A↑j
                 lea     si, aResurrectWhom ; "Resurrect whom? "
                 call    printGameText
                 call    sub_16C76
@@ -13694,7 +13696,7 @@ loc_1A7D1:                              ; CODE XREF: sub_1A692+13A↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A7E0:                              ; CODE XREF: sub_1A692+149↑j
+loc_1A7E0:                              ; CODE XREF: showTempleMenu+149↑j
                 dec     al
                 mov     cx, ax
                 cmp     byte ptr [bx+11h], 47h ; 'G'
@@ -13702,7 +13704,7 @@ loc_1A7E0:                              ; CODE XREF: sub_1A692+149↑j
                 jmp     loc_1A743
 ; ---------------------------------------------------------------------------
 
-loc_1A7ED:                              ; CODE XREF: sub_1A692+156↑j
+loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jz      short loc_1A824
                 mov     ax, cx
@@ -13722,14 +13724,14 @@ loc_1A7ED:                              ; CODE XREF: sub_1A692+156↑j
                 jmp     loc_1A752
 ; ---------------------------------------------------------------------------
 
-loc_1A817:                              ; CODE XREF: sub_1A692+180↑j
+loc_1A817:                              ; CODE XREF: showTempleMenu+180↑j
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     ax, 500h
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jmp     loc_1A6C4
 ; ---------------------------------------------------------------------------
 
-loc_1A824:                              ; CODE XREF: sub_1A692+15F↑j
+loc_1A824:                              ; CODE XREF: showTempleMenu+15F↑j
                 lea     si, aNotDead    ; "Not dead!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -13737,23 +13739,23 @@ loc_1A824:                              ; CODE XREF: sub_1A692+15F↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A833:                              ; CODE XREF: sub_1A692+2E↑j
+templeRecall:                           ; CODE XREF: showTempleMenu:TEMPLE_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aRecallingsCost ; jumptable 0001A6C0 case 3
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jnz     short loc_1A844
                 jmp     loc_1A72C
 ; ---------------------------------------------------------------------------
 
-loc_1A844:                              ; CODE XREF: sub_1A692+1AD↑j
+loc_1A844:                              ; CODE XREF: showTempleMenu+1AD↑j
                 cmp     word ptr [di+23h], 900h
                 jnb     short loc_1A84E
                 jmp     loc_1A735
 ; ---------------------------------------------------------------------------
 
-loc_1A84E:                              ; CODE XREF: sub_1A692+1B7↑j
+loc_1A84E:                              ; CODE XREF: showTempleMenu+1B7↑j
                 lea     si, aRecallWhom ; "Recall whom? "
                 call    printGameText
                 call    sub_16C76
@@ -13761,7 +13763,7 @@ loc_1A84E:                              ; CODE XREF: sub_1A692+1B7↑j
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
 
-loc_1A85D:                              ; CODE XREF: sub_1A692+1C6↑j
+loc_1A85D:                              ; CODE XREF: showTempleMenu+1C6↑j
                 dec     al
                 mov     cx, ax
                 cmp     byte ptr [bx+11h], 47h ; 'G'
@@ -13769,7 +13771,7 @@ loc_1A85D:                              ; CODE XREF: sub_1A692+1C6↑j
                 jmp     loc_1A743
 ; ---------------------------------------------------------------------------
 
-loc_1A86A:                              ; CODE XREF: sub_1A692+1D3↑j
+loc_1A86A:                              ; CODE XREF: showTempleMenu+1D3↑j
                 cmp     byte ptr [bx+11h], 41h ; 'A'
                 jnz     short loc_1A896
                 mov     byte ptr [bx+11h], 47h ; 'G'
@@ -13784,17 +13786,17 @@ loc_1A86A:                              ; CODE XREF: sub_1A692+1D3↑j
                 call    sub_17176
                 call    sub_171C1
                 mov     ax, 900h
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jmp     loc_1A6C4
 ; ---------------------------------------------------------------------------
 
-loc_1A896:                              ; CODE XREF: sub_1A692+1DC↑j
+loc_1A896:                              ; CODE XREF: showTempleMenu+1DC↑j
                 lea     si, aNotAshes   ; "Not ashes!\n"
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1A6CE
-sub_1A692       endp
+showTempleMenu  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13811,7 +13813,7 @@ sub_1A8A5       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    di
                 lea     si, aWelcomeToTheWe ; "\nWelcome to the\nWeapons Shop!\n\nList"...
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A8BD
                 call    sub_1A9E8
@@ -13943,7 +13945,7 @@ loc_1A986:                              ; CODE XREF: sub_1A8A5+D5↑j
                 shl     bx, 1
                 mov     ax, [bx-61E1h]
                 shr     bx, 1
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1A9D0
                 mov     al, dl
                 add     al, 1
@@ -14026,7 +14028,7 @@ sub_1AA25       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    di
                 lea     si, aWelcomeToTheAr ; "\nWelcome to the\nArmour Shop!\n\nList?"...
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1AA3D
                 call    sub_1AB68
@@ -14158,7 +14160,7 @@ loc_1AB06:                              ; CODE XREF: sub_1AA25+D5↑j
                 shl     bx, 1
                 mov     ax, [bx-612Dh]
                 shr     bx, 1
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1AB50
                 mov     al, dl
                 add     al, 1
@@ -14280,7 +14282,7 @@ loc_1ABCF:                              ; CODE XREF: sub_1AB93+37↑j
                 shl     ah, cl
                 or      al, ah
                 mov     ah, ch
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1AC59
                 mov     [di+25h], bl
                 jmp     short loc_1AC3C
@@ -14312,7 +14314,7 @@ loc_1ABFF:                              ; CODE XREF: sub_1AB93+26↑j
                 shl     ah, cl
                 or      al, ah
                 mov     ah, ch
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1AC59
                 mov     [di+26h], bl
 
@@ -14320,7 +14322,7 @@ loc_1AC3C:                              ; CODE XREF: sub_1AB93+6A↑j
                                         ; sub_1AB93+117↓j ...
                 lea     si, aAnythingElse ; "\nAnything else?\n"
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1AC4D
                 jmp     loc_1AB98
@@ -14378,7 +14380,7 @@ loc_1AC6B:                              ; CODE XREF: sub_1AB93+26↑j
                 shl     ah, cl
                 or      al, ah
                 mov     ah, ch
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jnb     short loc_1ACA7
                 jmp     short loc_1AC59
 ; ---------------------------------------------------------------------------
@@ -14414,7 +14416,7 @@ loc_1ACAC:                              ; CODE XREF: sub_1AB93+26↑j
                 shl     ah, cl
                 or      al, ah
                 mov     ah, ch
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jnb     short loc_1ACE9
                 jmp     loc_1AC59
 ; ---------------------------------------------------------------------------
@@ -14463,7 +14465,7 @@ loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
                 call    sub_126F4
                 mov     ah, al
                 mov     al, 0
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1AD56
                 mov     cl, 8
                 shr     ax, cl
@@ -14473,7 +14475,7 @@ loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
                 call    printGameText
                 lea     si, aMoreOffering ; "\nMore offering?\n"
                 call    printGameText
-                call    sub_1A561
+                call    promptYesNo
                 call    sub_126F4
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1AD08
@@ -14528,11 +14530,11 @@ sub_1AD70       proc near               ; CODE XREF: sub_17B54+4C4↑p
                 lea     si, a00gpWillYouBuy ; "00gp. Will you\nbuy? "
                 call    printGameText
                 mov     ah, al
-                call    sub_1A561
+                call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1ADBF
                 mov     al, 0
-                call    sub_1A587
+                call    deductGoldIfAffordable
                 jb      short loc_1ADB1
                 lea     si, aMayYouRideFast ; "May you ride\nfast and true\nfriend!\n"
                 call    printGameText
