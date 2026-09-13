@@ -1406,6 +1406,7 @@ static Bytes_0(void) {
 	create_strlit	(0X15B13,	0X15);
 	set_name	(0X15B13,	"aShrineWhoEnter");
 	create_insn	(0X15B28);
+	set_name	(0X15B28,	"isSpecialEncounterLocation");
 	create_insn	(0X15B46);
 	create_insn	(0X15B51);
 	create_insn	(0X15B85);
