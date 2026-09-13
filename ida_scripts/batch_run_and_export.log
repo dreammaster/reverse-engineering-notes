@@ -14,7 +14,7 @@ input md5     : 7bea6bf20b7079b30f8ca5336b3805b2
 segments:
   seg000       0x010100-0x019054  (36692 bytes)
 
-functions: 57 total, 3 named, 54 still sub_XXXXX
+functions: 57 total, 57 named, 0 still sub_XXXXX
 
 structs (0): 
 ----- end target script output -----
