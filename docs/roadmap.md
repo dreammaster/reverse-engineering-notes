@@ -280,22 +280,31 @@ Next-session priorities, roughly in order:
       right", `cmdTurnLeft`="Turn left", `cmdMoveForward`="Advance",
       `cmdMoveBackward`="Retreat" — all line up perfectly, independently
       confirming that fix was correct.
-- [ ] **Why is Unlock ('U') disabled in dungeons?** `DUNGEON_COMMAND_TABLE`
-      routes 10 letters (B, A, E, F, L, Q, T, U, X, S — `cmdDisabledInDungeon`)
-      to one shared disabled-command stub — most make obvious sense (no
-      vehicles/locations-within-locations/surface-only-save/nothing to
-      steal underground), but Unlock being disabled specifically is
-      surprising given Ultima dungeons are full of locked doors. Not
-      explained this pass — worth checking whether locked-door
-      interaction in dungeons happens automatically on movement
-      instead of via a dedicated command, or whether this finding
-      needs re-verification.
-- [ ] Confirm whether `_locationTypeTable` (`byte_1259D`) is really a
-      scalar or (more likely, given it's indexed alongside the
-      19-entry `LOCATION_TILE_TABLE`) a 19-byte parallel array —
-      applied at low-medium confidence this pass, worth a quick
-      `ida_bytes.get_word()`-style direct check against the actual
-      indexed access pattern before trusting it as-is.
+- [ ] **Why is Unlock ('U') disabled in dungeons?** PARTIALLY
+      explained, 2026-09-14: `cmdUnlock` only ever recognizes ONE
+      hardcoded tile value as "a locked door" — `getMapTileAt` result
+      `== 0xB8` — which reads like an overworld/town-specific tile ID
+      from that map format's own tile-numbering space, not obviously
+      shared with the dungeon renderer's much smaller, distinct
+      wall/floor/ladder tile-code space (confirmed elsewhere via the
+      dungeon movement handlers). If dungeons simply don't use tile ID
+      `0xB8` for anything, reusing `cmdUnlock` there would always be a
+      silent no-op — explaining why it was cheaper to just disable the
+      letter outright. Not fully confirmed: doesn't independently show
+      whether dungeon locked doors exist at all, or how they'd be
+      opened if so (automatic-on-movement remains a plausible
+      alternative, per the original hypothesis).
+- [x] **`_locationTypeTable` renamed to `_locationType`**, done
+      2026-09-14: confirmed a plain scalar (`db 0`, declared alone,
+      never accessed with an index anywhere in the binary) — not the
+      19-byte parallel array the old name implied. Clean reads (`cmp
+      _locationType,5/6/7` in `sub_17B54`; `cmp al,9` in
+      `beginCombatEncounter`) match a simple "current location type"
+      value. One write site inside a self-modifying-code setup block
+      (which reads opcode bytes from several `loc_` addresses as raw
+      data) stores something that looks like a code byte at this same
+      address rather than a location type — not explained, flagged as
+      a loose end rather than glossed over.
 - [x] **`WIZARD_SPELL_TABLE`/`CLERIC_SPELL_TABLE` — all 32 spell slots
       named**, done 2026-09-14. Confirmed both tables are exactly 16
       entries (32 bytes) each directly from `castSpell`'s own letter
