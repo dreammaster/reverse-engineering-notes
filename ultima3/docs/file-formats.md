@@ -237,18 +237,41 @@ Shrine/Fountain/Time Lord/Brand tile (LairWare's `UltimaDngn.c` has
 `$9076`/`$931C` — see [overview.md](overview.md) — a plausible
 cross-reference for what triggers each, once traced on the DOS side).
 
+## `NAME.DAT` (640 bytes) — a pixel-path animation script, NOT a name table
+
+**Correction, 2026-09-13**: this doc previously guessed (from external
+speculation only, with no disassembly evidence) that `NAME.DAT` is a
+random name-generator table for character creation. Direct
+disassembly evidence now contradicts that: `ULTIMA.COM` loads only the
+first 533 (`0x215`) of its 640 bytes into `byte_14117`, and
+`drawAnimatedPixelPath` (`ida_scripts/apply_renames.py`, formerly
+`sub_15E68`) consumes that buffer as a stream of `(length, row)` pairs
+— `length` and a row byte per entry, `0` terminates — plotting 2
+adjacent pixels per entry via `plotPixel2bpp` with a wait between each,
+called during the boot sequence. That's a coordinate-pair pixel-path
+animation script (the classic hand-drawn logo/signature reveal
+effect), not name-generation data. **Open**: why only 533 of 640 bytes
+are read, and what the remaining 107 bytes hold — not yet traced.
+
 ## Files with no external documentation found (2026-09-13 search)
 
 - **`DUNGEON.DAT`** (1,866 bytes)
-- **`ANIMATE.DAT`** (5,888 bytes)
-- **`NAME.DAT`** (640 bytes) — likely the random name-generator table
-  referenced by character creation (LairWare's remake has an
-  equivalent name-generation feature)
-- **`BOOTUP.BIN`** (19,572 bytes)
+- **`ANIMATE.DAT`** (5,888 bytes) — loaded into `byte_1432D` and
+  consumed by `drawAnimationFrameRow`/`runBootFlagAnimation` (see
+  `apply_renames.py`) as 16-row image-frame data for the boot logo/flag
+  animation. Internal frame layout not yet decoded.
+- **`BOOTUP.BIN`** (19,572 bytes) — per `docs/overview.md`'s "ULTIMA.COM's
+  real role" finding, this is very likely the actual game (character
+  creation, main loop, everything past the title screen), loaded and
+  chained into via a self-modifying FCB-read trick. Needs its own IDB —
+  see [roadmap.md](roadmap.md).
+- **`EXODUS.BIN`** (44,234 bytes) — see its own section above; not
+  confirmed whether it's a second chained executable or a pure data
+  blob.
 
-These four have to be reverse-engineered entirely from the
-disassembly and/or raw byte inspection — no wiki/community
-documentation was found for them. Flagged in
+`DUNGEON.DAT`/`ANIMATE.DAT`'s full internal layouts still have to be
+reverse-engineered from the disassembly and/or raw byte inspection —
+no wiki/community documentation was found for them. Flagged in
 [roadmap.md](roadmap.md) as open items.
 
 ## Open questions
