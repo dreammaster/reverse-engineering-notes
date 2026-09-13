@@ -19,6 +19,34 @@ function-naming sweep is complete. No structs defined yet (this
 executable turns out not to need any — see "ULTIMA.COM's real role"
 below). `ultima.asm` is ~113KB.
 
+## Two executables, two IDBs
+
+Following the "ULTIMA.COM's real role" finding below, this project now
+has the same shape as `ultima1` (one IDB per DOS executable) rather
+than `ultima2`'s single-IDB shape it was originally scaffolded to
+match — `ida_scripts/run_ida_script.ps1`/`batch_run_and_export.py` were
+generalized 2026-09-13 to take a `-Idb` parameter (ported directly from
+`ultima1`'s equivalent driver) rather than staying hardcoded to
+`ultima.idb`.
+
+| IDB | Root file | Role | Functions named |
+|---|---|---|---|
+| `ultima.idb` | `ULTIMA.COM` | Title screen / boot loader, chains to BOOTUP.BIN | 57 / 57 (100%) |
+| `ultima_bootup.idb` | `BOOTUP.BIN` | The actual game (character creation, main loop, etc. — hypothesis, not yet confirmed) | 4 / 73 |
+
+`ultima_bootup.idb` was created 2026-09-13 by copying `BOOTUP.BIN` to a
+temporary `.com`-extensioned file so IDA's automatic loader detection
+would treat it exactly like `ULTIMA.COM` (tiny-model COM file, same
+paragraph-`1000h`/offset-`100h` load address) rather than falling back
+to the generic "Binary File" loader with no base-address knowledge —
+the scratch copy is deleted immediately after (not needed once the IDB
+exists; IDA embeds its own copy of the input bytes). This is why the
+IDB's "root filename"/"input file" fields read `_bootup_scratch.com`
+rather than `BOOTUP.BIN` — cosmetic only, doesn't affect the analysis.
+Confirmed loading at the identical address range convention as
+`ULTIMA.COM` (`0x10100`-`0x14D74`, 19,572 bytes) — consistent with the
+FCB-read chain-load trick overwriting `ULTIMA.COM`'s memory in place.
+
 ## Platform and executable shape
 
 - **Single `.COM` file**: `ULTIMA.COM` (36,692 bytes on disk), MS-DOS
@@ -142,13 +170,18 @@ GUI is incompatible with this flow since it locks the `.idb`).
   filename, input path/hash, segments, function-naming progress,
   struct list). Used to produce the status line above; safe to re-run
   any time with `-NoExport` as a sanity check.
-- **`ida_scripts/apply_renames.py`** / **`apply_structs.py`** —
-  accumulating, idempotent, re-runnable scripts for plain renames and
-  struct-member edits respectively (separate files since they use
-  different IDA APIs). `apply_renames.py` now holds the full 54-entry
-  function-naming sweep plus 12 global/table/string renames (`DRY_RUN =
-  False`, flipped once the first batch verified clean — see roadmap.md);
-  `apply_structs.py` is still empty, no structs needed yet.
+- **`ida_scripts/apply_renames_<stem>.py`** / **`apply_structs_<stem>.py`**
+  (`ultima`/`bootup`) — accumulating, idempotent, re-runnable scripts
+  per executable for plain renames and struct-member edits
+  respectively (separate files since they use different IDA APIs; one
+  set per IDB since ultima1's precedent showed function/global renames
+  don't carry across IDBs automatically even when the executables share
+  code, per the naming convention doc there). `apply_renames_ultima.py`
+  holds the full 54-entry `ULTIMA.COM` function-naming sweep plus 12
+  global/table/string renames (`DRY_RUN = False`, flipped once the
+  first batch verified clean — see roadmap.md); the `_bootup` variants
+  are freshly scaffolded, both empty (`DRY_RUN = True`), pending
+  `BOOTUP.BIN`'s own identification pass.
 - **`ida_scripts/fix_wind_string_array.py`** — one-off structural fix,
   kept per the sibling-project convention of not deleting one-off
   scripts: splits the 5 wind-direction strings (see `updateWindDisplay`

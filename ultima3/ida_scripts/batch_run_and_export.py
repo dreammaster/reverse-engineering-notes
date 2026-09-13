@@ -1,6 +1,13 @@
 """
-Headless driver: run one of the apply_*.py scripts against ultima.idb via
-idat.exe, then export ultima.asm/.idc and save, all without opening the GUI.
+Headless driver: run a target script against whichever ultima3*.idb was
+passed to idat.exe, then export <same-stem>.asm/.idc and save, all without
+opening the GUI.
+
+Generalized 2026-09-13 (was hardcoded to ultima.idb/.asm/.idc) once
+BOOTUP.BIN needed its own IDB alongside ULTIMA.COM's ultima.idb -- this
+driver now derives the export paths from whatever IDB idat.exe actually
+opened (idc.get_idb_path()), rather than a hardcoded filename. Ported
+directly from ultima1's equivalent multi-IDB driver.
 
 USAGE (from a shell, IDA GUI must be closed first -- the .idb gets locked):
 
@@ -8,35 +15,36 @@ USAGE (from a shell, IDA GUI must be closed first -- the .idb gets locked):
         -S"C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py C:\\dev\\ultima3\\ida_scripts\\apply_structs.py" ^
         "C:\\dev\\ultima3\\ultima.idb"
 
-The first idc.ARGV entry after the script path is the target script to exec
-(e.g. apply_renames.py, apply_structs.py, or a one-off fix script that
-already has DRY_RUN = False). That script's own main()/module-level code
-runs exactly as it would under Alt+F7 -- this wrapper just adds the
-analysis-wait, export, save, and exit around it. A second ARGV entry, the
-literal string "noexport", skips the export/save step -- for read-only
-report scripts like identify.py.
+The first idc.ARGV entry after the driver's own path is the target script
+to exec (e.g. an apply_*.py or a one-off fix/discovery script). That
+script's own main()/module-level code runs exactly as it would under
+Alt+F7 -- this wrapper just adds the analysis-wait, export, save, and exit
+around it.
+
+If the target script itself doesn't want an export (e.g. a pure read-only
+discovery/report script), pass a second ARGV entry of "noexport" to skip
+the asm/idc export and database save steps:
+
+    -S"batch_run_and_export.py identify.py noexport"
 
 Every step is logged to batch_run_and_export.log via plain Python file
 I/O rather than print()/msg() -- console output from idat.exe in -A mode
-is unreliable, so the log file is the source of truth for what happened
-on any given run, including exceptions. This is a direct port of the same
-driver used in ultima1/ultima2 (see those repos' ida_scripts/ for the
-originals) -- two things it needed that a naive port of the Alt+F7 workflow
-wouldn't guess:
+is not reliable, so the log file is the source of truth for what happened
+on any given run, including exceptions. The target script's own stdout is
+captured and appended to the log too.
+
+Two non-obvious things this needed (confirmed 2026-08-18 in the ultima2
+project this pattern originated from):
   - ida_loader.gen_file()'s fp argument needs a real SWIG FILE* --
     ida_diskio.fopenWT()/eclose(), not a plain Python open() handle
     (that raises "TypeError: argument 2 of type 'FILE *'").
   - idat.exe's stdout/msg() output is not reliably flushed/visible
-    before qexit(); don't depend on console output for diagnosis. This
-    also means the TARGET script's own print() calls (e.g. a dry-run
-    script's [dry]/[!] lines) need to be captured explicitly -- this
-    driver redirects sys.stdout during the exec() and writes whatever
-    it captured into the log too, so DRY_RUN=True scripts are just as
-    inspectable headlessly as DRY_RUN=False ones.
+    before qexit(); don't depend on console output for diagnosis.
 """
 
 import contextlib
 import io
+import os
 import traceback
 
 import idc
@@ -44,9 +52,8 @@ import ida_auto
 import ida_diskio
 import ida_loader
 
-ASM_PATH = r"C:\dev\ultima3\ultima.asm"
-IDC_PATH = r"C:\dev\ultima3\ultima.idc"
-LOG_PATH = r"C:\dev\ultima3\ida_scripts\batch_run_and_export.log"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_PATH = os.path.join(SCRIPT_DIR, "batch_run_and_export.log")
 
 
 def log(fh, msg):
@@ -62,6 +69,12 @@ def main():
             log(fh, "[*] auto_wait (initial)")
             ida_auto.auto_wait()
 
+            idb_path = idc.get_idb_path()
+            stem = os.path.splitext(idb_path)[0]
+            asm_path = stem + ".asm"
+            idc_path = stem + ".idc"
+            log(fh, f"[*] idb = {idb_path}")
+
             argv = idc.ARGV
             log(fh, f"[*] ARGV = {list(argv)}")
             if len(argv) < 2:
@@ -70,7 +83,7 @@ def main():
                 return
 
             target_script = argv[1]
-            no_export = len(argv) > 2 and argv[2] == "noexport"
+            do_export = not (len(argv) >= 3 and argv[2] == "noexport")
 
             log(fh, f"[*] reading {target_script}")
             with open(target_script, "r") as f:
@@ -90,35 +103,31 @@ def main():
             log(fh, "[*] auto_wait (post-script)")
             ida_auto.auto_wait()
 
-            if no_export:
-                log(fh, "[*] noexport requested -- skipping export/save")
-                log(fh, "[*] done, exiting 0")
-                idc.qexit(0)
-                return
+            if do_export:
+                log(fh, f"[*] exporting ASM to {asm_path}")
+                fp = ida_diskio.fopenWT(asm_path)
+                if fp is None:
+                    raise RuntimeError(f"fopenWT failed for {asm_path}")
+                try:
+                    ok = ida_loader.gen_file(ida_loader.OFILE_ASM, fp, 0, idc.BADADDR, 0)
+                finally:
+                    ida_diskio.eclose(fp)
+                log(fh, f"[*] gen_file(OFILE_ASM) returned {ok}")
 
-            log(fh, f"[*] exporting ASM to {ASM_PATH}")
-            fp = ida_diskio.fopenWT(ASM_PATH)
-            if fp is None:
-                raise RuntimeError(f"fopenWT failed for {ASM_PATH}")
-            try:
-                ok = ida_loader.gen_file(ida_loader.OFILE_ASM, fp, 0, idc.BADADDR, 0)
-            finally:
-                ida_diskio.eclose(fp)
-            log(fh, f"[*] gen_file(OFILE_ASM) returned {ok}")
+                log(fh, f"[*] exporting IDC to {idc_path}")
+                fp = ida_diskio.fopenWT(idc_path)
+                if fp is None:
+                    raise RuntimeError(f"fopenWT failed for {idc_path}")
+                try:
+                    ok = ida_loader.gen_file(ida_loader.OFILE_IDC, fp, 0, idc.BADADDR, 0)
+                finally:
+                    ida_diskio.eclose(fp)
+                log(fh, f"[*] gen_file(OFILE_IDC) returned {ok}")
 
-            log(fh, f"[*] exporting IDC to {IDC_PATH}")
-            fp = ida_diskio.fopenWT(IDC_PATH)
-            if fp is None:
-                raise RuntimeError(f"fopenWT failed for {IDC_PATH}")
-            try:
-                ok = ida_loader.gen_file(ida_loader.OFILE_IDC, fp, 0, idc.BADADDR, 0)
-            finally:
-                ida_diskio.eclose(fp)
-            log(fh, f"[*] gen_file(OFILE_IDC) returned {ok}")
-
-            idb_path = idc.get_idb_path()
-            log(fh, f"[*] saving database to {idb_path}")
-            ida_loader.save_database(idb_path, 0)
+                log(fh, f"[*] saving database to {idb_path}")
+                ida_loader.save_database(idb_path, 0)
+            else:
+                log(fh, "[*] noexport requested -- skipping asm/idc export and save")
 
             log(fh, "[*] done, exiting 0")
             idc.qexit(0)

@@ -1,24 +1,29 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py']
 [*] reading identify.py
 [*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-root filename : ULTIMA.COM
-input file    : C:\games\ULTIMA3\ULTIMA.COM
+root filename : _bootup_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_bootup_scratch.com
 entry point   : 0x100 (cs=0x1000)
-input md5     : 7bea6bf20b7079b30f8ca5336b3805b2
+input md5     : e85fbab19a03876bfa6f3a8a58114fd8
 
 segments:
-  seg000       0x010100-0x019054  (36692 bytes)
+  seg000       0x010100-0x014d74  (19572 bytes)
 
-functions: 57 total, 57 named, 0 still sub_XXXXX
+functions: 73 total, 4 named, 69 still sub_XXXXX
 
 structs (0): 
 ----- end target script output -----
 [*] finished executing identify.py
 [*] auto_wait (post-script)
-[*] noexport requested -- skipping export/save
+[*] exporting ASM to C:\dev\ultima3\ultima_bootup.asm
+[*] gen_file(OFILE_ASM) returned 4065
+[*] exporting IDC to C:\dev\ultima3\ultima_bootup.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_bootup.idb
 [*] done, exiting 0

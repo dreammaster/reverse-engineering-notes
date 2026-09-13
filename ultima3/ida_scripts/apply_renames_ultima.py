@@ -31,7 +31,7 @@ data item). If a finding requires *creating* new data where there was
 previously nothing (splitting an array, building a table, adding xrefs)
 that's structural surgery, not a rename -- write a dedicated one-off
 script for it instead. Struct member renames/additions go in
-apply_structs.py, not here, since they use a different IDA API
+apply_structs_ultima.py, not here, since they use a different IDA API
 (add_struc_member / set_member_name) and address a struct definition
 rather than a single linear address.
 

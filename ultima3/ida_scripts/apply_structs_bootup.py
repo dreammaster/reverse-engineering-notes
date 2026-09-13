@@ -1,21 +1,24 @@
 """
 IDA Pro script: master list of struct-definition updates (new members,
-renames, retypes) for Ultima III (DOS).
+renames, retypes) for BOOTUP.BIN (DOS) -- Ultima III's actual game
+executable. Run against ultima_bootup.idb:
 
-Companion to apply_renames.py, same rationale: one accumulating,
+    .\\run_ida_script.ps1 -Idb ultima_bootup -ScriptName apply_structs_bootup.py
+
+Companion to apply_renames_bootup.py, same rationale: one accumulating,
 git-trackable file instead of a new one-off script per finding. Add an
 entry to OPERATIONS below whenever a struct field's meaning becomes
 clear, then re-run. Idempotent: each operation checks current state and
 skips if already applied.
 
-Convention: DRY_RUN starts True, same as apply_renames.py, until a first
+Convention: DRY_RUN starts True, same as apply_renames_bootup.py, until a first
 batch of struct edits has been verified end-to-end -- flip to False only
 as a deliberate, logged decision (see docs/roadmap.md).
 
 Scope: operations on IDA *struct* definitions via add_struc_member /
 set_member_name -- i.e. things that show up as `player.field_2B` ->
 `player._something` in the .asm. This is a different IDA API surface
-from apply_renames.py's idc.set_name (which addresses one specific
+from apply_renames_bootup.py's idc.set_name (which addresses one specific
 linear address, not a struct-relative offset), hence the split.
 
 Supports array-typed members: a struct member can be an N-element byte/
