@@ -75,10 +75,45 @@ static Enums(void) {
         end_type_updating(UTP_ENUM);
 }
 
+static ApplyStrucTInfos_0(void) {
+        auto id;
+	id = get_struc_id("RosterEntry");
+	return id;
+}
+
 //------------------------------------------------------------------------
 // Information about type information for structure members
 
 static ApplyStrucTInfos() {
+	ApplyStrucTInfos_0();
+}
+
+static Structures_0(id) {
+        auto mid;
+
+	id = add_struc(-1,"RosterEntry",0);
+	
+	id = get_struc_id("RosterEntry");
+	mid = add_struc_member(id,"_name",	0,	0x00000400,	-1,	10);
+	mid = add_struc_member(id,"_partyMember",	0X10,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_status",	0X11,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_strength",	0X12,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_dexterity",	0X13,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_intelligence",	0X14,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_wisdom",	0X15,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_race",	0X16,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_class",	0X17,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_sex",	0X18,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_hitPoints",	0X1A,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_maxHitPoints",	0X1C,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_armourIndex",	0X28,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_armourOwned",	0X29,	0x00000400,	-1,	7);
+	mid = add_struc_member(id,"_weaponIndex",	0X30,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_weaponOwned",	0X31,	0x00000400,	-1,	15);
+	return id;
 }
 
 //------------------------------------------------------------------------
@@ -87,6 +122,7 @@ static ApplyStrucTInfos() {
 static Structures(void) {
         auto id;
         begin_type_updating(UTP_STRUCT);
+	id = Structures_0(id);
 }
 
 //------------------------------------------------------------------------
@@ -373,7 +409,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1120A);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	set_name	(0X1120A,	"start_0");
+	set_name	(0X1120A,	"titleScreenAndMainMenuLoop");
 	create_insn	(x=0X1120E);
 	op_hex		(x,	1);
 	create_insn	(x=0X11236);
@@ -431,13 +467,16 @@ static Bytes_0(void) {
 	create_insn	(x=0X112FC);
 	op_hex		(x,	1);
 	create_insn	(0X1132B);
+	set_name	(0X1132B,	"drawWindowBorder");
 	create_insn	(x=0X11334);
 	op_hex		(x,	1);
 	create_insn	(0X11385);
+	set_name	(0X11385,	"clearMenuWindow");
 	set_cmt	(0X11398,	"- VIDEO - SCROLL PAGE UP\nAL = number of lines to scroll window (0 = blank whole window)\nBH = attributes to be used on blanked lines\nCH,CL = row,column of upper left corner of window to scroll\nDH,DL = row,column of lower right corner of window",	0);
 	create_insn	(x=0X11398);
 	op_hex		(x,	0);
 	create_insn	(0X113A0);
+	set_name	(0X113A0,	"showMainMenu");
 	create_insn	(x=0X113B3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -471,6 +510,7 @@ static Bytes_0(void) {
 	create_insn	(0X1142B);
 	create_insn	(0X11431);
 	create_insn	(0X11437);
+	set_name	(0X11437,	"handleJourneyOnward");
 	create_insn	(x=0X11450);
 	op_hex		(x,	1);
 	set_cmt	(0X11452,	"DOS - SET DISK TRANSFER AREA ADDRESS\nDS:DX -> disk transfer buffer",	0);
@@ -502,6 +542,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X114C9);
+	set_name	(0X114C9,	"showPartyOrganizationMenu");
 	create_insn	(x=0X114DA);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -542,6 +583,7 @@ static Bytes_0(void) {
 	create_insn	(0X11583);
 	create_insn	(0X11589);
 	create_insn	(0X1158F);
+	set_name	(0X1158F,	"showCharacterDetails");
 	create_insn	(x=0X115A2);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -635,6 +677,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11792);
+	set_name	(0X11792,	"handleFormParty");
 	create_insn	(x=0X1179E);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -680,10 +723,12 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X118AF);
+	set_name	(0X118AF,	"clearPartySelection");
 	create_insn	(x=0X118C0);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X118DF);
+	set_name	(0X118DF,	"handleDisperseParty");
 	create_insn	(x=0X118ED);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -710,12 +755,14 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1194B);
+	set_name	(0X1194B,	"showRegister");
 	create_insn	(x=0X11955);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11991);
 	create_insn	(0X119D4);
 	create_insn	(0X119DB);
+	set_name	(0X119DB,	"handleTerminateCharacter");
 	create_insn	(x=0X119EA);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -744,6 +791,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11A6D);
+	set_name	(0X11A6D,	"handleCreateCharacter");
 	create_insn	(x=0X11A7B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -773,6 +821,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11B33);
 	create_insn	(0X11B47);
+	set_name	(0X11B47,	"drawCharacterCreationForm");
 	create_insn	(x=0X11B50);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -807,6 +856,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11BC8);
+	set_name	(0X11BC8,	"gatherCharacterCreationInput");
 	create_insn	(x=0X11BE2);
 	op_hex		(x,	1);
 	create_insn	(0X11BEC);
@@ -829,11 +879,14 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11CD4);
+	set_name	(0X11CD4,	"printRemainingPoints");
 	create_insn	(0X11CE7);
+	set_name	(0X11CE7,	"waitForSpaceKey");
 	create_insn	(x=0X11CEF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11D07);
+	set_name	(0X11D07,	"syncPartyScratchToRoster");
 	create_insn	(x=0X11D0D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -841,6 +894,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11D34);
+	set_name	(0X11D34,	"syncRosterToPartyScratch");
 	create_insn	(x=0X11D3A);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -848,7 +902,9 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11D61);
+	set_name	(0X11D61,	"getRosterEntryPointer");
 	create_insn	(0X11D71);
+	set_name	(0X11D71,	"updateIntroAnimation");
 	create_insn	(x=0X11D82);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -856,7 +912,9 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X11D95);
+	set_name	(0X11D95,	"isCharacterAlive");
 	create_insn	(0X11DA8);
+	set_name	(0X11DA8,	"hasActiveParty");
 	create_insn	(x=0X11DAB);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -878,6 +936,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X11E09);
 	op_hex		(x,	0);
 	create_insn	(0X11E0C);
+	set_name	(0X11E0C,	"getEntryNumber");
 	create_insn	(0X11E31);
 	make_array	(0X11E34,	0XC);
 	create_byte	(0X11E40);
@@ -897,7 +956,20 @@ static Bytes_0(void) {
 	create_byte	(0X11F5B);
 	create_byte	(0X11F5C);
 	create_byte	(0X11F5D);
-	make_array	(0X11F5D,	0X41);
+	make_array	(0X11F5D,	0XD);
+	set_name	(0X11F5D,	"aCalmWind");
+	create_byte	(0X11F6A);
+	make_array	(0X11F6A,	0XD);
+	set_name	(0X11F6A,	"aNorthWind");
+	create_byte	(0X11F77);
+	make_array	(0X11F77,	0XD);
+	set_name	(0X11F77,	"aSouthWind");
+	create_byte	(0X11F84);
+	make_array	(0X11F84,	0XD);
+	set_name	(0X11F84,	"aEastWind");
+	create_byte	(0X11F91);
+	make_array	(0X11F91,	0XD);
+	set_name	(0X11F91,	"aWestWind");
 	create_strlit	(0X11F9E,	0X15);
 	set_name	(0X11F9E,	"aUnableToReadFi");
 	create_strlit	(0X11FB3,	0X16);
@@ -917,12 +989,17 @@ static Bytes_0(void) {
 	make_array	(0X133E9,	0X1000);
 	create_word	(0X143E9);
 	create_insn	(0X143EB);
+	set_name	(0X143EB,	"writeString");
 	create_insn	(0X143FD);
 	create_insn	(0X14401);
+	set_name	(0X14401,	"writeStringPreserveCx");
 	create_insn	(0X14407);
+	set_name	(0X14407,	"swapCursorPos");
 	create_insn	(0X1440C);
+	set_name	(0X1440C,	"writeCharacter");
 	create_insn	(0X1442A);
 	create_insn	(0X14440);
+	set_name	(0X14440,	"drawCharGlyph");
 	create_insn	(x=0X1444C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1444E);
@@ -950,6 +1027,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14479);
 	op_hex		(x,	1);
 	create_insn	(0X144B0);
+	set_name	(0X144B0,	"checkDebugModeFlag");
 	create_insn	(0X144B3);
 	create_insn	(x=0X144BC);
 	op_hex		(x,	1);
@@ -963,7 +1041,9 @@ static Bytes_0(void) {
 	create_byte	(0X144F0);
 	create_insn	(0X144F1);
 	create_insn	(0X14503);
+	set_name	(0X14503,	"plotPixel2bpp");
 	create_insn	(0X14528);
+	set_name	(0X14528,	"drawTileGrid");
 	create_insn	(x=0X14537);
 	op_hex		(x,	1);
 	create_insn	(x=0X14539);
@@ -986,10 +1066,12 @@ static Bytes_0(void) {
 	create_insn	(0X145B2);
 	set_name	(0X145B2,	"nullsub_2");
 	create_insn	(0X145B3);
+	set_name	(0X145B3,	"readLine");
 	create_insn	(0X145E2);
 	create_insn	(0X145E9);
 	create_insn	(0X145FA);
 	create_insn	(0X14601);
+	set_name	(0X14601,	"stepTimeSeededPrng");
 	create_insn	(x=0X1460A);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -998,11 +1080,14 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14634);
 	create_insn	(0X1463A);
+	set_name	(0X1463A,	"swapAnimTableRows");
 	create_insn	(0X14660);
+	set_name	(0X14660,	"updateLogoAnimationA");
 	create_insn	(x=0X14663);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X146AF);
+	set_name	(0X146AF,	"updateLogoAnimationB");
 	create_insn	(x=0X146B9);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1013,6 +1098,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14727);
+	set_name	(0X14727,	"updateLogoAnimationC");
 	create_insn	(x=0X1473C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1023,21 +1109,27 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14768);
+	set_name	(0X14768,	"updateLogoAnimationD");
 	create_insn	(x=0X14780);
 	op_hex		(x,	1);
 	create_insn	(0X147A5);
 	create_insn	(0X147C7);
+	set_name	(0X147C7,	"runIdleAnimationTick");
 	create_insn	(0X147EA);
+	set_name	(0X147EA,	"pollKeypressAndAnimate");
 	set_cmt	(0X147ED,	"KEYBOARD - CHECK BUFFER, DO NOT CLEAR\nReturn: ZF clear if character in buffer\nAH = scan code, AL = character\nZF set if no character in buffer",	0);
 	create_insn	(x=0X147ED);
 	op_hex		(x,	0);
 	create_insn	(0X147FD);
+	set_name	(0X147FD,	"getKeypressAndWaitRaw");
 	create_insn	(0X1481A);
 	set_cmt	(0X1484D,	"KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY\nReturn: AH = scan code, AL = character",	0);
 	create_insn	(x=0X1484D);
 	op_hex		(x,	0);
 	create_insn	(0X14858);
+	set_name	(0X14858,	"printHexWord");
 	create_insn	(0X14863);
+	set_name	(0X14863,	"printHexByte");
 	create_insn	(x=0X14864);
 	op_hex		(x,	1);
 	create_insn	(x=0X14866);
@@ -1055,9 +1147,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X14875);
 	op_hex		(x,	1);
 	create_insn	(0X1487C);
+	set_name	(0X1487C,	"printHexNibble");
 	create_insn	(x=0X1487E);
 	op_hex		(x,	1);
 	create_insn	(0X1488E);
+	set_name	(0X1488E,	"accumulateInputDigit");
 	create_insn	(0X148A4);
 	create_insn	(x=0X148E2);
 	op_hex		(x,	1);
@@ -1076,18 +1170,21 @@ static Bytes_0(void) {
 	create_insn	(0X1490D);
 	create_insn	(0X14912);
 	create_insn	(0X14918);
+	set_name	(0X14918,	"getMenuChoice");
 	create_insn	(0X1494E);
 	create_insn	(x=0X14951);
 	op_hex		(x,	1);
 	create_insn	(0X14972);
 	create_insn	(0X1497B);
 	create_insn	(0X1498F);
+	set_name	(0X1498F,	"promptForNumberEntry");
 	create_insn	(x=0X14996);
 	op_hex		(x,	1);
 	create_insn	(0X149D1);
 	create_insn	(x=0X149D5);
 	op_hex		(x,	1);
 	create_insn	(0X149E0);
+	set_name	(0X149E0,	"saveFile");
 	create_insn	(x=0X149E9);
 	op_hex		(x,	1);
 	set_cmt	(0X149EB,	"DOS - SET DISK TRANSFER AREA ADDRESS\nDS:DX -> disk transfer buffer",	0);
@@ -1111,6 +1208,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14A30);
+	set_name	(0X14A30,	"loadFile");
 	create_insn	(x=0X14A39);
 	op_hex		(x,	1);
 	set_cmt	(0X14A3B,	"DOS - SET DISK TRANSFER AREA ADDRESS\nDS:DX -> disk transfer buffer",	0);
@@ -1134,6 +1232,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14A83);
+	set_name	(0X14A83,	"openFileWithRetry");
 	create_insn	(x=0X14A8A);
 	op_hex		(x,	1);
 	set_cmt	(0X14A8C,	"DOS - OPEN DISK FILE\nDS:DX -> FCB\nReturn: AL = 00h file found, FFh file not found",	0);
@@ -1146,7 +1245,9 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14ABE);
+	set_name	(0X14ABE,	"printStringAt");
 	create_insn	(0X14AC7);
+	set_name	(0X14AC7,	"adjustAnimSpeed");
 	create_insn	(x=0X14ACF);
 	op_hex		(x,	1);
 	create_insn	(x=0X14AD1);
@@ -1158,6 +1259,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14AE6);
 	op_hex		(x,	1);
 	create_insn	(0X14AEA);
+	set_name	(0X14AEA,	"drawLogoTileGrid");
 	create_insn	(x=0X14AF2);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1165,6 +1267,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X14B05);
+	set_name	(0X14B05,	"computeAnimTableByte");
 	create_insn	(x=0X14B08);
 	op_hex		(x,	1);
 	create_insn	(x=0X14B0A);
@@ -1175,19 +1278,23 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_byte	(0X14B20);
 	make_array	(0X14B20,	0XA);
+	set_name	(0X14B20,	"WIND_DIRECTION_TABLE");
 	create_insn	(0X14B2A);
+	set_name	(0X14B2A,	"updateWindDisplay");
 	create_insn	(x=0X14B5B);
 	op_hex		(x,	1);
 	create_insn	(x=0X14B5F);
 	op_hex		(x,	1);
 	make_array	(0X14B71,	0XF);
 	create_byte	(0X14B80);
+	set_name	(0X14B80,	"_soundEnabled");
 	create_word	(x=0X14B81);
 	make_array	(x,	0XC);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	set_name	(0X14B81,	"funcs_14BB1");
+	set_name	(0X14B81,	"SOUND_EFFECT_TABLE");
 	create_insn	(0X14B99);
+	set_name	(0X14B99,	"playSoundEffect");
 	create_insn	(x=0X14BA9);
 	op_hex		(x,	1);
 	create_insn	(x=0X14BAD);
@@ -1196,6 +1303,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X14BB9);
+	set_name	(0X14BB9,	"playToneFF");
 	set_cmt	(0X14BBB,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14BBB);
 	op_hex		(x,	1);
@@ -1210,6 +1318,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14BD6);
 	op_hex		(x,	0);
 	create_insn	(0X14BDB);
+	set_name	(0X14BDB,	"playErrorBeep");
 	set_cmt	(0X14BDD,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14BDD);
 	op_hex		(x,	1);
@@ -1224,6 +1333,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14BF8);
 	op_hex		(x,	0);
 	create_insn	(0X14BFD);
+	set_name	(0X14BFD,	"playToneFD");
 	set_cmt	(0X14C00,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14C00);
 	op_hex		(x,	1);
@@ -1253,6 +1363,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14C50);
 	op_hex		(x,	0);
 	create_insn	(0X14C56);
+	set_name	(0X14C56,	"playToneFC");
 	set_cmt	(0X14C59,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14C59);
 	op_hex		(x,	1);
@@ -1267,6 +1378,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14C79);
 	op_hex		(x,	0);
 	create_insn	(0X14C7F);
+	set_name	(0X14C7F,	"playToneFB");
 	set_cmt	(0X14C80,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14C80);
 	op_hex		(x,	1);
@@ -1281,6 +1393,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14C96);
 	op_hex		(x,	0);
 	create_insn	(0X14C9A);
+	set_name	(0X14C9A,	"playToneFA");
 	set_cmt	(0X14C9C,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14C9C);
 	op_hex		(x,	1);
@@ -1295,7 +1408,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X14CB3);
 	op_hex		(x,	0);
 	create_insn	(0X14CB8);
+	set_name	(0X14CB8,	"playToneF9");
 	create_insn	(0X14CC2);
+	set_name	(0X14CC2,	"playToneF8");
 	set_cmt	(0X14CC4,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14CC4);
 	op_hex		(x,	1);
@@ -1310,8 +1425,11 @@ static Bytes_0(void) {
 	create_insn	(x=0X14CE3);
 	op_hex		(x,	0);
 	create_insn	(0X14CE8);
+	set_name	(0X14CE8,	"playToneF7");
 	create_insn	(0X14CF2);
+	set_name	(0X14CF2,	"playToneF6");
 	create_insn	(0X14CFC);
+	set_name	(0X14CFC,	"playToneHelper");
 	set_cmt	(0X14CFF,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14CFF);
 	op_hex		(x,	1);
@@ -1326,6 +1444,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14D18);
 	op_hex		(x,	0);
 	create_insn	(0X14D1E);
+	set_name	(0X14D1E,	"playToneF5");
 	set_cmt	(0X14D20,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14D20);
 	op_hex		(x,	1);
@@ -1344,6 +1463,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14D49);
 	op_hex		(x,	0);
 	create_insn	(0X14D4E);
+	set_name	(0X14D4E,	"playToneF4");
 	set_cmt	(0X14D50,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X14D50);
 	op_hex		(x,	1);

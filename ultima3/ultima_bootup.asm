@@ -26,33 +26,33 @@ seg000          segment byte public 'CODE' use16
                 org 100h
                 assume es:nothing, ss:nothing, ds:seg000, fs:nothing, gs:nothing
 ; [00000003 BYTES: COLLAPSED FUNCTION start. PRESS NUMPAD+ TO EXPAND]
-byte_10103      db 0                    ; DATA XREF: sub_14768+22↓r
-                                        ; sub_14768+42↓r ...
+byte_10103      db 0                    ; DATA XREF: updateLogoAnimationD+22↓r
+                                        ; updateLogoAnimationD+42↓r ...
                 db 5 dup(0)
-byte_10109      db 0B0h dup(0)          ; DATA XREF: sub_14AEA+8↓o
-byte_101B9      db 0                    ; DATA XREF: sub_11437+7↓r
+byte_10109      db 0B0h dup(0)          ; DATA XREF: drawLogoTileGrid+8↓o
+byte_101B9      db 0                    ; DATA XREF: handleJourneyOnward+7↓r
                                         ; seg000:1DD4↓w
                 align 4
-byte_101BC      db 0                    ; DATA XREF: start_0+98↓o
-                                        ; sub_11792+B6↓w ...
+byte_101BC      db 0                    ; DATA XREF: titleScreenAndMainMenuLoop+98↓o
+                                        ; handleFormParty+B6↓w ...
                 align 2
-byte_101BE      db 0                    ; DATA XREF: start_0+27↓w
-                                        ; start_0+A6↓w ...
+byte_101BE      db 0                    ; DATA XREF: titleScreenAndMainMenuLoop+27↓w
+                                        ; titleScreenAndMainMenuLoop+A6↓w ...
                 db 4 dup(0)
-byte_101C3      db 0                    ; DATA XREF: sub_11437↓r
-                                        ; sub_11792+13↓r ...
-byte_101C4      db 0                    ; DATA XREF: sub_11792+BB↓w
-byte_101C5      db 0                    ; DATA XREF: sub_11792+C0↓w
-byte_101C6      db 8 dup(0)             ; DATA XREF: sub_1158F+65↓o
-                                        ; sub_11792+66↓o ...
+byte_101C3      db 0                    ; DATA XREF: handleJourneyOnward↓r
+                                        ; handleFormParty+13↓r ...
+byte_101C4      db 0                    ; DATA XREF: handleFormParty+BB↓w
+byte_101C5      db 0                    ; DATA XREF: handleFormParty+C0↓w
+byte_101C6      db 8 dup(0)             ; DATA XREF: showCharacterDetails+65↓o
+                                        ; handleFormParty+66↓o ...
 byte_101CE      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
-                                        ; DATA XREF: sub_118DF+22↓o
-                                        ; sub_11D07+6↓o ...
+                                        ; DATA XREF: handleDisperseParty+22↓o
+                                        ; syncPartyScratchToRoster+6↓o ...
                 db 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
                 db 0FFh, 31h dup(0)
 byte_102CE      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
-                                        ; DATA XREF: start_0+67↓o
-                                        ; sub_11792+DD↓o ...
+                                        ; DATA XREF: titleScreenAndMainMenuLoop+67↓o
+                                        ; handleFormParty+DD↓o ...
                 db 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
                 db 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
                 db 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
@@ -63,49 +63,49 @@ byte_102CE      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
                 db 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
                 db 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h)
                 db 0FFh, 35h dup(0)
-byte_107D2      db 72h dup(0)           ; DATA XREF: start_0+48↓o
-                                        ; start_0+8A↓o ...
-byte_10844      db 400h dup(0)          ; DATA XREF: start_0+56↓o
-word_10C44      dw 1FFh                 ; DATA XREF: start_0:loc_112D3↓w
-                                        ; start_0+CD↓r ...
-aExodusBin      db 'EXODUS.BIN',0       ; DATA XREF: sub_11437+1D↓o
-aShapesUlt      db 'SHAPES.ULT',0       ; DATA XREF: start_0+41↓o
-aRosterUlt      db 'ROSTER.ULT',0       ; DATA XREF: start_0+6E↓o
-                                        ; sub_11792+D6↓o ...
-aPartyUlt       db 'PARTY.ULT',0        ; DATA XREF: start_0+9F↓o
-                                        ; sub_11792+CF↓o ...
-aDemoUlt        db 'DEMO.ULT',0         ; DATA XREF: start_0+4F↓o
-aMovesUlt       db 'MOVES.ULT',0        ; DATA XREF: start_0+5D↓o
-aCharsetUlt     db 'CHARSET.ULT',0      ; DATA XREF: start_0+33↓o
+byte_107D2      db 72h dup(0)           ; DATA XREF: titleScreenAndMainMenuLoop+48↓o
+                                        ; titleScreenAndMainMenuLoop+8A↓o ...
+byte_10844      db 400h dup(0)          ; DATA XREF: titleScreenAndMainMenuLoop+56↓o
+word_10C44      dw 1FFh                 ; DATA XREF: titleScreenAndMainMenuLoop:loc_112D3↓w
+                                        ; titleScreenAndMainMenuLoop+CD↓r ...
+aExodusBin      db 'EXODUS.BIN',0       ; DATA XREF: handleJourneyOnward+1D↓o
+aShapesUlt      db 'SHAPES.ULT',0       ; DATA XREF: titleScreenAndMainMenuLoop+41↓o
+aRosterUlt      db 'ROSTER.ULT',0       ; DATA XREF: titleScreenAndMainMenuLoop+6E↓o
+                                        ; handleFormParty+D6↓o ...
+aPartyUlt       db 'PARTY.ULT',0        ; DATA XREF: titleScreenAndMainMenuLoop+9F↓o
+                                        ; handleFormParty+CF↓o ...
+aDemoUlt        db 'DEMO.ULT',0         ; DATA XREF: titleScreenAndMainMenuLoop+4F↓o
+aMovesUlt       db 'MOVES.ULT',0        ; DATA XREF: titleScreenAndMainMenuLoop+5D↓o
+aCharsetUlt     db 'CHARSET.ULT',0      ; DATA XREF: titleScreenAndMainMenuLoop+33↓o
 byte_10C90      db 10h, 3Ch, 49h, 6Eh, 73h, 65h, 72h, 74h, 20h, 53h, 63h
                                         ; DATA XREF: seg000:1DCA↓o
                 db 65h, 6Eh, 61h, 72h, 69h, 6Fh, 20h, 44h, 69h, 73h, 6Bh
                 db 3Eh, 11h, 0
 byte_10CA9      db 10h, 55h, 6Ch, 74h, 69h, 6Dh, 61h, 20h, 3 dup(49h)
-                                        ; DATA XREF: start_0+7F↓o
-                                        ; start_0+B7↓o
+                                        ; DATA XREF: titleScreenAndMainMenuLoop+7F↓o
+                                        ; titleScreenAndMainMenuLoop+B7↓o
                 db 11h, 0
 byte_10CB6      db 10h, 50h, 72h, 65h, 2 dup(73h), 20h, 3Ch, 53h, 70h
-                                        ; DATA XREF: start_0+C2↓o
-                                        ; sub_11CE7+8↓o
+                                        ; DATA XREF: titleScreenAndMainMenuLoop+C2↓o
+                                        ; waitForSpaceKey+8↓o
                 db 61h, 63h, 65h, 3Eh, 11h, 0
 aC1983ByJamesRV db '(C)-1983 By James R. Van Artsdalen',0
-                                        ; DATA XREF: sub_113A0+13↓o
-aAndLordBritish db 'and Lord British',0 ; DATA XREF: sub_113A0+1E↓o
-aEntry          db 'Entry#',0           ; DATA XREF: sub_1158F+1E↓o
-                                        ; sub_1158F+50↓o ...
-a120Only        db '(1-20 Only!)',0     ; DATA XREF: sub_1158F+1ED↓o
-                                        ; sub_119DB+6F↓o ...
+                                        ; DATA XREF: showMainMenu+13↓o
+aAndLordBritish db 'and Lord British',0 ; DATA XREF: showMainMenu+1E↓o
+aEntry          db 'Entry#',0           ; DATA XREF: showCharacterDetails+1E↓o
+                                        ; showCharacterDetails+50↓o ...
+a120Only        db '(1-20 Only!)',0     ; DATA XREF: showCharacterDetails+1ED↓o
+                                        ; handleTerminateCharacter+6F↓o ...
 aFromTheDepthsO db 'From the depths of hell...',0
-                                        ; DATA XREF: sub_113A0+29↓o
+                                        ; DATA XREF: showMainMenu+29↓o
 aHeComesForVeng db '...he comes for VENGEANCE!',0
-                                        ; DATA XREF: sub_113A0+34↓o
+                                        ; DATA XREF: showMainMenu+34↓o
 aGood           db 'Good',0
 aPoisoned       db 'Poisoned',0
 aDead           db 'Dead',0
 aAshes          db 'Ashes',0
 aGpdpdIRWHand   db 'GPDPD',0Dh,'I',0Dh,'R',0Dh,'W',0Dh,'Hand',0
-                                        ; DATA XREF: sub_1158F+108↓o
+                                        ; DATA XREF: showCharacterDetails+108↓o
 aDagger         db 'Dagger',0
 aMace           db 'Mace',0
 aSling          db 'Sling',0
@@ -133,25 +133,31 @@ a2Plate         db '+2 Plate',0
                 db 0ABh, 0Dh, 0B2h, 0Dh, 0B9h, 0Dh, 0C0h, 0Dh, 0C7h, 0Dh
                 db 0CEh, 0Dh, 0D3h, 0Dh, 0D9h, 0Dh, 0E1h, 0Dh, 0E7h, 0Dh
                 db 0EDh, 0Dh, 0F6h, 0Dh, 0C7h, 0Dh
-aOption         db 'Option: ',0         ; DATA XREF: sub_113A0+3F↓o
-aReturnToTheVie db 'Return to the View',0 ; DATA XREF: sub_113A0+4A↓o
-aOrganizeAParty db 'Organize a Party',0 ; DATA XREF: sub_113A0+55↓o
-aJourneyOnward  db 'Journey Onward',0   ; DATA XREF: sub_113A0+60↓o
+aOption         db 'Option: ',0         ; DATA XREF: showMainMenu+3F↓o
+aReturnToTheVie db 'Return to the View',0 ; DATA XREF: showMainMenu+4A↓o
+aOrganizeAParty db 'Organize a Party',0 ; DATA XREF: showMainMenu+55↓o
+aJourneyOnward  db 'Journey Onward',0   ; DATA XREF: showMainMenu+60↓o
 aReturn         db 'Return',0
 aOrganize       db 'Organize',0
 aJourney        db 'Journey',0
-byte_10E83      db 52h, 4Fh, 4Ah, 1Bh   ; DATA XREF: sub_113A0+71↓o
-                db 6Bh, 0Eh, 72h, 0Eh, 7Bh, 0Eh, 6Bh, 0Eh
-                                        ; DATA XREF: sub_113A0+75↓o
-aPartyOrganizat db 'Party Organization',0 ; DATA XREF: sub_114C9+11↓o
-aOption_0       db 'Option:',0          ; DATA XREF: sub_114C9+1C↓o
-aExamineTheRegi db 'Examine the Register',0 ; DATA XREF: sub_114C9+27↓o
-aCreateACharact db 'Create a Character',0 ; DATA XREF: sub_114C9+32↓o
-aFormTheParty   db 'Form the Party',0   ; DATA XREF: sub_114C9+3D↓o
-aDisperseThePar db 'Disperse the Party',0 ; DATA XREF: sub_114C9+48↓o
-aTerminateAChar db 'Terminate a Character',0 ; DATA XREF: sub_114C9+53↓o
-aMainMenu       db 'Main Menu',0        ; DATA XREF: sub_114C9+69↓o
-aLookAtACharact db 'Look at a Character',0 ; DATA XREF: sub_114C9+5E↓o
+byte_10E83      db 52h, 4Fh, 4Ah, 1Bh   ; DATA XREF: showMainMenu+71↓o
+byte_10E87      db 6Bh, 0Eh, 72h, 0Eh, 7Bh, 0Eh, 6Bh, 0Eh
+                                        ; DATA XREF: showMainMenu+75↓o
+aPartyOrganizat db 'Party Organization',0
+                                        ; DATA XREF: showPartyOrganizationMenu+11↓o
+aOption_0       db 'Option:',0          ; DATA XREF: showPartyOrganizationMenu+1C↓o
+aExamineTheRegi db 'Examine the Register',0
+                                        ; DATA XREF: showPartyOrganizationMenu+27↓o
+aCreateACharact db 'Create a Character',0
+                                        ; DATA XREF: showPartyOrganizationMenu+32↓o
+aFormTheParty   db 'Form the Party',0   ; DATA XREF: showPartyOrganizationMenu+3D↓o
+aDisperseThePar db 'Disperse the Party',0
+                                        ; DATA XREF: showPartyOrganizationMenu+48↓o
+aTerminateAChar db 'Terminate a Character',0
+                                        ; DATA XREF: showPartyOrganizationMenu+53↓o
+aMainMenu       db 'Main Menu',0        ; DATA XREF: showPartyOrganizationMenu+69↓o
+aLookAtACharact db 'Look at a Character',0
+                                        ; DATA XREF: showPartyOrganizationMenu+5E↓o
 aExamine        db 'Examine',0
 aCreate_0       db 'Create',0
 aForm           db 'Form',0
@@ -159,47 +165,48 @@ aDisperse       db 'Disperse',0
 aTerminate_0    db 'Terminate',0
 aMain           db 'Main',0
 aLook           db 'Look',0
-                db 45h, 43h, 46h, 44h, 54h, 4Dh, 51h, 4Ch, 1Bh
-                                        ; DATA XREF: sub_114C9+7A↓o
-                db 28h, 0Fh, 30h, 0Fh, 37h, 0Fh, 3Ch, 0Fh, 45h, 0Fh, 4Fh
-                                        ; DATA XREF: sub_114C9+7E↓o
+byte_10F59      db 45h, 43h, 46h, 44h, 54h, 4Dh, 51h, 4Ch, 1Bh
+                                        ; DATA XREF: showPartyOrganizationMenu+7A↓o
+byte_10F62      db 28h, 0Fh, 30h, 0Fh, 37h, 0Fh, 3Ch, 0Fh, 45h, 0Fh, 4Fh
+                                        ; DATA XREF: showPartyOrganizationMenu+7E↓o
                 db 0Fh, 4Fh, 0Fh, 54h, 0Fh, 4Fh, 0Fh
-aRegister       db 'Register',0         ; DATA XREF: sub_1194B+A↓o
-aTerminate      db 'Terminate!',0       ; DATA XREF: sub_119DB+F↓o
-aNoOneThere     db '(No one there)',0   ; DATA XREF: sub_1158F+1FA↓o
-                                        ; sub_11792+101↓o ...
-aWithAParty     db '(With a party)',0   ; DATA XREF: sub_119DB+89↓o
-aTerminated     db '(Terminated)',0     ; DATA XREF: sub_119DB+4B↓o
-aCreate         db 'Create',0           ; DATA XREF: sub_11A6D+E↓o
-aNotEmpty       db '(Not Empty!)',0     ; DATA XREF: sub_11A6D+89↓o
-aPoints50       db 'Points:50',0        ; DATA XREF: sub_11B47+14↓o
-aName           db 'Name:',0            ; DATA XREF: sub_1158F+7F↓o
-                                        ; sub_11B47+1F↓o
-aSex            db ' Sex:',0            ; DATA XREF: sub_1158F+8F↓o
-                                        ; sub_11B47+2A↓o
-aRace           db 'Race:',0            ; DATA XREF: sub_1158F+B4↓o
-                                        ; sub_11B47+35↓o
-aType           db 'Type:',0            ; DATA XREF: sub_1158F+D9↓o
-                                        ; sub_11B47+40↓o
-aStrength_0     db 'Strength........',0 ; DATA XREF: sub_11B47+4B↓o
-aDexterity_0    db 'Dexterity.......',0 ; DATA XREF: sub_11B47+56↓o
-aIntelligence_0 db 'Intelligence....',0 ; DATA XREF: sub_11B47+61↓o
-aWisdom_0       db 'Wisdom..........',0 ; DATA XREF: sub_11B47+6C↓o
-aOK             db 'O.K.?',0            ; DATA XREF: sub_11B47+77↓o
+aRegister       db 'Register',0         ; DATA XREF: showRegister+A↓o
+aTerminate      db 'Terminate!',0       ; DATA XREF: handleTerminateCharacter+F↓o
+aNoOneThere     db '(No one there)',0   ; DATA XREF: showCharacterDetails+1FA↓o
+                                        ; handleFormParty+101↓o ...
+aWithAParty     db '(With a party)',0   ; DATA XREF: handleTerminateCharacter+89↓o
+aTerminated     db '(Terminated)',0     ; DATA XREF: handleTerminateCharacter+4B↓o
+aCreate         db 'Create',0           ; DATA XREF: handleCreateCharacter+E↓o
+aNotEmpty       db '(Not Empty!)',0     ; DATA XREF: handleCreateCharacter+89↓o
+aPoints50       db 'Points:50',0        ; DATA XREF: drawCharacterCreationForm+14↓o
+aName           db 'Name:',0            ; DATA XREF: showCharacterDetails+7F↓o
+                                        ; drawCharacterCreationForm+1F↓o
+aSex            db ' Sex:',0            ; DATA XREF: showCharacterDetails+8F↓o
+                                        ; drawCharacterCreationForm+2A↓o
+aRace           db 'Race:',0            ; DATA XREF: showCharacterDetails+B4↓o
+                                        ; drawCharacterCreationForm+35↓o
+aType           db 'Type:',0            ; DATA XREF: showCharacterDetails+D9↓o
+                                        ; drawCharacterCreationForm+40↓o
+aStrength_0     db 'Strength........',0 ; DATA XREF: drawCharacterCreationForm+4B↓o
+aDexterity_0    db 'Dexterity.......',0 ; DATA XREF: drawCharacterCreationForm+56↓o
+aIntelligence_0 db 'Intelligence....',0 ; DATA XREF: drawCharacterCreationForm+61↓o
+aWisdom_0       db 'Wisdom..........',0 ; DATA XREF: drawCharacterCreationForm+6C↓o
+aOK             db 'O.K.?',0            ; DATA XREF: drawCharacterCreationForm+77↓o
 aMale           db 'Male',0
 aFemale         db 'Female',0
 aOther          db 'Other',0
-byte_11045      db 4Dh, 46h, 4Fh        ; DATA XREF: sub_1158F+99↓o
-                                        ; sub_11BC8+2E↓o
+byte_11045      db 4Dh, 46h, 4Fh        ; DATA XREF: showCharacterDetails+99↓o
+                                        ; gatherCharacterCreationInput+2E↓o
 byte_11048      db 33h, 10h, 38h, 10h, 3Fh, 10h, 48h, 75h, 6Dh, 61h, 6Eh
-                                        ; DATA XREF: sub_11BC8+32↓o
+                                        ; DATA XREF: gatherCharacterCreationInput+32↓o
                 db 0, 45h, 6Ch, 66h, 0, 44h, 77h, 61h, 72h, 66h, 0, 42h
                 db 6Fh, 2 dup(62h), 69h, 74h, 0, 46h, 75h, 2 dup(7Ah)
                 db 79h, 0
-byte_1106B      db 48h, 45h, 44h, 42h, 46h ; DATA XREF: sub_1158F+BE↓o
-                                        ; sub_11BC8+46↓o
+byte_1106B      db 48h, 45h, 44h, 42h, 46h
+                                        ; DATA XREF: showCharacterDetails+BE↓o
+                                        ; gatherCharacterCreationInput+46↓o
 byte_11070      db 4Eh, 10h, 54h, 10h, 58h, 10h, 5Eh, 10h, 65h, 10h, 46h
-                                        ; DATA XREF: sub_11BC8+4A↓o
+                                        ; DATA XREF: gatherCharacterCreationInput+4A↓o
                 db 69h, 67h, 68h, 74h, 65h, 72h, 0, 43h, 6Ch, 65h, 72h
                 db 69h, 63h, 0, 57h, 69h, 7Ah, 61h, 72h, 64h, 0, 54h, 68h
                 db 69h, 65h, 66h, 0, 50h, 61h, 6Ch, 61h, 64h, 69h, 6Eh
@@ -209,45 +216,48 @@ byte_11070      db 4Eh, 10h, 54h, 10h, 58h, 10h, 5Eh, 10h, 65h, 10h, 46h
                 db 63h, 68h, 65h, 6Dh, 69h, 73h, 74h, 0, 52h, 61h, 6Eh
                 db 67h, 65h, 72h, 0
 byte_110D0      db 46h, 43h, 57h, 54h, 50h, 4Ch, 42h, 44h, 49h, 41h, 52h
-                                        ; DATA XREF: sub_1158F+E3↓o
-                                        ; sub_11BC8+5E↓o
+                                        ; DATA XREF: showCharacterDetails+E3↓o
+                                        ; gatherCharacterCreationInput+5E↓o
 byte_110DB      db 7Ah, 10h, 82h, 10h, 89h, 10h, 90h, 10h, 96h, 10h, 9Eh
-                                        ; DATA XREF: sub_11BC8+62↓o
+                                        ; DATA XREF: gatherCharacterCreationInput+62↓o
                 db 10h, 0A3h, 10h, 0ADh, 10h, 0B3h, 10h, 0BFh, 10h, 0C9h
                 db 10h, 59h, 65h, 73h, 0, 4Eh, 6Fh, 0
-byte_110F8      db 59h, 4Eh             ; DATA XREF: sub_11A6D+63↓o
-byte_110FA      db 0F1h, 10h, 0F5h, 10h ; DATA XREF: sub_11A6D+67↓o
-aLookAtACharact_0 db 'Look at a Character',0 ; DATA XREF: sub_1158F+13↓o
-aStatus         db 'Status:',0          ; DATA XREF: sub_1158F+FE↓o
-aWeapon         db 'Weapon:',0          ; DATA XREF: sub_1158F+123↓o
-aArmour         db 'Armour:',0          ; DATA XREF: sub_1158F+13E↓o
-aStrength       db 'Strength:',0        ; DATA XREF: sub_1158F+159↓o
-aDexterity      db 'Dexterity:',0       ; DATA XREF: sub_1158F+16A↓o
-aIntelligence   db 'Intelligence:',0    ; DATA XREF: sub_1158F+17B↓o
-aWisdom         db 'Wisdom:',0          ; DATA XREF: sub_1158F+18C↓o
-aHitPoints      db 'Hit points:',0      ; DATA XREF: sub_1158F+19D↓o
-aExperience     db 'Experience:',0      ; DATA XREF: sub_1158F+1AE↓o
-aFood           db 'Food:',0            ; DATA XREF: sub_1158F+1BF↓o
-aGold           db 'Gold:',0            ; DATA XREF: sub_1158F+1D0↓o
-aPlayer         db 'Player-',0          ; DATA XREF: sub_11792+32↓o
-aFormTheParty_0 db 'Form the Party',0   ; DATA XREF: sub_11792+C↓o
-aPartyInUse     db '(Party in Use)',0   ; DATA XREF: sub_11792+1E↓o
-aAlreadySelecte db 'Already Selected',0 ; DATA XREF: sub_11792+111↓o
-aFormed         db '(Formed)',0         ; DATA XREF: sub_11792+ED↓o
-aNoActivePlayer db '(No Active Players)',0 ; DATA XREF: sub_11437+87↓o
-                                        ; sub_11792+A4↓o
-aStrangeDisk    db '(Strange Disk)',0   ; DATA XREF: sub_11437+75↓o
-aNoParty        db '(No Party)',0       ; DATA XREF: sub_11437+63↓o
-                                        ; sub_118DF+63↓o
-aDispersed      db '(Dispersed!)',0     ; DATA XREF: sub_118DF+4D↓o
-aDisperseThePar_0 db 'Disperse the Party',0 ; DATA XREF: sub_118DF+E↓o
+byte_110F8      db 59h, 4Eh             ; DATA XREF: handleCreateCharacter+63↓o
+byte_110FA      db 0F1h, 10h, 0F5h, 10h ; DATA XREF: handleCreateCharacter+67↓o
+aLookAtACharact_0 db 'Look at a Character',0
+                                        ; DATA XREF: showCharacterDetails+13↓o
+aStatus         db 'Status:',0          ; DATA XREF: showCharacterDetails+FE↓o
+aWeapon         db 'Weapon:',0          ; DATA XREF: showCharacterDetails+123↓o
+aArmour         db 'Armour:',0          ; DATA XREF: showCharacterDetails+13E↓o
+aStrength       db 'Strength:',0        ; DATA XREF: showCharacterDetails+159↓o
+aDexterity      db 'Dexterity:',0       ; DATA XREF: showCharacterDetails+16A↓o
+aIntelligence   db 'Intelligence:',0    ; DATA XREF: showCharacterDetails+17B↓o
+aWisdom         db 'Wisdom:',0          ; DATA XREF: showCharacterDetails+18C↓o
+aHitPoints      db 'Hit points:',0      ; DATA XREF: showCharacterDetails+19D↓o
+aExperience     db 'Experience:',0      ; DATA XREF: showCharacterDetails+1AE↓o
+aFood           db 'Food:',0            ; DATA XREF: showCharacterDetails+1BF↓o
+aGold           db 'Gold:',0            ; DATA XREF: showCharacterDetails+1D0↓o
+aPlayer         db 'Player-',0          ; DATA XREF: handleFormParty+32↓o
+aFormTheParty_0 db 'Form the Party',0   ; DATA XREF: handleFormParty+C↓o
+aPartyInUse     db '(Party in Use)',0   ; DATA XREF: handleFormParty+1E↓o
+aAlreadySelecte db 'Already Selected',0 ; DATA XREF: handleFormParty+111↓o
+aFormed         db '(Formed)',0         ; DATA XREF: handleFormParty+ED↓o
+aNoActivePlayer db '(No Active Players)',0
+                                        ; DATA XREF: handleJourneyOnward+87↓o
+                                        ; handleFormParty+A4↓o
+aStrangeDisk    db '(Strange Disk)',0   ; DATA XREF: handleJourneyOnward+75↓o
+aNoParty        db '(No Party)',0       ; DATA XREF: handleJourneyOnward+63↓o
+                                        ; handleDisperseParty+63↓o
+aDispersed      db '(Dispersed!)',0     ; DATA XREF: handleDisperseParty+4D↓o
+aDisperseThePar_0 db 'Disperse the Party',0
+                                        ; DATA XREF: handleDisperseParty+E↓o
                 db 0B0h, 1, 0CFh
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: noreturn
 
-start_0         proc near               ; CODE XREF: start↑j
+titleScreenAndMainMenuLoop proc near    ; CODE XREF: start↑j
                 lea     sp, byte_11E40
                 add     sp, 100h
                 mov     ax, 0
@@ -265,66 +275,66 @@ start_0         proc near               ; CODE XREF: start↑j
                 lea     bx, byte_133E9
                 mov     cx, 800h
                 lea     dx, aCharsetUlt ; "CHARSET.ULT"
-                call    sub_14A30
+                call    loadFile
                 lea     bx, byte_11FE9
                 mov     cx, 1400h
                 lea     dx, aShapesUlt  ; "SHAPES.ULT"
-                call    sub_14A30
+                call    loadFile
                 lea     bx, byte_107D2
                 mov     cx, 72h ; 'r'
                 lea     dx, aDemoUlt    ; "DEMO.ULT"
-                call    sub_14A30
+                call    loadFile
                 lea     bx, byte_10844
                 mov     cx, 400h
                 lea     dx, aMovesUlt   ; "MOVES.ULT"
-                call    sub_14A30
+                call    loadFile
                 call    nullsub_1
                 lea     bx, byte_102CE
                 mov     cx, 500h
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
-                call    sub_14A30
+                call    loadFile
                 mov     dx, 1CC0h
-                call    sub_1132B
+                call    drawWindowBorder
                 mov     dh, 0Ah
                 mov     dl, 0Eh
                 lea     si, byte_10CA9
-                call    sub_14ABE
+                call    printStringAt
                 mov     ah, 6
                 mov     al, 13h
                 lea     bx, byte_107D2
                 lea     bp, byte_11FE9
                 mov     di, 0DC2h
-                call    sub_14528
+                call    drawTileGrid
                 lea     bx, byte_101BC
                 mov     cx, 112h
                 lea     dx, aPartyUlt   ; "PARTY.ULT"
-                call    sub_14A30
+                call    loadFile
                 mov     byte_101BE, 1
                 jmp     short loc_112C8
 ; ---------------------------------------------------------------------------
 
-loc_112B7:                              ; CODE XREF: start_0+11F↓j
+loc_112B7:                              ; CODE XREF: titleScreenAndMainMenuLoop+11F↓j
                 mov     dx, 1CC0h
-                call    sub_1132B
+                call    drawWindowBorder
                 mov     dh, 0Ah
                 mov     dl, 0Eh
                 lea     si, byte_10CA9
-                call    sub_14ABE
+                call    printStringAt
 
-loc_112C8:                              ; CODE XREF: start_0+AB↑j
+loc_112C8:                              ; CODE XREF: titleScreenAndMainMenuLoop+AB↑j
                 mov     dh, 17h
                 mov     dl, 0Ch
                 lea     si, byte_10CB6
-                call    sub_14ABE
+                call    printStringAt
 
-loc_112D3:                              ; CODE XREF: start_0+FA↓j
-                                        ; start_0+117↓j
+loc_112D3:                              ; CODE XREF: titleScreenAndMainMenuLoop+FA↓j
+                                        ; titleScreenAndMainMenuLoop+117↓j
                 inc     word_10C44
                 cmp     word_10C44, 200h
                 jnz     short loc_112E5
                 mov     word_10C44, 0
 
-loc_112E5:                              ; CODE XREF: start_0+D3↑j
+loc_112E5:                              ; CODE XREF: titleScreenAndMainMenuLoop+D3↑j
                 mov     si, word_10C44
                 mov     bl, [si+844h]
                 mov     bh, 0
@@ -335,36 +345,36 @@ loc_112E5:                              ; CODE XREF: start_0+D3↑j
                 jmp     short loc_11308
 ; ---------------------------------------------------------------------------
 
-loc_112FC:                              ; CODE XREF: start_0+EC↑j
+loc_112FC:                              ; CODE XREF: titleScreenAndMainMenuLoop+EC↑j
                 shr     al, 1
                 mov     [bx+7D2h], al
                 cmp     al, 8
                 jb      short loc_112D3
                 mov     ah, 1
 
-loc_11308:                              ; CODE XREF: start_0+F0↑j
-                                        ; start_0+112↓j
-                call    sub_11D71
-                call    sub_11D71
-                call    sub_11D71
-                call    sub_11D71
-                call    sub_11D71
-                call    sub_11D71
+loc_11308:                              ; CODE XREF: titleScreenAndMainMenuLoop+F0↑j
+                                        ; titleScreenAndMainMenuLoop+112↓j
+                call    updateIntroAnimation
+                call    updateIntroAnimation
+                call    updateIntroAnimation
+                call    updateIntroAnimation
+                call    updateIntroAnimation
+                call    updateIntroAnimation
                 dec     ah
                 jnz     short loc_11308
-                call    sub_147EA
+                call    pollKeypressAndAnimate
                 jz      short loc_112D3
-                call    sub_147FD
-                call    sub_113A0
+                call    getKeypressAndWaitRaw
+                call    showMainMenu
                 jmp     short loc_112B7
-start_0         endp ; sp-analysis failed
+titleScreenAndMainMenuLoop endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1132B       proc near               ; CODE XREF: start_0+78↑p
-                                        ; start_0+B0↑p ...
+drawWindowBorder proc near              ; CODE XREF: titleScreenAndMainMenuLoop+78↑p
+                                        ; titleScreenAndMainMenuLoop+B0↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -374,51 +384,51 @@ sub_1132B       proc near               ; CODE XREF: start_0+78↑p
                 xor     bx, dx
                 mov     cx, 28h ; '('
 
-loc_1133D:                              ; CODE XREF: sub_1132B+18↓j
-                call    sub_14503
+loc_1133D:                              ; CODE XREF: drawWindowBorder+18↓j
+                call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1133D
                 mov     ax, 2222h
                 mov     bx, dx
                 mov     cx, 28h ; '('
 
-loc_1134D:                              ; CODE XREF: sub_1132B+28↓j
-                call    sub_14503
+loc_1134D:                              ; CODE XREF: drawWindowBorder+28↓j
+                call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1134D
                 mov     bx, 0C82h
                 mov     cx, 26h ; '&'
 
-loc_1135B:                              ; CODE XREF: sub_1132B+36↓j
-                call    sub_14503
+loc_1135B:                              ; CODE XREF: drawWindowBorder+36↓j
+                call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1135B
                 mov     bx, 0C80h
                 mov     cx, 0Eh
 
-loc_11369:                              ; CODE XREF: sub_1132B+45↓j
-                call    sub_14503
+loc_11369:                              ; CODE XREF: drawWindowBorder+45↓j
+                call    plotPixel2bpp
                 add     bx, 140h
                 loop    loc_11369
                 mov     bx, 0CCEh
                 mov     cx, 0Eh
 
-loc_11378:                              ; CODE XREF: sub_1132B+54↓j
-                call    sub_14503
+loc_11378:                              ; CODE XREF: drawWindowBorder+54↓j
+                call    plotPixel2bpp
                 add     bx, 140h
                 loop    loc_11378
                 pop     cx
                 pop     bx
                 pop     ax
                 retn
-sub_1132B       endp
+drawWindowBorder endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11385       proc near               ; CODE XREF: sub_113A0:loc_113A6↓p
-                                        ; sub_11437:loc_11493↓p ...
+clearMenuWindow proc near               ; CODE XREF: showMainMenu:loc_113A6↓p
+                                        ; handleJourneyOnward:loc_11493↓p ...
                 push    ax
                 push    bx
                 push    cx
@@ -442,13 +452,13 @@ sub_11385       proc near               ; CODE XREF: sub_113A0:loc_113A6↓p
                 pop     bx
                 pop     ax
                 retn
-sub_11385       endp
+clearMenuWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_113A0       proc near               ; CODE XREF: start_0+11C↑p
+showMainMenu    proc near               ; CODE XREF: titleScreenAndMainMenuLoop+11C↑p
                 pushf
                 push    bx
                 push    cx
@@ -456,50 +466,50 @@ sub_113A0       proc near               ; CODE XREF: start_0+11C↑p
                 push    si
                 push    di
 
-loc_113A6:                              ; CODE XREF: sub_113A0+8E↓j
-                                        ; sub_113A0+94↓j
-                call    sub_11385
+loc_113A6:                              ; CODE XREF: showMainMenu+8E↓j
+                                        ; showMainMenu+94↓j
+                call    clearMenuWindow
                 mov     dx, 1CC0h
-                call    sub_1132B
+                call    drawWindowBorder
                 mov     dh, 15h
                 mov     dl, 3
                 lea     si, aC1983ByJamesRV ; "(C)-1983 By James R. Van Artsdalen"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 16h
                 mov     dl, 0Dh
                 lea     si, aAndLordBritish ; "and Lord British"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Bh
                 mov     dl, 7
                 lea     si, aFromTheDepthsO ; "From the depths of hell..."
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Ch
                 mov     dl, 7
                 lea     si, aHeComesForVeng ; "...he comes for VENGEANCE!"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Fh
                 mov     dl, 10h
                 lea     si, aOption     ; "Option: "
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 11h
                 mov     dl, 0Bh
                 lea     si, aReturnToTheVie ; "Return to the View"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 0Ch
                 lea     si, aOrganizeAParty ; "Organize a Party"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 13h
                 mov     dl, 0Dh
                 lea     si, aJourneyOnward ; "Journey Onward"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Fh
                 mov     dl, 17h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 4
                 lea     di, byte_10E83
                 lea     si, byte_10E87
-                call    sub_14918
+                call    getMenuChoice
                 cmp     al, 4Ah ; 'J'
                 jz      short loc_1142B
                 cmp     al, 4Fh ; 'O'
@@ -513,26 +523,26 @@ loc_113A6:                              ; CODE XREF: sub_113A0+8E↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1142B:                              ; CODE XREF: sub_113A0+7E↑j
-                call    sub_11437
+loc_1142B:                              ; CODE XREF: showMainMenu+7E↑j
+                call    handleJourneyOnward
                 jmp     loc_113A6
 ; ---------------------------------------------------------------------------
 
-loc_11431:                              ; CODE XREF: sub_113A0+82↑j
-                call    sub_114C9
+loc_11431:                              ; CODE XREF: showMainMenu+82↑j
+                call    showPartyOrganizationMenu
                 jmp     loc_113A6
-sub_113A0       endp
+showMainMenu    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11437       proc near               ; CODE XREF: sub_113A0:loc_1142B↑p
+handleJourneyOnward proc near           ; CODE XREF: showMainMenu:loc_1142B↑p
                 cmp     byte_101C3, 0
                 jz      short loc_11493
                 cmp     byte_101B9, 0FFh
                 jz      short loc_114A5
-                call    sub_11DA8
+                call    hasActiveParty
                 cmp     ah, 0
                 jz      short loc_114B7
                 mov     dx, 100h
@@ -564,94 +574,94 @@ sub_11437       proc near               ; CODE XREF: sub_113A0:loc_1142B↑p
                 jmp     sp
 ; ---------------------------------------------------------------------------
 
-loc_11493:                              ; CODE XREF: sub_11437+5↑j
-                call    sub_11385
+loc_11493:                              ; CODE XREF: handleJourneyOnward+5↑j
+                call    clearMenuWindow
                 mov     dh, 15h
                 mov     dl, 0Fh
                 lea     si, aNoParty    ; "(No Party)"
-                call    sub_14ABE
-                call    sub_11CE7
+                call    printStringAt
+                call    waitForSpaceKey
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_114A5:                              ; CODE XREF: sub_11437+C↑j
-                call    sub_11385
+loc_114A5:                              ; CODE XREF: handleJourneyOnward+C↑j
+                call    clearMenuWindow
                 mov     dh, 15h
                 mov     dl, 0Bh
                 lea     si, aStrangeDisk ; "(Strange Disk)"
-                call    sub_14ABE
-                call    sub_11CE7
+                call    printStringAt
+                call    waitForSpaceKey
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_114B7:                              ; CODE XREF: sub_11437+14↑j
-                call    sub_11385
+loc_114B7:                              ; CODE XREF: handleJourneyOnward+14↑j
+                call    clearMenuWindow
                 mov     dh, 15h
                 mov     dl, 9
                 lea     si, aNoActivePlayer ; "(No Active Players)"
-                call    sub_14ABE
-                call    sub_11CE7
+                call    printStringAt
+                call    waitForSpaceKey
                 retn
-sub_11437       endp
+handleJourneyOnward endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_114C9       proc near               ; CODE XREF: sub_113A0:loc_11431↑p
+showPartyOrganizationMenu proc near     ; CODE XREF: showMainMenu:loc_11431↑p
                 pushf
                 push    dx
                 push    si
                 push    di
 
-loc_114CD:                              ; CODE XREF: sub_114C9+A5↓j
-                                        ; sub_114C9+AB↓j ...
-                call    sub_11385
+loc_114CD:                              ; CODE XREF: showPartyOrganizationMenu+A5↓j
+                                        ; showPartyOrganizationMenu+AB↓j ...
+                call    clearMenuWindow
                 mov     dx, 1CC0h
-                call    sub_1132B
+                call    drawWindowBorder
                 mov     dh, 0Bh
                 mov     dl, 0Bh
                 lea     si, aPartyOrganizat ; "Party Organization"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Dh
                 mov     dl, 10h
                 lea     si, aOption_0   ; "Option:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Fh
                 mov     dl, 0Ah
                 lea     si, aExamineTheRegi ; "Examine the Register"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 10h
                 mov     dl, 0Bh
                 lea     si, aCreateACharact ; "Create a Character"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 11h
                 mov     dl, 0Dh
                 lea     si, aFormTheParty ; "Form the Party"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 0Bh
                 lea     si, aDisperseThePar ; "Disperse the Party"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 13h
                 mov     dl, 0Ah
                 lea     si, aTerminateAChar ; "Terminate a Character"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 14h
                 mov     dl, 0Bh
                 lea     si, aLookAtACharact ; "Look at a Character"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 15h
                 mov     dl, 0Fh
                 lea     si, aMainMenu   ; "Main Menu"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Dh
                 mov     dl, 17h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 9
                 lea     di, byte_10F59
                 lea     si, byte_10F62
-                call    sub_14918
+                call    getMenuChoice
                 cmp     al, 45h ; 'E'
                 jz      short loc_1156B
                 cmp     al, 43h ; 'C'
@@ -671,41 +681,41 @@ loc_114CD:                              ; CODE XREF: sub_114C9+A5↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1156B:                              ; CODE XREF: sub_114C9+87↑j
-                call    sub_1194B
+loc_1156B:                              ; CODE XREF: showPartyOrganizationMenu+87↑j
+                call    showRegister
                 jmp     loc_114CD
 ; ---------------------------------------------------------------------------
 
-loc_11571:                              ; CODE XREF: sub_114C9+8B↑j
-                call    sub_11A6D
+loc_11571:                              ; CODE XREF: showPartyOrganizationMenu+8B↑j
+                call    handleCreateCharacter
                 jmp     loc_114CD
 ; ---------------------------------------------------------------------------
 
-loc_11577:                              ; CODE XREF: sub_114C9+8F↑j
-                call    sub_11792
+loc_11577:                              ; CODE XREF: showPartyOrganizationMenu+8F↑j
+                call    handleFormParty
                 jmp     loc_114CD
 ; ---------------------------------------------------------------------------
 
-loc_1157D:                              ; CODE XREF: sub_114C9+93↑j
-                call    sub_118DF
+loc_1157D:                              ; CODE XREF: showPartyOrganizationMenu+93↑j
+                call    handleDisperseParty
                 jmp     loc_114CD
 ; ---------------------------------------------------------------------------
 
-loc_11583:                              ; CODE XREF: sub_114C9+97↑j
-                call    sub_119DB
+loc_11583:                              ; CODE XREF: showPartyOrganizationMenu+97↑j
+                call    handleTerminateCharacter
                 jmp     loc_114CD
 ; ---------------------------------------------------------------------------
 
-loc_11589:                              ; CODE XREF: sub_114C9+9B↑j
-                call    sub_1158F
+loc_11589:                              ; CODE XREF: showPartyOrganizationMenu+9B↑j
+                call    showCharacterDetails
                 jmp     loc_114CD
-sub_114C9       endp
+showPartyOrganizationMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1158F       proc near               ; CODE XREF: sub_114C9:loc_11589↑p
+showCharacterDetails proc near          ; CODE XREF: showPartyOrganizationMenu:loc_11589↑p
                 pushf
                 push    ax
                 push    bx
@@ -717,44 +727,44 @@ sub_1158F       proc near               ; CODE XREF: sub_114C9:loc_11589↑p
                 mov     ax, ds
                 mov     es, ax
                 assume es:seg000
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Fh
                 mov     dl, 0Ah
                 lea     si, aLookAtACharact_0 ; "Look at a Character"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 10h
                 lea     si, aEntry      ; "Entry#"
-                call    sub_14ABE
-                call    sub_11E0C
+                call    printStringAt
+                call    getEntryNumber
                 cmp     ah, 0
                 jnz     short loc_115BF
                 jmp     loc_11778
 ; ---------------------------------------------------------------------------
 
-loc_115BF:                              ; CODE XREF: sub_1158F+2B↑j
+loc_115BF:                              ; CODE XREF: showCharacterDetails+2B↑j
                 cmp     ah, 14h
                 jbe     short loc_115C7
                 jmp     loc_11778
 ; ---------------------------------------------------------------------------
 
-loc_115C7:                              ; CODE XREF: sub_1158F+33↑j
+loc_115C7:                              ; CODE XREF: showCharacterDetails+33↑j
                 mov     dl, al
                 mov     bl, ah
-                call    sub_11D61
+                call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jnz     short loc_115D6
                 jmp     loc_11785
 ; ---------------------------------------------------------------------------
 
-loc_115D6:                              ; CODE XREF: sub_1158F+42↑j
-                call    sub_11385
+loc_115D6:                              ; CODE XREF: showCharacterDetails+42↑j
+                call    clearMenuWindow
                 mov     al, dl
                 mov     dh, 0Bh
                 mov     dl, 0Fh
                 lea     si, aEntry      ; "Entry#"
-                call    sub_14ABE
-                call    sub_14863
+                call    printStringAt
+                call    printHexByte
                 cmp     byte ptr [bx+10h], 0FFh
                 jnz     short loc_1160A
                 mov     cx, 4
@@ -769,17 +779,17 @@ loc_115D6:                              ; CODE XREF: sub_1158F+42↑j
                 mov     bx, ax
                 lea     bx, [bx+1CEh]
 
-loc_1160A:                              ; CODE XREF: sub_1158F+5E↑j
+loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dh, 0Dh
                 mov     dl, 3
                 lea     si, aName       ; "Name:"
-                call    sub_14ABE
+                call    printStringAt
                 lea     si, [bx]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 0Eh
                 mov     dl, 3
                 lea     si, aSex        ; " Sex:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+18h]
                 lea     di, byte_11045
                 mov     cx, 3
@@ -789,11 +799,11 @@ loc_1160A:                              ; CODE XREF: sub_1158F+5E↑j
                 dec     si
                 shl     si, 1
                 mov     si, [si+1048h]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 0Fh
                 mov     dl, 3
                 lea     si, aRace       ; "Race:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+16h]
                 lea     di, byte_1106B
                 mov     cx, 5
@@ -803,11 +813,11 @@ loc_1160A:                              ; CODE XREF: sub_1158F+5E↑j
                 dec     si
                 shl     si, 1
                 mov     si, [si+1070h]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 10h
                 mov     dl, 3
                 lea     si, aType       ; "Type:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+17h]
                 lea     di, byte_110D0
                 mov     cx, 0Bh
@@ -817,11 +827,11 @@ loc_1160A:                              ; CODE XREF: sub_1158F+5E↑j
                 dec     si
                 shl     si, 1
                 mov     si, [si+10DBh]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 11h
                 mov     dl, 1
                 lea     si, aStatus     ; "Status:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+11h]
                 lea     di, aGpdpdIRWHand ; "GPDPD\rI\rR\rW\rHand"
                 mov     cx, 4
@@ -831,79 +841,79 @@ loc_1160A:                              ; CODE XREF: sub_1158F+5E↑j
                 dec     si
                 shl     si, 1
                 mov     si, [si+0D61h]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 13h
                 mov     dl, 1
                 lea     si, aWeapon     ; "Weapon:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+30h]
                 mov     ah, 0
                 shl     ax, 1
                 mov     si, ax
                 mov     si, [si+0DFFh]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 14h
                 mov     dl, 1
                 lea     si, aArmour     ; "Armour:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+28h]
                 mov     ah, 0
                 shl     ax, 1
                 mov     si, ax
                 mov     si, [si+0E1Fh]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     dh, 0Dh
                 mov     dl, 1Bh
                 lea     si, aStrength   ; "Strength:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+12h]
-                call    sub_14863
+                call    printHexByte
                 mov     dh, 0Eh
                 mov     dl, 1Ah
                 lea     si, aDexterity  ; "Dexterity:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+13h]
-                call    sub_14863
+                call    printHexByte
                 mov     dh, 0Fh
                 mov     dl, 17h
                 lea     si, aIntelligence ; "Intelligence:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+14h]
-                call    sub_14863
+                call    printHexByte
                 mov     dh, 10h
                 mov     dl, 1Dh
                 lea     si, aWisdom     ; "Wisdom:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, [bx+15h]
-                call    sub_14863
+                call    printHexByte
                 mov     dh, 12h
                 mov     dl, 17h
                 lea     si, aHitPoints  ; "Hit points:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     ax, [bx+1Ah]
-                call    sub_14858
+                call    printHexWord
                 mov     dh, 13h
                 mov     dl, 17h
                 lea     si, aExperience ; "Experience:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     ax, [bx+1Eh]
-                call    sub_14858
+                call    printHexWord
                 mov     dh, 14h
                 mov     dl, 1Dh
                 lea     si, aFood       ; "Food:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     ax, [bx+21h]
-                call    sub_14858
+                call    printHexWord
                 mov     dh, 15h
                 mov     dl, 1Dh
                 lea     si, aGold       ; "Gold:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     ax, [bx+23h]
-                call    sub_14858
+                call    printHexWord
 
-loc_1176C:                              ; CODE XREF: sub_1158F+1F4↓j
-                                        ; sub_1158F+201↓j
-                call    sub_11CE7
+loc_1176C:                              ; CODE XREF: showCharacterDetails+1F4↓j
+                                        ; showCharacterDetails+201↓j
+                call    waitForSpaceKey
                 pop     es
                 assume es:nothing
                 pop     di
@@ -916,75 +926,75 @@ loc_1176C:                              ; CODE XREF: sub_1158F+1F4↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11778:                              ; CODE XREF: sub_1158F+2D↑j
-                                        ; sub_1158F+35↑j
+loc_11778:                              ; CODE XREF: showCharacterDetails+2D↑j
+                                        ; showCharacterDetails+35↑j
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, a120Only    ; "(1-20 Only!)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_1176C
 ; ---------------------------------------------------------------------------
 
-loc_11785:                              ; CODE XREF: sub_1158F+44↑j
+loc_11785:                              ; CODE XREF: showCharacterDetails+44↑j
                 mov     dh, 15h
                 mov     dl, 0Dh
                 lea     si, aNoOneThere ; "(No one there)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_1176C
-sub_1158F       endp
+showCharacterDetails endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11792       proc near               ; CODE XREF: sub_114C9:loc_11577↑p
+handleFormParty proc near               ; CODE XREF: showPartyOrganizationMenu:loc_11577↑p
                 pushf
                 push    bx
                 push    cx
                 push    dx
                 push    si
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Dh
                 mov     dl, 0Dh
                 lea     si, aFormTheParty_0 ; "Form the Party"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, byte_101C3
                 cmp     al, 0
                 jz      short loc_117BA
                 mov     dh, 10h
                 mov     dl, 0Dh
                 lea     si, aPartyInUse ; "(Party in Use)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     loc_11886
 ; ---------------------------------------------------------------------------
 
-loc_117BA:                              ; CODE XREF: sub_11792+18↑j
+loc_117BA:                              ; CODE XREF: handleFormParty+18↑j
                 mov     cx, 4
 
-loc_117BD:                              ; CODE XREF: sub_11792+43↓j
+loc_117BD:                              ; CODE XREF: handleFormParty+43↓j
                 mov     dh, cl
                 add     dh, 0Fh
                 mov     dl, 0Fh
                 lea     si, aPlayer     ; "Player-"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, cl
-                call    sub_1487C
+                call    printHexNibble
                 mov     al, 2Dh ; '-'
-                call    sub_1440C
+                call    writeCharacter
                 loop    loc_117BD
 
-loc_117D7:                              ; CODE XREF: sub_11792+8F↓j
+loc_117D7:                              ; CODE XREF: handleFormParty+8F↓j
                 mov     dh, byte_101C3
                 add     dh, 10h
                 mov     dl, 18h
-                call    sub_14407
-                call    sub_11E0C
+                call    swapCursorPos
+                call    getEntryNumber
                 cmp     ah, 14h
                 jbe     short loc_117EE
                 jmp     loc_1188F
 ; ---------------------------------------------------------------------------
 
-loc_117EE:                              ; CODE XREF: sub_11792+57↑j
+loc_117EE:                              ; CODE XREF: handleFormParty+57↑j
                 cmp     al, 0
                 jz      short loc_11823
                 mov     bl, byte_101C3
@@ -992,63 +1002,63 @@ loc_117EE:                              ; CODE XREF: sub_11792+57↑j
                 lea     si, byte_101C6
                 mov     [bx+si], ah
                 mov     bl, ah
-                call    sub_11D61
+                call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jnz     short loc_1180B
                 jmp     loc_1188F
 ; ---------------------------------------------------------------------------
 
-loc_1180B:                              ; CODE XREF: sub_11792+74↑j
+loc_1180B:                              ; CODE XREF: handleFormParty+74↑j
                 cmp     byte ptr [bx+10h], 0FFh
                 jnz     short loc_11814
                 jmp     loc_1189F
 ; ---------------------------------------------------------------------------
 
-loc_11814:                              ; CODE XREF: sub_11792+7D↑j
+loc_11814:                              ; CODE XREF: handleFormParty+7D↑j
                 mov     byte ptr [bx+10h], 0FFh
                 inc     byte_101C3
                 cmp     byte_101C3, 4
                 jb      short loc_117D7
 
-loc_11823:                              ; CODE XREF: sub_11792+5E↑j
+loc_11823:                              ; CODE XREF: handleFormParty+5E↑j
                 cmp     byte_101C3, 0
                 jz      short loc_1188F
-                call    sub_11DA8
+                call    hasActiveParty
                 cmp     ah, 0FFh
                 jnz     short loc_11843
                 mov     dh, 15h
                 mov     dl, 9
                 lea     si, aNoActivePlayer ; "(No Active Players)"
-                call    sub_14ABE
-                call    sub_118AF
+                call    printStringAt
+                call    clearPartySelection
                 jmp     short loc_11886
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_11843:                              ; CODE XREF: sub_11792+9E↑j
+loc_11843:                              ; CODE XREF: handleFormParty+9E↑j
                 mov     byte_101BE, 0
                 mov     byte_101BC, 3Fh ; '?'
                 mov     byte_101C4, 2Ch ; ','
                 mov     byte_101C5, 14h
-                call    sub_11D34
+                call    syncRosterToPartyScratch
                 lea     bx, byte_101BC
                 mov     cx, 112h
                 lea     dx, aPartyUlt   ; "PARTY.ULT"
-                call    sub_149E0
+                call    saveFile
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
                 mov     cx, 500h
                 lea     bx, byte_102CE
-                call    sub_149E0
+                call    saveFile
                 mov     byte_101BE, 1
                 mov     dh, 15h
                 mov     dl, 10h
                 lea     si, aFormed     ; "(Formed)"
-                call    sub_14ABE
+                call    printStringAt
 
-loc_11886:                              ; CODE XREF: sub_11792+25↑j
-                                        ; sub_11792+AE↑j ...
-                call    sub_11CE7
+loc_11886:                              ; CODE XREF: handleFormParty+25↑j
+                                        ; handleFormParty+AE↑j ...
+                call    waitForSpaceKey
                 pop     si
                 pop     dx
                 pop     cx
@@ -1057,31 +1067,31 @@ loc_11886:                              ; CODE XREF: sub_11792+25↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1188F:                              ; CODE XREF: sub_11792+59↑j
-                                        ; sub_11792+76↑j ...
+loc_1188F:                              ; CODE XREF: handleFormParty+59↑j
+                                        ; handleFormParty+76↑j ...
                 mov     dh, 15h
                 mov     dl, 0Dh
                 lea     si, aNoOneThere ; "(No one there)"
-                call    sub_14ABE
-                call    sub_118AF
+                call    printStringAt
+                call    clearPartySelection
                 jmp     short loc_11886
 ; ---------------------------------------------------------------------------
 
-loc_1189F:                              ; CODE XREF: sub_11792+7F↑j
+loc_1189F:                              ; CODE XREF: handleFormParty+7F↑j
                 mov     dh, 15h
                 mov     dl, 0Dh
                 lea     si, aAlreadySelecte ; "Already Selected"
-                call    sub_14ABE
-                call    sub_118AF
+                call    printStringAt
+                call    clearPartySelection
                 jmp     short loc_11886
-sub_11792       endp
+handleFormParty endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_118AF       proc near               ; CODE XREF: sub_11792+AB↑p
-                                        ; sub_11792+108↑p ...
+clearPartySelection proc near           ; CODE XREF: handleFormParty+AB↑p
+                                        ; handleFormParty+108↑p ...
                 pushf
                 push    ax
                 push    bx
@@ -1089,31 +1099,31 @@ sub_118AF       proc near               ; CODE XREF: sub_11792+AB↑p
                 cmp     byte_101C3, 0
                 jz      short loc_118DA
 
-loc_118BA:                              ; CODE XREF: sub_118AF+29↓j
+loc_118BA:                              ; CODE XREF: clearPartySelection+29↓j
                 mov     bl, byte_101C3
                 mov     bh, 0
                 lea     si, byte_101C6
                 mov     al, [bx+si-1]
                 mov     byte ptr [bx+si-1], 0
                 mov     bl, al
-                call    sub_11D61
+                call    getRosterEntryPointer
                 mov     byte ptr [bx+10h], 0
                 dec     byte_101C3
                 jnz     short loc_118BA
 
-loc_118DA:                              ; CODE XREF: sub_118AF+9↑j
+loc_118DA:                              ; CODE XREF: clearPartySelection+9↑j
                 pop     si
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_118AF       endp
+clearPartySelection endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_118DF       proc near               ; CODE XREF: sub_114C9:loc_1157D↑p
+handleDisperseParty proc near           ; CODE XREF: showPartyOrganizationMenu:loc_1157D↑p
                 pushf
                 push    ax
                 push    bx
@@ -1121,15 +1131,15 @@ sub_118DF       proc near               ; CODE XREF: sub_114C9:loc_1157D↑p
                 push    dx
                 push    si
                 push    di
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 11h
                 mov     dl, 0Bh
                 lea     si, aDisperseThePar_0 ; "Disperse the Party"
-                call    sub_14ABE
+                call    printStringAt
                 cmp     byte_101C3, 0
                 jz      short loc_1193E
-                call    sub_11D07
-                call    sub_118AF
+                call    syncPartyScratchToRoster
+                call    clearPartySelection
                 lea     di, byte_101CE
                 mov     cx, 100h
                 mov     al, 0
@@ -1137,18 +1147,18 @@ sub_118DF       proc near               ; CODE XREF: sub_114C9:loc_1157D↑p
                 lea     bx, byte_101BC
                 mov     cx, 112h
                 lea     dx, aPartyUlt   ; "PARTY.ULT"
-                call    sub_149E0
+                call    saveFile
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
                 mov     cx, 500h
                 lea     bx, byte_102CE
-                call    sub_149E0
+                call    saveFile
                 mov     dh, 13h
                 mov     dl, 0Eh
                 lea     si, aDispersed  ; "(Dispersed!)"
-                call    sub_14ABE
+                call    printStringAt
 
-loc_11933:                              ; CODE XREF: sub_118DF+6A↓j
-                call    sub_11CE7
+loc_11933:                              ; CODE XREF: handleDisperseParty+6A↓j
+                call    waitForSpaceKey
                 pop     di
                 pop     si
                 pop     dx
@@ -1159,31 +1169,31 @@ loc_11933:                              ; CODE XREF: sub_118DF+6A↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1193E:                              ; CODE XREF: sub_118DF+1A↑j
+loc_1193E:                              ; CODE XREF: handleDisperseParty+1A↑j
                 mov     dh, 14h
                 mov     dl, 0Fh
                 lea     si, aNoParty    ; "(No Party)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11933
-sub_118DF       endp
+handleDisperseParty endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1194B       proc near               ; CODE XREF: sub_114C9:loc_1156B↑p
+showRegister    proc near               ; CODE XREF: showPartyOrganizationMenu:loc_1156B↑p
                 pushf
                 push    dx
                 push    si
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Bh
                 mov     dl, 10h
                 lea     si, aRegister   ; "Register"
-                call    sub_14ABE
+                call    printStringAt
                 mov     al, 1
                 mov     ah, 1
 
-loc_11960:                              ; CODE XREF: sub_1194B+87↓j
+loc_11960:                              ; CODE XREF: showRegister+87↓j
                 mov     dl, 1
                 mov     dh, ah
                 add     dh, 0Ch
@@ -1192,53 +1202,53 @@ loc_11960:                              ; CODE XREF: sub_1194B+87↓j
                 sub     dh, 0Ah
                 mov     dl, 14h
 
-loc_11971:                              ; CODE XREF: sub_1194B+1F↑j
-                call    sub_14407
+loc_11971:                              ; CODE XREF: showRegister+1F↑j
+                call    swapCursorPos
                 mov     bl, al
-                call    sub_14863
+                call    printHexByte
                 mov     bl, ah
-                call    sub_11D61
+                call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jz      short loc_119C8
                 push    ax
                 cmp     byte ptr [bx+10h], 0FFh
                 jz      short loc_11991
                 mov     al, 2Dh ; '-'
-                call    sub_1440C
+                call    writeCharacter
                 jmp     short loc_11996
 ; ---------------------------------------------------------------------------
 
-loc_11991:                              ; CODE XREF: sub_1194B+3D↑j
+loc_11991:                              ; CODE XREF: showRegister+3D↑j
                 mov     al, 2Ah ; '*'
-                call    sub_1440C
+                call    writeCharacter
 
-loc_11996:                              ; CODE XREF: sub_1194B+44↑j
+loc_11996:                              ; CODE XREF: showRegister+44↑j
                 mov     al, 20h ; ' '
-                call    sub_1440C
+                call    writeCharacter
                 mov     al, [bx+18h]
-                call    sub_1440C
+                call    writeCharacter
                 mov     al, [bx+16h]
-                call    sub_1440C
+                call    writeCharacter
                 mov     al, [bx+17h]
-                call    sub_1440C
+                call    writeCharacter
                 mov     al, [bx+11h]
-                call    sub_1440C
+                call    writeCharacter
                 mov     al, 20h ; ' '
-                call    sub_1440C
+                call    writeCharacter
                 lea     si, [bx]
                 mov     cx, 0Eh
 
-loc_119BD:                              ; CODE XREF: sub_1194B+7A↓j
+loc_119BD:                              ; CODE XREF: showRegister+7A↓j
                 lodsb
                 cmp     al, 0
                 jz      short loc_119C7
-                call    sub_1440C
+                call    writeCharacter
                 loop    loc_119BD
 
-loc_119C7:                              ; CODE XREF: sub_1194B+75↑j
+loc_119C7:                              ; CODE XREF: showRegister+75↑j
                 pop     ax
 
-loc_119C8:                              ; CODE XREF: sub_1194B+36↑j
+loc_119C8:                              ; CODE XREF: showRegister+36↑j
                 add     al, 1
                 daa
                 inc     ah
@@ -1247,19 +1257,19 @@ loc_119C8:                              ; CODE XREF: sub_1194B+36↑j
                 jmp     short loc_11960
 ; ---------------------------------------------------------------------------
 
-loc_119D4:                              ; CODE XREF: sub_1194B+85↑j
-                call    sub_11CE7
+loc_119D4:                              ; CODE XREF: showRegister+85↑j
+                call    waitForSpaceKey
                 pop     si
                 pop     dx
                 popf
                 retn
-sub_1194B       endp
+showRegister    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_119DB       proc near               ; CODE XREF: sub_114C9:loc_11583↑p
+handleTerminateCharacter proc near      ; CODE XREF: showPartyOrganizationMenu:loc_11583↑p
                 pushf
                 push    ax
                 push    bx
@@ -1268,22 +1278,22 @@ sub_119DB       proc near               ; CODE XREF: sub_114C9:loc_11583↑p
                 push    si
                 push    di
                 cld
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Fh
                 mov     dl, 0Fh
                 lea     si, aTerminate  ; "Terminate!"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 10h
                 lea     si, aEntry      ; "Entry#"
-                call    sub_14ABE
-                call    sub_11E0C
+                call    printStringAt
+                call    getEntryNumber
                 cmp     ah, 0
                 jz      short loc_11A46
                 cmp     ah, 14h
                 ja      short loc_11A46
                 mov     bl, ah
-                call    sub_11D61
+                call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jz      short loc_11A53
                 cmp     byte ptr [bx+10h], 0FFh
@@ -1295,15 +1305,15 @@ sub_119DB       proc near               ; CODE XREF: sub_114C9:loc_11583↑p
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, aTerminated ; "(Terminated)"
-                call    sub_14ABE
+                call    printStringAt
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
                 mov     cx, 500h
                 lea     bx, byte_102CE
-                call    sub_149E0
+                call    saveFile
 
-loc_11A3B:                              ; CODE XREF: sub_119DB+76↓j
-                                        ; sub_119DB+83↓j ...
-                call    sub_11CE7
+loc_11A3B:                              ; CODE XREF: handleTerminateCharacter+76↓j
+                                        ; handleTerminateCharacter+83↓j ...
+                call    waitForSpaceKey
                 pop     di
                 pop     si
                 pop     dx
@@ -1314,36 +1324,36 @@ loc_11A3B:                              ; CODE XREF: sub_119DB+76↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_11A46:                              ; CODE XREF: sub_119DB+27↑j
-                                        ; sub_119DB+2C↑j
+loc_11A46:                              ; CODE XREF: handleTerminateCharacter+27↑j
+                                        ; handleTerminateCharacter+2C↑j
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, a120Only    ; "(1-20 Only!)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11A3B
 ; ---------------------------------------------------------------------------
 
-loc_11A53:                              ; CODE XREF: sub_119DB+36↑j
+loc_11A53:                              ; CODE XREF: handleTerminateCharacter+36↑j
                 mov     dh, 14h
                 mov     dl, 0Dh
                 lea     si, aNoOneThere ; "(No one there)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11A3B
 ; ---------------------------------------------------------------------------
 
-loc_11A60:                              ; CODE XREF: sub_119DB+3C↑j
+loc_11A60:                              ; CODE XREF: handleTerminateCharacter+3C↑j
                 mov     dh, 15h
                 mov     dl, 0Dh
                 lea     si, aWithAParty ; "(With a party)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11A3B
-sub_119DB       endp
+handleTerminateCharacter endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11A6D       proc near               ; CODE XREF: sub_114C9:loc_11571↑p
+handleCreateCharacter proc near         ; CODE XREF: showPartyOrganizationMenu:loc_11571↑p
                 pushf
                 push    ax
                 push    bx
@@ -1351,47 +1361,47 @@ sub_11A6D       proc near               ; CODE XREF: sub_114C9:loc_11571↑p
                 push    dx
                 push    si
                 push    di
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Fh
                 mov     dl, 11h
                 lea     si, aCreate     ; "Create"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 10h
                 lea     si, aEntry      ; "Entry#"
-                call    sub_14ABE
-                call    sub_11E0C
+                call    printStringAt
+                call    getEntryNumber
                 cmp     ah, 0
                 jz      short loc_11AE5
                 cmp     ah, 14h
                 ja      short loc_11AE5
                 mov     dl, al
                 mov     bl, ah
-                call    sub_11D61
+                call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jnz     short loc_11AF2
                 mov     di, bx
                 mov     cx, 40h ; '@'
                 mov     al, 0
                 rep stosb
-                call    sub_11B47
+                call    drawCharacterCreationForm
                 mov     al, dl
                 mov     dh, 0Bh
                 mov     dl, 11h
-                call    sub_14407
-                call    sub_14863
-                call    sub_11BC8
+                call    swapCursorPos
+                call    printHexByte
+                call    gatherCharacterCreationInput
                 cmp     byte ptr [bx], 0
                 jz      short loc_11B33
 
-loc_11AC6:                              ; CODE XREF: sub_11A6D+76↓j
+loc_11AC6:                              ; CODE XREF: handleCreateCharacter+76↓j
                 mov     dh, 15h
                 mov     dl, 13h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 2
                 lea     di, byte_110F8
                 lea     si, byte_110FA
-                call    sub_14918
+                call    getMenuChoice
                 cmp     al, 59h ; 'Y'
                 jz      short loc_11AFF
                 cmp     al, 4Eh ; 'N'
@@ -1399,24 +1409,24 @@ loc_11AC6:                              ; CODE XREF: sub_11A6D+76↓j
                 jmp     short loc_11AC6
 ; ---------------------------------------------------------------------------
 
-loc_11AE5:                              ; CODE XREF: sub_11A6D+26↑j
-                                        ; sub_11A6D+2B↑j
+loc_11AE5:                              ; CODE XREF: handleCreateCharacter+26↑j
+                                        ; handleCreateCharacter+2B↑j
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, a120Only    ; "(1-20 Only!)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11B3C
 ; ---------------------------------------------------------------------------
 
-loc_11AF2:                              ; CODE XREF: sub_11A6D+37↑j
+loc_11AF2:                              ; CODE XREF: handleCreateCharacter+37↑j
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, aNotEmpty   ; "(Not Empty!)"
-                call    sub_14ABE
+                call    printStringAt
                 jmp     short loc_11B3C
 ; ---------------------------------------------------------------------------
 
-loc_11AFF:                              ; CODE XREF: sub_11A6D+70↑j
+loc_11AFF:                              ; CODE XREF: handleCreateCharacter+70↑j
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     byte ptr [bx+10h], 0
                 mov     word ptr [bx+1Ah], 150h
@@ -1428,20 +1438,20 @@ loc_11AFF:                              ; CODE XREF: sub_11A6D+70↑j
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
                 mov     cx, 500h
                 lea     bx, byte_102CE
-                call    sub_149E0
+                call    saveFile
                 jmp     short loc_11B3C
 ; ---------------------------------------------------------------------------
 
-loc_11B33:                              ; CODE XREF: sub_11A6D+57↑j
-                                        ; sub_11A6D+74↑j
+loc_11B33:                              ; CODE XREF: handleCreateCharacter+57↑j
+                                        ; handleCreateCharacter+74↑j
                 mov     al, 0
                 mov     cx, 40h ; '@'
                 mov     di, bx
                 rep stosb
 
-loc_11B3C:                              ; CODE XREF: sub_11A6D+83↑j
-                                        ; sub_11A6D+90↑j ...
-                call    sub_11CE7
+loc_11B3C:                              ; CODE XREF: handleCreateCharacter+83↑j
+                                        ; handleCreateCharacter+90↑j ...
+                call    waitForSpaceKey
                 pop     di
                 pop     si
                 pop     dx
@@ -1450,70 +1460,70 @@ loc_11B3C:                              ; CODE XREF: sub_11A6D+83↑j
                 pop     ax
                 popf
                 retn
-sub_11A6D       endp
+handleCreateCharacter endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11B47       proc near               ; CODE XREF: sub_11A6D+42↑p
+drawCharacterCreationForm proc near     ; CODE XREF: handleCreateCharacter+42↑p
                 push    dx
                 push    si
-                call    sub_11385
+                call    clearMenuWindow
                 mov     dh, 0Bh
                 mov     dl, 0Bh
                 lea     si, aEntry      ; "Entry#"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Bh
                 mov     dl, 14h
                 lea     si, aPoints50   ; "Points:50"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Dh
                 mov     dl, 0Eh
                 lea     si, aName       ; "Name:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Eh
                 mov     dl, 0Eh
                 lea     si, aSex        ; " Sex:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 0Fh
                 mov     dl, 0Eh
                 lea     si, aRace       ; "Race:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 10h
                 mov     dl, 0Eh
                 lea     si, aType       ; "Type:"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 11h
                 mov     dl, 0Bh
                 lea     si, aStrength_0 ; "Strength........"
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 12h
                 mov     dl, 0Bh
                 lea     si, aDexterity_0 ; "Dexterity......."
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 13h
                 mov     dl, 0Bh
                 lea     si, aIntelligence_0 ; "Intelligence...."
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 14h
                 mov     dl, 0Bh
                 lea     si, aWisdom_0   ; "Wisdom.........."
-                call    sub_14ABE
+                call    printStringAt
                 mov     dh, 15h
                 mov     dl, 0Eh
                 lea     si, aOK         ; "O.K.?"
-                call    sub_14ABE
+                call    printStringAt
                 pop     si
                 pop     dx
                 retn
-sub_11B47       endp
+drawCharacterCreationForm endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11BC8       proc near               ; CODE XREF: sub_11A6D+51↑p
+gatherCharacterCreationInput proc near  ; CODE XREF: handleCreateCharacter+51↑p
                 pushf
                 push    ax
                 push    bx
@@ -1523,11 +1533,11 @@ sub_11BC8       proc near               ; CODE XREF: sub_11A6D+51↑p
                 push    di
                 mov     dh, 0Dh
                 mov     dl, 13h
-                call    sub_14407
+                call    swapCursorPos
                 push    bx
                 mov     cx, 9
                 lea     di, [bx]
-                call    sub_145B3
+                call    readLine
                 mov     byte ptr [bx+di], 0
                 test    bx, 0FFFFh
                 pop     bx
@@ -1535,39 +1545,39 @@ sub_11BC8       proc near               ; CODE XREF: sub_11A6D+51↑p
                 jmp     loc_11CCC
 ; ---------------------------------------------------------------------------
 
-loc_11BEC:                              ; CODE XREF: sub_11BC8+1F↑j
+loc_11BEC:                              ; CODE XREF: gatherCharacterCreationInput+1F↑j
                 mov     dh, 0Eh
                 mov     dl, 13h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 3
                 lea     di, byte_11045
                 lea     si, byte_11048
-                call    sub_14918
+                call    getMenuChoice
                 mov     [bx+18h], al
                 mov     dh, 0Fh
                 mov     dl, 13h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 5
                 lea     di, byte_1106B
                 lea     si, byte_11070
-                call    sub_14918
+                call    getMenuChoice
                 mov     [bx+16h], al
                 mov     dh, 10h
                 mov     dl, 13h
-                call    sub_14407
+                call    swapCursorPos
                 mov     cx, 0Bh
                 lea     di, byte_110D0
                 lea     si, byte_110DB
-                call    sub_14918
+                call    getMenuChoice
                 mov     [bx+17h], al
                 mov     cl, 50h ; 'P'
 
-loc_11C36:                              ; CODE XREF: sub_11BC8+7B↓j
-                                        ; sub_11BC8+80↓j
+loc_11C36:                              ; CODE XREF: gatherCharacterCreationInput+7B↓j
+                                        ; gatherCharacterCreationInput+80↓j
                 mov     dh, 11h
                 mov     dl, 1Bh
-                call    sub_14407
-                call    sub_11E0C
+                call    swapCursorPos
+                call    getEntryNumber
                 cmp     ah, 19h
                 ja      short loc_11C36
                 cmp     ah, 5
@@ -1577,14 +1587,14 @@ loc_11C36:                              ; CODE XREF: sub_11BC8+7B↓j
                 mov     al, cl
                 das
                 mov     cl, al
-                call    sub_11CD4
+                call    printRemainingPoints
 
-loc_11C57:                              ; CODE XREF: sub_11BC8+9C↓j
-                                        ; sub_11BC8+A1↓j ...
+loc_11C57:                              ; CODE XREF: gatherCharacterCreationInput+9C↓j
+                                        ; gatherCharacterCreationInput+A1↓j ...
                 mov     dh, 12h
                 mov     dl, 1Bh
-                call    sub_14407
-                call    sub_11E0C
+                call    swapCursorPos
+                call    getEntryNumber
                 cmp     ah, 19h
                 ja      short loc_11C57
                 cmp     ah, 5
@@ -1597,14 +1607,14 @@ loc_11C57:                              ; CODE XREF: sub_11BC8+9C↓j
                 cmp     al, 10h
                 jb      short loc_11C57
                 mov     cl, al
-                call    sub_11CD4
+                call    printRemainingPoints
 
-loc_11C7E:                              ; CODE XREF: sub_11BC8+C3↓j
-                                        ; sub_11BC8+C8↓j ...
+loc_11C7E:                              ; CODE XREF: gatherCharacterCreationInput+C3↓j
+                                        ; gatherCharacterCreationInput+C8↓j ...
                 mov     dh, 13h
                 mov     dl, 1Bh
-                call    sub_14407
-                call    sub_11E0C
+                call    swapCursorPos
+                call    getEntryNumber
                 cmp     ah, 19h
                 ja      short loc_11C7E
                 cmp     ah, 5
@@ -1618,14 +1628,14 @@ loc_11C7E:                              ; CODE XREF: sub_11BC8+C3↓j
                 cmp     al, 5
                 jb      short loc_11C7E
                 mov     cl, al
-                call    sub_11CD4
+                call    printRemainingPoints
 
-loc_11CA7:                              ; CODE XREF: sub_11BC8+EC↓j
-                                        ; sub_11BC8+F1↓j ...
+loc_11CA7:                              ; CODE XREF: gatherCharacterCreationInput+EC↓j
+                                        ; gatherCharacterCreationInput+F1↓j ...
                 mov     dh, 14h
                 mov     dl, 1Bh
-                call    sub_14407
-                call    sub_11E0C
+                call    swapCursorPos
+                call    getEntryNumber
                 cmp     ah, 19h
                 ja      short loc_11CA7
                 cmp     ah, 5
@@ -1637,9 +1647,9 @@ loc_11CA7:                              ; CODE XREF: sub_11BC8+EC↓j
                 mov     al, cl
                 das
                 mov     cl, al
-                call    sub_11CD4
+                call    printRemainingPoints
 
-loc_11CCC:                              ; CODE XREF: sub_11BC8+21↑j
+loc_11CCC:                              ; CODE XREF: gatherCharacterCreationInput+21↑j
                 pop     di
                 pop     si
                 pop     dx
@@ -1648,34 +1658,34 @@ loc_11CCC:                              ; CODE XREF: sub_11BC8+21↑j
                 pop     ax
                 popf
                 retn
-sub_11BC8       endp
+gatherCharacterCreationInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11CD4       proc near               ; CODE XREF: sub_11BC8+8C↑p
-                                        ; sub_11BC8+B3↑p ...
+printRemainingPoints proc near          ; CODE XREF: gatherCharacterCreationInput+8C↑p
+                                        ; gatherCharacterCreationInput+B3↑p ...
                 pushf
                 push    ax
                 push    dx
                 mov     dh, 0Bh
                 mov     dl, 1Bh
-                call    sub_14407
+                call    swapCursorPos
                 mov     al, cl
-                call    sub_14863
+                call    printHexByte
                 pop     dx
                 pop     ax
                 popf
                 retn
-sub_11CD4       endp
+printRemainingPoints endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11CE7       proc near               ; CODE XREF: sub_11437+6A↑p
-                                        ; sub_11437+7C↑p ...
+waitForSpaceKey proc near               ; CODE XREF: handleJourneyOnward+6A↑p
+                                        ; handleJourneyOnward+7C↑p ...
                 pushf
                 push    ax
                 push    dx
@@ -1683,13 +1693,13 @@ sub_11CE7       proc near               ; CODE XREF: sub_11437+6A↑p
                 mov     dh, 17h
                 mov     dl, 0Ch
                 lea     si, byte_10CB6
-                call    sub_14ABE
+                call    printStringAt
 
-loc_11CF6:                              ; CODE XREF: sub_11CE7+12↓j
-                                        ; sub_11CE7+19↓j
-                call    sub_147EA
+loc_11CF6:                              ; CODE XREF: waitForSpaceKey+12↓j
+                                        ; waitForSpaceKey+19↓j
+                call    pollKeypressAndAnimate
                 jz      short loc_11CF6
-                call    sub_147FD
+                call    getKeypressAndWaitRaw
                 cmp     al, 20h ; ' '
                 jnz     short loc_11CF6
                 pop     si
@@ -1697,13 +1707,13 @@ loc_11CF6:                              ; CODE XREF: sub_11CE7+12↓j
                 pop     ax
                 popf
                 retn
-sub_11CE7       endp
+waitForSpaceKey endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D07       proc near               ; CODE XREF: sub_118DF+1C↑p
+syncPartyScratchToRoster proc near      ; CODE XREF: handleDisperseParty+1C↑p
                 pushf
                 push    bx
                 push    dx
@@ -1713,11 +1723,11 @@ sub_11D07       proc near               ; CODE XREF: sub_118DF+1C↑p
                 lea     si, byte_101CE
                 mov     dx, 0
 
-loc_11D14:                              ; CODE XREF: sub_11D07+25↓j
+loc_11D14:                              ; CODE XREF: syncPartyScratchToRoster+25↓j
                 lea     di, byte_101C6
                 mov     bx, dx
                 mov     bl, [bx+di]
-                call    sub_11D61
+                call    getRosterEntryPointer
                 mov     di, bx
                 mov     cx, 40h ; '@'
                 rep movsb
@@ -1730,13 +1740,13 @@ loc_11D14:                              ; CODE XREF: sub_11D07+25↓j
                 pop     bx
                 popf
                 retn
-sub_11D07       endp
+syncPartyScratchToRoster endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D34       proc near               ; CODE XREF: sub_11792+C5↑p
+syncRosterToPartyScratch proc near      ; CODE XREF: handleFormParty+C5↑p
                 pushf
                 push    bx
                 push    dx
@@ -1746,11 +1756,11 @@ sub_11D34       proc near               ; CODE XREF: sub_11792+C5↑p
                 lea     di, byte_101CE
                 mov     dx, 0
 
-loc_11D41:                              ; CODE XREF: sub_11D34+25↓j
+loc_11D41:                              ; CODE XREF: syncRosterToPartyScratch+25↓j
                 lea     si, byte_101C6
                 mov     bx, dx
                 mov     bl, [bx+si]
-                call    sub_11D61
+                call    getRosterEntryPointer
                 mov     si, bx
                 mov     cx, 40h ; '@'
                 rep movsb
@@ -1763,14 +1773,14 @@ loc_11D41:                              ; CODE XREF: sub_11D34+25↓j
                 pop     bx
                 popf
                 retn
-sub_11D34       endp
+syncRosterToPartyScratch endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D61       proc near               ; CODE XREF: sub_1158F+3C↑p
-                                        ; sub_11792+6E↑p ...
+getRosterEntryPointer proc near         ; CODE XREF: showCharacterDetails+3C↑p
+                                        ; handleFormParty+6E↑p ...
                 pushf
                 push    ax
                 mov     al, 40h ; '@'
@@ -1781,39 +1791,39 @@ sub_11D61       proc near               ; CODE XREF: sub_1158F+3C↑p
                 pop     ax
                 popf
                 retn
-sub_11D61       endp
+getRosterEntryPointer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D71       proc near               ; CODE XREF: start_0:loc_11308↑p
-                                        ; start_0+101↑p ...
+updateIntroAnimation proc near          ; CODE XREF: titleScreenAndMainMenuLoop:loc_11308↑p
+                                        ; titleScreenAndMainMenuLoop+101↑p ...
                 push    ax
                 push    bx
                 push    bp
                 push    di
-                call    sub_14660
-                call    sub_146AF
-                call    sub_14727
+                call    updateLogoAnimationA
+                call    updateLogoAnimationB
+                call    updateLogoAnimationC
                 mov     ah, 6
                 mov     al, 13h
                 lea     bx, byte_107D2
                 lea     bp, byte_11FE9
                 mov     di, 0DC2h
-                call    sub_14528
+                call    drawTileGrid
                 pop     di
                 pop     bp
                 pop     bx
                 pop     ax
                 retn
-sub_11D71       endp
+updateIntroAnimation endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11D95       proc near               ; CODE XREF: sub_11DA8:loc_11DB4↓p
+isCharacterAlive proc near              ; CODE XREF: hasActiveParty:loc_11DB4↓p
                 pushf
                 mov     al, 0
                 cmp     byte ptr [bx+11h], 47h ; 'G'
@@ -1822,18 +1832,18 @@ sub_11D95       proc near               ; CODE XREF: sub_11DA8:loc_11DB4↓p
                 jz      short loc_11DA6
                 mov     al, 0FFh
 
-loc_11DA6:                              ; CODE XREF: sub_11D95+7↑j
-                                        ; sub_11D95+D↑j
+loc_11DA6:                              ; CODE XREF: isCharacterAlive+7↑j
+                                        ; isCharacterAlive+D↑j
                 popf
                 retn
-sub_11D95       endp
+isCharacterAlive endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11DA8       proc near               ; CODE XREF: sub_11437+E↑p
-                                        ; sub_11792+98↑p
+hasActiveParty  proc near               ; CODE XREF: handleJourneyOnward+E↑p
+                                        ; handleFormParty+98↑p
                 pushf
                 push    bx
                 push    cx
@@ -1841,34 +1851,34 @@ sub_11DA8       proc near               ; CODE XREF: sub_11437+E↑p
                 mov     cx, 4
                 mov     ah, 0FFh
 
-loc_11DB4:                              ; CODE XREF: sub_11DA8+16↓j
-                call    sub_11D95
+loc_11DB4:                              ; CODE XREF: hasActiveParty+16↓j
+                call    isCharacterAlive
                 cmp     al, 0
                 jz      short loc_11DC2
                 add     bx, 40h ; '@'
                 loop    loc_11DB4
                 mov     ah, 0
 
-loc_11DC2:                              ; CODE XREF: sub_11DA8+11↑j
+loc_11DC2:                              ; CODE XREF: hasActiveParty+11↑j
                 pop     cx
                 pop     bx
                 popf
                 retn
-sub_11DA8       endp
+hasActiveParty  endp
 
 ; [00000001 BYTES: COLLAPSED FUNCTION nullsub_1. PRESS NUMPAD+ TO EXPAND]
 ; ---------------------------------------------------------------------------
                 pop     ss
                 mov     dl, 8
                 lea     si, byte_10C90
-                call    sub_14ABE
-                call    sub_144B0
+                call    printStringAt
+                call    checkDebugModeFlag
                 mov     byte_101B9, al
 
 loc_11DD7:                              ; CODE XREF: seg000:1DDA↓j
-                call    sub_147EA
+                call    pollKeypressAndAnimate
                 jz      short loc_11DD7
-                call    sub_147FD
+                call    getKeypressAndWaitRaw
                 cmp     al, 31h ; '1'
                 jb      short loc_11DF1
                 cmp     al, 34h ; '4'
@@ -1910,166 +1920,169 @@ locret_11E0B:                           ; CODE XREF: seg000:1DEF↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11E0C       proc near               ; CODE XREF: sub_1158F+25↑p
-                                        ; sub_11792+51↑p ...
+getEntryNumber  proc near               ; CODE XREF: showCharacterDetails+25↑p
+                                        ; handleFormParty+51↑p ...
                 pushf
                 push    dx
                 mov     dx, word_11F40
 
-loc_11E12:                              ; CODE XREF: sub_11E0C+23↓j
-                call    sub_1498F
+loc_11E12:                              ; CODE XREF: getEntryNumber+23↓j
+                call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jnz     short loc_11E31
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
                 mov     word_11F40, dx
                 mov     al, 20h ; ' '
-                call    sub_1440C
-                call    sub_1440C
+                call    writeCharacter
+                call    writeCharacter
                 mov     word_11F40, dx
                 jmp     short loc_11E12
 ; ---------------------------------------------------------------------------
 
-loc_11E31:                              ; CODE XREF: sub_11E0C+C↑j
+loc_11E31:                              ; CODE XREF: getEntryNumber+C↑j
                 pop     dx
                 popf
                 retn
-sub_11E0C       endp
+getEntryNumber  endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
-byte_11E40      db 100h dup(0)          ; DATA XREF: start_0↑o
-word_11F40      dw 0                    ; DATA XREF: sub_11E0C+2↑r
-                                        ; sub_11E0C+13↑w ...
-word_11F42      dw 0                    ; DATA XREF: sub_14B2A+1C↓r
-                                        ; sub_14B2A:loc_14B4C↓w ...
+byte_11E40      db 100h dup(0)          ; DATA XREF: titleScreenAndMainMenuLoop↑o
+word_11F40      dw 0                    ; DATA XREF: getEntryNumber+2↑r
+                                        ; getEntryNumber+13↑w ...
+word_11F42      dw 0                    ; DATA XREF: updateWindDisplay+1C↓r
+                                        ; updateWindDisplay:loc_14B4C↓w ...
                 db 0Fh dup(0)
-byte_11F53      db 3                    ; DATA XREF: sub_14660+7↓w
-                                        ; sub_14660+13↓w
-byte_11F54      db 2                    ; DATA XREF: sub_14660:loc_14678↓w
-                                        ; sub_14660+24↓w
-byte_11F55      db 3                    ; DATA XREF: sub_14660:loc_14689↓w
-                                        ; sub_14660+35↓w
-byte_11F56      db 2                    ; DATA XREF: sub_14660:loc_1469A↓w
-                                        ; sub_14660+46↓w
-byte_11F57      db 4                    ; DATA XREF: sub_146AF+4↓w
-                                        ; sub_146AF+24↓w
-byte_11F58      db 3                    ; DATA XREF: sub_146AF:loc_146D8↓w
-                                        ; sub_146AF+49↓w
-byte_11F59      db 2                    ; DATA XREF: sub_146AF:loc_146FD↓w
-                                        ; sub_146AF+6E↓w
-byte_11F5A      db 1                    ; DATA XREF: sub_14B2A+4↓w
-                                        ; sub_14B2A+A↓w
-byte_11F5B      db 0Ah                  ; DATA XREF: sub_14768+A↓r
-                                        ; sub_14768+12↓w ...
-byte_11F5C      db 0Ah                  ; DATA XREF: sub_14727+5↓w
-                                        ; sub_14727+B↓w
-                db 10h, 43h, 61h, 6Ch, 6Dh, 2 dup(20h), 57h, 69h, 6Eh
-                db 64h, 11h, 0, 10h, 4Eh, 6Fh, 72h, 74h, 68h, 20h, 57h
-                db 69h, 6Eh, 64h, 11h, 0, 10h, 53h, 6Fh, 75h, 74h, 68h
-                db 20h, 57h, 69h, 6Eh, 64h, 11h, 0, 10h, 45h, 61h, 73h
-                db 74h, 2 dup(20h), 57h, 69h, 6Eh, 64h, 11h, 0, 10h, 57h
-                db 65h, 73h, 74h, 2 dup(20h), 57h, 69h, 6Eh, 64h, 11h
-                db 0
-aUnableToReadFi db 'Unable to read file ',0 ; DATA XREF: sub_14A30+43↓o
-aUnableToWriteF db 'Unable to write file ',0 ; DATA XREF: sub_149E0+40↓o
-aWrongDiskette  db 'Wrong Diskette!',0  ; DATA XREF: sub_14A83:loc_14AA2↓o
-asc_11FD9       db '               ',0  ; DATA XREF: sub_14A83+F↓o
-byte_11FE9      db 300h dup(0)          ; DATA XREF: start_0+3A↑o
-                                        ; start_0+8E↑o ...
-byte_122E9      db 100h dup(0)          ; DATA XREF: sub_14727+2A↓o
-byte_123E9      db 0C00h dup(0)         ; DATA XREF: sub_14727+19↓o
-byte_12FE9      db 400h dup(0)          ; DATA XREF: sub_14727+15↓o
-byte_133E9      db 1000h dup(0)         ; DATA XREF: start_0+2C↑o
-word_143E9      dw 0B800h               ; DATA XREF: sub_14440+6↓r
-                                        ; sub_14528+9↓r ...
+byte_11F53      db 3                    ; DATA XREF: updateLogoAnimationA+7↓w
+                                        ; updateLogoAnimationA+13↓w
+byte_11F54      db 2                    ; DATA XREF: updateLogoAnimationA:loc_14678↓w
+                                        ; updateLogoAnimationA+24↓w
+byte_11F55      db 3                    ; DATA XREF: updateLogoAnimationA:loc_14689↓w
+                                        ; updateLogoAnimationA+35↓w
+byte_11F56      db 2                    ; DATA XREF: updateLogoAnimationA:loc_1469A↓w
+                                        ; updateLogoAnimationA+46↓w
+byte_11F57      db 4                    ; DATA XREF: updateLogoAnimationB+4↓w
+                                        ; updateLogoAnimationB+24↓w
+byte_11F58      db 3                    ; DATA XREF: updateLogoAnimationB:loc_146D8↓w
+                                        ; updateLogoAnimationB+49↓w
+byte_11F59      db 2                    ; DATA XREF: updateLogoAnimationB:loc_146FD↓w
+                                        ; updateLogoAnimationB+6E↓w
+byte_11F5A      db 1                    ; DATA XREF: updateWindDisplay+4↓w
+                                        ; updateWindDisplay+A↓w
+byte_11F5B      db 0Ah                  ; DATA XREF: updateLogoAnimationD+A↓r
+                                        ; updateLogoAnimationD+12↓w ...
+byte_11F5C      db 0Ah                  ; DATA XREF: updateLogoAnimationC+5↓w
+                                        ; updateLogoAnimationC+B↓w
+aCalmWind       db 10h, 43h, 61h, 6Ch, 6Dh, 2 dup(20h), 57h, 69h, 6Eh
+                db 64h, 11h, 0
+aNorthWind      db 10h, 4Eh, 6Fh, 72h, 74h, 68h, 20h, 57h, 69h, 6Eh, 64h
+                db 11h, 0
+aSouthWind      db 10h, 53h, 6Fh, 75h, 74h, 68h, 20h, 57h, 69h, 6Eh, 64h
+                db 11h, 0
+aEastWind       db 10h, 45h, 61h, 73h, 74h, 2 dup(20h), 57h, 69h, 6Eh
+                db 64h, 11h, 0
+aWestWind       db 10h, 57h, 65h, 73h, 74h, 2 dup(20h), 57h, 69h, 6Eh
+                db 64h, 11h, 0
+aUnableToReadFi db 'Unable to read file ',0 ; DATA XREF: loadFile+43↓o
+aUnableToWriteF db 'Unable to write file ',0 ; DATA XREF: saveFile+40↓o
+aWrongDiskette  db 'Wrong Diskette!',0  ; DATA XREF: openFileWithRetry:loc_14AA2↓o
+asc_11FD9       db '               ',0  ; DATA XREF: openFileWithRetry+F↓o
+byte_11FE9      db 300h dup(0)          ; DATA XREF: titleScreenAndMainMenuLoop+3A↑o
+                                        ; titleScreenAndMainMenuLoop+8E↑o ...
+byte_122E9      db 100h dup(0)          ; DATA XREF: updateLogoAnimationC+2A↓o
+byte_123E9      db 0C00h dup(0)         ; DATA XREF: updateLogoAnimationC+19↓o
+byte_12FE9      db 400h dup(0)          ; DATA XREF: updateLogoAnimationC+15↓o
+byte_133E9      db 1000h dup(0)         ; DATA XREF: titleScreenAndMainMenuLoop+2C↑o
+word_143E9      dw 0B800h               ; DATA XREF: drawCharGlyph+6↓r
+                                        ; drawTileGrid+9↓r ...
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_143EB       proc near               ; CODE XREF: sub_14401+1↓p
-                                        ; sub_14918+3D↓p
+writeString     proc near               ; CODE XREF: writeStringPreserveCx+1↓p
+                                        ; getMenuChoice+3D↓p
                 pushf
                 push    ax
                 push    si
                 cld
                 mov     cx, 0
 
-loc_143F2:                              ; CODE XREF: sub_143EB+10↓j
+loc_143F2:                              ; CODE XREF: writeString+10↓j
                 lodsb
                 cmp     al, 0
                 jz      short loc_143FD
                 inc     cx
-                call    sub_1440C
+                call    writeCharacter
                 jmp     short loc_143F2
 ; ---------------------------------------------------------------------------
 
-loc_143FD:                              ; CODE XREF: sub_143EB+A↑j
+loc_143FD:                              ; CODE XREF: writeString+A↑j
                 pop     si
                 pop     ax
                 popf
                 retn
-sub_143EB       endp
+writeString     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14401       proc near               ; CODE XREF: sub_1158F+88↑p
-                                        ; sub_1158F+AD↑p ...
+writeStringPreserveCx proc near         ; CODE XREF: showCharacterDetails+88↑p
+                                        ; showCharacterDetails+AD↑p ...
                 push    cx
-                call    sub_143EB
+                call    writeString
                 pop     cx
                 retn
-sub_14401       endp
+writeStringPreserveCx endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14407       proc near               ; CODE XREF: sub_113A0+6B↑p
-                                        ; sub_114C9+74↑p ...
+swapCursorPos   proc near               ; CODE XREF: showMainMenu+6B↑p
+                                        ; showPartyOrganizationMenu+74↑p ...
                 xchg    dx, word_11F40
                 retn
-sub_14407       endp
+swapCursorPos   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1440C       proc near               ; CODE XREF: sub_11792+40↑p
-                                        ; sub_1194B+41↑p ...
+writeCharacter  proc near               ; CODE XREF: handleFormParty+40↑p
+                                        ; showRegister+41↑p ...
                 push    ax
                 cmp     al, 8
                 jz      short loc_1442A
-                call    sub_14440
+                call    drawCharGlyph
                 inc     byte ptr word_11F40
                 cmp     byte ptr word_11F40, 28h ; '('
                 jnz     short loc_14428
                 inc     byte ptr word_11F40+1
                 mov     byte ptr word_11F40, 0
 
-loc_14428:                              ; CODE XREF: sub_1440C+11↑j
-                                        ; sub_1440C+27↓j ...
+loc_14428:                              ; CODE XREF: writeCharacter+11↑j
+                                        ; writeCharacter+27↓j ...
                 pop     ax
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1442A:                              ; CODE XREF: sub_1440C+3↑j
+loc_1442A:                              ; CODE XREF: writeCharacter+3↑j
                 dec     byte ptr word_11F40
                 cmp     byte ptr word_11F40, 0FFh
                 jnz     short loc_14428
                 mov     byte ptr word_11F40, 27h ; '''
                 dec     byte ptr word_11F40+1
                 jmp     short loc_14428
-sub_1440C       endp
+writeCharacter  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14440       proc near               ; CODE XREF: sub_1440C+5↑p
-                                        ; sub_147FD+B↓p ...
+drawCharGlyph   proc near               ; CODE XREF: writeCharacter+5↑p
+                                        ; getKeypressAndWaitRaw+B↓p ...
                 pushf
                 push    ax
                 push    bx
@@ -2124,16 +2137,16 @@ sub_14440       proc near               ; CODE XREF: sub_1440C+5↑p
                 pop     ax
                 popf
                 retn
-sub_14440       endp
+drawCharGlyph   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_144B0       proc near               ; CODE XREF: seg000:1DD1↑p
+checkDebugModeFlag proc near            ; CODE XREF: seg000:1DD1↑p
                 mov     al, 0
                 retn
-sub_144B0       endp
+checkDebugModeFlag endp
 
 ; ---------------------------------------------------------------------------
                 push    cx
@@ -2206,8 +2219,8 @@ loc_144F4:                              ; CODE XREF: seg000:44EE↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14503       proc near               ; CODE XREF: sub_1132B:loc_1133D↑p
-                                        ; sub_1132B:loc_1134D↑p ...
+plotPixel2bpp   proc near               ; CODE XREF: drawWindowBorder:loc_1133D↑p
+                                        ; drawWindowBorder:loc_1134D↑p ...
                 push    ds
                 mov     ds, word ptr ss:43E9h
                 mov     [bx], ax
@@ -2220,14 +2233,14 @@ sub_14503       proc near               ; CODE XREF: sub_1132B:loc_1133D↑p
                 mov     [bx+20F0h], ax
                 pop     ds
                 retn
-sub_14503       endp
+plotPixel2bpp   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14528       proc near               ; CODE XREF: start_0+95↑p
-                                        ; sub_11D71+1C↑p ...
+drawTileGrid    proc near               ; CODE XREF: titleScreenAndMainMenuLoop+95↑p
+                                        ; updateIntroAnimation+1C↑p ...
                 pushf
                 push    ax
                 push    bx
@@ -2243,10 +2256,10 @@ sub_14528       proc near               ; CODE XREF: start_0+95↑p
                 shl     dh, 1
                 shl     dh, 1
 
-loc_1453B:                              ; CODE XREF: sub_14528+56↓j
+loc_1453B:                              ; CODE XREF: drawTileGrid+56↓j
                 mov     dl, al
 
-loc_1453D:                              ; CODE XREF: sub_14528+48↓j
+loc_1453D:                              ; CODE XREF: drawTileGrid+48↓j
                 mov     si, [bx]
                 inc     bx
                 and     si, 0FFh
@@ -2259,7 +2272,7 @@ loc_1453D:                              ; CODE XREF: sub_14528+48↓j
                 add     si, bp
                 mov     cx, 8
 
-loc_14555:                              ; CODE XREF: sub_14528+32↓j
+loc_14555:                              ; CODE XREF: drawTileGrid+32↓j
                 movsw
                 movsw
                 add     di, 4Ch ; 'L'
@@ -2267,7 +2280,7 @@ loc_14555:                              ; CODE XREF: sub_14528+32↓j
                 add     di, 1D80h
                 mov     cx, 8
 
-loc_14563:                              ; CODE XREF: sub_14528+40↓j
+loc_14563:                              ; CODE XREF: drawTileGrid+40↓j
                 movsw
                 movsw
                 add     di, 4Ch ; 'L'
@@ -2291,7 +2304,7 @@ loc_14563:                              ; CODE XREF: sub_14528+40↓j
                 pop     ax
                 popf
                 retn
-sub_14528       endp
+drawTileGrid    endp
 
 ; ---------------------------------------------------------------------------
                 pushf
@@ -2322,8 +2335,8 @@ sub_14528       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_145B3       proc near               ; CODE XREF: sub_11BC8+14↑p
-                                        ; sub_1498F+25↓p
+readLine        proc near               ; CODE XREF: gatherCharacterCreationInput+14↑p
+                                        ; promptForNumberEntry+25↓p
                 pushf
                 push    ax
                 push    cx
@@ -2331,9 +2344,9 @@ sub_145B3       proc near               ; CODE XREF: sub_11BC8+14↑p
                 cld
                 mov     bx, cx
 
-loc_145BA:                              ; CODE XREF: sub_145B3+2D↓j
-                                        ; sub_145B3+45↓j ...
-                call    sub_147FD
+loc_145BA:                              ; CODE XREF: readLine+2D↓j
+                                        ; readLine+45↓j ...
+                call    getKeypressAndWaitRaw
                 cmp     ax, 0E08h
                 jz      short loc_145E9
                 cmp     ax, 0E7Fh
@@ -2348,12 +2361,12 @@ loc_145BA:                              ; CODE XREF: sub_145B3+2D↓j
                 jnb     short loc_145FA
                 jcxz    short loc_145FA
                 stosb
-                call    sub_1440C
+                call    writeCharacter
                 dec     cx
                 jmp     short loc_145BA
 ; ---------------------------------------------------------------------------
 
-loc_145E2:                              ; CODE XREF: sub_145B3+1C↑j
+loc_145E2:                              ; CODE XREF: readLine+1C↑j
                 sub     bx, cx
                 pop     di
                 pop     cx
@@ -2362,31 +2375,31 @@ loc_145E2:                              ; CODE XREF: sub_145B3+1C↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_145E9:                              ; CODE XREF: sub_145B3+D↑j
-                                        ; sub_145B3+12↑j ...
+loc_145E9:                              ; CODE XREF: readLine+D↑j
+                                        ; readLine+12↑j ...
                 cmp     bx, cx
                 jz      short loc_145FA
                 mov     al, 8
-                call    sub_1440C
+                call    writeCharacter
                 inc     cx
                 dec     di
                 mov     byte ptr es:[di], 20h ; ' '
                 jmp     short loc_145BA
 ; ---------------------------------------------------------------------------
 
-loc_145FA:                              ; CODE XREF: sub_145B3+20↑j
-                                        ; sub_145B3+24↑j ...
+loc_145FA:                              ; CODE XREF: readLine+20↑j
+                                        ; readLine+24↑j ...
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
                 jmp     short loc_145BA
-sub_145B3       endp
+readLine        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14601       proc near               ; CODE XREF: sub_14B2A+11↓p
-                                        ; sub_14C56+C↓p ...
+stepTimeSeededPrng proc near            ; CODE XREF: updateWindDisplay+11↓p
+                                        ; playToneFC+C↓p ...
                 pushf
                 push    ax
                 push    cx
@@ -2400,7 +2413,7 @@ sub_14601       proc near               ; CODE XREF: sub_14B2A+11↓p
                 dec     di
                 clc
 
-loc_14614:                              ; CODE XREF: sub_14601+17↓j
+loc_14614:                              ; CODE XREF: stepTimeSeededPrng+17↓j
                 lodsb
                 adc     al, [si]
                 stosb
@@ -2409,34 +2422,34 @@ loc_14614:                              ; CODE XREF: sub_14601+17↓j
                 lea     di, word_11F42+1
                 add     di, cx
 
-loc_14623:                              ; CODE XREF: sub_14601+25↓j
+loc_14623:                              ; CODE XREF: stepTimeSeededPrng+25↓j
                 dec     di
                 inc     byte ptr [di]
                 loope   loc_14623
                 mov     dl, byte ptr word_11F42+1
 
-loc_1462C:                              ; CODE XREF: sub_14601+31↓j
+loc_1462C:                              ; CODE XREF: stepTimeSeededPrng+31↓j
                 cmp     dl, dh
                 jb      short loc_14634
                 sub     dl, dh
                 jmp     short loc_1462C
 ; ---------------------------------------------------------------------------
 
-loc_14634:                              ; CODE XREF: sub_14601+2D↑j
+loc_14634:                              ; CODE XREF: stepTimeSeededPrng+2D↑j
                 pop     di
                 pop     si
                 pop     cx
                 pop     ax
                 popf
                 retn
-sub_14601       endp
+stepTimeSeededPrng endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1463A       proc near               ; CODE XREF: sub_14660+10↓p
-                                        ; sub_14660+21↓p ...
+swapAnimTableRows proc near             ; CODE XREF: updateLogoAnimationA+10↓p
+                                        ; updateLogoAnimationA+21↓p ...
                 pushf
                 push    ax
                 push    bx
@@ -2447,7 +2460,7 @@ sub_1463A       proc near               ; CODE XREF: sub_14660+10↓p
                 mov     dx, [bx+3Eh]
                 mov     cx, 8
 
-loc_1464A:                              ; CODE XREF: sub_1463A+1E↓j
+loc_1464A:                              ; CODE XREF: swapAnimTableRows+1E↓j
                 xchg    ax, [bx]
                 xchg    ax, [bx+20h]
                 xchg    dx, [bx+2]
@@ -2460,14 +2473,14 @@ loc_1464A:                              ; CODE XREF: sub_1463A+1E↓j
                 pop     ax
                 popf
                 retn
-sub_1463A       endp
+swapAnimTableRows endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14660       proc near               ; CODE XREF: sub_11D71+4↑p
-                                        ; sub_147C7:loc_147D9↓p
+updateLogoAnimationA proc near          ; CODE XREF: updateIntroAnimation+4↑p
+                                        ; runIdleAnimationTick:loc_147D9↓p
                 pushf
                 push    bx
                 push    dx
@@ -2475,43 +2488,43 @@ sub_14660       proc near               ; CODE XREF: sub_11D71+4↑p
                 dec     byte_11F53
                 jnz     short loc_14678
                 mov     bx, 0
-                call    sub_1463A
+                call    swapAnimTableRows
                 mov     byte_11F53, 3
 
-loc_14678:                              ; CODE XREF: sub_14660+B↑j
+loc_14678:                              ; CODE XREF: updateLogoAnimationA+B↑j
                 dec     byte_11F54
                 jnz     short loc_14689
                 mov     bx, 840h
-                call    sub_1463A
+                call    swapAnimTableRows
                 mov     byte_11F54, 2
 
-loc_14689:                              ; CODE XREF: sub_14660+1C↑j
+loc_14689:                              ; CODE XREF: updateLogoAnimationA+1C↑j
                 dec     byte_11F55
                 jnz     short loc_1469A
                 mov     bx, 800h
-                call    sub_1463A
+                call    swapAnimTableRows
                 mov     byte_11F55, 3
 
-loc_1469A:                              ; CODE XREF: sub_14660+2D↑j
+loc_1469A:                              ; CODE XREF: updateLogoAnimationA+2D↑j
                 dec     byte_11F56
                 jnz     short loc_146AB
                 mov     bx, 880h
-                call    sub_1463A
+                call    swapAnimTableRows
                 mov     byte_11F56, 2
 
-loc_146AB:                              ; CODE XREF: sub_14660+3E↑j
+loc_146AB:                              ; CODE XREF: updateLogoAnimationA+3E↑j
                 pop     dx
                 pop     bx
                 popf
                 retn
-sub_14660       endp
+updateLogoAnimationA endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_146AF       proc near               ; CODE XREF: sub_11D71+7↑p
-                                        ; sub_147C7+15↓p
+updateLogoAnimationB proc near          ; CODE XREF: updateIntroAnimation+7↑p
+                                        ; runIdleAnimationTick+15↓p
                 pushf
                 push    ax
                 push    bx
@@ -2528,7 +2541,7 @@ sub_146AF       proc near               ; CODE XREF: sub_11D71+7↑p
                 mov     [bx+22h], di
                 mov     byte_11F57, 4
 
-loc_146D8:                              ; CODE XREF: sub_146AF+8↑j
+loc_146D8:                              ; CODE XREF: updateLogoAnimationB+8↑j
                 dec     byte_11F58
                 jnz     short loc_146FD
                 lea     bx, byte_11FE9
@@ -2541,7 +2554,7 @@ loc_146D8:                              ; CODE XREF: sub_146AF+8↑j
                 mov     [bx+26h], di
                 mov     byte_11F58, 3
 
-loc_146FD:                              ; CODE XREF: sub_146AF+2D↑j
+loc_146FD:                              ; CODE XREF: updateLogoAnimationB+2D↑j
                 dec     byte_11F59
                 jnz     short loc_14722
                 lea     bx, byte_11FE9
@@ -2554,20 +2567,20 @@ loc_146FD:                              ; CODE XREF: sub_146AF+2D↑j
                 mov     [bx+6], di
                 mov     byte_11F59, 2
 
-loc_14722:                              ; CODE XREF: sub_146AF+52↑j
+loc_14722:                              ; CODE XREF: updateLogoAnimationB+52↑j
                 pop     di
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_146AF       endp
+updateLogoAnimationB endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14727       proc near               ; CODE XREF: sub_11D71+A↑p
-                                        ; sub_147C7+1B↓p
+updateLogoAnimationC proc near          ; CODE XREF: updateIntroAnimation+A↑p
+                                        ; runIdleAnimationTick+1B↓p
                 push    ax
                 push    cx
                 push    si
@@ -2584,7 +2597,7 @@ sub_14727       proc near               ; CODE XREF: sub_11D71+A↑p
                 lea     di, byte_123E9
                 mov     cx, 1E0h
 
-loc_14747:                              ; CODE XREF: sub_14727+28↓j
+loc_14747:                              ; CODE XREF: updateLogoAnimationC+28↓j
                 mov     ax, [di]
                 xchg    ax, [si]
                 add     si, 2
@@ -2593,14 +2606,14 @@ loc_14747:                              ; CODE XREF: sub_14727+28↓j
                 lea     di, byte_122E9
                 mov     cx, 20h ; ' '
 
-loc_14758:                              ; CODE XREF: sub_14727+39↓j
+loc_14758:                              ; CODE XREF: updateLogoAnimationC+39↓j
                 mov     ax, [di]
                 xchg    ax, [si]
                 add     si, 2
                 stosw
                 loop    loc_14758
 
-loc_14762:                              ; CODE XREF: sub_14727+9↑j
+loc_14762:                              ; CODE XREF: updateLogoAnimationC+9↑j
                 pop     es
                 assume es:nothing
                 pop     di
@@ -2608,20 +2621,20 @@ loc_14762:                              ; CODE XREF: sub_14727+9↑j
                 pop     cx
                 pop     ax
                 retn
-sub_14727       endp
+updateLogoAnimationC endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14768       proc near               ; CODE XREF: sub_147C7+18↓p
+updateLogoAnimationD proc near          ; CODE XREF: runIdleAnimationTick+18↓p
                 pushf
                 push    ax
                 push    bx
                 cmp     byte_101BE, 80h
                 jnz     short loc_147C3
                 mov     al, byte_11F5B
-                call    sub_14AC7
+                call    adjustAnimSpeed
                 neg     ah
                 add     byte_11F5B, ah
                 jnz     short loc_147C3
@@ -2634,12 +2647,12 @@ sub_14768       proc near               ; CODE XREF: sub_147C7+18↓p
                 mov     al, [bx+1ADh]
                 mov     bl, [bx+1A9h]
                 mov     bh, al
-                call    sub_14B05
+                call    computeAnimTableByte
                 mov     [bx], ah
                 jmp     short loc_147C3
 ; ---------------------------------------------------------------------------
 
-loc_147A5:                              ; CODE XREF: sub_14768+1B↑j
+loc_147A5:                              ; CODE XREF: updateLogoAnimationD+1B↑j
                 mov     byte_11F5B, 0Ah
                 mov     bl, byte_10103
                 mov     bh, 0
@@ -2647,46 +2660,46 @@ loc_147A5:                              ; CODE XREF: sub_14768+1B↑j
                 mov     al, [bx+1ADh]
                 mov     bl, [bx+1A9h]
                 mov     bh, al
-                call    sub_14B05
+                call    computeAnimTableByte
                 mov     [bx], ah
 
-loc_147C3:                              ; CODE XREF: sub_14768+8↑j
-                                        ; sub_14768+16↑j ...
+loc_147C3:                              ; CODE XREF: updateLogoAnimationD+8↑j
+                                        ; updateLogoAnimationD+16↑j ...
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_14768       endp
+updateLogoAnimationD endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147C7       proc near               ; CODE XREF: sub_147EA+D↓p
+runIdleAnimationTick proc near          ; CODE XREF: pollKeypressAndAnimate+D↓p
                 pushf
                 cmp     byte_101BE, 80h
                 jz      short loc_147D9
                 cmp     byte_101BE, 4
                 jz      short loc_147D9
-                call    sub_14B2A
+                call    updateWindDisplay
 
-loc_147D9:                              ; CODE XREF: sub_147C7+6↑j
-                                        ; sub_147C7+D↑j
-                call    sub_14660
-                call    sub_146AF
-                call    sub_14768
-                call    sub_14727
-                call    sub_14AEA
+loc_147D9:                              ; CODE XREF: runIdleAnimationTick+6↑j
+                                        ; runIdleAnimationTick+D↑j
+                call    updateLogoAnimationA
+                call    updateLogoAnimationB
+                call    updateLogoAnimationD
+                call    updateLogoAnimationC
+                call    drawLogoTileGrid
                 popf
                 retn
-sub_147C7       endp
+runIdleAnimationTick endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147EA       proc near               ; CODE XREF: start_0+114↑p
-                                        ; sub_11CE7:loc_11CF6↑p ...
+pollKeypressAndAnimate proc near        ; CODE XREF: titleScreenAndMainMenuLoop+114↑p
+                                        ; waitForSpaceKey:loc_11CF6↑p ...
                 push    ax
                 mov     ah, 1
                 int     16h             ; KEYBOARD - CHECK BUFFER, DO NOT CLEAR
@@ -2696,45 +2709,45 @@ sub_147EA       proc near               ; CODE XREF: start_0+114↑p
                 pushf
                 cmp     byte_101BE, 1
                 jz      short loc_147FA
-                call    sub_147C7
+                call    runIdleAnimationTick
 
-loc_147FA:                              ; CODE XREF: sub_147EA+B↑j
+loc_147FA:                              ; CODE XREF: pollKeypressAndAnimate+B↑j
                 popf
                 pop     ax
                 retn
-sub_147EA       endp
+pollKeypressAndAnimate endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147FD       proc near               ; CODE XREF: start_0+119↑p
-                                        ; sub_11CE7+14↑p ...
+getKeypressAndWaitRaw proc near         ; CODE XREF: titleScreenAndMainMenuLoop+119↑p
+                                        ; waitForSpaceKey+14↑p ...
                 pushf
                 push    cx
                 push    bx
                 push    ax
-                call    sub_147EA
+                call    pollKeypressAndAnimate
                 jnz     short loc_1481F
 
-loc_14806:                              ; CODE XREF: sub_147FD+1B↓j
+loc_14806:                              ; CODE XREF: getKeypressAndWaitRaw+1B↓j
                 mov     al, 1Eh
-                call    sub_14440
+                call    drawCharGlyph
                 mov     cx, 50h ; 'P'
 
-loc_1480E:                              ; CODE XREF: sub_147FD+14↓j
-                call    sub_147EA
+loc_1480E:                              ; CODE XREF: getKeypressAndWaitRaw+14↓j
+                call    pollKeypressAndAnimate
                 loope   loc_1480E
                 jnz     short loc_1481A
                 call    nullsub_2
                 jmp     short loc_14806
 ; ---------------------------------------------------------------------------
 
-loc_1481A:                              ; CODE XREF: sub_147FD+16↑j
+loc_1481A:                              ; CODE XREF: getKeypressAndWaitRaw+16↑j
                 mov     al, 20h ; ' '
-                call    sub_14440
+                call    drawCharGlyph
 
-loc_1481F:                              ; CODE XREF: sub_147FD+7↑j
+loc_1481F:                              ; CODE XREF: getKeypressAndWaitRaw+7↑j
                 cmp     byte_101BE, 80h
                 jnz     short loc_1484B
                 mov     bl, byte_10103
@@ -2744,12 +2757,12 @@ loc_1481F:                              ; CODE XREF: sub_147FD+7↑j
                 mov     al, [bx+0A4h]
                 mov     bl, [bx+0A0h]
                 mov     bh, al
-                call    sub_14B05
+                call    computeAnimTableByte
                 mov     [bx], ah
-                call    sub_14AEA
+                call    drawLogoTileGrid
                 mov     byte_11F5B, 2
 
-loc_1484B:                              ; CODE XREF: sub_147FD+27↑j
+loc_1484B:                              ; CODE XREF: getKeypressAndWaitRaw+27↑j
                 mov     ah, 0
                 int     16h             ; KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
                                         ; Return: AH = scan code, AL = character
@@ -2760,48 +2773,48 @@ loc_1484B:                              ; CODE XREF: sub_147FD+27↑j
                 pop     cx
                 popf
                 retn
-sub_147FD       endp
+getKeypressAndWaitRaw endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14858       proc near               ; CODE XREF: sub_1158F+1A7↑p
-                                        ; sub_1158F+1B8↑p ...
+printHexWord    proc near               ; CODE XREF: showCharacterDetails+1A7↑p
+                                        ; showCharacterDetails+1B8↑p ...
                 xchg    al, ah
-                call    sub_14863
+                call    printHexByte
                 xchg    al, ah
-                call    sub_14863
+                call    printHexByte
                 retn
-sub_14858       endp
+printHexWord    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14863       proc near               ; CODE XREF: sub_1158F+57↑p
-                                        ; sub_1158F+163↑p ...
+printHexByte    proc near               ; CODE XREF: showCharacterDetails+57↑p
+                                        ; showCharacterDetails+163↑p ...
                 pushf
                 rol     al, 1
                 rol     al, 1
                 rol     al, 1
                 rol     al, 1
-                call    sub_1487C
+                call    printHexNibble
                 rol     al, 1
                 rol     al, 1
                 rol     al, 1
                 rol     al, 1
-                call    sub_1487C
+                call    printHexNibble
                 popf
                 retn
-sub_14863       endp
+printHexByte    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1487C       proc near               ; CODE XREF: sub_11792+3B↑p
-                                        ; sub_14863+9↑p ...
+printHexNibble  proc near               ; CODE XREF: handleFormParty+3B↑p
+                                        ; printHexByte+9↑p ...
                 pushf
                 push    ax
                 and     al, 0Fh
@@ -2810,18 +2823,18 @@ sub_1487C       proc near               ; CODE XREF: sub_11792+3B↑p
                 jb      short loc_14888
                 add     al, 7
 
-loc_14888:                              ; CODE XREF: sub_1487C+8↑j
-                call    sub_1440C
+loc_14888:                              ; CODE XREF: printHexNibble+8↑j
+                call    writeCharacter
                 pop     ax
                 popf
                 retn
-sub_1487C       endp
+printHexNibble  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1488E       proc near               ; CODE XREF: sub_1498F+2E↓p
+accumulateInputDigit proc near          ; CODE XREF: promptForNumberEntry+2E↓p
                 pushf
                 push    ax
                 push    cx
@@ -2830,7 +2843,7 @@ sub_1488E       proc near               ; CODE XREF: sub_1498F+2E↓p
                 cld
                 mov     dx, 0FFFEh
 
-loc_14897:                              ; CODE XREF: sub_1488E+12↓j
+loc_14897:                              ; CODE XREF: accumulateInputDigit+12↓j
                 jcxz    short loc_14912
                 cmp     byte ptr [si], 20h ; ' '
                 jnz     short loc_148A4
@@ -2840,7 +2853,7 @@ loc_14897:                              ; CODE XREF: sub_1488E+12↓j
                 jmp     short loc_14912
 ; ---------------------------------------------------------------------------
 
-loc_148A4:                              ; CODE XREF: sub_1488E+E↑j
+loc_148A4:                              ; CODE XREF: accumulateInputDigit+E↑j
                 mov     al, [si]
                 cmp     al, 30h ; '0'
                 jb      short loc_14912
@@ -2855,13 +2868,13 @@ loc_148A4:                              ; CODE XREF: sub_1488E+E↑j
                 cmp     al, 66h ; 'f'
                 ja      short loc_14912
 
-loc_148BE:                              ; CODE XREF: sub_1488E+1E↑j
-                                        ; sub_1488E+26↑j
+loc_148BE:                              ; CODE XREF: accumulateInputDigit+1E↑j
+                                        ; accumulateInputDigit+26↑j
                 mov     bx, 0
                 mov     dx, 0
 
-loc_148C4:                              ; CODE XREF: sub_1488E+69↓j
-                                        ; sub_1488E+7D↓j ...
+loc_148C4:                              ; CODE XREF: accumulateInputDigit+69↓j
+                                        ; accumulateInputDigit+7D↓j ...
                 jcxz    short loc_14912
                 dec     cx
                 lodsb
@@ -2879,8 +2892,8 @@ loc_148C4:                              ; CODE XREF: sub_1488E+69↓j
                 cmp     al, 46h ; 'F'
                 ja      short loc_14912
 
-loc_148E2:                              ; CODE XREF: sub_1488E+40↑j
-                                        ; sub_1488E+48↑j
+loc_148E2:                              ; CODE XREF: accumulateInputDigit+40↑j
+                                        ; accumulateInputDigit+48↑j
                 shl     bx, 1
                 shl     bx, 1
                 shl     bx, 1
@@ -2890,7 +2903,7 @@ loc_148E2:                              ; CODE XREF: sub_1488E+40↑j
                 jbe     short loc_148F2
                 sub     al, 7
 
-loc_148F2:                              ; CODE XREF: sub_1488E+60↑j
+loc_148F2:                              ; CODE XREF: accumulateInputDigit+60↑j
                 or      bl, al
                 cmp     dx, 0FFFFh
                 jz      short loc_148C4
@@ -2906,27 +2919,27 @@ loc_148F2:                              ; CODE XREF: sub_1488E+60↑j
                 jmp     short loc_148C4
 ; ---------------------------------------------------------------------------
 
-loc_1490D:                              ; CODE XREF: sub_1488E+6D↑j
+loc_1490D:                              ; CODE XREF: accumulateInputDigit+6D↑j
                 mov     dx, 0FFFFh
                 jmp     short loc_148C4
 ; ---------------------------------------------------------------------------
 
-loc_14912:                              ; CODE XREF: sub_1488E:loc_14897↑j
-                                        ; sub_1488E+14↑j ...
+loc_14912:                              ; CODE XREF: accumulateInputDigit:loc_14897↑j
+                                        ; accumulateInputDigit+14↑j ...
                 pop     si
                 pop     bp
                 pop     cx
                 pop     ax
                 popf
                 retn
-sub_1488E       endp
+accumulateInputDigit endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14918       proc near               ; CODE XREF: sub_113A0+79↑p
-                                        ; sub_114C9+82↑p ...
+getMenuChoice   proc near               ; CODE XREF: showMainMenu+79↑p
+                                        ; showPartyOrganizationMenu+82↑p ...
                 pushf
                 push    bx
                 push    cx
@@ -2940,9 +2953,9 @@ sub_14918       proc near               ; CODE XREF: sub_113A0+79↑p
                 mov     dx, word_11F40
                 jcxz    short loc_14973
 
-loc_1492A:                              ; CODE XREF: sub_14918+34↓j
-                                        ; sub_14918+75↓j
-                call    sub_147FD
+loc_1492A:                              ; CODE XREF: getMenuChoice+34↓j
+                                        ; getMenuChoice+75↓j
+                call    getKeypressAndWaitRaw
                 cmp     al, 0
                 jz      short loc_14947
                 cmp     al, 61h ; 'a'
@@ -2951,30 +2964,30 @@ loc_1492A:                              ; CODE XREF: sub_14918+34↓j
                 ja      short loc_1493B
                 sub     al, 20h ; ' '
 
-loc_1493B:                              ; CODE XREF: sub_14918+1B↑j
-                                        ; sub_14918+1F↑j
+loc_1493B:                              ; CODE XREF: getMenuChoice+1B↑j
+                                        ; getMenuChoice+1F↑j
                 mov     cx, [bp+8]
                 mov     si, cx
                 mov     di, [bp+0]
                 repne scasb
                 jz      short loc_1494E
 
-loc_14947:                              ; CODE XREF: sub_14918+17↑j
+loc_14947:                              ; CODE XREF: getMenuChoice+17↑j
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
                 jmp     short loc_1492A
 ; ---------------------------------------------------------------------------
 
-loc_1494E:                              ; CODE XREF: sub_14918+2D↑j
+loc_1494E:                              ; CODE XREF: getMenuChoice+2D↑j
                 sub     si, cx
                 dec     si
                 shl     si, 1
                 mov     si, [bx+si]
-                call    sub_143EB
+                call    writeString
                 push    ax
 
-loc_14959:                              ; CODE XREF: sub_14918+58↓j
-                call    sub_147FD
+loc_14959:                              ; CODE XREF: getMenuChoice+58↓j
+                call    getKeypressAndWaitRaw
                 cmp     ax, 4B00h
                 jz      short loc_1497B
                 cmp     ax, 0E08h
@@ -2982,14 +2995,14 @@ loc_14959:                              ; CODE XREF: sub_14918+58↓j
                 cmp     ax, 1C0Dh
                 jz      short loc_14972
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
                 jmp     short loc_14959
 ; ---------------------------------------------------------------------------
 
-loc_14972:                              ; CODE XREF: sub_14918+51↑j
+loc_14972:                              ; CODE XREF: getMenuChoice+51↑j
                 pop     ax
 
-loc_14973:                              ; CODE XREF: sub_14918+10↑j
+loc_14973:                              ; CODE XREF: getMenuChoice+10↑j
                 pop     di
                 pop     si
                 pop     bp
@@ -3000,27 +3013,27 @@ loc_14973:                              ; CODE XREF: sub_14918+10↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1497B:                              ; CODE XREF: sub_14918+47↑j
-                                        ; sub_14918+4C↑j
+loc_1497B:                              ; CODE XREF: getMenuChoice+47↑j
+                                        ; getMenuChoice+4C↑j
                 pop     ax
                 mov     word_11F40, dx
                 jcxz    short loc_14989
                 mov     al, 20h ; ' '
 
-loc_14984:                              ; CODE XREF: sub_14918+6F↓j
-                call    sub_1440C
+loc_14984:                              ; CODE XREF: getMenuChoice+6F↓j
+                call    writeCharacter
                 loop    loc_14984
 
-loc_14989:                              ; CODE XREF: sub_14918+68↑j
+loc_14989:                              ; CODE XREF: getMenuChoice+68↑j
                 mov     word_11F40, dx
                 jmp     short loc_1492A
-sub_14918       endp
+getMenuChoice   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1498F       proc near               ; CODE XREF: sub_11E0C:loc_11E12↑p
+promptForNumberEntry proc near          ; CODE XREF: getEntryNumber:loc_11E12↑p
                 pushf
                 push    bx
                 push    cx
@@ -3032,29 +3045,29 @@ sub_1498F       proc near               ; CODE XREF: sub_11E0C:loc_11E12↑p
                 mov     bp, sp
                 mov     dx, word_11F40
 
-loc_1499F:                              ; CODE XREF: sub_1498F+40↓j
-                call    sub_14407
+loc_1499F:                              ; CODE XREF: promptForNumberEntry+40↓j
+                call    swapCursorPos
                 mov     al, 20h ; ' '
-                call    sub_1440C
-                call    sub_1440C
+                call    writeCharacter
+                call    writeCharacter
                 mov     word_11F40, dx
                 mov     cx, 2
                 lea     di, [bp+0]
-                call    sub_145B3
+                call    readLine
                 mov     ax, dx
                 mov     cx, bx
                 mov     si, di
-                call    sub_1488E
+                call    accumulateInputDigit
                 cmp     dx, 0FFFEh
                 jnz     short loc_149D1
                 mov     word_11F40, ax
                 mov     dx, ax
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
                 jmp     short loc_1499F
 ; ---------------------------------------------------------------------------
 
-loc_149D1:                              ; CODE XREF: sub_1498F+34↑j
+loc_149D1:                              ; CODE XREF: promptForNumberEntry+34↑j
                 mov     al, bl
                 mov     ah, dl
                 add     sp, 2
@@ -3066,14 +3079,14 @@ loc_149D1:                              ; CODE XREF: sub_1498F+34↑j
                 pop     bx
                 popf
                 retn
-sub_1498F       endp
+promptForNumberEntry endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_149E0       proc near               ; CODE XREF: sub_11792+D3↑p
-                                        ; sub_11792+E1↑p ...
+saveFile        proc near               ; CODE XREF: handleFormParty+D3↑p
+                                        ; handleFormParty+E1↑p ...
                 pushf
                 push    ax
                 push    dx
@@ -3093,7 +3106,7 @@ sub_149E0       proc near               ; CODE XREF: sub_11792+D3↑p
                                         ; ES:DI -> buffer to fill with unopened FCB
                                         ; AL = bit mask to control parsing
                 pop     si
-                call    sub_14A83
+                call    openFileWithRetry
                 mov     word ptr ds:68h, 0
                 mov     byte ptr ds:7Ch, 0
                 mov     ds:6Ah, cx
@@ -3116,24 +3129,24 @@ sub_149E0       proc near               ; CODE XREF: sub_11792+D3↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14A1F:                              ; CODE XREF: sub_149E0+33↑j
+loc_14A1F:                              ; CODE XREF: saveFile+33↑j
                 push    si
                 lea     si, aUnableToWriteF ; "Unable to write file "
                 mov     dx, 1800h
-                call    sub_14ABE
+                call    printStringAt
                 pop     si
-                call    sub_14401
+                call    writeStringPreserveCx
 
-loc_14A2E:                              ; CODE XREF: sub_149E0:loc_14A2E↓j
+loc_14A2E:                              ; CODE XREF: saveFile:loc_14A2E↓j
                 jmp     short loc_14A2E
-sub_149E0       endp
+saveFile        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A30       proc near               ; CODE XREF: start_0+37↑p
-                                        ; start_0+45↑p ...
+loadFile        proc near               ; CODE XREF: titleScreenAndMainMenuLoop+37↑p
+                                        ; titleScreenAndMainMenuLoop+45↑p ...
                 pushf
                 push    ax
                 push    dx
@@ -3153,7 +3166,7 @@ sub_14A30       proc near               ; CODE XREF: start_0+37↑p
                                         ; ES:DI -> buffer to fill with unopened FCB
                                         ; AL = bit mask to control parsing
                 pop     si
-                call    sub_14A83
+                call    openFileWithRetry
                 cmp     word ptr ds:6Ch, 0
                 jz      short loc_14A72
                 mov     word ptr ds:68h, 0
@@ -3176,28 +3189,28 @@ sub_14A30       proc near               ; CODE XREF: start_0+37↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14A72:                              ; CODE XREF: sub_14A30+21↑j
+loc_14A72:                              ; CODE XREF: loadFile+21↑j
                 push    si
                 lea     si, aUnableToReadFi ; "Unable to read file "
                 mov     dx, 1800h
-                call    sub_14ABE
+                call    printStringAt
                 pop     si
-                call    sub_14401
+                call    writeStringPreserveCx
 
-loc_14A81:                              ; CODE XREF: sub_14A30:loc_14A81↓j
+loc_14A81:                              ; CODE XREF: loadFile:loc_14A81↓j
                 jmp     short loc_14A81
-sub_14A30       endp
+loadFile        endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A83       proc near               ; CODE XREF: sub_149E0+19↑p
-                                        ; sub_14A30+19↑p
+openFileWithRetry proc near             ; CODE XREF: saveFile+19↑p
+                                        ; loadFile+19↑p
                 push    dx
                 push    word_11F40
 
-loc_14A88:                              ; CODE XREF: sub_14A83+39↓j
+loc_14A88:                              ; CODE XREF: openFileWithRetry+39↓j
                 mov     dx, di
                 mov     ah, 0Fh
                 int     21h             ; DOS - OPEN DISK FILE
@@ -3207,75 +3220,75 @@ loc_14A88:                              ; CODE XREF: sub_14A83+39↓j
                 jz      short loc_14AA2
                 lea     si, asc_11FD9   ; "               "
                 mov     dx, 1800h
-                call    sub_14ABE
+                call    printStringAt
                 pop     word_11F40
                 pop     dx
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14AA2:                              ; CODE XREF: sub_14A83+D↑j
+loc_14AA2:                              ; CODE XREF: openFileWithRetry+D↑j
                 lea     si, aWrongDiskette ; "Wrong Diskette!"
                 mov     word_11F40, 1800h
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     al, 0FEh
-                call    sub_14B99
+                call    playSoundEffect
 
-loc_14AB4:                              ; CODE XREF: sub_14A83+34↓j
-                call    sub_147EA
+loc_14AB4:                              ; CODE XREF: openFileWithRetry+34↓j
+                call    pollKeypressAndAnimate
                 jz      short loc_14AB4
-                call    sub_147FD
+                call    getKeypressAndWaitRaw
                 jmp     short loc_14A88
-sub_14A83       endp
+openFileWithRetry endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14ABE       proc near               ; CODE XREF: start_0+83↑p
-                                        ; start_0+BB↑p ...
+printStringAt   proc near               ; CODE XREF: titleScreenAndMainMenuLoop+83↑p
+                                        ; titleScreenAndMainMenuLoop+BB↑p ...
                 push    dx
-                call    sub_14407
-                call    sub_14401
+                call    swapCursorPos
+                call    writeStringPreserveCx
                 pop     dx
                 retn
-sub_14ABE       endp
+printStringAt   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14AC7       proc near               ; CODE XREF: sub_14768+D↑p
+adjustAnimSpeed proc near               ; CODE XREF: updateLogoAnimationD+D↑p
                 pushf
                 cmp     byte_101BE, 0
                 jnz     short loc_14AD3
                 shl     al, 1
                 shl     al, 1
 
-loc_14AD3:                              ; CODE XREF: sub_14AC7+6↑j
+loc_14AD3:                              ; CODE XREF: adjustAnimSpeed+6↑j
                 cbw
                 test    ax, 0FFFFh
                 js      short loc_14ADD
                 jz      short loc_14ADD
                 inc     ah
 
-loc_14ADD:                              ; CODE XREF: sub_14AC7+10↑j
-                                        ; sub_14AC7+12↑j
+loc_14ADD:                              ; CODE XREF: adjustAnimSpeed+10↑j
+                                        ; adjustAnimSpeed+12↑j
                 cmp     byte_101BE, 0
                 jnz     short loc_14AE8
                 shr     al, 1
                 shr     al, 1
 
-loc_14AE8:                              ; CODE XREF: sub_14AC7+1B↑j
+loc_14AE8:                              ; CODE XREF: adjustAnimSpeed+1B↑j
                 popf
                 retn
-sub_14AC7       endp
+adjustAnimSpeed endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14AEA       proc near               ; CODE XREF: sub_147C7+1E↑p
-                                        ; sub_147FD+46↑p
+drawLogoTileGrid proc near              ; CODE XREF: runIdleAnimationTick+1E↑p
+                                        ; getKeypressAndWaitRaw+46↑p
                 push    ax
                 push    bx
                 push    bp
@@ -3285,20 +3298,20 @@ sub_14AEA       proc near               ; CODE XREF: sub_147C7+1E↑p
                 lea     bx, byte_10109
                 lea     bp, byte_11FE9
                 mov     di, 142h
-                call    sub_14528
+                call    drawTileGrid
                 pop     di
                 pop     bp
                 pop     bx
                 pop     ax
                 retn
-sub_14AEA       endp
+drawLogoTileGrid endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B05       proc near               ; CODE XREF: sub_14768+36↑p
-                                        ; sub_14768+56↑p ...
+computeAnimTableByte proc near          ; CODE XREF: updateLogoAnimationD+36↑p
+                                        ; updateLogoAnimationD+56↑p ...
                 pushf
                 mov     al, bh
                 shl     bh, 1
@@ -3313,15 +3326,15 @@ sub_14B05       proc near               ; CODE XREF: sub_14768+36↑p
                 mov     al, [bx]
                 popf
                 retn
-sub_14B05       endp
+computeAnimTableByte endp
 
 ; ---------------------------------------------------------------------------
-                db 5Dh, 1Fh, 6Ah, 1Fh, 84h, 1Fh, 77h, 1Fh, 91h, 1Fh
+WIND_DIRECTION_TABLE db 5Dh, 1Fh, 6Ah, 1Fh, 84h, 1Fh, 77h, 1Fh, 91h, 1Fh
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B2A       proc near               ; CODE XREF: sub_147C7+F↑p
+updateWindDisplay proc near             ; CODE XREF: runIdleAnimationTick+F↑p
                 pushf
                 push    ax
                 push    dx
@@ -3330,57 +3343,57 @@ sub_14B2A       proc near               ; CODE XREF: sub_147C7+F↑p
                 jnz     short loc_14B50
                 mov     byte_11F5A, 19h
 
-loc_14B39:                              ; CODE XREF: sub_14B2A+20↓j
+loc_14B39:                              ; CODE XREF: updateWindDisplay+20↓j
                 mov     dh, 9
-                call    sub_14601
+                call    stepTimeSeededPrng
                 cmp     dl, 5
                 jb      short loc_14B4C
                 sub     dl, 4
                 cmp     dl, byte ptr word_11F42
                 jz      short loc_14B39
 
-loc_14B4C:                              ; CODE XREF: sub_14B2A+17↑j
+loc_14B4C:                              ; CODE XREF: updateWindDisplay+17↑j
                 mov     byte ptr word_11F42, dl
 
-loc_14B50:                              ; CODE XREF: sub_14B2A+8↑j
+loc_14B50:                              ; CODE XREF: updateWindDisplay+8↑j
                 mov     dx, 1706h
                 xchg    dx, word_11F40
                 mov     si, word_11F42
                 and     si, 0FFh
                 shl     si, 1
                 mov     si, [si+4B20h]
-                call    sub_14401
+                call    writeStringPreserveCx
                 mov     word_11F40, dx
                 pop     si
                 pop     dx
                 pop     ax
                 popf
                 retn
-sub_14B2A       endp
+updateWindDisplay endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
-byte_14B80      db 0FFh                 ; DATA XREF: sub_14B99+1↓r
-funcs_14BB1     dw offset sub_14BB9     ; DATA XREF: sub_14B99+18↓r
-                dw offset sub_14BDB
-                dw offset sub_14BFD
-                dw offset sub_14C56
-                dw offset sub_14C7F
-                dw offset sub_14C9A
-                dw offset sub_14CB8
-                dw offset sub_14CC2
-                dw offset sub_14CE8
-                dw offset sub_14CF2
-                dw offset sub_14D1E
-                dw offset sub_14D4E
+_soundEnabled   db 0FFh                 ; DATA XREF: playSoundEffect+1↓r
+SOUND_EFFECT_TABLE dw offset playToneFF ; DATA XREF: playSoundEffect+18↓r
+                dw offset playErrorBeep
+                dw offset playToneFD
+                dw offset playToneFC
+                dw offset playToneFB
+                dw offset playToneFA
+                dw offset playToneF9
+                dw offset playToneF8
+                dw offset playToneF7
+                dw offset playToneF6
+                dw offset playToneF5
+                dw offset playToneF4
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B99       proc near               ; CODE XREF: sub_11E0C+10↑p
-                                        ; sub_145B3+49↑p ...
+playSoundEffect proc near               ; CODE XREF: getEntryNumber+10↑p
+                                        ; readLine+49↑p ...
                 pushf
-                cmp     byte_14B80, 0
+                cmp     _soundEnabled, 0
                 jz      short loc_14BB7
                 cmp     al, 0F4h
                 jb      short loc_14BB7
@@ -3390,22 +3403,22 @@ sub_14B99       proc near               ; CODE XREF: sub_11E0C+10↑p
                 shl     al, 1
                 mov     di, ax
                 and     di, 0FFh
-                call    funcs_14BB1[di]
+                call    SOUND_EFFECT_TABLE[di]
                 pop     di
                 pop     ax
 
-loc_14BB7:                              ; CODE XREF: sub_14B99+6↑j
-                                        ; sub_14B99+A↑j
+loc_14BB7:                              ; CODE XREF: playSoundEffect+6↑j
+                                        ; playSoundEffect+A↑j
                 popf
                 retn
-sub_14B99       endp
+playSoundEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BB9       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneFF      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    cx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3420,7 +3433,7 @@ sub_14BB9       proc near               ; CODE XREF: sub_14B99+18↑p
                 and     al, 0FCh
                 mov     cx, 10h
 
-loc_14BC3:                              ; CODE XREF: sub_14BB9+1A↓j
+loc_14BC3:                              ; CODE XREF: playToneFF+1A↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -3432,10 +3445,10 @@ loc_14BC3:                              ; CODE XREF: sub_14BB9+1A↓j
                 xor     al, 2
                 mov     di, 1
 
-loc_14BCA:                              ; CODE XREF: sub_14BB9+18↓j
+loc_14BCA:                              ; CODE XREF: playToneFF+18↓j
                 mov     bx, 3E8h
 
-loc_14BCD:                              ; CODE XREF: sub_14BB9+15↓j
+loc_14BCD:                              ; CODE XREF: playToneFF+15↓j
                 dec     bx
                 jnz     short loc_14BCD
                 dec     di
@@ -3453,14 +3466,14 @@ loc_14BCD:                              ; CODE XREF: sub_14BB9+15↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14BB9       endp
+playToneFF      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BDB       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playErrorBeep   proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    cx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3475,7 +3488,7 @@ sub_14BDB       proc near               ; CODE XREF: sub_14B99+18↑p
                 and     al, 0FCh
                 mov     cx, 30h ; '0'
 
-loc_14BE5:                              ; CODE XREF: sub_14BDB+1A↓j
+loc_14BE5:                              ; CODE XREF: playErrorBeep+1A↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -3487,10 +3500,10 @@ loc_14BE5:                              ; CODE XREF: sub_14BDB+1A↓j
                 xor     al, 2
                 mov     di, 1
 
-loc_14BEC:                              ; CODE XREF: sub_14BDB+18↓j
+loc_14BEC:                              ; CODE XREF: playErrorBeep+18↓j
                 mov     bx, 163h
 
-loc_14BEF:                              ; CODE XREF: sub_14BDB+15↓j
+loc_14BEF:                              ; CODE XREF: playErrorBeep+15↓j
                 dec     bx
                 jnz     short loc_14BEF
                 dec     di
@@ -3508,14 +3521,14 @@ loc_14BEF:                              ; CODE XREF: sub_14BDB+15↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14BDB       endp
+playErrorBeep   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BFD       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; sub_14CB8+5↓p
+playToneFD      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; playToneF9+5↓p
                                         ; DATA XREF: ...
                 push    bx
                 push    cx
@@ -3533,13 +3546,13 @@ sub_14BFD       proc near               ; CODE XREF: sub_14B99+18↑p
                 mov     ch, bl
                 mov     cl, 1
 
-loc_14C09:                              ; CODE XREF: sub_14BFD+2D↓j
+loc_14C09:                              ; CODE XREF: playToneFD+2D↓j
                 mov     dl, bh
 
-loc_14C0B:                              ; CODE XREF: sub_14BFD+24↓j
+loc_14C0B:                              ; CODE XREF: playToneFD+24↓j
                 mov     dh, ch
 
-loc_14C0D:                              ; CODE XREF: sub_14BFD+12↓j
+loc_14C0D:                              ; CODE XREF: playToneFD+12↓j
                 dec     dh
                 jnz     short loc_14C0D
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3553,7 +3566,7 @@ loc_14C0D:                              ; CODE XREF: sub_14BFD+12↓j
                 xor     al, 2
                 mov     dh, cl
 
-loc_14C17:                              ; CODE XREF: sub_14BFD+1C↓j
+loc_14C17:                              ; CODE XREF: playToneFD+1C↓j
                 dec     dh
                 jnz     short loc_14C17
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3572,13 +3585,13 @@ loc_14C17:                              ; CODE XREF: sub_14BFD+1C↓j
                 cmp     cl, 1Bh
                 jnz     short loc_14C09
 
-loc_14C2C:                              ; CODE XREF: sub_14BFD+50↓j
+loc_14C2C:                              ; CODE XREF: playToneFD+50↓j
                 mov     dl, bh
 
-loc_14C2E:                              ; CODE XREF: sub_14BFD+47↓j
+loc_14C2E:                              ; CODE XREF: playToneFD+47↓j
                 mov     dh, ch
 
-loc_14C30:                              ; CODE XREF: sub_14BFD+35↓j
+loc_14C30:                              ; CODE XREF: playToneFD+35↓j
                 dec     dh
                 jnz     short loc_14C30
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3592,7 +3605,7 @@ loc_14C30:                              ; CODE XREF: sub_14BFD+35↓j
                 xor     al, 2
                 mov     dh, cl
 
-loc_14C3A:                              ; CODE XREF: sub_14BFD+3F↓j
+loc_14C3A:                              ; CODE XREF: playToneFD+3F↓j
                 dec     dh
                 jnz     short loc_14C3A
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3623,14 +3636,14 @@ loc_14C3A:                              ; CODE XREF: sub_14BFD+3F↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14BFD       endp
+playToneFD      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14C56       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneFC      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    cx
                 push    dx
@@ -3646,15 +3659,15 @@ sub_14C56       proc near               ; CODE XREF: sub_14B99+18↑p
                 and     al, 0FCh
                 mov     bh, 80h
 
-loc_14C60:                              ; CODE XREF: sub_14C56+20↓j
+loc_14C60:                              ; CODE XREF: playToneFC+20↓j
                 mov     dh, 0Fh
-                call    sub_14601
+                call    stepTimeSeededPrng
                 adc     dl, bl
 
-loc_14C67:                              ; CODE XREF: sub_14C56+18↓j
+loc_14C67:                              ; CODE XREF: playToneFC+18↓j
                 mov     cx, 3
 
-loc_14C6A:                              ; CODE XREF: sub_14C56:loc_14C6A↓j
+loc_14C6A:                              ; CODE XREF: playToneFC:loc_14C6A↓j
                 loop    loc_14C6A
                 dec     dl
                 jnz     short loc_14C67
@@ -3682,14 +3695,14 @@ loc_14C6A:                              ; CODE XREF: sub_14C56:loc_14C6A↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14C56       endp
+playToneFC      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14C7F       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneFB      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 in      al, 61h         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
@@ -3703,7 +3716,7 @@ sub_14C7F       proc near               ; CODE XREF: sub_14B99+18↑p
                 and     al, 0FCh
                 mov     bl, 0FBh
 
-loc_14C87:                              ; CODE XREF: sub_14C7F+14↓j
+loc_14C87:                              ; CODE XREF: playToneFB+14↓j
                 out     61h, al         ; PC/XT PPI port B bits:
                                         ; 0: Tmr 2 gate ═╦═► OR 03H=spkr ON
                                         ; 1: Tmr 2 data ═╝  AND 0fcH=spkr OFF
@@ -3715,7 +3728,7 @@ loc_14C87:                              ; CODE XREF: sub_14C7F+14↓j
                 xor     al, 2
                 mov     bh, bl
 
-loc_14C8D:                              ; CODE XREF: sub_14C7F+10↓j
+loc_14C8D:                              ; CODE XREF: playToneFB+10↓j
                 inc     bh
                 jnz     short loc_14C8D
                 dec     bl
@@ -3731,14 +3744,14 @@ loc_14C8D:                              ; CODE XREF: sub_14C7F+10↓j
                                         ; 7: 0=enable kbrd
                 pop     bx
                 retn
-sub_14C7F       endp
+playToneFB      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14C9A       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneFA      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    cx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3754,10 +3767,10 @@ sub_14C9A       proc near               ; CODE XREF: sub_14B99+18↑p
                 mov     bh, 0A0h
                 mov     ch, 0
 
-loc_14CA5:                              ; CODE XREF: sub_14C9A+16↓j
+loc_14CA5:                              ; CODE XREF: playToneFA+16↓j
                 mov     cl, bh
 
-loc_14CA7:                              ; CODE XREF: sub_14C9A+E↓j
+loc_14CA7:                              ; CODE XREF: playToneFA+E↓j
                 dec     cx
                 jnz     short loc_14CA7
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3783,28 +3796,28 @@ loc_14CA7:                              ; CODE XREF: sub_14C9A+E↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14C9A       endp
+playToneFA      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14CB8       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF9      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 mov     bl, 0E0h
                 mov     bh, 4
-                call    sub_14BFD
+                call    playToneFD
                 pop     bx
                 retn
-sub_14CB8       endp
+playToneF9      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14CC2       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF8      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    dx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3821,11 +3834,11 @@ sub_14CC2       proc near               ; CODE XREF: sub_14B99+18↑p
                 mov     bl, 0E0h
                 mov     bh, 40h ; '@'
 
-loc_14CCF:                              ; CODE XREF: sub_14CC2+1E↓j
-                call    sub_14601
+loc_14CCF:                              ; CODE XREF: playToneF8+1E↓j
+                call    stepTimeSeededPrng
                 or      dl, bl
 
-loc_14CD4:                              ; CODE XREF: sub_14CC2+14↓j
+loc_14CD4:                              ; CODE XREF: playToneF8+14↓j
                 dec     dl
                 jnz     short loc_14CD4
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3852,42 +3865,42 @@ loc_14CD4:                              ; CODE XREF: sub_14CC2+14↓j
                 pop     dx
                 pop     bx
                 retn
-sub_14CC2       endp
+playToneF8      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14CE8       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF7      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 mov     bh, 0
                 mov     bl, 0FFh
-                call    sub_14CFC
+                call    playToneHelper
                 pop     bx
                 retn
-sub_14CE8       endp
+playToneF7      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14CF2       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF6      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 mov     bh, 0
                 mov     bl, 8
-                call    sub_14CFC
+                call    playToneHelper
                 pop     bx
                 retn
-sub_14CF2       endp
+playToneF6      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14CFC       proc near               ; CODE XREF: sub_14CE8+5↑p
-                                        ; sub_14CF2+5↑p
+playToneHelper  proc near               ; CODE XREF: playToneF7+5↑p
+                                        ; playToneF6+5↑p
                 mov     di, bx
                 push    dx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3902,11 +3915,11 @@ sub_14CFC       proc near               ; CODE XREF: sub_14CE8+5↑p
                 and     al, 0FCh
                 mov     dh, 0FFh
 
-loc_14D06:                              ; CODE XREF: sub_14CFC+19↓j
-                call    sub_14601
+loc_14D06:                              ; CODE XREF: playToneHelper+19↓j
+                call    stepTimeSeededPrng
                 or      dl, bh
 
-loc_14D0B:                              ; CODE XREF: sub_14CFC+11↓j
+loc_14D0B:                              ; CODE XREF: playToneHelper+11↓j
                 dec     dl
                 jnz     short loc_14D0B
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3932,14 +3945,14 @@ loc_14D0B:                              ; CODE XREF: sub_14CFC+11↓j
                 pop     dx
                 mov     bx, di
                 retn
-sub_14CFC       endp
+playToneHelper  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14D1E       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF5      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    cx
                 push    dx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -3957,15 +3970,15 @@ sub_14D1E       proc near               ; CODE XREF: sub_14B99+18↑p
                 add     dl, 8
                 mov     cl, dl
 
-loc_14D2F:                              ; CODE XREF: sub_14D1E+28↓j
+loc_14D2F:                              ; CODE XREF: playToneF5+28↓j
                 mov     dh, 0FFh
-                call    sub_14601
+                call    stepTimeSeededPrng
                 mov     ch, 28h ; '('
 
-loc_14D36:                              ; CODE XREF: sub_14D1E+24↓j
+loc_14D36:                              ; CODE XREF: playToneF5+24↓j
                 mov     dh, dl
 
-loc_14D38:                              ; CODE XREF: sub_14D1E+1C↓j
+loc_14D38:                              ; CODE XREF: playToneF5+1C↓j
                 dec     dh
                 jnz     short loc_14D38
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -3993,14 +4006,14 @@ loc_14D38:                              ; CODE XREF: sub_14D1E+1C↓j
                 pop     dx
                 pop     cx
                 retn
-sub_14D1E       endp
+playToneF5      endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14D4E       proc near               ; CODE XREF: sub_14B99+18↑p
-                                        ; DATA XREF: seg000:funcs_14BB1↑o
+playToneF4      proc near               ; CODE XREF: playSoundEffect+18↑p
+                                        ; DATA XREF: seg000:SOUND_EFFECT_TABLE↑o
                 push    bx
                 push    cx
                 in      al, 61h         ; PC/XT PPI port B bits:
@@ -4015,13 +4028,13 @@ sub_14D4E       proc near               ; CODE XREF: sub_14B99+18↑p
                 and     al, 0FCh
                 mov     bl, 40h ; '@'
 
-loc_14D57:                              ; CODE XREF: sub_14D4E+1E↓j
+loc_14D57:                              ; CODE XREF: playToneF4+1E↓j
                 mov     bh, 1Eh
 
-loc_14D59:                              ; CODE XREF: sub_14D4E+17↓j
+loc_14D59:                              ; CODE XREF: playToneF4+17↓j
                 mov     cl, bl
 
-loc_14D5B:                              ; CODE XREF: sub_14D4E+F↓j
+loc_14D5B:                              ; CODE XREF: playToneF4+F↓j
                 dec     cl
                 jnz     short loc_14D5B
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -4050,7 +4063,7 @@ loc_14D5B:                              ; CODE XREF: sub_14D4E+F↓j
                 pop     cx
                 pop     bx
                 retn
-sub_14D4E       endp
+playToneF4      endp
 
 seg000          ends
 

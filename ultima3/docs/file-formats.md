@@ -147,6 +147,14 @@ Total `0x12 + 4×0x40` = 274 bytes — matches the real file exactly.
 
 ## `ROSTER.ULT` — character roster (1,280 bytes)
 
+**Confirmed against real code, 2026-09-13** (previously this section was
+sourced externally only): `ultima_bootup.idb`'s `showCharacterDetails`,
+`handleCreateCharacter`, and `showRegister` read/write every field below
+at the exact offsets listed, via the `RosterEntry` struct
+(`ida_scripts/create_roster_struct.py`). See
+[overview.md](overview.md#session-2026-09-13-ultima_bootupidb-created-and-fully-swept-7373-named)
+for the full evidence trail.
+
 20 character records, 64 (`0x40`) bytes each, no separate header.
 `20 × 64 = 1280` bytes — matches the real file exactly.
 
@@ -206,11 +214,19 @@ External source lists several fixed data tables inside this file:
 
 Real file size is 44,234 bytes — well past the last documented offset
 above (`0x7452` = 29,778), so most of the file is still undocumented
-externally. **Not yet determined**: whether this is a second
-executable chained to from `ULTIMA.COM` (Ultima I-style overlay) or a
-pure data blob read into a fixed buffer — see
-[roadmap.md](roadmap.md#open-questions). If it starts with `MZ` it's
-the former; check before assuming either shape.
+externally.
+
+**Resolved, 2026-09-13**: this IS a chained executable, not a pure data
+blob — `ultima_bootup.idb`'s `handleJourneyOnward` loads and chains
+into it via the same FCB-read trick `ULTIMA.COM` uses for `BOOTUP.BIN`,
+with one difference: execution reaches it via an **indirect** jump
+through a 2-byte vector stored at file offset `0x1228` (absolute
+`0x1328` once loaded), rather than falling straight through to offset
+0. Since neither `ULTIMA.COM` nor `BOOTUP.BIN` contains any overworld/
+combat/dungeon code, this is almost certainly where that lives — see
+[overview.md](overview.md#session-2026-09-13-ultima_bootupidb-created-and-fully-swept-7373-named)
+and [roadmap.md](roadmap.md) for the next-session plan to disassemble
+it (`ultima_exodus.idb`).
 
 ## `DEMO.ULT` — attract-mode menu map
 
@@ -260,14 +276,16 @@ are read, and what the remaining 107 bytes hold — not yet traced.
   consumed by `drawAnimationFrameRow`/`runBootFlagAnimation` (see
   `apply_renames.py`) as 16-row image-frame data for the boot logo/flag
   animation. Internal frame layout not yet decoded.
-- **`BOOTUP.BIN`** (19,572 bytes) — per `docs/overview.md`'s "ULTIMA.COM's
-  real role" finding, this is very likely the actual game (character
-  creation, main loop, everything past the title screen), loaded and
-  chained into via a self-modifying FCB-read trick. Needs its own IDB —
+- **`BOOTUP.BIN`** (19,572 bytes) — **confirmed 2026-09-13**: the
+  character-creation and party-management program, chained into from
+  `ULTIMA.COM`'s title screen. Fully disassembled and named
+  (`ultima_bootup.idb`, 73/73 functions) — see
+  [overview.md](overview.md).
+- **`EXODUS.BIN`** (44,234 bytes) — see its own section above:
+  confirmed chained-to from `BOOTUP.BIN`, and by elimination (neither
+  `ULTIMA.COM` nor `BOOTUP.BIN` has any overworld/combat/dungeon code)
+  almost certainly the actual game-world engine. Not yet disassembled —
   see [roadmap.md](roadmap.md).
-- **`EXODUS.BIN`** (44,234 bytes) — see its own section above; not
-  confirmed whether it's a second chained executable or a pure data
-  blob.
 
 `DUNGEON.DAT`/`ANIMATE.DAT`'s full internal layouts still have to be
 reverse-engineered from the disassembly and/or raw byte inspection —

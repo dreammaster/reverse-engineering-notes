@@ -1,25 +1,45 @@
 """
-One-off structural fix: the 5 wind-direction strings at 0x1623D-0x1627D
-(see apply_renames.py's WIND_DIRECTION_TABLE/aCalmWind/etc entries) were
-originally one undifferentiated data blob -- IDA only let the first
-string (aCalmWind, at the blob's start) be named; the other 4 sit at
-mid-array offsets and idc.set_name silently failed for them (returns
-False, not an exception) until the array is split into 5 separate
-13-byte string-literal items.
+One-off structural fix, run against BOTH ultima.idb and ultima_bootup.idb
+(same bug, same shape, hits both since they share this runtime code -- see
+docs/overview.md): the 5 wind-direction strings were originally one
+undifferentiated data blob in each IDB -- IDA only let the first string
+(aCalmWind, at the blob's start) be named; the other 4 sit at mid-array
+offsets and idc.set_name silently failed for them (returns False, not an
+exception) until the array is split into 5 separate 13-byte items.
 
 Each string is exactly 13 bytes: a 0x10 lead-in byte, the text
-(space-padded to a common width), a 0x11 byte, then a 0x00 terminator --
-STRTYPE_C's normal null-termination handles this fine even though the
-leading/trailing control bytes aren't printable ASCII.
+(space-padded to a common width), a 0x11 byte, then a 0x00 terminator.
+create_strlit unexpectedly returns False for these even after del_items
+(root cause not identified, see docs/roadmap.md) -- falls back to a plain
+FF_BYTE array via idc.create_data, which works fine for naming purposes.
 
-Run once via run_ida_script.ps1, then re-run apply_renames.py to apply
-the now-unblocked aNorthWind/aSouthWind/aEastWind/aWestWind renames.
+IMPORTANT: each IDB's address list is only valid *in that IDB* -- the two
+executables' address ranges overlap (both are tiny-model COM-style images
+based at paragraph 1000h), so ultima.idb's wind-string addresses point at
+unrelated real data inside ultima_bootup.idb and vice versa. Running the
+wrong list against the wrong IDB would corrupt whatever legitimate data
+happens to sit at those addresses there. STRING_STARTS below is set to
+whichever list still needs fixing -- check docs/roadmap.md / the git log
+for which IDB(s) this has already been run against before re-running, and
+edit the active list by hand rather than combining them.
+
+Already applied: ULTIMA_STARTS (2026-09-13, ultima.idb).
+
+Run once via run_ida_script.ps1 -Idb <target>, then re-run the matching
+apply_renames_*.py to apply the now-unblocked aNorthWind/aSouthWind/
+aEastWind/aWestWind renames.
 """
 
 import ida_bytes
 import idc
 
-STRING_STARTS = [0x1623D, 0x1624A, 0x16257, 0x16264, 0x16271]
+# ultima.idb's wind strings -- already applied, kept for reference only.
+ULTIMA_STARTS = [0x1623D, 0x1624A, 0x16257, 0x16264, 0x16271]
+# ultima_bootup.idb's wind strings (same shape, different addresses) --
+# this is the active list as of this script's last edit.
+BOOTUP_STARTS = [0x11F5D, 0x11F6A, 0x11F77, 0x11F84, 0x11F91]
+
+STRING_STARTS = BOOTUP_STARTS
 STRING_LEN = 13
 
 DRY_RUN = False
