@@ -277,7 +277,13 @@ are read, and what the remaining 107 bytes hold — not yet traced.
 
 ## Files with no external documentation found (2026-09-13 search)
 
-- **`DUNGEON.DAT`** (1,866 bytes)
+- **`DUNGEON.DAT`** (1,866 bytes) — **confirmed 2026-09-13**: loaded by
+  `ultima_exodus.idb`'s `cmdEnter` as a *second*, separate file read
+  (`0x800` = 2,048 bytes requested) whenever entering any dungeon,
+  alongside — not instead of — the dungeon's own numbered map file
+  (`0x890` = 2,192 bytes, matching the documented per-dungeon format
+  above exactly). So it's a shared auxiliary data file common to all
+  dungeons, not itself a map. Internal layout still undocumented.
 - **`ANIMATE.DAT`** (5,888 bytes) — loaded into `byte_1432D` and
   consumed by `drawAnimationFrameRow`/`runBootFlagAnimation` (see
   `apply_renames.py`) as 16-row image-frame data for the boot logo/flag

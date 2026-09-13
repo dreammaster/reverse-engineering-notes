@@ -487,29 +487,71 @@ RENAMES = [
     (0x11C7D, "cmdMoveNorth",
      "Up arrow (index 0): decrements _partyPosition's Y with 64-wide "
      "wraparound, after checking sub_17233/sub_17254 (not yet "
-     "identified -- presumably movement-blocked checks) don't veto it. "
-     "The other 3 arrow keys (indices 2-4, loc_11C9E/loc_11CBF/"
-     "loc_11CE0) are almost certainly cmdMoveSouth/East/West by the "
-     "same shape -- not individually confirmed this pass, left as "
-     "loc_ names pending a quick read-through."),
+     "identified -- presumably movement-blocked checks) don't veto it."),
+    (0x11C9E, "cmdMoveSouth", "Down arrow (index 2): same shape as cmdMoveNorth, increments Y."),
+    (0x11CBF, "cmdMoveEast", "Right arrow (index 3): same shape as cmdMoveNorth, increments X."),
+    (0x11CE0, "cmdMoveWest", "Left arrow (index 4): same shape as cmdMoveNorth, decrements X."),
 
     (0x11C77, "cmdPass",
      "Space (index 5): the simplest overworld command -- prints the "
      "'Pass' message and ends the turn, no other logic."),
 
     (0x11D01, "cmdBoard",
-     "'B' (index 6): checks the tile at _partyPosition for a specific "
-     "marker (0x28 or 0x2C) -- matches the earlier-found 'Mount "
-     "Horse!'/'Board Frigate!' strings (docs/overview.md's initial "
-     "string scan) exactly. Boarding a vehicle."),
+     "'B' (index 6): checks the tile at _partyPosition for a horse "
+     "marker (0x28, 'Mount Horse!' -> _currentTransport=0x0A) or ship "
+     "marker (0x2C, 'Board Frigate!' -> _currentTransport=0x0B) -- "
+     "confirms _currentTransport's horse/ship values exactly matching "
+     "the external PARTY.ULT documentation (0xA=horse, 0xB=ship)."),
 
     (0x11D69, "cmdEnter",
-     "'E' (index 11): checks _currentTransport==0x3F (on foot) and "
-     "the tile for marker 0xF8, calling sub_16366 (the Shrine-entry "
-     "function, confirmed via its own aShrineImg/aShrineWhoEnter "
-     "strings) -- 'Enter' a location (shrine confirmed; "
-     "dungeon/town/castle entry presumably shares this same command, "
-     "not yet traced past the shrine branch)."),
+     "'E' (index 11) -- MAJOR FINDING, fully traced: THE location-"
+     "entry command for shrines, dungeons, towns, AND castles. "
+     "Shrine branch (gameMode==0xFF, tile==0xF8): calls sub_16366 "
+     "(confirmed via its own aShrineImg/aShrineWhoEnter strings). "
+     "Otherwise (gameMode==0, on the overworld): looks up "
+     "_partyPosition in LOCATION_TILE_TABLE (19 entries) to get an "
+     "index into LOCATION_TYPE_TABLE, which holds the location kind "
+     "(5=Dungeon, 6=Towne, 7=Castle -- other values presumably other "
+     "kinds, not enumerated this pass). On match: saves the overworld "
+     "position (_savedOverworldPosition) for later return, sets the "
+     "starting in-location position (Dungeon: 0x0101, Towne: 0x2001, "
+     "Castle: 0x3E20) and gameMode (1/2/3 respectively), prints "
+     "'Dungeon!'/'Towne!'/'Castle!', then loads the location's data: "
+     "for towns/castles, a 0x1228-byte (4648, matching SOSARIA.ULT/"
+     "town-map size exactly) file into the `start` buffer (the reused-"
+     "after-boot code-space trick, same as drawLogoTileGrid's tile "
+     "data); for dungeons, BOTH a 0x890-byte (2192, matching the "
+     "documented dungeon file size exactly) map into byte_10900 AND a "
+     "separate 0x800-byte read of DUNGEON.DAT into `start` -- "
+     "confirms DUNGEON.DAT is a distinct auxiliary file loaded "
+     "alongside a dungeon's own numbered map file, not the map itself."),
+
+    (0x116E1, "LOCATION_TILE_TABLE",
+     "19-entry word array of overworld tile-position values, scanned "
+     "by cmdEnter via repne scasw against _partyPosition to find which "
+     "of the ~19 named locations (dungeons/towns/castles) the party is "
+     "standing on."),
+
+    (0x1259D, "_locationTypeTable",
+     "MEDIUM CONFIDENCE: byte, indexed by cmdEnter's LOCATION_TILE_TABLE "
+     "match, holding the location kind at that position (5=Dungeon, "
+     "6=Towne, 7=Castle -- other values not enumerated this pass). "
+     "Named as a scalar-looking single access, but given "
+     "LOCATION_TILE_TABLE's 19 entries this may actually be a 19-byte "
+     "PARALLEL ARRAY rather than a single byte -- not fully confirmed, "
+     "worth double-checking (compare its access pattern against "
+     "LOCATION_TILE_TABLE's index, `bx`, rather than a fixed address) "
+     "before trusting the current scalar treatment."),
+
+    (0x114C2, "_savedOverworldPosition",
+     "the overworld _partyPosition, saved by cmdEnter right before "
+     "entering a dungeon/town/castle so it can be restored on exit."),
+
+    (0x11D4E, "cmdCastSpell",
+     "'C' (index 23): the OVERWORLD cast-spell command (distinct from "
+     "combatCmdCastSpell) -- prompts for which party member casts "
+     "(sub_16C76, not yet identified -- presumably a player-selection "
+     "prompt) then calls castSpell if they're alive."),
 
     (0x12018, "cmdToggleSound",
      "'V' (index 8) plus 2 additional scancode-only bindings (indices "

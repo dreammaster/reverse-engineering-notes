@@ -163,6 +163,7 @@ static Bytes_0(void) {
 	create_byte	(0X114C0);
 	create_byte	(0X114C1);
 	create_word	(0X114C2);
+	set_name	(0X114C2,	"_savedOverworldPosition");
 	make_array	(0X114C4,	0X4);
 	create_byte	(0X114C8);
 	create_byte	(0X114C9);
@@ -230,6 +231,7 @@ static Bytes_0(void) {
 	make_array	(0X116BB,	0X26);
 	create_byte	(0X116E1);
 	make_array	(0X116E1,	0X2);
+	set_name	(0X116E1,	"LOCATION_TILE_TABLE");
 	create_byte	(0X116E3);
 	create_byte	(0X116E4);
 	make_array	(0X116E4,	0X35);
@@ -349,16 +351,19 @@ static Bytes_0(void) {
 	create_insn	(0X11C9B);
 	set_cmt	(0X11C9E,	"jumptable 00011BD1 case 2",	1);
 	create_insn	(0X11C9E);
+	set_name	(0X11C9E,	"cmdMoveSouth");
 	create_insn	(x=0X11CB4);
 	op_hex		(x,	1);
 	create_insn	(0X11CBC);
 	set_cmt	(0X11CBF,	"jumptable 00011BD1 case 3",	1);
 	create_insn	(0X11CBF);
+	set_name	(0X11CBF,	"cmdMoveEast");
 	create_insn	(x=0X11CD5);
 	op_hex		(x,	1);
 	create_insn	(0X11CDD);
 	set_cmt	(0X11CE0,	"jumptable 00011BD1 case 4",	1);
 	create_insn	(0X11CE0);
+	set_name	(0X11CE0,	"cmdMoveWest");
 	create_insn	(x=0X11CF6);
 	op_hex		(x,	1);
 	create_insn	(0X11CFE);
@@ -376,6 +381,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X11D4E,	"jumptable 00011BD1 case 23\njumptable 00018389 case 1",	1);
 	create_insn	(0X11D4E);
+	set_name	(0X11D4E,	"cmdCastSpell");
 	create_insn	(0X11D66);
 	set_cmt	(0X11D69,	"jumptable 00011BD1 case 11",	1);
 	create_insn	(0X11D69);
@@ -648,6 +654,7 @@ static Bytes_0(void) {
 	create_byte	(0X1259B);
 	create_byte	(0X1259C);
 	create_byte	(0X1259D);
+	set_name	(0X1259D,	"_locationTypeTable");
 	create_insn	(0X1259E);
 	create_insn	(0X125D6);
 	create_insn	(x=0X125D8);
