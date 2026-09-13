@@ -4,3 +4,8 @@
 *.id2
 *.nam
 *.til
+
+# LairWare's Ultima III Mac remake -- kept on disk as a reference/cross-check
+# for the original game's engine logic, not tracked in this RE-notes repo
+# (same treatment as ultima1's local-only ultima_old/ ScummVM cross-reference).
+/source/
