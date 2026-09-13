@@ -221,24 +221,30 @@ Next-session priorities, roughly in order:
       | Key | Handler address | Key | Handler address |
       |---|---|---|---|
       | A | `loc_1888B` | N | `loc_15CF8` |
-      | D | `loc_15CC3`\* | O | `loc_174D5` |
-      | F | `loc_15BCF` | R | `loc_17E33` |
-      | G | `loc_18190` | T | `loc_17FC6` |
-      | H | `loc_11E55` (partially read, see below) | W | `loc_17EE4` |
-      | I | `loc_15CC9` | Y | `loc_17458` |
-      | J | `loc_15C73` | Z | `loc_12068` |
-      | K | `loc_15CC3`\* | L | `loc_11E7A` |
+      | F | `loc_15BCF` | O | `loc_174D5` |
+      | G | `loc_18190` | R | `loc_17E33` |
+      | H | `loc_11E55` (partially read, see below) | T | `loc_17FC6` |
+      | J | `loc_15C73` | W | `loc_17EE4` |
+      | L | `loc_11E7A` | Y | `loc_17458` |
+      | | | Z | `loc_12068` |
 
-      \* D and K genuinely share `loc_15CC3` — confirmed directly via
-      `ida_bytes.get_word()` against `OVERWORLD_COMMAND_TABLE`, not a
-      transcription artifact (an earlier draft of this table
-      mis-transcribed 'C' as `loc_11C9E` by eye instead of from the
-      verified dump — fixed 2026-09-13; always regenerate a table like
-      this from a script's output, never retype it from memory). H
-      (`loc_11E55`) is partially read: prompts "To Player: ", involves
+      H (`loc_11E55`) is partially read: prompts "To Player: ", involves
       `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
       and a recursive self-call into `sub_17B54` — purpose not pinned
       down, flagged rather than guessed.
+- [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3` — genuinely
+      shared, confirmed via `ida_bytes.get_word()` against
+      `OVERWORLD_COMMAND_TABLE`) — both are no-ops on the overworld,
+      consistent with Descend/Klimb being dungeon-only commands. The
+      likely real in-dungeon command set is reached through a
+      **different** jump table, `jpt_18389`, referenced repeatedly
+      across this session's other finds (case numbers cited alongside
+      `OVERWORLD_COMMAND_TABLE`'s in several handlers' comments) but
+      never itself identified — **worth dedicated attention next**,
+      since it's plausibly where Descend/Klimb and other dungeon-only
+      commands actually live.
+- [x] `cmdIgniteTorch` ('I') — confirms `_torches` (`RosterEntry`
+      `+0x0F`) independently of external documentation.
 - [ ] Confirm whether `_locationTypeTable` (`byte_1259D`) is really a
       scalar or (more likely, given it's indexed alongside the
       19-entry `LOCATION_TILE_TABLE`) a 19-byte parallel array —

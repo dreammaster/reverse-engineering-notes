@@ -95,6 +95,7 @@ static Structures_0(id) {
 	
 	id = get_struc_id("RosterEntry");
 	mid = add_struc_member(id,"_name",	0,	0x00000400,	-1,	10);
+	mid = add_struc_member(id,"_torches",	0XF,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_partyMember",	0X10,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_status",	0X11,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_strength",	0X12,	0x00000400,	-1,	1);

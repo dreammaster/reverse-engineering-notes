@@ -499,18 +499,18 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset loc_11E7A
                 dw offset cmdExchange
                 dw offset cmdToggleSound
-                dw offset loc_15CC3
+                dw offset cmdDisabledOnSurface
                 dw offset loc_11E55
                 dw offset loc_17FC6
                 dw offset cmdUnlock
-                dw offset loc_15CC9
+                dw offset cmdIgniteTorch
                 dw offset cmdQuit
                 dw offset loc_17E33
                 dw offset loc_17EE4
                 dw offset cmdCastSpell
                 dw offset loc_15BCF
                 dw offset loc_15C73
-                dw offset loc_15CC3
+                dw offset cmdDisabledOnSurface
                 dw offset loc_15CF8
                 dw offset loc_18190
                 dw offset cmdPeer
@@ -5085,13 +5085,13 @@ loc_15CB5:                              ; CODE XREF: sub_17B54-1EBB↑j
                 jmp     short loc_15CB2
 ; ---------------------------------------------------------------------------
 
-loc_15CC3:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdDisabledOnSurface:                   ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 cases 15,26
                 jmp     loc_17DBA
 ; ---------------------------------------------------------------------------
 
-loc_15CC9:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdIgniteTorch:                         ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 19
@@ -8849,7 +8849,7 @@ jpt_18389       dw offset cmdPass       ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdCastSpell  ; jump table for switch statement
                 dw offset loc_18190
                 dw offset loc_11E55
-                dw offset loc_15CC9
+                dw offset cmdIgniteTorch
                 dw offset loc_15C73
                 dw offset cmdExchange
                 dw offset loc_15CF8

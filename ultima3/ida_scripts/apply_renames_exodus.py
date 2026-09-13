@@ -547,6 +547,23 @@ RENAMES = [
      "the overworld _partyPosition, saved by cmdEnter right before "
      "entering a dungeon/town/castle so it can be restored on exit."),
 
+    (0x15CC3, "cmdDisabledOnSurface",
+     "'D' and 'K' (indices 15, 26): both just print a message and "
+     "jump to the shared invalid-command trampoline (loc_17DBA) -- "
+     "these letters do nothing on the overworld. Classic Ultima has "
+     "Descend/Klimb as dungeon-only commands, consistent with this "
+     "being their overworld no-op stub (the real Descend/Klimb "
+     "handlers, if any, would be reached via a different jump table "
+     "used while in a dungeon -- jpt_18389, referenced repeatedly "
+     "throughout this session's finds but not yet itself identified)."),
+
+    (0x15CC9, "cmdIgniteTorch",
+     "'I' (index 19): dungeon-only (gameMode==1) -- prompts 'Whose "
+     "torch: ' (player select), spends 1 torch (RosterEntry _torches, "
+     "+0x0F, BCD-borrow-checked decrement) and sets a lit-torch flag "
+     "(byte_115CE=0xFF). Confirms _torches independently of external "
+     "documentation."),
+
     (0x11E9B, "cmdExchange",
      "'M' (index 13): prompts 2 player selections (sub_16C76 x2) then "
      "swaps their entire 0x40-byte combat records byte-for-byte, "

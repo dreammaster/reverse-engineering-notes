@@ -112,16 +112,15 @@
 116E1: already 'LOCATION_TILE_TABLE' -- skipping
 1259D: already '_locationTypeTable' -- skipping
 114C2: already '_savedOverworldPosition' -- skipping
-11E9B: 'loc_11E9B' -> 'cmdExchange'
-    'M' (index 13): prompts 2 player selections (sub_16C76 x2) then swaps their entire 0x40-byte combat records byte-for-byte, prints 'Exchanged!' -- swap two party members' marching order/positions.
-11EFD: 'loc_11EFD' -> 'cmdPeer'
-    'P' (index 29): decrements the selected character's _gems (RosterEntry +0x25, confirmed via this BCD-borrow-checked decrement -- 'None Left!' on underflow) then, in a dungeon (gameMode==1), calls sub_12909 (the nibble-coded-border map renderer read early this session, previously unidentified) -- 'Peer' at the dungeon layout using a gem, classic Ultima mechanic. On the overworld/towns, calls sub_1259E instead (not yet identified, presumably an equivalent overworld peer view).
-11F25: 'loc_11F25' -> 'cmdQuit'
-    'Q' (index 20): restricted to gameMode==0 (overworld surface --'Only on surface!' otherwise) -- saves _partyPosition, calls sub_1A46F and sub_1207D ('Please wait...') -- 'Quit & Save', matching the classic Ultima restriction that saving only works on the surface.
-11F53: 'loc_11F53' -> 'cmdSteal'
-    'S' (index 30): prompts a player and a direction, ~25% chance of success (stepTimeSeededPrng &3==0, else 'Failed!' and a guard-alert side effect setting an 0xC0 flag on 'H'-type map slots -- same alert-guards-on-failed-crime pattern as ultima2's alert_town_guards), checks the target tile is in a specific range (0x94-0xE4) then a look-two-tiles-further check for a '$'(0x24) marker, clears it and calls sub_180D9 (loot-message printer, confirmed via its own 'and'/'and a ' string fragments) -- classic Ultima 'Steal' from an NPC/shop.
-11FD6: 'loc_11FD6' -> 'cmdUnlock'
-    'U' (index 18): prompts a direction, checks the target tile is 0xB8 ('locked door'), prompts 'Whose key? ' (player select), decrements that character's _keys (RosterEntry +0x26, confirmed via this BCD-borrow-checked decrement), and rewrites the tile via _locationTypeTable-derived value -- 'Unlock' a door with a key, confirming the _keys offset independently of external documentation.
+15CC3: 'loc_15CC3' -> 'cmdDisabledOnSurface'
+    'D' and 'K' (indices 15, 26): both just print a message and jump to the shared invalid-command trampoline (loc_17DBA) -- these letters do nothing on the overworld. Classic Ultima has Descend/Klimb as dungeon-only commands, consistent with this being their overworld no-op stub (the real Descend/Klimb handlers, if any, would be reached via a different jump table used while in a dungeon -- jpt_18389, referenced repeatedly throughout this session's finds but not yet itself identified).
+15CC9: 'loc_15CC9' -> 'cmdIgniteTorch'
+    'I' (index 19): dungeon-only (gameMode==1) -- prompts 'Whose torch: ' (player select), spends 1 torch (RosterEntry _torches, +0x0F, BCD-borrow-checked decrement) and sets a lit-torch flag (byte_115CE=0xFF). Confirms _torches independently of external documentation.
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
 11D4E: already 'cmdCastSpell' -- skipping
 12018: already 'cmdToggleSound' -- skipping
 12035: already 'cmdExitVehicle' -- skipping
