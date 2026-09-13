@@ -445,3 +445,456 @@ structs (1): RosterEntry
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_overworld_labels.py', 'noexport']
+[*] reading dump_overworld_labels.py
+[*] executing dump_overworld_labels.py
+[*] captured stdout from target script:
+----- begin target script output -----
+table base: 0x18c9, 33 entries
+
+  [ 0] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 1] key='A' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 2] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 3] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 4] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 5] key=' ' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 6] key='B' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 7] key='X' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 8] key='V' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [ 9] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [10] key='Z' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [11] key='E' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [12] key='L' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [13] key='M' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [14] key='\\x00' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [15] key='K' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [16] key='H' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [17] key='T' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [18] key='U' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [19] key='I' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [20] key='Q' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [21] key='R' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [22] key='W' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [23] key='C' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [24] key='F' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [25] key='J' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [26] key='D' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [27] key='N' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [28] key='G' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [29] key='P' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [30] key='S' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [31] key='Y' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+  [32] key='O' label_ptr=0xffff -> '\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff'
+----- end target script output -----
+[*] finished executing dump_overworld_labels.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_overworld_labels.py', 'noexport']
+[*] reading dump_overworld_labels.py
+[*] executing dump_overworld_labels.py
+[*] captured stdout from target script:
+----- begin target script output -----
+table base: 0x118c9, 33 entries
+
+  [ 0] key='\\x00' label_ptr=0x1b4d (lin=0x11b4d) -> 'North\\x0a'
+  [ 1] key='A' label_ptr=0x17f4 (lin=0x117f4) -> 'Attack-'
+  [ 2] key='\\x00' label_ptr=0x1b54 (lin=0x11b54) -> 'South\\x0a'
+  [ 3] key='\\x00' label_ptr=0x1b5b (lin=0x11b5b) -> 'East\\x0a'
+  [ 4] key='\\x00' label_ptr=0x1b61 (lin=0x11b61) -> 'West\\x0a'
+  [ 5] key=' ' label_ptr=0x1707 (lin=0x11707) -> 'Pass\\x0a'
+  [ 6] key='B' label_ptr=0x170d (lin=0x1170d) -> 'Board'
+  [ 7] key='X' label_ptr=0x1713 (lin=0x11713) -> 'X-it '
+  [ 8] key='V' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [ 9] key='\\x00' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [10] key='Z' label_ptr=0x1721 (lin=0x11721) -> 'Ztats for # '
+  [11] key='E' label_ptr=0x172e (lin=0x1172e) -> 'Enter '
+  [12] key='L' label_ptr=0x1753 (lin=0x11753) -> 'Look-'
+  [13] key='M' label_ptr=0x17fc (lin=0x117fc) -> 'Modify order!\\x0aPlayer: '
+  [14] key='\\x00' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [15] key='K' label_ptr=0x17c4 (lin=0x117c4) -> 'Klimb'
+  [16] key='H' label_ptr=0x1735 (lin=0x11735) -> 'Hand Equipment!\\x0aFrom Player: '
+  [17] key='T' label_ptr=0x1759 (lin=0x11759) -> 'Who will\\x0aTransact? '
+  [18] key='U' label_ptr=0x176d (lin=0x1176d) -> 'Unlock-'
+  [19] key='I' label_ptr=0x17ca (lin=0x117ca) -> 'Ignite a torch\\x0a'
+  [20] key='Q' label_ptr=0x1775 (lin=0x11775) -> 'Quit & Save\\x0a'
+  [21] key='R' label_ptr=0x1782 (lin=0x11782) -> 'Ready for # '
+  [22] key='W' label_ptr=0x178f (lin=0x1178f) -> 'Wear for # '
+  [23] key='C' label_ptr=0x179b (lin=0x1179b) -> 'Cast by whom-'
+  [24] key='F' label_ptr=0x17a9 (lin=0x117a9) -> 'Fire'
+  [25] key='J' label_ptr=0x17ae (lin=0x117ae) -> 'Join gold to:'
+  [26] key='D' label_ptr=0x17bc (lin=0x117bc) -> 'Descend'
+  [27] key='N' label_ptr=0x17da (lin=0x117da) -> 'Negate Time!\\x0aWhose Powd? '
+  [28] key='G' label_ptr=0x1813 (lin=0x11813) -> 'Get Chest!\\x0aPlr to search-'
+  [29] key='P' label_ptr=0x182d (lin=0x1182d) -> 'Peer at gem!\\x0aWhose gem? '
+  [30] key='S' label_ptr=0x1846 (lin=0x11846) -> 'Steal Chest!\\x0aPlayer? '
+  [31] key='Y' label_ptr=0x185c (lin=0x1185c) -> 'Yell, whom? '
+  [32] key='O' label_ptr=0x1869 (lin=0x11869) -> 'Other command!\\x0aWhose action? '
+----- end target script output -----
+[*] finished executing dump_overworld_labels.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py', 'noexport']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: already '_locationTypeTable' -- skipping
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: 'cmdOrder' -> 'cmdOtherCommand'
+    RENAMED 2026-09-14 from the placeholder guess 'cmdOrder' -- confirmed via dump_overworld_labels.py's read of the per-command prompt-string table at DS:18C9h (linear 0x118C9, index 32 = 'O'): the actual on-screen prompt is 'Other command!\nWhose action? ', not anything related to party order (that's cmdExchange/'M', 'Modify order!', a different command entirely -- see below). 'O' (index 32, also dungeon index 8): prompts a player, confirms alive, prints 'Cmd: ' and reads a 10-character line of typed text, then looks it up against a table at a computed offset (`[bx+6540h]`) via sub_1740A/sub_17423 (not yet identified) -- a typed-text keyword command, matching cmdYell's mechanism almost exactly (same sub_1740A lookup helper) but against a different keyword table and without the _marksAndCards bit-check. Likely a second class of 'say a magic word' interaction, distinct from Yell's. Purpose past the input mechanism still not fully traced.
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: 'loc_11E55' -> 'cmdHandEquipment'
+    'H' (index 16, also dungeon index 3): the last of the 33 overworld command letters to be identified. Prompt text confirmed via dump_overworld_labels.py's read of the per-command prompt table at DS:18C9h (linear 0x118C9): index 16 = 'Hand Equipment!\nFrom Player: ', immediately explaining the otherwise-mysterious double player-select this handler does (the second prompt, '  To Player: ', is aToPlayer, already used elsewhere). Selects a 'from' and 'to' player via sub_16C76; if they're the same player it jumps to the shared loc_17DBA no-op/failure path, otherwise it makes a `call near ptr sub_17B54` back into the top-level command dispatcher itself. sub_17B54 saves/restores every register (including si/di) on entry/exit, so this is a genuine re-entrant call, not a parameter-passing trick -- the actual item hand-off almost certainly happens via a global 'hand mode' state (not yet located) that a subsequent single-key command (most likely 'W' for Wear, given the shared item-slot theme) reads to redirect its normal single-player behaviour into a transfer between the two globally-remembered players instead. That follow-on mechanism is NOT traced -- flagged as the next concrete lead rather than guessed at.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: already '_locationTypeTable' -- skipping
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: 'cmdOrder' -> 'cmdOtherCommand'
+    RENAMED 2026-09-14 from the placeholder guess 'cmdOrder' -- confirmed via dump_overworld_labels.py's read of the per-command prompt-string table at DS:18C9h (linear 0x118C9, index 32 = 'O'): the actual on-screen prompt is 'Other command!\nWhose action? ', not anything related to party order (that's cmdExchange/'M', 'Modify order!', a different command entirely -- see below). 'O' (index 32, also dungeon index 8): prompts a player, confirms alive, prints 'Cmd: ' and reads a 10-character line of typed text, then looks it up against a table at a computed offset (`[bx+6540h]`) via sub_1740A/sub_17423 (not yet identified) -- a typed-text keyword command, matching cmdYell's mechanism almost exactly (same sub_1740A lookup helper) but against a different keyword table and without the _marksAndCards bit-check. Likely a second class of 'say a magic word' interaction, distinct from Yell's. Purpose past the input mechanism still not fully traced.
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: 'loc_11E55' -> 'cmdHandEquipment'
+    'H' (index 16, also dungeon index 3): the last of the 33 overworld command letters to be identified. Prompt text confirmed via dump_overworld_labels.py's read of the per-command prompt table at DS:18C9h (linear 0x118C9): index 16 = 'Hand Equipment!\nFrom Player: ', immediately explaining the otherwise-mysterious double player-select this handler does (the second prompt, '  To Player: ', is aToPlayer, already used elsewhere). Selects a 'from' and 'to' player via sub_16C76; if they're the same player it jumps to the shared loc_17DBA no-op/failure path, otherwise it makes a `call near ptr sub_17B54` back into the top-level command dispatcher itself. sub_17B54 saves/restores every register (including si/di) on entry/exit, so this is a genuine re-entrant call, not a parameter-passing trick -- the actual item hand-off almost certainly happens via a global 'hand mode' state (not yet located) that a subsequent single-key command (most likely 'W' for Wear, given the shared item-slot theme) reads to redirect its normal single-player behaviour into a transfer between the two globally-remembered players instead. That follow-on mechanism is NOT traced -- flagged as the next concrete lead rather than guessed at.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14493
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 144 total, 65 named, 79 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

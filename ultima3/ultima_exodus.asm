@@ -366,7 +366,7 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset cmdExchange
                 dw offset cmdToggleSound
                 dw offset cmdDisabledOnSurface
-                dw offset loc_11E55
+                dw offset cmdHandEquipment
                 dw offset cmdTransact
                 dw offset cmdUnlock
                 dw offset cmdIgniteTorch
@@ -382,7 +382,7 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset cmdPeer
                 dw offset cmdSteal
                 dw offset cmdYell
-                dw offset cmdOrder
+                dw offset cmdOtherCommand
                 db 8, 39h, 0Fh, 24h, 0Fh, 0Ch, 1Fh, 3Ah, 8, 2Eh, 1Bh, 3Ah
                 db 1Dh, 37h, 2 dup(1Fh)
 byte_1195D      db 0, 48h, 0, 50h, 0, 4Dh, 0, 4Bh, 60h, 5Ch, 64h, 50h
@@ -839,7 +839,7 @@ loc_11E3A:                              ; CODE XREF: sub_17B54-5D31↑j
                 jmp     initDungeonState
 ; ---------------------------------------------------------------------------
 
-loc_11E55:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdHandEquipment:                       ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 16
@@ -8418,7 +8418,7 @@ loc_174CC:                              ; CODE XREF: sub_17B54-6C7↑j
                 jmp     short loc_174C6
 ; ---------------------------------------------------------------------------
 
-cmdOrder:                               ; CODE XREF: sub_17B54-5F83↑j
+cmdOtherCommand:                        ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 32
@@ -8725,12 +8725,12 @@ DUNGEON_COMMAND_KEYS db 20h, 39h, 43h, 2Eh, 47h, 22h, 48h, 23h, 49h, 17h, 4Ah
 DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdCastSpell  ; jump table for switch statement
                 dw offset cmdGet
-                dw offset loc_11E55
+                dw offset cmdHandEquipment
                 dw offset cmdIgniteTorch
                 dw offset cmdJoinGold
                 dw offset cmdExchange
                 dw offset cmdNegateTime
-                dw offset cmdOrder
+                dw offset cmdOtherCommand
                 dw offset cmdReady
                 dw offset cmdToggleSound
                 dw offset cmdWear
