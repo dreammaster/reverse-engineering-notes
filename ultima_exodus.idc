@@ -95,6 +95,7 @@ static Structures_0(id) {
 	
 	id = get_struc_id("RosterEntry");
 	mid = add_struc_member(id,"_name",	0,	0x00000400,	-1,	10);
+	mid = add_struc_member(id,"_marksAndCards",	0XE,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_torches",	0XF,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_partyMember",	0X10,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_status",	0X11,	0x00000400,	-1,	1);
@@ -464,6 +465,7 @@ static Bytes_0(void) {
 	create_insn	(0X11E77);
 	set_cmt	(0X11E7A,	"jumptable 00011BD1 case 12",	1);
 	create_insn	(0X11E7A);
+	set_name	(0X11E7A,	"cmdLook");
 	create_insn	(x=0X11E82);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -556,6 +558,7 @@ static Bytes_0(void) {
 	create_insn	(0X12065);
 	set_cmt	(0X12068,	"jumptable 00011BD1 case 10\njumptable 00018389 case 13",	1);
 	create_insn	(0X12068);
+	set_name	(0X12068,	"cmdZtats");
 	create_insn	(0X1207D);
 	create_insn	(x=0X12081);
 	op_plain_offset	(x,	1,	0X10000);
@@ -1433,6 +1436,7 @@ static Bytes_0(void) {
 	create_insn	(0X15C6F);
 	set_cmt	(0X15C73,	"jumptable 00011BD1 case 25\njumptable 00018389 case 5",	1);
 	create_insn	(0X15C73);
+	set_name	(0X15C73,	"cmdJoinGold");
 	create_insn	(x=0X15C7D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1452,6 +1456,7 @@ static Bytes_0(void) {
 	create_insn	(0X15CF5);
 	set_cmt	(0X15CF8,	"jumptable 00011BD1 case 27\njumptable 00018389 case 7",	1);
 	create_insn	(0X15CF8);
+	set_name	(0X15CF8,	"cmdNegateTime");
 	create_insn	(0X15D13);
 	create_insn	(0X15D16);
 	set_name	(0X15D16,	"readSpellLetterKey");
@@ -2045,6 +2050,7 @@ static Bytes_0(void) {
 	create_insn	(0X17451);
 	set_cmt	(0X17458,	"jumptable 00011BD1 case 31\njumptable 00018389 case 12",	1);
 	create_insn	(0X17458);
+	set_name	(0X17458,	"cmdYell");
 	create_insn	(x=0X17465);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2065,6 +2071,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X174D5,	"jumptable 00011BD1 case 32\njumptable 00018389 case 8",	1);
 	create_insn	(0X174D5);
+	set_name	(0X174D5,	"cmdOrder");
 	create_insn	(x=0X174E8);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2447,6 +2454,7 @@ static Bytes_0(void) {
 	create_insn	(0X17E02);
 	set_cmt	(0X17E33,	"jumptable 00011BD1 case 21\njumptable 00018389 case 9",	1);
 	create_insn	(0X17E33);
+	set_name	(0X17E33,	"cmdReady");
 	create_insn	(0X17E46);
 	create_insn	(0X17E48);
 	create_insn	(x=0X17E50);
@@ -2474,6 +2482,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X17EE4,	"jumptable 00011BD1 case 22\njumptable 00018389 case 11",	1);
 	create_insn	(0X17EE4);
+	set_name	(0X17EE4,	"cmdWear");
 	create_insn	(0X17EF7);
 	create_insn	(0X17EFA);
 	create_insn	(x=0X17F02);
@@ -2505,6 +2514,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X17FC6,	"jumptable 00011BD1 case 17",	1);
 	create_insn	(0X17FC6);
+	set_name	(0X17FC6,	"cmdTransact");
 	create_insn	(x=0X17FD7);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

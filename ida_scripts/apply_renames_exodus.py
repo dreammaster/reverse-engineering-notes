@@ -775,6 +775,53 @@ RENAMES = [
      "range 0x24-0x27 ('$' through treasure markers) and clears it if "
      "so -- classic Ultima 'Get' (pick up gold/treasure off the map)."),
 
+    (0x11E7A, "cmdLook",
+     "'L' (index 12): prompts a direction, reads the target tile via "
+     "getMapTileAt, derives a small index from it (`shr al,1` x2, "
+     "+1) and calls sub_16BFA (a display helper, not yet identified) "
+     "-- classic Ultima 'Look' at an adjacent tile."),
+
+    (0x15C73, "cmdJoinGold",
+     "'J' (dungeon-shared index, also dungeon index 5): prompts a "
+     "player, sums every party member's _gold (BCD, with an overflow "
+     "check bailing to an error path), zeroes everyone's _gold, and "
+     "gives the selected player the total -- matches "
+     "DUNGEON_COMMAND_LABELS' 'Join gold to:' string exactly. Classic "
+     "Ultima 'Join' (pool the party's gold into one purse)."),
+
+    (0x15CF8, "cmdNegateTime",
+     "'N' (dungeon-shared index, also dungeon index 7): identical "
+     "logic to combatCmdNegateTime -- prompts a player, spends 1 "
+     "Powder (BCD-borrow-checked decrement) and sets "
+     "_negateTimeDuration=0x0A. The overworld/dungeon counterpart to "
+     "the combat-only version found earlier this session."),
+
+    (0x17E33, "cmdReady",
+     "'R' (dungeon-shared index, also dungeon index 9): prompts a "
+     "player, confirms alive, calls sub_17E48 -- the exact same "
+     "helper combatCmdReady uses. The overworld/dungeon counterpart "
+     "to combat's 'Ready a weapon!'."),
+
+    (0x17FC6, "cmdTransact",
+     "MEDIUM-HIGH CONFIDENCE: 'T' (index 17): prompts a player and a "
+     "direction ('Direct? ', reusing the tail of the aFcwtpblidardir "
+     "string buffer), checks the target tile is in the same 0x94-0xE4 "
+     "range cmdSteal checks, then a second tile one step further for "
+     "a 0x40 marker -- classic Ultima 'Transact' (trade with a "
+     "shopkeeper/merchant tile), though the exact trade mechanics "
+     "aren't traced past the tile checks this pass."),
+
+    (0x174D5, "cmdOrder",
+     "LOW-MEDIUM CONFIDENCE: 'O' (index 32, also dungeon index 8): "
+     "prompts a player, confirms alive, prints 'Cmd: ' and reads a "
+     "10-character line of typed text, then looks it up against a "
+     "table at a computed offset (`[bx+6540h]`) via sub_1740A/"
+     "sub_17423 (not yet identified) -- a typed-text command parser, "
+     "possibly for giving an NPC/companion an instruction, or a "
+     "developer console left active in the shipped game. Purpose not "
+     "confirmed past the input mechanism -- named 'Order' as a "
+     "placeholder guess, not a confirmed command identity."),
+
     (0x11D4E, "cmdCastSpell",
      "'C' (index 23): the OVERWORLD cast-spell command (distinct from "
      "combatCmdCastSpell) -- prompts for which party member casts "
@@ -808,6 +855,33 @@ RENAMES = [
      "updateMonsterAI (straight/horizontal/vertical probes) -- a "
      "movement-legality check almost certainly, exact tile-code "
      "meanings not independently confirmed."),
+
+    (0x12068, "cmdZtats",
+     "'Z' (index 10): calls sub_16DC1 with dh=al+0x30 -- matches "
+     "combat's Ztats display pattern exactly (same helper, same "
+     "dh=player-index+0x30 convention seen in the combat command "
+     "table's Ztats handler). Shows a party member's full stat sheet "
+     "outside combat."),
+
+    (0x17458, "cmdYell",
+     "'Y' (index 31): prompts 'Word: ', reads up to 9 chars via "
+     "readLine, looks up the entered word against a keyword table "
+     "(byte_164FA) via sub_1740A/sub_17423. On a successful match, "
+     "checks bit 0x40 of the selected character's RosterEntry+0x0E "
+     "field (also requires _partyPosition == 0x0A) -- the classic "
+     "Ultima III 'Yell' password/keyword mechanic (e.g. yelling "
+     "'RAMA' at the correct location). This is the confirming "
+     "evidence for RosterEntry's _marksAndCards field (see "
+     "create_roster_struct.py) -- matches docs/file-formats.md's "
+     "externally-sourced 'Marks/cards bitmask' label exactly, though "
+     "individual bit meanings beyond 0x40 are not decoded."),
+
+    (0x17EE4, "cmdWear",
+     "'W' (index 22), TENTATIVE: player-select prompt, alive check, "
+     "then calls sub_17EFA. Not independently traced past the call; "
+     "named by elimination against the classic Ultima III command set "
+     "(Wear/Wield armour) and slot position, not by confirmed "
+     "argument/effect inspection of sub_17EFA itself."),
 ]
 
 

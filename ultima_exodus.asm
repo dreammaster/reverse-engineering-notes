@@ -360,29 +360,29 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset cmdExitVehicle
                 dw offset cmdToggleSound
                 dw offset cmdToggleSound
-                dw offset loc_12068
+                dw offset cmdZtats
                 dw offset cmdEnter
-                dw offset loc_11E7A
+                dw offset cmdLook
                 dw offset cmdExchange
                 dw offset cmdToggleSound
                 dw offset cmdDisabledOnSurface
                 dw offset loc_11E55
-                dw offset loc_17FC6
+                dw offset cmdTransact
                 dw offset cmdUnlock
                 dw offset cmdIgniteTorch
                 dw offset cmdQuit
-                dw offset loc_17E33
-                dw offset loc_17EE4
+                dw offset cmdReady
+                dw offset cmdWear
                 dw offset cmdCastSpell
                 dw offset cmdFire
-                dw offset loc_15C73
+                dw offset cmdJoinGold
                 dw offset cmdDisabledOnSurface
-                dw offset loc_15CF8
+                dw offset cmdNegateTime
                 dw offset cmdGet
                 dw offset cmdPeer
                 dw offset cmdSteal
-                dw offset loc_17458
-                dw offset loc_174D5
+                dw offset cmdYell
+                dw offset cmdOrder
                 db 8, 39h, 0Fh, 24h, 0Fh, 0Ch, 1Fh, 3Ah, 8, 2Eh, 1Bh, 3Ah
                 db 1Dh, 37h, 2 dup(1Fh)
 byte_1195D      db 0, 48h, 0, 50h, 0, 4Dh, 0, 4Bh, 60h, 5Ch, 64h, 50h
@@ -865,7 +865,7 @@ loc_11E77:                              ; CODE XREF: sub_17B54-5CE5↑j
                 jmp     loc_17DBA
 ; ---------------------------------------------------------------------------
 
-loc_11E7A:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdLook:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 12
                 call    readDirectionKeypress
@@ -1148,7 +1148,7 @@ loc_12065:                              ; CODE XREF: sub_17B54-5B0C↑j
                 jmp     loc_17DDE
 ; ---------------------------------------------------------------------------
 
-loc_12068:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdZtats:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 10
@@ -4904,7 +4904,7 @@ loc_15C6F:                              ; CODE XREF: sub_17B54-1F11↑j
                 jmp     short loc_15C1A
 ; ---------------------------------------------------------------------------
 
-loc_15C73:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdJoinGold:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 25
@@ -4987,7 +4987,7 @@ loc_15CF5:                              ; CODE XREF: sub_17B54-1E6F↑j
                 jmp     loc_17DA8
 ; ---------------------------------------------------------------------------
 
-loc_15CF8:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdNegateTime:                          ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 27
@@ -8355,7 +8355,7 @@ sub_17423       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_17458:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdYell:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 31
@@ -8418,7 +8418,7 @@ loc_174CC:                              ; CODE XREF: sub_17B54-6C7↑j
                 jmp     short loc_174C6
 ; ---------------------------------------------------------------------------
 
-loc_174D5:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdOrder:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 32
@@ -8727,15 +8727,15 @@ DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdGet
                 dw offset loc_11E55
                 dw offset cmdIgniteTorch
-                dw offset loc_15C73
+                dw offset cmdJoinGold
                 dw offset cmdExchange
-                dw offset loc_15CF8
-                dw offset loc_174D5
-                dw offset loc_17E33
+                dw offset cmdNegateTime
+                dw offset cmdOrder
+                dw offset cmdReady
                 dw offset cmdToggleSound
-                dw offset loc_17EE4
-                dw offset loc_17458
-                dw offset loc_12068
+                dw offset cmdWear
+                dw offset cmdYell
+                dw offset cmdZtats
                 dw offset cmdToggleSound
                 dw offset cmdToggleSound
                 dw offset cmdDisabledInDungeon
@@ -9663,7 +9663,7 @@ sub_17E02       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_17E33:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdReady:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 21
@@ -9779,7 +9779,7 @@ sub_17E48       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_17EE4:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdWear:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 22
@@ -9935,7 +9935,7 @@ sub_17F96       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdTransact:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 17
                 call    sub_16C76

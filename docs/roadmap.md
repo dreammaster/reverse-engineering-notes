@@ -222,16 +222,20 @@ Next-session priorities, roughly in order:
 
       | Key | Handler address | Key | Handler address |
       |---|---|---|---|
-      | H | `loc_11E55` (partially read, see below) | R | `loc_17E33` |
-      | J | `loc_15C73` | T | `loc_17FC6` |
-      | L | `loc_11E7A` | W | `loc_17EE4` |
-      | N | `loc_15CF8` | Y | `loc_17458` |
-      | O | `loc_174D5` | Z | `loc_12068` |
+      | H | `loc_11E55` (partially read, see below) | R | `cmdReady` (`0x17E33`) |
+      | J | `cmdJoinGold` (`0x15C73`) | T | `cmdTransact` (`0x17FC6`) |
+      | L | `cmdLook` (`0x11E7A`) | W | `cmdWear` (`0x17EE4`) |
+      | N | `cmdNegateTime` (`0x15CF8`) | Y | `cmdYell` (`0x17458`) |
+      | O | `cmdOrder` (`0x174D5`) | Z | `cmdZtats` (`0x12068`) |
 
       H (`loc_11E55`) is partially read: prompts "To Player: ", involves
       `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
       and a recursive self-call into `sub_17B54` — purpose not pinned
-      down, flagged rather than guessed.
+      down, flagged rather than guessed. **This is now the only one of
+      the 33 overworld command letters without a confirmed handler
+      name** — 32/33 done as of 2026-09-14 (`cmdZtats`/`cmdYell`/
+      `cmdWear` closed out the J/L/N/O/R/T/W/Y/Z batch above; see
+      overview.md's findings log).
 - [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3`) — both are
       no-ops on the overworld, consistent with Descend/Klimb being
       dungeon-only commands.
