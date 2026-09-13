@@ -773,3 +773,34 @@ Two results stood out:
 `ida_scripts/dump_overworld_labels.py` is kept in the repo (read-only,
 no IDB modifications) as living documentation of this table, the same
 way the other one-off `fix_*`/`dump_*` scripts are kept.
+
+**`DUNGEON_COMMAND_LABELS` confirmed, same session**: ran the same
+technique against the dungeon side (`ida_scripts/
+dump_dungeon_labels.py`) — `dungeonMainLoop`'s dispatcher does
+`lea si, DUNGEON_COMMAND_LABELS; mov si, [bx+si]` right before `jmp
+DUNGEON_COMMAND_TABLE[bx]`, so no manual segment math was needed for
+the table base this time (only its near-pointer string entries, same
+`linear = 0x10000 + ptr` convention). This closes the "worth
+confirming and naming next" item flagged in the dungeon-command
+correction writeup above — the table is exactly the per-command prompt
+string array hypothesized, and it double-confirms two earlier findings
+independently:
+
+- All 10 dungeon-disabled letters (`B`, `A`, `E`, `F`, `L`, `Q`, `T`,
+  `U`, `X`, `S` — `cmdDisabledInDungeon`) share one prompt string,
+  `"Not a DNG cmd!\n"` — consistent with them all routing to the same
+  handler.
+- Every enabled dungeon command's prompt matches its already-confirmed
+  handler exactly, including the 6 movement handlers whose addresses
+  were the subject of this session's self-caught correction (see
+  above): `cmdKlimb`="Klimb", `cmdDescend`="Descend",
+  `cmdTurnRight`="Turn right", `cmdTurnLeft`="Turn left",
+  `cmdMoveForward`="Advance", `cmdMoveBackward`="Retreat" — an
+  independent, prompt-text-based confirmation that the corrected
+  addresses are right, from a completely different table than the one
+  that originally caught the bug.
+
+'H' (`cmdHandEquipment`) and 'O' (`cmdOtherCommand`) both share their
+overworld prompts in the dungeon context too (dungeon indices 3 and 8
+respectively), i.e. Hand Equipment and the typed "Other command" both
+work underground as well as on the surface.
