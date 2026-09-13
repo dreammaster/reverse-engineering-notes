@@ -1,22 +1,38 @@
 """
-One-off structural setup: creates the RosterEntry struct (64 bytes) in
-ultima_bootup.idb, confirmed field-by-field against real code in
-showCharacterDetails, handleCreateCharacter, showRegister, and
-getRosterEntryPointer -- see docs/overview.md's findings log and
-docs/file-formats.md's ROSTER.ULT section for the full evidence trail.
-This is the "Savegame"-equivalent struct for Ultima III, matching the
-convention set by ultima1/ultima2's own Savegame structs.
+One-off structural setup: creates the RosterEntry struct (64 bytes),
+confirmed field-by-field against real code in ultima_bootup.idb
+(showCharacterDetails, handleCreateCharacter, showRegister,
+getRosterEntryPointer) and cross-confirmed independently in
+ultima_exodus.idb (castSpell, healHitPoints, addExperienceClamped,
+addGoldClamped, combatCmdNegateTime -- see docs/overview.md's findings
+log). This is the "Savegame"-equivalent struct for Ultima III, matching
+the convention set by ultima1/ultima2's own Savegame structs.
 
-apply_structs_bootup.py only edits an *existing* struct (add_struc_member/
-set_member_name) -- it doesn't create one from scratch, hence this
-separate one-off script. Run this once, then apply_structs_bootup.py's
-OPERATIONS list can add/rename further members as more fields are traced.
+IDA structs are per-IDB, not shared -- run this against BOTH
+ultima_bootup.idb and ultima_exodus.idb (same MEMBERS list, since the
+in-memory layout is identical: both use `[bx+N]`-style access into
+0x40-byte character records copied from ROSTER.ULT/PARTY.ULT):
+
+    .\\run_ida_script.ps1 -Idb ultima_bootup -ScriptName create_roster_struct.py
+    .\\run_ida_script.ps1 -Idb ultima_exodus -ScriptName create_roster_struct.py
+
+apply_structs_bootup.py/apply_structs_exodus.py only edit an *existing*
+struct (add_struc_member/set_member_name) -- they don't create one from
+scratch, hence this separate one-off script. Run this once per IDB,
+then those scripts' OPERATIONS lists can add/rename further members as
+more fields are traced. Idempotent per-member (add_struc_member on an
+offset that already has a member fails harmlessly with an error code,
+printed but not treated as fatal) -- safe to re-run after adding new
+members to MEMBERS, though a member added after this script's first run
+in a given IDB will need a manual add_struc_member call there too if
+this script isn't re-run wholesale (this script doesn't currently
+special-case "struct exists but member doesn't").
 
 Every offset here comes from a real `[bx+N]` access in the disassembly,
 not from the external file-formats.md documentation alone (though it
 matches that documentation exactly for every field checked) -- see the
-apply_renames_bootup.py notes for showCharacterDetails/
-handleCreateCharacter for the specific evidence per field.
+apply_renames_bootup.py/apply_renames_exodus.py notes for the specific
+evidence per field.
 """
 
 import idc
@@ -47,11 +63,20 @@ MEMBERS = [
     (0x16, "_race", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into a fixed race-name table."),
     (0x17, "_class", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into a fixed class-name table."),
     (0x18, "_sex", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into Male/Female/Other."),
+    (0x19, "_magicPoints", 1, 1,
+     "current magic points (BCD). Found and confirmed in "
+     "ultima_exodus.idb's castSpell: a spell's BCD-packed MP cost is "
+     "compared against this field and BCD-subtracted from it on a "
+     "successful cast ('M.P. too low!' otherwise)."),
     (0x1A, "_hitPoints", 2, 1, "showCharacterDetails (printHexWord/BCD), set to 150 (BCD) at creation."),
-    (0x1C, "_maxHitPoints", 2, 1, "set to 150 (BCD) at creation alongside _hitPoints -- offset inferred from handleCreateCharacter's parallel word write, not independently displayed by showCharacterDetails (which only shows one HP value) -- LOW CONFIDENCE on the exact label, confirmed only that *a* second HP-shaped word lives here."),
-    (0x1E, "_experience", 2, 1, "showCharacterDetails (printHexWord/BCD)."),
+    (0x1C, "_maxHitPoints", 2, 1,
+     "set to 150 (BCD) at creation alongside _hitPoints. CONFIRMED "
+     "2026-09-13 via ultima_exodus.idb's healHitPoints, which clamps "
+     "_hitPoints to this field's value after adding -- no longer just "
+     "an offset guess from the parallel creation-time write."),
+    (0x1E, "_experience", 2, 1, "showCharacterDetails (printHexWord/BCD); addExperienceClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999)."),
     (0x21, "_food", 2, 1, "showCharacterDetails (printHexWord/BCD), set to 150 (BCD) at creation."),
-    (0x23, "_gold", 2, 1, "showCharacterDetails (printHexWord/BCD)."),
+    (0x23, "_gold", 2, 1, "showCharacterDetails (printHexWord/BCD); addGoldClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999)."),
     (0x28, "_armourIndex", 1, 1, "currently-equipped armour type index, showCharacterDetails."),
     (0x29, "_armourOwned", 1, 7, "7-entry owned-quantity array (Cloth/Leather/Chain/Plate/+2 Chain/+2 Plate/Exotic per external doc) -- only [0] confirmed written (=1 at creation); the array bounds are from file-formats.md, not independently re-derived here."),
     (0x30, "_weaponIndex", 1, 1, "currently-equipped weapon type index, showCharacterDetails."),
