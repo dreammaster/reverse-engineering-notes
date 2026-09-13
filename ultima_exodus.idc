@@ -1520,6 +1520,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X15E9D);
 	op_hex		(x,	1);
 	create_insn	(0X15EAA);
+	set_name	(0X15EAA,	"applyRandomGroupDamage");
 	create_insn	(x=0X15EC3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3081,10 +3082,12 @@ static Bytes_0(void) {
 	create_byte	(0X18E42);
 	create_insn	(0X18E43);
 	create_insn	(0X18E46);
+	set_name	(0X18E46,	"findCombatantAtPosition");
 	create_insn	(x=0X18E70);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X18E7A);
+	set_name	(0X18E7A,	"fireProjectileAcrossArena");
 	create_insn	(0X18EA7);
 	create_insn	(x=0X18EAF);
 	op_plain_offset	(x,	1,	0X10000);
@@ -3105,6 +3108,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18F46);
 	op_hex		(x,	1);
 	create_insn	(0X18F5A);
+	set_name	(0X18F5A,	"applyCombatDamage");
 	create_insn	(x=0X18F74);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

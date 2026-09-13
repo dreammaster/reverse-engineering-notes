@@ -894,3 +894,70 @@ flavor text only, not independently confirmed by reading the routine's
 own code — a well-bounded next target now that every address has a
 name, and LairWare's `UltimaSpellCombat.c` is available as a secondary
 cross-reference for expected behavior.
+
+**Combat damage-resolution fully traced, same session**: read the code
+around `updateMonsterAI`'s attack-resolution chunk end-to-end rather
+than guessing from shape alone. The 8-combatant combat arena turns out
+to be a set of parallel byte arrays at a fixed base (`[reg+24C4h]`,
+DS-relative): `+0x80`=X, `+0x88`=Y, `+0x90`=display tile,
+`+0x98`=occupied-flag/HP-or-count — a smaller, combat-local cousin of
+`updateMonsterAI`'s own 32-slot overworld monster arrays
+(`+0x1280`/`+0x12A0`/`+0x12C0`/`+0x12E0`), not the same structure.
+Named 4 helpers:
+
+- **`findCombatantAtPosition`** (`0x18E46`) — given an (X,Y), searches
+  the 8 slots and returns the matching one's index via a small trick:
+  `lea bx, entryFromBootup; sub si, bx` — `entryFromBootup`'s own
+  near-offset within this segment happens to equal the arena array's
+  base offset, so the subtraction cancels it out and leaves the plain
+  0-7 loop index in `bx`, without a separate constant. Returns
+  `0xFFFF` if no occupied slot matches.
+- **`fireProjectileAcrossArena`** (`0x18E7A`) — called from
+  `combatCmdAttack`'s own chunk (ranged weapons) and from
+  `updateMonsterAI` (monster ranged attacks). Steps a projectile's
+  position by a fixed `(ch,cl)` delta per iteration, redrawing via
+  `drawLogoTileGrid` and testing `findCombatantAtPosition` after each
+  step, stopping when either axis reaches `0x0B` (leaving the 11×11
+  arena — matches `drawTileGrid`'s confirmed dimensions) or a
+  combatant is found.
+- **`applyCombatDamage`** (`0x18F5A`) — BCD-subtracts a damage amount
+  from a target slot's `+0x98` field; on death, prints "Killed!
+  Exp.+", clears the slot, and calls `addExperienceClamped` with an
+  amount read from an as-yet-unidentified table indexed by
+  `_conflictMonsterClass & 0xFh` (`[bx-79EBh]` — the table itself
+  isn't located/named). Has one unexplained special case: skipped
+  entirely when `_conflictMonsterClass == 0x13` — flagged, not
+  investigated (possibly a scripted/indestructible monster, maybe
+  Exodus itself, but not confirmed).
+- **`applyRandomGroupDamage`** (`0x15EAA`) — confirmed shared by
+  `spellRespond` and `spellNoxum`: its two `CODE XREF` comments
+  (`seg000:5FCBh`/`seg000:60B1h`) resolve to linear addresses
+  `0x15FCB` and `0x160B1`, which fall *inside* `spellRespond`'s
+  (`0x15F9F`-`0x15FD3`) and `spellNoxum`'s (`0x160A5`-`0x160B9`) own
+  address ranges respectively — i.e. those two spells call this helper
+  from within their bodies. It loops all 8 arena slots and, for each
+  occupied one, rolls `and dl,3` and applies damage via
+  `applyCombatDamage` unless the roll is exactly 0 — roughly a 3-in-4
+  chance per occupied slot, not the 1-in-4 a naive reading of "and
+  with 3" might suggest. Matches Noxum's manual description ("the
+  first of the multi-pronged attacks") well; for Respond ("dispel
+  Orcs/Goblins/Trolls"), the monster-type filtering the manual implies
+  isn't visible in this shared helper, so it must happen in
+  `spellRespond`'s own code before the call — not independently
+  confirmed.
+
+The **melee** to-hit/damage formula itself (inline in
+`updateMonsterAI`'s attack-resolution chunk, not a separate function,
+so not given its own name) is now fully traced: to-hit is a BCD dice
+roll compared against the defender's `_dexterity`
+(`RosterEntry+0x13`) — higher Dexterity means harder to hit. On a hit,
+damage is computed as:
+
+```
+strength = decimal(RosterEntry[+0x12])          ; BCD -> binary via AAD
+damage   = 4 + weaponIndex*3 + floor(strength/2) + random(0 .. strength|1)
+```
+
+(`weaponIndex` from `RosterEntry+0x30`), then applied via
+`applyCombatDamage`. This is a complete, evidence-based combat formula
+— a solid foundation for the eventual C++/ScummVM reimplementation.

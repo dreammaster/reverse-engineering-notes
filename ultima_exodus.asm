@@ -5058,7 +5058,7 @@ healHitPoints   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-addExperienceClamped proc near          ; CODE XREF: sub_18F5A+4D↓p
+addExperienceClamped proc near          ; CODE XREF: applyCombatDamage+4D↓p
                 pushf
                 push    ax
                 add     al, [bx+1Eh]
@@ -5276,7 +5276,7 @@ sub_15E89       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15EAA       proc near               ; CODE XREF: seg000:5FCB↓p
+applyRandomGroupDamage proc near        ; CODE XREF: seg000:5FCB↓p
                                         ; seg000:60B1↓p ...
                 pushf
                 push    ax
@@ -5294,7 +5294,7 @@ sub_15EAA       proc near               ; CODE XREF: seg000:5FCB↓p
                 mov     cx, 8
                 lea     bx, entryFromBootup
 
-loc_15EC7:                              ; CODE XREF: sub_15EAA+56↓j
+loc_15EC7:                              ; CODE XREF: applyRandomGroupDamage+56↓j
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 and     dl, 3
@@ -5314,10 +5314,10 @@ loc_15EC7:                              ; CODE XREF: sub_15EAA+56↓j
                 call    drawLogoTileGrid
                 xchg    bx, dx
                 mov     ax, si
-                call    sub_18F5A
+                call    applyCombatDamage
 
-loc_15EFF:                              ; CODE XREF: sub_15EAA+25↑j
-                                        ; sub_15EAA+2C↑j
+loc_15EFF:                              ; CODE XREF: applyRandomGroupDamage+25↑j
+                                        ; applyRandomGroupDamage+2C↑j
                 inc     bx
                 loop    loc_15EC7
                 pop     di
@@ -5328,7 +5328,7 @@ loc_15EFF:                              ; CODE XREF: sub_15EAA+25↑j
                 pop     ax
                 popf
                 retn
-sub_15EAA       endp
+applyRandomGroupDamage endp
 
 ; ---------------------------------------------------------------------------
 
@@ -5366,7 +5366,7 @@ loc_15F2D:                              ; CODE XREF: seg000:5FE0↓j
                 mov     bh, 0
                 mov     dh, [bx+2568h]
                 mov     dl, [bx+2564h]
-                call    sub_18E7A
+                call    fireProjectileAcrossArena
                 cmp     bx, 0FFFFh
                 jz      short loc_15F78
                 mov     al, 0F7h
@@ -5377,7 +5377,7 @@ loc_15F2D:                              ; CODE XREF: seg000:5FE0↓j
                 xchg    ax, di
                 lea     di, [di+14CCh]
                 lea     bx, [bx+24C4h]
-                call    sub_18F5A
+                call    applyCombatDamage
 
 loc_15F75:                              ; CODE XREF: seg000:5F40↑j
                 jmp     loc_15E69
@@ -5435,7 +5435,7 @@ spellRespond:
                 mov     dl, al
                 call    sub_15E89
                 mov     al, 0FFh
-                call    sub_15EAA
+                call    applyRandomGroupDamage
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5567,7 +5567,7 @@ spellNoxum:
                 jnz     short loc_160B7
                 call    sub_15E89
                 mov     al, 4Bh ; 'K'
-                call    sub_15EAA
+                call    applyRandomGroupDamage
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5602,7 +5602,7 @@ spellDagMentar:
                 and     al, 0Fh
                 aad
                 shl     al, 1
-                call    sub_15EAA
+                call    applyRandomGroupDamage
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5647,7 +5647,7 @@ spellZxkuqyb:
                 jnz     short loc_16150
                 call    sub_15E89
                 mov     al, 0FFh
-                call    sub_15EAA
+                call    applyRandomGroupDamage
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5671,7 +5671,7 @@ spellPontori:
                 mov     dl, al
                 call    sub_15E89
                 mov     al, 0FFh
-                call    sub_15EAA
+                call    applyRandomGroupDamage
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -10721,7 +10721,7 @@ byte_184E0      db 0                    ; DATA XREF: sub_17B54-5DF9↑w
                                         ; sub_17B54+D3A↓w ...
 _currentCombatant db 0                  ; DATA XREF: updateLogoAnimationD+22↑r
                                         ; updateLogoAnimationD+42↑r ...
-_conflictMonsterClass db 0              ; DATA XREF: sub_15EAA+46↑r
+_conflictMonsterClass db 0              ; DATA XREF: applyRandomGroupDamage+46↑r
                                         ; seg000:5FA6↑r ...
 byte_184E3      db 0                    ; DATA XREF: seg000:5FAD↑r
                                         ; seg000:5FB4↑w ...
@@ -10841,7 +10841,7 @@ aAttackDir      db ' Attack',0Ah        ; DATA XREF: updateMonsterAI+6A16↓o
 aMissed         db 'Missed!',0Ah,0      ; DATA XREF: updateMonsterAI:loc_18EAF↓o
 aHit            db 0Ah                  ; DATA XREF: updateMonsterAI+6B53↓o
                 db 'Hit!',0Ah,0
-aKilledExp      db 'Killed! Exp.+',0    ; DATA XREF: sub_18F5A:loc_18F74↓o
+aKilledExp      db 'Killed! Exp.+',0    ; DATA XREF: applyCombatDamage:loc_18F74↓o
 aReadyAWeapon   db 'Ready a weapon!',0Ah,0
                                         ; DATA XREF: updateMonsterAI:combatCmdReady↓o
 aCastSpell      db 'Cast Spell!',0Ah,0  ; DATA XREF: updateMonsterAI:combatCmdCastSpell↓o
@@ -11609,7 +11609,7 @@ combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 add     cl, dl
                 xchg    dx, cx
                 mov     di, bx
-                call    sub_18E46
+                call    findCombatantAtPosition
                 xchg    dx, cx
                 cmp     bx, 0FFFFh
                 jnz     short loc_18E3D
@@ -11629,7 +11629,7 @@ loc_18E2B:                              ; CODE XREF: updateMonsterAI+6A47↑j
                 mov     cx, dx
                 mov     dh, [bx+0A4h]
                 mov     dl, [bx+0A0h]
-                call    sub_18E7A
+                call    fireProjectileAcrossArena
                 cmp     bx, 0FFFFh
                 jz      short loc_18E40
 
@@ -11656,8 +11656,8 @@ loc_18E43:                              ; CODE XREF: updateMonsterAI+6A22↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18E46       proc near               ; CODE XREF: updateMonsterAI+6A65↑p
-                                        ; sub_18E7A+21↓p ...
+findCombatantAtPosition proc near       ; CODE XREF: updateMonsterAI+6A65↑p
+                                        ; fireProjectileAcrossArena+21↓p ...
                 pushf
                 push    cx
                 push    si
@@ -11665,7 +11665,7 @@ sub_18E46       proc near               ; CODE XREF: updateMonsterAI+6A65↑p
                 mov     si, 7
                 lea     si, [si+24C4h]
 
-loc_18E53:                              ; CODE XREF: sub_18E46+21↓j
+loc_18E53:                              ; CODE XREF: findCombatantAtPosition+21↓j
                 cmp     byte ptr [si+98h], 0
                 jz      short loc_18E66
                 cmp     [si+80h], dl
@@ -11673,37 +11673,37 @@ loc_18E53:                              ; CODE XREF: sub_18E46+21↓j
                 cmp     [si+88h], dh
                 jz      short loc_18E70
 
-loc_18E66:                              ; CODE XREF: sub_18E46+12↑j
-                                        ; sub_18E46+18↑j
+loc_18E66:                              ; CODE XREF: findCombatantAtPosition+12↑j
+                                        ; findCombatantAtPosition+18↑j
                 dec     si
                 loop    loc_18E53
                 mov     bx, 0FFFFh
 
-loc_18E6C:                              ; CODE XREF: sub_18E46+32↓j
+loc_18E6C:                              ; CODE XREF: findCombatantAtPosition+32↓j
                 pop     si
                 pop     cx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18E70:                              ; CODE XREF: sub_18E46+1E↑j
+loc_18E70:                              ; CODE XREF: findCombatantAtPosition+1E↑j
                 lea     bx, entryFromBootup
                 sub     si, bx
                 mov     bx, si
                 jmp     short loc_18E6C
-sub_18E46       endp
+findCombatantAtPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18E7A       proc near               ; CODE XREF: seg000:5F55↑p
+fireProjectileAcrossArena proc near     ; CODE XREF: seg000:5F55↑p
                                         ; updateMonsterAI+6A90↑p
                 pushf
                 push    ax
                 push    dx
 
-loc_18E7D:                              ; CODE XREF: sub_18E7A+27↓j
+loc_18E7D:                              ; CODE XREF: fireProjectileAcrossArena+27↓j
                 add     dh, ch
                 cmp     dh, 0Bh
                 jnb     short loc_18EA7
@@ -11716,23 +11716,23 @@ loc_18E7D:                              ; CODE XREF: sub_18E7A+27↓j
                 mov     [bx], ah
                 call    drawLogoTileGrid
                 mov     [bx], al
-                call    sub_18E46
+                call    findCombatantAtPosition
                 cmp     bx, 0FFFFh
                 jz      short loc_18E7D
 
-loc_18EA3:                              ; CODE XREF: sub_18E7A+33↓j
+loc_18EA3:                              ; CODE XREF: fireProjectileAcrossArena+33↓j
                 pop     dx
                 pop     ax
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18EA7:                              ; CODE XREF: sub_18E7A+8↑j
-                                        ; sub_18E7A+F↑j
+loc_18EA7:                              ; CODE XREF: fireProjectileAcrossArena+8↑j
+                                        ; fireProjectileAcrossArena+F↑j
                 call    drawLogoTileGrid
                 mov     bx, 0FFFFh
                 jmp     short loc_18EA3
-sub_18E7A       endp
+fireProjectileAcrossArena endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
@@ -11814,7 +11814,7 @@ loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
                 add     al, dl
                 add     al, 4
                 xchg    di, bx
-                call    sub_18F5A
+                call    applyCombatDamage
                 call    drawLogoTileGrid
                 jmp     combatAdvanceTurn
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
@@ -11822,7 +11822,7 @@ loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18F5A       proc near               ; CODE XREF: sub_15EAA+52↑p
+applyCombatDamage proc near             ; CODE XREF: applyRandomGroupDamage+52↑p
                                         ; seg000:5F72↑p ...
                 pushf
                 push    ax
@@ -11837,7 +11837,7 @@ sub_18F5A       proc near               ; CODE XREF: sub_15EAA+52↑p
                 jz      short loc_18F74
                 jnb     short loc_18FB0
 
-loc_18F74:                              ; CODE XREF: sub_18F5A+16↑j
+loc_18F74:                              ; CODE XREF: applyCombatDamage+16↑j
                 lea     si, aKilledExp  ; "Killed! Exp.+"
                 call    printGameText
                 mov     byte ptr [bx+98h], 0
@@ -11858,15 +11858,15 @@ loc_18F74:                              ; CODE XREF: sub_18F5A+16↑j
                 call    sub_126F4
                 call    drawLogoTileGrid
 
-loc_18FB0:                              ; CODE XREF: sub_18F5A+A↑j
-                                        ; sub_18F5A+18↑j
+loc_18FB0:                              ; CODE XREF: applyCombatDamage+A↑j
+                                        ; applyCombatDamage+18↑j
                 pop     si
                 pop     dx
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_18F5A       endp
+applyCombatDamage endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -11912,7 +11912,7 @@ sub_18FEB       proc near               ; CODE XREF: sub_19020+81↓p
 loc_18FFF:                              ; CODE XREF: sub_18FEB+23↓j
                                         ; sub_18FEB+27↓j ...
                 mov     al, 0FFh
-                call    sub_18E46
+                call    findCombatantAtPosition
                 cmp     bx, 0FFFFh
                 jnz     short loc_1901C
 
