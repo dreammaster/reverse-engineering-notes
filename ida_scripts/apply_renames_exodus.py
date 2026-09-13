@@ -1317,6 +1317,52 @@ RENAMES = [
      "getMapTileAt (overworld/town), reading directly from a loaded "
      "per-level dungeon buffer rather than computing a packed-tile "
      "value."),
+
+    # --- Temple interactions, 2026-09-14 ------------------------------
+    (0x1A561, "promptYesNo",
+     "Shared Y/N confirmation prompt (`getMenuChoice` restricted to "
+     "'Y'/'N' via byte_1965B/byte_19657), used throughout the "
+     "temple/shop code (`sub_1A5AC`, showTempleMenu's 4 handlers, "
+     "etc). Returns al='Y' or al='N'."),
+    (0x1A587, "deductGoldIfAffordable",
+     "Shared cost-check-and-pay helper: compares a cost (ax) against "
+     "`_gold` (`[di+0x23]`) via a swap-compare-swap trick (no spare "
+     "register clobbered); if gold < cost, returns immediately "
+     "(carry set, insufficient funds); otherwise BCD-subtracts the "
+     "cost from `_gold` (double-byte `sub`/`das`/`sbb`/`das`, "
+     "flooring to 0 on any residual underflow) and returns with carry "
+     "clear."),
+    (0x1A692, "showTempleMenu",
+     "The temple interaction screen ('Clerical Healing\\nSacraments:"
+     "\\n 1-Cur[e]...'), reached via sub_17B54 (temple is one of "
+     "the location types cmdEnter dispatches to, per "
+     "`_locationTypeTable`). A 6-choice menu (1-4 plus Q/Esc to "
+     "leave) dispatching through TEMPLE_COMMAND_TABLE (below) to one "
+     "of 4 handlers; on leaving, prints 'Fare thee well\\nmy "
+     "children.'."),
+    (0x1A6C0, "TEMPLE_COMMAND_TABLE",
+     "4-entry jump table for showTempleMenu's 1-4 choices: "
+     "templeCure/templeHeal/templeResurrect/templeRecall (below)."),
+    (0x1A6D4, "templeCure",
+     "showTempleMenu choice 1 ('A Curing will cost...'). Confirms via "
+     "promptYesNo, checks/pays a fixed gold cost (`cmp word ptr "
+     "[di+23h], 100h`) via deductGoldIfAffordable, then presumably "
+     "cures poison on a selected character -- the actual cure effect "
+     "past the payment gate wasn't independently re-traced (matches "
+     "spellAlcort's already-confirmed poison-cure mechanic in shape, "
+     "not verified byte-for-byte identical)."),
+    (0x1A761, "templeHeal",
+     "showTempleMenu choice 2 (\"Healing's cost 20...\"). Same "
+     "pay-then-act shape as templeCure, gold cost 0x200; presumably "
+     "restores HP on a selected character."),
+    (0x1A7B6, "templeResurrect",
+     "showTempleMenu choice 3 (\"Resurrection's c[ost]...\"). Same "
+     "pay-then-act shape; presumably revives a dead (not ashed) "
+     "character, the temple counterpart to spellSanctuMani."),
+    (0x1A833, "templeRecall",
+     "showTempleMenu choice 4 (\"Recalling's cost...\"). Same "
+     "pay-then-act shape; presumably restores an ashed character to "
+     "life, the temple counterpart to spellAnjuSermani."),
 ]
 
 

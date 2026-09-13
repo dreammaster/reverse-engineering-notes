@@ -3610,6 +3610,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A561);
+	set_name	(0X1A561,	"promptYesNo");
 	create_insn	(x=0X1A569);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3617,6 +3618,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A587);
+	set_name	(0X1A587,	"deductGoldIfAffordable");
 	create_insn	(0X1A5AC);
 	create_insn	(x=0X1A5B1);
 	op_plain_offset	(x,	1,	0X10000);
@@ -3659,6 +3661,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A692);
+	set_name	(0X1A692,	"showTempleMenu");
 	create_insn	(x=0X1A697);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3677,6 +3680,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A6C0);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
+	set_name	(0X1A6C0,	"TEMPLE_COMMAND_TABLE");
 	create_insn	(x=0X1A6C4);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3684,6 +3688,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A6D4);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X1A6D4,	"templeCure");
 	create_insn	(x=0X1A6E9);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3703,6 +3708,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A761);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X1A761,	"templeHeal");
 	create_insn	(x=0X1A776);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3711,6 +3717,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A7B6);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X1A7B6,	"templeResurrect");
 	create_insn	(0X1A7C7);
 	create_insn	(x=0X1A7D1);
 	op_plain_offset	(x,	1,	0X10000);
@@ -3725,6 +3732,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A833);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X1A833,	"templeRecall");
 	create_insn	(0X1A844);
 	create_insn	(x=0X1A84E);
 	op_plain_offset	(x,	1,	0X10000);

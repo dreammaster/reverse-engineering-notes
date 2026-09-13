@@ -85,18 +85,27 @@ for the full findings log. Remaining loose ends:
       `PIC*` files. `loadFile` is identified; tracing its 2 call sites
       for these files plus what reads the loaded buffers afterward
       should settle this quickly.
-- [ ] Why does `drawCharGlyph`'s glyph-data buffer read as all zeros in
-      `ULTIMA.COM`'s own file image (see overview.md's hard-won-lesson
-      section)? `ultima_bootup.idb` has an *identical* zero-filled
-      buffer at the same relative offset (`byte_133E9`/`33E9h`-relative,
-      the `drawCharGlyph` note in `apply_renames_bootup.py`) — so this
-      isn't `ULTIMA.COM`-specific after all, it's a real open question
-      about where/when `CHARSET.ULT`'s font data actually gets loaded
-      into this shared buffer. `EXODUS.BIN` is now the next suspect,
-      since neither title-screen-chain executable populates it before
-      needing readable glyphs (both display real text — the wind
-      indicator, menu labels — successfully, so it must be populated
-      *somehow*, just not found yet).
+- [x] **RESOLVED, 2026-09-14**: why does `drawCharGlyph`'s glyph-data
+      buffer read as all zeros in `ULTIMA.COM`'s own file image? Found
+      it: `ultima_exodus.idb`'s `entryFromBootup` is exactly where
+      `CHARSET.ULT` gets loaded — `loadFile` with `bx = byte_13B39 +
+      0x400`, `cx = 0x800` (2048 bytes) — immediately after loading
+      `SHAPES.ULT` into `byte_12B39` with `cx = 0x1400` (5120 bytes).
+      The two buffers are exactly contiguous: `0x12B39 + 0x1400 =
+      0x13F39 = 0x13B39 + 0x400`, so `SHAPES.ULT` and `CHARSET.ULT`
+      load back-to-back into one combined 7,168-byte graphics-asset
+      region. Since `ULTIMA.COM`/`BOOTUP.BIN` never load `CHARSET.ULT`
+      themselves, their own static file images correctly show that
+      shared buffer as all zeros — it's simply populated later, once
+      `EXODUS.BIN` runs. Since both earlier executables display real
+      text successfully before that point, they must not be routing it
+      through `drawCharGlyph` at all — most likely plain DOS/BIOS text
+      output for their own (non-graphics-mode) screens, with
+      `drawCharGlyph` being an EXODUS-only, graphics-mode glyph
+      renderer that's simply never exercised until its buffer is
+      actually populated. Not independently confirmed which text
+      routine `ULTIMA.COM`/`BOOTUP.BIN` use instead, but the "zero
+      buffer" mystery itself is fully explained.
 
 ## `BOOTUP.BIN` (`ultima_bootup.idb`) — function-naming sweep: COMPLETE (73/73, 2026-09-13)
 
@@ -485,16 +494,31 @@ Next-session priorities, roughly in order:
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
       strong lead for the combat-arena renderer specifically (exact
       dimension match with `CNFLCT_*.ULT`).
-- [ ] `SHAPES.ULT`/`CHARSET.ULT` — this is also where the
-      `drawCharGlyph`-buffer-is-all-zeros mystery (see `ULTIMA.COM`'s
-      open items above) most likely resolves, since `entryFromBootup`
-      does load both files directly.
-- [ ] `sub_15D83` (spells) and the `Cure`/`Heal`/`Resurrect`/`Recall`
-      temple interactions (`sub_1A692`) — good self-contained targets
-      once the main dispatchers are underway, since Ultima III's
-      cleric/wizard spell list and temple mechanics are well-documented
-      externally (`ULTIMA3.TXT`, LairWare's `UltimaSpellCombat.c`) to
-      cross-check against.
+- [x] **`SHAPES.ULT`/`CHARSET.ULT` load sites found** — done, see the
+      resolved `drawCharGlyph`-buffer mystery in `ULTIMA.COM`'s open
+      items above (`entryFromBootup` loads both, back-to-back into one
+      contiguous buffer). Still open: what each byte of `SHAPES.ULT`'s
+      5,120-byte tile-shape data actually encodes hasn't been traced
+      (just the load site and size).
+- [x] **`castSpell` note updated** — its real address is `0x15D83`;
+      already identified and fully traced earlier this session (see
+      the spell-table and combat-damage findings above).
+- [x] **Temple interactions named**, done 2026-09-14:
+      `showTempleMenu` (`0x1A692`, the "Clerical Healing\nSacraments:"
+      screen reached from `cmdEnter` at a temple location) dispatches
+      through `TEMPLE_COMMAND_TABLE` (`0x1A6C0`) to `templeCure`
+      (`0x1A6D4`, gold cost `0x100`), `templeHeal` (`0x1A761`,
+      `0x200`), `templeResurrect` (`0x1A7B6`), and `templeRecall`
+      (`0x1A833`) — the temple counterparts to `spellAlcort`/
+      `spellSanctuMani`/`spellAnjuSermani`'s Cleric-spell effects,
+      each confirming its own gold cost via `promptYesNo` (`0x1A561`,
+      a shared Y/N confirmation) and `deductGoldIfAffordable`
+      (`0x1A587`, a shared cost-check-and-pay helper — BCD-subtracts
+      `_gold` if affordable, refuses otherwise). **Left open**: each
+      handler's actual character-effect *past* the payment gate wasn't
+      independently re-traced against its corresponding spell's own
+      code — presumed equivalent by name/shape, not verified
+      byte-for-byte identical.
 - [ ] Confirm/extend the `RosterEntry` struct against actual character-
       state manipulation during play (HP loss in combat, gold/food
       changes) — this is where fields only inferred so far

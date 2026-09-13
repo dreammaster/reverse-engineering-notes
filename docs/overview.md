@@ -1111,3 +1111,36 @@ based at a fixed `0x900`). Worth remembering as a general lesson: a
 speculative note written once, without re-reading the actual call
 site, can go stale — always re-verify against the code before trusting
 an old guess, not just when something looks suspicious.
+
+**`SHAPES.ULT`/`CHARSET.ULT` load sites found, and the old
+`drawCharGlyph`-zero-buffer mystery finally resolved, same session**:
+`entryFromBootup` (`EXODUS.BIN`'s entry point) loads `SHAPES.ULT` into
+a buffer at `0x12B39` (`0x1400` = 5,120 bytes) and, immediately after,
+`CHARSET.ULT` into `0x13B39 + 0x400`. Those two addresses are the same
+linear address (`0x12B39 + 0x1400 = 0x13F39 = 0x13B39 + 0x400`) — the
+two files load back-to-back into one contiguous 7,168-byte
+graphics-asset region. This explains a mystery flagged all the way
+back during the `ULTIMA.COM` phase: `drawCharGlyph`'s glyph buffer
+reads as all zeros in both `ULTIMA.COM`'s and `ultima_bootup.idb`'s
+own static file images simply because neither executable ever loads
+`CHARSET.ULT` — only `EXODUS.BIN` does, at runtime, into memory shared
+across the whole chain-loaded process. Since both earlier executables
+display real text successfully before `EXODUS.BIN` ever runs, they
+must be using a different text-output path than `drawCharGlyph` for
+their own (pre-graphics-mode) screens — not confirmed which, but the
+zero-buffer question itself is fully explained.
+
+**Temple interactions named, same session**: `showTempleMenu`
+(`0x1A692`) is the "Clerical Healing\nSacraments:" screen, reached
+from `cmdEnter` when the location type is a temple. It dispatches
+through a 4-entry `TEMPLE_COMMAND_TABLE` to `templeCure`, `templeHeal`,
+`templeResurrect`, and `templeRecall` — the temple-visit counterparts
+to `spellAlcort`/`spellSanctuMani`/`spellAnjuSermani`. Each follows
+the same shape: print a location-specific cost message, confirm via a
+newly-named shared `promptYesNo` helper, then pay via
+`deductGoldIfAffordable` (a shared cost-check-and-pay primitive that
+BCD-subtracts `_gold` if affordable and refuses otherwise) before
+presumably applying its effect. The actual character-state change past
+the payment gate wasn't independently re-traced against each
+corresponding spell's own code for this pass — assumed equivalent by
+name and structure, not confirmed byte-for-byte.
