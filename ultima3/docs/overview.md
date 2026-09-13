@@ -14,12 +14,13 @@ This file is the entry point into `docs/`. See also:
   disassembly and the original data files in `C:\games\ultima3`.
 
 Status as of this pass (2026-09-13, via `ida_scripts/identify.py`):
-**both IDBs 100% function-named** (`ultima.idb`: 58/58; `ultima_bootup.idb`:
-73/73). One struct defined so far (`RosterEntry`, in `ultima_bootup.idb`).
-A third executable, `EXODUS.BIN`, is now confirmed chained-to and holds
-the actual game-world engine (overworld/combat/dungeons) — see
-"Chained executables, now three deep" below and
-[roadmap.md](roadmap.md) for the next IDB to create.
+**`ultima.idb` and `ultima_bootup.idb` 100% function-named** (58/58 and
+73/73); **`ultima_exodus.idb` created and its entire shared low-level
+runtime named** (47/142 — the remaining 95 are `EXODUS.BIN`-specific
+game logic: overworld/town/dungeon movement, combat, spells, shops,
+temples, the ending sequence — a much larger follow-up effort, see
+[roadmap.md](roadmap.md)). One struct defined so far (`RosterEntry`, in
+`ultima_bootup.idb`).
 
 ## Three executables, three IDBs (one pending)
 
@@ -35,7 +36,7 @@ generalized 2026-09-13 to take a `-Idb` parameter (ported directly from
 |---|---|---|---|
 | `ultima.idb` | `ULTIMA.COM` | Title screen / boot loader, chains to BOOTUP.BIN | 58 / 58 (100%) |
 | `ultima_bootup.idb` | `BOOTUP.BIN` | Character creation / party management, chains to EXODUS.BIN | 73 / 73 (100%) |
-| `ultima_exodus.idb` | `EXODUS.BIN` | The overworld/combat/dungeon engine (confirmed by elimination — neither of the above has any such code) | not yet created |
+| `ultima_exodus.idb` | `EXODUS.BIN` | The overworld/town/dungeon/combat/spell/shop/temple engine and ending sequence | 47 / 142 (shared runtime only — game logic pending) |
 
 `ultima_bootup.idb` was created 2026-09-13 by copying `BOOTUP.BIN` to a
 temporary `.com`-extensioned file so IDA's automatic loader detection
@@ -409,3 +410,74 @@ starts at the segment's first instruction). Since neither `ULTIMA.COM`
 nor `BOOTUP.BIN` contains any overworld/combat/dungeon code, `EXODUS.BIN`
 is now the clear next target and holds the actual game-world engine —
 see [roadmap.md](roadmap.md).
+
+### Session 2026-09-13: `ultima_exodus.idb` created, shared runtime named (47/142)
+
+Created the third IDB the same way as `ultima_bootup.idb` (copy to a
+temp `.com` file for IDA's loader auto-detection — confirmed loading at
+the same `0x10100`-`0x1ADCA` range convention). This one is far bigger:
+**144 functions, ~14,600 `.asm` lines** — roughly 2x `BOOTUP.BIN` and
+5x `ULTIMA.COM` combined.
+
+**The real entry point had no function boundary at all**, unlike the
+previous two IDBs' `start_0`-equivalents. `BOOTUP.BIN`'s
+`handleJourneyOnward` reaches `EXODUS.BIN` via an indirect jump through
+a vector at file offset `0x1228` (see the previous section) — since
+nothing *within EXODUS.BIN itself* calls that address, IDA's
+auto-analysis had marked it as plain data (`byte_124C4`), not code.
+Fixed manually: `idc.plan_and_wait()` over a 0x400-byte range to force
+disassembly, then `ida_funcs.add_func()`, then named
+`entryFromBootup`. Confirms the vector points at a real, coherent boot
+routine (same `INT 23h`/`24h` vector-patching and stack setup as
+`titleScreenAndChainToBootup`/`titleScreenAndMainMenuLoop`), loading
+`CHARSET.ULT`/`SHAPES.ULT`/`PARTY.ULT` and going straight into gameplay
+— no decorative title/intro screen this time, unlike the previous two.
+
+**Confirms the shared-runtime hypothesis a third time, exhaustively.**
+Read through the entire low-level runtime cluster (`writeString`
+through the sound-effect table, ~40 functions) line-by-line and found
+it byte-for-byte structurally identical to `ultima_bootup.idb`'s copy —
+same text/graphics primitives, same file I/O, same boot/idle animation
+cluster, same 5-string wind display, same 12-entry sound table. All
+named directly from the known correspondence rather than re-derived
+from scratch (`ida_scripts/apply_renames_exodus.py`). One new function
+found here that's an anonymous orphan in the other two IDBs:
+`clearFramebuffer` (clears both CGA banks + resets cursor) has a real
+proc boundary in this IDB, so it got a name here for the first time.
+
+**A genuine memory-reuse trick, not a disassembly error**:
+`drawLogoTileGrid`'s 11×11 source tile-index buffer is `entryFromBootup`
+itself — the boot routine's own code bytes, deliberately read as
+scratch tile-index data once the boot routine has run exactly once.
+Worth remembering if `entryFromBootup`'s bytes ever look overwritten
+during later analysis.
+
+**The string table confirms this is the complete game-world engine** —
+overworld/town/dungeon map filenames (`SOSARIA.ULT` through
+`DARDIN.ULT`, all 19 `.ULT` map files), all 9 `CNFLCT_*.ULT` combat
+arenas, `DUNGEON.DAT`, the 4 special-location `.IMG` files
+(`SHRINE`/`TIME`/`FOUNTAIN`/`BRAND`), movement (`North`/`South`/`East`/
+`West`, "Mount Horse!", "Board Frigate!"), a large single-key overworld
+command dispatcher (evidenced by dozens of strings all attributed to
+one function, `sub_17B54`, at huge internal offsets — "Craft", "Cmd: ",
+"D, S, L, M:", "F, G, E, W, A:", trap messages, NPC interaction
+prompts), a separate combat-specific dispatcher (`sub_123A5` —
+"Attack", "Missed!", "Ready a weapon!", "Cast Spell!", "Negate Time!",
+"Ztats", "Pass"), spellcasting (`sub_15D83` — "Not a mage!", "Spell
+type W/C-", "Cleric spell-", "Wizard spell-", "M.P. too low!"), shops
+(`sub_1A630` — "Ye local Grocer..."), temples (`sub_1A692` — "Cure/
+Heal/Resurrect/Recall whom?"), and the game's ending sequence text
+("EXODUS:", "Seek ye out the...", "Shrines of Knowledge", "Fountains
+fair..."). This resolves a `docs/file-formats.md` naming discrepancy
+noted earlier: both `AMBROSIA.ULT` (on disk) and `FAWN.ULT`/
+`EXODUS.ULT` (referenced here as strings, not present on disk in this
+release) exist in the string table, suggesting a version/release
+difference rather than an error in either source — not fully resolved,
+noted in file-formats.md.
+
+**Scope reality check**: this executable alone is comparable in size to
+`ultima1`'s or `ultima2`'s entire sibling projects (which took many
+sessions each, per their git history). The remaining 95 functions
+include several genuinely massive ones (`sub_17B54` spans thousands of
+bytes by itself) — full identification is a multi-session effort, not
+a single pass. See [roadmap.md](roadmap.md) for the prioritized plan.

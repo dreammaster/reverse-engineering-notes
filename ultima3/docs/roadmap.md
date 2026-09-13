@@ -158,58 +158,79 @@ Remaining loose ends specific to this IDB:
       field-name lists (Elf/Dwarf/Fuzzy/etc. for race, Wizard/Ranger/
       etc. for class).
 
-## High value / next session: disassemble `EXODUS.BIN`
+## `EXODUS.BIN` (`ultima_exodus.idb`) — shared runtime named (47/142, 2026-09-13); game logic pending
 
-**This is now the top priority.** Neither `ULTIMA.COM` nor `BOOTUP.BIN`
-contains any overworld movement, combat, or dungeon code — that has to
-be in `EXODUS.BIN` (44,234 bytes), reached via `handleJourneyOnward`'s
-indirect-jump-through-a-file-offset-vector chain (see above).
+**This is now the top priority and the largest remaining phase of the
+whole project** — comparable in scope to `ultima1`'s or `ultima2`'s
+entire sibling efforts. Created 2026-09-13 (same recipe as
+`ultima_bootup.idb`: copy to a temp `.com` file for IDA's loader
+auto-detection). 144 functions total (142 after `entryFromBootup`'s
+manual `add_func` absorbed 2 stray auto-detected fragments), ~14,600
+`.asm` lines. The entire shared low-level runtime (~40 functions:
+`writeString`/`writeCharacter`/`drawCharGlyph`/`drawTileGrid`/
+`readLine`/`loadFile`/`saveFile`/`openFileWithRetry`/the boot-animation
+cluster/the wind display/the 12-entry sound table) is named — see
+[overview.md](overview.md#session-2026-09-13-ultima_exodusidb-created-shared-runtime-named-47142)
+for the full findings log. **95 functions remain, all game-specific.**
 
-- [ ] **Create a third IDB, `ultima_exodus.idb`**, same recipe as
-      `ultima_bootup.idb` (copy to a temp `.com` file for IDA's
-      auto-detection, since `EXODUS.BIN` is presumably also a raw
-      memory image). **Caveat**: confirm the load address assumption
-      still holds — `EXODUS.BIN` is loaded via `handleJourneyOnward`'s
-      DTA-at-`0x100` trick same as the other two, so it should occupy
-      the same `0x10100`+ range, but the *indirect* jump-through-vector
-      entry mechanism (unique to this chain-load) means its actual
-      entry point is wherever the 2-byte value at file offset `0x1228`
-      points, not necessarily offset `0x100` itself — find and follow
-      that vector once loaded, don't assume execution starts at the
-      segment's first byte the way it does for `ULTIMA.COM`/
-      `BOOTUP.BIN`.
-- [ ] Cross-reference the shared runtime immediately (same approach
-      that worked for `BOOTUP.BIN`): `drawTileGrid`, `playSoundEffect`/
-      `SOUND_EFFECT_TABLE`, `loadFile`/`saveFile`, the boot/idle
-      animation cluster, `writeCharacter`/`writeString`, etc. are very
-      likely present again, recompiled at yet another set of addresses.
-- [ ] Identify the top-level command dispatch loop (Ultima III's
-      classic single-key command set, per the game manual
-      `ULTIMA3.TXT`). Cross-reference LairWare's `UltimaMain.c` main
-      loop for the expected command set/shape before assuming Ultima
-      II's exact 26-command table transfers over unchanged.
-- [ ] Trace the overworld/town/dungeon map file loader — `SOSARIA.ULT`
-      etc. (4,648 bytes), dungeon/interior `.ULT` files (2,192 bytes),
-      `CNFLCT_*.ULT` combat arenas (176 bytes). `drawTileGrid`'s
-      confirmed 64-byte-tile/11×11-grid shape (already named in both
-      existing IDBs) is a strong lead for how this renders — the CNFLCT
-      arena dimensions match exactly.
+Confirmed via a string-table scan (not yet via reading the actual
+disassembly) that this executable holds: overworld/town/dungeon
+movement, a large single-key command dispatcher (`sub_17B54` — spans
+thousands of bytes, likely THE overworld command loop, analogous to
+ultima1/ultima2's A-Z dispatcher), a separate combat dispatcher
+(`sub_123A5`), spellcasting (`sub_15D83`), shops (`sub_1A630`), temples
+(`sub_1A692`), and the game's ending sequence.
+
+Next-session priorities, roughly in order:
+
+- [ ] **`sub_17B54`, the overworld command dispatcher** — the single
+      highest-value target. Given its size, don't try to read it start
+      to finish in one pass: first locate its internal command jump
+      table (same pattern as ultima2's `command_jump_table`) to split
+      it into per-command chunks, then work through those
+      systematically. Cross-reference LairWare's `UltimaMain.c` main
+      loop and `ULTIMA3.TXT`'s command list for the expected command
+      set before assuming Ultima I/II's exact letter mappings transfer
+      unchanged.
+- [ ] **`sub_123A5`, the combat dispatcher** — smaller and more
+      self-contained than the overworld one (strings suggest Attack/
+      Get/Ready/Cast Spell/Negate Time/Ztats/Pass), likely a more
+      tractable first target than `sub_17B54`.
+- [ ] Trace the overworld/town/dungeon map file loader against the
+      confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
+      `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
+      strong lead for the combat-arena renderer specifically (exact
+      dimension match with `CNFLCT_*.ULT`).
 - [ ] `SHAPES.ULT`/`CHARSET.ULT` — this is also where the
       `drawCharGlyph`-buffer-is-all-zeros mystery (see `ULTIMA.COM`'s
-      open items above) most likely resolves, if `EXODUS.BIN` is what
-      actually loads `CHARSET.ULT` into the shared buffer.
-- [ ] Confirm/extend the `RosterEntry` struct against whatever
-      character-state manipulation `EXODUS.BIN` does during actual
-      play (HP loss in combat, gold/food changes, etc.) — this is
-      where the fields only inferred so far (armour/weapon owned
-      arrays beyond index 0, `_maxHitPoints`) will get real evidence.
-- [ ] `EXODUS.BIN`'s own internal data tables (per the external
+      open items above) most likely resolves, since `entryFromBootup`
+      does load both files directly.
+- [ ] `sub_15D83` (spells) and the `Cure`/`Heal`/`Resurrect`/`Recall`
+      temple interactions (`sub_1A692`) — good self-contained targets
+      once the main dispatchers are underway, since Ultima III's
+      cleric/wizard spell list and temple mechanics are well-documented
+      externally (`ULTIMA3.TXT`, LairWare's `UltimaSpellCombat.c`) to
+      cross-check against.
+- [ ] Confirm/extend the `RosterEntry` struct against actual character-
+      state manipulation during play (HP loss in combat, gold/food
+      changes) — this is where fields only inferred so far
+      (`_maxHitPoints`, armour/weapon owned arrays beyond index 0) will
+      get real evidence.
+- [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
       documentation in file-formats.md: castle/town/dungeon/moongate
-      coordinates, "look" command strings) — cross-reference those
-      fixed offsets (`0x15E1`, `0x15E5`, `0x15F9`, `0x184D`, `0x1855`,
-      `0x6566`, `0x7445`, `0x7450`) against the disassembly once loaded.
+      coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"
+      command strings at `0x6566`) — cross-reference those file offsets
+      against the disassembly now that it's loaded.
+- [ ] Resolve the `AMBROSIA.ULT` (on disk) vs. `FAWN.ULT`/`EXODUS.ULT`
+      (referenced as strings here, not present on disk) discrepancy —
+      trace whichever function loads town/castle maps by name to see
+      how/whether these are actually reached.
 - [ ] `DUNGEON.DAT` (1,866 bytes) / `MOVES.ULT` (1,024 bytes) — smaller,
       less obviously-structured data files, lower priority.
+- [ ] Locate and name `checkDebugModeFlag`'s equivalent in this IDB (a
+      `mov al,0FFh; retn`-shaped stub near `drawCharGlyph`/`clearFramebuffer`
+      per the other two IDBs' layout) — a first address guess was
+      wrong and wasn't worth further chasing this pass; low priority.
 
 ## Open questions
 
