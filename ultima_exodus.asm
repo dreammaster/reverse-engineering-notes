@@ -970,7 +970,7 @@ loc_11E3A:                              ; CODE XREF: sub_17B54-5D31↑j
                 mov     cx, 800h
                 lea     dx, aDungeonDat ; "DUNGEON.DAT"
                 call    loadFile
-                jmp     loc_18314
+                jmp     initDungeonState
 ; ---------------------------------------------------------------------------
 
 loc_11E55:                              ; CODE XREF: sub_17B54-5F83↑j
@@ -7206,7 +7206,7 @@ isCharacterAlive endp
 
 
 checkPartyWipedOut proc near            ; CODE XREF: sub_17B54:mainGameLoop↑p
-                                        ; sub_17B54:loc_18327↓p ...
+                                        ; sub_17B54:dungeonMainLoop↓p ...
 
 ; FUNCTION CHUNK AT 7252 SIZE 00000002 BYTES
 
@@ -8838,14 +8838,14 @@ jpt_183F0       dw offset loc_1941E     ; DATA XREF: sub_17B54+89C↓r
                 dw offset loc_19550
                 dw offset loc_195B3
                 db 2 dup(0), 0Dh, 96h
-byte_17708      db 20h, 39h, 43h, 2Eh, 47h, 22h, 48h, 23h, 49h, 17h, 4Ah
+DUNGEON_COMMAND_KEYS db 20h, 39h, 43h, 2Eh, 47h, 22h, 48h, 23h, 49h, 17h, 4Ah
                                         ; DATA XREF: sub_17B54+81C↓o
                 db 24h, 4Dh, 32h, 4Eh, 31h, 4Fh, 18h, 52h, 13h, 56h, 2Fh
                 db 57h, 11h, 59h, 15h, 5Ah, 2Ch, 0, 1Fh, 0, 2Fh, 42h, 30h
                 db 41h, 1Eh, 45h, 12h, 46h, 21h, 4Ch, 26h, 51h, 10h, 54h
                 db 14h, 55h, 16h, 58h, 2Dh, 4Bh, 25h, 44h, 20h, 0, 4Dh
                 db 0, 4Bh, 53h, 1Fh, 0, 48h, 0, 2 dup(50h), 19h
-jpt_18389       dw offset cmdPass       ; DATA XREF: sub_17B54+835↓r
+DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdCastSpell  ; jump table for switch statement
                 dw offset loc_18190
                 dw offset loc_11E55
@@ -10536,19 +10536,19 @@ sub_182C6       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_18314:                              ; CODE XREF: sub_17B54-5D02↑j
+initDungeonState:                       ; CODE XREF: sub_17B54-5D02↑j
                 mov     byte_115CE, 0
                 mov     byte_115CF, 0
                 call    sub_162FD
                 call    sub_128C6
-                jmp     short loc_18327
+                jmp     short dungeonMainLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_18327:                              ; CODE XREF: sub_17B54+7D0↑j
+dungeonMainLoop:                        ; CODE XREF: sub_17B54+7D0↑j
                                         ; sub_17B54:loc_183F4↓j ...
                 call    checkPartyWipedOut
                 cmp     byte_115CE, 0
@@ -10594,7 +10594,7 @@ loc_18360:                              ; CODE XREF: sub_17B54+7FD↑j
 loc_1836D:                              ; CODE XREF: sub_17B54+80A↑j
                                         ; sub_17B54+811↑j ...
                 mov     cx, 21h ; '!'
-                lea     di, byte_17708
+                lea     di, DUNGEON_COMMAND_KEYS
                 repne scasw
                 jz      short loc_1837B
                 jmp     loc_17DBA
@@ -10607,7 +10607,7 @@ loc_1837B:                              ; CODE XREF: sub_17B54+822↑j
                 shl     bx, 1           ; switch 33 cases
                 lea     si, off_1778C
                 mov     si, [bx+si]
-                jmp     jpt_18389[bx]   ; switch jump
+                jmp     DUNGEON_COMMAND_TABLE[bx] ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_1838D:                              ; CODE XREF: sub_17B54-5F6E↑j
@@ -10660,11 +10660,11 @@ loc_183DD:                              ; CODE XREF: sub_17B54+85C↑j
 
 loc_183F4:                              ; CODE XREF: sub_17B54+869↑j
                                         ; sub_17B54+88B↑j ...
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_183F7:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 25
                 mov     bx, _partyPosition
                 call    sub_128F2
@@ -10686,7 +10686,7 @@ loc_18416:                              ; CODE XREF: sub_17B54+8B6↑j
 ; ---------------------------------------------------------------------------
 
 loc_1841C:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 26
                 mov     bx, _partyPosition
                 call    sub_128F2
@@ -10704,7 +10704,7 @@ loc_18435:                              ; CODE XREF: sub_17B54+8D4↑j
 ; ---------------------------------------------------------------------------
 
 loc_18438:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 27
                 mov     bx, _partyPosition
                 call    sub_128F2
@@ -10720,7 +10720,7 @@ loc_18452:                              ; CODE XREF: sub_17B54+8F0↑j
 ; ---------------------------------------------------------------------------
 
 loc_18455:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 28
                 mov     bx, _partyPosition
                 call    sub_128F2
@@ -10736,7 +10736,7 @@ loc_1846F:                              ; CODE XREF: sub_17B54+90D↑j
 ; ---------------------------------------------------------------------------
 
 loc_18472:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 cases 16-24,29
                 mov     al, 0FFh
                 call    playSoundEffect
@@ -10744,7 +10744,7 @@ loc_18472:                              ; CODE XREF: sub_17B54+835↑j
 ; ---------------------------------------------------------------------------
 
 loc_1847D:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 30
                 mov     bl, byte_158CC
                 mov     bh, 0
@@ -10765,7 +10765,7 @@ loc_184A6:                              ; CODE XREF: sub_17B54+949↑j
 ; ---------------------------------------------------------------------------
 
 loc_184A9:                              ; CODE XREF: sub_17B54+835↑j
-                                        ; DATA XREF: seg000:jpt_18389↑o
+                                        ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 31
                 mov     bl, byte_158CC
                 add     bl, 2
@@ -12624,7 +12624,7 @@ loc_19441:                              ; CODE XREF: sub_17B54+18F0↓j
                 call    sub_126F4
                 call    sub_19630
                 mov     byte_114BC, 1
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_19457:                              ; CODE XREF: sub_17B54+89C↑j
@@ -12665,7 +12665,7 @@ loc_19492:                              ; CODE XREF: sub_17B54+192D↑j
 loc_194A0:                              ; CODE XREF: sub_17B54+1926↑j
                 mov     byte_114BC, 1
                 call    sub_19630
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_194AB:                              ; CODE XREF: sub_17B54+193A↑j
@@ -12728,7 +12728,7 @@ loc_19517:                              ; CODE XREF: sub_17B54+89C↑j
                 call    printGameText
                 mov     byte_115CE, 0
                 call    sub_128C6
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_19529:                              ; CODE XREF: sub_17B54+89C↑j
@@ -12750,7 +12750,7 @@ loc_1954A:                              ; CODE XREF: sub_17B54+19EB↑j
                 call    sub_182C6
 
 loc_1954D:                              ; CODE XREF: sub_17B54+19F4↑j
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
@@ -12789,7 +12789,7 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
 loc_195A8:                              ; CODE XREF: sub_17B54+1A1F↑j
                 mov     byte_114BC, 1
                 call    sub_19630
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
 loc_195B3:                              ; CODE XREF: sub_17B54+89C↑j
@@ -12829,7 +12829,7 @@ loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
                 call    drawPartyStatusBar
                 mov     al, 0FAh
                 call    playSoundEffect
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
                 mov     byte ptr [bx], 0
@@ -12842,7 +12842,7 @@ loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
                 lea     si, [si+1100h]
                 call    printGameText
                 call    sub_126F4
-                jmp     loc_18327
+                jmp     dungeonMainLoop
 
 ; =============== S U B R O U T I N E =======================================
 

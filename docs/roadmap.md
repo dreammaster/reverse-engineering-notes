@@ -232,19 +232,41 @@ Next-session priorities, roughly in order:
       `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
       and a recursive self-call into `sub_17B54` — purpose not pinned
       down, flagged rather than guessed.
-- [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3` — genuinely
-      shared, confirmed via `ida_bytes.get_word()` against
-      `OVERWORLD_COMMAND_TABLE`) — both are no-ops on the overworld,
-      consistent with Descend/Klimb being dungeon-only commands. The
-      likely real in-dungeon command set is reached through a
-      **different** jump table, `jpt_18389`, referenced repeatedly
-      across this session's other finds (case numbers cited alongside
-      `OVERWORLD_COMMAND_TABLE`'s in several handlers' comments) but
-      never itself identified — **worth dedicated attention next**,
-      since it's plausibly where Descend/Klimb and other dungeon-only
-      commands actually live.
+- [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3`) — both are
+      no-ops on the overworld, consistent with Descend/Klimb being
+      dungeon-only commands.
 - [x] `cmdIgniteTorch` ('I') — confirms `_torches` (`RosterEntry`
       `+0x0F`) independently of external documentation.
+- [x] **`dungeonMainLoop` and `DUNGEON_COMMAND_TABLE`/
+      `DUNGEON_COMMAND_KEYS`** — done, 2026-09-14. `jpt_18389` (real
+      address `0x1774A`) is the dungeon counterpart to
+      `OVERWORLD_COMMAND_TABLE`, entered via `initDungeonState` right
+      after `cmdEnter`'s dungeon branch. Confirmed via the "It's dark!"
+      message tying directly to `cmdIgniteTorch`'s own flag
+      (`byte_115CE`) — not just structural similarity to the overworld
+      loop. See overview.md for the full writeup.
+- [ ] **`DUNGEON_COMMAND_TABLE`'s 7 dungeon-specific handlers** (K, D,
+      the 4 arrow keys, S — almost certainly Klimb/Descend and
+      first-person relative-turn dungeon movement) suffer the same
+      data-misdecoded-as-code problem `OVERWORLD_COMMAND_KEYS` had.
+      Needs a structural fix (extend `fix_command_key_tables.py`, or a
+      new script following the same pattern: `del_items` + redefine as
+      code/data as appropriate) before they can be read safely — the
+      addresses cluster around `0x1173x`-`0x1182x`. The overlapping
+      reference causing the confusion comes from `off_1778C`, a
+      parallel per-command table (likely message pointers, one per
+      command) referenced alongside `DUNGEON_COMMAND_TABLE` at its
+      dispatch site — identifying `off_1778C` first might clarify the
+      boundary automatically.
+- [ ] **Why is Unlock ('U') disabled in dungeons?** `DUNGEON_COMMAND_TABLE`
+      routes 9 letters (B, A, E, F, L, Q, T, U, X) to one shared
+      disabled-command stub — most make obvious sense (no vehicles/
+      locations-within-locations/surface-only-save underground), but
+      Unlock being disabled specifically is surprising given Ultima
+      dungeons are full of locked doors. Not explained this pass —
+      worth checking whether locked-door interaction in dungeons
+      happens automatically on movement instead of via a dedicated
+      command, or whether this finding needs re-verification.
 - [ ] Confirm whether `_locationTypeTable` (`byte_1259D`) is really a
       scalar or (more likely, given it's indexed alongside the
       19-entry `LOCATION_TILE_TABLE`) a 19-byte parallel array —

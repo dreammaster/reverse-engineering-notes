@@ -2,137 +2,24 @@
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
 [*] idb = C:\dev\ultima3\ultima_exodus.idb
-[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py']
-[*] reading apply_renames_exodus.py
-[*] executing apply_renames_exodus.py
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-124C4: already 'entryFromBootup' -- skipping
-14F3B: already 'writeString' -- skipping
-14F51: already 'writeStringPreserveCx' -- skipping
-14F57: already 'swapCursorPos' -- skipping
-14F5C: already 'writeCharacter' -- skipping
-14F90: already 'drawCharGlyph' -- skipping
-1504D: already 'plotPixel2bpp' -- skipping
-15072: already 'drawTileGrid' -- skipping
-150D3: already 'clearFramebuffer' -- skipping
-150FD: already 'readLine' -- skipping
-1514B: already 'stepTimeSeededPrng' -- skipping
-15184: already 'swapAnimTableRows' -- skipping
-151AA: already 'updateLogoAnimationA' -- skipping
-151F9: already 'updateLogoAnimationB' -- skipping
-15271: already 'updateLogoAnimationC' -- skipping
-152B2: already 'updateLogoAnimationD' -- skipping
-15311: already 'runIdleAnimationTick' -- skipping
-15334: already 'pollKeypressAndAnimate' -- skipping
-15347: already 'getKeypressAndWaitRaw' -- skipping
-153A2: already 'printHexWord' -- skipping
-153AD: already 'printHexByte' -- skipping
-153C6: already 'printHexNibble' -- skipping
-153D8: already 'accumulateInputDigit' -- skipping
-15462: already 'getMenuChoice' -- skipping
-154D9: already 'promptForNumberEntry' -- skipping
-1552A: already 'saveFile' -- skipping
-1557A: already 'loadFile' -- skipping
-155CD: already 'openFileWithRetry' -- skipping
-15608: already 'printStringAt' -- skipping
-15611: already 'adjustAnimSpeed' -- skipping
-15634: already 'drawLogoTileGrid' -- skipping
-1564F: already 'computeAnimTableByte' -- skipping
-15674: already 'updateWindDisplay' -- skipping
-156D9: already 'playSoundEffect' -- skipping
-156C0: already '_soundEnabled' -- skipping
-156C1: already 'SOUND_EFFECT_TABLE' -- skipping
-156F9: already 'playToneFF' -- skipping
-1571B: already 'playErrorBeep' -- skipping
-1573D: already 'playToneFD' -- skipping
-15796: already 'playToneFC' -- skipping
-157BF: already 'playToneFB' -- skipping
-157DA: already 'playToneFA' -- skipping
-157F8: already 'playToneF9' -- skipping
-15802: already 'playToneF8' -- skipping
-15828: already 'playToneF7' -- skipping
-15832: already 'playToneF6' -- skipping
-1585E: already 'playToneHelper' -- skipping
-1588E: already 'playToneF5' -- skipping
-12AAD: already 'aCalmWind' -- skipping
-12ABA: already 'aNorthWind' -- skipping
-12AC7: already 'aSouthWind' -- skipping
-12AD4: already 'aEastWind' -- skipping
-12AE1: already 'aWestWind' -- skipping
-1566A: already 'WIND_DIRECTION_TABLE' -- skipping
-123A5: already 'updateMonsterAI' -- skipping
-128DF: already 'getMapTileAt' -- skipping
-17AEA: already 'readDirectionKeypress' -- skipping
-115CC: already '_partyPosition' -- skipping
-184E1: already '_currentCombatant' -- skipping
-184E2: already '_conflictMonsterClass' -- skipping
-115D0: already '_negateTimeDuration' -- skipping
-188AA: already 'beginCombatEncounter' -- skipping
-18AC4: already 'lookupWeaponGlyph' -- skipping
-18AE6: already 'printCombatReactionMessage' -- skipping
-18B52: already 'combatTurnLoop' -- skipping
-18BD5: already 'readCombatCommandKey' -- skipping
-18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
-18BFC: already 'combatAdvanceTurn' -- skipping
-18C3C: already 'combatHandleMovement' -- skipping
-18CF1: already 'combatCmdReady' -- skipping
-18D0B: already 'combatCmdZtats' -- skipping
-18D38: already 'combatCmdCastSpell' -- skipping
-18D57: already 'combatCmdNegateTime' -- skipping
-18D83: already 'combatCmdPass' -- skipping
-18D8D: already 'combatCmdInvalid' -- skipping
-18D9F: already 'combatCmdAttack' -- skipping
-126A9: already 'printGameText' -- skipping
-15D16: already 'readSpellLetterKey' -- skipping
-15D2B: already 'healHitPoints' -- skipping
-15D4B: already 'addExperienceClamped' -- skipping
-15D67: already 'addGoldClamped' -- skipping
-15D83: already 'castSpell' -- skipping
-1594B: already 'WIZARD_SPELL_TABLE' -- skipping
-1596B: already 'CLERIC_SPELL_TABLE' -- skipping
-16C14: already 'isCharacterAlive' -- skipping
-16C29: already 'checkPartyWipedOut' -- skipping
-16CC3: already 'drawPartyStatusBar' -- skipping
-16FDF: already 'processPartyTurnEffects' -- skipping
-171ED: already 'invertCharacterCell' -- skipping
-17136: already 'regenerateMagicPoint' -- skipping
-114BA: already '_currentTransport' -- skipping
-11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
-1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
-11B7A: already 'mainGameLoop' -- skipping
-11BD5: already 'mainLoopCommandDone' -- skipping
-11C7D: already 'cmdMoveNorth' -- skipping
-11C9E: already 'cmdMoveSouth' -- skipping
-11CBF: already 'cmdMoveEast' -- skipping
-11CE0: already 'cmdMoveWest' -- skipping
-11C77: already 'cmdPass' -- skipping
-11D01: already 'cmdBoard' -- skipping
-11D69: already 'cmdEnter' -- skipping
-116E1: already 'LOCATION_TILE_TABLE' -- skipping
-1259D: already '_locationTypeTable' -- skipping
-114C2: already '_savedOverworldPosition' -- skipping
-15CC3: 'loc_15CC3' -> 'cmdDisabledOnSurface'
-    'D' and 'K' (indices 15, 26): both just print a message and jump to the shared invalid-command trampoline (loc_17DBA) -- these letters do nothing on the overworld. Classic Ultima has Descend/Klimb as dungeon-only commands, consistent with this being their overworld no-op stub (the real Descend/Klimb handlers, if any, would be reached via a different jump table used while in a dungeon -- jpt_18389, referenced repeatedly throughout this session's finds but not yet itself identified).
-15CC9: 'loc_15CC9' -> 'cmdIgniteTorch'
-    'I' (index 19): dungeon-only (gameMode==1) -- prompts 'Whose torch: ' (player select), spends 1 torch (RosterEntry _torches, +0x0F, BCD-borrow-checked decrement) and sets a lit-torch flag (byte_115CE=0xFF). Confirms _torches independently of external documentation.
-11E9B: already 'cmdExchange' -- skipping
-11EFD: already 'cmdPeer' -- skipping
-11F25: already 'cmdQuit' -- skipping
-11F53: already 'cmdSteal' -- skipping
-11FD6: already 'cmdUnlock' -- skipping
-11D4E: already 'cmdCastSpell' -- skipping
-12018: already 'cmdToggleSound' -- skipping
-12035: already 'cmdExitVehicle' -- skipping
-12228: already 'canMoveToTile' -- skipping
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
 
-Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 144 total, 65 named, 79 still sub_XXXXX
+
+structs (1): RosterEntry
 ----- end target script output -----
-[*] finished executing apply_renames_exodus.py
+[*] finished executing identify.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
-[*] gen_file(OFILE_ASM) returned 14616
-[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
-[*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0

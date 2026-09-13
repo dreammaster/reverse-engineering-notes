@@ -547,6 +547,70 @@ RENAMES = [
      "the overworld _partyPosition, saved by cmdEnter right before "
      "entering a dungeon/town/castle so it can be restored on exit."),
 
+    # -- THE DUNGEON MAIN LOOP AND ITS COMMAND TABLE: found while
+    # investigating jpt_18389, referenced repeatedly throughout this
+    # session's finds. Parallel in every way to mainGameLoop/
+    # OVERWORLD_COMMAND_TABLE, confirmed via the exact same structural
+    # shape (idle-animation poll, key-table lookup via repne scasw,
+    # jump-table dispatch) PLUS the "It's dark!" message tying directly
+    # to cmdIgniteTorch's own flag -- conclusive, not just structural
+    # similarity. --
+
+    (0x18314, "initDungeonState",
+     "entered via cmdEnter's dungeon branch right after loading the "
+     "dungeon map + DUNGEON.DAT. Resets the lit-torch flag "
+     "(byte_115CE=0) and byte_115CF=0 (a second dungeon-state byte, "
+     "not yet identified -- possibly a darkness/depth counter), calls "
+     "sub_162FD/sub_128C6 (not yet identified), falls into "
+     "dungeonMainLoop."),
+
+    (0x18327, "dungeonMainLoop",
+     "HIGH CONFIDENCE: the dungeon counterpart to mainGameLoop, "
+     "confirmed both structurally (identical idle-poll/key-lookup/"
+     "dispatch shape) and semantically -- checks byte_115CE (the "
+     "exact flag cmdIgniteTorch sets) and prints 'It's dark!\\n' every "
+     "iteration if unlit, the classic Ultima dungeon "
+     "need-a-lit-torch-to-see mechanic. Dispatches through "
+     "DUNGEON_COMMAND_TABLE via DUNGEON_COMMAND_KEYS instead of the "
+     "overworld's tables."),
+
+    (0x1774A, "DUNGEON_COMMAND_TABLE",
+     "33-entry jump table for the dungeon command loop, real address "
+     "0x1774A (verified via ida_bytes.get_word(), not its "
+     "auto-generated name's implied 0x18389). Shares many handlers "
+     "directly with OVERWORLD_COMMAND_TABLE (Pass, Cast Spell, "
+     "Ignite Torch, Exchange, Toggle Sound, and several still-"
+     "unnamed ones) -- these commands work identically in both "
+     "contexts. 9 consecutive letters (indices 16-24: B, A, E, F, L, "
+     "Q, T, U, X) share ONE disabled-command stub (loc_18472) -- "
+     "Board/Enter/eXit-vehicle/Quit disabled underground all make "
+     "immediate sense (no vehicles, no locations-within-locations, "
+     "no surface-only save); Attack/Fire/Locate/Transact/Unlock being "
+     "disabled here too is worth double-checking against actual "
+     "gameplay (Unlock disabled in dungeons specifically is "
+     "counter-intuitive and not independently explained this pass). "
+     "The remaining 7 non-overworld-shared entries (K, D, all 4 arrow "
+     "keys, S) point at genuinely dungeon-specific handlers -- almost "
+     "certainly Klimb/Descend and first-person turn/move-forward "
+     "navigation (classic Ultima dungeon movement is relative "
+     "turning, not compass directions) -- but these addresses "
+     "(around 0x1173x-0x1182x) suffer the same data/code "
+     "misdisassembly issue OVERWORLD_COMMAND_KEYS had (IDA shows "
+     "garbage instructions, likely due to an overlapping DATA XREF "
+     "from off_1778C, a parallel per-command message-pointer table not "
+     "yet identified) -- needs the same kind of structural fix as "
+     "fix_command_key_tables.py before these can be read/named safely. "
+     "Flagged in docs/roadmap.md rather than guessed at."),
+
+    (0x17708, "DUNGEON_COMMAND_KEYS",
+     "33-entry word array, same (scancode:char) shape as "
+     "OVERWORLD_COMMAND_KEYS, parallel index-for-index with "
+     "DUNGEON_COMMAND_TABLE. Verified via ida_bytes.get_word() against "
+     "all 33 entries -- did NOT need the misdecoded-as-code fix this "
+     "table's counterpart needed (this one was already clean data), "
+     "suggesting the earlier fix was specific to how OVERWORLD_COMMAND_"
+     "KEYS' surrounding bytes happened to align, not a systemic issue."),
+
     (0x15CC3, "cmdDisabledOnSurface",
      "'D' and 'K' (indices 15, 26): both just print a message and "
      "jump to the shared invalid-command trampoline (loc_17DBA) -- "
