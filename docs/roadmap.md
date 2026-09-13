@@ -321,9 +321,10 @@ Next-session priorities, roughly in order:
       near-offset), `fireProjectileAcrossArena` (`0x18E7A`, steps a
       ranged attack across the 11×11 arena by a fixed delta,
       redrawing and hit-testing each step), `applyCombatDamage`
-      (`0x18F5A`, BCD-subtracts damage from a slot's HP/count field,
-      handles death + `addExperienceClamped`, with an unexplained
-      skip when `_conflictMonsterClass == 0x13`), and
+      (`0x18F5A`, subtracts damage from a slot's HP/count field as
+      plain binary, not BCD, handles death + `addExperienceClamped`
+      (BCD amount from the now-identified `MONSTER_EXP_TABLE`), with
+      an unexplained skip when `_conflictMonsterClass == 0x13`), and
       `applyRandomGroupDamage` (`0x15EAA`, confirmed shared by
       `spellRespond` and `spellNoxum` via address-range containment of
       their `CODE XREF` offsets — loops all 8 arena slots, ~75% chance
@@ -334,9 +335,22 @@ Next-session priorities, roughly in order:
       (`RosterEntry+0x13`), and damage on a hit is
       `4 + weaponIndex*3 + floor(strength/2) + random(0..strength|1)`,
       strength/weapon read from `RosterEntry+0x12`/`+0x30`. Still
-      open: the experience-award table `applyCombatDamage` indexes via
-      `[bx-79EBh]` (keyed by `_conflictMonsterClass & 0xFh`) isn't
-      located/named yet.
+      open items closed while chasing this down, same session: found
+      `MONSTER_EXP_TABLE` (linear `0x18615`, the address
+      `applyCombatDamage`'s `[bx-79EBh]` resolves to) and the adjacent
+      `MONSTER_HP_TABLE` (linear `0x18605`,
+      `beginCombatEncounter`'s `[bx-79FBh]`, used as a PRNG upper bound
+      for a monster's starting `+0x98` HP-like counter, then OR'd with
+      `0x0F`) — both indexed by `_conflictMonsterClass & 0xFh`, 16
+      entries each, dumped via `ida_scripts/dump_monster_tables.py`.
+      **Self-correction**: `applyCombatDamage`'s subtraction was
+      initially documented as BCD by analogy with the rest of the
+      codebase's stat fields; re-checking the actual instructions
+      showed no `das` follows the `sub` (and the HP-counter's own
+      init ORs in `0x0F`, an invalid BCD nibble), so it's plain binary
+      — fixed before this was committed anywhere, per the same
+      re-verification discipline as the earlier dungeon-table
+      correction.
 - [ ] Resolve the **Level vs. Experience offset conflict**: `drawPartyStatusBar`
       (`ultima_exodus.idb`) reads `+0x1Fh` alone as a "Level" byte
       (BCD-displayed as value+1, clamped to 99), but

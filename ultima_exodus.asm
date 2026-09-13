@@ -1110,7 +1110,6 @@ cmdToggleSound:                         ; CODE XREF: sub_17B54-5F83↑j
                 xor     _soundEnabled, 0FFh
 
 loc_12020:                              ; CODE XREF: sub_17B54+193A↓j
-                                        ; DATA XREF: seg000:jpt_1948E↓o
                 lea     si, aOff        ; jumptable 0001948E case 4
                 cmp     _soundEnabled, 0
                 jz      short loc_1202F
@@ -10780,14 +10779,19 @@ jpt_18BF8       dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
-jpt_1948E       dw offset loc_194BB     ; DATA XREF: sub_17B54+193A↓r
-                dw offset loc_194DC     ; jump table for switch statement
-                dw offset loc_194EE
-                dw offset loc_194AB
-                dw offset loc_12020
-                db 2 dup(0F0h), 0C0h, 60h, 0A0h, 80h, 30h, 50h, 70h, 0A0h
-                db 0C0h, 0E0h, 2 dup(0F0h), 1, 2, 15h, 20h, 8, 6, 10h
-                db 5, 3, 4, 6, 8, 10h, 15h, 20h, 5
+jpt_1948E       db 0BBh                 ; DATA XREF: sub_17B54+193A↓r
+                                        ; jump table for switch statement
+                db  94h
+                db 0DCh
+                db  94h
+                db 0EEh
+                db  94h
+                db 0ABh
+                db  94h
+MONSTER_HP_TABLE db 2 dup(20h), 2 dup(0F0h), 0C0h, 60h, 0A0h, 80h, 30h
+                db 50h, 70h, 0A0h, 0C0h, 0E0h, 2 dup(0F0h)
+MONSTER_EXP_TABLE db 1, 2, 15h, 20h, 8, 6, 10h, 5, 3, 4, 6, 8, 10h, 15h
+                db 20h, 5
 byte_18625      db 46h, 43h, 57h, 54h, 50h, 42h, 4Ch, 49h, 44h, 41h, 14h
                                         ; DATA XREF: lookupWeaponGlyph+A↓o
                 db 15h, 16h, 17h, 2 dup(14h), 11h, 16h, 15h, 16h, 4Dh
@@ -12580,7 +12584,7 @@ loc_19470:                              ; CODE XREF: sub_17B54+194A↓j
                 mov     ah, 0
                 shl     ax, 1           ; switch 5 cases
                 mov     si, ax
-                jmp     jpt_1948E[si]   ; switch jump
+                jmp     word ptr jpt_1948E[si] ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_19492:                              ; CODE XREF: sub_17B54+192D↑j
@@ -12598,7 +12602,6 @@ loc_194A0:                              ; CODE XREF: sub_17B54+1926↑j
 ; ---------------------------------------------------------------------------
 
 loc_194AB:                              ; CODE XREF: sub_17B54+193A↑j
-                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aAhThatSNice ; jumptable 0001948E case 3
                 call    printGameText
                 mov     byte ptr [bx+11h], 47h ; 'G'
@@ -12607,7 +12610,6 @@ loc_194AB:                              ; CODE XREF: sub_17B54+193A↑j
 ; ---------------------------------------------------------------------------
 
 loc_194BB:                              ; CODE XREF: sub_17B54+193A↑j
-                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aYuckHorrible ; jumptable 0001948E case 0
                 call    printGameText
                 mov     byte ptr [bx+11h], 50h ; 'P'
@@ -12623,7 +12625,6 @@ loc_194BB:                              ; CODE XREF: sub_17B54+193A↑j
 ; ---------------------------------------------------------------------------
 
 loc_194DC:                              ; CODE XREF: sub_17B54+193A↑j
-                                        ; DATA XREF: seg000:jpt_1948E↑o
                 mov     ax, [bx+1Ch]    ; jumptable 0001948E case 1
                 mov     [bx+1Ah], ax
                 lea     si, aHowWonderful ; "How wonderful!\n"
@@ -12633,7 +12634,6 @@ loc_194DC:                              ; CODE XREF: sub_17B54+193A↑j
 ; ---------------------------------------------------------------------------
 
 loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
-                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aArghBlahYuk ; jumptable 0001948E case 2
                 call    printGameText
                 mov     al, 25h ; '%'
