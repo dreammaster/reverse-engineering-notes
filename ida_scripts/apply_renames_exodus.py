@@ -811,16 +811,22 @@ RENAMES = [
      "shopkeeper/merchant tile), though the exact trade mechanics "
      "aren't traced past the tile checks this pass."),
 
-    (0x174D5, "cmdOrder",
-     "LOW-MEDIUM CONFIDENCE: 'O' (index 32, also dungeon index 8): "
-     "prompts a player, confirms alive, prints 'Cmd: ' and reads a "
-     "10-character line of typed text, then looks it up against a "
-     "table at a computed offset (`[bx+6540h]`) via sub_1740A/"
-     "sub_17423 (not yet identified) -- a typed-text command parser, "
-     "possibly for giving an NPC/companion an instruction, or a "
-     "developer console left active in the shipped game. Purpose not "
-     "confirmed past the input mechanism -- named 'Order' as a "
-     "placeholder guess, not a confirmed command identity."),
+    (0x174D5, "cmdOtherCommand",
+     "RENAMED 2026-09-14 from the placeholder guess 'cmdOrder' -- "
+     "confirmed via dump_overworld_labels.py's read of the per-command "
+     "prompt-string table at DS:18C9h (linear 0x118C9, index 32 = 'O'): "
+     "the actual on-screen prompt is 'Other command!\\nWhose action? ', "
+     "not anything related to party order (that's cmdExchange/'M', "
+     "'Modify order!', a different command entirely -- see below). "
+     "'O' (index 32, also dungeon index 8): prompts a player, confirms "
+     "alive, prints 'Cmd: ' and reads a 10-character line of typed "
+     "text, then looks it up against a table at a computed offset "
+     "(`[bx+6540h]`) via sub_1740A/sub_17423 (not yet identified) -- a "
+     "typed-text keyword command, matching cmdYell's mechanism almost "
+     "exactly (same sub_1740A lookup helper) but against a different "
+     "keyword table and without the _marksAndCards bit-check. Likely a "
+     "second class of 'say a magic word' interaction, distinct from "
+     "Yell's. Purpose past the input mechanism still not fully traced."),
 
     (0x11D4E, "cmdCastSpell",
      "'C' (index 23): the OVERWORLD cast-spell command (distinct from "
@@ -877,11 +883,36 @@ RENAMES = [
      "individual bit meanings beyond 0x40 are not decoded."),
 
     (0x17EE4, "cmdWear",
-     "'W' (index 22), TENTATIVE: player-select prompt, alive check, "
-     "then calls sub_17EFA. Not independently traced past the call; "
-     "named by elimination against the classic Ultima III command set "
-     "(Wear/Wield armour) and slot position, not by confirmed "
-     "argument/effect inspection of sub_17EFA itself."),
+     "'W' (index 22): player-select prompt, alive check, then calls "
+     "sub_17EFA (not independently traced past the call). Prompt text "
+     "confirmed 2026-09-14 via dump_overworld_labels.py's read of the "
+     "prompt table at index 22: 'Wear for # ' -- matches the classic "
+     "Ultima III Wear/Wield armour command exactly, upgrading this "
+     "from a by-elimination guess to a confirmed identity (the effect "
+     "of sub_17EFA itself is still untraced)."),
+
+    (0x11E55, "cmdHandEquipment",
+     "'H' (index 16, also dungeon index 3): the last of the 33 "
+     "overworld command letters to be identified. Prompt text "
+     "confirmed via dump_overworld_labels.py's read of the "
+     "per-command prompt table at DS:18C9h (linear 0x118C9): index 16 "
+     "= 'Hand Equipment!\\nFrom Player: ', immediately explaining the "
+     "otherwise-mysterious double player-select this handler does (the "
+     "second prompt, '  To Player: ', is aToPlayer, already used "
+     "elsewhere). Selects a 'from' and 'to' player via sub_16C76; if "
+     "they're the same player it jumps to the shared loc_17DBA "
+     "no-op/failure path, otherwise it makes a `call near ptr "
+     "sub_17B54` back into the top-level command dispatcher itself. "
+     "sub_17B54 saves/restores every register (including si/di) on "
+     "entry/exit, so this is a genuine re-entrant call, not a "
+     "parameter-passing trick -- the actual item hand-off almost "
+     "certainly happens via a global 'hand mode' state (not yet "
+     "located) that a subsequent single-key command (most likely 'W' "
+     "for Wear, given the shared item-slot theme) reads to redirect "
+     "its normal single-player behaviour into a transfer between the "
+     "two globally-remembered players instead. That follow-on "
+     "mechanism is NOT traced -- flagged as the next concrete lead "
+     "rather than guessed at."),
 ]
 
 

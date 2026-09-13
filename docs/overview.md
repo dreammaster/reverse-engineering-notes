@@ -693,3 +693,83 @@ beyond `0x40` aren't decoded yet.
 (`loc_11E55`) remains unresolved — see roadmap.md's open-items list for
 what's known about it (prompts two players, recursively re-enters the
 dispatcher `sub_17B54` if they differ, purpose not pinned down).
+
+**All 33 of 33 overworld commands confirmed, 2026-09-14** — 'H' closed
+out, plus one earlier misnaming caught along the way. Rather than keep
+guessing at 'H' from its code alone, wrote a small read-only dump
+script (`ida_scripts/dump_overworld_labels.py`) to read the per-command
+prompt-string table directly: `sub_17B54`'s dispatcher does
+`mov si, [bx+18C9h]` right before `jmp OVERWORLD_COMMAND_TABLE[bx]`,
+loading a prompt string pointer from a 33-entry word table parallel to
+`OVERWORLD_COMMAND_TABLE`/`OVERWORLD_COMMAND_KEYS` — the overworld
+counterpart of `DUNGEON_COMMAND_LABELS`. **Gotcha worth recording**:
+the raw operand `18C9h` looks like it should be a linear address in
+this segment but isn't — `[bx+18C9h]` is DS-relative, and this IDB's
+load segment is `0x1000` (per `identify.py`'s "entry point: 0x100
+(cs=0x1000)"), so the real linear address is `0x1000*16 + 0x18C9 =
+0x118C9`, comfortably inside the loaded segment range
+(`0x10100`-`0x1ADCA`). The table's own word entries are near pointers
+under the same convention (`linear = 0x10000 + ptr`). Reading all 33
+entries against the already-known `OVERWORLD_COMMAND_KEYS` gave a
+full, direct confirmation of every command's on-screen prompt text in
+one pass:
+
+| Idx | Key | Prompt | Idx | Key | Prompt |
+|---|---|---|---|---|---|
+| 0 | (arrow) | "North" | 17 | T | "Who will\nTransact? " |
+| 1 | A | "Attack-" | 18 | U | "Unlock-" |
+| 2 | (arrow) | "South" | 19 | I | "Ignite a torch" |
+| 3 | (arrow) | "East" | 20 | Q | "Quit & Save" |
+| 4 | (arrow) | "West" | 21 | R | "Ready for #" |
+| 5 | (space) | "Pass" | 22 | W | "Wear for #" |
+| 6 | B | "Board" | 23 | C | "Cast by whom-" |
+| 7 | X | "X-it" | 24 | F | "Fire" |
+| 8 | V | "Volume" | 25 | J | "Join gold to:" |
+| 9/14 | (alt) | "Volume" | 26 | D | "Descend" |
+| 10 | Z | "Ztats for #" | 27 | N | "Negate Time!\nWhose Powd? " |
+| 11 | E | "Enter" | 28 | G | "Get Chest!\nPlr to search-" |
+| 12 | L | "Look-" | 29 | P | "Peer at gem!\nWhose gem? " |
+| 13 | M | "Modify order!\nPlayer: " | 30 | S | "Steal Chest!\nPlayer? " |
+| 15 | K | "Klimb" | 31 | Y | "Yell, whom? " |
+| 16 | H | "Hand Equipment!\nFrom Player: " | 32 | O | "Other command!\nWhose action? " |
+
+Two results stood out:
+
+- **Index 16, key 'H': "Hand Equipment!\nFrom Player: "** — finally
+  explains the otherwise-mysterious double player-select in
+  `loc_11E55` (now renamed `cmdHandEquipment`): it prompts a "from"
+  player, then (via the already-known `aToPlayer` string, "  To
+  Player: ") a "to" player. If they're the same player it takes the
+  shared `loc_17DBA` no-op path; if different, it makes a genuine
+  re-entrant `call near ptr sub_17B54` — a call back into the *top* of
+  the overworld command dispatcher itself. Confirmed this isn't a
+  parameter-passing trick: `sub_17B54`'s prologue unconditionally
+  pushes `ax`/`bx`/`cx`/`dx`/`bp`/`si`/`di`/flags, so nothing survives
+  the recursive call in registers. The actual weapon/armour hand-off
+  between the two selected characters must therefore happen through a
+  global "hand mode" flag (not yet located) that some subsequent
+  single-key command — `cmdWear` is the obvious candidate, given the
+  shared equipment-slot theme — checks to redirect its normal
+  single-player behavior into a transfer between the two
+  globally-remembered players. This follow-on mechanism is flagged as
+  the next concrete lead, not guessed at further.
+- **Index 32, key 'O': "Other command!\nWhose action? "** — caught a
+  real misnaming. `cmdOrder` (`0x174D5`) had been named on the guess
+  that "typed keyword command" plus letter 'O' meant party-order
+  related; the actual prompt has nothing to do with order at all, and
+  the genuine party-reorder command is `cmdExchange` (`0x11E9B`, key
+  'M', prompt "Modify order!\nPlayer: ", which does a confirmed
+  byte-for-byte swap of two characters' records). **Renamed `cmdOrder`
+  → `cmdOtherCommand`** to match the real prompt. Its mechanism is
+  otherwise unchanged from what was already known: player-select,
+  alive-check, prompt "Cmd: ", read a 10-character line, and look it
+  up via `sub_1740A` — the *same* keyword-lookup helper `cmdYell` uses,
+  against a *different* table (`[bx+6540h]`, linear `0x16540`, vs.
+  `cmdYell`'s `byte_164FA`) and without the `_marksAndCards` bit-check.
+  Reads like a second, more general "say a keyword" interaction
+  distinct from Yell's location-gated one — not fully traced past the
+  lookup itself.
+
+`ida_scripts/dump_overworld_labels.py` is kept in the repo (read-only,
+no IDB modifications) as living documentation of this table, the same
+way the other one-off `fix_*`/`dump_*` scripts are kept.

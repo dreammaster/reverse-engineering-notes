@@ -459,6 +459,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X11E55,	"jumptable 00011BD1 case 16\njumptable 00018389 case 3",	1);
 	create_insn	(0X11E55);
+	set_name	(0X11E55,	"cmdHandEquipment");
 	create_insn	(x=0X11E5D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2071,7 +2072,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X174D5,	"jumptable 00011BD1 case 32\njumptable 00018389 case 8",	1);
 	create_insn	(0X174D5);
-	set_name	(0X174D5,	"cmdOrder");
+	set_name	(0X174D5,	"cmdOtherCommand");
 	create_insn	(x=0X174E8);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

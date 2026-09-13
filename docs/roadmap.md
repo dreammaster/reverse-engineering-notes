@@ -209,33 +209,31 @@ Next-session priorities, roughly in order:
       entries (the individual spell effects) are the natural
       continuation — see below.
 - [x] **The overworld main game loop and its 33-entry command table**
-      — found (`mainGameLoop`, `OVERWORLD_COMMAND_TABLE`/
-      `OVERWORLD_COMMAND_KEYS`). 21 of 33 commands confirmed so far
-      (movement x4, Pass, Board, Exit vehicle, Toggle sound, Enter
-      (dungeon/town/castle/shrine), Cast Spell, Exchange, Peer, Quit,
-      Steal, Unlock, Ignite Torch, Attack, Fire, Get — see
-      overview.md). **10 remain** (plus the 6 dungeon-only movement
-      commands, done — see below), each a small, self-contained,
-      well-bounded target — far more tractable now than reading
-      `sub_17B54` linearly, since every handler's address and trigger
-      key are already known:
-
-      | Key | Handler address | Key | Handler address |
-      |---|---|---|---|
-      | H | `loc_11E55` (partially read, see below) | R | `cmdReady` (`0x17E33`) |
-      | J | `cmdJoinGold` (`0x15C73`) | T | `cmdTransact` (`0x17FC6`) |
-      | L | `cmdLook` (`0x11E7A`) | W | `cmdWear` (`0x17EE4`) |
-      | N | `cmdNegateTime` (`0x15CF8`) | Y | `cmdYell` (`0x17458`) |
-      | O | `cmdOrder` (`0x174D5`) | Z | `cmdZtats` (`0x12068`) |
-
-      H (`loc_11E55`) is partially read: prompts "To Player: ", involves
-      `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
-      and a recursive self-call into `sub_17B54` — purpose not pinned
-      down, flagged rather than guessed. **This is now the only one of
-      the 33 overworld command letters without a confirmed handler
-      name** — 32/33 done as of 2026-09-14 (`cmdZtats`/`cmdYell`/
-      `cmdWear` closed out the J/L/N/O/R/T/W/Y/Z batch above; see
-      overview.md's findings log).
+      — DONE, all 33/33 commands named as of 2026-09-14 (`mainGameLoop`,
+      `OVERWORLD_COMMAND_TABLE`/`OVERWORLD_COMMAND_KEYS`). The last
+      handful (`cmdZtats`, `cmdYell`, `cmdWear`, `cmdHandEquipment`) were
+      confirmed via `ida_scripts/dump_overworld_labels.py`, a read-only
+      dump of the per-command prompt-string table at `DS:18C9h`
+      (linear `0x118C9` — the operand's raw `18C9h` is *not* itself a
+      valid linear address in this segment, since `[bx+18C9h]` is
+      DS-relative and DS=`0x1000` here; same near-pointer/segment
+      convention applies to the string pointers the table holds). That
+      dump also caught one earlier misnamed handler: `cmdOrder`
+      (`0x174D5`, 'O') was renamed to **`cmdOtherCommand`** once the
+      real on-screen prompt turned out to be "Other command!", nothing
+      to do with party order (party reordering is `cmdExchange`/'M',
+      "Modify order!", already correctly named). See overview.md's
+      findings log for the full table dump and evidence per command.
+      `cmdHandEquipment` (`0x11E55`, 'H') — the very last letter
+      resolved — has a confirmed prompt ("Hand Equipment!\nFrom
+      Player: ") but an unconfirmed mechanism: it selects two distinct
+      players then makes a genuine re-entrant `call` back into the top-
+      level dispatcher `sub_17B54` (which saves/restores every
+      register, so this isn't parameter-passing) — the actual item
+      hand-off almost certainly happens through a not-yet-located
+      global "hand mode" flag that a subsequent command (a good bet:
+      `cmdWear`) checks. That follow-on mechanism is the concrete next
+      lead, not yet traced.
 - [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3`) — both are
       no-ops on the overworld, consistent with Descend/Klimb being
       dungeon-only commands.
