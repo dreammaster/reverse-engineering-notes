@@ -88,18 +88,23 @@ into `BOOTUP.BIN` — the actual game (character creation, main loop,
 combat, everything) almost certainly lives there, undisassembled, no
 IDB yet.
 
-- [ ] **Create a second IDB for `BOOTUP.BIN`.** This makes ultima3's
-      project shape closer to `ultima1`'s multi-executable pattern than
-      `ultima2`'s single-IDB one, despite the initial scaffolding
-      assuming the latter (a reasonable call at the time, before this
-      finding) — the `ida_scripts/` driver may need generalizing to
-      take an `-Idb`-style parameter like `ultima1`'s, rather than
-      staying hardcoded to `ultima.idb`, once a second database exists.
-      `BOOTUP.BIN` is a raw memory image (no `MZ`/EXE header, loaded
-      directly at paragraph `0x1000` offset `0x100` by the FCB-read
-      trick — same addressing as `ULTIMA.COM`), so creating its IDB
-      will need the same tiny-model/base-address setup as `ultima.idb`
-      rather than relying on IDA's automatic EXE-format detection.
+- [x] **Create a second IDB for `BOOTUP.BIN`** — done 2026-09-13.
+      `ida_scripts/run_ida_script.ps1`/`batch_run_and_export.py` were
+      generalized to take a `-Idb` parameter (ported from `ultima1`'s
+      driver) rather than staying hardcoded to `ultima.idb`, and
+      `apply_renames_ultima.py`/`apply_structs_ultima.py` were renamed
+      from the bare `apply_renames.py`/`apply_structs.py` to match
+      `ultima1`'s per-executable suffix convention, with matching
+      `_bootup` variants created (both empty so far). `BOOTUP.BIN` has
+      no `MZ`/EXE header (it's a raw memory image loaded at paragraph
+      `0x1000` offset `0x100` by the FCB-read trick — same addressing
+      as `ULTIMA.COM`), so its IDB was created by copying it to a
+      temporary `.com`-extensioned file first, letting IDA's normal
+      COM-file auto-detection handle the tiny-model/base-address setup
+      exactly like it did for `ULTIMA.COM` (confirmed: loaded at the
+      same `0x10100`+ range). `ultima_bootup.idb`: 73 functions, 4
+      named (IDA's own auto-analysis), 69 still `sub_XXXXX` — the next
+      identification sweep target.
 - [ ] Once loaded, cross-reference the shared runtime immediately:
       `drawTileGrid`, `playSoundEffect`/`SOUND_EFFECT_TABLE`, and the
       other primitives named in `ULTIMA.COM` are very likely called
