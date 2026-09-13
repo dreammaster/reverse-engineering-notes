@@ -4672,6 +4672,26 @@ disassembly work.
   different from `cc_run_code` to claim 1:1 correspondence, per this
   project's own established convention). See `reversing/notes/
   struct-layout-drift.md`.
+- **A second small enum survey right next door: `FIXUP_*` relocation
+  types, all 6 present with zero drift, plus a self-caught misread.**
+  `ccCreateInstanceEx`'s own fixup-relocation switch has the same
+  clean bounds-check shape as the `SCMD_*` table -- all 6 of
+  `Common/CSCOMP.H`'s declared `FIXUP_*` constants present, matching
+  `CSRUN.CPP:877-923` instruction for instruction. Two things that
+  looked like drift turned out to be exact matches once checked
+  against source's own text: `FIXUP_FUNCTION` is a no-op here because
+  2011's own handler has its one line of work commented out, and
+  `FIXUP_IMPORT`'s two literal comparisons -- first misread as ASCII
+  `'!'`/`'%'` -- are actually the raw `SCMD_CALLEXT`/`SCMD_CALLAS`
+  opcode values, matching source's own opcode-rewrite exactly. One
+  real drift did survive: source additionally encodes an exporting
+  instance's ID into the rewritten opcode via `INSTANCE_ID_SHIFT`,
+  which this build can't do since its own `is_script_import` returns
+  a plain boolean rather than 2011's real instance pointer -- a
+  coherent simplification, not a gap. Bonus: identifies the global
+  `SystemImports simp` object (`unk_534930`, shared `this` pointer
+  across 7+ already-matched `SystemImports` method calls). See
+  `reversing/notes/struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

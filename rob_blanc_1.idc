@@ -154448,6 +154448,7 @@ static Bytes_27(void) {
 	create_dword	(0X5347FC);
 	create_dword	(0X534800);
 	create_byte	(0X534804);
+	set_name	(0X534930,	"simp");
 	create_dword	(0X535744);
 	create_byte	(0X535748);
 	create_dword	(0X535848);

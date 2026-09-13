@@ -15740,3 +15740,50 @@ correspondence" per this project's own convention for such cases) --
 this round's value is the complete opcode inventory and the two
 corrections/findings above, recorded as a major extension to the
 function's existing `matches.json` entry rather than a new match.
+
+### A second small enum survey, right next door: the `FIXUP_*` relocation types, and a self-caught misread
+
+Following the same "complete the enum" instinct one step further:
+`ccCreateInstanceEx`'s own fixup-relocation switch (already matched,
+but never checked exhaustively against all 6 of `Common/CSCOMP.H:
+165-170`'s declared `FIXUP_*` constants) turned out to have exactly
+that same clean shape as the `SCMD_*` survey -- a `sub eax,1; cmp
+eax,5; ja default` bounds check allowing exactly 6 values, all 6
+present, matching `Common/CSRUN.CPP:877-923`'s own switch instruction
+for instruction.
+
+Two details that read as drift on a first pass turned out, once
+checked against source's own text rather than just its declared enum,
+to be exact matches: `FIXUP_FUNCTION`(2) is a bare no-op in this
+build's disassembly (a case with no memory write at all) -- but
+source's OWN handler has its one line of work commented out
+(`//cinst->code[fixup] += (long)&cinst->code[0];`), meaning 2011
+itself does nothing here too; and `FIXUP_IMPORT`(4)'s two literal
+comparisons, first misread as ASCII `'!'`/`'%'` (0x21/0x25), are
+actually the raw `SCMD_CALLEXT`(33=0x21)/`SCMD_CALLAS`(37=0x25) opcode
+VALUES -- matching source's own `if(code[fixup+1]==SCMD_CALLEXT)
+code[fixup+1]=SCMD_CALLAS;` (rewriting a call to another script's own
+exported function from a plain native-call opcode into the script-to-
+script-call opcode) exactly. Worth remembering as its own small
+lesson: a literal that looks like a printable-ASCII value is worth a
+second check against the surrounding opcode-numbering context before
+trusting IDA's own character-literal rendering.
+
+**One real, but fully explained, drift did survive the check**:
+source's `FIXUP_IMPORT` handler additionally ORs the exporting
+instance's own `loadedInstanceId` (shifted by `INSTANCE_ID_SHIFT`)
+into the rewritten opcode, letting a multi-instance-aware interpreter
+tell which instance a `CALLAS` targets -- no such OR exists anywhere
+in this build's case. Root cause, not just absence: this build's own
+`SystemImports::is_script_import` (already matched) returns a plain
+boolean flag byte, not 2011's `ccInstance*` pointer to the actual
+exporting instance -- there is structurally no instance pointer here
+to pull an ID out of. A coherent, deliberate simplification (this
+build only needs "is this import itself a script export, yes/no",
+not "which loaded instance exports it"), not an incomplete port.
+
+Bonus identification from the same read: the shared `this` pointer for
+`SystemImports::is_script_import`/`remove_range` (already matched)
+across 7+ call sites -- `unk_534930` -- is the global `SystemImports
+simp` object itself (`Common/CSRUN.CPP`'s file-scope `simp` global).
+Renamed accordingly.
