@@ -48,6 +48,12 @@ MEMBERS = [
     (0x00, "_name", 1, 0xA,
      "character name, ASCII, null-padded. readLine reads up to 9 "
      "chars during creation; external doc gives the field 10 bytes."),
+    (0x0E, "_marksAndCards", 1, 1,
+     "confirmed via ultima_exodus.idb's cmdYell ('Y'), which checks "
+     "bit 0x40 of this field after a successful keyword match -- "
+     "matches docs/file-formats.md's externally-sourced 'Marks/cards "
+     "bitmask' field label exactly. Individual bit meanings not "
+     "decoded."),
     (0x0F, "_torches", 1, 1,
      "confirmed via ultima_exodus.idb's cmdIgniteTorch ('I'), which "
      "spends 1 torch (BCD-borrow-checked decrement, dungeon-only) to "

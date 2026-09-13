@@ -170,7 +170,7 @@ for the full evidence trail.
 |---|---|---|
 | `0x00` | `0xA` | Name, ASCII, null-terminated/padded |
 | `0x0A` | `0x4` | Unknown |
-| `0x0E` | `0x1` | Marks/cards bitmask (quest-item flags) |
+| `0x0E` | `0x1` | Marks/cards bitmask (quest-item flags) — **confirmed** 2026-09-14 via `ultima_exodus.idb`'s `cmdYell`, which checks bit `0x40` of this field on a successful keyword match (see overview.md). Individual bit meanings beyond `0x40` still TBD. |
 | `0x0F` | `0x1` | Torch count (BCD) |
 | `0x10` | `0x1` | Party membership (`0x00`=no, `0xFF`=yes) |
 | `0x11` | `0x1` | Status (Good/Poisoned/Dead/Ashes — exact letter codes TBD from disassembly) |

@@ -663,3 +663,33 @@ dispatcher — the absorbed chunk, around absolute address `0x18D0B` — is
 now the actual next target, not `sub_17B54` as first assumed for
 combat specifically (though `sub_17B54` remains the overworld command
 dispatcher).
+
+**Three more overworld commands closed out, 2026-09-14**:
+`cmdZtats` (`0x12068`, 'Z', index 10) calls the same `sub_16DC1` helper
+combat's Ztats display uses, with the same `dh = playerIndex + 0x30`
+calling convention — an out-of-combat character stat sheet.
+`cmdWear` (`0x17EE4`, 'W', index 22, tentative) does a player-select
+plus alive-check then calls `sub_17EFA`, not yet traced past that call
+— named by elimination against the classic Ultima III command set and
+slot position rather than confirmed effect.
+
+`cmdYell` (`0x17458`, 'Y', index 31) is the more interesting one: it
+prompts `"Word: "`, reads up to 9 characters via `readLine`, and looks
+the entered word up against a keyword table (`byte_164FA`) via
+`sub_1740A`/`sub_17423`. On a successful match it checks **bit `0x40`
+of the selected character's record at offset `+0x0E`** (and additionally
+requires `_partyPosition == 0x0A`, i.e. a specific map location) before
+doing anything — the classic Ultima III "Yell a word" mechanic (e.g.
+yelling "RAMA" at a specific spot to trigger something). This is the
+first real-code confirmation of `docs/file-formats.md`'s
+externally-sourced "Marks/cards bitmask" field at that offset (previously
+carried in `RosterEntry` as an unlabeled gap between `_name` and
+`_torches`) — added to the struct as `_marksAndCards`
+(`ida_scripts/create_roster_struct.py`, applied to both
+`ultima_bootup.idb` and `ultima_exodus.idb`). Individual bit meanings
+beyond `0x40` aren't decoded yet.
+
+**32 of 33 overworld commands are now confirmed.** Only 'H'
+(`loc_11E55`) remains unresolved — see roadmap.md's open-items list for
+what's known about it (prompts two players, recursively re-enters the
+dispatcher `sub_17B54` if they differ, purpose not pinned down).
