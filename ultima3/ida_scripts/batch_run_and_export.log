@@ -948,3 +948,623 @@ DUNGEON_COMMAND_KEYS   = 0x17708
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_spell_tables.py', 'noexport']
+[*] reading dump_spell_tables.py
+[*] executing dump_spell_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+WIZARD_SPELL_TABLE: start=0x1594b end=0x1596b size=32 bytes (16 words if word-sized)
+  [ 0] 0x1594b: ptr=0x5f9f (lin=0x15f9f)
+  [ 1] 0x1594d: ptr=0x5fd4 (lin=0x15fd4)
+  [ 2] 0x1594f: ptr=0x5fe3 (lin=0x15fe3)
+  [ 3] 0x15951: ptr=0x5fee (lin=0x15fee)
+  [ 4] 0x15953: ptr=0x600c (lin=0x1600c)
+  [ 5] 0x15955: ptr=0x602f (lin=0x1602f)
+  [ 6] 0x15957: ptr=0x6034 (lin=0x16034)
+  [ 7] 0x15959: ptr=0x606a (lin=0x1606a)
+  [ 8] 0x1595b: ptr=0x608a (lin=0x1608a)
+  [ 9] 0x1595d: ptr=0x6095 (lin=0x16095)
+  [10] 0x1595f: ptr=0x60a5 (lin=0x160a5)
+  [11] 0x15961: ptr=0x60ba (lin=0x160ba)
+  [12] 0x15963: ptr=0x60bf (lin=0x160bf)
+  [13] 0x15965: ptr=0x60ca (lin=0x160ca)
+  [14] 0x15967: ptr=0x60fa (lin=0x160fa)
+  [15] 0x15969: ptr=0x613e (lin=0x1613e)
+
+CLERIC_SPELL_TABLE: start=0x1596b end=0x1599b size=48 bytes (24 words if word-sized)
+  [ 0] 0x1596b: ptr=0x6153 (lin=0x16153)
+  [ 1] 0x1596d: ptr=0x6188 (lin=0x16188)
+  [ 2] 0x1596f: ptr=0x61dc (lin=0x161dc)
+  [ 3] 0x15971: ptr=0x5fe3 (lin=0x15fe3)
+  [ 4] 0x15973: ptr=0x600c (lin=0x1600c)
+  [ 5] 0x15975: ptr=0x5fee (lin=0x15fee)
+  [ 6] 0x15977: ptr=0x61f6 (lin=0x161f6)
+  [ 7] 0x15979: ptr=0x6209 (lin=0x16209)
+  [ 8] 0x1597b: ptr=0x623c (lin=0x1623c)
+  [ 9] 0x1597d: ptr=0x608a (lin=0x1608a)
+  [10] 0x1597f: ptr=0x624f (lin=0x1624f)
+  [11] 0x15981: ptr=0x6269 (lin=0x16269)
+  [12] 0x15983: ptr=0x60ba (lin=0x160ba)
+  [13] 0x15985: ptr=0x6288 (lin=0x16288)
+  [14] 0x15987: ptr=0x613e (lin=0x1613e)
+  [15] 0x15989: ptr=0x62c4 (lin=0x162c4)
+  [16] 0x1598b: ptr=0x5a58 (lin=0x15a58)
+  [17] 0x1598d: ptr=0x5a66 (lin=0x15a66)
+  [18] 0x1598f: ptr=0x5a5f (lin=0x15a5f)
+  [19] 0x15991: ptr=0x5a6d (lin=0x15a6d)
+  [20] 0x15993: ptr=0x5aa1 (lin=0x15aa1)  -> aStrength
+  [21] 0x15995: ptr=0x5ab0 (lin=0x15ab0)  -> aDexterity
+  [22] 0x15997: ptr=0x5abf (lin=0x15abf)  -> aIntelligence
+  [23] 0x15999: ptr=0x5a93 (lin=0x15a93)  -> aWisdom
+----- end target script output -----
+[*] finished executing dump_spell_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_spell_tables.py', 'noexport']
+[*] reading dump_spell_tables.py
+[*] executing dump_spell_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+WIZARD_SPELL_TABLE: start=0x1594b, 16 entries (letters A-P, confirmed via castSpell's own bounds check)
+  [ 0] A  effect=0x15f9f  name='Repond'
+  [ 1] B  effect=0x15fd4  name='Mittar'
+  [ 2] C  effect=0x15fe3  name='Lorum'
+  [ 3] D  effect=0x15fee  name='Dor Acron'
+  [ 4] E  effect=0x1600c  name='Sur Acron'
+  [ 5] F  effect=0x1602f  name='Fulgar'
+  [ 6] G  effect=0x16034  name='Dag Acron'
+  [ 7] H  effect=0x1606a  name='Mentar'
+  [ 8] I  effect=0x1608a  name='Dag Lorum'
+  [ 9] J  effect=0x16095  name='Fal Divi'
+  [10] K  effect=0x160a5  name='Noxum'
+  [11] L  effect=0x160ba  name='Decorp'
+  [12] M  effect=0x160bf  name='Altair'
+  [13] N  effect=0x160ca  name='Dag Mentar'
+  [14] O  effect=0x160fa  name='Necorp'
+  [15] P  effect=0x1613e  name=''
+
+CLERIC_SPELL_TABLE: start=0x1596b, 16 entries (letters A-P, confirmed via castSpell's own bounds check)
+  [ 0] A  effect=0x16153  name='Pontori'
+  [ 1] B  effect=0x16188  name='Appar Unem'
+  [ 2] C  effect=0x161dc  name='Sanctu'
+  [ 3] D  effect=0x15fe3  name='Luminae'
+  [ 4] E  effect=0x1600c  name='Rec Su'
+  [ 5] F  effect=0x15fee  name='Rec Du'
+  [ 6] G  effect=0x161f6  name='Lib Rec'
+  [ 7] H  effect=0x16209  name='Alcort'
+  [ 8] I  effect=0x1623c  name='Sequitu'
+  [ 9] J  effect=0x1608a  name='Sominae'
+  [10] K  effect=0x1624f  name='Sanctu Mani'
+  [11] L  effect=0x16269  name='Vieda'
+  [12] M  effect=0x160ba  name='Excuun'
+  [13] N  effect=0x16288  name='Surmandum'
+  [14] O  effect=0x1613e  name='Zxkuqyb'
+  [15] P  effect=0x162c4  name='Anju Sermani'
+----- end target script output -----
+[*] finished executing dump_spell_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_spell_addrs.py', 'noexport']
+[*] reading check_spell_addrs.py
+[*] executing check_spell_addrs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+Address collisions (same effect addr used by >1 slot):
+  0x15fe3: ['W2', 'C3']
+  0x15fee: ['W3', 'C5']
+  0x1600c: ['W4', 'C4']
+  0x1608a: ['W8', 'C9']
+  0x160ba: ['W11', 'C12']
+  0x1613e: ['W15', 'C14']
+
+Per-address function/name status:
+  WIZARD[ 0] 0x15f9f: func_start=False name=''
+  WIZARD[ 1] 0x15fd4: func_start=False name=''
+  WIZARD[ 2] 0x15fe3: func_start=False name=''
+  WIZARD[ 3] 0x15fee: func_start=False name=''
+  WIZARD[ 4] 0x1600c: func_start=False name=''
+  WIZARD[ 5] 0x1602f: func_start=False name=''
+  WIZARD[ 6] 0x16034: func_start=False name=''
+  WIZARD[ 7] 0x1606a: func_start=False name=''
+  WIZARD[ 8] 0x1608a: func_start=False name=''
+  WIZARD[ 9] 0x16095: func_start=False name=''
+  WIZARD[10] 0x160a5: func_start=False name=''
+  WIZARD[11] 0x160ba: func_start=False name=''
+  WIZARD[12] 0x160bf: func_start=False name=''
+  WIZARD[13] 0x160ca: func_start=False name=''
+  WIZARD[14] 0x160fa: func_start=False name=''
+  WIZARD[15] 0x1613e: func_start=False name=''
+  CLERIC[ 0] 0x16153: func_start=False name=''
+  CLERIC[ 1] 0x16188: func_start=False name=''
+  CLERIC[ 2] 0x161dc: func_start=False name=''
+  CLERIC[ 3] 0x15fe3: func_start=False name=''
+  CLERIC[ 4] 0x1600c: func_start=False name=''
+  CLERIC[ 5] 0x15fee: func_start=False name=''
+  CLERIC[ 6] 0x161f6: func_start=False name=''
+  CLERIC[ 7] 0x16209: func_start=False name=''
+  CLERIC[ 8] 0x1623c: func_start=False name=''
+  CLERIC[ 9] 0x1608a: func_start=False name=''
+  CLERIC[10] 0x1624f: func_start=False name=''
+  CLERIC[11] 0x16269: func_start=False name=''
+  CLERIC[12] 0x160ba: func_start=False name=''
+  CLERIC[13] 0x16288: func_start=False name=''
+  CLERIC[14] 0x1613e: func_start=False name=''
+  CLERIC[15] 0x162c4: func_start=False name=''
+----- end target script output -----
+[*] finished executing check_spell_addrs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py', 'noexport']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: already '_locationTypeTable' -- skipping
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: already 'cmdOtherCommand' -- skipping
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: already 'cmdHandEquipment' -- skipping
+1590B: '' -> 'SPELL_NAME_TABLE'
+    32-entry near-pointer array (wizard spells 0-15, cleric spells 16-31, matching WIZARD_SPELL_TABLE/CLERIC_SPELL_TABLE's own local indexing) read by castSpell via `mov si, [si+590Bh]` to print the spell's name before dispatching to its effect routine.
+15F9F: '' -> 'spellRespond'
+    Wizard A, magic word 'Repond' (binary spelling; ULTIMA3.TXT spells it 'RESPOND'). Manual: dispels Orcs/Goblins/Trolls.
+15FD4: '' -> 'spellMittar'
+    Wizard B, 'Mittar'. Manual: a directed magic-missile-style damage attack.
+15FE3: '' -> 'spellLorum'
+    Wizard C, 'Lorum' -- SHARES this effect address with Cleric D 'Luminae'. Manual: a short-duration magic light.
+15FEE: '' -> 'spellDorAcron'
+    Wizard D, 'Dor Acron' -- SHARES this effect address with Cleric F 'Rec Du'. Manual: descend the party one dungeon level (surface-independent of the Klimb/Descend commands).
+1600C: '' -> 'spellSurAcron'
+    Wizard E, 'Sur Acron' -- SHARES this effect address with Cleric E 'Rec Su'. Manual: ascend the party one dungeon level.
+1602F: '' -> 'spellFulgar'
+    Wizard F, 'Fulgar'. Manual: a fireball-style damage attack.
+16034: '' -> 'spellDagAcron'
+    Wizard G, 'Dag Acron'. Manual: teleport the party to a random location, surface-only.
+1606A: '' -> 'spellMentar'
+    Wizard H, 'Mentar'. Manual: an Intelligence-scaled mental damage attack.
+1608A: '' -> 'spellDagLorum'
+    Wizard I, 'Dag Lorum' -- SHARES this effect address with Cleric J 'Sominae'. Manual: a longer-duration magic light than Lorum/Luminae.
+16095: '' -> 'spellFalDivi'
+    Wizard J, 'Fal Divi'. Manual flavor text claims this grants access to the Cleric spellbook -- almost certainly narrative flourish rather than a literal class-unlock; actual effect not traced in code.
+160A5: '' -> 'spellNoxum'
+    Wizard K, 'Noxum'. Manual: 'the first of the multi-pronged attacks' -- a multi-target damage spell.
+160BA: '' -> 'spellDecorp'
+    Wizard L, 'Decorp' -- SHARES this effect address with Cleric M 'Excuun'. Manual: a powerful single-target instant-kill attack.
+160BF: '' -> 'spellAltair'
+    Wizard M, 'Altair'. Manual: stops time, matching combatCmdNegateTime/cmdNegateTime's Powder-based mechanic but as a spell instead.
+160CA: '' -> 'spellDagMentar'
+    Wizard N, 'Dag Mentar'. Manual: a multi-target, Intelligence-scaled mental damage attack (Mentar's group version).
+160FA: '' -> 'spellNecorp'
+    Wizard O, 'Necorp'. Manual: another powerful attack spell.
+1613E: '' -> 'spellZxkuqyb'
+    Cleric O, 'Zxkuqyb' -- SHARES this effect address with Wizard slot P. Notably, SPELL_NAME_TABLE's entry for Wizard P resolves to an empty string and ULTIMA3.TXT's Wizard spell list ends at O -- 'P' is not a documented Wizard spell, yet castSpell's letter-range check ('A'..'P') structurally permits selecting it anyway, and doing so invokes this exact routine (Cleric's most powerful attack spell, described in the manual as words of 'anti-creation' able to end a target's life outright). Whether this is a real, exploitable quirk of the shipped game or an artifact of how the two tables happen to be packed in memory is not confirmed -- flagged as a concrete, interesting lead rather than asserted as a discovered bug.
+16153: '' -> 'spellPontori'
+    Cleric A, 'Pontori'. Manual: dispels Undead creatures.
+16188: '' -> 'spellApparUnem'
+    Cleric B, 'Appar Unem'. Manual: opens a trapped chest safely.
+161DC: '' -> 'spellSanctu'
+    Cleric C, 'Sanctu'. Manual: minor healing.
+161F6: '' -> 'spellLibRec'
+    Cleric G, 'Lib Rec'. Manual: teleport within a dungeon (blink), the dungeon-context counterpart to Wizard's surface-only Dag Acron.
+16209: '' -> 'spellAlcort'
+    Cleric H, 'Alcort'. Manual: cures poison.
+1623C: '' -> 'spellSequitu'
+    Cleric I, 'Sequitu'. Manual: recalls the party from a dungeon to the Sosarian surface.
+1624F: '' -> 'spellSanctuMani'
+    Cleric K, 'Sanctu Mani' (ULTIMA3.TXT prints it 'SANTU MANI', missing a C -- likely a manual typo; binary spelling kept as source of truth). Manual: restores a near-dead character to full health.
+16269: '' -> 'spellVieda'
+    Cleric L, 'Vieda'. Manual: reveals the party's current surroundings (a Peer-like vision spell, works in dungeon or surface).
+16288: '' -> 'spellSurmandum'
+    Cleric N, 'Surmandum'. Manual: attempts to resurrect a dead party member, turning them to ashes on failure.
+162C4: '' -> 'spellAnjuSermani'
+    Cleric P, 'Anju Sermani'. Manual: restores an ashed character to life at a cost of 5 Wisdom points.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: already '_locationTypeTable' -- skipping
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: already 'cmdOtherCommand' -- skipping
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: already 'cmdHandEquipment' -- skipping
+1590B: '' -> 'SPELL_NAME_TABLE'
+    32-entry near-pointer array (wizard spells 0-15, cleric spells 16-31, matching WIZARD_SPELL_TABLE/CLERIC_SPELL_TABLE's own local indexing) read by castSpell via `mov si, [si+590Bh]` to print the spell's name before dispatching to its effect routine.
+15F9F: '' -> 'spellRespond'
+    Wizard A, magic word 'Repond' (binary spelling; ULTIMA3.TXT spells it 'RESPOND'). Manual: dispels Orcs/Goblins/Trolls.
+15FD4: '' -> 'spellMittar'
+    Wizard B, 'Mittar'. Manual: a directed magic-missile-style damage attack.
+15FE3: '' -> 'spellLorum'
+    Wizard C, 'Lorum' -- SHARES this effect address with Cleric D 'Luminae'. Manual: a short-duration magic light.
+15FEE: '' -> 'spellDorAcron'
+    Wizard D, 'Dor Acron' -- SHARES this effect address with Cleric F 'Rec Du'. Manual: descend the party one dungeon level (surface-independent of the Klimb/Descend commands).
+1600C: '' -> 'spellSurAcron'
+    Wizard E, 'Sur Acron' -- SHARES this effect address with Cleric E 'Rec Su'. Manual: ascend the party one dungeon level.
+1602F: '' -> 'spellFulgar'
+    Wizard F, 'Fulgar'. Manual: a fireball-style damage attack.
+16034: '' -> 'spellDagAcron'
+    Wizard G, 'Dag Acron'. Manual: teleport the party to a random location, surface-only.
+1606A: '' -> 'spellMentar'
+    Wizard H, 'Mentar'. Manual: an Intelligence-scaled mental damage attack.
+1608A: '' -> 'spellDagLorum'
+    Wizard I, 'Dag Lorum' -- SHARES this effect address with Cleric J 'Sominae'. Manual: a longer-duration magic light than Lorum/Luminae.
+16095: '' -> 'spellFalDivi'
+    Wizard J, 'Fal Divi'. Manual flavor text claims this grants access to the Cleric spellbook -- almost certainly narrative flourish rather than a literal class-unlock; actual effect not traced in code.
+160A5: '' -> 'spellNoxum'
+    Wizard K, 'Noxum'. Manual: 'the first of the multi-pronged attacks' -- a multi-target damage spell.
+160BA: '' -> 'spellDecorp'
+    Wizard L, 'Decorp' -- SHARES this effect address with Cleric M 'Excuun'. Manual: a powerful single-target instant-kill attack.
+160BF: '' -> 'spellAltair'
+    Wizard M, 'Altair'. Manual: stops time, matching combatCmdNegateTime/cmdNegateTime's Powder-based mechanic but as a spell instead.
+160CA: '' -> 'spellDagMentar'
+    Wizard N, 'Dag Mentar'. Manual: a multi-target, Intelligence-scaled mental damage attack (Mentar's group version).
+160FA: '' -> 'spellNecorp'
+    Wizard O, 'Necorp'. Manual: another powerful attack spell.
+1613E: '' -> 'spellZxkuqyb'
+    Cleric O, 'Zxkuqyb' -- SHARES this effect address with Wizard slot P. Notably, SPELL_NAME_TABLE's entry for Wizard P resolves to an empty string and ULTIMA3.TXT's Wizard spell list ends at O -- 'P' is not a documented Wizard spell, yet castSpell's letter-range check ('A'..'P') structurally permits selecting it anyway, and doing so invokes this exact routine (Cleric's most powerful attack spell, described in the manual as words of 'anti-creation' able to end a target's life outright). Whether this is a real, exploitable quirk of the shipped game or an artifact of how the two tables happen to be packed in memory is not confirmed -- flagged as a concrete, interesting lead rather than asserted as a discovered bug.
+16153: '' -> 'spellPontori'
+    Cleric A, 'Pontori'. Manual: dispels Undead creatures.
+16188: '' -> 'spellApparUnem'
+    Cleric B, 'Appar Unem'. Manual: opens a trapped chest safely.
+161DC: '' -> 'spellSanctu'
+    Cleric C, 'Sanctu'. Manual: minor healing.
+161F6: '' -> 'spellLibRec'
+    Cleric G, 'Lib Rec'. Manual: teleport within a dungeon (blink), the dungeon-context counterpart to Wizard's surface-only Dag Acron.
+16209: '' -> 'spellAlcort'
+    Cleric H, 'Alcort'. Manual: cures poison.
+1623C: '' -> 'spellSequitu'
+    Cleric I, 'Sequitu'. Manual: recalls the party from a dungeon to the Sosarian surface.
+1624F: '' -> 'spellSanctuMani'
+    Cleric K, 'Sanctu Mani' (ULTIMA3.TXT prints it 'SANTU MANI', missing a C -- likely a manual typo; binary spelling kept as source of truth). Manual: restores a near-dead character to full health.
+16269: '' -> 'spellVieda'
+    Cleric L, 'Vieda'. Manual: reveals the party's current surroundings (a Peer-like vision spell, works in dungeon or surface).
+16288: '' -> 'spellSurmandum'
+    Cleric N, 'Surmandum'. Manual: attempts to resurrect a dead party member, turning them to ashes on failure.
+162C4: '' -> 'spellAnjuSermani'
+    Cleric P, 'Anju Sermani'. Manual: restores an ashed character to life at a cost of 5 Wisdom points.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14545
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 144 total, 65 named, 79 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

@@ -804,3 +804,93 @@ independently:
 overworld prompts in the dungeon context too (dungeon indices 3 and 8
 respectively), i.e. Hand Equipment and the typed "Other command" both
 work underground as well as on the surface.
+
+**All 32 spell slots named, 2026-09-14** (`WIZARD_SPELL_TABLE`/
+`CLERIC_SPELL_TABLE`, 16 entries each). `castSpell` restricts the typed
+spell letter to `'A'..'P'` (`cmp ah,41h` / `cmp ah,50h` at
+`castSpell+89`/`+92`) before subtracting `'A'` for a 0-based index —
+this is what actually proves both tables are exactly 32 bytes, not an
+assumption from where a following label happens to sit. Worth
+recording: an earlier version of this dump (`dump_spell_tables.py`)
+walked each table's byte range until IDA's next *named* symbol and
+silently over-read `CLERIC_SPELL_TABLE` by 16 bytes into an unrelated,
+unlabeled table (`aStrength`/`aDexterity`/`aIntelligence`/`aWisdom`
+pointers happening to sit right after it) — the exact same class of
+mistake as the dungeon-command-table mixup earlier this session,
+caught the same way: re-derive the boundary from the dispatching code
+itself, not from data layout.
+
+Each spell's magic word is directly readable from the binary via a
+combined 32-entry name-pointer table, `SPELL_NAME_TABLE` (linear
+`0x1590B`), which `castSpell` reads via `mov si, [si+590Bh]` (index =
+local index + 0 for wizard, +0x10 for cleric) to print the spell's name
+before dispatching to its effect routine via `jmp word ptr [di]`. All
+32 words were cross-checked against `C:\games\ultima3\ULTIMA3.TXT`'s
+in-game spellbook manual and match exactly (one likely manual typo:
+"SANTU MANI" in the text vs. the binary's "Sanctu Mani"):
+
+| Ltr | Wizard word | Effect (per manual) | Ltr | Cleric word | Effect (per manual) |
+|---|---|---|---|---|---|
+| A | Repond | Dispel Orcs/Goblins/Trolls | A | Pontori | Dispel Undead |
+| B | Mittar | Magic missile attack | B | Appar Unem | Open chest safely |
+| C | Lorum | Light (short) | C | Sanctu | Minor heal |
+| D | Dor Acron | Descend 1 dungeon level | D | Luminae | Light (short) |
+| E | Sur Acron | Ascend 1 dungeon level | E | Rec Su | Ascend 1 dungeon level |
+| F | Fulgar | Fireball attack | F | Rec Du | Descend 1 dungeon level |
+| G | Dag Acron | Random teleport (surface) | G | Lib Rec | Teleport within dungeon |
+| H | Mentar | INT-scaled mind attack | H | Alcort | Cure poison |
+| I | Dag Lorum | Light (long) | I | Sequitu | Recall to surface |
+| J | Fal Divi | "Unlocks Cleric book" (flavor) | J | Sominae | Light (long) |
+| K | Noxum | Multi-target attack | K | Sanctu Mani | Heal near-death |
+| L | Decorp | Single-target kill | L | Vieda | Reveal surroundings |
+| M | Altair | Stop time | M | Excuun | Single-target kill |
+| N | Dag Mentar | Multi-target INT attack | N | Surmandum | Resurrect (risk: ashes) |
+| O | Necorp | Powerful attack | O | Zxkuqyb | Powerful "anti-creation" kill |
+| P | *(unused — see below)* | | P | Anju Sermani | Restore from ashes (-5 Wisdom) |
+
+Two things stood out enough to flag explicitly:
+
+- **6 of the 32 slots share their effect routine with the other
+  class's same-purpose spell** (confirmed via `check_spell_addrs.py`,
+  reading each table's raw pointers and diffing addresses — no other
+  collisions found): Wizard "Lorum"/Cleric "Luminae" (both short
+  lights), Wizard "Dor Acron"/Cleric "Rec Du" (both descend-a-level),
+  Wizard "Sur Acron"/Cleric "Rec Su" (both ascend-a-level), Wizard "Dag
+  Lorum"/Cleric "Sominae" (both long lights), Wizard "Decorp"/Cleric
+  "Excuun" (both single-target kills), and — the more interesting one
+  below — Wizard's unused 'P' slot and Cleric "Zxkuqyb". Makes sense:
+  the game only needed one implementation per *effect*, reused across
+  whichever spell letters/classes call for that effect.
+- **Wizard letter 'P' is not a documented spell** — `ULTIMA3.TXT`'s
+  wizard spell list stops at 'O', and `SPELL_NAME_TABLE`'s entry for
+  Wizard index 15 (letter P) resolves to an empty string. But
+  `castSpell`'s letter check is a generic `'A'..'P'` range test with no
+  per-class upper bound, so selecting 'P' as a Wizard is structurally
+  possible — and its table entry points at the exact same routine as
+  Cleric's "Zxkuqyb", described in the manual as the most powerful
+  attack spell in the game ("the second words of anti-creation...
+  [that] will end this life, and all other potential lives within
+  them"). Whether this is a real, exploitable quirk of the shipped
+  game (a free/mistakenly-costed instant-kill for Wizards) or just an
+  artifact of how the two tables happen to be packed in memory isn't
+  confirmed either way — flagged as a concrete, interesting lead, not
+  asserted as a discovered bug.
+
+The MP-cost formula was also confirmed directly from `castSpell`'s own
+arithmetic (not from the manual): `cost = localIndex * 5`, computed via
+`mul`+`aam` and packed to BCD, checked against `RosterEntry+0x19`
+(`_magicPoints`) before a BCD-subtract — so within either class's own
+16-spell list, letter A costs 0 MP and letter P costs 75 MP BCD,
+increasing by 5 per letter.
+
+All 32 spell-effect addresses plus `SPELL_NAME_TABLE` are now named
+(`spellRespond`, `spellMittar`, ... — see
+`ida_scripts/apply_renames_exodus.py` for the complete list with
+per-entry evidence). None of them were recognized by IDA as function
+starts (same situation as the overworld/dungeon command handlers) —
+renamed as plain labels via `idc.set_name`, same as those. **Still
+open**: each routine's actual mechanic is sourced from the manual's
+flavor text only, not independently confirmed by reading the routine's
+own code — a well-bounded next target now that every address has a
+name, and LairWare's `UltimaSpellCombat.c` is available as a secondary
+cross-reference for expected behavior.

@@ -913,6 +913,135 @@ RENAMES = [
      "two globally-remembered players instead. That follow-on "
      "mechanism is NOT traced -- flagged as the next concrete lead "
      "rather than guessed at."),
+
+    # --- Spell tables, 2026-09-14 -----------------------------------
+    # castSpell (0x15D83) restricts the typed spell letter to 'A'..'P'
+    # (cmp ah,41h / cmp ah,50h at castSpell+89/+92) before subtracting
+    # 'A' for a 0-based index -- this, not where a following label
+    # happens to sit, is what proves WIZARD_SPELL_TABLE/
+    # CLERIC_SPELL_TABLE are exactly 16 entries (32 bytes) each. An
+    # earlier attempt at this dump walked byte ranges until the next
+    # *named* IDA symbol and silently over-read CLERIC_SPELL_TABLE by
+    # 16 bytes into an unrelated, unlabeled table (aStrength/aDexterity/
+    # aIntelligence/aWisdom pointers) -- same class of mistake as the
+    # dungeon-command-table mixup earlier this session, caught the same
+    # way (re-derive from code, not from data layout).
+    #
+    # Each spell's magic word is directly readable from the binary via
+    # a combined 32-entry name-pointer table at linear 0x1590B
+    # (`mov si, [si+590Bh]` in castSpell, index = local index + 0/0x10
+    # for wizard/cleric) -- see SPELL_NAME_TABLE below. Names here are
+    # taken from THAT table (i.e. confirmed present in the binary
+    # itself), cross-referenced against C:\games\ultima3\ULTIMA3.TXT's
+    # in-game spellbook manual for the associated flavor-text effect
+    # description, which is NOT independently verified against each
+    # routine's actual code -- see docs/overview.md for the full
+    # writeup and the effect-description table sourced from the
+    # manual. 6 of the 32 (letter, class) slots share their effect
+    # address with another slot in the OTHER class's table (confirmed
+    # via check_spell_addrs.py, no other collisions found) -- named
+    # after whichever spell reads more naturally as primary, alias
+    # noted in each entry.
+    (0x1590B, "SPELL_NAME_TABLE",
+     "32-entry near-pointer array (wizard spells 0-15, cleric spells "
+     "16-31, matching WIZARD_SPELL_TABLE/CLERIC_SPELL_TABLE's own "
+     "local indexing) read by castSpell via `mov si, [si+590Bh]` to "
+     "print the spell's name before dispatching to its effect "
+     "routine."),
+
+    (0x15F9F, "spellRespond",
+     "Wizard A, magic word 'Repond' (binary spelling; ULTIMA3.TXT "
+     "spells it 'RESPOND'). Manual: dispels Orcs/Goblins/Trolls."),
+    (0x15FD4, "spellMittar",
+     "Wizard B, 'Mittar'. Manual: a directed magic-missile-style "
+     "damage attack."),
+    (0x15FE3, "spellLorum",
+     "Wizard C, 'Lorum' -- SHARES this effect address with Cleric D "
+     "'Luminae'. Manual: a short-duration magic light."),
+    (0x15FEE, "spellDorAcron",
+     "Wizard D, 'Dor Acron' -- SHARES this effect address with Cleric "
+     "F 'Rec Du'. Manual: descend the party one dungeon level "
+     "(surface-independent of the Klimb/Descend commands)."),
+    (0x1600C, "spellSurAcron",
+     "Wizard E, 'Sur Acron' -- SHARES this effect address with Cleric "
+     "E 'Rec Su'. Manual: ascend the party one dungeon level."),
+    (0x1602F, "spellFulgar",
+     "Wizard F, 'Fulgar'. Manual: a fireball-style damage attack."),
+    (0x16034, "spellDagAcron",
+     "Wizard G, 'Dag Acron'. Manual: teleport the party to a random "
+     "location, surface-only."),
+    (0x1606A, "spellMentar",
+     "Wizard H, 'Mentar'. Manual: an Intelligence-scaled mental "
+     "damage attack."),
+    (0x1608A, "spellDagLorum",
+     "Wizard I, 'Dag Lorum' -- SHARES this effect address with Cleric "
+     "J 'Sominae'. Manual: a longer-duration magic light than "
+     "Lorum/Luminae."),
+    (0x16095, "spellFalDivi",
+     "Wizard J, 'Fal Divi'. Manual flavor text claims this grants "
+     "access to the Cleric spellbook -- almost certainly narrative "
+     "flourish rather than a literal class-unlock; actual effect not "
+     "traced in code."),
+    (0x160A5, "spellNoxum",
+     "Wizard K, 'Noxum'. Manual: 'the first of the multi-pronged "
+     "attacks' -- a multi-target damage spell."),
+    (0x160BA, "spellDecorp",
+     "Wizard L, 'Decorp' -- SHARES this effect address with Cleric M "
+     "'Excuun'. Manual: a powerful single-target instant-kill attack."),
+    (0x160BF, "spellAltair",
+     "Wizard M, 'Altair'. Manual: stops time, matching "
+     "combatCmdNegateTime/cmdNegateTime's Powder-based mechanic but as "
+     "a spell instead."),
+    (0x160CA, "spellDagMentar",
+     "Wizard N, 'Dag Mentar'. Manual: a multi-target, "
+     "Intelligence-scaled mental damage attack (Mentar's group "
+     "version)."),
+    (0x160FA, "spellNecorp",
+     "Wizard O, 'Necorp'. Manual: another powerful attack spell."),
+    (0x1613E, "spellZxkuqyb",
+     "Cleric O, 'Zxkuqyb' -- SHARES this effect address with Wizard "
+     "slot P. Notably, SPELL_NAME_TABLE's entry for Wizard P resolves "
+     "to an empty string and ULTIMA3.TXT's Wizard spell list ends at "
+     "O -- 'P' is not a documented Wizard spell, yet castSpell's "
+     "letter-range check ('A'..'P') structurally permits selecting it "
+     "anyway, and doing so invokes this exact routine (Cleric's most "
+     "powerful attack spell, described in the manual as words of "
+     "'anti-creation' able to end a target's life outright). Whether "
+     "this is a real, exploitable quirk of the shipped game or an "
+     "artifact of how the two tables happen to be packed in memory is "
+     "not confirmed -- flagged as a concrete, interesting lead rather "
+     "than asserted as a discovered bug."),
+
+    (0x16153, "spellPontori",
+     "Cleric A, 'Pontori'. Manual: dispels Undead creatures."),
+    (0x16188, "spellApparUnem",
+     "Cleric B, 'Appar Unem'. Manual: opens a trapped chest safely."),
+    (0x161DC, "spellSanctu",
+     "Cleric C, 'Sanctu'. Manual: minor healing."),
+    (0x161F6, "spellLibRec",
+     "Cleric G, 'Lib Rec'. Manual: teleport within a dungeon (blink), "
+     "the dungeon-context counterpart to Wizard's surface-only Dag "
+     "Acron."),
+    (0x16209, "spellAlcort",
+     "Cleric H, 'Alcort'. Manual: cures poison."),
+    (0x1623C, "spellSequitu",
+     "Cleric I, 'Sequitu'. Manual: recalls the party from a dungeon "
+     "to the Sosarian surface."),
+    (0x1624F, "spellSanctuMani",
+     "Cleric K, 'Sanctu Mani' (ULTIMA3.TXT prints it 'SANTU MANI', "
+     "missing a C -- likely a manual typo; binary spelling kept as "
+     "source of truth). Manual: restores a near-dead character to "
+     "full health."),
+    (0x16269, "spellVieda",
+     "Cleric L, 'Vieda'. Manual: reveals the party's current "
+     "surroundings (a Peer-like vision spell, works in dungeon or "
+     "surface)."),
+    (0x16288, "spellSurmandum",
+     "Cleric N, 'Surmandum'. Manual: attempts to resurrect a dead "
+     "party member, turning them to ashes on failure."),
+    (0x162C4, "spellAnjuSermani",
+     "Cleric P, 'Anju Sermani'. Manual: restores an ashed character "
+     "to life at a cost of 5 Wisdom points."),
 ]
 
 

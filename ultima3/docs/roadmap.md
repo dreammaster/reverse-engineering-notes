@@ -287,11 +287,32 @@ Next-session priorities, roughly in order:
       applied at low-medium confidence this pass, worth a quick
       `ida_bytes.get_word()`-style direct check against the actual
       indexed access pattern before trusting it as-is.
-- [ ] Individual spell effects in `WIZARD_SPELL_TABLE`/
-      `CLERIC_SPELL_TABLE` — now that `castSpell`'s dispatch mechanism
-      is understood, each entry is a small, self-contained function.
-      Cross-reference `ULTIMA3.TXT`'s spell list and LairWare's
-      `UltimaSpellCombat.c` for expected spell names/effects.
+- [x] **`WIZARD_SPELL_TABLE`/`CLERIC_SPELL_TABLE` — all 32 spell slots
+      named**, done 2026-09-14. Confirmed both tables are exactly 16
+      entries (32 bytes) each directly from `castSpell`'s own letter
+      bounds-check ('A'..'P'), not from data layout — an earlier
+      boundary-walk attempt over-read `CLERIC_SPELL_TABLE` by 16 bytes
+      into an unrelated table, the same class of mistake as the
+      dungeon-command mixup, caught the same way. Every spell's magic
+      word was read directly from a 32-entry name-pointer table in the
+      binary (`SPELL_NAME_TABLE`, linear `0x1590B`) and cross-checked
+      against `C:\games\ultima3\ULTIMA3.TXT`'s in-game spellbook manual
+      — all 32 words match the manual exactly (mod one likely manual
+      typo, "SANTU MANI" vs. the binary's "Sanctu Mani"). See
+      overview.md for the full name/address table and two notable
+      findings: 6 of the 32 (letter, class) slots share their effect
+      routine with a same-purpose spell in the *other* class (e.g.
+      Wizard "Lorum" and Cleric "Luminae", both short-light spells,
+      are literally the same routine), and Wizard slot 'P' — not a
+      documented spell in the manual, whose name-table entry is an
+      empty string — is nonetheless selectable per `castSpell`'s
+      generic 'A'..'P' range check, and invokes Cleric's most powerful
+      attack spell ("Zxkuqyb") when selected. **Still open**: each
+      routine's actual mechanic is sourced from `ULTIMA3.TXT`'s flavor
+      text, not independently confirmed by reading the routine's own
+      code — a good next target now that all addresses are named,
+      along with cross-referencing LairWare's `UltimaSpellCombat.c`
+      for its own effect implementation as a secondary source.
 - [ ] `combatCmdAttack`'s damage-resolution helpers (`sub_18E46`,
       `sub_18E7A`) — the actual to-hit/damage formula, not yet traced
       past "the overall shape."
