@@ -4644,7 +4644,7 @@ aDirect_0       db 0Ah                  ; DATA XREF: sub_17B54:loc_15BDC↓o
 aSDestroyed     db 's',0Ah              ; DATA XREF: sub_17B54-1EFB↓o
                 db 'Destroyed!',0Ah,0
 aWhoseTorch     db 'Whose torch: ',0    ; DATA XREF: sub_17B54-1E81↓o
-                db 53h, 68h, 5Ah, 68h, 61h, 68h, 67h, 68h, 71h, 68h, 7Bh
+SPELL_NAME_TABLE db 53h, 68h, 5Ah, 68h, 61h, 68h, 67h, 68h, 71h, 68h, 7Bh
                 db 68h, 82h, 68h, 8Ch, 68h, 93h, 68h, 9Dh, 68h, 0A6h, 68h
                 db 0ACh, 68h, 0B3h, 68h, 0BAh, 68h, 0C5h, 68h, 0CCh, 68h
                 db 0CDh, 68h, 0D5h, 68h, 0E0h, 68h, 0E7h, 68h, 0EFh, 68h
@@ -4673,7 +4673,7 @@ aMPTooLow       db 'M.P. too low!',0Ah,0
                                         ; DATA XREF: castSpell:loc_15E6D↓o
 aFailed_1       db 'Failed!',0Ah,0      ; DATA XREF: seg000:loc_15E7B↓o
 aHealWhom_0     db 'Heal whom? ',0      ; DATA XREF: seg000:loc_15F0A↓o
-aCureWhom_0     db 'Cure whom? ',0      ; DATA XREF: seg000:6209↓o
+aCureWhom_0     db 'Cure whom? ',0      ; DATA XREF: seg000:spellAlcort↓o
 aResurectWhom   db 'Resurect whom? ',0  ; DATA XREF: seg000:628F↓o
 aRecallWhom_0   db 'Recall whom? ',0    ; DATA XREF: seg000:62CD↓o
 aExitToSosariaP db 'Exit to Sosaria!',0Ah ; DATA XREF: sub_16458+10↓o
@@ -5418,6 +5418,8 @@ loc_15F82:                              ; CODE XREF: sub_15F7B+18↓j
 sub_15F7B       endp
 
 ; ---------------------------------------------------------------------------
+
+spellRespond:
                 cmp     byte_114BC, 80h
                 jnz     short loc_15FD1
                 cmp     _conflictMonsterClass, 18h
@@ -5441,6 +5443,8 @@ loc_15FD1:                              ; CODE XREF: seg000:5FA4↑j
                                         ; seg000:5FAB↑j ...
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellMittar:
                 mov     al, dl
                 mov     dh, 28h ; '('
                 call    stepTimeSeededPrng
@@ -5448,10 +5452,14 @@ loc_15FD1:                              ; CODE XREF: seg000:5FA4↑j
                 xchg    al, dl
                 jmp     loc_15F2D
 ; ---------------------------------------------------------------------------
+
+spellLorum:
                 mov     byte_115CE, 0Ah
                 call    sub_15E89
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
+
+spellDorAcron:
                 cmp     byte_114BC, 1
                 jnz     short loc_16009
                 call    sub_15E89
@@ -5466,6 +5474,8 @@ loc_16009:                              ; CODE XREF: seg000:5FF3↑j
                                         ; seg000:5FFD↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellSurAcron:
                 cmp     byte_114BC, 1
                 jnz     short loc_16027
                 call    sub_15E89
@@ -5486,9 +5496,13 @@ loc_1602A:                              ; CODE XREF: seg000:601B↑j
                 call    sub_16458
                 jmp     short loc_16024
 ; ---------------------------------------------------------------------------
+
+spellFulgar:
                 mov     al, 4Bh ; 'K'
                 jmp     loc_15F2D
 ; ---------------------------------------------------------------------------
+
+spellDagAcron:
                 cmp     byte_114BC, 0
                 jnz     short loc_16067
                 call    sub_15E89
@@ -5517,6 +5531,8 @@ loc_1603E:                              ; CODE XREF: seg000:6051↓j
 loc_16067:                              ; CODE XREF: seg000:6039↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellMentar:
                 mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
@@ -5531,16 +5547,22 @@ loc_16067:                              ; CODE XREF: seg000:6039↑j
                 shl     al, 1
                 jmp     loc_15F2D
 ; ---------------------------------------------------------------------------
+
+spellDagLorum:
                 mov     byte_115CE, 0FAh
                 call    sub_15E89
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
+
+spellFalDivi:
                 call    sub_15E89
                 lea     di, CLERIC_SPELL_TABLE
                 lea     si, aClericSpell ; "Cleric spell-"
                 mov     dh, 10h
                 jmp     loc_15DFF
 ; ---------------------------------------------------------------------------
+
+spellNoxum:
                 cmp     byte_114BC, 80h
                 jnz     short loc_160B7
                 call    sub_15E89
@@ -5552,13 +5574,19 @@ loc_16067:                              ; CODE XREF: seg000:6039↑j
 loc_160B7:                              ; CODE XREF: seg000:60AA↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellDecorp:
                 mov     al, 0FFh
                 jmp     loc_15F2D
 ; ---------------------------------------------------------------------------
+
+spellAltair:
                 mov     _negateTimeDuration, 0Ah
                 call    sub_15E89
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
+
+spellDagMentar:
                 cmp     byte_114BC, 80h
                 jnz     short loc_160F7
                 call    sub_15E89
@@ -5581,6 +5609,8 @@ loc_160B7:                              ; CODE XREF: seg000:60AA↑j
 loc_160F7:                              ; CODE XREF: seg000:60CF↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellNecorp:
                 cmp     byte_114BC, 80h
                 jnz     short loc_1613B
                 call    sub_15E89
@@ -5611,6 +5641,8 @@ loc_16135:                              ; CODE XREF: seg000:6110↑j
 loc_1613B:                              ; CODE XREF: seg000:60FF↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellZxkuqyb:
                 cmp     byte_114BC, 80h
                 jnz     short loc_16150
                 call    sub_15E89
@@ -5622,6 +5654,8 @@ loc_1613B:                              ; CODE XREF: seg000:60FF↑j
 loc_16150:                              ; CODE XREF: seg000:6143↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellPontori:
                 cmp     byte_114BC, 80h
                 jnz     short loc_16185
                 cmp     _conflictMonsterClass, 19h
@@ -5645,6 +5679,8 @@ loc_16185:                              ; CODE XREF: seg000:6158↑j
                                         ; seg000:615F↑j ...
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellApparUnem:
                 mov     di, bx
                 call    sub_15E89
                 mov     dh, 0FFh
@@ -5694,6 +5730,8 @@ loc_161CE:                              ; CODE XREF: seg000:61A7↑j
                 call    playSoundEffect
                 jmp     short loc_161CB
 ; ---------------------------------------------------------------------------
+
+spellSanctu:
                 mov     ch, dl
                 mov     dh, 14h
                 call    stepTimeSeededPrng
@@ -5707,6 +5745,8 @@ loc_161CE:                              ; CODE XREF: seg000:61A7↑j
                 mov     dl, ch
                 jmp     loc_15F0A
 ; ---------------------------------------------------------------------------
+
+spellLibRec:
                 cmp     byte_114BC, 1
                 jnz     short loc_16206
                 call    sub_15E89
@@ -5717,6 +5757,8 @@ loc_161CE:                              ; CODE XREF: seg000:61A7↑j
 loc_16206:                              ; CODE XREF: seg000:61FB↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellAlcort:
                 lea     si, aCureWhom_0 ; "Cure whom? "
                 call    printGameText
                 call    sub_16C76
@@ -5742,6 +5784,8 @@ loc_16230:                              ; CODE XREF: seg000:6213↑j
                 mov     [bx+19h], al
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
+
+spellSequitu:
                 cmp     byte_114BC, 1
                 jnz     short loc_1624C
                 call    sub_15E89
@@ -5752,6 +5796,8 @@ loc_16230:                              ; CODE XREF: seg000:6213↑j
 loc_1624C:                              ; CODE XREF: seg000:6241↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellSanctuMani:
                 mov     ch, dl
                 mov     dh, 50h ; 'P'
                 call    stepTimeSeededPrng
@@ -5765,6 +5811,8 @@ loc_1624C:                              ; CODE XREF: seg000:6241↑j
                 mov     dl, ch
                 jmp     loc_15F0A
 ; ---------------------------------------------------------------------------
+
+spellVieda:
                 cmp     byte_114BC, 80h
                 jz      short loc_16285
                 call    sub_15E89
@@ -5784,6 +5832,8 @@ loc_16282:                              ; CODE XREF: seg000:627D↑j
 loc_16285:                              ; CODE XREF: seg000:626E↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellSurmandum:
                 cmp     byte_114BC, 80h
                 jz      short loc_162C1
                 lea     si, aResurectWhom ; "Resurect whom? "
@@ -5811,6 +5861,8 @@ loc_162C1:                              ; CODE XREF: seg000:628D↑j
                                         ; seg000:6299↑j ...
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
+
+spellAnjuSermani:
                 mov     di, bx
                 cmp     byte_114BC, 80h
                 jz      short loc_162FA
