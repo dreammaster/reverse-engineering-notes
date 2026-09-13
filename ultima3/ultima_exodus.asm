@@ -351,7 +351,7 @@ OVERWORLD_COMMAND_KEYS dw 4800h, 1E41h, 5000h, 4D00h, 4B00h, 3920h, 3042h, 2D58h
                 db 18h, 5Ch, 18h, 69h, 18h
 OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                                         ; DATA XREF: sub_17B54-5F83↓r
-                dw offset loc_1888B     ; jump table for switch statement
+                dw offset cmdAttack     ; jump table for switch statement
                 dw offset cmdMoveSouth
                 dw offset cmdMoveEast
                 dw offset cmdMoveWest
@@ -374,11 +374,11 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset loc_17E33
                 dw offset loc_17EE4
                 dw offset cmdCastSpell
-                dw offset loc_15BCF
+                dw offset cmdFire
                 dw offset loc_15C73
                 dw offset cmdDisabledOnSurface
                 dw offset loc_15CF8
-                dw offset loc_18190
+                dw offset cmdGet
                 dw offset cmdPeer
                 dw offset cmdSteal
                 dw offset loc_17458
@@ -4818,7 +4818,7 @@ sub_15B85       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_15BCF:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdFire:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 24
                 cmp     _currentTransport, 0Bh
@@ -8724,7 +8724,7 @@ DUNGEON_COMMAND_KEYS db 20h, 39h, 43h, 2Eh, 47h, 22h, 48h, 23h, 49h, 17h, 4Ah
                 db 0, 4Bh, 53h, 1Fh, 0, 48h, 0, 2 dup(50h), 19h
 DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdCastSpell  ; jump table for switch statement
-                dw offset loc_18190
+                dw offset cmdGet
                 dw offset loc_11E55
                 dw offset cmdIgniteTorch
                 dw offset loc_15C73
@@ -8755,7 +8755,7 @@ DUNGEON_COMMAND_TABLE dw offset cmdPass ; DATA XREF: sub_17B54+835↓r
                 dw offset cmdMoveForward
                 dw offset cmdMoveBackward
                 dw offset cmdPeer
-off_1778C       dw offset loc_177EA     ; DATA XREF: sub_17B54+82F↓o
+DUNGEON_COMMAND_LABELS dw offset loc_177EA ; DATA XREF: sub_17B54+82F↓o
                 dw offset aCastByWhom   ; "Cast by whom-"
                 dw offset aGetChestPlrToS ; "Get Chest!\nPlr to search-"
                 dw offset aHandEquipmentF ; "Hand Equipment!\nFrom Player: "
@@ -8795,7 +8795,7 @@ aItSDark        db 'It',27h,'s dark!',0Ah,0 ; DATA XREF: sub_17B54+7DD↓o
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_177EA:                              ; DATA XREF: seg000:off_1778C↑o
+loc_177EA:                              ; DATA XREF: seg000:DUNGEON_COMMAND_LABELS↑o
                 push    ax
                 popa
                 jnb     short near ptr aHowMuch+0Ah ; " "
@@ -10181,7 +10181,7 @@ sub_180D9       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_18190:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdGet:                                 ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 28
@@ -10482,7 +10482,7 @@ loc_1837B:                              ; CODE XREF: sub_17B54+822↑j
                 sub     bx, cx
                 dec     bx
                 shl     bx, 1           ; switch 33 cases
-                lea     si, off_1778C
+                lea     si, DUNGEON_COMMAND_LABELS
                 mov     si, [bx+si]
                 jmp     DUNGEON_COMMAND_TABLE[bx] ; switch jump
 ; ---------------------------------------------------------------------------
@@ -10803,7 +10803,7 @@ aPass           db 'Pass',0Ah,0         ; DATA XREF: updateMonsterAI:combatCmdPa
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_1888B:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdAttack:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 1
                 mov     byte_184E0, 3Dh ; '='

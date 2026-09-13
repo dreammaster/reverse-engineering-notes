@@ -627,6 +627,19 @@ its *output* still needs the same skepticism before being written into
 documentation as fact — a second, careful pass caught this before it
 became a permanent wrong claim.
 
+**Follow-up, same session**: named `DUNGEON_COMMAND_LABELS`
+(`off_1778C`, medium confidence — a per-command prompt-string table
+loaded into `si` right before every dungeon command dispatches,
+explaining why individual handlers don't always show their own
+`lea si,aXxx` before their first `printGameText` call) and 3 more
+overworld commands: `cmdAttack` ('A', prompts a direction and jumps
+straight into `beginCombatEncounter` — the same combat path
+`updateMonsterAI` uses automatically), `cmdFire` ('F', ship-only
+cannon fire, steps a projectile up to 3 tiles), and `cmdGet` ('G',
+picks up gold/treasure off the map). **21 of 33 overworld commands are
+now confirmed** — 12 letters remain (H, J, L, N, O, R, T, W, Y, Z, plus
+completing H's partial read).
+
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly
 `sub_123A5`) is **not** the combat command dispatcher the string scan

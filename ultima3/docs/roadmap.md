@@ -210,23 +210,23 @@ Next-session priorities, roughly in order:
       continuation — see below.
 - [x] **The overworld main game loop and its 33-entry command table**
       — found (`mainGameLoop`, `OVERWORLD_COMMAND_TABLE`/
-      `OVERWORLD_COMMAND_KEYS`). 16 of 33 commands confirmed so far
+      `OVERWORLD_COMMAND_KEYS`). 21 of 33 commands confirmed so far
       (movement x4, Pass, Board, Exit vehicle, Toggle sound, Enter
       (dungeon/town/castle/shrine), Cast Spell, Exchange, Peer, Quit,
-      Steal, Unlock — see overview.md). **17 remain**, each a small,
-      self-contained, well-bounded target — far more tractable now
-      than reading `sub_17B54` linearly, since every handler's address
-      and trigger key are already known:
+      Steal, Unlock, Ignite Torch, Attack, Fire, Get — see
+      overview.md). **10 remain** (plus the 6 dungeon-only movement
+      commands, done — see below), each a small, self-contained,
+      well-bounded target — far more tractable now than reading
+      `sub_17B54` linearly, since every handler's address and trigger
+      key are already known:
 
       | Key | Handler address | Key | Handler address |
       |---|---|---|---|
-      | A | `loc_1888B` | N | `loc_15CF8` |
-      | F | `loc_15BCF` | O | `loc_174D5` |
-      | G | `loc_18190` | R | `loc_17E33` |
-      | H | `loc_11E55` (partially read, see below) | T | `loc_17FC6` |
-      | J | `loc_15C73` | W | `loc_17EE4` |
-      | L | `loc_11E7A` | Y | `loc_17458` |
-      | | | Z | `loc_12068` |
+      | H | `loc_11E55` (partially read, see below) | R | `loc_17E33` |
+      | J | `loc_15C73` | T | `loc_17FC6` |
+      | L | `loc_11E7A` | W | `loc_17EE4` |
+      | N | `loc_15CF8` | Y | `loc_17458` |
+      | O | `loc_174D5` | Z | `loc_12068` |
 
       H (`loc_11E55`) is partially read: prompts "To Player: ", involves
       `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
