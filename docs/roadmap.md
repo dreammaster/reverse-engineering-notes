@@ -412,13 +412,32 @@ Next-session priorities, roughly in order:
       position `0x0A`/game mode 3 is special — i.e. what specific named
       location this constant refers to — isn't confirmed; named for
       the condition it checks, not for an asserted location identity.
-- [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
-      `sub_1232F`, compares against `_partyPosition`) and `sub_1232F`
-      itself (the special-case handler for monster types `'t'`/`'<'`
-      in `updateMonsterAI`), `sub_17F96`/`sub_128F2` (helpers
-      `canMoveToTile` calls into), and `sub_17233`/`sub_17254`
-      (movement-blocked checks `cmdMoveNorth` calls) — all found in
-      passing this pass but not chased down.
+- [x] **Overworld monster breath attack traced and named**, done
+      2026-09-14: `sub_1232F` → **`monsterBreathAttack`** (the
+      special-case handler for monster types `'t'`/`'<'` — dragon-type
+      monsters — in `updateMonsterAI`; 50% chance per call, steps a
+      breath effect toward the party's screen-center position, blocked
+      by impassable terrain, damaging the party on a hit) and
+      `sub_1633B` → **`computeStepTowardParty`** (shared aiming helper,
+      also called directly by `updateMonsterAI` for ordinary monster
+      chasing — computes a single-step direction toward
+      `_partyPosition` with wraparound on the overworld's 64-tile-per-
+      axis map). Following the hit path also named `sub_182C6` →
+      **`damagePartyAll`** (loops all 4 live party members, applying
+      `random(0..0x77) + (_dungeonLevel+1)*8` BCD damage to each alive
+      one — the dungeon-depth term suggests this helper is shared with
+      a dungeon-context caller too, not traced) and `sub_16BC9` →
+      **`damageCharacterHP`** (the general BCD HP-subtract primitive,
+      also used by `processPartyTurnEffects`/poison-hunger effects;
+      handles death by setting `_status='D'` and calling the
+      not-yet-traced `sub_16B91`).
+- [ ] Identify `sub_17F96`/`sub_128F2` (helpers `canMoveToTile` calls
+      into), `sub_17233`/`sub_17254` (movement-blocked checks
+      `cmdMoveNorth` calls), and `sub_16B91`/`sub_12097` (called from
+      `damageCharacterHP` on death and from `checkPartyWipedOut`,
+      conditionally on game mode — possibly a party-wipe/game-over
+      check, not traced) — all found in passing this pass but not
+      chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
