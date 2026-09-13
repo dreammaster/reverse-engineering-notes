@@ -577,11 +577,41 @@ the in-dungeon command set). `cmdIgniteTorch` ('I') confirms a further
 documentation.
 
 18 of 33 overworld commands are now confirmed. 15 letters (A, F, G, H,
-J, L, N, O, R, T, W, Y, Z, plus `jpt_18389`'s presumed in-dungeon
-command set) remain — a concrete, bounded checklist for continuing
-(see [roadmap.md](roadmap.md)), much more tractable than reading
-`sub_17B54` linearly since each handler's address and trigger key are
-now known.
+J, L, N, O, R, T, W, Y, Z) remain — a concrete, bounded checklist for
+continuing (see [roadmap.md](roadmap.md)), much more tractable than
+reading `sub_17B54` linearly since each handler's address and trigger
+key are now known.
+
+### Session 2026-09-14: `dungeonMainLoop` found — the entire dungeon command system
+
+`jpt_18389`, referenced repeatedly throughout the previous session's
+finds but never itself identified, turns out to be **`DUNGEON_COMMAND_TABLE`**
+— the dungeon counterpart to `OVERWORLD_COMMAND_TABLE`, dispatched from
+**`dungeonMainLoop`** (structurally identical to `mainGameLoop`: idle-
+animation poll, key lookup, jump-table dispatch), entered via
+**`initDungeonState`** right after `cmdEnter`'s dungeon branch loads the
+dungeon map + `DUNGEON.DAT`. Confirmed both structurally *and*
+semantically: `dungeonMainLoop` checks `byte_115CE` — the exact flag
+`cmdIgniteTorch` sets — and prints **"It's dark!"** every turn it's
+unlit, the classic Ultima need-a-lit-torch mechanic.
+
+`DUNGEON_COMMAND_TABLE` shares many handlers directly with the
+overworld table (Pass, Cast Spell, Ignite Torch, Exchange, Toggle
+Sound all work identically in both places) but disables 9 letters
+outright (B, A, E, F, L, Q, T, U, X all route to one shared stub) —
+Board/Enter/eXit-vehicle/Quit-and-save disabled underground all make
+immediate sense; Attack/Fire/Locate/Transact/**Unlock** being disabled
+too is unexpected (Unlock specifically is odd — Ultima dungeons are
+full of locked doors) and not yet explained, flagged as open. The
+remaining 7 letters (**K**, **D**, all 4 arrow keys, **S**) point at
+genuinely dungeon-specific handlers — almost certainly Klimb/Descend
+and first-person relative-turn movement (matching classic Ultima
+dungeon navigation, distinct from the overworld's compass-direction
+movement) — but their addresses suffer the same data-misdecoded-as-code
+problem `OVERWORLD_COMMAND_KEYS` had, from an overlapping reference
+via a still-unidentified parallel table (`off_1778C`). Needs a
+structural fix (same technique as `fix_command_key_tables.py`) before
+they can be safely read and named — see [roadmap.md](roadmap.md).
 
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly

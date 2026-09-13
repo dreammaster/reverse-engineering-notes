@@ -2112,12 +2112,13 @@ static Bytes_0(void) {
 	make_array	(0X17704,	0X4);
 	create_byte	(0X17708);
 	make_array	(0X17708,	0X42);
+	set_name	(0X17708,	"DUNGEON_COMMAND_KEYS");
 	set_cmt	(0X1774A,	"jump table for switch statement",	0);
 	create_word	(x=0X1774A);
 	make_array	(x,	0X21);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	set_name	(0X1774A,	"jpt_18389");
+	set_name	(0X1774A,	"DUNGEON_COMMAND_TABLE");
 	create_word	(x=0X1778C);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
@@ -2579,8 +2580,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X182FB);
 	op_hex		(x,	1);
 	create_insn	(0X18314);
+	set_name	(0X18314,	"initDungeonState");
 	create_byte	(0X18326);
 	create_insn	(0X18327);
+	set_name	(0X18327,	"dungeonMainLoop");
 	create_insn	(x=0X18331);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
