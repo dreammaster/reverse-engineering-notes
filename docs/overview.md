@@ -554,10 +554,23 @@ map *and* a separate `0x800`-byte read of `DUNGEON.DAT` — confirming
 ('C') is the overworld counterpart to `combatCmdCastSpell`, found while
 tracing a neighboring table lookup.
 
-22 command letters (A, D, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T,
-U, W, Y, Z) still point at unnamed `loc_XXXXX` handlers — a concrete,
-bounded checklist for continuing (see [roadmap.md](roadmap.md)), much
-more tractable than reading `sub_17B54` linearly since each handler's
+**Follow-up pass, same session**: 5 more commands confirmed —
+`cmdExchange` ('M', swaps two party members' full combat records),
+`cmdPeer` ('P', spends a Gem to view the dungeon/overworld layout),
+`cmdQuit` ('Q', save-and-quit, restricted to the overworld surface),
+`cmdSteal` ('S', ~25% success chance with a guard-alert failure
+consequence, same pattern as `ultima2`'s `alert_town_guards`), and
+`cmdUnlock` ('U', spends a Key on a locked-door tile). These
+independently confirm three more `RosterEntry` fields via real
+gameplay arithmetic: `_gems` (`+0x25`), `_keys` (`+0x26`), and
+`_powder` (`+0x27`, via `combatCmdNegateTime`) — all matching
+`docs/file-formats.md`'s externally-sourced field list exactly.
+
+16 of 33 overworld commands are now confirmed. 17 letters (A, D, F, G,
+H, I, J, K, L, N, O, R, T, W, Y, Z, plus a closer look at H's partial
+read) still point at unnamed `loc_XXXXX` handlers — a concrete, bounded
+checklist for continuing (see [roadmap.md](roadmap.md)), much more
+tractable than reading `sub_17B54` linearly since each handler's
 address and trigger key are now known.
 
 **First game-specific function identified, and a correction to the

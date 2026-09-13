@@ -497,14 +497,14 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset loc_12068
                 dw offset cmdEnter
                 dw offset loc_11E7A
-                dw offset loc_11E9B
+                dw offset cmdExchange
                 dw offset cmdToggleSound
                 dw offset loc_15CC3
                 dw offset loc_11E55
                 dw offset loc_17FC6
-                dw offset loc_11FD6
+                dw offset cmdUnlock
                 dw offset loc_15CC9
-                dw offset loc_11F25
+                dw offset cmdQuit
                 dw offset loc_17E33
                 dw offset loc_17EE4
                 dw offset cmdCastSpell
@@ -513,8 +513,8 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset loc_15CC3
                 dw offset loc_15CF8
                 dw offset loc_18190
-                dw offset loc_11EFD
-                dw offset loc_11F53
+                dw offset cmdPeer
+                dw offset cmdSteal
                 dw offset loc_17458
                 dw offset loc_174D5
                 db 8, 39h, 0Fh, 24h, 0Fh, 0Ch, 1Fh, 3Ah, 8, 2Eh, 1Bh, 3Ah
@@ -1017,7 +1017,7 @@ loc_11E98:                              ; CODE XREF: sub_17B54-5CD4↑j
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
-loc_11E9B:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdExchange:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 13
@@ -1069,7 +1069,7 @@ loc_11EFA:                              ; CODE XREF: sub_17B54-5CB3↑j
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
-loc_11EFD:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdPeer:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 29
@@ -1099,7 +1099,7 @@ loc_11F22:                              ; CODE XREF: sub_17B54-5C49↑j
                 jmp     loc_17DA8
 ; ---------------------------------------------------------------------------
 
-loc_11F25:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdQuit:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 20
                 cmp     byte_114BC, 0
@@ -1123,7 +1123,7 @@ loc_11F45:                              ; CODE XREF: sub_17B54-5C27↑j
                 jmp     short loc_11F42
 ; ---------------------------------------------------------------------------
 
-loc_11F53:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdSteal:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 30
                 call    sub_16C76
@@ -1197,7 +1197,7 @@ loc_11FD3:                              ; CODE XREF: sub_17B54-5BF4↑j
                 jmp     loc_17DF0
 ; ---------------------------------------------------------------------------
 
-loc_11FD6:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdUnlock:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 18
                 call    readDirectionKeypress
@@ -8851,7 +8851,7 @@ jpt_18389       dw offset cmdPass       ; DATA XREF: sub_17B54+835↓r
                 dw offset loc_11E55
                 dw offset loc_15CC9
                 dw offset loc_15C73
-                dw offset loc_11E9B
+                dw offset cmdExchange
                 dw offset loc_15CF8
                 dw offset loc_174D5
                 dw offset loc_17E33
@@ -8877,7 +8877,7 @@ jpt_18389       dw offset cmdPass       ; DATA XREF: sub_17B54+835↓r
                 dw offset loc_18472
                 dw offset loc_1847D
                 dw offset loc_184A9
-                dw offset loc_11EFD
+                dw offset cmdPeer
 off_1778C       dw offset loc_177EA     ; DATA XREF: sub_17B54+82F↓o
                 dw offset loc_1179A+1
                 dw offset loc_11813
