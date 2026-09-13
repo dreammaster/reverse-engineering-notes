@@ -1048,3 +1048,29 @@ overworld attack, which reads oddly unless `_dungeonLevel` simply
 holds a stale/irrelevant value on the surface (most likely) or this
 helper turns out to be shared with an as-yet-unfound dungeon-dragon
 caller — not resolved either way this pass.
+
+**Auto-save-on-death confirmed, same session**: followed
+`damageCharacterHP`'s death branch into `sub_16B91`
+(→ **`autoSaveOnDeath`**) and its two callees, which turned out to be
+exactly what their save-file arguments say: `sub_1207D`
+(→ **`saveSosariaAndParty`**) calls `saveFile` on `SOSARIA.ULT` with
+`cx=0x1228` (4648 bytes — matching the confirmed overworld/town map
+file size exactly) then on `PARTY.ULT`; `sub_12097`
+(→ **`savePartyFile`**) alone calls `saveFile` on `PARTY.ULT` with
+`cx=0x112` (274 bytes — matching its confirmed size too), sourced from
+`_currentTransport`, the live party struct's own base address (PARTY.
+ULT's first byte per `file-formats.md`). `autoSaveOnDeath` picks
+between the two based on game mode: a full save in the overworld or a
+specific combat sub-state, `PARTY.ULT` alone otherwise (dungeon/town,
+where the overworld map itself hasn't changed). This confirms a real
+design decision worth replicating exactly in any reimplementation:
+Ultima III permanently commits a character's death to disk
+*immediately*, not only at an explicit Quit & Save — there's no "undo"
+by quitting without saving after a death.
+
+This also clarified `checkPartyWipedOut` (already named, from an
+earlier session): it's the actual game-over check, looping all 4
+party slots and, if every one is dead, printing "All Players Out!",
+calling `autoSaveOnDeath`, and jumping to a small 2-byte function
+chunk at `loc_17252` — presumably the real reset-to-title or
+re-chain-load point, not yet traced.

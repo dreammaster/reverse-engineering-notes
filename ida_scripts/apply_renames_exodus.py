@@ -1242,6 +1242,27 @@ RENAMES = [
      "game-mode-dependent side effect, possibly a party-wipe/game-over "
      "check given it's also called from checkPartyWipedOut). Returns "
      "ch=0FFh if the character died, 0 otherwise."),
+
+    # --- Auto-save on death, 2026-09-14 ------------------------------
+    (0x12097, "savePartyFile",
+     "Saves PARTY.ULT: `saveFile` with bx=`_currentTransport` (the "
+     "live party struct's base -- transport mode is PARTY.ULT's first "
+     "byte per file-formats.md) and cx=0x112 (274 decimal), exactly "
+     "matching PARTY.ULT's confirmed on-disk size."),
+    (0x1207D, "saveSosariaAndParty",
+     "Saves SOSARIA.ULT (bx=`start`, cx=0x1228 = 4648 decimal, "
+     "matching the confirmed town/overworld map file size) then calls "
+     "savePartyFile."),
+    (0x16B91, "autoSaveOnDeath",
+     "Called from damageCharacterHP whenever a character dies, and "
+     "from checkPartyWipedOut on a full party wipe. Auto-saves the "
+     "game at the moment of death: if game mode (`byte_114BC`) is 0 "
+     "(overworld) or 0x80 (combat) with `byte_158CB == 0`, calls "
+     "saveSosariaAndParty (full save); otherwise calls savePartyFile "
+     "only (party state alone -- e.g. inside a dungeon/town where the "
+     "overworld map itself hasn't changed). Confirms Ultima III "
+     "permanently persists character death immediately, not just at "
+     "an explicit Quit & Save."),
 ]
 
 
