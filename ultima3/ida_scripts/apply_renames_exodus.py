@@ -581,26 +581,90 @@ RENAMES = [
      "directly with OVERWORLD_COMMAND_TABLE (Pass, Cast Spell, "
      "Ignite Torch, Exchange, Toggle Sound, and several still-"
      "unnamed ones) -- these commands work identically in both "
-     "contexts. 9 consecutive letters (indices 16-24: B, A, E, F, L, "
-     "Q, T, U, X) share ONE disabled-command stub (loc_18472) -- "
-     "Board/Enter/eXit-vehicle/Quit disabled underground all make "
-     "immediate sense (no vehicles, no locations-within-locations, "
-     "no surface-only save); Attack/Fire/Locate/Transact/Unlock being "
-     "disabled here too is worth double-checking against actual "
-     "gameplay (Unlock disabled in dungeons specifically is "
-     "counter-intuitive and not independently explained this pass). "
-     "The remaining 7 non-overworld-shared entries (K, D, all 4 arrow "
-     "keys, S) point at genuinely dungeon-specific handlers -- almost "
-     "certainly Klimb/Descend and first-person turn/move-forward "
-     "navigation (classic Ultima dungeon movement is relative "
-     "turning, not compass directions) -- but these addresses "
-     "(around 0x1173x-0x1182x) suffer the same data/code "
-     "misdisassembly issue OVERWORLD_COMMAND_KEYS had (IDA shows "
-     "garbage instructions, likely due to an overlapping DATA XREF "
-     "from off_1778C, a parallel per-command message-pointer table not "
-     "yet identified) -- needs the same kind of structural fix as "
-     "fix_command_key_tables.py before these can be read/named safely. "
-     "Flagged in docs/roadmap.md rather than guessed at."),
+     "contexts. CORRECTED from an earlier note in this same session, "
+     "which misread a buggy exploratory dump: indices 16-24 AND 29 "
+     "(10 letters total: B, A, E, F, L, Q, T, U, X, S) share ONE "
+     "disabled-command stub (cmdDisabledInDungeon) -- Board/Enter/"
+     "eXit-vehicle/Quit-and-save/Steal disabled underground all make "
+     "immediate sense; Attack/Fire/Locate/Transact/Unlock being "
+     "disabled here too is still worth double-checking against actual "
+     "gameplay. The remaining 6 entries (K, D, both arrow-turn keys, "
+     "both arrow-move keys) are the genuinely dungeon-specific "
+     "handlers -- confirmed (not guessed) as cmdKlimb/cmdDescend/"
+     "cmdTurnLeft/cmdTurnRight/cmdMoveForward/cmdMoveBackward, a "
+     "classic first-person relative-turn dungeon movement system, "
+     "distinct from the overworld's compass-direction movement. See "
+     "each one's own entry below."),
+
+    (0x158CC, "_facingDirection",
+     "0-3, the party's current facing while in a dungeon (classic "
+     "Ultima first-person dungeon navigation). Incremented/decremented "
+     "mod 4 by cmdTurnRight/cmdTurnLeft; indexes a 4-entry (dx,dy) "
+     "delta table (_dungeonFacingDeltaX/Y below) for cmdMoveForward/"
+     "cmdMoveBackward."),
+
+    (0x115CF, "_dungeonLevel",
+     "current dungeon depth, incremented by cmdDescend and "
+     "decremented by cmdKlimb -- matches docs/file-formats.md's "
+     "documented dungeon format (levels stored sequentially, depth "
+     "increases with level number)."),
+
+    (0x176F0, "_dungeonFacingDeltaX",
+     "4-entry byte array, X delta for each of the 4 facing directions "
+     "-- indexed by _facingDirection in cmdMoveForward/cmdMoveBackward."),
+
+    (0x176F4, "_dungeonFacingDeltaY",
+     "4-entry byte array, Y delta counterpart to "
+     "_dungeonFacingDeltaX."),
+
+    (0x183F7, "cmdKlimb",
+     "'K' (dungeon index 25): checks the current tile for the Ladder-"
+     "up bit (0x10, matching docs/file-formats.md's dungeon tile "
+     "encoding exactly), and if present, decrements _dungeonLevel "
+     "(guarded by a nonzero check) and calls sub_16458 -- classic "
+     "Ultima 'Klimb' a ladder up one level."),
+
+    (0x1841C, "cmdDescend",
+     "'D' (dungeon index 26): checks the current tile for the Ladder-"
+     "down bit (0x20, matching docs/file-formats.md exactly), and if "
+     "present, increments _dungeonLevel -- 'Descend' a ladder down one "
+     "level."),
+
+    (0x18438, "cmdTurnRight",
+     "Right arrow (dungeon index 27): checks the current tile isn't a "
+     "specific blocking type (`cmp al,0A0h; jnb`), then rotates "
+     "_facingDirection clockwise mod 4 -- first-person turn right, "
+     "does not change position."),
+
+    (0x18455, "cmdTurnLeft",
+     "Left arrow (dungeon index 28): mirror of cmdTurnRight, rotates "
+     "_facingDirection counterclockwise mod 4."),
+
+    (0x18472, "cmdDisabledInDungeon",
+     "10 letters (dungeon indices 16-24 and 29: B, A, E, F, L, Q, T, "
+     "U, X, S) share this stub -- beeps (playErrorBeep) and falls "
+     "through to the invalid-command path. The dungeon counterpart to "
+     "cmdDisabledOnSurface."),
+
+    (0x1847D, "cmdMoveForward",
+     "Up arrow (dungeon index 30): computes the tile one step ahead "
+     "using _facingDirection to index _dungeonFacingDeltaX/Y, checks "
+     "it isn't a Wall (tile==0x80, matching docs/file-formats.md's "
+     "dungeon tile encoding exactly), and if clear, updates "
+     "_partyPosition -- first-person move forward, the classic Ultima "
+     "dungeon-crawler movement primitive."),
+
+    (0x184A9, "cmdMoveBackward",
+     "Down arrow (dungeon index 31): mirror of cmdMoveForward using "
+     "_facingDirection+2 (mod 4, i.e. facing directly behind), checks "
+     "the sign bit of the tile byte (`rol al,1; jb` -- the same Wall/"
+     "Door/Secret-door-share-the-high-bit encoding documented in "
+     "docs/file-formats.md) rather than an exact Wall match -- move "
+     "backward, blocked by any of the 3 blocking tile types rather "
+     "than just plain Wall like cmdMoveForward. Worth double-checking "
+     "this asymmetry (forward only checks 0x80 exactly, backward "
+     "checks the whole sign-bit group) isn't a transcription slip on "
+     "this pass's part rather than a real game-behavior difference."),
 
     (0x17708, "DUNGEON_COMMAND_KEYS",
      "33-entry word array, same (scancode:char) shape as "
