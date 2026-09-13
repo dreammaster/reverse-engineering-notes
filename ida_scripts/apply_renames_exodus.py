@@ -666,6 +666,22 @@ RENAMES = [
      "checks the whole sign-bit group) isn't a transcription slip on "
      "this pass's part rather than a real game-behavior difference."),
 
+    (0x1778C, "DUNGEON_COMMAND_LABELS",
+     "MEDIUM CONFIDENCE: parallel table to DUNGEON_COMMAND_TABLE, "
+     "loaded into si right before the command dispatch jump "
+     "(`lea si,DUNGEON_COMMAND_LABELS; mov si,[bx+si]; jmp "
+     "DUNGEON_COMMAND_TABLE[bx]`) -- so si is pre-loaded with a "
+     "per-command string pointer before every handler's own "
+     "`call printGameText`, which is presumably why individual "
+     "handlers don't always show their own explicit `lea si,aXxx` "
+     "before their first printGameText call. Entries confirmed to sit "
+     "inside one contiguous string-literal block (~0x11730-0x11870+) "
+     "including 'Descend', 'Klimb', 'Modify order!', 'Ignite a "
+     "torch\\n', 'Negate Time!\\n', 'Cast by whom-', 'Quit & Save\\n' "
+     "-- one label per command, matching several of this session's "
+     "confirmed command identities directly. Not fully mapped index-"
+     "by-index against DUNGEON_COMMAND_TABLE this pass."),
+
     (0x17708, "DUNGEON_COMMAND_KEYS",
      "33-entry word array, same (scancode:char) shape as "
      "OVERWORLD_COMMAND_KEYS, parallel index-for-index with "
@@ -734,6 +750,30 @@ RENAMES = [
      "via _locationTypeTable-derived value -- 'Unlock' a door with a "
      "key, confirming the _keys offset independently of external "
      "documentation."),
+
+    (0x1888B, "cmdAttack",
+     "'A' (index 1): prompts a direction, checks the target square via "
+     "sub_17F96 (a monster/target-presence check, not yet identified), "
+     "and if something's there, jumps DIRECTLY into "
+     "beginCombatEncounter -- the overworld 'Attack' command manually "
+     "triggers the exact same combat-encounter path that "
+     "updateMonsterAI's automatic monster-reaches-the-party trigger "
+     "uses."),
+
+    (0x15BCF, "cmdFire",
+     "'F' (index 24): requires _currentTransport==0x0B (aboard a "
+     "Ship) or falls through to the invalid-command path -- prompts a "
+     "direction, plays a distinct sound (0FBh), then steps a "
+     "projectile up to 3 tiles in that direction (wraparound "
+     "position math identical to movement), checking each step via "
+     "sub_17F96 for a hit and marking an impact tile (0xF4) if so -- "
+     "classic Ultima 'Fire' (ship's cannons), confirmed ship-only."),
+
+    (0x18190, "cmdGet",
+     "'G' (index 28): prompts a player selection and confirms they're "
+     "alive, then (outside dungeons) checks the current tile is in "
+     "range 0x24-0x27 ('$' through treasure markers) and clears it if "
+     "so -- classic Ultima 'Get' (pick up gold/treasure off the map)."),
 
     (0x11D4E, "cmdCastSpell",
      "'C' (index 23): the OVERWORLD cast-spell command (distinct from "

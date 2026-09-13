@@ -1412,6 +1412,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X15BCF,	"jumptable 00011BD1 case 24",	1);
 	create_insn	(0X15BCF);
+	set_name	(0X15BCF,	"cmdFire");
 	create_insn	(x=0X15BDC);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2159,6 +2160,7 @@ static Bytes_0(void) {
 	create_word	(x=0X1778C);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
+	set_name	(0X1778C,	"DUNGEON_COMMAND_LABELS");
 	create_word	(x=0X1778E);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
@@ -2569,6 +2571,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X18190,	"jumptable 00011BD1 case 28\njumptable 00018389 case 2",	1);
 	create_insn	(0X18190);
+	set_name	(0X18190,	"cmdGet");
 	create_insn	(x=0X181B9);
 	op_hex		(x,	1);
 	create_insn	(x=0X181BB);
@@ -2827,6 +2830,7 @@ static Bytes_0(void) {
 	set_name	(0X18885,	"aPass");
 	set_cmt	(0X1888B,	"jumptable 00011BD1 case 1",	1);
 	create_insn	(0X1888B);
+	set_name	(0X1888B,	"cmdAttack");
 	create_insn	(0X188A4);
 	create_insn	(0X188A7);
 	create_insn	(0X188AA);
