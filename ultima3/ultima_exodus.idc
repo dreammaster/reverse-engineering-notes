@@ -561,6 +561,7 @@ static Bytes_0(void) {
 	create_insn	(0X12068);
 	set_name	(0X12068,	"cmdZtats");
 	create_insn	(0X1207D);
+	set_name	(0X1207D,	"saveSosariaAndParty");
 	create_insn	(x=0X12081);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -568,6 +569,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X12097);
+	set_name	(0X12097,	"savePartyFile");
 	create_insn	(x=0X1209B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1840,6 +1842,7 @@ static Bytes_0(void) {
 	create_strlit	(0X16B7F,	0X12);
 	set_name	(0X16B7F,	"aNotEnoughGold");
 	create_insn	(0X16B91);
+	set_name	(0X16B91,	"autoSaveOnDeath");
 	create_insn	(0X16BB9);
 	create_insn	(0X16BC9);
 	set_name	(0X16BC9,	"damageCharacterHP");

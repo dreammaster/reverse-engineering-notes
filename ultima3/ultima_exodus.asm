@@ -127,10 +127,10 @@ byte_115D1      db 1                    ; DATA XREF: sub_17B54-58D3↓w
                                         ; sub_17B54:loc_12286↓w
 word_115D2      dw 0                    ; DATA XREF: sub_17B54-5F86↓w
                                         ; sub_17B54-58E1↓r
-aPartyUlt       db 'PARTY.ULT',0        ; DATA XREF: sub_12097+B↓o
+aPartyUlt       db 'PARTY.ULT',0        ; DATA XREF: savePartyFile+B↓o
                                         ; entryFromBootup:loc_12509↓o
 aDungeonDat     db 'DUNGEON.DAT',0      ; DATA XREF: sub_17B54-5D09↓o
-aSosariaUlt     db 'SOSARIA.ULT',0      ; DATA XREF: sub_1207D+B↓o
+aSosariaUlt     db 'SOSARIA.ULT',0      ; DATA XREF: saveSosariaAndParty+B↓o
                                         ; sub_12168+9D↓o ...
 aAmbrosiaUlt    db 'AMBROSIA.ULT',0     ; DATA XREF: sub_12168+5D↓o
 aBritishUlt     db 'BRITISH.ULT',0
@@ -812,7 +812,7 @@ loc_11E0A:                              ; CODE XREF: sub_17B54-5D8A↑j
                                         ; sub_17B54-5D6D↑j
                 lea     si, aPleaseWait ; "Please wait...\n"
                 call    printGameText
-                call    sub_1207D
+                call    saveSosariaAndParty
                 mov     byte_114BC, dl
                 mov     si, bx
                 mov     dx, [si+16BBh]
@@ -975,7 +975,7 @@ cmdQuit:                                ; CODE XREF: sub_17B54-5F83↑j
                 call    sub_1A46F
                 lea     si, aPleaseWait ; "Please wait...\n"
                 call    printGameText
-                call    sub_1207D
+                call    saveSosariaAndParty
 
 loc_11F42:                              ; CODE XREF: sub_17B54-5C03↓j
                 jmp     mainLoopCommandDone
@@ -1166,7 +1166,7 @@ loc_1207A:                              ; CODE XREF: sub_17B54-5AE6↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1207D       proc near               ; CODE XREF: sub_17B54-5D43↑p
+saveSosariaAndParty proc near           ; CODE XREF: sub_17B54-5D43↑p
                                         ; sub_17B54-5C15↑p ...
                 push    ax
                 push    bx
@@ -1176,19 +1176,19 @@ sub_1207D       proc near               ; CODE XREF: sub_17B54-5D43↑p
                 mov     cx, 1228h
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
                 call    saveFile
-                call    sub_12097
+                call    savePartyFile
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 retn
-sub_1207D       endp
+saveSosariaAndParty endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12097       proc near               ; CODE XREF: sub_1207D+12↑p
+savePartyFile   proc near               ; CODE XREF: saveSosariaAndParty+12↑p
                                         ; sub_12168+BB↓p ...
                 push    ax
                 push    bx
@@ -1203,7 +1203,7 @@ sub_12097       proc near               ; CODE XREF: sub_1207D+12↑p
                 pop     bx
                 pop     ax
                 retn
-sub_12097       endp
+savePartyFile   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1320,7 +1320,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 add     dl, 7
                 mov     byte ptr word_11320, 3
                 mov     byte ptr word_11320+1, dl
-                call    sub_1207D
+                call    saveSosariaAndParty
                 call    sub_128C6
                 lea     si, aAsTheWaterEnte ; "\n\n As the water\n enters  your\nlungs"...
                 call    printGameText
@@ -1362,7 +1362,7 @@ loc_121F4:                              ; CODE XREF: sub_12168+24↑j
                 mov     _partyPosition, ax
                 mov     byte_114BC, 0
                 mov     _currentTransport, 0Bh
-                call    sub_12097
+                call    savePartyFile
                 jmp     short loc_121EA
 sub_12168       endp
 
@@ -3644,8 +3644,8 @@ promptForNumberEntry endp
 ; =============== S U B R O U T I N E =======================================
 
 
-saveFile        proc near               ; CODE XREF: sub_1207D+F↑p
-                                        ; sub_12097+F↑p
+saveFile        proc near               ; CODE XREF: saveSosariaAndParty+F↑p
+                                        ; savePartyFile+F↑p
                 pushf
                 push    ax
                 push    dx
@@ -4631,7 +4631,7 @@ playToneF5      endp
                 align 10h
 aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: enterShrine+28↓o
 byte_158CB      db 0                    ; DATA XREF: isSpecialEncounterLocation:loc_15B46↓r
-                                        ; sub_16B91+10↓r ...
+                                        ; autoSaveOnDeath+10↓r ...
 _facingDirection db 0                   ; DATA XREF: sub_17B54-5D8F↑w
                                         ; drawDungeonStatusBar+25↓r ...
 byte_158CD      db 48h, 45h, 44h, 42h, 46h, 5 dup(75h), 99h, 75h, 50h
@@ -6124,7 +6124,7 @@ sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                 mov     cx, 1228h
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
                 call    loadFile
-                call    sub_12097
+                call    savePartyFile
                 mov     _dungeonLevel, 0
                 call    sub_16C53
                 pop     si
@@ -7028,7 +7028,7 @@ aNotEnoughGold  db 'Not enough gold!',0Ah,0
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16B91       proc near               ; CODE XREF: damageCharacterHP+22↓p
+autoSaveOnDeath proc near               ; CODE XREF: damageCharacterHP+22↓p
                                         ; checkPartyWipedOut+1F↓p ...
                 pushf
                 push    ax
@@ -7039,26 +7039,26 @@ sub_16B91       proc near               ; CODE XREF: damageCharacterHP+22↓p
                 cmp     byte_158CB, 0
                 jz      short loc_16BB9
 
-loc_16BA8:                              ; CODE XREF: sub_16B91+E↑j
+loc_16BA8:                              ; CODE XREF: autoSaveOnDeath+E↑j
                 mov     al, byte_114BC
                 mov     byte_114BC, 0
-                call    sub_12097
+                call    savePartyFile
                 mov     byte_114BC, al
 
-loc_16BB6:                              ; CODE XREF: sub_16B91+36↓j
+loc_16BB6:                              ; CODE XREF: autoSaveOnDeath+36↓j
                 pop     ax
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16BB9:                              ; CODE XREF: sub_16B91+7↑j
-                                        ; sub_16B91+15↑j
+loc_16BB9:                              ; CODE XREF: autoSaveOnDeath+7↑j
+                                        ; autoSaveOnDeath+15↑j
                 mov     al, byte_114BC
                 mov     byte_114BC, 0
-                call    sub_1207D
+                call    saveSosariaAndParty
                 mov     byte_114BC, al
                 jmp     short loc_16BB6
-sub_16B91       endp
+autoSaveOnDeath endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7086,7 +7086,7 @@ loc_16BDE:                              ; CODE XREF: sub_17B54-FE6↑j
                 jnb     short loc_16BF0
                 mov     byte ptr [bx+11h], 44h ; 'D'
                 mov     word ptr [bx+1Ah], 0
-                call    sub_16B91
+                call    autoSaveOnDeath
                 mov     ch, 0FFh
 
 loc_16BF0:                              ; CODE XREF: damageCharacterHP+17↑j
@@ -7170,7 +7170,7 @@ loc_16C34:                              ; CODE XREF: checkPartyWipedOut+13↓j
                 call    drawPartyStatusBar
                 lea     si, aAllPlayersOut ; "\n\nAll Players Out!\n"
                 call    printGameText
-                call    sub_16B91
+                call    autoSaveOnDeath
                 jmp     loc_17252
 ; ---------------------------------------------------------------------------
 
@@ -13310,7 +13310,7 @@ loc_1A4D2:                              ; CODE XREF: sub_17B54+2987↓j
                 mov     dl, 2
                 lea     si, aOnwardToUltima ; "Onward to ULTIMA IV!"
                 call    printStringAt
-                call    sub_16B91
+                call    autoSaveOnDeath
                 mov     byte_114BC, 1
 
 loc_1A556:                              ; CODE XREF: sub_17B54+2A05↓j

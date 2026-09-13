@@ -431,13 +431,27 @@ Next-session priorities, roughly in order:
       also used by `processPartyTurnEffects`/poison-hunger effects;
       handles death by setting `_status='D'` and calling the
       not-yet-traced `sub_16B91`).
+- [x] **Auto-save-on-death traced**, done 2026-09-14: `sub_16B91` →
+      **`autoSaveOnDeath`**, called from `damageCharacterHP` whenever
+      *any* character dies (not just on a full party wipe). Depending
+      on game mode, calls either `saveSosariaAndParty` (`sub_1207D` —
+      saves `SOSARIA.ULT` then `PARTY.ULT`, sizes matching both files'
+      confirmed on-disk sizes exactly) or just `savePartyFile`
+      (`sub_12097` — `PARTY.ULT` alone, e.g. inside a dungeon/town
+      where the overworld map hasn't changed). Confirms Ultima III
+      permanently persists a character's death immediately, not only
+      at an explicit Quit & Save — a real "hardcore" mechanic worth
+      replicating exactly in the eventual reimplementation.
+      `checkPartyWipedOut` itself (already named) is the actual
+      game-over check: loops all 4 party slots, and if every one is
+      dead, prints "All Players Out!", calls `autoSaveOnDeath`, and
+      jumps to a small 2-byte function chunk at `loc_17252` — likely
+      the actual reset-to-title/re-chain-load point, not yet traced.
 - [ ] Identify `sub_17F96`/`sub_128F2` (helpers `canMoveToTile` calls
       into), `sub_17233`/`sub_17254` (movement-blocked checks
-      `cmdMoveNorth` calls), and `sub_16B91`/`sub_12097` (called from
-      `damageCharacterHP` on death and from `checkPartyWipedOut`,
-      conditionally on game mode — possibly a party-wipe/game-over
-      check, not traced) — all found in passing this pass but not
-      chased down.
+      `cmdMoveNorth` calls), and the `loc_17252` game-over destination
+      `checkPartyWipedOut` jumps to on a full party wipe — all found
+      in passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
