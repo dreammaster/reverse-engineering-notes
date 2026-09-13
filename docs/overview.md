@@ -1093,3 +1093,21 @@ specific values instead play a distinct warning sound with a timed
 delay (an extra one when mounted) while still allowing the move,
 reading like an audio hazard cue rather than a hard block; the exact
 tile-to-hazard mapping wasn't chased down further.
+
+**`canMoveToTile`'s real helper found, and a stale guess corrected,
+same session**: `findMonsterAtPosition` (`0x17F96`) loops
+`updateMonsterAI`'s 32-slot overworld monster arrays looking for an
+occupant at a candidate (X,Y) — `canMoveToTile` calls it to refuse a
+move onto a tile another monster already occupies, the overworld
+counterpart to combat's `findCombatantAtPosition`. Along the way, an
+earlier roadmap note's guess that `sub_128F2` was `canMoveToTile`'s
+*other* helper turned out to be wrong — reading `canMoveToTile`
+end-to-end shows it only calls `findMonsterAtPosition`. `sub_128F2`
+is something else entirely, and a useful find in its own right:
+**`getDungeonTileAt`**, the dungeon-map counterpart to `getMapTileAt`
+— reads a tile byte from a loaded per-level dungeon buffer at a
+computed offset (packed X/Y in one byte, plus `_dungeonLevel<<8`,
+based at a fixed `0x900`). Worth remembering as a general lesson: a
+speculative note written once, without re-reading the actual call
+site, can go stale — always re-verify against the code before trusting
+an old guess, not just when something looks suspicious.

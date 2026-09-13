@@ -1293,6 +1293,30 @@ RENAMES = [
      "the player audibly without actually blocking movement; the "
      "specific tile-code-to-hazard-type mapping isn't independently "
      "confirmed."),
+
+    # --- canMoveToTile's real helpers, 2026-09-14 --------------------
+    (0x17F96, "findMonsterAtPosition",
+     "Called from canMoveToTile (with dl/dh=the candidate X/Y). Loops "
+     "updateMonsterAI's 32-slot overworld monster arrays (base "
+     "`+0x1280`=type/`+0x12C0`=X/`+0x12E0`=Y, same convention "
+     "confirmed elsewhere), skipping empty slots (`type==0`), looking "
+     "for one whose X/Y matches. Returns bx=0FFFFh if no monster "
+     "occupies that position. This is the overworld's 32-slot "
+     "counterpart to findCombatantAtPosition's 8-slot combat-arena "
+     "lookup -- same purpose (don't let two monsters/movers occupy "
+     "the same tile), different array."),
+
+    (0x128F2, "getDungeonTileAt",
+     "NOT actually one of canMoveToTile's helpers (an earlier roadmap "
+     "note guessed it was, alongside findMonsterAtPosition -- "
+     "canMoveToTile in fact only calls findMonsterAtPosition; this "
+     "correction supersedes that note). Computes a dungeon map byte "
+     "offset from packed (X,Y) in (bl,bh) -- `bh<<4 | bl` -- plus "
+     "`_dungeonLevel<<8`, added to a fixed base (`0x900`), and reads "
+     "the tile byte there. This is the dungeon-map counterpart to "
+     "getMapTileAt (overworld/town), reading directly from a loaded "
+     "per-level dungeon buffer rather than computing a packed-tile "
+     "value."),
 ]
 
 

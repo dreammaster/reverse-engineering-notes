@@ -776,6 +776,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X128E6);
 	op_hex		(x,	1);
 	create_insn	(0X128F2);
+	set_name	(0X128F2,	"getDungeonTileAt");
 	create_insn	(x=0X128F3);
 	op_hex		(x,	1);
 	create_insn	(x=0X128F5);
@@ -2553,6 +2554,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X17F96);
+	set_name	(0X17F96,	"findMonsterAtPosition");
 	create_insn	(x=0X17FBC);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

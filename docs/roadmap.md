@@ -466,8 +466,20 @@ Next-session priorities, roughly in order:
       is a deliberate infinite hang after the "All Players Out!"
       message and auto-save, requiring the player to reboot/restart
       `ULTIMA.COM`. No further resolution needed there.
-- [ ] Identify `sub_17F96`/`sub_128F2` (helpers `canMoveToTile` calls
-      into) — found in passing this pass but not chased down.
+- [x] **`canMoveToTile`'s real helper named, and a stale note
+      corrected**, done 2026-09-14: `sub_17F96` →
+      **`findMonsterAtPosition`** — loops `updateMonsterAI`'s 32-slot
+      overworld monster arrays looking for an occupant at a given
+      (X,Y); `canMoveToTile` calls it to refuse moving onto a tile
+      another monster already occupies. This is the overworld
+      counterpart to combat's `findCombatantAtPosition`.
+      **Correction**: an earlier note guessed `sub_128F2` was
+      `canMoveToTile`'s *other* helper — it isn't (`canMoveToTile`
+      only calls `findMonsterAtPosition`). `sub_128F2` turned out to
+      be something unrelated but useful on its own: **`getDungeonTileAt`**,
+      the dungeon-map counterpart to `getMapTileAt`, reading a tile
+      byte from a loaded per-level dungeon buffer at a computed
+      offset (packed X/Y plus `_dungeonLevel<<8`, base `0x900`).
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
