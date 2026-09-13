@@ -210,35 +210,43 @@ Next-session priorities, roughly in order:
       continuation — see below.
 - [x] **The overworld main game loop and its 33-entry command table**
       — found (`mainGameLoop`, `OVERWORLD_COMMAND_TABLE`/
-      `OVERWORLD_COMMAND_KEYS`). 8 of 33 commands confirmed (see
-      overview.md's table). **25 remain, each a small, self-contained,
-      well-bounded target** — far more tractable now than reading
-      `sub_17B54` linearly, since every handler's address and trigger
-      key are already known:
+      `OVERWORLD_COMMAND_KEYS`). 11 of 33 commands confirmed so far
+      (movement x4, Pass, Board, Exit vehicle, Toggle sound, Enter
+      (dungeon/town/castle/shrine), Cast Spell — see overview.md).
+      **22 remain, each a small, self-contained, well-bounded target**
+      — far more tractable now than reading `sub_17B54` linearly, since
+      every handler's address and trigger key are already known:
 
       | Key | Handler address | Key | Handler address |
       |---|---|---|---|
       | A | `loc_1888B` | N | `loc_15CF8` |
-      | C | `loc_11C9E`\* | O | `loc_174D5` |
-      | D | `loc_15CC3` | P | `loc_11EFD` |
-      | Down arrow | `loc_11C9E` | Q | `loc_11F25` |
-      | F | `loc_15BCF` | Right arrow | `loc_11CBF` |
-      | G | `loc_18190` | S | `loc_11F53` |
-      | H | `loc_11E55` | T | `loc_17FC6` |
-      | I | `loc_15CC9` | U | `loc_11FD6` |
-      | J | `loc_15C73` | W | `loc_17EE4` |
-      | K | `loc_15CC3`\* | Left arrow | `loc_11CE0` |
-      | L | `loc_11E7A` | Y | `loc_17458` |
-      | M | `loc_11E9B` | Z | `loc_12068` |
-      | R | `loc_17E33` | | |
+      | D | `loc_15CC3`\* | O | `loc_174D5` |
+      | F | `loc_15BCF` | P | `loc_11EFD` |
+      | G | `loc_18190` | Q | `loc_11F25` |
+      | H | `loc_11E55` | R | `loc_17E33` |
+      | I | `loc_15CC9` | S | `loc_11F53` |
+      | J | `loc_15C73` | T | `loc_17FC6` |
+      | K | `loc_15CC3`\* | U | `loc_11FD6` |
+      | L | `loc_11E7A` | W | `loc_17EE4` |
+      | M | `loc_11E9B` | Y | `loc_17458` |
+      | | | Z | `loc_12068` |
 
-      \* D and K share `loc_15CC3` per the raw table dump — double-check
-      this isn't a transcription slip before relying on it (verify with
-      `ida_bytes.get_word()` against `OVERWORLD_COMMAND_TABLE` directly
-      rather than trusting this table by eye). South/East/West movement
-      (`loc_11C9E`/`loc_11CBF`/`loc_11CE0`) should be quick, high-
-      confidence renames (`cmdMoveSouth`/`cmdMoveEast`/`cmdMoveWest`)
-      given `cmdMoveNorth`'s already-confirmed shape.
+      \* D and K genuinely share `loc_15CC3` — confirmed directly via
+      `ida_bytes.get_word()` against `OVERWORLD_COMMAND_TABLE`, not a
+      transcription artifact (an earlier draft of this table
+      mis-transcribed 'C' as `loc_11C9E` by eye instead of from the
+      verified dump — fixed 2026-09-13; always regenerate a table like
+      this from a script's output, never retype it from memory). H
+      (`loc_11E55`) is partially read: prompts "To Player: ", involves
+      `sub_16C76` (a player-selection prompt, also used by `cmdCastSpell`)
+      and a recursive self-call into `sub_17B54` — purpose not pinned
+      down, flagged rather than guessed.
+- [ ] Confirm whether `_locationTypeTable` (`byte_1259D`) is really a
+      scalar or (more likely, given it's indexed alongside the
+      19-entry `LOCATION_TILE_TABLE`) a 19-byte parallel array —
+      applied at low-medium confidence this pass, worth a quick
+      `ida_bytes.get_word()`-style direct check against the actual
+      indexed access pattern before trusting it as-is.
 - [ ] Individual spell effects in `WIZARD_SPELL_TABLE`/
       `CLERIC_SPELL_TABLE` — now that `castSpell`'s dispatch mechanism
       is understood, each entry is a small, self-contained function.

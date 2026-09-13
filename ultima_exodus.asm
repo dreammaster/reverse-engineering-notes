@@ -98,7 +98,7 @@ byte_114C0      db 0                    ; DATA XREF: sub_17E02+26↓r
                                         ; sub_17E02+2B↓w
 byte_114C1      db 0                    ; DATA XREF: sub_17B54:loc_11BE9↓r
                                         ; sub_17B54-1ED1↓r ...
-word_114C2      dw 0                    ; DATA XREF: sub_17B54-5DAD↓w
+_savedOverworldPosition dw 0            ; DATA XREF: sub_17B54-5DAD↓w
                                         ; sub_17B54-5C22↓w ...
                 align 8
 byte_114C8      db 0                    ; DATA XREF: sub_17B54+113↓r
@@ -156,7 +156,7 @@ aDardinUlt      db 'DARDIN.ULT',0
                 db 16h, 40h, 16h, 4Dh, 16h, 56h, 16h, 5Fh, 16h, 69h, 16h
                 db 72h, 16h, 7Ch, 16h, 82h, 16h, 8Bh, 16h, 94h, 16h, 9Ah
                 db 16h, 0A7h, 16h, 0B0h, 16h
-byte_116E1      db 2Dh, 12h             ; DATA XREF: sub_17B54-5DBD↓o
+LOCATION_TILE_TABLE db 2Dh, 12h         ; DATA XREF: sub_17B54-5DBD↓o
 byte_116E3      db 0Ah                  ; DATA XREF: sub_15B28+12↓r
                 db 35h, 2Eh, 13h, 6, 0Dh, 22h, 10h, 31h, 3Ah, 2Fh, 3Ah
                 db 7, 2Ch, 25h, 35h, 12h, 1Fh, 1Eh, 2, 38h, 1Fh, 13h, 39h
@@ -486,9 +486,9 @@ loc_118E9:                              ; CODE XREF: sub_17B54-62D4↑j
 OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                                         ; DATA XREF: sub_17B54-5F83↓r
                 dw offset loc_1888B     ; jump table for switch statement
-                dw offset loc_11C9E
-                dw offset loc_11CBF
-                dw offset loc_11CE0
+                dw offset cmdMoveSouth
+                dw offset cmdMoveEast
+                dw offset cmdMoveWest
                 dw offset cmdPass
                 dw offset cmdBoard
                 dw offset cmdExitVehicle
@@ -507,7 +507,7 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset loc_11F25
                 dw offset loc_17E33
                 dw offset loc_17EE4
-                dw offset loc_11D4E
+                dw offset cmdCastSpell
                 dw offset loc_15BCF
                 dw offset loc_15C73
                 dw offset loc_15CC3
@@ -758,7 +758,7 @@ loc_11C9B:                              ; CODE XREF: sub_17B54-5ECF↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_11C9E:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdMoveSouth:                           ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 2
                 mov     al, 3
@@ -777,7 +777,7 @@ loc_11CBC:                              ; CODE XREF: sub_17B54-5EAE↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_11CBF:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdMoveEast:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 3
                 mov     al, 2
@@ -796,7 +796,7 @@ loc_11CDD:                              ; CODE XREF: sub_17B54-5E8D↑j
                 jmp     loc_17DCC
 ; ---------------------------------------------------------------------------
 
-loc_11CE0:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdMoveWest:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 4
                 mov     al, 4
@@ -857,7 +857,7 @@ loc_11D4B:                              ; CODE XREF: sub_17B54-5E1A↑j
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
-loc_11D4E:                              ; CODE XREF: sub_17B54-5F83↑j
+cmdCastSpell:                           ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 23
@@ -902,15 +902,15 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
                 cld
                 mov     cx, 13h
                 mov     bx, cx
-                lea     di, byte_116E1
+                lea     di, LOCATION_TILE_TABLE
                 repne scasw
                 jnz     short loc_11D8B
                 sub     bx, cx
                 dec     bx
                 shl     bx, 1
                 mov     ax, _partyPosition
-                mov     word_114C2, ax
-                cmp     byte_1259D, 5
+                mov     _savedOverworldPosition, ax
+                cmp     _locationTypeTable, 5
                 jnz     short loc_11DCC
                 lea     si, aDungeon    ; "Dungeon!\n"
                 call    printGameText
@@ -922,7 +922,7 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
 ; ---------------------------------------------------------------------------
 
 loc_11DCC:                              ; CODE XREF: sub_17B54-5DA5↑j
-                cmp     byte_1259D, 6
+                cmp     _locationTypeTable, 6
                 jnz     short loc_11DE9
                 lea     si, aTowne      ; "Towne!\n"
                 call    printGameText
@@ -933,7 +933,7 @@ loc_11DCC:                              ; CODE XREF: sub_17B54-5DA5↑j
 ; ---------------------------------------------------------------------------
 
 loc_11DE9:                              ; CODE XREF: sub_17B54-5D83↑j
-                cmp     byte_1259D, 7
+                cmp     _locationTypeTable, 7
                 jnz     short loc_11D8B
                 lea     si, aCastle     ; "Castle!\n"
                 call    printGameText
@@ -1105,7 +1105,7 @@ loc_11F25:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     byte_114BC, 0
                 jnz     short loc_11F45
                 mov     ax, _partyPosition
-                mov     word_114C2, ax
+                mov     _savedOverworldPosition, ax
                 call    sub_1A46F
                 lea     si, aPleaseWait ; "Please wait...\n"
                 call    printGameText
@@ -1217,7 +1217,7 @@ loc_11FD6:                              ; CODE XREF: sub_17B54-5F83↑j
                 das
                 jb      short loc_12015
                 mov     [bx+26h], al
-                mov     al, byte_1259D
+                mov     al, _locationTypeTable
                 shl     al, 1
                 shl     al, 1
                 mov     [si], al
@@ -1447,7 +1447,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 cmp     byte_114BC, 0FFh
                 jz      short loc_121F4
                 mov     bx, _partyPosition
-                mov     word_114C2, bx
+                mov     _savedOverworldPosition, bx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0
                 mov     dh, 37h ; '7'
@@ -1493,7 +1493,7 @@ loc_121F4:                              ; CODE XREF: sub_12168+24↑j
                 call    loadFile
                 lea     si, aYouMadeIt  ; " You made it!\n"
                 call    printGameText
-                mov     ax, word_114C2
+                mov     ax, _savedOverworldPosition
                 mov     _partyPosition, ax
                 mov     byte_114BC, 0
                 mov     _currentTransport, 0Bh
@@ -1950,7 +1950,7 @@ loc_12509:                              ; DATA XREF: seg000:2838↓r
                 mov     cx, 1400h
                 lea     dx, aShapesUlt  ; "SHAPES.ULT"
                 call    loadFile
-                mov     ax, word_114C2
+                mov     ax, _savedOverworldPosition
                 mov     _partyPosition, ax
                 mov     byte_124C0, 0FFh
                 mov     _soundEnabled, 0FFh
@@ -1992,7 +1992,7 @@ byte_1259B      db 0                    ; DATA XREF: sub_17B54-5ECD↑r
                                         ; seg000:2835↓w
 byte_1259C      db 0                    ; DATA XREF: sub_17B54-5EAC↑r
                                         ; seg000:283B↓w
-byte_1259D      db 0                    ; DATA XREF: sub_17B54-5DAA↑r
+_locationTypeTable db 0                 ; DATA XREF: sub_17B54-5DAA↑r
                                         ; sub_17B54:loc_11DCC↑r ...
 
 ; =============== S U B R O U T I N E =======================================
@@ -2432,7 +2432,7 @@ loc_12821:                              ; CODE XREF: seg000:2800↑j
                 mov     al, byte ptr loc_124FF
                 mov     byte_1259A, al
                 mov     al, byte ptr loc_124FF+1
-                mov     byte_1259D, al
+                mov     _locationTypeTable, al
                 mov     al, _currentTransport
                 mov     byte ptr loc_124FF+1, al
                 mov     dh, 0Ah
@@ -4852,7 +4852,7 @@ sub_15B28       proc near               ; CODE XREF: sub_17B54:loc_11C35↑p
                 jnz     short loc_15B4D
 
 loc_15B37:                              ; CODE XREF: sub_15B28+23↓j
-                mov     al, byte ptr word_114C2
+                mov     al, byte ptr _savedOverworldPosition
                 cmp     al, byte_116E3
                 jnz     short loc_15B4D
                 mov     al, 0FFh
@@ -6169,7 +6169,7 @@ sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                 push    cx
                 push    dx
                 push    si
-                mov     ax, word_114C2
+                mov     ax, _savedOverworldPosition
                 mov     _partyPosition, ax
                 mov     byte_124C0, 0FFh
                 lea     si, aExitToSosariaP ; "Exit to Sosaria!\nPlease wait...\n"
@@ -8647,7 +8647,7 @@ loc_17580:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6554↑o
                 cmp     byte_114BC, 2
                 jnz     short loc_1759F
-                cmp     byte ptr word_114C2, 22h ; '"'
+                cmp     byte ptr _savedOverworldPosition, 22h ; '"'
                 jnz     short loc_1759F
                 cmp     _partyPosition, 3030h
                 jnz     short loc_1759F
@@ -8714,7 +8714,7 @@ loc_175F9:                              ; CODE XREF: sub_17B54-584↑j
 
 loc_17607:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6550↑o
-                cmp     byte_1259D, 3Eh ; '>'
+                cmp     _locationTypeTable, 3Eh ; '>'
                 jnz     short loc_17625
                 mov     cl, byte ptr _partyPosition
                 and     cl, 3
@@ -8846,7 +8846,7 @@ byte_17708      db 20h, 39h, 43h, 2Eh, 47h, 22h, 48h, 23h, 49h, 17h, 4Ah
                 db 14h, 55h, 16h, 58h, 2Dh, 4Bh, 25h, 44h, 20h, 0, 4Dh
                 db 0, 4Bh, 53h, 1Fh, 0, 48h, 0, 2 dup(50h), 19h
 jpt_18389       dw offset cmdPass       ; DATA XREF: sub_17B54+835↓r
-                dw offset loc_11D4E     ; jump table for switch statement
+                dw offset cmdCastSpell  ; jump table for switch statement
                 dw offset loc_18190
                 dw offset loc_11E55
                 dw offset loc_15CC9
@@ -11044,7 +11044,7 @@ loc_18960:                              ; CODE XREF: updateMonsterAI+65A8↑j
                 jnb     short loc_189BD
 
 loc_18972:                              ; CODE XREF: updateMonsterAI+65C0↑j
-                mov     al, byte_1259D
+                mov     al, _locationTypeTable
                 cmp     al, 9
                 jnz     short loc_18986
                 mov     bx, _partyPosition
@@ -13884,7 +13884,7 @@ loc_1A8E6:                              ; CODE XREF: sub_1A8A5+3C↑j
                 call    printGameText
                 push    di
                 mov     cx, 0Ah
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1A902
                 cmp     byte_114CA, 0
                 jz      short loc_1A902
@@ -13960,7 +13960,7 @@ loc_1A96A:                              ; CODE XREF: sub_1A8A5+3E↑j
                 call    printGameText
                 push    di
                 mov     cx, 0Ah
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1A986
                 cmp     byte_114CA, 0
                 jz      short loc_1A986
@@ -14035,7 +14035,7 @@ sub_1A9E8       proc near               ; CODE XREF: sub_1A8A5+15↑p
                 jz      short loc_1AA21
                 lea     si, aH2hSwd250gp ; "\nH:2H Swd  250gp\n"
                 call    printGameText
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1AA21
                 mov     byte_114CA, 0FFh
                 lea     si, aI2Axe400gpJ2Bo ; "I:+2 Axe  400gp\nJ:+2 Bow 1050gp\nK:+2 "...
@@ -14099,7 +14099,7 @@ loc_1AA66:                              ; CODE XREF: sub_1AA25+3C↑j
                 call    printGameText
                 push    di
                 mov     cx, 7
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1AA82
                 cmp     byte_114CB, 0
                 jz      short loc_1AA82
@@ -14175,7 +14175,7 @@ loc_1AAEA:                              ; CODE XREF: sub_1AA25+3E↑j
                 call    printGameText
                 push    di
                 mov     cx, 7
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1AB06
                 cmp     byte_114CB, 0FFh
                 jnz     short loc_1AB06
@@ -14248,7 +14248,7 @@ sub_1AB68       proc near               ; CODE XREF: sub_1AA25+15↑p
                 call    sub_16FB1
                 cmp     al, 0FFh
                 jz      short loc_1AB8F
-                cmp     byte ptr word_114C2, 25h ; '%'
+                cmp     byte ptr _savedOverworldPosition, 25h ; '%'
                 jnz     short loc_1AB8C
                 mov     byte_114CB, 0FFh
                 lea     si, aF2chain6130gpG ; "\nF:+2Chain 6130gp\nG:+2Plate 8250gp"

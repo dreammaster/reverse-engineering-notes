@@ -536,12 +536,29 @@ key/letter:
 | E | `cmdEnter` | enter a location — shrine entry confirmed (calls the already-known shrine function); dungeon/town/castle entry presumably shares this command, not traced past the shrine branch |
 | V (+2 alt bindings) | `cmdToggleSound` | mute toggle, shared with an unidentified menu screen's jump table |
 
-The other 25 command letters (A, C, D, F, G, H, I, J, K, L, M, N, O, P,
-Q, R, S, T, U, W, Y, Z) still point at unnamed `loc_XXXXX` handlers —
-a concrete, bounded checklist for continuing (see
-[roadmap.md](roadmap.md)), much more tractable than reading
-`sub_17B54` linearly since each handler's address and trigger key are
-now known.
+**Follow-up pass, same session**: confirmed the 3 remaining movement
+directions (`cmdMoveSouth`/`cmdMoveEast`/`cmdMoveWest`, identical shape
+to `cmdMoveNorth`), and made a major find tracing `cmdEnter` fully:
+it's not shrine-only as first thought, it's **the entire dungeon/town/
+castle entry system**. It scans a new 19-entry `LOCATION_TILE_TABLE`
+against `_partyPosition` to identify which named location the party is
+standing on, looks up the location kind in `_locationTypeTable`
+(5=Dungeon, 6=Towne, 7=Castle), sets the appropriate starting position
+and game mode, and loads the location's data — confirming two file
+sizes exactly against `docs/file-formats.md` in the process (town/
+castle maps: `0x1228` = 4,648 bytes, matching `SOSARIA.ULT`'s
+documented size; dungeon maps: `0x890` = 2,192 bytes). Also discovered
+that entering a dungeon loads **two** files — the dungeon's own numbered
+map *and* a separate `0x800`-byte read of `DUNGEON.DAT` — confirming
+`DUNGEON.DAT` is an auxiliary data file, not itself a map. `cmdCastSpell`
+('C') is the overworld counterpart to `combatCmdCastSpell`, found while
+tracing a neighboring table lookup.
+
+22 command letters (A, D, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T,
+U, W, Y, Z) still point at unnamed `loc_XXXXX` handlers — a concrete,
+bounded checklist for continuing (see [roadmap.md](roadmap.md)), much
+more tractable than reading `sub_17B54` linearly since each handler's
+address and trigger key are now known.
 
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly
