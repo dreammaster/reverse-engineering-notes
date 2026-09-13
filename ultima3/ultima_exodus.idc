@@ -508,6 +508,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X12228);
+	set_name	(0X12228,	"canMoveToTile");
 	create_insn	(0X12237);
 	create_insn	(0X1224B);
 	create_insn	(0X12268);
@@ -528,6 +529,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1239B);
 	create_insn	(0X123A5);
+	set_name	(0X123A5,	"updateMonsterAI");
 	create_insn	(0X123BB);
 	create_insn	(0X123D3);
 	create_insn	(x=0X123D7);
@@ -662,6 +664,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X128D7);
 	op_hex		(x,	0);
 	create_insn	(0X128DF);
+	set_name	(0X128DF,	"getMapTileAt");
 	create_insn	(x=0X128E4);
 	op_hex		(x,	1);
 	create_insn	(x=0X128E6);

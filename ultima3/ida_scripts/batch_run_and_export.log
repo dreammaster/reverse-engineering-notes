@@ -2,24 +2,79 @@
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
 [*] idb = C:\dev\ultima3\ultima_exodus.idb
-[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
-[*] reading identify.py
-[*] executing identify.py
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-root filename : _exodus_scratch.com
-input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
-entry point   : 0x100 (cs=0x1000)
-input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: 'sub_123A5' -> 'updateMonsterAI'
+    NOT the combat command dispatcher the string-table scan suggested (see docs/overview.md) -- that was a false lead caused by IDA merging a far-away, separately-located code chunk (containing the 'Attack'/'Cast Spell'/'Ztats'/'Pass' combat menu logic, around absolute address 0x18D0B, ~0x6500 bytes away) into this function's chunk list. This function itself is the per-turn monster/NPC movement AI: iterates 32 slots (si=0x1F downto 0) over 4 parallel byte arrays at fixed offsets from a shared base -- +0x1280 (monster type, 0=empty slot), +0x12A0 (display tile), +0x12C0 (X position), +0x12E0 (Y position) -- same parallel-array convention as ultima2's monster tracking (not an array-of-structs). For each active slot: rolls movement chance via stepTimeSeededPrng/adjustAnimSpeed (gated by byte_114BC/_gameMode and the monster's own type-derived movement class read from [si+1300h]), computes a candidate new position, checks it via getMapTileAddress+canMoveToTile (see those renames), and if clear, updates position and redraws the tile (erasing the old marker via the saved 'floor under monster' byte at +0x12A0, placing the new one). Monster types 't'(0x74)/'<'(0x3C) get special-cased into sub_1232F -- not yet identified, possibly a specific monster's unique behavior (thief steal? merchant?). The REAL combat command dispatcher (the chunk this function absorbed) is now the top target -- see roadmap.md.
+128DF: 'sub_128DF' -> 'getMapTileAt'
+    LOW-MEDIUM CONFIDENCE: takes a packed coordinate in bx, computes `(bx>>2) + 0x100`-ish offset and returns the byte there in al -- i.e. returns a TILE VALUE (not a pointer, despite the 'get X address' shape of similar-looking helpers in other clusters). Bit-level derivation from the packed coordinate not fully worked out; named for its evident role (read the map at a position) in updateMonsterAI's call context, not independently verified against a known map buffer layout.
+12228: 'sub_12228' -> 'canMoveToTile'
+    LOW CONFIDENCE, structural guess: takes getMapTileAt's tile value in al plus a monster-slot context (si), returns al=0xFFh for passable / 0 for blocked after checking specific tile-type codes (4/8/0xCh/0x20h look like passable-terrain IDs) and delegating to sub_17F96 (not identified) for slot types 4 and 0x2C-0x40. Checked 3 times per movement attempt in updateMonsterAI (straight/horizontal/vertical probes) -- a movement-legality check almost certainly, exact tile-code meanings not independently confirmed.
 
-segments:
-  seg000       0x010100-0x01adca  (44234 bytes)
-
-functions: 142 total, 47 named, 95 still sub_XXXXX
-
-structs (0): 
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
 ----- end target script output -----
-[*] finished executing identify.py
+[*] finished executing apply_renames_exodus.py
 [*] auto_wait (post-script)
-[*] noexport requested -- skipping asm/idc export and save
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14646
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
 [*] done, exiting 0
