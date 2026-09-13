@@ -378,6 +378,156 @@ RENAMES = [
      "Cleric-spell counterpart to WIZARD_SPELL_TABLE, same dispatch "
      "mechanism -- entries not yet individually traced."),
 
+    # -- party status/turn-processing helpers, found while chasing
+    # combat's supporting cast --
+
+    (0x16C14, "isCharacterAlive",
+     "identical check to ultima_bootup.idb's isCharacterAlive "
+     "(_status == 'G' or 'P') -- same name reused for the same "
+     "confirmed logic, per convention."),
+
+    (0x16C29, "checkPartyWipedOut",
+     "scans all 4 party slots via isCharacterAlive; if none are alive, "
+     "prints 'All Players Out!' and jumps to loc_17252 (not yet "
+     "identified -- presumably a game-over sequence)."),
+
+    (0x16CC3, "drawPartyStatusBar",
+     "draws the 4-row party status display (Status/Sex/Race/Class "
+     "letters, ' M:'+_magicPoints, ' L:'+a level-like byte at +0x1Fh "
+     "displayed as value+1 clamped to 99, ' '+_hitPoints, +_food) for "
+     "each present party slot -- called both in combat and from "
+     "entryFromBootup, so this is the general-purpose status bar, not "
+     "combat-specific. **Open discrepancy, not resolved this pass**: "
+     "displays +0x1Fh as a standalone 'Level' byte, but "
+     "ultima_bootup.idb's RosterEntry struct has +0x1E/+0x1F defined "
+     "as a single 2-byte _experience word (from showCharacterDetails's "
+     "printHexWord(ax=[bx+1Eh]) call) -- these can't both be right as "
+     "written. Left unresolved rather than silently picking one; see "
+     "docs/roadmap.md."),
+
+    (0x16FDF, "processPartyTurnEffects",
+     "per-turn party upkeep, gated by two countdown timers "
+     "(byte_164A2/byte_164A3): for each living party member "
+     "(isCharacterAlive), regenerates 1 Magic Point "
+     "(regenerateMagicPoint) if below a class-appropriate attribute "
+     "threshold -- Wizard capped by _intelligence, Cleric by _wisdom, "
+     "Lark/Druid/Alchemist also using _intelligence (matching "
+     "castSpell's Wizard-type class grouping) -- and (per this "
+     "function's own 'Poisoned!'/'Starving!'-adjacent string table "
+     "references, not fully traced this pass) presumably applies "
+     "poison/hunger damage-over-time too."),
+
+    (0x171ED, "invertCharacterCell",
+     "XORs one on-screen character cell's pixels (same interleaved-"
+     "bank CGA addressing as drawCharGlyph/plotPixel2bpp) -- a "
+     "highlight-toggle primitive, used e.g. by combatCmdZtats to "
+     "highlight the selected player's row."),
+
+    (0x17136, "regenerateMagicPoint",
+     "increments a living character's _magicPoints by 1 (BCD) -- the "
+     "actual regen step processPartyTurnEffects gates by attribute."),
+
+    # -- THE OVERWORLD MAIN GAME LOOP AND COMMAND TABLE: found while
+    # looking for sub_17B54's own command structure (as opposed to
+    # combat's, already identified above). This is the top-level "wait
+    # for a command, dispatch it" loop that drives the entire game
+    # outside combat -- confirms _partyPosition/_currentTransport and a
+    # first handful of the 33 overworld commands. Full table documented
+    # in docs/overview.md; most of the 33 handlers still need their own
+    # pass (see docs/roadmap.md) -- this entry only covers what a first
+    # read-through confirmed with real evidence. --
+
+    (0x114BA, "_currentTransport",
+     "0x3F = on foot, else a vehicle/mount type index -- matches "
+     "docs/file-formats.md's externally-sourced PARTY.ULT 'Transport' "
+     "field exactly (0xA=horse, 0xB=ship, 0x3F=foot documented there; "
+     "this pass independently confirms the 0x3F=foot convention via "
+     "cmdExitVehicle's own logic, not just the external doc)."),
+
+    (0x11887, "OVERWORLD_COMMAND_KEYS",
+     "33-entry word array, each a full (scancode:char) AX value "
+     "compared via `repne scasw` against the raw getKeypressAndWaitRaw "
+     "result -- NOT a byte array of characters, which is why IDA's "
+     "auto-analysis originally misdecoded this range as garbage x86 "
+     "instructions (fixed via ida_scripts/fix_command_key_tables.py). "
+     "Parallel index-for-index with OVERWORLD_COMMAND_TABLE. Verified "
+     "via ida_bytes.get_word() against all 33 entries: 4 arrow keys "
+     "(Up/Down/Right/Left, scancodes 0x48/0x50/0x4D/0x4B) + Space + "
+     "all 26 letters A-Z + 2 additional scancode-only entries (0x1F, "
+     "0x2F, char 0 -- likely Alt+S/Alt+V or similar unshifted "
+     "combinations, both routed to the same handler as 'V')."),
+
+    (0x1190B, "OVERWORLD_COMMAND_TABLE",
+     "33-entry jump table for the main overworld command loop, real "
+     "address 0x1190B -- NOT 0x11BD1 as IDA's own auto-generated name "
+     "implies (same lesson as every other table in this project: "
+     "verify via ida_bytes.get_word(), never trust a name's numeric "
+     "suffix). Parallel to OVERWORLD_COMMAND_KEYS. See "
+     "docs/overview.md for the full 33-entry letter-to-handler table "
+     "and which handlers are confirmed vs. still `loc_XXXXX`."),
+
+    (0x11B7A, "mainGameLoop",
+     "the top-level 'wait for a command, dispatch it, repeat' loop: "
+     "checkPartyWipedOut, draws a cursor glyph, polls for a keypress "
+     "with a ~5-second idle timeout (drives idle animation via "
+     "sub_17347 while waiting -- not yet identified), uppercases the "
+     "key, looks it up in OVERWORLD_COMMAND_KEYS via repne scasw, and "
+     "jumps into OVERWORLD_COMMAND_TABLE at the matching index (or the "
+     "shared aWhat/'<-What?' invalid-command trampoline at loc_17DBA "
+     "if not found)."),
+
+    (0x11BD5, "mainLoopCommandDone",
+     "post-command landing pad: if in combat mode, jumps straight to "
+     "combatAdvanceTurn instead of continuing the overworld loop; "
+     "otherwise processPartyTurnEffects, re-derives the tile under the "
+     "party (getMapTileAt) and dispatches a couple of tile-triggered "
+     "side effects (0x88 -- not yet identified, calls sub_15B51/"
+     "sub_120AE) before mainGameLoop repeats."),
+
+    (0x11C7D, "cmdMoveNorth",
+     "Up arrow (index 0): decrements _partyPosition's Y with 64-wide "
+     "wraparound, after checking sub_17233/sub_17254 (not yet "
+     "identified -- presumably movement-blocked checks) don't veto it. "
+     "The other 3 arrow keys (indices 2-4, loc_11C9E/loc_11CBF/"
+     "loc_11CE0) are almost certainly cmdMoveSouth/East/West by the "
+     "same shape -- not individually confirmed this pass, left as "
+     "loc_ names pending a quick read-through."),
+
+    (0x11C77, "cmdPass",
+     "Space (index 5): the simplest overworld command -- prints the "
+     "'Pass' message and ends the turn, no other logic."),
+
+    (0x11D01, "cmdBoard",
+     "'B' (index 6): checks the tile at _partyPosition for a specific "
+     "marker (0x28 or 0x2C) -- matches the earlier-found 'Mount "
+     "Horse!'/'Board Frigate!' strings (docs/overview.md's initial "
+     "string scan) exactly. Boarding a vehicle."),
+
+    (0x11D69, "cmdEnter",
+     "'E' (index 11): checks _currentTransport==0x3F (on foot) and "
+     "the tile for marker 0xF8, calling sub_16366 (the Shrine-entry "
+     "function, confirmed via its own aShrineImg/aShrineWhoEnter "
+     "strings) -- 'Enter' a location (shrine confirmed; "
+     "dungeon/town/castle entry presumably shares this same command, "
+     "not yet traced past the shrine branch)."),
+
+    (0x12018, "cmdToggleSound",
+     "'V' (index 8) plus 2 additional scancode-only bindings (indices "
+     "9, 14 -- likely alternate/Alt-key shortcuts to the same command): "
+     "`xor _soundEnabled, 0FFh` then prints 'On!'/'Off!' -- a sound "
+     "mute toggle. Shares this handler with a similarly-shaped 'Off!' "
+     "case in a DIFFERENT jump table (jpt_1948E case 4, not yet "
+     "identified -- presumably a menu/settings screen reusing the same "
+     "code)."),
+
+    (0x12035, "cmdExitVehicle",
+     "'X' (index 7): writes _currentTransport (shifted to match the "
+     "map's tile encoding) onto the tile at _partyPosition, resets "
+     "_currentTransport to 0x3F (foot), prints 'Craft' -- confirms "
+     "'X-it' as get-off-vehicle, and confirms the 0x3F=on-foot "
+     "convention for _currentTransport independently of the external "
+     "PARTY.ULT documentation."),
+
     (0x12228, "canMoveToTile",
      "LOW CONFIDENCE, structural guess: takes getMapTileAt's tile "
      "value in al plus a monster-slot context (si), returns al=0xFFh "

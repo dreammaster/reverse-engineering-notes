@@ -155,6 +155,7 @@ static Bytes_0(void) {
 	create_byte	(0X11328);
 	make_array	(0X11328,	0X192);
 	create_byte	(0X114BA);
+	set_name	(0X114BA,	"_currentTransport");
 	create_byte	(0X114BC);
 	create_byte	(0X114BD);
 	create_byte	(0X114BE);
@@ -233,8 +234,10 @@ static Bytes_0(void) {
 	create_byte	(0X116E4);
 	make_array	(0X116E4,	0X35);
 	create_insn	(0X11719);
-	create_insn	(x=0X118A6);
-	op_hex		(x,	1);
+	create_word	(0X11887);
+	make_array	(0X11887,	0X21);
+	set_name	(0X11887,	"OVERWORLD_COMMAND_KEYS");
+	create_insn	(0X118CC);
 	create_insn	(x=0X118D5);
 	op_hex		(x,	1);
 	create_insn	(x=0X118E9);
@@ -246,7 +249,7 @@ static Bytes_0(void) {
 	make_array	(x,	0X21);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	set_name	(0X1190B,	"jpt_11BD1");
+	set_name	(0X1190B,	"OVERWORLD_COMMAND_TABLE");
 	create_byte	(0X1194D);
 	make_array	(0X1194D,	0X10);
 	create_byte	(0X1195D);
@@ -306,6 +309,7 @@ static Bytes_0(void) {
 	create_strlit	(0X11B67,	0X10);
 	set_name	(0X11B67,	"aPleaseWait");
 	create_insn	(0X11B77);
+	set_name	(0X11B7A,	"mainGameLoop");
 	create_insn	(x=0X11B82);
 	op_hex		(x,	1);
 	set_cmt	(0X11B84,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
@@ -329,14 +333,17 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
 	create_insn	(0X11BD5);
+	set_name	(0X11BD5,	"mainLoopCommandDone");
 	create_insn	(0X11BDF);
 	create_insn	(0X11BE9);
 	create_insn	(0X11C1D);
 	create_insn	(0X11C62);
 	set_cmt	(0X11C77,	"jumptable 00011BD1 case 5\njumptable 00018389 case 0",	1);
 	create_insn	(0X11C77);
+	set_name	(0X11C77,	"cmdPass");
 	set_cmt	(0X11C7D,	"jumptable 00011BD1 case 0",	1);
 	create_insn	(0X11C7D);
+	set_name	(0X11C7D,	"cmdMoveNorth");
 	create_insn	(x=0X11C93);
 	op_hex		(x,	1);
 	create_insn	(0X11C9B);
@@ -357,6 +364,7 @@ static Bytes_0(void) {
 	create_insn	(0X11CFE);
 	set_cmt	(0X11D01,	"jumptable 00011BD1 case 6",	1);
 	create_insn	(0X11D01);
+	set_name	(0X11D01,	"cmdBoard");
 	create_insn	(0X11D1D);
 	create_insn	(0X11D2B);
 	create_insn	(x=0X11D33);
@@ -371,6 +379,7 @@ static Bytes_0(void) {
 	create_insn	(0X11D66);
 	set_cmt	(0X11D69,	"jumptable 00011BD1 case 11",	1);
 	create_insn	(0X11D69);
+	set_name	(0X11D69,	"cmdEnter");
 	create_insn	(0X11D8B);
 	create_insn	(0X11D8E);
 	create_insn	(x=0X11D97);
@@ -476,6 +485,7 @@ static Bytes_0(void) {
 	create_insn	(0X12015);
 	set_cmt	(0X12018,	"jumptable 00011BD1 cases 8,9,14\njumptable 00018389 cases 10,14,15",	1);
 	create_insn	(0X12018);
+	set_name	(0X12018,	"cmdToggleSound");
 	create_insn	(x=0X1201B);
 	op_hex		(x,	1);
 	set_cmt	(0X12020,	"jumptable 0001948E case 4",	1);
@@ -487,6 +497,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X12035,	"jumptable 00011BD1 case 7",	1);
 	create_insn	(0X12035);
+	set_name	(0X12035,	"cmdExitVehicle");
 	create_insn	(x=0X1204D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1204F);
@@ -1741,7 +1752,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X16C07);
 	op_hex		(x,	1);
 	create_insn	(0X16C14);
+	set_name	(0X16C14,	"isCharacterAlive");
 	create_insn	(0X16C29);
+	set_name	(0X16C29,	"checkPartyWipedOut");
 	create_insn	(x=0X16C2D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1758,6 +1771,7 @@ static Bytes_0(void) {
 	create_insn	(0X16CB8);
 	create_insn	(0X16CBF);
 	create_insn	(0X16CC3);
+	set_name	(0X16CC3,	"drawPartyStatusBar");
 	create_insn	(x=0X16CCF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1846,6 +1860,7 @@ static Bytes_0(void) {
 	create_insn	(0X16FB1);
 	create_insn	(0X16FD8);
 	create_insn	(0X16FDF);
+	set_name	(0X16FDF,	"processPartyTurnEffects");
 	create_insn	(0X16FF4);
 	create_insn	(x=0X16FF9);
 	op_plain_offset	(x,	1,	0X10000);
@@ -1863,6 +1878,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X17136);
+	set_name	(0X17136,	"regenerateMagicPoint");
 	create_insn	(0X17149);
 	create_insn	(x=0X17152);
 	op_hex		(x,	1);
@@ -1915,6 +1931,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X171D7);
 	op_hex		(x,	1);
 	create_insn	(0X171ED);
+	set_name	(0X171ED,	"invertCharacterCell");
 	create_insn	(x=0X171F8);
 	op_hex		(x,	1);
 	create_insn	(x=0X171FA);
@@ -3849,9 +3866,15 @@ static Functions_0(void) {
 	set_frame_size(0X123A5, 0, 2, 0);
 	add_func    (0X124C4,0X12582);
 	set_func_flags(0X124C4,0x1400);
+	add_func    (0X1259E,0X12675);
+	set_func_flags(0X1259E,0x5400);
+	set_frame_size(0X1259E, 0, 0, 0);
 	add_func    (0X12675,0X126A9);
 	set_func_flags(0X12675,0x5400);
 	set_frame_size(0X12675, 0X4, 0, 0);
+	add_func    (0X126A9,0X126F4);
+	set_func_flags(0X126A9,0x5400);
+	set_frame_size(0X126A9, 0, 0, 0);
 	add_func    (0X126F4,0X12716);
 	set_func_flags(0X126F4,0x5400);
 	set_frame_size(0X126F4, 0XA, 0, 0);
@@ -4321,7 +4344,6 @@ static SegRegs(void) {
 	split_sreg_range(0X15286,"es",0X1000,3);
 	split_sreg_range(0X152AD,"es",BADSEL,3);
 	split_sreg_range(0X10100,"ss",BADSEL,3);
-	split_sreg_range(0X118AF,"ss",BADSEL,3);
 	split_sreg_range(0X118CD,"ss",BADSEL,3);
 	split_sreg_range(0X118D5,"ss",BADSEL,3);
 	split_sreg_range(0X118D9,"ss",BADSEL,3);
@@ -4331,7 +4353,6 @@ static SegRegs(void) {
 	split_sreg_range(0X118ED,"ss",BADSEL,3);
 	split_sreg_range(0X118EF,"ss",BADSEL,3);
 	split_sreg_range(0X10100,"ds",0X1000,3);
-	split_sreg_range(0X118C5,"ds",0X1000,3);
 	split_sreg_range(0X1504C,"ds",0X1000,3);
 	split_sreg_range(0X15053,"ds",0X1000,3);
 	split_sreg_range(0X15071,"ds",0X1000,3);

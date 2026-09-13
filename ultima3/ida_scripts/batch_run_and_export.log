@@ -15,7 +15,7 @@ input md5     : af8f5c907c22cd86ffabf1cd01949f2c
 segments:
   seg000       0x010100-0x01adca  (44234 bytes)
 
-functions: 142 total, 58 named, 84 still sub_XXXXX
+functions: 144 total, 65 named, 79 still sub_XXXXX
 
 structs (1): RosterEntry
 ----- end target script output -----
