@@ -104,6 +104,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_race",	0X16,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_class",	0X17,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_sex",	0X18,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_magicPoints",	0X19,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_hitPoints",	0X1A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_maxHitPoints",	0X1C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);

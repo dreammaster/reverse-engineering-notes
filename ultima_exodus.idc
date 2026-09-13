@@ -75,10 +75,46 @@ static Enums(void) {
         end_type_updating(UTP_ENUM);
 }
 
+static ApplyStrucTInfos_0(void) {
+        auto id;
+	id = get_struc_id("RosterEntry");
+	return id;
+}
+
 //------------------------------------------------------------------------
 // Information about type information for structure members
 
 static ApplyStrucTInfos() {
+	ApplyStrucTInfos_0();
+}
+
+static Structures_0(id) {
+        auto mid;
+
+	id = add_struc(-1,"RosterEntry",0);
+	
+	id = get_struc_id("RosterEntry");
+	mid = add_struc_member(id,"_name",	0,	0x00000400,	-1,	10);
+	mid = add_struc_member(id,"_partyMember",	0X10,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_status",	0X11,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_strength",	0X12,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_dexterity",	0X13,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_intelligence",	0X14,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_wisdom",	0X15,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_race",	0X16,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_class",	0X17,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_sex",	0X18,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_magicPoints",	0X19,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_hitPoints",	0X1A,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_maxHitPoints",	0X1C,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_armourIndex",	0X28,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_armourOwned",	0X29,	0x00000400,	-1,	7);
+	mid = add_struc_member(id,"_weaponIndex",	0X30,	0x00000400,	-1,	1);
+	mid = add_struc_member(id,"_weaponOwned",	0X31,	0x00000400,	-1,	15);
+	return id;
 }
 
 //------------------------------------------------------------------------
@@ -87,6 +123,7 @@ static ApplyStrucTInfos() {
 static Structures(void) {
         auto id;
         begin_type_updating(UTP_STRUCT);
+	id = Structures_0(id);
 }
 
 //------------------------------------------------------------------------
@@ -135,9 +172,11 @@ static Bytes_0(void) {
 	create_byte	(0X1158C);
 	make_array	(0X1158C,	0X40);
 	create_word	(0X115CC);
+	set_name	(0X115CC,	"_partyPosition");
 	create_byte	(0X115CE);
 	create_byte	(0X115CF);
 	create_byte	(0X115D0);
+	set_name	(0X115D0,	"_negateTimeDuration");
 	create_byte	(0X115D1);
 	create_word	(0X115D2);
 	create_strlit	(0X115D4,	0XA);
@@ -627,6 +666,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12697);
 	op_hex		(x,	1);
 	create_insn	(0X126A9);
+	set_name	(0X126A9,	"printGameText");
 	create_insn	(0X126D3);
 	create_insn	(0X126DA);
 	create_insn	(0X126DF);
@@ -1242,8 +1282,10 @@ static Bytes_0(void) {
 	make_array	(0X1590B,	0X40);
 	create_byte	(0X1594B);
 	make_array	(0X1594B,	0X20);
+	set_name	(0X1594B,	"WIZARD_SPELL_TABLE");
 	create_byte	(0X1596B);
 	make_array	(0X1596B,	0X30);
+	set_name	(0X1596B,	"CLERIC_SPELL_TABLE");
 	create_strlit	(0X1599B,	0XD);
 	set_name	(0X1599B,	"aNotAMage");
 	create_strlit	(0X159A8,	0X10);
@@ -1349,10 +1391,15 @@ static Bytes_0(void) {
 	create_insn	(0X15CF8);
 	create_insn	(0X15D13);
 	create_insn	(0X15D16);
+	set_name	(0X15D16,	"readSpellLetterKey");
 	create_insn	(0X15D2B);
+	set_name	(0X15D2B,	"healHitPoints");
 	create_insn	(0X15D4B);
+	set_name	(0X15D4B,	"addExperienceClamped");
 	create_insn	(0X15D67);
+	set_name	(0X15D67,	"addGoldClamped");
 	create_insn	(0X15D83);
+	set_name	(0X15D83,	"castSpell");
 	create_insn	(x=0X15D8E);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2206,6 +2253,7 @@ static Bytes_0(void) {
 	create_strlit	(0X17ADF,	0XB);
 	set_name	(0X17ADF,	"aGasTrap");
 	create_insn	(0X17AEA);
+	set_name	(0X17AEA,	"readDirectionKeypress");
 	create_insn	(x=0X17B16);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2580,7 +2628,9 @@ static Bytes_0(void) {
 	make_array	(0X184DB,	0X5);
 	create_byte	(0X184E0);
 	create_byte	(0X184E1);
+	set_name	(0X184E1,	"_currentCombatant");
 	create_byte	(0X184E2);
+	set_name	(0X184E2,	"_conflictMonsterClass");
 	create_byte	(0X184E3);
 	create_strlit	(0X184E4,	0XA);
 	set_name	(0X184E4,	"aBrandImg");
@@ -2698,6 +2748,7 @@ static Bytes_0(void) {
 	create_insn	(0X188A4);
 	create_insn	(0X188A7);
 	create_insn	(0X188AA);
+	set_name	(0X188AA,	"beginCombatEncounter");
 	create_insn	(x=0X188C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X188C4);
@@ -2771,11 +2822,13 @@ static Bytes_0(void) {
 	create_insn	(x=0X18A88);
 	op_hex		(x,	1);
 	create_insn	(0X18AC4);
+	set_name	(0X18AC4,	"lookupWeaponGlyph");
 	create_insn	(x=0X18ACE);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X18AE2);
 	create_insn	(0X18AE6);
+	set_name	(0X18AE6,	"printCombatReactionMessage");
 	create_insn	(x=0X18AEE);
 	op_hex		(x,	1);
 	create_insn	(x=0X18AFE);
@@ -2794,6 +2847,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X18B52);
+	set_name	(0X18B52,	"combatTurnLoop");
 	create_insn	(x=0X18B76);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2811,6 +2865,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18BAE);
 	op_hex		(x,	0);
 	create_insn	(0X18BD5);
+	set_name	(0X18BD5,	"readCombatCommandKey");
 	create_insn	(x=0X18BE5);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2822,13 +2877,16 @@ static Bytes_0(void) {
 	create_insn	(x=0X18BF8);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
+	set_name	(0X18BF8,	"COMBAT_COMMAND_TABLE");
 	create_insn	(0X18BFC);
+	set_name	(0X18BFC,	"combatAdvanceTurn");
 	create_insn	(x=0X18C16);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X18C36);
 	create_insn	(0X18C39);
 	create_insn	(0X18C3C);
+	set_name	(0X18C3C,	"combatHandleMovement");
 	create_insn	(0X18C93);
 	create_insn	(0X18C96);
 	create_insn	(0X18CAD);
@@ -2856,29 +2914,36 @@ static Bytes_0(void) {
 	create_insn	(x=0X18CF1);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18CF1,	"combatCmdReady");
 	set_cmt	(0X18D0B,	"jumptable 00018BF8 case 10",	1);
 	create_insn	(x=0X18D0B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18D0B,	"combatCmdZtats");
 	set_cmt	(0X18D38,	"jumptable 00018BF8 case 12",	1);
 	create_insn	(x=0X18D38);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18D38,	"combatCmdCastSpell");
 	set_cmt	(0X18D57,	"jumptable 00018BF8 case 11",	1);
 	create_insn	(x=0X18D57);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18D57,	"combatCmdNegateTime");
 	create_insn	(0X18D80);
 	set_cmt	(0X18D83,	"jumptable 00018BF8 case 1",	1);
 	create_insn	(x=0X18D83);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18D83,	"combatCmdPass");
 	set_cmt	(0X18D8D,	"jumptable 00018BF8 cases 0,14-32",	1);
 	create_insn	(x=0X18D8D);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X18D8D,	"combatCmdInvalid");
 	set_cmt	(0X18D9F,	"jumptable 00018BF8 case 13",	1);
 	create_insn	(0X18D9F);
+	set_name	(0X18D9F,	"combatCmdAttack");
 	create_insn	(x=0X18DBB);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

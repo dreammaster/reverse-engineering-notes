@@ -115,13 +115,13 @@ byte_114CC      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
                 db 31h dup(0), 0Eh dup(20h), 0FFh, 31h dup(0)
 byte_1158C      db 0Eh dup(20h), 0FFh, 31h dup(0)
                                         ; DATA XREF: sub_16FDF:loc_16FF9↓o
-word_115CC      dw 0                    ; DATA XREF: sub_17B54-5F5E↓r
+_partyPosition  dw 0                    ; DATA XREF: sub_17B54-5F5E↓r
                                         ; sub_17B54-5F4A↓r ...
 byte_115CE      db 0                    ; DATA XREF: entryFromBootup+88↓w
                                         ; sub_17B54-1E6A↓w ...
 byte_115CF      db 0                    ; DATA XREF: sub_17B54-5D9A↓w
                                         ; sub_128F2+B↓r ...
-byte_115D0      db 0                    ; DATA XREF: sub_17B54-5F1A↓w
+_negateTimeDuration db 0                ; DATA XREF: sub_17B54-5F1A↓w
                                         ; sub_17B54-5E30↓w ...
 byte_115D1      db 1                    ; DATA XREF: sub_17B54-58D3↓w
                                         ; sub_17B54:loc_12286↓w
@@ -612,13 +612,13 @@ aAllIsDark      db 0Ah                  ; DATA XREF: sub_12168:loc_121F4↓o
                 db ' All is Dark!',0Ah
                 db 0Ah,0
 aYouMadeIt      db ' You made it!',0Ah,0 ; DATA XREF: sub_12168+A4↓o
-aNorth          db 'North',0Ah,0        ; DATA XREF: sub_17AEA:loc_17B16↓o
+aNorth          db 'North',0Ah,0        ; DATA XREF: readDirectionKeypress:loc_17B16↓o
                                         ; updateMonsterAI:loc_18CBE↓o
-aSouth          db 'South',0Ah,0        ; DATA XREF: sub_17AEA:loc_17B21↓o
+aSouth          db 'South',0Ah,0        ; DATA XREF: readDirectionKeypress:loc_17B21↓o
                                         ; updateMonsterAI:loc_18CC9↓o
-aEast           db 'East',0Ah,0         ; DATA XREF: sub_17AEA:loc_17B2C↓o
+aEast           db 'East',0Ah,0         ; DATA XREF: readDirectionKeypress:loc_17B2C↓o
                                         ; updateMonsterAI:loc_18CD4↓o
-aWest           db 'West',0Ah,0         ; DATA XREF: sub_17AEA:loc_17B37↓o
+aWest           db 'West',0Ah,0         ; DATA XREF: readDirectionKeypress:loc_17B37↓o
                                         ; updateMonsterAI:loc_18CDF↓o
 aPleaseWait     db 'Please wait...',0Ah,0
                                         ; DATA XREF: sub_17B54:loc_11E0A↓o
@@ -691,7 +691,7 @@ loc_11BD5:                              ; CODE XREF: sub_17B54-5EDA↓j
                                         ; sub_17B54-5EBC↓j ...
                 cmp     byte_114BC, 80h
                 jnz     short loc_11BDF
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
 loc_11BDF:                              ; CODE XREF: sub_17B54-5F7A↑j
@@ -705,9 +705,9 @@ loc_11BE9:                              ; CODE XREF: sub_17B54-5F70↑j
                 call    sub_17E02
                 cmp     byte_114BC, 2
                 jb      short loc_11C07
-                cmp     byte ptr word_115CC, 0
+                cmp     byte ptr _partyPosition, 0
                 jz      short loc_11C04
-                cmp     byte ptr word_115CC+1, 0
+                cmp     byte ptr _partyPosition+1, 0
                 jnz     short loc_11C07
 
 loc_11C04:                              ; CODE XREF: sub_17B54-5F59↑j
@@ -716,7 +716,7 @@ loc_11C04:                              ; CODE XREF: sub_17B54-5F59↑j
 loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
                                         ; sub_17B54-5F52↑j
                 call    sub_16FDF
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C1D
@@ -727,7 +727,7 @@ loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
 
 loc_11C1D:                              ; CODE XREF: sub_17B54-5F41↑j
                 call    sub_120AE
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C2E
@@ -742,7 +742,7 @@ loc_11C2E:                              ; CODE XREF: sub_17B54-5F39↑j
 loc_11C35:                              ; CODE XREF: sub_17B54-5F24↑j
                 call    sub_15B28
                 jnz     short loc_11C74
-                mov     byte_115D0, 0
+                mov     _negateTimeDuration, 0
                 mov     dh, 0Bh
                 call    stepTimeSeededPrng
                 mov     bl, dl
@@ -775,22 +775,22 @@ loc_11C74:                              ; CODE XREF: sub_17B54-5F1C↑j
 loc_11C77:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 5
+                call    printGameText   ; jumptable 00011BD1 case 5
                                         ; jumptable 00018389 case 0
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
 loc_11C7D:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 0
+                call    printGameText   ; jumptable 00011BD1 case 0
                 mov     al, 1
                 call    sub_17233
                 jnz     short loc_11C9B
                 mov     al, byte_1259B
                 call    sub_17254
                 jnz     short loc_11C9B
-                dec     byte ptr word_115CC+1
-                and     byte ptr word_115CC+1, 3Fh
+                dec     byte ptr _partyPosition+1
+                and     byte ptr _partyPosition+1, 3Fh
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
@@ -801,15 +801,15 @@ loc_11C9B:                              ; CODE XREF: sub_17B54-5ECF↑j
 
 loc_11C9E:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 2
+                call    printGameText   ; jumptable 00011BD1 case 2
                 mov     al, 3
                 call    sub_17233
                 jnz     short loc_11CBC
                 mov     al, byte_1259C
                 call    sub_17254
                 jnz     short loc_11CBC
-                inc     byte ptr word_115CC+1
-                and     byte ptr word_115CC+1, 3Fh
+                inc     byte ptr _partyPosition+1
+                and     byte ptr _partyPosition+1, 3Fh
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
@@ -820,15 +820,15 @@ loc_11CBC:                              ; CODE XREF: sub_17B54-5EAE↑j
 
 loc_11CBF:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 3
+                call    printGameText   ; jumptable 00011BD1 case 3
                 mov     al, 2
                 call    sub_17233
                 jnz     short loc_11CDD
                 mov     al, byte_12599
                 call    sub_17254
                 jnz     short loc_11CDD
-                inc     byte ptr word_115CC
-                and     byte ptr word_115CC, 3Fh
+                inc     byte ptr _partyPosition
+                and     byte ptr _partyPosition, 3Fh
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
@@ -839,15 +839,15 @@ loc_11CDD:                              ; CODE XREF: sub_17B54-5E8D↑j
 
 loc_11CE0:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 4
+                call    printGameText   ; jumptable 00011BD1 case 4
                 mov     al, 4
                 call    sub_17233
                 jnz     short loc_11CFE
                 mov     al, byte_1259A
                 call    sub_17254
                 jnz     short loc_11CFE
-                dec     byte ptr word_115CC
-                and     byte ptr word_115CC, 3Fh
+                dec     byte ptr _partyPosition
+                and     byte ptr _partyPosition, 3Fh
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
@@ -860,7 +860,7 @@ loc_11D01:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
                 cmp     byte_114BA, 3Fh ; '?' ; jumptable 00011BD1 case 6
                 jnz     short loc_11D17
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 28h ; '('
                 jz      short loc_11D1D
@@ -869,14 +869,14 @@ loc_11D01:                              ; CODE XREF: sub_17B54-5F83↑j
 
 loc_11D17:                              ; CODE XREF: sub_17B54-5E4E↑j
                                         ; sub_17B54-5E2B↓j
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_17DBA
 ; ---------------------------------------------------------------------------
 
 loc_11D1D:                              ; CODE XREF: sub_17B54-5E43↑j
                 cmp     byte_114BC, 0FFh
                 jnz     short loc_11D2B
-                mov     byte_115D0, 0
+                mov     _negateTimeDuration, 0
                 jmp     short loc_11D17
 ; ---------------------------------------------------------------------------
 
@@ -884,7 +884,7 @@ loc_11D2B:                              ; CODE XREF: sub_17B54-5E32↑j
                 mov     byte ptr [bx], 4
                 mov     byte_114BA, 0Ah
                 lea     si, aMountHorse ; "Mount Horse!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_11D4B
 ; ---------------------------------------------------------------------------
 
@@ -892,7 +892,7 @@ loc_11D3C:                              ; CODE XREF: sub_17B54-5E3F↑j
                 mov     byte ptr [bx], 0
                 mov     byte_114BA, 0Bh
                 lea     si, aBoardFrigate ; "Board Frigate!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_11D4B:                              ; CODE XREF: sub_17B54-5E1A↑j
                 jmp     loc_11BD5
@@ -901,14 +901,14 @@ loc_11D4B:                              ; CODE XREF: sub_17B54-5E1A↑j
 loc_11D4E:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 23
+                call    printGameText   ; jumptable 00011BD1 case 23
                                         ; jumptable 00018389 case 1
                 call    sub_16C76
                 jz      short loc_11D63
                 call    sub_16C14
                 jnz     short loc_11D66
                 mov     byte_184E0, 3Ch ; '<'
-                call    sub_15D83
+                call    castSpell
 
 loc_11D63:                              ; CODE XREF: sub_17B54-5E00↑j
                 jmp     loc_11BD5
@@ -920,12 +920,12 @@ loc_11D66:                              ; CODE XREF: sub_17B54-5DFB↑j
 
 loc_11D69:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 11
+                call    printGameText   ; jumptable 00011BD1 case 11
                 cmp     byte_114BC, 0
                 jz      short loc_11D8E
                 cmp     byte_114BC, 0FFh
                 jnz     short loc_11D8B
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 0F8h
                 jnz     short loc_11D8B
@@ -939,7 +939,7 @@ loc_11D8B:                              ; CODE XREF: sub_17B54-5DDC↑j
 ; ---------------------------------------------------------------------------
 
 loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
-                mov     ax, word_115CC
+                mov     ax, _partyPosition
                 cld
                 mov     cx, 13h
                 mov     bx, cx
@@ -949,15 +949,15 @@ loc_11D8E:                              ; CODE XREF: sub_17B54-5DE3↑j
                 sub     bx, cx
                 dec     bx
                 shl     bx, 1
-                mov     ax, word_115CC
+                mov     ax, _partyPosition
                 mov     word_114C2, ax
                 cmp     byte_1259D, 5
                 jnz     short loc_11DCC
                 lea     si, aDungeon    ; "Dungeon!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dl, 1
                 mov     byte_115CF, 0
-                mov     word_115CC, 101h
+                mov     _partyPosition, 101h
                 mov     byte_158CC, 1
                 jmp     short loc_11E0A
 ; ---------------------------------------------------------------------------
@@ -966,9 +966,9 @@ loc_11DCC:                              ; CODE XREF: sub_17B54-5DA5↑j
                 cmp     byte_1259D, 6
                 jnz     short loc_11DE9
                 lea     si, aTowne      ; "Towne!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dl, 2
-                mov     word_115CC, 2001h
+                mov     _partyPosition, 2001h
                 mov     byte_124C0, 0
                 jmp     short loc_11E0A
 ; ---------------------------------------------------------------------------
@@ -977,16 +977,16 @@ loc_11DE9:                              ; CODE XREF: sub_17B54-5D83↑j
                 cmp     byte_1259D, 7
                 jnz     short loc_11D8B
                 lea     si, aCastle     ; "Castle!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dl, 3
-                mov     word_115CC, 3E20h
+                mov     _partyPosition, 3E20h
                 mov     byte_124C0, 0
                 mov     word_164A0, 0
 
 loc_11E0A:                              ; CODE XREF: sub_17B54-5D8A↑j
                                         ; sub_17B54-5D6D↑j
                 lea     si, aPleaseWait ; "Please wait...\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_1207D
                 mov     byte_114BC, dl
                 mov     si, bx
@@ -1017,12 +1017,12 @@ loc_11E3A:                              ; CODE XREF: sub_17B54-5D31↑j
 loc_11E55:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 16
+                call    printGameText   ; jumptable 00011BD1 case 16
                                         ; jumptable 00018389 case 3
                 call    sub_16C76
                 jz      short loc_11E74
                 lea     si, aToPlayer   ; "  To Player: "
-                call    loc_126A9
+                call    printGameText
                 mov     si, bx
                 call    sub_16C76
                 jz      short loc_11E74
@@ -1042,11 +1042,11 @@ loc_11E77:                              ; CODE XREF: sub_17B54-5CE5↑j
 
 loc_11E7A:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 12
-                call    sub_17AEA
+                call    printGameText   ; jumptable 00011BD1 case 12
+                call    readDirectionKeypress
                 jz      short loc_11E98
                 lea     si, byte_1197F
-                call    loc_126A9
+                call    printGameText
                 call    getMapTileAt
                 shr     al, 1
                 shr     al, 1
@@ -1061,7 +1061,7 @@ loc_11E98:                              ; CODE XREF: sub_17B54-5CD4↑j
 loc_11E9B:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 13
+                call    printGameText   ; jumptable 00011BD1 case 13
                                         ; jumptable 00018389 case 6
                 call    sub_16C76
                 jz      short loc_11EFA
@@ -1069,7 +1069,7 @@ loc_11E9B:                              ; CODE XREF: sub_17B54-5F83↑j
                 dec     dl
                 mov     di, bx
                 lea     si, aPlayer_0   ; "Player: "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_11EFA
                 mov     dh, al
@@ -1103,7 +1103,7 @@ loc_11ED8:                              ; CODE XREF: sub_17B54-5C76↓j
 loc_11EF0:                              ; CODE XREF: sub_17B54-5C69↑j
                 call    sub_16CC3
                 lea     si, aExchanged  ; "Exchanged!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_11EFA:                              ; CODE XREF: sub_17B54-5CB3↑j
                                         ; sub_17B54-5CA1↑j
@@ -1113,7 +1113,7 @@ loc_11EFA:                              ; CODE XREF: sub_17B54-5CB3↑j
 loc_11EFD:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 29
+                call    printGameText   ; jumptable 00011BD1 case 29
                                         ; jumptable 00018389 case 32
                 call    sub_16C76
                 jz      short loc_11F1F
@@ -1142,14 +1142,14 @@ loc_11F22:                              ; CODE XREF: sub_17B54-5C49↑j
 
 loc_11F25:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 20
+                call    printGameText   ; jumptable 00011BD1 case 20
                 cmp     byte_114BC, 0
                 jnz     short loc_11F45
-                mov     ax, word_115CC
+                mov     ax, _partyPosition
                 mov     word_114C2, ax
                 call    sub_1A46F
                 lea     si, aPleaseWait ; "Please wait...\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_1207D
 
 loc_11F42:                              ; CODE XREF: sub_17B54-5C03↓j
@@ -1158,7 +1158,7 @@ loc_11F42:                              ; CODE XREF: sub_17B54-5C03↓j
 
 loc_11F45:                              ; CODE XREF: sub_17B54-5C27↑j
                 lea     si, aOnlyOnSurface ; "Only on surface!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_11F42
@@ -1166,15 +1166,15 @@ loc_11F45:                              ; CODE XREF: sub_17B54-5C27↑j
 
 loc_11F53:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 30
+                call    printGameText   ; jumptable 00011BD1 case 30
                 call    sub_16C76
                 jz      short loc_11FD0
                 mov     di, bx
                 call    sub_16C14
                 jnz     short loc_11FD3
                 lea     si, aDirect     ; "Direct? "
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jz      short loc_11FD0
                 mov     cx, bx
                 mov     bx, di
@@ -1188,7 +1188,7 @@ loc_11F77:                              ; CODE XREF: sub_17B54-5BA1↓j
                 and     dl, 3
                 jz      short loc_11F8A
                 lea     si, aFailed     ; "Failed!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_11FD0
 ; ---------------------------------------------------------------------------
 
@@ -1205,7 +1205,7 @@ loc_11F9B:                              ; CODE XREF: sub_17B54-5BC0↑j
                 inc     bx
                 loop    loc_11F91
                 lea     si, aWatchOut   ; "Watch out!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FAh
                 call    playSoundEffect
                 jmp     short loc_11FD0
@@ -1240,8 +1240,8 @@ loc_11FD3:                              ; CODE XREF: sub_17B54-5BF4↑j
 
 loc_11FD6:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 18
-                call    sub_17AEA
+                call    printGameText   ; jumptable 00011BD1 case 18
+                call    readDirectionKeypress
                 jz      short loc_1200F
                 test    dh, 0FFh
                 jnz     short loc_12012
@@ -1249,7 +1249,7 @@ loc_11FD6:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     al, 0B8h
                 jnz     short loc_12012
                 lea     si, aWhoseKey   ; "Whose key? "
-                call    loc_126A9
+                call    printGameText
                 mov     si, bx
                 call    sub_16C76
                 jz      short loc_1200F
@@ -1280,7 +1280,7 @@ loc_12015:                              ; CODE XREF: sub_17B54-5B56↑j
 
 loc_12018:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j ...
-                call    loc_126A9       ; jumptable 00011BD1 cases 8,9,14
+                call    printGameText   ; jumptable 00011BD1 cases 8,9,14
                                         ; jumptable 00018389 cases 10,14,15
                 xor     _soundEnabled, 0FFh
 
@@ -1292,16 +1292,16 @@ loc_12020:                              ; CODE XREF: sub_17B54+193A↓j
                 lea     si, aOn         ; "On!\n"
 
 loc_1202F:                              ; CODE XREF: sub_17B54-5B2B↑j
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
 loc_12035:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 7
+                call    printGameText   ; jumptable 00011BD1 case 7
                 cmp     byte_114BA, 3Fh ; '?'
                 jz      short loc_12062
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 4
                 ja      short loc_12065
@@ -1311,7 +1311,7 @@ loc_12035:                              ; CODE XREF: sub_17B54-5F83↑j
                 mov     [bx], al
                 mov     byte_114BA, 3Fh ; '?'
                 lea     si, aCraft      ; "Craft\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_11BD5
 ; ---------------------------------------------------------------------------
 
@@ -1326,7 +1326,7 @@ loc_12065:                              ; CODE XREF: sub_17B54-5B0C↑j
 loc_12068:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 10
+                call    printGameText   ; jumptable 00011BD1 case 10
                                         ; jumptable 00018389 case 13
                 call    sub_16C76
                 jz      short loc_1207A
@@ -1482,12 +1482,12 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 call    loc_127CD
                 mov     byte_114BA, 0Bh
                 lea     si, aAHugeSwirlingW ; "\nA huge swirling\n --WhirlPool--\n eng"...
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0F4h
                 call    playSoundEffect
                 cmp     byte_114BC, 0FFh
                 jz      short loc_121F4
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 mov     word_114C2, bx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0
@@ -1499,7 +1499,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 call    sub_1207D
                 call    sub_128C6
                 lea     si, aAsTheWaterEnte ; "\n\n As the water\n enters  your\nlungs"...
-                call    loc_126A9
+                call    printGameText
                 push    word_11324
                 lea     bx, start
                 mov     cx, 1228h
@@ -1507,10 +1507,10 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 call    loadFile
                 pop     word_11324
                 mov     byte_114BA, 3Fh ; '?'
-                mov     word_115CC, 3620h
+                mov     _partyPosition, 3620h
                 mov     byte_114BC, 0FFh
                 lea     si, aYouAwakenOnThe ; "\n You awaken on\n the shores of\n a fo"...
-                call    loc_126A9
+                call    printGameText
                 call    loc_127CD
 
 loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
@@ -1526,16 +1526,16 @@ loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
 
 loc_121F4:                              ; CODE XREF: sub_12168+24↑j
                 lea     si, aAllIsDark  ; "\n\n\n\n\n All is Dark!\n\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_128C6
                 lea     bx, start
                 mov     cx, 1228h
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
                 call    loadFile
                 lea     si, aYouMadeIt  ; " You made it!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     ax, word_114C2
-                mov     word_115CC, ax
+                mov     _partyPosition, ax
                 mov     byte_114BC, 0
                 mov     byte_114BA, 0Bh
                 call    sub_12097
@@ -1616,9 +1616,9 @@ loc_12286:                              ; CODE XREF: sub_17B54-58D5↑j
                 js      short loc_1229F
 
 loc_1228C:                              ; CODE XREF: sub_17B54-58E3↑j
-                test    byte_115D0, 0FFh
+                test    _negateTimeDuration, 0FFh
                 jz      short loc_12299
-                dec     byte_115D0
+                dec     _negateTimeDuration
                 jmp     short loc_1229F
 ; ---------------------------------------------------------------------------
 
@@ -1682,11 +1682,11 @@ loc_122D2:                              ; CODE XREF: sub_122A5+21↑j
                 mov     [si+12A0h], ah
                 mov     dh, 40h ; '@'
                 call    stepTimeSeededPrng
-                cmp     dl, byte ptr word_115CC
+                cmp     dl, byte ptr _partyPosition
                 jz      short loc_12328
                 mov     bl, dl
                 call    stepTimeSeededPrng
-                cmp     dl, byte ptr word_115CC+1
+                cmp     dl, byte ptr _partyPosition+1
                 jz      short loc_12328
                 mov     bh, dl
                 mov     [si+12C0h], bl
@@ -1722,11 +1722,11 @@ sub_1232F       proc near               ; CODE XREF: updateMonsterAI:loc_12464�
                 jb      short loc_1239F
                 call    sub_1633B
                 mov     bx, 505h
-                sub     bh, byte ptr word_115CC+1
+                sub     bh, byte ptr _partyPosition+1
                 add     bh, [si+12E0h]
                 cmp     bh, 0Bh
                 jnb     short loc_1239F
-                sub     bl, byte ptr word_115CC
+                sub     bl, byte ptr _partyPosition
                 add     bl, [si+12C0h]
                 cmp     bl, 0Bh
                 jnb     short loc_1239F
@@ -1817,11 +1817,11 @@ loc_123BB:                              ; CODE XREF: updateMonsterAI+11↑j
 
 loc_123C2:                              ; CODE XREF: updateMonsterAI+42↓j
                 call    sub_1633B
-                cmp     dx, word_115CC
+                cmp     dx, _partyPosition
                 jnz     short loc_12425
                 lea     sp, [bp+4]
                 mov     bx, si
-                jmp     loc_188AA
+                jmp     beginCombatEncounter
 ; ---------------------------------------------------------------------------
 
 loc_123D3:                              ; CODE XREF: updateMonsterAI+1B↑j
@@ -1899,7 +1899,7 @@ loc_12467:                              ; CODE XREF: updateMonsterAI+BD↑j
 
 loc_12469:                              ; CODE XREF: updateMonsterAI+8A↑j
                                         ; updateMonsterAI+9A↑j ...
-                cmp     dx, word_115CC
+                cmp     dx, _partyPosition
                 jz      short loc_124A5
                 mov     bh, [si+12E0h]
                 mov     bl, [si+12C0h]
@@ -1992,11 +1992,11 @@ loc_12509:                              ; DATA XREF: seg000:2838↓r
                 lea     dx, aShapesUlt  ; "SHAPES.ULT"
                 call    loadFile
                 mov     ax, word_114C2
-                mov     word_115CC, ax
+                mov     _partyPosition, ax
                 mov     byte_124C0, 0FFh
                 mov     _soundEnabled, 0FFh
                 mov     byte_164A4, 1
-                mov     byte_115D0, 0
+                mov     _negateTimeDuration, 0
                 mov     byte_115CE, 0
                 call    sub_16C53
                 mov     ah, 2Ch
@@ -2135,7 +2135,7 @@ loc_12623:                              ; CODE XREF: seg000:261F↑j
 ; ---------------------------------------------------------------------------
 
 loc_1262C:                              ; CODE XREF: seg000:2628↑j
-                mov     cx, word_115CC
+                mov     cx, _partyPosition
                 mov     bl, byte_114BC
                 mov     byte_114BC, 1
                 mov     ah, 0C0h
@@ -2206,7 +2206,7 @@ sub_12675       endp
 
 ; ---------------------------------------------------------------------------
 
-loc_126A9:                              ; CODE XREF: sub_17B54:loc_11C77↑p
+printGameText:                          ; CODE XREF: sub_17B54:loc_11C77↑p
                                         ; sub_17B54:loc_11C7D↑p ...
                 pushf
                 push    ax
@@ -2405,7 +2405,7 @@ loc_127CD:                              ; CODE XREF: entryFromBootup:loc_11B77�
                 push    di
                 push    bp
                 cld
-                mov     dx, word_115CC
+                mov     dx, _partyPosition
                 sub     dh, 5
                 sub     dl, 5
                 lea     di, entryFromBootup
@@ -2649,7 +2649,7 @@ loc_1294E:                              ; CODE XREF: sub_12909+1D↑j
                 mov     byte ptr word_12A90, 4
                 cmp     ch, 10h
                 jb      short loc_1291D
-                mov     ax, word_115CC
+                mov     ax, _partyPosition
                 add     ax, 404h
                 mov     word_12A90, ax
 
@@ -3366,7 +3366,7 @@ updateLogoAnimationD proc near          ; CODE XREF: runIdleAnimationTick+18↓p
                 test    ah, 0FFh
                 jns     short loc_152EF
                 mov     byte_12AAB, 0FDh
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 mov     ah, [bx+256Ch]
                 mov     al, [bx+2568h]
@@ -3379,7 +3379,7 @@ updateLogoAnimationD proc near          ; CODE XREF: runIdleAnimationTick+18↓p
 
 loc_152EF:                              ; CODE XREF: updateLogoAnimationD+1B↑j
                 mov     byte_12AAB, 0Ah
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 mov     ah, [bx+2570h]
                 mov     al, [bx+2568h]
@@ -3475,7 +3475,7 @@ loc_15364:                              ; CODE XREF: getKeypressAndWaitRaw+16↑
 loc_15369:                              ; CODE XREF: getKeypressAndWaitRaw+7↑j
                 cmp     byte_114BC, 80h
                 jnz     short loc_15395
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 lea     bx, [bx+24C4h]
                 mov     ah, [bx+0ACh]
@@ -4817,27 +4817,27 @@ aWhoseTorch     db 'Whose torch: ',0    ; DATA XREF: sub_17B54-1E81↓o
                 db 0CDh, 68h, 0D5h, 68h, 0E0h, 68h, 0E7h, 68h, 0EFh, 68h
                 db 0F6h, 68h, 0FDh, 68h, 5, 69h, 0Ch, 69h, 14h, 69h, 1Ch
                 db 69h, 28h, 69h, 2Eh, 69h, 35h, 69h, 3Fh, 69h, 47h, 69h
-byte_1594B      db 9Fh, 5Fh, 0D4h, 5Fh, 0E3h, 5Fh, 0EEh, 5Fh, 0Ch, 60h
-                                        ; DATA XREF: sub_15D83+21↓o
-                                        ; sub_15D83+50↓o
+WIZARD_SPELL_TABLE db 9Fh, 5Fh, 0D4h, 5Fh, 0E3h, 5Fh, 0EEh, 5Fh, 0Ch, 60h
+                                        ; DATA XREF: castSpell+21↓o
+                                        ; castSpell+50↓o
                 db 2Fh, 60h, 34h, 60h, 6Ah, 60h, 8Ah, 60h, 95h, 60h, 0A5h
                 db 60h, 0BAh, 60h, 0BFh, 60h, 0CAh, 60h, 0FAh, 60h, 3Eh
                 db 61h
-byte_1596B      db 53h, 61h, 88h, 61h, 0DCh, 61h, 0E3h, 5Fh, 0Ch, 60h
-                                        ; DATA XREF: sub_15D83+B↓o
-                                        ; sub_15D83+5F↓o ...
+CLERIC_SPELL_TABLE db 53h, 61h, 88h, 61h, 0DCh, 61h, 0E3h, 5Fh, 0Ch, 60h
+                                        ; DATA XREF: castSpell+B↓o
+                                        ; castSpell+5F↓o ...
                 db 0EEh, 5Fh, 0F6h, 61h, 9, 62h, 3Ch, 62h, 8Ah, 60h, 4Fh
                 db 62h, 69h, 62h, 0BAh, 60h, 88h, 62h, 3Eh, 61h, 0C4h
                 db 62h, 58h, 5Ah, 66h, 5Ah, 5Fh, 5Ah, 6Dh, 5Ah, 0A1h, 5Ah
                 db 0B0h, 5Ah, 0BFh, 5Ah, 93h, 5Ah
-aNotAMage       db 'Not a mage!',0Ah,0  ; DATA XREF: sub_15D83+37↓o
-aSpellTypeWC    db 'Spell type W/C-',0  ; DATA XREF: sub_15D83:loc_15DC9↓o
-aClericSpell    db 'Cleric spell-',0    ; DATA XREF: sub_15D83+F↓o
-                                        ; sub_15D83+63↓o ...
-aWizardSpell    db 'Wizard spell-',0    ; DATA XREF: sub_15D83+25↓o
-                                        ; sub_15D83+54↓o
+aNotAMage       db 'Not a mage!',0Ah,0  ; DATA XREF: castSpell+37↓o
+aSpellTypeWC    db 'Spell type W/C-',0  ; DATA XREF: castSpell:loc_15DC9↓o
+aClericSpell    db 'Cleric spell-',0    ; DATA XREF: castSpell+F↓o
+                                        ; castSpell+63↓o ...
+aWizardSpell    db 'Wizard spell-',0    ; DATA XREF: castSpell+25↓o
+                                        ; castSpell+54↓o
 aMPTooLow       db 'M.P. too low!',0Ah,0
-                                        ; DATA XREF: sub_15D83:loc_15E6D↓o
+                                        ; DATA XREF: castSpell:loc_15E6D↓o
 aFailed_1       db 'Failed!',0Ah,0      ; DATA XREF: seg000:loc_15E7B↓o
 aHealWhom_0     db 'Heal whom? ',0      ; DATA XREF: seg000:loc_15F0A↓o
 aCureWhom_0     db 'Cure whom? ',0      ; DATA XREF: seg000:6209↓o
@@ -4920,7 +4920,7 @@ sub_15B51       proc near               ; CODE XREF: sub_17B54-5F3F↑p
                 mov     bh, 0
                 mov     al, [bx+194Dh]
                 mov     ah, [bx+1955h]
-                mov     word_115CC, ax
+                mov     _partyPosition, ax
                 mov     bl, 0C0h
                 mov     bh, 20h ; ' '
                 mov     al, 0FDh
@@ -4987,7 +4987,7 @@ sub_15B85       endp
 
 loc_15BCF:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 24
+                call    printGameText   ; jumptable 00011BD1 case 24
                 cmp     byte_114BA, 0Bh
                 jz      short loc_15BDC
                 jmp     loc_17DBA
@@ -4995,12 +4995,12 @@ loc_15BCF:                              ; CODE XREF: sub_17B54-5F83↑j
 
 loc_15BDC:                              ; CODE XREF: sub_17B54-1F7D↑j
                 lea     si, aDirect_0   ; "\nDirect-"
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jz      short loc_15C1D
                 mov     al, 0FBh
                 call    playSoundEffect
-                mov     cx, word_115CC
+                mov     cx, _partyPosition
                 mov     ax, dx
                 mov     si, 3
 
@@ -5057,7 +5057,7 @@ loc_15C45:                              ; CODE XREF: sub_17B54-1F18↑j
                 add     al, 1
                 call    sub_16BFA
                 lea     si, aSDestroyed ; "s\nDestroyed!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, ah
                 mov     cl, [di+12A0h]
                 mov     [bx], cl
@@ -5074,7 +5074,7 @@ loc_15C6F:                              ; CODE XREF: sub_17B54-1F11↑j
 loc_15C73:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 25
+                call    printGameText   ; jumptable 00011BD1 case 25
                                         ; jumptable 00018389 case 5
                 call    sub_16C76
                 jz      short loc_15CB2
@@ -5112,7 +5112,7 @@ loc_15CB2:                              ; CODE XREF: sub_17B54-1EDB↑j
 
 loc_15CB5:                              ; CODE XREF: sub_17B54-1EBB↑j
                 lea     si, aNoMoreRoom ; "No more room!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_15CB2
@@ -5120,19 +5120,19 @@ loc_15CB5:                              ; CODE XREF: sub_17B54-1EBB↑j
 
 loc_15CC3:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 cases 15,26
+                call    printGameText   ; jumptable 00011BD1 cases 15,26
                 jmp     loc_17DBA
 ; ---------------------------------------------------------------------------
 
 loc_15CC9:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 19
+                call    printGameText   ; jumptable 00011BD1 case 19
                                         ; jumptable 00018389 case 4
                 cmp     byte_114BC, 1
                 jnz     short loc_15CF2
                 lea     si, aWhoseTorch ; "Whose torch: "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_15CEF
                 mov     al, [bx+0Fh]
@@ -5157,7 +5157,7 @@ loc_15CF5:                              ; CODE XREF: sub_17B54-1E6F↑j
 loc_15CF8:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 27
+                call    printGameText   ; jumptable 00011BD1 case 27
                                         ; jumptable 00018389 case 7
                 call    sub_16C76
                 jz      short loc_15D10
@@ -5166,7 +5166,7 @@ loc_15CF8:                              ; CODE XREF: sub_17B54-5F83↑j
                 das
                 jb      short loc_15D13
                 mov     [bx+27h], al
-                mov     byte_115D0, 0Ah
+                mov     _negateTimeDuration, 0Ah
 
 loc_15D10:                              ; CODE XREF: sub_17B54-1E56↑j
                 jmp     loc_11BD5
@@ -5179,8 +5179,8 @@ loc_15D13:                              ; CODE XREF: sub_17B54-1E4E↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15D16       proc near               ; CODE XREF: sub_15D83:loc_15DD0↓p
-                                        ; sub_15D83:loc_15E02↓p
+readSpellLetterKey proc near            ; CODE XREF: castSpell:loc_15DD0↓p
+                                        ; castSpell:loc_15E02↓p
                 pushf
                 call    getKeypressAndWaitRaw
                 mov     ah, al
@@ -5190,17 +5190,17 @@ sub_15D16       proc near               ; CODE XREF: sub_15D83:loc_15DD0↓p
                 ja      short loc_15D29
                 add     ah, 0E0h
 
-loc_15D29:                              ; CODE XREF: sub_15D16+9↑j
-                                        ; sub_15D16+E↑j
+loc_15D29:                              ; CODE XREF: readSpellLetterKey+9↑j
+                                        ; readSpellLetterKey+E↑j
                 popf
                 retn
-sub_15D16       endp
+readSpellLetterKey endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15D2B       proc near               ; CODE XREF: seg000:5F1C↓p
+healHitPoints   proc near               ; CODE XREF: seg000:5F1C↓p
                 pushf
                 push    ax
                 add     al, [bx+1Ah]
@@ -5215,17 +5215,17 @@ sub_15D2B       proc near               ; CODE XREF: seg000:5F1C↓p
                 jnb     short loc_15D48
                 mov     [bx+1Ah], ax
 
-loc_15D48:                              ; CODE XREF: sub_15D2B+18↑j
+loc_15D48:                              ; CODE XREF: healHitPoints+18↑j
                 pop     ax
                 popf
                 retn
-sub_15D2B       endp
+healHitPoints   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15D4B       proc near               ; CODE XREF: sub_18F5A+4D↓p
+addExperienceClamped proc near          ; CODE XREF: sub_18F5A+4D↓p
                 pushf
                 push    ax
                 add     al, [bx+1Eh]
@@ -5238,17 +5238,17 @@ sub_15D4B       proc near               ; CODE XREF: sub_18F5A+4D↓p
                 jnb     short loc_15D64
                 mov     word ptr [bx+1Eh], 9999h
 
-loc_15D64:                              ; CODE XREF: sub_15D4B+12↑j
+loc_15D64:                              ; CODE XREF: addExperienceClamped+12↑j
                 pop     ax
                 popf
                 retn
-sub_15D4B       endp
+addExperienceClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15D67       proc near               ; CODE XREF: sub_180D9+31↓p
+addGoldClamped  proc near               ; CODE XREF: sub_180D9+31↓p
                 pushf
                 push    ax
                 add     al, [bx+23h]
@@ -5261,24 +5261,24 @@ sub_15D67       proc near               ; CODE XREF: sub_180D9+31↓p
                 jnb     short loc_15D80
                 mov     word ptr [bx+23h], 9999h
 
-loc_15D80:                              ; CODE XREF: sub_15D67+12↑j
+loc_15D80:                              ; CODE XREF: addGoldClamped+12↑j
                 pop     ax
                 popf
                 retn
-sub_15D67       endp
+addGoldClamped  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15D83       proc near               ; CODE XREF: sub_17B54-5DF4↑p
+castSpell       proc near               ; CODE XREF: sub_17B54-5DF4↑p
                                         ; updateMonsterAI+69AC↓p
                 mov     al, [bx+17h]
                 cmp     al, 44h ; 'D'
                 jz      short loc_15DC9
                 cmp     al, 52h ; 'R'
                 jz      short loc_15DC9
-                lea     di, byte_1596B
+                lea     di, CLERIC_SPELL_TABLE
                 lea     si, aClericSpell ; "Cleric spell-"
                 mov     dh, 10h
                 cmp     al, 43h ; 'C'
@@ -5287,7 +5287,7 @@ sub_15D83       proc near               ; CODE XREF: sub_17B54-5DF4↑p
                 jz      short loc_15DFF
                 cmp     al, 49h ; 'I'
                 jz      short loc_15DFF
-                lea     di, byte_1594B
+                lea     di, WIZARD_SPELL_TABLE
                 lea     si, aWizardSpell ; "Wizard spell-"
                 mov     dh, 0
                 cmp     al, 57h ; 'W'
@@ -5297,25 +5297,25 @@ sub_15D83       proc near               ; CODE XREF: sub_17B54-5DF4↑p
                 cmp     al, 41h ; 'A'
                 jz      short loc_15DFF
                 lea     si, aNotAMage   ; "Not a mage!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
-loc_15DC9:                              ; CODE XREF: sub_15D83+5↑j
-                                        ; sub_15D83+9↑j
+loc_15DC9:                              ; CODE XREF: castSpell+5↑j
+                                        ; castSpell+9↑j
                 lea     si, aSpellTypeWC ; "Spell type W/C-"
-                call    loc_126A9
+                call    printGameText
 
-loc_15DD0:                              ; CODE XREF: sub_15D83+77↓j
-                call    sub_15D16
-                lea     di, byte_1594B
+loc_15DD0:                              ; CODE XREF: castSpell+77↓j
+                call    readSpellLetterKey
+                lea     di, WIZARD_SPELL_TABLE
                 lea     si, aWizardSpell ; "Wizard spell-"
                 mov     dh, 0
                 cmp     ah, 57h ; 'W'
                 jz      short loc_15DFC
-                lea     di, byte_1596B
+                lea     di, CLERIC_SPELL_TABLE
                 lea     si, aClericSpell ; "Cleric spell-"
                 mov     dh, 10h
                 cmp     ah, 43h ; 'C'
@@ -5327,16 +5327,16 @@ loc_15DD0:                              ; CODE XREF: sub_15D83+77↓j
                 jmp     short loc_15DD0
 ; ---------------------------------------------------------------------------
 
-loc_15DFC:                              ; CODE XREF: sub_15D83+5D↑j
-                                        ; sub_15D83+6C↑j
+loc_15DFC:                              ; CODE XREF: castSpell+5D↑j
+                                        ; castSpell+6C↑j
                 call    writeCharacter
 
-loc_15DFF:                              ; CODE XREF: sub_15D83+17↑j
-                                        ; sub_15D83+1B↑j ...
-                call    loc_126A9
+loc_15DFF:                              ; CODE XREF: castSpell+17↑j
+                                        ; castSpell+1B↑j ...
+                call    printGameText
 
-loc_15E02:                              ; CODE XREF: sub_15D83+A0↓j
-                call    sub_15D16
+loc_15E02:                              ; CODE XREF: castSpell+A0↓j
+                call    readSpellLetterKey
                 cmp     al, 1Bh
                 jz      short loc_15E66
                 cmp     ah, 41h ; 'A'
@@ -5349,14 +5349,14 @@ loc_15E02:                              ; CODE XREF: sub_15D83+A0↓j
                 jmp     short loc_15E25
 ; ---------------------------------------------------------------------------
 
-loc_15E1E:                              ; CODE XREF: sub_15D83+89↑j
-                                        ; sub_15D83+8E↑j
+loc_15E1E:                              ; CODE XREF: castSpell+89↑j
+                                        ; castSpell+8E↑j
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_15E02
 ; ---------------------------------------------------------------------------
 
-loc_15E25:                              ; CODE XREF: sub_15D83+99↑j
+loc_15E25:                              ; CODE XREF: castSpell+99↑j
                 mov     al, ah
                 mov     dl, al
                 mov     ah, 5
@@ -5381,36 +5381,36 @@ loc_15E25:                              ; CODE XREF: sub_15D83+99↑j
                 shl     al, 1
                 add     di, ax
                 mov     si, [si+590Bh]
-                call    loc_126A9
+                call    printGameText
                 call    sub_126F4
                 call    sub_126F4
                 jmp     word ptr [di]
 ; ---------------------------------------------------------------------------
 
-loc_15E66:                              ; CODE XREF: sub_15D83+70↑j
-                                        ; sub_15D83+84↑j
+loc_15E66:                              ; CODE XREF: castSpell+70↑j
+                                        ; castSpell+84↑j
                 call    sub_126F4
 
-loc_15E69:                              ; CODE XREF: sub_15D83+43↑j
-                                        ; sub_15D83+F6↓j ...
+loc_15E69:                              ; CODE XREF: castSpell+43↑j
+                                        ; castSpell+F6↓j ...
                 call    sub_16CC3
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_15E6D:                              ; CODE XREF: sub_15D83+B5↑j
+loc_15E6D:                              ; CODE XREF: castSpell+B5↑j
                 lea     si, aMPTooLow   ; "M.P. too low!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_15E69
-sub_15D83       endp
+castSpell       endp
 
 ; ---------------------------------------------------------------------------
 
 loc_15E7B:                              ; CODE XREF: seg000:loc_15F78↓j
                                         ; seg000:loc_15FD1↓j ...
                 lea     si, aFailed_1   ; "Failed!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FAh
                 call    playSoundEffect
                 jmp     short loc_15E69
@@ -5453,7 +5453,7 @@ sub_15EAA       proc near               ; CODE XREF: seg000:5FCB↓p
                 push    si
                 push    di
                 mov     si, ax
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     di, ax
@@ -5476,7 +5476,7 @@ loc_15EC7:                              ; CODE XREF: sub_15EAA+56↓j
                 call    drawLogoTileGrid
                 mov     al, 0F7h
                 call    playSoundEffect
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 mov     [bx], al
                 call    drawLogoTileGrid
                 xchg    bx, dx
@@ -5502,13 +5502,13 @@ sub_15EAA       endp
 loc_15F0A:                              ; CODE XREF: seg000:61F3↓j
                                         ; seg000:6266↓j
                 lea     si, aHealWhom_0 ; "Heal whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_15F2A
                 dec     al
                 mov     cl, al
                 mov     al, dh
-                call    sub_15D2B
+                call    healHitPoints
                 mov     al, cl
                 call    sub_17176
                 call    sub_15E89
@@ -5524,12 +5524,12 @@ loc_15F2D:                              ; CODE XREF: seg000:5FE0↓j
                 cmp     byte_114BC, 80h
                 jnz     short loc_15F78
                 lea     si, aDirect_2   ; "Direct? "
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jz      short loc_15F75
                 call    sub_15E89
                 mov     cx, dx
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 mov     dh, [bx+2568h]
                 mov     dl, [bx+2564h]
@@ -5538,7 +5538,7 @@ loc_15F2D:                              ; CODE XREF: seg000:5FE0↓j
                 jz      short loc_15F78
                 mov     al, 0F7h
                 call    playSoundEffect
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 xchg    ax, di
@@ -5575,7 +5575,7 @@ loc_15F82:                              ; CODE XREF: sub_15F7B+18↓j
                 call    sub_128F2
                 cmp     al, 0
                 jnz     short loc_15F82
-                mov     word_115CC, cx
+                mov     _partyPosition, cx
                 pop     dx
                 pop     cx
                 pop     bx
@@ -5587,7 +5587,7 @@ sub_15F7B       endp
 ; ---------------------------------------------------------------------------
                 cmp     byte_114BC, 80h
                 jnz     short loc_15FD1
-                cmp     byte_184E2, 18h
+                cmp     _conflictMonsterClass, 18h
                 jnz     short loc_15FD1
                 cmp     byte_184E3, 0
                 jnz     short loc_15FD1
@@ -5677,14 +5677,14 @@ loc_1603E:                              ; CODE XREF: seg000:6051↓j
                 jz      short loc_1603E
                 call    sub_17254
                 jnz     short loc_1603E
-                mov     word_115CC, cx
+                mov     _partyPosition, cx
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
 loc_16067:                              ; CODE XREF: seg000:6039↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     bx, ax
@@ -5703,7 +5703,7 @@ loc_16067:                              ; CODE XREF: seg000:6039↑j
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
                 call    sub_15E89
-                lea     di, byte_1596B
+                lea     di, CLERIC_SPELL_TABLE
                 lea     si, aClericSpell ; "Cleric spell-"
                 mov     dh, 10h
                 jmp     loc_15DFF
@@ -5722,14 +5722,14 @@ loc_160B7:                              ; CODE XREF: seg000:60AA↑j
                 mov     al, 0FFh
                 jmp     loc_15F2D
 ; ---------------------------------------------------------------------------
-                mov     byte_115D0, 0Ah
+                mov     _negateTimeDuration, 0Ah
                 call    sub_15E89
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
                 cmp     byte_114BC, 80h
                 jnz     short loc_160F7
                 call    sub_15E89
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     bx, ax
@@ -5765,7 +5765,7 @@ loc_1610B:                              ; CODE XREF: seg000:6136↓j
                 call    drawLogoTileGrid
                 mov     al, 0F7h
                 call    playSoundEffect
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 mov     [bx], al
                 call    drawLogoTileGrid
 
@@ -5791,7 +5791,7 @@ loc_16150:                              ; CODE XREF: seg000:6143↑j
 ; ---------------------------------------------------------------------------
                 cmp     byte_114BC, 80h
                 jnz     short loc_16185
-                cmp     byte_184E2, 19h
+                cmp     _conflictMonsterClass, 19h
                 jnz     short loc_16185
                 cmp     byte_184E3, 0
                 jnz     short loc_16185
@@ -5818,7 +5818,7 @@ loc_16185:                              ; CODE XREF: seg000:6158↑j
                 call    stepTimeSeededPrng
                 and     dl, 3
                 jz      short loc_161CB
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 cmp     byte_114BC, 1
                 jz      short loc_161BB
                 call    getMapTileAt
@@ -5856,7 +5856,7 @@ loc_161CB:                              ; CODE XREF: seg000:6195↑j
 loc_161CE:                              ; CODE XREF: seg000:61A7↑j
                                         ; seg000:61AB↑j ...
                 lea     si, aNotHere    ; "Not Here!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_161CB
@@ -5885,7 +5885,7 @@ loc_16206:                              ; CODE XREF: seg000:61FB↑j
                 jmp     loc_15E7B
 ; ---------------------------------------------------------------------------
                 lea     si, aCureWhom_0 ; "Cure whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_16230
                 dec     al
@@ -5954,7 +5954,7 @@ loc_16285:                              ; CODE XREF: seg000:626E↑j
                 cmp     byte_114BC, 80h
                 jz      short loc_162C1
                 lea     si, aResurectWhom ; "Resurect whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_162C1
                 dec     al
@@ -5982,7 +5982,7 @@ loc_162C1:                              ; CODE XREF: seg000:628D↑j
                 cmp     byte_114BC, 80h
                 jz      short loc_162FA
                 lea     si, aRecallWhom_0 ; "Recall whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_162FA
                 dec     al
@@ -6045,14 +6045,14 @@ sub_1633B       proc near               ; CODE XREF: sub_1232F+E↑p
                                         ; updateMonsterAI:loc_123C2↑p ...
                 pushf
                 push    ax
-                mov     al, byte ptr word_115CC
+                mov     al, byte ptr _partyPosition
                 mov     dl, [si+12C0h]
                 sub     al, dl
                 call    adjustAnimSpeed
                 mov     cl, ah
                 add     dl, cl
                 and     dl, 3Fh
-                mov     al, byte ptr word_115CC+1
+                mov     al, byte ptr _partyPosition+1
                 mov     dh, [si+12E0h]
                 sub     al, dh
                 call    adjustAnimSpeed
@@ -6075,7 +6075,7 @@ sub_16366       proc near               ; CODE XREF: sub_17B54-5DCF↑p
                 push    cx
                 push    dx
                 lea     si, aShrineWhoEnter ; "shrine!\nWho enters? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jnz     short loc_1637A
                 jmp     loc_16428
@@ -6099,15 +6099,15 @@ loc_16386:                              ; CODE XREF: sub_16366+1B↑j
                 mov     byte_114BC, 4
                 pop     bx
                 lea     si, aWelcomeToTheSh ; "\n Welcome to the\n   Shrine of\n"
-                call    loc_126A9
-                mov     al, byte ptr word_115CC
+                call    printGameText
+                mov     al, byte ptr _partyPosition
                 and     al, 3
                 mov     dl, al
                 mov     dh, 0
                 mov     si, dx
                 shl     si, 1
                 mov     si, [si+5993h]
-                call    loc_126A9
+                call    printGameText
                 mov     al, [bx+16h]
                 mov     cx, 5
                 lea     di, byte_158CD
@@ -6122,7 +6122,7 @@ loc_16386:                              ; CODE XREF: sub_16366+1B↑j
                 xchg    bx, dx
                 mov     di, dx
                 lea     si, aOffering100 ; "Offering*100-"
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     al, 0
                 jz      short loc_16441
@@ -6146,7 +6146,7 @@ loc_16403:                              ; CODE XREF: sub_16366+97↑j
 loc_16405:                              ; CODE XREF: sub_16366+9B↑j
                 mov     [bx+di+12h], al
                 lea     si, aShazam     ; "\nShazam!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     ax, bp
                 call    sub_17176
                 call    sub_171C1
@@ -6171,7 +6171,7 @@ loc_16428:                              ; CODE XREF: sub_16366+11↑j
 
 loc_16433:                              ; CODE XREF: sub_16366+84↑j
                 lea     si, aYouCanTCheatTh ; "\nYou can't cheat\nthe Gods!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_16428
@@ -6179,13 +6179,13 @@ loc_16433:                              ; CODE XREF: sub_16366+84↑j
 
 loc_16441:                              ; CODE XREF: sub_16366+7F↑j
                 lea     si, aThenBeOff  ; "\nThen be off!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_16428
 ; ---------------------------------------------------------------------------
 
 loc_1644A:                              ; CODE XREF: sub_16366+1D↑j
                 lea     si, aIncapacitated ; "Incapacitated!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_16428
@@ -6203,10 +6203,10 @@ sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                 push    dx
                 push    si
                 mov     ax, word_114C2
-                mov     word_115CC, ax
+                mov     _partyPosition, ax
                 mov     byte_124C0, 0FFh
                 lea     si, aExitToSosariaP ; "Exit to Sosaria!\nPlease wait...\n"
-                call    loc_126A9
+                call    printGameText
                 mov     byte_114BC, 0
                 lea     bx, start
                 mov     cx, 1228h
@@ -7204,7 +7204,7 @@ sub_16BFA       proc near               ; CODE XREF: sub_17B54-5CC2↑p
                 mov     bh, 0
                 shl     bx, 1
                 mov     si, [bx+6556h]
-                call    loc_126A9
+                call    printGameText
 
 loc_16C10:                              ; CODE XREF: sub_16BFA+5↑j
                 pop     si
@@ -7257,7 +7257,7 @@ loc_16C34:                              ; CODE XREF: sub_16C29+13↓j
                 loop    loc_16C34
                 call    sub_16CC3
                 lea     si, aAllPlayersOut ; "\n\nAll Players Out!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_16B91
                 jmp     loc_17252
 ; ---------------------------------------------------------------------------
@@ -7331,7 +7331,7 @@ loc_16C7A:                              ; CODE XREF: sub_16C76+47↓j
                 jnz     short loc_16CAE
                 mov     cl, 0
                 lea     si, aNoOneThere ; "\nNo one there!"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
 
@@ -7504,25 +7504,25 @@ sub_16DC1       proc near               ; CODE XREF: sub_17B54-5ADD↑p
                 sub     al, 30h ; '0'
                 call    sub_171ED
                 lea     si, [di]
-                call    loc_126A9
+                call    printGameText
                 lea     si, aStr        ; "\nStr..."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+12h]
                 call    printHexByte
                 lea     si, aDex        ; "\nDex..."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+13h]
                 call    printHexByte
                 lea     si, aInt        ; "\nInt..."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+14h]
                 call    printHexByte
                 lea     si, aWis        ; "\nWis..."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+15h]
                 call    printHexByte
                 lea     si, aHP         ; "\nH.P..."
-                call    loc_126A9
+                call    printGameText
                 mov     ax, [di+1Ah]
                 call    printHexWord
                 call    sub_16FB1
@@ -7533,7 +7533,7 @@ sub_16DC1       proc near               ; CODE XREF: sub_17B54-5ADD↑p
 
 loc_16E1C:                              ; CODE XREF: sub_16DC1+56↑j
                 lea     si, aHM         ; "\nH.M..."
-                call    loc_126A9
+                call    printGameText
                 mov     ax, [di+1Ch]
                 call    printHexWord
                 call    sub_16FB1
@@ -7544,7 +7544,7 @@ loc_16E1C:                              ; CODE XREF: sub_16DC1+56↑j
 
 loc_16E33:                              ; CODE XREF: sub_16DC1+6D↑j
                 lea     si, aGold       ; "\nGold: "
-                call    loc_126A9
+                call    printGameText
                 mov     ax, [di+23h]
                 call    printHexWord
                 call    sub_16FB1
@@ -7555,7 +7555,7 @@ loc_16E33:                              ; CODE XREF: sub_16DC1+6D↑j
 
 loc_16E4A:                              ; CODE XREF: sub_16DC1+84↑j
                 lea     si, aExp        ; "\nExp..."
-                call    loc_126A9
+                call    printGameText
                 mov     ax, [di+1Eh]
                 call    printHexWord
                 call    sub_16FB1
@@ -7566,7 +7566,7 @@ loc_16E4A:                              ; CODE XREF: sub_16DC1+84↑j
 
 loc_16E61:                              ; CODE XREF: sub_16DC1+9B↑j
                 lea     si, aGems       ; "\nGems.."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+25h]
                 call    printHexByte
                 call    sub_16FB1
@@ -7577,7 +7577,7 @@ loc_16E61:                              ; CODE XREF: sub_16DC1+9B↑j
 
 loc_16E78:                              ; CODE XREF: sub_16DC1+B2↑j
                 lea     si, aKeys       ; "\nKeys.."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+26h]
                 call    printHexByte
                 call    sub_16FB1
@@ -7588,7 +7588,7 @@ loc_16E78:                              ; CODE XREF: sub_16DC1+B2↑j
 
 loc_16E8F:                              ; CODE XREF: sub_16DC1+C9↑j
                 lea     si, aPowd       ; "\nPowd.."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+27h]
                 call    printHexByte
                 call    sub_16FB1
@@ -7599,7 +7599,7 @@ loc_16E8F:                              ; CODE XREF: sub_16DC1+C9↑j
 
 loc_16EA6:                              ; CODE XREF: sub_16DC1+E0↑j
                 lea     si, aTrch       ; "\nTrch.."
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+0Fh]
                 call    printHexByte
                 call    sub_16FB1
@@ -7617,7 +7617,7 @@ loc_16EC6:                              ; CODE XREF: sub_16DC1+11D↓j
                 rcl     ah, 1
                 jnb     short loc_16EDB
                 mov     si, [bx+6DB1h]
-                call    loc_126A9
+                call    printGameText
                 call    sub_16FB1
                 cmp     al, 0
                 jz      short loc_16EDB
@@ -7629,7 +7629,7 @@ loc_16EDB:                              ; CODE XREF: sub_16DC1+107↑j
                 add     bx, 2
                 loop    loc_16EC6
                 lea     si, aWeapon     ; "\nWeapon:"
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+30h]
                 add     al, 41h ; 'A'
                 call    sub_16BFA
@@ -7641,7 +7641,7 @@ loc_16EDB:                              ; CODE XREF: sub_16DC1+107↑j
 
 loc_16EF9:                              ; CODE XREF: sub_16DC1+133↑j
                 lea     si, aArmour     ; "\nArmour:"
-                call    loc_126A9
+                call    printGameText
                 mov     al, [di+28h]
                 add     al, 51h ; 'Q'
                 call    sub_16BFA
@@ -7653,7 +7653,7 @@ loc_16EF9:                              ; CODE XREF: sub_16DC1+133↑j
 
 loc_16F12:                              ; CODE XREF: sub_16DC1+14C↑j
                 lea     si, aWeapons    ; "\n***Weapons***"
-                call    loc_126A9
+                call    printGameText
                 mov     bx, 0Fh
 
 loc_16F1C:                              ; CODE XREF: sub_16DC1+195↓j
@@ -7684,7 +7684,7 @@ loc_16F54:                              ; CODE XREF: sub_16DC1+15F↑j
                 dec     bl
                 jnz     short loc_16F1C
                 lea     si, a02HandsAArmour ; "\n02-Hands-(A)\n**Armour**"
-                call    loc_126A9
+                call    printGameText
                 mov     bx, 7
 
 loc_16F62:                              ; CODE XREF: sub_16DC1+1DB↓j
@@ -7715,7 +7715,7 @@ loc_16F9A:                              ; CODE XREF: sub_16DC1+1A5↑j
                 dec     bl
                 jnz     short loc_16F62
                 lea     si, a01SkinA    ; "\n01-Skin-(A)\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_16FA5:                              ; CODE XREF: sub_16DC1+58↑j
                                         ; sub_16DC1+6F↑j ...
@@ -7880,7 +7880,7 @@ loc_17094:                              ; CODE XREF: sub_16FDF+9A↑j
                 dec     al
                 call    sub_17176
                 lea     si, aPoisoned   ; "Poisoned!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_17176
 
 loc_170B5:                              ; CODE XREF: sub_16FDF+BE↑j
@@ -7942,7 +7942,7 @@ sub_170E4       proc near               ; CODE XREF: sub_16FDF+B7↑p
                 jnb     short loc_17131
                 mov     word ptr [bx+21h], 0
                 lea     si, aStarving   ; "Starving!\n"
-                call    loc_126A9
+                call    printGameText
                 lea     si, byte_114CC
                 mov     ax, bx
                 sub     ax, si
@@ -8368,13 +8368,13 @@ loc_17357:                              ; CODE XREF: sub_17347+B↑j
                 mov     word_11320, cx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0
-                cmp     cx, word_115CC
+                cmp     cx, _partyPosition
                 jz      short loc_173E7
                 call    loc_127CD
                 mov     al, 0F4h
                 call    playSoundEffect
                 lea     si, byte_164C8
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_17403
 ; ---------------------------------------------------------------------------
 
@@ -8401,7 +8401,7 @@ loc_173CA:                              ; CODE XREF: sub_17347+3C↑j
 
 loc_173DE:                              ; CODE XREF: sub_17347+81↑j
                 mov     ax, word_11320
-                cmp     ax, word_115CC
+                cmp     ax, _partyPosition
                 jnz     short loc_17403
 
 loc_173E7:                              ; CODE XREF: sub_17347+57↑j
@@ -8525,14 +8525,14 @@ sub_17423       endp
 loc_17458:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 31
+                call    printGameText   ; jumptable 00011BD1 case 31
                                         ; jumptable 00018389 case 12
                 call    sub_16C76
                 jz      short loc_174C6
                 call    sub_16C14
                 jnz     short loc_174C9
                 lea     si, aWord       ; "Word: "
-                call    loc_126A9
+                call    printGameText
                 push    bx
                 sub     sp, 9
                 mov     cx, 9
@@ -8552,15 +8552,15 @@ loc_17458:                              ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_174CC
                 cmp     byte_114BC, 0
                 jnz     short loc_174CC
-                cmp     byte ptr word_115CC, 0Ah
+                cmp     byte ptr _partyPosition, 0Ah
                 jnz     short loc_174CC
-                cmp     byte ptr word_115CC+1, 38h ; '8'
+                cmp     byte ptr _partyPosition+1, 38h ; '8'
                 jz      short loc_174B2
-                cmp     byte ptr word_115CC+1, 3Bh ; ';'
+                cmp     byte ptr _partyPosition+1, 3Bh ; ';'
                 jnz     short loc_174CC
 
 loc_174B2:                              ; CODE XREF: sub_17B54-6AB↑j
-                xor     byte ptr word_115CC+1, 3
+                xor     byte ptr _partyPosition+1, 3
                 call    sub_128C6
                 mov     al, 0FDh
                 mov     bl, 0C0h
@@ -8581,14 +8581,14 @@ loc_174C9:                              ; CODE XREF: sub_17B54-6F1↑j
 loc_174CC:                              ; CODE XREF: sub_17B54-6C7↑j
                                         ; sub_17B54-6C0↑j ...
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_174C6
 ; ---------------------------------------------------------------------------
 
 loc_174D5:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 32
+                call    printGameText   ; jumptable 00011BD1 case 32
                                         ; jumptable 00018389 case 8
                 call    sub_16C76
                 jz      short loc_1752B
@@ -8598,7 +8598,7 @@ loc_174D5:                              ; CODE XREF: sub_17B54-5F83↑j
                 call    sub_16C14
                 jnz     short loc_174C9
                 lea     si, aCmd        ; "Cmd: "
-                call    loc_126A9
+                call    printGameText
                 sub     sp, 0Ah
                 mov     cx, 0Ah
                 mov     di, sp
@@ -8625,7 +8625,7 @@ loc_1751B:                              ; CODE XREF: sub_17B54-647↑j
                 test    si, 0FFFFh
                 jnz     short loc_1752E
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1752B:                              ; CODE XREF: sub_17B54-679↑j
                 jmp     loc_11BD5
@@ -8640,7 +8640,7 @@ loc_17534:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:654E↑o
                 cmp     byte_114BC, 0
                 jnz     short loc_17554
-                mov     ax, word_115CC
+                mov     ax, _partyPosition
                 mov     si, 0Eh
                 mov     bx, 3Fh ; '?'
                 cmp     ax, 321h
@@ -8652,7 +8652,7 @@ loc_17534:                              ; CODE XREF: sub_17B54-624↑j
 
 loc_17554:                              ; CODE XREF: sub_17B54-61B↑j
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1755B:                              ; CODE XREF: sub_17B54-5D6↓j
                 jmp     loc_11BD5
@@ -8672,7 +8672,7 @@ loc_1756A:                              ; CODE XREF: sub_17B54-5EF↑j
                 add     si, 2
                 mov     byte ptr [si+14BAh], 0FFh
                 lea     si, byte_16B5D
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1755B
 ; ---------------------------------------------------------------------------
 
@@ -8682,17 +8682,17 @@ loc_17580:                              ; CODE XREF: sub_17B54-624↑j
                 jnz     short loc_1759F
                 cmp     byte ptr word_114C2, 22h ; '"'
                 jnz     short loc_1759F
-                cmp     word_115CC, 3030h
+                cmp     _partyPosition, 3030h
                 jnz     short loc_1759F
                 lea     si, loc_16B67
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_175A6
 ; ---------------------------------------------------------------------------
 
 loc_1759F:                              ; CODE XREF: sub_17B54-5CF↑j
                                         ; sub_17B54-5C8↑j ...
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_175A6:                              ; CODE XREF: sub_17B54-5B7↑j
                 jmp     loc_11BD5
@@ -8701,8 +8701,8 @@ loc_175A6:                              ; CODE XREF: sub_17B54-5B7↑j
 loc_175A9:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6552↑o
                 lea     si, aDirect_1   ; "Direct? "
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jz      short loc_175F6
                 mov     dx, bx
                 call    sub_17F96
@@ -8730,7 +8730,7 @@ loc_175A9:                              ; CODE XREF: sub_17B54-624↑j
 loc_175EF:                              ; CODE XREF: sub_17B54-597↑j
                                         ; sub_17B54-590↑j
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_175F6:                              ; CODE XREF: sub_17B54-5A1↑j
                                         ; sub_17B54-567↑j ...
@@ -8739,7 +8739,7 @@ loc_175F6:                              ; CODE XREF: sub_17B54-5A1↑j
 
 loc_175F9:                              ; CODE XREF: sub_17B54-584↑j
                 lea     si, aNotEnoughGold ; "Not enough gold!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_175F6
@@ -8749,19 +8749,19 @@ loc_17607:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6550↑o
                 cmp     byte_1259D, 3Eh ; '>'
                 jnz     short loc_17625
-                mov     cl, byte ptr word_115CC
+                mov     cl, byte ptr _partyPosition
                 and     cl, 3
                 mov     al, 1
                 shl     al, cl
                 or      [di+0Eh], al
                 lea     si, aACardWithStran ; "A card, with\nstrange marks!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1762C
 ; ---------------------------------------------------------------------------
 
 loc_17625:                              ; CODE XREF: sub_17B54-548↑j
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1762C:                              ; CODE XREF: sub_17B54-531↑j
                 jmp     loc_11BD5
@@ -8770,8 +8770,8 @@ loc_1762C:                              ; CODE XREF: sub_17B54-531↑j
 loc_1762F:                              ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:off_1654C↑o
                 lea     si, aDirect_1   ; "Direct? "
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jnz     short loc_1763E
                 jmp     loc_176C6
 ; ---------------------------------------------------------------------------
@@ -8791,7 +8791,7 @@ loc_1764A:                              ; CODE XREF: sub_17B54-50F↑j
                 push    bx
                 push    cx
                 lea     si, aDSLM       ; "D, S, L, M:\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 lea     si, loc_16B07+1
                 mov     cx, 6
@@ -8841,7 +8841,7 @@ loc_17697:                              ; CODE XREF: sub_17B54-4A7↓j
 loc_176BF:                              ; CODE XREF: sub_17B54-50D↑j
                                         ; sub_17B54-4D5↑j
                 lea     si, aNoEffect   ; "No effect!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_176C6:                              ; CODE XREF: sub_17B54-519↑j
                                         ; sub_17B54-4EA↑j ...
@@ -9285,14 +9285,14 @@ aGasTrap        db 'Gas trap!',0Ah,0    ; DATA XREF: sub_17B54:loc_18200↓o
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17AEA       proc near               ; CODE XREF: sub_17B54-5CD7↑p
+readDirectionKeypress proc near         ; CODE XREF: sub_17B54-5CD7↑p
                                         ; sub_17B54-5BEB↑p ...
                 push    ax
                 push    si
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 mov     dx, 0
 
-loc_17AF3:                              ; CODE XREF: sub_17AEA+2A↓j
+loc_17AF3:                              ; CODE XREF: readDirectionKeypress+2A↓j
                 call    getKeypressAndWaitRaw
                 cmp     ax, 4800h
                 jz      short loc_17B16
@@ -9309,34 +9309,34 @@ loc_17AF3:                              ; CODE XREF: sub_17AEA+2A↓j
                 jmp     short loc_17AF3
 ; ---------------------------------------------------------------------------
 
-loc_17B16:                              ; CODE XREF: sub_17AEA+F↑j
+loc_17B16:                              ; CODE XREF: readDirectionKeypress+F↑j
                 lea     si, aNorth      ; "North\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dh, 0FFh
                 jmp     short loc_17B40
 ; ---------------------------------------------------------------------------
 
-loc_17B21:                              ; CODE XREF: sub_17AEA+14↑j
+loc_17B21:                              ; CODE XREF: readDirectionKeypress+14↑j
                 lea     si, aSouth      ; "South\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dh, 1
                 jmp     short loc_17B40
 ; ---------------------------------------------------------------------------
 
-loc_17B2C:                              ; CODE XREF: sub_17AEA+19↑j
+loc_17B2C:                              ; CODE XREF: readDirectionKeypress+19↑j
                 lea     si, aEast       ; "East\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dl, 1
                 jmp     short loc_17B40
 ; ---------------------------------------------------------------------------
 
-loc_17B37:                              ; CODE XREF: sub_17AEA+1E↑j
+loc_17B37:                              ; CODE XREF: readDirectionKeypress+1E↑j
                 lea     si, aWest       ; "West\n"
-                call    loc_126A9
+                call    printGameText
                 mov     dl, 0FFh
 
-loc_17B40:                              ; CODE XREF: sub_17AEA+35↑j
-                                        ; sub_17AEA+40↑j ...
+loc_17B40:                              ; CODE XREF: readDirectionKeypress+35↑j
+                                        ; readDirectionKeypress+40↑j ...
                 add     bl, dl
                 add     bh, dh
                 and     bx, 3F3Fh
@@ -9346,10 +9346,10 @@ loc_17B40:                              ; CODE XREF: sub_17AEA+35↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17B4F:                              ; CODE XREF: sub_17AEA+23↑j
+loc_17B4F:                              ; CODE XREF: readDirectionKeypress+23↑j
                 call    sub_126F4
                 jmp     short loc_17B40
-sub_17AEA       endp
+readDirectionKeypress endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -9400,7 +9400,7 @@ sub_17B54       proc far                ; CODE XREF: sub_17B54-5CE3↑p
                 cld
                 mov     bp, sp
                 lea     si, aFGEWA      ; "F, G, E, W, A:\n"
-                call    loc_126A9
+                call    printGameText
                 mov     cx, 7
                 lea     di, loc_178B1+3
                 lea     si, loc_178BA+1
@@ -9420,7 +9420,7 @@ sub_17B54       proc far                ; CODE XREF: sub_17B54-5CE3↑p
 loc_17B8E:                              ; CODE XREF: sub_17B54+7A↓j
                                         ; sub_17B54+102↓j ...
                 lea     si, aDone       ; "\nDone!"
-                call    loc_126A9
+                call    printGameText
 
 loc_17B95:                              ; CODE XREF: sub_17B54+AD↓j
                                         ; sub_17B54+CF↓j ...
@@ -9445,7 +9445,7 @@ loc_17B98:                              ; CODE XREF: sub_17B54+C4↓j
 
 loc_17BAC:                              ; CODE XREF: sub_17B54+53↑j
                 lea     si, aHowMuch    ; "\nHow much? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_17D1A
                 mov     si, [bp+2]
                 mov     cx, [bx+si]
@@ -9460,7 +9460,7 @@ loc_17BAC:                              ; CODE XREF: sub_17B54+53↑j
                 jmp     short loc_17B8E
 ; ---------------------------------------------------------------------------
                 lea     si, aGKPT       ; "\nG, K, P, T:\n"
-                call    loc_126A9
+                call    printGameText
                 mov     cx, 6
                 lea     di, loc_178DE+2
                 lea     si, loc_178E5+1
@@ -9490,14 +9490,14 @@ loc_17C09:                              ; CODE XREF: sub_17B54+74↑j
                                         ; sub_17B54+FC↓j ...
                 call    sub_126F4
                 lea     si, aNoMoreRoom ; "No more room!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     loc_17B98
 ; ---------------------------------------------------------------------------
 
 loc_17C1B:                              ; CODE XREF: sub_17B54+B3↑j
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     loc_17B95
@@ -9506,7 +9506,7 @@ loc_17C1B:                              ; CODE XREF: sub_17B54+B3↑j
 loc_17C26:                              ; CODE XREF: sub_17B54+96↑j
                                         ; sub_17B54+9D↑j ...
                 lea     si, aHowMuch    ; "\nHow much? "
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_17C59
@@ -9573,7 +9573,7 @@ loc_17CA7:                              ; CODE XREF: sub_17B54+12F↑j
                 jz      short loc_17CFF
                 mov     dl, al
                 lea     si, aHowMany    ; "\nHow many? "
-                call    loc_126A9
+                call    printGameText
                 mov     si, [bp+2]
                 mov     di, [bp+0]
                 call    promptForNumberEntry
@@ -9623,7 +9623,7 @@ loc_17D0B:                              ; CODE XREF: sub_17B54+18B↑j
                 mov     al, 0FEh
                 call    playSoundEffect
                 lea     si, aInUse      ; "\nIn use!"
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_17B95
 sub_17B54       endp ; sp-analysis failed
 
@@ -9736,7 +9736,7 @@ sub_17D74       endp
 loc_17DA8:                              ; CODE XREF: sub_17B54:loc_11F22↑j
                                         ; sub_17B54:loc_12015↑j ...
                 lea     si, aNoneLeft   ; "None Left!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
                 call    sub_16C53
@@ -9746,7 +9746,7 @@ loc_17DA8:                              ; CODE XREF: sub_17B54:loc_11F22↑j
 loc_17DBA:                              ; CODE XREF: sub_17B54-5F92↑j
                                         ; sub_17B54-5E3A↑j ...
                 lea     si, aWhat       ; "<-What?\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
                 call    sub_16C53
@@ -9756,7 +9756,7 @@ loc_17DBA:                              ; CODE XREF: sub_17B54-5F92↑j
 loc_17DCC:                              ; CODE XREF: sub_17B54:loc_11C9B↑j
                                         ; sub_17B54:loc_11CBC↑j ...
                 lea     si, aInvalidMove ; "Invalid Move!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 call    sub_16C53
@@ -9766,7 +9766,7 @@ loc_17DCC:                              ; CODE XREF: sub_17B54:loc_11C9B↑j
 loc_17DDE:                              ; CODE XREF: sub_17B54:loc_12012↑j
                                         ; sub_17B54:loc_12065↑j ...
                 lea     si, aNotHere    ; "Not Here!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 call    sub_16C53
@@ -9776,7 +9776,7 @@ loc_17DDE:                              ; CODE XREF: sub_17B54:loc_12012↑j
 loc_17DF0:                              ; CODE XREF: sub_17B54:loc_11D66↑j
                                         ; sub_17B54:loc_11FD3↑j ...
                 lea     si, aIncapacitated ; "Incapacitated!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 call    sub_16C53
@@ -9822,7 +9822,7 @@ sub_17E02       endp
 loc_17E33:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 21
+                call    printGameText   ; jumptable 00011BD1 case 21
                                         ; jumptable 00018389 case 9
                 call    sub_16C76
                 jz      short loc_17E43
@@ -9852,7 +9852,7 @@ sub_17E48       proc near               ; CODE XREF: sub_17B54+2EC↑p
                 push    di
                 cld
                 lea     si, aWeapon_0   ; "Weapon:\n"
-                call    loc_126A9
+                call    printGameText
                 mov     cx, 0Bh
                 mov     si, cx
                 lea     di, aFcwtpblidardir ; "FCWTPBLIDARDirect? "
@@ -9894,7 +9894,7 @@ loc_17E9E:                              ; CODE XREF: sub_17E48+50↑j
 
 loc_17EAE:                              ; CODE XREF: sub_17E48+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     [di+30h], al
 
 loc_17EB8:                              ; CODE XREF: sub_17E48+7B↓j
@@ -9917,7 +9917,7 @@ loc_17EC0:                              ; CODE XREF: sub_17E48+48↑j
 
 loc_17EC5:                              ; CODE XREF: sub_17E48+54↑j
                 lea     si, aNotAllowed ; "\nNot allowed!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17EB8
@@ -9926,7 +9926,7 @@ loc_17EC5:                              ; CODE XREF: sub_17E48+54↑j
 loc_17ED3:                              ; CODE XREF: sub_17E48+64↑j
                 call    sub_126F4
                 lea     si, aNoneOwned  ; "None owned\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17EB8
@@ -9938,7 +9938,7 @@ sub_17E48       endp
 loc_17EE4:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 22
+                call    printGameText   ; jumptable 00011BD1 case 22
                                         ; jumptable 00018389 case 11
                 call    sub_16C76
                 jz      short loc_17EF4
@@ -9967,7 +9967,7 @@ sub_17EFA       proc near               ; CODE XREF: sub_17B54+39D↑p
                 push    di
                 cld
                 lea     si, aArmour_0   ; "Armour:\n"
-                call    loc_126A9
+                call    printGameText
                 mov     cx, 0Bh
                 mov     si, cx
                 lea     di, aFcwtpblidardir ; "FCWTPBLIDARDirect? "
@@ -10009,7 +10009,7 @@ loc_17F50:                              ; CODE XREF: sub_17EFA+50↑j
 
 loc_17F60:                              ; CODE XREF: sub_17EFA+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     [di+28h], al
 
 loc_17F6A:                              ; CODE XREF: sub_17EFA+7B↓j
@@ -10032,7 +10032,7 @@ loc_17F72:                              ; CODE XREF: sub_17EFA+48↑j
 
 loc_17F77:                              ; CODE XREF: sub_17EFA+54↑j
                 lea     si, aNotAllowed ; "\nNot allowed!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17F6A
@@ -10041,7 +10041,7 @@ loc_17F77:                              ; CODE XREF: sub_17EFA+54↑j
 loc_17F85:                              ; CODE XREF: sub_17EFA+64↑j
                 call    sub_126F4
                 lea     si, aNoneOwned  ; "None owned\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17F6A
@@ -10093,7 +10093,7 @@ sub_17F96       endp
 
 loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 17
+                call    printGameText   ; jumptable 00011BD1 case 17
                 call    sub_16C76
                 jz      short loc_18031
                 mov     di, ax
@@ -10101,8 +10101,8 @@ loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
                 call    sub_16C14
                 jnz     short loc_18037
                 lea     si, aFcwtpblidardir+0Bh ; "Direct? "
-                call    loc_126A9
-                call    sub_17AEA
+                call    printGameText
+                call    readDirectionKeypress
                 jz      short loc_18031
                 mov     cx, dx
                 xchg    dx, bx
@@ -10132,7 +10132,7 @@ loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
 ; ---------------------------------------------------------------------------
 
 loc_1801D:                              ; CODE XREF: sub_17B54+4C2↑j
-                mov     al, byte ptr word_115CC+1
+                mov     al, byte ptr _partyPosition+1
                 and     al, 7
                 mov     ah, 0
                 shl     ax, 1
@@ -10174,25 +10174,25 @@ loc_1803A:                              ; CODE XREF: sub_17B54+499↑j
                 shl     bx, 1
                 mov     si, [bx+1100h]
                 lea     si, [si+1100h]
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_18031
 ; ---------------------------------------------------------------------------
 
 loc_18069:                              ; CODE XREF: sub_17B54+4F5↑j
                 lea     si, aEatDeathScum ; "\nEat Death Scum!\n\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_18031
 ; ---------------------------------------------------------------------------
 
 loc_18072:                              ; CODE XREF: sub_17B54+4FE↑j
                 lea     si, aGoodDay    ; "\nGood day!\n\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_18031
 ; ---------------------------------------------------------------------------
 
 loc_1807B:                              ; CODE XREF: sub_17B54+4ED↑j
                 lea     si, aWelcomeMyChild ; "\nWelcome my child\n"
-                call    loc_126A9
+                call    printGameText
                 mov     bx, bp
                 mov     al, [bx+1Dh]
                 cmp     al, [bx+1Fh]
@@ -10210,7 +10210,7 @@ loc_1809C:                              ; CODE XREF: sub_17B54+53E↑j
                 daa
                 mov     [bx+1Dh], al
                 lea     si, aThouArtGreater ; "Thou art greater\n\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_171C1
                 mov     al, 0FDh
                 mov     bl, 80h
@@ -10222,19 +10222,19 @@ loc_1809C:                              ; CODE XREF: sub_17B54+53E↑j
 
 loc_180BB:                              ; CODE XREF: sub_17B54+546↑j
                 lea     si, aSeekYeTheMarkO ; "Seek ye, the\nMark of Kings!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_18031
 ; ---------------------------------------------------------------------------
 
 loc_180C5:                              ; CODE XREF: sub_17B54+53A↑j
                 lea     si, aNoMore     ; "No more!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_18031
 ; ---------------------------------------------------------------------------
 
 loc_180CF:                              ; CODE XREF: sub_17B54+536↑j
                 lea     si, aExperienceMore ; "Experience more!\n\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     loc_18031
 ; END OF FUNCTION CHUNK FOR sub_17B54
 
@@ -10250,7 +10250,7 @@ sub_180D9       proc near               ; CODE XREF: sub_17B54-5B87↑p
                 push    dx
                 push    si
                 lea     si, aGold_0     ; "Gold+"
-                call    loc_126A9
+                call    printGameText
                 mov     dh, 64h ; 'd'
                 call    stepTimeSeededPrng
                 or      dl, 30h
@@ -10268,7 +10268,7 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 call    printHexByte
                 call    sub_126F4
                 mov     bx, di
-                call    sub_15D67
+                call    addGoldClamped
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 cmp     dl, 40h ; '@'
@@ -10282,7 +10282,7 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 and     dl, 7
                 jz      short loc_18151
                 lea     si, aAndA       ; "and a "
-                call    loc_126A9
+                call    printGameText
                 mov     al, dl
                 add     al, 41h ; 'A'
                 call    sub_16BFA
@@ -10309,7 +10309,7 @@ loc_18151:                              ; CODE XREF: sub_180D9+44↑j
                 and     dl, 3
                 jz      short loc_18189
                 lea     si, aAnd        ; "and "
-                call    loc_126A9
+                call    printGameText
                 mov     al, dl
                 add     al, 51h ; 'Q'
                 call    sub_16BFA
@@ -10340,7 +10340,7 @@ sub_180D9       endp
 loc_18190:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; sub_17B54+835↓j
                                         ; DATA XREF: ...
-                call    loc_126A9       ; jumptable 00011BD1 case 28
+                call    printGameText   ; jumptable 00011BD1 case 28
                                         ; jumptable 00018389 case 2
                 call    sub_16C76
                 jz      short loc_181DD
@@ -10349,7 +10349,7 @@ loc_18190:                              ; CODE XREF: sub_17B54-5F83↑j
                 mov     di, bx
                 call    sub_16C14
                 jnz     short loc_181E3
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 cmp     byte_114BC, 1
                 jz      short loc_181C7
                 call    getMapTileAt
@@ -10410,7 +10410,7 @@ loc_181E6:                              ; CODE XREF: sub_17B54+684↑j
 
 loc_18200:                              ; CODE XREF: sub_17B54+6A7↑j
                 lea     si, aGasTrap    ; "Gas trap!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_182AA
                 cmp     al, 0
                 jnz     short loc_18211
@@ -10442,7 +10442,7 @@ loc_1822F:                              ; CODE XREF: sub_17B54+6C6↑j
 
 loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
                 lea     si, aAcidTrap   ; "Acid trap!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_182AA
                 cmp     al, 0
                 jz      short loc_182A1
@@ -10464,7 +10464,7 @@ loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
 
 loc_1826D:                              ; CODE XREF: sub_17B54+6A3↑j
                 lea     si, aPoisonTrap ; "Poison trap!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_182AA
                 cmp     al, 0
                 jz      short loc_182A1
@@ -10480,7 +10480,7 @@ loc_1826D:                              ; CODE XREF: sub_17B54+6A3↑j
 
 loc_18290:                              ; CODE XREF: sub_17B54+6A9↑j
                 lea     si, aBombTrap   ; "Bomb trap!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_182AA
                 cmp     al, 0
                 jz      short loc_182A1
@@ -10505,7 +10505,7 @@ sub_182AA       proc near               ; CODE XREF: sub_17B54+6B3↑p
                 call    sub_15B85
                 jnz     short loc_182C2
                 lea     si, aTrapEvaded ; "Trap evaded!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FAh
                 call    playSoundEffect
                 mov     al, 0
@@ -10587,7 +10587,7 @@ loc_18327:                              ; CODE XREF: sub_17B54+7D0↑j
                 cmp     byte_115CE, 0
                 jnz     short loc_18338
                 lea     si, aItSDark    ; "It's dark!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_18338:                              ; CODE XREF: sub_17B54+7DB↑j
                 mov     al, 10h
@@ -10655,7 +10655,7 @@ loc_1838D:                              ; CODE XREF: sub_17B54-5F6E↑j
 loc_183A1:                              ; CODE XREF: sub_17B54+847↑j
                 call    sub_162FD
                 call    sub_19630
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    sub_128F2
                 cmp     al, 0
                 jnz     short loc_183DD
@@ -10673,7 +10673,7 @@ loc_183A1:                              ; CODE XREF: sub_17B54+847↑j
 
 loc_183D0:                              ; CODE XREF: sub_17B54+878↑j
                 add     dl, 18h
-                mov     byte_184E2, dl
+                mov     _conflictMonsterClass, dl
                 mov     byte ptr [bx], 40h ; '@'
                 jmp     loc_188EA
 ; ---------------------------------------------------------------------------
@@ -10698,8 +10698,8 @@ loc_183F4:                              ; CODE XREF: sub_17B54+869↑j
 
 loc_183F7:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 25
-                mov     bx, word_115CC
+                call    printGameText   ; jumptable 00018389 case 25
+                mov     bx, _partyPosition
                 call    sub_128F2
                 and     al, 10h
                 jz      short loc_18413
@@ -10720,8 +10720,8 @@ loc_18416:                              ; CODE XREF: sub_17B54+8B6↑j
 
 loc_1841C:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 26
-                mov     bx, word_115CC
+                call    printGameText   ; jumptable 00018389 case 26
+                mov     bx, _partyPosition
                 call    sub_128F2
                 test    al, 0FFh
                 js      short loc_18435
@@ -10738,8 +10738,8 @@ loc_18435:                              ; CODE XREF: sub_17B54+8D4↑j
 
 loc_18438:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 27
-                mov     bx, word_115CC
+                call    printGameText   ; jumptable 00018389 case 27
+                mov     bx, _partyPosition
                 call    sub_128F2
                 cmp     al, 0A0h
                 jnb     short loc_18452
@@ -10754,8 +10754,8 @@ loc_18452:                              ; CODE XREF: sub_17B54+8F0↑j
 
 loc_18455:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 28
-                mov     bx, word_115CC
+                call    printGameText   ; jumptable 00018389 case 28
+                mov     bx, _partyPosition
                 call    sub_128F2
                 cmp     al, 0A0h
                 jnb     short loc_1846F
@@ -10770,7 +10770,7 @@ loc_1846F:                              ; CODE XREF: sub_17B54+90D↑j
 
 loc_18472:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 cases 16-24,29
+                call    printGameText   ; jumptable 00018389 cases 16-24,29
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1838D
@@ -10778,10 +10778,10 @@ loc_18472:                              ; CODE XREF: sub_17B54+835↑j
 
 loc_1847D:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 30
+                call    printGameText   ; jumptable 00018389 case 30
                 mov     bl, byte_158CC
                 mov     bh, 0
-                mov     dx, word_115CC
+                mov     dx, _partyPosition
                 add     dl, [bx+76F0h]
                 add     dh, [bx+76F4h]
                 and     dx, 0F0Fh
@@ -10789,7 +10789,7 @@ loc_1847D:                              ; CODE XREF: sub_17B54+835↑j
                 call    sub_128F2
                 cmp     al, 80h
                 jz      short loc_184A6
-                mov     word_115CC, dx
+                mov     _partyPosition, dx
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10799,12 +10799,12 @@ loc_184A6:                              ; CODE XREF: sub_17B54+949↑j
 
 loc_184A9:                              ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:jpt_18389↑o
-                call    loc_126A9       ; jumptable 00018389 case 31
+                call    printGameText   ; jumptable 00018389 case 31
                 mov     bl, byte_158CC
                 add     bl, 2
                 and     bl, 3
                 mov     bh, 0
-                mov     dx, word_115CC
+                mov     dx, _partyPosition
                 add     dl, [bx+76F0h]
                 add     dh, [bx+76F4h]
                 and     dx, 0F0Fh
@@ -10812,7 +10812,7 @@ loc_184A9:                              ; CODE XREF: sub_17B54+835↑j
                 call    sub_128F2
                 rol     al, 1
                 jb      short loc_184D8
-                mov     word_115CC, dx
+                mov     _partyPosition, dx
                 jmp     loc_1838D
 ; ---------------------------------------------------------------------------
 
@@ -10823,9 +10823,9 @@ loc_184D8:                              ; CODE XREF: sub_17B54+97B↑j
                 align 8
 byte_184E0      db 0                    ; DATA XREF: sub_17B54-5DF9↑w
                                         ; sub_17B54+D3A↓w ...
-byte_184E1      db 0                    ; DATA XREF: updateLogoAnimationD+22↑r
+_currentCombatant db 0                  ; DATA XREF: updateLogoAnimationD+22↑r
                                         ; updateLogoAnimationD+42↑r ...
-byte_184E2      db 0                    ; DATA XREF: sub_15EAA+46↑r
+_conflictMonsterClass db 0              ; DATA XREF: sub_15EAA+46↑r
                                         ; seg000:5FA6↑r ...
 byte_184E3      db 0                    ; DATA XREF: seg000:5FAD↑r
                                         ; seg000:5FB4↑w ...
@@ -10850,8 +10850,9 @@ byte_18579      db 55h, 16h, 20h, 39h, 0, 48h, 0, 50h, 0, 4Dh, 0, 4Bh
                 db 21h, 47h, 22h, 49h, 17h, 4Bh, 25h, 50h, 19h, 51h, 10h
                 db 53h, 1Fh, 54h, 14h, 57h, 11h, 58h, 2Dh, 48h, 23h, 4Ah
                 db 24h, 4Ch, 26h, 4Dh, 32h, 4Fh, 18h, 59h, 15h
-jpt_18BF8       dw offset loc_18D8D     ; DATA XREF: updateMonsterAI+6853↓r
-                dw offset loc_18D83     ; jump table for switch statement
+jpt_18BF8       dw offset combatCmdInvalid
+                                        ; DATA XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↓r
+                dw offset combatCmdPass ; jump table for switch statement
                 dw offset loc_18CBE
                 dw offset loc_18CC9
                 dw offset loc_18CD4
@@ -10859,30 +10860,30 @@ jpt_18BF8       dw offset loc_18D8D     ; DATA XREF: updateMonsterAI+6853↓r
                 dw offset loc_18CEA
                 dw offset loc_18CEA
                 dw offset loc_18CEA
-                dw offset loc_18CF1
-                dw offset loc_18D0B
-                dw offset loc_18D57
-                dw offset loc_18D38
-                dw offset loc_18D9F
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
-                dw offset loc_18D8D
+                dw offset combatCmdReady
+                dw offset combatCmdZtats
+                dw offset combatCmdNegateTime
+                dw offset combatCmdCastSpell
+                dw offset combatCmdAttack
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
+                dw offset combatCmdInvalid
 jpt_1948E       dw offset loc_194BB     ; DATA XREF: sub_17B54+193A↓r
                 dw offset loc_194DC     ; jump table for switch statement
                 dw offset loc_194EE
@@ -10892,7 +10893,7 @@ jpt_1948E       dw offset loc_194BB     ; DATA XREF: sub_17B54+193A↓r
                 db 0C0h, 0E0h, 2 dup(0F0h), 1, 2, 15h, 20h, 8, 6, 10h
                 db 5, 3, 4, 6, 8, 10h, 15h, 20h, 5
 byte_18625      db 46h, 43h, 57h, 54h, 50h, 42h, 4Ch, 49h, 44h, 41h, 14h
-                                        ; DATA XREF: sub_18AC4+A↓o
+                                        ; DATA XREF: lookupWeaponGlyph+A↓o
                 db 15h, 16h, 17h, 2 dup(14h), 11h, 16h, 15h, 16h, 4Dh
                 db 69h, 73h, 74h, 79h, 20h, 77h, 72h, 69h, 74h, 69h, 6Eh
                 db 67h, 3Ah, 0Ah, 0
@@ -10930,9 +10931,9 @@ aPlr            db 'Plr ',0             ; DATA XREF: sub_19244:loc_19262↓o
 aPilfered       db ' Pilfered!',0Ah,0   ; DATA XREF: sub_193A2+69↓o
 aMissed_0       db ' Missed!',0Ah,0     ; DATA XREF: sub_19244+54↓o
 aHit_0          db ' Hit!',0Ah,0        ; DATA XREF: sub_19244:loc_192A1↓o
-aThieves        db 'Thieves',0          ; DATA XREF: sub_18AE6+5D↓o
-aEs             db 'es',0Ah             ; DATA XREF: sub_18AE6+37↓o
-                                        ; sub_18AE6+3F↓o
+aThieves        db 'Thieves',0          ; DATA XREF: printCombatReactionMessage+5D↓o
+aEs             db 'es',0Ah             ; DATA XREF: printCombatReactionMessage+37↓o
+                                        ; printCombatReactionMessage+3F↓o
                 db 0Ah,0
 aConflict       db 0Ah                  ; DATA XREF: updateMonsterAI+6563↓o
                 db '---Conflict!!---',0Ah
@@ -10946,29 +10947,29 @@ aHit            db 0Ah                  ; DATA XREF: updateMonsterAI+6B53↓o
                 db 'Hit!',0Ah,0
 aKilledExp      db 'Killed! Exp.+',0    ; DATA XREF: sub_18F5A:loc_18F74↓o
 aReadyAWeapon   db 'Ready a weapon!',0Ah,0
-                                        ; DATA XREF: updateMonsterAI:loc_18CF1↓o
-aCastSpell      db 'Cast Spell!',0Ah,0  ; DATA XREF: updateMonsterAI:loc_18D38↓o
-aNegateTime     db 'Negate Time!',0Ah,0 ; DATA XREF: updateMonsterAI:loc_18D57↓o
+                                        ; DATA XREF: updateMonsterAI:combatCmdReady↓o
+aCastSpell      db 'Cast Spell!',0Ah,0  ; DATA XREF: updateMonsterAI:combatCmdCastSpell↓o
+aNegateTime     db 'Negate Time!',0Ah,0 ; DATA XREF: updateMonsterAI:combatCmdNegateTime↓o
 aNotUsableCmd   db 'Not usable cmd!',0Ah,0
-                                        ; DATA XREF: updateMonsterAI:loc_18D8D↓o
-aZtats          db 'Ztats',0Ah,0        ; DATA XREF: updateMonsterAI:loc_18D0B↓o
+                                        ; DATA XREF: updateMonsterAI:combatCmdInvalid↓o
+aZtats          db 'Ztats',0Ah,0        ; DATA XREF: updateMonsterAI:combatCmdZtats↓o
 aVictory        db '****Victory!****',0Ah ; DATA XREF: sub_17B54+1467↓o
                 db 0Ah,0
-aPass           db 'Pass',0Ah,0         ; DATA XREF: updateMonsterAI:loc_18D83↓o
+aPass           db 'Pass',0Ah,0         ; DATA XREF: updateMonsterAI:combatCmdPass↓o
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
 loc_1888B:                              ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:jpt_11BD1↑o
-                call    loc_126A9       ; jumptable 00011BD1 case 1
+                call    printGameText   ; jumptable 00011BD1 case 1
                 mov     byte_184E0, 3Dh ; '='
-                call    sub_17AEA
+                call    readDirectionKeypress
                 jz      short loc_188A7
                 mov     dx, bx
                 call    sub_17F96
                 cmp     bx, 0FFFFh
                 jz      short loc_188A4
-                jmp     short loc_188AA
+                jmp     short beginCombatEncounter
 ; ---------------------------------------------------------------------------
 
 loc_188A4:                              ; CODE XREF: sub_17B54+D4C↑j
@@ -10982,7 +10983,7 @@ loc_188A7:                              ; CODE XREF: sub_17B54+D42↑j
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
 ;   ADDITIONAL PARENT FUNCTION sub_17B54
 
-loc_188AA:                              ; CODE XREF: updateMonsterAI+2B↑j
+beginCombatEncounter:                   ; CODE XREF: updateMonsterAI+2B↑j
                                         ; sub_17B54+D4E↑j
                 call    loc_127CD
                 mov     di, bx
@@ -11002,7 +11003,7 @@ loc_188CA:                              ; CODE XREF: updateMonsterAI+651B↑j
                 mov     al, [di+1280h]
                 shr     al, 1
                 shr     al, 1
-                mov     byte_184E2, al
+                mov     _conflictMonsterClass, al
                 mov     byte ptr [di+1280h], 0
                 cmp     al, 0Fh
                 jnz     short loc_188EA
@@ -11029,9 +11030,9 @@ loc_18905:                              ; CODE XREF: updateMonsterAI+6559↑j
                 inc     bx
                 loop    loc_188F6
                 lea     si, aConflict   ; "\n---Conflict!!---\n->"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
-                call    sub_18AE6
+                call    printCombatReactionMessage
                 call    sub_126F4
                 call    sub_126F4
                 cmp     byte_114BC, 1
@@ -11041,9 +11042,9 @@ loc_18905:                              ; CODE XREF: updateMonsterAI+6559↑j
 ; ---------------------------------------------------------------------------
 
 loc_18928:                              ; CODE XREF: updateMonsterAI+657A↑j
-                cmp     byte_184E2, 0Fh
+                cmp     _conflictMonsterClass, 0Fh
                 jnz     short loc_18948
-                mov     byte_184E2, 17h
+                mov     _conflictMonsterClass, 17h
                 lea     dx, aCnflctSUlt ; "CNFLCT_S.ULT"
                 cmp     byte_114BA, 0Bh
                 jnz     short loc_18942
@@ -11062,24 +11063,24 @@ loc_18948:                              ; CODE XREF: updateMonsterAI+6588↑j
                 cmp     byte_114BA, 0Bh
                 jnz     short loc_18960
                 lea     dx, aCnflctQUlt ; "CNFLCT_Q.ULT"
-                cmp     byte_184E2, 10h
+                cmp     _conflictMonsterClass, 10h
                 jb      short loc_189BD
                 lea     dx, aCnflctRUlt ; "CNFLCT_R.ULT"
                 jmp     short loc_189BD
 ; ---------------------------------------------------------------------------
 
 loc_18960:                              ; CODE XREF: updateMonsterAI+65A8↑j
-                cmp     byte_184E2, 10h
+                cmp     _conflictMonsterClass, 10h
                 jnb     short loc_18972
                 lea     dx, aCnflctMUlt ; "CNFLCT_M.ULT"
-                cmp     byte_184E2, 0Bh
+                cmp     _conflictMonsterClass, 0Bh
                 jnb     short loc_189BD
 
 loc_18972:                              ; CODE XREF: updateMonsterAI+65C0↑j
                 mov     al, byte_1259D
                 cmp     al, 9
                 jnz     short loc_18986
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    getMapTileAt
                 and     al, 3
                 jnz     short loc_18986
@@ -11104,7 +11105,7 @@ loc_18986:                              ; CODE XREF: updateMonsterAI+65D2↑j
                 cmp     al, 21h ; '!'
                 jz      short loc_189BD
                 lea     dx, aCnflctCUlt ; "CNFLCT_C.ULT"
-                cmp     byte_184E2, 8
+                cmp     _conflictMonsterClass, 8
                 jz      short loc_189BD
                 lea     dx, aCnflctGUlt ; "CNFLCT_G.ULT"
 
@@ -11143,7 +11144,7 @@ loc_18A04:                              ; CODE XREF: updateMonsterAI+664B↑j
                 mov     bl, [di+0A0h]
                 mov     bh, [di+0A4h]
                 mov     al, [si+17h]
-                call    sub_18AC4
+                call    lookupWeaponGlyph
                 mov     [di+0ACh], al
                 call    computeAnimTableByte
                 mov     [di+0A8h], al
@@ -11165,7 +11166,7 @@ loc_18A23:                              ; CODE XREF: updateMonsterAI+665D↑j
                 jb      short loc_18A59
                 cmp     byte_158CB, 0FFh
                 jz      short loc_18A59
-                cmp     byte_184E2, 12h
+                cmp     _conflictMonsterClass, 12h
                 jz      short loc_18A54
                 mov     cx, 1
                 jmp     short loc_18A64
@@ -11195,7 +11196,7 @@ loc_18A64:                              ; CODE XREF: updateMonsterAI+66AD↑j
                 lea     si, [si+24C4h]
                 cmp     byte ptr [si+98h], 0
                 jnz     short loc_18A64
-                mov     bl, byte_184E2
+                mov     bl, _conflictMonsterClass
                 and     bl, 0Fh
                 mov     dh, [bx-79FBh]
                 call    stepTimeSeededPrng
@@ -11205,7 +11206,7 @@ loc_18A64:                              ; CODE XREF: updateMonsterAI+66AD↑j
                 mov     bl, [si+80h]
                 call    computeAnimTableByte
                 mov     [si+90h], al
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 mov     [bx], al
                 loop    loc_18A64
                 call    drawLogoTileGrid
@@ -11219,13 +11220,13 @@ loc_18A64:                              ; CODE XREF: updateMonsterAI+66AD↑j
                 mov     bh, 10h
                 call    playSoundEffect
                 call    sub_16C53
-                jmp     loc_18B52
+                jmp     combatTurnLoop
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18AC4       proc near               ; CODE XREF: updateMonsterAI+666A↑p
+lookupWeaponGlyph proc near             ; CODE XREF: updateMonsterAI+666A↑p
                 pushf
                 push    bx
                 push    cx
@@ -11240,7 +11241,7 @@ sub_18AC4       proc near               ; CODE XREF: updateMonsterAI+666A↑p
                 dec     bx
                 mov     al, [bx-79D1h]
 
-loc_18ADD:                              ; CODE XREF: sub_18AC4+20↓j
+loc_18ADD:                              ; CODE XREF: lookupWeaponGlyph+20↓j
                 pop     di
                 pop     cx
                 pop     bx
@@ -11248,36 +11249,36 @@ loc_18ADD:                              ; CODE XREF: sub_18AC4+20↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18AE2:                              ; CODE XREF: sub_18AC4+10↑j
+loc_18AE2:                              ; CODE XREF: lookupWeaponGlyph+10↑j
                 mov     al, 3Fh ; '?'
                 jmp     short loc_18ADD
-sub_18AC4       endp
+lookupWeaponGlyph endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18AE6       proc near               ; CODE XREF: updateMonsterAI+656C↑p
+printCombatReactionMessage proc near    ; CODE XREF: updateMonsterAI+656C↑p
                                         ; updateMonsterAI+6B50↓p
                 pushf
                 push    ax
                 push    si
                 mov     ah, al
-                mov     al, byte ptr word_115CC+1
+                mov     al, byte ptr _partyPosition+1
                 shr     al, 1
                 jnb     short loc_18B30
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 sub     al, 17h
                 jb      short loc_18B30
                 push    ax
-                mov     ah, byte ptr word_115CC
+                mov     ah, byte ptr _partyPosition
                 shr     ah, 1
                 pop     ax
                 rcl     al, 1
                 add     al, 79h ; 'y'
                 call    sub_16BFA
 
-loc_18B08:                              ; CODE XREF: sub_18AE6+56↓j
+loc_18B08:                              ; CODE XREF: printCombatReactionMessage+56↓j
                 cmp     ah, 0FFh
                 jnz     short loc_18B2C
                 cmp     al, 2
@@ -11293,53 +11294,53 @@ loc_18B08:                              ; CODE XREF: sub_18AE6+56↓j
                 jz      short loc_18B29
                 lea     si, aEs+1       ; "s\n\n"
 
-loc_18B29:                              ; CODE XREF: sub_18AE6+3D↑j
-                call    loc_126A9
+loc_18B29:                              ; CODE XREF: printCombatReactionMessage+3D↑j
+                call    printGameText
 
-loc_18B2C:                              ; CODE XREF: sub_18AE6+25↑j
-                                        ; sub_18AE6+6A↓j
+loc_18B2C:                              ; CODE XREF: printCombatReactionMessage+25↑j
+                                        ; printCombatReactionMessage+6A↓j
                 pop     si
                 pop     ax
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18B30:                              ; CODE XREF: sub_18AE6+A↑j
-                                        ; sub_18AE6+11↑j
-                mov     al, byte_184E2
+loc_18B30:                              ; CODE XREF: printCombatReactionMessage+A↑j
+                                        ; printCombatReactionMessage+11↑j
+                mov     al, _conflictMonsterClass
                 cmp     al, 17h
                 jz      short loc_18B3E
 
-loc_18B37:                              ; CODE XREF: sub_18AE6+5B↓j
+loc_18B37:                              ; CODE XREF: printCombatReactionMessage+5B↓j
                 add     al, 1
                 call    sub_16BFA
                 jmp     short loc_18B08
 ; ---------------------------------------------------------------------------
 
-loc_18B3E:                              ; CODE XREF: sub_18AE6+4F↑j
+loc_18B3E:                              ; CODE XREF: printCombatReactionMessage+4F↑j
                 cmp     ah, 0FFh
                 jnz     short loc_18B37
                 lea     si, aThieves    ; "Thieves"
-                call    loc_126A9
+                call    printGameText
 
-loc_18B4A:                              ; CODE XREF: sub_18AE6+29↑j
-                                        ; sub_18AE6+2D↑j ...
+loc_18B4A:                              ; CODE XREF: printCombatReactionMessage+29↑j
+                                        ; printCombatReactionMessage+2D↑j ...
                 call    sub_126F4
                 call    sub_126F4
                 jmp     short loc_18B2C
-sub_18AE6       endp
+printCombatReactionMessage endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
 ;   ADDITIONAL PARENT FUNCTION sub_17B54
 
-loc_18B52:                              ; CODE XREF: updateMonsterAI+671C↑j
+combatTurnLoop:                         ; CODE XREF: updateMonsterAI+671C↑j
                                         ; sub_17B54:loc_19212↓j
                 call    sub_16FDF
-                mov     byte_184E1, 0
+                mov     _currentCombatant, 0
 
 loc_18B5A:                              ; CODE XREF: sub_17B54:loc_18C39↓j
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 inc     al
                 call    sub_171ED
                 mov     ah, 40h ; '@'
@@ -11349,17 +11350,17 @@ loc_18B5A:                              ; CODE XREF: sub_17B54:loc_18C39↓j
                 lea     bx, [bx+14CCh]
                 call    sub_16C14
                 jz      short loc_18B76
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
 loc_18B76:                              ; CODE XREF: updateMonsterAI+67CC↑j
                 lea     si, aPlayer     ; "----Player "
-                call    loc_126A9
-                mov     al, byte_184E1
+                call    printGameText
+                mov     al, _currentCombatant
                 inc     al
                 call    printHexNibble
                 lea     si, asc_187FD   ; "----\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_18B8C:                              ; CODE XREF: updateMonsterAI+69F7↓j
                 mov     al, 10h
@@ -11378,14 +11379,14 @@ loc_18B8C:                              ; CODE XREF: updateMonsterAI+69F7↓j
 loc_18BA7:                              ; CODE XREF: updateMonsterAI+67FD↑j
                                         ; updateMonsterAI+680D↓j
                 call    pollKeypressAndAnimate
-                jnz     short loc_18BD5
+                jnz     short readCombatCommandKey
                 mov     ah, 2Ch
                 int     21h             ; DOS - GET CURRENT TIME
                                         ; Return: CH = hours, CL = minutes, DH = seconds
                                         ; DL = hundredths of seconds
                 cmp     bl, dh
                 jnz     short loc_18BA7
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 mov     ah, [bx+2570h]
                 mov     al, [bx+2568h]
@@ -11398,7 +11399,7 @@ loc_18BA7:                              ; CODE XREF: updateMonsterAI+67FD↑j
                 jmp     short loc_18BE2
 ; ---------------------------------------------------------------------------
 
-loc_18BD5:                              ; CODE XREF: updateMonsterAI+6805↑j
+readCombatCommandKey:                   ; CODE XREF: updateMonsterAI+6805↑j
                 call    getKeypressAndWaitRaw
                 cmp     al, 61h ; 'a'
                 jb      short loc_18BE2
@@ -11420,22 +11421,24 @@ loc_18BF0:                              ; CODE XREF: updateMonsterAI+6846↑j
                 sub     bx, cx
                 dec     bx
                 shl     bx, 1           ; switch 33 cases
-                jmp     jpt_18BF8[bx]   ; switch jump
+
+COMBAT_COMMAND_TABLE:                   ; switch jump
+                jmp     jpt_18BF8[bx]
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 ;   ADDITIONAL PARENT FUNCTION updateMonsterAI
 
-loc_18BFC:                              ; CODE XREF: sub_17B54-5F78↑j
+combatAdvanceTurn:                      ; CODE XREF: sub_17B54-5F78↑j
                                         ; updateMonsterAI+67CE↑j ...
                 mov     al, 1
                 call    sub_17E02
                 call    sub_15B28
                 jnz     short loc_18C0B
-                mov     byte_115D0, 0
+                mov     _negateTimeDuration, 0
 
 loc_18C0B:                              ; CODE XREF: sub_17B54+10B0↑j
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 inc     al
                 call    sub_171ED
                 mov     cx, 8
@@ -11445,8 +11448,8 @@ loc_18C0B:                              ; CODE XREF: sub_17B54+10B0↑j
                 jz      short loc_18C36
                 call    drawLogoTileGrid
                 call    sub_16CC3
-                inc     byte_184E1
-                mov     al, byte_184E1
+                inc     _currentCombatant
+                mov     al, _currentCombatant
                 cmp     al, byte_114C1
                 jb      short loc_18C39
                 jmp     loc_1914F
@@ -11462,10 +11465,10 @@ loc_18C39:                              ; CODE XREF: sub_17B54+10DD↑j
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18C3C:                              ; CODE XREF: updateMonsterAI+6921↓j
+combatHandleMovement:                   ; CODE XREF: updateMonsterAI+6921↓j
                                         ; updateMonsterAI+692C↓j ...
-                call    loc_126A9
-                mov     bl, byte_184E1
+                call    printGameText
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 mov     si, bx
                 lea     si, [si+24C4h]
@@ -11494,7 +11497,7 @@ loc_18C3C:                              ; CODE XREF: updateMonsterAI+6921↓j
                 mov     [di], al
                 mov     [si+0A4h], ch
                 mov     [si+0A0h], cl
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
 loc_18C93:                              ; CODE XREF: updateMonsterAI+68B5↑j
@@ -11540,63 +11543,63 @@ sub_18C96       endp
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18CBE:                              ; CODE XREF: updateMonsterAI+6853↑j
+loc_18CBE:                              ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNorth      ; jumptable 00018BF8 case 2
                 mov     dh, 0FFh
                 mov     dl, 0
-                jmp     loc_18C3C
+                jmp     combatHandleMovement
 ; ---------------------------------------------------------------------------
 
-loc_18CC9:                              ; CODE XREF: updateMonsterAI+6853↑j
+loc_18CC9:                              ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aSouth      ; jumptable 00018BF8 case 3
                 mov     dh, 1
                 mov     dl, 0
-                jmp     loc_18C3C
+                jmp     combatHandleMovement
 ; ---------------------------------------------------------------------------
 
-loc_18CD4:                              ; CODE XREF: updateMonsterAI+6853↑j
+loc_18CD4:                              ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aEast       ; jumptable 00018BF8 case 4
                 mov     dh, 0
                 mov     dl, 1
-                jmp     loc_18C3C
+                jmp     combatHandleMovement
 ; ---------------------------------------------------------------------------
 
-loc_18CDF:                              ; CODE XREF: updateMonsterAI+6853↑j
+loc_18CDF:                              ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aWest       ; jumptable 00018BF8 case 5
                 mov     dh, 0
                 mov     dl, 0FFh
-                jmp     loc_18C3C
+                jmp     combatHandleMovement
 ; ---------------------------------------------------------------------------
 
-loc_18CEA:                              ; CODE XREF: updateMonsterAI+6853↑j
+loc_18CEA:                              ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, loc_11719   ; jumptable 00018BF8 cases 6-8
                 jmp     loc_12018       ; jumptable 00011BD1 cases 8,9,14
                                         ; jumptable 00018389 cases 10,14,15
 ; ---------------------------------------------------------------------------
 
-loc_18CF1:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdReady:                         ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aReadyAWeapon ; jumptable 00018BF8 case 9
-                call    loc_126A9
-                mov     al, byte_184E1
+                call    printGameText
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     bx, ax
                 lea     bx, [bx+14CCh]
                 call    sub_17E48
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
-loc_18D0B:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdZtats:                         ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aZtats      ; jumptable 00018BF8 case 10
-                call    loc_126A9
-                mov     al, byte_184E1
+                call    printGameText
+                mov     al, _currentCombatant
                 mov     dh, al
                 add     dh, 31h ; '1'
                 inc     al
@@ -11610,28 +11613,28 @@ loc_18D0B:                              ; CODE XREF: updateMonsterAI+6853↑j
                 mov     al, dh
                 sub     al, 30h ; '0'
                 call    sub_171ED
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
-loc_18D38:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdCastSpell:                     ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aCastSpell  ; jumptable 00018BF8 case 12
-                call    loc_126A9
+                call    printGameText
                 mov     byte_184E0, 3Ch ; '<'
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     bx, ax
                 lea     bx, [bx+14CCh]
-                call    sub_15D83
-                jmp     loc_18BFC
+                call    castSpell
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
-loc_18D57:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdNegateTime:                    ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNegateTime ; jumptable 00018BF8 case 11
-                call    loc_126A9
-                mov     al, byte_184E1
+                call    printGameText
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     bx, ax
@@ -11642,35 +11645,35 @@ loc_18D57:                              ; CODE XREF: updateMonsterAI+6853↑j
                 sub     al, 1
                 das
                 mov     [bx+27h], al
-                mov     byte_115D0, 0Ah
-                jmp     loc_18BFC
+                mov     _negateTimeDuration, 0Ah
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
 loc_18D80:                              ; CODE XREF: updateMonsterAI+69CB↑j
                 jmp     loc_17DA8
 ; ---------------------------------------------------------------------------
 
-loc_18D83:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdPass:                          ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aPass       ; jumptable 00018BF8 case 1
-                call    loc_126A9
-                jmp     loc_18BFC
+                call    printGameText
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
-loc_18D8D:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdInvalid:                       ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNotUsableCmd ; jumptable 00018BF8 cases 0,14-32
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
                 call    sub_16C53
                 jmp     loc_18B8C
 ; ---------------------------------------------------------------------------
 
-loc_18D9F:                              ; CODE XREF: updateMonsterAI+6853↑j
+combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMMAND_TABLE↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 mov     byte_184E0, 3Dh ; '=' ; jumptable 00018BF8 case 13
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     si, ax
@@ -11680,11 +11683,11 @@ loc_18D9F:                              ; CODE XREF: updateMonsterAI+6853↑j
                 call    sub_16BFA
                 mov     di, si
                 lea     si, aAttackDir  ; " Attack\nDir-"
-                call    loc_126A9
+                call    printGameText
                 mov     si, di
-                call    sub_17AEA
+                call    readDirectionKeypress
                 jz      short loc_18E43
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 shl     bl, 1
                 shl     bl, 1
                 shl     bl, 1
@@ -11693,7 +11696,7 @@ loc_18D9F:                              ; CODE XREF: updateMonsterAI+6853↑j
                 mov     al, 0FDh
                 call    playSoundEffect
                 mov     al, [si+30h]
-                mov     bl, byte_184E1
+                mov     bl, _currentCombatant
                 mov     bh, 0
                 lea     bx, [bx+24C4h]
                 cmp     al, 3
@@ -11751,7 +11754,7 @@ loc_18E40:                              ; CODE XREF: updateMonsterAI+6A73↑j
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
 
 loc_18E43:                              ; CODE XREF: updateMonsterAI+6A22↑j
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
@@ -11841,13 +11844,13 @@ sub_18E7A       endp
 loc_18EAF:                              ; CODE XREF: updateMonsterAI:loc_18E40↑j
                                         ; updateMonsterAI:loc_18ED4↓j
                 lea     si, aMissed     ; "Missed!\n"
-                call    loc_126A9
+                call    printGameText
                 call    drawLogoTileGrid
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
 loc_18EBC:                              ; CODE XREF: updateMonsterAI:loc_18E3D↑j
-                mov     al, byte_184E1
+                mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
                 mov     di, ax
@@ -11879,9 +11882,9 @@ loc_18ED6:                              ; CODE XREF: updateMonsterAI+6B27↑j
 
 loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
                 mov     al, 0
-                call    sub_18AE6
+                call    printCombatReactionMessage
                 lea     si, aHit        ; "\nHit!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     bp, di
                 mov     di, bx
                 lea     di, [di+24C4h]
@@ -11917,7 +11920,7 @@ loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
                 xchg    di, bx
                 call    sub_18F5A
                 call    drawLogoTileGrid
-                jmp     loc_18BFC
+                jmp     combatAdvanceTurn
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
@@ -11930,7 +11933,7 @@ sub_18F5A       proc near               ; CODE XREF: sub_15EAA+52↑p
                 push    bx
                 push    dx
                 push    si
-                cmp     byte_184E2, 13h
+                cmp     _conflictMonsterClass, 13h
                 jz      short loc_18FB0
                 mov     ah, [bx+98h]
                 sub     ah, al
@@ -11940,7 +11943,7 @@ sub_18F5A       proc near               ; CODE XREF: sub_15EAA+52↑p
 
 loc_18F74:                              ; CODE XREF: sub_18F5A+16↑j
                 lea     si, aKilledExp  ; "Killed! Exp.+"
-                call    loc_126A9
+                call    printGameText
                 mov     byte ptr [bx+98h], 0
                 mov     ah, [bx+90h]
                 mov     dh, [bx+88h]
@@ -11948,14 +11951,14 @@ loc_18F74:                              ; CODE XREF: sub_18F5A+16↑j
                 mov     bx, dx
                 call    computeAnimTableByte
                 mov     [bx], ah
-                mov     bl, byte_184E2
+                mov     bl, _conflictMonsterClass
                 and     bl, 0Fh
                 mov     bh, 0
                 mov     al, [bx-79EBh]
                 mov     dl, al
                 call    printHexByte
                 mov     bx, di
-                call    sub_15D4B
+                call    addExperienceClamped
                 call    sub_126F4
                 call    drawLogoTileGrid
 
@@ -11973,9 +11976,9 @@ sub_18F5A       endp
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
 loc_18FB6:                              ; CODE XREF: sub_17B54:loc_18C36↑j
-                mov     byte_115D0, 0
+                mov     _negateTimeDuration, 0
                 lea     si, aVictory    ; "****Victory!****\n\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C53
                 mov     al, 0FDh
                 mov     bl, 80h
@@ -12003,9 +12006,9 @@ sub_18FEB       proc near               ; CODE XREF: sub_19020+81↓p
                                         ; sub_19020+91↓p ...
                 pushf
                 push    bx
-                cmp     byte_184E2, 10h
+                cmp     _conflictMonsterClass, 10h
                 jnb     short loc_1900C
-                cmp     byte_184E2, 0Bh
+                cmp     _conflictMonsterClass, 0Bh
                 jb      short loc_1900C
                 cmp     al, 0
                 jnz     short loc_1901C
@@ -12228,9 +12231,9 @@ sub_190FD       endp
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
 loc_1914F:                              ; CODE XREF: sub_17B54+10DF↑j
-                cmp     byte_115D0, 0
+                cmp     _negateTimeDuration, 0
                 jz      short loc_1915D
-                dec     byte_115D0
+                dec     _negateTimeDuration
                 jmp     loc_19212
 ; ---------------------------------------------------------------------------
 
@@ -12261,7 +12264,7 @@ loc_1917C:                              ; CODE XREF: sub_17B54+1620↑j
                 shl     dl, 1
                 pop     dx
                 jb      short loc_19198
-                cmp     byte_184E2, 1Dh
+                cmp     _conflictMonsterClass, 1Dh
                 jnz     short loc_19198
                 call    sub_190FD
                 jmp     short loc_19209
@@ -12275,7 +12278,7 @@ loc_19198:                              ; CODE XREF: sub_17B54+162B↑j
                 shl     dl, 1
                 pop     dx
                 jnb     short loc_191CA
-                mov     ah, byte_184E2
+                mov     ah, _conflictMonsterClass
                 cmp     ah, 0Dh
                 jz      short loc_191D3
                 cmp     ah, 0Eh
@@ -12338,7 +12341,7 @@ loc_19209:                              ; CODE XREF: sub_17B54+1613↑j
 
 loc_19212:                              ; CODE XREF: sub_17B54+1606↑j
                                         ; sub_17B54+16B9↑j
-                jmp     loc_18B52
+                jmp     combatTurnLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
 
 ; =============== S U B R O U T I N E =======================================
@@ -12357,7 +12360,7 @@ sub_19215       proc near               ; CODE XREF: sub_17B54:loc_191CE↑p
                 mov     bx, dx
                 call    computeAnimTableByte
                 mov     [di+2554h], al
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 mov     [bx], al
                 call    drawLogoTileGrid
                 pop     bx
@@ -12374,7 +12377,7 @@ sub_19244       proc near               ; CODE XREF: sub_17B54+1622↑p
                 pushf
                 push    ax
                 push    si
-                mov     al, byte_184E2
+                mov     al, _conflictMonsterClass
                 cmp     al, 0Eh
                 jz      short loc_19256
                 cmp     al, 1Eh
@@ -12396,7 +12399,7 @@ loc_1925B:                              ; CODE XREF: sub_19244+10↑j
 loc_19262:                              ; CODE XREF: sub_19244+15↑j
                                         ; sub_19244+19↑j
                 lea     si, aPlr        ; "Plr "
-                call    loc_126A9
+                call    printGameText
                 mov     al, bl
                 add     al, 31h ; '1'
                 call    writeCharacter
@@ -12418,14 +12421,14 @@ loc_1928A:                              ; CODE XREF: sub_19244+3E↑j
                 cmp     dl, 8
                 jb      short loc_192A1
                 lea     si, aMissed_0   ; " Missed!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_192AB
 ; ---------------------------------------------------------------------------
 
 loc_192A1:                              ; CODE XREF: sub_19244+44↑j
                                         ; sub_19244+52↑j
                 lea     si, aHit_0      ; " Hit!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_192AF
 
 loc_192AB:                              ; CODE XREF: sub_19244+5B↑j
@@ -12453,7 +12456,7 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 mov     bx, ax
                 lea     bx, [bx+14CCh]
                 mov     dx, bx
-                mov     bl, byte_184E2
+                mov     bl, _conflictMonsterClass
                 mov     bh, 0
                 and     bl, 0Fh
                 mov     al, [bx-79FBh]
@@ -12503,7 +12506,7 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 mov     byte ptr [si+2564h], 0FFh
                 mov     byte ptr [si+2568h], 0FFh
                 lea     si, aKilled     ; "Killed!!!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C29
 
 loc_19356:                              ; CODE XREF: sub_192AF+80↑j
@@ -12537,12 +12540,12 @@ sub_19360       proc near               ; CODE XREF: sub_19244:loc_19256↑p
                 jnz     short loc_1939D
                 mov     byte ptr [si+14DDh], 50h ; 'P'
                 lea     si, aPlr        ; "Plr "
-                call    loc_126A9
+                call    printGameText
                 mov     al, bl
                 add     al, 31h ; '1'
                 call    writeCharacter
                 lea     si, aPoisoned_0 ; " Poisoned!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FAh
                 call    playSoundEffect
                 call    sub_16CC3
@@ -12611,12 +12614,12 @@ loc_193DE:                              ; CODE XREF: sub_193A2+19↑j
 
 loc_193FD:                              ; CODE XREF: sub_193A2+3A↑j
                 lea     si, aPlr        ; "Plr "
-                call    loc_126A9
+                call    printGameText
                 mov     ax, di
                 add     al, 31h ; '1'
                 call    writeCharacter
                 lea     si, aPilfered   ; " Pilfered!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FAh
                 call    playSoundEffect
 
@@ -12644,7 +12647,7 @@ loc_1941E:                              ; CODE XREF: sub_17B54+89C↑j
                 call    drawLogoTileGrid
                 mov     byte_114BC, 4
                 lea     si, aYouSeeAVisionO ; "You see a vision\nof the Time Lord\n  H"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C53
 
 loc_19441:                              ; CODE XREF: sub_17B54+18F0↓j
@@ -12670,13 +12673,13 @@ loc_19457:                              ; CODE XREF: sub_17B54+89C↑j
 loc_19470:                              ; CODE XREF: sub_17B54+194A↓j
                                         ; sub_17B54+1965↓j ...
                 lea     si, aAFountainWhoWi ; "\nA fountain.  Who\nwill drink? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_194A0
                 mov     cl, al
                 call    sub_16C14
                 jnz     short loc_19492
-                mov     al, byte ptr word_115CC
+                mov     al, byte ptr _partyPosition
                 and     al, 3
                 mov     ah, 0
                 shl     ax, 1           ; switch 5 cases
@@ -12686,7 +12689,7 @@ loc_19470:                              ; CODE XREF: sub_17B54+194A↓j
 
 loc_19492:                              ; CODE XREF: sub_17B54+192D↑j
                 lea     si, aCanT       ; "Can't!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_19470
@@ -12701,7 +12704,7 @@ loc_194A0:                              ; CODE XREF: sub_17B54+1926↑j
 loc_194AB:                              ; CODE XREF: sub_17B54+193A↑j
                                         ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aAhThatSNice ; jumptable 0001948E case 3
-                call    loc_126A9
+                call    printGameText
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 call    sub_16CC3
                 jmp     short loc_19470
@@ -12710,7 +12713,7 @@ loc_194AB:                              ; CODE XREF: sub_17B54+193A↑j
 loc_194BB:                              ; CODE XREF: sub_17B54+193A↑j
                                         ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aYuckHorrible ; jumptable 0001948E case 0
-                call    loc_126A9
+                call    printGameText
                 mov     byte ptr [bx+11h], 50h ; 'P'
                 dec     cl
                 mov     al, cl
@@ -12728,7 +12731,7 @@ loc_194DC:                              ; CODE XREF: sub_17B54+193A↑j
                 mov     ax, [bx+1Ch]    ; jumptable 0001948E case 1
                 mov     [bx+1Ah], ax
                 lea     si, aHowWonderful ; "How wonderful!\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_16CC3
                 jmp     short loc_19470
 ; ---------------------------------------------------------------------------
@@ -12736,7 +12739,7 @@ loc_194DC:                              ; CODE XREF: sub_17B54+193A↑j
 loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
                                         ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aArghBlahYuk ; jumptable 0001948E case 2
-                call    loc_126A9
+                call    printGameText
                 mov     al, 25h ; '%'
                 call    sub_16BC9
                 call    sub_171C1
@@ -12755,7 +12758,7 @@ loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
 loc_19517:                              ; CODE XREF: sub_17B54+89C↑j
                                         ; DATA XREF: seg000:jpt_183F0↑o
                 lea     si, aStrangeWind ; jumptable 000183F0 case 2
-                call    loc_126A9
+                call    printGameText
                 mov     byte_115CE, 0
                 call    sub_128C6
                 jmp     loc_18327
@@ -12765,14 +12768,14 @@ loc_19529:                              ; CODE XREF: sub_17B54+89C↑j
                                         ; DATA XREF: seg000:jpt_183F0↑o
                 mov     byte ptr [bx], 0 ; jumptable 000183F0 case 3
                 lea     si, aArghATrap  ; "Argh!! A trap!!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0F6h
                 call    playSoundEffect
                 lea     bx, byte_114CC
                 call    sub_15B85
                 jnz     short loc_1954A
                 lea     si, aEvaded     ; "Evaded!!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1954D
 ; ---------------------------------------------------------------------------
 
@@ -12792,11 +12795,11 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 call    drawLogoTileGrid
                 mov     byte_114BC, 4
                 lea     si, aARedHotRodInTh ; "A red hot rod\nin the wall. Who\nwill t"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C53
                 call    sub_16C76
                 jz      short loc_195A8
-                mov     ah, byte ptr word_115CC
+                mov     ah, byte ptr _partyPosition
                 and     ah, 3
                 mov     cl, ah
                 add     cl, 4
@@ -12814,7 +12817,7 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 call    sub_16BC9
                 call    sub_16CC3
                 lea     si, aItLeftAMark ; "It left a mark!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_195A8:                              ; CODE XREF: sub_17B54+1A1F↑j
                 mov     byte_114BC, 1
@@ -12834,7 +12837,7 @@ loc_195B3:                              ; CODE XREF: sub_17B54+89C↑j
                 call    sub_16C14
                 jnz     short loc_19602
                 lea     si, aGremlins   ; "Gremlins!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     ax, [bx+21h]
                 xchg    al, ah
                 sub     al, 1
@@ -12844,7 +12847,7 @@ loc_195B3:                              ; CODE XREF: sub_17B54+89C↑j
                 jnb     short loc_19602
                 mov     word ptr [bx+21h], 0
                 lea     si, aStarving   ; "Starving!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, dl
                 call    sub_17176
                 mov     al, 0F7h
@@ -12864,13 +12867,13 @@ loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
 ; ---------------------------------------------------------------------------
                 mov     byte ptr [bx], 0
                 lea     si, byte_18625+14h
-                call    loc_126A9
+                call    printGameText
                 mov     bl, byte_115CF
                 mov     bh, 0
                 shl     bx, 1
                 mov     si, [bx+1100h]
                 lea     si, [si+1100h]
-                call    loc_126A9
+                call    printGameText
                 call    sub_126F4
                 jmp     loc_18327
 
@@ -12887,7 +12890,7 @@ sub_19630       proc near               ; CODE XREF: sub_17B54+850↑p
                 jz      short loc_1964B
                 mov     al, byte_158CC
                 mov     ah, byte_115CF
-                mov     bx, word_115CC
+                mov     bx, _partyPosition
                 call    near ptr start
 
 loc_1964B:                              ; CODE XREF: sub_19630+B↑j
@@ -13279,7 +13282,7 @@ loc_1A47E:                              ; CODE XREF: sub_1A46F+13↓j
                 loop    loc_1A47E
                 cld
                 lea     si, aMoves      ; " moves\n"
-                call    loc_126A9
+                call    printGameText
                 pop     si
                 pop     cx
                 pop     ax
@@ -13328,10 +13331,10 @@ sub_1A491       endp
 
 loc_1A4B9:                              ; CODE XREF: sub_17B54-498↑j
                 lea     si, aCongratulation ; "\nCongratulations!\n   Thou hast\n   co"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A46F
                 lea     si, aReportThyFeat ; "Report thy feat!"
-                call    loc_126A9
+                call    printGameText
                 cld
                 lea     si, byte_1967D
                 mov     cx, 15h
@@ -13461,11 +13464,11 @@ sub_1A5AC       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    dx
                 push    si
                 lea     si, aWelcomeToThePu ; "\n   Welcome to\n    the Pub!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1A5B8:                              ; CODE XREF: sub_1A5AC+5B↓j
                 lea     si, aHereFriendHave ; "\nHere, friend,\nhave a drink!\nIt cost"...
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1A61F
@@ -13473,7 +13476,7 @@ loc_1A5B8:                              ; CODE XREF: sub_1A5AC+5B↓j
                 cmp     al, 7
                 jnb     short loc_1A5DC
                 lea     si, aLeaveMyShopYou ; "\n Leave my shop!\n   You scum!!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1A610
@@ -13490,15 +13493,15 @@ loc_1A5DC:                              ; CODE XREF: sub_1A5AC+20↑j
                 mov     si, ax
                 shl     si, 1
                 mov     si, [si-6687h]
-                call    loc_126A9
+                call    printGameText
                 lea     si, aAnother    ; "\nAnother? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 call    sub_126F4
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1A5B8
                 lea     si, aItSBeenAPleasu ; "It's been a\npleasure!!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1A610:                              ; CODE XREF: sub_1A5AC+2E↑j
                                         ; sub_1A5AC+82↓j
@@ -13512,14 +13515,14 @@ loc_1A610:                              ; CODE XREF: sub_1A5AC+2E↑j
 
 loc_1A616:                              ; CODE XREF: sub_1A5AC+35↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A629
 ; ---------------------------------------------------------------------------
 
 loc_1A61F:                              ; CODE XREF: sub_1A5AC+19↑j
                 call    sub_126F4
                 lea     si, aWhat       ; "<-What?\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1A629:                              ; CODE XREF: sub_1A5AC+71↑j
                 mov     al, 0FEh
@@ -13537,7 +13540,7 @@ sub_1A630       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    ax
                 push    si
                 lea     si, aYeLocalGrocerR ; "    Ye local\n     Grocer\n\nRations:\n"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_17D1A
                 cmp     ax, 0
                 jz      short loc_1A667
@@ -13559,7 +13562,7 @@ sub_1A630       proc near               ; CODE XREF: sub_17B54+4D4↑p
 
 loc_1A667:                              ; CODE XREF: sub_1A630+10↑j
                 lea     si, aThankYouComeAg ; "\n\nThank you,\nCome again!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1A66E:                              ; CODE XREF: sub_1A630+4E↓j
                                         ; sub_1A630+60↓j
@@ -13571,7 +13574,7 @@ loc_1A66E:                              ; CODE XREF: sub_1A630+4E↓j
 
 loc_1A672:                              ; CODE XREF: sub_1A630+15↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1A66E
@@ -13579,7 +13582,7 @@ loc_1A672:                              ; CODE XREF: sub_1A630+15↑j
 
 loc_1A680:                              ; CODE XREF: sub_1A630+2C↑j
                 lea     si, aTooMuchToCarry ; "\nToo much to\ncarry!\n"
-                call    loc_126A9
+                call    printGameText
                 pop     ax
                 mov     [di+21h], ax
                 mov     al, 0FFh
@@ -13599,7 +13602,7 @@ sub_1A692       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    cx
                 push    si
                 lea     si, aClericalHealin ; "\nClerical Healing\nSacraments:\n 1-Cur"...
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 6
                 lea     si, byte_19BFA
@@ -13621,7 +13624,7 @@ sub_1A692       proc near               ; CODE XREF: sub_17B54+4D4↑p
 loc_1A6C4:                              ; CODE XREF: sub_1A692+1E↑j
                                         ; sub_1A692+22↑j ...
                 lea     si, aFareTheeWellMy ; "\nFare thee well\nmy children.\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_16CC3
 
 loc_1A6CE:                              ; CODE XREF: sub_1A692+61↓j
@@ -13637,14 +13640,14 @@ loc_1A6CE:                              ; CODE XREF: sub_1A692+61↓j
 loc_1A6D4:                              ; CODE XREF: sub_1A692+2E↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aACuringWillCos ; jumptable 0001A6C0 case 0
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
                 cmp     word ptr [di+23h], 100h
                 jb      short loc_1A735
                 lea     si, aCureWhom   ; "Cure whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jz      short loc_1A6CE
                 dec     al
@@ -13674,14 +13677,14 @@ loc_1A6D4:                              ; CODE XREF: sub_1A692+2E↑j
 loc_1A72C:                              ; CODE XREF: sub_1A692+4E↑j
                                         ; sub_1A692+DB↓j ...
                 lea     si, aWithoutProperO ; "\nWithout proper\nofferings I\ncannot h"...
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A6CE
 ; ---------------------------------------------------------------------------
 
 loc_1A735:                              ; CODE XREF: sub_1A692+55↑j
                                         ; sub_1A692+E2↓j ...
                 lea     si, aIMSorryButThou ; "I'm sorry, but\nthou hast not\ngold eno"...
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1A6CE
@@ -13690,7 +13693,7 @@ loc_1A735:                              ; CODE XREF: sub_1A692+55↑j
 loc_1A743:                              ; CODE XREF: sub_1A692+6B↑j
                                         ; sub_1A692+FD↓j ...
                 lea     si, aNotInjured ; "Not injured!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1A6CE
@@ -13699,7 +13702,7 @@ loc_1A743:                              ; CODE XREF: sub_1A692+6B↑j
 loc_1A752:                              ; CODE XREF: sub_1A692+8C↑j
                                         ; sub_1A692+182↓j
                 lea     si, aFailed_0   ; "Failed!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1A6CE
@@ -13708,14 +13711,14 @@ loc_1A752:                              ; CODE XREF: sub_1A692+8C↑j
 loc_1A761:                              ; CODE XREF: sub_1A692+2E↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aHealingsCost20 ; jumptable 0001A6C0 case 1
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
                 cmp     word ptr [di+23h], 200h
                 jb      short loc_1A735
                 lea     si, aHealWhom   ; "Heal whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jnz     short loc_1A785
                 jmp     loc_1A6CE
@@ -13746,7 +13749,7 @@ loc_1A785:                              ; CODE XREF: sub_1A692+EE↑j
 loc_1A7B6:                              ; CODE XREF: sub_1A692+2E↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aResurrectionsC ; jumptable 0001A6C0 case 2
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jnz     short loc_1A7C7
@@ -13761,7 +13764,7 @@ loc_1A7C7:                              ; CODE XREF: sub_1A692+130↑j
 
 loc_1A7D1:                              ; CODE XREF: sub_1A692+13A↑j
                 lea     si, aResurrectWhom ; "Resurrect whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jnz     short loc_1A7E0
                 jmp     loc_1A6CE
@@ -13804,7 +13807,7 @@ loc_1A817:                              ; CODE XREF: sub_1A692+180↑j
 
 loc_1A824:                              ; CODE XREF: sub_1A692+15F↑j
                 lea     si, aNotDead    ; "Not dead!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1A6CE
@@ -13813,7 +13816,7 @@ loc_1A824:                              ; CODE XREF: sub_1A692+15F↑j
 loc_1A833:                              ; CODE XREF: sub_1A692+2E↑j
                                         ; DATA XREF: seg000:jpt_1A6C0↑o
                 lea     si, aRecallingsCost ; jumptable 0001A6C0 case 3
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jnz     short loc_1A844
@@ -13828,7 +13831,7 @@ loc_1A844:                              ; CODE XREF: sub_1A692+1AD↑j
 
 loc_1A84E:                              ; CODE XREF: sub_1A692+1B7↑j
                 lea     si, aRecallWhom ; "Recall whom? "
-                call    loc_126A9
+                call    printGameText
                 call    sub_16C76
                 jnz     short loc_1A85D
                 jmp     loc_1A6CE
@@ -13863,7 +13866,7 @@ loc_1A86A:                              ; CODE XREF: sub_1A692+1D3↑j
 
 loc_1A896:                              ; CODE XREF: sub_1A692+1DC↑j
                 lea     si, aNotAshes   ; "Not ashes!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1A6CE
@@ -13883,7 +13886,7 @@ sub_1A8A5       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    si
                 push    di
                 lea     si, aWelcomeToTheWe ; "\nWelcome to the\nWeapons Shop!\n\nList"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A8BD
@@ -13891,7 +13894,7 @@ sub_1A8A5       proc near               ; CODE XREF: sub_17B54+4D4↑p
 
 loc_1A8BD:                              ; CODE XREF: sub_1A8A5+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 4
                 lea     si, byte_19C1D
@@ -13911,7 +13914,7 @@ loc_1A8BD:                              ; CODE XREF: sub_1A8A5+13↑j
 loc_1A8E6:                              ; CODE XREF: sub_1A8A5+3C↑j
                                         ; sub_1A8A5+AF↓j
                 lea     si, aForSale    ; "For sale?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 0Ah
                 cmp     byte ptr word_114C2, 25h ; '%'
@@ -13958,7 +13961,7 @@ loc_1A93C:                              ; CODE XREF: sub_1A8A5+92↑j
                 mov     [bx+di+31h], al
                 mov     byte ptr [di+30h], 0
                 lea     si, aThankYou   ; "\nThank you!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A8E6
 ; ---------------------------------------------------------------------------
 
@@ -13980,14 +13983,14 @@ loc_1A959:                              ; CODE XREF: sub_1A8A5+34↑j
 
 loc_1A961:                              ; CODE XREF: sub_1A8A5+7C↑j
                 lea     si, aYouDonTOwnOneO ; "\nYou don't own\none of those!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
 loc_1A96A:                              ; CODE XREF: sub_1A8A5+3E↑j
                                         ; sub_1A8A5+120↓j
                 lea     si, aYourInterest ; "Your interest?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 0Ah
                 cmp     byte ptr word_114C2, 25h ; '%'
@@ -14023,25 +14026,25 @@ loc_1A986:                              ; CODE XREF: sub_1A8A5+D5↑j
                 daa
                 mov     [bx+di+31h], al
                 lea     si, aHereYouAreMayI ; "\nHere you are.\nMay it serve\nyou well"...
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A96A
 ; ---------------------------------------------------------------------------
 
 loc_1A9C7:                              ; CODE XREF: sub_1A8A5+94↑j
                 lea     si, aTooMuchGold ; "\nToo much gold!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
 loc_1A9D0:                              ; CODE XREF: sub_1A8A5+10F↑j
                 lea     si, aIMVerySorryBut ; "\nI'm very sorry,\nbut you haven't\nthe"...
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
 loc_1A9D9:                              ; CODE XREF: sub_1A8A5+100↑j
                 lea     si, aNoMoreRoom_0 ; "\nNo more room!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1A9E0:                              ; CODE XREF: sub_1A8A5+C3↑j
                                         ; sub_1A8A5+129↑j ...
@@ -14059,22 +14062,22 @@ sub_1A9E8       proc near               ; CODE XREF: sub_1A8A5+15↑p
                 push    ax
                 push    si
                 lea     si, aAvailableBDagg ; "\nAvailable:\nB:Dagger    5gp\nC:Mace  "...
-                call    loc_126A9
+                call    printGameText
                 call    sub_16FB1
                 cmp     al, 0FFh
                 jz      short loc_1AA21
                 lea     si, aH2hSwd250gp ; "\nH:2H Swd  250gp\n"
-                call    loc_126A9
+                call    printGameText
                 cmp     byte ptr word_114C2, 25h ; '%'
                 jnz     short loc_1AA21
                 mov     byte_114CA, 0FFh
                 lea     si, aI2Axe400gpJ2Bo ; "I:+2 Axe  400gp\nJ:+2 Bow 1050gp\nK:+2 "...
-                call    loc_126A9
+                call    printGameText
                 call    sub_16FB1
                 cmp     al, 0FFh
                 jz      short loc_1AA21
                 lea     si, aO4Swd4550gp ; "\nO:+4 Swd 4550gp\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AA21:                              ; CODE XREF: sub_1A9E8+F↑j
                                         ; sub_1A9E8+1D↑j ...
@@ -14098,7 +14101,7 @@ sub_1AA25       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    si
                 push    di
                 lea     si, aWelcomeToTheAr ; "\nWelcome to the\nArmour Shop!\n\nList?"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1AA3D
@@ -14106,7 +14109,7 @@ sub_1AA25       proc near               ; CODE XREF: sub_17B54+4D4↑p
 
 loc_1AA3D:                              ; CODE XREF: sub_1AA25+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 4
                 lea     si, byte_19C1D
@@ -14126,7 +14129,7 @@ loc_1AA3D:                              ; CODE XREF: sub_1AA25+13↑j
 loc_1AA66:                              ; CODE XREF: sub_1AA25+3C↑j
                                         ; sub_1AA25+AF↓j
                 lea     si, aForSale    ; "For sale?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 7
                 cmp     byte ptr word_114C2, 25h ; '%'
@@ -14173,7 +14176,7 @@ loc_1AABC:                              ; CODE XREF: sub_1AA25+92↑j
                 mov     [bx+di+29h], al
                 mov     byte ptr [di+28h], 0
                 lea     si, aThankYou   ; "\nThank you!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AA66
 ; ---------------------------------------------------------------------------
 
@@ -14195,14 +14198,14 @@ loc_1AAD9:                              ; CODE XREF: sub_1AA25+34↑j
 
 loc_1AAE1:                              ; CODE XREF: sub_1AA25+7C↑j
                 lea     si, aYouDonTOwnOneO ; "\nYou don't own\none of those!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
 loc_1AAEA:                              ; CODE XREF: sub_1AA25+3E↑j
                                         ; sub_1AA25+120↓j
                 lea     si, aYourInterest ; "Your interest?\n"
-                call    loc_126A9
+                call    printGameText
                 push    di
                 mov     cx, 7
                 cmp     byte ptr word_114C2, 25h ; '%'
@@ -14238,25 +14241,25 @@ loc_1AB06:                              ; CODE XREF: sub_1AA25+D5↑j
                 daa
                 mov     [bx+di+29h], al
                 lea     si, aHereYouAreMayI ; "\nHere you are.\nMay it serve\nyou well"...
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AAEA
 ; ---------------------------------------------------------------------------
 
 loc_1AB47:                              ; CODE XREF: sub_1AA25+94↑j
                 lea     si, aTooMuchGold ; "\nToo much gold!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
 loc_1AB50:                              ; CODE XREF: sub_1AA25+10F↑j
                 lea     si, aIMVerySorryBut ; "\nI'm very sorry,\nbut you haven't\nthe"...
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
 loc_1AB59:                              ; CODE XREF: sub_1AA25+100↑j
                 lea     si, aNoMoreRoom_0 ; "\nNo more room!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AB60:                              ; CODE XREF: sub_1AA25+C3↑j
                                         ; sub_1AA25+129↑j ...
@@ -14274,7 +14277,7 @@ sub_1AB68       proc near               ; CODE XREF: sub_1AA25+15↑p
                 push    ax
                 push    si
                 lea     si, aAvailableBClot ; "\nAvailable:\nB:Cloth     75gp\nC:Leath"...
-                call    loc_126A9
+                call    printGameText
                 call    sub_16FB1
                 cmp     al, 0FFh
                 jz      short loc_1AB8F
@@ -14282,7 +14285,7 @@ sub_1AB68       proc near               ; CODE XREF: sub_1AA25+15↑p
                 jnz     short loc_1AB8C
                 mov     byte_114CB, 0FFh
                 lea     si, aF2chain6130gpG ; "\nF:+2Chain 6130gp\nG:+2Plate 8250gp"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AB8C:                              ; CODE XREF: sub_1AB68+16↑j
                 call    sub_126F4
@@ -14308,7 +14311,7 @@ sub_1AB93       proc near               ; CODE XREF: sub_17B54+4D4↑p
 
 loc_1AB98:                              ; CODE XREF: sub_1AB93+B7↓j
                 lea     si, aTheGuildShopKe ; "The Guild shop:\n Keys      50gp\n Torc"...
-                call    loc_126A9
+                call    printGameText
                 push    di
                 lea     si, byte_1A39B
                 lea     di, byte_1A395
@@ -14326,7 +14329,7 @@ loc_1AB98:                              ; CODE XREF: sub_1AB93+B7↓j
 loc_1ABBD:                              ; CODE XREF: sub_1AB93+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 0
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jnz     short loc_1ABCF
@@ -14362,7 +14365,7 @@ loc_1ABCF:                              ; CODE XREF: sub_1AB93+37↑j
 loc_1ABFF:                              ; CODE XREF: sub_1AB93+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 1
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
@@ -14392,7 +14395,7 @@ loc_1ABFF:                              ; CODE XREF: sub_1AB93+26↑j
 loc_1AC3C:                              ; CODE XREF: sub_1AB93+6A↑j
                                         ; sub_1AB93+117↓j ...
                 lea     si, aAnythingElse ; "\nAnything else?\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1AC4D
@@ -14406,14 +14409,14 @@ loc_1AC4D:                              ; CODE XREF: sub_1AB93+B5↑j
 loc_1AC50:                              ; CODE XREF: sub_1AB93+44↑j
                                         ; sub_1AB93+83↑j ...
                 lea     si, aTooMuchToCarry ; "\nToo much to\ncarry!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AC63
 ; ---------------------------------------------------------------------------
 
 loc_1AC59:                              ; CODE XREF: sub_1AB93+65↑j
                                         ; sub_1AB93+A4↑j ...
                 lea     si, aIMSorryButYouH ; "\nI'm sorry,\nbut you have\nnot the fun"...
-                call    loc_126A9
+                call    printGameText
 
 loc_1AC60:                              ; CODE XREF: sub_1AB93+39↑j
                                         ; sub_1AB93+79↑j ...
@@ -14428,7 +14431,7 @@ loc_1AC63:                              ; CODE XREF: sub_1AB93+C4↑j
 loc_1AC6B:                              ; CODE XREF: sub_1AB93+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 2
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
@@ -14464,7 +14467,7 @@ loc_1ACA7:                              ; CODE XREF: sub_1AB93+110↑j
 loc_1ACAC:                              ; CODE XREF: sub_1AB93+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 3
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
@@ -14501,7 +14504,7 @@ loc_1ACEF:                              ; CODE XREF: sub_1AB93+26↑j
                                         ; sub_1AB93:loc_1AC4D↑j
                                         ; DATA XREF: ...
                 lea     si, aThankYouComeAg_0 ; jumptable 0001ABB9 cases 4,5
-                call    loc_126A9
+                call    printGameText
 
 loc_1ACF6:                              ; CODE XREF: sub_1AB93+D5↑j
                 pop     di
@@ -14524,11 +14527,11 @@ sub_1ACFC       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    dx
                 push    si
                 lea     si, aRadrionProphet ; "\n    Radrion:\nProphet of Life!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
                 lea     si, aHowMany100gpIs ; "\nHow many 100gp\nis your\noffering? "
-                call    loc_126A9
+                call    printGameText
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1AD5F
@@ -14543,16 +14546,16 @@ loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
                 mov     si, ax
                 shl     si, 1
                 mov     si, [si-5E50h]
-                call    loc_126A9
+                call    printGameText
                 lea     si, aMoreOffering ; "\nMore offering?\n"
-                call    loc_126A9
+                call    printGameText
                 call    sub_1A561
                 call    sub_126F4
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1AD08
                 call    sub_126F4
                 lea     si, aFareTheeWellAn ; "\nFare thee well\nand good luck!\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AD50:                              ; CODE XREF: sub_1ACFC+72↓j
                 pop     si
@@ -14565,14 +14568,14 @@ loc_1AD50:                              ; CODE XREF: sub_1ACFC+72↓j
 
 loc_1AD56:                              ; CODE XREF: sub_1ACFC+28↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
-                call    loc_126A9
+                call    printGameText
                 jmp     short loc_1AD69
 ; ---------------------------------------------------------------------------
 
 loc_1AD5F:                              ; CODE XREF: sub_1ACFC+19↑j
                 call    sub_126F4
                 lea     si, aWhat       ; "<-What?\n"
-                call    loc_126A9
+                call    printGameText
 
 loc_1AD69:                              ; CODE XREF: sub_1ACFC+61↑j
                 mov     al, 0FEh
@@ -14591,15 +14594,15 @@ sub_1AD70       proc near               ; CODE XREF: sub_17B54+4C4↑p
                 push    ax
                 push    si
                 lea     si, aEquineEmporium ; "\n\nEquine Emporium:\n\n"
-                call    loc_126A9
+                call    printGameText
                 mov     al, byte_114C1
                 call    printHexNibble
                 lea     si, aHorsesCost ; " horses cost\n"
-                call    loc_126A9
+                call    printGameText
                 shl     al, 1
                 call    printHexNibble
                 lea     si, a00gpWillYouBuy ; "00gp. Will you\nbuy? "
-                call    loc_126A9
+                call    printGameText
                 mov     ah, al
                 call    sub_1A561
                 cmp     al, 4Eh ; 'N'
@@ -14608,14 +14611,14 @@ sub_1AD70       proc near               ; CODE XREF: sub_17B54+4C4↑p
                 call    sub_1A587
                 jb      short loc_1ADB1
                 lea     si, aMayYouRideFast ; "May you ride\nfast and true\nfriend!\n"
-                call    loc_126A9
+                call    printGameText
                 mov     byte_114BA, 0Ah
                 jmp     short loc_1ADC6
 ; ---------------------------------------------------------------------------
 
 loc_1ADB1:                              ; CODE XREF: sub_1AD70+31↑j
                 lea     si, aIMSorryButThou ; "I'm sorry, but\nthou hast not\ngold eno"...
-                call    loc_126A9
+                call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1ADC6
@@ -14623,7 +14626,7 @@ loc_1ADB1:                              ; CODE XREF: sub_1AD70+31↑j
 
 loc_1ADBF:                              ; CODE XREF: sub_1AD70+2A↑j
                 lea     si, aAhTooBadTheseA ; "Ah, too bad.\nThese are the\nbest in to"...
-                call    loc_126A9
+                call    printGameText
 
 loc_1ADC6:                              ; CODE XREF: sub_1AD70+3F↑j
                                         ; sub_1AD70+4D↑j
