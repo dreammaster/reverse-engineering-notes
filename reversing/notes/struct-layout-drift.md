@@ -15787,3 +15787,38 @@ Bonus identification from the same read: the shared `this` pointer for
 across 7+ call sites -- `unk_534930` -- is the global `SystemImports
 simp` object itself (`Common/CSRUN.CPP`'s file-scope `simp` global).
 Renamed accordingly.
+
+### The `SCMD_*` survey pays a second dividend: `ccInstance.registers[6]`'s two long-open slots close
+
+`ccInstance`'s own struct comment for `registers[6]`@+0x984 had sat
+since an earlier round with only `registers[1]`/`SREG_SP` individually
+confirmed -- the other slots were "inferred from the array's
+existence, not individually verified," and `SREG_OP`/`SREG_DX`'s
+absence rested only on there being no room left in the struct's own
+confirmed total size. Rereading the `SCMD_*` opcode-table survey
+(`sub_42B394`, see above) with this specific question in mind finds
+two more slots individually pinned down via FIXED-offset opcode
+handlers, not just generic bytecode-operand indexing: **`registers[2]`
+=+0x98C=`MAR`**, dereferenced directly by `SCMD_WRITELIT`/`MEMREAD`/
+`MEMWRITE` (opcodes 4/7/8) exactly where source reads
+`inst->registers[SREG_MAR]`; and **`registers[3]`=+0x990=`AX`**, tested
+by `SCMD_JZ`'s own fixed "ax==0" check (opcode 28) and written by
+`SCMD_CALLEXT`'s (opcode 33) native-call return value -- both matching
+source's own `inst->registers[SREG_AX]` sites exactly. `registers[4]`/
+`[5]` (`BX`/`CX`) remain positional-only; no opcode among the 38
+references either via a fixed literal the way `JZ`/`CALLEXT` pin `AX`.
+
+**`SREG_OP`/`SREG_DX`'s absence now has a second, independent line of
+evidence**, not just the struct's own size: the same opcode survey
+found `SCMD_CALLOBJ` -- 2011's dedicated "next call is member function
+of reg1" opcode, the specific instruction `SREG_OP` exists to service
+-- is itself CONFIRMED ABSENT from this build's dispatch table (see
+above). `CALL`(23)/`THISBASE`(38) implement member-function-relative
+addressing via a per-call-frame local array instead, so there was
+never a reason for a dedicated object-pointer register to exist here
+in the first place. Two lines of evidence reached from completely
+different directions (a struct-size argument, and the opcode that
+would consume the register) now agree with each other -- a
+satisfying capstone to both this round's opcode survey and the
+`ccInstance` struct's own long history in this project. Recorded as an
+update to `apply_structs.py`'s own `registers[6]` field comment.

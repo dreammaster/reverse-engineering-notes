@@ -969,9 +969,28 @@ struct ccInstance {
                             // longs (indices 0-5), not 8. SREG_OP ("object pointer for member func
                             // calls") and SREG_DX are index 6/7, past the end of this 2002 region --
                             // plausible that those two registers didn't exist yet in 2002, consistent
-                            // with member-function-call script features being a later addition. Only
-                            // registers[1]/SP independently confirmed; the other 5 slots are inferred
-                            // from the array's existence, not individually verified.
+                            // with member-function-call script features being a later addition.
+                            // UPGRADED (full SCMD_* opcode-table survey of the interpreter, sub_42B394):
+                            // two more slots individually confirmed via FIXED-offset opcode handlers
+                            // (not just generic reg[Size]/reg[Src] bytecode-operand indexing) --
+                            // registers[2]=+0x98C=MAR, read/written directly by SCMD_WRITELIT/MEMREAD/
+                            // MEMWRITE (opcodes 4/7/8) exactly where source dereferences
+                            // `inst->registers[SREG_MAR]`; registers[3]=+0x990=AX, tested by SCMD_JZ's
+                            // own fixed "ax==0" check (opcode 28) and written by SCMD_CALLEXT's
+                            // (opcode 33) native-call return value, matching source's
+                            // `inst->registers[SREG_AX]` at both sites. registers[4]/[5] (BX/CX) remain
+                            // positional-only -- no opcode in this build's own 38-entry table (see the
+                            // interpreter's own matches.json entry for the complete survey) references
+                            // them via a fixed literal offset the way JZ/CALLEXT pin AX. SREG_OP/DX's
+                            // absence is now independently corroborated architecturally, not just by
+                            // the struct's own size: the same opcode-table survey found SCMD_CALLOBJ
+                            // (2011's dedicated "next call is member function of reg1" opcode, the
+                            // opcode SREG_OP exists to service) is itself CONFIRMED ABSENT from this
+                            // build's dispatch table -- CALL(23)/THISBASE(38) implement member-function-
+                            // relative addressing via a per-call-frame local array instead of a
+                            // dedicated object-pointer register, so there was never a reason for
+                            // SREG_OP to exist here. Two independent lines of evidence (struct size,
+                            // and the opcode that would consume the register) now agree.
   int pc;                      // +0x99C, high confidence: set to 0 right after the registers-sized region,
                             // matching source's program-counter reset on instance creation.
   int line_number;            // +0x9A0, high confidence: SCMD_LINENUM (opcode 36, "debug info --

@@ -4692,6 +4692,22 @@ disassembly work.
   `SystemImports simp` object (`unk_534930`, shared `this` pointer
   across 7+ already-matched `SystemImports` method calls). See
   `reversing/notes/struct-layout-drift.md`.
+- **The `SCMD_*` survey pays a second dividend: two more
+  `ccInstance.registers[6]` slots close, and `SREG_OP`/`DX`'s absence
+  gets a second, independent confirmation.** Rereading the opcode
+  survey with this specific struct field in mind found
+  `registers[2]`=`MAR` (dereferenced directly by `WRITELIT`/`MEMREAD`/
+  `MEMWRITE`) and `registers[3]`=`AX` (tested by `JZ`'s own fixed
+  check, written by `CALLEXT`'s return value) individually confirmed
+  via fixed-offset opcode handlers, not just generic operand indexing
+  -- upgrading them from "inferred" to confirmed. `SREG_OP`/`SREG_DX`'s
+  absence, previously resting only on there being no room left in the
+  struct's own size, now has a second, independent line of evidence:
+  `SCMD_CALLOBJ` -- the specific opcode `SREG_OP` exists to service --
+  is itself confirmed absent from the dispatch table, and `CALL`/
+  `THISBASE` implement the equivalent behavior without needing a
+  dedicated register at all. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
