@@ -183,19 +183,45 @@ ultima1/ultima2's A-Z dispatcher), a separate combat dispatcher
 
 Next-session priorities, roughly in order:
 
+- [x] Investigated `sub_123A5` — **turned out to be `updateMonsterAI`
+      (per-turn monster/NPC movement AI), not the combat dispatcher.**
+      The "Attack"/"Cast Spell"/"Ztats"/"Pass" strings that pointed
+      here were a false lead: they actually belong to a separate code
+      chunk at absolute address **`~0x18D0B`**, ~0x6500 bytes away, that
+      IDA had merged into `sub_123A5`'s function-chunk list (a real IDA
+      behavior for disjoint/cold-path chunks). Confirmed a new
+      `Monster` parallel-array layout in the process: `+0x1280` type,
+      `+0x12A0` display tile, `+0x12C0` X, `+0x12E0` Y, 32 slots — same
+      convention as `ultima2`'s monster tracking. Two supporting
+      helpers named at low/medium confidence: `getMapTileAt` (returns
+      a tile *value*, not a pointer, from a packed coordinate — exact
+      bit-level derivation not fully worked out) and `canMoveToTile`
+      (movement-legality check, exact tile-code meanings unconfirmed).
+- [ ] **The real combat command dispatcher, around absolute address
+      `0x18D0B`** — this is now the actual next target for combat
+      (strings: Attack/Get/Ready/Cast Spell/Negate Time/Ztats/Pass).
+      Since it showed up as a "function chunk" of `updateMonsterAI`
+      rather than its own function, it may need its own
+      `ida_funcs.add_func()` boundary fix before it can be named
+      properly — check whether IDA already treats it as addressable at
+      that chunk's own start address, or whether it needs splitting out
+      from `updateMonsterAI` first.
 - [ ] **`sub_17B54`, the overworld command dispatcher** — the single
-      highest-value target. Given its size, don't try to read it start
-      to finish in one pass: first locate its internal command jump
-      table (same pattern as ultima2's `command_jump_table`) to split
-      it into per-command chunks, then work through those
-      systematically. Cross-reference LairWare's `UltimaMain.c` main
-      loop and `ULTIMA3.TXT`'s command list for the expected command
-      set before assuming Ultima I/II's exact letter mappings transfer
-      unchanged.
-- [ ] **`sub_123A5`, the combat dispatcher** — smaller and more
-      self-contained than the overworld one (strings suggest Attack/
-      Get/Ready/Cast Spell/Negate Time/Ztats/Pass), likely a more
-      tractable first target than `sub_17B54`.
+      highest-value target for everything else (movement, town/dungeon
+      entry, NPC interaction, traps, the "Cmd: " prompt). Given its
+      size, don't try to read it start to finish in one pass: first
+      locate its internal command jump table (same pattern as
+      ultima2's `command_jump_table`) to split it into per-command
+      chunks, then work through those systematically. Cross-reference
+      LairWare's `UltimaMain.c` main loop and `ULTIMA3.TXT`'s command
+      list for the expected command set before assuming Ultima I/II's
+      exact letter mappings transfer unchanged.
+- [ ] Identify `sub_1633B` (called from `updateMonsterAI` and from
+      `sub_1232F`, compares against `word_115CC`) and `sub_1232F`
+      itself (the special-case handler for monster types `'t'`/`'<'`
+      in `updateMonsterAI`) and `sub_17F96`/`sub_128F2` (helpers
+      `canMoveToTile`/a `sub_12909`-family function call into) — all
+      found in passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a

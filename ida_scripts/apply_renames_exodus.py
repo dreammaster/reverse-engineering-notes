@@ -133,6 +133,55 @@ RENAMES = [
      "identical mechanism to the other IDBs' WIND_DIRECTION_TABLE, "
      "same Calm/North/East/South/West selection order -- verified via "
      "ida_bytes.get_word() against all 5 entries, not assumed."),
+
+    # -- first game-specific function identified, found while looking
+    # for the combat command dispatcher the string table pointed at --
+
+    (0x123A5, "updateMonsterAI",
+     "NOT the combat command dispatcher the string-table scan "
+     "suggested (see docs/overview.md) -- that was a false lead caused "
+     "by IDA merging a far-away, separately-located code chunk "
+     "(containing the 'Attack'/'Cast Spell'/'Ztats'/'Pass' combat menu "
+     "logic, around absolute address 0x18D0B, ~0x6500 bytes away) into "
+     "this function's chunk list. This function itself is the "
+     "per-turn monster/NPC movement AI: iterates 32 slots (si=0x1F "
+     "downto 0) over 4 parallel byte arrays at fixed offsets from a "
+     "shared base -- +0x1280 (monster type, 0=empty slot), +0x12A0 "
+     "(display tile), +0x12C0 (X position), +0x12E0 (Y position) -- "
+     "same parallel-array convention as ultima2's monster tracking "
+     "(not an array-of-structs). For each active slot: rolls movement "
+     "chance via stepTimeSeededPrng/adjustAnimSpeed (gated by "
+     "byte_114BC/_gameMode and the monster's own type-derived movement "
+     "class read from [si+1300h]), computes a candidate new position, "
+     "checks it via getMapTileAt+canMoveToTile (see those "
+     "renames), and if clear, updates position and redraws the tile "
+     "(erasing the old marker via the saved 'floor under monster' byte "
+     "at +0x12A0, placing the new one). Monster types 't'(0x74)/'<'"
+     "(0x3C) get special-cased into sub_1232F -- not yet identified, "
+     "possibly a specific monster's unique behavior (thief steal? "
+     "merchant?). The REAL combat command dispatcher (the chunk this "
+     "function absorbed) is now the top target -- see roadmap.md."),
+
+    (0x128DF, "getMapTileAt",
+     "LOW-MEDIUM CONFIDENCE: takes a packed coordinate in bx, computes "
+     "`(bx>>2) + 0x100`-ish offset and returns the byte there in al -- "
+     "i.e. returns a TILE VALUE (not a pointer, despite the "
+     "'get X address' shape of similar-looking helpers in other "
+     "clusters). Bit-level derivation from the packed coordinate not "
+     "fully worked out; named for its evident role (read the map at a "
+     "position) in updateMonsterAI's call context, not independently "
+     "verified against a known map buffer layout."),
+
+    (0x12228, "canMoveToTile",
+     "LOW CONFIDENCE, structural guess: takes getMapTileAt's tile "
+     "value in al plus a monster-slot context (si), returns al=0xFFh "
+     "for passable / 0 for blocked after checking specific tile-type "
+     "codes (4/8/0xCh/0x20h look like passable-terrain IDs) and "
+     "delegating to sub_17F96 (not identified) for slot types 4 and "
+     "0x2C-0x40. Checked 3 times per movement attempt in "
+     "updateMonsterAI (straight/horizontal/vertical probes) -- a "
+     "movement-legality check almost certainly, exact tile-code "
+     "meanings not independently confirmed."),
 ]
 
 

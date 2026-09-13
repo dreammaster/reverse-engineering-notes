@@ -477,7 +477,31 @@ noted in file-formats.md.
 
 **Scope reality check**: this executable alone is comparable in size to
 `ultima1`'s or `ultima2`'s entire sibling projects (which took many
-sessions each, per their git history). The remaining 95 functions
+sessions each, per their git history). The remaining functions
 include several genuinely massive ones (`sub_17B54` spans thousands of
 bytes by itself) — full identification is a multi-session effort, not
 a single pass. See [roadmap.md](roadmap.md) for the prioritized plan.
+
+**First game-specific function identified, and a correction to the
+string-table-based guess above**: `updateMonsterAI` (formerly
+`sub_123A5`) is **not** the combat command dispatcher the string scan
+suggested — that was a false lead caused by IDA merging a far-away
+(~0x6500 bytes distant), separately-located code chunk containing the
+actual "Attack"/"Cast Spell"/"Ztats"/"Pass" combat-menu logic into this
+function's chunk list (a real IDA behavior: a function can have
+disjoint chunks at distant addresses, usually from a compiler placing
+a cold path elsewhere, and IDA's own analysis attributed the strings'
+DATA XREF comments to the chunk owner rather than the chunk itself).
+`updateMonsterAI` itself is the per-turn monster/NPC movement AI:
+iterates 32 slots over 4 parallel byte arrays at fixed offsets from a
+shared base — `+0x1280` (monster type, 0 = empty slot), `+0x12A0`
+(display tile), `+0x12C0` (X), `+0x12E0` (Y) — the same parallel-array
+convention `ultima2` uses for its own monster tracking, not an
+array-of-structs. Rolls a movement chance via `stepTimeSeededPrng`/
+`adjustAnimSpeed`, checks the candidate position via two new low/
+medium-confidence helpers (`getMapTileAt`, `canMoveToTile`), and
+updates position + redraws on success. The **real** combat command
+dispatcher — the absorbed chunk, around absolute address `0x18D0B` — is
+now the actual next target, not `sub_17B54` as first assumed for
+combat specifically (though `sub_17B54` remains the overworld command
+dispatcher).

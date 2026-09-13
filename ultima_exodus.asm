@@ -613,13 +613,13 @@ aAllIsDark      db 0Ah                  ; DATA XREF: sub_12168:loc_121F4↓o
                 db 0Ah,0
 aYouMadeIt      db ' You made it!',0Ah,0 ; DATA XREF: sub_12168+A4↓o
 aNorth          db 'North',0Ah,0        ; DATA XREF: sub_17AEA:loc_17B16↓o
-                                        ; sub_123A5:loc_18CBE↓o
+                                        ; updateMonsterAI:loc_18CBE↓o
 aSouth          db 'South',0Ah,0        ; DATA XREF: sub_17AEA:loc_17B21↓o
-                                        ; sub_123A5:loc_18CC9↓o
+                                        ; updateMonsterAI:loc_18CC9↓o
 aEast           db 'East',0Ah,0         ; DATA XREF: sub_17AEA:loc_17B2C↓o
-                                        ; sub_123A5:loc_18CD4↓o
+                                        ; updateMonsterAI:loc_18CD4↓o
 aWest           db 'West',0Ah,0         ; DATA XREF: sub_17AEA:loc_17B37↓o
-                                        ; sub_123A5:loc_18CDF↓o
+                                        ; updateMonsterAI:loc_18CDF↓o
 aPleaseWait     db 'Please wait...',0Ah,0
                                         ; DATA XREF: sub_17B54:loc_11E0A↓o
                                         ; sub_17B54-5C1C↓o
@@ -717,7 +717,7 @@ loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
                                         ; sub_17B54-5F52↑j
                 call    sub_16FDF
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C1D
                 call    sub_15B51
@@ -728,7 +728,7 @@ loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
 loc_11C1D:                              ; CODE XREF: sub_17B54-5F41↑j
                 call    sub_120AE
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C2E
                 call    sub_15B51
@@ -861,7 +861,7 @@ loc_11D01:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     byte_114BA, 3Fh ; '?' ; jumptable 00011BD1 case 6
                 jnz     short loc_11D17
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 28h ; '('
                 jz      short loc_11D1D
                 cmp     al, 2Ch ; ','
@@ -926,7 +926,7 @@ loc_11D69:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     byte_114BC, 0FFh
                 jnz     short loc_11D8B
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 0F8h
                 jnz     short loc_11D8B
                 call    sub_16366
@@ -1047,7 +1047,7 @@ loc_11E7A:                              ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_11E98
                 lea     si, byte_1197F
                 call    loc_126A9
-                call    sub_128DF
+                call    getMapTileAt
                 shr     al, 1
                 shr     al, 1
                 inc     al
@@ -1213,7 +1213,7 @@ loc_11F9B:                              ; CODE XREF: sub_17B54-5BC0↑j
 
 loc_11FAC:                              ; CODE XREF: sub_17B54-5BDF↑j
                 mov     bx, cx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 94h
                 jb      short loc_11F77
                 cmp     al, 0E4h
@@ -1223,7 +1223,7 @@ loc_11FAC:                              ; CODE XREF: sub_17B54-5BDF↑j
                 add     ch, dh
                 add     ch, dh
                 mov     bx, cx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 24h ; '$'
                 jnz     short loc_11F77
                 mov     byte ptr [bx], 20h ; ' '
@@ -1245,7 +1245,7 @@ loc_11FD6:                              ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_1200F
                 test    dh, 0FFh
                 jnz     short loc_12012
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 0B8h
                 jnz     short loc_12012
                 lea     si, aWhoseKey   ; "Whose key? "
@@ -1302,7 +1302,7 @@ loc_12035:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     byte_114BA, 3Fh ; '?'
                 jz      short loc_12062
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 4
                 ja      short loc_12065
                 mov     al, byte_114BA
@@ -1416,14 +1416,14 @@ loc_120E5:                              ; CODE XREF: sub_120AE+27↑j
                 mov     al, [bx+1955h]
                 mov     bl, [bx+194Dh]
                 mov     bh, al
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 4
                 mov     bl, byte ptr word_11324
                 mov     bh, 0
                 mov     al, [bx+1955h]
                 mov     bl, [bx+194Dh]
                 mov     bh, al
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 88h
                 mov     al, dl
                 and     al, dh
@@ -1489,7 +1489,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 jz      short loc_121F4
                 mov     bx, word_115CC
                 mov     word_114C2, bx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 0
                 mov     dh, 37h ; '7'
                 call    stepTimeSeededPrng
@@ -1546,8 +1546,8 @@ sub_12168       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12228       proc near               ; CODE XREF: sub_123A5+85↓p
-                                        ; sub_123A5+95↓p ...
+canMoveToTile   proc near               ; CODE XREF: updateMonsterAI+85↓p
+                                        ; updateMonsterAI+95↓p ...
                 pushf
                 push    bx
                 cmp     byte ptr [si+1280h], 4
@@ -1556,20 +1556,20 @@ sub_12228       proc near               ; CODE XREF: sub_123A5+85↓p
                 jmp     short loc_12247
 ; ---------------------------------------------------------------------------
 
-loc_12237:                              ; CODE XREF: sub_12228+7↑j
+loc_12237:                              ; CODE XREF: canMoveToTile+7↑j
                 cmp     byte ptr [si+1280h], 40h ; '@'
                 jnb     short loc_1224B
                 cmp     byte ptr [si+1280h], 2Ch ; ','
                 jb      short loc_1224B
                 cmp     al, 0
 
-loc_12247:                              ; CODE XREF: sub_12228+D↑j
+loc_12247:                              ; CODE XREF: canMoveToTile+D↑j
                 jz      short loc_1225B
                 jmp     short loc_12268
 ; ---------------------------------------------------------------------------
 
-loc_1224B:                              ; CODE XREF: sub_12228+14↑j
-                                        ; sub_12228+1B↑j
+loc_1224B:                              ; CODE XREF: canMoveToTile+14↑j
+                                        ; canMoveToTile+1B↑j
                 cmp     al, 4
                 jz      short loc_1225B
                 cmp     al, 8
@@ -1579,24 +1579,24 @@ loc_1224B:                              ; CODE XREF: sub_12228+14↑j
                 cmp     al, 20h ; ' '
                 jnz     short loc_12268
 
-loc_1225B:                              ; CODE XREF: sub_12228:loc_12247↑j
-                                        ; sub_12228+25↑j ...
+loc_1225B:                              ; CODE XREF: canMoveToTile:loc_12247↑j
+                                        ; canMoveToTile+25↑j ...
                 mov     al, 0FFh
                 call    sub_17F96
                 cmp     bx, 0FFFFh
                 jnz     short loc_12268
 
-loc_12265:                              ; CODE XREF: sub_12228+42↓j
+loc_12265:                              ; CODE XREF: canMoveToTile+42↓j
                 pop     bx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_12268:                              ; CODE XREF: sub_12228+21↑j
-                                        ; sub_12228+31↑j ...
+loc_12268:                              ; CODE XREF: canMoveToTile+21↑j
+                                        ; canMoveToTile+31↑j ...
                 mov     al, 0
                 jmp     short loc_12265
-sub_12228       endp
+canMoveToTile   endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -1623,7 +1623,7 @@ loc_1228C:                              ; CODE XREF: sub_17B54-58E3↑j
 ; ---------------------------------------------------------------------------
 
 loc_12299:                              ; CODE XREF: sub_17B54-58C3↑j
-                call    near ptr sub_123A5
+                call    near ptr updateMonsterAI
                 call    sub_122A5
 
 loc_1229F:                              ; CODE XREF: sub_17B54-58CA↑j
@@ -1692,7 +1692,7 @@ loc_122D2:                              ; CODE XREF: sub_122A5+21↑j
                 mov     [si+12C0h], bl
                 mov     [si+12E0h], bh
                 mov     byte ptr [si+1300h], 0C0h
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, [si+12A0h]
                 jnz     short loc_12328
                 mov     al, [si+1280h]
@@ -1710,7 +1710,7 @@ sub_122A5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1232F       proc near               ; CODE XREF: sub_123A5:loc_12464↓p
+sub_1232F       proc near               ; CODE XREF: updateMonsterAI:loc_12464↓p
                 pushf
                 push    ax
                 push    bx
@@ -1779,7 +1779,7 @@ sub_1232F       endp
 
 ; Attributes: bp-based frame
 
-sub_123A5       proc far                ; CODE XREF: sub_17B54:loc_12299↑p
+updateMonsterAI proc far                ; CODE XREF: sub_17B54:loc_12299↑p
 
 ; FUNCTION CHUNK AT 7DA8 SIZE 0000005A BYTES
 ; FUNCTION CHUNK AT 88AA SIZE 00000097 BYTES
@@ -1802,20 +1802,20 @@ sub_123A5       proc far                ; CODE XREF: sub_17B54:loc_12299↑p
                 push    si
                 mov     si, 1Fh
 
-loc_123B1:                              ; CODE XREF: sub_123A5+103↓j
+loc_123B1:                              ; CODE XREF: updateMonsterAI+103↓j
                 cmp     byte ptr [si+1280h], 0
                 jnz     short loc_123BB
 
-loc_123B8:                              ; CODE XREF: sub_123A5+3A↓j
-                                        ; sub_123A5+50↓j ...
+loc_123B8:                              ; CODE XREF: updateMonsterAI+3A↓j
+                                        ; updateMonsterAI+50↓j ...
                 jmp     loc_124A5
 ; ---------------------------------------------------------------------------
 
-loc_123BB:                              ; CODE XREF: sub_123A5+11↑j
+loc_123BB:                              ; CODE XREF: updateMonsterAI+11↑j
                 cmp     byte_114BC, 0
                 jnz     short loc_123D3
 
-loc_123C2:                              ; CODE XREF: sub_123A5+42↓j
+loc_123C2:                              ; CODE XREF: updateMonsterAI+42↓j
                 call    sub_1633B
                 cmp     dx, word_115CC
                 jnz     short loc_12425
@@ -1824,7 +1824,7 @@ loc_123C2:                              ; CODE XREF: sub_123A5+42↓j
                 jmp     loc_188AA
 ; ---------------------------------------------------------------------------
 
-loc_123D3:                              ; CODE XREF: sub_123A5+1B↑j
+loc_123D3:                              ; CODE XREF: updateMonsterAI+1B↑j
                 mov     al, [si+1300h]
                 and     al, 0C0h
                 mov     cl, 6
@@ -1839,7 +1839,7 @@ loc_123D3:                              ; CODE XREF: sub_123A5+1B↑j
                 jmp     short loc_12425
 ; ---------------------------------------------------------------------------
 
-loc_123EE:                              ; CODE XREF: sub_123A5+3E↑j
+loc_123EE:                              ; CODE XREF: updateMonsterAI+3E↑j
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 shl     dl, 1
@@ -1863,25 +1863,25 @@ loc_123EE:                              ; CODE XREF: sub_123A5+3E↑j
                 and     dh, 3Fh
                 jz      short loc_123B8
 
-loc_12425:                              ; CODE XREF: sub_123A5+24↑j
-                                        ; sub_123A5+47↑j
+loc_12425:                              ; CODE XREF: updateMonsterAI+24↑j
+                                        ; updateMonsterAI+47↑j
                 mov     bx, dx
-                call    sub_128DF
-                call    sub_12228
+                call    getMapTileAt
+                call    canMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_12469
                 mov     dl, [si+12C0h]
                 mov     bx, dx
-                call    sub_128DF
-                call    sub_12228
+                call    getMapTileAt
+                call    canMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_12469
                 add     dl, cl
                 and     dl, 3Fh
                 mov     dh, [si+12E0h]
                 mov     bx, dx
-                call    sub_128DF
-                call    sub_12228
+                call    getMapTileAt
+                call    canMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_12469
                 cmp     byte ptr [si+1280h], 74h ; 't'
@@ -1889,27 +1889,27 @@ loc_12425:                              ; CODE XREF: sub_123A5+24↑j
                 cmp     byte ptr [si+1280h], 3Ch ; '<'
                 jnz     short loc_12467
 
-loc_12464:                              ; CODE XREF: sub_123A5+B6↑j
-                                        ; sub_123A5+F7↓j ...
+loc_12464:                              ; CODE XREF: updateMonsterAI+B6↑j
+                                        ; updateMonsterAI+F7↓j ...
                 call    sub_1232F
 
-loc_12467:                              ; CODE XREF: sub_123A5+BD↑j
+loc_12467:                              ; CODE XREF: updateMonsterAI+BD↑j
                 jmp     short loc_124A5
 ; ---------------------------------------------------------------------------
 
-loc_12469:                              ; CODE XREF: sub_123A5+8A↑j
-                                        ; sub_123A5+9A↑j ...
+loc_12469:                              ; CODE XREF: updateMonsterAI+8A↑j
+                                        ; updateMonsterAI+9A↑j ...
                 cmp     dx, word_115CC
                 jz      short loc_124A5
                 mov     bh, [si+12E0h]
                 mov     bl, [si+12C0h]
-                call    sub_128DF
+                call    getMapTileAt
                 mov     al, [si+12A0h]
                 mov     [bx], al
                 mov     [si+12E0h], dh
                 mov     [si+12C0h], dl
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     [si+12A0h], al
                 mov     al, [si+1280h]
                 mov     [bx], al
@@ -1918,14 +1918,14 @@ loc_12469:                              ; CODE XREF: sub_123A5+8A↑j
                 cmp     byte ptr [si+1280h], 3Ch ; '<'
                 jz      short loc_12464
 
-loc_124A5:                              ; CODE XREF: sub_123A5:loc_123B8↑j
-                                        ; sub_123A5:loc_12467↑j ...
+loc_124A5:                              ; CODE XREF: updateMonsterAI:loc_123B8↑j
+                                        ; updateMonsterAI:loc_12467↑j ...
                 dec     si
                 js      short loc_124AB
                 jmp     loc_123B1
 ; ---------------------------------------------------------------------------
 
-loc_124AB:                              ; CODE XREF: sub_123A5+101↑j
+loc_124AB:                              ; CODE XREF: updateMonsterAI+101↑j
                 pop     si
                 pop     dx
                 pop     cx
@@ -1934,7 +1934,7 @@ loc_124AB:                              ; CODE XREF: sub_123A5+101↑j
                 popf
                 pop     bp
                 retn
-sub_123A5       endp
+updateMonsterAI endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -2005,7 +2005,7 @@ loc_12509:                              ; DATA XREF: seg000:2838↓r
                                         ; DL = hundredths of seconds
                 mov     word_12AA1, dx
 
-loc_1255C:                              ; DATA XREF: sub_123A5+6685↓o
+loc_1255C:                              ; DATA XREF: updateMonsterAI+6685↓o
                                         ; sub_17B54+10C2↓o
                 mov     word_12A99, dx
                 mov     word_12A9F, cx
@@ -2053,7 +2053,7 @@ loc_1259E:                              ; CODE XREF: sub_17B54-5C3D↑p
 loc_125AE:                              ; CODE XREF: seg000:2621↓j
                                         ; seg000:262A↓j
                 mov     bx, cx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 0
                 jz      short loc_1261A
                 mov     ah, 40h ; '@'
@@ -2562,7 +2562,7 @@ sub_128C6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_128DF       proc near               ; CODE XREF: sub_17B54-5F46↑p
+getMapTileAt    proc near               ; CODE XREF: sub_17B54-5F46↑p
                                         ; sub_17B54-5F30↑p ...
                 pushf
                 mov     al, bl
@@ -2574,7 +2574,7 @@ sub_128DF       proc near               ; CODE XREF: sub_17B54-5F46↑p
                 mov     al, [bx]
                 popf
                 retn
-sub_128DF       endp
+getMapTileAt    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -3984,8 +3984,8 @@ printStringAt   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-adjustAnimSpeed proc near               ; CODE XREF: sub_123A5+57↑p
-                                        ; sub_123A5+6E↑p ...
+adjustAnimSpeed proc near               ; CODE XREF: updateMonsterAI+57↑p
+                                        ; updateMonsterAI+6E↑p ...
                 pushf
                 cmp     byte_114BC, 0
                 jnz     short loc_1561D
@@ -4877,7 +4877,7 @@ aShrineWhoEnter db 'shrine!',0Ah        ; DATA XREF: sub_16366+5↓o
 
 
 sub_15B28       proc near               ; CODE XREF: sub_17B54:loc_11C35↑p
-                                        ; sub_123A5+6690↓p ...
+                                        ; updateMonsterAI+6690↓p ...
                 pushf
                 cmp     byte_114BC, 80h
                 jz      short loc_15B46
@@ -5014,7 +5014,7 @@ loc_15BF6:                              ; CODE XREF: sub_17B54-1F3C↓j
                 jnz     short loc_15C20
                 push    ax
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 0F4h
                 call    loc_127CD
                 mov     [bx], al
@@ -5033,7 +5033,7 @@ loc_15C1D:                              ; CODE XREF: sub_17B54-1F6E↑j
 loc_15C20:                              ; CODE XREF: sub_17B54-1F4E↑j
                 mov     di, bx
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 0F4h
                 call    loc_127CD
                 mov     ah, al
@@ -5272,7 +5272,7 @@ sub_15D67       endp
 
 
 sub_15D83       proc near               ; CODE XREF: sub_17B54-5DF4↑p
-                                        ; sub_123A5+69AC↓p
+                                        ; updateMonsterAI+69AC↓p
                 mov     al, [bx+17h]
                 cmp     al, 44h ; 'D'
                 jz      short loc_15DC9
@@ -5668,7 +5668,7 @@ loc_1603E:                              ; CODE XREF: seg000:6051↓j
                 call    stepTimeSeededPrng
                 mov     bh, dl
                 mov     cx, bx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 30h ; '0'
                 jz      short loc_1603E
                 cmp     al, 80h
@@ -5821,7 +5821,7 @@ loc_16185:                              ; CODE XREF: seg000:6158↑j
                 mov     bx, word_115CC
                 cmp     byte_114BC, 1
                 jz      short loc_161BB
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 24h ; '$'
                 jb      short loc_161CE
                 cmp     al, 27h ; '''
@@ -6042,7 +6042,7 @@ sub_162FD       endp
 
 
 sub_1633B       proc near               ; CODE XREF: sub_1232F+E↑p
-                                        ; sub_123A5:loc_123C2↑p ...
+                                        ; updateMonsterAI:loc_123C2↑p ...
                 pushf
                 push    ax
                 mov     al, byte ptr word_115CC
@@ -7495,7 +7495,7 @@ sub_16D81       endp
 
 
 sub_16DC1       proc near               ; CODE XREF: sub_17B54-5ADD↑p
-                                        ; sub_123A5+6986↓p
+                                        ; updateMonsterAI+6986↓p
                 pushf
                 push    ax
                 push    bx
@@ -8358,7 +8358,7 @@ loc_17357:                              ; CODE XREF: sub_17347+B↑j
                 add     cl, byte_11322
                 and     cx, 3F3Fh
                 mov     bx, cx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 0
                 jz      short loc_173CA
                 cmp     al, 2Ch ; ','
@@ -8366,7 +8366,7 @@ loc_17357:                              ; CODE XREF: sub_17347+B↑j
                 mov     byte ptr [bx], 30h ; '0'
                 mov     bx, word_11320
                 mov     word_11320, cx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 0
                 cmp     cx, word_115CC
                 jz      short loc_173E7
@@ -8395,7 +8395,7 @@ loc_173CA:                              ; CODE XREF: sub_17347+3C↑j
                 mov     byte ptr [bx], 30h ; '0'
                 mov     bx, word_11320
                 mov     word_11320, cx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     byte ptr [bx], 0
                 call    loc_127CD
 
@@ -8722,7 +8722,7 @@ loc_175A9:                              ; CODE XREF: sub_17B54-624↑j
                 mov     dl, [bx+12C0h]
                 mov     byte ptr [bx+1280h], 0
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 mov     [bx], ah
                 jmp     short loc_175F6
 ; ---------------------------------------------------------------------------
@@ -8778,7 +8778,7 @@ loc_1762F:                              ; CODE XREF: sub_17B54-624↑j
 
 loc_1763E:                              ; CODE XREF: sub_17B54-51B↑j
                 mov     cl, bl
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 7Ch ; '|'
                 jz      short loc_1764A
                 jmp     short loc_176BF
@@ -9731,7 +9731,7 @@ sub_17D74       endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
-;   ADDITIONAL PARENT FUNCTION sub_123A5
+;   ADDITIONAL PARENT FUNCTION updateMonsterAI
 
 loc_17DA8:                              ; CODE XREF: sub_17B54:loc_11F22↑j
                                         ; sub_17B54:loc_12015↑j ...
@@ -9842,7 +9842,7 @@ loc_17E46:                              ; CODE XREF: sub_17B54+2EA↑j
 
 
 sub_17E48       proc near               ; CODE XREF: sub_17B54+2EC↑p
-                                        ; sub_123A5+6960↓p
+                                        ; updateMonsterAI+6960↓p
                 pushf
                 push    ax
                 push    bx
@@ -10051,7 +10051,7 @@ sub_17EFA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17F96       proc near               ; CODE XREF: sub_12228+35↑p
+sub_17F96       proc near               ; CODE XREF: canMoveToTile+35↑p
                                         ; sub_17B54-1F54↑p ...
                 pushf
                 push    cx
@@ -10110,7 +10110,7 @@ loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
                 cmp     bx, 0FFFFh
                 jnz     short loc_1803A
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 94h
                 jb      short loc_18034
                 cmp     al, 0E4h
@@ -10118,7 +10118,7 @@ loc_17FC6:                              ; CODE XREF: sub_17B54-5F83↑j
                 add     dl, cl
                 add     dh, ch
                 mov     bx, dx
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 40h ; '@'
                 jnz     short loc_18034
                 mov     si, di
@@ -10352,7 +10352,7 @@ loc_18190:                              ; CODE XREF: sub_17B54-5F83↑j
                 mov     bx, word_115CC
                 cmp     byte_114BC, 1
                 jz      short loc_181C7
-                call    sub_128DF
+                call    getMapTileAt
                 cmp     al, 24h ; '$'
                 jb      short loc_181E0
                 cmp     al, 27h ; '''
@@ -10832,25 +10832,25 @@ byte_184E3      db 0                    ; DATA XREF: seg000:5FAD↑r
 aBrandImg       db 'BRAND.IMG',0        ; DATA XREF: sub_17B54+1A03↓o
 aTimeImg        db 'TIME.IMG',0         ; DATA XREF: sub_17B54+18D4↓o
 aFountainImg    db 'FOUNTAIN.IMG',0     ; DATA XREF: sub_17B54+190A↓o
-aCnflctAUlt     db 'CNFLCT_A.ULT',0     ; DATA XREF: sub_123A5:loc_18942↓o
-aCnflctBUlt     db 'CNFLCT_B.ULT',0     ; DATA XREF: sub_123A5+65E9↓o
-aCnflctCUlt     db 'CNFLCT_C.ULT',0     ; DATA XREF: sub_123A5+657C↓o
-                                        ; sub_123A5+65F9↓o ...
-aCnflctFUlt     db 'CNFLCT_F.ULT',0     ; DATA XREF: sub_123A5+65F1↓o
-aCnflctGUlt     db 'CNFLCT_G.ULT',0     ; DATA XREF: sub_123A5:loc_18986↓o
-                                        ; sub_123A5+6614↓o
-aCnflctMUlt     db 'CNFLCT_M.ULT',0     ; DATA XREF: sub_123A5+65C2↓o
-aCnflctQUlt     db 'CNFLCT_Q.ULT',0     ; DATA XREF: sub_123A5+65AA↓o
-aCnflctRUlt     db 'CNFLCT_R.ULT',0     ; DATA XREF: sub_123A5+65B5↓o
-aCnflctSUlt     db 'CNFLCT_S.ULT',0     ; DATA XREF: sub_123A5+658F↓o
+aCnflctAUlt     db 'CNFLCT_A.ULT',0     ; DATA XREF: updateMonsterAI:loc_18942↓o
+aCnflctBUlt     db 'CNFLCT_B.ULT',0     ; DATA XREF: updateMonsterAI+65E9↓o
+aCnflctCUlt     db 'CNFLCT_C.ULT',0     ; DATA XREF: updateMonsterAI+657C↓o
+                                        ; updateMonsterAI+65F9↓o ...
+aCnflctFUlt     db 'CNFLCT_F.ULT',0     ; DATA XREF: updateMonsterAI+65F1↓o
+aCnflctGUlt     db 'CNFLCT_G.ULT',0     ; DATA XREF: updateMonsterAI:loc_18986↓o
+                                        ; updateMonsterAI+6614↓o
+aCnflctMUlt     db 'CNFLCT_M.ULT',0     ; DATA XREF: updateMonsterAI+65C2↓o
+aCnflctQUlt     db 'CNFLCT_Q.ULT',0     ; DATA XREF: updateMonsterAI+65AA↓o
+aCnflctRUlt     db 'CNFLCT_R.ULT',0     ; DATA XREF: updateMonsterAI+65B5↓o
+aCnflctSUlt     db 'CNFLCT_S.ULT',0     ; DATA XREF: updateMonsterAI+658F↓o
 byte_18579      db 55h, 16h, 20h, 39h, 0, 48h, 0, 50h, 0, 4Dh, 0, 4Bh
-                                        ; DATA XREF: sub_123A5+6840↓o
+                                        ; DATA XREF: updateMonsterAI+6840↓o
                 db 56h, 2Fh, 0, 1Fh, 0, 2Fh, 52h, 13h, 5Ah, 2Ch, 4Eh, 31h
                 db 43h, 2Eh, 41h, 1Eh, 42h, 30h, 44h, 20h, 45h, 12h, 46h
                 db 21h, 47h, 22h, 49h, 17h, 4Bh, 25h, 50h, 19h, 51h, 10h
                 db 53h, 1Fh, 54h, 14h, 57h, 11h, 58h, 2Dh, 48h, 23h, 4Ah
                 db 24h, 4Ch, 26h, 4Dh, 32h, 4Fh, 18h, 59h, 15h
-jpt_18BF8       dw offset loc_18D8D     ; DATA XREF: sub_123A5+6853↓r
+jpt_18BF8       dw offset loc_18D8D     ; DATA XREF: updateMonsterAI+6853↓r
                 dw offset loc_18D83     ; jump table for switch statement
                 dw offset loc_18CBE
                 dw offset loc_18CC9
@@ -10934,27 +10934,27 @@ aThieves        db 'Thieves',0          ; DATA XREF: sub_18AE6+5D↓o
 aEs             db 'es',0Ah             ; DATA XREF: sub_18AE6+37↓o
                                         ; sub_18AE6+3F↓o
                 db 0Ah,0
-aConflict       db 0Ah                  ; DATA XREF: sub_123A5+6563↓o
+aConflict       db 0Ah                  ; DATA XREF: updateMonsterAI+6563↓o
                 db '---Conflict!!---',0Ah
                 db '->',0
-aPlayer         db '----Player ',0      ; DATA XREF: sub_123A5:loc_18B76↓o
-asc_187FD       db '----',0Ah,0         ; DATA XREF: sub_123A5+67E0↓o
-aAttackDir      db ' Attack',0Ah        ; DATA XREF: sub_123A5+6A16↓o
+aPlayer         db '----Player ',0      ; DATA XREF: updateMonsterAI:loc_18B76↓o
+asc_187FD       db '----',0Ah,0         ; DATA XREF: updateMonsterAI+67E0↓o
+aAttackDir      db ' Attack',0Ah        ; DATA XREF: updateMonsterAI+6A16↓o
                 db 'Dir-',0
-aMissed         db 'Missed!',0Ah,0      ; DATA XREF: sub_123A5:loc_18EAF↓o
-aHit            db 0Ah                  ; DATA XREF: sub_123A5+6B53↓o
+aMissed         db 'Missed!',0Ah,0      ; DATA XREF: updateMonsterAI:loc_18EAF↓o
+aHit            db 0Ah                  ; DATA XREF: updateMonsterAI+6B53↓o
                 db 'Hit!',0Ah,0
 aKilledExp      db 'Killed! Exp.+',0    ; DATA XREF: sub_18F5A:loc_18F74↓o
 aReadyAWeapon   db 'Ready a weapon!',0Ah,0
-                                        ; DATA XREF: sub_123A5:loc_18CF1↓o
-aCastSpell      db 'Cast Spell!',0Ah,0  ; DATA XREF: sub_123A5:loc_18D38↓o
-aNegateTime     db 'Negate Time!',0Ah,0 ; DATA XREF: sub_123A5:loc_18D57↓o
+                                        ; DATA XREF: updateMonsterAI:loc_18CF1↓o
+aCastSpell      db 'Cast Spell!',0Ah,0  ; DATA XREF: updateMonsterAI:loc_18D38↓o
+aNegateTime     db 'Negate Time!',0Ah,0 ; DATA XREF: updateMonsterAI:loc_18D57↓o
 aNotUsableCmd   db 'Not usable cmd!',0Ah,0
-                                        ; DATA XREF: sub_123A5:loc_18D8D↓o
-aZtats          db 'Ztats',0Ah,0        ; DATA XREF: sub_123A5:loc_18D0B↓o
+                                        ; DATA XREF: updateMonsterAI:loc_18D8D↓o
+aZtats          db 'Ztats',0Ah,0        ; DATA XREF: updateMonsterAI:loc_18D0B↓o
 aVictory        db '****Victory!****',0Ah ; DATA XREF: sub_17B54+1467↓o
                 db 0Ah,0
-aPass           db 'Pass',0Ah,0         ; DATA XREF: sub_123A5:loc_18D83↓o
+aPass           db 'Pass',0Ah,0         ; DATA XREF: updateMonsterAI:loc_18D83↓o
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
@@ -10979,16 +10979,16 @@ loc_188A7:                              ; CODE XREF: sub_17B54+D42↑j
                 jmp     loc_11BD5
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 ;   ADDITIONAL PARENT FUNCTION sub_17B54
 
-loc_188AA:                              ; CODE XREF: sub_123A5+2B↑j
+loc_188AA:                              ; CODE XREF: updateMonsterAI+2B↑j
                                         ; sub_17B54+D4E↑j
                 call    loc_127CD
                 mov     di, bx
                 mov     bh, [di+12E0h]
                 mov     bl, [di+12C0h]
-                call    sub_128DF
+                call    getMapTileAt
                 mov     al, [di+12A0h]
                 cmp     al, 0
                 jz      short loc_188CA
@@ -10997,7 +10997,7 @@ loc_188AA:                              ; CODE XREF: sub_123A5+2B↑j
                 and     al, 3
                 or      al, 24h
 
-loc_188CA:                              ; CODE XREF: sub_123A5+651B↑j
+loc_188CA:                              ; CODE XREF: updateMonsterAI+651B↑j
                 mov     [bx], al
                 mov     al, [di+1280h]
                 shr     al, 1
@@ -11011,21 +11011,21 @@ loc_188CA:                              ; CODE XREF: sub_123A5+651B↑j
                 mov     byte ptr [bx], 2Ch ; ','
 
 loc_188EA:                              ; CODE XREF: sub_17B54+886↑j
-                                        ; sub_123A5+6539↑j ...
+                                        ; updateMonsterAI+6539↑j ...
                 mov     byte_184E3, 0
                 lea     bx, byte_11280
                 mov     cx, 20h ; ' '
 
-loc_188F6:                              ; CODE XREF: sub_123A5+6561↓j
+loc_188F6:                              ; CODE XREF: updateMonsterAI+6561↓j
                 cmp     byte ptr [bx], 4Ch ; 'L'
                 jz      short loc_18900
                 cmp     byte ptr [bx], 48h ; 'H'
                 jnz     short loc_18905
 
-loc_18900:                              ; CODE XREF: sub_123A5+6554↑j
+loc_18900:                              ; CODE XREF: updateMonsterAI+6554↑j
                 mov     byte ptr [bx+80h], 0C0h
 
-loc_18905:                              ; CODE XREF: sub_123A5+6559↑j
+loc_18905:                              ; CODE XREF: updateMonsterAI+6559↑j
                 inc     bx
                 loop    loc_188F6
                 lea     si, aConflict   ; "\n---Conflict!!---\n->"
@@ -11040,7 +11040,7 @@ loc_18905:                              ; CODE XREF: sub_123A5+6559↑j
                 jmp     loc_189BD
 ; ---------------------------------------------------------------------------
 
-loc_18928:                              ; CODE XREF: sub_123A5+657A↑j
+loc_18928:                              ; CODE XREF: updateMonsterAI+657A↑j
                 cmp     byte_184E2, 0Fh
                 jnz     short loc_18948
                 mov     byte_184E2, 17h
@@ -11048,17 +11048,17 @@ loc_18928:                              ; CODE XREF: sub_123A5+657A↑j
                 cmp     byte_114BA, 0Bh
                 jnz     short loc_18942
                 jmp     short loc_189BD
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 ; ---------------------------------------------------------------------------
                 align 2
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18942:                              ; CODE XREF: sub_123A5+6598↑j
+loc_18942:                              ; CODE XREF: updateMonsterAI+6598↑j
                 lea     dx, aCnflctAUlt ; "CNFLCT_A.ULT"
                 jmp     short loc_189BD
 ; ---------------------------------------------------------------------------
 
-loc_18948:                              ; CODE XREF: sub_123A5+6588↑j
+loc_18948:                              ; CODE XREF: updateMonsterAI+6588↑j
                 cmp     byte_114BA, 0Bh
                 jnz     short loc_18960
                 lea     dx, aCnflctQUlt ; "CNFLCT_Q.ULT"
@@ -11068,25 +11068,25 @@ loc_18948:                              ; CODE XREF: sub_123A5+6588↑j
                 jmp     short loc_189BD
 ; ---------------------------------------------------------------------------
 
-loc_18960:                              ; CODE XREF: sub_123A5+65A8↑j
+loc_18960:                              ; CODE XREF: updateMonsterAI+65A8↑j
                 cmp     byte_184E2, 10h
                 jnb     short loc_18972
                 lea     dx, aCnflctMUlt ; "CNFLCT_M.ULT"
                 cmp     byte_184E2, 0Bh
                 jnb     short loc_189BD
 
-loc_18972:                              ; CODE XREF: sub_123A5+65C0↑j
+loc_18972:                              ; CODE XREF: updateMonsterAI+65C0↑j
                 mov     al, byte_1259D
                 cmp     al, 9
                 jnz     short loc_18986
                 mov     bx, word_115CC
-                call    sub_128DF
+                call    getMapTileAt
                 and     al, 3
                 jnz     short loc_18986
                 mov     al, 8
 
-loc_18986:                              ; CODE XREF: sub_123A5+65D2↑j
-                                        ; sub_123A5+65DD↑j
+loc_18986:                              ; CODE XREF: updateMonsterAI+65D2↑j
+                                        ; updateMonsterAI+65DD↑j
                 lea     dx, aCnflctGUlt ; "CNFLCT_G.ULT"
                 cmp     al, 1
                 jz      short loc_189BD
@@ -11108,8 +11108,8 @@ loc_18986:                              ; CODE XREF: sub_123A5+65D2↑j
                 jz      short loc_189BD
                 lea     dx, aCnflctGUlt ; "CNFLCT_G.ULT"
 
-loc_189BD:                              ; CODE XREF: sub_123A5+6580↑j
-                                        ; sub_123A5+659A↑j ...
+loc_189BD:                              ; CODE XREF: updateMonsterAI+6580↑j
+                                        ; updateMonsterAI+659A↑j ...
                 lea     bx, entryFromBootup
                 mov     cx, 0B0h
                 call    loadFile
@@ -11128,7 +11128,7 @@ loc_189BD:                              ; CODE XREF: sub_123A5+6580↑j
                 mov     si, ax
                 lea     si, [si+14CCh]
 
-loc_189EC:                              ; CODE XREF: sub_123A5+6682↓j
+loc_189EC:                              ; CODE XREF: updateMonsterAI+6682↓j
                 cmp     byte ptr [si+11h], 47h ; 'G'
                 jz      short loc_18A04
                 cmp     byte ptr [si+11h], 50h ; 'P'
@@ -11138,8 +11138,8 @@ loc_189EC:                              ; CODE XREF: sub_123A5+6682↓j
                 jmp     short loc_18A23
 ; ---------------------------------------------------------------------------
 
-loc_18A04:                              ; CODE XREF: sub_123A5+664B↑j
-                                        ; sub_123A5+6651↑j
+loc_18A04:                              ; CODE XREF: updateMonsterAI+664B↑j
+                                        ; updateMonsterAI+6651↑j
                 mov     bl, [di+0A0h]
                 mov     bh, [di+0A4h]
                 mov     al, [si+17h]
@@ -11150,7 +11150,7 @@ loc_18A04:                              ; CODE XREF: sub_123A5+664B↑j
                 mov     al, [di+0ACh]
                 mov     [bx], al
 
-loc_18A23:                              ; CODE XREF: sub_123A5+665D↑j
+loc_18A23:                              ; CODE XREF: updateMonsterAI+665D↑j
                 sub     si, 40h ; '@'
                 dec     di
                 loop    loc_189EC
@@ -11171,22 +11171,22 @@ loc_18A23:                              ; CODE XREF: sub_123A5+665D↑j
                 jmp     short loc_18A64
 ; ---------------------------------------------------------------------------
 
-loc_18A54:                              ; CODE XREF: sub_123A5+6693↑j
-                                        ; sub_123A5+66A8↑j
+loc_18A54:                              ; CODE XREF: updateMonsterAI+6693↑j
+                                        ; updateMonsterAI+66A8↑j
                 mov     cx, 8
                 jmp     short loc_18A64
 ; ---------------------------------------------------------------------------
 
-loc_18A59:                              ; CODE XREF: sub_123A5+669A↑j
-                                        ; sub_123A5+66A1↑j
+loc_18A59:                              ; CODE XREF: updateMonsterAI+669A↑j
+                                        ; updateMonsterAI+66A1↑j
                 mov     dh, 8
                 call    stepTimeSeededPrng
                 inc     dl
                 mov     cl, dl
                 mov     ch, 0
 
-loc_18A64:                              ; CODE XREF: sub_123A5+66AD↑j
-                                        ; sub_123A5+66B2↑j ...
+loc_18A64:                              ; CODE XREF: updateMonsterAI+66AD↑j
+                                        ; updateMonsterAI+66B2↑j ...
                 mov     dh, 8
                 call    stepTimeSeededPrng
                 mov     bl, dl
@@ -11220,12 +11220,12 @@ loc_18A64:                              ; CODE XREF: sub_123A5+66AD↑j
                 call    playSoundEffect
                 call    sub_16C53
                 jmp     loc_18B52
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18AC4       proc near               ; CODE XREF: sub_123A5+666A↑p
+sub_18AC4       proc near               ; CODE XREF: updateMonsterAI+666A↑p
                 pushf
                 push    bx
                 push    cx
@@ -11257,8 +11257,8 @@ sub_18AC4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18AE6       proc near               ; CODE XREF: sub_123A5+656C↑p
-                                        ; sub_123A5+6B50↓p
+sub_18AE6       proc near               ; CODE XREF: updateMonsterAI+656C↑p
+                                        ; updateMonsterAI+6B50↓p
                 pushf
                 push    ax
                 push    si
@@ -11330,10 +11330,10 @@ loc_18B4A:                              ; CODE XREF: sub_18AE6+29↑j
 sub_18AE6       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 ;   ADDITIONAL PARENT FUNCTION sub_17B54
 
-loc_18B52:                              ; CODE XREF: sub_123A5+671C↑j
+loc_18B52:                              ; CODE XREF: updateMonsterAI+671C↑j
                                         ; sub_17B54:loc_19212↓j
                 call    sub_16FDF
                 mov     byte_184E1, 0
@@ -11352,7 +11352,7 @@ loc_18B5A:                              ; CODE XREF: sub_17B54:loc_18C39↓j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18B76:                              ; CODE XREF: sub_123A5+67CC↑j
+loc_18B76:                              ; CODE XREF: updateMonsterAI+67CC↑j
                 lea     si, aPlayer     ; "----Player "
                 call    loc_126A9
                 mov     al, byte_184E1
@@ -11361,7 +11361,7 @@ loc_18B76:                              ; CODE XREF: sub_123A5+67CC↑j
                 lea     si, asc_187FD   ; "----\n"
                 call    loc_126A9
 
-loc_18B8C:                              ; CODE XREF: sub_123A5+69F7↓j
+loc_18B8C:                              ; CODE XREF: updateMonsterAI+69F7↓j
                 mov     al, 10h
                 call    writeCharacter
                 mov     byte_12AAB, 2
@@ -11375,8 +11375,8 @@ loc_18B8C:                              ; CODE XREF: sub_123A5+69F7↓j
                 jb      short loc_18BA7
                 sub     bl, 3Ch ; '<'
 
-loc_18BA7:                              ; CODE XREF: sub_123A5+67FD↑j
-                                        ; sub_123A5+680D↓j
+loc_18BA7:                              ; CODE XREF: updateMonsterAI+67FD↑j
+                                        ; updateMonsterAI+680D↓j
                 call    pollKeypressAndAnimate
                 jnz     short loc_18BD5
                 mov     ah, 2Ch
@@ -11398,7 +11398,7 @@ loc_18BA7:                              ; CODE XREF: sub_123A5+67FD↑j
                 jmp     short loc_18BE2
 ; ---------------------------------------------------------------------------
 
-loc_18BD5:                              ; CODE XREF: sub_123A5+6805↑j
+loc_18BD5:                              ; CODE XREF: updateMonsterAI+6805↑j
                 call    getKeypressAndWaitRaw
                 cmp     al, 61h ; 'a'
                 jb      short loc_18BE2
@@ -11406,8 +11406,8 @@ loc_18BD5:                              ; CODE XREF: sub_123A5+6805↑j
                 ja      short loc_18BE2
                 sub     al, 20h ; ' '
 
-loc_18BE2:                              ; CODE XREF: sub_123A5+682E↑j
-                                        ; sub_123A5+6835↑j ...
+loc_18BE2:                              ; CODE XREF: updateMonsterAI+682E↑j
+                                        ; updateMonsterAI+6835↑j ...
                 mov     cx, 21h ; '!'
                 lea     di, byte_18579
                 repne scasw
@@ -11415,19 +11415,19 @@ loc_18BE2:                              ; CODE XREF: sub_123A5+682E↑j
                 jmp     loc_17DBA
 ; ---------------------------------------------------------------------------
 
-loc_18BF0:                              ; CODE XREF: sub_123A5+6846↑j
+loc_18BF0:                              ; CODE XREF: updateMonsterAI+6846↑j
                 mov     bx, 21h ; '!'
                 sub     bx, cx
                 dec     bx
                 shl     bx, 1           ; switch 33 cases
                 jmp     jpt_18BF8[bx]   ; switch jump
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
-;   ADDITIONAL PARENT FUNCTION sub_123A5
+;   ADDITIONAL PARENT FUNCTION updateMonsterAI
 
 loc_18BFC:                              ; CODE XREF: sub_17B54-5F78↑j
-                                        ; sub_123A5+67CE↑j ...
+                                        ; updateMonsterAI+67CE↑j ...
                 mov     al, 1
                 call    sub_17E02
                 call    sub_15B28
@@ -11460,10 +11460,10 @@ loc_18C39:                              ; CODE XREF: sub_17B54+10DD↑j
                 jmp     loc_18B5A
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18C3C:                              ; CODE XREF: sub_123A5+6921↓j
-                                        ; sub_123A5+692C↓j ...
+loc_18C3C:                              ; CODE XREF: updateMonsterAI+6921↓j
+                                        ; updateMonsterAI+692C↓j ...
                 call    loc_126A9
                 mov     bl, byte_184E1
                 mov     bh, 0
@@ -11497,15 +11497,15 @@ loc_18C3C:                              ; CODE XREF: sub_123A5+6921↓j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18C93:                              ; CODE XREF: sub_123A5+68B5↑j
-                                        ; sub_123A5+68BC↑j ...
+loc_18C93:                              ; CODE XREF: updateMonsterAI+68B5↑j
+                                        ; updateMonsterAI+68BC↑j ...
                 jmp     loc_17DCC
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18C96       proc near               ; CODE XREF: sub_123A5+68C5↑p
+sub_18C96       proc near               ; CODE XREF: updateMonsterAI+68C5↑p
                 pushf
                 push    cx
                 cmp     al, 1
@@ -11538,9 +11538,9 @@ loc_18CB5:                              ; CODE XREF: sub_18C96:loc_18CB5↓j
 sub_18C96       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18CBE:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CBE:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNorth      ; jumptable 00018BF8 case 2
                 mov     dh, 0FFh
@@ -11548,7 +11548,7 @@ loc_18CBE:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18C3C
 ; ---------------------------------------------------------------------------
 
-loc_18CC9:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CC9:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aSouth      ; jumptable 00018BF8 case 3
                 mov     dh, 1
@@ -11556,7 +11556,7 @@ loc_18CC9:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18C3C
 ; ---------------------------------------------------------------------------
 
-loc_18CD4:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CD4:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aEast       ; jumptable 00018BF8 case 4
                 mov     dh, 0
@@ -11564,7 +11564,7 @@ loc_18CD4:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18C3C
 ; ---------------------------------------------------------------------------
 
-loc_18CDF:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CDF:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aWest       ; jumptable 00018BF8 case 5
                 mov     dh, 0
@@ -11572,14 +11572,14 @@ loc_18CDF:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18C3C
 ; ---------------------------------------------------------------------------
 
-loc_18CEA:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CEA:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, loc_11719   ; jumptable 00018BF8 cases 6-8
                 jmp     loc_12018       ; jumptable 00011BD1 cases 8,9,14
                                         ; jumptable 00018389 cases 10,14,15
 ; ---------------------------------------------------------------------------
 
-loc_18CF1:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18CF1:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aReadyAWeapon ; jumptable 00018BF8 case 9
                 call    loc_126A9
@@ -11592,7 +11592,7 @@ loc_18CF1:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18D0B:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D0B:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aZtats      ; jumptable 00018BF8 case 10
                 call    loc_126A9
@@ -11613,7 +11613,7 @@ loc_18D0B:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18D38:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D38:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aCastSpell  ; jumptable 00018BF8 case 12
                 call    loc_126A9
@@ -11627,7 +11627,7 @@ loc_18D38:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18D57:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D57:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNegateTime ; jumptable 00018BF8 case 11
                 call    loc_126A9
@@ -11646,18 +11646,18 @@ loc_18D57:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18D80:                              ; CODE XREF: sub_123A5+69CB↑j
+loc_18D80:                              ; CODE XREF: updateMonsterAI+69CB↑j
                 jmp     loc_17DA8
 ; ---------------------------------------------------------------------------
 
-loc_18D83:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D83:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aPass       ; jumptable 00018BF8 case 1
                 call    loc_126A9
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18D8D:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D8D:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 lea     si, aNotUsableCmd ; jumptable 00018BF8 cases 0,14-32
                 call    loc_126A9
@@ -11667,7 +11667,7 @@ loc_18D8D:                              ; CODE XREF: sub_123A5+6853↑j
                 jmp     loc_18B8C
 ; ---------------------------------------------------------------------------
 
-loc_18D9F:                              ; CODE XREF: sub_123A5+6853↑j
+loc_18D9F:                              ; CODE XREF: updateMonsterAI+6853↑j
                                         ; DATA XREF: seg000:jpt_18BF8↑o
                 mov     byte_184E0, 3Dh ; '=' ; jumptable 00018BF8 case 13
                 mov     al, byte_184E1
@@ -11725,8 +11725,8 @@ loc_18D9F:                              ; CODE XREF: sub_123A5+6853↑j
                 jnz     short loc_18E2B
                 mov     byte ptr [si+30h], 0
 
-loc_18E2B:                              ; CODE XREF: sub_123A5+6A47↑j
-                                        ; sub_123A5+6A4B↑j ...
+loc_18E2B:                              ; CODE XREF: updateMonsterAI+6A47↑j
+                                        ; updateMonsterAI+6A4B↑j ...
                 mov     cx, dx
                 mov     dh, [bx+0A4h]
                 mov     dl, [bx+0A0h]
@@ -11734,30 +11734,30 @@ loc_18E2B:                              ; CODE XREF: sub_123A5+6A47↑j
                 cmp     bx, 0FFFFh
                 jz      short loc_18E40
 
-loc_18E3D:                              ; CODE XREF: sub_123A5+6A6D↑j
+loc_18E3D:                              ; CODE XREF: updateMonsterAI+6A6D↑j
                 jmp     short loc_18EBC
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 ; ---------------------------------------------------------------------------
                 align 2
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18E40:                              ; CODE XREF: sub_123A5+6A73↑j
-                                        ; sub_123A5+6A96↑j
+loc_18E40:                              ; CODE XREF: updateMonsterAI+6A73↑j
+                                        ; updateMonsterAI+6A96↑j
                 jmp     short loc_18EAF
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 ; ---------------------------------------------------------------------------
                 db 90h
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18E43:                              ; CODE XREF: sub_123A5+6A22↑j
+loc_18E43:                              ; CODE XREF: updateMonsterAI+6A22↑j
                 jmp     loc_18BFC
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18E46       proc near               ; CODE XREF: sub_123A5+6A65↑p
+sub_18E46       proc near               ; CODE XREF: updateMonsterAI+6A65↑p
                                         ; sub_18E7A+21↓p ...
                 pushf
                 push    cx
@@ -11799,7 +11799,7 @@ sub_18E46       endp
 
 
 sub_18E7A       proc near               ; CODE XREF: seg000:5F55↑p
-                                        ; sub_123A5+6A90↑p
+                                        ; updateMonsterAI+6A90↑p
                 pushf
                 push    ax
                 push    dx
@@ -11836,17 +11836,17 @@ loc_18EA7:                              ; CODE XREF: sub_18E7A+8↑j
 sub_18E7A       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_123A5
+; START OF FUNCTION CHUNK FOR updateMonsterAI
 
-loc_18EAF:                              ; CODE XREF: sub_123A5:loc_18E40↑j
-                                        ; sub_123A5:loc_18ED4↓j
+loc_18EAF:                              ; CODE XREF: updateMonsterAI:loc_18E40↑j
+                                        ; updateMonsterAI:loc_18ED4↓j
                 lea     si, aMissed     ; "Missed!\n"
                 call    loc_126A9
                 call    drawLogoTileGrid
                 jmp     loc_18BFC
 ; ---------------------------------------------------------------------------
 
-loc_18EBC:                              ; CODE XREF: sub_123A5:loc_18E3D↑j
+loc_18EBC:                              ; CODE XREF: updateMonsterAI:loc_18E3D↑j
                 mov     al, byte_184E1
                 mov     ah, 40h ; '@'
                 mul     ah
@@ -11857,12 +11857,12 @@ loc_18EBC:                              ; CODE XREF: sub_123A5:loc_18E3D↑j
                 cmp     byte ptr [di+30h], 0Fh
                 jz      short loc_18ED6
 
-loc_18ED4:                              ; CODE XREF: sub_123A5+6B4C↓j
+loc_18ED4:                              ; CODE XREF: updateMonsterAI+6B4C↓j
                 jmp     short loc_18EAF
 ; ---------------------------------------------------------------------------
 
-loc_18ED6:                              ; CODE XREF: sub_123A5+6B27↑j
-                                        ; sub_123A5+6B2D↑j
+loc_18ED6:                              ; CODE XREF: updateMonsterAI+6B27↑j
+                                        ; updateMonsterAI+6B2D↑j
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 shl     dl, 1
@@ -11877,7 +11877,7 @@ loc_18ED6:                              ; CODE XREF: sub_123A5+6B27↑j
                 cmp     al, [di+13h]
                 jnb     short loc_18ED4
 
-loc_18EF3:                              ; CODE XREF: sub_123A5+6B38↑j
+loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
                 mov     al, 0
                 call    sub_18AE6
                 lea     si, aHit        ; "\nHit!\n"
@@ -11918,7 +11918,7 @@ loc_18EF3:                              ; CODE XREF: sub_123A5+6B38↑j
                 call    sub_18F5A
                 call    drawLogoTileGrid
                 jmp     loc_18BFC
-; END OF FUNCTION CHUNK FOR sub_123A5
+; END OF FUNCTION CHUNK FOR updateMonsterAI
 
 ; =============== S U B R O U T I N E =======================================
 
