@@ -48,6 +48,13 @@ MEMBERS = [
     (0x00, "_name", 1, 0xA,
      "character name, ASCII, null-padded. readLine reads up to 9 "
      "chars during creation; external doc gives the field 10 bytes."),
+    (0x0F, "_torches", 1, 1,
+     "confirmed via ultima_exodus.idb's cmdIgniteTorch ('I'), which "
+     "spends 1 torch (BCD-borrow-checked decrement, dungeon-only) to "
+     "set a lit-torch flag (byte_115CE). Matches docs/file-formats.md's "
+     "externally-sourced 'Torch count (BCD)' field exactly. Offsets "
+     "0x0A-0x0E remain unlabeled (external doc: 4 bytes unknown at "
+     "0x0A, a 'Marks/cards' bitmask at 0x0E)."),
     (0x10, "_partyMember",
      1, 1, "0x00 = not in active party, 0xFF = in active party "
      "(handleFormParty/clearPartySelection/showRegister all check/set "

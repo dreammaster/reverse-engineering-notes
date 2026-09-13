@@ -95,6 +95,7 @@ static Structures_0(id) {
 	
 	id = get_struc_id("RosterEntry");
 	mid = add_struc_member(id,"_name",	0,	0x00000400,	-1,	10);
+	mid = add_struc_member(id,"_torches",	0XF,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_partyMember",	0X10,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_status",	0X11,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_strength",	0X12,	0x00000400,	-1,	1);
@@ -1406,8 +1407,10 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X15CC3,	"jumptable 00011BD1 cases 15,26",	1);
 	create_insn	(0X15CC3);
+	set_name	(0X15CC3,	"cmdDisabledOnSurface");
 	set_cmt	(0X15CC9,	"jumptable 00011BD1 case 19\njumptable 00018389 case 4",	1);
 	create_insn	(0X15CC9);
+	set_name	(0X15CC9,	"cmdIgniteTorch");
 	create_insn	(x=0X15CD3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

@@ -566,12 +566,22 @@ gameplay arithmetic: `_gems` (`+0x25`), `_keys` (`+0x26`), and
 `_powder` (`+0x27`, via `combatCmdNegateTime`) — all matching
 `docs/file-formats.md`'s externally-sourced field list exactly.
 
-16 of 33 overworld commands are now confirmed. 17 letters (A, D, F, G,
-H, I, J, K, L, N, O, R, T, W, Y, Z, plus a closer look at H's partial
-read) still point at unnamed `loc_XXXXX` handlers — a concrete, bounded
-checklist for continuing (see [roadmap.md](roadmap.md)), much more
-tractable than reading `sub_17B54` linearly since each handler's
-address and trigger key are now known.
+**Follow-up pass, same session**: 'D'/'K' turn out to be disabled on
+the overworld (`cmdDisabledOnSurface` — both just fall through to the
+invalid-command trampoline), consistent with Descend/Klimb being
+dungeon-only commands reached through a different jump table
+(`jpt_18389`, referenced repeatedly across this session's finds as an
+alternate dispatch table but not yet itself identified — presumably
+the in-dungeon command set). `cmdIgniteTorch` ('I') confirms a further
+`RosterEntry` field, `_torches` (`+0x0F`), independently of external
+documentation.
+
+18 of 33 overworld commands are now confirmed. 15 letters (A, F, G, H,
+J, L, N, O, R, T, W, Y, Z, plus `jpt_18389`'s presumed in-dungeon
+command set) remain — a concrete, bounded checklist for continuing
+(see [roadmap.md](roadmap.md)), much more tractable than reading
+`sub_17B54` linearly since each handler's address and trigger key are
+now known.
 
 **First game-specific function identified, and a correction to the
 string-table-based guess above**: `updateMonsterAI` (formerly
