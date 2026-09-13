@@ -4645,6 +4645,33 @@ disassembly work.
   MP3 position-in-milliseconds) were documented but left unnamed --
   neither library has source in this repo to verify exact names
   against. See `reversing/notes/struct-layout-drift.md`.
+- **Shifted focus to a fresh AGS-side subsystem: the full `SCMD_*`
+  bytecode opcode table.** Read the script interpreter's (`sub_42B394`,
+  this project's own "2002 predecessor of `cc_run_code`") entire
+  38-case jump table end to end against `Common/CSCOMP.H`'s declared
+  opcode set -- the first time any round had surveyed it exhaustively
+  rather than examining individual opcodes in isolation. DECISIVE
+  FINDING: the dispatch's own bounds check allows exactly opcodes 1-38,
+  and all 38 match their 2011 declared semantics with zero drift.
+  CONFIRMED ABSENT, by that single bounds check: opcodes 39-72 in one
+  shot -- the entire float-arithmetic block, the entire managed/
+  dynamic-pointer block, and `SCMD_CALLOBJ`(45)/`CHECKBOUNDS`(46)/
+  `LOADSPOFFS`(51)/`CREATESTRING`(64)/`STRINGSEQUAL`/`NOTEQ`(65/66)/
+  `LOOPCHECKOFF`(68)/`JNZ`(70) -- corroborated independently via
+  `ags-archives/`'s own contemporary changelogs (float added in AGS
+  2.70, pointer-in-struct support in 2.71, both years after this
+  build's 2.4b/July-2002 pin). Also corrects an older claim that the
+  interpreter's self-recursion happens "at two call sites" -- a direct
+  grep finds exactly ONE, inside `CALLAS`(37) only; `CALL`(23) uses a
+  simple local-array mechanism instead. New architectural finding:
+  `CALL`(23) and `THISBASE`(38) jointly implement member-function-
+  relative call addressing without needing a separate `CALLOBJ`
+  opcode -- 2011 later generalized that into its own explicit
+  instruction. Recorded as a major extension to `sub_42B394`'s
+  existing entry rather than a rename (still too structurally
+  different from `cc_run_code` to claim 1:1 correspondence, per this
+  project's own established convention). See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 

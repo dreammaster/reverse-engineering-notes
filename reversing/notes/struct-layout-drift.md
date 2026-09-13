@@ -15651,3 +15651,92 @@ per this project's standing convention, since neither JGMOD nor ALMP3
 has source present in this repo to verify an exact name against, but
 each now has a real behavioral description on record instead of being
 an undifferentiated gap.
+
+### Fresh AGS-side subsystem survey: the SCMD_* bytecode opcode table, complete
+
+After several rounds sweeping already-matched functions' own remaining
+third-party callees, shifted focus to a genuinely fresh AGS-side target:
+a full opcode-by-opcode survey of the script bytecode interpreter itself
+(`sub_42B394`, this project's own long-standing "2002 predecessor of
+`cc_run_code`" -- see `reversing/notes/csrun-interpreter-evolution.md`
+for its earlier history). No prior round had read its entire 38-case
+jump table start to finish against `Common/CSCOMP.H`'s declared `SCMD_*`
+set -- only a handful of individual opcodes (`SCMD_LINENUM`, the
+self-recursive call site) had been examined in isolation.
+
+**The headline finding is a single, decisive bounds check.** The
+dispatch's own range guard is `sub eax,1 (0-base); cmp eax,0x25(37); ja
+default` -- exactly 38 valid opcode values, 1 through 38 inclusive, with
+IDA's own disassembly literally annotating the jump table "switch 38
+cases". Reading all 38 cases confirms EVERY one matches its 2011
+`CSCOMP.H` comment's declared semantics with zero drift: `1=ADD,
+2=SUB, 3=REGTOREG, 4=WRITELIT(memcpy), 5=RET, 6=LITTOREG, 7=MEMREAD,
+8=MEMWRITE, 9=MULREG, 10=DIVREG, 11=ADDREG, 12=SUBREG, 13=BITAND,
+14=BITOR, 15=ISEQUAL, 16=NOTEQUAL, 17=GREATER, 18=LESSTHAN, 19=GTE,
+20=LTE, 21=AND, 22=OR, 23=CALL, 24=MEMREADB, 25=MEMREADW, 26=MEMWRITEB,
+27=MEMWRITEW, 28=JZ, 29=PUSHREG, 30=POPREG, 31=JMP, 32=MUL, 33=CALLEXT,
+34=PUSHREAL, 35=SUBREALSTACK, 36=LINENUM, 37=CALLAS, 38=THISBASE` --
+this is 2011's own opcode numbering 1-38 preserved EXACTLY, with no
+reordering and no gaps.
+
+**CONFIRMED ABSENT, by the bounds check alone**: opcodes 39
+(`NUMFUNCARGS`) through 72 (`NEWARRAY`), the entire remainder of 2011's
+declared set. That single fact retroactively confirms, in one shot,
+that the ENTIRE managed/dynamic-pointer subsystem (`MEMWRITEPTR`/
+`MEMREADPTR`/`MEMZEROPTR`/`MEMINITPTR`/`CHECKNULL`/`CHECKNULLREG`/
+`MEMZEROPTRND`/`DYNAMICBOUNDS`/`NEWARRAY`), the ENTIRE float-arithmetic
+block (`FADD` through `FLTE`, 53-62), `CALLOBJ`(45, see below),
+`CHECKBOUNDS`(46), `LOADSPOFFS`(51), `CREATESTRING`(64),
+`STRINGSEQUAL`/`STRINGSNOTEQ`(65/66), `LOOPCHECKOFF`(68), and `JNZ`(70)
+are all absent from this build's compiled script VM at the OPCODE
+level -- not merely unfound, structurally impossible for the dispatch
+to reach. CORROBORATED independently via `ags-archives/`'s own
+contemporary changelogs (this project's established dating technique):
+*"Added float data type, along with related conversion functions"*
+first appears in `ags270/docs/CHANGES.TXT`, and *"Added support for
+having pointer variables in structs"* first appears in
+`ags271/docs/CHANGES.TXT` -- both released ~2005-2006, several years
+after this build's own pinned AGS 2.4b/July-2002 version. This is a
+much deeper confirmation than the struct-field-level "later AGS
+addition, confirmed absent" pattern found dozens of times elsewhere in
+this project -- the managed-object/dynamic-pointer/float type system
+doesn't exist at the BYTECODE level here, so no compiled script from
+this era could contain those instructions even in principle.
+
+**A precise correction to this function's own earlier evidence text**:
+an older round's prose claimed the self-recursion happens "at two
+separate call sites." A direct grep of the function's entire body for
+`call sub_42B394` (cross-checked against the proc header's own single
+`CODE XREF` for the recursive edge) finds exactly ONE such call,
+inside case 37 (`CALLAS`) alone. Case 23 (`CALL`, a same-instance
+subroutine jump) does NOT recurse at all -- it computes a return
+address via `word_4BB3B4[opcode*2]` (a per-opcode operand-size lookup
+table, the SAME table the normal post-switch pc-advance step uses to
+skip past whatever operands the current instruction has), pushes it
+onto the VM's own data stack, and jumps directly within the SAME call
+to this function. Only `CALLAS` -- calling into what 2011 resolves via
+`ccCallInstance`'s own public re-entry point -- needs a fresh native
+stack frame.
+
+**A genuine new architectural finding**: `CALL`(23) and
+`THISBASE`(38) work together to implement member-function-relative
+call addressing WITHOUT a separate tagging opcode. `THISBASE` writes
+`var_FC[current_depth] = arg1` (a per-call-frame base-offset);
+`CALL`'s own target-address computation then branches on whether the
+CURRENT frame's `var_FC` entry is nonzero, rebasing the jump target by
+`target - var_FC[depth] + var_78[depth]` when it is. 2011 achieves the
+equivalent effect with a dedicated opcode, `SCMD_CALLOBJ`(45, "next
+call is member function of reg1") -- confirmed absent here by the same
+bounds check -- so this build's compiler folds that bookkeeping
+directly into ordinary `THISBASE`+`CALL` sequences instead of needing
+a distinct instruction. A genuine "later AGS versions generalized a
+2002-era mechanism into its own explicit opcode" case, the bytecode-VM
+equivalent of the struct-level pattern found repeatedly throughout this
+project.
+
+Not renamed (still correctly left as the established "2002 predecessor
+of `cc_run_code`, too structurally different to claim 1:1
+correspondence" per this project's own convention for such cases) --
+this round's value is the complete opcode inventory and the two
+corrections/findings above, recorded as a major extension to the
+function's existing `matches.json` entry rather than a new match.
