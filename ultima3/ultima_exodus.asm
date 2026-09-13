@@ -33,7 +33,7 @@ byte_10E65      db 0                    ; DATA XREF: sub_120AE+70↓w
                                         ; sub_120AE+7B↓w
                 db 41Ah dup(0)
 byte_11280      db 0A0h dup(0)          ; DATA XREF: sub_17B54:loc_11F8A↓o
-                                        ; sub_17F96:loc_17FBC↓o ...
+                                        ; findMonsterAtPosition:loc_17FBC↓o ...
 word_11320      dw 0                    ; DATA XREF: sub_12168+3C↓w
                                         ; sub_17347+25↓r ...
 byte_11322      db 0                    ; DATA XREF: sub_17347+2D↓r
@@ -120,7 +120,7 @@ _partyPosition  dw 0                    ; DATA XREF: sub_17B54-5F5E↓r
 byte_115CE      db 0                    ; DATA XREF: entryFromBootup+88↓w
                                         ; sub_17B54-1E6A↓w ...
 _dungeonLevel   db 0                    ; DATA XREF: sub_17B54-5D9A↓w
-                                        ; sub_128F2+B↓r ...
+                                        ; getDungeonTileAt+B↓r ...
 _negateTimeDuration db 0                ; DATA XREF: sub_17B54-5F1A↓w
                                         ; sub_17B54-5E30↓w ...
 byte_115D1      db 1                    ; DATA XREF: sub_17B54-58D3↓w
@@ -1406,7 +1406,7 @@ loc_1224B:                              ; CODE XREF: canMoveToTile+14↑j
 loc_1225B:                              ; CODE XREF: canMoveToTile:loc_12247↑j
                                         ; canMoveToTile+25↑j ...
                 mov     al, 0FFh
-                call    sub_17F96
+                call    findMonsterAtPosition
                 cmp     bx, 0FFFFh
                 jnz     short loc_12268
 
@@ -2412,7 +2412,7 @@ getMapTileAt    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_128F2       proc near               ; CODE XREF: sub_12909+16↓p
+getDungeonTileAt proc near              ; CODE XREF: sub_12909+16↓p
                                         ; sub_15F7B+13↓p ...
                 pushf
                 shl     bh, 1
@@ -2425,7 +2425,7 @@ sub_128F2       proc near               ; CODE XREF: sub_12909+16↓p
                 mov     al, [bx]
                 popf
                 retn
-sub_128F2       endp
+getDungeonTileAt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2445,7 +2445,7 @@ sub_12909       proc near               ; CODE XREF: sub_17B54:loc_11F1C↑p
 loc_1291D:                              ; CODE XREF: sub_12909+4F↓j
                                         ; sub_12909+5F↓j
                 mov     bx, cx
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 0C0h
                 mov     ah, 1
                 jz      short loc_1294E
@@ -4869,7 +4869,7 @@ loc_15BF6:                              ; CODE XREF: sub_17B54-1F3C↓j
                 add     cl, al
                 and     cx, 3F3Fh
                 mov     dx, cx
-                call    sub_17F96
+                call    findMonsterAtPosition
                 cmp     bx, 0FFFFh
                 jnz     short loc_15C20
                 push    ax
@@ -5432,7 +5432,7 @@ loc_15F82:                              ; CODE XREF: sub_15F7B+18↓j
                 call    stepTimeSeededPrng
                 mov     ch, dl
                 mov     bx, cx
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 0
                 jnz     short loc_15F82
                 mov     _partyPosition, cx
@@ -5734,7 +5734,7 @@ loc_161B7:                              ; CODE XREF: seg000:61B3↑j
 ; ---------------------------------------------------------------------------
 
 loc_161BB:                              ; CODE XREF: seg000:61A0↑j
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 40h ; '@'
                 jnz     short loc_161CE
                 mov     byte ptr [bx], 0
@@ -8617,7 +8617,7 @@ loc_175A9:                              ; CODE XREF: sub_17B54-624↑j
                 call    readDirectionKeypress
                 jz      short loc_175F6
                 mov     dx, bx
-                call    sub_17F96
+                call    findMonsterAtPosition
                 cmp     bx, 0FFFFh
                 jz      short loc_175EF
                 cmp     byte ptr [bx+1280h], 48h ; 'H'
@@ -9974,7 +9974,7 @@ sub_17EFA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17F96       proc near               ; CODE XREF: canMoveToTile+35↑p
+findMonsterAtPosition proc near         ; CODE XREF: canMoveToTile+35↑p
                                         ; sub_17B54-1F54↑p ...
                 pushf
                 push    cx
@@ -9983,7 +9983,7 @@ sub_17F96       proc near               ; CODE XREF: canMoveToTile+35↑p
                 mov     si, 1Fh
                 lea     si, [si+1280h]
 
-loc_17FA3:                              ; CODE XREF: sub_17F96+1D↓j
+loc_17FA3:                              ; CODE XREF: findMonsterAtPosition+1D↓j
                 cmp     byte ptr [si], 0
                 jz      short loc_17FB2
                 cmp     dh, [si+60h]
@@ -9991,25 +9991,25 @@ loc_17FA3:                              ; CODE XREF: sub_17F96+1D↓j
                 cmp     dl, [si+40h]
                 jz      short loc_17FBC
 
-loc_17FB2:                              ; CODE XREF: sub_17F96+10↑j
-                                        ; sub_17F96+15↑j
+loc_17FB2:                              ; CODE XREF: findMonsterAtPosition+10↑j
+                                        ; findMonsterAtPosition+15↑j
                 dec     si
                 loop    loc_17FA3
                 mov     bx, 0FFFFh
 
-loc_17FB8:                              ; CODE XREF: sub_17F96+2E↓j
+loc_17FB8:                              ; CODE XREF: findMonsterAtPosition+2E↓j
                 pop     si
                 pop     cx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17FBC:                              ; CODE XREF: sub_17F96+1A↑j
+loc_17FBC:                              ; CODE XREF: findMonsterAtPosition+1A↑j
                 lea     bx, byte_11280
                 xchg    bx, si
                 sub     bx, si
                 jmp     short loc_17FB8
-sub_17F96       endp
+findMonsterAtPosition endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -10029,7 +10029,7 @@ cmdTransact:                            ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_18031
                 mov     cx, dx
                 xchg    dx, bx
-                call    sub_17F96
+                call    findMonsterAtPosition
                 cmp     bx, 0FFFFh
                 jnz     short loc_1803A
                 mov     bx, dx
@@ -10292,7 +10292,7 @@ loc_181C3:                              ; CODE XREF: sub_17B54+66B↑j
 ; ---------------------------------------------------------------------------
 
 loc_181C7:                              ; CODE XREF: sub_17B54+658↑j
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 40h ; '@'
                 jnz     short loc_181E0
                 mov     byte ptr [bx], 0
@@ -10579,7 +10579,7 @@ loc_183A1:                              ; CODE XREF: sub_17B54+847↑j
                 call    drawDungeonStatusBar
                 call    sub_19630
                 mov     bx, _partyPosition
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 0
                 jnz     short loc_183DD
                 mov     dh, 82h
@@ -10623,7 +10623,7 @@ cmdKlimb:                               ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 25
                 mov     bx, _partyPosition
-                call    sub_128F2
+                call    getDungeonTileAt
                 and     al, 10h
                 jz      short loc_18413
                 cmp     _dungeonLevel, 0
@@ -10645,7 +10645,7 @@ cmdDescend:                             ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 26
                 mov     bx, _partyPosition
-                call    sub_128F2
+                call    getDungeonTileAt
                 test    al, 0FFh
                 js      short loc_18435
                 and     al, 20h
@@ -10663,7 +10663,7 @@ cmdTurnRight:                           ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 27
                 mov     bx, _partyPosition
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 0A0h
                 jnb     short loc_18452
                 inc     _facingDirection
@@ -10679,7 +10679,7 @@ cmdTurnLeft:                            ; CODE XREF: sub_17B54+835↑j
                                         ; DATA XREF: seg000:DUNGEON_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00018389 case 28
                 mov     bx, _partyPosition
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 0A0h
                 jnb     short loc_1846F
                 dec     _facingDirection
@@ -10709,7 +10709,7 @@ cmdMoveForward:                         ; CODE XREF: sub_17B54+835↑j
                 add     dh, [bx+76F4h]
                 and     dx, 0F0Fh
                 mov     bx, dx
-                call    sub_128F2
+                call    getDungeonTileAt
                 cmp     al, 80h
                 jz      short loc_184A6
                 mov     _partyPosition, dx
@@ -10732,7 +10732,7 @@ cmdMoveBackward:                        ; CODE XREF: sub_17B54+835↑j
                 add     dh, [bx+76F4h]
                 and     dx, 0F0Fh
                 mov     bx, dx
-                call    sub_128F2
+                call    getDungeonTileAt
                 rol     al, 1
                 jb      short loc_184D8
                 mov     _partyPosition, dx
@@ -10894,7 +10894,7 @@ cmdAttack:                              ; CODE XREF: sub_17B54-5F83↑j
                 call    readDirectionKeypress
                 jz      short loc_188A7
                 mov     dx, bx
-                call    sub_17F96
+                call    findMonsterAtPosition
                 cmp     bx, 0FFFFh
                 jz      short loc_188A4
                 jmp     short beginCombatEncounter
