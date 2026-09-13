@@ -1191,6 +1191,57 @@ RENAMES = [
      "location, e.g. a castle courtyard, is a plausible guess but not "
      "confirmed) is not resolved -- named for the condition it "
      "checks, not for an asserted purpose."),
+
+    # --- Overworld monster breath attack, 2026-09-14 -----------------
+    (0x1633B, "computeStepTowardParty",
+     "Called from sub_1232F/monsterBreathAttack and directly from "
+     "updateMonsterAI. Computes, for a monster at (si+0x12C0, "
+     "si+0x12E0), the single-step direction (cl=dx, ch=dy, each "
+     "effectively -1/0/+1 via adjustAnimSpeed) toward `_partyPosition`, "
+     "accounting for wraparound on a 64-tile axis (`and dl/dh, 3Fh` on "
+     "an intermediate stepped position) -- i.e. the overworld map "
+     "wraps at 64 tiles per axis. The recomputed absolute position "
+     "(dl/dh) is discarded -- only the direction in cl/ch is actually "
+     "used by callers; this looks like shared code originally written "
+     "to also return a stepped position, repurposed here just for its "
+     "direction math."),
+
+    (0x1232F, "monsterBreathAttack",
+     "Called from updateMonsterAI's special-case handler for monster "
+     "types `'t'`/`'<'` (dragon-type monsters, per the roadmap's "
+     "earlier note). 50% chance per call (coin-flip via "
+     "stepTimeSeededPrng). Uses computeStepTowardParty to aim, then "
+     "steps a breath effect ('=' tile) from the monster's position "
+     "toward a fixed (5,5) -- the party's own screen-relative center "
+     "position in the 11x11 visible viewport, NOT the combat arena -- "
+     "one tile at a time, blocked by tile values 4/0x23/0x24 "
+     "(impassable terrain), and calling damagePartyAll if the breath "
+     "reaches the party's own tile (dx == 0x0505)."),
+
+    (0x182C6, "damagePartyAll",
+     "Called from monsterBreathAttack (on a successful breath hit) "
+     "and from within sub_17B54. Loops all 4 party slots in the live "
+     "roster array (`byte_114CC`, stride 0x40, same array "
+     "drawPartyStatusBar reads), skipping dead characters "
+     "(isCharacterAlive), and applies BCD damage to each alive member "
+     "via damageCharacterHP twice: once `random(0..0x77)` and once "
+     "`(_dungeonLevel+1)*8` (a dungeon-depth-scaled component -- "
+     "present even though this is reachable from the overworld breath "
+     "attack, suggesting this helper is shared with a dungeon-context "
+     "caller too). Plays the same 'hit' sound (0xF7) reused by melee "
+     "combat and redraws the status bar afterward."),
+
+    (0x16BC9, "damageCharacterHP",
+     "Called from damagePartyAll and elsewhere (processPartyTurnEffects, "
+     "sub_170E4 -- poison/hunger-style damage-over-time, not traced "
+     "further this pass). Takes bx=RosterEntry pointer, al=BCD damage; "
+     "BCD-subtracts (double-byte `sub`/`das`/`sbb`/`das`) from "
+     "`_hitPoints` (+0x1A). On death (borrow past zero): sets `_status` "
+     "(+0x11) to 'D', zeroes `_hitPoints`, and calls sub_16B91 (not "
+     "further traced -- appears to conditionally trigger a "
+     "game-mode-dependent side effect, possibly a party-wipe/game-over "
+     "check given it's also called from checkPartyWipedOut). Returns "
+     "ch=0FFh if the character died, 0 otherwise."),
 ]
 
 

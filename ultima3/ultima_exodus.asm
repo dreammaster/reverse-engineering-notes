@@ -579,7 +579,7 @@ loc_11C35:                              ; CODE XREF: sub_17B54-5F24↑j
                 call    loc_127CD
                 mov     byte ptr [bx], 3Dh ; '='
                 call    drawLogoTileGrid
-                call    sub_182C6
+                call    damagePartyAll
                 jmp     short loc_11C74
 ; ---------------------------------------------------------------------------
 
@@ -1534,7 +1534,7 @@ sub_122A5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1232F       proc near               ; CODE XREF: updateMonsterAI:loc_12464↓p
+monsterBreathAttack proc near           ; CODE XREF: updateMonsterAI:loc_12464↓p
                 pushf
                 push    ax
                 push    bx
@@ -1544,7 +1544,7 @@ sub_1232F       proc near               ; CODE XREF: updateMonsterAI:loc_12464�
                 call    stepTimeSeededPrng
                 shl     dl, 1
                 jb      short loc_1239F
-                call    sub_1633B
+                call    computeStepTowardParty
                 mov     bx, 505h
                 sub     bh, byte ptr _partyPosition+1
                 add     bh, [si+12E0h]
@@ -1560,7 +1560,7 @@ sub_1232F       proc near               ; CODE XREF: updateMonsterAI:loc_12464�
                 mov     dx, bx
                 mov     ah, 3
 
-loc_12369:                              ; CODE XREF: sub_1232F+6E↓j
+loc_12369:                              ; CODE XREF: monsterBreathAttack+6E↓j
                 add     dh, ch
                 cmp     dh, 0Bh
                 ja      short loc_1239F
@@ -1580,23 +1580,23 @@ loc_12369:                              ; CODE XREF: sub_1232F+6E↓j
                 mov     [bx], al
                 cmp     dx, 505h
                 jnz     short loc_1239B
-                call    sub_182C6
+                call    damagePartyAll
                 jmp     short loc_1239F
 ; ---------------------------------------------------------------------------
 
-loc_1239B:                              ; CODE XREF: sub_1232F+65↑j
+loc_1239B:                              ; CODE XREF: monsterBreathAttack+65↑j
                 dec     ah
                 jnz     short loc_12369
 
-loc_1239F:                              ; CODE XREF: sub_1232F+C↑j
-                                        ; sub_1232F+1F↑j ...
+loc_1239F:                              ; CODE XREF: monsterBreathAttack+C↑j
+                                        ; monsterBreathAttack+1F↑j ...
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_1232F       endp
+monsterBreathAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1640,7 +1640,7 @@ loc_123BB:                              ; CODE XREF: updateMonsterAI+11↑j
                 jnz     short loc_123D3
 
 loc_123C2:                              ; CODE XREF: updateMonsterAI+42↓j
-                call    sub_1633B
+                call    computeStepTowardParty
                 cmp     dx, _partyPosition
                 jnz     short loc_12425
                 lea     sp, [bp+4]
@@ -1659,7 +1659,7 @@ loc_123D3:                              ; CODE XREF: updateMonsterAI+1B↑j
                 jz      short loc_123EE
                 cmp     al, 3
                 jz      short loc_123C2
-                call    sub_1633B
+                call    computeStepTowardParty
                 jmp     short loc_12425
 ; ---------------------------------------------------------------------------
 
@@ -1715,7 +1715,7 @@ loc_12425:                              ; CODE XREF: updateMonsterAI+24↑j
 
 loc_12464:                              ; CODE XREF: updateMonsterAI+B6↑j
                                         ; updateMonsterAI+F7↓j ...
-                call    sub_1232F
+                call    monsterBreathAttack
 
 loc_12467:                              ; CODE XREF: updateMonsterAI+BD↑j
                 jmp     short loc_124A5
@@ -3871,7 +3871,7 @@ drawLogoTileGrid endp
 
 
 computeAnimTableByte proc near          ; CODE XREF: sub_17B54-5F05↑p
-                                        ; sub_1232F+4A↑p ...
+                                        ; monsterBreathAttack+4A↑p ...
                 pushf
                 mov     al, bh
                 shl     bh, 1
@@ -5953,7 +5953,7 @@ drawDungeonStatusBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1633B       proc near               ; CODE XREF: sub_1232F+E↑p
+computeStepTowardParty proc near        ; CODE XREF: monsterBreathAttack+E↑p
                                         ; updateMonsterAI:loc_123C2↑p ...
                 pushf
                 push    ax
@@ -5974,7 +5974,7 @@ sub_1633B       proc near               ; CODE XREF: sub_1232F+E↑p
                 pop     ax
                 popf
                 retn
-sub_1633B       endp
+computeStepTowardParty endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7028,7 +7028,7 @@ aNotEnoughGold  db 'Not enough gold!',0Ah,0
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16B91       proc near               ; CODE XREF: sub_16BC9+22↓p
+sub_16B91       proc near               ; CODE XREF: damageCharacterHP+22↓p
                                         ; checkPartyWipedOut+1F↓p ...
                 pushf
                 push    ax
@@ -7064,7 +7064,7 @@ sub_16B91       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16BC9       proc near               ; CODE XREF: processPartyTurnEffects+C2↓p
+damageCharacterHP proc near             ; CODE XREF: processPartyTurnEffects+C2↓p
                                         ; sub_170E4+4A↓p ...
                 pushf
                 push    cx
@@ -7089,14 +7089,14 @@ loc_16BDE:                              ; CODE XREF: sub_17B54-FE6↑j
                 call    sub_16B91
                 mov     ch, 0FFh
 
-loc_16BF0:                              ; CODE XREF: sub_16BC9+17↑j
+loc_16BF0:                              ; CODE XREF: damageCharacterHP+17↑j
                 call    drawPartyStatusBar
                 pop     ax
                 mov     al, ch
                 pop     cx
                 popf
                 retn
-sub_16BC9       endp
+damageCharacterHP endp
 
 ; ---------------------------------------------------------------------------
                 retn
@@ -7787,7 +7787,7 @@ loc_17094:                              ; CODE XREF: processPartyTurnEffects+9A�
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_170B5
                 mov     al, 1
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     al, cl
                 dec     al
                 call    sub_17176
@@ -7867,7 +7867,7 @@ sub_170E4       proc near               ; CODE XREF: processPartyTurnEffects+B7�
                 mov     al, ah
                 call    sub_17176
                 mov     al, 5
-                call    sub_16BC9
+                call    damageCharacterHP
 
 loc_17131:                              ; CODE XREF: sub_170E4+1F↑j
                 pop     si
@@ -8190,7 +8190,7 @@ loc_172C8:                              ; CODE XREF: sub_17254+7D↓j
 
 loc_172D8:                              ; CODE XREF: sub_17254+78↑j
                 mov     al, 99h
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     al, byte_114C1
                 sub     al, cl
                 call    sub_17176
@@ -8217,7 +8217,7 @@ loc_17308:                              ; CODE XREF: sub_17254+DB↓j
                 test    byte ptr [bx+0Eh], 20h
                 jnz     short loc_1732C
                 mov     al, 50h ; 'P'
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     al, byte_114C1
                 sub     al, cl
                 call    sub_17176
@@ -8771,7 +8771,7 @@ loc_176C9:                              ; CODE XREF: sub_17B54-4CC↑j
                 mov     word ptr [di+1Ah], 0
                 mov     bx, di
                 mov     al, 0FFh
-                call    sub_16BC9
+                call    damageCharacterHP
                 jmp     short loc_176C6
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
@@ -10380,7 +10380,7 @@ loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
                 and     dl, 37h
                 mov     al, dl
                 mov     bx, di
-                call    sub_16BC9
+                call    damageCharacterHP
                 call    drawPartyStatusBar
                 jmp     short loc_182A1
 ; ---------------------------------------------------------------------------
@@ -10407,7 +10407,7 @@ loc_18290:                              ; CODE XREF: sub_17B54+6A9↑j
                 call    sub_182AA
                 cmp     al, 0
                 jz      short loc_182A1
-                call    sub_182C6
+                call    damagePartyAll
 
 loc_182A1:                              ; CODE XREF: sub_17B54+6BA↑j
                                         ; sub_17B54+6E6↑j ...
@@ -10444,8 +10444,8 @@ sub_182AA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_182C6       proc near               ; CODE XREF: sub_17B54-5EF7↑p
-                                        ; sub_1232F+67↑p ...
+damagePartyAll  proc near               ; CODE XREF: sub_17B54-5EF7↑p
+                                        ; monsterBreathAttack+67↑p ...
                 pushf
                 push    ax
                 push    bx
@@ -10454,7 +10454,7 @@ sub_182C6       proc near               ; CODE XREF: sub_17B54-5EF7↑p
                 lea     bx, byte_114CC
                 mov     cl, 0
 
-loc_182D1:                              ; CODE XREF: sub_182C6+43↓j
+loc_182D1:                              ; CODE XREF: damagePartyAll+43↓j
                 call    isCharacterAlive
                 jnz     short loc_18300
                 mov     al, cl
@@ -10467,15 +10467,15 @@ loc_182D1:                              ; CODE XREF: sub_182C6+43↓j
                 call    stepTimeSeededPrng
                 and     dl, 77h
                 mov     al, dl
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     al, _dungeonLevel
                 inc     al
                 shl     al, 1
                 shl     al, 1
                 shl     al, 1
-                call    sub_16BC9
+                call    damageCharacterHP
 
-loc_18300:                              ; CODE XREF: sub_182C6+E↑j
+loc_18300:                              ; CODE XREF: damagePartyAll+E↑j
                 add     bx, 40h ; '@'
                 inc     cl
                 cmp     cl, byte_114C1
@@ -10487,7 +10487,7 @@ loc_18300:                              ; CODE XREF: sub_182C6+E↑j
                 pop     ax
                 popf
                 retn
-sub_182C6       endp
+damagePartyAll  endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -12402,11 +12402,11 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 mov     cl, 4
                 shl     ah, cl
                 or      al, ah
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     al, byte_158CB
                 and     al, 3
                 shl     al, cl
-                call    sub_16BC9
+                call    damageCharacterHP
                 mov     ax, si
                 call    sub_17176
                 mov     dx, bx
@@ -12665,7 +12665,7 @@ loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
                 lea     si, aArghBlahYuk ; jumptable 0001948E case 2
                 call    printGameText
                 mov     al, 25h ; '%'
-                call    sub_16BC9
+                call    damageCharacterHP
                 call    sub_171C1
                 dec     cl
                 mov     al, cl
@@ -12704,7 +12704,7 @@ loc_19529:                              ; CODE XREF: sub_17B54+89C↑j
 ; ---------------------------------------------------------------------------
 
 loc_1954A:                              ; CODE XREF: sub_17B54+19EB↑j
-                call    sub_182C6
+                call    damagePartyAll
 
 loc_1954D:                              ; CODE XREF: sub_17B54+19F4↑j
                 jmp     dungeonMainLoop
@@ -12738,7 +12738,7 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 mov     al, ah
                 call    sub_17176
                 mov     al, 50h ; 'P'
-                call    sub_16BC9
+                call    damageCharacterHP
                 call    drawPartyStatusBar
                 lea     si, aItLeftAMark ; "It left a mark!\n"
                 call    printGameText
@@ -12779,7 +12779,7 @@ loc_195B3:                              ; CODE XREF: sub_17B54+89C↑j
                 mov     al, dl
                 call    sub_17176
                 mov     al, 5
-                call    sub_16BC9
+                call    damageCharacterHP
 
 loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
                                         ; sub_17B54+1A8C↑j

@@ -1019,3 +1019,32 @@ resolved two more roadmap items:
 entries) once it needed to fix these two tables' boundaries too, on
 top of the two monster tables from earlier — same
 `del_items`+`create_data` pattern each time.
+
+**Overworld dragon breath attack traced, same session**: followed the
+roadmap's flagged-but-unchased `'t'`/`'<'` monster-type special case in
+`updateMonsterAI` all the way through. `monsterBreathAttack`
+(`0x1232F`) fires on a 50% per-turn roll, using `computeStepTowardParty`
+(`0x1633B`) to get a single-step aim direction toward the party
+(wrapping correctly on the overworld's 64-tile-per-axis map — the same
+wraparound convention seen elsewhere), then walks a `'='` breath tile
+outward from the monster's position toward a fixed `(5,5)` — the
+party's own fixed screen-center position in the 11×11 visible viewport
+(distinct from the 11×11 *combat* arena traced earlier) — stopping at
+impassable terrain (tile values `4`/`0x23`/`0x24`) or, on actually
+reaching the party's tile, calling `damagePartyAll` (`0x182C6`). That
+function loops all 4 live party members and hits each alive one with
+`random(0..0x77) + (_dungeonLevel+1)*8` BCD damage via
+`damageCharacterHP` (`0x16BC9`, the general-purpose BCD HP-subtract
+primitive — also called from `processPartyTurnEffects`, so poison/
+hunger presumably route through it too, not independently confirmed).
+`damageCharacterHP` handles death by setting `_status` to `'D'` and
+zeroing `_hitPoints`, then calls an untraced `sub_16B91` — worth
+following up, since it's also called from `checkPartyWipedOut` and
+looks like it could be the actual party-wipe/game-over trigger.
+
+One loose thread worth flagging: `damagePartyAll`'s
+dungeon-depth-scaled damage term fires even when reached from this
+overworld attack, which reads oddly unless `_dungeonLevel` simply
+holds a stale/irrelevant value on the surface (most likely) or this
+helper turns out to be shared with an as-yet-unfound dungeon-dragon
+caller — not resolved either way this pass.

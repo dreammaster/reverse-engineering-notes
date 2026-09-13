@@ -626,6 +626,7 @@ static Bytes_0(void) {
 	create_insn	(0X122D2);
 	create_insn	(0X12328);
 	create_insn	(0X1232F);
+	set_name	(0X1232F,	"monsterBreathAttack");
 	create_insn	(x=0X12339);
 	op_hex		(x,	1);
 	create_insn	(0X1239B);
@@ -1667,6 +1668,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16328);
 	op_hex		(x,	1);
 	create_insn	(0X1633B);
+	set_name	(0X1633B,	"computeStepTowardParty");
 	create_insn	(x=0X1634D);
 	op_hex		(x,	1);
 	create_insn	(x=0X16360);
@@ -1840,6 +1842,7 @@ static Bytes_0(void) {
 	create_insn	(0X16B91);
 	create_insn	(0X16BB9);
 	create_insn	(0X16BC9);
+	set_name	(0X16BC9,	"damageCharacterHP");
 	create_insn	(0X16BF9);
 	create_insn	(0X16BFA);
 	create_insn	(x=0X16C07);
@@ -2654,6 +2657,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X182C6);
+	set_name	(0X182C6,	"damagePartyAll");
 	create_insn	(x=0X182CB);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
