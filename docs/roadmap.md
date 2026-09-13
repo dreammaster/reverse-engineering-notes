@@ -259,21 +259,18 @@ Next-session priorities, roughly in order:
       `cmdMoveBackward` (via a confirmed `_dungeonFacingDeltaX`/`Y`
       table). 'S' (Steal) turned out to be disabled in dungeons too,
       not a 7th unique handler as first miscounted.
-- [ ] `off_1778C` (the parallel table that caused the earlier
-      confusion) still isn't itself identified — it's a genuine
-      33+-entry table, not code, addressed the same way as
-      `DUNGEON_COMMAND_TABLE`/`DUNGEON_COMMAND_KEYS` at the dispatch
-      site. A quick read (its entries are all inside a contiguous
-      string-literal block around `0x11730`-`0x11870`+, containing at
-      least "Hand Equipment!", "Look-", "Unlock-", "Quit & Save",
-      "Ready for #", "Wear for #", "Cast by whom-", "Descend",
-      "Klimb", "Ignite a torch", "Negate Time!", "Attack-", "Modify
-      order!", "Get Chest!") strongly suggests it's a per-command
-      PROMPT STRING table (one string per dungeon command, parallel to
-      `DUNGEON_COMMAND_TABLE`) — worth confirming and naming next, and
-      likely a fast way to independently double-check several of this
-      session's command identifications (e.g. "Modify order!" for
-      `cmdExchange`'s dungeon-context prompt, if the indices line up).
+- [x] **`DUNGEON_COMMAND_LABELS` (`off_1778C`) confirmed** — done,
+      2026-09-14, via `ida_scripts/dump_dungeon_labels.py` (read-only,
+      same technique as `dump_overworld_labels.py`). It's exactly the
+      per-command prompt-string table hypothesized: all 10 disabled
+      letters (`B`, `A`, `E`, `F`, `L`, `Q`, `T`, `U`, `X`, `S`) print
+      the shared string `"Not a DNG cmd!\n"`, and every enabled
+      letter's prompt matches its handler exactly, including a free
+      cross-check of the earlier movement-handler correction:
+      `cmdKlimb`="Klimb", `cmdDescend`="Descend", `cmdTurnRight`="Turn
+      right", `cmdTurnLeft`="Turn left", `cmdMoveForward`="Advance",
+      `cmdMoveBackward`="Retreat" — all line up perfectly, independently
+      confirming that fix was correct.
 - [ ] **Why is Unlock ('U') disabled in dungeons?** `DUNGEON_COMMAND_TABLE`
       routes 10 letters (B, A, E, F, L, Q, T, U, X, S — `cmdDisabledInDungeon`)
       to one shared disabled-command stub — most make obvious sense (no

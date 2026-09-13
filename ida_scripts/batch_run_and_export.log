@@ -898,3 +898,53 @@ structs (1): RosterEntry
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_dungeon_labels.py', 'noexport']
+[*] reading dump_dungeon_labels.py
+[*] executing dump_dungeon_labels.py
+[*] captured stdout from target script:
+----- begin target script output -----
+DUNGEON_COMMAND_LABELS = 0x1778c
+DUNGEON_COMMAND_KEYS   = 0x17708
+
+  [ 0] key=' ' label_ptr=0x77ea (lin=0x177ea) -> 'Pass\\x0a'
+  [ 1] key='C' label_ptr=0x179b (lin=0x1179b) -> 'Cast by whom-'
+  [ 2] key='G' label_ptr=0x1813 (lin=0x11813) -> 'Get Chest!\\x0aPlr to search-'
+  [ 3] key='H' label_ptr=0x1735 (lin=0x11735) -> 'Hand Equipment!\\x0aFrom Player: '
+  [ 4] key='I' label_ptr=0x17ca (lin=0x117ca) -> 'Ignite a torch\\x0a'
+  [ 5] key='J' label_ptr=0x17ae (lin=0x117ae) -> 'Join gold to:'
+  [ 6] key='M' label_ptr=0x17fc (lin=0x117fc) -> 'Modify order!\\x0aPlayer: '
+  [ 7] key='N' label_ptr=0x17da (lin=0x117da) -> 'Negate Time!\\x0aWhose Powd? '
+  [ 8] key='O' label_ptr=0x1869 (lin=0x11869) -> 'Other command!\\x0aWhose action? '
+  [ 9] key='R' label_ptr=0x1782 (lin=0x11782) -> 'Ready for # '
+  [10] key='V' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [11] key='W' label_ptr=0x178f (lin=0x1178f) -> 'Wear for # '
+  [12] key='Y' label_ptr=0x185c (lin=0x1185c) -> 'Yell, whom? '
+  [13] key='Z' label_ptr=0x1721 (lin=0x11721) -> 'Ztats for # '
+  [14] key='\\x00' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [15] key='\\x00' label_ptr=0x1719 (lin=0x11719) -> 'Volume '
+  [16] key='B' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [17] key='A' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [18] key='E' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [19] key='F' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [20] key='L' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [21] key='Q' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [22] key='T' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [23] key='U' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [24] key='X' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [25] key='K' label_ptr=0x7809 (lin=0x17809) -> 'Klimb\\x0a'
+  [26] key='D' label_ptr=0x7800 (lin=0x17800) -> 'Descend\\x0a'
+  [27] key='\\x00' label_ptr=0x7822 (lin=0x17822) -> 'Turn right\\x0a'
+  [28] key='\\x00' label_ptr=0x782e (lin=0x1782e) -> 'Turn left\\x0a'
+  [29] key='S' label_ptr=0x77f0 (lin=0x177f0) -> 'Not a DNG cmd!\\x0a'
+  [30] key='\\x00' label_ptr=0x7810 (lin=0x17810) -> 'Advance\\x0a'
+  [31] key='\\x00' label_ptr=0x7819 (lin=0x17819) -> 'Retreat\\x0a'
+  [32] key='P' label_ptr=0x182d (lin=0x1182d) -> 'Peer at gem!\\x0aWhose gem? '
+----- end target script output -----
+[*] finished executing dump_dungeon_labels.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
