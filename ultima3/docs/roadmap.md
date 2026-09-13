@@ -447,11 +447,27 @@ Next-session priorities, roughly in order:
       dead, prints "All Players Out!", calls `autoSaveOnDeath`, and
       jumps to a small 2-byte function chunk at `loc_17252` — likely
       the actual reset-to-title/re-chain-load point, not yet traced.
+- [x] **Movement-blocked checks named**, done 2026-09-14:
+      `sub_17233` → **`isShipMovementBlockedByWind`** — Ultima III's
+      classic sailing-against-the-wind restriction, confirmed via
+      `word_12A92`'s low byte (independently confirmed elsewhere as
+      the current wind direction, via `updateWindDisplay`): a ship
+      can't move at all when the wind is calm, and can't sail directly
+      into the wind. `sub_17254` → **`checkTerrainMovementBlocked`** —
+      general transport-dependent terrain passability; a few specific
+      tile values don't block movement but play a distinct warning
+      sound with a timed delay (an extra one when mounted), reading
+      like a hazard-terrain audio cue rather than a hard block; the
+      specific tile-to-hazard mapping isn't independently confirmed.
+      Also confirmed (not renamed — a trivial 2-byte chunk, not worth
+      a function name): `loc_17252`, the destination
+      `checkPartyWipedOut` jumps to on a full party wipe, is a literal
+      `jmp short loc_17252` to itself — Ultima III's game-over screen
+      is a deliberate infinite hang after the "All Players Out!"
+      message and auto-save, requiring the player to reboot/restart
+      `ULTIMA.COM`. No further resolution needed there.
 - [ ] Identify `sub_17F96`/`sub_128F2` (helpers `canMoveToTile` calls
-      into), `sub_17233`/`sub_17254` (movement-blocked checks
-      `cmdMoveNorth` calls), and the `loc_17252` game-over destination
-      `checkPartyWipedOut` jumps to on a full party wipe — all found
-      in passing this pass but not chased down.
+      into) — found in passing this pass but not chased down.
 - [ ] Trace the overworld/town/dungeon map file loader against the
       confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
       `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a

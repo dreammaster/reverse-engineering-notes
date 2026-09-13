@@ -609,10 +609,10 @@ cmdMoveNorth:                           ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 0
                 mov     al, 1
-                call    sub_17233
+                call    isShipMovementBlockedByWind
                 jnz     short loc_11C9B
                 mov     al, byte_1259B
-                call    sub_17254
+                call    checkTerrainMovementBlocked
                 jnz     short loc_11C9B
                 dec     byte ptr _partyPosition+1
                 and     byte ptr _partyPosition+1, 3Fh
@@ -628,10 +628,10 @@ cmdMoveSouth:                           ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 2
                 mov     al, 3
-                call    sub_17233
+                call    isShipMovementBlockedByWind
                 jnz     short loc_11CBC
                 mov     al, byte_1259C
-                call    sub_17254
+                call    checkTerrainMovementBlocked
                 jnz     short loc_11CBC
                 inc     byte ptr _partyPosition+1
                 and     byte ptr _partyPosition+1, 3Fh
@@ -647,10 +647,10 @@ cmdMoveEast:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 3
                 mov     al, 2
-                call    sub_17233
+                call    isShipMovementBlockedByWind
                 jnz     short loc_11CDD
                 mov     al, byte_12599
-                call    sub_17254
+                call    checkTerrainMovementBlocked
                 jnz     short loc_11CDD
                 inc     byte ptr _partyPosition
                 and     byte ptr _partyPosition, 3Fh
@@ -666,10 +666,10 @@ cmdMoveWest:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 4
                 mov     al, 4
-                call    sub_17233
+                call    isShipMovementBlockedByWind
                 jnz     short loc_11CFE
                 mov     al, byte_1259A
-                call    sub_17254
+                call    checkTerrainMovementBlocked
                 jnz     short loc_11CFE
                 dec     byte ptr _partyPosition
                 and     byte ptr _partyPosition, 3Fh
@@ -5549,7 +5549,7 @@ loc_1603E:                              ; CODE XREF: seg000:6051↓j
                 jz      short loc_1603E
                 cmp     al, 84h
                 jz      short loc_1603E
-                call    sub_17254
+                call    checkTerrainMovementBlocked
                 jnz     short loc_1603E
                 mov     _partyPosition, cx
                 jmp     loc_15E69
@@ -8060,7 +8060,7 @@ invertCharacterCell endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17233       proc near               ; CODE XREF: sub_17B54-5ED2↑p
+isShipMovementBlockedByWind proc near   ; CODE XREF: sub_17B54-5ED2↑p
                                         ; sub_17B54-5EB1↑p ...
                 pushf
                 cmp     _currentTransport, 0Bh
@@ -8070,20 +8070,20 @@ sub_17233       proc near               ; CODE XREF: sub_17B54-5ED2↑p
                 cmp     al, byte ptr word_12A92
                 jnz     short loc_1724C
 
-loc_17248:                              ; CODE XREF: sub_17233+D↑j
+loc_17248:                              ; CODE XREF: isShipMovementBlockedByWind+D↑j
                 mov     al, 0FFh
                 jmp     short loc_1724E
 ; ---------------------------------------------------------------------------
 
-loc_1724C:                              ; CODE XREF: sub_17233+6↑j
-                                        ; sub_17233+13↑j
+loc_1724C:                              ; CODE XREF: isShipMovementBlockedByWind+6↑j
+                                        ; isShipMovementBlockedByWind+13↑j
                 mov     al, 0
 
-loc_1724E:                              ; CODE XREF: sub_17233+17↑j
+loc_1724E:                              ; CODE XREF: isShipMovementBlockedByWind+17↑j
                 popf
                 cmp     al, 0
                 retn
-sub_17233       endp
+isShipMovementBlockedByWind endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR checkPartyWipedOut
@@ -8097,7 +8097,7 @@ loc_17252:                              ; CODE XREF: checkPartyWipedOut+22↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17254       proc near               ; CODE XREF: sub_17B54-5ECA↑p
+checkTerrainMovementBlocked proc near   ; CODE XREF: sub_17B54-5ECA↑p
                                         ; sub_17B54-5EA9↑p ...
                 pushf
                 push    bx
@@ -8112,7 +8112,7 @@ sub_17254       proc near               ; CODE XREF: sub_17B54-5ECA↑p
                 jmp     short loc_172A5
 ; ---------------------------------------------------------------------------
 
-loc_17269:                              ; CODE XREF: sub_17254+9↑j
+loc_17269:                              ; CODE XREF: checkTerrainMovementBlocked+9↑j
                 cmp     al, 20h ; ' '
                 jz      short loc_172B4
                 cmp     al, 21h ; '!'
@@ -8128,34 +8128,34 @@ loc_17269:                              ; CODE XREF: sub_17254+9↑j
                 cmp     al, 4
                 jz      short loc_172A5
 
-loc_17285:                              ; CODE XREF: sub_17254+1F↑j
-                                        ; sub_17254+23↑j ...
+loc_17285:                              ; CODE XREF: checkTerrainMovementBlocked+1F↑j
+                                        ; checkTerrainMovementBlocked+23↑j ...
                 mov     al, 0F6h
                 call    playSoundEffect
                 mov     cx, 2000h
 
-loc_1728D:                              ; CODE XREF: sub_17254:loc_1728D↓j
+loc_1728D:                              ; CODE XREF: checkTerrainMovementBlocked:loc_1728D↓j
                 loop    loc_1728D
                 call    playSoundEffect
                 cmp     _currentTransport, 0Ah
                 jnz     short loc_172A1
                 mov     cx, 2000h
 
-loc_1729C:                              ; CODE XREF: sub_17254:loc_1729C↓j
+loc_1729C:                              ; CODE XREF: checkTerrainMovementBlocked:loc_1729C↓j
                 loop    loc_1729C
                 call    playSoundEffect
 
-loc_172A1:                              ; CODE XREF: sub_17254+D↑j
-                                        ; sub_17254+11↑j ...
+loc_172A1:                              ; CODE XREF: checkTerrainMovementBlocked+D↑j
+                                        ; checkTerrainMovementBlocked+11↑j ...
                 mov     al, 0
                 jmp     short loc_172A7
 ; ---------------------------------------------------------------------------
 
-loc_172A5:                              ; CODE XREF: sub_17254+13↑j
-                                        ; sub_17254+27↑j ...
+loc_172A5:                              ; CODE XREF: checkTerrainMovementBlocked+13↑j
+                                        ; checkTerrainMovementBlocked+27↑j ...
                 mov     al, 0FFh
 
-loc_172A7:                              ; CODE XREF: sub_17254+4F↑j
+loc_172A7:                              ; CODE XREF: checkTerrainMovementBlocked+4F↑j
                 pop     cx
                 mov     bl, al
                 pop     ax
@@ -8166,11 +8166,11 @@ loc_172A7:                              ; CODE XREF: sub_17254+4F↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_172B2:                              ; CODE XREF: sub_17254+1B↑j
+loc_172B2:                              ; CODE XREF: checkTerrainMovementBlocked+1B↑j
                 jmp     short loc_172F9
 ; ---------------------------------------------------------------------------
 
-loc_172B4:                              ; CODE XREF: sub_17254+17↑j
+loc_172B4:                              ; CODE XREF: checkTerrainMovementBlocked+17↑j
                 call    sub_171C1
                 mov     al, 0FCh
                 mov     bl, 10h
@@ -8179,7 +8179,7 @@ loc_172B4:                              ; CODE XREF: sub_17254+17↑j
                 mov     ch, 0
                 lea     bx, byte_114CC
 
-loc_172C8:                              ; CODE XREF: sub_17254+7D↓j
+loc_172C8:                              ; CODE XREF: checkTerrainMovementBlocked+7D↓j
                 test    byte ptr [bx+0Eh], 10h
                 jz      short loc_172D8
                 add     bx, 40h ; '@'
@@ -8188,7 +8188,7 @@ loc_172C8:                              ; CODE XREF: sub_17254+7D↓j
                 jmp     short loc_17285
 ; ---------------------------------------------------------------------------
 
-loc_172D8:                              ; CODE XREF: sub_17254+78↑j
+loc_172D8:                              ; CODE XREF: checkTerrainMovementBlocked+78↑j
                 mov     al, 99h
                 call    damageCharacterHP
                 mov     al, byte_114C1
@@ -8204,14 +8204,14 @@ loc_172D8:                              ; CODE XREF: sub_17254+78↑j
                 jmp     short loc_172A5
 ; ---------------------------------------------------------------------------
 
-loc_172F9:                              ; CODE XREF: sub_17254:loc_172B2↑j
+loc_172F9:                              ; CODE XREF: checkTerrainMovementBlocked:loc_172B2↑j
                 mov     al, 0F8h
                 call    playSoundEffect
                 lea     bx, byte_114CC
                 mov     cl, byte_114C1
                 mov     ch, 0
 
-loc_17308:                              ; CODE XREF: sub_17254+DB↓j
+loc_17308:                              ; CODE XREF: checkTerrainMovementBlocked+DB↓j
                 call    isCharacterAlive
                 jnz     short loc_1732C
                 test    byte ptr [bx+0Eh], 20h
@@ -8227,13 +8227,13 @@ loc_17308:                              ; CODE XREF: sub_17254+DB↓j
                 mov     al, ah
                 call    sub_17176
 
-loc_1732C:                              ; CODE XREF: sub_17254+B7↑j
-                                        ; sub_17254+BD↑j
+loc_1732C:                              ; CODE XREF: checkTerrainMovementBlocked+B7↑j
+                                        ; checkTerrainMovementBlocked+BD↑j
                 add     bx, 40h ; '@'
                 loop    loc_17308
                 call    drawPartyStatusBar
                 jmp     loc_172A1
-sub_17254       endp
+checkTerrainMovementBlocked endp
 
 ; ---------------------------------------------------------------------------
                 align 2
