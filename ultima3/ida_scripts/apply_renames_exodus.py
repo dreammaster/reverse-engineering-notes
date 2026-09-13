@@ -1042,6 +1042,69 @@ RENAMES = [
     (0x162C4, "spellAnjuSermani",
      "Cleric P, 'Anju Sermani'. Manual: restores an ashed character "
      "to life at a cost of 5 Wisdom points."),
+
+    # --- Combat damage-resolution helpers, 2026-09-14 ----------------
+    (0x18E46, "findCombatantAtPosition",
+     "Called from updateMonsterAI's attack-resolution chunk and from "
+     "fireProjectileAcrossArena. Searches 8 parallel-array combat "
+     "slots at a fixed arena base (DS-relative `[si+24C4h]`, si "
+     "running 7 down to 0): `+0x98`=occupied flag, `+0x80`=X, "
+     "`+0x88`=Y. Given a target (dl,dh)=(X,Y), returns the matching "
+     "slot's index (0-7) in bx via a neat trick -- `lea bx, "
+     "entryFromBootup` then `sub si, bx` -- entryFromBootup's own "
+     "near-offset within this segment (0x24C4) exactly cancels the "
+     "array's base, leaving the plain 0-7 loop index; returns "
+     "bx=0FFFFh if no occupied slot matches. This is the 8-combatant "
+     "arena grid (party+monsters together) that "
+     "combatHandleMovement/drawTileGrid's 11x11 rendering operates "
+     "on -- distinct from updateMonsterAI's own 32-slot overworld "
+     "monster arrays."),
+
+    (0x18E7A, "fireProjectileAcrossArena",
+     "Called from combatCmdAttack's chunk (ranged weapons) and from "
+     "updateMonsterAI (monster ranged attacks). Steps a projectile "
+     "position by a fixed (ch,cl) delta each iteration, redrawing it "
+     "via drawLogoTileGrid and checking findCombatantAtPosition after "
+     "each step; stops when the position leaves the 11x11 arena "
+     "(either axis reaching 0Bh) or a combatant is found at the new "
+     "position (bx != 0FFFFh)."),
+
+    (0x18F5A, "applyCombatDamage",
+     "Called from updateMonsterAI's melee-hit chunk, from "
+     "applyRandomGroupDamage (below), and from at least 2 spell "
+     "effect routines (see their notes). Takes bx=arena-relative "
+     "combatant pointer (base `[bx+24C4h]`-style, same 8-slot arena "
+     "as findCombatantAtPosition) and al=damage amount; BCD-subtracts "
+     "al from the slot's `+0x98` count/HP field. On reaching 0 (or "
+     "going negative, checked via the subtract's flags): prints "
+     "'Killed! Exp.+', clears the slot, looks up an experience award "
+     "from an unidentified table indexed by `_conflictMonsterClass & "
+     "0xFh` at a computed negative offset (`[bx-79EBh]`, table itself "
+     "not yet located/named), and calls addExperienceClamped. Has an "
+     "unexplained special case: entirely skipped when "
+     "`_conflictMonsterClass == 13h` -- flagged, not investigated "
+     "further (possibly an indestructible/scripted monster, e.g. a "
+     "boss)."),
+
+    (0x15EAA, "applyRandomGroupDamage",
+     "Called from within spellRespond's body (`seg000:5FCBh` = linear "
+     "0x15FCB falls inside spellRespond's 0x15F9F-0x15FD3 range) and "
+     "spellNoxum's body (`seg000:60B1h` = linear 0x160B1 falls inside "
+     "spellNoxum's 0x160A5-0x160B9 range) -- confirms both are "
+     "multi-target effects sharing one implementation. Takes a damage "
+     "amount in al, loops all 8 arena combat slots, and for each "
+     "occupied slot rolls a 2-bit random value (`and dl,3`) applying "
+     "the damage via applyCombatDamage only on a nonzero roll -- "
+     "roughly a 3-in-4 chance per occupied slot, not the 1-in-4 "
+     "initially estimated from the manual's 'multi-pronged' "
+     "description alone. Matches the manual's description of Noxum "
+     "('the first of the multi-pronged attacks') and is consistent "
+     "with Respond's 'dispel Orcs/Goblins/Trolls' if called with a "
+     "damage value large enough to be lethal -- the type-filtering "
+     "(only Orcs/Goblins/Trolls) implied by Respond's manual text is "
+     "NOT visible in this shared helper itself, so it must happen in "
+     "spellRespond's own code before calling this, or the filtering "
+     "claim in the manual is inexact; not fully resolved."),
 ]
 
 

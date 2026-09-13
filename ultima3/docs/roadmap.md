@@ -313,9 +313,30 @@ Next-session priorities, roughly in order:
       code — a good next target now that all addresses are named,
       along with cross-referencing LairWare's `UltimaSpellCombat.c`
       for its own effect implementation as a secondary source.
-- [ ] `combatCmdAttack`'s damage-resolution helpers (`sub_18E46`,
-      `sub_18E7A`) — the actual to-hit/damage formula, not yet traced
-      past "the overall shape."
+- [x] **Combat damage-resolution helpers** — done, 2026-09-14:
+      `findCombatantAtPosition` (`0x18E46`, look up the occupied
+      8-slot arena combatant at a given (X,Y), returning its slot
+      index via a `lea bx,entryFromBootup; sub si,bx` trick that
+      cancels the array's fixed base against `entryFromBootup`'s own
+      near-offset), `fireProjectileAcrossArena` (`0x18E7A`, steps a
+      ranged attack across the 11×11 arena by a fixed delta,
+      redrawing and hit-testing each step), `applyCombatDamage`
+      (`0x18F5A`, BCD-subtracts damage from a slot's HP/count field,
+      handles death + `addExperienceClamped`, with an unexplained
+      skip when `_conflictMonsterClass == 0x13`), and
+      `applyRandomGroupDamage` (`0x15EAA`, confirmed shared by
+      `spellRespond` and `spellNoxum` via address-range containment of
+      their `CODE XREF` offsets — loops all 8 arena slots, ~75% chance
+      per occupied slot via `and dl,3`). The **melee** to-hit/damage
+      formula itself (inline in `updateMonsterAI`'s attack chunk, not
+      a separate function) is now fully traced too: to-hit chance is a
+      BCD roll against the defender's `_dexterity`
+      (`RosterEntry+0x13`), and damage on a hit is
+      `4 + weaponIndex*3 + floor(strength/2) + random(0..strength|1)`,
+      strength/weapon read from `RosterEntry+0x12`/`+0x30`. Still
+      open: the experience-award table `applyCombatDamage` indexes via
+      `[bx-79EBh]` (keyed by `_conflictMonsterClass & 0xFh`) isn't
+      located/named yet.
 - [ ] Resolve the **Level vs. Experience offset conflict**: `drawPartyStatusBar`
       (`ultima_exodus.idb`) reads `+0x1Fh` alone as a "Level" byte
       (BCD-displayed as value+1, clamped to 99), but
