@@ -1488,3 +1488,13 @@ character to Ashes directly on the map display before calling
 combat pipelines: the formal 8-slot arena encounter system, and a
 separate "a monster reaches you while exploring a dungeon corridor"
 system with its own damage math and its own special-attack types.
+
+Rounding out the dungeon-monster system: `fireDungeonProjectileAtParty`
+(`0x190FD`) is the dungeon first-person counterpart to
+`fireProjectileAcrossArena`/`monsterBreathAttack` — steps a
+projectile across the 11×11 dungeon view and calls
+`applyDungeonMonsterDamage` if it reaches an occupied party position
+(tracked in its own parallel array, distinct from the overworld/arena
+ones). `moveDungeonMonsterSprite` (`0x19215`) handles redrawing a
+dungeon monster's sprite as it moves between tiles, the display-side
+counterpart to that same tracking.
