@@ -1826,3 +1826,42 @@ non-functional in the shipped game. Neither is confirmed, but the
 search space for "which command consumes this" is now much smaller
 than it was, and the two most obvious candidates are conclusively
 ruled out.
+
+## `ultima.idb`'s last 2 orphaned functions defined: 60/60 named
+
+Closed out the remaining roadmap item under the function-naming sweep:
+the two regions of undefined code that a prior naive "walk backward to
+the nearest `retn`" heuristic had gotten wrong. This time, resolved
+them the safe way instead of guessing from disassembly text (which can
+mislead in an orphaned/undefined region) -- dumped the exact raw bytes
+of the already-confirmed, already-named copies in `ultima_bootup.idb`
+(`dump_bootup_func_bytes.py`), then dumped a wide raw-byte window
+around each candidate address in `ultima.idb`
+(`dump_ultima_orphan_bytes.py`) and located the byte-for-byte match by
+eye.
+
+Both matched exactly, instruction for instruction, differing only in
+one relocated near-pointer/immediate word operand each -- expected,
+since the two binaries lay out their data segments differently. This
+gave fully confirmed boundaries, used directly in `ida_funcs.add_func()`
+calls (`apply_orphan_funcs_ultima.py`) rather than any heuristic:
+
+- **`promptForNumberEntry`**: `0x18C6F`-`0x18CC0` (81 bytes) -- **not**
+  `~0x18C39` as an earlier guess had it; that address falls inside an
+  unrelated preceding code fragment. Matches `ultima_bootup.idb`'s copy
+  at `0x1498F`-`0x149E0` exactly.
+- **`saveFile`**: `0x18CC0`-`0x18D10` (80 bytes) -- starts exactly where
+  `promptForNumberEntry` ends, with no gap between them (a nice
+  internal consistency check that the boundaries are right). Matches
+  `ultima_bootup.idb`'s copy at `0x149E0`-`0x14A30` exactly.
+
+Both are real shared-runtime code (confirmed real callers exist in
+`ultima_bootup.idb`: `getEntryNumber` for `promptForNumberEntry`,
+several PARTY.ULT/ROSTER.ULT writers for `saveFile`) that `ULTIMA.COM`'s
+title screen just never happens to call itself.
+
+**With this, `ultima.idb` reaches full function-naming coverage:
+60/60, confirmed via `identify.py` (0 `sub_XXXXX` remaining).** All
+three of Ultima III's executables now have complete function coverage:
+`ultima.idb` (60/60), `ultima_bootup.idb` (73/73), `ultima_exodus.idb`
+(144/144).
