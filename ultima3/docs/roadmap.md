@@ -479,20 +479,20 @@ for the full disassembly-confirmed mechanism.
       right", `cmdTurnLeft`="Turn left", `cmdMoveForward`="Advance",
       `cmdMoveBackward`="Retreat" — all line up perfectly, independently
       confirming that fix was correct.
-- [ ] **Why is Unlock ('U') disabled in dungeons?** PARTIALLY
-      explained, 2026-09-14: `cmdUnlock` only ever recognizes ONE
-      hardcoded tile value as "a locked door" — `getMapTileAt` result
-      `== 0xB8` — which reads like an overworld/town-specific tile ID
-      from that map format's own tile-numbering space, not obviously
-      shared with the dungeon renderer's much smaller, distinct
-      wall/floor/ladder tile-code space (confirmed elsewhere via the
-      dungeon movement handlers). If dungeons simply don't use tile ID
-      `0xB8` for anything, reusing `cmdUnlock` there would always be a
-      silent no-op — explaining why it was cheaper to just disable the
-      letter outright. Not fully confirmed: doesn't independently show
-      whether dungeon locked doors exist at all, or how they'd be
-      opened if so (automatic-on-movement remains a plausible
-      alternative, per the original hypothesis).
+- [x] **RESOLVED 2026-09-14: why Unlock ('U') is disabled in
+      dungeons.** Dumped `OVERWORLD_COMMAND_KEYS` (`0x11887`) and
+      `DUNGEON_COMMAND_KEYS` (`0x17708`) side by side: `'U'` (`0x55`)
+      is present in the overworld table but **entirely absent** from
+      the dungeon one. `readAndDispatchCommand`'s dungeon-mode
+      dispatcher never recognizes 'U' as a valid keypress in the first
+      place — it's not that `cmdUnlock` runs and silently no-ops (the
+      earlier `getMapTileAt() == 0xB8` theory, now superseded), it's
+      that the key lookup itself rejects 'U' before any handler is
+      ever reached. Simpler and directly decisive, confirmed straight
+      from the two tables' raw bytes rather than inferred from tile
+      semantics. Whether dungeon locked doors exist at all (and how
+      they'd be opened, if so) remains a separate, still-open
+      question.
 - [x] **`_locationTypeTable` renamed to `_locationType`**, done
       2026-09-14: confirmed a plain scalar (`db 0`, declared alone,
       never accessed with an index anywhere in the binary) — not the
