@@ -765,7 +765,7 @@ loc_115D6:                              ; CODE XREF: showCharacterDetails+42↑j
                 lea     si, aEntry      ; "Entry#"
                 call    printStringAt
                 call    printHexByte
-                cmp     byte ptr [bx+10h], 0FFh
+                cmp     [bx+RosterEntry._partyMember], 0FFh
                 jnz     short loc_1160A
                 mov     cx, 4
                 mov     bx, cx
@@ -790,7 +790,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 3
                 lea     si, aSex        ; " Sex:"
                 call    printStringAt
-                mov     al, [bx+18h]
+                mov     al, [bx+RosterEntry._sex]
                 lea     di, byte_11045
                 mov     cx, 3
                 mov     si, cx
@@ -804,7 +804,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 3
                 lea     si, aRace       ; "Race:"
                 call    printStringAt
-                mov     al, [bx+16h]
+                mov     al, [bx+RosterEntry._race]
                 lea     di, byte_1106B
                 mov     cx, 5
                 mov     si, cx
@@ -818,7 +818,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 3
                 lea     si, aType       ; "Type:"
                 call    printStringAt
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 lea     di, byte_110D0
                 mov     cx, 0Bh
                 mov     si, cx
@@ -832,7 +832,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 1
                 lea     si, aStatus     ; "Status:"
                 call    printStringAt
-                mov     al, [bx+11h]
+                mov     al, [bx+RosterEntry._status]
                 lea     di, aGpdpdIRWHand ; "GPDPD\rI\rR\rW\rHand"
                 mov     cx, 4
                 mov     si, cx
@@ -846,7 +846,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 1
                 lea     si, aWeapon     ; "Weapon:"
                 call    printStringAt
-                mov     al, [bx+30h]
+                mov     al, [bx+RosterEntry._weaponIndex]
                 mov     ah, 0
                 shl     ax, 1
                 mov     si, ax
@@ -856,7 +856,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 1
                 lea     si, aArmour     ; "Armour:"
                 call    printStringAt
-                mov     al, [bx+28h]
+                mov     al, [bx+RosterEntry._armourIndex]
                 mov     ah, 0
                 shl     ax, 1
                 mov     si, ax
@@ -866,49 +866,49 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 mov     dl, 1Bh
                 lea     si, aStrength   ; "Strength:"
                 call    printStringAt
-                mov     al, [bx+12h]
+                mov     al, [bx+RosterEntry._strength]
                 call    printHexByte
                 mov     dh, 0Eh
                 mov     dl, 1Ah
                 lea     si, aDexterity  ; "Dexterity:"
                 call    printStringAt
-                mov     al, [bx+13h]
+                mov     al, [bx+RosterEntry._dexterity]
                 call    printHexByte
                 mov     dh, 0Fh
                 mov     dl, 17h
                 lea     si, aIntelligence ; "Intelligence:"
                 call    printStringAt
-                mov     al, [bx+14h]
+                mov     al, [bx+RosterEntry._intelligence]
                 call    printHexByte
                 mov     dh, 10h
                 mov     dl, 1Dh
                 lea     si, aWisdom     ; "Wisdom:"
                 call    printStringAt
-                mov     al, [bx+15h]
+                mov     al, [bx+RosterEntry._wisdom]
                 call    printHexByte
                 mov     dh, 12h
                 mov     dl, 17h
                 lea     si, aHitPoints  ; "Hit points:"
                 call    printStringAt
-                mov     ax, [bx+1Ah]
+                mov     ax, [bx+RosterEntry._hitPoints]
                 call    printHexWord
                 mov     dh, 13h
                 mov     dl, 17h
                 lea     si, aExperience ; "Experience:"
                 call    printStringAt
-                mov     ax, [bx+1Eh]
+                mov     ax, [bx+RosterEntry._experience]
                 call    printHexWord
                 mov     dh, 14h
                 mov     dl, 1Dh
                 lea     si, aFood       ; "Food:"
                 call    printStringAt
-                mov     ax, [bx+21h]
+                mov     ax, [bx+RosterEntry._food]
                 call    printHexWord
                 mov     dh, 15h
                 mov     dl, 1Dh
                 lea     si, aGold       ; "Gold:"
                 call    printStringAt
-                mov     ax, [bx+23h]
+                mov     ax, [bx+RosterEntry._gold]
                 call    printHexWord
 
 loc_1176C:                              ; CODE XREF: showCharacterDetails+1F4↓j
@@ -1009,13 +1009,13 @@ loc_117EE:                              ; CODE XREF: handleFormParty+57↑j
 ; ---------------------------------------------------------------------------
 
 loc_1180B:                              ; CODE XREF: handleFormParty+74↑j
-                cmp     byte ptr [bx+10h], 0FFh
+                cmp     [bx+RosterEntry._partyMember], 0FFh
                 jnz     short loc_11814
                 jmp     loc_1189F
 ; ---------------------------------------------------------------------------
 
 loc_11814:                              ; CODE XREF: handleFormParty+7D↑j
-                mov     byte ptr [bx+10h], 0FFh
+                mov     [bx+RosterEntry._partyMember], 0FFh
                 inc     byte_101C3
                 cmp     byte_101C3, 4
                 jb      short loc_117D7
@@ -1107,7 +1107,7 @@ loc_118BA:                              ; CODE XREF: clearPartySelection+29↓j
                 mov     byte ptr [bx+si-1], 0
                 mov     bl, al
                 call    getRosterEntryPointer
-                mov     byte ptr [bx+10h], 0
+                mov     [bx+RosterEntry._partyMember], 0
                 dec     byte_101C3
                 jnz     short loc_118BA
 
@@ -1211,7 +1211,7 @@ loc_11971:                              ; CODE XREF: showRegister+1F↑j
                 cmp     byte ptr [bx], 0
                 jz      short loc_119C8
                 push    ax
-                cmp     byte ptr [bx+10h], 0FFh
+                cmp     [bx+RosterEntry._partyMember], 0FFh
                 jz      short loc_11991
                 mov     al, 2Dh ; '-'
                 call    writeCharacter
@@ -1225,13 +1225,13 @@ loc_11991:                              ; CODE XREF: showRegister+3D↑j
 loc_11996:                              ; CODE XREF: showRegister+44↑j
                 mov     al, 20h ; ' '
                 call    writeCharacter
-                mov     al, [bx+18h]
+                mov     al, [bx+RosterEntry._sex]
                 call    writeCharacter
-                mov     al, [bx+16h]
+                mov     al, [bx+RosterEntry._race]
                 call    writeCharacter
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 call    writeCharacter
-                mov     al, [bx+11h]
+                mov     al, [bx+RosterEntry._status]
                 call    writeCharacter
                 mov     al, 20h ; ' '
                 call    writeCharacter
@@ -1296,7 +1296,7 @@ handleTerminateCharacter proc near      ; CODE XREF: showPartyOrganizationMenu:l
                 call    getRosterEntryPointer
                 cmp     byte ptr [bx], 0
                 jz      short loc_11A53
-                cmp     byte ptr [bx+10h], 0FFh
+                cmp     [bx+RosterEntry._partyMember], 0FFh
                 jz      short loc_11A60
                 mov     cx, 40h ; '@'
                 mov     di, bx
@@ -1427,14 +1427,14 @@ loc_11AF2:                              ; CODE XREF: handleCreateCharacter+37↑
 ; ---------------------------------------------------------------------------
 
 loc_11AFF:                              ; CODE XREF: handleCreateCharacter+70↑j
-                mov     byte ptr [bx+11h], 47h ; 'G'
-                mov     byte ptr [bx+10h], 0
-                mov     word ptr [bx+1Ah], 150h
-                mov     word ptr [bx+1Ch], 150h
-                mov     word ptr [bx+21h], 150h
-                mov     word ptr [bx+23h], 150h
-                mov     byte ptr [bx+31h], 1
-                mov     byte ptr [bx+29h], 1
+                mov     [bx+RosterEntry._status], 47h ; 'G'
+                mov     [bx+RosterEntry._partyMember], 0
+                mov     [bx+RosterEntry._hitPoints], 150h
+                mov     [bx+RosterEntry._maxHitPoints], 150h
+                mov     [bx+RosterEntry._food], 150h
+                mov     [bx+RosterEntry._gold], 150h
+                mov     [bx+RosterEntry._weaponOwned], 1
+                mov     [bx+RosterEntry._armourOwned], 1
                 lea     dx, aRosterUlt  ; "ROSTER.ULT"
                 mov     cx, 500h
                 lea     bx, byte_102CE
@@ -1553,7 +1553,7 @@ loc_11BEC:                              ; CODE XREF: gatherCharacterCreationInpu
                 lea     di, byte_11045
                 lea     si, byte_11048
                 call    getMenuChoice
-                mov     [bx+18h], al
+                mov     [bx+RosterEntry._sex], al
                 mov     dh, 0Fh
                 mov     dl, 13h
                 call    swapCursorPos
@@ -1561,7 +1561,7 @@ loc_11BEC:                              ; CODE XREF: gatherCharacterCreationInpu
                 lea     di, byte_1106B
                 lea     si, byte_11070
                 call    getMenuChoice
-                mov     [bx+16h], al
+                mov     [bx+RosterEntry._race], al
                 mov     dh, 10h
                 mov     dl, 13h
                 call    swapCursorPos
@@ -1569,7 +1569,7 @@ loc_11BEC:                              ; CODE XREF: gatherCharacterCreationInpu
                 lea     di, byte_110D0
                 lea     si, byte_110DB
                 call    getMenuChoice
-                mov     [bx+17h], al
+                mov     [bx+RosterEntry._class], al
                 mov     cl, 50h ; 'P'
 
 loc_11C36:                              ; CODE XREF: gatherCharacterCreationInput+7B↓j
@@ -1582,7 +1582,7 @@ loc_11C36:                              ; CODE XREF: gatherCharacterCreationInpu
                 ja      short loc_11C36
                 cmp     ah, 5
                 jb      short loc_11C36
-                mov     [bx+12h], al
+                mov     [bx+RosterEntry._strength], al
                 sub     cl, al
                 mov     al, cl
                 das
@@ -1599,7 +1599,7 @@ loc_11C57:                              ; CODE XREF: gatherCharacterCreationInpu
                 ja      short loc_11C57
                 cmp     ah, 5
                 jb      short loc_11C57
-                mov     [bx+13h], al
+                mov     [bx+RosterEntry._dexterity], al
                 mov     ch, cl
                 sub     ch, al
                 mov     al, ch
@@ -1619,7 +1619,7 @@ loc_11C7E:                              ; CODE XREF: gatherCharacterCreationInpu
                 ja      short loc_11C7E
                 cmp     ah, 5
                 jb      short loc_11C7E
-                mov     [bx+14h], al
+                mov     [bx+RosterEntry._intelligence], al
                 mov     ch, cl
                 sub     ch, al
                 js      short loc_11C7E
@@ -1642,7 +1642,7 @@ loc_11CA7:                              ; CODE XREF: gatherCharacterCreationInpu
                 jb      short loc_11CA7
                 cmp     cl, al
                 jb      short loc_11CA7
-                mov     [bx+15h], al
+                mov     [bx+RosterEntry._wisdom], al
                 sub     cl, al
                 mov     al, cl
                 das
