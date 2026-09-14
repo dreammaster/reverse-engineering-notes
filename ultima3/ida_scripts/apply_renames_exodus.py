@@ -1754,16 +1754,16 @@ RENAMES = [
      "chain-load/re-entry, per the FCB self-modifying-code trick this "
      "project has documented elsewhere) isn't traced further."),
     (0x15B51, "teleportPartyWithFanfare",
-     "MODERATE CONFIDENCE. Redraws the map (drawMapViewport), flashes "
+     "CONFIRMED 2026-09-14 (was moderate confidence): this is the "
+     "WHIRLPOOL effect. Redraws the map (drawMapViewport), flashes "
      "the full screen (invertFullScreen) with a sound cue, sets "
-     "`_partyPosition` to a NEW position looked up from a pair of "
-     "parallel tables (`0x194D`/`0x1955`) indexed by `word_11324`'s "
-     "high byte, and flashes again. Shape strongly suggests a "
-     "scripted 'magically transported elsewhere' effect (e.g. a "
-     "whirlpool) but `word_11324`'s own meaning/origin wasn't traced "
-     "back to confirm that specifically -- named for the confirmed "
-     "mechanical effect (teleport + screen fanfare), not an asserted "
-     "trigger."),
+     "`_partyPosition` to a NEW position looked up from "
+     "`0x194D`/`0x1955` indexed by `word_11324`'s high byte, and "
+     "flashes again. `word_11324` is confirmed by updateWhirlpoolPosition "
+     "(below) to be the whirlpool's own current animated map "
+     "position, cycled once per turn -- this function is what "
+     "actually happens when the party sails onto the tile the "
+     "whirlpool currently occupies."),
 
     (0x1A9E8, "listWeaponsShopInventory",
      "showWeaponsShopMenu's 'List?' handler: prints the standard "
@@ -1905,6 +1905,22 @@ RENAMES = [
      "matching readyWeapon's, incrementing `_weaponOwned`) and/or an "
      "armour item ('and [name]', incrementing `_armourOwned`), each "
      "BCD-incremented and clamped to 0x99."),
+
+    (0x120AE, "updateWhirlpoolPosition",
+     "Called from entryFromBootup and the main game loop. Only when "
+     "game mode is 0 (overworld): advances `word_11324` (the "
+     "whirlpool's current animated map position) on two independent "
+     "timers -- its low byte (X) cycles through 8 values every 11 "
+     "turns, its high byte (Y) every 3 turns, both wrapping mod 8 -- "
+     "and when the position changes, restores the OLD map tile (via "
+     "the same `0x194D`/`0x1955` position tables teleportPartyWithFanfare "
+     "reads) and marks the NEW one with tile value 4, i.e. the "
+     "whirlpool visibly moves around a small fixed set of map "
+     "locations over time. Confirms `teleportPartyWithFanfare`'s "
+     "identity as the whirlpool's teleport effect. The function's "
+     "second half (unconditional cursor/HUD manipulation after the "
+     "whirlpool logic) wasn't traced further -- possibly unrelated "
+     "per-turn bookkeeping bundled into the same call site."),
 ]
 
 

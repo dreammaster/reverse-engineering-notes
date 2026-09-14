@@ -1522,3 +1522,15 @@ systems; not confirmed further this pass.
 `addGoldClamped`, then on separate random rolls may award a weapon
 item ("and a [name]") and/or an armour item ("and [name]"), each via
 `printNameByIndex` and a BCD-incremented, 0x99-clamped owned-count.
+
+**The whirlpool, confirmed**: `updateWhirlpoolPosition` (`0x120AE`,
+called from `entryFromBootup` and the main game loop) advances a
+whirlpool's animated map position once per turn -- its X coordinate
+cycles through 8 values every 11 turns, its Y coordinate every 3 turns
+-- restoring the old map tile and marking the new one each time it
+moves. This uses the exact same position tables
+`teleportPartyWithFanfare` (`0x15B51`) reads, upgrading that function
+from a moderate-confidence guess to a confirmed identity: it's what
+happens when the party sails onto the whirlpool's current tile -- the
+classic Ultima whirlpool teleport, now traced end-to-end from the
+map-feature animation through to the actual transport effect.
