@@ -80,11 +80,17 @@ for the full findings log. Remaining loose ends:
       `idc.create_data`. Root cause not identified (possibly an IDA 8.3
       API quirk, possibly the leading `0x10` control byte). Not
       blocking — the fallback works — but worth a look if it recurs.
-- [ ] Confirm `BLANK.IBM`/`EXOD.IBM`'s exact format — likely full-screen
-      CGA/EGA image data (16,384 bytes), analogous to Ultima II's
-      `PIC*` files. `loadFile` is identified; tracing its 2 call sites
-      for these files plus what reads the loaded buffers afterward
-      should settle this quickly.
+- [x] **RESOLVED, 2026-09-15**: `BLANK.IBM`/`EXOD.IBM` confirmed as
+      raw CGA framebuffer images (16,384 bytes = one full 4-color
+      graphics-mode bank), exactly the guess. `BLANK.IBM` is copied
+      directly into CGA video memory (`es=0xB800`) right after
+      loading; `EXOD.IBM` (Exodus's own portrait, loaded the same way
+      right after) isn't blitted at its own load site — the title
+      sequence calls `drawAnimatedPixelPath` shortly after with a
+      *different* source buffer (`ANIMATE.DAT`), consistent with a
+      progressive reveal rather than an instant blit, though the exact
+      site that finally draws `EXOD.IBM` itself wasn't traced. See
+      file-formats.md.
 - [x] **RESOLVED, 2026-09-14**: why does `drawCharGlyph`'s glyph-data
       buffer read as all zeros in `ULTIMA.COM`'s own file image? Found
       it: `ultima_exodus.idb`'s `entryFromBootup` is exactly where
