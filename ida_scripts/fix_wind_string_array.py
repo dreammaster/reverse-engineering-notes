@@ -9,9 +9,13 @@ exception) until the array is split into 5 separate 13-byte items.
 
 Each string is exactly 13 bytes: a 0x10 lead-in byte, the text
 (space-padded to a common width), a 0x11 byte, then a 0x00 terminator.
-create_strlit unexpectedly returns False for these even after del_items
-(root cause not identified, see docs/roadmap.md) -- falls back to a plain
-FF_BYTE array via idc.create_data, which works fine for naming purposes.
+create_strlit returns False for these even after del_items -- RESOLVED
+2026-09-14, not a bug: STRTYPE_C validates every byte before the
+terminator against the encoding's legal character set, and control
+bytes 0x10/0x11 aren't legal C-string characters, so create_strlit
+correctly refuses. Falls back to a plain FF_BYTE array via
+idc.create_data, which is actually the more accurate representation
+of this mixed control-code-plus-text blob, not just a workaround.
 
 IMPORTANT: each IDB's address list is only valid *in that IDB* -- the two
 executables' address ranges overlap (both are tiny-model COM-style images

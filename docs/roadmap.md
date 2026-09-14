@@ -126,12 +126,19 @@ for the full findings log. Remaining loose ends:
       remaining 107 bytes are literal zero padding, nothing hidden.
       See
       [file-formats.md](file-formats.md#namedat-640-bytes--a-pixel-path-animation-script-not-a-name-table).
-- [ ] The `create_strlit` mystery from `fix_wind_string_array.py`: it
-      returns `False` for the wind strings in *both* IDBs even after
-      `del_items`, forcing a fallback to a plain `FF_BYTE` array via
-      `idc.create_data`. Root cause not identified (possibly an IDA 8.3
-      API quirk, possibly the leading `0x10` control byte). Not
-      blocking — the fallback works — but worth a look if it recurs.
+- [x] **RESOLVED 2026-09-14**: the `create_strlit` mystery from
+      `fix_wind_string_array.py`. Not an IDA 8.3 quirk — expected,
+      correct behavior once the exact byte layout is considered. Each
+      wind string is `[0x10 lead-in][text][0x11][0x00 terminator]`
+      (per the script's own docstring). `STRTYPE_C` validates that
+      every byte before the terminator is a legal character for the
+      current string encoding, and the control bytes `0x10`/`0x11`
+      aren't — so `create_strlit` correctly refuses to treat this as a
+      plain C string. The byte-array fallback isn't just a workaround,
+      it's the *more accurate* representation: this is a mixed
+      control-code-plus-text display blob (the same
+      embedded-control-code convention `writeCharacter` handles
+      elsewhere in this codebase), not a bare null-terminated string.
 - [x] **RESOLVED, 2026-09-15**: `BLANK.IBM`/`EXOD.IBM` confirmed as
       raw CGA framebuffer images (16,384 bytes = one full 4-color
       graphics-mode bank), exactly the guess. `BLANK.IBM` is copied
