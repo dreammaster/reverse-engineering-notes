@@ -383,8 +383,8 @@ OVERWORLD_COMMAND_TABLE dw offset cmdMoveNorth
                 dw offset cmdSteal
                 dw offset cmdYell
                 dw offset cmdOtherCommand
-                db 8, 39h, 0Fh, 24h, 0Fh, 0Ch, 1Fh, 3Ah, 8, 2Eh, 1Bh, 3Ah
-                db 1Dh, 37h, 2 dup(1Fh)
+WHIRLPOOL_X_TABLE db 8, 39h, 0Fh, 24h, 0Fh, 0Ch, 1Fh, 3Ah
+WHIRLPOOL_Y_TABLE db 8, 2Eh, 1Bh, 3Ah, 1Dh, 37h, 2 dup(1Fh)
 byte_1195D      db 0, 48h, 0, 50h, 0, 4Dh, 0, 4Bh, 60h, 5Ch, 64h, 50h
                                         ; DATA XREF: readAndDispatchCommand-58DB↓o
                 db 68h, 6Ch, 34h, 70h, 58h, 38h, 3Ch, 74h, 78h, 6 dup(4)

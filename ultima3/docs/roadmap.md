@@ -865,11 +865,35 @@ for the full disassembly-confirmed mechanism.
       wandering a level (as opposed to a formal arena encounter) use
       an entirely different attack/damage pipeline. Function-naming
       jumped from 125/144 to 129/144 in this one batch.
-- [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
-      documentation in file-formats.md: castle/town/dungeon/moongate
-      coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"
-      command strings at `0x6566`) — cross-reference those file offsets
-      against the disassembly now that it's loaded.
+- [x] **RESOLVED 2026-09-14**: cross-referenced the external doc's
+      guessed `EXODUS.BIN` fixed-data-table file offsets against the
+      now-fully-disassembled `ultima_exodus.idb` (file offset 0 =
+      linear `0x10100`, a `.COM`-style load). All five resolved to
+      already-understood structures, none needed new investigation
+      from scratch:
+  - **"look" command strings** (`0x6566` → linear `0x16666`): lands
+      exactly on `GAME_NAME_TABLE`'s string blob, already fully
+      cataloged this session (`fix_game_name_table.py`) — 146 strings
+      covering terrain/objects/NPCs/monsters/spells/etc.
+  - **castle/town/dungeon coordinates** (`0x15E1`/`0x15E5`/`0x15F9` →
+      linear `0x116E1`/`0x116E5`/`0x116F9`): these three "separate"
+      offsets are just three different indices into the single,
+      already-named 19-entry `LOCATION_TILE_TABLE` (word array of
+      `_partyPosition`-format positions for every named overworld
+      location) — not three distinct tables as the external doc's
+      byte-level guess implied.
+  - **"moongate" coordinates** (`0x184D`/`0x1855` → linear
+      `0x1194D`/`0x11955`): genuinely new — these were undefined bytes
+      in the IDB, referenced only via raw hex offsets
+      (`[bx+194Dh]`/`[bx+1955h]`) inside `teleportPartyWithFanfare`
+      and `updateWhirlpoolPosition`, whose rename notes already
+      explain the mechanism in full (the game's **moving whirlpool**,
+      not a moongate): 8 possible on-map positions, cycled over time,
+      selected by `word_11324`'s two independently-timed index bytes.
+      Named the two 8-byte tables `WHIRLPOOL_X_TABLE`/
+      `WHIRLPOOL_Y_TABLE` to close the loop — the external doc's
+      "moongate" label was simply a mismatch with Ultima III's actual
+      mechanic (there's no moongate system in this game).
 - [x] **`AMBROSIA.ULT`'s role confirmed** — done 2026-09-14, while
       naming the last few functions (see `teleportToAmbrosia` below):
       it's loaded directly by name when the party falls into a
