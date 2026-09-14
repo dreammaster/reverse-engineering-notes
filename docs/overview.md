@@ -1230,3 +1230,44 @@ writing anywhere itself, leaving the actual commit to its many call
 sites scattered directly in `sub_17B54`. Distinct from
 `addGoldClamped`/`addExperienceClamped`, which are simpler and commit
 their result directly to a `RosterEntry` field.
+
+**Town shops and NPCs identified — a big batch**: found by reading
+`cmdEnter`'s building-tile branch (entering a town building, tile
+`'@'` = `0x40`) all the way through. It dispatches through a
+newly-named `TOWN_BUILDING_TABLE` (`0x18028`, 8 entries) indexed by
+`_partyPosition`'s Y byte `& 7` — which of 8 shop/NPC types a given
+town building is turns out to depend purely on its Y coordinate mod 8,
+one fixed pattern reused across every town in the game, not anything
+town-specific. Every one of the 8 handlers was identified from its own
+on-screen welcome text (not guessed from position):
+
+- **`showTavernMenu`** (`0x1A5AC`) — "Welcome to\nthe Pub!" Buy drinks
+  for gold; below a minimum cost you're kicked out ("Leave my shop!
+  You scum!!"), and each drink tier prints a different rumor/lore line
+  from a small lookup table indexed by cost. Loops via "Another?",
+  farewell "It's been a\npleasure!!" — the classic Ultima
+  tavern-rumors mechanic.
+- **`showGrocerMenu`** (`0x1A630`) — "Ye local\nGrocer\n\nRations:".
+  Buys food, BCD-adding to `_food` (confirming that offset again from
+  a completely different angle than `showCharacterDetails`), refusing
+  a purchase that would overflow it ("Too much to\ncarry!").
+- **`showWeaponsShopMenu`**/**`showArmourShopMenu`** (`0x1A8A5`/
+  `0x1AA25`) — structurally identical to each other (shared prompt
+  strings and byte-table layout), buy/sell weapons or armour.
+- **`showGuildMenu`** (`0x1AB93`) — "The Guild shop:\n Keys 50gp\n
+  Torc[hes]...", sells Keys/Torches/Powders/Gems.
+- **`showOracleMenu`** (`0x1ACFC`) — "    Radrion:\nProphet of Life!",
+  the game's cryptic-hint NPC. Its full dialogue is a direct, valuable
+  lore confirmation: rhyming riddles about the 4 Marks, the 4 Shrines,
+  playing-card suits, and seeking "the Lord of Time" in the dungeons —
+  ties straight back to the `_marksAndCards` `RosterEntry` field found
+  earlier this session via `cmdYell`. Takes a gold offering (100gp
+  increments) per hint.
+- **`showStableMenu`** (`0x1AD70`) — "\n\nEquine Emporium:\n\n", buys
+  horses for the whole party at `partySize * 200gp`.
+
+This one batch moved function-naming from 99/144 to 106/144. Left
+open: `showGrocerMenu`'s cost-calculation call, `sub_17D1A` (likely a
+shared "prompt a quantity, compute the price" utility other shops
+probably reuse too), and the weapons/armour shops' own
+inventory-listing internals weren't individually traced this pass.

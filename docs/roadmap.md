@@ -549,6 +549,29 @@ Next-session priorities, roughly in order:
       `_maxHitPoints` itself remains a same-session inference (see its
       own struct note) and armour/weapon-owned array entries beyond
       index 0 are still unconfirmed.
+- [x] **Town shops/NPCs identified**, done 2026-09-14 — a big batch,
+      all found via `cmdEnter`'s building-tile branch (tile `'@'` =
+      `0x40`), which dispatches through a newly-named 8-entry
+      `TOWN_BUILDING_TABLE` (`0x18028`) indexed by the party's Y
+      position `& 7` — which of 8 shop/NPC types a town building is
+      depends on its Y coordinate mod 8, a fixed pattern reused across
+      every town. Every handler was identified from its own on-screen
+      welcome text, not guessed from position: `showTavernMenu`
+      (buy drinks for gold, each tier printing a different rumor —
+      classic Ultima tavern-rumors mechanic), `showGrocerMenu` (buy
+      food, confirms `_food` again), `showTempleMenu` (already named),
+      `showWeaponsShopMenu`/`showArmourShopMenu` (buy/sell, structurally
+      identical to each other), `showGuildMenu` (Keys/Torches/
+      Powders/Gems), `showOracleMenu` ("Radrion, Prophet of Life!" —
+      the cryptic-hint NPC; its dialogue directly confirms the
+      Marks/Cards quest matching the `_marksAndCards` RosterEntry field
+      found earlier this session), and `showStableMenu` (buy horses,
+      `partySize*200gp`). Function-naming jumped from 99/144 to
+      106/144 in this one batch. Still open: `sub_17D1A`
+      (`showGrocerMenu`'s cost-calc helper, likely a shared "prompt
+      quantity, compute price" utility other shops may use too) and
+      the weapons/armour shops' own inventory-listing internals aren't
+      individually traced.
 - [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
       documentation in file-formats.md: castle/town/dungeon/moongate
       coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"

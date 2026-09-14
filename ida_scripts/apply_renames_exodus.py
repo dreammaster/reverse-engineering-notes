@@ -1513,6 +1513,62 @@ RENAMES = [
      "addGoldClamped/addExperienceClamped, which are simpler, "
      "single-purpose, and DO commit their result directly to a "
      "RosterEntry field."),
+
+    # --- Town shops/NPCs, 2026-09-14 ---------------------------------
+    # cmdEnter's building-tile branch (sub_17B54, tile '@' = 0x40)
+    # dispatches through this 8-entry table indexed by
+    # `_partyPosition`'s HIGH byte (the party's Y coordinate) & 7 --
+    # i.e. which of the 8 possible shop/NPC types a town building is
+    # depends on its Y position mod 8, a fixed pattern reused across
+    # every town. Every one of the 8 handlers below was identified
+    # from its own on-screen welcome text, not guessed from position.
+    (0x18028, "TOWN_BUILDING_TABLE",
+     "8-entry jump table, index = `_partyPosition`'s Y byte & 7. "
+     "0=showTavernMenu, 1=showGrocerMenu, 2=showTempleMenu, "
+     "3=showWeaponsShopMenu, 4=showArmourShopMenu, 5=showGuildMenu, "
+     "6=showOracleMenu, 7=showStableMenu (all named below/elsewhere "
+     "this session)."),
+    (0x1A5AC, "showTavernMenu",
+     "TOWN_BUILDING_TABLE[0]. 'Welcome to\\nthe Pub!' -- buy drinks "
+     "for gold (min cost gate, 'Leave my shop! You scum!!' below a "
+     "threshold), each drink tier printing a different rumor/lore "
+     "line from a small lookup table (`[si-6687h]`, indexed by "
+     "cost/16); loops via 'Another?' (promptYesNo), farewell 'It's "
+     "been a\\npleasure!!'. Classic Ultima tavern-rumors mechanic."),
+    (0x1A630, "showGrocerMenu",
+     "TOWN_BUILDING_TABLE[1]. 'Ye local\\nGrocer\\n\\nRations:' -- "
+     "buys food, BCD-adding to `_food` (`[di+21h]`, confirming that "
+     "offset again) after a cost check via sub_17D1A (not yet "
+     "traced -- likely a shared 'prompt quantity, compute price' shop "
+     "helper) and deductGoldIfAffordable; 'Too much to\\ncarry!' if "
+     "the purchase would overflow `_food`."),
+    (0x1A8A5, "showWeaponsShopMenu",
+     "TOWN_BUILDING_TABLE[3]. 'Welcome to the\\nWeapons Shop!' -- buy "
+     "or sell weapons, list inventory (a shared 'BSQ'/Buy/Sell prompt "
+     "with showArmourShopMenu, `aBsqBuy`)."),
+    (0x1AA25, "showArmourShopMenu",
+     "TOWN_BUILDING_TABLE[4]. 'Welcome to the\\nArmour Shop!' -- "
+     "structurally identical to showWeaponsShopMenu (shares the same "
+     "prompt strings and byte tables at matching offsets), armour "
+     "inventory instead of weapons."),
+    (0x1AB93, "showGuildMenu",
+     "TOWN_BUILDING_TABLE[5]. 'The Guild shop:\\n Keys 50gp\\n "
+     "Torc[hes]...' -- sells Keys/Torches/Powders/Gems (matches "
+     "`aKeys_0`/`aTorches`/`aPowders`/`aGems_0`), a 6-choice menu "
+     "(4 items + list/exit) dispatching through `jpt_1ABB9`."),
+    (0x1ACFC, "showOracleMenu",
+     "TOWN_BUILDING_TABLE[6]. '    Radrion:\\nProphet of Life!' -- "
+     "the game's cryptic-hint NPC (per its full dialogue: rhyming "
+     "riddles about the 4 Marks, the 4 Shrines, card suits, and "
+     "seeking 'the Lord of Time' in the dungeons -- direct lore "
+     "confirmation of the Marks/Cards quest matching the "
+     "`_marksAndCards` RosterEntry field found earlier this session). "
+     "Takes a gold offering (100gp increments) per hint via "
+     "promptForNumberEntry/deductGoldIfAffordable."),
+    (0x1AD70, "showStableMenu",
+     "TOWN_BUILDING_TABLE[7]. '\\n\\nEquine Emporium:\\n\\n' -- buys "
+     "horses for the party at `partySize (byte_114C1) * 200gp`, via "
+     "promptYesNo then deductGoldIfAffordable."),
 ]
 
 
