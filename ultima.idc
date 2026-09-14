@@ -409,6 +409,7 @@ static Bytes_0(void) {
 	create_insn	(0X18790);
 	set_name	(0X18790,	"checkDebugModeFlag");
 	create_insn	(0X18793);
+	set_name	(0X18793,	"checkDiskCopyProtection");
 	create_insn	(x=0X1879C);
 	op_hex		(x,	1);
 	set_cmt	(0X1879E,	"DOS - GET DEFAULT DISK NUMBER",	0);
@@ -917,6 +918,9 @@ static Functions_0(void) {
 	add_func    (0X18790,0X18793);
 	set_func_flags(0X18790,0x5400);
 	set_frame_size(0X18790, 0, 0, 0);
+	add_func    (0X18793,0X187E3);
+	set_func_flags(0X18793,0x5410);
+	set_frame_size(0X18793, 0X4, 10, 0);
 	add_func    (0X18808,0X18869);
 	set_func_flags(0X18808,0x5400);
 	set_frame_size(0X18808, 0, 0, 0);

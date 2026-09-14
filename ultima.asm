@@ -962,7 +962,12 @@ checkDebugModeFlag proc near            ; CODE XREF: titleScreenAndChainToBootup
                 retn
 checkDebugModeFlag endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+; Attributes: bp-based frame
+
+checkDiskCopyProtection proc near
                 push    cx
                 push    dx
                 push    ds
@@ -977,13 +982,13 @@ checkDebugModeFlag endp
                 jbe     short loc_187A6
                 mov     al, 0
 
-loc_187A6:                              ; CODE XREF: seg000:87A2↑j
+loc_187A6:                              ; CODE XREF: checkDiskCopyProtection+F↑j
                 mov     dl, al
                 mov     si, 4
                 mov     cl, 10h
 
-loc_187AD:                              ; CODE XREF: seg000:87C6↓j
-                                        ; seg000:87C9↓j
+loc_187AD:                              ; CODE XREF: checkDiskCopyProtection+33↓j
+                                        ; checkDiskCopyProtection+36↓j
                 mov     ax, 201h
                 mov     dh, 0
                 mov     ch, 9
@@ -1002,7 +1007,7 @@ loc_187AD:                              ; CODE XREF: seg000:87C6↓j
                 jmp     short loc_187AD
 ; ---------------------------------------------------------------------------
 
-loc_187C8:                              ; CODE XREF: seg000:87BD↑j
+loc_187C8:                              ; CODE XREF: checkDiskCopyProtection+2A↑j
                 dec     si
                 jnz     short loc_187AD
                 mov     bx, 0FFFFh
@@ -1011,10 +1016,10 @@ loc_187C8:                              ; CODE XREF: seg000:87BD↑j
                 db 90h
 ; ---------------------------------------------------------------------------
 
-loc_187D1:                              ; CODE XREF: seg000:87C1↑j
+loc_187D1:                              ; CODE XREF: checkDiskCopyProtection+2E↑j
                 mov     bx, 0
 
-loc_187D4:                              ; CODE XREF: seg000:87CE↑j
+loc_187D4:                              ; CODE XREF: checkDiskCopyProtection+3B↑j
                 pop     si
                 pop     di
                 mov     sp, bp
@@ -1029,6 +1034,8 @@ loc_187D4:                              ; CODE XREF: seg000:87CE↑j
                 pop     bx
                 popf
                 retn
+checkDiskCopyProtection endp
+
 ; ---------------------------------------------------------------------------
                 push    ds
                 mov     ds, word ptr ss:86C9h
