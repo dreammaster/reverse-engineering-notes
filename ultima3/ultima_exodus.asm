@@ -919,7 +919,7 @@ loc_11ED8:                              ; CODE XREF: sub_17B54-5C76↓j
                 stosb
                 inc     si
                 loop    loc_11ED8
-                call    sub_12716
+                call    drawScreenBorder
                 call    drawPartySlotNumbers
                 cmp     byte_114BC, 1
                 jz      short loc_11EF0
@@ -949,7 +949,7 @@ cmdPeer:                                ; CODE XREF: sub_17B54-5F83↑j
                 mov     [bx+25h], al
                 cmp     byte_114BC, 1
                 jz      short loc_11F1C
-                call    sub_1259E
+                call    drawPeerMapOverview
                 jmp     short loc_11F1F
 ; ---------------------------------------------------------------------------
 
@@ -1787,7 +1787,7 @@ entryFromBootup proc near               ; DATA XREF: seg000:27DF↓o
                 mov     es:92h, ax
                 pop     es
                 assume es:nothing
-                call    sub_12716
+                call    drawScreenBorder
                 lea     bx, byte_13B39+400h
                 mov     cx, 800h
 
@@ -1863,7 +1863,7 @@ _locationType   db 0                    ; DATA XREF: sub_17B54-5DAA↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1259E       proc near               ; CODE XREF: sub_17B54-5C3D↑p
+drawPeerMapOverview proc near           ; CODE XREF: sub_17B54-5C3D↑p
                                         ; seg000:loc_1627F↓p
                 pushf
                 push    ax
@@ -1876,8 +1876,8 @@ sub_1259E       proc near               ; CODE XREF: sub_17B54-5C3D↑p
                 call    clearMapViewport
                 mov     cx, 0
 
-loc_125AE:                              ; CODE XREF: sub_1259E+83↓j
-                                        ; sub_1259E+8C↓j
+loc_125AE:                              ; CODE XREF: drawPeerMapOverview+83↓j
+                                        ; drawPeerMapOverview+8C↓j
                 mov     bx, cx
                 call    getMapTileAt
                 cmp     al, 0
@@ -1900,92 +1900,92 @@ loc_125AE:                              ; CODE XREF: sub_1259E+83↓j
 ; ---------------------------------------------------------------------------
                 align 2
 
-loc_125D6:                              ; CODE XREF: sub_1259E+1D↑j
+loc_125D6:                              ; CODE XREF: drawPeerMapOverview+1D↑j
                 mov     dh, cl
                 and     dh, 1
                 mov     dl, 1
-                call    sub_12675
+                call    plotMapOverviewPixel
                 jmp     short loc_1261A
 ; ---------------------------------------------------------------------------
 
-loc_125E2:                              ; CODE XREF: sub_1259E+21↑j
-                                        ; sub_1259E+52↓j
+loc_125E2:                              ; CODE XREF: drawPeerMapOverview+21↑j
+                                        ; drawPeerMapOverview+52↓j
                 mov     dx, 101h
-                call    sub_12675
+                call    plotMapOverviewPixel
                 jmp     short loc_1261A
 ; ---------------------------------------------------------------------------
 
-loc_125EA:                              ; CODE XREF: sub_1259E+25↑j
-                                        ; sub_1259E+6E↓j
+loc_125EA:                              ; CODE XREF: drawPeerMapOverview+25↑j
+                                        ; drawPeerMapOverview+6E↓j
                 mov     dx, 1
-                call    sub_12675
+                call    plotMapOverviewPixel
                 jmp     short loc_125E2
 ; ---------------------------------------------------------------------------
 
-loc_125F2:                              ; CODE XREF: sub_1259E+2F↑j
+loc_125F2:                              ; CODE XREF: drawPeerMapOverview+2F↑j
                 mov     dx, 0
-                call    sub_12675
+                call    plotMapOverviewPixel
                 mov     dx, 100h
-                call    sub_12675
+                call    plotMapOverviewPixel
                 jmp     short loc_1261A
 ; ---------------------------------------------------------------------------
 
-loc_12600:                              ; CODE XREF: sub_1259E+2B↑j
-                                        ; sub_1259E+33↑j
+loc_12600:                              ; CODE XREF: drawPeerMapOverview+2B↑j
+                                        ; drawPeerMapOverview+33↑j
                 mov     dx, 0
-                call    sub_12675
+                call    plotMapOverviewPixel
                 mov     dx, 100h
-                call    sub_12675
+                call    plotMapOverviewPixel
                 jmp     short loc_125EA
 ; ---------------------------------------------------------------------------
 
-loc_1260E:                              ; CODE XREF: sub_1259E+35↑j
+loc_1260E:                              ; CODE XREF: drawPeerMapOverview+35↑j
                 mov     dx, 0
-                call    sub_12675
+                call    plotMapOverviewPixel
                 mov     dx, 1
-                call    sub_12675
+                call    plotMapOverviewPixel
 
-loc_1261A:                              ; CODE XREF: sub_1259E+17↑j
-                                        ; sub_1259E+42↑j ...
+loc_1261A:                              ; CODE XREF: drawPeerMapOverview+17↑j
+                                        ; drawPeerMapOverview+42↑j ...
                 inc     cl
                 and     cl, 3Fh
                 jz      short loc_12623
                 jmp     short loc_125AE
 ; ---------------------------------------------------------------------------
 
-loc_12623:                              ; CODE XREF: sub_1259E+81↑j
+loc_12623:                              ; CODE XREF: drawPeerMapOverview+81↑j
                 inc     ch
                 cmp     ch, 40h ; '@'
                 jnb     short loc_1262C
                 jmp     short loc_125AE
 ; ---------------------------------------------------------------------------
 
-loc_1262C:                              ; CODE XREF: sub_1259E+8A↑j
+loc_1262C:                              ; CODE XREF: drawPeerMapOverview+8A↑j
                 mov     cx, _partyPosition
                 mov     bl, byte_114BC
                 mov     byte_114BC, 1
                 mov     ah, 0C0h
 
-loc_1263B:                              ; CODE XREF: sub_1259E+C7↓j
+loc_1263B:                              ; CODE XREF: drawPeerMapOverview+C7↓j
                 mov     dx, 0
-                call    sub_12675
+                call    plotMapOverviewPixel
                 call    pollKeypressAndAnimate
                 jnz     short loc_12667
                 mov     dx, 101h
-                call    sub_12675
+                call    plotMapOverviewPixel
                 call    pollKeypressAndAnimate
                 jnz     short loc_12667
                 mov     dx, 1
-                call    sub_12675
+                call    plotMapOverviewPixel
                 call    pollKeypressAndAnimate
                 jnz     short loc_12667
                 mov     dx, 100h
-                call    sub_12675
+                call    plotMapOverviewPixel
                 call    pollKeypressAndAnimate
                 jz      short loc_1263B
 
-loc_12667:                              ; CODE XREF: sub_1259E+A6↑j
-                                        ; sub_1259E+B1↑j ...
+loc_12667:                              ; CODE XREF: drawPeerMapOverview+A6↑j
+                                        ; drawPeerMapOverview+B1↑j ...
                 call    getKeypressAndWaitRaw
                 mov     byte_114BC, bl
                 pop     es
@@ -1996,14 +1996,14 @@ loc_12667:                              ; CODE XREF: sub_1259E+A6↑j
                 pop     ax
                 popf
                 retn
-sub_1259E       endp
+drawPeerMapOverview endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12675       proc near               ; CODE XREF: sub_1259E+3F↑p
-                                        ; sub_1259E+47↑p ...
+plotMapOverviewPixel proc near          ; CODE XREF: drawPeerMapOverview+3F↑p
+                                        ; drawPeerMapOverview+47↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -2030,7 +2030,7 @@ sub_12675       proc near               ; CODE XREF: sub_1259E+3F↑p
                 pop     bx
                 pop     ax
                 retn
-sub_12675       endp
+plotMapOverviewPixel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2137,7 +2137,7 @@ scrollMessageWindow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12716       proc near               ; CODE XREF: sub_17B54-5C74↑p
+drawScreenBorder proc near              ; CODE XREF: sub_17B54-5C74↑p
                                         ; entryFromBootup+27↑p
                 pushf
                 push    ax
@@ -2149,70 +2149,70 @@ sub_12716       proc near               ; CODE XREF: sub_17B54-5C74↑p
                 mov     bx, 0
                 mov     cx, 18h
 
-loc_12729:                              ; CODE XREF: sub_12716+1A↓j
+loc_12729:                              ; CODE XREF: drawScreenBorder+1A↓j
                 call    plotPixel2bpp
                 add     bx, 140h
                 loop    loc_12729
                 mov     bx, 2Eh ; '.'
                 mov     cx, 18h
 
-loc_12738:                              ; CODE XREF: sub_12716+29↓j
+loc_12738:                              ; CODE XREF: drawScreenBorder+29↓j
                 call    plotPixel2bpp
                 add     bx, 140h
                 loop    loc_12738
                 mov     bx, 0
                 mov     cx, 18h
 
-loc_12747:                              ; CODE XREF: sub_12716+37↓j
+loc_12747:                              ; CODE XREF: drawScreenBorder+37↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_12747
                 mov     bx, 1CC0h
                 mov     cx, 18h
 
-loc_12755:                              ; CODE XREF: sub_12716+45↓j
+loc_12755:                              ; CODE XREF: drawScreenBorder+45↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_12755
                 mov     bx, 30h ; '0'
                 mov     cx, 11h
 
-loc_12763:                              ; CODE XREF: sub_12716+53↓j
+loc_12763:                              ; CODE XREF: drawScreenBorder+53↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_12763
                 mov     bx, 530h
                 mov     cx, 11h
 
-loc_12771:                              ; CODE XREF: sub_12716+61↓j
+loc_12771:                              ; CODE XREF: drawScreenBorder+61↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_12771
                 mov     bx, 0A30h
                 mov     cx, 11h
 
-loc_1277F:                              ; CODE XREF: sub_12716+6F↓j
+loc_1277F:                              ; CODE XREF: drawScreenBorder+6F↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1277F
                 mov     bx, 0F30h
                 mov     cx, 11h
 
-loc_1278D:                              ; CODE XREF: sub_12716+7D↓j
+loc_1278D:                              ; CODE XREF: drawScreenBorder+7D↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1278D
                 mov     bx, 1430h
                 mov     cx, 11h
 
-loc_1279B:                              ; CODE XREF: sub_12716+8B↓j
+loc_1279B:                              ; CODE XREF: drawScreenBorder+8B↓j
                 call    plotPixel2bpp
                 add     bx, 2
                 loop    loc_1279B
                 mov     bx, 4Eh ; 'N'
                 mov     cx, 11h
 
-loc_127A9:                              ; CODE XREF: sub_12716+9A↓j
+loc_127A9:                              ; CODE XREF: drawScreenBorder+9A↓j
                 call    plotPixel2bpp
                 add     bx, 140h
                 loop    loc_127A9
@@ -2221,7 +2221,7 @@ loc_127A9:                              ; CODE XREF: sub_12716+9A↓j
                 pop     ax
                 popf
                 retn
-sub_12716       endp
+drawScreenBorder endp
 
 ; ---------------------------------------------------------------------------
                 db 5 dup(1), 0, 5 dup(0FFh), 5 dup(0Bh), 0, 5 dup(0F5h)
@@ -2556,7 +2556,7 @@ byte_12B39      db 101h dup(0)          ; DATA XREF: entryFromBootup+60↑o
 byte_12E39      db 100h dup(0)          ; DATA XREF: updateLogoAnimationC+2A↓o
 byte_12F39      db 0C00h dup(0)         ; DATA XREF: updateLogoAnimationC+19↓o
 byte_13B39      db 1400h dup(0)         ; DATA XREF: updateLogoAnimationC+15↓o
-word_14F39      dw 0B800h               ; DATA XREF: sub_1259E+6↑r
+word_14F39      dw 0B800h               ; DATA XREF: drawPeerMapOverview+6↑r
                                         ; drawCharGlyph+6↓r ...
 
 ; =============== S U B R O U T I N E =======================================
@@ -2774,8 +2774,8 @@ loc_15041:                              ; CODE XREF: seg000:503D↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-plotPixel2bpp   proc near               ; CODE XREF: sub_12716:loc_12729↑p
-                                        ; sub_12716:loc_12738↑p ...
+plotPixel2bpp   proc near               ; CODE XREF: drawScreenBorder:loc_12729↑p
+                                        ; drawScreenBorder:loc_12738↑p ...
                 push    ds
                 mov     ds, word ptr ss:4F39h
                 mov     [bx], ax
@@ -2864,7 +2864,7 @@ drawTileGrid    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-clearFramebuffer proc near              ; CODE XREF: sub_12716+7↑p
+clearFramebuffer proc near              ; CODE XREF: drawScreenBorder+7↑p
                 pushf
                 push    ax
                 push    cx
@@ -3256,7 +3256,7 @@ runIdleAnimationTick endp
 
 
 pollKeypressAndAnimate proc near        ; CODE XREF: sub_17B54-5FBE↑p
-                                        ; sub_1259E+A3↑p ...
+                                        ; drawPeerMapOverview+A3↑p ...
                 push    ax
                 mov     ah, 1
                 int     16h             ; KEYBOARD - CHECK BUFFER, DO NOT CLEAR
@@ -3279,7 +3279,7 @@ pollKeypressAndAnimate endp
 
 
 getKeypressAndWaitRaw proc near         ; CODE XREF: sub_17B54:loc_11BA8↑p
-                                        ; sub_1259E:loc_12667↑p ...
+                                        ; drawPeerMapOverview:loc_12667↑p ...
                 pushf
                 push    cx
                 push    bx
@@ -5851,7 +5851,7 @@ spellVieda:
 ; ---------------------------------------------------------------------------
 
 loc_1627F:                              ; CODE XREF: seg000:6278↑j
-                call    sub_1259E
+                call    drawPeerMapOverview
 
 loc_16282:                              ; CODE XREF: seg000:627D↑j
                 jmp     loc_15E69

@@ -1534,3 +1534,16 @@ from a moderate-confidence guess to a confirmed identity: it's what
 happens when the party sails onto the whirlpool's current tile -- the
 classic Ultima whirlpool teleport, now traced end-to-end from the
 map-feature animation through to the actual transport effect.
+
+**The Peer spell/command's rendering routine found**:
+`drawPeerMapOverview` (`0x1259E`) clears the viewport and loops the
+*entire* 64×64 overworld map (not just the local 11×11 view),
+plotting a simplified color-coded pixel per tile via
+`plotMapOverviewPixel` (`0x12675`) based on tile type, then blinks a
+marker at `_partyPosition` and waits for a keypress. `cmdPeer` and
+`spellVieda` were both already confirmed as "reveal surroundings"
+abilities earlier this session; this is the actual rendering behind
+that reveal — a classic "gem of viewing" full-map overview. Also
+named `drawScreenBorder` (`0x12716`): clears the framebuffer and
+plots the game's main rectangular screen frame, drawn once at startup
+and again on returning to certain screens.
