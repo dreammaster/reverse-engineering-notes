@@ -452,7 +452,7 @@ aPleaseWait     db 'Please wait...',0Ah,0
 ; START OF FUNCTION CHUNK FOR entryFromBootup
 
 loc_11B77:                              ; CODE XREF: entryFromBootup+BB↓j
-                call    loc_127CD
+                call    drawMapViewport
 ; END OF FUNCTION CHUNK FOR entryFromBootup
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
@@ -545,7 +545,7 @@ loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
                 call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C1D
-                call    sub_15B51
+                call    teleportPartyWithFanfare
                 call    sub_120AE
                 jmp     short loc_11C2E
 ; ---------------------------------------------------------------------------
@@ -556,7 +556,7 @@ loc_11C1D:                              ; CODE XREF: sub_17B54-5F41↑j
                 call    getMapTileAt
                 cmp     al, 88h
                 jnz     short loc_11C2E
-                call    sub_15B51
+                call    teleportPartyWithFanfare
 
 loc_11C2E:                              ; CODE XREF: sub_17B54-5F39↑j
                                         ; sub_17B54-5F2B↑j
@@ -576,7 +576,7 @@ loc_11C35:                              ; CODE XREF: sub_17B54-5F24↑j
                 cmp     bx, 505h
                 call    computeAnimTableByte
                 jnz     short loc_11C62
-                call    loc_127CD
+                call    drawMapViewport
                 mov     byte ptr [bx], 3Dh ; '='
                 call    drawLogoTileGrid
                 call    damagePartyAll
@@ -1087,7 +1087,7 @@ cmdUnlock:                              ; CODE XREF: sub_17B54-5F83↑j
                 shl     al, 1
                 shl     al, 1
                 mov     [si], al
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_1200F:                              ; CODE XREF: sub_17B54-5B78↑j
                                         ; sub_17B54-5B5E↑j
@@ -1303,7 +1303,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 push    dx
                 push    si
                 mov     _currentTransport, 0Ch
-                call    loc_127CD
+                call    drawMapViewport
                 mov     _currentTransport, 0Bh
                 lea     si, aAHugeSwirlingW ; "\nA huge swirling\n --WhirlPool--\n eng"...
                 call    printGameText
@@ -1335,7 +1335,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 mov     byte_114BC, 0FFh
                 lea     si, aYouAwakenOnThe ; "\n You awaken on\n the shores of\n a fo"...
                 call    printGameText
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
                 call    flushInputBuffer
@@ -1452,7 +1452,7 @@ loc_12299:                              ; CODE XREF: sub_17B54-58C3↑j
 
 loc_1229F:                              ; CODE XREF: sub_17B54-58CA↑j
                                         ; sub_17B54-58BD↑j
-                call    loc_127CD
+                call    drawMapViewport
                 jmp     mainGameLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
 
@@ -1554,7 +1554,7 @@ monsterBreathAttack proc near           ; CODE XREF: updateMonsterAI:loc_12464�
                 add     bl, [si+12C0h]
                 cmp     bl, 0Bh
                 jnb     short loc_1239F
-                call    loc_127CD
+                call    drawMapViewport
                 mov     al, 0FBh
                 call    playSoundEffect
                 mov     dx, bx
@@ -2227,7 +2227,7 @@ sub_12716       endp
                 db 5 dup(1), 0, 5 dup(0FFh), 5 dup(0Bh), 0, 5 dup(0F5h)
 ; ---------------------------------------------------------------------------
 
-loc_127CD:                              ; CODE XREF: entryFromBootup:loc_11B77↑p
+drawMapViewport:                        ; CODE XREF: entryFromBootup:loc_11B77↑p
                                         ; sub_17B54-5F00↑p ...
                 pushf
                 push    ax
@@ -4771,12 +4771,12 @@ isSpecialEncounterLocation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15B51       proc near               ; CODE XREF: sub_17B54-5F3F↑p
+teleportPartyWithFanfare proc near      ; CODE XREF: sub_17B54-5F3F↑p
                                         ; sub_17B54-5F29↑p
                 push    ax
                 push    bx
-                call    loc_127CD
-                call    sub_171C1
+                call    drawMapViewport
+                call    invertFullScreen
                 mov     bl, byte ptr word_11324+1
                 mov     bh, 0
                 mov     al, [bx+194Dh]
@@ -4786,15 +4786,15 @@ sub_15B51       proc near               ; CODE XREF: sub_17B54-5F3F↑p
                 mov     bh, 20h ; ' '
                 mov     al, 0FDh
                 call    playSoundEffect
-                call    sub_171C1
-                call    loc_127CD
-                call    sub_171C1
+                call    invertFullScreen
+                call    drawMapViewport
+                call    invertFullScreen
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 pop     bx
                 pop     ax
                 retn
-sub_15B51       endp
+teleportPartyWithFanfare endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4877,14 +4877,14 @@ loc_15BF6:                              ; CODE XREF: sub_17B54-1F3C↓j
                 mov     bx, dx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0F4h
-                call    loc_127CD
+                call    drawMapViewport
                 mov     [bx], al
                 pop     ax
                 dec     si
                 jnz     short loc_15BF6
 
 loc_15C1A:                              ; CODE XREF: sub_17B54-1EE3↓j
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_15C1D:                              ; CODE XREF: sub_17B54-1F6E↑j
                                         ; sub_17B54-1EE7↓j
@@ -4896,7 +4896,7 @@ loc_15C20:                              ; CODE XREF: sub_17B54-1F4E↑j
                 mov     bx, dx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0F4h
-                call    loc_127CD
+                call    drawMapViewport
                 mov     ah, al
                 mov     al, 0F7h
                 call    playSoundEffect
@@ -5286,14 +5286,14 @@ sub_15E89       proc near               ; CODE XREF: seg000:5F24↓p
                 push    bx
                 mov     al, 0F5h
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 mov     al, 0FDh
                 mov     bh, 30h ; '0'
                 mov     bl, dl
                 and     bl, 0Fh
                 or      bl, 60h
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 pop     bx
                 pop     ax
                 popf
@@ -6062,12 +6062,12 @@ loc_16405:                              ; CODE XREF: enterShrine+9B↑j
                 call    printGameText
                 mov     ax, bp
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 mov     al, 0FDh
                 mov     bl, 0D8h
                 mov     bh, 30h ; '0'
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 mov     ax, bp
                 call    invertScreenRegion
 
@@ -7992,8 +7992,8 @@ invertScreenRegion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_171C1       proc near               ; CODE XREF: sub_15B51+5↑p
-                                        ; sub_15B51+22↑p ...
+invertFullScreen proc near              ; CODE XREF: teleportPartyWithFanfare+5↑p
+                                        ; teleportPartyWithFanfare+22↑p ...
                 pushf
                 push    bx
                 push    cx
@@ -8004,10 +8004,10 @@ sub_171C1       proc near               ; CODE XREF: sub_15B51+5↑p
                 mov     bx, 142h
                 mov     dx, 58h ; 'X'
 
-loc_171D0:                              ; CODE XREF: sub_171C1+24↓j
+loc_171D0:                              ; CODE XREF: invertFullScreen+24↓j
                 mov     cx, 16h
 
-loc_171D3:                              ; CODE XREF: sub_171C1+1E↓j
+loc_171D3:                              ; CODE XREF: invertFullScreen+1E↓j
                 xor     word ptr [bx], 0FFFFh
                 xor     word ptr [bx+2000h], 0FFFFh
                 inc     bx
@@ -8023,7 +8023,7 @@ loc_171D3:                              ; CODE XREF: sub_171C1+1E↓j
                 pop     bx
                 popf
                 retn
-sub_171C1       endp
+invertFullScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8173,7 +8173,7 @@ loc_172B2:                              ; CODE XREF: checkTerrainMovementBlocked
 ; ---------------------------------------------------------------------------
 
 loc_172B4:                              ; CODE XREF: checkTerrainMovementBlocked+17↑j
-                call    sub_171C1
+                call    invertFullScreen
                 mov     al, 0FCh
                 mov     bl, 10h
                 call    playSoundEffect
@@ -8186,7 +8186,7 @@ loc_172C8:                              ; CODE XREF: checkTerrainMovementBlocked
                 jz      short loc_172D8
                 add     bx, 40h ; '@'
                 loop    loc_172C8
-                call    sub_171C1
+                call    invertFullScreen
                 jmp     short loc_17285
 ; ---------------------------------------------------------------------------
 
@@ -8201,7 +8201,7 @@ loc_172D8:                              ; CODE XREF: checkTerrainMovementBlocked
                 call    playSoundEffect
                 mov     al, ah
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 call    drawPartyStatusBar
                 jmp     short loc_172A5
 ; ---------------------------------------------------------------------------
@@ -8284,7 +8284,7 @@ loc_17357:                              ; CODE XREF: sub_17347+B↑j
                 mov     byte ptr [bx], 0
                 cmp     cx, _partyPosition
                 jz      short loc_173E7
-                call    loc_127CD
+                call    drawMapViewport
                 mov     al, 0F4h
                 call    playSoundEffect
                 lea     si, byte_164C8
@@ -8311,7 +8311,7 @@ loc_173CA:                              ; CODE XREF: sub_17347+3C↑j
                 mov     word_11320, cx
                 call    getMapTileAt
                 mov     byte ptr [bx], 0
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_173DE:                              ; CODE XREF: sub_17347+81↑j
                 mov     ax, word_11320
@@ -8480,7 +8480,7 @@ loc_174B2:                              ; CODE XREF: sub_17B54-6AB↑j
                 mov     bl, 0C0h
                 mov     bh, 40h ; '@'
                 call    playSoundEffect
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_174C6:                              ; CODE XREF: sub_17B54-6F6↑j
                                         ; sub_17B54-681↓j
@@ -8737,16 +8737,16 @@ attemptExodusSequence:                  ; CODE XREF: sub_17B54-50F↑j
 
 loc_17697:                              ; CODE XREF: sub_17B54-4A7↓j
                 mov     byte ptr [si], 0F0h
-                call    loc_127CD
+                call    drawMapViewport
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     byte ptr [si], 7Ch ; '|'
-                call    loc_127CD
+                call    drawMapViewport
                 mov     al, 0F7h
                 call    playSoundEffect
                 loop    loc_17697
                 mov     byte ptr [si], 20h ; ' '
-                call    loc_127CD
+                call    drawMapViewport
                 cmp     word_164A0, 4
                 jnz     short loc_176C6
                 jmp     victorySequence
@@ -10139,12 +10139,12 @@ loc_1809C:                              ; CODE XREF: sub_17B54+53E↑j
                 mov     [bx+1Dh], al
                 lea     si, aThouArtGreater ; "Thou art greater\n\n"
                 call    printGameText
-                call    sub_171C1
+                call    invertFullScreen
                 mov     al, 0FDh
                 mov     bl, 80h
                 mov     bh, 40h ; '@'
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 jmp     loc_18031
 ; ---------------------------------------------------------------------------
 
@@ -10918,7 +10918,7 @@ loc_188A7:                              ; CODE XREF: sub_17B54+D42↑j
 
 beginCombatEncounter:                   ; CODE XREF: updateMonsterAI+2B↑j
                                         ; sub_17B54+D4E↑j
-                call    loc_127CD
+                call    drawMapViewport
                 mov     di, bx
                 mov     bh, [di+12E0h]
                 mov     bl, [di+12C0h]
@@ -11926,7 +11926,7 @@ loc_18FB6:                              ; CODE XREF: sub_17B54:loc_18C36↑j
                 mov     byte_114BC, al
                 cmp     al, 1
                 jz      short loc_18FE8
-                call    loc_127CD
+                call    drawMapViewport
 
 loc_18FE8:                              ; CODE XREF: sub_17B54+148F↑j
                 jmp     mainLoopCommandDone
@@ -12254,12 +12254,12 @@ loc_191D3:                              ; CODE XREF: sub_17B54+1656↑j
                 pop     ax
                 jnz     short loc_191CA
                 push    bx
-                call    sub_171C1
+                call    invertFullScreen
                 mov     bl, 40h ; '@'
                 mov     bh, 40h ; '@'
                 mov     al, 0FDh
                 call    playSoundEffect
-                call    sub_171C1
+                call    invertFullScreen
                 pop     bx
                 mov     byte_184E0, 3Ch ; '<'
                 call    sub_19244
@@ -12671,7 +12671,7 @@ loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
                 call    printGameText
                 mov     al, 25h ; '%'
                 call    damageCharacterHP
-                call    sub_171C1
+                call    invertFullScreen
                 dec     cl
                 mov     al, cl
                 call    invertScreenRegion
@@ -12679,7 +12679,7 @@ loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
                 call    playSoundEffect
                 mov     al, cl
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 call    drawPartyStatusBar
                 jmp     loc_19470
 ; ---------------------------------------------------------------------------
@@ -13587,7 +13587,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 cmp     byte ptr [bx+11h], 47h ; 'G'
                 jz      short loc_1A743
                 mov     ax, cx
-                call    sub_171C1
+                call    invertFullScreen
                 call    invertScreenRegion
                 push    bx
                 mov     al, 0FDh
@@ -13597,7 +13597,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 pop     bx
                 mov     ax, cx
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_1A752
                 mov     byte ptr [bx+11h], 47h ; 'G'
@@ -13664,7 +13664,7 @@ loc_1A785:                              ; CODE XREF: showTempleMenu+EE↑j
                 jb      short loc_1A743
                 mov     [bx+1Ah], ax
                 mov     ax, cx
-                call    sub_171C1
+                call    invertFullScreen
                 call    invertScreenRegion
                 mov     al, 0FDh
                 mov     bl, 0C0h
@@ -13672,7 +13672,7 @@ loc_1A785:                              ; CODE XREF: showTempleMenu+EE↑j
                 call    playSoundEffect
                 mov     ax, cx
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 mov     ax, 200h
                 call    deductGoldIfAffordable
                 jmp     loc_1A6C4
@@ -13714,7 +13714,7 @@ loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jz      short loc_1A824
                 mov     ax, cx
-                call    sub_171C1
+                call    invertFullScreen
                 call    invertScreenRegion
                 push    bx
                 mov     al, 0FDh
@@ -13724,7 +13724,7 @@ loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 pop     bx
                 mov     ax, cx
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 cmp     byte ptr [bx+11h], 44h ; 'D'
                 jz      short loc_1A817
                 jmp     loc_1A752
@@ -13782,7 +13782,7 @@ loc_1A86A:                              ; CODE XREF: showTempleMenu+1D3↑j
                 jnz     short loc_1A896
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     ax, cx
-                call    sub_171C1
+                call    invertFullScreen
                 call    invertScreenRegion
                 mov     al, 0FDh
                 mov     bl, 0C0h
@@ -13790,7 +13790,7 @@ loc_1A86A:                              ; CODE XREF: showTempleMenu+1D3↑j
                 call    playSoundEffect
                 mov     ax, cx
                 call    invertScreenRegion
-                call    sub_171C1
+                call    invertFullScreen
                 mov     ax, 900h
                 call    deductGoldIfAffordable
                 jmp     loc_1A6C4

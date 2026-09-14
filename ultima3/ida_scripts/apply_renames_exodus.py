@@ -1725,6 +1725,45 @@ RENAMES = [
      "column, one per row -- the numbered frame around each party "
      "member's row that drawPartyStatusBar itself fills in "
      "afterward."),
+
+    (0x171C1, "invertFullScreen",
+     "Structurally identical to xorScreenRegionWithPattern but "
+     "hardcoded to 0FFFFh (a full invert, not a caller-supplied "
+     "pattern) over the same large region -- covers essentially the "
+     "whole CGA graphics buffer (both interlaced banks). Used for "
+     "full-screen flash effects: enterShrine's 'Shazam!' fanfare, "
+     "showTempleMenu, checkTerrainMovementBlocked, and "
+     "teleportPartyWithFanfare (below)."),
+    (0x127CD, "drawMapViewport",
+     "THE main map redraw routine (a labeled location inside "
+     "entryFromBootup's function chunks, called extremely widely -- "
+     "confirmed via reading its own body, not just its name). Loops "
+     "an 11x11 grid centered on `_partyPosition - (5,5)`, reads each "
+     "map tile with wraparound on a 64-tile-per-axis map (`and 3Fh`, "
+     "matching every other confirmed overworld wraparound in this "
+     "codebase), converts it to a display tile value, and writes it "
+     "into the video buffer via `stosb`. After the loop, performs the "
+     "self-modifying-code bookkeeping first flagged as a mystery "
+     "early in this project (backs up several code bytes from "
+     "`loc_124F5`/`loc_12509`/`loc_124FF` into "
+     "`byte_1259B`/`byte_1259C`/`byte_12599`/`byte_1259A`/"
+     "`_locationType`, then patches `_currentTransport`'s value "
+     "directly into a `loc_124FF+1` instruction operand) -- this "
+     "confirms that mechanism lives here, though its exact purpose "
+     "(almost certainly parameterizing a subsequent "
+     "chain-load/re-entry, per the FCB self-modifying-code trick this "
+     "project has documented elsewhere) isn't traced further."),
+    (0x15B51, "teleportPartyWithFanfare",
+     "MODERATE CONFIDENCE. Redraws the map (drawMapViewport), flashes "
+     "the full screen (invertFullScreen) with a sound cue, sets "
+     "`_partyPosition` to a NEW position looked up from a pair of "
+     "parallel tables (`0x194D`/`0x1955`) indexed by `word_11324`'s "
+     "high byte, and flashes again. Shape strongly suggests a "
+     "scripted 'magically transported elsewhere' effect (e.g. a "
+     "whirlpool) but `word_11324`'s own meaning/origin wasn't traced "
+     "back to confirm that specifically -- named for the confirmed "
+     "mechanical effect (teleport + screen fanfare), not an asserted "
+     "trigger."),
 ]
 
 

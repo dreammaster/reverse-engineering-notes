@@ -1392,3 +1392,31 @@ producing static instead of a pitch, called by `playToneF7`/
 routine (called from `entryFromBootup`) that draws the party status
 bar's 4 numbered-slot border labels, the frame `drawPartyStatusBar`
 itself fills in afterward.
+
+**The main map-drawing routine finally found and named**:
+`drawMapViewport` (`0x127CD`) draws the visible 11×11 tile grid
+centered on `_partyPosition-(5,5)`, wrapping correctly on the
+confirmed 64-tile-per-axis map. It's a labeled location inside
+`entryFromBootup`'s own function chunks rather than a standalone
+`sub_`, called from all over the codebase. Its tail end turned out to
+be exactly where the self-modifying-code bookkeeping flagged as an
+open mystery much earlier in this project actually lives: it backs up
+several code bytes from fixed addresses and patches
+`_currentTransport`'s current value directly into an instruction
+operand at `loc_124FF+1` — presumably parameterizing something about a
+later re-entry into this same code, the same general FCB/self-modifying
+trick this project has documented in the chain-loading executables.
+The exact purpose of that particular patch wasn't traced further.
+
+Also named `invertFullScreen` (`0x171C1`) —
+`xorScreenRegionWithPattern`'s simpler, hardcoded-`0xFFFF` full-screen
+twin, used for fanfare flashes (`enterShrine`'s "Shazam!",
+`showTempleMenu`, `checkTerrainMovementBlocked`) — and, at moderate
+confidence, `teleportPartyWithFanfare` (`0x15B51`): redraws the map,
+double-flashes the full screen with a sound cue, and moves
+`_partyPosition` to a new position pulled from a small lookup table.
+The shape strongly suggests a scripted "magically transported
+elsewhere" effect — a whirlpool is the obvious candidate — but the
+index it's keyed on (`word_11324`) wasn't traced back far enough to
+confirm that specifically, so it's named for the confirmed mechanical
+effect rather than an asserted trigger.

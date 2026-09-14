@@ -512,6 +512,27 @@ Next-session priorities, roughly in order:
       contiguous buffer). Still open: what each byte of `SHAPES.ULT`'s
       5,120-byte tile-shape data actually encodes hasn't been traced
       (just the load site and size).
+- [x] **The main map-drawing routine found and named**, done
+      2026-09-14: `drawMapViewport` (`0x127CD`, a labeled location
+      inside `entryFromBootup`'s own function chunks, called
+      extremely widely) draws the visible 11×11 tile grid centered on
+      `_partyPosition-(5,5)`, with the confirmed 64-tile-per-axis
+      wraparound. Its tail end is where the self-modifying-code
+      bookkeeping flagged as an open mystery earlier in this project
+      actually lives — it backs up several code bytes and patches
+      `_currentTransport`'s value directly into an instruction operand
+      at `loc_124FF+1`, presumably parameterizing a later re-entry.
+      The exact purpose of that patch isn't traced further. Also
+      named `invertFullScreen` (`0x171C1`, `xorScreenRegionWithPattern`'s
+      hardcoded-0xFFFF full-screen twin, used by `enterShrine`'s
+      "Shazam!" fanfare and others) and, at moderate confidence,
+      `teleportPartyWithFanfare` (`0x15B51`) — redraws the map,
+      double-flashes the full screen with a sound cue, and moves
+      `_partyPosition` to a new position from a lookup table. Shape
+      strongly suggests a scripted "magically transported" effect
+      (a whirlpool being the obvious candidate) but the index it's
+      keyed on (`word_11324`) wasn't traced back far enough to confirm
+      that specifically.
 - [x] **`castSpell` note updated** — its real address is `0x15D83`;
       already identified and fully traced earlier this session (see
       the spell-table and combat-damage findings above).
