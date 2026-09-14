@@ -1783,6 +1783,20 @@ RENAMES = [
      "Plate' armour -- `byte_114CB` is the flag wearArmour checks for "
      "its own widened max tier. Both shops share the same one secret "
      "town."),
+
+    (0x15B85, "rollTrapEvasionChance",
+     "Computes a trap-evasion threshold from Dexterity "
+     "(`RosterEntry+0x13`, BCD->binary) plus a class-dependent bonus: "
+     "Bard/Illusionist/Ranger ('B'/'I'/'R') get +0x40, Thief ('T') "
+     "gets +0x80 (double -- Thieves are the trap specialists), every "
+     "other class gets -0x80. Rolls a random byte against that "
+     "threshold and returns al=0FFh (evaded) or al=0 (not evaded)."),
+    (0x182AA, "checkTrapEvasion",
+     "Calls rollTrapEvasionChance; on a successful evasion prints "
+     "'Trap evaded!\\n' with a sound cue and returns al=0, otherwise "
+     "returns nonzero (the trap triggers) -- called from several "
+     "trap-handling sites in sub_17B54 (Acid/Poison/Bomb/Gas traps, "
+     "already named via their own strings)."),
 ]
 
 
