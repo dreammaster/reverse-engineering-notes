@@ -920,7 +920,7 @@ loc_11ED8:                              ; CODE XREF: sub_17B54-5C76↓j
                 inc     si
                 loop    loc_11ED8
                 call    sub_12716
-                call    sub_16D58
+                call    drawPartySlotNumbers
                 cmp     byte_114BC, 1
                 jz      short loc_11EF0
                 call    sub_120AE
@@ -1794,7 +1794,7 @@ entryFromBootup proc near               ; DATA XREF: seg000:27DF↓o
 loc_124F5:                              ; DATA XREF: seg000:2832↓r
                 lea     dx, aCharsetUlt ; "CHARSET.ULT"
                 call    loadFile
-                call    sub_16D58
+                call    drawPartySlotNumbers
 
 loc_124FF:                              ; DATA XREF: seg000:2844↓r
                                         ; seg000:284A↓r ...
@@ -4438,7 +4438,7 @@ playToneF7      proc near               ; CODE XREF: playSoundEffect+18↑p
                 push    bx
                 mov     bh, 0
                 mov     bl, 0FFh
-                call    sub_1583C
+                call    playSpeakerNoise
                 pop     bx
                 retn
 playToneF7      endp
@@ -4452,7 +4452,7 @@ playToneF6      proc near               ; CODE XREF: playSoundEffect+18↑p
                 push    bx
                 mov     bh, 0
                 mov     bl, 8
-                call    sub_1583C
+                call    playSpeakerNoise
                 pop     bx
                 retn
 playToneF6      endp
@@ -4461,7 +4461,7 @@ playToneF6      endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1583C       proc near               ; CODE XREF: playToneF7+5↑p
+playSpeakerNoise proc near              ; CODE XREF: playToneF7+5↑p
                                         ; playToneF6+5↑p
                 mov     di, bx
                 push    dx
@@ -4477,11 +4477,11 @@ sub_1583C       proc near               ; CODE XREF: playToneF7+5↑p
                 and     al, 0FCh
                 mov     dh, 0FFh
 
-loc_15846:                              ; CODE XREF: sub_1583C+19↓j
+loc_15846:                              ; CODE XREF: playSpeakerNoise+19↓j
                 call    stepTimeSeededPrng
                 or      dl, bh
 
-loc_1584B:                              ; CODE XREF: sub_1583C+11↓j
+loc_1584B:                              ; CODE XREF: playSpeakerNoise+11↓j
                 dec     dl
                 jnz     short loc_1584B
                 out     61h, al         ; PC/XT PPI port B bits:
@@ -4507,7 +4507,7 @@ loc_1584B:                              ; CODE XREF: sub_1583C+11↓j
                 pop     dx
                 mov     bx, di
                 retn
-sub_1583C       endp
+playSpeakerNoise endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7342,13 +7342,13 @@ drawPartyStatusBar endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16D58       proc near               ; CODE XREF: sub_17B54-5C71↑p
+drawPartySlotNumbers proc near          ; CODE XREF: sub_17B54-5C71↑p
                                         ; entryFromBootup+38↑p
                 pushf
                 push    ax
                 mov     cx, 4
 
-loc_16D5D:                              ; CODE XREF: sub_16D58+24↓j
+loc_16D5D:                              ; CODE XREF: drawPartySlotNumbers+24↓j
                 mov     al, cl
                 dec     al
                 shl     al, 1
@@ -7365,7 +7365,7 @@ loc_16D5D:                              ; CODE XREF: sub_16D58+24↓j
                 pop     ax
                 popf
                 retn
-sub_16D58       endp
+drawPartySlotNumbers endp
 
 
 ; =============== S U B R O U T I N E =======================================

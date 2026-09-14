@@ -1383,3 +1383,12 @@ step underlying the entire message-output system. `clearMapViewport`
 (`0x128C6`) is the same BIOS call with a blank-instead-of-scroll mode
 over a much larger central region — the main map/game viewport,
 distinct from the smaller text area.
+
+**Two more small utilities named**: `playSpeakerNoise` (`0x1583C`) is
+a raw PC-speaker white-noise generator -- toggles the speaker bit with
+a *randomized* delay per cycle rather than a fixed tone period,
+producing static instead of a pitch, called by `playToneF7`/
+`playToneF6`. `drawPartySlotNumbers` (`0x16D58`) is a one-time setup
+routine (called from `entryFromBootup`) that draws the party status
+bar's 4 numbered-slot border labels, the frame `drawPartyStatusBar`
+itself fills in afterward.
