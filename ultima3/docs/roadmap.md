@@ -252,13 +252,31 @@ Remaining loose ends specific to this IDB:
       alongside `_hitPoints` at character creation), not independently
       displayed/read anywhere to confirm the name. See
       `create_roster_struct.py`'s note.
-- [ ] The exact letter/index encodings for `_status`/`_race`/`_class`/
-      `_sex` are referenced via fixed lookup tables in the disassembly
-      (e.g. `byte_11045`/`byte_1106B`/`byte_110D0`) but not yet
-      individually decoded value-by-value — worth a dedicated pass
-      cross-referencing against `docs/file-formats.md`'s external
-      field-name lists (Elf/Dwarf/Fuzzy/etc. for race, Wizard/Ranger/
-      etc. for class).
+- [x] **`_race`/`_class`/`_sex` letter encodings fully decoded**, done
+      2026-09-15 (`dump_char_creation_tables.py`, applied via
+      `fix_char_creation_tables.py`; `_status`'s 4 letters were
+      already confirmed earlier via direct code logic, not a lookup
+      table — see its own struct note). Walked the pointer tables
+      programmatically rather than hand-parsing the raw hex (the same
+      discipline as every other table this project has decoded, after
+      getting burned once by manual byte-counting on the dungeon
+      command table):
+      - **`SEX_KEYS`** (`0x11045`) → `SEX_NAME_PTRS`: `'M'`=Male,
+        `'F'`=Female, `'O'`=Other.
+      - **`RACE_KEYS`** (`0x1106B`) → `RACE_NAME_PTRS`: `'H'`=Human,
+        `'E'`=Elf, `'D'`=Dwarf, `'B'`=Bobbit, `'F'`=Fuzzy.
+      - **`CLASS_KEYS`** (`0x110D0`) → `CLASS_NAME_PTRS`: `'F'`=Fighter,
+        `'C'`=Cleric, `'W'`=Wizard, `'T'`=Thief, `'P'`=Paladin,
+        `'L'`=Lark, `'B'`=Barbarian, `'D'`=Druid, `'I'`=Illusionist,
+        `'A'`=Alchemist, `'R'`=Ranger.
+
+      Also confirmed, from `getMenuChoice`'s own code, that
+      `RosterEntry._sex`/`._race`/`._class` store the raw **ASCII key
+      letter** itself (e.g. literally `'M'`), not a 0-based index —
+      `getMenuChoice` only uses the index internally for a live-preview
+      name lookup while the player is choosing, but returns (and
+      `showCharacterDetails` independently re-derives the display name
+      from) the original letter.
 
 ## `EXODUS.BIN` (`ultima_exodus.idb`) — function-naming sweep: COMPLETE (144/144, 2026-09-14)
 
