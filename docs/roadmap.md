@@ -330,7 +330,7 @@ Remaining loose ends specific to this IDB:
       `showCharacterDetails` independently re-derives the display name
       from) the original letter.
 
-## `EXODUS.BIN` (`ultima_exodus.idb`) — function-naming sweep: COMPLETE (144/144, 2026-09-14)
+## `EXODUS.BIN` (`ultima_exodus.idb`) — function-naming sweep: COMPLETE (145/145, 2026-09-14)
 
 **DONE as of 2026-09-14 — every one of the 144 functions in this IDB
 has a real name.** Created 2026-09-13 (same recipe as
@@ -902,10 +902,19 @@ for the full disassembly-confirmed mechanism.
       `drawDungeonView`'s entry above.
 - [ ] `MOVES.ULT` (1,024 bytes) — smaller, less obviously-structured
       data file, lower priority, still open.
-- [ ] Locate and name `checkDebugModeFlag`'s equivalent in this IDB (a
-      `mov al,0FFh; retn`-shaped stub near `drawCharGlyph`/`clearFramebuffer`
-      per the other two IDBs' layout) — a first address guess was
-      wrong and wasn't worth further chasing this pass; low priority.
+- [x] **RESOLVED 2026-09-14**: `checkDebugModeFlag`'s equivalent in
+      this IDB, found and named. It's at `0x15000`-`0x15003`, right
+      after `drawCharGlyph` (`0x14F90`-`0x15000`) — exactly the same
+      relative layout as `ultima.idb` and `ultima_bootup.idb`. Body is
+      `mov al, 0FFh; retn` (opposite polarity from the other two
+      binaries' `mov al, 0`, though moot either way). **Zero callers
+      anywhere in `EXODUS.BIN`** — unlike its counterparts, which are
+      each called once from their respective title/boot sequences.
+      Consistent with `EXODUS.BIN` (the game engine, entered only
+      after the title screen/character creation are done) simply
+      having no boot-logo-animation step for this hook to gate.
+      Defined via `ida_funcs.add_func()`; `ultima_exodus.idb` now
+      145/145 functions named.
 
 ## Open questions
 
