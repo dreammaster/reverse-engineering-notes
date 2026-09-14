@@ -6167,7 +6167,7 @@ byte_164FA      db 45h, 56h, 4Fh, 43h, 41h, 52h, 45h, 3 dup(20h), 49h
                 db 4, 65h, 0Eh, 65h, 18h, 65h, 22h, 65h, 2Ch, 65h, 2 dup(0)
 off_1654C       dw offset loc_1762F     ; DATA XREF: sub_17B54-624↓r
                 dw offset loc_17534
-                dw offset loc_17607
+                dw offset obtainCard
                 dw offset loc_175A9
                 dw offset loc_17580
                 dw offset loc_16666
@@ -8659,7 +8659,7 @@ loc_175F9:                              ; CODE XREF: sub_17B54-584↑j
                 jmp     short loc_175F6
 ; ---------------------------------------------------------------------------
 
-loc_17607:                              ; CODE XREF: sub_17B54-624↑j
+obtainCard:                             ; CODE XREF: sub_17B54-624↑j
                                         ; DATA XREF: seg000:6550↑o
                 cmp     _locationType, 3Eh ; '>'
                 jnz     short loc_17625
@@ -8694,14 +8694,14 @@ loc_1763E:                              ; CODE XREF: sub_17B54-51B↑j
                 mov     cl, bl
                 call    getMapTileAt
                 cmp     al, 7Ch ; '|'
-                jz      short loc_1764A
+                jz      short attemptExodusSequence
                 jmp     short loc_176BF
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
                 align 2
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_1764A:                              ; CODE XREF: sub_17B54-50F↑j
+attemptExodusSequence:                  ; CODE XREF: sub_17B54-50F↑j
                 push    bx
                 push    cx
                 lea     si, aDSLM       ; "D, S, L, M:\n"

@@ -1303,3 +1303,40 @@ Not yet traced: what actually *triggers* entry into `victorySequence`
 in the first place — i.e., the specific "Exodus has been defeated"
 condition check, presumably somewhere in the combat-resolution code
 path. A good, well-scoped next target.
+
+**Found it immediately after — Ultima III's legendary Exodus puzzle,
+confirmed directly from the disassembly.** Tracing `victorySequence`'s
+own trigger backward led straight to it. This is one of gaming
+history's most famous "you can't just fight the boss" mechanics, and
+it's right there in the code:
+
+- **`obtainCard`** (`0x17607`) fires only when `_locationType ==
+  0x3Eh`. It sets one bit of the acting character's `_marksAndCards`
+  (`RosterEntry+0x0E`) based on `_partyPosition & 3` — which of the 4
+  Cards you get depends on where in the world you pick it up — and
+  prints "A card, with\nstrange marks!\n".
+- **`attemptExodusSequence`** (`0x1764A`) is the actual puzzle
+  mechanic. You stand on one of 4 special control-panel tiles (`'|'`,
+  `0x7C`) — reached by prompting "Direct? " and checking the targeted
+  tile — and choose a letter from a "D, S, L, M:\n" menu. That only
+  advances a step counter (`word_164A0`, starting at 0) if THREE
+  things all check out for the current step: the chosen letter
+  matches an expected value, the panel's position matches an expected
+  value, and — this is the part that makes it a real puzzle, not just
+  a lookup table — the acting character's `_marksAndCards` has the
+  bit for the Card that step actually requires. Get any of the three
+  wrong and you just get a flash-and-beep ("wrong answer"); get all
+  four steps right, in order, each with the matching Card already in
+  hand, and `word_164A0` reaches 4 — which jumps straight into
+  `victorySequence`.
+
+This directly explains `showOracleMenu`'s riddle dialogue found
+earlier this same session: Radrion the Prophet's rhyme about "The
+cards their\nsuits do number..." and seeking guidance "Unto the
+Montors" was always a hint toward exactly this mechanism — the game's
+central puzzle is confirmed end-to-end, from the Oracle's cryptic hint
+text through to the winning condition check, entirely from reading the
+code. The precise letter-to-card/position mapping (which of D/S/L/M
+pairs with which of the 4 steps) wasn't decoded digit-by-digit this
+pass — the mechanism is confirmed, the exact walkthrough sequence
+isn't spelled out.

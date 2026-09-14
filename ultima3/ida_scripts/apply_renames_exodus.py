@@ -1606,9 +1606,47 @@ RENAMES = [
      "can only be pure speculation! Onward to ULTIMA IV!') before "
      "calling autoSaveGameState (below) and setting game mode to 1. "
      "Reached via a raw offset inside sub_17B54 (`sub_17B54-498`), not "
-     "a directly-named condition check -- what triggers entry into "
-     "this code (defeating Exodus specifically) wasn't traced back "
-     "further this pass."),
+     "a directly-named condition check -- traced back further below: "
+     "the trigger is attemptExodusSequence's `word_164A0 == 4` win "
+     "check."),
+
+    # --- The Exodus endgame puzzle, 2026-09-14 -----------------------
+    # This is the famous "how do you actually beat Exodus" mechanic:
+    # combat alone can't win it. Found by tracing victorySequence's
+    # jump backward to its trigger site.
+    (0x17607, "obtainCard",
+     "Reached via `off_1654C[2]` (a dispatch table, likely indexed by "
+     "the tile/item under a `cmdGet`-style interaction -- the table's "
+     "other entries aren't individually traced this pass). Only fires "
+     "when `_locationType == 0x3Eh`. Sets one bit of the selected "
+     "character's `_marksAndCards` (`RosterEntry+0x0E`) based on "
+     "`_partyPosition & 3` (i.e. which of 4 card types depends on "
+     "where you pick it up), printing 'A card, with\\nstrange "
+     "marks!\\n'. These are the 4 Cards Radrion the Oracle's riddles "
+     "reference ('The cards their\\nsuits do number...')."),
+    (0x1764A, "attemptExodusSequence",
+     "Reached via `off_1654C[0]` (`loc_1762F`: prompts 'Direct? ', "
+     "reads a direction, and only proceeds if the tile there is "
+     "`'|'` (0x7C) -- a control-panel/lever tile). Prompts a 4-choice "
+     "menu 'D, S, L, M:\\n' (the letter/word to 'say' to the panel), "
+     "then checks THREE things against a running step counter "
+     "(`word_164A0`, 0-3): (1) the chosen letter matches an "
+     "expected value for this step (`bl+0x1Eh`), (2) the tile's "
+     "screen offset matches a per-step expected value "
+     "(`[bx+6B14h]`), and (3) critically, the acting character's "
+     "`_marksAndCards` (`[di+0Eh]`) has the CARD bit matching this "
+     "step (`1 << word_164A0`) -- i.e. you must actually hold the "
+     "correct Card (from obtainCard) to advance. All 3 matching "
+     "advances `word_164A0`; a 5-flash tile animation plays either "
+     "way. Reaching `word_164A0 == 4` (all 4 steps completed, in "
+     "order, each with the right card in hand) jumps straight to "
+     "victorySequence -- **this is Ultima III's legendary Exodus "
+     "puzzle**: combat cannot defeat Exodus at all; only speaking the "
+     "correct word at each of 4 specific panel positions, each "
+     "requiring its matching Card, in the correct sequence, does. "
+     "The exact D/S/L/M-to-card/position mapping (which letter goes "
+     "with which of the 4 steps) isn't decoded digit-by-digit here -- "
+     "confirmed at the mechanism level, not the exact-sequence level."),
 ]
 
 
