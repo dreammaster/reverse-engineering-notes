@@ -1518,3 +1518,79 @@ healHitPoints: 0x15d2b-0x15d4b
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_unlock_dungeon.py', 'noexport']
+[*] reading investigate_unlock_dungeon.py
+[*] executing investigate_unlock_dungeon.py
+[*] captured stdout from target script:
+----- begin target script output -----
+cmdUnlock: 0x17b54-0x17d1a
+  0x11fd6: call    printGameText; jumptable 00011BD1 case 18
+  0x11fd9: call    readDirectionKeypress
+  0x11fdc: jz      short loc_1200F
+  0x11fde: test    dh, 0FFh
+  0x11fe1: jnz     short loc_12012
+  0x11fe3: call    getMapTileAt
+  0x11fe6: cmp     al, 0B8h
+  0x11fe8: jnz     short loc_12012
+  0x11fea: lea     si, aWhoseKey; "Whose key? "
+  0x11fee: call    printGameText
+  0x11ff1: mov     si, bx
+  0x11ff3: call    selectPlayer
+  0x11ff6: jz      short loc_1200F
+  0x11ff8: mov     al, [bx+RosterEntry._keys]
+  0x11ffb: sub     al, 1
+  0x11ffd: das
+  0x11ffe: jb      short loc_12015
+  0x12000: mov     [bx+RosterEntry._keys], al
+  0x12003: mov     al, _locationType
+  0x12006: shl     al, 1
+  0x12008: shl     al, 1
+  0x1200a: mov     [si], al
+  0x1200c: call    drawMapViewport
+  0x1200f: jmp     mainLoopCommandDone
+  0x12012: jmp     loc_17DDE
+  0x12015: jmp     loc_17DA8
+  0x12018: call    printGameText; jumptable 00011BD1 cases 8,9,14
+  0x1201b: xor     _soundEnabled, 0FFh
+  0x12020: lea     si, aOff; "Off!\n"
+  0x12024: cmp     _soundEnabled, 0
+  0x12029: jz      short loc_1202F
+  0x1202b: lea     si, aOn; "On!\n"
+  0x1202f: call    printGameText
+  0x12032: jmp     mainLoopCommandDone
+  0x12035: call    printGameText; jumptable 00011BD1 case 7
+
+OVERWORLD_COMMAND_KEYS @ 0x11887
+DUNGEON_COMMAND_KEYS @ 0x17708
+----- end target script output -----
+[*] finished executing investigate_unlock_dungeon.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_command_key_tables.py', 'noexport']
+[*] reading dump_command_key_tables.py
+[*] executing dump_command_key_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+OVERWORLD_COMMAND_KEYS @ 0x11887:
+  raw: 00 48 41 1e 00 50 00 4d 00 4b 20 39 42 30 58 2d 56 2f 00 1f 5a 2c 45 12 4c 26 4d 32 00 2f 4b 25 48 23 54 14 55 16 49 17
+  as chars: <00>HA<1E><00>P<00>M<00>K 9B0X-V/<00><1F>Z,E<12>L&M2<00>/K%H#T<14>U<16>I<17>
+  contains 'U': True
+
+DUNGEON_COMMAND_KEYS @ 0x17708:
+  raw: 20 39 43 2e 47 22 48 23 49 17 4a 24 4d 32 4e 31 4f 18 52 13 56 2f 57 11 59 15 5a 2c 00 1f 00 2f 42 30 41 1e 45 12 46 21
+  as chars:  9C.G"H#I<17>J$M2N1O<18>R<13>V/W<11>Y<15>Z,<00><1F><00>/B0A<1E>E<12>F!
+  contains 'U': False
+----- end target script output -----
+[*] finished executing dump_command_key_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

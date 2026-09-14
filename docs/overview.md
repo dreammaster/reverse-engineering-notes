@@ -2042,3 +2042,19 @@ coverage: `ultima.idb` (61/61), `ultima_bootup.idb` (74/74),
 `ultima_exodus.idb` (145/145) -- and every mechanism question flagged
 at the end of the original function-naming sweeps has now been
 resolved.
+
+## Why Unlock ('U') is disabled in dungeons: solved
+
+A quick, decisive follow-up on a previously only-partially-explained
+question. The earlier theory was that `cmdUnlock` runs in dungeons but
+silently no-ops, since its one hardcoded locked-door tile check
+(`getMapTileAt() == 0xB8`) looked like an overworld/town-specific tile
+ID that dungeons never produce. Simpler answer, found directly:
+dumping `OVERWORLD_COMMAND_KEYS` (`0x11887`) and `DUNGEON_COMMAND_KEYS`
+(`0x17708`) side by side shows `'U'` (`0x55`) present in the overworld
+table and **entirely absent** from the dungeon one. The dungeon-mode
+command dispatcher rejects the keypress before `cmdUnlock` is ever
+reached -- not a no-op handler, a table that never offers the letter
+at all. Whether dungeons have locked doors by some other mechanism
+remains open, but the "why is U disabled" half of the question is now
+fully closed.
