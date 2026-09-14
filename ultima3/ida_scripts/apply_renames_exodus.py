@@ -1764,6 +1764,25 @@ RENAMES = [
      "back to confirm that specifically -- named for the confirmed "
      "mechanical effect (teleport + screen fanfare), not an asserted "
      "trigger."),
+
+    (0x1A9E8, "listWeaponsShopInventory",
+     "showWeaponsShopMenu's 'List?' handler: prints the standard "
+     "weapon list with prices, then -- ONLY when "
+     "`_savedOverworldPosition == 0x25h` (one specific town) -- sets "
+     "`byte_114CA = 0FFh` and unlocks a second, better-weapons page "
+     "('+2 Axe', '+2 Bow', '+4 Swd', etc). `byte_114CA` is exactly the "
+     "flag readyWeapon checks to widen a Ranger/Paladin-type class's "
+     "max weapon tier -- confirms a real progression mechanic: one "
+     "specific town's weapon shop permanently unlocks access to "
+     "higher-tier weapons once visited."),
+    (0x1AB68, "listArmourShopInventory",
+     "showArmourShopMenu's 'List?' handler, the exact armour "
+     "counterpart to listWeaponsShopInventory: standard armour list, "
+     "then at the SAME special town (`_savedOverworldPosition == "
+     "0x25h`) sets `byte_114CB = 0FFh` and unlocks '+2 Chain'/'+2 "
+     "Plate' armour -- `byte_114CB` is the flag wearArmour checks for "
+     "its own widened max tier. Both shops share the same one secret "
+     "town."),
 ]
 
 

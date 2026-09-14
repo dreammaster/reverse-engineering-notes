@@ -13018,7 +13018,7 @@ aYouDonTOwnOneO db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A9
 aThankYou       db 0Ah                  ; DATA XREF: showWeaponsShopMenu+A8↓o
                                         ; showArmourShopMenu+A8↓o
                 db 'Thank you!',0Ah,0
-aAvailableBDagg db 0Ah                  ; DATA XREF: sub_1A9E8+3↓o
+aAvailableBDagg db 0Ah                  ; DATA XREF: listWeaponsShopInventory+3↓o
                 db 'Available:',0Ah
                 db 'B:Dagger    5gp',0Ah
                 db 'C:Mace     30gp',0Ah
@@ -13026,15 +13026,16 @@ aAvailableBDagg db 0Ah                  ; DATA XREF: sub_1A9E8+3↓o
                 db 'E:Axe     125gp',0Ah
                 db 'F:Bow     350gp',0Ah
                 db 'G:Sword   200gp',0
-aH2hSwd250gp    db 0Ah                  ; DATA XREF: sub_1A9E8+11↓o
+aH2hSwd250gp    db 0Ah                  ; DATA XREF: listWeaponsShopInventory+11↓o
                 db 'H:2H Swd  250gp',0Ah,0
-aI2Axe400gpJ2Bo db 'I:+2 Axe  400gp',0Ah ; DATA XREF: sub_1A9E8+24↓o
+aI2Axe400gpJ2Bo db 'I:+2 Axe  400gp',0Ah
+                                        ; DATA XREF: listWeaponsShopInventory+24↓o
                 db 'J:+2 Bow 1050gp',0Ah
                 db 'K:+2 Swd  800gp',0Ah
                 db 'L:Gloves 1200gp',0Ah
                 db 'M:+4 Axe 2700gp',0Ah
                 db 'N:+4 Bow 6550gp',0
-aO4Swd4550gp    db 0Ah                  ; DATA XREF: sub_1A9E8+32↓o
+aO4Swd4550gp    db 0Ah                  ; DATA XREF: listWeaponsShopInventory+32↓o
                 db 'O:+4 Swd 4550gp',0Ah,0
 aTooMuchGold    db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A9C7↓o
                                         ; showArmourShopMenu:loc_1AB47↓o
@@ -13050,13 +13051,13 @@ aWelcomeToTheAr db 0Ah                  ; DATA XREF: showArmourShopMenu+7↓o
                 db 'Armour Shop!',0Ah
                 db 0Ah
                 db 'List? ',0
-aAvailableBClot db 0Ah                  ; DATA XREF: sub_1AB68+3↓o
+aAvailableBClot db 0Ah                  ; DATA XREF: listArmourShopInventory+3↓o
                 db 'Available:',0Ah
                 db 'B:Cloth     75gp',0Ah
                 db 'C:Leather  195gp',0Ah
                 db 'D:Chain    575gp',0Ah
                 db 'E:Plate   2500gp',0
-aF2chain6130gpG db 0Ah                  ; DATA XREF: sub_1AB68+1D↓o
+aF2chain6130gpG db 0Ah                  ; DATA XREF: listArmourShopInventory+1D↓o
                 db 'F:+2Chain 6130gp',0Ah
                 db 'G:+2Plate 8250gp',0
 aU              db 'u',0
@@ -13822,7 +13823,7 @@ showWeaponsShopMenu proc near           ; CODE XREF: sub_17B54:TOWN_BUILDING_TAB
                 call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A8BD
-                call    sub_1A9E8
+                call    listWeaponsShopInventory
 
 loc_1A8BD:                              ; CODE XREF: showWeaponsShopMenu+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
@@ -13989,7 +13990,7 @@ showWeaponsShopMenu endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A9E8       proc near               ; CODE XREF: showWeaponsShopMenu+15↑p
+listWeaponsShopInventory proc near      ; CODE XREF: showWeaponsShopMenu+15↑p
                 pushf
                 push    ax
                 push    si
@@ -14011,13 +14012,13 @@ sub_1A9E8       proc near               ; CODE XREF: showWeaponsShopMenu+15↑p
                 lea     si, aO4Swd4550gp ; "\nO:+4 Swd 4550gp\n"
                 call    printGameText
 
-loc_1AA21:                              ; CODE XREF: sub_1A9E8+F↑j
-                                        ; sub_1A9E8+1D↑j ...
+loc_1AA21:                              ; CODE XREF: listWeaponsShopInventory+F↑j
+                                        ; listWeaponsShopInventory+1D↑j ...
                 pop     si
                 pop     ax
                 popf
                 retn
-sub_1A9E8       endp
+listWeaponsShopInventory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14037,7 +14038,7 @@ showArmourShopMenu proc near            ; CODE XREF: sub_17B54:TOWN_BUILDING_TAB
                 call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1AA3D
-                call    sub_1AB68
+                call    listArmourShopInventory
 
 loc_1AA3D:                              ; CODE XREF: showArmourShopMenu+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
@@ -14204,7 +14205,7 @@ showArmourShopMenu endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB68       proc near               ; CODE XREF: showArmourShopMenu+15↑p
+listArmourShopInventory proc near       ; CODE XREF: showArmourShopMenu+15↑p
                 pushf
                 push    ax
                 push    si
@@ -14219,15 +14220,15 @@ sub_1AB68       proc near               ; CODE XREF: showArmourShopMenu+15↑p
                 lea     si, aF2chain6130gpG ; "\nF:+2Chain 6130gp\nG:+2Plate 8250gp"
                 call    printGameText
 
-loc_1AB8C:                              ; CODE XREF: sub_1AB68+16↑j
+loc_1AB8C:                              ; CODE XREF: listArmourShopInventory+16↑j
                 call    scrollMessageWindow
 
-loc_1AB8F:                              ; CODE XREF: sub_1AB68+F↑j
+loc_1AB8F:                              ; CODE XREF: listArmourShopInventory+F↑j
                 pop     si
                 pop     ax
                 popf
                 retn
-sub_1AB68       endp
+listArmourShopInventory endp
 
 
 ; =============== S U B R O U T I N E =======================================
