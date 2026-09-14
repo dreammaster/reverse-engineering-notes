@@ -1817,6 +1817,39 @@ RENAMES = [
      "after moving `_dungeonLevel`, consistent with a level-transition "
      "spell needing a random landing spot rather than a specific "
      "staircase tile."),
+
+    # --- Dungeon monster special attacks, 2026-09-14 -----------------
+    (0x19360, "attemptPoisonAttack",
+     "25% chance (via `and dl,3`) to change a targeted player's "
+     "`_status` from 'G' (Good) to 'P' (Poisoned), printing 'Plr N "
+     "Poisoned!\\n'. Called from attemptSpecialMonsterAttack (below) "
+     "for monster classes 0x0Eh/0x1Ch/0x1Eh."),
+    (0x193A2, "attemptStealAttack",
+     "Randomly picks either the target's `_weaponOwned` or "
+     "`_armourOwned` array, picks a random owned-item slot within it, "
+     "and decrements that item's count by 1 (BCD), printing 'Plr N "
+     "Pilfered!\\n' (confirmed via the string `aPilfered`). Called "
+     "from attemptSpecialMonsterAttack for monster class 0x17h -- a "
+     "Thief-type monster's steal attack."),
+    (0x192AF, "applyDungeonMonsterDamage",
+     "Rolls damage from the attacking monster's MONSTER_HP_TABLE "
+     "entry plus a dungeon-level-scaled component, applies it TWICE "
+     "via damageCharacterHP, flashes the target's status-bar portrait "
+     "and an on-map hit animation, and on death converts the "
+     "character to Ashes on the map display and calls "
+     "checkPartyWipedOut. This is the dungeon first-person combat's "
+     "damage-and-kill resolution -- a separate code path from the "
+     "arena-combat damage system (applyCombatDamage) documented "
+     "earlier this session, for monsters that attack the party while "
+     "wandering a dungeon level rather than in a formal combat "
+     "encounter."),
+    (0x19244, "attemptSpecialMonsterAttack",
+     "Dispatches by `_conflictMonsterClass` to attemptPoisonAttack "
+     "(classes 0x0E/0x1C/0x1E) or attemptStealAttack (class 0x17), "
+     "then rolls a to-hit check scaled by the target's `_armourIndex` "
+     "(printing 'Missed!'/'Hit!'), applying applyDungeonMonsterDamage "
+     "on a hit. Called twice from sub_17B54 -- the dungeon-monster "
+     "special-attack entry point."),
 ]
 
 
