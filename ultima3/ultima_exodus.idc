@@ -1845,7 +1845,7 @@ static Bytes_0(void) {
 	create_strlit	(0X16B7F,	0X12);
 	set_name	(0X16B7F,	"aNotEnoughGold");
 	create_insn	(0X16B91);
-	set_name	(0X16B91,	"autoSaveOnDeath");
+	set_name	(0X16B91,	"autoSaveGameState");
 	create_insn	(0X16BB9);
 	create_insn	(0X16BC9);
 	set_name	(0X16BC9,	"damageCharacterHP");
@@ -2483,6 +2483,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X17D1A);
+	set_name	(0X17D1A,	"promptForQuantity");
 	create_insn	(x=0X17D21);
 	op_hex		(x,	1);
 	create_insn	(x=0X17D24);
@@ -3578,6 +3579,7 @@ static Bytes_0(void) {
 	create_strlit	(0X1A463,	0XC);
 	set_name	(0X1A463,	"aHowMany_0");
 	create_insn	(0X1A46F);
+	set_name	(0X1A46F,	"printMoveCount");
 	create_insn	(x=0X1A474);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3585,9 +3587,11 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A491);
+	set_name	(0X1A491,	"xorScreenRegionWithPattern");
 	create_insn	(x=0X1A4B9);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+	set_name	(0X1A4B9,	"victorySequence");
 	create_insn	(x=0X1A4C3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3955,6 +3959,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AD01);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1AD08);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3969,15 +3982,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AD56);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1AD5F);
 	create_insn	(x=0X1AD62);
 	op_plain_offset	(x,	1,	0X10000);

@@ -1271,3 +1271,35 @@ open: `showGrocerMenu`'s cost-calculation call, `sub_17D1A` (likely a
 shared "prompt a quantity, compute the price" utility other shops
 probably reuse too), and the weapons/armour shops' own
 inventory-listing internals weren't individually traced this pass.
+
+**The win condition and ending sequence found**, while chasing down
+`showGrocerMenu`'s remaining cost-calc helper (now named
+`promptForQuantity`, `0x17D1A` — a 4-digit number-entry prompt similar
+in shape to `promptForNumberEntry`). Right nearby, `victorySequence`
+(`0x1A4B9`) turned out to be Ultima III's entire win screen: it prints
+"Congratulations!\n Thou hast\n compleated\nExodus: Ultima 3\n in",
+the party's move count (`printMoveCount`, `0x1A46F`, printing the same
+4-byte BCD counter `incrementMoveCounter` ticks), "Report thy feat!",
+then a 21-flash screen fanfare — `xorScreenRegionWithPattern`
+(`0x1A491`), a generic large-region CGA XOR helper parameterized by a
+caller-supplied pattern, structurally similar to `invertScreenRegion`
+but bigger and not hardcoded to `0xFFFF` — before printing the
+complete epilogue, line by line, at fixed screen coordinates:
+
+> And so it came to pass that on this day EXODUS, hell-born incarnate
+> of evil, was vanquished from Sosaria. What now lies ahead in the
+> ULTIMA saga can only be pure speculation! Onward to ULTIMA IV!
+
+It then calls `autoSaveGameState` and sets game mode to 1. That call
+is itself a small but important finding: the function had been named
+`autoSaveOnDeath` on the assumption it only fired on character death
+or a full party wipe — finding it ALSO called here, at the moment of
+victory, showed that name was too narrow. Renamed to
+`autoSaveGameState`, reflecting its real role as a general "commit
+game state to disk at a major transition" primitive, not something
+death-specific.
+
+Not yet traced: what actually *triggers* entry into `victorySequence`
+in the first place — i.e., the specific "Exodus has been defeated"
+condition check, presumably somewhere in the combat-resolution code
+path. A good, well-scoped next target.
