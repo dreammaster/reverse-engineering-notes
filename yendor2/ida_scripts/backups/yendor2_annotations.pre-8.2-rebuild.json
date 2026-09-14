@@ -1,0 +1,2762 @@
+{
+ "names": {
+  "0x10000": "start",
+  "0x11edc": "InitGame",
+  "0x1206f": "clear_kbd_buffer",
+  "0x12075": "findSavegame",
+  "0x120ed": "InitGlobals",
+  "0x122f2": "loadWorldDat2",
+  "0x12323": "loadWorldDat3",
+  "0x12355": "loadWorldDat1",
+  "0x1247a": "loadWorldDat4",
+  "0x124ab": "loadWorldDat5",
+  "0x1264d": "MapUnmapPages",
+  "0x12677": "InitMemory",
+  "0x12a51": "InitGraphics",
+  "0x12b31": "Struc1_Allocate",
+  "0x12b76": "calcOffset",
+  "0x16298": "allocMem",
+  "0x1840e": "wait",
+  "0x18424": "FileEntry_Close",
+  "0x18450": "FileEntry_CreateFile",
+  "0x18472": "FileEntry_OpenFile",
+  "0x18491": "FileEntry_Read",
+  "0x184bc": "FileEntry_Write",
+  "0x184e7": "FileEntry_Seek",
+  "0x1f38a": "GameDialog_drawButtons",
+  "0x1f438": "GameDialog_drawAnimation",
+  "0x1f481": "GameDialog_drawDos",
+  "0x1f49c": "GameDialog_drawReturn",
+  "0x1f4b7": "GameDialog_drawLoad",
+  "0x1f4d2": "GameDialog_drawMusic",
+  "0x1f4ed": "GameDialog_drawNewGame",
+  "0x1f508": "GameDialog_drawSave",
+  "0x1f523": "GameDialog_drawSoundFx",
+  "0x237d8": "InitMouse",
+  "0x23b5e": "writeString",
+  "0x27f30": "WorldDat_setBlock1",
+  "0x27f4e": "WorldDat_setBlock2",
+  "0x27f6c": "WorldDat_setBlock3",
+  "0x27f86": "WorldDat_setBlock4",
+  "0x27fa4": "WorldDat_setBlock5",
+  "0x27fc2": "WorldDat_setBlock6",
+  "0x286fc": "aCallingProgram",
+  "0x28715": "aMemoryAllocati",
+  "0x28730": "aProblemWithPic",
+  "0x2874c": "aProblemWithPal",
+  "0x2876a": "aRequiredExpand",
+  "0x287d3": "aMinimumOf1mbEx",
+  "0x28804": "aAnEmmMappingEr",
+  "0x28829": "aProblemWithMus",
+  "0x2884d": "aProblemWithADr",
+  "0x28866": "aProblemWithWor",
+  "0x28880": "aProblemWithCur",
+  "0x288c4": "aProblemWithASa",
+  "0x288e6": "aExpandedMemory",
+  "0x2890a": "aProblemRetreiv",
+  "0x2892a": "aProblemRetreiv_0",
+  "0x28949": "aProblemRetreiv_1",
+  "0x2897d": "ErrorCheck",
+  "0x2899c": "ErrorExit",
+  "0x28a31": "ErrorTable",
+  "0x29aa2": "writeChar",
+  "0x2a11b": "Fade?",
+  "0x2a681": "getTextPos",
+  "0x2da7a": "fonts",
+  "0x2da82": "font0",
+  "0x2dcc2": "font1",
+  "0x2df02": "font2",
+  "0x2e142": "font3",
+  "0x2e382": "_font_bgColor",
+  "0x2e388": "x",
+  "0x2e38a": "y",
+  "0x2e38c": "_font_bgTransparent",
+  "0x2e408": "_val27",
+  "0x2e47e": "_val1",
+  "0x2e480": "_val2",
+  "0x2e482": "_val3",
+  "0x2e484": "_val4",
+  "0x2e486": "_val5",
+  "0x2e488": "_val6",
+  "0x2e48a": "_val7",
+  "0x2e48c": "_val8",
+  "0x2e4ae": "_val10",
+  "0x2e502": "_emsPointer1?",
+  "0x2e506": "aEmmxxxx",
+  "0x2e50e": "_emsPageCount",
+  "0x2e510": "_emsSegmentPageFrame",
+  "0x2e518": "aBlaster",
+  "0x2e521": "aSound",
+  "0x2e528": "_val34",
+  "0x2e52c": "_font_fgColor",
+  "0x2e53c": "_val21",
+  "0x2e53e": "_val22",
+  "0x2e540": "_val23",
+  "0x2e542": "_val24",
+  "0x2e552": "fontOffset",
+  "0x31962": "_emsVal1",
+  "0x31964": "_emsVal2",
+  "0x31966": "_emsVal3",
+  "0x31968": "_emsVal4",
+  "0x3196a": "_emsVal5",
+  "0x3196c": "_emsVal6",
+  "0x3196e": "_emsVal7",
+  "0x31970": "_emsVal8",
+  "0x31972": "_emsVal9",
+  "0x3291c": "_videoBufferSeg",
+  "0x32930": "errorCode",
+  "0x32936": "_videoSegment",
+  "0x32946": "fe",
+  "0x3294a": "_textPos_x",
+  "0x32962": "_textPos_y",
+  "0x32992": "_val15",
+  "0x32994": "_val16",
+  "0x32996": "_val17",
+  "0x32998": "_val18",
+  "0x3299a": "_val19",
+  "0x3299c": "_val20",
+  "0x3299e": "_val25",
+  "0x329a0": "_val26",
+  "0x329a2": "_val28",
+  "0x329a4": "_val29",
+  "0x329a6": "_val30",
+  "0x329a8": "_val31",
+  "0x329aa": "_val32",
+  "0x329ac": "_val33",
+  "0x329ae": "_val35",
+  "0x329b0": "_val36",
+  "0x329b2": "_val37",
+  "0x329b4": "_val38",
+  "0x329b6": "_val39",
+  "0x329b8": "_val40",
+  "0x329ba": "_val41",
+  "0x329bc": "_val42",
+  "0x329be": "_val43",
+  "0x329c0": "_val9",
+  "0x329c2": "_val44",
+  "0x329c4": "_val45",
+  "0x329c6": "_val46",
+  "0x329c8": "_val47",
+  "0x329ca": "_val49",
+  "0x329cc": "_val48",
+  "0x329d0": "_val11",
+  "0x329d2": "_val12",
+  "0x329d4": "_val13",
+  "0x329d6": "_val14",
+  "0x329d8": "_ptr1",
+  "0x329da": "_ptr2",
+  "0x329dc": "_ptr3",
+  "0x329de": "_ptr4",
+  "0x329e0": "_ptr5",
+  "0x329e2": "_ptr6",
+  "0x329e4": "_ptr7",
+  "0x329f2": "_blockSize1",
+  "0x329f6": "_blockSize4",
+  "0x329fc": "_blockSize5",
+  "0x32a10": "_blockSize3",
+  "0x32a14": "_blockSize2",
+  "0x3451e": "savegameNames",
+  "0x34520": "aEmpty_5",
+  "0x34539": "a2",
+  "0x3453b": "aEmpty_4",
+  "0x34556": "aEmpty_3",
+  "0x34571": "aEmpty_2",
+  "0x3458c": "aEmpty_1",
+  "0x345a5": "a6",
+  "0x345a7": "aEmpty_0",
+  "0x35026": "aPegasus",
+  "0x35040": "aGiantEagle",
+  "0x3505a": "aFlyingRug",
+  "0x35074": "aMagicDragon",
+  "0x3512e": "aNorth",
+  "0x35137": "aSouth",
+  "0x35140": "aEast",
+  "0x35149": "aWest",
+  "0x35152": "aSave",
+  "0x35157": "aLoad",
+  "0x3515c": "aDos",
+  "0x35160": "aMusic",
+  "0x35166": "aSoundFx",
+  "0x3516f": "aReturn",
+  "0x35176": "aLevelX",
+  "0x3517f": "aMapX",
+  "0x35186": "aPosition",
+  "0x35194": "a1212Am",
+  "0x3519d": "a12121212",
+  "0x351c2": "aCharacterCreat",
+  "0x351d5": "aPickAClass",
+  "0x351e2": "aFighter",
+  "0x351ed": "aMerchant",
+  "0x351f8": "aRogue",
+  "0x35203": "aMonk",
+  "0x3520e": "aAlchemist",
+  "0x35219": "aPaladin",
+  "0x35224": "aMage",
+  "0x3522f": "aDruid",
+  "0x3523a": "aMarksman",
+  "0x35245": "aQuitCreate",
+  "0x35253": "aMale",
+  "0x3525a": "aFemale",
+  "0x35261": "aPickAPortrait",
+  "0x35271": "aSelectAn",
+  "0x3527b": "aOption",
+  "0x35282": "aClass",
+  "0x35288": "aTakeUpToFour",
+  "0x35298": "aItems",
+  "0x3529e": "aNameCharacter",
+  "0x352ad": "aEnterTheName",
+  "0x352bc": "aKeepCharacter",
+  "0x352cb": "aCharacterPrevi",
+  "0x352dd": "aDelete",
+  "0x352e4": "aReturn_0",
+  "0x352eb": "aAreYouSure",
+  "0x352f9": "aYesDelete",
+  "0x35305": "aNoKeep",
+  "0x3530e": "aDead",
+  "0x35313": "aAfflictions",
+  "0x35320": "aNone",
+  "0x35325": "aDead_0",
+  "0x3532a": "aDiseased",
+  "0x35333": "aPoisoned",
+  "0x3533c": "aSick",
+  "0x35341": "aStoned",
+  "0x35348": "aFrozen",
+  "0x3534f": "aParalyzed",
+  "0x35359": "aCursed",
+  "0x35360": "aHexed",
+  "0x35366": "aJinxed",
+  "0x3536d": "aHealth",
+  "0x35375": "aMagic",
+  "0x3537c": "aWeight",
+  "0x35384": "aProtections",
+  "0x35391": "aDisease",
+  "0x35399": "aPoison",
+  "0x353a0": "aSickness",
+  "0x353a9": "aStoning",
+  "0x353b1": "aFrozen_0",
+  "0x353b8": "aParalyze",
+  "0x353c1": "aCursing",
+  "0x353c9": "aHexing",
+  "0x353d0": "aJinxing",
+  "0x353d8": "aTraining",
+  "0x353e2": "aReadyFor",
+  "0x353ec": "aLevel",
+  "0x353f2": "aTransports",
+  "0x353fe": "aCurrently",
+  "0x35408": "aLevel_0",
+  "0x3540e": "aUnlocked",
+  "0x35417": "aNotLocked",
+  "0x35422": "aButTrapped",
+  "0x3542e": "aLocked",
+  "0x35435": "aLockedAnd",
+  "0x35440": "aTrapped",
+  "0x35448": "aMagically",
+  "0x35452": "aLocked_0",
+  "0x35459": "aRequires",
+  "0x35462": "aSpecialKey",
+  "0x3546e": "aBrassKey",
+  "0x35478": "aBronzeKey",
+  "0x35483": "aCopperKey",
+  "0x3548e": "aIronKey",
+  "0x35497": "aSteelKey",
+  "0x354a1": "aSilverKey",
+  "0x354ac": "aGoldKey",
+  "0x354b5": "aGoldCoins",
+  "0x354c1": "aMagicOre",
+  "0x354cd": "aNuore",
+  "0x354d5": "aAbsorption",
+  "0x354e1": "aDamage",
+  "0x354e9": "aTheLockpick",
+  "0x354f6": "aBroke",
+  "0x354fc": "aEnter",
+  "0x35502": "aLeave",
+  "0x35508": "aTrap",
+  "0x3550e": "aDefeated",
+  "0x35517": "aBrass",
+  "0x35524": "aBronze",
+  "0x35531": "aCopper",
+  "0x3553e": "aIron",
+  "0x3554b": "aSteel",
+  "0x35558": "aSilver",
+  "0x35565": "aGold",
+  "0x3557f": "aFailed",
+  "0x35586": "aEmpty",
+  "0x3558c": "aNuore_0",
+  "0x35596": "aCreated",
+  "0x3559e": "aXHoursPass",
+  "0x355ab": "aXFoodEaten",
+  "0x355b8": "aYourRestIs",
+  "0x355c5": "aInterrupted",
+  "0x355d1": "aNothingHere",
+  "0x355de": "aYourSkill",
+  "0x355eb": "aIsNotHigh",
+  "0x355f8": "aEnough",
+  "0x35605": "aYouCanNot",
+  "0x35611": "aRestHere",
+  "0x3561b": "aExperience",
+  "0x35627": "aStrength",
+  "0x35634": "aDexterity",
+  "0x35641": "aStamina",
+  "0x3564e": "aIntelligence",
+  "0x3565b": "aWisdom",
+  "0x35668": "aCharisma",
+  "0x356b6": "aHitPoints",
+  "0x356c3": "aMagicPoints",
+  "0x356dd": "aSurvival",
+  "0x356ea": "aProjectile",
+  "0x356f7": "aSlashing",
+  "0x35704": "aBashing",
+  "0x35711": "aPolearm",
+  "0x3571e": "aCasting",
+  "0x3572b": "aMapping",
+  "0x35738": "aNavigation",
+  "0x35745": "aBartering",
+  "0x35752": "aRepair",
+  "0x3575f": "aThievery",
+  "0x3576c": "aLinguistics",
+  "0x35779": "aChemistry",
+  "0x35786": "aToReplenishYou",
+  "0x357a7": "aToRemoveYourCo",
+  "0x357c2": "aToReturnYouToL",
+  "0x357d9": "aToCompletelyRe",
+  "0x357f4": "aToTrainToLevel",
+  "0x35807": "aForUndisturbed",
+  "0x3581d": "aValue",
+  "0x35830": "aSpacebarTo",
+  "0x3583d": "aSellItemOr",
+  "0x3584a": "aEscToUndo",
+  "0x35857": "aIHaveNo",
+  "0x35864": "aNeedFor",
+  "0x35871": "aThatTypeOf",
+  "0x3587e": "aItem",
+  "0x3588b": "aYouMust",
+  "0x35898": "aHaveAt",
+  "0x358a5": "aLeast10",
+  "0x358b2": "aUnits",
+  "0x358bf": "aItWillCost",
+  "0x358cd": "aGold_0",
+  "0x358d3": "aIsThatPriceAgr",
+  "0x358ec": "aYouDonTHaveEno",
+  "0x35908": "aYouAreNowLevel",
+  "0x3591e": "aWithHealthPoin",
+  "0x35934": "aMagicPoints_0",
+  "0x3594a": "aNowYouCanSpend",
+  "0x35967": "aPoints",
+  "0x35971": "aYouHaveLearned",
+  "0x3598e": "aBonusPoints",
+  "0x3599b": "aSpacebarTo_0",
+  "0x359a7": "aEnhanceItem",
+  "0x359b4": "aCost",
+  "0x359ba": "aICanNot",
+  "0x359c4": "aEnhanceThat",
+  "0x359d1": "aPressEscapeToE",
+  "0x359e6": "aOreCosts10Gold",
+  "0x35a03": "aYouCanAffordUp",
+  "0x35a18": "aEnterQuantityT",
+  "0x35a2e": "aSpacebarTo_1",
+  "0x35a3a": "aRepairItem",
+  "0x35a46": "aICanNot_0",
+  "0x35a50": "aRepairThat",
+  "0x35a5c": "aIWillBuyYour",
+  "0x35a6c": "aName",
+  "0x35a72": "aCost_0",
+  "0x35a78": "aCanOnlyFlyBetw",
+  "0x35a8d": "a12amAnd6pm",
+  "0x35a9a": "a6pmAnd12am",
+  "0x35aa7": "aCanFlyAnytimeD",
+  "0x35ac4": "aMayBeUsedXTime",
+  "0x35ae0": "aMayBeUsedOnceP",
+  "0x35af9": "aYouAlreadyHave",
+  "0x35b18": "aFor",
+  "0x35b1c": "aDoYouWantToSel",
+  "0x35b38": "aYourAttempt",
+  "0x35b45": "aToRepair",
+  "0x35b4f": "aTheItemHas",
+  "0x35b5c": "aFailed_0",
+  "0x35b64": "aYourAttempt_0",
+  "0x35b71": "aToRepair_0",
+  "0x35b7b": "aTheItemHas_0",
+  "0x35b88": "aFailedThe",
+  "0x35b95": "aItemWas",
+  "0x35b9e": "aDestroyed",
+  "0x35ba9": "aTheItemIs",
+  "0x35bb5": "aRepaired",
+  "0x35bbf": "aRemaining",
+  "0x35bca": "aUsesToday",
+  "0x35bd6": "aYouDonT",
+  "0x35be3": "aHaveEnough",
+  "0x35bf0": "aGold_1",
+  "0x35bfd": "aYouDonTHaveEno_0",
+  "0x35c1f": "aYouDonTSeemToH",
+  "0x35c41": "aAnimation",
+  "0x35c4b": "aNewGame",
+  "0x35c54": "aSlow",
+  "0x35c5b": "aMedium",
+  "0x35c62": "aFast",
+  "0x35c69": "aThatIsIncorrec",
+  "0x35c7c": "aThatSoundsGood",
+  "0x35c94": "aWarrior",
+  "0x35c9f": "aTinkerer",
+  "0x35caa": "aThief",
+  "0x35cb5": "aCleric",
+  "0x35cc0": "aTransmuter",
+  "0x35ccb": "aCavalier",
+  "0x35cd6": "aWizard",
+  "0x35ce1": "aEnchanter",
+  "0x35cec": "aRanger",
+  "0x35cf7": "aChampion",
+  "0x35d02": "aBlacksmith",
+  "0x35d0d": "aAssassin",
+  "0x35d18": "aPriest",
+  "0x35d23": "aHealer",
+  "0x35d2e": "aHero",
+  "0x35d39": "aSorcerer",
+  "0x35d44": "aSage",
+  "0x35d4f": "aKnight",
+  "0x35d5a": "aCongratulation",
+  "0x35d6c": "aYouAreNowA",
+  "0x35d7a": "aToPurchase",
+  "0x35d87": "aBonusPoints_0",
+  "0x35d96": "aClose",
+  "0x35d9c": "aPortrait",
+  "0x35da5": "aNonMagicUsers",
+  "0x35db6": "aClericTypes",
+  "0x35dc4": "aWizardTypes",
+  "0x35dd2": "aRollAttributes",
+  "0x35de2": "aPickItems",
+  "0x35ded": "aChallengeOf",
+  "0x35dfb": "aCongratulation_0",
+  "0x35e16": "aYouHaveSuccess",
+  "0x35e35": "aThe",
+  "0x35e3a": "aChallenge",
+  "0x35e45": "aAndHaveEarnedA",
+  "0x35e61": "aUnfortunatelyY",
+  "0x35e7f": "aToMasterThisCh",
+  "0x35ea0": "aYouWillHaveBet",
+  "0x35ebf": "aYourNextAttemp",
+  "0x35ed2": "aGoldCoins_0",
+  "0x35edf": "aYourSpell",
+  "0x35eea": "aHasFailed",
+  "0x35ef6": "aYourSpell_0",
+  "0x35f01": "aHasMissed",
+  "0x35f0d": "aYouAreNot",
+  "0x35f19": "aYetReady",
+  "0x35f24": "aUnfortunatelyI",
+  "0x35f44": "aYouThroughLeve",
+  "0x35f56": "aDarkUnionTheOn",
+  "0x35f79": "aPressTabAtAnyT",
+  "0x35fa8": "aF1MapsWorldTow",
+  "0x35fce": "aF2MonsterStati",
+  "0x35fe6": "aF3SpellsInform",
+  "0x3600e": "aF4MagicUsersSp",
+  "0x36031": "aF5InventoryIte",
+  "0x36063": "aF6CompleteWalk",
+  "0x3608a": "aEscReturnToGam",
+  "0x3609d": "aDarkUnion",
+  "0x360a8": "aSpellInformati",
+  "0x360ba": "aMagicUserInfor",
+  "0x360d1": "aMaps",
+  "0x360d6": "aMonsterStatist",
+  "0x360e9": "aCompleteWalkTh",
+  "0x360ff": "aHelpScreen",
+  "0x3610b": "aSelectLegendOr",
+  "0x36120": "aInventoryItems",
+  "0x36130": "aStrength_0",
+  "0x3613a": "aPoison_0",
+  "0x36141": "aUndead",
+  "0x36148": "aPercentOfHealt",
+  "0x3615a": "aPercentOfMagic",
+  "0x3616b": "aGold_2",
+  "0x36171": "aHealth_0",
+  "0x36179": "aAccuracy",
+  "0x36183": "aDexterity_0",
+  "0x3618e": "aAbsorption_0",
+  "0x3619a": "aDamage_0",
+  "0x361a2": "aRangedAcc",
+  "0x361af": "aRangedDam",
+  "0x361bc": "aPoison_1",
+  "0x361c4": "aDisease_0",
+  "0x361cd": "aParalysis",
+  "0x361d8": "aFreezing",
+  "0x361e2": "aHexing_0",
+  "0x361ea": "aCursing_0",
+  "0x361f3": "aFire",
+  "0x361f9": "aCold",
+  "0x361ff": "aElectric",
+  "0x36209": "aPower",
+  "0x36210": "aMagicDamage",
+  "0x3621e": "aPhysicalDamage",
+  "0x3622f": "aSpecialAttack",
+  "0x3623f": "aImmune",
+  "0x36246": "aResistant",
+  "0x36250": "aBreakProjectil",
+  "0x36261": "aArmorRings",
+  "0x3626d": "aAttributeEnhan",
+  "0x36281": "aJewelsArtifact",
+  "0x3629f": "aMagicScrollsQu",
+  "0x362b4": "aPotions",
+  "0x362bc": "aSuppliesFood",
+  "0x362ca": "aTransportation",
+  "0x362da": "aWeapons",
+  "0x362e2": "aBaseValue",
+  "0x362ee": "aWeight_0",
+  "0x362f6": "aAbsorption_1",
+  "0x36302": "aFitsIn",
+  "0x3630b": "aAdds",
+  "0x36311": "aCharacterPanel",
+  "0x36321": "aAnyPanel",
+  "0x3632b": "aBackpack",
+  "0x36335": "aBox",
+  "0x3633a": "aBag",
+  "0x3633e": "a2Handed",
+  "0x36348": "aYes",
+  "0x3634c": "aNo",
+  "0x3634f": "aSkill",
+  "0x36356": "aPermanentlyAdd",
+  "0x36366": "aToAn",
+  "0x3636c": "aAttribute",
+  "0x36376": "aToA",
+  "0x3637b": "aSkill_0",
+  "0x36381": "aScrolls",
+  "0x36389": "aWands",
+  "0x3638f": "aVials",
+  "0x36395": "aParchments",
+  "0x363a0": "aRods",
+  "0x363a5": "aDuration",
+  "0x363af": "aMinutes",
+  "0x363b7": "aHealth_1",
+  "0x363bf": "aMagic_0",
+  "0x363c6": "aPercent",
+  "0x363ce": "aPartyAttack",
+  "0x363dd": "aBreak",
+  "0x363e4": "aDestroy",
+  "0x363ed": "aPoison_2",
+  "0x363f6": "aDisease_1",
+  "0x36400": "aParalyze_0",
+  "0x3640b": "aFrozen_1",
+  "0x36414": "aStoning_0",
+  "0x3641e": "aJinxing_0",
+  "0x36428": "aHexing_1",
+  "0x36431": "aCursing_1",
+  "0x3643b": "aStealGold",
+  "0x36448": "aStealOre",
+  "0x36454": "aStealNuore",
+  "0x36462": "aProjectile_0",
+  "0x3646f": "aWeapon",
+  "0x36478": "aShield",
+  "0x36481": "aUses",
+  "0x36487": "aTime",
+  "0x3648d": "aBetweenAnd",
+  "0x3649f": "a7pM",
+  "0x364a5": "a7aM",
+  "0x364ab": "aAnytime",
+  "0x364b3": "aRestores",
+  "0x364bd": "a3X3",
+  "0x364c3": "aCures",
+  "0x364ca": "aSickPoisonDise",
+  "0x364e0": "aConverts",
+  "0x364ea": "aMagicOreAndNuo",
+  "0x364fe": "aClassLevel",
+  "0x3650f": "aMp",
+  "0x36516": "aNuore_1",
+  "0x3651d": "aOre",
+  "0x36524": "aAffects",
+  "0x3652e": "aWhen",
+  "0x36535": "aEffect",
+  "0x3653d": "aTraining_0",
+  "0x36546": "aScroll",
+  "0x3654d": "aAll",
+  "0x36551": "aOne",
+  "0x36555": "aMonster",
+  "0x3655d": "aCharacter",
+  "0x36567": "aS",
+  "0x36569": "aInHandToHand",
+  "0x36579": "aInAStraightLin",
+  "0x3658c": "aInA3x3Area",
+  "0x3659a": "aAtADistance",
+  "0x365a8": "aOutOfHandToHan",
+  "0x365bc": "aAnytime_0",
+  "0x365c4": "aVisibleMonster",
+  "0x365d5": "aInsect",
+  "0x365dc": "aUndead_0",
+  "0x365e3": "aCreation",
+  "0x365ec": "aMagic_1",
+  "0x365f6": "aOreCreated",
+  "0x36603": "aYouCanNot_0",
+  "0x3660f": "aUseThat",
+  "0x36618": "aHere",
+  "0x3661e": "aThePotion",
+  "0x36629": "aWorked",
+  "0x36630": "aSuccessfully",
+  "0x3663d": "aYouDonT_0",
+  "0x36647": "aHaveAllOf",
+  "0x36653": "aTheItems",
+  "0x3665e": "aSick_0",
+  "0x36665": "aThatIsAn",
+  "0x36670": "aIllusion",
+  "0x3667a": "aPatienceIs",
+  "0x36686": "aAVirtue",
+  "0x36690": "a5000",
+  "0x36697": "aNuore_2",
+  "0x3669d": "a5000_0",
+  "0x366a4": "aMagicOre_0",
+  "0x366ae": "a2XHealth",
+  "0x366b9": "a2XMagic",
+  "0x366c3": "aRegisterYourCo",
+  "0x366ee": "aThankYouForPla",
+  "0x36728": "aPleaseRegister",
+  "0x3674c": "aAMoreB",
+  "0x36757": "aDList",
+  "0x3675e": "aMapC",
+  "0x36764": "aMonkClericPrie",
+  "0x3677b": "aAlchemistTrans",
+  "0x3679b": "aPaladinCavalie",
+  "0x367b5": "aMageWizardSorc",
+  "0x367ce": "aDruidEnchanter",
+  "0x367e7": "aMarksmanRanger",
+  "0x36802": "aPoor",
+  "0x3680a": "aAverage",
+  "0x36812": "aGood",
+  "0x3681a": "aGreat",
+  "0x36822": "aVisibleUndeads",
+  "0x36832": "aRegister",
+  "0x3683b": "aToday",
+  "0x36843": "aHxxxx",
+  "0x36849": "aVxxxx",
+  "0x3684f": "aBXxx",
+  "0x36855": "aFXxx",
+  "0x3685b": "curGame",
+  "0x36869": "aCurgame",
+  "0x36871": "picturesVga",
+  "0x3687f": "aPicturesVga",
+  "0x3688c": "savegameX",
+  "0x3689a": "aSavgamex",
+  "0x368a3": "worldDat",
+  "0x368b1": "aWorldDat",
+  "0x36c5f": "_savegameBuffer",
+  "0x397b4": "aPentagon",
+  "0x397bd": "aLinguistic",
+  "0x397c8": "aWhitePotion",
+  "0x397d5": "aThaine",
+  "0x397dc": "aShirley",
+  "0x397e4": "aGain",
+  "0x397e9": "aItHasBeenOnlyA",
+  "0x3981b": "aTrekThroughThe",
+  "0x3984a": "aNowTakeYouToTh",
+  "0x3987b": "aPortHopeWhereY",
+  "0x398ab": "aGuestsOfTheGov",
+  "0x398c3": "aNightHasFallen",
+  "0x398f4": "aYourRecentAdve",
+  "0x3990e": "aALoudKnockOnTh",
+  "0x39939": "aYourSleep",
+  "0x39945": "aOnceEnchantedT",
+  "0x39976": "aCreaturesFromT",
+  "0x39990": "aASinisterLaugh",
+  "0x399bd": "aZamoraHasFalle",
+  "0x399d2": "aSummonTheHeale",
+  "0x399f6": "aWhoHasStolenTh",
+  "0x39a29": "aYouMustVenture",
+  "0x39a55": "aOfZamora",
+  "0x39a61": "aBecausePaltiva",
+  "0x39a94": "aOfWizardsHeCan",
+  "0x39ac5": "aWeShallBanishH",
+  "0x39af7": "aInTime",
+  "0x39b01": "aIAmSorryToHave",
+  "0x39b2d": "aGovernorReques",
+  "0x39b87": "aDESIGNERS",
+  "0x39ba9": "aRodneyRSmith",
+  "0x39bc6": "aPrograms",
+  "0x39be2": "aTimSmith",
+  "0x39bfc": "aArtMusicSound",
+  "0x39c1d": "aRodSmithIi",
+  "0x39c39": "aDataCreativeIn",
+  "0x39c5f": "aSpecialThanksT",
+  "0x39c7e": "aHelioRosental",
+  "0x39c9c": "aDChrisYoung",
+  "0x39cb9": "aVOICES",
+  "0x39cdd": "aEugeneGonzalez",
+  "0x39cfe": "aTimSmith_0",
+  "0x39d1c": "aDannyDeloach",
+  "0x39d38": "aPORTRAITS",
+  "0x39d5c": "aRodSmithIiKimS",
+  "0x39d82": "aTimSmithSandra",
+  "0x39da5": "aKristiQuicksal",
+  "0x39dcb": "aAlexandraYesel",
+  "0x39dee": "aGregRufusDonTi",
+  "0x39e11": "aLynHarrisMarsh",
+  "0x39e36": "aPatriciaFrankl",
+  "0x39e5c": "aVickiePaceShar",
+  "0x39e82": "aMarkTJohnsonLa",
+  "0x39ea8": "aLizRileyRodney",
+  "0x39ed0": "aRogerBlevinsPa",
+  "0x39ef3": "aDonnaKarpenkoN",
+  "0x39f15": "aSharonLehmanTJ",
+  "0x39f37": "aPatThomaShelle",
+  "0x39f5d": "aKristineSmithJ",
+  "0x39f85": "aNadineSmithBry",
+  "0x39faa": "aRalphSmithBran",
+  "0x39fd1": "aJudyVanoverDeb",
+  "0x39ff7": "aDianeElpersMik",
+  "0x3a01b": "aKatheySmithHun",
+  "0x3a040": "aDickElpersLawr",
+  "0x3a068": "aDerekElpersDan",
+  "0x3a08e": "aChuckMabreySta",
+  "0x3a0bb": "aSteveSmith",
+  "0x3a0da": "aEugeneGonzalez_0",
+  "0x3a0fb": "aCraigShirley",
+  "0x3a121": "aACTORS",
+  "0x3a145": "aTimSmithChuckM",
+  "0x3a16b": "aMikeHurleyLawr",
+  "0x3a193": "aRodSmithIiDann",
+  "0x3a1b9": "aHunterNolenEug",
+  "0x3a1eb": "aUponSearchingT",
+  "0x3a219": "aTatteredPieceO",
+  "0x3a243": "aPaltivar",
+  "0x3a24e": "aAfterReadingTh",
+  "0x3a269": "aParchmentYouWi",
+  "0x3a281": "aTeleportedToYe_0",
+  "0x3a29d": "aWeCanPlanYourV",
+  "0x3a2b8": "aAgainstZamoraA",
+  "0x3a2d9": "aYourFaithfulFo",
+  "0x3a2f1": "aSimech",
+  "0x3a305": "aCyril",
+  "0x3a318": "aIrudon",
+  "0x3a32c": "aSomethingStran",
+  "0x3a34c": "aAfterDroppingT",
+  "0x3a369": "aToTheFloorOfTh",
+  "0x3a384": "aChamberYouAreI",
+  "0x3a3a1": "aTeleportedToYe",
+  "0x3a3c0": "aByYourSurround",
+  "0x3a3e2": "aThatYouHaveArr",
+  "0x3a402": "aOutsideOfTheAt",
+  "0x3a423": "aYouGatherYourW",
+  "0x3a445": "aQuicklyHeadIns",
+  "0x3a464": "aSpeakWithZamor",
+  "0x3a47f": "aOnceInsideYouE",
+  "0x3a4b4": "aToStopTheEvilM",
+  "0x3a4ea": "aButItWasAlread",
+  "0x3a51d": "aFutureAVolcano",
+  "0x3a54f": "aFortressThusAc",
+  "0x3a581": "aHappensPaltiva",
+  "0x3a5a1": "aTheNewsYouBrin",
+  "0x3a5ce": "aAlthoughTheApp",
+  "0x3a5ff": "aThereIsAMoreUr",
+  "0x3a653": "_worldDatOffset3",
+  "0x3a65f": "_worldDatOffset1",
+  "0x3a663": "_worldDatOffset2",
+  "0x3a6c3": "_worldDatOffset5",
+  "0x3a6c7": "_worldDatOffset6",
+  "0x3a6cb": "_worldDatOffset4",
+  "0x3a755": "BLOCK_OFFSETS"
+ },
+ "comments": {
+  "0x10010": {
+   "text": "DOS - 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)\nES = segment address of block to change\nBX = new size in paragraphs",
+   "repeatable": false
+  },
+  "0x101c2": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x10252": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x102e2": {
+   "text": "- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",
+   "repeatable": false
+  },
+  "0x102e7": {
+   "text": "- VIDEO - SET VIDEO MODE\nAL = mode",
+   "repeatable": false
+  },
+  "0x102f6": {
+   "text": "DOS - PRINT STRING\nDS:DX -> string terminated by \"$\"",
+   "repeatable": false
+  },
+  "0x102fd": {
+   "text": "DOS - PRINT STRING\nDS:DX -> string terminated by \"$\"",
+   "repeatable": false
+  },
+  "0x10304": {
+   "text": "DOS - 2+ - QUIT WITH EXIT CODE (EXIT)\nAL = exit code",
+   "repeatable": false
+  },
+  "0x10c51": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x11102": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1113c": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x117c3": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x118d3": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x11a1c": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11a5a": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11a91": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11adc": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11b22": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11b3b": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11b72": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11bc3": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11c07": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11c4a": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11c82": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11c8f": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11c9f": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x11cef": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11d08": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11d21": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11d3a": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11e11": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x11e84": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1201c": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x12072": {
+   "text": "DOS - CLEAR KEYBOARD BUFFER\nAL must be 01h, 06h, 07h, 08h, or 0Ah.",
+   "repeatable": false
+  },
+  "0x12093": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x120a4": {
+   "text": "DOS - 2+ - FIND FIRST ASCIZ (FINDFIRST)\nCX = search attributes\nDS:DX -> ASCIZ filespec\n(drive, path, and wildcards allowed)",
+   "repeatable": false
+  },
+  "0x12367": {
+   "text": "size",
+   "repeatable": false
+  },
+  "0x12369": {
+   "text": "fileEntry",
+   "repeatable": false
+  },
+  "0x1244f": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x124ae": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x124ce": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x124f2": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x12636": {
+   "text": " - LIM EMS - RELEASE HANDLE AND MEMORY\nDX = EMM handle\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x12643": {
+   "text": " - LIM EMS - RELEASE HANDLE AND MEMORY\nDX = EMM handle\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x12663": {
+   "text": " - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x12688": {
+   "text": "DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",
+   "repeatable": false
+  },
+  "0x1269f": {
+   "text": " - LIM EMS - GET MANAGER STATUS\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x126ac": {
+   "text": " - LIM EMS - GET EMM VERSION\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x126c2": {
+   "text": " - LIM EMS - GET PAGE FRAME SEGMENT\nReturn: AH = 00h function successful, BX = segment of page frame\nAH = error code",
+   "repeatable": false
+  },
+  "0x126d9": {
+   "text": " - LIM EMS - GET NUMBER OF PAGES\nReturn: AH = 00h function successful, BX = number of unallocated pages\nDX = total number of pages\nAH = error code",
+   "repeatable": false
+  },
+  "0x126f7": {
+   "text": " - LIM EMS - GET HANDLE AND ALLOCATE MEMORY\nBX = number of logical pages to allocate\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x12721": {
+   "text": " - LIM EMS - GET HANDLE AND ALLOCATE MEMORY\nBX = number of logical pages to allocate\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x12afd": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x12b2e": {
+   "text": "- VIDEO - SET VIDEO MODE\nAL = mode",
+   "repeatable": false
+  },
+  "0x1388c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x138a8": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1394e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x139ac": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13a12": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13a2a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13a45": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13a8a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13ad0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13af1": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13aff": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13b22": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13b30": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13b51": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13b9d": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x13cba": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13ced": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d3c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d5d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d6c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d7b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d8a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13d9f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13db1": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13e12": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13e6f": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x13e83": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13eeb": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13f03": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13f32": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13f6f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13f95": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13fa9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x13fb6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1404c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14060": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14081": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x14119": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x14189": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x141a4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x141b3": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x143e9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1457f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14592": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1465c": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1467b": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x1468b": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x148f0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1493b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1498b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x149e3": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14a2e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14a7e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14a93": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14adf": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14b02": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14c02": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14c51": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14c73": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x14f61": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x14fb4": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x15127": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x15138": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x15146": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x15165": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x151c6": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x151df": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x151f5": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x15281": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x152b0": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x152ce": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x156e4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x15d11": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x15e55": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x15e63": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x15ed2": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1620a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1629a": {
+   "text": "DOS - 2+ - ALLOCATE MEMORY\nBX = number of 16-byte paragraphs desired",
+   "repeatable": false
+  },
+  "0x162bf": {
+   "text": "DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",
+   "repeatable": false
+  },
+  "0x162f3": {
+   "text": "DOS - CLEAR KEYBOARD BUFFER\nAL must be 01h, 06h, 07h, 08h, or 0Ah.",
+   "repeatable": false
+  },
+  "0x165c7": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x168bb": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1696d": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x16df9": {
+   "text": "Timer 8253-5 (AT: 8254.2).",
+   "repeatable": false
+  },
+  "0x16dfd": {
+   "text": "Timer 8253-5 (AT: 8254.2).",
+   "repeatable": false
+  },
+  "0x16dff": {
+   "text": "PC/XT PPI port B bits:\n0: Tmr 2 gate \u00e2\u0095\u0090\u00e2\u0095\u00a6\u00e2\u0095\u0090\u00e2\u0096\u00ba OR 03H=spkr ON\n1: Tmr 2 data \u00e2\u0095\u0090\u00e2\u0095\u009d  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",
+   "repeatable": false
+  },
+  "0x16e03": {
+   "text": "PC/XT PPI port B bits:\n0: Tmr 2 gate \u00e2\u0095\u0090\u00e2\u0095\u00a6\u00e2\u0095\u0090\u00e2\u0096\u00ba OR 03H=spkr ON\n1: Tmr 2 data \u00e2\u0095\u0090\u00e2\u0095\u009d  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",
+   "repeatable": false
+  },
+  "0x16e05": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x16e0d": {
+   "text": "PC/XT PPI port B bits:\n0: Tmr 2 gate \u00e2\u0095\u0090\u00e2\u0095\u00a6\u00e2\u0095\u0090\u00e2\u0096\u00ba OR 03H=spkr ON\n1: Tmr 2 data \u00e2\u0095\u0090\u00e2\u0095\u009d  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",
+   "repeatable": false
+  },
+  "0x16e11": {
+   "text": "PC/XT PPI port B bits:\n0: Tmr 2 gate \u00e2\u0095\u0090\u00e2\u0095\u00a6\u00e2\u0095\u0090\u00e2\u0096\u00ba OR 03H=spkr ON\n1: Tmr 2 data \u00e2\u0095\u0090\u00e2\u0095\u009d  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",
+   "repeatable": false
+  },
+  "0x16f86": {
+   "text": "DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",
+   "repeatable": false
+  },
+  "0x17145": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x17322": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x17593": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1763a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x17671": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1767f": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x176b4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1770e": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x17734": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x17835": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1795b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x17a4c": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x17f10": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x17f7c": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x17f8b": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x180e8": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x18414": {
+   "text": "CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",
+   "repeatable": false
+  },
+  "0x1841a": {
+   "text": "CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",
+   "repeatable": false
+  },
+  "0x1842b": {
+   "text": "DOS - 2+ - CLOSE A FILE WITH HANDLE\nBX = file handle",
+   "repeatable": false
+  },
+  "0x1844b": {
+   "text": "DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from end of file",
+   "repeatable": false
+  },
+  "0x1845c": {
+   "text": "DOS - 2+ - CREATE A FILE WITH HANDLE (CREAT)\nCX = attributes for file\nDS:DX -> ASCIZ filename (may include drive and path)",
+   "repeatable": false
+  },
+  "0x1847b": {
+   "text": "DOS - 2+ - OPEN DISK FILE WITH HANDLE\nDS:DX -> ASCIZ filename\nAL = access mode\n0 - read, 1 - write, 2 - read & write",
+   "repeatable": false
+  },
+  "0x184a7": {
+   "text": "DOS - 2+ - READ FROM FILE WITH HANDLE\nBX = file handle, CX = number of bytes to read\nDS:DX -> buffer",
+   "repeatable": false
+  },
+  "0x184d2": {
+   "text": "DOS - 2+ - WRITE TO FILE WITH HANDLE\nBX = file handle, CX = number of bytes to write, DS:DX -> buffer",
+   "repeatable": false
+  },
+  "0x18500": {
+   "text": "DOS - 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)\nAL = method: offset from beginning of file",
+   "repeatable": false
+  },
+  "0x189d9": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x19096": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x193ec": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1a351": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1a51d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1a5e3": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1a628": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1a724": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1a750": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1af63": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1afc5": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1afd9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1b04d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1b509": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1b53b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1b633": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1b936": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1bc64": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1bd6a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1bd78": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1bdac": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1bf0e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c022": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c190": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c327": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c365": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c3ae": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c43f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c5fd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c635": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c779": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c786": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c799": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c7c7": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1c8a0": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x1c8af": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x1c8f7": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x1c947": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x1cbd6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1cc4c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1cecc": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ced0": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1cf51": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1cf55": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1cfc9": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1cfcd": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1d050": {
+   "text": "DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",
+   "repeatable": false
+  },
+  "0x1d072": {
+   "text": "DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",
+   "repeatable": false
+  },
+  "0x1d0ab": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1d0d7": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1d8d0": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1da4b": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1e0c3": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x1e337": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e405": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e573": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e583": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e5af": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e5e5": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e605": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e7c0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1e7d6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1ec81": {
+   "text": "styleNum",
+   "repeatable": false
+  },
+  "0x1edaf": {
+   "text": "styleNum",
+   "repeatable": false
+  },
+  "0x1ee53": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ee57": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ee96": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1eeb1": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1eec1": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ef05": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ef15": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ef6a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1ef8b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1efb2": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1efbd": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f01a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f028": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f065": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f070": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f1af": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f44a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f474": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f493": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f4ae": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f4c9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f4e4": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f4ff": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f51a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f535": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f57c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f5aa": {
+   "text": "styleNum",
+   "repeatable": false
+  },
+  "0x1f64a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f665": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f680": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f690": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f6d4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f6e4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f739": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f75a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f781": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f78c": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f7e9": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f7f7": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f834": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f83f": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x1f898": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x1f8cc": {
+   "text": "styleNum",
+   "repeatable": false
+  },
+  "0x1fc02": {
+   "text": "DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",
+   "repeatable": false
+  },
+  "0x1fc19": {
+   "text": "DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",
+   "repeatable": false
+  },
+  "0x1fc37": {
+   "text": "DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",
+   "repeatable": false
+  },
+  "0x20472": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x204a1": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2053a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x20587": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x205c0": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x20a44": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x20a54": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x21561": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x218fa": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2199a": {
+   "text": "CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",
+   "repeatable": false
+  },
+  "0x219dc": {
+   "text": "CLOCK - GET TIME OF DAY\nReturn: CX:DX = clock count\nAL = 00h if clock was read or written (via AH=0,1) since the previous\nmidnight\nOtherwise, AL > 0",
+   "repeatable": false
+  },
+  "0x21a94": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21acd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21b10": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21b2c": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21bf9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21cc6": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x21cd4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x21ee7": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x21efb": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x21f88": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x21fae": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x220a9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x225ae": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x22a68": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22bf8": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22c05": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22c41": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22c4e": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22c88": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x22c95": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x23199": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x231d4": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2320f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23241": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23500": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2350f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x235f7": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2360b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23627": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2363b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23657": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2366b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23683": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x236dd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23722": {
+   "text": "- MS MOUSE - READ MOTION COUNTERS\nReturn: CX = number of mickeys mouse moved horizontally since last call\nDX = number of mickeys mouse moved vertically",
+   "repeatable": false
+  },
+  "0x237e1": {
+   "text": "DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",
+   "repeatable": false
+  },
+  "0x237fa": {
+   "text": "- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",
+   "repeatable": false
+  },
+  "0x2383d": {
+   "text": "- MS MOUSE - DEFINE INTERRUPT SUBROUTINE PARAMETERS\nCX = call mask, ES:DX -> FAR routine",
+   "repeatable": false
+  },
+  "0x23848": {
+   "text": "- MS MOUSE - DEFINE MICKEY/PIXEL RATIO\nCX = number of mickeys per 8 pixels horizontally (default 8)\nDX = number of mickeys per 8 pixels vertically (default 16)",
+   "repeatable": false
+  },
+  "0x2387a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x23c47": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23ca6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23cc0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23d3d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x23e59": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x243ed": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2441a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24428": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24436": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x245d4": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x249ac": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24a52": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24a75": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24c12": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24cd5": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24ce3": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x24cf1": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2511e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25138": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x254f4": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2553b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25587": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25744": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x25773": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x257c0": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x257c4": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x25819": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2581d": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x25a46": {
+   "text": "Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",
+   "repeatable": false
+  },
+  "0x25a63": {
+   "text": "- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",
+   "repeatable": false
+  },
+  "0x25c70": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25d19": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25d6b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25d8b": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25d9e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25db5": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25dc9": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25ddd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25df1": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25e05": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25e19": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25e2d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25e41": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25e55": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25ec8": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25ef3": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25efd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25f27": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25f48": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25f69": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25f83": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x25fd6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x26022": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2602a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2641b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x26660": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2684b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x268fb": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x27180": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x271a0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x271c0": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2747e": {
+   "text": "DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",
+   "repeatable": false
+  },
+  "0x274b5": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x275ed": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x27774": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2809a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x280a8": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x280d8": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x280e6": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x28121": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2812f": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2821e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x28232": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x282b3": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x283b2": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x283ba": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x283e7": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x28443": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x284d9": {
+   "text": "DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",
+   "repeatable": false
+  },
+  "0x28549": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x2856b": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x285fa": {
+   "text": "numPara",
+   "repeatable": false
+  },
+  "0x289b7": {
+   "text": "- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",
+   "repeatable": false
+  },
+  "0x289bc": {
+   "text": "- VIDEO - SET VIDEO MODE\nAL = mode",
+   "repeatable": false
+  },
+  "0x289c4": {
+   "text": "DOS - PRINT STRING\nDS:DX -> string terminated by \"$\"",
+   "repeatable": false
+  },
+  "0x289cc": {
+   "text": "DOS - 2+ - QUIT WITH EXIT CODE (EXIT)\nAL = exit code",
+   "repeatable": false
+  },
+  "0x28cc2": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x28d59": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x28e6b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x28ecd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x28f00": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x28f0e": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x28f9c": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x290cf": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x290e2": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x290fb": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x29143": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2914d": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2915a": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x29164": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x29171": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x29190": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x291a6": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2929e": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x29583": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x29838": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x29898": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x2989b": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29abe": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29ac1": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29b0c": {
+   "text": "DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",
+   "repeatable": false
+  },
+  "0x29c95": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29c99": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29d33": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29d36": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29da8": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29daa": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29df0": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29df4": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29e72": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29e76": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29f09": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29f0d": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x29f8d": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x29f91": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x2a150": {
+   "text": "x",
+   "repeatable": false
+  },
+  "0x2a153": {
+   "text": "y",
+   "repeatable": false
+  },
+  "0x2a6cb": {
+   "text": " - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x2a73e": {
+   "text": " - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",
+   "repeatable": false
+  },
+  "0x2a8b2": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2acbd": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2b43e": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b4ed": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b502": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b546": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b58a": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b5be": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b5f3": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2b622": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2bac6": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2bfee": {
+   "text": "msg",
+   "repeatable": false
+  },
+  "0x2c6cf": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2c712": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2c789": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2c84b": {
+   "text": "this",
+   "repeatable": false
+  },
+  "0x2c87f": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2c8c1": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2c8df": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2c920": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cb21": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cb81": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2ccd3": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2ce86": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cea2": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cebe": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2ceda": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cf51": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cf80": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2cfa7": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d129": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d137": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d158": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d3ab": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d3f5": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d4a1": {
+   "text": "ticks",
+   "repeatable": false
+  },
+  "0x2d585": {
+   "text": "DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",
+   "repeatable": false
+  }
+ },
+ "types": {
+  "0x16298": "int __usercall allocMem@<ax>(int numPara@<bx>);",
+  "0x1840e": "void __usercall wait(int ticks@<ax>);",
+  "0x18424": "void __usercall FileEntry_Close(FileEntry *this);",
+  "0x18450": "int __usercall FileEntry_CreateFile@<ax>(FileEntry *this);",
+  "0x18472": "int __usercall FileEntry_OpenFile@<ax>(FileEntry *this);",
+  "0x18491": "int __usercall FileEntry_Read@<ax>(FileEntry *this);",
+  "0x184bc": "int __usercall FileEntry_Write@<ax>(FileEntry *this);",
+  "0x1f38a": "void __usercall GameDialog_drawButtons(int styleNum@<ax>);",
+  "0x27cb0": "void __usercall sub_27CB0(FileEntry *this@<ds:bx>);",
+  "0x27d8a": "void __usercall sub_27D8A(FileEntry *this@<ds:bx>);",
+  "0x27da8": "void __usercall sub_27DA8(FileEntry *this@<ds:bx>);",
+  "0x27dc6": "void __usercall sub_27DC6(FileEntry *this@<ds:bx>);",
+  "0x27de5": "void __usercall sub_27DE5(FileEntry *this@<ds:bx>);",
+  "0x27e04": "void __usercall sub_27E04(FileEntry *this@<ds:bx>);",
+  "0x27e20": "void __usercall sub_27E20(FileEntry *this@<ds:bx>);",
+  "0x27e3a": "void __usercall sub_27E3A(FileEntry *this@<ds:bx>);",
+  "0x27f30": "void __usercall WorldDat_setBlock1(FileEntry near *fileEntry@<bx>, int size@<ax>);",
+  "0x2a681": "void *__usercall getTextPos@<ds:ax>(int x@<ax>, int y@<bx>);"
+ }
+}

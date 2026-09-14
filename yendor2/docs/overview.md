@@ -79,8 +79,12 @@ instead once more functions are named.
 ## Headless IDA pipeline
 
 Set up 2026-09-14, mirroring `ultima1`/`ultima2`'s `ida_scripts/`
-approach (IDA Pro 8.3, `idat.exe`, no GUI required — the GUI is
-incompatible with this flow since it locks the `.idb`). This project has
+approach (IDA Pro, `idat.exe`, no GUI required — the GUI is
+incompatible with this flow since it locks the `.idb`). Originally set
+up against IDA Pro 8.3; switched to 8.2 on 2026-09-14 after a machine
+move left only 8.2 available, and the `.idb` was recreated from scratch
+under 8.2 — see the `ida_scripts/backups/` note below about the
+tentative-renaming work that recreation lost. This project has
 exactly one `.idb` (`ultima2`'s situation, not `ultima1`'s five), so the
 driver hardcodes the single IDB/ASM/IDC path the way `ultima2`'s does,
 but keeps `ultima1`'s later `-NoExport` refinement for read-only report
@@ -106,12 +110,79 @@ scripts.
   filename, input path/hash, segments, function-naming progress, struct
   list, sample of already-named functions). Safe to re-run any time as a
   sanity check with `-NoExport`.
+- **`ida_scripts/backups/`** — holds `yendor2.idc.pre-8.2-rebuild.bak`,
+  a snapshot of `yendor2.idc` taken 2026-09-14 right before the `.idb`
+  was recreated under IDA 8.2. The recreated `.idb` has none of the
+  prior tentative function/variable renaming, so this backup is the
+  reference to reapply (or diff against) that work rather than
+  redoing it from scratch.
 
-Confirmed working end-to-end 2026-09-14 (report mode against
-`yendor2.idb`, `identify.py -NoExport` — see current state below). Full
-export+save round-trip not yet exercised here (no changes made yet to
-export), but uses the exact same `ida_loader.gen_file`/`save_database`
-code already proven in `ultima1`/`ultima2`.
+Confirmed working end-to-end 2026-09-14, including a full export+save
+round-trip (not just report mode) — see "2026-09-14 session update"
+below for what that round-trip actually did.
+
+**`-NoExport` is not a dry run.** It only skips re-exporting
+`yendor2.asm`/`.idc` and the explicit `save_database()` call in
+`batch_run_and_export.py` — `idat.exe` itself still commits database
+writes (`set_name`, `add_func`, `op_offset`, etc.) to `yendor2.idb` on
+exit regardless. Confirmed by writing a comment in one `-NoExport` run
+and reading it back, still present, in a separate later `-NoExport` run.
+Use `-NoExport` for genuinely read-only report scripts (`identify.py`);
+don't rely on it to "safely try" a mutating script.
+
+### 2026-09-14 session update: reapplied prior work + ErrorTable recovery
+
+The `.idb` referenced above as "before any work this session" was a
+*second* rebuild: partway through this session the original IDA-8.3 .idb
+had to be recreated again from scratch under IDA 8.2 (8.3 wasn't
+installed on this machine), which lost the 45 named functions, 497
+comments, 4 structs and 18 typed prototypes described below. That work
+was fully recovered:
+
+- `ida_scripts/backups/yendor2.idc.pre-8.2-rebuild.bak` — full IDC
+  export from the pre-rebuild database, kept as the durable
+  reference/backup.
+- `ida_scripts/backups/yendor2_annotations.pre-8.2-rebuild.json` — just
+  the `set_name`/`set_cmt`/`SetType` calls pulled out of the `.bak` by
+  regex. This is what actually got replayed: a naive `idat.exe -c` fresh
+  reload + `compile_idc_file()`+`main()` replay of the whole `.bak` was
+  tried first and turned out to silently drop almost all of the naming
+  (the old `Functions_0()` IDC function is ~750 statements back to back;
+  the classic IDC VM chokes partway through it with no reported error —
+  a scratch test reproduced only 45 of 748 names that way). Replaying
+  the individual calls one at a time via `ida_scripts/apply_prior_annotations.py`
+  instead gave full visibility into failures and got all 748 names, 497
+  comments, and 18 prototypes applied (a handful of names needed a
+  `SN_DELTAIL` retry where the fresh 8.2 auto-analysis had drawn item
+  boundaries differently than the old analysis).
+- Of the 748 reapplied names, only 45 were actually function names (the
+  rest are data/string labels) — consistent with the "45 named
+  functions" baseline, not a regression.
+- `ida_scripts/fix_error_table.py` — separately recovered a piece of
+  *structure*, not just names, that the reapplied annotations didn't
+  cover: `ErrorTable` at `0x28A31` (20 words, referenced from
+  `ErrorCheck+0x16`) dispatches to 19 tiny handler routines that the
+  fresh auto-analysis never turned into functions at all (they're only
+  reachable through the table, never `call`ed directly, so recursive
+  descent doesn't find them). Rebuilt from scratch against the current
+  database — function boundaries, table/operand "offset" typing so they
+  render symbolically instead of raw hex, and names for the 15 handlers
+  whose referenced message string is distinctive (`ShowErr_*`, e.g.
+  `ShowErr_ProblemWithPalette`) — cross-checked against the committed
+  pre-session `yendor2.asm` for ground truth. Net effect: 750 → 769
+  functions, 44 → 59 named.
+- `ida_scripts/try_flirt_sigs.py` — tried the DOS-era 16-bit C runtime
+  FLIRT signature files bundled with IDA 8.2 (Borland, Digital Mars,
+  Zortech, etc.) against the binary; none matched anything. IDA doesn't
+  ship Watcom signatures by default, and the doc note above about a
+  possible Watcom/similarly-segmented compile is still unconfirmed either
+  way — this was a cheap thing to rule out, not a real result.
+- `ida_scripts/analyze_functions.py` — characterized the remaining ~700
+  unnamed functions to see if there was another mechanical win like
+  `ErrorTable` available: no trivial (≤3-instruction) thunk chains, and
+  only 2 small interrupt-dominant functions. Most unnamed functions are
+  substantive (498 of 706 have 16+ instructions) — further naming needs
+  genuine per-function reading, not another automated pass.
 
 ## Current state (2026-09-14, before any work this session)
 

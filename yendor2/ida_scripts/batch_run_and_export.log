@@ -200,3 +200,1161 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 750 total, 1 named, 749 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'apply_prior_annotations.py']
+[*] reading apply_prior_annotations.py
+[*] executing apply_prior_annotations.py
+[*] captured stdout from target script:
+----- begin target script output -----
+loaded 748 names, 497 comments, 18 types from C:\dev\yendor\yendor2\ida_scripts\backups\yendor2_annotations.pre-8.2-rebuild.json
+apply_structs: parse_decls errors = 0
+apply_names: 713 applied, 4 already correct, 31 failed
+  FAILED name 0x28715 'aMemoryAllocati': set_name failed
+  FAILED name 0x28730 'aProblemWithPic': set_name failed
+  FAILED name 0x2874c 'aProblemWithPal': set_name failed
+  FAILED name 0x2876a 'aRequiredExpand': set_name failed
+  FAILED name 0x287d3 'aMinimumOf1mbEx': set_name failed
+  FAILED name 0x28804 'aAnEmmMappingEr': set_name failed
+  FAILED name 0x28829 'aProblemWithMus': set_name failed
+  FAILED name 0x2884d 'aProblemWithADr': set_name failed
+  FAILED name 0x28866 'aProblemWithWor': set_name failed
+  FAILED name 0x28880 'aProblemWithCur': set_name failed
+  FAILED name 0x288c4 'aProblemWithASa': set_name failed
+  FAILED name 0x288e6 'aExpandedMemory': set_name failed
+  FAILED name 0x2890a 'aProblemRetreiv': set_name failed
+  FAILED name 0x2892a 'aProblemRetreiv_0': set_name failed
+  FAILED name 0x28949 'aProblemRetreiv_1': set_name failed
+  FAILED name 0x329aa '_val32': set_name failed
+  FAILED name 0x329ac '_val33': set_name failed
+  FAILED name 0x329ae '_val35': set_name failed
+  FAILED name 0x329b0 '_val36': set_name failed
+  FAILED name 0x329b2 '_val37': set_name failed
+  FAILED name 0x329b4 '_val38': set_name failed
+  FAILED name 0x329b6 '_val39': set_name failed
+  FAILED name 0x329b8 '_val40': set_name failed
+  FAILED name 0x329ba '_val41': set_name failed
+  FAILED name 0x329bc '_val42': set_name failed
+  FAILED name 0x329be '_val43': set_name failed
+  FAILED name 0x329c4 '_val45': set_name failed
+  FAILED name 0x329c6 '_val46': set_name failed
+  FAILED name 0x329c8 '_val47': set_name failed
+  FAILED name 0x329ca '_val49': set_name failed
+  FAILED name 0x329cc '_val48': set_name failed
+apply_comments: 497 applied, 0 failed
+apply_types: 18 applied, 0 failed
+----- end target script output -----
+[*] finished executing apply_prior_annotations.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 115884
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'apply_prior_annotations.py']
+[*] reading apply_prior_annotations.py
+[*] executing apply_prior_annotations.py
+[*] captured stdout from target script:
+----- begin target script output -----
+loaded 748 names, 497 comments, 18 types from C:\dev\yendor\yendor2\ida_scripts\backups\yendor2_annotations.pre-8.2-rebuild.json
+apply_structs: parse_decls errors = 0
+apply_names: 27 applied, 717 already correct, 4 applied via SN_DELTAIL retry, 0 failed
+apply_comments: 497 applied, 0 failed
+apply_types: 18 applied, 0 failed
+----- end target script output -----
+[*] finished executing apply_prior_annotations.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 116450
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 750 total, 44 named, 706 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x016298  allocMem
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  0x01f481  GameDialog_drawDos
+  0x01f49c  GameDialog_drawReturn
+  0x01f4b7  GameDialog_drawLoad
+  0x01f4d2  GameDialog_drawMusic
+  0x01f4ed  GameDialog_drawNewGame
+  0x01f508  GameDialog_drawSave
+  0x01f523  GameDialog_drawSoundFx
+  0x0237d8  InitMouse
+  0x023b5e  writeString
+  0x027f30  WorldDat_setBlock1
+  0x027f4e  WorldDat_setBlock2
+  0x027f6c  WorldDat_setBlock3
+  0x027f86  WorldDat_setBlock4
+  0x027fa4  WorldDat_setBlock5
+  0x027fc2  WorldDat_setBlock6
+  0x02897d  ErrorCheck
+  0x029aa2  writeChar
+  0x02a11b  Fade?
+  0x02a681  getTextPos
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'try_flirt_sigs.py', 'noexport']
+[*] reading try_flirt_sigs.py
+[*] executing try_flirt_sigs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+before: total=750 named=44 lib=0
+plan_to_apply_idasgn('vac35wc') -> 1
+plan_to_apply_idasgn('bc31rtd') -> 2
+plan_to_apply_idasgn('bc31rtw') -> 3
+plan_to_apply_idasgn('bc15c2') -> 4
+plan_to_apply_idasgn('dm16dos') -> 5
+plan_to_apply_idasgn('mv16rdos') -> 6
+plan_to_apply_idasgn('sm16rdos') -> 7
+plan_to_apply_idasgn('mq16rdos') -> 8
+plan_to_apply_idasgn('z116rdos') -> 9
+plan_to_apply_idasgn('z316rdos') -> 10
+plan_to_apply_idasgn('bh16rdos') -> 11
+after: total=750 named=44 lib=0
+delta: named +0, lib +0
+----- end target script output -----
+[*] finished executing try_flirt_sigs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'analyze_functions.py', 'noexport']
+[*] reading analyze_functions.py
+[*] executing analyze_functions.py
+[*] captured stdout from target script:
+----- begin target script output -----
+total functions: 750, unnamed: 706
+size histogram (by instruction count): {'1-2 instr': 0, '3-5 instr': 23, '6-15 instr': 185, '16+ instr': 498}
+
+tiny (<=3 instr) functions that jmp/call a function: 0
+  ...of which the target is already named (safe thunk-label candidates): 0
+
+sample (ea -> target, target_name):
+
+small (<=8 instr) functions containing an int instruction: 2
+  0x25a5b  int 0x10  - VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)
+  0x29b06  int 0x21  DOS - 2+ - FREE MEMORY
+----- end target script output -----
+[*] finished executing analyze_functions.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'find_string_refs.py', 'noexport']
+[*] reading find_string_refs.py
+[*] executing find_string_refs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+unnamed functions with direct string-literal refs: 0 / 706
+----- end target script output -----
+[*] finished executing find_string_refs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_strlit.py', 'noexport']
+[*] reading debug_strlit.py
+[*] executing debug_strlit.py
+[*] captured stdout from target script:
+----- begin target script output -----
+name: aProblemWithPal
+flags: 0x4000
+is_strlit: False
+contents: b'Problem with pallette data.\n\r$Required Expanded Memory Manager (EMM Ver 4.0 or later)\n\rwas not found or is not functioning properly.\n\r$Minimum of 1MB Expanded RAM must be available.\n\r$An EMM mapping error has occurred.\n\r$Problem with music or sound data.\n\r$Problem with a driver.\n\r$Problem with WORLD.DAT.\n\r$Problem with CURGAME.\n\rYou need to run the install process first.\n\r$Problem with a SAVED GAME file.\n\r$Expanded memory allocation error.\n\r$Problem retreiving text data.\n\r$Problem retreiving NPC data.\n\r$Problem retreiving conversation data.\n\r$.\n\r$.\n\r$.\n\r$'
+xrefs to it:
+----- end target script output -----
+[*] finished executing debug_strlit.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_errortable.py', 'noexport']
+[*] reading debug_errortable.py
+[*] executing debug_errortable.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x289d3 name='' func=False flags=0x40000600 is_code=True
+0x289d8 name='' func=False flags=0x40000600 is_code=True
+0x2899c name='ErrorExit' func=True flags=0x5600 is_code=True
+
+disasm around 0x289c0-0x28a00:
+  0x289c0  push    cs
+  0x289c1  pop     ds
+  0x289c2  mov     ah, 9
+  0x289c4  int     21h; DOS - PRINT STRING
+  0x289c6  pop     ds
+  0x289c7  mov     ax, ds:50D0h
+  0x289ca  mov     ah, 4Ch
+  0x289cc  int     21h; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
+  0x289ce  mov     ax, 25h ; '%'
+  0x289d1  jmp     short ErrorExit
+  0x289d3  mov     ax, 40h ; '@'
+  0x289d6  jmp     short ErrorExit
+  0x289d8  mov     ax, 5Ch ; '\'
+  0x289db  jmp     short ErrorExit
+  0x289dd  mov     ax, 7Ah ; 'z'
+  0x289e0  jmp     short ErrorExit
+  0x289e2  mov     ax, 0E3h
+  0x289e5  jmp     short ErrorExit
+  0x289e7  mov     ax, 114h
+  0x289ea  jmp     short ErrorExit
+  0x289ec  mov     ax, 139h
+  0x289ef  jmp     short ErrorExit
+  0x289f1  mov     ax, 15Dh
+  0x289f4  jmp     short ErrorExit
+  0x289f6  mov     ax, 176h
+  0x289f9  jmp     short ErrorExit
+  0x289fb  mov     ax, 190h
+  0x289fe  jmp     short ErrorExit
+  0x28a00  mov     ax, 1D4h
+  0x28a03  jmp     short ErrorExit
+  0x28a05  mov     ax, 1F6h
+  0x28a08  jmp     short ErrorExit
+  0x28a0a  mov     ax, 21Ah
+  0x28a0d  jmp     short ErrorExit
+  0x28a0f  mov     ax, 23Ah
+----- end target script output -----
+[*] finished executing debug_errortable.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'fix_error_table.py', 'noexport']
+[*] reading fix_error_table.py
+[*] executing fix_error_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+functions: 0 already defined, 19 newly created, 1 failed: ['0x2899c']
+renamed 15 handlers, 0 failed: []
+derived offset base = 0x286f0
+message-offset typing: 0 ok, 19 failed: [(166350, 'aMemoryAllocati', 'op_plain_offset mismatch/failed'), (166355, 'aProblemWithPic', 'op_plain_offset mismatch/failed'), (166360, 'aProblemWithPal', 'op_plain_offset mismatch/failed'), (166365, 'aRequiredExpand', 'op_plain_offset mismatch/failed'), (166370, 'aMinimumOf1mbEx', 'op_plain_offset mismatch/failed'), (166375, 'aAnEmmMappingEr', 'op_plain_offset mismatch/failed'), (166380, 'aProblemWithMus', 'op_plain_offset mismatch/failed'), (166385, 'aProblemWithADr', 'op_plain_offset mismatch/failed'), (166390, 'aProblemWithWor', 'op_plain_offset mismatch/failed'), (166395, 'aProblemWithCur', 'op_plain_offset mismatch/failed'), (166400, 'aProblemWithASa', 'op_plain_offset mismatch/failed'), (166405, 'aExpandedMemory', 'op_plain_offset mismatch/failed'), (166410, 'aProblemRetreiv', 'op_plain_offset mismatch/failed'), (166415, 'aProblemRetreiv_0', 'op_plain_offset mismatch/failed'), (166420, 'aProblemRetreiv_1', 'op_plain_offset mismatch/failed'), (166425, 'asc_28971', 'name not found'), (166431, 'asc_28975', 'name not found'), (166437, 'asc_28979', 'name not found'), (166443, 'asc_28979', 'name not found')]
+derived table base = 0x286f0
+table-entry typing: 0 ok, 20 failed: [('0x28a31', '0x2899c'), ('0x28a33', '0x289ce'), ('0x28a35', '0x289d3'), ('0x28a37', '0x289d8'), ('0x28a39', '0x289dd'), ('0x28a3b', '0x289e2'), ('0x28a3d', '0x289e7'), ('0x28a3f', '0x289ec'), ('0x28a41', '0x289f1'), ('0x28a43', '0x289f6'), ('0x28a45', '0x289fb'), ('0x28a47', '0x28a00'), ('0x28a49', '0x28a05'), ('0x28a4b', '0x28a0a'), ('0x28a4d', '0x28a0f'), ('0x28a4f', '0x28a14'), ('0x28a51', '0x28a19'), ('0x28a53', '0x28a1f'), ('0x28a55', '0x28a25'), ('0x28a57', '0x28a2b')]
+----- end target script output -----
+[*] finished executing fix_error_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_offset.py', 'noexport']
+[*] reading debug_offset.py
+[*] executing debug_offset.py
+[*] captured stdout from target script:
+----- begin target script output -----
+before: mov     ax, offset aMemoryAllocati
+raw operand value: 0x25
+op_plain_offset ok: True
+after: mov     ax, offset aMemoryAllocati
+operand value after: 0x25
+get_operand_type: 5
+----- end target script output -----
+[*] finished executing debug_offset.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_persist_test.py', 'noexport']
+[*] reading debug_persist_test.py
+[*] executing debug_persist_test.py
+[*] captured stdout from target script:
+----- begin target script output -----
+old cmt: None
+new cmt: None
+----- end target script output -----
+[*] finished executing debug_persist_test.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_persist_test.py', 'noexport']
+[*] reading debug_persist_test.py
+[*] executing debug_persist_test.py
+[*] captured stdout from target script:
+----- begin target script output -----
+old cmt: None
+new cmt: PERSISTENCE_TEST_MARKER
+----- end target script output -----
+[*] finished executing debug_persist_test.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_persist_test.py', 'noexport']
+[*] reading debug_persist_test.py
+[*] executing debug_persist_test.py
+[*] captured stdout from target script:
+----- begin target script output -----
+old cmt: PERSISTENCE_TEST_MARKER
+new cmt: PERSISTENCE_TEST_MARKER
+----- end target script output -----
+[*] finished executing debug_persist_test.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_persist_test.py', 'noexport']
+[*] reading debug_persist_test.py
+[*] executing debug_persist_test.py
+[*] captured stdout from target script:
+----- begin target script output -----
+clearing test marker, current cmt: PERSISTENCE_TEST_MARKER
+after clear: None
+----- end target script output -----
+[*] finished executing debug_persist_test.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_errortable2.py', 'noexport']
+[*] reading debug_errortable2.py
+[*] executing debug_errortable2.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x2899c name='ErrorExit' func=True line='push    ax'
+0x289ce name='ShowErr_MemoryAllocation' func=True line='mov     ax, offset aMemoryAllocati'
+0x289d3 name='ShowErr_ProblemWithPictureVga' func=True line='mov     ax, offset aProblemWithPic'
+0x289d8 name='ShowErr_ProblemWithPalette' func=True line='mov     ax, offset aProblemWithPal'
+0x28a2b name='sub_28A2B' func=True line='mov     ax, 289h'
+
+ErrorTable region:
+  0x28a31  'dw offset ErrorExit; Jump table of error-message handlers, indexed from ErrorCheck. Each entry sets AX to an error-message offset (into the block starting near aMemoryAllocati) then falls into ErrorExit.'
+  0x28a33  'dw offset ShowErr_MemoryAllocation'
+  0x28a35  'dw offset ShowErr_ProblemWithPictureVga'
+  0x28a37  'dw offset ShowErr_ProblemWithPalette'
+  0x28a39  'dw offset ShowErr_RequiredExpandedMemMgr'
+  0x28a3b  'dw offset ShowErr_MinimumExpandedRam'
+  0x28a3d  'dw offset ShowErr_EmmMappingError'
+  0x28a3f  'dw offset ShowErr_ProblemWithMusic'
+  0x28a41  'dw offset ShowErr_ProblemWithDriver'
+  0x28a43  'dw offset ShowErr_ProblemWithWorldDat'
+  0x28a45  'dw offset ShowErr_ProblemWithCurgame'
+  0x28a47  'dw offset ShowErr_ProblemWithSavedGame'
+  0x28a49  'dw offset ShowErr_ExpandedMemAllocFail'
+  0x28a4b  'dw offset ShowErr_ProblemRetrievingText'
+  0x28a4d  'dw offset ShowErr_ProblemRetrievingNpc'
+  0x28a4f  'dw offset ShowErr_ProblemRetrievingConvo'
+  0x28a51  'dw offset sub_28A19'
+  0x28a53  'dw offset sub_28A1F'
+  0x28a55  'dw offset sub_28A25'
+  0x28a57  'dw offset sub_28A2B'
+----- end target script output -----
+[*] finished executing debug_errortable2.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 769 total, 59 named, 710 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x016298  allocMem
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  0x01f481  GameDialog_drawDos
+  0x01f49c  GameDialog_drawReturn
+  0x01f4b7  GameDialog_drawLoad
+  0x01f4d2  GameDialog_drawMusic
+  0x01f4ed  GameDialog_drawNewGame
+  0x01f508  GameDialog_drawSave
+  0x01f523  GameDialog_drawSoundFx
+  0x0237d8  InitMouse
+  0x023b5e  writeString
+  0x027f30  WorldDat_setBlock1
+  0x027f4e  WorldDat_setBlock2
+  0x027f6c  WorldDat_setBlock3
+  0x027f86  WorldDat_setBlock4
+  0x027fa4  WorldDat_setBlock5
+  0x027fc2  WorldDat_setBlock6
+  0x02897d  ErrorCheck
+  0x0289ce  ShowErr_MemoryAllocation
+  0x0289d3  ShowErr_ProblemWithPictureVga
+  0x0289d8  ShowErr_ProblemWithPalette
+  0x0289dd  ShowErr_RequiredExpandedMemMgr
+  0x0289e2  ShowErr_MinimumExpandedRam
+  0x0289e7  ShowErr_EmmMappingError
+  0x0289ec  ShowErr_ProblemWithMusic
+  0x0289f1  ShowErr_ProblemWithDriver
+  0x0289f6  ShowErr_ProblemWithWorldDat
+  0x0289fb  ShowErr_ProblemWithCurgame
+  0x028a00  ShowErr_ProblemWithSavedGame
+  0x028a05  ShowErr_ExpandedMemAllocFail
+  0x028a0a  ShowErr_ProblemRetrievingText
+  0x028a0f  ShowErr_ProblemRetrievingNpc
+  0x028a14  ShowErr_ProblemRetrievingConvo
+  0x029aa2  writeChar
+  0x02a11b  Fade?
+  0x02a681  getTextPos
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 116573
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 769 total, 59 named, 710 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x016298  allocMem
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  0x01f481  GameDialog_drawDos
+  0x01f49c  GameDialog_drawReturn
+  0x01f4b7  GameDialog_drawLoad
+  0x01f4d2  GameDialog_drawMusic
+  0x01f4ed  GameDialog_drawNewGame
+  0x01f508  GameDialog_drawSave
+  0x01f523  GameDialog_drawSoundFx
+  0x0237d8  InitMouse
+  0x023b5e  writeString
+  0x027f30  WorldDat_setBlock1
+  0x027f4e  WorldDat_setBlock2
+  0x027f6c  WorldDat_setBlock3
+  0x027f86  WorldDat_setBlock4
+  0x027fa4  WorldDat_setBlock5
+  0x027fc2  WorldDat_setBlock6
+  0x02897d  ErrorCheck
+  0x0289ce  ShowErr_MemoryAllocation
+  0x0289d3  ShowErr_ProblemWithPictureVga
+  0x0289d8  ShowErr_ProblemWithPalette
+  0x0289dd  ShowErr_RequiredExpandedMemMgr
+  0x0289e2  ShowErr_MinimumExpandedRam
+  0x0289e7  ShowErr_EmmMappingError
+  0x0289ec  ShowErr_ProblemWithMusic
+  0x0289f1  ShowErr_ProblemWithDriver
+  0x0289f6  ShowErr_ProblemWithWorldDat
+  0x0289fb  ShowErr_ProblemWithCurgame
+  0x028a00  ShowErr_ProblemWithSavedGame
+  0x028a05  ShowErr_ExpandedMemAllocFail
+  0x028a0a  ShowErr_ProblemRetrievingText
+  0x028a0f  ShowErr_ProblemRetrievingNpc
+  0x028a14  ShowErr_ProblemRetrievingConvo
+  0x029aa2  writeChar
+  0x02a11b  Fade?
+  0x02a681  getTextPos
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

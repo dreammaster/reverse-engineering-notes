@@ -9,6 +9,18 @@
 # IDA GUI must be closed first -- the .idb is locked while it's open.
 # After it runs, check batch_run_and_export.log for a step-by-step
 # trace (console output from idat.exe is not reliable).
+#
+# -NoExport is NOT a dry run: it only skips re-exporting yendor2.asm/.idc
+# and the explicit save_database() call in batch_run_and_export.py.
+# idat.exe itself still commits database writes (set_name, add_func,
+# op_offset, etc.) to yendor2.idb on exit regardless -- confirmed
+# 2026-09-14 by writing a comment in one -NoExport run and reading it
+# back, still present, in a separate later -NoExport run. Any target
+# script that mutates the database will have those mutations persist to
+# the .idb even with -NoExport; only the text exports and the "did we
+# save" log line are skipped. Use -NoExport for genuinely read-only
+# report scripts (like identify.py) where this distinction doesn't
+# matter, not as a way to try a mutating script "safely".
 
 param(
     [Parameter(Mandatory = $true)]
@@ -19,7 +31,7 @@ param(
 
 $ScriptsDir = $PSScriptRoot
 $RootDir = Split-Path $ScriptsDir -Parent
-$IdatExe = "C:\Program Files\IDA Pro 8.3\idat.exe"
+$IdatExe = "C:\Program Files\IDA Pro 8.2\idat.exe"
 $IdbPath = Join-Path $RootDir "yendor2.idb"
 $Driver = Join-Path $ScriptsDir "batch_run_and_export.py"
 

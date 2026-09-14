@@ -4,7 +4,7 @@ export yendor2.asm/.idc and save, all without opening the GUI.
 
 USAGE (from a shell, IDA GUI must be closed first -- the .idb gets locked):
 
-    "C:\\Program Files\\IDA Pro 8.3\\idat.exe" -A ^
+    "C:\\Program Files\\IDA Pro 8.2\\idat.exe" -A ^
         -S"C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py C:\\dev\\yendor\\yendor2\\ida_scripts\\identify.py" ^
         "C:\\dev\\yendor\\yendor2\\yendor2.idb"
 
