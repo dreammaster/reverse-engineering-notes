@@ -240,9 +240,12 @@ Next-session priorities, roughly in order:
       level dispatcher `sub_17B54` (which saves/restores every
       register, so this isn't parameter-passing) — the actual item
       hand-off almost certainly happens through a not-yet-located
-      global "hand mode" flag that a subsequent command (a good bet:
-      `cmdWear`) checks. That follow-on mechanism is the concrete next
-      lead, not yet traced.
+      global "hand mode" flag that a subsequent command checks. **One
+      hypothesis ruled out**: `cmdWear`'s actual effect is now fully
+      traced (see `wearArmour` below) and shows no such flag check —
+      it's a self-contained "choose from armour types you already
+      own" equip mechanic with no cross-character interaction. The
+      real hand-off mechanism is still not located.
 - [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3`) — both are
       no-ops on the overworld, consistent with Descend/Klimb being
       dungeon-only commands.

@@ -104,11 +104,11 @@ _savedOverworldPosition dw 0            ; DATA XREF: sub_17B54-5DAD↓w
 byte_114C8      db 0                    ; DATA XREF: sub_17B54+113↓r
                                         ; sub_17E48+27↓r
 byte_114C9      db 0                    ; DATA XREF: sub_17B54+137↓r
-                                        ; sub_17EFA+27↓r
+                                        ; wearArmour+27↓r
 byte_114CA      db 0                    ; DATA XREF: sub_17B54+11D↓r
                                         ; sub_17E48+31↓r ...
 byte_114CB      db 0                    ; DATA XREF: sub_17B54+141↓r
-                                        ; sub_17EFA+31↓r ...
+                                        ; wearArmour+31↓r ...
 byte_114CC      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
                                         ; DATA XREF: sub_17B54-1ED7↓o
                                         ; checkPartyWipedOut+4↓o ...
@@ -876,7 +876,7 @@ cmdLook:                                ; CODE XREF: sub_17B54-5F83↑j
                 shr     al, 1
                 shr     al, 1
                 inc     al
-                call    sub_16BFA
+                call    printNameByIndex
                 call    sub_126F4
 
 loc_11E98:                              ; CODE XREF: sub_17B54-5CD4↑j
@@ -4916,7 +4916,7 @@ loc_15C45:                              ; CODE XREF: sub_17B54-1F18↑j
                 shr     al, 1
                 shr     al, 1
                 add     al, 1
-                call    sub_16BFA
+                call    printNameByIndex
                 lea     si, aSDestroyed ; "s\nDestroyed!\n"
                 call    printGameText
                 mov     al, ah
@@ -7105,7 +7105,7 @@ damageCharacterHP endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16BFA       proc near               ; CODE XREF: sub_17B54-5CC2↑p
+printNameByIndex proc near              ; CODE XREF: sub_17B54-5CC2↑p
                                         ; sub_17B54-1EFE↑p ...
                 pushf
                 push    bx
@@ -7119,12 +7119,12 @@ sub_16BFA       proc near               ; CODE XREF: sub_17B54-5CC2↑p
                 mov     si, [bx+6556h]
                 call    printGameText
 
-loc_16C10:                              ; CODE XREF: sub_16BFA+5↑j
+loc_16C10:                              ; CODE XREF: printNameByIndex+5↑j
                 pop     si
                 pop     bx
                 popf
                 retn
-sub_16BFA       endp
+printNameByIndex endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7545,7 +7545,7 @@ loc_16EDB:                              ; CODE XREF: showZtats+107↑j
                 call    printGameText
                 mov     al, [di+30h]
                 add     al, 41h ; 'A'
-                call    sub_16BFA
+                call    printNameByIndex
                 call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16EF9
@@ -7557,7 +7557,7 @@ loc_16EF9:                              ; CODE XREF: showZtats+133↑j
                 call    printGameText
                 mov     al, [di+28h]
                 add     al, 51h ; 'Q'
-                call    sub_16BFA
+                call    printNameByIndex
                 call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16F12
@@ -7579,7 +7579,7 @@ loc_16F1C:                              ; CODE XREF: showZtats+195↓j
                 call    writeCharacter
                 mov     al, bl
                 add     al, 41h ; 'A'
-                call    sub_16BFA
+                call    printNameByIndex
                 mov     al, 2Dh ; '-'
                 call    writeCharacter
                 mov     al, 28h ; '('
@@ -7610,7 +7610,7 @@ loc_16F62:                              ; CODE XREF: showZtats+1DB↓j
                 call    writeCharacter
                 mov     al, bl
                 add     al, 51h ; 'Q'
-                call    sub_16BFA
+                call    printNameByIndex
                 mov     al, 2Dh ; '-'
                 call    writeCharacter
                 mov     al, 28h ; '('
@@ -9108,7 +9108,7 @@ loc_17921:                              ; CODE XREF: sub_17B54-204↓j
                 adc     al, 68h ; 'h'
 
 loc_17926:                              ; DATA XREF: sub_17B54:loc_17C9F↓o
-                                        ; sub_17EFA:loc_17F35↓o
+                                        ; wearArmour:loc_17F35↓o
                 sbb     bp, [bx+si+51h]
                 sbb     ax, [bx+di+42h]
                 inc     bx
@@ -9119,7 +9119,7 @@ loc_17926:                              ; DATA XREF: sub_17B54:loc_17C9F↓o
                 dec     ax
 
 loc_17932:                              ; DATA XREF: sub_17B54+14F↓o
-                                        ; sub_17EFA+3F↓o ...
+                                        ; wearArmour+3F↓o ...
                 scasw
                 js      short loc_178E4
                 js      short near ptr loc_17958+1
@@ -9169,20 +9169,20 @@ aIncapacitated  db 'Incapacitated!',0Ah,0
 aNoMoreRoom     db 'No more room!',0Ah,0 ; CODE XREF: sub_17B54-202↑j
                                         ; DATA XREF: sub_17B54:loc_15CB5↑o ...
 aNoneOwned      db 'None owned',0Ah,0   ; DATA XREF: sub_17E48+8E↓o
-                                        ; sub_17EFA+8E↓o
+                                        ; wearArmour+8E↓o
 aWeapon_0       db 'Weapon:',0Ah,0      ; DATA XREF: sub_17E48+8↓o
 aNotAllowed     db 0Ah                  ; DATA XREF: sub_17E48:loc_17EC5↓o
-                                        ; sub_17EFA:loc_17F77↓o
+                                        ; wearArmour:loc_17F77↓o
                 db 'Not allowed!',0Ah,0
 aReadied        db 0Ah                  ; DATA XREF: sub_17E48:loc_17EAE↓o
-                                        ; sub_17EFA:loc_17F60↓o
+                                        ; wearArmour:loc_17F60↓o
                 db 'Readied!',0Ah,0
-aArmour_0       db 'Armour:',0Ah,0      ; DATA XREF: sub_17EFA+8↓o
+aArmour_0       db 'Armour:',0Ah,0      ; DATA XREF: wearArmour+8↓o
                 db 51h, 44h, 43h, 48h, 3 dup(51h), 2 dup(44h), 43h, 4Ch
                 db 49h, 45h, 43h, 44h, 46h, 44h, 43h, 44h, 2 dup(43h)
                 db 48h
 aFcwtpblidardir db 'FCWTPBLIDARDirect? ',0 ; DATA XREF: sub_17E48+14↓o
-                                        ; sub_17EFA+14↓o ...
+                                        ; wearArmour+14↓o ...
 aGoodDay        db 0Ah                  ; DATA XREF: sub_17B54:loc_18072↓o
                 db 'Good day!',0Ah
                 db 0Ah,0
@@ -9870,7 +9870,7 @@ cmdWear:                                ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_17EF4
                 call    isCharacterAlive
                 jnz     short loc_17EF7
-                call    sub_17EFA
+                call    wearArmour
 
 loc_17EF4:                              ; CODE XREF: sub_17B54+396↑j
                 jmp     mainLoopCommandDone
@@ -9883,7 +9883,7 @@ loc_17EF7:                              ; CODE XREF: sub_17B54+39B↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17EFA       proc near               ; CODE XREF: sub_17B54+39D↑p
+wearArmour      proc near               ; CODE XREF: sub_17B54+39D↑p
                 pushf
                 push    ax
                 push    bx
@@ -9910,8 +9910,8 @@ sub_17EFA       proc near               ; CODE XREF: sub_17B54+39D↑p
                 jz      short loc_17F35
                 mov     cx, 7
 
-loc_17F35:                              ; CODE XREF: sub_17EFA+2C↑j
-                                        ; sub_17EFA+36↑j
+loc_17F35:                              ; CODE XREF: wearArmour+2C↑j
+                                        ; wearArmour+36↑j
                 lea     di, loc_17926+2
                 lea     si, loc_17932
                 call    getMenuChoice
@@ -9924,7 +9924,7 @@ loc_17F35:                              ; CODE XREF: sub_17EFA+2C↑j
                 cmp     al, dl
                 jnb     short loc_17F77
 
-loc_17F50:                              ; CODE XREF: sub_17EFA+50↑j
+loc_17F50:                              ; CODE XREF: wearArmour+50↑j
                 mov     di, bx
                 sub     al, 41h ; 'A'
                 jz      short loc_17F60
@@ -9933,13 +9933,13 @@ loc_17F50:                              ; CODE XREF: sub_17EFA+50↑j
                 cmp     byte ptr [bx+28h], 0
                 jz      short loc_17F85
 
-loc_17F60:                              ; CODE XREF: sub_17EFA+5A↑j
+loc_17F60:                              ; CODE XREF: wearArmour+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
                 call    printGameText
                 mov     [di+28h], al
 
-loc_17F6A:                              ; CODE XREF: sub_17EFA+7B↓j
-                                        ; sub_17EFA+89↓j ...
+loc_17F6A:                              ; CODE XREF: wearArmour+7B↓j
+                                        ; wearArmour+89↓j ...
                 pop     di
                 pop     si
                 pop     dx
@@ -9950,13 +9950,13 @@ loc_17F6A:                              ; CODE XREF: sub_17EFA+7B↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17F72:                              ; CODE XREF: sub_17EFA+48↑j
-                                        ; sub_17EFA+4C↑j
+loc_17F72:                              ; CODE XREF: wearArmour+48↑j
+                                        ; wearArmour+4C↑j
                 call    sub_126F4
                 jmp     short loc_17F6A
 ; ---------------------------------------------------------------------------
 
-loc_17F77:                              ; CODE XREF: sub_17EFA+54↑j
+loc_17F77:                              ; CODE XREF: wearArmour+54↑j
                 lea     si, aNotAllowed ; "\nNot allowed!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -9964,14 +9964,14 @@ loc_17F77:                              ; CODE XREF: sub_17EFA+54↑j
                 jmp     short loc_17F6A
 ; ---------------------------------------------------------------------------
 
-loc_17F85:                              ; CODE XREF: sub_17EFA+64↑j
+loc_17F85:                              ; CODE XREF: wearArmour+64↑j
                 call    sub_126F4
                 lea     si, aNoneOwned  ; "None owned\n"
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17F6A
-sub_17EFA       endp
+wearArmour      endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10213,7 +10213,7 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 call    printGameText
                 mov     al, dl
                 add     al, 41h ; 'A'
-                call    sub_16BFA
+                call    printNameByIndex
                 call    sub_126F4
                 mov     bl, dl
                 mov     bh, 0
@@ -10240,7 +10240,7 @@ loc_18151:                              ; CODE XREF: sub_180D9+44↑j
                 call    printGameText
                 mov     al, dl
                 add     al, 51h ; 'Q'
-                call    sub_16BFA
+                call    printNameByIndex
                 call    sub_126F4
                 mov     bl, dl
                 mov     bh, 0
@@ -11209,7 +11209,7 @@ printCombatReactionMessage proc near    ; CODE XREF: updateMonsterAI+656C↑p
                 pop     ax
                 rcl     al, 1
                 add     al, 79h ; 'y'
-                call    sub_16BFA
+                call    printNameByIndex
 
 loc_18B08:                              ; CODE XREF: printCombatReactionMessage+56↓j
                 cmp     ah, 0FFh
@@ -11246,7 +11246,7 @@ loc_18B30:                              ; CODE XREF: printCombatReactionMessage+
 
 loc_18B37:                              ; CODE XREF: printCombatReactionMessage+5B↓j
                 add     al, 1
-                call    sub_16BFA
+                call    printNameByIndex
                 jmp     short loc_18B08
 ; ---------------------------------------------------------------------------
 
@@ -11613,7 +11613,7 @@ combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 lea     si, [si+14CCh]
                 mov     al, [si+30h]
                 add     al, 41h ; 'A'
-                call    sub_16BFA
+                call    printNameByIndex
                 mov     di, si
                 lea     si, aAttackDir  ; " Attack\nDir-"
                 call    printGameText

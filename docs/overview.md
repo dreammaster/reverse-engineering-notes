@@ -1340,3 +1340,25 @@ code. The precise letter-to-card/position mapping (which of D/S/L/M
 pairs with which of the 4 steps) wasn't decoded digit-by-digit this
 pass — the mechanism is confirmed, the exact walkthrough sequence
 isn't spelled out.
+
+**`cmdWear`'s effect finally traced**: `wearArmour` (`0x17EFA`) had
+been left as "not traced past the call" since the very first session
+covering EXODUS.BIN's command letters. It prints "Armour:\n", looks up
+the character's class letter against a combined string
+`'FCWTPBLIDARDirect? '` (confirming an 11-class roster) to find that
+class's max wearable-armour tier, shows a menu of owned armour types,
+and on a valid choice sets `_armourIndex` and prints "Readied!\n" (the
+same confirmation text weapon-readying uses). This also rules out one
+piece of speculation from `cmdHandEquipment`'s note: `wearArmour`
+shows no "hand mode" flag check of any kind, so it's not the follow-on
+half of that mechanic after all — a self-contained, single-character
+equip screen with nothing cross-character about it. The real
+item-hand-off mechanism `cmdHandEquipment` implies is still not
+located.
+
+Also named `printNameByIndex` (`0x16BFA`), a generic "look up a string
+by index in a shared table, print it" helper reused across very
+different contexts (`cmdLook`'s tile descriptions, and at least 3
+combat-related callers) — named for its confirmed mechanism rather
+than a single asserted purpose, since different callers clearly use
+it for different kinds of names.

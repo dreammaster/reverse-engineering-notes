@@ -1647,6 +1647,30 @@ RENAMES = [
      "The exact D/S/L/M-to-card/position mapping (which letter goes "
      "with which of the 4 steps) isn't decoded digit-by-digit here -- "
      "confirmed at the mechanism level, not the exact-sequence level."),
+
+    (0x17EFA, "wearArmour",
+     "RESOLVES cmdWear's long-open 'not traced past the call' note. "
+     "Prints 'Armour:\\n', looks up the character's class letter "
+     "(`[bx+17h]`) against a combined string 'FCWTPBLIDARDirect? ' "
+     "(each character is a class-letter code -- confirms an 11-class "
+     "roster) to find that class's max wearable-armour-type index via "
+     "a small lookup table (`[si+79FAh]`), then shows a menu of "
+     "armour choices up to that max. On a valid choice, sets "
+     "`_armourIndex` (`+0x28`) to the chosen type and prints "
+     "'Readied!\\n' (the same confirmation string weapon-readying "
+     "uses, reused here for armour)."),
+
+    (0x16BFA, "printNameByIndex",
+     "A generic 'look up a string pointer by index (1-0x88) in a "
+     "shared table at linear 0x16556, print it' helper, reused across "
+     "very different contexts: `cmdLook` (printing a description for "
+     "a tile-derived index), `showZtats`/`printCombatReactionMessage`/"
+     "`updateMonsterAI` (printing something -- monster names being "
+     "the obvious candidate given the combat contexts, not "
+     "independently confirmed). Named for the confirmed mechanism "
+     "(index -> shared string table -> print), not a single asserted "
+     "purpose, since its callers clearly use it for different kinds "
+     "of names/descriptions."),
 ]
 
 
