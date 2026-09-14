@@ -167,30 +167,36 @@ Remaining loose ends specific to this IDB:
       field-name lists (Elf/Dwarf/Fuzzy/etc. for race, Wizard/Ranger/
       etc. for class).
 
-## `EXODUS.BIN` (`ultima_exodus.idb`) — shared runtime named (47/142, 2026-09-13); game logic pending
+## `EXODUS.BIN` (`ultima_exodus.idb`) — function-naming sweep: COMPLETE (144/144, 2026-09-14)
 
-**This is now the top priority and the largest remaining phase of the
-whole project** — comparable in scope to `ultima1`'s or `ultima2`'s
-entire sibling efforts. Created 2026-09-13 (same recipe as
+**DONE as of 2026-09-14 — every one of the 144 functions in this IDB
+has a real name.** Created 2026-09-13 (same recipe as
 `ultima_bootup.idb`: copy to a temp `.com` file for IDA's loader
-auto-detection). 144 functions total (142 after `entryFromBootup`'s
-manual `add_func` absorbed 2 stray auto-detected fragments), ~14,600
-`.asm` lines. The entire shared low-level runtime (~40 functions:
-`writeString`/`writeCharacter`/`drawCharGlyph`/`drawTileGrid`/
-`readLine`/`loadFile`/`saveFile`/`openFileWithRetry`/the boot-animation
-cluster/the wind display/the 12-entry sound table) is named — see
-[overview.md](overview.md#session-2026-09-13-ultima_exodusidb-created-shared-runtime-named-47142)
-for the full findings log. **95 functions remain, all game-specific.**
+auto-detection), ~14,600 `.asm` lines. This was comparable in scope to
+`ultima1`'s or `ultima2`'s entire sibling efforts, and covers
+everything: the shared low-level runtime, the overworld command
+dispatcher (`readAndDispatchCommand`, formerly `sub_17B54` — the
+single massive multi-chunk function every `cmdX`/`combatCmdX`/
+`templeX`/shop handler lives inside as a label, not a separate
+procedure), the combat dispatcher (inside `updateMonsterAI`'s chunk
+list), spellcasting (`castSpell`, all 32 spell effects), all 8 town
+shops/NPCs, temples, the dungeon-monster AI and its own separate
+combat-damage system, the Peer/Vieda map-overview rendering, the
+whirlpool mechanics (including the secret Ambrosia gateway), the win
+condition, and Ultima III's legendary Exodus endgame puzzle. See
+overview.md's findings log for the full narrative, and
+`apply_renames_exodus.py` for the complete rename list with per-entry
+evidence.
 
-Confirmed via a string-table scan (not yet via reading the actual
-disassembly) that this executable holds: overworld/town/dungeon
-movement, a large single-key command dispatcher (`sub_17B54` — spans
-thousands of bytes, likely THE overworld command loop, analogous to
-ultima1/ultima2's A-Z dispatcher), a separate combat dispatcher
-(`sub_123A5`), spellcasting (`sub_15D83`), shops (`sub_1A630`), temples
-(`sub_1A692`), and the game's ending sequence.
-
-Next-session priorities, roughly in order:
+The checklist below is kept as a historical record of how this sweep
+actually happened — a genuine, sometimes winding, evidence-first
+process — not as a to-do list; nothing under `EXODUS.BIN` remains
+open at the function-naming level. A handful of deeper mechanism
+questions are flagged as still-unresolved inline (e.g. `cmdHandEquipment`'s
+exact item-transfer mechanism, `drawDungeonView`'s self-modifying
+`start` call target, the exact D/S/L/M-to-card mapping in the Exodus
+puzzle) — those are the legitimate remaining frontier, not simple
+naming gaps.
 
 - [x] Investigated `sub_123A5` — **turned out to be `updateMonsterAI`
       (per-turn monster/NPC movement AI), not the combat dispatcher.**

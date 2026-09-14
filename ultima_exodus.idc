@@ -2432,6 +2432,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X17B4F);
 	create_insn	(0X17B54);
+	set_name	(0X17B54,	"readAndDispatchCommand");
 	create_insn	(x=0X17B5F);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3375,6 +3376,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1961D);
 	op_hex		(x,	1);
 	create_insn	(0X19630);
+	set_name	(0X19630,	"drawDungeonView");
 	create_byte	(0X19650);
 	make_array	(0X19650,	0X7);
 	create_byte	(0X19657);
@@ -3894,14 +3896,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AA86);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AAA5);
-	op_hex		(x,	1);
-	create_insn	(x=0X1AAAB);
-	op_hex		(x,	1);
-	create_insn	(0X1AABC);
-	create_insn	(x=0X1AACD);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3911,6 +3905,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AAA5);
+	op_hex		(x,	1);
+	create_insn	(x=0X1AAAB);
+	op_hex		(x,	1);
+	create_insn	(0X1AABC);
+	create_insn	(x=0X1AACD);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AAD6);
 	create_insn	(x=0X1AAE1);
 	op_plain_offset	(x,	1,	0X10000);

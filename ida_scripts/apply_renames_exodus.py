@@ -2007,6 +2007,39 @@ RENAMES = [
      "confirms `AMBROSIA.ULT`'s role directly from code, resolving "
      "part of the open `AMBROSIA.ULT`-vs-`FAWN.ULT`/`EXODUS.ULT` "
      "question in the roadmap."),
+
+    (0x19630, "drawDungeonView",
+     "Clears the viewport (clearMapViewport); if `byte_115CE` (the "
+     "confirmed lit-torch flag from cmdIgniteTorch) is nonzero, calls "
+     "into `start` with al=`_facingDirection`, ah=`_dungeonLevel`, "
+     "bx=`_partyPosition` -- otherwise does nothing further, matching "
+     "the confirmed 'It's dark!' behavior elsewhere (no torch means "
+     "nothing gets drawn). FLAGGED, not fully resolved: `start` "
+     "(linear `0x100`) is declared in the .asm as a `0x800`-byte zero "
+     "buffer -- the same buffer entryFromBootup loads SOSARIA.ULT "
+     "into elsewhere -- yet it's called here as code. This strongly "
+     "suggests a self-modifying/JIT-style renderer: something "
+     "presumably writes actual dungeon-rendering machine code into "
+     "this buffer at runtime before it's called, but that write site "
+     "wasn't located this pass. Named for the confirmed torch-gated "
+     "'draw what the party can currently see in the dungeon' role, "
+     "not for the unresolved call target."),
+
+    (0x17B54, "readAndDispatchCommand",
+     "THE LAST unnamed function in ultima_exodus.idb -- referenced by "
+     "raw address throughout this entire session's evidence notes "
+     "(literally every `cmdX`/`combatCmdX`/`templeX`/showXMenu` "
+     "handler and dozens of shared helpers cite 'sub_17B54' as their "
+     "container or caller), finally given a name of its own. This is "
+     "the single, massive, multi-chunk function containing the whole "
+     "overworld command-read-and-dispatch cycle: reads a keypress, "
+     "looks it up in OVERWORLD_COMMAND_KEYS, and jumps through "
+     "OVERWORLD_COMMAND_TABLE to whichever `cmdX` handler matches -- "
+     "every overworld/dungeon command handler this project has "
+     "identified is a label living inside this one function's many "
+     "chunks, not a separate procedure. Also the target of "
+     "`cmdHandEquipment`'s confirmed genuine re-entrant self-call "
+     "(processes one more command recursively, mid-command)."),
 ]
 
 
