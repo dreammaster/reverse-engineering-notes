@@ -1947,6 +1947,27 @@ RENAMES = [
      "effect -- `cmdPeer` and `spellVieda` were both already confirmed "
      "as reveal-surroundings abilities; this is what actually draws "
      "that reveal."),
+
+    (0x12909, "drawPeerDungeonOverview",
+     "The dungeon counterpart to drawPeerMapOverview: clears the "
+     "viewport, loops a 16x16 grid reading `getDungeonTileAt`, maps "
+     "each tile value to a single-digit code (1-6 for specific "
+     "confirmed tile values, the raw value for 0, '?' for anything "
+     "else) and prints it, then blinks a '*' marker at the party's "
+     "position and waits for a keypress. Peer/Vieda's dungeon-context "
+     "rendering, called from the same overworld cmdPeer/spellVieda "
+     "handlers that call drawPeerMapOverview on the surface."),
+    (0x122A5, "spawnRandomOverworldMonster",
+     "The ambient random-encounter generator. Only in overworld mode "
+     "(game mode 0), rolls a chance, finds an empty slot in "
+     "updateMonsterAI's 32-monster array, picks a random monster "
+     "type from a type/tile lookup table pair (`0x1965`/`0x1972`), "
+     "and rolls a random position within the map, near but not "
+     "exactly on the party -- validating the destination tile matches "
+     "the monster's expected terrain via getMapTileAt before actually "
+     "placing it (undoing the spawn if the position doesn't check "
+     "out). This is what populates the overworld with wandering "
+     "monsters over time."),
 ]
 
 

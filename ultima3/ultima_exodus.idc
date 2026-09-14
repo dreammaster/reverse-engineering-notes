@@ -625,6 +625,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12299);
 	create_insn	(0X122A5);
+	set_name	(0X122A5,	"spawnRandomOverworldMonster");
 	create_insn	(x=0X122B7);
 	op_hex		(x,	1);
 	create_insn	(0X122D2);
@@ -794,6 +795,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X128F9);
 	op_hex		(x,	1);
 	create_insn	(0X12909);
+	set_name	(0X12909,	"drawPeerDungeonOverview");
 	create_insn	(x=0X12955);
 	op_hex		(x,	1);
 	create_byte	(0X1298E);
@@ -3905,12 +3907,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AAEA);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AB06);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AB0A);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3920,6 +3916,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AB06);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X1AB0A);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1AB29);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AB2F);
