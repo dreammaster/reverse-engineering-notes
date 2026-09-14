@@ -1288,6 +1288,7 @@ static Bytes_0(void) {
 	create_insn	(0X15832);
 	set_name	(0X15832,	"playToneF6");
 	create_insn	(0X1583C);
+	set_name	(0X1583C,	"playSpeakerNoise");
 	set_cmt	(0X1583F,	"PC/XT PPI port B bits:\n0: Tmr 2 gate ═╦═► OR 03H=spkr ON\n1: Tmr 2 data ═╝  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X1583F);
 	op_hex		(x,	1);
@@ -1895,6 +1896,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16D58);
+	set_name	(0X16D58,	"drawPartySlotNumbers");
 	create_insn	(x=0X16D61);
 	op_hex		(x,	1);
 	create_insn	(x=0X16D63);
@@ -3948,10 +3950,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AC59);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	set_cmt	(0X1AC6B,	"jumptable 0001ABB9 case 2",	1);
-	create_insn	(x=0X1AC6B);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3961,6 +3959,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1AC6B,	"jumptable 0001ABB9 case 2",	1);
+	create_insn	(x=0X1AC6B);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1ACA7);
 	set_cmt	(0X1ACAC,	"jumptable 0001ABB9 case 3",	1);
 	create_insn	(x=0X1ACAC);

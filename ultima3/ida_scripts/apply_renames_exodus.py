@@ -1711,6 +1711,20 @@ RENAMES = [
      "scrollMessageWindow's smaller text-output area. Called from "
      "several redraw contexts (sub_12168, sub_1259E, sub_12909, and "
      "directly within sub_17B54, e.g. initDungeonState)."),
+
+    (0x1583C, "playSpeakerNoise",
+     "Raw PC-speaker white-noise generator: toggles PPI port 0x61's "
+     "speaker bit with a randomized delay (stepTimeSeededPrng) per "
+     "cycle rather than a fixed tone period -- produces a static/"
+     "noise sound rather than a pitched tone. Called by the "
+     "already-named playToneF7/playToneF6 sound-effect entries."),
+    (0x16D58, "drawPartySlotNumbers",
+     "One-time setup called from entryFromBootup (and once more "
+     "within sub_17B54): draws the party status bar's 4 slot-number "
+     "labels (border glyph, digit 1-4, border glyph) at a fixed "
+     "column, one per row -- the numbered frame around each party "
+     "member's row that drawPartyStatusBar itself fills in "
+     "afterward."),
 ]
 
 
