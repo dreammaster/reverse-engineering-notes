@@ -12107,7 +12107,7 @@ sub_19020       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_190FD       proc near               ; CODE XREF: sub_17B54+163F↓p
+fireDungeonProjectileAtParty proc near  ; CODE XREF: sub_17B54+163F↓p
                 pushf
                 push    ax
                 push    bx
@@ -12117,7 +12117,7 @@ sub_190FD       proc near               ; CODE XREF: sub_17B54+163F↓p
                 mov     dl, [di+2544h]
                 mov     dh, [di+254Ch]
 
-loc_1910E:                              ; CODE XREF: sub_190FD+48↓j
+loc_1910E:                              ; CODE XREF: fireDungeonProjectileAtParty+48↓j
                 add     dl, cl
                 cmp     dl, 0Bh
                 jnb     short loc_19147
@@ -12129,7 +12129,7 @@ loc_1910E:                              ; CODE XREF: sub_190FD+48↓j
                 dec     ax
                 mov     bx, ax
 
-loc_19124:                              ; CODE XREF: sub_190FD+39↓j
+loc_19124:                              ; CODE XREF: fireDungeonProjectileAtParty+39↓j
                 cmp     dl, [bx+2564h]
                 jnz     short loc_19135
                 cmp     dh, [bx+2568h]
@@ -12138,8 +12138,8 @@ loc_19124:                              ; CODE XREF: sub_190FD+39↓j
                 jmp     short loc_19147
 ; ---------------------------------------------------------------------------
 
-loc_19135:                              ; CODE XREF: sub_190FD+2B↑j
-                                        ; sub_190FD+31↑j
+loc_19135:                              ; CODE XREF: fireDungeonProjectileAtParty+2B↑j
+                                        ; fireDungeonProjectileAtParty+31↑j
                 dec     bx
                 jns     short loc_19124
                 mov     bx, dx
@@ -12150,15 +12150,15 @@ loc_19135:                              ; CODE XREF: sub_190FD+2B↑j
                 jmp     short loc_1910E
 ; ---------------------------------------------------------------------------
 
-loc_19147:                              ; CODE XREF: sub_190FD+16↑j
-                                        ; sub_190FD+1D↑j ...
+loc_19147:                              ; CODE XREF: fireDungeonProjectileAtParty+16↑j
+                                        ; fireDungeonProjectileAtParty+1D↑j ...
                 call    drawLogoTileGrid
                 pop     dx
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_190FD       endp
+fireDungeonProjectileAtParty endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -12199,7 +12199,7 @@ loc_1917C:                              ; CODE XREF: sub_17B54+1620↑j
                 jb      short loc_19198
                 cmp     _conflictMonsterClass, 1Dh
                 jnz     short loc_19198
-                call    sub_190FD
+                call    fireDungeonProjectileAtParty
                 jmp     short loc_19209
 ; ---------------------------------------------------------------------------
 
@@ -12233,7 +12233,7 @@ loc_191CA:                              ; CODE XREF: sub_17B54+164D↑j
                 js      short loc_19209
 
 loc_191CE:                              ; CODE XREF: sub_17B54+1674↑j
-                call    sub_19215
+                call    moveDungeonMonsterSprite
                 jmp     short loc_19209
 ; ---------------------------------------------------------------------------
 
@@ -12280,7 +12280,7 @@ loc_19212:                              ; CODE XREF: sub_17B54+1606↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19215       proc near               ; CODE XREF: sub_17B54:loc_191CE↑p
+moveDungeonMonsterSprite proc near      ; CODE XREF: sub_17B54:loc_191CE↑p
                 push    ax
                 push    bx
                 mov     bh, [di+254Ch]
@@ -12299,7 +12299,7 @@ sub_19215       proc near               ; CODE XREF: sub_17B54:loc_191CE↑p
                 pop     bx
                 pop     ax
                 retn
-sub_19215       endp
+moveDungeonMonsterSprite endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12375,7 +12375,7 @@ attemptSpecialMonsterAttack endp
 ; =============== S U B R O U T I N E =======================================
 
 
-applyDungeonMonsterDamage proc near     ; CODE XREF: sub_190FD+33↑p
+applyDungeonMonsterDamage proc near     ; CODE XREF: fireDungeonProjectileAtParty+33↑p
                                         ; attemptSpecialMonsterAttack+64↑p
                 pushf
                 push    ax

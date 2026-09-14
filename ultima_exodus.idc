@@ -3193,6 +3193,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X190F9);
 	create_insn	(0X190FD);
+	set_name	(0X190FD,	"fireDungeonProjectileAtParty");
 	create_insn	(0X19135);
 	create_insn	(0X19147);
 	create_insn	(0X1914F);
@@ -3211,6 +3212,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19212);
 	create_insn	(0X19215);
+	set_name	(0X19215,	"moveDungeonMonsterSprite");
 	create_insn	(0X19244);
 	set_name	(0X19244,	"attemptSpecialMonsterAttack");
 	create_insn	(0X1925B);
@@ -3923,14 +3925,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB6B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AB85);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1AB93);
-	set_name	(0X1AB93,	"showGuildMenu");
-	create_insn	(x=0X1AB98);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3940,6 +3934,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AB85);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(0X1AB93);
+	set_name	(0X1AB93,	"showGuildMenu");
+	create_insn	(x=0X1AB98);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1ABA0);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

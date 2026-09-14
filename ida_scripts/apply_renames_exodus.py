@@ -1850,6 +1850,25 @@ RENAMES = [
      "(printing 'Missed!'/'Hit!'), applying applyDungeonMonsterDamage "
      "on a hit. Called twice from sub_17B54 -- the dungeon-monster "
      "special-attack entry point."),
+
+    (0x190FD, "fireDungeonProjectileAtParty",
+     "The dungeon first-person counterpart to "
+     "fireProjectileAcrossArena/monsterBreathAttack: steps a "
+     "projectile position by a (cl,ch) delta within the 11x11 "
+     "dungeon view, drawing a '=' travel tile each step, and checks "
+     "each of the party's dungeon-view positions (`[bx+2564h]`/"
+     "`[bx+2568h]`, a parallel array distinct from the "
+     "overworld/arena position arrays) for a hit -- calling "
+     "applyDungeonMonsterDamage when the projectile reaches an "
+     "occupied party slot. Stops at the 11-tile view boundary "
+     "otherwise."),
+    (0x19215, "moveDungeonMonsterSprite",
+     "Moves a dungeon monster's displayed sprite from its old "
+     "position (`[di+2544h]`/`[di+254Ch]`) to a new one (dx): redraws "
+     "the old tile with its cached prior contents, draws the "
+     "monster's glyph at the new position, and updates the cached "
+     "position/tile-contents fields for next time. Parallel array to "
+     "the party-position fields fireDungeonProjectileAtParty reads."),
 ]
 
 
