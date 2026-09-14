@@ -146,14 +146,73 @@ for the full findings log — headline results:
 
 Remaining loose ends specific to this IDB:
 
-- [ ] Apply the `RosterEntry` struct type to the actual `[bx+N]`
-      instruction operands (`ida_bytes.op_stroff` per site) so the
-      `.asm` shows `player.RosterEntry._hitPoints`-style field names
-      instead of raw offsets, matching the sibling projects' `Savegame`
-      struct treatment. Not done yet — defining the struct and
-      confirming its layout was the priority this pass; wiring it into
-      every access site (~15+ sites across 5 functions) is a
-      mechanical follow-up.
+- [x] **`RosterEntry` wired into real instruction operands**, done
+      2026-09-15 (`idc.op_stroff` per site, both IDBs): 39 sites across
+      7 functions in `ultima_bootup.idb`
+      (`showCharacterDetails`/`handleCreateCharacter`/
+      `gatherCharacterCreationInput`/`showRegister`/`handleFormParty`/
+      `clearPartySelection`/`handleTerminateCharacter`), 206 sites
+      across 26 functions in `ultima_exodus.idb`. The `.asm` now shows
+      `[bx+RosterEntry._hitPoints]`-style field names instead of raw
+      offsets at every confirmed site.
+
+      Found via a data-driven scan (`find_roster_stroff_candidates.py`)
+      rather than guessing which functions to target — it flags every
+      `[reg+N]` operand in the IDB whose `N` matches a RosterEntry
+      member offset, grouped by function, ranked by how many *distinct*
+      offsets a function touches (a function hitting several different
+      confirmed offsets is very likely a real RosterEntry accessor;
+      one hitting only a single common small offset is far more likely
+      coincidental). Applied only to a manually-vetted allowlist, not
+      blindly to every match.
+
+      **Two categories of false positive excluded on sight, both
+      recurring across both IDBs**: (1) offset `0x0` (`_name`) matches
+      are *always* noise here — real `_name` access loops over
+      multiple bytes (`readLine`), it's never touched via a single
+      `[reg+0]`, and 0 is an extremely common displacement in
+      unrelated code (stack-frame locals like `[bp+0]`, array bases).
+      (2) `updateLogoAnimationB`/`swapAnimTableRows` matching
+      `_foodSubCounter`/`_keys` — boot-animation code, topically
+      unrelated to character records, coincidental offset overlap.
+
+      **A real mistake happened and was caught before it mattered**:
+      a first, uncurated pass over `ultima_exodus.idb` also matched 21
+      sites inside a genuinely mis-disassembled data region around
+      `0x16700`-`0x16900` (garbage 386-only instructions like `arpl`/
+      `gs:`/`fs:` prefixes and jumps into mid-instruction addresses —
+      impossible in this program's real 8086/80186-era code — see the
+      new roadmap item below). That pass ran with IDA's own headless
+      driver's `-NoExport` flag, which was assumed to make it a safe,
+      non-persisting dry run — it doesn't: `.idb` files are live paged
+      databases that commit edits as they happen regardless of an
+      explicit `save_database()` call, so all 21 bad annotations
+      landed on disk anyway. Caught immediately by hand-reviewing the
+      full result list before trusting it (not by assuming success),
+      and reverted cleanly via `idc.op_hex` (`revert_bad_stroff.py`)
+      before re-applying the corrected, excluded-range version. Worth
+      remembering generally: **`-NoExport` prevents the `.asm`/`.idc`
+      export and the final `save_database()` call, but does NOT make
+      IDB edits transient** — there is no safe "try it and discard" for
+      a headless run once `idc.*` write calls have executed; review
+      before trusting, the same discipline as every other rename batch
+      this project has used, not a special exemption for structural
+      edits.
+- [ ] **NEW, found while wiring `RosterEntry`**: a data region around
+      linear `0x16700`-`0x16900` in `ultima_exodus.idb` is
+      mis-disassembled as code (confirmed garbage: 386-only `arpl`
+      instructions, `gs:`/`fs:` segment override prefixes, jumps into
+      mid-instruction addresses like `loc_16773+1` — none of which are
+      possible in this program's real 16-bit code), despite carrying
+      real `CODE XREF`s from within `readAndDispatchCommand`'s own
+      function-chunk list. Very likely a large ASCII text/data table
+      that IDA's analysis wrongly classified as code. Not fixed this
+      pass (out of scope for the RosterEntry task that surfaced it) —
+      re-classifying it (`ida_bytes.del_items` + a proper string/data
+      definition, the same pattern used for the wind-direction arrays
+      and command-key tables elsewhere in this project) is a
+      well-scoped follow-up.
+- [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
 - [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
       confirmed that *a* second HP-shaped word lives there (set
       alongside `_hitPoints` at character creation), not independently

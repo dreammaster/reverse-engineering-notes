@@ -944,11 +944,11 @@ cmdPeer:                                ; CODE XREF: readAndDispatchCommand-5F83
                                         ; jumptable 00018389 case 32
                 call    selectPlayer
                 jz      short loc_11F1F
-                mov     al, [bx+25h]
+                mov     al, [bx+RosterEntry._gems]
                 sub     al, 1
                 das
                 jb      short loc_11F22
-                mov     [bx+25h], al
+                mov     [bx+RosterEntry._gems], al
                 cmp     byte_114BC, 1
                 jz      short loc_11F1C
                 call    drawPeerMapOverview
@@ -1080,11 +1080,11 @@ cmdUnlock:                              ; CODE XREF: readAndDispatchCommand-5F83
                 mov     si, bx
                 call    selectPlayer
                 jz      short loc_1200F
-                mov     al, [bx+26h]
+                mov     al, [bx+RosterEntry._keys]
                 sub     al, 1
                 das
                 jb      short loc_12015
-                mov     [bx+26h], al
+                mov     [bx+RosterEntry._keys], al
                 mov     al, _locationType
                 shl     al, 1
                 shl     al, 1
@@ -4807,25 +4807,25 @@ rollTrapEvasionChance proc near         ; CODE XREF: readAndDispatchCommand-5BE2
                 pushf
                 push    dx
                 mov     dh, ah
-                mov     al, [bx+13h]
+                mov     al, [bx+RosterEntry._dexterity]
                 mov     ah, 0
                 shl     ax, 1
                 shl     ax, 1
                 shl     ax, 1
                 shl     ax, 1
-                mov     al, [bx+13h]
+                mov     al, [bx+RosterEntry._dexterity]
                 and     al, 0Fh
                 aad
                 mov     ah, dh
                 add     al, 40h ; '@'
-                cmp     byte ptr [bx+17h], 42h ; 'B'
+                cmp     [bx+RosterEntry._class], 42h ; 'B'
                 jz      short loc_15BBD
-                cmp     byte ptr [bx+17h], 49h ; 'I'
+                cmp     [bx+RosterEntry._class], 49h ; 'I'
                 jz      short loc_15BBD
-                cmp     byte ptr [bx+17h], 52h ; 'R'
+                cmp     [bx+RosterEntry._class], 52h ; 'R'
                 jz      short loc_15BBD
                 add     al, 40h ; '@'
-                cmp     byte ptr [bx+17h], 54h ; 'T'
+                cmp     [bx+RosterEntry._class], 54h ; 'T'
                 jz      short loc_15BBD
                 sub     al, 80h
 
@@ -4949,7 +4949,7 @@ cmdJoinGold:                            ; CODE XREF: readAndDispatchCommand-5F83
                 mov     ax, 0
 
 loc_15C8C:                              ; CODE XREF: readAndDispatchCommand-1EB6↓j
-                mov     dx, [bx+23h]
+                mov     dx, [bx+RosterEntry._gold]
                 add     al, dl
                 daa
                 xchg    al, ah
@@ -4963,10 +4963,10 @@ loc_15C8C:                              ; CODE XREF: readAndDispatchCommand-1EB6
                 mov     bx, si
 
 loc_15CA5:                              ; CODE XREF: readAndDispatchCommand-1EA7↓j
-                mov     word ptr [bx+23h], 0
+                mov     [bx+RosterEntry._gold], 0
                 add     bx, 40h ; '@'
                 loop    loc_15CA5
-                mov     [di+23h], ax
+                mov     [di+RosterEntry._gold], ax
 
 loc_15CB2:                              ; CODE XREF: readAndDispatchCommand-1EDB↑j
                                         ; readAndDispatchCommand-1E93↓j
@@ -4998,11 +4998,11 @@ cmdIgniteTorch:                         ; CODE XREF: readAndDispatchCommand-5F83
                 call    printGameText
                 call    selectPlayer
                 jz      short loc_15CEF
-                mov     al, [bx+0Fh]
+                mov     al, [bx+RosterEntry._torches]
                 sub     al, 1
                 das
                 jb      short loc_15CF5
-                mov     [bx+0Fh], al
+                mov     [bx+RosterEntry._torches], al
                 mov     byte_115CE, 0FFh
 
 loc_15CEF:                              ; CODE XREF: readAndDispatchCommand-1E77↑j
@@ -5024,11 +5024,11 @@ cmdNegateTime:                          ; CODE XREF: readAndDispatchCommand-5F83
                                         ; jumptable 00018389 case 7
                 call    selectPlayer
                 jz      short loc_15D10
-                mov     al, [bx+27h]
+                mov     al, [bx+RosterEntry._powder]
                 sub     al, 1
                 das
                 jb      short loc_15D13
-                mov     [bx+27h], al
+                mov     [bx+RosterEntry._powder], al
                 mov     _negateTimeDuration, 0Ah
 
 loc_15D10:                              ; CODE XREF: readAndDispatchCommand-1E56↑j
@@ -5066,17 +5066,17 @@ readSpellLetterKey endp
 healHitPoints   proc near               ; CODE XREF: seg000:5F1C↓p
                 pushf
                 push    ax
-                add     al, [bx+1Ah]
+                add     al, byte ptr [bx+RosterEntry._hitPoints]
                 daa
-                mov     [bx+1Ah], al
+                mov     byte ptr [bx+RosterEntry._hitPoints], al
                 mov     al, [bx+1Bh]
                 adc     al, 0
                 daa
                 mov     [bx+1Bh], al
-                mov     ax, [bx+1Ch]
-                cmp     ax, [bx+1Ah]
+                mov     ax, [bx+RosterEntry._maxHitPoints]
+                cmp     ax, [bx+RosterEntry._hitPoints]
                 jnb     short loc_15D48
-                mov     [bx+1Ah], ax
+                mov     [bx+RosterEntry._hitPoints], ax
 
 loc_15D48:                              ; CODE XREF: healHitPoints+18↑j
                 pop     ax
@@ -5091,15 +5091,15 @@ healHitPoints   endp
 addExperienceClamped proc near          ; CODE XREF: applyCombatDamage+4D↓p
                 pushf
                 push    ax
-                add     al, [bx+1Eh]
+                add     al, byte ptr [bx+RosterEntry._experience]
                 daa
-                mov     [bx+1Eh], al
+                mov     byte ptr [bx+RosterEntry._experience], al
                 mov     al, [bx+1Fh]
                 adc     al, 0
                 daa
                 mov     [bx+1Fh], al
                 jnb     short loc_15D64
-                mov     word ptr [bx+1Eh], 9999h
+                mov     [bx+RosterEntry._experience], 9999h
 
 loc_15D64:                              ; CODE XREF: addExperienceClamped+12↑j
                 pop     ax
@@ -5114,15 +5114,15 @@ addExperienceClamped endp
 addGoldClamped  proc near               ; CODE XREF: generateChestLoot+31↓p
                 pushf
                 push    ax
-                add     al, [bx+23h]
+                add     al, byte ptr [bx+RosterEntry._gold]
                 daa
-                mov     [bx+23h], al
+                mov     byte ptr [bx+RosterEntry._gold], al
                 mov     al, [bx+24h]
                 adc     al, 0
                 daa
                 mov     [bx+24h], al
                 jnb     short loc_15D80
-                mov     word ptr [bx+23h], 9999h
+                mov     [bx+RosterEntry._gold], 9999h
 
 loc_15D80:                              ; CODE XREF: addGoldClamped+12↑j
                 pop     ax
@@ -5136,7 +5136,7 @@ addGoldClamped  endp
 
 castSpell       proc near               ; CODE XREF: readAndDispatchCommand-5DF4↑p
                                         ; updateMonsterAI+69AC↓p
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 cmp     al, 44h ; 'D'
                 jz      short loc_15DC9
                 cmp     al, 52h ; 'R'
@@ -5228,12 +5228,12 @@ loc_15E25:                              ; CODE XREF: castSpell+99↑j
                 mov     cl, 4
                 shl     ah, cl
                 or      al, ah
-                cmp     al, [bx+19h]
+                cmp     al, [bx+RosterEntry._magicPoints]
                 ja      short loc_15E6D
-                xchg    al, [bx+19h]
-                sub     al, [bx+19h]
+                xchg    al, [bx+RosterEntry._magicPoints]
+                sub     al, [bx+RosterEntry._magicPoints]
                 das
-                mov     [bx+19h], al
+                mov     [bx+RosterEntry._magicPoints], al
                 call    scrollMessageWindow
                 mov     al, dl
                 add     al, dh
@@ -5794,11 +5794,11 @@ spellAlcort:
                 call    selectPlayer
                 jz      short loc_16230
                 dec     al
-                cmp     byte ptr [bx+11h], 50h ; 'P'
+                cmp     [bx+RosterEntry._status], 50h ; 'P'
                 jnz     short loc_1622D
                 call    invertScreenRegion
                 call    playSpellCastFanfare
-                mov     byte ptr [bx+11h], 47h ; 'G'
+                mov     [bx+RosterEntry._status], 47h ; 'G'
                 call    invertScreenRegion
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
@@ -5809,7 +5809,7 @@ loc_1622D:                              ; CODE XREF: seg000:621B↑j
 
 loc_16230:                              ; CODE XREF: seg000:6213↑j
                 mov     al, 35h ; '5'
-                add     al, [bx+19h]
+                add     al, [bx+RosterEntry._magicPoints]
                 daa
                 mov     [bx+19h], al
                 jmp     loc_15E69
@@ -6023,7 +6023,7 @@ loc_16386:                              ; CODE XREF: enterShrine+1B↑j
                 shl     si, 1
                 mov     si, [si+5993h]
                 call    printGameText
-                mov     al, [bx+16h]
+                mov     al, [bx+RosterEntry._race]
                 mov     cx, 5
                 lea     di, byte_158CD
                 repne scasb
@@ -6048,7 +6048,7 @@ loc_16386:                              ; CODE XREF: enterShrine+1B↑j
                 sub     al, ah
                 das
                 mov     [bx+24h], al
-                mov     al, [bx+di+12h]
+                mov     al, [bx+di+RosterEntry._strength]
                 add     al, ah
                 daa
                 jb      short loc_16403
@@ -6059,7 +6059,7 @@ loc_16403:                              ; CODE XREF: enterShrine+97↑j
                 mov     al, cl
 
 loc_16405:                              ; CODE XREF: enterShrine+9B↑j
-                mov     [bx+di+12h], al
+                mov     [bx+di+RosterEntry._strength], al
                 lea     si, aShazam     ; "\nShazam!\n"
                 call    printGameText
                 mov     ax, bp
@@ -7075,20 +7075,20 @@ damageCharacterHP proc near             ; CODE XREF: processPartyTurnEffects+C2�
 loc_16BCB:                              ; CODE XREF: readAndDispatchCommand:loc_16B60↑j
                 push    ax
                 mov     cl, al
-                mov     ax, [bx+1Ah]
+                mov     ax, [bx+RosterEntry._hitPoints]
                 sub     al, cl
                 das
                 xchg    al, ah
                 sbb     al, 0
                 das
                 xchg    al, ah
-                mov     [bx+1Ah], ax
+                mov     [bx+RosterEntry._hitPoints], ax
 
 loc_16BDE:                              ; CODE XREF: readAndDispatchCommand-FE6↑j
                 mov     ch, 0
                 jnb     short loc_16BF0
-                mov     byte ptr [bx+11h], 44h ; 'D'
-                mov     word ptr [bx+1Ah], 0
+                mov     [bx+RosterEntry._status], 44h ; 'D'
+                mov     [bx+RosterEntry._hitPoints], 0
                 call    autoSaveGameState
                 mov     ch, 0FFh
 
@@ -7136,9 +7136,9 @@ isCharacterAlive proc near              ; CODE XREF: readAndDispatchCommand-5DFE
                                         ; readAndDispatchCommand-5BF7↑p ...
                 pushf
                 mov     al, 0
-                cmp     byte ptr [bx+11h], 47h ; 'G'
+                cmp     [bx+RosterEntry._status], 47h ; 'G'
                 jz      short loc_16C25
-                cmp     byte ptr [bx+11h], 50h ; 'P'
+                cmp     [bx+RosterEntry._status], 50h ; 'P'
                 jz      short loc_16C25
                 mov     al, 0FFh
 
@@ -7293,19 +7293,19 @@ loc_16CD3:                              ; CODE XREF: drawPartyStatusBar+89↓j
                 sub     al, cl
                 call    setCursorForPartyRow
                 mov     byte ptr word_12A90, 26h ; '&'
-                mov     al, [bx+11h]
+                mov     al, [bx+RosterEntry._status]
                 call    writeCharacter
                 mov     byte ptr word_12A90, 19h
                 inc     byte ptr word_12A90+1
-                mov     al, [bx+18h]
+                mov     al, [bx+RosterEntry._sex]
                 call    writeCharacter
-                mov     al, [bx+16h]
+                mov     al, [bx+RosterEntry._race]
                 call    writeCharacter
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 call    writeCharacter
                 lea     si, aM          ; " M:"
                 call    writeStringPreserveCx
-                mov     al, [bx+19h]
+                mov     al, [bx+RosterEntry._magicPoints]
                 call    printHexByte
                 lea     si, asc_16AE2   ; " L:"
                 call    writeStringPreserveCx
@@ -7321,11 +7321,11 @@ loc_16D23:                              ; CODE XREF: drawPartyStatusBar+5C↑j
                 mov     byte ptr word_12A90, 19h
                 lea     si, byte_16AE6
                 call    writeStringPreserveCx
-                mov     ax, [bx+1Ah]
+                mov     ax, [bx+RosterEntry._hitPoints]
                 call    printHexWord
                 lea     si, loc_16AE8+1
                 call    writeStringPreserveCx
-                mov     ax, [bx+21h]
+                mov     ax, [bx+RosterEntry._food]
                 call    printHexWord
 
 loc_16D49:                              ; CODE XREF: drawPartyStatusBar+13↑j
@@ -7422,23 +7422,23 @@ showZtats       proc near               ; CODE XREF: readAndDispatchCommand-5ADD
                 call    printGameText
                 lea     si, aStr        ; "\nStr..."
                 call    printGameText
-                mov     al, [di+12h]
+                mov     al, [di+RosterEntry._strength]
                 call    printHexByte
                 lea     si, aDex        ; "\nDex..."
                 call    printGameText
-                mov     al, [di+13h]
+                mov     al, [di+RosterEntry._dexterity]
                 call    printHexByte
                 lea     si, aInt        ; "\nInt..."
                 call    printGameText
-                mov     al, [di+14h]
+                mov     al, [di+RosterEntry._intelligence]
                 call    printHexByte
                 lea     si, aWis        ; "\nWis..."
                 call    printGameText
-                mov     al, [di+15h]
+                mov     al, [di+RosterEntry._wisdom]
                 call    printHexByte
                 lea     si, aHP         ; "\nH.P..."
                 call    printGameText
-                mov     ax, [di+1Ah]
+                mov     ax, [di+RosterEntry._hitPoints]
                 call    printHexWord
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7449,7 +7449,7 @@ showZtats       proc near               ; CODE XREF: readAndDispatchCommand-5ADD
 loc_16E1C:                              ; CODE XREF: showZtats+56↑j
                 lea     si, aHM         ; "\nH.M..."
                 call    printGameText
-                mov     ax, [di+1Ch]
+                mov     ax, [di+RosterEntry._maxHitPoints]
                 call    printHexWord
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7460,7 +7460,7 @@ loc_16E1C:                              ; CODE XREF: showZtats+56↑j
 loc_16E33:                              ; CODE XREF: showZtats+6D↑j
                 lea     si, aGold       ; "\nGold: "
                 call    printGameText
-                mov     ax, [di+23h]
+                mov     ax, [di+RosterEntry._gold]
                 call    printHexWord
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7471,7 +7471,7 @@ loc_16E33:                              ; CODE XREF: showZtats+6D↑j
 loc_16E4A:                              ; CODE XREF: showZtats+84↑j
                 lea     si, aExp        ; "\nExp..."
                 call    printGameText
-                mov     ax, [di+1Eh]
+                mov     ax, [di+RosterEntry._experience]
                 call    printHexWord
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7482,7 +7482,7 @@ loc_16E4A:                              ; CODE XREF: showZtats+84↑j
 loc_16E61:                              ; CODE XREF: showZtats+9B↑j
                 lea     si, aGems       ; "\nGems.."
                 call    printGameText
-                mov     al, [di+25h]
+                mov     al, [di+RosterEntry._gems]
                 call    printHexByte
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7493,7 +7493,7 @@ loc_16E61:                              ; CODE XREF: showZtats+9B↑j
 loc_16E78:                              ; CODE XREF: showZtats+B2↑j
                 lea     si, aKeys       ; "\nKeys.."
                 call    printGameText
-                mov     al, [di+26h]
+                mov     al, [di+RosterEntry._keys]
                 call    printHexByte
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7504,7 +7504,7 @@ loc_16E78:                              ; CODE XREF: showZtats+B2↑j
 loc_16E8F:                              ; CODE XREF: showZtats+C9↑j
                 lea     si, aPowd       ; "\nPowd.."
                 call    printGameText
-                mov     al, [di+27h]
+                mov     al, [di+RosterEntry._powder]
                 call    printHexByte
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7515,7 +7515,7 @@ loc_16E8F:                              ; CODE XREF: showZtats+C9↑j
 loc_16EA6:                              ; CODE XREF: showZtats+E0↑j
                 lea     si, aTrch       ; "\nTrch.."
                 call    printGameText
-                mov     al, [di+0Fh]
+                mov     al, [di+RosterEntry._torches]
                 call    printHexByte
                 call    waitForContinueOrCancel
                 cmp     al, 0
@@ -7525,7 +7525,7 @@ loc_16EA6:                              ; CODE XREF: showZtats+E0↑j
 
 loc_16EBD:                              ; CODE XREF: showZtats+F7↑j
                 mov     cx, 8
-                mov     ah, [di+0Eh]
+                mov     ah, [di+RosterEntry._marksAndCards]
                 mov     bx, 0
 
 loc_16EC6:                              ; CODE XREF: showZtats+11D↓j
@@ -7545,7 +7545,7 @@ loc_16EDB:                              ; CODE XREF: showZtats+107↑j
                 loop    loc_16EC6
                 lea     si, aWeapon     ; "\nWeapon:"
                 call    printGameText
-                mov     al, [di+30h]
+                mov     al, [di+RosterEntry._weaponIndex]
                 add     al, 41h ; 'A'
                 call    printNameByIndex
                 call    waitForContinueOrCancel
@@ -7557,7 +7557,7 @@ loc_16EDB:                              ; CODE XREF: showZtats+107↑j
 loc_16EF9:                              ; CODE XREF: showZtats+133↑j
                 lea     si, aArmour     ; "\nArmour:"
                 call    printGameText
-                mov     al, [di+28h]
+                mov     al, [di+RosterEntry._armourIndex]
                 add     al, 51h ; 'Q'
                 call    printNameByIndex
                 call    waitForContinueOrCancel
@@ -7572,10 +7572,10 @@ loc_16F12:                              ; CODE XREF: showZtats+14C↑j
                 mov     bx, 0Fh
 
 loc_16F1C:                              ; CODE XREF: showZtats+195↓j
-                cmp     byte ptr [bx+di+30h], 0
+                cmp     [bx+di+RosterEntry._weaponIndex], 0
                 jz      short loc_16F54
                 call    scrollMessageWindow
-                mov     al, [bx+di+30h]
+                mov     al, [bx+di+RosterEntry._weaponIndex]
                 call    printHexByte
                 mov     al, 2Dh ; '-'
                 call    writeCharacter
@@ -7603,10 +7603,10 @@ loc_16F54:                              ; CODE XREF: showZtats+15F↑j
                 mov     bx, 7
 
 loc_16F62:                              ; CODE XREF: showZtats+1DB↓j
-                cmp     byte ptr [bx+di+28h], 0
+                cmp     [bx+di+RosterEntry._armourIndex], 0
                 jz      short loc_16F9A
                 call    scrollMessageWindow
-                mov     al, [bx+di+28h]
+                mov     al, [bx+di+RosterEntry._armourIndex]
                 call    printHexByte
                 mov     al, 2Dh ; '-'
                 call    writeCharacter
@@ -7719,67 +7719,67 @@ loc_1700B:                              ; CODE XREF: processPartyTurnEffects+25�
 ; ---------------------------------------------------------------------------
 
 loc_17013:                              ; CODE XREF: processPartyTurnEffects+2F↑j
-                cmp     byte ptr [bx+17h], 57h ; 'W'
+                cmp     [bx+RosterEntry._class], 57h ; 'W'
                 jnz     short loc_17024
-                mov     al, [bx+19h]
-                cmp     al, [bx+14h]
+                mov     al, [bx+RosterEntry._magicPoints]
+                cmp     al, [bx+RosterEntry._intelligence]
                 jnb     short loc_17024
                 call    regenerateMagicPoint
 
 loc_17024:                              ; CODE XREF: processPartyTurnEffects+38↑j
                                         ; processPartyTurnEffects+40↑j
-                cmp     byte ptr [bx+17h], 43h ; 'C'
+                cmp     [bx+RosterEntry._class], 43h ; 'C'
                 jnz     short loc_17035
-                mov     al, [bx+19h]
-                cmp     al, [bx+15h]
+                mov     al, [bx+RosterEntry._magicPoints]
+                cmp     al, [bx+RosterEntry._wisdom]
                 jnb     short loc_17035
                 call    regenerateMagicPoint
 
 loc_17035:                              ; CODE XREF: processPartyTurnEffects+49↑j
                                         ; processPartyTurnEffects+51↑j
-                cmp     byte ptr [bx+17h], 4Ch ; 'L'
+                cmp     [bx+RosterEntry._class], 4Ch ; 'L'
                 jz      short loc_17047
-                cmp     byte ptr [bx+17h], 44h ; 'D'
+                cmp     [bx+RosterEntry._class], 44h ; 'D'
                 jz      short loc_17047
-                cmp     byte ptr [bx+17h], 41h ; 'A'
+                cmp     [bx+RosterEntry._class], 41h ; 'A'
                 jnz     short loc_17055
 
 loc_17047:                              ; CODE XREF: processPartyTurnEffects+5A↑j
                                         ; processPartyTurnEffects+60↑j
-                mov     al, [bx+14h]
+                mov     al, [bx+RosterEntry._intelligence]
                 call    computeMaxMagicPointsFromAttribute
-                cmp     al, [bx+19h]
+                cmp     al, [bx+RosterEntry._magicPoints]
                 jbe     short loc_17055
                 call    regenerateMagicPoint
 
 loc_17055:                              ; CODE XREF: processPartyTurnEffects+66↑j
                                         ; processPartyTurnEffects+71↑j
-                cmp     byte ptr [bx+17h], 50h ; 'P'
+                cmp     [bx+RosterEntry._class], 50h ; 'P'
                 jz      short loc_17067
-                cmp     byte ptr [bx+17h], 49h ; 'I'
+                cmp     [bx+RosterEntry._class], 49h ; 'I'
                 jz      short loc_17067
-                cmp     byte ptr [bx+17h], 44h ; 'D'
+                cmp     [bx+RosterEntry._class], 44h ; 'D'
                 jnz     short loc_17075
 
 loc_17067:                              ; CODE XREF: processPartyTurnEffects+7A↑j
                                         ; processPartyTurnEffects+80↑j
-                mov     al, [bx+15h]
+                mov     al, [bx+RosterEntry._wisdom]
                 call    computeMaxMagicPointsFromAttribute
-                cmp     al, [bx+19h]
+                cmp     al, [bx+RosterEntry._magicPoints]
                 jbe     short loc_17075
                 call    regenerateMagicPoint
 
 loc_17075:                              ; CODE XREF: processPartyTurnEffects+86↑j
                                         ; processPartyTurnEffects+91↑j
-                cmp     byte ptr [bx+17h], 52h ; 'R'
+                cmp     [bx+RosterEntry._class], 52h ; 'R'
                 jnz     short loc_17094
-                mov     al, [bx+15h]
+                mov     al, [bx+RosterEntry._wisdom]
                 call    computeMaxMagicPointsFromAttribute
-                cmp     al, [bx+19h]
+                cmp     al, [bx+RosterEntry._magicPoints]
                 jbe     short loc_17094
-                mov     al, [bx+14h]
+                mov     al, [bx+RosterEntry._intelligence]
                 call    computeMaxMagicPointsFromAttribute
-                cmp     al, [bx+19h]
+                cmp     al, [bx+RosterEntry._magicPoints]
                 jbe     short loc_17094
                 call    regenerateMagicPoint
 
@@ -7787,7 +7787,7 @@ loc_17094:                              ; CODE XREF: processPartyTurnEffects+9A�
                                         ; processPartyTurnEffects+A5↑j ...
                 mov     al, 10h
                 call    applyHungerTick
-                cmp     byte ptr [bx+11h], 50h ; 'P'
+                cmp     [bx+RosterEntry._status], 50h ; 'P'
                 jnz     short loc_170B5
                 mov     al, 1
                 call    damageCharacterHP
@@ -7801,8 +7801,8 @@ loc_17094:                              ; CODE XREF: processPartyTurnEffects+9A�
 loc_170B5:                              ; CODE XREF: processPartyTurnEffects+BE↑j
                 cmp     byte_164A3, 0
                 jnz     short loc_170D1
-                mov     ax, [bx+1Ah]
-                cmp     ax, [bx+1Ch]
+                mov     ax, [bx+RosterEntry._hitPoints]
+                cmp     ax, [bx+RosterEntry._maxHitPoints]
                 jnb     short loc_170D1
                 add     al, 1
                 daa
@@ -7810,7 +7810,7 @@ loc_170B5:                              ; CODE XREF: processPartyTurnEffects+BE�
                 adc     al, 0
                 daa
                 xchg    ah, al
-                mov     [bx+1Ah], ax
+                mov     [bx+RosterEntry._hitPoints], ax
 
 loc_170D1:                              ; CODE XREF: processPartyTurnEffects+31↑j
                                         ; processPartyTurnEffects+DB↑j ...
@@ -7842,20 +7842,20 @@ applyHungerTick proc near               ; CODE XREF: processPartyTurnEffects+B7�
                 push    cx
                 push    si
                 mov     ah, al
-                mov     al, [bx+20h]
+                mov     al, [bx+RosterEntry._foodSubCounter]
                 sub     al, ah
                 das
-                mov     [bx+20h], al
-                mov     ax, [bx+21h]
+                mov     [bx+RosterEntry._foodSubCounter], al
+                mov     ax, [bx+RosterEntry._food]
                 sbb     al, 0
                 das
                 xchg    al, ah
                 sbb     al, 0
                 das
                 xchg    al, ah
-                mov     [bx+21h], ax
+                mov     [bx+RosterEntry._food], ax
                 jnb     short loc_17131
-                mov     word ptr [bx+21h], 0
+                mov     [bx+RosterEntry._food], 0
                 lea     si, aStarving   ; "Starving!\n"
                 call    printGameText
                 lea     si, byte_114CC
@@ -7890,10 +7890,10 @@ regenerateMagicPoint proc near          ; CODE XREF: processPartyTurnEffects+42�
                 push    ax
                 call    isCharacterAlive
                 jnz     short loc_17146
-                mov     al, [bx+19h]
+                mov     al, [bx+RosterEntry._magicPoints]
                 add     al, 1
                 daa
-                mov     [bx+19h], al
+                mov     [bx+RosterEntry._magicPoints], al
 
 loc_17146:                              ; CODE XREF: regenerateMagicPoint+5↑j
                 pop     ax
@@ -8464,7 +8464,7 @@ cmdYell:                                ; CODE XREF: readAndDispatchCommand-5F83
                 pop     bx
                 cmp     al, 0FFh
                 jnz     short loc_174CC
-                mov     al, [bx+0Eh]
+                mov     al, [bx+RosterEntry._marksAndCards]
                 and     al, 40h
                 jz      short loc_174CC
                 cmp     byte_114BC, 0
@@ -8627,13 +8627,13 @@ loc_175A9:                              ; CODE XREF: readAndDispatchCommand-624�
                 jz      short loc_175EF
                 cmp     byte ptr [bx+1280h], 48h ; 'H'
                 jnz     short loc_175EF
-                mov     ax, [di+23h]
+                mov     ax, [di+RosterEntry._gold]
                 xchg    al, ah
                 sub     al, 1
                 das
                 xchg    al, ah
                 jb      short loc_175F9
-                mov     [di+23h], ax
+                mov     [di+RosterEntry._gold], ax
                 mov     ah, [bx+12A0h]
                 mov     dh, [bx+12E0h]
                 mov     dl, [bx+12C0h]
@@ -8670,7 +8670,7 @@ obtainCard:                             ; CODE XREF: readAndDispatchCommand-624�
                 and     cl, 3
                 mov     al, 1
                 shl     al, cl
-                or      [di+0Eh], al
+                or      [di+RosterEntry._marksAndCards], al
                 lea     si, aACardWithStran ; "A card, with\nstrange marks!\n"
                 call    printGameText
                 jmp     short loc_1762C
@@ -8727,7 +8727,7 @@ attemptExodusSequence:                  ; CODE XREF: readAndDispatchCommand-50F�
                 mov     ah, 1
                 mov     cl, bl
                 shl     ah, cl
-                test    [di+0Eh], ah
+                test    [di+RosterEntry._marksAndCards], ah
                 jz      short loc_176BF
                 mov     ah, bl
                 add     ah, 1Eh
@@ -8773,7 +8773,7 @@ loc_176C9:                              ; CODE XREF: readAndDispatchCommand-4CC�
                 call    playSoundEffect
                 mov     ax, bp
                 call    invertScreenRegion
-                mov     word ptr [di+1Ah], 0
+                mov     [di+RosterEntry._hitPoints], 0
                 mov     bx, di
                 mov     al, 0FFh
                 call    damageCharacterHP
@@ -9791,7 +9791,7 @@ readyWeapon     proc near               ; CODE XREF: readAndDispatchCommand+2EC�
                 mov     cx, 0Bh
                 mov     si, cx
                 lea     di, aFcwtpblidardir ; "FCWTPBLIDARDirect? "
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 repne scasb
                 sub     si, cx
                 dec     si
@@ -9824,13 +9824,13 @@ loc_17E9E:                              ; CODE XREF: readyWeapon+50↑j
                 jz      short loc_17EAE
                 mov     ah, 0
                 add     bx, ax
-                cmp     byte ptr [bx+30h], 0
+                cmp     [bx+RosterEntry._weaponIndex], 0
                 jz      short loc_17ED3
 
 loc_17EAE:                              ; CODE XREF: readyWeapon+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
                 call    printGameText
-                mov     [di+30h], al
+                mov     [di+RosterEntry._weaponIndex], al
 
 loc_17EB8:                              ; CODE XREF: readyWeapon+7B↓j
                                         ; readyWeapon+89↓j ...
@@ -9906,7 +9906,7 @@ wearArmour      proc near               ; CODE XREF: readAndDispatchCommand+39D�
                 mov     cx, 0Bh
                 mov     si, cx
                 lea     di, aFcwtpblidardir ; "FCWTPBLIDARDirect? "
-                mov     al, [bx+17h]
+                mov     al, [bx+RosterEntry._class]
                 repne scasb
                 sub     si, cx
                 dec     si
@@ -9939,13 +9939,13 @@ loc_17F50:                              ; CODE XREF: wearArmour+50↑j
                 jz      short loc_17F60
                 mov     ah, 0
                 add     bx, ax
-                cmp     byte ptr [bx+28h], 0
+                cmp     [bx+RosterEntry._armourIndex], 0
                 jz      short loc_17F85
 
 loc_17F60:                              ; CODE XREF: wearArmour+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
                 call    printGameText
-                mov     [di+28h], al
+                mov     [di+RosterEntry._armourIndex], al
 
 loc_17F6A:                              ; CODE XREF: wearArmour+7B↓j
                                         ; wearArmour+89↓j ...
@@ -10138,7 +10138,7 @@ loc_1807B:                              ; CODE XREF: readAndDispatchCommand+4ED�
                 jnb     short loc_180C5
                 cmp     al, 5
                 jb      short loc_1809C
-                mov     ah, [bx+0Eh]
+                mov     ah, [bx+RosterEntry._marksAndCards]
                 and     ah, 80h
                 jz      short loc_180BB
 
@@ -10226,12 +10226,12 @@ loc_180F6:                              ; CODE XREF: generateChestLoot+18↑j
                 call    scrollMessageWindow
                 mov     bl, dl
                 mov     bh, 0
-                mov     al, [bx+di+30h]
+                mov     al, [bx+di+RosterEntry._weaponIndex]
                 add     al, 1
                 daa
-                mov     [bx+di+30h], al
+                mov     [bx+di+RosterEntry._weaponIndex], al
                 jnb     short loc_18189
-                mov     byte ptr [bx+di+30h], 99h
+                mov     [bx+di+RosterEntry._weaponIndex], 99h
                 jmp     short loc_18189
 ; ---------------------------------------------------------------------------
 
@@ -10253,12 +10253,12 @@ loc_18151:                              ; CODE XREF: generateChestLoot+44↑j
                 call    scrollMessageWindow
                 mov     bl, dl
                 mov     bh, 0
-                mov     al, [bx+di+28h]
+                mov     al, [bx+di+RosterEntry._armourIndex]
                 add     al, 1
                 daa
-                mov     [bx+di+28h], al
+                mov     [bx+di+RosterEntry._armourIndex], al
                 jnb     short loc_18189
-                mov     byte ptr [bx+di+28h], 99h
+                mov     [bx+di+RosterEntry._armourIndex], 99h
 
 loc_18189:                              ; CODE XREF: generateChestLoot+3C↑j
                                         ; generateChestLoot+70↑j ...
@@ -10367,7 +10367,7 @@ loc_18217:                              ; CODE XREF: readAndDispatchCommand+6E4�
                 call    playSoundEffect
                 mov     al, cl
                 call    invertScreenRegion
-                mov     byte ptr [bx+11h], 50h ; 'P'
+                mov     [bx+RosterEntry._status], 50h ; 'P'
 
 loc_1822F:                              ; CODE XREF: readAndDispatchCommand+6C6↑j
                 add     bx, 40h ; '@'
@@ -10411,7 +10411,7 @@ loc_1826D:                              ; CODE XREF: readAndDispatchCommand+6A3�
                 call    playSoundEffect
                 mov     ax, bp
                 call    invertScreenRegion
-                mov     byte ptr [di+11h], 50h ; 'P'
+                mov     [di+RosterEntry._status], 50h ; 'P'
                 jmp     short loc_182A1
 ; ---------------------------------------------------------------------------
 
@@ -11077,9 +11077,9 @@ loc_189BD:                              ; CODE XREF: updateMonsterAI+6580↑j
                 lea     si, [si+14CCh]
 
 loc_189EC:                              ; CODE XREF: updateMonsterAI+6682↓j
-                cmp     byte ptr [si+11h], 47h ; 'G'
+                cmp     [si+RosterEntry._status], 47h ; 'G'
                 jz      short loc_18A04
-                cmp     byte ptr [si+11h], 50h ; 'P'
+                cmp     [si+RosterEntry._status], 50h ; 'P'
                 jz      short loc_18A04
                 mov     byte ptr [di+0A0h], 0FFh
                 mov     byte ptr [di+0A4h], 0FFh
@@ -11090,7 +11090,7 @@ loc_18A04:                              ; CODE XREF: updateMonsterAI+664B↑j
                                         ; updateMonsterAI+6651↑j
                 mov     bl, [di+0A0h]
                 mov     bh, [di+0A4h]
-                mov     al, [si+17h]
+                mov     al, [si+RosterEntry._class]
                 call    lookupWeaponGlyph
                 mov     [di+0ACh], al
                 call    computeAnimTableByte
@@ -11586,12 +11586,12 @@ combatCmdNegateTime:                    ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mul     ah
                 mov     bx, ax
                 lea     bx, [bx+14CCh]
-                mov     al, [bx+27h]
+                mov     al, [bx+RosterEntry._powder]
                 cmp     al, 0
                 jz      short loc_18D80
                 sub     al, 1
                 das
-                mov     [bx+27h], al
+                mov     [bx+RosterEntry._powder], al
                 mov     _negateTimeDuration, 0Ah
                 jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
@@ -11625,7 +11625,7 @@ combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mul     ah
                 mov     si, ax
                 lea     si, [si+14CCh]
-                mov     al, [si+30h]
+                mov     al, [si+RosterEntry._weaponIndex]
                 add     al, 41h ; 'A'
                 call    printNameByIndex
                 mov     di, si
@@ -11642,7 +11642,7 @@ combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mov     bh, 6
                 mov     al, 0FDh
                 call    playSoundEffect
-                mov     al, [si+30h]
+                mov     al, [si+RosterEntry._weaponIndex]
                 mov     bl, _currentCombatant
                 mov     bh, 0
                 lea     bx, [bx+24C4h]
@@ -11667,13 +11667,13 @@ combatCmdAttack:                        ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mov     bx, di
                 cmp     al, 1
                 jnz     short loc_18E40
-                mov     al, [si+31h]
+                mov     al, [si+RosterEntry._weaponOwned]
                 sub     al, 1
                 das
-                mov     [si+31h], al
+                mov     [si+RosterEntry._weaponOwned], al
                 cmp     al, 0
                 jnz     short loc_18E2B
-                mov     byte ptr [si+30h], 0
+                mov     [si+RosterEntry._weaponIndex], 0
 
 loc_18E2B:                              ; CODE XREF: updateMonsterAI+6A47↑j
                                         ; updateMonsterAI+6A4B↑j ...
@@ -11804,7 +11804,7 @@ loc_18EBC:                              ; CODE XREF: updateMonsterAI:loc_18E3D�
                 lea     di, [di+14CCh]
                 call    isSpecialEncounterLocation
                 jnz     short loc_18ED6
-                cmp     byte ptr [di+30h], 0Fh
+                cmp     [di+RosterEntry._weaponIndex], 0Fh
                 jz      short loc_18ED6
 
 loc_18ED4:                              ; CODE XREF: updateMonsterAI+6B4C↓j
@@ -11824,7 +11824,7 @@ loc_18ED6:                              ; CODE XREF: updateMonsterAI+6B27↑j
                 mov     cl, 4
                 shl     ah, cl
                 or      al, ah
-                cmp     al, [di+13h]
+                cmp     al, [di+RosterEntry._dexterity]
                 jnb     short loc_18ED4
 
 loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
@@ -11846,22 +11846,22 @@ loc_18EF3:                              ; CODE XREF: updateMonsterAI+6B38↑j
                 call    playSoundEffect
                 mov     [bx], ah
                 mov     bx, bp
-                mov     al, [bx+12h]
+                mov     al, [bx+RosterEntry._strength]
                 mov     ah, 0
                 mov     cl, 4
                 shl     ax, cl
-                mov     al, [bx+12h]
+                mov     al, [bx+RosterEntry._strength]
                 and     al, 0Fh
                 aad
                 or      al, 1
                 mov     dh, al
                 call    stepTimeSeededPrng
-                mov     al, [bx+12h]
+                mov     al, [bx+RosterEntry._strength]
                 shr     al, 1
                 adc     dl, al
-                mov     al, [bx+30h]
+                mov     al, [bx+RosterEntry._weaponIndex]
                 shl     al, 1
-                add     al, [bx+30h]
+                add     al, [bx+RosterEntry._weaponIndex]
                 add     al, dl
                 add     al, 4
                 xchg    di, bx
@@ -12358,11 +12358,11 @@ loc_19262:                              ; CODE XREF: attemptSpecialMonsterAttack
                 lea     si, [si+14CCh]
                 call    isSpecialEncounterLocation
                 jnz     short loc_1928A
-                cmp     byte ptr [si+28h], 7
+                cmp     [si+RosterEntry._armourIndex], 7
                 jnz     short loc_192A1
 
 loc_1928A:                              ; CODE XREF: attemptSpecialMonsterAttack+3E↑j
-                mov     dh, [si+28h]
+                mov     dh, [si+RosterEntry._armourIndex]
                 add     dh, 10h
                 call    stepTimeSeededPrng
                 cmp     dl, 8
@@ -12443,7 +12443,7 @@ applyDungeonMonsterDamage proc near     ; CODE XREF: fireDungeonProjectileAtPart
                 mov     ax, si
                 call    invertScreenRegion
                 mov     bx, dx
-                cmp     byte ptr [bx+11h], 44h ; 'D'
+                cmp     [bx+RosterEntry._status], 44h ; 'D'
                 jnz     short loc_19356
                 mov     bl, [si+2564h]
                 mov     bh, [si+2568h]
@@ -12651,7 +12651,7 @@ loc_194A0:                              ; CODE XREF: readAndDispatchCommand+1926
 loc_194AB:                              ; CODE XREF: readAndDispatchCommand+193A↑j
                 lea     si, aAhThatSNice ; jumptable 0001948E case 3
                 call    printGameText
-                mov     byte ptr [bx+11h], 47h ; 'G'
+                mov     [bx+RosterEntry._status], 47h ; 'G'
                 call    drawPartyStatusBar
                 jmp     short loc_19470
 ; ---------------------------------------------------------------------------
@@ -12659,7 +12659,7 @@ loc_194AB:                              ; CODE XREF: readAndDispatchCommand+193A
 loc_194BB:                              ; CODE XREF: readAndDispatchCommand+193A↑j
                 lea     si, aYuckHorrible ; jumptable 0001948E case 0
                 call    printGameText
-                mov     byte ptr [bx+11h], 50h ; 'P'
+                mov     [bx+RosterEntry._status], 50h ; 'P'
                 dec     cl
                 mov     al, cl
                 call    invertScreenRegion
@@ -12672,8 +12672,8 @@ loc_194BB:                              ; CODE XREF: readAndDispatchCommand+193A
 ; ---------------------------------------------------------------------------
 
 loc_194DC:                              ; CODE XREF: readAndDispatchCommand+193A↑j
-                mov     ax, [bx+1Ch]    ; jumptable 0001948E case 1
-                mov     [bx+1Ah], ax
+                mov     ax, [bx+RosterEntry._maxHitPoints] ; jumptable 0001948E case 1
+                mov     [bx+RosterEntry._hitPoints], ax
                 lea     si, aHowWonderful ; "How wonderful!\n"
                 call    printGameText
                 call    drawPartyStatusBar
@@ -12748,7 +12748,7 @@ loc_19550:                              ; CODE XREF: readAndDispatchCommand+89C�
                 add     cl, 4
                 mov     ah, 1
                 shl     ah, cl
-                or      [bx+0Eh], ah
+                or      [bx+RosterEntry._marksAndCards], ah
                 dec     al
                 call    invertScreenRegion
                 mov     ah, al
@@ -12781,14 +12781,14 @@ loc_195B3:                              ; CODE XREF: readAndDispatchCommand+89C�
                 jnz     short loc_19602
                 lea     si, aGremlins   ; "Gremlins!\n"
                 call    printGameText
-                mov     ax, [bx+21h]
+                mov     ax, [bx+RosterEntry._food]
                 xchg    al, ah
                 sub     al, 1
                 das
                 xchg    al, ah
-                mov     [bx+21h], ax
+                mov     [bx+RosterEntry._food], ax
                 jnb     short loc_19602
-                mov     word ptr [bx+21h], 0
+                mov     [bx+RosterEntry._food], 0
                 lea     si, aStarving   ; "Starving!\n"
                 call    printGameText
                 mov     al, dl
@@ -13378,20 +13378,20 @@ promptYesNo     endp
 
 deductGoldIfAffordable proc near        ; CODE XREF: showTavernMenu+3A↓p
                                         ; showGrocerMenu+31↓p ...
-                xchg    ax, [di+23h]
-                cmp     ax, [di+23h]
-                xchg    ax, [di+23h]
+                xchg    ax, [di+RosterEntry._gold]
+                cmp     ax, [di+RosterEntry._gold]
+                xchg    ax, [di+RosterEntry._gold]
                 jb      short locret_1A5AB
-                xchg    ax, [di+23h]
-                sub     al, [di+23h]
+                xchg    ax, [di+RosterEntry._gold]
+                sub     al, byte ptr [di+RosterEntry._gold]
                 das
                 xchg    al, ah
                 sbb     al, [di+24h]
                 das
                 xchg    al, ah
-                xchg    ax, [di+23h]
+                xchg    ax, [di+RosterEntry._gold]
                 jnb     short locret_1A5AB
-                mov     word ptr [di+23h], 0
+                mov     [di+RosterEntry._gold], 0
 
 locret_1A5AB:                           ; CODE XREF: deductGoldIfAffordable+9↑j
                                         ; deductGoldIfAffordable+1D↑j
@@ -13430,7 +13430,7 @@ loc_1A5B8:                              ; CODE XREF: showTavernMenu+5B↓j
 
 loc_1A5DC:                              ; CODE XREF: showTavernMenu+20↑j
                 mov     ah, 0
-                cmp     ax, [di+23h]
+                cmp     ax, [di+RosterEntry._gold]
                 jnb     short loc_1A616
                 call    scrollMessageWindow
                 call    deductGoldIfAffordable
@@ -13490,17 +13490,17 @@ showGrocerMenu  proc near               ; CODE XREF: readAndDispatchCommand:TOWN
                 call    promptForQuantity
                 cmp     ax, 0
                 jz      short loc_1A667
-                cmp     ax, [di+23h]
+                cmp     ax, [di+RosterEntry._gold]
                 ja      short loc_1A672
-                push    word ptr [di+21h]
-                xchg    ax, [di+21h]
-                add     al, [di+21h]
+                push    [di+RosterEntry._food]
+                xchg    ax, [di+RosterEntry._food]
+                add     al, byte ptr [di+RosterEntry._food]
                 daa
                 xchg    al, ah
                 adc     al, [di+22h]
                 daa
                 xchg    al, ah
-                xchg    ax, [di+21h]
+                xchg    ax, [di+RosterEntry._food]
                 jb      short loc_1A680
                 add     sp, 2
                 call    deductGoldIfAffordable
@@ -13530,7 +13530,7 @@ loc_1A680:                              ; CODE XREF: showGrocerMenu+2C↑j
                 lea     si, aTooMuchToCarry ; "\nToo much to\ncarry!\n"
                 call    printGameText
                 pop     ax
-                mov     [di+21h], ax
+                mov     [di+RosterEntry._food], ax
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1A66E
@@ -13592,7 +13592,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
-                cmp     word ptr [di+23h], 100h
+                cmp     [di+RosterEntry._gold], 100h
                 jb      short loc_1A735
                 lea     si, aCureWhom   ; "Cure whom? "
                 call    printGameText
@@ -13600,7 +13600,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 jz      short loc_1A6CE
                 dec     al
                 mov     cx, ax
-                cmp     byte ptr [bx+11h], 47h ; 'G'
+                cmp     [bx+RosterEntry._status], 47h ; 'G'
                 jz      short loc_1A743
                 mov     ax, cx
                 call    invertFullScreen
@@ -13614,9 +13614,9 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 mov     ax, cx
                 call    invertScreenRegion
                 call    invertFullScreen
-                cmp     byte ptr [bx+11h], 50h ; 'P'
+                cmp     [bx+RosterEntry._status], 50h ; 'P'
                 jnz     short loc_1A752
-                mov     byte ptr [bx+11h], 47h ; 'G'
+                mov     [bx+RosterEntry._status], 47h ; 'G'
                 mov     ax, 100h
                 call    deductGoldIfAffordable
                 jmp     short loc_1A6C4
@@ -13663,7 +13663,7 @@ templeHeal:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 call    promptYesNo
                 cmp     al, 4Eh ; 'N'
                 jz      short loc_1A72C
-                cmp     word ptr [di+23h], 200h
+                cmp     [di+RosterEntry._gold], 200h
                 jb      short loc_1A735
                 lea     si, aHealWhom   ; "Heal whom? "
                 call    printGameText
@@ -13675,10 +13675,10 @@ templeHeal:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
 loc_1A785:                              ; CODE XREF: showTempleMenu+EE↑j
                 dec     al
                 mov     cx, ax
-                mov     ax, [bx+1Ch]
-                cmp     ax, [bx+1Ah]
+                mov     ax, [bx+RosterEntry._maxHitPoints]
+                cmp     ax, [bx+RosterEntry._hitPoints]
                 jb      short loc_1A743
-                mov     [bx+1Ah], ax
+                mov     [bx+RosterEntry._hitPoints], ax
                 mov     ax, cx
                 call    invertFullScreen
                 call    invertScreenRegion
@@ -13705,7 +13705,7 @@ templeResurrect:                        ; CODE XREF: showTempleMenu:TEMPLE_COMMA
 ; ---------------------------------------------------------------------------
 
 loc_1A7C7:                              ; CODE XREF: showTempleMenu+130↑j
-                cmp     word ptr [di+23h], 500h
+                cmp     [di+RosterEntry._gold], 500h
                 jnb     short loc_1A7D1
                 jmp     loc_1A735
 ; ---------------------------------------------------------------------------
@@ -13721,13 +13721,13 @@ loc_1A7D1:                              ; CODE XREF: showTempleMenu+13A↑j
 loc_1A7E0:                              ; CODE XREF: showTempleMenu+149↑j
                 dec     al
                 mov     cx, ax
-                cmp     byte ptr [bx+11h], 47h ; 'G'
+                cmp     [bx+RosterEntry._status], 47h ; 'G'
                 jnz     short loc_1A7ED
                 jmp     loc_1A743
 ; ---------------------------------------------------------------------------
 
 loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
-                cmp     byte ptr [bx+11h], 50h ; 'P'
+                cmp     [bx+RosterEntry._status], 50h ; 'P'
                 jz      short loc_1A824
                 mov     ax, cx
                 call    invertFullScreen
@@ -13741,13 +13741,13 @@ loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 mov     ax, cx
                 call    invertScreenRegion
                 call    invertFullScreen
-                cmp     byte ptr [bx+11h], 44h ; 'D'
+                cmp     [bx+RosterEntry._status], 44h ; 'D'
                 jz      short loc_1A817
                 jmp     loc_1A752
 ; ---------------------------------------------------------------------------
 
 loc_1A817:                              ; CODE XREF: showTempleMenu+180↑j
-                mov     byte ptr [bx+11h], 47h ; 'G'
+                mov     [bx+RosterEntry._status], 47h ; 'G'
                 mov     ax, 500h
                 call    deductGoldIfAffordable
                 jmp     loc_1A6C4
@@ -13772,7 +13772,7 @@ templeRecall:                           ; CODE XREF: showTempleMenu:TEMPLE_COMMA
 ; ---------------------------------------------------------------------------
 
 loc_1A844:                              ; CODE XREF: showTempleMenu+1AD↑j
-                cmp     word ptr [di+23h], 900h
+                cmp     [di+RosterEntry._gold], 900h
                 jnb     short loc_1A84E
                 jmp     loc_1A735
 ; ---------------------------------------------------------------------------
@@ -13788,15 +13788,15 @@ loc_1A84E:                              ; CODE XREF: showTempleMenu+1B7↑j
 loc_1A85D:                              ; CODE XREF: showTempleMenu+1C6↑j
                 dec     al
                 mov     cx, ax
-                cmp     byte ptr [bx+11h], 47h ; 'G'
+                cmp     [bx+RosterEntry._status], 47h ; 'G'
                 jnz     short loc_1A86A
                 jmp     loc_1A743
 ; ---------------------------------------------------------------------------
 
 loc_1A86A:                              ; CODE XREF: showTempleMenu+1D3↑j
-                cmp     byte ptr [bx+11h], 41h ; 'A'
+                cmp     [bx+RosterEntry._status], 41h ; 'A'
                 jnz     short loc_1A896
-                mov     byte ptr [bx+11h], 47h ; 'G'
+                mov     [bx+RosterEntry._status], 47h ; 'G'
                 mov     ax, cx
                 call    invertFullScreen
                 call    invertScreenRegion
@@ -13884,14 +13884,14 @@ loc_1A902:                              ; CODE XREF: showWeaponsShopMenu+51↑j
                 sub     al, 42h ; 'B'
                 mov     bx, ax
                 mov     bh, 0
-                mov     al, [bx+di+31h]
+                mov     al, [bx+di+RosterEntry._weaponOwned]
                 cmp     al, 0
                 jz      short loc_1A961
                 mov     dl, al
                 shl     bx, 1
                 mov     ax, [bx-61E1h]
                 shr     bx, 1
-                add     al, [di+23h]
+                add     al, byte ptr [di+RosterEntry._gold]
                 daa
                 xchg    ah, al
                 adc     al, [di+24h]
@@ -13902,12 +13902,12 @@ loc_1A902:                              ; CODE XREF: showWeaponsShopMenu+51↑j
 
 loc_1A93C:                              ; CODE XREF: showWeaponsShopMenu+92↑j
                 xchg    al, ah
-                mov     [di+23h], ax
+                mov     [di+RosterEntry._gold], ax
                 mov     al, dl
                 sub     al, 1
                 das
-                mov     [bx+di+31h], al
-                mov     byte ptr [di+30h], 0
+                mov     [bx+di+RosterEntry._weaponOwned], al
+                mov     [di+RosterEntry._weaponIndex], 0
                 lea     si, aThankYou   ; "\nThank you!\n"
                 call    printGameText
                 jmp     short loc_1A8E6
@@ -13960,7 +13960,7 @@ loc_1A986:                              ; CODE XREF: showWeaponsShopMenu+D5↑j
                 sub     al, 42h ; 'B'
                 mov     bx, ax
                 mov     bh, 0
-                mov     al, [bx+di+31h]
+                mov     al, [bx+di+RosterEntry._weaponOwned]
                 cmp     al, 99h
                 jz      short loc_1A9D9
                 mov     dl, al
@@ -13972,7 +13972,7 @@ loc_1A986:                              ; CODE XREF: showWeaponsShopMenu+D5↑j
                 mov     al, dl
                 add     al, 1
                 daa
-                mov     [bx+di+31h], al
+                mov     [bx+di+RosterEntry._weaponOwned], al
                 lea     si, aHereYouAreMayI ; "\nHere you are.\nMay it serve\nyou well"...
                 call    printGameText
                 jmp     short loc_1A96A
@@ -14099,14 +14099,14 @@ loc_1AA82:                              ; CODE XREF: showArmourShopMenu+51↑j
                 sub     al, 42h ; 'B'
                 mov     bx, ax
                 mov     bh, 0
-                mov     al, [bx+di+29h]
+                mov     al, [bx+di+RosterEntry._armourOwned]
                 cmp     al, 0
                 jz      short loc_1AAE1
                 mov     dl, al
                 shl     bx, 1
                 mov     ax, [bx-612Dh]
                 shr     bx, 1
-                add     al, [di+23h]
+                add     al, byte ptr [di+RosterEntry._gold]
                 daa
                 xchg    ah, al
                 adc     al, [di+24h]
@@ -14117,12 +14117,12 @@ loc_1AA82:                              ; CODE XREF: showArmourShopMenu+51↑j
 
 loc_1AABC:                              ; CODE XREF: showArmourShopMenu+92↑j
                 xchg    al, ah
-                mov     [di+23h], ax
+                mov     [di+RosterEntry._gold], ax
                 mov     al, dl
                 sub     al, 1
                 das
-                mov     [bx+di+29h], al
-                mov     byte ptr [di+28h], 0
+                mov     [bx+di+RosterEntry._armourOwned], al
+                mov     [di+RosterEntry._armourIndex], 0
                 lea     si, aThankYou   ; "\nThank you!\n"
                 call    printGameText
                 jmp     short loc_1AA66
@@ -14175,7 +14175,7 @@ loc_1AB06:                              ; CODE XREF: showArmourShopMenu+D5↑j
                 sub     al, 42h ; 'B'
                 mov     bx, ax
                 mov     bh, 0
-                mov     al, [bx+di+29h]
+                mov     al, [bx+di+RosterEntry._armourOwned]
                 cmp     al, 99h
                 jz      short loc_1AB59
                 mov     dl, al
@@ -14187,7 +14187,7 @@ loc_1AB06:                              ; CODE XREF: showArmourShopMenu+D5↑j
                 mov     al, dl
                 add     al, 1
                 daa
-                mov     [bx+di+29h], al
+                mov     [bx+di+RosterEntry._armourOwned], al
                 lea     si, aHereYouAreMayI ; "\nHere you are.\nMay it serve\nyou well"...
                 call    printGameText
                 jmp     short loc_1AAEA
@@ -14286,7 +14286,7 @@ loc_1ABBD:                              ; CODE XREF: showGuildMenu+26↑j
 
 loc_1ABCF:                              ; CODE XREF: showGuildMenu+37↑j
                 mov     bx, ax
-                add     al, [di+25h]
+                add     al, [di+RosterEntry._gems]
                 daa
                 mov     bl, al
                 jb      short loc_1AC50
@@ -14306,7 +14306,7 @@ loc_1ABCF:                              ; CODE XREF: showGuildMenu+37↑j
                 mov     ah, ch
                 call    deductGoldIfAffordable
                 jb      short loc_1AC59
-                mov     [di+25h], bl
+                mov     [di+RosterEntry._gems], bl
                 jmp     short loc_1AC3C
 ; ---------------------------------------------------------------------------
 
@@ -14318,7 +14318,7 @@ loc_1ABFF:                              ; CODE XREF: showGuildMenu+26↑j
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
                 mov     bx, ax
-                add     al, [di+26h]
+                add     al, [di+RosterEntry._keys]
                 daa
                 mov     bl, al
                 jb      short loc_1AC50
@@ -14338,7 +14338,7 @@ loc_1ABFF:                              ; CODE XREF: showGuildMenu+26↑j
                 mov     ah, ch
                 call    deductGoldIfAffordable
                 jb      short loc_1AC59
-                mov     [di+26h], bl
+                mov     [di+RosterEntry._keys], bl
 
 loc_1AC3C:                              ; CODE XREF: showGuildMenu+6A↑j
                                         ; showGuildMenu+117↓j ...
@@ -14384,7 +14384,7 @@ loc_1AC6B:                              ; CODE XREF: showGuildMenu+26↑j
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
                 mov     bx, ax
-                add     al, [di+27h]
+                add     al, [di+RosterEntry._powder]
                 daa
                 mov     bl, al
                 jb      short loc_1AC50
@@ -14408,7 +14408,7 @@ loc_1AC6B:                              ; CODE XREF: showGuildMenu+26↑j
 ; ---------------------------------------------------------------------------
 
 loc_1ACA7:                              ; CODE XREF: showGuildMenu+110↑j
-                mov     [di+27h], bl
+                mov     [di+RosterEntry._powder], bl
                 jmp     short loc_1AC3C
 ; ---------------------------------------------------------------------------
 
@@ -14420,7 +14420,7 @@ loc_1ACAC:                              ; CODE XREF: showGuildMenu+26↑j
                 cmp     ah, 0FFh
                 jz      short loc_1AC60
                 mov     bx, ax
-                add     al, [di+0Fh]
+                add     al, [di+RosterEntry._torches]
                 daa
                 mov     bl, al
                 jb      short loc_1AC50
@@ -14444,7 +14444,7 @@ loc_1ACAC:                              ; CODE XREF: showGuildMenu+26↑j
 ; ---------------------------------------------------------------------------
 
 loc_1ACE9:                              ; CODE XREF: showGuildMenu+151↑j
-                mov     [di+0Fh], bl
+                mov     [di+RosterEntry._torches], bl
                 jmp     loc_1AC3C
 ; ---------------------------------------------------------------------------
 

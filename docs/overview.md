@@ -1622,3 +1622,57 @@ coverage: 144/144, up from 65/144 at the start of this stretch of the
 session.** Combined with `ultima.idb` (58/58) and `ultima_bootup.idb`
 (73/73), completed earlier, all three of Ultima III's chained
 executables now have every function named.
+
+## Session 2026-09-15: `RosterEntry` wired into real instructions, and a caught mistake
+
+With function-naming complete, moved to the roadmap's next flagged
+item: wiring the `RosterEntry` struct into actual instruction operands
+(`idc.op_stroff`) so the `.asm` shows `[bx+RosterEntry._hitPoints]`
+instead of raw `[bx+1Ah]`. Rather than guessing which functions to
+target, wrote `find_roster_stroff_candidates.py` — a read-only scan
+that flags every `[reg+N]` operand in the IDB whose `N` matches a
+RosterEntry member offset, grouped by function and ranked by how many
+*distinct* offsets each function touches. A function hitting several
+different confirmed offsets is very likely a real accessor; one
+hitting only a single common small offset is far more likely
+coincidental — that ranking signal did most of the filtering work by
+itself.
+
+Two categories of false positive showed up consistently in both IDBs
+and were excluded on sight: offset `0x0` (`_name`) matches are always
+noise (real `_name` access loops over multiple bytes via `readLine`,
+never a single `[reg+0]`; 0 is an extremely common displacement in
+totally unrelated code — stack-frame locals, array bases), and
+`updateLogoAnimationB`/`swapAnimTableRows` coincidentally sharing
+`_foodSubCounter`/`_keys`'s offsets despite being boot-animation code
+with nothing to do with character records.
+
+**A real mistake, caught before it mattered.** A first, uncurated pass
+over `ultima_exodus.idb` also picked up 21 sites inside what turned
+out to be a genuinely mis-disassembled data region around linear
+`0x16700`-`0x16900` — garbage 386-only instructions (`arpl`, `gs:`/
+`fs:` segment prefixes) and jumps into mid-instruction addresses like
+`loc_16773+1`, none of which are possible in this program's real
+8086/80186-era code. That first pass ran under the headless driver's
+`-NoExport` flag, on the assumption that skipping export also made it
+a safe, non-persisting dry run. It doesn't: `.idb` files are live
+paged databases that commit edits as they happen, independent of the
+driver's own final `save_database()` call — there is no "try it and
+discard" for a headless run once an `idc.*` write executes. All 21 bad
+annotations landed on disk. Caught immediately by hand-reviewing the
+*entire* result list before trusting any of it (the standard applied
+to every rename batch all session, not relaxed for a "mechanical"
+struct-wiring task), reverted cleanly via `idc.op_hex`
+(`revert_bad_stroff.py`), and re-applied with the bad region excluded.
+Final state, verified clean: **206 sites across 26 functions in
+`ultima_exodus.idb`**, **39 sites across 7 functions in
+`ultima_bootup.idb`** (`showCharacterDetails`, `handleCreateCharacter`,
+`gatherCharacterCreationInput`, `showRegister`, `handleFormParty`,
+`clearPartySelection`, `handleTerminateCharacter`), both re-exported
+and saved.
+
+The mis-disassembled data region itself is now a new, well-scoped
+flagged item of its own (see roadmap.md) — very likely a large ASCII
+text/data table IDA's analysis wrongly classified as code, the same
+general class of issue as the wind-direction arrays and command-key
+tables fixed earlier in this project, just not yet re-classified.
