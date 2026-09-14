@@ -8864,14 +8864,15 @@ DUNGEON_COMMAND_LABELS dw offset loc_177EA ; DATA XREF: sub_17B54+82F↓o
                 dw offset loc_17809
                 db 0, 78h, 22h, 78h, 2Eh, 78h, 0F0h, 77h, 10h, 78h, 19h
                 db 78h, 2Dh, 18h
-funcs_18028     dw offset sub_1A5AC     ; DATA XREF: sub_17B54+4D4↓r
-                dw offset sub_1A630
+funcs_18028     dw offset showTavernMenu
+                                        ; DATA XREF: sub_17B54:TOWN_BUILDING_TABLE↓r
+                dw offset showGrocerMenu
                 dw offset showTempleMenu
-                dw offset sub_1A8A5
-                dw offset sub_1AA25
-                dw offset sub_1AB93
-                dw offset sub_1ACFC
-                dw offset sub_1AD70
+                dw offset showWeaponsShopMenu
+                dw offset showArmourShopMenu
+                dw offset showGuildMenu
+                dw offset showOracleMenu
+                dw offset showStableMenu
 aItSDark        db 'It',27h,'s dark!',0Ah,0 ; DATA XREF: sub_17B54+7DD↓o
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -9156,7 +9157,7 @@ loc_17958:                              ; CODE XREF: sub_17B54-21F↑j
                 db 7Bh
 aNoneLeft       db 'None Left!',0Ah,0   ; DATA XREF: sub_17B54:loc_17DA8↓o
 aWhat           db '<-What?',0Ah,0      ; DATA XREF: sub_17B54:loc_17DBA↓o
-                                        ; sub_1A5AC+76↓o ...
+                                        ; showTavernMenu+76↓o ...
 aNoOneThere_0   db 'No One There',0Ah,0
 aInvalidMove    db 'Invalid Move!',0Ah,0 ; CODE XREF: sub_17B54-23F↑j
                                         ; DATA XREF: sub_17B54:loc_17DCC↓o
@@ -9557,7 +9558,7 @@ sub_17B54       endp ; sp-analysis failed
 
 
 sub_17D1A       proc near               ; CODE XREF: sub_17B54+5F↑p
-                                        ; sub_1A630+A↓p
+                                        ; showGrocerMenu+A↓p
                 pushf
                 push    bx
                 push    cx
@@ -10052,7 +10053,7 @@ cmdTransact:                            ; CODE XREF: sub_17B54-5F83↑j
                 mov     di, bp
                 cmp     cx, 0FFh
                 jnz     short loc_1801D
-                call    sub_1AD70
+                call    showStableMenu
                 jmp     short loc_1802C
 ; ---------------------------------------------------------------------------
 
@@ -10062,6 +10063,8 @@ loc_1801D:                              ; CODE XREF: sub_17B54+4C2↑j
                 mov     ah, 0
                 shl     ax, 1
                 mov     bx, ax
+
+TOWN_BUILDING_TABLE:
                 call    funcs_18028[bx]
 
 loc_1802C:                              ; CODE XREF: sub_17B54+4C7↑j
@@ -12833,31 +12836,31 @@ byte_19657      db 59h, 4Eh, 51h, 1Bh   ; DATA XREF: promptYesNo+C↓o
 byte_1965B      db 50h, 96h, 54h, 96h, 54h, 96h, 54h, 96h
                                         ; DATA XREF: promptYesNo+8↓o
 byte_19663      db 51h, 1Bh, 0, 42h, 43h, 44h, 45h, 46h, 47h, 48h, 49h
-                                        ; DATA XREF: sub_1A8A5+61↓o
-                                        ; sub_1A8A5+E5↓o
+                                        ; DATA XREF: showWeaponsShopMenu+61↓o
+                                        ; showWeaponsShopMenu+E5↓o
                 db 4Ah, 4Bh, 4Ch, 4Dh, 4Eh, 4Fh
 byte_19674      db 51h, 1Bh, 0, 42h, 43h, 44h, 45h, 46h, 47h
-                                        ; DATA XREF: sub_1AA25+61↓o
-                                        ; sub_1AA25+E5↓o
+                                        ; DATA XREF: showArmourShopMenu+61↓o
+                                        ; showArmourShopMenu+E5↓o
 byte_1967D      db 2 dup(0FFh), 2 dup(33h), 2 dup(0CCh), 2 dup(0FFh), 2 dup(33h)
                                         ; DATA XREF: sub_17B54+2977↓o
                 db 2 dup(0FFh), 2 dup(0CCh), 2 dup(0FFh), 2 dup(33h), 2 dup(0CCh)
                 db 2 dup(0FFh), 2 dup(33h), 2 dup(0FFh), 2 dup(0CCh), 2 dup(0FFh)
                 db 2 dup(33h), 2 dup(0CCh), 2 dup(0FFh), 2 dup(33h), 2 dup(0FFh)
                 db 2 dup(0CCh)
-aWelcomeToThePu db 0Ah                  ; DATA XREF: sub_1A5AC+5↓o
+aWelcomeToThePu db 0Ah                  ; DATA XREF: showTavernMenu+5↓o
                 db '   Welcome to',0Ah
                 db '    the Pub!',0Ah,0
-aHereFriendHave db 0Ah                  ; DATA XREF: sub_1A5AC:loc_1A5B8↓o
+aHereFriendHave db 0Ah                  ; DATA XREF: showTavernMenu:loc_1A5B8↓o
                 db 'Here, friend,',0Ah
                 db 'have a drink!',0Ah
                 db 'It costs 7 g.p.',0Ah
                 db 'You pay? ',0
-aLeaveMyShopYou db 0Ah                  ; DATA XREF: sub_1A5AC+22↓o
+aLeaveMyShopYou db 0Ah                  ; DATA XREF: showTavernMenu+22↓o
                 db ' Leave my shop!',0Ah
                 db '   You scum!!',0Ah,0
-aWhatCanTPayOut db 0Ah                  ; DATA XREF: sub_1A5AC:loc_1A616↓o
-                                        ; sub_1A630:loc_1A672↓o ...
+aWhatCanTPayOut db 0Ah                  ; DATA XREF: showTavernMenu:loc_1A616↓o
+                                        ; showGrocerMenu:loc_1A672↓o ...
                 db 'What? Can',27h,'t pay!',0Ah
                 db 'Out you scum!',0Ah,0
 aThankYouKindly db 0Ah
@@ -12903,25 +12906,26 @@ aSeekYeOutTheLo db 'Seek ye out the',0Ah
                 db ' Lord of Time,',0Ah
                 db 'and the one way',0Ah
                 db 'is a sure find!',0Ah,0
-aAnother        db 0Ah                  ; DATA XREF: sub_1A5AC+4C↓o
+aAnother        db 0Ah                  ; DATA XREF: showTavernMenu+4C↓o
                 db 'Another? ',0
-aItSBeenAPleasu db 'It',27h,'s been a',0Ah ; DATA XREF: sub_1A5AC+5D↓o
+aItSBeenAPleasu db 'It',27h,'s been a',0Ah
+                                        ; DATA XREF: showTavernMenu+5D↓o
                 db 'pleasure!!',0Ah,0
                 db 3Ch, 97h, 52h, 97h, 70h, 97h, 93h, 97h, 0BEh, 97h, 0
                 db 98h, 3Ch, 98h, 8Eh, 98h, 0D9h, 98h, 16h, 99h
-aYeLocalGrocerR db '    Ye local',0Ah   ; DATA XREF: sub_1A630+3↓o
+aYeLocalGrocerR db '    Ye local',0Ah   ; DATA XREF: showGrocerMenu+3↓o
                 db '     Grocer',0Ah
                 db 0Ah
                 db 'Rations:',0Ah
                 db '1 g.p. each.',0Ah
                 db 'How many would',0Ah
                 db 'you like? ',0
-aThankYouComeAg db 0Ah                  ; DATA XREF: sub_1A630:loc_1A667↓o
+aThankYouComeAg db 0Ah                  ; DATA XREF: showGrocerMenu:loc_1A667↓o
                 db 0Ah
                 db 'Thank you,',0Ah
                 db 'Come again!',0Ah,0
-aTooMuchToCarry db 0Ah                  ; DATA XREF: sub_1A630:loc_1A680↓o
-                                        ; sub_1AB93:loc_1AC50↓o
+aTooMuchToCarry db 0Ah                  ; DATA XREF: showGrocerMenu:loc_1A680↓o
+                                        ; showGuildMenu:loc_1AC50↓o
                 db 'Too much to',0Ah
                 db 'carry!',0Ah,0
 aClericalHealin db 0Ah                  ; DATA XREF: showTempleMenu+5↓o
@@ -12960,7 +12964,7 @@ aWithoutProperO db 0Ah                  ; DATA XREF: showTempleMenu:loc_1A72C↓
                 db 'cannot help!',0Ah,0
 aIMSorryButThou db 'I',27h,'m sorry, but',0Ah
                                         ; DATA XREF: showTempleMenu:loc_1A735↓o
-                                        ; sub_1AD70:loc_1ADB1↓o
+                                        ; showStableMenu:loc_1ADB1↓o
                 db 'thou hast not',0Ah
                 db 'gold enough.',0Ah,0
 aNotInjured     db 'Not injured!',0Ah,0 ; DATA XREF: showTempleMenu:loc_1A743↓o
@@ -12976,43 +12980,43 @@ byte_19BF4      db 31h, 32h, 33h, 34h, 51h, 1Bh
 byte_19BFA      db 6, 9Ch, 8, 9Ch, 0Ah, 9Ch, 0Ch, 9Ch, 0Eh, 9Ch, 0Eh, 9Ch
                                         ; DATA XREF: showTempleMenu+10↓o
                 db 31h, 0, 32h, 0, 33h, 0, 34h, 0, 51h, 0
-aBsqBuy         db 'BSQ',1Bh,'Buy',0    ; DATA XREF: sub_1A8A5+27↓o
-                                        ; sub_1AA25+27↓o
+aBsqBuy         db 'BSQ',1Bh,'Buy',0    ; DATA XREF: showWeaponsShopMenu+27↓o
+                                        ; showArmourShopMenu+27↓o
 aSell           db 'Sell',0
 byte_19C1D      db 14h, 9Ch, 18h, 9Ch, 0AFh, 78h, 0AFh, 78h
-                                        ; DATA XREF: sub_1A8A5+23↓o
-                                        ; sub_1AA25+23↓o
-aWelcomeToTheWe db 0Ah                  ; DATA XREF: sub_1A8A5+7↓o
+                                        ; DATA XREF: showWeaponsShopMenu+23↓o
+                                        ; showArmourShopMenu+23↓o
+aWelcomeToTheWe db 0Ah                  ; DATA XREF: showWeaponsShopMenu+7↓o
                 db 'Welcome to the',0Ah
                 db 'Weapons Shop!',0Ah
                 db 0Ah
                 db 'List? ',0
-aBuyOrSell      db 0Ah                  ; DATA XREF: sub_1A8A5:loc_1A8BD↓o
-                                        ; sub_1AA25:loc_1AA3D↓o
+aBuyOrSell      db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A8BD↓o
+                                        ; showArmourShopMenu:loc_1AA3D↓o
                 db 'Buy or sell?',0Ah,0
 aYourInterest   db 'Your interest?',0Ah,0
-                                        ; DATA XREF: sub_1A8A5:loc_1A96A↓o
-                                        ; sub_1AA25:loc_1AAEA↓o
-aIMVerySorryBut db 0Ah                  ; DATA XREF: sub_1A8A5:loc_1A9D0↓o
-                                        ; sub_1AA25:loc_1AB50↓o
+                                        ; DATA XREF: showWeaponsShopMenu:loc_1A96A↓o
+                                        ; showArmourShopMenu:loc_1AAEA↓o
+aIMVerySorryBut db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A9D0↓o
+                                        ; showArmourShopMenu:loc_1AB50↓o
                 db 'I',27h,'m very sorry,',0Ah
                 db 'but you haven',27h,'t',0Ah
                 db 'the gold!',0Ah,0
 aOhWellMaybeNex db 'Oh well, maybe',0Ah
                 db 'next time.',0Ah,0
-aHereYouAreMayI db 0Ah                  ; DATA XREF: sub_1A8A5+119↓o
-                                        ; sub_1AA25+119↓o
+aHereYouAreMayI db 0Ah                  ; DATA XREF: showWeaponsShopMenu+119↓o
+                                        ; showArmourShopMenu+119↓o
                 db 'Here you are.',0Ah
                 db 'May it serve',0Ah
                 db 'you well.',0Ah,0
-aForSale        db 'For sale?',0Ah,0    ; DATA XREF: sub_1A8A5:loc_1A8E6↓o
-                                        ; sub_1AA25:loc_1AA66↓o
-aYouDonTOwnOneO db 0Ah                  ; DATA XREF: sub_1A8A5:loc_1A961↓o
-                                        ; sub_1AA25:loc_1AAE1↓o
+aForSale        db 'For sale?',0Ah,0    ; DATA XREF: showWeaponsShopMenu:loc_1A8E6↓o
+                                        ; showArmourShopMenu:loc_1AA66↓o
+aYouDonTOwnOneO db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A961↓o
+                                        ; showArmourShopMenu:loc_1AAE1↓o
                 db 'You don',27h,'t own',0Ah
                 db 'one of those!',0Ah,0
-aThankYou       db 0Ah                  ; DATA XREF: sub_1A8A5+A8↓o
-                                        ; sub_1AA25+A8↓o
+aThankYou       db 0Ah                  ; DATA XREF: showWeaponsShopMenu+A8↓o
+                                        ; showArmourShopMenu+A8↓o
                 db 'Thank you!',0Ah,0
 aAvailableBDagg db 0Ah                  ; DATA XREF: sub_1A9E8+3↓o
                 db 'Available:',0Ah
@@ -13032,16 +13036,16 @@ aI2Axe400gpJ2Bo db 'I:+2 Axe  400gp',0Ah ; DATA XREF: sub_1A9E8+24↓o
                 db 'N:+4 Bow 6550gp',0
 aO4Swd4550gp    db 0Ah                  ; DATA XREF: sub_1A9E8+32↓o
                 db 'O:+4 Swd 4550gp',0Ah,0
-aTooMuchGold    db 0Ah                  ; DATA XREF: sub_1A8A5:loc_1A9C7↓o
-                                        ; sub_1AA25:loc_1AB47↓o
+aTooMuchGold    db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A9C7↓o
+                                        ; showArmourShopMenu:loc_1AB47↓o
                 db 'Too much gold!',0Ah,0
-aNoMoreRoom_0   db 0Ah                  ; DATA XREF: sub_1A8A5:loc_1A9D9↓o
-                                        ; sub_1AA25:loc_1AB59↓o
+aNoMoreRoom_0   db 0Ah                  ; DATA XREF: showWeaponsShopMenu:loc_1A9D9↓o
+                                        ; showArmourShopMenu:loc_1AB59↓o
                 db 'No more room!',0Ah,0
                 db 5, 0, 30h, 0, 60h, 0, 25h, 1, 50h, 3, 0, 2, 50h, 2
                 db 0, 4, 50h, 10h, 0, 8, 0, 12h, 0, 27h, 50h, 65h, 50h
                 db 45h
-aWelcomeToTheAr db 0Ah                  ; DATA XREF: sub_1AA25+7↓o
+aWelcomeToTheAr db 0Ah                  ; DATA XREF: showArmourShopMenu+7↓o
                 db 'Welcome to the',0Ah
                 db 'Armour Shop!',0Ah
                 db 0Ah
@@ -13057,10 +13061,10 @@ aF2chain6130gpG db 0Ah                  ; DATA XREF: sub_1AB68+1D↓o
                 db 'G:+2Plate 8250gp',0
 aU              db 'u',0
                 db 95h, 1, 75h, 5, 0, 25h, 30h, 61h, 50h, 82h
-aRadrionProphet db 0Ah                  ; DATA XREF: sub_1ACFC+5↓o
+aRadrionProphet db 0Ah                  ; DATA XREF: showOracleMenu+5↓o
                 db '    Radrion:',0Ah
                 db 'Prophet of Life!',0Ah,0
-aHowMany100gpIs db 0Ah                  ; DATA XREF: sub_1ACFC:loc_1AD08↓o
+aHowMany100gpIs db 0Ah                  ; DATA XREF: showOracleMenu:loc_1AD08↓o
                 db 'How many 100gp',0Ah
                 db 'is your',0Ah
                 db 'offering? ',0
@@ -13106,24 +13110,24 @@ aThereSeekOutTh db 'There seek out',0Ah
                 db 'the Lord of Time',0Ah
                 db 'to help you',0Ah
                 db 'if he cares.',27h,0Ah,0
-aMoreOffering   db 0Ah                  ; DATA XREF: sub_1ACFC+39↓o
+aMoreOffering   db 0Ah                  ; DATA XREF: showOracleMenu+39↓o
                 db 'More offering?',0Ah,0
-aFareTheeWellAn db 0Ah                  ; DATA XREF: sub_1ACFC+4D↓o
+aFareTheeWellAn db 0Ah                  ; DATA XREF: showOracleMenu+4D↓o
                 db 'Fare thee well',0Ah
                 db 'and good luck!',0Ah,0
                 db 22h, 9Fh, 5Eh, 9Fh, 9Ch, 9Fh, 0DAh, 9Fh, 19h, 0A0h
                 db 52h, 0A0h, 89h, 0A0h, 0CDh, 0A0h, 5, 0A1h, 44h, 0A1h
-aEquineEmporium db 0Ah                  ; DATA XREF: sub_1AD70+3↓o
+aEquineEmporium db 0Ah                  ; DATA XREF: showStableMenu+3↓o
                 db 0Ah
                 db 'Equine Emporium:',0Ah
                 db 0Ah,0
-aHorsesCost     db ' horses cost',0Ah,0 ; DATA XREF: sub_1AD70+10↓o
-a00gpWillYouBuy db '00gp. Will you',0Ah ; DATA XREF: sub_1AD70+1C↓o
+aHorsesCost     db ' horses cost',0Ah,0 ; DATA XREF: showStableMenu+10↓o
+a00gpWillYouBuy db '00gp. Will you',0Ah ; DATA XREF: showStableMenu+1C↓o
                 db 'buy? ',0
-aAhTooBadTheseA db 'Ah, too bad.',0Ah   ; DATA XREF: sub_1AD70:loc_1ADBF↓o
+aAhTooBadTheseA db 'Ah, too bad.',0Ah   ; DATA XREF: showStableMenu:loc_1ADBF↓o
                 db 'These are the',0Ah
                 db 'best in town!',0Ah,0
-aMayYouRideFast db 'May you ride',0Ah   ; DATA XREF: sub_1AD70+33↓o
+aMayYouRideFast db 'May you ride',0Ah   ; DATA XREF: showStableMenu+33↓o
                 db 'fast and true',0Ah
                 db 'friend!',0Ah,0
 aMoves          db ' moves',0Ah,0       ; DATA XREF: sub_1A46F+16↓o
@@ -13158,34 +13162,34 @@ aTorches        db 'Torches',0
 aPowders        db 'Powders',0
 aGems_0         db 'Gems',0
 byte_1A395      db 47h, 4Bh, 50h, 54h, 51h, 1Bh
-                                        ; DATA XREF: sub_1AB93+11↓o
-byte_1A39B      db 90h                  ; DATA XREF: sub_1AB93+D↓o
+                                        ; DATA XREF: showGuildMenu+11↓o
+byte_1A39B      db 90h                  ; DATA XREF: showGuildMenu+D↓o
                 db 0A3h, 7Bh, 0A3h, 88h, 0A3h, 80h, 0A3h, 0AFh, 78h, 0AFh
                 db 78h
-jpt_1ABB9       dw offset loc_1ABBD     ; DATA XREF: sub_1AB93+26↓r
+jpt_1ABB9       dw offset loc_1ABBD     ; DATA XREF: showGuildMenu+26↓r
                 dw offset loc_1ABFF     ; jump table for switch statement
                 dw offset loc_1AC6B
                 dw offset loc_1ACAC
                 dw offset loc_1ACEF
                 dw offset loc_1ACEF
 aTheGuildShopKe db 'The Guild shop:',0Ah
-                                        ; DATA XREF: sub_1AB93:loc_1AB98↓o
+                                        ; DATA XREF: showGuildMenu:loc_1AB98↓o
                 db ' Keys      50gp',0Ah
                 db ' Torches    6gp',0Ah
                 db ' Powders   90gp',0Ah
                 db ' Gems      75gp',0Ah
                 db 'Your needs:',0Ah,0
-aThankYouComeAg_0 db 0Ah                ; DATA XREF: sub_1AB93:loc_1ACEF↓o
+aThankYouComeAg_0 db 0Ah                ; DATA XREF: showGuildMenu:loc_1ACEF↓o
                 db 'Thank you,',0Ah
                 db 'come again!',0Ah,0
-aIMSorryButYouH db 0Ah                  ; DATA XREF: sub_1AB93:loc_1AC59↓o
+aIMSorryButYouH db 0Ah                  ; DATA XREF: showGuildMenu:loc_1AC59↓o
                 db 'I',27h,'m sorry,',0Ah
                 db 'but you have',0Ah
                 db 'not the funds!',0Ah,0
-aAnythingElse   db 0Ah                  ; DATA XREF: sub_1AB93:loc_1AC3C↓o
+aAnythingElse   db 0Ah                  ; DATA XREF: showGuildMenu:loc_1AC3C↓o
                 db 'Anything else?',0Ah,0
-aHowMany_0      db 0Ah                  ; DATA XREF: sub_1AB93:loc_1ABBD↓o
-                                        ; sub_1AB93:loc_1ABFF↓o ...
+aHowMany_0      db 0Ah                  ; DATA XREF: showGuildMenu:loc_1ABBD↓o
+                                        ; showGuildMenu:loc_1ABFF↓o ...
                 db 'How many? ',0
 
 ; =============== S U B R O U T I N E =======================================
@@ -13325,7 +13329,7 @@ loc_1A556:                              ; CODE XREF: sub_17B54+2A05↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-promptYesNo     proc near               ; CODE XREF: sub_1A5AC+53↓p
+promptYesNo     proc near               ; CODE XREF: showTavernMenu+53↓p
                                         ; showTempleMenu+49↓p ...
                 pushf
                 push    cx
@@ -13356,8 +13360,8 @@ promptYesNo     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-deductGoldIfAffordable proc near        ; CODE XREF: sub_1A5AC+3A↓p
-                                        ; sub_1A630+31↓p ...
+deductGoldIfAffordable proc near        ; CODE XREF: showTavernMenu+3A↓p
+                                        ; showGrocerMenu+31↓p ...
                 xchg    ax, [di+23h]
                 cmp     ax, [di+23h]
                 xchg    ax, [di+23h]
@@ -13382,7 +13386,7 @@ deductGoldIfAffordable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5AC       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showTavernMenu  proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -13392,7 +13396,7 @@ sub_1A5AC       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 lea     si, aWelcomeToThePu ; "\n   Welcome to\n    the Pub!\n"
                 call    printGameText
 
-loc_1A5B8:                              ; CODE XREF: sub_1A5AC+5B↓j
+loc_1A5B8:                              ; CODE XREF: showTavernMenu+5B↓j
                 lea     si, aHereFriendHave ; "\nHere, friend,\nhave a drink!\nIt cost"...
                 call    printGameText
                 call    promptForNumberEntry
@@ -13408,7 +13412,7 @@ loc_1A5B8:                              ; CODE XREF: sub_1A5AC+5B↓j
                 jmp     short loc_1A610
 ; ---------------------------------------------------------------------------
 
-loc_1A5DC:                              ; CODE XREF: sub_1A5AC+20↑j
+loc_1A5DC:                              ; CODE XREF: showTavernMenu+20↑j
                 mov     ah, 0
                 cmp     ax, [di+23h]
                 jnb     short loc_1A616
@@ -13429,8 +13433,8 @@ loc_1A5DC:                              ; CODE XREF: sub_1A5AC+20↑j
                 lea     si, aItSBeenAPleasu ; "It's been a\npleasure!!\n"
                 call    printGameText
 
-loc_1A610:                              ; CODE XREF: sub_1A5AC+2E↑j
-                                        ; sub_1A5AC+82↓j
+loc_1A610:                              ; CODE XREF: showTavernMenu+2E↑j
+                                        ; showTavernMenu+82↓j
                 pop     si
                 pop     dx
                 pop     cx
@@ -13439,28 +13443,28 @@ loc_1A610:                              ; CODE XREF: sub_1A5AC+2E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A616:                              ; CODE XREF: sub_1A5AC+35↑j
+loc_1A616:                              ; CODE XREF: showTavernMenu+35↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
                 call    printGameText
                 jmp     short loc_1A629
 ; ---------------------------------------------------------------------------
 
-loc_1A61F:                              ; CODE XREF: sub_1A5AC+19↑j
+loc_1A61F:                              ; CODE XREF: showTavernMenu+19↑j
                 call    sub_126F4
                 lea     si, aWhat       ; "<-What?\n"
                 call    printGameText
 
-loc_1A629:                              ; CODE XREF: sub_1A5AC+71↑j
+loc_1A629:                              ; CODE XREF: showTavernMenu+71↑j
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     short loc_1A610
-sub_1A5AC       endp
+showTavernMenu  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A630       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showGrocerMenu  proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -13486,19 +13490,19 @@ sub_1A630       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 call    deductGoldIfAffordable
                 call    drawPartyStatusBar
 
-loc_1A667:                              ; CODE XREF: sub_1A630+10↑j
+loc_1A667:                              ; CODE XREF: showGrocerMenu+10↑j
                 lea     si, aThankYouComeAg ; "\n\nThank you,\nCome again!\n"
                 call    printGameText
 
-loc_1A66E:                              ; CODE XREF: sub_1A630+4E↓j
-                                        ; sub_1A630+60↓j
+loc_1A66E:                              ; CODE XREF: showGrocerMenu+4E↓j
+                                        ; showGrocerMenu+60↓j
                 pop     si
                 pop     ax
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A672:                              ; CODE XREF: sub_1A630+15↑j
+loc_1A672:                              ; CODE XREF: showGrocerMenu+15↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -13506,7 +13510,7 @@ loc_1A672:                              ; CODE XREF: sub_1A630+15↑j
                 jmp     short loc_1A66E
 ; ---------------------------------------------------------------------------
 
-loc_1A680:                              ; CODE XREF: sub_1A630+2C↑j
+loc_1A680:                              ; CODE XREF: showGrocerMenu+2C↑j
                 lea     si, aTooMuchToCarry ; "\nToo much to\ncarry!\n"
                 call    printGameText
                 pop     ax
@@ -13514,13 +13518,13 @@ loc_1A680:                              ; CODE XREF: sub_1A630+2C↑j
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_1A66E
-sub_1A630       endp
+showGrocerMenu  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-showTempleMenu  proc near               ; CODE XREF: sub_17B54+4D4↑p
+showTempleMenu  proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -13804,7 +13808,7 @@ showTempleMenu  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A8A5       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showWeaponsShopMenu proc near           ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -13820,7 +13824,7 @@ sub_1A8A5       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 jz      short loc_1A8BD
                 call    sub_1A9E8
 
-loc_1A8BD:                              ; CODE XREF: sub_1A8A5+13↑j
+loc_1A8BD:                              ; CODE XREF: showWeaponsShopMenu+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
                 call    printGameText
                 push    di
@@ -13839,8 +13843,8 @@ loc_1A8BD:                              ; CODE XREF: sub_1A8A5+13↑j
                 jmp     loc_1A96A
 ; ---------------------------------------------------------------------------
 
-loc_1A8E6:                              ; CODE XREF: sub_1A8A5+3C↑j
-                                        ; sub_1A8A5+AF↓j
+loc_1A8E6:                              ; CODE XREF: showWeaponsShopMenu+3C↑j
+                                        ; showWeaponsShopMenu+AF↓j
                 lea     si, aForSale    ; "For sale?\n"
                 call    printGameText
                 push    di
@@ -13851,8 +13855,8 @@ loc_1A8E6:                              ; CODE XREF: sub_1A8A5+3C↑j
                 jz      short loc_1A902
                 mov     cx, 11h
 
-loc_1A902:                              ; CODE XREF: sub_1A8A5+51↑j
-                                        ; sub_1A8A5+58↑j
+loc_1A902:                              ; CODE XREF: showWeaponsShopMenu+51↑j
+                                        ; showWeaponsShopMenu+58↑j
                 lea     si, loc_17904
                 lea     di, byte_19663
                 call    getMenuChoice
@@ -13880,7 +13884,7 @@ loc_1A902:                              ; CODE XREF: sub_1A8A5+51↑j
                 jmp     loc_1A9C7
 ; ---------------------------------------------------------------------------
 
-loc_1A93C:                              ; CODE XREF: sub_1A8A5+92↑j
+loc_1A93C:                              ; CODE XREF: showWeaponsShopMenu+92↑j
                 xchg    al, ah
                 mov     [di+23h], ax
                 mov     al, dl
@@ -13893,12 +13897,12 @@ loc_1A93C:                              ; CODE XREF: sub_1A8A5+92↑j
                 jmp     short loc_1A8E6
 ; ---------------------------------------------------------------------------
 
-loc_1A956:                              ; CODE XREF: sub_1A8A5+6B↑j
-                                        ; sub_1A8A5+6F↑j ...
+loc_1A956:                              ; CODE XREF: showWeaponsShopMenu+6B↑j
+                                        ; showWeaponsShopMenu+6F↑j ...
                 call    sub_126F4
 
-loc_1A959:                              ; CODE XREF: sub_1A8A5+34↑j
-                                        ; sub_1A8A5+38↑j ...
+loc_1A959:                              ; CODE XREF: showWeaponsShopMenu+34↑j
+                                        ; showWeaponsShopMenu+38↑j ...
                 pop     di
                 pop     si
                 pop     dx
@@ -13909,14 +13913,14 @@ loc_1A959:                              ; CODE XREF: sub_1A8A5+34↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A961:                              ; CODE XREF: sub_1A8A5+7C↑j
+loc_1A961:                              ; CODE XREF: showWeaponsShopMenu+7C↑j
                 lea     si, aYouDonTOwnOneO ; "\nYou don't own\none of those!\n"
                 call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
-loc_1A96A:                              ; CODE XREF: sub_1A8A5+3E↑j
-                                        ; sub_1A8A5+120↓j
+loc_1A96A:                              ; CODE XREF: showWeaponsShopMenu+3E↑j
+                                        ; showWeaponsShopMenu+120↓j
                 lea     si, aYourInterest ; "Your interest?\n"
                 call    printGameText
                 push    di
@@ -13927,8 +13931,8 @@ loc_1A96A:                              ; CODE XREF: sub_1A8A5+3E↑j
                 jz      short loc_1A986
                 mov     cx, 11h
 
-loc_1A986:                              ; CODE XREF: sub_1A8A5+D5↑j
-                                        ; sub_1A8A5+DC↑j
+loc_1A986:                              ; CODE XREF: showWeaponsShopMenu+D5↑j
+                                        ; showWeaponsShopMenu+DC↑j
                 lea     si, loc_17904
                 lea     di, byte_19663
                 call    getMenuChoice
@@ -13958,34 +13962,34 @@ loc_1A986:                              ; CODE XREF: sub_1A8A5+D5↑j
                 jmp     short loc_1A96A
 ; ---------------------------------------------------------------------------
 
-loc_1A9C7:                              ; CODE XREF: sub_1A8A5+94↑j
+loc_1A9C7:                              ; CODE XREF: showWeaponsShopMenu+94↑j
                 lea     si, aTooMuchGold ; "\nToo much gold!\n"
                 call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
-loc_1A9D0:                              ; CODE XREF: sub_1A8A5+10F↑j
+loc_1A9D0:                              ; CODE XREF: showWeaponsShopMenu+10F↑j
                 lea     si, aIMVerySorryBut ; "\nI'm very sorry,\nbut you haven't\nthe"...
                 call    printGameText
                 jmp     short loc_1A9E0
 ; ---------------------------------------------------------------------------
 
-loc_1A9D9:                              ; CODE XREF: sub_1A8A5+100↑j
+loc_1A9D9:                              ; CODE XREF: showWeaponsShopMenu+100↑j
                 lea     si, aNoMoreRoom_0 ; "\nNo more room!\n"
                 call    printGameText
 
-loc_1A9E0:                              ; CODE XREF: sub_1A8A5+C3↑j
-                                        ; sub_1A8A5+129↑j ...
+loc_1A9E0:                              ; CODE XREF: showWeaponsShopMenu+C3↑j
+                                        ; showWeaponsShopMenu+129↑j ...
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     loc_1A959
-sub_1A8A5       endp
+showWeaponsShopMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A9E8       proc near               ; CODE XREF: sub_1A8A5+15↑p
+sub_1A9E8       proc near               ; CODE XREF: showWeaponsShopMenu+15↑p
                 pushf
                 push    ax
                 push    si
@@ -14019,7 +14023,7 @@ sub_1A9E8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA25       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showArmourShopMenu proc near            ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -14035,7 +14039,7 @@ sub_1AA25       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 jz      short loc_1AA3D
                 call    sub_1AB68
 
-loc_1AA3D:                              ; CODE XREF: sub_1AA25+13↑j
+loc_1AA3D:                              ; CODE XREF: showArmourShopMenu+13↑j
                 lea     si, aBuyOrSell  ; "\nBuy or sell?\n"
                 call    printGameText
                 push    di
@@ -14054,8 +14058,8 @@ loc_1AA3D:                              ; CODE XREF: sub_1AA25+13↑j
                 jmp     loc_1AAEA
 ; ---------------------------------------------------------------------------
 
-loc_1AA66:                              ; CODE XREF: sub_1AA25+3C↑j
-                                        ; sub_1AA25+AF↓j
+loc_1AA66:                              ; CODE XREF: showArmourShopMenu+3C↑j
+                                        ; showArmourShopMenu+AF↓j
                 lea     si, aForSale    ; "For sale?\n"
                 call    printGameText
                 push    di
@@ -14066,8 +14070,8 @@ loc_1AA66:                              ; CODE XREF: sub_1AA25+3C↑j
                 jz      short loc_1AA82
                 mov     cx, 9
 
-loc_1AA82:                              ; CODE XREF: sub_1AA25+51↑j
-                                        ; sub_1AA25+58↑j
+loc_1AA82:                              ; CODE XREF: showArmourShopMenu+51↑j
+                                        ; showArmourShopMenu+58↑j
                 lea     si, loc_17932
                 lea     di, byte_19674
                 call    getMenuChoice
@@ -14095,7 +14099,7 @@ loc_1AA82:                              ; CODE XREF: sub_1AA25+51↑j
                 jmp     loc_1AB47
 ; ---------------------------------------------------------------------------
 
-loc_1AABC:                              ; CODE XREF: sub_1AA25+92↑j
+loc_1AABC:                              ; CODE XREF: showArmourShopMenu+92↑j
                 xchg    al, ah
                 mov     [di+23h], ax
                 mov     al, dl
@@ -14108,12 +14112,12 @@ loc_1AABC:                              ; CODE XREF: sub_1AA25+92↑j
                 jmp     short loc_1AA66
 ; ---------------------------------------------------------------------------
 
-loc_1AAD6:                              ; CODE XREF: sub_1AA25+6B↑j
-                                        ; sub_1AA25+6F↑j ...
+loc_1AAD6:                              ; CODE XREF: showArmourShopMenu+6B↑j
+                                        ; showArmourShopMenu+6F↑j ...
                 call    sub_126F4
 
-loc_1AAD9:                              ; CODE XREF: sub_1AA25+34↑j
-                                        ; sub_1AA25+38↑j ...
+loc_1AAD9:                              ; CODE XREF: showArmourShopMenu+34↑j
+                                        ; showArmourShopMenu+38↑j ...
                 pop     di
                 pop     si
                 pop     dx
@@ -14124,14 +14128,14 @@ loc_1AAD9:                              ; CODE XREF: sub_1AA25+34↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AAE1:                              ; CODE XREF: sub_1AA25+7C↑j
+loc_1AAE1:                              ; CODE XREF: showArmourShopMenu+7C↑j
                 lea     si, aYouDonTOwnOneO ; "\nYou don't own\none of those!\n"
                 call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
-loc_1AAEA:                              ; CODE XREF: sub_1AA25+3E↑j
-                                        ; sub_1AA25+120↓j
+loc_1AAEA:                              ; CODE XREF: showArmourShopMenu+3E↑j
+                                        ; showArmourShopMenu+120↓j
                 lea     si, aYourInterest ; "Your interest?\n"
                 call    printGameText
                 push    di
@@ -14142,8 +14146,8 @@ loc_1AAEA:                              ; CODE XREF: sub_1AA25+3E↑j
                 jnz     short loc_1AB06
                 mov     cx, 9
 
-loc_1AB06:                              ; CODE XREF: sub_1AA25+D5↑j
-                                        ; sub_1AA25+DC↑j
+loc_1AB06:                              ; CODE XREF: showArmourShopMenu+D5↑j
+                                        ; showArmourShopMenu+DC↑j
                 lea     si, loc_17932
                 lea     di, byte_19674
                 call    getMenuChoice
@@ -14173,34 +14177,34 @@ loc_1AB06:                              ; CODE XREF: sub_1AA25+D5↑j
                 jmp     short loc_1AAEA
 ; ---------------------------------------------------------------------------
 
-loc_1AB47:                              ; CODE XREF: sub_1AA25+94↑j
+loc_1AB47:                              ; CODE XREF: showArmourShopMenu+94↑j
                 lea     si, aTooMuchGold ; "\nToo much gold!\n"
                 call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
-loc_1AB50:                              ; CODE XREF: sub_1AA25+10F↑j
+loc_1AB50:                              ; CODE XREF: showArmourShopMenu+10F↑j
                 lea     si, aIMVerySorryBut ; "\nI'm very sorry,\nbut you haven't\nthe"...
                 call    printGameText
                 jmp     short loc_1AB60
 ; ---------------------------------------------------------------------------
 
-loc_1AB59:                              ; CODE XREF: sub_1AA25+100↑j
+loc_1AB59:                              ; CODE XREF: showArmourShopMenu+100↑j
                 lea     si, aNoMoreRoom_0 ; "\nNo more room!\n"
                 call    printGameText
 
-loc_1AB60:                              ; CODE XREF: sub_1AA25+C3↑j
-                                        ; sub_1AA25+129↑j ...
+loc_1AB60:                              ; CODE XREF: showArmourShopMenu+C3↑j
+                                        ; showArmourShopMenu+129↑j ...
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     loc_1AAD9
-sub_1AA25       endp
+showArmourShopMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB68       proc near               ; CODE XREF: sub_1AA25+15↑p
+sub_1AB68       proc near               ; CODE XREF: showArmourShopMenu+15↑p
                 pushf
                 push    ax
                 push    si
@@ -14229,7 +14233,7 @@ sub_1AB68       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB93       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showGuildMenu   proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -14237,7 +14241,7 @@ sub_1AB93       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 push    si
                 push    di
 
-loc_1AB98:                              ; CODE XREF: sub_1AB93+B7↓j
+loc_1AB98:                              ; CODE XREF: showGuildMenu+B7↓j
                 lea     si, aTheGuildShopKe ; "The Guild shop:\n Keys      50gp\n Torc"...
                 call    printGameText
                 push    di
@@ -14254,7 +14258,7 @@ loc_1AB98:                              ; CODE XREF: sub_1AB93+B7↓j
                 jmp     jpt_1ABB9[bx]   ; switch jump
 ; ---------------------------------------------------------------------------
 
-loc_1ABBD:                              ; CODE XREF: sub_1AB93+26↑j
+loc_1ABBD:                              ; CODE XREF: showGuildMenu+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 0
                 call    printGameText
@@ -14264,7 +14268,7 @@ loc_1ABBD:                              ; CODE XREF: sub_1AB93+26↑j
                 jmp     loc_1AC60
 ; ---------------------------------------------------------------------------
 
-loc_1ABCF:                              ; CODE XREF: sub_1AB93+37↑j
+loc_1ABCF:                              ; CODE XREF: showGuildMenu+37↑j
                 mov     bx, ax
                 add     al, [di+25h]
                 daa
@@ -14290,7 +14294,7 @@ loc_1ABCF:                              ; CODE XREF: sub_1AB93+37↑j
                 jmp     short loc_1AC3C
 ; ---------------------------------------------------------------------------
 
-loc_1ABFF:                              ; CODE XREF: sub_1AB93+26↑j
+loc_1ABFF:                              ; CODE XREF: showGuildMenu+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 1
                 call    printGameText
@@ -14320,8 +14324,8 @@ loc_1ABFF:                              ; CODE XREF: sub_1AB93+26↑j
                 jb      short loc_1AC59
                 mov     [di+26h], bl
 
-loc_1AC3C:                              ; CODE XREF: sub_1AB93+6A↑j
-                                        ; sub_1AB93+117↓j ...
+loc_1AC3C:                              ; CODE XREF: showGuildMenu+6A↑j
+                                        ; showGuildMenu+117↓j ...
                 lea     si, aAnythingElse ; "\nAnything else?\n"
                 call    printGameText
                 call    promptYesNo
@@ -14330,33 +14334,33 @@ loc_1AC3C:                              ; CODE XREF: sub_1AB93+6A↑j
                 jmp     loc_1AB98
 ; ---------------------------------------------------------------------------
 
-loc_1AC4D:                              ; CODE XREF: sub_1AB93+B5↑j
+loc_1AC4D:                              ; CODE XREF: showGuildMenu+B5↑j
                 jmp     loc_1ACEF       ; jumptable 0001ABB9 cases 4,5
 ; ---------------------------------------------------------------------------
 
-loc_1AC50:                              ; CODE XREF: sub_1AB93+44↑j
-                                        ; sub_1AB93+83↑j ...
+loc_1AC50:                              ; CODE XREF: showGuildMenu+44↑j
+                                        ; showGuildMenu+83↑j ...
                 lea     si, aTooMuchToCarry ; "\nToo much to\ncarry!\n"
                 call    printGameText
                 jmp     short loc_1AC63
 ; ---------------------------------------------------------------------------
 
-loc_1AC59:                              ; CODE XREF: sub_1AB93+65↑j
-                                        ; sub_1AB93+A4↑j ...
+loc_1AC59:                              ; CODE XREF: showGuildMenu+65↑j
+                                        ; showGuildMenu+A4↑j ...
                 lea     si, aIMSorryButYouH ; "\nI'm sorry,\nbut you have\nnot the fun"...
                 call    printGameText
 
-loc_1AC60:                              ; CODE XREF: sub_1AB93+39↑j
-                                        ; sub_1AB93+79↑j ...
+loc_1AC60:                              ; CODE XREF: showGuildMenu+39↑j
+                                        ; showGuildMenu+79↑j ...
                 call    sub_126F4
 
-loc_1AC63:                              ; CODE XREF: sub_1AB93+C4↑j
+loc_1AC63:                              ; CODE XREF: showGuildMenu+C4↑j
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     loc_1ACF6
 ; ---------------------------------------------------------------------------
 
-loc_1AC6B:                              ; CODE XREF: sub_1AB93+26↑j
+loc_1AC6B:                              ; CODE XREF: showGuildMenu+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 2
                 call    printGameText
@@ -14387,12 +14391,12 @@ loc_1AC6B:                              ; CODE XREF: sub_1AB93+26↑j
                 jmp     short loc_1AC59
 ; ---------------------------------------------------------------------------
 
-loc_1ACA7:                              ; CODE XREF: sub_1AB93+110↑j
+loc_1ACA7:                              ; CODE XREF: showGuildMenu+110↑j
                 mov     [di+27h], bl
                 jmp     short loc_1AC3C
 ; ---------------------------------------------------------------------------
 
-loc_1ACAC:                              ; CODE XREF: sub_1AB93+26↑j
+loc_1ACAC:                              ; CODE XREF: showGuildMenu+26↑j
                                         ; DATA XREF: seg000:jpt_1ABB9↑o
                 lea     si, aHowMany_0  ; jumptable 0001ABB9 case 3
                 call    printGameText
@@ -14423,31 +14427,31 @@ loc_1ACAC:                              ; CODE XREF: sub_1AB93+26↑j
                 jmp     loc_1AC59
 ; ---------------------------------------------------------------------------
 
-loc_1ACE9:                              ; CODE XREF: sub_1AB93+151↑j
+loc_1ACE9:                              ; CODE XREF: showGuildMenu+151↑j
                 mov     [di+0Fh], bl
                 jmp     loc_1AC3C
 ; ---------------------------------------------------------------------------
 
-loc_1ACEF:                              ; CODE XREF: sub_1AB93+26↑j
-                                        ; sub_1AB93:loc_1AC4D↑j
+loc_1ACEF:                              ; CODE XREF: showGuildMenu+26↑j
+                                        ; showGuildMenu:loc_1AC4D↑j
                                         ; DATA XREF: ...
                 lea     si, aThankYouComeAg_0 ; jumptable 0001ABB9 cases 4,5
                 call    printGameText
 
-loc_1ACF6:                              ; CODE XREF: sub_1AB93+D5↑j
+loc_1ACF6:                              ; CODE XREF: showGuildMenu+D5↑j
                 pop     di
                 pop     si
                 pop     cx
                 pop     ax
                 popf
                 retn
-sub_1AB93       endp
+showGuildMenu   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1ACFC       proc near               ; CODE XREF: sub_17B54+4D4↑p
+showOracleMenu  proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: seg000:funcs_18028↑o
                 pushf
                 push    ax
@@ -14457,7 +14461,7 @@ sub_1ACFC       proc near               ; CODE XREF: sub_17B54+4D4↑p
                 lea     si, aRadrionProphet ; "\n    Radrion:\nProphet of Life!\n"
                 call    printGameText
 
-loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
+loc_1AD08:                              ; CODE XREF: showOracleMenu+48↓j
                 lea     si, aHowMany100gpIs ; "\nHow many 100gp\nis your\noffering? "
                 call    printGameText
                 call    promptForNumberEntry
@@ -14485,7 +14489,7 @@ loc_1AD08:                              ; CODE XREF: sub_1ACFC+48↓j
                 lea     si, aFareTheeWellAn ; "\nFare thee well\nand good luck!\n"
                 call    printGameText
 
-loc_1AD50:                              ; CODE XREF: sub_1ACFC+72↓j
+loc_1AD50:                              ; CODE XREF: showOracleMenu+72↓j
                 pop     si
                 pop     dx
                 pop     cx
@@ -14494,29 +14498,29 @@ loc_1AD50:                              ; CODE XREF: sub_1ACFC+72↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1AD56:                              ; CODE XREF: sub_1ACFC+28↑j
+loc_1AD56:                              ; CODE XREF: showOracleMenu+28↑j
                 lea     si, aWhatCanTPayOut ; "\nWhat? Can't pay!\nOut you scum!\n"
                 call    printGameText
                 jmp     short loc_1AD69
 ; ---------------------------------------------------------------------------
 
-loc_1AD5F:                              ; CODE XREF: sub_1ACFC+19↑j
+loc_1AD5F:                              ; CODE XREF: showOracleMenu+19↑j
                 call    sub_126F4
                 lea     si, aWhat       ; "<-What?\n"
                 call    printGameText
 
-loc_1AD69:                              ; CODE XREF: sub_1ACFC+61↑j
+loc_1AD69:                              ; CODE XREF: showOracleMenu+61↑j
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     short loc_1AD50
-sub_1ACFC       endp
+showOracleMenu  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AD70       proc near               ; CODE XREF: sub_17B54+4C4↑p
-                                        ; sub_17B54+4D4↑p
+showStableMenu  proc near               ; CODE XREF: sub_17B54+4C4↑p
+                                        ; sub_17B54:TOWN_BUILDING_TABLE↑p
                                         ; DATA XREF: ...
                 pushf
                 push    ax
@@ -14544,7 +14548,7 @@ sub_1AD70       proc near               ; CODE XREF: sub_17B54+4C4↑p
                 jmp     short loc_1ADC6
 ; ---------------------------------------------------------------------------
 
-loc_1ADB1:                              ; CODE XREF: sub_1AD70+31↑j
+loc_1ADB1:                              ; CODE XREF: showStableMenu+31↑j
                 lea     si, aIMSorryButThou ; "I'm sorry, but\nthou hast not\ngold eno"...
                 call    printGameText
                 mov     al, 0FFh
@@ -14552,17 +14556,17 @@ loc_1ADB1:                              ; CODE XREF: sub_1AD70+31↑j
                 jmp     short loc_1ADC6
 ; ---------------------------------------------------------------------------
 
-loc_1ADBF:                              ; CODE XREF: sub_1AD70+2A↑j
+loc_1ADBF:                              ; CODE XREF: showStableMenu+2A↑j
                 lea     si, aAhTooBadTheseA ; "Ah, too bad.\nThese are the\nbest in to"...
                 call    printGameText
 
-loc_1ADC6:                              ; CODE XREF: sub_1AD70+3F↑j
-                                        ; sub_1AD70+4D↑j
+loc_1ADC6:                              ; CODE XREF: showStableMenu+3F↑j
+                                        ; showStableMenu+4D↑j
                 pop     si
                 pop     ax
                 popf
                 retn
-sub_1AD70       endp
+showStableMenu  endp
 
 seg000          ends
 

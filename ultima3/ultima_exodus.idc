@@ -2586,6 +2586,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X18028);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
+	set_name	(0X18028,	"TOWN_BUILDING_TABLE");
 	create_insn	(0X18034);
 	create_insn	(0X18037);
 	create_insn	(x=0X1803A);
@@ -3634,6 +3635,7 @@ static Bytes_0(void) {
 	create_insn	(0X1A587);
 	set_name	(0X1A587,	"deductGoldIfAffordable");
 	create_insn	(0X1A5AC);
+	set_name	(0X1A5AC,	"showTavernMenu");
 	create_insn	(x=0X1A5B1);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3660,6 +3662,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A630);
+	set_name	(0X1A630,	"showGrocerMenu");
 	create_insn	(x=0X1A633);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3757,6 +3760,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A8A5);
+	set_name	(0X1A8A5,	"showWeaponsShopMenu");
 	create_insn	(x=0X1A8AC);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3829,6 +3833,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AA25);
+	set_name	(0X1AA25,	"showArmourShopMenu");
 	create_insn	(x=0X1AA2C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3895,6 +3900,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AB93);
+	set_name	(0X1AB93,	"showGuildMenu");
 	create_insn	(x=0X1AB98);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3945,6 +3951,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1ACFC);
+	set_name	(0X1ACFC,	"showOracleMenu");
 	create_insn	(x=0X1AD01);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3962,11 +3969,21 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AD56);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1AD5F);
 	create_insn	(x=0X1AD62);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AD70);
+	set_name	(0X1AD70,	"showStableMenu");
 	create_insn	(x=0X1AD73);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3981,15 +3998,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ADA3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1ADB1);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
