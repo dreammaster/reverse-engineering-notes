@@ -585,6 +585,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12125);
 	create_insn	(0X12168);
+	set_name	(0X12168,	"teleportToAmbrosia");
 	create_insn	(x=0X1217B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -2104,6 +2105,7 @@ static Bytes_0(void) {
 	create_byte	(0X17338);
 	make_array	(0X17338,	0XF);
 	create_insn	(0X17347);
+	set_name	(0X17347,	"updateAmbrosiaWhirlpoolPosition");
 	create_insn	(0X17357);
 	create_insn	(x=0X17378);
 	op_hex		(x,	1);
@@ -3900,13 +3902,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AACD);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1AAD6);
-	create_insn	(x=0X1AAE1);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AAEA);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3916,6 +3911,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1AAD6);
+	create_insn	(x=0X1AAE1);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X1AAEA);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1AB06);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

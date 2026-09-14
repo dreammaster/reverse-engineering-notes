@@ -34,12 +34,12 @@ byte_10E65      db 0                    ; DATA XREF: updateWhirlpoolPosition+70�
                 db 41Ah dup(0)
 byte_11280      db 0A0h dup(0)          ; DATA XREF: sub_17B54:loc_11F8A↓o
                                         ; findMonsterAtPosition:loc_17FBC↓o ...
-word_11320      dw 0                    ; DATA XREF: sub_12168+3C↓w
-                                        ; sub_17347+25↓r ...
-byte_11322      db 0                    ; DATA XREF: sub_17347+2D↓r
-                                        ; sub_17347+77↓w
-byte_11323      db 0                    ; DATA XREF: sub_17347+29↓r
-                                        ; sub_17347+7E↓w
+word_11320      dw 0                    ; DATA XREF: teleportToAmbrosia+3C↓w
+                                        ; updateAmbrosiaWhirlpoolPosition+25↓r ...
+byte_11322      db 0                    ; DATA XREF: updateAmbrosiaWhirlpoolPosition+2D↓r
+                                        ; updateAmbrosiaWhirlpoolPosition+77↓w
+byte_11323      db 0                    ; DATA XREF: updateAmbrosiaWhirlpoolPosition+29↓r
+                                        ; updateAmbrosiaWhirlpoolPosition+7E↓w
 word_11324      dw 0                    ; DATA XREF: sub_17B54-5D2F↓r
                                         ; sub_17B54-5D21↓w ...
 byte_11326      db 0                    ; DATA XREF: updateWhirlpoolPosition+F↓w
@@ -131,8 +131,8 @@ aPartyUlt       db 'PARTY.ULT',0        ; DATA XREF: savePartyFile+B↓o
                                         ; entryFromBootup:loc_12509↓o
 aDungeonDat     db 'DUNGEON.DAT',0      ; DATA XREF: sub_17B54-5D09↓o
 aSosariaUlt     db 'SOSARIA.ULT',0      ; DATA XREF: saveSosariaAndParty+B↓o
-                                        ; sub_12168+9D↓o ...
-aAmbrosiaUlt    db 'AMBROSIA.ULT',0     ; DATA XREF: sub_12168+5D↓o
+                                        ; teleportToAmbrosia+9D↓o ...
+aAmbrosiaUlt    db 'AMBROSIA.ULT',0     ; DATA XREF: teleportToAmbrosia+5D↓o
 aBritishUlt     db 'BRITISH.ULT',0
 aExodusUlt      db 'EXODUS.ULT',0
 aLcbUlt         db 'LCB.ULT',0
@@ -407,7 +407,7 @@ aFailed         db 'Failed!',0Ah,0      ; DATA XREF: sub_17B54-5BD3↓o
 aWatchOut       db 'Watch out!',0Ah,0   ; DATA XREF: sub_17B54-5BB6↓o
 aOnlyOnSurface  db 'Only on surface!',0Ah,0
                                         ; DATA XREF: sub_17B54:loc_11F45↓o
-aAHugeSwirlingW db 0Ah                  ; DATA XREF: sub_12168+13↓o
+aAHugeSwirlingW db 0Ah                  ; DATA XREF: teleportToAmbrosia+13↓o
                 db 'A huge swirling',0Ah
                 db ' --WhirlPool--',0Ah
                 db ' engulfs you',0Ah
@@ -415,28 +415,29 @@ aAHugeSwirlingW db 0Ah                  ; DATA XREF: sub_12168+13↓o
                 db ' dragging both',0Ah
                 db '     to a',0Ah
                 db ' watery grave!',0
-aAsTheWaterEnte db 0Ah                  ; DATA XREF: sub_12168+4B↓o
+aAsTheWaterEnte db 0Ah                  ; DATA XREF: teleportToAmbrosia+4B↓o
                 db 0Ah
                 db ' As the water',0Ah
                 db ' enters  your',0Ah
                 db 'lungs you pass',0Ah
                 db 'into Darkness!',0Ah
                 db 0Ah,0
-aYouAwakenOnThe db 0Ah                  ; DATA XREF: sub_12168+78↓o
+aYouAwakenOnThe db 0Ah                  ; DATA XREF: teleportToAmbrosia+78↓o
                 db ' You awaken on',0Ah
                 db ' the shores of',0Ah
                 db ' a forgotten',0Ah
                 db 'Land.  Your ship',0Ah
                 db ' and crew lost',0Ah
                 db '  to the sea!',0Ah,0
-aAllIsDark      db 0Ah                  ; DATA XREF: sub_12168:loc_121F4↓o
+aAllIsDark      db 0Ah                  ; DATA XREF: teleportToAmbrosia:loc_121F4↓o
                 db 0Ah
                 db 0Ah
                 db 0Ah
                 db 0Ah
                 db ' All is Dark!',0Ah
                 db 0Ah,0
-aYouMadeIt      db ' You made it!',0Ah,0 ; DATA XREF: sub_12168+A4↓o
+aYouMadeIt      db ' You made it!',0Ah,0
+                                        ; DATA XREF: teleportToAmbrosia+A4↓o
 aNorth          db 'North',0Ah,0        ; DATA XREF: readDirectionKeypress:loc_17B16↓o
                                         ; updateMonsterAI:loc_18CBE↓o
 aSouth          db 'South',0Ah,0        ; DATA XREF: readDirectionKeypress:loc_17B21↓o
@@ -472,7 +473,7 @@ mainGameLoop:                           ; CODE XREF: sub_17B54-58B2↓j
 
 loc_11B93:                              ; CODE XREF: sub_17B54-5FC6↑j
                                         ; sub_17B54-5FB3↓j
-                call    sub_17347
+                call    updateAmbrosiaWhirlpoolPosition
                 call    pollKeypressAndAnimate
                 jnz     short loc_11BA8
                 mov     ah, 2Ch
@@ -562,7 +563,7 @@ loc_11C2E:                              ; CODE XREF: sub_17B54-5F39↑j
                                         ; sub_17B54-5F2B↑j
                 cmp     al, 30h ; '0'
                 jnz     short loc_11C35
-                call    sub_12168
+                call    teleportToAmbrosia
 
 loc_11C35:                              ; CODE XREF: sub_17B54-5F24↑j
                 call    isSpecialEncounterLocation
@@ -1189,7 +1190,7 @@ saveSosariaAndParty endp
 
 
 savePartyFile   proc near               ; CODE XREF: saveSosariaAndParty+12↑p
-                                        ; sub_12168+BB↓p ...
+                                        ; teleportToAmbrosia+BB↓p ...
                 push    ax
                 push    bx
                 push    cx
@@ -1294,8 +1295,8 @@ updateWhirlpoolPosition endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
-                                        ; sub_17347:loc_173E7↓p
+teleportToAmbrosia proc near            ; CODE XREF: sub_17B54-5F22↑p
+                                        ; updateAmbrosiaWhirlpoolPosition:loc_173E7↓p
                 pushf
                 push    ax
                 push    bx
@@ -1337,7 +1338,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 call    printGameText
                 call    drawMapViewport
 
-loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
+loc_121EA:                              ; CODE XREF: teleportToAmbrosia+BE↓j
                 call    flushInputBuffer
                 pop     si
                 pop     dx
@@ -1348,7 +1349,7 @@ loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_121F4:                              ; CODE XREF: sub_12168+24↑j
+loc_121F4:                              ; CODE XREF: teleportToAmbrosia+24↑j
                 lea     si, aAllIsDark  ; "\n\n\n\n\n All is Dark!\n\n"
                 call    printGameText
                 call    clearMapViewport
@@ -1364,7 +1365,7 @@ loc_121F4:                              ; CODE XREF: sub_12168+24↑j
                 mov     _currentTransport, 0Bh
                 call    savePartyFile
                 jmp     short loc_121EA
-sub_12168       endp
+teleportToAmbrosia endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2366,8 +2367,8 @@ loc_128A8:                              ; CODE XREF: seg000:2879↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-clearMapViewport proc near              ; CODE XREF: sub_12168+48↑p
-                                        ; sub_12168+93↑p ...
+clearMapViewport proc near              ; CODE XREF: teleportToAmbrosia+48↑p
+                                        ; teleportToAmbrosia+93↑p ...
                 push    ax
                 push    bx
                 push    cx
@@ -6145,14 +6146,14 @@ byte_164A2      db 4                    ; DATA XREF: processPartyTurnEffects+C�
 byte_164A3      db 9                    ; DATA XREF: processPartyTurnEffects+21↓w
                                         ; processPartyTurnEffects+27↓w ...
 byte_164A4      db 0                    ; DATA XREF: entryFromBootup+7E↑w
-                                        ; sub_17347:loc_17357↓w ...
+                                        ; updateAmbrosiaWhirlpoolPosition:loc_17357↓w ...
 aNoOneThere     db 0Ah                  ; DATA XREF: selectPlayer+2C↓o
                 db 'No one there!',0
 aAllPlayersOut  db 0Ah                  ; DATA XREF: checkPartyWipedOut+18↓o
                 db 0Ah
                 db 'All Players Out!',0Ah,0
 byte_164C8      db 20h, 41h, 20h, 73h, 68h, 69h, 70h, 20h, 77h, 61h, 73h
-                                        ; DATA XREF: sub_17347+61↓o
+                                        ; DATA XREF: updateAmbrosiaWhirlpoolPosition+61↓o
                 db 0Ah, 3 dup(20h), 44h, 65h, 73h, 74h, 72h, 6Fh, 79h
                 db 65h, 64h, 21h, 0Ah, 10h, 0
 aStarving       db 'Starving!',0Ah,0    ; DATA XREF: applyHungerTick+26↓o
@@ -7187,7 +7188,7 @@ checkPartyWipedOut endp
 ; =============== S U B R O U T I N E =======================================
 
 
-flushInputBuffer proc near              ; CODE XREF: sub_12168:loc_121EA↑p
+flushInputBuffer proc near              ; CODE XREF: teleportToAmbrosia:loc_121EA↑p
                                         ; entryFromBootup+8D↑p ...
                 pushf
                 push    ax
@@ -8245,7 +8246,8 @@ checkTerrainMovementBlocked endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17347       proc near               ; CODE XREF: sub_17B54:loc_11B93↑p
+updateAmbrosiaWhirlpoolPosition proc near
+                                        ; CODE XREF: sub_17B54:loc_11B93↑p
                 pushf
                 push    ax
                 push    cx
@@ -8255,11 +8257,11 @@ sub_17347       proc near               ; CODE XREF: sub_17B54:loc_11B93↑p
                 cmp     byte_114BC, 0
                 jz      short loc_17357
 
-loc_17354:                              ; CODE XREF: sub_17347+14↓j
+loc_17354:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+14↓j
                 jmp     loc_17403
 ; ---------------------------------------------------------------------------
 
-loc_17357:                              ; CODE XREF: sub_17347+B↑j
+loc_17357:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+B↑j
                 dec     byte_164A4
                 jnz     short loc_17354
                 mov     byte_164A4, 4
@@ -8292,8 +8294,8 @@ loc_17357:                              ; CODE XREF: sub_17347+B↑j
                 jmp     short loc_17403
 ; ---------------------------------------------------------------------------
 
-loc_173B1:                              ; CODE XREF: sub_17347+23↑j
-                                        ; sub_17347+40↑j
+loc_173B1:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+23↑j
+                                        ; updateAmbrosiaWhirlpoolPosition+40↑j
                 mov     dh, 8
                 call    stepTimeSeededPrng
                 mov     bl, dl
@@ -8305,7 +8307,7 @@ loc_173B1:                              ; CODE XREF: sub_17347+23↑j
                 jmp     short loc_173DE
 ; ---------------------------------------------------------------------------
 
-loc_173CA:                              ; CODE XREF: sub_17347+3C↑j
+loc_173CA:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+3C↑j
                 mov     byte ptr [bx], 30h ; '0'
                 mov     bx, word_11320
                 mov     word_11320, cx
@@ -8313,13 +8315,13 @@ loc_173CA:                              ; CODE XREF: sub_17347+3C↑j
                 mov     byte ptr [bx], 0
                 call    drawMapViewport
 
-loc_173DE:                              ; CODE XREF: sub_17347+81↑j
+loc_173DE:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+81↑j
                 mov     ax, word_11320
                 cmp     ax, _partyPosition
                 jnz     short loc_17403
 
-loc_173E7:                              ; CODE XREF: sub_17347+57↑j
-                call    sub_12168
+loc_173E7:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+57↑j
+                call    teleportToAmbrosia
                 mov     al, 10h
                 call    writeCharacter
                 pop     bx
@@ -8333,19 +8335,19 @@ loc_173E7:                              ; CODE XREF: sub_17347+57↑j
                 jmp     short loc_17404
 ; ---------------------------------------------------------------------------
 
-loc_17403:                              ; CODE XREF: sub_17347:loc_17354↑j
-                                        ; sub_17347+68↑j ...
+loc_17403:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition:loc_17354↑j
+                                        ; updateAmbrosiaWhirlpoolPosition+68↑j ...
                 pop     bx
 
-loc_17404:                              ; CODE XREF: sub_17347+B5↑j
-                                        ; sub_17347+BA↑j
+loc_17404:                              ; CODE XREF: updateAmbrosiaWhirlpoolPosition+B5↑j
+                                        ; updateAmbrosiaWhirlpoolPosition+BA↑j
                 pop     si
                 pop     dx
                 pop     cx
                 pop     ax
                 popf
                 retn
-sub_17347       endp
+updateAmbrosiaWhirlpoolPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
