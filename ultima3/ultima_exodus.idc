@@ -3212,6 +3212,7 @@ static Bytes_0(void) {
 	create_insn	(0X19212);
 	create_insn	(0X19215);
 	create_insn	(0X19244);
+	set_name	(0X19244,	"attemptSpecialMonsterAttack");
 	create_insn	(0X1925B);
 	create_insn	(x=0X19262);
 	op_plain_offset	(x,	1,	0X10000);
@@ -3223,6 +3224,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X192AF);
+	set_name	(0X192AF,	"applyDungeonMonsterDamage");
 	create_insn	(x=0X192C9);
 	op_hex		(x,	1);
 	create_insn	(x=0X192D2);
@@ -3239,6 +3241,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X19360);
+	set_name	(0X19360,	"attemptPoisonAttack");
 	create_insn	(x=0X19369);
 	op_hex		(x,	1);
 	create_insn	(x=0X19380);
@@ -3248,6 +3251,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X193A2);
+	set_name	(0X193A2,	"attemptStealAttack");
 	create_insn	(x=0X193B9);
 	op_hex		(x,	1);
 	create_insn	(x=0X193D0);
@@ -3927,6 +3931,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB98);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1ABA0);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3940,15 +3953,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ABB9);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1ABBD,	"jumptable 0001ABB9 case 0",	1);
 	create_insn	(x=0X1ABBD);
 	op_plain_offset	(x,	1,	0X10000);

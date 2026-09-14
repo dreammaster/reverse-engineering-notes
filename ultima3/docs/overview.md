@@ -1459,3 +1459,32 @@ address ranges, confirming the descend/ascend spells share this
 "land somewhere safe" step after moving `_dungeonLevel` — sensible,
 since a level-transition spell has no specific staircase tile to land
 on.
+
+**A whole second combat-damage system found: dungeon monster special
+attacks.** While investigating the last handful of unnamed functions,
+`attemptSpecialMonsterAttack` (`0x19244`) turned out to be an entry
+point for monsters attacking the party outside a formal arena
+encounter — while simply wandering a dungeon level. It dispatches by
+`_conflictMonsterClass`:
+
+- **`attemptPoisonAttack`** (`0x19360`) — monster classes `0x0E`/
+  `0x1C`/`0x1E`, a 25% chance to flip the target's `_status` from
+  Good to Poisoned, printing "Plr N Poisoned!\n".
+- **`attemptStealAttack`** (`0x193A2`) — monster class `0x17`, a
+  Thief-type monster that randomly picks either `_weaponOwned` or
+  `_armourOwned`, steals one of a random owned item, and prints "Plr
+  N Pilfered!\n" (confirmed directly via that exact string).
+
+Either path then rolls a to-hit check scaled by the target's
+`_armourIndex` ("Missed!"/"Hit!") before calling
+**`applyDungeonMonsterDamage`** (`0x192AF`) on a hit — a genuinely
+separate damage-and-kill resolution from `applyCombatDamage` (the
+arena-combat system documented much earlier this session). It rolls
+damage from `MONSTER_HP_TABLE` plus a dungeon-level-scaled bonus,
+applies it via `damageCharacterHP` twice, flashes the target's
+portrait and an on-map hit animation, and on death converts the
+character to Ashes directly on the map display before calling
+`checkPartyWipedOut`. This confirms Ultima III has two distinct
+combat pipelines: the formal 8-slot arena encounter system, and a
+separate "a monster reaches you while exploring a dungeon corridor"
+system with its own damage math and its own special-attack types.

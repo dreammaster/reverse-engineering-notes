@@ -10857,13 +10857,13 @@ aARedHotRodInTh db 'A red hot rod',0Ah  ; DATA XREF: sub_17B54+1A12↓o
                 db 'in the wall. Who',0Ah
                 db 'will touch? ',0
 aItLeftAMark    db 'It left a mark!',0Ah,0 ; DATA XREF: sub_17B54+1A4D↓o
-aKilled         db 'Killed!!!',0Ah,0    ; DATA XREF: sub_192AF+9D↓o
-aPoisoned_0     db ' Poisoned!',0Ah,0   ; DATA XREF: sub_19360+2E↓o
-aPlr            db 'Plr ',0             ; DATA XREF: sub_19244:loc_19262↓o
-                                        ; sub_19360+20↓o ...
-aPilfered       db ' Pilfered!',0Ah,0   ; DATA XREF: sub_193A2+69↓o
-aMissed_0       db ' Missed!',0Ah,0     ; DATA XREF: sub_19244+54↓o
-aHit_0          db ' Hit!',0Ah,0        ; DATA XREF: sub_19244:loc_192A1↓o
+aKilled         db 'Killed!!!',0Ah,0    ; DATA XREF: applyDungeonMonsterDamage+9D↓o
+aPoisoned_0     db ' Poisoned!',0Ah,0   ; DATA XREF: attemptPoisonAttack+2E↓o
+aPlr            db 'Plr ',0             ; DATA XREF: attemptSpecialMonsterAttack:loc_19262↓o
+                                        ; attemptPoisonAttack+20↓o ...
+aPilfered       db ' Pilfered!',0Ah,0   ; DATA XREF: attemptStealAttack+69↓o
+aMissed_0       db ' Missed!',0Ah,0     ; DATA XREF: attemptSpecialMonsterAttack+54↓o
+aHit_0          db ' Hit!',0Ah,0        ; DATA XREF: attemptSpecialMonsterAttack:loc_192A1↓o
 aThieves        db 'Thieves',0          ; DATA XREF: printCombatReactionMessage+5D↓o
 aEs             db 'es',0Ah             ; DATA XREF: printCombatReactionMessage+37↓o
                                         ; printCombatReactionMessage+3F↓o
@@ -12134,7 +12134,7 @@ loc_19124:                              ; CODE XREF: sub_190FD+39↓j
                 jnz     short loc_19135
                 cmp     dh, [bx+2568h]
                 jnz     short loc_19135
-                call    sub_192AF
+                call    applyDungeonMonsterDamage
                 jmp     short loc_19147
 ; ---------------------------------------------------------------------------
 
@@ -12184,7 +12184,7 @@ loc_1916A:                              ; CODE XREF: sub_17B54+1611↑j
                 mov     byte_184E0, 3Dh ; '='
                 cmp     al, 0
                 jnz     short loc_1917C
-                call    sub_19244
+                call    attemptSpecialMonsterAttack
                 jmp     loc_19209
 ; ---------------------------------------------------------------------------
 
@@ -12262,7 +12262,7 @@ loc_191D3:                              ; CODE XREF: sub_17B54+1656↑j
                 call    invertFullScreen
                 pop     bx
                 mov     byte_184E0, 3Ch ; '<'
-                call    sub_19244
+                call    attemptSpecialMonsterAttack
 
 loc_19209:                              ; CODE XREF: sub_17B54+1613↑j
                                         ; sub_17B54+1625↑j ...
@@ -12305,7 +12305,7 @@ sub_19215       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19244       proc near               ; CODE XREF: sub_17B54+1622↑p
+attemptSpecialMonsterAttack proc near   ; CODE XREF: sub_17B54+1622↑p
                                         ; sub_17B54+16B2↑p
                 pushf
                 push    ax
@@ -12318,19 +12318,19 @@ sub_19244       proc near               ; CODE XREF: sub_17B54+1622↑p
                 cmp     al, 1Ch
                 jnz     short loc_1925B
 
-loc_19256:                              ; CODE XREF: sub_19244+8↑j
-                                        ; sub_19244+C↑j
-                call    sub_19360
+loc_19256:                              ; CODE XREF: attemptSpecialMonsterAttack+8↑j
+                                        ; attemptSpecialMonsterAttack+C↑j
+                call    attemptPoisonAttack
                 jmp     short loc_19262
 ; ---------------------------------------------------------------------------
 
-loc_1925B:                              ; CODE XREF: sub_19244+10↑j
+loc_1925B:                              ; CODE XREF: attemptSpecialMonsterAttack+10↑j
                 cmp     al, 17h
                 jnz     short loc_19262
-                call    sub_193A2
+                call    attemptStealAttack
 
-loc_19262:                              ; CODE XREF: sub_19244+15↑j
-                                        ; sub_19244+19↑j
+loc_19262:                              ; CODE XREF: attemptSpecialMonsterAttack+15↑j
+                                        ; attemptSpecialMonsterAttack+19↑j
                 lea     si, aPlr        ; "Plr "
                 call    printGameText
                 mov     al, bl
@@ -12347,7 +12347,7 @@ loc_19262:                              ; CODE XREF: sub_19244+15↑j
                 cmp     byte ptr [si+28h], 7
                 jnz     short loc_192A1
 
-loc_1928A:                              ; CODE XREF: sub_19244+3E↑j
+loc_1928A:                              ; CODE XREF: attemptSpecialMonsterAttack+3E↑j
                 mov     dh, [si+28h]
                 add     dh, 10h
                 call    stepTimeSeededPrng
@@ -12358,25 +12358,25 @@ loc_1928A:                              ; CODE XREF: sub_19244+3E↑j
                 jmp     short loc_192AB
 ; ---------------------------------------------------------------------------
 
-loc_192A1:                              ; CODE XREF: sub_19244+44↑j
-                                        ; sub_19244+52↑j
+loc_192A1:                              ; CODE XREF: attemptSpecialMonsterAttack+44↑j
+                                        ; attemptSpecialMonsterAttack+52↑j
                 lea     si, aHit_0      ; " Hit!\n"
                 call    printGameText
-                call    sub_192AF
+                call    applyDungeonMonsterDamage
 
-loc_192AB:                              ; CODE XREF: sub_19244+5B↑j
+loc_192AB:                              ; CODE XREF: attemptSpecialMonsterAttack+5B↑j
                 pop     si
                 pop     ax
                 popf
                 retn
-sub_19244       endp
+attemptSpecialMonsterAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
-                                        ; sub_19244+64↑p
+applyDungeonMonsterDamage proc near     ; CODE XREF: sub_190FD+33↑p
+                                        ; attemptSpecialMonsterAttack+64↑p
                 pushf
                 push    ax
                 push    bx
@@ -12442,7 +12442,7 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 call    printGameText
                 call    checkPartyWipedOut
 
-loc_19356:                              ; CODE XREF: sub_192AF+80↑j
+loc_19356:                              ; CODE XREF: applyDungeonMonsterDamage+80↑j
                 call    drawPartyStatusBar
                 pop     si
                 pop     dx
@@ -12451,13 +12451,13 @@ loc_19356:                              ; CODE XREF: sub_192AF+80↑j
                 pop     ax
                 popf
                 retn
-sub_192AF       endp
+applyDungeonMonsterDamage endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19360       proc near               ; CODE XREF: sub_19244:loc_19256↑p
+attemptPoisonAttack proc near           ; CODE XREF: attemptSpecialMonsterAttack:loc_19256↑p
                 pushf
                 push    ax
                 push    dx
@@ -12483,20 +12483,20 @@ sub_19360       proc near               ; CODE XREF: sub_19244:loc_19256↑p
                 call    playSoundEffect
                 call    drawPartyStatusBar
 
-loc_1939D:                              ; CODE XREF: sub_19360+C↑j
-                                        ; sub_19360+19↑j
+loc_1939D:                              ; CODE XREF: attemptPoisonAttack+C↑j
+                                        ; attemptPoisonAttack+19↑j
                 pop     si
                 pop     dx
                 pop     ax
                 popf
                 retn
-sub_19360       endp
+attemptPoisonAttack endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_193A2       proc near               ; CODE XREF: sub_19244+1B↑p
+attemptStealAttack proc near            ; CODE XREF: attemptSpecialMonsterAttack+1B↑p
                 pushf
                 push    ax
                 push    bx
@@ -12529,7 +12529,7 @@ sub_193A2       proc near               ; CODE XREF: sub_19244+1B↑p
                 jmp     short loc_193FD
 ; ---------------------------------------------------------------------------
 
-loc_193DE:                              ; CODE XREF: sub_193A2+19↑j
+loc_193DE:                              ; CODE XREF: attemptStealAttack+19↑j
                 mov     dh, 8
                 call    stepTimeSeededPrng
                 cmp     dl, 0
@@ -12545,7 +12545,7 @@ loc_193DE:                              ; CODE XREF: sub_193A2+19↑j
                 das
                 mov     [bx+si], al
 
-loc_193FD:                              ; CODE XREF: sub_193A2+3A↑j
+loc_193FD:                              ; CODE XREF: attemptStealAttack+3A↑j
                 lea     si, aPlr        ; "Plr "
                 call    printGameText
                 mov     ax, di
@@ -12556,8 +12556,8 @@ loc_193FD:                              ; CODE XREF: sub_193A2+3A↑j
                 mov     al, 0FAh
                 call    playSoundEffect
 
-loc_19417:                              ; CODE XREF: sub_193A2+23↑j
-                                        ; sub_193A2+2A↑j ...
+loc_19417:                              ; CODE XREF: attemptStealAttack+23↑j
+                                        ; attemptStealAttack+2A↑j ...
                 pop     di
                 pop     si
                 pop     dx
@@ -12565,7 +12565,7 @@ loc_19417:                              ; CODE XREF: sub_193A2+23↑j
                 pop     ax
                 popf
                 retn
-sub_193A2       endp
+attemptStealAttack endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54

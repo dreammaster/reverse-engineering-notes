@@ -643,6 +643,26 @@ Next-session priorities, roughly in order:
       Also named `promptForQuantity` (`0x17D1A`, a 4-digit number-entry
       prompt used by `showGrocerMenu` and one direct `sub_17B54` call
       site, similar in shape to `promptForNumberEntry` but wider).
+- [x] **A whole second combat-damage system found: dungeon monster
+      special attacks**, done 2026-09-14. `attemptSpecialMonsterAttack`
+      (`0x19244`, called twice from `sub_17B54`) dispatches by
+      `_conflictMonsterClass` to `attemptPoisonAttack` (`0x19360`,
+      classes `0x0E`/`0x1C`/`0x1E` — 25% chance to poison the target)
+      or `attemptStealAttack` (`0x193A2`, class `0x17` — a Thief-type
+      monster stealing a random owned weapon or armour item,
+      confirmed via its own "Pilfered!" string), then rolls a to-hit
+      check scaled by the target's `_armourIndex` and applies
+      `applyDungeonMonsterDamage` (`0x192AF`) on a hit. That last one
+      is a genuinely separate damage-and-kill resolution path from
+      `applyCombatDamage` (the arena-combat system documented much
+      earlier this session) — it rolls damage from `MONSTER_HP_TABLE`
+      plus a dungeon-level-scaled bonus, applies it via
+      `damageCharacterHP` twice, and on death converts the character
+      to Ashes on the map display before calling `checkPartyWipedOut`.
+      This confirms dungeon monsters that reach the party while
+      wandering a level (as opposed to a formal arena encounter) use
+      an entirely different attack/damage pipeline. Function-naming
+      jumped from 125/144 to 129/144 in this one batch.
 - [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
       documentation in file-formats.md: castle/town/dungeon/moongate
       coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"
