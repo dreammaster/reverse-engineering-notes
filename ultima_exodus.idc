@@ -578,6 +578,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X120AE);
+	set_name	(0X120AE,	"updateWhirlpoolPosition");
 	create_insn	(x=0X120CC);
 	op_hex		(x,	1);
 	create_insn	(x=0X120E0);
@@ -3917,9 +3918,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB47);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AB50);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3929,6 +3927,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AB50);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1AB59);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

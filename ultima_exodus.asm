@@ -29,8 +29,8 @@ seg000          segment byte public 'CODE' use16
 start           db 800h dup(0)          ; CODE XREF: sub_19630+18↓p
                                         ; DATA XREF: sub_17B54-5D2B↓o ...
 byte_10900      db 565h dup(0)          ; DATA XREF: sub_17B54-5D17↓o
-byte_10E65      db 0                    ; DATA XREF: sub_120AE+70↓w
-                                        ; sub_120AE+7B↓w
+byte_10E65      db 0                    ; DATA XREF: updateWhirlpoolPosition+70↓w
+                                        ; updateWhirlpoolPosition+7B↓w
                 db 41Ah dup(0)
 byte_11280      db 0A0h dup(0)          ; DATA XREF: sub_17B54:loc_11F8A↓o
                                         ; findMonsterAtPosition:loc_17FBC↓o ...
@@ -42,10 +42,10 @@ byte_11323      db 0                    ; DATA XREF: sub_17347+29↓r
                                         ; sub_17347+7E↓w
 word_11324      dw 0                    ; DATA XREF: sub_17B54-5D2F↓r
                                         ; sub_17B54-5D21↓w ...
-byte_11326      db 0                    ; DATA XREF: sub_120AE+F↓w
-                                        ; sub_120AE+15↓w
-byte_11327      db 0                    ; DATA XREF: sub_120AE:loc_120D1↓w
-                                        ; sub_120AE+29↓w
+byte_11326      db 0                    ; DATA XREF: updateWhirlpoolPosition+F↓w
+                                        ; updateWhirlpoolPosition+15↓w
+byte_11327      db 0                    ; DATA XREF: updateWhirlpoolPosition:loc_120D1↓w
+                                        ; updateWhirlpoolPosition+29↓w
                 db 0C4h, 24h, 3 dup(0), 20h, 50h, 0, 50h, 20h, 0A0h, 0
                 db 0A0h, 20h, 0F0h, 0, 0F0h, 20h, 40h, 1, 40h, 21h, 90h
                 db 1, 90h, 21h, 0E0h, 1, 0E0h, 21h, 30h, 2, 30h, 22h, 80h
@@ -546,12 +546,12 @@ loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
                 cmp     al, 88h
                 jnz     short loc_11C1D
                 call    teleportPartyWithFanfare
-                call    sub_120AE
+                call    updateWhirlpoolPosition
                 jmp     short loc_11C2E
 ; ---------------------------------------------------------------------------
 
 loc_11C1D:                              ; CODE XREF: sub_17B54-5F41↑j
-                call    sub_120AE
+                call    updateWhirlpoolPosition
                 mov     bx, _partyPosition
                 call    getMapTileAt
                 cmp     al, 88h
@@ -923,7 +923,7 @@ loc_11ED8:                              ; CODE XREF: sub_17B54-5C76↓j
                 call    drawPartySlotNumbers
                 cmp     byte_114BC, 1
                 jz      short loc_11EF0
-                call    sub_120AE
+                call    updateWhirlpoolPosition
 
 loc_11EF0:                              ; CODE XREF: sub_17B54-5C69↑j
                 call    drawPartyStatusBar
@@ -1209,7 +1209,7 @@ savePartyFile   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_120AE       proc near               ; CODE XREF: sub_17B54-5F3C↑p
+updateWhirlpoolPosition proc near       ; CODE XREF: sub_17B54-5F3C↑p
                                         ; sub_17B54:loc_11C1D↑p ...
                 pushf
                 push    ax
@@ -1224,14 +1224,14 @@ sub_120AE       proc near               ; CODE XREF: sub_17B54-5F3C↑p
                 inc     byte ptr word_11324
                 and     byte ptr word_11324, 7
 
-loc_120D1:                              ; CODE XREF: sub_120AE+13↑j
+loc_120D1:                              ; CODE XREF: updateWhirlpoolPosition+13↑j
                 dec     byte_11327
                 jns     short loc_120E5
                 mov     byte_11327, 3
                 inc     byte ptr word_11324+1
                 and     byte ptr word_11324+1, 7
 
-loc_120E5:                              ; CODE XREF: sub_120AE+27↑j
+loc_120E5:                              ; CODE XREF: updateWhirlpoolPosition+27↑j
                 pop     dx
                 cmp     dh, byte ptr word_11324+1
                 jz      short loc_1212E
@@ -1257,13 +1257,13 @@ loc_120E5:                              ; CODE XREF: sub_120AE+27↑j
                 jmp     short loc_1212E
 ; ---------------------------------------------------------------------------
 
-loc_12125:                              ; CODE XREF: sub_120AE+6E↑j
+loc_12125:                              ; CODE XREF: updateWhirlpoolPosition+6E↑j
                 or      dl, dh
                 jnz     short loc_1212E
                 mov     byte_10E65, 0Ch
 
-loc_1212E:                              ; CODE XREF: sub_120AE+9↑j
-                                        ; sub_120AE+3C↑j ...
+loc_1212E:                              ; CODE XREF: updateWhirlpoolPosition+9↑j
+                                        ; updateWhirlpoolPosition+3C↑j ...
                 mov     dx, 8
                 xchg    dx, word_12A90
                 mov     al, 10h
@@ -1288,7 +1288,7 @@ loc_1212E:                              ; CODE XREF: sub_120AE+9↑j
                 pop     ax
                 popf
                 retn
-sub_120AE       endp
+updateWhirlpoolPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -1810,7 +1810,7 @@ loc_12509:                              ; DATA XREF: seg000:2838↓r
                 mov     cx, 1228h
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
                 call    loadFile
-                call    sub_120AE
+                call    updateWhirlpoolPosition
                 lea     bx, byte_12B39
                 mov     cx, 1400h
                 lea     dx, aShapesUlt  ; "SHAPES.ULT"
@@ -2503,8 +2503,8 @@ sub_12909       endp
 
 ; ---------------------------------------------------------------------------
 byte_1298E      db 102h dup(0)          ; DATA XREF: entryFromBootup↑o
-word_12A90      dw 0                    ; DATA XREF: sub_120AE+83↑w
-                                        ; sub_120AE+B1↑w ...
+word_12A90      dw 0                    ; DATA XREF: updateWhirlpoolPosition+83↑w
+                                        ; updateWhirlpoolPosition+B1↑w ...
 word_12A92      dw 0                    ; DATA XREF: updateWindDisplay+1C↓r
                                         ; updateWindDisplay:loc_15696↓w ...
                 db 0
@@ -2613,7 +2613,7 @@ swapCursorPos   endp
 
 
 writeCharacter  proc near               ; CODE XREF: sub_17B54-5FD5↑p
-                                        ; sub_120AE+89↑p ...
+                                        ; updateWhirlpoolPosition+89↑p ...
                 push    ax
                 cmp     al, 8
                 jz      short loc_14F7A
@@ -3370,8 +3370,8 @@ printHexByte    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-printHexNibble  proc near               ; CODE XREF: sub_120AE+94↑p
-                                        ; sub_120AE+A4↑p ...
+printHexNibble  proc near               ; CODE XREF: updateWhirlpoolPosition+94↑p
+                                        ; updateWhirlpoolPosition+A4↑p ...
                 pushf
                 push    ax
                 and     al, 0Fh
