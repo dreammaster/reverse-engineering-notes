@@ -748,6 +748,7 @@ static Bytes_0(void) {
 	create_byte	(0X127B7);
 	make_array	(0X127B7,	0X16);
 	create_insn	(0X127CD);
+	set_name	(0X127CD,	"drawMapViewport");
 	create_insn	(x=0X127DF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1417,6 +1418,7 @@ static Bytes_0(void) {
 	set_name	(0X15B28,	"isSpecialEncounterLocation");
 	create_insn	(0X15B46);
 	create_insn	(0X15B51);
+	set_name	(0X15B51,	"teleportPartyWithFanfare");
 	create_insn	(0X15B85);
 	create_insn	(x=0X15B8E);
 	op_hex		(x,	1);
@@ -2041,6 +2043,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X171A9);
 	op_hex		(x,	1);
 	create_insn	(0X171C1);
+	set_name	(0X171C1,	"invertFullScreen");
 	create_insn	(x=0X171D3);
 	op_hex		(x,	1);
 	create_insn	(x=0X171D7);
@@ -3943,13 +3946,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AC3C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1AC4D);
-	create_insn	(x=0X1AC50);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AC59);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3959,6 +3955,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1AC4D);
+	create_insn	(x=0X1AC50);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X1AC59);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	set_cmt	(0X1AC6B,	"jumptable 0001ABB9 case 2",	1);
 	create_insn	(x=0X1AC6B);
 	op_plain_offset	(x,	1,	0X10000);
