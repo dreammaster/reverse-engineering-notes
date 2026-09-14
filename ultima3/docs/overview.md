@@ -1516,3 +1516,9 @@ flagging: `canDungeonMonsterMoveToTile`'s occupancy check reuses
 active dungeon combatants and arena combatants may share the same
 underlying slot representation rather than being fully independent
 systems; not confirmed further this pass.
+
+**`cmdGet`'s actual loot generation named**: `generateChestLoot`
+(`0x180D9`) prints "Gold+" and a random BCD amount, adds it via
+`addGoldClamped`, then on separate random rolls may award a weapon
+item ("and a [name]") and/or an armour item ("and [name]"), each via
+`printNameByIndex` and a BCD-incremented, 0x99-clamped owned-count.

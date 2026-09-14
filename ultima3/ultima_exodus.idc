@@ -2636,6 +2636,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X180D9);
+	set_name	(0X180D9,	"generateChestLoot");
 	create_insn	(x=0X180DF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3919,9 +3920,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB50);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AB59);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3931,6 +3929,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AB59);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AB68);
 	set_name	(0X1AB68,	"listArmourShopInventory");
 	create_insn	(x=0X1AB6B);
