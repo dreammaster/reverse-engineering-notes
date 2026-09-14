@@ -152,10 +152,9 @@ aPUlt           db 'P.ULT',0
 aPerinianUlt    db 'PERINIAN.ULT',0
 aMineUlt        db 'MINE.ULT',0
 aDardinUlt      db 'DARDIN.ULT',0
-                db 3, 16h, 0Fh, 16h, 1Ah, 16h, 22h, 16h, 2Bh, 16h, 33h
-                db 16h, 40h, 16h, 4Dh, 16h, 56h, 16h, 5Fh, 16h, 69h, 16h
-                db 72h, 16h, 7Ch, 16h, 82h, 16h, 8Bh, 16h, 94h, 16h, 9Ah
-                db 16h, 0A7h, 16h, 0B0h, 16h
+LOCATION_FILENAME_TABLE dw 1603h, 160Fh, 161Ah, 1622h, 162Bh, 1633h, 1640h, 164Dh
+                dw 1656h, 165Fh, 1669h, 1672h, 167Ch, 1682h, 168Bh, 1694h
+                dw 169Ah, 16A7h, 16B0h
 LOCATION_TILE_TABLE db 2Dh, 12h         ; DATA XREF: readAndDispatchCommand-5DBD↓o
 byte_116E3      db 0Ah                  ; DATA XREF: isSpecialEncounterLocation+12↓r
                 db 35h, 2Eh, 13h, 6, 0Dh, 22h, 10h, 31h, 3Ah, 2Fh, 3Ah

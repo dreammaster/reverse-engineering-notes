@@ -87,10 +87,34 @@ data set only ships `AMBROSIA.ULT`. Best working hypothesis: `FAWN`
 and `EXODUS` (the Castle of Exodus, the endgame location) are real
 locations reachable in other releases/versions, and `AMBROSIA` is
 either a renamed version of one of them or a location added in this
-release — not yet confirmed which. Resolving this needs tracing
-whichever function actually calls these filenames (not yet identified
-— they weren't in the shared-runtime pass, so they're somewhere in the
-95 still-unnamed game-specific functions).
+release — not yet confirmed which.
+
+**The calling code itself is now fully identified, 2026-09-14**: both
+are ordinary entries in `cmdEnter`'s `LOCATION_FILENAME_TABLE`
+(`0x116BB` in `ultima_exodus.idb`) — `EXODUS.ULT` is entry `[1]`
+(overworld position `0x350A`), `FAWN.ULT` is entry `[10]` (position
+`0x021E`) — loaded through the exact same generic location-entry path
+as every other named town/castle/dungeon, with no special-casing in
+the code at all. This confirms the discrepancy is purely a **missing
+data file** in this particular release's install, not an unreached or
+conditionally-skipped code path: if the party's `_partyPosition` ever
+matched `0x350A` or `0x021E` on the real overworld map, the game would
+call `loadFile` for a file that simply isn't present in this data set.
+**Confirmed reachable, 2026-09-14**: read `SOSARIA.ULT`'s real map
+byte directly at each position (`offset = Y*64 + X`, 64×64 1-byte/cell
+map at file offset 0): `EXODUS`'s position (`0x350A` → X=10, Y=53,
+offset `0xD4A`) holds tile `0x1C` — the exact same tile value as
+`BRITISH`'s confirmed real castle position (`0x122D` → offset `0x4AD`,
+also `0x1C`). `FAWN`'s position (`0x021E` → X=30, Y=2, offset `0x9E`)
+holds tile `0x18` — the same tile value as `MOON`'s and `DEVIL`'s
+confirmed real town positions (both `0x18`). **Both spots are
+genuinely marked as a castle and a town, respectively, on the master
+map** — not random/inaccessible coordinates. This settles the
+question: `FAWN.ULT`/`EXODUS.ULT` are real, intentionally-placed,
+in-game-reachable locations (Castle Exodus almost certainly being the
+endgame castle), and their absence from this data set is a genuine
+missing-file gap in this particular archived copy, not a sign they
+were ever unused or renamed to `AMBROSIA`.
 
 ## Dungeons (`DARDIN`, `FIRE`, `M`, `MINE`, `P`, `PERINIAN`, `TIME` — 7 files)
 

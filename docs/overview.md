@@ -2091,3 +2091,53 @@ party lands when it sails onto that tile. Named the two tables
 `WHIRLPOOL_X_TABLE`/`WHIRLPOOL_Y_TABLE` (`ultima_exodus.idb`, still
 145/145) to finish the job — the external doc's "moongate" label
 was simply the wrong mechanic; Ultima III doesn't have moongates.
+
+## The map file loader traced: all 19 named locations resolved, and the FAWN.ULT/EXODUS.ULT mystery finally closed
+
+The last substantial roadmap item this session: tracing the overworld
+map file loader against the full confirmed filename list. Picked up a
+loose thread from `cmdEnter`'s own rename note -- a filename lookup
+via `[si+16BBh]` that had never been traced back to its source table.
+
+`si` turned out to be the `LOCATION_TILE_TABLE` match index (doubled),
+and `[si+16BBh]` resolves to linear `0x116BB` -- a 19-entry near-pointer
+array sitting *immediately before* `LOCATION_TILE_TABLE` itself (19
+words of filename pointer, then 19 words of position: one contiguous
+struct-of-arrays for all of Ultima III's named overworld locations).
+Dumped and resolved every pointer directly against the loaded strings:
+
+```
+[0] BRITISH.ULT   [1] EXODUS.ULT    [2] LCB.ULT       [3] MOON.ULT
+[4] YEW.ULT       [5] MONTOR_E.ULT  [6] MONTOR_W.ULT  [7] GREY.ULT
+[8] DAWN.ULT      [9] DEVIL.ULT     [10] FAWN.ULT     [11] DEATH.ULT
+[12] M.ULT        [13] FIRE.ULT     [14] TIME.ULT     [15] P.ULT
+[16] PERINIAN.ULT [17] MINE.ULT     [18] DARDIN.ULT
+```
+
+This matches real Ultima III geography exactly -- `DEVIL.ULT` (Devil
+Guard, where Radrion's riddle says the 4 Marks are found), `FIRE.ULT`
+and `TIME.ULT` (the Fire dungeon and the Time Lord's dungeon, both
+confirmed via the Exodus-puzzle lore earlier this session) all line up
+perfectly. Named the table `LOCATION_FILENAME_TABLE`
+(`apply_location_filename_table.py`); `ultima_exodus.idb` stays
+145/145.
+
+**This also finally resolves a discrepancy flagged all the way back
+in file-formats.md**: the game's data set is missing `EXODUS.ULT` and
+`FAWN.ULT` on disk, while shipping an unexplained `AMBROSIA.ULT`
+instead, and it was unclear whether `EXODUS`/`FAWN` were ever real,
+reachable locations or just leftover strings. With the loader fully
+traced, both are ordinary entries in `LOCATION_FILENAME_TABLE` (`[1]`
+and `[10]`), loaded through the exact same generic code path as every
+other town/castle/dungeon -- no special-casing at all. To settle it
+completely, read `SOSARIA.ULT`'s real map byte at each position
+directly: `EXODUS`'s spot (`0x350A`) carries tile `0x1C`, the same
+tile value as `BRITISH`'s confirmed real castle; `FAWN`'s spot
+(`0x021E`) carries tile `0x18`, the same value as `MOON`'s and
+`DEVIL`'s confirmed real towns. **Both are genuinely placed as a
+castle and a town on the master map** -- this data set is simply
+missing two files that the game fully expects to load, not evidence
+that `FAWN`/`EXODUS` were ever unused.
+
+With this, every substantial item flagged in `docs/roadmap.md` at the
+start of this session's "flagged questions" pass has been resolved.

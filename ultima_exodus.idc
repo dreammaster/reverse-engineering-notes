@@ -234,8 +234,9 @@ static Bytes_0(void) {
 	set_name	(0X116A7,	"aMineUlt");
 	create_strlit	(0X116B0,	0XB);
 	set_name	(0X116B0,	"aDardinUlt");
-	create_byte	(0X116BB);
-	make_array	(0X116BB,	0X26);
+	create_word	(0X116BB);
+	make_array	(0X116BB,	0X13);
+	set_name	(0X116BB,	"LOCATION_FILENAME_TABLE");
 	create_byte	(0X116E1);
 	make_array	(0X116E1,	0X2);
 	set_name	(0X116E1,	"LOCATION_TILE_TABLE");
@@ -3676,10 +3677,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X18DBB);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X18DCD);
-	op_hex		(x,	1);
-	create_insn	(x=0X18DCF);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -3689,6 +3686,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18DCD);
+	op_hex		(x,	1);
+	create_insn	(x=0X18DCF);
+	op_hex		(x,	1);
 	create_insn	(x=0X18DD1);
 	op_hex		(x,	1);
 	create_insn	(x=0X18DDD);

@@ -703,11 +703,24 @@ for the full disassembly-confirmed mechanism.
       the dungeon-map counterpart to `getMapTileAt`, reading a tile
       byte from a loaded per-level dungeon buffer at a computed
       offset (packed X/Y plus `_dungeonLevel<<8`, base `0x900`).
-- [ ] Trace the overworld/town/dungeon map file loader against the
-      confirmed filename list (all 19 `.ULT` files, `DUNGEON.DAT`) —
-      `drawTileGrid`'s confirmed 64-byte-tile/11×11-grid shape is a
-      strong lead for the combat-arena renderer specifically (exact
-      dimension match with `CNFLCT_*.ULT`).
+- [x] **RESOLVED 2026-09-14**: traced the overworld/town/dungeon map
+      file loader against the confirmed filename list. `cmdEnter`'s
+      `[si+16BBh]` access (`si` = the `LOCATION_TILE_TABLE` match
+      index, doubled) resolves to `LOCATION_FILENAME_TABLE`
+      (`0x116BB`, 19 near-pointers, sitting immediately before
+      `LOCATION_TILE_TABLE` — one contiguous struct-of-arrays layout).
+      Dumped and resolved all 19 filename pointers directly: `[0]
+      BRITISH.ULT [1] EXODUS.ULT [2] LCB.ULT [3] MOON.ULT [4] YEW.ULT
+      [5] MONTOR_E.ULT [6] MONTOR_W.ULT [7] GREY.ULT [8] DAWN.ULT [9]
+      DEVIL.ULT [10] FAWN.ULT [11] DEATH.ULT [12] M.ULT [13] FIRE.ULT
+      [14] TIME.ULT [15] P.ULT [16] PERINIAN.ULT [17] MINE.ULT [18]
+      DARDIN.ULT` — matching real Ultima III geography exactly (e.g.
+      `DEVIL.ULT`/Devil Guard from Radrion's riddle, `FIRE.ULT`/
+      `TIME.ULT` from the Marks/Time-Lord lore, both already confirmed
+      elsewhere this session). Named the table via
+      `apply_location_filename_table.py`; `ultima_exodus.idb` stays
+      145/145. `drawTileGrid`'s combat-arena/`CNFLCT_*.ULT` connection
+      remains a separate, still-untraced lead.
 - [x] **`SHAPES.ULT`/`CHARSET.ULT` load sites found** — done, see the
       resolved `drawCharGlyph`-buffer mystery in `ULTIMA.COM`'s open
       items above (`entryFromBootup` loads both, back-to-back into one
@@ -898,10 +911,11 @@ for the full disassembly-confirmed mechanism.
       naming the last few functions (see `teleportToAmbrosia` below):
       it's loaded directly by name when the party falls into a
       specific whirlpool, replacing the loaded Sosaria map with
-      Ambrosia's. `FAWN.ULT`/`EXODUS.ULT` remain unresolved — not
-      found referenced by name in any code reached this session; may
-      be loaded indirectly (a computed filename) or simply unused
-      leftover strings.
+      Ambrosia's. **`FAWN.ULT`/`EXODUS.ULT` now also resolved** (see
+      the map-file-loader trace below): both are ordinary named
+      overworld locations, loaded indirectly through
+      `LOCATION_FILENAME_TABLE` like any other town/castle/dungeon —
+      nothing special about either beyond being real place names.
 - [x] **Two distinct whirlpool-type map features found and named**,
       done 2026-09-14, closing out the last few unnamed functions in
       `ultima_exodus.idb`:
