@@ -1594,3 +1594,135 @@ DUNGEON_COMMAND_KEYS @ 0x17708:
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_moves_ult.py', 'noexport']
+[*] reading investigate_moves_ult.py
+[*] executing investigate_moves_ult.py
+[*] captured stdout from target script:
+----- begin target script output -----
+'MOVES.ULT' string @ 0x10c7a
+xrefs to the string:
+  0x11267 in 'titleScreenAndMainMenuLoop': lea     dx, aMovesUlt; "MOVES.ULT"
+    0x11247: lea     bx, byte_11FE9
+    0x11248: mov     cx, 1400h
+    0x1124b: lea     dx, aShapesUlt; "SHAPES.ULT"
+    0x1124f: call    loadFile
+    0x11252: lea     bx, byte_107D2
+    0x11256: mov     cx, 72h ; 'r'
+    0x11259: lea     dx, aDemoUlt; "DEMO.ULT"
+    0x1125d: call    loadFile
+    0x11260: lea     bx, byte_10844
+    0x11264: mov     cx, 400h
+    0x11267: lea     dx, aMovesUlt; "MOVES.ULT"
+    0x1126b: call    loadFile
+    0x1126e: call    nullsub_1
+    0x11271: lea     bx, byte_102CE
+    0x11275: mov     cx, 500h
+----- end target script output -----
+[*] finished executing investigate_moves_ult.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_moves_ult_usage.py', 'noexport']
+[*] reading check_moves_ult_usage.py
+[*] executing check_moves_ult_usage.py
+[*] captured stdout from target script:
+----- begin target script output -----
+byte_10844 @ 0x10844
+  0x11260 in 'titleScreenAndMainMenuLoop': lea     bx, byte_10844
+
+byte_10844+0x200 = 0x10a44, name=''
+----- end target script output -----
+[*] finished executing check_moves_ult_usage.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_moves_ult_code_xrefs.py', 'noexport']
+[*] reading check_moves_ult_code_xrefs.py
+[*] executing check_moves_ult_code_xrefs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== 0x10844 ===
+  code xrefs: []
+  code xrefs (no flow): []
+=== 0x10a44 ===
+  code xrefs: []
+  code xrefs (no flow): []
+
+context after MOVES.ULT load (0x1126b onward):
+  0x1126b: call    loadFile
+  0x1126e: call    nullsub_1
+  0x11271: lea     bx, byte_102CE
+  0x11275: mov     cx, 500h
+  0x11278: lea     dx, aRosterUlt; "ROSTER.ULT"
+  0x1127c: call    loadFile
+  0x1127f: mov     dx, 1CC0h
+  0x11282: call    drawWindowBorder
+  0x11285: mov     dh, 0Ah
+  0x11287: mov     dl, 0Eh
+  0x11289: lea     si, byte_10CA9
+  0x1128d: call    printStringAt
+  0x11290: mov     ah, 6
+  0x11292: mov     al, 13h
+  0x11294: lea     bx, byte_107D2
+  0x11298: lea     bp, byte_11FE9
+  0x1129c: mov     di, 0DC2h
+  0x1129f: call    drawTileGrid
+  0x112a2: lea     bx, byte_101BC
+  0x112a6: mov     cx, 112h
+  0x112a9: lea     dx, aPartyUlt; "PARTY.ULT"
+  0x112ad: call    loadFile
+  0x112b0: mov     byte_101BE, 1
+  0x112b5: jmp     short loc_112C8
+  0x112b7: mov     dx, 1CC0h
+  0x112ba: call    drawWindowBorder
+  0x112bd: mov     dh, 0Ah
+  0x112bf: mov     dl, 0Eh
+  0x112c1: lea     si, byte_10CA9
+  0x112c5: call    printStringAt
+  0x112c8: mov     dh, 17h
+  0x112ca: mov     dl, 0Ch
+  0x112cc: lea     si, byte_10CB6
+  0x112d0: call    printStringAt
+  0x112d3: inc     word_10C44
+  0x112d7: cmp     word_10C44, 200h
+  0x112dd: jnz     short loc_112E5
+  0x112df: mov     word_10C44, 0
+  0x112e5: mov     si, word_10C44
+  0x112e9: mov     bl, [si+844h]
+  0x112ed: mov     bh, 0
+  0x112ef: mov     al, [si+0A44h]
+  0x112f3: cmp     bl, 0FFh
+  0x112f6: jnz     short loc_112FC
+  0x112f8: mov     ah, al
+  0x112fa: jmp     short loc_11308
+  0x112fc: shr     al, 1
+  0x112fe: mov     [bx+7D2h], al
+  0x11302: cmp     al, 8
+  0x11304: jb      short loc_112D3
+  0x11306: mov     ah, 1
+  0x11308: call    updateIntroAnimation
+  0x1130b: call    updateIntroAnimation
+  0x1130e: call    updateIntroAnimation
+  0x11311: call    updateIntroAnimation
+  0x11314: call    updateIntroAnimation
+  0x11317: call    updateIntroAnimation
+  0x1131a: dec     ah
+  0x1131c: jnz     short loc_11308
+  0x1131e: call    pollKeypressAndAnimate
+----- end target script output -----
+[*] finished executing check_moves_ult_code_xrefs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

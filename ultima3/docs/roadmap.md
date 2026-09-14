@@ -911,8 +911,13 @@ for the full disassembly-confirmed mechanism.
       renderer, loaded straight into the `start` buffer and executed
       directly. See [file-formats.md](file-formats.md) and
       `drawDungeonView`'s entry above.
-- [ ] `MOVES.ULT` (1,024 bytes) — smaller, less obviously-structured
-      data file, lower priority, still open.
+- [x] **RESOLVED 2026-09-14**: `MOVES.ULT`'s internal format. Confirmed
+      from `titleScreenAndMainMenuLoop` in `ultima_bootup.idb`: its two
+      `0x200`-byte halves are an index table and a value table that
+      together script a 512-step "attract mode" poke sequence into
+      `DEMO.ULT`'s loaded buffer, one (offset, halved value) pair per
+      title-screen frame, with index `0xFF` reserved as a pause
+      marker. See [file-formats.md](file-formats.md#movesult--scripted-demo-playback-poke-table-1024-bytes).
 - [x] **RESOLVED 2026-09-14**: `checkDebugModeFlag`'s equivalent in
       this IDB, found and named. It's at `0x15000`-`0x15003`, right
       after `drawCharGlyph` (`0x14F90`-`0x15000`) — exactly the same
