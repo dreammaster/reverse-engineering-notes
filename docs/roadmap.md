@@ -317,12 +317,18 @@ evidence.
 The checklist below is kept as a historical record of how this sweep
 actually happened — a genuine, sometimes winding, evidence-first
 process — not as a to-do list; nothing under `EXODUS.BIN` remains
-open at the function-naming level. A handful of deeper mechanism
-questions are flagged as still-unresolved inline (e.g. `cmdHandEquipment`'s
-exact item-transfer mechanism, `drawDungeonView`'s self-modifying
-`start` call target, the exact D/S/L/M-to-card mapping in the Exodus
-puzzle) — those are the legitimate remaining frontier, not simple
-naming gaps.
+open at the function-naming level. Three deeper mechanism questions
+were flagged inline as the legitimate remaining frontier beyond simple
+naming gaps — **all three are now resolved**: the exact D/S/L/M-to-card
+mapping in the Exodus puzzle (`EXODUS_SEQUENCE_ANSWER` — see below),
+`cmdHandEquipment`'s exact item-transfer mechanism (a thorough,
+documented negative result — see below), and `drawDungeonView`'s
+self-modifying `start` call target, confirmed 2026-09-14:
+`DUNGEON.DAT` is itself a raw machine-code overlay (the dungeon
+first-person-view renderer), loaded into the `start` buffer and
+called directly as code when a torch is lit — see
+[file-formats.md](file-formats.md#files-with-no-external-documentation-found-2026-09-13-search)
+for the full disassembly-confirmed mechanism.
 
 - [x] Investigated `sub_123A5` — **turned out to be `updateMonsterAI`
       (per-turn monster/NPC movement AI), not the combat dispatcher.**
@@ -852,8 +858,13 @@ naming gaps.
         saved position ("You made it!"). Ultima III apparently has
         more than one whirlpool on the map, and only this specific
         one is the Ambrosia gateway.
-- [ ] `DUNGEON.DAT` (1,866 bytes) / `MOVES.ULT` (1,024 bytes) — smaller,
-      less obviously-structured data files, lower priority.
+- [x] `DUNGEON.DAT` (1,866 bytes) — **confirmed 2026-09-14: raw x86
+      machine code, not data** — the dungeon first-person-view
+      renderer, loaded straight into the `start` buffer and executed
+      directly. See [file-formats.md](file-formats.md) and
+      `drawDungeonView`'s entry above.
+- [ ] `MOVES.ULT` (1,024 bytes) — smaller, less obviously-structured
+      data file, lower priority, still open.
 - [ ] Locate and name `checkDebugModeFlag`'s equivalent in this IDB (a
       `mov al,0FFh; retn`-shaped stub near `drawCharGlyph`/`clearFramebuffer`
       per the other two IDBs' layout) — a first address guess was
