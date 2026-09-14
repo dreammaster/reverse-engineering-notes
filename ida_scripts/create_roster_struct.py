@@ -73,9 +73,9 @@ MEMBERS = [
     (0x13, "_dexterity", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, BCD."),
     (0x14, "_intelligence", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, BCD."),
     (0x15, "_wisdom", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, BCD."),
-    (0x16, "_race", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into a fixed race-name table."),
-    (0x17, "_class", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into a fixed class-name table."),
-    (0x18, "_sex", 1, 1, "showCharacterDetails/gatherCharacterCreationInput, index into Male/Female/Other."),
+    (0x16, "_race", 1, 1, "showCharacterDetails/gatherCharacterCreationInput. CONFIRMED 2026-09-15 (dump_char_creation_tables.py): stores the raw ASCII key letter itself (not an index) -- 'H'=Human, 'E'=Elf, 'D'=Dwarf, 'B'=Bobbit, 'F'=Fuzzy (RACE_KEYS/RACE_NAME_PTRS)."),
+    (0x17, "_class", 1, 1, "showCharacterDetails/gatherCharacterCreationInput. CONFIRMED 2026-09-15: stores the raw ASCII key letter -- 'F'=Fighter, 'C'=Cleric, 'W'=Wizard, 'T'=Thief, 'P'=Paladin, 'L'=Lark, 'B'=Barbarian, 'D'=Druid, 'I'=Illusionist, 'A'=Alchemist, 'R'=Ranger (CLASS_KEYS/CLASS_NAME_PTRS)."),
+    (0x18, "_sex", 1, 1, "showCharacterDetails/gatherCharacterCreationInput. CONFIRMED 2026-09-15: stores the raw ASCII key letter -- 'M'=Male, 'F'=Female, 'O'=Other (SEX_KEYS/SEX_NAME_PTRS)."),
     (0x19, "_magicPoints", 1, 1,
      "current magic points (BCD). Found and confirmed in "
      "ultima_exodus.idb's castSpell: a spell's BCD-packed MP cost is "

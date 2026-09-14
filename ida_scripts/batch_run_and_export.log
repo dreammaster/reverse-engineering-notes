@@ -1,29 +1,25 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\ultima3\ultima_exodus.idb
-[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
 [*] reading identify.py
 [*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-root filename : _exodus_scratch.com
-input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+root filename : _bootup_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_bootup_scratch.com
 entry point   : 0x100 (cs=0x1000)
-input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+input md5     : e85fbab19a03876bfa6f3a8a58114fd8
 
 segments:
-  seg000       0x010100-0x01adca  (44234 bytes)
+  seg000       0x010100-0x014d74  (19572 bytes)
 
-functions: 144 total, 144 named, 0 still sub_XXXXX
+functions: 73 total, 73 named, 0 still sub_XXXXX
 
 structs (1): RosterEntry
 ----- end target script output -----
 [*] finished executing identify.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
-[*] gen_file(OFILE_ASM) returned 14048
-[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
-[*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0

@@ -195,33 +195,142 @@ aOK             db 'O.K.?',0            ; DATA XREF: drawCharacterCreationForm+7
 aMale           db 'Male',0
 aFemale         db 'Female',0
 aOther          db 'Other',0
-byte_11045      db 4Dh, 46h, 4Fh        ; DATA XREF: showCharacterDetails+99↓o
+SEX_KEYS        db 4Dh, 46h, 4Fh        ; DATA XREF: showCharacterDetails+99↓o
                                         ; gatherCharacterCreationInput+2E↓o
-byte_11048      db 33h, 10h, 38h, 10h, 3Fh, 10h, 48h, 75h, 6Dh, 61h, 6Eh
-                                        ; DATA XREF: gatherCharacterCreationInput+32↓o
-                db 0, 45h, 6Ch, 66h, 0, 44h, 77h, 61h, 72h, 66h, 0, 42h
-                db 6Fh, 2 dup(62h), 69h, 74h, 0, 46h, 75h, 2 dup(7Ah)
-                db 79h, 0
-byte_1106B      db 48h, 45h, 44h, 42h, 46h
+SEX_NAME_PTRS   dw 1033h, 1038h, 103Fh  ; DATA XREF: gatherCharacterCreationInput+32↓o
+                db  48h ; H
+                db  75h ; u
+                db  6Dh ; m
+                db  61h ; a
+                db  6Eh ; n
+                db    0
+                db  45h ; E
+                db  6Ch ; l
+                db  66h ; f
+                db    0
+                db  44h ; D
+                db  77h ; w
+                db  61h ; a
+                db  72h ; r
+                db  66h ; f
+                db    0
+                db  42h ; B
+                db  6Fh ; o
+                db  62h ; b
+                db  62h ; b
+                db  69h ; i
+                db  74h ; t
+                db    0
+                db  46h ; F
+                db  75h ; u
+                db  7Ah ; z
+                db  7Ah ; z
+                db  79h ; y
+                db    0
+RACE_KEYS       db 48h, 45h, 44h, 42h, 46h
                                         ; DATA XREF: showCharacterDetails+BE↓o
                                         ; gatherCharacterCreationInput+46↓o
-byte_11070      db 4Eh, 10h, 54h, 10h, 58h, 10h, 5Eh, 10h, 65h, 10h, 46h
+RACE_NAME_PTRS  dw 104Eh, 1054h, 1058h, 105Eh, 1065h
                                         ; DATA XREF: gatherCharacterCreationInput+4A↓o
-                db 69h, 67h, 68h, 74h, 65h, 72h, 0, 43h, 6Ch, 65h, 72h
-                db 69h, 63h, 0, 57h, 69h, 7Ah, 61h, 72h, 64h, 0, 54h, 68h
-                db 69h, 65h, 66h, 0, 50h, 61h, 6Ch, 61h, 64h, 69h, 6Eh
-                db 0, 4Ch, 61h, 72h, 6Bh, 0, 42h, 61h, 72h, 62h, 61h, 72h
-                db 69h, 61h, 6Eh, 0, 44h, 72h, 75h, 69h, 64h, 0, 49h, 2 dup(6Ch)
-                db 75h, 73h, 69h, 6Fh, 6Eh, 69h, 73h, 74h, 0, 41h, 6Ch
-                db 63h, 68h, 65h, 6Dh, 69h, 73h, 74h, 0, 52h, 61h, 6Eh
-                db 67h, 65h, 72h, 0
-byte_110D0      db 46h, 43h, 57h, 54h, 50h, 4Ch, 42h, 44h, 49h, 41h, 52h
+                db  46h ; F
+                db  69h ; i
+                db  67h ; g
+                db  68h ; h
+                db  74h ; t
+                db  65h ; e
+                db  72h ; r
+                db    0
+                db  43h ; C
+                db  6Ch ; l
+                db  65h ; e
+                db  72h ; r
+                db  69h ; i
+                db  63h ; c
+                db    0
+                db  57h ; W
+                db  69h ; i
+                db  7Ah ; z
+                db  61h ; a
+                db  72h ; r
+                db  64h ; d
+                db    0
+                db  54h ; T
+                db  68h ; h
+                db  69h ; i
+                db  65h ; e
+                db  66h ; f
+                db    0
+                db  50h ; P
+                db  61h ; a
+                db  6Ch ; l
+                db  61h ; a
+                db  64h ; d
+                db  69h ; i
+                db  6Eh ; n
+                db    0
+                db  4Ch ; L
+                db  61h ; a
+                db  72h ; r
+                db  6Bh ; k
+                db    0
+                db  42h ; B
+                db  61h ; a
+                db  72h ; r
+                db  62h ; b
+                db  61h ; a
+                db  72h ; r
+                db  69h ; i
+                db  61h ; a
+                db  6Eh ; n
+                db    0
+                db  44h ; D
+                db  72h ; r
+                db  75h ; u
+                db  69h ; i
+                db  64h ; d
+                db    0
+                db  49h ; I
+                db  6Ch ; l
+                db  6Ch ; l
+                db  75h ; u
+                db  73h ; s
+                db  69h ; i
+                db  6Fh ; o
+                db  6Eh ; n
+                db  69h ; i
+                db  73h ; s
+                db  74h ; t
+                db    0
+                db  41h ; A
+                db  6Ch ; l
+                db  63h ; c
+                db  68h ; h
+                db  65h ; e
+                db  6Dh ; m
+                db  69h ; i
+                db  73h ; s
+                db  74h ; t
+                db    0
+                db  52h ; R
+                db  61h ; a
+                db  6Eh ; n
+                db  67h ; g
+                db  65h ; e
+                db  72h ; r
+                db    0
+CLASS_KEYS      db 46h, 43h, 57h, 54h, 50h, 4Ch, 42h, 44h, 49h, 41h, 52h
                                         ; DATA XREF: showCharacterDetails+E3↓o
                                         ; gatherCharacterCreationInput+5E↓o
-byte_110DB      db 7Ah, 10h, 82h, 10h, 89h, 10h, 90h, 10h, 96h, 10h, 9Eh
+CLASS_NAME_PTRS dw 107Ah, 1082h, 1089h, 1090h, 1096h, 109Eh, 10A3h, 10ADh
                                         ; DATA XREF: gatherCharacterCreationInput+62↓o
-                db 10h, 0A3h, 10h, 0ADh, 10h, 0B3h, 10h, 0BFh, 10h, 0C9h
-                db 10h, 59h, 65h, 73h, 0, 4Eh, 6Fh, 0
+                dw 10B3h, 10BFh, 10C9h
+                db  59h ; Y
+                db  65h ; e
+                db  73h ; s
+                db    0
+                db  4Eh ; N
+                db  6Fh ; o
+                db    0
 byte_110F8      db 59h, 4Eh             ; DATA XREF: handleCreateCharacter+63↓o
 byte_110FA      db 0F1h, 10h, 0F5h, 10h ; DATA XREF: handleCreateCharacter+67↓o
 aLookAtACharact_0 db 'Look at a Character',0
@@ -791,7 +900,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 lea     si, aSex        ; " Sex:"
                 call    printStringAt
                 mov     al, [bx+RosterEntry._sex]
-                lea     di, byte_11045
+                lea     di, SEX_KEYS
                 mov     cx, 3
                 mov     si, cx
                 repne scasb
@@ -805,7 +914,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 lea     si, aRace       ; "Race:"
                 call    printStringAt
                 mov     al, [bx+RosterEntry._race]
-                lea     di, byte_1106B
+                lea     di, RACE_KEYS
                 mov     cx, 5
                 mov     si, cx
                 repne scasb
@@ -819,7 +928,7 @@ loc_1160A:                              ; CODE XREF: showCharacterDetails+5E↑j
                 lea     si, aType       ; "Type:"
                 call    printStringAt
                 mov     al, [bx+RosterEntry._class]
-                lea     di, byte_110D0
+                lea     di, CLASS_KEYS
                 mov     cx, 0Bh
                 mov     si, cx
                 repne scasb
@@ -1550,24 +1659,24 @@ loc_11BEC:                              ; CODE XREF: gatherCharacterCreationInpu
                 mov     dl, 13h
                 call    swapCursorPos
                 mov     cx, 3
-                lea     di, byte_11045
-                lea     si, byte_11048
+                lea     di, SEX_KEYS
+                lea     si, SEX_NAME_PTRS
                 call    getMenuChoice
                 mov     [bx+RosterEntry._sex], al
                 mov     dh, 0Fh
                 mov     dl, 13h
                 call    swapCursorPos
                 mov     cx, 5
-                lea     di, byte_1106B
-                lea     si, byte_11070
+                lea     di, RACE_KEYS
+                lea     si, RACE_NAME_PTRS
                 call    getMenuChoice
                 mov     [bx+RosterEntry._race], al
                 mov     dh, 10h
                 mov     dl, 13h
                 call    swapCursorPos
                 mov     cx, 0Bh
-                lea     di, byte_110D0
-                lea     si, byte_110DB
+                lea     di, CLASS_KEYS
+                lea     si, CLASS_NAME_PTRS
                 call    getMenuChoice
                 mov     [bx+RosterEntry._class], al
                 mov     cl, 50h ; 'P'

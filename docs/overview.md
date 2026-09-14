@@ -1764,3 +1764,31 @@ directly. Every major piece of Ultima III's central puzzle — the
 Marks, the Cards, the hint-givers, and the literal winning sequence —
 is now captured straight from the game's own disassembly, not
 secondary sources.
+
+## `_race`/`_class`/`_sex` letter encodings decoded (`ultima_bootup.idb`)
+
+Closed out another flagged roadmap item: the exact letter-to-name
+mapping for `RosterEntry`'s `_race`/`_class`/`_sex` fields. Walked the
+pointer tables programmatically (`dump_char_creation_tables.py`)
+rather than hand-parsing raw hex — the same discipline this project
+adopted after the dungeon-command-table mixup, since these tables
+interleave near-pointers and inline ASCII text in a way that's easy to
+miscount by eye. Named all 6 tables (`SEX_KEYS`/`SEX_NAME_PTRS`,
+`RACE_KEYS`/`RACE_NAME_PTRS`, `CLASS_KEYS`/`CLASS_NAME_PTRS`):
+
+- **Sex**: `'M'`=Male, `'F'`=Female, `'O'`=Other.
+- **Race**: `'H'`=Human, `'E'`=Elf, `'D'`=Dwarf, `'B'`=Bobbit,
+  `'F'`=Fuzzy.
+- **Class**: `'F'`=Fighter, `'C'`=Cleric, `'W'`=Wizard, `'T'`=Thief,
+  `'P'`=Paladin, `'L'`=Lark, `'B'`=Barbarian, `'D'`=Druid,
+  `'I'`=Illusionist, `'A'`=Alchemist, `'R'`=Ranger.
+
+Also confirmed, by reading `getMenuChoice`'s own code, that these
+`RosterEntry` fields store the raw ASCII key letter itself (e.g.
+literally `'M'`), not a 0-based index into the table —
+`getMenuChoice` only uses an index internally, for a live preview of
+the highlighted choice while the player is still cycling through
+options with arrow keys; what it ultimately returns (and what
+`showCharacterDetails` independently re-derives the display name
+from, via its own `repne scasb` against the same `KEYS` array) is the
+original letter.
