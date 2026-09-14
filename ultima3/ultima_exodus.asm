@@ -2413,7 +2413,7 @@ getMapTileAt    endp
 
 
 getDungeonTileAt proc near              ; CODE XREF: sub_12909+16↓p
-                                        ; sub_15F7B+13↓p ...
+                                        ; teleportToRandomDungeonFloor+13↓p ...
                 pushf
                 shl     bh, 1
                 shl     bh, 1
@@ -5279,7 +5279,7 @@ loc_15E7B:                              ; CODE XREF: seg000:loc_15F78↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15E89       proc near               ; CODE XREF: seg000:5F24↓p
+playSpellCastFanfare proc near          ; CODE XREF: seg000:5F24↓p
                                         ; seg000:5F42↓p ...
                 pushf
                 push    ax
@@ -5298,7 +5298,7 @@ sub_15E89       proc near               ; CODE XREF: seg000:5F24↓p
                 pop     ax
                 popf
                 retn
-sub_15E89       endp
+playSpellCastFanfare endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5372,7 +5372,7 @@ loc_15F0A:                              ; CODE XREF: seg000:61F3↓j
                 call    healHitPoints
                 mov     al, cl
                 call    invertScreenRegion
-                call    sub_15E89
+                call    playSpellCastFanfare
                 call    invertScreenRegion
 
 loc_15F2A:                              ; CODE XREF: seg000:5F14↑j
@@ -5388,7 +5388,7 @@ loc_15F2D:                              ; CODE XREF: seg000:5FE0↓j
                 call    printGameText
                 call    readDirectionKeypress
                 jz      short loc_15F75
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     cx, dx
                 mov     bl, _currentCombatant
                 mov     bh, 0
@@ -5418,7 +5418,7 @@ loc_15F78:                              ; CODE XREF: seg000:5F34↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15F7B       proc near               ; CODE XREF: seg000:6003↓p
+teleportToRandomDungeonFloor proc near  ; CODE XREF: seg000:6003↓p
                                         ; seg000:6021↓p ...
                 pushf
                 push    ax
@@ -5427,7 +5427,7 @@ sub_15F7B       proc near               ; CODE XREF: seg000:6003↓p
                 push    dx
                 mov     dh, 10h
 
-loc_15F82:                              ; CODE XREF: sub_15F7B+18↓j
+loc_15F82:                              ; CODE XREF: teleportToRandomDungeonFloor+18↓j
                 call    stepTimeSeededPrng
                 mov     cl, dl
                 call    stepTimeSeededPrng
@@ -5443,7 +5443,7 @@ loc_15F82:                              ; CODE XREF: sub_15F7B+18↓j
                 pop     ax
                 popf
                 retn
-sub_15F7B       endp
+teleportToRandomDungeonFloor endp
 
 ; ---------------------------------------------------------------------------
 
@@ -5461,7 +5461,7 @@ spellRespond:
                 shl     dl, 1
                 jb      short loc_15FD1
                 mov     dl, al
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     al, 0FFh
                 call    applyRandomGroupDamage
                 jmp     loc_15E69
@@ -5483,18 +5483,18 @@ spellMittar:
 
 spellLorum:
                 mov     byte_115CE, 0Ah
-                call    sub_15E89
+                call    playSpellCastFanfare
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
 spellDorAcron:
                 cmp     byte_114BC, 1
                 jnz     short loc_16009
-                call    sub_15E89
+                call    playSpellCastFanfare
                 cmp     _dungeonLevel, 7
                 jnb     short loc_16009
                 inc     _dungeonLevel
-                call    sub_15F7B
+                call    teleportToRandomDungeonFloor
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5506,11 +5506,11 @@ loc_16009:                              ; CODE XREF: seg000:5FF3↑j
 spellSurAcron:
                 cmp     byte_114BC, 1
                 jnz     short loc_16027
-                call    sub_15E89
+                call    playSpellCastFanfare
                 cmp     _dungeonLevel, 0
                 jz      short loc_1602A
                 dec     _dungeonLevel
-                call    sub_15F7B
+                call    teleportToRandomDungeonFloor
 
 loc_16024:                              ; CODE XREF: seg000:602D↓j
                 jmp     loc_15E69
@@ -5533,7 +5533,7 @@ spellFulgar:
 spellDagAcron:
                 cmp     byte_114BC, 0
                 jnz     short loc_16067
-                call    sub_15E89
+                call    playSpellCastFanfare
 
 loc_1603E:                              ; CODE XREF: seg000:6051↓j
                                         ; seg000:6055↓j ...
@@ -5578,12 +5578,12 @@ spellMentar:
 
 spellDagLorum:
                 mov     byte_115CE, 0FAh
-                call    sub_15E89
+                call    playSpellCastFanfare
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
 spellFalDivi:
-                call    sub_15E89
+                call    playSpellCastFanfare
                 lea     di, CLERIC_SPELL_TABLE
                 lea     si, aClericSpell ; "Cleric spell-"
                 mov     dh, 10h
@@ -5593,7 +5593,7 @@ spellFalDivi:
 spellNoxum:
                 cmp     byte_114BC, 80h
                 jnz     short loc_160B7
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     al, 4Bh ; 'K'
                 call    applyRandomGroupDamage
                 jmp     loc_15E69
@@ -5610,14 +5610,14 @@ spellDecorp:
 
 spellAltair:
                 mov     _negateTimeDuration, 0Ah
-                call    sub_15E89
+                call    playSpellCastFanfare
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
 spellDagMentar:
                 cmp     byte_114BC, 80h
                 jnz     short loc_160F7
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     al, _currentCombatant
                 mov     ah, 40h ; '@'
                 mul     ah
@@ -5641,7 +5641,7 @@ loc_160F7:                              ; CODE XREF: seg000:60CF↑j
 spellNecorp:
                 cmp     byte_114BC, 80h
                 jnz     short loc_1613B
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     cx, 8
                 lea     si, entryFromBootup
 
@@ -5673,7 +5673,7 @@ loc_1613B:                              ; CODE XREF: seg000:60FF↑j
 spellZxkuqyb:
                 cmp     byte_114BC, 80h
                 jnz     short loc_16150
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     al, 0FFh
                 call    applyRandomGroupDamage
                 jmp     loc_15E69
@@ -5697,7 +5697,7 @@ spellPontori:
                 shl     dl, 1
                 jb      short loc_16185
                 mov     dl, al
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     al, 0FFh
                 call    applyRandomGroupDamage
                 jmp     loc_15E69
@@ -5710,7 +5710,7 @@ loc_16185:                              ; CODE XREF: seg000:6158↑j
 
 spellApparUnem:
                 mov     di, bx
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 and     dl, 3
@@ -5777,8 +5777,8 @@ spellSanctu:
 spellLibRec:
                 cmp     byte_114BC, 1
                 jnz     short loc_16206
-                call    sub_15E89
-                call    sub_15F7B
+                call    playSpellCastFanfare
+                call    teleportToRandomDungeonFloor
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5795,7 +5795,7 @@ spellAlcort:
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_1622D
                 call    invertScreenRegion
-                call    sub_15E89
+                call    playSpellCastFanfare
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 call    invertScreenRegion
                 jmp     loc_15E69
@@ -5816,7 +5816,7 @@ loc_16230:                              ; CODE XREF: seg000:6213↑j
 spellSequitu:
                 cmp     byte_114BC, 1
                 jnz     short loc_1624C
-                call    sub_15E89
+                call    playSpellCastFanfare
                 call    exitToSosaria
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
@@ -5843,7 +5843,7 @@ spellSanctuMani:
 spellVieda:
                 cmp     byte_114BC, 80h
                 jz      short loc_16285
-                call    sub_15E89
+                call    playSpellCastFanfare
                 cmp     byte_114BC, 1
                 jnz     short loc_1627F
                 call    sub_12909
@@ -5872,7 +5872,7 @@ spellSurmandum:
                 cmp     byte ptr [bx+11h], 44h ; 'D'
                 jnz     short loc_162C1
                 call    invertScreenRegion
-                call    sub_15E89
+                call    playSpellCastFanfare
                 call    invertScreenRegion
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
@@ -5902,7 +5902,7 @@ spellAnjuSermani:
                 cmp     byte ptr [bx+11h], 41h ; 'A'
                 jnz     short loc_162FA
                 call    invertScreenRegion
-                call    sub_15E89
+                call    playSpellCastFanfare
                 call    invertScreenRegion
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     al, [di+15h]

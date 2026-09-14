@@ -1797,6 +1797,26 @@ RENAMES = [
      "returns nonzero (the trap triggers) -- called from several "
      "trap-handling sites in sub_17B54 (Acid/Poison/Bomb/Gas traps, "
      "already named via their own strings)."),
+
+    (0x15E89, "playSpellCastFanfare",
+     "A two-flash-two-sound visual/audio fanfare (sound 0F5h + "
+     "invertFullScreen, then a second parameterized tone + "
+     "invertFullScreen again). Referenced only via raw offsets "
+     "(`seg000:5F24`/`seg000:5F42`, i.e. linear 0x15F24/0x15F42 -- "
+     "both inside spell-effect address ranges, not real IDA "
+     "functions, which is why no named caller shows up in an "
+     "xref-based caller search) -- called from within individual "
+     "spell-effect routines as their success cue."),
+    (0x15F7B, "teleportToRandomDungeonFloor",
+     "Rolls a random (X,Y) up to 16 times until `getDungeonTileAt` "
+     "returns 0 (an empty floor tile), then sets `_partyPosition` "
+     "there. Referenced via raw offsets 0x16003/0x16021, which fall "
+     "inside spellDorAcron's and spellSurAcron's own address ranges "
+     "respectively -- i.e. this is the 'land somewhere safe' step "
+     "both the descend-one-level and ascend-one-level spells share "
+     "after moving `_dungeonLevel`, consistent with a level-transition "
+     "spell needing a random landing spot rather than a specific "
+     "staircase tile."),
 ]
 
 
