@@ -2491,6 +2491,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X17D69);
 	op_hex		(x,	1);
 	create_insn	(0X17D74);
+	set_name	(0X17D74,	"tryBcdAddClamped");
 	create_insn	(0X17D9E);
 	create_insn	(0X17DA3);
 	create_insn	(x=0X17DA8);
@@ -2509,6 +2510,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X17E02);
+	set_name	(0X17E02,	"incrementMoveCounter");
 	set_cmt	(0X17E33,	"jumptable 00011BD1 case 21\njumptable 00018389 case 9",	1);
 	create_insn	(0X17E33);
 	set_name	(0X17E33,	"cmdReady");
@@ -3979,12 +3981,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ADA3);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1ADB1);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1ADBF);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3994,6 +3990,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1ADB1);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
+	create_insn	(x=0X1ADBF);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 }
 
 static Functions_0(void) {
