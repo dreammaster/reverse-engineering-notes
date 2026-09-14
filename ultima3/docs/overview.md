@@ -1158,3 +1158,35 @@ handler there would always be a silent no-op, making it cheaper to
 just disable the letter outright. Doesn't confirm whether dungeon
 locked doors exist or how they'd open if so — left as a genuinely
 open question, just a better-informed one.
+
+**Two frequently-cited helpers finally named, same session**:
+`selectPlayer` (`0x16C76`) and `invertScreenRegion` (`0x17176`) had
+both been referenced *by address* throughout this entire session's
+evidence notes (in `cmdCastSpell`, `enterShrine`, `showTempleMenu`,
+`applyHungerTick`, and more) without ever actually being renamed —
+fixed. `selectPlayer` is the player-selection keypress prompt used
+everywhere a command needs "which character?" (returns the character
+pointer in `bx`). `invertScreenRegion` XOR-inverts a CGA video-memory
+region across both interlaced banks — mechanically confirmed, but
+reused for at least two different purposes across callers (character
+portrait highlighting during `enterShrine`, and a screen-flash effect
+synced to a sound cue elsewhere), so it's named for the shared
+mechanism rather than one asserted purpose.
+
+**Full per-turn party effects cycle traced**: `processPartyTurnEffects`
+(already named from an earlier session) turned out to run a complete
+cycle every turn — class-gated MP regeneration, hunger, poison, and
+healing — and its two remaining unnamed helpers are now
+`applyHungerTick` (`0x170E4`) and `computeMaxMagicPointsFromAttribute`
+(`0x17149`). Tracing `applyHungerTick` turned up a genuine, previously
+unlabeled `RosterEntry` field: offset `0x20`, a 1-byte gap between
+`_experience` and `_food`, is `_foodSubCounter` — a fixed-point
+accumulator that only lets the visible `_food` counter drop once this
+sub-counter itself underflows, making hunger progress slower than 1
+unit per turn. Added to the struct in both `ultima_bootup.idb` and
+`ultima_exodus.idb`. The same pass confirmed poison deals 1 damage per
+turn with a "Poisoned!\n" message and a status-bar flash, starvation
+deals 5 damage the same way once `_food` bottoms out, and HP
+naturally regenerates by 1 (BCD) toward `_maxHitPoints` each turn a
+character isn't poisoned — a nice, complete confirmation of Ultima
+III's core survival-mechanics loop.

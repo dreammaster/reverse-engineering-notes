@@ -88,6 +88,13 @@ MEMBERS = [
      "_hitPoints to this field's value after adding -- no longer just "
      "an offset guess from the parallel creation-time write."),
     (0x1E, "_experience", 2, 1, "showCharacterDetails (printHexWord/BCD); addExperienceClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999). NOTE, confirmed 2026-09-14: drawPartyStatusBar (ultima_exodus.idb) separately reads the single high byte at +0x1F alone and displays it as a derived 'Level' (+1, clamped to 99) -- this is NOT a conflicting field, just this word's high BCD digit-pair read for a different display; there is no separate stored Level byte anywhere. See docs/overview.md's 'Level vs. Experience' writeup."),
+    (0x20, "_foodSubCounter", 1, 1,
+     "confirmed 2026-09-14 via ultima_exodus.idb's applyHungerTick "
+     "(processPartyTurnEffects' per-turn hunger handler): a "
+     "fixed-point accumulator decremented every turn, only cascading "
+     "into _food's own decrement on underflow -- makes food consumption "
+     "slower than 1 unit/turn. Previously an unlabeled 1-byte gap "
+     "between _experience (ends at 0x20) and _food (starts at 0x21)."),
     (0x21, "_food", 2, 1, "showCharacterDetails (printHexWord/BCD), set to 150 (BCD) at creation."),
     (0x23, "_gold", 2, 1, "showCharacterDetails (printHexWord/BCD); addGoldClamped in ultima_exodus.idb confirms this offset via real arithmetic (BCD add, clamped to 9999)."),
     (0x25, "_gems", 1, 1,

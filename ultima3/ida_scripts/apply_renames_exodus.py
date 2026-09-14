@@ -1379,6 +1379,59 @@ RENAMES = [
      "rather than a location type -- not fully explained, flagged "
      "rather than papered over; may indicate this address doubles as "
      "scratch storage in that one code path."),
+
+    # --- Two frequently-referenced helpers, finally named, 2026-09-14
+    (0x16C76, "selectPlayer",
+     "The player-selection prompt referenced BY NUMBER throughout "
+     "this entire session's evidence notes (cmdCastSpell, enterShrine, "
+     "showTempleMenu, and many more) but never actually renamed until "
+     "now. Reads a single keypress (digit 1-4 for a party slot, ESC "
+     "to cancel), validates the slot is occupied in the live "
+     "byte_114CC roster array ('No one there!' + error sound "
+     "otherwise), and returns bx=the selected character's record "
+     "pointer, al/cl=the slot number (0 on cancel or empty slot) -- "
+     "callers check success via the trailing `cmp al,0; retn`, `jz` "
+     "on the caller side."),
+    (0x17176, "invertScreenRegion",
+     "XOR-inverts (0xFFFFh) a computed rectangular region of CGA "
+     "video memory in both interlaced banks (`[bx]`/`[bx+2000h]`), "
+     "sized/positioned from `al` via a bit-shift address formula not "
+     "fully decoded digit-by-digit. Distinct from the already-named "
+     "`invertCharacterCell` (a smaller, differently-addressed 4-row "
+     "cell inversion used by combat's Ztats display) -- this one "
+     "covers a much larger area (12 rows x 15 words per bank) and is "
+     "reused for at least 2 different purposes across its callers: "
+     "highlighting/blinking the selected character during "
+     "`enterShrine`'s offering sequence (al=character index), and a "
+     "screen-flash effect synced with a sound cue in "
+     "`damagePartyAll`/`checkTerrainMovementBlocked`/"
+     "`processPartyTurnEffects` (al's meaning there not independently "
+     "confirmed as a character index). Named for the confirmed "
+     "mechanical behavior common to all callers, not a single "
+     "asserted higher-level purpose."),
+
+    # --- Party per-turn effects: hunger, poison, MP regen, 2026-09-14
+    (0x170E4, "applyHungerTick",
+     "Called once per turn from processPartyTurnEffects with a fixed "
+     "al=0x10. Decrements a 1-byte sub-counter at RosterEntry+0x20 "
+     "(previously an unlabeled gap in the struct -- see the new "
+     "_foodSubCounter field in create_roster_struct.py) by al; only "
+     "when THAT underflows does it cascade into decrementing the "
+     "visible 2-byte `_food` field (+0x21) by the borrow -- a "
+     "fixed-point accumulator so food drops slower than 1 unit/turn. "
+     "On `_food` reaching/crossing zero: clamps to 0, prints "
+     "'Starving!\\n', flashes the character's portrait via "
+     "invertScreenRegion (confirming that helper's `al` really is a "
+     "0-based character-slot index in this caller), and deals 5 "
+     "damage via damageCharacterHP -- the starvation-damage mechanic."),
+    (0x17149, "computeMaxMagicPointsFromAttribute",
+     "Shared helper for processPartyTurnEffects' class-gated MP "
+     "regeneration: converts a BCD attribute score (Intelligence or "
+     "Wisdom, passed in al) to binary via the same shl+aad pattern "
+     "castSpell's MP-cost calc uses, then halves it (`shr ax,1`) -- "
+     "i.e. computes `floor(decimal(attribute)/2)` as that class's max "
+     "regenerable MP threshold; the caller only calls "
+     "regenerateMagicPoint if current MP is below this."),
 ]
 
 

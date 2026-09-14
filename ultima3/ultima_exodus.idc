@@ -110,6 +110,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_hitPoints",	0X1A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_maxHitPoints",	0X1C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_foodSubCounter",	0X20,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gems",	0X25,	0x00000400,	-1,	1);
@@ -1865,6 +1866,7 @@ static Bytes_0(void) {
 	create_insn	(0X16C53);
 	create_insn	(0X16C6E);
 	create_insn	(0X16C76);
+	set_name	(0X16C76,	"selectPlayer");
 	create_insn	(x=0X16CA2);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1971,6 +1973,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X170DB);
 	create_insn	(0X170E4);
+	set_name	(0X170E4,	"applyHungerTick");
 	create_insn	(x=0X1710A);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1980,6 +1983,7 @@ static Bytes_0(void) {
 	create_insn	(0X17136);
 	set_name	(0X17136,	"regenerateMagicPoint");
 	create_insn	(0X17149);
+	set_name	(0X17149,	"computeMaxMagicPointsFromAttribute");
 	create_insn	(x=0X17152);
 	op_hex		(x,	1);
 	create_insn	(x=0X17154);
@@ -2001,6 +2005,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X1716A);
 	op_hex		(x,	1);
 	create_insn	(0X17176);
+	set_name	(0X17176,	"invertScreenRegion");
 	create_insn	(x=0X17186);
 	op_hex		(x,	1);
 	create_insn	(x=0X17188);
