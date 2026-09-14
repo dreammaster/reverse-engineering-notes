@@ -1595,3 +1595,30 @@ regular whirlpool's own on-map tile value, exactly matching
 `teleportPartyWithFanfare`'s trigger condition (`getMapTileAt() ==
 0x88`). Fixed in the rename note before it could compound into
 anything else.
+
+**`drawDungeonView` named** (`0x19630`): clears the viewport and, only
+when a torch is lit (`byte_115CE`), calls into a buffer labeled
+`start` -- the exact 2,048-byte zero buffer `entryFromBootup` also
+uses as `SOSARIA.ULT`'s load target -- as if it held executable code.
+Flagged rather than resolved: this strongly suggests a self-modifying/
+JIT-style dungeon renderer (something must write real machine code
+into that buffer before this call runs), but the write site wasn't
+found this pass. Named for its confirmed torch-gated role.
+
+**`readAndDispatchCommand` named** (`0x17B54`) -- **the last unnamed
+function in `ultima_exodus.idb`**, bringing this IDB's function-naming
+sweep to **144/144 (100%)**. It's the single massive, multi-chunk
+function referenced by raw address in nearly every note this entire
+session: the overworld keypress-read-and-dispatch cycle that looks a
+key up in `OVERWORLD_COMMAND_KEYS` and jumps through
+`OVERWORLD_COMMAND_TABLE` to whichever `cmdX` handler matches. Every
+overworld and dungeon command handler this project has identified --
+dozens of them -- is a label living inside this one function's many
+chunks, not a separate procedure. It's also the exact target of
+`cmdHandEquipment`'s confirmed genuine re-entrant self-call.
+
+**With this, `ultima_exodus.idb` reaches full function-naming
+coverage: 144/144, up from 65/144 at the start of this stretch of the
+session.** Combined with `ultima.idb` (58/58) and `ultima_bootup.idb`
+(73/73), completed earlier, all three of Ultima III's chained
+executables now have every function named.
