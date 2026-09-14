@@ -259,6 +259,26 @@ Shrine/Fountain/Time Lord/Brand tile (LairWare's `UltimaDngn.c` has
 `$9076`/`$931C` — see [overview.md](overview.md) — a plausible
 cross-reference for what triggers each, once traced on the DOS side).
 
+## `BLANK.IBM`/`EXOD.IBM` (16,384 bytes each) — confirmed: raw CGA framebuffer images
+
+**Confirmed 2026-09-15** via `titleScreenAndChainToBootup` (`ultima.idb`)
+— both files are loaded via `loadFile` with `cx = 0x4000` (16,384
+bytes, matching the roadmap's guess exactly) into the same scratch
+buffer (`byte_10115`). `BLANK.IBM` is copied immediately afterward
+directly into CGA video memory (`es = _cgaSegment` = `0xB800`,
+`rep movsw` for `0x2000` words) — a full-screen background image
+shown as-is, analogous to Ultima II's `PIC*` files. `EXOD.IBM` (loaded
+right after, same size, same buffer) is *not* copied to video memory
+immediately at its load site; the title sequence instead calls
+`drawAnimatedPixelPath` shortly after (with a *different* buffer,
+`ANIMATE.DAT`, as its data source — see below), consistent with
+`EXOD.IBM` holding Exodus's own portrait/logo image that gets revealed
+progressively rather than blitted all at once, though the exact
+draw-EXOD.IBM call site wasn't traced further this pass. Both files'
+16,384-byte size is one full CGA 4-color graphics-mode bank (`320×200`
+at 2 bits/pixel = 16,000 bytes, rounded up to the bank size) — genuine
+raw framebuffer dumps, not a compressed or structured format.
+
 ## `NAME.DAT` (640 bytes) — a pixel-path animation script, NOT a name table
 
 **Correction, 2026-09-13**: this doc previously guessed (from external
