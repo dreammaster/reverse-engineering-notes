@@ -1492,6 +1492,27 @@ RENAMES = [
      "writes both into `word_12A90`, the shared cursor-position "
      "variable other text routines (printGameText/writeCharacter) "
      "read."),
+
+    (0x17E02, "incrementMoveCounter",
+     "Increments a 4-byte BCD counter (byte_114BD/BE/BF/C0) by al, "
+     "with carry cascading through all 4 bytes (each `add`/`daa` "
+     "followed by a carry-conditional `+1` to the next byte). Matches "
+     "file-formats.md's PARTY.ULT 'Move count (BCD)' field exactly "
+     "(4 bytes at file offset 0x03) -- this is that counter, "
+     "incremented once per party move."),
+
+    (0x17D74, "tryBcdAddClamped",
+     "A generic, side-effect-free 'BCD add with a limit' calculator: "
+     "given ax=current value, cx=limit, dx=amount to add, returns "
+     "al=0 (success, with dx=the new total and cx=the original "
+     "limit-minus-original-value 'headroom') / al=1 (ax already "
+     "exceeds cx) / al=2 (the addition itself would overflow past "
+     "2-byte BCD). Doesn't write the result anywhere itself -- callers "
+     "(many direct call sites within sub_17B54) presumably store `dx` "
+     "back only when al=0. Distinct from the already-named "
+     "addGoldClamped/addExperienceClamped, which are simpler, "
+     "single-purpose, and DO commit their result directly to a "
+     "RosterEntry field."),
 ]
 
 

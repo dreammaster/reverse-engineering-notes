@@ -1217,3 +1217,16 @@ Escape to cancel). Also named `setCursorForPartyRow` (`0x16D81`,
 `drawPartyStatusBar`'s per-row helper — measures a character's name
 length to center it horizontally and sets the cursor row from the
 party slot).
+
+**Two more core utilities named**: `incrementMoveCounter` (`0x17E02`)
+increments a 4-byte BCD counter (`byte_114BD`-`byte_114C0`) with carry
+cascading through all 4 bytes -- matches `file-formats.md`'s
+`PARTY.ULT` "Move count (BCD)" field (4 bytes at file offset `0x03`)
+exactly, so this is that counter, ticked once per party move.
+`tryBcdAddClamped` (`0x17D74`) is a generic, side-effect-free "BCD add
+with a limit" calculator -- given a current value, a limit, and an
+amount, it reports success/already-over-limit/would-overflow without
+writing anywhere itself, leaving the actual commit to its many call
+sites scattered directly in `sub_17B54`. Distinct from
+`addGoldClamped`/`addExperienceClamped`, which are simpler and commit
+their result directly to a `RosterEntry` field.

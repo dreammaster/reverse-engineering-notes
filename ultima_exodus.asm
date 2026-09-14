@@ -88,14 +88,14 @@ _currentTransport db 0                  ; DATA XREF: sub_17B54:cmdBoard↓r
                 align 2
 byte_114BC      db 0                    ; DATA XREF: sub_17B54:mainLoopCommandDone↓r
                                         ; sub_17B54:loc_11BDF↓r ...
-byte_114BD      db 0                    ; DATA XREF: sub_17E02+2↓r
-                                        ; sub_17E02+7↓w ...
-byte_114BE      db 0                    ; DATA XREF: sub_17E02+E↓r
-                                        ; sub_17E02+13↓w
-byte_114BF      db 0                    ; DATA XREF: sub_17E02+1A↓r
-                                        ; sub_17E02+1F↓w
-byte_114C0      db 0                    ; DATA XREF: sub_17E02+26↓r
-                                        ; sub_17E02+2B↓w
+byte_114BD      db 0                    ; DATA XREF: incrementMoveCounter+2↓r
+                                        ; incrementMoveCounter+7↓w ...
+byte_114BE      db 0                    ; DATA XREF: incrementMoveCounter+E↓r
+                                        ; incrementMoveCounter+13↓w
+byte_114BF      db 0                    ; DATA XREF: incrementMoveCounter+1A↓r
+                                        ; incrementMoveCounter+1F↓w
+byte_114C0      db 0                    ; DATA XREF: incrementMoveCounter+26↓r
+                                        ; incrementMoveCounter+2B↓w
 byte_114C1      db 0                    ; DATA XREF: sub_17B54:loc_11BE9↓r
                                         ; sub_17B54-1ED1↓r ...
 _savedOverworldPosition dw 0            ; DATA XREF: sub_17B54-5DAD↓w
@@ -527,7 +527,7 @@ loc_11BDF:                              ; CODE XREF: sub_17B54-5F7A↑j
 
 loc_11BE9:                              ; CODE XREF: sub_17B54-5F70↑j
                 mov     al, byte_114C1
-                call    sub_17E02
+                call    incrementMoveCounter
                 cmp     byte_114BC, 2
                 jb      short loc_11C07
                 cmp     byte ptr _partyPosition, 0
@@ -9375,7 +9375,7 @@ loc_17BAC:                              ; CODE XREF: sub_17B54+53↑j
                 mov     si, [bp+2]
                 mov     cx, [bx+si]
                 mov     dx, [bx+di]
-                call    sub_17D74
+                call    tryBcdAddClamped
                 cmp     ax, 1
                 jz      short loc_17C03
                 cmp     ax, 2
@@ -9442,7 +9442,7 @@ loc_17C26:                              ; CODE XREF: sub_17B54+96↑j
                 mov     cl, [bx+si]
                 mov     dh, 0
                 mov     dl, [bx+di]
-                call    sub_17D74
+                call    tryBcdAddClamped
                 cmp     ax, 1
                 jz      short loc_17C03
                 cmp     dh, 0
@@ -9517,7 +9517,7 @@ loc_17CA7:                              ; CODE XREF: sub_17B54+12F↑j
                 mov     ch, 0
                 mov     dl, [bx+di]
                 mov     dh, 0
-                call    sub_17D74
+                call    tryBcdAddClamped
                 cmp     ax, 1
                 jz      short loc_17D05
                 cmp     dh, 0
@@ -9612,7 +9612,7 @@ sub_17D1A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17D74       proc near               ; CODE XREF: sub_17B54+69↑p
+tryBcdAddClamped proc near              ; CODE XREF: sub_17B54+69↑p
                                         ; sub_17B54+F1↑p ...
                 pushf
                 push    bx
@@ -9637,22 +9637,22 @@ sub_17D74       proc near               ; CODE XREF: sub_17B54+69↑p
                 mov     cx, ax
                 mov     ax, 0
 
-loc_17D9B:                              ; CODE XREF: sub_17D74+2D↓j
-                                        ; sub_17D74+32↓j
+loc_17D9B:                              ; CODE XREF: tryBcdAddClamped+2D↓j
+                                        ; tryBcdAddClamped+32↓j
                 pop     bx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17D9E:                              ; CODE XREF: sub_17D74+6↑j
+loc_17D9E:                              ; CODE XREF: tryBcdAddClamped+6↑j
                 mov     ax, 1
                 jmp     short loc_17D9B
 ; ---------------------------------------------------------------------------
 
-loc_17DA3:                              ; CODE XREF: sub_17D74+10↑j
+loc_17DA3:                              ; CODE XREF: tryBcdAddClamped+10↑j
                 mov     ax, 2
                 jmp     short loc_17D9B
-sub_17D74       endp
+tryBcdAddClamped endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -9711,7 +9711,7 @@ loc_17DF0:                              ; CODE XREF: sub_17B54:loc_11D66↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17E02       proc near               ; CODE XREF: sub_17B54-5F68↑p
+incrementMoveCounter proc near          ; CODE XREF: sub_17B54-5F68↑p
                                         ; sub_17B54+83C↓p ...
                 pushf
                 push    ax
@@ -9734,12 +9734,12 @@ sub_17E02       proc near               ; CODE XREF: sub_17B54-5F68↑p
                 daa
                 mov     byte_114C0, al
 
-loc_17E30:                              ; CODE XREF: sub_17E02+A↑j
-                                        ; sub_17E02+16↑j ...
+loc_17E30:                              ; CODE XREF: incrementMoveCounter+A↑j
+                                        ; incrementMoveCounter+16↑j ...
                 pop     ax
                 popf
                 retn
-sub_17E02       endp
+incrementMoveCounter endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -10571,7 +10571,7 @@ loc_1837B:                              ; CODE XREF: sub_17B54+822↑j
 loc_1838D:                              ; CODE XREF: sub_17B54-5F6E↑j
                                         ; sub_17B54+8BC↓j ...
                 mov     al, byte_114C1
-                call    sub_17E02
+                call    incrementMoveCounter
                 call    processPartyTurnEffects
                 cmp     byte_115CE, 0
                 jz      short loc_183A1
@@ -11362,7 +11362,7 @@ COMBAT_COMMAND_TABLE:                   ; switch jump
 combatAdvanceTurn:                      ; CODE XREF: sub_17B54-5F78↑j
                                         ; updateMonsterAI+67CE↑j ...
                 mov     al, 1
-                call    sub_17E02
+                call    incrementMoveCounter
                 call    isSpecialEncounterLocation
                 jnz     short loc_18C0B
                 mov     _negateTimeDuration, 0
