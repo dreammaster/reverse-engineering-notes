@@ -353,16 +353,32 @@ naming gaps.
       `cmdHandEquipment` (`0x11E55`, 'H') — the very last letter
       resolved — has a confirmed prompt ("Hand Equipment!\nFrom
       Player: ") but an unconfirmed mechanism: it selects two distinct
-      players then makes a genuine re-entrant `call` back into the top-
-      level dispatcher `sub_17B54` (which saves/restores every
-      register, so this isn't parameter-passing) — the actual item
-      hand-off almost certainly happens through a not-yet-located
-      global "hand mode" flag that a subsequent command checks. **One
-      hypothesis ruled out**: `cmdWear`'s actual effect is now fully
-      traced (see `wearArmour` below) and shows no such flag check —
-      it's a self-contained "choose from armour types you already
-      own" equip mechanic with no cross-character interaction. The
-      real hand-off mechanism is still not located.
+      players (`si`=from, `di`=to, both real `RosterEntry` pointers
+      from `selectPlayer`) then makes a genuine re-entrant `call` back
+      into the top-level dispatcher `readAndDispatchCommand` (which
+      saves/restores every register including `si`/`di`, so this
+      isn't parameter-passing in the usual sense — it only works if
+      some handler running *inside* that nested call reads `si`/`di`
+      directly, since they're otherwise just callee-saved and
+      restored on return). **Investigated further, 2026-09-15, ruled
+      out more than confirmed**: `wearArmour`/`readyWeapon` push/pop
+      `si`/`di` as pure scratch registers and never read the inherited
+      values (confirmed by re-reading both start-to-end). Went
+      further this time — searched every `[si+RosterEntry.field]`
+      access in the whole IDB (only 10 total, small enough to check by
+      hand): all 10 belong to unrelated code (`printCombatReactionMessage`'s
+      status/class check, `attemptSpecialMonsterAttack`'s armour
+      to-hit check, and `combatCmdAttack`'s own ammo-consumption logic,
+      each computing `si` fresh from `_currentCombatant`, not
+      inheriting it from a caller). **No consumer of the inherited
+      `si`/`di` found anywhere via a direct `[reg+N]` RosterEntry
+      access.** Either the actual transfer happens through a more
+      indirect path this search wouldn't catch (e.g. `si`/`di` copied
+      to another register or a global before use), or the command
+      really is non-functional/vestigial in the shipped game — neither
+      confirmed. A comprehensive negative result, not a dead end: the
+      search space for "which command consumes this" is now much
+      smaller than it was.
 - [x] `cmdDisabledOnSurface` (D and K, both `loc_15CC3`) — both are
       no-ops on the overworld, consistent with Descend/Klimb being
       dungeon-only commands.
