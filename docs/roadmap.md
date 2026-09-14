@@ -117,8 +117,14 @@ for the full findings log. Remaining loose ends:
       breakpoint stand-in), not a generic guess. `adjustAnimSpeed`,
       `computeAnimTableByte`, and the 6 `drawTitleBoxN` wrappers still
       need visual confirmation and remain open.
-- [ ] Why does `drawAnimatedPixelPath` only consume 533 of `NAME.DAT`'s
-      640 bytes? See
+- [x] **RESOLVED 2026-09-14**: why `drawAnimatedPixelPath` only
+      consumes 533 of `NAME.DAT`'s 640 bytes. Read the raw file
+      directly: the meaningful `(length, row)` script data ends with
+      its own `0x00 0x00` terminator at exactly file offset
+      `0x212`-`0x213` (533 bytes total including the terminator,
+      matching the `loadFile` call's `cx = 0x215` precisely). The
+      remaining 107 bytes are literal zero padding, nothing hidden.
+      See
       [file-formats.md](file-formats.md#namedat-640-bytes--a-pixel-path-animation-script-not-a-name-table).
 - [ ] The `create_strlit` mystery from `fix_wind_string_array.py`: it
       returns `False` for the wind strings in *both* IDBs even after
