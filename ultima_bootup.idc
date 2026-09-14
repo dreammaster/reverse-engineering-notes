@@ -110,6 +110,7 @@ static Structures_0(id) {
 	mid = add_struc_member(id,"_hitPoints",	0X1A,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_maxHitPoints",	0X1C,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_experience",	0X1E,	0x10000400,	-1,	2);
+	mid = add_struc_member(id,"_foodSubCounter",	0X20,	0x00000400,	-1,	1);
 	mid = add_struc_member(id,"_food",	0X21,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gold",	0X23,	0x10000400,	-1,	2);
 	mid = add_struc_member(id,"_gems",	0X25,	0x00000400,	-1,	1);

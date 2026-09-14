@@ -728,7 +728,7 @@ cmdCastSpell:                           ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 23
                                         ; jumptable 00018389 case 1
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11D63
                 call    isCharacterAlive
                 jnz     short loc_11D66
@@ -844,12 +844,12 @@ cmdHandEquipment:                       ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 16
                                         ; jumptable 00018389 case 3
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11E74
                 lea     si, aToPlayer   ; "  To Player: "
                 call    printGameText
                 mov     si, bx
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11E74
                 mov     di, bx
                 cmp     si, di
@@ -888,14 +888,14 @@ cmdExchange:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 13
                                         ; jumptable 00018389 case 6
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11EFA
                 mov     dl, al
                 dec     dl
                 mov     di, bx
                 lea     si, aPlayer_0   ; "Player: "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11EFA
                 mov     dh, al
                 dec     dh
@@ -940,7 +940,7 @@ cmdPeer:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 29
                                         ; jumptable 00018389 case 32
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11F1F
                 mov     al, [bx+25h]
                 sub     al, 1
@@ -992,7 +992,7 @@ loc_11F45:                              ; CODE XREF: sub_17B54-5C27↑j
 cmdSteal:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 30
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_11FD0
                 mov     di, bx
                 call    isCharacterAlive
@@ -1076,7 +1076,7 @@ cmdUnlock:                              ; CODE XREF: sub_17B54-5F83↑j
                 lea     si, aWhoseKey   ; "Whose key? "
                 call    printGameText
                 mov     si, bx
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_1200F
                 mov     al, [bx+26h]
                 sub     al, 1
@@ -1152,7 +1152,7 @@ cmdZtats:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 10
                                         ; jumptable 00018389 case 13
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_1207A
                 mov     dh, al
                 mov     di, bx
@@ -4936,7 +4936,7 @@ cmdJoinGold:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 25
                                         ; jumptable 00018389 case 5
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_15CB2
                 mov     di, bx
                 lea     bx, byte_114CC
@@ -4993,7 +4993,7 @@ cmdIgniteTorch:                         ; CODE XREF: sub_17B54-5F83↑j
                 jnz     short loc_15CF2
                 lea     si, aWhoseTorch ; "Whose torch: "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_15CEF
                 mov     al, [bx+0Fh]
                 sub     al, 1
@@ -5019,7 +5019,7 @@ cmdNegateTime:                          ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 27
                                         ; jumptable 00018389 case 7
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_15D10
                 mov     al, [bx+27h]
                 sub     al, 1
@@ -5363,16 +5363,16 @@ loc_15F0A:                              ; CODE XREF: seg000:61F3↓j
                                         ; seg000:6266↓j
                 lea     si, aHealWhom_0 ; "Heal whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_15F2A
                 dec     al
                 mov     cl, al
                 mov     al, dh
                 call    healHitPoints
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_15E89
-                call    sub_17176
+                call    invertScreenRegion
 
 loc_15F2A:                              ; CODE XREF: seg000:5F14↑j
                 jmp     loc_15E69
@@ -5788,15 +5788,15 @@ loc_16206:                              ; CODE XREF: seg000:61FB↑j
 spellAlcort:
                 lea     si, aCureWhom_0 ; "Cure whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_16230
                 dec     al
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_1622D
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_15E89
                 mov     byte ptr [bx+11h], 47h ; 'G'
-                call    sub_17176
+                call    invertScreenRegion
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -5865,14 +5865,14 @@ spellSurmandum:
                 jz      short loc_162C1
                 lea     si, aResurectWhom ; "Resurect whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_162C1
                 dec     al
                 cmp     byte ptr [bx+11h], 44h ; 'D'
                 jnz     short loc_162C1
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_15E89
-                call    sub_17176
+                call    invertScreenRegion
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 and     dl, 3
@@ -5895,14 +5895,14 @@ spellAnjuSermani:
                 jz      short loc_162FA
                 lea     si, aRecallWhom_0 ; "Recall whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_162FA
                 dec     al
                 cmp     byte ptr [bx+11h], 41h ; 'A'
                 jnz     short loc_162FA
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_15E89
-                call    sub_17176
+                call    invertScreenRegion
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     al, [di+15h]
                 sub     al, 5
@@ -5988,7 +5988,7 @@ enterShrine     proc near               ; CODE XREF: sub_17B54-5DCF↑p
                 push    dx
                 lea     si, aShrineWhoEnter ; "shrine!\nWho enters? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jnz     short loc_1637A
                 jmp     loc_16428
 ; ---------------------------------------------------------------------------
@@ -6060,7 +6060,7 @@ loc_16405:                              ; CODE XREF: enterShrine+9B↑j
                 lea     si, aShazam     ; "\nShazam!\n"
                 call    printGameText
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 mov     al, 0FDh
                 mov     bl, 0D8h
@@ -6068,7 +6068,7 @@ loc_16405:                              ; CODE XREF: enterShrine+9B↑j
                 call    playSoundEffect
                 call    sub_171C1
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
 
 loc_16428:                              ; CODE XREF: enterShrine+11↑j
                                         ; enterShrine+D9↓j ...
@@ -6145,7 +6145,7 @@ byte_164A3      db 9                    ; DATA XREF: processPartyTurnEffects+21�
                                         ; processPartyTurnEffects+27↓w ...
 byte_164A4      db 0                    ; DATA XREF: entryFromBootup+7E↑w
                                         ; sub_17347:loc_17357↓w ...
-aNoOneThere     db 0Ah                  ; DATA XREF: sub_16C76+2C↓o
+aNoOneThere     db 0Ah                  ; DATA XREF: selectPlayer+2C↓o
                 db 'No one there!',0
 aAllPlayersOut  db 0Ah                  ; DATA XREF: checkPartyWipedOut+18↓o
                 db 0Ah
@@ -6154,7 +6154,7 @@ byte_164C8      db 20h, 41h, 20h, 73h, 68h, 69h, 70h, 20h, 77h, 61h, 73h
                                         ; DATA XREF: sub_17347+61↓o
                 db 0Ah, 3 dup(20h), 44h, 65h, 73h, 74h, 72h, 6Fh, 79h
                 db 65h, 64h, 21h, 0Ah, 10h, 0
-aStarving       db 'Starving!',0Ah,0    ; DATA XREF: sub_170E4+26↓o
+aStarving       db 'Starving!',0Ah,0    ; DATA XREF: applyHungerTick+26↓o
                                         ; sub_17B54+1A93↓o
 aPoisoned       db 'Poisoned!',0Ah,0    ; DATA XREF: processPartyTurnEffects+CC↓o
 byte_164FA      db 45h, 56h, 4Fh, 43h, 41h, 52h, 45h, 3 dup(20h), 49h
@@ -7065,7 +7065,7 @@ autoSaveOnDeath endp
 
 
 damageCharacterHP proc near             ; CODE XREF: processPartyTurnEffects+C2↓p
-                                        ; sub_170E4+4A↓p ...
+                                        ; applyHungerTick+4A↓p ...
                 pushf
                 push    cx
 
@@ -7218,13 +7218,13 @@ sub_16C53       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16C76       proc near               ; CODE XREF: sub_17B54-5E03↑p
+selectPlayer    proc near               ; CODE XREF: sub_17B54-5E03↑p
                                         ; sub_17B54-5CFC↑p ...
                 push    cx
                 push    si
                 mov     ch, ah
 
-loc_16C7A:                              ; CODE XREF: sub_16C76+47↓j
+loc_16C7A:                              ; CODE XREF: selectPlayer+47↓j
                 call    getKeypressAndWaitRaw
                 cmp     ax, 11Bh
                 jz      short loc_16CBF
@@ -7247,8 +7247,8 @@ loc_16C7A:                              ; CODE XREF: sub_16C76+47↓j
                 mov     al, 0FEh
                 call    playSoundEffect
 
-loc_16CAE:                              ; CODE XREF: sub_16C76+1B↑j
-                                        ; sub_16C76+28↑j ...
+loc_16CAE:                              ; CODE XREF: selectPlayer+1B↑j
+                                        ; selectPlayer+28↑j ...
                 mov     ax, cx
                 call    sub_126F4
                 cmp     al, 0
@@ -7257,16 +7257,16 @@ loc_16CAE:                              ; CODE XREF: sub_16C76+1B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16CB8:                              ; CODE XREF: sub_16C76+10↑j
+loc_16CB8:                              ; CODE XREF: selectPlayer+10↑j
                 mov     al, 0FEh
                 call    playSoundEffect
                 jmp     short loc_16C7A
 ; ---------------------------------------------------------------------------
 
-loc_16CBF:                              ; CODE XREF: sub_16C76+A↑j
+loc_16CBF:                              ; CODE XREF: selectPlayer+A↑j
                 mov     cl, 0
                 jmp     short loc_16CAE
-sub_16C76       endp
+selectPlayer    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7744,7 +7744,7 @@ loc_17035:                              ; CODE XREF: processPartyTurnEffects+49�
 loc_17047:                              ; CODE XREF: processPartyTurnEffects+5A↑j
                                         ; processPartyTurnEffects+60↑j
                 mov     al, [bx+14h]
-                call    sub_17149
+                call    computeMaxMagicPointsFromAttribute
                 cmp     al, [bx+19h]
                 jbe     short loc_17055
                 call    regenerateMagicPoint
@@ -7761,7 +7761,7 @@ loc_17055:                              ; CODE XREF: processPartyTurnEffects+66�
 loc_17067:                              ; CODE XREF: processPartyTurnEffects+7A↑j
                                         ; processPartyTurnEffects+80↑j
                 mov     al, [bx+15h]
-                call    sub_17149
+                call    computeMaxMagicPointsFromAttribute
                 cmp     al, [bx+19h]
                 jbe     short loc_17075
                 call    regenerateMagicPoint
@@ -7771,11 +7771,11 @@ loc_17075:                              ; CODE XREF: processPartyTurnEffects+86�
                 cmp     byte ptr [bx+17h], 52h ; 'R'
                 jnz     short loc_17094
                 mov     al, [bx+15h]
-                call    sub_17149
+                call    computeMaxMagicPointsFromAttribute
                 cmp     al, [bx+19h]
                 jbe     short loc_17094
                 mov     al, [bx+14h]
-                call    sub_17149
+                call    computeMaxMagicPointsFromAttribute
                 cmp     al, [bx+19h]
                 jbe     short loc_17094
                 call    regenerateMagicPoint
@@ -7783,17 +7783,17 @@ loc_17075:                              ; CODE XREF: processPartyTurnEffects+86�
 loc_17094:                              ; CODE XREF: processPartyTurnEffects+9A↑j
                                         ; processPartyTurnEffects+A5↑j ...
                 mov     al, 10h
-                call    sub_170E4
+                call    applyHungerTick
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_170B5
                 mov     al, 1
                 call    damageCharacterHP
                 mov     al, cl
                 dec     al
-                call    sub_17176
+                call    invertScreenRegion
                 lea     si, aPoisoned   ; "Poisoned!\n"
                 call    printGameText
-                call    sub_17176
+                call    invertScreenRegion
 
 loc_170B5:                              ; CODE XREF: processPartyTurnEffects+BE↑j
                 cmp     byte_164A3, 0
@@ -7833,7 +7833,7 @@ processPartyTurnEffects endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_170E4       proc near               ; CODE XREF: processPartyTurnEffects+B7↑p
+applyHungerTick proc near               ; CODE XREF: processPartyTurnEffects+B7↑p
                 pushf
                 push    ax
                 push    cx
@@ -7860,22 +7860,22 @@ sub_170E4       proc near               ; CODE XREF: processPartyTurnEffects+B7�
                 sub     ax, si
                 mov     cl, 40h ; '@'
                 div     cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     ah, al
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, ah
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 5
                 call    damageCharacterHP
 
-loc_17131:                              ; CODE XREF: sub_170E4+1F↑j
+loc_17131:                              ; CODE XREF: applyHungerTick+1F↑j
                 pop     si
                 pop     cx
                 pop     ax
                 popf
                 retn
-sub_170E4       endp
+applyHungerTick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7902,7 +7902,8 @@ regenerateMagicPoint endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17149       proc near               ; CODE XREF: processPartyTurnEffects+6B↑p
+computeMaxMagicPointsFromAttribute proc near
+                                        ; CODE XREF: processPartyTurnEffects+6B↑p
                                         ; processPartyTurnEffects+8B↑p ...
                 pushf
                 push    bx
@@ -7930,13 +7931,13 @@ sub_17149       proc near               ; CODE XREF: processPartyTurnEffects+6B�
                 pop     bx
                 popf
                 retn
-sub_17149       endp
+computeMaxMagicPointsFromAttribute endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17176       proc near               ; CODE XREF: seg000:5F21↑p
+invertScreenRegion proc near            ; CODE XREF: seg000:5F21↑p
                                         ; seg000:5F27↑p ...
                 pushf
                 push    ax
@@ -7964,10 +7965,10 @@ sub_17176       proc near               ; CODE XREF: seg000:5F21↑p
                 shl     bx, 1
                 add     bx, 30h ; '0'
 
-loc_171A2:                              ; CODE XREF: sub_17176+42↓j
+loc_171A2:                              ; CODE XREF: invertScreenRegion+42↓j
                 mov     cx, 0Fh
 
-loc_171A5:                              ; CODE XREF: sub_17176+3B↓j
+loc_171A5:                              ; CODE XREF: invertScreenRegion+3B↓j
                 xor     word ptr [bx], 0FFFFh
                 xor     word ptr [bx+2000h], 0FFFFh
                 inc     bx
@@ -7984,7 +7985,7 @@ loc_171A5:                              ; CODE XREF: sub_17176+3B↓j
                 pop     ax
                 popf
                 retn
-sub_17176       endp
+invertScreenRegion endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8193,12 +8194,12 @@ loc_172D8:                              ; CODE XREF: checkTerrainMovementBlocked
                 call    damageCharacterHP
                 mov     al, byte_114C1
                 sub     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     ah, al
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, ah
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 call    drawPartyStatusBar
                 jmp     short loc_172A5
@@ -8220,12 +8221,12 @@ loc_17308:                              ; CODE XREF: checkTerrainMovementBlocked
                 call    damageCharacterHP
                 mov     al, byte_114C1
                 sub     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     ah, al
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, ah
-                call    sub_17176
+                call    invertScreenRegion
 
 loc_1732C:                              ; CODE XREF: checkTerrainMovementBlocked+B7↑j
                                         ; checkTerrainMovementBlocked+BD↑j
@@ -8439,7 +8440,7 @@ cmdYell:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 31
                                         ; jumptable 00018389 case 12
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_174C6
                 call    isCharacterAlive
                 jnz     short loc_174C9
@@ -8502,7 +8503,7 @@ cmdOtherCommand:                        ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 32
                                         ; jumptable 00018389 case 8
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_1752B
                 dec     al
                 mov     bp, ax
@@ -8763,11 +8764,11 @@ loc_176C6:                              ; CODE XREF: sub_17B54-519↑j
 loc_176C9:                              ; CODE XREF: sub_17B54-4CC↑j
                                         ; sub_17B54-4C6↑j
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     word ptr [di+1Ah], 0
                 mov     bx, di
                 mov     al, 0FFh
@@ -9747,7 +9748,7 @@ cmdReady:                               ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 21
                                         ; jumptable 00018389 case 9
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_17E43
                 call    isCharacterAlive
                 jnz     short loc_17E46
@@ -9863,7 +9864,7 @@ cmdWear:                                ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 22
                                         ; jumptable 00018389 case 11
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_17EF4
                 call    isCharacterAlive
                 jnz     short loc_17EF7
@@ -10017,7 +10018,7 @@ findMonsterAtPosition endp
 cmdTransact:                            ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: seg000:OVERWORLD_COMMAND_TABLE↑o
                 call    printGameText   ; jumptable 00011BD1 case 17
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_18031
                 mov     di, ax
                 mov     bp, bx
@@ -10265,7 +10266,7 @@ cmdGet:                                 ; CODE XREF: sub_17B54-5F83↑j
                                         ; DATA XREF: ...
                 call    printGameText   ; jumptable 00011BD1 case 28
                                         ; jumptable 00018389 case 2
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_181DD
                 dec     al
                 mov     bp, ax
@@ -10348,11 +10349,11 @@ loc_18217:                              ; CODE XREF: sub_17B54+6E4↓j
                 call    isCharacterAlive
                 jnz     short loc_1822F
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     byte ptr [bx+11h], 50h ; 'P'
 
 loc_1822F:                              ; CODE XREF: sub_17B54+6C6↑j
@@ -10370,11 +10371,11 @@ loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
                 cmp     al, 0
                 jz      short loc_182A1
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     dl, 0FFh
                 call    stepTimeSeededPrng
                 and     dl, 37h
@@ -10392,11 +10393,11 @@ loc_1826D:                              ; CODE XREF: sub_17B54+6A3↑j
                 cmp     al, 0
                 jz      short loc_182A1
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     ax, bp
-                call    sub_17176
+                call    invertScreenRegion
                 mov     byte ptr [di+11h], 50h ; 'P'
                 jmp     short loc_182A1
 ; ---------------------------------------------------------------------------
@@ -10458,11 +10459,11 @@ loc_182D1:                              ; CODE XREF: damagePartyAll+43↓j
                 call    isCharacterAlive
                 jnz     short loc_18300
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 and     dl, 77h
@@ -12408,7 +12409,7 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 shl     al, cl
                 call    damageCharacterHP
                 mov     ax, si
-                call    sub_17176
+                call    invertScreenRegion
                 mov     dx, bx
                 mov     bl, [si+2564h]
                 mov     bh, [si+2568h]
@@ -12422,7 +12423,7 @@ sub_192AF       proc near               ; CODE XREF: sub_190FD+33↑p
                 mov     [bx], al
                 call    drawLogoTileGrid
                 mov     ax, si
-                call    sub_17176
+                call    invertScreenRegion
                 mov     bx, dx
                 cmp     byte ptr [bx+11h], 44h ; 'D'
                 jnz     short loc_19356
@@ -12602,7 +12603,7 @@ loc_19470:                              ; CODE XREF: sub_17B54+194A↓j
                                         ; sub_17B54+1965↓j ...
                 lea     si, aAFountainWhoWi ; "\nA fountain.  Who\nwill drink? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_194A0
                 mov     cl, al
                 call    isCharacterAlive
@@ -12643,11 +12644,11 @@ loc_194BB:                              ; CODE XREF: sub_17B54+193A↑j
                 mov     byte ptr [bx+11h], 50h ; 'P'
                 dec     cl
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 call    drawPartyStatusBar
                 jmp     short loc_19470
 ; ---------------------------------------------------------------------------
@@ -12669,11 +12670,11 @@ loc_194EE:                              ; CODE XREF: sub_17B54+193A↑j
                 call    sub_171C1
                 dec     cl
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, cl
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 call    drawPartyStatusBar
                 jmp     loc_19470
@@ -12721,7 +12722,7 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 lea     si, aARedHotRodInTh ; "A red hot rod\nin the wall. Who\nwill t"...
                 call    printGameText
                 call    sub_16C53
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_195A8
                 mov     ah, byte ptr _partyPosition
                 and     ah, 3
@@ -12731,12 +12732,12 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 shl     ah, cl
                 or      [bx+0Eh], ah
                 dec     al
-                call    sub_17176
+                call    invertScreenRegion
                 mov     ah, al
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, ah
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 50h ; 'P'
                 call    damageCharacterHP
                 call    drawPartyStatusBar
@@ -12773,11 +12774,11 @@ loc_195B3:                              ; CODE XREF: sub_17B54+89C↑j
                 lea     si, aStarving   ; "Starving!\n"
                 call    printGameText
                 mov     al, dl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0F7h
                 call    playSoundEffect
                 mov     al, dl
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 5
                 call    damageCharacterHP
 
@@ -13574,7 +13575,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 jb      short loc_1A735
                 lea     si, aCureWhom   ; "Cure whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jz      short loc_1A6CE
                 dec     al
                 mov     cx, ax
@@ -13582,7 +13583,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 jz      short loc_1A743
                 mov     ax, cx
                 call    sub_171C1
-                call    sub_17176
+                call    invertScreenRegion
                 push    bx
                 mov     al, 0FDh
                 mov     bl, 0C0h
@@ -13590,7 +13591,7 @@ templeCure:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 call    playSoundEffect
                 pop     bx
                 mov     ax, cx
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 cmp     byte ptr [bx+11h], 50h ; 'P'
                 jnz     short loc_1A752
@@ -13645,7 +13646,7 @@ templeHeal:                             ; CODE XREF: showTempleMenu:TEMPLE_COMMA
                 jb      short loc_1A735
                 lea     si, aHealWhom   ; "Heal whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jnz     short loc_1A785
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
@@ -13659,13 +13660,13 @@ loc_1A785:                              ; CODE XREF: showTempleMenu+EE↑j
                 mov     [bx+1Ah], ax
                 mov     ax, cx
                 call    sub_171C1
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0FDh
                 mov     bl, 0C0h
                 mov     bh, 80h
                 call    playSoundEffect
                 mov     ax, cx
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 mov     ax, 200h
                 call    deductGoldIfAffordable
@@ -13691,7 +13692,7 @@ loc_1A7C7:                              ; CODE XREF: showTempleMenu+130↑j
 loc_1A7D1:                              ; CODE XREF: showTempleMenu+13A↑j
                 lea     si, aResurrectWhom ; "Resurrect whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jnz     short loc_1A7E0
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
@@ -13709,7 +13710,7 @@ loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 jz      short loc_1A824
                 mov     ax, cx
                 call    sub_171C1
-                call    sub_17176
+                call    invertScreenRegion
                 push    bx
                 mov     al, 0FDh
                 mov     bl, 0C0h
@@ -13717,7 +13718,7 @@ loc_1A7ED:                              ; CODE XREF: showTempleMenu+156↑j
                 call    playSoundEffect
                 pop     bx
                 mov     ax, cx
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 cmp     byte ptr [bx+11h], 44h ; 'D'
                 jz      short loc_1A817
@@ -13758,7 +13759,7 @@ loc_1A844:                              ; CODE XREF: showTempleMenu+1AD↑j
 loc_1A84E:                              ; CODE XREF: showTempleMenu+1B7↑j
                 lea     si, aRecallWhom ; "Recall whom? "
                 call    printGameText
-                call    sub_16C76
+                call    selectPlayer
                 jnz     short loc_1A85D
                 jmp     loc_1A6CE
 ; ---------------------------------------------------------------------------
@@ -13777,13 +13778,13 @@ loc_1A86A:                              ; CODE XREF: showTempleMenu+1D3↑j
                 mov     byte ptr [bx+11h], 47h ; 'G'
                 mov     ax, cx
                 call    sub_171C1
-                call    sub_17176
+                call    invertScreenRegion
                 mov     al, 0FDh
                 mov     bl, 0C0h
                 mov     bh, 80h
                 call    playSoundEffect
                 mov     ax, cx
-                call    sub_17176
+                call    invertScreenRegion
                 call    sub_171C1
                 mov     ax, 900h
                 call    deductGoldIfAffordable

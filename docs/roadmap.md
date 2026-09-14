@@ -528,11 +528,27 @@ Next-session priorities, roughly in order:
       independently re-traced against its corresponding spell's own
       code — presumed equivalent by name/shape, not verified
       byte-for-byte identical.
-- [ ] Confirm/extend the `RosterEntry` struct against actual character-
-      state manipulation during play (HP loss in combat, gold/food
-      changes) — this is where fields only inferred so far
-      (`_maxHitPoints`, armour/weapon owned arrays beyond index 0) will
-      get real evidence.
+- [x] **`RosterEntry` extended with `_foodSubCounter` (offset `0x20`)**,
+      done 2026-09-14 — real character-state-manipulation evidence,
+      exactly the kind this item asked for. Tracing
+      `processPartyTurnEffects`'s per-turn hunger handler
+      (`applyHungerTick`) showed the previously-unlabeled 1-byte gap
+      between `_experience` (ends `0x20`) and `_food` (starts `0x21`)
+      is a real, meaningful field: a fixed-point accumulator
+      decremented every turn, only cascading into `_food`'s own
+      decrement on underflow — food drops slower than 1 unit/turn.
+      Applied to both `ultima_exodus.idb` and `ultima_bootup.idb`,
+      struct size unchanged (`0x40`, filled an existing gap). Also
+      confirmed the full per-turn party effects cycle in one pass:
+      class-gated MP regen (`computeMaxMagicPointsFromAttribute`,
+      newly named — `floor(decimal(attribute)/2)` as each class's MP
+      regen ceiling), hunger/starvation (5 damage + a status flash on
+      `_food` reaching 0), poison damage (1 damage + flash + "Poisoned!"
+      each turn while `_status == 'P'`), and natural HP regeneration
+      (BCD `+1` toward `_maxHitPoints` when not poisoned). Still open:
+      `_maxHitPoints` itself remains a same-session inference (see its
+      own struct note) and armour/weapon-owned array entries beyond
+      index 0 are still unconfirmed.
 - [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
       documentation in file-formats.md: castle/town/dungeon/moongate
       coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"
