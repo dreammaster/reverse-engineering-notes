@@ -1531,6 +1531,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X15E89);
+	set_name	(0X15E89,	"playSpellCastFanfare");
 	create_insn	(x=0X15E9A);
 	op_hex		(x,	1);
 	create_insn	(x=0X15E9D);
@@ -1551,6 +1552,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X15F78);
 	create_insn	(0X15F7B);
+	set_name	(0X15F7B,	"teleportToRandomDungeonFloor");
 	create_insn	(0X15F9F);
 	set_name	(0X15F9F,	"spellRespond");
 	create_insn	(x=0X15FC0);
@@ -3938,10 +3940,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ABB9);
 	op_plain_offset	(x,	0,	0X10000);
 	op_plain_offset	(x,	128,	0X10000);
-	set_cmt	(0X1ABBD,	"jumptable 0001ABB9 case 0",	1);
-	create_insn	(x=0X1ABBD);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3951,6 +3949,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1ABBD,	"jumptable 0001ABB9 case 0",	1);
+	create_insn	(x=0X1ABBD);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1ABCF);
 	set_cmt	(0X1ABFF,	"jumptable 0001ABB9 case 1",	1);
 	create_insn	(x=0X1ABFF);

@@ -1446,3 +1446,16 @@ takes a penalty — then rolls a random byte against it.
 `checkTrapEvasion` (`0x182AA`) wraps that with the "Trap evaded!\n"
 message and sound cue, called from the Acid/Poison/Bomb/Gas trap
 handlers already named earlier this session via their own strings.
+
+**Two spell-effect helpers named**: `playSpellCastFanfare` (`0x15E89`)
+is a two-flash-two-sound success cue called from within individual
+spell-effect routines (referenced only via raw address offsets, since
+those routines aren't real IDA functions — explaining why no named
+caller turned up in an xref search). `teleportToRandomDungeonFloor`
+(`0x15F7B`) rolls a random position until `getDungeonTileAt` reports
+an empty floor tile, then moves `_partyPosition` there; its own
+reference offsets fall inside `spellDorAcron`'s and `spellSurAcron`'s
+address ranges, confirming the descend/ascend spells share this
+"land somewhere safe" step after moving `_dungeonLevel` — sensible,
+since a level-transition spell has no specific staircase tile to land
+on.
