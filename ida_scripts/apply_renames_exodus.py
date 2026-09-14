@@ -1921,6 +1921,32 @@ RENAMES = [
      "second half (unconditional cursor/HUD manipulation after the "
      "whirlpool logic) wasn't traced further -- possibly unrelated "
      "per-turn bookkeeping bundled into the same call site."),
+
+    (0x12716, "drawScreenBorder",
+     "Clears the framebuffer then plots a rectangular border/frame "
+     "(top/bottom/left/right edges via repeated plotPixel2bpp calls "
+     "with fixed strides) plus what look like two shorter inner "
+     "divider lines -- the main screen frame drawn once at startup "
+     "(entryFromBootup) and again on returning to certain screens "
+     "(sub_17B54)."),
+
+    (0x12675, "plotMapOverviewPixel",
+     "Called by drawPeerMapOverview (below) with a tile-type-derived "
+     "(dh,dl) pair; computes a pixel address via a bit-shift/table "
+     "(`[bx+132Ah]`) formula and plots it -- the per-tile pixel "
+     "plotter for the full-map overview display."),
+    (0x1259E, "drawPeerMapOverview",
+     "Clears the viewport and loops the ENTIRE 64x64 overworld map "
+     "(both axes to `0x40`, not just the local 11x11 view), plotting "
+     "a simplified color-coded pixel per tile via plotMapOverviewPixel "
+     "based on tile type (passable-terrain codes already confirmed "
+     "elsewhere get one treatment, others another). After the full "
+     "map is drawn, blinks a marker at `_partyPosition` and waits for "
+     "a keypress before restoring the prior game mode. This is the "
+     "rendering routine for Peer/Vieda's 'see the whole map at once' "
+     "effect -- `cmdPeer` and `spellVieda` were both already confirmed "
+     "as reveal-surroundings abilities; this is what actually draws "
+     "that reveal."),
 ]
 
 

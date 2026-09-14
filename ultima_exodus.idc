@@ -706,6 +706,7 @@ static Bytes_0(void) {
 	create_byte	(0X1259D);
 	set_name	(0X1259D,	"_locationType");
 	create_insn	(0X1259E);
+	set_name	(0X1259E,	"drawPeerMapOverview");
 	create_insn	(0X125D6);
 	create_insn	(x=0X125D8);
 	op_hex		(x,	1);
@@ -719,6 +720,7 @@ static Bytes_0(void) {
 	create_insn	(0X12623);
 	create_insn	(0X1262C);
 	create_insn	(0X12675);
+	set_name	(0X12675,	"plotMapOverviewPixel");
 	create_insn	(x=0X12678);
 	op_hex		(x,	1);
 	create_insn	(x=0X1267A);
@@ -746,6 +748,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X12707);
 	op_hex		(x,	0);
 	create_insn	(0X12716);
+	set_name	(0X12716,	"drawScreenBorder");
 	create_byte	(0X127B7);
 	make_array	(0X127B7,	0X16);
 	create_insn	(0X127CD);
@@ -3908,6 +3911,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB0A);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1AB29);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AB2F);
@@ -3918,15 +3930,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB47);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1AB50);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
