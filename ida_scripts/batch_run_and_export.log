@@ -1487,3 +1487,34 @@ structs (1): RosterEntry
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_heal_hitpoints.py', 'noexport']
+[*] reading check_heal_hitpoints.py
+[*] executing check_heal_hitpoints.py
+[*] captured stdout from target script:
+----- begin target script output -----
+healHitPoints: 0x15d2b-0x15d4b
+  0x15d2b: pushf
+  0x15d2c: push    ax
+  0x15d2d: add     al, byte ptr [bx+RosterEntry._hitPoints]
+  0x15d30: daa
+  0x15d31: mov     byte ptr [bx+RosterEntry._hitPoints], al
+  0x15d34: mov     al, [bx+1Bh]
+  0x15d37: adc     al, 0
+  0x15d39: daa
+  0x15d3a: mov     [bx+1Bh], al
+  0x15d3d: mov     ax, [bx+RosterEntry._maxHitPoints]
+  0x15d40: cmp     ax, [bx+RosterEntry._hitPoints]
+  0x15d43: jnb     short loc_15D48
+  0x15d45: mov     [bx+RosterEntry._hitPoints], ax
+  0x15d48: pop     ax
+  0x15d49: popf
+  0x15d4a: retn
+----- end target script output -----
+[*] finished executing check_heal_hitpoints.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
