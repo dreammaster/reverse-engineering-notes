@@ -1726,3 +1726,302 @@ context after MOVES.ULT load (0x1126b onward):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_exodus_fixed_tables.py', 'noexport']
+[*] reading check_exodus_fixed_tables.py
+[*] executing check_exodus_fixed_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+castle coords: file=0x15e1 linear=0x116e1 kind=data name='LOCATION_TILE_TABLE' func=None
+  bytes: 2d 12 0a 35 2e 13 06 0d 22 10 31 3a 2f 3a 07 2c 25 35 12 1f 1e 02 38 1f
+
+town coords: file=0x15e5 linear=0x116e5 kind=unk name='' func=None
+  bytes: 2e 13 06 0d 22 10 31 3a 2f 3a 07 2c 25 35 12 1f 1e 02 38 1f 13 39 31 22
+
+dungeon coords: file=0x15f9 linear=0x116f9 kind=unk name='' func=None
+  bytes: 13 39 31 22 3a 1e 3a 2c 38 06 09 1c 2e 07 50 61 73 73 0a 00 42 6f 61 72
+
+moongate coords (a): file=0x184d linear=0x1194d kind=data name='' func=None
+  bytes: 08 39 0f 24 0f 0c 1f 3a 08 2e 1b 3a 1d 37 1f 1f 00 48 00 50 00 4d 00 4b
+
+moongate coords (b): file=0x1855 linear=0x11955 kind=unk name='' func=None
+  bytes: 08 2e 1b 3a 1d 37 1f 1f 00 48 00 50 00 4d 00 4b 60 5c 64 50 68 6c 34 70
+
+look command strings: file=0x6566 linear=0x16666 kind=data name='aWater' func='readAndDispatchCommand'
+  bytes: 57 61 74 65 72 00 47 72 61 73 73 00 42 72 75 73 68 00 46 6f 72 65 73 74
+----- end target script output -----
+[*] finished executing check_exodus_fixed_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_moongate_table.py', 'noexport']
+[*] reading check_moongate_table.py
+[*] executing check_moongate_table.py
+[*] captured stdout from target script:
+----- begin target script output -----
+xrefs to 0x1194d:
+xrefs to 0x11955:
+
+word_11324 @ 0x11324
+teleportPartyWithFanfare: 0x15b51-0x15b85
+  0x15b51: push    ax
+  0x15b52: push    bx
+  0x15b53: call    drawMapViewport
+  0x15b56: call    invertFullScreen
+  0x15b59: mov     bl, byte ptr word_11324+1
+  0x15b5d: mov     bh, 0
+  0x15b5f: mov     al, [bx+194Dh]
+  0x15b63: mov     ah, [bx+1955h]
+  0x15b67: mov     _partyPosition, ax
+  0x15b6a: mov     bl, 0C0h
+  0x15b6c: mov     bh, 20h ; ' '
+  0x15b6e: mov     al, 0FDh
+  0x15b70: call    playSoundEffect
+  0x15b73: call    invertFullScreen
+  0x15b76: call    drawMapViewport
+  0x15b79: call    invertFullScreen
+  0x15b7c: call    playSoundEffect
+  0x15b7f: call    invertFullScreen
+  0x15b82: pop     bx
+  0x15b83: pop     ax
+  0x15b84: retn
+----- end target script output -----
+[*] finished executing check_moongate_table.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_word_11324_writes.py', 'noexport']
+[*] reading check_word_11324_writes.py
+[*] executing check_word_11324_writes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+word_11324 @ 0x11324
+  0x11e25 in 'readAndDispatchCommand': push    word_11324
+    0x11e15: mov     byte_114BC, dl
+    0x11e18: mov     si, bx
+    0x11e1a: mov     dx, [si+16BBh]
+    0x11e1e: cmp     byte_114BC, 1
+    0x11e23: jz      short loc_11E3A
+    0x11e25: push    word_11324
+    0x11e29: lea     bx, start
+  0x11e33 in 'readAndDispatchCommand': pop     word_11324
+    0x11e23: jz      short loc_11E3A
+    0x11e25: push    word_11324
+    0x11e29: lea     bx, start
+    0x11e2d: mov     cx, 1228h
+    0x11e30: call    loadFile
+    0x11e33: pop     word_11324
+    0x11e37: jmp     mainLoopCommandDone
+    0x11e3a: mov     cx, 890h
+  0x120b9 in 'updateWhirlpoolPosition': push    word_11324
+    0x120a9: pop     dx
+    0x120aa: pop     cx
+    0x120ab: pop     bx
+    0x120ac: pop     ax
+    0x120ad: retn
+    0x120ae: pushf
+    0x120af: push    ax
+    0x120b0: push    bx
+    0x120b1: push    dx
+    0x120b2: cmp     byte_114BC, 0
+    0x120b7: jnz     short loc_1212E
+    0x120b9: push    word_11324
+    0x120bd: dec     byte_11326
+  0x120c8 in 'updateWhirlpoolPosition': inc     byte ptr word_11324
+    0x120b8: jnz     short loc_1212E
+    0x120b9: push    word_11324
+    0x120bd: dec     byte_11326
+    0x120c1: jns     short loc_120D1
+    0x120c3: mov     byte_11326, 0Bh
+    0x120c8: inc     byte ptr word_11324
+    0x120cc: and     byte ptr word_11324, 7
+  0x120cc in 'updateWhirlpoolPosition': and     byte ptr word_11324, 7
+    0x120bc: push    word_11324
+    0x120bd: dec     byte_11326
+    0x120c1: jns     short loc_120D1
+    0x120c3: mov     byte_11326, 0Bh
+    0x120c8: inc     byte ptr word_11324
+    0x120cc: and     byte ptr word_11324, 7
+    0x120d1: dec     byte_11327
+  0x12100 in 'updateWhirlpoolPosition': mov     bl, byte ptr word_11324
+    0x120f0: mov     al, [bx+1955h]
+    0x120f4: mov     bl, [bx+194Dh]
+    0x120f8: mov     bh, al
+    0x120fa: call    getMapTileAt
+    0x120fd: mov     byte ptr [bx], 4
+    0x12100: mov     bl, byte ptr word_11324
+    0x12104: mov     bh, 0
+    0x12106: mov     al, [bx+1955h]
+  0x1213f in 'updateWhirlpoolPosition': mov     al, byte ptr word_11324
+    0x1212f: mov     dx, 8
+    0x12131: xchg    dx, word_12A90
+    0x12135: mov     al, 10h
+    0x12137: call    writeCharacter
+    0x1213a: mov     al, 28h ; '('
+    0x1213c: call    writeCharacter
+    0x1213f: mov     al, byte ptr word_11324
+    0x12142: call    printHexNibble
+    0x12145: mov     al, 29h ; ')'
+  0x121ba in 'teleportToAmbrosia': push    word_11324
+    0x121aa: mov     byte ptr word_11320+1, dl
+    0x121ad: call    saveSosariaAndParty
+    0x121b0: call    clearMapViewport
+    0x121b3: lea     si, aAsTheWaterEnte; "\n\n As the water\n enters  your\nlungs"...
+    0x121b7: call    printGameText
+    0x121ba: push    word_11324
+    0x121be: lea     bx, start
+  0x121cc in 'teleportToAmbrosia': pop     word_11324
+    0x121bc: push    word_11324
+    0x121be: lea     bx, start
+    0x121c2: mov     cx, 1228h
+    0x121c5: lea     dx, aAmbrosiaUlt; "AMBROSIA.ULT"
+    0x121c9: call    loadFile
+    0x121cc: pop     word_11324
+    0x121d0: mov     _currentTransport, 3Fh ; '?'
+----- end target script output -----
+[*] finished executing check_word_11324_writes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_update_whirlpool.py', 'noexport']
+[*] reading dump_update_whirlpool.py
+[*] executing dump_update_whirlpool.py
+[*] captured stdout from target script:
+----- begin target script output -----
+updateWhirlpoolPosition: 0x120ae-0x12168
+  0x120ae: pushf
+  0x120af: push    ax
+  0x120b0: push    bx
+  0x120b1: push    dx
+  0x120b2: cmp     byte_114BC, 0
+  0x120b7: jnz     short loc_1212E
+  0x120b9: push    word_11324
+  0x120bd: dec     byte_11326
+  0x120c1: jns     short loc_120D1
+  0x120c3: mov     byte_11326, 0Bh
+  0x120c8: inc     byte ptr word_11324
+  0x120cc: and     byte ptr word_11324, 7
+  0x120d1: dec     byte_11327
+  0x120d5: jns     short loc_120E5
+  0x120d7: mov     byte_11327, 3
+  0x120dc: inc     byte ptr word_11324+1
+  0x120e0: and     byte ptr word_11324+1, 7
+  0x120e5: pop     dx
+  0x120e6: cmp     dh, byte ptr word_11324+1
+  0x120ea: jz      short loc_1212E
+  0x120ec: mov     bl, dl
+  0x120ee: mov     bh, 0
+  0x120f0: mov     al, [bx+1955h]
+  0x120f4: mov     bl, [bx+194Dh]
+  0x120f8: mov     bh, al
+  0x120fa: call    getMapTileAt
+  0x120fd: mov     byte ptr [bx], 4
+  0x12100: mov     bl, byte ptr word_11324
+  0x12104: mov     bh, 0
+  0x12106: mov     al, [bx+1955h]
+  0x1210a: mov     bl, [bx+194Dh]
+  0x1210e: mov     bh, al
+  0x12110: call    getMapTileAt
+  0x12113: mov     byte ptr [bx], 88h
+  0x12116: mov     al, dl
+  0x12118: and     al, dh
+  0x1211a: cmp     al, 7
+  0x1211c: jnz     short loc_12125
+  0x1211e: mov     byte_10E65, 18h
+  0x12123: jmp     short loc_1212E
+  0x12125: or      dl, dh
+  0x12127: jnz     short loc_1212E
+  0x12129: mov     byte_10E65, 0Ch
+  0x1212e: mov     dx, 8
+  0x12131: xchg    dx, word_12A90
+  0x12135: mov     al, 10h
+  0x12137: call    writeCharacter
+  0x1213a: mov     al, 28h ; '('
+  0x1213c: call    writeCharacter
+  0x1213f: mov     al, byte ptr word_11324
+  0x12142: call    printHexNibble
+  0x12145: mov     al, 29h ; ')'
+  0x12147: call    writeCharacter
+  0x1214a: mov     al, 28h ; '('
+  0x1214c: call    writeCharacter
+  0x1214f: mov     al, byte ptr word_11324+1
+  0x12152: call    printHexNibble
+  0x12155: mov     al, 29h ; ')'
+  0x12157: call    writeCharacter
+  0x1215a: mov     al, 11h
+  0x1215c: call    writeCharacter
+  0x1215f: mov     word_12A90, dx
+  0x12163: pop     dx
+  0x12164: pop     bx
+  0x12165: pop     ax
+  0x12166: popf
+  0x12167: retn
+----- end target script output -----
+[*] finished executing dump_update_whirlpool.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_whirlpool_tables.py']
+[*] reading apply_whirlpool_tables.py
+[*] executing apply_whirlpool_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+create_data(0x1194d, 8 bytes) -> True
+set_name(0x1194d, 'WHIRLPOOL_X_TABLE') -> True
+  bytes: 08 39 0f 24 0f 0c 1f 3a
+create_data(0x11955, 8 bytes) -> True
+set_name(0x11955, 'WHIRLPOOL_Y_TABLE') -> True
+  bytes: 08 2e 1b 3a 1d 37 1f 1f
+----- end target script output -----
+[*] finished executing apply_whirlpool_tables.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14054
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 145 total, 145 named, 0 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

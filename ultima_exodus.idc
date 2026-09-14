@@ -291,7 +291,11 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	128,	0X10000);
 	set_name	(0X1190B,	"OVERWORLD_COMMAND_TABLE");
 	create_byte	(0X1194D);
-	make_array	(0X1194D,	0X10);
+	make_array	(0X1194D,	0X8);
+	set_name	(0X1194D,	"WHIRLPOOL_X_TABLE");
+	create_byte	(0X11955);
+	make_array	(0X11955,	0X8);
+	set_name	(0X11955,	"WHIRLPOOL_Y_TABLE");
 	create_byte	(0X1195D);
 	make_array	(0X1195D,	0X22);
 	create_byte	(0X1197F);
@@ -3676,12 +3680,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X18DCF);
 	op_hex		(x,	1);
-	create_insn	(x=0X18DD1);
-	op_hex		(x,	1);
-	create_insn	(x=0X18DDD);
-	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
-	create_insn	(x=0X18E1A);
-	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -3691,6 +3689,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18DD1);
+	op_hex		(x,	1);
+	create_insn	(x=0X18DDD);
+	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
+	create_insn	(x=0X18E1A);
+	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
 	create_insn	(x=0X18E20);
 	op_stroff	(x,	0,	GetStrucIdByName("RosterEntry"),	0);
 	create_insn	(x=0X18E27);

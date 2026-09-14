@@ -2058,3 +2058,36 @@ reached -- not a no-op handler, a table that never offers the letter
 at all. Whether dungeons have locked doors by some other mechanism
 remains open, but the "why is U disabled" half of the question is now
 fully closed.
+
+## `EXODUS.BIN`'s external-doc-guessed fixed data tables, cross-referenced
+
+Closed out the last EXODUS.BIN-specific item on the roadmap: an
+external doc had guessed at several fixed data tables by raw file
+offset (castle/town/dungeon/moongate coordinates, "look" command
+strings) with no disassembly to back it up. Converted each file offset
+to a linear address (`0x10100 + file offset`, matching this `.COM`-style
+load) and checked what's actually there now that the whole binary is
+disassembled.
+
+Two of the three coordinate claims collapsed into structures already
+fully understood: the "look" command strings offset lands exactly on
+`GAME_NAME_TABLE`'s string blob (146 strings, cataloged earlier this
+session), and the "castle/town/dungeon coordinates" are just three
+different array indices into the single already-named 19-entry
+`LOCATION_TILE_TABLE` — not three separate tables.
+
+The "moongate coordinates" were the one genuinely new piece: two
+completely undefined 8-byte regions, referenced only by raw hex offset
+(`[bx+194Dh]`, `[bx+1955h]`) inside `teleportPartyWithFanfare` and
+`updateWhirlpoolPosition`. Both functions' rename notes already
+explained the real mechanism in detail from an earlier pass this
+session — Ultima III's **moving whirlpool**, not a moongate at all:
+`word_11324` packs two independently-timed cyclic indices (low byte:
+X, every 11 turns; high byte: Y, every 3 turns; both mod 8), and each
+tick `updateWhirlpoolPosition` erases the whirlpool's tile (`0x88`) at
+its old indexed position and redraws it at the new one, while
+`teleportPartyWithFanfare` reads the same tables to decide where the
+party lands when it sails onto that tile. Named the two tables
+`WHIRLPOOL_X_TABLE`/`WHIRLPOOL_Y_TABLE` (`ultima_exodus.idb`, still
+145/145) to finish the job — the external doc's "moongate" label
+was simply the wrong mechanic; Ultima III doesn't have moongates.
