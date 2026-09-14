@@ -1374,3 +1374,12 @@ distinguished). Also named `checkMonsterTerrainHazard` (`0x18C96`,
 lower confidence) — a sound-plus-delay cue for specific monster-AI
 tile values, structurally similar to `checkTerrainMovementBlocked`'s
 hazard cues but for monster movement instead of the player party.
+
+**Two foundational screen-management primitives named**:
+`scrollMessageWindow` (`0x126F4`) is `INT 10h`'s scroll-page-up BIOS
+call over the game-text message area, called from dozens of sites
+across the whole codebase — the core "advance to a new text line"
+step underlying the entire message-output system. `clearMapViewport`
+(`0x128C6`) is the same BIOS call with a blank-instead-of-scroll mode
+over a much larger central region — the main map/game viewport,
+distinct from the smaller text area.

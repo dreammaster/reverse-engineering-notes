@@ -877,7 +877,7 @@ cmdLook:                                ; CODE XREF: sub_17B54-5F83↑j
                 shr     al, 1
                 inc     al
                 call    printNameByIndex
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_11E98:                              ; CODE XREF: sub_17B54-5CD4↑j
                 jmp     mainLoopCommandDone
@@ -1321,7 +1321,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 mov     byte ptr word_11320, 3
                 mov     byte ptr word_11320+1, dl
                 call    saveSosariaAndParty
-                call    sub_128C6
+                call    clearMapViewport
                 lea     si, aAsTheWaterEnte ; "\n\n As the water\n enters  your\nlungs"...
                 call    printGameText
                 push    word_11324
@@ -1351,7 +1351,7 @@ loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
 loc_121F4:                              ; CODE XREF: sub_12168+24↑j
                 lea     si, aAllIsDark  ; "\n\n\n\n\n All is Dark!\n\n"
                 call    printGameText
-                call    sub_128C6
+                call    clearMapViewport
                 lea     bx, start
                 mov     cx, 1228h
                 lea     dx, aSosariaUlt ; "SOSARIA.ULT"
@@ -1842,7 +1842,7 @@ loc_1255C:                              ; DATA XREF: updateMonsterAI+6685↓o
                 mov     word_12A95, dx
                 mov     word_12A9B, cx
                 mov     word_12A92+1, cx
-                call    sub_126F4
+                call    scrollMessageWindow
                 jmp     loc_11B77
 entryFromBootup endp ; sp-analysis failed
 
@@ -1873,7 +1873,7 @@ sub_1259E       proc near               ; CODE XREF: sub_17B54-5C3D↑p
                 push    es
                 mov     es, word_14F39
                 assume es:nothing
-                call    sub_128C6
+                call    clearMapViewport
                 mov     cx, 0
 
 loc_125AE:                              ; CODE XREF: sub_1259E+83↓j
@@ -2070,7 +2070,7 @@ loc_126CF:                              ; CODE XREF: printGameText+42↓j
 
 loc_126D3:                              ; CODE XREF: printGameText+C↑j
                                         ; printGameText+11↑j ...
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     dl, 18h
                 jmp     short loc_126BC
 ; ---------------------------------------------------------------------------
@@ -2094,7 +2094,7 @@ loc_126E8:                              ; CODE XREF: printGameText+1F↑j
 ; ---------------------------------------------------------------------------
 
 loc_126ED:                              ; CODE XREF: printGameText+21↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     dl, 18h
                 jmp     short loc_126CC
 printGameText   endp
@@ -2103,7 +2103,7 @@ printGameText   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_126F4       proc near               ; CODE XREF: sub_17B54-5CBF↑p
+scrollMessageWindow proc near           ; CODE XREF: sub_17B54-5CBF↑p
                                         ; entryFromBootup+B8↑p ...
                 push    ax
                 push    bx
@@ -2131,7 +2131,7 @@ sub_126F4       proc near               ; CODE XREF: sub_17B54-5CBF↑p
                 pop     bx
                 pop     ax
                 retn
-sub_126F4       endp
+scrollMessageWindow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2366,7 +2366,7 @@ loc_128A8:                              ; CODE XREF: seg000:2879↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_128C6       proc near               ; CODE XREF: sub_12168+48↑p
+clearMapViewport proc near              ; CODE XREF: sub_12168+48↑p
                                         ; sub_12168+93↑p ...
                 push    ax
                 push    bx
@@ -2388,7 +2388,7 @@ sub_128C6       proc near               ; CODE XREF: sub_12168+48↑p
                 pop     bx
                 pop     ax
                 retn
-sub_128C6       endp
+clearMapViewport endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2437,7 +2437,7 @@ sub_12909       proc near               ; CODE XREF: sub_17B54:loc_11F1C↑p
                 push    ax
                 push    bx
                 push    cx
-                call    sub_128C6
+                call    clearMapViewport
                 push    word_12A90
                 mov     cx, 0
                 mov     word_12A90, 404h
@@ -2603,7 +2603,7 @@ writeStringPreserveCx endp
 
 
 swapCursorPos   proc near               ; CODE XREF: printGameText+3A↑p
-                                        ; sub_126F4+19↑p ...
+                                        ; scrollMessageWindow+19↑p ...
                 xchg    dx, word_12A90
                 retn
 swapCursorPos   endp
@@ -5205,7 +5205,7 @@ loc_15E02:                              ; CODE XREF: castSpell+A0↓j
                 cmp     ah, 50h ; 'P'
                 ja      short loc_15E1E
                 call    writeCharacter
-                call    sub_126F4
+                call    scrollMessageWindow
                 sub     ah, 41h ; 'A'
                 jmp     short loc_15E25
 ; ---------------------------------------------------------------------------
@@ -5232,7 +5232,7 @@ loc_15E25:                              ; CODE XREF: castSpell+99↑j
                 sub     al, [bx+19h]
                 das
                 mov     [bx+19h], al
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     al, dl
                 add     al, dh
                 mov     ah, 0
@@ -5243,14 +5243,14 @@ loc_15E25:                              ; CODE XREF: castSpell+99↑j
                 add     di, ax
                 mov     si, [si+590Bh]
                 call    printGameText
-                call    sub_126F4
-                call    sub_126F4
+                call    scrollMessageWindow
+                call    scrollMessageWindow
                 jmp     word ptr [di]
 ; ---------------------------------------------------------------------------
 
 loc_15E66:                              ; CODE XREF: castSpell+70↑j
                                         ; castSpell+84↑j
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_15E69:                              ; CODE XREF: castSpell+43↑j
                                         ; castSpell+F6↓j ...
@@ -7251,7 +7251,7 @@ loc_16C7A:                              ; CODE XREF: selectPlayer+47↓j
 loc_16CAE:                              ; CODE XREF: selectPlayer+1B↑j
                                         ; selectPlayer+28↑j ...
                 mov     ax, cx
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 0
                 pop     si
                 pop     cx
@@ -7572,7 +7572,7 @@ loc_16F12:                              ; CODE XREF: showZtats+14C↑j
 loc_16F1C:                              ; CODE XREF: showZtats+195↓j
                 cmp     byte ptr [bx+di+30h], 0
                 jz      short loc_16F54
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     al, [bx+di+30h]
                 call    printHexByte
                 mov     al, 2Dh ; '-'
@@ -7603,7 +7603,7 @@ loc_16F54:                              ; CODE XREF: showZtats+15F↑j
 loc_16F62:                              ; CODE XREF: showZtats+1DB↓j
                 cmp     byte ptr [bx+di+28h], 0
                 jz      short loc_16F9A
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     al, [bx+di+28h]
                 call    printHexByte
                 mov     al, 2Dh ; '-'
@@ -7665,7 +7665,7 @@ loc_16FB5:                              ; CODE XREF: waitForContinueOrCancel+7�
                 jz      short loc_16FD8
                 cmp     ax, 11Bh
                 jnz     short loc_16FB5
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     al, 0FFh
                 jmp     short loc_16FDA
 ; ---------------------------------------------------------------------------
@@ -8453,7 +8453,7 @@ cmdYell:                                ; CODE XREF: sub_17B54-5F83↑j
                 mov     di, sp
                 call    readLine
                 mov     cx, bx
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    uppercaseBuffer
                 lea     si, byte_164FA
                 call    matchKeywordAtDelimiter
@@ -8475,7 +8475,7 @@ cmdYell:                                ; CODE XREF: sub_17B54-5F83↑j
 
 loc_174B2:                              ; CODE XREF: sub_17B54-6AB↑j
                 xor     byte ptr _partyPosition+1, 3
-                call    sub_128C6
+                call    clearMapViewport
                 mov     al, 0FDh
                 mov     bl, 0C0h
                 mov     bh, 40h ; '@'
@@ -8518,7 +8518,7 @@ cmdOtherCommand:                        ; CODE XREF: sub_17B54-5F83↑j
                 mov     di, sp
                 call    readLine
                 mov     cx, bx
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    uppercaseBuffer
                 mov     bx, 0
 
@@ -8714,7 +8714,7 @@ attemptExodusSequence:                  ; CODE XREF: sub_17B54-50F↑j
                 pop     di
                 pop     cx
                 pop     si
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 51h ; 'Q'
                 jz      short loc_176C6
                 cmp     al, 1Bh
@@ -9273,7 +9273,7 @@ loc_17B40:                              ; CODE XREF: readDirectionKeypress+35↑
 ; ---------------------------------------------------------------------------
 
 loc_17B4F:                              ; CODE XREF: readDirectionKeypress+23↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 jmp     short loc_17B40
 readDirectionKeypress endp
 
@@ -9350,7 +9350,7 @@ loc_17B8E:                              ; CODE XREF: sub_17B54+7A↓j
 
 loc_17B95:                              ; CODE XREF: sub_17B54+AD↓j
                                         ; sub_17B54+CF↓j ...
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_17B98:                              ; CODE XREF: sub_17B54+C4↓j
                 call    drawPartyStatusBar
@@ -9414,7 +9414,7 @@ loc_17C03:                              ; CODE XREF: sub_17B54+6F↑j
 
 loc_17C09:                              ; CODE XREF: sub_17B54+74↑j
                                         ; sub_17B54+FC↓j ...
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aNoMoreRoom ; "No more room!\n"
                 call    printGameText
                 mov     al, 0FEh
@@ -9489,7 +9489,7 @@ loc_17C9F:                              ; CODE XREF: sub_17B54+13C↑j
                 lea     si, loc_17932
 
 loc_17CA7:                              ; CODE XREF: sub_17B54+12F↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    getMenuChoice
                 cmp     al, 41h ; 'A'
                 jz      short loc_17D02
@@ -9837,7 +9837,7 @@ loc_17EB8:                              ; CODE XREF: readyWeapon+7B↓j
 
 loc_17EC0:                              ; CODE XREF: readyWeapon+48↑j
                                         ; readyWeapon+4C↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 jmp     short loc_17EB8
 ; ---------------------------------------------------------------------------
 
@@ -9850,7 +9850,7 @@ loc_17EC5:                              ; CODE XREF: readyWeapon+54↑j
 ; ---------------------------------------------------------------------------
 
 loc_17ED3:                              ; CODE XREF: readyWeapon+64↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aNoneOwned  ; "None owned\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -9952,7 +9952,7 @@ loc_17F6A:                              ; CODE XREF: wearArmour+7B↓j
 
 loc_17F72:                              ; CODE XREF: wearArmour+48↑j
                                         ; wearArmour+4C↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 jmp     short loc_17F6A
 ; ---------------------------------------------------------------------------
 
@@ -9965,7 +9965,7 @@ loc_17F77:                              ; CODE XREF: wearArmour+54↑j
 ; ---------------------------------------------------------------------------
 
 loc_17F85:                              ; CODE XREF: wearArmour+64↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aNoneOwned  ; "None owned\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -10194,7 +10194,7 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 or      al, ah
                 mov     ah, 0
                 call    printHexByte
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     bx, di
                 call    addGoldClamped
                 mov     dh, 0FFh
@@ -10214,7 +10214,7 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 mov     al, dl
                 add     al, 41h ; 'A'
                 call    printNameByIndex
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     bl, dl
                 mov     bh, 0
                 mov     al, [bx+di+30h]
@@ -10241,7 +10241,7 @@ loc_18151:                              ; CODE XREF: sub_180D9+44↑j
                 mov     al, dl
                 add     al, 51h ; 'Q'
                 call    printNameByIndex
-                call    sub_126F4
+                call    scrollMessageWindow
                 mov     bl, dl
                 mov     bh, 0
                 mov     al, [bx+di+28h]
@@ -10501,7 +10501,7 @@ initDungeonState:                       ; CODE XREF: sub_17B54-5D02↑j
                 mov     byte_115CE, 0
                 mov     _dungeonLevel, 0
                 call    drawDungeonStatusBar
-                call    sub_128C6
+                call    clearMapViewport
                 jmp     short dungeonMainLoop
 ; END OF FUNCTION CHUNK FOR sub_17B54
 ; ---------------------------------------------------------------------------
@@ -10966,8 +10966,8 @@ loc_18905:                              ; CODE XREF: updateMonsterAI+6559↑j
                 call    printGameText
                 mov     al, 0FFh
                 call    printCombatReactionMessage
-                call    sub_126F4
-                call    sub_126F4
+                call    scrollMessageWindow
+                call    scrollMessageWindow
                 cmp     byte_114BC, 1
                 jnz     short loc_18928
                 lea     dx, aCnflctCUlt ; "CNFLCT_C.ULT"
@@ -11258,8 +11258,8 @@ loc_18B3E:                              ; CODE XREF: printCombatReactionMessage+
 
 loc_18B4A:                              ; CODE XREF: printCombatReactionMessage+29↑j
                                         ; printCombatReactionMessage+2D↑j ...
-                call    sub_126F4
-                call    sub_126F4
+                call    scrollMessageWindow
+                call    scrollMessageWindow
                 jmp     short loc_18B2C
 printCombatReactionMessage endp
 
@@ -11892,7 +11892,7 @@ loc_18F74:                              ; CODE XREF: applyCombatDamage+16↑j
                 call    printHexByte
                 mov     bx, di
                 call    addExperienceClamped
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    drawLogoTileGrid
 
 loc_18FB0:                              ; CODE XREF: applyCombatDamage+A↑j
@@ -12587,7 +12587,7 @@ loc_19441:                              ; CODE XREF: sub_17B54+18F0↓j
                 call    pollKeypressAndAnimate
                 jz      short loc_19441
                 call    getKeypressAndWaitRaw
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    sub_19630
                 mov     byte_114BC, 1
                 jmp     dungeonMainLoop
@@ -12689,7 +12689,7 @@ loc_19517:                              ; CODE XREF: sub_17B54+89C↑j
                 lea     si, aStrangeWind ; jumptable 000183F0 case 2
                 call    printGameText
                 mov     byte_115CE, 0
-                call    sub_128C6
+                call    clearMapViewport
                 jmp     dungeonMainLoop
 ; ---------------------------------------------------------------------------
 
@@ -12803,7 +12803,7 @@ loc_19602:                              ; CODE XREF: sub_17B54+1A76↑j
                 mov     si, [bx+1100h]
                 lea     si, [si+1100h]
                 call    printGameText
-                call    sub_126F4
+                call    scrollMessageWindow
                 jmp     dungeonMainLoop
 
 ; =============== S U B R O U T I N E =======================================
@@ -12814,7 +12814,7 @@ sub_19630       proc near               ; CODE XREF: sub_17B54+850↑p
                 pushf
                 push    ax
                 push    bx
-                call    sub_128C6
+                call    clearMapViewport
                 cmp     byte_115CE, 0
                 jz      short loc_1964B
                 mov     al, _facingDirection
@@ -13275,7 +13275,7 @@ loc_1A4D2:                              ; CODE XREF: sub_17B54+2987↓j
                 lodsw
                 call    xorScreenRegionWithPattern
                 loop    loc_1A4D2
-                call    sub_128C6
+                call    clearMapViewport
                 mov     dh, 3
                 mov     dl, 5
                 lea     si, aAndSoItCameTo ; "And so it came to"
@@ -13340,7 +13340,7 @@ promptYesNo     proc near               ; CODE XREF: showTavernMenu+53↓p
                 lea     si, byte_1965B
                 lea     di, byte_19657
                 call    getMenuChoice
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1A57D
                 mov     al, 4Eh ; 'N'
@@ -13402,7 +13402,7 @@ loc_1A5B8:                              ; CODE XREF: showTavernMenu+5B↓j
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1A61F
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 7
                 jnb     short loc_1A5DC
                 lea     si, aLeaveMyShopYou ; "\n Leave my shop!\n   You scum!!\n"
@@ -13416,7 +13416,7 @@ loc_1A5DC:                              ; CODE XREF: showTavernMenu+20↑j
                 mov     ah, 0
                 cmp     ax, [di+23h]
                 jnb     short loc_1A616
-                call    sub_126F4
+                call    scrollMessageWindow
                 call    deductGoldIfAffordable
                 mov     cl, 4
                 shr     ax, cl
@@ -13427,7 +13427,7 @@ loc_1A5DC:                              ; CODE XREF: showTavernMenu+20↑j
                 lea     si, aAnother    ; "\nAnother? "
                 call    printGameText
                 call    promptYesNo
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1A5B8
                 lea     si, aItSBeenAPleasu ; "It's been a\npleasure!!\n"
@@ -13450,7 +13450,7 @@ loc_1A616:                              ; CODE XREF: showTavernMenu+35↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A61F:                              ; CODE XREF: showTavernMenu+19↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aWhat       ; "<-What?\n"
                 call    printGameText
 
@@ -13833,7 +13833,7 @@ loc_1A8BD:                              ; CODE XREF: showWeaponsShopMenu+13↑j
                 lea     di, aBsqBuy     ; "BSQ\x1BBuy"
                 call    getMenuChoice
                 pop     di
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 51h ; 'Q'
                 jz      short loc_1A959
                 cmp     al, 1Bh
@@ -13899,7 +13899,7 @@ loc_1A93C:                              ; CODE XREF: showWeaponsShopMenu+92↑j
 
 loc_1A956:                              ; CODE XREF: showWeaponsShopMenu+6B↑j
                                         ; showWeaponsShopMenu+6F↑j ...
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_1A959:                              ; CODE XREF: showWeaponsShopMenu+34↑j
                                         ; showWeaponsShopMenu+38↑j ...
@@ -14048,7 +14048,7 @@ loc_1AA3D:                              ; CODE XREF: showArmourShopMenu+13↑j
                 lea     di, aBsqBuy     ; "BSQ\x1BBuy"
                 call    getMenuChoice
                 pop     di
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 51h ; 'Q'
                 jz      short loc_1AAD9
                 cmp     al, 1Bh
@@ -14114,7 +14114,7 @@ loc_1AABC:                              ; CODE XREF: showArmourShopMenu+92↑j
 
 loc_1AAD6:                              ; CODE XREF: showArmourShopMenu+6B↑j
                                         ; showArmourShopMenu+6F↑j ...
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_1AAD9:                              ; CODE XREF: showArmourShopMenu+34↑j
                                         ; showArmourShopMenu+38↑j ...
@@ -14220,7 +14220,7 @@ sub_1AB68       proc near               ; CODE XREF: showArmourShopMenu+15↑p
                 call    printGameText
 
 loc_1AB8C:                              ; CODE XREF: sub_1AB68+16↑j
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_1AB8F:                              ; CODE XREF: sub_1AB68+F↑j
                 pop     si
@@ -14352,7 +14352,7 @@ loc_1AC59:                              ; CODE XREF: showGuildMenu+65↑j
 
 loc_1AC60:                              ; CODE XREF: showGuildMenu+39↑j
                                         ; showGuildMenu+79↑j ...
-                call    sub_126F4
+                call    scrollMessageWindow
 
 loc_1AC63:                              ; CODE XREF: showGuildMenu+C4↑j
                 mov     al, 0FFh
@@ -14467,8 +14467,8 @@ loc_1AD08:                              ; CODE XREF: showOracleMenu+48↓j
                 call    promptForNumberEntry
                 cmp     ah, 0FFh
                 jz      short loc_1AD5F
-                call    sub_126F4
-                call    sub_126F4
+                call    scrollMessageWindow
+                call    scrollMessageWindow
                 mov     ah, al
                 mov     al, 0
                 call    deductGoldIfAffordable
@@ -14482,10 +14482,10 @@ loc_1AD08:                              ; CODE XREF: showOracleMenu+48↓j
                 lea     si, aMoreOffering ; "\nMore offering?\n"
                 call    printGameText
                 call    promptYesNo
-                call    sub_126F4
+                call    scrollMessageWindow
                 cmp     al, 59h ; 'Y'
                 jz      short loc_1AD08
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aFareTheeWellAn ; "\nFare thee well\nand good luck!\n"
                 call    printGameText
 
@@ -14505,7 +14505,7 @@ loc_1AD56:                              ; CODE XREF: showOracleMenu+28↑j
 ; ---------------------------------------------------------------------------
 
 loc_1AD5F:                              ; CODE XREF: showOracleMenu+19↑j
-                call    sub_126F4
+                call    scrollMessageWindow
                 lea     si, aWhat       ; "<-What?\n"
                 call    printGameText
 

@@ -740,6 +740,7 @@ static Bytes_0(void) {
 	create_insn	(0X126E8);
 	create_insn	(0X126ED);
 	create_insn	(0X126F4);
+	set_name	(0X126F4,	"scrollMessageWindow");
 	set_cmt	(0X12707,	"- VIDEO - SCROLL PAGE UP\nAL = number of lines to scroll window (0 = blank whole window)\nBH = attributes to be used on blanked lines\nCH,CL = row,column of upper left corner of window to scroll\nDH,DL = row,column of lower right corner of window",	0);
 	create_insn	(x=0X12707);
 	op_hex		(x,	0);
@@ -767,6 +768,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X128B8);
 	op_hex		(x,	1);
 	create_insn	(0X128C6);
+	set_name	(0X128C6,	"clearMapViewport");
 	set_cmt	(0X128D7,	"- VIDEO - SCROLL PAGE UP\nAL = number of lines to scroll window (0 = blank whole window)\nBH = attributes to be used on blanked lines\nCH,CL = row,column of upper left corner of window to scroll\nDH,DL = row,column of lower right corner of window",	0);
 	create_insn	(x=0X128D7);
 	op_hex		(x,	0);
@@ -3950,11 +3952,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AC6B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1ACA7);
-	set_cmt	(0X1ACAC,	"jumptable 0001ABB9 case 3",	1);
-	create_insn	(x=0X1ACAC);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3964,6 +3961,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1ACA7);
+	set_cmt	(0X1ACAC,	"jumptable 0001ABB9 case 3",	1);
+	create_insn	(x=0X1ACAC);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1ACE9);
 	set_cmt	(0X1ACEF,	"jumptable 0001ABB9 cases 4,5",	1);
 	create_insn	(x=0X1ACEF);

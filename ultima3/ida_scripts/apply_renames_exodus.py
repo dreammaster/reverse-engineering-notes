@@ -1695,6 +1695,22 @@ RENAMES = [
      "rather than the player party -- exact tile-code meanings and "
      "the significance of the return value to its caller not "
      "independently confirmed."),
+
+    (0x126F4, "scrollMessageWindow",
+     "`INT 10h AH=6` (scroll page up) with AL=1 over a fixed window "
+     "(rows 0x11-0x17, cols 0x18-0x27) -- scrolls the game-text "
+     "message area up by one line, then repositions the cursor via "
+     "swapCursorPos. Called extremely widely (dozens of sites, "
+     "including entryFromBootup, castSpell, selectPlayer) -- the core "
+     "'advance to a new text line' primitive underlying the whole "
+     "message-output system."),
+    (0x128C6, "clearMapViewport",
+     "`INT 10h AH=6` with AL=0 (blank the whole window, not scroll) "
+     "over a large central screen region (rows/cols 0x01-0x16) -- "
+     "clears the main map/game viewport, distinct from "
+     "scrollMessageWindow's smaller text-output area. Called from "
+     "several redraw contexts (sub_12168, sub_1259E, sub_12909, and "
+     "directly within sub_17B54, e.g. initDungeonState)."),
 ]
 
 
