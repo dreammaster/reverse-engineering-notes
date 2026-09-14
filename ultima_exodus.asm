@@ -536,7 +536,7 @@ loc_11BE9:                              ; CODE XREF: sub_17B54-5F70↑j
                 jnz     short loc_11C07
 
 loc_11C04:                              ; CODE XREF: sub_17B54-5F59↑j
-                call    sub_16458
+                call    exitToSosaria
 
 loc_11C07:                              ; CODE XREF: sub_17B54-5F60↑j
                                         ; sub_17B54-5F52↑j
@@ -1338,7 +1338,7 @@ sub_12168       proc near               ; CODE XREF: sub_17B54-5F22↑p
                 call    loc_127CD
 
 loc_121EA:                              ; CODE XREF: sub_12168+BE↓j
-                call    sub_16C53
+                call    flushInputBuffer
                 pop     si
                 pop     dx
                 pop     cx
@@ -1822,7 +1822,7 @@ loc_12509:                              ; DATA XREF: seg000:2838↓r
                 mov     byte_164A4, 1
                 mov     _negateTimeDuration, 0
                 mov     byte_115CE, 0
-                call    sub_16C53
+                call    flushInputBuffer
                 mov     ah, 2Ch
                 int     21h             ; DOS - GET CURRENT TIME
                                         ; Return: CH = hours, CL = minutes, DH = seconds
@@ -4703,7 +4703,8 @@ aHealWhom_0     db 'Heal whom? ',0      ; DATA XREF: seg000:loc_15F0A↓o
 aCureWhom_0     db 'Cure whom? ',0      ; DATA XREF: seg000:spellAlcort↓o
 aResurectWhom   db 'Resurect whom? ',0  ; DATA XREF: seg000:628F↓o
 aRecallWhom_0   db 'Recall whom? ',0    ; DATA XREF: seg000:62CD↓o
-aExitToSosariaP db 'Exit to Sosaria!',0Ah ; DATA XREF: sub_16458+10↓o
+aExitToSosariaP db 'Exit to Sosaria!',0Ah
+                                        ; DATA XREF: exitToSosaria+10↓o
                 db 'Please wait...',0Ah,0
 aDirect_2       db 'Direct? ',0         ; DATA XREF: seg000:5F36↓o
 aLvl0           db 'LVL:0',0            ; DATA XREF: drawDungeonStatusBar+C↓o
@@ -5520,7 +5521,7 @@ loc_16027:                              ; CODE XREF: seg000:6011↑j
 ; ---------------------------------------------------------------------------
 
 loc_1602A:                              ; CODE XREF: seg000:601B↑j
-                call    sub_16458
+                call    exitToSosaria
                 jmp     short loc_16024
 ; ---------------------------------------------------------------------------
 
@@ -5816,7 +5817,7 @@ spellSequitu:
                 cmp     byte_114BC, 1
                 jnz     short loc_1624C
                 call    sub_15E89
-                call    sub_16458
+                call    exitToSosaria
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -6107,7 +6108,7 @@ enterShrine     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
+exitToSosaria   proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                                         ; seg000:loc_1602A↑p ...
                 push    ax
                 push    bx
@@ -6126,14 +6127,14 @@ sub_16458       proc near               ; CODE XREF: sub_17B54:loc_11C04↑p
                 call    loadFile
                 call    savePartyFile
                 mov     _dungeonLevel, 0
-                call    sub_16C53
+                call    flushInputBuffer
                 pop     si
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 retn
-sub_16458       endp
+exitToSosaria   endp
 
 ; ---------------------------------------------------------------------------
                 align 10h
@@ -7186,7 +7187,7 @@ checkPartyWipedOut endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16C53       proc near               ; CODE XREF: sub_12168:loc_121EA↑p
+flushInputBuffer proc near              ; CODE XREF: sub_12168:loc_121EA↑p
                                         ; entryFromBootup+8D↑p ...
                 pushf
                 push    ax
@@ -7194,7 +7195,7 @@ sub_16C53       proc near               ; CODE XREF: sub_12168:loc_121EA↑p
                 mov     bh, byte_114BC
                 mov     byte_114BC, 1
 
-loc_16C5F:                              ; CODE XREF: sub_16C53+19↓j
+loc_16C5F:                              ; CODE XREF: flushInputBuffer+19↓j
                 sti
                 nop
                 nop
@@ -7206,13 +7207,13 @@ loc_16C5F:                              ; CODE XREF: sub_16C53+19↓j
                 jmp     short loc_16C5F
 ; ---------------------------------------------------------------------------
 
-loc_16C6E:                              ; CODE XREF: sub_16C53+14↑j
+loc_16C6E:                              ; CODE XREF: flushInputBuffer+14↑j
                 mov     byte_114BC, bh
                 pop     bx
                 pop     ax
                 popf
                 retn
-sub_16C53       endp
+flushInputBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8350,37 +8351,37 @@ sub_17347       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1740A       proc near               ; CODE XREF: sub_17B54-6D7↓p
+uppercaseBuffer proc near               ; CODE XREF: sub_17B54-6D7↓p
                                         ; sub_17B54-655↓p
                 pushf
                 push    cx
                 push    di
                 jcxz    short loc_1741F
 
-loc_1740F:                              ; CODE XREF: sub_1740A+13↓j
+loc_1740F:                              ; CODE XREF: uppercaseBuffer+13↓j
                 cmp     byte ptr [di], 61h ; 'a'
                 jb      short loc_1741C
                 cmp     byte ptr [di], 7Ah ; 'z'
                 ja      short loc_1741C
                 add     byte ptr [di], 0E0h
 
-loc_1741C:                              ; CODE XREF: sub_1740A+8↑j
-                                        ; sub_1740A+D↑j
+loc_1741C:                              ; CODE XREF: uppercaseBuffer+8↑j
+                                        ; uppercaseBuffer+D↑j
                 inc     di
                 loop    loc_1740F
 
-loc_1741F:                              ; CODE XREF: sub_1740A+3↑j
+loc_1741F:                              ; CODE XREF: uppercaseBuffer+3↑j
                 pop     di
                 pop     cx
                 popf
                 retn
-sub_1740A       endp
+uppercaseBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17423       proc near               ; CODE XREF: sub_17B54-6D0↓p
+matchKeywordAtDelimiter proc near       ; CODE XREF: sub_17B54-6D0↓p
                                         ; sub_17B54-645↓p
                 pushf
                 push    cx
@@ -8388,7 +8389,7 @@ sub_17423       proc near               ; CODE XREF: sub_17B54-6D0↓p
                 push    di
                 jcxz    short loc_17451
 
-loc_17429:                              ; CODE XREF: sub_17423+C↓j
+loc_17429:                              ; CODE XREF: matchKeywordAtDelimiter+C↓j
                 cmp     byte ptr [di], 20h ; ' '
                 jnz     short loc_17433
                 inc     di
@@ -8396,8 +8397,8 @@ loc_17429:                              ; CODE XREF: sub_17423+C↓j
                 jmp     short loc_17451
 ; ---------------------------------------------------------------------------
 
-loc_17433:                              ; CODE XREF: sub_17423+9↑j
-                                        ; sub_17423+1E↓j
+loc_17433:                              ; CODE XREF: matchKeywordAtDelimiter+9↑j
+                                        ; matchKeywordAtDelimiter+1E↓j
                 mov     al, [si]
                 cmp     al, [di]
                 jnz     short loc_17451
@@ -8409,28 +8410,28 @@ loc_17433:                              ; CODE XREF: sub_17423+9↑j
                 jmp     short loc_17451
 ; ---------------------------------------------------------------------------
 
-loc_17445:                              ; CODE XREF: sub_17423+28↓j
+loc_17445:                              ; CODE XREF: matchKeywordAtDelimiter+28↓j
                 cmp     byte ptr [di], 20h ; ' '
                 jnz     short loc_17451
 
-loc_1744A:                              ; CODE XREF: sub_17423+1A↑j
+loc_1744A:                              ; CODE XREF: matchKeywordAtDelimiter+1A↑j
                 inc     di
                 loop    loc_17445
                 mov     al, 0FFh
                 jmp     short loc_17453
 ; ---------------------------------------------------------------------------
 
-loc_17451:                              ; CODE XREF: sub_17423+4↑j
-                                        ; sub_17423+E↑j ...
+loc_17451:                              ; CODE XREF: matchKeywordAtDelimiter+4↑j
+                                        ; matchKeywordAtDelimiter+E↑j ...
                 mov     al, 0
 
-loc_17453:                              ; CODE XREF: sub_17423+2C↑j
+loc_17453:                              ; CODE XREF: matchKeywordAtDelimiter+2C↑j
                 pop     di
                 pop     si
                 pop     cx
                 popf
                 retn
-sub_17423       endp
+matchKeywordAtDelimiter endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -8453,9 +8454,9 @@ cmdYell:                                ; CODE XREF: sub_17B54-5F83↑j
                 call    readLine
                 mov     cx, bx
                 call    sub_126F4
-                call    sub_1740A
+                call    uppercaseBuffer
                 lea     si, byte_164FA
-                call    sub_17423
+                call    matchKeywordAtDelimiter
                 add     sp, 9
                 pop     bx
                 cmp     al, 0FFh
@@ -8518,14 +8519,14 @@ cmdOtherCommand:                        ; CODE XREF: sub_17B54-5F83↑j
                 call    readLine
                 mov     cx, bx
                 call    sub_126F4
-                call    sub_1740A
+                call    uppercaseBuffer
                 mov     bx, 0
 
 loc_17505:                              ; CODE XREF: sub_17B54-63B↓j
                 mov     si, [bx+6540h]
                 test    si, 0FFFFh
                 jz      short loc_1751B
-                call    sub_17423
+                call    matchKeywordAtDelimiter
                 cmp     al, 0FFh
                 jz      short loc_1751B
                 add     bx, 2
@@ -9663,7 +9664,7 @@ loc_17DA8:                              ; CODE XREF: sub_17B54:loc_11F22↑j
                 call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
@@ -9673,7 +9674,7 @@ loc_17DBA:                              ; CODE XREF: sub_17B54-5F92↑j
                 call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
@@ -9683,7 +9684,7 @@ loc_17DCC:                              ; CODE XREF: sub_17B54:loc_11C9B↑j
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
@@ -9693,7 +9694,7 @@ loc_17DDE:                              ; CODE XREF: sub_17B54:loc_12012↑j
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
@@ -9703,7 +9704,7 @@ loc_17DF0:                              ; CODE XREF: sub_17B54:loc_11D66↑j
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     mainLoopCommandDone
 ; END OF FUNCTION CHUNK FOR sub_17B54
 
@@ -10611,7 +10612,7 @@ loc_183DD:                              ; CODE XREF: sub_17B54+85C↑j
                 mov     ah, 0
                 shl     ax, 1           ; switch 6 cases
                 mov     si, ax
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     jpt_183F0[si]   ; switch jump
 ; ---------------------------------------------------------------------------
 
@@ -10638,7 +10639,7 @@ loc_18413:                              ; CODE XREF: sub_17B54+8AF↑j
 ; ---------------------------------------------------------------------------
 
 loc_18416:                              ; CODE XREF: sub_17B54+8B6↑j
-                call    sub_16458
+                call    exitToSosaria
                 jmp     mainLoopCommandDone
 ; ---------------------------------------------------------------------------
 
@@ -11148,7 +11149,7 @@ loc_18A64:                              ; CODE XREF: updateMonsterAI+66AD↑j
                 call    playSoundEffect
                 mov     bh, 10h
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     combatTurnLoop
 ; END OF FUNCTION CHUNK FOR updateMonsterAI
 
@@ -11595,7 +11596,7 @@ combatCmdInvalid:                       ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 call    printGameText
                 mov     al, 0FEh
                 call    playSoundEffect
-                call    sub_16C53
+                call    flushInputBuffer
                 jmp     loc_18B8C
 ; ---------------------------------------------------------------------------
 
@@ -11908,7 +11909,7 @@ loc_18FB6:                              ; CODE XREF: sub_17B54:loc_18C36↑j
                 mov     _negateTimeDuration, 0
                 lea     si, aVictory    ; "****Victory!****\n\n"
                 call    printGameText
-                call    sub_16C53
+                call    flushInputBuffer
                 mov     al, 0FDh
                 mov     bl, 80h
                 mov     bh, 10h
@@ -12577,7 +12578,7 @@ loc_1941E:                              ; CODE XREF: sub_17B54+89C↑j
                 mov     byte_114BC, 4
                 lea     si, aYouSeeAVisionO ; "You see a vision\nof the Time Lord\n  H"...
                 call    printGameText
-                call    sub_16C53
+                call    flushInputBuffer
 
 loc_19441:                              ; CODE XREF: sub_17B54+18F0↓j
                 call    pollKeypressAndAnimate
@@ -12597,7 +12598,7 @@ loc_19457:                              ; CODE XREF: sub_17B54+89C↑j
                 call    loadFile
                 call    drawLogoTileGrid
                 mov     byte_114BC, 4
-                call    sub_16C53
+                call    flushInputBuffer
 
 loc_19470:                              ; CODE XREF: sub_17B54+194A↓j
                                         ; sub_17B54+1965↓j ...
@@ -12721,7 +12722,7 @@ loc_19550:                              ; CODE XREF: sub_17B54+89C↑j
                 mov     byte_114BC, 4
                 lea     si, aARedHotRodInTh ; "A red hot rod\nin the wall. Who\nwill t"...
                 call    printGameText
-                call    sub_16C53
+                call    flushInputBuffer
                 call    selectPlayer
                 jz      short loc_195A8
                 mov     ah, byte ptr _partyPosition
