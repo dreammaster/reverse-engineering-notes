@@ -532,6 +532,28 @@ RENAMES = [
      "of the ~19 named locations (dungeons/towns/castles) the party is "
      "standing on."),
 
+    (0x116BB, "LOCATION_FILENAME_TABLE",
+     "CONFIRMED 2026-09-14, fully resolving the roadmap's 'trace the "
+     "map file loader against the 19 .ULT files' item: a 19-entry "
+     "near-pointer array sitting immediately before LOCATION_TILE_TABLE "
+     "(19 words = 38 bytes, then LOCATION_TILE_TABLE's own 19 words -- "
+     "one contiguous struct-of-arrays layout). cmdEnter reads "
+     "`[si+16BBh]` (si = the LOCATION_TILE_TABLE match index*2) to get "
+     "each location's filename pointer. Resolved all 19, matching real "
+     "Ultima III geography exactly: [0] BRITISH.ULT, [1] EXODUS.ULT, "
+     "[2] LCB.ULT, [3] MOON.ULT, [4] YEW.ULT, [5] MONTOR_E.ULT, "
+     "[6] MONTOR_W.ULT, [7] GREY.ULT, [8] DAWN.ULT, [9] DEVIL.ULT "
+     "(Devil Guard -- matches Radrion's riddle, 'the 4 Marks... in "
+     "Devil Guard'), [10] FAWN.ULT, [11] DEATH.ULT, [12] M.ULT, "
+     "[13] FIRE.ULT (matches the Marks lore), [14] TIME.ULT (home of "
+     "the Time Lord, matches the Exodus-puzzle findings), [15] P.ULT, "
+     "[16] PERINIAN.ULT, [17] MINE.ULT, [18] DARDIN.ULT. This "
+     "conclusively resolves the previously-open 'FAWN.ULT/EXODUS.ULT "
+     "remain unresolved' note on AMBROSIA.ULT/teleportToAmbrosia: both "
+     "are ordinary named overworld locations like any other town/"
+     "castle/dungeon, loaded through this exact same table -- nothing "
+     "special about them beyond being real place names."),
+
     (0x1259D, "_locationTypeTable",
      "MEDIUM CONFIDENCE: byte, indexed by cmdEnter's LOCATION_TILE_TABLE "
      "match, holding the location kind at that position (5=Dungeon, "
@@ -2017,9 +2039,16 @@ RENAMES = [
      "`SOSARIA.ULT`, restores the saved overworld position, and "
      "prints 'You made it!\\n' -- falling into this second whirlpool "
      "on Ambrosia sends you back to Sosaria instead. This also "
-     "confirms `AMBROSIA.ULT`'s role directly from code, resolving "
-     "part of the open `AMBROSIA.ULT`-vs-`FAWN.ULT`/`EXODUS.ULT` "
-     "question in the roadmap."),
+     "confirms `AMBROSIA.ULT`'s role directly from code. The related "
+     "`FAWN.ULT`/`EXODUS.ULT` question is now fully resolved too, via "
+     "`LOCATION_FILENAME_TABLE` (below): both are simply ordinary "
+     "named overworld locations (entries 10 and 1 respectively),"
+     " loaded through cmdEnter's normal location-entry path like any "
+     "town/castle/dungeon -- nothing special about either beyond being "
+     "real place names. `AMBROSIA.ULT` itself is loaded by name "
+     "directly by this function (not through that table), since "
+     "Ambrosia is a special secret continent, not one of the 19 named "
+     "locations."),
 
     (0x19630, "drawDungeonView",
      "Clears the viewport (clearMapViewport); if `byte_115CE` (the "
