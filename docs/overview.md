@@ -1547,3 +1547,16 @@ that reveal — a classic "gem of viewing" full-map overview. Also
 named `drawScreenBorder` (`0x12716`): clears the framebuffer and
 plots the game's main rectangular screen frame, drawn once at startup
 and again on returning to certain screens.
+
+**Two more found while chasing Peer down: its dungeon rendering, and
+the ambient monster spawner.** `drawPeerDungeonOverview` (`0x12909`)
+is the dungeon-context counterpart to `drawPeerMapOverview` -- loops a
+16x16 grid of `getDungeonTileAt` reads, maps each to a single-digit
+code, prints the whole layout, and blinks the party's position.
+`spawnRandomOverworldMonster` (`0x122A5`) is the ambient
+random-encounter generator: only in overworld mode, it rolls a spawn
+chance, finds an empty slot in `updateMonsterAI`'s 32-monster array,
+picks a random type, and rolls a position near the party -- validating
+the terrain matches that monster's expected tile type before
+committing, undoing the attempt otherwise. This is what populates
+Sosaria with wandering monsters over time.

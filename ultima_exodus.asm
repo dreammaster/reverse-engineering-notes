@@ -954,7 +954,7 @@ cmdPeer:                                ; CODE XREF: sub_17B54-5F83↑j
 ; ---------------------------------------------------------------------------
 
 loc_11F1C:                              ; CODE XREF: sub_17B54-5C3F↑j
-                call    sub_12909
+                call    drawPeerDungeonOverview
 
 loc_11F1F:                              ; CODE XREF: sub_17B54-5C51↑j
                                         ; sub_17B54-5C3A↑j
@@ -1448,7 +1448,7 @@ loc_1228C:                              ; CODE XREF: sub_17B54-58E3↑j
 
 loc_12299:                              ; CODE XREF: sub_17B54-58C3↑j
                 call    near ptr updateMonsterAI
-                call    sub_122A5
+                call    spawnRandomOverworldMonster
 
 loc_1229F:                              ; CODE XREF: sub_17B54-58CA↑j
                                         ; sub_17B54-58BD↑j
@@ -1459,7 +1459,7 @@ loc_1229F:                              ; CODE XREF: sub_17B54-58CA↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_122A5       proc near               ; CODE XREF: sub_17B54-58B8↑p
+spawnRandomOverworldMonster proc near   ; CODE XREF: sub_17B54-58B8↑p
                 pushf
                 push    ax
                 push    bx
@@ -1475,14 +1475,14 @@ sub_122A5       proc near               ; CODE XREF: sub_17B54-58B8↑p
                 mov     cx, 20h ; ' '
                 mov     bx, 0
 
-loc_122C1:                              ; CODE XREF: sub_122A5+24↓j
+loc_122C1:                              ; CODE XREF: spawnRandomOverworldMonster+24↓j
                 cmp     byte ptr [bx+1280h], 0
                 jz      short loc_122D2
                 inc     bx
                 loop    loc_122C1
 
-loc_122CB:                              ; CODE XREF: sub_122A5+B↑j
-                                        ; sub_122A5+14↑j ...
+loc_122CB:                              ; CODE XREF: spawnRandomOverworldMonster+B↑j
+                                        ; spawnRandomOverworldMonster+14↑j ...
                 pop     si
                 pop     dx
                 pop     cx
@@ -1492,7 +1492,7 @@ loc_122CB:                              ; CODE XREF: sub_122A5+B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_122D2:                              ; CODE XREF: sub_122A5+21↑j
+loc_122D2:                              ; CODE XREF: spawnRandomOverworldMonster+21↑j
                 mov     dh, 0Dh
                 call    stepTimeSeededPrng
                 mov     al, dl
@@ -1524,11 +1524,11 @@ loc_122D2:                              ; CODE XREF: sub_122A5+21↑j
                 jmp     short loc_122CB
 ; ---------------------------------------------------------------------------
 
-loc_12328:                              ; CODE XREF: sub_122A5+56↑j
-                                        ; sub_122A5+61↑j ...
+loc_12328:                              ; CODE XREF: spawnRandomOverworldMonster+56↑j
+                                        ; spawnRandomOverworldMonster+61↑j ...
                 mov     byte ptr [si+1280h], 0
                 jmp     short loc_122CB
-sub_122A5       endp
+spawnRandomOverworldMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2412,7 +2412,7 @@ getMapTileAt    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-getDungeonTileAt proc near              ; CODE XREF: sub_12909+16↓p
+getDungeonTileAt proc near              ; CODE XREF: drawPeerDungeonOverview+16↓p
                                         ; teleportToRandomDungeonFloor+13↓p ...
                 pushf
                 shl     bh, 1
@@ -2431,7 +2431,7 @@ getDungeonTileAt endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12909       proc near               ; CODE XREF: sub_17B54:loc_11F1C↑p
+drawPeerDungeonOverview proc near       ; CODE XREF: sub_17B54:loc_11F1C↑p
                                         ; seg000:627A↓p
                 pushf
                 push    ax
@@ -2442,8 +2442,8 @@ sub_12909       proc near               ; CODE XREF: sub_17B54:loc_11F1C↑p
                 mov     cx, 0
                 mov     word_12A90, 404h
 
-loc_1291D:                              ; CODE XREF: sub_12909+4F↓j
-                                        ; sub_12909+5F↓j
+loc_1291D:                              ; CODE XREF: drawPeerDungeonOverview+4F↓j
+                                        ; drawPeerDungeonOverview+5F↓j
                 mov     bx, cx
                 call    getDungeonTileAt
                 cmp     al, 0C0h
@@ -2469,8 +2469,8 @@ loc_1291D:                              ; CODE XREF: sub_12909+4F↓j
                 jz      short loc_1294E
                 mov     ah, 3Fh ; '?'
 
-loc_1294E:                              ; CODE XREF: sub_12909+1D↑j
-                                        ; sub_12909+23↑j ...
+loc_1294E:                              ; CODE XREF: drawPeerDungeonOverview+1D↑j
+                                        ; drawPeerDungeonOverview+23↑j ...
                 mov     al, ah
                 call    writeCharacter
                 inc     cl
@@ -2485,7 +2485,7 @@ loc_1294E:                              ; CODE XREF: sub_12909+1D↑j
                 add     ax, 404h
                 mov     word_12A90, ax
 
-loc_12973:                              ; CODE XREF: sub_12909+77↓j
+loc_12973:                              ; CODE XREF: drawPeerDungeonOverview+77↓j
                 mov     al, 2Ah ; '*'
                 call    drawCharGlyph
                 mov     al, 20h ; ' '
@@ -2499,7 +2499,7 @@ loc_12973:                              ; CODE XREF: sub_12909+77↓j
                 pop     ax
                 popf
                 retn
-sub_12909       endp
+drawPeerDungeonOverview endp
 
 ; ---------------------------------------------------------------------------
 byte_1298E      db 102h dup(0)          ; DATA XREF: entryFromBootup↑o
@@ -2644,7 +2644,7 @@ writeCharacter  endp
 
 
 drawCharGlyph   proc near               ; CODE XREF: printGameText:loc_126E8↑p
-                                        ; sub_12909+6C↑p ...
+                                        ; drawPeerDungeonOverview+6C↑p ...
                 pushf
                 push    ax
                 push    bx
@@ -5846,7 +5846,7 @@ spellVieda:
                 call    playSpellCastFanfare
                 cmp     byte_114BC, 1
                 jnz     short loc_1627F
-                call    sub_12909
+                call    drawPeerDungeonOverview
                 jmp     short loc_16282
 ; ---------------------------------------------------------------------------
 
