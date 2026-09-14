@@ -2520,6 +2520,7 @@ static Bytes_0(void) {
 	set_name	(0X17E33,	"cmdReady");
 	create_insn	(0X17E46);
 	create_insn	(0X17E48);
+	set_name	(0X17E48,	"readyWeapon");
 	create_insn	(x=0X17E50);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3052,6 +3053,7 @@ static Bytes_0(void) {
 	set_name	(0X18C3C,	"combatHandleMovement");
 	create_insn	(0X18C93);
 	create_insn	(0X18C96);
+	set_name	(0X18C96,	"checkMonsterTerrainHazard");
 	create_insn	(0X18CAD);
 	set_cmt	(0X18CBE,	"jumptable 00018BF8 case 2",	1);
 	create_insn	(x=0X18CBE);
@@ -3953,11 +3955,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ACAC);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1ACE9);
-	set_cmt	(0X1ACEF,	"jumptable 0001ABB9 cases 4,5",	1);
-	create_insn	(x=0X1ACEF);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3967,6 +3964,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1ACE9);
+	set_cmt	(0X1ACEF,	"jumptable 0001ABB9 cases 4,5",	1);
+	create_insn	(x=0X1ACEF);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1ACFC);
 	set_name	(0X1ACFC,	"showOracleMenu");
 	create_insn	(x=0X1AD01);

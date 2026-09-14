@@ -1362,3 +1362,15 @@ different contexts (`cmdLook`'s tile descriptions, and at least 3
 combat-related callers) — named for its confirmed mechanism rather
 than a single asserted purpose, since different callers clearly use
 it for different kinds of names.
+
+**`readyWeapon` named as `wearArmour`'s exact structural counterpart**
+(`0x17E48`): same class-lookup pattern against the same
+`'FCWTPBLIDARDirect? '` string, a parallel max-weapon-tier table, and
+`_weaponOwned`/`_weaponIndex` in place of the armour fields — this is
+the 'Ready' command's actual weapon-selection mechanic, called from
+both the overworld dispatcher and `updateMonsterAI` (monsters reusing
+the same equip logic, or possibly combat's own Ready sharing it — not
+distinguished). Also named `checkMonsterTerrainHazard` (`0x18C96`,
+lower confidence) — a sound-plus-delay cue for specific monster-AI
+tile values, structurally similar to `checkTerrainMovementBlocked`'s
+hazard cues but for monster movement instead of the player party.

@@ -1671,6 +1671,30 @@ RENAMES = [
      "(index -> shared string table -> print), not a single asserted "
      "purpose, since its callers clearly use it for different kinds "
      "of names/descriptions."),
+
+    (0x17E48, "readyWeapon",
+     "The weapon counterpart to wearArmour, structurally identical: "
+     "prints 'Weapon:\\n', looks up the character's class letter "
+     "against the same combined 'FCWTPBLIDARDirect? ' string for that "
+     "class's max wieldable-weapon tier (`[si+79EFh]`, a table "
+     "parallel to wearArmour's `[si+79FAh]`), shows a menu of owned "
+     "weapon types (`_weaponOwned`, `+0x30`), and on a valid choice "
+     "sets `_weaponIndex`. Called from both `sub_17B54` (the "
+     "overworld 'Ready' command) and `updateMonsterAI` (monsters "
+     "readying weapons too, or possibly combat's own Ready command "
+     "reusing this -- not independently distinguished)."),
+
+    (0x18C96, "checkMonsterTerrainHazard",
+     "LOW-MEDIUM CONFIDENCE. Called from updateMonsterAI with a tile "
+     "value in al. If al is one of {1,2,3,8}, plays a distinctive "
+     "sound (0xF6) with a timed delay loop and a second sound before "
+     "returning al=0; any other value returns al=0FFh immediately "
+     "with no sound. Structurally similar to "
+     "checkTerrainMovementBlocked's hazard-cue tiles (a sound+delay "
+     "without necessarily blocking) but for monster AI movement "
+     "rather than the player party -- exact tile-code meanings and "
+     "the significance of the return value to its caller not "
+     "independently confirmed."),
 ]
 
 

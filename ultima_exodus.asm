@@ -102,11 +102,11 @@ _savedOverworldPosition dw 0            ; DATA XREF: sub_17B54-5DAD↓w
                                         ; sub_17B54-5C22↓w ...
                 align 8
 byte_114C8      db 0                    ; DATA XREF: sub_17B54+113↓r
-                                        ; sub_17E48+27↓r
+                                        ; readyWeapon+27↓r
 byte_114C9      db 0                    ; DATA XREF: sub_17B54+137↓r
                                         ; wearArmour+27↓r
 byte_114CA      db 0                    ; DATA XREF: sub_17B54+11D↓r
-                                        ; sub_17E48+31↓r ...
+                                        ; readyWeapon+31↓r ...
 byte_114CB      db 0                    ; DATA XREF: sub_17B54+141↓r
                                         ; wearArmour+31↓r ...
 byte_114CC      db 0Eh dup(20h), 0FFh, 31h dup(0), 0Eh dup(20h), 0FFh
@@ -9052,7 +9052,7 @@ loc_178EF:                              ; CODE XREF: sub_17B54:loc_17958↓j
                 js      short loc_178A0
 
 loc_178F1:                              ; DATA XREF: sub_17B54:loc_17C7B↓o
-                                        ; sub_17E48:loc_17E83↓o
+                                        ; readyWeapon:loc_17E83↓o
                 js      short loc_17944
                 sbb     ax, [bx+di+42h]
                 inc     bx
@@ -9073,7 +9073,7 @@ loc_17903:                              ; CODE XREF: sub_17B54-2BC↑j
                 push    ax
 
 loc_17904:                              ; DATA XREF: sub_17B54+12B↓o
-                                        ; sub_17E48+3F↓o ...
+                                        ; readyWeapon+3F↓o ...
                 scasw
                 js      short loc_178B6
                 js      short loc_178C6
@@ -9168,20 +9168,20 @@ aIncapacitated  db 'Incapacitated!',0Ah,0
                                         ; sub_17B54:loc_17DF0↓o
 aNoMoreRoom     db 'No more room!',0Ah,0 ; CODE XREF: sub_17B54-202↑j
                                         ; DATA XREF: sub_17B54:loc_15CB5↑o ...
-aNoneOwned      db 'None owned',0Ah,0   ; DATA XREF: sub_17E48+8E↓o
+aNoneOwned      db 'None owned',0Ah,0   ; DATA XREF: readyWeapon+8E↓o
                                         ; wearArmour+8E↓o
-aWeapon_0       db 'Weapon:',0Ah,0      ; DATA XREF: sub_17E48+8↓o
-aNotAllowed     db 0Ah                  ; DATA XREF: sub_17E48:loc_17EC5↓o
+aWeapon_0       db 'Weapon:',0Ah,0      ; DATA XREF: readyWeapon+8↓o
+aNotAllowed     db 0Ah                  ; DATA XREF: readyWeapon:loc_17EC5↓o
                                         ; wearArmour:loc_17F77↓o
                 db 'Not allowed!',0Ah,0
-aReadied        db 0Ah                  ; DATA XREF: sub_17E48:loc_17EAE↓o
+aReadied        db 0Ah                  ; DATA XREF: readyWeapon:loc_17EAE↓o
                                         ; wearArmour:loc_17F60↓o
                 db 'Readied!',0Ah,0
 aArmour_0       db 'Armour:',0Ah,0      ; DATA XREF: wearArmour+8↓o
                 db 51h, 44h, 43h, 48h, 3 dup(51h), 2 dup(44h), 43h, 4Ch
                 db 49h, 45h, 43h, 44h, 46h, 44h, 43h, 44h, 2 dup(43h)
                 db 48h
-aFcwtpblidardir db 'FCWTPBLIDARDirect? ',0 ; DATA XREF: sub_17E48+14↓o
+aFcwtpblidardir db 'FCWTPBLIDARDirect? ',0 ; DATA XREF: readyWeapon+14↓o
                                         ; wearArmour+14↓o ...
 aGoodDay        db 0Ah                  ; DATA XREF: sub_17B54:loc_18072↓o
                 db 'Good day!',0Ah
@@ -9754,7 +9754,7 @@ cmdReady:                               ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_17E43
                 call    isCharacterAlive
                 jnz     short loc_17E46
-                call    sub_17E48
+                call    readyWeapon
 
 loc_17E43:                              ; CODE XREF: sub_17B54+2E5↑j
                 jmp     mainLoopCommandDone
@@ -9767,7 +9767,7 @@ loc_17E46:                              ; CODE XREF: sub_17B54+2EA↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17E48       proc near               ; CODE XREF: sub_17B54+2EC↑p
+readyWeapon     proc near               ; CODE XREF: sub_17B54+2EC↑p
                                         ; updateMonsterAI+6960↓p
                 pushf
                 push    ax
@@ -9795,8 +9795,8 @@ sub_17E48       proc near               ; CODE XREF: sub_17B54+2EC↑p
                 jz      short loc_17E83
                 mov     cx, 0Ah
 
-loc_17E83:                              ; CODE XREF: sub_17E48+2C↑j
-                                        ; sub_17E48+36↑j
+loc_17E83:                              ; CODE XREF: readyWeapon+2C↑j
+                                        ; readyWeapon+36↑j
                 lea     di, loc_178F1+1
                 lea     si, loc_17904
                 call    getMenuChoice
@@ -9809,7 +9809,7 @@ loc_17E83:                              ; CODE XREF: sub_17E48+2C↑j
                 cmp     al, dl
                 jnb     short loc_17EC5
 
-loc_17E9E:                              ; CODE XREF: sub_17E48+50↑j
+loc_17E9E:                              ; CODE XREF: readyWeapon+50↑j
                 mov     di, bx
                 sub     al, 41h ; 'A'
                 jz      short loc_17EAE
@@ -9818,13 +9818,13 @@ loc_17E9E:                              ; CODE XREF: sub_17E48+50↑j
                 cmp     byte ptr [bx+30h], 0
                 jz      short loc_17ED3
 
-loc_17EAE:                              ; CODE XREF: sub_17E48+5A↑j
+loc_17EAE:                              ; CODE XREF: readyWeapon+5A↑j
                 lea     si, aReadied    ; "\nReadied!\n"
                 call    printGameText
                 mov     [di+30h], al
 
-loc_17EB8:                              ; CODE XREF: sub_17E48+7B↓j
-                                        ; sub_17E48+89↓j ...
+loc_17EB8:                              ; CODE XREF: readyWeapon+7B↓j
+                                        ; readyWeapon+89↓j ...
                 pop     di
                 pop     si
                 pop     dx
@@ -9835,13 +9835,13 @@ loc_17EB8:                              ; CODE XREF: sub_17E48+7B↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17EC0:                              ; CODE XREF: sub_17E48+48↑j
-                                        ; sub_17E48+4C↑j
+loc_17EC0:                              ; CODE XREF: readyWeapon+48↑j
+                                        ; readyWeapon+4C↑j
                 call    sub_126F4
                 jmp     short loc_17EB8
 ; ---------------------------------------------------------------------------
 
-loc_17EC5:                              ; CODE XREF: sub_17E48+54↑j
+loc_17EC5:                              ; CODE XREF: readyWeapon+54↑j
                 lea     si, aNotAllowed ; "\nNot allowed!\n"
                 call    printGameText
                 mov     al, 0FFh
@@ -9849,14 +9849,14 @@ loc_17EC5:                              ; CODE XREF: sub_17E48+54↑j
                 jmp     short loc_17EB8
 ; ---------------------------------------------------------------------------
 
-loc_17ED3:                              ; CODE XREF: sub_17E48+64↑j
+loc_17ED3:                              ; CODE XREF: readyWeapon+64↑j
                 call    sub_126F4
                 lea     si, aNoneOwned  ; "None owned\n"
                 call    printGameText
                 mov     al, 0FFh
                 call    playSoundEffect
                 jmp     short loc_17EB8
-sub_17E48       endp
+readyWeapon     endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -11417,7 +11417,7 @@ combatHandleMovement:                   ; CODE XREF: updateMonsterAI+6921↓j
                 mov     cx, bx
                 call    computeAnimTableByte
                 mov     ah, al
-                call    sub_18C96
+                call    checkMonsterTerrainHazard
                 cmp     al, 0FFh
                 jz      short loc_18C93
                 mov     di, bx
@@ -11441,7 +11441,7 @@ loc_18C93:                              ; CODE XREF: updateMonsterAI+68B5↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18C96       proc near               ; CODE XREF: updateMonsterAI+68C5↑p
+checkMonsterTerrainHazard proc near     ; CODE XREF: updateMonsterAI+68C5↑p
                 pushf
                 push    cx
                 cmp     al, 1
@@ -11454,24 +11454,24 @@ sub_18C96       proc near               ; CODE XREF: updateMonsterAI+68C5↑p
                 jz      short loc_18CAD
                 mov     al, 0FFh
 
-loc_18CAA:                              ; CODE XREF: sub_18C96+26↓j
+loc_18CAA:                              ; CODE XREF: checkMonsterTerrainHazard+26↓j
                 pop     cx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18CAD:                              ; CODE XREF: sub_18C96+4↑j
-                                        ; sub_18C96+8↑j ...
+loc_18CAD:                              ; CODE XREF: checkMonsterTerrainHazard+4↑j
+                                        ; checkMonsterTerrainHazard+8↑j ...
                 mov     al, 0F6h
                 call    playSoundEffect
                 mov     cx, 2000h
 
-loc_18CB5:                              ; CODE XREF: sub_18C96:loc_18CB5↓j
+loc_18CB5:                              ; CODE XREF: checkMonsterTerrainHazard:loc_18CB5↓j
                 loop    loc_18CB5
                 call    playSoundEffect
                 mov     al, 0
                 jmp     short loc_18CAA
-sub_18C96       endp
+checkMonsterTerrainHazard endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR updateMonsterAI
@@ -11524,7 +11524,7 @@ combatCmdReady:                         ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mul     ah
                 mov     bx, ax
                 lea     bx, [bx+14CCh]
-                call    sub_17E48
+                call    readyWeapon
                 jmp     combatAdvanceTurn
 ; ---------------------------------------------------------------------------
 
