@@ -1052,7 +1052,7 @@ loc_11FAC:                              ; CODE XREF: sub_17B54-5BDF↑j
                 cmp     al, 24h ; '$'
                 jnz     short loc_11F77
                 mov     byte ptr [bx], 20h ; ' '
-                call    sub_180D9
+                call    generateChestLoot
 
 loc_11FD0:                              ; CODE XREF: sub_17B54-5BFB↑j
                                         ; sub_17B54-5BE8↑j ...
@@ -5109,7 +5109,7 @@ addExperienceClamped endp
 ; =============== S U B R O U T I N E =======================================
 
 
-addGoldClamped  proc near               ; CODE XREF: sub_180D9+31↓p
+addGoldClamped  proc near               ; CODE XREF: generateChestLoot+31↓p
                 pushf
                 push    ax
                 add     al, [bx+23h]
@@ -5741,7 +5741,7 @@ loc_161BB:                              ; CODE XREF: seg000:61A0↑j
                 mov     byte ptr [bx], 0
 
 loc_161C5:                              ; CODE XREF: seg000:61B9↑j
-                call    sub_180D9
+                call    generateChestLoot
                 jmp     loc_15E69
 ; ---------------------------------------------------------------------------
 
@@ -9199,9 +9199,9 @@ aExperienceMore db 'Experience more!',0Ah
 aEatDeathScum   db 0Ah                  ; DATA XREF: sub_17B54:loc_18069↓o
                 db 'Eat Death Scum!',0Ah
                 db 0Ah,0
-aGold_0         db 'Gold+',0            ; DATA XREF: sub_180D9+6↓o
-aAndA           db 'and a ',0           ; DATA XREF: sub_180D9+52↓o
-aAnd            db 'and ',0             ; DATA XREF: sub_180D9+8C↓o
+aGold_0         db 'Gold+',0            ; DATA XREF: generateChestLoot+6↓o
+aAndA           db 'and a ',0           ; DATA XREF: generateChestLoot+52↓o
+aAnd            db 'and ',0             ; DATA XREF: generateChestLoot+8C↓o
 aTrapEvaded     db 'Trap evaded!',0Ah,0 ; DATA XREF: checkTrapEvasion+A↓o
 aAcidTrap       db 'Acid trap!',0Ah,0   ; DATA XREF: sub_17B54:loc_1823C↓o
 aPoisonTrap     db 'Poison trap!',0Ah,0 ; DATA XREF: sub_17B54:loc_1826D↓o
@@ -10169,7 +10169,7 @@ loc_180CF:                              ; CODE XREF: sub_17B54+536↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_180D9       proc near               ; CODE XREF: sub_17B54-5B87↑p
+generateChestLoot proc near             ; CODE XREF: sub_17B54-5B87↑p
                                         ; seg000:loc_161C5↑p ...
                 pushf
                 push    ax
@@ -10186,7 +10186,7 @@ sub_180D9       proc near               ; CODE XREF: sub_17B54-5B87↑p
                 jb      short loc_180F6
                 sub     dl, 64h ; 'd'
 
-loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
+loc_180F6:                              ; CODE XREF: generateChestLoot+18↑j
                 mov     al, dl
                 aam
                 mov     cl, 4
@@ -10226,8 +10226,8 @@ loc_180F6:                              ; CODE XREF: sub_180D9+18↑j
                 jmp     short loc_18189
 ; ---------------------------------------------------------------------------
 
-loc_18151:                              ; CODE XREF: sub_180D9+44↑j
-                                        ; sub_180D9+50↑j
+loc_18151:                              ; CODE XREF: generateChestLoot+44↑j
+                                        ; generateChestLoot+50↑j
                 call    stepTimeSeededPrng
                 test    dl, 0FFh
                 js      short loc_18189
@@ -10251,8 +10251,8 @@ loc_18151:                              ; CODE XREF: sub_180D9+44↑j
                 jnb     short loc_18189
                 mov     byte ptr [bx+di+28h], 99h
 
-loc_18189:                              ; CODE XREF: sub_180D9+3C↑j
-                                        ; sub_180D9+70↑j ...
+loc_18189:                              ; CODE XREF: generateChestLoot+3C↑j
+                                        ; generateChestLoot+70↑j ...
                 pop     si
                 pop     dx
                 pop     cx
@@ -10260,7 +10260,7 @@ loc_18189:                              ; CODE XREF: sub_180D9+3C↑j
                 pop     ax
                 popf
                 retn
-sub_180D9       endp
+generateChestLoot endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -10307,7 +10307,7 @@ loc_181D1:                              ; CODE XREF: sub_17B54+671↑j
                 call    stepTimeSeededPrng
                 shl     dl, 1
                 jb      short loc_181E6
-                call    sub_180D9
+                call    generateChestLoot
 
 loc_181DD:                              ; CODE XREF: sub_17B54+642↑j
                 jmp     mainLoopCommandDone
@@ -10416,7 +10416,7 @@ loc_18290:                              ; CODE XREF: sub_17B54+6A9↑j
 
 loc_182A1:                              ; CODE XREF: sub_17B54+6BA↑j
                                         ; sub_17B54+6E6↑j ...
-                call    sub_180D9
+                call    generateChestLoot
                 call    drawPartyStatusBar
                 jmp     mainLoopCommandDone
 ; END OF FUNCTION CHUNK FOR sub_17B54

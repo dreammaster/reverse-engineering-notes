@@ -1896,6 +1896,15 @@ RENAMES = [
      "fireDungeonProjectileAtParty for monster class `0x1Dh` -- "
      "confirms this whole cluster is the dungeon's own per-monster AI "
      "tick, distinct from updateMonsterAI's overworld one."),
+
+    (0x180D9, "generateChestLoot",
+     "cmdGet's actual loot-generation routine ('Get Chest!'). Prints "
+     "'Gold+' and a random BCD amount, adds it via addGoldClamped, "
+     "then on separate random rolls may award a weapon item ('and a "
+     "[name]', via printNameByIndex with a letter-index scheme "
+     "matching readyWeapon's, incrementing `_weaponOwned`) and/or an "
+     "armour item ('and [name]', incrementing `_armourOwned`), each "
+     "BCD-incremented and clamped to 0x99."),
 ]
 
 
