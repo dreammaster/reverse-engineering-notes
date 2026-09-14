@@ -1253,16 +1253,19 @@ RENAMES = [
      "Saves SOSARIA.ULT (bx=`start`, cx=0x1228 = 4648 decimal, "
      "matching the confirmed town/overworld map file size) then calls "
      "savePartyFile."),
-    (0x16B91, "autoSaveOnDeath",
-     "Called from damageCharacterHP whenever a character dies, and "
-     "from checkPartyWipedOut on a full party wipe. Auto-saves the "
-     "game at the moment of death: if game mode (`byte_114BC`) is 0 "
+    (0x16B91, "autoSaveGameState",
+     "RENAMED 2026-09-14 from 'autoSaveOnDeath' -- that name turned "
+     "out to be too narrow. Originally found called from "
+     "damageCharacterHP on any character death and from "
+     "checkPartyWipedOut on a full party wipe; now ALSO confirmed "
+     "called from the game's WIN sequence (loc_victorySequence, right "
+     "before printing the epilogue), so this is a general "
+     "'commit game state to disk at a major state transition' "
+     "primitive, not death-specific. If game mode (`byte_114BC`) is 0 "
      "(overworld) or 0x80 (combat) with `byte_158CB == 0`, calls "
      "saveSosariaAndParty (full save); otherwise calls savePartyFile "
      "only (party state alone -- e.g. inside a dungeon/town where the "
-     "overworld map itself hasn't changed). Confirms Ultima III "
-     "permanently persists character death immediately, not just at "
-     "an explicit Quit & Save."),
+     "overworld map itself hasn't changed)."),
 
     # --- Movement-blocked checks, 2026-09-14 -------------------------
     (0x17233, "isShipMovementBlockedByWind",
@@ -1569,6 +1572,43 @@ RENAMES = [
      "TOWN_BUILDING_TABLE[7]. '\\n\\nEquine Emporium:\\n\\n' -- buys "
      "horses for the party at `partySize (byte_114C1) * 200gp`, via "
      "promptYesNo then deductGoldIfAffordable."),
+
+    # --- The win condition / ending sequence, 2026-09-14 -------------
+    (0x17D1A, "promptForQuantity",
+     "A number-entry prompt (accumulateInputDigit-based, like the "
+     "already-named promptForNumberEntry, but 4 digits wide with its "
+     "own cursor-clearing loop) used for 'how many' shop quantities -- "
+     "showGrocerMenu's rations purchase, and one direct call site in "
+     "sub_17B54."),
+    (0x1A46F, "printMoveCount",
+     "Prints the 4-byte BCD move counter (byte_114BD, the same field "
+     "incrementMoveCounter ticks) as 4 hex/BCD bytes followed by "
+     "' moves\\n'. Called both from victorySequence (below) and from "
+     "another context (sub_17B54-5C1F, not identified -- plausibly "
+     "the Quit & Save screen, which classic Ultima also shows a move "
+     "count on)."),
+    (0x1A491, "xorScreenRegionWithPattern",
+     "A large-region CGA screen XOR helper, structurally similar to "
+     "invertScreenRegion but parameterized by a caller-supplied "
+     "pattern in ax (not hardcoded 0FFFFh) and covering a bigger, "
+     "differently-strided region (0x16 words x 0x58 rows across both "
+     "interlaced banks). Used exclusively by victorySequence's screen "
+     "-flash fanfare, reading each flash pattern from a 0x15-entry "
+     "table (byte_1967D)."),
+    (0x1A4B9, "victorySequence",
+     "THE WIN CONDITION. Prints 'Congratulations!\\n Thou hast\\n "
+     "compleated\\nExodus: Ultima 3\\n   in', the move count "
+     "(printMoveCount), 'Report thy feat!', a 21-flash screen fanfare "
+     "(xorScreenRegionWithPattern x21 with a sound cue each flash), "
+     "then the full epilogue text line by line ('And so it came to "
+     "pass that on this day EXODUS, hell-born incarnate of evil, was "
+     "vanquished from Sosaria. What now lies ahead in the ULTIMA saga "
+     "can only be pure speculation! Onward to ULTIMA IV!') before "
+     "calling autoSaveGameState (below) and setting game mode to 1. "
+     "Reached via a raw offset inside sub_17B54 (`sub_17B54-498`), not "
+     "a directly-named condition check -- what triggers entry into "
+     "this code (defeating Exodus specifically) wasn't traced back "
+     "further this pass."),
 ]
 
 

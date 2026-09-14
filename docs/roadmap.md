@@ -572,6 +572,31 @@ Next-session priorities, roughly in order:
       quantity, compute price" utility other shops may use too) and
       the weapons/armour shops' own inventory-listing internals aren't
       individually traced.
+- [x] **The win condition / ending sequence found and named**, done
+      2026-09-14: `victorySequence` (`0x1A4B9`, a labeled location
+      inside `sub_17B54`, reached via `sub_17B54-498`). Prints
+      "Congratulations!\n Thou hast\n compleated\nExodus: Ultima 3\n
+      in", the move count (`printMoveCount`, `0x1A46F` — the same
+      4-byte BCD counter `incrementMoveCounter` ticks), "Report thy
+      feat!", a 21-flash screen fanfare (`xorScreenRegionWithPattern`,
+      `0x1A491`, a generic large-region CGA XOR helper parameterized
+      by a caller-supplied pattern — distinct from the simpler,
+      always-0xFFFF `invertScreenRegion`), then the complete epilogue
+      text line by line: "And so it came to pass that on this day
+      EXODUS, hell-born incarnate of evil, was vanquished from
+      Sosaria. What now lies ahead in the ULTIMA saga can only be pure
+      speculation! Onward to ULTIMA IV!" — before calling
+      `autoSaveGameState` (see below) and setting game mode to 1.
+      **What actually triggers entry into this code** (i.e. the
+      specific "Exodus is defeated" condition check) wasn't traced
+      back further this pass — a good next lead.
+      **Renamed `autoSaveOnDeath` → `autoSaveGameState`**: finding it
+      called from the win sequence too (not just death/party-wipe)
+      showed the old name was too narrow — it's a general "commit
+      game state to disk at a major transition" primitive.
+      Also named `promptForQuantity` (`0x17D1A`, a 4-digit number-entry
+      prompt used by `showGrocerMenu` and one direct `sub_17B54` call
+      site, similar in shape to `promptForNumberEntry` but wider).
 - [ ] `EXODUS.BIN`'s own internal fixed data tables (per external
       documentation in file-formats.md: castle/town/dungeon/moongate
       coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"

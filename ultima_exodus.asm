@@ -972,7 +972,7 @@ cmdQuit:                                ; CODE XREF: sub_17B54-5F83↑j
                 jnz     short loc_11F45
                 mov     ax, _partyPosition
                 mov     _savedOverworldPosition, ax
-                call    sub_1A46F
+                call    printMoveCount
                 lea     si, aPleaseWait ; "Please wait...\n"
                 call    printGameText
                 call    saveSosariaAndParty
@@ -3392,7 +3392,7 @@ printHexNibble  endp
 
 
 accumulateInputDigit proc near          ; CODE XREF: promptForNumberEntry+2E↓p
-                                        ; sub_17D1A+3C↓p
+                                        ; promptForQuantity+3C↓p
                 pushf
                 push    ax
                 push    cx
@@ -4631,7 +4631,7 @@ playToneF5      endp
                 align 10h
 aShrineImg      db 'SHRINE.IMG',0       ; DATA XREF: enterShrine+28↓o
 byte_158CB      db 0                    ; DATA XREF: isSpecialEncounterLocation:loc_15B46↓r
-                                        ; autoSaveOnDeath+10↓r ...
+                                        ; autoSaveGameState+10↓r ...
 _facingDirection db 0                   ; DATA XREF: sub_17B54-5D8F↑w
                                         ; drawDungeonStatusBar+25↓r ...
 byte_158CD      db 48h, 45h, 44h, 42h, 46h, 5 dup(75h), 99h, 75h, 50h
@@ -7029,7 +7029,7 @@ aNotEnoughGold  db 'Not enough gold!',0Ah,0
 ; =============== S U B R O U T I N E =======================================
 
 
-autoSaveOnDeath proc near               ; CODE XREF: damageCharacterHP+22↓p
+autoSaveGameState proc near             ; CODE XREF: damageCharacterHP+22↓p
                                         ; checkPartyWipedOut+1F↓p ...
                 pushf
                 push    ax
@@ -7040,26 +7040,26 @@ autoSaveOnDeath proc near               ; CODE XREF: damageCharacterHP+22↓p
                 cmp     byte_158CB, 0
                 jz      short loc_16BB9
 
-loc_16BA8:                              ; CODE XREF: autoSaveOnDeath+E↑j
+loc_16BA8:                              ; CODE XREF: autoSaveGameState+E↑j
                 mov     al, byte_114BC
                 mov     byte_114BC, 0
                 call    savePartyFile
                 mov     byte_114BC, al
 
-loc_16BB6:                              ; CODE XREF: autoSaveOnDeath+36↓j
+loc_16BB6:                              ; CODE XREF: autoSaveGameState+36↓j
                 pop     ax
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_16BB9:                              ; CODE XREF: autoSaveOnDeath+7↑j
-                                        ; autoSaveOnDeath+15↑j
+loc_16BB9:                              ; CODE XREF: autoSaveGameState+7↑j
+                                        ; autoSaveGameState+15↑j
                 mov     al, byte_114BC
                 mov     byte_114BC, 0
                 call    saveSosariaAndParty
                 mov     byte_114BC, al
                 jmp     short loc_16BB6
-autoSaveOnDeath endp
+autoSaveGameState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7087,7 +7087,7 @@ loc_16BDE:                              ; CODE XREF: sub_17B54-FE6↑j
                 jnb     short loc_16BF0
                 mov     byte ptr [bx+11h], 44h ; 'D'
                 mov     word ptr [bx+1Ah], 0
-                call    autoSaveOnDeath
+                call    autoSaveGameState
                 mov     ch, 0FFh
 
 loc_16BF0:                              ; CODE XREF: damageCharacterHP+17↑j
@@ -7171,7 +7171,7 @@ loc_16C34:                              ; CODE XREF: checkPartyWipedOut+13↓j
                 call    drawPartyStatusBar
                 lea     si, aAllPlayersOut ; "\n\nAll Players Out!\n"
                 call    printGameText
-                call    autoSaveOnDeath
+                call    autoSaveGameState
                 jmp     loc_17252
 ; ---------------------------------------------------------------------------
 
@@ -8749,7 +8749,7 @@ loc_17697:                              ; CODE XREF: sub_17B54-4A7↓j
                 call    loc_127CD
                 cmp     word_164A0, 4
                 jnz     short loc_176C6
-                jmp     loc_1A4B9
+                jmp     victorySequence
 ; ---------------------------------------------------------------------------
 
 loc_176BF:                              ; CODE XREF: sub_17B54-50D↑j
@@ -9372,7 +9372,7 @@ loc_17B98:                              ; CODE XREF: sub_17B54+C4↓j
 loc_17BAC:                              ; CODE XREF: sub_17B54+53↑j
                 lea     si, aHowMuch    ; "\nHow much? "
                 call    printGameText
-                call    sub_17D1A
+                call    promptForQuantity
                 mov     si, [bp+2]
                 mov     cx, [bx+si]
                 mov     dx, [bx+di]
@@ -9557,7 +9557,7 @@ sub_17B54       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17D1A       proc near               ; CODE XREF: sub_17B54+5F↑p
+promptForQuantity proc near             ; CODE XREF: sub_17B54+5F↑p
                                         ; showGrocerMenu+A↓p
                 pushf
                 push    bx
@@ -9573,7 +9573,7 @@ sub_17D1A       proc near               ; CODE XREF: sub_17B54+5F↑p
                 call    swapCursorPos
                 mov     [bp+0], dx
 
-loc_17D32:                              ; CODE XREF: sub_17D1A+4B↓j
+loc_17D32:                              ; CODE XREF: promptForQuantity+4B↓j
                 call    swapCursorPos
                 mov     al, 20h ; ' '
                 call    writeCharacter
@@ -9596,7 +9596,7 @@ loc_17D32:                              ; CODE XREF: sub_17D1A+4B↓j
                 jmp     short loc_17D32
 ; ---------------------------------------------------------------------------
 
-loc_17D67:                              ; CODE XREF: sub_17D1A+41↑j
+loc_17D67:                              ; CODE XREF: promptForQuantity+41↑j
                 mov     ax, bx
                 add     sp, 6
                 pop     di
@@ -9607,7 +9607,7 @@ loc_17D67:                              ; CODE XREF: sub_17D1A+41↑j
                 pop     bx
                 popf
                 retn
-sub_17D1A       endp
+promptForQuantity endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13130,8 +13130,8 @@ aAhTooBadTheseA db 'Ah, too bad.',0Ah   ; DATA XREF: showStableMenu:loc_1ADBF↓
 aMayYouRideFast db 'May you ride',0Ah   ; DATA XREF: showStableMenu+33↓o
                 db 'fast and true',0Ah
                 db 'friend!',0Ah,0
-aMoves          db ' moves',0Ah,0       ; DATA XREF: sub_1A46F+16↓o
-aCongratulation db 0Ah                  ; DATA XREF: sub_17B54:loc_1A4B9↓o
+aMoves          db ' moves',0Ah,0       ; DATA XREF: printMoveCount+16↓o
+aCongratulation db 0Ah                  ; DATA XREF: sub_17B54:victorySequence↓o
                 db 'Congratulations!',0Ah
                 db '   Thou hast',0Ah
                 db '   compleated',0Ah
@@ -13195,7 +13195,7 @@ aHowMany_0      db 0Ah                  ; DATA XREF: showGuildMenu:loc_1ABBD↓o
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A46F       proc near               ; CODE XREF: sub_17B54-5C1F↑p
+printMoveCount  proc near               ; CODE XREF: sub_17B54-5C1F↑p
                                         ; sub_17B54+296C↓p
                 pushf
                 push    ax
@@ -13206,7 +13206,7 @@ sub_1A46F       proc near               ; CODE XREF: sub_17B54-5C1F↑p
                 add     si, 3
                 mov     cx, 4
 
-loc_1A47E:                              ; CODE XREF: sub_1A46F+13↓j
+loc_1A47E:                              ; CODE XREF: printMoveCount+13↓j
                 lodsb
                 call    printHexByte
                 loop    loc_1A47E
@@ -13218,13 +13218,13 @@ loc_1A47E:                              ; CODE XREF: sub_1A46F+13↓j
                 pop     ax
                 popf
                 retn
-sub_1A46F       endp
+printMoveCount  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A491       proc near               ; CODE XREF: sub_17B54+2984↓p
+xorScreenRegionWithPattern proc near    ; CODE XREF: sub_17B54+2984↓p
                 pushf
                 push    bx
                 push    cx
@@ -13235,10 +13235,10 @@ sub_1A491       proc near               ; CODE XREF: sub_17B54+2984↓p
                 mov     bx, 142h
                 mov     dx, 58h ; 'X'
 
-loc_1A4A0:                              ; CODE XREF: sub_1A491+20↓j
+loc_1A4A0:                              ; CODE XREF: xorScreenRegionWithPattern+20↓j
                 mov     cx, 16h
 
-loc_1A4A3:                              ; CODE XREF: sub_1A491+1A↓j
+loc_1A4A3:                              ; CODE XREF: xorScreenRegionWithPattern+1A↓j
                 xor     [bx], ax
                 xor     [bx+2000h], ax
                 inc     bx
@@ -13254,15 +13254,15 @@ loc_1A4A3:                              ; CODE XREF: sub_1A491+1A↓j
                 pop     bx
                 popf
                 retn
-sub_1A491       endp
+xorScreenRegionWithPattern endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
 
-loc_1A4B9:                              ; CODE XREF: sub_17B54-498↑j
+victorySequence:                        ; CODE XREF: sub_17B54-498↑j
                 lea     si, aCongratulation ; "\nCongratulations!\n   Thou hast\n   co"...
                 call    printGameText
-                call    sub_1A46F
+                call    printMoveCount
                 lea     si, aReportThyFeat ; "Report thy feat!"
                 call    printGameText
                 cld
@@ -13273,7 +13273,7 @@ loc_1A4D2:                              ; CODE XREF: sub_17B54+2987↓j
                 mov     al, 0F7h
                 call    playSoundEffect
                 lodsw
-                call    sub_1A491
+                call    xorScreenRegionWithPattern
                 loop    loc_1A4D2
                 call    sub_128C6
                 mov     dh, 3
@@ -13316,7 +13316,7 @@ loc_1A4D2:                              ; CODE XREF: sub_17B54+2987↓j
                 mov     dl, 2
                 lea     si, aOnwardToUltima ; "Onward to ULTIMA IV!"
                 call    printStringAt
-                call    autoSaveOnDeath
+                call    autoSaveGameState
                 mov     byte_114BC, 1
 
 loc_1A556:                              ; CODE XREF: sub_17B54+2A05↓j
@@ -13471,7 +13471,7 @@ showGrocerMenu  proc near               ; CODE XREF: sub_17B54:TOWN_BUILDING_TAB
                 push    si
                 lea     si, aYeLocalGrocerR ; "    Ye local\n     Grocer\n\nRations:\n"...
                 call    printGameText
-                call    sub_17D1A
+                call    promptForQuantity
                 cmp     ax, 0
                 jz      short loc_1A667
                 cmp     ax, [di+23h]
