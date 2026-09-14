@@ -22,7 +22,7 @@ across sessions, unlike a one-off todo list.
   re-verified via `identify.py`, 0 failures in both). The `apply_structs_*`
   scripts haven't had this decision made yet; treat as dry-run-first.
 
-## `ULTIMA.COM` (`ultima.idb`) — function-naming sweep: COMPLETE (58/58, 2026-09-13)
+## `ULTIMA.COM` (`ultima.idb`) — function-naming sweep: COMPLETE (60/60, 2026-09-14)
 
 Every function is named — see
 [overview.md](overview.md#session-2026-09-13-full-function-naming-sweep-5454-named)
@@ -32,28 +32,37 @@ for the full findings log. Remaining loose ends:
       via `ida_funcs.add_func()` — confirmed real, reachable-from-
       BOOTUP.BIN's-identical-copy shared code, not dead weight. See
       `ida_scripts/fix_orphaned_functions.py`.
-- [ ] **2 more regions of undefined code** still need `ida_funcs.add_func()`
-      before they can be named — both **confirmed real** now (their
-      byte-for-byte identical, properly-bounded copies exist and are
-      named in `ultima_bootup.idb`), but a first attempt at
-      automatically finding their boundaries (a naive "walk backward to
-      the nearest `retn`" heuristic) got them wrong — see
-      `fix_orphaned_functions.py`'s docstring. Do these by hand next
-      time (temporarily open the IDB in the IDA GUI read-only to see
-      the boundaries visually, or write a more careful boundary finder
-      that handles loops/branches inside the orphan) rather than risk
-      corrupting the flow graph with a wrong `add_func` call:
-  - **`promptForNumberEntry`** (around `loc_18C39`/`loc_18C7F`, calls
-    `accumulateInputDigit`/`readLine`) — matches `ultima_bootup.idb`'s
-    `promptForNumberEntry` (0x1498F) exactly, which has a confirmed
-    real caller there (`getEntryNumber`, used for every "Entry#"
-    prompt). No caller found within `ultima.idb` itself — real shared-
-    runtime code this title screen just doesn't happen to use.
-  - **`saveFile`** (around `0x18CD9`, calls `openFileWithRetry`,
-    mirrors `loadFile` but with `AH=15h` sequential write) — matches
-    `ultima_bootup.idb`'s `saveFile` (0x149E0) exactly, which writes
-    PARTY.ULT/ROSTER.ULT from several confirmed call sites there. Same
-    situation: real code, unused by the title screen.
+- [x] **2 more regions of undefined code** fixed via `ida_funcs.add_func()`
+      — both **confirmed real** (byte-for-byte identical, properly-
+      bounded copies already named in `ultima_bootup.idb`). The earlier
+      heuristic ("walk backward to the nearest `retn`") had guessed
+      wrong boundaries (`~0x18C39`/`~0x18CD9`); this time the exact
+      boundary was found the safe way — dump the confirmed
+      `ultima_bootup.idb` copy's raw bytes
+      (`dump_bootup_func_bytes.py`), dump a wide raw-byte window around
+      the candidate region in `ultima.idb`
+      (`dump_ultima_orphan_bytes.py`), and locate the byte-for-byte
+      match by eye (identical opcodes throughout, differing only in one
+      relocated near-pointer/immediate word operand per function — an
+      expected artifact of the two binaries having different data
+      segment layouts). See `apply_orphan_funcs_ultima.py`.
+  - **`promptForNumberEntry`**: confirmed `0x18C6F`-`0x18CC0` (81 bytes, matching
+    `ultima_bootup.idb`'s `0x1498F`-`0x149E0` exactly) — **not**
+    `~0x18C39` as first guessed; that address falls inside an unrelated
+    preceding code fragment. Calls `accumulateInputDigit`/`readLine`.
+    Matches `ultima_bootup.idb`'s copy, which has a confirmed real
+    caller there (`getEntryNumber`, used for every "Entry#" prompt). No
+    caller found within `ultima.idb` itself — real shared-runtime code
+    this title screen just doesn't happen to use.
+  - **`saveFile`**: confirmed `0x18CC0`-`0x18D10` (80 bytes, matching
+    `ultima_bootup.idb`'s `0x149E0`-`0x14A30` exactly) — starts exactly
+    where `promptForNumberEntry` ends, no gap between them. Calls
+    `openFileWithRetry`, mirrors `loadFile` but with `AH=15h`
+    sequential write. Matches `ultima_bootup.idb`'s `saveFile`, which
+    writes PARTY.ULT/ROSTER.ULT from several confirmed call sites
+    there. Same situation: real code, unused by the title screen.
+      `ultima.idb`: 60/60 functions named, 0 `sub_XXXXX` remaining
+      (confirmed via `identify.py`).
 - [ ] A raw `INT 13h` disk-sector-read routine (~`0x1878C`, reads track
       9 into segment `0xC000` with a retry loop) — no confirmed caller,
       and (unlike the two above) **no matching copy found in

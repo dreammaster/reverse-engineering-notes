@@ -555,12 +555,14 @@ static Bytes_0(void) {
 	create_insn	(0X18C52);
 	create_insn	(0X18C5B);
 	create_insn	(0X18C6F);
+	set_name	(0X18C6F,	"promptForNumberEntry");
 	create_insn	(x=0X18C76);
 	op_hex		(x,	1);
 	create_insn	(0X18CB1);
 	create_insn	(x=0X18CB5);
 	op_hex		(x,	1);
 	create_insn	(0X18CC0);
+	set_name	(0X18CC0,	"saveFile");
 	create_insn	(x=0X18CC9);
 	op_hex		(x,	1);
 	set_cmt	(0X18CCB,	"DOS - SET DISK TRANSFER AREA ADDRESS\nDS:DX -> disk transfer buffer",	0);
@@ -963,6 +965,12 @@ static Functions_0(void) {
 	add_func    (0X18B6E,0X18BF8);
 	set_func_flags(0X18B6E,0x5400);
 	set_frame_size(0X18B6E, 0, 0, 0);
+	add_func    (0X18C6F,0X18CC0);
+	set_func_flags(0X18C6F,0x5400);
+	set_frame_size(0X18C6F, 0, 0, 0);
+	add_func    (0X18CC0,0X18D10);
+	set_func_flags(0X18CC0,0x5400);
+	set_frame_size(0X18CC0, 0, 0, 0);
 	add_func    (0X18D10,0X18D63);
 	set_func_flags(0X18D10,0x5400);
 	set_frame_size(0X18D10, 0, 0, 0);

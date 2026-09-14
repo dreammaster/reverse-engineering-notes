@@ -800,7 +800,7 @@ aEastWind       db 10h, 45h, 61h, 73h, 74h, 2 dup(20h), 57h, 69h, 6Eh
 aWestWind       db 10h, 57h, 65h, 73h, 74h, 2 dup(20h), 57h, 69h, 6Eh
                 db 64h, 11h, 0
 aUnableToReadFi db 'Unable to read file ',0 ; DATA XREF: loadFile+43↓o
-aUnableToWriteF db 'Unable to write file ',0 ; DATA XREF: seg000:8D00↓o
+aUnableToWriteF db 'Unable to write file ',0 ; DATA XREF: saveFile+40↓o
 aWrongDiskette  db 'Wrong Diskette!',0  ; DATA XREF: openFileWithRetry:loc_18D82↓o
 asc_162B9       db '               ',0  ; DATA XREF: openFileWithRetry+F↓o
 byte_162C9      db 300h dup(0)          ; DATA XREF: updateLogoAnimationA+3↓o
@@ -842,7 +842,7 @@ writeString     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-writeStringPreserveCx proc near         ; CODE XREF: seg000:8D0B↓p
+writeStringPreserveCx proc near         ; CODE XREF: saveFile+4B↓p
                                         ; loadFile+4E↓p ...
                 push    cx
                 call    writeString
@@ -854,7 +854,7 @@ writeStringPreserveCx endp
 ; =============== S U B R O U T I N E =======================================
 
 
-swapCursorPos   proc near               ; CODE XREF: seg000:loc_18C7F↓p
+swapCursorPos   proc near               ; CODE XREF: promptForNumberEntry:loc_18C7F↓p
                                         ; printErrorPrefix+1↓p
                 xchg    dx, _textCursorPos
                 retn
@@ -1141,7 +1141,7 @@ drawTileGrid    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-readLine        proc near               ; CODE XREF: seg000:8C94↓p
+readLine        proc near               ; CODE XREF: promptForNumberEntry+25↓p
                 pushf
                 push    ax
                 push    cx
@@ -1635,7 +1635,7 @@ printHexNibble  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-accumulateInputDigit proc near          ; CODE XREF: seg000:8C9D↓p
+accumulateInputDigit proc near          ; CODE XREF: promptForNumberEntry+2E↓p
                 pushf
                 push    ax
                 push    cx
@@ -1823,7 +1823,11 @@ loc_18C64:                              ; CODE XREF: seg000:8C67↓j
 loc_18C69:                              ; CODE XREF: seg000:8C60↑j
                 mov     _textCursorPos, dx
                 jmp     short loc_18C0A
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+promptForNumberEntry proc near
                 pushf
                 push    bx
                 push    cx
@@ -1835,7 +1839,7 @@ loc_18C69:                              ; CODE XREF: seg000:8C60↑j
                 mov     bp, sp
                 mov     dx, _textCursorPos
 
-loc_18C7F:                              ; CODE XREF: seg000:8CAF↓j
+loc_18C7F:                              ; CODE XREF: promptForNumberEntry+40↓j
                 call    swapCursorPos
                 mov     al, 20h ; ' '
                 call    writeCharacter
@@ -1857,7 +1861,7 @@ loc_18C7F:                              ; CODE XREF: seg000:8CAF↓j
                 jmp     short loc_18C7F
 ; ---------------------------------------------------------------------------
 
-loc_18CB1:                              ; CODE XREF: seg000:8CA3↑j
+loc_18CB1:                              ; CODE XREF: promptForNumberEntry+34↑j
                 mov     al, bl
                 mov     ah, dl
                 add     sp, 2
@@ -1869,7 +1873,13 @@ loc_18CB1:                              ; CODE XREF: seg000:8CA3↑j
                 pop     bx
                 popf
                 retn
-; ---------------------------------------------------------------------------
+promptForNumberEntry endp
+
+
+; =============== S U B R O U T I N E =======================================
+
+
+saveFile        proc near
                 pushf
                 push    ax
                 push    dx
@@ -1912,7 +1922,7 @@ loc_18CB1:                              ; CODE XREF: seg000:8CA3↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_18CFF:                              ; CODE XREF: seg000:8CF3↑j
+loc_18CFF:                              ; CODE XREF: saveFile+33↑j
                 push    si
                 lea     si, aUnableToWriteF ; "Unable to write file "
                 mov     dx, 1800h
@@ -1920,8 +1930,10 @@ loc_18CFF:                              ; CODE XREF: seg000:8CF3↑j
                 pop     si
                 call    writeStringPreserveCx
 
-loc_18D0E:                              ; CODE XREF: seg000:loc_18D0E↓j
+loc_18D0E:                              ; CODE XREF: saveFile:loc_18D0E↓j
                 jmp     short loc_18D0E
+saveFile        endp
+
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -1986,7 +1998,7 @@ loadFile        endp
 ; =============== S U B R O U T I N E =======================================
 
 
-openFileWithRetry proc near             ; CODE XREF: seg000:8CD9↑p
+openFileWithRetry proc near             ; CODE XREF: saveFile+19↑p
                                         ; loadFile+19↑p
                 push    dx
                 push    _textCursorPos
@@ -2025,7 +2037,7 @@ openFileWithRetry endp
 ; =============== S U B R O U T I N E =======================================
 
 
-printErrorPrefix proc near              ; CODE XREF: seg000:8D07↑p
+printErrorPrefix proc near              ; CODE XREF: saveFile+47↑p
                                         ; loadFile+4A↑p ...
                 push    dx
                 call    swapCursorPos

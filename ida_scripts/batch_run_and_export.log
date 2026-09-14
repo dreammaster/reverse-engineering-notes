@@ -2,22 +2,86 @@
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
 [*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_bootup_func_bytes.py', 'noexport']
+[*] reading dump_bootup_func_bytes.py
+[*] executing dump_bootup_func_bytes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+promptForNumberEntry (0x1498f-0x149e0, 81 bytes):
+9c 53 51 52 55 56 57 83 ec 02 8b ec 8b 16 40 1f e8 65 fa b0 20 e8 65 fa e8 62 fa 89 16 40 1f b9 02 00 8d 7e 00 e8 fc fb 8b c2 8b cb 8b f7 e8 ce fe 83 fa fe 75 0c a3 40 1f 8b d0 b0 fe e8 ca 01 eb ce 8a c3 8a e2 83 c4 02 5f 5e 5d 5a 59 5b 9d c3
+
+saveFile (0x149e0-0x14a30, 80 bytes):
+9c 50 52 56 57 8b f2 8b d3 b4 1a cd 21 8d 3e 5c 00 b0 00 b4 29 56 cd 21 5e e8 87 00 c7 06 68 00 00 00 c6 06 7c 00 00 89 0e 6a 00 8b d7 b4 15 cd 21 0a c0 75 0a b4 10 cd 21 5f 5e 5a 58 9d c3 56 8d 36 b3 1f ba 00 18 e8 94 00 5e e8 d3 f9 eb fe
+----- end target script output -----
+[*] finished executing dump_bootup_func_bytes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_ultima_orphan_bytes.py', 'noexport']
+[*] reading dump_ultima_orphan_bytes.py
+[*] executing dump_ultima_orphan_bytes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+promptForNumberEntry candidate @ 0x18c30 (90 bytes):
+4e d1 e6 8b 30 e8 93 fa 50 e8 a1 fe 3d 00 4b 74 1a 3d 08 0e 74 15 3d 0d 1c 74 07 b0 fe e8 29 02 eb e7 58 5f 5e 5d 5a 59 5b 9d c3 58 89 16 20 62 e3 07 b0 20 e8 85 fa e2 fb 89 16 20 62 eb 9b 9c 53 51 52 55 56 57 83 ec 02 8b ec 8b 16 20 62 e8 65 fa b0 20 e8 65 fa e8 62 fa
+
+saveFile candidate @ 0x18cc0 (90 bytes):
+9c 50 52 56 57 8b f2 8b d3 b4 1a cd 21 8d 3e 5c 00 b0 00 b4 29 56 cd 21 5e e8 87 00 c7 06 68 00 00 00 c6 06 7c 00 00 89 0e 6a 00 8b d7 b4 15 cd 21 0a c0 75 0a b4 10 cd 21 5f 5e 5a 58 9d c3 56 8d 36 93 62 ba 00 18 e8 94 00 5e e8 d3 f9 eb fe 9c 50 52 56 57 8b f2 8b d3 b4
+----- end target script output -----
+[*] finished executing dump_ultima_orphan_bytes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_orphan_funcs_ultima.py']
+[*] reading apply_orphan_funcs_ultima.py
+[*] executing apply_orphan_funcs_ultima.py
+[*] captured stdout from target script:
+----- begin target script output -----
+promptForNumberEntry: add_func(0x18c6f, 0x18cc0) -> True
+  set_name -> True
+saveFile: add_func(0x18cc0, 0x18d10) -> True
+  set_name -> True
+
+Post-state:
+  promptForNumberEntry: func 0x18c6f-0x18cc0 name='promptForNumberEntry'
+  saveFile: func 0x18cc0-0x18d10 name='saveFile'
+----- end target script output -----
+[*] finished executing apply_orphan_funcs_ultima.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima.asm
+[*] gen_file(OFILE_ASM) returned 2871
+[*] exporting IDC to C:\dev\ultima3\ultima.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
 [*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
 [*] reading identify.py
 [*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-root filename : _bootup_scratch.com
-input file    : C:\dev\ultima3\ida_scripts\_bootup_scratch.com
+root filename : ULTIMA.COM
+input file    : C:\games\ULTIMA3\ULTIMA.COM
 entry point   : 0x100 (cs=0x1000)
-input md5     : e85fbab19a03876bfa6f3a8a58114fd8
+input md5     : 7bea6bf20b7079b30f8ca5336b3805b2
 
 segments:
-  seg000       0x010100-0x014d74  (19572 bytes)
+  seg000       0x010100-0x019054  (36692 bytes)
 
-functions: 73 total, 73 named, 0 still sub_XXXXX
+functions: 60 total, 60 named, 0 still sub_XXXXX
 
-structs (1): RosterEntry
+structs (0): 
 ----- end target script output -----
 [*] finished executing identify.py
 [*] auto_wait (post-script)
