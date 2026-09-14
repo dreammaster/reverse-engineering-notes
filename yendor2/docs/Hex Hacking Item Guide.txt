@@ -1,0 +1,847 @@
+To find the offset numbers, which are different for every character, and 
+also not too uniform, use this technique. (makes it easy on first time 
+hex hackers.)
+
+Clear all 4 of your characters inventories, and fill them with breads. 
+Take all essential inventory items and place them in containers ie. bags, 
+boxes, or backpacks, and wear them on your container slot, so that all
+8 items slots for each character are free.
+Once they are filled with breads, simply save your game in a different 
+slot and open that save game in a hex editor. I prefer using AXE, but you 
+can use any you like. 
+The ANSII text on the right hand side will list each characters name. 
+About 15 lines below the name, will be the items. each item has 4 double 
+digits associated with it. You will see this for each character:
+37 00 00 00 37 00 00 00 37 00 00 00 37 00 00 00
+37 00 00 00 37 00 00 00 37 00 00 00 37 00 00 00
+
+These may not line up, but the pattern will be easily seen.
+Simply change the 37's to any item you like from the list below. 
+It's really as simple as that.
+
+
+
+Some notes on hex codes
+The item slots are 4 double digits I will mark them here
+
+00 00 00 00
+
+the first 00 is for the item number, example, 37 is bread.
+
+The second 00 is the item modifier, like for the second page of items is 
+01 example would be a leather helm which would be 14 01 00 00 or 
+a short bow 24 02 00 00
+
+The third 00 is for how many uses each item has. 00 is one use, so is 01. 
+02 is 2 uses, 03 is 3, etc. This only works for consumable items like 
+potions. It also works for scrolls (of stats and skills) wands, etc. 
+Does not work for food no matter what (believe me, I’ve tried it all!)
+For instance if you want a purple potion (completely refills mp) with 
+almost infinite uses the code would be 17 00 FF 00 or you could have a 
+wand of magic (which raises max MP by 6 permanently) with almost 
+infinite uses would be 97 00 FF 00 
+
+the fourth set of 00 I am not sure about. I don’t think it does anything.
+I’ve yet to find an item that causes this number to change from 00, so 
+changing it may cause instability in the game. 
+
+
+
+Hex number	Item
+00	Nothing
+01	Gold coins *
+02	Magic Ore *
+03	Nu Ore *
+04	Backpack
+05	Box
+06	Bag
+07	Hourglass
+08	Candle
+09	Lit candle
+0A	Used candle
+0B	Light source *
+0C	Lit light *
+0D	Used light*
+0E	Torch
+0F	Lit torch
+10	Used torch
+11	Magic container*
+12	Black potion
+13	Gray potion
+14	White potion
+15	Red potion
+16	Orange potion
+17	Purple potion
+18	Green potion
+19	Gold potion
+1A	Silver potion
+1B	Blue potion
+1C	Brown potion
+1D	Pink potion
+1E	Party map
+1F	World map*
+20	Lockpick
+21	Brass chest key
+22	Bronze chest key
+23	Copper chest key
+24	Iron chest key
+25	Steel chest key
+26	Silver chest key
+27	Gold chest key
+28	Brass door key
+29	Bronze door key
+2A	Copper door key
+2B	Iron door key
+2C	Steel door key
+2D	Silver door key
+2E	Gold door key
+2F	Key ring
+30	Key of port hope
+31	Key of pariah
+32	Key of numagik
+33	Key of stony peak
+34	Key of tracking
+35	Blink key *
+36	Meat
+37	Bread
+38	Food *
+39	Cheese
+3A	Ale
+3B	Food*
+3C	Food*
+3D	Food*
+3E	Food*
+3F	Food*
+40	Food*
+41	Magic apple
+42	Magic food*
+43	Magic food*
+44	Magic food*
+45	Magic food*
+46	Magic food*
+47	Filler*
+48	Filler*
+49	Filler*
+4A	Filler*
+4B	Filler*
+4C	Filler*
+4D	Filler*
+4E	Filler*
+4F	Filler*
+50	Strength potion
+51	Dexterity potion
+52	Stamina potion
+53	Intelligence potion
+54	Wisdom potion
+55	Charisma potion
+56	Not used*
+57	Not used*
+58	Not used*
+59	Health potion
+5A	Magic potion
+5B	Vial of survival
+5C	Vial of projectile
+5D	Vial of slashing
+5E	Vial of bashing
+5F	Vial of polearm
+60	Vial of casting
+61	Vial of thievery
+62	Vial of navigation
+63	Vial of bartering
+64	Vial of repair
+65	Vial of mapping
+66	Vial of linguistics
+67	Vial of chemistry
+68	Scroll of strength
+69	Scroll of dexterity
+6A	Scroll of stamina
+6B	Scroll of intelligence
+6C	Scroll of wisdom
+6D	Scroll of charisma
+6E	Not used*
+6F	Not used*
+70	Not used*
+71	Scroll of health
+72	Scroll of magic
+73	Survival parchment
+74	Projectile parchment
+75	Slashing parchment
+76	Bashing parchment
+77	Polearm parchment
+78	Casting parchment
+79	Thievery parchment
+7A	Navigation parchment
+7B	Bartering parchment
+7C	Repair parchment
+7D	Mapping parchment
+7E	Linguistics parchment
+7F	Chemistry parchment
+80	Rod of survival
+81	Rod of projectile
+82	Rod of slashing
+83	Rod of bashing
+84	Rod of polearm
+85	Rod of casting
+86	Rod of thievery
+87	Rod of navigation
+88	Rod of bartering
+89	Rod of repair
+8A	Rod of mapping
+8B	Rod of linguistics
+8C	Rod of chemistry
+8D	Wand of strength
+8E	Wand of dexterity
+8F	Wand of stamina
+90	Wand of intelligence
+91	Wand of wisdom
+92	Wand of charisma
+93	Not used*
+94	Not used*
+95	Not used*
+96	Wand of health
+97	Wand of magic
+98	Gold nugget
+99	Emerald
+9A	Silver bar
+9B	Gold bar
+9C	Platinum bar*
+9D	Turquoise *
+9E	Onyx
+9F	Pearl *
+A0	Topaz
+A1	Sapphire
+A2	Ruby
+A3	Diamond
+A4	Ring of invisibility
+A5	Ring of Disease protection
+A6	Ring of stone protection
+A7	Ring of curse protection
+A8	Copper ring of defense
+A9	Steel ring of defense
+AA	Silver ring of defense
+AB	Gold ring of defense
+AC	Halfling gloves of strength
+AD	Gnome boots of dexterity
+AE	Elfin boots of stamina
+AF	Halfling helm of intelligence
+B0	Elfin helm of wisdom
+B1	Gnome helm of charisma
+B2	Not used*
+B3	Gloves*(1)
+B4	Boots*(1)
+B5	Wood shield
+B6	+1
+B7	+2
+B8	+3
+B9	+4
+BA	+5
+BB	Copper shield
+BC	+1
+BD	+2
+BE	+3
+BF	+4
+C0	+5
+C1	Steel shield
+C2	+1
+C3	+2
+C4	+3
+C5	+4
+C6	+5
+C7	+6
+C8	+7
+C9	Silver shield
+CA	+1
+CB	+2
+CC	+3
+CD	+4
+CE	+5
+CF	+6
+D0	+7
+D1	+8
+D2	+9
+D3	+10
+D4	Gold shield
+D5	+1
+D6	+2
+D7	+3
+D8	+4
+D9	+5
+DA	+6
+DB	+7
+DC	+8
+DD	+9
+DE	+10
+DF	Leather gloves
+E0	+1
+E1	+2
+E2	+3
+E3	+4
+E4	+5
+E5	Chain mail gloves
+E6	+1
+E7	+2
+E8	+3
+E9	+4
+EA	+5
+EB	+6
+EC	+7
+ED	+8
+EE	+9
+EF	+10
+F0	Field plate gloves
+F1	+1
+F2	+2
+F3	+3
+F4	+4
+F5	+5
+F6	+6
+F7	+7
+F8	+8
+F9	+9
+FA	+10
+FB	Leather boots
+FC	+1
+FD	+2
+FE	+3
+FF	+4
+
+
+This list repeats its self with different items when you change the 2 
+digits after the item slot with an 01 instead of 00, this is the 01 list.
+
+Hex number	Item
+00	Leather boots +5
+01	Scale mail boots
+02	+1
+03	+2
+04	+3
+05	+4
+06	+5
+07	+6
+08	+7
+09	Field plate boots
+0A	+1
+0B	+2
+0C	+3
+0D	+4
+0E	+5
+0F	+6
+10	+7
+11	+8
+12	+9
+13	+10
+14	Leather helmet
+15	+1
+16	+2
+17	+3
+18	+4
+19	+5
+1A	Scale mail helm
+1B	+1
+1C	+2
+1D	+3
+1E	+4
+1F	+5
+20	+6
+21	+7
+22	Chain coif
+23	+1
+24	+2
+25	+3
+26	+4
+27	+5
+28	+6
+29	+7
+2A	+8
+2B	+9
+2C	+10
+2D	Field plate helm
+2E	+1
+2F	+2
+30	+3
+31	+4
+32	+5
+33	+6
+34	+7
+35	+8
+36	+9
+37	+10
+38	Cloth leggings
+39	+1
+3A	+2
+3B	+3
+3C	+4
+3D	+5
+3E	Leather leggings
+3F	+1
+40	+2
+41	+3
+42	+4
+43	+5
+44	Ring mail leggings
+45	+1
+46	+2
+47	+3
+48	+4
+49	+5
+4A	+6
+4B	+7
+4C	Scale mail leggings
+4D	+1
+4E	+2
+4F	+3
+50	+4
+51	+5
+52	+6
+53	+7
+54	Chain mail leggings
+55	+1
+56	+2
+57	+3
+58	+4
+59	+5
+5A	+6
+5B	+7
+5C	+8
+5D	+9
+5E	+10
+5F	Field plate leggings
+60	+1
+61	+2
+62	+3
+63	+4
+64	+5
+65	+6
+66	+7
+67	+8
+68	+9
+69	+10
+6A	Cloth armor
+6B	+1
+6C	+2
+6D	+3
+6E	+4
+6F	+5
+70	Leather armor
+71	+1
+72	+2
+73	+3
+74	+4
+75	+5
+76	Ring mail armor
+77	+1
+78	+2
+79	+3
+7A	+4
+7B	+5
+7C	+6
+7D	+7
+7E	Scale mail armor
+7F	+1
+80	+2
+81	+3
+82	+4
+83	+5
+84	+6
+85	+7
+86	Chain mail armor
+87	+1
+88	+2
+89	+3
+8A	+4
+8B	+5
+8C	+6
+8D	+7
+8E	+8
+8F	+9
+90	+10
+91	Field plate armor
+92	+1
+93	+2
+94	+3
+95	+4
+96	+5
+97	+6
+98	+7
+99	+8
+9A	+9
+9B	+10
+9C	Dagger
+9D	+1
+9E	+2
+9F	+3
+A0	+4
+A1	+5
+A2	Club
+A3	+1
+A4	+2
+A5	+3
+A6	+4
+A7	+5
+A8	Staff
+A9	+1
+AA	+2
+AB	+3
+AC	+4
+AD	+5
+AE	Spear
+AF	+1
+B0	+2
+B1	+3
+B2	+4
+B3	+5
+B4	Mace
+B5	+1
+B6	+2
+B7	+3
+B8	+4
+B9	+5
+BA	Broadsword
+BB	+1
+BC	+2
+BD	+3
+BE	+4
+BF	+5
+C0	Longsword
+C1	+1
+C2	+2
+C3	+3
+C4	+4
+C5	+5
+C6	+6
+C7	+7
+C8	Whip
+C9	+1
+CA	+2
+CB	+3
+CC	+4
+CD	+5
+CE	+6
+CF	+7
+D0	Hammer
+D1	+1
+D2	+2
+D3	+3
+D4	+4
+D5	+5
+D6	+6
+D7	+7
+D8	Flail
+D9	+1
+DA	+2
+DB	+3
+DC	+4
+DD	+5
+DE	+6
+DF	+7
+E0	+8
+E1	+9
+E2	+10
+E3	Battle axe
+E4	+1
+E5	+2
+E6	+3
+E7	+4
+E8	+5
+E9	+6
+EA	+7
+EB	+8
+EC	+9
+ED	+10
+EE	Morning star
+EF	+1
+F0	+2
+F1	+3
+F2	+4
+F3	+5
+F4	+6
+F5	+7
+F6	+8
+F7	+9
+F8	+10
+F9	2 handed sword
+FA	+1
+FB	+2
+FC	+3
+FD	+4
+FE	+5
+FF	+6
+
+The list repeats again with an 02 after the item number 
+instead of an 00 or 01
+Hex number	Item
+00	2 handed sword +7
+01	+8
+02	+9
+03	+10
+04	Halberd
+05	+1
+06	+2
+07	+3
+08	+4
+09	+5
+0A	+6
+0B	+7
+0C	+8
+0D	+9
+0E	+10
+0F	Shovel
+10	Pick axe
+11	Broken dagger
+12	Broken club
+13	Broken staff
+14	Broken spear
+15	Broken mace
+16	Broken hammer
+17	Broken flail
+18	Broken battle axe
+19	Broken morning star
+1A	Broken 2 hand sword
+1B	Broken halberd
+1C	Broken short sword
+1D	Broken long sword
+1E	Sling
+1F	+1
+20	+2
+21	+3
+22	+4
+23	+5
+24	Short bow
+25	+1
+26	+2
+27	+3
+28	+4
+29	+5
+2A	Long bow
+2B	+1
+2C	+2
+2D	+3
+2E	+4
+2F	+5
+30	+6
+31	+7
+32	+8
+33	+9
+34	+10
+35	Light crossbow
+36	+1
+37	+2
+38	+3
+39	+4
+3A	+5
+3B	+6
+3C	+7
+3D	+8
+3E	+9
+3F	+10
+40	Flaming oil flask
+41	Scroll of forgery
+42	Blank key
+43	Phase 1 key
+44	Phase 2 key
+45	Phase 3 key
+46	Boulder of nu ore
+47	Meteorite of magic ore
+48	Quartz lens
+49	Pane of quartz glass
+4A	Elfin crystal goblet
+4B	Quest item *
+4C	Quest item *
+4D	Quest item *
+4E	Quest item *
+4F	Silver coin
+50	Golden amulet
+51	Barrel of water
+52	Enhanced barrel of water
+53	Crystal ball
+54	Flower
+55	Cocoon
+56	Feather
+57	Orange
+58	Potion of appreciation
+59	Dragon skin
+5A	Bones
+5B	Instrument
+5C	Black book
+5D	Green book
+5E	Blue book
+5F	Brown book
+60	Scroll *(1)
+61	Offensive scroll *(1)
+62	Defensive scroll *(1)
+63	Gray quartz
+64	Purple quartz
+65	Red quartz
+66	Orange quartz
+67	Yellow quartz
+68	Green quartz
+69	Blue quartz
+6A	White quartz
+6B	Used quartz
+6C	Elfin mask
+6D	Elfin pan flute
+6E	Elfin gems
+6F	Elfin ornament
+70	Elfin crystal
+71	Gnome figurine
+72	Gnome horn
+73	Gnome painting
+74	Gnome tapestry
+75	Gnome ointment
+76	Halfling pipe
+77	Halfling cube
+78	Halfling minerals
+79	Halfling trophy
+7A	Halfling pottery
+7B	Paundor’s journal
+7C	Book of lore
+7D	Wizard guild scroll
+7E	Opposition scroll 1
+7F	Opposition scroll 2
+80	Opposition scroll 3
+81	Opposition scroll 4
+82	Opposition scroll 5
+83	Wizard note
+84	Book of magic
+85	Scroll * (2)
+86	Challenge scroll 1
+87	Challenge scroll 2
+88	Challenge scroll 3
+89	Challenge scroll 4
+8A	Torchlight scroll 1
+8B	Torchlight scroll 2
+8C	Torchlight scroll 3
+8D	Torchlight scroll 4
+8E	Simech’s journal
+8F	Simech’s note
+90	Travis’s note
+91	Ogre poetry
+92	Murgatros scroll
+93	Mystery cave scroll
+94	Quartz tower scroll
+95	Scroll *(1)
+96	Broken wood shield
+97	Broken copper shield
+98	Broken steel shield
+99	Broken silver shield
+9A	Broken gold shield
+9B	Broken sling
+9C	Broken short bow
+9D	Broken long bow
+9E	Broken crossbow
+9F	Chemistry book
+A0	Challenge scroll A 
+A1	Challenge scroll B
+A2	Logic book chapter 2
+A3	Logic book chapter 3
+A4	Green scroll *(1)
+A5	Blue scroll *(1)
+A6	Purple scroll *(1)
+A7	Yellow scroll *(1)
+A8	Miners light 1 scroll
+A9	Cure poison scroll 
+AA	Insect repellent scroll
+AB	Electric burst scroll
+AC	Jump over scroll
+AD	Dispel illusion
+AE	Hex monster scroll
+AF	Remove jinx scroll
+B0	Turn undead scroll
+B1	Miner’s light 2 scroll
+B2	Shrapnel scroll
+B3	Party heal scroll
+B4	Thin skin scroll
+B5	Disease antidote scroll
+B6	Dispel undead scroll
+B7	Holy rain scroll
+B8	Safe haven scroll
+B9	Blast of power scroll
+BA	Unlock magic scroll
+BB	Blind scroll
+BC	Linked lightning scroll
+BD	Cure paralysis scroll
+BE	Fireball scroll
+BF	Restore health scroll
+C0	Swarm of insects scroll
+C1	Paladins pain scroll
+C2	Quartz of acid rain
+C3	Jump through scroll
+C4	Quartz of lightning strike
+C5	Ball of fire scroll
+C6	Quartz of infinite illumination
+C7	Staplar’s recipe
+C8	Empty potion bottle
+C9	Lava sample
+CA	Numagik scroll 1
+CB	Numagik scroll 2
+CC	Numagik scroll 3
+CD	Stony peak scroll
+CE	Broken warhammer
+CF	Warhammer
+D0	+1
+D1	+2
+D2	+3
+D3	+4
+D4	+5
+D5	+6
+D6	+7
+D7	+8
+D8	+9
+D9	+10
+DA	Quartz dragon slayer
+DB	Quartz bone crusher
+DC	Quartz executioner
+DD	Remove hex scroll
+DE	Quartz of spinal tap
+DF	Ranger’s rock scroll
+E0	Quartz of fiery spear
+E1	Forgery scroll
+E2	Shard of ice scroll
+E3	Quartz of power surge
+E4	Un-stone scroll
+E5	Thaw scroll
+E6	Quartz of organ distortion
+E7	Destroy undead scroll
+E8	Resurrection scroll
+E9	Bad item* (3)
+EA	Bad item* (3)
+EB	Bad item* (3)
+EC	Bad item* (3)
+ED	Bad item* (3)
+EE	Bad item* (3)
+EF	Bad item* (3)
+F0	Bad item* (3)
+F1	Bad item* (3)
+F2	Bad item* (3)
+F3	Bad item* (3)
+F4	Bad item* (3)
+F5	Bad item* (3)
+F6	Bad item* (3)
+F7	Bad item* (3)
+F8	Bad item* (3)
+F9	Bad item* (3)
+FA	Bad item* (3)
+FB	Bad item* (3)
+FC	Bad item* (3)
+FD	Bad item* (3)
+FE	Bad item* (3)
+FF	Bad item* (3)
+
+Legend 
+*    dummy item. Shows up as a mouse icon in your inventory, 
+     clicking it makes it disappear.
+1    item is a dummy, but has a graphic. This item cannot be 
+     used or equipped
+2    item is a dummy, and can be used, but shows a glitched 
+     screen. Esc to exit from it.
+3    item is a dummy, but will cause a crash of the game if 
+     you open your inventory with it 
+in it.
+
+This guide is copyright of Josh Hines 2004. Feel free to distribute it in 
+any way you like, provided I still get credit for it.
+If you have any questions or comments, please email volyren@yahoo.com
+
+Note: It is possible to get past the blocked portal in the shareware version 
+and play the rest of the game, by giving yourself the Key of Pariah, which 
+teleports you to the town the portal would have taken you to.

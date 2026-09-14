@@ -214,6 +214,71 @@ low-risk way to start confirming the already-present `loadWorldDat*`/
 target once deeper work begins, same pattern as `ultima1`'s CRT
 file-I/O-layer pass.
 
+## Reference documents added by Paul (2026-09-14, same session)
+
+Two files landed in `docs/` partway through this session, both useful
+enough to fold into the working notes rather than just sit as raw
+attachments:
+
+- **`manual.txt`** — the official game manual. Confirms/refines several
+  things the string survey above only guessed at:
+  - **EMS requirement, more precisely**: manual says **minimum 2MB**,
+    **up to 8MB** used if available — the in-EXE error string found this
+    session only said `"Minimum of 1MB Expanded RAM must be available"`,
+    so either the error string is a looser/older check than the real
+    requirement, or "1MB" refers to something more specific (e.g. a
+    single allocation, not the whole budget). Worth resolving once
+    `MapUnmapPages`/`InitMemory` are actually traced.
+  - **Class system is a percentage blend of two base archetypes**, not
+    flat classes — e.g. `Merchant = 50-75% Fighter, 25-50% Thief`,
+    `Alchemist = 75% Cleric, 25% Wizard`, `Marksman = 50% Wizard, 50%
+    Fighter`. Every one of the 9 base classes found in strings maps onto
+    one of 3 rows (Fighter/Thief-leaning, Cleric-leaning,
+    Wizard-leaning), each row having a "pure", "mostly", and "half-and-
+    half" member. This is a precise, checkable spec for wherever
+    character-stat generation lives in the code — strong parallel to
+    `ultima1`'s point-buy mechanic being an easy, high-confidence early
+    win.
+  - **Attribute/skill definitions**, matching the string-survey list
+    exactly but now with actual game-mechanical meaning attached (e.g.
+    `DEXTERITY` = turn order in battle, `CHARISMA` = bonus training
+    points up to 15, `MAPPING` = party average gates overhead-map detail,
+    `NAVIGATION` = party average gates transport range). Useful as
+    acceptance criteria once the stat-calculation functions are found.
+  - **Controls**: arrow keys move/turn, `Ctrl`+arrow strafes, single-key
+    hotkeys (`A` attack, `C` cast, `D` disk panel, `K` keyring, `M` party
+    map, `P` toggle panels, `R` rest, `S` shoot, `T` hourglass, `1`-`4`
+    select character, `F1`-`F4` character sheets, `F5` map toggle, `F8`
+    clue book, `SPACE` context-use/confirm) plus a fairly rich
+    click/double-click/right-click mouse vocabulary. Good target list for
+    locating the main input-dispatch loop later — the four on-screen
+    action icons (`SHOOT`/`CAST`/`REST`/`DISK`) plus the `D`-for-disk
+    hotkey plausibly connect to the already-named `GameDialog_draw*`
+    cluster (`Dos`/`Load`/`Save`/`Return`/... — worth checking once
+    that cluster is traced).
+  - **"Book I" backstory recap**: this exe is a direct narrative sequel
+    to an earlier game/chapter, not a fresh story — the manual's
+    "Recent History" section names the antagonist banished at the end of
+    Book I as **Paltivar**, and the returned-orb bearer as **Zamora,
+    "Dean of the Athaneum"** (a person, not just an exclamation) — which
+    directly explains two strings found in this session's own survey:
+    the intro cutscene's `"ONCE ENCHANTED, THIS ORB WILL VANQUISH ALL
+    EVIL CREATURES..."` and the ominous closer `"ZAMORA HAS FALLEN!"`.
+    Useful narrative/text-asset context for later `WORLD.DAT` text-table
+    work, and confirms "Book I Chapter 1" is a distinct, separate game
+    from this one (not just a marketing chapter split).
+- **`Hex Hacking Item Guide.txt`** — community-written (2004, Josh
+  Hines), documents the savegame's per-item 4-byte encoding and a
+  near-complete 3-page item ID table by direct hex-editing observation.
+  Folded into [file-formats.md](file-formats.md#item-slot-encoding-from-hex-hacking-item-guidetxt-not-yet-cross-checked-against-the-idb)
+  in full detail — this is likely the single highest-leverage document
+  added this session, since it turns the `CURGAME`/savegame format from
+  "undecoded" into "has a strong, partially externally-cross-confirmed
+  hypothesis, just needs verifying against the actual struct in the
+  IDB." Cross-confirmed independently against this session's own string
+  survey (door-key tier names, town/key names) — see file-formats.md for
+  specifics.
+
 ## Next steps (not started this session)
 
 See [roadmap.md](roadmap.md) for the fuller prioritized list. Immediate
