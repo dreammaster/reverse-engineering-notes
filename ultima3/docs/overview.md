@@ -1865,3 +1865,78 @@ title screen just never happens to call itself.
 three of Ultima III's executables now have complete function coverage:
 `ultima.idb` (60/60), `ultima_bootup.idb` (73/73), `ultima_exodus.idb`
 (144/144).
+
+## `drawDungeonView`'s self-modifying `start` call: solved -- `DUNGEON.DAT` is machine code
+
+The last of the three inline-flagged mechanism questions from the
+function-naming sweep, closed. The mystery: `drawDungeonView` clears
+the viewport and, only when a torch is lit (`byte_115CE`), does
+`call near ptr start` -- `start` being `0x10100`, the same 2,048-byte
+buffer that is `EXODUS.BIN`'s own entry point *and* the load target
+for `SOSARIA.ULT` (the overworld map). Calling a data buffer as code
+is exactly the self-modifying-code smell this project has learned to
+chase down rather than wave off.
+
+Traced every site that takes `start`'s address (`idautils.DataRefsTo`).
+Most turned out to be ordinary `SOSARIA.ULT`/`AMBROSIA.ULT`
+load/save round-trips (`saveSosariaAndParty`, `teleportToAmbrosia`,
+`entryFromBootup`, `exitToSosaria`) -- unrelated to dungeons. But two
+sites live inside `readAndDispatchCommand`'s dungeon-entry path
+(`cmdEnter`'s label), right next to each other:
+
+```
+mov     cx, 890h
+lea     bx, byte_10900
+call    loadFile          ; per-dungeon file, filename from [si+16BBh]
+lea     bx, start
+mov     cx, 800h
+lea     dx, aDungeonDat   ; "DUNGEON.DAT"
+call    loadFile          ; loads DUNGEON.DAT (0x800=2048 bytes) into start
+jmp     initDungeonState
+```
+
+So entering *any* dungeon loads two files: the dungeon-specific map
+(`byte_10900`, matching the documented per-dungeon `.DAT` format) and
+the single shared `DUNGEON.DAT` -- straight into the `start` buffer
+that `drawDungeonView` later calls as code.
+
+To confirm this isn't coincidental reuse of a buffer, read
+`DUNGEON.DAT`'s actual raw bytes from disk directly (`xxd`, outside
+IDA entirely -- the IDB has no real content loaded at `start` since
+it's only ever populated at runtime). The first three bytes are
+`e9 44 03` -- `jmp` (opcode `E9`) to relative offset `0x0344`, landing
+at file offset `0x347`, a classic "jump over an embedded data table"
+prologue. The code actually at `0x347`:
+
+```
+pushf
+push    ax
+push    es
+mov     [103h], bx      ; save _partyPosition
+mov     [105h], al      ; save _facingDirection
+mov     [106h], ah      ; save _dungeonLevel
+mov     ax, 0B800h
+mov     es, ax          ; ES = CGA framebuffer segment
+mov     al, 0
+call    ...             ; draw wall at depth 0
+...                     ; then depth 1, 3, 6, 0Ah
+```
+
+This is unambiguous, purposeful 8086 machine code -- it saves the
+three register-passed arguments (`al`=`_facingDirection`,
+`ah`=`_dungeonLevel`, `bx`=`_partyPosition`, exactly matching
+`drawDungeonView`'s call-site setup), points `ES` at the CGA video
+segment, and dispatches a sequence of wall-drawing calls at increasing
+corridor depths. **`DUNGEON.DAT` is not a data file at all -- it *is*
+the dungeon first-person-corridor-view renderer**, shipped as a
+relocatable compiled-code blob loaded directly into the program's own
+entry-point buffer and invoked with a register-based calling
+convention, rather than as interpreted data read by engine code. A
+genuinely elegant (if slightly alarming) piece of 1983-era space-
+saving engineering: reuse the one-time boot-entry buffer as a generic
+"load and execute" slot for an overlay once it's no longer needed for
+its original purpose.
+
+With this, all three of the mechanism questions flagged at the end of
+the `EXODUS.BIN` function-naming sweep are resolved: the Exodus card
+sequence, `cmdHandEquipment`'s negative result, and now this.

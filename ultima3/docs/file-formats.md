@@ -297,13 +297,29 @@ are read, and what the remaining 107 bytes hold — not yet traced.
 
 ## Files with no external documentation found (2026-09-13 search)
 
-- **`DUNGEON.DAT`** (1,866 bytes) — **confirmed 2026-09-13**: loaded by
-  `ultima_exodus.idb`'s `cmdEnter` as a *second*, separate file read
-  (`0x800` = 2,048 bytes requested) whenever entering any dungeon,
-  alongside — not instead of — the dungeon's own numbered map file
-  (`0x890` = 2,192 bytes, matching the documented per-dungeon format
-  above exactly). So it's a shared auxiliary data file common to all
-  dungeons, not itself a map. Internal layout still undocumented.
+- **`DUNGEON.DAT`** (1,866 bytes) — **confirmed 2026-09-14: not a data
+  file at all — a raw 8086 machine-code overlay, the dungeon
+  first-person-view renderer itself.** `readAndDispatchCommand`'s
+  dungeon-entry path loads it (`0x800` = 2,048 bytes requested,
+  `lea bx, start`) directly into `start` — the same 2,048-byte buffer
+  at `0x10100` that doubles as `EXODUS.BIN`'s own entry point and as
+  `SOSARIA.ULT`'s overworld-map load target — alongside, not instead
+  of, the dungeon's own numbered map file (`0x890` = 2,192 bytes into
+  `byte_10900`, matching the documented per-dungeon format above
+  exactly). `drawDungeonView` then, only when a torch is lit
+  (`byte_115CE`), calls that buffer directly as code
+  (`call near ptr start`) with `al`=`_facingDirection`,
+  `ah`=`_dungeonLevel`, `bx`=`_partyPosition` as register-passed
+  arguments. Confirmed genuinely executable by reading the real file's
+  raw bytes: it opens with `e9 44 03` (`jmp` over an embedded data
+  table to offset `0x347`), landing on code that saves the three
+  passed-in registers to local scratch variables, sets `es`=`0B800h`
+  (the CGA framebuffer segment), and dispatches a sequence of
+  wall-drawing calls at increasing corridor depths (`al` = 0, 1, 3, 6,
+  0Ah) — the classic Ultima III first-person corridor-perspective
+  renderer, shipped as a relocatable compiled-code blob rather than
+  interpreted data. This resolves the "self-modifying `start` call
+  target" question flagged in [roadmap.md](roadmap.md).
 - **`ANIMATE.DAT`** (5,888 bytes) — loaded into `byte_1432D` and
   consumed by `drawAnimationFrameRow`/`runBootFlagAnimation` (see
   `apply_renames.py`) as 16-row image-frame data for the boot logo/flag

@@ -87,3 +87,354 @@ structs (0):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_dungeon_start_buffer.py', 'noexport']
+[*] reading investigate_dungeon_start_buffer.py
+[*] executing investigate_dungeon_start_buffer.py
+[*] captured stdout from target script:
+----- begin target script output -----
+'start' symbol @ 0x10100
+  flags: code=False data=True
+  containing func: None
+
+Code xrefs to 'start':
+  0x19648 in 'drawDungeonView': call    near ptr start
+
+Data xrefs to 'start' (potential write sites):
+  0x11e29 in 'readAndDispatchCommand': lea     bx, start
+  0x11e44 in 'readAndDispatchCommand': lea     bx, start
+  0x12081 in 'saveSosariaAndParty': lea     bx, start
+  0x121be in 'teleportToAmbrosia': lea     bx, start
+  0x121fe in 'teleportToAmbrosia': lea     bx, start
+  0x12513 in 'entryFromBootup': lea     bx, start
+  0x16474 in 'exitToSosaria': lea     bx, start
+
+--- drawDungeonView full disassembly ---
+  0x19630: pushf
+  0x19631: push    ax
+  0x19632: push    bx
+  0x19633: call    clearMapViewport
+  0x19636: cmp     byte_115CE, 0
+  0x1963b: jz      short loc_1964B
+  0x1963d: mov     al, _facingDirection
+  0x19640: mov     ah, _dungeonLevel
+  0x19644: mov     bx, _partyPosition
+  0x19648: call    near ptr start
+  0x1964b: pop     bx
+  0x1964c: pop     ax
+  0x1964d: popf
+  0x1964e: retn
+----- end target script output -----
+[*] finished executing investigate_dungeon_start_buffer.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_dungeon_start_writes.py', 'noexport']
+[*] reading investigate_dungeon_start_writes.py
+[*] executing investigate_dungeon_start_writes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== 'readAndDispatchCommand' @ 0x11e29 ===
+
+=== 'readAndDispatchCommand' @ 0x11e44 ===
+
+=== 'saveSosariaAndParty' @ 0x12081 ===
+  0x1207d: push    ax
+  0x1207e: push    bx
+  0x1207f: push    cx
+  0x12080: push    dx
+  0x12081: lea     bx, start <-- 
+  0x12085: mov     cx, 1228h
+  0x12088: lea     dx, aSosariaUlt; "SOSARIA.ULT"
+  0x1208c: call    saveFile
+  0x1208f: call    savePartyFile
+  0x12092: pop     dx
+  0x12093: pop     cx
+  0x12094: pop     bx
+  0x12095: pop     ax
+  0x12096: retn
+
+=== 'teleportToAmbrosia' @ 0x121be ===
+  0x121a4: mov     byte ptr word_11320, 3
+  0x121a9: mov     byte ptr word_11320+1, dl
+  0x121ad: call    saveSosariaAndParty
+  0x121b0: call    clearMapViewport
+  0x121b3: lea     si, aAsTheWaterEnte; "\n\n As the water\n enters  your\nlungs"...
+  0x121b7: call    printGameText
+  0x121ba: push    word_11324
+  0x121be: lea     bx, start <-- 
+  0x121c2: mov     cx, 1228h
+  0x121c5: lea     dx, aAmbrosiaUlt; "AMBROSIA.ULT"
+  0x121c9: call    loadFile
+  0x121cc: pop     word_11324
+  0x121d0: mov     _currentTransport, 3Fh ; '?'
+  0x121d5: mov     _partyPosition, 3620h
+  0x121db: mov     byte_114BC, 0FFh
+  0x121e0: lea     si, aYouAwakenOnThe; "\n You awaken on\n the shores of\n a fo"...
+  0x121e4: call    printGameText
+  0x121e7: call    drawMapViewport
+  0x121ea: call    flushInputBuffer
+  0x121ed: pop     si
+  0x121ee: pop     dx
+  0x121ef: pop     cx
+  0x121f0: pop     bx
+  0x121f1: pop     ax
+  0x121f2: popf
+  0x121f3: retn
+  0x121f4: lea     si, aAllIsDark; "\n\n\n\n\n All is Dark!\n\n"
+  0x121f8: call    printGameText
+  0x121fb: call    clearMapViewport
+  0x121fe: lea     bx, start
+  0x12202: mov     cx, 1228h
+  0x12205: lea     dx, aSosariaUlt; "SOSARIA.ULT"
+  0x12209: call    loadFile
+  0x1220c: lea     si, aYouMadeIt; " You made it!\n"
+  0x12210: call    printGameText
+  0x12213: mov     ax, _savedOverworldPosition
+  0x12216: mov     _partyPosition, ax
+  0x12219: mov     byte_114BC, 0
+  0x1221e: mov     _currentTransport, 0Bh
+  0x12223: call    savePartyFile
+  0x12226: jmp     short loc_121EA
+
+=== 'teleportToAmbrosia' @ 0x121fe ===
+  0x121f0: pop     bx
+  0x121f1: pop     ax
+  0x121f2: popf
+  0x121f3: retn
+  0x121f4: lea     si, aAllIsDark; "\n\n\n\n\n All is Dark!\n\n"
+  0x121f8: call    printGameText
+  0x121fb: call    clearMapViewport
+  0x121fe: lea     bx, start <-- 
+  0x12202: mov     cx, 1228h
+  0x12205: lea     dx, aSosariaUlt; "SOSARIA.ULT"
+  0x12209: call    loadFile
+  0x1220c: lea     si, aYouMadeIt; " You made it!\n"
+  0x12210: call    printGameText
+  0x12213: mov     ax, _savedOverworldPosition
+  0x12216: mov     _partyPosition, ax
+  0x12219: mov     byte_114BC, 0
+  0x1221e: mov     _currentTransport, 0Bh
+  0x12223: call    savePartyFile
+  0x12226: jmp     short loc_121EA
+
+=== 'entryFromBootup' @ 0x12513 ===
+  0x124fc: call    drawPartySlotNumbers
+  0x124ff: call    updateWindDisplay
+  0x12502: lea     bx, _currentTransport
+  0x12506: mov     cx, 112h
+  0x12509: lea     dx, aPartyUlt; "PARTY.ULT"
+  0x1250d: call    loadFile
+  0x12510: call    drawPartyStatusBar
+  0x12513: lea     bx, start <-- 
+  0x12517: mov     cx, 1228h
+  0x1251a: lea     dx, aSosariaUlt; "SOSARIA.ULT"
+  0x1251e: call    loadFile
+  0x12521: call    updateWhirlpoolPosition
+  0x12524: lea     bx, byte_12B39
+  0x12528: mov     cx, 1400h
+  0x1252b: lea     dx, aShapesUlt; "SHAPES.ULT"
+  0x1252f: call    loadFile
+  0x12532: mov     ax, _savedOverworldPosition
+  0x12535: mov     _partyPosition, ax
+  0x12538: mov     byte_124C0, 0FFh
+  0x1253d: mov     _soundEnabled, 0FFh
+  0x12542: mov     byte_164A4, 1
+  0x12547: mov     _negateTimeDuration, 0
+  0x1254c: mov     byte_115CE, 0
+  0x12551: call    flushInputBuffer
+  0x12554: mov     ah, 2Ch
+  0x12556: int     21h; DOS - GET CURRENT TIME
+  0x12558: mov     word_12AA1, dx
+  0x1255c: mov     word_12A99, dx
+  0x12560: mov     word_12A9F, cx
+  0x12564: mov     word_12A97, cx
+  0x12568: mov     ah, 2Ah
+  0x1256a: int     21h; DOS - GET CURRENT DATE
+  0x1256c: mov     word_12A9D, dx
+  0x12570: mov     word_12A95, dx
+  0x12574: mov     word_12A9B, cx
+  0x12578: mov     word_12A92+1, cx
+  0x1257c: call    scrollMessageWindow
+  0x1257f: jmp     loc_11B77
+
+=== 'exitToSosaria' @ 0x16474 ===
+  0x1645c: push    si
+  0x1645d: mov     ax, _savedOverworldPosition
+  0x16460: mov     _partyPosition, ax
+  0x16463: mov     byte_124C0, 0FFh
+  0x16468: lea     si, aExitToSosariaP; "Exit to Sosaria!\nPlease wait...\n"
+  0x1646c: call    printGameText
+  0x1646f: mov     byte_114BC, 0
+  0x16474: lea     bx, start <-- 
+  0x16478: mov     cx, 1228h
+  0x1647b: lea     dx, aSosariaUlt; "SOSARIA.ULT"
+  0x1647f: call    loadFile
+  0x16482: call    savePartyFile
+  0x16485: mov     _dungeonLevel, 0
+  0x1648a: call    flushInputBuffer
+  0x1648d: pop     si
+  0x1648e: pop     dx
+  0x1648f: pop     cx
+  0x16490: pop     bx
+  0x16491: pop     ax
+  0x16492: retn
+----- end target script output -----
+[*] finished executing investigate_dungeon_start_writes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_dispatch_start_sites.py', 'noexport']
+[*] reading investigate_dispatch_start_sites.py
+[*] executing investigate_dispatch_start_sites.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== site 0x11e29  chunk=0x11b7a-0x1207d ===
+  0x11df4: call    printGameText
+  0x11df7: mov     dl, 3
+  0x11df9: mov     _partyPosition, 3E20h
+  0x11dff: mov     byte_124C0, 0
+  0x11e04: mov     word_164A0, 0
+  0x11e0a: lea     si, aPleaseWait; "Please wait...\n"
+  0x11e0e: call    printGameText
+  0x11e11: call    saveSosariaAndParty
+  0x11e14: mov     byte_114BC, dl
+  0x11e18: mov     si, bx
+  0x11e1a: mov     dx, [si+16BBh]
+  0x11e1e: cmp     byte_114BC, 1
+  0x11e23: jz      short loc_11E3A
+  0x11e25: push    word_11324
+  0x11e29: lea     bx, start <-- 
+  0x11e2d: mov     cx, 1228h
+  0x11e30: call    loadFile
+  0x11e33: pop     word_11324
+  0x11e37: jmp     mainLoopCommandDone
+  0x11e3a: mov     cx, 890h
+  0x11e3d: lea     bx, byte_10900
+  0x11e41: call    loadFile
+  0x11e44: lea     bx, start
+  0x11e48: mov     cx, 800h
+  0x11e4b: lea     dx, aDungeonDat; "DUNGEON.DAT"
+  0x11e4f: call    loadFile
+  0x11e52: jmp     initDungeonState
+  0x11e55: call    printGameText; jumptable 00011BD1 case 16
+  0x11e58: call    selectPlayer
+  0x11e5b: jz      short loc_11E74
+  0x11e5d: lea     si, aToPlayer; "  To Player: "
+  0x11e61: call    printGameText
+  0x11e64: mov     si, bx
+  0x11e66: call    selectPlayer
+  0x11e69: jz      short loc_11E74
+
+=== site 0x11e44  chunk=0x11b7a-0x1207d ===
+  0x11e14: mov     byte_114BC, dl
+  0x11e18: mov     si, bx
+  0x11e1a: mov     dx, [si+16BBh]
+  0x11e1e: cmp     byte_114BC, 1
+  0x11e23: jz      short loc_11E3A
+  0x11e25: push    word_11324
+  0x11e29: lea     bx, start
+  0x11e2d: mov     cx, 1228h
+  0x11e30: call    loadFile
+  0x11e33: pop     word_11324
+  0x11e37: jmp     mainLoopCommandDone
+  0x11e3a: mov     cx, 890h
+  0x11e3d: lea     bx, byte_10900
+  0x11e41: call    loadFile
+  0x11e44: lea     bx, start <-- 
+  0x11e48: mov     cx, 800h
+  0x11e4b: lea     dx, aDungeonDat; "DUNGEON.DAT"
+  0x11e4f: call    loadFile
+  0x11e52: jmp     initDungeonState
+  0x11e55: call    printGameText; jumptable 00011BD1 case 16
+  0x11e58: call    selectPlayer
+  0x11e5b: jz      short loc_11E74
+  0x11e5d: lea     si, aToPlayer; "  To Player: "
+  0x11e61: call    printGameText
+  0x11e64: mov     si, bx
+  0x11e66: call    selectPlayer
+  0x11e69: jz      short loc_11E74
+  0x11e6b: mov     di, bx
+  0x11e6d: cmp     si, di
+  0x11e6f: jz      short loc_11E77
+  0x11e71: call    near ptr readAndDispatchCommand
+  0x11e74: jmp     mainLoopCommandDone
+  0x11e77: jmp     loc_17DBA
+  0x11e7a: call    printGameText; jumptable 00011BD1 case 12
+  0x11e7d: call    readDirectionKeypress
+----- end target script output -----
+[*] finished executing investigate_dispatch_start_sites.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'investigate_byte_10900_load.py', 'noexport']
+[*] reading investigate_byte_10900_load.py
+[*] executing investigate_byte_10900_load.py
+[*] captured stdout from target script:
+----- begin target script output -----
+chunk: 0x11b7a-0x1207d
+  0x11dc0: mov     _partyPosition, 101h
+  0x11dc5: mov     _facingDirection, 1
+  0x11dca: jmp     short loc_11E0A
+  0x11dcc: cmp     _locationType, 6
+  0x11dd1: jnz     short loc_11DE9
+  0x11dd3: lea     si, aTowne; "Towne!\n"
+  0x11dd7: call    printGameText
+  0x11dda: mov     dl, 2
+  0x11ddc: mov     _partyPosition, 2001h
+  0x11de2: mov     byte_124C0, 0
+  0x11de7: jmp     short loc_11E0A
+  0x11de9: cmp     _locationType, 7
+  0x11dee: jnz     short loc_11D8B
+  0x11df0: lea     si, aCastle; "Castle!\n"
+  0x11df4: call    printGameText
+  0x11df7: mov     dl, 3
+  0x11df9: mov     _partyPosition, 3E20h
+  0x11dff: mov     byte_124C0, 0
+  0x11e04: mov     word_164A0, 0
+  0x11e0a: lea     si, aPleaseWait; "Please wait...\n"
+  0x11e0e: call    printGameText
+  0x11e11: call    saveSosariaAndParty
+  0x11e14: mov     byte_114BC, dl
+  0x11e18: mov     si, bx
+  0x11e1a: mov     dx, [si+16BBh]
+  0x11e1e: cmp     byte_114BC, 1
+  0x11e23: jz      short loc_11E3A
+  0x11e25: push    word_11324
+  0x11e29: lea     bx, start
+  0x11e2d: mov     cx, 1228h
+  0x11e30: call    loadFile
+  0x11e33: pop     word_11324
+  0x11e37: jmp     mainLoopCommandDone
+  0x11e3a: mov     cx, 890h
+  0x11e3d: lea     bx, byte_10900
+  0x11e41: call    loadFile
+  0x11e44: lea     bx, start
+  0x11e48: mov     cx, 800h
+  0x11e4b: lea     dx, aDungeonDat; "DUNGEON.DAT"
+  0x11e4f: call    loadFile
+  0x11e52: jmp     initDungeonState
+
+byte_10900 @ 0x10900
+xrefs to byte_10900:
+  data ref 0x11e3d in 'readAndDispatchCommand': lea     bx, byte_10900
+----- end target script output -----
+[*] finished executing investigate_byte_10900_load.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
