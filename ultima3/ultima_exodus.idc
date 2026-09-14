@@ -1720,6 +1720,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16458);
+	set_name	(0X16458,	"exitToSosaria");
 	create_insn	(x=0X16468);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1864,6 +1865,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16C4E);
 	create_insn	(0X16C53);
+	set_name	(0X16C53,	"flushInputBuffer");
 	create_insn	(0X16C6E);
 	create_insn	(0X16C76);
 	set_name	(0X16C76,	"selectPlayer");
@@ -2094,7 +2096,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X17403);
 	create_insn	(0X1740A);
+	set_name	(0X1740A,	"uppercaseBuffer");
 	create_insn	(0X17423);
+	set_name	(0X17423,	"matchKeywordAtDelimiter");
 	create_insn	(0X17433);
 	create_insn	(0X17445);
 	create_insn	(0X17451);

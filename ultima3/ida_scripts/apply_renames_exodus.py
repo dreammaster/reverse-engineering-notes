@@ -1432,6 +1432,40 @@ RENAMES = [
      "i.e. computes `floor(decimal(attribute)/2)` as that class's max "
      "regenerable MP threshold; the caller only calls "
      "regenerateMagicPoint if current MP is below this."),
+
+    # --- Keyword-matching helpers (cmdYell/cmdOtherCommand), 2026-09-14
+    (0x1740A, "uppercaseBuffer",
+     "CORRECTS an earlier session note that described this as part of "
+     "'the keyword-lookup helper sub_1740A/sub_17423' without "
+     "distinguishing the two. This one just converts cx bytes at di "
+     "to uppercase in place (`'a'..'z'` range check, `add "
+     "0E0h` wraps a lowercase byte to its uppercase form) -- a "
+     "case-normalization pre-pass, called before matchKeywordAtDelimiter "
+     "(below) does the actual comparison."),
+    (0x17423, "matchKeywordAtDelimiter",
+     "The actual keyword-lookup comparison cmdYell/cmdOtherCommand use: "
+     "compares the typed word (si) against a dictionary word (di) "
+     "byte-by-byte, treating a space as the terminator on EITHER side "
+     "-- returns al=0FFh only if both reach a space at the same "
+     "position (i.e. the words are identical in length and content up "
+     "to the delimiter), al=0 otherwise."),
+
+    (0x16C53, "flushInputBuffer",
+     "Temporarily forces game mode to 1, then loops "
+     "pollKeypressAndAnimate/getKeypressAndWaitRaw discarding any "
+     "pending keystrokes until none remain, before restoring the "
+     "original game mode. A 'clear stale input before this screen "
+     "starts responding' utility, called from several transition "
+     "points (entryFromBootup, exitToSosaria, beginCombatEncounter's "
+     "tail, sub_12168)."),
+    (0x16458, "exitToSosaria",
+     "Named directly after its own string, 'Exit to Sosaria!\\nPlease "
+     "wait...\\n'. Restores `_partyPosition` from "
+     "`_savedOverworldPosition`, resets game mode to 0 (overworld), "
+     "reloads SOSARIA.ULT, saves PARTY.ULT, resets `_dungeonLevel` to "
+     "0, and calls flushInputBuffer -- the 'leave a "
+     "dungeon/town/castle/shrine, return to the overworld map' "
+     "transition."),
 ]
 
 

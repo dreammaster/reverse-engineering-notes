@@ -1190,3 +1190,17 @@ deals 5 damage the same way once `_food` bottoms out, and HP
 naturally regenerates by 1 (BCD) toward `_maxHitPoints` each turn a
 character isn't poisoned — a nice, complete confirmation of Ultima
 III's core survival-mechanics loop.
+
+**Keyword-matching and transition helpers named, same session**: an
+earlier note had described "the keyword-lookup helper sub_1740A/
+sub_17423" as one unit without distinguishing them — reading both
+end-to-end shows they're two different steps: `uppercaseBuffer`
+(`0x1740A`) is a case-normalization pre-pass (converts a buffer to
+uppercase in place), and `matchKeywordAtDelimiter` (`0x17423`) is the
+actual comparison `cmdYell`/`cmdOtherCommand` use, matching a typed
+word against a dictionary word up to a shared space delimiter. Also
+named `exitToSosaria` (`0x16458`, directly from its own string "Exit
+to Sosaria!\nPlease wait...") — the general "leave a
+dungeon/town/castle/shrine, return to the overworld map" transition —
+and its `flushInputBuffer` helper (`0x16C53`), which discards any
+pending keystrokes before a new screen starts responding.
