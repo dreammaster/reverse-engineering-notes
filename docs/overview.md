@@ -1792,3 +1792,37 @@ options with arrow keys; what it ultimately returns (and what
 `showCharacterDetails` independently re-derives the display name
 from, via its own `repne scasb` against the same `KEYS` array) is the
 original letter.
+
+## `cmdHandEquipment`'s mechanism investigated further — a solid negative result
+
+Went back to the last of the three inline-flagged mechanism questions
+from the previous session's summary: how `cmdHandEquipment` actually
+transfers an item between two characters. It selects two players
+(`si`=from, `di`=to, both real `RosterEntry` pointers) and makes a
+genuine re-entrant call back into `readAndDispatchCommand` — which
+only does something useful if some handler running inside that nested
+call reads the inherited `si`/`di` directly, since they're otherwise
+just ordinary callee-saved registers restored unchanged on return.
+
+Re-read `wearArmour`/`readyWeapon` start-to-end again: both push/pop
+`si`/`di` purely as scratch space and never read the inherited values
+— confirmed, not just assumed. Went further this time by searching
+every `[si+RosterEntry.field]` access in the entire IDB (only 10
+total, small enough to check individually): all 10 turned out to
+belong to unrelated code that computes its own fresh `si` from
+`_currentCombatant` — `printCombatReactionMessage`'s status/class
+check, `attemptSpecialMonsterAttack`'s armour to-hit check, and
+`combatCmdAttack`'s own ammunition-consumption logic (a nice
+independent find: ranged weapons with limited ammo, like a bow,
+decrement `_weaponOwned` and clear `_weaponIndex` when it hits 0).
+None of them inherit `si` from a caller.
+
+No consumer of `cmdHandEquipment`'s inherited `si`/`di` turned up
+anywhere via a direct `[reg+N]` RosterEntry access. This is a genuine,
+comprehensive negative result, not a shallow one: either the transfer
+happens through a more indirect path (values copied elsewhere before
+use) that this search wouldn't catch, or the command is actually
+non-functional in the shipped game. Neither is confirmed, but the
+search space for "which command consumes this" is now much smaller
+than it was, and the two most obvious candidates are conclusively
+ruled out.
