@@ -2012,3 +2012,33 @@ shipped build, the wait never triggers -- this reads as a genuine,
 deliberately-disabled developer hook (plausibly a breakpoint stand-in
 for attaching a debugger before the logo animation), not a generic
 guess at the function's purpose.
+
+## `checkDebugModeFlag`'s equivalent found in `ultima_exodus.idb`: 145/145
+
+Last of this session's flagged items. The investigation into
+`checkDebugModeFlag` and the `INT13h` disk-check routine (both
+immediately above) had already turned up the answer as a side effect:
+while mapping the shared low-level runtime layout around
+`drawCharGlyph` in `ultima_exodus.idb`, an orphaned 3-byte stub
+turned up right where the pattern predicted -- `0x15000`-`0x15003`,
+immediately after `drawCharGlyph` (`0x14F90`-`0x15000`), exactly
+matching the relative layout confirmed in both `ultima.idb` and
+`ultima_bootup.idb`.
+
+Its body: `mov al, 0FFh; retn` -- the opposite polarity from the other
+two binaries' `mov al, 0`, though it makes no practical difference
+since, unlike its counterparts (each called exactly once from their
+respective title/boot sequences), **this copy has zero callers
+anywhere in `EXODUS.BIN`**. That's consistent with `EXODUS.BIN` being
+the game engine proper -- entered only after the title screen and
+character creation are already done -- so it has no boot-logo-
+animation step left for this hook to gate. Defined via
+`ida_funcs.add_func()` and named `checkDebugModeFlag` to match its
+twins in the other two binaries.
+
+**With this, `ultima_exodus.idb` reaches 145/145 functions named.**
+All three of Ultima III's executables now have complete function
+coverage: `ultima.idb` (61/61), `ultima_bootup.idb` (74/74),
+`ultima_exodus.idb` (145/145) -- and every mechanism question flagged
+at the end of the original function-naming sweeps has now been
+resolved.

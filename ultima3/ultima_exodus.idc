@@ -901,6 +901,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X14FC9);
 	op_hex		(x,	1);
 	create_insn	(0X15000);
+	set_name	(0X15000,	"checkDebugModeFlag");
 	create_insn	(0X15003);
 	create_insn	(x=0X1500A);
 	op_hex		(x,	1);
@@ -3681,8 +3682,6 @@ static Bytes_0(void) {
 	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
 	create_insn	(x=0X18E1A);
 	op_stroff	(x,	1,	GetStrucIdByName("RosterEntry"),	0);
-	create_insn	(x=0X18E20);
-	op_stroff	(x,	0,	GetStrucIdByName("RosterEntry"),	0);
 }
 
 //------------------------------------------------------------------------
@@ -3692,6 +3691,8 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X18E20);
+	op_stroff	(x,	0,	GetStrucIdByName("RosterEntry"),	0);
 	create_insn	(x=0X18E27);
 	op_stroff	(x,	0,	GetStrucIdByName("RosterEntry"),	0);
 	create_insn	(0X18E40);
@@ -4797,6 +4798,9 @@ static Functions_0(void) {
 	add_func    (0X14F90,0X15000);
 	set_func_flags(0X14F90,0x5400);
 	set_frame_size(0X14F90, 0, 0, 0);
+	add_func    (0X15000,0X15003);
+	set_func_flags(0X15000,0x5400);
+	set_frame_size(0X15000, 0, 0, 0);
 	add_func    (0X1504D,0X15072);
 	set_func_flags(0X1504D,0x5400);
 	set_frame_size(0X1504D, 0, 0, 0);

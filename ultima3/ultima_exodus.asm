@@ -2701,9 +2701,15 @@ drawCharGlyph   proc near               ; CODE XREF: printGameText:loc_126E8↑p
                 retn
 drawCharGlyph   endp
 
-; ---------------------------------------------------------------------------
+
+; =============== S U B R O U T I N E =======================================
+
+
+checkDebugModeFlag proc near
                 mov     al, 0FFh
                 retn
+checkDebugModeFlag endp
+
 ; ---------------------------------------------------------------------------
                 push    ax
                 push    cx
@@ -6432,7 +6438,7 @@ asc_16AE2       db ' L:',0              ; DATA XREF: drawPartyStatusBar+4F↓o
 byte_16AE6      db 48h, 3Ah             ; DATA XREF: drawPartyStatusBar+6C↓o
 ; START OF FUNCTION CHUNK FOR readAndDispatchCommand
 unk_16AE8       db    0                 ; CODE XREF: seg000:6A7B↑j
-                db 20h, 46h             ; DATA XREF: drawPartyStatusBar+79↓o
+byte_16AE9      db 20h, 46h             ; DATA XREF: drawPartyStatusBar+79↓o
 ; ---------------------------------------------------------------------------
                 cmp     al, [bx+si]
 ; ---------------------------------------------------------------------------

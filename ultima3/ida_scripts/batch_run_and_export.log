@@ -1419,3 +1419,71 @@ structs (1): RosterEntry
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_exodus_debug_stub.py', 'noexport']
+[*] reading check_exodus_debug_stub.py
+[*] executing check_exodus_debug_stub.py
+[*] captured stdout from target script:
+----- begin target script output -----
+function ending near 0x14fff: 0x14f90-0x15000 name='drawCharGlyph'
+
+stub @ 0x15000:
+  disasm: mov     al, 0FFh / retn
+  name: ''
+  containing func: None
+  code xrefs:
+  data xrefs:
+----- end target script output -----
+[*] finished executing check_exodus_debug_stub.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_exodus_debug_stub.py']
+[*] reading apply_exodus_debug_stub.py
+[*] executing apply_exodus_debug_stub.py
+[*] captured stdout from target script:
+----- begin target script output -----
+add_func(0x15000, 0x15003) -> True
+set_name -> True
+post-state: func 0x15000-0x15003 name='checkDebugModeFlag'
+----- end target script output -----
+[*] finished executing apply_exodus_debug_stub.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14054
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 145 total, 145 named, 0 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
