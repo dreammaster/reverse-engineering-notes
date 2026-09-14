@@ -1869,6 +1869,33 @@ RENAMES = [
      "monster's glyph at the new position, and updates the cached "
      "position/tile-contents fields for next time. Parallel array to "
      "the party-position fields fireDungeonProjectileAtParty reads."),
+
+    (0x18FEB, "canDungeonMonsterMoveToTile",
+     "Movement-legality check for dungeon monster AI: for most "
+     "monster classes, the destination tile (al) must be one of "
+     "{1,2,3,8} (the same passable-terrain set canMoveToTile checks); "
+     "monster classes `0x0B`-`0x0Fh` instead require tile value 0 "
+     "specifically (a more restrictive rule for that class range, "
+     "not further explained). Either way, also checks the tile isn't "
+     "already occupied via findCombatantAtPosition -- interesting "
+     "reuse of the arena's 8-slot occupancy lookup from dungeon "
+     "monster AI, suggesting active dungeon combatants share that "
+     "same underlying slot representation rather than a fully "
+     "separate one; not independently confirmed further."),
+    (0x19020, "moveDungeonMonsterTowardParty",
+     "The dungeon counterpart to computeStepTowardParty/"
+     "updateMonsterAI's overworld seeking behavior. Loops the live "
+     "party array, finds a party member within range of a dungeon "
+     "monster (`[di+2544h]`/`[di+254Ch]`), computes a step direction "
+     "toward them (adjustAnimSpeed, same convention as "
+     "computeStepTowardParty), and validates the move via "
+     "canDungeonMonsterMoveToTile before committing to it. Called "
+     "from the dungeon per-turn monster-AI loop in sub_17B54, "
+     "immediately followed by attemptSpecialMonsterAttack when a "
+     "monster is already adjacent/blocked, or a 50% chance of "
+     "fireDungeonProjectileAtParty for monster class `0x1Dh` -- "
+     "confirms this whole cluster is the dungeon's own per-monster AI "
+     "tick, distinct from updateMonsterAI's overworld one."),
 ]
 
 

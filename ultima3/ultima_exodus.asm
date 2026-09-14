@@ -11935,8 +11935,8 @@ loc_18FE8:                              ; CODE XREF: sub_17B54+148F↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18FEB       proc near               ; CODE XREF: sub_19020+81↓p
-                                        ; sub_19020+91↓p ...
+canDungeonMonsterMoveToTile proc near   ; CODE XREF: moveDungeonMonsterTowardParty+81↓p
+                                        ; moveDungeonMonsterTowardParty+91↓p ...
                 pushf
                 push    bx
                 cmp     _conflictMonsterClass, 10h
@@ -11946,21 +11946,21 @@ sub_18FEB       proc near               ; CODE XREF: sub_19020+81↓p
                 cmp     al, 0
                 jnz     short loc_1901C
 
-loc_18FFF:                              ; CODE XREF: sub_18FEB+23↓j
-                                        ; sub_18FEB+27↓j ...
+loc_18FFF:                              ; CODE XREF: canDungeonMonsterMoveToTile+23↓j
+                                        ; canDungeonMonsterMoveToTile+27↓j ...
                 mov     al, 0FFh
                 call    findCombatantAtPosition
                 cmp     bx, 0FFFFh
                 jnz     short loc_1901C
 
-loc_19009:                              ; CODE XREF: sub_18FEB+33↓j
+loc_19009:                              ; CODE XREF: canDungeonMonsterMoveToTile+33↓j
                 pop     bx
                 popf
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1900C:                              ; CODE XREF: sub_18FEB+7↑j
-                                        ; sub_18FEB+E↑j
+loc_1900C:                              ; CODE XREF: canDungeonMonsterMoveToTile+7↑j
+                                        ; canDungeonMonsterMoveToTile+E↑j
                 cmp     al, 1
                 jz      short loc_18FFF
                 cmp     al, 2
@@ -11970,17 +11970,17 @@ loc_1900C:                              ; CODE XREF: sub_18FEB+7↑j
                 cmp     al, 8
                 jz      short loc_18FFF
 
-loc_1901C:                              ; CODE XREF: sub_18FEB+12↑j
-                                        ; sub_18FEB+1C↑j
+loc_1901C:                              ; CODE XREF: canDungeonMonsterMoveToTile+12↑j
+                                        ; canDungeonMonsterMoveToTile+1C↑j
                 mov     al, 0
                 jmp     short loc_19009
-sub_18FEB       endp
+canDungeonMonsterMoveToTile endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19020       proc near               ; CODE XREF: sub_17B54:loc_1916A↓p
+moveDungeonMonsterTowardParty proc near ; CODE XREF: sub_17B54:loc_1916A↓p
                 pushf
                 push    bp
                 sub     sp, 2
@@ -11994,7 +11994,7 @@ sub_19020       proc near               ; CODE XREF: sub_17B54:loc_1916A↓p
                 mov     bx, 0
                 mov     ah, 0FFh
 
-loc_1903D:                              ; CODE XREF: sub_19020+C5↓j
+loc_1903D:                              ; CODE XREF: moveDungeonMonsterTowardParty+C5↓j
                 xchg    bx, [bp+0]
                 call    isCharacterAlive
                 xchg    bx, [bp+0]
@@ -12002,7 +12002,7 @@ loc_1903D:                              ; CODE XREF: sub_19020+C5↓j
                 jmp     loc_190DA
 ; ---------------------------------------------------------------------------
 
-loc_1904B:                              ; CODE XREF: sub_19020+26↑j
+loc_1904B:                              ; CODE XREF: moveDungeonMonsterTowardParty+26↑j
                 mov     dl, [bx+2564h]
                 sub     dl, [di+2544h]
                 mov     cl, dl
@@ -12010,7 +12010,7 @@ loc_1904B:                              ; CODE XREF: sub_19020+26↑j
                 jns     short loc_1905C
                 neg     cl
 
-loc_1905C:                              ; CODE XREF: sub_19020+38↑j
+loc_1905C:                              ; CODE XREF: moveDungeonMonsterTowardParty+38↑j
                 mov     dh, [bx+2568h]
                 sub     dh, [di+254Ch]
                 mov     ch, dh
@@ -12018,7 +12018,7 @@ loc_1905C:                              ; CODE XREF: sub_19020+38↑j
                 jns     short loc_1906D
                 neg     ch
 
-loc_1906D:                              ; CODE XREF: sub_19020+49↑j
+loc_1906D:                              ; CODE XREF: moveDungeonMonsterTowardParty+49↑j
                 mov     al, cl
                 or      al, ch
                 cmp     al, 1
@@ -12026,7 +12026,7 @@ loc_1906D:                              ; CODE XREF: sub_19020+49↑j
                 jmp     loc_190F9
 ; ---------------------------------------------------------------------------
 
-loc_19078:                              ; CODE XREF: sub_19020+53↑j
+loc_19078:                              ; CODE XREF: moveDungeonMonsterTowardParty+53↑j
                 mov     al, cl
                 add     al, ch
                 cmp     al, ah
@@ -12045,20 +12045,20 @@ loc_19078:                              ; CODE XREF: sub_19020+53↑j
                 add     dh, ch
                 mov     bx, dx
                 call    computeAnimTableByte
-                call    sub_18FEB
+                call    canDungeonMonsterMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_190CE
                 mov     dl, [di+2544h]
                 mov     bx, dx
                 call    computeAnimTableByte
-                call    sub_18FEB
+                call    canDungeonMonsterMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_190CE
                 add     dl, cl
                 mov     dh, [di+254Ch]
                 mov     bx, dx
                 call    computeAnimTableByte
-                call    sub_18FEB
+                call    canDungeonMonsterMoveToTile
                 cmp     al, 0FFh
                 jz      short loc_190CE
                 pop     bx
@@ -12066,8 +12066,8 @@ loc_19078:                              ; CODE XREF: sub_19020+53↑j
                 jmp     short loc_190DA
 ; ---------------------------------------------------------------------------
 
-loc_190CE:                              ; CODE XREF: sub_19020+86↑j
-                                        ; sub_19020+96↑j ...
+loc_190CE:                              ; CODE XREF: moveDungeonMonsterTowardParty+86↑j
+                                        ; moveDungeonMonsterTowardParty+96↑j ...
                 pop     bx
                 pop     ax
                 mov     ah, al
@@ -12075,8 +12075,8 @@ loc_190CE:                              ; CODE XREF: sub_19020+86↑j
                 mov     [bp+2], cx
                 mov     [bp+4], dx
 
-loc_190DA:                              ; CODE XREF: sub_19020+28↑j
-                                        ; sub_19020+5E↑j ...
+loc_190DA:                              ; CODE XREF: moveDungeonMonsterTowardParty+28↑j
+                                        ; moveDungeonMonsterTowardParty+5E↑j ...
                 inc     bx
                 add     word ptr [bp+0], 40h ; '@'
                 cmp     bl, byte_114C1
@@ -12084,11 +12084,11 @@ loc_190DA:                              ; CODE XREF: sub_19020+28↑j
                 jmp     loc_1903D
 ; ---------------------------------------------------------------------------
 
-loc_190E8:                              ; CODE XREF: sub_19020+C3↑j
+loc_190E8:                              ; CODE XREF: moveDungeonMonsterTowardParty+C3↑j
                 mov     al, ah
                 mov     bx, si
 
-loc_190EC:                              ; CODE XREF: sub_19020+DB↓j
+loc_190EC:                              ; CODE XREF: moveDungeonMonsterTowardParty+DB↓j
                 mov     cx, [bp+2]
                 mov     dx, [bp+4]
                 pop     si
@@ -12098,10 +12098,10 @@ loc_190EC:                              ; CODE XREF: sub_19020+DB↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_190F9:                              ; CODE XREF: sub_19020+55↑j
+loc_190F9:                              ; CODE XREF: moveDungeonMonsterTowardParty+55↑j
                 mov     al, 0
                 jmp     short loc_190EC
-sub_19020       endp
+moveDungeonMonsterTowardParty endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12180,7 +12180,7 @@ loc_19160:                              ; CODE XREF: sub_17B54+16BB↓j
 ; ---------------------------------------------------------------------------
 
 loc_1916A:                              ; CODE XREF: sub_17B54+1611↑j
-                call    sub_19020
+                call    moveDungeonMonsterTowardParty
                 mov     byte_184E0, 3Dh ; '='
                 cmp     al, 0
                 jnz     short loc_1917C
