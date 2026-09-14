@@ -396,7 +396,7 @@ aBoardFrigate   db 'Board Frigate!',0Ah,0
 aWhoseKey       db 'Whose key? ',0      ; DATA XREF: readAndDispatchCommand-5B6A↓o
 aCraft          db 'Craft',0Ah,0        ; DATA XREF: readAndDispatchCommand-5AFC↓o
 aOn             db 'On!',0Ah,0          ; DATA XREF: readAndDispatchCommand-5B29↓o
-aOff            db 'Off!',0Ah,0         ; DATA XREF: readAndDispatchCommand:loc_12020↓o
+aOff            db 'Off!',0Ah,0         ; DATA XREF: readAndDispatchCommand-5B34↓o
 aDungeon        db 'Dungeon!',0Ah,0     ; DATA XREF: readAndDispatchCommand-5DA3↓o
 aTowne          db 'Towne!',0Ah,0       ; DATA XREF: readAndDispatchCommand-5D81↓o
 aCastle         db 'Castle!',0Ah,0      ; DATA XREF: readAndDispatchCommand-5D64↓o
@@ -1110,9 +1110,7 @@ cmdToggleSound:                         ; CODE XREF: readAndDispatchCommand-5F83
                 call    printGameText   ; jumptable 00011BD1 cases 8,9,14
                                         ; jumptable 00018389 cases 10,14,15
                 xor     _soundEnabled, 0FFh
-
-loc_12020:                              ; CODE XREF: readAndDispatchCommand+193A↓j
-                lea     si, aOff        ; jumptable 0001948E case 4
+                lea     si, aOff        ; "Off!\n"
                 cmp     _soundEnabled, 0
                 jz      short loc_1202F
                 lea     si, aOn         ; "On!\n"
@@ -6172,696 +6170,186 @@ off_1654C       dw offset loc_1762F     ; DATA XREF: readAndDispatchCommand-624�
                 dw offset obtainCard
                 dw offset loc_175A9
                 dw offset loc_17580
-                dw offset loc_16666
-                dw offset loc_1666C
-                dw offset loc_16671+1
-                dw offset loc_16676+2
-                dw offset loc_1667E+1
-; ---------------------------------------------------------------------------
-                mov     [bp-6Fh], sp
-                xchg    eax, edi
-                db      66h
-                sahf
-                db      66h
-                movsb
-                db      66h
-                stosb
-                db      66h
-                mov     al, 66h ; 'f'
-                mov     ax, 0C266h
-                retfd   0D466h
-; ---------------------------------------------------------------------------
-                db 66h, 0DBh, 66h, 0E4h, 66h, 0EBh, 66h, 0F1h, 66h, 0FEh
-                db 66h, 6, 67h, 0Dh, 67h, 14h, 67h, 1Ah, 67h, 1Eh, 67h
-                db 27h, 67h, 2Dh, 67h, 34h, 67h, 3Ch, 67h, 43h, 67h, 4Ah
-                db 67h, 51h, 67h, 5Dh, 67h, 62h, 67h, 6Ch, 67h, 71h, 67h
-                db 6Ch, 67h, 76h, 67h, 78h, 67h, 7Ah, 67h, 7Ch, 67h, 7Eh
-                db 67h, 80h, 67h, 82h, 67h, 84h, 67h, 86h, 67h, 88h, 67h
-                db 8Ah, 67h, 8Ch, 67h, 8Eh, 67h, 90h, 67h, 92h, 67h, 94h
-                db 67h, 96h, 67h, 98h, 67h, 9Ah, 67h, 9Ch, 67h, 9Eh, 67h
-                db 9Eh, 67h, 0A4h, 67h, 0AAh, 67h, 0AFh, 67h, 0B6h, 67h
-                db 0BDh, 67h, 0C2h, 67h, 0C9h, 67h, 0CEh, 67h, 0D4h, 67h
-                db 0D8h, 67h, 0DCh, 67h, 0E2h, 67h, 0EAh, 67h, 0F1h, 67h
-                db 0F8h, 67h, 0FFh, 67h, 6, 68h, 0Dh, 68h, 14h, 68h, 1Bh
-                db 68h, 22h, 68h, 27h, 68h, 2Dh, 68h, 35h, 68h, 3Bh, 68h
-                db 41h, 68h, 4Ah, 68h, 1Bh, 68h, 53h, 68h, 5Ah, 68h, 61h
-                db 68h, 67h, 68h, 71h, 68h, 7Bh, 68h, 82h, 68h, 8Ch, 68h
-                db 93h, 68h, 9Dh, 68h, 0A6h, 68h, 0ACh, 68h, 0B3h, 68h
-                db 0BAh, 68h, 0C5h, 68h, 0CCh, 68h, 0CDh, 68h, 0D5h, 68h
-                db 0E0h, 68h, 0E7h, 68h, 0EFh, 68h, 0F6h, 68h, 0FDh, 68h
-                db 5, 69h, 0Ch, 69h, 14h, 69h, 1Ch, 69h, 28h, 69h, 2Eh
-                db 69h, 35h, 69h, 3Fh, 69h, 47h, 69h, 54h, 69h, 5Ch, 69h
-                db 65h, 69h, 6Ch, 69h, 72h, 69h, 78h, 69h, 7Fh, 69h, 85h
-                db 69h, 8Bh, 69h, 94h, 69h, 99h, 69h, 0A0h, 69h, 0A7h
-                db 69h, 0AFh, 69h, 0B6h, 69h, 0BCh, 69h
-; ---------------------------------------------------------------------------
+GAME_NAME_TABLE dw 6666h, 666Ch, 6672h, 6678h, 667Fh, 6689h, 6691h, 6697h
+                dw 669Eh, 66A4h, 66AAh, 66B0h, 66B8h, 66C2h, 66CAh, 66D4h
+                dw 66DBh, 66E4h, 66EBh, 66F1h, 66FEh, 6706h, 670Dh, 6714h
+                dw 671Ah, 671Eh, 6727h, 672Dh, 6734h, 673Ch, 6743h, 674Ah
+                dw 6751h, 675Dh, 6762h, 676Ch, 6771h, 676Ch, 6776h, 6778h
+                dw 677Ah, 677Ch, 677Eh, 6780h, 6782h, 6784h, 6786h, 6788h
+                dw 678Ah, 678Ch, 678Eh, 6790h, 6792h, 6794h, 6796h, 6798h
+                dw 679Ah, 679Ch, 2 dup(679Eh), 67A4h, 67AAh, 67AFh, 67B6h
+                dw 67BDh, 67C2h, 67C9h, 67CEh, 67D4h, 67D8h, 67DCh, 67E2h
+                dw 67EAh, 67F1h, 67F8h, 67FFh, 6806h, 680Dh, 6814h, 681Bh
+                dw 6822h, 6827h, 682Dh, 6835h, 683Bh, 6841h, 684Ah, 681Bh
+                dw 6853h, 685Ah, 6861h, 6867h, 6871h, 687Bh, 6882h, 688Ch
+                dw 6893h, 689Dh, 68A6h, 68ACh, 68B3h, 68BAh, 68C5h, 68CCh
+                dw 68CDh, 68D5h, 68E0h, 68E7h, 68EFh, 68F6h, 68FDh, 6905h
+                dw 690Ch, 6914h, 691Ch, 6928h, 692Eh, 6935h, 693Fh, 6947h
+                dw 6954h, 695Ch, 6965h, 696Ch, 6972h, 6978h, 697Fh, 6985h
+                dw 698Bh, 6994h, 6999h, 69A0h, 69A7h, 69AFh, 69B6h, 69BCh
 ; START OF FUNCTION CHUNK FOR readAndDispatchCommand
-
-loc_16666:                              ; CODE XREF: readAndDispatchCommand-624↓j
-                                        ; DATA XREF: seg000:6556↑o
-                push    di
-                popa
-                jz      short near ptr loc_166CD+2
-                jb      short $+2
-
-loc_1666C:                              ; CODE XREF: readAndDispatchCommand-14EA↑j
-                                        ; readAndDispatchCommand-624↓j
-                                        ; DATA XREF: ...
-                inc     di
-                jb      short loc_166D0
-                jnb     short loc_166E4
-
-loc_16671:                              ; DATA XREF: seg000:655A↑o
-                add     [bp+si+72h], al
-                jnz     short near ptr loc_166E8+1
-
-loc_16676:                              ; DATA XREF: seg000:655C↑o
-                push    4600h
-                outsw
-                jb      short near ptr loc_166DF+2
-                jnb     short near ptr loc_166F0+2
-
-loc_1667E:                              ; DATA XREF: seg000:655E↑o
-                add     [di+6Fh], cl
-                jnz     short near ptr loc_166F0+1
-                jz      short near ptr loc_166E5+1
-                imul    bp, [bp+73h], 4400h
-                jnz     short near ptr loc_166F8+2
-                outs    dx, word ptr gs:[esi]
-                outsb
-                add     [si+6Fh], dl
-                ja      short near ptr loc_16700+3
-                add     gs:[bp+di+61h], al
-                jnb     short near ptr loc_1670E+1
-                insb
-                add     gs:[bp+6Ch], al
-                outsw
-                outsw
-                jb      short $+2
-
-loc_166A4:                              ; CODE XREF: readAndDispatchCommand-14B2↑j
-                inc     bx
-                push    7365h
-                jz      short $+2
-
-loc_166AA:                              ; CODE XREF: readAndDispatchCommand-14AC↑j
-                dec     ax
-                outsw
-                jb      short near ptr loc_16720+1
-                add     gs:[bp+72h], al
-                imul    sp, [bx+61h], 6574h
-                add     [bx+68h], dl
-                imul    si, [bp+si+6Ch], 6F70h
-                outsw
-                insb
-                add     [bp+di+65h], dl
-                jb      short loc_16736
-                outs    dx, byte ptr gs:[si]
-                jz      short $+2
-
-loc_166CA:                              ; CODE XREF: readAndDispatchCommand-148C↑j
-                dec     bp
-                popa
-                outsb
-
-loc_166CD:                              ; CODE XREF: readAndDispatchCommand-14EC↑j
-                sub     ax, 2D4Fh
-
-loc_166D0:                              ; CODE XREF: readAndDispatchCommand-14E7↑j
-                push    di
-                popa
-                jb      short $+2
-
-loc_166D4:                              ; CODE XREF: readAndDispatchCommand-1482↑j
-                push    ax
-                imul    si, [bp+si+61h], 6574h
-                add     [di+65h], cl
-                jb      short loc_16742
-
-loc_166DF:                              ; CODE XREF: readAndDispatchCommand-14DA↑j
-                push    6E61h
-                jz      short $+2
-
-loc_166E4:                              ; CODE XREF: readAndDispatchCommand-14E5↑j
-                                        ; readAndDispatchCommand-1472↑j
-                dec     dx
-
-loc_166E5:                              ; CODE XREF: readAndDispatchCommand-14D1↑j
-                db      65h
-                jnb     short near ptr loc_1675B+1
-
-loc_166E8:                              ; CODE XREF: readAndDispatchCommand-14E0↑j
-                db      65h
-                jb      short $+3
-
-loc_166EB:                              ; CODE XREF: readAndDispatchCommand:loc_166E8↑j
-                inc     di
-                jnz     short near ptr loc_1674D+2
-                jb      short near ptr loc_16753+1
-
-loc_166F0:                              ; CODE XREF: readAndDispatchCommand-14D3↑j
-                                        ; readAndDispatchCommand-14D8↑j
-                add     [si+6Fh], cl
-                jb      short loc_16759
-                and     [bp+si+72h], al
-
-loc_166F8:                              ; CODE XREF: readAndDispatchCommand-14CA↑j
-                imul    si, [si+69h], 6873h
-                add     [bp+69h], al
-
-loc_16700:                              ; CODE XREF: readAndDispatchCommand-14C1↑j
-                db      67h
-                push    6574h
-                jb      short $+2
-
-loc_16706:                              ; CODE XREF: readAndDispatchCommand-1450↑j
-                inc     bx
-                insb
-                db      65h
-                jb      short near ptr loc_16773+1
-                arpl    [bx+si], ax
-                push    di
-
-loc_1670E:                              ; CODE XREF: readAndDispatchCommand-14BB↑j
-                imul    di, [bp+si+61h], 6472h
-                add     [si+68h], dl
-                imul    sp, [di+66h], 4F00h
-                jb      short loc_16780
-                add     [bp+di+6Bh], dl
-
-loc_16720:                              ; CODE XREF: readAndDispatchCommand-14A8↑j
-                db      65h
-                insb
-                db      65h
-                jz      short loc_16794
-                outsb
-                add     [bx+69h], al
-                popa
-                outsb
-                jz      short $+2
-
-loc_1672D:                              ; CODE XREF: readAndDispatchCommand-1429↑j
-                inc     sp
-                popa
-                db      65h
-                insw
-                outsw
-                outsb
-                add     [bx+si+69h], dl
-
-loc_16736:                              ; CODE XREF: readAndDispatchCommand-1490↑j
-                outsb
-                arpl    [bx+si+65h], bp
-                jb      short $+2
-
-loc_1673C:                              ; CODE XREF: readAndDispatchCommand-141A↑j
-                inc     sp
-                jb      short loc_167A0
-                outs    dx, word ptr [esi]
-                outsb
-
-loc_16742:                              ; CODE XREF: readAndDispatchCommand-1477↑j
-                add     [bp+si+61h], al
-                insb
-                jb      short near ptr loc_167B4+3
-                outsb
-                add     [di+78h], al
-                outsw
-
-loc_1674D:                              ; CODE XREF: readAndDispatchCommand-1468↑j
-                db      64h
-                jnz     short near ptr loc_167C0+3
-                add     [bp+6Fh], al
-
-loc_16753:                              ; CODE XREF: readAndDispatchCommand-1466↑j
-                jb      short loc_167B8
-                and     gs:[bp+69h], al
-
-loc_16759:                              ; CODE XREF: readAndDispatchCommand-1461↑j
-                db      65h
-                insb
-
-loc_1675B:                              ; CODE XREF: readAndDispatchCommand:loc_166E5↑j
-                add     fs:[si+61h], cl
-                jbe     short near ptr loc_167C0+2
-                add     [di+6Fh], cl
-                outsw
-                outsb
-                and     [bx+61h], al
-                jz      short loc_167D0
-                add     [bx+61h], dl
-                insb
-                insb
-                add     [bp+6Fh], dl
-
-loc_16773:                              ; CODE XREF: readAndDispatchCommand-144C↑j
-                imul    sp, [si+0], 41h ; 'A'
-                inc     dx
-                add     [bp+di+0], al
-                inc     sp
-                add     [di+0], al
-
-loc_16780:                              ; CODE XREF: readAndDispatchCommand-1439↑j
-                inc     si
-                add     [bx+0], al
-                dec     ax
-                add     [bx+di+0], cl
-                push    bp
-                add     [bx+di+0], bl
-                dec     sp
-                add     [di+0], cl
-                dec     si
-                add     [bx+0], cl
-
-loc_16794:                              ; CODE XREF: readAndDispatchCommand-1432↑j
-                push    ax
-                add     [bx+0], dl
-                push    dx
-                add     [bp+di+0], dl
-                push    sp
-                add     [bp+di+6Eh], dl
-
-loc_167A0:                              ; CODE XREF: readAndDispatchCommand-1417↑j
-                popa
-                imul    sp, [di+0], 4Dh ; 'M'
-                popa
-                imul    sp, [ebx+0], 6946h
-                jb      short near ptr loc_16812+1
-                add     [bp+di+68h], dl
-                jb      short near ptr loc_16819+3
-                outsb
-
-loc_167B4:                              ; CODE XREF: readAndDispatchCommand-140E↑j
-                add     gs:[bp+si+61h], dl
-
-loc_167B8:                              ; CODE XREF: readAndDispatchCommand:loc_16753↑j
-                outsb
-                db      67h, 65h
-                jb      $+4
-
-loc_167BD:                              ; CODE XREF: readAndDispatchCommand-139B↑j
-                dec     ax
-                popa
-                outsb
-
-loc_167C0:                              ; CODE XREF: readAndDispatchCommand-13F5↑j
-                                        ; readAndDispatchCommand:loc_1674D↑j
-                add     fs:[si+61h], al
-                db      67h, 67h, 65h
-                jb      $+5
-
-loc_167C9:                              ; CODE XREF: readAndDispatchCommand-1390↑j
-                dec     bp
-                popa
-                arpl    [di+0], sp
-                push    bx
-                insb
-
-loc_167D0:                              ; CODE XREF: readAndDispatchCommand-13EB↑j
-                imul    bp, [bp+67h], 4100h
-                js      short near ptr loc_1683A+2
-                add     [bp+si+6Fh], al
-                ja      short $+2
-
-loc_167DC:                              ; CODE XREF: readAndDispatchCommand-137A↑j
-                push    bx
-                ja      short loc_1684E
-                jb      short loc_16845
-                add     [bp+si], dh
-                sub     ax, 2D48h
-                push    bx
-                ja      short loc_1684D
-                add     [bp+di], ch
-                xor     ah, [bx+si]
-                inc     cx
-                js      short loc_16855
-                add     [bp+di], ch
-                xor     ah, [bx+si]
-                inc     dx
-                outsw
-                ja      short $+2
-
-loc_167F8:                              ; CODE XREF: readAndDispatchCommand-135E↑j
-                sub     si, [bp+si]
-                and     [bp+di+77h], dl
-                add     fs:[bx+6Ch], al
-                outsw
-                jbe     short loc_16869
-                jnb     short $+2
-
-loc_16806:                              ; CODE XREF: readAndDispatchCommand-1350↑j
-                sub     si, [si]
-                and     [bx+di+78h], al
-                add     gs:[bp+di], ch
-                xor     al, 20h
-                inc     dx
-                outsw
-
-loc_16812:                              ; CODE XREF: readAndDispatchCommand-13A8↑j
-                ja      short $+2
-
-loc_16814:                              ; CODE XREF: readAndDispatchCommand:loc_16812↑j
-                sub     si, [si]
-                and     [bp+di+77h], dl
-
-loc_16819:                              ; CODE XREF: readAndDispatchCommand-13A3↑j
-                add     fs:[di+78h], al
-                outsw
-                jz      short near ptr loc_16888+1
-                arpl    [bx+si], ax
-                push    bx
-                imul    bp, [bx+di+6Eh], 0
-                inc     bx
-                insb
-                outsw
-                jz      short loc_16894
-                add     [si+65h], cl
-                popa
-                jz      short loc_1689A
-                db      65h
-                jb      short $+3
-
-loc_16835:                              ; CODE XREF: readAndDispatchCommand-1322↑j
-                inc     bx
-                push    6961h
-                outsb
-
-loc_1683A:                              ; CODE XREF: readAndDispatchCommand-137F↑j
-                add     [bx+si+6Ch], dl
-                popa
-                jz      short loc_168A5
-                add     [bp+di], ch
-                xor     ah, [bx+si]
-                inc     bx
-
-loc_16845:                              ; CODE XREF: readAndDispatchCommand-1375↑j
-                push    6961h
-                outsb
-                add     [bp+di], ch
-                xor     ah, [bx+si]
-
-loc_1684D:                              ; CODE XREF: readAndDispatchCommand-136D↑j
-                push    ax
-
-loc_1684E:                              ; CODE XREF: readAndDispatchCommand-1377↑j
-                insb
-                popa
-                jz      short loc_168B7
-                add     [bp+si+65h], dl
-
-loc_16855:                              ; CODE XREF: readAndDispatchCommand-1366↑j
-                jo      short loc_168C6
-                outsb
-                add     fs:[di+69h], cl
-                jz      short loc_168D2
-                popa
-                jb      short $+2
-
-loc_16861:                              ; CODE XREF: readAndDispatchCommand-12F5↑j
-                dec     sp
-                outsw
-                jb      short near ptr loc_168D9+1
-                insw
-                add     [si+6Fh], al
-
-loc_16869:                              ; CODE XREF: readAndDispatchCommand-1352↑j
-                jb      short loc_1688B
-                inc     cx
-                arpl    [bp+si+6Fh], si
-                outsb
-                add     [bp+di+75h], dl
-                jb      short loc_16895
-                inc     cx
-                arpl    [bp+si+6Fh], si
-                outsb
-                add     [bp+75h], al
-                insb
-                db      67h
-                popa
-                jb      short $+2
-
-loc_16882:                              ; CODE XREF: readAndDispatchCommand-12D4↑j
-                inc     sp
-                popa
-                and     [ecx+63h], al
-
-loc_16888:                              ; CODE XREF: readAndDispatchCommand-1336↑j
-                jb      short near ptr loc_168F7+2
-                outsb
-
-loc_1688B:                              ; CODE XREF: readAndDispatchCommand:loc_16869↑j
-                add     [di+65h], cl
-                outsb
-                jz      short near ptr loc_168F0+2
-                jb      short $+2
-
-loc_16893:                              ; CODE XREF: readAndDispatchCommand-12C3↑j
-                inc     sp
-
-loc_16894:                              ; CODE XREF: readAndDispatchCommand-132A↑j
-                popa
-
-loc_16895:                              ; CODE XREF: readAndDispatchCommand-12E1↑j
-                and     [edi+ebp*2+72h], cl
-
-loc_1689A:                              ; CODE XREF: readAndDispatchCommand-1324↑j
-                jnz     short near ptr loc_16907+2
-                add     [bp+61h], al
-                insb
-                and     [si+69h], al
-                jbe     short near ptr loc_1690D+1
-
-loc_168A5:                              ; CODE XREF: readAndDispatchCommand-1316↑j
-                add     [bp+6Fh], cl
-                js      short loc_1691F
-                insw
-                add     [si+65h], al
-                arpl    [bx+72h], bp
-                jo      short $+2
-
-loc_168B3:                              ; CODE XREF: readAndDispatchCommand-12A3↑j
-                inc     cx
-                insb
-                jz      short near ptr loc_16917+1
-
-loc_168B7:                              ; CODE XREF: readAndDispatchCommand-1304↑j
-                imul    si, [bp+si+0], 6144h
-                and     [ebp+65h], cl
-                outsb
-                jz      short near ptr loc_16922+2
-                jb      short $+2
-
-loc_168C5:                              ; CODE XREF: readAndDispatchCommand-1291↑j
-                dec     si
-
-loc_168C6:                              ; CODE XREF: readAndDispatchCommand:loc_16855↑j
-                arpl    gs:[bx+72h], bp
-                jo      short $+2
-
-loc_168CC:                              ; CODE XREF: readAndDispatchCommand-128A↑j
-                add     [bx+si+6Fh], dl
-                outsb
-                jz      short loc_16941
-
-loc_168D2:                              ; CODE XREF: readAndDispatchCommand-12F8↑j
-                jb      short near ptr loc_1693B+2
-                add     [bx+di+70h], al
-                jo      short loc_1693A
-
-loc_168D9:                              ; CODE XREF: readAndDispatchCommand-12F1↑j
-                jb      short loc_168FB
-                push    bp
-                outsb
-                db      65h
-                insw
-                add     [bp+di+61h], dl
-                outsb
-                arpl    [si+75h], si
-                add     [si+75h], cl
-                insw
-                imul    bp, [bp+61h], 65h ; 'e'
-                push    dx
-
-loc_168F0:                              ; CODE XREF: readAndDispatchCommand-12C5↑j
-                arpl    gs:[bx+si], sp
-                push    bx
-                jnz     short $+2
-
-loc_168F6:                              ; CODE XREF: readAndDispatchCommand-1260↑j
-                push    dx
-
-loc_168F7:                              ; CODE XREF: readAndDispatchCommand:loc_16888↑j
-                arpl    gs:[bx+si], sp
-                inc     sp
-
-loc_168FB:                              ; CODE XREF: readAndDispatchCommand:loc_168D9↑j
-                jnz     short $+2
-
-loc_168FD:                              ; CODE XREF: readAndDispatchCommand:loc_168FB↑j
-                dec     sp
-                imul    sp, [bp+si+20h], 6552h
-                arpl    [bx+si], ax
-                inc     cx
-                insb
-
-loc_16907:                              ; CODE XREF: readAndDispatchCommand:loc_1689A↑j
-                arpl    [bx+72h], bp
-                jz      short $+2
-
-loc_1690C:                              ; CODE XREF: readAndDispatchCommand-124A↑j
-                push    bx
-
-loc_1690D:                              ; CODE XREF: readAndDispatchCommand-12B1↑j
-                db      65h
-                jno     short near ptr loc_16984+1
-                imul    si, [si+75h], 5300h
-                outsw
-                insw
-
-loc_16917:                              ; CODE XREF: readAndDispatchCommand-129F↑j
-                imul    bp, [bp+61h], 65h ; 'e'
-                push    bx
-                popa
-                outsb
-
-loc_1691F:                              ; CODE XREF: readAndDispatchCommand-12AC↑j
-                arpl    [si+75h], si
-
-loc_16922:                              ; CODE XREF: readAndDispatchCommand-1293↑j
-                and     [di+61h], cl
-                outsb
-                imul    ax, [bx+si], 6956h
-                db      65h, 64h
-                popa
-                add     [di+78h], al
-                arpl    [di+75h], si
-                outsb
-                add     [bp+di+75h], dl
-                jb      short near ptr loc_169A5+1
-                popa
-
-loc_1693A:                              ; CODE XREF: readAndDispatchCommand-127D↑j
-                outsb
-
-loc_1693B:                              ; CODE XREF: readAndDispatchCommand:loc_168D2↑j
-                db      64h
-                jnz     short near ptr loc_169A9+2
-                add     [bp+si+78h], bl
-
-loc_16941:                              ; CODE XREF: readAndDispatchCommand-1284↑j
-                imul    si, [di+71h], 79h ; 'y'
-                bound   ax, [bx+si]
-                inc     cx
-                outsb
-                push    75h ; 'u'
-                and     [bp+di+65h], dl
-                jb      short near ptr loc_169BB+2
-                popa
-                outsb
-                imul    ax, [bx+si], 7242h
-                imul    sp, [bx+61h], 646Eh
-                add     [bp+di+75h], al
-                jz      short near ptr aDex+6 ; "."
-                jnz     short near ptr aInt+2 ; "nt..."
-                jnb     short near ptr aStr+7 ; ""
-                add     [bx+6Fh], al
-                bound   bp, [si+69h]
-                outsb
-                add     [si+72h], dl
-                outsw
-                insb
-                insb
-                add     [bx+68h], al
-                outsw
-                jnz     short near ptr aHP+1 ; "H.P..."
-                add     [bp+si+6Fh], bl
-                insw
-                bound   bp, [bx+di+65h]
-                add     [bx+6Fh], al
-                insb
-                db      65h
-                insw
-
-loc_16984:                              ; CODE XREF: readAndDispatchCommand:loc_1690D↑j
-                add     [si+69h], dl
-                jz      short near ptr aHM ; "\nH.M..."
-                outsb
-                add     [bx+61h], al
-                jb      short near ptr aGold+4 ; "d: "
-                outsw
-                jns     short near ptr aExp+4 ; "..."
-                add     gs:[di+61h], cl
-                outsb
-                add     gs:[bp+di+6Eh], dl
-                popa
-                jz      short near ptr aExp+7 ; ""
-                push    4200h
-                jb      short near ptr aGems+2 ; "ems.."
-                db      64h
-                insb
-
-loc_169A5:                              ; CODE XREF: readAndDispatchCommand-121D↑j
-                add     gs:[bx+72h], al
-
-loc_169A9:                              ; CODE XREF: readAndDispatchCommand:loc_1693B↑j
-                imul    sp, [bp+66h], 6E6Fh
-                add     [bx+79h], dl
-                jbe     short near ptr aPowd+6 ; "."
-                jb      short loc_16A23
-                add     [bx+72h], cl
-                arpl    [di+73h], si
-
-loc_169BB:                              ; CODE XREF: readAndDispatchCommand-1206↑j
-                add     [si+65h], al
-                jbe     short near ptr loc_16A27+2
-                insb
-; END OF FUNCTION CHUNK FOR readAndDispatchCommand
-; ---------------------------------------------------------------------------
+aWater          db 'Water',0
+aGrass          db 'Grass',0
+aBrush          db 'Brush',0
+aForest         db 'Forest',0
+aMountains      db 'Mountains',0
+aDungeon_0      db 'Dungeon',0
+aTowne_0        db 'Towne',0
+aCastle_0       db 'Castle',0
+aFloor          db 'Floor',0
+aChest          db 'Chest',0
+aHorse          db 'Horse',0
+aFrigate        db 'Frigate',0
+aWhirlpool      db 'Whirlpool',0
+aSerpent        db 'Serpent',0
+aManOWar        db 'Man-O-War',0
+aPirate         db 'Pirate',0
+aMerchant       db 'Merchant',0
+aJester         db 'Jester',0
+aGuard          db 'Guard',0
+aLordBritish    db 'Lord British',0
+aFighter        db 'Fighter',0
+aCleric         db 'Cleric',0
+aWizard         db 'Wizard',0
+aThief          db 'Thief',0
+aOrc            db 'Orc',0
+aSkeleton       db 'Skeleton',0
+aGiant          db 'Giant',0
+aDaemon         db 'Daemon',0
+aPincher        db 'Pincher',0
+aDragon         db 'Dragon',0
+aBalron         db 'Balron',0
+aExodus         db 'Exodus',0
+aForceField     db 'Force Field',0
+aLava           db 'Lava',0
+aMoonGate       db 'Moon Gate',0
+aWall           db 'Wall',0
+aVoid           db 'Void',0
+aA              db 'A',0
+aB              db 'B',0
+aC              db 'C',0
+aD              db 'D',0
+aE              db 'E',0
+                db 'F',0
+aG              db 'G',0
+                db 'H',0
+aI              db 'I',0
+aU_0            db 'U',0
+aY              db 'Y',0
+                db 'L',0
+aM_0            db 'M',0
+aN              db 'N',0
+aO              db 'O',0
+aP              db 'P',0
+aW              db 'W',0
+aR              db 'R',0
+aS              db 'S',0
+aT              db 'T',0
+aSnake          db 'Snake',0
+aMagic          db 'Magic',0
+aFire_0         db 'Fire',0
+aShrine         db 'Shrine',0
+aRanger         db 'Ranger',0
+aHand           db 'Hand',0
+aDagger         db 'Dagger',0
+aMace           db 'Mace',0
+aSling          db 'Sling',0
+aAxe            db 'Axe',0
+aBow            db 'Bow',0
+aSword          db 'Sword',0
+a2HSwd          db '2-H-Swd',0
+a2Axe           db '+2 Axe',0
+a2Bow           db '+2 Bow',0
+a2Swd           db '+2 Swd',0
+aGloves         db 'Gloves',0
+a4Axe           db '+4 Axe',0
+a4Bow           db '+4 Bow',0
+a4Swd           db '+4 Swd',0
+aExotic         db 'Exotic',0
+aSkin           db 'Skin',0
+aCloth          db 'Cloth',0
+aLeather        db 'Leather',0
+aChain          db 'Chain',0
+aPlate          db 'Plate',0
+a2Chain         db '+2 Chain',0
+a2Plate         db '+2 Plate',0
+aRepond         db 'Repond',0
+aMittar         db 'Mittar',0
+aLorum          db 'Lorum',0
+aDorAcron       db 'Dor Acron',0
+aSurAcron       db 'Sur Acron',0
+aFulgar         db 'Fulgar',0
+aDagAcron       db 'Dag Acron',0
+aMentar         db 'Mentar',0
+aDagLorum       db 'Dag Lorum',0
+aFalDivi        db 'Fal Divi',0
+aNoxum          db 'Noxum',0
+aDecorp         db 'Decorp',0
+aAltair         db 'Altair',0
+aDagMentar      db 'Dag Mentar',0
+aNecorp         db 'Necorp',0
                 db 0
-aStr            db 0Ah                  ; CODE XREF: readAndDispatchCommand-11F2↑j
-                                        ; DATA XREF: showZtats+10↓o
+aPontori        db 'Pontori',0
+aApparUnem      db 'Appar Unem',0
+aSanctu         db 'Sanctu',0
+aLuminae        db 'Luminae',0
+aRecSu          db 'Rec Su',0
+aRecDu          db 'Rec Du',0
+aLibRec         db 'Lib Rec',0
+aAlcort         db 'Alcort',0
+aSequitu        db 'Sequitu',0
+aSominae        db 'Sominae',0
+aSanctuMani     db 'Sanctu Mani',0
+aVieda          db 'Vieda',0
+aExcuun         db 'Excuun',0
+aSurmandum      db 'Surmandum',0
+aZxkuqyb        db 'Zxkuqyb',0
+aAnjuSermani    db 'Anju Sermani',0
+aBrigand        db 'Brigand',0
+aCutpurse       db 'Cutpurse',0
+aGoblin         db 'Goblin',0
+aTroll          db 'Troll',0
+aGhoul          db 'Ghoul',0
+aZombie         db 'Zombie',0
+aGolem          db 'Golem',0
+aTitan          db 'Titan',0
+aGargoyle       db 'Gargoyle',0
+aMane           db 'Mane',0
+aSnatch         db 'Snatch',0
+aBradle         db 'Bradle',0
+aGriffon        db 'Griffon',0
+aWyvern         db 'Wyvern',0
+aOrcus          db 'Orcus',0
+aDevil          db 'Devil',0
+; END OF FUNCTION CHUNK FOR readAndDispatchCommand
+aStr            db 0Ah                  ; DATA XREF: showZtats+10↓o
                 db 'Str...',0
-aDex            db 0Ah                  ; CODE XREF: readAndDispatchCommand-11F6↑j
-                                        ; DATA XREF: showZtats+1D↓o
+aDex            db 0Ah                  ; DATA XREF: showZtats+1D↓o
                 db 'Dex...',0
-aInt            db 0Ah                  ; CODE XREF: readAndDispatchCommand-11F4↑j
-                                        ; DATA XREF: showZtats+2A↓o
+aInt            db 0Ah                  ; DATA XREF: showZtats+2A↓o
                 db 'Int...',0
 aWis            db 0Ah                  ; DATA XREF: showZtats+37↓o
                 db 'Wis...',0
-aHP             db 0Ah                  ; CODE XREF: readAndDispatchCommand-11DF↑j
-                                        ; DATA XREF: showZtats+44↓o
+aHP             db 0Ah                  ; DATA XREF: showZtats+44↓o
                 db 'H.P...',0
-aHM             db 0Ah                  ; CODE XREF: readAndDispatchCommand-11CD↑j
-                                        ; DATA XREF: showZtats:loc_16E1C↓o
+aHM             db 0Ah                  ; DATA XREF: showZtats:loc_16E1C↓o
                 db 'H.M...',0
-aGold           db 0Ah                  ; CODE XREF: readAndDispatchCommand-11C7↑j
-                                        ; DATA XREF: showZtats:loc_16E33↓o
+aGold           db 0Ah                  ; DATA XREF: showZtats:loc_16E33↓o
                 db 'Gold: ',0
-aExp            db 0Ah                  ; CODE XREF: readAndDispatchCommand-11C4↑j
-                                        ; readAndDispatchCommand-11B8↑j
-                                        ; DATA XREF: ...
+aExp            db 0Ah                  ; DATA XREF: showZtats:loc_16E4A↓o
                 db 'Exp...',0
-aGems           db 0Ah                  ; CODE XREF: readAndDispatchCommand-11B3↑j
-                                        ; DATA XREF: showZtats:loc_16E61↓o
+aGems           db 0Ah                  ; DATA XREF: showZtats:loc_16E61↓o
                 db 'Gems..',0
 aKeys           db 0Ah                  ; DATA XREF: showZtats:loc_16E78↓o
                 db 'Keys..',0
-aPowd           db 0Ah                  ; CODE XREF: readAndDispatchCommand-11A3↑j
-                                        ; DATA XREF: showZtats:loc_16E8F↓o
+aPowd           db 0Ah                  ; DATA XREF: showZtats:loc_16E8F↓o
                 db 'Powd..',0
 aTrch           db 0Ah                  ; DATA XREF: showZtats:loc_16EA6↓o
                 db 'Trch..',0
-                db 0Ah
+aCa             db 0Ah
+                db 'Ca'
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR readAndDispatchCommand
-
-loc_16A23:                              ; CODE XREF: readAndDispatchCommand-11A1↑j
-                inc     bx
-                popa
                 jb      short near ptr loc_16A8A+1
-
-loc_16A27:                              ; CODE XREF: readAndDispatchCommand-1196↑j
                 and     [bx+66h], ch
                 and     [si+65h], al
                 popa
@@ -6890,7 +6378,7 @@ loc_16A27:                              ; CODE XREF: readAndDispatchCommand-1196
                 outsb
                 jnb     short $+2
 
-loc_16A5B:                              ; CODE XREF: readAndDispatchCommand-10FB↑j
+loc_16A5B:                              ; CODE XREF: seg000:6A59↑j
                 or      cl, [di+61h]
                 jb      short near ptr a02HandsAArmour+14h ; "ur**"
                 and     [bx+66h], ch
@@ -6906,7 +6394,7 @@ loc_16A5B:                              ; CODE XREF: readAndDispatchCommand-10FB
                 add     [bp+si], cl
                 dec     bp
                 popa
-                jb      short loc_16AE8
+                jb      short near ptr unk_16AE8
                 and     [bx+66h], ch
                 and     [bp+di+6Eh], dl
                 popa
@@ -6914,81 +6402,51 @@ loc_16A5B:                              ; CODE XREF: readAndDispatchCommand-10FB
                 dec     bp
                 popa
 
-loc_16A8A:                              ; CODE XREF: readAndDispatchCommand-112F↑j
-                jb      short near ptr loc_16AF6+1
+loc_16A8A:                              ; CODE XREF: seg000:6A25↑j
+                jb      short near ptr aDeath_0+4 ; "h"
                 and     [bx+66h], ch
                 and     [bp+di+69h], cl
                 outsb
                 db      67h
                 jnb     $+3             ; "\nWeapon:"
-; END OF FUNCTION CHUNK FOR readAndDispatchCommand
 ; ---------------------------------------------------------------------------
-aWeapon         db 0Ah                  ; CODE XREF: readAndDispatchCommand-10C1↑j
-                                        ; readAndDispatchCommand-1126↑j ...
+aWeapon         db 0Ah                  ; CODE XREF: seg000:6A93↑j
+                                        ; seg000:6A2E↑j ...
                 db 'Weapon:',0
-aArmour         db 0Ah                  ; CODE XREF: readAndDispatchCommand-1113↑j
+aArmour         db 0Ah                  ; CODE XREF: seg000:6A41↑j
                                         ; DATA XREF: showZtats:loc_16EF9↓o
                 db 'Armour:',0
-aWeapons        db 0Ah                  ; CODE XREF: readAndDispatchCommand-110B↑j
-                                        ; readAndDispatchCommand-1105↑j
+aWeapons        db 0Ah                  ; CODE XREF: seg000:6A49↑j
+                                        ; seg000:6A4F↑j
                                         ; DATA XREF: ...
                 db '***Weapons***',0
-a02HandsAArmour db 0Ah                  ; CODE XREF: readAndDispatchCommand-1043↓j
-                                        ; DATA XREF: showZtats+197↓o
+a02HandsAArmour db 0Ah                  ; DATA XREF: showZtats+197↓o
                 db '02-Hands-(A)',0Ah
                 db '**Armour**',0
-a01SkinA        db 0Ah                  ; CODE XREF: readAndDispatchCommand-10E7↑j
-                                        ; readAndDispatchCommand-10DF↑j
+a01SkinA        db 0Ah                  ; CODE XREF: seg000:6A6D↑j
+                                        ; seg000:6A75↑j
                                         ; DATA XREF: ...
                 db '01-Skin-(A)',0Ah,0
 aM              db ' M:',0              ; DATA XREF: drawPartyStatusBar+42↓o
 asc_16AE2       db ' L:',0              ; DATA XREF: drawPartyStatusBar+4F↓o
 byte_16AE6      db 48h, 3Ah             ; DATA XREF: drawPartyStatusBar+6C↓o
-; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR readAndDispatchCommand
-
-loc_16AE8:                              ; CODE XREF: readAndDispatchCommand-10D9↑j
-                                        ; DATA XREF: drawPartyStatusBar+79↓o
-                add     [bx+si], ah
-                inc     si
-                cmp     al, [bx+si]
-                dec     bp
-                outsw
-                outsw
-                outsb
-                jnb     short $+2
-
-loc_16AF3:                              ; CODE XREF: readAndDispatchCommand-1063↑j
-                inc     sp
-                db      65h
-                popa
-
-loc_16AF6:                              ; CODE XREF: readAndDispatchCommand:loc_16A8A↑j
-                jz      short loc_16B60
-                add     [si+6Fh], cl
-                jbe     short loc_16B62
-                add     [bp+di+6Fh], dl
-                insb
-
-loc_16B01:                              ; DATA XREF: readAndDispatchCommand-4F9↓o
-                add     [di+44h], cl
-                dec     sp
-                push    bx
-                push    cx
-
-loc_16B07:                              ; DATA XREF: readAndDispatchCommand-500↓o
-                sbb     bp, bp
-                push    0FFF3h
-                push    0FFF9h
-                push    0FFFEh
-                push    0FFAFh
-                js      short near ptr a02HandsAArmour+0Bh ; "A)\n**Armour**"
-                js      short near ptr loc_16B60+1
-                push    bx
-                dec     bp
-                inc     sp
-; END OF FUNCTION CHUNK FOR readAndDispatchCommand
+unk_16AE8       db    0                 ; CODE XREF: seg000:6A7B↑j
+                db 20h, 46h             ; DATA XREF: drawPartyStatusBar+79↓o
 ; ---------------------------------------------------------------------------
+                cmp     al, [bx+si]
+; ---------------------------------------------------------------------------
+aMoons          db 'Moons',0
+aDeath_0        db 'Death',0            ; CODE XREF: seg000:loc_16A8A↑j
+aLove           db 'Love',0
+aSol            db 'Sol',0
+EXODUS_SEQUENCE_MENU_KEYS db 4Dh, 44h, 4Ch, 53h, 51h, 1Bh
+                                        ; DATA XREF: readAndDispatchCommand-4F9↓o
+EXODUS_SEQUENCE_NAME_PTRS dw 6AEDh, 6AF3h, 6AF9h, 6AFEh
+                                        ; DATA XREF: readAndDispatchCommand-500↓o
+                dw 2 dup(78AFh)
+EXODUS_SEQUENCE_ANSWER db 4Ch, 53h, 4Dh, 44h
+; END OF FUNCTION CHUNK FOR readAndDispatchCommand
 aCmd            db 'Cmd: ',0            ; DATA XREF: readAndDispatchCommand-66C↓o
 aNoEffect       db 'No effect!',0Ah,0   ; DATA XREF: readAndDispatchCommand:loc_174CC↓o
                                         ; readAndDispatchCommand-630↓o ...
@@ -7000,12 +6458,7 @@ aACardWithStran db 'A card, with',0Ah   ; DATA XREF: readAndDispatchCommand-538�
 byte_16B5D      db 45h, 78h, 6Fh        ; DATA XREF: readAndDispatchCommand-5DD↓o
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR readAndDispatchCommand
-
-loc_16B60:                              ; CODE XREF: readAndDispatchCommand:loc_16AF6↑j
-                                        ; readAndDispatchCommand-1041↑j
                 jz      short loc_16BCB
-
-loc_16B62:                              ; CODE XREF: readAndDispatchCommand-1059↑j
                 arpl    [bp+di+21h], si
                 or      al, [bx+si]
 
@@ -7072,7 +6525,7 @@ damageCharacterHP proc near             ; CODE XREF: processPartyTurnEffects+C2�
                 pushf
                 push    cx
 
-loc_16BCB:                              ; CODE XREF: readAndDispatchCommand:loc_16B60↑j
+loc_16BCB:                              ; CODE XREF: readAndDispatchCommand-FF4↑j
                 push    ax
                 mov     cl, al
                 mov     ax, [bx+RosterEntry._hitPoints]
@@ -7323,7 +6776,7 @@ loc_16D23:                              ; CODE XREF: drawPartyStatusBar+5C↑j
                 call    writeStringPreserveCx
                 mov     ax, [bx+RosterEntry._hitPoints]
                 call    printHexWord
-                lea     si, loc_16AE8+1
+                lea     si, byte_16AE9
                 call    writeStringPreserveCx
                 mov     ax, [bx+RosterEntry._food]
                 call    printHexWord
@@ -8710,9 +8163,9 @@ attemptExodusSequence:                  ; CODE XREF: readAndDispatchCommand-50F�
                 lea     si, aDSLM       ; "D, S, L, M:\n"
                 call    printGameText
                 push    di
-                lea     si, loc_16B07+1
+                lea     si, EXODUS_SEQUENCE_NAME_PTRS
                 mov     cx, 6
-                lea     di, loc_16B01+1
+                lea     di, EXODUS_SEQUENCE_MENU_KEYS
                 call    getMenuChoice
                 pop     di
                 pop     cx
@@ -9297,8 +8750,7 @@ readAndDispatchCommand proc far         ; CODE XREF: readAndDispatchCommand-5CE3
 ; FUNCTION CHUNK AT 1B7A SIZE 00000503 BYTES
 ; FUNCTION CHUNK AT 226C SIZE 00000039 BYTES
 ; FUNCTION CHUNK AT 5BCF SIZE 00000147 BYTES
-; FUNCTION CHUNK AT 6666 SIZE 0000035B BYTES
-; FUNCTION CHUNK AT 6A23 SIZE 00000073 BYTES
+; FUNCTION CHUNK AT 6666 SIZE 0000035C BYTES
 ; FUNCTION CHUNK AT 6AE8 SIZE 00000030 BYTES
 ; FUNCTION CHUNK AT 6B60 SIZE 00000017 BYTES
 ; FUNCTION CHUNK AT 7252 SIZE 00000002 BYTES
@@ -10821,15 +10273,10 @@ jpt_18BF8       dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
                 dw offset combatCmdInvalid
-jpt_1948E       db 0BBh                 ; DATA XREF: readAndDispatchCommand+193A↓r
-                                        ; jump table for switch statement
-                db  94h
-                db 0DCh
-                db  94h
-                db 0EEh
-                db  94h
-                db 0ABh
-                db  94h
+jpt_1948E       dw offset loc_194BB     ; DATA XREF: readAndDispatchCommand+193A↓r
+                dw offset loc_194DC     ; jump table for switch statement
+                dw offset loc_194EE
+                dw offset loc_194AB
 MONSTER_HP_TABLE db 2 dup(20h), 2 dup(0F0h), 0C0h, 60h, 0A0h, 80h, 30h
                 db 50h, 70h, 0A0h, 0C0h, 0E0h, 2 dup(0F0h)
 MONSTER_EXP_TABLE db 1, 2, 15h, 20h, 8, 6, 10h, 5, 3, 4, 6, 8, 10h, 15h
@@ -12629,9 +12076,9 @@ loc_19470:                              ; CODE XREF: readAndDispatchCommand+194A
                 mov     al, byte ptr _partyPosition
                 and     al, 3
                 mov     ah, 0
-                shl     ax, 1           ; switch 5 cases
+                shl     ax, 1           ; switch 4 cases
                 mov     si, ax
-                jmp     word ptr jpt_1948E[si] ; switch jump
+                jmp     jpt_1948E[si]   ; switch jump
 ; ---------------------------------------------------------------------------
 
 loc_19492:                              ; CODE XREF: readAndDispatchCommand+192D↑j
@@ -12649,6 +12096,7 @@ loc_194A0:                              ; CODE XREF: readAndDispatchCommand+1926
 ; ---------------------------------------------------------------------------
 
 loc_194AB:                              ; CODE XREF: readAndDispatchCommand+193A↑j
+                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aAhThatSNice ; jumptable 0001948E case 3
                 call    printGameText
                 mov     [bx+RosterEntry._status], 47h ; 'G'
@@ -12657,6 +12105,7 @@ loc_194AB:                              ; CODE XREF: readAndDispatchCommand+193A
 ; ---------------------------------------------------------------------------
 
 loc_194BB:                              ; CODE XREF: readAndDispatchCommand+193A↑j
+                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aYuckHorrible ; jumptable 0001948E case 0
                 call    printGameText
                 mov     [bx+RosterEntry._status], 50h ; 'P'
@@ -12672,6 +12121,7 @@ loc_194BB:                              ; CODE XREF: readAndDispatchCommand+193A
 ; ---------------------------------------------------------------------------
 
 loc_194DC:                              ; CODE XREF: readAndDispatchCommand+193A↑j
+                                        ; DATA XREF: seg000:jpt_1948E↑o
                 mov     ax, [bx+RosterEntry._maxHitPoints] ; jumptable 0001948E case 1
                 mov     [bx+RosterEntry._hitPoints], ax
                 lea     si, aHowWonderful ; "How wonderful!\n"
@@ -12681,6 +12131,7 @@ loc_194DC:                              ; CODE XREF: readAndDispatchCommand+193A
 ; ---------------------------------------------------------------------------
 
 loc_194EE:                              ; CODE XREF: readAndDispatchCommand+193A↑j
+                                        ; DATA XREF: seg000:jpt_1948E↑o
                 lea     si, aArghBlahYuk ; jumptable 0001948E case 2
                 call    printGameText
                 mov     al, 25h ; '%'

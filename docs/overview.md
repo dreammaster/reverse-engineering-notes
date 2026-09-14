@@ -1671,8 +1671,96 @@ Final state, verified clean: **206 sites across 26 functions in
 `clearPartySelection`, `handleTerminateCharacter`), both re-exported
 and saved.
 
-The mis-disassembled data region itself is now a new, well-scoped
-flagged item of its own (see roadmap.md) — very likely a large ASCII
-text/data table IDA's analysis wrongly classified as code, the same
-general class of issue as the wind-direction arrays and command-key
-tables fixed earlier in this project, just not yet re-classified.
+The mis-disassembled data region itself turned out to be worth
+following up immediately — see the next section for what it actually
+was.
+
+## The mis-disassembled region resolved — and Ultima III's Exodus puzzle solved
+
+Went straight back to the garbage region flagged above rather than
+letting it sit. Dumping its raw bytes directly (not trusting IDA's
+own — wrong — code classification) showed it was plain, perfectly
+readable ASCII text: `printNameByIndex`'s own backing data. That
+function's `[bx+6556h]` pointer table (already known from tracing
+`printNameByIndex` itself, much earlier this session) turned out to
+index into one single, unified 146-string table this whole game
+shares for "describe whatever's here" purposes — fixed and named
+`GAME_NAME_TABLE` (`fix_game_name_table.py`, `idc.create_strlit` per
+string, same technique as every other string-array fix this project
+has needed):
+
+- **Terrain names** (indices 1-9): Water, Grass, Brush, Forest,
+  Mountains, Dungeon, Towne, Castle, Floor — exactly the tile
+  categories `cmdLook` describes, confirmed independently for the
+  first time (`cmdLook` was named back near the start of this
+  project's `EXODUS.BIN` phase without ever confirming what its
+  descriptions actually said).
+- Objects/vehicles (`0xA`-`0xC`: Chest, Horse, Frigate), the
+  Whirlpool (`0xD`).
+- NPC/monster-class names (`0xE`-`0x20`): Serpent, Man-O-War, Pirate,
+  Merchant, Jester, Guard, Lord British, then the 4 player classes
+  reused as generic humanoid descriptions (Fighter/Cleric/Wizard/
+  Thief), then Orc, Skeleton, Giant, Daemon, Pincher, Dragon, Balron,
+  Exodus.
+- Dungeon features (`0x21`-`0x26`): Force Field, Lava, Moon Gate,
+  Wall, Void.
+- Single-letter rune/sign tiles (`0x27` onward: A, B, C, D, E, F,
+  G, H, I, ...).
+- **Weapon names** matching `_weaponOwned`'s confirmed 15-entry array
+  (Dagger implied at index 0, then Mace, Sling, Axe, Bow, Sword,
+  2-H-Swd, +2 Axe, +2 Bow, +2 Swd, Gloves, +4 Axe, +4 Bow, +4 Swd,
+  Exotic) and **armour names** matching `_armourIndex`'s range (Skin,
+  Cloth, Leather, Chain, Plate, +2 Chain, +2 Plate, Exotic — one more
+  entry than `_armourOwned`'s own 7, since `_armourIndex` needs a
+  "wearing nothing" state `_armourOwned` doesn't).
+- All 32 spell names again — a second copy, distinct from
+  `SPELL_NAME_TABLE` (`0x1590B`) found earlier this session.
+- **A confirmed 16-entry monster bestiary** (`0x79`-`0x88`): Brigand,
+  Cutpurse, Goblin, Troll, Ghoul, Zombie, Golem, Titan, Gargoyle,
+  Mane, Snatch, Bradle, Griffon, Wyvern, Orcus, Devil — Ultima III's
+  actual named monster list, confirmed directly from the game's own
+  data for the first time this project (earlier sessions could only
+  say "monster names being the obvious candidate, not independently
+  confirmed").
+
+**A second, smaller mis-decoded patch right next to it turned out to
+be even more valuable: the literal solution to Ultima III's Exodus
+puzzle.** Fixed via `fix_exodus_sequence_table.py`. Its bytes are the
+4 card names (Moons, Death, Love, Sol), the menu's 6 valid keys
+(`EXODUS_SEQUENCE_MENU_KEYS` = 'M','D','L','S','Q',Esc), and —
+critically — `EXODUS_SEQUENCE_ANSWER`, a 4-byte array holding the raw
+bytes `'L','S','M','D'`. `attemptExodusSequence`'s own code indexes
+this exact array (`cmp al, [bx+6B14h]`, `bx` = the puzzle's 0-3 step
+counter) to check the player's typed letter against the expected one
+for that step. **The answer is Love, Sol, Moons, Death, in that exact
+order** — confirmed two independent ways in the same sitting: directly
+from this lookup table's own bytes, and from a completely separate
+string found while reading the surrounding data, the Time Lord's
+in-game vision (`aYouSeeAVisionO`): "You see a vision of the Time
+Lord. He tells you: The one way is Love, Sol, Moons & Death, All else
+fails." — word-for-word identical to the code's own lookup table.
+
+Reading the rest of the newly-fixed strings also recovered Radrion
+the Oracle's *complete* riddle, only partially quoted in earlier
+findings:
+
+> And so the sage said unto thee: "If thou can solve my rhyme, you'll
+> learn of marks & playing cards & hidden holy shrines. Of marks I
+> say there are but 4: of fire, force, snake & king. Learn their use
+> in Devil Guard, or death you'll surely bring. Shrines there are
+> again but 4 to which you go and pray. Their uses are innumerable
+> and clues throughout I say. The cards their suits do number 4,
+> called Sol, Moon, Death and Love. Unto the Montors thou must go for
+> guidance from above. To aid thee in thy cryptic search, to dungeons
+> thou must fare. There seek out the Lord of Time to help you if he
+> cares."
+
+This gives the 4 Marks their names for the first time (fire, force,
+snake, king — obtained "in Devil Guard", presumably the dungeon
+matching the already-known `DEVIL.ULT` file), confirms the 4 Cards by
+name (Sol, Moon, Death, Love), and identifies "the Lord of Time" as
+the NPC/vision that hands the player the exact solution sequence
+directly. Every major piece of Ultima III's central puzzle — the
+Marks, the Cards, the hint-givers, and the literal winning sequence —
+is now captured straight from the game's own disassembly, not
+secondary sources.
