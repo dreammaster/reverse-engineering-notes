@@ -668,10 +668,42 @@ Next-session priorities, roughly in order:
       coordinates at `0x15E1`/`0x15E5`/`0x15F9`/`0x184D`/`0x1855`, "look"
       command strings at `0x6566`) — cross-reference those file offsets
       against the disassembly now that it's loaded.
-- [ ] Resolve the `AMBROSIA.ULT` (on disk) vs. `FAWN.ULT`/`EXODUS.ULT`
-      (referenced as strings here, not present on disk) discrepancy —
-      trace whichever function loads town/castle maps by name to see
-      how/whether these are actually reached.
+- [x] **`AMBROSIA.ULT`'s role confirmed** — done 2026-09-14, while
+      naming the last few functions (see `teleportToAmbrosia` below):
+      it's loaded directly by name when the party falls into a
+      specific whirlpool, replacing the loaded Sosaria map with
+      Ambrosia's. `FAWN.ULT`/`EXODUS.ULT` remain unresolved — not
+      found referenced by name in any code reached this session; may
+      be loaded indirectly (a computed filename) or simply unused
+      leftover strings.
+- [x] **Two distinct whirlpool-type map features found and named**,
+      done 2026-09-14, closing out the last few unnamed functions in
+      `ultima_exodus.idb`:
+      - The regular whirlpool: `updateWhirlpoolPosition` (`0x120AE`)
+        animates it on two independent modular timers (X every 11
+        turns, Y every 3), and `teleportPartyWithFanfare` (`0x15B51`,
+        confirmed earlier) triggers when the party's tile reads
+        `0x88` — the whirlpool's own tile value, restored to plain
+        terrain (`4`) once it moves on. **Self-correction**: an
+        earlier note here had the old/new tile values backwards
+        (said the old tile got `4` and confirmed nothing about
+        `0x88`'s meaning); re-reading the code the right way round
+        shows `4` marks the vacated position and `0x88` marks the
+        whirlpool's current one — which is also now independently
+        confirmed as the exact value `teleportPartyWithFanfare`
+        checks for.
+      - A **second, distinct** whirlpool: `updateAmbrosiaWhirlpoolPosition`
+        (`0x17347`) moves via a random walk (not fixed timers), and
+        calls `teleportToAmbrosia` (`0x12168`) directly when it lands
+        on the party. `teleportToAmbrosia` is the secret-continent
+        transition — prints the "huge swirling WhirlPool" text, loads
+        `AMBROSIA.ULT` in place of the current map, and drops the
+        party at a fixed landing point. It also handles the return
+        trip: falling into this same whirlpool while already on
+        Ambrosia instead reloads `SOSARIA.ULT` and restores the
+        saved position ("You made it!"). Ultima III apparently has
+        more than one whirlpool on the map, and only this specific
+        one is the Ambrosia gateway.
 - [ ] `DUNGEON.DAT` (1,866 bytes) / `MOVES.ULT` (1,024 bytes) — smaller,
       less obviously-structured data files, lower priority.
 - [ ] Locate and name `checkDebugModeFlag`'s equivalent in this IDB (a

@@ -1560,3 +1560,38 @@ picks a random type, and rolls a position near the party -- validating
 the terrain matches that monster's expected tile type before
 committing, undoing the attempt otherwise. This is what populates
 Sosaria with wandering monsters over time.
+
+**Two distinct whirlpools found, and a self-caught error in the first
+one's own notes.** While closing out the last few unnamed functions,
+`updateAmbrosiaWhirlpoolPosition` (`0x17347`) turned out to be a
+SEPARATE animated map feature from `updateWhirlpoolPosition`
+(different state variable, `word_11320` vs `word_11324`; a random walk
+with momentum instead of two independent modular timers). It calls a
+newly-named `teleportToAmbrosia` (`0x12168`) directly when its
+position lands on the party — and that function is the game's secret
+continent transition: it prints "A huge swirling\n--WhirlPool--"
+and "...As the water\nenters your\nlungs...into Darkness!", saves the
+current position, loads `AMBROSIA.ULT` in place of the loaded Sosaria
+map, and drops the party at a fixed landing point ("You awaken on\n
+the shores of\n a foreign land"). It even handles the return trip:
+falling into the same whirlpool again while already on Ambrosia
+(checked via a game-mode flag this same function sets) instead prints
+"All is Dark!\n", reloads `SOSARIA.ULT`, and restores the saved
+position with "You made it!\n". Ultima III apparently has more than
+one whirlpool-like feature on the map, and only this specific one is
+the Ambrosia gateway — the "regular" one just relocates the party
+locally. This also resolves part of an old open question: `AMBROSIA.ULT`
+is confirmed loaded by name directly from this code path;
+`FAWN.ULT`/`EXODUS.ULT` remain unreferenced by name anywhere reached
+this session.
+
+Tracing this also caught a small error in the earlier
+`updateWhirlpoolPosition` note: it originally said the vacated tile
+got value `4` and didn't pin down `0x88`'s meaning. Re-reading the
+same code again more carefully shows that's right about `4` (the
+vacated position is restored to plain passable terrain) but the NEW
+position gets `0x88` — which independently confirms `0x88` as the
+regular whirlpool's own on-map tile value, exactly matching
+`teleportPartyWithFanfare`'s trigger condition (`getMapTileAt() ==
+0x88`). Fixed in the rename note before it could compound into
+anything else.

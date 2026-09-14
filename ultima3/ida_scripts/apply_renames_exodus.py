@@ -1912,15 +1912,20 @@ RENAMES = [
      "whirlpool's current animated map position) on two independent "
      "timers -- its low byte (X) cycles through 8 values every 11 "
      "turns, its high byte (Y) every 3 turns, both wrapping mod 8 -- "
-     "and when the position changes, restores the OLD map tile (via "
-     "the same `0x194D`/`0x1955` position tables teleportPartyWithFanfare "
-     "reads) and marks the NEW one with tile value 4, i.e. the "
-     "whirlpool visibly moves around a small fixed set of map "
-     "locations over time. Confirms `teleportPartyWithFanfare`'s "
-     "identity as the whirlpool's teleport effect. The function's "
-     "second half (unconditional cursor/HUD manipulation after the "
-     "whirlpool logic) wasn't traced further -- possibly unrelated "
-     "per-turn bookkeeping bundled into the same call site."),
+     "and when the position changes (via the same `0x194D`/`0x1955` "
+     "position-index tables teleportPartyWithFanfare reads): CORRECTED "
+     "2026-09-14 -- sets the OLD position's tile to `4` (restoring "
+     "normal passable terrain there, matching `4`'s confirmed meaning "
+     "elsewhere) and the NEW position's tile to `0x88` (an earlier "
+     "note here had these backwards). `0x88` is confirmed as this "
+     "whirlpool's own on-map tile value directly from "
+     "teleportPartyWithFanfare's trigger condition (`getMapTileAt() "
+     "== 0x88`) -- i.e. the party gets pulled in by standing on "
+     "wherever tile `0x88` currently is, which is exactly this "
+     "function's job to move around. The function's second half "
+     "(unconditional cursor/HUD manipulation after the whirlpool "
+     "logic) wasn't traced further -- possibly unrelated per-turn "
+     "bookkeeping bundled into the same call site."),
 
     (0x12716, "drawScreenBorder",
      "Clears the framebuffer then plots a rectangular border/frame "
@@ -1968,6 +1973,40 @@ RENAMES = [
      "placing it (undoing the spawn if the position doesn't check "
      "out). This is what populates the overworld with wandering "
      "monsters over time."),
+
+    # --- The SPECIAL Ambrosia whirlpool (distinct from the regular
+    # one above), 2026-09-14 -----------------------------------------
+    (0x17347, "updateAmbrosiaWhirlpoolPosition",
+     "A SEPARATE animated map feature from updateWhirlpoolPosition's "
+     "one (different state, `word_11320` vs `word_11324`, different "
+     "movement algorithm -- a random walk with momentum via "
+     "`byte_11322`/`byte_11323` deltas, not two independent modular "
+     "counters). Rolls a chance each turn to take a step, checks the "
+     "destination tile is open water (`0` or `,`/0x2Ch) before "
+     "committing the move (restoring the old tile, marking the new "
+     "one), and calls teleportToAmbrosia (below) directly if the new "
+     "position lands exactly on `_partyPosition`. This is a second, "
+     "specific whirlpool -- Ultima III apparently has more than one "
+     "whirlpool-like feature on the map, and only this particular one "
+     "leads to Ambrosia."),
+    (0x12168, "teleportToAmbrosia",
+     "THE secret continent transition. Prints '\\nA huge swirling\\n "
+     "--WhirlPool--\\n eng[ulfs]...' and '...As the water\\n enters "
+     "your\\nlungs...into Darkness!', saves the current overworld "
+     "position (`_savedOverworldPosition`), sets a new random-ish "
+     "state, saves the game, loads `AMBROSIA.ULT` into the `start` "
+     "buffer (replacing the loaded Sosaria map), and drops the party "
+     "at a fixed position (`0x3620`) with 'You awaken on\\n the "
+     "shores of\\n a fo[reign land]'. Has a return branch too: if "
+     "called while `byte_114BC == 0FFh` (i.e. already on Ambrosia, "
+     "which this function itself sets before returning), it instead "
+     "prints '\\n\\n\\n\\n\\n All is Dark!\\n\\n', reloads "
+     "`SOSARIA.ULT`, restores the saved overworld position, and "
+     "prints 'You made it!\\n' -- falling into this second whirlpool "
+     "on Ambrosia sends you back to Sosaria instead. This also "
+     "confirms `AMBROSIA.ULT`'s role directly from code, resolving "
+     "part of the open `AMBROSIA.ULT`-vs-`FAWN.ULT`/`EXODUS.ULT` "
+     "question in the roadmap."),
 ]
 
 

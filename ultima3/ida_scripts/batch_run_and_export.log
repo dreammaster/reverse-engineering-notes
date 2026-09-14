@@ -19388,3 +19388,599 @@ structs (1): RosterEntry
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py', 'noexport']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: '_locationType' -> '_locationTypeTable'
+    MEDIUM CONFIDENCE: byte, indexed by cmdEnter's LOCATION_TILE_TABLE match, holding the location kind at that position (5=Dungeon, 6=Towne, 7=Castle -- other values not enumerated this pass). Named as a scalar-looking single access, but given LOCATION_TILE_TABLE's 19 entries this may actually be a 19-byte PARALLEL ARRAY rather than a single byte -- not fully confirmed, worth double-checking (compare its access pattern against LOCATION_TILE_TABLE's index, `bx`, rather than a fixed address) before trusting the current scalar treatment.
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: already 'cmdOtherCommand' -- skipping
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: already 'cmdHandEquipment' -- skipping
+1590B: already 'SPELL_NAME_TABLE' -- skipping
+15F9F: already 'spellRespond' -- skipping
+15FD4: already 'spellMittar' -- skipping
+15FE3: already 'spellLorum' -- skipping
+15FEE: already 'spellDorAcron' -- skipping
+1600C: already 'spellSurAcron' -- skipping
+1602F: already 'spellFulgar' -- skipping
+16034: already 'spellDagAcron' -- skipping
+1606A: already 'spellMentar' -- skipping
+1608A: already 'spellDagLorum' -- skipping
+16095: already 'spellFalDivi' -- skipping
+160A5: already 'spellNoxum' -- skipping
+160BA: already 'spellDecorp' -- skipping
+160BF: already 'spellAltair' -- skipping
+160CA: already 'spellDagMentar' -- skipping
+160FA: already 'spellNecorp' -- skipping
+1613E: already 'spellZxkuqyb' -- skipping
+16153: already 'spellPontori' -- skipping
+16188: already 'spellApparUnem' -- skipping
+161DC: already 'spellSanctu' -- skipping
+161F6: already 'spellLibRec' -- skipping
+16209: already 'spellAlcort' -- skipping
+1623C: already 'spellSequitu' -- skipping
+1624F: already 'spellSanctuMani' -- skipping
+16269: already 'spellVieda' -- skipping
+16288: already 'spellSurmandum' -- skipping
+162C4: already 'spellAnjuSermani' -- skipping
+18E46: already 'findCombatantAtPosition' -- skipping
+18E7A: already 'fireProjectileAcrossArena' -- skipping
+18F5A: already 'applyCombatDamage' -- skipping
+15EAA: already 'applyRandomGroupDamage' -- skipping
+18605: already 'MONSTER_HP_TABLE' -- skipping
+18615: already 'MONSTER_EXP_TABLE' -- skipping
+1598B: already 'FACING_DIRECTION_NAME_TABLE' -- skipping
+15993: already 'SHRINE_ATTRIBUTE_NAME_TABLE' -- skipping
+162FD: already 'drawDungeonStatusBar' -- skipping
+16366: already 'enterShrine' -- skipping
+15B28: already 'isSpecialEncounterLocation' -- skipping
+1633B: already 'computeStepTowardParty' -- skipping
+1232F: already 'monsterBreathAttack' -- skipping
+182C6: already 'damagePartyAll' -- skipping
+16BC9: already 'damageCharacterHP' -- skipping
+12097: already 'savePartyFile' -- skipping
+1207D: already 'saveSosariaAndParty' -- skipping
+16B91: already 'autoSaveGameState' -- skipping
+17233: already 'isShipMovementBlockedByWind' -- skipping
+17254: already 'checkTerrainMovementBlocked' -- skipping
+17F96: already 'findMonsterAtPosition' -- skipping
+128F2: already 'getDungeonTileAt' -- skipping
+1A561: already 'promptYesNo' -- skipping
+1A587: already 'deductGoldIfAffordable' -- skipping
+1A692: already 'showTempleMenu' -- skipping
+1A6C0: already 'TEMPLE_COMMAND_TABLE' -- skipping
+1A6D4: already 'templeCure' -- skipping
+1A761: already 'templeHeal' -- skipping
+1A7B6: already 'templeResurrect' -- skipping
+1A833: already 'templeRecall' -- skipping
+1259D: already '_locationType' -- skipping
+16C76: already 'selectPlayer' -- skipping
+17176: already 'invertScreenRegion' -- skipping
+170E4: already 'applyHungerTick' -- skipping
+17149: already 'computeMaxMagicPointsFromAttribute' -- skipping
+1740A: already 'uppercaseBuffer' -- skipping
+17423: already 'matchKeywordAtDelimiter' -- skipping
+16C53: already 'flushInputBuffer' -- skipping
+16458: already 'exitToSosaria' -- skipping
+16FB1: already 'waitForContinueOrCancel' -- skipping
+16DC1: already 'showZtats' -- skipping
+16D81: already 'setCursorForPartyRow' -- skipping
+17E02: already 'incrementMoveCounter' -- skipping
+17D74: already 'tryBcdAddClamped' -- skipping
+18028: already 'TOWN_BUILDING_TABLE' -- skipping
+1A5AC: already 'showTavernMenu' -- skipping
+1A630: already 'showGrocerMenu' -- skipping
+1A8A5: already 'showWeaponsShopMenu' -- skipping
+1AA25: already 'showArmourShopMenu' -- skipping
+1AB93: already 'showGuildMenu' -- skipping
+1ACFC: already 'showOracleMenu' -- skipping
+1AD70: already 'showStableMenu' -- skipping
+17D1A: already 'promptForQuantity' -- skipping
+1A46F: already 'printMoveCount' -- skipping
+1A491: already 'xorScreenRegionWithPattern' -- skipping
+1A4B9: already 'victorySequence' -- skipping
+17607: already 'obtainCard' -- skipping
+1764A: already 'attemptExodusSequence' -- skipping
+17EFA: already 'wearArmour' -- skipping
+16BFA: already 'printNameByIndex' -- skipping
+17E48: already 'readyWeapon' -- skipping
+18C96: already 'checkMonsterTerrainHazard' -- skipping
+126F4: already 'scrollMessageWindow' -- skipping
+128C6: already 'clearMapViewport' -- skipping
+1583C: already 'playSpeakerNoise' -- skipping
+16D58: already 'drawPartySlotNumbers' -- skipping
+171C1: already 'invertFullScreen' -- skipping
+127CD: already 'drawMapViewport' -- skipping
+15B51: already 'teleportPartyWithFanfare' -- skipping
+1A9E8: already 'listWeaponsShopInventory' -- skipping
+1AB68: already 'listArmourShopInventory' -- skipping
+15B85: already 'rollTrapEvasionChance' -- skipping
+182AA: already 'checkTrapEvasion' -- skipping
+15E89: already 'playSpellCastFanfare' -- skipping
+15F7B: already 'teleportToRandomDungeonFloor' -- skipping
+19360: already 'attemptPoisonAttack' -- skipping
+193A2: already 'attemptStealAttack' -- skipping
+192AF: already 'applyDungeonMonsterDamage' -- skipping
+19244: already 'attemptSpecialMonsterAttack' -- skipping
+190FD: already 'fireDungeonProjectileAtParty' -- skipping
+19215: already 'moveDungeonMonsterSprite' -- skipping
+18FEB: already 'canDungeonMonsterMoveToTile' -- skipping
+19020: already 'moveDungeonMonsterTowardParty' -- skipping
+180D9: already 'generateChestLoot' -- skipping
+120AE: already 'updateWhirlpoolPosition' -- skipping
+12716: already 'drawScreenBorder' -- skipping
+12675: already 'plotMapOverviewPixel' -- skipping
+1259E: already 'drawPeerMapOverview' -- skipping
+12909: already 'drawPeerDungeonOverview' -- skipping
+122A5: already 'spawnRandomOverworldMonster' -- skipping
+17347: 'sub_17347' -> 'updateAmbrosiaWhirlpoolPosition'
+    A SEPARATE animated map feature from updateWhirlpoolPosition's one (different state, `word_11320` vs `word_11324`, different movement algorithm -- a random walk with momentum via `byte_11322`/`byte_11323` deltas, not two independent modular counters). Rolls a chance each turn to take a step, checks the destination tile is open water (`0` or `,`/0x2Ch) before committing the move (restoring the old tile, marking the new one), and calls teleportToAmbrosia (below) directly if the new position lands exactly on `_partyPosition`. This is a second, specific whirlpool -- Ultima III apparently has more than one whirlpool-like feature on the map, and only this particular one leads to Ambrosia.
+12168: 'sub_12168' -> 'teleportToAmbrosia'
+    THE secret continent transition. Prints '\nA huge swirling\n --WhirlPool--\n eng[ulfs]...' and '...As the water\n enters your\nlungs...into Darkness!', saves the current overworld position (`_savedOverworldPosition`), sets a new random-ish state, saves the game, loads `AMBROSIA.ULT` into the `start` buffer (replacing the loaded Sosaria map), and drops the party at a fixed position (`0x3620`) with 'You awaken on\n the shores of\n a fo[reign land]'. Has a return branch too: if called while `byte_114BC == 0FFh` (i.e. already on Ambrosia, which this function itself sets before returning), it instead prints '\n\n\n\n\n All is Dark!\n\n', reloads `SOSARIA.ULT`, restores the saved overworld position, and prints 'You made it!\n' -- falling into this second whirlpool on Ambrosia sends you back to Sosaria instead. This also confirms `AMBROSIA.ULT`'s role directly from code, resolving part of the open `AMBROSIA.ULT`-vs-`FAWN.ULT`/`EXODUS.ULT` question in the roadmap.
+
+[dry] nothing changed. Set DRY_RUN = False to apply.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_renames_exodus.py']
+[*] reading apply_renames_exodus.py
+[*] executing apply_renames_exodus.py
+[*] captured stdout from target script:
+----- begin target script output -----
+124C4: already 'entryFromBootup' -- skipping
+14F3B: already 'writeString' -- skipping
+14F51: already 'writeStringPreserveCx' -- skipping
+14F57: already 'swapCursorPos' -- skipping
+14F5C: already 'writeCharacter' -- skipping
+14F90: already 'drawCharGlyph' -- skipping
+1504D: already 'plotPixel2bpp' -- skipping
+15072: already 'drawTileGrid' -- skipping
+150D3: already 'clearFramebuffer' -- skipping
+150FD: already 'readLine' -- skipping
+1514B: already 'stepTimeSeededPrng' -- skipping
+15184: already 'swapAnimTableRows' -- skipping
+151AA: already 'updateLogoAnimationA' -- skipping
+151F9: already 'updateLogoAnimationB' -- skipping
+15271: already 'updateLogoAnimationC' -- skipping
+152B2: already 'updateLogoAnimationD' -- skipping
+15311: already 'runIdleAnimationTick' -- skipping
+15334: already 'pollKeypressAndAnimate' -- skipping
+15347: already 'getKeypressAndWaitRaw' -- skipping
+153A2: already 'printHexWord' -- skipping
+153AD: already 'printHexByte' -- skipping
+153C6: already 'printHexNibble' -- skipping
+153D8: already 'accumulateInputDigit' -- skipping
+15462: already 'getMenuChoice' -- skipping
+154D9: already 'promptForNumberEntry' -- skipping
+1552A: already 'saveFile' -- skipping
+1557A: already 'loadFile' -- skipping
+155CD: already 'openFileWithRetry' -- skipping
+15608: already 'printStringAt' -- skipping
+15611: already 'adjustAnimSpeed' -- skipping
+15634: already 'drawLogoTileGrid' -- skipping
+1564F: already 'computeAnimTableByte' -- skipping
+15674: already 'updateWindDisplay' -- skipping
+156D9: already 'playSoundEffect' -- skipping
+156C0: already '_soundEnabled' -- skipping
+156C1: already 'SOUND_EFFECT_TABLE' -- skipping
+156F9: already 'playToneFF' -- skipping
+1571B: already 'playErrorBeep' -- skipping
+1573D: already 'playToneFD' -- skipping
+15796: already 'playToneFC' -- skipping
+157BF: already 'playToneFB' -- skipping
+157DA: already 'playToneFA' -- skipping
+157F8: already 'playToneF9' -- skipping
+15802: already 'playToneF8' -- skipping
+15828: already 'playToneF7' -- skipping
+15832: already 'playToneF6' -- skipping
+1585E: already 'playToneHelper' -- skipping
+1588E: already 'playToneF5' -- skipping
+12AAD: already 'aCalmWind' -- skipping
+12ABA: already 'aNorthWind' -- skipping
+12AC7: already 'aSouthWind' -- skipping
+12AD4: already 'aEastWind' -- skipping
+12AE1: already 'aWestWind' -- skipping
+1566A: already 'WIND_DIRECTION_TABLE' -- skipping
+123A5: already 'updateMonsterAI' -- skipping
+128DF: already 'getMapTileAt' -- skipping
+17AEA: already 'readDirectionKeypress' -- skipping
+115CC: already '_partyPosition' -- skipping
+184E1: already '_currentCombatant' -- skipping
+184E2: already '_conflictMonsterClass' -- skipping
+115D0: already '_negateTimeDuration' -- skipping
+188AA: already 'beginCombatEncounter' -- skipping
+18AC4: already 'lookupWeaponGlyph' -- skipping
+18AE6: already 'printCombatReactionMessage' -- skipping
+18B52: already 'combatTurnLoop' -- skipping
+18BD5: already 'readCombatCommandKey' -- skipping
+18BF8: already 'COMBAT_COMMAND_TABLE' -- skipping
+18BFC: already 'combatAdvanceTurn' -- skipping
+18C3C: already 'combatHandleMovement' -- skipping
+18CF1: already 'combatCmdReady' -- skipping
+18D0B: already 'combatCmdZtats' -- skipping
+18D38: already 'combatCmdCastSpell' -- skipping
+18D57: already 'combatCmdNegateTime' -- skipping
+18D83: already 'combatCmdPass' -- skipping
+18D8D: already 'combatCmdInvalid' -- skipping
+18D9F: already 'combatCmdAttack' -- skipping
+126A9: already 'printGameText' -- skipping
+15D16: already 'readSpellLetterKey' -- skipping
+15D2B: already 'healHitPoints' -- skipping
+15D4B: already 'addExperienceClamped' -- skipping
+15D67: already 'addGoldClamped' -- skipping
+15D83: already 'castSpell' -- skipping
+1594B: already 'WIZARD_SPELL_TABLE' -- skipping
+1596B: already 'CLERIC_SPELL_TABLE' -- skipping
+16C14: already 'isCharacterAlive' -- skipping
+16C29: already 'checkPartyWipedOut' -- skipping
+16CC3: already 'drawPartyStatusBar' -- skipping
+16FDF: already 'processPartyTurnEffects' -- skipping
+171ED: already 'invertCharacterCell' -- skipping
+17136: already 'regenerateMagicPoint' -- skipping
+114BA: already '_currentTransport' -- skipping
+11887: already 'OVERWORLD_COMMAND_KEYS' -- skipping
+1190B: already 'OVERWORLD_COMMAND_TABLE' -- skipping
+11B7A: already 'mainGameLoop' -- skipping
+11BD5: already 'mainLoopCommandDone' -- skipping
+11C7D: already 'cmdMoveNorth' -- skipping
+11C9E: already 'cmdMoveSouth' -- skipping
+11CBF: already 'cmdMoveEast' -- skipping
+11CE0: already 'cmdMoveWest' -- skipping
+11C77: already 'cmdPass' -- skipping
+11D01: already 'cmdBoard' -- skipping
+11D69: already 'cmdEnter' -- skipping
+116E1: already 'LOCATION_TILE_TABLE' -- skipping
+1259D: '_locationType' -> '_locationTypeTable'
+    MEDIUM CONFIDENCE: byte, indexed by cmdEnter's LOCATION_TILE_TABLE match, holding the location kind at that position (5=Dungeon, 6=Towne, 7=Castle -- other values not enumerated this pass). Named as a scalar-looking single access, but given LOCATION_TILE_TABLE's 19 entries this may actually be a 19-byte PARALLEL ARRAY rather than a single byte -- not fully confirmed, worth double-checking (compare its access pattern against LOCATION_TILE_TABLE's index, `bx`, rather than a fixed address) before trusting the current scalar treatment.
+114C2: already '_savedOverworldPosition' -- skipping
+18314: already 'initDungeonState' -- skipping
+18327: already 'dungeonMainLoop' -- skipping
+1774A: already 'DUNGEON_COMMAND_TABLE' -- skipping
+158CC: already '_facingDirection' -- skipping
+115CF: already '_dungeonLevel' -- skipping
+176F0: already '_dungeonFacingDeltaX' -- skipping
+176F4: already '_dungeonFacingDeltaY' -- skipping
+183F7: already 'cmdKlimb' -- skipping
+1841C: already 'cmdDescend' -- skipping
+18438: already 'cmdTurnRight' -- skipping
+18455: already 'cmdTurnLeft' -- skipping
+18472: already 'cmdDisabledInDungeon' -- skipping
+1847D: already 'cmdMoveForward' -- skipping
+184A9: already 'cmdMoveBackward' -- skipping
+1778C: already 'DUNGEON_COMMAND_LABELS' -- skipping
+17708: already 'DUNGEON_COMMAND_KEYS' -- skipping
+15CC3: already 'cmdDisabledOnSurface' -- skipping
+15CC9: already 'cmdIgniteTorch' -- skipping
+11E9B: already 'cmdExchange' -- skipping
+11EFD: already 'cmdPeer' -- skipping
+11F25: already 'cmdQuit' -- skipping
+11F53: already 'cmdSteal' -- skipping
+11FD6: already 'cmdUnlock' -- skipping
+1888B: already 'cmdAttack' -- skipping
+15BCF: already 'cmdFire' -- skipping
+18190: already 'cmdGet' -- skipping
+11E7A: already 'cmdLook' -- skipping
+15C73: already 'cmdJoinGold' -- skipping
+15CF8: already 'cmdNegateTime' -- skipping
+17E33: already 'cmdReady' -- skipping
+17FC6: already 'cmdTransact' -- skipping
+174D5: already 'cmdOtherCommand' -- skipping
+11D4E: already 'cmdCastSpell' -- skipping
+12018: already 'cmdToggleSound' -- skipping
+12035: already 'cmdExitVehicle' -- skipping
+12228: already 'canMoveToTile' -- skipping
+12068: already 'cmdZtats' -- skipping
+17458: already 'cmdYell' -- skipping
+17EE4: already 'cmdWear' -- skipping
+11E55: already 'cmdHandEquipment' -- skipping
+1590B: already 'SPELL_NAME_TABLE' -- skipping
+15F9F: already 'spellRespond' -- skipping
+15FD4: already 'spellMittar' -- skipping
+15FE3: already 'spellLorum' -- skipping
+15FEE: already 'spellDorAcron' -- skipping
+1600C: already 'spellSurAcron' -- skipping
+1602F: already 'spellFulgar' -- skipping
+16034: already 'spellDagAcron' -- skipping
+1606A: already 'spellMentar' -- skipping
+1608A: already 'spellDagLorum' -- skipping
+16095: already 'spellFalDivi' -- skipping
+160A5: already 'spellNoxum' -- skipping
+160BA: already 'spellDecorp' -- skipping
+160BF: already 'spellAltair' -- skipping
+160CA: already 'spellDagMentar' -- skipping
+160FA: already 'spellNecorp' -- skipping
+1613E: already 'spellZxkuqyb' -- skipping
+16153: already 'spellPontori' -- skipping
+16188: already 'spellApparUnem' -- skipping
+161DC: already 'spellSanctu' -- skipping
+161F6: already 'spellLibRec' -- skipping
+16209: already 'spellAlcort' -- skipping
+1623C: already 'spellSequitu' -- skipping
+1624F: already 'spellSanctuMani' -- skipping
+16269: already 'spellVieda' -- skipping
+16288: already 'spellSurmandum' -- skipping
+162C4: already 'spellAnjuSermani' -- skipping
+18E46: already 'findCombatantAtPosition' -- skipping
+18E7A: already 'fireProjectileAcrossArena' -- skipping
+18F5A: already 'applyCombatDamage' -- skipping
+15EAA: already 'applyRandomGroupDamage' -- skipping
+18605: already 'MONSTER_HP_TABLE' -- skipping
+18615: already 'MONSTER_EXP_TABLE' -- skipping
+1598B: already 'FACING_DIRECTION_NAME_TABLE' -- skipping
+15993: already 'SHRINE_ATTRIBUTE_NAME_TABLE' -- skipping
+162FD: already 'drawDungeonStatusBar' -- skipping
+16366: already 'enterShrine' -- skipping
+15B28: already 'isSpecialEncounterLocation' -- skipping
+1633B: already 'computeStepTowardParty' -- skipping
+1232F: already 'monsterBreathAttack' -- skipping
+182C6: already 'damagePartyAll' -- skipping
+16BC9: already 'damageCharacterHP' -- skipping
+12097: already 'savePartyFile' -- skipping
+1207D: already 'saveSosariaAndParty' -- skipping
+16B91: already 'autoSaveGameState' -- skipping
+17233: already 'isShipMovementBlockedByWind' -- skipping
+17254: already 'checkTerrainMovementBlocked' -- skipping
+17F96: already 'findMonsterAtPosition' -- skipping
+128F2: already 'getDungeonTileAt' -- skipping
+1A561: already 'promptYesNo' -- skipping
+1A587: already 'deductGoldIfAffordable' -- skipping
+1A692: already 'showTempleMenu' -- skipping
+1A6C0: already 'TEMPLE_COMMAND_TABLE' -- skipping
+1A6D4: already 'templeCure' -- skipping
+1A761: already 'templeHeal' -- skipping
+1A7B6: already 'templeResurrect' -- skipping
+1A833: already 'templeRecall' -- skipping
+1259D: '_locationTypeTable' -> '_locationType'
+    RENAMED from the placeholder '_locationTypeTable' -- confirmed 2026-09-14 to be a plain SCALAR byte (`db 0`, never accessed with an index anywhere in the binary), not the 19-entry parallel array (alongside LOCATION_TILE_TABLE) that name implied and that an earlier note flagged as needing confirmation. Clean reads: `cmp _locationTypeTable,5/6/7` (sub_17B54) and `mov al,_locationTypeTable; cmp al,9` (beginCombatEncounter) match a simple 'current location type' value. One write site (sub_17B54, part of a self-modifying-code setup block that reads opcode bytes from several `loc_` addresses as data) stores what looks like a code byte here rather than a location type -- not fully explained, flagged rather than papered over; may indicate this address doubles as scratch storage in that one code path.
+16C76: already 'selectPlayer' -- skipping
+17176: already 'invertScreenRegion' -- skipping
+170E4: already 'applyHungerTick' -- skipping
+17149: already 'computeMaxMagicPointsFromAttribute' -- skipping
+1740A: already 'uppercaseBuffer' -- skipping
+17423: already 'matchKeywordAtDelimiter' -- skipping
+16C53: already 'flushInputBuffer' -- skipping
+16458: already 'exitToSosaria' -- skipping
+16FB1: already 'waitForContinueOrCancel' -- skipping
+16DC1: already 'showZtats' -- skipping
+16D81: already 'setCursorForPartyRow' -- skipping
+17E02: already 'incrementMoveCounter' -- skipping
+17D74: already 'tryBcdAddClamped' -- skipping
+18028: already 'TOWN_BUILDING_TABLE' -- skipping
+1A5AC: already 'showTavernMenu' -- skipping
+1A630: already 'showGrocerMenu' -- skipping
+1A8A5: already 'showWeaponsShopMenu' -- skipping
+1AA25: already 'showArmourShopMenu' -- skipping
+1AB93: already 'showGuildMenu' -- skipping
+1ACFC: already 'showOracleMenu' -- skipping
+1AD70: already 'showStableMenu' -- skipping
+17D1A: already 'promptForQuantity' -- skipping
+1A46F: already 'printMoveCount' -- skipping
+1A491: already 'xorScreenRegionWithPattern' -- skipping
+1A4B9: already 'victorySequence' -- skipping
+17607: already 'obtainCard' -- skipping
+1764A: already 'attemptExodusSequence' -- skipping
+17EFA: already 'wearArmour' -- skipping
+16BFA: already 'printNameByIndex' -- skipping
+17E48: already 'readyWeapon' -- skipping
+18C96: already 'checkMonsterTerrainHazard' -- skipping
+126F4: already 'scrollMessageWindow' -- skipping
+128C6: already 'clearMapViewport' -- skipping
+1583C: already 'playSpeakerNoise' -- skipping
+16D58: already 'drawPartySlotNumbers' -- skipping
+171C1: already 'invertFullScreen' -- skipping
+127CD: already 'drawMapViewport' -- skipping
+15B51: already 'teleportPartyWithFanfare' -- skipping
+1A9E8: already 'listWeaponsShopInventory' -- skipping
+1AB68: already 'listArmourShopInventory' -- skipping
+15B85: already 'rollTrapEvasionChance' -- skipping
+182AA: already 'checkTrapEvasion' -- skipping
+15E89: already 'playSpellCastFanfare' -- skipping
+15F7B: already 'teleportToRandomDungeonFloor' -- skipping
+19360: already 'attemptPoisonAttack' -- skipping
+193A2: already 'attemptStealAttack' -- skipping
+192AF: already 'applyDungeonMonsterDamage' -- skipping
+19244: already 'attemptSpecialMonsterAttack' -- skipping
+190FD: already 'fireDungeonProjectileAtParty' -- skipping
+19215: already 'moveDungeonMonsterSprite' -- skipping
+18FEB: already 'canDungeonMonsterMoveToTile' -- skipping
+19020: already 'moveDungeonMonsterTowardParty' -- skipping
+180D9: already 'generateChestLoot' -- skipping
+120AE: already 'updateWhirlpoolPosition' -- skipping
+12716: already 'drawScreenBorder' -- skipping
+12675: already 'plotMapOverviewPixel' -- skipping
+1259E: already 'drawPeerMapOverview' -- skipping
+12909: already 'drawPeerDungeonOverview' -- skipping
+122A5: already 'spawnRandomOverworldMonster' -- skipping
+17347: 'sub_17347' -> 'updateAmbrosiaWhirlpoolPosition'
+    A SEPARATE animated map feature from updateWhirlpoolPosition's one (different state, `word_11320` vs `word_11324`, different movement algorithm -- a random walk with momentum via `byte_11322`/`byte_11323` deltas, not two independent modular counters). Rolls a chance each turn to take a step, checks the destination tile is open water (`0` or `,`/0x2Ch) before committing the move (restoring the old tile, marking the new one), and calls teleportToAmbrosia (below) directly if the new position lands exactly on `_partyPosition`. This is a second, specific whirlpool -- Ultima III apparently has more than one whirlpool-like feature on the map, and only this particular one leads to Ambrosia.
+12168: 'sub_12168' -> 'teleportToAmbrosia'
+    THE secret continent transition. Prints '\nA huge swirling\n --WhirlPool--\n eng[ulfs]...' and '...As the water\n enters your\nlungs...into Darkness!', saves the current overworld position (`_savedOverworldPosition`), sets a new random-ish state, saves the game, loads `AMBROSIA.ULT` into the `start` buffer (replacing the loaded Sosaria map), and drops the party at a fixed position (`0x3620`) with 'You awaken on\n the shores of\n a fo[reign land]'. Has a return branch too: if called while `byte_114BC == 0FFh` (i.e. already on Ambrosia, which this function itself sets before returning), it instead prints '\n\n\n\n\n All is Dark!\n\n', reloads `SOSARIA.ULT`, restores the saved overworld position, and prints 'You made it!\n' -- falling into this second whirlpool on Ambrosia sends you back to Sosaria instead. This also confirms `AMBROSIA.ULT`'s role directly from code, resolving part of the open `AMBROSIA.ULT`-vs-`FAWN.ULT`/`EXODUS.ULT` question in the roadmap.
+
+Done. Re-export the .asm/.idc and check the new names took, then update docs/roadmap.md's checklist.
+----- end target script output -----
+[*] finished executing apply_renames_exodus.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14584
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
+
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 144 total, 142 named, 2 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
