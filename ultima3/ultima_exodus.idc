@@ -1851,6 +1851,7 @@ static Bytes_0(void) {
 	set_name	(0X16BC9,	"damageCharacterHP");
 	create_insn	(0X16BF9);
 	create_insn	(0X16BFA);
+	set_name	(0X16BFA,	"printNameByIndex");
 	create_insn	(x=0X16C07);
 	op_hex		(x,	1);
 	create_insn	(0X16C14);
@@ -2547,6 +2548,7 @@ static Bytes_0(void) {
 	set_name	(0X17EE4,	"cmdWear");
 	create_insn	(0X17EF7);
 	create_insn	(0X17EFA);
+	set_name	(0X17EFA,	"wearArmour");
 	create_insn	(x=0X17F02);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
