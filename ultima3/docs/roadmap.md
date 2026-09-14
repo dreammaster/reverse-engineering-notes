@@ -22,7 +22,7 @@ across sessions, unlike a one-off todo list.
   re-verified via `identify.py`, 0 failures in both). The `apply_structs_*`
   scripts haven't had this decision made yet; treat as dry-run-first.
 
-## `ULTIMA.COM` (`ultima.idb`) — function-naming sweep: COMPLETE (60/60, 2026-09-14)
+## `ULTIMA.COM` (`ultima.idb`) — function-naming sweep: COMPLETE (61/61, 2026-09-14)
 
 Every function is named — see
 [overview.md](overview.md#session-2026-09-13-full-function-naming-sweep-5454-named)
@@ -63,23 +63,60 @@ for the full findings log. Remaining loose ends:
     there. Same situation: real code, unused by the title screen.
       `ultima.idb`: 60/60 functions named, 0 `sub_XXXXX` remaining
       (confirmed via `identify.py`).
-- [ ] A raw `INT 13h` disk-sector-read routine (~`0x1878C`, reads track
-      9 into segment `0xC000` with a retry loop) — no confirmed caller,
-      and (unlike the two above) **no matching copy found in
-      `ultima_bootup.idb` either** on a quick read-through, so this one
-      might genuinely be `ULTIMA.COM`-specific. Given the "Wrong
-      Diskette!" prompt theme elsewhere, still plausibly a **copy-
-      protection check** (a non-standard/"weak" sector only present on
-      the master diskette). Worth checking `EXODUS.BIN` once that's
-      disassembled before concluding it's dead code.
-  - Also unresolved: a small helper right before `drawTileGrid`
-      (~`0x18780`) that swaps 8 words between two rows via a
-      `ds:86C9h`-relative address, purpose/caller not identified.
-- [ ] `checkDebugModeFlag`, `adjustAnimSpeed`, `computeAnimTableByte`,
-      and the 6 `drawTitleBoxN` wrappers' exact visual roles are all
-      low-confidence/generic names (see their `note` fields in
-      `apply_renames_ultima.py`) — revisit once the game can actually be
-      run under an emulator for visual confirmation.
+- [x] **RESOLVED 2026-09-14**: the raw `INT 13h` disk-sector-read
+      routine (was guessed at `~0x1878C`; real address `0x18793` —
+      that guess landed inside `drawCharGlyph` instead, another stale
+      address from before this session's own edits). Found for real by
+      scanning for the raw `CD 13` opcode bytes directly rather than
+      trusting a remembered address. Reads track 9, head 0, **sector
+      16** (drive from `AH=19h`/`INT 21h`, `AH=19h` "get default
+      drive"), into segment `0xC000`, with up to 4 retries, returning
+      0=success/-1=fail in AL. Sector 16 doesn't exist on a standard
+      9-sectors-per-track floppy — consistent with a **copy-protection
+      "weak sector" check**, matching the "Wrong Diskette!" theme
+      elsewhere. Named `checkDiskCopyProtection` and given a real
+      `ida_funcs.add_func()` boundary (`0x18793`-`0x187E3`, 80 bytes,
+      confirmed byte-for-byte).
+  - **Checked all three binaries, as this item asked**: byte-for-byte
+      identical copies exist in `ultima.idb` (`0x18793`) *and*
+      `ultima_bootup.idb` (`0x144B3`, also named+defined this session)
+      — contradicting the earlier "no matching copy in
+      `ultima_bootup.idb`" note, which was based on an incomplete
+      read-through. `ultima_exodus.idb` has a structurally-different
+      assembly of the same logic at `0x15003`, but it's even more
+      clearly dead: it has **no `retn` of its own** and falls straight
+      through into that IDB's own `plotPixel2bpp` — not left
+      `add_func`'d there, since forcing a function boundary on code
+      that doesn't even return properly would be exactly the kind of
+      guess this project has learned to avoid.
+  - **Zero callers found for this routine in any of the three
+      binaries** (confirmed via exhaustive xref search, not just "none
+      spotted") — it's real, shared, copy-protection-shaped code that
+      the shipped product never actually invokes anywhere.
+  - The "small helper right before `drawTileGrid`" from the same note
+      turned out to be a **third already-resolved mystery**: it's not
+      a mysterious word-swap, it's `plotPixel2bpp` itself (already
+      named and actively used — 5 callers in `drawWindowBorder` in
+      `ultima_bootup.idb`, 9 in `drawScreenBorder` in
+      `ultima_exodus.idb`). `ultima.idb` happens to have a second,
+      *unused* orphaned copy of the same code sitting right next to
+      its own dead `checkDiskCopyProtection`, separate from its own
+      live `plotPixel2bpp` elsewhere — left undefined since naming a
+      second `plotPixel2bpp` in the same IDB adds no value.
+- [x] **RESOLVED 2026-09-14**: `checkDebugModeFlag`'s exact role,
+      confirmed from disassembly alone (no emulator needed). Its body
+      really is just `mov al, 0 / retn` (3 bytes) — a hardcoded
+      "debug mode is off" stub. Its one caller
+      (`titleScreenAndChainToBootup`) stores the result in
+      `byte_1432C`, then later does `cmp byte_1432C, 0FFh; jz $` — a
+      busy-wait-on-self loop that would spin forever **if** debug mode
+      were ever signaled (`0FFh`), gating entry into
+      `runBootFlagAnimation`. Since the flag is hardcoded to 0, that
+      wait never triggers in the shipped build; this reads as a
+      genuine, deliberately-disabled developer hook (e.g. a debugger
+      breakpoint stand-in), not a generic guess. `adjustAnimSpeed`,
+      `computeAnimTableByte`, and the 6 `drawTitleBoxN` wrappers still
+      need visual confirmation and remain open.
 - [ ] Why does `drawAnimatedPixelPath` only consume 533 of `NAME.DAT`'s
       640 bytes? See
       [file-formats.md](file-formats.md#namedat-640-bytes--a-pixel-path-animation-script-not-a-name-table).
@@ -122,7 +159,7 @@ for the full findings log. Remaining loose ends:
       routine `ULTIMA.COM`/`BOOTUP.BIN` use instead, but the "zero
       buffer" mystery itself is fully explained.
 
-## `BOOTUP.BIN` (`ultima_bootup.idb`) — function-naming sweep: COMPLETE (73/73, 2026-09-13)
+## `BOOTUP.BIN` (`ultima_bootup.idb`) — function-naming sweep: COMPLETE (74/74, 2026-09-14)
 
 Created and fully swept in the same session as the finding that
 prompted it. See

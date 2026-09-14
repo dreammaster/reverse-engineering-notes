@@ -438,3 +438,984 @@ xrefs to byte_10900:
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_int13_routine.py', 'noexport']
+[*] reading dump_int13_routine.py
+[*] executing dump_int13_routine.py
+[*] captured stdout from target script:
+----- begin target script output -----
+func: 0x18720-0x18790 name='drawCharGlyph'
+raw bytes (112):
+9c 50 53 56 06 fc 8e 06 c9 86 b4 00 d1 e0 d1 e0 d1 e0 d1 e0 8b f0 8d b4 c9 76 b7 00 8a 1e 21 62 d1 e3 d1 e3 d1 e3 d1 e3 d1 e3 d1 e3 8b c3 d1 e3 d1 e3 03 d8 b4 00 a0 20 62 d1 e0 03 d8 ad 26 89 07 ad 26 89 47 50 ad 26 89 87 a0 00 ad 26 89 87 f0 00 ad 26 89 87 00 20 ad 26 89 87 50 20 ad 26 89 87 a0 20 ad 26 89 87 f0 20 07 5e 5b 58 9d c3
+
+disasm:
+  0x18720: pushf
+  0x18721: push    ax
+  0x18722: push    bx
+  0x18723: push    si
+  0x18724: push    es
+  0x18725: cld
+  0x18726: mov     es, _cgaFramebufferSegment
+  0x1872a: mov     ah, 0
+  0x1872c: shl     ax, 1
+  0x1872e: shl     ax, 1
+  0x18730: shl     ax, 1
+  0x18732: shl     ax, 1
+  0x18734: mov     si, ax
+  0x18736: lea     si, [si+76C9h]
+  0x1873a: mov     bh, 0
+  0x1873c: mov     bl, byte ptr _textCursorPos+1
+  0x18740: shl     bx, 1
+  0x18742: shl     bx, 1
+  0x18744: shl     bx, 1
+  0x18746: shl     bx, 1
+  0x18748: shl     bx, 1
+  0x1874a: shl     bx, 1
+  0x1874c: mov     ax, bx
+  0x1874e: shl     bx, 1
+  0x18750: shl     bx, 1
+  0x18752: add     bx, ax
+  0x18754: mov     ah, 0
+  0x18756: mov     al, byte ptr _textCursorPos
+  0x18759: shl     ax, 1
+  0x1875b: add     bx, ax
+  0x1875d: lodsw
+  0x1875e: mov     es:[bx], ax
+  0x18761: lodsw
+  0x18762: mov     es:[bx+50h], ax
+  0x18766: lodsw
+  0x18767: mov     es:[bx+0A0h], ax
+  0x1876c: lodsw
+  0x1876d: mov     es:[bx+0F0h], ax
+  0x18772: lodsw
+  0x18773: mov     es:[bx+2000h], ax
+  0x18778: lodsw
+  0x18779: mov     es:[bx+2050h], ax
+  0x1877e: lodsw
+  0x1877f: mov     es:[bx+20A0h], ax
+  0x18784: lodsw
+  0x18785: mov     es:[bx+20F0h], ax
+  0x1878a: pop     es
+  0x1878b: pop     si
+  0x1878c: pop     bx
+  0x1878d: pop     ax
+  0x1878e: popf
+  0x1878f: retn
+
+code xrefs to func start:
+  0x186f1 in 'writeCharacter': call    drawCharGlyph
+  0x18ae8 in 'getKeypressAndWaitRaw': call    drawCharGlyph
+  0x18afc in 'getKeypressAndWaitRaw': call    drawCharGlyph
+----- end target script output -----
+[*] finished executing dump_int13_routine.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'find_int13_calls.py', 'noexport']
+[*] reading find_int13_calls.py
+[*] executing find_int13_calls.py
+[*] captured stdout from target script:
+----- begin target script output -----
+found 1 'CD 13' byte patterns in seg000:
+  0x187bb code=True func=None disasm=int     13h; DISK - READ SECTORS INTO MEMORY
+----- end target script output -----
+[*] finished executing find_int13_calls.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_int13_full.py', 'noexport']
+[*] reading dump_int13_full.py
+[*] executing dump_int13_full.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  0x18790: mov     al, 0
+  0x18792: retn
+  0x18793: push    cx
+  0x18794: push    dx
+  0x18795: push    ds
+  0x18796: push    es
+  0x18797: push    bp
+  0x18798: mov     bp, sp
+  0x1879a: push    di
+  0x1879b: push    si
+  0x1879c: mov     ah, 19h
+  0x1879e: int     21h; DOS - GET DEFAULT DISK NUMBER
+  0x187a0: cmp     al, 1
+  0x187a2: jbe     short loc_187A6
+  0x187a4: mov     al, 0
+  0x187a6: mov     dl, al
+  0x187a8: mov     si, 4
+  0x187ab: mov     cl, 10h
+  0x187ad: mov     ax, 201h
+  0x187b0: mov     dh, 0
+  0x187b2: mov     ch, 9
+  0x187b4: mov     bx, 0C000h
+  0x187b7: mov     es, bx
+  0x187b9: xor     bx, bx
+  0x187bb: int     13h; DISK - READ SECTORS INTO MEMORY
+  0x187bd: jb      short loc_187C8
+  0x187bf: dec     cl
+  0x187c1: jz      short loc_187D1
+  0x187c3: mov     si, 4
+  0x187c6: jmp     short loc_187AD
+  0x187c8: dec     si
+  0x187c9: jnz     short loc_187AD
+  0x187cb: mov     bx, 0FFFFh
+  0x187ce: jmp     short loc_187D4
+  0x187d0: db 90h
+  0x187d1: mov     bx, 0
+  0x187d4: pop     si
+  0x187d5: pop     di
+  0x187d6: mov     sp, bp
+  0x187d8: pop     bp
+  0x187d9: pop     es
+  0x187da: pop     ds
+  0x187db: pop     dx
+  0x187dc: pop     cx
+  0x187dd: pop     ax
+  0x187de: mov     al, bl
+  0x187e0: pop     bx
+  0x187e1: popf
+  0x187e2: retn
+  0x187e3: push    ds
+  0x187e4: mov     ds, word ptr ss:86C9h
+  0x187e9: mov     [bx], ax
+  0x187eb: mov     [bx+50h], ax
+  0x187ee: mov     [bx+0A0h], ax
+  0x187f2: mov     [bx+0F0h], ax
+  0x187f6: mov     [bx+2000h], ax
+  0x187fa: mov     [bx+2050h], ax
+  0x187fe: mov     [bx+20A0h], ax
+  0x18802: mov     [bx+20F0h], ax
+  0x18806: pop     ds
+  0x18807: retn
+  0x18808: pushf
+  0x18809: push    ax
+  0x1880a: push    bx
+  0x1880b: push    cx
+  0x1880c: push    dx
+  0x1880d: push    si
+  0x1880e: push    di
+  0x1880f: push    es
+  0x18810: cld
+  0x18811: mov     es, _cgaFramebufferSegment
+  0x18815: mov     dh, al
+  0x18817: shl     dh, 1
+  0x18819: shl     dh, 1
+  0x1881b: mov     dl, al
+  0x1881d: mov     si, [bx]
+  0x1881f: inc     bx
+  0x18820: and     si, 0FFh
+  0x18824: shl     si, 1
+  0x18826: shl     si, 1
+  0x18828: shl     si, 1
+  0x1882a: shl     si, 1
+  0x1882c: shl     si, 1
+  0x1882e: shl     si, 1
+  0x18830: add     si, bp
+  0x18832: mov     cx, 8
+  0x18835: movsw
+  0x18836: movsw
+  0x18837: add     di, 4Ch ; 'L'
+  0x1883a: loop    loc_18835
+  0x1883c: add     di, 1D80h
+  0x18840: mov     cx, 8
+  0x18843: movsw
+  0x18844: movsw
+  0x18845: add     di, 4Ch ; 'L'
+  0x18848: loop    loc_18843
+  0x1884a: sub     di, 227Ch
+  0x1884e: dec     dl
+
+raw bytes 0x18790-0x18850:
+b0 00 c3 51 52 1e 06 55 8b ec 57 56 b4 19 cd 21 3c 01 76 02 b0 00 8a d0 be 04 00 b1 10 b8 01 02 b6 00 b5 09 bb 00 c0 8e c3 33 db cd 13 72 09 fe c9 74 0e be 04 00 eb e5 4e 75 e2 bb ff ff eb 04 90 bb 00 00 5e 5f 8b e5 5d 07 1f 5a 59 58 8a c3 5b 9d c3 1e 36 8e 1e c9 86 89 07 89 47 50 89 87 a0 00 89 87 f0 00 89 87 00 20 89 87 50 20 89 87 a0 20 89 87 f0 20 1f c3 9c 50 53 51 52 56 57 06 fc 8e 06 c9 86 8a f0 d0 e6 d0 e6 8a d0 8b 37 43 81 e6 ff 00 d1 e6 d1 e6 d1 e6 d1 e6 d1 e6 d1 e6 03 f5 b9 08 00 a5 a5 83 c7 4c e2 f9 81 c7 80 1d b9 08 00 a5 a5 83 c7 4c e2 f9 81 ef 7c 22 fe ca
+----- end target script output -----
+[*] finished executing dump_int13_full.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'find_int13_callers.py', 'noexport']
+[*] reading find_int13_callers.py
+[*] executing find_int13_callers.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== callers of 0x18790 ===
+  0x15d8d in 'titleScreenAndChainToBootup': call    checkDebugModeFlag
+
+=== callers of 0x18793 ===
+
+=== callers of 0x187e3 ===
+
+=== callers of 0x18808 ===
+  0x18ddd in 'drawLogoTileGrid': call    drawTileGrid
+----- end target script output -----
+[*] finished executing find_int13_callers.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'find_int13_other_idbs.py', 'noexport']
+[*] reading find_int13_other_idbs.py
+[*] executing find_int13_other_idbs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+segment seg000 (0x10100-0x14d74): 1 'CD 13' hits
+  0x144db func=None int     13h; DISK - READ SECTORS INTO MEMORY
+----- end target script output -----
+[*] finished executing find_int13_other_idbs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'find_int13_other_idbs.py', 'noexport']
+[*] reading find_int13_other_idbs.py
+[*] executing find_int13_other_idbs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+segment seg000 (0x10100-0x1adca): 1 'CD 13' hits
+  0x15029 func=None int     13h; DISK - READ SECTORS INTO MEMORY
+----- end target script output -----
+[*] finished executing find_int13_other_idbs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_int13_callers_other_idbs.py', 'noexport']
+[*] reading check_int13_callers_other_idbs.py
+[*] executing check_int13_callers_other_idbs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+idb=C:\dev\ultima3\ultima_bootup.idb int13_ea=0x144db
+guessed func start: 0x144b3
+disasm from guessed start:
+  0x144a3: mov     es:[bx+20A0h], ax
+  0x144a4: lodsw
+  0x144a5: mov     es:[bx+20F0h], ax
+  0x144aa: pop     es
+  0x144ab: pop     si
+  0x144ac: pop     bx
+  0x144ad: pop     ax
+  0x144ae: popf
+  0x144af: retn
+  0x144b0: mov     al, 0
+  0x144b2: retn
+  0x144b3: push    cx
+  0x144b4: push    dx
+  0x144b5: push    ds
+  0x144b6: push    es
+  0x144b7: push    bp
+  0x144b8: mov     bp, sp
+  0x144ba: push    di
+  0x144bb: push    si
+  0x144bc: mov     ah, 19h
+  0x144be: int     21h; DOS - GET DEFAULT DISK NUMBER
+  0x144c0: cmp     al, 1
+  0x144c2: jbe     short loc_144C6
+  0x144c4: mov     al, 0
+  0x144c6: mov     dl, al
+  0x144c8: mov     si, 4
+  0x144cb: mov     cl, 10h
+  0x144cd: mov     ax, 201h
+  0x144d0: mov     dh, 0
+  0x144d2: mov     ch, 9
+  0x144d4: mov     bx, 0C000h
+  0x144d7: mov     es, bx
+  0x144d9: xor     bx, bx
+  0x144db: int     13h; DISK - READ SECTORS INTO MEMORY <-- int13h
+  0x144dd: jb      short loc_144E8
+  0x144df: dec     cl
+  0x144e1: jz      short loc_144F1
+  0x144e3: mov     si, 4
+  0x144e6: jmp     short loc_144CD
+  0x144e8: dec     si
+  0x144e9: jnz     short loc_144CD
+  0x144eb: mov     bx, 0FFFFh
+  0x144ee: jmp     short loc_144F4
+  0x144f0: db 90h
+  0x144f1: mov     bx, 0
+  0x144f4: pop     si
+  0x144f5: pop     di
+  0x144f6: mov     sp, bp
+  0x144f8: pop     bp
+  0x144f9: pop     es
+  0x144fa: pop     ds
+  0x144fb: pop     dx
+  0x144fc: pop     cx
+  0x144fd: pop     ax
+  0x144fe: mov     al, bl
+  0x14500: pop     bx
+  0x14501: popf
+  0x14502: retn
+  0x14503: push    ds
+  0x14504: mov     ds, word ptr ss:43E9h
+  0x14509: mov     [bx], ax
+  0x1450b: mov     [bx+50h], ax
+  0x1450e: mov     [bx+0A0h], ax
+  0x14512: mov     [bx+0F0h], ax
+  0x14516: mov     [bx+2000h], ax
+  0x1451a: mov     [bx+2050h], ax
+  0x1451e: mov     [bx+20A0h], ax
+  0x14522: mov     [bx+20F0h], ax
+  0x14526: pop     ds
+  0x14527: retn
+  0x14528: pushf
+  0x14529: push    ax
+  0x1452a: push    bx
+  0x1452b: push    cx
+  0x1452c: push    dx
+  0x1452d: push    si
+  0x1452e: push    di
+  0x1452f: push    es
+  0x14530: cld
+  0x14531: mov     es, word_143E9
+  0x14535: mov     dh, al
+  0x14537: shl     dh, 1
+  0x14539: shl     dh, 1
+
+code xrefs to guessed start 0x144b3:
+data xrefs to guessed start 0x144b3:
+----- end target script output -----
+[*] finished executing check_int13_callers_other_idbs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_int13_callers_other_idbs.py', 'noexport']
+[*] reading check_int13_callers_other_idbs.py
+[*] executing check_int13_callers_other_idbs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+idb=C:\dev\ultima3\ultima_exodus.idb int13_ea=0x15029
+guessed func start: 0x15001
+disasm from guessed start:
+  0x14ff1: mov     es:[bx+20A0h], ax
+  0x14ff4: lodsw
+  0x14ff5: mov     es:[bx+20F0h], ax
+  0x14ffa: pop     es
+  0x14ffb: pop     si
+  0x14ffc: pop     bx
+  0x14ffd: pop     ax
+  0x14ffe: popf
+  0x14fff: retn
+  0x15000: mov     al, 0FFh
+  0x15002: retn
+  0x15003: push    ax
+  0x15004: push    cx
+  0x15005: push    dx
+  0x15006: push    si
+  0x15007: push    di
+  0x15008: push    bp
+  0x15009: push    es
+  0x1500a: mov     ah, 19h
+  0x1500c: int     21h; DOS - GET DEFAULT DISK NUMBER
+  0x1500e: cmp     al, 1
+  0x15010: jbe     short loc_15014
+  0x15012: mov     al, 0
+  0x15014: mov     dl, al
+  0x15016: mov     si, 4
+  0x15019: mov     cl, 10h
+  0x1501b: mov     ax, 201h
+  0x1501e: mov     dh, 0
+  0x15020: mov     ch, 9
+  0x15022: mov     bx, 0C000h
+  0x15025: mov     es, bx
+  0x15027: xor     bx, bx
+  0x15029: int     13h; DISK - READ SECTORS INTO MEMORY <-- int13h
+  0x1502b: jb      short loc_15036
+  0x1502d: dec     cl
+  0x1502f: jz      short loc_1503F
+  0x15031: mov     si, 4
+  0x15034: jmp     short loc_1501B
+  0x15036: dec     si
+  0x15037: jz      short loc_1503B
+  0x15039: jmp     short loc_1501B
+  0x1503b: mov     bl, 1
+  0x1503d: jmp     short loc_15041
+  0x1503f: mov     bl, 0
+  0x15041: pop     es
+  0x15042: pop     bp
+  0x15043: pop     di
+  0x15044: pop     si
+  0x15045: pop     dx
+  0x15046: pop     cx
+  0x15047: pop     ax
+  0x15048: mov     al, bl
+  0x1504a: pop     bx
+  0x1504b: pop     ds
+  0x1504c: popf
+  0x1504d: push    ds
+  0x1504e: mov     ds, word ptr ss:4F39h
+  0x15053: mov     [bx], ax
+  0x15055: mov     [bx+50h], ax
+  0x15058: mov     [bx+0A0h], ax
+  0x1505c: mov     [bx+0F0h], ax
+  0x15060: mov     [bx+2000h], ax
+  0x15064: mov     [bx+2050h], ax
+  0x15068: mov     [bx+20A0h], ax
+  0x1506c: mov     [bx+20F0h], ax
+  0x15070: pop     ds
+  0x15071: retn
+  0x15072: pushf
+  0x15073: push    ax
+  0x15074: push    bx
+  0x15075: push    cx
+  0x15076: push    dx
+  0x15077: push    si
+  0x15078: push    di
+  0x15079: push    es
+  0x1507a: cld
+  0x1507b: mov     es, word_14F39
+  0x1507f: mov     dh, al
+  0x15081: shl     dh, 1
+  0x15083: shl     dh, 1
+  0x15085: mov     dl, al
+  0x15087: mov     si, [bx]
+
+code xrefs to guessed start 0x15001:
+data xrefs to guessed start 0x15001:
+----- end target script output -----
+[*] finished executing check_int13_callers_other_idbs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_int13_group_bytes.py', 'noexport']
+[*] reading dump_int13_group_bytes.py
+[*] executing dump_int13_group_bytes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ultima.idb @ 0x18793 (125 bytes):
+51 52 1e 06 55 8b ec 57 56 b4 19 cd 21 3c 01 76 02 b0 00 8a d0 be 04 00 b1 10 b8 01 02 b6 00 b5 09 bb 00 c0 8e c3 33 db cd 13 72 09 fe c9 74 0e be 04 00 eb e5 4e 75 e2 bb ff ff eb 04 90 bb 00 00 5e 5f 8b e5 5d 07 1f 5a 59 58 8a c3 5b 9d c3 1e 36 8e 1e c9 86 89 07 89 47 50 89 87 a0 00 89 87 f0 00 89 87 00 20 89 87 50 20 89 87 a0 20 89 87 f0 20 1f c3 9c 50 53 51 52 56 57 06
+----- end target script output -----
+[*] finished executing dump_int13_group_bytes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_int13_group_bytes.py', 'noexport']
+[*] reading dump_int13_group_bytes.py
+[*] executing dump_int13_group_bytes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ultima_bootup.idb @ 0x144b3 (125 bytes):
+51 52 1e 06 55 8b ec 57 56 b4 19 cd 21 3c 01 76 02 b0 00 8a d0 be 04 00 b1 10 b8 01 02 b6 00 b5 09 bb 00 c0 8e c3 33 db cd 13 72 09 fe c9 74 0e be 04 00 eb e5 4e 75 e2 bb ff ff eb 04 90 bb 00 00 5e 5f 8b e5 5d 07 1f 5a 59 58 8a c3 5b 9d c3 1e 36 8e 1e e9 43 89 07 89 47 50 89 87 a0 00 89 87 f0 00 89 87 00 20 89 87 50 20 89 87 a0 20 89 87 f0 20 1f c3 9c 50 53 51 52 56 57 06
+----- end target script output -----
+[*] finished executing dump_int13_group_bytes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_int13_group_bytes.py', 'noexport']
+[*] reading dump_int13_group_bytes.py
+[*] executing dump_int13_group_bytes.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ultima_exodus.idb @ 0x15001 (125 bytes):
+ff c3 50 51 52 56 57 55 06 b4 19 cd 21 3c 01 76 02 b0 00 8a d0 be 04 00 b1 10 b8 01 02 b6 00 b5 09 bb 00 c0 8e c3 33 db cd 13 72 09 fe c9 74 0e be 04 00 eb e5 4e 74 02 eb e0 b3 01 eb 02 b3 00 07 5d 5f 5e 5a 59 58 8a c3 5b 1f 9d 1e 36 8e 1e 39 4f 89 07 89 47 50 89 87 a0 00 89 87 f0 00 89 87 00 20 89 87 50 20 89 87 a0 20 89 87 f0 20 1f c3 9c 50 53 51 52 56 57 06 fc 8e 06 39
+----- end target script output -----
+[*] finished executing dump_int13_group_bytes.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_debug_flag_usage.py', 'noexport']
+[*] reading check_debug_flag_usage.py
+[*] executing check_debug_flag_usage.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  0x15d60: lea     di, _scanlineAddressTable
+  0x15d61: mov     cx, 64h ; 'd'
+  0x15d64: mov     ax, 0
+  0x15d67: stosw
+  0x15d68: add     ax, 2000h
+  0x15d6b: stosw
+  0x15d6c: add     ax, 0E050h
+  0x15d6f: loop    loc_15D67
+  0x15d71: lea     bx, byte_10115
+  0x15d75: mov     cx, 4000h
+  0x15d78: lea     dx, aExodIbm; "EXOD.IBM"
+  0x15d7c: call    loadFile
+  0x15d7f: lea     bx, byte_14117
+  0x15d83: mov     cx, 215h
+  0x15d86: lea     dx, aNameDat; "NAME.DAT"
+  0x15d8a: call    loadFile
+  0x15d8d: call    checkDebugModeFlag
+  0x15d90: mov     byte_1432C, al
+  0x15d93: lea     bx, byte_1432D
+  0x15d97: mov     cx, 1700h
+  0x15d9a: lea     dx, aAnimateDat; "ANIMATE.DAT"
+  0x15d9e: call    loadFile
+  0x15da1: call    drawTitleBox1
+  0x15da4: mov     ax, 2
+  0x15da7: call    waitFrames
+  0x15daa: call    drawTitleBox4
+  0x15dad: mov     ax, 5
+  0x15db0: call    waitFrames
+  0x15db3: call    drawTitleBox5
+  0x15db6: mov     ax, 3
+  0x15db9: call    waitFrames
+  0x15dbc: mov     si, 9FFh
+  0x15dbf: call    drawAnimatedPixelPath
+  0x15dc2: mov     ax, 2
+  0x15dc5: call    waitFrames
+  0x15dc8: call    drawTitleBox6
+  0x15dcb: mov     ax, 6
+  0x15dce: call    waitFrames
+----- end target script output -----
+[*] finished executing check_debug_flag_usage.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_byte_1432c_usage.py', 'noexport']
+[*] reading check_byte_1432c_usage.py
+[*] executing check_byte_1432c_usage.py
+[*] captured stdout from target script:
+----- begin target script output -----
+byte_1432C @ 0x1432c
+  0x15d90 in 'titleScreenAndChainToBootup': mov     byte_1432C, al
+  0x15dd1 in 'titleScreenAndChainToBootup': cmp     byte_1432C, 0FFh
+----- end target script output -----
+[*] finished executing check_byte_1432c_usage.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_byte_1432c_gate.py', 'noexport']
+[*] reading check_byte_1432c_gate.py
+[*] executing check_byte_1432c_gate.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  0x15dd1: cmp     byte_1432C, 0FFh
+  0x15dd6: jz      short loc_15DD1
+  0x15dd8: call    runBootFlagAnimation
+  0x15ddb: mov     ax, 4
+  0x15dde: call    waitFrames
+  0x15de1: call    drawTitleBox2
+  0x15de4: call    pollKeypressAndAnimate
+  0x15de7: jnz     short loc_15E05
+  0x15de9: in      al, 61h; PC/XT PPI port B bits:
+  0x15deb: mov     ah, al
+  0x15ded: and     al, 0FCh
+  0x15def: mov     dh, 0FFh
+  0x15df1: mov     cx, 400h
+  0x15df4: call    stepTimeSeededPrng
+  0x15df7: dec     dl
+  0x15df9: jnz     short loc_15DF7
+  0x15dfb: out     61h, al; PC/XT PPI port B bits:
+  0x15dfd: xor     al, 2
+  0x15dff: loop    loc_15DF4
+  0x15e01: mov     al, ah
+  0x15e03: out     61h, al; PC/XT PPI port B bits:
+  0x15e05: call    drawTitleBox3
+  0x15e08: mov     ax, 5
+  0x15e0b: call    waitFrames
+  0x15e0e: call    pollKeypressAndAnimate
+  0x15e11: jz      short loc_15E18
+  0x15e13: call    getKeypressAndWaitRaw
+  0x15e16: jmp     short loc_15E0E
+  0x15e18: mov     dx, 100h
+  0x15e1b: mov     ah, 1Ah
+  0x15e1d: int     21h; DOS - SET DISK TRANSFER AREA ADDRESS
+  0x15e1f: lea     si, aBootupBin; "BOOTUP.BIN"
+  0x15e23: lea     di, ds:5Ch
+  0x15e27: mov     al, 0
+  0x15e29: mov     ah, 29h
+  0x15e2b: int     21h; DOS - PARSE FILENAME
+  0x15e2d: mov     dx, di
+  0x15e2f: mov     ah, 0Fh
+----- end target script output -----
+[*] finished executing check_byte_1432c_gate.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'dump_exodus_int13_exact.py', 'noexport']
+[*] reading dump_exodus_int13_exact.py
+[*] executing dump_exodus_int13_exact.py
+[*] captured stdout from target script:
+----- begin target script output -----
+  0x15003: push    ax
+  0x15004: push    cx
+  0x15005: push    dx
+  0x15006: push    si
+  0x15007: push    di
+  0x15008: push    bp
+  0x15009: push    es
+  0x1500a: mov     ah, 19h
+  0x1500c: int     21h; DOS - GET DEFAULT DISK NUMBER
+  0x1500e: cmp     al, 1
+  0x15010: jbe     short loc_15014
+  0x15012: mov     al, 0
+  0x15014: mov     dl, al
+  0x15016: mov     si, 4
+  0x15019: mov     cl, 10h
+  0x1501b: mov     ax, 201h
+  0x1501e: mov     dh, 0
+  0x15020: mov     ch, 9
+  0x15022: mov     bx, 0C000h
+  0x15025: mov     es, bx
+  0x15027: xor     bx, bx
+  0x15029: int     13h; DISK - READ SECTORS INTO MEMORY
+  0x1502b: jb      short loc_15036
+  0x1502d: dec     cl
+  0x1502f: jz      short loc_1503F
+  0x15031: mov     si, 4
+  0x15034: jmp     short loc_1501B
+  0x15036: dec     si
+  0x15037: jz      short loc_1503B
+  0x15039: jmp     short loc_1501B
+  0x1503b: mov     bl, 1
+  0x1503d: jmp     short loc_15041
+  0x1503f: mov     bl, 0
+  0x15041: pop     es
+  0x15042: pop     bp
+  0x15043: pop     di
+  0x15044: pop     si
+  0x15045: pop     dx
+  0x15046: pop     cx
+  0x15047: pop     ax
+  0x15048: mov     al, bl
+  0x1504a: pop     bx
+  0x1504b: pop     ds
+  0x1504c: popf
+  0x1504d: push    ds
+  0x1504e: mov     ds, word ptr ss:4F39h
+  0x15053: mov     [bx], ax
+  0x15055: mov     [bx+50h], ax
+  0x15058: mov     [bx+0A0h], ax
+  0x1505c: mov     [bx+0F0h], ax
+  0x15060: mov     [bx+2000h], ax
+  0x15064: mov     [bx+2050h], ax
+  0x15068: mov     [bx+20A0h], ax
+  0x1506c: mov     [bx+20F0h], ax
+  0x15070: pop     ds
+  0x15071: retn
+  0x15072: pushf
+  0x15073: push    ax
+  0x15074: push    bx
+  0x15075: push    cx
+  0x15076: push    dx
+  0x15077: push    si
+  0x15078: push    di
+  0x15079: push    es
+  0x1507a: cld
+  0x1507b: mov     es, word_14F39
+  0x1507f: mov     dh, al
+  0x15081: shl     dh, 1
+  0x15083: shl     dh, 1
+  0x15085: mov     dl, al
+  0x15087: mov     si, [bx]
+  0x15089: inc     bx
+  0x1508a: and     si, 0FFh
+  0x1508e: shl     si, 1
+  0x15090: shl     si, 1
+  0x15092: shl     si, 1
+  0x15094: shl     si, 1
+  0x15096: shl     si, 1
+  0x15098: shl     si, 1
+  0x1509a: add     si, bp
+  0x1509c: mov     cx, 8
+  0x1509f: movsw
+----- end target script output -----
+[*] finished executing dump_exodus_int13_exact.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_bootup_int13_callers.py', 'noexport']
+[*] reading check_bootup_int13_callers.py
+[*] executing check_bootup_int13_callers.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== callers of 0x144b3 (push    cx) ===
+
+=== callers of 0x14503 (push    ds) ===
+  0x1133d in 'drawWindowBorder': call    plotPixel2bpp
+  0x1134d in 'drawWindowBorder': call    plotPixel2bpp
+  0x1135b in 'drawWindowBorder': call    plotPixel2bpp
+  0x11369 in 'drawWindowBorder': call    plotPixel2bpp
+  0x11378 in 'drawWindowBorder': call    plotPixel2bpp
+----- end target script output -----
+[*] finished executing check_bootup_int13_callers.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_shared_runtime_names.py', 'noexport']
+[*] reading check_shared_runtime_names.py
+[*] executing check_shared_runtime_names.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== ultima.idb ===
+plotPixel2bpp (by name) @ 0x15f41
+stub @ 0x18790: get_name='checkDebugModeFlag' func='checkDebugModeFlag' bounds=0x18790-0x18793
+  disasm: mov     al, 0
+  code xrefs to here:
+    0x15d8d in 'titleScreenAndChainToBootup': call    checkDebugModeFlag
+check @ 0x18793: get_name='' func=None (orphaned)
+  disasm: push    cx
+  code xrefs to here:
+plot @ 0x187e3: get_name='' func=None (orphaned)
+  disasm: push    ds
+  code xrefs to here:
+----- end target script output -----
+[*] finished executing check_shared_runtime_names.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_shared_runtime_names.py', 'noexport']
+[*] reading check_shared_runtime_names.py
+[*] executing check_shared_runtime_names.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== ultima_bootup.idb ===
+plotPixel2bpp (by name) @ 0x14503
+stub @ 0x144b0: get_name='checkDebugModeFlag' func='checkDebugModeFlag' bounds=0x144b0-0x144b3
+  disasm: mov     al, 0
+  code xrefs to here:
+    0x11dd1 in '': call    checkDebugModeFlag
+check @ 0x144b3: get_name='' func=None (orphaned)
+  disasm: push    cx
+  code xrefs to here:
+plot @ 0x14503: get_name='plotPixel2bpp' func='plotPixel2bpp' bounds=0x14503-0x14528
+  disasm: push    ds
+  code xrefs to here:
+    0x1133d in 'drawWindowBorder': call    plotPixel2bpp
+    0x1134d in 'drawWindowBorder': call    plotPixel2bpp
+    0x1135b in 'drawWindowBorder': call    plotPixel2bpp
+    0x11369 in 'drawWindowBorder': call    plotPixel2bpp
+    0x11378 in 'drawWindowBorder': call    plotPixel2bpp
+----- end target script output -----
+[*] finished executing check_shared_runtime_names.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_shared_runtime_names.py', 'noexport']
+[*] reading check_shared_runtime_names.py
+[*] executing check_shared_runtime_names.py
+[*] captured stdout from target script:
+----- begin target script output -----
+=== ultima_exodus.idb ===
+plotPixel2bpp (by name) @ 0x1504d
+stub @ 0x15000: get_name='' func=None (orphaned)
+  disasm: mov     al, 0FFh
+  code xrefs to here:
+check @ 0x15003: get_name='' func=None (orphaned)
+  disasm: push    ax
+  code xrefs to here:
+plot @ 0x15072: get_name='drawTileGrid' func='drawTileGrid' bounds=0x15072-0x150d3
+  disasm: pushf
+  code xrefs to here:
+    0x15647 in 'drawLogoTileGrid': call    drawTileGrid
+----- end target script output -----
+[*] finished executing check_shared_runtime_names.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'check_exodus_plotpixel_callers.py', 'noexport']
+[*] reading check_exodus_plotpixel_callers.py
+[*] executing check_exodus_plotpixel_callers.py
+[*] captured stdout from target script:
+----- begin target script output -----
+plotPixel2bpp: 0x1504d-0x15072
+  caller 0x1504c in '': popf
+  caller 0x12729 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x12738 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x12747 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x12755 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x12763 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x12771 in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x1277f in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x1278d in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x1279b in 'drawScreenBorder': call    plotPixel2bpp
+  caller 0x127a9 in 'drawScreenBorder': call    plotPixel2bpp
+
+disasm 0x15040-0x15072 (end of disk-check region into plotPixel2bpp):
+  0x15040: mov     bl, 0
+  0x15041: pop     es
+  0x15042: pop     bp
+  0x15043: pop     di
+  0x15044: pop     si
+  0x15045: pop     dx
+  0x15046: pop     cx
+  0x15047: pop     ax
+  0x15048: mov     al, bl
+  0x1504a: pop     bx
+  0x1504b: pop     ds
+  0x1504c: popf
+  0x1504d: push    ds
+  0x1504e: mov     ds, word ptr ss:4F39h
+  0x15053: mov     [bx], ax
+  0x15055: mov     [bx+50h], ax
+  0x15058: mov     [bx+0A0h], ax
+  0x1505c: mov     [bx+0F0h], ax
+  0x15060: mov     [bx+2000h], ax
+  0x15064: mov     [bx+2050h], ax
+  0x15068: mov     [bx+20A0h], ax
+  0x1506c: mov     [bx+20F0h], ax
+  0x15070: pop     ds
+  0x15071: retn
+----- end target script output -----
+[*] finished executing check_exodus_plotpixel_callers.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_disk_check_funcs.py']
+[*] reading apply_disk_check_funcs.py
+[*] executing apply_disk_check_funcs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+add_func(0x18793, 0x187e3) -> True
+set_name -> True
+post-state: func 0x18793-0x187e3 name='checkDiskCopyProtection'
+----- end target script output -----
+[*] finished executing apply_disk_check_funcs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima.asm
+[*] gen_file(OFILE_ASM) returned 2878
+[*] exporting IDC to C:\dev\ultima3\ultima.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_disk_check_funcs.py']
+[*] reading apply_disk_check_funcs.py
+[*] executing apply_disk_check_funcs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+add_func(0x144b3, 0x14503) -> True
+set_name -> True
+post-state: func 0x144b3-0x14503 name='checkDiskCopyProtection'
+----- end target script output -----
+[*] finished executing apply_disk_check_funcs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\ultima3\ultima_bootup.asm
+[*] gen_file(OFILE_ASM) returned 4194
+[*] exporting IDC to C:\dev\ultima3\ultima_bootup.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\ultima3\ultima_bootup.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : ULTIMA.COM
+input file    : C:\games\ULTIMA3\ULTIMA.COM
+entry point   : 0x100 (cs=0x1000)
+input md5     : 7bea6bf20b7079b30f8ca5336b3805b2
+
+segments:
+  seg000       0x010100-0x019054  (36692 bytes)
+
+functions: 61 total, 61 named, 0 still sub_XXXXX
+
+structs (0): 
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\ultima3\ultima_bootup.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : _bootup_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_bootup_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : e85fbab19a03876bfa6f3a8a58114fd8
+
+segments:
+  seg000       0x010100-0x014d74  (19572 bytes)
+
+functions: 74 total, 74 named, 0 still sub_XXXXX
+
+structs (1): RosterEntry
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

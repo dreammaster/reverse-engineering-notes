@@ -1940,3 +1940,75 @@ its original purpose.
 With this, all three of the mechanism questions flagged at the end of
 the `EXODUS.BIN` function-naming sweep are resolved: the Exodus card
 sequence, `cmdHandEquipment`'s negative result, and now this.
+
+## The INT13h disk-check mystery solved: dead copy-protection code in all three binaries, plus checkDebugModeFlag fully confirmed
+
+Went back to a roadmap item that had a stale address (`~0x1878C`) left
+over from before this session's own `ultima.idb` edits -- that address
+now falls inside `drawCharGlyph`. Rather than guess at a new address,
+scanned the whole segment for the raw `CD 13` opcode bytes directly
+(`find_int13_calls.py`) and found exactly one hit: `0x187BB`, inside a
+completely orphaned (`func=None`) routine.
+
+The full routine (`checkDiskCopyProtection`, `0x18793`-`0x187E3`, 80
+bytes): gets the default DOS drive (`AH=19h`/`INT 21h`), then reads
+**track 9, head 0, sector 16** into segment `0xC000` via `INT 13h`,
+retrying up to 4 times, returning 0=success/-1=fail in AL. Sector 16
+simply doesn't exist on a standard 9-sectors-per-track floppy -- this
+is the classic shape of a "weak sector" copy-protection check, and it
+lines up with the "Wrong Diskette!" prompt theme already documented
+elsewhere in the game.
+
+The roadmap had asked to check `ultima_bootup.idb` and (once
+disassembled) `EXODUS.BIN` too. Did both, properly this time:
+
+- **`ultima_bootup.idb`**: a byte-for-byte identical copy exists at
+  `0x144B3` (differing only in one relocated segment-relative operand,
+  the same kind of difference seen throughout this project between
+  binaries) -- contradicting an earlier note that claimed no match
+  existed there. Also zero callers.
+- **`ultima_exodus.idb`**: a structurally different assembly of the
+  same logic exists at `0x15003` (different register save order/set),
+  but it's even more clearly vestigial: tracing its tail byte-for-byte
+  shows it has **no `retn` of its own** -- it falls straight through
+  into `plotPixel2bpp`'s own prologue. Left undefined rather than
+  forcing an `add_func` boundary onto code that doesn't even return
+  properly.
+
+**Confirmed zero callers for this routine in all three binaries** via
+exhaustive xref search (not just "none spotted this pass"). It's real,
+shared, copy-protection-shaped code that the shipped product never
+actually invokes anywhere -- genuinely dead, presumably because
+whatever protection scheme it implemented was dropped before this
+version shipped (or this copy was made from a cracked/stripped
+distribution).
+
+Defined and named it properly in `ultima.idb` (61/61 functions now)
+and `ultima_bootup.idb` (74/74) via `ida_funcs.add_func()`, matching
+the exact confirmed 80-byte boundary in both.
+
+**Bonus resolution of a second flagged mystery in the same
+investigation**: the roadmap also flagged "a small helper right before
+`drawTileGrid` that swaps 8 words between two rows via a `ds:86C9h`-
+relative address" as unidentified. Dumping it revealed it's not a
+swap at all -- it writes the *same* `ax` value to 8 interlaced CGA
+framebuffer offsets (`[bx]`, `[bx+50h]`, `[bx+0A0h]`, ... `[bx+20F0h]`).
+And it's not a mystery: it's **`plotPixel2bpp`**, already named and
+actively used elsewhere (5 callers in `drawWindowBorder` in
+`ultima_bootup.idb`, 9 in `drawScreenBorder` in `ultima_exodus.idb`).
+`ultima.idb` happens to carry a second, unused orphaned copy of the
+same code right next to its own dead `checkDiskCopyProtection` --
+separate from its own live `plotPixel2bpp` elsewhere in the same IDB --
+left unnamed since a duplicate name would add nothing.
+
+**Also fully confirmed `checkDebugModeFlag`'s exact role**, closing out
+part of another flagged item without needing an emulator. Its body
+really is just `mov al, 0 / retn` -- a hardcoded "debug mode off" stub.
+Its one caller (`titleScreenAndChainToBootup`) stores the result and
+later does `cmp byte_1432C, 0FFh; jz $` -- a busy-wait-on-itself loop
+that would spin forever if debug mode were ever signaled, gating entry
+into `runBootFlagAnimation`. Since the flag is hardcoded to 0 in the
+shipped build, the wait never triggers -- this reads as a genuine,
+deliberately-disabled developer hook (plausibly a breakpoint stand-in
+for attaching a debugger before the logo animation), not a generic
+guess at the function's purpose.
