@@ -2172,6 +2172,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X17607);
+	set_name	(0X17607,	"obtainCard");
 	create_insn	(x=0X17612);
 	op_hex		(x,	1);
 	create_insn	(x=0X1761C);
@@ -2185,6 +2186,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1763E);
 	create_insn	(0X1764A);
+	set_name	(0X1764A,	"attemptExodusSequence");
 	create_insn	(x=0X1764C);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3954,11 +3956,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ACEF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1ACFC);
-	set_name	(0X1ACFC,	"showOracleMenu");
-	create_insn	(x=0X1AD01);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3968,6 +3965,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1ACFC);
+	set_name	(0X1ACFC,	"showOracleMenu");
+	create_insn	(x=0X1AD01);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1AD08);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

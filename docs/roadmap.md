@@ -587,9 +587,23 @@ Next-session priorities, roughly in order:
       Sosaria. What now lies ahead in the ULTIMA saga can only be pure
       speculation! Onward to ULTIMA IV!" — before calling
       `autoSaveGameState` (see below) and setting game mode to 1.
-      **What actually triggers entry into this code** (i.e. the
-      specific "Exodus is defeated" condition check) wasn't traced
-      back further this pass — a good next lead.
+      **What triggers entry found immediately after**: `attemptExodusSequence`
+      (`0x1764A`) — **Ultima III's legendary Exodus puzzle**. Combat
+      cannot defeat Exodus at all; instead, standing on one of 4
+      control-panel tiles (`'|'`, `0x7C`) and choosing a letter from a
+      "D, S, L, M:" menu only advances a step counter
+      (`word_164A0`) if you're saying the right word AND facing the
+      right tile AND — checked directly against `_marksAndCards`
+      (`RosterEntry+0x0E`) — actually holding the matching Card for
+      that step. All 4 cards come from `obtainCard` (`0x17607`),
+      which sets one `_marksAndCards` bit based on where you pick a
+      card up. Reaching all 4 correct steps in sequence
+      (`word_164A0 == 4`) jumps straight into `victorySequence`. This
+      directly explains `showOracleMenu`'s riddle dialogue found
+      earlier this session ("The cards their\nsuits do number...").
+      Confirmed at the mechanism level; the exact
+      letter-to-card/position mapping (which of D/S/L/M goes with
+      which of the 4 steps) wasn't decoded digit-by-digit.
       **Renamed `autoSaveOnDeath` → `autoSaveGameState`**: finding it
       called from the win sequence too (not just death/party-wipe)
       showed the old name was too narrow — it's a general "commit
