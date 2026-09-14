@@ -298,12 +298,17 @@ Remaining loose ends specific to this IDB:
       obtained "in Devil Guard", and the 4 Cards are "Sol, Moon,
       Death and Love" — all of Ultima III's central puzzle lore is
       now captured directly from the game's own disassembly.
-- [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
-- [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
-      confirmed that *a* second HP-shaped word lives there (set
-      alongside `_hitPoints` at character creation), not independently
-      displayed/read anywhere to confirm the name. See
-      `create_roster_struct.py`'s note.
+- [x] **RESOLVED** (this checkbox was just stale — the confirmation
+      itself already happened 2026-09-13, and was re-verified directly
+      2026-09-14): `_maxHitPoints` (offset `0x1C`) is not just a
+      second HP-shaped word set at creation. `healHitPoints` in
+      `ultima_exodus.idb` (`0x15D2B`-`0x15D4B`) BCD-adds to
+      `_hitPoints`, then does `mov ax, [bx+_maxHitPoints];
+      cmp ax, [bx+_hitPoints]; jnb short loc_15D48;
+      mov [bx+_hitPoints], ax` — clamping current HP down to max HP
+      whenever healing would push it over. That's an unambiguous
+      "current can't exceed max" relationship, confirming the name
+      directly from real arithmetic, not just parallel-write proximity.
 - [x] **`_race`/`_class`/`_sex` letter encodings fully decoded**, done
       2026-09-15 (`dump_char_creation_tables.py`, applied via
       `fix_char_creation_tables.py`; `_status`'s 4 letters were
