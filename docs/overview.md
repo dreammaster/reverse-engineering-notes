@@ -1437,3 +1437,12 @@ character's equipment ceiling goes up for the rest of the game.
 Confirmed end-to-end from both the unlock side and the consumption
 side of the same two flags, found independently in two different
 commits.
+
+**Trap evasion mechanic named**: `rollTrapEvasionChance` (`0x15B85`)
+computes an evasion threshold from Dexterity plus a class bonus —
+Bard/Illusionist/Ranger get a modest bonus, Thief gets double that
+(the classic "Thieves are trap specialists" trope), every other class
+takes a penalty — then rolls a random byte against it.
+`checkTrapEvasion` (`0x182AA`) wraps that with the "Trap evaded!\n"
+message and sound cue, called from the Acid/Poison/Bomb/Gas trap
+handlers already named earlier this session via their own strings.

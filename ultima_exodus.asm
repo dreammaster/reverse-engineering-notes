@@ -1003,7 +1003,7 @@ cmdSteal:                               ; CODE XREF: sub_17B54-5F83↑j
                 jz      short loc_11FD0
                 mov     cx, bx
                 mov     bx, di
-                call    sub_15B85
+                call    rollTrapEvasionChance
                 jz      short loc_11FAC
 
 loc_11F77:                              ; CODE XREF: sub_17B54-5BA1↓j
@@ -4800,8 +4800,8 @@ teleportPartyWithFanfare endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15B85       proc near               ; CODE XREF: sub_17B54-5BE2↑p
-                                        ; sub_182AA+5↓p ...
+rollTrapEvasionChance proc near         ; CODE XREF: sub_17B54-5BE2↑p
+                                        ; checkTrapEvasion+5↓p ...
                 pushf
                 push    dx
                 mov     dh, ah
@@ -4827,8 +4827,8 @@ sub_15B85       proc near               ; CODE XREF: sub_17B54-5BE2↑p
                 jz      short loc_15BBD
                 sub     al, 80h
 
-loc_15BBD:                              ; CODE XREF: sub_15B85+20↑j
-                                        ; sub_15B85+26↑j ...
+loc_15BBD:                              ; CODE XREF: rollTrapEvasionChance+20↑j
+                                        ; rollTrapEvasionChance+26↑j ...
                 mov     dh, 0FFh
                 call    stepTimeSeededPrng
                 cmp     dl, al
@@ -4836,12 +4836,12 @@ loc_15BBD:                              ; CODE XREF: sub_15B85+20↑j
                 jnb     short loc_15BCA
                 mov     al, 0
 
-loc_15BCA:                              ; CODE XREF: sub_15B85+41↑j
+loc_15BCA:                              ; CODE XREF: rollTrapEvasionChance+41↑j
                 pop     dx
                 popf
                 cmp     al, 0
                 retn
-sub_15B85       endp
+rollTrapEvasionChance endp
 
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR sub_17B54
@@ -9202,7 +9202,7 @@ aEatDeathScum   db 0Ah                  ; DATA XREF: sub_17B54:loc_18069↓o
 aGold_0         db 'Gold+',0            ; DATA XREF: sub_180D9+6↓o
 aAndA           db 'and a ',0           ; DATA XREF: sub_180D9+52↓o
 aAnd            db 'and ',0             ; DATA XREF: sub_180D9+8C↓o
-aTrapEvaded     db 'Trap evaded!',0Ah,0 ; DATA XREF: sub_182AA+A↓o
+aTrapEvaded     db 'Trap evaded!',0Ah,0 ; DATA XREF: checkTrapEvasion+A↓o
 aAcidTrap       db 'Acid trap!',0Ah,0   ; DATA XREF: sub_17B54:loc_1823C↓o
 aPoisonTrap     db 'Poison trap!',0Ah,0 ; DATA XREF: sub_17B54:loc_1826D↓o
 aBombTrap       db 'Bomb trap!',0Ah,0   ; DATA XREF: sub_17B54:loc_18290↓o
@@ -10339,7 +10339,7 @@ loc_181E6:                              ; CODE XREF: sub_17B54+684↑j
 loc_18200:                              ; CODE XREF: sub_17B54+6A7↑j
                 lea     si, aGasTrap    ; "Gas trap!\n"
                 call    printGameText
-                call    sub_182AA
+                call    checkTrapEvasion
                 cmp     al, 0
                 jnz     short loc_18211
                 jmp     loc_182A1
@@ -10371,7 +10371,7 @@ loc_1822F:                              ; CODE XREF: sub_17B54+6C6↑j
 loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
                 lea     si, aAcidTrap   ; "Acid trap!\n"
                 call    printGameText
-                call    sub_182AA
+                call    checkTrapEvasion
                 cmp     al, 0
                 jz      short loc_182A1
                 mov     ax, bp
@@ -10393,7 +10393,7 @@ loc_1823C:                              ; CODE XREF: sub_17B54+69F↑j
 loc_1826D:                              ; CODE XREF: sub_17B54+6A3↑j
                 lea     si, aPoisonTrap ; "Poison trap!\n"
                 call    printGameText
-                call    sub_182AA
+                call    checkTrapEvasion
                 cmp     al, 0
                 jz      short loc_182A1
                 mov     ax, bp
@@ -10409,7 +10409,7 @@ loc_1826D:                              ; CODE XREF: sub_17B54+6A3↑j
 loc_18290:                              ; CODE XREF: sub_17B54+6A9↑j
                 lea     si, aBombTrap   ; "Bomb trap!\n"
                 call    printGameText
-                call    sub_182AA
+                call    checkTrapEvasion
                 cmp     al, 0
                 jz      short loc_182A1
                 call    damagePartyAll
@@ -10424,13 +10424,13 @@ loc_182A1:                              ; CODE XREF: sub_17B54+6BA↑j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_182AA       proc near               ; CODE XREF: sub_17B54+6B3↑p
+checkTrapEvasion proc near              ; CODE XREF: sub_17B54+6B3↑p
                                         ; sub_17B54+6EF↑p ...
                 pushf
                 push    bx
                 push    si
                 mov     bx, di
-                call    sub_15B85
+                call    rollTrapEvasionChance
                 jnz     short loc_182C2
                 lea     si, aTrapEvaded ; "Trap evaded!\n"
                 call    printGameText
@@ -10438,12 +10438,12 @@ sub_182AA       proc near               ; CODE XREF: sub_17B54+6B3↑p
                 call    playSoundEffect
                 mov     al, 0
 
-loc_182C2:                              ; CODE XREF: sub_182AA+8↑j
+loc_182C2:                              ; CODE XREF: checkTrapEvasion+8↑j
                 pop     si
                 pop     bx
                 popf
                 retn
-sub_182AA       endp
+checkTrapEvasion endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12701,7 +12701,7 @@ loc_19529:                              ; CODE XREF: sub_17B54+89C↑j
                 mov     al, 0F6h
                 call    playSoundEffect
                 lea     bx, byte_114CC
-                call    sub_15B85
+                call    rollTrapEvasionChance
                 jnz     short loc_1954A
                 lea     si, aEvaded     ; "Evaded!!\n"
                 call    printGameText
