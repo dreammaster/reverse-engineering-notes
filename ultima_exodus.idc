@@ -3170,8 +3170,10 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X18FEB);
+	set_name	(0X18FEB,	"canDungeonMonsterMoveToTile");
 	create_insn	(0X1900C);
 	create_insn	(0X19020);
+	set_name	(0X19020,	"moveDungeonMonsterTowardParty");
 	create_insn	(x=0X19022);
 	op_hex		(x,	1);
 	create_insn	(x=0X19025);
@@ -3920,11 +3922,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AB59);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(0X1AB68);
-	set_name	(0X1AB68,	"listArmourShopInventory");
-	create_insn	(x=0X1AB6B);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3934,6 +3931,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1AB68);
+	set_name	(0X1AB68,	"listArmourShopInventory");
+	create_insn	(x=0X1AB6B);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(x=0X1AB85);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);

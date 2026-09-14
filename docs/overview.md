@@ -1498,3 +1498,21 @@ projectile across the 11×11 dungeon view and calls
 ones). `moveDungeonMonsterSprite` (`0x19215`) handles redrawing a
 dungeon monster's sprite as it moves between tiles, the display-side
 counterpart to that same tracking.
+
+The last two pieces of that system: `moveDungeonMonsterTowardParty`
+(`0x19020`) is the dungeon counterpart to `computeStepTowardParty`/
+`updateMonsterAI`'s overworld seeking behavior — finds a party member
+within range, steps toward them, and validates the move via
+`canDungeonMonsterMoveToTile` (`0x18FEB`, a passability + occupancy
+check). Confirmed by reading the caller loop directly: this whole
+cluster is one contiguous per-turn dungeon monster-AI tick inside
+`sub_17B54`, immediately followed by `attemptSpecialMonsterAttack`
+when a monster is adjacent/blocked, or a chance of
+`fireDungeonProjectileAtParty` for a specific monster class — a
+complete, self-contained dungeon combat AI loop, distinct from
+`updateMonsterAI`'s overworld one. One interesting detail worth
+flagging: `canDungeonMonsterMoveToTile`'s occupancy check reuses
+`findCombatantAtPosition` — the arena's own 8-slot lookup — suggesting
+active dungeon combatants and arena combatants may share the same
+underlying slot representation rather than being fully independent
+systems; not confirmed further this pass.
