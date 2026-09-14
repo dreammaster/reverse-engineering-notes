@@ -198,20 +198,54 @@ Remaining loose ends specific to this IDB:
       before trusting, the same discipline as every other rename batch
       this project has used, not a special exemption for structural
       edits.
-- [ ] **NEW, found while wiring `RosterEntry`**: a data region around
-      linear `0x16700`-`0x16900` in `ultima_exodus.idb` is
-      mis-disassembled as code (confirmed garbage: 386-only `arpl`
-      instructions, `gs:`/`fs:` segment override prefixes, jumps into
-      mid-instruction addresses like `loc_16773+1` — none of which are
-      possible in this program's real 16-bit code), despite carrying
-      real `CODE XREF`s from within `readAndDispatchCommand`'s own
-      function-chunk list. Very likely a large ASCII text/data table
-      that IDA's analysis wrongly classified as code. Not fixed this
-      pass (out of scope for the RosterEntry task that surfaced it) —
-      re-classifying it (`ida_bytes.del_items` + a proper string/data
-      definition, the same pattern used for the wind-direction arrays
-      and command-key tables elsewhere in this project) is a
-      well-scoped follow-up.
+- [x] **RESOLVED, 2026-09-15 — and it turned out to be a landmark
+      find.** The mis-disassembled region around linear
+      `0x16700`-`0x16900` was `printNameByIndex`'s own backing data: a
+      0x88-entry pointer table at `0x16556` (already known from that
+      function's own `[bx+6556h]` operand) indexing into a large
+      null-terminated ASCII string blob, confirmed and fixed via
+      `fix_game_name_table.py`. Named the table `GAME_NAME_TABLE` and
+      defined all 146 strings it addresses. This is a single, unified
+      "describe anything" table the whole game shares: **terrain
+      names** (1-9: Water/Grass/Brush/Forest/Mountains/Dungeon/Towne/
+      Castle/Floor — exactly `cmdLook`'s tile categories, confirmed
+      independently for the first time), objects/vehicles (`0xA`-`0xC`),
+      the Whirlpool (`0xD`), NPC/monster-class names (`0xE`-`0x20`,
+      ending at 'Exodus'), dungeon features (`0x21`-`0x26`: Force
+      Field/Lava/Moon Gate/Wall/Void), single-letter rune/sign tiles
+      (`0x27`-`~0x42`), weapon names matching `_weaponOwned`'s 15-entry
+      array, armour names matching `_armourIndex`'s range (an extra
+      leading 'Skin'/unarmored entry beyond `_armourOwned`'s own
+      7-entry list), all 32 spell names again (a second copy, distinct
+      from `SPELL_NAME_TABLE`), and — new — **a confirmed 16-entry
+      monster bestiary** (`0x79`-`0x88`: Brigand/Cutpurse/Goblin/Troll/
+      Ghoul/Zombie/Golem/Titan/Gargoyle/Mane/Snatch/Bradle/Griffon/
+      Wyvern/Orcus/Devil), Ultima III's actual named monster list,
+      confirmed directly from the game's own data for the first time
+      this project.
+- [x] **RESOLVED, 2026-09-15 — the exact D/S/L/M-to-card mapping,
+      Ultima III's Exodus puzzle SOLVED end-to-end.** A second, small
+      mis-disassembled patch right next to the above (`0x16AE8`-`0x16B18`)
+      turned out to hold the puzzle's literal answer key. Fixed via
+      `fix_exodus_sequence_table.py`: the 4 card names ('Moons',
+      'Death', 'Love', 'Sol'), the menu's valid keys
+      (`EXODUS_SEQUENCE_MENU_KEYS` = 'M','D','L','S','Q',Esc), and —
+      the answer itself — `EXODUS_SEQUENCE_ANSWER`, a 4-byte lookup
+      array holding the literal bytes `'L','S','M','D'`, which
+      `attemptExodusSequence`'s own code (`cmp al, [bx+6B14h]`,
+      `bx=word_164A0`) indexes by step number to check the player's
+      answer against. **The solution is Love, Sol, Moons, Death, in
+      that exact order** — confirmed two independent ways at once:
+      directly from this lookup table's raw bytes, and from the
+      Time Lord's in-game vision text found in the same investigation
+      (`aYouSeeAVisionO`: "You see a vision of the Time Lord. He tells
+      you: The one way is Love, Sol, Moons & Death, All else fails.")
+      — word-for-word identical. Also recovered Radrion the Oracle's
+      full riddle while reading the surrounding strings (previously
+      only partially quoted): the 4 Marks are fire/force/snake/king,
+      obtained "in Devil Guard", and the 4 Cards are "Sol, Moon,
+      Death and Love" — all of Ultima III's central puzzle lore is
+      now captured directly from the game's own disassembly.
 - [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
 - [ ] `_maxHitPoints` (offset `0x1C`) is a low-confidence label — only
       confirmed that *a* second HP-shaped word lives there (set

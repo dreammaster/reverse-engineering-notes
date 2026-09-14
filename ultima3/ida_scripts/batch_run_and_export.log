@@ -1,60 +1,29 @@
 ============================================================
 [*] batch_run_and_export starting
 [*] auto_wait (initial)
-[*] idb = C:\dev\ultima3\ultima_bootup.idb
-[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'apply_roster_stroff_bootup.py']
-[*] reading apply_roster_stroff_bootup.py
-[*] executing apply_roster_stroff_bootup.py
+[*] idb = C:\dev\ultima3\ultima_exodus.idb
+[*] ARGV = ['C:\\dev\\ultima3\\ida_scripts\\batch_run_and_export.py', 'identify.py']
+[*] reading identify.py
+[*] executing identify.py
 [*] captured stdout from target script:
 ----- begin target script output -----
-39 site(s) to apply op_stroff to (APPLYING)
-  0x115e9 op0: ok  cmp     byte ptr [bx+10h], 0FFh  ->  cmp     [bx+RosterEntry._partyMember], 0FFh
-  0x11625 op1: ok  mov     al, [bx+18h]  ->  mov     al, [bx+RosterEntry._sex]
-  0x1164a op1: ok  mov     al, [bx+16h]  ->  mov     al, [bx+RosterEntry._race]
-  0x1166f op1: ok  mov     al, [bx+17h]  ->  mov     al, [bx+RosterEntry._class]
-  0x11694 op1: ok  mov     al, [bx+11h]  ->  mov     al, [bx+RosterEntry._status]
-  0x116b9 op1: ok  mov     al, [bx+30h]  ->  mov     al, [bx+RosterEntry._weaponIndex]
-  0x116d4 op1: ok  mov     al, [bx+28h]  ->  mov     al, [bx+RosterEntry._armourIndex]
-  0x116ef op1: ok  mov     al, [bx+12h]  ->  mov     al, [bx+RosterEntry._strength]
-  0x11700 op1: ok  mov     al, [bx+13h]  ->  mov     al, [bx+RosterEntry._dexterity]
-  0x11711 op1: ok  mov     al, [bx+14h]  ->  mov     al, [bx+RosterEntry._intelligence]
-  0x11722 op1: ok  mov     al, [bx+15h]  ->  mov     al, [bx+RosterEntry._wisdom]
-  0x11733 op1: ok  mov     ax, [bx+1Ah]  ->  mov     ax, [bx+RosterEntry._hitPoints]
-  0x11744 op1: ok  mov     ax, [bx+1Eh]  ->  mov     ax, [bx+RosterEntry._experience]
-  0x11755 op1: ok  mov     ax, [bx+21h]  ->  mov     ax, [bx+RosterEntry._food]
-  0x11766 op1: ok  mov     ax, [bx+23h]  ->  mov     ax, [bx+RosterEntry._gold]
-  0x1180b op0: ok  cmp     byte ptr [bx+10h], 0FFh  ->  cmp     [bx+RosterEntry._partyMember], 0FFh
-  0x11814 op0: ok  mov     byte ptr [bx+10h], 0FFh  ->  mov     [bx+RosterEntry._partyMember], 0FFh
-  0x118d0 op0: ok  mov     byte ptr [bx+10h], 0  ->  mov     [bx+RosterEntry._partyMember], 0
-  0x11984 op0: ok  cmp     byte ptr [bx+10h], 0FFh  ->  cmp     [bx+RosterEntry._partyMember], 0FFh
-  0x1199b op1: ok  mov     al, [bx+18h]  ->  mov     al, [bx+RosterEntry._sex]
-  0x119a1 op1: ok  mov     al, [bx+16h]  ->  mov     al, [bx+RosterEntry._race]
-  0x119a7 op1: ok  mov     al, [bx+17h]  ->  mov     al, [bx+RosterEntry._class]
-  0x119ad op1: ok  mov     al, [bx+11h]  ->  mov     al, [bx+RosterEntry._status]
-  0x11a13 op0: ok  cmp     byte ptr [bx+10h], 0FFh  ->  cmp     [bx+RosterEntry._partyMember], 0FFh
-  0x11aff op0: ok  mov     byte ptr [bx+11h], 47h ; 'G'  ->  mov     [bx+RosterEntry._status], 47h ; 'G'
-  0x11b03 op0: ok  mov     byte ptr [bx+10h], 0  ->  mov     [bx+RosterEntry._partyMember], 0
-  0x11b07 op0: ok  mov     word ptr [bx+1Ah], 150h  ->  mov     [bx+RosterEntry._hitPoints], 150h
-  0x11b0c op0: ok  mov     word ptr [bx+1Ch], 150h  ->  mov     [bx+RosterEntry._maxHitPoints], 150h
-  0x11b11 op0: ok  mov     word ptr [bx+21h], 150h  ->  mov     [bx+RosterEntry._food], 150h
-  0x11b16 op0: ok  mov     word ptr [bx+23h], 150h  ->  mov     [bx+RosterEntry._gold], 150h
-  0x11b1b op0: ok  mov     byte ptr [bx+31h], 1  ->  mov     [bx+RosterEntry._weaponOwned], 1
-  0x11b1f op0: ok  mov     byte ptr [bx+29h], 1  ->  mov     [bx+RosterEntry._armourOwned], 1
-  0x11c01 op0: ok  mov     [bx+18h], al  ->  mov     [bx+RosterEntry._sex], al
-  0x11c19 op0: ok  mov     [bx+16h], al  ->  mov     [bx+RosterEntry._race], al
-  0x11c31 op0: ok  mov     [bx+17h], al  ->  mov     [bx+RosterEntry._class], al
-  0x11c4a op0: ok  mov     [bx+12h], al  ->  mov     [bx+RosterEntry._strength], al
-  0x11c6b op0: ok  mov     [bx+13h], al  ->  mov     [bx+RosterEntry._dexterity], al
-  0x11c92 op0: ok  mov     [bx+14h], al  ->  mov     [bx+RosterEntry._intelligence], al
-  0x11cbf op0: ok  mov     [bx+15h], al  ->  mov     [bx+RosterEntry._wisdom], al
+root filename : _exodus_scratch.com
+input file    : C:\dev\ultima3\ida_scripts\_exodus_scratch.com
+entry point   : 0x100 (cs=0x1000)
+input md5     : af8f5c907c22cd86ffabf1cd01949f2c
 
-Done: 39 applied, 0 failed.
+segments:
+  seg000       0x010100-0x01adca  (44234 bytes)
+
+functions: 144 total, 144 named, 0 still sub_XXXXX
+
+structs (1): RosterEntry
 ----- end target script output -----
-[*] finished executing apply_roster_stroff_bootup.py
+[*] finished executing identify.py
 [*] auto_wait (post-script)
-[*] exporting ASM to C:\dev\ultima3\ultima_bootup.asm
-[*] gen_file(OFILE_ASM) returned 4078
-[*] exporting IDC to C:\dev\ultima3\ultima_bootup.idc
+[*] exporting ASM to C:\dev\ultima3\ultima_exodus.asm
+[*] gen_file(OFILE_ASM) returned 14048
+[*] exporting IDC to C:\dev\ultima3\ultima_exodus.idc
 [*] gen_file(OFILE_IDC) returned 1
-[*] saving database to C:\dev\ultima3\ultima_bootup.idb
+[*] saving database to C:\dev\ultima3\ultima_exodus.idb
 [*] done, exiting 0
