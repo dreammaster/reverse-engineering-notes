@@ -1420,3 +1420,20 @@ elsewhere" effect — a whirlpool is the obvious candidate — but the
 index it's keyed on (`word_11324`) wasn't traced back far enough to
 confirm that specifically, so it's named for the confirmed mechanical
 effect rather than an asserted trigger.
+
+**A real "secret shop unlocks better gear" progression mechanic
+confirmed**, from naming the weapons/armour shops' inventory-listing
+handlers left open a couple of commits back:
+`listWeaponsShopInventory` (`0x1A9E8`) and `listArmourShopInventory`
+(`0x1AB68`) both print their shop's standard goods list, then — ONLY
+when `_savedOverworldPosition == 0x25h`, one specific town — unlock a
+second page of better gear ('+2 Axe'/'+2 Bow'/'+4 Swd' for weapons,
+'+2 Chain'/'+2 Plate' for armour) and permanently set
+`byte_114CA`/`byte_114CB`. Those two flags are exactly what
+`readyWeapon`/`wearArmour` separately check to widen a class's max
+equippable tier — so this is a genuine, deliberate progression
+mechanic: visit one specific secret town's shops once, and every
+character's equipment ceiling goes up for the rest of the game.
+Confirmed end-to-end from both the unlock side and the consumption
+side of the same two flags, found independently in two different
+commits.

@@ -3837,6 +3837,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1A9E8);
+	set_name	(0X1A9E8,	"listWeaponsShopInventory");
 	create_insn	(x=0X1A9EB);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3910,6 +3911,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AB68);
+	set_name	(0X1AB68,	"listArmourShopInventory");
 	create_insn	(x=0X1AB6B);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -3943,9 +3945,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ABFF);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
-	create_insn	(x=0X1AC3C);
-	op_plain_offset	(x,	1,	0X10000);
-	op_plain_offset	(x,	129,	0X10000);
 }
 
 //------------------------------------------------------------------------
@@ -3955,6 +3954,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1AC3C);
+	op_plain_offset	(x,	1,	0X10000);
+	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X1AC4D);
 	create_insn	(x=0X1AC50);
 	op_plain_offset	(x,	1,	0X10000);

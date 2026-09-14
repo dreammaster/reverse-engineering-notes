@@ -591,11 +591,19 @@ Next-session priorities, roughly in order:
       Marks/Cards quest matching the `_marksAndCards` RosterEntry field
       found earlier this session), and `showStableMenu` (buy horses,
       `partySize*200gp`). Function-naming jumped from 99/144 to
-      106/144 in this one batch. Still open: `sub_17D1A`
-      (`showGrocerMenu`'s cost-calc helper, likely a shared "prompt
-      quantity, compute price" utility other shops may use too) and
-      the weapons/armour shops' own inventory-listing internals aren't
-      individually traced.
+      106/144 in this one batch. `showGrocerMenu`'s cost-calc helper
+      (`promptForQuantity`) and the weapons/armour shops' inventory
+      listings (`listWeaponsShopInventory`/`listArmourShopInventory`)
+      were named in later commits — see below for a genuine
+      progression-mechanic discovery those turned up: both shops
+      unlock a second, better-goods page ('+2 Chain'/'+2 Plate' armour,
+      '+2 Axe'/'+2 Bow'/'+4 Swd' weapons) only when
+      `_savedOverworldPosition == 0x25h` — one specific, secret town
+      — permanently setting `byte_114CA`/`byte_114CB`, the exact flags
+      `readyWeapon`/`wearArmour` separately check to widen a
+      character's max equippable tier. A real "find the secret shop
+      to unlock better gear" mechanic, confirmed end-to-end from both
+      the unlock side and the consumption side of the same two flags.
 - [x] **The win condition / ending sequence found and named**, done
       2026-09-14: `victorySequence` (`0x1A4B9`, a labeled location
       inside `sub_17B54`, reached via `sub_17B54-498`). Prints
