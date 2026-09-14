@@ -15928,3 +15928,70 @@ build's own pinned 2.4b/July-2002. A satisfying double-corroboration:
 two entirely unrelated features (loop-hang detection, RTL text) landed
 in the very same AGS release, and this project's own two independent
 disassembly findings both point at exactly that release.
+
+### `ViewFrame272.flags`: a real bit, but not the field it looks like at first glance
+
+Revisited `ViewFrame272`'s one remaining flagged-as-shelved field.
+Several rounds back, a dedicated search for `flags`@+0x0C (2011's
+`VFLG_FLIPSPRITE` mirroring bit, `Common/acroom.h:2266`) came up empty
+-- every already-matched frame-consuming function checked at the time
+(`AnimateObject`, `SetObjectView`/`SetObjectFrame`,
+`GetLocationType`'s cursor-animation code) touched only `pic`/`speed`,
+never this offset. The field was shelved as unconfirmed, same status
+as `InterfaceElement`'s last open lead.
+
+Re-reading `prepare_characters_for_drawing`'s own actsps[]-caching
+control flow -- the exact same code already read once before for the
+`CharacterExtras` tint-fields round, just not with this specific field
+in mind -- turns up two real, independent access sites the earlier
+search missed (it never fully retraced this particular function's own
+body): `"mov edx,[views+view*8D4h+loop*118h+14h+frame*1Ch+0Ch]; and
+edx,1; test edx,edx; jz <skip>"`. When the bit is set, an *extra*
+bitmap is created and the character's just-rendered sprite is blitted
+into it via `draw_sprite_v_flip` (already matched, Allegro's public
+vtable-slot-0x4C vertical-flip API), and that flipped copy -- not the
+original -- is what gets passed to the final `render_to_screen` call.
+This is confirmed at two separate call sites within the same function
+(the "no per-frame cache yet" path and the "size changed, recreate"
+path both do it identically).
+
+This is a real, exercised bit-flag -- not a dead end -- but it turns
+out NOT to be a confirmation of 2011's `VFLG_FLIPSPRITE` at this same
+struct position, for two independent reasons that surfaced once the
+obvious identification was checked rather than assumed:
+
+1. **Dating contradiction.** `ags-archives/ags251/docs/CHANGES.TXT:10`
+   reads, verbatim, *"Added sprite mirroring support to views."* AGS
+   2.51 is strictly *after* this project's own already-established
+   `<2.5` upper bound for this build (pinned via `MYOGG`/
+   `MAXTOPICOPTIONS=15`/`DCMD_SETGLOBALINT` all being confirmed absent
+   -- all three are AGS 2.5 additions). If the sprite-mirroring
+   feature itself didn't exist until 2.51, this 2002 binary's own
+   compiled code cannot be implementing it.
+2. **Wrong flip axis, even ignoring the dating.** 2011's own
+   `VFLG_FLIPSPRITE`-gated code (`scale_and_flip_sprite`,
+   `AC.CPP:7810-7884`) calls `draw_sprite_h_flip` -- a HORIZONTAL flip,
+   the obvious choice for mirroring a character's left/right facing.
+   This build's code calls `draw_sprite_v_flip` -- a VERTICAL flip --
+   at the exact analogous point. Both functions are independently,
+   solidly matched elsewhere in this binary at two different,
+   unambiguous vtable slots (`draw_sprite_v_flip`@0x4C, confirmed via
+   this exact call plus a second, unrelated use inside
+   `__GetLocationType`'s `FlipScreen`-driven cursor-flip dispatch --
+   see `GameState.screen_flipped`'s own entry; `draw_sprite_h_flip`@
+   0x50, confirmed via a separate call inside the same
+   `__GetLocationType` function) -- ruling out a simple vtable-slot
+   mislabeling as the explanation.
+
+So: a real bit, doing a real (vertical) flip, at the exact byte offset
+2011 later dedicates to a conceptually-related-but-different
+(horizontal, and chronologically later) feature. Most likely an
+unrelated, unidentified 2002-era predecessor mechanic that happened to
+land on the same struct slot once 2011's field layout is projected
+backward -- or possibly a genuine quirk/bug specific to this build's
+own actsps-caching code. Deliberately left UNNAMED rather than force
+the `VFLG_FLIPSPRITE` identity onto it; `apply_structs.py`'s own
+comment for this field now documents the finding and the two reasons
+it doesn't fit the obvious 2011 label, upgrading it from "UNCONFIRMED"
+to "a real bit is tested here, role unresolved" -- an honest middle
+ground between "no evidence" and "confirmed match."

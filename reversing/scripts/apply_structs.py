@@ -2730,18 +2730,32 @@ struct MoveList {
 struct ViewFrame272 {
   // Per-frame struct, embedded inside each ViewStruct272 loop-block (see below). Total size
   // (0x1C, 28 bytes) is high confidence -- confirmed via multiple `imul reg,1Ch` frame-index
-  // scaling sites in `update_stuff` (already matched). Two fields (`pic`, `speed`) now have
-  // independent access-site evidence in this build; the remaining fields are still carried
-  // over from 2011's declared `ViewFrame` (`Common/acroom.h:2268-2291`) as an UNVERIFIED
-  // STRUCTURAL ASSUMPTION ONLY -- included so the 28-byte total has named fields instead of
-  // opaque padding, not because each one has been independently checked. Do not cite
-  // xoffs/yoffs/flags/sound/reserved_for_future as confirmed without new evidence. A dedicated
-  // round searching for `flags` (the VFLG_FLIPSPRITE mirroring bit) came up empty -- every
-  // already-matched frame-consuming function found this round (`prepare_characters_for_drawing`,
-  // `AnimateObject`, `SetObjectView`/`SetObjectFrame`, `GetLocationType`'s mouse-cursor-animation
-  // code) touches `pic` and/or `speed` only, never the flags/xoffs/yoffs/sound region. Shelved
-  // for now, same status as `InterfaceElement`'s remaining fields -- revisit if a new caller
-  // (a mirrored-sprite draw path, or a frame-linked sound-effect trigger) surfaces.
+  // scaling sites in `update_stuff` (already matched). Three fields (`pic`, `speed`, and now
+  // `flags`) have independent access-site evidence in this build; `xoffs`/`yoffs`/`sound`/
+  // `reserved_for_future` are still carried over from 2011's declared `ViewFrame`
+  // (`Common/acroom.h:2268-2291`) as an UNVERIFIED STRUCTURAL ASSUMPTION ONLY -- included so
+  // the 28-byte total has named fields instead of opaque padding, not because each one has
+  // been independently checked. Do not cite xoffs/yoffs/sound/reserved_for_future as confirmed
+  // without new evidence.
+  //
+  // `flags`@+0x0C: an EARLIER round's dedicated search (which only checked AnimateObject/
+  // SetObjectView/SetObjectFrame/GetLocationType) came up empty and shelved this field. A later
+  // round, re-reading `prepare_characters_for_drawing`'s own actsps[]-caching control flow (the
+  // same code already read for the CharacterExtras tint-fields round) found TWO real access
+  // sites: "mov edx,[loopbase+frame*1Ch+0Ch]; and edx,1; test edx,edx; jz <skip>" -- when set,
+  // an extra bitmap is created and the character's sprite is blitted into it via
+  // `draw_sprite_v_flip` (already matched) before the final `render_to_screen` call. This is a
+  // real, exercised bit -- NOT a confirmation of 2011's `VFLG_FLIPSPRITE` (`acroom.h:2266`, the
+  // same bit position) though: (1) `ags-archives/ags251/docs/CHANGES.TXT:10` dates "Added
+  // sprite mirroring support to views" to AGS 2.51, strictly AFTER this build's own established
+  // "<2.5" upper bound -- the feature can't exist yet in this binary; (2) the flip performed is
+  // VERTICAL, where 2011's own VFLG_FLIPSPRITE-gated code (`scale_and_flip_sprite`,
+  // `AC.CPP:7810-7884`) uses `draw_sprite_h_flip` (a separately, solidly matched function at a
+  // different vtable slot -- no mislabeling ambiguity). Left UNNAMED/unattributed rather than
+  // force the VFLG_FLIPSPRITE identity onto it -- most likely an unrelated, unidentified
+  // 2002-era predecessor mechanic. See reversing/notes/struct-layout-drift.md for the complete
+  // writeup. `xoffs`/`yoffs`/`sound`/`reserved_for_future` remain fully unconfirmed, same
+  // shelved status as `InterfaceElement`'s one remaining lead.
   int pic;                         // +0x00, high confidence: confirmed via `update_stuff`
                             // (already matched), TWICE, in a "loop has no frames of its own --
                             // fall back to the mirrored previous loop" check: "cmp dword ptr
@@ -2765,7 +2779,12 @@ struct ViewFrame272 {
                             // added to the base animation speed") exactly.
   char _pad_align[2];              // +0x0A..0x0C, compiler alignment padding (not a real field)
                             // -- `flags` below is a 4-byte int and needs 4-byte alignment.
-  int flags;                       // +0x0C, UNCONFIRMED -- see struct-level note above.
+  int flags;                       // +0x0C, MEDIUM confidence: a real bit (0) IS tested here by
+                            // `prepare_characters_for_drawing` (already matched), gating an extra
+                            // draw_sprite_v_flip render pass -- but this is NOT a confirmed match
+                            // to 2011's VFLG_FLIPSPRITE at this same position (wrong flip axis,
+                            // and the feature postdates this build's own <2.5 pin per
+                            // ags-archives/ags251). See struct-level note above.
   int sound;                       // +0x10, UNCONFIRMED -- see struct-level note above.
   int reserved_for_future[2];       // +0x14..0x1C, UNCONFIRMED -- see struct-level note above.
 };

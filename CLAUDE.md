@@ -4739,6 +4739,22 @@ disassembly work.
   2.56, the SAME release this session's own `INSTF_RUNNING` survey
   already dated a different feature to. See `reversing/notes/
   struct-layout-drift.md`.
+- **`ViewFrame272.flags`'s long-shelved field gets a real access site,
+  but not the identity it looks like at first glance.** Re-reading
+  `prepare_characters_for_drawing`'s own actsps[]-caching control flow
+  found two genuine sites testing bit 0 of this exact field, gating an
+  extra `draw_sprite_v_flip` render pass -- a real, exercised bit, not
+  a dead end. But it can't be a confirmation of 2011's `VFLG_FLIPSPRITE`
+  at this same position: `ags-archives/ags251/docs/CHANGES.TXT` dates
+  "Added sprite mirroring support to views" to AGS 2.51, strictly after
+  this build's own established `<2.5` pin, and even setting the dating
+  aside, the flip performed is VERTICAL where 2011's own
+  `VFLG_FLIPSPRITE`-gated code uses a HORIZONTAL flip (`draw_sprite_
+  h_flip`, a separately and solidly matched function at a different,
+  unambiguous vtable slot -- ruling out simple mislabeling). Left
+  UNNAMED rather than force the wrong identity onto it -- most likely
+  an unrelated 2002-era predecessor mechanic. See `reversing/notes/
+  struct-layout-drift.md`.
 
 ## Third-party library identification (Task #10)
 
