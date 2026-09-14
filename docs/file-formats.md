@@ -239,16 +239,42 @@ it (`ultima_exodus.idb`).
 19×6 tiles, 1 byte/cell, per the external source. Real file is 114
 bytes; `19 × 6 = 114` — matches exactly.
 
-## `MOVES.ULT` — menu animation script (1,024 bytes)
+## `MOVES.ULT` — scripted demo-playback poke table (1,024 bytes)
 
 | Offset | Length | Purpose |
 |---|---|---|
-| `0x000` | `0x200` | Command table |
-| `0x200` | `0x200` | Data table |
+| `0x000` | `0x200` | Index table |
+| `0x200` | `0x200` | Value table |
 
-Total `0x400` = 1,024 bytes — matches the real file exactly. Internal
-structure of the command/data tables not documented externally — open
-question for the disassembly.
+Total `0x400` = 1,024 bytes — matches the real file exactly, and
+**confirmed 2026-09-14** directly from `titleScreenAndMainMenuLoop` in
+`ultima_bootup.idb`. Loaded whole into `byte_10844` (index table at
+`+0x000`, value table at `+0x200` = `byte_10A44`), right after
+`DEMO.ULT` loads into its own small buffer (`byte_107D2`, 114 bytes).
+A rotating cursor `word_10C44` (wraps at `0x200`, i.e. steps through
+all 512 index/value pairs) drives this loop each title-screen frame:
+
+```
+si = word_10C44
+bl = byte_10844[si]      ; index table entry
+al = byte_10A44[si]      ; value table entry
+if bl == 0xFF:
+    ah = al               ; sentinel: al is instead a PAUSE-frame count
+else:
+    byte_107D2[bl] = al >> 1   ; poke the halved value into DEMO.ULT's buffer
+    if al < 8: continue without advancing further this pass
+    ah = 1
+call updateIntroAnimation, ah times
+```
+
+In other words: **`MOVES.ULT` is a scripted "attract mode" playback
+track** — a 512-step sequence of (buffer offset, halved value) pokes
+applied to `DEMO.ULT`'s loaded buffer over time, animating whatever
+`DEMO.ULT` represents (most likely an idle demo scene shown on the
+title screen) frame by frame, with index `0xFF` reserved as a
+"pause/hold for N ticks" marker rather than a real poke. This
+confirms the external doc's guessed two-table, `0x200`+`0x200` split
+exactly, and additionally nails down what each table actually holds.
 
 ## `.IMG` files (`BRAND`, `FOUNTAIN`, `SHRINE`, `TIME` — 121 bytes each)
 
