@@ -292,8 +292,19 @@ first 533 (`0x215`) of its 640 bytes into `byte_14117`, and
 adjacent pixels per entry via `plotPixel2bpp` with a wait between each,
 called during the boot sequence. That's a coordinate-pair pixel-path
 animation script (the classic hand-drawn logo/signature reveal
-effect), not name-generation data. **Open**: why only 533 of 640 bytes
-are read, and what the remaining 107 bytes hold — not yet traced.
+effect), not name-generation data.
+
+**Resolved 2026-09-14**: why only 533 of 640 bytes are read. Read the
+real file's raw bytes directly (outside IDA): the `(length, row)`
+pair stream's own data ends with a `0x00 0x00` terminator pair at
+file offset `0x212`-`0x213` — meaning the meaningful script plus its
+terminator totals exactly `0x215` = 533 bytes, matching the
+`loadFile` call's `cx = 0x215` precisely. Every byte from offset
+`0x215` to the end of the 640-byte file (all 107 remaining bytes) is
+literal `0x00` padding — the file was simply allocated larger than
+the animation script needed, and `ULTIMA.COM` reads exactly the 533
+meaningful bytes and no more. No hidden second script or data
+structure in the tail; it's just unused padding.
 
 ## Files with no external documentation found (2026-09-13 search)
 
