@@ -1466,6 +1466,32 @@ RENAMES = [
      "0, and calls flushInputBuffer -- the 'leave a "
      "dungeon/town/castle/shrine, return to the overworld map' "
      "transition."),
+
+    # --- Ztats display, finally named, 2026-09-14 --------------------
+    (0x16FB1, "waitForContinueOrCancel",
+     "Waits for a keypress restricted to Enter/Down-arrow/Space "
+     "(continue, returns normally) or Escape (cancel, returns "
+     "al=0FFh) -- a simple pager gate between screenfuls of text, "
+     "used by showZtats (below) between its Str/Dex/Int/Wis/HP and "
+     "HM/Gold/etc pages."),
+    (0x16DC1, "showZtats",
+     "The shared character-stats display both `cmdZtats` (overworld) "
+     "and `combatCmdZtats` (combat) call -- referenced by number in "
+     "this session's notes ever since `cmdZtats` was first identified, "
+     "finally named. Highlights the selected character's row via "
+     "invertCharacterCell, then prints Strength/Dexterity/"
+     "Intelligence/Wisdom/HP (and, paged via waitForContinueOrCancel, "
+     "further stats) from the character's RosterEntry."),
+
+    (0x16D81, "setCursorForPartyRow",
+     "Called from drawPartyStatusBar once per party row. Computes the "
+     "text cursor position for printing a centered character name: "
+     "measures the name's length (scans up to 0x1F bytes for a null "
+     "terminator), centers it horizontally (`(0x21-namelen)/2`), and "
+     "sets the row from the passed-in party slot (`slot*4+1`) -- "
+     "writes both into `word_12A90`, the shared cursor-position "
+     "variable other text routines (printGameText/writeCharacter) "
+     "read."),
 ]
 
 

@@ -1204,3 +1204,16 @@ to Sosaria!\nPlease wait...") — the general "leave a
 dungeon/town/castle/shrine, return to the overworld map" transition —
 and its `flushInputBuffer` helper (`0x16C53`), which discards any
 pending keystrokes before a new screen starts responding.
+
+**`showZtats` finally named**, along with its two small helpers:
+`showZtats` (`0x16DC1`) is the shared character-stats display both
+`cmdZtats` and `combatCmdZtats` call — referenced by address in this
+session's notes ever since `cmdZtats` was first identified back at the
+very start of this stretch of work, but never actually renamed until
+now. It highlights the selected character's row (`invertCharacterCell`)
+and prints their stats page by page, gated by the newly-named
+`waitForContinueOrCancel` (`0x16FB1`, Enter/Down/Space to continue,
+Escape to cancel). Also named `setCursorForPartyRow` (`0x16D81`,
+`drawPartyStatusBar`'s per-row helper — measures a character's name
+length to center it horizontally and sets the cursor row from the
+party slot).

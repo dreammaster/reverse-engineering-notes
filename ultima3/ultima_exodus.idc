@@ -1897,6 +1897,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X16D63);
 	op_hex		(x,	1);
 	create_insn	(0X16D81);
+	set_name	(0X16D81,	"setCursorForPartyRow");
 	create_insn	(x=0X16D97);
 	op_hex		(x,	1);
 	create_insn	(x=0X16D9D);
@@ -1906,6 +1907,7 @@ static Bytes_0(void) {
 	create_byte	(0X16DB1);
 	make_array	(0X16DB1,	0X10);
 	create_insn	(0X16DC1);
+	set_name	(0X16DC1,	"showZtats");
 	create_insn	(x=0X16DD1);
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
@@ -1962,6 +1964,7 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	1,	0X10000);
 	op_plain_offset	(x,	129,	0X10000);
 	create_insn	(0X16FB1);
+	set_name	(0X16FB1,	"waitForContinueOrCancel");
 	create_insn	(0X16FD8);
 	create_insn	(0X16FDF);
 	set_name	(0X16FDF,	"processPartyTurnEffects");
@@ -3984,6 +3987,15 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0X10000);
 }
 
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
+}
+
 static Functions_0(void) {
 
 	add_func    (0X1207D,0X12097);
@@ -4516,6 +4528,7 @@ static Patches(void) {
 
 static Bytes(void) {
 	Bytes_0();
+	Bytes_1();
         end_type_updating(UTP_STRUCT);
 }
 

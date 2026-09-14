@@ -1157,7 +1157,7 @@ cmdZtats:                               ; CODE XREF: sub_17B54-5F83↑j
                 mov     dh, al
                 mov     di, bx
                 add     dh, 30h ; '0'
-                call    sub_16DC1
+                call    showZtats
 
 loc_1207A:                              ; CODE XREF: sub_17B54-5AE6↑j
                 jmp     mainLoopCommandDone
@@ -6817,38 +6817,38 @@ loc_169BB:                              ; CODE XREF: sub_17B54-1206↑j
 ; ---------------------------------------------------------------------------
                 db 0
 aStr            db 0Ah                  ; CODE XREF: sub_17B54-11F2↑j
-                                        ; DATA XREF: sub_16DC1+10↓o
+                                        ; DATA XREF: showZtats+10↓o
                 db 'Str...',0
 aDex            db 0Ah                  ; CODE XREF: sub_17B54-11F6↑j
-                                        ; DATA XREF: sub_16DC1+1D↓o
+                                        ; DATA XREF: showZtats+1D↓o
                 db 'Dex...',0
 aInt            db 0Ah                  ; CODE XREF: sub_17B54-11F4↑j
-                                        ; DATA XREF: sub_16DC1+2A↓o
+                                        ; DATA XREF: showZtats+2A↓o
                 db 'Int...',0
-aWis            db 0Ah                  ; DATA XREF: sub_16DC1+37↓o
+aWis            db 0Ah                  ; DATA XREF: showZtats+37↓o
                 db 'Wis...',0
 aHP             db 0Ah                  ; CODE XREF: sub_17B54-11DF↑j
-                                        ; DATA XREF: sub_16DC1+44↓o
+                                        ; DATA XREF: showZtats+44↓o
                 db 'H.P...',0
 aHM             db 0Ah                  ; CODE XREF: sub_17B54-11CD↑j
-                                        ; DATA XREF: sub_16DC1:loc_16E1C↓o
+                                        ; DATA XREF: showZtats:loc_16E1C↓o
                 db 'H.M...',0
 aGold           db 0Ah                  ; CODE XREF: sub_17B54-11C7↑j
-                                        ; DATA XREF: sub_16DC1:loc_16E33↓o
+                                        ; DATA XREF: showZtats:loc_16E33↓o
                 db 'Gold: ',0
 aExp            db 0Ah                  ; CODE XREF: sub_17B54-11C4↑j
                                         ; sub_17B54-11B8↑j
                                         ; DATA XREF: ...
                 db 'Exp...',0
 aGems           db 0Ah                  ; CODE XREF: sub_17B54-11B3↑j
-                                        ; DATA XREF: sub_16DC1:loc_16E61↓o
+                                        ; DATA XREF: showZtats:loc_16E61↓o
                 db 'Gems..',0
-aKeys           db 0Ah                  ; DATA XREF: sub_16DC1:loc_16E78↓o
+aKeys           db 0Ah                  ; DATA XREF: showZtats:loc_16E78↓o
                 db 'Keys..',0
 aPowd           db 0Ah                  ; CODE XREF: sub_17B54-11A3↑j
-                                        ; DATA XREF: sub_16DC1:loc_16E8F↓o
+                                        ; DATA XREF: showZtats:loc_16E8F↓o
                 db 'Powd..',0
-aTrch           db 0Ah                  ; DATA XREF: sub_16DC1:loc_16EA6↓o
+aTrch           db 0Ah                  ; DATA XREF: showZtats:loc_16EA6↓o
                 db 'Trch..',0
                 db 0Ah
 ; ---------------------------------------------------------------------------
@@ -6925,14 +6925,14 @@ aWeapon         db 0Ah                  ; CODE XREF: sub_17B54-10C1↑j
                                         ; sub_17B54-1126↑j ...
                 db 'Weapon:',0
 aArmour         db 0Ah                  ; CODE XREF: sub_17B54-1113↑j
-                                        ; DATA XREF: sub_16DC1:loc_16EF9↓o
+                                        ; DATA XREF: showZtats:loc_16EF9↓o
                 db 'Armour:',0
 aWeapons        db 0Ah                  ; CODE XREF: sub_17B54-110B↑j
                                         ; sub_17B54-1105↑j
                                         ; DATA XREF: ...
                 db '***Weapons***',0
 a02HandsAArmour db 0Ah                  ; CODE XREF: sub_17B54-1043↓j
-                                        ; DATA XREF: sub_16DC1+197↓o
+                                        ; DATA XREF: showZtats+197↓o
                 db '02-Hands-(A)',0Ah
                 db '**Armour**',0
 a01SkinA        db 0Ah                  ; CODE XREF: sub_17B54-10E7↑j
@@ -7289,7 +7289,7 @@ loc_16CD3:                              ; CODE XREF: drawPartyStatusBar+89↓j
                 jz      short loc_16D49
                 mov     al, 4
                 sub     al, cl
-                call    sub_16D81
+                call    setCursorForPartyRow
                 mov     byte ptr word_12A90, 26h ; '&'
                 mov     al, [bx+11h]
                 call    writeCharacter
@@ -7371,7 +7371,7 @@ sub_16D58       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16D81       proc near               ; CODE XREF: drawPartyStatusBar+19↑p
+setCursorForPartyRow proc near          ; CODE XREF: drawPartyStatusBar+19↑p
                 pushf
                 push    ax
                 push    cx
@@ -7398,7 +7398,7 @@ sub_16D81       proc near               ; CODE XREF: drawPartyStatusBar+19↑p
                 pop     ax
                 popf
                 retn
-sub_16D81       endp
+setCursorForPartyRow endp
 
 ; ---------------------------------------------------------------------------
                 db 87h, 6Ah, 78h, 3 dup(6Ah), 5Bh, 6Ah, 22h, 6Ah, 4Ch
@@ -7407,7 +7407,7 @@ sub_16D81       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16DC1       proc near               ; CODE XREF: sub_17B54-5ADD↑p
+showZtats       proc near               ; CODE XREF: sub_17B54-5ADD↑p
                                         ; updateMonsterAI+6986↓p
                 pushf
                 push    ax
@@ -7438,107 +7438,107 @@ sub_16DC1       proc near               ; CODE XREF: sub_17B54-5ADD↑p
                 call    printGameText
                 mov     ax, [di+1Ah]
                 call    printHexWord
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E1C
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E1C:                              ; CODE XREF: sub_16DC1+56↑j
+loc_16E1C:                              ; CODE XREF: showZtats+56↑j
                 lea     si, aHM         ; "\nH.M..."
                 call    printGameText
                 mov     ax, [di+1Ch]
                 call    printHexWord
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E33
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E33:                              ; CODE XREF: sub_16DC1+6D↑j
+loc_16E33:                              ; CODE XREF: showZtats+6D↑j
                 lea     si, aGold       ; "\nGold: "
                 call    printGameText
                 mov     ax, [di+23h]
                 call    printHexWord
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E4A
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E4A:                              ; CODE XREF: sub_16DC1+84↑j
+loc_16E4A:                              ; CODE XREF: showZtats+84↑j
                 lea     si, aExp        ; "\nExp..."
                 call    printGameText
                 mov     ax, [di+1Eh]
                 call    printHexWord
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E61
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E61:                              ; CODE XREF: sub_16DC1+9B↑j
+loc_16E61:                              ; CODE XREF: showZtats+9B↑j
                 lea     si, aGems       ; "\nGems.."
                 call    printGameText
                 mov     al, [di+25h]
                 call    printHexByte
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E78
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E78:                              ; CODE XREF: sub_16DC1+B2↑j
+loc_16E78:                              ; CODE XREF: showZtats+B2↑j
                 lea     si, aKeys       ; "\nKeys.."
                 call    printGameText
                 mov     al, [di+26h]
                 call    printHexByte
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16E8F
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16E8F:                              ; CODE XREF: sub_16DC1+C9↑j
+loc_16E8F:                              ; CODE XREF: showZtats+C9↑j
                 lea     si, aPowd       ; "\nPowd.."
                 call    printGameText
                 mov     al, [di+27h]
                 call    printHexByte
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16EA6
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16EA6:                              ; CODE XREF: sub_16DC1+E0↑j
+loc_16EA6:                              ; CODE XREF: showZtats+E0↑j
                 lea     si, aTrch       ; "\nTrch.."
                 call    printGameText
                 mov     al, [di+0Fh]
                 call    printHexByte
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16EBD
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16EBD:                              ; CODE XREF: sub_16DC1+F7↑j
+loc_16EBD:                              ; CODE XREF: showZtats+F7↑j
                 mov     cx, 8
                 mov     ah, [di+0Eh]
                 mov     bx, 0
 
-loc_16EC6:                              ; CODE XREF: sub_16DC1+11D↓j
+loc_16EC6:                              ; CODE XREF: showZtats+11D↓j
                 rcl     ah, 1
                 jnb     short loc_16EDB
                 mov     si, [bx+6DB1h]
                 call    printGameText
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16EDB
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16EDB:                              ; CODE XREF: sub_16DC1+107↑j
-                                        ; sub_16DC1+115↑j
+loc_16EDB:                              ; CODE XREF: showZtats+107↑j
+                                        ; showZtats+115↑j
                 add     bx, 2
                 loop    loc_16EC6
                 lea     si, aWeapon     ; "\nWeapon:"
@@ -7546,30 +7546,30 @@ loc_16EDB:                              ; CODE XREF: sub_16DC1+107↑j
                 mov     al, [di+30h]
                 add     al, 41h ; 'A'
                 call    sub_16BFA
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16EF9
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16EF9:                              ; CODE XREF: sub_16DC1+133↑j
+loc_16EF9:                              ; CODE XREF: showZtats+133↑j
                 lea     si, aArmour     ; "\nArmour:"
                 call    printGameText
                 mov     al, [di+28h]
                 add     al, 51h ; 'Q'
                 call    sub_16BFA
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0
                 jz      short loc_16F12
                 jmp     loc_16FA5
 ; ---------------------------------------------------------------------------
 
-loc_16F12:                              ; CODE XREF: sub_16DC1+14C↑j
+loc_16F12:                              ; CODE XREF: showZtats+14C↑j
                 lea     si, aWeapons    ; "\n***Weapons***"
                 call    printGameText
                 mov     bx, 0Fh
 
-loc_16F1C:                              ; CODE XREF: sub_16DC1+195↓j
+loc_16F1C:                              ; CODE XREF: showZtats+195↓j
                 cmp     byte ptr [bx+di+30h], 0
                 jz      short loc_16F54
                 call    sub_126F4
@@ -7589,18 +7589,18 @@ loc_16F1C:                              ; CODE XREF: sub_16DC1+195↓j
                 call    writeCharacter
                 mov     al, 29h ; ')'
                 call    writeCharacter
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0FFh
                 jz      short loc_16FA5
 
-loc_16F54:                              ; CODE XREF: sub_16DC1+15F↑j
+loc_16F54:                              ; CODE XREF: showZtats+15F↑j
                 dec     bl
                 jnz     short loc_16F1C
                 lea     si, a02HandsAArmour ; "\n02-Hands-(A)\n**Armour**"
                 call    printGameText
                 mov     bx, 7
 
-loc_16F62:                              ; CODE XREF: sub_16DC1+1DB↓j
+loc_16F62:                              ; CODE XREF: showZtats+1DB↓j
                 cmp     byte ptr [bx+di+28h], 0
                 jz      short loc_16F9A
                 call    sub_126F4
@@ -7620,18 +7620,18 @@ loc_16F62:                              ; CODE XREF: sub_16DC1+1DB↓j
                 call    writeCharacter
                 mov     al, 29h ; ')'
                 call    writeCharacter
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0FFh
                 jz      short loc_16FA5
 
-loc_16F9A:                              ; CODE XREF: sub_16DC1+1A5↑j
+loc_16F9A:                              ; CODE XREF: showZtats+1A5↑j
                 dec     bl
                 jnz     short loc_16F62
                 lea     si, a01SkinA    ; "\n01-Skin-(A)\n"
                 call    printGameText
 
-loc_16FA5:                              ; CODE XREF: sub_16DC1+58↑j
-                                        ; sub_16DC1+6F↑j ...
+loc_16FA5:                              ; CODE XREF: showZtats+58↑j
+                                        ; showZtats+6F↑j ...
                 mov     al, dh
                 sub     al, 30h ; '0'
                 call    invertCharacterCell
@@ -7640,20 +7640,20 @@ loc_16FA5:                              ; CODE XREF: sub_16DC1+58↑j
                 pop     ax
                 popf
                 retn
-sub_16DC1       endp
+showZtats       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16FB1       proc near               ; CODE XREF: sub_16DC1+51↑p
-                                        ; sub_16DC1+68↑p ...
+waitForContinueOrCancel proc near       ; CODE XREF: showZtats+51↑p
+                                        ; showZtats+68↑p ...
                 pushf
                 push    bx
                 mov     bh, ah
 
-loc_16FB5:                              ; CODE XREF: sub_16FB1+7↓j
-                                        ; sub_16FB1+1E↓j
+loc_16FB5:                              ; CODE XREF: waitForContinueOrCancel+7↓j
+                                        ; waitForContinueOrCancel+1E↓j
                 call    pollKeypressAndAnimate
                 jz      short loc_16FB5
                 call    getKeypressAndWaitRaw
@@ -7670,16 +7670,16 @@ loc_16FB5:                              ; CODE XREF: sub_16FB1+7↓j
                 jmp     short loc_16FDA
 ; ---------------------------------------------------------------------------
 
-loc_16FD8:                              ; CODE XREF: sub_16FB1+F↑j
-                                        ; sub_16FB1+14↑j ...
+loc_16FD8:                              ; CODE XREF: waitForContinueOrCancel+F↑j
+                                        ; waitForContinueOrCancel+14↑j ...
                 mov     al, 0
 
-loc_16FDA:                              ; CODE XREF: sub_16FB1+25↑j
+loc_16FDA:                              ; CODE XREF: waitForContinueOrCancel+25↑j
                 mov     ah, bh
                 pop     bx
                 popf
                 retn
-sub_16FB1       endp
+waitForContinueOrCancel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8029,8 +8029,8 @@ sub_171C1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-invertCharacterCell proc near           ; CODE XREF: sub_16DC1+8↑p
-                                        ; sub_16DC1+1E8↑p ...
+invertCharacterCell proc near           ; CODE XREF: showZtats+8↑p
+                                        ; showZtats+1E8↑p ...
                 pushf
                 push    bx
                 push    ds
@@ -11539,7 +11539,7 @@ combatCmdZtats:                         ; CODE XREF: updateMonsterAI:COMBAT_COMM
                 mul     ah
                 mov     di, ax
                 lea     di, [di+14CCh]
-                call    sub_16DC1
+                call    showZtats
                 mov     al, dh
                 sub     al, 30h ; '0'
                 call    invertCharacterCell
@@ -13991,7 +13991,7 @@ sub_1A9E8       proc near               ; CODE XREF: sub_1A8A5+15↑p
                 push    si
                 lea     si, aAvailableBDagg ; "\nAvailable:\nB:Dagger    5gp\nC:Mace  "...
                 call    printGameText
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0FFh
                 jz      short loc_1AA21
                 lea     si, aH2hSwd250gp ; "\nH:2H Swd  250gp\n"
@@ -14001,7 +14001,7 @@ sub_1A9E8       proc near               ; CODE XREF: sub_1A8A5+15↑p
                 mov     byte_114CA, 0FFh
                 lea     si, aI2Axe400gpJ2Bo ; "I:+2 Axe  400gp\nJ:+2 Bow 1050gp\nK:+2 "...
                 call    printGameText
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0FFh
                 jz      short loc_1AA21
                 lea     si, aO4Swd4550gp ; "\nO:+4 Swd 4550gp\n"
@@ -14206,7 +14206,7 @@ sub_1AB68       proc near               ; CODE XREF: sub_1AA25+15↑p
                 push    si
                 lea     si, aAvailableBClot ; "\nAvailable:\nB:Cloth     75gp\nC:Leath"...
                 call    printGameText
-                call    sub_16FB1
+                call    waitForContinueOrCancel
                 cmp     al, 0FFh
                 jz      short loc_1AB8F
                 cmp     byte ptr _savedOverworldPosition, 25h ; '%'
