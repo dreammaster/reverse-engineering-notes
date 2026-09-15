@@ -440,7 +440,9 @@ render-pass function checks (`DrawDungeonCellWallTexture`,
 `ExtendDungeonFloorTexture`, `ExtendDungeonCeilingTexture`, etc. all
 skip a cell when it's set): walks progressively closer rows to find
 the nearest wall-blocked boundary, then marks side-passage cells past
-it as hidden — dungeon line-of-sight occlusion.
+it as hidden — dungeon line-of-sight occlusion, using
+`IsDungeonRowFullyBlocked` (is every cell in a given row a solid-wall
+type — a dead-end/closed-wall test) to find that boundary row.
 
 ### Combat: monster slots and turn order
 

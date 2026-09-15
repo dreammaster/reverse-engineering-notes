@@ -2566,6 +2566,17 @@ drawn.
 
 323 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsDungeonRowFullyBlocked
+
+Named `sub_214F4`, called from `ComputeDungeonCellVisibility`: the
+per-row "is every cell here a solid wall" dead-end test used to find
+the occlusion boundary. Completes this session's full trace of the
+dungeon-rendering pipeline, from facing direction through cell
+copying, visibility computation, three render passes, sprite
+blitting, and monster AI.
+
+324 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -5438,7 +5438,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X214E1);
 	op_hex		(x,	1);
 	create_insn	(0X214EA);
+	set_cmt	(0X214F4,	"Checks whether every cell in the row at word_3292C is a solid-wall type (_val18.._val17) -- if so, marks the next `bp` scratch cells hidden ([+6]|=1) and returns 'blocked' (ax=1); else 'not blocked' (ax=0). Called from ComputeDungeonCellVisibility.",	0);
 	create_insn	(0X214F4);
+	set_name	(0X214F4,	"IsDungeonRowFullyBlocked");
 	create_insn	(x=0X21500);
 	op_hex		(x,	1);
 	create_insn	(x=0X2151F);
@@ -6465,12 +6467,6 @@ static Bytes_1(void) {
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
-	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
-	create_insn	(0X25A5B);
-	set_name	(0X25A5B,	"GetPalette");
-	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
-	create_insn	(x=0X25A63);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -6480,6 +6476,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X25A5B,	"BIOS INT 10h/AX=1017h: reads all 256 DAC palette registers into es:dx (768-byte RGB-triple buffer).",	0);
+	create_insn	(0X25A5B);
+	set_name	(0X25A5B,	"GetPalette");
+	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
+	create_insn	(x=0X25A63);
+	op_hex		(x,	0);
 	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
 	create_insn	(0X25A66);
 	set_name	(0X25A66,	"ScaleByPercentRounded");
@@ -9943,6 +9945,15 @@ static Bytes_2(void) {
 	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
 	set_name	(0X32A20,	"g_monsterSlots");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32A2A);
 	create_word	(0X32AB2);
 	create_word	(0X32ABC);
@@ -9956,15 +9967,6 @@ static Bytes_2(void) {
 	create_word	(0X32BFC);
 	set_cmt	(0X32BFE,	"14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).",	0);
 	set_name	(0X32BFE,	"g_combatTurnOrder");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32DBC);
 	create_word	(0X32DBE);
 	create_word	(0X32DC0);

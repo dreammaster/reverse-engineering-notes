@@ -30419,7 +30419,7 @@ ComputeDungeonCellVisibility proc near  ; CODE XREF: RedrawDungeonScreen+3↑p
                 mov     word_3292C, 2Dh ; '-' ; Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.
                 mov     cx, 3
                 mov     bp, 2Dh ; '-'
-                call    sub_214F4
+                call    IsDungeonRowFullyBlocked
                 or      ax, ax
                 jz      short loc_21411
                 jmp     short loc_21459
@@ -30429,25 +30429,25 @@ loc_21411:                              ; CODE XREF: ComputeDungeonCellVisibilit
                 mov     word_3292C, 2Ah ; '*'
                 mov     cx, 3
                 mov     bp, 2Ah ; '*'
-                call    sub_214F4
+                call    IsDungeonRowFullyBlocked
                 or      ax, ax
                 jnz     short loc_21459
                 mov     word_3292C, 27h ; '''
                 mov     cx, 3
                 mov     bp, 27h ; '''
-                call    sub_214F4
+                call    IsDungeonRowFullyBlocked
                 or      ax, ax
                 jnz     short loc_21459
                 mov     word_3292C, 22h ; '"'
                 mov     cx, 5
                 mov     bp, 22h ; '"'
-                call    sub_214F4
+                call    IsDungeonRowFullyBlocked
                 or      ax, ax
                 jnz     short loc_21459
                 mov     word_3292C, 11h
                 mov     cx, 11h
                 mov     bp, 11h
-                call    sub_214F4
+                call    IsDungeonRowFullyBlocked
 
 loc_21459:                              ; CODE XREF: ComputeDungeonCellVisibility+13↑j
                                         ; ComputeDungeonCellVisibility+26↑j ...
@@ -30527,14 +30527,14 @@ ComputeDungeonCellVisibility endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_214F4       proc near               ; CODE XREF: ComputeDungeonCellVisibility+C↑p
+IsDungeonRowFullyBlocked proc near      ; CODE XREF: ComputeDungeonCellVisibility+C↑p
                                         ; ComputeDungeonCellVisibility+21↑p ...
-                mov     ax, 8
+                mov     ax, 8           ; Checks whether every cell in the row at word_3292C is a solid-wall type (_val18.._val17) -- if so, marks the next `bp` scratch cells hidden ([+6]|=1) and returns 'blocked' (ax=1); else 'not blocked' (ax=0). Called from ComputeDungeonCellVisibility.
                 mul     word_3292C
                 add     ax, 6D60h
                 mov     bx, ax
 
-loc_21500:                              ; CODE XREF: sub_214F4+24↓j
+loc_21500:                              ; CODE XREF: IsDungeonRowFullyBlocked+24↓j
                 test    word ptr [bx+6], 1
                 jnz     short loc_2152C
                 mov     ax, [bx]
@@ -30547,7 +30547,7 @@ loc_21500:                              ; CODE XREF: sub_214F4+24↓j
                 mov     cx, bp
                 mov     bx, 6D60h
 
-loc_2151F:                              ; CODE XREF: sub_214F4+32↓j
+loc_2151F:                              ; CODE XREF: IsDungeonRowFullyBlocked+32↓j
                 or      word ptr [bx+6], 1
                 add     bx, 8
                 loop    loc_2151F
@@ -30555,11 +30555,11 @@ loc_2151F:                              ; CODE XREF: sub_214F4+32↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2152C:                              ; CODE XREF: sub_214F4+11↑j
-                                        ; sub_214F4+19↑j ...
+loc_2152C:                              ; CODE XREF: IsDungeonRowFullyBlocked+11↑j
+                                        ; IsDungeonRowFullyBlocked+19↑j ...
                 xor     ax, ax
                 retn
-sub_214F4       endp
+IsDungeonRowFullyBlocked endp
 
 ; ---------------------------------------------------------------------------
                 align 2
