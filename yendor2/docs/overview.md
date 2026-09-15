@@ -2777,6 +2777,13 @@ to `TrySellItemForGold`.
 
 352 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HitTestCatalogSlot
+
+Named `sub_17B67`, the click gate for `sub_17032`'s buy/sell branches:
+hit-tests region table `0x63C8` plus an 8-entry exclusion check.
+
+353 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -350,10 +350,12 @@ party member.
 A 4th shop-mode bit, `word_328C6` `0x200`, gates a mouse-click-driven
 shop purchase path: `sub_17032` (a catalog-click handler reached from
 the main input loop via a hit-test against region table `0x5AC0`, not
-fully traced) calls `PayGoldAndAcquireItem` for its "quick buy"
-branch, and a sibling branch, `SellClickedCatalogItem`, credits gold
-back for the clicked item instead — the click counterpart to
-`TrySellItemForGold` — pays `g_partyGold` against a price at `0xB30`
+fully traced — its own click gate is `HitTestCatalogSlot`, region
+table `0x63C8` plus an 8-entry exclusion check) calls
+`PayGoldAndAcquireItem` for its "quick buy" branch, and a sibling
+branch, `SellClickedCatalogItem`, credits gold back for the clicked
+item instead — the click counterpart to `TrySellItemForGold` — pays
+`g_partyGold` against a price at `0xB30`
 (`CompareBCD4`/`SubBCD4`, bailing if unaffordable, with a special-case
 `ShowResourceDepletedOverlay` when the purchase exactly drains gold to
 zero) and stages the acquired item the same way

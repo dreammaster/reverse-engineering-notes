@@ -11880,7 +11880,7 @@ seg023          segment byte public 'CODE' use16
 
 sub_17032       proc far                ; CODE XREF: RunShopScreen+13A↓p
                                         ; sub_1869D+E9↓P
-                call    sub_17B67
+                call    HitTestCatalogSlot
                 cmp     ax, 0
                 jnz     short loc_1703B
                 retf
@@ -12121,7 +12121,7 @@ sub_17032       endp
 
 sub_17270       proc far                ; CODE XREF: RunShopScreen+D2↓p
                                         ; sub_1869D:loc_18857↓P
-                call    sub_17B67
+                call    HitTestCatalogSlot
                 cmp     ax, 0
                 jnz     short loc_17279
                 retf
@@ -13112,9 +13112,9 @@ SellClickedCatalogItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17B67       proc near               ; CODE XREF: sub_17032↑p
+HitTestCatalogSlot proc near            ; CODE XREF: sub_17032↑p
                                         ; sub_17270↑p
-                mov     ax, word_2E76E
+                mov     ax, word_2E76E  ; Hit-tests region table 0x63C8 for a catalog-slot click; if hit, also checks an 8-entry table (0x558A) for a match. Returns the region index (0 = no hit) in ax. Called from sub_17032 and sub_17270.
                 mov     bx, word_2E770
                 mov     si, 63C8h
                 call    HitTestRegionTable
@@ -13124,17 +13124,17 @@ sub_17B67       proc near               ; CODE XREF: sub_17032↑p
                 mov     si, 558Ah
                 mov     cx, 8
 
-loc_17B84:                              ; CODE XREF: sub_17B67+28↓j
+loc_17B84:                              ; CODE XREF: HitTestCatalogSlot+28↓j
                 cmp     ax, [di+8]
                 jz      short locret_17B91
                 add     si, 4
                 add     di, 0Ah
                 loop    loc_17B84
 
-locret_17B91:                           ; CODE XREF: sub_17B67+12↑j
-                                        ; sub_17B67+20↑j
+locret_17B91:                           ; CODE XREF: HitTestCatalogSlot+12↑j
+                                        ; HitTestCatalogSlot+20↑j
                 retn
-sub_17B67       endp
+HitTestCatalogSlot endp
 
 seg023          ends
 
