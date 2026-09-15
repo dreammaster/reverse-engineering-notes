@@ -232,8 +232,14 @@ limitation.
 book's top bar: conditional "d) LIST" / "c) MAP" hotkey hints
 (`word_328CC` bits `0x40`/`0x20`), then a row of 7 category-tab icons
 (fixed base picture ids, each swapped to a highlighted +1 variant when
-its bit in `word_328CC`, `0x8000` down to `0x200`, is set). The drawing
-mechanism is confirmed; which tab is which category is not.
+its bit in `word_328CC`, `0x8000` down to `0x200`, is set).
+
+`ShowClueBook` also calls `ShowClueBookHelpScreen` (bound to TAB,
+per its own title text), which lists the clue book's categories: F1
+Maps (world/towns/mines), F2 Monster Statistics, F3 Spells, F4 Magic
+Users (spells by class), F5 Inventory Items, F6 Complete Walk Through,
+ESC Return to Game — very likely (order not yet matched bit-for-bit)
+the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 
 ### Quest-item and party-inventory range checks
 

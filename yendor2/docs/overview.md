@@ -2128,6 +2128,18 @@ for the whole sell-item screen/station.
 
 271 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowClueBookHelpScreen identifies the clue book's categories
+
+Named `sub_14BD5`, called from `ShowClueBook`: the TAB help/index
+screen, titled "** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **",
+listing F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users
+(spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC
+Return to Game. This very likely names (at least 6 of)
+`DrawClueBookNavBar`'s 7 category tabs, though the bit-to-category
+mapping isn't confirmed yet.
+
+272 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

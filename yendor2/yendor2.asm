@@ -1289,7 +1289,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 mov     ax, 15h
                 mov     word_3297E, ax
                 call    PlayClueBookOpenAnimation
-                call    sub_14BD5
+                call    ShowClueBookHelpScreen
                 call    sub_2587E
 
 loc_10CB5:                              ; CODE XREF: ShowClueBook+F3↓j
@@ -1348,7 +1348,7 @@ loc_10D1E:                              ; CODE XREF: ShowClueBook+D3↑j
 ; ---------------------------------------------------------------------------
 
 loc_10D2E:                              ; CODE XREF: ShowClueBook+E3↑j
-                call    sub_14BD5
+                call    ShowClueBookHelpScreen
                 jmp     short loc_10CB5
 ; ---------------------------------------------------------------------------
 
@@ -7683,9 +7683,9 @@ sub_14B85       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BD5       proc far                ; CODE XREF: ShowClueBook+6B↑P
+ShowClueBookHelpScreen proc far         ; CODE XREF: ShowClueBook+6B↑P
                                         ; ShowClueBook:loc_10D2E↑P ...
-                and     word_328CC, 7Fh
+                and     word_328CC, 7Fh ; Clue book TAB help/index screen (called from ShowClueBook). Title: '** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **'. Body lists the categories: F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users (spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC Return to Game -- identifying (at least 6 of) DrawClueBookNavBar's 7 category tabs.
                 mov     word_2E3FC, 0F9h
                 mov     ax, 86F6h
                 mov     word_2E3F8, ax
@@ -7709,7 +7709,7 @@ sub_14BD5       proc far                ; CODE XREF: ShowClueBook+6B↑P
                 call    near ptr DrawClueBookNavBar
                 call    DrawMouseCursor
                 retf
-sub_14BD5       endp
+ShowClueBookHelpScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7822,7 +7822,7 @@ loc_14D3D:                              ; CODE XREF: sub_14D26+12↑j
                 jnz     short loc_14D70
                 and     word_328CC, 0FF9Fh
                 push    cs
-                call    near ptr sub_14BD5
+                call    near ptr ShowClueBookHelpScreen
                 mov     word_2E40A, 0FFFFh
                 jmp     locret_14DFB
 ; ---------------------------------------------------------------------------

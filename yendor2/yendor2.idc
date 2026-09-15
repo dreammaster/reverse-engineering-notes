@@ -2001,8 +2001,10 @@ static Bytes_0(void) {
 	set_name	(0X14B10,	"FillVideoBuffer");
 	create_insn	(0X14B24);
 	create_insn	(0X14B85);
+	set_cmt	(0X14BD5,	"Clue book TAB help/index screen (called from ShowClueBook). Title: '** PRESS TAB AT ANY TIME TO SEE THIS SCREEN **'. Body lists the categories: F1 Maps, F2 Monster Statistics, F3 Spells, F4 Magic Users (spells by class), F5 Inventory Items, F6 Complete Walk Through, ESC Return to Game -- identifying (at least 6 of) DrawClueBookNavBar's 7 category tabs.",	0);
 	create_insn	(x=0X14BD5);
 	op_hex		(x,	1);
+	set_name	(0X14BD5,	"ShowClueBookHelpScreen");
 	set_cmt	(0X14C02,	"msg",	0);
 	set_cmt	(0X14C37,	"Clue book (F8) nav bar, called from RunClueEntryMenu. Draws two conditional hotkey hints (word_328CC bit 0x40 -> 'd) LIST', bit 0x20 -> 'c) MAP'), then a row of 7 category-tab icons at y=0xB4 (x from 0x3E, step 0x1E): 7 base picture ids (0x20/0x145/0x147/0x153/0x149/0x14B/0x14D), each +1'd to a highlighted variant when its bit (word_328CC 0x8000..0x200) is set, drawn via DrawPicture. Category identities not traced -- only the mechanism is confirmed.",	0);
 	create_insn	(x=0X14C37);
@@ -4184,6 +4186,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1C8A0,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X1C8A0);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1C8AD);
 	op_hex		(x,	1);
 	set_cmt	(0X1C8AF,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -4210,15 +4221,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CA64,	"UseItem's fallback branch (item record es:[si+0xE] bit 0x800). Re-loads the item's own type flags (es:[si+0x10]) into word_2E410 and re-dispatches on the same bits the main type handlers use, but only to call a target-status classifier (ClassifyPartyMemberCondition / sub_1B7DD / CheckPartyMemberItemFlagAndClearPanel / CheckPartyMemberItemFlag) -- no cost or stat change applied. Reads as a preview of the item's target-status effect. A separate path (bits 0x3000, matching UseAbilityScroll's selector) instead finishes the use and shows a different result via an untraced pair (sub_25CFA/sub_2909C).",	0);
 	create_insn	(0X1CA64);
 	set_name	(0X1CA64,	"ShowItemUsagePreview");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1CA74);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA7A);
@@ -7262,6 +7264,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -7296,15 +7307,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289DD,	"ShowErr_RequiredExpandedMemMgr");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X289E2);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -10757,6 +10759,15 @@ static Bytes_2(void) {
 	set_name	(0X36551,	"aOne");
 	create_strlit	(0X36555,	0X8);
 	set_name	(0X36555,	"aMonster");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3655D,	0XA);
 	set_name	(0X3655D,	"aCharacter");
 	create_strlit	(0X36567,	0X2);
@@ -10791,15 +10802,6 @@ static Bytes_2(void) {
 	set_name	(0X3660F,	"aUseThat");
 	create_strlit	(0X36618,	0X6);
 	set_name	(0X36618,	"aHere");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3661E,	0XB);
 	set_name	(0X3661E,	"aThePotion");
 	create_strlit	(0X36629,	0X7);
