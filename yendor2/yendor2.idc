@@ -7640,7 +7640,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X28C67);
 	op_hex		(x,	1);
 	create_insn	(0X28C94);
+	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
+	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
 	set_cmt	(0X28CC2,	"this",	0);
 	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
@@ -8961,11 +8963,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B78D);
 	set_name	(0X2B78D,	"ShowConversationText_4000");
-	create_insn	(0X2B7FB);
-	create_insn	(0X2B845);
-	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B866);
-	set_name	(0X2B866,	"ShowConversationText_2000");
 }
 
 //------------------------------------------------------------------------
@@ -8975,6 +8972,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B7FB);
+	create_insn	(0X2B845);
+	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B866);
+	set_name	(0X2B866,	"ShowConversationText_2000");
 	create_insn	(0X2B8CB);
 	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B8D7);

@@ -2961,6 +2961,16 @@ party record on confirmation.
 
 380 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ReadMapCellAttributeByte
+
+Named `sub_28CB1`, an open lead flagged much earlier this session
+("don't force a name"): a single-byte `WORLD.DAT` block-3 read for a
+map cell, called from `RevealMapRegion`/`RevealMapRegionRow`. Exact
+meaning of the byte still not identified, but the mechanism is now
+confirmed and documented.
+
+381 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

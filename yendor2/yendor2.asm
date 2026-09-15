@@ -43067,7 +43067,7 @@ WorldDat_setBlock2 endp
 
 
 WorldDat_setBlock3 proc far             ; CODE XREF: BuildClueLocationSuffix+9↑P
-                                        ; sub_28CB1+1E↓P
+                                        ; ReadMapCellAttributeByte+1E↓P
                 push    si
                 mov     si, 0CDF3h
                 mov     [bx+4], ax
@@ -44736,9 +44736,9 @@ sub_28C94       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28CB1       proc far                ; CODE XREF: RevealMapRegion+152↓p
+ReadMapCellAttributeByte proc far       ; CODE XREF: RevealMapRegion+152↓p
                                         ; RevealMapRegionRow+8B↓p
-                push    bx
+                push    bx              ; Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.
                 push    word_368AB
                 push    word_368A7
                 push    word_368AD
@@ -44760,7 +44760,7 @@ sub_28CB1       proc far                ; CODE XREF: RevealMapRegion+152↓p
                 pop     word_368AB
                 pop     bx
                 retf
-sub_28CB1       endp
+ReadMapCellAttributeByte endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44889,7 +44889,7 @@ loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 call    near ptr sub_28C94
                 mov     word_3290C, ax
                 push    cs
-                call    near ptr sub_28CB1
+                call    near ptr ReadMapCellAttributeByte
                 mov     word_328FE, ax
                 mov     ax, word_2E406
                 mov     word_36863, ax
@@ -45255,7 +45255,7 @@ loc_29200:                              ; CODE XREF: RevealMapRegionRow+AC↓j
                 cmp     word_328FE, 1
                 jnz     short loc_29239
                 push    cs
-                call    near ptr sub_28CB1
+                call    near ptr ReadMapCellAttributeByte
                 cmp     ax, 2
                 jz      short loc_29239
 
@@ -92922,7 +92922,7 @@ word_38808      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+2
 word_3880A      dw 0                    ; DATA XREF: DrawClueBookNavBar+56↑w
                                         ; DrawClueBookNavBar+D4↑r ...
 word_3880C      dw 0                    ; DATA XREF: sub_19CA1+D↑w
-                                        ; sub_28CB1+35↑r
+                                        ; ReadMapCellAttributeByte+35↑r
 word_3880E      dw 0                    ; DATA XREF: FormatAndDrawBCD4+19↑w
                                         ; sub_19CA1+10↑w
 word_38810      dw 0                    ; DATA XREF: sub_19CA1+13↑w
