@@ -5338,7 +5338,7 @@ loc_132B8:                              ; CODE XREF: RunClueBookMonsterCategory+
                                         ; RunClueBookMonsterCategory+29↓j ...
                 test    word_328C4, 400h
                 jz      short loc_132CD
-                call    sub_141D9
+                call    ShowClueBookMonsterDetail
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
 
@@ -6702,9 +6702,9 @@ sub_1419B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_141D9       proc near               ; CODE XREF: RunClueBookMonsterCategory+B↑p
-                                        ; sub_141D9+48B↓j ...
-                mov     es, fe
+ShowClueBookMonsterDetail proc near     ; CODE XREF: RunClueBookMonsterCategory+B↑p
+                                        ; ShowClueBookMonsterDetail+48B↓j ...
+                mov     es, fe          ; F2 Monster Statistics detail panel (drawn by RunClueBookMonsterCategory). Labeled fields confirmed via message dump: EXPERIENCE:, GOLD:, MAGIC ORE:, NUORE: (loot), HEALTH-, ACCURACY-, DEXTERITY-, ABSORPTION-, DAMAGE-, RANGED ACC.-, RANGED DAM.- (combat), POISON:/DISEASE:/PARALYSIS:/FREEZING:/HEXING:/CURSING:/FIRE:/COLD:/ELECTRIC:/POWER: (resistances/vulnerabilities). Individual field offsets not traced yet.
                 mov     si, 0
                 mov     bx, word_2E3EE
                 mov     bx, [bx]
@@ -6832,7 +6832,7 @@ sub_141D9       proc near               ; CODE XREF: RunClueBookMonsterCategory+
                 mov     bx, 89E6h       ; msg
                 call    writeString
 
-loc_143F1:                              ; CODE XREF: sub_141D9+202↑j
+loc_143F1:                              ; CODE XREF: ShowClueBookMonsterDetail+202↑j
                 mov     _textPos_x, 0A7h
                 mov     _textPos_y, 0A0h
                 mov     bx, 89BEh
@@ -6852,15 +6852,15 @@ loc_143F1:                              ; CODE XREF: sub_141D9+202↑j
                 jmp     loc_14595
 ; ---------------------------------------------------------------------------
 
-loc_14439:                              ; CODE XREF: sub_141D9+24F↑j
+loc_14439:                              ; CODE XREF: ShowClueBookMonsterDetail+24F↑j
                 test    word ptr es:[si+92h], 1000h
                 jz      short loc_1444A
 
-loc_14442:                              ; CODE XREF: sub_141D9+258↑j
+loc_14442:                              ; CODE XREF: ShowClueBookMonsterDetail+258↑j
                 mov     ax, 8B6Eh
                 call    StrCat
 
-loc_1444A:                              ; CODE XREF: sub_141D9+267↑j
+loc_1444A:                              ; CODE XREF: ShowClueBookMonsterDetail+267↑j
                 push    bx
                 mov     ax, es:[si+6Eh]
                 call    PrepareTrapEffectSlots
@@ -6871,73 +6871,73 @@ loc_1444A:                              ; CODE XREF: sub_141D9+267↑j
                 mov     ax, 8DFEh
                 call    StrCat
 
-loc_14466:                              ; CODE XREF: sub_141D9+283↑j
+loc_14466:                              ; CODE XREF: ShowClueBookMonsterDetail+283↑j
                 test    word ptr [di+8], 4000h
                 jz      short loc_14475
                 mov     ax, 8B8Dh
                 call    StrCat
 
-loc_14475:                              ; CODE XREF: sub_141D9+292↑j
+loc_14475:                              ; CODE XREF: ShowClueBookMonsterDetail+292↑j
                 test    word ptr [di+8], 2000h
                 jz      short loc_14484
                 mov     ax, 8B96h
                 call    StrCat
 
-loc_14484:                              ; CODE XREF: sub_141D9+2A1↑j
+loc_14484:                              ; CODE XREF: ShowClueBookMonsterDetail+2A1↑j
                 test    word ptr [di+8], 1000h
                 jz      short loc_14493
                 mov     ax, 8BA0h
                 call    StrCat
 
-loc_14493:                              ; CODE XREF: sub_141D9+2B0↑j
+loc_14493:                              ; CODE XREF: ShowClueBookMonsterDetail+2B0↑j
                 test    word ptr [di+8], 800h
                 jz      short loc_144A2
                 mov     ax, 8BABh
                 call    StrCat
 
-loc_144A2:                              ; CODE XREF: sub_141D9+2BF↑j
+loc_144A2:                              ; CODE XREF: ShowClueBookMonsterDetail+2BF↑j
                 test    word ptr [di+8], 400h
                 jz      short loc_144B1
                 mov     ax, 8BB4h
                 call    StrCat
 
-loc_144B1:                              ; CODE XREF: sub_141D9+2CE↑j
+loc_144B1:                              ; CODE XREF: ShowClueBookMonsterDetail+2CE↑j
                 test    word ptr [di+8], 200h
                 jz      short loc_144C0
                 mov     ax, 8BBEh
                 call    StrCat
 
-loc_144C0:                              ; CODE XREF: sub_141D9+2DD↑j
+loc_144C0:                              ; CODE XREF: ShowClueBookMonsterDetail+2DD↑j
                 test    word ptr [di+8], 100h
                 jz      short loc_144CF
                 mov     ax, 8BC8h
                 call    StrCat
 
-loc_144CF:                              ; CODE XREF: sub_141D9+2EC↑j
+loc_144CF:                              ; CODE XREF: ShowClueBookMonsterDetail+2EC↑j
                 test    word ptr [di+8], 80h
                 jz      short loc_144DE
                 mov     ax, 8BD1h
                 call    StrCat
 
-loc_144DE:                              ; CODE XREF: sub_141D9+2FB↑j
+loc_144DE:                              ; CODE XREF: ShowClueBookMonsterDetail+2FB↑j
                 test    word ptr [di+8], 1
                 jz      short loc_144ED
                 mov     ax, 8BDBh
                 call    StrCat
 
-loc_144ED:                              ; CODE XREF: sub_141D9+30A↑j
+loc_144ED:                              ; CODE XREF: ShowClueBookMonsterDetail+30A↑j
                 test    word ptr [di+8], 4
                 jz      short loc_144FC
                 mov     ax, 8BE8h
                 call    StrCat
 
-loc_144FC:                              ; CODE XREF: sub_141D9+319↑j
+loc_144FC:                              ; CODE XREF: ShowClueBookMonsterDetail+319↑j
                 test    word ptr [di+8], 2
                 jz      short loc_1450B
                 mov     ax, 8BF4h
                 call    StrCat
 
-loc_1450B:                              ; CODE XREF: sub_141D9+328↑j
+loc_1450B:                              ; CODE XREF: ShowClueBookMonsterDetail+328↑j
                 test    word ptr es:[si+92h], 0E00h
                 jz      short loc_1455B
                 test    word ptr [di+0Ah], 200h
@@ -6946,30 +6946,30 @@ loc_1450B:                              ; CODE XREF: sub_141D9+328↑j
                 jmp     short loc_14523
 ; ---------------------------------------------------------------------------
 
-loc_14520:                              ; CODE XREF: sub_141D9+340↑j
+loc_14520:                              ; CODE XREF: ShowClueBookMonsterDetail+340↑j
                 mov     ax, 8B7Dh
 
-loc_14523:                              ; CODE XREF: sub_141D9+345↑j
+loc_14523:                              ; CODE XREF: ShowClueBookMonsterDetail+345↑j
                 call    StrCat
                 test    word ptr es:[si+92h], 800h
                 jz      short loc_14539
                 mov     ax, 8C02h
                 call    StrCat
 
-loc_14539:                              ; CODE XREF: sub_141D9+356↑j
+loc_14539:                              ; CODE XREF: ShowClueBookMonsterDetail+356↑j
                 test    word ptr es:[si+92h], 400h
                 jz      short loc_1454A
                 mov     ax, 8C0Fh
                 call    StrCat
 
-loc_1454A:                              ; CODE XREF: sub_141D9+367↑j
+loc_1454A:                              ; CODE XREF: ShowClueBookMonsterDetail+367↑j
                 test    word ptr es:[si+92h], 200h
                 jz      short loc_1455B
                 mov     ax, 8C18h
                 call    StrCat
 
-loc_1455B:                              ; CODE XREF: sub_141D9+339↑j
-                                        ; sub_141D9+378↑j
+loc_1455B:                              ; CODE XREF: ShowClueBookMonsterDetail+339↑j
+                                        ; ShowClueBookMonsterDetail+378↑j
                 mov     byte ptr [bx-2], 0
                 mov     _textPos_x, 0ABh
                 mov     bx, 0AFA8h
@@ -6982,14 +6982,14 @@ loc_1455B:                              ; CODE XREF: sub_141D9+339↑j
                 mul     cx
                 mov     _textPos_x, ax
 
-loc_1457F:                              ; CODE XREF: sub_141D9+397↑j
+loc_1457F:                              ; CODE XREF: ShowClueBookMonsterDetail+397↑j
                 mov     bx, 89CFh       ; msg
                 call    writeString
                 add     _textPos_x, 5Ah ; 'Z'
                 mov     _font_fgColor, 0CAh
                 mov     bx, 0AFA8h      ; msg
 
-loc_14595:                              ; CODE XREF: sub_141D9+25D↑j
+loc_14595:                              ; CODE XREF: ShowClueBookMonsterDetail+25D↑j
                 call    writeString
                 mov     _font_bgTransparent, 1
                 mov     ax, es:[si+8]
@@ -7013,7 +7013,7 @@ loc_14595:                              ; CODE XREF: sub_141D9+25D↑j
                 mov     g_blitMaskPtr, ax
                 mov     g_blitMaskLen, 6
 
-loc_145EB:                              ; CODE XREF: sub_141D9+3EA↑j
+loc_145EB:                              ; CODE XREF: ShowClueBookMonsterDetail+3EA↑j
                 call    DrawPicture
                 and     word_328C6, 0FFFEh
                 inc     word_32938
@@ -7025,7 +7025,7 @@ loc_145EB:                              ; CODE XREF: sub_141D9+3EA↑j
                 mov     es:[si+8], ax
                 or      word ptr es:[si+0Ch], 4
 
-loc_14612:                              ; CODE XREF: sub_141D9+427↑j
+loc_14612:                              ; CODE XREF: ShowClueBookMonsterDetail+427↑j
                 cmp     word_32938, 4Ah ; 'J'
                 jnz     short loc_14628
                 mov     ax, es:[si+5Ch]
@@ -7035,7 +7035,7 @@ loc_14612:                              ; CODE XREF: sub_141D9+427↑j
                 jmp     short loc_1464A
 ; ---------------------------------------------------------------------------
 
-loc_14628:                              ; CODE XREF: sub_141D9+43E↑j
+loc_14628:                              ; CODE XREF: ShowClueBookMonsterDetail+43E↑j
                 cmp     word_32938, 4Fh ; 'O'
                 jle     short loc_14645
                 mov     word_32938, 1
@@ -7045,26 +7045,26 @@ loc_14628:                              ; CODE XREF: sub_141D9+43E↑j
                 jmp     short loc_14667
 ; ---------------------------------------------------------------------------
 
-loc_14645:                              ; CODE XREF: sub_141D9+425↑j
-                                        ; sub_141D9+454↑j
+loc_14645:                              ; CODE XREF: ShowClueBookMonsterDetail+425↑j
+                                        ; ShowClueBookMonsterDetail+454↑j
                 call    sub_25656
 
-loc_1464A:                              ; CODE XREF: sub_141D9+446↑j
-                                        ; sub_141D9+44D↑j
+loc_1464A:                              ; CODE XREF: ShowClueBookMonsterDetail+446↑j
+                                        ; ShowClueBookMonsterDetail+44D↑j
                 test    word ptr es:[si+0Ch], 4
                 jz      short loc_14667
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 mov     ax, 2           ; ticks
                 call    wait
-                jmp     sub_141D9
+                jmp     ShowClueBookMonsterDetail
 ; ---------------------------------------------------------------------------
 
-loc_14667:                              ; CODE XREF: sub_141D9+46A↑j
-                                        ; sub_141D9+477↑j
+loc_14667:                              ; CODE XREF: ShowClueBookMonsterDetail+46A↑j
+                                        ; ShowClueBookMonsterDetail+477↑j
                 and     word_328C4, 0FBFFh
                 retn
-sub_141D9       endp
+ShowClueBookMonsterDetail endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7115,7 +7115,7 @@ loc_1467D:                              ; CODE XREF: LoadClueBookMonsterEntry+9�
 loc_14700:                              ; CODE XREF: LoadClueBookMonsterEntry+7E↑j
                 mov     word_32938, 1
                 or      word_328CC, 40h
-                call    sub_141D9
+                call    ShowClueBookMonsterDetail
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -7249,8 +7249,8 @@ sub_147FF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14833       proc near               ; CODE XREF: sub_141D9+3F↑p
-                                        ; sub_141D9+54↑p ...
+sub_14833       proc near               ; CODE XREF: ShowClueBookMonsterDetail+3F↑p
+                                        ; ShowClueBookMonsterDetail+54↑p ...
                 push    si
                 push    ax
                 mov     _font_bgTransparent, 1
@@ -7307,8 +7307,8 @@ sub_14876       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_148B2       proc near               ; CODE XREF: sub_141D9+93↑p
-                                        ; sub_141D9+A8↑p ...
+sub_148B2       proc near               ; CODE XREF: ShowClueBookMonsterDetail+93↑p
+                                        ; ShowClueBookMonsterDetail+A8↑p ...
                 push    ax
                 mov     _font_fgColor, 0Ah
                 call    writeString
@@ -7395,8 +7395,8 @@ sub_148EA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1496B       proc near               ; CODE XREF: sub_141D9+126↑p
-                                        ; sub_141D9+13B↑p ...
+sub_1496B       proc near               ; CODE XREF: ShowClueBookMonsterDetail+126↑p
+                                        ; ShowClueBookMonsterDetail+13B↑p ...
                 push    ax
                 mov     _font_fgColor, 0Ah
                 call    writeString
@@ -7519,8 +7519,8 @@ sub_149DD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A5E       proc near               ; CODE XREF: sub_141D9+1F8↑p
-                                        ; sub_141D9+22A↑p
+sub_14A5E       proc near               ; CODE XREF: ShowClueBookMonsterDetail+1F8↑p
+                                        ; ShowClueBookMonsterDetail+22A↑p
                 push    ax
                 mov     _font_fgColor, 0Ah
                 call    writeString
@@ -7655,7 +7655,7 @@ sub_14B24       endp
 
 
 sub_14B85       proc far                ; CODE XREF: BuildClueEntryText+9A↑P
-                                        ; sub_141D9+D↑P
+                                        ; ShowClueBookMonsterDetail+D↑P
                 mov     ax, 0AFDAh
                 call    WorldDat_setBlock5
                 mov     errorCode, 9
@@ -13702,7 +13702,7 @@ seg026          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-PrepareTrapEffectSlots proc far         ; CODE XREF: sub_141D9+276↑P
+PrepareTrapEffectSlots proc far         ; CODE XREF: ShowClueBookMonsterDetail+276↑P
                                         ; sub_16DAA:loc_16DDD↑P ...
                 push    ax              ; PrepareTrapEffectSlots(ax=effect id): returns bx = g_trapEffectDefs + id*0xC (the effect-definition record). Also clears the [+8..+0x14) fields of all 4 g_partyEffectIconSlots entries first -- reset before repopulate. ax is left 0 on return.
                 push    es
@@ -37706,7 +37706,7 @@ seg078          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25656       proc far                ; CODE XREF: sub_141D9:loc_14645↑P
+sub_25656       proc far                ; CODE XREF: ShowClueBookMonsterDetail:loc_14645↑P
                                         ; sub_20E54+15C↑P
                 test    word ptr es:[si+92h], 40h
                 jz      short loc_25662
@@ -44376,7 +44376,7 @@ seg103          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-StrLen          proc far                ; CODE XREF: sub_141D9+38F↑P
+StrLen          proc far                ; CODE XREF: ShowClueBookMonsterDetail+38F↑P
                                         ; TrimTrailingSpaces+1↑P ...
                 push    cx              ; strlen(bx): scans for a null byte (max 255 bytes), returns length in ax.
                 push    di
@@ -56741,10 +56741,10 @@ _val7           dw 0                    ; DATA XREF: InitGlobals+24↑w
                                         ; ShowCharacterInventory+D6↑r ...
 _val8           dw 0                    ; DATA XREF: InitGlobals+2A↑w
                                         ; ShowCharacterInventory+EA↑r ...
-g_blitMaskPtr   dw 0                    ; DATA XREF: sub_141D9+409↑w
+g_blitMaskPtr   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+409↑w
                                         ; sub_14E28+34↑w ...
                                         ; Pointer to the current sprite's explicit transparency/AND mask data (paired with g_blitMaskLen), consumed by ExpandBlitMaskNibbles when word_328C6 bit 0 is set. Set from ~12 call sites before drawing a masked sprite; often length 6.
-g_blitMaskLen   dw 0                    ; DATA XREF: sub_141D9+40C↑w
+g_blitMaskLen   dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+40C↑w
                                         ; sub_14E28+39↑w ...
                                         ; Length in bytes of the mask at g_blitMaskPtr (see ExpandBlitMaskNibbles). Commonly 6.
 word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
@@ -74294,8 +74294,8 @@ word_32934      dw 0                    ; DATA XREF: ComputeGameClockTime↑w
                                         ; ComputeGameClockTime+11↑w ...
 _videoSegment   dw 0                    ; DATA XREF: sub_1075E+4C↑w
                                         ; ShowClueBook+4B↑w ...
-word_32938      dw 0                    ; DATA XREF: sub_141D9+41C↑w
-                                        ; sub_141D9+420↑r ...
+word_32938      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+41C↑w
+                                        ; ShowClueBookMonsterDetail+420↑r ...
 word_3293A      dw 0                    ; DATA XREF: InitGraphics↑w
                                         ; Struc1_Allocate+15↑r ...
 word_3293C      dw 0                    ; DATA XREF: InitGraphics+6↑w
@@ -74342,11 +74342,11 @@ word_32960      dw 0                    ; DATA XREF: DrawLocalMapCell+56↑w
 ; int textPos_y
 _textPos_y      dw 0                    ; DATA XREF: sub_1075E+37↑w
                                         ; ShowIntroPicture+EF↑w ...
-word_32964      dw 0                    ; DATA XREF: sub_141D9+3F5↑w
+word_32964      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+3F5↑w
                                         ; sub_14E28+DE↑w ...
-word_32966      dw 0                    ; DATA XREF: sub_141D9+3FC↑w
+word_32966      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+3FC↑w
                                         ; sub_14E28+E3↑w ...
-word_32968      dw 0                    ; DATA XREF: sub_141D9+403↑w
+word_32968      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+403↑w
                                         ; sub_14E28+E8↑w ...
 word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
                                         ; TrySellItemForGold+63↑w
@@ -92911,7 +92911,7 @@ g_partyRecords  db    0                 ; Base of the party-member record array.
                 db  52h ; R
                 db  45h ; E
                 db    0
-word_38808      dw 0                    ; DATA XREF: sub_141D9+22D↑w
+word_38808      dw 0                    ; DATA XREF: ShowClueBookMonsterDetail+22D↑w
                                         ; DrawClueBookNavBar+50↑w ...
 word_3880A      dw 0                    ; DATA XREF: DrawClueBookNavBar+56↑w
                                         ; DrawClueBookNavBar+D4↑r ...

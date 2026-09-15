@@ -280,11 +280,17 @@ screen (F5): an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
 The F2 "MONSTER STATISTICS" category follows the same pattern:
 `RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
 `LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for
-the current entry into a fresh buffer) then loops redrawing a detail
-panel (`sub_141D9`, a 362-line function with dozens of individually
-labeled stat fields, not yet named) plus `DrawClueBookNavBar` whenever
-dirty, until ESC — no region-table hit-testing, unlike the item
-category's loop.
+the current entry into a fresh buffer) then loops redrawing
+`ShowClueBookMonsterDetail` plus `DrawClueBookNavBar` whenever dirty,
+until ESC — no region-table hit-testing, unlike the item category's
+loop. `ShowClueBookMonsterDetail`'s labels (dumped from its message
+table) give a full monster stat sheet: `EXPERIENCE:`, `GOLD:`,
+`MAGIC ORE:`, `NUORE:` (loot — consistent with `GrantMonsterRewards`'
+4 staged loot fields), `HEALTH-`, `ACCURACY-`, `DEXTERITY-`,
+`ABSORPTION-`, `DAMAGE-`, `RANGED ACC.-`, `RANGED DAM.-` (combat), and
+`POISON:`/`DISEASE:`/`PARALYSIS:`/`FREEZING:`/`HEXING:`/`CURSING:`/
+`FIRE:`/`COLD:`/`ELECTRIC:`/`POWER:` (resistances or vulnerabilities)
+— individual field offsets into the loaded record not traced yet.
 
 `RunClueBookItemCategory` is item subtype 1's own interactive loop
 (draw entry, poll input, hit-test a region table so the player can

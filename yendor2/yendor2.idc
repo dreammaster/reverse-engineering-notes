@@ -1865,7 +1865,9 @@ static Bytes_0(void) {
 	create_insn	(0X1419B);
 	set_cmt	(0X141A4,	"this",	0);
 	set_cmt	(0X141B3,	"numPara",	0);
+	set_cmt	(0X141D9,	"F2 Monster Statistics detail panel (drawn by RunClueBookMonsterCategory). Labeled fields confirmed via message dump: EXPERIENCE:, GOLD:, MAGIC ORE:, NUORE: (loot), HEALTH-, ACCURACY-, DEXTERITY-, ABSORPTION-, DAMAGE-, RANGED ACC.-, RANGED DAM.- (combat), POISON:/DISEASE:/PARALYSIS:/FREEZING:/HEXING:/CURSING:/FIRE:/COLD:/ELECTRIC:/POWER: (resistances/vulnerabilities). Individual field offsets not traced yet.",	0);
 	create_insn	(0X141D9);
+	set_name	(0X141D9,	"ShowClueBookMonsterDetail");
 	create_insn	(x=0X143D4);
 	op_hex		(x,	1);
 	set_cmt	(0X143E9,	"msg",	0);
@@ -4039,10 +4041,6 @@ static Bytes_0(void) {
 	create_insn	(0X1BEEF);
 	set_cmt	(0X1BF0E,	"msg",	0);
 	create_insn	(0X1BF1C);
-	create_insn	(0X1BF4A);
-	set_cmt	(0X1BF94,	"UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.",	0);
-	create_insn	(0X1BF94);
-	set_name	(0X1BF94,	"UseHealingItem");
 }
 
 //------------------------------------------------------------------------
@@ -4052,6 +4050,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1BF4A);
+	set_cmt	(0X1BF94,	"UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.",	0);
+	create_insn	(0X1BF94);
+	set_name	(0X1BF94,	"UseHealingItem");
 	create_insn	(x=0X1BF98);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BFA0);
@@ -7082,6 +7084,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X28172);
 	create_insn	(0X2818B);
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
@@ -7099,15 +7110,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X28296);
 	op_hex		(x,	1);
 	set_name	(0X28296,	"PlayMusicTrack");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);
@@ -10497,6 +10499,15 @@ static Bytes_2(void) {
 	set_name	(0X35DD2,	"aRollAttributes");
 	create_strlit	(0X35DE2,	0XB);
 	set_name	(0X35DE2,	"aPickItems");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35DED,	0XE);
 	set_name	(0X35DED,	"aChallengeOf");
 	create_strlit	(0X35DFB,	0X1A);
@@ -10535,15 +10546,6 @@ static Bytes_2(void) {
 	set_name	(0X35F24,	"aUnfortunatelyI");
 	create_strlit	(0X35F44,	0X12);
 	set_name	(0X35F44,	"aYouThroughLeve");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35F56,	0X23);
 	set_name	(0X35F56,	"aDarkUnionTheOn");
 	create_strlit	(0X35F79,	0X2F);

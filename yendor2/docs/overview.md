@@ -2302,6 +2302,19 @@ described when it was named; and `sub_13119` has 4 confirmed call
 sites, not "two other sites" as first counted. Documentation-only,
 renames only, no new count.
 
+### 2026-09-15 session update, continued: ShowClueBookMonsterDetail
+
+Named `sub_141D9`, the F2 Monster Statistics detail panel. Message
+dump gives a full monster stat sheet: `EXPERIENCE:`, `GOLD:`,
+`MAGIC ORE:`, `NUORE:` (loot, matching `GrantMonsterRewards`'s 4
+staged loot fields), `HEALTH-`/`ACCURACY-`/`DEXTERITY-`/`ABSORPTION-`/
+`DAMAGE-`/`RANGED ACC.-`/`RANGED DAM.-` (combat), and 10
+resistance/vulnerability labels (poison, disease, paralysis, freezing,
+hexing, cursing, fire, cold, electric, power). Individual field
+offsets not traced yet.
+
+286 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
