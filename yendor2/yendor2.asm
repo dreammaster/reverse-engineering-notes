@@ -28328,7 +28328,7 @@ loc_201DE:                              ; CODE XREF: RunMapEditorScreen+15C↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_201F5
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_206A0
+                call    RedrawMapEditorGrid
                 call    sub_2075B
                 call    sub_238CD
 
@@ -28886,8 +28886,8 @@ sub_20652       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_206A0       proc near               ; CODE XREF: RunMapEditorScreen+17A↑p
-                xor     dx, dx
+RedrawMapEditorGrid proc near           ; CODE XREF: RunMapEditorScreen+17A↑p
+                xor     dx, dx          ; Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.
                 mov     ax, word_36CF7
                 mov     bx, 28h ; '('
                 div     bx
@@ -28902,13 +28902,13 @@ sub_206A0       proc near               ; CODE XREF: RunMapEditorScreen+17A↑p
                 mov     y, 8
                 mov     cx, 18h
 
-loc_206C7:                              ; CODE XREF: sub_206A0+69↓j
+loc_206C7:                              ; CODE XREF: RedrawMapEditorGrid+69↓j
                 push    _textPos_x
                 mov     x, 0
                 push    cx
                 mov     cx, 28h ; '('
 
-loc_206D5:                              ; CODE XREF: sub_206A0+59↓j
+loc_206D5:                              ; CODE XREF: RedrawMapEditorGrid+59↓j
                 push    cx
                 mov     ax, _textPos_x
                 mov     bx, _textPos_y
@@ -28928,7 +28928,7 @@ loc_206D5:                              ; CODE XREF: sub_206A0+59↓j
                 pop     _textPos_x
                 loop    loc_206C7
                 retn
-sub_206A0       endp
+RedrawMapEditorGrid endp
 
 
 ; =============== S U B R O U T I N E =======================================

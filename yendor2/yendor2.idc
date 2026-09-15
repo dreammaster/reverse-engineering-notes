@@ -5215,7 +5215,9 @@ static Bytes_1(void) {
 	create_insn	(0X20652);
 	create_insn	(x=0X20695);
 	op_seg		(x,	1);
+	set_cmt	(0X206A0,	"Redraws the full visible 40x24 cell grid in the map editor: for every cell, PersistExploredCell + LoadWorldDatTilePalette + DrawCellIconPair. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X206A0);
+	set_name	(0X206A0,	"RedrawMapEditorGrid");
 	create_insn	(x=0X206E5);
 	op_seg		(x,	1);
 	create_insn	(0X2070C);

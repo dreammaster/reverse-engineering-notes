@@ -1092,7 +1092,10 @@ literal write site is still not found in the disassembly (no
 an indirect/computed pointer write. Left as an open question, though
 now a much narrower one. `RunMapEditorScreen` also uses
 `ClearVideoMemoryRegion` (a partial VGA-segment clear, 2560 bytes at
-`0xA000:0000`) before some of its redraws.
+`0xA000:0000`) before some of its redraws, and
+`RedrawMapEditorGrid` to redraw the full visible 40×24 cell grid
+(`PersistExploredCell` + `LoadWorldDatTilePalette` + `DrawCellIconPair`
+per cell) — the same area `FillVisibleAreaWithSelectedTile` floods.
 
 **Open question — how the two tile-type lookup tables actually work**:
 dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like

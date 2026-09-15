@@ -2660,6 +2660,13 @@ out this session's coverage of the hidden map-editor screen.
 
 334 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RedrawMapEditorGrid
+
+Named `sub_206A0`: redraws the map editor's full visible 40×24 cell
+grid, the same area `FillVisibleAreaWithSelectedTile` floods.
+
+335 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
