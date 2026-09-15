@@ -1180,7 +1180,9 @@ static Bytes_0(void) {
 	create_insn	(0X11299);
 	create_insn	(0X112A0);
 	create_insn	(0X112A7);
+	set_cmt	(0X112AE,	"Movement/turning input handler, called from `start`. Dispatches on byte_2E400 == 'H'/'P'/'K'/'M' (BIOS extended scan codes for cursor Up/Down/Left/Right) -- matches the manual's move forward/backward/turn left/turn right exactly, plus an 's' case. Updates player position (word_36CF7/36CF9) and facing (word_328D2), then triggers the automap reveal (sub_21D30/RevealCellsAroundPlayer).",	0);
 	create_insn	(0X112AE);
+	set_name	(0X112AE,	"HandleMovementInput");
 	create_insn	(x=0X112B7);
 	op_hex		(x,	1);
 	create_insn	(0X112D5);
@@ -5350,7 +5352,9 @@ static Bytes_0(void) {
 	create_insn	(0X21C79);
 	create_insn	(x=0X21C7E);
 	op_hex		(x,	1);
+	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
 	create_insn	(0X21CC2);
+	set_name	(0X21CC2,	"PersistExploredCell");
 	set_cmt	(0X21CC6,	"this",	0);
 	set_cmt	(0X21CD4,	"this",	0);
 	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
@@ -5798,6 +5802,15 @@ static Bytes_0(void) {
 	set_cmt	(0X237E1,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X237E1);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X237F0);
 	create_insn	(0X237F7);
 	set_cmt	(0X237FA,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -5852,15 +5865,6 @@ static Bytes_0(void) {
 	set_cmt	(0X23A22,	"Restores the saved background (0xE0E) to the video buffer at (word_2E776, word_31956) via getTextPos -- erases the cursor from its last drawn position. (Corrected from an earlier, backwards 'DrawMouseCursor' name this session -- see fix_cursor_naming.py.)",	0);
 	create_insn	(0X23A22);
 	set_name	(0X23A22,	"RestoreCursorBackground");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23A40);
 	op_hex		(x,	1);
 	create_insn	(x=0X23A58);
@@ -10150,6 +10154,15 @@ static Bytes_1(void) {
 	set_name	(0X35D96,	"aClose");
 	create_strlit	(0X35D9C,	0X9);
 	set_name	(0X35D9C,	"aPortrait");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35DA5,	0X11);
 	set_name	(0X35DA5,	"aNonMagicUsers");
 	create_strlit	(0X35DB6,	0XE);
@@ -10202,15 +10215,6 @@ static Bytes_1(void) {
 	set_name	(0X35F56,	"aDarkUnionTheOn");
 	create_strlit	(0X35F79,	0X2F);
 	set_name	(0X35F79,	"aPressTabAtAnyT");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35FA8,	0X25);
 	set_name	(0X35FA8,	"aF1MapsWorldTow");
 	create_strlit	(0X35FCE,	0X17);

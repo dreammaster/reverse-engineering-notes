@@ -867,6 +867,29 @@ rendering code.
 
 127 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PersistExploredCell, HandleMovementInput
+
+`MarkCellExplored`'s reveal action, `PersistExploredCell` (was
+`sub_21CC2`), turned out to be about *persistence* rather than
+rendering: it writes the explored-cell bit directly into `CURGAME`
+(bit-packed, byte = x/8 + `word_3685F`, bit = x%8) — the automap survives
+save/load because it's stored in the savegame itself, not kept in
+memory only.
+
+Stepping back up, named the function that started this whole thread:
+`HandleMovementInput` (was `sub_112AE`, called directly from `start`) —
+dispatches on the key `H`/`P`/`K`/`M`, the classic BIOS extended scan
+codes for the cursor arrow keys, matching the manual's "move forward/
+backward, turn left/right" exactly. Updates position and facing, then
+triggers the automap reveal chain.
+
+The actual first-person dungeon-view *rendering* still hasn't
+surfaced — `HandleMovementInput`'s own picture/marker draws
+(`sub_116CF`) turned out to be a small on-screen indicator, not the
+main view. A good next lead for whoever continues.
+
+129 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

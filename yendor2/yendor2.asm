@@ -1193,7 +1193,7 @@ loc_10A90:                              ; CODE XREF: start+A8B↑j
 loc_10AAB:                              ; CODE XREF: start+373↑j
                                         ; start+380↑j ...
                 call    sub_16E18
-                call    sub_112AE
+                call    HandleMovementInput
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10ABF
                 jmp     loc_10286
@@ -1807,7 +1807,7 @@ seg002          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11160       proc far                ; CODE XREF: sub_112AE+2B3↓p
+sub_11160       proc far                ; CODE XREF: HandleMovementInput+2B3↓p
                                         ; sub_29297+C0↓P ...
                 mov     errorCode, 0
                 cmp     ax, 1
@@ -1846,7 +1846,7 @@ sub_11160       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1119A       proc far                ; CODE XREF: sub_112AE+2C2↓p
+sub_1119A       proc far                ; CODE XREF: HandleMovementInput+2C2↓p
                                         ; sub_29297+B2↓P ...
                 mov     errorCode, 0
                 cmp     ax, 15h
@@ -2000,8 +2000,8 @@ sub_11236       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_112AE       proc far                ; CODE XREF: start+AB0↑P
-                mov     ax, word_36CF5
+HandleMovementInput proc far            ; CODE XREF: start+AB0↑P
+                mov     ax, word_36CF5  ; Movement/turning input handler, called from `start`. Dispatches on byte_2E400 == 'H'/'P'/'K'/'M' (BIOS extended scan codes for cursor Up/Down/Left/Right) -- matches the manual's move forward/backward/turn left/turn right exactly, plus an 's' case. Updates player position (word_36CF7/36CF9) and facing (word_328D2), then triggers the automap reveal (sub_21D30/RevealCellsAroundPlayer).
                 xor     bx, bx
                 xor     cx, cx
                 xor     dx, dx
@@ -2015,23 +2015,23 @@ sub_112AE       proc far                ; CODE XREF: start+AB0↑P
                 jmp     loc_1137C
 ; ---------------------------------------------------------------------------
 
-loc_112D5:                              ; CODE XREF: sub_112AE+22↑j
+loc_112D5:                              ; CODE XREF: HandleMovementInput+22↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_112DF
                 jmp     loc_113CA
 ; ---------------------------------------------------------------------------
 
-loc_112DF:                              ; CODE XREF: sub_112AE+2C↑j
+loc_112DF:                              ; CODE XREF: HandleMovementInput+2C↑j
                 cmp     byte_2E400, 73h ; 's'
                 jnz     short loc_112E9
                 jmp     loc_11418
 ; ---------------------------------------------------------------------------
 
-loc_112E9:                              ; CODE XREF: sub_112AE+36↑j
+loc_112E9:                              ; CODE XREF: HandleMovementInput+36↑j
                 jmp     loc_1145E
 ; ---------------------------------------------------------------------------
 
-loc_112EC:                              ; CODE XREF: sub_112AE+1B↑j
+loc_112EC:                              ; CODE XREF: HandleMovementInput+1B↑j
                 mov     word_2E530, 1Ah
                 mov     word_32940, 19h
                 mov     word_32904, 6442h
@@ -2046,25 +2046,25 @@ loc_112EC:                              ; CODE XREF: sub_112AE+1B↑j
                 jmp     loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_1131D:                              ; CODE XREF: sub_112AE+56↑j
+loc_1131D:                              ; CODE XREF: HandleMovementInput+56↑j
                 inc     cx
                 add     dx, 270h
                 jmp     loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_11325:                              ; CODE XREF: sub_112AE+5E↑j
+loc_11325:                              ; CODE XREF: HandleMovementInput+5E↑j
                 dec     cx
                 sub     dx, 270h
                 jmp     loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_1132D:                              ; CODE XREF: sub_112AE+66↑j
+loc_1132D:                              ; CODE XREF: HandleMovementInput+66↑j
                 dec     bx
                 sub     dx, 8
                 jmp     loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_11334:                              ; CODE XREF: sub_112AE+14↑j
+loc_11334:                              ; CODE XREF: HandleMovementInput+14↑j
                 mov     word_2E530, 14h
                 mov     word_32940, 13h
                 mov     word_32904, 6424h
@@ -2079,25 +2079,25 @@ loc_11334:                              ; CODE XREF: sub_112AE+14↑j
                 jmp     loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_11365:                              ; CODE XREF: sub_112AE+9E↑j
+loc_11365:                              ; CODE XREF: HandleMovementInput+9E↑j
                 dec     cx
                 sub     dx, 270h
                 jmp     loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_1136D:                              ; CODE XREF: sub_112AE+A6↑j
+loc_1136D:                              ; CODE XREF: HandleMovementInput+A6↑j
                 inc     cx
                 add     dx, 270h
                 jmp     loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_11375:                              ; CODE XREF: sub_112AE+AE↑j
+loc_11375:                              ; CODE XREF: HandleMovementInput+AE↑j
                 inc     bx
                 add     dx, 8
                 jmp     loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_1137C:                              ; CODE XREF: sub_112AE+24↑j
+loc_1137C:                              ; CODE XREF: HandleMovementInput+24↑j
                 mov     word_2E530, 12h
                 mov     word_32940, 11h
                 mov     word_32904, 641Ah
@@ -2112,25 +2112,25 @@ loc_1137C:                              ; CODE XREF: sub_112AE+24↑j
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_113AF:                              ; CODE XREF: sub_112AE+E6↑j
+loc_113AF:                              ; CODE XREF: HandleMovementInput+E6↑j
                 and     ax, 7FFFh
                 or      ax, 2000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_113B8:                              ; CODE XREF: sub_112AE+EE↑j
+loc_113B8:                              ; CODE XREF: HandleMovementInput+EE↑j
                 and     ax, 0BFFFh
                 or      ax, 1000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_113C1:                              ; CODE XREF: sub_112AE+F6↑j
+loc_113C1:                              ; CODE XREF: HandleMovementInput+F6↑j
                 and     ax, 0EFFFh
                 or      ax, 8000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_113CA:                              ; CODE XREF: sub_112AE+2E↑j
+loc_113CA:                              ; CODE XREF: HandleMovementInput+2E↑j
                 mov     word_2E530, 16h
                 mov     word_32940, 15h
                 mov     word_32904, 642Eh
@@ -2145,25 +2145,25 @@ loc_113CA:                              ; CODE XREF: sub_112AE+2E↑j
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_113FD:                              ; CODE XREF: sub_112AE+134↑j
+loc_113FD:                              ; CODE XREF: HandleMovementInput+134↑j
                 and     ax, 7FFFh
                 or      ax, 1000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_11406:                              ; CODE XREF: sub_112AE+13C↑j
+loc_11406:                              ; CODE XREF: HandleMovementInput+13C↑j
                 and     ax, 0BFFFh
                 or      ax, 2000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_1140F:                              ; CODE XREF: sub_112AE+144↑j
+loc_1140F:                              ; CODE XREF: HandleMovementInput+144↑j
                 and     ax, 0EFFFh
                 or      ax, 4000h
                 jmp     loc_114C2
 ; ---------------------------------------------------------------------------
 
-loc_11418:                              ; CODE XREF: sub_112AE+38↑j
+loc_11418:                              ; CODE XREF: HandleMovementInput+38↑j
                 mov     word_2E530, 18h
                 mov     word_32940, 17h
                 mov     word_32904, 6438h
@@ -2176,31 +2176,31 @@ loc_11418:                              ; CODE XREF: sub_112AE+38↑j
                 jmp     short loc_11457
 ; ---------------------------------------------------------------------------
 
-loc_11444:                              ; CODE XREF: sub_112AE+182↑j
+loc_11444:                              ; CODE XREF: HandleMovementInput+182↑j
                 dec     bx
                 sub     dx, 8
                 jmp     short loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_1144A:                              ; CODE XREF: sub_112AE+18A↑j
+loc_1144A:                              ; CODE XREF: HandleMovementInput+18A↑j
                 inc     bx
                 add     dx, 8
                 jmp     short loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_11450:                              ; CODE XREF: sub_112AE+192↑j
+loc_11450:                              ; CODE XREF: HandleMovementInput+192↑j
                 dec     cx
                 sub     dx, 270h
                 jmp     short loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_11457:                              ; CODE XREF: sub_112AE+194↑j
+loc_11457:                              ; CODE XREF: HandleMovementInput+194↑j
                 inc     cx
                 add     dx, 270h
                 jmp     short loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_1145E:                              ; CODE XREF: sub_112AE:loc_112E9↑j
+loc_1145E:                              ; CODE XREF: HandleMovementInput:loc_112E9↑j
                 mov     word_2E530, 1Ch
                 mov     word_32940, 1Bh
                 mov     word_32904, 644Ch
@@ -2213,49 +2213,49 @@ loc_1145E:                              ; CODE XREF: sub_112AE:loc_112E9↑j
                 jmp     short loc_1149D
 ; ---------------------------------------------------------------------------
 
-loc_1148A:                              ; CODE XREF: sub_112AE+1C8↑j
+loc_1148A:                              ; CODE XREF: HandleMovementInput+1C8↑j
                 inc     bx
                 add     dx, 8
                 jmp     short loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_11490:                              ; CODE XREF: sub_112AE+1D0↑j
+loc_11490:                              ; CODE XREF: HandleMovementInput+1D0↑j
                 dec     bx
                 sub     dx, 8
                 jmp     short loc_114A4
 ; ---------------------------------------------------------------------------
 
-loc_11496:                              ; CODE XREF: sub_112AE+1D8↑j
+loc_11496:                              ; CODE XREF: HandleMovementInput+1D8↑j
                 inc     cx
                 add     dx, 270h
                 jmp     short loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_1149D:                              ; CODE XREF: sub_112AE+1DA↑j
+loc_1149D:                              ; CODE XREF: HandleMovementInput+1DA↑j
                 dec     cx
                 sub     dx, 270h
                 jmp     short loc_114AC
 ; ---------------------------------------------------------------------------
 
-loc_114A4:                              ; CODE XREF: sub_112AE+6C↑j
-                                        ; sub_112AE+83↑j ...
+loc_114A4:                              ; CODE XREF: HandleMovementInput+6C↑j
+                                        ; HandleMovementInput+83↑j ...
                 or      word_328C4, 1000h
                 jmp     short loc_114B2
 ; ---------------------------------------------------------------------------
 
-loc_114AC:                              ; CODE XREF: sub_112AE+74↑j
-                                        ; sub_112AE+7C↑j ...
+loc_114AC:                              ; CODE XREF: HandleMovementInput+74↑j
+                                        ; HandleMovementInput+7C↑j ...
                 or      word_328C4, 800h
 
-loc_114B2:                              ; CODE XREF: sub_112AE+1FC↑j
+loc_114B2:                              ; CODE XREF: HandleMovementInput+1FC↑j
                 test    word_328CA, 1000h
                 jz      short loc_114C2
                 and     word_328C4, 0E7FFh
                 jmp     short loc_114F0
 ; ---------------------------------------------------------------------------
 
-loc_114C2:                              ; CODE XREF: sub_112AE+FE↑j
-                                        ; sub_112AE+107↑j ...
+loc_114C2:                              ; CODE XREF: HandleMovementInput+FE↑j
+                                        ; HandleMovementInput+107↑j ...
                 call    sub_116CF
                 mov     word_2E402, bx
                 mov     word_2E406, cx
@@ -2273,8 +2273,8 @@ loc_114C2:                              ; CODE XREF: sub_112AE+FE↑j
                 jmp     short loc_114FF
 ; ---------------------------------------------------------------------------
 
-loc_114F0:                              ; CODE XREF: sub_112AE+212↑j
-                                        ; sub_112AE+22E↑j ...
+loc_114F0:                              ; CODE XREF: HandleMovementInput+212↑j
+                                        ; HandleMovementInput+22E↑j ...
                 mov     ax, word_32940
                 mov     word_2E530, ax
                 call    sub_116CF
@@ -2282,7 +2282,7 @@ loc_114F0:                              ; CODE XREF: sub_112AE+212↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_114FF:                              ; CODE XREF: sub_112AE+240↑j
+loc_114FF:                              ; CODE XREF: HandleMovementInput+240↑j
                 mov     word_36CF5, ax
                 mov     es, word_2E562
                 mov     bx, word_328D2
@@ -2298,13 +2298,13 @@ loc_114FF:                              ; CODE XREF: sub_112AE+240↑j
                 jmp     short loc_11598
 ; ---------------------------------------------------------------------------
 
-loc_1152A:                              ; CODE XREF: sub_112AE+266↑j
+loc_1152A:                              ; CODE XREF: HandleMovementInput+266↑j
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jnz     short loc_11535
                 mov     ax, word_36E4B
 
-loc_11535:                              ; CODE XREF: sub_112AE+282↑j
+loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
                 call    sub_25B14
                 mov     ax, word_36CF7
                 add     ax, word_2E402
@@ -2315,8 +2315,8 @@ loc_11535:                              ; CODE XREF: sub_112AE+282↑j
                 jmp     short loc_11581
 ; ---------------------------------------------------------------------------
 
-loc_11555:                              ; CODE XREF: sub_112AE+26F↑j
-                                        ; sub_112AE+275↑j
+loc_11555:                              ; CODE XREF: HandleMovementInput+26F↑j
+                                        ; HandleMovementInput+275↑j
                 test    word_328C4, 8000h
                 jnz     short loc_11598
                 mov     ax, es:[bx]
@@ -2330,15 +2330,15 @@ loc_11555:                              ; CODE XREF: sub_112AE+26F↑j
                 cmp     errorCode, 0
                 jz      short loc_11598
 
-loc_1157A:                              ; CODE XREF: sub_112AE+2BB↑j
+loc_1157A:                              ; CODE XREF: HandleMovementInput+2BB↑j
                 cmp     errorCode, 2
                 jz      short loc_11589
 
-loc_11581:                              ; CODE XREF: sub_112AE+2A5↑j
+loc_11581:                              ; CODE XREF: HandleMovementInput+2A5↑j
                 mov     ax, _val33
                 call    sub_28412
 
-loc_11589:                              ; CODE XREF: sub_112AE+2D1↑j
+loc_11589:                              ; CODE XREF: HandleMovementInput+2D1↑j
                 mov     ax, word_32940
                 mov     word_2E530, ax
                 call    sub_116CF
@@ -2346,8 +2346,8 @@ loc_11589:                              ; CODE XREF: sub_112AE+2D1↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11598:                              ; CODE XREF: sub_112AE+27A↑j
-                                        ; sub_112AE+2AD↑j ...
+loc_11598:                              ; CODE XREF: HandleMovementInput+27A↑j
+                                        ; HandleMovementInput+2AD↑j ...
                 mov     ax, word_2E402
                 add     word_36CF7, ax
                 mov     ax, word_2E406
@@ -2362,7 +2362,7 @@ loc_11598:                              ; CODE XREF: sub_112AE+27A↑j
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_115C8:                              ; CODE XREF: sub_112AE+323↓j
+loc_115C8:                              ; CODE XREF: HandleMovementInput+323↓j
                 cmp     ax, [si+6]
                 jz      short loc_115D5
                 add     si, 9Ch
@@ -2370,7 +2370,7 @@ loc_115C8:                              ; CODE XREF: sub_112AE+323↓j
                 jmp     short loc_11613
 ; ---------------------------------------------------------------------------
 
-loc_115D5:                              ; CODE XREF: sub_112AE+31D↑j
+loc_115D5:                              ; CODE XREF: HandleMovementInput+31D↑j
                 or      word_328CA, 1000h
                 call    sub_22315
                 push    si
@@ -2390,8 +2390,8 @@ loc_115D5:                              ; CODE XREF: sub_112AE+31D↑j
                 mov     ax, [si+92h]
                 or      word_328CA, ax
 
-loc_11613:                              ; CODE XREF: sub_112AE+30F↑j
-                                        ; sub_112AE+325↑j
+loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
+                                        ; HandleMovementInput+325↑j
                 call    sub_223D4
                 call    sub_20C1E
                 call    sub_21612
@@ -2407,8 +2407,8 @@ loc_11613:                              ; CODE XREF: sub_112AE+30F↑j
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
 
-loc_11652:                              ; CODE XREF: sub_112AE+384↑j
-                                        ; sub_112AE+38C↑j
+loc_11652:                              ; CODE XREF: HandleMovementInput+384↑j
+                                        ; HandleMovementInput+38C↑j
                 call    sub_19E56
                 cmp     byte_2E400, 0
                 jnz     short loc_116C8
@@ -2435,8 +2435,8 @@ loc_11652:                              ; CODE XREF: sub_112AE+384↑j
                 jmp     short loc_116C8
 ; ---------------------------------------------------------------------------
 
-loc_116A2:                              ; CODE XREF: sub_112AE+3CC↑j
-                                        ; sub_112AE+3D8↑j ...
+loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
+                                        ; HandleMovementInput+3D8↑j ...
                 call    sub_209D2
                 test    word_328C4, 8000h
                 jz      short loc_116C8
@@ -2446,18 +2446,18 @@ loc_116A2:                              ; CODE XREF: sub_112AE+3CC↑j
                 call    sub_21588
                 call    DrawMouseCursor
 
-loc_116C8:                              ; CODE XREF: sub_112AE+3A2↑j
-                                        ; sub_112AE+3AE↑j ...
+loc_116C8:                              ; CODE XREF: HandleMovementInput+3A2↑j
+                                        ; HandleMovementInput+3AE↑j ...
                 and     word_328C4, 0E7FFh
                 retf
-sub_112AE       endp
+HandleMovementInput endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116CF       proc near               ; CODE XREF: sub_112AE:loc_114C2↑p
-                                        ; sub_112AE+248↑p ...
+sub_116CF       proc near               ; CODE XREF: HandleMovementInput:loc_114C2↑p
+                                        ; HandleMovementInput+248↑p ...
                 push    ax
                 push    bx
                 mov     bx, word_32904
@@ -2477,7 +2477,7 @@ sub_116CF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_116F3       proc near               ; CODE XREF: sub_112AE+277↑p
+sub_116F3       proc near               ; CODE XREF: HandleMovementInput+277↑p
                 cmp     byte_2E400, 48h ; 'H'
                 jz      short loc_11704
                 mov     ax, _val30
@@ -12701,7 +12701,7 @@ LoadCurgameRecord endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17795       proc far                ; CODE XREF: sub_112AE+2A0↑P
+sub_17795       proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                                         ; sub_178A6+98↓p ...
                 call    sub_16E18
                 or      word_328C4, 100h
@@ -17437,7 +17437,7 @@ seg032          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19E56       proc far                ; CODE XREF: sub_112AE:loc_11652↑P
+sub_19E56       proc far                ; CODE XREF: HandleMovementInput:loc_11652↑P
                                         ; sub_1DCE0+41A↓P ...
                 mov     byte_2E400, 0
                 push    cs
@@ -28536,7 +28536,7 @@ sub_2034B       endp
 sub_203AC       proc near               ; CODE XREF: sub_2034B+40↑p
                 mov     ax, _textPos_x
                 mov     bx, _textPos_y
-                call    sub_21CC2
+                call    PersistExploredCell
                 call    sub_205C0
                 mov     ax, word_2E496
                 mov     [si], ax
@@ -28856,7 +28856,7 @@ sub_20652       proc near               ; CODE XREF: sub_20070+2A4↑p
                 mov     ax, word_2E770
                 mov     word_32940, ax
                 call    sub_204F0
-                call    sub_21CC2
+                call    PersistExploredCell
                 call    sub_205C0
                 mov     ax, word_2E496
                 mov     [si], ax
@@ -28910,7 +28910,7 @@ loc_206D5:                              ; CODE XREF: sub_206A0+59↓j
                 push    cx
                 mov     ax, _textPos_x
                 mov     bx, _textPos_y
-                call    sub_21CC2
+                call    PersistExploredCell
                 call    sub_205C0
                 mov     ax, seg seg129
                 mov     es, ax
@@ -28938,7 +28938,7 @@ sub_2070C       proc near               ; CODE XREF: sub_20070+2D0↑p
                 mov     ax, word_2E774
                 mov     word_32940, ax
                 call    sub_204F0
-                call    sub_21CC2
+                call    PersistExploredCell
                 call    sub_205C0
                 mov     ax, word_2E4A2
                 mov     [si+2], ax
@@ -31434,9 +31434,9 @@ seg068          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21CC2       proc far                ; CODE XREF: sub_203AC+7↑P
+PersistExploredCell proc far            ; CODE XREF: sub_203AC+7↑P
                                         ; sub_20652+F↑P ...
-                push    word_3293E
+                push    word_3293E      ; Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.
                 push    word_32940      ; this
                 mov     word_3293E, ax
                 mov     word_32940, bx
@@ -31468,13 +31468,13 @@ sub_21CC2       proc far                ; CODE XREF: sub_203AC+7↑P
                 pop     word_32940
                 pop     word_3293E
                 retf
-sub_21CC2       endp
+PersistExploredCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-RevealCellsAroundPlayer proc far        ; CODE XREF: sub_112AE+304↑P
+RevealCellsAroundPlayer proc far        ; CODE XREF: HandleMovementInput+304↑P
                                         ; sub_116F3+82↑P ...
                 mov     ax, word_36CF7  ; Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.
                 mov     bx, word_36CF9
@@ -31564,7 +31564,7 @@ MarkCellExplored proc near              ; CODE XREF: ScanAdjacentCellsAlongX+4�
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 push    cs
-                call    near ptr sub_21CC2
+                call    near ptr PersistExploredCell
 
 locret_21DE0:                           ; CODE XREF: MarkCellExplored+12↑j
                 retn
@@ -32087,7 +32087,7 @@ seg070          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_222F8       proc far                ; CODE XREF: sub_112AE+3B0↑P
+sub_222F8       proc far                ; CODE XREF: HandleMovementInput+3B0↑P
                                         ; InitGame+135↑P ...
                 mov     bx, 95EBh
                 push    cs
@@ -32108,7 +32108,7 @@ sub_222F8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22315       proc far                ; CODE XREF: sub_112AE+32D↑P
+sub_22315       proc far                ; CODE XREF: HandleMovementInput+32D↑P
                                         ; sub_22D4C+294↓P ...
                 push    si
                 push    di
@@ -32194,8 +32194,8 @@ sub_22387       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_223D4       proc far                ; CODE XREF: sub_112AE:loc_11613↑P
-                                        ; sub_112AE+401↑P ...
+sub_223D4       proc far                ; CODE XREF: HandleMovementInput:loc_11613↑P
+                                        ; HandleMovementInput+401↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -38538,7 +38538,7 @@ sub_25AAC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25B14       proc far                ; CODE XREF: sub_112AE:loc_11535↑P
+sub_25B14       proc far                ; CODE XREF: HandleMovementInput:loc_11535↑P
                                         ; sub_16A39+25↑P ...
                 push    bx
                 push    dx
@@ -56599,12 +56599,12 @@ byte_2E400      db 0                    ; DATA XREF: start+34↑r
                 align 2
 ; FileEntry *word_2E402
 word_2E402      dw 0                    ; DATA XREF: sub_111C1+2A↑r
-                                        ; sub_112AE+217↑w ...
-word_2E404      dw 0                    ; DATA XREF: sub_112AE+21F↑w
-                                        ; sub_112AE+25C↑r ...
+                                        ; HandleMovementInput+217↑w ...
+word_2E404      dw 0                    ; DATA XREF: HandleMovementInput+21F↑w
+                                        ; HandleMovementInput+25C↑r ...
 ; FileEntry *word_2E406
 word_2E406      dw 0                    ; DATA XREF: sub_111C1+6↑r
-                                        ; sub_112AE+21B↑w ...
+                                        ; HandleMovementInput+21B↑w ...
 _val27          dw 0                    ; DATA XREF: InitGlobals+C6↑w
                                         ; sub_21187+75↑r
 word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
@@ -56767,7 +56767,7 @@ word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
 word_2E4A8      dw 0                    ; DATA XREF: sub_1F0CD+15↑w
                                         ; sub_25608+1D↑r ...
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
-                                        ; sub_112AE+336↑r ...
+                                        ; HandleMovementInput+336↑r ...
 word_2E4AC      dw 0                    ; DATA XREF: sub_13678+78↑w
                                         ; sub_13780+18↑w ...
 _val10          dw 0                    ; DATA XREF: InitGlobals+36↑w
@@ -56925,16 +56925,16 @@ word_2E558      dw 0                    ; DATA XREF: FindObjectAtPosition+49↑w
                                         ; FindObjectAtPosition+65↑w
 word_2E55A      dw 0                    ; DATA XREF: sub_12449+E↑w
                                         ; sub_12449+1B↑r ...
-word_2E55C      dw 0                    ; DATA XREF: sub_112AE+3C2↑r
-                                        ; sub_112AE+3CE↑r ...
+word_2E55C      dw 0                    ; DATA XREF: HandleMovementInput+3C2↑r
+                                        ; HandleMovementInput+3CE↑r ...
 word_2E55E      dw 0                    ; DATA XREF: sub_21306+1E↑w
                                         ; sub_21306:loc_21338↑w ...
 word_2E560      dw 0                    ; DATA XREF: sub_21306+24↑w
                                         ; sub_21306+38↑w ...
-word_2E562      dw 0                    ; DATA XREF: sub_112AE+254↑r
-                                        ; sub_112AE+347↑r ...
-word_2E564      dw 0                    ; DATA XREF: sub_112AE+3DA↑r
-                                        ; sub_112AE+3E6↑r ...
+word_2E562      dw 0                    ; DATA XREF: HandleMovementInput+254↑r
+                                        ; HandleMovementInput+347↑r ...
+word_2E564      dw 0                    ; DATA XREF: HandleMovementInput+3DA↑r
+                                        ; HandleMovementInput+3E6↑r ...
                 db    0
                 db    0
                 db    0
@@ -74189,8 +74189,8 @@ word_328CE      dw 0                    ; DATA XREF: sub_1FECF+12↑r
                                         ; sub_1FECF+EF↑w ...
                 db    0
                 db    0
-word_328D2      dw 0                    ; DATA XREF: sub_112AE+258↑r
-                                        ; sub_112AE+2F8↑r ...
+word_328D2      dw 0                    ; DATA XREF: HandleMovementInput+258↑r
+                                        ; HandleMovementInput+2F8↑r ...
 word_328D4      dw 0                    ; DATA XREF: sub_16407:loc_16428↑w
                                         ; sub_16407+3D↑w ...
 word_328D6      dw 0                    ; DATA XREF: sub_16D4D+24↑w
@@ -74238,8 +74238,8 @@ word_32900      dw 0                    ; DATA XREF: sub_15429+71↑w
                                         ; sub_15429+9B↑w ...
 word_32902      dw 0                    ; DATA XREF: sub_17B92:loc_17E8B↑r
                                         ; sub_17B92+33D↑r ...
-word_32904      dw 0                    ; DATA XREF: sub_112AE+4A↑w
-                                        ; sub_112AE+92↑w ...
+word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w
+                                        ; HandleMovementInput+92↑w ...
 word_32906      dw 0                    ; DATA XREF: sub_13FCF+46↑w
                                         ; sub_14E28+B1↑w ...
 word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
@@ -74407,10 +74407,10 @@ _val29          dw 0                    ; DATA XREF: InitGlobals+D2↑w
 _val30          dw 0                    ; DATA XREF: start+738↑r
                                         ; sub_116F3+7↑r ...
 _val31          dw 0                    ; DATA XREF: sub_11160+16↑r
-                                        ; sub_112AE+271↑r ...
+                                        ; HandleMovementInput+271↑r ...
 _val32          dw 0                    ; DATA XREF: sub_11160+10↑r
-                                        ; sub_112AE+26B↑r ...
-_val33          dw 0                    ; DATA XREF: sub_112AE:loc_11581↑r
+                                        ; HandleMovementInput+26B↑r ...
+_val33          dw 0                    ; DATA XREF: HandleMovementInput:loc_11581↑r
                                         ; InitGlobals+EA↑w ...
 _val35          dw 0                    ; DATA XREF: InitGlobals+F6↑w
                                         ; sub_1D4B8+3F0↑r
@@ -85993,7 +85993,7 @@ word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
                                         ; sub_1B2BD↑r ...
 word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r
                                         ; sub_219FA:loc_21A17↑r ...
-word_36D07      dw 0                    ; DATA XREF: sub_112AE:loc_1152A↑r
+word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r
                                         ; sub_178A6:loc_178D5↑r ...
 word_36D09      dw 0                    ; DATA XREF: sub_197B9+15B↑r
                                         ; sub_1C890:loc_1C98C↑r ...
@@ -86315,7 +86315,7 @@ word_36E0F      dw 0                    ; DATA XREF: sub_1A320+18↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36E4B      dw 0                    ; DATA XREF: sub_112AE+284↑r
+word_36E4B      dw 0                    ; DATA XREF: HandleMovementInput+284↑r
                                         ; sub_1869D+4B7↑r ...
 word_36E4D      dw 0                    ; DATA XREF: sub_1869D+4C0↑r
                                         ; ShowConfirmPrompt+15E↑r ...
