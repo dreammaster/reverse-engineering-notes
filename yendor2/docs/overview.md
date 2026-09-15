@@ -1413,6 +1413,16 @@ or gate consistently on a fixed per-character value. Corrected
 `file-formats.md` and `RestCharacter`'s own stale comment rather than
 leaving the earlier guess standing next to contradicting evidence.
 
+### 2026-09-15 session update, continued: two small stat-math helpers
+
+Named the two clean, widely-reused arithmetic helpers behind
+`UseTrainingItem`'s class-growth formulas: `ScaleByPercentRounded`
+(round-to-nearest percentage scale) and `AddToStatCapped` (adds a
+delta to any party-member stat field, clamped at 9999 for HP/MP or 999
+for everything else, refusing to grow an uninitialized field).
+
+198 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

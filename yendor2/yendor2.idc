@@ -3606,7 +3606,9 @@ static Bytes_0(void) {
 	create_insn	(0X1AA06);
 	create_insn	(0X1AA2A);
 	create_insn	(0X1AA52);
+	set_cmt	(0X1AA53,	"AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.",	0);
 	create_insn	(0X1AA53);
+	set_name	(0X1AA53,	"AddToStatCapped");
 	create_insn	(0X1AA9B);
 	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
 	create_insn	(0X1AB26);
@@ -4841,6 +4843,15 @@ static Bytes_0(void) {
 	create_insn	(0X1F5A5);
 	set_name	(0X1F5A5,	"ConfirmNewGame");
 	set_cmt	(0X1F5AA,	"styleNum",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1F5CD);
 	create_insn	(x=0X1F5D7);
 	op_hex		(x,	1);
@@ -4864,15 +4875,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1F78C,	"this",	0);
 	set_cmt	(0X1F7E9,	"this",	0);
 	set_cmt	(0X1F7F7,	"this",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1F834,	"this",	0);
 	set_cmt	(0X1F83F,	"this",	0);
 	create_insn	(0X1F884);
@@ -6290,7 +6292,9 @@ static Bytes_1(void) {
 	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
 	create_insn	(x=0X25A63);
 	op_hex		(x,	0);
+	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
 	create_insn	(0X25A66);
+	set_name	(0X25A66,	"ScaleByPercentRounded");
 	create_insn	(0X25A73);
 	create_insn	(0X25AAC);
 	create_insn	(x=0X25ACF);

@@ -18896,9 +18896,9 @@ sub_1AA06       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA53       proc far                ; CODE XREF: UseTrainingItem+BD↓P
+AddToStatCapped proc far                ; CODE XREF: UseTrainingItem+BD↓P
                                         ; UseTrainingItem+18A↓P ...
-                push    ax
+                push    ax              ; AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.
                 push    bx
                 push    dx
                 mov     dx, 270Fh
@@ -18912,8 +18912,8 @@ sub_1AA53       proc far                ; CODE XREF: UseTrainingItem+BD↓P
                 jz      short loc_1AA72
                 mov     dx, 3E7h
 
-loc_1AA72:                              ; CODE XREF: sub_1AA53+9↑j
-                                        ; sub_1AA53+F↑j ...
+loc_1AA72:                              ; CODE XREF: AddToStatCapped+9↑j
+                                        ; AddToStatCapped+F↑j ...
                 mov     errorCode, 2
                 add     bx, word_328D4
                 cmp     word ptr [bx], 0
@@ -18925,15 +18925,15 @@ loc_1AA72:                              ; CODE XREF: sub_1AA53+9↑j
                 mov     errorCode, 1
                 mov     ax, dx
 
-loc_1AA95:                              ; CODE XREF: sub_1AA53+38↑j
+loc_1AA95:                              ; CODE XREF: AddToStatCapped+38↑j
                 mov     [bx], ax
 
-loc_1AA97:                              ; CODE XREF: sub_1AA53+2C↑j
+loc_1AA97:                              ; CODE XREF: AddToStatCapped+2C↑j
                 pop     dx
                 pop     bx
                 pop     ax
                 retf
-sub_1AA53       endp
+AddToStatCapped endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -18960,7 +18960,7 @@ sub_1AA9B       proc far                ; CODE XREF: sub_1819B:loc_181F6↑P
                 sub     ax, 48h ; 'H'
                 jle     short loc_1AAD1
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+38h], ax
 
 loc_1AAD1:                              ; CODE XREF: sub_1AA9B+29↑j
@@ -18969,14 +18969,14 @@ loc_1AAD1:                              ; CODE XREF: sub_1AA9B+29↑j
                 sub     ax, 48h ; 'H'
                 jle     short loc_1AB19
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+3Ah], ax
                 mov     word ptr [si+78h], 0
                 mov     ax, [si+7Ch]
                 sub     ax, 48h ; 'H'
                 jle     short loc_1AB01
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+78h], ax
 
 loc_1AB01:                              ; CODE XREF: sub_1AA9B+59↑j
@@ -18985,7 +18985,7 @@ loc_1AB01:                              ; CODE XREF: sub_1AA9B+59↑j
                 sub     ax, 48h ; 'H'
                 jle     short loc_1AB19
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+7Ah], ax
 
 loc_1AB19:                              ; CODE XREF: sub_1AA9B+41↑j
@@ -21557,14 +21557,14 @@ loc_1C19E:                              ; CODE XREF: UseTrainingItem+59↑j
 loc_1C1D1:                              ; CODE XREF: UseTrainingItem+A7↑j
                 mov     bx, 1Eh
                 mov     ax, [si+80h]
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     bx, 92h
-                call    sub_1AA53
+                call    AddToStatCapped
                 mov     ax, [si+92h]
                 mov     [si+52h], ax
                 mov     ax, [si+86h]
                 mov     bx, 0Dh
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 cmp     ax, 0Fh
                 jle     short loc_1C200
                 mov     ax, 0Fh
@@ -21603,11 +21603,11 @@ loc_1C224:                              ; CODE XREF: UseTrainingItem+FC↑j
 loc_1C23C:                              ; CODE XREF: UseTrainingItem+106↑j
                 mov     ax, [si+82h]
                 mov     bx, 4Bh ; 'K'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     word_3293E, ax
                 mov     ax, [si+84h]
                 mov     bx, 19h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     ax, word_3293E
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
@@ -21615,11 +21615,11 @@ loc_1C23C:                              ; CODE XREF: UseTrainingItem+106↑j
 loc_1C25E:                              ; CODE XREF: UseTrainingItem+10B↑j
                 mov     ax, [si+84h]
                 mov     bx, 4Bh ; 'K'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     word_3293E, ax
                 mov     ax, [si+82h]
                 mov     bx, 19h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     ax, word_3293E
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
@@ -21634,7 +21634,7 @@ loc_1C286:                              ; CODE XREF: UseTrainingItem+115↑j
 
 loc_1C28A:                              ; CODE XREF: UseTrainingItem+161↑j
                 mov     bx, 32h ; '2'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     ax, word_3293E
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
@@ -21650,9 +21650,9 @@ loc_1C29E:                              ; CODE XREF: UseTrainingItem+117↑j
 loc_1C2A2:                              ; CODE XREF: UseTrainingItem+139↑j
                                         ; UseTrainingItem+15B↑j ...
                 mov     bx, 1Eh
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     bx, 94h
-                call    sub_1AA53
+                call    AddToStatCapped
                 mov     ax, [si+94h]
                 mov     [si+54h], ax
 
@@ -21662,14 +21662,14 @@ loc_1C2B9:                              ; CODE XREF: UseTrainingItem+FE↑j
                 mov     cx, 6
 
 loc_1C2C2:                              ; CODE XREF: UseTrainingItem+1A7↓j
-                call    sub_1AA53
+                call    AddToStatCapped
                 add     bx, 2
                 loop    loc_1C2C2
                 mov     bx, 98h
                 mov     cx, 0Dh
 
 loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
-                call    sub_1AA53
+                call    AddToStatCapped
                 add     bx, 2
                 loop    loc_1C2D2
                 push    si
@@ -35502,15 +35502,15 @@ sub_23F58       proc near               ; CODE XREF: ShowCharacterSkills+1CC↓p
                 mov     si, word_328D4
                 mov     ax, [si+3Ch]
                 mov     bx, 0Ah
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+58h], ax
                 mov     ax, [si+3Eh]
                 mov     bx, 1Eh
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+58h], ax
                 mov     ax, [si+40h]
                 mov     bx, 3Ch ; '<'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+58h], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 1
@@ -35536,11 +35536,11 @@ loc_23FB6:                              ; CODE XREF: sub_23F58+35↑j
                 mov     [si+98h], ax
                 mov     ax, [si+3Ch]
                 mov     bx, 50h ; 'P'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+5Ah], ax
                 mov     ax, [si+3Eh]
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+5Ah], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 1
@@ -35565,11 +35565,11 @@ loc_24009:                              ; CODE XREF: sub_23F58+8B↑j
                 mov     [si+9Ah], ax
                 mov     ax, [si+3Ch]
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+5Ch], ax
                 mov     ax, [si+3Eh]
                 mov     bx, 50h ; 'P'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+5Ch], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 1
@@ -35623,11 +35623,11 @@ loc_240AB:                              ; CODE XREF: sub_23F58+124↑j
                 mov     [si+9Eh], ax
                 mov     ax, [si+3Ch]
                 mov     bx, 32h ; '2'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+60h], ax
                 mov     ax, [si+3Eh]
                 mov     bx, 32h ; '2'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+60h], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 1
@@ -35718,11 +35718,11 @@ loc_24181:                              ; CODE XREF: sub_23F58+20F↑j
                 jz      short loc_241E9
                 mov     ax, [si+46h]
                 mov     bx, 55h ; 'U'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+68h], ax
                 mov     ax, [si+42h]
                 mov     bx, 0Fh
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+68h], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 2
@@ -35754,11 +35754,11 @@ loc_241E9:                              ; CODE XREF: sub_23F58+23A↑j
                 jz      short loc_24251
                 mov     ax, [si+3Eh]
                 mov     bx, 50h ; 'P'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+6Ah], ax
                 mov     ax, [si+42h]
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+6Ah], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 2
@@ -35791,11 +35791,11 @@ loc_24251:                              ; CODE XREF: sub_23F58+29F↑j
                 mov     ax, 0
                 mov     ax, [si+42h]
                 mov     bx, 5Ah ; 'Z'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+64h], ax
                 mov     ax, [si+44h]
                 mov     bx, 0Ah
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+64h], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 7
@@ -35829,11 +35829,11 @@ loc_242B0:                              ; CODE XREF: sub_23F58+307↑j
                 jz      short loc_2431E
                 mov     ax, [si+42h]
                 mov     bx, 46h ; 'F'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+6Eh], ax
                 mov     ax, [si+44h]
                 mov     bx, 1Eh
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+6Eh], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 8
@@ -35872,11 +35872,11 @@ loc_2431E:                              ; CODE XREF: sub_23F58+366↑j
                 jz      short loc_24383
                 mov     ax, [si+42h]
                 mov     bx, 14h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+70h], ax
                 mov     ax, [si+44h]
                 mov     bx, 50h ; 'P'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 add     [si+70h], ax
                 mov     ax, 5
                 cmp     word ptr [si+0Eh], 5
@@ -37370,7 +37370,7 @@ sub_252EF       proc near               ; CODE XREF: ShowCharacterSkills:loc_245
                 mov     [si+80h], ax
                 mov     ax, [si+40h]
                 mov     bx, 19h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     [si+52h], ax
                 mov     [si+92h], ax
                 mov     ax, 0
@@ -37402,7 +37402,7 @@ loc_253BB:                              ; CODE XREF: sub_252EF:loc_2539F↑j
 loc_253C4:                              ; CODE XREF: sub_252EF+C8↑j
                 mov     ax, [si+82h]
                 mov     bx, 32h ; '2'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     dx, ax
                 test    word ptr [si+84h], 1
                 jz      short loc_2543F
@@ -37413,11 +37413,11 @@ loc_253C4:                              ; CODE XREF: sub_252EF+C8↑j
 loc_253DD:                              ; CODE XREF: sub_252EF+B6↑j
                 mov     ax, [si+82h]
                 mov     bx, 4Bh ; 'K'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 push    ax
                 mov     ax, [si+84h]
                 mov     bx, 19h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 pop     bx
                 add     ax, bx
                 mov     dx, 5
@@ -37433,7 +37433,7 @@ loc_253FE:                              ; CODE XREF: sub_252EF+CA↑j
 loc_25407:                              ; CODE XREF: sub_252EF+C2↑j
                 mov     ax, [si+84h]
                 mov     bx, 32h ; '2'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 mov     dx, ax
                 test    word ptr [si+84h], 1
                 jz      short loc_2543F
@@ -37444,11 +37444,11 @@ loc_25407:                              ; CODE XREF: sub_252EF+C2↑j
 loc_25420:                              ; CODE XREF: sub_252EF+BC↑j
                 mov     ax, [si+84h]
                 mov     bx, 4Bh ; 'K'
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 push    ax
                 mov     ax, [si+82h]
                 mov     bx, 19h
-                call    sub_25A66
+                call    ScaleByPercentRounded
                 pop     bx
                 add     ax, bx
                 mov     dx, 5
@@ -38436,15 +38436,15 @@ seg084          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25A66       proc far                ; CODE XREF: sub_1AA9B+2E↑P
+ScaleByPercentRounded proc far          ; CODE XREF: sub_1AA9B+2E↑P
                                         ; sub_1AA9B+46↑P ...
-                mul     bx
+                mul     bx              ; ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.
                 add     ax, 32h ; '2'
                 xor     dx, dx
                 mov     bx, 64h ; 'd'
                 div     bx
                 retf
-sub_25A66       endp
+ScaleByPercentRounded endp
 
 
 ; =============== S U B R O U T I N E =======================================
