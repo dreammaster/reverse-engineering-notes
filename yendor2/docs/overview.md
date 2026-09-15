@@ -907,6 +907,48 @@ write-up, including the two new map-cell fields, in
 
 131 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: minimap tile tables were a dead end, but led to a legend screen
+
+Tried to pin down what `word_32926` (a parameter `BuildMinimapTileData`
+sets per-cell before drawing) actually controls. `DrawMinimap` keeps its
+own picture index fixed at `g_pictureDir` entry 9 throughout its loop,
+so the varying table value isn't a picture selector there; checked
+whether it's a color/remap parameter by reading `sub_2A53C` and ruled
+that out too — it never reads `word_32926` at all. Documented as
+genuinely open in file-formats.md rather than leaving the disproven
+theory standing (commit `518cf62`, no new names that round).
+
+Followed the same two tables (0xE551/0xE175, confirmed 12/10-byte
+strides) into a second, previously-unexplored consumer: a full
+interactive screen (`sub_20070`, reached from an ordinary keyboard
+command slot in `start`'s main dispatch, not a debug hook) that draws
+two scrollable 17-icon horizontal strips — one per table — as a legend,
+then uses `GetMapCellPtr` on a stored screen position to preview the
+current cell's own floor+overlay icon pair at full size. Confirmed via
+direct reads that nothing in this cluster ever writes back to map data
+(only `DrawCellIconPair`'s `es:[bx]`/`es:[bx+2]` reads and the legend
+strips' table reads) — this is a reference/legend screen, not a level
+editor. Named the whole clearly-understood piece:
+`DrawCellIconPair` (floor+overlay icon for one cell, also used
+elsewhere), `DrawWallTypeLegendRow`/`DrawFloorTypeLegendRow` (the two
+strips), `IsPairedValueMatch` (a small fuzzy-equality helper used by
+the strip-highlighting logic: `ax==bx`, or `ax`'s even/odd pair
+partner `==bx`), and `ShowTileLegend` for the screen itself (moderate
+confidence on the exact manual name/key, high confidence on structure).
+
+A sibling cluster on the same two tables (`sub_20C8E`/`sub_20CEC`/
+`sub_20D2F`/`sub_20E12`/`sub_29FF6`, called from the same `sub_20C1E`
+master-redraw dispatch as the minimap) draws two small "current cell
+class" preview boxes and scans candidate lists to highlight the
+matching legend icon — the overall shape is understood but the exact
+per-field semantics (`word_328E6`..`word_328F2`, which are read in
+several places but never written anywhere findable by static
+address — they're almost certainly filled by an indirect/computed
+pointer write, not a literal `mov word_328E6, ax`) aren't confirmed
+enough to name. Left open rather than guessed at.
+
+136 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

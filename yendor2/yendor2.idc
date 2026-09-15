@@ -4927,7 +4927,9 @@ static Bytes_0(void) {
 	create_insn	(0X20015);
 	create_insn	(x=0X2003F);
 	op_hex		(x,	1);
+	set_cmt	(0X20070,	"Interactive legend/reference screen, reached as a normal main-loop keyboard command (not confirmed which manual key). Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) plus a live preview of the current cell's icon pair (DrawCellIconPair via GetMapCellPtr on word_36CF7/word_36CF9). Own PollKeyboardInput loop; ESC exits via the normal full-redraw path. No writes back to map data found -- reads as a legend/key screen for the automap symbols, not an editor. Moderate confidence on the overall role.",	0);
 	create_insn	(0X20070);
+	set_name	(0X20070,	"ShowTileLegend");
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -4966,12 +4968,16 @@ static Bytes_0(void) {
 	create_insn	(0X203E4);
 	create_insn	(0X203F2);
 	create_insn	(0X203F7);
+	set_cmt	(0X20406,	"Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.",	0);
 	create_insn	(0X20406);
+	set_name	(0X20406,	"DrawWallTypeLegendRow");
 	create_insn	(0X2044C);
 	set_cmt	(0X20472,	"msg",	0);
 	create_insn	(0X2047B);
 	set_cmt	(0X204A1,	"msg",	0);
+	set_cmt	(0X204AA,	"Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.",	0);
 	create_insn	(0X204AA);
+	set_name	(0X204AA,	"DrawFloorTypeLegendRow");
 	create_insn	(0X204F0);
 	create_insn	(0X20523);
 	set_cmt	(0X2053A,	"msg",	0);
@@ -5007,7 +5013,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X207EA);
 	op_hex		(x,	1);
 	create_insn	(0X20817);
+	set_cmt	(0X20888,	"Draws one map cell's icon pair: floor (g_pictureDir via table 0xE551 field +0xA, indexed by es:[bx]) then, if es:[bx+2] != 0, an overlay/wall icon (g_pictureDir via table 0xE175 field +8, indexed by es:[bx+2]) drawn transparently on top. Same composite BuildMinimapTileData/DrawMinimap use per cell, but full-size.",	0);
 	create_insn	(0X20888);
+	set_name	(0X20888,	"DrawCellIconPair");
 	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
 	set_name	(0X208CA,	"TickStatusEffects");
@@ -5081,7 +5089,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20C75);
 	op_hex		(x,	1);
+	set_cmt	(0X20C7C,	"Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.",	0);
 	create_insn	(0X20C7C);
+	set_name	(0X20C7C,	"IsPairedValueMatch");
 	create_insn	(x=0X20C81);
 	op_hex		(x,	1);
 	create_insn	(0X20C8A);
@@ -5615,6 +5625,15 @@ static Bytes_0(void) {
 	create_insn	(0X22F49);
 	create_insn	(x=0X22F83);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X22F8B);
 	op_hex		(x,	1);
 	create_insn	(0X22FA5);
@@ -5767,15 +5786,6 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X23729);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2372F);
 	op_hex		(x,	1);
 	create_insn	(x=0X23734);
@@ -10048,6 +10058,15 @@ static Bytes_1(void) {
 	set_name	(0X35A9A,	"a6pmAnd12am");
 	create_strlit	(0X35AA7,	0X1D);
 	set_name	(0X35AA7,	"aCanFlyAnytimeD");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35AC4,	0X1C);
 	set_name	(0X35AC4,	"aMayBeUsedXTime");
 	create_strlit	(0X35AE0,	0X19);
@@ -10124,15 +10143,6 @@ static Bytes_1(void) {
 	set_name	(0X35CCB,	"aCavalier");
 	create_strlit	(0X35CD6,	0XB);
 	set_name	(0X35CD6,	"aWizard");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35CE1,	0XB);
 	set_name	(0X35CE1,	"aEnchanter");
 	create_strlit	(0X35CEC,	0XB);

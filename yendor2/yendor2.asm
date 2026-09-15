@@ -1106,7 +1106,7 @@ loc_109BE:                              ; CODE XREF: seg000:09B9↑j
 loc_109D6:                              ; CODE XREF: seg000:09D1↑j
                 and     word_3295A, 9FFFh
                 call    sub_16E18
-                call    sub_20070
+                call    ShowTileLegend
                 call    sub_1FD03
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -11697,8 +11697,8 @@ seg020          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-GetMapCellPtr   proc far                ; CODE XREF: sub_20070+A9↓P
-                                        ; sub_20070+1F1↓P ...
+GetMapCellPtr   proc far                ; CODE XREF: ShowTileLegend+A9↓P
+                                        ; ShowTileLegend+1F1↓P ...
                 push    ax              ; Map cell linear address: (y-word_2E564)*0x270 + (x-word_2E55C)*8, es=word_2E562 (map data segment). 8 bytes/cell, row stride 0x270 = 78 cells wide.
                 mov     ax, word_2E564
                 sub     bx, ax
@@ -28202,8 +28202,8 @@ seg060          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
-                push    word_3295A
+ShowTileLegend  proc far                ; CODE XREF: seg000:09E1↑P
+                push    word_3295A      ; Interactive legend/reference screen, reached as a normal main-loop keyboard command (not confirmed which manual key). Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) plus a live preview of the current cell's icon pair (DrawCellIconPair via GetMapCellPtr on word_36CF7/word_36CF9). Own PollKeyboardInput loop; ESC exits via the normal full-redraw path. No writes back to map data found -- reads as a legend/key screen for the automap symbols, not an editor. Moderate confidence on the overall role.
                 mov     word_3295A, 0
                 push    word_2E77A
                 push    word_2E778
@@ -28226,9 +28226,9 @@ sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
                 call    sub_203F7
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2044C
-                call    sub_20406
+                call    DrawWallTypeLegendRow
                 call    sub_2047B
-                call    sub_204AA
+                call    DrawFloorTypeLegendRow
                 xor     dx, dx
                 mov     bx, 28h ; '('
                 mov     ax, word_36CF7
@@ -28247,11 +28247,11 @@ sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
-                call    sub_20888
+                call    DrawCellIconPair
                 call    sub_238CD
 
-loc_20126:                              ; CODE XREF: sub_20070+C0↓j
-                                        ; sub_20070+E2↓j ...
+loc_20126:                              ; CODE XREF: ShowTileLegend+C0↓j
+                                        ; ShowTileLegend+E2↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_20126
@@ -28262,19 +28262,19 @@ loc_20126:                              ; CODE XREF: sub_20070+C0↓j
                 jmp     loc_20244
 ; ---------------------------------------------------------------------------
 
-loc_20143:                              ; CODE XREF: sub_20070+CE↑j
+loc_20143:                              ; CODE XREF: ShowTileLegend+CE↑j
                 cmp     errorCode, 3
                 jnz     short loc_2014D
                 jmp     loc_202AF
 ; ---------------------------------------------------------------------------
 
-loc_2014D:                              ; CODE XREF: sub_20070+D8↑j
+loc_2014D:                              ; CODE XREF: ShowTileLegend+D8↑j
                 cmp     errorCode, 7
                 jnz     short loc_20126
                 jmp     loc_2031F
 ; ---------------------------------------------------------------------------
 
-loc_20157:                              ; CODE XREF: sub_20070+C7↑j
+loc_20157:                              ; CODE XREF: ShowTileLegend+C7↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_201A0
                 call    sub_25862
@@ -28294,28 +28294,28 @@ loc_20157:                              ; CODE XREF: sub_20070+C7↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_201A0:                              ; CODE XREF: sub_20070+EC↑j
+loc_201A0:                              ; CODE XREF: ShowTileLegend+EC↑j
                 cmp     byte_2E400, 9
                 jnz     short loc_201AD
                 call    sub_20817
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_201AD:                              ; CODE XREF: sub_20070+135↑j
+loc_201AD:                              ; CODE XREF: ShowTileLegend+135↑j
                 cmp     byte_2E400, 42h ; 'B'
                 jnz     short loc_201BA
                 call    sub_205FB
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_201BA:                              ; CODE XREF: sub_20070+142↑j
+loc_201BA:                              ; CODE XREF: ShowTileLegend+142↑j
                 cmp     byte_2E400, 46h ; 'F'
                 jnz     short loc_201C7
                 call    sub_20626
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_201C7:                              ; CODE XREF: sub_20070+14F↑j
+loc_201C7:                              ; CODE XREF: ShowTileLegend+14F↑j
                 cmp     byte_2E400, 41h ; 'A'
                 jnz     short loc_201DE
                 call    RestoreCursorBackgroundIfDirty
@@ -28323,7 +28323,7 @@ loc_201C7:                              ; CODE XREF: sub_20070+14F↑j
                 call    sub_2075B
                 call    sub_238CD
 
-loc_201DE:                              ; CODE XREF: sub_20070+15C↑j
+loc_201DE:                              ; CODE XREF: ShowTileLegend+15C↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_201F5
                 call    RestoreCursorBackgroundIfDirty
@@ -28331,7 +28331,7 @@ loc_201DE:                              ; CODE XREF: sub_20070+15C↑j
                 call    sub_2075B
                 call    sub_238CD
 
-loc_201F5:                              ; CODE XREF: sub_20070+173↑j
+loc_201F5:                              ; CODE XREF: ShowTileLegend+173↑j
                 cmp     byte_2E400, 53h ; 'S'
                 jnz     short loc_20241
                 test    word_328C4, 400h
@@ -28342,30 +28342,30 @@ loc_201F5:                              ; CODE XREF: sub_20070+173↑j
                 call    sub_2075B
                 call    sub_203F7
                 call    sub_2044C
-                call    sub_20406
+                call    DrawWallTypeLegendRow
                 call    sub_2047B
-                call    sub_204AA
+                call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_2022E:                              ; CODE XREF: sub_20070+192↑j
+loc_2022E:                              ; CODE XREF: ShowTileLegend+192↑j
                 or      word_328C4, 400h
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2075B
                 call    sub_238CD
 
-loc_20241:                              ; CODE XREF: sub_20070+18A↑j
+loc_20241:                              ; CODE XREF: ShowTileLegend+18A↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_20244:                              ; CODE XREF: sub_20070+D0↑j
+loc_20244:                              ; CODE XREF: ShowTileLegend+D0↑j
                 cmp     byte_2E400, 4Bh ; 'K'
                 jnz     short loc_20285
                 sub     word_36CF7, 28h ; '('
 
-loc_20250:                              ; CODE XREF: sub_20070+221↓j
-                                        ; sub_20070+22F↓j ...
+loc_20250:                              ; CODE XREF: ShowTileLegend+221↓j
+                                        ; ShowTileLegend+22F↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_209D2
                 mov     ax, word_36CF7
@@ -28375,36 +28375,36 @@ loc_20250:                              ; CODE XREF: sub_20070+221↓j
                 call    sub_2075B
                 call    sub_203F7
                 call    sub_2044C
-                call    sub_20406
+                call    DrawWallTypeLegendRow
                 call    sub_2047B
-                call    sub_204AA
+                call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_20285:                              ; CODE XREF: sub_20070+1D9↑j
+loc_20285:                              ; CODE XREF: ShowTileLegend+1D9↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_20293
                 add     word_36CF7, 28h ; '('
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
-loc_20293:                              ; CODE XREF: sub_20070+21A↑j
+loc_20293:                              ; CODE XREF: ShowTileLegend+21A↑j
                 cmp     byte_2E400, 48h ; 'H'
                 jnz     short loc_202A1
                 sub     word_36CF9, 18h
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
-loc_202A1:                              ; CODE XREF: sub_20070+228↑j
+loc_202A1:                              ; CODE XREF: ShowTileLegend+228↑j
                 cmp     byte_2E400, 50h ; 'P'
                 jnz     short loc_202AF
                 add     word_36CF9, 18h
                 jmp     short loc_20250
 ; ---------------------------------------------------------------------------
 
-loc_202AF:                              ; CODE XREF: sub_20070+DA↑j
-                                        ; sub_20070+236↑j
+loc_202AF:                              ; CODE XREF: ShowTileLegend+DA↑j
+                                        ; ShowTileLegend+236↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5E00h
@@ -28414,21 +28414,21 @@ loc_202AF:                              ; CODE XREF: sub_20070+DA↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_202C6:                              ; CODE XREF: sub_20070+251↑j
+loc_202C6:                              ; CODE XREF: ShowTileLegend+251↑j
                 cmp     ax, 12h
                 jnz     short loc_202D1
                 call    sub_20523
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_202D1:                              ; CODE XREF: sub_20070+259↑j
+loc_202D1:                              ; CODE XREF: ShowTileLegend+259↑j
                 cmp     ax, 13h
                 jnz     short loc_202DC
                 call    sub_20570
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_202DC:                              ; CODE XREF: sub_20070+264↑j
+loc_202DC:                              ; CODE XREF: ShowTileLegend+264↑j
                 cmp     ax, 1
                 jl      short loc_202F3
                 cmp     ax, 11h
@@ -28439,8 +28439,8 @@ loc_202DC:                              ; CODE XREF: sub_20070+264↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_202F3:                              ; CODE XREF: sub_20070+26F↑j
-                                        ; sub_20070+274↑j
+loc_202F3:                              ; CODE XREF: ShowTileLegend+26F↑j
+                                        ; ShowTileLegend+274↑j
                 cmp     ax, 15h
                 jl      short loc_2030A
                 cmp     ax, 25h ; '%'
@@ -28451,19 +28451,19 @@ loc_202F3:                              ; CODE XREF: sub_20070+26F↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_2030A:                              ; CODE XREF: sub_20070+286↑j
-                                        ; sub_20070+28B↑j
+loc_2030A:                              ; CODE XREF: ShowTileLegend+286↑j
+                                        ; ShowTileLegend+28B↑j
                 cmp     ax, 14h
                 jl      short loc_2031C
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_20652
                 call    sub_238CD
 
-loc_2031C:                              ; CODE XREF: sub_20070+29D↑j
+loc_2031C:                              ; CODE XREF: ShowTileLegend+29D↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_2031F:                              ; CODE XREF: sub_20070+E4↑j
+loc_2031F:                              ; CODE XREF: ShowTileLegend+E4↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5E00h
@@ -28473,22 +28473,22 @@ loc_2031F:                              ; CODE XREF: sub_20070+E4↑j
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
-loc_20336:                              ; CODE XREF: sub_20070+2C1↑j
+loc_20336:                              ; CODE XREF: ShowTileLegend+2C1↑j
                 cmp     ax, 14h
                 jl      short loc_20348
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2070C
                 call    sub_238CD
 
-loc_20348:                              ; CODE XREF: sub_20070+2C9↑j
+loc_20348:                              ; CODE XREF: ShowTileLegend+2C9↑j
                 jmp     loc_20126
-sub_20070       endp
+ShowTileLegend  endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2034B       proc near               ; CODE XREF: sub_20070+163↑p
+sub_2034B       proc near               ; CODE XREF: ShowTileLegend+163↑p
                 push    word_2E384
                 mov     ax, word_2E496
                 mov     word_2E384, ax
@@ -28547,7 +28547,7 @@ sub_203AC       proc near               ; CODE XREF: sub_2034B+40↑p
                 mov     es, ax
                 assume es:seg129
                 mov     bx, si
-                call    sub_20888
+                call    DrawCellIconPair
                 inc     _textPos_x
                 add     x, 8
                 retn
@@ -28575,8 +28575,8 @@ sub_203E4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_203F7       proc near               ; CODE XREF: sub_20070+69↑p
-                                        ; sub_20070+1A7↑p ...
+sub_203F7       proc near               ; CODE XREF: ShowTileLegend+69↑p
+                                        ; ShowTileLegend+1A7↑p ...
                 mov     ax, 0A000h
                 mov     es, ax
                 assume es:nothing
@@ -28591,9 +28591,9 @@ sub_203F7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20406       proc near               ; CODE XREF: sub_20070+74↑p
-                                        ; sub_20070+1AD↑p ...
-                push    word_2E496
+DrawWallTypeLegendRow proc near         ; CODE XREF: ShowTileLegend+74↑p
+                                        ; ShowTileLegend+1AD↑p ...
+                push    word_2E496      ; Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.
                 mov     _font_bgTransparent, 0
                 mov     ax, word_2E384
                 mov     word_2E496, ax
@@ -28601,7 +28601,7 @@ sub_20406       proc near               ; CODE XREF: sub_20070+74↑p
                 mov     x, 18h
                 mov     cx, 11h
 
-loc_20425:                              ; CODE XREF: sub_20406+3F↓j
+loc_20425:                              ; CODE XREF: DrawWallTypeLegendRow+3F↓j
                 mov     ax, 0Ch
                 mul     word_2E496
                 add     ax, 0E551h
@@ -28614,14 +28614,14 @@ loc_20425:                              ; CODE XREF: sub_20406+3F↓j
                 loop    loc_20425
                 pop     word_2E496
                 retn
-sub_20406       endp
+DrawWallTypeLegendRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2044C       proc near               ; CODE XREF: sub_20070+71↑p
-                                        ; sub_20070+1AA↑p ...
+sub_2044C       proc near               ; CODE XREF: ShowTileLegend+71↑p
+                                        ; ShowTileLegend+1AA↑p ...
                 mov     _textPos_x, 4
                 mov     _textPos_y, 1
                 mov     _font_fgColor, 0Fh
@@ -28638,8 +28638,8 @@ sub_2044C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2047B       proc near               ; CODE XREF: sub_20070+77↑p
-                                        ; sub_20070+1B0↑p ...
+sub_2047B       proc near               ; CODE XREF: ShowTileLegend+77↑p
+                                        ; ShowTileLegend+1B0↑p ...
                 mov     _textPos_x, 0A4h
                 mov     _textPos_y, 1
                 mov     _font_fgColor, 0Fh
@@ -28656,9 +28656,9 @@ sub_2047B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_204AA       proc near               ; CODE XREF: sub_20070+7A↑p
-                                        ; sub_20070+1B3↑p ...
-                push    word_2E4A2
+DrawFloorTypeLegendRow proc near        ; CODE XREF: ShowTileLegend+7A↑p
+                                        ; ShowTileLegend+1B3↑p ...
+                push    word_2E4A2      ; Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.
                 mov     _font_bgTransparent, 0
                 mov     ax, word_2E386
                 mov     word_2E4A2, ax
@@ -28666,7 +28666,7 @@ sub_204AA       proc near               ; CODE XREF: sub_20070+7A↑p
                 mov     x, 0B8h
                 mov     cx, 11h
 
-loc_204C9:                              ; CODE XREF: sub_204AA+3F↓j
+loc_204C9:                              ; CODE XREF: DrawFloorTypeLegendRow+3F↓j
                 mov     ax, 0Ah
                 mul     word_2E4A2
                 add     ax, 0E175h
@@ -28679,7 +28679,7 @@ loc_204C9:                              ; CODE XREF: sub_204AA+3F↓j
                 loop    loc_204C9
                 pop     word_2E4A2
                 retn
-sub_204AA       endp
+DrawFloorTypeLegendRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28718,7 +28718,7 @@ sub_204F0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20523       proc near               ; CODE XREF: sub_20070+25B↑p
+sub_20523       proc near               ; CODE XREF: ShowTileLegend+25B↑p
                                         ; sub_20523+39↓j ...
                 call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 4
@@ -28739,7 +28739,7 @@ sub_20523       proc near               ; CODE XREF: sub_20070+25B↑p
 
 loc_20564:                              ; CODE XREF: sub_20523+32↑j
                 call    sub_2044C
-                call    sub_20406
+                call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
 sub_20523       endp
@@ -28748,7 +28748,7 @@ sub_20523       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20570       proc near               ; CODE XREF: sub_20070+266↑p
+sub_20570       proc near               ; CODE XREF: ShowTileLegend+266↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 0A4h
                 mov     _textPos_y, 1
@@ -28772,7 +28772,7 @@ loc_205AE:                              ; CODE XREF: sub_20570+39↑j
 
 loc_205B4:                              ; CODE XREF: sub_20570+32↑j
                 call    sub_2047B
-                call    sub_204AA
+                call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
 sub_20570       endp
@@ -28808,7 +28808,7 @@ sub_205C0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_205FB       proc near               ; CODE XREF: sub_20070+144↑p
+sub_205FB       proc near               ; CODE XREF: ShowTileLegend+144↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_2E776
                 mov     word_3293E, ax
@@ -28820,7 +28820,7 @@ sub_205FB       proc near               ; CODE XREF: sub_20070+144↑p
                 mov     word_2E384, ax
                 mov     word_2E496, ax
                 call    sub_2044C
-                call    sub_20406
+                call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
 sub_205FB       endp
@@ -28829,7 +28829,7 @@ sub_205FB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20626       proc near               ; CODE XREF: sub_20070+151↑p
+sub_20626       proc near               ; CODE XREF: ShowTileLegend+151↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_2E776
                 mov     word_3293E, ax
@@ -28841,7 +28841,7 @@ sub_20626       proc near               ; CODE XREF: sub_20070+151↑p
                 mov     word_2E386, ax
                 mov     word_2E4A2, ax
                 call    sub_2047B
-                call    sub_204AA
+                call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
 sub_20626       endp
@@ -28850,7 +28850,7 @@ sub_20626       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20652       proc near               ; CODE XREF: sub_20070+2A4↑p
+sub_20652       proc near               ; CODE XREF: ShowTileLegend+2A4↑p
                 mov     ax, word_2E76E
                 mov     word_3293E, ax
                 mov     ax, word_2E770
@@ -28876,7 +28876,7 @@ sub_20652       proc near               ; CODE XREF: sub_20070+2A4↑p
                 mov     es, ax
                 assume es:seg129
                 mov     bx, si
-                call    sub_20888
+                call    DrawCellIconPair
                 retn
 sub_20652       endp
 
@@ -28884,7 +28884,7 @@ sub_20652       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_206A0       proc near               ; CODE XREF: sub_20070+17A↑p
+sub_206A0       proc near               ; CODE XREF: ShowTileLegend+17A↑p
                 xor     dx, dx
                 mov     ax, word_36CF7
                 mov     bx, 28h ; '('
@@ -28915,7 +28915,7 @@ loc_206D5:                              ; CODE XREF: sub_206A0+59↓j
                 mov     ax, seg seg129
                 mov     es, ax
                 mov     bx, si
-                call    sub_20888
+                call    DrawCellIconPair
                 inc     _textPos_x
                 add     x, 8
                 pop     cx
@@ -28932,7 +28932,7 @@ sub_206A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2070C       proc near               ; CODE XREF: sub_20070+2D0↑p
+sub_2070C       proc near               ; CODE XREF: ShowTileLegend+2D0↑p
                 mov     ax, word_2E772
                 mov     word_3293E, ax
                 mov     ax, word_2E774
@@ -28957,7 +28957,7 @@ sub_2070C       proc near               ; CODE XREF: sub_20070+2D0↑p
                 mov     ax, seg seg129
                 mov     es, ax
                 mov     bx, si
-                call    sub_20888
+                call    DrawCellIconPair
                 retn
 sub_2070C       endp
 
@@ -28965,8 +28965,8 @@ sub_2070C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2075B       proc near               ; CODE XREF: sub_20070+166↑p
-                                        ; sub_20070+17D↑p ...
+sub_2075B       proc near               ; CODE XREF: ShowTileLegend+166↑p
+                                        ; ShowTileLegend+17D↑p ...
                 test    word_328C4, 400h
                 jnz     short loc_20764
                 retn
@@ -29039,7 +29039,7 @@ sub_2075B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20817       proc near               ; CODE XREF: sub_20070+137↑p
+sub_20817       proc near               ; CODE XREF: ShowTileLegend+137↑p
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_203F7
                 mov     _textPos_x, 0
@@ -29065,8 +29065,8 @@ sub_20817       proc near               ; CODE XREF: sub_20070+137↑p
                 call    sub_203F7
                 call    sub_2044C
                 call    sub_2047B
-                call    sub_20406
-                call    sub_204AA
+                call    DrawWallTypeLegendRow
+                call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
 sub_20817       endp
@@ -29075,9 +29075,9 @@ sub_20817       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20888       proc near               ; CODE XREF: sub_20070+AE↑p
+DrawCellIconPair proc near              ; CODE XREF: ShowTileLegend+AE↑p
                                         ; sub_203AC+2B↑p ...
-                push    bx
+                push    bx              ; Draws one map cell's icon pair: floor (g_pictureDir via table 0xE551 field +0xA, indexed by es:[bx]) then, if es:[bx+2] != 0, an overlay/wall icon (g_pictureDir via table 0xE175 field +8, indexed by es:[bx+2]) drawn transparently on top. Same composite BuildMinimapTileData/DrawMinimap use per cell, but full-size.
                 mov     _font_bgTransparent, 0
                 mov     ax, 0Ch
                 mul     word ptr es:[bx]
@@ -29099,9 +29099,9 @@ sub_20888       proc near               ; CODE XREF: sub_20070+AE↑p
                 mov     word_2E530, ax
                 call    DrawPicture
 
-locret_208C9:                           ; CODE XREF: sub_20888+2A↑j
+locret_208C9:                           ; CODE XREF: DrawCellIconPair+2A↑j
                 retn
-sub_20888       endp
+DrawCellIconPair endp
 
 seg060          ends
 
@@ -29584,14 +29584,14 @@ sub_20C46       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20C7C       proc near               ; CODE XREF: sub_20CEC+18↓p
+IsPairedValueMatch proc near            ; CODE XREF: sub_20CEC+18↓p
                                         ; sub_20E12+17↓p
-                cmp     ax, bx
+                cmp     ax, bx          ; Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.
                 jnz     short loc_20C81
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_20C81:                              ; CODE XREF: sub_20C7C+2↑j
+loc_20C81:                              ; CODE XREF: IsPairedValueMatch+2↑j
                 test    ax, 1
                 jnz     short loc_20C8A
                 inc     ax
@@ -29599,11 +29599,11 @@ loc_20C81:                              ; CODE XREF: sub_20C7C+2↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_20C8A:                              ; CODE XREF: sub_20C7C+8↑j
+loc_20C8A:                              ; CODE XREF: IsPairedValueMatch+8↑j
                 dec     ax
                 cmp     ax, bx
                 retn
-sub_20C7C       endp
+IsPairedValueMatch endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29659,7 +29659,7 @@ sub_20CEC       proc near               ; CODE XREF: sub_20C8E+12↑p
                 add     si, ax
                 mov     ax, word_2E498
                 mov     bx, [si+2]
-                call    sub_20C7C
+                call    IsPairedValueMatch
                 jz      short loc_20D24
                 mov     word_2E530, bx
                 mov     word_32918, 2
@@ -29767,7 +29767,7 @@ sub_20E12       proc near               ; CODE XREF: sub_20D2F+97↑p
                 add     si, ax
                 mov     ax, word_2E4A0
                 mov     bx, [si]
-                call    sub_20C7C
+                call    IsPairedValueMatch
                 jz      short loc_20E49
                 mov     word_2E530, bx
                 mov     word_32918, 1
@@ -31639,7 +31639,7 @@ sub_21DE2       endp
 
 
 sub_21E71       proc far                ; CODE XREF: seg000:085D↑P
-                                        ; sub_20070+55↑P ...
+                                        ; ShowTileLegend+55↑P ...
                 test    word_328C4, 1
                 jnz     short loc_21E8F
                 test    word_36C7F, 200h
@@ -56468,10 +56468,10 @@ font3           db    0
                 db    0
 _font_bgColor   dw 0                    ; DATA XREF: sub_11A10+6D↑w
                                         ; sub_11A10+B8↑w ...
-word_2E384      dw 0                    ; DATA XREF: sub_20070+26↑w
-                                        ; sub_20070+279↑r ...
-word_2E386      dw 0                    ; DATA XREF: sub_20070+2C↑w
-                                        ; sub_20070+290↑r ...
+word_2E384      dw 0                    ; DATA XREF: ShowTileLegend+26↑w
+                                        ; ShowTileLegend+279↑r ...
+word_2E386      dw 0                    ; DATA XREF: ShowTileLegend+2C↑w
+                                        ; ShowTileLegend+290↑r ...
 ; int x
 x               dw 0                    ; DATA XREF: sub_116CF+8↑w
                                         ; ShowIntroPicture+15↑w ...
@@ -56746,8 +56746,8 @@ word_2E490      dw 0                    ; DATA XREF: sub_141D9+40C↑w
 word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
                                         ; InitGame+CF↑r ...
 word_2E494      dw 0FFFFh               ; DATA XREF: sub_2827E:loc_28289↑r
-word_2E496      dw 0                    ; DATA XREF: sub_20070+32↑w
-                                        ; sub_20070+27D↑w ...
+word_2E496      dw 0                    ; DATA XREF: ShowTileLegend+32↑w
+                                        ; ShowTileLegend+27D↑w ...
 word_2E498      dw 0                    ; DATA XREF: sub_20CEC+12↑r
                                         ; sub_20D2F:loc_20D5C↑w ...
 word_2E49A      dw 0                    ; DATA XREF: sub_16407↑w
@@ -56758,8 +56758,8 @@ word_2E49E      dw 0                    ; DATA XREF: sub_16407+6↑w
                                         ; sub_16881+B↑w ...
 word_2E4A0      dw 0                    ; DATA XREF: sub_20D2F+32↑w
                                         ; sub_20D2F+75↑r ...
-word_2E4A2      dw 0                    ; DATA XREF: sub_20070+38↑w
-                                        ; sub_20070+294↑w ...
+word_2E4A2      dw 0                    ; DATA XREF: ShowTileLegend+38↑w
+                                        ; ShowTileLegend+294↑w ...
                 db    0
                 db    0
 word_2E4A6      dw 0                    ; DATA XREF: sub_209D2↑r
@@ -57465,10 +57465,10 @@ word_2E774      dw 0                    ; DATA XREF: start+506↑r
 ; int word_2E776
 word_2E776      dw 0                    ; DATA XREF: sub_205FB+5↑r
                                         ; sub_20626+5↑r ...
-word_2E778      dw 13Ch                 ; DATA XREF: sub_20070+E↑r
-                                        ; sub_20070+123↑w ...
-word_2E77A      dw 1                    ; DATA XREF: sub_20070+A↑r
-                                        ; sub_20070+1A↑w ...
+word_2E778      dw 13Ch                 ; DATA XREF: ShowTileLegend+E↑r
+                                        ; ShowTileLegend+123↑w ...
+word_2E77A      dw 1                    ; DATA XREF: ShowTileLegend+A↑r
+                                        ; ShowTileLegend+1A↑w ...
                 align 8
 word_2E780      dw 0                    ; DATA XREF: ShowConfirmPrompt+32↑w
                                         ; ShowConfirmPrompt+C8↑r ...
@@ -70227,10 +70227,10 @@ word_31954      dw 0                    ; DATA XREF: seg073:0097↑w
 ; int word_31956
 word_31956      dw 0                    ; DATA XREF: sub_205FB+B↑r
                                         ; sub_20626+B↑r ...
-word_31958      dw 0C3h                 ; DATA XREF: sub_20070+12↑r
-                                        ; sub_20070+11F↑w ...
-word_3195A      dw 8                    ; DATA XREF: sub_20070+16↑r
-                                        ; sub_20070+20↑w ...
+word_31958      dw 0C3h                 ; DATA XREF: ShowTileLegend+12↑r
+                                        ; ShowTileLegend+11F↑w ...
+word_3195A      dw 8                    ; DATA XREF: ShowTileLegend+16↑r
+                                        ; ShowTileLegend+20↑w ...
 word_3195C      dw 0                    ; DATA XREF: sub_162B6:loc_162C8↑r
                                         ; sub_162B6+1F↑r ...
 word_3195E      dw 0                    ; DATA XREF: PlayMusicTrack+21↑r

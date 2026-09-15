@@ -188,6 +188,48 @@ refresh the view. No separate "3D corridor" renderer has turned up;
 this minimap widget appears to be the game's primary way of showing the
 dungeon layout.
 
+**The `0xE551`/`0xE175` tile-type tables have a confirmed layout and a
+second consumer.** Entry stride: 12 bytes (`0xE551`) / 10 bytes
+(`0xE175`). Confirmed fields on `0xE551`: `+0xA` = `g_pictureDir` byte
+offset (used by `DrawMinimap`/`DrawCellIconPair`/`DrawWallTypeLegendRow`
+to pick the drawn picture); `+0` and `+2` hold two further per-type
+values read only by the still-unnamed `sub_20D2F`/`sub_20CEC`/
+`sub_20E12` cluster (see below) — not picture offsets, their exact
+meaning is unconfirmed. `0xE175`'s confirmed field is `+8` (same role
+as `0xE551`'s `+0xA`, for the overlay picture).
+
+Checked whether `word_32926` (a parameter `BuildMinimapTileData` sets
+per-cell before drawing) is a color/remap value, since `DrawMinimap`
+itself keeps its picture index fixed at `g_pictureDir` entry 9
+throughout its loop rather than varying it per cell — read the
+candidate consumer `sub_2A53C` directly and ruled this out, it never
+touches `word_32926` at all. **Still an open question** what
+`word_32926` actually controls; not worth another guess without more
+evidence.
+
+A second, separate screen also reads these two tables:
+`ShowTileLegend` (`0x20070`, reached from an ordinary keyboard command
+slot in `start`'s main dispatch — not a debug/dev-only hook) draws two
+scrollable 17-icon horizontal legend strips, one per table
+(`DrawWallTypeLegendRow`/`DrawFloorTypeLegendRow`), then previews the
+current map cell's own floor+overlay icon pair at full size
+(`DrawCellIconPair`, the same floor/overlay composite `DrawMinimap`
+uses, just unscaled). Confirmed by direct reads that nothing in this
+cluster writes back to map data — it's a legend/reference screen for
+decoding the automap's icons, not a level editor. A sibling cluster
+(`sub_20C8E`/`sub_20CEC`/`sub_20D2F`/`sub_20E12`/`sub_29FF6`, called
+from the same `sub_20C1E` master-redraw dispatch the minimap uses)
+draws two small "current cell class" preview boxes using `g_pictureDir`
+entries 4 and 5 as fixed panel graphics, and scans candidate lists
+(reading the `0xE551` table's `+0`/`+2` fields, compared via the new
+`IsPairedValueMatch` fuzzy-equality helper) to highlight the matching
+legend icon — structure understood, but the driving inputs
+(`word_328E6`..`word_328F2`, seven consecutive words that are read in
+several places but have no literal write site anywhere in the
+disassembly — almost certainly filled by an indirect/computed pointer
+write rather than a `mov word_328E6, ax`) remain unidentified, so no
+name was forced onto that cluster.
+
 **Open question — how the two tile-type lookup tables actually work**:
 dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like
 values they yield (`0x16`-`0x50` range) are far outside `g_pictureDir`'s
