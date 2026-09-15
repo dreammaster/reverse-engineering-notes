@@ -3074,6 +3074,14 @@ without a full redraw.
 
 394 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ClearMessageBoxArea
+
+Named `sub_16EFA`, shared by `sub_17032`, `UseAbilityCommand`, and
+`RestPartyAndAdvanceClock`: a generic message/status-box background
+clear, sized by combat state.
+
+395 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

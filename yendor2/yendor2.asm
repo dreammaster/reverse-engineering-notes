@@ -11625,9 +11625,9 @@ seg019          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16EFA       proc far                ; CODE XREF: sub_17032+E5↓P
+ClearMessageBoxArea proc far            ; CODE XREF: sub_17032+E5↓P
                                         ; UseAbilityCommand+37↓P ...
-                push    di
+                push    di              ; Clears a VGA video-memory region (fill 0x0404), sized by combat state (word_328CA bit 0x1000). Generic message/status-box clear reused by sub_17032, UseAbilityCommand, and RestPartyAndAdvanceClock.
                 push    es
                 push    cx
                 call    RestoreCursorBackgroundIfDirty
@@ -11640,7 +11640,7 @@ sub_16EFA       proc far                ; CODE XREF: sub_17032+E5↓P
                 mov     cx, 3Ch ; '<'
                 mov     ax, 404h
 
-loc_16F18:                              ; CODE XREF: sub_16EFA+29↓j
+loc_16F18:                              ; CODE XREF: ClearMessageBoxArea+29↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11651,7 +11651,7 @@ loc_16F18:                              ; CODE XREF: sub_16EFA+29↓j
                 mov     cx, 6
                 mov     ax, 404h
 
-loc_16F2E:                              ; CODE XREF: sub_16EFA+3F↓j
+loc_16F2E:                              ; CODE XREF: ClearMessageBoxArea+3F↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11666,12 +11666,12 @@ loc_16F2E:                              ; CODE XREF: sub_16EFA+3F↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_16F44:                              ; CODE XREF: sub_16EFA+13↑j
+loc_16F44:                              ; CODE XREF: ClearMessageBoxArea+13↑j
                 mov     di, 6C70h
                 mov     cx, 6Dh ; 'm'
                 mov     ax, 404h
 
-loc_16F4D:                              ; CODE XREF: sub_16EFA+5F↓j
+loc_16F4D:                              ; CODE XREF: ClearMessageBoxArea+5F↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 stosb
@@ -11684,7 +11684,7 @@ loc_16F4D:                              ; CODE XREF: sub_16EFA+5F↓j
                 pop     es
                 pop     di
                 retf
-sub_16EFA       endp
+ClearMessageBoxArea endp
 
 seg019          ends
 
@@ -11988,7 +11988,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 push    cs
                 call    near ptr sub_1728A
                 call    DrawMouseCursor
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
                 mov     _videoSegment, 0A000h
                 mov     _textPos_x, 0F0h
@@ -12831,7 +12831,7 @@ loc_178D5:                              ; CODE XREF: UseAbilityCommand+29↑j
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jnz     short loc_17906
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 6
                 test    word_32DCE, 2
                 jnz     short loc_178F0
@@ -12841,7 +12841,7 @@ loc_178F0:                              ; CODE XREF: UseAbilityCommand+45↑j
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_17906
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -18098,7 +18098,7 @@ sub_1A37E       proc far                ; CODE XREF: start+322↑P
 
 loc_1A386:                              ; CODE XREF: sub_1A37E+5↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    sub_25740
                 jz      short loc_1A39E
                 call    FlashStatusWarning
@@ -18128,7 +18128,7 @@ loc_1A3CB:                              ; CODE XREF: sub_1A37E+40↑j
                 mov     word_3194C, 0
 
 loc_1A3E4:                              ; CODE XREF: sub_1A37E+4B↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
 
 loc_1A3E9:                              ; CODE XREF: sub_1A37E+1E↑j
                 call    ShowMaterialCounterHud
@@ -18287,7 +18287,7 @@ loc_1A52F:                              ; CODE XREF: IsDestinationUnlocked+A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1A533:                              ; CODE XREF: IsDestinationUnlocked+28↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, [si+6]
                 call    ShowConfirmPrompt
                 cmp     ax, 0
@@ -19843,7 +19843,7 @@ sub_1B2BD       proc far                ; CODE XREF: UseItem:loc_17C5B↑P
                 mov     ax, word_36D03
                 cmp     ax, 0
                 jnz     short loc_1B2DF
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 0Ah
                 call    ShowConfirmPrompt
                 cmp     ax, 0
@@ -22282,12 +22282,12 @@ loc_1C98C:                              ; CODE XREF: LoadItemData+13E↓j
                 mov     ax, word_36D09
                 cmp     ax, 0
                 jnz     short loc_1C9AF
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 0Bh
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_1C9AF
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 1
                 retf
 ; ---------------------------------------------------------------------------
@@ -22307,7 +22307,7 @@ loc_1C9AF:                              ; CODE XREF: LoadItemData+102↑j
 
 loc_1C9D0:                              ; CODE XREF: LoadItemData+FA↑j
                                         ; LoadItemData+131↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 or      word_328C4, 1
                 mov     si, 0BCEh
                 mov     word_2E550, 2
@@ -25698,7 +25698,7 @@ loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13
 
 loc_1E6AE:                              ; CODE XREF: RestPartyAndAdvanceClock+25↑j
                 call    RestoreDialogAreaFromEMS
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     byte_2E400, 0
                 test    word_328C4, 1
                 jnz     short loc_1E6CD
@@ -26068,7 +26068,7 @@ RunGameDialog   proc far                ; CODE XREF: start+7E0↑P
 loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 call    ClearStatusPanelIfDirty
                 call    RestoreDialogAreaFromEMS
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 test    word_328C4, 1
                 jnz     short loc_1EAA2
                 mov     ax, 1
@@ -26094,7 +26094,7 @@ loc_1EAD0:                              ; CODE XREF: RunGameDialog:loc_1EC0B↓j
                 mov     word_2E530, 0
                 call    DrawPicture
                 call    sub_1F217
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 test    word_328C4, 1
                 jz      short loc_1EB27
                 test    word_328C4, 2
@@ -26370,7 +26370,7 @@ loc_1ED31:                              ; CODE XREF: RunGameDialog+26C↑j
 
 loc_1ED53:                              ; CODE XREF: RunGameDialog+29D↑j
                                         ; RunGameDialog+2B1↑j ...
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32904
                 mov     ax, [bx]
@@ -26436,7 +26436,7 @@ loc_1EDED:                              ; CODE XREF: RunGameDialog+373↑j
                 jz      short loc_1EE23
 
 loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32904
                 mov     ax, [bx]
@@ -26449,7 +26449,7 @@ loc_1EE02:                              ; CODE XREF: RunGameDialog+37D↑j
 ; ---------------------------------------------------------------------------
 
 loc_1EE23:                              ; CODE XREF: RunGameDialog+392↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     word_2E530, 0Bh
                 call    sub_23874
                 mov     errorCode, 0Bh
@@ -27194,7 +27194,7 @@ ConfirmNewGame  proc near               ; CODE XREF: RunGameDialog+1BF↑p
                 call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1F5CD
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     byte_2E400, 0
                 call    RestoreCursorBackgroundIfDirty
                 retn
@@ -27221,7 +27221,7 @@ ConfirmNewGame  endp
 
 
 sub_1F5FF       proc near               ; CODE XREF: RunGameDialog+327↑p
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     word_2E530, 0Bh
                 call    sub_23874
                 mov     bx, word_32906
@@ -27428,7 +27428,7 @@ ConfirmQuitToDos proc near              ; CODE XREF: RunGameDialog+193↑p
                 call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_1F8EF
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
                 mov     byte_2E400, 0
                 retn
@@ -31169,12 +31169,12 @@ loc_21A17:                              ; CODE XREF: sub_219FA+59↓j
                 mov     ax, word_36D05
                 cmp     ax, 0
                 jnz     short loc_21A39
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 7
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_21A39
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 jmp     loc_21C20
 ; ---------------------------------------------------------------------------
 
@@ -48240,12 +48240,12 @@ sub_2A788       proc far                ; CODE XREF: HandleGameCommand+1C↑P
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jnz     short loc_2A7A8
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 8
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2A7A8
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48750,7 +48750,7 @@ loc_2AB82:                              ; CODE XREF: CastSpell+125↑j
 ; ---------------------------------------------------------------------------
 
 loc_2AB8A:                              ; CODE XREF: CastSpell+1A↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
 
 loc_2AB8F:                              ; CODE XREF: CastSpell+16E↓j
                 mov     ax, word_36D0B
@@ -48760,7 +48760,7 @@ loc_2AB8F:                              ; CODE XREF: CastSpell+16E↓j
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2ABAC
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -48786,14 +48786,14 @@ loc_2ABC8:                              ; CODE XREF: CastSpell+166↑j
 ; ---------------------------------------------------------------------------
 
 loc_2ABDC:                              ; CODE XREF: CastSpell+174↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 23h ; '#'
                 call    ShowConfirmPrompt
                 cmp     ax, 5
                 jz      short loc_2AC2B
                 cmp     ax, 7
                 jz      short loc_2ABFB
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 jmp     loc_2AA75
 ; ---------------------------------------------------------------------------
 
@@ -49756,12 +49756,12 @@ loc_2B663:                              ; CODE XREF: RunConversation+4E↓j
                 mov     ax, word_36D09
                 cmp     ax, 0
                 jnz     short loc_2B685
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 0Bh
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2B685
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 jmp     loc_2B70C
 ; ---------------------------------------------------------------------------
 
@@ -49780,7 +49780,7 @@ loc_2B685:                              ; CODE XREF: RunConversation+13↑j
 
 loc_2B6A6:                              ; CODE XREF: RunConversation+B↑j
                                         ; RunConversation+41↑j
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 call    RestoreCursorBackgroundIfDirty
                 mov     x, 0Fh
                 mov     y, 17h
@@ -50958,12 +50958,12 @@ loc_2C01D:                              ; CODE XREF: RepairItemCommand+52↓j
                 mov     ax, word_36D05
                 cmp     ax, 0
                 jnz     short loc_2C03D
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 mov     ax, 9
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2C03D
-                call    sub_16EFA
+                call    ClearMessageBoxArea
                 retf
 ; ---------------------------------------------------------------------------
 

@@ -2629,7 +2629,9 @@ static Bytes_0(void) {
 	create_insn	(0X16EDE);
 	set_name	(0X16EDE,	"TrimTrailingSpaces");
 	create_insn	(0X16EF8);
+	set_cmt	(0X16EFA,	"Clears a VGA video-memory region (fill 0x0404), sized by combat state (word_328CA bit 0x1000). Generic message/status-box clear reused by sub_17032, UseAbilityCommand, and RestPartyAndAdvanceClock.",	0);
 	create_insn	(0X16EFA);
+	set_name	(0X16EFA,	"ClearMessageBoxArea");
 	create_insn	(x=0X16F07);
 	op_hex		(x,	1);
 	create_insn	(0X16F44);
@@ -3659,6 +3661,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1A4C5,	"Destination-eligibility gate: looks up table 0xDFBB (22-byte stride) by destination id (word_2E516); tests a flag word against a bitmask, returning eligible (1) or not (0, with an optional rejection message). Called from TravelToDestination.",	0);
 	create_insn	(0X1A4C5);
 	set_name	(0X1A4C5,	"IsDestinationUnlocked");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1A4DA);
 	create_insn	(0X1A4E9);
 	create_insn	(x=0X1A4F4);
@@ -3675,15 +3686,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A5CC,	"Moderate confidence: plays a sound, briefly shows picture id 0xE for 7 ticks (saving/restoring the previous picture id), then restores. Called from HandleGameCommand when a status effect is already active -- a periodic warning flash.",	0);
 	create_insn	(0X1A5CC);
 	set_name	(0X1A5CC,	"FlashStatusWarning");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1A5E3,	"ticks",	0);
 	create_insn	(x=0X1A5F6);
 	op_hex		(x,	1);
@@ -5905,10 +5907,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22B78,	"Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.",	0);
 	create_insn	(0X22B78);
 	set_name	(0X22B78,	"FindMonsterTypeInLevelPool");
-	create_insn	(0X22B8E);
-	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
-	create_insn	(0X22B96);
-	set_name	(0X22B96,	"GrantMonsterRewards");
 }
 
 //------------------------------------------------------------------------
@@ -5918,6 +5916,10 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X22B8E);
+	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
+	create_insn	(0X22B96);
+	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
 	create_insn	(0X22BF5);
@@ -8898,6 +8900,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
 	create_insn	(0X2B17F);
 	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B184);
 	op_hex		(x,	1);
 	create_insn	(0X2B1C3);
@@ -8910,15 +8921,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B2CF,	"Item-icon-dispatch handler (word_32974==0x253, part of the same themed cluster as UseLocationBoundPotion/CheckQuestItemsCompleted). Saves the current view state, jumps to a fixed coordinate (340,99) using the same redraw sequence ApplyMapTriggerEffect uses for teleports, shows it briefly, then restores the original view -- the player doesn't actually move. A vision/scrying effect revealing a fixed, presumably story-significant location.",	0);
 	create_insn	(0X2B2CF);
 	set_name	(0X2B2CF,	"ShowVisionAtLocation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B2EF);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B2F4);

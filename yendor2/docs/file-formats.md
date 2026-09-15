@@ -1141,7 +1141,10 @@ math `AdvanceGameClock` uses (wraps at `0x5A0`/1440 minutes, calendar
 counters wrapping the same way) and calls `ResetDailyAbilityCharges`
 on rollover, before resuming play via `RunDungeonGameLoop`. Uses
 `RestoreDialogAreaFromEMS` (shared with `RunGameDialog`) to restore
-the status area from an EMS cache before drawing.
+the status area from an EMS cache before drawing, and
+`ClearMessageBoxArea` (shared with `sub_17032` and
+`UseAbilityCommand`) to clear the message-box background.
+
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade
