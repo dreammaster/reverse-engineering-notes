@@ -6608,7 +6608,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X25AF1);
 	op_hex		(x,	1);
+	set_cmt	(0X25B14,	"Resolves a 1-based party-record id (ax) to its pointer: word_328D6=ax, word_328D4=(ax-1)*0x1F4+0x95F3 (or 0 if ax==0) -- the party-member record table, 500 bytes/record. Called extremely widely throughout the codebase.",	0);
 	create_insn	(0X25B14);
+	set_name	(0X25B14,	"SelectPartyRecordById");
 	create_insn	(0X25B34);
 	create_insn	(0X25B3E);
 	create_insn	(0X25B65);
@@ -8877,13 +8879,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2AFB8,	"Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.",	0);
 	create_insn	(0X2AFB8);
 	set_name	(0X2AFB8,	"CollectMagicOreCache");
-	create_insn	(x=0X2AFC5);
-	op_hex		(x,	1);
-	create_insn	(x=0X2AFF4);
-	op_hex		(x,	1);
-	set_cmt	(0X2B029,	"Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.",	0);
-	create_insn	(0X2B029);
-	set_name	(0X2B029,	"CollectNuoreCache");
 }
 
 //------------------------------------------------------------------------
@@ -8893,6 +8888,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2AFC5);
+	op_hex		(x,	1);
+	create_insn	(x=0X2AFF4);
+	op_hex		(x,	1);
+	set_cmt	(0X2B029,	"Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.",	0);
+	create_insn	(0X2B029);
+	set_name	(0X2B029,	"CollectNuoreCache");
 	create_insn	(x=0X2B036);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B065);

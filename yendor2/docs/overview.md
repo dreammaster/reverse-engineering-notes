@@ -3107,6 +3107,16 @@ icon. A widely-reused helper, now named across dozens of call sites.
 
 400 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SelectPartyRecordById
+
+Named `sub_25B14`, an extremely widely-called foundational function:
+resolves a 1-based party-record id into `word_328D4`/`word_328D6`.
+Fills in a gap flagged earlier this session — "exactly how 'the
+current member' gets chosen isn't fully mapped yet" — this is the
+main mechanism.
+
+401 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

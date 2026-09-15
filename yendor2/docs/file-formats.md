@@ -71,12 +71,16 @@ uses the same table to map a party record back to its slot number
 existing panel-select routine (`sub_25B34`), then draws that member's
 status-bar row: portrait icon, name, level (`+0x16`), packed-BCD XP
 (`+0x18`) — called both from a `UseItemType_400` path and from the
-F1-F4/click-portrait party-member selection handler. `word_328D4`
-itself is set by
-several different mechanisms depending on context (a direct selector
+F1-F4/click-portrait party-member selection handler. The main
+mechanism setting `word_328D4` is now confirmed:
+`SelectPartyRecordById` (a foundational, extremely widely-called
+function) takes a 1-based record id and sets `word_328D4` =
+`(id-1)*0x1F4 + 0x95F3` (or 0 for id 0), also caching the id itself in
+`word_328D6` — this is the function behind `g_partyRecords`'
+base/stride confirmation above. Other mechanisms (a direct selector
 struct in some callers, `SelectDefaultPartyRecord`'s "first record
-with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) — exactly how
-"the current member" gets chosen isn't fully mapped yet. Confirmed
+with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) still apply
+in their own contexts. Confirmed
 fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
 `ida_scripts/name_char_rename.py`); **`+0xE`: plausibly a class id**
 (**correction**: documented since early in the session as "a time-of-

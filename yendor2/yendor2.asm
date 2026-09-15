@@ -2306,7 +2306,7 @@ loc_1152A:                              ; CODE XREF: HandleMovementInput+266↑j
                 mov     ax, g_partySlotAssignment
 
 loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     ax, word_36CF7
                 add     ax, word_2E402
                 mov     bx, word_36CF9
@@ -10955,7 +10955,7 @@ loc_16A58:                              ; CODE XREF: BuildCombatTurnOrder+4A↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_16A85
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+1Ch], 1C40h
                 jnz     short loc_16A80
@@ -11006,7 +11006,7 @@ loc_16ABF:                              ; CODE XREF: BuildCombatTurnOrder+99↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_16ABF
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+1Ch], 1C40h
                 jnz     short loc_16ABF
@@ -11303,7 +11303,7 @@ FindPartySlotForRecord proc near        ; CODE XREF: sub_16881+82↑p
 
 loc_16D58:                              ; CODE XREF: FindPartySlotForRecord+19↓j
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 cmp     ax, dx
                 jz      short loc_16D77
                 add     bx, 2
@@ -12850,7 +12850,7 @@ loc_17906:                              ; CODE XREF: UseAbilityCommand+35↑j
                                         ; UseAbilityCommand+52↑j
                 mov     word_32990, ax
                 mov     word_36D07, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_17927
@@ -13483,7 +13483,7 @@ loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 jnz     short loc_17F25
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 call    sub_25CFA
                 mov     ax, word_32902
@@ -15374,7 +15374,7 @@ loc_18CEF:                              ; CODE XREF: sub_18C79+34↑j
                 jz      short loc_18C8D
                 mov     word_32924, si
                 mov     ax, [si]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 cmp     word_31948, 11h
                 jz      short loc_18D18
@@ -15814,7 +15814,7 @@ sub_190E9       proc near               ; CODE XREF: sub_1869D+442↑p
 
 loc_190EF:                              ; CODE XREF: sub_190E9+3↑j
                 mov     ax, [si]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    sub_266A9
                 push    ds
                 mov     dx, _emsPointer1?
@@ -15848,7 +15848,7 @@ sub_190E9       endp
 ShowPartyPortraitForSlot proc near      ; CODE XREF: HandlePortraitClick+88↑p
                                         ; RefreshPartyPortraits+22↑p ...
                 mov     ax, [si]        ; Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    DrawPartyMemberPortrait
                 retn
 ShowPartyPortraitForSlot endp
@@ -16094,7 +16094,7 @@ loc_193A4:                              ; CODE XREF: sub_1930E+33↑j
 
 loc_193B0:                              ; CODE XREF: sub_1930E+9D↑j
                 mov     ax, [si]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     errorCode, 0
                 retn
 sub_1930E       endp
@@ -16351,7 +16351,7 @@ loc_195BF:                              ; CODE XREF: sub_19553+69↑j
 loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                                         ; sub_19553+1AB↓j
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    RestoreCursorBackgroundIfDirty
                 call    SelectAndDrawPartyStatusRow
                 call    sub_197B9
@@ -17742,7 +17742,7 @@ loc_1A0CC:                              ; CODE XREF: sub_1A085+62↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_1A0E9
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    sub_1A14D
                 add     word_32924, 2
                 add     di, 14h
@@ -17769,7 +17769,7 @@ loc_1A11C:                              ; CODE XREF: sub_1A085+B2↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_1A139
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    sub_1A195
                 add     word_32924, 2
                 add     di, 14h
@@ -17878,7 +17878,7 @@ loc_1A200:                              ; CODE XREF: sub_1A085+196↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_1A21D
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    sub_1A233
                 add     word_32924, 2
                 add     di, 14h
@@ -19029,7 +19029,7 @@ loc_1AB55:                              ; CODE XREF: UpdatePartyAverageStatTiers
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1AB87
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_1AB82
@@ -19857,7 +19857,7 @@ loc_1B2DF:                              ; CODE XREF: ConfirmAndValidatePartyTarg
                 mov     errorCode, 0
                 mov     word_32990, ax
                 mov     word_36D03, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_1B306
@@ -20177,7 +20177,7 @@ loc_1B571:                              ; CODE XREF: sub_1B4C2+103↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_1B5D1
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 push    word_3293E
                 test    word ptr [si+1Ch], 40h
@@ -20296,7 +20296,7 @@ loc_1B692:                              ; CODE XREF: sub_1B5FD+CB↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_1B6D4
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+1Ch], 40h
                 jnz     short loc_1B6C2
@@ -20379,7 +20379,7 @@ CheckPartyMemberItemFlag proc far       ; CODE XREF: UseItem+2F4↑P
                 or      word_2E40C, 1000h
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 mov     di, 0BCEh
                 mov     ax, [di+1Ah]
@@ -20405,7 +20405,7 @@ ClassifyPartyMemberCondition proc far   ; CODE XREF: UseItem+2C7↑P
                 and     word_2E40C, 3FFh
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 xor     bx, bx
                 test    word ptr [si+1Ch], 40h
@@ -20459,7 +20459,7 @@ CheckPartyMemberItemFlagAndClearPanel proc far
                 or      word_2E40C, 1000h
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 mov     di, 0BCEh
                 mov     ax, [di+1Ah]
@@ -20487,7 +20487,7 @@ sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
                 or      word_2E40C, 1000h
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    CheckForLevelUp
                 mov     si, word_328D4
                 cmp     word ptr [si+1Eh], 0
@@ -22295,7 +22295,7 @@ loc_1C98C:                              ; CODE XREF: LoadItemData+13E↓j
 loc_1C9AF:                              ; CODE XREF: LoadItemData+102↑j
                                         ; LoadItemData+114↑j
                 mov     word_36D09, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     word_3197E, ax
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
@@ -22443,7 +22443,7 @@ loc_1CAF3:                              ; CODE XREF: ShowItemUsagePreview+27↑j
 loc_1CB15:                              ; CODE XREF: ShowItemUsagePreview+A8↑j
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 call    sub_25CFA
                 call    ShowTransportUsagePreview
@@ -22651,7 +22651,7 @@ sub_1CCBC       proc far                ; CODE XREF: PayGoldAndAcquireItem+A↑P
                 mov     word_2E392, ax
                 mov     word_32922, ax
                 mov     ax, word_36D03
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 mov     ax, 37h ; '7'
                 cmp     word ptr [bx+68h], 36h ; '6'
@@ -22798,7 +22798,7 @@ loc_1CE35:                              ; CODE XREF: IsItemRangeAvailable+92↓j
                 jz      short loc_1CE65
                 push    cx
                 push    si
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    FindItemInInventoryRange
                 pop     si
                 pop     cx
@@ -23689,7 +23689,7 @@ loc_1D452:                              ; CODE XREF: RunTitleScreen+1C2↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1D46A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 mov     ax, _val47
                 or      [bx+1Ch], ax
@@ -23781,7 +23781,7 @@ loc_1D503:                              ; CODE XREF: HandleRangedOrCombatAction+
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1D538
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_1D530
@@ -24316,7 +24316,7 @@ locret_1DA98:                           ; CODE XREF: ResolveAttackOrAbilityActio
 
 loc_1DA99:                              ; CODE XREF: ResolveAttackOrAbilityAction+2E↑j
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     ax, [di]
                 call    LoadItemCatalogRecord
                 mov     di, ax
@@ -24899,7 +24899,7 @@ loc_1DF4F:                              ; CODE XREF: RunAlchemyScreen:loc_1DDE5�
                 push    word_328D6
                 mov     word_32924, bx
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 cmp     word ptr [bx+94h], 0
                 jz      short loc_1DF87
@@ -24967,7 +24967,7 @@ loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
 loc_1E01E:                              ; CODE XREF: RunAlchemyScreen+327↑j
                 push    word_328D4
                 mov     ax, word_3331A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     word_33318, ax
                 pop     word_328D4
                 pop     word_328D6
@@ -25011,7 +25011,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 pop     word_32924
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    sub_1E61B
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32924
@@ -25448,7 +25448,7 @@ loc_1E450:                              ; CODE XREF: sub_1E447+20↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1E46F
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 cmp     word ptr [bx+94h], 0
                 jnz     short loc_1E46B
@@ -25477,7 +25477,7 @@ sub_1E473       proc near               ; CODE XREF: RunAlchemyScreen+E↑p
                 mov     ax, word_36CCD
                 cmp     ax, 0
                 jz      short loc_1E4A1
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 cmp     word ptr [bx+94h], 0
                 jz      short loc_1E4A1
@@ -25817,7 +25817,7 @@ loc_1E83E:                              ; CODE XREF: RestPartyAndAdvanceClock+20
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1E85B
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_1E856
@@ -25902,7 +25902,7 @@ RestPartyAndAdvanceClock endp
 
 
 sub_1E943       proc near               ; CODE XREF: RestPartyAndAdvanceClock+257↑p
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_1E954
@@ -31182,7 +31182,7 @@ loc_21A39:                              ; CODE XREF: sub_219FA+23↑j
                                         ; sub_219FA+35↑j
                 mov     word_32990, ax
                 mov     word_36D05, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_21A55
@@ -32952,7 +32952,7 @@ loc_22A36:                              ; CODE XREF: sub_22A35+20↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_22A36
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+1Ch], 1C40h
                 jnz     short loc_22A36
@@ -33872,7 +33872,7 @@ loc_2325F:                              ; CODE XREF: ShowLootAndAwardExperience+
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_2329A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jnz     short loc_2327F
@@ -38513,7 +38513,7 @@ loc_25AC2:                              ; CODE XREF: sub_25AAC+2D↓j
                 cmp     ax, 0
                 jz      short loc_25ADB
                 push    cs
-                call    near ptr sub_25B14
+                call    near ptr SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_25B08
@@ -38545,9 +38545,9 @@ sub_25AAC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25B14       proc far                ; CODE XREF: HandleMovementInput:loc_11535↑P
+SelectPartyRecordById proc far          ; CODE XREF: HandleMovementInput:loc_11535↑P
                                         ; BuildCombatTurnOrder+25↑P ...
-                push    bx
+                push    bx              ; Resolves a 1-based party-record id (ax) to its pointer: word_328D6=ax, word_328D4=(ax-1)*0x1F4+0x95F3 (or 0 if ax==0) -- the party-member record table, 500 bytes/record. Called extremely widely throughout the codebase.
                 push    dx
                 mov     word_328D6, ax
                 mov     word_328D4, 0
@@ -38559,11 +38559,11 @@ sub_25B14       proc far                ; CODE XREF: HandleMovementInput:loc_115
                 add     ax, 95F3h
                 mov     word_328D4, ax
 
-loc_25B30:                              ; CODE XREF: sub_25B14+11↑j
+loc_25B30:                              ; CODE XREF: SelectPartyRecordById+11↑j
                 pop     dx
                 pop     bx
                 retf
-sub_25B14       endp
+SelectPartyRecordById endp
 
 seg085          ends
 
@@ -38646,7 +38646,7 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 mov     ax, si
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 mov     ax, word_2E40A
                 cmp     ax, 4
@@ -40683,7 +40683,7 @@ sub_26CFB       proc near               ; CODE XREF: sub_26C9E+25↑p
                 jz      short locret_26D53
                 push    bx
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 mov     ax, [bx+12h]
                 mov     word_2E530, ax
@@ -45042,7 +45042,7 @@ loc_2900D:                              ; CODE XREF: ResetDailyAbilityCharges+36
                 or      ax, ax
                 jz      short loc_29031
                 push    cx
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 add     si, 0B6h
                 mov     cx, 4
@@ -45079,7 +45079,7 @@ sub_29040       proc far                ; CODE XREF: UseItem:loc_17F25↑P
                 push    cx
                 mov     bx, word_32924
                 mov     ax, [bx]
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 mov     bx, [si+0B4h]
                 mov     es, word_2E54C
@@ -45653,7 +45653,7 @@ loc_2953C:                              ; CODE XREF: SyncAllContainers+23↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_2954F
-                call    sub_25B14
+                call    SelectPartyRecordById
                 call    SyncPartyMemberContainers
                 add     si, 2
                 loop    loc_2953C
@@ -46019,7 +46019,7 @@ loc_297EB:                              ; CODE XREF: UnlockDoorCommand+A9↑j
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jz      short loc_297F8
-                call    sub_25B14
+                call    SelectPartyRecordById
 
 loc_297F8:                              ; CODE XREF: UnlockDoorCommand+B9↑j
                 call    ShowLockStatus
@@ -48253,7 +48253,7 @@ loc_2A7A8:                              ; CODE XREF: sub_2A788+6↑j
                                         ; sub_2A788+18↑j
                 mov     word_32990, ax
                 mov     word_36D07, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2A7C4
@@ -48768,7 +48768,7 @@ loc_2ABAC:                              ; CODE XREF: CastSpell+13D↑j
                                         ; CastSpell+14A↑j
                 mov     word_32990, ax
                 mov     word_36D0B, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+1Ch], 1C40h
                 jz      short loc_2ABC8
@@ -48953,7 +48953,7 @@ ConfirmAndSelectPartyTarget proc near   ; CODE XREF: ApplyMultiStatEffect+5↑p
 
 loc_2ADC4:                              ; CODE XREF: ConfirmAndSelectPartyTarget+1B↑j
                 mov     word_32990, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     ax, word_328D6
                 retn
 ConfirmAndSelectPartyTarget endp
@@ -49288,7 +49288,7 @@ loc_2B0FF:                              ; CODE XREF: PartyMassHealAndOverheal+9E
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_2B13A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 and     word ptr [si+1Ch], 3Fh
                 mov     ax, [si+92h]
@@ -49769,7 +49769,7 @@ loc_2B685:                              ; CODE XREF: RunConversation+13↑j
                                         ; RunConversation+25↑j
                 mov     word_32990, ax
                 mov     word_36D09, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2B6A6
@@ -50972,7 +50972,7 @@ loc_2C03D:                              ; CODE XREF: RepairItemCommand+13↑j
                 mov     errorCode, 0
                 mov     word_32990, ax
                 mov     word_36D05, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
                 jz      short loc_2C064
@@ -51233,7 +51233,7 @@ loc_2C246:                              ; CODE XREF: sub_2C0FE+17F↓j
                 mov     ax, ds:[bp+0]
                 or      ax, ax
                 jz      short loc_2C27F
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     [di+0Ch], ax
                 mov     [di+8], dx
                 mov     [di+0Ah], si
@@ -52566,7 +52566,7 @@ loc_2CFCC:                              ; CODE XREF: sub_2C0FE+F0E↓j
                 mov     ax, ds:[bp+0]
                 or      ax, ax
                 jz      short loc_2D00E
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     [di+0Ch], ax
                 mov     [di+8], dx
                 mov     [di+0Ah], si
@@ -53460,7 +53460,7 @@ loc_2D6B9:                              ; CODE XREF: InteractWithContainer+4A↑
 
 loc_2D6D3:                              ; CODE XREF: InteractWithContainer+74↑j
                 mov     ax, word_3331A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     word_33318, ax
 
 loc_2D6DE:                              ; CODE XREF: InteractWithContainer+65↑j
@@ -53484,7 +53484,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jz      short loc_2D77A
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 test    word ptr [si+15Eh], 8000h
                 jz      short loc_2D73C
@@ -53539,7 +53539,7 @@ loc_2D7AD:                              ; CODE XREF: sub_2D7A7+40↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short locret_2D7E9
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 mov     ax, word_3330A
                 call    sub_27A66
@@ -53577,7 +53577,7 @@ loc_2D7F0:                              ; CODE XREF: sub_2D7EA+1C↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short locret_2D808
-                call    sub_25B14
+                call    SelectPartyRecordById
                 mov     si, ax
                 and     word ptr [si+15Eh], 7FFFh
                 add     bx, 2
@@ -53623,7 +53623,7 @@ locret_2D860:                           ; DATA XREF: seg129:g_driverStateFlags�
 
 loc_2D861:                              ; CODE XREF: seg128:01FC↑j
                 mov     word_32990, ax
-                call    sub_25B14
+                call    SelectPartyRecordById
 
 loc_2D869:                              ; DATA XREF: seg129:g_driverStateFlags↓o
                 mov     ax, word_328D6
