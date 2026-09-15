@@ -8596,7 +8596,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2AEF8);
 	op_hex		(x,	1);
 	create_insn	(0X2AF2D);
+	set_cmt	(0X2AF2E,	"Item-icon-dispatch handler (word_32974==0x258). A potion that only works at one specific map cell (word_36CF7==0x68, word_36CF9==0x6E): there, shows 'THE POTION WORKED SUCCESSFULLY', confirms item 0x258 is present (IsItemRangeAvailable), and sets global quest flag 0x48 (SetGlobalFlag). Elsewhere: 'YOU CAN NOT USE THAT HERE!'.",	0);
 	create_insn	(0X2AF2E);
+	set_name	(0X2AF2E,	"UseLocationBoundPotion");
 	create_insn	(x=0X2AF33);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AF8E);
@@ -11152,6 +11154,15 @@ static Bytes_2(void) {
 	create_strlit	(0X3A169,	0X2);
 	create_strlit	(0X3A16B,	0X26);
 	set_name	(0X3A16B,	"aMikeHurleyLawr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A191,	0X2);
 	create_strlit	(0X3A193,	0X24);
 	set_name	(0X3A193,	"aRodSmithIiDann");
@@ -11170,15 +11181,6 @@ static Bytes_2(void) {
 	set_name	(0X3A219,	"aTatteredPieceO");
 	create_strlit	(0X3A243,	0XA);
 	set_name	(0X3A243,	"aPaltivar");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A24E,	0X1B);
 	set_name	(0X3A24E,	"aAfterReadingTh");
 	create_strlit	(0X3A269,	0X18);

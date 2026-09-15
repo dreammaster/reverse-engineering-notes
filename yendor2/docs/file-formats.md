@@ -223,6 +223,17 @@ sound and runs an animated sequence re-checking those 4 plus a 5th
 N required quest items," a completion reward sequence — exact narrative
 (which items, what they unlock) not identified.
 
+**One of the 5 items identified**: item `0x258` — immediately adjacent
+to the `0x254`-`0x257` completion range — is `UseLocationBoundPotion`
+(`word_32974==0x258`, another item-icon-dispatch handler): a potion
+that only works at one specific map cell, confirmed by its own message
+strings (`THE POTION WORKED SUCCESSFULLY` there, `YOU CAN NOT USE THAT
+HERE!` elsewhere). Using it there sets global quest flag `0x48`. The
+adjacency to the completion-check range (`0x254`-`0x258` consecutive,
+plus `0x2C8`) strongly suggests these 5-6 items are one themed quest
+item set — a promising thread into the main-quest structure, not
+followed further this round.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

@@ -49045,7 +49045,7 @@ sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D
 loc_2AE48:                              ; CODE XREF: sub_2AE3C+6↑j
                 cmp     word_32974, 258h
                 jnz     short loc_2AE54
-                call    sub_2AF2E
+                call    UseLocationBoundPotion
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49150,8 +49150,8 @@ sub_2AE3C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
-                call    ClearStatusPanelIfDirty
+UseLocationBoundPotion proc near        ; CODE XREF: sub_2AE3C+14↑p
+                call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x258). A potion that only works at one specific map cell (word_36CF7==0x68, word_36CF9==0x6E): there, shows 'THE POTION WORKED SUCCESSFULLY', confirms item 0x258 is present (IsItemRangeAvailable), and sets global quest flag 0x48 (SetGlobalFlag). Elsewhere: 'YOU CAN NOT USE THAT HERE!'.
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49180,14 +49180,14 @@ sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2AFA7:                              ; CODE XREF: sub_2AF2E+2E↑j
-                                        ; sub_2AF2E+35↑j
+loc_2AFA7:                              ; CODE XREF: UseLocationBoundPotion+2E↑j
+                                        ; UseLocationBoundPotion+35↑j
                 mov     bx, 8DA3h
                 mov     cx, 3
                 call    sub_23B76
                 call    DrawMouseCursor
                 retn
-sub_2AF2E       endp
+UseLocationBoundPotion endp
 
 
 ; =============== S U B R O U T I N E =======================================

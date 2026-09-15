@@ -1901,6 +1901,19 @@ target" context.
 
 249 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseLocationBoundPotion — the quest-item thread deepens
+
+Followed up on last round's quest-completion lead: item `0x258`
+(immediately adjacent to the `0x254`-`0x257` completion range) is
+`UseLocationBoundPotion` — a potion that only works at one specific map
+cell, confirmed by its own strings ("THE POTION WORKED SUCCESSFULLY" /
+"YOU CAN NOT USE THAT HERE!"), setting a quest-milestone global flag
+when used there. The adjacency (`0x254`-`0x258` consecutive, plus
+`0x2C8`) strongly suggests one themed quest-item set — a good next
+thread for a future round.
+
+250 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
