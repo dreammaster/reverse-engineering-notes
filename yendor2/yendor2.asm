@@ -29790,9 +29790,10 @@ sub_20E12       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20E54       proc near               ; CODE XREF: TryTriggerMonsterEncounterAtCell:loc_212E7↓p
+DrawMonsterAndUpdateAttackState proc near
+                                        ; CODE XREF: TryTriggerMonsterEncounterAtCell:loc_212E7↓p
                                         ; RenderActiveMonsterSprites+11↓p
-                test    word ptr [si+92h], 4
+                test    word ptr [si+92h], 4 ; Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.
                 jz      short loc_20E6F
                 or      word_328C6, 1
                 mov     ax, si
@@ -29800,7 +29801,7 @@ sub_20E54       proc near               ; CODE XREF: TryTriggerMonsterEncounterA
                 mov     g_blitMaskPtr, ax
                 mov     g_blitMaskLen, 6
 
-loc_20E6F:                              ; CODE XREF: sub_20E54+6↑j
+loc_20E6F:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+6↑j
                 mov     ax, [si+8]
                 mov     word_2E530, ax
                 mov     word_2E532, 30h ; '0'
@@ -29808,7 +29809,7 @@ loc_20E6F:                              ; CODE XREF: sub_20E54+6↑j
                 jnz     short loc_20E89
                 mov     word_2E532, 20h ; ' '
 
-loc_20E89:                              ; CODE XREF: sub_20E54+2D↑j
+loc_20E89:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+2D↑j
                 mov     ax, [si+0Ah]
                 mov     word_32918, ax
                 mov     _font_bgTransparent, 1
@@ -29823,7 +29824,7 @@ loc_20E89:                              ; CODE XREF: sub_20E54+2D↑j
                 jmp     short loc_20ECA
 ; ---------------------------------------------------------------------------
 
-loc_20EB1:                              ; CODE XREF: sub_20E54+4C↑j
+loc_20EB1:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+4C↑j
                 test    word ptr [si+0Ch], 4
                 jz      short loc_20ECA
                 mov     ax, [si+4Ch]
@@ -29833,8 +29834,8 @@ loc_20EB1:                              ; CODE XREF: sub_20E54+4C↑j
                 mov     word_2E530, ax
                 mov     [si+8], ax
 
-loc_20ECA:                              ; CODE XREF: sub_20E54+5B↑j
-                                        ; sub_20E54+62↑j ...
+loc_20ECA:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+5B↑j
+                                        ; DrawMonsterAndUpdateAttackState+62↑j ...
                 call    sub_29B0F
                 mov     word_32984, 0
                 mov     word ptr [si+18h], 0
@@ -29845,13 +29846,13 @@ loc_20ECA:                              ; CODE XREF: sub_20E54+5B↑j
                 mov     word_2E530, ax
                 call    sub_29B0F
 
-loc_20EF1:                              ; CODE XREF: sub_20E54+90↑j
+loc_20EF1:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+90↑j
                 test    word ptr [si+0Ch], 8
                 jnz     short loc_20EFB
                 jmp     loc_20F96
 ; ---------------------------------------------------------------------------
 
-loc_20EFB:                              ; CODE XREF: sub_20E54+A2↑j
+loc_20EFB:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+A2↑j
                 and     word ptr [si+0Ch], 0FFF7h
                 mov     x, 0FFEAh
                 mov     y, 22h ; '"'
@@ -29872,8 +29873,8 @@ loc_20EFB:                              ; CODE XREF: sub_20E54+A2↑j
                 jz      short loc_20F52
                 mov     x, 6Bh ; 'k'
 
-loc_20F52:                              ; CODE XREF: sub_20E54+BC↑j
-                                        ; sub_20E54+C9↑j ...
+loc_20F52:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+BC↑j
+                                        ; DrawMonsterAndUpdateAttackState+C9↑j ...
                 mov     ax, [si+68h]
                 add     x, ax
                 mov     ax, [si+6Ah]
@@ -29886,8 +29887,8 @@ loc_20F52:                              ; CODE XREF: sub_20E54+BC↑j
                 jnz     short loc_20F77
                 mov     ax, word_329E8
 
-loc_20F77:                              ; CODE XREF: sub_20E54+114↑j
-                                        ; sub_20E54+11E↑j
+loc_20F77:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+114↑j
+                                        ; DrawMonsterAndUpdateAttackState+11E↑j
                 mov     word_2E530, ax
                 mov     ax, word_328F2
                 mov     word_32926, ax
@@ -29896,7 +29897,7 @@ loc_20F77:                              ; CODE XREF: sub_20E54+114↑j
                 call    DrawPicture
                 and     word ptr [si+0Eh], 1FFFh
 
-loc_20F96:                              ; CODE XREF: sub_20E54+A4↑j
+loc_20F96:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+A4↑j
                 test    word ptr [si+0Ch], 3010h
                 jz      short loc_20FAB
                 mov     ax, [si+4Ch]
@@ -29906,7 +29907,7 @@ loc_20F96:                              ; CODE XREF: sub_20E54+A4↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_20FAB:                              ; CODE XREF: sub_20E54+147↑j
+loc_20FAB:                              ; CODE XREF: DrawMonsterAndUpdateAttackState+147↑j
                 push    es
                 mov     ax, ds
                 mov     es, ax
@@ -29915,7 +29916,7 @@ loc_20FAB:                              ; CODE XREF: sub_20E54+147↑j
                 pop     es
                 assume es:nothing
                 retn
-sub_20E54       endp
+DrawMonsterAndUpdateAttackState endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30279,7 +30280,7 @@ loc_212C8:                              ; CODE XREF: TryTriggerMonsterEncounterA
 
 loc_212E7:                              ; CODE XREF: TryTriggerMonsterEncounterAtCell+25↑j
                                         ; TryTriggerMonsterEncounterAtCell+2C↑j
-                call    sub_20E54
+                call    DrawMonsterAndUpdateAttackState
                 retn
 TryTriggerMonsterEncounterAtCell endp
 
@@ -30295,7 +30296,7 @@ RenderActiveMonsterSprites proc near    ; CODE XREF: RenderDungeonVanishingPoint
 loc_212F7:                              ; CODE XREF: RenderActiveMonsterSprites+18↓j
                 cmp     word ptr [si], 0
                 jz      short loc_212FF
-                call    sub_20E54
+                call    DrawMonsterAndUpdateAttackState
 
 loc_212FF:                              ; CODE XREF: RenderActiveMonsterSprites+F↑j
                 add     si, 9Ch
@@ -37708,7 +37709,7 @@ seg078          segment byte public 'CODE' use16
 
 
 sub_25656       proc far                ; CODE XREF: ShowClueBookMonsterDetail:loc_14645↑P
-                                        ; sub_20E54+15C↑P
+                                        ; DrawMonsterAndUpdateAttackState+15C↑P
                 test    word ptr es:[si+92h], 40h
                 jz      short loc_25662
                 jmp     locret_256EE
@@ -74375,8 +74376,8 @@ word_32980      dw 0                    ; DATA XREF: sub_11D66+18↑w
                                         ; sub_152EF+71↑w ...
 word_32982      dw 0                    ; DATA XREF: sub_11D66+1E↑w
                                         ; sub_152EF+80↑w ...
-word_32984      dw 0                    ; DATA XREF: sub_20E54+44↑w
-                                        ; sub_20E54+7B↑w ...
+word_32984      dw 0                    ; DATA XREF: DrawMonsterAndUpdateAttackState+44↑w
+                                        ; DrawMonsterAndUpdateAttackState+7B↑w ...
 word_32986      dw 0                    ; DATA XREF: sub_11D66+24↑w
                                         ; sub_152EF+6B↑w ...
 word_32988      dw 0                    ; DATA XREF: sub_11D66+2A↑w
@@ -74476,11 +74477,11 @@ _ptr7           dw 0                    ; DATA XREF: InitGlobals+78↑w
 word_329E6      dw 0                    ; DATA XREF: InitGlobals+162↑w
                                         ; sub_1D4B8+21A↑r
 word_329E8      dw 0                    ; DATA XREF: InitGlobals+168↑w
-                                        ; sub_20E54+120↑r
+                                        ; DrawMonsterAndUpdateAttackState+120↑r
 word_329EA      dw 0                    ; DATA XREF: InitGlobals+16E↑w
-                                        ; sub_20E54+116↑r
+                                        ; DrawMonsterAndUpdateAttackState+116↑r
 word_329EC      dw 0                    ; DATA XREF: InitGlobals+174↑w
-                                        ; sub_20E54+10C↑r
+                                        ; DrawMonsterAndUpdateAttackState+10C↑r
 word_329EE      dw 0                    ; DATA XREF: InitGlobals+17A↑w
                                         ; UnlockDoorCommand+EE↑r ...
 word_329F0      dw 0                    ; DATA XREF: InitGlobals+180↑w

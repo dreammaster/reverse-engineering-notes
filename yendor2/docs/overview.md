@@ -2492,6 +2492,19 @@ a per-monster detection-range threshold before setting an aware flag.
 
 313 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawMonsterAndUpdateAttackState connects dungeon rendering to the existing combat/wound documentation
+
+Named `sub_20E54`, called from `TryTriggerMonsterEncounterAtCell` and
+`RenderActiveMonsterSprites`: draws a monster's sprite (base picture,
+hit-flash/recovery animation via `+0xC` bits 2/4 — the same wound
+flags `UpdateMonsterWoundTier` sets, documented earlier this session)
+plus a weapon/attack-effect sprite, then checks the same `+0xC 0x3010`
+bits `BuildCombatTurnOrder`/`TickMonsterTimer` use for countdown
+gating. Nicely ties this round's dungeon-rendering work back to
+earlier-session combat findings.
+
+314 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

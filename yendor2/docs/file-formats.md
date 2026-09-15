@@ -475,7 +475,14 @@ light, `0x4000` moderate, `0x2000` severe, by percentage of `+0x50` —
 plausibly max HP/toughness) plus an unconditional display flag
 (`+0xC` `|= 0xA`) — it does not subtract HP itself, but its caller
 does immediately afterward: **`[monster+0x10] -= word_2E49C`** (the
-damage just dealt). This confirms `+0x10` doubles as the monster's
+damage just dealt). `DrawMonsterAndUpdateAttackState` (called for
+every rendered monster, whether a corridor encounter or an active
+`g_monsterSlots` combatant) reads exactly this wound state to pick a
+hit-flash/recovery animation frame (`+0xC` bits 2/4), draws a weapon/
+attack-effect sprite, and at the end checks the same `+0xC` `0x3010`
+bits documented above for `BuildCombatTurnOrder`/`TickMonsterTimer`'s
+countdown — resetting it if set, else calling an untraced `sub_25656`
+(plausibly the actual attack-resolution trigger). This confirms `+0x10` doubles as the monster's
 *current HP* in the active-combat context — the same field
 `TickMonsterTimer` uses as a presence/lifespan countdown in the
 level-wide `g_levelMonsters` pool context, a polymorphic field reused

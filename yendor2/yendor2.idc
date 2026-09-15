@@ -5312,8 +5312,10 @@ static Bytes_1(void) {
 	create_insn	(0X20E12);
 	create_insn	(x=0X20E13);
 	op_hex		(x,	1);
+	set_cmt	(0X20E54,	"Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.",	0);
 	create_insn	(x=0X20E54);
 	op_hex		(x,	1);
+	set_name	(0X20E54,	"DrawMonsterAndUpdateAttackState");
 	create_insn	(x=0X20E5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X20E7B);
@@ -6683,13 +6685,6 @@ static Bytes_1(void) {
 	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
-	set_cmt	(0X2684B,	"this",	0);
-	create_insn	(0X26864);
-	create_insn	(0X2687B);
-	create_insn	(0X268A0);
-	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
-	create_insn	(0X268F4);
-	set_name	(0X268F4,	"SaveAndCloseContainer");
 }
 
 //------------------------------------------------------------------------
@@ -6699,6 +6694,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2684B,	"this",	0);
+	create_insn	(0X26864);
+	create_insn	(0X2687B);
+	create_insn	(0X268A0);
+	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
+	create_insn	(0X268F4);
+	set_name	(0X268F4,	"SaveAndCloseContainer");
 	set_cmt	(0X268FB,	"this",	0);
 	create_insn	(0X26928);
 	create_insn	(0X26937);
@@ -10092,6 +10094,15 @@ static Bytes_2(void) {
 	set_name	(0X3525A,	"aFemale");
 	create_strlit	(0X35261,	0X10);
 	set_name	(0X35261,	"aPickAPortrait");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35271,	0XA);
 	set_name	(0X35271,	"aSelectAn");
 	create_strlit	(0X3527B,	0X7);
@@ -10110,15 +10121,6 @@ static Bytes_2(void) {
 	set_name	(0X352BC,	"aKeepCharacter");
 	create_strlit	(0X352CB,	0X12);
 	set_name	(0X352CB,	"aCharacterPrevi");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X352DD,	0X7);
 	set_name	(0X352DD,	"aDelete");
 	create_strlit	(0X352E4,	0X7);
