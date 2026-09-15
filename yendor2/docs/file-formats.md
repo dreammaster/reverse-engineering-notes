@@ -427,6 +427,15 @@ catalog data, not a code literal), so pinning down exactly what
 recharges it needs `WORLD.DAT` item-data inspection rather than more
 static tracing.
 
+Before any of the three render passes runs, `RedrawDungeonScreen`
+first calls `BuildDungeonViewportCells`, which builds the local
+scratch cell buffer (`0x6D60`) every pass actually reads from:
+computes a facing-dependent row stride/side-step (the same
+`word_36CF5` tier bits used throughout) from the current position,
+then calls `CopyDungeonRowCells` 7× (matching `RenderDungeonViewport`'s
+row-count pattern) to copy the visible cells out of the level's map
+data.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

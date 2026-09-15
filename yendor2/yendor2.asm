@@ -29540,7 +29540,7 @@ seg063          segment byte public 'CODE' use16
 
 RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                                         ; start+134↑P ...
-                call    sub_21306       ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
+                call    BuildDungeonViewportCells ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
                 call    sub_213FC
                 call    sub_2784A
                 call    DrawDungeonFloorAndCeiling
@@ -30310,8 +30310,8 @@ RenderActiveMonsterSprites endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21306       proc near               ; CODE XREF: RedrawDungeonScreen↑p
-                and     word_3295A, 7FFFh
+BuildDungeonViewportCells proc near     ; CODE XREF: RedrawDungeonScreen↑p
+                and     word_3295A, 7FFFh ; Builds the local scratch cell buffer (di=0x6D60) that every dungeon-rendering pass reads from: computes a facing-dependent row stride/side-step (word_36CF5 tier bits) from the current position, then calls CopyDungeonRowCells 7x (same row-count pattern as RenderDungeonViewport) to copy the visible cells from the level's map data. Called first in RedrawDungeonScreen.
                 cmp     word_36CF5, 8000h
                 jz      short loc_21338
                 cmp     word_36CF5, 4000h
@@ -30325,7 +30325,7 @@ sub_21306       proc near               ; CODE XREF: RedrawDungeonScreen↑p
                 jmp     short loc_21372
 ; ---------------------------------------------------------------------------
 
-loc_21338:                              ; CODE XREF: sub_21306+C↑j
+loc_21338:                              ; CODE XREF: BuildDungeonViewportCells+C↑j
                 mov     word_2E55E, 8
                 mov     word_2E560, 270h
                 mov     cx, 0FFFAh
@@ -30333,7 +30333,7 @@ loc_21338:                              ; CODE XREF: sub_21306+C↑j
                 jmp     short loc_21372
 ; ---------------------------------------------------------------------------
 
-loc_2134C:                              ; CODE XREF: sub_21306+14↑j
+loc_2134C:                              ; CODE XREF: BuildDungeonViewportCells+14↑j
                 mov     word_2E55E, 0FFF8h
                 mov     word_2E560, 0FD90h
                 mov     cx, 6
@@ -30341,14 +30341,14 @@ loc_2134C:                              ; CODE XREF: sub_21306+14↑j
                 jmp     short loc_21372
 ; ---------------------------------------------------------------------------
 
-loc_21360:                              ; CODE XREF: sub_21306+1C↑j
+loc_21360:                              ; CODE XREF: BuildDungeonViewportCells+1C↑j
                 mov     word_2E55E, 270h
                 mov     word_2E560, 0FFF8h
                 mov     cx, 0FFF8h
                 mov     bx, 6
 
-loc_21372:                              ; CODE XREF: sub_21306+30↑j
-                                        ; sub_21306+44↑j ...
+loc_21372:                              ; CODE XREF: BuildDungeonViewportCells+30↑j
+                                        ; BuildDungeonViewportCells+44↑j ...
                 add     bx, word_36CF7
                 add     cx, word_36CF9
                 sub     cx, word_2E564
@@ -30363,9 +30363,9 @@ loc_21372:                              ; CODE XREF: sub_21306+30↑j
                 mov     es, word_2E562
                 mov     bp, word_2E55E
                 mov     cx, 11h
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 mov     cx, 11h
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 add     si, bp
                 add     si, bp
                 add     si, bp
@@ -30373,28 +30373,28 @@ loc_21372:                              ; CODE XREF: sub_21306+30↑j
                 add     si, bp
                 add     si, bp
                 mov     cx, 5
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 add     si, bp
                 mov     cx, 3
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 mov     cx, 3
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 mov     cx, 3
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 mov     cx, 3
-                call    sub_213D4
+                call    CopyDungeonRowCells
                 retn
-sub_21306       endp
+BuildDungeonViewportCells endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_213D4       proc near               ; CODE XREF: sub_21306+98↑p
-                                        ; sub_21306+9E↑p ...
-                push    si
+CopyDungeonRowCells proc near           ; CODE XREF: BuildDungeonViewportCells+98↑p
+                                        ; BuildDungeonViewportCells+9E↑p ...
+                push    si              ; Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.
 
-loc_213D5:                              ; CODE XREF: sub_213D4+20↓j
+loc_213D5:                              ; CODE XREF: CopyDungeonRowCells+20↓j
                 mov     bx, es:[si]
                 mov     [di], bx
                 mov     bx, es:[si+2]
@@ -30409,7 +30409,7 @@ loc_213D5:                              ; CODE XREF: sub_213D4+20↓j
                 pop     si
                 add     si, word_2E560
                 retn
-sub_213D4       endp
+CopyDungeonRowCells endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -56933,10 +56933,10 @@ word_2E55A      dw 0                    ; DATA XREF: sub_12449+E↑w
                                         ; sub_12449+1B↑r ...
 word_2E55C      dw 0                    ; DATA XREF: HandleMovementInput+3C2↑r
                                         ; HandleMovementInput+3CE↑r ...
-word_2E55E      dw 0                    ; DATA XREF: sub_21306+1E↑w
-                                        ; sub_21306:loc_21338↑w ...
-word_2E560      dw 0                    ; DATA XREF: sub_21306+24↑w
-                                        ; sub_21306+38↑w ...
+word_2E55E      dw 0                    ; DATA XREF: BuildDungeonViewportCells+1E↑w
+                                        ; BuildDungeonViewportCells:loc_21338↑w ...
+word_2E560      dw 0                    ; DATA XREF: BuildDungeonViewportCells+24↑w
+                                        ; BuildDungeonViewportCells+38↑w ...
 word_2E562      dw 0                    ; DATA XREF: HandleMovementInput+254↑r
                                         ; HandleMovementInput+347↑r ...
 word_2E564      dw 0                    ; DATA XREF: HandleMovementInput+3DA↑r

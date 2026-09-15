@@ -5410,12 +5410,16 @@ static Bytes_1(void) {
 	create_insn	(x=0X212EB);
 	op_hex		(x,	1);
 	set_name	(0X212EB,	"RenderActiveMonsterSprites");
+	set_cmt	(0X21306,	"Builds the local scratch cell buffer (di=0x6D60) that every dungeon-rendering pass reads from: computes a facing-dependent row stride/side-step (word_36CF5 tier bits) from the current position, then calls CopyDungeonRowCells 7x (same row-count pattern as RenderDungeonViewport) to copy the visible cells from the level's map data. Called first in RedrawDungeonScreen.",	0);
 	create_insn	(x=0X21306);
 	op_hex		(x,	1);
+	set_name	(0X21306,	"BuildDungeonViewportCells");
 	create_insn	(0X21338);
 	create_insn	(0X2134C);
 	create_insn	(0X21360);
+	set_cmt	(0X213D4,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
 	create_insn	(0X213D4);
+	set_name	(0X213D4,	"CopyDungeonRowCells");
 	create_insn	(0X213FC);
 	create_insn	(0X21411);
 	create_insn	(x=0X2145E);
@@ -6482,6 +6486,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X25B14);
 	create_insn	(0X25B34);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X25B3E);
 	create_insn	(0X25B65);
 	create_insn	(0X25B78);
@@ -6535,15 +6548,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25DD6);
 	op_hex		(x,	1);
 	set_cmt	(0X25DDD,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X25DEA);
 	op_hex		(x,	1);
 	set_cmt	(0X25DF1,	"msg",	0);
@@ -9982,6 +9986,15 @@ static Bytes_2(void) {
 	create_word	(0X332EA);
 	create_word	(0X332EC);
 	create_word	(0X332EE);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X332F0);
 	create_word	(0X332F2);
 	create_word	(0X332F4);
@@ -10035,15 +10048,6 @@ static Bytes_2(void) {
 	set_name	(0X35040,	"aGiantEagle");
 	create_strlit	(0X3505A,	0XD);
 	set_name	(0X3505A,	"aFlyingRug");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35074,	0XD);
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);

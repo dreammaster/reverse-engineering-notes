@@ -2545,6 +2545,16 @@ underneath all of it.
 
 320 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildDungeonViewportCells and CopyDungeonRowCells
+
+Named the setup step that runs before all three dungeon render
+passes: builds the local scratch cell buffer they all read from,
+copying the visible cells out of the level's map data using a
+facing-dependent row stride. Traces the full path from "current
+position + facing direction" to "cells the render passes see."
+
+322 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
