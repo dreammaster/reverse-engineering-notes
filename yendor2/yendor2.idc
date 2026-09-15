@@ -7639,7 +7639,9 @@ static Bytes_2(void) {
 	create_insn	(0X28C3A);
 	create_insn	(x=0X28C67);
 	op_hex		(x,	1);
+	set_cmt	(0X28C94,	"Coordinate-to-index conversion: (bx/word_32A0E)*word_32A04 + (bx/word_32A06). Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28C94);
+	set_name	(0X28C94,	"ComputeMapCellIndex");
 	set_cmt	(0X28CB1,	"Reads WORLD.DAT block 3 for a given position (ax), preserving the caller's own block-read context (nested-read guard), and returns one byte from the result. Exact meaning of the byte not identified. Called from RevealMapRegion/RevealMapRegionRow.",	0);
 	create_insn	(0X28CB1);
 	set_name	(0X28CB1,	"ReadMapCellAttributeByte");
@@ -7710,7 +7712,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X29208);
 	op_hex		(x,	1);
+	set_cmt	(0X29259,	"Draws one revealed cell's minimap-style icon (0xE551 table's [+0xA] field) plus an optional door/feature overlay (0xE175 table's [+8] field). Called from RevealMapRegionRow.",	0);
 	create_insn	(0X29259);
+	set_name	(0X29259,	"DrawRevealedCellIcon");
 	set_cmt	(0X29297,	"Click-to-travel: converts a mouse click into a map cell, checks its 'explored' bit (word_3685F, errorCode=2 if unexplored), validates via sub_1119A/sub_11160, then TryInteractAtPosition; on success moves the party (word_36CF7/36CF9) to that cell. Called from RevealMapRegion.",	0);
 	create_insn	(0X29297);
 	set_name	(0X29297,	"TryTravelToClickedMapCell");
@@ -8960,9 +8964,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B771);
 	set_name	(0X2B771,	"LoadConversationText_800");
-	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B78D);
-	set_name	(0X2B78D,	"ShowConversationText_4000");
 }
 
 //------------------------------------------------------------------------
@@ -8972,6 +8973,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B78D);
+	set_name	(0X2B78D,	"ShowConversationText_4000");
 	create_insn	(0X2B7FB);
 	create_insn	(0X2B845);
 	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);

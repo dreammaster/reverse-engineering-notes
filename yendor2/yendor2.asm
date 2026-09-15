@@ -44713,9 +44713,9 @@ seg106          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28C94       proc far                ; CODE XREF: RevealMapRegion+14B↓p
+ComputeMapCellIndex proc far            ; CODE XREF: RevealMapRegion+14B↓p
                                         ; RevealMapRegionRow+73↓p
-                push    dx
+                push    dx              ; Coordinate-to-index conversion: (bx/word_32A0E)*word_32A04 + (bx/word_32A06). Called from RevealMapRegion/RevealMapRegionRow.
                 push    ax
                 xor     dx, dx
                 mov     ax, bx
@@ -44730,7 +44730,7 @@ sub_28C94       proc far                ; CODE XREF: RevealMapRegion+14B↓p
                 add     ax, bx
                 pop     dx
                 retf
-sub_28C94       endp
+ComputeMapCellIndex endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44886,7 +44886,7 @@ loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 push    cs
-                call    near ptr sub_28C94
+                call    near ptr ComputeMapCellIndex
                 mov     word_3290C, ax
                 push    cs
                 call    near ptr ReadMapCellAttributeByte
@@ -45247,7 +45247,7 @@ loc_29200:                              ; CODE XREF: RevealMapRegionRow+AC↓j
                 mov     ax, word_2E402
                 mov     bx, word_2E406
                 push    cs
-                call    near ptr sub_28C94
+                call    near ptr ComputeMapCellIndex
                 cmp     ax, word_3290C
                 jz      short loc_29236
                 cmp     word_328FE, 2
@@ -45260,7 +45260,7 @@ loc_29200:                              ; CODE XREF: RevealMapRegionRow+AC↓j
                 jz      short loc_29239
 
 loc_29236:                              ; CODE XREF: RevealMapRegionRow+7A↑j
-                call    sub_29259
+                call    DrawRevealedCellIcon
 
 loc_29239:                              ; CODE XREF: RevealMapRegionRow+69↑j
                                         ; RevealMapRegionRow+81↑j ...
@@ -45287,8 +45287,8 @@ RevealMapRegionRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29259       proc near               ; CODE XREF: RevealMapRegionRow:loc_29236↑p
-                mov     ax, 0Ch
+DrawRevealedCellIcon proc near          ; CODE XREF: RevealMapRegionRow:loc_29236↑p
+                mov     ax, 0Ch         ; Draws one revealed cell's minimap-style icon (0xE551 table's [+0xA] field) plus an optional door/feature overlay (0xE175 table's [+8] field). Called from RevealMapRegionRow.
                 mul     word ptr [si]
                 mov     di, ax
                 add     di, 0E551h
@@ -45307,9 +45307,9 @@ sub_29259       proc near               ; CODE XREF: RevealMapRegionRow:loc_2923
                 call    DrawPicture
                 mov     _font_bgTransparent, 0
 
-locret_29296:                           ; CODE XREF: sub_29259+27↑j
+locret_29296:                           ; CODE XREF: DrawRevealedCellIcon+27↑j
                 retn
-sub_29259       endp
+DrawRevealedCellIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================

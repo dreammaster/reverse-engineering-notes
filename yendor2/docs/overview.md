@@ -2971,6 +2971,16 @@ confirmed and documented.
 
 381 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ComputeMapCellIndex and DrawRevealedCellIcon
+
+Named the other two open leads from the same early-session flag as
+`ReadMapCellAttributeByte`: a coordinate-to-index conversion and the
+minimap-style icon drawer for a newly-revealed cell. Both called from
+`RevealMapRegion`/`RevealMapRegionRow`. Closes out that entire old
+open-lead group.
+
+383 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
