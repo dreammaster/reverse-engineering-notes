@@ -1807,9 +1807,9 @@ seg002          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_11160       proc far                ; CODE XREF: HandleMovementInput+2B3↓p
+ClassifyFloorType proc far              ; CODE XREF: HandleMovementInput+2B3↓p
                                         ; TryTravelToClickedMapCell+C0↓P ...
-                mov     errorCode, 0
+                mov     errorCode, 0    ; Given a cell type (ax), classifies it into errorCode 0/1/2 (normal / special terrain / a narrow low range, plausibly open floor or door). Called from HandleMovementInput and TryTravelToClickedMapCell.
                 cmp     ax, 1
                 jle     short loc_11193
                 cmp     ax, 5
@@ -1819,7 +1819,7 @@ sub_11160       proc far                ; CODE XREF: HandleMovementInput+2B3↓p
                 cmp     ax, _val31
                 jle     short loc_1118C
 
-loc_1117C:                              ; CODE XREF: sub_11160+14↑j
+loc_1117C:                              ; CODE XREF: ClassifyFloorType+14↑j
                 cmp     ax, 0Bh
                 jl      short locret_1118B
                 cmp     ax, 0Fh
@@ -1827,28 +1827,28 @@ loc_1117C:                              ; CODE XREF: sub_11160+14↑j
                 cmp     ax, 39h ; '9'
                 jg      short loc_1118C
 
-locret_1118B:                           ; CODE XREF: sub_11160+1F↑j
+locret_1118B:                           ; CODE XREF: ClassifyFloorType+1F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1118C:                              ; CODE XREF: sub_11160+E↑j
-                                        ; sub_11160+1A↑j ...
+loc_1118C:                              ; CODE XREF: ClassifyFloorType+E↑j
+                                        ; ClassifyFloorType+1A↑j ...
                 mov     errorCode, 1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_11193:                              ; CODE XREF: sub_11160+9↑j
+loc_11193:                              ; CODE XREF: ClassifyFloorType+9↑j
                 mov     errorCode, 2
                 retf
-sub_11160       endp
+ClassifyFloorType endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1119A       proc far                ; CODE XREF: HandleMovementInput+2C2↓p
+IsCellTypeImpassable proc far           ; CODE XREF: HandleMovementInput+2C2↓p
                                         ; TryTravelToClickedMapCell+B2↓P ...
-                mov     errorCode, 0
+                mov     errorCode, 0    ; Given a cell type (ax), returns errorCode=3 if blocking (0x15-0x23, 0x25, 0x27-0x2A), else 0. Called from HandleMovementInput and TryTravelToClickedMapCell.
                 cmp     ax, 15h
                 jl      short locret_111B9
                 cmp     ax, 23h ; '#'
@@ -1860,16 +1860,16 @@ sub_1119A       proc far                ; CODE XREF: HandleMovementInput+2C2↓p
                 cmp     ax, 2Ah ; '*'
                 jle     short loc_111BA
 
-locret_111B9:                           ; CODE XREF: sub_1119A+9↑j
-                                        ; sub_1119A+18↑j
+locret_111B9:                           ; CODE XREF: IsCellTypeImpassable+9↑j
+                                        ; IsCellTypeImpassable+18↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_111BA:                              ; CODE XREF: sub_1119A+E↑j
-                                        ; sub_1119A+13↑j ...
+loc_111BA:                              ; CODE XREF: IsCellTypeImpassable+E↑j
+                                        ; IsCellTypeImpassable+13↑j ...
                 mov     errorCode, 3
                 retf
-sub_1119A       endp
+IsCellTypeImpassable endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -2322,12 +2322,12 @@ loc_11555:                              ; CODE XREF: HandleMovementInput+26F↑j
                 jnz     short loc_11598
                 mov     ax, es:[bx]
                 push    cs
-                call    near ptr sub_11160
+                call    near ptr ClassifyFloorType
                 cmp     errorCode, 0
                 jnz     short loc_1157A
                 mov     ax, es:[bx+2]
                 push    cs
-                call    near ptr sub_1119A
+                call    near ptr IsCellTypeImpassable
                 cmp     errorCode, 0
                 jz      short loc_11598
 
@@ -45390,11 +45390,11 @@ loc_29340:                              ; CODE XREF: TryTravelToClickedMapCell+9
                 shl     byte ptr ds:[bp+0], 1
                 jnb     short loc_2939E
                 mov     ax, [si+2]
-                call    sub_1119A
+                call    IsCellTypeImpassable
                 cmp     errorCode, 0
                 jnz     short loc_293A6
                 mov     ax, [si]
-                call    sub_11160
+                call    ClassifyFloorType
                 cmp     errorCode, 0
                 jnz     short loc_293AE
                 push    si
@@ -49563,7 +49563,7 @@ loc_2B40E:                              ; CODE XREF: sub_2B384+81↑j
 
 loc_2B41C:                              ; CODE XREF: sub_2B384+8D↑j
                 mov     ax, es:[bx]
-                call    sub_11160
+                call    ClassifyFloorType
                 cmp     errorCode, 0
                 jz      short loc_2B42C
                 retf
@@ -49571,7 +49571,7 @@ loc_2B41C:                              ; CODE XREF: sub_2B384+8D↑j
 
 loc_2B42C:                              ; CODE XREF: sub_2B384+A5↑j
                 mov     ax, es:[bx+2]
-                call    sub_1119A
+                call    IsCellTypeImpassable
                 retf
 sub_2B384       endp
 
@@ -51510,7 +51510,7 @@ loc_2C47C:                              ; CODE XREF: sub_2C0FE:loc_2C4C7↓j
                 jz      short loc_2C4B4
 
 loc_2C4A5:                              ; CODE XREF: sub_2C0FE+39B↑j
-                call    sub_11160
+                call    ClassifyFloorType
                 cmp     errorCode, 0
                 jz      short loc_2C4B4
                 jmp     loc_2C400
@@ -51519,7 +51519,7 @@ loc_2C4A5:                              ; CODE XREF: sub_2C0FE+39B↑j
 loc_2C4B4:                              ; CODE XREF: sub_2C0FE+3A0↑j
                                         ; sub_2C0FE+3A5↑j ...
                 mov     ax, es:[si+2]
-                call    sub_1119A
+                call    IsCellTypeImpassable
                 cmp     errorCode, 0
                 jz      short loc_2C4C7
                 jmp     loc_2C400
@@ -51626,11 +51626,11 @@ loc_2C59F:                              ; CODE XREF: sub_2C0FE+472↑j
                 call    GetMapCellPtr
                 mov     word_328FC, bx
                 mov     ax, es:[bx]
-                call    sub_11160
+                call    ClassifyFloorType
                 cmp     errorCode, 0
                 jnz     short loc_2C59C
                 mov     ax, es:[bx+2]
-                call    sub_1119A
+                call    IsCellTypeImpassable
                 cmp     errorCode, 0
                 jnz     short loc_2C59C
                 mov     ax, 3Ah ; ':'
@@ -74416,9 +74416,9 @@ _val29          dw 0                    ; DATA XREF: InitGlobals+D2↑w
                                         ; HandleRangedOrCombatAction+36B↑r ...
 _val30          dw 0                    ; DATA XREF: start+738↑r
                                         ; sub_116F3+7↑r ...
-_val31          dw 0                    ; DATA XREF: sub_11160+16↑r
+_val31          dw 0                    ; DATA XREF: ClassifyFloorType+16↑r
                                         ; HandleMovementInput+271↑r ...
-_val32          dw 0                    ; DATA XREF: sub_11160+10↑r
+_val32          dw 0                    ; DATA XREF: ClassifyFloorType+10↑r
                                         ; HandleMovementInput+26B↑r ...
 _val33          dw 0                    ; DATA XREF: HandleMovementInput:loc_11581↑r
                                         ; InitGlobals+EA↑w ...

@@ -2943,6 +2943,16 @@ Locate/Scout/Magic-Mapping ability rather than a correction to
 
 377 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsCellTypeImpassable and ClassifyFloorType
+
+Named the two cell-type classification checks shared by
+`HandleMovementInput` (ordinary movement) and
+`TryTravelToClickedMapCell` (click-to-travel): one a simple blocked/
+passable check, the other a finer classification into normal/special-
+terrain/narrow-low-range codes.
+
+379 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

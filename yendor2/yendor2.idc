@@ -1158,10 +1158,14 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X11151);
 	op_hex		(x,	1);
+	set_cmt	(0X11160,	"Given a cell type (ax), classifies it into errorCode 0/1/2 (normal / special terrain / a narrow low range, plausibly open floor or door). Called from HandleMovementInput and TryTravelToClickedMapCell.",	0);
 	create_insn	(0X11160);
+	set_name	(0X11160,	"ClassifyFloorType");
 	create_insn	(0X1118C);
 	create_insn	(0X11193);
+	set_cmt	(0X1119A,	"Given a cell type (ax), returns errorCode=3 if blocking (0x15-0x23, 0x25, 0x27-0x2A), else 0. Called from HandleMovementInput and TryTravelToClickedMapCell.",	0);
 	create_insn	(0X1119A);
+	set_name	(0X1119A,	"IsCellTypeImpassable");
 	create_insn	(0X111BA);
 	set_cmt	(0X111C1,	"WORLD.DAT-backed counterpart to ClassifyObstacleAtViewportRow: reads a map cell from WORLD.DAT (word_2E406/word_2E402 index) and classifies it with the same type-range logic into errorCode (0=clear, 1=wall, 2=door/feature). Called from ProcessLevelMonsters to check a monster's target cell anywhere on the level, not just what's currently rendered.",	0);
 	create_insn	(0X111C1);
@@ -3676,6 +3680,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A605);
 	op_hex		(x,	1);
 	set_cmt	(0X1A628,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1A656);
 	op_seg		(x,	1);
 	create_insn	(0X1A6E7);
@@ -3707,15 +3720,6 @@ static Bytes_0(void) {
 	create_insn	(0X1A85A);
 	create_insn	(0X1A864);
 	create_insn	(0X1A871);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1A87B);
 	create_insn	(0X1A8C7);
 	create_insn	(0X1A8D7);
@@ -5929,6 +5933,15 @@ static Bytes_1(void) {
 	create_insn	(0X22DB7);
 	create_insn	(x=0X22DC0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22DCA);
 	create_insn	(x=0X22DE8);
 	op_hex		(x,	1);
@@ -5986,15 +5999,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2301F);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2302A);
 	create_insn	(x=0X23076);
 	op_hex		(x,	1);
@@ -8964,10 +8968,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B8D7);
 	set_name	(0X2B8D7,	"ShowConversationText_1000");
-	create_insn	(0X2B93C);
-	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B948);
-	set_name	(0X2B948,	"ShowConversationText_800");
 }
 
 //------------------------------------------------------------------------
@@ -8977,6 +8977,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B93C);
+	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B948);
+	set_name	(0X2B948,	"ShowConversationText_800");
 	create_insn	(0X2B9C8);
 	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
 	create_insn	(x=0X2B9D4);
