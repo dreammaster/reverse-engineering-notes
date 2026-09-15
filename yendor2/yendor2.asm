@@ -23898,7 +23898,7 @@ loc_1D67B:                              ; CODE XREF: sub_1D4B8+1BE↑j
 loc_1D68B:                              ; CODE XREF: sub_1D4B8+1C8↑j
                                         ; sub_1D4B8+1EF↓j ...
                 call    sub_1DC73
-                call    sub_1DA60
+                call    ResolveAttackOrAbilityAction
                 test    word_328C8, 200h
                 jnz     short loc_1D6AC
                 mov     ax, _val43
@@ -24041,7 +24041,7 @@ loc_1D813:                              ; CODE XREF: sub_1D4B8+356↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D832:                              ; CODE XREF: sub_1D4B8+360↑j
-                call    sub_1DA60
+                call    ResolveAttackOrAbilityAction
                 test    word_328C8, 200h
                 jnz     short loc_1D840
                 jmp     loc_1D747
@@ -24122,7 +24122,7 @@ loc_1D902:                              ; CODE XREF: sub_1D4B8+10↑j
                 mov     word_3292C, 31h ; '1'
                 call    sub_2BAA0
                 mov     si, word_32A1E
-                call    sub_1DA60
+                call    ResolveAttackOrAbilityAction
                 test    word_328C8, 200h
                 jnz     short loc_1D921
                 jmp     short loc_1D931
@@ -24198,9 +24198,10 @@ sub_1D937       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D9E5       proc near               ; CODE XREF: sub_1DA2C+B↓p
-                                        ; sub_1DA60+7A↓p ...
-                push    cx
+ApplyResolvedDamageWithResistance proc near
+                                        ; CODE XREF: ApplyDamageAlongCorridorLine+B↓p
+                                        ; ResolveAttackOrAbilityAction+7A↓p ...
+                push    cx              ; Applies a resolved attack's damage (word_2E49C) to the target (si), reducing it via a resistance bit-scan (word_2E49E attack type flags vs [si+0x98] resistance flags -- each match halves the damage), then subtracts from HP ([si+0x10], clamped to 0) and sets display flags. Shared by ranged/ability attacks (sub_1DA60) and sub_1DA2C.
                 cmp     word_2E49C, 0
                 jz      short loc_1DA2A
                 mov     ax, [si+96h]
@@ -24212,12 +24213,12 @@ sub_1D9E5       proc near               ; CODE XREF: sub_1DA2C+B↓p
                 mov     ax, word_2E49C
                 mov     cx, 10h
 
-loc_1DA08:                              ; CODE XREF: sub_1D9E5:loc_1DA0E↓j
+loc_1DA08:                              ; CODE XREF: ApplyResolvedDamageWithResistance:loc_1DA0E↓j
                 shl     bx, 1
                 jnb     short loc_1DA0E
                 shr     ax, 1
 
-loc_1DA0E:                              ; CODE XREF: sub_1D9E5+25↑j
+loc_1DA0E:                              ; CODE XREF: ApplyResolvedDamageWithResistance+25↑j
                 loop    loc_1DA08
                 mov     bx, [si+10h]
                 sub     bx, ax
@@ -24225,36 +24226,36 @@ loc_1DA0E:                              ; CODE XREF: sub_1D9E5+25↑j
                 jg      short loc_1DA1D
                 mov     bx, 0
 
-loc_1DA1D:                              ; CODE XREF: sub_1D9E5+33↑j
+loc_1DA1D:                              ; CODE XREF: ApplyResolvedDamageWithResistance+33↑j
                 mov     [si+10h], bx
                 or      word ptr [si+0Ch], 3
                 or      word_328C8, 200h
 
-loc_1DA2A:                              ; CODE XREF: sub_1D9E5+6↑j
+loc_1DA2A:                              ; CODE XREF: ApplyResolvedDamageWithResistance+6↑j
                 pop     cx
                 retn
-sub_1D9E5       endp
+ApplyResolvedDamageWithResistance endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DA2C       proc near               ; CODE XREF: sub_1DA60+FD↓p
-                                        ; sub_1DA60+104↓p ...
-                push    cx
+ApplyDamageAlongCorridorLine proc near  ; CODE XREF: ResolveAttackOrAbilityAction+FD↓p
+                                        ; ResolveAttackOrAbilityAction+104↓p ...
+                push    cx              ; Straight-line multi-target attack: calls GetMonsterAtViewportRow for 3 consecutive depth rows (word_3292C incrementing), applying ApplyResolvedDamageWithResistance to whatever monster is found at each. Matches the 'IN A STRAIGHT LINE' targeting text from ShowClueBookSpellDetail's message table. Called from sub_1DA60.
                 mov     cx, 3
 
-loc_1DA30:                              ; CODE XREF: sub_1DA2C+12↓j
-                call    sub_233D0
+loc_1DA30:                              ; CODE XREF: ApplyDamageAlongCorridorLine+12↓j
+                call    GetMonsterAtViewportRow
                 jz      short loc_1DA3A
-                call    sub_1D9E5
+                call    ApplyResolvedDamageWithResistance
 
-loc_1DA3A:                              ; CODE XREF: sub_1DA2C+9↑j
+loc_1DA3A:                              ; CODE XREF: ApplyDamageAlongCorridorLine+9↑j
                 inc     word_3292C
                 loop    loc_1DA30
                 pop     cx
                 retn
-sub_1DA2C       endp
+ApplyDamageAlongCorridorLine endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -24284,9 +24285,9 @@ sub_1DA42       endp ; sp-analysis failed
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DA60       proc near               ; CODE XREF: sub_1D4B8+1D6↑p
+ResolveAttackOrAbilityAction proc near  ; CODE XREF: sub_1D4B8+1D6↑p
                                         ; sub_1D4B8:loc_1D832↑p ...
-                and     word_328C8, 0FDFFh
+                and     word_328C8, 0FDFFh ; Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).
                 mov     word_2E49A, 0
                 mov     word_2E49C, 0
                 mov     word_2E49E, 0
@@ -24295,23 +24296,23 @@ sub_1DA60       proc near               ; CODE XREF: sub_1D4B8+1D6↑p
                 jmp     short loc_1DADE
 ; ---------------------------------------------------------------------------
 
-loc_1DA82:                              ; CODE XREF: sub_1DA60+1E↑j
+loc_1DA82:                              ; CODE XREF: ResolveAttackOrAbilityAction+1E↑j
                 mov     di, 5078h
                 mov     bx, 95EBh
                 mov     cx, 4
 
-loc_1DA8B:                              ; CODE XREF: sub_1DA60+36↓j
+loc_1DA8B:                              ; CODE XREF: ResolveAttackOrAbilityAction+36↓j
                 cmp     word ptr [di], 0
                 jnz     short loc_1DA99
                 add     di, 2
                 add     bx, 2
                 loop    loc_1DA8B
 
-locret_1DA98:                           ; CODE XREF: sub_1DA60+97↓j
+locret_1DA98:                           ; CODE XREF: ResolveAttackOrAbilityAction+97↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DA99:                              ; CODE XREF: sub_1DA60+2E↑j
+loc_1DA99:                              ; CODE XREF: ResolveAttackOrAbilityAction+2E↑j
                 mov     ax, [bx]
                 call    sub_25B14
                 mov     ax, [di]
@@ -24321,34 +24322,34 @@ loc_1DA99:                              ; CODE XREF: sub_1DA60+2E↑j
                 jz      short loc_1DAB6
                 or      word_2E49E, 1000h
 
-loc_1DAB6:                              ; CODE XREF: sub_1DA60+4E↑j
+loc_1DAB6:                              ; CODE XREF: ResolveAttackOrAbilityAction+4E↑j
                 cmp     word ptr [di+8], 0
                 jz      short loc_1DAC2
                 or      word_2E49E, 800h
 
-loc_1DAC2:                              ; CODE XREF: sub_1DA60+5A↑j
+loc_1DAC2:                              ; CODE XREF: ResolveAttackOrAbilityAction+5A↑j
                 or      word_2E49E, 8000h
                 mov     di, word_328D4
                 mov     ax, [si+58h]
                 mov     bx, [di+48h]
                 mov     cx, [di+4Ah]
                 call    ResolveAttack
-                call    sub_1D9E5
+                call    ApplyResolvedDamageWithResistance
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DADE:                              ; CODE XREF: sub_1DA60+20↑j
-                call    sub_1DB73
+loc_1DADE:                              ; CODE XREF: ResolveAttackOrAbilityAction+20↑j
+                call    ResolveAbilityEffect
                 cmp     ax, _val46
                 jz      short loc_1DAF1
                 cmp     ax, _val29
                 jz      short loc_1DAF1
-                call    sub_1D9E5
+                call    ApplyResolvedDamageWithResistance
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DAF1:                              ; CODE XREF: sub_1DA60+85↑j
-                                        ; sub_1DA60+8B↑j
+loc_1DAF1:                              ; CODE XREF: ResolveAttackOrAbilityAction+85↑j
+                                        ; ResolveAttackOrAbilityAction+8B↑j
                 test    word_328CA, 1000h
                 jnz     short locret_1DA98
                 push    word_3292C
@@ -24362,7 +24363,7 @@ loc_1DAF1:                              ; CODE XREF: sub_1DA60+85↑j
                 jmp     short loc_1DB59
 ; ---------------------------------------------------------------------------
 
-loc_1DB1A:                              ; CODE XREF: sub_1DA60+A7↑j
+loc_1DB1A:                              ; CODE XREF: ResolveAttackOrAbilityAction+A7↑j
                 cmp     word_3292C, 28h ; '('
                 jnz     short loc_1DB32
                 mov     word ptr [bp+0], 23h ; '#'
@@ -24371,7 +24372,7 @@ loc_1DB1A:                              ; CODE XREF: sub_1DA60+A7↑j
                 jmp     short loc_1DB59
 ; ---------------------------------------------------------------------------
 
-loc_1DB32:                              ; CODE XREF: sub_1DA60+BF↑j
+loc_1DB32:                              ; CODE XREF: ResolveAttackOrAbilityAction+BF↑j
                 cmp     word_3292C, 2Bh ; '+'
                 jnz     short loc_1DB4A
                 mov     word ptr [bp+0], 27h ; '''
@@ -24380,29 +24381,29 @@ loc_1DB32:                              ; CODE XREF: sub_1DA60+BF↑j
                 jmp     short loc_1DB59
 ; ---------------------------------------------------------------------------
 
-loc_1DB4A:                              ; CODE XREF: sub_1DA60+D7↑j
+loc_1DB4A:                              ; CODE XREF: ResolveAttackOrAbilityAction+D7↑j
                 mov     word ptr [bp+0], 2Ah ; '*'
                 mov     word ptr [bp+2], 2Dh ; '-'
                 mov     word ptr [bp+4], 30h ; '0'
 
-loc_1DB59:                              ; CODE XREF: sub_1DA60+B8↑j
-                                        ; sub_1DA60+D0↑j ...
+loc_1DB59:                              ; CODE XREF: ResolveAttackOrAbilityAction+B8↑j
+                                        ; ResolveAttackOrAbilityAction+D0↑j ...
                 pop     word_3292C
-                call    sub_1DA2C
+                call    ApplyDamageAlongCorridorLine
                 pop     word_3292C
-                call    sub_1DA2C
+                call    ApplyDamageAlongCorridorLine
                 pop     word_3292C
-                call    sub_1DA2C
+                call    ApplyDamageAlongCorridorLine
                 pop     word_3292C
                 retn
-sub_1DA60       endp
+ResolveAttackOrAbilityAction endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DB73       proc near               ; CODE XREF: sub_1DA60:loc_1DADE↑p
-                mov     word_2E49C, 0
+ResolveAbilityEffect proc near          ; CODE XREF: ResolveAttackOrAbilityAction:loc_1DADE↑p
+                mov     word_2E49C, 0   ; Ability/spell effect resolver: 85% success roll, then dispatches on word_32974 (ability id) to set a flat damage amount (word_2E49C) and, for several ids, a status-effect flag (word_2E49A) plus duration ([si+0x1C]/[0x1E]) unless already afflicted ([si+0x96]). Two ids (area-effect spells, per ShowClueBookSpellDetail's targeting text) are gated on not being in combat. Called from sub_1DA60.
                 mov     word_2E49E, 0
                 mov     word_2E49A, 0
                 mov     word ptr [si+1Ch], 0
@@ -24414,7 +24415,7 @@ sub_1DB73       proc near               ; CODE XREF: sub_1DA60:loc_1DADE↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DB9D:                              ; CODE XREF: sub_1DB73+27↑j
+loc_1DB9D:                              ; CODE XREF: ResolveAbilityEffect+27↑j
                 mov     ax, word_32974
                 cmp     ax, 19h
                 jnz     short loc_1DBAE
@@ -24422,7 +24423,7 @@ loc_1DB9D:                              ; CODE XREF: sub_1DB73+27↑j
                 jmp     loc_1DC4E
 ; ---------------------------------------------------------------------------
 
-loc_1DBAE:                              ; CODE XREF: sub_1DB73+30↑j
+loc_1DBAE:                              ; CODE XREF: ResolveAbilityEffect+30↑j
                 cmp     ax, 1Ah
                 jnz     short loc_1DBD3
                 test    word ptr [si+96h], 8000h
@@ -24431,12 +24432,12 @@ loc_1DBAE:                              ; CODE XREF: sub_1DB73+30↑j
                 mov     word ptr [si+1Ch], 6
                 mov     word ptr [si+1Eh], 5
 
-loc_1DBCB:                              ; CODE XREF: sub_1DB73+46↑j
+loc_1DBCB:                              ; CODE XREF: ResolveAbilityEffect+46↑j
                 mov     word_2E49C, 23h ; '#'
                 jmp     short loc_1DC4E
 ; ---------------------------------------------------------------------------
 
-loc_1DBD3:                              ; CODE XREF: sub_1DB73+3E↑j
+loc_1DBD3:                              ; CODE XREF: ResolveAbilityEffect+3E↑j
                 cmp     ax, 1Bh
                 jnz     short loc_1DBEE
                 cmp     word ptr [si+4Eh], 0Dh
@@ -24445,12 +24446,12 @@ loc_1DBD3:                              ; CODE XREF: sub_1DB73+3E↑j
                 jnz     short loc_1DBEC
                 mov     word_2E49C, 32h ; '2'
 
-loc_1DBEC:                              ; CODE XREF: sub_1DB73+69↑j
-                                        ; sub_1DB73+71↑j
+loc_1DBEC:                              ; CODE XREF: ResolveAbilityEffect+69↑j
+                                        ; ResolveAbilityEffect+71↑j
                 jmp     short loc_1DC4E
 ; ---------------------------------------------------------------------------
 
-loc_1DBEE:                              ; CODE XREF: sub_1DB73+63↑j
+loc_1DBEE:                              ; CODE XREF: ResolveAbilityEffect+63↑j
                 cmp     ax, _val28
                 jnz     short loc_1DC14
                 test    word ptr [si+96h], 400h
@@ -24459,12 +24460,12 @@ loc_1DBEE:                              ; CODE XREF: sub_1DB73+63↑j
                 mov     word ptr [si+1Ch], 10h
                 mov     word ptr [si+1Eh], 5
 
-loc_1DC0C:                              ; CODE XREF: sub_1DB73+87↑j
+loc_1DC0C:                              ; CODE XREF: ResolveAbilityEffect+87↑j
                 mov     word_2E49C, 19h
                 jmp     short loc_1DC4E
 ; ---------------------------------------------------------------------------
 
-loc_1DC14:                              ; CODE XREF: sub_1DB73+7F↑j
+loc_1DC14:                              ; CODE XREF: ResolveAbilityEffect+7F↑j
                 cmp     ax, _val46
                 jnz     short loc_1DC2A
                 test    word_328CA, 1000h
@@ -24473,7 +24474,7 @@ loc_1DC14:                              ; CODE XREF: sub_1DB73+7F↑j
                 jmp     short loc_1DC4E
 ; ---------------------------------------------------------------------------
 
-loc_1DC2A:                              ; CODE XREF: sub_1DB73+A5↑j
+loc_1DC2A:                              ; CODE XREF: ResolveAbilityEffect+A5↑j
                 cmp     ax, _val29
                 jnz     short loc_1DC4E
                 test    word_328CA, 1000h
@@ -24483,8 +24484,8 @@ loc_1DC2A:                              ; CODE XREF: sub_1DB73+A5↑j
                 mov     word ptr [si+1Eh], 5
                 mov     word_2E49C, 0Fh
 
-loc_1DC4E:                              ; CODE XREF: sub_1DB73+38↑j
-                                        ; sub_1DB73+5E↑j ...
+loc_1DC4E:                              ; CODE XREF: ResolveAbilityEffect+38↑j
+                                        ; ResolveAbilityEffect+5E↑j ...
                 or      word_2E49E, 8000h
                 cmp     word_2E49A, 0
                 jz      short locret_1DC72
@@ -24497,10 +24498,10 @@ loc_1DC4E:                              ; CODE XREF: sub_1DB73+38↑j
                 jle     short locret_1DC72
                 mov     word_2E49A, 0
 
-locret_1DC72:                           ; CODE XREF: sub_1DB73+AD↑j
-                                        ; sub_1DB73+C3↑j ...
+locret_1DC72:                           ; CODE XREF: ResolveAbilityEffect+AD↑j
+                                        ; ResolveAbilityEffect+C3↑j ...
                 retn
-sub_1DB73       endp
+ResolveAbilityEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34059,9 +34060,9 @@ sub_2333B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_233D0       proc far                ; CODE XREF: sub_1DA2C:loc_1DA30↑P
+GetMonsterAtViewportRow proc far        ; CODE XREF: ApplyDamageAlongCorridorLine:loc_1DA30↑P
                                         ; sub_2C0FE:loc_2CAAB↓P ...
-                push    dx
+                push    dx              ; Looks up the dungeon-viewport scratch buffer (0x6D60 + word_3292C*8) for a monster at the current depth row -- if the cell's [+6] bit 0x400 'monster present' flag is set, resolves it via FindMonsterTypeInLevelPool. Called from ApplyDamageAlongCorridorLine and sub_2C0FE.
                 mov     ax, 8
                 mul     word_3292C
                 mov     si, 6D60h
@@ -34073,15 +34074,15 @@ sub_233D0       proc far                ; CODE XREF: sub_1DA2C:loc_1DA30↑P
                 jmp     short loc_233F3
 ; ---------------------------------------------------------------------------
 
-loc_233EC:                              ; CODE XREF: sub_233D0+12↑j
+loc_233EC:                              ; CODE XREF: GetMonsterAtViewportRow+12↑j
                 mov     ax, [si+4]
                 push    cs
                 call    near ptr FindMonsterTypeInLevelPool
 
-loc_233F3:                              ; CODE XREF: sub_233D0+1A↑j
+loc_233F3:                              ; CODE XREF: GetMonsterAtViewportRow+1A↑j
                 pop     dx
                 retf
-sub_233D0       endp
+GetMonsterAtViewportRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -52078,7 +52079,7 @@ loc_2CAA1:                              ; CODE XREF: sub_2C0FE+99E↑j
 ; ---------------------------------------------------------------------------
 
 loc_2CAAB:                              ; CODE XREF: sub_2C0FE+9A8↑j
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 mov     di, si
                 call    sub_2D4B6
                 mov     ax, word_2E49A
@@ -52364,7 +52365,7 @@ loc_2CDC8:                              ; CODE XREF: sub_2C0FE+CC5↑j
 ; ---------------------------------------------------------------------------
 
 loc_2CDD1:                              ; CODE XREF: sub_2C0FE+CCF↑j
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 mov     di, si
                 call    sub_2D4B6
                 mov     ax, word_2E49A
@@ -52485,7 +52486,7 @@ loc_2CF03:                              ; CODE XREF: sub_2C0FE+E00↑j
 
 loc_2CF09:                              ; CODE XREF: sub_2C0FE+DF5↑j
                 mov     word_3292C, 32h ; '2'
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 or      si, si
                 jz      short loc_2CF1D
                 mov     di, si
@@ -52493,7 +52494,7 @@ loc_2CF09:                              ; CODE XREF: sub_2C0FE+DF5↑j
 
 loc_2CF1D:                              ; CODE XREF: sub_2C0FE+E18↑j
                 mov     word_3292C, 30h ; '0'
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 or      si, si
                 jz      short loc_2CF31
                 mov     di, si
@@ -52504,7 +52505,7 @@ loc_2CF31:                              ; CODE XREF: sub_2C0FE+E2C↑j
                 mov     cx, 30h ; '0'
 
 loc_2CF3A:                              ; CODE XREF: sub_2C0FE+E4E↓j
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 or      si, si
                 jz      short loc_2CF48
                 mov     di, si
@@ -53063,7 +53064,7 @@ sub_2D470       proc near               ; CODE XREF: sub_2C0FE+B43↑p
 
 loc_2D474:                              ; CODE XREF: sub_2D470+24↓j
                 push    cx
-                call    sub_233D0
+                call    GetMonsterAtViewportRow
                 jz      short loc_2D48F
                 mov     di, si
                 call    sub_2D4B6
@@ -74407,7 +74408,7 @@ _val25          dw 0                    ; DATA XREF: InitGlobals+BA↑w
 _val26          dw 0                    ; DATA XREF: InitGlobals+C0↑w
                                         ; UseTrainingItem:loc_1C456↑r
 _val28          dw 0                    ; DATA XREF: InitGlobals+CC↑w
-                                        ; sub_1DB73:loc_1DBEE↑r
+                                        ; ResolveAbilityEffect:loc_1DBEE↑r
 _val29          dw 0                    ; DATA XREF: InitGlobals+D2↑w
                                         ; sub_1D4B8+36B↑r ...
 _val30          dw 0                    ; DATA XREF: start+738↑r

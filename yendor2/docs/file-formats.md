@@ -474,6 +474,38 @@ wound/display flags, redraws, then resolves death (`GrantMonsterRewards`
 counterpart to the turn-based `g_monsterSlots` combat flow documented
 below.
 
+**Ranged attacks and area-effect abilities against a corridor monster**:
+`ResolveAttackOrAbilityAction` (called from `sub_1D4B8`, an unnamed
+combat-round driver, itself called from `start`) handles two modes,
+selected by `word_328C8` bit `0x100` (set by the caller — e.g.
+`start`'s loc_10A65 branch, gated on *not* being in formal combat):
+
+- **Set (ranged/thrown weapon)**: finds an equipped item in a party
+  member's inventory slot, loads its catalog record for damage-type
+  flags, rolls the hit via `ResolveAttack`, applies it via
+  `ApplyResolvedDamageWithResistance`.
+- **Clear (spell/ability)**: calls `ResolveAbilityEffect` — an 85%
+  success roll, then dispatches on `word_32974` (the ability id) to
+  set a flat damage amount and, for several ids, a status-effect flag
+  plus duration (the same `ApplyStatusEffect`/`TickStatusEffects`
+  convention). Two specific ids are **area-effect spells**: when not
+  in formal combat, `ResolveAttackOrAbilityAction` picks one of 4
+  depth-row triples (by which band the current viewport row falls in)
+  and calls `ApplyDamageAlongCorridorLine` for each — which in turn
+  calls `GetMonsterAtViewportRow` (looking up the dungeon-viewport
+  scratch buffer — the *same* `0x6D60` buffer `RenderDungeonViewRow`
+  reads — for a monster at each depth row) and applies damage to
+  whatever it finds. This matches the "IN A STRAIGHT LINE"/"IN A 3X3
+  AREA" targeting text dumped from `ShowClueBookSpellDetail`'s message
+  table, and directly ties the dungeon-rendering scratch buffer into
+  the combat/targeting system.
+
+`ApplyResolvedDamageWithResistance` is the shared damage-application
+step used by both the ranged-weapon branch and
+`ApplyDamageAlongCorridorLine`: reduces damage via a resistance
+bit-scan (the attack's type flags vs. the target's `[+0x98]`
+resistance flags, halving per match) before subtracting from HP.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

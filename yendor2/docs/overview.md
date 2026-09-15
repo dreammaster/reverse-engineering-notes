@@ -2667,6 +2667,24 @@ grid, the same area `FillVisibleAreaWithSelectedTile` floods.
 
 335 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ResolveAttackOrAbilityAction ties dungeon rendering into ranged/spell combat
+
+Named a 5-function cluster resolving ranged attacks and area-effect
+spells against a corridor monster: `ResolveAttackOrAbilityAction`
+(ranged weapon vs. spell/ability, selected by a caller-set flag) →
+`ResolveAbilityEffect` (85% success roll, dispatches on the ability id
+to set damage + status-effect flags) → for the 2 area-effect ability
+ids, `ApplyDamageAlongCorridorLine` (hits 3 consecutive depth rows) →
+`GetMonsterAtViewportRow` (looks up the *same* `0x6D60` scratch buffer
+`RenderDungeonViewRow` reads for a monster at that row) →
+`ApplyResolvedDamageWithResistance` (the shared damage step, reducing
+via a resistance bit-scan). Directly ties this session's earlier
+dungeon-rendering work into the combat/targeting system, and matches
+the "IN A STRAIGHT LINE"/"IN A 3X3 AREA" spell-targeting text already
+dumped from `ShowClueBookSpellDetail`.
+
+340 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

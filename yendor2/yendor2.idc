@@ -4529,7 +4529,9 @@ static Bytes_1(void) {
 	create_insn	(0X1D921);
 	create_insn	(0X1D937);
 	create_insn	(0X1D941);
+	set_cmt	(0X1D9E5,	"Applies a resolved attack's damage (word_2E49C) to the target (si), reducing it via a resistance bit-scan (word_2E49E attack type flags vs [si+0x98] resistance flags -- each match halves the damage), then subtracts from HP ([si+0x10], clamped to 0) and sets display flags. Shared by ranged/ability attacks (sub_1DA60) and sub_1DA2C.",	0);
 	create_insn	(0X1D9E5);
+	set_name	(0X1D9E5,	"ApplyResolvedDamageWithResistance");
 	create_insn	(x=0X1DA08);
 	op_hex		(x,	1);
 	create_insn	(x=0X1DA0C);
@@ -4538,12 +4540,16 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1DA24);
 	op_hex		(x,	1);
+	set_cmt	(0X1DA2C,	"Straight-line multi-target attack: calls GetMonsterAtViewportRow for 3 consecutive depth rows (word_3292C incrementing), applying ApplyResolvedDamageWithResistance to whatever monster is found at each. Matches the 'IN A STRAIGHT LINE' targeting text from ShowClueBookSpellDetail's message table. Called from sub_1DA60.",	0);
 	create_insn	(0X1DA2C);
+	set_name	(0X1DA2C,	"ApplyDamageAlongCorridorLine");
 	create_insn	(0X1DA42);
 	set_cmt	(0X1DA4B,	"ticks",	0);
 	create_insn	(0X1DA54);
+	set_cmt	(0X1DA60,	"Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).",	0);
 	create_insn	(x=0X1DA60);
 	op_hex		(x,	1);
+	set_name	(0X1DA60,	"ResolveAttackOrAbilityAction");
 	create_insn	(x=0X1DA78);
 	op_hex		(x,	1);
 	create_insn	(0X1DA82);
@@ -4564,7 +4570,9 @@ static Bytes_1(void) {
 	create_insn	(0X1DB1A);
 	create_insn	(0X1DB32);
 	create_insn	(0X1DB4A);
+	set_cmt	(0X1DB73,	"Ability/spell effect resolver: 85% success roll, then dispatches on word_32974 (ability id) to set a flat damage amount (word_2E49C) and, for several ids, a status-effect flag (word_2E49A) plus duration ([si+0x1C]/[0x1E]) unless already afflicted ([si+0x96]). Two ids (area-effect spells, per ShowClueBookSpellDetail's targeting text) are gated on not being in combat. Called from sub_1DA60.",	0);
 	create_insn	(0X1DB73);
+	set_name	(0X1DB73,	"ResolveAbilityEffect");
 	create_insn	(0X1DB9D);
 	create_insn	(0X1DBAE);
 	create_insn	(x=0X1DBB3);
@@ -5975,7 +5983,9 @@ static Bytes_1(void) {
 	create_insn	(0X2337D);
 	create_insn	(0X23396);
 	create_insn	(0X233C6);
+	set_cmt	(0X233D0,	"Looks up the dungeon-viewport scratch buffer (0x6D60 + word_3292C*8) for a monster at the current depth row -- if the cell's [+6] bit 0x400 'monster present' flag is set, resolves it via FindMonsterTypeInLevelPool. Called from ApplyDamageAlongCorridorLine and sub_2C0FE.",	0);
 	create_insn	(0X233D0);
+	set_name	(0X233D0,	"GetMonsterAtViewportRow");
 	create_insn	(x=0X233DD);
 	op_hex		(x,	1);
 	create_insn	(0X233EC);
@@ -6291,6 +6301,15 @@ static Bytes_1(void) {
 	set_cmt	(0X24A5B,	"ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.",	0);
 	create_insn	(0X24A5B);
 	set_name	(0X24A5B,	"ShowCharacterEquipment");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X24A75,	"msg",	0);
 	create_insn	(0X24B3D);
 	create_insn	(0X24B52);
@@ -6366,15 +6385,6 @@ static Bytes_1(void) {
 	set_cmt	(0X252EF,	"Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.",	0);
 	create_insn	(0X252EF);
 	set_name	(0X252EF,	"RollCharacterAttributes");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2539F);
 	create_insn	(0X253BB);
 	create_insn	(0X253C4);
@@ -9606,6 +9616,15 @@ static Bytes_2(void) {
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");
 	create_word	(0X2E492);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E494);
 	create_word	(0X2E496);
 	create_word	(0X2E498);
@@ -9767,15 +9786,6 @@ static Bytes_2(void) {
 	create_word	(0X328FA);
 	create_word	(0X328FC);
 	create_word	(0X328FE);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32900);
 	create_word	(0X32902);
 	create_word	(0X32904);
