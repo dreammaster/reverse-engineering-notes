@@ -5113,7 +5113,7 @@ RunClueBookItemCategory proc far        ; CODE XREF: ShowClueBook:loc_10F2F↑P
 
 loc_130AD:                              ; CODE XREF: RunClueBookItemCategory+75↓j
                 call    ShowClueBookItemDetail
-                call    sub_13780
+                call    ShowArmorDetailRow
                 call    DrawMouseCursor
 
 loc_130B8:                              ; CODE XREF: RunClueBookItemCategory+32↓j
@@ -5225,7 +5225,7 @@ RunClueBookWeaponCategory proc far      ; CODE XREF: ShowClueBook:loc_110CA↑P
 
 loc_131AA:                              ; CODE XREF: RunClueBookWeaponCategory+75↓j
                 call    ShowClueBookItemDetail
-                call    sub_1385C
+                call    ShowWeaponDetailRow
                 call    DrawMouseCursor
 
 loc_131B5:                              ; CODE XREF: RunClueBookWeaponCategory+32↓j
@@ -5755,8 +5755,8 @@ sub_13707       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13780       proc near               ; CODE XREF: RunClueBookItemCategory+20↑p
-                mov     _textPos_y, 39h ; '9'
+ShowArmorDetailRow proc near            ; CODE XREF: RunClueBookItemCategory+20↑p
+                mov     _textPos_y, 39h ; '9' ; F5 subtype 1 (ARMOR/RINGS) extra row: 'ABSORPTION-' plus a value. Called from RunClueBookItemCategory, after ShowClueBookItemDetail's generic fields.
                 mov     _textPos_x, 5Bh ; '['
                 mov     bx, 8A96h
                 mov     ax, word_2E548
@@ -5772,7 +5772,7 @@ sub_13780       proc near               ; CODE XREF: RunClueBookItemCategory+20�
                 call    sub_148EA
                 call    sub_14994
                 retn
-sub_13780       endp
+ShowArmorDetailRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5834,8 +5834,8 @@ ShowItemEffectDuration endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1385C       proc near               ; CODE XREF: RunClueBookWeaponCategory+20↑p
-                mov     _textPos_y, 39h ; '9'
+ShowWeaponDetailRow proc near           ; CODE XREF: RunClueBookWeaponCategory+20↑p
+                mov     _textPos_y, 39h ; '9' ; F5 subtype 8 (WEAPONS) extra row: 'DAMAGE:' plus a value, then '2-HANDED: YES/NO'. Called from RunClueBookWeaponCategory, after ShowClueBookItemDetail's generic fields.
                 mov     _textPos_x, 73h ; 's'
                 mov     bx, 7C81h
                 mov     ax, word_2E548
@@ -5855,13 +5855,13 @@ sub_1385C       proc near               ; CODE XREF: RunClueBookWeaponCategory+2
                 jz      short loc_138AB
                 mov     bx, 8AE8h       ; msg
 
-loc_138AB:                              ; CODE XREF: sub_1385C+4A↑j
+loc_138AB:                              ; CODE XREF: ShowWeaponDetailRow+4A↑j
                 mov     _textPos_x, 9Dh
                 mov     _font_fgColor, 0A7h
                 call    writeString
                 call    sub_14994
                 retn
-sub_1385C       endp
+ShowWeaponDetailRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7280,7 +7280,7 @@ DrawRecordFieldBCDIfNonzero endp
 
 
 DrawLabeledNumberIfNonzero proc near    ; CODE XREF: ShowClueBookItemDetail+7E↑p
-                                        ; sub_13780+1E↑p ...
+                                        ; ShowArmorDetailRow+1E↑p ...
                 push    si              ; Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.
                 push    ax
                 push    cx
@@ -7333,7 +7333,7 @@ sub_148B2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_148EA       proc near               ; CODE XREF: sub_13780+3C↑p
+sub_148EA       proc near               ; CODE XREF: ShowArmorDetailRow+3C↑p
                 mov     _font_fgColor, 0Ah
                 mov     bx, 8AABh       ; msg
                 call    writeString
@@ -7417,8 +7417,8 @@ sub_1496B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14994       proc near               ; CODE XREF: sub_13780+3F↑p
-                                        ; sub_1385C+60↑p
+sub_14994       proc near               ; CODE XREF: ShowArmorDetailRow+3F↑p
+                                        ; ShowWeaponDetailRow+60↑p
                 mov     word_2E532, 80h
                 mov     word_2E530, 155h
                 mov     di, 6976h
@@ -7457,7 +7457,7 @@ sub_14994       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_149DD       proc near               ; CODE XREF: sub_13780+2D↑p
+sub_149DD       proc near               ; CODE XREF: ShowArmorDetailRow+2D↑p
                 mov     _font_fgColor, 0Ah
                 mov     bx, 7B24h       ; msg
                 call    writeString
@@ -7541,7 +7541,7 @@ sub_14A5E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14A87       proc near               ; CODE XREF: sub_1385C+21↑p
+sub_14A87       proc near               ; CODE XREF: ShowWeaponDetailRow+21↑p
                 mov     _textPos_y, 5Ah ; 'Z'
                 mov     _textPos_x, 79h ; 'y'
                 mov     bx, 8AEFh       ; msg
@@ -56777,7 +56777,7 @@ word_2E4A8      dw 0                    ; DATA XREF: InitializeDungeonLevel+15�
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
                                         ; HandleMovementInput+336↑r ...
 word_2E4AC      dw 0                    ; DATA XREF: ShowClueBookItemDetail+78↑w
-                                        ; sub_13780+18↑w ...
+                                        ; ShowArmorDetailRow+18↑w ...
 _val10          dw 0                    ; DATA XREF: InitGlobals+36↑w
                                         ; LoadCurgameRecord+7↑r ...
 g_partyEffectIconSlots db    0          ; 4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.

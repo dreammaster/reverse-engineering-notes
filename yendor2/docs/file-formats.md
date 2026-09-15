@@ -329,7 +329,10 @@ table) give a full monster stat sheet: `EXPERIENCE:`, `GOLD:`,
 
 `RunClueBookItemCategory` is item subtype 1's own interactive loop
 (draw entry, poll input, hit-test a region table so the player can
-click a sub-icon to jump entries, until ESC) — the more complex
+click a sub-icon to jump entries, until ESC), adding `ShowArmorDetailRow`
+("ABSORPTION-", matching `ShowClueBookMonsterDetail`'s own field) after
+the generic fields; `RunClueBookWeaponCategory` (subtype 8) similarly
+adds `ShowWeaponDetailRow` ("DAMAGE:" and "2-HANDED: YES/NO") — the more complex
 `RunClueBookItemDetailWithAbilityInfo` (item subtypes 3–6, 4 call
 sites; simpler than `RunClueBookItemCategory` in that it has no click
 navigation) adds an extra ability-info overlay when the item's id

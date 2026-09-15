@@ -2815,6 +2815,14 @@ text.
 
 358 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowArmorDetailRow and ShowWeaponDetailRow
+
+Named the per-subtype extra stat rows for F5 item subtypes 1 (ARMOR/
+RINGS: "ABSORPTION-") and 8 (WEAPONS: "DAMAGE:" and "2-HANDED: YES/NO"),
+shown after the generic BASE VALUE/WEIGHT fields.
+
+360 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -1745,14 +1745,18 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X13770);
 	op_hex		(x,	1);
+	set_cmt	(0X13780,	"F5 subtype 1 (ARMOR/RINGS) extra row: 'ABSORPTION-' plus a value. Called from RunClueBookItemCategory, after ShowClueBookItemDetail's generic fields.",	0);
 	create_insn	(0X13780);
+	set_name	(0X13780,	"ShowArmorDetailRow");
 	create_insn	(0X137C3);
 	create_insn	(x=0X137D6);
 	op_hex		(x,	1);
 	set_cmt	(0X1381C,	"Shows 'DURATION- <n> MINUTES' for a scroll/potion's timed effect (value from word_2E548's [+4] field x10). Called from RunClueBookItemDetailWithAbilityInfo.",	0);
 	create_insn	(0X1381C);
 	set_name	(0X1381C,	"ShowItemEffectDuration");
+	set_cmt	(0X1385C,	"F5 subtype 8 (WEAPONS) extra row: 'DAMAGE:' plus a value, then '2-HANDED: YES/NO'. Called from RunClueBookWeaponCategory, after ShowClueBookItemDetail's generic fields.",	0);
 	create_insn	(0X1385C);
+	set_name	(0X1385C,	"ShowWeaponDetailRow");
 	set_cmt	(0X1388C,	"msg",	0);
 	create_insn	(x=0X138A1);
 	op_hex		(x,	1);
@@ -3758,6 +3762,15 @@ static Bytes_0(void) {
 	create_insn	(0X1AD7D);
 	create_insn	(0X1AD8E);
 	create_insn	(0X1AD95);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1ADAB);
 	op_hex		(x,	1);
 	create_insn	(0X1ADCE);
@@ -3794,15 +3807,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AEF8);
 	op_hex		(x,	1);
 	set_name	(0X1AEF8,	"UseKeyItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1AF00);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF21);
@@ -6043,6 +6047,15 @@ static Bytes_1(void) {
 	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
 	create_insn	(0X234D3);
 	set_name	(0X234D3,	"DrawMonsterInfoPanel");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X234D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X234E5);
@@ -6070,15 +6083,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X235FA);
 	op_hex		(x,	1);
 	set_cmt	(0X2360B,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2360E);
 	op_hex		(x,	1);
 	create_insn	(0X23618);
@@ -9094,6 +9098,15 @@ static Bytes_2(void) {
 	create_insn	(0X2C0AC);
 	create_insn	(x=0X2C0BF);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C0C7);
 	create_insn	(0X2C0D4);
 	create_insn	(x=0X2C0E7);
@@ -9126,15 +9139,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C17C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2C187);
 	op_hex		(x,	1);
 	create_insn	(x=0X2C192);
