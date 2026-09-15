@@ -5176,7 +5176,9 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(0X203E4);
 	create_insn	(0X203F2);
+	set_cmt	(0X203F7,	"Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X203F7);
+	set_name	(0X203F7,	"ClearVideoMemoryRegion");
 	set_cmt	(0X20406,	"Draws a scrollable 17-icon horizontal strip from table 0xE551 (field +0xA), starting at index word_2E384, at y=0 x=0x18+.",	0);
 	create_insn	(0X20406);
 	set_name	(0X20406,	"DrawWallTypeLegendRow");
@@ -6392,11 +6394,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
 	set_name	(0X25656,	"AdvanceMonsterAnimationFrame");
-	create_insn	(0X25662);
-	create_insn	(x=0X25666);
-	op_hex		(x,	1);
-	create_insn	(x=0X2566F);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -6406,6 +6403,11 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X25662);
+	create_insn	(x=0X25666);
+	op_hex		(x,	1);
+	create_insn	(x=0X2566F);
+	op_hex		(x,	1);
 	create_insn	(x=0X2567A);
 	op_hex		(x,	1);
 	create_insn	(0X25690);
@@ -9847,10 +9849,6 @@ static Bytes_2(void) {
 	set_name	(0X3299A,	"_val19");
 	create_word	(0X3299C);
 	set_name	(0X3299C,	"_val20");
-	create_word	(0X3299E);
-	set_name	(0X3299E,	"_val25");
-	create_word	(0X329A0);
-	set_name	(0X329A0,	"_val26");
 }
 
 //------------------------------------------------------------------------
@@ -9860,6 +9858,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X3299E);
+	set_name	(0X3299E,	"_val25");
+	create_word	(0X329A0);
+	set_name	(0X329A0,	"_val26");
 	create_word	(0X329A2);
 	set_name	(0X329A2,	"_val28");
 	create_word	(0X329A4);

@@ -28224,7 +28224,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 call    sub_238CD
                 call    sub_2587E
                 call    sub_162B6
-                call    sub_203F7
+                call    ClearVideoMemoryRegion
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_2044C
                 call    DrawWallTypeLegendRow
@@ -28341,7 +28341,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    ShowLocalAreaMap
                 call    sub_2075B
-                call    sub_203F7
+                call    ClearVideoMemoryRegion
                 call    sub_2044C
                 call    DrawWallTypeLegendRow
                 call    sub_2047B
@@ -28374,7 +28374,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 call    GetMapCellPtr
                 call    ShowLocalAreaMap
                 call    sub_2075B
-                call    sub_203F7
+                call    ClearVideoMemoryRegion
                 call    sub_2044C
                 call    DrawWallTypeLegendRow
                 call    sub_2047B
@@ -28577,9 +28577,9 @@ sub_203E4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_203F7       proc near               ; CODE XREF: RunMapEditorScreen+69↑p
+ClearVideoMemoryRegion proc near        ; CODE XREF: RunMapEditorScreen+69↑p
                                         ; RunMapEditorScreen+1A7↑p ...
-                mov     ax, 0A000h
+                mov     ax, 0A000h      ; Zeroes 0x500 words (2560 bytes) at VGA segment 0xA000:0000 -- a partial screen clear, not the full 64000-byte frame. Called from RunMapEditorScreen.
                 mov     es, ax
                 assume es:nothing
                 xor     di, di
@@ -28587,7 +28587,7 @@ sub_203F7       proc near               ; CODE XREF: RunMapEditorScreen+69↑p
                 xor     ax, ax
                 rep stosw
                 retn
-sub_203F7       endp
+ClearVideoMemoryRegion endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -29043,7 +29043,7 @@ sub_2075B       endp
 
 sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_203F7
+                call    ClearVideoMemoryRegion
                 mov     _textPos_x, 0
                 mov     _textPos_y, 1
                 mov     _font_fgColor, 0Fh
@@ -29064,7 +29064,7 @@ sub_20817       proc near               ; CODE XREF: RunMapEditorScreen+137↑p
                 mov     byte ptr [bx], 56h ; 'V'
                 call    writeString
                 call    sub_162B6
-                call    sub_203F7
+                call    ClearVideoMemoryRegion
                 call    sub_2044C
                 call    sub_2047B
                 call    DrawWallTypeLegendRow

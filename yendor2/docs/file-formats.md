@@ -1086,7 +1086,9 @@ render pass this session traced reads them the same way — but their
 literal write site is still not found in the disassembly (no
 `mov word_328E6, ax` anywhere), so they're almost certainly filled by
 an indirect/computed pointer write. Left as an open question, though
-now a much narrower one.
+now a much narrower one. `RunMapEditorScreen` also uses
+`ClearVideoMemoryRegion` (a partial VGA-segment clear, 2560 bytes at
+`0xA000:0000`) before some of its redraws.
 
 **Open question — how the two tile-type lookup tables actually work**:
 dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like

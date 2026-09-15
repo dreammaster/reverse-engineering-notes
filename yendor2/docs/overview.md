@@ -2634,6 +2634,13 @@ even though the literal write instruction still isn't found.
 `file-formats.md` corrected in place; this entry left standing as the
 historical record of the original (wrong) framing.
 
+### 2026-09-15 session update, continued: ClearVideoMemoryRegion
+
+Named `sub_203F7`, called from `RunMapEditorScreen`: a partial VGA
+video-memory clear (2560 bytes at `0xA000:0000`, not the full frame).
+
+330 named of 769 functions as of this update.
+
 Via `identify.py`:
 
 - **Root file**: `SW.EXE`, MD5 `d464f6847b9ea4296e9ce1b251f92788`.
