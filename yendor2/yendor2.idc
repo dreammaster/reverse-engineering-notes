@@ -6169,7 +6169,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X252B0);
 	create_insn	(0X252E6);
+	set_cmt	(0X252EF,	"Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.",	0);
 	create_insn	(0X252EF);
+	set_name	(0X252EF,	"RollCharacterAttributes");
 	create_insn	(0X2539F);
 	create_insn	(0X253BB);
 	create_insn	(0X253C4);
@@ -8530,6 +8532,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B10C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B114);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B11D);
@@ -8593,15 +8604,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);

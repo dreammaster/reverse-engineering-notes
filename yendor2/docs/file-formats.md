@@ -133,9 +133,26 @@ the matching charge field (`+0xB6`/`+0xB8`/`+0xBA` for bits `0x8000`/
 it's learned, cross-confirming both fields' roles.
 `0x18` dispels/cures — clears bits 13-15 of `+0x1C`, a *different* 3-bit group
 than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
-10/11/13 — bit 13 appears in both groups). Not yet mapped: the 6
-attribute values (`ShowCharacterStats`), the 8 item slots
-(`ShowCharacterInventory`), or the skill values (`ShowCharacterSkills`).
+10/11/13 — bit 13 appears in both groups).
+
+**The 6 core attributes are now mapped** (found via `RollCharacterAttributes`,
+character creation's stat roller — resolves the "not yet mapped" note
+that stood since early in the session): 6 base/derived field pairs,
+each rolled `RandomInRange(15)+45` (45–59) into the base field, copied
+to the derived field 0x40 higher: `+0x3C`/`+0x7C` (also ×10 into a
+weight-like derived stat at `+0x56`/`+0x96` — plausibly **Strength**,
+carry capacity); `+0x3E`/`+0x7E` (no secondary use found yet);
+`+0x42`/`+0x82` (one component of `UseTrainingItem`'s MP-growth blend —
+plausibly **Intelligence**); `+0x44`/`+0x84` (the other MP-growth
+component — plausibly **Wisdom**); `+0x46`/`+0x86` (feeds a separate
+`UseTrainingItem` growth calculation); `+0x40`/`+0x80` (25%-scaled to
+set both current and max HP, `+0x52`/`+0x92` — plausibly
+**Stamina/Constitution**). Exact name-to-offset assignment for all 6
+isn't independently confirmed — the roll order doesn't obviously match
+the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
+(base ↔ derived, and which pair feeds HP vs. MP) is solid. Still not
+mapped: the 8 item slots (`ShowCharacterInventory`), or the skill
+values (`ShowCharacterSkills`).
 
 ### Combat: monster slots and turn order
 

@@ -1423,6 +1423,21 @@ for everything else, refusing to grow an uninitialized field).
 
 198 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: mapped the 6 core attributes
+
+Traced `sub_252EF`, character creation's stat roller, and finally
+mapped the party record's 6 core attributes — flagged "not yet mapped"
+since the very first pass over the executable's strings. Each rolls
+`RandomInRange(15)+45` into a base field, copied to a derived field
+0x40 higher; the derived fields at `+0x82`/`+0x84` (already known from
+`UseTrainingItem`'s MP-growth formula) and `+0x80` (scaled 25% to set
+HP) are now confirmed to be 3 of the 6 attributes, plausibly
+Intelligence/Wisdom and Stamina respectively, alongside a weight-
+deriving Strength-like pair and two more without a matched name yet.
+Named `RollCharacterAttributes`.
+
+199 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

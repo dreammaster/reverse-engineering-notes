@@ -36100,7 +36100,7 @@ loc_2457F:                              ; CODE XREF: ShowCharacterSkills+121↑j
 ; ---------------------------------------------------------------------------
 
 loc_2459C:                              ; CODE XREF: ShowCharacterSkills+1C1↑j
-                call    sub_252EF
+                call    RollCharacterAttributes
                 call    sub_23F58
                 call    sub_1B30C
                 call    sub_24D30
@@ -36707,7 +36707,7 @@ ShowCharacterEquipment endp
 
 ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                                         ; ShowCharacterStats+87↓j ...
-                call    sub_252EF       ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
+                call    RollCharacterAttributes ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
                 call    sub_23F58
                 call    sub_1B30C
                 call    sub_254CC
@@ -37273,7 +37273,7 @@ loc_2525D:                              ; CODE XREF: ShowCharacterSummary+F4↑j
 
 loc_25272:                              ; CODE XREF: ShowCharacterSummary+FB↑j
                                         ; ShowCharacterSummary+12F↑j
-                call    sub_252EF
+                call    RollCharacterAttributes
                 call    sub_23F58
                 call    sub_1B30C
                 jmp     ShowCharacterSummary
@@ -37327,9 +37327,9 @@ ShowCharacterSummary endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_252EF       proc near               ; CODE XREF: ShowCharacterSkills:loc_2459C↑p
+RollCharacterAttributes proc near       ; CODE XREF: ShowCharacterSkills:loc_2459C↑p
                                         ; ShowCharacterStats↑p ...
-                mov     si, word_328D4
+                mov     si, word_328D4  ; Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.
                 mov     word ptr [si+72h], 0
                 mov     word ptr [si+32h], 0
                 mov     word ptr [si+74h], 0
@@ -37380,7 +37380,7 @@ sub_252EF       proc near               ; CODE XREF: ShowCharacterSkills:loc_245
                 jmp     loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_2539F:                              ; CODE XREF: sub_252EF+AB↑j
+loc_2539F:                              ; CODE XREF: RollCharacterAttributes+AB↑j
                 jz      short loc_253BB
                 cmp     word ptr [si+0Eh], 8
                 jz      short loc_253DD
@@ -37393,13 +37393,13 @@ loc_2539F:                              ; CODE XREF: sub_252EF+AB↑j
                 jmp     short loc_253FE
 ; ---------------------------------------------------------------------------
 
-loc_253BB:                              ; CODE XREF: sub_252EF:loc_2539F↑j
+loc_253BB:                              ; CODE XREF: RollCharacterAttributes:loc_2539F↑j
                 mov     ax, [si+84h]
                 mov     dx, 0Ah
                 jmp     short loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_253C4:                              ; CODE XREF: sub_252EF+C8↑j
+loc_253C4:                              ; CODE XREF: RollCharacterAttributes+C8↑j
                 mov     ax, [si+82h]
                 mov     bx, 32h ; '2'
                 call    ScaleByPercentRounded
@@ -37410,7 +37410,7 @@ loc_253C4:                              ; CODE XREF: sub_252EF+C8↑j
                 jmp     short loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_253DD:                              ; CODE XREF: sub_252EF+B6↑j
+loc_253DD:                              ; CODE XREF: RollCharacterAttributes+B6↑j
                 mov     ax, [si+82h]
                 mov     bx, 4Bh ; 'K'
                 call    ScaleByPercentRounded
@@ -37424,13 +37424,13 @@ loc_253DD:                              ; CODE XREF: sub_252EF+B6↑j
                 jmp     short loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_253FE:                              ; CODE XREF: sub_252EF+CA↑j
+loc_253FE:                              ; CODE XREF: RollCharacterAttributes+CA↑j
                 mov     ax, [si+82h]
                 mov     dx, 0Ah
                 jmp     short loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_25407:                              ; CODE XREF: sub_252EF+C2↑j
+loc_25407:                              ; CODE XREF: RollCharacterAttributes+C2↑j
                 mov     ax, [si+84h]
                 mov     bx, 32h ; '2'
                 call    ScaleByPercentRounded
@@ -37441,7 +37441,7 @@ loc_25407:                              ; CODE XREF: sub_252EF+C2↑j
                 jmp     short loc_2543F
 ; ---------------------------------------------------------------------------
 
-loc_25420:                              ; CODE XREF: sub_252EF+BC↑j
+loc_25420:                              ; CODE XREF: RollCharacterAttributes+BC↑j
                 mov     ax, [si+84h]
                 mov     bx, 4Bh ; 'K'
                 call    ScaleByPercentRounded
@@ -37453,8 +37453,8 @@ loc_25420:                              ; CODE XREF: sub_252EF+BC↑j
                 add     ax, bx
                 mov     dx, 5
 
-loc_2543F:                              ; CODE XREF: sub_252EF+AD↑j
-                                        ; sub_252EF+D3↑j ...
+loc_2543F:                              ; CODE XREF: RollCharacterAttributes+AD↑j
+                                        ; RollCharacterAttributes+D3↑j ...
                 push    ax
                 shr     ax, 1
                 shr     ax, 1
@@ -37465,7 +37465,7 @@ loc_2543F:                              ; CODE XREF: sub_252EF+AD↑j
                 mov     [si+62h], ax
                 mov     [si+0A2h], ax
                 retn
-sub_252EF       endp
+RollCharacterAttributes endp
 
 
 ; =============== S U B R O U T I N E =======================================
