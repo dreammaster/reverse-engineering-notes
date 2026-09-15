@@ -1288,7 +1288,7 @@ loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 and     word_328CC, 101Fh
                 mov     ax, 15h
                 mov     word_3297E, ax
-                call    sub_15142
+                call    PlayClueBookOpenAnimation
                 call    sub_14BD5
                 call    sub_2587E
 
@@ -8280,8 +8280,8 @@ DrawMessageBox  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15142       proc far                ; CODE XREF: ShowClueBook+66↑P
-                push    cx
+PlayClueBookOpenAnimation proc far      ; CODE XREF: ShowClueBook+66↑P
+                push    cx              ; One-time (word_328CC bit 0x10 latch) clue-book intro animation: swaps in a special palette, draws g_pictureDir entry 0xC, plays two timed sound cues, restores the normal palette. Skipped if word_328C4 bit 0x8000 is set or already shown. Always ends by drawing a border/frame picture (entry 0x1D).
                 push    es
                 push    si
                 push    di
@@ -8291,13 +8291,13 @@ sub_15142       proc far                ; CODE XREF: ShowClueBook+66↑P
                 jmp     loc_15217
 ; ---------------------------------------------------------------------------
 
-loc_15152:                              ; CODE XREF: sub_15142+B↑j
+loc_15152:                              ; CODE XREF: PlayClueBookOpenAnimation+B↑j
                 test    word_328CC, 10h
                 jz      short loc_1515D
                 jmp     loc_15217
 ; ---------------------------------------------------------------------------
 
-loc_1515D:                              ; CODE XREF: sub_15142+16↑j
+loc_1515D:                              ; CODE XREF: PlayClueBookOpenAnimation+16↑j
                 or      word_328CC, 10h
                 mov     ax, 442Ah
                 mov     bx, 9043h       ; this
@@ -8340,8 +8340,8 @@ loc_1515D:                              ; CODE XREF: sub_15142+16↑j
                 call    ErrorCheck
                 call    sub_25862
 
-loc_15217:                              ; CODE XREF: sub_15142+D↑j
-                                        ; sub_15142+18↑j
+loc_15217:                              ; CODE XREF: PlayClueBookOpenAnimation+D↑j
+                                        ; PlayClueBookOpenAnimation+18↑j
                 mov     word_2E530, 1Dh
                 call    sub_23874
                 call    sub_238CD
@@ -8351,7 +8351,7 @@ loc_15217:                              ; CODE XREF: sub_15142+D↑j
                 pop     es
                 pop     cx
                 retf
-sub_15142       endp
+PlayClueBookOpenAnimation endp
 
 seg010          ends
 

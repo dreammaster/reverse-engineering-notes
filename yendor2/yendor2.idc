@@ -2066,7 +2066,9 @@ static Bytes_0(void) {
 	set_name	(0X150E5,	"DrawMessageBox");
 	set_cmt	(0X15127,	"msg",	0);
 	set_cmt	(0X15138,	"msg",	0);
+	set_cmt	(0X15142,	"One-time (word_328CC bit 0x10 latch) clue-book intro animation: swaps in a special palette, draws g_pictureDir entry 0xC, plays two timed sound cues, restores the normal palette. Skipped if word_328C4 bit 0x8000 is set or already shown. Always ends by drawing a border/frame picture (entry 0x1D).",	0);
 	create_insn	(0X15142);
+	set_name	(0X15142,	"PlayClueBookOpenAnimation");
 	set_cmt	(0X15146,	"this",	0);
 	create_insn	(x=0X15147);
 	op_hex		(x,	1);
@@ -4298,9 +4300,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1D038,	"Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.",	0);
 	create_insn	(0X1D038);
 	set_name	(0X1D038,	"PollKeyboardInput");
-	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
-	create_insn	(x=0X1D050);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -4310,6 +4309,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
+	create_insn	(x=0X1D050);
+	op_hex		(x,	0);
 	create_insn	(x=0X1D060);
 	op_hex		(x,	1);
 	create_insn	(0X1D06E);
@@ -7454,6 +7456,15 @@ static Bytes_1(void) {
 	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
 	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29040);
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
@@ -7464,15 +7475,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X290CF,	"msg",	0);
 	set_cmt	(0X290E2,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X290FB,	"msg",	0);
 	create_insn	(x=0X29135);
 	op_hex		(x,	1);
@@ -10948,11 +10950,6 @@ static Bytes_2(void) {
 	set_cmt	(0X36E4B,	"4 entries x 2 bytes: which 1-based g_partyRecords index occupies UI/effect slot N (0 = empty).",	0);
 	create_word	(0X36E4B);
 	set_name	(0X36E4B,	"g_partySlotAssignment");
-	create_word	(0X36E4D);
-	create_word	(0X36E4F);
-	create_word	(0X36E51);
-	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
-	set_name	(0X36E53,	"g_partyRecords");
 }
 
 //------------------------------------------------------------------------
@@ -10962,6 +10959,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_word	(0X36E4D);
+	create_word	(0X36E4F);
+	create_word	(0X36E51);
+	set_cmt	(0X36E53,	"Base of the party-member record array. Confirmed fixed stride 0x1F4 (500) bytes/record via ApplyMapTriggerEffect's explicit index arithmetic (record = this + (slot-1)*0x1F4).",	0);
+	set_name	(0X36E53,	"g_partyRecords");
 	create_word	(0X38808);
 	create_word	(0X3880A);
 	create_word	(0X3880C);

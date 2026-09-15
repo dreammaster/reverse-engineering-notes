@@ -2030,6 +2030,15 @@ entries are locked behind shareware registration. Named
 
 262 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PlayClueBookOpenAnimation
+
+Named the clue book's one-time intro animation: a palette swap, a
+picture, two timed sound cues, then a restore — shown once per session
+when the clue book first opens (skipped if in combat or already
+shown).
+
+263 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
