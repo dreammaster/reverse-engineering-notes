@@ -203,6 +203,24 @@ write-back as `SaveAndCloseContainer` minus the marker-clear) — a
 like the repair minigame, presumably so an in-progress bag's state
 isn't lost if the action fails.
 
+### The on-line clue book (F8)
+
+`ShowClueBook` (the manual's "F8 On-line clue book") drives an
+interactive, categorized clue-entry browser: `RunClueEntryMenu` (the
+per-category menu loop) → `ShowClueCategoryEntries` (init+draw one
+category, reading its entry count from a table at `0xF3F4` indexed by
+`word_2E3F6`, the category selector) → `DrawClueEntryList` (the
+scrollable entry list itself, positions from a table at `0x68D2`) →
+`BuildClueEntryText` (composes one entry's display text, dispatching
+on `word_2E3F6` to different lookups per category) → for at least
+category 1, `BuildClueLocationSuffix` (reads a clue record from
+`WORLD.DAT` and appends ` LEVEL X` or ` MAP X` when the clue is tied to
+a specific level/map, else no suffix). **Correction**: this whole
+chain was first named as a save-game slot-selection menu — wrong; all
+13 call sites into it trace to `ShowClueBook` alone, confirmed by that
+function's own pre-existing comment citing the manual, with no other
+caller anywhere.
+
 ### Quest-item and party-inventory range checks
 
 `IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`

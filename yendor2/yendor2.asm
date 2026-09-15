@@ -1296,7 +1296,7 @@ loc_10CB5:                              ; CODE XREF: ShowClueBook+F3↓j
                                         ; ShowClueBook+157↓j ...
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3F6, 0
-                call    sub_12B84
+                call    RunClueEntryMenu
 
 loc_10CC5:                              ; CODE XREF: ShowClueBook:loc_10D6B↓j
                                         ; ShowClueBook+161↓j ...
@@ -1363,7 +1363,7 @@ loc_10D3B:                              ; CODE XREF: ShowClueBook+129↓j
                 mov     ax, 8871h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 1
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jnz     short loc_10D6B
                 call    sub_13278
@@ -1383,7 +1383,7 @@ loc_10D6E:                              ; CODE XREF: ShowClueBook+AB↑j
                 mov     ax, 8876h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 2
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 0FFFFh
                 jnz     short loc_10D9A
                 jmp     loc_10CB5
@@ -1419,7 +1419,7 @@ loc_10DC3:                              ; CODE XREF: ShowClueBook+1B6↓j
                 mov     ax, 8848h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 3
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jnz     short loc_10DF8
                 call    sub_13216
@@ -1440,7 +1440,7 @@ loc_10DFB:                              ; CODE XREF: ShowClueBook+CB↑j
                 mov     ax, 885Ah
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 4
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jz      short loc_10E2D
                 jmp     loc_10CC5
@@ -1460,7 +1460,7 @@ loc_10E3F:                              ; CODE XREF: ShowClueBook+238↓j
                 mov     word_2E3F8, ax
                 mov     ax, 8848h
                 mov     word_2E3FA, ax
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_10E64
                 jmp     short loc_10DFB
@@ -1489,7 +1489,7 @@ loc_10E7D:                              ; CODE XREF: ShowClueBook+DB↑j
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 0Bh
                 mov     word_2E3EA, 0
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jz      short loc_10EAF
                 jmp     loc_10CC5
@@ -1556,7 +1556,7 @@ loc_10EF9:                              ; CODE XREF: ShowClueBook+2F9↓j
                 mov     ax, 8A01h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 0Ch
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_10F25
                 jmp     loc_10E7D
@@ -1597,7 +1597,7 @@ loc_10F56:                              ; CODE XREF: ShowClueBook+356↓j
                 mov     ax, 8A21h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 0Dh
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_10F82
                 jmp     loc_10E7D
@@ -1627,7 +1627,7 @@ loc_10FA1:                              ; CODE XREF: ShowClueBook+3A1↓j
                 mov     ax, 8A3Fh
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 0Eh
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_10FCD
                 jmp     loc_10E7D
@@ -1657,7 +1657,7 @@ loc_10FEC:                              ; CODE XREF: ShowClueBook+3EC↓j
                 mov     ax, 8A54h
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 0Fh
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_11018
                 jmp     loc_10E7D
@@ -1687,7 +1687,7 @@ loc_11037:                              ; CODE XREF: ShowClueBook+437↓j
                 mov     ax, 8A5Ch
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 10h
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_11063
                 jmp     loc_10E7D
@@ -1728,7 +1728,7 @@ loc_11094:                              ; CODE XREF: ShowClueBook+494↓j
                 mov     ax, 8A7Ah
                 mov     word_2E3FA, ax
                 mov     word_2E3F6, 11h
-                call    sub_12B84
+                call    RunClueEntryMenu
                 cmp     word_2E40A, 1
                 jnz     short loc_110C0
                 jmp     loc_10E7D
@@ -4398,9 +4398,9 @@ seg008          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12B84       proc far                ; CODE XREF: ShowClueBook+80↑P
+RunClueEntryMenu proc far               ; CODE XREF: ShowClueBook+80↑P
                                         ; ShowClueBook+118↑P ...
-                push    ax
+                push    ax              ; Interactive per-category clue-book entry menu (PollKeyboardInput loop). Mouse clicks hit-test against the entry-list region table (0x68D2) to select an entry and refresh via ShowClueCategoryEntries. Enter/Space on an unread entry (status bit 0x8000 clear) calls sub_14AE8 (not traced, plausibly show full detail / mark as read).
                 push    bx
                 push    cx
                 push    dx
@@ -4412,8 +4412,8 @@ sub_12B84       proc far                ; CODE XREF: ShowClueBook+80↑P
                 jz      short loc_12B9B
                 call    ShowClueCategoryEntries
 
-loc_12B9B:                              ; CODE XREF: sub_12B84+12↑j
-                                        ; sub_12B84+21↓j ...
+loc_12B9B:                              ; CODE XREF: RunClueEntryMenu+12↑j
+                                        ; RunClueEntryMenu+21↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_12B9B
@@ -4424,7 +4424,7 @@ loc_12B9B:                              ; CODE XREF: sub_12B84+12↑j
                 jmp     loc_12C3E
 ; ---------------------------------------------------------------------------
 
-loc_12BB8:                              ; CODE XREF: sub_12B84+2F↑j
+loc_12BB8:                              ; CODE XREF: RunClueEntryMenu+2F↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
@@ -4433,8 +4433,8 @@ loc_12BB8:                              ; CODE XREF: sub_12B84+2F↑j
                 jmp     loc_12C88
 ; ---------------------------------------------------------------------------
 
-loc_12BD1:                              ; CODE XREF: sub_12B84+3E↑j
-                                        ; sub_12B84+AC↓j
+loc_12BD1:                              ; CODE XREF: RunClueEntryMenu+3E↑j
+                                        ; RunClueEntryMenu+AC↓j
                 call    sub_12DD8
                 cmp     errorCode, 0
                 jz      short loc_12BE0
@@ -4442,7 +4442,7 @@ loc_12BD1:                              ; CODE XREF: sub_12B84+3E↑j
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12BE0:                              ; CODE XREF: sub_12B84+55↑j
+loc_12BE0:                              ; CODE XREF: RunClueEntryMenu+55↑j
                 call    sub_12D5C
                 cmp     errorCode, 0
                 jz      short loc_12BEF
@@ -4450,7 +4450,7 @@ loc_12BE0:                              ; CODE XREF: sub_12B84+55↑j
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12BEF:                              ; CODE XREF: sub_12B84+64↑j
+loc_12BEF:                              ; CODE XREF: RunClueEntryMenu+64↑j
                 cmp     byte_2E400, 0Dh
                 jz      short loc_12C65
                 cmp     byte_2E400, 20h ; ' '
@@ -4458,7 +4458,7 @@ loc_12BEF:                              ; CODE XREF: sub_12B84+64↑j
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12BFF:                              ; CODE XREF: sub_12B84+28↑j
+loc_12BFF:                              ; CODE XREF: RunClueEntryMenu+28↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 68D2h
@@ -4474,7 +4474,7 @@ loc_12BFF:                              ; CODE XREF: sub_12B84+28↑j
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12C26:                              ; CODE XREF: sub_12B84+8D↑j
+loc_12C26:                              ; CODE XREF: RunClueEntryMenu+8D↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_12BD1
@@ -4483,7 +4483,7 @@ loc_12C26:                              ; CODE XREF: sub_12B84+8D↑j
                 jmp     short loc_12C88
 ; ---------------------------------------------------------------------------
 
-loc_12C3E:                              ; CODE XREF: sub_12B84+31↑j
+loc_12C3E:                              ; CODE XREF: RunClueEntryMenu+31↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 68D2h
@@ -4493,7 +4493,7 @@ loc_12C3E:                              ; CODE XREF: sub_12B84+31↑j
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12C55:                              ; CODE XREF: sub_12B84+CC↑j
+loc_12C55:                              ; CODE XREF: RunClueEntryMenu+CC↑j
                 dec     ax
                 mov     bx, 4
                 mul     bx
@@ -4501,8 +4501,8 @@ loc_12C55:                              ; CODE XREF: sub_12B84+CC↑j
                 mov     word_2E3EE, ax
                 call    ShowClueCategoryEntries
 
-loc_12C65:                              ; CODE XREF: sub_12B84+70↑j
-                                        ; sub_12B84+77↑j
+loc_12C65:                              ; CODE XREF: RunClueEntryMenu+70↑j
+                                        ; RunClueEntryMenu+77↑j
                 mov     word_2E40A, 0
                 test    word_328CA, 1
                 jnz     short loc_12C86
@@ -4513,13 +4513,13 @@ loc_12C65:                              ; CODE XREF: sub_12B84+70↑j
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
-loc_12C86:                              ; CODE XREF: sub_12B84+ED↑j
-                                        ; sub_12B84+F8↑j
+loc_12C86:                              ; CODE XREF: RunClueEntryMenu+ED↑j
+                                        ; RunClueEntryMenu+F8↑j
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_12C88:                              ; CODE XREF: sub_12B84+4A↑j
-                                        ; sub_12B84+B8↑j ...
+loc_12C88:                              ; CODE XREF: RunClueEntryMenu+4A↑j
+                                        ; RunClueEntryMenu+B8↑j ...
                 and     word_328CC, 0FE7Fh
                 pop     es
                 pop     si
@@ -4529,7 +4529,7 @@ loc_12C88:                              ; CODE XREF: sub_12B84+4A↑j
                 pop     bx
                 pop     ax
                 retf
-sub_12B84       endp
+RunClueEntryMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4609,7 +4609,7 @@ DrawClueEntryList endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12D5C       proc near               ; CODE XREF: sub_12B84:loc_12BE0↑p
+sub_12D5C       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BE0↑p
                 cmp     word_2E3EA, 0
                 jz      short loc_12D7B
                 mov     ax, word_2E3EE
@@ -4682,7 +4682,7 @@ sub_12D5C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12DD8       proc near               ; CODE XREF: sub_12B84:loc_12BD1↑p
+sub_12DD8       proc near               ; CODE XREF: RunClueEntryMenu:loc_12BD1↑p
                 cmp     word_2E3EA, 0
                 jz      short loc_12E52
                 cmp     byte_2E400, 0
@@ -4750,8 +4750,8 @@ sub_12DD8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowClueCategoryEntries proc near       ; CODE XREF: sub_12B84+14↑p
-                                        ; sub_12B84+57↑p ...
+ShowClueCategoryEntries proc near       ; CODE XREF: RunClueEntryMenu+14↑p
+                                        ; RunClueEntryMenu+57↑p ...
                 cmp     word_2E3EA, 0   ; CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).
                 jnz     short loc_12EB1
                 mov     bx, word_2E3F6
@@ -7582,7 +7582,7 @@ seg010          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14AE8       proc far                ; CODE XREF: sub_12B84+FA↑P
+sub_14AE8       proc far                ; CODE XREF: RunClueEntryMenu+FA↑P
                                         ; sub_133EB+5F↑P
                 mov     ax, 3
                 call    sub_28412
@@ -7715,8 +7715,8 @@ sub_14BD5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14C37       proc far                ; CODE XREF: sub_12B84+40↑P
-                                        ; sub_12B84+AE↑P ...
+sub_14C37       proc far                ; CODE XREF: RunClueEntryMenu+40↑P
+                                        ; RunClueEntryMenu+AE↑P ...
                 test    word_328CC, 40h
                 jz      short loc_14C59
                 mov     _textPos_x, 0Bh
@@ -7801,8 +7801,8 @@ sub_14C37       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14D26       proc far                ; CODE XREF: sub_12B84:loc_12BB8↑P
-                                        ; sub_12B84:loc_12C26↑P ...
+sub_14D26       proc far                ; CODE XREF: RunClueEntryMenu:loc_12BB8↑P
+                                        ; RunClueEntryMenu:loc_12C26↑P ...
                 cmp     byte_2E400, 0
                 jz      short loc_14D8E
                 mov     word_2E40A, 8
@@ -56580,8 +56580,8 @@ word_2E3EC      dw 0                    ; DATA XREF: DrawClueEntryList+7↑r
                                         ; ShowClueCategoryEntries:loc_12E8A↑w ...
 word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
                                         ; ShowClueBook:loc_10EAF↑r ...
-word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
-                                        ; sub_12B84+D7↑r ...
+word_2E3F0      dw 0                    ; DATA XREF: RunClueEntryMenu+95↑r
+                                        ; RunClueEntryMenu+D7↑r ...
 word_2E3F2      dw 0                    ; DATA XREF: DrawClueEntryList+9A↑r
                                         ; sub_12D5C+3F↑r ...
 word_2E3F4      dw 0                    ; DATA XREF: DrawClueEntryList:loc_12D2C↑r

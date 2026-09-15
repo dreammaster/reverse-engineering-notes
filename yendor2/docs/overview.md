@@ -2011,6 +2011,16 @@ than leaving the wrong "save menu" framing in the historical log above
 
 260 named of 769 functions (renames only, no new count).
 
+### 2026-09-15 session update, continued: RunClueEntryMenu completes the clue-book chain
+
+Named `sub_12B84` itself: the interactive per-category clue-book entry
+menu (mouse-click hit-testing against the entry list, Enter/Space to
+view an unread entry's detail). Completes the corrected chain:
+`RunClueEntryMenu` → `ShowClueCategoryEntries` → `DrawClueEntryList` →
+`BuildClueEntryText` → `BuildClueLocationSuffix`.
+
+261 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

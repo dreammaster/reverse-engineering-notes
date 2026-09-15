@@ -1548,7 +1548,9 @@ static Bytes_0(void) {
 	create_insn	(0X12B6C);
 	create_insn	(0X12B76);
 	set_name	(0X12B76,	"calcOffset");
+	set_cmt	(0X12B84,	"Interactive per-category clue-book entry menu (PollKeyboardInput loop). Mouse clicks hit-test against the entry-list region table (0x68D2) to select an entry and refresh via ShowClueCategoryEntries. Enter/Space on an unread entry (status bit 0x8000 clear) calls sub_14AE8 (not traced, plausibly show full detail / mark as read).",	0);
 	create_insn	(0X12B84);
+	set_name	(0X12B84,	"RunClueEntryMenu");
 	create_insn	(x=0X12B8B);
 	op_hex		(x,	1);
 	create_insn	(0X12BB8);
@@ -4303,6 +4305,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1D072,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D072);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D081);
 	op_hex		(x,	1);
 	create_insn	(0X1D090);
@@ -4329,15 +4340,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1D118,	"Generic mouse hit-test: scans a table at ds:si of 10-byte entries (x_min, x_max, y_min, y_max, result), 0xFFFF as x_min terminating the table, for one containing (ax, bx). Returns/stores in word_2E40A the matching result word, or 0 if none match.",	0);
 	create_insn	(0X1D118);
 	set_name	(0X1D118,	"HitTestRegionTable");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1D127);
 	create_insn	(0X1D141);
 	create_insn	(0X1D146);
@@ -7476,6 +7478,15 @@ static Bytes_1(void) {
 	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
 	set_name	(0X291A3,	"RevealMapRegionRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -7488,15 +7499,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2929E,	"this",	0);
 	create_insn	(0X292B7);
 	create_insn	(0X292C0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X292D7);
 	create_insn	(0X292E0);
 	create_insn	(x=0X292F2);
@@ -10979,12 +10981,6 @@ static Bytes_2(void) {
 	set_name	(0X397C8,	"aWhitePotion");
 	create_strlit	(0X397D5,	0X7);
 	set_name	(0X397D5,	"aThaine");
-	create_strlit	(0X397DC,	0X8);
-	set_name	(0X397DC,	"aShirley");
-	create_strlit	(0X397E4,	0X5);
-	set_name	(0X397E4,	"aGain");
-	create_strlit	(0X397E9,	0X32);
-	set_name	(0X397E9,	"aItHasBeenOnlyA");
 }
 
 //------------------------------------------------------------------------
@@ -10994,6 +10990,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X397DC,	0X8);
+	set_name	(0X397DC,	"aShirley");
+	create_strlit	(0X397E4,	0X5);
+	set_name	(0X397E4,	"aGain");
+	create_strlit	(0X397E9,	0X32);
+	set_name	(0X397E9,	"aItHasBeenOnlyA");
 	create_strlit	(0X3981B,	0X2F);
 	set_name	(0X3981B,	"aTrekThroughThe");
 	create_strlit	(0X3984A,	0X31);
