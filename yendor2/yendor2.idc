@@ -1171,7 +1171,9 @@ static Bytes_0(void) {
 	create_insn	(0X11221);
 	create_insn	(0X11228);
 	create_insn	(0X1122F);
+	set_cmt	(0X11236,	"Classifies what's at the current depth row in the dungeon-viewport scratch buffer into errorCode: 0=clear, 1=wall, 2=door/side-feature, 3=a [+6] bit 0x800 feature, 4=monster (FindMonsterTypeInLevelPool). Called repeatedly by sub_1D4B8 as a projectile travels down the corridor.",	0);
 	create_insn	(0X11236);
+	set_name	(0X11236,	"ClassifyObstacleAtViewportRow");
 	create_insn	(x=0X11248);
 	op_hex		(x,	1);
 	create_insn	(x=0X11261);
@@ -3919,9 +3921,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1B702,	"SelectItemUseRecord: es:si = word_2E54E = the (word_2E550)th 58-byte sub-record within LoadItemData's buffer (es=word_2E54C). Confirms the loaded item block is a list of use-records, not a single blob.",	0);
 	create_insn	(0X1B702);
 	set_name	(0X1B702,	"SelectItemUseRecord");
-	set_cmt	(0X1B717,	"Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.",	0);
-	create_insn	(0X1B717);
-	set_name	(0X1B717,	"CheckPartyMemberItemFlag");
 }
 
 //------------------------------------------------------------------------
@@ -3931,6 +3930,9 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1B717,	"Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.",	0);
+	create_insn	(0X1B717);
+	set_name	(0X1B717,	"CheckPartyMemberItemFlag");
 	create_insn	(x=0X1B71A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B720);
@@ -4477,7 +4479,9 @@ static Bytes_1(void) {
 	create_insn	(0X1D484);
 	create_insn	(0X1D496);
 	create_insn	(0X1D4B4);
+	set_cmt	(0X1D4B8,	"Combat-action entry point, 3-way branch: formal combat (word_328CA bit 0x1000, not traced), a fully-traced ranged-weapon shot sequence (word_328C8 bit 0x100 set -- select weapon, animate a projectile down the corridor row by row via AnimateProjectileStep/ClassifyObstacleAtViewportRow, resolve via ResolveAttackOrAbilityAction on a monster hit), or a spell/ability-cast opening (bit 0x100 clear, not traced). Called from `start`.",	0);
 	create_insn	(0X1D4B8);
+	set_name	(0X1D4B8,	"HandleRangedOrCombatAction");
 	create_insn	(x=0X1D4C0);
 	op_hex		(x,	1);
 	create_insn	(0X1D4CB);
@@ -6261,6 +6265,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X24662);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X24676);
 	op_hex		(x,	1);
 	create_insn	(x=0X2468A);
@@ -6301,15 +6314,6 @@ static Bytes_1(void) {
 	set_cmt	(0X24A5B,	"ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.",	0);
 	create_insn	(0X24A5B);
 	set_name	(0X24A5B,	"ShowCharacterEquipment");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X24A75,	"msg",	0);
 	create_insn	(0X24B3D);
 	create_insn	(0X24B52);
@@ -8935,7 +8939,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2BA7D);
 	op_hex		(x,	1);
 	create_insn	(0X2BA88);
+	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, plays a sound (sub_2BC16, not traced), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
 	create_insn	(0X2BAA0);
+	set_name	(0X2BAA0,	"AnimateProjectileStep");
 	set_cmt	(0X2BAC6,	"ticks",	0);
 	create_insn	(0X2BAD5);
 	create_insn	(0X2BADB);
@@ -9543,6 +9549,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D7D9);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2D7EA);
 	create_insn	(x=0X2D7FD);
 	op_hex		(x,	1);
@@ -9616,15 +9631,6 @@ static Bytes_2(void) {
 	create_word	(0X2E490);
 	set_name	(0X2E490,	"g_blitMaskLen");
 	create_word	(0X2E492);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E494);
 	create_word	(0X2E496);
 	create_word	(0X2E498);

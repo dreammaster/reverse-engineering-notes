@@ -2685,6 +2685,20 @@ dumped from `ShowClueBookSpellDetail`.
 
 340 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleRangedOrCombatAction and the projectile-travel animation
+
+Named `sub_1D4B8` (the combat-action entry point called from `start`)
+along with `AnimateProjectileStep` and `ClassifyObstacleAtViewportRow`
+— the projectile animates down the corridor one depth row at a time,
+checking each row for a wall/door/monster via the same dungeon-
+viewport scratch buffer `RenderDungeonViewRow` reads, until it hits
+something and (for a monster) hands off to
+`ResolveAttackOrAbilityAction`. `HandleRangedOrCombatAction` is a
+3-way dispatcher; its formal-combat and spell-cast-opening branches
+aren't traced yet, only the fully-worked-out ranged-weapon-shot path.
+
+343 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

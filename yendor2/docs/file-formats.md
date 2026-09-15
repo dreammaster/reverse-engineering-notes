@@ -506,6 +506,25 @@ step used by both the ranged-weapon branch and
 bit-scan (the attack's type flags vs. the target's `[+0x98]`
 resistance flags, halving per match) before subtracting from HP.
 
+**The full ranged-weapon shot sequence**, `HandleRangedOrCombatAction`
+(called from `start`, 2 sites — one sets `word_328C8` bit `0x100`
+first): a 3-way combat-action dispatcher. If already in formal combat
+(`word_328CA` bit `0x1000`), branches elsewhere (not traced). If the
+caller set bit `0x100` (a ranged-attack request): scans the 4 party
+inventory slots for a character with an eligible ranged weapon (item
+`0x13A`, status-gated), bails if none; else draws a 4-icon weapon-select
+UI and **animates a projectile traveling down the corridor one depth
+row at a time** — `AnimateProjectileStep` (draws the projectile sprite,
+plays a sound, waits) then `ClassifyObstacleAtViewportRow` (classifies
+what's at that row: clear / wall / door / a `[+6]` bit `0x800` feature
+/ a monster, reusing `GetMonsterAtViewportRow`'s `0x6D60` scratch-buffer
+lookup) at successive rows (`0x31`→`0x2E`→`0x2B`→`0x28`→`0x24`→`0x19`,
+i.e. the shot travels from far to near) until something stops it. A
+wall/door shows a "deflected" message; a monster triggers
+`ResolveAttackOrAbilityAction` and a hit/miss follow-up. If bit `0x100`
+was clear (not in combat), it instead opens a parallel spell/ability-
+cast sequence (not traced).
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
