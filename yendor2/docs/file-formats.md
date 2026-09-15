@@ -420,10 +420,15 @@ perception skill value, not confirmed against `ShowCharacterSkills`'
 similar role for NPC conversations: `ClassifyConversationSkillTier`
 (called before every `RunConversation` topic display) compares it
 against tiered thresholds to gate how much an NPC reveals — plausibly
-a charisma/persuasion-like stat. Both `+0x6C` and `+0x6E` sit outside
-the confirmed `+0xCA`–`+0xE9` skill array, so they're either a
-separate small cluster of derived/social skills or something else
-entirely — not confirmed.
+a charisma/persuasion-like stat. **A third field in the same cluster,
+`+0x6A`**, gates `RepairItemCommand`'s repair-success roll — plausibly
+a repair/crafting skill; its message strings confirm the minigame
+outright: `YOUR ATTEMPT TO REPAIR THE ITEM HAS FAILED! THE ITEM WAS
+DESTROYED.` (critical fail) / `...HAS FAILED.` (soft fail, item
+survives) / `THE ITEM IS REPAIRED.` (success). All three (`+0x6A`,
+`+0x6C`, `+0x6E`) sit outside the confirmed `+0xCA`–`+0xE9` skill
+array, so they're either a separate small cluster of derived/practical
+skills or something else entirely — not confirmed.
 
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags

@@ -45634,7 +45634,7 @@ seg108          segment byte public 'CODE' use16
 
 
 sub_2952A       proc far                ; CODE XREF: sub_1CDBC+6E↑P
-                                        ; sub_2C010+3↓P
+                                        ; RepairItemCommand+3↓P
                 push    di
                 push    si
                 push    dx
@@ -45866,7 +45866,7 @@ loc_296C6:                              ; CODE XREF: HandleGameCommand+102↑j
 
 loc_296E5:                              ; CODE XREF: HandleGameCommand+11C↑j
                 mov     bx, word_2E548
-                call    sub_2C010
+                call    RepairItemCommand
                 or      word_328C8, 20h
                 retf
 ; ---------------------------------------------------------------------------
@@ -50943,12 +50943,12 @@ seg123          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C010       proc far                ; CODE XREF: HandleGameCommand+141↑P
-                mov     word_3293E, ax
+RepairItemCommand proc far              ; CODE XREF: HandleGameCommand+141↑P
+                mov     word_3293E, ax  ; Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).
                 call    sub_2952A
                 call    sub_238CD
 
-loc_2C01D:                              ; CODE XREF: sub_2C010+52↓j
+loc_2C01D:                              ; CODE XREF: RepairItemCommand+52↓j
                 mov     ax, word_36D05
                 cmp     ax, 0
                 jnz     short loc_2C03D
@@ -50961,8 +50961,8 @@ loc_2C01D:                              ; CODE XREF: sub_2C010+52↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2C03D:                              ; CODE XREF: sub_2C010+13↑j
-                                        ; sub_2C010+25↑j
+loc_2C03D:                              ; CODE XREF: RepairItemCommand+13↑j
+                                        ; RepairItemCommand+25↑j
                 mov     errorCode, 0
                 mov     word_32990, ax
                 mov     word_36D05, ax
@@ -50975,7 +50975,7 @@ loc_2C03D:                              ; CODE XREF: sub_2C010+13↑j
                 jmp     short loc_2C01D
 ; ---------------------------------------------------------------------------
 
-loc_2C064:                              ; CODE XREF: sub_2C010+45↑j
+loc_2C064:                              ; CODE XREF: RepairItemCommand+45↑j
                 mov     ax, 14h
                 mul     word_3293E
                 mov     si, ax
@@ -50993,8 +50993,8 @@ loc_2C064:                              ; CODE XREF: sub_2C010+45↑j
                 jl      short loc_2C094
                 mov     ax, 10h
 
-loc_2C094:                              ; CODE XREF: sub_2C010+64↑j
-                                        ; sub_2C010+6D↑j ...
+loc_2C094:                              ; CODE XREF: RepairItemCommand+64↑j
+                                        ; RepairItemCommand+6D↑j ...
                 add     ax, 6B7Eh
                 add     si, ax
                 mov     ax, 64h ; 'd'
@@ -51006,7 +51006,7 @@ loc_2C094:                              ; CODE XREF: sub_2C010+64↑j
                 jmp     short loc_2C0C7
 ; ---------------------------------------------------------------------------
 
-loc_2C0AC:                              ; CODE XREF: sub_2C010+93↑j
+loc_2C0AC:                              ; CODE XREF: RepairItemCommand+93↑j
                 mov     ax, _val20
                 call    sub_28412
                 mov     cx, 6
@@ -51016,14 +51016,14 @@ loc_2C0AC:                              ; CODE XREF: sub_2C010+93↑j
                 jmp     short loc_2C0ED
 ; ---------------------------------------------------------------------------
 
-loc_2C0C7:                              ; CODE XREF: sub_2C010+9A↑j
+loc_2C0C7:                              ; CODE XREF: RepairItemCommand+9A↑j
                 mov     cx, 4
                 mov     bx, 82D8h
                 call    sub_29461
                 jmp     short loc_2C0F2
 ; ---------------------------------------------------------------------------
 
-loc_2C0D4:                              ; CODE XREF: sub_2C010+98↑j
+loc_2C0D4:                              ; CODE XREF: RepairItemCommand+98↑j
                 mov     ax, 7
                 call    sub_28412
                 mov     cx, 2
@@ -51031,14 +51031,14 @@ loc_2C0D4:                              ; CODE XREF: sub_2C010+98↑j
                 call    sub_29461
                 or      word_328C8, 8000h
 
-loc_2C0ED:                              ; CODE XREF: sub_2C010+B5↑j
+loc_2C0ED:                              ; CODE XREF: RepairItemCommand+B5↑j
                 call    sub_274B4
 
-loc_2C0F2:                              ; CODE XREF: sub_2C010+C2↑j
+loc_2C0F2:                              ; CODE XREF: RepairItemCommand+C2↑j
                 and     word_328C8, 3FFFh
                 call    DrawMouseCursor
                 retf
-sub_2C010       endp
+RepairItemCommand endp
 
 seg123          ends
 

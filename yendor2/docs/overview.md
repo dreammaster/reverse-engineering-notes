@@ -1659,6 +1659,18 @@ or something else, not confirmed either way.
 
 224 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the item-repair minigame
+
+Traced `sub_2C010` (called directly from `HandleGameCommand`) and
+dumped its message strings — an unambiguous item-repair minigame with
+3 outcomes: critical fail (item destroyed), soft fail (item survives),
+or success, chosen by a percentile roll against thresholds gated on
+the character's own `+0x6A` field (a third member of the `+0x6A`/
+`+0x6C`/`+0x6E` skill-like cluster found this session, plausibly
+repair/crafting). Named `RepairItemCommand`.
+
+225 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

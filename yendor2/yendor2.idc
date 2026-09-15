@@ -8822,7 +8822,9 @@ static Bytes_2(void) {
 	create_insn	(0X2BF98);
 	create_insn	(0X2BFBC);
 	set_cmt	(0X2BFEE,	"msg",	0);
+	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
+	set_name	(0X2C010,	"RepairItemCommand");
 	create_insn	(0X2C03D);
 	create_insn	(x=0X2C050);
 	op_hex		(x,	1);
