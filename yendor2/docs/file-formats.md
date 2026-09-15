@@ -252,7 +252,10 @@ the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 
 **`ShowClueBook`'s full F-key dispatch**, traced directly from its own
 `word_2E40A` (`PollKeyboardInput` result) switch: F1 (`word_2E3F6=1`,
-Maps) → `RunClueEntryMenu` + `sub_13278` loop, not traced further. F2
+Maps) → `RunClueEntryMenu` + `RunClueBookMapCategory` (loads the map
+via `LoadClueBookMapEntry`, draws a row/col grid of per-cell location
+labels via `DrawClueBookMapGrid`, and dispatches cell clicks to an
+untraced `sub_14122`). F2
 (`word_2E3F6=2`, Monster Statistics) → `RunClueEntryMenu` +
 `RunClueBookMonsterCategory`. F3 (`word_2E3F6=3`, Spells) →
 `RunClueEntryMenu` + `RunClueBookSpellCategory`. F4

@@ -1366,7 +1366,7 @@ loc_10D3B:                              ; CODE XREF: ShowClueBook+129↓j
                 call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jnz     short loc_10D6B
-                call    sub_13278
+                call    RunClueBookMapCategory
                 jmp     short loc_10D3B
 ; ---------------------------------------------------------------------------
 
@@ -5301,13 +5301,13 @@ RunClueBookSpellCategory endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13278       proc far                ; CODE XREF: ShowClueBook+124↑P
-                call    sub_1419B
-                call    sub_13FCF
+RunClueBookMapCategory proc far         ; CODE XREF: ShowClueBook+124↑P
+                call    LoadClueBookMapEntry ; F1 'MAPS' clue-book category loop (called from ShowClueBook). LoadClueBookMapEntry + DrawClueBookMapGrid, then polls input and hit-tests region table 0x6976 for cell clicks (sub_14122, not traced), until ESC.
+                call    DrawClueBookMapGrid
                 call    DrawMouseCursor
 
-loc_13283:                              ; CODE XREF: sub_13278+15↓j
-                                        ; sub_13278+1C↓j ...
+loc_13283:                              ; CODE XREF: RunClueBookMapCategory+15↓j
+                                        ; RunClueBookMapCategory+1C↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13283
@@ -5321,11 +5321,11 @@ loc_13283:                              ; CODE XREF: sub_13278+15↓j
                 jz      short loc_132AD
                 call    sub_14122
 
-loc_132AD:                              ; CODE XREF: sub_13278+30↑j
+loc_132AD:                              ; CODE XREF: RunClueBookMapCategory+30↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_13283
                 retf
-sub_13278       endp
+RunClueBookMapCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5421,7 +5421,7 @@ sub_1334E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13380       proc near               ; CODE XREF: sub_13FCF:loc_14108↓p
+sub_13380       proc near               ; CODE XREF: DrawClueBookMapGrid:loc_14108↓p
                 xor     dx, dx
                 mov     ax, es:[di+2]
                 mov     bx, 28h ; '('
@@ -6507,7 +6507,7 @@ sub_13EDF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13FBF       proc near               ; CODE XREF: sub_13FCF+112↓p
+sub_13FBF       proc near               ; CODE XREF: DrawClueBookMapGrid+112↓p
                                         ; sub_1472A+14↓p
                 mov     di, 6976h
                 mov     es, word_2E4AA
@@ -6521,8 +6521,8 @@ sub_13FBF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
-                and     word_328CA, 0FFFBh
+DrawClueBookMapGrid proc near           ; CODE XREF: RunClueBookMapCategory+3↑p
+                and     word_328CA, 0FFFBh ; Draws the F1 map grid: computes a row/col layout (id-1 / 20) from the loaded map id, clears the video buffer, and draws per-cell location labels via BuildClueLocationSuffix.
                 xor     dx, dx
                 mov     ax, word_2E664
                 dec     ax
@@ -6579,7 +6579,7 @@ sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
                 mov     y, 8
                 mov     cx, 18h
 
-loc_14081:                              ; CODE XREF: sub_13FCF+110↓j
+loc_14081:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 push    cx              ; this
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
@@ -6613,8 +6613,8 @@ loc_14081:                              ; CODE XREF: sub_13FCF+110↓j
                 mov     di, 0
                 mov     cx, 195h
 
-loc_140F7:                              ; CODE XREF: sub_13FCF+135↓j
-                                        ; sub_13FCF+142↓j
+loc_140F7:                              ; CODE XREF: DrawClueBookMapGrid+135↓j
+                                        ; DrawClueBookMapGrid+142↓j
                 mov     ax, word_2E664
                 cmp     es:[di], ax
                 jg      short loc_14113
@@ -6624,27 +6624,27 @@ loc_140F7:                              ; CODE XREF: sub_13FCF+135↓j
                 jmp     short loc_14113
 ; ---------------------------------------------------------------------------
 
-loc_14108:                              ; CODE XREF: sub_13FCF+130↑j
+loc_14108:                              ; CODE XREF: DrawClueBookMapGrid+130↑j
                 call    sub_13380
                 mov     ax, word_2E664
                 cmp     es:[di], ax
                 jz      short loc_140F7
 
-loc_14113:                              ; CODE XREF: sub_13FCF+12E↑j
-                                        ; sub_13FCF+137↑j
+loc_14113:                              ; CODE XREF: DrawClueBookMapGrid+12E↑j
+                                        ; DrawClueBookMapGrid+137↑j
                 mov     es, fe
                 mov     ah, 49h
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
                 mov     fe, 0
                 retn
-sub_13FCF       endp
+DrawClueBookMapGrid endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14122       proc near               ; CODE XREF: sub_13278+32↑p
+sub_14122       proc near               ; CODE XREF: RunClueBookMapCategory+32↑p
                 push    ax
                 mov     ax, 0AFA8h
                 mov     bx, 4
@@ -6678,8 +6678,8 @@ sub_14122       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1419B       proc near               ; CODE XREF: sub_13278↑p
-                mov     bx, word_2E3EE
+LoadClueBookMapEntry proc near          ; CODE XREF: RunClueBookMapCategory↑p
+                mov     bx, word_2E3EE  ; Loads the current map id (word_2E3EE[0]) via FileEntry_Read from WORLD.DAT into a fresh buffer. Called by RunClueBookMapCategory.
                 mov     ax, [bx]
                 mov     word_2E664, ax
                 push    word_368A5      ; this
@@ -6696,7 +6696,7 @@ sub_1419B       proc near               ; CODE XREF: sub_13278↑p
                 call    ErrorCheck
                 pop     word_368A5
                 retn
-sub_1419B       endp
+LoadClueBookMapEntry endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7599,7 +7599,7 @@ ShowClueBookRegistrationNag endp
 ; =============== S U B R O U T I N E =======================================
 
 
-FillVideoBuffer proc far                ; CODE XREF: sub_13FCF+4C↑P
+FillVideoBuffer proc far                ; CODE XREF: DrawClueBookMapGrid+4C↑P
                                         ; DrawMessageBox+4↓p
                 push    es              ; Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.
                 push    di
@@ -11833,7 +11833,7 @@ seg022          segment byte public 'CODE' use16
 
 
 StrCat          proc far                ; CODE XREF: BuildClueEntryText+8E↑P
-                                        ; sub_13FCF+78↑P ...
+                                        ; DrawClueBookMapGrid+78↑P ...
                 push    es              ; strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.
                 push    si
                 push    di
@@ -31587,7 +31587,7 @@ seg069          segment byte public 'CODE' use16
 
 
 BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
-                                        ; sub_13FCF+6D↑P ...
+                                        ; DrawClueBookMapGrid+6D↑P ...
                 mov     word_368AB, ax  ; CORRECTED from 'CheckWorldDatCompatibility' -- this is the clue-book's entry system (all callers trace to ShowClueBook, the F8 on-line clue book), not a save/load check. Reads a clue record from WORLD.DAT (block 3) plus a secondary field. Two character positions hold an encoded level/map number: if set, appends ' LEVEL X' (returns 2) or ' MAP X' (returns 1) to the clue text; else returns 0 (generic clue, no location suffix).
                 mov     bx, 9043h
                 mov     ax, 0AFDAh
@@ -31884,7 +31884,7 @@ ToggleMapViewMode endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawLocalMapRow proc far                ; CODE XREF: sub_13FCF+101↑P
+DrawLocalMapRow proc far                ; CODE XREF: DrawClueBookMapGrid+101↑P
                                         ; ShowLocalAreaMap+B2↑p
                 push    cx              ; Draws 40 columns of one ShowLocalAreaMap row. Per cell, tests the explored/fog-of-war bitmap bit (same format PersistExploredCell writes): unexplored -> fixed blank/fog tile (g_pictureDir entry 0x13); explored -> DrawLocalMapCell.
                 push    dx
@@ -43136,7 +43136,7 @@ WorldDat_setBlock6 endp
 
 
 sub_27FE0       proc far                ; CODE XREF: sub_111C1+12↑P
-                                        ; sub_13FCF+B9↑P ...
+                                        ; DrawClueBookMapGrid+B9↑P ...
                 push    si
                 push    dx
                 mov     si, 0CDEFh
@@ -57191,12 +57191,12 @@ word_2E564      dw 0                    ; DATA XREF: HandleMovementInput+3DA↑r
                 db    0
                 db    0
                 db    0
-word_2E662      dw 0                    ; DATA XREF: sub_13FCF+2C↑w
-                                        ; sub_13FCF+3B↑r ...
-word_2E664      dw 0                    ; DATA XREF: sub_13FCF+7↑r
-                                        ; sub_13FCF+21↑r ...
-word_2E666      dw 0                    ; DATA XREF: sub_13FCF+16↑w
-                                        ; sub_13FCF+9F↑r ...
+word_2E662      dw 0                    ; DATA XREF: DrawClueBookMapGrid+2C↑w
+                                        ; DrawClueBookMapGrid+3B↑r ...
+word_2E664      dw 0                    ; DATA XREF: DrawClueBookMapGrid+7↑r
+                                        ; DrawClueBookMapGrid+21↑r ...
+word_2E666      dw 0                    ; DATA XREF: DrawClueBookMapGrid+16↑w
+                                        ; DrawClueBookMapGrid+9F↑r ...
 byte_2E668      db 0                    ; DATA XREF: sub_17032+18D↑w
                                         ; sub_17032+1B2↑w ...
                 align 4
@@ -74244,7 +74244,7 @@ word_32902      dw 0                    ; DATA XREF: UseItem:loc_17E8B↑r
                                         ; UseItem+33D↑r ...
 word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w
                                         ; HandleMovementInput+92↑w ...
-word_32906      dw 0                    ; DATA XREF: sub_13FCF+46↑w
+word_32906      dw 0                    ; DATA XREF: DrawClueBookMapGrid+46↑w
                                         ; sub_14E28+B1↑w ...
 word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
                                         ; sub_16881:loc_168F6↑r ...
@@ -74252,8 +74252,8 @@ word_3290A      dw 0                    ; DATA XREF: sub_1AC80+6↑w
                                         ; sub_1AC80+1D↑r ...
 word_3290C      dw 0                    ; DATA XREF: UseItem+151↑r
                                         ; UseKeyItem+B↑w ...
-word_3290E      dw 0                    ; DATA XREF: sub_13FCF+A6↑w
-                                        ; sub_13FCF+BE↑r ...
+word_3290E      dw 0                    ; DATA XREF: DrawClueBookMapGrid+A6↑w
+                                        ; DrawClueBookMapGrid+BE↑r ...
 word_32910      dw 0                    ; DATA XREF: RunGameDialog:loc_1EC8A↑w
                                         ; RunGameDialog:loc_1EDB8↑w ...
 word_32912      dw 0                    ; DATA XREF: EraseLabelText+12↑r
@@ -74492,7 +74492,7 @@ _blockSize4     dw 0                    ; DATA XREF: InitGlobals+192↑w
                                         ; sub_28000+12↑r
 word_329F8      dw 0                    ; DATA XREF: InitGlobals+198↑w
 word_329FA      dw 0                    ; DATA XREF: InitGlobals+19E↑w
-                                        ; sub_13FCF+E2↑r ...
+                                        ; DrawClueBookMapGrid+E2↑r ...
 _blockSize5     dw 0                    ; DATA XREF: InitGlobals+1A4↑w
                                         ; sub_2801A+12↑r
 word_329FE      dw 0                    ; DATA XREF: InitGlobals+1C8↑w
@@ -74511,7 +74511,7 @@ word_32A0A      dw 0                    ; DATA XREF: InitGlobals+1D4↑w
                                         ; sub_209D2+43↑r ...
 word_32A0C      dw 0                    ; DATA XREF: InitGlobals+1DA↑w
 word_32A0E      dw 0                    ; DATA XREF: InitGlobals+1E0↑w
-                                        ; sub_13FCF+9B↑r ...
+                                        ; DrawClueBookMapGrid+9B↑r ...
 _blockSize3     dw 0                    ; DATA XREF: InitGlobals+1C2↑w
                                         ; sub_205C0+13↑r ...
 word_32A12      dw 0                    ; DATA XREF: InitGlobals+1E6↑w

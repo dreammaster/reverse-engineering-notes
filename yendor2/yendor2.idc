@@ -1675,7 +1675,9 @@ static Bytes_0(void) {
 	set_name	(0X13216,	"RunClueBookSpellCategory");
 	create_insn	(x=0X13272);
 	op_hex		(x,	1);
+	set_cmt	(0X13278,	"F1 'MAPS' clue-book category loop (called from ShowClueBook). LoadClueBookMapEntry + DrawClueBookMapGrid, then polls input and hit-tests region table 0x6976 for cell clicks (sub_14122, not traced), until ESC.",	0);
 	create_insn	(0X13278);
+	set_name	(0X13278,	"RunClueBookMapCategory");
 	set_cmt	(0X132B5,	"F2 'MONSTER STATISTICS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory minus the region-table hit-testing: LoadClueBookMonsterEntry once, then redraw (sub_141D9 -- the detail panel, not yet named) + DrawClueBookNavBar when dirty, until ESC.",	0);
 	create_insn	(0X132B5);
 	set_name	(0X132B5,	"RunClueBookMonsterCategory");
@@ -1849,8 +1851,10 @@ static Bytes_0(void) {
 	set_cmt	(0X13FA9,	"msg",	0);
 	set_cmt	(0X13FB6,	"msg",	0);
 	create_insn	(0X13FBF);
+	set_cmt	(0X13FCF,	"Draws the F1 map grid: computes a row/col layout (id-1 / 20) from the loaded map id, clears the video buffer, and draws per-cell location labels via BuildClueLocationSuffix.",	0);
 	create_insn	(x=0X13FCF);
 	op_hex		(x,	1);
+	set_name	(0X13FCF,	"DrawClueBookMapGrid");
 	create_insn	(x=0X13FFE);
 	op_hex		(x,	1);
 	create_insn	(x=0X14000);
@@ -1866,7 +1870,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(0X14122);
 	set_cmt	(0X14189,	"msg",	0);
+	set_cmt	(0X1419B,	"Loads the current map id (word_2E3EE[0]) via FileEntry_Read from WORLD.DAT into a fresh buffer. Called by RunClueBookMapCategory.",	0);
 	create_insn	(0X1419B);
+	set_name	(0X1419B,	"LoadClueBookMapEntry");
 	set_cmt	(0X141A4,	"this",	0);
 	set_cmt	(0X141B3,	"numPara",	0);
 	set_cmt	(0X141D9,	"F2 Monster Statistics detail panel (drawn by RunClueBookMonsterCategory). Labeled fields confirmed via message dump: EXPERIENCE:, GOLD:, MAGIC ORE:, NUORE: (loot), HEALTH-, ACCURACY-, DEXTERITY-, ABSORPTION-, DAMAGE-, RANGED ACC.-, RANGED DAM.- (combat), POISON:/DISEASE:/PARALYSIS:/FREEZING:/HEXING:/CURSING:/FIRE:/COLD:/ELECTRIC:/POWER: (resistances/vulnerabilities). Individual field offsets not traced yet.",	0);
@@ -3991,6 +3997,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1BB48,	"Applies the current item-use record's (SelectItemUseRecord) bit-level effects: es:[si+0xE] bit 0x20 clears word_328F6/word_328F8 via a complement mask; bit 0x10 instead restores word_2E40C/word_2E40E from them. Unconditionally clears then sets bits in word_2E40C/word_2E40E from the item's own masks (es:[si+0x1A]/[si+0x1C]/[si+0x1E]/[si+0x20] -- plausibly current player/party status or equipment-bonus flags, not confirmed). Then, unless bit 2 + word_328C6 bit 0x40 both hold, walks 6 signed flag-index fields (es:[si+0x2E]+) applying SetGlobalFlag/ClearGlobalFlag to each nonzero one -- an item can flip up to 6 global quest/world-state flags.",	0);
 	create_insn	(0X1BB48);
 	set_name	(0X1BB48,	"ApplyItemEffectFlags");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1BB4F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BB79);
@@ -4030,15 +4045,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1BEA1,	"One of UseItem's item-type handlers (selected by word_2E410 bit 0x400). Sub-dispatches on the current SelectItemUseRecord's own es:[si+0x10] flags. Bit 2: pays a BCD material cost (0x94B3 vs a threshold at 0x512A, 'not enough' message if short) then sets a per-character flag via SetRecordFlag_10C using the item's own +0x1A field as the index -- same pattern as sub_1BBED's type-2 branch. Bit 0x200: builds a message string instead, no BCD cost -- plausibly a non-consuming 'read/examine' path.",	0);
 	create_insn	(0X1BEA1);
 	set_name	(0X1BEA1,	"UseItemType_400");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1BEA5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BEAD);
@@ -7018,6 +7024,15 @@ static Bytes_1(void) {
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
 	create_insn	(0X27CB0);
 	set_name	(0X27CB0,	"LoadMasterPalette");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27CC9);
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
@@ -7088,15 +7103,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
 	set_name	(0X2814C,	"ComputeGameClockTime");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28172);
 	create_insn	(0X2818B);
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
@@ -10449,6 +10455,15 @@ static Bytes_2(void) {
 	set_name	(0X35C94,	"aWarrior");
 	create_strlit	(0X35C9F,	0XB);
 	set_name	(0X35C9F,	"aTinkerer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35CAA,	0XB);
 	set_name	(0X35CAA,	"aThief");
 	create_strlit	(0X35CB5,	0XB);
@@ -10503,15 +10518,6 @@ static Bytes_2(void) {
 	set_name	(0X35DD2,	"aRollAttributes");
 	create_strlit	(0X35DE2,	0XB);
 	set_name	(0X35DE2,	"aPickItems");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35DED,	0XE);
 	set_name	(0X35DED,	"aChallengeOf");
 	create_strlit	(0X35DFB,	0X1A);

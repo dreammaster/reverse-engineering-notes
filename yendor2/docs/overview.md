@@ -2325,6 +2325,17 @@ with a 6-class eligibility marker row.
 
 288 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookMapCategory, LoadClueBookMapEntry, DrawClueBookMapGrid
+
+Named the F1 "MAPS" clue-book category cluster. `LoadClueBookMapEntry`
+reads the current map id from `WORLD.DAT`; `DrawClueBookMapGrid`
+computes a row/col grid from the id and draws per-cell location labels
+via the already-named `BuildClueLocationSuffix`; `RunClueBookMapCategory`
+ties them together with input polling and cell-click hit-testing
+(dispatching to an untraced `sub_14122`), until ESC.
+
+291 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
