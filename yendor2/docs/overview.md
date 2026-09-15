@@ -320,6 +320,19 @@ multi-part label, not drawing a box as first assumed from
 `DrawMessageBox` calling it — not yet renamed, worth a follow-up pass to
 pin down what the label actually says.
 
+Found and named one more of the same family: `StrFillN` (`0x1D01E`) —
+`memset`-and-null-terminate (`dest=bx`, `count=ah`, `fill=al`, returns
+end pointer, same convention as `StpCpy`/`StrCat`). Found via a scratch
+text buffer at `0xAFA8` that several list/label-drawing functions clear
+with spaces (`StrFillN(bx=0xAFA8, ah=0x19, al=' ')`) before rebuilding a
+label in it and displaying it with `writeString` — this buffer, and the
+functions around it (`sub_1F197` redraws whatever's currently in it;
+`sub_1F1B8` looks up a list item's `x`,`y` from a 10-byte-per-entry
+table at `0x5CD0` indexed by `word_3291E`) are a promising lead for a
+list/menu rendering subsystem, not yet named.
+
+71 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -13496,7 +13496,7 @@ loc_17EA8:                              ; CODE XREF: sub_17B92+2F2↑j
                 mov     _font_bgColor, 44h ; 'D'
                 mov     bx, 0AFA8h
                 mov     ax, 2120h
-                call    sub_1D01E
+                call    StrFillN
                 mov     _font_bgTransparent, 0
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
@@ -23070,9 +23070,9 @@ seg048          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D01E       proc far                ; CODE XREF: sub_17B92+373↑P
+StrFillN        proc far                ; CODE XREF: sub_17B92+373↑P
                                         ; sub_1F197+7↓P
-                push    es
+                push    es              ; StrFillN(dest=bx, count=ah, fill=al): writes `count` copies of `fill` into dest then a null terminator; returns bx = pointer to the terminator (same convention as StpCpy/StrCat). Used e.g. to blank a text buffer with spaces before rebuilding a label in it.
                 push    di
                 push    cx
                 mov     cx, seg seg129
@@ -23089,7 +23089,7 @@ sub_1D01E       proc far                ; CODE XREF: sub_17B92+373↑P
                 pop     es
                 assume es:nothing
                 retf
-sub_1D01E       endp
+StrFillN        endp
 
 seg048          ends
 
@@ -26703,7 +26703,7 @@ sub_1F197       proc near               ; CODE XREF: sub_1EA6E:loc_1ED31↑p
                 mov     ah, 19h
                 mov     al, 20h ; ' '
                 mov     bx, 0AFA8h
-                call    sub_1D01E
+                call    StrFillN
                 mov     ax, word_32910
                 mov     _textPos_x, ax
                 mov     ax, word_32912

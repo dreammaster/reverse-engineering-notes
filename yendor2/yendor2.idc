@@ -4157,7 +4157,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1D00F);
 	op_hex		(x,	1);
 	create_insn	(0X1D013);
+	set_cmt	(0X1D01E,	"StrFillN(dest=bx, count=ah, fill=al): writes `count` copies of `fill` into dest then a null terminator; returns bx = pointer to the terminator (same convention as StpCpy/StrCat). Used e.g. to blank a text buffer with spaces before rebuilding a label in it.",	0);
 	create_insn	(0X1D01E);
+	set_name	(0X1D01E,	"StrFillN");
 	create_insn	(x=0X1D021);
 	op_seg		(x,	1);
 	create_insn	(0X1D038);
@@ -6586,6 +6588,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2786A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X27875);
 	op_hex		(x,	1);
 	create_insn	(0X27887);
@@ -6624,15 +6635,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X27994);
 	create_insn	(0X27A20);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27A2A);
 	create_insn	(0X27A34);
 	create_insn	(0X27A3E);
