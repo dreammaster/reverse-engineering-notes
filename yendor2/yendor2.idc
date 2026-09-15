@@ -5515,8 +5515,10 @@ static Bytes_1(void) {
 	create_insn	(0X21DE2);
 	create_insn	(0X21E51);
 	create_insn	(0X21E6D);
+	set_cmt	(0X21E71,	"HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.",	0);
 	create_insn	(x=0X21E71);
 	op_hex		(x,	1);
+	set_name	(0X21E71,	"ShowLocalAreaMap");
 	create_insn	(x=0X21E79);
 	op_hex		(x,	1);
 	create_insn	(0X21E8A);
@@ -7586,6 +7588,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X29811);
 	op_hex		(x,	1);
 	set_cmt	(0X29838,	"this",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2986C);
 	op_hex		(x,	1);
 	set_cmt	(0X29878,	"Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).",	0);
@@ -7602,15 +7613,6 @@ static Bytes_1(void) {
 	create_insn	(0X298EB);
 	create_insn	(x=0X298F5);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29907);
 	create_insn	(0X29916);
 	create_insn	(x=0X29918);
@@ -11224,12 +11226,6 @@ static Bytes_2(void) {
 	set_name	(0X3A6C3,	"_worldDatOffset5");
 	set_name	(0X3A6C7,	"_worldDatOffset6");
 	set_name	(0X3A6CB,	"_worldDatOffset4");
-	set_name	(0X3A755,	"BLOCK_OFFSETS");
-	set_cmt	(0X3B81B,	"Object-type capability table, 0x16-byte entries (0xFFFF at +0 terminates): +0 object type, +2 ptr to a per-type 'known/unlocked' flags byte, +4 bitmask, +8 the command code required to unlock it. Read by UseAbilityOnTarget (tries to unlock via the current command) and ExamineTarget (just checks whether it's already known).",	0);
-	create_word	(0X3CC76);
-	set_name	(0X3CC78,	"g_soundDriverFarPtr");
-	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
-	create_word	(0X3CC7A);
 }
 
 //------------------------------------------------------------------------
@@ -11239,6 +11235,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_name	(0X3A755,	"BLOCK_OFFSETS");
+	set_cmt	(0X3B81B,	"Object-type capability table, 0x16-byte entries (0xFFFF at +0 terminates): +0 object type, +2 ptr to a per-type 'known/unlocked' flags byte, +4 bitmask, +8 the command code required to unlock it. Read by UseAbilityOnTarget (tries to unlock via the current command) and ExamineTarget (just checks whether it's already known).",	0);
+	create_word	(0X3CC76);
+	set_name	(0X3CC78,	"g_soundDriverFarPtr");
+	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
+	create_word	(0X3CC7A);
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);

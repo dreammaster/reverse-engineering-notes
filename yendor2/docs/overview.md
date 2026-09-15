@@ -1852,6 +1852,15 @@ day/night system for the rest of gameplay — and briefly silences music
 during character creation before restoring it. Documentation-only
 round, no new function named.
 
+### 2026-09-15 session update, continued: ShowLocalAreaMap
+
+Named `HandleGameCommand`'s `word_32974==0x1E` handler (also called
+from `RunMapEditorScreen`): a full-screen, 24-row map view centered on
+the player, reading both `WORLD.DAT` and `CURGAME` per row — distinct
+from the already-named overworld `ShowWorldMap`.
+
+245 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

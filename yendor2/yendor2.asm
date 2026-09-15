@@ -948,7 +948,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 cmp     word_32974, 0
                 jz      short loc_10867
                 and     word_3295A, 9FFFh
-                call    sub_21E71
+                call    ShowLocalAreaMap
                 call    sub_1FD03
 
 loc_10867:                              ; CODE XREF: seg000:0855↑j
@@ -28220,7 +28220,7 @@ RunMapEditorScreen proc far             ; CODE XREF: seg000:09E1↑P
                 mov     _videoSegment, 0A000h
                 and     word_328C4, 0FBFFh
                 or      word_328C4, 1
-                call    sub_21E71
+                call    ShowLocalAreaMap
                 call    sub_238CD
                 call    sub_2587E
                 call    sub_162B6
@@ -28339,7 +28339,7 @@ loc_201F5:                              ; CODE XREF: RunMapEditorScreen+173↑j
                 jz      short loc_2022E
                 and     word_328C4, 0FBFFh
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_21E71
+                call    ShowLocalAreaMap
                 call    sub_2075B
                 call    sub_203F7
                 call    sub_2044C
@@ -28372,7 +28372,7 @@ loc_20250:                              ; CODE XREF: RunMapEditorScreen+221↓j
                 mov     ax, word_36CF7
                 mov     bx, word_36CF9
                 call    GetMapCellPtr
-                call    sub_21E71
+                call    ShowLocalAreaMap
                 call    sub_2075B
                 call    sub_203F7
                 call    sub_2044C
@@ -31640,9 +31640,9 @@ sub_21DE2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21E71       proc far                ; CODE XREF: seg000:085D↑P
+ShowLocalAreaMap proc far               ; CODE XREF: seg000:085D↑P
                                         ; RunMapEditorScreen+55↑P ...
-                test    word_328C4, 1
+                test    word_328C4, 1   ; HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.
                 jnz     short loc_21E8F
                 test    word_36C7F, 200h
                 jnz     short loc_21E8A
@@ -31651,10 +31651,10 @@ sub_21E71       proc far                ; CODE XREF: seg000:085D↑P
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21E8A:                              ; CODE XREF: sub_21E71+E↑j
+loc_21E8A:                              ; CODE XREF: ShowLocalAreaMap+E↑j
                 call    sub_25862
 
-loc_21E8F:                              ; CODE XREF: sub_21E71+6↑j
+loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328CA, 4
                 mov     ax, 0A000h
@@ -31691,7 +31691,7 @@ loc_21E8F:                              ; CODE XREF: sub_21E71+6↑j
                 mov     y, 8
                 mov     cx, 18h
 
-loc_21EFB:                              ; CODE XREF: sub_21E71+C3↓j
+loc_21EFB:                              ; CODE XREF: ShowLocalAreaMap+C3↓j
                 push    cx              ; this
                 mov     errorCode, 9
                 mov     bx, 9043h
@@ -31752,10 +31752,10 @@ loc_21EFB:                              ; CODE XREF: sub_21E71+C3↓j
                 jz      short loc_21FBC
                 mov     _font_fgColor, 0AAh
 
-loc_21FBC:                              ; CODE XREF: sub_21E71+143↑j
+loc_21FBC:                              ; CODE XREF: ShowLocalAreaMap+143↑j
                 call    writeString
 
-loc_21FC1:                              ; CODE XREF: sub_21E71+135↑j
+loc_21FC1:                              ; CODE XREF: ShowLocalAreaMap+135↑j
                 xor     dx, dx
                 mov     bx, word_32A06
                 mov     ax, word_36CF7
@@ -31785,8 +31785,8 @@ loc_21FC1:                              ; CODE XREF: sub_21E71+135↑j
                 jnz     short loc_22020
                 mov     word_2E530, 3
 
-loc_22020:                              ; CODE XREF: sub_21E71+18B↑j
-                                        ; sub_21E71+199↑j ...
+loc_22020:                              ; CODE XREF: ShowLocalAreaMap+18B↑j
+                                        ; ShowLocalAreaMap+199↑j ...
                 call    DrawPicture
                 pop     y
                 pop     x
@@ -31795,7 +31795,7 @@ loc_22020:                              ; CODE XREF: sub_21E71+18B↑j
                 jmp     short loc_220B1
 ; ---------------------------------------------------------------------------
 
-loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
+loc_22037:                              ; CODE XREF: ShowLocalAreaMap+1C2↑j
                 mov     ax, x
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -31829,13 +31829,13 @@ loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
 
-loc_220B1:                              ; CODE XREF: sub_21E71+1C4↑j
+loc_220B1:                              ; CODE XREF: ShowLocalAreaMap+1C4↑j
                 test    word_328C4, 1
                 jz      short loc_220BA
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_220BA:                              ; CODE XREF: sub_21E71+246↑j
+loc_220BA:                              ; CODE XREF: ShowLocalAreaMap+246↑j
                 call    sub_2587E
                 call    sub_162B6
                 call    sub_25862
@@ -31845,7 +31845,7 @@ loc_220BA:                              ; CODE XREF: sub_21E71+246↑j
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 retf
-sub_21E71       endp
+ShowLocalAreaMap endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31885,7 +31885,7 @@ ToggleMapViewMode endp
 
 
 sub_22140       proc far                ; CODE XREF: sub_13FCF+101↑P
-                                        ; sub_21E71+B2↑p
+                                        ; ShowLocalAreaMap+B2↑p
                 push    cx
                 push    dx
                 push    si
@@ -32058,7 +32058,7 @@ sub_22255       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_222BD       proc near               ; CODE XREF: sub_21E71+10↑p
+sub_222BD       proc near               ; CODE XREF: ShowLocalAreaMap+10↑p
                                         ; ToggleMapViewMode+8↑p
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -45812,7 +45812,7 @@ loc_29666:                              ; CODE XREF: HandleGameCommand+AF↑j
                                         ; HandleGameCommand+B6↑j
                 cmp     word_32974, 1Eh
                 jnz     short loc_29673
-                call    sub_21E71
+                call    ShowLocalAreaMap
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -74502,9 +74502,9 @@ word_32A00      dw 0                    ; DATA XREF: InitGlobals+1AA↑w
 word_32A02      dw 0                    ; DATA XREF: InitGlobals+1B0↑w
                                         ; sub_209D2+1F↑r ...
 word_32A04      dw 0                    ; DATA XREF: InitGlobals+1B6↑w
-                                        ; sub_21E71+DF↑r ...
+                                        ; ShowLocalAreaMap+DF↑r ...
 word_32A06      dw 0                    ; DATA XREF: InitGlobals+1BC↑w
-                                        ; sub_21E71+30↑r ...
+                                        ; ShowLocalAreaMap+30↑r ...
 word_32A08      dw 0                    ; DATA XREF: InitGlobals+1CE↑w
                                         ; sub_209D2:loc_20A23↑r ...
 word_32A0A      dw 0                    ; DATA XREF: InitGlobals+1D4↑w
