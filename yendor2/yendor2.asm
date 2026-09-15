@@ -1152,7 +1152,7 @@ loc_10A35:                              ; CODE XREF: start+A30↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 2Fh ; '/'
                 call    sub_12554
-                call    sub_29738
+                call    UnlockDoorCommand
 ; START OF FUNCTION CHUNK FOR start
 
 loc_10A62:                              ; CODE XREF: seg000:0A4E↑j
@@ -45481,7 +45481,7 @@ seg107          segment byte public 'CODE' use16
 
 
 sub_2940E       proc far                ; CODE XREF: UseAbilityOnTarget+1↓p
-                                        ; sub_29738:loc_29747↓P ...
+                                        ; UnlockDoorCommand:loc_29747↓P ...
                 call    sub_21C79
                 mov     word_2E530, 0Fh
                 call    sub_23874
@@ -45742,7 +45742,7 @@ loc_295CA:                              ; CODE XREF: HandleGameCommand+1A↑j
                 jg      short loc_295E5
 
 loc_295DF:                              ; CODE XREF: HandleGameCommand+27↑j
-                call    sub_29738
+                call    UnlockDoorCommand
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -45920,31 +45920,31 @@ seg110          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29738       proc far                ; CODE XREF: seg000:0A5D↑P
+UnlockDoorCommand proc far              ; CODE XREF: seg000:0A5D↑P
                                         ; HandleGameCommand:loc_295DF↑P
-                test    word_328CA, 1000h
+                test    word_328CA, 1000h ; HandleGameCommand's unlock-door handler (word_32974 in 0x21-0x2E or ==0x2F). Uses ProbeFacingTile to find what's ahead; if it's a lock-type object, loads its state via LoadLockState/LoadCurgameRecord. Shows 'NOT LOCKED' directly if the already-unlocked bit is set (same test as ShowLockStatus). Otherwise compares the door's required-key flags (word_32DCE) against the player's held key (word_36C81/word_2E548) to resolve the unlock attempt.
                 jz      short loc_29747
                 call    FlashStatusWarning
                 jmp     short loc_2975D
 ; ---------------------------------------------------------------------------
 
-loc_29747:                              ; CODE XREF: sub_29738+6↑j
+loc_29747:                              ; CODE XREF: UnlockDoorCommand+6↑j
                 call    sub_2940E
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_29769
 
-loc_29753:                              ; CODE XREF: sub_29738+5C↓j
+loc_29753:                              ; CODE XREF: UnlockDoorCommand+5C↓j
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
-loc_2975D:                              ; CODE XREF: sub_29738+D↑j
-                                        ; sub_29738+84↓j ...
+loc_2975D:                              ; CODE XREF: UnlockDoorCommand+D↑j
+                                        ; UnlockDoorCommand+84↓j ...
                 mov     word_2E530, 0
                 call    sub_23874
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29769:                              ; CODE XREF: sub_29738+19↑j
+loc_29769:                              ; CODE XREF: UnlockDoorCommand+19↑j
                 call    ProbeFacingTile
                 cmp     errorCode, 0
                 jz      short loc_29787
@@ -45953,31 +45953,31 @@ loc_29769:                              ; CODE XREF: sub_29738+19↑j
                 jmp     short loc_29796
 ; ---------------------------------------------------------------------------
 
-loc_2977E:                              ; CODE XREF: sub_29738+42↑j
+loc_2977E:                              ; CODE XREF: UnlockDoorCommand+42↑j
                 test    word ptr [si+2], 4000h
                 jz      short loc_29787
                 jmp     short loc_297A0
 ; ---------------------------------------------------------------------------
 
-loc_29787:                              ; CODE XREF: sub_29738+3B↑j
-                                        ; sub_29738+4B↑j ...
+loc_29787:                              ; CODE XREF: UnlockDoorCommand+3B↑j
+                                        ; UnlockDoorCommand+4B↑j ...
                 mov     byte_2E400, 0
                 mov     ax, 3
                 call    sub_28412
                 jmp     short loc_29753
 ; ---------------------------------------------------------------------------
 
-loc_29796:                              ; CODE XREF: sub_29738+44↑j
+loc_29796:                              ; CODE XREF: UnlockDoorCommand+44↑j
                 mov     ax, [si+4]
                 call    LoadLockState
                 jmp     short loc_297A8
 ; ---------------------------------------------------------------------------
 
-loc_297A0:                              ; CODE XREF: sub_29738+4D↑j
+loc_297A0:                              ; CODE XREF: UnlockDoorCommand+4D↑j
                 mov     ax, [si+4]
                 call    LoadCurgameRecord
 
-loc_297A8:                              ; CODE XREF: sub_29738+66↑j
+loc_297A8:                              ; CODE XREF: UnlockDoorCommand+66↑j
                 mov     ax, word_32DC8
                 test    byte_32DCD, al
                 jz      short loc_297BE
@@ -45987,7 +45987,7 @@ loc_297A8:                              ; CODE XREF: sub_29738+66↑j
                 jmp     short loc_2975D
 ; ---------------------------------------------------------------------------
 
-loc_297BE:                              ; CODE XREF: sub_29738+77↑j
+loc_297BE:                              ; CODE XREF: UnlockDoorCommand+77↑j
                 test    word ptr [si+2], 8000h
                 jnz     short loc_297CE
                 test    word ptr [si+2], 4000h
@@ -45995,7 +45995,7 @@ loc_297BE:                              ; CODE XREF: sub_29738+77↑j
                 jmp     short loc_29787
 ; ---------------------------------------------------------------------------
 
-loc_297CE:                              ; CODE XREF: sub_29738+8B↑j
+loc_297CE:                              ; CODE XREF: UnlockDoorCommand+8B↑j
                 mov     bx, word_2E548
                 mov     ax, word_36C81
                 test    word ptr [bx], 20h
@@ -46004,24 +46004,24 @@ loc_297CE:                              ; CODE XREF: sub_29738+8B↑j
                 test    word ptr [bx], 80h
                 jz      short loc_297EB
 
-loc_297E3:                              ; CODE XREF: sub_29738+A1↑j
+loc_297E3:                              ; CODE XREF: UnlockDoorCommand+A1↑j
                 mov     bx, word_32DCE
                 test    ah, bh
                 jnz     short loc_2981F
 
-loc_297EB:                              ; CODE XREF: sub_29738+A9↑j
-                                        ; sub_29738+DD↓j ...
+loc_297EB:                              ; CODE XREF: UnlockDoorCommand+A9↑j
+                                        ; UnlockDoorCommand+DD↓j ...
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jz      short loc_297F8
                 call    sub_25B14
 
-loc_297F8:                              ; CODE XREF: sub_29738+B9↑j
+loc_297F8:                              ; CODE XREF: UnlockDoorCommand+B9↑j
                 call    ShowLockStatus
                 jmp     loc_2975D
 ; ---------------------------------------------------------------------------
 
-loc_29800:                              ; CODE XREF: sub_29738+92↑j
+loc_29800:                              ; CODE XREF: UnlockDoorCommand+92↑j
                 mov     bx, word_2E548
                 mov     ax, word_36C81
                 xchg    ah, al
@@ -46031,18 +46031,18 @@ loc_29800:                              ; CODE XREF: sub_29738+92↑j
                 test    word ptr [bx], 40h
                 jz      short loc_297EB
 
-loc_29817:                              ; CODE XREF: sub_29738+D5↑j
+loc_29817:                              ; CODE XREF: UnlockDoorCommand+D5↑j
                 mov     bx, word_32DCE
                 test    ah, bh
                 jz      short loc_297EB
 
-loc_2981F:                              ; CODE XREF: sub_29738+B1↑j
+loc_2981F:                              ; CODE XREF: UnlockDoorCommand+B1↑j
                 call    sub_2827E
                 jnz     short loc_2982E
                 mov     ax, word_329EE
                 call    sub_28412
 
-loc_2982E:                              ; CODE XREF: sub_29738+EC↑j
+loc_2982E:                              ; CODE XREF: UnlockDoorCommand+EC↑j
                 mov     ax, word_32DC8
                 or      byte_32DCD, al
                 mov     ax, 556Dh
@@ -46064,9 +46064,9 @@ loc_2982E:                              ; CODE XREF: sub_29738+EC↑j
                 pop     es
                 pop     si
 
-loc_29874:                              ; CODE XREF: sub_29738+128↑j
+loc_29874:                              ; CODE XREF: UnlockDoorCommand+128↑j
                 jmp     loc_2975D
-sub_29738       endp
+UnlockDoorCommand endp
 
 seg110          ends
 
@@ -74481,7 +74481,7 @@ word_329EA      dw 0                    ; DATA XREF: InitGlobals+16E↑w
 word_329EC      dw 0                    ; DATA XREF: InitGlobals+174↑w
                                         ; sub_20E54+10C↑r
 word_329EE      dw 0                    ; DATA XREF: InitGlobals+17A↑w
-                                        ; sub_29738+EE↑r ...
+                                        ; UnlockDoorCommand+EE↑r ...
 word_329F0      dw 0                    ; DATA XREF: InitGlobals+180↑w
                                         ; sub_2784A:loc_278B8↑r
 _blockSize1     dw 0                    ; DATA XREF: InitGlobals+186↑w
@@ -85863,7 +85863,7 @@ word_36C79      dw 0                    ; DATA XREF: seg000:loc_108C5↑r
 word_36C7F      dw 0                    ; DATA XREF: start+3BF↑r
                                         ; start:loc_103E2↑w ...
 word_36C81      dw 0                    ; DATA XREF: sub_219FA+23D↑r
-                                        ; sub_29738+9A↑r ...
+                                        ; UnlockDoorCommand+9A↑r ...
 word_36C83      dw 0                    ; DATA XREF: sub_1FD24+4B↑r
                                         ; TickStatusEffects+1B↑w ...
 word_36C85      dw 0                    ; DATA XREF: sub_1A582+5↑r

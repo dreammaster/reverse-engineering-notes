@@ -7536,8 +7536,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X29727);
 	create_insn	(0X2972D);
+	set_cmt	(0X29738,	"HandleGameCommand's unlock-door handler (word_32974 in 0x21-0x2E or ==0x2F). Uses ProbeFacingTile to find what's ahead; if it's a lock-type object, loads its state via LoadLockState/LoadCurgameRecord. Shows 'NOT LOCKED' directly if the already-unlocked bit is set (same test as ShowLockStatus). Otherwise compares the door's required-key flags (word_32DCE) against the player's held key (word_36C81/word_2E548) to resolve the unlock attempt.",	0);
 	create_insn	(x=0X29738);
 	op_hex		(x,	1);
+	set_name	(0X29738,	"UnlockDoorCommand");
 	create_insn	(0X29747);
 	create_insn	(0X29769);
 	create_insn	(x=0X29775);
@@ -7977,6 +7979,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29EC4);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29EC7);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29ECA);
@@ -8025,15 +8036,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F48);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29F4B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F4E);

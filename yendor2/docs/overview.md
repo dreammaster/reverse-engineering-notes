@@ -1728,6 +1728,18 @@ item's catalog data as the roll parameter.
 
 232 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UnlockDoorCommand ties the lock system together
+
+Named `sub_29738` — `HandleGameCommand`'s unlock-door handler — which
+ties together `ProbeFacingTile`, `LoadLockState`, and `ShowLockStatus`'s
+exact strings: finds the lock ahead, loads its state, shows `NOT
+LOCKED` directly via the same bit test `ShowLockStatus` uses if already
+open, otherwise compares required-key flags against the player's held
+key. Completes the lock/key system traced across several rounds this
+session.
+
+233 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

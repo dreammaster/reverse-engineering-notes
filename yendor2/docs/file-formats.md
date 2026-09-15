@@ -444,6 +444,14 @@ field directly as `LoadLockState`'s lock id — a key's catalog "type"
 *is* the numbered door it opens, no separate item-to-lock lookup
 table needed.
 
+**The actual unlock-a-door command**: `UnlockDoorCommand` (a
+`HandleGameCommand` handler, `word_32974` `0x21`-`0x2E`/`0x2F`) uses
+`ProbeFacingTile` to find the lock ahead, loads its state via
+`LoadLockState`, shows `NOT LOCKED` directly if it's already open
+(same bit test `ShowLockStatus` performs), and otherwise compares the
+door's required-key flags against the player's currently held key to
+resolve the attempt.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration
