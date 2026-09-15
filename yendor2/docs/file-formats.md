@@ -257,7 +257,13 @@ Together with `ShowVisionAtLocation`/`UseLocationBoundPotion`/
 `CheckQuestItemsCompleted`, this reads as a themed set of quest/relic
 items central to the main story — exact narrative (what they are,
 where they come from) still unidentified, but now a well-scoped thread
-for a future round.
+for a future round. The recharge flag itself, `g_globalFlags` index
+`0xB1`, has **no literal `SetGlobalFlag`/`ClearGlobalFlag` call**
+anywhere in the disassembly — it must be flipped through
+`ApplyItemEffectFlags`'s data-driven flag-index fields (an item's own
+catalog data, not a code literal), so pinning down exactly what
+recharges it needs `WORLD.DAT` item-data inspection rather than more
+static tracing.
 
 ### Combat: monster slots and turn order
 
