@@ -5396,8 +5396,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X212C8);
 	op_hex		(x,	1);
 	create_insn	(0X212E7);
+	set_cmt	(0X212EB,	"Iterates the 3 g_monsterSlots records, calling sub_20E54 (not traced) for each occupied one -- draws the active combat monsters' sprites into the dungeon viewport. Called from RenderDungeonVanishingPoint when word_328CA bit 0x1000 is set.",	0);
 	create_insn	(x=0X212EB);
 	op_hex		(x,	1);
+	set_name	(0X212EB,	"RenderActiveMonsterSprites");
 	create_insn	(x=0X21306);
 	op_hex		(x,	1);
 	create_insn	(0X21338);
@@ -6740,6 +6742,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X26AA8);
 	op_hex		(x,	1);
 	create_insn	(0X26AB1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26AB5);
 	op_hex		(x,	1);
 	create_insn	(0X26ABD);
@@ -6776,15 +6787,6 @@ static Bytes_1(void) {
 	create_insn	(0X26B4F);
 	create_insn	(x=0X26B82);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X26BBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X26BCB);
@@ -10152,6 +10154,15 @@ static Bytes_2(void) {
 	set_name	(0X35391,	"aDisease");
 	create_strlit	(0X35399,	0X7);
 	set_name	(0X35399,	"aPoison");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X353A0,	0X9);
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);
@@ -10168,15 +10179,6 @@ static Bytes_2(void) {
 	set_name	(0X353D0,	"aJinxing");
 	create_strlit	(0X353D8,	0XA);
 	set_name	(0X353D8,	"aTraining");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X353E2,	0XA);
 	set_name	(0X353E2,	"aReadyFor");
 	create_strlit	(0X353EC,	0X6);

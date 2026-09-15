@@ -29791,7 +29791,7 @@ sub_20E12       endp
 
 
 sub_20E54       proc near               ; CODE XREF: TryTriggerMonsterEncounterAtCell:loc_212E7↓p
-                                        ; sub_212EB+11↓p
+                                        ; RenderActiveMonsterSprites+11↓p
                 test    word ptr [si+92h], 4
                 jz      short loc_20E6F
                 or      word_328C6, 1
@@ -30241,7 +30241,7 @@ loc_212A9:                              ; CODE XREF: RenderDungeonVanishingPoint
                 call    TryTriggerMonsterEncounterAtCell
                 test    word_328CA, 1000h
                 jz      short locret_212B7
-                call    sub_212EB
+                call    RenderActiveMonsterSprites
 
 locret_212B7:                           ; CODE XREF: RenderDungeonVanishingPoint+9B↑j
                 retn
@@ -30287,23 +30287,23 @@ TryTriggerMonsterEncounterAtCell endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_212EB       proc near               ; CODE XREF: RenderDungeonVanishingPoint+9D↑p
-                or      word_3295A, 8000h
+RenderActiveMonsterSprites proc near    ; CODE XREF: RenderDungeonVanishingPoint+9D↑p
+                or      word_3295A, 8000h ; Iterates the 3 g_monsterSlots records, calling sub_20E54 (not traced) for each occupied one -- draws the active combat monsters' sprites into the dungeon viewport. Called from RenderDungeonVanishingPoint when word_328CA bit 0x1000 is set.
                 mov     si, 51C0h
                 mov     cx, 3
 
-loc_212F7:                              ; CODE XREF: sub_212EB+18↓j
+loc_212F7:                              ; CODE XREF: RenderActiveMonsterSprites+18↓j
                 cmp     word ptr [si], 0
                 jz      short loc_212FF
                 call    sub_20E54
 
-loc_212FF:                              ; CODE XREF: sub_212EB+F↑j
+loc_212FF:                              ; CODE XREF: RenderActiveMonsterSprites+F↑j
                 add     si, 9Ch
                 loop    loc_212F7
 
 locret_21305:                           ; CODE XREF: TryTriggerMonsterEncounterAtCell+1B↑j
                 retn
-sub_212EB       endp
+RenderActiveMonsterSprites endp
 
 
 ; =============== S U B R O U T I N E =======================================

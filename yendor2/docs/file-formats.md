@@ -525,7 +525,10 @@ variant.
 six: draws the far-wall/vanishing-point cells at the end of the
 visible corridor (a different `0xE551` table field, z-layer 6), then
 runs the same per-cell side-feature and encounter checks as
-`RenderDungeonViewRow` for the final cell.
+`RenderDungeonViewRow` for the final cell, and (when `word_328CA` bit
+`0x1000` is set, plausibly "in combat") calls
+`RenderActiveMonsterSprites` to draw the 3 `g_monsterSlots` combat
+monsters into the viewport.
 
 `RenderDungeonViewport` itself is called by two `start`-reachable
 screen-redraw functions: `RedrawDungeonScreen` (a fuller variant with

@@ -2463,6 +2463,15 @@ then runs the same per-cell side-feature and encounter checks as
 
 310 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RenderActiveMonsterSprites
+
+Named `sub_212EB`, called from `RenderDungeonVanishingPoint` when
+`word_328CA` bit `0x1000` is set: iterates the 3 `g_monsterSlots`
+records and draws each occupied one's sprite into the dungeon
+viewport.
+
+311 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
