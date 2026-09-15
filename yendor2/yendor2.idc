@@ -3974,7 +3974,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1BF0E,	"msg",	0);
 	create_insn	(0X1BF1C);
 	create_insn	(0X1BF4A);
+	set_cmt	(0X1BF94,	"UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.",	0);
 	create_insn	(0X1BF94);
+	set_name	(0X1BF94,	"UseHealingItem");
 	create_insn	(x=0X1BF98);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BFA0);
@@ -4929,6 +4931,15 @@ static Bytes_0(void) {
 	set_name	(0X1FC21,	"RestoreInt1cVector");
 	create_insn	(x=0X1FC34);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1FC37,	"DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",	0);
 	create_insn	(x=0X1FC37);
 	op_hex		(x,	0);
@@ -4994,15 +5005,6 @@ static Bytes_0(void) {
 	set_cmt	(0X20070,	"CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).",	0);
 	create_insn	(0X20070);
 	set_name	(0X20070,	"RunMapEditorScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -8707,6 +8709,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BCEC);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BCEF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BCFB);
@@ -8822,15 +8833,6 @@ static Bytes_1(void) {
 	create_insn	(0X2C2D7);
 	create_insn	(x=0X2C2E6);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C2F9);
 	create_insn	(0X2C303);
 	create_insn	(0X2C344);

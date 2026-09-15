@@ -13163,7 +13163,7 @@ loc_17BA4:                              ; CODE XREF: UseItem+D↑j
                 call    ClearStatusPanelIfDirty
                 test    word_2E410, 8000h
                 jz      short loc_17BBF
-                call    sub_1BF94
+                call    UseHealingItem
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -20397,7 +20397,7 @@ CheckPartyMemberItemFlag endp
 
 
 ClassifyPartyMemberCondition proc far   ; CODE XREF: UseItem+2C7↑P
-                                        ; sub_1BF94+6A↓p ...
+                                        ; UseHealingItem+6A↓p ...
                 push    bx              ; Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.
                 push    si
                 and     word_2E40C, 3FFh
@@ -20663,7 +20663,7 @@ sub_1B8EE       endp
 
 
 sub_1B96F       proc far                ; CODE XREF: UseItemType_400+EF↓p
-                                        ; sub_1BF94+169↓p ...
+                                        ; UseHealingItem+169↓p ...
                 push    bx
                 push    ax
                 mov     ax, es:[si+10h]
@@ -20734,8 +20734,8 @@ sub_1B96F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BA35       proc far                ; CODE XREF: sub_1BF94+14C↓p
-                                        ; sub_1BF94+179↓p
+sub_1BA35       proc far                ; CODE XREF: UseHealingItem+14C↓p
+                                        ; UseHealingItem+179↓p
                 mov     bx, word_328D4
                 xor     ax, ax
                 test    word ptr [bx+1Ch], 8000h
@@ -21304,8 +21304,8 @@ UseItemType_400 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BF94       proc far                ; CODE XREF: UseItem+25↑P
-                push    cs
+UseHealingItem  proc far                ; CODE XREF: UseItem+25↑P
+                push    cs              ; UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.
                 call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1BFEA
@@ -21318,25 +21318,25 @@ sub_1BF94       proc far                ; CODE XREF: UseItem+25↑P
                 jmp     loc_1C0D7
 ; ---------------------------------------------------------------------------
 
-loc_1BFBB:                              ; CODE XREF: sub_1BF94+22↑j
+loc_1BFBB:                              ; CODE XREF: UseHealingItem+22↑j
                 test    word ptr es:[si+10h], 2000h
                 jz      short loc_1BFC6
                 jmp     loc_1C101
 ; ---------------------------------------------------------------------------
 
-loc_1BFC6:                              ; CODE XREF: sub_1BF94+2D↑j
+loc_1BFC6:                              ; CODE XREF: UseHealingItem+2D↑j
                 test    word ptr es:[si+10h], 4000h
                 jz      short loc_1BFD1
                 jmp     loc_1C10C
 ; ---------------------------------------------------------------------------
 
-loc_1BFD1:                              ; CODE XREF: sub_1BF94+38↑j
+loc_1BFD1:                              ; CODE XREF: UseHealingItem+38↑j
                 test    word ptr es:[si+10h], 8000h
                 jz      short loc_1BFDC
                 jmp     loc_1C118
 ; ---------------------------------------------------------------------------
 
-loc_1BFDC:                              ; CODE XREF: sub_1BF94+43↑j
+loc_1BFDC:                              ; CODE XREF: UseHealingItem+43↑j
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
@@ -21345,8 +21345,8 @@ loc_1BFDC:                              ; CODE XREF: sub_1BF94+43↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
-                                        ; sub_1BF94+6D↓j ...
+loc_1BFEA:                              ; CODE XREF: UseHealingItem+A↑j
+                                        ; UseHealingItem+6D↓j ...
                 or      word_2E410, 1
                 push    cs
                 call    near ptr ApplyItemEffectFlags
@@ -21356,13 +21356,13 @@ loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BFFD:                              ; CODE XREF: sub_1BF94+12↑j
+loc_1BFFD:                              ; CODE XREF: UseHealingItem+12↑j
                 push    cs
                 call    near ptr ClassifyPartyMemberCondition
                 jmp     short loc_1BFEA
 ; ---------------------------------------------------------------------------
 
-loc_1C003:                              ; CODE XREF: sub_1BF94+1A↑j
+loc_1C003:                              ; CODE XREF: UseHealingItem+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
                 call    CompareBCD4
@@ -21376,7 +21376,7 @@ loc_1C003:                              ; CODE XREF: sub_1BF94+1A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C030:                              ; CODE XREF: sub_1BF94+7A↑j
+loc_1C030:                              ; CODE XREF: UseHealingItem+7A↑j
                 call    SubBCD4
                 push    word_32924
                 mov     word_32924, 0
@@ -21391,25 +21391,25 @@ loc_1C030:                              ; CODE XREF: sub_1BF94+7A↑j
                 and     word ptr [bx+1Ch], 0FFBFh
                 mov     word ptr [bx+52h], 2
 
-loc_1C066:                              ; CODE XREF: sub_1BF94+C7↑j
+loc_1C066:                              ; CODE XREF: UseHealingItem+C7↑j
                 test    word_3298E, 4000h
                 jz      short loc_1C072
                 and     word ptr [bx+1Ch], 7Fh
 
-loc_1C072:                              ; CODE XREF: sub_1BF94+D8↑j
+loc_1C072:                              ; CODE XREF: UseHealingItem+D8↑j
                 test    word_3298E, 8000h
                 jz      short loc_1C081
                 mov     ax, [bx+92h]
                 mov     [bx+52h], ax
 
-loc_1C081:                              ; CODE XREF: sub_1BF94+E4↑j
+loc_1C081:                              ; CODE XREF: UseHealingItem+E4↑j
                 test    word_3298E, 1000h
                 jz      short loc_1C094
                 mov     ax, [bx+92h]
                 mov     [bx+52h], ax
                 and     word ptr [bx+1Ch], 3Fh
 
-loc_1C094:                              ; CODE XREF: sub_1BF94+F3↑j
+loc_1C094:                              ; CODE XREF: UseHealingItem+F3↑j
                 push    si
                 mov     si, word_32924
                 sub     si, 95EBh
@@ -21433,30 +21433,30 @@ loc_1C094:                              ; CODE XREF: sub_1BF94+F3↑j
                 jmp     loc_1BFEA
 ; ---------------------------------------------------------------------------
 
-loc_1C0D7:                              ; CODE XREF: sub_1BF94+24↑j
+loc_1C0D7:                              ; CODE XREF: UseHealingItem+24↑j
                 test    word_2E40C, 4000h
                 jz      short loc_1C0E3
                 push    cs
                 call    near ptr sub_1BA35
 
-loc_1C0E3:                              ; CODE XREF: sub_1BF94+149↑j
+loc_1C0E3:                              ; CODE XREF: UseHealingItem+149↑j
                 test    word_2E40C, 8000h
                 jz      short loc_1C0EE
                 add     ax, 14h
 
-loc_1C0EE:                              ; CODE XREF: sub_1BF94+155↑j
+loc_1C0EE:                              ; CODE XREF: UseHealingItem+155↑j
                 test    word_2E40C, 2000h
                 jz      short loc_1C0F9
                 add     ax, 64h ; 'd'
 
-loc_1C0F9:                              ; CODE XREF: sub_1BF94+160↑j
+loc_1C0F9:                              ; CODE XREF: UseHealingItem+160↑j
                 mov     bx, 7F79h
                 push    cs
                 call    near ptr sub_1B96F
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C101:                              ; CODE XREF: sub_1BF94+2F↑j
+loc_1C101:                              ; CODE XREF: UseHealingItem+2F↑j
                 mov     ax, 64h ; 'd'
                 mov     bx, 7F62h
                 push    cs
@@ -21464,7 +21464,7 @@ loc_1C101:                              ; CODE XREF: sub_1BF94+2F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C10C:                              ; CODE XREF: sub_1BF94+3A↑j
+loc_1C10C:                              ; CODE XREF: UseHealingItem+3A↑j
                 push    cs
                 call    near ptr sub_1BA35
                 mov     bx, 7F47h
@@ -21473,13 +21473,13 @@ loc_1C10C:                              ; CODE XREF: sub_1BF94+3A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C118:                              ; CODE XREF: sub_1BF94+45↑j
+loc_1C118:                              ; CODE XREF: UseHealingItem+45↑j
                 mov     ax, 14h
                 mov     bx, 7F26h
                 push    cs
                 call    near ptr sub_1B96F
                 retf
-sub_1BF94       endp
+UseHealingItem  endp
 
 
 ; =============== S U B R O U T I N E =======================================

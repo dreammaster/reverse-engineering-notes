@@ -1350,6 +1350,22 @@ redraw-dirty flag.
 
 193 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found a real item type — UseHealingItem
+
+One of `UseItem`'s type handlers (`word_2E410` bit `0x8000`) finally
+had concrete, unambiguous behavior instead of the usual offset-
+suffixed ambiguity: pays a BCD material cost, then restores HP and
+clears specific status-ailment bits on the current party member per a
+separate cure-flags word — classic healing-potion/cure-spell mechanics.
+Named `UseHealingItem` outright rather than hedging. It also reuses
+the trap/status-effect icon-bar system from several rounds ago
+(`PrepareTrapEffectSlots`/`ApplyEffectAndDrawIconBar`) to show a
+"healed" icon, and a separate branch confirmed `ClassifyPartyMemberCondition`'s
+tier bits really do drive the user-facing status message shown for a
+target, not just internal bookkeeping.
+
+194 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
