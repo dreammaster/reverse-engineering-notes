@@ -2311,7 +2311,7 @@ loc_11535:                              ; CODE XREF: HandleMovementInput+282↑j
                 mov     bx, word_36CF9
                 add     bx, word_2E406
                 call    TryInteractAtPosition
-                call    sub_17795
+                call    ShowLockStatus
                 jmp     short loc_11581
 ; ---------------------------------------------------------------------------
 
@@ -12701,9 +12701,9 @@ LoadCurgameRecord endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17795       proc far                ; CODE XREF: HandleMovementInput+2A0↑P
+ShowLockStatus  proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                                         ; UseAbilityCommand+98↓p ...
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; Lock-examination message shower (called from UseAbilityCommand and HandleMovementInput). Shows 'NOT LOCKED'/'LOCKED'/'MAGICALLY LOCKED' (word_32DCE bit 0x20)/'LOCKED AND TRAPPED', or 'REQUIRES SPECIAL KEY: <tier> KEY' -- the exact 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD, word_32DCE bits 0x200-0x8000) already cross-confirmed early in the session against the Hex Hacking Item Guide's door-key item table. Gated on the current party member's [+0x6C] field (plausibly a lockpicking/perception skill) against thresholds.
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -12720,7 +12720,7 @@ sub_17795       proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
 
-loc_177D8:                              ; CODE XREF: sub_17795+3E↑j
+loc_177D8:                              ; CODE XREF: ShowLockStatus+3E↑j
                 mov     bx, 7BB7h
                 mov     cx, 1
                 test    word_32DCE, 80h
@@ -12730,18 +12730,18 @@ loc_177D8:                              ; CODE XREF: sub_17795+3E↑j
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
 
-loc_177EF:                              ; CODE XREF: sub_17795+55↑j
+loc_177EF:                              ; CODE XREF: ShowLockStatus+55↑j
                 cmp     word_32DD0, 0
                 jnz     short loc_177F9
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
 
-loc_177F9:                              ; CODE XREF: sub_17795+5F↑j
+loc_177F9:                              ; CODE XREF: ShowLockStatus+5F↑j
                 add     cx, 1
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
 
-loc_177FF:                              ; CODE XREF: sub_17795+4F↑j
+loc_177FF:                              ; CODE XREF: ShowLockStatus+4F↑j
                 mov     bx, 7BCEh
                 mov     cx, 1
                 cmp     word ptr [si+6Ch], 37h ; '7'
@@ -12749,7 +12749,7 @@ loc_177FF:                              ; CODE XREF: sub_17795+4F↑j
                 jmp     loc_17896
 ; ---------------------------------------------------------------------------
 
-loc_1780E:                              ; CODE XREF: sub_17795+74↑j
+loc_1780E:                              ; CODE XREF: ShowLockStatus+74↑j
                 cmp     word_32DD0, 0
                 jz      short loc_17821
                 mov     bx, 7BD5h
@@ -12757,7 +12757,7 @@ loc_1780E:                              ; CODE XREF: sub_17795+74↑j
                 cmp     word ptr [si+6Ch], 41h ; 'A'
                 jl      short loc_17896
 
-loc_17821:                              ; CODE XREF: sub_17795+7E↑j
+loc_17821:                              ; CODE XREF: ShowLockStatus+7E↑j
                 test    word_32DCE, 0FE00h
                 jz      short loc_17896
                 mov     bx, 7BF9h
@@ -12791,13 +12791,13 @@ loc_17821:                              ; CODE XREF: sub_17795+7E↑j
                 jnz     short loc_17896
                 mov     bx, 7C02h
 
-loc_17896:                              ; CODE XREF: sub_17795+40↑j
-                                        ; sub_17795+57↑j ...
+loc_17896:                              ; CODE XREF: ShowLockStatus+40↑j
+                                        ; ShowLockStatus+57↑j ...
                 call    sub_23B76
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_17795       endp
+ShowLockStatus  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12865,7 +12865,7 @@ loc_17927:                              ; CODE XREF: UseAbilityCommand+72↑j
                 test    byte_32DCD, al
                 jnz     short loc_1799D
                 push    cs
-                call    near ptr sub_17795
+                call    near ptr ShowLockStatus
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -46017,7 +46017,7 @@ loc_297EB:                              ; CODE XREF: sub_29738+A9↑j
                 call    sub_25B14
 
 loc_297F8:                              ; CODE XREF: sub_29738+B9↑j
-                call    sub_17795
+                call    ShowLockStatus
                 jmp     loc_2975D
 ; ---------------------------------------------------------------------------
 
@@ -48320,7 +48320,7 @@ loc_2A82F:                              ; CODE XREF: sub_2A788+9D↑j
 loc_2A845:                              ; CODE XREF: sub_2A788+AE↑j
                 test    word_32DCE, 40h
                 jnz     short loc_2A854
-                call    sub_17795
+                call    ShowLockStatus
                 jmp     short loc_2A7DA
 ; ---------------------------------------------------------------------------
 
@@ -75461,7 +75461,7 @@ byte_32DCC      db 0                    ; DATA XREF: sub_17032:loc_170A3↑w
 byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
 word_32DCE      dw 0                    ; DATA XREF: sub_1732B+24C↑r
-                                        ; sub_17795+38↑r ...
+                                        ; ShowLockStatus+38↑r ...
 word_32DD0      dw 0                    ; DATA XREF: sub_1766F+88↑r
                                         ; LoadCurgameRecord+74↑r ...
                 db    0

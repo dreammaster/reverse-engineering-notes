@@ -404,6 +404,16 @@ up with the town/password strings found in the binary (`PORT HOPE`,
 accurate for at least the shareware chapter's item set, not just
 inferred/reconstructed after the fact by its author.
 
+**Found the code that uses this string cluster**: `ShowLockStatus`
+(was `sub_17795`) examines a targeted lock and shows `NOT LOCKED`/
+`LOCKED`/`MAGICALLY LOCKED`/`LOCKED AND TRAPPED`, or `REQUIRES SPECIAL
+KEY: <tier> KEY` — the exact 7-tier hierarchy above, selected by flag
+bits on `word_32DCE`. How much detail is revealed is gated on the
+current party member's `+0x6C` field against ASCII-looking thresholds
+(`0x37`/`'7'`, `0x41`/`'A'`, `0x50`/`'P'`) — plausibly a lockpicking or
+perception skill value, not confirmed against `ShowCharacterSkills`'
+15-entry skill array yet.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration

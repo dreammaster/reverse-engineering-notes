@@ -2700,7 +2700,9 @@ static Bytes_0(void) {
 	op_plain_offset	(x,	129,	0);
 	create_insn	(x=0X1777B);
 	op_seg		(x,	1);
+	set_cmt	(0X17795,	"Lock-examination message shower (called from UseAbilityCommand and HandleMovementInput). Shows 'NOT LOCKED'/'LOCKED'/'MAGICALLY LOCKED' (word_32DCE bit 0x20)/'LOCKED AND TRAPPED', or 'REQUIRES SPECIAL KEY: <tier> KEY' -- the exact 7-tier key hierarchy (BRASS/BRONZE/COPPER/IRON/STEEL/SILVER/GOLD, word_32DCE bits 0x200-0x8000) already cross-confirmed early in the session against the Hex Hacking Item Guide's door-key item table. Gated on the current party member's [+0x6C] field (plausibly a lockpicking/perception skill) against thresholds.",	0);
 	create_insn	(0X17795);
+	set_name	(0X17795,	"ShowLockStatus");
 	create_insn	(x=0X1779A);
 	op_hex		(x,	1);
 	create_insn	(x=0X177CD);
@@ -4627,6 +4629,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E714);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1E72A);
 	create_insn	(x=0X1E72F);
 	op_hex		(x,	1);
@@ -4676,15 +4687,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1EA6E,	"In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.",	0);
 	create_insn	(0X1EA6E);
 	set_name	(0X1EA6E,	"RunGameDialog");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1EA83);
 	create_insn	(x=0X1EA92);
 	op_hex		(x,	1);
@@ -8282,6 +8284,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A39A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A3A4);
 	create_insn	(x=0X2A3A7);
 	op_hex		(x,	1);
@@ -8355,15 +8366,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2A53C,	"If word_328C6 bit 0 is set, expands g_blitMaskLen bytes from g_blitMaskPtr into a 15-word scratch buffer: each byte's low nibble becomes (nibble << 4) zero-extended to a word -- classic masked-blit prep. Factored-out copy of the same loop inlined in DrawPicture (loc_29A02) and sub_29B0F.",	0);
 	create_insn	(0X2A53C);
 	set_name	(0X2A53C,	"ExpandBlitMaskNibbles");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A551);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A56A);

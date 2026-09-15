@@ -1566,6 +1566,21 @@ question — it's the caller that reaches `ShowMaterialCounterHud`, via
 
 211 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowLockStatus, closing a very early lead
+
+Traced `sub_17795` and dumped its message strings directly — they're
+the exact 7-tier key hierarchy (`BRASS`/`BRONZE`/`COPPER`/`IRON`/
+`STEEL`/`SILVER`/`GOLD KEY`) the very first string survey of this
+session cross-confirmed against the Hex Hacking Item Guide's door-key
+table, but whose actual usage in code was never traced until now.
+Named `ShowLockStatus`: examines a targeted lock and reports its state
+(`NOT LOCKED`/`LOCKED`/`MAGICALLY LOCKED`/`LOCKED AND TRAPPED`/
+`REQUIRES SPECIAL KEY: <tier>`), gated by a party member's `+0x6C`
+field against skill-looking thresholds — plausibly lockpicking or
+perception, not yet cross-checked against the skill array.
+
+212 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
