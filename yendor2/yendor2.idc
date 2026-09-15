@@ -7382,7 +7382,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X284C5);
 	op_hex		(x,	1);
+	set_cmt	(0X284CB,	"Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.",	0);
 	create_insn	(0X284CB);
+	set_name	(0X284CB,	"DetectSoundDriver");
 	create_insn	(x=0X284D7);
 	op_hex		(x,	1);
 	set_cmt	(0X284D9,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
@@ -8798,8 +8800,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
-	create_insn	(x=0X2AA5C);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -8809,6 +8809,8 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2AA5C);
+	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);
 	op_hex		(x,	1);
 	create_insn	(0X2AA6B);

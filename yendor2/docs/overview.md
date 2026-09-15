@@ -3165,6 +3165,14 @@ inside it.
 
 409 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DetectSoundDriver
+
+Named `sub_284CB`: scans DOS interrupt vectors for an installed sound/
+music driver's signature, allocating its buffer and setting driver
+state flags on success.
+
+410 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

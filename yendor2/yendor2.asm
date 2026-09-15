@@ -43655,7 +43655,7 @@ sub_283EA       proc far                ; CODE XREF: InitGame+85↑P
 loc_283FB:                              ; CODE XREF: sub_283EA+E↑j
                 test    word_328C8, 2
                 jnz     short loc_28406
-                call    sub_284CB
+                call    DetectSoundDriver
 
 loc_28406:                              ; CODE XREF: sub_283EA+17↑j
                 test    word_328C8, 1
@@ -43754,11 +43754,11 @@ StopMusicAndResetTimer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_284CB       proc near               ; CODE XREF: sub_283EA+19↑p
-                mov     cx, 3Fh ; '?'
+DetectSoundDriver proc near             ; CODE XREF: sub_283EA+19↑p
+                mov     cx, 3Fh ; '?'   ; Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.
                 mov     word_2E534, 80h
 
-loc_284D4:                              ; CODE XREF: sub_284CB+1E↓j
+loc_284D4:                              ; CODE XREF: DetectSoundDriver+1E↓j
                 mov     ax, word_2E534
                 mov     ah, 35h
                 int     21h             ; DOS - 2+ - GET INTERRUPT VECTOR
@@ -43769,8 +43769,8 @@ loc_284D4:                              ; CODE XREF: sub_284CB+1E↓j
                 cmp     byte ptr es:[bx], 0CFh
                 jnz     short loc_284F6
 
-loc_284E5:                              ; CODE XREF: sub_284CB+12↑j
-                                        ; sub_284CB+3A↓j
+loc_284E5:                              ; CODE XREF: DetectSoundDriver+12↑j
+                                        ; DetectSoundDriver+3A↓j
                 inc     word_2E534
                 loop    loc_284D4
                 and     g_driverStateFlags, 0FFFCh
@@ -43778,7 +43778,7 @@ loc_284E5:                              ; CODE XREF: sub_284CB+12↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_284F6:                              ; CODE XREF: sub_284CB+18↑j
+loc_284F6:                              ; CODE XREF: DetectSoundDriver+18↑j
                 push    cx
                 mov     si, 0CD6h
                 mov     di, 103h
@@ -43789,7 +43789,7 @@ loc_284F6:                              ; CODE XREF: sub_284CB+18↑j
                 jmp     short loc_284E5
 ; ---------------------------------------------------------------------------
 
-loc_28507:                              ; CODE XREF: sub_284CB+37↑j
+loc_28507:                              ; CODE XREF: DetectSoundDriver+37↑j
                 add     sp, 2
                 mov     ax, word_2E534
                 mov     cs:byte_28617, al
@@ -43805,12 +43805,12 @@ loc_28507:                              ; CODE XREF: sub_284CB+37↑j
                 mov     cx, _val44
                 mov     ax, 0
 
-loc_28533:                              ; CODE XREF: sub_284CB+71↓j
+loc_28533:                              ; CODE XREF: DetectSoundDriver+71↓j
                 cmp     ax, [bx]
                 jge     short loc_28539
                 mov     ax, [bx]
 
-loc_28539:                              ; CODE XREF: sub_284CB+6A↑j
+loc_28539:                              ; CODE XREF: DetectSoundDriver+6A↑j
                 add     bx, 2
                 loop    loc_28533
                 sar     ax, 1
@@ -43825,7 +43825,7 @@ loc_28539:                              ; CODE XREF: sub_284CB+6A↑j
                 or      g_driverStateFlags, 3
                 and     g_driverStateFlags, 0FFBFh
                 retn
-sub_284CB       endp
+DetectSoundDriver endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43897,7 +43897,7 @@ sub_28564       endp
 byte_28616      db 0CDh                 ; CODE XREF: PlayMusicTrack+5B↑p
                                         ; PlayMusicTrack+72↑p ...
 byte_28617      db 0                    ; DATA XREF: ShutdownAudioDrivers+35↑r
-                                        ; sub_284CB+42↑w
+                                        ; DetectSoundDriver+42↑w
 ; ---------------------------------------------------------------------------
                 retn
 
@@ -56900,8 +56900,8 @@ word_2E530      dw 0                    ; DATA XREF: start+63F↑w
                                         ; start:loc_10652↑w ...
 word_2E532      dw 0                    ; DATA XREF: sub_116CF+11↑w
                                         ; ShowIntroPicture+27↑w ...
-word_2E534      dw 0                    ; DATA XREF: sub_284CB+3↑w
-                                        ; sub_284CB:loc_284D4↑r ...
+word_2E534      dw 0                    ; DATA XREF: DetectSoundDriver+3↑w
+                                        ; DetectSoundDriver:loc_284D4↑r ...
 aFmdrv          db 'FMDRV',0
 _val21          dw 0                    ; DATA XREF: InitGlobals+A2↑w
                                         ; DrawDungeonCellSideFeature+3F↑r
@@ -74443,7 +74443,7 @@ _val43          dw 0                    ; DATA XREF: InitGlobals+126↑w
 _val9           dw 0                    ; DATA XREF: InitGlobals+30↑w
                                         ; LoadCurgameRecord+58↑r
 _val44          dw 0                    ; DATA XREF: InitGlobals+12C↑w
-                                        ; sub_284CB+61↑r
+                                        ; DetectSoundDriver+61↑r
 _val45          dw 0                    ; DATA XREF: InitGlobals+132↑w
                                         ; sub_28564+7C↑r
 _val46          dw 0                    ; DATA XREF: InitGlobals+138↑w
