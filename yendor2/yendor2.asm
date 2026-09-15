@@ -52477,7 +52477,7 @@ loc_2CEED:                              ; CODE XREF: sub_2C0FE+DE7↑j
 loc_2CEFB:                              ; CODE XREF: sub_2C0FE+E09↓j
                 cmp     word ptr [di], 0
                 jz      short loc_2CF03
-                call    sub_2D370
+                call    ApplyDamageToMapMonster
 
 loc_2CF03:                              ; CODE XREF: sub_2C0FE+E00↑j
                 add     di, 9Ch
@@ -52489,7 +52489,7 @@ loc_2CF09:                              ; CODE XREF: sub_2C0FE+DF5↑j
                 or      si, si
                 jz      short loc_2CF1D
                 mov     di, si
-                call    sub_2D370
+                call    ApplyDamageToMapMonster
 
 loc_2CF1D:                              ; CODE XREF: sub_2C0FE+E18↑j
                 mov     word_3292C, 30h ; '0'
@@ -52497,7 +52497,7 @@ loc_2CF1D:                              ; CODE XREF: sub_2C0FE+E18↑j
                 or      si, si
                 jz      short loc_2CF31
                 mov     di, si
-                call    sub_2D370
+                call    ApplyDamageToMapMonster
 
 loc_2CF31:                              ; CODE XREF: sub_2C0FE+E2C↑j
                 mov     word_3292C, 2Fh ; '/'
@@ -52508,7 +52508,7 @@ loc_2CF3A:                              ; CODE XREF: sub_2C0FE+E4E↓j
                 or      si, si
                 jz      short loc_2CF48
                 mov     di, si
-                call    sub_2D370
+                call    ApplyDamageToMapMonster
 
 loc_2CF48:                              ; CODE XREF: sub_2C0FE+E43↑j
                 dec     word_3292C
@@ -52927,9 +52927,9 @@ sub_2D1C2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2D370       proc near               ; CODE XREF: sub_2C0FE+E02↑p
+ApplyDamageToMapMonster proc near       ; CODE XREF: sub_2C0FE+E02↑p
                                         ; sub_2C0FE+E1C↑p ...
-                push    di
+                push    di              ; Applies damage (word_2E49A+word_2E49C) to a dungeon-corridor monster (g_levelMonsters, via sub_2D498/sub_2D4B6, not traced), sets wound/display flags, redraws and waits, then resolves death (GrantMonsterRewards + RemoveMonsterFromMap + RedrawDungeonScreen) or survival (RefreshDungeonScreen) based on HP ([+0x10]). Called from sub_2C0FE.
                 push    cx
                 push    word_3292C
                 call    sub_2D4B6
@@ -52946,7 +52946,7 @@ sub_2D370       proc near               ; CODE XREF: sub_2C0FE+E02↑p
                 jz      short loc_2D3A0
                 and     word ptr [di+0Ch], 0FFFEh
 
-loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
+loc_2D3A0:                              ; CODE XREF: ApplyDamageToMapMonster+2A↑j
                 push    di
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
@@ -52961,18 +52961,18 @@ loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
                 jmp     short loc_2D3D0
 ; ---------------------------------------------------------------------------
 
-loc_2D3CB:                              ; CODE XREF: sub_2D370+48↑j
+loc_2D3CB:                              ; CODE XREF: ApplyDamageToMapMonster+48↑j
                 call    RefreshDungeonScreen
 
-loc_2D3D0:                              ; CODE XREF: sub_2D370+59↑j
+loc_2D3D0:                              ; CODE XREF: ApplyDamageToMapMonster+59↑j
                 call    DrawMouseCursor
 
-loc_2D3D5:                              ; CODE XREF: sub_2D370+12↑j
+loc_2D3D5:                              ; CODE XREF: ApplyDamageToMapMonster+12↑j
                 pop     word_3292C
                 pop     cx
                 pop     di
                 retn
-sub_2D370       endp
+ApplyDamageToMapMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================

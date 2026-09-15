@@ -9398,7 +9398,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D359);
 	op_hex		(x,	1);
+	set_cmt	(0X2D370,	"Applies damage (word_2E49A+word_2E49C) to a dungeon-corridor monster (g_levelMonsters, via sub_2D498/sub_2D4B6, not traced), sets wound/display flags, redraws and waits, then resolves death (GrantMonsterRewards + RemoveMonsterFromMap + RedrawDungeonScreen) or survival (RefreshDungeonScreen) based on HP ([+0x10]). Called from sub_2C0FE.",	0);
 	create_insn	(0X2D370);
+	set_name	(0X2D370,	"ApplyDamageToMapMonster");
 	create_insn	(x=0X2D390);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D394);
@@ -9923,6 +9925,15 @@ static Bytes_2(void) {
 	create_word	(0X329FA);
 	create_word	(0X329FC);
 	set_name	(0X329FC,	"_blockSize5");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329FE);
 	create_word	(0X32A00);
 	create_word	(0X32A02);
@@ -9945,15 +9956,6 @@ static Bytes_2(void) {
 	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
 	set_name	(0X32A20,	"g_monsterSlots");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32A2A);
 	create_word	(0X32AB2);
 	create_word	(0X32ABC);

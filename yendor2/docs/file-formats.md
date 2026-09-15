@@ -444,6 +444,15 @@ it as hidden — dungeon line-of-sight occlusion, using
 `IsDungeonRowFullyBlocked` (is every cell in a given row a solid-wall
 type — a dead-end/closed-wall test) to find that boundary row.
 
+**Attacking a monster in the corridor before it's engaged in turn-based
+combat**: `ApplyDamageToMapMonster` (called from an unnamed dispatcher,
+`sub_2C0FE`) applies damage to a `g_levelMonsters`-pool monster, sets
+wound/display flags, redraws, then resolves death (`GrantMonsterRewards`
++ `RemoveMonsterFromMap` + `RedrawDungeonScreen`) or survival
+(`RefreshDungeonScreen`) based on its HP — the corridor-encounter
+counterpart to the turn-based `g_monsterSlots` combat flow documented
+below.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

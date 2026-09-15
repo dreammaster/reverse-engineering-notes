@@ -2577,6 +2577,17 @@ blitting, and monster AI.
 
 324 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyDamageToMapMonster
+
+Named `sub_2D370`: applies damage to a `g_levelMonsters`-pool monster
+in the corridor (not yet in turn-based combat), then resolves death
+(reusing `GrantMonsterRewards`/`RemoveMonsterFromMap`/
+`RedrawDungeonScreen`) or survival (`RefreshDungeonScreen`). Ties this
+round's dungeon-rendering names back into earlier-session combat/loot
+findings.
+
+325 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
