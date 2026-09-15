@@ -488,6 +488,15 @@ isn't traced yet.
 wander pool**, `g_levelMonsters` (base `0xF26`, 80 × `0x9C`-byte
 records — same stride and `[+0xC]` flag conventions as
 `g_monsterSlots`, strongly suggesting the identical record layout).
+New monsters enter this pool via `SpawnMonsterInFacingDirection`
+(called from an untraced movement/trigger handler, `sub_212B8`):
+finds an empty slot, loads the monster's catalog record from
+`WORLD.DAT` (same block math as `LoadClueBookMonsterEntry`), computes
+a spawn position offset from the party's current facing direction
+(the same `word_36CF5` tier bits `ShowCompassDirection` reads) plus
+current position, sets a countdown timer and full HP
+(`[+0x10]=[+0x50]`).
+
 `ProcessLevelMonsters` ticks every occupied slot via `TickMonsterTimer`
 each `RunDungeonGameLoop` iteration: a movement/attack-readiness
 countdown (`[+0x10] -= [+0x1C]`, `errorCode`=1 on reaching 0, or a

@@ -2395,6 +2395,18 @@ directly, the other a record pointer.
 
 300 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SpawnMonsterInFacingDirection
+
+Named `sub_22A68`, the per-level monster spawn function: finds an
+empty `g_levelMonsters` slot, loads the monster's catalog record from
+`WORLD.DAT`, computes a spawn position offset from the party's current
+facing direction (same tier bits as `ShowCompassDirection`), sets a
+countdown timer and full HP. Called from an untraced movement/trigger
+handler (`sub_212B8`) — a first foothold into the combat-encounter
+trigger system, not chased further this round.
+
+301 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

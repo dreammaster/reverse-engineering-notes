@@ -5753,8 +5753,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X22A5E);
 	op_hex		(x,	1);
-	set_cmt	(0X22A68,	"this",	0);
+	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
 	create_insn	(0X22A68);
+	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -6935,6 +6936,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2781C,	"FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.",	0);
 	create_insn	(0X2781C);
 	set_name	(0X2781C,	"FailsSavingThrow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27846);
 	create_insn	(0X2784A);
 	create_insn	(x=0X27852);
@@ -6984,15 +6994,6 @@ static Bytes_1(void) {
 	set_cmt	(0X27A2A,	"ClearGlobalFlag(ax=flag index): [si] &= ~mask.",	0);
 	create_insn	(0X27A2A);
 	set_name	(0X27A2A,	"ClearGlobalFlag");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27A34);
 	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
 	create_insn	(0X27A3E);
@@ -10306,6 +10307,15 @@ static Bytes_2(void) {
 	set_name	(0X3575F,	"aThievery");
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35779,	0XD);
 	set_name	(0X35779,	"aChemistry");
 	create_strlit	(0X35786,	0X21);
@@ -10329,15 +10339,6 @@ static Bytes_2(void) {
 	set_name	(0X3583D,	"aSellItemOr");
 	create_strlit	(0X3584A,	0XD);
 	set_name	(0X3584A,	"aEscToUndo");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
 	create_strlit	(0X35864,	0XD);
@@ -12758,7 +12759,7 @@ static Functions_0(void) {
 	set_frame_size(0X22A35, 0X2, 0, 0);
 	add_func    (0X22A68,0X22B78);
 	set_func_flags(0X22A68,0x5402);
-	SetType(0X22A68, "int __fastcall __far sub_22A68(int, int, FileEntry *this);");
+	SetType(0X22A68, "int __fastcall __far SpawnMonsterInFacingDirection(int, int, FileEntry *this);");
 	set_frame_size(0X22A68, 0, 0, 0);
 	add_func    (0X22B78,0X22B96);
 	set_func_flags(0X22B78,0x5402);

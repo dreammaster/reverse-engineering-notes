@@ -30271,7 +30271,7 @@ loc_212C8:                              ; CODE XREF: sub_212B8+D↑j
                 mov     ax, [di+4]
                 call    sub_22B78
                 jnz     short loc_212E7
-                call    sub_22A68
+                call    SpawnMonsterInFacingDirection
                 jnz     short loc_212E7
                 retn
 ; ---------------------------------------------------------------------------
@@ -32969,14 +32969,14 @@ seg072          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall __far sub_22A68(int, int, FileEntry *this)
-sub_22A68       proc far                ; CODE XREF: sub_212B8+27↑P
-                push    cx              ; this
+; int __fastcall __far SpawnMonsterInFacingDirection(int, int, FileEntry *this)
+SpawnMonsterInFacingDirection proc far  ; CODE XREF: sub_212B8+27↑P
+                push    cx              ; Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).
                 mov     bx, ax
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_22A71:                              ; CODE XREF: sub_22A68+12↓j
+loc_22A71:                              ; CODE XREF: SpawnMonsterInFacingDirection+12↓j
                 cmp     word ptr [si], 0
                 jz      short loc_22A8A
                 add     si, 9Ch
@@ -32987,7 +32987,7 @@ loc_22A71:                              ; CODE XREF: sub_22A68+12↓j
                 jmp     loc_22B73
 ; ---------------------------------------------------------------------------
 
-loc_22A8A:                              ; CODE XREF: sub_22A68+C↑j
+loc_22A8A:                              ; CODE XREF: SpawnMonsterInFacingDirection+C↑j
                 mov     [si], bx
                 mov     ax, 0AFA8h
                 call    WorldDat_setBlock6
@@ -33016,8 +33016,8 @@ loc_22A8A:                              ; CODE XREF: sub_22A68+C↑j
                 jnz     short loc_22AF1
                 mov     bx, 71C2h
 
-loc_22AF1:                              ; CODE XREF: sub_22A68+6E↑j
-                                        ; sub_22A68+79↑j ...
+loc_22AF1:                              ; CODE XREF: SpawnMonsterInFacingDirection+6E↑j
+                                        ; SpawnMonsterInFacingDirection+79↑j ...
                 add     bx, ax
                 mov     al, [bx]
                 cbw
@@ -33047,7 +33047,7 @@ loc_22AF1:                              ; CODE XREF: sub_22A68+6E↑j
                 jnz     short loc_22B40
                 mov     ax, 0Dh
 
-loc_22B40:                              ; CODE XREF: sub_22A68+D3↑j
+loc_22B40:                              ; CODE XREF: SpawnMonsterInFacingDirection+D3↑j
                 mov     [si+0Ah], ax
                 mov     ax, [si+50h]
                 mov     [si+10h], ax
@@ -33058,7 +33058,7 @@ loc_22B40:                              ; CODE XREF: sub_22A68+D3↑j
                 mov     bx, 0E4E9h
                 mov     ax, [si]
 
-loc_22B57:                              ; CODE XREF: sub_22A68+FD↓j
+loc_22B57:                              ; CODE XREF: SpawnMonsterInFacingDirection+FD↓j
                 cmp     word ptr [bx], 0
                 jz      short loc_22B73
                 cmp     ax, [bx]
@@ -33068,18 +33068,18 @@ loc_22B57:                              ; CODE XREF: sub_22A68+FD↓j
                 jmp     short loc_22B57
 ; ---------------------------------------------------------------------------
 
-loc_22B67:                              ; CODE XREF: sub_22A68+F6↑j
+loc_22B67:                              ; CODE XREF: SpawnMonsterInFacingDirection+F6↑j
                 mov     ax, [bx+2]
                 mov     [si+14h], ax
                 mov     ax, [bx+4]
                 mov     [si+16h], ax
 
-loc_22B73:                              ; CODE XREF: sub_22A68+1F↑j
-                                        ; sub_22A68+F2↑j ...
+loc_22B73:                              ; CODE XREF: SpawnMonsterInFacingDirection+1F↑j
+                                        ; SpawnMonsterInFacingDirection+F2↑j ...
                 cmp     si, 0
                 pop     cx
                 retf
-sub_22A68       endp
+SpawnMonsterInFacingDirection endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33201,7 +33201,7 @@ sub_22BF5       endp
 
 
 ; int __fastcall __far sub_22C3E(int, FileEntry *this)
-sub_22C3E       proc far                ; CODE XREF: sub_22A68+E7↑p
+sub_22C3E       proc far                ; CODE XREF: SpawnMonsterInFacingDirection+E7↑p
                 push    ax
                 push    bx
                 push    cx
@@ -34085,7 +34085,7 @@ sub_233D0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_233F5       proc near               ; CODE XREF: sub_22A68+E1↑p
+sub_233F5       proc near               ; CODE XREF: SpawnMonsterInFacingDirection+E1↑p
                                         ; sub_22B78:loc_22B8E↑p
                 test    word ptr [si+0Ch], 1
                 jz      short loc_233FD
@@ -43117,7 +43117,7 @@ WorldDat_setBlock5 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WorldDat_setBlock6 proc far             ; CODE XREF: sub_22A68+27↑P
+WorldDat_setBlock6 proc far             ; CODE XREF: SpawnMonsterInFacingDirection+27↑P
                 push    si
                 mov     si, 0CE67h
                 mov     word_368A7, ax
