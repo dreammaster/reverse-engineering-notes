@@ -468,7 +468,13 @@ not fully decoded), and `UpdateAmbientMusic` — the 5th sub-task
 (`word_32958`, ~1-second period), which switches between day and night
 background music tracks based on `word_36D01` (the clock) falling
 inside or outside `[0x1A4, 0x474]` (7:00 AM–7:00 PM), via the
-already-named `PlayMusicTrack`. The
+already-named `PlayMusicTrack`. `word_3297E` is the "forced track"
+override this checks (0 = let the ambient day/night system choose):
+`RunTitleScreen` sets it to `1` (title music) on entry and clears it
+to `0` right at its `E` ("Enter"/leave-the-title-screen) exit point,
+handing music control to the ambient system for the rest of gameplay
+— and briefly forces `0` (silence) during character creation, restoring
+`1` afterward. The
 raw ISR entry itself is embedded in bytes IDA hasn't cleanly separated
 from a preceding data declaration, so it's documented here rather than
 renamed (renaming risks corrupting the disassembly boundary).

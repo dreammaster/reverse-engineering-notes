@@ -1842,6 +1842,16 @@ whole clock-system investigation this round.
 
 244 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: confirmed the music-override handoff
+
+Checked `word_3297E` (the "forced track" override `UpdateAmbientMusic`
+respects) at its other write sites: `RunTitleScreen` forces title
+music on entry and clears the override right at its `E`
+("Enter"/leave-title-screen) exit — handing control to the ambient
+day/night system for the rest of gameplay — and briefly silences music
+during character creation before restoring it. Documentation-only
+round, no new function named.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
