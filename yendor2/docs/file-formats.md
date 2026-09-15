@@ -67,15 +67,20 @@ struct in some callers, `SelectDefaultPartyRecord`'s "first record
 with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) — exactly how
 "the current member" gets chosen isn't fully mapped yet. Confirmed
 fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
-`ida_scripts/name_char_rename.py`); `+0xE`: a time-of-day-like value
-(reduced mod 10 in `RestCharacter`; `SelectDefaultPartyRecord` treats
-`0` here as its scan target, though whether that means "empty slot" or
-something else isn't confirmed) — **possible alternate reading**:
-`UseTrainingItem` reduces the same field the same way (repeated `-0xA`
-after `cmp 9`) to select one of several class/race-specific stat-growth
-paths, which would fit a class/race id at least as well as a clock
-value; not resolved either way, flagged rather than corrected since
-both functions treat it identically; `+0x10`: gender/type (compared
+`ida_scripts/name_char_rename.py`); **`+0xE`: plausibly a class id**
+(**correction**: documented since early in the session as "a time-of-
+day-like value" — wrong, or at least a worse fit. `RestCharacter`'s two
+branches settle it: the HP-regen branch never touches `+0xE` at all,
+but the MP-regen branch reduces it the same way `UseTrainingItem` does
+`(cmp 9 / -0xA / cmp 9 / -0xA)` and, if <4, skips MP regen entirely
+instead of gating on time; `UseTrainingItem` reduces the identical
+field to pick between class-specific MP-growth formulas blending two
+stat tables in different proportions. Read together: ids 0-3 are
+plausibly non-caster classes with no MP pool to regenerate or grow —
+far more consistent than a clock value correlating with class-specific
+formulas in an unrelated function. `SelectDefaultPartyRecord` treats
+`0` here as its scan target — whether that's "class 0" specifically or
+something else isn't confirmed); `+0x10`: gender/type (compared
 against `2` in `ShowCharacterEquipment`); `+0x16`: plausibly a
 level/skill stat — used in `FailsSavingThrow`'s save-chance formula
 (`5*([+0x16] - threshold) + resistance bonus`), higher beats a higher

@@ -23679,3 +23679,24 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'fix_field_0e_is_class_not_time.py']
+[*] reading fix_field_0e_is_class_not_time.py
+[*] executing fix_field_0e_is_class_not_time.py
+[*] captured stdout from target script:
+----- begin target script output -----
+RestCharacter @ 0x2a9ad
+old RestCharacter comment: "Rest/regeneration: if a time-of-day check on [si+0xE] (si=party member) fails, sets a 'resting'-ish flag ([si+0x1C] |= 0x8000) instead. Otherwise regenerates one of two stats (current/max at +0x52/+0x92 or +0x54/+0x94, selected by a flag on the target) by a percentage of max, capped at max. Matches the manual's 'R rest (1 food per person needed)'."
+RestCharacter comment corrected
+----- end target script output -----
+[*] finished executing fix_field_0e_is_class_not_time.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106932
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

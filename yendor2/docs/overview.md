@@ -1399,6 +1399,20 @@ since their evidence was less conclusive).
 
 196 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — party field +0xE is a class id, not time-of-day
+
+Followed up on the lead flagged last round. Read `UseTrainingItem`'s
+MP-growth branch in full — it blends two class-specific stat tables in
+different proportions depending on the same reduced `+0xE` value — then
+rechecked `RestCharacter`'s two branches side by side: HP-regen never
+touches `+0xE`, but MP-regen reduces it the identical way and skips
+regen entirely below 4. Put together, a class id (ids 0-3 plausibly
+non-casters with no MP pool) fits both sites far better than "time of
+day", which had no reason to determine class-specific growth formulas
+or gate consistently on a fixed per-character value. Corrected
+`file-formats.md` and `RestCharacter`'s own stale comment rather than
+leaving the earlier guess standing next to contradicting evidence.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

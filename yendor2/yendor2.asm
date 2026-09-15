@@ -48494,7 +48494,7 @@ sub_2A982       endp
 
 
 RestCharacter   proc far                ; CODE XREF: HandleGameCommand+B8↑P
-                call    sub_21C79       ; Rest/regeneration: if a time-of-day check on [si+0xE] (si=party member) fails, sets a 'resting'-ish flag ([si+0x1C] |= 0x8000) instead. Otherwise regenerates one of two stats (current/max at +0x52/+0x92 or +0x54/+0x94, selected by a flag on the target) by a percentage of max, capped at max. Matches the manual's 'R rest (1 food per person needed)'.
+                call    sub_21C79       ; Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.
                 call    sub_2AD94
                 cmp     ax, 0
                 jnz     short loc_2A9BD

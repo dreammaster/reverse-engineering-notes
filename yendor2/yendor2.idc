@@ -8405,7 +8405,7 @@ static Bytes_1(void) {
 	create_insn	(0X2A93C);
 	create_insn	(0X2A982);
 	create_insn	(0X2A9A2);
-	set_cmt	(0X2A9AD,	"Rest/regeneration: if a time-of-day check on [si+0xE] (si=party member) fails, sets a 'resting'-ish flag ([si+0x1C] |= 0x8000) instead. Otherwise regenerates one of two stats (current/max at +0x52/+0x92 or +0x54/+0x94, selected by a flag on the target) by a percentage of max, capped at max. Matches the manual's 'R rest (1 food per person needed)'.",	0);
+	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
 	create_insn	(0X2A9AD);
 	set_name	(0X2A9AD,	"RestCharacter");
 	create_insn	(0X2A9BD);
@@ -8589,9 +8589,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2B656);
 	op_hex		(x,	1);
 	set_name	(0X2B656,	"RunConversation");
-	create_insn	(x=0X2B65C);
-	op_hex		(x,	1);
-	create_insn	(0X2B685);
 }
 
 //------------------------------------------------------------------------
@@ -8601,6 +8598,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X2B65C);
+	op_hex		(x,	1);
+	create_insn	(0X2B685);
 	create_insn	(x=0X2B692);
 	op_hex		(x,	1);
 	create_insn	(0X2B6A6);
