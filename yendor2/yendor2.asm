@@ -13170,7 +13170,7 @@ loc_17BA4:                              ; CODE XREF: UseItem+D↑j
 loc_17BBF:                              ; CODE XREF: UseItem+23↑j
                 test    word_2E410, 4000h
                 jz      short loc_17BCF
-                call    sub_1C123
+                call    UseTrainingItem
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -16111,7 +16111,7 @@ seg030          segment byte public 'CODE' use16
 
 
 sub_193BE       proc far                ; CODE XREF: UseItemType_400+87↓P
-                                        ; sub_1C123+3AE↓P
+                                        ; UseTrainingItem+3AE↓P
                 push    word_3295A
                 and     word_3295A, 3FFFh
 
@@ -16544,7 +16544,7 @@ sub_19553       endp
 
 
 sub_19768       proc far                ; CODE XREF: sub_19957+76↓p
-                                        ; sub_1C123+35A↓P ...
+                                        ; UseTrainingItem+35A↓P ...
                 push    dx
                 mov     bx, 7982h
                 mov     ax, [si+0Eh]
@@ -18896,8 +18896,8 @@ sub_1AA06       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AA53       proc far                ; CODE XREF: sub_1C123+BD↓P
-                                        ; sub_1C123+18A↓P ...
+sub_1AA53       proc far                ; CODE XREF: UseTrainingItem+BD↓P
+                                        ; UseTrainingItem+18A↓P ...
                 push    ax
                 push    bx
                 push    dx
@@ -20477,7 +20477,7 @@ CheckPartyMemberItemFlagAndClearPanel endp
 
 
 sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
-                                        ; sub_1C123+49↓p ...
+                                        ; UseTrainingItem+49↓p ...
                 push    si
                 push    bx
                 call    ClearStatusPanelIfDirty
@@ -21485,8 +21485,8 @@ UseHealingItem  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C123       proc far                ; CODE XREF: UseItem+35↑P
-                push    cs
+UseTrainingItem proc far                ; CODE XREF: UseItem+35↑P
+                push    cs              ; UseItem's handler for word_2E410 bit 0x4000. Bit-2 branch: pays a BCD material cost (0x94B3 vs threshold 0x512A), then increments word_328D4's [+0x16] (level/skill stat, capped at 0x5A) and recalculates max HP/MP from it -- a level-up/training mechanic. Branches further on [+0xE] (compared against small constants after mod-20 reduction) to select a class/race-specific growth path -- [+0xE] plausibly a class/race id rather than the earlier 'time-of-day-like' guess from RestCharacter, not confirmed either way.
                 call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1C158
@@ -21499,7 +21499,7 @@ sub_1C123       proc far                ; CODE XREF: UseItem+35↑P
                 jmp     loc_1C4E1
 ; ---------------------------------------------------------------------------
 
-loc_1C14A:                              ; CODE XREF: sub_1C123+22↑j
+loc_1C14A:                              ; CODE XREF: UseTrainingItem+22↑j
                 push    cs
                 call    near ptr ApplyItemEffectFlags
                 push    cs
@@ -21508,8 +21508,8 @@ loc_1C14A:                              ; CODE XREF: sub_1C123+22↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C158:                              ; CODE XREF: sub_1C123+A↑j
-                                        ; sub_1C123+4C↓j ...
+loc_1C158:                              ; CODE XREF: UseTrainingItem+A↑j
+                                        ; UseTrainingItem+4C↓j ...
                 or      word_2E410, 1
                 push    cs
                 call    near ptr ApplyItemEffectFlags
@@ -21519,13 +21519,13 @@ loc_1C158:                              ; CODE XREF: sub_1C123+A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C16B:                              ; CODE XREF: sub_1C123+12↑j
+loc_1C16B:                              ; CODE XREF: UseTrainingItem+12↑j
                 push    cs
                 call    near ptr sub_1B7DD
                 jmp     short loc_1C158
 ; ---------------------------------------------------------------------------
 
-loc_1C171:                              ; CODE XREF: sub_1C123+1A↑j
+loc_1C171:                              ; CODE XREF: UseTrainingItem+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
                 call    CompareBCD4
@@ -21539,7 +21539,7 @@ loc_1C171:                              ; CODE XREF: sub_1C123+1A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C19E:                              ; CODE XREF: sub_1C123+59↑j
+loc_1C19E:                              ; CODE XREF: UseTrainingItem+59↑j
                 call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
@@ -21554,7 +21554,7 @@ loc_1C19E:                              ; CODE XREF: sub_1C123+59↑j
                 jle     short loc_1C1D1
                 mov     word ptr [si+16h], 5Ah ; 'Z'
 
-loc_1C1D1:                              ; CODE XREF: sub_1C123+A7↑j
+loc_1C1D1:                              ; CODE XREF: UseTrainingItem+A7↑j
                 mov     bx, 1Eh
                 mov     ax, [si+80h]
                 call    sub_25A66
@@ -21569,7 +21569,7 @@ loc_1C1D1:                              ; CODE XREF: sub_1C123+A7↑j
                 jle     short loc_1C200
                 mov     ax, 0Fh
 
-loc_1C200:                              ; CODE XREF: sub_1C123+D8↑j
+loc_1C200:                              ; CODE XREF: UseTrainingItem+D8↑j
                 mov     word_2E38E, ax
                 mov     word_3293E, 0
                 mov     ax, [si+0Eh]
@@ -21580,14 +21580,14 @@ loc_1C200:                              ; CODE XREF: sub_1C123+D8↑j
                 jle     short loc_1C21C
                 sub     ax, 0Ah
 
-loc_1C21C:                              ; CODE XREF: sub_1C123+EC↑j
-                                        ; sub_1C123+F4↑j
+loc_1C21C:                              ; CODE XREF: UseTrainingItem+EC↑j
+                                        ; UseTrainingItem+F4↑j
                 cmp     ax, 4
                 jge     short loc_1C224
                 jmp     loc_1C2B9
 ; ---------------------------------------------------------------------------
 
-loc_1C224:                              ; CODE XREF: sub_1C123+FC↑j
+loc_1C224:                              ; CODE XREF: UseTrainingItem+FC↑j
                 jz      short loc_1C298
                 cmp     ax, 8
                 jz      short loc_1C23C
@@ -21600,7 +21600,7 @@ loc_1C224:                              ; CODE XREF: sub_1C123+FC↑j
                 jmp     short loc_1C29E
 ; ---------------------------------------------------------------------------
 
-loc_1C23C:                              ; CODE XREF: sub_1C123+106↑j
+loc_1C23C:                              ; CODE XREF: UseTrainingItem+106↑j
                 mov     ax, [si+82h]
                 mov     bx, 4Bh ; 'K'
                 call    sub_25A66
@@ -21612,7 +21612,7 @@ loc_1C23C:                              ; CODE XREF: sub_1C123+106↑j
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
 
-loc_1C25E:                              ; CODE XREF: sub_1C123+10B↑j
+loc_1C25E:                              ; CODE XREF: UseTrainingItem+10B↑j
                 mov     ax, [si+84h]
                 mov     bx, 4Bh ; 'K'
                 call    sub_25A66
@@ -21624,31 +21624,31 @@ loc_1C25E:                              ; CODE XREF: sub_1C123+10B↑j
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
 
-loc_1C280:                              ; CODE XREF: sub_1C123+110↑j
+loc_1C280:                              ; CODE XREF: UseTrainingItem+110↑j
                 mov     ax, [si+84h]
                 jmp     short loc_1C28A
 ; ---------------------------------------------------------------------------
 
-loc_1C286:                              ; CODE XREF: sub_1C123+115↑j
+loc_1C286:                              ; CODE XREF: UseTrainingItem+115↑j
                 mov     ax, [si+82h]
 
-loc_1C28A:                              ; CODE XREF: sub_1C123+161↑j
+loc_1C28A:                              ; CODE XREF: UseTrainingItem+161↑j
                 mov     bx, 32h ; '2'
                 call    sub_25A66
                 add     ax, word_3293E
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
 
-loc_1C298:                              ; CODE XREF: sub_1C123:loc_1C224↑j
+loc_1C298:                              ; CODE XREF: UseTrainingItem:loc_1C224↑j
                 mov     ax, [si+84h]
                 jmp     short loc_1C2A2
 ; ---------------------------------------------------------------------------
 
-loc_1C29E:                              ; CODE XREF: sub_1C123+117↑j
+loc_1C29E:                              ; CODE XREF: UseTrainingItem+117↑j
                 mov     ax, [si+82h]
 
-loc_1C2A2:                              ; CODE XREF: sub_1C123+139↑j
-                                        ; sub_1C123+15B↑j ...
+loc_1C2A2:                              ; CODE XREF: UseTrainingItem+139↑j
+                                        ; UseTrainingItem+15B↑j ...
                 mov     bx, 1Eh
                 call    sub_25A66
                 mov     bx, 94h
@@ -21656,19 +21656,19 @@ loc_1C2A2:                              ; CODE XREF: sub_1C123+139↑j
                 mov     ax, [si+94h]
                 mov     [si+54h], ax
 
-loc_1C2B9:                              ; CODE XREF: sub_1C123+FE↑j
+loc_1C2B9:                              ; CODE XREF: UseTrainingItem+FE↑j
                 mov     ax, 2
                 mov     bx, 7Ch ; '|'
                 mov     cx, 6
 
-loc_1C2C2:                              ; CODE XREF: sub_1C123+1A7↓j
+loc_1C2C2:                              ; CODE XREF: UseTrainingItem+1A7↓j
                 call    sub_1AA53
                 add     bx, 2
                 loop    loc_1C2C2
                 mov     bx, 98h
                 mov     cx, 0Dh
 
-loc_1C2D2:                              ; CODE XREF: sub_1C123+1B7↓j
+loc_1C2D2:                              ; CODE XREF: UseTrainingItem+1B7↓j
                 call    sub_1AA53
                 add     bx, 2
                 loop    loc_1C2D2
@@ -21723,7 +21723,7 @@ loc_1C2D2:                              ; CODE XREF: sub_1C123+1B7↓j
                 jmp     loc_1C447
 ; ---------------------------------------------------------------------------
 
-loc_1C39C:                              ; CODE XREF: sub_1C123+274↑j
+loc_1C39C:                              ; CODE XREF: UseTrainingItem+274↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 4Fh ; 'O'
                 mov     _font_fgColor, 0Dh
@@ -21746,18 +21746,18 @@ loc_1C39C:                              ; CODE XREF: sub_1C123+274↑j
                 jmp     short loc_1C3FC
 ; ---------------------------------------------------------------------------
 
-loc_1C3EF:                              ; CODE XREF: sub_1C123+2C5↑j
+loc_1C3EF:                              ; CODE XREF: UseTrainingItem+2C5↑j
                 cmp     bx, 0Eh
                 jl      short loc_1C3F9
                 sub     bx, 0Eh
                 jmp     short loc_1C3FC
 ; ---------------------------------------------------------------------------
 
-loc_1C3F9:                              ; CODE XREF: sub_1C123+2CF↑j
+loc_1C3F9:                              ; CODE XREF: UseTrainingItem+2CF↑j
                 sub     bx, 4
 
-loc_1C3FC:                              ; CODE XREF: sub_1C123+2CA↑j
-                                        ; sub_1C123+2D4↑j
+loc_1C3FC:                              ; CODE XREF: UseTrainingItem+2CA↑j
+                                        ; UseTrainingItem+2D4↑j
                 mov     ax, 50h ; 'P'
                 mul     bx
                 mov     di, 0D22Bh
@@ -21771,7 +21771,7 @@ loc_1C3FC:                              ; CODE XREF: sub_1C123+2CA↑j
                 mov     cx, 2
                 xor     bp, bp
 
-loc_1C418:                              ; CODE XREF: sub_1C123+304↓j
+loc_1C418:                              ; CODE XREF: UseTrainingItem+304↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1C429
@@ -21780,7 +21780,7 @@ loc_1C418:                              ; CODE XREF: sub_1C123+304↓j
                 inc     bp
                 loop    loc_1C418
 
-loc_1C429:                              ; CODE XREF: sub_1C123+2F9↑j
+loc_1C429:                              ; CODE XREF: UseTrainingItem+2F9↑j
                 or      bp, bp
                 jz      short loc_1C447
                 mov     _textPos_x, 16h
@@ -21789,8 +21789,8 @@ loc_1C429:                              ; CODE XREF: sub_1C123+2F9↑j
                 mov     bx, 8111h       ; msg
                 call    writeString
 
-loc_1C447:                              ; CODE XREF: sub_1C123+276↑j
-                                        ; sub_1C123+2BD↑j ...
+loc_1C447:                              ; CODE XREF: UseTrainingItem+276↑j
+                                        ; UseTrainingItem+2BD↑j ...
                 mov     ax, [si+16h]
                 cmp     ax, _val25
                 jnz     short loc_1C456
@@ -21798,12 +21798,12 @@ loc_1C447:                              ; CODE XREF: sub_1C123+276↑j
                 jmp     short loc_1C460
 ; ---------------------------------------------------------------------------
 
-loc_1C456:                              ; CODE XREF: sub_1C123+32B↑j
+loc_1C456:                              ; CODE XREF: UseTrainingItem+32B↑j
                 cmp     ax, _val26
                 jnz     short loc_1C499
                 add     word ptr [si+0Eh], 0Ah
 
-loc_1C460:                              ; CODE XREF: sub_1C123+331↑j
+loc_1C460:                              ; CODE XREF: UseTrainingItem+331↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 5Bh ; '['
                 mov     _font_fgColor, 0Fh
@@ -21816,7 +21816,7 @@ loc_1C460:                              ; CODE XREF: sub_1C123+331↑j
                 mov     _font_fgColor, 8Ah
                 call    writeString
 
-loc_1C499:                              ; CODE XREF: sub_1C123+337↑j
+loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    sub_1CC98
                 call    sub_1AA9B
                 mov     bx, word_32924
@@ -21835,7 +21835,7 @@ loc_1C499:                              ; CODE XREF: sub_1C123+337↑j
                 jmp     loc_1C158
 ; ---------------------------------------------------------------------------
 
-loc_1C4E1:                              ; CODE XREF: sub_1C123+24↑j
+loc_1C4E1:                              ; CODE XREF: UseTrainingItem+24↑j
                 mov     si, word_328D4
                 mov     ax, [si+16h]
                 inc     ax
@@ -21867,7 +21867,7 @@ loc_1C4E1:                              ; CODE XREF: sub_1C123+24↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C54C:                              ; CODE XREF: sub_1C123+3CC↑j
+loc_1C54C:                              ; CODE XREF: UseTrainingItem+3CC↑j
                 mov     bx, 0BC28h
                 call    FormatNumber
                 mov     bx, 0BC28h
@@ -21886,7 +21886,7 @@ loc_1C54C:                              ; CODE XREF: sub_1C123+3CC↑j
                 push    cs
                 call    near ptr sub_1B96F
                 retf
-sub_1C123       endp
+UseTrainingItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -22588,7 +22588,7 @@ sub_1CC2E       endp
 
 
 sub_1CC70       proc near               ; CODE XREF: UseItemType_400+91↑p
-                                        ; sub_1C123+3B8↑p
+                                        ; UseTrainingItem+3B8↑p
                 mov     es, word_2E4AA
                 mov     cx, 10h
                 mov     si, word_328D4
@@ -22609,7 +22609,7 @@ sub_1CC70       endp
 
 
 sub_1CC98       proc near               ; CODE XREF: UseItemType_400+84↑p
-                                        ; sub_1C123:loc_1C499↑p
+                                        ; UseTrainingItem:loc_1C499↑p
                 mov     es, word_2E4AA
                 mov     cx, 10h
                 mov     si, word_328D4
@@ -42232,7 +42232,7 @@ SetGlobalFlag   endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A4E       proc far                ; CODE XREF: sub_1C123+2FB↑P
+sub_27A4E       proc far                ; CODE XREF: UseTrainingItem+2FB↑P
                                         ; sub_25456+67↑P ...
                 push    si
                 call    GetRecordFlagBitAndWord_CA
@@ -74401,9 +74401,9 @@ _val19          dw 0                    ; DATA XREF: InitGlobals+96↑w
 _val20          dw 0                    ; DATA XREF: InitGlobals+9C↑w
                                         ; InitGlobals+1FB↑r ...
 _val25          dw 0                    ; DATA XREF: InitGlobals+BA↑w
-                                        ; sub_1C123+327↑r
+                                        ; UseTrainingItem+327↑r
 _val26          dw 0                    ; DATA XREF: InitGlobals+C0↑w
-                                        ; sub_1C123:loc_1C456↑r
+                                        ; UseTrainingItem:loc_1C456↑r
 _val28          dw 0                    ; DATA XREF: InitGlobals+CC↑w
                                         ; sub_1DB73:loc_1DBEE↑r
 _val29          dw 0                    ; DATA XREF: InitGlobals+D2↑w
@@ -96110,7 +96110,7 @@ word_39488      dw 0                    ; DATA XREF: sub_1381C+19↑w
                 align 8
 word_39490      dw 0                    ; DATA XREF: sub_2278C+27↑w
 byte_39492      db 0                    ; DATA XREF: UseItemType_400+C2↑w
-                                        ; sub_1C123+439↑w
+                                        ; UseTrainingItem+439↑w
                 db    0
                 db    0
                 db    0

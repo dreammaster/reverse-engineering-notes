@@ -70,11 +70,18 @@ fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
 `ida_scripts/name_char_rename.py`); `+0xE`: a time-of-day-like value
 (reduced mod 10 in `RestCharacter`; `SelectDefaultPartyRecord` treats
 `0` here as its scan target, though whether that means "empty slot" or
-something else isn't confirmed); `+0x10`: gender/type (compared
+something else isn't confirmed) — **possible alternate reading**:
+`UseTrainingItem` reduces the same field the same way (repeated `-0xA`
+after `cmp 9`) to select one of several class/race-specific stat-growth
+paths, which would fit a class/race id at least as well as a clock
+value; not resolved either way, flagged rather than corrected since
+both functions treat it identically; `+0x10`: gender/type (compared
 against `2` in `ShowCharacterEquipment`); `+0x16`: plausibly a
 level/skill stat — used in `FailsSavingThrow`'s save-chance formula
 (`5*([+0x16] - threshold) + resistance bonus`), higher beats a higher
-threshold; `+0x1C`: a status/condition flags word, tested throughout
+threshold, and incremented (capped at 90) by `UseTrainingItem`, which
+also recalculates max HP/MP from it — a level-up/training item;
+`+0x1C`: a status/condition flags word, tested throughout
 (`RunTitleScreen`'s `E` handler, `ShowCharacterSkills`,
 `RunConversation`, `UseAbilityOnTarget`'s `0xDFBB` table, and now a
 "resting" bit in `RestCharacter`); **`+0x20`–`+0x30`: 9 contiguous

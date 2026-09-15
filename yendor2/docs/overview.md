@@ -1366,6 +1366,22 @@ target, not just internal bookkeeping.
 
 194 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseTrainingItem — a level-up item, and a flagged reinterpretation
+
+Another of `UseItem`'s type handlers (`word_2E410` bit `0x4000`) turned
+out concrete: pays a BCD material cost, then increments the current
+party member's `+0x16` (level/skill stat, capped at 90) and
+recalculates max HP/MP from it — a level-up/training item. Named
+`UseTrainingItem`. Along the way, noticed it reduces `+0xE` (documented
+since early in the session as "a time-of-day-like value") the exact
+same way `RestCharacter` does, but here to select a class/race-specific
+stat-growth path — a class/race id would fit at least as well as a
+clock value. Flagged as an open alternate reading in `file-formats.md`
+rather than overriding the existing description outright, since
+nothing yet distinguishes between the two.
+
+195 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
