@@ -2304,8 +2304,10 @@ static Bytes_0(void) {
 	set_cmt	(0X162F3,	"DOS - CLEAR KEYBOARD BUFFER\nAL must be 01h, 06h, 07h, 08h, or 0Ah.",	0);
 	create_insn	(x=0X162F3);
 	op_hex		(x,	0);
+	set_cmt	(0X162F6,	"Main dungeon game loop, called once from `start`. Each iteration: checks movement/menu input (sub_16407/sub_16881/sub_25AAC), redraws (sub_20C1E, BuildMinimapTileData, DrawMinimap), shows a resource-depleted overlay if needed, draws 3 fixed status/info widgets via sub_232A8, and checks a BCD counter at 0x51B6 to conditionally call sub_23151. Loops via jmp back to its own body until byte_2E400 signals exit.",	0);
 	create_insn	(x=0X162F6);
 	op_hex		(x,	1);
+	set_name	(0X162F6,	"RunDungeonGameLoop");
 	create_insn	(x=0X16305);
 	op_hex		(x,	1);
 	create_insn	(x=0X16316);
@@ -5238,6 +5240,15 @@ static Bytes_0(void) {
 	create_insn	(0X214F4);
 	create_insn	(x=0X21500);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2151F);
 	op_hex		(x,	1);
 	create_insn	(0X2152C);
@@ -5259,15 +5270,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X21596);
 	op_hex		(x,	1);
 	create_insn	(0X215A4);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
 	create_insn	(0X21612);
 	set_name	(0X21612,	"BuildMinimapTileData");
@@ -9543,6 +9545,15 @@ static Bytes_1(void) {
 	set_name	(0X329C0,	"_val9");
 	create_word	(0X329C2);
 	set_name	(0X329C2,	"_val44");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329C4);
 	set_name	(0X329C4,	"_val45");
 	create_word	(0X329C6);
@@ -9574,15 +9585,6 @@ static Bytes_1(void) {
 	set_name	(0X329E0,	"_ptr5");
 	create_word	(0X329E2);
 	set_name	(0X329E2,	"_ptr6");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329E4);
 	set_name	(0X329E4,	"_ptr7");
 	create_word	(0X329E6);

@@ -1158,6 +1158,19 @@ open.
 
 163 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the main game loop; another hedge corrected
+
+Followed `sub_234D3`'s caller (`sub_232A8`, which draws it exactly 3
+times at 3 fixed addresses/screen positions — not a dynamic list, so
+the earlier "plausibly bestiary/identify" hedge doesn't fit either;
+corrected to "3 fixed status widgets, content unclear") one level
+further up, into `sub_162F6` — called directly from `start` right
+after setup, looping on itself and driving movement input, redraws,
+and resource checks every iteration. This is the main dungeon game
+loop. Named `RunDungeonGameLoop`.
+
+164 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
