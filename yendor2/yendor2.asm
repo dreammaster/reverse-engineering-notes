@@ -32338,17 +32338,17 @@ loc_224C6:                              ; CODE XREF: sub_22445+68↑j
                 xor     bx, bx
 
 loc_224E5:                              ; CODE XREF: sub_22445+9C↑j
-                call    sub_226FC
+                call    DrawStatBar
                 mov     ax, 5
                 mov     _font_fgColor, 0CAh
                 mov     bx, [si+54h]
                 mov     cx, [si+94h]
-                call    sub_226FC
+                call    DrawStatBar
                 mov     ax, 0Ah
                 mov     _font_fgColor, 86h
                 mov     bx, [si+118h]
                 mov     cx, [si+56h]
-                call    sub_226FC
+                call    DrawStatBar
                 mov     word_2E532, 90h
                 mov     word_2E530, 14h
                 mov     ax, [di+3Ch]
@@ -32529,9 +32529,9 @@ sub_22615       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_226FC       proc near               ; CODE XREF: sub_22445:loc_224E5↑p
+DrawStatBar     proc near               ; CODE XREF: sub_22445:loc_224E5↑p
                                         ; sub_22445+B3↑p ...
-                push    dx
+                push    dx              ; Draws a 5-row proportional stat bar (health/mana-gauge style): bx=current, cx=max, drawn as filled (_font_fgColor) vs empty (_font_bgColor) pixels across a 38-pixel width, 5 rows tall. Called from sub_22445.
                 push    di
                 push    es
                 add     ax, [di+4Ah]
@@ -32550,7 +32550,7 @@ sub_226FC       proc near               ; CODE XREF: sub_22445:loc_224E5↑p
                 mov     bx, cx
                 add     _font_fgColor, 2
 
-loc_2272C:                              ; CODE XREF: sub_226FC+27↑j
+loc_2272C:                              ; CODE XREF: DrawStatBar+27↑j
                 mov     ax, 64h ; 'd'
                 mul     cx
                 cmp     dx, 0
@@ -32560,8 +32560,8 @@ loc_2272C:                              ; CODE XREF: sub_226FC+27↑j
                 mov     dx, bx
                 inc     bx
 
-loc_2273D:                              ; CODE XREF: sub_226FC+38↑j
-                                        ; sub_226FC+3C↑j
+loc_2273D:                              ; CODE XREF: DrawStatBar+38↑j
+                                        ; DrawStatBar+3C↑j
                 div     bx
                 mov     bx, ax
                 xor     dx, dx
@@ -32571,11 +32571,11 @@ loc_2273D:                              ; CODE XREF: sub_226FC+38↑j
                 jnz     short loc_2274F
                 mov     ax, 1
 
-loc_2274F:                              ; CODE XREF: sub_226FC+4E↑j
+loc_2274F:                              ; CODE XREF: DrawStatBar+4E↑j
                 mov     word_3293E, ax
                 mov     cx, 5
 
-loc_22755:                              ; CODE XREF: sub_226FC+74↓j
+loc_22755:                              ; CODE XREF: DrawStatBar+74↓j
                 push    cx
                 mov     cx, word_3293E
                 mov     ax, _font_fgColor
@@ -32590,11 +32590,11 @@ loc_22755:                              ; CODE XREF: sub_226FC+74↓j
                 jmp     short loc_22787
 ; ---------------------------------------------------------------------------
 
-loc_22774:                              ; CODE XREF: sub_226FC+23↑j
+loc_22774:                              ; CODE XREF: DrawStatBar+23↑j
                 mov     cx, 5
                 mov     ax, _font_bgColor
 
-loc_2277A:                              ; CODE XREF: sub_226FC+89↓j
+loc_2277A:                              ; CODE XREF: DrawStatBar+89↓j
                 push    cx
                 mov     cx, 26h ; '&'
                 rep stosb
@@ -32602,12 +32602,12 @@ loc_2277A:                              ; CODE XREF: sub_226FC+89↓j
                 pop     cx
                 loop    loc_2277A
 
-loc_22787:                              ; CODE XREF: sub_226FC+76↑j
+loc_22787:                              ; CODE XREF: DrawStatBar+76↑j
                 pop     es
                 pop     di
                 pop     dx
                 retn
-sub_226FC       endp
+DrawStatBar     endp
 
 seg070          ends
 

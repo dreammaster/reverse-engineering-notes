@@ -3020,6 +3020,14 @@ a generic "does this context accept this item type" gate, reused by
 
 387 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawStatBar
+
+Named `sub_226FC`, called from an unnamed function (`sub_22445`)
+reached directly from the main input loop: draws a 5-row proportional
+health/mana-gauge-style stat bar.
+
+388 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

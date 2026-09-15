@@ -5821,7 +5821,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X226B7);
 	op_hex		(x,	1);
+	set_cmt	(0X226FC,	"Draws a 5-row proportional stat bar (health/mana-gauge style): bx=current, cx=max, drawn as filled (_font_fgColor) vs empty (_font_bgColor) pixels across a 38-pixel width, 5 rows tall. Called from sub_22445.",	0);
 	create_insn	(0X226FC);
+	set_name	(0X226FC,	"DrawStatBar");
 	create_insn	(0X22774);
 	create_insn	(0X2278C);
 	create_insn	(x=0X22791);
