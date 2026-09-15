@@ -3045,6 +3045,18 @@ track — the ambient-music-by-zone trigger.
 
 390 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestPartyAndAdvanceClock — the "R rest" command
+
+Named `sub_1E64A`: the party rest/camp action. Advances the game
+clock (8 hours flat for a full rest, or up to 8 hourly ticks with
+`ProcessLevelMonsters` and early combat interruption), inlining the
+exact same day-rollover math `AdvanceGameClock` uses (wraps at 1440
+minutes) and calling `ResetDailyAbilityCharges` on rollover — a clean
+cross-confirmation of the whole clock/calendar system documented
+earlier this session, from a completely different entry point.
+
+391 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

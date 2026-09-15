@@ -1134,7 +1134,7 @@ loc_10A23:                              ; CODE XREF: start+A19↑j
 ; ---------------------------------------------------------------------------
 
 loc_10A26:                              ; CODE XREF: start+4A4↑j
-                call    sub_1E64A
+                call    RestPartyAndAdvanceClock
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10A35
                 jmp     loc_10286
@@ -10135,7 +10135,7 @@ seg015          segment byte public 'CODE' use16
 
 
 RunDungeonGameLoop proc far             ; CODE XREF: start+4B↑P
-                                        ; sub_1E64A+1DC↓P
+                                        ; RestPartyAndAdvanceClock+1DC↓P
                 and     word_328C8, 0FFDFh ; Main dungeon game loop, called once from `start`. Each iteration: checks movement/menu input (sub_16407/sub_16881/sub_25AAC), redraws (sub_20C1E, BuildMinimapTileData, DrawMinimap), shows a resource-depleted overlay if needed, draws 3 fixed status/info widgets via sub_232A8, and checks a BCD counter at 0x51B6 to conditionally call sub_23151. Loops via jmp back to its own body until byte_2E400 signals exit.
                 call    sub_22CBC
                 mov     byte_2E400, 0
@@ -25661,21 +25661,21 @@ seg057          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E64A       proc far                ; CODE XREF: start:loc_10A26↑P
+RestPartyAndAdvanceClock proc far       ; CODE XREF: start:loc_10A26↑P
                                         ; sub_2C0FE+60A↓P
-                mov     byte_2E400, 0
+                mov     byte_2E400, 0   ; The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.
                 cmp     word_31946, 0
                 jz      short loc_1E657
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1E657:                              ; CODE XREF: sub_1E64A+A↑j
+loc_1E657:                              ; CODE XREF: RestPartyAndAdvanceClock+A↑j
                 test    word_328C4, 2
                 jz      short loc_1E662
                 jmp     loc_1E6FB
 ; ---------------------------------------------------------------------------
 
-loc_1E662:                              ; CODE XREF: sub_1E64A+13↑j
+loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13↑j
                 call    ClearStatusPanelIfDirty
                 call    sub_1EA18
                 cmp     errorCode, 0
@@ -25696,7 +25696,7 @@ loc_1E662:                              ; CODE XREF: sub_1E64A+13↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1E6AE:                              ; CODE XREF: sub_1E64A+25↑j
+loc_1E6AE:                              ; CODE XREF: RestPartyAndAdvanceClock+25↑j
                 call    sub_28246
                 call    sub_16EFA
                 mov     byte_2E400, 0
@@ -25705,7 +25705,7 @@ loc_1E6AE:                              ; CODE XREF: sub_1E64A+25↑j
                 mov     ax, 1
                 call    sub_28412
 
-loc_1E6CD:                              ; CODE XREF: sub_1E64A+79↑j
+loc_1E6CD:                              ; CODE XREF: RestPartyAndAdvanceClock+79↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     x, 115h
                 mov     y, 43h ; 'C'
@@ -25715,7 +25715,7 @@ loc_1E6CD:                              ; CODE XREF: sub_1E64A+79↑j
                 mov     word_2E530, 8
                 call    DrawPicture
 
-loc_1E6FB:                              ; CODE XREF: sub_1E64A+15↑j
+loc_1E6FB:                              ; CODE XREF: RestPartyAndAdvanceClock+15↑j
                 call    sub_25862
                 call    sub_1FC3F
                 and     word_3295A, 1FFFh
@@ -25728,8 +25728,8 @@ loc_1E6FB:                              ; CODE XREF: sub_1E64A+15↑j
                 jmp     short loc_1E746
 ; ---------------------------------------------------------------------------
 
-loc_1E72A:                              ; CODE XREF: sub_1E64A+D0↑j
-                                        ; sub_1E64A+F6↓j
+loc_1E72A:                              ; CODE XREF: RestPartyAndAdvanceClock+D0↑j
+                                        ; RestPartyAndAdvanceClock+F6↓j
                 call    ProcessLevelMonsters
                 test    word_328CA, 1000h
                 jnz     short loc_1E746
@@ -25738,8 +25738,8 @@ loc_1E72A:                              ; CODE XREF: sub_1E64A+D0↑j
                 loop    loc_1E72A
                 dec     word_32940
 
-loc_1E746:                              ; CODE XREF: sub_1E64A+DE↑j
-                                        ; sub_1E64A+EB↑j
+loc_1E746:                              ; CODE XREF: RestPartyAndAdvanceClock+DE↑j
+                                        ; RestPartyAndAdvanceClock+EB↑j
                 cmp     word_36D01, 59Fh
                 jl      short loc_1E786
                 sub     word_36D01, 5A0h
@@ -25747,7 +25747,7 @@ loc_1E746:                              ; CODE XREF: sub_1E64A+DE↑j
                 jnz     short loc_1E761
                 mov     word_36D01, 1
 
-loc_1E761:                              ; CODE XREF: sub_1E64A+10F↑j
+loc_1E761:                              ; CODE XREF: RestPartyAndAdvanceClock+10F↑j
                 call    ResetDailyAbilityCharges
                 inc     word_36CFB
                 cmp     word_36CFB, 1Fh
@@ -25758,15 +25758,15 @@ loc_1E761:                              ; CODE XREF: sub_1E64A+10F↑j
                 jnz     short loc_1E786
                 inc     word_36CFF
 
-loc_1E786:                              ; CODE XREF: sub_1E64A+102↑j
-                                        ; sub_1E64A+125↑j ...
+loc_1E786:                              ; CODE XREF: RestPartyAndAdvanceClock+102↑j
+                                        ; RestPartyAndAdvanceClock+125↑j ...
                 call    sub_1FC53
                 test    word_328CA, 1000h
                 jnz     short loc_1E796
                 jmp     loc_1E82C
 ; ---------------------------------------------------------------------------
 
-loc_1E796:                              ; CODE XREF: sub_1E64A+147↑j
+loc_1E796:                              ; CODE XREF: RestPartyAndAdvanceClock+147↑j
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -25793,13 +25793,13 @@ loc_1E796:                              ; CODE XREF: sub_1E64A+147↑j
                 call    sub_1FD03
                 call    sub_2587E
 
-loc_1E808:                              ; CODE XREF: sub_1E64A+1DA↓j
+loc_1E808:                              ; CODE XREF: RestPartyAndAdvanceClock+1DA↓j
                 test    word_328C4, 400h
                 jz      short loc_1E81A
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
 
-loc_1E81A:                              ; CODE XREF: sub_1E64A+1C4↑j
+loc_1E81A:                              ; CODE XREF: RestPartyAndAdvanceClock+1C4↑j
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1E808
@@ -25807,13 +25807,13 @@ loc_1E81A:                              ; CODE XREF: sub_1E64A+1C4↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1E82C:                              ; CODE XREF: sub_1E64A+149↑j
+loc_1E82C:                              ; CODE XREF: RestPartyAndAdvanceClock+149↑j
                 mov     word_31974, 0
                 mov     word_2E544, 0
                 mov     cx, 4
                 mov     si, 95EBh
 
-loc_1E83E:                              ; CODE XREF: sub_1E64A+20F↓j
+loc_1E83E:                              ; CODE XREF: RestPartyAndAdvanceClock+20F↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1E85B
@@ -25823,14 +25823,14 @@ loc_1E83E:                              ; CODE XREF: sub_1E64A+20F↓j
                 jnz     short loc_1E856
                 inc     word_31974
 
-loc_1E856:                              ; CODE XREF: sub_1E64A+206↑j
+loc_1E856:                              ; CODE XREF: RestPartyAndAdvanceClock+206↑j
                 add     si, 2
                 loop    loc_1E83E
 
-loc_1E85B:                              ; CODE XREF: sub_1E64A+1F8↑j
+loc_1E85B:                              ; CODE XREF: RestPartyAndAdvanceClock+1F8↑j
                 mov     cx, word_31974
 
-loc_1E85F:                              ; CODE XREF: sub_1E64A+236↓j
+loc_1E85F:                              ; CODE XREF: RestPartyAndAdvanceClock+236↓j
                 mov     word_3293E, 36h ; '6'
                 mov     word_32940, 40h ; '@'
                 call    IsItemRangeAvailable
@@ -25840,7 +25840,7 @@ loc_1E85F:                              ; CODE XREF: sub_1E64A+236↓j
                 inc     word_2E544
                 loop    loc_1E85F
 
-loc_1E882:                              ; CODE XREF: sub_1E64A+22B↑j
+loc_1E882:                              ; CODE XREF: RestPartyAndAdvanceClock+22B↑j
                 xor     dx, dx
                 mov     ax, 64h ; 'd'
                 div     word_31974
@@ -25849,7 +25849,7 @@ loc_1E882:                              ; CODE XREF: sub_1E64A+22B↑j
                 mov     cx, 4
                 mov     si, 95EBh
 
-loc_1E898:                              ; CODE XREF: sub_1E64A+25F↓j
+loc_1E898:                              ; CODE XREF: RestPartyAndAdvanceClock+25F↓j
                 mov     ax, [si]
                 cmp     ax, 0
                 jz      short loc_1E8AB
@@ -25861,7 +25861,7 @@ loc_1E898:                              ; CODE XREF: sub_1E64A+25F↓j
                 add     si, 2
                 loop    loc_1E898
 
-loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
+loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+253↑j
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
@@ -25895,13 +25895,13 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 call    UpdateAmbientMusicForRegion
                 call    sub_2587E
                 retf
-sub_1E64A       endp
+RestPartyAndAdvanceClock endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E943       proc near               ; CODE XREF: sub_1E64A+257↑p
+sub_1E943       proc near               ; CODE XREF: RestPartyAndAdvanceClock+257↑p
                 call    sub_25B14
                 mov     bx, ax
                 test    word ptr [bx+1Ch], 1C40h
@@ -26005,7 +26005,7 @@ sub_1E943       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1EA18       proc near               ; CODE XREF: sub_1E64A+1D↑p
+sub_1EA18       proc near               ; CODE XREF: RestPartyAndAdvanceClock+1D↑p
                 test    word_36C79, 2
                 jz      short loc_1EA27
                 mov     errorCode, 1
@@ -27655,7 +27655,7 @@ RestoreInt1cVector endp
 
 
 sub_1FC3F       proc far                ; CODE XREF: ApplyMapTriggerEffect+7B↑P
-                                        ; sub_1E64A+B6↑P
+                                        ; RestPartyAndAdvanceClock+B6↑P
                 test    word_3295A, 800h
                 jnz     short loc_1FC48
                 retf
@@ -37666,7 +37666,7 @@ seg077          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-UpdateAmbientMusicForRegion proc far    ; CODE XREF: sub_1E64A+2EE↑P
+UpdateAmbientMusicForRegion proc far    ; CODE XREF: RestPartyAndAdvanceClock+2EE↑P
                                         ; sub_209D2:loc_20BA0↑P
                 xor     dx, dx          ; Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.
                 mov     bx, 18h
@@ -41513,7 +41513,7 @@ seg092          segment byte public 'CODE' use16
 
 
 sub_274B4       proc far                ; CODE XREF: CheckAndPaySpecialItemCost+2A↑P
-                                        ; sub_1E64A+22D↑P ...
+                                        ; RestPartyAndAdvanceClock+22D↑P ...
                 push    si
                 push    cx              ; this
                 mov     ax, word_32974
@@ -43414,7 +43414,7 @@ seg099          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28246       proc far                ; CODE XREF: sub_1E64A:loc_1E6AE↑P
+sub_28246       proc far                ; CODE XREF: RestPartyAndAdvanceClock:loc_1E6AE↑P
                                         ; RunGameDialog+1A↑P
                 push    si
                 push    di
@@ -45024,7 +45024,7 @@ RevealMapRegion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ResetDailyAbilityCharges proc far       ; CODE XREF: sub_1E64A:loc_1E761↑P
+ResetDailyAbilityCharges proc far       ; CODE XREF: RestPartyAndAdvanceClock:loc_1E761↑P
                                         ; AdvanceGameClock:loc_1FE6D↑P
                 push    ax              ; AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.
                 push    bx
@@ -51743,7 +51743,7 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
 
 loc_2C703:                              ; CODE XREF: sub_2C0FE+5A↑j
                 or      word_328C4, 2
-                call    sub_1E64A
+                call    RestPartyAndAdvanceClock
                 and     word_328C4, 0FFFDh
                 mov     ax, 14h         ; ticks
                 call    wait
@@ -70265,8 +70265,8 @@ _emsVal8        dw 1                    ; DATA XREF: InitMemory+F1↑w
                                         ; InitMemory+132↑w ...
 _emsVal9        dw 1                    ; DATA XREF: InitMemory+F7↑w
                                         ; InitMemory+138↑w ...
-word_31974      dw 0                    ; DATA XREF: sub_1E64A:loc_1E82C↑w
-                                        ; sub_1E64A+208↑w ...
+word_31974      dw 0                    ; DATA XREF: RestPartyAndAdvanceClock:loc_1E82C↑w
+                                        ; RestPartyAndAdvanceClock+208↑w ...
 word_31976      dw 0                    ; DATA XREF: FadePaletteStep+8↑w
                                         ; FadePaletteStep+C↑w ...
                 db    0
@@ -74183,7 +74183,7 @@ word_328BE      dw 0                    ; DATA XREF: sub_15267+3C↑r
                                         ; sub_15267+43↑r ...
 word_328C0      dw 0                    ; DATA XREF: HandlePortraitClick+23↑w
                                         ; HandlePortraitClick+3C↑w ...
-word_328C2      dw 0                    ; DATA XREF: sub_1E64A+245↑w
+word_328C2      dw 0                    ; DATA XREF: RestPartyAndAdvanceClock+245↑w
                                         ; sub_1E943+8A↑r ...
 word_328C4      dw 0                    ; DATA XREF: start+1F↑w
                                         ; start:loc_1007D↑r ...
@@ -85992,11 +85992,11 @@ word_36CF7      dw 276h                 ; DATA XREF: start:loc_1019B↑r
                                         ; start:loc_1022B↑r ...
 word_36CF9      dw 0ACh                 ; DATA XREF: start+19F↑r
                                         ; start+22F↑r ...
-word_36CFB      dw 4                    ; DATA XREF: sub_1E64A+11C↑w
-                                        ; sub_1E64A+120↑r ...
-word_36CFD      dw 0Bh                  ; DATA XREF: sub_1E64A+12D↑w
-                                        ; sub_1E64A+131↑r ...
-word_36CFF      dw 222h                 ; DATA XREF: sub_1E64A+138↑w
+word_36CFB      dw 4                    ; DATA XREF: RestPartyAndAdvanceClock+11C↑w
+                                        ; RestPartyAndAdvanceClock+120↑r ...
+word_36CFD      dw 0Bh                  ; DATA XREF: RestPartyAndAdvanceClock+12D↑w
+                                        ; RestPartyAndAdvanceClock+131↑r ...
+word_36CFF      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+138↑w
                                         ; AdvanceGameClock+45↑w ...
 word_36D01      dw 1E0h                 ; DATA XREF: sub_11A10+E5↑w
                                         ; TravelToDestination+87↑r ...

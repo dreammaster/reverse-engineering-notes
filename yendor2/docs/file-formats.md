@@ -1127,6 +1127,16 @@ On the day rollover, `ResetDailyAbilityCharges` also zeroes every
 party member's 4 special-ability charge fields (`+0xB6`-`+0xBC`,
 see `RevealMapRegion`/`UseAbilityScroll`) — special abilities recharge
 once per in-game day.
+
+**The "R rest" command**, `RestPartyAndAdvanceClock` (an action-toolbar
+entry from `start`, also reached from `sub_2C0FE`): after an
+eligibility check, advances `word_36D01` directly — a flat `+0x1E0`
+(8 hours) for a full/uninterrupted rest, or up to 8 hourly `+0x3C`
+ticks (calling `ProcessLevelMonsters` each hour and stopping early if
+combat starts) otherwise — then inlines the exact same day-rollover
+math `AdvanceGameClock` uses (wraps at `0x5A0`/1440 minutes, calendar
+counters wrapping the same way) and calls `ResetDailyAbilityCharges`
+on rollover, before resuming play via `RunDungeonGameLoop`.
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade

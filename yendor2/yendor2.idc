@@ -4785,7 +4785,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1E5E5,	"msg",	0);
 	set_cmt	(0X1E605,	"msg",	0);
 	create_insn	(0X1E61B);
+	set_cmt	(0X1E64A,	"The party rest/camp action ('R rest'). Checks eligibility (sub_1EA18), advances the game clock (8 hours flat for a full rest, or up to 8 hourly ticks calling ProcessLevelMonsters and stopping if combat starts), handles day rollover (ResetDailyAbilityCharges + calendar counters), shows hours rested, then resumes via RunDungeonGameLoop. Called from `start` and sub_2C0FE.",	0);
 	create_insn	(0X1E64A);
+	set_name	(0X1E64A,	"RestPartyAndAdvanceClock");
 	create_insn	(x=0X1E657);
 	op_hex		(x,	1);
 	create_insn	(0X1E662);
