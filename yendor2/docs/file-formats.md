@@ -506,6 +506,13 @@ the farthest visible cells, not right next to the party** — plus a
 flag bit on the cell record and a probability roll, before calling
 `SpawnMonsterInFacingDirection`, which:
 
+`RenderDungeonViewRow` draws each cell's base wall texture via
+`DrawDungeonCellWallTexture` (the `0xE551` lookup table by cell id, at
+z-layer `word_32918=0` — a different layer from the `3`/`4` values
+used earlier in `RenderDungeonViewRow` for items/monsters standing in
+the cell), plus a fixed overlay picture when the cell's `[+6]` flags
+have bit `0x2000` set (a door/torch/decoration marker, not confirmed).
+
 `RenderDungeonViewport` itself is called by two `start`-reachable
 screen-redraw functions: `RedrawDungeonScreen` (a fuller variant with
 extra setup calls) and `RefreshDungeonScreen` (a lighter variant that

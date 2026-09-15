@@ -5361,7 +5361,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X21112);
 	op_hex		(x,	1);
+	set_cmt	(0X21128,	"Draws one dungeon cell's base wall texture (0xE551 lookup table by cell id, z-layer word_32918=0), then a fixed overlay (picture 5) if the cell's [+6] flags have bit 0x2000 set (a door/torch/decoration marker, not confirmed). Called from RenderDungeonViewRow per visible cell.",	0);
 	create_insn	(0X21128);
+	set_name	(0X21128,	"DrawDungeonCellWallTexture");
 	create_insn	(x=0X2115A);
 	op_hex		(x,	1);
 	create_insn	(0X2117F);
@@ -6817,6 +6819,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2704C,	"Unified 'resource depleted' overlay, called both when a material BCD counter can't cover a cost (SpendMaterialCounterClamped) and when the dungeon view itself is blanked (DrawMinimap, word_36C7F bit 0x1000). Sets that bit, blits a fixed overlay image (EMS page frame -> video buffer) over the minimap's screen area, checks all 3 material BCD counters (0x94B3/0x94B7/0x94BB, confirmed consecutive, stride 4) and builds a small per-material 'nonzero' indicator array, then draws a banner icon and the material status icons via DrawResourceStatusIcons.",	0);
 	create_insn	(0X2704C);
 	set_name	(0X2704C,	"ShowResourceDepletedOverlay");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X27050);
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
@@ -6848,15 +6859,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X27392);
 	op_hex		(x,	1);
 	create_insn	(0X273E6);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X273F9);
 	op_hex		(x,	1);
 	set_cmt	(0X27441,	"For cx entries: if the id at [si] is nonzero, looks it up (sub_12554) and draws its icon at the matching (x,y) from a position table at di (stride 0xA: x at +0, y at +4).",	0);
@@ -10212,6 +10214,15 @@ static Bytes_2(void) {
 	set_name	(0X354CD,	"aNuore");
 	create_strlit	(0X354D5,	0XC);
 	set_name	(0X354D5,	"aAbsorption");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X354E1,	0X8);
 	set_name	(0X354E1,	"aDamage");
 	create_strlit	(0X354E9,	0XD);
@@ -10228,15 +10239,6 @@ static Bytes_2(void) {
 	set_name	(0X3550E,	"aDefeated");
 	create_strlit	(0X35517,	0XD);
 	set_name	(0X35517,	"aBrass");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35524,	0XD);
 	set_name	(0X35524,	"aBronze");
 	create_strlit	(0X35531,	0XD);

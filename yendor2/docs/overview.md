@@ -2435,6 +2435,15 @@ distinguishing the two not traced.
 
 306 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawDungeonCellWallTexture
+
+Named `sub_21128`, called from `RenderDungeonViewRow` per visible
+cell: draws the cell's base wall texture (0xE551 lookup table) plus a
+conditional overlay picture (door/torch/decoration marker, not
+confirmed).
+
+307 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

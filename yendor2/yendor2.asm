@@ -29972,7 +29972,7 @@ loc_2101D:                              ; CODE XREF: RenderDungeonViewRow+70↓j
                 push    cx
                 test    word ptr [di+6], 1
                 jnz     short loc_2107D
-                call    sub_21128
+                call    DrawDungeonCellWallTexture
                 test    word ptr [di+0Eh], 1
                 jnz     short loc_21077
                 mov     bx, [di+8]
@@ -30028,7 +30028,7 @@ loc_210A8:                              ; CODE XREF: RenderDungeonViewRow+FB↓j
                 push    cx
                 test    word ptr [di+6], 1
                 jnz     short loc_21108
-                call    sub_21128
+                call    DrawDungeonCellWallTexture
                 test    word ptr [di-2], 1
                 jnz     short loc_21102
                 mov     bx, [di-8]
@@ -30066,7 +30066,7 @@ loc_21108:                              ; CODE XREF: RenderDungeonViewRow+99↑j
                 loop    loc_210A8
                 test    word ptr [di+6], 1
                 jnz     short loc_21122
-                call    sub_21128
+                call    DrawDungeonCellWallTexture
                 call    sub_2117F
                 call    TryTriggerMonsterEncounterAtCell
 
@@ -30080,9 +30080,9 @@ RenderDungeonViewRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21128       proc near               ; CODE XREF: RenderDungeonViewRow+10↑p
+DrawDungeonCellWallTexture proc near    ; CODE XREF: RenderDungeonViewRow+10↑p
                                         ; RenderDungeonViewRow+9B↑p ...
-                mov     si, [di]
+                mov     si, [di]        ; Draws one dungeon cell's base wall texture (0xE551 lookup table by cell id, z-layer word_32918=0), then a fixed overlay (picture 5) if the cell's [+6] flags have bit 0x2000 set (a door/torch/decoration marker, not confirmed). Called from RenderDungeonViewRow per visible cell.
                 or      si, si
                 jz      short locret_2117E
                 mov     ax, 0Ch
@@ -30105,10 +30105,10 @@ sub_21128       proc near               ; CODE XREF: RenderDungeonViewRow+10↑p
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
 
-locret_2117E:                           ; CODE XREF: sub_21128+4↑j
-                                        ; sub_21128+16↑j ...
+locret_2117E:                           ; CODE XREF: DrawDungeonCellWallTexture+4↑j
+                                        ; DrawDungeonCellWallTexture+16↑j ...
                 retn
-sub_21128       endp
+DrawDungeonCellWallTexture endp
 
 
 ; =============== S U B R O U T I N E =======================================
