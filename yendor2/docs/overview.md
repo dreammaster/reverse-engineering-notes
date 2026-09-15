@@ -1214,6 +1214,22 @@ not-yet-traced calls. This is the per-level spawn/wander pool that
 
 171 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — "ready" means reward+removal, not combat promotion
+
+Traced the two functions `ProcessLevelMonsters` calls on
+`TickMonsterTimer`'s "ready" signal, guessed last round to "plausibly
+promote this monster into an active combat slot." Wrong: they're
+`GrantMonsterRewards` (adds fixed BCD values into the monster's own
+tally fields and a global running counter, `0x51B6`) and
+`RemoveMonsterFromMap` (clears the monster's map presence and wipes
+its record entirely). So a `g_levelMonsters` slot's "ready" countdown
+ends its presence with a reward grant and cleanup, not a hand-off into
+`g_monsterSlots` combat — corrected the guess in `file-formats.md`
+rather than leaving it standing. The real spawn-into-combat trigger, if
+distinct from this, is still unfound.
+
+173 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

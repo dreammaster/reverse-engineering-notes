@@ -160,10 +160,17 @@ flagged `0x3010`), plus a separate, slower countdown (`[+0x1E]`) that
 on reaching 0 resets the monster wholesale — clears several `[+0xC]`
 flag bits, zeroes `[+0x1A]`/`[+0x1C]`/`[+0x1E]`, restores `[+8]` from a
 template value at `[+0x4C]` — plausibly a death/respawn cycle, not
-confirmed. On `errorCode`==1, `ProcessLevelMonsters` calls two further,
-not-yet-traced functions (`sub_22B96`, `sub_23116`) that plausibly
-promote the monster into one of `g_monsterSlots`' 3 active-combat
-slots — the exact spawn-into-combat handoff isn't traced yet.
+confirmed. **Correction**: on `errorCode`==1, `ProcessLevelMonsters` does *not*
+promote the monster into combat (last round's guess) — it calls
+`GrantMonsterRewards` (adds 4 fixed BCD values into the monster's own
+tally fields and into the global BCD counter `0x51B6` — see below) then
+`RemoveMonsterFromMap` (clears the monster's "present here" flag on its
+map cell and zeroes the entire record). So `[+0x10]`'s countdown is
+better read as a remaining-presence/lifespan timer than a movement-
+readiness one — reaching zero ends the monster's presence with a
+reward grant, not a combat trigger. The actual "monster notices the
+party and a fight starts" path, if distinct from this, isn't found
+yet.
 
 ### Global material counters and BCD arithmetic
 

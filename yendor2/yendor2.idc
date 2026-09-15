@@ -5606,7 +5606,9 @@ static Bytes_1(void) {
 	create_insn	(0X22B67);
 	create_insn	(0X22B78);
 	create_insn	(0X22B8E);
+	set_cmt	(0X22B96,	"Grants a reward on this monster's presence ending: adds 4 fixed BCD values (0x51BA/0x5396/0x539A, plus the global counter at 0x51B6 itself) into the monster's [+0x7E]/[+0x82]/[+0x86] and into the global BCD counter 0x51B6 (checked elsewhere via IsBCDCounterAtLeast to conditionally call sub_23151 -- plausibly an achievement/threshold notification). Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).",	0);
 	create_insn	(0X22B96);
+	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
 	create_insn	(0X22BEF);
 	create_insn	(0X22BF5);
@@ -5619,7 +5621,7 @@ static Bytes_1(void) {
 	set_cmt	(0X22C88,	"this",	0);
 	set_cmt	(0X22C95,	"this",	0);
 	create_insn	(0X22CBC);
-	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] by [si+0x1C]; reaching 0 sets errorCode=1 ('ready/arrived'). Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly a death/respawn reset.",	0);
+	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.",	0);
 	create_insn	(0X22CED);
 	set_name	(0X22CED,	"TickMonsterTimer");
 	create_insn	(x=0X22CF3);
@@ -5630,7 +5632,7 @@ static Bytes_1(void) {
 	create_insn	(0X22D24);
 	create_insn	(x=0X22D2B);
 	op_hex		(x,	1);
-	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 ('ready'), calls sub_22B96 then sub_23116 (not traced, plausibly promotes this monster into an active g_monsterSlots combat slot). Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
+	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 (this monster's presence has ended), calls GrantMonsterRewards then RemoveMonsterFromMap. Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
 	create_insn	(0X22D4C);
 	set_name	(0X22D4C,	"ProcessLevelMonsters");
 	create_insn	(x=0X22D52);
@@ -5718,7 +5720,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X230CB);
 	op_hex		(x,	1);
 	create_insn	(0X230D6);
+	set_cmt	(0X23116,	"Removes a monster from the map and wipes its record: clears the 'present here' flag (bit 0x400) on the map cell its [+6] field points at and zeroes that cell's [+4] occupant reference, then zeroes the entire g_levelMonsters/g_monsterSlots-layout record (0x9C bytes).",	0);
 	create_insn	(0X23116);
+	set_name	(0X23116,	"RemoveMonsterFromMap");
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
 	create_insn	(0X2313D);
@@ -9287,6 +9291,15 @@ static Bytes_1(void) {
 	set_name	(0X2E4AE,	"_val10");
 	set_cmt	(0X2E4B0,	"4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.",	0);
 	set_name	(0X2E4B0,	"g_partyEffectIconSlots");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E500);
 	create_word	(0X2E502);
 	set_name	(0X2E502,	"_emsPointer1?");
@@ -9348,15 +9361,6 @@ static Bytes_1(void) {
 	create_word	(0X2E66C);
 	create_word	(0X2E76E);
 	create_word	(0X2E770);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E772);
 	create_word	(0X2E774);
 	create_word	(0X2E776);

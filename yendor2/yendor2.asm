@@ -11112,7 +11112,7 @@ loc_16B94:                              ; CODE XREF: sub_16B63+2A↑j
                 mov     word_32A1E, 0
 
 loc_16BA2:                              ; CODE XREF: sub_16B63+37↑j
-                call    sub_22B96
+                call    GrantMonsterRewards
                 call    sub_2313D
                 jmp     short loc_16BB4
 ; ---------------------------------------------------------------------------
@@ -23932,8 +23932,8 @@ loc_1D6CE:                              ; CODE XREF: sub_1D4B8+1FA↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D6EA:                              ; CODE XREF: sub_1D4B8+227↑j
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
                 and     word_328C8, 0FBFFh
                 push    word_3292C
                 call    sub_20C1E
@@ -24066,8 +24066,8 @@ loc_1D840:                              ; CODE XREF: sub_1D4B8+383↑j
 ; ---------------------------------------------------------------------------
 
 loc_1D872:                              ; CODE XREF: sub_1D4B8+3B5↑j
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
                 jmp     loc_1D747
 ; ---------------------------------------------------------------------------
 
@@ -24106,8 +24106,8 @@ loc_1D8E4:                              ; CODE XREF: sub_1D4B8+445↓j
                 jz      short loc_1D8F9
                 cmp     word ptr [si+10h], 0
                 jg      short loc_1D8F9
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
 
 loc_1D8F9:                              ; CODE XREF: sub_1D4B8+42F↑j
                                         ; sub_1D4B8+435↑j
@@ -33112,9 +33112,9 @@ sub_22B78       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22B96       proc far                ; CODE XREF: sub_16B63:loc_16BA2↑P
+GrantMonsterRewards proc far            ; CODE XREF: sub_16B63:loc_16BA2↑P
                                         ; sub_1D4B8:loc_1D6EA↑P ...
-                push    si
+                push    si              ; Grants a reward on this monster's presence ending: adds 4 fixed BCD values (0x51BA/0x5396/0x539A, plus the global counter at 0x51B6 itself) into the monster's [+0x7E]/[+0x82]/[+0x86] and into the global BCD counter 0x51B6 (checked elsewhere via IsBCDCounterAtLeast to conditionally call sub_23151 -- plausibly an achievement/threshold notification). Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).
                 push    di
                 mov     di, si
                 add     di, 7Eh ; '~'
@@ -33139,11 +33139,11 @@ sub_22B96       proc far                ; CODE XREF: sub_16B63:loc_16BA2↑P
                 jmp     short loc_22BDE
 ; ---------------------------------------------------------------------------
 
-loc_22BD9:                              ; CODE XREF: sub_22B96+3A↑j
+loc_22BD9:                              ; CODE XREF: GrantMonsterRewards+3A↑j
                 call    sub_27A2A
 
-loc_22BDE:                              ; CODE XREF: sub_22B96+38↑j
-                                        ; sub_22B96+41↑j
+loc_22BDE:                              ; CODE XREF: GrantMonsterRewards+38↑j
+                                        ; GrantMonsterRewards+41↑j
                 mov     ax, [si+16h]
                 cmp     ax, 0
                 jz      short locret_22BF4
@@ -33152,13 +33152,13 @@ loc_22BDE:                              ; CODE XREF: sub_22B96+38↑j
                 jmp     short locret_22BF4
 ; ---------------------------------------------------------------------------
 
-loc_22BEF:                              ; CODE XREF: sub_22B96+50↑j
+loc_22BEF:                              ; CODE XREF: GrantMonsterRewards+50↑j
                 call    sub_27A2A
 
-locret_22BF4:                           ; CODE XREF: sub_22B96+4E↑j
-                                        ; sub_22B96+57↑j
+locret_22BF4:                           ; CODE XREF: GrantMonsterRewards+4E↑j
+                                        ; GrantMonsterRewards+57↑j
                 retf
-sub_22B96       endp
+GrantMonsterRewards endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33283,7 +33283,7 @@ sub_22CBC       endp
 
 TickMonsterTimer proc far               ; CODE XREF: sub_16881+1D↑P
                                         ; ProcessLevelMonsters+4E↓p
-                mov     errorCode, 0    ; Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] by [si+0x1C]; reaching 0 sets errorCode=1 ('ready/arrived'). Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly a death/respawn reset.
+                mov     errorCode, 0    ; Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] (plausibly a remaining-presence/lifespan timer, not confirmed movement-related) by [si+0x1C]; reaching 0 sets errorCode=1, which callers (ProcessLevelMonsters) treat as 'this monster's presence has ended' -- granting a reward and removing it. Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly preparing the slot for reuse/respawn.
                 test    word ptr [si+0Ch], 0FC10h
                 jnz     short loc_22CFB
                 retf
@@ -33330,7 +33330,7 @@ TickMonsterTimer endp
 
 ProcessLevelMonsters proc far           ; CODE XREF: start+62↑P
                                         ; start+12F↑P ...
-                push    ax              ; Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 ('ready'), calls sub_22B96 then sub_23116 (not traced, plausibly promotes this monster into an active g_monsterSlots combat slot). Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).
+                push    ax              ; Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 (this monster's presence has ended), calls GrantMonsterRewards then RemoveMonsterFromMap. Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).
                 push    bx
                 push    cx
                 push    dx
@@ -33385,9 +33385,9 @@ loc_22D92:                              ; CODE XREF: ProcessLevelMonsters+15↑j
 
 loc_22DAD:                              ; CODE XREF: ProcessLevelMonsters+5D↑j
                 push    cs
-                call    near ptr sub_22B96
+                call    near ptr GrantMonsterRewards
                 push    cs
-                call    near ptr sub_23116
+                call    near ptr RemoveMonsterFromMap
                 jmp     short loc_22D63
 ; ---------------------------------------------------------------------------
 
@@ -33745,9 +33745,9 @@ ProcessLevelMonsters endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23116       proc far                ; CODE XREF: sub_1D4B8+237↑P
+RemoveMonsterFromMap proc far           ; CODE XREF: sub_1D4B8+237↑P
                                         ; sub_1D4B8+3BF↑P ...
-                push    cx
+                push    cx              ; Removes a monster from the map and wipes its record: clears the 'present here' flag (bit 0x400) on the map cell its [+6] field points at and zeroes that cell's [+4] occupant reference, then zeroes the entire g_levelMonsters/g_monsterSlots-layout record (0x9C bytes).
                 push    di
                 push    es
                 mov     bx, [si+6]
@@ -33763,7 +33763,7 @@ sub_23116       proc far                ; CODE XREF: sub_1D4B8+237↑P
                 pop     di
                 pop     cx
                 retf
-sub_23116       endp
+RemoveMonsterFromMap endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42185,7 +42185,7 @@ seg095          segment byte public 'CODE' use16
 
 
 sub_27A2A       proc far                ; CODE XREF: sub_1BB48+92↑P
-                                        ; sub_22B96:loc_22BD9↑P ...
+                                        ; GrantMonsterRewards:loc_22BD9↑P ...
                 push    si
                 call    sub_27A98
                 not     ax
@@ -52130,8 +52130,8 @@ loc_2CB17:                              ; CODE XREF: sub_2C0FE+9E7↑j
                 cmp     word ptr [di+10h], 0
                 jg      short loc_2CBB6
                 mov     si, di
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
                 call    sub_20C1E
                 jmp     short loc_2CBB6
 ; ---------------------------------------------------------------------------
@@ -52141,8 +52141,8 @@ loc_2CB4F:                              ; CODE XREF: sub_2C0FE+9CA↑j
                 cmp     word ptr [di+10h], 0
                 jg      short loc_2CB63
                 mov     si, di
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
                 jmp     short loc_2CB68
 ; ---------------------------------------------------------------------------
 
@@ -52251,8 +52251,8 @@ loc_2CC62:                              ; CODE XREF: sub_2C0FE+B7D↓j
                 jz      short loc_2CC77
                 cmp     word ptr [si+10h], 0
                 jg      short loc_2CC77
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
 
 loc_2CC77:                              ; CODE XREF: sub_2C0FE+B67↑j
                                         ; sub_2C0FE+B6D↑j
@@ -52406,8 +52406,8 @@ loc_2CE33:                              ; CODE XREF: sub_2C0FE+D2E↑j
                 cmp     word ptr [di+10h], 0
                 jg      short loc_2CE5A
                 mov     si, di
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
 
 loc_2CE5A:                              ; CODE XREF: sub_2C0FE+D48↑j
                                         ; sub_2C0FE+D4E↑j
@@ -52952,8 +52952,8 @@ loc_2D3A0:                              ; CODE XREF: sub_2D370+2A↑j
                 pop     si
                 cmp     word ptr [si+10h], 0
                 jg      short loc_2D3CB
-                call    sub_22B96
-                call    sub_23116
+                call    GrantMonsterRewards
+                call    RemoveMonsterFromMap
                 call    sub_20C1E
                 jmp     short loc_2D3D0
 ; ---------------------------------------------------------------------------
