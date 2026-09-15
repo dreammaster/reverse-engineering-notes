@@ -4268,7 +4268,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CC12);
 	op_hex		(x,	1);
+	set_cmt	(0X1CC2E,	"Redraws the gold readout: blanks the area (msg 0x7952) then FormatAndDrawBCD4(g_partyGold), then conditionally ShowResourceDepletedOverlay (word_36C7F bit 0x1000). Called from sub_1BBED (an unnamed, not-yet-fully-traced UseItem shop/vendor handler) after it spends gold.",	0);
 	create_insn	(0X1CC2E);
+	set_name	(0X1CC2E,	"RedrawPartyGoldDisplay");
 	set_cmt	(0X1CC4C,	"msg",	0);
 	create_insn	(x=0X1CC62);
 	op_hex		(x,	1);
@@ -7215,6 +7217,15 @@ static Bytes_1(void) {
 	create_byte	(0X286FC);
 	make_array	(0X286FC,	0X19);
 	set_name	(0X286FC,	"aCallingProgram");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X28715);
 	make_array	(0X28715,	0X1B);
 	set_name	(0X28715,	"aMemoryAllocati");
@@ -7233,15 +7244,6 @@ static Bytes_1(void) {
 	create_byte	(0X28804);
 	make_array	(0X28804,	0X25);
 	set_name	(0X28804,	"aAnEmmMappingEr");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_byte	(0X28829);
 	make_array	(0X28829,	0X24);
 	set_name	(0X28829,	"aProblemWithMus");
@@ -10693,6 +10695,15 @@ static Bytes_2(void) {
 	set_name	(0X363F6,	"aDisease_1");
 	create_strlit	(0X36400,	0XB);
 	set_name	(0X36400,	"aParalyze_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3640B,	0X9);
 	set_name	(0X3640B,	"aFrozen_1");
 	create_strlit	(0X36414,	0XA);
@@ -10711,15 +10722,6 @@ static Bytes_2(void) {
 	set_name	(0X36454,	"aStealNuore");
 	create_strlit	(0X36462,	0XD);
 	set_name	(0X36462,	"aProjectile_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3646F,	0X9);
 	set_name	(0X3646F,	"aWeapon");
 	create_strlit	(0X36478,	0X9);

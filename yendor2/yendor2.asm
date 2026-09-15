@@ -21024,7 +21024,7 @@ loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
 loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 call    SubBCD4
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 mov     si, word_328D4
                 mov     di, 0BCEh
                 mov     ax, [di+14h]
@@ -21064,7 +21064,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 call    AddBCD4
                 loop    loc_1BCDE
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 mov     si, word_328D4
                 mov     bx, 0BCEh
                 mov     ax, [bx+1Ah]
@@ -21261,7 +21261,7 @@ loc_1BEEF:                              ; CODE XREF: UseItemType_400+1A↑j
 loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 call    SubBCD4
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 call    sub_1CC98
                 call    sub_193BE
                 call    sub_26C9E
@@ -21383,7 +21383,7 @@ loc_1C030:                              ; CODE XREF: UseHealingItem+7A↑j
                 call    sub_26C9E
                 pop     word_32924
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 call    DrawMouseCursor
                 mov     bx, word_328D4
                 test    word_3298E, 2000h
@@ -21542,7 +21542,7 @@ loc_1C171:                              ; CODE XREF: UseTrainingItem+1A↑j
 loc_1C19E:                              ; CODE XREF: UseTrainingItem+59↑j
                 call    SubBCD4
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 push    word_32924
                 mov     word_32924, 0
                 call    sub_26C9E
@@ -21957,7 +21957,7 @@ loc_1C60B:                              ; CODE XREF: UseAbilityScroll+55↑j
 loc_1C643:                              ; CODE XREF: UseAbilityScroll+8D↑j
                 call    SubBCD4
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 call    RestoreCursorBackgroundIfDirty
                 push    cs
                 call    near ptr SelectItemUseRecord
@@ -22117,7 +22117,7 @@ loc_1C7D9:                              ; CODE XREF: UseAbilityScroll+151↑j
                 mov     ax, 7
                 call    sub_28412
                 push    cs
-                call    near ptr sub_1CC2E
+                call    near ptr RedrawPartyGoldDisplay
                 jmp     loc_1C707
 UseAbilityScroll endp
 
@@ -22563,9 +22563,9 @@ CheckKeyItem    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC2E       proc far                ; CODE XREF: sub_1BBED+8B↑p
+RedrawPartyGoldDisplay proc far         ; CODE XREF: sub_1BBED+8B↑p
                                         ; sub_1BBED+104↑p ...
-                mov     _textPos_x, 5Eh ; '^'
+                mov     _textPos_x, 5Eh ; '^' ; Redraws the gold readout: blanks the area (msg 0x7952) then FormatAndDrawBCD4(g_partyGold), then conditionally ShowResourceDepletedOverlay (word_36C7F bit 0x1000). Called from sub_1BBED (an unnamed, not-yet-fully-traced UseItem shop/vendor handler) after it spends gold.
                 mov     _textPos_y, 73h ; 's'
                 mov     _font_bgColor, 44h ; 'D'
                 mov     _font_fgColor, 44h ; 'D'
@@ -22579,9 +22579,9 @@ sub_1CC2E       proc far                ; CODE XREF: sub_1BBED+8B↑p
                 jz      short locret_1CC6F
                 call    ShowResourceDepletedOverlay
 
-locret_1CC6F:                           ; CODE XREF: sub_1CC2E+3A↑j
+locret_1CC6F:                           ; CODE XREF: RedrawPartyGoldDisplay+3A↑j
                 retf
-sub_1CC2E       endp
+RedrawPartyGoldDisplay endp
 
 
 ; =============== S U B R O U T I N E =======================================

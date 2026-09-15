@@ -2161,6 +2161,19 @@ ranges — left unnamed, not traced.
 
 274 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RedrawPartyGoldDisplay
+
+Named `sub_1CC2E`: blanks the display area then redraws `g_partyGold`
+via `FormatAndDrawBCD4`, plus a conditional resource-depleted overlay.
+Called from `sub_1BBED`, a large UseItem shop/vendor "buy" handler
+that spends gold against a price table (`0x512A`) — left unnamed this
+round since its multiple purchase-path branches (single item vs. a
+quantity loop that adds the unit price to both `g_partyGold` and a
+second counter `0xB30`) aren't disentangled with enough confidence
+yet.
+
+275 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

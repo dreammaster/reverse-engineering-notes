@@ -249,6 +249,16 @@ sibling loop (`sub_13119`, called from two other `ShowClueBook` sites)
 adds extra dispatches for item-id ranges overlapping `CastSpell`'s and
 `RestCharacter`'s selector ranges, not yet traced.
 
+A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
+reached from `UseItem+0x65`) spends `g_partyGold` via
+`CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated by
+inventory-capacity checks against the same `0xBCE` range table used
+elsewhere, and redraws the gold readout afterward via
+`RedrawPartyGoldDisplay`. Left unnamed — it has several branches
+(a single-item purchase path and a quantity-loop path that repeatedly
+adds the unit price to both `g_partyGold` and a second counter
+`0xB30`) not yet disentangled with enough confidence to name safely.
+
 ### Quest-item and party-inventory range checks
 
 `IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`
