@@ -148,6 +148,23 @@ the combat-adjacent code already documented this session
 etc. — not yet cross-referenced against this specific variable, a
 good next step).
 
+`g_monsterSlots` is fed by a much larger **per-level monster spawn/
+wander pool**, `g_levelMonsters` (base `0xF26`, 80 × `0x9C`-byte
+records — same stride and `[+0xC]` flag conventions as
+`g_monsterSlots`, strongly suggesting the identical record layout).
+`ProcessLevelMonsters` ticks every occupied slot via `TickMonsterTimer`
+each `RunDungeonGameLoop` iteration: a movement/attack-readiness
+countdown (`[+0x10] -= [+0x1C]`, `errorCode`=1 on reaching 0, or a
+two-phase variant with an intermediate `errorCode`=2 for monsters
+flagged `0x3010`), plus a separate, slower countdown (`[+0x1E]`) that
+on reaching 0 resets the monster wholesale — clears several `[+0xC]`
+flag bits, zeroes `[+0x1A]`/`[+0x1C]`/`[+0x1E]`, restores `[+8]` from a
+template value at `[+0x4C]` — plausibly a death/respawn cycle, not
+confirmed. On `errorCode`==1, `ProcessLevelMonsters` calls two further,
+not-yet-traced functions (`sub_22B96`, `sub_23116`) that plausibly
+promote the monster into one of `g_monsterSlots`' 3 active-combat
+slots — the exact spawn-into-combat handoff isn't traced yet.
+
 ### Global material counters and BCD arithmetic
 
 Three **global** (not per-party-member) crafting-material counters at

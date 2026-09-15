@@ -1197,6 +1197,23 @@ slots.
 
 169 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the per-level monster spawn/wander pool
+
+Followed `RunDungeonGameLoop`'s other monster callee (`sub_22D4C`,
+also called directly from `start`) and found the level-wide monster
+pool feeding last round's 3-slot combat system: `g_levelMonsters` (was
+bare `0xF26`), 80 records at the same `0x9C`-byte stride and `[+0xC]`
+flag conventions as `g_monsterSlots`. `ProcessLevelMonsters` (was
+`sub_22D4C`) ticks each occupied slot via the new `TickMonsterTimer`
+(was `sub_22CED`, a per-monster countdown/state-machine: movement/
+attack-readiness timers, plus a slower reset timer that restores a
+monster from its template data — plausibly a death/respawn cycle), and
+on "ready" promotes it toward active combat via two further,
+not-yet-traced calls. This is the per-level spawn/wander pool that
+`g_monsterSlots` draws its up-to-3 active combatants from.
+
+171 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

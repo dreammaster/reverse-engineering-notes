@@ -78,7 +78,7 @@ loc_1005A:                              ; CODE XREF: start+49↑j
                                         ; start+55↑j ...
                 test    word_328C8, 20h
                 jz      short loc_1007D
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10071
                 jmp     loc_10286
@@ -184,7 +184,7 @@ loc_10125:                              ; CODE XREF: start+120↑j
 ; ---------------------------------------------------------------------------
                 test    word_328C4, 8000h
                 jz      short loc_10152
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 call    sub_20C1E
                 call    BuildMinimapTileData
                 call    DrawMinimap
@@ -1875,8 +1875,8 @@ sub_1119A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_111C1       proc far                ; CODE XREF: sub_22D4C+D3↓P
-                                        ; sub_22D4C+11B↓P
+sub_111C1       proc far                ; CODE XREF: ProcessLevelMonsters+D3↓P
+                                        ; ProcessLevelMonsters+11B↓P
                 mov     errorCode, 0
                 mov     ax, word_2E406
                 mov     word_368AB, ax
@@ -2401,7 +2401,7 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                 jnz     short loc_11652
                 test    word_328C4, 1800h
                 jz      short loc_11652
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 call    sub_20C1E
                 call    sub_2278C
                 cmp     byte_2E400, 0
@@ -10190,7 +10190,7 @@ loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
                 jz      short loc_163B1
                 cmp     errorCode, 1
                 jnz     short loc_163A0
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 call    sub_20C1E
                 call    sub_2278C
                 cmp     byte_2E400, 0
@@ -10757,7 +10757,7 @@ sub_16881       proc near               ; CODE XREF: RunDungeonGameLoop+5D↑p
                 mov     word_2E49C, 0
                 mov     si, [bx]
                 mov     word_32904, si
-                call    sub_22CED
+                call    TickMonsterTimer
                 test    word ptr [si+0Ch], 0F010h
                 jz      short loc_168C3
                 or      word ptr [si+0Ch], 20h
@@ -23977,7 +23977,7 @@ loc_1D747:                              ; CODE XREF: sub_1D4B8+1B1↑j
 
 loc_1D75C:                              ; CODE XREF: sub_1D4B8+29D↑j
                 call    DrawMouseCursor
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 call    sub_20C1E
                 call    DrawMinimap
                 call    sub_2278C
@@ -25726,7 +25726,7 @@ loc_1E6FB:                              ; CODE XREF: sub_1E64A+15↑j
 
 loc_1E72A:                              ; CODE XREF: sub_1E64A+D0↑j
                                         ; sub_1E64A+F6↓j
-                call    sub_22D4C
+                call    ProcessLevelMonsters
                 test    word_328CA, 1000h
                 jnz     short loc_1E746
                 add     word_36D01, 3Ch ; '<'
@@ -32110,7 +32110,7 @@ sub_222F8       endp
 
 
 sub_22315       proc far                ; CODE XREF: HandleMovementInput+32D↑P
-                                        ; sub_22D4C+294↓P ...
+                                        ; ProcessLevelMonsters+294↓P ...
                 push    si
                 push    di
                 push    es
@@ -33281,15 +33281,15 @@ sub_22CBC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22CED       proc far                ; CODE XREF: sub_16881+1D↑P
-                                        ; sub_22D4C+4E↓p
-                mov     errorCode, 0
+TickMonsterTimer proc far               ; CODE XREF: sub_16881+1D↑P
+                                        ; ProcessLevelMonsters+4E↓p
+                mov     errorCode, 0    ; Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] by [si+0x1C]; reaching 0 sets errorCode=1 ('ready/arrived'). Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly a death/respawn reset.
                 test    word ptr [si+0Ch], 0FC10h
                 jnz     short loc_22CFB
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_22CFB:                              ; CODE XREF: sub_22CED+B↑j
+loc_22CFB:                              ; CODE XREF: TickMonsterTimer+B↑j
                 mov     ax, [si+1Ch]
                 sub     [si+10h], ax
                 jle     short loc_22D18
@@ -33300,20 +33300,20 @@ loc_22CFB:                              ; CODE XREF: sub_22CED+B↑j
                 sub     [si+10h], ax
                 jg      short loc_22D24
 
-loc_22D18:                              ; CODE XREF: sub_22CED+14↑j
+loc_22D18:                              ; CODE XREF: TickMonsterTimer+14↑j
                 mov     word ptr [si+10h], 0
                 mov     errorCode, 1
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_22D24:                              ; CODE XREF: sub_22CED+1B↑j
-                                        ; sub_22CED+29↑j
+loc_22D24:                              ; CODE XREF: TickMonsterTimer+1B↑j
+                                        ; TickMonsterTimer+29↑j
                 sub     word ptr [si+1Eh], 1
                 jle     short loc_22D2B
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_22D2B:                              ; CODE XREF: sub_22CED+3B↑j
+loc_22D2B:                              ; CODE XREF: TickMonsterTimer+3B↑j
                 and     word ptr [si+0Ch], 3EDh
                 mov     word ptr [si+1Ah], 0
                 mov     word ptr [si+1Ch], 0
@@ -33322,15 +33322,15 @@ loc_22D2B:                              ; CODE XREF: sub_22CED+3B↑j
                 mov     [si+8], ax
                 mov     errorCode, 0
                 retf
-sub_22CED       endp
+TickMonsterTimer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22D4C       proc far                ; CODE XREF: start+62↑P
+ProcessLevelMonsters proc far           ; CODE XREF: start+62↑P
                                         ; start+12F↑P ...
-                push    ax
+                push    ax              ; Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 ('ready'), calls sub_22B96 then sub_23116 (not traced, plausibly promotes this monster into an active g_monsterSlots combat slot). Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).
                 push    bx
                 push    cx
                 push    dx
@@ -33340,13 +33340,13 @@ sub_22D4C       proc far                ; CODE XREF: start+62↑P
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_22D5D:                              ; CODE XREF: sub_22D4C+1C↓j
+loc_22D5D:                              ; CODE XREF: ProcessLevelMonsters+1C↓j
                 push    cx
                 cmp     word ptr [si], 0
                 jnz     short loc_22D92
 
-loc_22D63:                              ; CODE XREF: sub_22D4C+4B↓j
-                                        ; sub_22D4C+5F↓j ...
+loc_22D63:                              ; CODE XREF: ProcessLevelMonsters+4B↓j
+                                        ; ProcessLevelMonsters+5F↓j ...
                 pop     cx
                 add     si, 9Ch
                 loop    loc_22D5D
@@ -33360,8 +33360,8 @@ loc_22D63:                              ; CODE XREF: sub_22D4C+4B↓j
                 call    near ptr sub_23151
                 call    DrawMouseCursor
 
-loc_22D8B:                              ; CODE XREF: sub_22D4C+24↑j
-                                        ; sub_22D4C+34↑j
+loc_22D8B:                              ; CODE XREF: ProcessLevelMonsters+24↑j
+                                        ; ProcessLevelMonsters+34↑j
                 pop     di
                 pop     si
                 pop     dx
@@ -33371,11 +33371,11 @@ loc_22D8B:                              ; CODE XREF: sub_22D4C+24↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_22D92:                              ; CODE XREF: sub_22D4C+15↑j
+loc_22D92:                              ; CODE XREF: ProcessLevelMonsters+15↑j
                 test    word ptr [si+0Ch], 1
                 jz      short loc_22D63
                 push    cs
-                call    near ptr sub_22CED
+                call    near ptr TickMonsterTimer
                 cmp     errorCode, 0
                 jz      short loc_22DB7
                 cmp     errorCode, 1
@@ -33383,7 +33383,7 @@ loc_22D92:                              ; CODE XREF: sub_22D4C+15↑j
                 jmp     short loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22DAD:                              ; CODE XREF: sub_22D4C+5D↑j
+loc_22DAD:                              ; CODE XREF: ProcessLevelMonsters+5D↑j
                 push    cs
                 call    near ptr sub_22B96
                 push    cs
@@ -33391,19 +33391,19 @@ loc_22DAD:                              ; CODE XREF: sub_22D4C+5D↑j
                 jmp     short loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22DB7:                              ; CODE XREF: sub_22D4C+56↑j
+loc_22DB7:                              ; CODE XREF: ProcessLevelMonsters+56↑j
                 cmp     word ptr [si+60h], 0
                 jnz     short loc_22DC0
                 jmp     loc_22EBF
 ; ---------------------------------------------------------------------------
 
-loc_22DC0:                              ; CODE XREF: sub_22D4C+6F↑j
+loc_22DC0:                              ; CODE XREF: ProcessLevelMonsters+6F↑j
                 test    word ptr [si+0Ch], 800h
                 jz      short loc_22DCA
                 jmp     loc_22EBF
 ; ---------------------------------------------------------------------------
 
-loc_22DCA:                              ; CODE XREF: sub_22D4C+79↑j
+loc_22DCA:                              ; CODE XREF: ProcessLevelMonsters+79↑j
                 mov     ax, [si+2]
                 mov     word_2E402, ax
                 mov     ax, [si+4]
@@ -33416,7 +33416,7 @@ loc_22DCA:                              ; CODE XREF: sub_22D4C+79↑j
                 jmp     loc_22EBF
 ; ---------------------------------------------------------------------------
 
-loc_22DE8:                              ; CODE XREF: sub_22D4C+97↑j
+loc_22DE8:                              ; CODE XREF: ProcessLevelMonsters+97↑j
                 or      word ptr [si+0Eh], 800h
                 mov     word_3293E, 1
                 mov     ax, word_2E406
@@ -33427,7 +33427,7 @@ loc_22DE8:                              ; CODE XREF: sub_22D4C+97↑j
                 mov     word_3293E, 0FFFFh
                 mov     cx, 5
 
-loc_22E0F:                              ; CODE XREF: sub_22D4C+AE↑j
+loc_22E0F:                              ; CODE XREF: ProcessLevelMonsters+AE↑j
                 mov     ax, word_2E406
                 add     ax, word_3293E
                 cmp     ax, word_36CF9
@@ -33438,12 +33438,12 @@ loc_22E0F:                              ; CODE XREF: sub_22D4C+AE↑j
                 jnz     short loc_22E2D
                 loop    loc_22E57
 
-loc_22E2D:                              ; CODE XREF: sub_22D4C+DD↑j
-                                        ; sub_22D4C+125↓j
+loc_22E2D:                              ; CODE XREF: ProcessLevelMonsters+DD↑j
+                                        ; ProcessLevelMonsters+125↓j
                 jmp     loc_22EBF
 ; ---------------------------------------------------------------------------
 
-loc_22E30:                              ; CODE XREF: sub_22D4C+8E↑j
+loc_22E30:                              ; CODE XREF: ProcessLevelMonsters+8E↑j
                 or      word ptr [si+0Eh], 100h
                 mov     word_3293E, 1
                 mov     ax, word_2E402
@@ -33454,8 +33454,8 @@ loc_22E30:                              ; CODE XREF: sub_22D4C+8E↑j
                 mov     word_3293E, 0FFFFh
                 mov     cx, 5
 
-loc_22E57:                              ; CODE XREF: sub_22D4C+DF↑j
-                                        ; sub_22D4C+F6↑j ...
+loc_22E57:                              ; CODE XREF: ProcessLevelMonsters+DF↑j
+                                        ; ProcessLevelMonsters+F6↑j ...
                 mov     ax, word_2E402
                 add     ax, word_3293E
                 cmp     ax, word_36CF7
@@ -33468,8 +33468,8 @@ loc_22E57:                              ; CODE XREF: sub_22D4C+DF↑j
                 jmp     short loc_22EBF
 ; ---------------------------------------------------------------------------
 
-loc_22E77:                              ; CODE XREF: sub_22D4C+CE↑j
-                                        ; sub_22D4C+116↑j
+loc_22E77:                              ; CODE XREF: ProcessLevelMonsters+CE↑j
+                                        ; ProcessLevelMonsters+116↑j
                 mov     ax, 64h ; 'd'
                 call    RandomInRange
                 mov     bx, 5Ah ; 'Z'
@@ -33486,8 +33486,8 @@ loc_22E77:                              ; CODE XREF: sub_22D4C+CE↑j
                 jnz     short loc_22EAE
                 mov     bx, 5
 
-loc_22EAE:                              ; CODE XREF: sub_22D4C+13C↑j
-                                        ; sub_22D4C+147↑j ...
+loc_22EAE:                              ; CODE XREF: ProcessLevelMonsters+13C↑j
+                                        ; ProcessLevelMonsters+147↑j ...
                 cmp     ax, bx
                 jg      short loc_22EBF
                 or      word ptr [si+0Eh], 1000h
@@ -33495,8 +33495,8 @@ loc_22EAE:                              ; CODE XREF: sub_22D4C+13C↑j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22EBF:                              ; CODE XREF: sub_22D4C+71↑j
-                                        ; sub_22D4C+7B↑j ...
+loc_22EBF:                              ; CODE XREF: ProcessLevelMonsters+71↑j
+                                        ; ProcessLevelMonsters+7B↑j ...
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     word_2E404, 0
@@ -33514,7 +33514,7 @@ loc_22EBF:                              ; CODE XREF: sub_22D4C+71↑j
                 jmp     short loc_22F63
 ; ---------------------------------------------------------------------------
 
-loc_22EFE:                              ; CODE XREF: sub_22D4C+19D↑j
+loc_22EFE:                              ; CODE XREF: ProcessLevelMonsters+19D↑j
                 sub     ax, 2
                 cmp     ax, word_36CF9
                 jnz     short loc_22F1A
@@ -33524,8 +33524,8 @@ loc_22EFE:                              ; CODE XREF: sub_22D4C+19D↑j
                 jmp     short loc_22F63
 ; ---------------------------------------------------------------------------
 
-loc_22F1A:                              ; CODE XREF: sub_22D4C+196↑j
-                                        ; sub_22D4C+1B9↑j ...
+loc_22F1A:                              ; CODE XREF: ProcessLevelMonsters+196↑j
+                                        ; ProcessLevelMonsters+1B9↑j ...
                 mov     ax, word_36CF7
                 cmp     ax, [si+2]
                 jnz     short loc_22F2D
@@ -33535,7 +33535,7 @@ loc_22F1A:                              ; CODE XREF: sub_22D4C+196↑j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22F2D:                              ; CODE XREF: sub_22D4C+1D4↑j
+loc_22F2D:                              ; CODE XREF: ProcessLevelMonsters+1D4↑j
                 mov     word_2E402, 0FFFFh
                 mov     word_2E404, 0FFF8h
                 jl      short loc_22F63
@@ -33544,16 +33544,16 @@ loc_22F2D:                              ; CODE XREF: sub_22D4C+1D4↑j
                 jmp     short loc_22F63
 ; ---------------------------------------------------------------------------
 
-loc_22F49:                              ; CODE XREF: sub_22D4C+1DC↑j
-                                        ; sub_22D4C+27B↓j
+loc_22F49:                              ; CODE XREF: ProcessLevelMonsters+1DC↑j
+                                        ; ProcessLevelMonsters+27B↓j
                 mov     word_2E406, 0FFFFh
                 mov     word_2E404, 0FD90h
                 jl      short loc_22F63
                 mov     word_2E406, 1
                 mov     word_2E404, 270h
 
-loc_22F63:                              ; CODE XREF: sub_22D4C+1B0↑j
-                                        ; sub_22D4C+1CC↑j ...
+loc_22F63:                              ; CODE XREF: ProcessLevelMonsters+1B0↑j
+                                        ; ProcessLevelMonsters+1CC↑j ...
                 call    sub_2B384
                 cmp     errorCode, 0
                 jnz     short loc_22F83
@@ -33566,7 +33566,7 @@ loc_22F63:                              ; CODE XREF: sub_22D4C+1B0↑j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22F83:                              ; CODE XREF: sub_22D4C+221↑j
+loc_22F83:                              ; CODE XREF: ProcessLevelMonsters+221↑j
                 test    word_328C8, 40h
                 jz      short loc_22FA5
                 and     word_328C8, 0FFBFh
@@ -33576,13 +33576,13 @@ loc_22F83:                              ; CODE XREF: sub_22D4C+221↑j
                 jmp     loc_22F1A
 ; ---------------------------------------------------------------------------
 
-loc_22FA5:                              ; CODE XREF: sub_22D4C+23D↑j
+loc_22FA5:                              ; CODE XREF: ProcessLevelMonsters+23D↑j
                 cmp     word_2E402, 0
                 jnz     short loc_22FAF
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22FAF:                              ; CODE XREF: sub_22D4C+25E↑j
+loc_22FAF:                              ; CODE XREF: ProcessLevelMonsters+25E↑j
                 mov     word_2E402, 0
                 mov     word_2E406, 0
                 mov     word_2E404, 0
@@ -33592,7 +33592,7 @@ loc_22FAF:                              ; CODE XREF: sub_22D4C+25E↑j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_22FCC:                              ; CODE XREF: sub_22D4C+22E↑j
+loc_22FCC:                              ; CODE XREF: ProcessLevelMonsters+22E↑j
                 test    word_328CA, 1000h
                 jnz     short loc_2300C
                 mov     word_32A1E, 0
@@ -33615,35 +33615,35 @@ loc_22FCC:                              ; CODE XREF: sub_22D4C+22E↑j
                 jmp     loc_2309D
 ; ---------------------------------------------------------------------------
 
-loc_2300C:                              ; CODE XREF: sub_22D4C+286↑j
+loc_2300C:                              ; CODE XREF: ProcessLevelMonsters+286↑j
                 test    word ptr [si+92h], 8000h
                 jz      short loc_2301C
                 test    word_328CA, 8000h
                 jnz     short loc_2301F
 
-loc_2301C:                              ; CODE XREF: sub_22D4C+2C6↑j
-                                        ; sub_22D4C+2E3↓j
+loc_2301C:                              ; CODE XREF: ProcessLevelMonsters+2C6↑j
+                                        ; ProcessLevelMonsters+2E3↓j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_2301F:                              ; CODE XREF: sub_22D4C+2CE↑j
+loc_2301F:                              ; CODE XREF: ProcessLevelMonsters+2CE↑j
                 test    word_328CA, 2000h
                 jz      short loc_2302A
                 jmp     loc_230B7
 ; ---------------------------------------------------------------------------
 
-loc_2302A:                              ; CODE XREF: sub_22D4C+2D9↑j
+loc_2302A:                              ; CODE XREF: ProcessLevelMonsters+2D9↑j
                 cmp     g_monsterSlots, 0
                 jnz     short loc_2301C
 
-loc_23031:                              ; CODE XREF: sub_22D4C+372↓j
+loc_23031:                              ; CODE XREF: ProcessLevelMonsters+372↓j
                 cmp     word_32A1E, 0
                 jz      short loc_23041
                 mov     di, word_32A1E
                 mov     ax, [di]
                 mov     word_32A1E, ax
 
-loc_23041:                              ; CODE XREF: sub_22D4C+2EA↑j
+loc_23041:                              ; CODE XREF: ProcessLevelMonsters+2EA↑j
                 push    si
                 mov     di, 52F8h
                 mov     si, 525Ch
@@ -33675,15 +33675,15 @@ loc_23041:                              ; CODE XREF: sub_22D4C+2EA↑j
                 jmp     short loc_2309A
 ; ---------------------------------------------------------------------------
 
-loc_23094:                              ; CODE XREF: sub_22D4C+336↑j
-                                        ; sub_22D4C+33E↑j
+loc_23094:                              ; CODE XREF: ProcessLevelMonsters+336↑j
+                                        ; ProcessLevelMonsters+33E↑j
                 or      word_328CA, 4000h
 
-loc_2309A:                              ; CODE XREF: sub_22D4C+346↑j
+loc_2309A:                              ; CODE XREF: ProcessLevelMonsters+346↑j
                 mov     si, 51C0h
 
-loc_2309D:                              ; CODE XREF: sub_22D4C+2BD↑j
-                                        ; sub_22D4C+3C8↓j
+loc_2309D:                              ; CODE XREF: ProcessLevelMonsters+2BD↑j
+                                        ; ProcessLevelMonsters+3C8↓j
                 mov     es, word_2E562
                 mov     bx, [si+6]
                 and     word ptr es:[bx+6], 0FBFFh
@@ -33693,32 +33693,32 @@ loc_2309D:                              ; CODE XREF: sub_22D4C+2BD↑j
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_230B7:                              ; CODE XREF: sub_22D4C+2DB↑j
+loc_230B7:                              ; CODE XREF: ProcessLevelMonsters+2DB↑j
                 cmp     g_monsterSlots, 0
                 jnz     short loc_230C1
                 jmp     loc_23031
 ; ---------------------------------------------------------------------------
 
-loc_230C1:                              ; CODE XREF: sub_22D4C+370↑j
+loc_230C1:                              ; CODE XREF: ProcessLevelMonsters+370↑j
                 cmp     word_32ABC, 0
                 jz      short loc_230CB
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_230CB:                              ; CODE XREF: sub_22D4C+37A↑j
+loc_230CB:                              ; CODE XREF: ProcessLevelMonsters+37A↑j
                 test    word ptr [si+92h], 2000h
                 jnz     short loc_230D6
                 jmp     loc_22D63
 ; ---------------------------------------------------------------------------
 
-loc_230D6:                              ; CODE XREF: sub_22D4C+385↑j
+loc_230D6:                              ; CODE XREF: ProcessLevelMonsters+385↑j
                 cmp     word_32A1E, 0
                 jz      short loc_230E6
                 mov     di, word_32A1E
                 mov     ax, [di]
                 mov     word_32A1E, ax
 
-loc_230E6:                              ; CODE XREF: sub_22D4C+38F↑j
+loc_230E6:                              ; CODE XREF: ProcessLevelMonsters+38F↑j
                 push    si
                 mov     di, 525Ch
                 mov     si, 51C0h
@@ -33739,7 +33739,7 @@ loc_230E6:                              ; CODE XREF: sub_22D4C+38F↑j
                 dec     word_32A2A
                 mov     si, 51C0h
                 jmp     short loc_2309D
-sub_22D4C       endp
+ProcessLevelMonsters endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33940,7 +33940,7 @@ DrawMonsterInfoPanels endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23305       proc far                ; CODE XREF: sub_22D4C+231↑p
+sub_23305       proc far                ; CODE XREF: ProcessLevelMonsters+231↑p
                 mov     es, word_2E562
                 mov     bx, [si+6]
                 and     word ptr es:[bx+6], 0FBFFh
@@ -34187,7 +34187,7 @@ sub_23442       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_234A7       proc near               ; CODE XREF: sub_22D4C+364↑p
+sub_234A7       proc near               ; CODE XREF: ProcessLevelMonsters+364↑p
                                         ; sub_2333B:loc_233C8↑p
                 cmp     word_32A1E, 0
                 jnz     short loc_234AF
@@ -49478,7 +49478,7 @@ seg117          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B384       proc far                ; CODE XREF: sub_22D4C:loc_22F63↑P
+sub_2B384       proc far                ; CODE XREF: ProcessLevelMonsters:loc_22F63↑P
                 mov     errorCode, 1
                 mov     es, word_2E562
                 mov     bx, [si+6]
@@ -57479,7 +57479,7 @@ word_2E782      dw 0                    ; DATA XREF: seg073:00B5↑r
                                         ; InitMouse+40↑w ...
 word_2E784      dw 0                    ; DATA XREF: seg073:00BB↑r
                                         ; InitMouse+46↑w ...
-                db    0
+g_levelMonsters db    0                 ; 80 x 0x9C-byte monster records (per-level monster pool, feeding the 3-slot g_monsterSlots active-combat array). Same record stride and [+0xC] flag conventions as g_monsterSlots.
                 db    0
                 db    0
                 db    0
@@ -74523,8 +74523,8 @@ word_32A1A      dw 0                    ; DATA XREF: sub_22CBC+C↑w
 word_32A1C      dw 0                    ; DATA XREF: sub_22CBC+12↑w
 word_32A1E      dw 0                    ; DATA XREF: RunDungeonGameLoop+3F↑w
                                         ; sub_16407+2CB↑w ...
-g_monsterSlots  dw 0                    ; DATA XREF: sub_22D4C:loc_2302A↑r
-                                        ; sub_22D4C:loc_230B7↑r
+g_monsterSlots  dw 0                    ; DATA XREF: ProcessLevelMonsters:loc_2302A↑r
+                                        ; ProcessLevelMonsters:loc_230B7↑r
                                         ; 3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.
                 db    0
                 db    0
@@ -74534,8 +74534,8 @@ g_monsterSlots  dw 0                    ; DATA XREF: sub_22D4C:loc_2302A↑r
                 db    0
                 db    0
                 db    0
-word_32A2A      dw 0                    ; DATA XREF: sub_22D4C+326↑w
-                                        ; sub_22D4C+3C1↑w
+word_32A2A      dw 0                    ; DATA XREF: ProcessLevelMonsters+326↑w
+                                        ; ProcessLevelMonsters+3C1↑w
                 db    0
                 db    0
                 db    0
@@ -74670,7 +74670,7 @@ word_32A2A      dw 0                    ; DATA XREF: sub_22D4C+326↑w
                 db    0
                 db    0
                 db    0
-word_32AB2      dw 0                    ; DATA XREF: sub_22D4C+330↑r
+word_32AB2      dw 0                    ; DATA XREF: ProcessLevelMonsters+330↑r
                 db    0
                 db    0
                 db    0
@@ -74679,7 +74679,7 @@ word_32AB2      dw 0                    ; DATA XREF: sub_22D4C+330↑r
                 db    0
                 db    0
                 db    0
-word_32ABC      dw 0                    ; DATA XREF: sub_22D4C:loc_230C1↑r
+word_32ABC      dw 0                    ; DATA XREF: ProcessLevelMonsters:loc_230C1↑r
                 db    0
                 db    0
                 db    0
@@ -74688,7 +74688,7 @@ word_32ABC      dw 0                    ; DATA XREF: sub_22D4C:loc_230C1↑r
                 db    0
                 db    0
                 db    0
-word_32AC6      dw 0                    ; DATA XREF: sub_22D4C+3AA↑w
+word_32AC6      dw 0                    ; DATA XREF: ProcessLevelMonsters+3AA↑w
                 db    0
                 db    0
                 db    0
@@ -74843,7 +74843,7 @@ word_32AC6      dw 0                    ; DATA XREF: sub_22D4C+3AA↑w
                 db    0
                 db    0
                 db    0
-word_32B62      dw 0                    ; DATA XREF: sub_22D4C+305↑w
+word_32B62      dw 0                    ; DATA XREF: ProcessLevelMonsters+305↑w
                 db    0
                 db    0
                 db    0
@@ -74978,7 +74978,7 @@ word_32B62      dw 0                    ; DATA XREF: sub_22D4C+305↑w
                 db    0
                 db    0
                 db    0
-word_32BEA      dw 0                    ; DATA XREF: sub_22D4C+338↑r
+word_32BEA      dw 0                    ; DATA XREF: ProcessLevelMonsters+338↑r
                 db    0
                 db    0
                 db    0

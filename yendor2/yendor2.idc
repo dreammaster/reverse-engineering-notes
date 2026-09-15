@@ -5619,7 +5619,9 @@ static Bytes_1(void) {
 	set_cmt	(0X22C88,	"this",	0);
 	set_cmt	(0X22C95,	"this",	0);
 	create_insn	(0X22CBC);
+	set_cmt	(0X22CED,	"Per-monster timer/state-machine tick (si = a g_levelMonsters entry). Gated on [si+0xC] & 0xFC10. Decrements [si+0x10] by [si+0x1C]; reaching 0 sets errorCode=1 ('ready/arrived'). Monsters flagged 0x3010 in [si+0xC] (same combo BuildCombatTurnOrder tests) get a second decrement pass with an intermediate errorCode=2. Separately, decrements [si+0x1E] and on reaching 0 resets the monster wholesale (clears [si+0xC] flag bits 0x3ED, zeroes [si+0x1A]/[si+0x1C]/[si+0x1E], restores [si+8] from a template at [si+0x4C]) -- plausibly a death/respawn reset.",	0);
 	create_insn	(0X22CED);
+	set_name	(0X22CED,	"TickMonsterTimer");
 	create_insn	(x=0X22CF3);
 	op_hex		(x,	1);
 	create_insn	(0X22CFB);
@@ -5628,7 +5630,9 @@ static Bytes_1(void) {
 	create_insn	(0X22D24);
 	create_insn	(x=0X22D2B);
 	op_hex		(x,	1);
+	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 ('ready'), calls sub_22B96 then sub_23116 (not traced, plausibly promotes this monster into an active g_monsterSlots combat slot). Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
 	create_insn	(0X22D4C);
+	set_name	(0X22D4C,	"ProcessLevelMonsters");
 	create_insn	(x=0X22D52);
 	op_hex		(x,	1);
 	create_insn	(x=0X22D6A);
@@ -9344,6 +9348,15 @@ static Bytes_1(void) {
 	create_word	(0X2E66C);
 	create_word	(0X2E76E);
 	create_word	(0X2E770);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E772);
 	create_word	(0X2E774);
 	create_word	(0X2E776);
@@ -9353,6 +9366,8 @@ static Bytes_1(void) {
 	create_word	(0X2E780);
 	create_word	(0X2E782);
 	create_word	(0X2E784);
+	set_cmt	(0X2E786,	"80 x 0x9C-byte monster records (per-level monster pool, feeding the 3-slot g_monsterSlots active-combat array). Same record stride and [+0xC] flag conventions as g_monsterSlots.",	0);
+	set_name	(0X2E786,	"g_levelMonsters");
 	create_word	(0X31946);
 	create_word	(0X31948);
 	create_word	(0X3194A);
@@ -9439,15 +9454,6 @@ static Bytes_1(void) {
 	create_word	(0X32914);
 	create_word	(0X32916);
 	create_word	(0X32918);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X3291A);
 	create_word	(0X3291C);
 	set_name	(0X3291C,	"_videoBufferSeg");
