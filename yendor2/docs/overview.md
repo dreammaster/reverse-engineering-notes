@@ -826,6 +826,20 @@ briefly flashes a picture before restoring, reading as a periodic
 
 121 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FormatNumber, and CastSpell's 0x1C
+
+Chased `CastSpell`'s last unresolved code, `0x1C`. Found and named
+`FormatNumber` (was `sub_17FB8`, high confidence): a general decimal
+integer-to-string formatter with leading-zero suppression, used here to
+display the spell's effect amount. `0x1C` itself reads as an
+offensive/damage spell — target selection, a resource-availability
+check, then an icon + `FormatNumber`'d amount + sound — distinct from
+the self-heal codes, but not fully traced (the exact resource check and
+damage source remain open). Updated `CastSpell`'s comment with the full
+picture.
+
+122 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

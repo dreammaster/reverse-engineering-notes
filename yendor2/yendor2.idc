@@ -2859,7 +2859,9 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X17FB1);
 	op_hex		(x,	1);
+	set_cmt	(0X17FB8,	"Formats ax as a decimal string into the buffer at bx (space-padded '0' for ax==0). Extracts digits via successive divisors with leading-zero suppression (sub_18041).",	0);
 	create_insn	(0X17FB8);
+	set_name	(0X17FB8,	"FormatNumber");
 	create_insn	(x=0X17FBC);
 	op_hex		(x,	1);
 	create_insn	(x=0X17FBF);
@@ -8269,7 +8271,7 @@ static Bytes_1(void) {
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex targeted spell (target selection + confirmation), not fully traced. Matches the manual's 'C cast spell'.",	0);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex spell: picks a target, checks resource availability (sub_19A7C, two variants selected by the confirmation answer), then on success draws a small icon and a FormatNumber'd amount with a message and sound cue -- reads as an offensive/damage spell rather than a self-heal, not fully traced. Matches the manual's 'C cast spell'.",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
@@ -10228,6 +10230,15 @@ static Bytes_1(void) {
 	set_name	(0X36130,	"aStrength_0");
 	create_strlit	(0X3613A,	0X7);
 	set_name	(0X3613A,	"aPoison_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36141,	0X7);
 	set_name	(0X36141,	"aUndead");
 	create_strlit	(0X36148,	0X12);
@@ -10240,15 +10251,6 @@ static Bytes_1(void) {
 	set_name	(0X36171,	"aHealth_0");
 	create_strlit	(0X36179,	0XA);
 	set_name	(0X36179,	"aAccuracy");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36183,	0XB);
 	set_name	(0X36183,	"aDexterity_0");
 	create_strlit	(0X3618E,	0XC);

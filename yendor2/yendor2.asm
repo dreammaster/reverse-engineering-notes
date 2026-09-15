@@ -5963,7 +5963,7 @@ loc_139E5:                              ; CODE XREF: sub_13957+6B↑j
                                         ; sub_13957+75↑j ...
                 mov     _textPos_x, 9Dh
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -6034,7 +6034,7 @@ loc_13A88:                              ; CODE XREF: sub_13957+104↑j
 loc_13AB6:                              ; CODE XREF: sub_13957+15A↑j
                 push    dx
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -6110,7 +6110,7 @@ sub_13B3F       proc near               ; CODE XREF: sub_13216+35↑p
 loc_13BA8:                              ; CODE XREF: sub_13B3F+84↓j
                 pop     ax
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -6240,7 +6240,7 @@ sub_13C86       proc near               ; CODE XREF: sub_13B3F+CE↑p
                 mov     _textPos_x, 68h ; 'h'
                 pop     ax
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -6470,7 +6470,7 @@ sub_13EDF       proc near               ; CODE XREF: sub_13E98+2B↑p
                 mov     _textPos_x, 7Fh
                 mov     ax, [si+16h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -7292,7 +7292,7 @@ sub_14876       proc near               ; CODE XREF: sub_13678+7E↑p
                 mov     _textPos_x, 9Dh
                 mov     ax, [si]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    sub_16262
@@ -7319,7 +7319,7 @@ sub_148B2       proc near               ; CODE XREF: sub_141D9+93↑p
                 mov     _textPos_x, 113h
                 mov     ax, es:[bx]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -7356,7 +7356,7 @@ loc_14913:                              ; CODE XREF: sub_148EA+7D↓j
                 push    cx
                 mov     ax, [si+2]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -7480,7 +7480,7 @@ loc_14A06:                              ; CODE XREF: sub_149DD+7D↓j
                 push    cx
                 mov     ax, [si+2]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -12000,7 +12000,7 @@ loc_17100:                              ; CODE XREF: sub_17032+CA↑j
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFA8h
                 pop     ax
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 call    writeString
@@ -13593,14 +13593,14 @@ seg025          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-sub_17FB8       proc far                ; CODE XREF: sub_13957+97↑P
+FormatNumber    proc far                ; CODE XREF: sub_13957+97↑P
                                         ; sub_13957+163↑P ...
 
 var_6           = byte ptr -6
 var_4           = word ptr -4
 var_2           = word ptr -2
 
-                push    dx
+                push    dx              ; Formats ax as a decimal string into the buffer at bx (space-padded '0' for ax==0). Extracts digits via successive divisors with leading-zero suppression (sub_18041).
                 push    bp
                 mov     bp, sp
                 sub     sp, 0Ah
@@ -13617,58 +13617,58 @@ var_2           = word ptr -2
                 jmp     short loc_18039
 ; ---------------------------------------------------------------------------
 
-loc_17FE7:                              ; CODE XREF: sub_17FB8+16↑j
+loc_17FE7:                              ; CODE XREF: FormatNumber+16↑j
                 mov     [bp+var_4], 2710h
                 call    sub_18041
                 cmp     al, 0
                 jz      short loc_17FF7
                 mov     [bp+var_6], 1
 
-loc_17FF7:                              ; CODE XREF: sub_17FB8+39↑j
+loc_17FF7:                              ; CODE XREF: FormatNumber+39↑j
                 mov     [bp+var_4], 3E8h
                 call    sub_18041
                 cmp     al, 0
                 jz      short loc_18007
                 mov     [bp+var_6], 1
 
-loc_18007:                              ; CODE XREF: sub_17FB8+49↑j
+loc_18007:                              ; CODE XREF: FormatNumber+49↑j
                 cmp     [bp+var_6], 0
                 jz      short loc_18011
                 mov     byte ptr [bx], 2Ch ; ','
                 inc     bx
 
-loc_18011:                              ; CODE XREF: sub_17FB8+53↑j
+loc_18011:                              ; CODE XREF: FormatNumber+53↑j
                 mov     [bp+var_4], 64h ; 'd'
                 call    sub_18041
                 cmp     al, 0
                 jz      short loc_18021
                 mov     [bp+var_6], 1
 
-loc_18021:                              ; CODE XREF: sub_17FB8+63↑j
+loc_18021:                              ; CODE XREF: FormatNumber+63↑j
                 mov     [bp+var_4], 0Ah
                 call    sub_18041
                 cmp     al, 0
                 jz      short loc_18031
                 mov     [bp+var_6], 1
 
-loc_18031:                              ; CODE XREF: sub_17FB8+73↑j
+loc_18031:                              ; CODE XREF: FormatNumber+73↑j
                 mov     [bp+var_4], 1
                 call    sub_18041
 
-loc_18039:                              ; CODE XREF: sub_17FB8+2D↑j
+loc_18039:                              ; CODE XREF: FormatNumber+2D↑j
                 mov     byte ptr [bx], 0
                 mov     sp, bp
                 pop     bp
                 pop     dx
                 retf
-sub_17FB8       endp
+FormatNumber    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18041       proc near               ; CODE XREF: sub_17FB8+34↑p
-                                        ; sub_17FB8+44↑p ...
+sub_18041       proc near               ; CODE XREF: FormatNumber+34↑p
+                                        ; FormatNumber+44↑p ...
                 mov     ax, [bp-2]
                 mov     dx, 0
                 div     word ptr [bp-4]
@@ -16582,7 +16582,7 @@ sub_1978F       proc near               ; CODE XREF: sub_193BE+49↑p
 
 loc_197A3:                              ; CODE XREF: sub_1978F+A↑j
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -20152,7 +20152,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 mov     word_38808, 202Bh
                 mov     ax, [si+16h]
                 mov     bx, 0AFAAh
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFAAh
                 call    sub_2570C
                 mov     bx, 0AFA8h      ; msg
@@ -21279,7 +21279,7 @@ loc_1BF4A:                              ; CODE XREF: sub_1BEA1+24↑j
                 mov     ax, [di+18h]
                 mov     word_2E38E, ax
                 mov     bx, 0BC28h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0BC28h
                 call    sub_2570C
                 mov     byte_39492, 0
@@ -21700,7 +21700,7 @@ loc_1C2D2:                              ; CODE XREF: sub_1C123+1B7↓j
                 mov     _font_fgColor, 8Ah
                 mov     ax, [si+16h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -21713,7 +21713,7 @@ loc_1C2D2:                              ; CODE XREF: sub_1C123+1B7↓j
                 mov     _font_fgColor, 8Ah
                 mov     ax, [si+92h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 call    writeString
@@ -21732,7 +21732,7 @@ loc_1C39C:                              ; CODE XREF: sub_1C123+274↑j
                 mov     _font_fgColor, 8Ah
                 mov     ax, [si+94h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 call    writeString
@@ -21856,7 +21856,7 @@ loc_1C4E1:                              ; CODE XREF: sub_1C123+24↑j
                 mov     _font_fgColor, 8Ah
                 mov     ax, word_3293E
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -21868,7 +21868,7 @@ loc_1C4E1:                              ; CODE XREF: sub_1C123+24↑j
 
 loc_1C54C:                              ; CODE XREF: sub_1C123+3CC↑j
                 mov     bx, 0BC28h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0BC28h
                 call    sub_2570C
                 mov     byte_39492, 0
@@ -25284,13 +25284,13 @@ sub_1E285       endp
 sub_1E2E5       proc near               ; CODE XREF: sub_1E546+8A↓p
                 push    bx
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    sub_16262
                 pop     ax
                 mov     bx, 0AFB2h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFB2h
                 call    sub_2570C
                 call    sub_16262
@@ -25315,7 +25315,7 @@ sub_1E2E5       endp
 sub_1E340       proc near               ; CODE XREF: sub_1E3AF+67↓p
                                         ; sub_1E3AF+77↓p ...
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -31216,7 +31216,7 @@ loc_21A8E:                              ; CODE XREF: sub_219FA+77↑j
                 mov     ax, [bx+0Ah]
                 add     ax, word_3293E
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     word_2E4AC, 1
@@ -31265,7 +31265,7 @@ loc_21B25:                              ; CODE XREF: sub_219FA+114↑j
 loc_21B3F:                              ; CODE XREF: sub_219FA+129↑j
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 call    writeString
@@ -31796,7 +31796,7 @@ loc_22020:                              ; CODE XREF: sub_21E71+18B↑j
 loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
                 mov     ax, x
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     ax, bx
@@ -31804,7 +31804,7 @@ loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
                 call    StpCpy
                 mov     ax, y
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     ax, bx
@@ -34384,12 +34384,12 @@ loc_2367C:                              ; CODE XREF: sub_234D3+182↑j
                 add     _textPos_y, 6
                 mov     ax, [si+10h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     ax, [si+50h]
                 mov     bx, 0AFB2h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFB2h
                 call    sub_2570C
                 mov     word_3881C, 2Fh ; '/'
@@ -37081,7 +37081,7 @@ sub_25091       proc near               ; CODE XREF: sub_24CAD+5F↑p
 
 loc_250A5:                              ; CODE XREF: sub_25091+A↑j
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -37103,7 +37103,7 @@ sub_250BB       proc near               ; CODE XREF: sub_24D30+BC↑p
 
 loc_250CF:                              ; CODE XREF: sub_250BB+A↑j
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 call    writeString
@@ -37898,7 +37898,7 @@ seg081          segment byte public 'CODE' use16
 sub_2572C       proc far                ; CODE XREF: sub_2044C+21↑P
                                         ; sub_2047B+21↑P ...
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2A766
                 mov     ax, bx
@@ -38749,7 +38749,7 @@ sub_25C61       proc far                ; CODE XREF: sub_1B7DD+33↑P
                 add     _textPos_x, 2Ah ; '*'
                 mov     ax, [si+16h]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -38767,7 +38767,7 @@ sub_25C61       proc far                ; CODE XREF: sub_1B7DD+33↑P
                 add     _textPos_x, 2Ah ; '*'
                 mov     ax, [si+1Eh]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -38936,7 +38936,7 @@ sub_25E5E       proc near               ; CODE XREF: sub_25F10+8F↓p
                                         ; sub_25F10+A4↓p ...
                 push    bx
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 cmp     word_2E4AC, 0
@@ -38947,7 +38947,7 @@ sub_25E5E       proc near               ; CODE XREF: sub_25F10+8F↓p
 loc_25E80:                              ; CODE XREF: sub_25E5E+16↑j
                 pop     ax
                 mov     bx, 0AFB2h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFB2h
                 call    sub_256F0
                 cmp     word_2E4AC, 0
@@ -39081,7 +39081,7 @@ sub_25FCD       proc near               ; CODE XREF: sub_25B34+94↑p
 loc_25FFF:                              ; CODE XREF: sub_25FCD+51↓j
                 mov     ax, [si]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 call    writeString
@@ -43281,7 +43281,7 @@ sub_28034       endp
 sub_28138       proc near               ; CODE XREF: sub_28034+4D↑p
                                         ; sub_28034+5B↑p ...
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     ax, bx
@@ -44924,7 +44924,7 @@ loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
                 mov     ax, [si+16h]
                 sub     ax, [di]
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     bx, 0AFA8h
                 call    sub_2570C
                 mov     ax, 835Fh
@@ -48571,7 +48571,7 @@ RestCharacter   endp
 
 
 CastSpell       proc far                ; CODE XREF: HandleGameCommand:loc_2964C↑P
-                mov     bx, word_2E548  ; Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex targeted spell (target selection + confirmation), not fully traced. Matches the manual's 'C cast spell'.
+                mov     bx, word_2E548  ; Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex spell: picks a target, checks resource availability (sub_19A7C, two variants selected by the confirmation answer), then on success draws a small icon and a FormatNumber'd amount with a message and sound cue -- reads as an offensive/damage spell rather than a self-heal, not fully traced. Matches the manual's 'C cast spell'.
                 test    word ptr [bx], 2
                 jnz     short loc_2AA86
                 test    word ptr [bx], 1
@@ -48841,7 +48841,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 call    sub_23B76
                 mov     ax, word_32940
                 mov     bx, 0AFA8h
-                call    sub_17FB8
+                call    FormatNumber
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFAAh      ; msg
                 call    writeString
