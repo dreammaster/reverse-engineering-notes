@@ -35311,7 +35311,7 @@ loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
 loc_23D8D:                              ; CODE XREF: sub_23C18+FD↑j
                                         ; sub_23C18+17E↓j ...
                 mov     si, 5F7Eh
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     ax, 0
                 jz      short loc_23D8D
                 jl      short loc_23DA3
@@ -35414,7 +35414,7 @@ loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
 loc_23E9F:                              ; CODE XREF: sub_23C18+290↓j
                                         ; sub_23C18+29B↓j ...
                 mov     si, 5F7Eh
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     ax, 0
                 jz      short loc_23E9F
                 jl      short loc_23EB5
@@ -36021,7 +36021,7 @@ ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8�
 loc_244D8:                              ; CODE XREF: ShowCharacterSkills+110↓j
                                         ; ShowCharacterSkills+11D↓j ...
                 mov     si, 66D6h
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     errorCode, 7
                 jz      short loc_244D8
                 cmp     ax, 11h
@@ -36211,7 +36211,7 @@ loc_246C9:                              ; CODE XREF: ShowCharacterInventory+F6�
 loc_246D6:                              ; CODE XREF: ShowCharacterInventory+131↓j
                                         ; ShowCharacterInventory+143↓j ...
                 mov     si, 6068h
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     ax, 0
                 jz      short loc_246D6
                 jl      short loc_246F3
@@ -36602,7 +36602,7 @@ loc_24AF0:                              ; CODE XREF: ShowCharacterEquipment+90�
 loc_24B08:                              ; CODE XREF: ShowCharacterEquipment+B8↓j
                                         ; ShowCharacterEquipment+C7↓j ...
                 mov     si, 673Ch
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     errorCode, 7
                 jz      short loc_24B08
                 cmp     ax, 11h
@@ -36739,7 +36739,7 @@ ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
 loc_24C5C:                              ; CODE XREF: ShowCharacterStats+73↓j
                                         ; ShowCharacterStats+7E↓j ...
                 mov     si, 5F7Eh
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     ax, 0
                 jz      short loc_24C5C
                 jl      short loc_24C72
@@ -37193,7 +37193,7 @@ ShowCharacterSummary proc near          ; CODE XREF: ShowPartyMembers+5A↑p
 loc_251CB:                              ; CODE XREF: ShowCharacterSummary+D1↓j
                                         ; ShowCharacterSummary+DC↓j ...
                 mov     si, 5F7Eh
-                call    sub_255C7
+                call    WaitForClickOrEscape
                 cmp     ax, 0
                 jz      short loc_251CB
                 jl      short loc_251E1
@@ -37621,36 +37621,36 @@ sub_25595       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_255C7       proc near               ; CODE XREF: sub_23C18+178↑p
+WaitForClickOrEscape proc near          ; CODE XREF: sub_23C18+178↑p
                                         ; sub_23C18+28A↑p ...
-                call    UpdateAmbientMusic
+                call    UpdateAmbientMusic ; Generic 'wait for a click or ESC' loop, ticking UpdateAmbientMusic each iteration. Returns ax=0xFFFF on ESC, else the HitTestRegionTable result for the click. Called from sub_23C18.
                 call    PollKeyboardInput
                 cmp     errorCode, 0
-                jz      short sub_255C7
+                jz      short WaitForClickOrEscape
                 cmp     errorCode, 7
                 jz      short loc_255FA
                 cmp     errorCode, 3
                 jz      short loc_255F1
                 cmp     errorCode, 1
-                jnz     short sub_255C7
+                jnz     short WaitForClickOrEscape
                 mov     ax, 0FFFFh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_255F1:                              ; CODE XREF: sub_255C7+1D↑j
+loc_255F1:                              ; CODE XREF: WaitForClickOrEscape+1D↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 jmp     short loc_25601
 ; ---------------------------------------------------------------------------
 
-loc_255FA:                              ; CODE XREF: sub_255C7+16↑j
+loc_255FA:                              ; CODE XREF: WaitForClickOrEscape+16↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
 
-loc_25601:                              ; CODE XREF: sub_255C7+31↑j
+loc_25601:                              ; CODE XREF: WaitForClickOrEscape+31↑j
                 call    HitTestRegionTable
                 retn
-sub_255C7       endp
+WaitForClickOrEscape endp
 
 seg076          ends
 

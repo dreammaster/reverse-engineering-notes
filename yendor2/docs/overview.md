@@ -3198,6 +3198,13 @@ block.
 
 413 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WaitForClickOrEscape
+
+Named `sub_255C7`: a generic "wait for a click or ESC" loop, ticking
+the already-named `UpdateAmbientMusic` each iteration.
+
+414 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

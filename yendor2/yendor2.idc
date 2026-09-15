@@ -6494,7 +6494,9 @@ static Bytes_2(void) {
 	create_insn	(0X25595);
 	create_insn	(x=0X255B3);
 	op_hex		(x,	1);
+	set_cmt	(0X255C7,	"Generic 'wait for a click or ESC' loop, ticking UpdateAmbientMusic each iteration. Returns ax=0xFFFF on ESC, else the HitTestRegionTable result for the click. Called from sub_23C18.",	0);
 	create_insn	(0X255C7);
+	set_name	(0X255C7,	"WaitForClickOrEscape");
 	create_insn	(0X255F1);
 	create_insn	(0X255FA);
 	set_cmt	(0X25608,	"Computes a coarse map-region index from the party's position; if it changed since last checked (word_2E4A8), reads the new region's WORLD.DAT record and plays its music track (PlayMusicTrack) -- the ambient-music region trigger. Called from sub_1E64A and sub_209D2.",	0);
@@ -8794,15 +8796,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
 	create_insn	(0X2A9AD);
 	set_name	(0X2A9AD,	"RestCharacter");
-	create_insn	(0X2A9BD);
-	create_insn	(x=0X2A9C5);
-	op_hex		(x,	1);
-	create_insn	(x=0X2A9E4);
-	op_hex		(x,	1);
-	create_insn	(0X2A9EB);
-	create_insn	(0X2AA0C);
-	create_insn	(x=0X2AA2B);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -8812,6 +8805,15 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2A9BD);
+	create_insn	(x=0X2A9C5);
+	op_hex		(x,	1);
+	create_insn	(x=0X2A9E4);
+	op_hex		(x,	1);
+	create_insn	(0X2A9EB);
+	create_insn	(0X2AA0C);
+	create_insn	(x=0X2AA2B);
+	op_hex		(x,	1);
 	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
