@@ -1661,7 +1661,9 @@ static Bytes_0(void) {
 	create_insn	(0X13149);
 	create_insn	(x=0X13187);
 	op_hex		(x,	1);
+	set_cmt	(0X1318D,	"F5 item-subtype-8 'WEAPONS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory (subtype 1, 'ARMOR/RINGS'): ShowClueBookItemDetail + sub_1385C, region-table 0x6976 hit-testing for sub-icon clicks, until ESC.",	0);
 	create_insn	(0X1318D);
+	set_name	(0X1318D,	"RunClueBookWeaponCategory");
 	create_insn	(x=0X13190);
 	op_hex		(x,	1);
 	create_insn	(x=0X131E8);
@@ -3966,6 +3968,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text/bx varies per caller (UseHealingItem x4, UseItemType_400, UseTrainingItem). All 6 traced call sites retf immediately after calling this -- none poll Y/N or deduct gold here. The actual confirm+pay step, if any, isn't found yet.",	0);
 	create_insn	(0X1B96F);
 	set_name	(0X1B96F,	"ShowHealingCostPrompt");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B978);
 	op_hex		(x,	1);
 	create_insn	(0X1BA35);
@@ -4001,15 +4012,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1BB48,	"Applies the current item-use record's (SelectItemUseRecord) bit-level effects: es:[si+0xE] bit 0x20 clears word_328F6/word_328F8 via a complement mask; bit 0x10 instead restores word_2E40C/word_2E40E from them. Unconditionally clears then sets bits in word_2E40C/word_2E40E from the item's own masks (es:[si+0x1A]/[si+0x1C]/[si+0x1E]/[si+0x20] -- plausibly current player/party status or equipment-bonus flags, not confirmed). Then, unless bit 2 + word_328C6 bit 0x40 both hold, walks 6 signed flag-index fields (es:[si+0x2E]+) applying SetGlobalFlag/ClearGlobalFlag to each nonzero one -- an item can flip up to 6 global quest/world-state flags.",	0);
 	create_insn	(0X1BB48);
 	set_name	(0X1BB48,	"ApplyItemEffectFlags");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1BB4F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BB79);
@@ -6993,6 +6995,15 @@ static Bytes_1(void) {
 	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27A98);
 	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X27AC1,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27AC1);
 	set_name	(0X27AC1,	"GetRecordFlagBitAndWord_CA");
@@ -7028,15 +7039,6 @@ static Bytes_1(void) {
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
 	create_insn	(0X27CB0);
 	set_name	(0X27CB0,	"LoadMasterPalette");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27CC9);
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
@@ -10409,6 +10411,15 @@ static Bytes_2(void) {
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);
 	set_name	(0X35B4F,	"aTheItemHas");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35B5C,	0X8);
 	set_name	(0X35B5C,	"aFailed_0");
 	create_strlit	(0X35B64,	0XD);
@@ -10459,15 +10470,6 @@ static Bytes_2(void) {
 	set_name	(0X35C94,	"aWarrior");
 	create_strlit	(0X35C9F,	0XB);
 	set_name	(0X35C9F,	"aTinkerer");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35CAA,	0XB);
 	set_name	(0X35CAA,	"aThief");
 	create_strlit	(0X35CB5,	0XB);

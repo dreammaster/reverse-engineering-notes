@@ -1741,7 +1741,7 @@ loc_110C0:                              ; CODE XREF: ShowClueBook+47B↑j
 ; ---------------------------------------------------------------------------
 
 loc_110CA:                              ; CODE XREF: ShowClueBook+485↑j
-                call    sub_1318D
+                call    RunClueBookWeaponCategory
                 cmp     word_2E40A, 1
                 jz      short loc_11094
                 jmp     loc_10CC5
@@ -5212,8 +5212,8 @@ sub_13119       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1318D       proc far                ; CODE XREF: ShowClueBook:loc_110CA↑P
-                call    sub_1472A
+RunClueBookWeaponCategory proc far      ; CODE XREF: ShowClueBook:loc_110CA↑P
+                call    sub_1472A       ; F5 item-subtype-8 'WEAPONS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory (subtype 1, 'ARMOR/RINGS'): ShowClueBookItemDetail + sub_1385C, region-table 0x6976 hit-testing for sub-icon clicks, until ESC.
                 or      word_328CC, 40h
                 mov     word_2E3FC, 111h
                 mov     ax, 8A7Ah
@@ -5222,13 +5222,13 @@ sub_1318D       proc far                ; CODE XREF: ShowClueBook:loc_110CA↑P
                 mov     ax, [bx]
                 mov     word_32974, ax
 
-loc_131AA:                              ; CODE XREF: sub_1318D+75↓j
+loc_131AA:                              ; CODE XREF: RunClueBookWeaponCategory+75↓j
                 call    ShowClueBookItemDetail
                 call    sub_1385C
                 call    DrawMouseCursor
 
-loc_131B5:                              ; CODE XREF: sub_1318D+32↓j
-                                        ; sub_1318D+39↓j ...
+loc_131B5:                              ; CODE XREF: RunClueBookWeaponCategory+32↓j
+                                        ; RunClueBookWeaponCategory+39↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_131B5
@@ -5254,13 +5254,13 @@ loc_131B5:                              ; CODE XREF: sub_1318D+32↓j
                 jmp     short loc_131AA
 ; ---------------------------------------------------------------------------
 
-loc_13204:                              ; CODE XREF: sub_1318D+4D↑j
+loc_13204:                              ; CODE XREF: RunClueBookWeaponCategory+4D↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_131B5
                 and     word_328CC, 0FFBFh
                 retf
-sub_1318D       endp
+RunClueBookWeaponCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5833,7 +5833,7 @@ sub_1381C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1385C       proc near               ; CODE XREF: sub_1318D+20↑p
+sub_1385C       proc near               ; CODE XREF: RunClueBookWeaponCategory+20↑p
                 mov     _textPos_y, 39h ; '9'
                 mov     _textPos_x, 73h ; 's'
                 mov     bx, 7C81h
@@ -7129,7 +7129,7 @@ LoadClueBookMonsterEntry endp
 
 
 sub_1472A       proc near               ; CODE XREF: RunClueBookItemCategory↑p
-                                        ; sub_1318D↑p
+                                        ; RunClueBookWeaponCategory↑p
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_32974, ax

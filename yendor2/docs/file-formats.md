@@ -268,18 +268,20 @@ ore counters used elsewhere) and "AFFECTS:"/"WHEN:"/"EFFECT:"
 description sections with a 6-class eligibility marker row. F5
 (`word_2E3F6=0xB`,
 Inventory Items) → `RunClueEntryMenu` lists **8 item subtypes**
-(`word_2E3EE[0]` 1–8), each with its own sub-loop: subtype 1 →
+(`word_2E3EE[0]` 1–8), each with its own sub-loop and now fully
+identified by title dump: **1 "ARMOR/RINGS"** →
 `RunClueBookItemCategory` (**correction**: previously described below
 as "the F5 category's own loop" — it's actually only item subtype 1's
-loop within F5's subtype selector); subtype 2 → just
-`WaitForKeypress` (looks like a placeholder/empty subtype); subtypes
-3–6 (`word_2E3F6=0xD/0xE/0xF/0x10`) → `sub_13119` (**correction**: has
-4 call sites here, not "two other sites" as first counted below);
-subtype 7 → `RunClueBookTransportCategory` (a single "TRANSPORTATIONS"
-screen listing PEGASUS/GIANT EAGLE/MAGIC DRAGON — ties to
-`IsItemRangeAvailable`'s "boat/horse-style transport gate"); subtype 8
-(`word_2E3F6=0x11`) → `RunClueEntryMenu` + `sub_1318D`. F6 (Complete
-Walk Through) →
+loop within F5's subtype selector); **2** → just `WaitForKeypress`
+(an empty/placeholder subtype, no title); **3 "JEWELS/ARTIFACTS/
+UNIQUE ITEMS"**, **4 "MAGIC SCROLLS/QUARTZ"**, **5 "POTIONS"**, **6
+"SUPPLIES/FOOD"** (`word_2E3F6=0xD/0xE/0xF/0x10`) → all four route
+through `sub_13119` (**correction**: has 4 call sites here, not "two
+other sites" as first counted below); **7 "TRANSPORTATIONS"** →
+`RunClueBookTransportCategory` (PEGASUS/GIANT EAGLE/MAGIC DRAGON —
+ties to `IsItemRangeAvailable`'s "boat/horse-style transport gate");
+**8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
+`RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
 cleanup and `LoadMasterPalette` back to the normal palette (the
 reverse of `PlayClueBookOpenAnimation`'s swap). `sub_13278`/

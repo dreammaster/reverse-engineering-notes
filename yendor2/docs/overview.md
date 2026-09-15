@@ -2345,6 +2345,18 @@ gate" use case from earlier this session.
 
 293 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookWeaponCategory completes the F5 item-subtype map
+
+Named `sub_1318D` (title dumped as "WEAPONS"), F5 item-subtype 8's
+category loop, structurally identical to `RunClueBookItemCategory`
+(subtype 1). This completes identification of all 8 F5 subtypes: 1
+ARMOR/RINGS, 2 (empty placeholder), 3 JEWELS/ARTIFACTS/UNIQUE ITEMS, 4
+MAGIC SCROLLS/QUARTZ, 5 POTIONS, 6 SUPPLIES/FOOD, 7 TRANSPORTATIONS, 8
+WEAPONS — closing out this session's full trace of `ShowClueBook`'s
+category dispatch.
+
+294 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
