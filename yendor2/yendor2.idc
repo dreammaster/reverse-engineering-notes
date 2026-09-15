@@ -3375,7 +3375,9 @@ static Bytes_0(void) {
 	set_name	(0X190AF,	"ShowInsufficientGoldMessage");
 	create_insn	(x=0X190B4);
 	op_hex		(x,	1);
+	set_cmt	(0X190E9,	"Resolves a party record (SelectPartyRecordById), calls sub_266A9 (not traced), then restores a portrait-sized EMS-cached region (page 0x55D8) at a position from word_328BC/word_328C0. Called from sub_1869D and sub_18F6C.",	0);
 	create_insn	(0X190E9);
+	set_name	(0X190E9,	"RestorePortraitAreaAtPosition");
 	create_insn	(0X190EF);
 	set_cmt	(0X19133,	"Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.",	0);
 	create_insn	(0X19133);
@@ -3637,12 +3639,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A37E,	"The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.",	0);
 	create_insn	(0X1A37E);
 	set_name	(0X1A37E,	"TryDropHeldItem");
-	create_insn	(0X1A386);
-	create_insn	(0X1A39E);
-	create_insn	(0X1A3CB);
-	set_cmt	(0X1A3F0,	"Party teleport/fast-travel handler: given a destination id, looks up table 0xD40B (16-byte stride), gates on IsDestinationUnlocked if flagged, sets a music/mode flag, sets new position/facing (with a hardcoded landing-spot override for one destination), and reveals/redraws the map. Called from `start` and ExamineTarget.",	0);
-	create_insn	(0X1A3F0);
-	set_name	(0X1A3F0,	"TravelToDestination");
 }
 
 //------------------------------------------------------------------------
@@ -3652,6 +3648,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1A386);
+	create_insn	(0X1A39E);
+	create_insn	(0X1A3CB);
+	set_cmt	(0X1A3F0,	"Party teleport/fast-travel handler: given a destination id, looks up table 0xD40B (16-byte stride), gates on IsDestinationUnlocked if flagged, sets a music/mode flag, sets new position/facing (with a hardcoded landing-spot override for one destination), and reveals/redraws the map. Called from `start` and ExamineTarget.",	0);
+	create_insn	(0X1A3F0);
+	set_name	(0X1A3F0,	"TravelToDestination");
 	create_insn	(x=0X1A3FE);
 	op_hex		(x,	1);
 	create_insn	(0X1A40E);
@@ -5875,6 +5877,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X229BD);
 	op_hex		(x,	1);
 	create_insn	(0X229C4);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X229D3);
 	op_hex		(x,	1);
 	create_insn	(0X229DA);
@@ -5897,15 +5908,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
 	create_insn	(0X22A68);
 	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -8852,6 +8854,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);
@@ -8879,15 +8890,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2AFB8,	"Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.",	0);
 	create_insn	(0X2AFB8);
 	set_name	(0X2AFB8,	"CollectMagicOreCache");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AFC5);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AFF4);

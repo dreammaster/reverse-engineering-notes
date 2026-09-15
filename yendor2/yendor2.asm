@@ -15148,7 +15148,7 @@ loc_18ACC:                              ; CODE XREF: sub_1869D+40C↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 1
                 call    sub_28412
-                call    sub_190E9
+                call    RestorePortraitAreaAtPosition
                 call    DrawMouseCursor
                 call    sub_238CD
                 test    word_328C6, 7800h
@@ -15667,19 +15667,19 @@ sub_18F6C       proc near               ; CODE XREF: sub_1869D+344↑p
                 mov     word_328BC, 8
                 mov     word_328C0, 8
                 mov     si, 95EBh
-                call    sub_190E9
+                call    RestorePortraitAreaAtPosition
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
                 mov     si, 95EDh
-                call    sub_190E9
+                call    RestorePortraitAreaAtPosition
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
                 mov     si, 95EFh
-                call    sub_190E9
+                call    RestorePortraitAreaAtPosition
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
                 mov     si, 95F1h
-                call    sub_190E9
+                call    RestorePortraitAreaAtPosition
                 and     word_328C6, 87FFh
                 call    ClearStatusPanelIfDirty
                 retn
@@ -15805,14 +15805,14 @@ ShowInsufficientGoldMessage endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_190E9       proc near               ; CODE XREF: sub_1869D+442↑p
+RestorePortraitAreaAtPosition proc near ; CODE XREF: sub_1869D+442↑p
                                         ; sub_18F6C+14↑p ...
-                cmp     word ptr [si], 0
+                cmp     word ptr [si], 0 ; Resolves a party record (SelectPartyRecordById), calls sub_266A9 (not traced), then restores a portrait-sized EMS-cached region (page 0x55D8) at a position from word_328BC/word_328C0. Called from sub_1869D and sub_18F6C.
                 jg      short loc_190EF
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_190EF:                              ; CODE XREF: sub_190E9+3↑j
+loc_190EF:                              ; CODE XREF: RestorePortraitAreaAtPosition+3↑j
                 mov     ax, [si]
                 call    SelectPartyRecordById
                 call    sub_266A9
@@ -15828,7 +15828,7 @@ loc_190EF:                              ; CODE XREF: sub_190E9+3↑j
                 mov     es, _videoBufferSeg
                 mov     ds, _emsSegmentPageFrame
 
-loc_19120:                              ; CODE XREF: sub_190E9+46↓j
+loc_19120:                              ; CODE XREF: RestorePortraitAreaAtPosition+46↓j
                 push    cx
                 mov     cx, 1Ch
                 mov     si, bx
@@ -15839,7 +15839,7 @@ loc_19120:                              ; CODE XREF: sub_190E9+46↓j
                 loop    loc_19120
                 pop     ds
                 retn
-sub_190E9       endp
+RestorePortraitAreaAtPosition endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39824,7 +39824,7 @@ sub_26415       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_266A9       proc far                ; CODE XREF: sub_190E9+D↑P
+sub_266A9       proc far                ; CODE XREF: RestorePortraitAreaAtPosition+D↑P
                 push    ax
                 push    bx
                 push    cx

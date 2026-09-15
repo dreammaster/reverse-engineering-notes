@@ -3117,6 +3117,15 @@ main mechanism.
 
 401 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestorePortraitAreaAtPosition
+
+Named `sub_190E9`, called from the main input loop and `sub_18F6C`: a
+per-slot-position variant of the portrait EMS-restore pattern, using
+the same EMS page as `RestorePortraitPanelFromEMS`/
+`RestoreDialogAreaFromEMS`.
+
+402 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
