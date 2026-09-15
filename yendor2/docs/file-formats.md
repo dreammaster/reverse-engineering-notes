@@ -503,8 +503,11 @@ decrementing `word_3292C` as it goes. `TryTriggerMonsterEncounterAtCell`
 only fires for `word_3292C >= 0x11` — since only the first two (and
 therefore *farthest*) rows use `cx=0x11`, **monsters can only spawn in
 the farthest visible cells, not right next to the party** — plus a
-flag bit on the cell record and a probability roll, before calling
-`SpawnMonsterInFacingDirection`, which:
+flag bit on the cell record, then **correction**: skips spawning if
+this monster type already exists somewhere in `g_levelMonsters`
+(`FindMonsterTypeInLevelPool` — first described as "a probability
+roll," which was wrong; it's a duplicate/unique-monster prevention
+check), before calling `SpawnMonsterInFacingDirection`, which:
 
 `RenderDungeonViewRow` draws each cell's base wall texture via
 `DrawDungeonCellWallTexture` (the `0xE551` lookup table by cell id, at

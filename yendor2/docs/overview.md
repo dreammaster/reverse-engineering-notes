@@ -2472,6 +2472,17 @@ viewport.
 
 311 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — FindMonsterTypeInLevelPool is a dedup check, not a probability roll
+
+Named `sub_22B78`. Re-tracing `TryTriggerMonsterEncounterAtCell`'s
+call to it shows it's a duplicate-prevention lookup (scans
+`g_levelMonsters` for an existing entry of the same monster type,
+skipping the spawn if found) — not "a probability check" as
+`TryTriggerMonsterEncounterAtCell`'s own naming comment claimed two
+rounds ago. Corrected both that comment and file-formats.md.
+
+312 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

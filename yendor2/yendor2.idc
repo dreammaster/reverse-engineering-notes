@@ -5388,7 +5388,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X212AC);
 	op_hex		(x,	1);
-	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); rolls a probability (sub_22B78) before calling SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
+	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
 	create_insn	(0X212B8);
 	set_name	(0X212B8,	"TryTriggerMonsterEncounterAtCell");
 	create_insn	(x=0X212C0);
@@ -5789,7 +5789,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X22B4C,	"int",	0);
 	create_insn	(0X22B67);
+	set_cmt	(0X22B78,	"Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.",	0);
 	create_insn	(0X22B78);
+	set_name	(0X22B78,	"FindMonsterTypeInLevelPool");
 	create_insn	(0X22B8E);
 	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
@@ -6693,6 +6695,15 @@ static Bytes_1(void) {
 	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
 	create_insn	(0X26954);
 	set_name	(0X26954,	"GetInventorySlotPtr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X26958);
 	op_hex		(x,	1);
 	create_insn	(0X2696A);
@@ -6742,15 +6753,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X26AA8);
 	op_hex		(x,	1);
 	create_insn	(0X26AB1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X26AB5);
 	op_hex		(x,	1);
 	create_insn	(0X26ABD);
@@ -10130,6 +10132,15 @@ static Bytes_2(void) {
 	set_name	(0X35333,	"aPoisoned");
 	create_strlit	(0X3533C,	0X5);
 	set_name	(0X3533C,	"aSick");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35341,	0X7);
 	set_name	(0X35341,	"aStoned");
 	create_strlit	(0X35348,	0X7);
@@ -10154,15 +10165,6 @@ static Bytes_2(void) {
 	set_name	(0X35391,	"aDisease");
 	create_strlit	(0X35399,	0X7);
 	set_name	(0X35399,	"aPoison");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X353A0,	0X9);
 	set_name	(0X353A0,	"aSickness");
 	create_strlit	(0X353A9,	0X8);

@@ -1944,7 +1944,7 @@ sub_11236       proc far                ; CODE XREF: sub_1D4B8+149↓P
                 jz      short loc_11261
                 mov     word_3293E, bx
                 mov     ax, [bx+4]
-                call    sub_22B78
+                call    FindMonsterTypeInLevelPool
                 jnz     short loc_112A7
                 mov     bx, word_3293E
 
@@ -30254,7 +30254,7 @@ RenderDungeonVanishingPoint endp
 TryTriggerMonsterEncounterAtCell proc near
                                         ; CODE XREF: RenderDungeonViewRow+65↑p
                                         ; RenderDungeonViewRow+F0↑p ...
-                cmp     word_3292C, 11h ; Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); rolls a probability (sub_22B78) before calling SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.
+                cmp     word_3292C, 11h ; Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); skips spawning if this monster type already exists on the level (FindMonsterTypeInLevelPool -- CORRECTION: not a probability roll as first described), then calls SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.
                 jge     short loc_212C0
                 retn
 ; ---------------------------------------------------------------------------
@@ -30270,7 +30270,7 @@ loc_212C8:                              ; CODE XREF: TryTriggerMonsterEncounterA
                 cmp     word_3292C, 31h ; '1'
                 jz      short locret_21305
                 mov     ax, [di+4]
-                call    sub_22B78
+                call    FindMonsterTypeInLevelPool
                 jnz     short loc_212E7
                 call    SpawnMonsterInFacingDirection
                 jnz     short loc_212E7
@@ -33086,13 +33086,13 @@ SpawnMonsterInFacingDirection endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22B78       proc far                ; CODE XREF: sub_11236+20↑P
+FindMonsterTypeInLevelPool proc far     ; CODE XREF: sub_11236+20↑P
                                         ; TryTriggerMonsterEncounterAtCell+20↑P ...
-                push    cx
+                push    cx              ; Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'
 
-loc_22B7F:                              ; CODE XREF: sub_22B78+F↓j
+loc_22B7F:                              ; CODE XREF: FindMonsterTypeInLevelPool+F↓j
                 cmp     ax, [si]
                 jz      short loc_22B8E
                 add     si, 9Ch
@@ -33101,14 +33101,14 @@ loc_22B7F:                              ; CODE XREF: sub_22B78+F↓j
                 jmp     short loc_22B91
 ; ---------------------------------------------------------------------------
 
-loc_22B8E:                              ; CODE XREF: sub_22B78+9↑j
+loc_22B8E:                              ; CODE XREF: FindMonsterTypeInLevelPool+9↑j
                 call    sub_233F5
 
-loc_22B91:                              ; CODE XREF: sub_22B78+14↑j
+loc_22B91:                              ; CODE XREF: FindMonsterTypeInLevelPool+14↑j
                 cmp     si, 0
                 pop     cx
                 retf
-sub_22B78       endp
+FindMonsterTypeInLevelPool endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34075,7 +34075,7 @@ sub_233D0       proc far                ; CODE XREF: sub_1DA2C:loc_1DA30↑P
 loc_233EC:                              ; CODE XREF: sub_233D0+12↑j
                 mov     ax, [si+4]
                 push    cs
-                call    near ptr sub_22B78
+                call    near ptr FindMonsterTypeInLevelPool
 
 loc_233F3:                              ; CODE XREF: sub_233D0+1A↑j
                 pop     dx
@@ -34087,7 +34087,7 @@ sub_233D0       endp
 
 
 sub_233F5       proc near               ; CODE XREF: SpawnMonsterInFacingDirection+E1↑p
-                                        ; sub_22B78:loc_22B8E↑p
+                                        ; FindMonsterTypeInLevelPool:loc_22B8E↑p
                 test    word ptr [si+0Ch], 1
                 jz      short loc_233FD
                 retn
