@@ -2768,6 +2768,15 @@ individually traced.
 
 351 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SellClickedCatalogItem
+
+Named `sub_17B09`, a sibling branch of `sub_17032` (the shop-catalog
+click handler) alongside `PayGoldAndAcquireItem`: credits gold back
+for the clicked item instead of spending it — the click counterpart
+to `TrySellItemForGold`.
+
+352 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

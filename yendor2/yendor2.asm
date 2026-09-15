@@ -12111,7 +12111,7 @@ loc_1722F:                              ; CODE XREF: sub_17032+1D3↑j
 ; ---------------------------------------------------------------------------
 
 loc_1726C:                              ; CODE XREF: sub_17032+203↑j
-                call    sub_17B09
+                call    SellClickedCatalogItem
                 retf
 sub_17032       endp
 
@@ -13081,8 +13081,8 @@ PayGoldAndAcquireItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17B09       proc near               ; CODE XREF: sub_17032:loc_1726C↑p
-                mov     ax, word_31948
+SellClickedCatalogItem proc near        ; CODE XREF: sub_17032:loc_1726C↑p
+                mov     ax, word_31948  ; Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.
                 mov     si, word_2E546
                 add     si, 4
                 call    sub_1CCBC
@@ -13094,7 +13094,7 @@ sub_17B09       proc near               ; CODE XREF: sub_17032:loc_1726C↑p
                 mov     word_36D6D, 1
                 call    ShowResourceDepletedOverlay
 
-loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
+loc_17B35:                              ; CODE XREF: SellClickedCatalogItem+1F↑j
                 mov     word_31946, 0
                 mov     word_2E530, 0
                 mov     word_31948, 0
@@ -13106,7 +13106,7 @@ loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
                 call    near ptr ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-sub_17B09       endp
+SellClickedCatalogItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16782,7 +16782,7 @@ seg031          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-AddBCD4         proc far                ; CODE XREF: sub_17B09+15↑P
+AddBCD4         proc far                ; CODE XREF: SellClickedCatalogItem+15↑P
                                         ; TrySellItemForGold+9A↑P ...
                 mov     al, [si+3]      ; Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.
                 add     al, [di+3]
@@ -22639,7 +22639,7 @@ seg046          segment byte public 'CODE' use16
 
 
 sub_1CCBC       proc far                ; CODE XREF: PayGoldAndAcquireItem+A↑P
-                                        ; sub_17B09+A↑P ...
+                                        ; SellClickedCatalogItem+A↑P ...
                 push    word_32974
                 mov     word_32974, ax
                 mov     ax, [si]

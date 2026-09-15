@@ -2832,7 +2832,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X17ABC);
 	op_hex		(x,	1);
 	create_insn	(0X17AC5);
+	set_cmt	(0X17B09,	"Credits gold (AddBCD4(g_partyGold, [0xB30])) instead of spending it, clears the held/staged item, refreshes the material/gold HUD -- a 'sell this catalog item back' action, the click counterpart to TrySellItemForGold. Called from sub_17032.",	0);
 	create_insn	(0X17B09);
+	set_name	(0X17B09,	"SellClickedCatalogItem");
 	create_insn	(0X17B67);
 	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
 	create_insn	(0X17B92);
@@ -3848,6 +3850,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1B20C,	"Eligibility check for TryRepairItemForGold (also called elsewhere, not traced). For each of 2 location-flag bits (word_2E546's [+0xC] 0xC000/0x800), if set and the held item's matching flag (word_2E548's [+2] 0x100/0x40) is also set, returns eligible (ax=0).",	0);
 	create_insn	(0X1B20C);
 	set_name	(0X1B20C,	"IsItemEligibleForRepair");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B214);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B21F);
@@ -3860,15 +3871,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B245);
 	op_hex		(x,	1);
 	set_name	(0X1B245,	"RunSellItemScreen");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B24A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B258);
@@ -6179,6 +6181,15 @@ static Bytes_1(void) {
 	create_insn	(0X2391C);
 	create_insn	(x=0X23923);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23938);
 	op_seg		(x,	1);
 	create_insn	(x=0X23959);
@@ -6198,15 +6209,6 @@ static Bytes_1(void) {
 	set_cmt	(0X23A64,	"stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).",	0);
 	create_insn	(0X23A64);
 	set_name	(0X23A64,	"StpCpy");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
 	create_insn	(0X23A7C);
@@ -9322,6 +9324,15 @@ static Bytes_2(void) {
 	create_insn	(0X2CE62);
 	set_cmt	(0X2CE86,	"ticks",	0);
 	set_cmt	(0X2CEA2,	"ticks",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X2CEBE,	"ticks",	0);
 	set_cmt	(0X2CEDA,	"ticks",	0);
 	create_insn	(0X2CEE7);
@@ -9390,15 +9401,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D259);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D261);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D269);
