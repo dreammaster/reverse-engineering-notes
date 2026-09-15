@@ -1250,6 +1250,25 @@ out.
 
 175 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a global quest/world-state flag system
+
+Traced `GrantMonsterRewards`' two remaining untraced callees
+(`[+0x14]`/`[+0x16]` signed stat deltas) and found a small, clean
+global boolean flag-bit family backed by a bitfield array,
+`g_globalFlags` (was `0x94D1`): `GetGlobalFlagBitAndWord` (shared
+"index → word+mask" split), `SetGlobalFlag`, `ClearGlobalFlag`, and
+`TestGlobalFlag` (confirmed fundamental — called directly from `start`
+at several points, not just from monster deaths). So a monster's death
+can set or clear an arbitrary quest/world-state flag via its own
+`[+0x14]`/`[+0x16]` fields (negative = clear, positive = set). A
+related but distinct family (`sub_27A6E`/`sub_27A3E`, `sub_27AC1`)
+manipulates *per-object* flag banks at different fixed offsets from a
+caller-supplied record instead of this global array — not traced this
+round, a good next lead (the differing offset constants suggest more
+than one record type carries its own flag bank).
+
+179 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

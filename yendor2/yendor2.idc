@@ -5608,7 +5608,7 @@ static Bytes_1(void) {
 	create_insn	(0X22B67);
 	create_insn	(0X22B78);
 	create_insn	(0X22B8E);
-	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters (CORRECTED direction from last round's comment): 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A]. ShowLootAndAwardExperience later drains these staging counters into the permanent material counters and party XP. Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).",	0);
+	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
 	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
@@ -6805,16 +6805,24 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X27994);
 	create_insn	(0X27A20);
+	set_cmt	(0X27A2A,	"ClearGlobalFlag(ax=flag index): [si] &= ~mask.",	0);
 	create_insn	(0X27A2A);
+	set_name	(0X27A2A,	"ClearGlobalFlag");
 	create_insn	(0X27A34);
 	create_insn	(0X27A3E);
+	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
 	create_insn	(0X27A46);
+	set_name	(0X27A46,	"SetGlobalFlag");
 	create_insn	(0X27A4E);
 	create_insn	(0X27A56);
+	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27A5E);
+	set_name	(0X27A5E,	"TestGlobalFlag");
 	create_insn	(0X27A66);
 	create_insn	(0X27A6E);
+	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27A98);
+	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
 	create_insn	(0X27AC1);
 	create_insn	(0X27AEC);
 	create_insn	(x=0X27AF5);
@@ -9204,6 +9212,15 @@ static Bytes_1(void) {
 	create_insn	(0X2D7A7);
 	create_insn	(x=0X2D7C8);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D7D9);
 	op_hex		(x,	1);
 	create_insn	(0X2D7EA);
@@ -9254,15 +9271,6 @@ static Bytes_1(void) {
 	create_word	(0X2E412);
 	create_word	(0X2E414);
 	create_word	(0X2E416);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E42C);
 	create_word	(0X2E432);
 	create_word	(0X2E47E);
@@ -10761,6 +10769,8 @@ static Bytes_2(void) {
 	create_word	(0X36D0B);
 	create_word	(0X36D13);
 	create_word	(0X36D15);
+	set_cmt	(0X36D31,	"Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.",	0);
+	set_name	(0X36D31,	"g_globalFlags");
 	create_word	(0X36D6D);
 	create_word	(0X36D71);
 	create_word	(0X36D75);

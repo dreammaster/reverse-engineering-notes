@@ -830,13 +830,13 @@ loc_106EF:                              ; CODE XREF: start+6EA↑j
 
 loc_10702:                              ; CODE XREF: start+6FA↑j
                 mov     ax, 69h ; 'i'
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_10720
                 mov     ax, 6Ah ; 'j'
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_10720
                 mov     ax, 6Bh ; 'k'
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jnz     short loc_1072E
 
 loc_10720:                              ; CODE XREF: start+70A↑j
@@ -20122,7 +20122,7 @@ sub_1B4C2       proc far                ; CODE XREF: sub_17B92+11A↑P
                 push    di
                 mov     di, 0BCEh
                 mov     ax, [di+12h]
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_1B4D2
                 pop     di
                 retf
@@ -20162,7 +20162,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 mov     ax, [di+12h]
-                call    sub_27A46
+                call    SetGlobalFlag
                 mov     ax, [di+16h]
                 mov     word_3293E, ax
                 mov     ax, [di+14h]
@@ -20250,7 +20250,7 @@ sub_1B5FD       proc far                ; CODE XREF: sub_17B92+127↑P
                 push    di
                 mov     di, 0BCEh
                 mov     ax, [di+12h]
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_1B60F
                 pop     di
                 pop     bp
@@ -20283,7 +20283,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 call    PrepareTrapEffectSlots
                 mov     word_32904, bx
                 mov     ax, [di+12h]
-                call    sub_27A46
+                call    SetGlobalFlag
                 add     di, 14h
                 mov     bp, di
                 mov     cx, 4
@@ -20542,14 +20542,14 @@ loc_1B856:                              ; CODE XREF: sub_1B818+5D↓j
                 cmp     ax, 0
                 jz      short loc_1B872
                 jl      short loc_1B869
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_1B8A8
                 jmp     short loc_1B872
 ; ---------------------------------------------------------------------------
 
 loc_1B869:                              ; CODE XREF: sub_1B818+46↑j
                 neg     ax
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jnz     short loc_1B8A8
 
 loc_1B872:                              ; CODE XREF: sub_1B818+44↑j
@@ -20937,13 +20937,13 @@ loc_1BBC7:                              ; CODE XREF: sub_1BB48+9A↓j
                 cmp     ax, 0
                 jz      short loc_1BBDF
                 jl      short loc_1BBD8
-                call    sub_27A46
+                call    SetGlobalFlag
                 jmp     short loc_1BBDF
 ; ---------------------------------------------------------------------------
 
 loc_1BBD8:                              ; CODE XREF: sub_1BB48+87↑j
                 neg     ax
-                call    sub_27A2A
+                call    ClearGlobalFlag
 
 loc_1BBDF:                              ; CODE XREF: sub_1BB48+85↑j
                                         ; sub_1BB48+8E↑j
@@ -22311,7 +22311,7 @@ loc_1C9D0:                              ; CODE XREF: sub_1C890+FA↑j
                 mov     ax, [si+0Ch]
                 or      ax, ax
                 jz      short loc_1C9F1
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
 loc_1C9F1:                              ; CODE XREF: sub_1C890+158↑j
@@ -22319,7 +22319,7 @@ loc_1C9F1:                              ; CODE XREF: sub_1C890+158↑j
                 mov     ax, [si+0Eh]
                 or      ax, ax
                 jz      short loc_1CA05
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
 loc_1CA05:                              ; CODE XREF: sub_1C890+16C↑j
@@ -22327,7 +22327,7 @@ loc_1CA05:                              ; CODE XREF: sub_1C890+16C↑j
                 mov     ax, [si+10h]
                 or      ax, ax
                 jz      short loc_1CA19
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
 loc_1CA19:                              ; CODE XREF: sub_1C890+180↑j
@@ -33114,7 +33114,7 @@ sub_22B78       endp
 
 GrantMonsterRewards proc far            ; CODE XREF: sub_16B63:loc_16BA2↑P
                                         ; sub_1D4B8:loc_1D6EA↑P ...
-                push    si              ; Stages this monster's own loot fields into 4 global counters (CORRECTED direction from last round's comment): 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A]. ShowLootAndAwardExperience later drains these staging counters into the permanent material counters and party XP. Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).
+                push    si              ; Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.
                 push    di
                 mov     di, si
                 add     di, 7Eh ; '~'
@@ -33135,12 +33135,12 @@ GrantMonsterRewards proc far            ; CODE XREF: sub_16B63:loc_16BA2↑P
                 cmp     ax, 0
                 jz      short loc_22BDE
                 jl      short loc_22BD9
-                call    sub_27A46
+                call    SetGlobalFlag
                 jmp     short loc_22BDE
 ; ---------------------------------------------------------------------------
 
 loc_22BD9:                              ; CODE XREF: GrantMonsterRewards+3A↑j
-                call    sub_27A2A
+                call    ClearGlobalFlag
 
 loc_22BDE:                              ; CODE XREF: GrantMonsterRewards+38↑j
                                         ; GrantMonsterRewards+41↑j
@@ -33148,12 +33148,12 @@ loc_22BDE:                              ; CODE XREF: GrantMonsterRewards+38↑j
                 cmp     ax, 0
                 jz      short locret_22BF4
                 jl      short loc_22BEF
-                call    sub_27A46
+                call    SetGlobalFlag
                 jmp     short locret_22BF4
 ; ---------------------------------------------------------------------------
 
 loc_22BEF:                              ; CODE XREF: GrantMonsterRewards+50↑j
-                call    sub_27A2A
+                call    ClearGlobalFlag
 
 locret_22BF4:                           ; CODE XREF: GrantMonsterRewards+4E↑j
                                         ; GrantMonsterRewards+57↑j
@@ -42184,15 +42184,15 @@ seg095          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A2A       proc far                ; CODE XREF: sub_1BB48+92↑P
+ClearGlobalFlag proc far                ; CODE XREF: sub_1BB48+92↑P
                                         ; GrantMonsterRewards:loc_22BD9↑P ...
-                push    si
-                call    sub_27A98
+                push    si              ; ClearGlobalFlag(ax=flag index): [si] &= ~mask.
+                call    GetGlobalFlagBitAndWord
                 not     ax
                 and     [si], ax
                 pop     si
                 retf
-sub_27A2A       endp
+ClearGlobalFlag endp
 
 ; ---------------------------------------------------------------------------
                 push    si
@@ -42218,14 +42218,14 @@ sub_27A3E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A46       proc far                ; CODE XREF: sub_1B4C2+95↑P
+SetGlobalFlag   proc far                ; CODE XREF: sub_1B4C2+95↑P
                                         ; sub_1B5FD+82↑P ...
-                push    si
-                call    sub_27A98
+                push    si              ; SetGlobalFlag(ax=flag index): [si] |= mask.
+                call    GetGlobalFlagBitAndWord
                 or      [si], ax
                 pop     si
                 retf
-sub_27A46       endp
+SetGlobalFlag   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42257,14 +42257,14 @@ sub_27A56       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A5E       proc far                ; CODE XREF: start+705↑P
+TestGlobalFlag  proc far                ; CODE XREF: start+705↑P
                                         ; start+70F↑P ...
-                push    si
-                call    sub_27A98
+                push    si              ; TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.
+                call    GetGlobalFlagBitAndWord
                 test    [si], ax
                 pop     si
                 retf
-sub_27A5E       endp
+TestGlobalFlag  endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42315,9 +42315,9 @@ sub_27A6E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A98       proc near               ; CODE XREF: sub_27A2A+1↑p
-                                        ; sub_27A46+1↑p ...
-                push    bx
+GetGlobalFlagBitAndWord proc near       ; CODE XREF: ClearGlobalFlag+1↑p
+                                        ; SetGlobalFlag+1↑p ...
+                push    bx              ; GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.
                 push    cx
                 push    dx
                 mov     bx, 10h
@@ -42334,14 +42334,14 @@ sub_27A98       proc near               ; CODE XREF: sub_27A2A+1↑p
                 mov     cx, 10h
                 sub     si, 2
 
-loc_27ABA:                              ; CODE XREF: sub_27A98+1A↑j
+loc_27ABA:                              ; CODE XREF: GetGlobalFlagBitAndWord+1A↑j
                 dec     cx
                 shr     ax, cl
                 pop     dx
                 pop     cx
                 pop     bx
                 retn
-sub_27A98       endp
+GetGlobalFlagBitAndWord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49092,7 +49092,7 @@ loc_2AEA9:                              ; CODE XREF: sub_2AE3C+68↑j
                 cmp     word_32974, 249h
                 jg      short locret_2AF2D
                 mov     ax, 0B1h
-                call    sub_27A5E
+                call    TestGlobalFlag
                 jz      short loc_2AEF3
                 cmp     word_32974, 246h
                 jnz     short loc_2AEC7
@@ -49175,7 +49175,7 @@ sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
                 call    sub_274B4
                 call    DrawMouseCursor
                 mov     ax, 48h ; 'H'
-                call    sub_27A46
+                call    SetGlobalFlag
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -86037,7 +86037,7 @@ word_36D15      dw 0                    ; DATA XREF: sub_1AF49+45↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-                db    0
+g_globalFlags   db    0                 ; Global boolean flag bitfield (quest/world-state flags), accessed via SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag/GetGlobalFlagBitAndWord. GrantMonsterRewards sets/clears specific flags on monster death via its [+0x14]/[+0x16] signed flag-index fields.
                 db    0
                 db    0
                 db    0

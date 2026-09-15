@@ -205,6 +205,24 @@ pairing crosses over rather than matching numeric order), then drains
 plausibly an **experience-points** counter, a new party-record field
 find.
 
+### Global quest/world-state flags
+
+A boolean bitfield array, `g_globalFlags` (base `0x94D1`), accessed
+only through 4 small helpers rather than direct bit-twiddling:
+`GetGlobalFlagBitAndWord` (index → word+mask, MSB-first within each
+16-bit word), `SetGlobalFlag`, `ClearGlobalFlag`, `TestGlobalFlag`.
+`TestGlobalFlag` is called directly from `start` at several points,
+confirming this is a core, general-purpose mechanism — not something
+local to combat. `GrantMonsterRewards` sets or clears one flag per
+monster death via its own record's `+0x14`/`+0x16` fields (negative
+index = clear, positive = set), so specific monster kills can flip
+arbitrary quest/world-state flags (e.g. a boss-defeated flag). No
+individual flag indices are identified yet. A separate, structurally
+similar but distinct family (`sub_27A6E`/`sub_27A3E`, `sub_27AC1`)
+manipulates *per-object* flag banks at fixed offsets (`+0x10C`,
+`+0xCA`) from a caller-supplied record rather than this global array —
+not traced yet.
+
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
 Not independently verified against `SW.EXE`'s code yet, but internally
