@@ -1581,6 +1581,22 @@ perception, not yet cross-checked against the skill array.
 
 212 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — the "weight/capacity check" is a lock-state loader
+
+`TryInteractAtPosition`'s very first comment (written before this area
+of code was understood) called `sub_1766F` "a weight/capacity check".
+Traced its body: it reads a bit-packed "previously unlocked?" array
+from `CURGAME`, a second `CURGAME` block into an EMS buffer, and
+splits a value via `/100` — nothing to do with weight. Confirmed by
+its call site: right afterward, `TryInteractAtPosition` tests the
+exact globals (`byte_32DCD`, `word_32DCE` bits `0x20`/`0x40`)
+`ShowLockStatus` reads to pick its message. Named `LoadLockState` and
+corrected `TryInteractAtPosition`'s stale comment (the old wording is
+left standing in this log's earlier dated entries, per this session's
+practice of appending corrections rather than editing history).
+
+213 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

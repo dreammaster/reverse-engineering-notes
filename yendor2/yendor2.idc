@@ -2681,7 +2681,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X17616);
 	op_hex		(x,	1);
 	set_cmt	(0X1763A,	"msg",	0);
+	set_cmt	(0X1766F,	"LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.",	0);
 	create_insn	(0X1766F);
+	set_name	(0X1766F,	"LoadLockState");
 	set_cmt	(0X17671,	"this",	0);
 	set_cmt	(0X1767F,	"this",	0);
 	set_cmt	(0X176B4,	"this",	0);
@@ -4585,6 +4587,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1E2E5);
 	set_cmt	(0X1E337,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1E340);
 	create_insn	(x=0X1E356);
 	op_hex		(x,	1);
@@ -4629,15 +4640,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1E714);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1E72A);
 	create_insn	(x=0X1E72F);
 	op_hex		(x,	1);
@@ -5335,7 +5337,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X216DC);
 	op_hex		(x,	1);
-	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): weight/capacity check (sub_1766F), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
+	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): LoadLockState (CORRECTED from a wrong 'weight/capacity check' guess -- it loads a lock/door's persisted state from CURGAME, feeding ShowLockStatus's message choice), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
 	create_insn	(0X216F0);
 	set_name	(0X216F0,	"TryInteractAtPosition");
 	create_insn	(x=0X216F4);
@@ -8215,6 +8217,15 @@ static Bytes_1(void) {
 	create_insn	(0X2A2D8);
 	create_insn	(x=0X2A2DB);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A2DD);
 	op_hex		(x,	1);
 	create_insn	(0X2A2E0);
@@ -8284,15 +8295,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A39A);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A3A4);
 	create_insn	(x=0X2A3A7);
 	op_hex		(x,	1);

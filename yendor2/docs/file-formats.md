@@ -43,10 +43,14 @@ not confirmed which).
 offset* record (`ax=0x556D`, via the resource stub `sub_27DE5`) back to
 this same `FileEntry` whenever `TryInteractAtPosition` (was `sub_216F0`
 — validates an interaction at a map position via `FindObjectAtPosition`,
-branching on the target's type flags into a weight/capacity check,
-`LoadCurgameRecord`, or a specific failure code) returns certain outcome
-codes — not indexed by character, so plausibly global state like the
-player's world position. `CURGAME` is also explicitly zeroed and closed
+branching on the target's type flags into `LoadLockState` — a lock/
+door persisted-state loader, corrected from an earlier "weight/capacity
+check" guess — `LoadCurgameRecord`, or a specific failure code) returns
+certain outcome codes — not indexed by character, so plausibly global
+state like the player's world position. `LoadLockState` itself reads
+this same block (`0x556D`) back when examining a lock, alongside a
+bit-packed "previously unlocked?" array in block `0x556C`. `CURGAME` is
+also explicitly zeroed and closed
 cleanly (`FileEntry_Write` with `_blockSize`/`_blockOffset` all zero,
 then `FileEntry_Close`) on the quit-to-DOS path. `sub_27DE5`'s target
 record itself isn't named yet.

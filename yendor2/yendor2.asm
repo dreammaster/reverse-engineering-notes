@@ -12580,9 +12580,9 @@ ShowMaterialCounterHud endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1766F       proc far                ; CODE XREF: UseAbilityCommand+2C↓p
+LoadLockState   proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                                         ; sub_1AEF8+17↓P ...
-                push    es
+                push    es              ; LoadLockState(ax=1-based lock/object id): reads a bit-packed 'previously unlocked?' array from CURGAME (block 0x556C, (id-1)/8 byte + (id-1)%8 bit -> word_32DC8 mask), reads a second CURGAME block (0x556D) into an EMS buffer at offset id*0x1A, and splits word_32DD0 into word_32DC0/word_32DC2 via /100. Feeds word_32DCE and friends, which ShowLockStatus reads to choose its message.
                 push    si
                 push    di              ; this
                 dec     ax
@@ -12636,7 +12636,7 @@ sub_1766F       proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                 pop     si
                 pop     es
                 retf
-sub_1766F       endp
+LoadLockState   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -12822,7 +12822,7 @@ loc_178BE:                              ; CODE XREF: UseAbilityCommand+10↑j
 
 loc_178D1:                              ; CODE XREF: UseAbilityCommand+23↑j
                 push    cs
-                call    near ptr sub_1766F
+                call    near ptr LoadLockState
 
 loc_178D5:                              ; CODE XREF: UseAbilityCommand+29↑j
                                         ; UseAbilityCommand+7F↓j
@@ -19521,7 +19521,7 @@ sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
-                call    sub_1766F
+                call    LoadLockState
                 call    sub_1732B
                 mov     di, 0BB8h
                 mov     ax, [di]
@@ -22545,7 +22545,7 @@ sub_1CBF3       proc far                ; CODE XREF: UseItem+1A1↑P
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
-                call    sub_1766F
+                call    LoadLockState
                 call    sub_1732B
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
@@ -30780,7 +30780,7 @@ seg065          segment byte public 'CODE' use16
 
 TryInteractAtPosition proc far          ; CODE XREF: start+1A3↑P
                                         ; start+233↑P ...
-                push    es              ; Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): weight/capacity check (sub_1766F), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.
+                push    es              ; Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): LoadLockState (CORRECTED from a wrong 'weight/capacity check' guess -- it loads a lock/door's persisted state from CURGAME, feeding ShowLockStatus's message choice), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.
                 push    di
                 push    dx
                 push    cx
@@ -30812,7 +30812,7 @@ loc_2172A:                              ; CODE XREF: TryInteractAtPosition+10↑
 
 loc_21733:                              ; CODE XREF: TryInteractAtPosition+17↑j
                 mov     ax, [si+4]
-                call    sub_1766F
+                call    LoadLockState
                 mov     ax, word_32DC8
                 test    byte_32DCD, al
                 jnz     short loc_2172A
@@ -42794,7 +42794,7 @@ sub_27DA8       endp
 
 ; void __usercall sub_27DC6(FileEntry *this@<eds:ebx.2>)
 sub_27DC6       proc far                ; CODE XREF: sub_1732B+26B↑P
-                                        ; sub_1766F+13↑P ...
+                                        ; LoadLockState+13↑P ...
                 push    si
                 mov     si, 0CDE3h
                 mov     [bx+4], ax
@@ -45969,7 +45969,7 @@ loc_29787:                              ; CODE XREF: sub_29738+3B↑j
 
 loc_29796:                              ; CODE XREF: sub_29738+44↑j
                 mov     ax, [si+4]
-                call    sub_1766F
+                call    LoadLockState
                 jmp     short loc_297A8
 ; ---------------------------------------------------------------------------
 
@@ -48299,7 +48299,7 @@ loc_2A80E:                              ; CODE XREF: sub_2A788+72↑j
 
 loc_2A81D:                              ; CODE XREF: sub_2A788+7B↑j
                 mov     ax, [si+4]
-                call    sub_1766F
+                call    LoadLockState
                 jmp     short loc_2A82F
 ; ---------------------------------------------------------------------------
 
@@ -53631,7 +53631,7 @@ seg129          segment byte public 'UNK' use16
                 assume cs:seg129
                 ;org 0Dh
                 assume es:nothing, ss:nothing, ds:seg129, fs:nothing, gs:nothing
-unk_2D86D       db    0                 ; DATA XREF: sub_1766F+7A↑o
+unk_2D86D       db    0                 ; DATA XREF: LoadLockState+7A↑o
                 db 0C8h
                 db  6Eh ; n
                 db 0B4h
@@ -75440,21 +75440,21 @@ g_combatTurnOrder db    0               ; 14 x 8-byte combat turn-order scratch 
                 db  4Eh ; N
                 db  47h ; G
                 db    0
-word_32DBC      dw 0                    ; DATA XREF: sub_1766F+4↑w
-                                        ; sub_1766F+69↑r ...
+word_32DBC      dw 0                    ; DATA XREF: LoadLockState+4↑w
+                                        ; LoadLockState+69↑r ...
 word_32DBE      dw 0                    ; DATA XREF: UseAbilityCommand+1B↑w
                                         ; UseAbilityCommand:loc_1799D↑r
 word_32DC0      dw 0                    ; DATA XREF: sub_16881+BF↑w
                                         ; sub_16881+18D↑w ...
-word_32DC2      dw 0                    ; DATA XREF: sub_1766F+95↑w
+word_32DC2      dw 0                    ; DATA XREF: LoadLockState+95↑w
                                         ; LoadCurgameRecord+81↑w ...
 word_32DC4      dw 0                    ; DATA XREF: start:loc_106EF↑w
                                         ; start+6FC↑w ...
-word_32DC6      dw 0                    ; DATA XREF: sub_1766F+A↑w
-                                        ; sub_1766F+2A↑r ...
+word_32DC6      dw 0                    ; DATA XREF: LoadLockState+A↑w
+                                        ; LoadLockState+2A↑r ...
 word_32DC8      dw 0                    ; DATA XREF: start:loc_101B8↑r
                                         ; start:loc_10248↑r ...
-word_32DCA      dw 0                    ; DATA XREF: sub_1766F+7↑w
+word_32DCA      dw 0                    ; DATA XREF: LoadLockState+7↑w
                                         ; RunGameDialog+53B↑w ...
 byte_32DCC      db 0                    ; DATA XREF: sub_17032:loc_170A3↑w
                                         ; sub_17032:loc_17100↑w ...
@@ -75462,7 +75462,7 @@ byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
 word_32DCE      dw 0                    ; DATA XREF: sub_1732B+24C↑r
                                         ; ShowLockStatus+38↑r ...
-word_32DD0      dw 0                    ; DATA XREF: sub_1766F+88↑r
+word_32DD0      dw 0                    ; DATA XREF: LoadLockState+88↑r
                                         ; LoadCurgameRecord+74↑r ...
                 db    0
                 db    0
