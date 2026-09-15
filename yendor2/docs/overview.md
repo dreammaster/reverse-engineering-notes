@@ -2933,6 +2933,16 @@ action-icon panel areas before animated overlays draw over them.
 
 376 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryTravelToClickedMapCell
+
+Named `sub_29297`, called from `RevealMapRegion`: click a cell within
+the revealed area (gated on its "explored" bit) to instantly travel
+the party there — a scry-then-teleport interaction, consistent with a
+Locate/Scout/Magic-Mapping ability rather than a correction to
+`RevealMapRegion`'s existing documentation.
+
+377 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

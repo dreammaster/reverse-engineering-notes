@@ -7705,7 +7705,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X29208);
 	op_hex		(x,	1);
 	create_insn	(0X29259);
+	set_cmt	(0X29297,	"Click-to-travel: converts a mouse click into a map cell, checks its 'explored' bit (word_3685F, errorCode=2 if unexplored), validates via sub_1119A/sub_11160, then TryInteractAtPosition; on success moves the party (word_36CF7/36CF9) to that cell. Called from RevealMapRegion.",	0);
 	create_insn	(0X29297);
+	set_name	(0X29297,	"TryTravelToClickedMapCell");
 	set_cmt	(0X2929E,	"this",	0);
 	create_insn	(0X292B7);
 	create_insn	(0X292C0);

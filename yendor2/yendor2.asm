@@ -1808,7 +1808,7 @@ seg002          segment byte public 'CODE' use16
 
 
 sub_11160       proc far                ; CODE XREF: HandleMovementInput+2B3↓p
-                                        ; sub_29297+C0↓P ...
+                                        ; TryTravelToClickedMapCell+C0↓P ...
                 mov     errorCode, 0
                 cmp     ax, 1
                 jle     short loc_11193
@@ -1847,7 +1847,7 @@ sub_11160       endp
 
 
 sub_1119A       proc far                ; CODE XREF: HandleMovementInput+2C2↓p
-                                        ; sub_29297+B2↓P ...
+                                        ; TryTravelToClickedMapCell+B2↓P ...
                 mov     errorCode, 0
                 cmp     ax, 15h
                 jl      short locret_111B9
@@ -44967,7 +44967,7 @@ loc_28F42:                              ; CODE XREF: RevealMapRegion+238↑j
 ; ---------------------------------------------------------------------------
 
 loc_28F4B:                              ; CODE XREF: RevealMapRegion+241↑j
-                call    sub_29297
+                call    TryTravelToClickedMapCell
                 cmp     errorCode, 0
                 jz      short loc_28FAA
                 cmp     errorCode, 1
@@ -45315,8 +45315,8 @@ sub_29259       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29297       proc near               ; CODE XREF: RevealMapRegion:loc_28F4B↑p
-                push    cx
+TryTravelToClickedMapCell proc near     ; CODE XREF: RevealMapRegion:loc_28F4B↑p
+                push    cx              ; Click-to-travel: converts a mouse click into a map cell, checks its 'explored' bit (word_3685F, errorCode=2 if unexplored), validates via sub_1119A/sub_11160, then TryInteractAtPosition; on success moves the party (word_36CF7/36CF9) to that cell. Called from RevealMapRegion.
                 push    di
                 push    si
                 push    word_2E402
@@ -45331,13 +45331,13 @@ sub_29297       proc near               ; CODE XREF: RevealMapRegion:loc_28F4B�
                 jmp     loc_29396
 ; ---------------------------------------------------------------------------
 
-loc_292B7:                              ; CODE XREF: sub_29297+1B↑j
+loc_292B7:                              ; CODE XREF: TryTravelToClickedMapCell+1B↑j
                 cmp     ax, word_328FA
                 jle     short loc_292C0
                 jmp     loc_29396
 ; ---------------------------------------------------------------------------
 
-loc_292C0:                              ; CODE XREF: sub_29297+24↑j
+loc_292C0:                              ; CODE XREF: TryTravelToClickedMapCell+24↑j
                 dec     ax
                 add     word_2E402, ax
                 mov     ax, word_2E770
@@ -45349,13 +45349,13 @@ loc_292C0:                              ; CODE XREF: sub_29297+24↑j
                 jmp     loc_29396
 ; ---------------------------------------------------------------------------
 
-loc_292D7:                              ; CODE XREF: sub_29297+3B↑j
+loc_292D7:                              ; CODE XREF: TryTravelToClickedMapCell+3B↑j
                 cmp     ax, word_32900
                 jle     short loc_292E0
                 jmp     loc_29396
 ; ---------------------------------------------------------------------------
 
-loc_292E0:                              ; CODE XREF: sub_29297+44↑j
+loc_292E0:                              ; CODE XREF: TryTravelToClickedMapCell+44↑j
                 dec     ax
                 add     word_2E406, ax
                 mov     ax, word_2E406
@@ -45386,7 +45386,7 @@ loc_292E0:                              ; CODE XREF: sub_29297+44↑j
                 mov     cx, dx
                 shl     byte ptr ds:[bp+0], cl
 
-loc_29340:                              ; CODE XREF: sub_29297+9F↑j
+loc_29340:                              ; CODE XREF: TryTravelToClickedMapCell+9F↑j
                 shl     byte ptr ds:[bp+0], 1
                 jnb     short loc_2939E
                 mov     ax, [si+2]
@@ -45415,36 +45415,36 @@ loc_29340:                              ; CODE XREF: sub_29297+9F↑j
                 jmp     short loc_293BC
 ; ---------------------------------------------------------------------------
 
-loc_29396:                              ; CODE XREF: sub_29297+1D↑j
-                                        ; sub_29297+26↑j ...
+loc_29396:                              ; CODE XREF: TryTravelToClickedMapCell+1D↑j
+                                        ; TryTravelToClickedMapCell+26↑j ...
                 mov     errorCode, 1
                 jmp     short loc_293B4
 ; ---------------------------------------------------------------------------
 
-loc_2939E:                              ; CODE XREF: sub_29297+AD↑j
+loc_2939E:                              ; CODE XREF: TryTravelToClickedMapCell+AD↑j
                 mov     errorCode, 2
                 jmp     short loc_293B4
 ; ---------------------------------------------------------------------------
 
-loc_293A6:                              ; CODE XREF: sub_29297+BC↑j
+loc_293A6:                              ; CODE XREF: TryTravelToClickedMapCell+BC↑j
                 mov     errorCode, 3
                 jmp     short loc_293B4
 ; ---------------------------------------------------------------------------
 
-loc_293AE:                              ; CODE XREF: sub_29297+CA↑j
+loc_293AE:                              ; CODE XREF: TryTravelToClickedMapCell+CA↑j
                 mov     errorCode, 4
 
-loc_293B4:                              ; CODE XREF: sub_29297+DF↑j
-                                        ; sub_29297+E6↑j ...
+loc_293B4:                              ; CODE XREF: TryTravelToClickedMapCell+DF↑j
+                                        ; TryTravelToClickedMapCell+E6↑j ...
                 pop     word_2E406
                 pop     word_2E402
 
-loc_293BC:                              ; CODE XREF: sub_29297+FD↑j
+loc_293BC:                              ; CODE XREF: TryTravelToClickedMapCell+FD↑j
                 pop     si
                 pop     di
                 pop     cx
                 retn
-sub_29297       endp
+TryTravelToClickedMapCell endp
 
 
 ; =============== S U B R O U T I N E =======================================

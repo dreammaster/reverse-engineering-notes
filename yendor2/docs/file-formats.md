@@ -125,7 +125,11 @@ not confirmed; `+0x66` → `word_36CA7`, gating a 4-tier area size in
 weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
 style special ability that reads `WORLD.DAT`/`CURGAME` directly and
 reveals a `word_36CA7`-sized box of the map around the player, not a
-visual weather effect); `+0x58` → `word_36CA9`, gating progressively-
+visual weather effect). `RevealMapRegion` also calls
+`TryTravelToClickedMapCell`: click a cell within the revealed area
+(gated on that cell's "explored" bit) to instantly travel/teleport the
+party there — a scry-then-teleport interaction consistent with a
+Locate/Scout/Magic-Mapping ability; `+0x58` → `word_36CA9`, gating progressively-
 revealed detail icons in `DrawMonsterInfoPanel` (**correction, round
 2**: the "3 fixed addresses" turned out to be `g_monsterSlots` — 3
 active-combat monster records, found via `BuildCombatTurnOrder` — so
