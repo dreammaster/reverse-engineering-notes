@@ -3350,7 +3350,7 @@ loc_11FDF:                              ; CODE XREF: InitGame+A3↑j
 loc_11FFE:                              ; CODE XREF: InitGame+F4↑j
                                         ; InitGame+100↑j ...
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 test    word_328C4, 4000h
                 jnz     short loc_12016
                 call    sub_222F8
@@ -10210,7 +10210,7 @@ loc_163A0:                              ; CODE XREF: RunDungeonGameLoop+90↑j
 loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
                 and     word_328CA, 0FFFh
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_222F8
                 pop     ax
                 and     word_36C7F, 0EFFFh
@@ -12442,7 +12442,7 @@ loc_17500:                              ; CODE XREF: RunShopScreen+72↑j
 loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
                 and     word_328C6, 0FDFFh
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_222F8
                 call    RefreshDungeonScreen
                 test    word_328C6, 80h
@@ -13571,7 +13571,7 @@ loc_17F7E:                              ; CODE XREF: UseItem+3E2↑j
 
 loc_17F8D:                              ; CODE XREF: UseItem+3F1↑j
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_222F8
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -25863,7 +25863,7 @@ loc_1E898:                              ; CODE XREF: RestPartyAndAdvanceClock+25
 
 loc_1E8AB:                              ; CODE XREF: RestPartyAndAdvanceClock+253↑j
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_222F8
                 call    UpdatePartyAverageStatTiers
                 and     word_328C4, 0FBFFh
@@ -26643,7 +26643,7 @@ InitializeDungeonLevel proc far         ; CODE XREF: start+7F6↑P
                 call    sub_209D2
                 call    RevealCellsAroundPlayer
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_222F8
                 call    RedrawDungeonScreen
                 call    BuildMinimapTileData
@@ -32164,9 +32164,9 @@ sub_22315       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22387       proc far                ; CODE XREF: InitGame+128↑P
+DrawFullScreenPictureAndCacheToEMS proc far ; CODE XREF: InitGame+128↑P
                                         ; RunDungeonGameLoop+C7↑P ...
-                push    cx
+                push    cx              ; Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.
                 push    dx
                 push    si
                 push    di
@@ -32195,7 +32195,7 @@ sub_22387       proc far                ; CODE XREF: InitGame+128↑P
                 pop     dx
                 pop     cx
                 retf
-sub_22387       endp
+DrawFullScreenPictureAndCacheToEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35181,13 +35181,13 @@ sub_23BA4       endp
 
 ShowPartyMembers proc far               ; CODE XREF: RunTitleScreen+15E↑P
                 call    sub_25862       ; Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.
-                call    sub_25544
+                call    ShowCreateCharacterPrompt
                 call    sub_2587E
                 jmp     short loc_23BC0
 ; ---------------------------------------------------------------------------
 
 loc_23BBD:                              ; CODE XREF: ShowPartyMembers+62↓j
-                call    sub_25544
+                call    ShowCreateCharacterPrompt
 
 loc_23BC0:                              ; CODE XREF: ShowPartyMembers+D↑j
                 cmp     word_328D4, 0
@@ -35231,7 +35231,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     word_328BC, 74h ; 't'
                 mov     word_328C0, 3Ch ; '<'
                 mov     word_2E530, 3
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 mov     _textPos_x, 6Bh ; 'k'
                 mov     _textPos_y, 6
                 mov     _font_bgTransparent, 1
@@ -35252,7 +35252,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     _font_bgColor, 33h ; '3'
                 call    sub_24D30
                 call    DrawThreeThresholdStats
-                call    sub_2504F
+                call    DrawCharacterClassAndLevel
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 1Ah
                 mov     bx, word_328D4
@@ -35483,7 +35483,7 @@ loc_23F10:                              ; CODE XREF: sub_23C18+308↓j
                 call    PlaceItemOnGround
                 add     si, 4
                 loop    loc_23F10
-                call    sub_243C3
+                call    ClearPartyRecord
                 call    sub_25862
                 mov     bx, 8FFBh
                 mov     ax, 93FFh
@@ -35942,15 +35942,15 @@ RestoreWorldMapAreaFromEMS endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_243C3       proc near               ; CODE XREF: sub_23C18+30A↑p
+ClearPartyRecord proc near              ; CODE XREF: sub_23C18+30A↑p
                                         ; ShowCharacterSkills+1A3↓p ...
-                mov     es, word_2E4AA
+                mov     es, word_2E4AA  ; Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.
                 mov     di, word_328D4
                 xor     ax, ax
                 mov     cx, 0FAh
                 rep stosw
                 retn
-sub_243C3       endp
+ClearPartyRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36085,7 +36085,7 @@ loc_2456E:                              ; CODE XREF: ShowCharacterSkills+117↑j
                                         ; ShowCharacterSkills+196↑j
                 test    word_328CA, 8000h
                 jnz     short loc_24579
-                call    sub_243C3
+                call    ClearPartyRecord
 
 loc_24579:                              ; CODE XREF: ShowCharacterSkills+1A1↑j
                 mov     byte_2E400, 51h ; 'Q'
@@ -36097,7 +36097,7 @@ loc_2457F:                              ; CODE XREF: ShowCharacterSkills+121↑j
                 mov     si, word_328D4
                 mov     [si+0Eh], ax
                 mov     word ptr [si+16h], 1
-                call    sub_2504F
+                call    DrawCharacterClassAndLevel
                 test    word_328CA, 8000h
                 jnz     short loc_2459C
                 mov     byte_2E400, 0
@@ -36672,7 +36672,7 @@ loc_24B93:                              ; CODE XREF: ShowCharacterEquipment+BD�
                                         ; ShowCharacterEquipment+11A↑j
                 test    word_328CA, 8000h
                 jnz     short loc_24B9E
-                call    sub_243C3
+                call    ClearPartyRecord
 
 loc_24B9E:                              ; CODE XREF: ShowCharacterEquipment+13E↑j
                 mov     byte_2E400, 51h ; 'Q'
@@ -36767,7 +36767,7 @@ loc_24C8C:                              ; CODE XREF: ShowCharacterStats+7C↑j
                 jnz     short loc_24C9A
 
 loc_24C91:                              ; CODE XREF: ShowCharacterStats+96↑j
-                call    sub_243C3
+                call    ClearPartyRecord
                 mov     byte_2E400, 51h ; 'Q'
                 retn
 ; ---------------------------------------------------------------------------
@@ -37055,9 +37055,9 @@ DrawListEntryLabel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2504F       proc near               ; CODE XREF: sub_23C18+7B↑p
+DrawCharacterClassAndLevel proc near    ; CODE XREF: sub_23C18+7B↑p
                                         ; ShowCharacterSkills+1B8↑p ...
-                mov     si, word_328D4
+                mov     si, word_328D4  ; Draws the current character's (word_328D4) class name (GetClassNameString) and level (+0x16, via DrawValueWithThresholdColor with ax==bx so no highlight ever fires -- a plain number draw). Shared by ShowCharacterSkills and sub_23C18.
                 call    GetClassNameString
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 26h ; '&'
@@ -37071,7 +37071,7 @@ sub_2504F       proc near               ; CODE XREF: sub_23C18+7B↑p
                 mov     word_2E414, 0Fh
                 call    DrawValueWithThresholdColor
                 retn
-sub_2504F       endp
+DrawCharacterClassAndLevel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -37121,7 +37121,7 @@ sub_250BB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SelectDefaultPartyRecord proc near      ; CODE XREF: sub_25544+12↓p
+SelectDefaultPartyRecord proc near      ; CODE XREF: ShowCreateCharacterPrompt+12↓p
                 mov     word_328D4, 0   ; Linearly scans g_partyRecords (base 0x95F3, stride 0x1F4, up to 9 slots) for the first record whose +0xE field is 0, and sets word_328D4 to it (0 if none found). Whether +0xE==0 means 'unused slot' or something else isn't confirmed -- named on mechanism, not a guessed interpretation. Called by sub_25544 to establish/refresh word_328D4 between ShowPartyMembers iterations.
                 mov     si, 95F3h
                 mov     cx, 9
@@ -37323,7 +37323,7 @@ loc_252B0:                              ; CODE XREF: ShowCharacterSummary+E5↑j
 
 loc_252E6:                              ; CODE XREF: ShowCharacterSummary+115↑j
                                         ; ShowCharacterSummary+140↑j
-                call    sub_243C3
+                call    ClearPartyRecord
                 mov     byte_2E400, 51h ; 'Q'
                 retn
 ShowCharacterSummary endp
@@ -37540,7 +37540,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                                         ; ShowCharacterSummary↑p
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 3
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 mov     _textPos_x, 6Bh ; 'k'
                 mov     _textPos_y, 6
                 mov     _font_bgTransparent, 1
@@ -37557,7 +37557,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                 call    DrawPicture
                 call    sub_24D30
                 call    DrawThreeThresholdStats
-                call    sub_2504F
+                call    DrawCharacterClassAndLevel
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 1Ah
                 mov     bx, word_328D4
@@ -37570,9 +37570,9 @@ sub_254CC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25544       proc near               ; CODE XREF: ShowPartyMembers+5↑p
+ShowCreateCharacterPrompt proc near     ; CODE XREF: ShowPartyMembers+5↑p
                                         ; ShowPartyMembers:loc_23BBD↑p
-                mov     word_328BC, 74h ; 't'
+                mov     word_328BC, 74h ; 't' ; Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.
                 mov     word_328C0, 3Ch ; '<'
                 and     word_328CA, 7FFFh
                 call    SelectDefaultPartyRecord
@@ -37581,10 +37581,10 @@ sub_25544       proc near               ; CODE XREF: ShowPartyMembers+5↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_25561:                              ; CODE XREF: sub_25544+1A↑j
-                call    sub_243C3
+loc_25561:                              ; CODE XREF: ShowCreateCharacterPrompt+1A↑j
+                call    ClearPartyRecord
                 mov     word_2E530, 3
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 mov     _textPos_x, 6Bh ; 'k'
                 mov     _textPos_y, 6
                 mov     _font_bgTransparent, 1
@@ -37593,7 +37593,7 @@ loc_25561:                              ; CODE XREF: sub_25544+1A↑j
                 call    writeString
                 call    DrawMouseCursor
                 retn
-sub_25544       endp
+ShowCreateCharacterPrompt endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49003,7 +49003,7 @@ sub_2ADE8       proc far                ; CODE XREF: sub_25AAC:loc_25ADB↑P
 loc_2ADFC:                              ; CODE XREF: sub_2ADE8+A↑j
                 call    sub_2AE1A
                 mov     word_2E530, 1
-                call    sub_22387
+                call    DrawFullScreenPictureAndCacheToEMS
                 call    sub_22402
                 call    sub_2827E
                 call    DrawMouseCursor

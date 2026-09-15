@@ -5800,7 +5800,9 @@ static Bytes_1(void) {
 	create_insn	(0X22315);
 	create_insn	(x=0X2231F);
 	op_hex		(x,	1);
+	set_cmt	(0X22387,	"Draws a full-screen picture (dir 0, id=word_2E530, set by caller) at (1,1), then saves the resulting screen to EMS page 0x55D8 (0x7D00 words = one full VGA screen). Generic full-screen draw-then-cache utility; called from many different screens (InitGame, RunDungeonGameLoop, ShowCreateCharacterPrompt, etc.) each with their own picture id.",	0);
 	create_insn	(0X22387);
+	set_name	(0X22387,	"DrawFullScreenPictureAndCacheToEMS");
 	create_insn	(0X223D4);
 	create_insn	(0X22402);
 	set_cmt	(0X22445,	"Draws one party member's full status panel: portrait, unconscious/dead overlay, three DrawStatBar gauges (HP [+0x52]/[+0x92], MP [+0x54]/[+0x94], a third stat [+0x118]/[+0x56] not identified), an ability-readiness icon ([+0xB4]), and level-up/training text ([+0x1C] bit 0x40, [+0x1E]). Called from the main input loop sub_1869D.",	0);
@@ -5813,6 +5815,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X224A7);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X224DC);
 	op_hex		(x,	1);
 	create_insn	(x=0X2255E);
@@ -5844,15 +5855,6 @@ static Bytes_1(void) {
 	set_cmt	(0X226FC,	"Draws a 5-row proportional stat bar (health/mana-gauge style): bx=current, cx=max, drawn as filled (_font_fgColor) vs empty (_font_bgColor) pixels across a 38-pixel width, 5 rows tall. Called from sub_22445.",	0);
 	create_insn	(0X226FC);
 	set_name	(0X226FC,	"DrawStatBar");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22774);
 	create_insn	(0X2278C);
 	create_insn	(x=0X22791);
@@ -6322,7 +6324,9 @@ static Bytes_2(void) {
 	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X2438B);
 	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
+	set_cmt	(0X243C3,	"Zeroes exactly 0xFA words (500 bytes = the confirmed g_partyRecords stride 0x1F4) at es:di, di=word_328D4 -- wipes one entire party record clean.",	0);
 	create_insn	(0X243C3);
+	set_name	(0X243C3,	"ClearPartyRecord");
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
@@ -6432,7 +6436,9 @@ static Bytes_2(void) {
 	set_cmt	(0X24FFC,	"Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.",	0);
 	create_insn	(0X24FFC);
 	set_name	(0X24FFC,	"DrawListEntryLabel");
+	set_cmt	(0X2504F,	"Draws the current character's (word_328D4) class name (GetClassNameString) and level (+0x16, via DrawValueWithThresholdColor with ax==bx so no highlight ever fires -- a plain number draw). Shared by ShowCharacterSkills and sub_23C18.",	0);
 	create_insn	(0X2504F);
+	set_name	(0X2504F,	"DrawCharacterClassAndLevel");
 	set_cmt	(0X25091,	"Draws a formatted number (ax), using a highlight color if ax > bx (a threshold). Called from DrawThreeThresholdStats.",	0);
 	create_insn	(0X25091);
 	set_name	(0X25091,	"DrawValueWithThresholdColor");
@@ -6498,7 +6504,9 @@ static Bytes_2(void) {
 	create_insn	(0X254CC);
 	set_cmt	(0X254F4,	"msg",	0);
 	set_cmt	(0X2553B,	"msg",	0);
+	set_cmt	(0X25544,	"Uses SelectDefaultPartyRecord's empty-slot scan (first record with +0xE==0); if none found, returns (roster full, no prompt). Otherwise wipes the slot (ClearPartyRecord), draws picture 3 full-screen (DrawFullScreenPictureAndCacheToEMS), and writes 'CHARACTER CREATION'. Called from ShowPartyMembers.",	0);
 	create_insn	(0X25544);
+	set_name	(0X25544,	"ShowCreateCharacterPrompt");
 	create_insn	(x=0X25550);
 	op_hex		(x,	1);
 	create_insn	(0X25561);
@@ -8645,6 +8653,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A38B);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A395);
 	create_insn	(x=0X2A398);
 	op_hex		(x,	1);
@@ -8761,15 +8778,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
 	create_insn	(0X2A68D);
 	set_name	(0X2A68D,	"LoadPictureIntoEms");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A6A3);
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);

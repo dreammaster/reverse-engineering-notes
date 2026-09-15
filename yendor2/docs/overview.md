@@ -3277,6 +3277,26 @@ selection) remains an open, untraced lead.
 
 421 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawCharacterClassAndLevel, ShowCreateCharacterPrompt cluster
+
+Named `sub_2504F` -> `DrawCharacterClassAndLevel` (draws the current
+character's class name plus `+0x16`, shared by `ShowCharacterSkills`
+and the still-untraced `sub_23C18`) — upgrades `+0x16` from "plausibly
+a level/skill stat" to confirmed character level.
+
+Also named a small cluster found while investigating `sub_25544`
+(called from `ShowPartyMembers`): `ShowCreateCharacterPrompt` (was
+`sub_25544`) uses `SelectDefaultPartyRecord`'s empty-slot scan to find
+a free roster slot, then calls `ClearPartyRecord` (was `sub_243C3` —
+zeroes exactly one 500-byte `g_partyRecords` stride, an independent
+confirmation of that stride) and `DrawFullScreenPictureAndCacheToEMS`
+(was `sub_22387` — a generic full-screen draw-and-cache-to-EMS utility
+used by ~11 different screens, including `InitGame` and
+`RunDungeonGameLoop`) before writing "CHARACTER CREATION" — the party
+roster's entry point into character creation.
+
+425 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

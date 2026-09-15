@@ -80,7 +80,18 @@ function) takes a 1-based record id and sets `word_328D4` =
 base/stride confirmation above. Other mechanisms (a direct selector
 struct in some callers, `SelectDefaultPartyRecord`'s "first record
 with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) still apply
-in their own contexts. Confirmed
+in their own contexts. `ShowCreateCharacterPrompt` (was `sub_25544`,
+also called from `ShowPartyMembers`) is built directly on that
+empty-slot scan: if `SelectDefaultPartyRecord` finds no empty slot
+(roster full), it does nothing; otherwise it wipes the slot
+(`ClearPartyRecord`, was `sub_243C3` — zeroes exactly one
+`g_partyRecords` stride, 500 bytes, confirming the stride from yet
+another angle), draws a full-screen picture
+(`DrawFullScreenPictureAndCacheToEMS`, was `sub_22387` — a generic
+"draw picture + cache to EMS" utility reused by ~11 different screens
+including `InitGame` and `RunDungeonGameLoop`), and writes
+"CHARACTER CREATION" — the entry point into character creation from
+the party roster screen. Confirmed
 fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
 `ida_scripts/name_char_rename.py`); **`+0xE`: confirmed class id**
 (**correction**: documented since early in the session as "a time-of-
@@ -105,11 +116,15 @@ MAGE, 8 DRUID, 9 MARKSMAN, 10 WARRIOR, 11 TINKERER, 12 THIEF, 13 CLERIC,
 CHAMPION, 20 BLACKSMITH, 21 ASSASSIN, 22 PRIEST, 23 HEALER, 24 HERO, 25
 SORCERER, 26 SAGE, 27 KNIGHT` — the game's full 27-class list, leaving no
 doubt `+0xE` is the class id); `+0x10`: gender/type (compared
-against `2` in `ShowCharacterEquipment`); `+0x16`: plausibly a
-level/skill stat — used in `FailsSavingThrow`'s save-chance formula
+against `2` in `ShowCharacterEquipment`); `+0x16`: **confirmed
+character level** — used in `FailsSavingThrow`'s save-chance formula
 (`5*([+0x16] - threshold) + resistance bonus`), higher beats a higher
 threshold, and incremented (capped at 90) by `UseTrainingItem`, which
-also recalculates max HP/MP from it — a level-up/training item;
+also recalculates max HP/MP from it — a level-up/training item; also
+the value `DrawCharacterClassAndLevel` (was `sub_2504F`, shared by
+`ShowCharacterSkills` and the still-untraced `sub_23C18`) draws next to
+the character's class name on the character sheet, which is what
+upgraded this from "plausibly" to confirmed;
 `+0x1C`: a status/condition flags word, tested throughout
 (`RunTitleScreen`'s `E` handler, `ShowCharacterSkills`,
 `RunConversation`, `UseAbilityOnTarget`'s `0xDFBB` table, and now a
