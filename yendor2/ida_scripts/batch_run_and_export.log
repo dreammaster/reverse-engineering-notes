@@ -3010,3 +3010,195 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_12554 @ 0x12554 ----
+  0x12554  push    cx
+  0x12555  push    dx
+  0x12556  push    di
+  0x12557  push    si
+  0x12558  push    es
+  0x12559  push    ax
+  0x1255a  mov     es, word_2E4AA
+  0x1255e  mov     di, 0B34h
+  0x12561  mov     cx, 29h ; ')'
+  0x12564  xor     ax, ax
+  0x12566  rep stosw
+  0x12568  mov     dx, _emsPointer1?
+  0x1256c  mov     bx, 55C6h
+  0x1256f  call    MapUnmapPages
+  0x12574  pop     ax
+  0x12575  or      ax, ax
+  0x12577  jnz     short loc_1257C
+  0x12579  jmp     loc_12611
+  0x1257c  dec     ax
+  0x1257d  mov     di, 0B50h
+  0x12580  mov     bx, 3Ah ; ':'
+  0x12583  mul     bx
+  0x12585  mov     si, ax
+  0x12587  mov     ds, _emsSegmentPageFrame
+  0x1258b  mov     cx, 1Dh
+  0x1258e  rep movsw
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_28412 @ 0x28412 ----
+  0x28412  test    g_driverStateFlags, 8
+  0x28418  jnz     short loc_28425
+  0x2841a  cmp     ax, 3
+  0x2841d  jnz     short locret_28424
+  0x2841f  call    sub_16DEA
+  0x28424  retf
+  0x28425  push    bx
+  0x28426  push    cx
+  0x28427  push    dx
+  0x28428  push    si
+  0x28429  push    di
+  0x2842a  push    es
+  0x2842b  push    errorCode
+  0x2842f  push    word_368A5
+  0x28433  push    word_368A7
+  0x28437  push    word_368A9
+  0x2843b  push    word_368AB
+  0x2843f  push    word_368AD
+  0x28443  push    word_368AF; this  ; this
+  0x28447  mov     bx, ax
+  0x28449  mov     ax, word_3292E
+  0x2844c  mov     word_368A5, ax
+  0x2844f  xor     ax, ax
+  0x28451  call    sub_27E53
+  0x28456  mov     errorCode, 7
+  0x2845c  mov     bx, 9043h
+  0x2845f  call    FileEntry_Read
+  0x28464  call    ErrorCheck
+  0x28469  mov     es, word_3292E
+  0x2846d  mov     di, es:14h
+  0x28472  mov     bx, 6
+  0x28475  call    dword ptr g_soundDriverFarPtr
+  0x28479  pop     word_368AF
+  0x2847d  pop     word_368AD
+  0x28481  pop     word_368AB
+  0x28485  pop     word_368A9
+  0x28489  pop     word_368A7
+  0x2848d  pop     word_368A5
+  0x28491  pop     errorCode
+  0x28495  pop     es
+  0x28496  pop     di
+  0x28497  pop     si
+  0x28498  pop     dx
+  0x28499  pop     cx
+  0x2849a  pop     bx
+  0x2849b  retf
+; ---- sub_2849C @ 0x2849c ----
+  0x2849c  test    g_driverStateFlags, 2
+  0x284a2  jnz     short loc_284A5
+  0x284a4  retf
+  0x284a5  mov     bx, 7
+  0x284a8  call    near ptr byte_28616
+  0x284ab  mov     word_2E4A6, 0
+  0x284b1  test    word_3295A, 200h
+  0x284b7  jnz     short loc_284C5
+  0x284b9  mov     word_32958, 14h
+  0x284bf  or      word_3295A, 200h
+  0x284c5  and     word_328CA, 0FFEFh
+  0x284ca  retf
+; ---- sub_284CB @ 0x284cb ----
+  0x284cb  mov     cx, 3Fh ; '?'
+  0x284ce  mov     word_2E534, 80h
+  0x284d4  mov     ax, word_2E534
+  0x284d7  mov     ah, 35h
+  0x284d9  int     21h; DOS - 2+ - GET INTERRUPT VECTOR  ; DOS - 2+ - GET INTERRUPT VECTOR
+AL = interrupt number
+Return: ES:BX = value of interrupt vector
+  0x284db  or      bx, bx
+  0x284dd  jz      short loc_284E5
+  0x284df  cmp     byte ptr es:[bx], 0CFh
+  0x284e3  jnz     short loc_284F6
+  0x284e5  inc     word_2E534
+  0x284e9  loop    loc_284D4
+  0x284eb  and     g_driverStateFlags, 0FFFCh
+  0x284f0  or      g_driverStateFlags, 40h
+  0x284f5  retn
+  0x284f6  push    cx
+  0x284f7  mov     si, 0CD6h
+  0x284fa  mov     di, 103h
+  0x284fd  mov     cx, 5
+  0x28500  repe cmpsb
+  0x28502  jz      short loc_28507
+  0x28504  pop     cx
+  0x28505  jmp     short loc_284E5
+  0x28507  add     sp, 2
+  0x2850a  mov     ax, word_2E534
+  0x2850d  mov     cs:byte_28617, al
+  0x28511  mov     dx, seg seg129
+  0x28514  mov     ax, 0C32h
+  0x28517  mov     bx, 1
+  0x2851a  call    near ptr byte_28616
+  0x2851d  mov     bx, 7
+  0x28520  call    near ptr byte_28616
+  0x28523  mov     bx, 8
+  0x28526  call    near ptr byte_28616
+  0x28529  mov     bx, 0CECBh
+  0x2852c  mov     cx, _val44
+  0x28530  mov     ax, 0
+  0x28533  cmp     ax, [bx]
+  0x28535  jge     short loc_28539
+  0x28537  mov     ax, [bx]
+  0x28539  add     bx, 2
+  0x2853c  loop    loc_28533
+  0x2853e  sar     ax, 1
+  0x28540  sar     ax, 1
+  0x28542  sar     ax, 1
+  0x28544  sar     ax, 1
+  0x28546  add     ax, 2
+  0x28549  mov     bx, ax; numPara  ; numPara
+  0x2854b  mov     errorCode, 1
+  0x28551  call    allocMem
+  0x28556  mov     word_3195E, ax
+  0x28559  or      g_driverStateFlags, 3
+  0x2855e  and     g_driverStateFlags, 0FFBFh
+  0x28563  retn
+; ---- sub_28564 @ 0x28564 ----
+  0x28564  xor     ax, ax
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'document_sound_dispatch.py']
+[*] reading document_sound_dispatch.py
+[*] executing document_sound_dispatch.py
+[*] captured stdout from target script:
+----- begin target script output -----
+done
+----- end target script output -----
+[*] finished executing document_sound_dispatch.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106915
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

@@ -6789,6 +6789,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X28406);
 	op_hex		(x,	1);
+	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
 	create_insn	(0X28425);
