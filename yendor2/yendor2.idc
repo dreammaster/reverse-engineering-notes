@@ -5015,7 +5015,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X20944);
 	op_hex		(x,	1);
 	create_insn	(0X2094E);
+	set_cmt	(0X2095A,	"Applies/extends a timed status effect: on word_32974==8/0xE/0xB, sets the corresponding active flag (word_36C79) and increments the matching duration counter (word_36C85/36C89/36C8B) -- the exact mirror of TickStatusEffects, which decrements these and clears the flag on expiry.",	0);
 	create_insn	(0X2095A);
+	set_name	(0X2095A,	"ApplyStatusEffect");
 	create_insn	(x=0X20987);
 	op_hex		(x,	1);
 	create_insn	(x=0X20993);
@@ -5879,6 +5881,15 @@ static Bytes_0(void) {
 	create_insn	(0X23DA3);
 	create_insn	(0X23DB3);
 	create_insn	(0X23DC3);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X23E1F);
 	create_insn	(0X23E33);
 	set_cmt	(0X23E59,	"msg",	0);
@@ -5892,15 +5903,6 @@ static Bytes_0(void) {
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X243ED,	"msg",	0);
 	create_insn	(x=0X243F9);
 	op_hex		(x,	1);
@@ -10256,6 +10258,15 @@ static Bytes_1(void) {
 	set_name	(0X361D8,	"aFreezing");
 	create_strlit	(0X361E2,	0X8);
 	set_name	(0X361E2,	"aHexing_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X361EA,	0X9);
 	set_name	(0X361EA,	"aCursing_0");
 	create_strlit	(0X361F3,	0X6);
@@ -10278,15 +10289,6 @@ static Bytes_1(void) {
 	set_name	(0X36246,	"aResistant");
 	create_strlit	(0X36250,	0X11);
 	set_name	(0X36250,	"aBreakProjectil");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36261,	0XC);
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);

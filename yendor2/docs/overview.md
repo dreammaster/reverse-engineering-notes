@@ -792,6 +792,13 @@ permanent-until-cured.
 
 119 named of 769 functions as of this update.
 
+Immediately confirmed it with its exact mirror: `ApplyStatusEffect`
+(was `sub_2095A`, codes `8`/`0xE`/`0xB`) sets the same flag bits
+`TickStatusEffects` clears and increments the same duration counters it
+decrements — as clean a confirmation pair as this session has found.
+
+120 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

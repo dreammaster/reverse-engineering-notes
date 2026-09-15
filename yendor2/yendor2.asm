@@ -29179,8 +29179,8 @@ TickStatusEffects endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2095A       proc far                ; CODE XREF: HandleGameCommand:loc_29624↓P
-                call    sub_238CD
+ApplyStatusEffect proc far              ; CODE XREF: HandleGameCommand:loc_29624↓P
+                call    sub_238CD       ; Applies/extends a timed status effect: on word_32974==8/0xE/0xB, sets the corresponding active flag (word_36C79) and increments the matching duration counter (word_36C85/36C89/36C8B) -- the exact mirror of TickStatusEffects, which decrements these and clears the flag on expiry.
                 cmp     word_32974, 8
                 jz      short loc_20987
                 cmp     word_32974, 0Eh
@@ -29193,24 +29193,24 @@ sub_2095A       proc far                ; CODE XREF: HandleGameCommand:loc_29624
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_20987:                              ; CODE XREF: sub_2095A+A↑j
+loc_20987:                              ; CODE XREF: ApplyStatusEffect+A↑j
                 or      word_36C79, 2000h
                 inc     word_36C85
                 jmp     short loc_209A9
 ; ---------------------------------------------------------------------------
 
-loc_20993:                              ; CODE XREF: sub_2095A+11↑j
+loc_20993:                              ; CODE XREF: ApplyStatusEffect+11↑j
                 or      word_36C79, 800h
                 inc     word_36C89
                 jmp     short loc_209A9
 ; ---------------------------------------------------------------------------
 
-loc_2099F:                              ; CODE XREF: sub_2095A+18↑j
+loc_2099F:                              ; CODE XREF: ApplyStatusEffect+18↑j
                 or      word_36C79, 400h
                 inc     word_36C8B
 
-loc_209A9:                              ; CODE XREF: sub_2095A+37↑j
-                                        ; sub_2095A+43↑j
+loc_209A9:                              ; CODE XREF: ApplyStatusEffect+37↑j
+                                        ; ApplyStatusEffect+43↑j
                 or      word_3295A, 800h
                 push    cs
                 call    near ptr sub_209C0
@@ -29218,14 +29218,14 @@ loc_209A9:                              ; CODE XREF: sub_2095A+37↑j
                 call    sub_20C46
                 call    DrawMouseCursor
                 retf
-sub_2095A       endp
+ApplyStatusEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 sub_209C0       proc far                ; CODE XREF: TickStatusEffects+6D↑p
-                                        ; sub_2095A+56↑p
+                                        ; ApplyStatusEffect+56↑p
                 mov     si, word_3297A
                 or      si, si
                 jz      short loc_209C9
@@ -45771,7 +45771,7 @@ loc_29611:                              ; CODE XREF: HandleGameCommand+42↑j
 ; ---------------------------------------------------------------------------
 
 loc_29624:                              ; CODE XREF: HandleGameCommand+6F↑j
-                call    sub_2095A
+                call    ApplyStatusEffect
                 retf
 ; ---------------------------------------------------------------------------
 
