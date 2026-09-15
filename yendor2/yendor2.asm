@@ -701,7 +701,7 @@ loc_105CD:                              ; CODE XREF: start+5AD↑j
                 and     ax, 7000h
                 push    ax
                 mov     ax, [si+4]
-                call    sub_178A6
+                call    UseAbilityCommand
                 pop     ax
                 cmp     byte_2E400, 0
                 jnz     short loc_105F6
@@ -11624,7 +11624,7 @@ seg019          segment byte public 'CODE' use16
 
 
 sub_16EFA       proc far                ; CODE XREF: sub_17032+E5↓P
-                                        ; sub_178A6+37↓P ...
+                                        ; UseAbilityCommand+37↓P ...
                 push    di
                 push    es
                 push    cx
@@ -12207,7 +12207,7 @@ sub_1728A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1732B       proc far                ; CODE XREF: sub_178A6+104↓p
+sub_1732B       proc far                ; CODE XREF: UseAbilityCommand+104↓p
                                         ; sub_1AEF8+1C↓P ...
                 call    ClearStatusPanelIfDirty
                 call    sub_1B47A
@@ -12580,7 +12580,7 @@ ShowMaterialCounterHud endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1766F       proc far                ; CODE XREF: sub_178A6+2C↓p
+sub_1766F       proc far                ; CODE XREF: UseAbilityCommand+2C↓p
                                         ; sub_1AEF8+17↓P ...
                 push    es
                 push    si
@@ -12642,7 +12642,7 @@ sub_1766F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-LoadCurgameRecord proc far              ; CODE XREF: sub_178A6+26↓p
+LoadCurgameRecord proc far              ; CODE XREF: UseAbilityCommand+26↓p
                                         ; TryInteractAtPosition+88↓P ...
                 push    es              ; Reads a record from CURGAME (the active savegame, FileEntry bx=0x8FFB) via EMS paging, indexed by word_32DBC*4 + 0x1A*_val9 (plausibly a per-character row). Splits word_32DD0 by 100 into word_32DC0 (quotient)/word_32DC2 (remainder) -- typical of a currency or time value split into two denominations, not confirmed which.
                 push    si
@@ -12702,7 +12702,7 @@ LoadCurgameRecord endp
 
 
 sub_17795       proc far                ; CODE XREF: HandleMovementInput+2A0↑P
-                                        ; sub_178A6+98↓p ...
+                                        ; UseAbilityCommand+98↓p ...
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
@@ -12803,14 +12803,14 @@ sub_17795       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_178A6       proc far                ; CODE XREF: start+5DD↑P
-                mov     byte_2E400, 0
+UseAbilityCommand proc far              ; CODE XREF: start+5DD↑P
+                mov     byte_2E400, 0   ; Top-level 'use ability on a target' command, called directly from `start`. Dispatches on a caller-supplied record's +2 flags (bit 0x8000 -> weight/capacity check via sub_1766F, else LoadCurgameRecord for the target). Confirms via ShowConfirmPrompt, validates the target (status mask 0x1C40, else FlashStatusWarning), writes the result to CURGAME (FileEntry 0x8FFB) when gated flags allow, and shows a message box. If the action record's +2 bit 0x8000 was set, ends by calling ShowMaterialCounterHud (via sub_1732B) -- explains that HUD element's calling context.
                 mov     word_32DC4, 6EE8h
                 cmp     errorCode, 1
                 jz      short loc_178BE
                 mov     word_32DC4, 6ED0h
 
-loc_178BE:                              ; CODE XREF: sub_178A6+10↑j
+loc_178BE:                              ; CODE XREF: UseAbilityCommand+10↑j
                 mov     bx, [si+2]
                 mov     word_32DBE, bx
                 test    bx, 8000h
@@ -12820,12 +12820,12 @@ loc_178BE:                              ; CODE XREF: sub_178A6+10↑j
                 jmp     short loc_178D5
 ; ---------------------------------------------------------------------------
 
-loc_178D1:                              ; CODE XREF: sub_178A6+23↑j
+loc_178D1:                              ; CODE XREF: UseAbilityCommand+23↑j
                 push    cs
                 call    near ptr sub_1766F
 
-loc_178D5:                              ; CODE XREF: sub_178A6+29↑j
-                                        ; sub_178A6+7F↓j
+loc_178D5:                              ; CODE XREF: UseAbilityCommand+29↑j
+                                        ; UseAbilityCommand+7F↓j
                 mov     ax, word_36D07
                 cmp     ax, 0
                 jnz     short loc_17906
@@ -12835,7 +12835,7 @@ loc_178D5:                              ; CODE XREF: sub_178A6+29↑j
                 jnz     short loc_178F0
                 mov     ax, 5
 
-loc_178F0:                              ; CODE XREF: sub_178A6+45↑j
+loc_178F0:                              ; CODE XREF: UseAbilityCommand+45↑j
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_17906
@@ -12844,8 +12844,8 @@ loc_178F0:                              ; CODE XREF: sub_178A6+45↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17906:                              ; CODE XREF: sub_178A6+35↑j
-                                        ; sub_178A6+52↑j
+loc_17906:                              ; CODE XREF: UseAbilityCommand+35↑j
+                                        ; UseAbilityCommand+52↑j
                 mov     word_32990, ax
                 mov     word_36D07, ax
                 call    sub_25B14
@@ -12857,7 +12857,7 @@ loc_17906:                              ; CODE XREF: sub_178A6+35↑j
                 jmp     short loc_178D5
 ; ---------------------------------------------------------------------------
 
-loc_17927:                              ; CODE XREF: sub_178A6+72↑j
+loc_17927:                              ; CODE XREF: UseAbilityCommand+72↑j
                 call    RestoreCursorBackgroundIfDirty
                 test    word_32DCE, 80h
                 jnz     short loc_17948
@@ -12870,7 +12870,7 @@ loc_17927:                              ; CODE XREF: sub_178A6+72↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17948:                              ; CODE XREF: sub_178A6+8C↑j
+loc_17948:                              ; CODE XREF: UseAbilityCommand+8C↑j
                 mov     ax, word_32DC8
                 test    byte_32DCD, al
                 jnz     short loc_1799D
@@ -12888,7 +12888,7 @@ loc_17948:                              ; CODE XREF: sub_178A6+8C↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_17980:                              ; CODE XREF: sub_178A6+D7↑j
+loc_17980:                              ; CODE XREF: UseAbilityCommand+D7↑j
                 cmp     word_32DD0, 0
                 jz      short loc_1799D
                 cmp     ax, 1
@@ -12898,19 +12898,19 @@ loc_17980:                              ; CODE XREF: sub_178A6+D7↑j
                 call    sub_29461
                 and     word_328C4, 0FEFFh
 
-loc_1799D:                              ; CODE XREF: sub_178A6+95↑j
-                                        ; sub_178A6+A9↑j ...
+loc_1799D:                              ; CODE XREF: UseAbilityCommand+95↑j
+                                        ; UseAbilityCommand+A9↑j ...
                 test    word_32DBE, 8000h
                 jnz     short loc_179A6
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_179A6:                              ; CODE XREF: sub_178A6+FD↑j
+loc_179A6:                              ; CODE XREF: UseAbilityCommand+FD↑j
                 call    sub_17A65
                 push    cs
                 call    near ptr sub_1732B
                 retf
-sub_178A6       endp
+UseAbilityCommand endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13008,7 +13008,7 @@ sub_17A21       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A65       proc near               ; CODE XREF: sub_178A6:loc_179A6↑p
+sub_17A65       proc near               ; CODE XREF: UseAbilityCommand:loc_179A6↑p
                 call    ShowResourceDepletedOverlay
                 test    word_32DCE, 2
                 jz      short loc_17A73
@@ -18545,7 +18545,7 @@ seg038          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowConfirmPrompt proc far              ; CODE XREF: sub_178A6:loc_178F0↑P
+ShowConfirmPrompt proc far              ; CODE XREF: UseAbilityCommand:loc_178F0↑P
                                         ; sub_1A37E+38↑P ...
                 push    _videoSegment   ; Shows a yes/no confirmation prompt for message id ax; returns 5 when the user confirms (per both call sites -- ConfirmQuitToDos, ConfirmNewGame).
                 push    bx
@@ -44596,7 +44596,7 @@ seg105          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28BD2       proc far                ; CODE XREF: sub_178A6+CD↑P
+sub_28BD2       proc far                ; CODE XREF: UseAbilityCommand+CD↑P
                                         ; sub_2A788+142↓P
                 cmp     word_32DD0, 0
                 jnz     short loc_28BE2
@@ -45521,7 +45521,7 @@ sub_2940E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29461       proc far                ; CODE XREF: sub_178A6+EC↑P
+sub_29461       proc far                ; CODE XREF: UseAbilityCommand+EC↑P
                                         ; UseAbilityOnTarget+75↓p ...
                 push    bx
                 push    cx
@@ -74386,7 +74386,7 @@ word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
                                         ; UseAbilityScroll+22A↑w ...
 word_3298E      dw 0                    ; DATA XREF: sub_1B96F+6↑w
                                         ; sub_1BBED+1E0↑w ...
-word_32990      dw 0                    ; DATA XREF: sub_178A6:loc_17906↑w
+word_32990      dw 0                    ; DATA XREF: UseAbilityCommand:loc_17906↑w
                                         ; sub_1B2BD+28↑w ...
 _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
                                         ; sub_2BAD5+18↑r
@@ -75442,8 +75442,8 @@ g_combatTurnOrder db    0               ; 14 x 8-byte combat turn-order scratch 
                 db    0
 word_32DBC      dw 0                    ; DATA XREF: sub_1766F+4↑w
                                         ; sub_1766F+69↑r ...
-word_32DBE      dw 0                    ; DATA XREF: sub_178A6+1B↑w
-                                        ; sub_178A6:loc_1799D↑r
+word_32DBE      dw 0                    ; DATA XREF: UseAbilityCommand+1B↑w
+                                        ; UseAbilityCommand:loc_1799D↑r
 word_32DC0      dw 0                    ; DATA XREF: sub_16881+BF↑w
                                         ; sub_16881+18D↑w ...
 word_32DC2      dw 0                    ; DATA XREF: sub_1766F+95↑w
@@ -85999,7 +85999,7 @@ word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
 word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r
                                         ; sub_219FA:loc_21A17↑r ...
 word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r
-                                        ; sub_178A6:loc_178D5↑r ...
+                                        ; UseAbilityCommand:loc_178D5↑r ...
 word_36D09      dw 0                    ; DATA XREF: sub_197B9+15B↑r
                                         ; LoadItemData:loc_1C98C↑r ...
 word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r

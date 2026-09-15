@@ -2729,7 +2729,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1788B);
 	op_hex		(x,	1);
+	set_cmt	(0X178A6,	"Top-level 'use ability on a target' command, called directly from `start`. Dispatches on a caller-supplied record's +2 flags (bit 0x8000 -> weight/capacity check via sub_1766F, else LoadCurgameRecord for the target). Confirms via ShowConfirmPrompt, validates the target (status mask 0x1C40, else FlashStatusWarning), writes the result to CURGAME (FileEntry 0x8FFB) when gated flags allow, and shows a message box. If the action record's +2 bit 0x8000 was set, ends by calling ShowMaterialCounterHud (via sub_1732B) -- explains that HUD element's calling context.",	0);
 	create_insn	(0X178A6);
+	set_name	(0X178A6,	"UseAbilityCommand");
 	create_insn	(x=0X178C5);
 	op_hex		(x,	1);
 	create_insn	(0X178D1);
@@ -4674,6 +4676,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1EA6E,	"In-game options dialog: draws the panel background (DrawPicture id 1) + mouse cursor (id 8) + GameDialog_drawButtons, then loops on PollKeyboardInput dispatching each of the panel's 8 hotkeys: A=Animation(sub_1F163) D=Dos(sub_1F8C7) F=SoundFx(sub_1F93D) L=Load M=Music(sub_1F8F5) N=NewGame(sub_1F5A5) R/ESC=Return S=Save. Called directly from `start` and InitGame.",	0);
 	create_insn	(0X1EA6E);
 	set_name	(0X1EA6E,	"RunGameDialog");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1EA83);
 	create_insn	(x=0X1EA92);
 	op_hex		(x,	1);
@@ -4719,15 +4730,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ECCF);
 	op_hex		(x,	1);
 	create_insn	(0X1ECDC);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1ED31);
 	create_insn	(0X1ED75);
 	create_insn	(x=0X1ED8F);
@@ -8353,6 +8355,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2A53C,	"If word_328C6 bit 0 is set, expands g_blitMaskLen bytes from g_blitMaskPtr into a 15-word scratch buffer: each byte's low nibble becomes (nibble << 4) zero-extended to a word -- classic masked-blit prep. Factored-out copy of the same loop inlined in DrawPicture (loc_29A02) and sub_29B0F.",	0);
 	create_insn	(0X2A53C);
 	set_name	(0X2A53C,	"ExpandBlitMaskNibbles");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A551);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A56A);
@@ -8385,15 +8396,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A677);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A67E);
 	create_insn	(0X2A681);
 	set_name	(0X2A681,	"getTextPos");

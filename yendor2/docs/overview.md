@@ -1555,6 +1555,17 @@ context (which screen(s) actually show it) isn't nailed down yet.
 
 210 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseAbilityCommand, and ShowMaterialCounterHud's context resolved
+
+Traced `sub_178A6` (called directly from `start`) — the top-level "use
+an ability on a target" command shell: picks/validates a target,
+confirms, writes the result to `CURGAME`, and shows a message box.
+Named `UseAbilityCommand`. This also resolves last round's open
+question — it's the caller that reaches `ShowMaterialCounterHud`, via
+`sub_1732B`, when the action's own flags call for it.
+
+211 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
