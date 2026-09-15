@@ -179,6 +179,18 @@ explains why the slots weren't visible from `ShowCharacterInventory`'s
 own drawing code — that reads generic catalog ids for its labels, not
 per-character storage directly.
 
+**The "3 alternate bags" are literal container items**, confirmed via
+`sub_26415`'s open/close branches: clicking an unopened container item
+assigns it to the first free marker (`+0x17C`/`+0x1A2`/`+0x1C8`,
+priority order) and calls the new `LoadContainerContents`, which reads
+that container's own saved inventory contents from **`CURGAME`**
+(`FileEntry` `bx=0x8FFB`, `errorCode=0xB`) into the matching bag slot
+area. Clicking an open container again calls `SaveAndCloseContainer`,
+which writes the bag's contents back to `CURGAME` (same `FileEntry`)
+if nonempty, then clears the marker — unloading it. So each bag's
+contents persist independently in the savegame, swapped into the
+character's inventory groups only while open.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

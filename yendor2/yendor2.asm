@@ -39132,7 +39132,7 @@ loc_26058:                              ; CODE XREF: sub_26022+6↑j
 
 loc_2605F:                              ; CODE XREF: sub_26022+34↑j
                 mov     bx, 0AFA8h
-                call    sub_26846
+                call    LoadContainerContents
                 push    es
                 push    di
                 mov     es, word_2E4AA
@@ -39470,7 +39470,7 @@ loc_2637A:                              ; CODE XREF: sub_2621C+13B↑j
                 jz      short loc_2639C
                 mov     ax, [di+2]
                 mov     bx, 0AFA8h
-                call    sub_26846
+                call    LoadContainerContents
                 mov     bx, 0AFA8h
                 add     bx, 2
                 mov     cx, 8
@@ -39604,11 +39604,11 @@ loc_26490:                              ; CODE XREF: sub_26415+76↑j
                 test    word ptr [si+15Ch], 1000h
                 jz      short loc_264F9
                 mov     di, 17Ch
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1A2h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1C8h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 and     word ptr [si+15Ch], 0FFFh
                 jmp     loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39623,7 +39623,7 @@ loc_264BE:                              ; CODE XREF: sub_26415+A4↑j
                 cmp     word ptr [si+17Ch], 0
                 jz      short loc_264D4
                 mov     di, 17Ch
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 and     word ptr [si+15Ch], 7FFFh
                 jmp     loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39632,14 +39632,14 @@ loc_264D4:                              ; CODE XREF: sub_26415+AE↑j
                 cmp     word ptr [si+1A2h], 0
                 jz      short loc_264EA
                 mov     di, 1A2h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 and     word ptr [si+15Ch], 0BFFFh
                 jmp     loc_265B0
 ; ---------------------------------------------------------------------------
 
 loc_264EA:                              ; CODE XREF: sub_26415+C4↑j
                 mov     di, 1C8h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 and     word ptr [si+15Ch], 0DFFFh
                 jmp     loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39647,11 +39647,11 @@ loc_264EA:                              ; CODE XREF: sub_26415+C4↑j
 loc_264F9:                              ; CODE XREF: sub_26415+81↑j
                 push    di
                 mov     di, 17Ch
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1A2h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1C8h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 and     word ptr [si+15Ch], 1FFFh
                 pop     di
                 mov     bx, [di]
@@ -39660,7 +39660,7 @@ loc_264F9:                              ; CODE XREF: sub_26415+81↑j
                 mov     [si+1CAh], ax
                 mov     bx, word_328D4
                 add     bx, 1CCh
-                call    sub_26846
+                call    LoadContainerContents
                 or      word ptr [si+15Ch], 1000h
                 jmp     short loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39685,7 +39685,7 @@ loc_26548:                              ; CODE XREF: sub_26415+123↑j
                 mov     ax, bx
                 mov     bx, word_328D4
                 add     bx, 180h
-                call    sub_26846
+                call    LoadContainerContents
                 or      word ptr [si+15Ch], 8000h
                 jmp     short loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39698,7 +39698,7 @@ loc_26571:                              ; CODE XREF: sub_26415+13D↑j
                 mov     ax, bx
                 mov     bx, word_328D4
                 add     bx, 1A6h
-                call    sub_26846
+                call    LoadContainerContents
                 or      word ptr [si+15Ch], 4000h
                 jmp     short loc_265B0
 ; ---------------------------------------------------------------------------
@@ -39709,7 +39709,7 @@ loc_26595:                              ; CODE XREF: sub_26415+161↑j
                 mov     ax, bx
                 mov     bx, word_328D4
                 add     bx, 1CCh
-                call    sub_26846
+                call    LoadContainerContents
                 or      word ptr [si+15Ch], 2000h
 
 loc_265B0:                              ; CODE XREF: sub_26415+9B↑j
@@ -39830,11 +39830,11 @@ sub_266A9       proc far                ; CODE XREF: sub_190E9+D↑P
                 mov     si, word_328D4
                 and     word ptr [si+15Ch], 0FFFh
                 mov     di, 17Ch
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1A2h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 mov     di, 1C8h
-                call    sub_268F4
+                call    SaveAndCloseContainer
                 pop     es
                 pop     di
                 pop     si
@@ -40032,9 +40032,9 @@ sub_2681B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26846       proc near               ; CODE XREF: sub_26022+40↑p
+LoadContainerContents proc near         ; CODE XREF: sub_26022+40↑p
                                         ; sub_2621C+16A↑p ...
-                mov     word_36863, ax
+                mov     word_36863, ax  ; LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
                 call    sub_27E3A
@@ -40042,7 +40042,7 @@ sub_26846       proc near               ; CODE XREF: sub_26022+40↑p
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_26846       endp
+LoadContainerContents endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40111,9 +40111,9 @@ sub_268A0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_268F4       proc near               ; CODE XREF: sub_26415+86↑p
+SaveAndCloseContainer proc near         ; CODE XREF: sub_26415+86↑p
                                         ; sub_26415+8C↑p ...
-                add     di, si
+                add     di, si          ; SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.
                 cmp     word ptr [di], 0
                 jz      short loc_2691E
                 mov     bx, 8FFBh       ; this
@@ -40126,11 +40126,11 @@ sub_268F4       proc near               ; CODE XREF: sub_26415+86↑p
                 call    FileEntry_Write
                 call    ErrorCheck
 
-loc_2691E:                              ; CODE XREF: sub_268F4+5↑j
+loc_2691E:                              ; CODE XREF: SaveAndCloseContainer+5↑j
                 mov     word ptr [di], 0
                 mov     word ptr [di+2], 0
                 retn
-sub_268F4       endp
+SaveAndCloseContainer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -40504,7 +40504,7 @@ loc_26B6B:                              ; CODE XREF: sub_26B4F+F↑j
                 push    ax
                 mov     ax, word_3194C
                 mov     bx, 0AFA8h
-                call    sub_26846
+                call    LoadContainerContents
                 pop     ax
                 add     ax, word_38808
 

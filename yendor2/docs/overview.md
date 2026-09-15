@@ -1534,6 +1534,18 @@ current and pending level, confirming `+0x1E`'s role.
 
 207 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: containers are separately-saved items
+
+Confirmed the "3 alternate bags" from last round's `GetInventorySlotPtr`
+finding are literal container items with their own persisted contents:
+opening one (`LoadContainerContents`) reads its saved inventory
+straight from `CURGAME`; closing it (`SaveAndCloseContainer`) writes
+any contents back and unloads it. Each bag's contents live
+independently in the savegame, only swapped into the character's
+inventory groups while open.
+
+209 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

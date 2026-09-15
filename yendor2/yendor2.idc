@@ -6529,12 +6529,16 @@ static Bytes_1(void) {
 	create_insn	(0X267DC);
 	create_insn	(0X267F0);
 	create_insn	(0X2681B);
+	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
+	set_name	(0X26846,	"LoadContainerContents");
 	set_cmt	(0X2684B,	"this",	0);
 	create_insn	(0X26864);
 	create_insn	(0X2687B);
 	create_insn	(0X268A0);
+	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
 	create_insn	(0X268F4);
+	set_name	(0X268F4,	"SaveAndCloseContainer");
 	set_cmt	(0X268FB,	"this",	0);
 	create_insn	(0X26928);
 	create_insn	(0X26937);
@@ -8385,6 +8389,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
 	create_insn	(0X2A68D);
 	set_name	(0X2A68D,	"LoadPictureIntoEms");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A6A3);
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
@@ -8407,15 +8420,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2A805);
 	op_hex		(x,	1);
 	create_insn	(0X2A80E);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A81D);
 	create_insn	(0X2A827);
 	create_insn	(x=0X2A845);
