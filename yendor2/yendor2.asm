@@ -27553,7 +27553,7 @@ loc_1FB7B:                              ; CODE XREF: seg059:0200↑j
                 jz      short loc_1FB8C
                 dec     word_32950
                 jnz     short loc_1FB8C
-                call    sub_1FFE4
+                call    AdvanceDayNightPaletteFade
 
 loc_1FB8C:                              ; CODE XREF: seg059:0211↑j
                                         ; seg059:0217↑j
@@ -27969,7 +27969,7 @@ loc_1FE6D:                              ; CODE XREF: AdvanceGameClock+A↑j
 
 loc_1FEA0:                              ; CODE XREF: AdvanceGameClock+12↑j
                                         ; AdvanceGameClock+1A↑j
-                call    sub_1FFE4
+                call    AdvanceDayNightPaletteFade
 
 loc_1FEA3:                              ; CODE XREF: AdvanceGameClock+1C↑j
                                         ; AdvanceGameClock+32↑j ...
@@ -28129,9 +28129,9 @@ sub_1FECF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FFE4       proc near               ; CODE XREF: seg059:0219↑p
+AdvanceDayNightPaletteFade proc near    ; CODE XREF: seg059:0219↑p
                                         ; AdvanceGameClock:loc_1FEA0↑p
-                push    es
+                push    es              ; AdvanceGameClock's dawn/dusk handler (fired at exactly 6:00 AM/6:00 PM). Sets up (or continues) a gradual 113-step palette fade through a snapshot table at 0x4A5C -- backward from dusk, forward from dawn -- writing 32-RGB-triple chunks into VGA palette entries 0xE0-0xFF (the last 32 slots, plausibly a sky/ambient-light ramp) via SetPaletteRange. Guarded by word_3295A bit 0x2000 so it only initializes once per transition.
                 push    di
                 push    si
                 push    bp
@@ -28149,12 +28149,12 @@ sub_1FFE4       proc near               ; CODE XREF: seg059:0219↑p
                 jmp     short loc_20021
 ; ---------------------------------------------------------------------------
 
-loc_20015:                              ; CODE XREF: sub_1FFE4+21↑j
+loc_20015:                              ; CODE XREF: AdvanceDayNightPaletteFade+21↑j
                 mov     word_36D91, 14Dh
                 mov     word_36D93, 0FFFDh
 
-loc_20021:                              ; CODE XREF: sub_1FFE4+D↑j
-                                        ; sub_1FFE4+2F↑j
+loc_20021:                              ; CODE XREF: AdvanceDayNightPaletteFade+D↑j
+                                        ; AdvanceDayNightPaletteFade+2F↑j
                 mov     cx, 60h ; '`'
                 mov     si, 4A5Ch
                 add     si, word_36D91
@@ -28169,7 +28169,7 @@ loc_20021:                              ; CODE XREF: sub_1FFE4+D↑j
                 jg      short loc_20045
                 and     word_3295A, 0DFFFh
 
-loc_20045:                              ; CODE XREF: sub_1FFE4+59↑j
+loc_20045:                              ; CODE XREF: AdvanceDayNightPaletteFade+59↑j
                 mov     cx, 60h ; '`'
                 mov     si, 9535h
                 mov     di, 46CAh
@@ -28189,7 +28189,7 @@ loc_20045:                              ; CODE XREF: sub_1FFE4+59↑j
                 pop     es
                 assume es:nothing
                 retn
-sub_1FFE4       endp
+AdvanceDayNightPaletteFade endp
 
 seg059          ends
 
@@ -41949,7 +41949,7 @@ seg094          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2784A       proc far                ; CODE XREF: sub_1FFE4+79↑P
+sub_2784A       proc far                ; CODE XREF: AdvanceDayNightPaletteFade+79↑P
                                         ; sub_20C1E+6↑P ...
                 push    ax
                 push    bx

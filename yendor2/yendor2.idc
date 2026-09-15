@@ -5028,7 +5028,9 @@ static Bytes_1(void) {
 	create_insn	(0X1FEF9);
 	create_insn	(0X1FF3C);
 	create_insn	(0X1FF7E);
+	set_cmt	(0X1FFE4,	"AdvanceGameClock's dawn/dusk handler (fired at exactly 6:00 AM/6:00 PM). Sets up (or continues) a gradual 113-step palette fade through a snapshot table at 0x4A5C -- backward from dusk, forward from dawn -- writing 32-RGB-triple chunks into VGA palette entries 0xE0-0xFF (the last 32 slots, plausibly a sky/ambient-light ramp) via SetPaletteRange. Guarded by word_3295A bit 0x2000 so it only initializes once per transition.",	0);
 	create_insn	(0X1FFE4);
+	set_name	(0X1FFE4,	"AdvanceDayNightPaletteFade");
 	create_insn	(x=0X1FFEB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1FFF3);
@@ -7780,6 +7782,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29C95,	"x",	0);
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);
@@ -7827,15 +7838,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X29D11);
 	op_stkvar	(x,	0);
 	create_insn	(0X29D1C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29D22);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29D2A);

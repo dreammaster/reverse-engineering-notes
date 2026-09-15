@@ -469,9 +469,12 @@ day (`word_36CFB`) wraps at 31 into month (`word_36CFD`), which wraps
 at 13 into year (`word_36CFF`) — a **30-day-month, 12-month-year**
 in-game calendar (new-game start: day 4, month 11, year `0x222`=546).
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
-6:00 PM (`word_36D01`==`0x168`/`0x438`, via `sub_1FFE4`, not traced —
-plausibly a lighting or monster-spawn-rate change), plus a separate
-5-minute periodic timer (`word_32954`, gated on `word_3295A` bit
+6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
+— a genuine ambient-lighting system: a gradual 113-step palette fade
+through a snapshot table, written into VGA palette entries `0xE0`-
+`0xFF` (the last 32 slots, plausibly a dedicated sky/ambient-light
+ramp) via `SetPaletteRange`, walked forward from dawn and backward
+from dusk), plus a separate 5-minute periodic timer (`word_32954`, gated on `word_3295A` bit
 `0x800`, calling `sub_1FD24`, not traced). Resting advances the clock
 by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
 "resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance

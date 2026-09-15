@@ -1775,6 +1775,17 @@ traced yet — good next leads now that the clock's skeleton is known.
 
 237 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a real day/night ambient lighting system
+
+Traced `AdvanceGameClock`'s dawn/dusk handler and found a genuine
+ambient-lighting system, not a flag flip: `AdvanceDayNightPaletteFade`
+gradually fades the VGA palette's last 32 entries over 113 steps
+(forward from dawn, backward from dusk) through a snapshot table,
+guarded so it only initializes once per transition. Confirms this
+DOS-era game has real, gradual day/night lighting.
+
+238 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
