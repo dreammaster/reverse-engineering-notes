@@ -212,6 +212,12 @@ if nonempty, then clears the marker — unloading it. So each bag's
 contents persist independently in the savegame, swapped into the
 character's inventory groups only while open.
 
+**`IsContainerTypeCompatible`** (called from `sub_2621C`, a 230-line
+main-input-loop handler not traced this round) checks whether the
+currently-open alternate bag matches an allowed-type bitmask before
+letting an item be placed into it, rejecting with
+`FlashStatusWarning` otherwise.
+
 **Dropping a held item**: `TryDropHeldItem` (checks `IsItemDroppable`,
 warns and bails if not; shows a confirm prompt; calls
 `PlaceItemOnGround` on confirmation, else restores the held item)

@@ -6942,7 +6942,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X26BE5);
 	create_insn	(0X26C0E);
+	set_cmt	(0X26C22,	"Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.",	0);
 	create_insn	(0X26C22);
+	set_name	(0X26C22,	"IsContainerTypeCompatible");
 	create_insn	(x=0X26C33);
 	op_hex		(x,	1);
 	create_insn	(x=0X26C3F);

@@ -39414,7 +39414,7 @@ loc_262D5:                              ; CODE XREF: sub_2621C+B4↑j
                 ja      short loc_262AA
 
 loc_262FC:                              ; CODE XREF: sub_2621C+D2↑j
-                call    sub_26C22
+                call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26309
                 call    sub_268A0
@@ -39526,7 +39526,7 @@ loc_263E8:                              ; CODE XREF: sub_2621C+B6↑j
 ; ---------------------------------------------------------------------------
 
 loc_263FC:                              ; CODE XREF: sub_2621C+1D7↑j
-                call    sub_26C22
+                call    IsContainerTypeCompatible
                 cmp     errorCode, 0
                 jnz     short loc_26409
                 call    sub_2687B
@@ -40586,9 +40586,9 @@ sub_26C0E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26C22       proc near               ; CODE XREF: sub_2621C:loc_262FC↑p
+IsContainerTypeCompatible proc near     ; CODE XREF: sub_2621C:loc_262FC↑p
                                         ; sub_2621C:loc_263FC↑p
-                mov     errorCode, 0
+                mov     errorCode, 0    ; Checks whether the currently-open container (one of the '3 alternate bags', selected via [+0x15C]/[+0x17C]/[+0x1A2]/[+0x1C8]) matches an allowed-type bitmask (word_3293E). Rejects with FlashStatusWarning if not. Called from sub_2621C.
                 cmp     word_2E40A, 0Ah
                 jge     short locret_26C9C
                 mov     ax, [si+17Ch]
@@ -40603,8 +40603,8 @@ sub_26C22       proc near               ; CODE XREF: sub_2621C:loc_262FC↑p
                 test    word ptr [si+15Ch], 1000h
                 jz      short locret_26C9C
 
-loc_26C5B:                              ; CODE XREF: sub_26C22+17↑j
-                                        ; sub_26C22+23↑j ...
+loc_26C5B:                              ; CODE XREF: IsContainerTypeCompatible+17↑j
+                                        ; IsContainerTypeCompatible+23↑j ...
                 call    LoadItemCatalogRecord
                 mov     ax, 2000h
                 test    word ptr [bx+0Ch], 4
@@ -40620,17 +40620,17 @@ loc_26C5B:                              ; CODE XREF: sub_26C22+17↑j
                 jnz     short loc_26C8B
                 mov     ax, 0
 
-loc_26C8B:                              ; CODE XREF: sub_26C22+46↑j
-                                        ; sub_26C22+50↑j ...
+loc_26C8B:                              ; CODE XREF: IsContainerTypeCompatible+46↑j
+                                        ; IsContainerTypeCompatible+50↑j ...
                 test    word_3293E, ax
                 jnz     short locret_26C9C
                 call    FlashStatusWarning
                 mov     errorCode, 1
 
-locret_26C9C:                           ; CODE XREF: sub_26C22+B↑j
-                                        ; sub_26C22+37↑j ...
+locret_26C9C:                           ; CODE XREF: IsContainerTypeCompatible+B↑j
+                                        ; IsContainerTypeCompatible+37↑j ...
                 retn
-sub_26C22       endp
+IsContainerTypeCompatible endp
 
 seg087          ends
 

@@ -3134,6 +3134,14 @@ crosshair cursor, waiting for ESC or a valid dungeon-viewport click.
 
 403 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsContainerTypeCompatible
+
+Named `sub_26C22`: checks whether the currently-open alternate bag
+matches an allowed-type bitmask before letting an item be placed into
+it.
+
+404 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
