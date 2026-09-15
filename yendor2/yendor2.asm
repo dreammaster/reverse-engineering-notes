@@ -11904,7 +11904,7 @@ loc_1704C:                              ; CODE XREF: sub_17032+17↑j
                 call    LoadItemCatalogRecord
                 test    word_328C6, 20h
                 jz      short loc_17060
-                call    sub_17A8D
+                call    PayGoldAndAcquireItem
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -13029,8 +13029,8 @@ sub_17A65       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A8D       proc near               ; CODE XREF: sub_17032+2A↑p
-                push    si
+PayGoldAndAcquireItem proc near         ; CODE XREF: sub_17032+2A↑p
+                push    si              ; Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).
                 mov     ax, [si]
                 mov     si, word_2E546
                 add     si, 4
@@ -13051,14 +13051,14 @@ sub_17A8D       proc near               ; CODE XREF: sub_17032+2A↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_17AC5:                              ; CODE XREF: sub_17A8D+27↑j
+loc_17AC5:                              ; CODE XREF: PayGoldAndAcquireItem+27↑j
                 jnz     short loc_17ADA
                 mov     word_36D6D, 0
                 call    ShowResourceDepletedOverlay
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
 
-loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
+loc_17ADA:                              ; CODE XREF: PayGoldAndAcquireItem:loc_17AC5↑j
                 call    SubBCD4
                 pop     di
                 pop     si
@@ -13075,7 +13075,7 @@ loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
                 call    near ptr ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-sub_17A8D       endp
+PayGoldAndAcquireItem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16829,7 +16829,7 @@ AddToBCDCounter endp
 ; =============== S U B R O U T I N E =======================================
 
 
-CompareBCD4     proc far                ; CODE XREF: sub_17A8D+22↑P
+CompareBCD4     proc far                ; CODE XREF: PayGoldAndAcquireItem+22↑P
                                         ; SpendMaterialCounterClamped+6↑P ...
                 push    cx              ; Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].
                 push    di
@@ -17144,7 +17144,7 @@ sub_19BE6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-SubBCD4         proc far                ; CODE XREF: sub_17A8D:loc_17ADA↑P
+SubBCD4         proc far                ; CODE XREF: PayGoldAndAcquireItem:loc_17ADA↑P
                                         ; SpendMaterialCounterClamped:loc_18222↑P ...
                 mov     al, [si+3]      ; Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.
                 sub     al, [di+3]
@@ -22638,7 +22638,7 @@ seg046          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CCBC       proc far                ; CODE XREF: sub_17A8D+A↑P
+sub_1CCBC       proc far                ; CODE XREF: PayGoldAndAcquireItem+A↑P
                                         ; sub_17B09+A↑P ...
                 push    word_32974
                 mov     word_32974, ax
@@ -31147,7 +31147,7 @@ seg067          segment byte public 'CODE' use16
 
 
 sub_219FA       proc far                ; CODE XREF: sub_17270+14↑P
-                                        ; sub_17A8D+15↑P ...
+                                        ; PayGoldAndAcquireItem+15↑P ...
                 push    es
                 push    di
                 push    si
@@ -86100,7 +86100,7 @@ g_globalFlags   db    0                 ; Global boolean flag bitfield (quest/wo
                 db 0FFh
                 db 0FFh
 word_36D6D      dw 0                    ; DATA XREF: sub_17032+A0↑w
-                                        ; sub_17A8D+3A↑w ...
+                                        ; PayGoldAndAcquireItem+3A↑w ...
                 db    0
                 db    0
 word_36D71      dw 0                    ; DATA XREF: sub_17032+14A↑w

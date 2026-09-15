@@ -274,6 +274,17 @@ item-catalog quantity field (`0xBCE+0x18`), added in a loop running
 once per `[word_328D4+0x16]` — plausibly once per afflicted/eligible
 party member.
 
+A 4th shop-mode bit, `word_328C6` `0x200`, gates a mouse-click-driven
+shop purchase path: `sub_17032` (a catalog-click handler reached from
+the main input loop via a hit-test against region table `0x5AC0`, not
+fully traced) calls `PayGoldAndAcquireItem` for its "quick buy"
+branch — pays `g_partyGold` against a price at `0xB30`
+(`CompareBCD4`/`SubBCD4`, bailing if unaffordable, with a special-case
+`ShowResourceDepletedOverlay` when the purchase exactly drains gold to
+zero) and stages the acquired item the same way
+`TrySellItemForGold`/`TryEnhanceItemForGold`/`TryRepairItemForGold`
+stage theirs.
+
 A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
 reached from `UseItem+0x65`) spends `g_partyGold` via
 `CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated by

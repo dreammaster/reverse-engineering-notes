@@ -2796,7 +2796,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X17A6A);
 	op_hex		(x,	1);
 	create_insn	(0X17A73);
+	set_cmt	(0X17A8D,	"Core 'pay and receive' step of a shop purchase: CompareBCD4/SubBCD4(g_partyGold, [0xB30]) -- bails if unaffordable, shows ShowResourceDepletedOverlay on an exact-drain special case -- then stages the acquired item (word_31946/3194A/3194C) the same way TrySellItemForGold/TryEnhanceItemForGold/TryRepairItemForGold stage theirs. Called from sub_17032, a shop-catalog click handler (main input loop, word_328C6 bit 0x200).",	0);
 	create_insn	(0X17A8D);
+	set_name	(0X17A8D,	"PayGoldAndAcquireItem");
 	create_insn	(x=0X17ABC);
 	op_hex		(x,	1);
 	create_insn	(0X17AC5);
@@ -4084,6 +4086,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1C123,	"UseItem's handler for word_2E410 bit 0x4000. Bit-2 branch: pays a BCD material cost (0x94B3 vs threshold 0x512A), then increments word_328D4's [+0x16] (level/skill stat, capped at 0x5A) and recalculates max HP/MP from it -- a level-up/training mechanic. Branches further on [+0xE] (compared against small constants after mod-20 reduction) to select a class/race-specific growth path -- [+0xE] plausibly a class/race id rather than the earlier 'time-of-day-like' guess from RestCharacter, not confirmed either way.",	0);
 	create_insn	(0X1C123);
 	set_name	(0X1C123,	"UseTrainingItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1C127);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C12F);
@@ -4118,15 +4129,6 @@ static Bytes_0(void) {
 	create_insn	(0X1C3F9);
 	create_insn	(x=0X1C409);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1C43F,	"msg",	0);
 	create_insn	(0X1C456);
 	create_insn	(0X1C4E1);

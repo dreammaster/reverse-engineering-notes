@@ -2234,6 +2234,19 @@ individually traced.
 
 279 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PayGoldAndAcquireItem
+
+Named `sub_17A8D`, a 4th shop-mode action (`word_328C6` bit `0x200`,
+alongside sell/enhance/repair's `0x10`/`8`/`4`) reached via mouse
+click (region table `0x5AC0`) rather than Space: pays `g_partyGold`
+against a price at `0xB30`, bailing if unaffordable and special-casing
+an exact-drain-to-zero purchase with `ShowResourceDepletedOverlay`,
+then stages the acquired item the same way the Space-bar actions stage
+theirs. Its caller `sub_17032` (a catalog-click handler with several
+other, untraced item-type branches) is left unnamed for now.
+
+280 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
