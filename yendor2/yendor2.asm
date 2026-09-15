@@ -4566,7 +4566,7 @@ loc_12CCF:                              ; CODE XREF: sub_12C96+1A↑j
 
 loc_12CEA:                              ; CODE XREF: sub_12C96+28↑j
                                         ; sub_12C96+2F↑j ...
-                call    sub_12ECD
+                call    BuildLoadValidationMessage
                 cmp     bx, 0
                 jz      short loc_12CF7
                 call    writeString
@@ -4800,8 +4800,8 @@ sub_12E59       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12ECD       proc near               ; CODE XREF: sub_12C96:loc_12CEA↑p
-                push    cx
+BuildLoadValidationMessage proc near    ; CODE XREF: sub_12C96:loc_12CEA↑p
+                push    cx              ; Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.
                 push    dx
                 push    si
                 push    di
@@ -4810,25 +4810,25 @@ sub_12ECD       proc near               ; CODE XREF: sub_12C96:loc_12CEA↑p
                 jmp     short loc_12F4D
 ; ---------------------------------------------------------------------------
 
-loc_12EDA:                              ; CODE XREF: sub_12ECD+9↑j
+loc_12EDA:                              ; CODE XREF: BuildLoadValidationMessage+9↑j
                 cmp     word_2E3F6, 2
                 jnz     short loc_12EE4
                 jmp     loc_12F65
 ; ---------------------------------------------------------------------------
 
-loc_12EE4:                              ; CODE XREF: sub_12ECD+12↑j
+loc_12EE4:                              ; CODE XREF: BuildLoadValidationMessage+12↑j
                 cmp     word_2E3F6, 3
                 jnz     short loc_12EEE
                 jmp     loc_12F6E
 ; ---------------------------------------------------------------------------
 
-loc_12EEE:                              ; CODE XREF: sub_12ECD+1C↑j
+loc_12EEE:                              ; CODE XREF: BuildLoadValidationMessage+1C↑j
                 cmp     word_2E3F6, 4
                 jnz     short loc_12EF8
                 jmp     loc_12F7A
 ; ---------------------------------------------------------------------------
 
-loc_12EF8:                              ; CODE XREF: sub_12ECD+26↑j
+loc_12EF8:                              ; CODE XREF: BuildLoadValidationMessage+26↑j
                 cmp     word_2E3F6, 5
                 jl      short loc_12F08
                 cmp     word_2E3F6, 0Ah
@@ -4836,55 +4836,55 @@ loc_12EF8:                              ; CODE XREF: sub_12ECD+26↑j
                 jmp     short loc_12F6E
 ; ---------------------------------------------------------------------------
 
-loc_12F08:                              ; CODE XREF: sub_12ECD+30↑j
-                                        ; sub_12ECD+37↑j
+loc_12F08:                              ; CODE XREF: BuildLoadValidationMessage+30↑j
+                                        ; BuildLoadValidationMessage+37↑j
                 cmp     word_2E3F6, 0Bh
                 jnz     short loc_12F11
                 jmp     short loc_12F8E
 ; ---------------------------------------------------------------------------
 
-loc_12F11:                              ; CODE XREF: sub_12ECD+40↑j
+loc_12F11:                              ; CODE XREF: BuildLoadValidationMessage+40↑j
                 cmp     word_2E3F6, 0Ch
                 jnz     short loc_12F1B
                 jmp     loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F1B:                              ; CODE XREF: sub_12ECD+49↑j
+loc_12F1B:                              ; CODE XREF: BuildLoadValidationMessage+49↑j
                 cmp     word_2E3F6, 0Dh
                 jnz     short loc_12F24
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F24:                              ; CODE XREF: sub_12ECD+53↑j
+loc_12F24:                              ; CODE XREF: BuildLoadValidationMessage+53↑j
                 cmp     word_2E3F6, 0Eh
                 jnz     short loc_12F2D
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F2D:                              ; CODE XREF: sub_12ECD+5C↑j
+loc_12F2D:                              ; CODE XREF: BuildLoadValidationMessage+5C↑j
                 cmp     word_2E3F6, 0Fh
                 jnz     short loc_12F36
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F36:                              ; CODE XREF: sub_12ECD+65↑j
+loc_12F36:                              ; CODE XREF: BuildLoadValidationMessage+65↑j
                 cmp     word_2E3F6, 10h
                 jnz     short loc_12F3F
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F3F:                              ; CODE XREF: sub_12ECD+6E↑j
+loc_12F3F:                              ; CODE XREF: BuildLoadValidationMessage+6E↑j
                 cmp     word_2E3F6, 11h
                 jnz     short loc_12F48
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F48:                              ; CODE XREF: sub_12ECD+77↑j
+loc_12F48:                              ; CODE XREF: BuildLoadValidationMessage+77↑j
                 mov     bx, 0
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F4D:                              ; CODE XREF: sub_12ECD+B↑j
+loc_12F4D:                              ; CODE XREF: BuildLoadValidationMessage+B↑j
                 mov     ax, [si]
                 dec     ax
                 call    CheckWorldDatCompatibility
@@ -4895,65 +4895,65 @@ loc_12F4D:                              ; CODE XREF: sub_12ECD+B↑j
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F65:                              ; CODE XREF: sub_12ECD+14↑j
+loc_12F65:                              ; CODE XREF: BuildLoadValidationMessage+14↑j
                 mov     bx, [si]
                 call    sub_14B85
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F6E:                              ; CODE XREF: sub_12ECD+1E↑j
-                                        ; sub_12ECD+39↑j
+loc_12F6E:                              ; CODE XREF: BuildLoadValidationMessage+1E↑j
+                                        ; BuildLoadValidationMessage+39↑j
                 mov     ax, [si]
                 call    sub_1D198
                 mov     bx, 5A5Ah
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F7A:                              ; CODE XREF: sub_12ECD+28↑j
+loc_12F7A:                              ; CODE XREF: BuildLoadValidationMessage+28↑j
                 mov     cx, [si]
                 dec     cx
                 mov     bx, 8F04h
                 cmp     cx, 0
                 jz      short loc_12F8C
 
-loc_12F85:                              ; CODE XREF: sub_12ECD+BD↓j
+loc_12F85:                              ; CODE XREF: BuildLoadValidationMessage+BD↓j
                 call    sub_23BA4
                 loop    loc_12F85
 
-loc_12F8C:                              ; CODE XREF: sub_12ECD+B6↑j
+loc_12F8C:                              ; CODE XREF: BuildLoadValidationMessage+B6↑j
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F8E:                              ; CODE XREF: sub_12ECD+42↑j
+loc_12F8E:                              ; CODE XREF: BuildLoadValidationMessage+42↑j
                 mov     cx, [si]
                 dec     cx
                 mov     bx, 8A01h
                 cmp     cx, 0
                 jz      short loc_12FA0
 
-loc_12F99:                              ; CODE XREF: sub_12ECD+D1↓j
+loc_12F99:                              ; CODE XREF: BuildLoadValidationMessage+D1↓j
                 call    sub_23BA4
                 loop    loc_12F99
 
-loc_12FA0:                              ; CODE XREF: sub_12ECD+CA↑j
+loc_12FA0:                              ; CODE XREF: BuildLoadValidationMessage+CA↑j
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12FA2:                              ; CODE XREF: sub_12ECD+4B↑j
-                                        ; sub_12ECD+55↑j ...
+loc_12FA2:                              ; CODE XREF: BuildLoadValidationMessage+4B↑j
+                                        ; BuildLoadValidationMessage+55↑j ...
                 mov     ax, [si]
                 call    sub_14B24
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_12FAB:                              ; CODE XREF: sub_12ECD+7E↑j
-                                        ; sub_12ECD+96↑j ...
+loc_12FAB:                              ; CODE XREF: BuildLoadValidationMessage+7E↑j
+                                        ; BuildLoadValidationMessage+96↑j ...
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 retn
-sub_12ECD       endp
+BuildLoadValidationMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7619,7 +7619,7 @@ FillVideoBuffer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B24       proc far                ; CODE XREF: sub_12ECD+D7↑P
+sub_14B24       proc far                ; CODE XREF: BuildLoadValidationMessage+D7↑P
                                         ; sub_13678+3↑P
                 call    LoadItemCatalogRecord
                 mov     ax, word_2E546
@@ -7654,7 +7654,7 @@ sub_14B24       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B85       proc far                ; CODE XREF: sub_12ECD+9A↑P
+sub_14B85       proc far                ; CODE XREF: BuildLoadValidationMessage+9A↑P
                                         ; sub_141D9+D↑P
                 mov     ax, 0AFDAh
                 call    WorldDat_setBlock5
@@ -11832,7 +11832,7 @@ seg022          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-StrCat          proc far                ; CODE XREF: sub_12ECD+8E↑P
+StrCat          proc far                ; CODE XREF: BuildLoadValidationMessage+8E↑P
                                         ; sub_13FCF+78↑P ...
                 push    es              ; strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.
                 push    si
@@ -23330,7 +23330,7 @@ seg052          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D198       proc far                ; CODE XREF: sub_12ECD+A3↑P
+sub_1D198       proc far                ; CODE XREF: BuildLoadValidationMessage+A3↑P
                                         ; sub_13216+E↑P ...
                 push    bx
                 push    cx
@@ -31586,7 +31586,7 @@ seg069          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-CheckWorldDatCompatibility proc far     ; CODE XREF: sub_12ECD+83↑P
+CheckWorldDatCompatibility proc far     ; CODE XREF: BuildLoadValidationMessage+83↑P
                                         ; sub_13FCF+6D↑P ...
                 mov     word_368AB, ax  ; Reads a small WORLD.DAT record (block 3) plus a second field (sub_28000), trims trailing spaces. Checks two character positions against sentinels: if set, builds ' LEVEL X' (ax=2) or ' MAP X' (ax=1) with the mismatched value; else ax=0 (ok). Reads as a save/WORLD.DAT version-compatibility check.
                 mov     bx, 9043h
@@ -35157,8 +35157,8 @@ seg076          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23BA4       proc far                ; CODE XREF: sub_12ECD:loc_12F85↑P
-                                        ; sub_12ECD:loc_12F99↑P ...
+sub_23BA4       proc far                ; CODE XREF: BuildLoadValidationMessage:loc_12F85↑P
+                                        ; BuildLoadValidationMessage:loc_12F99↑P ...
                 cmp     byte ptr [bx], 0
                 jz      short loc_23BAC
                 inc     bx

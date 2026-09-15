@@ -1604,7 +1604,9 @@ static Bytes_0(void) {
 	create_insn	(0X12E59);
 	create_insn	(x=0X12E65);
 	op_hex		(x,	1);
+	set_cmt	(0X12ECD,	"Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.",	0);
 	create_insn	(0X12ECD);
+	set_name	(0X12ECD,	"BuildLoadValidationMessage");
 	create_insn	(0X12EDA);
 	create_insn	(0X12EE4);
 	create_insn	(0X12EEE);

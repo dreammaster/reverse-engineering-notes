@@ -1960,6 +1960,16 @@ parse as first appeared.
 
 257 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildLoadValidationMessage
+
+Named `sub_12ECD`, a ~16-way dispatcher on a validation-failure-type
+selector: composes a detailed error message for whichever specific
+save/load validation failure occurred (state 1 uses the newly-named
+`CheckWorldDatCompatibility` for level/map mismatches; other states
+not individually traced).
+
+258 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
