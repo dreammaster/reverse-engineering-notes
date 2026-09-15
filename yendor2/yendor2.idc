@@ -3758,7 +3758,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B136);
 	op_hex		(x,	1);
+	set_cmt	(0X1B147,	"Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.",	0);
 	create_insn	(0X1B147);
+	set_name	(0X1B147,	"IsItemEligibleForEnhance");
 	create_insn	(x=0X1B14F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B156);
@@ -3785,7 +3787,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1FB);
 	op_hex		(x,	1);
+	set_cmt	(0X1B20C,	"Eligibility check for TryRepairItemForGold (also called elsewhere, not traced). For each of 2 location-flag bits (word_2E546's [+0xC] 0xC000/0x800), if set and the held item's matching flag (word_2E548's [+2] 0x100/0x40) is also set, returns eligible (ax=0).",	0);
 	create_insn	(0X1B20C);
+	set_name	(0X1B20C,	"IsItemEligibleForRepair");
 	create_insn	(x=0X1B214);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B21F);
@@ -4206,6 +4210,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA7A);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1CA85);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA9F);
@@ -4249,15 +4262,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CC4C,	"msg",	0);
 	create_insn	(x=0X1CC62);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1CC70);
 	create_insn	(0X1CC98);
 	create_insn	(0X1CCBC);
@@ -7288,6 +7292,15 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X289DD,	"ShowErr_RequiredExpandedMemMgr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X289E2);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -7324,15 +7337,6 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X28A0A,	"ShowErr_ProblemRetrievingText");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28A0F);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -10783,6 +10787,15 @@ static Bytes_2(void) {
 	set_name	(0X3660F,	"aUseThat");
 	create_strlit	(0X36618,	0X6);
 	set_name	(0X36618,	"aHere");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3661E,	0XB);
 	set_name	(0X3661E,	"aThePotion");
 	create_strlit	(0X36629,	0X7);
@@ -10817,15 +10830,6 @@ static Bytes_2(void) {
 	set_name	(0X366AE,	"a2XHealth");
 	create_strlit	(0X366B9,	0XA);
 	set_name	(0X366B9,	"a2XMagic");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X366C3,	0X2B);
 	set_name	(0X366C3,	"aRegisterYourCo");
 	create_strlit	(0X366EE,	0X3A);

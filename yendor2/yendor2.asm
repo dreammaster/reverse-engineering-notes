@@ -15711,7 +15711,7 @@ sub_18FC5       endp
 TryEnhanceItemForGold proc near         ; CODE XREF: sub_1869D+558↑p
                 mov     ax, word_31948  ; Space-bar 'enhance item' action (sub_1869D, sibling of TrySellItemForGold). Eligibility via sub_1B147 (a level/stat range check against table 0xBCE); on failure, 'I CAN NOT ENHANCE THAT' (msg 0x815A). Else CompareBCD4(g_partyGold, [table 0xCB2]) -- on insufficient gold, 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, via sub_190AF); else SubBCD4(g_partyGold -= [0xCB2]), advances the item to the next catalog entry (word_32974+1) and reloads it as the enhanced result.
                 mov     word_32974, ax
-                call    sub_1B147
+                call    IsItemEligibleForEnhance
                 jz      short loc_19021
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -15858,7 +15858,7 @@ sub_19133       endp
 TryRepairItemForGold proc near          ; CODE XREF: sub_1869D+566↑p
                 mov     ax, word_31948  ; Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.
                 mov     word_32974, ax
-                call    sub_1B20C
+                call    IsItemEligibleForRepair
                 jz      short loc_19187
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -19689,9 +19689,9 @@ sub_1B0CF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B147       proc far                ; CODE XREF: TryEnhanceItemForGold+6↑P
+IsItemEligibleForEnhance proc far       ; CODE XREF: TryEnhanceItemForGold+6↑P
                                         ; sub_1CCBC+80↓P ...
-                push    bx
+                push    bx              ; Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.
                 mov     ax, 1
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0A00h
@@ -19705,13 +19705,13 @@ sub_1B147       proc far                ; CODE XREF: TryEnhanceItemForGold+6↑P
                 jmp     short loc_1B17B
 ; ---------------------------------------------------------------------------
 
-loc_1B16D:                              ; CODE XREF: sub_1B147+D↑j
+loc_1B16D:                              ; CODE XREF: IsItemEligibleForEnhance+D↑j
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 100h
                 jz      short loc_1B18F
                 mov     ax, [bx+6]
 
-loc_1B17B:                              ; CODE XREF: sub_1B147+24↑j
+loc_1B17B:                              ; CODE XREF: IsItemEligibleForEnhance+24↑j
                 mov     bx, 0BCEh
                 cmp     ax, [bx+14h]
                 jl      short loc_1B18C
@@ -19721,16 +19721,16 @@ loc_1B17B:                              ; CODE XREF: sub_1B147+24↑j
                 jmp     short loc_1B18F
 ; ---------------------------------------------------------------------------
 
-loc_1B18C:                              ; CODE XREF: sub_1B147+3A↑j
-                                        ; sub_1B147+3F↑j
+loc_1B18C:                              ; CODE XREF: IsItemEligibleForEnhance+3A↑j
+                                        ; IsItemEligibleForEnhance+3F↑j
                 mov     ax, 1
 
-loc_1B18F:                              ; CODE XREF: sub_1B147+14↑j
-                                        ; sub_1B147+1F↑j ...
+loc_1B18F:                              ; CODE XREF: IsItemEligibleForEnhance+14↑j
+                                        ; IsItemEligibleForEnhance+1F↑j ...
                 cmp     ax, 0
                 pop     bx
                 retf
-sub_1B147       endp
+IsItemEligibleForEnhance endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19769,9 +19769,9 @@ sub_1B194       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B20C       proc far                ; CODE XREF: TryRepairItemForGold+6↑P
+IsItemEligibleForRepair proc far        ; CODE XREF: TryRepairItemForGold+6↑P
                                         ; sub_1CCBC:loc_1CD7A↓P ...
-                push    bx
+                push    bx              ; Eligibility check for TryRepairItemForGold (also called elsewhere, not traced). For each of 2 location-flag bits (word_2E546's [+0xC] 0xC000/0x800), if set and the held item's matching flag (word_2E548's [+2] 0x100/0x40) is also set, returns eligible (ax=0).
                 mov     ax, 1
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0C000h
@@ -19783,8 +19783,8 @@ sub_1B20C       proc far                ; CODE XREF: TryRepairItemForGold+6↑P
                 jmp     short loc_1B240
 ; ---------------------------------------------------------------------------
 
-loc_1B22B:                              ; CODE XREF: sub_1B20C+D↑j
-                                        ; sub_1B20C+18↑j
+loc_1B22B:                              ; CODE XREF: IsItemEligibleForRepair+D↑j
+                                        ; IsItemEligibleForRepair+18↑j
                 test    word ptr [bx+0Ch], 800h
                 jz      short loc_1B240
                 mov     bx, word_2E548
@@ -19792,12 +19792,12 @@ loc_1B22B:                              ; CODE XREF: sub_1B20C+D↑j
                 jz      short loc_1B240
                 mov     ax, 0
 
-loc_1B240:                              ; CODE XREF: sub_1B20C+1D↑j
-                                        ; sub_1B20C+24↑j ...
+loc_1B240:                              ; CODE XREF: IsItemEligibleForRepair+1D↑j
+                                        ; IsItemEligibleForRepair+24↑j ...
                 cmp     ax, 0
                 pop     bx
                 retf
-sub_1B20C       endp
+IsItemEligibleForRepair endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -22685,7 +22685,7 @@ loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
                 pop     ax
                 mov     si, 50C0h
                 call    sub_19CA1
-                call    sub_1B147
+                call    IsItemEligibleForEnhance
                 jnz     short loc_1CD7A
                 mov     word_2E512, 0
                 mov     word_2E514, 0
@@ -22704,7 +22704,7 @@ loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
                 call    LoadItemCatalogRecord
 
 loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
-                call    sub_1B20C
+                call    IsItemEligibleForRepair
                 jnz     short loc_1CDB7
                 mov     word_328E2, 0
                 mov     word_328E4, 0
@@ -31320,14 +31320,14 @@ loc_21BBD:                              ; CODE XREF: sub_219FA+169↑j
 ; ---------------------------------------------------------------------------
 
 loc_21BE6:                              ; CODE XREF: sub_219FA+1E0↑j
-                call    sub_1B147
+                call    IsItemEligibleForEnhance
                 jnz     short loc_21C11
                 mov     bx, 8154h
                 jmp     short loc_21BFC
 ; ---------------------------------------------------------------------------
 
 loc_21BF2:                              ; CODE XREF: sub_219FA+1E8↑j
-                call    sub_1B20C
+                call    IsItemEligibleForRepair
                 jnz     short loc_21C11
                 mov     bx, 8154h       ; msg
 

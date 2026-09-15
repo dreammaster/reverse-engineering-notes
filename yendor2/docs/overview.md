@@ -2103,6 +2103,18 @@ critically fail and destroy the item.
 
 267 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: IsItemEligibleForEnhance / IsItemEligibleForRepair
+
+Named the two eligibility-check helpers gating `TryEnhanceItemForGold`
+and `TryRepairItemForGold`. `IsItemEligibleForEnhance` (`sub_1B147`)
+selects a held-item field based on the standing location's flags and
+checks it against a range table at `0xBCE`. `IsItemEligibleForRepair`
+(`sub_1B20C`) matches a pair of location/held-item flag bits directly.
+Both have other, untraced callers beyond this cluster (e.g. `sub_1CCBC`),
+so only their confirmed primary behavior is documented.
+
+269 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

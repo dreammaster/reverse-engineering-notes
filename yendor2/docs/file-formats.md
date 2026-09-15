@@ -406,8 +406,12 @@ stealing party gold is plausible. A third Space-bar sibling,
 `TryRepairItemForGold` (`word_328C6` bit 4), pays gold (cost table
 `0x5082`) to repair the held item, rejecting with "I CAN NOT REPAIR
 THAT" if ineligible — distinct from the skill-based `RepairItemCommand`
-minigame below, which can critically fail and destroy the item.
-All three are manipulated via the packed-BCD
+minigame below, which can critically fail and destroy the item. Its
+eligibility check is `IsItemEligibleForRepair` (a location/item
+flag-pair match); `TryEnhanceItemForGold`'s is `IsItemEligibleForEnhance`
+(a location-selected item field checked against a range table at
+`0xBCE`). Both have other, untraced callers beyond this Space-bar
+cluster. All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
 `SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,
