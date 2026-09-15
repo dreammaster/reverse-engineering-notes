@@ -5206,8 +5206,12 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X205F3);
 	op_hex		(x,	1);
+	set_cmt	(0X205FB,	"'B' key handler: picks a wall type from the tile palette at the clicked position (LoadWorldDatTilePalette), stores it to word_2E384/word_2E496 (same fields EditWallLegendTypeNumber writes), redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X205FB);
+	set_name	(0X205FB,	"BrowseWallTilePalette");
+	set_cmt	(0X20626,	"'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.",	0);
 	create_insn	(0X20626);
+	set_name	(0X20626,	"BrowseFloorTilePalette");
 	create_insn	(0X20652);
 	create_insn	(x=0X20695);
 	op_seg		(x,	1);
@@ -6360,6 +6364,15 @@ static Bytes_1(void) {
 	set_cmt	(0X252EF,	"Rolls the 6 core attributes for word_328D4 (RandomInRange(15)+45 each, 45-59), storing base+derived field pairs: +0x3C/+0x7C (also x10 into +0x56/+0x96, weight-like -- plausibly STRENGTH); +0x3E/+0x7E; +0x42/+0x82 (MP-formula component in UseTrainingItem -- plausibly INTELLIGENCE); +0x44/+0x84 (the other MP-formula component -- plausibly WISDOM); +0x46/+0x86 (a separate UseTrainingItem growth calc); +0x40/+0x80, whose 25%-scaled value sets both current and max HP (+0x52/+0x92) -- plausibly STAMINA/CONSTITUTION.",	0);
 	create_insn	(0X252EF);
 	set_name	(0X252EF,	"RollCharacterAttributes");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2539F);
 	create_insn	(0X253BB);
 	create_insn	(0X253C4);
@@ -6383,15 +6396,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25550);
 	op_hex		(x,	1);
 	create_insn	(0X25561);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25587,	"msg",	0);
 	create_insn	(0X25595);
 	create_insn	(x=0X255B3);
@@ -9761,6 +9765,15 @@ static Bytes_2(void) {
 	create_word	(0X328FA);
 	create_word	(0X328FC);
 	create_word	(0X328FE);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32900);
 	create_word	(0X32902);
 	create_word	(0X32904);
@@ -9781,15 +9794,6 @@ static Bytes_2(void) {
 	create_word	(0X32920);
 	create_word	(0X32922);
 	create_word	(0X32924);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X32926);
 	create_word	(0X32928);
 	create_word	(0X3292A);

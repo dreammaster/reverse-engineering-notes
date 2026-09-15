@@ -2650,6 +2650,16 @@ Named a generic `WORLD.DAT` FileEntry setup helper (a sibling of
 
 332 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BrowseWallTilePalette and BrowseFloorTilePalette
+
+Named `RunMapEditorScreen`'s `B`/`F` palette-browsing key handlers:
+pick a wall/floor type from the per-level tile palette at the clicked
+position, storing it into the same fields
+`EditWallLegendTypeNumber`/`EditFloorLegendTypeNumber` write. Closes
+out this session's coverage of the hidden map-editor screen.
+
+334 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

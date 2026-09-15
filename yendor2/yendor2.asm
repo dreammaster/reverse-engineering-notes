@@ -28305,14 +28305,14 @@ loc_201A0:                              ; CODE XREF: RunMapEditorScreen+EC↑j
 loc_201AD:                              ; CODE XREF: RunMapEditorScreen+135↑j
                 cmp     byte_2E400, 42h ; 'B'
                 jnz     short loc_201BA
-                call    sub_205FB
+                call    BrowseWallTilePalette
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
 loc_201BA:                              ; CODE XREF: RunMapEditorScreen+142↑j
                 cmp     byte_2E400, 46h ; 'F'
                 jnz     short loc_201C7
-                call    sub_20626
+                call    BrowseFloorTilePalette
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28687,8 +28687,8 @@ DrawFloorTypeLegendRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_204F0       proc near               ; CODE XREF: sub_205FB+11↓p
-                                        ; sub_20626+11↓p ...
+sub_204F0       proc near               ; CODE XREF: BrowseWallTilePalette+11↓p
+                                        ; BrowseFloorTilePalette+11↓p ...
                 push    cx
                 push    dx
                 mov     cx, 3
@@ -28785,7 +28785,7 @@ EditFloorLegendTypeNumber endp
 
 ; int __fastcall LoadWorldDatTilePalette(int, FileEntry *this)
 LoadWorldDatTilePalette proc near       ; CODE XREF: PaintCellAndPersist+C↑p
-                                        ; sub_205FB+14↓p ...
+                                        ; BrowseWallTilePalette+14↓p ...
                 push    dx              ; Loads a per-level tile-palette record from WORLD.DAT: PrepareWorldDatRead then overrides the block offset with _blockSize3*word_329FE (selects one record among several) before FileEntry_Read. Called from PaintCellAndPersist and sub_205FB -- feeds RunMapEditorScreen's B/F palette-browsing keys.
                 mov     word_3293E, ax
                 mov     word_368AB, bx
@@ -28810,8 +28810,8 @@ LoadWorldDatTilePalette endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_205FB       proc near               ; CODE XREF: RunMapEditorScreen+144↑p
-                call    RestoreCursorBackgroundIfDirty
+BrowseWallTilePalette proc near         ; CODE XREF: RunMapEditorScreen+144↑p
+                call    RestoreCursorBackgroundIfDirty ; 'B' key handler: picks a wall type from the tile palette at the clicked position (LoadWorldDatTilePalette), stores it to word_2E384/word_2E496 (same fields EditWallLegendTypeNumber writes), redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen.
                 mov     ax, word_2E776
                 mov     word_3293E, ax
                 mov     ax, word_31956
@@ -28825,14 +28825,14 @@ sub_205FB       proc near               ; CODE XREF: RunMapEditorScreen+144↑p
                 call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
-sub_205FB       endp
+BrowseWallTilePalette endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20626       proc near               ; CODE XREF: RunMapEditorScreen+151↑p
-                call    RestoreCursorBackgroundIfDirty
+BrowseFloorTilePalette proc near        ; CODE XREF: RunMapEditorScreen+151↑p
+                call    RestoreCursorBackgroundIfDirty ; 'F' key handler, floor counterpart to BrowseWallTilePalette: picks a floor type from the palette, stores to word_2E386/word_2E4A2, redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen.
                 mov     ax, word_2E776
                 mov     word_3293E, ax
                 mov     ax, word_31956
@@ -28846,7 +28846,7 @@ sub_20626       proc near               ; CODE XREF: RunMapEditorScreen+151↑p
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
-sub_20626       endp
+BrowseFloorTilePalette endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -57469,8 +57469,8 @@ word_2E772      dw 0                    ; DATA XREF: start:loc_10503↑r
 word_2E774      dw 0                    ; DATA XREF: start+506↑r
                                         ; start+6CA↑r ...
 ; int word_2E776
-word_2E776      dw 0                    ; DATA XREF: sub_205FB+5↑r
-                                        ; sub_20626+5↑r ...
+word_2E776      dw 0                    ; DATA XREF: BrowseWallTilePalette+5↑r
+                                        ; BrowseFloorTilePalette+5↑r ...
 word_2E778      dw 13Ch                 ; DATA XREF: RunMapEditorScreen+E↑r
                                         ; RunMapEditorScreen+123↑w ...
 word_2E77A      dw 1                    ; DATA XREF: RunMapEditorScreen+A↑r
@@ -70231,8 +70231,8 @@ word_31950      dw 0                    ; DATA XREF: seg073:0071↑w
 word_31952      dw 0                    ; DATA XREF: seg073:0093↑w
 word_31954      dw 0                    ; DATA XREF: seg073:0097↑w
 ; int word_31956
-word_31956      dw 0                    ; DATA XREF: sub_205FB+B↑r
-                                        ; sub_20626+B↑r ...
+word_31956      dw 0                    ; DATA XREF: BrowseWallTilePalette+B↑r
+                                        ; BrowseFloorTilePalette+B↑r ...
 word_31958      dw 0C3h                 ; DATA XREF: RunMapEditorScreen+12↑r
                                         ; RunMapEditorScreen+11F↑w ...
 word_3195A      dw 8                    ; DATA XREF: RunMapEditorScreen+16↑r
