@@ -42579,7 +42579,7 @@ sub_27BF7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C5A       proc far                ; CODE XREF: sub_28564+2↓P
+sub_27C5A       proc far                ; CODE XREF: InitMusicDriver+2↓P
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 mov     bx, 0CE23h
@@ -43660,7 +43660,7 @@ loc_283FB:                              ; CODE XREF: InitSoundSystem+E↑j
 loc_28406:                              ; CODE XREF: InitSoundSystem+17↑j
                 test    word_328C8, 1
                 jnz     short locret_28411
-                call    sub_28564
+                call    InitMusicDriver
 
 locret_28411:                           ; CODE XREF: InitSoundSystem+22↑j
                 retf
@@ -43831,8 +43831,8 @@ DetectSoundDriver endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28564       proc near               ; CODE XREF: InitSoundSystem+24↑p
-                xor     ax, ax
+InitMusicDriver proc near               ; CODE XREF: InitSoundSystem+24↑p
+                xor     ax, ax          ; Initializes the sound driver's hardware config (word_32916/word_32914) and calls into it via g_soundDriverFarPtr (function selectors 1-5: settings, init, further setup), then allocates its music-data buffer (word_3292E). Called from InitSoundSystem.
                 call    sub_27C5A
                 mov     bx, 9Ch         ; numPara
                 mov     errorCode, 1
@@ -43859,7 +43859,7 @@ sub_28564       proc near               ; CODE XREF: InitSoundSystem+24↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_285C4:                              ; CODE XREF: sub_28564+52↑j
+loc_285C4:                              ; CODE XREF: InitMusicDriver+52↑j
                 mov     ax, 1
                 mov     bx, 4
                 call    dword ptr g_soundDriverFarPtr
@@ -43873,12 +43873,12 @@ loc_285C4:                              ; CODE XREF: sub_28564+52↑j
                 mov     cx, _val45
                 mov     ax, 0
 
-loc_285E7:                              ; CODE XREF: sub_28564+8C↓j
+loc_285E7:                              ; CODE XREF: InitMusicDriver+8C↓j
                 cmp     ax, [bx]
                 jnb     short loc_285ED
                 mov     ax, [bx]
 
-loc_285ED:                              ; CODE XREF: sub_28564+85↑j
+loc_285ED:                              ; CODE XREF: InitMusicDriver+85↑j
                 add     bx, 2
                 loop    loc_285E7
                 mov     cx, 4
@@ -43891,7 +43891,7 @@ loc_285ED:                              ; CODE XREF: sub_28564+85↑j
                 or      g_driverStateFlags, 0Ch
                 and     g_driverStateFlags, 0FF7Fh
                 retn
-sub_28564       endp
+InitMusicDriver endp
 
 ; ---------------------------------------------------------------------------
 byte_28616      db 0CDh                 ; CODE XREF: PlayMusicTrack+5B↑p
@@ -74264,9 +74264,9 @@ word_32910      dw 0                    ; DATA XREF: RunGameDialog:loc_1EC8A↑w
                                         ; RunGameDialog:loc_1EDB8↑w ...
 word_32912      dw 0                    ; DATA XREF: EraseLabelText+12↑r
                                         ; GetListItemPosition+22↑w
-word_32914      dw 0                    ; DATA XREF: sub_28564+3E↑r
+word_32914      dw 0                    ; DATA XREF: InitMusicDriver+3E↑r
                                         ; sub_28619+87↑w
-word_32916      dw 0                    ; DATA XREF: sub_28564+34↑r
+word_32916      dw 0                    ; DATA XREF: InitMusicDriver+34↑r
                                         ; sub_28619+6A↑w
 word_32918      dw 0                    ; DATA XREF: HandleRangedOrCombatAction+3EA↑w
                                         ; ExtendDungeonCeilingTexture+21↑w ...
@@ -74445,7 +74445,7 @@ _val9           dw 0                    ; DATA XREF: InitGlobals+30↑w
 _val44          dw 0                    ; DATA XREF: InitGlobals+12C↑w
                                         ; DetectSoundDriver+61↑r
 _val45          dw 0                    ; DATA XREF: InitGlobals+132↑w
-                                        ; sub_28564+7C↑r
+                                        ; InitMusicDriver+7C↑r
 _val46          dw 0                    ; DATA XREF: InitGlobals+138↑w
                                         ; RunClueBookItemDetailWithAbilityInfo:loc_13149↑r ...
 _val47          dw 0                    ; DATA XREF: InitGlobals+13E↑w

@@ -7414,7 +7414,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2855E);
 	op_hex		(x,	1);
+	set_cmt	(0X28564,	"Initializes the sound driver's hardware config (word_32916/word_32914) and calls into it via g_soundDriverFarPtr (function selectors 1-5: settings, init, further setup), then allocates its music-data buffer (word_3292E). Called from InitSoundSystem.",	0);
 	create_insn	(0X28564);
+	set_name	(0X28564,	"InitMusicDriver");
 	set_cmt	(0X2856B,	"numPara",	0);
 	create_insn	(x=0X28592);
 	op_seg		(x,	1);

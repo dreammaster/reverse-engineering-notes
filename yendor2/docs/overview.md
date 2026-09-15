@@ -3181,6 +3181,15 @@ function on possible sound/music disable flags.
 
 411 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InitMusicDriver
+
+Named `sub_28564`, called from `InitSoundSystem`: initializes the
+sound driver's hardware config and calls into it via
+`g_soundDriverFarPtr`'s function-selector interface, then allocates
+its music-data buffer.
+
+412 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
