@@ -3126,6 +3126,14 @@ the same EMS page as `RestorePortraitPanelFromEMS`/
 
 402 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WaitForTargetClick
+
+Named `sub_2940E`, called from `UseAbilityOnTarget` and
+`UnlockDoorCommand`: a generic targeting-mode wait loop with a
+crosshair cursor, waiting for ESC or a valid dungeon-viewport click.
+
+403 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

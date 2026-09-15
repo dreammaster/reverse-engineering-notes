@@ -45485,15 +45485,15 @@ seg107          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2940E       proc far                ; CODE XREF: UseAbilityOnTarget+1↓p
+WaitForTargetClick proc far             ; CODE XREF: UseAbilityOnTarget+1↓p
                                         ; UnlockDoorCommand:loc_29747↓P ...
-                call    sub_21C79
+                call    sub_21C79       ; Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.
                 mov     word_2E530, 0Fh
                 call    UpdateCursorForHeldItem
                 call    sub_238CD
 
-loc_29423:                              ; CODE XREF: sub_2940E+1F↓j
-                                        ; sub_2940E+2D↓j ...
+loc_29423:                              ; CODE XREF: WaitForTargetClick+1F↓j
+                                        ; WaitForTargetClick+2D↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_29423
@@ -45504,13 +45504,13 @@ loc_29423:                              ; CODE XREF: sub_2940E+1F↓j
                 jmp     short loc_29447
 ; ---------------------------------------------------------------------------
 
-loc_2943F:                              ; CODE XREF: sub_2940E+26↑j
+loc_2943F:                              ; CODE XREF: WaitForTargetClick+26↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_29423
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_29447:                              ; CODE XREF: sub_2940E+2F↑j
+loc_29447:                              ; CODE XREF: WaitForTargetClick+2F↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
@@ -45520,7 +45520,7 @@ loc_29447:                              ; CODE XREF: sub_2940E+2F↑j
                 cmp     ax, 1
                 jnz     short loc_29423
                 retf
-sub_2940E       endp
+WaitForTargetClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45553,7 +45553,7 @@ sub_29461       endp
 
 UseAbilityOnTarget proc far             ; CODE XREF: sub_2AE3C:loc_2AE82↓P
                 push    cs              ; Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.
-                call    near ptr sub_2940E
+                call    near ptr WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_294CE
 
@@ -45934,7 +45934,7 @@ UnlockDoorCommand proc far              ; CODE XREF: seg000:0A5D↑P
 ; ---------------------------------------------------------------------------
 
 loc_29747:                              ; CODE XREF: UnlockDoorCommand+6↑j
-                call    sub_2940E
+                call    WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_29769
 
@@ -48262,7 +48262,7 @@ loc_2A7A8:                              ; CODE XREF: sub_2A788+6↑j
 ; ---------------------------------------------------------------------------
 
 loc_2A7C4:                              ; CODE XREF: sub_2A788+32↑j
-                call    sub_2940E
+                call    WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_2A7F0
 
@@ -48871,7 +48871,7 @@ loc_2ACD0:                              ; CODE XREF: CastSpell+10↑j
 loc_2ACEE:                              ; CODE XREF: CastSpell+27E↑j
                                         ; CastSpell+287↑j
                 call    sub_21C79
-                call    sub_2940E
+                call    WaitForTargetClick
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_2AD02
                 jmp     loc_2AA75

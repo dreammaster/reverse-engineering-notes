@@ -7778,7 +7778,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X293F4);
 	op_hex		(x,	1);
+	set_cmt	(0X2940E,	"Generic targeting-mode wait loop: sets a crosshair-style cursor (picture 0xF), polls input until ESC (cancel) or a valid click on the dungeon-viewport region (table 0x5AC0, index 1). Called from UseAbilityOnTarget and UnlockDoorCommand.",	0);
 	create_insn	(0X2940E);
+	set_name	(0X2940E,	"WaitForTargetClick");
 	create_insn	(0X2943F);
 	create_insn	(0X29447);
 	create_insn	(0X29461);
