@@ -24624,7 +24624,7 @@ loc_1DD16:                              ; CODE XREF: RunAlchemyScreen+16↑j
 
 loc_1DD28:                              ; CODE XREF: RunAlchemyScreen+3E↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_1E4AA
+                call    ShowAlchemyIconActive
                 call    sub_26C9E
 
 loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
@@ -24877,7 +24877,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
                 call    sub_26C9E
-                call    sub_1E4D6
+                call    ShowAlchemyIconIdle
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
                 call    RefreshDungeonScreen
@@ -25024,7 +25024,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
-                call    sub_1E4D6
+                call    ShowAlchemyIconIdle
                 call    ClearStatusPanelIfDirty
                 call    ShowCompassDirection
                 call    RefreshDungeonScreen
@@ -25506,8 +25506,8 @@ sub_1E473       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4AA       proc near               ; CODE XREF: RunAlchemyScreen+4D↑p
-                mov     ax, 1
+ShowAlchemyIconActive proc near         ; CODE XREF: RunAlchemyScreen+4D↑p
+                mov     ax, 1           ; Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.
                 call    sub_28412
                 mov     x, 102h
                 mov     y, 43h ; 'C'
@@ -25517,15 +25517,15 @@ sub_1E4AA       proc near               ; CODE XREF: RunAlchemyScreen+4D↑p
                 mov     word_2E530, 6
                 call    DrawPicture
                 retn
-sub_1E4AA       endp
+ShowAlchemyIconActive endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4D6       proc near               ; CODE XREF: RunAlchemyScreen+24D↑p
+ShowAlchemyIconIdle proc near           ; CODE XREF: RunAlchemyScreen+24D↑p
                                         ; RunAlchemyScreen+3EB↑p
-                mov     x, 102h
+                mov     x, 102h         ; Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).
                 mov     y, 43h ; 'C'
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -25533,7 +25533,7 @@ sub_1E4D6       proc near               ; CODE XREF: RunAlchemyScreen+24D↑p
                 mov     word_2E530, 5
                 call    DrawPicture
                 retn
-sub_1E4D6       endp
+ShowAlchemyIconIdle endp
 
 
 ; =============== S U B R O U T I N E =======================================

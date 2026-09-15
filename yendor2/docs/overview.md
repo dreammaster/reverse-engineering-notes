@@ -2901,6 +2901,14 @@ not audio. Corrected the comment and file-formats.md.
 
 370 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowAlchemyIconActive and ShowAlchemyIconIdle
+
+Named two small alchemy-screen icon drawers, called from
+`RunAlchemyScreen`. Exact narrative (what the two icon states
+represent) not confirmed.
+
+372 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

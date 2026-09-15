@@ -4762,8 +4762,12 @@ static Bytes_1(void) {
 	create_insn	(0X1E46B);
 	create_insn	(0X1E473);
 	create_insn	(0X1E4A5);
+	set_cmt	(0X1E4AA,	"Draws alchemy-screen picture 6 at (0x102,0x43), plus message 1. Called from RunAlchemyScreen. Exact narrative (vs. ShowAlchemyIconIdle) not confirmed.",	0);
 	create_insn	(0X1E4AA);
+	set_name	(0X1E4AA,	"ShowAlchemyIconActive");
+	set_cmt	(0X1E4D6,	"Draws alchemy-screen picture 5 at (0x102,0x43) -- sibling of ShowAlchemyIconActive. Called from RunAlchemyScreen (2 sites).",	0);
 	create_insn	(0X1E4D6);
+	set_name	(0X1E4D6,	"ShowAlchemyIconIdle");
 	create_insn	(0X1E4FA);
 	create_insn	(0X1E522);
 	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
@@ -5982,6 +5986,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2301F);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2302A);
 	create_insn	(x=0X23076);
 	op_hex		(x,	1);
@@ -6003,15 +6016,6 @@ static Bytes_1(void) {
 	set_cmt	(0X23116,	"Removes a monster from the map and wipes its record: clears the 'present here' flag (bit 0x400) on the map cell its [+6] field points at and zeroes that cell's [+4] occupant reference, then zeroes the entire g_levelMonsters/g_monsterSlots-layout record (0x9C bytes).",	0);
 	create_insn	(0X23116);
 	set_name	(0X23116,	"RemoveMonsterFromMap");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
 	create_insn	(0X2313D);
@@ -8962,11 +8966,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B948);
 	set_name	(0X2B948,	"ShowConversationText_800");
-	create_insn	(0X2B9C8);
-	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
-	create_insn	(x=0X2B9D4);
-	op_hex		(x,	1);
-	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
 }
 
 //------------------------------------------------------------------------
@@ -8976,6 +8975,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B9C8);
+	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
+	create_insn	(x=0X2B9D4);
+	op_hex		(x,	1);
+	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
 	create_insn	(x=0X2B9EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA04);
