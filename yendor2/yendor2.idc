@@ -5944,8 +5944,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X233DD);
 	op_hex		(x,	1);
 	create_insn	(0X233EC);
+	set_cmt	(0X233F5,	"If not already active ([+0xC] bit 0), checks the render-depth counter (word_3292C) against a per-monster detection-range threshold selected by [+0x94] flags (0x20/0x40/0x80/0x100 -> 0x21/0x2C/0x29/0x26) -- sets [+0xC] bit 0 once close enough, marking the monster active/aware. Called from SpawnMonsterInFacingDirection and FindMonsterTypeInLevelPool.",	0);
 	create_insn	(x=0X233F5);
 	op_hex		(x,	1);
+	set_name	(0X233F5,	"TryActivateMonsterByDistance");
 	create_insn	(0X233FD);
 	create_insn	(x=0X23404);
 	op_hex		(x,	1);
@@ -6688,13 +6690,6 @@ static Bytes_1(void) {
 	set_cmt	(0X268F4,	"SaveAndCloseContainer(di=bag marker offset, si=word_328D4): if the bag slot area has contents ([di]!=0), writes them back to CURGAME (FileEntry bx=0x8FFB, errorCode=0xB), then zeroes the marker fields ([di]/[di+2]) -- unloads the container.",	0);
 	create_insn	(0X268F4);
 	set_name	(0X268F4,	"SaveAndCloseContainer");
-	set_cmt	(0X268FB,	"this",	0);
-	create_insn	(0X26928);
-	create_insn	(0X26937);
-	create_insn	(0X26946);
-	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
-	create_insn	(0X26954);
-	set_name	(0X26954,	"GetInventorySlotPtr");
 }
 
 //------------------------------------------------------------------------
@@ -6704,6 +6699,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X268FB,	"this",	0);
+	create_insn	(0X26928);
+	create_insn	(0X26937);
+	create_insn	(0X26946);
+	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
+	create_insn	(0X26954);
+	set_name	(0X26954,	"GetInventorySlotPtr");
 	create_insn	(x=0X26958);
 	op_hex		(x,	1);
 	create_insn	(0X2696A);
@@ -10108,6 +10110,15 @@ static Bytes_2(void) {
 	set_name	(0X352BC,	"aKeepCharacter");
 	create_strlit	(0X352CB,	0X12);
 	set_name	(0X352CB,	"aCharacterPrevi");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X352DD,	0X7);
 	set_name	(0X352DD,	"aDelete");
 	create_strlit	(0X352E4,	0X7);
@@ -10132,15 +10143,6 @@ static Bytes_2(void) {
 	set_name	(0X35333,	"aPoisoned");
 	create_strlit	(0X3533C,	0X5);
 	set_name	(0X3533C,	"aSick");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35341,	0X7);
 	set_name	(0X35341,	"aStoned");
 	create_strlit	(0X35348,	0X7);

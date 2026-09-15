@@ -509,6 +509,13 @@ this monster type already exists somewhere in `g_levelMonsters`
 roll," which was wrong; it's a duplicate/unique-monster prevention
 check), before calling `SpawnMonsterInFacingDirection`, which:
 
+Both `SpawnMonsterInFacingDirection` and `FindMonsterTypeInLevelPool`
+call `TryActivateMonsterByDistance`: if a monster isn't already marked
+active/aware (`[+0xC]` bit 0), it checks the render-depth counter
+(`word_3292C`) against a per-monster detection-range threshold
+selected by `[+0x94]` flags, setting the aware bit once the party is
+close enough — a distance-based monster "notices you" mechanic.
+
 `RenderDungeonViewRow` draws each cell's base wall texture via
 `DrawDungeonCellWallTexture` (the `0xE551` lookup table by cell id, at
 z-layer `word_32918=0` — a different layer from the `3`/`4` values

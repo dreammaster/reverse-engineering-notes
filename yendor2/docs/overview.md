@@ -2483,6 +2483,15 @@ rounds ago. Corrected both that comment and file-formats.md.
 
 312 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryActivateMonsterByDistance
+
+Named `sub_233F5`, called from `SpawnMonsterInFacingDirection` and
+`FindMonsterTypeInLevelPool`: a distance-based "the party notices this
+monster" activation check, comparing the render-depth counter against
+a per-monster detection-range threshold before setting an aware flag.
+
+313 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

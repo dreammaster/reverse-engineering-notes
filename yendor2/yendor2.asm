@@ -33052,7 +33052,7 @@ loc_22B40:                              ; CODE XREF: SpawnMonsterInFacingDirecti
                 mov     [si+0Ah], ax
                 mov     ax, [si+50h]
                 mov     [si+10h], ax
-                call    sub_233F5
+                call    TryActivateMonsterByDistance
                 mov     ax, [si]        ; int
                 push    cs
                 call    near ptr sub_22C3E
@@ -33102,7 +33102,7 @@ loc_22B7F:                              ; CODE XREF: FindMonsterTypeInLevelPool+
 ; ---------------------------------------------------------------------------
 
 loc_22B8E:                              ; CODE XREF: FindMonsterTypeInLevelPool+9↑j
-                call    sub_233F5
+                call    TryActivateMonsterByDistance
 
 loc_22B91:                              ; CODE XREF: FindMonsterTypeInLevelPool+14↑j
                 cmp     si, 0
@@ -34086,14 +34086,14 @@ sub_233D0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_233F5       proc near               ; CODE XREF: SpawnMonsterInFacingDirection+E1↑p
+TryActivateMonsterByDistance proc near  ; CODE XREF: SpawnMonsterInFacingDirection+E1↑p
                                         ; FindMonsterTypeInLevelPool:loc_22B8E↑p
-                test    word ptr [si+0Ch], 1
+                test    word ptr [si+0Ch], 1 ; If not already active ([+0xC] bit 0), checks the render-depth counter (word_3292C) against a per-monster detection-range threshold selected by [+0x94] flags (0x20/0x40/0x80/0x100 -> 0x21/0x2C/0x29/0x26) -- sets [+0xC] bit 0 once close enough, marking the monster active/aware. Called from SpawnMonsterInFacingDirection and FindMonsterTypeInLevelPool.
                 jz      short loc_233FD
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_233FD:                              ; CODE XREF: sub_233F5+5↑j
+loc_233FD:                              ; CODE XREF: TryActivateMonsterByDistance+5↑j
                 cmp     word_3292C, 21h ; '!'
                 jle     short locret_23441
                 test    word ptr [si+94h], 20h
@@ -34105,7 +34105,7 @@ loc_233FD:                              ; CODE XREF: sub_233F5+5↑j
                 jmp     short loc_2343D
 ; ---------------------------------------------------------------------------
 
-loc_2341D:                              ; CODE XREF: sub_233F5+1D↑j
+loc_2341D:                              ; CODE XREF: TryActivateMonsterByDistance+1D↑j
                 test    word ptr [si+94h], 80h
                 jz      short loc_2342E
                 cmp     word_3292C, 29h ; ')'
@@ -34113,20 +34113,20 @@ loc_2341D:                              ; CODE XREF: sub_233F5+1D↑j
                 jmp     short loc_2343D
 ; ---------------------------------------------------------------------------
 
-loc_2342E:                              ; CODE XREF: sub_233F5+2E↑j
+loc_2342E:                              ; CODE XREF: TryActivateMonsterByDistance+2E↑j
                 test    word ptr [si+94h], 100h
                 jz      short loc_2343D
                 cmp     word_3292C, 26h ; '&'
                 jle     short locret_23441
 
-loc_2343D:                              ; CODE XREF: sub_233F5+26↑j
-                                        ; sub_233F5+37↑j ...
+loc_2343D:                              ; CODE XREF: TryActivateMonsterByDistance+26↑j
+                                        ; TryActivateMonsterByDistance+37↑j ...
                 or      word ptr [si+0Ch], 1
 
-locret_23441:                           ; CODE XREF: sub_233F5+D↑j
-                                        ; sub_233F5+15↑j ...
+locret_23441:                           ; CODE XREF: TryActivateMonsterByDistance+D↑j
+                                        ; TryActivateMonsterByDistance+15↑j ...
                 retn
-sub_233F5       endp
+TryActivateMonsterByDistance endp
 
 
 ; =============== S U B R O U T I N E =======================================
