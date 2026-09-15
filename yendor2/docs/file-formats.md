@@ -292,7 +292,12 @@ reverse of `PlayClueBookOpenAnimation`'s swap). `sub_13278`/
 loops by this trace but not yet individually named/traced.
 
 `ShowClueBookItemDetail` is confirmed as item subtype 1's per-entry
-screen (F5): an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
+screen (F5): an item's icon plus "BASE VALUE:" and "WEIGHT:" fields,
+each drawn via `DrawLabeledBCDIfNonzero` — a small reused helper
+(shared with `ShowClueBookMonsterDetail`'s stat fields) that draws a
+label then the BCD4 value only if it's nonzero.
+`DrawRecordFieldBCDIfNonzero` is its sibling, taking a record pointer
+instead of a direct value pointer.
 The F2 "MONSTER STATISTICS" category follows the same pattern:
 `RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
 `LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for

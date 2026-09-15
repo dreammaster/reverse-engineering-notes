@@ -2386,6 +2386,15 @@ using the same 4-slot PEGASUS/GIANT EAGLE/MAGIC DRAGON table as
 
 298 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawLabeledBCDIfNonzero and DrawRecordFieldBCDIfNonzero
+
+Named two small reused display helpers ("draw a label, then the BCD4
+value only if nonzero"), shared between `ShowClueBookItemDetail` and
+`ShowClueBookMonsterDetail`'s stat fields. One takes a value pointer
+directly, the other a record pointer.
+
+300 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

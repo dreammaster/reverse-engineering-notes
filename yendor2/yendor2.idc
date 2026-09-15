@@ -1984,8 +1984,12 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X147C4);
 	create_insn	(0X147D8);
+	set_cmt	(0X147FF,	"Draws a label (bx=msg) then the BCD4 value at si only if nonzero (IsBCDCounterAtLeast vs threshold 0). Used by ShowClueBookItemDetail and ShowClueBookMonsterDetail for several stat fields.",	0);
 	create_insn	(0X147FF);
+	set_name	(0X147FF,	"DrawLabeledBCDIfNonzero");
+	set_cmt	(0X14833,	"Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.",	0);
 	create_insn	(0X14833);
+	set_name	(0X14833,	"DrawRecordFieldBCDIfNonzero");
 	create_insn	(0X14876);
 	create_insn	(0X148B2);
 	create_insn	(0X148EA);
@@ -3918,15 +3922,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1B717,	"Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.",	0);
 	create_insn	(0X1B717);
 	set_name	(0X1B717,	"CheckPartyMemberItemFlag");
-	create_insn	(x=0X1B71A);
-	op_hex		(x,	1);
-	create_insn	(x=0X1B720);
-	op_hex		(x,	1);
-	create_insn	(x=0X1B740);
-	op_hex		(x,	1);
-	set_cmt	(0X1B74A,	"Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.",	0);
-	create_insn	(0X1B74A);
-	set_name	(0X1B74A,	"ClassifyPartyMemberCondition");
 }
 
 //------------------------------------------------------------------------
@@ -3936,6 +3931,15 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1B71A);
+	op_hex		(x,	1);
+	create_insn	(x=0X1B720);
+	op_hex		(x,	1);
+	create_insn	(x=0X1B740);
+	op_hex		(x,	1);
+	set_cmt	(0X1B74A,	"Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.",	0);
+	create_insn	(0X1B74A);
+	set_name	(0X1B74A,	"ClassifyPartyMemberCondition");
 	create_insn	(x=0X1B74C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B761);
@@ -6980,13 +6984,6 @@ static Bytes_1(void) {
 	set_cmt	(0X27A2A,	"ClearGlobalFlag(ax=flag index): [si] &= ~mask.",	0);
 	create_insn	(0X27A2A);
 	set_name	(0X27A2A,	"ClearGlobalFlag");
-	create_insn	(0X27A34);
-	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
-	create_insn	(0X27A3E);
-	set_name	(0X27A3E,	"SetRecordFlag_10C");
-	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
-	create_insn	(0X27A46);
-	set_name	(0X27A46,	"SetGlobalFlag");
 }
 
 //------------------------------------------------------------------------
@@ -6996,6 +6993,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X27A34);
+	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
+	create_insn	(0X27A3E);
+	set_name	(0X27A3E,	"SetRecordFlag_10C");
+	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
+	create_insn	(0X27A46);
+	set_name	(0X27A46,	"SetGlobalFlag");
 	create_insn	(0X27A4E);
 	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27A56);
@@ -10325,6 +10329,15 @@ static Bytes_2(void) {
 	set_name	(0X3583D,	"aSellItemOr");
 	create_strlit	(0X3584A,	0XD);
 	set_name	(0X3584A,	"aEscToUndo");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
 	create_strlit	(0X35864,	0XD);
@@ -10349,15 +10362,6 @@ static Bytes_2(void) {
 	set_name	(0X358D3,	"aIsThatPriceAgr");
 	create_strlit	(0X358EC,	0X1C);
 	set_name	(0X358EC,	"aYouDonTHaveEno");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35908,	0X16);
 	set_name	(0X35908,	"aYouAreNowLevel");
 	create_strlit	(0X3591E,	0X16);

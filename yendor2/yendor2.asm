@@ -5684,7 +5684,7 @@ loc_136BD:                              ; CODE XREF: ShowClueBookItemDetail+3F�
                 mov     bx, 8A82h
                 mov     ax, si
                 add     ax, 4
-                call    sub_147FF
+                call    DrawLabeledBCDIfNonzero
                 mov     _textPos_y, 2Dh ; '-'
                 mov     _textPos_x, 73h ; 's'
                 mov     bx, 8A8Eh
@@ -6719,22 +6719,22 @@ ShowClueBookMonsterDetail proc near     ; CODE XREF: RunClueBookMonsterCategory+
                 mov     _textPos_y, 10h
                 mov     bx, 7DBBh
                 mov     ax, 8Ah
-                call    sub_14833
+                call    DrawRecordFieldBCDIfNonzero
                 mov     _textPos_x, 0DDh
                 mov     _textPos_y, 16h
                 mov     bx, 890Bh
                 mov     ax, 7Eh ; '~'
-                call    sub_14833
+                call    DrawRecordFieldBCDIfNonzero
                 mov     _textPos_x, 0BFh
                 mov     _textPos_y, 1Ch
                 mov     bx, 7C61h
                 mov     ax, 86h
-                call    sub_14833
+                call    DrawRecordFieldBCDIfNonzero
                 mov     _textPos_x, 0D7h
                 mov     _textPos_y, 22h ; '"'
                 mov     bx, 7C6Dh
                 mov     ax, 82h
-                call    sub_14833
+                call    DrawRecordFieldBCDIfNonzero
                 mov     _textPos_x, 0E9h
                 mov     _textPos_y, 2Eh ; '.'
                 mov     bx, 8911h
@@ -7226,8 +7226,8 @@ sub_147D8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147FF       proc near               ; CODE XREF: ShowClueBookItemDetail+5E↑p
-                push    si
+DrawLabeledBCDIfNonzero proc near       ; CODE XREF: ShowClueBookItemDetail+5E↑p
+                push    si              ; Draws a label (bx=msg) then the BCD4 value at si only if nonzero (IsBCDCounterAtLeast vs threshold 0). Used by ShowClueBookItemDetail and ShowClueBookMonsterDetail for several stat fields.
                 push    ax
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Ah
@@ -7240,18 +7240,18 @@ sub_147FF       proc near               ; CODE XREF: ShowClueBookItemDetail+5E�
                 mov     _textPos_x, 9Dh
                 call    FormatAndDrawBCD4
 
-loc_14831:                              ; CODE XREF: sub_147FF+1F↑j
+loc_14831:                              ; CODE XREF: DrawLabeledBCDIfNonzero+1F↑j
                 pop     si
                 retn
-sub_147FF       endp
+DrawLabeledBCDIfNonzero endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14833       proc near               ; CODE XREF: ShowClueBookMonsterDetail+3F↑p
+DrawRecordFieldBCDIfNonzero proc near   ; CODE XREF: ShowClueBookMonsterDetail+3F↑p
                                         ; ShowClueBookMonsterDetail+54↑p ...
-                push    si
+                push    si              ; Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.
                 push    ax
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Ah
@@ -7269,10 +7269,10 @@ sub_14833       proc near               ; CODE XREF: ShowClueBookMonsterDetail+3
                 mov     _textPos_x, 0FBh
                 call    FormatAndDrawBCD4
 
-loc_14874:                              ; CODE XREF: sub_14833+2E↑j
+loc_14874:                              ; CODE XREF: DrawRecordFieldBCDIfNonzero+2E↑j
                 pop     si
                 retn
-sub_14833       endp
+DrawRecordFieldBCDIfNonzero endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16864,8 +16864,8 @@ CompareBCD4     endp
 ; =============== S U B R O U T I N E =======================================
 
 
-IsBCDCounterAtLeast proc far            ; CODE XREF: sub_147FF+1A↑P
-                                        ; sub_14833+29↑P ...
+IsBCDCounterAtLeast proc far            ; CODE XREF: DrawLabeledBCDIfNonzero+1A↑P
+                                        ; DrawRecordFieldBCDIfNonzero+29↑P ...
                 push    cx              ; IsBCDCounterAtLeast(si=BCD counter, word_3293E=threshold): converts word_3293E via ConvertWordToBCD4, then CompareBCD4 against the counter at si. Callers use jnb on the result to mean 'counter >= threshold'.
                 push    dx
                 push    si
@@ -17005,7 +17005,7 @@ sub_19B3E       endp
 
 
 FormatAndDrawBCD4 proc far              ; CODE XREF: sub_13EDF+3C↑P
-                                        ; sub_147FF+2D↑P ...
+                                        ; DrawLabeledBCDIfNonzero+2D↑P ...
                 push    cx              ; FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.
                 push    dx
                 push    es
@@ -56618,7 +56618,7 @@ word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
 word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
                                         ; UseItem:loc_17BBF↑r ...
 word_2E412      dw 0                    ; DATA XREF: sub_13EDF+30↑w
-                                        ; sub_147FF+21↑w ...
+                                        ; DrawLabeledBCDIfNonzero+21↑w ...
 word_2E414      dw 0                    ; DATA XREF: sub_193BE+1C↑w
                                         ; sub_193BE+52↑w ...
 word_2E416      dw 0                    ; DATA XREF: UseItem:loc_17DC7↑r
