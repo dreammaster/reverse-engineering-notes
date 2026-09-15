@@ -5550,12 +5550,16 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_name	(0X220DF,	"ToggleMapViewMode");
 	create_insn	(0X220F0);
+	set_cmt	(0X22140,	"Draws 40 columns of one ShowLocalAreaMap row. Per cell, tests the explored/fog-of-war bitmap bit (same format PersistExploredCell writes): unexplored -> fixed blank/fog tile (g_pictureDir entry 0x13); explored -> DrawLocalMapCell.",	0);
 	create_insn	(0X22140);
+	set_name	(0X22140,	"DrawLocalMapRow");
 	create_insn	(x=0X22173);
 	op_hex		(x,	1);
 	create_insn	(0X22180);
+	set_cmt	(0X221A0,	"Draws one local-area-map cell. If word_328CA bit 4 is set, calls TryInteractAtPosition on the cell to check for a special interactive object (errorCode 6/7 select an overlay tile); otherwise uses the cell's own stored tile-type fields.",	0);
 	create_insn	(x=0X221A0);
 	op_hex		(x,	1);
+	set_name	(0X221A0,	"DrawLocalMapCell");
 	create_insn	(0X221FB);
 	create_insn	(0X22208);
 	create_insn	(0X22255);
@@ -7564,6 +7568,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X29738);
 	op_hex		(x,	1);
 	set_name	(0X29738,	"UnlockDoorCommand");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29747);
 	create_insn	(0X29769);
 	create_insn	(x=0X29775);
@@ -7588,15 +7601,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X29811);
 	op_hex		(x,	1);
 	set_cmt	(0X29838,	"this",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2986C);
 	op_hex		(x,	1);
 	set_cmt	(0X29878,	"Core picture-drawing primitive: looks up g_pictureDir[word_2E532], calls LoadPictureIntoEms to ensure it's EMS-resident, then blits width x height pixels from the EMS page frame to the video buffer at (x, y). Blit mode selected by _font_bgTransparent (0-5 -- different transparency/color-key branches).",	0);
@@ -11218,14 +11222,6 @@ static Bytes_2(void) {
 	set_name	(0X3A5A1,	"aTheNewsYouBrin");
 	create_strlit	(0X3A5CE,	0X31);
 	set_name	(0X3A5CE,	"aAlthoughTheApp");
-	create_strlit	(0X3A5FF,	0X34);
-	set_name	(0X3A5FF,	"aThereIsAMoreUr");
-	set_name	(0X3A653,	"_worldDatOffset3");
-	set_name	(0X3A65F,	"_worldDatOffset1");
-	set_name	(0X3A663,	"_worldDatOffset2");
-	set_name	(0X3A6C3,	"_worldDatOffset5");
-	set_name	(0X3A6C7,	"_worldDatOffset6");
-	set_name	(0X3A6CB,	"_worldDatOffset4");
 }
 
 //------------------------------------------------------------------------
@@ -11235,6 +11231,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X3A5FF,	0X34);
+	set_name	(0X3A5FF,	"aThereIsAMoreUr");
+	set_name	(0X3A653,	"_worldDatOffset3");
+	set_name	(0X3A65F,	"_worldDatOffset1");
+	set_name	(0X3A663,	"_worldDatOffset2");
+	set_name	(0X3A6C3,	"_worldDatOffset5");
+	set_name	(0X3A6C7,	"_worldDatOffset6");
+	set_name	(0X3A6CB,	"_worldDatOffset4");
 	set_name	(0X3A755,	"BLOCK_OFFSETS");
 	set_cmt	(0X3B81B,	"Object-type capability table, 0x16-byte entries (0xFFFF at +0 terminates): +0 object type, +2 ptr to a per-type 'known/unlocked' flags byte, +4 bitmask, +8 the command code required to unlock it. Read by UseAbilityOnTarget (tries to unlock via the current command) and ExamineTarget (just checks whether it's already known).",	0);
 	create_word	(0X3CC76);

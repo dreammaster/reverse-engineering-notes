@@ -6601,7 +6601,7 @@ loc_14081:                              ; CODE XREF: sub_13FCF+110↓j
                 mov     bx, 9043h
                 call    FileEntry_Read
                 call    ErrorCheck
-                call    sub_22140
+                call    DrawLocalMapRow
                 inc     word_3290E
                 add     y, 8
                 pop     cx
@@ -31702,7 +31702,7 @@ loc_21EFB:                              ; CODE XREF: ShowLocalAreaMap+C3↓j
                 call    FileEntry_Read
                 call    ErrorCheck
                 push    cs
-                call    near ptr sub_22140
+                call    near ptr DrawLocalMapRow
                 inc     word_368AB
                 inc     word_36863
                 add     y, 8
@@ -31884,9 +31884,9 @@ ToggleMapViewMode endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22140       proc far                ; CODE XREF: sub_13FCF+101↑P
+DrawLocalMapRow proc far                ; CODE XREF: sub_13FCF+101↑P
                                         ; ShowLocalAreaMap+B2↑p
-                push    cx
+                push    cx              ; Draws 40 columns of one ShowLocalAreaMap row. Per cell, tests the explored/fog-of-war bitmap bit (same format PersistExploredCell writes): unexplored -> fixed blank/fog tile (g_pictureDir entry 0x13); explored -> DrawLocalMapCell.
                 push    dx
                 push    si
                 push    di
@@ -31901,7 +31901,7 @@ sub_22140       proc far                ; CODE XREF: sub_13FCF+101↑P
                 mov     bx, 8
                 mov     cx, 28h ; '('
 
-loc_2216B:                              ; CODE XREF: sub_22140+58↓j
+loc_2216B:                              ; CODE XREF: DrawLocalMapRow+58↓j
                 push    cx
                 push    bx
                 mov     word_2E530, 13h
@@ -31911,10 +31911,10 @@ loc_2216B:                              ; CODE XREF: sub_22140+58↓j
                 jmp     short loc_22183
 ; ---------------------------------------------------------------------------
 
-loc_22180:                              ; CODE XREF: sub_22140+37↑j
-                call    sub_221A0
+loc_22180:                              ; CODE XREF: DrawLocalMapRow+37↑j
+                call    DrawLocalMapCell
 
-loc_22183:                              ; CODE XREF: sub_22140+3E↑j
+loc_22183:                              ; CODE XREF: DrawLocalMapRow+3E↑j
                 add     si, 4
                 add     x, 8
                 pop     bx
@@ -31923,7 +31923,7 @@ loc_22183:                              ; CODE XREF: sub_22140+3E↑j
                 mov     bx, 8
                 inc     bp
 
-loc_22193:                              ; CODE XREF: sub_22140+4D↑j
+loc_22193:                              ; CODE XREF: DrawLocalMapRow+4D↑j
                 pop     cx
                 inc     word_328FA
                 loop    loc_2216B
@@ -31933,14 +31933,14 @@ loc_22193:                              ; CODE XREF: sub_22140+4D↑j
                 pop     dx
                 pop     cx
                 retf
-sub_22140       endp
+DrawLocalMapRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_221A0       proc near               ; CODE XREF: sub_22140:loc_22180↑p
-                test    word_328CA, 4
+DrawLocalMapCell proc near              ; CODE XREF: DrawLocalMapRow:loc_22180↑p
+                test    word_328CA, 4   ; Draws one local-area-map cell. If word_328CA bit 4 is set, calls TryInteractAtPosition on the cell to check for a special interactive object (errorCode 6/7 select an overlay tile); otherwise uses the cell's own stored tile-type fields.
                 jz      short loc_221EE
                 push    si
                 push    bp
@@ -31964,7 +31964,7 @@ sub_221A0       proc near               ; CODE XREF: sub_22140:loc_22180↑p
                 cmp     errorCode, 7
                 jz      short loc_22208
 
-loc_221EE:                              ; CODE XREF: sub_221A0+6↑j
+loc_221EE:                              ; CODE XREF: DrawLocalMapCell+6↑j
                 mov     ax, [si]
                 mov     word_3295E, ax
                 mov     ax, [si+2]
@@ -31972,7 +31972,7 @@ loc_221EE:                              ; CODE XREF: sub_221A0+6↑j
                 jmp     short loc_22214
 ; ---------------------------------------------------------------------------
 
-loc_221FB:                              ; CODE XREF: sub_221A0+45↑j
+loc_221FB:                              ; CODE XREF: DrawLocalMapCell+45↑j
                 mov     ax, word_32DD0
                 mov     word_32960, ax
                 mov     ax, [si]
@@ -31980,14 +31980,14 @@ loc_221FB:                              ; CODE XREF: sub_221A0+45↑j
                 jmp     short loc_22214
 ; ---------------------------------------------------------------------------
 
-loc_22208:                              ; CODE XREF: sub_221A0+4C↑j
+loc_22208:                              ; CODE XREF: DrawLocalMapCell+4C↑j
                 mov     ax, word_32DD0
                 mov     word_3295E, ax
                 mov     ax, [si+2]
                 mov     word_32960, ax
 
-loc_22214:                              ; CODE XREF: sub_221A0+59↑j
-                                        ; sub_221A0+66↑j
+loc_22214:                              ; CODE XREF: DrawLocalMapCell+59↑j
+                                        ; DrawLocalMapCell+66↑j
                 mov     ax, 0Ch
                 mul     word_3295E
                 mov     di, ax
@@ -32007,9 +32007,9 @@ loc_22214:                              ; CODE XREF: sub_221A0+59↑j
                 call    DrawPicture
                 mov     _font_bgTransparent, 0
 
-locret_22254:                           ; CODE XREF: sub_221A0+9E↑j
+locret_22254:                           ; CODE XREF: DrawLocalMapCell+9E↑j
                 retn
-sub_221A0       endp
+DrawLocalMapCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -74335,10 +74335,10 @@ word_3295A      dw 0                    ; DATA XREF: start+552↑w
                                         ; start:loc_105CD↑w ...
 word_3295C      dw 0                    ; DATA XREF: ComputeGameClockTime+22↑w
                                         ; ComputeGameClockTime+39↑w ...
-word_3295E      dw 0                    ; DATA XREF: sub_221A0+50↑w
-                                        ; sub_221A0+63↑w ...
-word_32960      dw 0                    ; DATA XREF: sub_221A0+56↑w
-                                        ; sub_221A0+5E↑w ...
+word_3295E      dw 0                    ; DATA XREF: DrawLocalMapCell+50↑w
+                                        ; DrawLocalMapCell+63↑w ...
+word_32960      dw 0                    ; DATA XREF: DrawLocalMapCell+56↑w
+                                        ; DrawLocalMapCell+5E↑w ...
 ; int textPos_y
 _textPos_y      dw 0                    ; DATA XREF: sub_1075E+37↑w
                                         ; ShowIntroPicture+EF↑w ...
@@ -84835,10 +84835,10 @@ word_36861      dw 0                    ; DATA XREF: RunGameDialog+4B4↑w
                                         ; RunGameDialog+557↑w ...
 word_36863      dw 0                    ; DATA XREF: sub_19091↑w
                                         ; sub_1A294+18↑r ...
-word_36865      dw 0                    ; DATA XREF: sub_221A0+A↑r
-                                        ; sub_221A0+3A↑w ...
-word_36867      dw 0                    ; DATA XREF: sub_221A0+E↑r
-                                        ; sub_221A0+36↑w ...
+word_36865      dw 0                    ; DATA XREF: DrawLocalMapCell+A↑r
+                                        ; DrawLocalMapCell+3A↑w ...
+word_36867      dw 0                    ; DATA XREF: DrawLocalMapCell+E↑r
+                                        ; DrawLocalMapCell+36↑w ...
 aCurgame        db 'CURGAME',0
 picturesVga     db 0FFh
                 db 0FFh

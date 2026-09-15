@@ -1861,6 +1861,16 @@ from the already-named overworld `ShowWorldMap`.
 
 245 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawLocalMapRow/Cell
+
+Named `ShowLocalAreaMap`'s per-row/per-cell drawing helpers:
+`DrawLocalMapRow` respects the same fog-of-war bitmap as the automap
+(blank tile if unexplored), and `DrawLocalMapCell` calls the
+already-named `TryInteractAtPosition` to show special interactive
+objects (doors, etc.) with distinct icons rather than plain terrain.
+
+247 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
