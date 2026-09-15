@@ -744,7 +744,7 @@ loc_10635:                              ; CODE XREF: start+5B4↑j
                 mov     word_2E530, 0Bh
                 call    sub_23874
                 mov     ax, [si+4]
-                call    sub_1A3F0
+                call    TravelToDestination
 
 loc_10652:                              ; CODE XREF: start+63D↑j
                 mov     word_2E530, 0
@@ -18147,9 +18147,9 @@ seg035          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A3F0       proc far                ; CODE XREF: start+64D↑P
+TravelToDestination proc far            ; CODE XREF: start+64D↑P
                                         ; ExamineTarget+28↓P
-                mov     word_2E516, ax
+                mov     word_2E516, ax  ; Party teleport/fast-travel handler: given a destination id, looks up table 0xD40B (16-byte stride), gates on IsDestinationUnlocked if flagged, sets a music/mode flag, sets new position/facing (with a hardcoded landing-spot override for one destination), and reveals/redraws the map. Called from `start` and ExamineTarget.
                 dec     ax
                 mov     bx, 10h
                 mul     bx
@@ -18157,20 +18157,20 @@ sub_1A3F0       proc far                ; CODE XREF: start+64D↑P
                 add     si, ax
                 test    word ptr [si+0Eh], 2000h
                 jz      short loc_1A40E
-                call    sub_1A4C5
+                call    IsDestinationUnlocked
                 cmp     ax, 1
                 jge     short loc_1A40E
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A40E:                              ; CODE XREF: sub_1A3F0+13↑j
-                                        ; sub_1A3F0+1B↑j
+loc_1A40E:                              ; CODE XREF: TravelToDestination+13↑j
+                                        ; TravelToDestination+1B↑j
                 mov     ax, [si+6]
                 cmp     ax, 0
                 jz      short loc_1A41B
                 call    sub_28412
 
-loc_1A41B:                              ; CODE XREF: sub_1A3F0+24↑j
+loc_1A41B:                              ; CODE XREF: TravelToDestination+24↑j
                 and     word_36C79, 0FFF8h
                 test    word ptr [si+0Eh], 8000h
                 jz      short loc_1A42E
@@ -18178,7 +18178,7 @@ loc_1A41B:                              ; CODE XREF: sub_1A3F0+24↑j
                 jmp     short loc_1A451
 ; ---------------------------------------------------------------------------
 
-loc_1A42E:                              ; CODE XREF: sub_1A3F0+35↑j
+loc_1A42E:                              ; CODE XREF: TravelToDestination+35↑j
                 test    word ptr [si+0Eh], 4000h
                 jz      short loc_1A445
                 call    sub_1A582
@@ -18187,13 +18187,13 @@ loc_1A42E:                              ; CODE XREF: sub_1A3F0+35↑j
                 jmp     short loc_1A451
 ; ---------------------------------------------------------------------------
 
-loc_1A445:                              ; CODE XREF: sub_1A3F0+43↑j
+loc_1A445:                              ; CODE XREF: TravelToDestination+43↑j
                 test    word ptr [si+0Eh], 1000h
                 jz      short loc_1A451
                 or      word_36C79, 1
 
-loc_1A451:                              ; CODE XREF: sub_1A3F0+3C↑j
-                                        ; sub_1A3F0+53↑j ...
+loc_1A451:                              ; CODE XREF: TravelToDestination+3C↑j
+                                        ; TravelToDestination+53↑j ...
                 mov     ax, [si]
                 mov     word_36CF7, ax
                 mov     ax, [si+2]
@@ -18211,12 +18211,12 @@ loc_1A451:                              ; CODE XREF: sub_1A3F0+3C↑j
                 cmp     word_36D01, 474h
                 jl      short loc_1A493
 
-loc_1A487:                              ; CODE XREF: sub_1A3F0+8D↑j
+loc_1A487:                              ; CODE XREF: TravelToDestination+8D↑j
                 mov     word_36CF7, 17Ah
                 mov     word_36CF9, 0E3h
 
-loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
-                                        ; sub_1A3F0+7E↑j ...
+loc_1A493:                              ; CODE XREF: TravelToDestination+77↑j
+                                        ; TravelToDestination+7E↑j ...
                 push    si
                 call    sub_209D2
                 call    RevealCellsAroundPlayer
@@ -18231,18 +18231,18 @@ loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
                 call    DrawMinimap
                 call    DrawMouseCursor
                 retf
-sub_1A3F0       endp
+TravelToDestination endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A4C5       proc near               ; CODE XREF: sub_1A3F0+15↑p
-                push    si
+IsDestinationUnlocked proc near         ; CODE XREF: TravelToDestination+15↑p
+                push    si              ; Destination-eligibility gate: looks up table 0xDFBB (22-byte stride) by destination id (word_2E516); tests a flag word against a bitmask, returning eligible (1) or not (0, with an optional rejection message). Called from TravelToDestination.
                 mov     si, 0DFBBh
                 mov     ax, word_2E516
 
-loc_1A4CC:                              ; CODE XREF: sub_1A4C5+13↓j
+loc_1A4CC:                              ; CODE XREF: IsDestinationUnlocked+13↓j
                 cmp     word ptr [si], 0FFFFh
                 jz      short loc_1A52F
                 cmp     [si], ax
@@ -18251,7 +18251,7 @@ loc_1A4CC:                              ; CODE XREF: sub_1A4C5+13↓j
                 jmp     short loc_1A4CC
 ; ---------------------------------------------------------------------------
 
-loc_1A4DA:                              ; CODE XREF: sub_1A4C5+E↑j
+loc_1A4DA:                              ; CODE XREF: IsDestinationUnlocked+E↑j
                 mov     bx, [si+2]
                 mov     ax, [si+4]
                 test    [bx], ax
@@ -18261,7 +18261,7 @@ loc_1A4DA:                              ; CODE XREF: sub_1A4C5+E↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A4E9:                              ; CODE XREF: sub_1A4C5+1D↑j
+loc_1A4E9:                              ; CODE XREF: IsDestinationUnlocked+1D↑j
                 cmp     word ptr [si+8], 0
                 jz      short loc_1A533
                 call    ClearStatusPanelIfDirty
@@ -18278,13 +18278,13 @@ loc_1A4E9:                              ; CODE XREF: sub_1A4C5+1D↑j
                 call    DrawMouseCursor
                 call    sub_238CD
 
-loc_1A52F:                              ; CODE XREF: sub_1A4C5+A↑j
+loc_1A52F:                              ; CODE XREF: IsDestinationUnlocked+A↑j
                 xor     ax, ax
                 pop     si
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A533:                              ; CODE XREF: sub_1A4C5+28↑j
+loc_1A533:                              ; CODE XREF: IsDestinationUnlocked+28↑j
                 call    sub_16EFA
                 mov     ax, [si+6]
                 call    ShowConfirmPrompt
@@ -18296,7 +18296,7 @@ loc_1A533:                              ; CODE XREF: sub_1A4C5+28↑j
                 add     si, 0Ah
                 mov     di, 0AFA8h
 
-loc_1A554:                              ; CODE XREF: sub_1A4C5+9C↓j
+loc_1A554:                              ; CODE XREF: IsDestinationUnlocked+9C↓j
                 mov     dl, [si]
                 cmp     dl, 20h ; ' '
                 jz      short loc_1A563
@@ -18306,7 +18306,7 @@ loc_1A554:                              ; CODE XREF: sub_1A4C5+9C↓j
                 inc     si
                 loop    loc_1A554
 
-loc_1A563:                              ; CODE XREF: sub_1A4C5+94↑j
+loc_1A563:                              ; CODE XREF: IsDestinationUnlocked+94↑j
                 or      [bx], ax
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -18315,20 +18315,20 @@ loc_1A563:                              ; CODE XREF: sub_1A4C5+94↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1A574:                              ; CODE XREF: sub_1A4C5+7E↑j
-                                        ; sub_1A4C5+98↑j
+loc_1A574:                              ; CODE XREF: IsDestinationUnlocked+7E↑j
+                                        ; IsDestinationUnlocked+98↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 xor     ax, ax
                 pop     si
                 retn
-sub_1A4C5       endp
+IsDestinationUnlocked endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A582       proc near               ; CODE XREF: sub_1A3F0+45↑p
+sub_1A582       proc near               ; CODE XREF: TravelToDestination+45↑p
                 and     word_328C4, 0FFBFh
                 mov     cx, word_36C85
                 mov     ax, 9
@@ -53373,7 +53373,7 @@ loc_2D625:                              ; CODE XREF: ExamineTarget+14↑j
 
 loc_2D62F:                              ; CODE XREF: ExamineTarget+10↑j
                 mov     ax, word_2E516
-                call    sub_1A3F0
+                call    TravelToDestination
                 jmp     short loc_2D644
 ; ---------------------------------------------------------------------------
 
@@ -56881,8 +56881,8 @@ word_2E512      dw 0                    ; DATA XREF: sub_1CCBC+87↑w
                                         ; sub_1CCBC+9F↑w
 word_2E514      dw 0                    ; DATA XREF: sub_1CCBC+8D↑w
                                         ; sub_1CCBC+A5↑w
-word_2E516      dw 0                    ; DATA XREF: sub_1A3F0↑w
-                                        ; sub_1A4C5+4↑r ...
+word_2E516      dw 0                    ; DATA XREF: TravelToDestination↑w
+                                        ; IsDestinationUnlocked+4↑r ...
 aBlaster        db 'BLASTER=',0
 aSound          db 'SOUND=',0
 _val34          dw 0                    ; DATA XREF: InitGlobals+F0↑w
@@ -85913,9 +85913,9 @@ word_36CA9      dw 0                    ; DATA XREF: UpdatePartyAverageStatTiers
                 db 0FFh
 word_36CAF      dw 0                    ; DATA XREF: sub_2C0FE+4FD↑r
                                         ; sub_2C0FE+537↑w
-word_36CB1      dw 0                    ; DATA XREF: sub_1A3F0+B2↑w
+word_36CB1      dw 0                    ; DATA XREF: TravelToDestination+B2↑w
                                         ; sub_209D2+8↑r ...
-word_36CB3      dw 0                    ; DATA XREF: sub_1A3F0+B8↑w
+word_36CB3      dw 0                    ; DATA XREF: TravelToDestination+B8↑w
                                         ; sub_209D2+E↑r ...
                 db 0FFh
                 db 0FFh
@@ -85996,7 +85996,7 @@ word_36CFD      dw 0Bh                  ; DATA XREF: sub_1E64A+12D↑w
 word_36CFF      dw 222h                 ; DATA XREF: sub_1E64A+138↑w
                                         ; AdvanceGameClock+45↑w ...
 word_36D01      dw 1E0h                 ; DATA XREF: sub_11A10+E5↑w
-                                        ; sub_1A3F0+87↑r ...
+                                        ; TravelToDestination+87↑r ...
 word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
                                         ; sub_1B2BD↑r ...
 word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r

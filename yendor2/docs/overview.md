@@ -2733,6 +2733,15 @@ epilogue every path funnels through (loot-staging check →
 `HandleRangedOrCombatAction` is now fully mapped end to end.
 Documentation only, no new renames.
 
+### 2026-09-15 session update, continued: TravelToDestination and IsDestinationUnlocked
+
+Named the party teleport/fast-travel system: `TravelToDestination`
+(called from `start` and `ExamineTarget`) looks up a destination table
+for the new position/facing and an optional message, gated by
+`IsDestinationUnlocked`'s separate eligibility table when required.
+
+347 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

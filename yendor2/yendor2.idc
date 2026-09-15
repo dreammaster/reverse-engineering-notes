@@ -3594,7 +3594,9 @@ static Bytes_0(void) {
 	create_insn	(0X1A386);
 	create_insn	(0X1A39E);
 	create_insn	(0X1A3CB);
+	set_cmt	(0X1A3F0,	"Party teleport/fast-travel handler: given a destination id, looks up table 0xD40B (16-byte stride), gates on IsDestinationUnlocked if flagged, sets a music/mode flag, sets new position/facing (with a hardcoded landing-spot override for one destination), and reveals/redraws the map. Called from `start` and ExamineTarget.",	0);
 	create_insn	(0X1A3F0);
+	set_name	(0X1A3F0,	"TravelToDestination");
 	create_insn	(x=0X1A3FE);
 	op_hex		(x,	1);
 	create_insn	(0X1A40E);
@@ -3614,7 +3616,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1A462);
 	op_hex		(x,	1);
+	set_cmt	(0X1A4C5,	"Destination-eligibility gate: looks up table 0xDFBB (22-byte stride) by destination id (word_2E516); tests a flag word against a bitmask, returning eligible (1) or not (0, with an optional rejection message). Called from TravelToDestination.",	0);
 	create_insn	(0X1A4C5);
+	set_name	(0X1A4C5,	"IsDestinationUnlocked");
 	create_insn	(0X1A4DA);
 	create_insn	(0X1A4E9);
 	create_insn	(x=0X1A4F4);
@@ -3885,6 +3889,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1B428,	"CheckForLevelUp (implicit si=word_328D4): walks the XP-threshold table at 0x9277 (65 x 4-byte packed-BCD entries, one per level) starting at the character's current level [+0x16], comparing their XP [+0x18] against each threshold and advancing while >=. If the result exceeds the current level, stores it into [+0x1E] (pending new level, not yet applied).",	0);
 	create_insn	(0X1B428);
 	set_name	(0X1B428,	"CheckForLevelUp");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B433);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B441);
@@ -3921,15 +3934,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1B702,	"SelectItemUseRecord: es:si = word_2E54E = the (word_2E550)th 58-byte sub-record within LoadItemData's buffer (es=word_2E54C). Confirms the loaded item block is a list of use-records, not a single blob.",	0);
 	create_insn	(0X1B702);
 	set_name	(0X1B702,	"SelectItemUseRecord");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1B717,	"Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.",	0);
 	create_insn	(0X1B717);
 	set_name	(0X1B717,	"CheckPartyMemberItemFlag");
@@ -6209,6 +6213,15 @@ static Bytes_1(void) {
 	set_cmt	(0X23BAE,	"Iterates the party roster: sub_25544/SelectDefaultPartyRecord establish word_328D4 between iterations (a linear scan of g_partyRecords, NOT a '+0x10 next' link field -- that description was wrong, see fix_party_record_next_claim.py), then runs a pipeline of per-member display steps (ShowCharacterSkills -> ShowCharacterEquipment -> ShowCharacterStats -> ShowCharacterInventory -> EditCharacterName -> ShowCharacterSummary) -- 'Q' aborts at any stage. RunTitleScreen's only caller (its 'C' option) -- resolves 'C' as viewing the party's characters.",	0);
 	create_insn	(0X23BAE);
 	set_name	(0X23BAE,	"ShowPartyMembers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X23BBD);
 	create_insn	(0X23BC8);
 	create_insn	(x=0X23BF5);
@@ -6235,15 +6248,6 @@ static Bytes_1(void) {
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X243ED,	"msg",	0);
 	create_insn	(x=0X243F9);
 	op_hex		(x,	1);
@@ -9468,6 +9472,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D463);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D46B);
 	op_hex		(x,	1);
 	create_insn	(0X2D470);
@@ -9517,15 +9530,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2D60A,	"Looks up the currently-targeted object (word_2E548) in the 0xDFBB capability table; if its capability is already known, shows one message (sub_29461), otherwise (or if not in the table at all) shows a generic description (sub_1A3F0). The 'examine' counterpart to UseAbilityOnTarget's 'try it'.",	0);
 	create_insn	(0X2D60A);
 	set_name	(0X2D60A,	"ExamineTarget");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D625);
 	create_insn	(0X2D639);
 	set_cmt	(0X2D65A,	"Moderate confidence: one of HandleGameCommand's fallback handlers for 'container-like' target flags. Checks a needs-confirmation bit on the target and prompts (ShowConfirmPrompt msg=0x20) before proceeding if set -- consistent with a locked/trapped container. Not fully traced past that point.",	0);

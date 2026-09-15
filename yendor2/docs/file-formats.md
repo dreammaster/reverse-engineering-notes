@@ -212,6 +212,17 @@ write-back as `SaveAndCloseContainer` minus the marker-clear) — a
 like the repair minigame, presumably so an in-progress bag's state
 isn't lost if the action fails.
 
+### Party travel / fast-travel
+
+`TravelToDestination` (called from `start` and `ExamineTarget`) is the
+party teleport/fast-travel handler: given a destination id, looks up
+a destination table (`0xD40B`) for the new position/facing, an
+optional message, and a music/mode flag; gated by
+`IsDestinationUnlocked` (a separate eligibility table, `0xDFBB`) when
+the destination requires it, rejecting with a message if not yet
+unlocked. Reveals cells around the new position and redraws the
+screen/minimap on success.
+
 ### The on-line clue book (F8)
 
 `ShowClueBook` (the manual's "F8 On-line clue book") drives an
