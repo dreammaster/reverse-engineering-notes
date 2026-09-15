@@ -972,7 +972,7 @@ loc_10897:                              ; CODE XREF: seg000:0885↑j
                 call    CheckTransportAvailability
                 cmp     word_32974, 7
                 jnz     short loc_108B7
-                call    sub_2819F
+                call    ShowGameClockCommand
 
 loc_108B7:                              ; CODE XREF: seg000:08B0↑j
                 jmp     loc_10043
@@ -43304,7 +43304,7 @@ seg098          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2814C       proc far                ; CODE XREF: sub_2819F+C↓p
+sub_2814C       proc far                ; CODE XREF: ShowGameClockCommand+C↓p
                 mov     word_32934, 4D41h
                 mov     ax, word_36D01
                 cmp     word_36D01, 2CFh
@@ -43348,9 +43348,9 @@ sub_2814C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2819F       proc far                ; CODE XREF: seg000:08B2↑P
+ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                                         ; HandleGameCommand+EC↓P
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.
                 or      word_328C4, 100h
                 push    cs
                 call    near ptr sub_2814C
@@ -43393,7 +43393,7 @@ sub_2819F       proc far                ; CODE XREF: seg000:08B2↑P
                 call    sub_21530
                 call    DrawMouseCursor
                 retf
-sub_2819F       endp
+ShowGameClockCommand endp
 
 seg098          ends
 
@@ -45829,7 +45829,7 @@ loc_29680:                              ; CODE XREF: HandleGameCommand+D0↑j
                 test    word_328CA, 1000h
                 jnz     short loc_2969A
                 call    sub_238CD
-                call    sub_2819F
+                call    ShowGameClockCommand
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -84336,19 +84336,19 @@ aLevelX         db ' LEVEL X',0
 aMapX           db ' MAP X',0
 aPosition       db 'POSITION ',0
                 db ' - ',0
-a1212Am         dw 3231h                ; DATA XREF: sub_2819F+38↑w
+a1212Am         dw 3231h                ; DATA XREF: ShowGameClockCommand+38↑w
                 db  3Ah ; :
-word_35197      dw 3231h                ; DATA XREF: sub_2819F+46↑w
+word_35197      dw 3231h                ; DATA XREF: ShowGameClockCommand+46↑w
                 db  20h
-byte_3519A      db 41h                  ; DATA XREF: sub_2819F+4C↑w
+byte_3519A      db 41h                  ; DATA XREF: ShowGameClockCommand+4C↑w
                 db  4Dh ; M
                 db    0
-a12121212       dw 3231h                ; DATA XREF: sub_2819F+5A↑w
+a12121212       dw 3231h                ; DATA XREF: ShowGameClockCommand+5A↑w
                 db  2Fh ; /
-word_351A0      dw 3231h                ; DATA XREF: sub_2819F+68↑w
+word_351A0      dw 3231h                ; DATA XREF: ShowGameClockCommand+68↑w
                 db  2Fh ; /
-word_351A3      dw 3231h                ; DATA XREF: sub_2819F+76↑w
-word_351A5      dw 3231h                ; DATA XREF: sub_2819F+7C↑w
+word_351A3      dw 3231h                ; DATA XREF: ShowGameClockCommand+76↑w
+word_351A5      dw 3231h                ; DATA XREF: ShowGameClockCommand+7C↑w
                 align 2
                 db '                         ',0
 aCharacterCreat db 'CHARACTER CREATION',0

@@ -1749,6 +1749,17 @@ exact trigger for the mode bit itself wasn't traced.
 
 234 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found an in-game clock/calendar
+
+Traced `HandleGameCommand`'s `word_32974==7` handler and dumped its
+template strings directly — `12:12 AM` and `12/12/1212`, filled in
+with the current time and date. A genuine, standalone finding: the
+game tracks a real in-game calendar, not just a coarse day/night
+state. Named `ShowGameClockCommand`. The clock-advancement logic
+itself (who ticks these globals, and how fast) isn't traced yet.
+
+235 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -452,6 +452,17 @@ table needed.
 door's required-key flags against the player's currently held key to
 resolve the attempt.
 
+### In-game clock/calendar
+
+`ShowGameClockCommand` (a `HandleGameCommand` handler, `word_32974==7`)
+confirms the game tracks a genuine in-game date and time, not just a
+coarse day/night or "time of day" value: it fills two fixed template
+strings — `12:12 AM` and `12/12/1212` — with the current hour/minute/
+AM-PM (`word_32948`/`word_3295C`/`word_32934`) and month/day/year
+(`word_36CFD`/`word_36CFB`/`word_36CFF`). None of these globals'
+update logic (who advances the clock, and how fast) has been traced
+yet.
+
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of
 Pariah" (item `0x31`, modifier `00`) — directly explains the registration

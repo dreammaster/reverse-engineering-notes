@@ -7004,7 +7004,9 @@ static Bytes_1(void) {
 	create_insn	(0X2814C);
 	create_insn	(0X28172);
 	create_insn	(0X2818B);
+	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
 	create_insn	(0X2819F);
+	set_name	(0X2819F,	"ShowGameClockCommand");
 	create_insn	(x=0X281A4);
 	op_hex		(x,	1);
 	set_cmt	(0X2821E,	"msg",	0);
@@ -7902,6 +7904,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29DEB);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29DF0,	"x",	0);
 	set_cmt	(0X29DF4,	"y",	0);
 	create_insn	(x=0X29DFA);
@@ -7946,15 +7957,6 @@ static Bytes_1(void) {
 	create_insn	(0X29E5E);
 	create_insn	(x=0X29E64);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29E6A);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29E6D);
