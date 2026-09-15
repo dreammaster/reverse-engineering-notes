@@ -23891,7 +23891,7 @@ loc_1D67B:                              ; CODE XREF: HandleRangedOrCombatAction+
                 cmp     errorCode, 4
                 jz      short loc_1D68B
                 mov     ax, _val33
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 jmp     loc_1D747
 ; ---------------------------------------------------------------------------
 
@@ -23902,7 +23902,7 @@ loc_1D68B:                              ; CODE XREF: HandleRangedOrCombatAction+
                 test    word_328C8, 200h
                 jnz     short loc_1D6AC
                 mov     ax, _val43
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 call    sub_1DCC6
                 cmp     word_2E544, 0
                 jnz     short loc_1D68B
@@ -23923,7 +23923,7 @@ loc_1D6AC:                              ; CODE XREF: HandleRangedOrCombatAction+
 loc_1D6CE:                              ; CODE XREF: HandleRangedOrCombatAction+1FA↑j
                 and     word ptr [si+0Ch], 0FFFDh
                 mov     ax, word_329E6
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 call    sub_1DCC6
                 cmp     word ptr [si+10h], 0
                 jle     short loc_1D6EA
@@ -24036,7 +24036,7 @@ loc_1D813:                              ; CODE XREF: HandleRangedOrCombatAction+
                 cmp     ax, _val29
                 jz      short loc_1D87F
                 mov     ax, _val37
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 jmp     loc_1D747
 ; ---------------------------------------------------------------------------
 
@@ -24060,7 +24060,7 @@ loc_1D840:                              ; CODE XREF: HandleRangedOrCombatAction+
                 cmp     ax, _val29
                 jz      short loc_1D87F
                 mov     ax, _val37
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 cmp     word ptr [si+10h], 0
                 jle     short loc_1D872
                 jmp     loc_1D747
@@ -24076,7 +24076,7 @@ loc_1D87F:                              ; CODE XREF: HandleRangedOrCombatAction+
                                         ; HandleRangedOrCombatAction+36F↑j ...
                 call    sub_2BB97
                 mov     ax, _val36
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
                 mov     g_blitMaskLen, 6
                 mov     ax, 55AAh
                 mov     g_blitMaskPtr, ax
@@ -24132,7 +24132,7 @@ loc_1D921:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    RefreshDungeonScreen
                 call    DrawMouseCursor
                 mov     ax, _val37
-                call    sub_1DA42
+                call    ShowCombatMessageOrWait
 
 loc_1D931:                              ; CODE XREF: HandleRangedOrCombatAction+467↑j
                 call    sub_238CD
@@ -24261,9 +24261,9 @@ ApplyDamageAlongCorridorLine endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DA42       proc near               ; CODE XREF: HandleRangedOrCombatAction+1CD↑p
+ShowCombatMessageOrWait proc near       ; CODE XREF: HandleRangedOrCombatAction+1CD↑p
                                         ; HandleRangedOrCombatAction+1E4↑p ...
-                push    ax
+                push    ax              ; Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.
                 call    sub_2827E
                 jz      short loc_1DA54
                 pop     ax
@@ -24272,14 +24272,14 @@ sub_1DA42       proc near               ; CODE XREF: HandleRangedOrCombatAction+
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1DA54:                              ; CODE XREF: sub_1DA42+6↑j
-                                        ; sub_1DA42+16↓j
+loc_1DA54:                              ; CODE XREF: ShowCombatMessageOrWait+6↑j
+                                        ; ShowCombatMessageOrWait+16↓j
                 pop     ax
                 cmp     ax, 0
                 jz      short loc_1DA54
                 call    sub_28412
                 retn
-sub_1DA42       endp ; sp-analysis failed
+ShowCombatMessageOrWait endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================

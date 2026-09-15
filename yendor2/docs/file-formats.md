@@ -520,7 +520,9 @@ what's at that row: clear / wall / door / a `[+6]` bit `0x800` feature
 / a monster, reusing `GetMonsterAtViewportRow`'s `0x6D60` scratch-buffer
 lookup) at successive rows (`0x31`→`0x2E`→`0x2B`→`0x28`→`0x24`→`0x19`,
 i.e. the shot travels from far to near) until something stops it. A
-wall/door shows a "deflected" message; a monster triggers
+wall/door shows a "deflected" message (`ShowCombatMessageOrWait`,
+which shows the message unless speech/sound is currently busy, in
+which case it just waits); a monster triggers
 `ResolveAttackOrAbilityAction` and a hit/miss follow-up. If bit `0x100`
 was clear (not in combat), it instead opens a parallel spell/ability-
 cast sequence (not traced).

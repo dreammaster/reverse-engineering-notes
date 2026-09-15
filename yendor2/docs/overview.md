@@ -2699,6 +2699,14 @@ aren't traced yet, only the fully-worked-out ranged-weapon-shot path.
 
 343 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowCombatMessageOrWait
+
+Named `sub_1DA42`, `HandleRangedOrCombatAction`'s message helper:
+shows a combat message unless speech/sound is currently busy, in
+which case it just waits 6 ticks instead.
+
+344 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

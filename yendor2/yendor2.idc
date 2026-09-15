@@ -4547,7 +4547,9 @@ static Bytes_1(void) {
 	set_cmt	(0X1DA2C,	"Straight-line multi-target attack: calls GetMonsterAtViewportRow for 3 consecutive depth rows (word_3292C incrementing), applying ApplyResolvedDamageWithResistance to whatever monster is found at each. Matches the 'IN A STRAIGHT LINE' targeting text from ShowClueBookSpellDetail's message table. Called from sub_1DA60.",	0);
 	create_insn	(0X1DA2C);
 	set_name	(0X1DA2C,	"ApplyDamageAlongCorridorLine");
+	set_cmt	(0X1DA42,	"Shows a combat message (ax, via sub_28412) unless sub_2827E reports speech/sound busy, in which case it just waits 6 ticks instead. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X1DA42);
+	set_name	(0X1DA42,	"ShowCombatMessageOrWait");
 	set_cmt	(0X1DA4B,	"ticks",	0);
 	create_insn	(0X1DA54);
 	set_cmt	(0X1DA60,	"Resolves an attack/ability action against word_328D4 (current target). word_328C8 bit 0x100 set -> ranged/thrown weapon attack (finds an equipped item, ResolveAttack + ApplyResolvedDamageWithResistance). Else -> ResolveAbilityEffect (spell/ability roll); for its 2 area-effect ids, when not yet in formal combat, probes nearby depth-row triples via ApplyDamageAlongCorridorLine to find a target. Called from sub_1D4B8 (the combat-round driver).",	0);
@@ -6252,6 +6254,15 @@ static Bytes_1(void) {
 	set_cmt	(0X245AE,	"Draws up to 8 item entries (DrawListEntryLabel, one per _val1.._val8, each skippable via a word_328C4 bit -- likely empty slots) -- matches the 8-item-slot-per-character savegame layout from file-formats.md. Then a selection loop: 'N' next character, 'Q' back, 'E' exit entirely (mirrors ShowPartyMembers' outer iteration). The character inventory/equipment screen.",	0);
 	create_insn	(0X245AE);
 	set_name	(0X245AE,	"ShowCharacterInventory");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X245D4,	"msg",	0);
 	create_insn	(x=0X245FE);
 	op_hex		(x,	1);
@@ -6265,15 +6276,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X24662);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X24676);
 	op_hex		(x,	1);
 	create_insn	(x=0X2468A);
@@ -9536,6 +9538,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D6EF);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2D6FC);
 	create_insn	(x=0X2D72D);
 	op_hex		(x,	1);
@@ -9549,15 +9560,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D7D9);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D7EA);
 	create_insn	(x=0X2D7FD);
 	op_hex		(x,	1);
