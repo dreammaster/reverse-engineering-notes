@@ -1451,6 +1451,20 @@ values, that flag bank must belong to a different record type. No new
 function named this round — a documentation-only pass, refining
 `ShowCharacterSkills`' own comment to match.
 
+### 2026-09-15 session update, continued: found the 8 item slots
+
+Followed `ShowCharacterInventory`'s item-selection path down into a
+new function, `GetInventorySlotPtr`, and found the last remaining
+party-record TODO: each character has up to 4 separate 8-slot
+inventories (1 main + 3 "alternate bags," selected by 3 marker
+fields), each slot 4 bytes, addressed via a small group-base-plus-
+offset formula. Slot content encoding itself (item id vs. quantity)
+isn't decoded yet. With this, all three of the original "not yet
+mapped" party-record TODOs (attributes, skills, item slots) have at
+least a structural answer.
+
+200 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

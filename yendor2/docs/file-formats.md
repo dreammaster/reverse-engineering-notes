@@ -165,8 +165,19 @@ confident that `GetRecordFlagBitAndWord_CA` (the per-object flag bank
 at the same relative offset, from several rounds ago) operates on a
 *different* record type than the party record, not this one — that
 hedge said "unconfirmed record type," which now reads more like
-"confirmed not the party record." Still not mapped: the 8 item slots
-(`ShowCharacterInventory`).
+"confirmed not the party record." **Follow-up**: found the 8 item
+slots too, via `ShowCharacterInventory`'s item-selection handler
+(`sub_26415`) down into the new `GetInventorySlotPtr`. Each character
+has up to **4 separate 8(-ish)-slot inventories** — 1 main plus 3
+"alternate bags" — not stored directly on the base record:
+`GetInventorySlotPtr(slot 1-9)` picks a group base (`+0x118` by
+default, or `+0x180`/`+0x1A6`/`+0x1CC` if the matching marker field —
+`+0x17C`/`+0x1A2`/`+0x1C8` — is populated) and returns
+`group_base + 2 + (slot-1)*4`, i.e. 4 bytes per slot. Individual slot
+content (item id vs. quantity split) not decoded yet. This also
+explains why the slots weren't visible from `ShowCharacterInventory`'s
+own drawing code — that reads generic catalog ids for its labels, not
+per-character storage directly.
 
 ### Combat: monster slots and turn order
 

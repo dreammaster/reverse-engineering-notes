@@ -39337,7 +39337,7 @@ loc_2624C:                              ; CODE XREF: sub_2621C+25↑j
 ; ---------------------------------------------------------------------------
 
 loc_2625C:                              ; CODE XREF: sub_2621C+35↑j
-                call    sub_26954
+                call    GetInventorySlotPtr
                 cmp     word_31946, 0
                 jnz     short loc_26295
                 cmp     word ptr [di], 0
@@ -39568,7 +39568,7 @@ loc_26441:                              ; CODE XREF: sub_26415+21↑j
                 mov     si, word_328D4
                 cmp     word_2E40A, 9
                 jz      short loc_264B3
-                call    sub_26954
+                call    GetInventorySlotPtr
                 mov     ax, [di]
                 cmp     ax, 0
                 jz      short loc_2647D
@@ -40165,9 +40165,9 @@ sub_26928       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26954       proc near               ; CODE XREF: sub_2621C:loc_2625C↑p
+GetInventorySlotPtr proc near           ; CODE XREF: sub_2621C:loc_2625C↑p
                                         ; sub_26415+37↑p
-                mov     si, word_328D4
+                mov     si, word_328D4  ; GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.
                 and     word ptr [si+15Ch], 0F83Fh
                 mov     di, word_328D4
                 cmp     ax, 9
@@ -40175,7 +40175,7 @@ sub_26954       proc near               ; CODE XREF: sub_2621C:loc_2625C↑p
                 jmp     loc_269F5
 ; ---------------------------------------------------------------------------
 
-loc_2696A:                              ; CODE XREF: sub_26954+11↑j
+loc_2696A:                              ; CODE XREF: GetInventorySlotPtr+11↑j
                 cmp     word ptr [si+17Ch], 0
                 jz      short loc_2697D
                 add     di, 180h
@@ -40183,7 +40183,7 @@ loc_2696A:                              ; CODE XREF: sub_26954+11↑j
                 jmp     short loc_269AD
 ; ---------------------------------------------------------------------------
 
-loc_2697D:                              ; CODE XREF: sub_26954+1B↑j
+loc_2697D:                              ; CODE XREF: GetInventorySlotPtr+1B↑j
                 cmp     word ptr [si+1A2h], 0
                 jz      short loc_26990
                 add     di, 1A6h
@@ -40191,7 +40191,7 @@ loc_2697D:                              ; CODE XREF: sub_26954+1B↑j
                 jmp     short loc_269AD
 ; ---------------------------------------------------------------------------
 
-loc_26990:                              ; CODE XREF: sub_26954+2E↑j
+loc_26990:                              ; CODE XREF: GetInventorySlotPtr+2E↑j
                 cmp     word ptr [si+1C8h], 0
                 jz      short loc_269A3
                 add     di, 1CCh
@@ -40199,69 +40199,69 @@ loc_26990:                              ; CODE XREF: sub_26954+2E↑j
                 jmp     short loc_269AD
 ; ---------------------------------------------------------------------------
 
-loc_269A3:                              ; CODE XREF: sub_26954+41↑j
+loc_269A3:                              ; CODE XREF: GetInventorySlotPtr+41↑j
                 add     di, 118h
                 or      word ptr [si+15Ch], 80h
 
-loc_269AD:                              ; CODE XREF: sub_26954+27↑j
-                                        ; sub_26954+3A↑j ...
+loc_269AD:                              ; CODE XREF: GetInventorySlotPtr+27↑j
+                                        ; GetInventorySlotPtr+3A↑j ...
                 cmp     ax, 1
                 jnz     short loc_269B6
                 add     di, 2
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269B6:                              ; CODE XREF: sub_26954+5C↑j
+loc_269B6:                              ; CODE XREF: GetInventorySlotPtr+5C↑j
                 cmp     ax, 2
                 jnz     short loc_269BF
                 add     di, 6
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269BF:                              ; CODE XREF: sub_26954+65↑j
+loc_269BF:                              ; CODE XREF: GetInventorySlotPtr+65↑j
                 cmp     ax, 3
                 jnz     short loc_269C8
                 add     di, 0Ah
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269C8:                              ; CODE XREF: sub_26954+6E↑j
+loc_269C8:                              ; CODE XREF: GetInventorySlotPtr+6E↑j
                 cmp     ax, 4
                 jnz     short loc_269D1
                 add     di, 0Eh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269D1:                              ; CODE XREF: sub_26954+77↑j
+loc_269D1:                              ; CODE XREF: GetInventorySlotPtr+77↑j
                 cmp     ax, 5
                 jnz     short loc_269DA
                 add     di, 12h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269DA:                              ; CODE XREF: sub_26954+80↑j
+loc_269DA:                              ; CODE XREF: GetInventorySlotPtr+80↑j
                 cmp     ax, 6
                 jnz     short loc_269E3
                 add     di, 16h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269E3:                              ; CODE XREF: sub_26954+89↑j
+loc_269E3:                              ; CODE XREF: GetInventorySlotPtr+89↑j
                 cmp     ax, 7
                 jnz     short loc_269EC
                 add     di, 1Ah
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269EC:                              ; CODE XREF: sub_26954+92↑j
+loc_269EC:                              ; CODE XREF: GetInventorySlotPtr+92↑j
                 cmp     ax, 8
                 jnz     short loc_269F5
                 add     di, 1Eh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_269F5:                              ; CODE XREF: sub_26954+13↑j
-                                        ; sub_26954+9B↑j
+loc_269F5:                              ; CODE XREF: GetInventorySlotPtr+13↑j
+                                        ; GetInventorySlotPtr+9B↑j
                 and     word ptr [si+15Ch], 0F8FFh
                 or      word ptr [si+15Ch], 80h
                 cmp     ax, 0Ah
@@ -40270,42 +40270,42 @@ loc_269F5:                              ; CODE XREF: sub_26954+13↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A0B:                              ; CODE XREF: sub_26954+B0↑j
+loc_26A0B:                              ; CODE XREF: GetInventorySlotPtr+B0↑j
                 cmp     ax, 0Bh
                 jnz     short loc_26A15
                 add     di, 13Eh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A15:                              ; CODE XREF: sub_26954+BA↑j
+loc_26A15:                              ; CODE XREF: GetInventorySlotPtr+BA↑j
                 cmp     ax, 0Ch
                 jnz     short loc_26A1F
                 add     di, 142h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A1F:                              ; CODE XREF: sub_26954+C4↑j
+loc_26A1F:                              ; CODE XREF: GetInventorySlotPtr+C4↑j
                 cmp     ax, 0Dh
                 jnz     short loc_26A29
                 add     di, 146h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A29:                              ; CODE XREF: sub_26954+CE↑j
+loc_26A29:                              ; CODE XREF: GetInventorySlotPtr+CE↑j
                 cmp     ax, 0Eh
                 jnz     short loc_26A33
                 add     di, 14Ah
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A33:                              ; CODE XREF: sub_26954+D8↑j
+loc_26A33:                              ; CODE XREF: GetInventorySlotPtr+D8↑j
                 cmp     ax, 0Fh
                 jnz     short loc_26A3D
                 add     di, 14Eh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A3D:                              ; CODE XREF: sub_26954+E2↑j
+loc_26A3D:                              ; CODE XREF: GetInventorySlotPtr+E2↑j
                 and     word ptr [si+15Ch], 0FF7Fh
                 or      word ptr [si+15Ch], 40h
                 cmp     ax, 10h
@@ -40314,31 +40314,31 @@ loc_26A3D:                              ; CODE XREF: sub_26954+E2↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A52:                              ; CODE XREF: sub_26954+F7↑j
+loc_26A52:                              ; CODE XREF: GetInventorySlotPtr+F7↑j
                 cmp     ax, 11h
                 jnz     short loc_26A5C
                 add     di, 154h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A5C:                              ; CODE XREF: sub_26954+101↑j
+loc_26A5C:                              ; CODE XREF: GetInventorySlotPtr+101↑j
                 cmp     ax, 12h
                 jnz     short loc_26A66
                 add     di, 156h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A66:                              ; CODE XREF: sub_26954+10B↑j
+loc_26A66:                              ; CODE XREF: GetInventorySlotPtr+10B↑j
                 cmp     ax, 13h
                 jnz     short loc_26A70
                 add     di, 158h
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_26A70:                              ; CODE XREF: sub_26954+115↑j
+loc_26A70:                              ; CODE XREF: GetInventorySlotPtr+115↑j
                 add     di, 15Ah
                 retn
-sub_26954       endp
+GetInventorySlotPtr endp
 
 
 ; =============== S U B R O U T I N E =======================================

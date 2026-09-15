@@ -6527,7 +6527,9 @@ static Bytes_1(void) {
 	create_insn	(0X26928);
 	create_insn	(0X26937);
 	create_insn	(0X26946);
+	set_cmt	(0X26954,	"GetInventorySlotPtr(ax=slot index 1-9): di = word_328D4 + group base + 2 + (ax-1)*4. Group base is +0x118 by default, or +0x180/+0x1A6/+0x1CC if the matching alternate-bag marker ([+0x17C]/[+0x1A2]/[+0x1C8]) is nonzero (also sets a flag in [+0x15C]) -- up to 4 separate inventories per character (1 main + 3 alternates/bags). Slot content encoding (4 bytes each) not decoded.",	0);
 	create_insn	(0X26954);
+	set_name	(0X26954,	"GetInventorySlotPtr");
 	create_insn	(x=0X26958);
 	op_hex		(x,	1);
 	create_insn	(0X2696A);
@@ -8493,6 +8495,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);
@@ -8520,15 +8531,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AFF4);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2B029);
 	create_insn	(x=0X2B036);
 	op_hex		(x,	1);
