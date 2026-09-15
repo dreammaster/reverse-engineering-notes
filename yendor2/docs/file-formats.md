@@ -240,6 +240,8 @@ Maps (world/towns/mines), F2 Monster Statistics, F3 Spells, F4 Magic
 Users (spells by class), F5 Inventory Items, F6 Complete Walk Through,
 ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
+`ShowClueBookItemDetail` is confirmed as the F5 category's per-entry
+screen: an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
 
 ### Quest-item and party-inventory range checks
 

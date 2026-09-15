@@ -1712,7 +1712,9 @@ static Bytes_0(void) {
 	create_insn	(0X13463);
 	create_insn	(0X135E8);
 	create_insn	(0X13630);
+	set_cmt	(0X13678,	"Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.",	0);
 	create_insn	(0X13678);
+	set_name	(0X13678,	"ShowClueBookItemDetail");
 	create_insn	(x=0X136B2);
 	op_hex		(x,	1);
 	create_insn	(0X13707);
@@ -4181,11 +4183,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1C890,	"LoadItemData(ax=item id): frees any previously-loaded item data buffers, reads WORLD.DAT's item catalog record (fixed address 0xBCE, FileEntry bx=0x9043) to find this item's data block, allocates a buffer sized to fit, and reads the item's data from WORLD.DAT into it. WORLD.DAT's item-data catalog, structurally similar to g_pictureDir's role for PICTURES.VGA.",	0);
 	create_insn	(0X1C890);
 	set_name	(0X1C890,	"LoadItemData");
-	create_insn	(x=0X1C89E);
-	op_hex		(x,	1);
-	set_cmt	(0X1C8A0,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
-	create_insn	(x=0X1C8A0);
-	op_hex		(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -4195,6 +4192,11 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1C89E);
+	op_hex		(x,	1);
+	set_cmt	(0X1C8A0,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
+	create_insn	(x=0X1C8A0);
+	op_hex		(x,	0);
 	create_insn	(x=0X1C8AD);
 	op_hex		(x,	1);
 	set_cmt	(0X1C8AF,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -7261,9 +7263,6 @@ static Bytes_1(void) {
 	create_insn	(0X28985);
 	create_insn	(x=0X28991);
 	op_hex		(x,	1);
-	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
-	create_insn	(0X2899C);
-	set_name	(0X2899C,	"ErrorExit");
 }
 
 //------------------------------------------------------------------------
@@ -7273,6 +7272,9 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
+	create_insn	(0X2899C);
+	set_name	(0X2899C,	"ErrorExit");
 	create_insn	(x=0X289AC);
 	op_hex		(x,	1);
 	set_cmt	(0X289B7,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -10735,6 +10737,15 @@ static Bytes_2(void) {
 	set_name	(0X364E0,	"aConverts");
 	create_strlit	(0X364EA,	0X14);
 	set_name	(0X364EA,	"aMagicOreAndNuo");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X364FE,	0X11);
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);
@@ -10759,15 +10770,6 @@ static Bytes_2(void) {
 	set_name	(0X36551,	"aOne");
 	create_strlit	(0X36555,	0X8);
 	set_name	(0X36555,	"aMonster");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3655D,	0XA);
 	set_name	(0X3655D,	"aCharacter");
 	create_strlit	(0X36567,	0X2);

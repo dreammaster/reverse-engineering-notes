@@ -5112,7 +5112,7 @@ sub_13090       proc far                ; CODE XREF: ShowClueBook:loc_10F2F↑P
                 mov     word_32974, ax
 
 loc_130AD:                              ; CODE XREF: sub_13090+75↓j
-                call    sub_13678
+                call    ShowClueBookItemDetail
                 call    sub_13780
                 call    DrawMouseCursor
 
@@ -5161,7 +5161,7 @@ sub_13119       proc far                ; CODE XREF: ShowClueBook:loc_10F8C↑P
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_32974, ax
-                call    sub_13678
+                call    ShowClueBookItemDetail
                 test    word ptr [si+0Ch], 1000h
                 jz      short loc_13136
                 call    sub_1381C
@@ -5223,7 +5223,7 @@ sub_1318D       proc far                ; CODE XREF: ShowClueBook:loc_110CA↑P
                 mov     word_32974, ax
 
 loc_131AA:                              ; CODE XREF: sub_1318D+75↓j
-                call    sub_13678
+                call    ShowClueBookItemDetail
                 call    sub_1385C
                 call    DrawMouseCursor
 
@@ -5658,9 +5658,9 @@ sub_13630       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13678       proc near               ; CODE XREF: sub_13090:loc_130AD↑p
+ShowClueBookItemDetail proc near        ; CODE XREF: sub_13090:loc_130AD↑p
                                         ; sub_13119+E↑p ...
-                mov     ax, word_32974
+                mov     ax, word_32974  ; Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.
                 call    sub_14B24
                 mov     ax, 0AFA8h
                 mov     word_2E3F8, ax
@@ -5677,7 +5677,7 @@ sub_13678       proc near               ; CODE XREF: sub_13090:loc_130AD↑p
                 jz      short loc_136BD
                 inc     word_2E530
 
-loc_136BD:                              ; CODE XREF: sub_13678+3F↑j
+loc_136BD:                              ; CODE XREF: ShowClueBookItemDetail+3F↑j
                 call    DrawPicture
                 mov     _textPos_y, 27h ; '''
                 mov     _textPos_x, 5Bh ; '['
@@ -5697,13 +5697,13 @@ loc_136BD:                              ; CODE XREF: sub_13678+3F↑j
                 mov     si, word_2E546
                 call    sub_13707
                 retn
-sub_13678       endp
+ShowClueBookItemDetail endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13707       proc near               ; CODE XREF: sub_13678+8B↑p
+sub_13707       proc near               ; CODE XREF: ShowClueBookItemDetail+8B↑p
                 mov     _textPos_x, 6Eh ; 'n'
                 mov     _font_fgColor, 0Ah
                 mov     bx, 8AA2h
@@ -7226,7 +7226,7 @@ sub_147D8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_147FF       proc near               ; CODE XREF: sub_13678+5E↑p
+sub_147FF       proc near               ; CODE XREF: ShowClueBookItemDetail+5E↑p
                 push    si
                 push    ax
                 mov     _font_bgTransparent, 1
@@ -7278,7 +7278,7 @@ sub_14833       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14876       proc near               ; CODE XREF: sub_13678+7E↑p
+sub_14876       proc near               ; CODE XREF: ShowClueBookItemDetail+7E↑p
                                         ; sub_13780+1E↑p ...
                 push    si
                 push    ax
@@ -7620,7 +7620,7 @@ FillVideoBuffer endp
 
 
 sub_14B24       proc far                ; CODE XREF: BuildClueEntryText+D7↑P
-                                        ; sub_13678+3↑P
+                                        ; ShowClueBookItemDetail+3↑P
                 call    LoadItemCatalogRecord
                 mov     ax, word_2E546
                 add     ax, 13h
@@ -56772,7 +56772,7 @@ word_2E4A8      dw 0                    ; DATA XREF: sub_1F0CD+15↑w
                                         ; sub_25608+1D↑r ...
 word_2E4AA      dw 0                    ; DATA XREF: start+17↑w
                                         ; HandleMovementInput+336↑r ...
-word_2E4AC      dw 0                    ; DATA XREF: sub_13678+78↑w
+word_2E4AC      dw 0                    ; DATA XREF: ShowClueBookItemDetail+78↑w
                                         ; sub_13780+18↑w ...
 _val10          dw 0                    ; DATA XREF: InitGlobals+36↑w
                                         ; LoadCurgameRecord+7↑r ...

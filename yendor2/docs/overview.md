@@ -2140,6 +2140,14 @@ mapping isn't confirmed yet.
 
 272 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowClueBookItemDetail
+
+Named `sub_13678`: draws an entry's icon plus "BASE VALUE:" and
+"WEIGHT:" fields after DrawMessageBox/DrawClueBookNavBar — the F5
+"INVENTORY ITEMS" category's per-entry detail screen.
+
+273 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
