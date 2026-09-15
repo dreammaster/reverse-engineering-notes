@@ -1760,6 +1760,21 @@ itself (who ticks these globals, and how fast) isn't traced yet.
 
 235 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the full game-clock mechanism
+
+Followed `ShowGameClockCommand`'s globals to their source — a genuinely
+major, foundational find. `AdvanceGameClock` is the master per-minute
+tick: advances a minutes-since-midnight counter, rolls a full 30-day-
+month/12-month-year calendar on day overflow, fires dawn/dusk events
+at exactly 6:00 AM/6:00 PM, and runs a separate 5-minute periodic
+timer. `ComputeGameClockTime` converts the counter to a 12-hour
+display. Resting advances the clock by a fixed 8 hours, matching the
+classic convention. The dawn/dusk and 5-minute event handlers
+themselves (`sub_1FFE4`, `sub_1FD24`, `sub_28FF9` for new-day) aren't
+traced yet — good next leads now that the clock's skeleton is known.
+
+237 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

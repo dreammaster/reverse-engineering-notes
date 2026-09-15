@@ -5016,7 +5016,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FE48);
 	op_hex		(x,	1);
+	set_cmt	(0X1FE4F,	"Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.",	0);
 	create_insn	(0X1FE4F);
+	set_name	(0X1FE4F,	"AdvanceGameClock");
 	create_insn	(0X1FE6D);
 	create_insn	(0X1FEA0);
 	create_insn	(x=0X1FEA3);
@@ -7001,7 +7003,9 @@ static Bytes_1(void) {
 	set_cmt	(0X28121,	"msg",	0);
 	set_cmt	(0X2812F,	"msg",	0);
 	create_insn	(0X28138);
+	set_cmt	(0X2814C,	"Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.",	0);
 	create_insn	(0X2814C);
+	set_name	(0X2814C,	"ComputeGameClockTime");
 	create_insn	(0X28172);
 	create_insn	(0X2818B);
 	set_cmt	(0X2819F,	"HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.",	0);
@@ -7823,6 +7827,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X29D11);
 	op_stkvar	(x,	0);
 	create_insn	(0X29D1C);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29D22);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29D2A);
@@ -7904,15 +7917,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29DEB);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29DF0,	"x",	0);
 	set_cmt	(0X29DF4,	"y",	0);
 	create_insn	(x=0X29DFA);

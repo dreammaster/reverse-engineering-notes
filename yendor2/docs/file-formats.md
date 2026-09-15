@@ -458,10 +458,24 @@ resolve the attempt.
 confirms the game tracks a genuine in-game date and time, not just a
 coarse day/night or "time of day" value: it fills two fixed template
 strings — `12:12 AM` and `12/12/1212` — with the current hour/minute/
-AM-PM (`word_32948`/`word_3295C`/`word_32934`) and month/day/year
-(`word_36CFD`/`word_36CFB`/`word_36CFF`). None of these globals'
-update logic (who advances the clock, and how fast) has been traced
-yet.
+AM-PM and month/day/year, via `ComputeGameClockTime`.
+
+**Full mechanism traced**: `word_36D01` is the master "minutes since
+midnight" counter (0–1439), advanced by `AdvanceGameClock` — the
+per-minute clock tick. `ComputeGameClockTime` converts it to a 12-hour
+display (`word_32934`="AM"/"PM", `word_32948`=hour 1–12,
+`word_3295C`=minute). Past 1440, `AdvanceGameClock` rolls the calendar:
+day (`word_36CFB`) wraps at 31 into month (`word_36CFD`), which wraps
+at 13 into year (`word_36CFF`) — a **30-day-month, 12-month-year**
+in-game calendar (new-game start: day 4, month 11, year `0x222`=546).
+It also fires a dawn event at exactly 6:00 AM and a dusk event at
+6:00 PM (`word_36D01`==`0x168`/`0x438`, via `sub_1FFE4`, not traced —
+plausibly a lighting or monster-spawn-rate change), plus a separate
+5-minute periodic timer (`word_32954`, gated on `word_3295A` bit
+`0x800`, calling `sub_1FD24`, not traced). Resting advances the clock
+by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
+"resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance
+exists elsewhere too, context not traced.
 
 **Shareware relevance**: the guide notes the shareware version has a
 blocked portal that can be bypassed by giving a character the "Key of

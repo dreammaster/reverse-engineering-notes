@@ -27545,7 +27545,7 @@ loc_1FB6A:                              ; CODE XREF: seg059:01EF↑j
                 jz      short loc_1FB7B
                 dec     word_3294E
                 jnz     short loc_1FB7B
-                call    sub_1FE4F
+                call    AdvanceGameClock
 
 loc_1FB7B:                              ; CODE XREF: seg059:0200↑j
                                         ; seg059:0206↑j
@@ -27771,7 +27771,7 @@ sub_1FD17       endp
 
 
 sub_1FD24       proc near               ; CODE XREF: sub_1FC3F+10↑p
-                                        ; sub_1FE4F+70↓p
+                                        ; AdvanceGameClock+70↓p
                 push    es
                 push    di
                 push    si
@@ -27941,8 +27941,8 @@ sub_1FE0A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FE4F       proc near               ; CODE XREF: seg059:0208↑p
-                inc     word_36D01
+AdvanceGameClock proc near              ; CODE XREF: seg059:0208↑p
+                inc     word_36D01      ; Master per-minute game-clock tick. Increments word_36D01; past 1440 (a full day), calls sub_28FF9 ('new day', not traced), resets to 1, and rolls the calendar: day (word_36CFB) wraps at 31 into month (word_36CFD), which wraps at 13 into year (word_36CFF) -- a 30-day-month, 12-month-year calendar. Fires sub_1FFE4 (not traced, plausibly lighting/spawn-rate) at exactly 6:00 AM or 6:00 PM -- dawn/dusk. Also runs a separate 5-minute periodic countdown (word_32954, gated on word_3295A bit 0x800) calling sub_1FD24 when it lapses.
                 cmp     word_36D01, 5A1h
                 jz      short loc_1FE6D
                 cmp     word_36D01, 168h
@@ -27952,7 +27952,7 @@ sub_1FE4F       proc near               ; CODE XREF: seg059:0208↑p
                 jmp     short loc_1FEA3
 ; ---------------------------------------------------------------------------
 
-loc_1FE6D:                              ; CODE XREF: sub_1FE4F+A↑j
+loc_1FE6D:                              ; CODE XREF: AdvanceGameClock+A↑j
                 call    sub_28FF9
                 mov     word_36D01, 1
                 inc     word_36CFB
@@ -27967,12 +27967,12 @@ loc_1FE6D:                              ; CODE XREF: sub_1FE4F+A↑j
                 jmp     short loc_1FEA3
 ; ---------------------------------------------------------------------------
 
-loc_1FEA0:                              ; CODE XREF: sub_1FE4F+12↑j
-                                        ; sub_1FE4F+1A↑j
+loc_1FEA0:                              ; CODE XREF: AdvanceGameClock+12↑j
+                                        ; AdvanceGameClock+1A↑j
                 call    sub_1FFE4
 
-loc_1FEA3:                              ; CODE XREF: sub_1FE4F+1C↑j
-                                        ; sub_1FE4F+32↑j ...
+loc_1FEA3:                              ; CODE XREF: AdvanceGameClock+1C↑j
+                                        ; AdvanceGameClock+32↑j ...
                 test    word_3295A, 800h
                 jz      short loc_1FEC8
                 cmp     word_32954, 0
@@ -27982,14 +27982,14 @@ loc_1FEA3:                              ; CODE XREF: sub_1FE4F+1C↑j
                 mov     cs:word_1F984, 1
                 call    sub_1FD24
 
-loc_1FEC2:                              ; CODE XREF: sub_1FE4F+61↑j
+loc_1FEC2:                              ; CODE XREF: AdvanceGameClock+61↑j
                 mov     word_32954, 5
 
-loc_1FEC8:                              ; CODE XREF: sub_1FE4F+5A↑j
-                                        ; sub_1FE4F+67↑j
+loc_1FEC8:                              ; CODE XREF: AdvanceGameClock+5A↑j
+                                        ; AdvanceGameClock+67↑j
                 mov     word_3294E, 5Bh ; '['
                 retn
-sub_1FE4F       endp
+AdvanceGameClock endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28130,7 +28130,7 @@ sub_1FECF       endp
 
 
 sub_1FFE4       proc near               ; CODE XREF: seg059:0219↑p
-                                        ; sub_1FE4F:loc_1FEA0↑p
+                                        ; AdvanceGameClock:loc_1FEA0↑p
                 push    es
                 push    di
                 push    si
@@ -43304,14 +43304,14 @@ seg098          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2814C       proc far                ; CODE XREF: ShowGameClockCommand+C↓p
-                mov     word_32934, 4D41h
+ComputeGameClockTime proc far           ; CODE XREF: ShowGameClockCommand+C↓p
+                mov     word_32934, 4D41h ; Converts word_36D01 (minutes since midnight, 0-1439) to 12-hour clock fields: word_32934='AM'/'PM', word_32948=hour(1-12), word_3295C=minute. Handles the 12:xx AM special case and PM hour-12 wraparound.
                 mov     ax, word_36D01
                 cmp     word_36D01, 2CFh
                 jle     short loc_28163
                 mov     word_32934, 4D50h
 
-loc_28163:                              ; CODE XREF: sub_2814C+F↑j
+loc_28163:                              ; CODE XREF: ComputeGameClockTime+F↑j
                 cmp     ax, 3Bh ; ';'
                 jg      short loc_28172
                 mov     word_32948, 0Ch
@@ -43319,7 +43319,7 @@ loc_28163:                              ; CODE XREF: sub_2814C+F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28172:                              ; CODE XREF: sub_2814C+1A↑j
+loc_28172:                              ; CODE XREF: ComputeGameClockTime+1A↑j
                 cmp     word_36D01, 30Bh
                 jg      short loc_2818B
                 push    dx
@@ -43332,7 +43332,7 @@ loc_28172:                              ; CODE XREF: sub_2814C+1A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2818B:                              ; CODE XREF: sub_2814C+2C↑j
+loc_2818B:                              ; CODE XREF: ComputeGameClockTime+2C↑j
                 push    dx
                 xor     dx, dx
                 mov     bx, 3Ch ; '<'
@@ -43342,7 +43342,7 @@ loc_2818B:                              ; CODE XREF: sub_2814C+2C↑j
                 mov     word_3295C, dx
                 pop     dx
                 retf
-sub_2814C       endp
+ComputeGameClockTime endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43353,7 +43353,7 @@ ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                 call    ClearStatusPanelIfDirty ; HandleGameCommand's handler for word_32974==7. Shows the in-game clock/calendar: fixed template strings '12:12 AM' and '12/12/1212' (dumped directly from the data segment) have their digit positions overwritten with the current time (word_32948/word_3295C/word_32934) and date (word_36CFD/word_36CFB/word_36CFF) via sub_2572C. Confirms an in-game calendar system, not just a coarse time-of-day value.
                 or      word_328C4, 100h
                 push    cs
-                call    near ptr sub_2814C
+                call    near ptr ComputeGameClockTime
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -45020,7 +45020,7 @@ RevealMapRegion endp
 
 
 sub_28FF9       proc far                ; CODE XREF: sub_1E64A:loc_1E761↑P
-                                        ; sub_1FE4F:loc_1FE6D↑P
+                                        ; AdvanceGameClock:loc_1FE6D↑P
                 push    ax
                 push    bx
                 push    cx
@@ -74290,8 +74290,8 @@ errorCode       dw 0                    ; DATA XREF: start+94↑r
                                         ; start+9B↑r ...
 word_32932      dw 0                    ; DATA XREF: sub_21217+27↑w
                                         ; sub_21217+6D↑w ...
-word_32934      dw 0                    ; DATA XREF: sub_2814C↑w
-                                        ; sub_2814C+11↑w ...
+word_32934      dw 0                    ; DATA XREF: ComputeGameClockTime↑w
+                                        ; ComputeGameClockTime+11↑w ...
 _videoSegment   dw 0                    ; DATA XREF: sub_1075E+4C↑w
                                         ; ShowClueBook+4B↑w ...
 word_32938      dw 0                    ; DATA XREF: sub_141D9+41C↑w
@@ -74312,8 +74312,8 @@ word_32944      dw 0                    ; DATA XREF: sub_2C0FE+FC1↑w
 ; FileEntry *fe
 fe              dw 0                    ; DATA XREF: ShowClueBook+8↑r
                                         ; ShowClueBook+11↑r ...
-word_32948      dw 0                    ; DATA XREF: sub_2814C+1C↑w
-                                        ; sub_2814C+36↑w ...
+word_32948      dw 0                    ; DATA XREF: ComputeGameClockTime+1C↑w
+                                        ; ComputeGameClockTime+36↑w ...
 ; int textPos_x
 _textPos_x      dw 0                    ; DATA XREF: sub_1075E+31↑w
                                         ; ShowIntroPicture+E9↑w ...
@@ -74326,15 +74326,15 @@ word_32950      dw 0                    ; DATA XREF: seg059:0213↑w
 word_32952      dw 0                    ; DATA XREF: seg059:0224↑w
                                         ; sub_1FBE1+18↑w ...
 word_32954      dw 0                    ; DATA XREF: sub_1F0CD+61↑w
-                                        ; sub_1FE4F+5C↑r ...
+                                        ; AdvanceGameClock+5C↑r ...
 word_32956      dw 0                    ; DATA XREF: sub_11D66↑w
                                         ; sub_11D66:loc_11DCE↑r ...
 word_32958      dw 0                    ; DATA XREF: seg059:0244↑w
                                         ; sub_28320+1F↑w ...
 word_3295A      dw 0                    ; DATA XREF: start+552↑w
                                         ; start:loc_105CD↑w ...
-word_3295C      dw 0                    ; DATA XREF: sub_2814C+22↑w
-                                        ; sub_2814C+39↑w ...
+word_3295C      dw 0                    ; DATA XREF: ComputeGameClockTime+22↑w
+                                        ; ComputeGameClockTime+39↑w ...
 word_3295E      dw 0                    ; DATA XREF: sub_221A0+50↑w
                                         ; sub_221A0+63↑w ...
 word_32960      dw 0                    ; DATA XREF: sub_221A0+56↑w
@@ -85991,7 +85991,7 @@ word_36CFB      dw 4                    ; DATA XREF: sub_1E64A+11C↑w
 word_36CFD      dw 0Bh                  ; DATA XREF: sub_1E64A+12D↑w
                                         ; sub_1E64A+131↑r ...
 word_36CFF      dw 222h                 ; DATA XREF: sub_1E64A+138↑w
-                                        ; sub_1FE4F+45↑w ...
+                                        ; AdvanceGameClock+45↑w ...
 word_36D01      dw 1E0h                 ; DATA XREF: sub_11A10+E5↑w
                                         ; sub_1A3F0+87↑r ...
 word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
