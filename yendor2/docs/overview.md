@@ -2259,6 +2259,15 @@ near an exit. Many internal helpers not individually traced.
 
 281 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowMapSkillTooLowMessage
+
+Named `sub_222BD`, called from `ShowLocalAreaMap` and
+`ToggleMapViewMode`: "YOUR SKILL IS NOT HIGH ENOUGH!" — a
+cartography/mapping skill gate, not yet traced to a specific
+party-record field.
+
+282 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

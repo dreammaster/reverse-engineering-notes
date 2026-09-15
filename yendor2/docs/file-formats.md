@@ -639,7 +639,11 @@ DESTROYED.` (critical fail) / `...HAS FAILED.` (soft fail, item
 survives) / `THE ITEM IS REPAIRED.` (success). All three (`+0x6A`,
 `+0x6C`, `+0x6E`) sit outside the confirmed `+0xCA`–`+0xE9` skill
 array, so they're either a separate small cluster of derived/practical
-skills or something else entirely — not confirmed.
+skills or something else entirely — not confirmed. A further,
+unidentified skill check gates `ShowLocalAreaMap`/`ToggleMapViewMode`:
+`ShowMapSkillTooLowMessage` shows "YOUR SKILL IS NOT HIGH ENOUGH!" —
+plausibly a cartography/mapping skill, not yet traced to a specific
+field.
 
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags

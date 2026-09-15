@@ -5616,7 +5616,9 @@ static Bytes_1(void) {
 	create_insn	(0X22208);
 	create_insn	(0X22255);
 	create_insn	(0X222BC);
+	set_cmt	(0X222BD,	"'YOUR SKILL IS NOT HIGH ENOUGH!' (msg 0x7D7E, cx=3) -- a mapping/cartography skill gate rejection, called from ShowLocalAreaMap and ToggleMapViewMode.",	0);
 	create_insn	(0X222BD);
+	set_name	(0X222BD,	"ShowMapSkillTooLowMessage");
 	create_insn	(x=0X222C2);
 	op_hex		(x,	1);
 	create_insn	(0X222F8);

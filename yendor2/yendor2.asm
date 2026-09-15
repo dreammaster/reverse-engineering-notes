@@ -31646,7 +31646,7 @@ ShowLocalAreaMap proc far               ; CODE XREF: seg000:085D↑P
                 jnz     short loc_21E8F
                 test    word_36C7F, 200h
                 jnz     short loc_21E8A
-                call    sub_222BD
+                call    ShowMapSkillTooLowMessage
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -31855,7 +31855,7 @@ ToggleMapViewMode proc far              ; CODE XREF: seg000:088D↑P
                                         ; HandleGameCommand+D2↓P
                 test    word_36C7F, 100h ; HandleGameCommand's handler for word_32974==0x1F. If word_36C7F bit 0x100 is clear, does a normal small-view redraw (sub_222BD); if set, draws a full-screen picture (g_pictureDir entry 6, x=0,y=0 -- fills the whole screen rather than the small minimap position) instead. Exact trigger for the bit itself not traced.
                 jnz     short loc_220F0
-                call    sub_222BD
+                call    ShowMapSkillTooLowMessage
                 call    sub_238CD
                 retf
 ; ---------------------------------------------------------------------------
@@ -32058,9 +32058,9 @@ sub_22255       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_222BD       proc near               ; CODE XREF: ShowLocalAreaMap+10↑p
+ShowMapSkillTooLowMessage proc near     ; CODE XREF: ShowLocalAreaMap+10↑p
                                         ; ToggleMapViewMode+8↑p
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; 'YOUR SKILL IS NOT HIGH ENOUGH!' (msg 0x7D7E, cx=3) -- a mapping/cartography skill gate rejection, called from ShowLocalAreaMap and ToggleMapViewMode.
                 or      word_328C4, 100h
                 mov     _font_fgColor, 8Ah
                 mov     _font_bgTransparent, 1
@@ -32073,7 +32073,7 @@ sub_222BD       proc near               ; CODE XREF: ShowLocalAreaMap+10↑p
                 call    sub_23B76
                 call    DrawMouseCursor
                 retn
-sub_222BD       endp
+ShowMapSkillTooLowMessage endp
 
 seg069          ends
 
