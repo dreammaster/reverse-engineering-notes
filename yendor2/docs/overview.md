@@ -2720,6 +2720,19 @@ value was in fully understanding the combat-action dispatcher's shape.
 
 345 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HandleRangedOrCombatAction's spell-cast branch fully traced
+
+Finished tracing the last untraced branch: the spell/ability-cast
+opening (not-ranged, not-in-combat) turns out to converge into the
+*exact same* row-by-row projectile scan the ranged-weapon branch
+uses — both paths share the code after `HighlightSelectedAbilityIcon`.
+Also found a multi-shot continuation (characters with more than one
+attack per turn loop back to the next depth row) and the common
+epilogue every path funnels through (loot-staging check →
+`ShowLootAndAwardExperience` → `ProcessLevelMonsters` → redraw).
+`HandleRangedOrCombatAction` is now fully mapped end to end.
+Documentation only, no new renames.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

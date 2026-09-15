@@ -524,8 +524,17 @@ wall/door shows a "deflected" message (`ShowCombatMessageOrWait`,
 which shows the message unless speech/sound is currently busy, in
 which case it just waits); a monster triggers
 `ResolveAttackOrAbilityAction` and a hit/miss follow-up. If bit `0x100`
-was clear (not in combat), it instead opens a parallel spell/ability-
-cast sequence (mostly the same shape, still not fully traced).
+was clear (not in combat), it instead opens the **spell/ability-cast
+sequence**: `HighlightSelectedAbilityIcon` then the *identical*
+row-by-row `AnimateProjectileStep`/`ClassifyObstacleAtViewportRow`
+scan the ranged-weapon branch uses — both paths converge into the same
+code. On a hit that doesn't kill the target but the shooter has more
+attempts left (`word_2E544`, decremented via `sub_1DCC6`), the loop
+continues to the next depth row automatically — a multi-shot
+continuation for characters with more than one attack. All paths
+converge on a common epilogue: if the loot-staging counter (`0x51B6`)
+has accumulated enough, `ShowLootAndAwardExperience` fires, then
+`ProcessLevelMonsters` ticks and the screen/minimap redraw.
 
 **The in-combat melee branch** (formal combat, `word_328CA` bit
 `0x1000` set) is much simpler: `HighlightSelectedAbilityIcon` marks
