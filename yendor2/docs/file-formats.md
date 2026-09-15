@@ -861,8 +861,12 @@ is the mouse-click counterpart to the keyboard `1`-`4` selector
 (`sub_25B34`): hit-tests the 4 portrait zones and sets the matching
 highlight bit when clicked. Both draw via `ShowPartyPortraitForSlot`
 → `DrawPartyMemberPortrait`: the character's icon (`+0x14`), a status
-bar, and a condition icon selected by `+0x15C`/`+0x10` — a 150-line
-function whose full icon-selection logic isn't individually traced.
+bar, and a condition icon selected by `+0x15C`/`+0x10`, plus
+equipped-item icons via `DrawEquippedItemIcons` (reads the
+`+0x13A`/`+0x13E`/`+0x142` equipment slot arrays, using an "active"
+icon variant when an item's own `[+0xC]` bit `0x400` is set) — a
+150-line function whose remaining icon-selection logic isn't
+individually traced.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

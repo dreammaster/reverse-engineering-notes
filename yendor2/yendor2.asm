@@ -39185,7 +39185,7 @@ DrawPartyMemberPortrait proc far        ; CODE XREF: sub_1869D+4E0↑P
                 add     si, 13Ah
                 mov     di, 6148h
                 mov     cx, 1
-                call    sub_267A7
+                call    DrawEquippedItemIcons
                 mov     si, word_328D4
                 test    word ptr [si+15Ch], 1000h
                 jz      short loc_26100
@@ -39195,7 +39195,7 @@ DrawPartyMemberPortrait proc far        ; CODE XREF: sub_1869D+4E0↑P
                 add     si, 142h
                 mov     di, 615Ch
                 mov     cx, 2
-                call    sub_267A7
+                call    DrawEquippedItemIcons
                 jmp     short loc_26111
 ; ---------------------------------------------------------------------------
 
@@ -39204,7 +39204,7 @@ loc_26100:                              ; CODE XREF: DrawPartyMemberPortrait+65�
                 add     si, 13Eh
                 mov     di, 6152h
                 mov     cx, 3
-                call    sub_267A7
+                call    DrawEquippedItemIcons
 
 loc_26111:                              ; CODE XREF: DrawPartyMemberPortrait+7F↑j
                 mov     si, word_328D4
@@ -39265,14 +39265,14 @@ loc_26196:                              ; CODE XREF: DrawPartyMemberPortrait+E1�
                 add     si, 2
                 mov     di, 60EEh
                 mov     cx, 8
-                call    sub_267A7
+                call    DrawEquippedItemIcons
                 or      word_328C6, 8000h
                 mov     word_2E532, 90h
                 mov     si, word_328D4
                 add     si, 14Ah
                 mov     di, 6170h
                 mov     cx, 2
-                call    sub_267A7
+                call    DrawEquippedItemIcons
                 and     word_328C6, 7FFFh
                 mov     word_2E532, 70h ; 'p'
                 mov     si, word_328D4
@@ -39955,9 +39955,9 @@ sub_26778       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_267A7       proc near               ; CODE XREF: DrawPartyMemberPortrait+58↑p
+DrawEquippedItemIcons proc near         ; CODE XREF: DrawPartyMemberPortrait+58↑p
                                         ; DrawPartyMemberPortrait+7C↑p ...
-                cmp     word ptr [si], 0
+                cmp     word ptr [si], 0 ; Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.
                 jz      short loc_267E7
                 mov     ax, [di]
                 add     ax, word_328BC
@@ -39976,20 +39976,20 @@ sub_267A7       proc near               ; CODE XREF: DrawPartyMemberPortrait+58�
                 jmp     short loc_267DF
 ; ---------------------------------------------------------------------------
 
-loc_267DC:                              ; CODE XREF: sub_267A7+25↑j
-                                        ; sub_267A7+2C↑j
+loc_267DC:                              ; CODE XREF: DrawEquippedItemIcons+25↑j
+                                        ; DrawEquippedItemIcons+2C↑j
                 mov     ax, [bx+8]
 
-loc_267DF:                              ; CODE XREF: sub_267A7+33↑j
+loc_267DF:                              ; CODE XREF: DrawEquippedItemIcons+33↑j
                 mov     word_2E530, ax
                 call    DrawPicture
 
-loc_267E7:                              ; CODE XREF: sub_267A7+3↑j
+loc_267E7:                              ; CODE XREF: DrawEquippedItemIcons+3↑j
                 add     di, 0Ah
                 add     si, 4
-                loop    sub_267A7
+                loop    DrawEquippedItemIcons
                 retn
-sub_267A7       endp
+DrawEquippedItemIcons endp
 
 
 ; =============== S U B R O U T I N E =======================================

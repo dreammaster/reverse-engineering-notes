@@ -2856,6 +2856,14 @@ types armor can grant.
 
 364 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawEquippedItemIcons
+
+Named `sub_267A7`, called from `DrawPartyMemberPortrait`: draws the
+equipped-item icons next to a party member's portrait, using an
+"active" icon variant when an item is currently in use.
+
+365 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

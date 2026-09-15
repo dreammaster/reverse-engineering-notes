@@ -6774,7 +6774,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2674F);
 	create_insn	(0X26778);
+	set_cmt	(0X267A7,	"Draws up to cx equipped-item icons next to a portrait: for each nonzero item id, loads its catalog record and draws its icon at a position offset by word_328BC/word_328C0, using an 'active' icon variant ([+4] vs [+8]) when word_328C6 bit 0x8000 and the item's [+0xC] bit 0x400 are both set. Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X267A7);
+	set_name	(0X267A7,	"DrawEquippedItemIcons");
 	create_insn	(x=0X267C6);
 	op_hex		(x,	1);
 	create_insn	(x=0X267CE);
@@ -9023,6 +9025,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BC90);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BC95);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2BCA1);
@@ -9060,15 +9071,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD04);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2BD07);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD0D);
