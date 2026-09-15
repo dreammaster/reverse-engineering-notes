@@ -82,7 +82,7 @@ struct in some callers, `SelectDefaultPartyRecord`'s "first record
 with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) still apply
 in their own contexts. Confirmed
 fields so far — `+0x0`: name (13 chars max, see `EditCharacterName`,
-`ida_scripts/name_char_rename.py`); **`+0xE`: plausibly a class id**
+`ida_scripts/name_char_rename.py`); **`+0xE`: confirmed class id**
 (**correction**: documented since early in the session as "a time-of-
 day-like value" — wrong, or at least a worse fit. `RestCharacter`'s two
 branches settle it: the HP-regen branch never touches `+0xE` at all,
@@ -95,7 +95,16 @@ plausibly non-caster classes with no MP pool to regenerate or grow —
 far more consistent than a clock value correlating with class-specific
 formulas in an unrelated function. `SelectDefaultPartyRecord` treats
 `0` here as its scan target — whether that's "class 0" specifically or
-something else isn't confirmed); `+0x10`: gender/type (compared
+something else isn't confirmed. **Now fully confirmed**: `GetClassNameString`
+(was `sub_19768`) takes this exact field through the identical
+`cmp 9 / -0xA / cmp 9 / -0xA` dispatch and returns a pointer into a real
+27-entry class-name string table (11-byte stride, two contiguous blocks)
+— `1 FIGHTER, 2 MERCHANT, 3 ROGUE, 4 MONK, 5 ALCHEMIST, 6 PALADIN, 7
+MAGE, 8 DRUID, 9 MARKSMAN, 10 WARRIOR, 11 TINKERER, 12 THIEF, 13 CLERIC,
+14 TRANSMUTER, 15 CAVALIER, 16 WIZARD, 17 ENCHANTER, 18 RANGER, 19
+CHAMPION, 20 BLACKSMITH, 21 ASSASSIN, 22 PRIEST, 23 HEALER, 24 HERO, 25
+SORCERER, 26 SAGE, 27 KNIGHT` — the game's full 27-class list, leaving no
+doubt `+0xE` is the class id); `+0x10`: gender/type (compared
 against `2` in `ShowCharacterEquipment`); `+0x16`: plausibly a
 level/skill stat — used in `FailsSavingThrow`'s save-chance formula
 (`5*([+0x16] - threshold) + resistance bonus`), higher beats a higher
@@ -268,6 +277,35 @@ optional message, and a music/mode flag; gated by
 the destination requires it, rejecting with a message if not yet
 unlocked. Reveals cells around the new position and redraws the
 screen/minimap on success.
+
+### The party roster screen (`ShowWorldMap`)
+
+`ShowWorldMap` (the world-map screen, called from `RunTitleScreen`)
+does more than draw the map: it also iterates the full 9-slot
+`g_partyRecords` array (base `0x95F3`, stride `0x1F4`) and, for each
+occupied slot (`+0x16 != 0` — the already-documented level/skill
+field, used here purely as an "is there a character here" check),
+draws a roster row via `DrawPartyRosterEntry` (was `sub_2BFBC`): an
+icon at `[+0x12]` (a field not otherwise identified yet), the
+character's name (`+0x0`), and — via the newly-named
+`GetClassNameString` (was `sub_19768`) — the character's class name as
+text. **Correction**: this loop previously carried a comment guessing
+it placed "up to 9 small markers... at per-location positions,
+skipping locations not flagged discovered" — that reading doesn't
+survive `DrawPartyRosterEntry` showing a name+class label is drawn for
+each row; these are player characters, not towns.
+
+Digit keys `1`-`9` select a roster slot by index (recomputing
+`word_328D4` the same way `SelectPartyRecordById` does) and call
+`sub_23C18` (still an open lead — a ~270-line handler, not traced) to
+open some detail/interaction screen. A second, differently-routed key
+range reaches the same slot math but first tests a flag
+(`+0x15C` bit `0x800`); when set, it clears the bit and removes the
+slot's index from two small lookup tables (`0x95EB`, 5 slots at
+`0x94A3`) before falling through — plausibly a recruit/dismiss
+mechanic (adding/removing a character from the active adventuring
+group), but not confirmed. Worth revisiting once `sub_23C18` is
+traced.
 
 ### The on-line clue book (F8)
 

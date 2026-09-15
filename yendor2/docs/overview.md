@@ -3250,6 +3250,33 @@ detail-reveal) is derived, not raw-rolled.
 
 419 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: GetClassNameString, DrawPartyRosterEntry
+
+Named `sub_19768` -> `GetClassNameString` and `sub_2BFBC` ->
+`DrawPartyRosterEntry`. `GetClassNameString` takes the party record's
+`+0xE` field (already documented as "plausibly a class id") through the
+same `cmp 9 / -0xA / cmp 9 / -0xA` dispatch seen in `RestCharacter` and
+`UseTrainingItem`, and returns a pointer into a real 27-entry
+class-name string table — dumping it gave the game's actual class list
+(FIGHTER, MERCHANT, ROGUE, MONK, ALCHEMIST, PALADIN, MAGE, DRUID,
+MARKSMAN, WARRIOR, TINKERER, THIEF, CLERIC, TRANSMUTER, CAVALIER,
+WIZARD, ENCHANTER, RANGER, CHAMPION, BLACKSMITH, ASSASSIN, PRIEST,
+HEALER, HERO, SORCERER, SAGE, KNIGHT), upgrading `+0xE` from "plausibly"
+to confirmed.
+
+This also let me correct a stale comment on `ShowWorldMap`: its loop
+over the 9-slot `g_partyRecords` array was previously guessed to be
+placing "location markers" on the map. `DrawPartyRosterEntry` calls
+`GetClassNameString` and draws a name+class label per row, which only
+makes sense for player characters — so this is a party roster listing
+(with digit-key slot selection and what looks like a recruit/dismiss
+toggle), not a set of town markers. See
+[file-formats.md](file-formats.md#the-party-roster-screen-showworldmap)
+for the full writeup; `sub_23C18` (the detail screen opened on
+selection) remains an open, untraced lead.
+
+421 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

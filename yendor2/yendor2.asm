@@ -16545,9 +16545,9 @@ sub_19553       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19768       proc far                ; CODE XREF: SelectAndDrawPartyStatusRow+76↓p
+GetClassNameString proc far             ; CODE XREF: SelectAndDrawPartyStatusRow+76↓p
                                         ; UseTrainingItem+35A↓P ...
-                push    dx
+                push    dx              ; Given a class id (ax, 1-27), returns a pointer (bx) into one of two contiguous 11-byte-stride string tables -- a real class-name table (FIGHTER/MERCHANT/ROGUE/MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN for 1-9; WARRIOR/TINKERER/THIEF/CLERIC/TRANSMUTER/CAVALIER/WIZARD/ENCHANTER/RANGER/CHAMPION/BLACKSMITH/ASSASSIN/PRIEST/HEALER/HERO/SORCERER/SAGE/KNIGHT for 10-27). Confirms +0xE is a class id.
                 mov     bx, 7982h
                 mov     ax, [si+0Eh]
                 cmp     ax, 9
@@ -16559,15 +16559,15 @@ sub_19768       proc far                ; CODE XREF: SelectAndDrawPartyStatusRow
                 mov     bx, 8497h
                 sub     ax, 0Ah
 
-loc_19785:                              ; CODE XREF: sub_19768+A↑j
-                                        ; sub_19768+15↑j
+loc_19785:                              ; CODE XREF: GetClassNameString+A↑j
+                                        ; GetClassNameString+15↑j
                 mov     dx, 0Bh
                 dec     ax
                 mul     dx
                 add     bx, ax
                 pop     dx
                 retf
-sub_19768       endp
+GetClassNameString endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -16751,7 +16751,7 @@ loc_19988:                              ; CODE XREF: SelectAndDrawPartyStatusRow
                 mov     word_2E414, 8Ah
                 mov     si, word_328D4
                 push    cs
-                call    near ptr sub_19768
+                call    near ptr GetClassNameString
                 mov     _textPos_x, 14h
                 mov     _textPos_y, 1Bh
                 mov     _font_fgColor, 0Fh
@@ -21812,7 +21812,7 @@ loc_1C460:                              ; CODE XREF: UseTrainingItem+331↑j
                 mov     bx, 84FAh
                 mov     cx, 2
                 call    sub_23B76
-                call    sub_19768
+                call    GetClassNameString
                 mov     _textPos_y, 61h ; 'a'
                 mov     _textPos_x, 6Ah ; 'j'
                 mov     _font_fgColor, 8Ah
@@ -37058,7 +37058,7 @@ DrawListEntryLabel endp
 sub_2504F       proc near               ; CODE XREF: sub_23C18+7B↑p
                                         ; ShowCharacterSkills+1B8↑p ...
                 mov     si, word_328D4
-                call    sub_19768
+                call    GetClassNameString
                 mov     _textPos_x, 9Ch
                 mov     _textPos_y, 26h ; '&'
                 mov     _font_fgColor, 0Fh
@@ -50606,7 +50606,7 @@ seg122          segment byte public 'CODE' use16
 
 ShowWorldMap    proc far                ; CODE XREF: RunTitleScreen+170↑P
                                         ; ShowWorldMap+149↓j
-                mov     x, 1            ; Moderate confidence: RunTitleScreen's 'A' option. Draws g_pictureDir entry 4 full-screen, then places up to 9 small markers (entry 9) at per-location positions from a table, skipping locations not flagged discovered (+0x16). Shape (map background + flagged location pins) fits the docs' ~7 named towns from the string survey. Not confirmed which letter/word this is short for.
+                mov     x, 1            ; Moderate-high confidence, corrected: NOT a location-marker map overlay (original guess). Draws g_pictureDir entry 4 full-screen, then iterates the 9-slot g_partyRecords array (base 0x95F3, stride 0x1F4) drawing one roster row per occupied slot (+0x16 != 0 -- the already-documented level/skill field, used here as an occupied-slot check, not a 'discovered' flag) via DrawPartyRosterEntry (icon + name + class name -- proves these are characters, not towns). Digit keys 1-9 (and a second, differently- routed key range) select a slot by index and call sub_23C18 to open a detail/interaction screen; one path toggles a flag (+0x15C bit 0x800) and removes the slot's index from two small lookup tables (0x95EB/0x94A3) when set -- plausibly a recruit/dismiss roster screen (add/remove a character from the active adventuring group), not a set of townsite markers. Not fully traced: sub_23C18, the toggle's exact meaning, and the digit-vs-alt-key distinction remain open.
                 mov     y, 1
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -50628,7 +50628,7 @@ loc_2BD58:                              ; CODE XREF: ShowWorldMap+84↓j
 ; ---------------------------------------------------------------------------
 
 loc_2BD63:                              ; CODE XREF: ShowWorldMap+42↑j
-                call    sub_2BFBC
+                call    DrawPartyRosterEntry
                 add     di, 0Ah
                 mov     word_2E532, 90h
                 mov     ax, [di]
@@ -50907,8 +50907,8 @@ sub_2BF3C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BFBC       proc near               ; CODE XREF: ShowWorldMap:loc_2BD63↑p
-                mov     word_2E532, 70h ; 'p'
+DrawPartyRosterEntry proc near          ; CODE XREF: ShowWorldMap:loc_2BD63↑p
+                mov     word_2E532, 70h ; 'p' ; Draws one party-roster row for a record (si): icon at [si+0x12], name string at [si+0], and class name via GetClassNameString([si+0xE]). Called only from ShowWorldMap, once per occupied roster slot.
                 mov     ax, [di]
                 mov     x, ax
                 mov     ax, [di+4]
@@ -50930,10 +50930,10 @@ sub_2BFBC       proc near               ; CODE XREF: ShowWorldMap:loc_2BD63↑p
                 mov     _textPos_x, ax
                 mov     ax, [di+4]
                 mov     _textPos_y, ax
-                call    sub_19768
+                call    GetClassNameString
                 call    writeString
                 retn
-sub_2BFBC       endp
+DrawPartyRosterEntry endp
 
 ; ---------------------------------------------------------------------------
                 align 2

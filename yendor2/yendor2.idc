@@ -3463,7 +3463,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19747);
 	create_insn	(0X1974F);
+	set_cmt	(0X19768,	"Given a class id (ax, 1-27), returns a pointer (bx) into one of two contiguous 11-byte-stride string tables -- a real class-name table (FIGHTER/MERCHANT/ROGUE/MONK/ALCHEMIST/PALADIN/MAGE/DRUID/MARKSMAN for 1-9; WARRIOR/TINKERER/THIEF/CLERIC/TRANSMUTER/CAVALIER/WIZARD/ENCHANTER/RANGER/CHAMPION/BLACKSMITH/ASSASSIN/PRIEST/HEALER/HERO/SORCERER/SAGE/KNIGHT for 10-27). Confirms +0xE is a class id.",	0);
 	create_insn	(0X19768);
+	set_name	(0X19768,	"GetClassNameString");
 	create_insn	(0X1978F);
 	create_insn	(0X197B9);
 	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
@@ -3626,6 +3628,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1A294,	"Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.",	0);
 	create_insn	(0X1A294);
 	set_name	(0X1A294,	"PlaceItemOnGround");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1A29F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A2C4);
@@ -3639,15 +3650,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A37E,	"The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.",	0);
 	create_insn	(0X1A37E);
 	set_name	(0X1A37E,	"TryDropHeldItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1A386);
 	create_insn	(0X1A39E);
 	create_insn	(0X1A3CB);
@@ -5842,6 +5844,15 @@ static Bytes_1(void) {
 	set_cmt	(0X226FC,	"Draws a 5-row proportional stat bar (health/mana-gauge style): bx=current, cx=max, drawn as filled (_font_fgColor) vs empty (_font_bgColor) pixels across a 38-pixel width, 5 rows tall. Called from sub_22445.",	0);
 	create_insn	(0X226FC);
 	set_name	(0X226FC,	"DrawStatBar");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22774);
 	create_insn	(0X2278C);
 	create_insn	(x=0X22791);
@@ -5877,15 +5888,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X229BD);
 	op_hex		(x,	1);
 	create_insn	(0X229C4);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X229D3);
 	op_hex		(x,	1);
 	create_insn	(0X229DA);
@@ -9178,7 +9180,7 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD0D);
 	op_seg		(x,	1);
-	set_cmt	(0X2BD1A,	"Moderate confidence: RunTitleScreen's 'A' option. Draws g_pictureDir entry 4 full-screen, then places up to 9 small markers (entry 9) at per-location positions from a table, skipping locations not flagged discovered (+0x16). Shape (map background + flagged location pins) fits the docs' ~7 named towns from the string survey. Not confirmed which letter/word this is short for.",	0);
+	set_cmt	(0X2BD1A,	"Moderate-high confidence, corrected: NOT a location-marker map overlay (original guess). Draws g_pictureDir entry 4 full-screen, then iterates the 9-slot g_partyRecords array (base 0x95F3, stride 0x1F4) drawing one roster row per occupied slot (+0x16 != 0 -- the already-documented level/skill field, used here as an occupied-slot check, not a 'discovered' flag) via DrawPartyRosterEntry (icon + name + class name -- proves these are characters, not towns). Digit keys 1-9 (and a second, differently- routed key range) select a slot by index and call sub_23C18 to open a detail/interaction screen; one path toggles a flag (+0x15C bit 0x800) and removes the slot's index from two small lookup tables (0x95EB/0x94A3) when set -- plausibly a recruit/dismiss roster screen (add/remove a character from the active adventuring group), not a set of townsite markers. Not fully traced: sub_23C18, the toggle's exact meaning, and the digit-vs-alt-key distinction remain open.",	0);
 	create_insn	(0X2BD1A);
 	set_name	(0X2BD1A,	"ShowWorldMap");
 	create_insn	(0X2BD63);
@@ -9208,7 +9210,9 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2BF76);
 	create_insn	(0X2BF98);
+	set_cmt	(0X2BFBC,	"Draws one party-roster row for a record (si): icon at [si+0x12], name string at [si+0], and class name via GetClassNameString([si+0xE]). Called only from ShowWorldMap, once per occupied roster slot.",	0);
 	create_insn	(0X2BFBC);
+	set_name	(0X2BFBC,	"DrawPartyRosterEntry");
 	set_cmt	(0X2BFEE,	"msg",	0);
 	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
