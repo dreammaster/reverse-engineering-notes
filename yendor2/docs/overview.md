@@ -184,6 +184,54 @@ was fully recovered:
   substantive (498 of 706 have 16+ instructions) — further naming needs
   genuine per-function reading, not another automated pass.
 
+### 2026-09-14 session update, continued: DS-segreg fix (major unlock)
+
+While manually reading `ErrorCheck`/`ErrorExit` (`ida_scripts/dump_range.py`
+is the general-purpose tool for this — edit `START`/`END` and rerun), every
+`ds:XXXXh`-style data operand rendered as a bare unresolved hex offset
+instead of a symbol, and `idautils.DataRefsFrom`/`XrefsTo` came back empty
+for them — this is also why the string-cross-reference approach earlier
+in the session found 0 hits. Root cause: the DS segment register's
+default value was never set for any segment in the fresh 8.2 database, so
+IDA has no way to turn a `ds:offset` operand into a real linear address.
+The old 8.3-era `.idc` had exactly this info in `SegRegs()`
+(`SegDefReg(ea,"ds",0x2D86)` for all ~130 segments, uniformly) — this
+piece of the old analysis wasn't part of the annotation reapplication
+(only names/comments/types were replayed, deliberately, per the
+whole-IDC-replay fragility above) but turned out to be small, mechanical,
+and safe to redo directly.
+
+`ida_scripts/fix_ds_segreg.py` sets `DS = 0x2D86` as the default segment
+register value for every segment (matching the old analysis exactly) and
+forces a full database reanalysis. Effect was immediate and large:
+`ds:50D0h` in `ErrorCheck` turned out to already be named `errorCode` —
+one of the 748 reapplied names, just invisible until this fix let it
+resolve. More broadly, **391 of the 706 unnamed functions now show at
+least one reference to a named data item** (was 0 before). This is
+probably the single highest-leverage thing done this session for
+unlocking further naming work, more so than any individual function
+identification — worth running early in any future session that picks
+this back up, if a database rebuild ever loses it again.
+
+With DS resolution working, fully read and named the `ErrorCheck`/
+`ErrorExit` cleanup chain (`ida_scripts/name_error_cleanup_chain.py`):
+`RestoreInt1cVector` (restores the original INT 1Ch timer vector if one
+was hooked), `FreeVideoBuffer` (frees `_videoBufferSeg`),
+`ShutdownAudioDrivers` (sends shutdown commands through up to two
+driver dispatch tables, frees their memory), plus globals
+`g_driverStateFlags` and `g_soundDriverFarPtr`.
+
+Also investigated and *deliberately declined* to mass-name a ~27-function
+cluster at `0x27B42`-`0x2801A` (`ida_scripts/document_resource_stubs.py`):
+each is a tiny stub that hardcodes one `FileEntry`'s block offset/size for
+one specific game resource, called individually from many scattered call
+sites (not a dispatch table). Which resource each one represents isn't
+recoverable from static analysis alone (opaque pointer-table constants,
+no distinguishing strings) — the old analyst left these as `sub_XXXXX`
+too despite having the `FileEntry*` parameter type worked out, and
+inventing distinguishing names now would be guessing. Documented the
+pattern via a comment on the first one instead.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

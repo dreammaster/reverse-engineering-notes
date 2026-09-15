@@ -1358,3 +1358,1190 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'callees_of_named.py', 'noexport']
+[*] reading callees_of_named.py
+[*] executing callees_of_named.py
+[*] captured stdout from target script:
+----- begin target script output -----
+start (0x10000, size=1886): 0 callees, 0 unnamed
+InitGame (0x11edc, size=403): 0 callees, 0 unnamed
+InitGlobals (0x120ed, size=517): 0 callees, 0 unnamed
+InitMemory (0x12677, size=986): 0 callees, 0 unnamed
+InitGraphics (0x12a51, size=224): 0 callees, 0 unnamed
+InitMouse (0x237d8, size=115): 0 callees, 0 unnamed
+MapUnmapPages (0x1264d, size=42): 0 callees, 0 unnamed
+ErrorCheck (0x2897d, size=81): 0 callees, 0 unnamed
+findSavegame (0x12075, size=120): 0 callees, 0 unnamed
+loadWorldDat1 (0x12355, size=244): 0 callees, 0 unnamed
+loadWorldDat2 (0x122f2, size=49): 0 callees, 0 unnamed
+loadWorldDat3 (0x12323, size=50): 0 callees, 0 unnamed
+loadWorldDat4 (0x1247a, size=49): 0 callees, 0 unnamed
+loadWorldDat5 (0x124ab, size=65): 0 callees, 0 unnamed
+WorldDat_setBlock1 (0x27f30, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock2 (0x27f4e, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock3 (0x27f6c, size=26): 0 callees, 0 unnamed
+WorldDat_setBlock4 (0x27f86, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock5 (0x27fa4, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock6 (0x27fc2, size=30): 0 callees, 0 unnamed
+Struc1_Allocate (0x12b31, size=69): 0 callees, 0 unnamed
+calcOffset (0x12b76, size=14): 0 callees, 0 unnamed
+allocMem (0x16298, size=29): 0 callees, 0 unnamed
+writeString (0x23b5e, size=24): 0 callees, 0 unnamed
+writeChar (0x29aa2, size=100): 0 callees, 0 unnamed
+getTextPos (0x2a681, size=12): 0 callees, 0 unnamed
+GameDialog_drawButtons (0x1f38a, size=174): 0 callees, 0 unnamed
+GameDialog_drawAnimation (0x1f438, size=73): 0 callees, 0 unnamed
+----- end target script output -----
+[*] finished executing callees_of_named.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'debug_callees.py', 'noexport']
+[*] reading debug_callees.py
+[*] executing debug_callees.py
+[*] captured stdout from target script:
+----- begin target script output -----
+func: 0x11edc 0x1206f
+  0x11edc  call    InitMemory  optype0=6 opval0=0x57
+  0x11ee1  call    InitGraphics  optype0=6 opval0=0x431
+  0x11ee6  call    ErrorCheck  optype0=6 opval0=0x28d
+  0x11eeb  call    clear_kbd_buffer  optype0=7 opval0=0x19f
+  0x11eee  call    InitGlobals  optype0=7 opval0=0x21d
+  0x11ef1  call    sub_1251D  optype0=7 opval0=0x64d
+  0x11f0b  call    FileEntry_OpenFile  optype0=6 opval0=0x52
+  0x11f10  call    ErrorCheck  optype0=6 opval0=0x28d
+  0x11f2a  call    FileEntry_OpenFile  optype0=6 opval0=0x52
+  0x11f2f  call    ErrorCheck  optype0=6 opval0=0x28d
+  0x11f34  call    sub_124EC  optype0=7 opval0=0x61c
+  0x11f37  call    sub_12449  optype0=7 opval0=0x579
+  0x11f43  call    FileEntry_CreateFile  optype0=6 opval0=0x30
+  0x11f48  call    ErrorCheck  optype0=6 opval0=0x28d
+  0x11f4d  call    findSavegame  optype0=7 opval0=0x1a5
+  0x11f50  call    loadWorldDat1  optype0=7 opval0=0x485
+  0x11f53  call    loadWorldDat2  optype0=7 opval0=0x422
+  0x11f56  call    loadWorldDat3  optype0=7 opval0=0x453
+  0x11f59  call    loadWorldDat4  optype0=7 opval0=0x5aa
+  0x11f5c  call    InitMouse  optype0=6 opval0=0xf8
+  0x11f61  call    sub_283EA  optype0=6 opval0=0x17a
+  0x11f6c  call    loadWorldDat5  optype0=7 opval0=0x5db
+  0x11f6f  call    sub_25862  optype0=6 opval0=0x2
+  0x11f81  call    sub_218DC  optype0=6 opval0=0xc
+  0x11f86  call    sub_1FBE1  optype0=6 opval0=0x271
+  0x11f92  call    sub_1522E  optype0=6 opval0=0xe
+  0x11f9e  call    sub_1177C  optype0=6 opval0=0xc
+  0x11fb2  call    sub_2849C  optype0=6 opval0=0x22c
+  0x11fbd  call    sub_238CD  optype0=6 opval0=0x1ed
+  0x11fc2  call    loadWorldDat5  optype0=7 opval0=0x5db
+  0x11fc5  call    sub_25862  optype0=6 opval0=0x2
+  0x11fd2  call    sub_1D2A6  optype0=6 opval0=0x6
+  0x11fdf  call    sub_1FBE1  optype0=6 opval0=0x271
+  0x11fe4  call    sub_238CD  optype0=6 opval0=0x1ed
+  0x11ff1  call    sub_1D2A6  optype0=6 opval0=0x6
+  0x12004  call    sub_22387  optype0=6 opval0=0x97
+  0x12011  call    sub_222F8  optype0=6 opval0=0x8
+  0x1201f  call    allocMem  optype0=6 opval0=0x8
+  0x12027  call    sub_25862  optype0=6 opval0=0x2
+  0x1202c  call    sub_22402  optype0=6 opval0=0x112
+  0x12052  call    Fade?  optype0=6 opval0=0x8ab
+  0x12057  call    sub_1EA6E  optype0=6 opval0=0xe
+  0x12064  call    sub_1F0CD  optype0=6 opval0=0x66d
+done, n= 98
+----- end target script output -----
+[*] finished executing debug_callees.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'callees_of_named.py', 'noexport']
+[*] reading callees_of_named.py
+[*] executing callees_of_named.py
+[*] captured stdout from target script:
+----- begin target script output -----
+start (0x10000, size=1886): 52 callees, 47 unnamed
+  unnamed: 0x1075e, 0x1177c, 0x11a10, 0x12624, 0x162f6, 0x16e18, 0x16f84, 0x178a6, 0x17b92, 0x18504, 0x1869d, 0x18c79, 0x19553, 0x1a37e, 0x1a3f0, 0x1d038, 0x1d118, 0x1fc21, 0x1fd03, 0x209d2, 0x20c1e, 0x20c46, 0x21588, 0x21612, 0x216f0, 0x217ed, 0x22402, 0x2278c, 0x22d4c, 0x237b0, 0x23874, 0x23b19, 0x2589a, 0x25b34, 0x2704c, 0x270fe, 0x2714a, 0x271dc, 0x2738b, 0x27a5e, 0x27de5, 0x2838f, 0x28412, 0x2849c, 0x28cff, 0x295a8, 0x29b06
+  named: ErrorCheck, Fade?, FileEntry_Close, FileEntry_Write, InitGame
+InitGame (0x11edc, size=403): 33 callees, 17 unnamed
+  unnamed: 0x1177c, 0x12449, 0x124ec, 0x1251d, 0x1522e, 0x1d2a6, 0x1ea6e, 0x1f0cd, 0x1fbe1, 0x218dc, 0x222f8, 0x22387, 0x22402, 0x238cd, 0x25862, 0x283ea, 0x2849c
+  named: ErrorCheck, Fade?, FileEntry_CreateFile, FileEntry_OpenFile, InitGlobals, InitGraphics, InitMemory, InitMouse, allocMem, clear_kbd_buffer, findSavegame, loadWorldDat1, loadWorldDat2, loadWorldDat3, loadWorldDat4, loadWorldDat5
+InitGlobals (0x120ed, size=517): 0 callees, 0 unnamed
+InitMemory (0x12677, size=986): 1 callees, 0 unnamed
+  named: ErrorCheck
+InitGraphics (0x12a51, size=224): 4 callees, 0 unnamed
+  named: MapUnmapPages, Struc1_Allocate, allocMem, calcOffset
+InitMouse (0x237d8, size=115): 1 callees, 1 unnamed
+  unnamed: 0x23874
+MapUnmapPages (0x1264d, size=42): 1 callees, 0 unnamed
+  named: ErrorCheck
+ErrorCheck (0x2897d, size=81): 3 callees, 3 unnamed
+  unnamed: 0x1fc21, 0x2838f, 0x29b06
+findSavegame (0x12075, size=120): 5 callees, 1 unnamed
+  unnamed: 0x23a64
+  named: ErrorCheck, FileEntry_Close, FileEntry_OpenFile, FileEntry_Read
+loadWorldDat1 (0x12355, size=244): 9 callees, 4 unnamed
+  unnamed: 0x27e7c, 0x27e9a, 0x27eb8, 0x27ed6
+  named: ErrorCheck, FileEntry_Read, MapUnmapPages, WorldDat_setBlock1, WorldDat_setBlock2
+loadWorldDat2 (0x122f2, size=49): 3 callees, 1 unnamed
+  unnamed: 0x27ef4
+  named: FileEntry_Read, MapUnmapPages
+loadWorldDat3 (0x12323, size=50): 3 callees, 1 unnamed
+  unnamed: 0x27f12
+  named: FileEntry_Read, MapUnmapPages
+loadWorldDat4 (0x1247a, size=49): 3 callees, 0 unnamed
+  named: FileEntry_Read, MapUnmapPages, WorldDat_setBlock4
+loadWorldDat5 (0x124ab, size=65): 3 callees, 1 unnamed
+  unnamed: 0x27cb0
+  named: ErrorCheck, FileEntry_Read
+WorldDat_setBlock1 (0x27f30, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock2 (0x27f4e, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock3 (0x27f6c, size=26): 0 callees, 0 unnamed
+WorldDat_setBlock4 (0x27f86, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock5 (0x27fa4, size=30): 0 callees, 0 unnamed
+WorldDat_setBlock6 (0x27fc2, size=30): 0 callees, 0 unnamed
+Struc1_Allocate (0x12b31, size=69): 1 callees, 0 unnamed
+  named: allocMem
+calcOffset (0x12b76, size=14): 0 callees, 0 unnamed
+allocMem (0x16298, size=29): 1 callees, 0 unnamed
+  named: ErrorCheck
+writeString (0x23b5e, size=24): 1 callees, 0 unnamed
+  named: writeChar
+writeChar (0x29aa2, size=100): 1 callees, 0 unnamed
+  named: getTextPos
+getTextPos (0x2a681, size=12): 0 callees, 0 unnamed
+GameDialog_drawButtons (0x1f38a, size=174): 9 callees, 0 unnamed
+  named: GameDialog_drawAnimation, GameDialog_drawDos, GameDialog_drawLoad, GameDialog_drawMusic, GameDialog_drawNewGame, GameDialog_drawReturn, GameDialog_drawSave, GameDialog_drawSoundFx, writeString
+GameDialog_drawAnimation (0x1f438, size=73): 1 callees, 0 unnamed
+  named: writeString
+----- end target script output -----
+[*] finished executing callees_of_named.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_27CB0 @ 0x27cb0 ----
+  0x27cb0  push    si
+  0x27cb1  mov     si, 0CE1Fh
+  0x27cb4  mov     [bx+4], ax
+  0x27cb7  mov     ax, [si]
+  0x27cb9  mov     [bx+0Ah], ax
+  0x27cbc  mov     ax, [si+2]
+  0x27cbf  mov     [bx+0Ch], ax
+  0x27cc2  mov     word ptr [bx+6], 300h
+  0x27cc7  pop     si
+  0x27cc8  retf
+; ---- sub_27CC9 @ 0x27cc9 ----
+  0x27cc9  push    dx
+  0x27cca  mov     word ptr ds:904Bh, 0
+  0x27cd0  mov     ds:9047h, ax
+  0x27cd3  dec     bx
+  0x27cd4  shl     bx, 1
+  0x27cd6  push    bx
+  0x27cd7  shl     bx, 1
+  0x27cd9  add     bx, 0D0FDh
+  0x27cdd  mov     ax, [bx]
+  0x27cdf  mov     ds:904Dh, ax
+  0x27ce2  mov     ax, [bx+2]
+  0x27ce5  mov     ds:904Fh, ax
+  0x27ce8  pop     bx
+  0x27ce9  add     bx, 0D101h
+  0x27ced  mov     ax, [bx]
+  0x27cef  mov     ds:9049h, ax
+  0x27cf2  xor     dx, dx
+  0x27cf4  mov     bx, 17h
+  0x27cf7  div     bx
+  0x27cf9  mov     ds:4120h, ax
+  0x27cfc  pop     dx
+  0x27cfd  retf
+; ---- sub_27CFE @ 0x27cfe ----
+  0x27cfe  push    si
+  0x27cff  mov     bx, 9043h
+  0x27d02  mov     si, 0CE5Bh
+  0x27d05  mov     [bx+4], ax
+  0x27d08  mov     ax, [si]
+  0x27d0a  mov     [bx+0Ah], ax
+  0x27d0d  mov     ax, [si+2]
+  0x27d10  mov     [bx+0Ch], ax
+  0x27d13  mov     ax, ds:51B4h
+  0x27d16  mov     [bx+6], ax
+  0x27d19  mov     word ptr [bx+8], 0
+  0x27d1e  pop     si
+  0x27d1f  retf
+; ---- sub_27D20 @ 0x27d20 ----
+  0x27d20  push    dx
+  0x27d21  mov     word ptr ds:904Bh, 0
+  0x27d27  mov     ds:9047h, ax
+  0x27d2a  dec     bx
+  0x27d2b  shl     bx, 1
+  0x27d2d  push    bx
+  0x27d2e  shl     bx, 1
+  0x27d30  add     bx, 0D103h
+  0x27d34  mov     ax, [bx]
+  0x27d36  mov     ds:904Dh, ax
+  0x27d39  mov     ax, [bx+2]
+  0x27d3c  mov     ds:904Fh, ax
+  0x27d3f  pop     bx
+  0x27d40  add     bx, 0D16Bh
+  0x27d44  mov     ax, [bx]
+  0x27d46  mov     ds:9049h, ax
+  0x27d49  xor     dx, dx
+  0x27d4b  mov     bx, 16h
+  0x27d4e  div     bx
+  0x27d50  mov     ds:4120h, ax
+  0x27d53  pop     dx
+  0x27d54  retf
+; ---- sub_27D55 @ 0x27d55 ----
+  0x27d55  push    dx
+  0x27d56  mov     word ptr ds:904Bh, 0
+  0x27d5c  mov     ds:9047h, ax
+  0x27d5f  dec     bx
+  0x27d60  shl     bx, 1
+  0x27d62  push    bx
+  0x27d63  shl     bx, 1
+  0x27d65  add     bx, 0D19Fh
+  0x27d69  mov     ax, [bx]
+  0x27d6b  mov     ds:904Dh, ax
+  0x27d6e  mov     ax, [bx+2]
+  0x27d71  mov     ds:904Fh, ax
+  0x27d74  pop     bx
+  0x27d75  add     bx, 0D1A3h
+  0x27d79  mov     ax, [bx]
+  0x27d7b  mov     ds:9049h, ax
+  0x27d7e  xor     dx, dx
+  0x27d80  mov     bx, 17h
+  0x27d83  div     bx
+  0x27d85  mov     ds:4120h, ax
+  0x27d88  pop     dx
+  0x27d89  retf
+; ---- sub_27D8A @ 0x27d8a ----
+  0x27d8a  push    si
+  0x27d8b  mov     si, 0CDEBh
+  0x27d8e  mov     [bx+4], ax
+  0x27d91  mov     ax, [si]
+  0x27d93  mov     [bx+0Ah], ax
+  0x27d96  mov     ax, [si+2]
+  0x27d99  mov     [bx+0Ch], ax
+  0x27d9c  mov     word ptr [bx+8], 0
+  0x27da1  mov     word ptr [bx+6], 30C0h
+  0x27da6  pop     si
+  0x27da7  retf
+; ---- sub_27DA8 @ 0x27da8 ----
+  0x27da8  push    si
+  0x27da9  mov     si, 0CDD3h
+  0x27dac  mov     [bx+4], ax
+  0x27daf  mov     ax, [si]
+  0x27db1  mov     [bx+0Ah], ax
+  0x27db4  mov     ax, [si+2]
+  0x27db7  mov     [bx+0Ch], ax
+  0x27dba  mov     word ptr [bx+8], 0
+  0x27dbf  mov     word ptr [bx+6], 1388h
+  0x27dc4  pop     si
+  0x27dc5  retf
+; ---- sub_27DC6 @ 0x27dc6 ----
+  0x27dc6  push    si
+  0x27dc7  mov     si, 0CDE3h
+  0x27dca  mov     [bx+4], ax
+  0x27dcd  mov     ax, [si]
+  0x27dcf  mov     [bx+0Ah], ax
+  0x27dd2  mov     ax, [si+2]
+  0x27dd5  mov     [bx+0Ch], ax
+  0x27dd8  mov     ax, ds:556Ah
+  0x27ddb  mov     [bx+8], ax
+  0x27dde  mov     word ptr [bx+6], 1
+  0x27de3  pop     si
+  0x27de4  retf
+; ---- sub_27DE5 @ 0x27de5 ----
+  0x27de5  push    si
+  0x27de6  mov     si, 0CDDFh
+  0x27de9  mov     [bx+4], ax
+  0x27dec  mov     ax, [si]
+  0x27dee  mov     [bx+0Ah], ax
+  0x27df1  mov     ax, [si+2]
+  0x27df4  mov     [bx+0Ch], ax
+  0x27df7  mov     ax, ds:5566h
+  0x27dfa  mov     [bx+8], ax
+  0x27dfd  mov     word ptr [bx+6], 1
+  0x27e02  pop     si
+  0x27e03  retf
+; ---- sub_27E04 @ 0x27e04 ----
+  0x27e04  push    si
+  0x27e05  mov     si, 0CDE7h
+  0x27e08  mov     [bx+4], ax
+  0x27e0b  mov     ax, [si]
+  0x27e0d  mov     [bx+0Ah], ax
+  0x27e10  mov     ax, [si+2]
+  0x27e13  mov     [bx+0Ch], ax
+  0x27e16  mov     [bx+8], cx
+  0x27e19  mov     word ptr [bx+6], 1
+  0x27e1e  pop     si
+  0x27e1f  retf
+; ---- sub_27E20 @ 0x27e20 ----
+  0x27e20  push    si
+  0x27e21  mov     si, 0CDD7h
+  0x27e24  mov     [bx+4], ax
+  0x27e27  mov     ax, [si]
+  0x27e29  mov     [bx+0Ah], ax
+  0x27e2c  mov     ax, [si+2]
+  0x27e2f  mov     [bx+0Ch], ax
+  0x27e32  mov     ax, ds:519Ah
+  0x27e35  mov     [bx+6], ax
+  0x27e38  pop     si
+  0x27e39  retf
+; ---- sub_27E3A @ 0x27e3a ----
+  0x27e3a  push    si
+  0x27e3b  mov     si, 0CDDBh
+  0x27e3e  mov     [bx+4], ax
+  0x27e41  mov     ax, [si]
+  0x27e43  mov     [bx+0Ah], ax
+  0x27e46  mov     ax, [si+2]
+  0x27e49  mov     [bx+0Ch], ax
+  0x27e4c  mov     word ptr [bx+6], 22h ; '"'
+  0x27e51  pop     si
+  0x27e52  retf
+; ---- sub_27E53 @ 0x27e53 ----
+  0x27e53  mov     word ptr ds:904Bh, 0
+  0x27e59  mov     ds:9047h, ax
+  0x27e5c  dec     bx
+  0x27e5d  shl     bx, 1
+  0x27e5f  push    bx
+  0x27e60  shl     bx, 1
+  0x27e62  add     bx, 0CEF5h
+  0x27e66  mov     ax, [bx]
+  0x27e68  mov     ds:904Dh, ax
+  0x27e6b  mov     ax, [bx+2]
+  0x27e6e  mov     ds:904Fh, ax
+  0x27e71  pop     bx
+  0x27e72  add     bx, 0D039h
+  0x27e76  mov     ax, [bx]
+  0x27e78  mov     ds:9049h, ax
+  0x27e7b  retf
+; ---- sub_27E7C @ 0x27e7c ----
+  0x27e7c  push    si
+  0x27e7d  mov     si, 0CE07h
+  0x27e80  mov     [bx+4], ax
+  0x27e83  mov     ax, [si]
+  0x27e85  mov     [bx+0Ah], ax
+  0x27e88  mov     ax, [si+2]
+  0x27e8b  mov     [bx+0Ch], ax
+  0x27e8e  mov     word ptr [bx+6], 10h
+  0x27e93  mov     word ptr [bx+8], 0
+  0x27e98  pop     si
+  0x27e99  retf
+; ---- sub_27E9A @ 0x27e9a ----
+  0x27e9a  push    si
+  0x27e9b  mov     si, 0CE0Bh
+  0x27e9e  mov     [bx+4], ax
+  0x27ea1  mov     ax, [si]
+  0x27ea3  mov     [bx+0Ah], ax
+  0x27ea6  mov     ax, [si+2]
+  0x27ea9  mov     [bx+0Ch], ax
+  0x27eac  mov     word ptr [bx+6], 0Ch
+  0x27eb1  mov     word ptr [bx+8], 0
+  0x27eb6  pop     si
+  0x27eb7  retf
+; ---- sub_27EB8 @ 0x27eb8 ----
+  0x27eb8  push    si
+  0x27eb9  mov     si, 0CE0Fh
+  0x27ebc  mov     [bx+4], ax
+  0x27ebf  mov     ax, [si]
+  0x27ec1  mov     [bx+0Ah], ax
+  0x27ec4  mov     ax, [si+2]
+  0x27ec7  mov     [bx+0Ch], ax
+  0x27eca  mov     word ptr [bx+6], 8
+  0x27ecf  mov     word ptr [bx+8], 0
+  0x27ed4  pop     si
+  0x27ed5  retf
+; ---- sub_27ED6 @ 0x27ed6 ----
+  0x27ed6  push    si
+  0x27ed7  mov     si, 0CE13h
+  0x27eda  mov     [bx+4], ax
+  0x27edd  mov     ax, [si]
+  0x27edf  mov     [bx+0Ah], ax
+  0x27ee2  mov     ax, [si+2]
+  0x27ee5  mov     [bx+0Ch], ax
+  0x27ee8  mov     word ptr [bx+6], 0Ch
+  0x27eed  mov     word ptr [bx+8], 0
+  0x27ef2  pop     si
+  0x27ef3  retf
+; ---- sub_27EF4 @ 0x27ef4 ----
+  0x27ef4  push    si
+  0x27ef5  mov     si, 0CE17h
+  0x27ef8  mov     [bx+4], ax
+  0x27efb  mov     ax, [si]
+  0x27efd  mov     [bx+0Ah], ax
+  0x27f00  mov     ax, [si+2]
+  0x27f03  mov     [bx+0Ch], ax
+  0x27f06  mov     word ptr [bx+6], 1Ah
+  0x27f0b  mov     word ptr [bx+8], 0
+  0x27f10  pop     si
+  0x27f11  retf
+; ---- sub_27F12 @ 0x27f12 ----
+  0x27f12  push    si
+  0x27f13  mov     si, 0CE1Bh
+  0x27f16  mov     [bx+4], ax
+  0x27f19  mov     ax, [si]
+  0x27f1b  mov     [bx+0Ah], ax
+  0x27f1e  mov     ax, [si+2]
+  0x27f21  mov     [bx+0Ch], ax
+  0x27f24  mov     word ptr [bx+6], 4
+  0x27f29  mov     word ptr [bx+8], 0
+  0x27f2e  pop     si
+  0x27f2f  retf
+; ---- WorldDat_setBlock1 @ 0x27f30 ----
+  0x27f30  push    si
+  0x27f31  mov     si, 0CDFFh
+  0x27f34  mov     [bx+4], ax
+  0x27f37  mov     ax, [si]
+  0x27f39  mov     [bx+0Ah], ax
+  0x27f3c  mov     ax, [si+2]
+  0x27f3f  mov     [bx+0Ch], ax
+  0x27f42  mov     word ptr [bx+6], 3Ah ; ':'
+  0x27f47  mov     word ptr [bx+8], 0
+  0x27f4c  pop     si
+  0x27f4d  retf
+; ---- WorldDat_setBlock2 @ 0x27f4e ----
+  0x27f4e  push    si
+  0x27f4f  mov     si, 0CE03h
+  0x27f52  mov     [bx+4], ax
+  0x27f55  mov     ax, [si]
+  0x27f57  mov     [bx+0Ah], ax
+  0x27f5a  mov     ax, [si+2]
+  0x27f5d  mov     [bx+0Ch], ax
+  0x27f60  mov     word ptr [bx+6], 3Ah ; ':'
+  0x27f65  mov     word ptr [bx+8], 0
+  0x27f6a  pop     si
+  0x27f6b  retf
+; ---- WorldDat_setBlock3 @ 0x27f6c ----
+  0x27f6c  push    si
+  0x27f6d  mov     si, 0CDF3h
+  0x27f70  mov     [bx+4], ax
+  0x27f73  mov     ax, [si]
+  0x27f75  mov     [bx+0Ah], ax
+  0x27f78  mov     ax, [si+2]
+  0x27f7b  mov     [bx+0Ch], ax
+  0x27f7e  mov     ax, ds:5194h
+  0x27f81  mov     [bx+6], ax
+  0x27f84  pop     si
+  0x27f85  retf
+; ---- WorldDat_setBlock4 @ 0x27f86 ----
+  0x27f86  push    si
+  0x27f87  mov     si, 0CE6Bh
+  0x27f8a  mov     [bx+4], ax
+  0x27f8d  mov     ax, [si]
+  0x27f8f  mov     [bx+0Ah], ax
+  0x27f92  mov     ax, [si+2]
+  0x27f95  mov     [bx+0Ch], ax
+  0x27f98  mov     word ptr [bx+6], 50h ; 'P'
+  0x27f9d  mov     word ptr [bx+8], 0
+  0x27fa2  pop     si
+  0x27fa3  retf
+; ---- WorldDat_setBlock5 @ 0x27fa4 ----
+  0x27fa4  push    si
+  0x27fa5  mov     si, 0CE63h
+  0x27fa8  mov     ds:9047h, ax
+  0x27fab  mov     ax, [si]
+  0x27fad  mov     ds:904Dh, ax
+  0x27fb0  mov     ax, [si+2]
+  0x27fb3  mov     ds:904Fh, ax
+  0x27fb6  mov     word ptr ds:9049h, 6Ah ; 'j'
+  0x27fbc  mov     ds:904Bh, bx
+  0x27fc0  pop     si
+  0x27fc1  retf
+; ---- WorldDat_setBlock6 @ 0x27fc2 ----
+  0x27fc2  push    si
+  0x27fc3  mov     si, 0CE67h
+  0x27fc6  mov     ds:9047h, ax
+  0x27fc9  mov     ax, [si]
+  0x27fcb  mov     ds:904Dh, ax
+  0x27fce  mov     ax, [si+2]
+  0x27fd1  mov     ds:904Fh, ax
+  0x27fd4  mov     word ptr ds:9049h, 2
+  0x27fda  mov     ds:904Bh, bx
+  0x27fde  pop     si
+  0x27fdf  retf
+; ---- sub_27FE0 @ 0x27fe0 ----
+  0x27fe0  push    si
+  0x27fe1  push    dx
+  0x27fe2  mov     si, 0CDEFh
+  0x27fe5  mov     [bx+4], ax
+  0x27fe8  mov     ax, [si]
+  0x27fea  mov     [bx+0Ah], ax
+  0x27fed  mov     ax, [si+2]
+  0x27ff0  mov     [bx+0Ch], ax
+  0x27ff3  mov     ax, 4
+  0x27ff6  mul     word ptr ds:51B0h
+  0x27ffa  mov     [bx+6], ax
+  0x27ffd  pop     dx
+  0x27ffe  pop     si
+  0x27fff  retf
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'scope_resource_stubs.py', 'noexport']
+[*] reading scope_resource_stubs.py
+[*] executing scope_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+functions matching the [bx+4]/[bx+0Ah] FileEntry-block-setup pattern: 27
+range: 0x27b42 - 0x2801a
+  of which unnamed: 23
+by segment: {'seg096': 27}
+----- end target script output -----
+[*] finished executing scope_resource_stubs.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- ErrorCheck @ 0x2897d ----
+  0x2897d  cmp     word ptr ds:50D0h, 0
+  0x28982  jnz     short loc_28985
+  0x28984  retf
+  0x28985  mov     ax, 0Ch
+  0x28988  mov     bx, ds:50D0h
+  0x2898c  cmp     bx, 0FFFFh
+  0x2898f  jz      short ErrorExit
+  0x28991  shl     bx, 1
+  0x28993  add     bx, 341h
+  0x28997  mov     ax, cs:[bx]
+  0x2899a  jmp     ax
+  0x2899c  push    ax
+  0x2899d  call    sub_1FC21
+  0x289a2  call    sub_29B06
+  0x289a7  call    sub_2838F
+  0x289ac  test    word ptr ds:40FCh, 1
+  0x289b2  jz      short loc_289B9
+  0x289b4  mov     ax, 0
+  0x289b7  int     33h; - MS MOUSE - RESET DRIVER AND READ STATUS  ; - MS MOUSE - RESET DRIVER AND READ STATUS
+Return: AX = status
+BX = number of buttons
+  0x289b9  mov     ax, 3
+  0x289bc  int     10h; - VIDEO - SET VIDEO MODE  ; - VIDEO - SET VIDEO MODE
+AL = mode
+  0x289be  pop     dx
+  0x289bf  push    ds
+  0x289c0  push    cs
+  0x289c1  pop     ds
+  0x289c2  mov     ah, 9
+  0x289c4  int     21h; DOS - PRINT STRING  ; DOS - PRINT STRING
+DS:DX -> string terminated by "$"
+  0x289c6  pop     ds
+  0x289c7  mov     ax, ds:50D0h
+  0x289ca  mov     ah, 4Ch
+  0x289cc  int     21h; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)  ; DOS - 2+ - QUIT WITH EXIT CODE (EXIT)
+AL = exit code
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_1FC21 @ 0x1fc21 ----
+  0x1fc21  and     word_3295A, 0DFFh
+  0x1fc27  cmp     word ptr cs:dword_1F97C+2, 0
+  0x1fc2d  jz      short locret_1FC3E
+  0x1fc2f  lds     dx, cs:dword_1F97C
+  0x1fc34  mov     ax, 251Ch
+  0x1fc37  int     21h; DOS - SET INTERRUPT VECTOR  ; DOS - SET INTERRUPT VECTOR
+AL = interrupt number
+DS:DX = new vector to be used for specified interrupt
+  0x1fc39  mov     ax, seg seg129
+  0x1fc3c  mov     ds, ax
+  0x1fc3e  retf
+; ---- sub_1FC3F @ 0x1fc3f ----
+  0x1fc3f  test    word_3295A, 800h
+  0x1fc45  jnz     short loc_1FC48
+  0x1fc47  retf
+  0x1fc48  mov     cs:word_1F984, 270Fh
+  0x1fc4f  call    sub_1FD24
+  0x1fc52  retf
+; ---- sub_1FC53 @ 0x1fc53 ----
+  0x1fc53  push    es
+  0x1fc54  push    di
+  0x1fc55  push    si
+  0x1fc56  push    dx
+  0x1fc57  push    cx
+  0x1fc58  and     word_3295A, 0DFFFh
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_29B06 @ 0x29b06 ----
+  0x29b06  mov     es, _videoBufferSeg
+  0x29b0a  mov     ah, 49h
+  0x29b0c  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x29b0e  retf
+; ---- sub_29B0F @ 0x29b0f ----
+  0x29b0f  push    ax
+  0x29b10  push    bx
+  0x29b11  push    cx
+  0x29b12  push    dx
+  0x29b13  push    es
+  0x29b14  push    si
+  0x29b15  push    di
+  0x29b16  push    bp
+  0x29b17  mov     bp, sp
+  0x29b19  sub     sp, 50h
+  0x29b1c  cmp     word_32918, 5
+  0x29b21  jnz     short loc_29B3C
+  0x29b23  mov     [bp+var_4], 0
+  0x29b28  mov     word_32918, 7
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_2838F @ 0x2838f ----
+  0x2838f  test    word ptr ds:9485h, 4
+  0x28395  jz      short loc_283BC
+  0x28397  cmp     word ptr ds:0F41Ah, 0
+  0x2839c  jz      short loc_283BC
+  0x2839e  mov     bx, 8
+  0x283a1  call    dword ptr ds:0F418h
+  0x283a5  mov     bx, 9
+  0x283a8  call    dword ptr ds:0F418h
+  0x283ac  mov     es, word ptr ds:0F41Ah
+  0x283b0  mov     ah, 49h
+  0x283b2  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283b4  mov     es, word ptr ds:50CEh
+  0x283b8  mov     ah, 49h
+  0x283ba  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283bc  test    word ptr ds:9485h, 1
+  0x283c2  jz      short locret_283E9
+  0x283c4  cmp     cs:byte_28617, 0
+  0x283ca  jz      short locret_283E9
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_2838F @ 0x2838f ----
+  0x2838f  test    word ptr ds:9485h, 4
+  0x28395  jz      short loc_283BC
+  0x28397  cmp     word ptr ds:0F41Ah, 0
+  0x2839c  jz      short loc_283BC
+  0x2839e  mov     bx, 8
+  0x283a1  call    dword ptr ds:0F418h
+  0x283a5  mov     bx, 9
+  0x283a8  call    dword ptr ds:0F418h
+  0x283ac  mov     es, word ptr ds:0F41Ah
+  0x283b0  mov     ah, 49h
+  0x283b2  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283b4  mov     es, word ptr ds:50CEh
+  0x283b8  mov     ah, 49h
+  0x283ba  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283bc  test    word ptr ds:9485h, 1
+  0x283c2  jz      short locret_283E9
+  0x283c4  cmp     cs:byte_28617, 0
+  0x283ca  jz      short locret_283E9
+  0x283cc  mov     bx, 7
+  0x283cf  call    near ptr byte_28616
+  0x283d2  mov     bx, 8
+  0x283d5  call    near ptr byte_28616
+  0x283d8  mov     ax, 0FFFFh
+  0x283db  mov     bx, 3
+  0x283de  call    near ptr byte_28616
+  0x283e1  mov     es, word ptr ds:40FEh
+  0x283e5  mov     ah, 49h
+  0x283e7  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283e9  retf
+; ---- sub_283EA @ 0x283ea ----
+  0x283ea  and     word ptr ds:9485h, 0FFF0h
+  0x283ef  call    sub_28619
+  0x283f2  test    word ptr ds:9485h, 0C000h
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'resolve_ds_addr.py', 'noexport']
+[*] reading resolve_ds_addr.py
+[*] executing resolve_ds_addr.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ds segreg value (paragraph): 0xffffffff
+containing segment: seg102 0x286fc 0x28a5a
+mov insn: mov     bx, ds:50D0h
+operand type: 2
+operand value (raw): 0x50d0
+DataRefsFrom: []
+----- end target script output -----
+[*] finished executing resolve_ds_addr.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'fix_ds_segreg.py', 'noexport']
+[*] reading fix_ds_segreg.py
+[*] executing fix_ds_segreg.py
+[*] captured stdout from target script:
+----- begin target script output -----
+set_default_sreg_value(ds=0x2d86): 131 ok, 0 failed, 131 segments total
+before reanalysis: mov     bx, errorCode
+reanalyzing small test region 0x28980-0x28a00...
+after small-region reanalysis: mov     bx, errorCode
+operand type now: 2
+----- end target script output -----
+[*] finished executing fix_ds_segreg.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'fix_ds_segreg.py']
+[*] reading fix_ds_segreg.py
+[*] executing fix_ds_segreg.py
+[*] captured stdout from target script:
+----- begin target script output -----
+set_default_sreg_value(ds=0x2d86): 131 ok, 0 failed, 131 segments total
+spot check before reanalysis: mov     bx, errorCode
+reanalyzing whole database (this will take a while)...
+reanalysis done
+spot check after reanalysis: mov     bx, errorCode
+----- end target script output -----
+[*] finished executing fix_ds_segreg.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106914
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'identify.py', 'noexport']
+[*] reading identify.py
+[*] executing identify.py
+[*] captured stdout from target script:
+----- begin target script output -----
+root filename : SW.EXE
+input file    : C:\dev\yendor\yendor2\game\SW.EXE
+entry point   : 0x0 (cs=0x1000)
+input md5     : d464f6847b9ea4296e9ce1b251f92788
+
+segments:
+  seg000       0x010000-0x010c40  (3136 bytes)
+  seg001       0x010c40-0x011160  (1312 bytes)
+  seg002       0x011160-0x01177b  (1563 bytes)
+  seg003       0x01177b-0x011a10  (661 bytes)
+  seg004       0x011a10-0x011edc  (1228 bytes)
+  seg005       0x011edc-0x012553  (1655 bytes)
+  seg006       0x012553-0x012623  (208 bytes)
+  seg007       0x012623-0x012b84  (1377 bytes)
+  seg008       0x012b84-0x01305e  (1242 bytes)
+  seg009       0x01305e-0x014ae8  (6794 bytes)
+  seg010       0x014ae8-0x01522d  (1861 bytes)
+  seg011       0x01522d-0x016262  (4149 bytes)
+  seg012       0x016262-0x016298  (54 bytes)
+  seg013       0x016298-0x0162b5  (29 bytes)
+  seg014       0x0162b5-0x0162f6  (65 bytes)
+  seg015       0x0162f6-0x016dea  (2804 bytes)
+  seg016       0x016dea-0x016e18  (46 bytes)
+  seg017       0x016e18-0x016ede  (198 bytes)
+  seg018       0x016ede-0x016efa  (28 bytes)
+  seg019       0x016efa-0x016f64  (106 bytes)
+  seg020       0x016f64-0x016f83  (31 bytes)
+  seg021       0x016f83-0x01700e  (139 bytes)
+  seg022       0x01700e-0x017031  (35 bytes)
+  seg023       0x017031-0x017b92  (2913 bytes)
+  seg024       0x017b92-0x017fb8  (1062 bytes)
+  seg025       0x017fb8-0x018067  (175 bytes)
+  seg026       0x018067-0x01840d  (934 bytes)
+  seg027       0x01840d-0x018424  (23 bytes)
+  seg028       0x018424-0x018504  (224 bytes)
+  seg029       0x018504-0x0193be  (3770 bytes)
+  seg030       0x0193be-0x019a16  (1624 bytes)
+  seg031       0x019a16-0x019e56  (1088 bytes)
+  seg032       0x019e56-0x01a294  (1086 bytes)
+  seg033       0x01a294-0x01a37e  (234 bytes)
+  seg034       0x01a37e-0x01a3f0  (114 bytes)
+  seg035       0x01a3f0-0x01a5cc  (476 bytes)
+  seg036       0x01a5cc-0x01a5f5  (41 bytes)
+  seg037       0x01a5f5-0x01a76d  (376 bytes)
+  seg038       0x01a76d-0x01aa05  (664 bytes)
+  seg039       0x01aa05-0x01ac80  (635 bytes)
+  seg040       0x01ac80-0x01aef7  (631 bytes)
+  seg041       0x01aef7-0x01b30c  (1045 bytes)
+  seg042       0x01b30c-0x01b428  (284 bytes)
+  seg043       0x01b428-0x01b47a  (82 bytes)
+  seg044       0x01b47a-0x01b4c1  (71 bytes)
+  seg045       0x01b4c1-0x01ccbb  (6138 bytes)
+  seg046       0x01ccbb-0x01cdbc  (257 bytes)
+  seg047       0x01cdbc-0x01d01d  (609 bytes)
+  seg048       0x01d01d-0x01d038  (27 bytes)
+  seg049       0x01d038-0x01d118  (224 bytes)
+  seg050       0x01d118-0x01d146  (46 bytes)
+  seg051       0x01d146-0x01d197  (81 bytes)
+  seg052       0x01d197-0x01d1d4  (61 bytes)
+  seg053       0x01d1d4-0x01d2a5  (209 bytes)
+  seg054       0x01d2a5-0x01d4b7  (530 bytes)
+  seg055       0x01d4b7-0x01dce0  (2089 bytes)
+  seg056       0x01dce0-0x01e64a  (2410 bytes)
+  seg057       0x01e64a-0x01ea6d  (1059 bytes)
+  seg058       0x01ea6d-0x01f97b  (3854 bytes)
+  seg059       0x01f97b-0x020070  (1781 bytes)
+  seg060       0x020070-0x0208ca  (2138 bytes)
+  seg061       0x0208ca-0x0209d2  (264 bytes)
+  seg062       0x0209d2-0x020c1e  (588 bytes)
+  seg063       0x020c1e-0x021530  (2322 bytes)
+  seg064       0x021530-0x0216f0  (448 bytes)
+  seg065       0x0216f0-0x0218dc  (492 bytes)
+  seg066       0x0218dc-0x0219f9  (285 bytes)
+  seg067       0x0219f9-0x021cc2  (713 bytes)
+  seg068       0x021cc2-0x021de1  (287 bytes)
+  seg069       0x021de1-0x0222f7  (1302 bytes)
+  seg070       0x0222f7-0x02278b  (1172 bytes)
+  seg071       0x02278b-0x022a67  (732 bytes)
+  seg072       0x022a67-0x0236eb  (3204 bytes)
+  seg073       0x0236eb-0x023a64  (889 bytes)
+  seg074       0x023a64-0x023a7c  (24 bytes)
+  seg075       0x023a7c-0x023ba4  (296 bytes)
+  seg076       0x023ba4-0x025607  (6755 bytes)
+  seg077       0x025607-0x025655  (78 bytes)
+  seg078       0x025655-0x0256f0  (155 bytes)
+  seg079       0x0256f0-0x02570b  (27 bytes)
+  seg080       0x02570b-0x02572b  (32 bytes)
+  seg081       0x02572b-0x025740  (21 bytes)
+  seg082       0x025740-0x025862  (290 bytes)
+  seg083       0x025862-0x025a66  (516 bytes)
+  seg084       0x025a66-0x025aab  (69 bytes)
+  seg085       0x025aab-0x025b33  (136 bytes)
+  seg086       0x025b33-0x026021  (1262 bytes)
+  seg087       0x026021-0x026c9d  (3196 bytes)
+  seg088       0x026c9d-0x026d54  (183 bytes)
+  seg089       0x026d54-0x02704b  (759 bytes)
+  seg090       0x02704b-0x02746c  (1057 bytes)
+  seg091       0x02746c-0x0274b4  (72 bytes)
+  seg092       0x0274b4-0x02781c  (872 bytes)
+  seg093       0x02781c-0x027849  (45 bytes)
+  seg094       0x027849-0x027a20  (471 bytes)
+  seg095       0x027a20-0x027aeb  (203 bytes)
+  seg096       0x027aeb-0x028034  (1353 bytes)
+  seg097       0x028034-0x02814b  (279 bytes)
+  seg098       0x02814b-0x028245  (250 bytes)
+  seg099       0x028245-0x02827e  (57 bytes)
+  seg100       0x02827e-0x0286b1  (1075 bytes)
+  seg101       0x0286b1-0x0286fc  (75 bytes)
+  seg102       0x0286fc-0x028a5a  (862 bytes)
+  seg103       0x028a5a-0x028a75  (27 bytes)
+  seg104       0x028a75-0x028bd1  (348 bytes)
+  seg105       0x028bd1-0x028c93  (194 bytes)
+  seg106       0x028c93-0x02940e  (1915 bytes)
+  seg107       0x02940e-0x029529  (283 bytes)
+  seg108       0x029529-0x0295a7  (126 bytes)
+  seg109       0x0295a7-0x029738  (401 bytes)
+  seg110       0x029738-0x029877  (319 bytes)
+  seg111       0x029877-0x02a765  (3822 bytes)
+  seg112       0x02a765-0x02a787  (34 bytes)
+  seg113       0x02a787-0x02a914  (397 bytes)
+  seg114       0x02a914-0x02ade8  (1236 bytes)
+  seg115       0x02ade8-0x02ae3b  (83 bytes)
+  seg116       0x02ae3b-0x02b383  (1352 bytes)
+  seg117       0x02b383-0x02b436  (179 bytes)
+  seg118       0x02b436-0x02b655  (543 bytes)
+  seg119       0x02b655-0x02ba61  (1036 bytes)
+  seg120       0x02ba61-0x02baa0  (63 bytes)
+  seg121       0x02baa0-0x02bd1a  (634 bytes)
+  seg122       0x02bd1a-0x02c010  (758 bytes)
+  seg123       0x02c010-0x02c0fe  (238 bytes)
+  seg124       0x02c0fe-0x02d577  (5241 bytes)
+  seg125       0x02d577-0x02d5e0  (105 bytes)
+  seg126       0x02d5e0-0x02d609  (41 bytes)
+  seg127       0x02d609-0x02d65a  (81 bytes)
+  seg128       0x02d65a-0x02d86d  (531 bytes)
+  seg129       0x02d86d-0x03cc80  (62483 bytes)
+  seg130       0x03cc80-0x03ce80  (512 bytes)
+
+functions: 769 total, 59 named, 710 still sub_XXXXX
+
+structs (0): 
+
+named functions (non-sub_, first 200):
+  0x010000  start
+  0x011edc  InitGame
+  0x01206f  clear_kbd_buffer
+  0x012075  findSavegame
+  0x0120ed  InitGlobals
+  0x0122f2  loadWorldDat2
+  0x012323  loadWorldDat3
+  0x012355  loadWorldDat1
+  0x01247a  loadWorldDat4
+  0x0124ab  loadWorldDat5
+  0x01264d  MapUnmapPages
+  0x012677  InitMemory
+  0x012a51  InitGraphics
+  0x012b31  Struc1_Allocate
+  0x012b76  calcOffset
+  0x016298  allocMem
+  0x01840e  wait
+  0x018424  FileEntry_Close
+  0x018450  FileEntry_CreateFile
+  0x018472  FileEntry_OpenFile
+  0x018491  FileEntry_Read
+  0x0184bc  FileEntry_Write
+  0x0184e7  FileEntry_Seek
+  0x01f38a  GameDialog_drawButtons
+  0x01f438  GameDialog_drawAnimation
+  0x01f481  GameDialog_drawDos
+  0x01f49c  GameDialog_drawReturn
+  0x01f4b7  GameDialog_drawLoad
+  0x01f4d2  GameDialog_drawMusic
+  0x01f4ed  GameDialog_drawNewGame
+  0x01f508  GameDialog_drawSave
+  0x01f523  GameDialog_drawSoundFx
+  0x0237d8  InitMouse
+  0x023b5e  writeString
+  0x027f30  WorldDat_setBlock1
+  0x027f4e  WorldDat_setBlock2
+  0x027f6c  WorldDat_setBlock3
+  0x027f86  WorldDat_setBlock4
+  0x027fa4  WorldDat_setBlock5
+  0x027fc2  WorldDat_setBlock6
+  0x02897d  ErrorCheck
+  0x0289ce  ShowErr_MemoryAllocation
+  0x0289d3  ShowErr_ProblemWithPictureVga
+  0x0289d8  ShowErr_ProblemWithPalette
+  0x0289dd  ShowErr_RequiredExpandedMemMgr
+  0x0289e2  ShowErr_MinimumExpandedRam
+  0x0289e7  ShowErr_EmmMappingError
+  0x0289ec  ShowErr_ProblemWithMusic
+  0x0289f1  ShowErr_ProblemWithDriver
+  0x0289f6  ShowErr_ProblemWithWorldDat
+  0x0289fb  ShowErr_ProblemWithCurgame
+  0x028a00  ShowErr_ProblemWithSavedGame
+  0x028a05  ShowErr_ExpandedMemAllocFail
+  0x028a0a  ShowErr_ProblemRetrievingText
+  0x028a0f  ShowErr_ProblemRetrievingNpc
+  0x028a14  ShowErr_ProblemRetrievingConvo
+  0x029aa2  writeChar
+  0x02a11b  Fade?
+  0x02a681  getTextPos
+----- end target script output -----
+[*] finished executing identify.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'verify_ds_fix.py', 'noexport']
+[*] reading verify_ds_fix.py
+[*] executing verify_ds_fix.py
+[*] captured stdout from target script:
+----- begin target script output -----
+mov insn: mov     bx, errorCode
+DataRefsFrom(0x28988): ['0x32930']
+
+name at 0x2874C: aProblemWithPal
+is_strlit: False
+xrefs to it: ['0x289d8']
+
+unnamed functions with SOME named-data ref now: 391 / 710
+----- end target script output -----
+[*] finished executing verify_ds_fix.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_1FC21 @ 0x1fc21 ----
+  0x1fc21  and     word_3295A, 0DFFh
+  0x1fc27  cmp     word ptr cs:dword_1F97C+2, 0
+  0x1fc2d  jz      short locret_1FC3E
+  0x1fc2f  lds     dx, cs:dword_1F97C
+  0x1fc34  mov     ax, 251Ch
+  0x1fc37  int     21h; DOS - SET INTERRUPT VECTOR  ; DOS - SET INTERRUPT VECTOR
+AL = interrupt number
+DS:DX = new vector to be used for specified interrupt
+  0x1fc39  mov     ax, seg seg129
+  0x1fc3c  mov     ds, ax
+  0x1fc3e  retf
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_2838F @ 0x2838f ----
+  0x2838f  test    off_36CE5, 4
+  0x28395  jz      short loc_283BC
+  0x28397  cmp     word_3CC7A, 0
+  0x2839c  jz      short loc_283BC
+  0x2839e  mov     bx, 8
+  0x283a1  call    dword ptr unk_3CC78
+  0x283a5  mov     bx, 9
+  0x283a8  call    dword ptr unk_3CC78
+  0x283ac  mov     es, word_3CC7A
+  0x283b0  mov     ah, 49h
+  0x283b2  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283b4  mov     es, word_3292E
+  0x283b8  mov     ah, 49h
+  0x283ba  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283bc  test    off_36CE5, 1
+  0x283c2  jz      short locret_283E9
+  0x283c4  cmp     cs:byte_28617, 0
+  0x283ca  jz      short locret_283E9
+  0x283cc  mov     bx, 7
+  0x283cf  call    near ptr byte_28616
+  0x283d2  mov     bx, 8
+  0x283d5  call    near ptr byte_28616
+  0x283d8  mov     ax, 0FFFFh
+  0x283db  mov     bx, 3
+  0x283de  call    near ptr byte_28616
+  0x283e1  mov     es, word_3195E
+  0x283e5  mov     ah, 49h
+  0x283e7  int     21h; DOS - 2+ - FREE MEMORY  ; DOS - 2+ - FREE MEMORY
+ES = segment address of area to be freed
+  0x283e9  retf
+; ---- sub_283EA @ 0x283ea ----
+  0x283ea  and     off_36CE5, 0FFF0h
+  0x283ef  call    sub_28619
+  0x283f2  test    off_36CE5, 0C000h
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'name_error_cleanup_chain.py']
+[*] reading name_error_cleanup_chain.py
+[*] executing name_error_cleanup_chain.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x1fc21  'sub_1FC21' -> 'RestoreInt1cVector': ok
+0x29b06  'sub_29B06' -> 'FreeVideoBuffer': ok
+0x2838f  'sub_2838F' -> 'ShutdownAudioDrivers': ok
+0x36ce5  'off_36CE5' -> 'g_driverStateFlags': ok
+0x3cc78  'unk_3CC78' -> 'g_soundDriverFarPtr': ok
+----- end target script output -----
+[*] finished executing name_error_cleanup_chain.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106915
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'document_resource_stubs.py']
+[*] reading document_resource_stubs.py
+[*] executing document_resource_stubs.py
+[*] captured stdout from target script:
+----- begin target script output -----
+done
+----- end target script output -----
+[*] finished executing document_resource_stubs.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106915
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
