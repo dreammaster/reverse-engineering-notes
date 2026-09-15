@@ -373,7 +373,7 @@ loc_10306:                              ; CODE XREF: start+B0↑j
 loc_1031D:                              ; CODE XREF: start+318↑j
                 cmp     ax, 1
                 jnz     short loc_1032A
-                call    sub_1A37E
+                call    TryDropHeldItem
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 
@@ -10461,7 +10461,7 @@ loc_165D7:                              ; CODE XREF: HandleDungeonInput+88↑j
 loc_165EE:                              ; CODE XREF: HandleDungeonInput+1E2↑j
                 cmp     ax, 1
                 jnz     short loc_16605
-                call    sub_1A37E
+                call    TryDropHeldItem
                 call    DrawMonsterInfoPanels
                 call    DrawMouseCursor
                 jmp     loc_16451
@@ -12375,7 +12375,7 @@ loc_1746E:                              ; CODE XREF: RunShopScreen+120↑j
                 jnz     short loc_17485
                 cmp     word_31946, 0
                 jz      short loc_17482
-                call    sub_1A37E
+                call    TryDropHeldItem
 
 loc_17482:                              ; CODE XREF: RunShopScreen+150↑j
                                         ; RunShopScreen+15F↓j ...
@@ -14732,7 +14732,7 @@ loc_18714:                              ; CODE XREF: sub_1869D+61↑j
                 call    sub_1930E
                 cmp     errorCode, 1
                 jnz     short loc_1872D
-                call    sub_1A37E
+                call    TryDropHeldItem
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
 
@@ -17953,9 +17953,9 @@ seg033          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A294       proc far                ; CODE XREF: sub_1A37E+55↓P
+PlaceItemOnGround proc far              ; CODE XREF: TryDropHeldItem+55↓P
                                         ; sub_23C18+300↓P
-                push    cx
+                push    cx              ; Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.
                 push    dx
                 push    si
                 push    di
@@ -17970,7 +17970,7 @@ sub_1A294       proc far                ; CODE XREF: sub_1A37E+55↓P
                 mov     si, 0AFA8h
                 mov     cx, 8
 
-loc_1A2B6:                              ; CODE XREF: sub_1A294+7E↓j
+loc_1A2B6:                              ; CODE XREF: PlaceItemOnGround+7E↓j
                 push    cx
                 push    si
                 mov     ax, [si+2]
@@ -17986,7 +17986,7 @@ loc_1A2B6:                              ; CODE XREF: sub_1A294+7E↓j
                 mov     si, 0AFCAh
                 mov     cx, 8
 
-loc_1A2DE:                              ; CODE XREF: sub_1A294+70↓j
+loc_1A2DE:                              ; CODE XREF: PlaceItemOnGround+70↓j
                 push    cx
                 push    si
                 mov     ax, [si+2]
@@ -18000,8 +18000,8 @@ loc_1A2DE:                              ; CODE XREF: sub_1A294+70↓j
                 call    sub_1A34C
                 call    sub_1A320
 
-loc_1A2FF:                              ; CODE XREF: sub_1A294+51↑j
-                                        ; sub_1A294+5D↑j
+loc_1A2FF:                              ; CODE XREF: PlaceItemOnGround+51↑j
+                                        ; PlaceItemOnGround+5D↑j
                 pop     si
                 pop     cx
                 add     si, 4
@@ -18009,8 +18009,8 @@ loc_1A2FF:                              ; CODE XREF: sub_1A294+51↑j
                 pop     word_36863
                 call    sub_1A320
 
-loc_1A30D:                              ; CODE XREF: sub_1A294+29↑j
-                                        ; sub_1A294+35↑j
+loc_1A30D:                              ; CODE XREF: PlaceItemOnGround+29↑j
+                                        ; PlaceItemOnGround+35↑j
                 pop     si
                 pop     cx
                 add     si, 4
@@ -18018,20 +18018,20 @@ loc_1A30D:                              ; CODE XREF: sub_1A294+29↑j
                 pop     word_36863
                 call    sub_1A320
 
-loc_1A31B:                              ; CODE XREF: sub_1A294+10↑j
+loc_1A31B:                              ; CODE XREF: PlaceItemOnGround+10↑j
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 retf
-sub_1A294       endp
+PlaceItemOnGround endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A320       proc near               ; CODE XREF: sub_1A294+68↑p
-                                        ; sub_1A294+76↑p ...
+sub_1A320       proc near               ; CODE XREF: PlaceItemOnGround+68↑p
+                                        ; PlaceItemOnGround+76↑p ...
                 push    word_3685F
                 mov     word_3685F, 0AFECh
                 mov     di, 0AFECh
@@ -18052,8 +18052,8 @@ sub_1A320       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A34C       proc near               ; CODE XREF: sub_1A294+15↑p
-                                        ; sub_1A294+3D↑p ...
+sub_1A34C       proc near               ; CODE XREF: PlaceItemOnGround+15↑p
+                                        ; PlaceItemOnGround+3D↑p ...
                 mov     word_36863, ax
                 mov     ax, bx
                 mov     bx, 8FFBh       ; this
@@ -18089,23 +18089,23 @@ seg034          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A37E       proc far                ; CODE XREF: start+322↑P
+TryDropHeldItem proc far                ; CODE XREF: start+322↑P
                                         ; HandleDungeonInput+1EC↑P ...
-                cmp     word_31946, 0
+                cmp     word_31946, 0   ; The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.
                 jnz     short loc_1A386
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1A386:                              ; CODE XREF: sub_1A37E+5↑j
+loc_1A386:                              ; CODE XREF: TryDropHeldItem+5↑j
                 call    ClearStatusPanelIfDirty
                 call    ClearMessageBoxArea
-                call    sub_25740
+                call    IsItemDroppable
                 jz      short loc_1A39E
                 call    FlashStatusWarning
                 jmp     short loc_1A3E9
 ; ---------------------------------------------------------------------------
 
-loc_1A39E:                              ; CODE XREF: sub_1A37E+17↑j
+loc_1A39E:                              ; CODE XREF: TryDropHeldItem+17↑j
                 push    word_31946
                 mov     word_31946, 0
                 mov     word_2E530, 0
@@ -18119,21 +18119,21 @@ loc_1A39E:                              ; CODE XREF: sub_1A37E+17↑j
                 jmp     short loc_1A3E4
 ; ---------------------------------------------------------------------------
 
-loc_1A3CB:                              ; CODE XREF: sub_1A37E+40↑j
+loc_1A3CB:                              ; CODE XREF: TryDropHeldItem+40↑j
                 pop     ax
                 mov     ax, word_31948
                 mov     bx, word_3194C
-                call    sub_1A294
+                call    PlaceItemOnGround
                 mov     word_31948, 0
                 mov     word_3194C, 0
 
-loc_1A3E4:                              ; CODE XREF: sub_1A37E+4B↑j
+loc_1A3E4:                              ; CODE XREF: TryDropHeldItem+4B↑j
                 call    ClearMessageBoxArea
 
-loc_1A3E9:                              ; CODE XREF: sub_1A37E+1E↑j
+loc_1A3E9:                              ; CODE XREF: TryDropHeldItem+1E↑j
                 call    ShowMaterialCounterHud
                 retf
-sub_1A37E       endp
+TryDropHeldItem endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -18548,7 +18548,7 @@ seg038          segment byte public 'CODE' use16
 
 
 ShowConfirmPrompt proc far              ; CODE XREF: UseAbilityCommand:loc_178F0↑P
-                                        ; sub_1A37E+38↑P ...
+                                        ; TryDropHeldItem+38↑P ...
                 push    _videoSegment   ; Shows a yes/no confirmation prompt for message id ax; returns 5 when the user confirms (per both call sites -- ConfirmQuitToDos, ConfirmNewGame).
                 push    bx
                 push    cx
@@ -35352,7 +35352,7 @@ loc_23DCE:                              ; CODE XREF: sub_23C18+1D0↓j
                 mov     word_31948, ax
                 mov     ax, [si+2]
                 mov     word_3194C, ax
-                call    sub_25740
+                call    IsItemDroppable
                 jnz     short loc_23E1F
 
 loc_23DE5:                              ; CODE XREF: sub_23C18+1B9↑j
@@ -35368,7 +35368,7 @@ loc_23DFB:                              ; CODE XREF: sub_23C18+1F7↓j
                 jz      short loc_23E0C
                 mov     ax, [si]
                 mov     word_31948, ax
-                call    sub_25740
+                call    IsItemDroppable
                 jnz     short loc_23E1F
 
 loc_23E0C:                              ; CODE XREF: sub_23C18+1E6↑j
@@ -35480,7 +35480,7 @@ loc_23F09:                              ; CODE XREF: sub_23C18+2D8↑j
 loc_23F10:                              ; CODE XREF: sub_23C18+308↓j
                 mov     ax, [si+11Ah]
                 mov     bx, [si+11Ch]
-                call    sub_1A294
+                call    PlaceItemOnGround
                 add     si, 4
                 loop    loc_23F10
                 call    sub_243C3
@@ -37926,9 +37926,9 @@ seg082          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25740       proc far                ; CODE XREF: sub_1A37E+12↑P
+IsItemDroppable proc far                ; CODE XREF: TryDropHeldItem+12↑P
                                         ; sub_23C18+1C6↑P ...
-                push    di
+                push    di              ; Checks the held item's catalog [+0xC] flags (bit 1 / bit 0x2000, the container flag) to determine droppability. Called from TryDropHeldItem.
                 push    si
                 push    dx
                 push    cx
@@ -37942,17 +37942,17 @@ sub_25740       proc far                ; CODE XREF: sub_1A37E+12↑P
                 test    word ptr [bx+0Ch], 2000h
                 jnz     short loc_25770
 
-loc_25760:                              ; CODE XREF: sub_25740+B↑j
-                                        ; sub_25740+7D↓j
+loc_25760:                              ; CODE XREF: IsItemDroppable+B↑j
+                                        ; IsItemDroppable+7D↓j
                 xor     ax, ax
                 jmp     short loc_25767
 ; ---------------------------------------------------------------------------
 
-loc_25764:                              ; CODE XREF: sub_25740+17↑j
-                                        ; sub_25740+67↓j ...
+loc_25764:                              ; CODE XREF: IsItemDroppable+17↑j
+                                        ; IsItemDroppable+67↓j ...
                 mov     ax, 0FFFFh
 
-loc_25767:                              ; CODE XREF: sub_25740+22↑j
+loc_25767:                              ; CODE XREF: IsItemDroppable+22↑j
                 cmp     ax, 0
                 pop     bx
                 pop     cx
@@ -37962,7 +37962,7 @@ loc_25767:                              ; CODE XREF: sub_25740+22↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_25770:                              ; CODE XREF: sub_25740+1E↑j
+loc_25770:                              ; CODE XREF: IsItemDroppable+1E↑j
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
                 call    sub_27E3A
@@ -37974,7 +37974,7 @@ loc_25770:                              ; CODE XREF: sub_25740+1E↑j
                 mov     di, 0BC2Ah
                 mov     cx, 8
 
-loc_25797:                              ; CODE XREF: sub_25740+7B↓j
+loc_25797:                              ; CODE XREF: IsItemDroppable+7B↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_257B8
@@ -37987,19 +37987,19 @@ loc_25797:                              ; CODE XREF: sub_25740+7B↓j
                 cmp     ax, 0
                 jnz     short loc_25764
 
-loc_257B8:                              ; CODE XREF: sub_25740+5B↑j
-                                        ; sub_25740+6E↑j
+loc_257B8:                              ; CODE XREF: IsItemDroppable+5B↑j
+                                        ; IsItemDroppable+6E↑j
                 add     di, 4
                 loop    loc_25797
                 jmp     short loc_25760
-sub_25740       endp
+IsItemDroppable endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 ; int __fastcall sub_257BF(int, int, FileEntry *this)
-sub_257BF       proc near               ; CODE XREF: sub_25740+70↑p
+sub_257BF       proc near               ; CODE XREF: IsItemDroppable+70↑p
                 push    di
                 push    cx              ; this
                 mov     ax, 0BC4Ah
@@ -84840,7 +84840,7 @@ word_3685F      dw 0                    ; DATA XREF: sub_1A320↑r
 word_36861      dw 0                    ; DATA XREF: RunGameDialog+4B4↑w
                                         ; RunGameDialog+557↑w ...
 word_36863      dw 0                    ; DATA XREF: sub_19091↑w
-                                        ; sub_1A294+18↑r ...
+                                        ; PlaceItemOnGround+18↑r ...
 word_36865      dw 0                    ; DATA XREF: DrawLocalMapCell+A↑r
                                         ; DrawLocalMapCell+3A↑w ...
 word_36867      dw 0                    ; DATA XREF: DrawLocalMapCell+E↑r

@@ -208,6 +208,14 @@ if nonempty, then clears the marker — unloading it. So each bag's
 contents persist independently in the savegame, swapped into the
 character's inventory groups only while open.
 
+**Dropping a held item**: `TryDropHeldItem` (checks `IsItemDroppable`,
+warns and bails if not; shows a confirm prompt; calls
+`PlaceItemOnGround` on confirmation, else restores the held item)
+handles the "drop" action. `PlaceItemOnGround` recurses into a
+dropped container's 8-slot contents (catalog `[+0xC]` bit `0x2000`,
+the same container flag) so a dropped bag's full contents are placed
+too, not just the container item itself.
+
 **`SyncAllContainers`** (found via `RepairItemCommand`'s opening call)
 writes every open bag's contents back to `CURGAME` across the *whole
 party*, without closing them (`SyncContainerContents`, the same

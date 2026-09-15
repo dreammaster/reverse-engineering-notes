@@ -3090,6 +3090,15 @@ the pick is incapacitated.
 
 396 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryDropHeldItem, IsItemDroppable, PlaceItemOnGround
+
+Named the "drop held item" cluster: a confirm-gated drop action whose
+placement step recurses into a dropped container's contents (the
+same container flag already documented for the 3 alternate bags), so
+a dropped bag's full contents are placed too.
+
+399 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

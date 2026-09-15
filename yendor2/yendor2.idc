@@ -3621,7 +3621,9 @@ static Bytes_0(void) {
 	create_insn	(0X1A276);
 	create_insn	(x=0X1A28D);
 	op_hex		(x,	1);
+	set_cmt	(0X1A294,	"Places the held item on the ground; if it's a container ([+0xC] bit 0x2000), recursively processes its 8-slot contents the same way via sub_1A34C -- persists a dropped container's full contents. Called from TryDropHeldItem.",	0);
 	create_insn	(0X1A294);
+	set_name	(0X1A294,	"PlaceItemOnGround");
 	create_insn	(x=0X1A29F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A2C4);
@@ -3632,13 +3634,24 @@ static Bytes_0(void) {
 	create_insn	(0X1A34C);
 	set_cmt	(0X1A351,	"this",	0);
 	create_insn	(0X1A36A);
+	set_cmt	(0X1A37E,	"The 'drop held item' action: checks IsItemDroppable (warns/bails if not), shows a confirm prompt, then calls PlaceItemOnGround on confirmation or restores the held item on decline. Called from `start`/HandleDungeonInput.",	0);
 	create_insn	(0X1A37E);
+	set_name	(0X1A37E,	"TryDropHeldItem");
 	create_insn	(0X1A386);
 	create_insn	(0X1A39E);
 	create_insn	(0X1A3CB);
 	set_cmt	(0X1A3F0,	"Party teleport/fast-travel handler: given a destination id, looks up table 0xD40B (16-byte stride), gates on IsDestinationUnlocked if flagged, sets a music/mode flag, sets new position/facing (with a hardcoded landing-spot override for one destination), and reveals/redraws the map. Called from `start` and ExamineTarget.",	0);
 	create_insn	(0X1A3F0);
 	set_name	(0X1A3F0,	"TravelToDestination");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1A3FE);
 	op_hex		(x,	1);
 	create_insn	(0X1A40E);
@@ -3661,15 +3674,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1A4C5,	"Destination-eligibility gate: looks up table 0xDFBB (22-byte stride) by destination id (word_2E516); tests a flag word against a bitmask, returning eligible (1) or not (0, with an optional rejection message). Called from TravelToDestination.",	0);
 	create_insn	(0X1A4C5);
 	set_name	(0X1A4C5,	"IsDestinationUnlocked");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1A4DA);
 	create_insn	(0X1A4E9);
 	create_insn	(x=0X1A4F4);
@@ -5893,6 +5897,15 @@ static Bytes_1(void) {
 	set_cmt	(0X22A68,	"Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).",	0);
 	create_insn	(0X22A68);
 	set_name	(0X22A68,	"SpawnMonsterInFacingDirection");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -5909,15 +5922,6 @@ static Bytes_1(void) {
 	set_cmt	(0X22B78,	"Scans g_levelMonsters for an entry matching the given monster type id (ax). Found -> sub_233F5 + ZF clear; not found -> ZF set. Used by TryTriggerMonsterEncounterAtCell as a duplicate-prevention check before spawning (skips spawning if this type already exists on the level) -- NOT a probability roll, correcting last round's comment.",	0);
 	create_insn	(0X22B78);
 	set_name	(0X22B78,	"FindMonsterTypeInLevelPool");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22B8E);
 	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters: 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A] (drained later by ShowLootAndAwardExperience). Also applies two signed global-flag-index deltas, [+0x14]/[+0x16] (negative clears, positive sets, via ClearGlobalFlag/SetGlobalFlag) -- e.g. this monster's death can set/clear an arbitrary quest/world-state flag.",	0);
 	create_insn	(0X22B96);
@@ -6522,7 +6526,9 @@ static Bytes_2(void) {
 	create_insn	(0X2570C);
 	create_insn	(0X25726);
 	create_insn	(0X2572C);
+	set_cmt	(0X25740,	"Checks the held item's catalog [+0xC] flags (bit 1 / bit 0x2000, the container flag) to determine droppability. Called from TryDropHeldItem.",	0);
 	create_insn	(0X25740);
+	set_name	(0X25740,	"IsItemDroppable");
 	set_cmt	(0X25744,	"this",	0);
 	create_insn	(x=0X25752);
 	op_hex		(x,	1);
@@ -8883,6 +8889,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2B09A,	"Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X2B09A);
 	set_name	(0X2B09A,	"PartyMassHealAndOverheal");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B09F);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B0CE);
@@ -8902,15 +8917,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
 	create_insn	(0X2B17F);
 	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B184);
 	op_hex		(x,	1);
 	create_insn	(0X2B1C3);
