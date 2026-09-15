@@ -2187,7 +2187,16 @@ the total; the Y/N poll and gold deduction happen in the caller
 
 276 named of 769 functions as of this update.
 
-## Current state (2026-09-14, before any work this session)
+### 2026-09-15 session update, continued: precision fix — ShowHealingCostPrompt's confirm/pay step isn't in any traced caller
+
+Checked all 6 call sites of `ShowHealingCostPrompt` (found a 6th: it's
+also called from `UseTrainingItem`, not just `UseHealingItem`/
+`UseItemType_400`). Every one `retf`s immediately after the call —
+none poll Y/N or deduct gold there. Corrected last entry's overstated
+claim that "the caller" handles the confirm+pay step; in fact no
+traced call site does, so that step (if it exists at all) happens on
+some separate, later re-entry not yet found. Renames only, no new
+count.
 
 Via `identify.py`:
 

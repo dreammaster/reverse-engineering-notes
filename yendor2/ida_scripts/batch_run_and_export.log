@@ -47550,3 +47550,22 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'fix_healing_cost_prompt_comment.py']
+[*] reading fix_healing_cost_prompt_comment.py
+[*] executing fix_healing_cost_prompt_comment.py
+[*] captured stdout from target script:
+----- begin target script output -----
+comment updated
+----- end target script output -----
+[*] finished executing fix_healing_cost_prompt_comment.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106933
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

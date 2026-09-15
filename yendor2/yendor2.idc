@@ -3937,7 +3937,7 @@ static Bytes_0(void) {
 	create_insn	(0X1B8AB);
 	create_insn	(0X1B8EE);
 	set_cmt	(0X1B936,	"msg",	0);
-	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text per caller: 'TO REPLENISH YOUR HEALTH POINTS.' / 'TO REMOVE YOUR CONDITIONS.' / 'TO RETURN YOU TO LIFE.' / 'TO COMPLETELY RESTORE YOU.'. Doesn't poll Y/N itself -- caller handles that.",	0);
+	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text/bx varies per caller (UseHealingItem x4, UseItemType_400, UseTrainingItem). All 6 traced call sites retf immediately after calling this -- none poll Y/N or deduct gold here. The actual confirm+pay step, if any, isn't found yet.",	0);
 	create_insn	(0X1B96F);
 	set_name	(0X1B96F,	"ShowHealingCostPrompt");
 	create_insn	(x=0X1B978);

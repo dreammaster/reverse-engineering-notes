@@ -20664,7 +20664,7 @@ sub_1B8EE       endp
 
 ShowHealingCostPrompt proc far          ; CODE XREF: UseItemType_400+EF↓p
                                         ; UseHealingItem+169↓p ...
-                push    bx              ; Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text per caller: 'TO REPLENISH YOUR HEALTH POINTS.' / 'TO REMOVE YOUR CONDITIONS.' / 'TO RETURN YOU TO LIFE.' / 'TO COMPLETELY RESTORE YOU.'. Doesn't poll Y/N itself -- caller handles that.
+                push    bx              ; Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text/bx varies per caller (UseHealingItem x4, UseItemType_400, UseTrainingItem). All 6 traced call sites retf immediately after calling this -- none poll Y/N or deduct gold here. The actual confirm+pay step, if any, isn't found yet.
                 push    ax
                 mov     ax, es:[si+10h]
                 mov     word_3298E, ax
