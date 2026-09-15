@@ -275,8 +275,11 @@ loop within F5's subtype selector); subtype 2 → just
 `WaitForKeypress` (looks like a placeholder/empty subtype); subtypes
 3–6 (`word_2E3F6=0xD/0xE/0xF/0x10`) → `sub_13119` (**correction**: has
 4 call sites here, not "two other sites" as first counted below);
-subtype 7 → `sub_1334E`; subtype 8 (`word_2E3F6=0x11`) →
-`RunClueEntryMenu` + `sub_1318D`. F6 (Complete Walk Through) →
+subtype 7 → `RunClueBookTransportCategory` (a single "TRANSPORTATIONS"
+screen listing PEGASUS/GIANT EAGLE/MAGIC DRAGON — ties to
+`IsItemRangeAvailable`'s "boat/horse-style transport gate"); subtype 8
+(`word_2E3F6=0x11`) → `RunClueEntryMenu` + `sub_1318D`. F6 (Complete
+Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
 cleanup and `LoadMasterPalette` back to the normal palette (the
 reverse of `PlayClueBookOpenAnimation`'s swap). `sub_13278`/

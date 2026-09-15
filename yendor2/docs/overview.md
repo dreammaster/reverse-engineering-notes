@@ -2336,6 +2336,15 @@ ties them together with input polling and cell-click hit-testing
 
 291 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookTransportCategory / ShowClueBookTransportDetail
+
+Named F5 item-subtype-7's cluster: a single "TRANSPORTATIONS" screen
+(dumped title) listing PEGASUS, GIANT EAGLE, MAGIC DRAGON — ties back
+to `IsItemRangeAvailable`'s documented "boat/horse-style transport
+gate" use case from earlier this session.
+
+293 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

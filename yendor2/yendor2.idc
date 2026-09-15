@@ -1689,8 +1689,10 @@ static Bytes_0(void) {
 	create_insn	(0X132F2);
 	set_name	(0X132F2,	"ShowPagedEntryScreen");
 	create_insn	(0X1334D);
+	set_cmt	(0X1334E,	"F5 item-subtype-7 'TRANSPORTATIONS' clue-book category loop (called from ShowClueBook). Draws via ShowClueBookTransportDetail, polls input until ESC.",	0);
 	create_insn	(x=0X1334E);
 	op_hex		(x,	1);
+	set_name	(0X1334E,	"RunClueBookTransportCategory");
 	create_insn	(x=0X1337A);
 	op_hex		(x,	1);
 	create_insn	(0X13380);
@@ -1838,7 +1840,9 @@ static Bytes_0(void) {
 	set_cmt	(0X13E12,	"msg",	0);
 	set_cmt	(0X13E6F,	"this",	0);
 	set_cmt	(0X13E83,	"msg",	0);
+	set_cmt	(0X13E98,	"'TRANSPORTATIONS' detail screen (msg 0x8A6A): message box + nav bar, then 3 named mounts -- PEGASUS, GIANT EAGLE, MAGIC DRAGON -- drawn via sub_13EDF (not traced, likely a per-mount stat-line drawer).",	0);
 	create_insn	(0X13E98);
+	set_name	(0X13E98,	"ShowClueBookTransportDetail");
 	create_insn	(0X13EDF);
 	set_cmt	(0X13EEB,	"msg",	0);
 	set_cmt	(0X13F03,	"msg",	0);

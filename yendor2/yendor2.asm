@@ -1707,7 +1707,7 @@ loc_1106D:                              ; CODE XREF: ShowClueBook+428↑j
 ; ---------------------------------------------------------------------------
 
 loc_1107C:                              ; CODE XREF: ShowClueBook+2A8↑j
-                call    sub_1334E
+                call    RunClueBookTransportCategory
                 cmp     word_2E40A, 1
                 jz      short loc_1108B
                 jmp     loc_10CC5
@@ -5398,13 +5398,13 @@ ShowPagedEntryScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1334E       proc far                ; CODE XREF: ShowClueBook:loc_1107C↑P
-                or      word_328CC, 40h
-                call    sub_13E98
+RunClueBookTransportCategory proc far   ; CODE XREF: ShowClueBook:loc_1107C↑P
+                or      word_328CC, 40h ; F5 item-subtype-7 'TRANSPORTATIONS' clue-book category loop (called from ShowClueBook). Draws via ShowClueBookTransportDetail, polls input until ESC.
+                call    ShowClueBookTransportDetail
                 call    DrawMouseCursor
 
-loc_1335B:                              ; CODE XREF: sub_1334E+17↓j
-                                        ; sub_1334E+1E↓j ...
+loc_1335B:                              ; CODE XREF: RunClueBookTransportCategory+17↓j
+                                        ; RunClueBookTransportCategory+1E↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1335B
@@ -5415,7 +5415,7 @@ loc_1335B:                              ; CODE XREF: sub_1334E+17↓j
                 jz      short loc_1335B
                 and     word_328CC, 0FFBFh
                 retf
-sub_1334E       endp
+RunClueBookTransportCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6419,8 +6419,8 @@ loc_13E6F:                              ; CODE XREF: ShowClueBookSpellDetail+356
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13E98       proc near               ; CODE XREF: sub_1334E+5↑p
-                mov     _textPos_x, 0E1h
+ShowClueBookTransportDetail proc near   ; CODE XREF: RunClueBookTransportCategory+5↑p
+                mov     _textPos_x, 0E1h ; 'TRANSPORTATIONS' detail screen (msg 0x8A6A): message box + nav bar, then 3 named mounts -- PEGASUS, GIANT EAGLE, MAGIC DRAGON -- drawn via sub_13EDF (not traced, likely a per-mount stat-line drawer).
                 mov     ax, 8A6Ah
                 mov     word_2E3F8, ax
                 mov     cx, 88C0h
@@ -6438,14 +6438,14 @@ sub_13E98       proc near               ; CODE XREF: sub_1334E+5↑p
                 mov     _textPos_y, 7Ah ; 'z'
                 call    sub_13EDF
                 retn
-sub_13E98       endp
+ShowClueBookTransportDetail endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13EDF       proc near               ; CODE XREF: sub_13E98+2B↑p
-                                        ; sub_13E98+37↑p ...
+sub_13EDF       proc near               ; CODE XREF: ShowClueBookTransportDetail+2B↑p
+                                        ; ShowClueBookTransportDetail+37↑p ...
                 mov     _font_fgColor, 0Dh
                 mov     _textPos_x, 5Bh ; '['
                 mov     bx, si          ; msg
