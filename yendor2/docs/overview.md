@@ -2198,6 +2198,19 @@ traced call site does, so that step (if it exists at all) happens on
 some separate, later re-entry not yet found. Renames only, no new
 count.
 
+### 2026-09-15 session update, continued: SelectAndDrawPartyStatusRow
+
+Named `sub_19957`: given a party record, maps it to a slot number via
+`g_partySlotAssignment`, fakes that digit as a keypress to reuse the
+main loop's panel-select routine (`sub_25B34`), then draws that
+member's status-bar row (portrait icon, name, level, packed-BCD XP).
+Called from a `UseItemType_400` path and from the F1-F4/click-portrait
+party-member selection handler (`sub_19553`).
+
+277 named of 769 functions as of this update.
+
+## Current state (2026-09-14, before any work this session)
+
 Via `identify.py`:
 
 - **Root file**: `SW.EXE`, MD5 `d464f6847b9ea4296e9ce1b251f92788`.

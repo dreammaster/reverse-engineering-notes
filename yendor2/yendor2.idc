@@ -3390,7 +3390,9 @@ static Bytes_0(void) {
 	create_insn	(0X19768);
 	create_insn	(0X1978F);
 	create_insn	(0X197B9);
+	set_cmt	(0X19957,	"Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).",	0);
 	create_insn	(0X19957);
+	set_name	(0X19957,	"SelectAndDrawPartyStatusRow");
 	set_cmt	(0X19A16,	"Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.",	0);
 	create_insn	(0X19A16);
 	set_name	(0X19A16,	"AddBCD4");
@@ -4116,13 +4118,6 @@ static Bytes_0(void) {
 	create_insn	(0X1C3F9);
 	create_insn	(x=0X1C409);
 	op_hex		(x,	1);
-	set_cmt	(0X1C43F,	"msg",	0);
-	create_insn	(0X1C456);
-	create_insn	(0X1C4E1);
-	create_insn	(0X1C54C);
-	set_cmt	(0X1C589,	"UseItem's handler for word_2E410 bits 0x1000|0x2000 (0x3000). Bit-2 branch: if the current party member already has this item's ability bit (es:[si+0x12]) set in their own [+0xB4] ('abilities learned' bitmask -- see RevealMapRegion), shows an 'already known' message. Otherwise pays a BCD material cost (0x94B3 vs threshold 0x512A) then learns it: sets the bit in [+0xB4] and zeroes the matching charge field ([+0xB6]/[+0xB8]/[+0xBA] for bits 0x8000/0x4000/0x2000). A scroll/tome that teaches a new special ability.",	0);
-	create_insn	(0X1C589);
-	set_name	(0X1C589,	"UseAbilityScroll");
 }
 
 //------------------------------------------------------------------------
@@ -4132,6 +4127,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1C43F,	"msg",	0);
+	create_insn	(0X1C456);
+	create_insn	(0X1C4E1);
+	create_insn	(0X1C54C);
+	set_cmt	(0X1C589,	"UseItem's handler for word_2E410 bits 0x1000|0x2000 (0x3000). Bit-2 branch: if the current party member already has this item's ability bit (es:[si+0x12]) set in their own [+0xB4] ('abilities learned' bitmask -- see RevealMapRegion), shows an 'already known' message. Otherwise pays a BCD material cost (0x94B3 vs threshold 0x512A) then learns it: sets the bit in [+0xB4] and zeroes the matching charge field ([+0xB6]/[+0xB8]/[+0xBA] for bits 0x8000/0x4000/0x2000). A scroll/tome that teaches a new special ability.",	0);
+	create_insn	(0X1C589);
+	set_name	(0X1C589,	"UseAbilityScroll");
 	create_insn	(x=0X1C58D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C598);
@@ -7161,6 +7163,15 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X2853E);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28540);
 	op_hex		(x,	1);
 	create_insn	(x=0X28542);
@@ -7204,15 +7215,6 @@ static Bytes_1(void) {
 	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
 	set_name	(0X286B2,	"UpdateMonsterWoundTier");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -10643,6 +10645,15 @@ static Bytes_2(void) {
 	set_name	(0X36321,	"aAnyPanel");
 	create_strlit	(0X3632B,	0XA);
 	set_name	(0X3632B,	"aBackpack");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36335,	0X5);
 	set_name	(0X36335,	"aBox");
 	create_strlit	(0X3633A,	0X4);
@@ -10689,15 +10700,6 @@ static Bytes_2(void) {
 	set_name	(0X363CE,	"aPartyAttack");
 	create_strlit	(0X363DD,	0X7);
 	set_name	(0X363DD,	"aBreak");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X363E4,	0X9);
 	set_name	(0X363E4,	"aDestroy");
 	create_strlit	(0X363ED,	0X9);

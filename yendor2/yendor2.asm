@@ -16116,7 +16116,7 @@ sub_193BE       proc far                ; CODE XREF: UseItemType_400+87↓P
                 and     word_3295A, 3FFFh
 
 loc_193C8:                              ; CODE XREF: sub_193BE+17C↓j
-                call    sub_19957
+                call    SelectAndDrawPartyStatusRow
                 call    sub_197B9
                 mov     _font_fgColor, 0Fh
                 mov     word_2E412, 0Fh
@@ -16351,7 +16351,7 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
                 mov     ax, [bx]
                 call    sub_25B14
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_19957
+                call    SelectAndDrawPartyStatusRow
                 call    sub_197B9
                 call    sub_26C9E
                 call    sub_238CD
@@ -16543,7 +16543,7 @@ sub_19553       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19768       proc far                ; CODE XREF: sub_19957+76↓p
+sub_19768       proc far                ; CODE XREF: SelectAndDrawPartyStatusRow+76↓p
                                         ; UseTrainingItem+35A↓P ...
                 push    dx
                 mov     bx, 7982h
@@ -16718,9 +16718,9 @@ sub_197B9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19957       proc near               ; CODE XREF: sub_193BE:loc_193C8↑p
+SelectAndDrawPartyStatusRow proc near   ; CODE XREF: sub_193BE:loc_193C8↑p
                                         ; sub_19553+92↑p
-                mov     al, byte_2E400
+                mov     al, byte_2E400  ; Given a party record (word_32924), matches it to a slot in g_partySlotAssignment, fakes that digit ('1'-'4') into byte_2E400 and calls sub_25B34 (the same panel-select path the main loop's 1-4 keys use), then draws the status row: portrait icon, name, level (+0x16), and packed-BCD XP (+0x18). Called from sub_193BE (via UseItemType_400) and sub_19553 (the F1-F4/click party-member selection handler).
                 push    ax
                 push    si
                 mov     byte_2E400, 31h ; '1'
@@ -16734,8 +16734,8 @@ sub_19957       proc near               ; CODE XREF: sub_193BE:loc_193C8↑p
                 jz      short loc_19988
                 mov     byte_2E400, 34h ; '4'
 
-loc_19988:                              ; CODE XREF: sub_19957+10↑j
-                                        ; sub_19957+1D↑j ...
+loc_19988:                              ; CODE XREF: SelectAndDrawPartyStatusRow+10↑j
+                                        ; SelectAndDrawPartyStatusRow+1D↑j ...
                 call    sub_25B34
                 mov     x, 0Fh
                 mov     y, 17h
@@ -16767,7 +16767,7 @@ loc_19988:                              ; CODE XREF: sub_19957+10↑j
                 pop     ax
                 mov     byte_2E400, al
                 retn
-sub_19957       endp
+SelectAndDrawPartyStatusRow endp
 
 seg030          ends
 

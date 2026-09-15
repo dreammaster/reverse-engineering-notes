@@ -65,7 +65,14 @@ loaded): lives in a **confirmed fixed array**, `g_partyRecords` (base
 been misattached to the wrong call site — see
 `ida_scripts/fix_party_record_next_claim.py`). `ApplyMapTriggerEffect`
 independently confirms the same base/stride via a separate 4-slot
-`g_partySlotAssignment` index table. `word_328D4` itself is set by
+`g_partySlotAssignment` index table. `SelectAndDrawPartyStatusRow`
+uses the same table to map a party record back to its slot number
+(1-4), fakes that digit as a keypress to reuse the main loop's
+existing panel-select routine (`sub_25B34`), then draws that member's
+status-bar row: portrait icon, name, level (`+0x16`), packed-BCD XP
+(`+0x18`) — called both from a `UseItemType_400` path and from the
+F1-F4/click-portrait party-member selection handler. `word_328D4`
+itself is set by
 several different mechanisms depending on context (a direct selector
 struct in some callers, `SelectDefaultPartyRecord`'s "first record
 with `+0xE`==0" scan as a fallback in `ShowPartyMembers`) — exactly how
