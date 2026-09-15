@@ -1832,6 +1832,16 @@ structure in `file-formats.md` instead.
 
 243 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UpdateAmbientMusic — the clock drives day/night music too
+
+Named the timer-ISR's last sub-task, `UpdateAmbientMusic`: switches
+between day and night background music tracks based on the game
+clock's current time, via the already-named `PlayMusicTrack`. All 5 of
+the timer ISR's sub-tasks are now named. A satisfying capstone to the
+whole clock-system investigation this round.
+
+244 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

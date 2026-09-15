@@ -10088,7 +10088,7 @@ seg014          segment byte public 'CODE' use16
 
 sub_162B6       proc far                ; CODE XREF: sub_162B6+18↓j
                                         ; sub_162B6+32↓j ...
-                call    sub_28320
+                call    UpdateAmbientMusic
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -23111,7 +23111,7 @@ PollKeyboardInput proc far              ; CODE XREF: start:loc_1008F↑P
                 push    bx
                 push    cx
                 push    dx
-                call    sub_28320
+                call    UpdateAmbientMusic
                 mov     errorCode, 0
                 mov     byte_2E400, 0
                 mov     ah, 6
@@ -23610,7 +23610,7 @@ loc_1D3A8:                              ; CODE XREF: RunTitleScreen+F3↑j
 
 loc_1D3B3:                              ; CODE XREF: RunTitleScreen+108↑j
                 or      g_driverStateFlags, 2
-                call    sub_28320
+                call    UpdateAmbientMusic
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
 
@@ -27456,7 +27456,7 @@ ToggleMusicSetting proc near            ; CODE XREF: RunGameDialog:loc_1EC1F↑p
 
 loc_1F921:                              ; CODE XREF: ToggleMusicSetting+1B↑j
                 or      g_driverStateFlags, 2
-                call    sub_28320
+                call    UpdateAmbientMusic
                 mov     cx, 12h
 
 loc_1F92E:                              ; CODE XREF: ToggleMusicSetting+2A↑j
@@ -37618,7 +37618,7 @@ sub_25595       endp
 
 sub_255C7       proc near               ; CODE XREF: sub_23C18+178↑p
                                         ; sub_23C18+28A↑p ...
-                call    sub_28320
+                call    UpdateAmbientMusic
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short sub_255C7
@@ -43540,9 +43540,9 @@ PlayMusicTrack  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28320       proc far                ; CODE XREF: sub_162B6↑P
+UpdateAmbientMusic proc far             ; CODE XREF: sub_162B6↑P
                                         ; PollKeyboardInput+4↑P ...
-                test    g_driverStateFlags, 2
+                test    g_driverStateFlags, 2 ; Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.
                 jz      short locret_28358
                 cmp     byte ptr word_2E492, 0
                 jnz     short locret_28358
@@ -43555,15 +43555,15 @@ sub_28320       proc far                ; CODE XREF: sub_162B6↑P
                 jnz     short loc_28352
                 mov     word_32958, 14h
 
-loc_28352:                              ; CODE XREF: sub_28320+2A↑j
+loc_28352:                              ; CODE XREF: UpdateAmbientMusic+2A↑j
                 or      word_3295A, 200h
 
-locret_28358:                           ; CODE XREF: sub_28320+6↑j
-                                        ; sub_28320+D↑j ...
+locret_28358:                           ; CODE XREF: UpdateAmbientMusic+6↑j
+                                        ; UpdateAmbientMusic+D↑j ...
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28359:                              ; CODE XREF: sub_28320+15↑j
+loc_28359:                              ; CODE XREF: UpdateAmbientMusic+15↑j
                 mov     ax, word_3297E
                 or      ax, ax
                 jnz     short loc_28382
@@ -43574,20 +43574,20 @@ loc_28359:                              ; CODE XREF: sub_28320+15↑j
                 jg      short loc_28376
                 mov     ax, word_36CB1
 
-loc_28376:                              ; CODE XREF: sub_28320+49↑j
-                                        ; sub_28320+51↑j
+loc_28376:                              ; CODE XREF: UpdateAmbientMusic+49↑j
+                                        ; UpdateAmbientMusic+51↑j
                 or      ax, ax
                 jz      short locret_28358
                 test    word_328C4, 2000h
                 jz      short locret_28358
 
-loc_28382:                              ; CODE XREF: sub_28320+3E↑j
+loc_28382:                              ; CODE XREF: UpdateAmbientMusic+3E↑j
                 and     word_328CA, 0FFEFh
                 mov     word_2E4A6, ax
                 push    cs
                 call    near ptr PlayMusicTrack
                 retf
-sub_28320       endp
+UpdateAmbientMusic endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -50647,7 +50647,7 @@ loc_2BD93:                              ; CODE XREF: ShowWorldMap+47↑j
 
 loc_2BDAA:                              ; CODE XREF: ShowWorldMap+9F↓j
                                         ; ShowWorldMap+B6↓j ...
-                call    sub_28320
+                call    UpdateAmbientMusic
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_2BDAA
@@ -74330,7 +74330,7 @@ word_32954      dw 0                    ; DATA XREF: sub_1F0CD+61↑w
 word_32956      dw 0                    ; DATA XREF: sub_11D66↑w
                                         ; sub_11D66:loc_11DCE↑r ...
 word_32958      dw 0                    ; DATA XREF: seg059:0244↑w
-                                        ; sub_28320+1F↑w ...
+                                        ; UpdateAmbientMusic+1F↑w ...
 word_3295A      dw 0                    ; DATA XREF: start+552↑w
                                         ; start:loc_105CD↑w ...
 word_3295C      dw 0                    ; DATA XREF: ComputeGameClockTime+22↑w

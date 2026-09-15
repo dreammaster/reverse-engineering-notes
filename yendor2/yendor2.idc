@@ -7036,8 +7036,10 @@ static Bytes_1(void) {
 	create_insn	(0X2829F);
 	set_cmt	(0X282B3,	"this",	0);
 	create_insn	(0X282B3);
+	set_cmt	(0X28320,	"Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.",	0);
 	create_insn	(x=0X28320);
 	op_hex		(x,	1);
+	set_name	(0X28320,	"UpdateAmbientMusic");
 	create_insn	(x=0X2832F);
 	op_hex		(x,	1);
 	create_insn	(x=0X28337);
@@ -7600,6 +7602,15 @@ static Bytes_1(void) {
 	create_insn	(0X298EB);
 	create_insn	(x=0X298F5);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29907);
 	create_insn	(0X29916);
 	create_insn	(x=0X29918);
@@ -7640,15 +7651,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X299D2);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X299E1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X299E4);
@@ -11228,6 +11230,15 @@ static Bytes_2(void) {
 	set_name	(0X3CC78,	"g_soundDriverFarPtr");
 	set_cmt	(0X3CC7A,	"Segment half of the far pointer g_soundDriverFarPtr (0x3CC78); reused directly as the ES segment to free when shutting the driver down.",	0);
 	create_word	(0X3CC7A);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	make_array	(0X3CC7C,	0X4);
 	create_byte	(0X3CC80);
 	make_array	(0X3CC80,	0X200);
@@ -14690,6 +14701,7 @@ static Bytes(void) {
 	Bytes_0();
 	Bytes_1();
 	Bytes_2();
+	Bytes_3();
         end_type_updating(UTP_STRUCT);
 }
 

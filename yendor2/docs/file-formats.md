@@ -464,7 +464,11 @@ bit and its own countdown reload value: `TickRedrawTimer` (periodic
 `AdvanceDayNightPaletteFade` (confirms its 113-step fade is driven by
 *repeated* ISR calls, not one burst), `AnimatePaletteCycle` (a
 palette-cycling animation effect — torch flicker/water shimmer style,
-not fully decoded), and one inline bit-clear task not yet named. The
+not fully decoded), and `UpdateAmbientMusic` — the 5th sub-task
+(`word_32958`, ~1-second period), which switches between day and night
+background music tracks based on `word_36D01` (the clock) falling
+inside or outside `[0x1A4, 0x474]` (7:00 AM–7:00 PM), via the
+already-named `PlayMusicTrack`. The
 raw ISR entry itself is embedded in bytes IDA hasn't cleanly separated
 from a preceding data declaration, so it's documented here rather than
 renamed (renaming risks corrupting the disassembly boundary).
