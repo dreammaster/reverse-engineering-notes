@@ -7538,7 +7538,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X29074);
 	op_hex		(x,	1);
+	set_cmt	(0X2909C,	"Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).",	0);
 	create_insn	(0X2909C);
+	set_name	(0X2909C,	"ShowTransportUsagePreview");
 	create_insn	(x=0X290B4);
 	op_hex		(x,	1);
 	set_cmt	(0X290CF,	"msg",	0);
@@ -10347,6 +10349,15 @@ static Bytes_2(void) {
 	set_name	(0X358D3,	"aIsThatPriceAgr");
 	create_strlit	(0X358EC,	0X1C);
 	set_name	(0X358EC,	"aYouDonTHaveEno");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35908,	0X16);
 	set_name	(0X35908,	"aYouAreNowLevel");
 	create_strlit	(0X3591E,	0X16);
@@ -10367,15 +10378,6 @@ static Bytes_2(void) {
 	set_name	(0X359A7,	"aEnhanceItem");
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X359BA,	0XA);
 	set_name	(0X359BA,	"aICanNot");
 	create_strlit	(0X359C4,	0XD);

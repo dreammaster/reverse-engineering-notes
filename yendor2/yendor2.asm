@@ -22444,7 +22444,7 @@ loc_1CB15:                              ; CODE XREF: ShowItemUsagePreview+A8↑j
                 call    sub_25B14
                 mov     si, ax
                 call    sub_25CFA
-                call    sub_2909C
+                call    ShowTransportUsagePreview
                 call    sub_238CD
                 call    DrawMouseCursor
                 retf
@@ -45112,21 +45112,21 @@ sub_29040       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2909C       proc far                ; CODE XREF: ShowItemUsagePreview+C3↑P
-                mov     _font_bgColor, 44h ; 'D'
+ShowTransportUsagePreview proc far      ; CODE XREF: ShowItemUsagePreview+C3↑P
+                mov     _font_bgColor, 44h ; 'D' ; Transport/mount item-use preview (called from ShowItemUsagePreview): selects an entry from the 4-slot transport table (0x77C6, stride 0x1A -- PEGASUS/GIANT EAGLE/MAGIC DRAGON, same table as ShowClueBookTransportDetail) via es:[si+0x12] flag bits, draws 'NAME:'/'COST:' plus a flight-time-restriction line ('CAN FLY ANYTIME DAY OR NIGHT' or a time-window variant).
                 mov     si, word_2E54E
                 mov     es, word_2E54C
                 mov     dx, es:[si+12h]
                 mov     cx, 4
                 mov     di, 77C6h
 
-loc_290B4:                              ; CODE XREF: sub_2909C+1F↓j
+loc_290B4:                              ; CODE XREF: ShowTransportUsagePreview+1F↓j
                 shl     dx, 1
                 jb      short loc_290BD
                 add     di, 1Ah
                 loop    loc_290B4
 
-loc_290BD:                              ; CODE XREF: sub_2909C+1A↑j
+loc_290BD:                              ; CODE XREF: ShowTransportUsagePreview+1A↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     _font_fgColor, 0Dh
@@ -45162,7 +45162,7 @@ loc_290BD:                              ; CODE XREF: sub_2909C+1A↑j
                 jmp     short loc_29179
 ; ---------------------------------------------------------------------------
 
-loc_2914D:                              ; CODE XREF: sub_2909C+9E↑j
+loc_2914D:                              ; CODE XREF: ShowTransportUsagePreview+9E↑j
                 mov     bx, 8218h       ; msg
                 call    writeString
                 add     _textPos_x, 7Eh ; '~'
@@ -45171,15 +45171,15 @@ loc_2914D:                              ; CODE XREF: sub_2909C+9E↑j
                 jmp     short loc_29179
 ; ---------------------------------------------------------------------------
 
-loc_29164:                              ; CODE XREF: sub_2909C+A5↑j
+loc_29164:                              ; CODE XREF: ShowTransportUsagePreview+A5↑j
                 mov     bx, 8218h       ; msg
                 call    writeString
                 add     _textPos_x, 7Eh ; '~'
                 mov     bx, 822Dh       ; msg
                 call    writeString
 
-loc_29179:                              ; CODE XREF: sub_2909C+AF↑j
-                                        ; sub_2909C+C6↑j
+loc_29179:                              ; CODE XREF: ShowTransportUsagePreview+AF↑j
+                                        ; ShowTransportUsagePreview+C6↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 5Bh ; '['
                 mov     bx, 8280h
@@ -45190,11 +45190,11 @@ loc_29179:                              ; CODE XREF: sub_2909C+AF↑j
                 add     al, 30h ; '0'
                 mov     [bx+0Ch], al
 
-loc_29198:                              ; CODE XREF: sub_2909C+F2↑j
+loc_29198:                              ; CODE XREF: ShowTransportUsagePreview+F2↑j
                 call    writeString
                 call    sub_1CBC4
                 retf
-sub_2909C       endp
+ShowTransportUsagePreview endp
 
 
 ; =============== S U B R O U T I N E =======================================

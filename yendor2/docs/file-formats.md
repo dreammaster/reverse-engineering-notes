@@ -279,7 +279,10 @@ UNIQUE ITEMS"**, **4 "MAGIC SCROLLS/QUARTZ"**, **5 "POTIONS"**, **6
 through `sub_13119` (**correction**: has 4 call sites here, not "two
 other sites" as first counted below); **7 "TRANSPORTATIONS"** →
 `RunClueBookTransportCategory` (PEGASUS/GIANT EAGLE/MAGIC DRAGON —
-ties to `IsItemRangeAvailable`'s "boat/horse-style transport gate");
+ties to `IsItemRangeAvailable`'s "boat/horse-style transport gate" and
+to `ShowTransportUsagePreview`, `ShowItemUsagePreview`'s preview for
+actually using one of these mount items: name, cost, and a
+flight-time-restriction line, e.g. "CAN FLY ANYTIME DAY OR NIGHT");
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →

@@ -2377,6 +2377,15 @@ ENHANCE/REPAIR ITEM", or the default sell hint).
 
 297 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowTransportUsagePreview
+
+Named `sub_2909C`, called from `ShowItemUsagePreview`: draws the
+transport/mount item-use preview (name, cost, flight-time restriction)
+using the same 4-slot PEGASUS/GIANT EAGLE/MAGIC DRAGON table as
+`ShowClueBookTransportDetail`.
+
+298 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
