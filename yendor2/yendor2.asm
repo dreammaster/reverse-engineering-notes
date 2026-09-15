@@ -29544,7 +29544,7 @@ RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                 call    sub_213FC
                 call    sub_2784A
                 call    DrawDungeonFloorAndCeiling
-                call    sub_20C8E
+                call    ExtendDungeonCeilingPass
                 call    RenderDungeonViewport
                 test    word_36C7F, 1000h
                 jz      short loc_20C3F
@@ -29563,7 +29563,7 @@ RefreshDungeonScreen proc far           ; CODE XREF: start+85↑P
                                         ; start+4F6↑P ...
                 call    sub_2784A       ; Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.
                 call    DrawDungeonFloorAndCeiling
-                call    sub_20C8E
+                call    ExtendDungeonCeilingPass
                 call    RenderDungeonViewport
                 test    word_36C7F, 1000h
                 jz      short loc_20C68
@@ -29586,7 +29586,7 @@ RefreshDungeonScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-IsPairedValueMatch proc near            ; CODE XREF: sub_20CEC+18↓p
+IsPairedValueMatch proc near            ; CODE XREF: ExtendDungeonCeilingTexture+18↓p
                                         ; ExtendDungeonFloorTexture+17↓p
                 cmp     ax, bx          ; Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.
                 jnz     short loc_20C81
@@ -29611,48 +29611,48 @@ IsPairedValueMatch endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20C8E       proc near               ; CODE XREF: RedrawDungeonScreen+E↑p
+ExtendDungeonCeilingPass proc near      ; CODE XREF: RedrawDungeonScreen+E↑p
                                         ; RefreshDungeonScreen+8↑p
-                mov     di, 6D60h
+                mov     di, 6D60h       ; Ceiling-extension driver: same 7-call row pattern as RenderDungeonViewport, calling ExtendDungeonCeilingTexture. Called from RedrawDungeonScreen/RefreshDungeonScreen between DrawDungeonFloorAndCeiling and RenderDungeonViewport.
                 mov     word_3292C, 0
                 mov     cx, 11h
                 mov     ax, word_328E6
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 11h
                 mov     ax, word_328E8
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 5
                 mov     ax, word_328EA
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 3
                 mov     ax, word_328EC
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 3
                 mov     ax, word_328EE
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 3
                 mov     ax, word_328F0
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 mov     cx, 3
                 mov     ax, word_328F2
                 mov     word_32926, ax
-                call    sub_20CEC
+                call    ExtendDungeonCeilingTexture
                 retn
-sub_20C8E       endp
+ExtendDungeonCeilingPass endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20CEC       proc near               ; CODE XREF: sub_20C8E+12↑p
-                                        ; sub_20C8E+1E↑p ...
-                push    cx
+ExtendDungeonCeilingTexture proc near   ; CODE XREF: ExtendDungeonCeilingPass+12↑p
+                                        ; ExtendDungeonCeilingPass+1E↑p ...
+                push    cx              ; Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.
                 test    word ptr [di+6], 1
                 jnz     short loc_20D24
                 mov     si, 0E551h
@@ -29669,14 +29669,14 @@ sub_20CEC       proc near               ; CODE XREF: sub_20C8E+12↑p
                 mov     _font_bgTransparent, 0
                 call    sub_29B0F
 
-loc_20D24:                              ; CODE XREF: sub_20CEC+6↑j
-                                        ; sub_20CEC+1B↑j
+loc_20D24:                              ; CODE XREF: ExtendDungeonCeilingTexture+6↑j
+                                        ; ExtendDungeonCeilingTexture+1B↑j
                 add     di, 8
                 inc     word_3292C
                 pop     cx
-                loop    sub_20CEC
+                loop    ExtendDungeonCeilingTexture
                 retn
-sub_20CEC       endp
+ExtendDungeonCeilingTexture endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -46506,7 +46506,7 @@ FreeVideoBuffer endp
 ; Attributes: bp-based frame
 
 sub_29B0F       proc far                ; CODE XREF: sub_1D4B8+404↑P
-                                        ; sub_20CEC+33↑P ...
+                                        ; ExtendDungeonCeilingTexture+33↑P ...
 
 var_2A          = word ptr -2Ah
 var_21          = byte ptr -21h
@@ -56754,7 +56754,7 @@ word_2E492      dw 0FFh                 ; DATA XREF: sub_11A10:loc_11D4A↑r
 word_2E494      dw 0FFFFh               ; DATA XREF: sub_2827E:loc_28289↑r
 word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
                                         ; RunMapEditorScreen+27D↑w ...
-word_2E498      dw 0                    ; DATA XREF: sub_20CEC+12↑r
+word_2E498      dw 0                    ; DATA XREF: ExtendDungeonCeilingTexture+12↑r
                                         ; DrawDungeonFloorAndCeiling:loc_20D5C↑w ...
 word_2E49A      dw 0                    ; DATA XREF: HandleDungeonInput↑w
                                         ; sub_16881+5↑w ...
@@ -74214,19 +74214,19 @@ word_328E2      dw 0                    ; DATA XREF: sub_1CCBC+C5↑w
                                         ; sub_1CCBC+DC↑w
 word_328E4      dw 0                    ; DATA XREF: sub_1CCBC+CB↑w
                                         ; sub_1CCBC+E2↑w
-word_328E6      dw 0                    ; DATA XREF: sub_20C8E+C↑r
+word_328E6      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+C↑r
                                         ; DrawDungeonFloorAndCeiling+91↑r ...
-word_328E8      dw 0                    ; DATA XREF: sub_20C8E+18↑r
+word_328E8      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+18↑r
                                         ; DrawDungeonFloorAndCeiling+9D↑r ...
-word_328EA      dw 0                    ; DATA XREF: sub_20C8E+24↑r
+word_328EA      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+24↑r
                                         ; DrawDungeonFloorAndCeiling+A9↑r ...
-word_328EC      dw 0                    ; DATA XREF: sub_20C8E+30↑r
+word_328EC      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+30↑r
                                         ; DrawDungeonFloorAndCeiling+B5↑r ...
-word_328EE      dw 0                    ; DATA XREF: sub_20C8E+3C↑r
+word_328EE      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+3C↑r
                                         ; DrawDungeonFloorAndCeiling+C1↑r ...
-word_328F0      dw 0                    ; DATA XREF: sub_20C8E+48↑r
+word_328F0      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+48↑r
                                         ; DrawDungeonFloorAndCeiling+CD↑r ...
-word_328F2      dw 0                    ; DATA XREF: sub_20C8E+54↑r
+word_328F2      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+54↑r
                                         ; DrawDungeonFloorAndCeiling+D9↑r ...
 word_328F4      dw 0                    ; DATA XREF: UseItem:loc_17F7E↑r
                                         ; UseItem+3F3↑r ...
@@ -74265,7 +74265,7 @@ word_32914      dw 0                    ; DATA XREF: sub_28564+3E↑r
 word_32916      dw 0                    ; DATA XREF: sub_28564+34↑r
                                         ; sub_28619+6A↑w
 word_32918      dw 0                    ; DATA XREF: sub_1D4B8+3EA↑w
-                                        ; sub_20CEC+21↑w ...
+                                        ; ExtendDungeonCeilingTexture+21↑w ...
 word_3291A      dw 0                    ; DATA XREF: sub_124EC+E↑w
                                         ; sub_124EC+1B↑r ...
 _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
@@ -74278,8 +74278,8 @@ word_32922      dw 0                    ; DATA XREF: TrySellItemForGold+6C↑r
                                         ; sub_1CCBC+15↑w
 word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
                                         ; HandleDungeonInput+38↑w ...
-word_32926      dw 0                    ; DATA XREF: sub_20C8E+F↑w
-                                        ; sub_20C8E+1B↑w ...
+word_32926      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+F↑w
+                                        ; ExtendDungeonCeilingPass+1B↑w ...
 word_32928      dw 0                    ; DATA XREF: InitGlobals+156↑w
                                         ; sub_2BAD5+21↑r
 word_3292A      dw 0                    ; DATA XREF: InitGlobals+15C↑w

@@ -5304,8 +5304,12 @@ static Bytes_1(void) {
 	create_insn	(x=0X20C81);
 	op_hex		(x,	1);
 	create_insn	(0X20C8A);
+	set_cmt	(0X20C8E,	"Ceiling-extension driver: same 7-call row pattern as RenderDungeonViewport, calling ExtendDungeonCeilingTexture. Called from RedrawDungeonScreen/RefreshDungeonScreen between DrawDungeonFloorAndCeiling and RenderDungeonViewport.",	0);
 	create_insn	(0X20C8E);
+	set_name	(0X20C8E,	"ExtendDungeonCeilingPass");
+	set_cmt	(0X20CEC,	"Ceiling counterpart to ExtendDungeonFloorTexture: draws the current ceiling picture (word_2E498) at z-layer 2 for cells whose [+2] ceiling field matches (IsPairedValueMatch). Called 6x by ExtendDungeonCeilingPass.",	0);
 	create_insn	(0X20CEC);
+	set_name	(0X20CEC,	"ExtendDungeonCeilingTexture");
 	create_insn	(x=0X20CED);
 	op_hex		(x,	1);
 	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
@@ -6531,6 +6535,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X25DD6);
 	op_hex		(x,	1);
 	set_cmt	(0X25DDD,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X25DEA);
 	op_hex		(x,	1);
 	set_cmt	(0X25DF1,	"msg",	0);
@@ -6580,15 +6593,6 @@ static Bytes_1(void) {
 	create_insn	(0X26176);
 	create_insn	(x=0X2617D);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X26192);
 	create_insn	(x=0X261A2);
 	op_hex		(x,	1);

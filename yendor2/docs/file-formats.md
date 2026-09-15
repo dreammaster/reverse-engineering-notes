@@ -546,7 +546,13 @@ the sky/ceiling and floor backdrop pictures for the current cell, then
 calls `ExtendDungeonFloorTexture` six times (same row pattern) to
 extend the floor texture across cells sharing the same floor type — a
 simpler "seamless floor" pass, distinct from `RenderDungeonViewRow`'s
-full per-cell wall/object rendering.
+full per-cell wall/object rendering. Between that and
+`RenderDungeonViewport`, both callers also run `ExtendDungeonCeilingPass`
+(the ceiling counterpart, via `ExtendDungeonCeilingTexture`) — so the
+dungeon-screen render sequence is: 1) `DrawDungeonFloorAndCeiling`
+(backdrop images + floor-extension), 2) `ExtendDungeonCeilingPass`
+(ceiling-extension), 3) `RenderDungeonViewport` (full wall/door/
+monster/encounter rendering).
 
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other

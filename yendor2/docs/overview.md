@@ -2524,6 +2524,15 @@ distinct from `RenderDungeonViewRow`'s full wall/object rendering.
 
 317 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ExtendDungeonCeilingPass completes the dungeon render sequence
+
+Named the ceiling counterpart to `DrawDungeonFloorAndCeiling`/
+`ExtendDungeonFloorTexture`. The full dungeon-screen render sequence
+is now clear: 1) backdrop + floor-extension, 2) ceiling-extension, 3)
+`RenderDungeonViewport`'s full wall/door/monster/encounter rendering.
+
+319 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
