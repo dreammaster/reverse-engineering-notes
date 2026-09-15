@@ -5376,8 +5376,10 @@ static Bytes_1(void) {
 	create_insn	(x=0X2151F);
 	op_hex		(x,	1);
 	create_insn	(0X2152C);
+	set_cmt	(0X21530,	"Compass/facing-direction HUD readout ('NORTH'/'SOUTH'/'EAST'/'WEST', selected by word_36CF5 tier bits), gated on word_328CA bit 0x1000 clear and word_36C7F bit 0x400 set. Drawn at the same screen position as ShowMaterialCounterHud/RedrawPartyGoldDisplay. Called from RunAlchemyScreen.",	0);
 	create_insn	(x=0X21530);
 	op_hex		(x,	1);
+	set_name	(0X21530,	"ShowCompassDirection");
 	create_insn	(x=0X21538);
 	op_hex		(x,	1);
 	create_insn	(x=0X21543);
@@ -7100,6 +7102,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X28320);
 	op_hex		(x,	1);
 	set_name	(0X28320,	"UpdateAmbientMusic");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2832F);
 	op_hex		(x,	1);
 	create_insn	(x=0X28337);
@@ -7115,15 +7126,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2838F);
 	op_hex		(x,	1);
 	set_name	(0X2838F,	"ShutdownAudioDrivers");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X283B0);
 	op_hex		(x,	1);
 	set_cmt	(0X283B2,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -10549,6 +10551,15 @@ static Bytes_2(void) {
 	set_name	(0X3608A,	"aEscReturnToGam");
 	create_strlit	(0X3609D,	0XB);
 	set_name	(0X3609D,	"aDarkUnion");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X360A8,	0X12);
 	set_name	(0X360A8,	"aSpellInformati");
 	create_strlit	(0X360BA,	0X17);
@@ -10569,15 +10580,6 @@ static Bytes_2(void) {
 	set_name	(0X36130,	"aStrength_0");
 	create_strlit	(0X3613A,	0X7);
 	set_name	(0X3613A,	"aPoison_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36141,	0X7);
 	set_name	(0X36141,	"aUndead");
 	create_strlit	(0X36148,	0X12);

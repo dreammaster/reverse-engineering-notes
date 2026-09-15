@@ -458,6 +458,11 @@ hit-tests clickable regions, reuses the party-member panel-select
 routine, and shows a confirm prompt (plausibly for an ore conversion)
 before exiting back to the dungeon via `ApplyMapTriggerEffect`. Its
 many internal helper calls aren't individually traced yet.
+`RunAlchemyScreen` also calls `ShowCompassDirection`, a
+"NORTH"/"SOUTH"/"EAST"/"WEST" HUD readout gated on an unidentified
+"compass active" mode (`word_328CA` bit `0x1000` clear, `word_36C7F`
+bit `0x400` set), drawn at the same screen position as the
+material/gold HUD.
 
 Three **global** (not per-party-member) counters at `0x94B3`
 (`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly

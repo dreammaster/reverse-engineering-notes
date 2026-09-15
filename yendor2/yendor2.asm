@@ -24876,7 +24876,7 @@ loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
                 call    sub_26C9E
                 call    sub_1E4D6
                 call    ClearStatusPanelIfDirty
-                call    sub_21530
+                call    ShowCompassDirection
                 call    sub_20C46
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -25023,7 +25023,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    wait
                 call    sub_1E4D6
                 call    ClearStatusPanelIfDirty
-                call    sub_21530
+                call    ShowCompassDirection
                 call    sub_20C46
                 call    DrawMouseCursor
                 call    sub_238CD
@@ -30573,9 +30573,9 @@ seg064          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21530       proc far                ; CODE XREF: RunAlchemyScreen+255↑P
+ShowCompassDirection proc far           ; CODE XREF: RunAlchemyScreen+255↑P
                                         ; RunAlchemyScreen+3F3↑P ...
-                test    word_328CA, 1000h
+                test    word_328CA, 1000h ; Compass/facing-direction HUD readout ('NORTH'/'SOUTH'/'EAST'/'WEST', selected by word_36CF5 tier bits), gated on word_328CA bit 0x1000 clear and word_36C7F bit 0x400 set. Drawn at the same screen position as ShowMaterialCounterHud/RedrawPartyGoldDisplay. Called from RunAlchemyScreen.
                 jnz     short locret_21587
                 test    word_36C7F, 400h
                 jz      short locret_21587
@@ -30590,8 +30590,8 @@ sub_21530       proc far                ; CODE XREF: RunAlchemyScreen+255↑P
                 jnz     short loc_21564
                 add     bx, 9           ; msg
 
-loc_21564:                              ; CODE XREF: sub_21530+19↑j
-                                        ; sub_21530+24↑j ...
+loc_21564:                              ; CODE XREF: ShowCompassDirection+19↑j
+                                        ; ShowCompassDirection+24↑j ...
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
                 mov     _font_fgColor, 0Fh
@@ -30600,10 +30600,10 @@ loc_21564:                              ; CODE XREF: sub_21530+19↑j
                 mov     _font_bgTransparent, 1
                 call    writeString
 
-locret_21587:                           ; CODE XREF: sub_21530+6↑j
-                                        ; sub_21530+E↑j
+locret_21587:                           ; CODE XREF: ShowCompassDirection+6↑j
+                                        ; ShowCompassDirection+E↑j
                 retf
-sub_21530       endp
+ShowCompassDirection endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30677,7 +30677,7 @@ DrawMinimap     endp
 BuildMinimapTileData proc far           ; CODE XREF: start+139↑P
                                         ; start+1E4↑P ...
                 push    cs              ; Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.
-                call    near ptr sub_21530
+                call    near ptr ShowCompassDirection
                 test    word_36C7F, 4000h
                 jnz     short loc_2161F
                 retf
@@ -43390,7 +43390,7 @@ ShowGameClockCommand proc far           ; CODE XREF: seg000:08B2↑P
                 mov     _textPos_y, 66h ; 'f'
                 mov     bx, 793Dh       ; msg
                 call    writeString
-                call    sub_21530
+                call    ShowCompassDirection
                 call    DrawMouseCursor
                 retf
 ShowGameClockCommand endp
@@ -53516,7 +53516,7 @@ loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑
                 call    ApplyMapTriggerEffect
                 call    sub_222F8
                 call    ClearStatusPanelIfDirty
-                call    sub_21530
+                call    ShowCompassDirection
                 call    DrawMouseCursor
                 retf
 InteractWithContainer endp

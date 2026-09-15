@@ -2268,6 +2268,14 @@ party-record field.
 
 282 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowCompassDirection
+
+Named `sub_21530`, called from `RunAlchemyScreen`: a "NORTH"/"SOUTH"/
+"EAST"/"WEST" HUD readout, drawn at the same position as the material/
+gold HUD, gated on an unidentified "compass active" mode.
+
+283 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
