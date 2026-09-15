@@ -1871,6 +1871,23 @@ objects (doors, etc.) with distinct icons rather than plain terrain.
 
 247 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — "transport check" was too specific, and a quest-completion sequence found
+
+Traced a new caller of `CheckTransportAvailability` (item-icon-dispatch
+handler `word_32974==0x2C8`) and found it checking 4 *specific* item
+ids for being **absent** — not a transport gate at all. The function's
+own mechanism (fixed table, else party-wide inventory search over an
+id range) is genuinely generic, so "transport" was too specific a
+guess from its first-seen use. Renamed `IsItemRangeAvailable` and
+corrected its comment. The new caller itself, `CheckQuestItemsCompleted`,
+reads as a quest-item-completion reward sequence: if 4 specific items
+are all gone from the party's inventory, plays a success sound and
+runs an animated re-check of those 4 plus a 5th item in reverse order —
+exact narrative not identified, but a genuine new lead into the game's
+main-quest structure.
+
+248 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

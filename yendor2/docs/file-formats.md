@@ -203,6 +203,26 @@ write-back as `SaveAndCloseContainer` minus the marker-clear) — a
 like the repair minigame, presumably so an in-progress bag's state
 isn't lost if the action fails.
 
+### Quest-item and party-inventory range checks
+
+`IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`
+several rounds ago on a first-seen use that looked transport-related —
+too specific a guess) is actually a generic primitive: given an item-id
+range (a single id if the range's min/max are equal), it first checks a
+fixed 6-entry table (`0x9519`) for a direct match, then falls back to
+`FindItemInInventoryRange` (search every party member's main inventory,
+recursing into open containers via `FindItemInsideContainer`) until
+someone qualifies. It's reused for at least two different purposes:
+a boat/horse-style transport gate (its original use), and — found via
+`CheckQuestItemsCompleted` (an item-icon-dispatch handler,
+`word_32974==0x2C8`) — a **quest-item-completion check**: 4 specific
+item ids (`0x254`-`0x257`) are each checked for being *absent* from
+every party member's inventory; if all 4 are gone, it plays a success
+sound and runs an animated sequence re-checking those 4 plus a 5th
+(`0x2C8`) in reverse order. Reads as "the party has used/given away all
+N required quest items," a completion reward sequence — exact narrative
+(which items, what they unlock) not identified.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
@@ -508,7 +528,8 @@ gated on `word_3295A` bit `0x800`, calling `TickWorldAilments`) — a
 status-ailment duration sweep, not an item timer: it ticks a shared
 "ailment slot" format (`[+0]`=ailment code `9`/`0xF`/`0xC`, matching
 `TickStatusEffects`; `[+2]`=remaining duration) across a 6-entry world
-table (`0x9519`, also read by `CheckTransportAvailability`) and every
+table (`0x9519`, also read by `IsItemRangeAvailable` — see the
+"Quest-item and party-inventory range checks" note below) and every
 party member's main inventory (`+0x11A`), decrementing one of 3 global
 per-ailment counters (`0x9425`/`0x9429`/`0x942B`) to zero before
 clearing the corresponding `word_36C79` flag — and disables itself

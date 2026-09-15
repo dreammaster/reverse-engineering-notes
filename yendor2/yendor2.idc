@@ -4230,9 +4230,9 @@ static Bytes_0(void) {
 	create_insn	(0X1CC70);
 	create_insn	(0X1CC98);
 	create_insn	(0X1CCBC);
-	set_cmt	(0X1CDBC,	"CheckTransportAvailability(word_3293E/word_32940 = an item-type range): checks a fixed 6-entry table at 0x9519 for a direct match first; if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. 'Can the party use this mode of transport' -- a scripted route or someone carrying the right item.",	0);
+	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
 	create_insn	(0X1CDBC);
-	set_name	(0X1CDBC,	"CheckTransportAvailability");
+	set_name	(0X1CDBC,	"IsItemRangeAvailable");
 	create_insn	(0X1CDFA);
 	create_insn	(0X1CE02);
 	create_insn	(0X1CE25);
@@ -4363,6 +4363,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3A0);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D3A8);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3B3);
@@ -4391,15 +4400,6 @@ static Bytes_0(void) {
 	create_insn	(0X1D496);
 	create_insn	(0X1D4B4);
 	create_insn	(0X1D4B8);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D4C0);
 	op_hex		(x,	1);
 	create_insn	(0X1D4CB);
@@ -7555,6 +7555,15 @@ static Bytes_1(void) {
 	create_insn	(0X296F4);
 	create_insn	(x=0X296F8);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29705);
 	op_hex		(x,	1);
 	create_insn	(0X29712);
@@ -7568,15 +7577,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X29738);
 	op_hex		(x,	1);
 	set_name	(0X29738,	"UnlockDoorCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29747);
 	create_insn	(0X29769);
 	create_insn	(x=0X29775);
@@ -8625,7 +8625,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B174);
 	op_hex		(x,	1);
+	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
 	create_insn	(0X2B17F);
+	set_name	(0X2B17F,	"CheckQuestItemsCompleted");
 	create_insn	(x=0X2B184);
 	op_hex		(x,	1);
 	create_insn	(0X2B1C3);
@@ -11174,6 +11176,15 @@ static Bytes_2(void) {
 	set_name	(0X3A281,	"aTeleportedToYe_0");
 	create_strlit	(0X3A29D,	0X1B);
 	set_name	(0X3A29D,	"aWeCanPlanYourV");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3A2B8,	0X20);
 	set_name	(0X3A2B8,	"aAgainstZamoraA");
 	create_strlit	(0X3A2D9,	0X18);
@@ -11222,15 +11233,6 @@ static Bytes_2(void) {
 	set_name	(0X3A5A1,	"aTheNewsYouBrin");
 	create_strlit	(0X3A5CE,	0X31);
 	set_name	(0X3A5CE,	"aAlthoughTheApp");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A5FF,	0X34);
 	set_name	(0X3A5FF,	"aThereIsAMoreUr");
 	set_name	(0X3A653,	"_worldDatOffset3");
