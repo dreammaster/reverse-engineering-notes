@@ -1603,7 +1603,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12E3F);
 	create_insn	(0X12E52);
+	set_cmt	(0X12E59,	"Save-slot menu init+draw. On first call, reads a per-category slot count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state, capping the visible list at 14 entries. Every call draws the frame (DrawMessageBox) plus header/footer (sub_14C37/sub_1303C, not traced) and the slot list (DrawSaveSlotList).",	0);
 	create_insn	(0X12E59);
+	set_name	(0X12E59,	"ShowSaveSlotMenu");
 	create_insn	(x=0X12E65);
 	op_hex		(x,	1);
 	set_cmt	(0X12ECD,	"Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.",	0);
@@ -4327,6 +4329,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1D118,	"Generic mouse hit-test: scans a table at ds:si of 10-byte entries (x_min, x_max, y_min, y_max, result), 0xFFFF as x_min terminating the table, for one containing (ax, bx). Returns/stores in word_2E40A the matching result word, or 0 if none match.",	0);
 	create_insn	(0X1D118);
 	set_name	(0X1D118,	"HitTestRegionTable");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1D127);
 	create_insn	(0X1D141);
 	create_insn	(0X1D146);
@@ -4341,15 +4352,6 @@ static Bytes_0(void) {
 	create_insn	(0X1D1D4);
 	create_insn	(0X1D1E9);
 	create_insn	(0X1D213);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1D23F);
 	create_insn	(0X1D24B);
 	create_insn	(0X1D258);
@@ -7500,6 +7502,15 @@ static Bytes_1(void) {
 	create_insn	(0X2939E);
 	create_insn	(0X293A6);
 	create_insn	(0X293AE);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X293C0);
 	create_insn	(x=0X293D8);
 	op_hex		(x,	1);
@@ -7516,15 +7527,6 @@ static Bytes_1(void) {
 	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
 	create_insn	(0X294A3);
 	set_name	(0X294A3,	"UseAbilityOnTarget");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X294CE);
 	create_insn	(x=0X294DA);
 	op_hex		(x,	1);
@@ -10989,6 +10991,15 @@ static Bytes_2(void) {
 	set_name	(0X3984A,	"aNowTakeYouToTh");
 	create_strlit	(0X3987B,	0X30);
 	set_name	(0X3987B,	"aPortHopeWhereY");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X398AB,	0X18);
 	set_name	(0X398AB,	"aGuestsOfTheGov");
 	create_strlit	(0X398C3,	0X31);
@@ -11015,15 +11026,6 @@ static Bytes_2(void) {
 	set_name	(0X39A29,	"aYouMustVenture");
 	create_strlit	(0X39A55,	0XC);
 	set_name	(0X39A55,	"aOfZamora");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39A61,	0X33);
 	set_name	(0X39A61,	"aBecausePaltiva");
 	create_strlit	(0X39A94,	0X31);

@@ -1981,6 +1981,17 @@ this round's save/load-menu investigation: `DrawSaveSlotList` →
 
 259 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowSaveSlotMenu
+
+Named `sub_12E59`, `DrawSaveSlotList`'s caller: the save-slot menu's
+init+draw step — initializes scroll/selection state from a per-
+category slot count table on first call, then draws the message-box
+frame and slot list every call. Full chain now traced: `ShowSaveSlotMenu`
+→ `DrawSaveSlotList` → `BuildLoadValidationMessage` →
+`CheckWorldDatCompatibility`.
+
+260 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

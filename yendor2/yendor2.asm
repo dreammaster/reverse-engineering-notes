@@ -4410,7 +4410,7 @@ sub_12B84       proc far                ; CODE XREF: ShowClueBook+80↑P
                 and     word_328CC, 0FE7Fh
                 cmp     word_2E3F6, 0
                 jz      short loc_12B9B
-                call    sub_12E59
+                call    ShowSaveSlotMenu
 
 loc_12B9B:                              ; CODE XREF: sub_12B84+12↑j
                                         ; sub_12B84+21↓j ...
@@ -4438,7 +4438,7 @@ loc_12BD1:                              ; CODE XREF: sub_12B84+3E↑j
                 call    sub_12DD8
                 cmp     errorCode, 0
                 jz      short loc_12BE0
-                call    sub_12E59
+                call    ShowSaveSlotMenu
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4446,7 +4446,7 @@ loc_12BE0:                              ; CODE XREF: sub_12B84+55↑j
                 call    sub_12D5C
                 cmp     errorCode, 0
                 jz      short loc_12BEF
-                call    sub_12E59
+                call    ShowSaveSlotMenu
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4470,7 +4470,7 @@ loc_12BFF:                              ; CODE XREF: sub_12B84+28↑j
                 mul     bx
                 add     ax, word_2E3F0
                 mov     word_2E3EE, ax
-                call    sub_12E59
+                call    ShowSaveSlotMenu
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4499,7 +4499,7 @@ loc_12C55:                              ; CODE XREF: sub_12B84+CC↑j
                 mul     bx
                 add     ax, word_2E3F0
                 mov     word_2E3EE, ax
-                call    sub_12E59
+                call    ShowSaveSlotMenu
 
 loc_12C65:                              ; CODE XREF: sub_12B84+70↑j
                                         ; sub_12B84+77↑j
@@ -4535,7 +4535,7 @@ sub_12B84       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawSaveSlotList proc near              ; CODE XREF: sub_12E59+6B↓p
+DrawSaveSlotList proc near              ; CODE XREF: ShowSaveSlotMenu+6B↓p
                 mov     di, 68D2h       ; Draws a scrollable save-slot list: word_2E3EC entries at positions from a table (0x68D2, stride 0xA), highlighting the selected one (word_2E3EE). Each entry's status/validation text comes from BuildLoadValidationMessage. Shows scroll indicators when the list extends beyond the visible window.
                 mov     si, word_2E3F0
                 mov     cx, word_2E3EC
@@ -4750,9 +4750,9 @@ sub_12DD8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12E59       proc near               ; CODE XREF: sub_12B84+14↑p
+ShowSaveSlotMenu proc near              ; CODE XREF: sub_12B84+14↑p
                                         ; sub_12B84+57↑p ...
-                cmp     word_2E3EA, 0
+                cmp     word_2E3EA, 0   ; Save-slot menu init+draw. On first call, reads a per-category slot count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state, capping the visible list at 14 entries. Every call draws the frame (DrawMessageBox) plus header/footer (sub_14C37/sub_1303C, not traced) and the slot list (DrawSaveSlotList).
                 jnz     short loc_12EB1
                 mov     bx, word_2E3F6
                 dec     bx
@@ -4770,7 +4770,7 @@ sub_12E59       proc near               ; CODE XREF: sub_12B84+14↑p
                 jle     short loc_12E8A
                 mov     ax, 0Eh
 
-loc_12E8A:                              ; CODE XREF: sub_12E59+2C↑j
+loc_12E8A:                              ; CODE XREF: ShowSaveSlotMenu+2C↑j
                 mov     word_2E3EC, ax
                 dec     ax
                 mov     bx, 4
@@ -4786,7 +4786,7 @@ loc_12E8A:                              ; CODE XREF: sub_12E59+2C↑j
                 mul     bx
                 add     word_2E3F4, ax
 
-loc_12EB1:                              ; CODE XREF: sub_12E59+5↑j
+loc_12EB1:                              ; CODE XREF: ShowSaveSlotMenu+5↑j
                 mov     word_2E3FE, 0Eh
                 call    DrawMessageBox
                 call    sub_14C37
@@ -4794,7 +4794,7 @@ loc_12EB1:                              ; CODE XREF: sub_12E59+5↑j
                 call    DrawSaveSlotList
                 call    DrawMouseCursor
                 retn
-sub_12E59       endp
+ShowSaveSlotMenu endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4959,7 +4959,7 @@ BuildLoadValidationMessage endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12FB0       proc near               ; CODE XREF: sub_12E59+20↑p
+sub_12FB0       proc near               ; CODE XREF: ShowSaveSlotMenu+20↑p
                                         ; sub_1303C+2↓p
                 mov     bx, 68D2h
                 mov     cx, 0Eh
@@ -5045,7 +5045,7 @@ sub_13014       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1303C       proc near               ; CODE XREF: sub_12E59+68↑p
+sub_1303C       proc near               ; CODE XREF: ShowSaveSlotMenu+68↑p
                 push    si
                 push    cx
                 call    sub_12FB0
@@ -8251,7 +8251,7 @@ sub_150B8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawMessageBox  proc far                ; CODE XREF: sub_12E59+5E↑P
+DrawMessageBox  proc far                ; CODE XREF: ShowSaveSlotMenu+5E↑P
                                         ; sub_13216+2B↑P ...
                 mov     ax, 0           ; Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.
                 push    cs
@@ -56577,7 +56577,7 @@ word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
 word_2E3EA      dw 0                    ; DATA XREF: ShowClueBook+96↑w
                                         ; ShowClueBook+A5↑w ...
 word_2E3EC      dw 0                    ; DATA XREF: DrawSaveSlotList+7↑r
-                                        ; sub_12E59:loc_12E8A↑w ...
+                                        ; ShowSaveSlotMenu:loc_12E8A↑w ...
 word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
                                         ; ShowClueBook:loc_10EAF↑r ...
 word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
@@ -56585,7 +56585,7 @@ word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
 word_2E3F2      dw 0                    ; DATA XREF: DrawSaveSlotList+9A↑r
                                         ; sub_12D5C+3F↑r ...
 word_2E3F4      dw 0                    ; DATA XREF: DrawSaveSlotList:loc_12D2C↑r
-                                        ; sub_12E59+4B↑w ...
+                                        ; ShowSaveSlotMenu+4B↑w ...
 word_2E3F6      dw 0                    ; DATA XREF: ShowClueBook+7A↑w
                                         ; ShowClueBook+112↑w ...
 word_2E3F8      dw 0                    ; DATA XREF: ShowClueBook+109↑w
@@ -56594,7 +56594,7 @@ word_2E3FA      dw 0                    ; DATA XREF: ShowClueBook+10F↑w
                                         ; ShowClueBook+142↑w ...
 word_2E3FC      dw 0                    ; DATA XREF: ShowClueBook+100↑w
                                         ; ShowClueBook+133↑w ...
-word_2E3FE      dw 0                    ; DATA XREF: sub_12E59:loc_12EB1↑w
+word_2E3FE      dw 0                    ; DATA XREF: ShowSaveSlotMenu:loc_12EB1↑w
                                         ; sub_13216+25↑w ...
 byte_2E400      db 0                    ; DATA XREF: start+34↑r
                                         ; start+50↑r ...
