@@ -3150,6 +3150,13 @@ next id), loading each via `LoadContainerContents` in turn.
 
 405 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawPortraitOverlayIconA and DrawPortraitOverlayIconB
+
+Named two small overlay icon drawers called from
+`DrawPartyMemberPortrait`. Exact narrative not confirmed.
+
+407 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

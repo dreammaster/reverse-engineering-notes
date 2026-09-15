@@ -938,7 +938,10 @@ equipped-item icons via `DrawEquippedItemIcons` (reads the
 `+0x13A`/`+0x13E`/`+0x142` equipment slot arrays, using an "active"
 icon variant when an item's own `[+0xC]` bit `0x400` is set) — a
 150-line function whose remaining icon-selection logic isn't
-individually traced. A separate function, `DrawPartyMemberStatusPanel`
+individually traced, plus two small overlay icon drawers,
+`DrawPortraitOverlayIconA`/`DrawPortraitOverlayIconB` (each drawing a
+"+1" highlighted icon variant at a fixed offset — exact narrative not
+confirmed). A separate function, `DrawPartyMemberStatusPanel`
 (called from the main input loop `sub_1869D`), draws a fuller
 combat-style status panel per party slot: portrait, unconscious/dead
 overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP

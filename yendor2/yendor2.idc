@@ -6829,8 +6829,12 @@ static Bytes_2(void) {
 	create_insn	(x=0X267CE);
 	op_hex		(x,	1);
 	create_insn	(0X267DC);
+	set_cmt	(0X267F0,	"Draws the '+1' (highlighted) variant of word_2E546's [+8] icon at a fixed offset (0x28,0x40) from the portrait position. Called from DrawPartyMemberPortrait. Exact narrative not confirmed.",	0);
 	create_insn	(0X267F0);
+	set_name	(0X267F0,	"DrawPortraitOverlayIconA");
+	set_cmt	(0X2681B,	"Sibling of DrawPortraitOverlayIconA, at offset (0x26,0x24). Called from DrawPartyMemberPortrait.",	0);
 	create_insn	(0X2681B);
+	set_name	(0X2681B,	"DrawPortraitOverlayIconB");
 	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
@@ -8844,6 +8848,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AD27);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2AD32);
 	set_cmt	(0X2AD94,	"Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.",	0);
 	create_insn	(0X2AD94);
@@ -8855,15 +8868,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE20);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AE26);
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);

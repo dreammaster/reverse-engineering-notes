@@ -39191,7 +39191,7 @@ DrawPartyMemberPortrait proc far        ; CODE XREF: sub_1869D+4E0â†‘P
                 test    word ptr [si+15Ch], 1000h
                 jz      short loc_26100
                 mov     ax, [si+1C8h]
-                call    sub_267F0
+                call    DrawPortraitOverlayIconA
                 mov     si, word_328D4
                 add     si, 142h
                 mov     di, 615Ch
@@ -39231,7 +39231,7 @@ loc_2614A:                              ; CODE XREF: DrawPartyMemberPortrait+9Câ
                 cmp     word ptr [si+17Ch], 0
                 jz      short loc_26162
                 mov     ax, [si+17Ch]
-                call    sub_2681B
+                call    DrawPortraitOverlayIconB
                 add     si, 180h
                 jmp     short loc_26196
 ; ---------------------------------------------------------------------------
@@ -39240,7 +39240,7 @@ loc_26162:                              ; CODE XREF: DrawPartyMemberPortrait+D4â
                 cmp     word ptr [si+1A2h], 0
                 jz      short loc_26176
                 mov     ax, [si+1A2h]
-                call    sub_2681B
+                call    DrawPortraitOverlayIconB
                 add     si, 1A6h
                 jmp     short loc_26196
 ; ---------------------------------------------------------------------------
@@ -39251,7 +39251,7 @@ loc_26176:                              ; CODE XREF: DrawPartyMemberPortrait+E8â
                 test    word ptr [si+15Ch], 1000h
                 jnz     short loc_2618C
                 mov     ax, [si+1C8h]
-                call    sub_2681B
+                call    DrawPortraitOverlayIconB
 
 loc_2618C:                              ; CODE XREF: DrawPartyMemberPortrait+104â†‘j
                 add     si, 1CCh
@@ -39996,8 +39996,8 @@ DrawEquippedItemIcons endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_267F0       proc near               ; CODE XREF: DrawPartyMemberPortrait+6Bâ†‘p
-                call    LoadItemCatalogRecord
+DrawPortraitOverlayIconA proc near      ; CODE XREF: DrawPartyMemberPortrait+6Bâ†‘p
+                call    LoadItemCatalogRecord ; Draws the '+1' (highlighted) variant of word_2E546's [+8] icon at a fixed offset (0x28,0x40) from the portrait position. Called from DrawPartyMemberPortrait. Exact narrative not confirmed.
                 mov     ax, 28h ; '('
                 mov     bx, 40h ; '@'
                 add     ax, word_328BC
@@ -40010,15 +40010,15 @@ sub_267F0       proc near               ; CODE XREF: DrawPartyMemberPortrait+6Bâ
                 mov     word_2E530, ax
                 call    DrawPicture
                 retn
-sub_267F0       endp
+DrawPortraitOverlayIconA endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2681B       proc near               ; CODE XREF: DrawPartyMemberPortrait+DAâ†‘p
+DrawPortraitOverlayIconB proc near      ; CODE XREF: DrawPartyMemberPortrait+DAâ†‘p
                                         ; DrawPartyMemberPortrait+EEâ†‘p ...
-                call    LoadItemCatalogRecord
+                call    LoadItemCatalogRecord ; Sibling of DrawPortraitOverlayIconA, at offset (0x26,0x24). Called from DrawPartyMemberPortrait.
                 mov     ax, 26h ; '&'
                 mov     bx, 24h ; '$'
                 add     ax, word_328BC
@@ -40031,7 +40031,7 @@ sub_2681B       proc near               ; CODE XREF: DrawPartyMemberPortrait+DAâ
                 mov     word_2E530, ax
                 call    DrawPicture
                 retn
-sub_2681B       endp
+DrawPortraitOverlayIconB endp
 
 
 ; =============== S U B R O U T I N E =======================================
