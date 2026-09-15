@@ -3908,7 +3908,9 @@ static Bytes_0(void) {
 	create_insn	(0X1BAF2);
 	create_insn	(x=0X1BB10);
 	op_seg		(x,	1);
+	set_cmt	(0X1BB48,	"Applies the current item-use record's (SelectItemUseRecord) bit-level effects: es:[si+0xE] bit 0x20 clears word_328F6/word_328F8 via a complement mask; bit 0x10 instead restores word_2E40C/word_2E40E from them. Unconditionally clears then sets bits in word_2E40C/word_2E40E from the item's own masks (es:[si+0x1A]/[si+0x1C]/[si+0x1E]/[si+0x20] -- plausibly current player/party status or equipment-bonus flags, not confirmed). Then, unless bit 2 + word_328C6 bit 0x40 both hold, walks 6 signed flag-index fields (es:[si+0x2E]+) applying SetGlobalFlag/ClearGlobalFlag to each nonzero one -- an item can flip up to 6 global quest/world-state flags.",	0);
 	create_insn	(0X1BB48);
+	set_name	(0X1BB48,	"ApplyItemEffectFlags");
 	create_insn	(x=0X1BB4F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BB79);
@@ -5021,6 +5023,15 @@ static Bytes_0(void) {
 	set_cmt	(0X203AC,	"Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203AC);
 	set_name	(0X203AC,	"PaintCellAndPersist");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X203D0);
 	op_seg		(x,	1);
 	create_insn	(0X203E4);
@@ -5036,15 +5047,6 @@ static Bytes_0(void) {
 	set_cmt	(0X204AA,	"Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.",	0);
 	create_insn	(0X204AA);
 	set_name	(0X204AA,	"DrawFloorTypeLegendRow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X204F0);
 	create_insn	(0X20523);
 	set_cmt	(0X2053A,	"msg",	0);
@@ -8931,6 +8933,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2C9CE);
 	op_hex		(x,	1);
 	create_insn	(0X2C9FD);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2CA03);
 	op_hex		(x,	1);
 	create_insn	(x=0X2CA22);
@@ -8982,15 +8993,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2CCC4);
 	op_hex		(x,	1);
 	set_cmt	(0X2CCD3,	"ticks",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2CCEE);
 	create_insn	(0X2CDBE);
 	create_insn	(0X2CDC8);

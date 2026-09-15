@@ -13196,7 +13196,7 @@ loc_17BEF:                              ; CODE XREF: UseItem+53↑j
 ; ---------------------------------------------------------------------------
 
 loc_17BFF:                              ; CODE XREF: UseItem+63↑j
-                call    sub_1BB48
+                call    ApplyItemEffectFlags
                 mov     si, word_2E54E
                 mov     es, word_2E54C
                 test    word ptr es:[si+0Eh], 800h
@@ -13216,7 +13216,7 @@ loc_17C1C:                              ; CODE XREF: UseItem+80↑j
 loc_17C33:                              ; CODE XREF: UseItem+97↑j
                 mov     ax, es:[si+10h]
                 call    sub_1A5F6
-                call    sub_1BB48
+                call    ApplyItemEffectFlags
                 call    sub_1B8AB
                 call    sub_1B8EE
                 call    DrawMouseCursor
@@ -20669,7 +20669,7 @@ sub_1B96F       proc far                ; CODE XREF: UseItemType_400+EF↓p
                 mov     word_3298E, ax
                 and     word_2E410, 0FFFEh
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
@@ -20804,7 +20804,7 @@ sub_1BA96       proc far                ; CODE XREF: FinishItemUse+5↑p
                 test    word_328C6, 40h
                 jz      short loc_1BABC
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 jmp     short loc_1BAF2
 ; ---------------------------------------------------------------------------
 
@@ -20881,9 +20881,9 @@ sub_1BA96       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BB48       proc far                ; CODE XREF: UseItem:loc_17BFF↑P
+ApplyItemEffectFlags proc far           ; CODE XREF: UseItem:loc_17BFF↑P
                                         ; UseItem+AA↑P ...
-                push    cx
+                push    cx              ; Applies the current item-use record's (SelectItemUseRecord) bit-level effects: es:[si+0xE] bit 0x20 clears word_328F6/word_328F8 via a complement mask; bit 0x10 instead restores word_2E40C/word_2E40E from them. Unconditionally clears then sets bits in word_2E40C/word_2E40E from the item's own masks (es:[si+0x1A]/[si+0x1C]/[si+0x1E]/[si+0x20] -- plausibly current player/party status or equipment-bonus flags, not confirmed). Then, unless bit 2 + word_328C6 bit 0x40 both hold, walks 6 signed flag-index fields (es:[si+0x2E]+) applying SetGlobalFlag/ClearGlobalFlag to each nonzero one -- an item can flip up to 6 global quest/world-state flags.
                 push    di
                 push    si
                 push    cs
@@ -20903,7 +20903,7 @@ sub_1BB48       proc far                ; CODE XREF: UseItem:loc_17BFF↑P
                 jmp     short loc_1BB8D
 ; ---------------------------------------------------------------------------
 
-loc_1BB79:                              ; CODE XREF: sub_1BB48+D↑j
+loc_1BB79:                              ; CODE XREF: ApplyItemEffectFlags+D↑j
                 test    word ptr es:[si+0Eh], 10h
                 jz      short loc_1BB8D
                 mov     ax, word_328F6
@@ -20911,8 +20911,8 @@ loc_1BB79:                              ; CODE XREF: sub_1BB48+D↑j
                 mov     ax, word_328F8
                 mov     word_2E40E, ax
 
-loc_1BB8D:                              ; CODE XREF: sub_1BB48+2F↑j
-                                        ; sub_1BB48+37↑j
+loc_1BB8D:                              ; CODE XREF: ApplyItemEffectFlags+2F↑j
+                                        ; ApplyItemEffectFlags+37↑j
                 mov     ax, es:[si+1Eh]
                 not     ax
                 and     word_2E40C, ax
@@ -20928,11 +20928,11 @@ loc_1BB8D:                              ; CODE XREF: sub_1BB48+2F↑j
                 test    word_328C6, 40h
                 jz      short loc_1BBE4
 
-loc_1BBC1:                              ; CODE XREF: sub_1BB48+6F↑j
+loc_1BBC1:                              ; CODE XREF: ApplyItemEffectFlags+6F↑j
                 add     si, 2Eh ; '.'
                 mov     cx, 6
 
-loc_1BBC7:                              ; CODE XREF: sub_1BB48+9A↓j
+loc_1BBC7:                              ; CODE XREF: ApplyItemEffectFlags+9A↓j
                 mov     ax, es:[si]
                 cmp     ax, 0
                 jz      short loc_1BBDF
@@ -20941,22 +20941,22 @@ loc_1BBC7:                              ; CODE XREF: sub_1BB48+9A↓j
                 jmp     short loc_1BBDF
 ; ---------------------------------------------------------------------------
 
-loc_1BBD8:                              ; CODE XREF: sub_1BB48+87↑j
+loc_1BBD8:                              ; CODE XREF: ApplyItemEffectFlags+87↑j
                 neg     ax
                 call    ClearGlobalFlag
 
-loc_1BBDF:                              ; CODE XREF: sub_1BB48+85↑j
-                                        ; sub_1BB48+8E↑j
+loc_1BBDF:                              ; CODE XREF: ApplyItemEffectFlags+85↑j
+                                        ; ApplyItemEffectFlags+8E↑j
                 add     si, 2
                 loop    loc_1BBC7
 
-loc_1BBE4:                              ; CODE XREF: sub_1BB48+77↑j
+loc_1BBE4:                              ; CODE XREF: ApplyItemEffectFlags+77↑j
                 and     word_328C6, 0FFBFh
                 pop     si
                 pop     di
                 pop     cx
                 retf
-sub_1BB48       endp
+ApplyItemEffectFlags endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20978,7 +20978,7 @@ sub_1BBED       proc far                ; CODE XREF: UseItem+65↑P
 
 loc_1BC14:                              ; CODE XREF: sub_1BBED+22↑j
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -20993,7 +20993,7 @@ loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
                 push    cs
                 call    near ptr SelectItemUseRecord
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21132,7 +21132,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 mov     word_3298E, ax
                 and     word_2E410, 0FFFEh
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
@@ -21219,7 +21219,7 @@ UseItemType_400 proc far                ; CODE XREF: UseItem+55↑P
 
 loc_1BEC8:                              ; CODE XREF: UseItemType_400+22↑j
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21230,7 +21230,7 @@ loc_1BED6:                              ; CODE XREF: UseItemType_400+A↑j
                                         ; UseItemType_400+4C↓j ...
                 or      word_2E410, 1
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21337,7 +21337,7 @@ loc_1BFD1:                              ; CODE XREF: sub_1BF94+38↑j
 
 loc_1BFDC:                              ; CODE XREF: sub_1BF94+43↑j
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21348,7 +21348,7 @@ loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
                                         ; sub_1BF94+6D↓j ...
                 or      word_2E410, 1
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21500,7 +21500,7 @@ sub_1C123       proc far                ; CODE XREF: UseItem+35↑P
 
 loc_1C14A:                              ; CODE XREF: sub_1C123+22↑j
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21511,7 +21511,7 @@ loc_1C158:                              ; CODE XREF: sub_1C123+A↑j
                                         ; sub_1C123+4C↓j ...
                 or      word_2E410, 1
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -21914,7 +21914,7 @@ loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
                 call    sub_26C9E
                 call    sub_238CD
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -22024,7 +22024,7 @@ loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
                 call    sub_26C9E
                 call    sub_238CD
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr FinishItemUse
                 call    DrawMouseCursor
@@ -22052,7 +22052,7 @@ loc_1C72F:                              ; CODE XREF: sub_1C589+137↑j
                 push    es
                 and     word_2E410, 0FFFEh
                 push    cs
-                call    near ptr sub_1BB48
+                call    near ptr ApplyItemEffectFlags
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
@@ -42184,7 +42184,7 @@ seg095          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-ClearGlobalFlag proc far                ; CODE XREF: sub_1BB48+92↑P
+ClearGlobalFlag proc far                ; CODE XREF: ApplyItemEffectFlags+92↑P
                                         ; GrantMonsterRewards:loc_22BD9↑P ...
                 push    si              ; ClearGlobalFlag(ax=flag index): [si] &= ~mask.
                 call    GetGlobalFlagBitAndWord
@@ -56613,7 +56613,7 @@ word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
 word_2E40C      dw 0                    ; DATA XREF: sub_1B717+3↑w
                                         ; sub_1B717+9↑w ...
 word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
-                                        ; sub_1BB48+1F↑r ...
+                                        ; ApplyItemEffectFlags+1F↑r ...
 word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
                                         ; UseItem:loc_17BBF↑r ...
 word_2E412      dw 0                    ; DATA XREF: sub_13EDF+30↑w
@@ -74227,10 +74227,10 @@ word_328F2      dw 0                    ; DATA XREF: sub_20C8E+54↑r
                                         ; sub_20D2F+D9↑r ...
 word_328F4      dw 0                    ; DATA XREF: UseItem:loc_17F7E↑r
                                         ; UseItem+3F3↑r ...
-word_328F6      dw 0                    ; DATA XREF: sub_1BB48+12↑w
-                                        ; sub_1BB48+1B↑w ...
-word_328F8      dw 0                    ; DATA XREF: sub_1BB48+22↑w
-                                        ; sub_1BB48+2B↑w ...
+word_328F6      dw 0                    ; DATA XREF: ApplyItemEffectFlags+12↑w
+                                        ; ApplyItemEffectFlags+1B↑w ...
+word_328F8      dw 0                    ; DATA XREF: ApplyItemEffectFlags+22↑w
+                                        ; ApplyItemEffectFlags+2B↑w ...
 word_328FA      dw 0                    ; DATA XREF: sub_15429+6B↑w
                                         ; sub_15429:loc_154BF↑w ...
 word_328FC      dw 0                    ; DATA XREF: sub_2C0FE+376↑w

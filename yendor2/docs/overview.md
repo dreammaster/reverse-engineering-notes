@@ -1318,6 +1318,21 @@ true game-design identity still isn't confirmed.
 
 187 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: items can flip up to 6 global flags each
+
+Traced `sub_1BB48` — called from `UseItem`'s own fallback path and
+from inside several of its type handlers — a shared "apply this item's
+bit-level effects" step. It extends last round's global-flag finding:
+an item can set/clear up to **6** global quest/world-state flags (not
+just the 1-2 seen from `GrantMonsterRewards`), via 6 signed flag-index
+fields in its data record. It also directly manipulates two pairs of
+16-bit flag words (`word_328F6`/`word_328F8` and `word_2E40C`/
+`word_2E40E`) with save/restore and set/clear-mask semantics —
+plausibly current player/party status or equipment-bonus flags, not
+confirmed. Named `ApplyItemEffectFlags`.
+
+188 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

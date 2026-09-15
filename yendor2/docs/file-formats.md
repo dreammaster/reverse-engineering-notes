@@ -231,6 +231,17 @@ flags (quest steps, items read, NPCs met), not confirmed.
 a *different* offset, `+0xCA`, on an unconfirmed record type. Matching
 Clear/Test accessors for both banks weren't found this round.
 
+**Items can flip up to 6 global flags each**: `ApplyItemEffectFlags`
+(was `sub_1BB48`, a shared step called from `UseItem`'s fallback and
+several of its type handlers) walks 6 signed flag-index fields in the
+current item-use record (`SelectItemUseRecord`'s `es:[si+0x2E]`
+onward) — positive sets, negative (negated) clears, zero skips that
+slot. The same function also directly manipulates two pairs of 16-bit
+flag words, `word_328F6`/`word_328F8` and `word_2E40C`/`word_2E40E`,
+with save/restore and set/clear-mask semantics driven by more fields
+on the item record — plausibly current player/party status-effect or
+equipment-bonus flags, not confirmed.
+
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
 Not independently verified against `SW.EXE`'s code yet, but internally
