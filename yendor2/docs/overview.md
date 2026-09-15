@@ -3028,6 +3028,15 @@ health/mana-gauge-style stat bar.
 
 388 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawPartyMemberStatusPanel
+
+Named `sub_22445`, called from the main input loop: a fuller
+combat-style status panel per party slot -- portrait, unconscious/dead
+overlay, three `DrawStatBar` gauges (HP, MP, an unidentified third
+stat), an ability-readiness icon, and level-up/training text.
+
+389 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

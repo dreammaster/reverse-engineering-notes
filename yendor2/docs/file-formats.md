@@ -904,7 +904,13 @@ equipped-item icons via `DrawEquippedItemIcons` (reads the
 `+0x13A`/`+0x13E`/`+0x142` equipment slot arrays, using an "active"
 icon variant when an item's own `[+0xC]` bit `0x400` is set) — a
 150-line function whose remaining icon-selection logic isn't
-individually traced.
+individually traced. A separate function, `DrawPartyMemberStatusPanel`
+(called from the main input loop `sub_1869D`), draws a fuller
+combat-style status panel per party slot: portrait, unconscious/dead
+overlay, three `DrawStatBar` gauges (HP `+0x52`/`+0x92`, MP
+`+0x54`/`+0x94`, a third stat `+0x118`/`+0x56` not identified), an
+ability-readiness icon (`+0xB4`, the "learned abilities" bitmask), and
+level-up/training text.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

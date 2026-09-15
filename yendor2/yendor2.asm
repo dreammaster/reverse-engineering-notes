@@ -14741,7 +14741,7 @@ loc_1872D:                              ; CODE XREF: sub_1869D+86↑j
                 cmp     errorCode, 1
                 jz      short loc_1877B
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 mov     ax, word_31948
                 call    LoadItemCatalogRecord
                 cmp     word_31946, 0
@@ -15026,7 +15026,7 @@ loc_1897F:                              ; CODE XREF: sub_1869D+2C4↑j
                 cmp     errorCode, 1
                 jz      short loc_1897C
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 call    DrawMouseCursor
                 jmp     near ptr sub_1869D
 ; ---------------------------------------------------------------------------
@@ -15652,7 +15652,7 @@ loc_18F34:                              ; CODE XREF: sub_18C79+2B2↑j
                 call    sub_23874
                 call    sub_1B30C
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 mov     errorCode, 0
                 retf
 sub_18C79       endp
@@ -16264,7 +16264,7 @@ loc_19527:                              ; CODE XREF: sub_193BE+193↓j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 jmp     loc_193C8
 ; ---------------------------------------------------------------------------
 
@@ -21431,7 +21431,7 @@ loc_1C094:                              ; CODE XREF: UseHealingItem+F3↑j
                 call    near ptr ClassifyPartyMemberCondition
                 call    CheckForLevelUp
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 jmp     loc_1BFEA
 ; ---------------------------------------------------------------------------
 
@@ -21822,7 +21822,7 @@ loc_1C499:                              ; CODE XREF: UseTrainingItem+337↑j
                 call    sub_1CC98
                 call    sub_1AA9B
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 6Dh ; 'm'
                 mov     _font_fgColor, 0Dh
@@ -21994,7 +21994,7 @@ loc_1C688:                              ; CODE XREF: UseAbilityScroll+F5↑j
 loc_1C693:                              ; CODE XREF: UseAbilityScroll+E3↑j
                                         ; UseAbilityScroll+F0↑j ...
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 call    ClearStatusPanelIfDirty
                 mov     si, word_328D4
                 call    sub_25CFA
@@ -22115,7 +22115,7 @@ loc_1C7D9:                              ; CODE XREF: UseAbilityScroll+151↑j
                 mov     di, 512Ah
                 call    AddBCD4
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 mov     ax, 7
                 call    sub_28412
                 push    cs
@@ -25015,7 +25015,7 @@ loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
                 call    sub_1E61B
                 call    RestoreCursorBackgroundIfDirty
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 call    sub_1E522
                 call    sub_1E1A7
                 call    sub_1E3AF
@@ -32098,16 +32098,16 @@ sub_222F8       proc far                ; CODE XREF: HandleMovementInput+3B0↑P
                                         ; InitGame+135↑P ...
                 mov     bx, 95EBh
                 push    cs
-                call    near ptr sub_22445
+                call    near ptr DrawPartyMemberStatusPanel
                 mov     bx, 95EDh
                 push    cs
-                call    near ptr sub_22445
+                call    near ptr DrawPartyMemberStatusPanel
                 mov     bx, 95EFh
                 push    cs
-                call    near ptr sub_22445
+                call    near ptr DrawPartyMemberStatusPanel
                 mov     bx, 95F1h
                 push    cs
-                call    near ptr sub_22445
+                call    near ptr DrawPartyMemberStatusPanel
                 retf
 sub_222F8       endp
 
@@ -32276,9 +32276,9 @@ sub_22402       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22445       proc far                ; CODE XREF: sub_1869D+A0↑P
+DrawPartyMemberStatusPanel proc far     ; CODE XREF: sub_1869D+A0↑P
                                         ; sub_1869D+30A↑P ...
-                push    _font_bgTransparent
+                push    _font_bgTransparent ; Draws one party member's full status panel: portrait, unconscious/dead overlay, three DrawStatBar gauges (HP [+0x52]/[+0x92], MP [+0x54]/[+0x94], a third stat [+0x118]/[+0x56] not identified), an ability-readiness icon ([+0xB4]), and level-up/training text ([+0x1C] bit 0x40, [+0x1E]). Called from the main input loop sub_1869D.
                 push    bx
                 push    cx
                 push    si
@@ -32293,7 +32293,7 @@ sub_22445       proc far                ; CODE XREF: sub_1869D+A0↑P
                 jmp     loc_225B6
 ; ---------------------------------------------------------------------------
 
-loc_22461:                              ; CODE XREF: sub_22445+17↑j
+loc_22461:                              ; CODE XREF: DrawPartyMemberStatusPanel+17↑j
                 mov     si, [bx]
                 dec     si
                 mov     ax, 1F4h
@@ -32320,14 +32320,14 @@ loc_22461:                              ; CODE XREF: sub_22445+17↑j
                 test    word ptr [si+15Eh], 8000h
                 jz      short loc_224C6
 
-loc_224AF:                              ; CODE XREF: sub_22445+60↑j
+loc_224AF:                              ; CODE XREF: DrawPartyMemberStatusPanel+60↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _val38
                 mov     word_2E530, ax
                 call    DrawPicture
                 mov     _font_bgTransparent, 0
 
-loc_224C6:                              ; CODE XREF: sub_22445+68↑j
+loc_224C6:                              ; CODE XREF: DrawPartyMemberStatusPanel+68↑j
                 mov     ax, 0
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     _font_bgColor, 6
@@ -32337,7 +32337,7 @@ loc_224C6:                              ; CODE XREF: sub_22445+68↑j
                 jz      short loc_224E5
                 xor     bx, bx
 
-loc_224E5:                              ; CODE XREF: sub_22445+9C↑j
+loc_224E5:                              ; CODE XREF: DrawPartyMemberStatusPanel+9C↑j
                 call    DrawStatBar
                 mov     ax, 5
                 mov     _font_fgColor, 0CAh
@@ -32359,7 +32359,7 @@ loc_224E5:                              ; CODE XREF: sub_22445+9C↑j
                 jnz     short loc_22533
                 mov     word_2E530, 15h
 
-loc_22533:                              ; CODE XREF: sub_22445+E6↑j
+loc_22533:                              ; CODE XREF: DrawPartyMemberStatusPanel+E6↑j
                 call    DrawPicture
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Fh
@@ -32380,13 +32380,13 @@ loc_22533:                              ; CODE XREF: sub_22445+E6↑j
                 jmp     short loc_22583
 ; ---------------------------------------------------------------------------
 
-loc_22572:                              ; CODE XREF: sub_22445+11E↑j
-                                        ; sub_22445+124↑j
+loc_22572:                              ; CODE XREF: DrawPartyMemberStatusPanel+11E↑j
+                                        ; DrawPartyMemberStatusPanel+124↑j
                 mov     _font_bgTransparent, 0
                 mov     word_2E530, 15h
                 call    DrawPicture
 
-loc_22583:                              ; CODE XREF: sub_22445+12B↑j
+loc_22583:                              ; CODE XREF: DrawPartyMemberStatusPanel+12B↑j
                 mov     _font_bgTransparent, 0
                 call    sub_22615
                 test    word ptr [si+1Ch], 40h
@@ -32401,8 +32401,8 @@ loc_22583:                              ; CODE XREF: sub_22445+12B↑j
                 mov     bx, 7AAEh       ; msg
                 call    writeString
 
-loc_225B6:                              ; CODE XREF: sub_22445+19↑j
-                                        ; sub_22445+14C↑j
+loc_225B6:                              ; CODE XREF: DrawPartyMemberStatusPanel+19↑j
+                                        ; DrawPartyMemberStatusPanel+14C↑j
                 mov     dx, _emsPointer1?
                 mov     bx, 55D8h
                 call    MapUnmapPages
@@ -32412,7 +32412,7 @@ loc_225B6:                              ; CODE XREF: sub_22445+19↑j
                 mov     ax, _videoBufferSeg
                 mov     ds, ax
 
-loc_225D1:                              ; CODE XREF: sub_22445+19B↓j
+loc_225D1:                              ; CODE XREF: DrawPartyMemberStatusPanel+19B↓j
                 push    cx
                 mov     cx, 70h ; 'p'
                 mov     si, bx
@@ -32430,7 +32430,7 @@ loc_225D1:                              ; CODE XREF: sub_22445+19B↓j
                 pop     bx
                 pop     _font_bgTransparent
                 retf
-sub_22445       endp
+DrawPartyMemberStatusPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -32451,7 +32451,7 @@ sub_225F1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22615       proc near               ; CODE XREF: sub_22445+144↑p
+sub_22615       proc near               ; CODE XREF: DrawPartyMemberStatusPanel+144↑p
                 mov     ax, [di+0Ah]
                 mov     x, ax
                 mov     ax, [di+0Eh]
@@ -32529,8 +32529,8 @@ sub_22615       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawStatBar     proc near               ; CODE XREF: sub_22445:loc_224E5↑p
-                                        ; sub_22445+B3↑p ...
+DrawStatBar     proc near               ; CODE XREF: DrawPartyMemberStatusPanel:loc_224E5↑p
+                                        ; DrawPartyMemberStatusPanel+B3↑p ...
                 push    dx              ; Draws a 5-row proportional stat bar (health/mana-gauge style): bx=current, cx=max, drawn as filled (_font_fgColor) vs empty (_font_bgColor) pixels across a 38-pixel width, 5 rows tall. Called from sub_22445.
                 push    di
                 push    es
@@ -33888,7 +33888,7 @@ loc_2327F:                              ; CODE XREF: ShowLootAndAwardExperience+
                 cmp     word ptr [bx+1Eh], 0
                 jz      short loc_23295
                 mov     bx, si
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
 
 loc_23295:                              ; CODE XREF: ShowLootAndAwardExperience+13B↑j
                 add     si, 2
@@ -48347,7 +48347,7 @@ loc_2A854:                              ; CODE XREF: sub_2A788+C3↑j
                 cmp     word_3297A, 0
                 jnz     short loc_2A896
                 mov     bx, word_32924
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
 
 loc_2A896:                              ; CODE XREF: sub_2A788+103↑j
                 jmp     loc_2A7DA
@@ -48971,7 +48971,7 @@ loc_2ADD6:                              ; CODE XREF: sub_2ADD0+15↓j
                 cmp     word ptr [bx], 0
                 jz      short locret_2ADE7
                 push    bx
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
                 pop     bx
                 add     bx, 2
                 loop    loc_2ADD6
@@ -53555,7 +53555,7 @@ loc_2D7AD:                              ; CODE XREF: sub_2D7A7+40↓j
 loc_2D7D9:                              ; CODE XREF: sub_2D7A7+1B↑j
                                         ; sub_2D7A7+27↑j
                 or      word ptr [si+15Eh], 8000h
-                call    sub_22445
+                call    DrawPartyMemberStatusPanel
 
 loc_2D7E4:                              ; CODE XREF: sub_2D7A7+30↑j
                 add     bx, 2
@@ -74429,7 +74429,7 @@ _val36          dw 0                    ; DATA XREF: InitGlobals+FC↑w
 _val37          dw 0                    ; DATA XREF: InitGlobals+102↑w
                                         ; HandleRangedOrCombatAction+371↑r ...
 _val38          dw 0                    ; DATA XREF: InitGlobals+108↑w
-                                        ; sub_22445+70↑r ...
+                                        ; DrawPartyMemberStatusPanel+70↑r ...
 _val39          dw 0                    ; DATA XREF: InitGlobals+10E↑w
                                         ; RunGameDialog+504↑r ...
 _val40          dw 0                    ; DATA XREF: InitGlobals+114↑w
