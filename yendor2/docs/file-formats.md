@@ -140,7 +140,10 @@ active-combat monster records, found via `BuildCombatTurnOrder` — so
 the *original* "identify"-style hypothesis was right after all, just
 for the wrong reason at first: `+0x58` is plausibly a perception/
 identify stat that reveals more monster detail as it rises, not a
-bestiary browser). Only the light/torch-fuel identity (`+0x64`) remains
+bestiary browser — now further confirmed as a *derived* stat by
+`ComputeDerivedCharacterStats`, computed from a weighted blend of the
+6 base attributes plus a class-dependent bonus, not a raw rolled
+value). Only the light/torch-fuel identity (`+0x64`) remains
 an unconfirmed guess; `+0x66` (area-reveal-size) and `+0x58`
 (monster-detail-reveal) are now on solid ground. `+0xB4`: a bitmask of
 which of (at least) 4 special abilities this character has learned;
@@ -178,7 +181,14 @@ the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
 6 attributes; it isn't, since those 6 are confirmed at the entirely
 different `+0x3C`–`+0x86` range above. What `+0x4C`/`+0x4E`/`+0x50`
 actually are (drawn alongside the attributes on the same screen, so
-presumably related — derived combat stats?) is still open.
+presumably related) is still open. `ComputeDerivedCharacterStats`
+(called right after `RollCharacterAttributes`, before
+`DrawThreeThresholdStats`) computes a family of derived stats from
+the 6 attributes — each a weighted percentage blend of 2-3 attributes
+plus a class-dependent bonus, mirrored into current/max pairs
+`+0x58`/`+0x98`, `+0x5A`/`+0x9A`, `+0x5C`/`+0x9C`, `+0x5E`/`+0x9E`,
+`+0x60`/`+0xA0`, and more — but it starts at `+0x58`, so it isn't the
+source of `+0x4C`/`+0x4E`/`+0x50` either.
 
 **Skill values found**: `ShowCharacterSkills` clears a **16-word array
 at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before

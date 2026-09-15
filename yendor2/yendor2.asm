@@ -35502,9 +35502,9 @@ sub_23C18       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23F58       proc near               ; CODE XREF: ShowCharacterSkills+1CC↓p
+ComputeDerivedCharacterStats proc near  ; CODE XREF: ShowCharacterSkills+1CC↓p
                                         ; ShowCharacterStats+3↓p ...
-                mov     si, word_328D4
+                mov     si, word_328D4  ; Computes a family of derived stats from the 6 base attributes: each a weighted percentage blend (ScaleByPercentRounded) of 2-3 attributes plus a class-dependent bonus, mirrored into current/max pairs +0x58/+0x98, +0x5A/+0x9A, +0x5C/+0x9C, +0x5E/+0x9E, +0x60/+0xA0, and more. Confirms +0x58 (DrawMonsterInfoPanel's reveal-gate stat) is derived, not raw-rolled. Called from ShowCharacterSkills and ShowCharacterStats.
                 mov     ax, [si+3Ch]
                 mov     bx, 0Ah
                 call    ScaleByPercentRounded
@@ -35534,8 +35534,8 @@ sub_23F58       proc near               ; CODE XREF: ShowCharacterSkills+1CC↓p
                 jz      short loc_23FB6
                 mov     ax, 0
 
-loc_23FB6:                              ; CODE XREF: sub_23F58+35↑j
-                                        ; sub_23F58+3E↑j ...
+loc_23FB6:                              ; CODE XREF: ComputeDerivedCharacterStats+35↑j
+                                        ; ComputeDerivedCharacterStats+3E↑j ...
                 add     ax, [si+58h]
                 mov     [si+58h], ax
                 mov     [si+98h], ax
@@ -35563,8 +35563,8 @@ loc_23FB6:                              ; CODE XREF: sub_23F58+35↑j
                 jz      short loc_24009
                 mov     ax, 0
 
-loc_24009:                              ; CODE XREF: sub_23F58+8B↑j
-                                        ; sub_23F58+91↑j ...
+loc_24009:                              ; CODE XREF: ComputeDerivedCharacterStats+8B↑j
+                                        ; ComputeDerivedCharacterStats+91↑j ...
                 add     ax, [si+5Ah]
                 mov     [si+5Ah], ax
                 mov     [si+9Ah], ax
@@ -35595,8 +35595,8 @@ loc_24009:                              ; CODE XREF: sub_23F58+8B↑j
                 jz      short loc_24065
                 mov     ax, 0
 
-loc_24065:                              ; CODE XREF: sub_23F58+DE↑j
-                                        ; sub_23F58+E7↑j ...
+loc_24065:                              ; CODE XREF: ComputeDerivedCharacterStats+DE↑j
+                                        ; ComputeDerivedCharacterStats+E7↑j ...
                 add     ax, [si+5Ch]
                 mov     [si+5Ch], ax
                 mov     [si+9Ch], ax
@@ -35621,8 +35621,8 @@ loc_24065:                              ; CODE XREF: sub_23F58+DE↑j
                 jz      short loc_240AB
                 mov     ax, 0
 
-loc_240AB:                              ; CODE XREF: sub_23F58+124↑j
-                                        ; sub_23F58+12D↑j ...
+loc_240AB:                              ; CODE XREF: ComputeDerivedCharacterStats+124↑j
+                                        ; ComputeDerivedCharacterStats+12D↑j ...
                 add     ax, [si+5Eh]
                 mov     [si+5Eh], ax
                 mov     [si+9Eh], ax
@@ -35653,8 +35653,8 @@ loc_240AB:                              ; CODE XREF: sub_23F58+124↑j
                 jz      short loc_24107
                 mov     ax, 0
 
-loc_24107:                              ; CODE XREF: sub_23F58+180↑j
-                                        ; sub_23F58+189↑j ...
+loc_24107:                              ; CODE XREF: ComputeDerivedCharacterStats+180↑j
+                                        ; ComputeDerivedCharacterStats+189↑j ...
                 add     ax, [si+60h]
                 mov     [si+60h], ax
                 mov     [si+0A0h], ax
@@ -35680,12 +35680,12 @@ loc_24107:                              ; CODE XREF: sub_23F58+180↑j
                 jz      short loc_24150
                 mov     ax, 0
 
-loc_24150:                              ; CODE XREF: sub_23F58+1EA↑j
-                                        ; sub_23F58+1F3↑j
+loc_24150:                              ; CODE XREF: ComputeDerivedCharacterStats+1EA↑j
+                                        ; ComputeDerivedCharacterStats+1F3↑j
                 add     ax, [si+6Ch]
 
-loc_24153:                              ; CODE XREF: sub_23F58+1C0↑j
-                                        ; sub_23F58+1C6↑j ...
+loc_24153:                              ; CODE XREF: ComputeDerivedCharacterStats+1C0↑j
+                                        ; ComputeDerivedCharacterStats+1C6↑j ...
                 mov     [si+6Ch], ax
                 mov     [si+0ACh], ax
                 mov     ax, [si+3Eh]
@@ -35702,8 +35702,8 @@ loc_24153:                              ; CODE XREF: sub_23F58+1C0↑j
                 jz      short loc_24181
                 mov     ax, 0
 
-loc_24181:                              ; CODE XREF: sub_23F58+20F↑j
-                                        ; sub_23F58+215↑j ...
+loc_24181:                              ; CODE XREF: ComputeDerivedCharacterStats+20F↑j
+                                        ; ComputeDerivedCharacterStats+215↑j ...
                 add     ax, [si+66h]
                 mov     [si+66h], ax
                 mov     [si+0A6h], ax
@@ -35737,12 +35737,12 @@ loc_24181:                              ; CODE XREF: sub_23F58+20F↑j
                 jz      short loc_241E6
                 mov     ax, 0
 
-loc_241E6:                              ; CODE XREF: sub_23F58+280↑j
-                                        ; sub_23F58+289↑j
+loc_241E6:                              ; CODE XREF: ComputeDerivedCharacterStats+280↑j
+                                        ; ComputeDerivedCharacterStats+289↑j
                 add     ax, [si+68h]
 
-loc_241E9:                              ; CODE XREF: sub_23F58+23A↑j
-                                        ; sub_23F58+240↑j ...
+loc_241E9:                              ; CODE XREF: ComputeDerivedCharacterStats+23A↑j
+                                        ; ComputeDerivedCharacterStats+240↑j ...
                 mov     [si+68h], ax
                 mov     [si+0A8h], ax
                 mov     ax, 0
@@ -35776,12 +35776,12 @@ loc_241E9:                              ; CODE XREF: sub_23F58+23A↑j
                 jz      short loc_2424E
                 mov     ax, 0
 
-loc_2424E:                              ; CODE XREF: sub_23F58+2DF↑j
-                                        ; sub_23F58+2E8↑j ...
+loc_2424E:                              ; CODE XREF: ComputeDerivedCharacterStats+2DF↑j
+                                        ; ComputeDerivedCharacterStats+2E8↑j ...
                 add     ax, [si+6Ah]
 
-loc_24251:                              ; CODE XREF: sub_23F58+29F↑j
-                                        ; sub_23F58+2A5↑j ...
+loc_24251:                              ; CODE XREF: ComputeDerivedCharacterStats+29F↑j
+                                        ; ComputeDerivedCharacterStats+2A5↑j ...
                 mov     [si+6Ah], ax
                 mov     [si+0AAh], ax
                 mov     ax, 28h ; '('
@@ -35812,12 +35812,12 @@ loc_24251:                              ; CODE XREF: sub_23F58+29F↑j
                 jz      short loc_242AD
                 mov     ax, 0
 
-loc_242AD:                              ; CODE XREF: sub_23F58+341↑j
-                                        ; sub_23F58+34A↑j ...
+loc_242AD:                              ; CODE XREF: ComputeDerivedCharacterStats+341↑j
+                                        ; ComputeDerivedCharacterStats+34A↑j ...
                 add     ax, [si+64h]
 
-loc_242B0:                              ; CODE XREF: sub_23F58+307↑j
-                                        ; sub_23F58+30D↑j ...
+loc_242B0:                              ; CODE XREF: ComputeDerivedCharacterStats+307↑j
+                                        ; ComputeDerivedCharacterStats+30D↑j ...
                 mov     [si+64h], ax
                 mov     [si+0A4h], ax
                 mov     ax, 0
@@ -35853,12 +35853,12 @@ loc_242B0:                              ; CODE XREF: sub_23F58+307↑j
                 jz      short loc_2431B
                 mov     ax, 0
 
-loc_2431B:                              ; CODE XREF: sub_23F58+3A6↑j
-                                        ; sub_23F58+3AF↑j ...
+loc_2431B:                              ; CODE XREF: ComputeDerivedCharacterStats+3A6↑j
+                                        ; ComputeDerivedCharacterStats+3AF↑j ...
                 add     ax, [si+6Eh]
 
-loc_2431E:                              ; CODE XREF: sub_23F58+366↑j
-                                        ; sub_23F58+36C↑j ...
+loc_2431E:                              ; CODE XREF: ComputeDerivedCharacterStats+366↑j
+                                        ; ComputeDerivedCharacterStats+36C↑j ...
                 mov     [si+6Eh], ax
                 mov     [si+0AEh], ax
                 mov     ax, 0
@@ -35891,16 +35891,16 @@ loc_2431E:                              ; CODE XREF: sub_23F58+366↑j
                 jz      short loc_24380
                 mov     ax, 0
 
-loc_24380:                              ; CODE XREF: sub_23F58+41A↑j
-                                        ; sub_23F58+423↑j
+loc_24380:                              ; CODE XREF: ComputeDerivedCharacterStats+41A↑j
+                                        ; ComputeDerivedCharacterStats+423↑j
                 add     ax, [si+70h]
 
-loc_24383:                              ; CODE XREF: sub_23F58+3D4↑j
-                                        ; sub_23F58+3DA↑j ...
+loc_24383:                              ; CODE XREF: ComputeDerivedCharacterStats+3D4↑j
+                                        ; ComputeDerivedCharacterStats+3DA↑j ...
                 mov     [si+70h], ax
                 mov     [si+0B0h], ax
                 retn
-sub_23F58       endp
+ComputeDerivedCharacterStats endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36106,7 +36106,7 @@ loc_2457F:                              ; CODE XREF: ShowCharacterSkills+121↑j
 
 loc_2459C:                              ; CODE XREF: ShowCharacterSkills+1C1↑j
                 call    RollCharacterAttributes
-                call    sub_23F58
+                call    ComputeDerivedCharacterStats
                 call    sub_1B30C
                 call    sub_24D30
                 call    DrawThreeThresholdStats
@@ -36713,7 +36713,7 @@ ShowCharacterEquipment endp
 ShowCharacterStats proc near            ; CODE XREF: ShowPartyMembers+37↑p
                                         ; ShowCharacterStats+87↓j ...
                 call    RollCharacterAttributes ; ShowPartyMembers pipeline step: draws a header then 6 lines of text via sub_23AF2 -- matches the 6 core attributes (STRENGTH/DEXTERITY/STAMINA/INTELLIGENCE/WISDOM/CHARISMA) from the manual exactly. The character stats display.
-                call    sub_23F58
+                call    ComputeDerivedCharacterStats
                 call    sub_1B30C
                 call    sub_254CC
                 mov     _textPos_x, 8
@@ -37279,7 +37279,7 @@ loc_2525D:                              ; CODE XREF: ShowCharacterSummary+F4↑j
 loc_25272:                              ; CODE XREF: ShowCharacterSummary+FB↑j
                                         ; ShowCharacterSummary+12F↑j
                 call    RollCharacterAttributes
-                call    sub_23F58
+                call    ComputeDerivedCharacterStats
                 call    sub_1B30C
                 jmp     ShowCharacterSummary
 ; ---------------------------------------------------------------------------

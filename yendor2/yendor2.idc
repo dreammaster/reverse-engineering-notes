@@ -6314,7 +6314,9 @@ static Bytes_2(void) {
 	create_insn	(0X23EC6);
 	create_insn	(0X23ECE);
 	create_insn	(0X23EF2);
+	set_cmt	(0X23F58,	"Computes a family of derived stats from the 6 base attributes: each a weighted percentage blend (ScaleByPercentRounded) of 2-3 attributes plus a class-dependent bonus, mirrored into current/max pairs +0x58/+0x98, +0x5A/+0x9A, +0x5C/+0x9C, +0x5E/+0x9E, +0x60/+0xA0, and more. Confirms +0x58 (DrawMonsterInfoPanel's reveal-gate stat) is derived, not raw-rolled. Called from ShowCharacterSkills and ShowCharacterStats.",	0);
 	create_insn	(0X23F58);
+	set_name	(0X23F58,	"ComputeDerivedCharacterStats");
 	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X2438B);
 	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
@@ -8757,6 +8759,15 @@ static Bytes_2(void) {
 	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
 	create_insn	(0X2A68D);
 	set_name	(0X2A68D,	"LoadPictureIntoEms");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2A6A3);
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
@@ -8774,15 +8785,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2A7C4);
 	create_insn	(0X2A7F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2A7FC);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A805);

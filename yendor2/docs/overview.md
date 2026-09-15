@@ -3239,6 +3239,17 @@ completely different offset range from `DrawThreeThresholdStats`'
 actual identity is still open, though they're drawn on the same
 post-roll screen so presumably related. Renames only, no new count.
 
+### 2026-09-15 session update, continued: ComputeDerivedCharacterStats
+
+Named `sub_23F58`: computes a family of derived character stats from
+the 6 base attributes (weighted percentage blends plus class-dependent
+bonuses), mirrored into `+0x58`/`+0x98`, `+0x5A`/`+0x9A`,
+`+0x5C`/`+0x9C`, `+0x5E`/`+0x9E`, `+0x60`/`+0xA0`, and more. Confirms
+`+0x58` (already documented as gating `DrawMonsterInfoPanel`'s
+detail-reveal) is derived, not raw-rolled.
+
+419 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
