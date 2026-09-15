@@ -1704,6 +1704,16 @@ tentatively linked only by name.)
 
 230 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: FindItemInsideContainer
+
+Named `FindItemInInventoryRange`'s remaining callee,
+`FindItemInsideContainer`: reads a container's contents from `CURGAME`
+and searches its 8 slots for a matching item, recursing into nested
+containers — full bag-within-a-bag support for the inventory-range
+search.
+
+231 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

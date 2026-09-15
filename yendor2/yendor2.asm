@@ -22851,7 +22851,7 @@ loc_1CE8D:                              ; CODE XREF: FindItemInInventoryRange+15
                 call    sub_12554
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CEA1
-                call    sub_1CECB
+                call    FindItemInsideContainer
                 or      ax, ax
                 jz      short loc_1CEA1
                 retn
@@ -22869,7 +22869,7 @@ loc_1CEA1:                              ; CODE XREF: FindItemInInventoryRange+F�
                 call    sub_12554
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CEC8
-                call    sub_1CECB
+                call    FindItemInsideContainer
                 or      ax, ax
                 jz      short loc_1CEC8
                 retn
@@ -22885,10 +22885,10 @@ FindItemInInventoryRange endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_1CECB(int, int, FileEntry *this)
-sub_1CECB       proc near               ; CODE XREF: FindItemInInventoryRange+2E↑p
+; int __fastcall FindItemInsideContainer(int, int, FileEntry *this)
+FindItemInsideContainer proc near       ; CODE XREF: FindItemInInventoryRange+2E↑p
                                         ; FindItemInInventoryRange+55↑p
-                push    di
+                push    di              ; Reads a container's contents from CURGAME (FileEntry bx=0x8FFB, same pattern as LoadContainerContents) into a scratch buffer, searches its 8 slots for an item id in [word_3293E, word_32940], and recurses into nested container items the same way via sub_1CF50 -- FindItemInInventoryRange's container-search step.
                 push    cx              ; this
                 mov     ax, 0BC28h
                 mov     bx, 8FFBh       ; this
@@ -22901,7 +22901,7 @@ sub_1CECB       proc near               ; CODE XREF: FindItemInInventoryRange+2E
                 mov     di, 0BC2Ah
                 mov     cx, 8
 
-loc_1CEF4:                              ; CODE XREF: sub_1CECB+7E↓j
+loc_1CEF4:                              ; CODE XREF: FindItemInsideContainer+7E↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1CF46
@@ -22916,8 +22916,8 @@ loc_1CEF4:                              ; CODE XREF: sub_1CECB+7E↓j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CF16:                              ; CODE XREF: sub_1CECB+33↑j
-                                        ; sub_1CECB+39↑j
+loc_1CF16:                              ; CODE XREF: FindItemInsideContainer+33↑j
+                                        ; FindItemInsideContainer+39↑j
                 call    sub_12554
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CF46
@@ -22931,33 +22931,33 @@ loc_1CF16:                              ; CODE XREF: sub_1CECB+33↑j
                 jmp     short loc_1CF3E
 ; ---------------------------------------------------------------------------
 
-loc_1CF3A:                              ; CODE XREF: sub_1CECB+67↑j
+loc_1CF3A:                              ; CODE XREF: FindItemInsideContainer+67↑j
                 pop     word_32972
 
-loc_1CF3E:                              ; CODE XREF: sub_1CECB+6D↑j
+loc_1CF3E:                              ; CODE XREF: FindItemInsideContainer+6D↑j
                 add     sp, 4
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1CF42:                              ; CODE XREF: sub_1CECB+60↑j
+loc_1CF42:                              ; CODE XREF: FindItemInsideContainer+60↑j
                 pop     word_36863
 
-loc_1CF46:                              ; CODE XREF: sub_1CECB+2D↑j
-                                        ; sub_1CECB+55↑j
+loc_1CF46:                              ; CODE XREF: FindItemInsideContainer+2D↑j
+                                        ; FindItemInsideContainer+55↑j
                 add     di, 4
                 loop    loc_1CEF4
                 pop     cx
                 pop     di
                 xor     ax, ax
                 retn
-sub_1CECB       endp
+FindItemInsideContainer endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
 ; int __fastcall sub_1CF50(int, int, FileEntry *this)
-sub_1CF50       proc near               ; CODE XREF: sub_1CECB+5B↑p
+sub_1CF50       proc near               ; CODE XREF: FindItemInsideContainer+5B↑p
                 push    di
                 push    cx              ; this
                 mov     ax, 0BC4Ah
@@ -74353,11 +74353,11 @@ word_3296A      dw 0                    ; DATA XREF: sub_1869D+5A4↑r
 word_3296C      dw 0                    ; DATA XREF: CheckTransportAvailability+23↑w
                                         ; CheckTransportAvailability+5D↑w ...
 word_3296E      dw 0                    ; DATA XREF: CheckTransportAvailability+2F↑w
-                                        ; sub_1CECB+69↑w ...
+                                        ; FindItemInsideContainer+69↑w ...
 word_32970      dw 0                    ; DATA XREF: sub_26415+27E↑w
                                         ; sub_2738B+7F↑w ...
 word_32972      dw 0                    ; DATA XREF: CheckTransportAvailability+29↑w
-                                        ; sub_1CECB+62↑r ...
+                                        ; FindItemInsideContainer+62↑r ...
 word_32974      dw 0                    ; DATA XREF: seg000:0850↑r
                                         ; seg000:0880↑r ...
 word_32976      dw 0                    ; DATA XREF: CheckTransportAvailability+5↑w

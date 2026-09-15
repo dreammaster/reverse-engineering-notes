@@ -4247,7 +4247,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1CEB9);
 	op_hex		(x,	1);
 	create_insn	(0X1CEC8);
+	set_cmt	(0X1CECB,	"Reads a container's contents from CURGAME (FileEntry bx=0x8FFB, same pattern as LoadContainerContents) into a scratch buffer, searches its 8 slots for an item id in [word_3293E, word_32940], and recurses into nested container items the same way via sub_1CF50 -- FindItemInInventoryRange's container-search step.",	0);
 	create_insn	(0X1CECB);
+	set_name	(0X1CECB,	"FindItemInsideContainer");
 	set_cmt	(0X1CECC,	"this",	0);
 	set_cmt	(0X1CED0,	"this",	0);
 	create_insn	(x=0X1CF12);
@@ -4389,6 +4391,15 @@ static Bytes_0(void) {
 	create_insn	(0X1D496);
 	create_insn	(0X1D4B4);
 	create_insn	(0X1D4B8);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D4C0);
 	op_hex		(x,	1);
 	create_insn	(0X1D4CB);
@@ -4433,15 +4444,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D8C1);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1D8D0,	"ticks",	0);
 	create_insn	(0X1D902);
 	create_insn	(x=0X1D917);
@@ -8023,6 +8025,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F48);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X29F4B);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29F4E);
@@ -8059,15 +8070,6 @@ static Bytes_1(void) {
 	create_insn	(0X29FA9);
 	create_insn	(x=0X29FAA);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29FB0);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X29FB3);
@@ -12137,7 +12139,7 @@ static Functions_0(void) {
 	set_frame_size(0X1CE6B, 0, 0, 0);
 	add_func    (0X1CECB,0X1CF50);
 	set_func_flags(0X1CECB,0x5400);
-	SetType(0X1CECB, "int __fastcall sub_1CECB(int, int, FileEntry *this);");
+	SetType(0X1CECB, "int __fastcall FindItemInsideContainer(int, int, FileEntry *this);");
 	set_frame_size(0X1CECB, 0X2, 0, 0);
 	add_func    (0X1CF50,0X1CFC8);
 	set_func_flags(0X1CF50,0x5400);
