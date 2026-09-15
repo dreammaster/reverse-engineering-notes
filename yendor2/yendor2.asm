@@ -11878,7 +11878,7 @@ seg023          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17032       proc far                ; CODE XREF: sub_1732B+13A↓p
+sub_17032       proc far                ; CODE XREF: RunShopScreen+13A↓p
                                         ; sub_1869D+E9↓P
                 call    sub_17B67
                 cmp     ax, 0
@@ -12119,7 +12119,7 @@ sub_17032       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17270       proc far                ; CODE XREF: sub_1732B+D2↓p
+sub_17270       proc far                ; CODE XREF: RunShopScreen+D2↓p
                                         ; sub_1869D:loc_18857↓P
                 call    sub_17B67
                 cmp     ax, 0
@@ -12207,9 +12207,9 @@ sub_1728A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1732B       proc far                ; CODE XREF: UseAbilityCommand+104↓p
+RunShopScreen   proc far                ; CODE XREF: UseAbilityCommand+104↓p
                                         ; UseKeyItem+1C↓P ...
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; Umbrella shop screen, reached from UseAbilityCommand. Calls sub_1869D (main input loop -- hosts the sell/enhance/repair Space-bar cluster) directly, twice; calls sub_17032 (the mouse-click 'buy' handler reaching PayGoldAndAcquireItem); redraws ShowMaterialCounterHud repeatedly; hit-tests several region tables; writes state via FileEntry_Write near an exit path. Ties the whole shop cluster together. Many internal helper calls not individually traced yet.
                 call    sub_1B47A
                 or      word_328C6, 200h
                 call    sub_179AE
@@ -12220,8 +12220,8 @@ sub_1732B       proc far                ; CODE XREF: UseAbilityCommand+104↓p
                 call    sub_238CD
                 call    DrawMouseCursor
 
-loc_17350:                              ; CODE XREF: sub_1732B+2F↓j
-                                        ; sub_1732B+66↓j ...
+loc_17350:                              ; CODE XREF: RunShopScreen+2F↓j
+                                        ; RunShopScreen+66↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_17350
@@ -12230,43 +12230,43 @@ loc_17350:                              ; CODE XREF: sub_1732B+2F↓j
                 jmp     short loc_17396
 ; ---------------------------------------------------------------------------
 
-loc_17365:                              ; CODE XREF: sub_1732B+36↑j
+loc_17365:                              ; CODE XREF: RunShopScreen+36↑j
                 cmp     errorCode, 2
                 jnz     short loc_1736F
                 jmp     loc_17403
 ; ---------------------------------------------------------------------------
 
-loc_1736F:                              ; CODE XREF: sub_1732B+3F↑j
+loc_1736F:                              ; CODE XREF: RunShopScreen+3F↑j
                 cmp     errorCode, 3
                 jnz     short loc_17379
                 jmp     loc_17432
 ; ---------------------------------------------------------------------------
 
-loc_17379:                              ; CODE XREF: sub_1732B+49↑j
+loc_17379:                              ; CODE XREF: RunShopScreen+49↑j
                 cmp     errorCode, 6
                 jnz     short loc_17382
                 jmp     short loc_173D9
 ; ---------------------------------------------------------------------------
 
-loc_17382:                              ; CODE XREF: sub_1732B+53↑j
+loc_17382:                              ; CODE XREF: RunShopScreen+53↑j
                 cmp     errorCode, 7
                 jnz     short loc_1738C
                 jmp     loc_174CE
 ; ---------------------------------------------------------------------------
 
-loc_1738C:                              ; CODE XREF: sub_1732B+5C↑j
+loc_1738C:                              ; CODE XREF: RunShopScreen+5C↑j
                 cmp     errorCode, 0Ah
                 jnz     short loc_17350
                 jmp     loc_175CA
 ; ---------------------------------------------------------------------------
 
-loc_17396:                              ; CODE XREF: sub_1732B+38↑j
+loc_17396:                              ; CODE XREF: RunShopScreen+38↑j
                 cmp     byte_2E400, 20h ; ' '
                 jnz     short loc_173A0
                 jmp     loc_17500
 ; ---------------------------------------------------------------------------
 
-loc_173A0:                              ; CODE XREF: sub_1732B+70↑j
+loc_173A0:                              ; CODE XREF: RunShopScreen+70↑j
                 cmp     byte_2E400, 4Dh ; 'M'
                 jnz     short loc_173BD
                 test    word_36C7F, 200h
@@ -12277,7 +12277,7 @@ loc_173A0:                              ; CODE XREF: sub_1732B+70↑j
                 jmp     loc_17557
 ; ---------------------------------------------------------------------------
 
-loc_173BD:                              ; CODE XREF: sub_1732B+7A↑j
+loc_173BD:                              ; CODE XREF: RunShopScreen+7A↑j
                 cmp     byte_2E400, 50h ; 'P'
                 jnz     short loc_173D1
                 call    sub_185A2
@@ -12285,14 +12285,14 @@ loc_173BD:                              ; CODE XREF: sub_1732B+7A↑j
                 jmp     loc_1754D
 ; ---------------------------------------------------------------------------
 
-loc_173D1:                              ; CODE XREF: sub_1732B+97↑j
+loc_173D1:                              ; CODE XREF: RunShopScreen+97↑j
                 call    sub_25B34
 
-loc_173D6:                              ; CODE XREF: sub_1732B+82↑j
+loc_173D6:                              ; CODE XREF: RunShopScreen+82↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_173D9:                              ; CODE XREF: sub_1732B+55↑j
+loc_173D9:                              ; CODE XREF: RunShopScreen+55↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
@@ -12308,13 +12308,13 @@ loc_173D9:                              ; CODE XREF: sub_1732B+55↑j
                 push    cs
                 call    near ptr sub_17270
 
-loc_17400:                              ; CODE XREF: sub_1732B+C0↑j
-                                        ; sub_1732B+CF↑j
+loc_17400:                              ; CODE XREF: RunShopScreen+C0↑j
+                                        ; RunShopScreen+CF↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_17403:                              ; CODE XREF: sub_1732B+41↑j
-                                        ; sub_1732B+C5↑j
+loc_17403:                              ; CODE XREF: RunShopScreen+41↑j
+                                        ; RunShopScreen+C5↑j
                 call    sub_19553
                 call    sub_20C46
                 test    word_328C6, 80h
@@ -12324,17 +12324,17 @@ loc_17403:                              ; CODE XREF: sub_1732B+41↑j
                 mov     word_2E550, ax
                 call    FinishItemUse
 
-loc_17422:                              ; CODE XREF: sub_1732B+E8↑j
+loc_17422:                              ; CODE XREF: RunShopScreen+E8↑j
                 call    DrawMouseCursor
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_1742A:                              ; CODE XREF: sub_1732B+CA↑j
+loc_1742A:                              ; CODE XREF: RunShopScreen+CA↑j
                 call    sub_270FE
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_17432:                              ; CODE XREF: sub_1732B+4B↑j
+loc_17432:                              ; CODE XREF: RunShopScreen+4B↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5AC0h
@@ -12346,14 +12346,14 @@ loc_17432:                              ; CODE XREF: sub_1732B+4B↑j
                 jmp     short loc_1746E
 ; ---------------------------------------------------------------------------
 
-loc_1744D:                              ; CODE XREF: sub_1732B+11E↑j
+loc_1744D:                              ; CODE XREF: RunShopScreen+11E↑j
                 cmp     ax, 2
                 jnz     short loc_1745A
                 call    sub_271DC
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_1745A:                              ; CODE XREF: sub_1732B+125↑j
+loc_1745A:                              ; CODE XREF: RunShopScreen+125↑j
                 cmp     ax, 6
                 jz      short loc_174A2
                 cmp     ax, 5
@@ -12363,24 +12363,24 @@ loc_1745A:                              ; CODE XREF: sub_1732B+125↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_1746B:                              ; CODE XREF: sub_1732B+119↑j
-                                        ; sub_1732B+137↑j ...
+loc_1746B:                              ; CODE XREF: RunShopScreen+119↑j
+                                        ; RunShopScreen+137↑j ...
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_1746E:                              ; CODE XREF: sub_1732B+120↑j
+loc_1746E:                              ; CODE XREF: RunShopScreen+120↑j
                 test    word_328C6, 80h
                 jnz     short loc_17485
                 cmp     word_31946, 0
                 jz      short loc_17482
                 call    sub_1A37E
 
-loc_17482:                              ; CODE XREF: sub_1732B+150↑j
-                                        ; sub_1732B+15F↓j ...
+loc_17482:                              ; CODE XREF: RunShopScreen+150↑j
+                                        ; RunShopScreen+15F↓j ...
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_17485:                              ; CODE XREF: sub_1732B+149↑j
+loc_17485:                              ; CODE XREF: RunShopScreen+149↑j
                 cmp     word_31946, 0
                 jnz     short loc_17482
                 mov     ax, word_2E76E
@@ -12392,14 +12392,14 @@ loc_17485:                              ; CODE XREF: sub_1732B+149↑j
                 jmp     short loc_17500
 ; ---------------------------------------------------------------------------
 
-loc_174A2:                              ; CODE XREF: sub_1732B+132↑j
+loc_174A2:                              ; CODE XREF: RunShopScreen+132↑j
                 cmp     word_31946, 0
                 jnz     short loc_174B1
                 call    sub_25B34
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_174B1:                              ; CODE XREF: sub_1732B+17C↑j
+loc_174B1:                              ; CODE XREF: RunShopScreen+17C↑j
                 call    sub_18C79
                 cmp     errorCode, 0
                 jnz     short loc_1746B
@@ -12410,7 +12410,7 @@ loc_174B1:                              ; CODE XREF: sub_1732B+17C↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_174CE:                              ; CODE XREF: sub_1732B+5E↑j
+loc_174CE:                              ; CODE XREF: RunShopScreen+5E↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
@@ -12427,17 +12427,17 @@ loc_174CE:                              ; CODE XREF: sub_1732B+5E↑j
                 cmp     errorCode, 2
                 jz      short loc_17557
 
-loc_174FD:                              ; CODE XREF: sub_1732B+1B5↑j
-                                        ; sub_1732B+1C4↑j
+loc_174FD:                              ; CODE XREF: RunShopScreen+1B5↑j
+                                        ; RunShopScreen+1C4↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_17500:                              ; CODE XREF: sub_1732B+72↑j
-                                        ; sub_1732B+175↑j ...
+loc_17500:                              ; CODE XREF: RunShopScreen+72↑j
+                                        ; RunShopScreen+175↑j ...
                 push    errorCode
                 call    sub_17A21
 
-loc_17507:                              ; CODE XREF: sub_1732B+284↓j
+loc_17507:                              ; CODE XREF: RunShopScreen+284↓j
                 and     word_328C6, 0FDFFh
                 mov     word_2E530, 1
                 call    sub_22387
@@ -12447,27 +12447,27 @@ loc_17507:                              ; CODE XREF: sub_1732B+284↓j
                 jnz     short loc_1752F
                 call    DrawMouseCursor
 
-loc_1752F:                              ; CODE XREF: sub_1732B+1FD↑j
+loc_1752F:                              ; CODE XREF: RunShopScreen+1FD↑j
                 pop     errorCode
                 mov     byte_2E400, 0
                 jmp     locret_175F3
 ; ---------------------------------------------------------------------------
 
-loc_1753B:                              ; CODE XREF: sub_1732B+1BF↑j
+loc_1753B:                              ; CODE XREF: RunShopScreen+1BF↑j
                 call    sub_18504
                 test    word_328C6, 7800h
                 jz      short loc_1754D
                 call    sub_1869D
 
-loc_1754D:                              ; CODE XREF: sub_1732B+A3↑j
-                                        ; sub_1732B+21B↑j ...
+loc_1754D:                              ; CODE XREF: RunShopScreen+A3↑j
+                                        ; RunShopScreen+21B↑j ...
                 cmp     errorCode, 2
                 jz      short loc_17557
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_17557:                              ; CODE XREF: sub_1732B+8F↑j
-                                        ; sub_1732B+1D0↑j ...
+loc_17557:                              ; CODE XREF: RunShopScreen+8F↑j
+                                        ; RunShopScreen+1D0↑j ...
                 mov     bx, word_2E548
                 test    word ptr [bx], 8
                 jnz     short loc_1756F
@@ -12477,7 +12477,7 @@ loc_17557:                              ; CODE XREF: sub_1732B+8F↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_1756F:                              ; CODE XREF: sub_1732B+234↑j
+loc_1756F:                              ; CODE XREF: RunShopScreen+234↑j
                 test    word_328C6, 80h
                 jnz     short loc_175BD
                 test    word_32DCE, 2
@@ -12487,7 +12487,7 @@ loc_1756F:                              ; CODE XREF: sub_1732B+234↑j
                 call    sub_20C46
                 call    DrawMouseCursor
 
-loc_17590:                              ; CODE XREF: sub_1732B+252↑j
+loc_17590:                              ; CODE XREF: RunShopScreen+252↑j
                 mov     ax, 556Ch
                 mov     bx, 8FFBh       ; this
                 call    sub_27DC6
@@ -12499,20 +12499,20 @@ loc_17590:                              ; CODE XREF: sub_1732B+252↑j
                 jmp     loc_17507
 ; ---------------------------------------------------------------------------
 
-loc_175B2:                              ; CODE XREF: sub_1732B+23A↑j
+loc_175B2:                              ; CODE XREF: RunShopScreen+23A↑j
                 test    word_328C6, 80h
                 jnz     short loc_175BD
                 jmp     loc_17500
 ; ---------------------------------------------------------------------------
 
-loc_175BD:                              ; CODE XREF: sub_1732B+24A↑j
-                                        ; sub_1732B+28D↑j
+loc_175BD:                              ; CODE XREF: RunShopScreen+24A↑j
+                                        ; RunShopScreen+28D↑j
                 call    sub_238CD
                 call    FlashStatusWarning
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-loc_175CA:                              ; CODE XREF: sub_1732B+68↑j
+loc_175CA:                              ; CODE XREF: RunShopScreen+68↑j
                 mov     ax, word_2E772
                 mov     bx, word_2E774
                 mov     si, 5AC0h
@@ -12526,21 +12526,21 @@ loc_175CA:                              ; CODE XREF: sub_1732B+68↑j
                 jmp     loc_1754D
 ; ---------------------------------------------------------------------------
 
-loc_175F0:                              ; CODE XREF: sub_1732B+2B1↑j
-                                        ; sub_1732B+2B6↑j
+loc_175F0:                              ; CODE XREF: RunShopScreen+2B1↑j
+                                        ; RunShopScreen+2B6↑j
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
 
-locret_175F3:                           ; CODE XREF: sub_1732B+20D↑j
+locret_175F3:                           ; CODE XREF: RunShopScreen+20D↑j
                 retf
-sub_1732B       endp
+RunShopScreen   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowMaterialCounterHud proc far         ; CODE XREF: sub_1732B+18↑p
-                                        ; sub_1732B+193↑p ...
+ShowMaterialCounterHud proc far         ; CODE XREF: RunShopScreen+18↑p
+                                        ; RunShopScreen+193↑p ...
                 test    word_328C6, 80h ; Gated on word_328C6 bit 0x80: draws a fixed label (0x7FC4) plus the current value of material counter 0x94B3 via FormatAndDrawBCD4 -- a small HUD element. Only traced caller is sub_1732B.
                 jnz     short loc_175FD
                 retf
@@ -12908,7 +12908,7 @@ loc_1799D:                              ; CODE XREF: UseAbilityCommand+95↑j
 loc_179A6:                              ; CODE XREF: UseAbilityCommand+FD↑j
                 call    sub_17A65
                 push    cs
-                call    near ptr sub_1732B
+                call    near ptr RunShopScreen
                 retf
 UseAbilityCommand endp
 
@@ -12916,7 +12916,7 @@ UseAbilityCommand endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_179AE       proc near               ; CODE XREF: sub_1732B+10↑p
+sub_179AE       proc near               ; CODE XREF: RunShopScreen+10↑p
                 mov     es, word_2E4AA
                 mov     di, 558Ah
                 xor     ax, ax
@@ -12977,7 +12977,7 @@ sub_179AE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17A21       proc near               ; CODE XREF: sub_1732B+1D9↑p
+sub_17A21       proc near               ; CODE XREF: RunShopScreen+1D9↑p
                 test    word_328C6, 80h
                 jz      short loc_17A32
                 test    word_328C6, 20h
@@ -19522,7 +19522,7 @@ UseKeyItem      proc far                ; CODE XREF: UseItem+1B1↑P
                 call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
                 call    LoadLockState
-                call    sub_1732B
+                call    RunShopScreen
                 mov     di, 0BB8h
                 mov     ax, [di]
                 mov     word_2E550, ax
@@ -20066,7 +20066,7 @@ seg044          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B47A       proc far                ; CODE XREF: sub_1732B+5↑P
+sub_1B47A       proc far                ; CODE XREF: RunShopScreen+5↑P
                                         ; sub_185A2+8C↑P ...
                 push    di
                 push    es
@@ -20328,7 +20328,7 @@ sub_1B5FD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-FinishItemUse   proc far                ; CODE XREF: sub_1732B+F2↑P
+FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
                                         ; UseItem+100↑P ...
                 push    cs              ; FinishItemUse: common post-item-use cleanup/redraw, called at the end of every branch in UseItemType_400 and sub_1BBED (the 0x800-selected sibling handler).
                 call    near ptr sub_1B8AB
@@ -22546,7 +22546,7 @@ CheckKeyItem    proc far                ; CODE XREF: UseItem+1A1↑P
                 call    ShowResourceDepletedOverlay
                 mov     ax, es:[si+10h]
                 call    LoadLockState
-                call    sub_1732B
+                call    RunShopScreen
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
@@ -42793,7 +42793,7 @@ sub_27DA8       endp
 
 
 ; void __usercall sub_27DC6(FileEntry *this@<eds:ebx.2>)
-sub_27DC6       proc far                ; CODE XREF: sub_1732B+26B↑P
+sub_27DC6       proc far                ; CODE XREF: RunShopScreen+26B↑P
                                         ; LoadLockState+13↑P ...
                 push    si
                 mov     si, 0CDE3h
@@ -56917,7 +56917,7 @@ word_2E54C      dw 0                    ; DATA XREF: UseItem+76↑r
                                         ; UseItem+10E↑r ...
 word_2E54E      dw 0                    ; DATA XREF: UseItem+72↑r
                                         ; UseItem:loc_17C9C↑r ...
-word_2E550      dw 0                    ; DATA XREF: sub_1732B+EF↑w
+word_2E550      dw 0                    ; DATA XREF: RunShopScreen+EF↑w
                                         ; UseItem+25E↑w ...
 fontOffset      dw 0                    ; DATA XREF: sub_1A5F6+8E↑w
                                         ; ShowHealingCostPrompt+B6↑w ...
@@ -75460,7 +75460,7 @@ byte_32DCC      db 0                    ; DATA XREF: sub_17032:loc_170A3↑w
                                         ; sub_17032:loc_17100↑w ...
 byte_32DCD      db 0                    ; DATA XREF: start+1BB↑w
                                         ; start+24B↑w ...
-word_32DCE      dw 0                    ; DATA XREF: sub_1732B+24C↑r
+word_32DCE      dw 0                    ; DATA XREF: RunShopScreen+24C↑r
                                         ; ShowLockStatus+38↑r ...
 word_32DD0      dw 0                    ; DATA XREF: LoadLockState+88↑r
                                         ; LoadCurgameRecord+74↑r ...

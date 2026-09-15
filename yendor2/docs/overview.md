@@ -2247,6 +2247,18 @@ other, untraced item-type branches) is left unnamed for now.
 
 280 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunShopScreen ties the whole vendor cluster together
+
+Named `sub_1732B`, reached from `UseAbilityCommand`: the umbrella shop
+screen hosting all four vendor actions found this session. Calls the
+main input loop `sub_1869D` directly, twice (enabling the
+sell/enhance/repair Space-bar cluster), and `sub_17032` (enabling
+`PayGoldAndAcquireItem`'s click-to-buy path); redraws
+`ShowMaterialCounterHud` repeatedly; writes state via `FileEntry_Write`
+near an exit. Many internal helpers not individually traced.
+
+281 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

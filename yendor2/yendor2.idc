@@ -2642,7 +2642,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X172FF);
 	op_hex		(x,	1);
 	set_cmt	(0X17322,	"msg",	0);
+	set_cmt	(0X1732B,	"Umbrella shop screen, reached from UseAbilityCommand. Calls sub_1869D (main input loop -- hosts the sell/enhance/repair Space-bar cluster) directly, twice; calls sub_17032 (the mouse-click 'buy' handler reaching PayGoldAndAcquireItem); redraws ShowMaterialCounterHud repeatedly; hit-tests several region tables; writes state via FileEntry_Write near an exit path. Ties the whole shop cluster together. Many internal helper calls not individually traced yet.",	0);
 	create_insn	(0X1732B);
+	set_name	(0X1732B,	"RunShopScreen");
 	create_insn	(x=0X17335);
 	op_hex		(x,	1);
 	create_insn	(0X17365);
@@ -4074,6 +4076,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1C09D);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1C0D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C0E3);
@@ -4086,15 +4097,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1C123,	"UseItem's handler for word_2E410 bit 0x4000. Bit-2 branch: pays a BCD material cost (0x94B3 vs threshold 0x512A), then increments word_328D4's [+0x16] (level/skill stat, capped at 0x5A) and recalculates max HP/MP from it -- a level-up/training mechanic. Branches further on [+0xE] (compared against small constants after mod-20 reduction) to select a class/race-specific growth path -- [+0xE] plausibly a class/race id rather than the earlier 'time-of-day-like' guess from RestCharacter, not confirmed either way.",	0);
 	create_insn	(0X1C123);
 	set_name	(0X1C123,	"UseTrainingItem");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1C127);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C12F);
@@ -7111,6 +7113,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2838F);
 	op_hex		(x,	1);
 	set_name	(0X2838F,	"ShutdownAudioDrivers");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X283B0);
 	op_hex		(x,	1);
 	set_cmt	(0X283B2,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -7139,15 +7150,6 @@ static Bytes_1(void) {
 	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
 	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
@@ -10565,6 +10567,15 @@ static Bytes_2(void) {
 	set_name	(0X36130,	"aStrength_0");
 	create_strlit	(0X3613A,	0X7);
 	set_name	(0X3613A,	"aPoison_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36141,	0X7);
 	set_name	(0X36141,	"aUndead");
 	create_strlit	(0X36148,	0X12);
@@ -10619,15 +10630,6 @@ static Bytes_2(void) {
 	set_name	(0X36246,	"aResistant");
 	create_strlit	(0X36250,	0X11);
 	set_name	(0X36250,	"aBreakProjectil");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36261,	0XC);
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);

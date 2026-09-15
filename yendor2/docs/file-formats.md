@@ -285,6 +285,14 @@ zero) and stages the acquired item the same way
 `TrySellItemForGold`/`TryEnhanceItemForGold`/`TryRepairItemForGold`
 stage theirs.
 
+All four shop actions (sell, enhance, repair, buy) are hosted under
+one umbrella screen, `RunShopScreen` (reached from `UseAbilityCommand`,
+not `UseItem`): it calls the main input loop `sub_1869D` directly
+(twice, enabling the Space-bar cluster) and `sub_17032` (enabling the
+click-to-buy path), redraws `ShowMaterialCounterHud` repeatedly, and
+writes state back via `FileEntry_Write` near an exit. Its many
+internal helpers aren't individually traced yet.
+
 A separate, likely shop/vendor "buy" `UseItem` handler (`sub_1BBED`,
 reached from `UseItem+0x65`) spends `g_partyGold` via
 `CompareBCD4`/`SubBCD4` against a price table at `0x512A`, gated by
