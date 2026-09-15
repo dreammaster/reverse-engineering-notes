@@ -3752,3 +3752,204 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_16EDE @ 0x16ede ----
+  0x16ede  push    di
+  0x16edf  call    sub_28A5A
+  0x16ee4  add     ax, bx
+  0x16ee6  dec     ax
+  0x16ee7  mov     di, ax
+  0x16ee9  cmp     byte ptr [di], 20h ; ' '
+  0x16eec  jnz     short loc_16EF8
+  0x16eee  mov     byte ptr [di], 0
+  0x16ef1  cmp     bx, di
+  0x16ef3  jz      short loc_16EF8
+  0x16ef5  dec     di
+  0x16ef6  jmp     short loc_16EE9
+  0x16ef8  pop     di
+  0x16ef9  retf
+; ---- sub_16EFA @ 0x16efa ----
+  0x16efa  push    di
+  0x16efb  push    es
+  0x16efc  push    cx
+  0x16efd  call    sub_237B0
+  0x16f02  mov     ax, 0A000h
+  0x16f05  mov     es, ax
+  0x16f07  test    word_328CA, 1000h
+  0x16f0d  jnz     short loc_16F44
+  0x16f0f  mov     di, 78F0h
+  0x16f12  mov     cx, 3Ch ; '<'
+  0x16f15  mov     ax, 404h
+  0x16f18  push    cx
+  0x16f19  mov     cx, 24h ; '$'
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_28A5A @ 0x28a5a ----
+  0x28a5a  push    cx
+  0x28a5b  push    di
+  0x28a5c  push    es
+  0x28a5d  mov     ax, seg seg129
+  0x28a60  mov     es, ax
+  0x28a62  cld
+  0x28a63  mov     cx, 0FFh
+  0x28a66  mov     di, bx
+  0x28a68  xor     al, al
+  0x28a6a  repne scasb
+  0x28a6c  dec     di
+  0x28a6d  sub     di, bx
+  0x28a6f  mov     ax, di
+  0x28a71  pop     es
+  0x28a72  pop     di
+  0x28a73  pop     cx
+  0x28a74  retf
+  0x28a75  align 2
+; ---- sub_28A76 @ 0x28a76 ----
+  0x28a76  test    word_328C4, 20h
+  0x28a7c  jnz     short loc_28A8C
+  0x28a7e  test    word_328C4, 2
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_23A64 @ 0x23a64 ----
+  0x23a64  push    es
+  0x23a65  push    si
+  0x23a66  push    di
+  0x23a67  mov     si, ax
+  0x23a69  mov     di, bx
+  0x23a6b  mov     ax, seg seg129
+  0x23a6e  mov     es, ax
+  0x23a70  lodsb
+  0x23a71  stosb
+  0x23a72  cmp     al, 0
+  0x23a74  jnz     short loc_23A70
+  0x23a76  mov     bx, di
+  0x23a78  pop     di
+  0x23a79  pop     si
+  0x23a7a  pop     es
+  0x23a7b  retf
+; ---- sub_23A7C @ 0x23a7c ----
+  0x23a7c  push    _textPos_x
+  0x23a80  mov     ax, word_2E412
+  0x23a83  mov     _font_fgColor, ax
+  0x23a86  mov     al, [bx]
+  0x23a88  or      al, al
+  0x23a8a  jz      short loc_23AA6
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_range.py', 'noexport']
+[*] reading dump_range.py
+[*] executing dump_range.py
+[*] captured stdout from target script:
+----- begin target script output -----
+; ---- sub_1700E @ 0x1700e ----
+  0x1700e  push    es
+  0x1700f  push    si
+  0x17010  push    di
+  0x17011  push    cx
+  0x17012  push    ax
+  0x17013  mov     di, bx
+  0x17015  mov     ax, seg seg129
+  0x17018  mov     es, ax
+  0x1701a  xor     al, al
+  0x1701c  mov     cx, 400h
+  0x1701f  repne scasb
+  0x17021  pop     si
+  0x17022  dec     di
+  0x17023  lodsb
+  0x17024  stosb
+  0x17025  cmp     al, 0
+  0x17027  jnz     short loc_17023
+  0x17029  dec     di
+  0x1702a  mov     bx, di
+  0x1702c  pop     cx
+  0x1702d  pop     di
+  0x1702e  pop     si
+  0x1702f  pop     es
+  0x17030  retf
+  0x17031  align 2
+; ---- sub_17032 @ 0x17032 ----
+  0x17032  call    sub_17B67
+  0x17035  cmp     ax, 0
+----- end target script output -----
+[*] finished executing dump_range.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'name_string_utils.py']
+[*] reading name_string_utils.py
+[*] executing name_string_utils.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x28a5a  'sub_28A5A' -> 'StrLen': ok
+0x23a64  'sub_23A64' -> 'StpCpy': ok
+0x1700e  'sub_1700E' -> 'StrCat': ok
+0x16ede  'sub_16EDE' -> 'TrimTrailingSpaces': ok
+----- end target script output -----
+[*] finished executing name_string_utils.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106915
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'find_callers.py', 'noexport']
+[*] reading find_callers.py
+[*] executing find_callers.py
+[*] captured stdout from target script:
+----- begin target script output -----
+0x28a5a (StrLen): 6 callers: ['TrimTrailingSpaces', 'sub_141D9', 'sub_1A5F6', 'sub_1EA6E', 'sub_21E71', 'sub_2498B']
+0x23a64 (StpCpy): 8 callers: ['findSavegame', 'sub_14B24', 'sub_14B85', 'sub_1EA6E', 'sub_21E71', 'sub_2498B', 'sub_24FFC', 'sub_28034']
+0x1700e (StrCat): 16 callers: ['sub_12ECD', 'sub_13FCF', 'sub_141D9', 'sub_14B24', 'sub_14B85', 'sub_1B96F', 'sub_1BBED', 'sub_1BEA1', 'sub_1C123', 'sub_1E2E5', 'sub_21DE2', 'sub_21E71', 'sub_234D3', 'sub_24FFC', 'sub_25E5E']
+0x16ede (TrimTrailingSpaces): 5 callers: ['sub_14B24', 'sub_14B85', 'sub_21DE2', 'sub_2498B', 'sub_24FFC']
+----- end target script output -----
+[*] finished executing find_callers.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0

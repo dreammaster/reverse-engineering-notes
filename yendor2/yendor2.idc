@@ -2520,7 +2520,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X16EA0);
 	op_hex		(x,	1);
 	create_insn	(0X16EAA);
+	set_cmt	(0X16EDE,	"rtrim(bx): finds the end via StrLen, then walks backward replacing trailing space (0x20) bytes with 0x00.",	0);
 	create_insn	(0X16EDE);
+	set_name	(0X16EDE,	"TrimTrailingSpaces");
 	create_insn	(0X16EF8);
 	create_insn	(0X16EFA);
 	create_insn	(x=0X16F07);
@@ -2543,7 +2545,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X17006);
 	op_hex		(x,	1);
 	create_insn	(0X1700D);
+	set_cmt	(0X1700E,	"strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.",	0);
 	create_insn	(0X1700E);
+	set_name	(0X1700E,	"StrCat");
 	create_insn	(x=0X17015);
 	op_seg		(x,	1);
 	create_insn	(0X17032);
@@ -5790,7 +5794,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X23A58);
 	op_hex		(x,	1);
+	set_cmt	(0X23A64,	"stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).",	0);
 	create_insn	(0X23A64);
+	set_name	(0X23A64,	"StpCpy");
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
 	create_insn	(0X23A7C);
@@ -6618,6 +6624,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X27994);
 	create_insn	(0X27A20);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27A2A);
 	create_insn	(0X27A34);
 	create_insn	(0X27A3E);
@@ -6660,15 +6675,6 @@ static Bytes_0(void) {
 	create_insn	(0X27C96);
 	set_cmt	(0X27CB0,	"First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.",	0);
 	create_insn	(0X27CB0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27CC9);
 	create_insn	(x=0X27CD4);
 	op_hex		(x,	1);
@@ -7079,7 +7085,9 @@ static Bytes_1(void) {
 	create_word	(x=0X28A57);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
+	set_cmt	(0X28A5A,	"strlen(bx): scans for a null byte (max 255 bytes), returns length in ax.",	0);
 	create_insn	(0X28A5A);
+	set_name	(0X28A5A,	"StrLen");
 	create_insn	(x=0X28A5D);
 	op_seg		(x,	1);
 	create_insn	(x=0X28A76);

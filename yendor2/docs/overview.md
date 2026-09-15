@@ -290,6 +290,36 @@ same pattern as `dump_range.py`.
 
 66 named of 769 functions as of this update.
 
+### 2026-09-14 session update, continued: core string utilities
+
+While tracing `sub_14B24`'s repeated copy/trim/concat call sequence
+(originally assumed to be box-drawing purely from its caller context —
+it isn't, see below), found and named a small family of unambiguous,
+broadly-used C-runtime-equivalent string helpers
+(`ida_scripts/name_string_utils.py`):
+
+- `StrLen` (`0x28A5A`) — `es:di=bx`, scan for a null byte (max 255),
+  `ax` = length. 6 callers.
+- `StpCpy` (`0x23A64`) — copies `src=ax` into `dest=bx` including the
+  terminator; returns `bx` = pointer to the copied terminator (stpcpy,
+  not plain strcpy's "return start"). 8 callers, including the
+  already-trusted `findSavegame`, a good sanity check.
+- `StrCat` (`0x1700E`) — finds `dest=bx`'s existing terminator (scanning
+  up to 1024 bytes), appends `src=ax`; also returns a pointer to the new
+  terminator. 16 callers.
+- `TrimTrailingSpaces` (`0x16EDE`) — `StrLen` then walks backward
+  turning trailing spaces into nulls. 5 callers.
+
+This is exactly the same shape of win as the DS-segreg fix: foundational
+utilities used across dozens of call sites, so naming them pays off far
+beyond the 4 functions themselves — every caller's disassembly is now
+more readable. `sub_14B24` itself (which chains `StpCpy`/
+`TrimTrailingSpaces`/`StrCat` repeatedly with a base pointer
+`word_2E546` and fixed separator strings) is building a formatted
+multi-part label, not drawing a box as first assumed from
+`DrawMessageBox` calling it — not yet renamed, worth a follow-up pass to
+pin down what the label actually says.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

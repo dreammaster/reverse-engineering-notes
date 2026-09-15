@@ -1,5 +1,5 @@
 """
-Read-only: lists callers of a hardcoded target address (edit TARGETS).
+Read-only: lists callers of hardcoded target addresses (edit TARGETS).
 
     .\run_ida_script.ps1 find_callers.py -NoExport
 """
@@ -7,7 +7,7 @@ import idautils
 import idc
 import ida_funcs
 
-TARGETS = [0x138C0]
+TARGETS = [0x28A5A, 0x23A64, 0x1700E, 0x16EDE]
 
 for t in TARGETS:
     callers = set()
@@ -15,5 +15,5 @@ for t in TARGETS:
         f = ida_funcs.get_func(x)
         if f:
             callers.add(f.start_ea)
-    names = [idc.get_func_name(c) for c in callers]
-    print(f"{t:#x} ({idc.get_func_name(t)}): called from {names}")
+    names = sorted(idc.get_func_name(c) for c in callers)
+    print(f"{t:#x} ({idc.get_func_name(t)}): {len(names)} callers: {names[:15]}")

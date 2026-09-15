@@ -3437,7 +3437,7 @@ loc_12093:                              ; CODE XREF: findSavegame+75↓j
                 mov     ax, 93FFh
                 mov     bx, di
                 add     bx, 2
-                call    sub_23A64
+                call    StpCpy
 
 loc_120E6:                              ; CODE XREF: findSavegame+31↑j
                 add     di, 1Bh
@@ -4890,7 +4890,7 @@ loc_12F4D:                              ; CODE XREF: sub_12ECD+B↑j
                 call    sub_21DE2
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
@@ -6563,7 +6563,7 @@ sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
                 call    sub_21DE2
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 mov     _font_fgColor, 59h ; 'Y'
@@ -6858,7 +6858,7 @@ loc_14439:                              ; CODE XREF: sub_141D9+24F↑j
 
 loc_14442:                              ; CODE XREF: sub_141D9+258↑j
                 mov     ax, 8B6Eh
-                call    sub_1700E
+                call    StrCat
 
 loc_1444A:                              ; CODE XREF: sub_141D9+267↑j
                 push    bx
@@ -6869,73 +6869,73 @@ loc_1444A:                              ; CODE XREF: sub_141D9+267↑j
                 test    word ptr [di+8], 8000h
                 jz      short loc_14466
                 mov     ax, 8DFEh
-                call    sub_1700E
+                call    StrCat
 
 loc_14466:                              ; CODE XREF: sub_141D9+283↑j
                 test    word ptr [di+8], 4000h
                 jz      short loc_14475
                 mov     ax, 8B8Dh
-                call    sub_1700E
+                call    StrCat
 
 loc_14475:                              ; CODE XREF: sub_141D9+292↑j
                 test    word ptr [di+8], 2000h
                 jz      short loc_14484
                 mov     ax, 8B96h
-                call    sub_1700E
+                call    StrCat
 
 loc_14484:                              ; CODE XREF: sub_141D9+2A1↑j
                 test    word ptr [di+8], 1000h
                 jz      short loc_14493
                 mov     ax, 8BA0h
-                call    sub_1700E
+                call    StrCat
 
 loc_14493:                              ; CODE XREF: sub_141D9+2B0↑j
                 test    word ptr [di+8], 800h
                 jz      short loc_144A2
                 mov     ax, 8BABh
-                call    sub_1700E
+                call    StrCat
 
 loc_144A2:                              ; CODE XREF: sub_141D9+2BF↑j
                 test    word ptr [di+8], 400h
                 jz      short loc_144B1
                 mov     ax, 8BB4h
-                call    sub_1700E
+                call    StrCat
 
 loc_144B1:                              ; CODE XREF: sub_141D9+2CE↑j
                 test    word ptr [di+8], 200h
                 jz      short loc_144C0
                 mov     ax, 8BBEh
-                call    sub_1700E
+                call    StrCat
 
 loc_144C0:                              ; CODE XREF: sub_141D9+2DD↑j
                 test    word ptr [di+8], 100h
                 jz      short loc_144CF
                 mov     ax, 8BC8h
-                call    sub_1700E
+                call    StrCat
 
 loc_144CF:                              ; CODE XREF: sub_141D9+2EC↑j
                 test    word ptr [di+8], 80h
                 jz      short loc_144DE
                 mov     ax, 8BD1h
-                call    sub_1700E
+                call    StrCat
 
 loc_144DE:                              ; CODE XREF: sub_141D9+2FB↑j
                 test    word ptr [di+8], 1
                 jz      short loc_144ED
                 mov     ax, 8BDBh
-                call    sub_1700E
+                call    StrCat
 
 loc_144ED:                              ; CODE XREF: sub_141D9+30A↑j
                 test    word ptr [di+8], 4
                 jz      short loc_144FC
                 mov     ax, 8BE8h
-                call    sub_1700E
+                call    StrCat
 
 loc_144FC:                              ; CODE XREF: sub_141D9+319↑j
                 test    word ptr [di+8], 2
                 jz      short loc_1450B
                 mov     ax, 8BF4h
-                call    sub_1700E
+                call    StrCat
 
 loc_1450B:                              ; CODE XREF: sub_141D9+328↑j
                 test    word ptr es:[si+92h], 0E00h
@@ -6950,30 +6950,30 @@ loc_14520:                              ; CODE XREF: sub_141D9+340↑j
                 mov     ax, 8B7Dh
 
 loc_14523:                              ; CODE XREF: sub_141D9+345↑j
-                call    sub_1700E
+                call    StrCat
                 test    word ptr es:[si+92h], 800h
                 jz      short loc_14539
                 mov     ax, 8C02h
-                call    sub_1700E
+                call    StrCat
 
 loc_14539:                              ; CODE XREF: sub_141D9+356↑j
                 test    word ptr es:[si+92h], 400h
                 jz      short loc_1454A
                 mov     ax, 8C0Fh
-                call    sub_1700E
+                call    StrCat
 
 loc_1454A:                              ; CODE XREF: sub_141D9+367↑j
                 test    word ptr es:[si+92h], 200h
                 jz      short loc_1455B
                 mov     ax, 8C18h
-                call    sub_1700E
+                call    StrCat
 
 loc_1455B:                              ; CODE XREF: sub_141D9+339↑j
                                         ; sub_141D9+378↑j
                 mov     byte ptr [bx-2], 0
                 mov     _textPos_x, 0ABh
                 mov     bx, 0AFA8h
-                call    sub_28A5A
+                call    StrLen
                 cmp     ax, 8
                 jle     short loc_1457F
                 mov     cx, 23h ; '#'
@@ -7625,27 +7625,27 @@ sub_14B24       proc far                ; CODE XREF: sub_12ECD+D7↑P
                 mov     ax, word_2E546
                 add     ax, 13h
                 mov     bx, 0AFA8h
-                call    sub_23A64
+                call    StpCpy
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, word_2E546
                 add     ax, 20h ; ' '
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, word_2E546
                 add     ax, 2Dh ; '-'
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     bx, 0AFA8h
                 retf
 sub_14B24       endp
@@ -7663,18 +7663,18 @@ sub_14B85       proc far                ; CODE XREF: sub_12ECD+9A↑P
                 call    FileEntry_Read
                 call    ErrorCheck
                 mov     bx, 0AFE7h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     bx, 0AFDAh
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     ax, 0AFDAh
                 mov     bx, 0AFA8h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFE7h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h
                 retf
 sub_14B85       endp
@@ -11586,15 +11586,15 @@ seg018          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16EDE       proc far                ; CODE XREF: sub_14B24+16↑P
+TrimTrailingSpaces proc far             ; CODE XREF: sub_14B24+16↑P
                                         ; sub_14B24+37↑P ...
-                push    di
-                call    sub_28A5A
+                push    di              ; rtrim(bx): finds the end via StrLen, then walks backward replacing trailing space (0x20) bytes with 0x00.
+                call    StrLen
                 add     ax, bx
                 dec     ax
                 mov     di, ax
 
-loc_16EE9:                              ; CODE XREF: sub_16EDE+18↓j
+loc_16EE9:                              ; CODE XREF: TrimTrailingSpaces+18↓j
                 cmp     byte ptr [di], 20h ; ' '
                 jnz     short loc_16EF8
                 mov     byte ptr [di], 0
@@ -11604,11 +11604,11 @@ loc_16EE9:                              ; CODE XREF: sub_16EDE+18↓j
                 jmp     short loc_16EE9
 ; ---------------------------------------------------------------------------
 
-loc_16EF8:                              ; CODE XREF: sub_16EDE+E↑j
-                                        ; sub_16EDE+15↑j
+loc_16EF8:                              ; CODE XREF: TrimTrailingSpaces+E↑j
+                                        ; TrimTrailingSpaces+15↑j
                 pop     di
                 retf
-sub_16EDE       endp
+TrimTrailingSpaces endp
 
 seg018          ends
 
@@ -11832,9 +11832,9 @@ seg022          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1700E       proc far                ; CODE XREF: sub_12ECD+8E↑P
+StrCat          proc far                ; CODE XREF: sub_12ECD+8E↑P
                                         ; sub_13FCF+78↑P ...
-                push    es
+                push    es              ; strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.
                 push    si
                 push    di
                 push    cx
@@ -11849,7 +11849,7 @@ sub_1700E       proc far                ; CODE XREF: sub_12ECD+8E↑P
                 pop     si
                 dec     di
 
-loc_17023:                              ; CODE XREF: sub_1700E+19↓j
+loc_17023:                              ; CODE XREF: StrCat+19↓j
                 lodsb
                 stosb
                 cmp     al, 0
@@ -11862,7 +11862,7 @@ loc_17023:                              ; CODE XREF: sub_1700E+19↓j
                 pop     es
                 assume es:nothing
                 retf
-sub_1700E       endp
+StrCat          endp
 
 seg022          ends
 
@@ -18490,11 +18490,11 @@ loc_1A6E7:                              ; CODE XREF: sub_1A5F6+E7↑j
                 jnz     short loc_1A712
                 mov     di, word_32904
                 mov     bx, di
-                call    sub_28A5A
+                call    StrLen
                 mov     cx, ax
                 mov     si, 0AFA8h
                 mov     bx, si
-                call    sub_28A5A
+                call    StrLen
                 cmp     ax, cx
                 jnz     short loc_1A712
                 mov     ax, seg seg129
@@ -20700,11 +20700,11 @@ loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
                 mov     ax, 805Fh
                 mov     bx, 0AFBCh
                 mov     byte ptr [bx], 0
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 806Dh
-                call    sub_1700E
+                call    StrCat
                 push    cs
                 call    near ptr sub_1CB37
                 mov     _textPos_x, 16h
@@ -21081,7 +21081,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     byte ptr word_38808, 0
                 mov     ax, 85D5h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     si, 0BCEh
                 mov     ax, [si+14h]
                 mov     di, 5410h
@@ -21096,10 +21096,10 @@ loc_1BD45:                              ; CODE XREF: sub_1BBED+15F↓j
 loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 mov     ax, [di+2]
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 85DAh
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     _textPos_y, 55h ; 'U'
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
@@ -21112,9 +21112,9 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 call    sub_19B80
                 mov     ax, 0AFA8h
                 mov     bx, 0AFBCh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 8672h
-                call    sub_1700E
+                call    StrCat
                 mov     _textPos_y, 61h ; 'a'
                 mov     bx, 0AFBCh      ; msg
                 call    writeString
@@ -21147,7 +21147,7 @@ loc_1BDC9:                              ; CODE XREF: sub_1BBED+24↑j
                 mov     byte ptr word_38808, 0
                 mov     ax, 858Dh
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     si, 0BCEh
                 mov     ax, [si+14h]
                 mov     di, 5410h
@@ -21164,7 +21164,7 @@ loc_1BE0D:                              ; CODE XREF: sub_1BBED+22C↓j
 loc_1BE1B:                              ; CODE XREF: sub_1BBED+222↑j
                 mov     ax, [di+2]
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
 
 loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 mov     _textPos_x, 16h
@@ -21179,11 +21179,11 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 mov     ax, 805Fh
                 mov     bx, 0AFBCh
                 mov     byte ptr [bx], 0
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 806Dh
-                call    sub_1700E
+                call    StrCat
                 mov     _textPos_y, 4Fh ; 'O'
                 mov     cx, 1
                 mov     bx, 0AFBCh
@@ -21285,13 +21285,13 @@ loc_1BF4A:                              ; CODE XREF: sub_1BEA1+24↑j
                 mov     byte_39492, 0
                 mov     ax, 851Ah
                 mov     bx, 0BC32h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0BC28h
                 mov     bx, 0BC32h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 8527h
                 mov     bx, 0BC32h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 3E8h
                 mov     bx, 0BC32h
                 push    cs
@@ -21874,10 +21874,10 @@ loc_1C54C:                              ; CODE XREF: sub_1C123+3CC↑j
                 mov     byte_39492, 0
                 mov     ax, 7F94h
                 mov     bx, 0BC32h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0BC28h
                 mov     bx, 0BC32h
-                call    sub_1700E
+                call    StrCat
                 mov     byte ptr [bx], 2Eh ; '.'
                 mov     byte ptr [bx+1], 0
                 mov     bx, 0BC32h
@@ -25298,11 +25298,11 @@ sub_1E2E5       proc near               ; CODE XREF: sub_1E546+8A↓p
                 mov     byte ptr word_3883A, 0
                 mov     ax, 0AFA8h
                 mov     bx, 0AFDAh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFBCh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFB2h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
                 retn
@@ -26321,7 +26321,7 @@ loc_1ECA7:                              ; CODE XREF: sub_1EA6E+234↑j
 
 loc_1ECDC:                              ; CODE XREF: sub_1EA6E+265↑j
                 add     bx, 2
-                call    sub_28A5A
+                call    StrLen
                 mov     ah, 6
                 mul     ah
                 add     _textPos_x, ax
@@ -26347,7 +26347,7 @@ loc_1ED06:                              ; CODE XREF: sub_1EA6E+28F↑j
                 mov     ax, word_32906
                 add     ax, 2
                 mov     bx, 93FFh
-                call    sub_23A64
+                call    StpCpy
                 jmp     short loc_1ED8F
 ; ---------------------------------------------------------------------------
 
@@ -26382,10 +26382,10 @@ loc_1ED75:                              ; CODE XREF: sub_1EA6E+2E3↑j
                 mov     ax, 0AFA8h
                 mov     bx, word_32906
                 add     bx, 2
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, 0AFA8h
                 mov     bx, 93FFh
-                call    sub_23A64
+                call    StpCpy
 
 loc_1ED8F:                              ; CODE XREF: sub_1EA6E+2C1↑j
                 or      word_328C4, 4000h
@@ -31604,13 +31604,13 @@ sub_21DE2       proc far                ; CODE XREF: sub_12ECD+83↑P
                 call    ErrorCheck
                 mov     byte ptr word_3881C, 0
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     byte_38826, 0
                 cmp     byte ptr word_3883A, 30h ; '0'
                 jz      short loc_21E51
                 mov     ax, 7916h
                 mov     bx, 0AFC6h
-                call    sub_1700E
+                call    StrCat
                 mov     al, byte ptr word_3883A
                 mov     byte_3882D, al
                 mov     ax, 2
@@ -31622,7 +31622,7 @@ loc_21E51:                              ; CODE XREF: sub_21DE2+58↑j
                 jz      short loc_21E6D
                 mov     ax, 791Fh
                 mov     bx, 0AFC6h
-                call    sub_1700E
+                call    StrCat
                 mov     al, byte ptr word_3883A+1
                 mov     byte_3882B, al
                 mov     ax, 1
@@ -31736,7 +31736,7 @@ loc_21EFB:                              ; CODE XREF: sub_21E71+C3↓j
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
                 mov     bx, 0AFA8h
-                call    sub_28A5A
+                call    StrLen
                 inc     ax
                 mov     bx, 6
                 mul     bx
@@ -31801,7 +31801,7 @@ loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
                 call    sub_2570C
                 mov     ax, bx
                 mov     bx, 0BC28h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, y
                 mov     bx, 0AFA8h
                 call    sub_17FB8
@@ -31809,19 +31809,19 @@ loc_22037:                              ; CODE XREF: sub_21E71+1C2↑j
                 call    sub_2570C
                 mov     ax, bx
                 mov     bx, 0BC32h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, 7926h
                 mov     bx, 0AFA8h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, 0BC28h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 7930h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0BC32h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     _textPos_x, 0DCh
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFA8h      ; msg
@@ -34396,11 +34396,11 @@ loc_2367C:                              ; CODE XREF: sub_234D3+182↑j
                 mov     word_3883A, 0
                 mov     ax, 0AFA8h
                 mov     bx, 0AFDAh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFBCh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFB2h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
 
@@ -34929,9 +34929,9 @@ seg074          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23A64       proc far                ; CODE XREF: findSavegame+6C↑P
+StpCpy          proc far                ; CODE XREF: findSavegame+6C↑P
                                         ; sub_14B24+E↑P ...
-                push    es
+                push    es              ; stpcpy(dest=bx, src=ax): copies src including its null terminator into dest; returns bx = pointer to the copied terminator (ready for a further append).
                 push    si
                 push    di
                 mov     si, ax
@@ -34940,7 +34940,7 @@ sub_23A64       proc far                ; CODE XREF: findSavegame+6C↑P
                 mov     es, ax
                 assume es:seg129
 
-loc_23A70:                              ; CODE XREF: sub_23A64+10↓j
+loc_23A70:                              ; CODE XREF: StpCpy+10↓j
                 lodsb
                 stosb
                 cmp     al, 0
@@ -34951,7 +34951,7 @@ loc_23A70:                              ; CODE XREF: sub_23A64+10↓j
                 pop     es
                 assume es:nothing
                 retf
-sub_23A64       endp
+StpCpy          endp
 
 seg074          ends
 
@@ -36513,9 +36513,9 @@ loc_24A03:                              ; CODE XREF: sub_2498B+6E↑j
                 cmp     errorCode, 0
                 jnz     short sub_2498B
                 mov     bx, ax
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     bx, 0AFA8h
-                call    sub_28A5A
+                call    StrLen
                 cmp     ax, 0
                 jnz     short loc_24A21
                 jmp     sub_2498B
@@ -36525,7 +36525,7 @@ loc_24A21:                              ; CODE XREF: sub_2498B+91↑j
                 mov     ax, 0AFA8h
                 mov     bx, word_328D4
                 add     bx, 0
-                call    sub_23A64
+                call    StpCpy
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -37029,17 +37029,17 @@ sub_24FFC       proc near               ; CODE XREF: sub_245AE+61↑p
                 mov     ax, word_2E546
                 add     ax, 13h
                 mov     bx, 0AFA8h
-                call    sub_23A64
+                call    StpCpy
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 mov     ax, 7960h
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     ax, word_2E546
                 add     ax, 20h ; ' '
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFA8h
-                call    sub_16EDE
+                call    TrimTrailingSpaces
                 call    writeString
                 retn
 sub_24FFC       endp
@@ -38960,11 +38960,11 @@ loc_25EA2:                              ; CODE XREF: sub_25E5E+38↑j
                 mov     byte ptr word_3883A, 0
                 mov     ax, 0AFA8h
                 mov     bx, 0AFDAh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFBCh
-                call    sub_1700E
+                call    StrCat
                 mov     ax, 0AFB2h
-                call    sub_1700E
+                call    StrCat
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
                 retn
@@ -43227,11 +43227,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     ax, word_2E55C
                 call    sub_28138
                 mov     bx, 8FE4h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, word_2E564
                 call    sub_28138
                 mov     bx, 8FEAh
-                call    sub_23A64
+                call    StpCpy
                 mov     bx, 8FE3h       ; msg
                 call    writeString
                 mov     _textPos_x, 11Ah
@@ -43240,11 +43240,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     ax, word_36CF7
                 call    sub_28138
                 mov     bx, 8FE4h
-                call    sub_23A64
+                call    StpCpy
                 mov     ax, word_36CF9
                 call    sub_28138
                 mov     bx, 8FEAh
-                call    sub_23A64
+                call    StpCpy
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 84h
                 mov     bx, 8FE3h       ; msg
@@ -43259,11 +43259,11 @@ loc_28055:                              ; CODE XREF: sub_28034+1E↑j
                 mov     ax, es:[bx]
                 call    sub_28138
                 mov     bx, 8FF1h
-                call    sub_23A64
+                call    StpCpy
                 pop     ax
                 call    sub_28138
                 mov     bx, 8FF7h
-                call    sub_23A64
+                call    StpCpy
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 8Ah
                 mov     bx, 8FEFh       ; msg
@@ -44374,9 +44374,9 @@ seg103          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28A5A       proc far                ; CODE XREF: sub_141D9+38F↑P
-                                        ; sub_16EDE+1↑P ...
-                push    cx
+StrLen          proc far                ; CODE XREF: sub_141D9+38F↑P
+                                        ; TrimTrailingSpaces+1↑P ...
+                push    cx              ; strlen(bx): scans for a null byte (max 255 bytes), returns length in ax.
                 push    di
                 push    es
                 mov     ax, seg seg129
@@ -44395,7 +44395,7 @@ sub_28A5A       proc far                ; CODE XREF: sub_141D9+38F↑P
                 pop     di
                 pop     cx
                 retf
-sub_28A5A       endp
+StrLen          endp
 
 seg103          ends
 
@@ -44929,7 +44929,7 @@ loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
                 call    sub_2570C
                 mov     ax, 835Fh
                 mov     bx, 0AFA8h
-                call    sub_1700E
+                call    StrCat
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 0Fh
                 mov     bx, 0AFA8h      ; msg
