@@ -1151,7 +1151,7 @@ loc_10A35:                              ; CODE XREF: start+A30↑j
                 jz      short loc_10A62
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, 2Fh ; '/'
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 call    UnlockDoorCommand
 ; START OF FUNCTION CHUNK FOR start
 
@@ -3776,9 +3776,9 @@ seg006          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12554       proc far                ; CODE XREF: seg000:0A58↑P
+LoadItemCatalogRecord proc far          ; CODE XREF: seg000:0A58↑P
                                         ; sub_1472A+9↓P ...
-                push    cx
+                push    cx              ; LoadItemCatalogRecord(ax=item id): maps in EMS item-catalog pages, copies the item's 58-byte record into a scratch buffer (0xB50). If [+2] is nonzero, also loads word_2E54A (the multi-stat-effect table ApplyMultiStatEffect walks) from an 8-word sub-block. Also sets up word_2E548 -- the 'current target' pointer read throughout the codebase -- based on a flag test on [+0xC]. The single most pervasively-used item lookup in the executable.
                 push    dx
                 push    di
                 push    si
@@ -3798,7 +3798,7 @@ sub_12554       proc far                ; CODE XREF: seg000:0A58↑P
                 jmp     loc_12611
 ; ---------------------------------------------------------------------------
 
-loc_1257C:                              ; CODE XREF: sub_12554+23↑j
+loc_1257C:                              ; CODE XREF: LoadItemCatalogRecord+23↑j
                 dec     ax
                 mov     di, 0B50h
                 mov     bx, 3Ah ; ':'
@@ -3825,7 +3825,7 @@ loc_1257C:                              ; CODE XREF: sub_12554+23↑j
                 mov     ax, seg seg129
                 mov     ds, ax
 
-loc_125C7:                              ; CODE XREF: sub_12554+5C↑j
+loc_125C7:                              ; CODE XREF: LoadItemCatalogRecord+5C↑j
                 mov     word_2E548, 0
                 mov     si, 0B50h
                 test    word ptr [si+0Ch], 0E00h
@@ -3836,7 +3836,7 @@ loc_125C7:                              ; CODE XREF: sub_12554+5C↑j
                 jmp     short loc_12604
 ; ---------------------------------------------------------------------------
 
-loc_125E2:                              ; CODE XREF: sub_12554+81↑j
+loc_125E2:                              ; CODE XREF: LoadItemCatalogRecord+81↑j
                 test    word ptr [si+0Ch], 0C000h
                 jz      short loc_125F4
                 mov     cx, 6
@@ -3845,22 +3845,22 @@ loc_125E2:                              ; CODE XREF: sub_12554+81↑j
                 jmp     short loc_12604
 ; ---------------------------------------------------------------------------
 
-loc_125F4:                              ; CODE XREF: sub_12554+93↑j
+loc_125F4:                              ; CODE XREF: LoadItemCatalogRecord+93↑j
                 test    word ptr [si+0Ch], 100h
                 jz      short loc_12611
                 mov     cx, 4
                 mov     si, [si]
                 add     si, 17D4h
 
-loc_12604:                              ; CODE XREF: sub_12554+8C↑j
-                                        ; sub_12554+9E↑j
+loc_12604:                              ; CODE XREF: LoadItemCatalogRecord+8C↑j
+                                        ; LoadItemCatalogRecord+9E↑j
                 mov     di, 0B34h
                 mov     word_2E548, di
                 mov     ds, _emsSegmentPageFrame
                 rep movsw
 
-loc_12611:                              ; CODE XREF: sub_12554+25↑j
-                                        ; sub_12554+A5↑j
+loc_12611:                              ; CODE XREF: LoadItemCatalogRecord+25↑j
+                                        ; LoadItemCatalogRecord+A5↑j
                 mov     ax, seg seg129
                 mov     ds, ax
                 mov     ax, word_2E548
@@ -3871,7 +3871,7 @@ loc_12611:                              ; CODE XREF: sub_12554+25↑j
                 pop     dx
                 pop     cx
                 retf
-sub_12554       endp
+LoadItemCatalogRecord endp
 
 seg006          ends
 
@@ -7133,7 +7133,7 @@ sub_1472A       proc near               ; CODE XREF: sub_13090↑p
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_32974, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     word_328FE, 0
                 call    sub_13FBF
                 mov     bx, word_2E546
@@ -7170,7 +7170,7 @@ loc_14775:                              ; CODE XREF: sub_1472A+2B↑j
 loc_14796:                              ; CODE XREF: sub_1472A+9D↓j
                 inc     word_32974
                 mov     ax, word_32974
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word_328FE, 1
                 jnz     short loc_147B7
                 mov     bx, word_2E548
@@ -7196,7 +7196,7 @@ loc_147C9:                              ; CODE XREF: sub_1472A+8B↑j
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_32974, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 retn
 sub_1472A       endp
 
@@ -7621,7 +7621,7 @@ FillVideoBuffer endp
 
 sub_14B24       proc far                ; CODE XREF: sub_12ECD+D7↑P
                                         ; sub_13678+3↑P
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, word_2E546
                 add     ax, 13h
                 mov     bx, 0AFA8h
@@ -10656,7 +10656,7 @@ loc_16778:                              ; CODE XREF: HandleDungeonInput+35E↑j
                 jnz     short loc_167A9
                 mov     si, word_328D4
                 mov     ax, [si+142h]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx+0Ah]
                 or      ax, ax
@@ -11901,7 +11901,7 @@ loc_17045:                              ; CODE XREF: sub_17032+E↑j
 
 loc_1704C:                              ; CODE XREF: sub_17032+17↑j
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word_328C6, 20h
                 jz      short loc_17060
                 call    sub_17A8D
@@ -11947,7 +11947,7 @@ loc_170A7:                              ; CODE XREF: sub_17032+237↓j
                 push    cs
                 call    near ptr sub_1728A
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 call    sub_21C79
                 call    sub_238CD
                 retf
@@ -12067,7 +12067,7 @@ loc_171DE:                              ; CODE XREF: sub_17032+1A6↑j
 
 loc_171F0:                              ; CODE XREF: sub_17032+1AA↑j
                 mov     ax, [di]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1720D
                 mov     ax, [bx+0Ah]
@@ -12178,7 +12178,7 @@ loc_172C9:                              ; CODE XREF: sub_1728A+6B↓j
                 cmp     ax, 0
                 jz      short loc_172EF
                 inc     word_3293E
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    DrawPicture
@@ -12273,7 +12273,7 @@ loc_173A0:                              ; CODE XREF: sub_1732B+70↑j
                 jz      short loc_173D6
                 mov     ax, 1Eh
                 mov     word_32974, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 jmp     loc_17557
 ; ---------------------------------------------------------------------------
 
@@ -12946,7 +12946,7 @@ loc_179C9:                              ; CODE XREF: sub_179AE+70↓j
                 push    bx
                 mov     dx, 0
                 mov     ax, [si]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 100h
                 jz      short loc_17A0F
                 mov     bx, ax
@@ -13056,7 +13056,7 @@ loc_17AC5:                              ; CODE XREF: sub_17A8D+27↑j
                 mov     word_36D6D, 0
                 call    ShowResourceDepletedOverlay
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
 
 loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
                 call    SubBCD4
@@ -13889,7 +13889,7 @@ sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:l
                 mov     [bx+2], ax
                 mov     ax, [si+12h]
                 mov     [bx], ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     ax, [si+12h]
@@ -13900,7 +13900,7 @@ sub_1819B       proc near               ; CODE XREF: ApplyEffectAndDrawIconBar:l
 loc_181DA:                              ; CODE XREF: sub_1819B+1D↑j
                 mov     word ptr [bx], 0
                 mov     ax, [si+10h]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     ax, [bx+0Ah]
@@ -14741,7 +14741,7 @@ loc_1872D:                              ; CODE XREF: sub_1869D+86↑j
                 mov     bx, word_32924
                 call    sub_22445
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 cmp     word_31946, 0
                 jz      short loc_18759
                 test    word_328C6, 1Ch
@@ -14959,7 +14959,7 @@ loc_188F3:                              ; CODE XREF: sub_1869D+233↑j
                 jz      short loc_18932
                 mov     word_3293E, bx
                 mov     word_32940, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, word_32940
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_18932
@@ -15229,7 +15229,7 @@ loc_18B94:                              ; CODE XREF: sub_1869D+13↑j
                 jz      short loc_18BD1
                 mov     ax, 1Eh
                 mov     word_32974, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 jmp     loc_189B4
 ; ---------------------------------------------------------------------------
 
@@ -15291,7 +15291,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 jz      short loc_18C06
                 mov     ax, word_32968
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     word_31946, ax
@@ -15386,7 +15386,7 @@ loc_18CEF:                              ; CODE XREF: sub_18C79+34↑j
 loc_18D18:                              ; CODE XREF: sub_18C79+8D↑j
                                         ; sub_18C79+9A↑j
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     cx, word_31948
                 mov     dx, word_3194C
                 test    word ptr [bx+0Ch], 8000h
@@ -15450,7 +15450,7 @@ loc_18D91:                              ; CODE XREF: sub_18C79+C2↑j
 
 loc_18D9B:                              ; CODE XREF: sub_18C79+11D↑j
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 test    word ptr [bx+2], 1
                 jz      short loc_18DB6
@@ -15745,7 +15745,7 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     ax, word_32974
                 inc     ax
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
@@ -15892,7 +15892,7 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     ax, word_3194C
                 mov     word_3194C, 0
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     si, word_2E546
                 add     si, 4
                 mov     ax, word_31948
@@ -17958,7 +17958,7 @@ sub_1A294       proc far                ; CODE XREF: sub_1A37E+55↓P
                 push    si
                 push    di
                 push    bx
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 pop     ax
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1A31B
@@ -17974,7 +17974,7 @@ loc_1A2B6:                              ; CODE XREF: sub_1A294+7E↓j
                 mov     ax, [si+2]
                 or      ax, ax
                 jz      short loc_1A30D
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1A30D
                 mov     ax, [si+4]
@@ -17990,7 +17990,7 @@ loc_1A2DE:                              ; CODE XREF: sub_1A294+70↓j
                 mov     ax, [si+2]
                 or      ax, ax
                 jz      short loc_1A2FF
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1A2FF
                 mov     ax, [si+4]
@@ -18845,7 +18845,7 @@ sub_1AA06       proc far                ; CODE XREF: sub_1819B+38↑P
                                         ; sub_18C79+203↑P ...
                 push    si
                 push    di
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     cx, 4
                 mov     bx, word_2E54A
                 cmp     bx, 0
@@ -19115,7 +19115,7 @@ sub_1AC2F       proc far                ; CODE XREF: sub_1819B+D↑P
                                         ; sub_26B4F+61↓P ...
                 push    si
                 push    di
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     cx, 4
                 mov     bx, word_2E54A
                 cmp     bx, 0
@@ -19457,7 +19457,7 @@ sub_1AE9D       proc near               ; CODE XREF: sub_1AC80+9↑p
                                         ; sub_1ACD7+1A↑p ...
                 mov     errorCode, 0
                 mov     word_3290A, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 0C000h
                 jnz     short loc_1AEC0
                 test    word ptr [bx+0Ch], 800h
@@ -19913,7 +19913,7 @@ sub_1B30C       proc far                ; CODE XREF: sub_18C79+2DE↑P
                 mov     ax, [si+13Ah]
                 cmp     ax, 0
                 jz      short loc_1B37C
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [si+9Ah]
                 mov     dx, [si+5Ah]
@@ -19928,7 +19928,7 @@ loc_1B37C:                              ; CODE XREF: sub_1B30C+50↑j
                 mov     ax, [si+142h]
                 cmp     ax, 0
                 jz      short loc_1B3DB
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [si+9Ch]
                 mov     dx, [si+5Ch]
@@ -19966,7 +19966,7 @@ loc_1B3E4:                              ; CODE XREF: sub_1B30C+F1↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1B3FA
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx]
                 add     [si+50h], ax
@@ -19983,7 +19983,7 @@ loc_1B408:                              ; CODE XREF: sub_1B30C+115↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1B41E
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx]
                 add     [si+50h], ax
@@ -22691,7 +22691,7 @@ loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
                 mov     word_2E514, 0
                 mov     ax, word_32974
                 inc     ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+4]
                 mov     word_2E512, ax
                 mov     ax, [bx+6]
@@ -22701,7 +22701,7 @@ loc_1CD22:                              ; CODE XREF: sub_1CCBC+29↑j
                 mov     ax, [bx+18h]
                 call    sub_19CA1
                 mov     ax, word_32974
-                call    sub_12554
+                call    LoadItemCatalogRecord
 
 loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
                 call    sub_1B20C
@@ -22709,7 +22709,7 @@ loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
                 mov     word_328E2, 0
                 mov     word_328E4, 0
                 mov     ax, word_3194C
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+4]
                 mov     word_328E2, ax
                 mov     ax, [bx+6]
@@ -22719,7 +22719,7 @@ loc_1CD7A:                              ; CODE XREF: sub_1CCBC+85↑j
                 mov     ax, [bx+18h]
                 call    sub_19CA1
                 mov     ax, word_32974
-                call    sub_12554
+                call    LoadItemCatalogRecord
 
 loc_1CDB7:                              ; CODE XREF: sub_1CCBC+C3↑j
                 pop     word_32974
@@ -22848,7 +22848,7 @@ loc_1CE76:                              ; CODE XREF: FindItemInInventoryRange+39
 
 loc_1CE8D:                              ; CODE XREF: FindItemInInventoryRange+15↑j
                                         ; FindItemInInventoryRange+1B↑j
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CEA1
                 call    FindItemInsideContainer
@@ -22866,7 +22866,7 @@ loc_1CEA1:                              ; CODE XREF: FindItemInInventoryRange+F�
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_1CEC8
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CEC8
                 call    FindItemInsideContainer
@@ -22918,7 +22918,7 @@ loc_1CEF4:                              ; CODE XREF: FindItemInsideContainer+7E�
 
 loc_1CF16:                              ; CODE XREF: FindItemInsideContainer+33↑j
                                         ; FindItemInsideContainer+39↑j
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CF46
                 push    word_36863
@@ -22988,7 +22988,7 @@ loc_1CF79:                              ; CODE XREF: sub_1CF50+71↓j
 
 loc_1CF9B:                              ; CODE XREF: sub_1CF50+33↑j
                                         ; sub_1CF50+39↑j
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_1CFBE
                 push    word_36863
@@ -24315,7 +24315,7 @@ loc_1DA99:                              ; CODE XREF: sub_1DA60+2E↑j
                 mov     ax, [bx]
                 call    sub_25B14
                 mov     ax, [di]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     di, ax
                 test    word ptr [di+2], 400h
                 jz      short loc_1DAB6
@@ -31156,7 +31156,7 @@ sub_219FA       proc far                ; CODE XREF: sub_17270+14↑P
                 push    word_32974
                 mov     word_3293E, bx
                 mov     word_32974, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word_328C6, 3Ch
                 jnz     short loc_21A55
 
@@ -36419,7 +36419,7 @@ loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3�
                 cmp     ax, word_32940
                 jz      short loc_24917
                 or      word_328C4, bx
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
@@ -37021,7 +37021,7 @@ sub_24D30       endp
 
 DrawListEntryLabel proc near            ; CODE XREF: ShowCharacterInventory+61↑p
                                         ; ShowCharacterInventory+75↑p ...
-                call    sub_12554       ; Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.
+                call    LoadItemCatalogRecord ; Loads a paged record (sub_12554), draws its icon (+8 field) via DrawPicture, and displays a label built from two text fields (+0x13, +0x20) joined by a fixed separator. Confirms sub_12554's record layout: icon id at +8, text fields at +0x13/+0x20. Same pattern as sub_14B24 (DrawMessageBox's helper) but simpler.
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    DrawPicture
@@ -37931,7 +37931,7 @@ sub_25740       proc far                ; CODE XREF: sub_1A37E+12↑P
                 mov     ax, word_31948
                 cmp     ax, 0
                 jz      short loc_25760
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 1
                 jnz     short loc_25764
                 test    word ptr [bx+0Ch], 2000h
@@ -37973,7 +37973,7 @@ loc_25797:                              ; CODE XREF: sub_25740+7B↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_257B8
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 1
                 jnz     short loc_25764
                 test    word ptr [bx+0Ch], 2000h
@@ -38012,7 +38012,7 @@ loc_257E8:                              ; CODE XREF: sub_257BF+4D↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_25809
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 1
                 jnz     short loc_25812
                 test    word ptr [bx+0Ch], 2000h
@@ -38062,7 +38062,7 @@ loc_25841:                              ; CODE XREF: sub_25818+3E↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_25853
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 1
                 jnz     short loc_2585C
 
@@ -39364,7 +39364,7 @@ loc_2628F:                              ; CODE XREF: sub_2621C+5B↑j
 
 loc_26295:                              ; CODE XREF: sub_2621C+48↑j
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, word_2E40A
                 call    sub_26A75
                 cmp     errorCode, 0
@@ -39395,7 +39395,7 @@ loc_262C7:                              ; CODE XREF: sub_2621C+9B↑j
 
 loc_262D5:                              ; CODE XREF: sub_2621C+B4↑j
                 mov     ax, [di]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jnz     short loc_2632B
                 cmp     word ptr [di], 2Fh ; '/'
@@ -39572,7 +39572,7 @@ loc_26441:                              ; CODE XREF: sub_26415+21↑j
                 mov     ax, [di]
                 cmp     ax, 0
                 jz      short loc_2647D
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jnz     short loc_26486
                 cmp     word_31946, 0
@@ -39862,7 +39862,7 @@ loc_266EB:                              ; CODE XREF: sub_266D4+9↑j
                 mov     ax, word_31948
                 mov     [di], ax
                 mov     word_31948, 0
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, word_3194A
                 mov     word_3194A, 0
                 add     word_38808, ax
@@ -39932,7 +39932,7 @@ sub_26778       proc near               ; CODE XREF: sub_2607F+15A↑p
                 mov     x, bx
                 add     cx, word_328C0
                 mov     y, cx
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx+4]
                 cmp     word ptr [si+10h], 1
@@ -39962,7 +39962,7 @@ sub_267A7       proc near               ; CODE XREF: sub_2607F+58↑p
                 add     ax, word_328C0
                 mov     y, ax
                 mov     ax, [si]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word_328C6, 8000h
                 jz      short loc_267DC
                 test    word ptr [bx+0Ch], 400h
@@ -39992,7 +39992,7 @@ sub_267A7       endp
 
 
 sub_267F0       proc near               ; CODE XREF: sub_2607F+6B↑p
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, 28h ; '('
                 mov     bx, 40h ; '@'
                 add     ax, word_328BC
@@ -40013,7 +40013,7 @@ sub_267F0       endp
 
 sub_2681B       proc near               ; CODE XREF: sub_2607F+DA↑p
                                         ; sub_2607F+EE↑p ...
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, 26h ; '&'
                 mov     bx, 24h ; '$'
                 add     ax, word_328BC
@@ -40495,7 +40495,7 @@ loc_26B6B:                              ; CODE XREF: sub_26B4F+F↑j
                 mov     ax, [di]
                 mov     word_31948, ax
                 mov     word ptr [di], 0
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     ax, [bx+0Ah]
@@ -40600,7 +40600,7 @@ sub_26C22       proc near               ; CODE XREF: sub_2621C:loc_262FC↑p
 
 loc_26C5B:                              ; CODE XREF: sub_26C22+17↑j
                                         ; sub_26C22+23↑j ...
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, 2000h
                 test    word ptr [bx+0Ch], 4
                 jnz     short loc_26C8B
@@ -41210,7 +41210,7 @@ loc_2724A:                              ; CODE XREF: sub_271DC+64↑j
 
 loc_2726E:                              ; CODE XREF: sub_271DC+71↑j
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 2000h
                 jnz     short loc_27284
                 cmp     word ptr [di], 0
@@ -41267,7 +41267,7 @@ loc_272E6:                              ; CODE XREF: sub_271DC+A6↑j
                 mov     word_3194C, ax
                 mov     ax, [di]
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     ax, [bx+8]
@@ -41279,13 +41279,13 @@ loc_272E6:                              ; CODE XREF: sub_271DC+A6↑j
 
 loc_2731C:                              ; CODE XREF: sub_271DC+6B↑j
                 mov     ax, [di]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [di+2]
                 mov     word_3194C, ax
                 mov     word ptr [di+2], 0
                 mov     ax, [di]
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     ax, [bx+8]
@@ -41297,7 +41297,7 @@ loc_27348:                              ; CODE XREF: sub_271DC+13E↑j
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word_328C6, 1Ch
                 jnz     short loc_27369
                 call    sub_21C79
@@ -41369,7 +41369,7 @@ loc_273E6:                              ; CODE XREF: sub_2738B+29↑j
                 cmp     word ptr [di], 0
                 jz      short loc_273DE
                 mov     ax, [di]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 test    word ptr [bx+0Ch], 100h
                 jnz     short loc_27407
                 call    sub_2D5E0
@@ -41412,7 +41412,7 @@ DrawResourceStatusIcons proc near       ; CODE XREF: ShowResourceDepletedOverlay
                 mov     ax, [di+4]
                 mov     y, ax
                 mov     ax, [si]
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 call    DrawPicture
@@ -41512,7 +41512,7 @@ sub_274B4       proc far                ; CODE XREF: sub_1C809+2A↑P
                 push    si
                 push    cx              ; this
                 mov     ax, word_32974
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 cmp     word_3297A, 0
                 jnz     short loc_274C8
                 jmp     loc_2755C
@@ -45719,7 +45719,7 @@ seg109          segment byte public 'CODE' use16
 HandleGameCommand proc far              ; CODE XREF: start+57F↑P
                                         ; start+61E↑P ...
                 mov     ax, word_32974  ; Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 cmp     word_2E54A, 0
                 jz      short loc_295BD
                 call    ApplyMultiStatEffect
@@ -45847,7 +45847,7 @@ loc_296A5:                              ; CODE XREF: HandleGameCommand+DD↑j
                 test    word ptr [bx+2], 100h
                 jz      short loc_296F4
                 mov     ax, word_32970
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx+8]
                 jmp     short loc_296E5
@@ -45860,7 +45860,7 @@ loc_296C6:                              ; CODE XREF: HandleGameCommand+102↑j
                 test    word ptr [bx+2], 40h
                 jz      short loc_296F4
                 mov     ax, word_32970
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, ax
                 mov     ax, [bx+6]
 
@@ -49401,7 +49401,7 @@ loc_2B214:                              ; CODE XREF: CheckQuestItemsCompleted+90
                 call    DrawMouseCursor
                 mov     ax, 258h
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+8]
                 mov     word_2E530, ax
                 mov     word_31946, ax
@@ -50169,7 +50169,7 @@ sub_2BA62       proc far                ; CODE XREF: sub_2621C+101↑P
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_31948
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     bx, word_2E548
                 mov     ax, [bx]
                 test    ax, 80h
@@ -51334,7 +51334,7 @@ loc_2C303:                              ; CODE XREF: sub_2C0FE+200↑j
 
 loc_2C322:                              ; CODE XREF: sub_2C0FE+212↑j
                 mov     word_31948, ax
-                call    sub_12554
+                call    LoadItemCatalogRecord
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 mov     ax, word_332EA
@@ -56908,11 +56908,11 @@ _val24          dw 0                    ; DATA XREF: InitGlobals+B4↑w
 word_2E544      dw 0                    ; DATA XREF: sub_1D4B8:loc_1D4CB↑w
                                         ; sub_1D4B8+72↑w ...
 word_2E546      dw 0                    ; DATA XREF: loadWorldDat1+3↑w
-                                        ; sub_12554+C5↑r ...
-word_2E548      dw 0                    ; DATA XREF: sub_12554:loc_125C7↑w
-                                        ; sub_12554+B3↑w ...
-word_2E54A      dw 0                    ; DATA XREF: sub_12554+4D↑w
-                                        ; sub_12554+61↑w ...
+                                        ; LoadItemCatalogRecord+C5↑r ...
+word_2E548      dw 0                    ; DATA XREF: LoadItemCatalogRecord:loc_125C7↑w
+                                        ; LoadItemCatalogRecord+B3↑w ...
+word_2E54A      dw 0                    ; DATA XREF: LoadItemCatalogRecord+4D↑w
+                                        ; LoadItemCatalogRecord+61↑w ...
 word_2E54C      dw 0                    ; DATA XREF: UseItem+76↑r
                                         ; UseItem+10E↑r ...
 word_2E54E      dw 0                    ; DATA XREF: UseItem+72↑r

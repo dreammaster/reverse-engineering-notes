@@ -1473,7 +1473,9 @@ static Bytes_0(void) {
 	create_insn	(0X124EC);
 	set_cmt	(0X124F2,	"numPara",	0);
 	create_insn	(0X1251D);
+	set_cmt	(0X12554,	"LoadItemCatalogRecord(ax=item id): maps in EMS item-catalog pages, copies the item's 58-byte record into a scratch buffer (0xB50). If [+2] is nonzero, also loads word_2E54A (the multi-stat-effect table ApplyMultiStatEffect walks) from an 8-word sub-block. Also sets up word_2E548 -- the 'current target' pointer read throughout the codebase -- based on a flag test on [+0xC]. The single most pervasively-used item lookup in the executable.",	0);
 	create_insn	(0X12554);
+	set_name	(0X12554,	"LoadItemCatalogRecord");
 	create_insn	(0X1257C);
 	create_insn	(x=0X12590);
 	op_seg		(x,	1);
@@ -4343,6 +4345,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
 	create_insn	(0X1D2A6);
 	set_name	(0X1D2A6,	"RunTitleScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1D2BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C3);
@@ -4363,15 +4374,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3A0);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1D3A8);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D3B3);
@@ -7535,6 +7537,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2962A);
 	op_hex		(x,	1);
 	create_insn	(0X29635);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29652);
 	create_insn	(0X29666);
 	create_insn	(0X29673);
@@ -7555,15 +7566,6 @@ static Bytes_1(void) {
 	create_insn	(0X296F4);
 	create_insn	(x=0X296F8);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X29705);
 	op_hex		(x,	1);
 	create_insn	(0X29712);
@@ -11168,14 +11170,6 @@ static Bytes_2(void) {
 	set_name	(0X3A219,	"aTatteredPieceO");
 	create_strlit	(0X3A243,	0XA);
 	set_name	(0X3A243,	"aPaltivar");
-	create_strlit	(0X3A24E,	0X1B);
-	set_name	(0X3A24E,	"aAfterReadingTh");
-	create_strlit	(0X3A269,	0X18);
-	set_name	(0X3A269,	"aParchmentYouWi");
-	create_strlit	(0X3A281,	0X1C);
-	set_name	(0X3A281,	"aTeleportedToYe_0");
-	create_strlit	(0X3A29D,	0X1B);
-	set_name	(0X3A29D,	"aWeCanPlanYourV");
 }
 
 //------------------------------------------------------------------------
@@ -11185,6 +11179,14 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X3A24E,	0X1B);
+	set_name	(0X3A24E,	"aAfterReadingTh");
+	create_strlit	(0X3A269,	0X18);
+	set_name	(0X3A269,	"aParchmentYouWi");
+	create_strlit	(0X3A281,	0X1C);
+	set_name	(0X3A281,	"aTeleportedToYe_0");
+	create_strlit	(0X3A29D,	0X1B);
+	set_name	(0X3A29D,	"aWeCanPlanYourV");
 	create_strlit	(0X3A2B8,	0X20);
 	set_name	(0X3A2B8,	"aAgainstZamoraA");
 	create_strlit	(0X3A2D9,	0X18);

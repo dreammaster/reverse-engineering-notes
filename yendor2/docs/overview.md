@@ -1888,6 +1888,19 @@ main-quest structure.
 
 248 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: named the central item-lookup primitive
+
+Named `sub_12554`, by far the most pervasively-called function
+encountered this session (dozens of callers spanning nearly every
+subsystem explored): `LoadItemCatalogRecord` maps in an item's 58-byte
+catalog data and, as a side effect, sets up both `word_2E54A` (the
+multi-stat-effect table `ApplyMultiStatEffect` walks) and `word_2E548`
+(the "current target" pointer read throughout the codebase) — looking
+up an item's data is also how the game establishes "the current
+target" context.
+
+249 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
