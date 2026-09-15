@@ -29545,7 +29545,7 @@ sub_20C1E       proc far                ; CODE XREF: start:loc_10071↑P
                 call    sub_2784A
                 call    sub_20D2F
                 call    sub_20C8E
-                call    sub_20FB7
+                call    RenderDungeonViewport
                 test    word_36C7F, 1000h
                 jz      short loc_20C3F
                 call    ShowResourceDepletedOverlay
@@ -29564,7 +29564,7 @@ sub_20C46       proc far                ; CODE XREF: start+85↑P
                 call    sub_2784A
                 call    sub_20D2F
                 call    sub_20C8E
-                call    sub_20FB7
+                call    RenderDungeonViewport
                 test    word_36C7F, 1000h
                 jz      short loc_20C68
                 call    ShowResourceDepletedOverlay
@@ -29790,7 +29790,7 @@ sub_20E12       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20E54       proc near               ; CODE XREF: sub_212B8:loc_212E7↓p
+sub_20E54       proc near               ; CODE XREF: TryTriggerMonsterEncounterAtCell:loc_212E7↓p
                                         ; sub_212EB+11↓p
                 test    word ptr [si+92h], 4
                 jz      short loc_20E6F
@@ -29921,54 +29921,54 @@ sub_20E54       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20FB7       proc near               ; CODE XREF: sub_20C1E+11↑p
+RenderDungeonViewport proc near         ; CODE XREF: sub_20C1E+11↑p
                                         ; sub_20C46+B↑p
-                mov     di, 6D60h
+                mov     di, 6D60h       ; First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.
                 mov     word_3292C, 0
                 mov     cx, 11h
                 mov     ax, word_328E6
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 11h
                 mov     ax, word_328E8
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 5
                 mov     ax, word_328EA
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 3
                 mov     ax, word_328EC
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 3
                 mov     ax, word_328EE
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 3
                 mov     ax, word_328F0
                 mov     word_32926, ax
-                call    sub_21015
+                call    RenderDungeonViewRow
                 mov     cx, 3
                 mov     ax, word_328F2
                 mov     word_32926, ax
                 call    sub_21217
                 retn
-sub_20FB7       endp
+RenderDungeonViewport endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21015       proc near               ; CODE XREF: sub_20FB7+12↑p
-                                        ; sub_20FB7+1E↑p ...
-                mov     bx, cx
+RenderDungeonViewRow proc near          ; CODE XREF: RenderDungeonViewport+12↑p
+                                        ; RenderDungeonViewport+1E↑p ...
+                mov     bx, cx          ; Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.
                 dec     bx
                 shr     bx, 1
                 push    bx
                 mov     cx, bx
 
-loc_2101D:                              ; CODE XREF: sub_21015+70↓j
+loc_2101D:                              ; CODE XREF: RenderDungeonViewRow+70↓j
                 push    cx
                 test    word ptr [di+6], 1
                 jnz     short loc_2107D
@@ -29998,12 +29998,12 @@ loc_2101D:                              ; CODE XREF: sub_21015+70↓j
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
 
-loc_21077:                              ; CODE XREF: sub_21015+18↑j
-                                        ; sub_21015+2C↑j ...
+loc_21077:                              ; CODE XREF: RenderDungeonViewRow+18↑j
+                                        ; RenderDungeonViewRow+2C↑j ...
                 call    sub_2117F
-                call    sub_212B8
+                call    TryTriggerMonsterEncounterAtCell
 
-loc_2107D:                              ; CODE XREF: sub_21015+E↑j
+loc_2107D:                              ; CODE XREF: RenderDungeonViewRow+E↑j
                 add     di, 8
                 inc     word_3292C
                 pop     cx
@@ -30024,7 +30024,7 @@ loc_2107D:                              ; CODE XREF: sub_21015+E↑j
                 dec     ax
                 mov     word_3292C, ax
 
-loc_210A8:                              ; CODE XREF: sub_21015+FB↓j
+loc_210A8:                              ; CODE XREF: RenderDungeonViewRow+FB↓j
                 push    cx
                 test    word ptr [di+6], 1
                 jnz     short loc_21108
@@ -30054,12 +30054,12 @@ loc_210A8:                              ; CODE XREF: sub_21015+FB↓j
                 mov     _font_bgTransparent, 1
                 call    sub_29B0F
 
-loc_21102:                              ; CODE XREF: sub_21015+A3↑j
-                                        ; sub_21015+B7↑j ...
+loc_21102:                              ; CODE XREF: RenderDungeonViewRow+A3↑j
+                                        ; RenderDungeonViewRow+B7↑j ...
                 call    sub_2117F
-                call    sub_212B8
+                call    TryTriggerMonsterEncounterAtCell
 
-loc_21108:                              ; CODE XREF: sub_21015+99↑j
+loc_21108:                              ; CODE XREF: RenderDungeonViewRow+99↑j
                 sub     di, 8
                 dec     word_3292C
                 pop     cx
@@ -30068,20 +30068,20 @@ loc_21108:                              ; CODE XREF: sub_21015+99↑j
                 jnz     short loc_21122
                 call    sub_21128
                 call    sub_2117F
-                call    sub_212B8
+                call    TryTriggerMonsterEncounterAtCell
 
-loc_21122:                              ; CODE XREF: sub_21015+102↑j
+loc_21122:                              ; CODE XREF: RenderDungeonViewRow+102↑j
                 pop     word_3292C
                 pop     di
                 retn
-sub_21015       endp
+RenderDungeonViewRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21128       proc near               ; CODE XREF: sub_21015+10↑p
-                                        ; sub_21015+9B↑p ...
+sub_21128       proc near               ; CODE XREF: RenderDungeonViewRow+10↑p
+                                        ; RenderDungeonViewRow+9B↑p ...
                 mov     si, [di]
                 or      si, si
                 jz      short locret_2117E
@@ -30114,8 +30114,8 @@ sub_21128       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2117F       proc near               ; CODE XREF: sub_21015:loc_21077↑p
-                                        ; sub_21015:loc_21102↑p ...
+sub_2117F       proc near               ; CODE XREF: RenderDungeonViewRow:loc_21077↑p
+                                        ; RenderDungeonViewRow:loc_21102↑p ...
                 mov     si, [di+2]
                 or      si, si
                 jnz     short sub_21187
@@ -30186,7 +30186,7 @@ sub_21187       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21217       proc near               ; CODE XREF: sub_20FB7+5A↑p
+sub_21217       proc near               ; CODE XREF: RenderDungeonViewport+5A↑p
                 test    word ptr [di+6], 1
                 jnz     short loc_21252
                 mov     si, [di]
@@ -30238,7 +30238,7 @@ loc_21298:                              ; CODE XREF: sub_21217+48↑j
                 call    sub_21187
 
 loc_212A9:                              ; CODE XREF: sub_21217+8D↑j
-                call    sub_212B8
+                call    TryTriggerMonsterEncounterAtCell
                 test    word_328CA, 1000h
                 jz      short locret_212B7
                 call    sub_212EB
@@ -30251,20 +30251,21 @@ sub_21217       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_212B8       proc near               ; CODE XREF: sub_21015+65↑p
-                                        ; sub_21015+F0↑p ...
-                cmp     word_3292C, 11h
+TryTriggerMonsterEncounterAtCell proc near
+                                        ; CODE XREF: RenderDungeonViewRow+65↑p
+                                        ; RenderDungeonViewRow+F0↑p ...
+                cmp     word_3292C, 11h ; Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); rolls a probability (sub_22B78) before calling SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.
                 jge     short loc_212C0
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_212C0:                              ; CODE XREF: sub_212B8+5↑j
+loc_212C0:                              ; CODE XREF: TryTriggerMonsterEncounterAtCell+5↑j
                 test    word ptr [di+6], 400h
                 jnz     short loc_212C8
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_212C8:                              ; CODE XREF: sub_212B8+D↑j
+loc_212C8:                              ; CODE XREF: TryTriggerMonsterEncounterAtCell+D↑j
                 or      word_3295A, 8000h
                 cmp     word_3292C, 31h ; '1'
                 jz      short locret_21305
@@ -30276,11 +30277,11 @@ loc_212C8:                              ; CODE XREF: sub_212B8+D↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_212E7:                              ; CODE XREF: sub_212B8+25↑j
-                                        ; sub_212B8+2C↑j
+loc_212E7:                              ; CODE XREF: TryTriggerMonsterEncounterAtCell+25↑j
+                                        ; TryTriggerMonsterEncounterAtCell+2C↑j
                 call    sub_20E54
                 retn
-sub_212B8       endp
+TryTriggerMonsterEncounterAtCell endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -30300,7 +30301,7 @@ loc_212FF:                              ; CODE XREF: sub_212EB+F↑j
                 add     si, 9Ch
                 loop    loc_212F7
 
-locret_21305:                           ; CODE XREF: sub_212B8+1B↑j
+locret_21305:                           ; CODE XREF: TryTriggerMonsterEncounterAtCell+1B↑j
                 retn
 sub_212EB       endp
 
@@ -32970,7 +32971,7 @@ seg072          segment byte public 'CODE' use16
 
 
 ; int __fastcall __far SpawnMonsterInFacingDirection(int, int, FileEntry *this)
-SpawnMonsterInFacingDirection proc far  ; CODE XREF: sub_212B8+27↑P
+SpawnMonsterInFacingDirection proc far  ; CODE XREF: TryTriggerMonsterEncounterAtCell+27↑P
                 push    cx              ; Spawns a monster (catalog id in ax/bx) into an empty g_levelMonsters slot: loads its catalog record from WORLD.DAT (same block math as LoadClueBookMonsterEntry), computes a spawn position offset from the current facing direction (word_36CF5 tier bits -- same as ShowCompassDirection) plus current position (word_36CF7/36CF9), sets a countdown timer (RandomInRange(5) + template) and full HP ([+0x10]=[+0x50]). Called from sub_212B8 (a movement/trigger handler, not traced).
                 mov     bx, ax
                 mov     si, 0F26h
@@ -33086,7 +33087,7 @@ SpawnMonsterInFacingDirection endp
 
 
 sub_22B78       proc far                ; CODE XREF: sub_11236+20↑P
-                                        ; sub_212B8+20↑P ...
+                                        ; TryTriggerMonsterEncounterAtCell+20↑P ...
                 push    cx
                 mov     si, 0F26h
                 mov     cx, 50h ; 'P'

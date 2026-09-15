@@ -5339,8 +5339,12 @@ static Bytes_1(void) {
 	create_insn	(x=0X20FA6);
 	op_hex		(x,	1);
 	create_insn	(0X20FAB);
+	set_cmt	(0X20FB7,	"First-person dungeon corridor viewport renderer: resets word_3292C, calls RenderDungeonViewRow 6x with decreasing cell counts (0x11/0x11/5/3/3/3) and different row-data pointers (word_328E6..F0), then sub_21217 once more (word_328F2). Called from sub_20C1E and sub_20C46.",	0);
 	create_insn	(0X20FB7);
+	set_name	(0X20FB7,	"RenderDungeonViewport");
+	set_cmt	(0X21015,	"Renders one depth row of the dungeon corridor view: iterates 8-byte cell records (forward then backward from a midpoint), drawing each cell's picture (table 0xE551, 12-byte stride) via sub_29B0F, and calls TryTriggerMonsterEncounterAtCell once per cell while incrementing/decrementing word_3292C (a per-frame row depth counter). Called 6x by RenderDungeonViewport.",	0);
 	create_insn	(0X21015);
+	set_name	(0X21015,	"RenderDungeonViewRow");
 	create_insn	(x=0X21018);
 	op_hex		(x,	1);
 	create_insn	(x=0X2101E);
@@ -5372,7 +5376,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X212AC);
 	op_hex		(x,	1);
+	set_cmt	(0X212B8,	"Per-cell encounter check: only fires for word_3292C >= 0x11 (the farthest visible rows) and a flag bit on the cell record ([di+6] bit 0x400); rolls a probability (sub_22B78) before calling SpawnMonsterInFacingDirection. Called once per cell from RenderDungeonViewRow.",	0);
 	create_insn	(0X212B8);
+	set_name	(0X212B8,	"TryTriggerMonsterEncounterAtCell");
 	create_insn	(x=0X212C0);
 	op_hex		(x,	1);
 	create_insn	(x=0X212C8);
@@ -6851,6 +6857,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2747E,	"DOS - GET CURRENT TIME\nReturn: CH = hours, CL = minutes, DH = seconds\nDL = hundredths of seconds",	0);
 	create_insn	(x=0X2747E);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2749E);
 	op_hex		(x,	1);
 	create_insn	(0X274A5);
@@ -6936,15 +6951,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2781C,	"FailsSavingThrow(si=party-member record, word_3293E=difficulty threshold, word_32940=resistance bonus): chance = max(5, 5*([si+0x16]-threshold) + bonus); rolls RandomInRange(100) against it. Returns 1 if the roll exceeds the chance (save fails, effect applies), 0 if resisted.",	0);
 	create_insn	(0X2781C);
 	set_name	(0X2781C,	"FailsSavingThrow");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X27846);
 	create_insn	(0X2784A);
 	create_insn	(x=0X27852);
@@ -10253,6 +10259,15 @@ static Bytes_2(void) {
 	set_name	(0X355DE,	"aYourSkill");
 	create_strlit	(0X355EB,	0XD);
 	set_name	(0X355EB,	"aIsNotHigh");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X355F8,	0XD);
 	set_name	(0X355F8,	"aEnough");
 	create_strlit	(0X35605,	0XC);
@@ -10307,15 +10322,6 @@ static Bytes_2(void) {
 	set_name	(0X3575F,	"aThievery");
 	create_strlit	(0X3576C,	0XD);
 	set_name	(0X3576C,	"aLinguistics");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35779,	0XD);
 	set_name	(0X35779,	"aChemistry");
 	create_strlit	(0X35786,	0X21);

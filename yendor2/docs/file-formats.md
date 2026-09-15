@@ -488,8 +488,24 @@ isn't traced yet.
 wander pool**, `g_levelMonsters` (base `0xF26`, 80 × `0x9C`-byte
 records — same stride and `[+0xC]` flag conventions as
 `g_monsterSlots`, strongly suggesting the identical record layout).
-New monsters enter this pool via `SpawnMonsterInFacingDirection`
-(called from an untraced movement/trigger handler, `sub_212B8`):
+New monsters enter this pool via `SpawnMonsterInFacingDirection`,
+called from `TryTriggerMonsterEncounterAtCell` — which turns out to be
+part of the **first-person dungeon corridor viewport renderer**:
+`RenderDungeonViewport` (called from two unnamed sites) resets a
+per-frame row-depth counter (`word_3292C`) and calls
+`RenderDungeonViewRow` six times with decreasing cell counts (`0x11`,
+`0x11`, `5`, `3`, `3`, `3`) and a different row-data pointer each time
+— the classic "draw each depth row of the visible corridor, near to
+far" shape. `RenderDungeonViewRow` draws each cell's picture (a
+12-byte-stride lookup table at `0xE551`) and calls
+`TryTriggerMonsterEncounterAtCell` once per cell, incrementing/
+decrementing `word_3292C` as it goes. `TryTriggerMonsterEncounterAtCell`
+only fires for `word_3292C >= 0x11` — since only the first two (and
+therefore *farthest*) rows use `cx=0x11`, **monsters can only spawn in
+the farthest visible cells, not right next to the party** — plus a
+flag bit on the cell record and a probability roll, before calling
+`SpawnMonsterInFacingDirection`, which:
+
 finds an empty slot, loads the monster's catalog record from
 `WORLD.DAT` (same block math as `LoadClueBookMonsterEntry`), computes
 a spawn position offset from the party's current facing direction

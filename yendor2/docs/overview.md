@@ -2407,6 +2407,25 @@ trigger system, not chased further this round.
 
 301 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RenderDungeonViewport reveals the first-person corridor renderer and encounter gating
+
+Traced `SpawnMonsterInFacingDirection`'s caller chain one level
+further and found the **first-person dungeon corridor viewport
+renderer**: `RenderDungeonViewport` (was `sub_20FB7`) calls
+`RenderDungeonViewRow` (was `sub_21015`) six times with decreasing
+cell counts, one per depth row of the visible corridor.
+`RenderDungeonViewRow` draws each cell's picture and calls
+`TryTriggerMonsterEncounterAtCell` (was `sub_212B8`) once per cell.
+Key finding: the encounter check only fires for the farthest two rows
+(`word_3292C >= 0x11`) — **monsters can only spawn at the edge of
+visibility, never right next to the party** — a deliberate fairness
+design, not an incidental detail. This is a genuine architectural
+discovery about the game's core rendering/encounter loop, found by
+following one function's caller chain rather than starting from this
+subsystem directly.
+
+304 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
