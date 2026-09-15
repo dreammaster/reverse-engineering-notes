@@ -7047,7 +7047,7 @@ loc_14628:                              ; CODE XREF: ShowClueBookMonsterDetail+4
 
 loc_14645:                              ; CODE XREF: ShowClueBookMonsterDetail+425↑j
                                         ; ShowClueBookMonsterDetail+454↑j
-                call    sub_25656
+                call    AdvanceMonsterAnimationFrame
 
 loc_1464A:                              ; CODE XREF: ShowClueBookMonsterDetail+446↑j
                                         ; ShowClueBookMonsterDetail+44D↑j
@@ -29912,7 +29912,7 @@ loc_20FAB:                              ; CODE XREF: DrawMonsterAndUpdateAttackS
                 mov     ax, ds
                 mov     es, ax
                 assume es:seg129
-                call    sub_25656
+                call    AdvanceMonsterAnimationFrame
                 pop     es
                 assume es:nothing
                 retn
@@ -37708,14 +37708,14 @@ seg078          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25656       proc far                ; CODE XREF: ShowClueBookMonsterDetail:loc_14645↑P
+AdvanceMonsterAnimationFrame proc far   ; CODE XREF: ShowClueBookMonsterDetail:loc_14645↑P
                                         ; DrawMonsterAndUpdateAttackState+15C↑P
-                test    word ptr es:[si+92h], 40h
+                test    word ptr es:[si+92h], 40h ; Advances a monster's idle/walk animation frame ([+8]) within a small cycle relative to a base frame ([+0x4C]), mode selected by [+0x92] bits 0x20/0x10 (skipped entirely if bit 0x40 set). Called from DrawMonsterAndUpdateAttackState (non-attacking case) and ShowClueBookMonsterDetail (animates the clue-book preview the same way).
                 jz      short loc_25662
                 jmp     locret_256EE
 ; ---------------------------------------------------------------------------
 
-loc_25662:                              ; CODE XREF: sub_25656+7↑j
+loc_25662:                              ; CODE XREF: AdvanceMonsterAnimationFrame+7↑j
                 mov     ax, es:[si+8]
                 test    word ptr es:[si+92h], 20h
                 jnz     short loc_2567A
@@ -37724,7 +37724,7 @@ loc_25662:                              ; CODE XREF: sub_25656+7↑j
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_2567A:                              ; CODE XREF: sub_25656+17↑j
+loc_2567A:                              ; CODE XREF: AdvanceMonsterAnimationFrame+17↑j
                 test    word ptr es:[si+0Ch], 4
                 jnz     short loc_25696
                 mov     bx, es:[si+4Ch]
@@ -37735,23 +37735,23 @@ loc_2567A:                              ; CODE XREF: sub_25656+17↑j
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_25690:                              ; CODE XREF: sub_25656+35↑j
+loc_25690:                              ; CODE XREF: AdvanceMonsterAnimationFrame+35↑j
                 mov     ax, es:[si+4Ch]
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_25696:                              ; CODE XREF: sub_25656+2A↑j
+loc_25696:                              ; CODE XREF: AdvanceMonsterAnimationFrame+2A↑j
                 mov     bx, es:[si+4Ch]
                 add     bx, 8
                 cmp     ax, bx
                 jz      short loc_256A2
                 inc     ax
 
-loc_256A2:                              ; CODE XREF: sub_25656+49↑j
+loc_256A2:                              ; CODE XREF: AdvanceMonsterAnimationFrame+49↑j
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_256A4:                              ; CODE XREF: sub_25656+20↑j
+loc_256A4:                              ; CODE XREF: AdvanceMonsterAnimationFrame+20↑j
                 test    word ptr es:[si+0Ch], 4
                 jnz     short loc_256DE
                 test    word ptr es:[si+92h], 8
@@ -37764,13 +37764,13 @@ loc_256A4:                              ; CODE XREF: sub_25656+20↑j
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_256C3:                              ; CODE XREF: sub_25656+68↑j
+loc_256C3:                              ; CODE XREF: AdvanceMonsterAnimationFrame+68↑j
                 dec     ax
                 and     word ptr es:[si+92h], 0FFF7h
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_256CC:                              ; CODE XREF: sub_25656+5D↑j
+loc_256CC:                              ; CODE XREF: AdvanceMonsterAnimationFrame+5D↑j
                 cmp     ax, es:[si+4Ch]
                 jg      short loc_256DB
                 or      word ptr es:[si+92h], 8
@@ -37778,25 +37778,25 @@ loc_256CC:                              ; CODE XREF: sub_25656+5D↑j
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_256DB:                              ; CODE XREF: sub_25656+7A↑j
+loc_256DB:                              ; CODE XREF: AdvanceMonsterAnimationFrame+7A↑j
                 dec     ax
                 jmp     short loc_256EA
 ; ---------------------------------------------------------------------------
 
-loc_256DE:                              ; CODE XREF: sub_25656+54↑j
+loc_256DE:                              ; CODE XREF: AdvanceMonsterAnimationFrame+54↑j
                 mov     bx, es:[si+4Ch]
                 add     bx, 8
                 cmp     ax, bx
                 jz      short loc_256EA
                 inc     ax
 
-loc_256EA:                              ; CODE XREF: sub_25656+22↑j
-                                        ; sub_25656+38↑j ...
+loc_256EA:                              ; CODE XREF: AdvanceMonsterAnimationFrame+22↑j
+                                        ; AdvanceMonsterAnimationFrame+38↑j ...
                 mov     es:[si+8], ax
 
-locret_256EE:                           ; CODE XREF: sub_25656+9↑j
+locret_256EE:                           ; CODE XREF: AdvanceMonsterAnimationFrame+9↑j
                 retf
-sub_25656       endp
+AdvanceMonsterAnimationFrame endp
 
 ; ---------------------------------------------------------------------------
                 align 2

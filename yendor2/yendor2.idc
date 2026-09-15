@@ -6364,8 +6364,10 @@ static Bytes_1(void) {
 	create_insn	(0X255F1);
 	create_insn	(0X255FA);
 	create_insn	(0X25608);
+	set_cmt	(0X25656,	"Advances a monster's idle/walk animation frame ([+8]) within a small cycle relative to a base frame ([+0x4C]), mode selected by [+0x92] bits 0x20/0x10 (skipped entirely if bit 0x40 set). Called from DrawMonsterAndUpdateAttackState (non-attacking case) and ShowClueBookMonsterDetail (animates the clue-book preview the same way).",	0);
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
+	set_name	(0X25656,	"AdvanceMonsterAnimationFrame");
 	create_insn	(0X25662);
 	create_insn	(x=0X25666);
 	op_hex		(x,	1);
@@ -6659,6 +6661,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2661B);
 	op_hex		(x,	1);
 	create_insn	(0X2663F);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X26660,	"this",	0);
 	create_insn	(0X266A9);
 	create_insn	(x=0X266B4);
@@ -6685,15 +6696,6 @@ static Bytes_1(void) {
 	set_cmt	(0X26846,	"LoadContainerContents(ax=?, bx=word_328D4+group-base): reads a container item's saved inventory contents from CURGAME (FileEntry bx=0x8FFB, errorCode=0xB) into the character's bag slot area. Called when opening a container item into one of the 3 alternate-bag inventory groups (see GetInventorySlotPtr).",	0);
 	create_insn	(0X26846);
 	set_name	(0X26846,	"LoadContainerContents");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2684B,	"this",	0);
 	create_insn	(0X26864);
 	create_insn	(0X2687B);
@@ -10063,6 +10065,15 @@ static Bytes_2(void) {
 	create_word	(0X351A0);
 	create_word	(0X351A3);
 	create_word	(0X351A5);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X351A8,	0X1A);
 	create_strlit	(0X351C2,	0X13);
 	set_name	(0X351C2,	"aCharacterCreat");
@@ -10094,15 +10105,6 @@ static Bytes_2(void) {
 	set_name	(0X3525A,	"aFemale");
 	create_strlit	(0X35261,	0X10);
 	set_name	(0X35261,	"aPickAPortrait");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35271,	0XA);
 	set_name	(0X35271,	"aSelectAn");
 	create_strlit	(0X3527B,	0X7);

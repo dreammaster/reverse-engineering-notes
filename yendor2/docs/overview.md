@@ -2505,6 +2505,15 @@ earlier-session combat findings.
 
 314 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: AdvanceMonsterAnimationFrame
+
+Named `sub_25656`, called from `DrawMonsterAndUpdateAttackState` (the
+non-attacking case) and reused by `ShowClueBookMonsterDetail`:
+advances a monster's idle/walk animation frame within a small cycle
+relative to a base frame.
+
+315 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

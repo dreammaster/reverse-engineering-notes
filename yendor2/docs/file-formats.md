@@ -481,8 +481,11 @@ every rendered monster, whether a corridor encounter or an active
 hit-flash/recovery animation frame (`+0xC` bits 2/4), draws a weapon/
 attack-effect sprite, and at the end checks the same `+0xC` `0x3010`
 bits documented above for `BuildCombatTurnOrder`/`TickMonsterTimer`'s
-countdown — resetting it if set, else calling an untraced `sub_25656`
-(plausibly the actual attack-resolution trigger). This confirms `+0x10` doubles as the monster's
+countdown — resetting it if set, else calling
+`AdvanceMonsterAnimationFrame` (also reused by
+`ShowClueBookMonsterDetail` to animate its preview sprite the same
+way): advances the monster's idle/walk animation frame within a small
+cycle relative to a base frame, mode selected by `[+0x92]` flags. This confirms `+0x10` doubles as the monster's
 *current HP* in the active-combat context — the same field
 `TickMonsterTimer` uses as a presence/lifespan countdown in the
 level-wide `g_levelMonsters` pool context, a polymorphic field reused
