@@ -8798,7 +8798,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X2AD27);
 	op_hex		(x,	1);
 	create_insn	(0X2AD32);
+	set_cmt	(0X2AD94,	"Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.",	0);
 	create_insn	(0X2AD94);
+	set_name	(0X2AD94,	"ConfirmAndSelectPartyTarget");
 	create_insn	(0X2ADC4);
 	create_insn	(0X2ADD0);
 	create_insn	(0X2ADE8);
@@ -8964,10 +8966,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B866,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B866);
 	set_name	(0X2B866,	"ShowConversationText_2000");
-	create_insn	(0X2B8CB);
-	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
-	create_insn	(0X2B8D7);
-	set_name	(0X2B8D7,	"ShowConversationText_1000");
 }
 
 //------------------------------------------------------------------------
@@ -8977,6 +8975,10 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2B8CB);
+	set_cmt	(0X2B8D7,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
+	create_insn	(0X2B8D7);
+	set_name	(0X2B8D7,	"ShowConversationText_1000");
 	create_insn	(0X2B93C);
 	set_cmt	(0X2B948,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B948);

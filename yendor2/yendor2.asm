@@ -48417,7 +48417,7 @@ seg114          segment byte public 'CODE' use16
 ApplyMultiStatEffect proc far           ; CODE XREF: HandleGameCommand+F↑P
                                         ; ApplyMultiStatEffect+26↓j
                 call    sub_21C79       ; First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.
-                call    sub_2AD94
+                call    ConfirmAndSelectPartyTarget
                 cmp     ax, 0
                 jnz     short loc_2A923
                 jmp     short loc_2A971
@@ -48500,7 +48500,7 @@ sub_2A982       endp
 
 RestCharacter   proc far                ; CODE XREF: HandleGameCommand+B8↑P
                 call    sub_21C79       ; Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.
-                call    sub_2AD94
+                call    ConfirmAndSelectPartyTarget
                 cmp     ax, 0
                 jnz     short loc_2A9BD
                 jmp     loc_2AA47
@@ -48604,7 +48604,7 @@ loc_2AA86:                              ; CODE XREF: CastSpell+8↑j
                 call    sub_21C79
 
 loc_2AA8B:                              ; CODE XREF: CastSpell+8C↓j
-                call    sub_2AD94
+                call    ConfirmAndSelectPartyTarget
                 cmp     ax, 0
                 jz      short loc_2AA75
                 call    ClearStatusPanelIfDirty
@@ -48935,9 +48935,9 @@ sub_2AD32       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AD94       proc near               ; CODE XREF: ApplyMultiStatEffect+5↑p
+ConfirmAndSelectPartyTarget proc near   ; CODE XREF: ApplyMultiStatEffect+5↑p
                                         ; RestCharacter+5↑p ...
-                mov     word_2E530, 0Fh
+                mov     word_2E530, 0Fh ; Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.
                 call    sub_23874
                 call    sub_238CD
                 mov     ax, 12h
@@ -48951,12 +48951,12 @@ sub_2AD94       proc near               ; CODE XREF: ApplyMultiStatEffect+5↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2ADC4:                              ; CODE XREF: sub_2AD94+1B↑j
+loc_2ADC4:                              ; CODE XREF: ConfirmAndSelectPartyTarget+1B↑j
                 mov     word_32990, ax
                 call    sub_25B14
                 mov     ax, word_328D6
                 retn
-sub_2AD94       endp
+ConfirmAndSelectPartyTarget endp
 
 
 ; =============== S U B R O U T I N E =======================================

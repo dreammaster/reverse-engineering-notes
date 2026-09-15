@@ -2953,6 +2953,14 @@ terrain/narrow-low-range codes.
 
 379 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ConfirmAndSelectPartyTarget
+
+Named `sub_2AD94`, called from `ApplyMultiStatEffect` and
+`RestCharacter`: shows a confirm prompt, then resolves the selected
+party record on confirmation.
+
+380 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
