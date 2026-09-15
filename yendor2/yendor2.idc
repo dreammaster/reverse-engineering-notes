@@ -3343,7 +3343,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X190E9);
 	create_insn	(0X190EF);
+	set_cmt	(0X19133,	"Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.",	0);
 	create_insn	(0X19133);
+	set_name	(0X19133,	"ShowPartyPortraitForSlot");
 	set_cmt	(0X19140,	"Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.",	0);
 	create_insn	(0X19140);
 	set_name	(0X19140,	"TryRepairItemForGold");
@@ -6632,7 +6634,9 @@ static Bytes_2(void) {
 	create_insn	(0X26022);
 	set_cmt	(0X2602A,	"this",	0);
 	create_insn	(0X26058);
+	set_cmt	(0X2607F,	"Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.",	0);
 	create_insn	(0X2607F);
+	set_name	(0X2607F,	"DrawPartyMemberPortrait");
 	create_insn	(x=0X2608A);
 	op_hex		(x,	1);
 	create_insn	(x=0X260DE);
@@ -9386,6 +9390,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D259);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D261);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D269);
@@ -9424,15 +9437,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D2F8);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D300);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D308);

@@ -14562,7 +14562,7 @@ loc_1857E:                              ; CODE XREF: HandlePortraitClick+2F↑j
                 jz      short locret_1851B
                 or      word_328C6, bx
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
                 mov     ax, 1
                 call    sub_28412
                 call    DrawMouseCursor
@@ -14584,7 +14584,7 @@ RefreshPartyPortraits proc far          ; CODE XREF: start+81D↑P
                 or      word_328C6, 4000h
                 mov     word_328BC, 8
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_185C7:                              ; CODE XREF: RefreshPartyPortraits+E↑j
                 mov     si, 95EDh
@@ -14593,7 +14593,7 @@ loc_185C7:                              ; CODE XREF: RefreshPartyPortraits+E↑j
                 or      word_328C6, 2000h
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_185E4:                              ; CODE XREF: RefreshPartyPortraits+2B↑j
                 mov     si, 95EFh
@@ -14602,7 +14602,7 @@ loc_185E4:                              ; CODE XREF: RefreshPartyPortraits+2B↑
                 or      word_328C6, 1000h
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑j
                 mov     si, 95F1h
@@ -14611,7 +14611,7 @@ loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑
                 or      word_328C6, 800h
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑j
                 mov     ax, 1
@@ -14825,7 +14825,7 @@ loc_187D7:                              ; CODE XREF: sub_1869D+1D↑j
                 mov     si, 95EBh
                 mov     word_328BC, 8
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_187F9:                              ; CODE XREF: sub_1869D+148↑j
                 test    word_328C6, 2000h
@@ -14833,7 +14833,7 @@ loc_187F9:                              ; CODE XREF: sub_1869D+148↑j
                 mov     si, 95EDh
                 mov     word_328BC, 40h ; '@'
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_18813:                              ; CODE XREF: sub_1869D+162↑j
                 test    word_328C6, 1000h
@@ -14841,7 +14841,7 @@ loc_18813:                              ; CODE XREF: sub_1869D+162↑j
                 mov     si, 95EFh
                 mov     word_328BC, 78h ; 'x'
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_1882D:                              ; CODE XREF: sub_1869D+17C↑j
                 test    word_328C6, 800h
@@ -14849,7 +14849,7 @@ loc_1882D:                              ; CODE XREF: sub_1869D+17C↑j
                 mov     si, 95F1h
                 mov     word_328BC, 0B0h
                 mov     word_328C0, 8
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
 
 loc_18847:                              ; CODE XREF: sub_1869D+196↑j
                 call    DrawMouseCursor
@@ -15132,7 +15132,7 @@ loc_18AA0:                              ; CODE XREF: sub_1869D+3B8↑j
                 jnz     short loc_18ACC
                 or      word_328C6, bx
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_19133
+                call    ShowPartyPortraitForSlot
                 mov     ax, 1
                 call    sub_28412
                 call    DrawMouseCursor
@@ -15211,7 +15211,7 @@ loc_18B6F:                              ; CODE XREF: sub_1869D+4BB↑j
                 jz      short loc_18B82
                 mov     ax, 6
                 call    sub_28412
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
 
 loc_18B82:                              ; CODE XREF: sub_1869D+4D6↑j
                 call    ClearStatusPanelIfDirty
@@ -15843,13 +15843,13 @@ sub_190E9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19133       proc near               ; CODE XREF: HandlePortraitClick+88↑p
+ShowPartyPortraitForSlot proc near      ; CODE XREF: HandlePortraitClick+88↑p
                                         ; RefreshPartyPortraits+22↑p ...
-                mov     ax, [si]
+                mov     ax, [si]        ; Resolves a party slot's record id to a pointer (sub_25B14) then draws its portrait (DrawPartyMemberPortrait). Called from RefreshPartyPortraits/HandlePortraitClick.
                 call    sub_25B14
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
                 retn
-sub_19133       endp
+ShowPartyPortraitForSlot endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35236,7 +35236,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     _font_fgColor, 0Fh
                 mov     bx, 7A6Bh       ; msg
                 call    writeString
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
                 mov     si, word_328D4
                 mov     ax, [si+12h]
                 mov     word_2E530, ax
@@ -36690,7 +36690,7 @@ loc_24BB4:                              ; CODE XREF: ShowCharacterEquipment+154�
                 mov     [si+12h], ax
                 mov     [si+14h], ax
                 add     word ptr [si+12h], 13h
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
                 mov     ax, [si+12h]
                 mov     word_2E530, ax
                 mov     x, 74h ; 't'
@@ -37545,7 +37545,7 @@ sub_254CC       proc near               ; CODE XREF: ShowCharacterStats+B↑p
                 mov     _font_fgColor, 0Fh
                 mov     bx, 7962h       ; msg
                 call    writeString
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
                 mov     si, word_328D4
                 mov     ax, [si+12h]
                 mov     word_2E530, ax
@@ -39155,9 +39155,9 @@ sub_26022       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2607F       proc far                ; CODE XREF: sub_1869D+4E0↑P
-                                        ; sub_19133+7↑P ...
-                push    ax
+DrawPartyMemberPortrait proc far        ; CODE XREF: sub_1869D+4E0↑P
+                                        ; ShowPartyPortraitForSlot+7↑P ...
+                push    ax              ; Draws one party member's portrait panel at word_328BC/word_328C0: character icon ([+0x14]), a status bar (sub_267A7), a condition icon ([+0x15C]/[+0x10]), and further icon draws (sub_2681B, not traced). Called via ShowPartyPortraitForSlot.
                 push    bx
                 push    cx
                 push    dx
@@ -39198,14 +39198,14 @@ sub_2607F       proc far                ; CODE XREF: sub_1869D+4E0↑P
                 jmp     short loc_26111
 ; ---------------------------------------------------------------------------
 
-loc_26100:                              ; CODE XREF: sub_2607F+65↑j
+loc_26100:                              ; CODE XREF: DrawPartyMemberPortrait+65↑j
                 mov     si, word_328D4
                 add     si, 13Eh
                 mov     di, 6152h
                 mov     cx, 3
                 call    sub_267A7
 
-loc_26111:                              ; CODE XREF: sub_2607F+7F↑j
+loc_26111:                              ; CODE XREF: DrawPartyMemberPortrait+7F↑j
                 mov     si, word_328D4
                 test    word ptr [si+15Ch], 20h
                 jz      short loc_2614A
@@ -39214,7 +39214,7 @@ loc_26111:                              ; CODE XREF: sub_2607F+7F↑j
                 jz      short loc_2612F
                 mov     word_2E530, 0Dh
 
-loc_2612F:                              ; CODE XREF: sub_2607F+A8↑j
+loc_2612F:                              ; CODE XREF: DrawPartyMemberPortrait+A8↑j
                 mov     di, 6166h
                 mov     ax, [di]
                 add     ax, word_328BC
@@ -39224,7 +39224,7 @@ loc_2612F:                              ; CODE XREF: sub_2607F+A8↑j
                 mov     y, ax
                 call    DrawPicture
 
-loc_2614A:                              ; CODE XREF: sub_2607F+9C↑j
+loc_2614A:                              ; CODE XREF: DrawPartyMemberPortrait+9C↑j
                 mov     si, word_328D4
                 cmp     word ptr [si+17Ch], 0
                 jz      short loc_26162
@@ -39234,7 +39234,7 @@ loc_2614A:                              ; CODE XREF: sub_2607F+9C↑j
                 jmp     short loc_26196
 ; ---------------------------------------------------------------------------
 
-loc_26162:                              ; CODE XREF: sub_2607F+D4↑j
+loc_26162:                              ; CODE XREF: DrawPartyMemberPortrait+D4↑j
                 cmp     word ptr [si+1A2h], 0
                 jz      short loc_26176
                 mov     ax, [si+1A2h]
@@ -39243,7 +39243,7 @@ loc_26162:                              ; CODE XREF: sub_2607F+D4↑j
                 jmp     short loc_26196
 ; ---------------------------------------------------------------------------
 
-loc_26176:                              ; CODE XREF: sub_2607F+E8↑j
+loc_26176:                              ; CODE XREF: DrawPartyMemberPortrait+E8↑j
                 cmp     word ptr [si+1C8h], 0
                 jz      short loc_26192
                 test    word ptr [si+15Ch], 1000h
@@ -39251,16 +39251,16 @@ loc_26176:                              ; CODE XREF: sub_2607F+E8↑j
                 mov     ax, [si+1C8h]
                 call    sub_2681B
 
-loc_2618C:                              ; CODE XREF: sub_2607F+104↑j
+loc_2618C:                              ; CODE XREF: DrawPartyMemberPortrait+104↑j
                 add     si, 1CCh
                 jmp     short loc_26196
 ; ---------------------------------------------------------------------------
 
-loc_26192:                              ; CODE XREF: sub_2607F+FC↑j
+loc_26192:                              ; CODE XREF: DrawPartyMemberPortrait+FC↑j
                 add     si, 118h
 
-loc_26196:                              ; CODE XREF: sub_2607F+E1↑j
-                                        ; sub_2607F+F5↑j ...
+loc_26196:                              ; CODE XREF: DrawPartyMemberPortrait+E1↑j
+                                        ; DrawPartyMemberPortrait+F5↑j ...
                 add     si, 2
                 mov     di, 60EEh
                 mov     cx, 8
@@ -39304,7 +39304,7 @@ loc_26196:                              ; CODE XREF: sub_2607F+E1↑j
                 pop     bx
                 pop     ax
                 retf
-sub_2607F       endp
+DrawPartyMemberPortrait endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -39509,7 +39509,7 @@ loc_263BD:                              ; CODE XREF: sub_2621C+190↑j
                 call    sub_23874
                 call    sub_26C0E
                 push    cs
-                call    near ptr sub_2607F
+                call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 jmp     short loc_26409
 ; ---------------------------------------------------------------------------
@@ -39718,7 +39718,7 @@ loc_26595:                              ; CODE XREF: sub_26415+161↑j
 loc_265B0:                              ; CODE XREF: sub_26415+9B↑j
                                         ; sub_26415+BC↑j ...
                 push    cs
-                call    near ptr sub_2607F
+                call    near ptr DrawPartyMemberPortrait
                 mov     errorCode, 0
                 jmp     loc_266A1
 ; ---------------------------------------------------------------------------
@@ -39927,8 +39927,8 @@ sub_266D4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_26778       proc near               ; CODE XREF: sub_2607F+15A↑p
-                                        ; sub_2607F+167↑p ...
+sub_26778       proc near               ; CODE XREF: DrawPartyMemberPortrait+15A↑p
+                                        ; DrawPartyMemberPortrait+167↑p ...
                 cmp     ax, 0
                 jz      short locret_267A6
                 add     bx, word_328BC
@@ -39954,8 +39954,8 @@ sub_26778       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_267A7       proc near               ; CODE XREF: sub_2607F+58↑p
-                                        ; sub_2607F+7C↑p ...
+sub_267A7       proc near               ; CODE XREF: DrawPartyMemberPortrait+58↑p
+                                        ; DrawPartyMemberPortrait+7C↑p ...
                 cmp     word ptr [si], 0
                 jz      short loc_267E7
                 mov     ax, [di]
@@ -39994,7 +39994,7 @@ sub_267A7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_267F0       proc near               ; CODE XREF: sub_2607F+6B↑p
+sub_267F0       proc near               ; CODE XREF: DrawPartyMemberPortrait+6B↑p
                 call    LoadItemCatalogRecord
                 mov     ax, 28h ; '('
                 mov     bx, 40h ; '@'
@@ -40014,8 +40014,8 @@ sub_267F0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2681B       proc near               ; CODE XREF: sub_2607F+DA↑p
-                                        ; sub_2607F+EE↑p ...
+sub_2681B       proc near               ; CODE XREF: DrawPartyMemberPortrait+DA↑p
+                                        ; DrawPartyMemberPortrait+EE↑p ...
                 call    LoadItemCatalogRecord
                 mov     ax, 26h ; '&'
                 mov     bx, 24h ; '$'
@@ -40056,7 +40056,7 @@ sub_26864       proc near               ; CODE XREF: sub_2621C:loc_2628F↑p
                 call    sub_26B4F
                 call    sub_23874
                 push    cs
-                call    near ptr sub_2607F
+                call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
 sub_26864       endp
@@ -40073,7 +40073,7 @@ sub_2687B       proc near               ; CODE XREF: sub_2621C+1EA↑p
                 mov     word_2E530, 0
                 call    sub_23874
                 push    cs
-                call    near ptr sub_2607F
+                call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
 sub_2687B       endp
@@ -40105,7 +40105,7 @@ sub_268A0       proc near               ; CODE XREF: sub_2621C+EA↑p
                 pop     word_31948
                 call    sub_23874
                 push    cs
-                call    near ptr sub_2607F
+                call    near ptr DrawPartyMemberPortrait
                 call    sub_238CD
                 retn
 sub_268A0       endp
@@ -41716,7 +41716,7 @@ loc_2769D:                              ; CODE XREF: sub_274B4+195↑j
                 mov     word_328D4, ax
                 mov     si, ax
                 call    sub_2772C
-                call    sub_2607F
+                call    DrawPartyMemberPortrait
                 test    word_328C8, 0E000h
                 jz      short loc_276C2
                 mov     ax, word_31948

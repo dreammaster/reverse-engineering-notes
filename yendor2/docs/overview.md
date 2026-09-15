@@ -2759,6 +2759,15 @@ the clicked member.
 
 349 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowPartyPortraitForSlot and DrawPartyMemberPortrait
+
+Named the party-member portrait renderer used by
+RefreshPartyPortraits/HandlePortraitClick: character icon, status bar,
+and a condition icon. Full internal icon-selection logic not
+individually traced.
+
+351 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
