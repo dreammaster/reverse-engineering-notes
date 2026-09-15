@@ -335,7 +335,26 @@ the generic fields; `RunClueBookWeaponCategory` (subtype 8) similarly
 adds `ShowWeaponDetailRow` ("DAMAGE:" and "2-HANDED: YES/NO"); both
 end with `DrawSubIconSelectorRow`, drawing the clickable sub-icon
 indicator strip (region table `0x6976`, the same table
-`RunClueBookItemCategory` hit-tests, toggled by `word_328FE` bits) — the more complex
+`RunClueBookItemCategory` hit-tests, toggled by `word_328FE` bits).
+
+**Major reference find**: `ShowArmorDetailRow` also calls two
+bonus-list drawers, each iterating up to 4 `(type id, amount)` pairs
+at `word_2E54A` and printing `"+<amount> <name>"`:
+`ShowArmorProtectionsList` ("PROTECTIONS:", type id `<= 0x30`, a
+9-entry table — DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/
+CURSING/HEXING/JINXING) and `ShowArmorAttributeBonusList` ("ADDS:",
+type id `>= 0x7C`, a 27-entry table at `0x7DC7` that is the
+**canonical index order of the game's attribute/skill system** —
+`STRENGTH`, `DEXTERITY`, `STAMINA`, `INTELLIGENCE`, `WISDOM`,
+`CHARISMA`, 3 blank slots, `HIT POINTS`, `MAGIC POINTS`, a blank,
+`SURVIVAL`, `PROJECTILE`, `SLASHING`, `BASHING`, `POLEARM`,
+`CASTING`, `MAPPING`, `NAVIGATION`, `BARTERING`, `REPAIR`,
+`THIEVERY`, `LINGUISTICS`, `CHEMISTRY`, and more beyond the 150 bytes
+dumped so far — previously this skill list was only known piecemeal
+from a raw string scan; this table gives its actual in-engine index
+order, which future work can cross-reference against the party-record
+skill array (`+0xCA`–`+0xE9`) and `ShowCharacterSkills`'s 15-entry
+array. — the more complex
 `RunClueBookItemDetailWithAbilityInfo` (item subtypes 3–6, 4 call
 sites; simpler than `RunClueBookItemCategory` in that it has no click
 navigation) adds an extra ability-info overlay when the item's id

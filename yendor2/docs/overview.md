@@ -2839,6 +2839,23 @@ matching `UseHealingItem`'s own HP/MP flag convention.
 
 362 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowArmorProtectionsList and ShowArmorAttributeBonusList — a major reference find
+
+Named `ShowArmorDetailRow`'s two bonus-list drawers.
+`ShowArmorAttributeBonusList`'s lookup table (`0x7DC7`) turns out to
+be the **canonical index order of the game's entire attribute/skill
+system** — Strength/Dexterity/Stamina/Intelligence/Wisdom/Charisma,
+Hit Points/Magic Points, then Survival/Projectile/Slashing/Bashing/
+Polearm/Casting/Mapping/Navigation/Bartering/Repair/Thievery/
+Linguistics/Chemistry and more. Previously this skill list was only
+known piecemeal from a raw string scan; this gives its actual
+in-engine index order — a strong candidate for cross-referencing
+against the party-record skill array and `ShowCharacterSkills`.
+`ShowArmorProtectionsList` similarly names the 9 affliction-protection
+types armor can grant.
+
+364 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

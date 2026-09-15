@@ -5766,10 +5766,10 @@ ShowArmorDetailRow proc near            ; CODE XREF: RunClueBookItemCategory+20�
                 call    DrawLabeledNumberIfNonzero
                 mov     _textPos_y, 51h ; 'Q'
                 mov     _textPos_x, 55h ; 'U'
-                call    sub_149DD
+                call    ShowArmorProtectionsList
                 mov     _textPos_y, 6Fh ; 'o'
                 mov     _textPos_x, 7Fh
-                call    sub_148EA
+                call    ShowArmorAttributeBonusList
                 call    DrawSubIconSelectorRow
                 retn
 ShowArmorDetailRow endp
@@ -7333,8 +7333,8 @@ sub_148B2       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_148EA       proc near               ; CODE XREF: ShowArmorDetailRow+3C↑p
-                mov     _font_fgColor, 0Ah
+ShowArmorAttributeBonusList proc near   ; CODE XREF: ShowArmorDetailRow+3C↑p
+                mov     _font_fgColor, 0Ah ; 'ADDS:' attribute/skill bonus list for word_2E54A entries with type id >= 0x7C: table 0x7DC7 is the canonical 27-entry attribute/skill name list (STRENGTH..LINGUISTICS and beyond). Called from ShowArmorDetailRow.
                 mov     bx, 8AABh       ; msg
                 call    writeString
                 cmp     word_2E54A, 0
@@ -7342,14 +7342,14 @@ sub_148EA       proc near               ; CODE XREF: ShowArmorDetailRow+3C↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_14900:                              ; CODE XREF: sub_148EA+13↑j
+loc_14900:                              ; CODE XREF: ShowArmorAttributeBonusList+13↑j
                 push    si
                 mov     _font_fgColor, 0A7h
                 add     _textPos_x, 1Eh
                 mov     si, word_2E54A
                 mov     cx, 4
 
-loc_14913:                              ; CODE XREF: sub_148EA+7D↓j
+loc_14913:                              ; CODE XREF: ShowArmorAttributeBonusList+7D↓j
                 cmp     word ptr [si], 0
                 jz      short loc_14969
                 cmp     word ptr [si], 7Ch ; '|'
@@ -7366,7 +7366,7 @@ loc_14913:                              ; CODE XREF: sub_148EA+7D↓j
                 mov     ax, 7Ch ; '|'
                 mov     cx, 1Bh
 
-loc_14944:                              ; CODE XREF: sub_148EA+66↓j
+loc_14944:                              ; CODE XREF: ShowArmorAttributeBonusList+66↓j
                 cmp     ax, [si]
                 jz      short loc_14954
                 add     ax, 2
@@ -7375,22 +7375,22 @@ loc_14944:                              ; CODE XREF: sub_148EA+66↓j
                 jmp     short loc_14959
 ; ---------------------------------------------------------------------------
 
-loc_14954:                              ; CODE XREF: sub_148EA+5C↑j
+loc_14954:                              ; CODE XREF: ShowArmorAttributeBonusList+5C↑j
                 call    writeString
 
-loc_14959:                              ; CODE XREF: sub_148EA+68↑j
+loc_14959:                              ; CODE XREF: ShowArmorAttributeBonusList+68↑j
                 pop     cx
                 sub     _textPos_x, 18h
                 add     _textPos_y, 6
 
-loc_14964:                              ; CODE XREF: sub_148EA+31↑j
+loc_14964:                              ; CODE XREF: ShowArmorAttributeBonusList+31↑j
                 add     si, 4
                 loop    loc_14913
 
-loc_14969:                              ; CODE XREF: sub_148EA+2C↑j
+loc_14969:                              ; CODE XREF: ShowArmorAttributeBonusList+2C↑j
                 pop     si
                 retn
-sub_148EA       endp
+ShowArmorAttributeBonusList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7457,8 +7457,8 @@ DrawSubIconSelectorRow endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_149DD       proc near               ; CODE XREF: ShowArmorDetailRow+2D↑p
-                mov     _font_fgColor, 0Ah
+ShowArmorProtectionsList proc near      ; CODE XREF: ShowArmorDetailRow+2D↑p
+                mov     _font_fgColor, 0Ah ; 'PROTECTIONS:' list for word_2E54A entries with type id <= 0x30: DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31). Called from ShowArmorDetailRow.
                 mov     bx, 7B24h       ; msg
                 call    writeString
                 cmp     word_2E54A, 0
@@ -7466,14 +7466,14 @@ sub_149DD       proc near               ; CODE XREF: ShowArmorDetailRow+2D↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_149F3:                              ; CODE XREF: sub_149DD+13↑j
+loc_149F3:                              ; CODE XREF: ShowArmorProtectionsList+13↑j
                 push    si
                 mov     _font_fgColor, 0A7h
                 add     _textPos_x, 48h ; 'H'
                 mov     si, word_2E54A
                 mov     cx, 4
 
-loc_14A06:                              ; CODE XREF: sub_149DD+7D↓j
+loc_14A06:                              ; CODE XREF: ShowArmorProtectionsList+7D↓j
                 cmp     word ptr [si], 0
                 jz      short loc_14A5C
                 cmp     word ptr [si], 30h ; '0'
@@ -7490,7 +7490,7 @@ loc_14A06:                              ; CODE XREF: sub_149DD+7D↓j
                 mov     ax, 20h ; ' '
                 mov     cx, 9
 
-loc_14A37:                              ; CODE XREF: sub_149DD+66↓j
+loc_14A37:                              ; CODE XREF: ShowArmorProtectionsList+66↓j
                 cmp     ax, [si]
                 jz      short loc_14A47
                 add     ax, 2
@@ -7499,22 +7499,22 @@ loc_14A37:                              ; CODE XREF: sub_149DD+66↓j
                 jmp     short loc_14A4C
 ; ---------------------------------------------------------------------------
 
-loc_14A47:                              ; CODE XREF: sub_149DD+5C↑j
+loc_14A47:                              ; CODE XREF: ShowArmorProtectionsList+5C↑j
                 call    writeString
 
-loc_14A4C:                              ; CODE XREF: sub_149DD+68↑j
+loc_14A4C:                              ; CODE XREF: ShowArmorProtectionsList+68↑j
                 pop     cx
                 sub     _textPos_x, 18h
                 add     _textPos_y, 6
 
-loc_14A57:                              ; CODE XREF: sub_149DD+31↑j
+loc_14A57:                              ; CODE XREF: ShowArmorProtectionsList+31↑j
                 add     si, 4
                 loop    loc_14A06
 
-loc_14A5C:                              ; CODE XREF: sub_149DD+2C↑j
+loc_14A5C:                              ; CODE XREF: ShowArmorProtectionsList+2C↑j
                 pop     si
                 retn
-sub_149DD       endp
+ShowArmorProtectionsList endp
 
 
 ; =============== S U B R O U T I N E =======================================

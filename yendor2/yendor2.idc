@@ -2010,7 +2010,9 @@ static Bytes_0(void) {
 	create_insn	(0X14876);
 	set_name	(0X14876,	"DrawLabeledNumberIfNonzero");
 	create_insn	(0X148B2);
+	set_cmt	(0X148EA,	"'ADDS:' attribute/skill bonus list for word_2E54A entries with type id >= 0x7C: table 0x7DC7 is the canonical 27-entry attribute/skill name list (STRENGTH..LINGUISTICS and beyond). Called from ShowArmorDetailRow.",	0);
 	create_insn	(0X148EA);
+	set_name	(0X148EA,	"ShowArmorAttributeBonusList");
 	set_cmt	(0X148F0,	"msg",	0);
 	create_insn	(0X14900);
 	set_cmt	(0X1493B,	"msg",	0);
@@ -2024,7 +2026,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X149D5);
 	op_hex		(x,	1);
 	create_insn	(0X149DC);
+	set_cmt	(0X149DD,	"'PROTECTIONS:' list for word_2E54A entries with type id <= 0x30: DISEASE/POISON/SICKNESS/STONING/FROZEN/PARALYZE/CURSING/HEXING/JINXING (table 0x7B31). Called from ShowArmorDetailRow.",	0);
 	create_insn	(0X149DD);
+	set_name	(0X149DD,	"ShowArmorProtectionsList");
 	set_cmt	(0X149E3,	"msg",	0);
 	create_insn	(0X149F3);
 	set_cmt	(0X14A2E,	"msg",	0);
@@ -3719,10 +3723,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1AA53,	"AddToStatCapped(ax=delta, bx=field offset on word_328D4): [word_328D4+bx] += ax, clamped at 9999 for HP/MP fields (+0x52/+0x92/+0x54/+0x94) or 999 otherwise. errorCode: 2 if the field was 0 (uninitialized, not applied), 1 if clamped, 0 if applied cleanly.",	0);
 	create_insn	(0X1AA53);
 	set_name	(0X1AA53,	"AddToStatCapped");
-	create_insn	(0X1AA9B);
-	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
-	create_insn	(0X1AB26);
-	set_name	(0X1AB26,	"UpdatePartyAverageStatTiers");
 }
 
 //------------------------------------------------------------------------
@@ -3732,6 +3732,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1AA9B);
+	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
+	create_insn	(0X1AB26);
+	set_name	(0X1AB26,	"UpdatePartyAverageStatTiers");
 	create_insn	(x=0X1AB31);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AB62);
@@ -6010,6 +6014,15 @@ static Bytes_1(void) {
 	set_cmt	(0X232A8,	"Draws the 3 g_monsterSlots info panels via DrawMonsterInfoPanel at 3 fixed screen positions (previously misidentified as generic 'status widgets' before BuildCombatTurnOrder confirmed these addresses are monster records).",	0);
 	create_insn	(0X232A8);
 	set_name	(0X232A8,	"DrawMonsterInfoPanels");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X232B9);
 	op_hex		(x,	1);
 	create_insn	(0X23305);
@@ -6033,15 +6046,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X233F5);
 	op_hex		(x,	1);
 	set_name	(0X233F5,	"TryActivateMonsterByDistance");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X233FD);
 	create_insn	(x=0X23404);
 	op_hex		(x,	1);
@@ -9056,6 +9060,15 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD04);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2BD07);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2BD0D);
@@ -9095,15 +9108,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
 	set_name	(0X2C010,	"RepairItemCommand");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2C03D);
 	create_insn	(x=0X2C050);
 	op_hex		(x,	1);
