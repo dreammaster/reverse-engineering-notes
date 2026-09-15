@@ -2998,6 +2998,19 @@ here" marker on the local area map at the party's current position.
 executable is now named**, up from 45 (5.8%) at the very start of this
 project's work on `SW.EXE`.
 
+### 2026-09-15 session update, continued: TryCureAilmentFromIconClick
+
+Named `sub_2738B`, initially misread as a generic 6-slot equipment
+icon bar — caught before committing: the table it reads (`0x9519`) is
+already documented elsewhere as the 6-entry *ailment* table
+`TickWorldAilments` walks, not a generic item table. Corrected to
+`TryCureAilmentFromIconClick`: click handler for the active-ailment
+icon bar, staging the clicked ailment (loaded via the item-catalog
+path — ailment codes and item ids appear to share a numbering space)
+into the "carrying" state, plausibly to apply a held cure item to it.
+
+386 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

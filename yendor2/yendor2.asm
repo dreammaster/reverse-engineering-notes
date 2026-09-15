@@ -650,7 +650,7 @@ loc_10541:                              ; CODE XREF: start+53C↑j
 ; ---------------------------------------------------------------------------
 
 loc_1056B:                              ; CODE XREF: start+522↑j
-                call    sub_2738B
+                call    TryCureAilmentFromIconClick
                 cmp     errorCode, 2
                 jz      short loc_1057A
                 jmp     loc_10043
@@ -10433,7 +10433,7 @@ loc_16594:                              ; CODE XREF: HandleDungeonInput+17E↑j
 ; ---------------------------------------------------------------------------
 
 loc_165A9:                              ; CODE XREF: HandleDungeonInput+183↑j
-                call    sub_2738B
+                call    TryCureAilmentFromIconClick
                 cmp     errorCode, 2
                 jnz     short loc_1658C
                 call    RestoreCursorBackgroundIfDirty
@@ -12425,7 +12425,7 @@ loc_174CE:                              ; CODE XREF: RunShopScreen+5E↑j
                 jz      short loc_1753B
                 cmp     ax, 2
                 jnz     short loc_174FD
-                call    sub_2738B
+                call    TryCureAilmentFromIconClick
                 cmp     errorCode, 2
                 jz      short loc_17557
 
@@ -15005,7 +15005,7 @@ loc_1894A:                              ; CODE XREF: sub_1869D+3A↑j
 loc_1896B:                              ; CODE XREF: sub_1869D+2C9↑j
                 cmp     ax, 2
                 jnz     short loc_1897C
-                call    sub_2738B
+                call    TryCureAilmentFromIconClick
                 cmp     errorCode, 2
                 jz      short loc_189B4
 
@@ -41325,9 +41325,9 @@ sub_271DC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2738B       proc far                ; CODE XREF: start:loc_1056B↑P
+TryCureAilmentFromIconClick proc far    ; CODE XREF: start:loc_1056B↑P
                                         ; HandleDungeonInput:loc_165A9↑P ...
-                push    ax
+                push    ax              ; CORRECTED: click handler for the 6-slot active-ailment icon bar (word_36C7F bit 0x1000), not a generic equipment bar. Hit-tests region table 0x636C, maps to the 6-entry ailment table 0x9519 (same table TickWorldAilments walks -- [+0]=ailment code matching TickStatusEffects' 9/0xF/0xC, [+2]=duration; also read by IsItemRangeAvailable). Loads the ailment code as an item-catalog record (ailment codes and item ids appear to share a numbering space elsewhere in this engine too), validates via sub_2D5E0 if needed, then stages it into the 'carrying' state (errorCode=2) -- plausibly clicking an active ailment icon to apply a held cure item to it. Called from `start` and HandleDungeonInput.
                 push    bx
                 push    cx
                 push    dx
@@ -41361,14 +41361,14 @@ sub_2738B       proc far                ; CODE XREF: start:loc_1056B↑P
                 cmp     ax, 9
                 jz      short loc_273E6
 
-loc_273DE:                              ; CODE XREF: sub_2738B+D↑j
-                                        ; sub_2738B+21↑j ...
+loc_273DE:                              ; CODE XREF: TryCureAilmentFromIconClick+D↑j
+                                        ; TryCureAilmentFromIconClick+21↑j ...
                 mov     errorCode, 0
                 jmp     short loc_27439
 ; ---------------------------------------------------------------------------
 
-loc_273E6:                              ; CODE XREF: sub_2738B+29↑j
-                                        ; sub_2738B+31↑j ...
+loc_273E6:                              ; CODE XREF: TryCureAilmentFromIconClick+29↑j
+                                        ; TryCureAilmentFromIconClick+31↑j ...
                 cmp     word_31946, 0
                 jnz     short loc_273DE
                 cmp     word ptr [di], 0
@@ -41380,7 +41380,7 @@ loc_273E6:                              ; CODE XREF: sub_2738B+29↑j
                 call    sub_2D5E0
                 jz      short loc_273DE
 
-loc_27407:                              ; CODE XREF: sub_2738B+73↑j
+loc_27407:                              ; CODE XREF: TryCureAilmentFromIconClick+73↑j
                 mov     ax, [di+2]
                 mov     word_32970, ax
                 mov     ax, [di]
@@ -41393,7 +41393,7 @@ loc_27407:                              ; CODE XREF: sub_2738B+73↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     errorCode, 2
 
-loc_27439:                              ; CODE XREF: sub_2738B+59↑j
+loc_27439:                              ; CODE XREF: TryCureAilmentFromIconClick+59↑j
                 pop     es
                 pop     di
                 pop     si
@@ -41402,7 +41402,7 @@ loc_27439:                              ; CODE XREF: sub_2738B+59↑j
                 pop     bx
                 pop     ax
                 retf
-sub_2738B       endp
+TryCureAilmentFromIconClick endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -53317,7 +53317,7 @@ seg126          segment byte public 'CODE' use16
 
 
 sub_2D5E0       proc far                ; CODE XREF: sub_26415:loc_26473↑P
-                                        ; sub_2738B+75↑P
+                                        ; TryCureAilmentFromIconClick+75↑P
                 push    bx
                 mov     bx, word_2E546
                 test    word ptr [bx+0Ch], 0C000h
@@ -74361,7 +74361,7 @@ word_3296C      dw 0                    ; DATA XREF: IsItemRangeAvailable+23↑w
 word_3296E      dw 0                    ; DATA XREF: IsItemRangeAvailable+2F↑w
                                         ; FindItemInsideContainer+69↑w ...
 word_32970      dw 0                    ; DATA XREF: sub_26415+27E↑w
-                                        ; sub_2738B+7F↑w ...
+                                        ; TryCureAilmentFromIconClick+7F↑w ...
 word_32972      dw 0                    ; DATA XREF: IsItemRangeAvailable+29↑w
                                         ; FindItemInsideContainer+62↑r ...
 word_32974      dw 0                    ; DATA XREF: seg000:0850↑r

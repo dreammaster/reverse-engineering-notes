@@ -6980,7 +6980,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X27359);
 	op_hex		(x,	1);
 	create_insn	(0X27369);
+	set_cmt	(0X2738B,	"CORRECTED: click handler for the 6-slot active-ailment icon bar (word_36C7F bit 0x1000), not a generic equipment bar. Hit-tests region table 0x636C, maps to the 6-entry ailment table 0x9519 (same table TickWorldAilments walks -- [+0]=ailment code matching TickStatusEffects' 9/0xF/0xC, [+2]=duration; also read by IsItemRangeAvailable). Loads the ailment code as an item-catalog record (ailment codes and item ids appear to share a numbering space elsewhere in this engine too), validates via sub_2D5E0 if needed, then stages it into the 'carrying' state (errorCode=2) -- plausibly clicking an active ailment icon to apply a held cure item to it. Called from `start` and HandleDungeonInput.",	0);
 	create_insn	(0X2738B);
+	set_name	(0X2738B,	"TryCureAilmentFromIconClick");
 	create_insn	(x=0X27392);
 	op_hex		(x,	1);
 	create_insn	(0X273E6);
@@ -8962,12 +8964,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2B739,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
 	create_insn	(0X2B739);
 	set_name	(0X2B739,	"LoadConversationText_1000");
-	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
-	create_insn	(0X2B755);
-	set_name	(0X2B755,	"LoadConversationText_2000");
-	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
-	create_insn	(0X2B771);
-	set_name	(0X2B771,	"LoadConversationText_800");
 }
 
 //------------------------------------------------------------------------
@@ -8977,6 +8973,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2B755,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
+	create_insn	(0X2B755);
+	set_name	(0X2B755,	"LoadConversationText_2000");
+	set_cmt	(0X2B771,	"Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.",	0);
+	create_insn	(0X2B771);
+	set_name	(0X2B771,	"LoadConversationText_800");
 	set_cmt	(0X2B78D,	"One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.",	0);
 	create_insn	(0X2B78D);
 	set_name	(0X2B78D,	"ShowConversationText_4000");

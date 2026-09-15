@@ -1125,7 +1125,12 @@ status-ailment duration sweep, not an item timer: it ticks a shared
 "ailment slot" format (`[+0]`=ailment code `9`/`0xF`/`0xC`, matching
 `TickStatusEffects`; `[+2]`=remaining duration) across a 6-entry world
 table (`0x9519`, also read by `IsItemRangeAvailable` — see the
-"Quest-item and party-inventory range checks" note below) and every
+"Quest-item and party-inventory range checks" note below — and by
+`TryCureAilmentFromIconClick`, the click handler for this same 6-slot
+active-ailment icon bar: hit-tests region table `0x636C`, loads the
+clicked ailment's code as an item-catalog record — ailment codes and
+item ids appear to share a numbering space — then stages it into the
+"carrying" state, plausibly to apply a held cure item to it) and every
 party member's main inventory (`+0x11A`), decrementing one of 3 global
 per-ailment counters (`0x9425`/`0x9429`/`0x942B`) to zero before
 clearing the corresponding `word_36C79` flag — and disables itself
