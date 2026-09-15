@@ -2514,6 +2514,16 @@ relative to a base frame.
 
 315 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawDungeonFloorAndCeiling and ExtendDungeonFloorTexture
+
+Named a separate rendering pass that runs before `RenderDungeonViewport`:
+`DrawDungeonFloorAndCeiling` draws the sky/floor backdrop, then
+`ExtendDungeonFloorTexture` extends the floor texture across cells
+sharing the same floor type — a simpler "seamless floor" pass,
+distinct from `RenderDungeonViewRow`'s full wall/object rendering.
+
+317 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

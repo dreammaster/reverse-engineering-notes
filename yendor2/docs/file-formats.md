@@ -540,6 +540,14 @@ side-feature sprite (table at `0xE175`, same facing-tier pattern as
 conditional overlay for what's plausibly an open-door/lit-torch
 variant.
 
+Before `RenderDungeonViewport` runs, both `RedrawDungeonScreen` and
+`RefreshDungeonScreen` first call `DrawDungeonFloorAndCeiling`: draws
+the sky/ceiling and floor backdrop pictures for the current cell, then
+calls `ExtendDungeonFloorTexture` six times (same row pattern) to
+extend the floor texture across cells sharing the same floor type — a
+simpler "seamless floor" pass, distinct from `RenderDungeonViewRow`'s
+full per-cell wall/object rendering.
+
 `RenderDungeonViewport`'s 7th and final call is
 `RenderDungeonVanishingPoint`, structurally different from the other
 six: draws the far-wall/vanishing-point cells at the end of the

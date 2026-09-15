@@ -5308,8 +5308,12 @@ static Bytes_1(void) {
 	create_insn	(0X20CEC);
 	create_insn	(x=0X20CED);
 	op_hex		(x,	1);
+	set_cmt	(0X20D2F,	"Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.",	0);
 	create_insn	(0X20D2F);
+	set_name	(0X20D2F,	"DrawDungeonFloorAndCeiling");
+	set_cmt	(0X20E12,	"For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.",	0);
 	create_insn	(0X20E12);
+	set_name	(0X20E12,	"ExtendDungeonFloorTexture");
 	create_insn	(x=0X20E13);
 	op_hex		(x,	1);
 	set_cmt	(0X20E54,	"Draws a monster's sprite in the dungeon viewport (base picture, wound-flash animation via [+0xC] bits 2/4, optional overlay via bit 0x10, plus a weapon/attack-effect sprite), then checks [+0xC] bits 0x3010 (same flags ProcessLevelMonsters documents for TickMonsterTimer's two-phase countdown): if set, resets the countdown; else calls sub_25656 (not traced, plausibly attack resolution). Called from TryTriggerMonsterEncounterAtCell and RenderActiveMonsterSprites.",	0);
@@ -6576,6 +6580,15 @@ static Bytes_1(void) {
 	create_insn	(0X26176);
 	create_insn	(x=0X2617D);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X26192);
 	create_insn	(x=0X261A2);
 	op_hex		(x,	1);
@@ -6661,15 +6674,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2661B);
 	op_hex		(x,	1);
 	create_insn	(0X2663F);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X26660,	"this",	0);
 	create_insn	(0X266A9);
 	create_insn	(x=0X266B4);
@@ -10029,6 +10033,15 @@ static Bytes_2(void) {
 	set_name	(0X35074,	"aMagicDragon");
 	set_cmt	(0X3508E,	"Picture directory for PICTURES.VGA -- exactly 10 entries (confirmed by scanning for plausible width/height/offset until the pattern breaks down). 16-byte entries: word @+8 = width, word @+0xA = height, dword (low @+0xC, high @+0xE) = byte offset into PICTURES.VGA. Raw 8bpp indexed pixels, no per-image header. Full catalog, extracted and visually identified via extract_pic.py:\n  0: 318x198 @ 0x0        -- \"SmithWare\" splash-screen logo\n  1: 210x105 @ 0xE694C    -- GameDialog button panel background\n  2: 140x155 @ 0x3064B6   -- two-figure combat/fighting scene\n  3: 190x110 @ 0x779552   -- wolf/monster silhouette\n  4: 224x74  @ 0xAB3F1A   -- light gradient panel (sky/background?)\n  5: 224x62  @ 0xAFCC9A   -- sky/cloud gradient\n  6: 56x136  @ 0xB2579A   -- male character silhouette (char. creation?)\n  7: 32x32   @ 0xB8BBDA   -- icon (indistinct in grayscale, real palette not recovered)\n  8: 16x16   @ 0xBCF3DA   -- mouse cursor\n  9: 8x8     @ 0xBEF1DA   -- scroll-arrow icon\nIndexed as g_pictureDir + word_2E532 (p" "i",	0);
 	set_name	(0X3508E,	"g_pictureDir");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3512E,	0X9);
 	set_name	(0X3512E,	"aNorth");
 	create_strlit	(0X35137,	0X9);
@@ -10065,15 +10078,6 @@ static Bytes_2(void) {
 	create_word	(0X351A0);
 	create_word	(0X351A3);
 	create_word	(0X351A5);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X351A8,	0X1A);
 	create_strlit	(0X351C2,	0X13);
 	set_name	(0X351C2,	"aCharacterCreat");

@@ -29543,7 +29543,7 @@ RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                 call    sub_21306       ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
                 call    sub_213FC
                 call    sub_2784A
-                call    sub_20D2F
+                call    DrawDungeonFloorAndCeiling
                 call    sub_20C8E
                 call    RenderDungeonViewport
                 test    word_36C7F, 1000h
@@ -29562,7 +29562,7 @@ RedrawDungeonScreen endp
 RefreshDungeonScreen proc far           ; CODE XREF: start+85↑P
                                         ; start+4F6↑P ...
                 call    sub_2784A       ; Lighter dungeon-screen redraw (skips sub_21306/sub_213FC vs. RedrawDungeonScreen): sub_2784A/sub_20D2F/sub_20C8E, RenderDungeonViewport, conditional ShowResourceDepletedOverlay, plus a conditional DrawMinimap. Called from `start`.
-                call    sub_20D2F
+                call    DrawDungeonFloorAndCeiling
                 call    sub_20C8E
                 call    RenderDungeonViewport
                 test    word_36C7F, 1000h
@@ -29587,7 +29587,7 @@ RefreshDungeonScreen endp
 
 
 IsPairedValueMatch proc near            ; CODE XREF: sub_20CEC+18↓p
-                                        ; sub_20E12+17↓p
+                                        ; ExtendDungeonFloorTexture+17↓p
                 cmp     ax, bx          ; Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.
                 jnz     short loc_20C81
                 retn
@@ -29682,9 +29682,9 @@ sub_20CEC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20D2F       proc near               ; CODE XREF: RedrawDungeonScreen+B↑p
+DrawDungeonFloorAndCeiling proc near    ; CODE XREF: RedrawDungeonScreen+B↑p
                                         ; RefreshDungeonScreen+5↑p
-                mov     es, word_2E562
+                mov     es, word_2E562  ; Draws the dungeon backdrop: ceiling (word_2E498) and floor (word_2E4A0) pictures from the current cell's 0xE551 table entry, then calls ExtendDungeonFloorTexture 6x (same row-pointer pattern as RenderDungeonViewport) to extend the floor texture across matching cells. Called from RedrawDungeonScreen/RefreshDungeonScreen just before RenderDungeonViewport.
                 mov     di, word_328D2
                 mov     si, 0E551h
                 mov     ax, 0Ch
@@ -29699,8 +29699,8 @@ sub_20D2F       proc near               ; CODE XREF: RedrawDungeonScreen+B↑p
                 jz      short loc_20D5C
                 mov     ax, 1
 
-loc_20D5C:                              ; CODE XREF: sub_20D2F+18↑j
-                                        ; sub_20D2F+20↑j ...
+loc_20D5C:                              ; CODE XREF: DrawDungeonFloorAndCeiling+18↑j
+                                        ; DrawDungeonFloorAndCeiling+20↑j ...
                 mov     word_2E498, ax
                 mov     ax, [si]
                 mov     word_2E4A0, ax
@@ -29726,41 +29726,41 @@ loc_20D5C:                              ; CODE XREF: sub_20D2F+18↑j
                 mov     cx, 11h
                 mov     ax, word_328E6
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 11h
                 mov     ax, word_328E8
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 5
                 mov     ax, word_328EA
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, word_328EC
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, word_328EE
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, word_328F0
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 mov     cx, 3
                 mov     ax, word_328F2
                 mov     word_32926, ax
-                call    sub_20E12
+                call    ExtendDungeonFloorTexture
                 retn
-sub_20D2F       endp
+DrawDungeonFloorAndCeiling endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20E12       proc near               ; CODE XREF: sub_20D2F+97↑p
-                                        ; sub_20D2F+A3↑p ...
-                push    cx
+ExtendDungeonFloorTexture proc near     ; CODE XREF: DrawDungeonFloorAndCeiling+97↑p
+                                        ; DrawDungeonFloorAndCeiling+A3↑p ...
+                push    cx              ; For each cell in one row, draws the current floor picture (word_2E4A0) if the cell's type shares that same floor (IsPairedValueMatch) -- a seamless-floor pass, simpler than RenderDungeonViewRow's full wall/object rendering. Called 6x by DrawDungeonFloorAndCeiling.
                 test    word ptr [di+6], 1
                 jnz     short loc_20E49
                 mov     si, 0E551h
@@ -29777,14 +29777,14 @@ sub_20E12       proc near               ; CODE XREF: sub_20D2F+97↑p
                 mov     _font_bgTransparent, 0
                 call    sub_29B0F
 
-loc_20E49:                              ; CODE XREF: sub_20E12+6↑j
-                                        ; sub_20E12+1A↑j
+loc_20E49:                              ; CODE XREF: ExtendDungeonFloorTexture+6↑j
+                                        ; ExtendDungeonFloorTexture+1A↑j
                 add     di, 8
                 inc     word_3292C
                 pop     cx
-                loop    sub_20E12
+                loop    ExtendDungeonFloorTexture
                 retn
-sub_20E12       endp
+ExtendDungeonFloorTexture endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -47143,8 +47143,8 @@ sub_29B0F       endp
 
 ; Attributes: bp-based frame
 
-sub_29FF6       proc far                ; CODE XREF: sub_20D2F+5E↑P
-                                        ; sub_20D2F+80↑P
+sub_29FF6       proc far                ; CODE XREF: DrawDungeonFloorAndCeiling+5E↑P
+                                        ; DrawDungeonFloorAndCeiling+80↑P
 
 var_21          = byte ptr -21h
 var_8           = word ptr -8
@@ -56755,15 +56755,15 @@ word_2E494      dw 0FFFFh               ; DATA XREF: sub_2827E:loc_28289↑r
 word_2E496      dw 0                    ; DATA XREF: RunMapEditorScreen+32↑w
                                         ; RunMapEditorScreen+27D↑w ...
 word_2E498      dw 0                    ; DATA XREF: sub_20CEC+12↑r
-                                        ; sub_20D2F:loc_20D5C↑w ...
+                                        ; DrawDungeonFloorAndCeiling:loc_20D5C↑w ...
 word_2E49A      dw 0                    ; DATA XREF: HandleDungeonInput↑w
                                         ; sub_16881+5↑w ...
 word_2E49C      dw 0                    ; DATA XREF: HandleDungeonInput+C↑w
                                         ; HandleDungeonInput+359↑r ...
 word_2E49E      dw 0                    ; DATA XREF: HandleDungeonInput+6↑w
                                         ; sub_16881+B↑w ...
-word_2E4A0      dw 0                    ; DATA XREF: sub_20D2F+32↑w
-                                        ; sub_20D2F+75↑r ...
+word_2E4A0      dw 0                    ; DATA XREF: DrawDungeonFloorAndCeiling+32↑w
+                                        ; DrawDungeonFloorAndCeiling+75↑r ...
 word_2E4A2      dw 0                    ; DATA XREF: RunMapEditorScreen+38↑w
                                         ; RunMapEditorScreen+294↑w ...
                 db    0
@@ -74215,19 +74215,19 @@ word_328E2      dw 0                    ; DATA XREF: sub_1CCBC+C5↑w
 word_328E4      dw 0                    ; DATA XREF: sub_1CCBC+CB↑w
                                         ; sub_1CCBC+E2↑w
 word_328E6      dw 0                    ; DATA XREF: sub_20C8E+C↑r
-                                        ; sub_20D2F+91↑r ...
+                                        ; DrawDungeonFloorAndCeiling+91↑r ...
 word_328E8      dw 0                    ; DATA XREF: sub_20C8E+18↑r
-                                        ; sub_20D2F+9D↑r ...
+                                        ; DrawDungeonFloorAndCeiling+9D↑r ...
 word_328EA      dw 0                    ; DATA XREF: sub_20C8E+24↑r
-                                        ; sub_20D2F+A9↑r ...
+                                        ; DrawDungeonFloorAndCeiling+A9↑r ...
 word_328EC      dw 0                    ; DATA XREF: sub_20C8E+30↑r
-                                        ; sub_20D2F+B5↑r ...
+                                        ; DrawDungeonFloorAndCeiling+B5↑r ...
 word_328EE      dw 0                    ; DATA XREF: sub_20C8E+3C↑r
-                                        ; sub_20D2F+C1↑r ...
+                                        ; DrawDungeonFloorAndCeiling+C1↑r ...
 word_328F0      dw 0                    ; DATA XREF: sub_20C8E+48↑r
-                                        ; sub_20D2F+CD↑r ...
+                                        ; DrawDungeonFloorAndCeiling+CD↑r ...
 word_328F2      dw 0                    ; DATA XREF: sub_20C8E+54↑r
-                                        ; sub_20D2F+D9↑r ...
+                                        ; DrawDungeonFloorAndCeiling+D9↑r ...
 word_328F4      dw 0                    ; DATA XREF: UseItem:loc_17F7E↑r
                                         ; UseItem+3F3↑r ...
 word_328F6      dw 0                    ; DATA XREF: ApplyItemEffectFlags+12↑w
