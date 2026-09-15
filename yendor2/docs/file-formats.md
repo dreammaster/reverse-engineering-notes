@@ -416,7 +416,14 @@ bits on `word_32DCE`. How much detail is revealed is gated on the
 current party member's `+0x6C` field against ASCII-looking thresholds
 (`0x37`/`'7'`, `0x41`/`'A'`, `0x50`/`'P'`) — plausibly a lockpicking or
 perception skill value, not confirmed against `ShowCharacterSkills`'
-15-entry skill array yet.
+15-entry skill array yet. **A neighboring field, `+0x6E`**, plays a
+similar role for NPC conversations: `ClassifyConversationSkillTier`
+(called before every `RunConversation` topic display) compares it
+against tiered thresholds to gate how much an NPC reveals — plausibly
+a charisma/persuasion-like stat. Both `+0x6C` and `+0x6E` sit outside
+the confirmed `+0xCA`–`+0xE9` skill array, so they're either a
+separate small cluster of derived/social skills or something else
+entirely — not confirmed.
 
 **Key items reference locks by their own catalog type value**:
 `UseItem`'s `UseKeyItem` branch passes a key item's own type-flags

@@ -49785,7 +49785,7 @@ loc_2B6A6:                              ; CODE XREF: RunConversation+B↑j
                 mov     bx, word_2E548
                 test    word ptr [bx+2], 4000h
                 jz      short loc_2B6E1
-                call    sub_2B9D4
+                call    ClassifyConversationSkillTier
                 call    ShowConversationText_4000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
@@ -49793,7 +49793,7 @@ loc_2B6A6:                              ; CODE XREF: RunConversation+B↑j
 loc_2B6E1:                              ; CODE XREF: RunConversation+81↑j
                 test    word ptr [bx+2], 2000h
                 jz      short loc_2B6F0
-                call    sub_2B9D4
+                call    ClassifyConversationSkillTier
                 call    ShowConversationText_2000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
@@ -49801,7 +49801,7 @@ loc_2B6E1:                              ; CODE XREF: RunConversation+81↑j
 loc_2B6F0:                              ; CODE XREF: RunConversation+90↑j
                 test    word ptr [bx+2], 1000h
                 jz      short loc_2B6FF
-                call    sub_2B9D4
+                call    ClassifyConversationSkillTier
                 call    ShowConversationText_1000
                 jmp     short loc_2B70C
 ; ---------------------------------------------------------------------------
@@ -49809,7 +49809,7 @@ loc_2B6F0:                              ; CODE XREF: RunConversation+90↑j
 loc_2B6FF:                              ; CODE XREF: RunConversation+9F↑j
                 test    word ptr [bx+2], 800h
                 jz      short loc_2B70C
-                call    sub_2B9D4
+                call    ClassifyConversationSkillTier
                 call    ShowConversationText_800
 
 loc_2B70C:                              ; CODE XREF: RunConversation+2C↑j
@@ -50086,9 +50086,9 @@ ShowConversationText_800 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B9D4       proc near               ; CODE XREF: RunConversation+83↑p
+ClassifyConversationSkillTier proc near ; CODE XREF: RunConversation+83↑p
                                         ; RunConversation+92↑p ...
-                and     word_328C4, 0FFC1h
+                and     word_328C4, 0FFC1h ; Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.
                 mov     fontOffset, 2
                 mov     ax, 41h ; 'A'
                 mov     dx, 46h ; 'F'
@@ -50115,15 +50115,15 @@ sub_2B9D4       proc near               ; CODE XREF: RunConversation+83↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BA30:                              ; CODE XREF: sub_2B9D4+1C↑j
-                                        ; sub_2B9D4+35↑j ...
+loc_2BA30:                              ; CODE XREF: ClassifyConversationSkillTier+1C↑j
+                                        ; ClassifyConversationSkillTier+35↑j ...
                 mov     bx, word_328D4
                 cmp     [bx+6Eh], ax
                 jge     short loc_2BA3A
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BA3A:                              ; CODE XREF: sub_2B9D4+63↑j
+loc_2BA3A:                              ; CODE XREF: ClassifyConversationSkillTier+63↑j
                 cmp     [bx+6Eh], dx
                 jl      short loc_2BA5B
                 cmp     [bx+6Eh], di
@@ -50134,20 +50134,20 @@ loc_2BA3A:                              ; CODE XREF: sub_2B9D4+63↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BA4F:                              ; CODE XREF: sub_2B9D4+73↑j
+loc_2BA4F:                              ; CODE XREF: ClassifyConversationSkillTier+73↑j
                 or      word_328C4, 4
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BA55:                              ; CODE XREF: sub_2B9D4+6E↑j
+loc_2BA55:                              ; CODE XREF: ClassifyConversationSkillTier+6E↑j
                 or      word_328C4, 8
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_2BA5B:                              ; CODE XREF: sub_2B9D4+69↑j
+loc_2BA5B:                              ; CODE XREF: ClassifyConversationSkillTier+69↑j
                 or      word_328C4, 10h
                 retn
-sub_2B9D4       endp
+ClassifyConversationSkillTier endp
 
 seg119          ends
 

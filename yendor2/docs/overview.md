@@ -1645,6 +1645,20 @@ categories" guess, even though which specific category each is
 
 223 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a skill-gated conversation system
+
+Traced `sub_2B9D4`, called before every `RunConversation` topic
+display: compares the party member's `+0x6E` field against tiered
+thresholds (selected by the topic's own difficulty bits) to gate how
+much an NPC reveals — a 4-tier "response quality" system, plausibly
+driven by a charisma/persuasion-like stat. Named
+`ClassifyConversationSkillTier`. `+0x6E` sits right next to `+0x6C`
+(the lockpicking/perception-like field from `ShowLockStatus`), outside
+the confirmed skill array — a small cluster of derived/social stats,
+or something else, not confirmed either way.
+
+224 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

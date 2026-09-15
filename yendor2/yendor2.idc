@@ -8683,8 +8683,10 @@ static Bytes_2(void) {
 	create_insn	(0X2B948);
 	set_name	(0X2B948,	"ShowConversationText_800");
 	create_insn	(0X2B9C8);
+	set_cmt	(0X2B9D4,	"Skill-gated response-quality classifier, called before every RunConversation topic display. word_2E548's own [+2] bits (8/4/2) select one of 4 threshold ladders; the current party member's [+0x6E] (plausibly charisma/persuasion, adjacent to [+0x6C]'s lockpicking/perception role) is compared against them. Below the lowest threshold: word_328C4 bit 0x20 (minimal response). Otherwise: bit 2/4/8/0x10 depending on the band -- a 4-tier 'how much the NPC reveals' gate.",	0);
 	create_insn	(x=0X2B9D4);
 	op_hex		(x,	1);
+	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
 	create_insn	(x=0X2B9EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA04);
