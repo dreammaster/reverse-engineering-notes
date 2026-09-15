@@ -1566,9 +1566,9 @@ static Bytes_0(void) {
 	create_insn	(0X12C86);
 	create_insn	(x=0X12C88);
 	op_hex		(x,	1);
-	set_cmt	(0X12C96,	"Draws a scrollable save-slot list: word_2E3EC entries at positions from a table (0x68D2, stride 0xA), highlighting the selected one (word_2E3EE). Each entry's status/validation text comes from BuildLoadValidationMessage. Shows scroll indicators when the list extends beyond the visible window.",	0);
+	set_cmt	(0X12C96,	"CORRECTED from 'DrawSaveSlotList'. Draws the scrollable list of individual clue-book entries for the current category (word_2E3EC entries, table at 0x68D2), highlighting the selected one (word_2E3EE), text from BuildClueEntryText, with scroll indicators when the category has more entries than fit on screen.",	0);
 	create_insn	(0X12C96);
-	set_name	(0X12C96,	"DrawSaveSlotList");
+	set_name	(0X12C96,	"DrawClueEntryList");
 	create_insn	(x=0X12CB8);
 	op_hex		(x,	1);
 	create_insn	(x=0X12CC0);
@@ -1603,14 +1603,14 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X12E3F);
 	create_insn	(0X12E52);
-	set_cmt	(0X12E59,	"Save-slot menu init+draw. On first call, reads a per-category slot count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state, capping the visible list at 14 entries. Every call draws the frame (DrawMessageBox) plus header/footer (sub_14C37/sub_1303C, not traced) and the slot list (DrawSaveSlotList).",	0);
+	set_cmt	(0X12E59,	"CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).",	0);
 	create_insn	(0X12E59);
-	set_name	(0X12E59,	"ShowSaveSlotMenu");
+	set_name	(0X12E59,	"ShowClueCategoryEntries");
 	create_insn	(x=0X12E65);
 	op_hex		(x,	1);
-	set_cmt	(0X12ECD,	"Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.",	0);
+	set_cmt	(0X12ECD,	"CORRECTED from 'BuildLoadValidationMessage'. Dispatches on word_2E3F6 (a clue-book CATEGORY selector, ~16 categories) to compose one clue entry's full display text -- category 1 uses BuildClueLocationSuffix for the level/map tag; other categories use different lookups, not individually traced.",	0);
 	create_insn	(0X12ECD);
-	set_name	(0X12ECD,	"BuildLoadValidationMessage");
+	set_name	(0X12ECD,	"BuildClueEntryText");
 	create_insn	(0X12EDA);
 	create_insn	(0X12EE4);
 	create_insn	(0X12EEE);
@@ -5520,9 +5520,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X21DCF);
 	op_hex		(x,	1);
-	set_cmt	(0X21DE2,	"Reads a small WORLD.DAT record (block 3) plus a second field (sub_28000), trims trailing spaces. Checks two character positions against sentinels: if set, builds ' LEVEL X' (ax=2) or ' MAP X' (ax=1) with the mismatched value; else ax=0 (ok). Reads as a save/WORLD.DAT version-compatibility check.",	0);
+	set_cmt	(0X21DE2,	"CORRECTED from 'CheckWorldDatCompatibility' -- this is the clue-book's entry system (all callers trace to ShowClueBook, the F8 on-line clue book), not a save/load check. Reads a clue record from WORLD.DAT (block 3) plus a secondary field. Two character positions hold an encoded level/map number: if set, appends ' LEVEL X' (returns 2) or ' MAP X' (returns 1) to the clue text; else returns 0 (generic clue, no location suffix).",	0);
 	create_insn	(0X21DE2);
-	set_name	(0X21DE2,	"CheckWorldDatCompatibility");
+	set_name	(0X21DE2,	"BuildClueLocationSuffix");
 	create_insn	(0X21E51);
 	create_insn	(0X21E6D);
 	set_cmt	(0X21E71,	"HandleGameCommand's handler for word_32974==0x1E (also called from RunMapEditorScreen). Renders a full-screen (24-row) map view centered on the player (word_36CF7/word_36CF9): for each row, reads a block from WORLD.DAT and CURGAME and draws it via sub_22140 (not traced). Falls back to a smaller view (sub_222BD) when word_328C4 bit 1 is clear. Distinct from the overworld ShowWorldMap -- reads as the 'full local area map'.",	0);
@@ -7488,6 +7488,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2929E,	"this",	0);
 	create_insn	(0X292B7);
 	create_insn	(0X292C0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X292D7);
 	create_insn	(0X292E0);
 	create_insn	(x=0X292F2);
@@ -7502,15 +7511,6 @@ static Bytes_1(void) {
 	create_insn	(0X2939E);
 	create_insn	(0X293A6);
 	create_insn	(0X293AE);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X293C0);
 	create_insn	(x=0X293D8);
 	op_hex		(x,	1);
@@ -10985,12 +10985,6 @@ static Bytes_2(void) {
 	set_name	(0X397E4,	"aGain");
 	create_strlit	(0X397E9,	0X32);
 	set_name	(0X397E9,	"aItHasBeenOnlyA");
-	create_strlit	(0X3981B,	0X2F);
-	set_name	(0X3981B,	"aTrekThroughThe");
-	create_strlit	(0X3984A,	0X31);
-	set_name	(0X3984A,	"aNowTakeYouToTh");
-	create_strlit	(0X3987B,	0X30);
-	set_name	(0X3987B,	"aPortHopeWhereY");
 }
 
 //------------------------------------------------------------------------
@@ -11000,6 +10994,12 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X3981B,	0X2F);
+	set_name	(0X3981B,	"aTrekThroughThe");
+	create_strlit	(0X3984A,	0X31);
+	set_name	(0X3984A,	"aNowTakeYouToTh");
+	create_strlit	(0X3987B,	0X30);
+	set_name	(0X3987B,	"aPortHopeWhereY");
 	create_strlit	(0X398AB,	0X18);
 	set_name	(0X398AB,	"aGuestsOfTheGov");
 	create_strlit	(0X398C3,	0X31);

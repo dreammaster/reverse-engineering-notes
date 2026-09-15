@@ -1992,6 +1992,25 @@ frame and slot list every call. Full chain now traced: `ShowSaveSlotMenu`
 
 260 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — that whole chain was the clue book, not a save-load menu
+
+Checked every caller of the "save slot menu" chain named across the
+last four rounds (`sub_12B84`, above `ShowSaveSlotMenu`) and found all
+13 of them are inside `ShowClueBook` — the game's actual F8 on-line
+clue book (confirmed by its own pre-existing comment quoting the
+manual) — with no other caller anywhere. The "level/map validation"
+framing was wrong: `CheckWorldDatCompatibility` → `BuildClueLocationSuffix`
+actually tags individual clue-book entries with which level/map they
+apply to (appending " LEVEL X"/" MAP X" when relevant), and the rest of
+the chain renamed to match: `BuildLoadValidationMessage` →
+`BuildClueEntryText`, `DrawSaveSlotList` → `DrawClueEntryList`,
+`ShowSaveSlotMenu` → `ShowClueCategoryEntries`. `word_2E3F6` is a clue
+*category* selector, not a validation-failure type. Corrected rather
+than leaving the wrong "save menu" framing in the historical log above
+— see this entry for the real identification.
+
+260 named of 769 functions (renames only, no new count).
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -4410,7 +4410,7 @@ sub_12B84       proc far                ; CODE XREF: ShowClueBook+80↑P
                 and     word_328CC, 0FE7Fh
                 cmp     word_2E3F6, 0
                 jz      short loc_12B9B
-                call    ShowSaveSlotMenu
+                call    ShowClueCategoryEntries
 
 loc_12B9B:                              ; CODE XREF: sub_12B84+12↑j
                                         ; sub_12B84+21↓j ...
@@ -4438,7 +4438,7 @@ loc_12BD1:                              ; CODE XREF: sub_12B84+3E↑j
                 call    sub_12DD8
                 cmp     errorCode, 0
                 jz      short loc_12BE0
-                call    ShowSaveSlotMenu
+                call    ShowClueCategoryEntries
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4446,7 +4446,7 @@ loc_12BE0:                              ; CODE XREF: sub_12B84+55↑j
                 call    sub_12D5C
                 cmp     errorCode, 0
                 jz      short loc_12BEF
-                call    ShowSaveSlotMenu
+                call    ShowClueCategoryEntries
                 jmp     short loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4470,7 +4470,7 @@ loc_12BFF:                              ; CODE XREF: sub_12B84+28↑j
                 mul     bx
                 add     ax, word_2E3F0
                 mov     word_2E3EE, ax
-                call    ShowSaveSlotMenu
+                call    ShowClueCategoryEntries
                 jmp     loc_12B9B
 ; ---------------------------------------------------------------------------
 
@@ -4499,7 +4499,7 @@ loc_12C55:                              ; CODE XREF: sub_12B84+CC↑j
                 mul     bx
                 add     ax, word_2E3F0
                 mov     word_2E3EE, ax
-                call    ShowSaveSlotMenu
+                call    ShowClueCategoryEntries
 
 loc_12C65:                              ; CODE XREF: sub_12B84+70↑j
                                         ; sub_12B84+77↑j
@@ -4535,12 +4535,12 @@ sub_12B84       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawSaveSlotList proc near              ; CODE XREF: ShowSaveSlotMenu+6B↓p
-                mov     di, 68D2h       ; Draws a scrollable save-slot list: word_2E3EC entries at positions from a table (0x68D2, stride 0xA), highlighting the selected one (word_2E3EE). Each entry's status/validation text comes from BuildLoadValidationMessage. Shows scroll indicators when the list extends beyond the visible window.
+DrawClueEntryList proc near             ; CODE XREF: ShowClueCategoryEntries+6B↓p
+                mov     di, 68D2h       ; CORRECTED from 'DrawSaveSlotList'. Draws the scrollable list of individual clue-book entries for the current category (word_2E3EC entries, table at 0x68D2), highlighting the selected one (word_2E3EE), text from BuildClueEntryText, with scroll indicators when the category has more entries than fit on screen.
                 mov     si, word_2E3F0
                 mov     cx, word_2E3EC
 
-loc_12CA1:                              ; CODE XREF: DrawSaveSlotList+67↓j
+loc_12CA1:                              ; CODE XREF: DrawClueEntryList+67↓j
                 mov     ax, [di]
                 mov     _textPos_x, ax
                 mov     ax, [di+4]
@@ -4556,7 +4556,7 @@ loc_12CA1:                              ; CODE XREF: DrawSaveSlotList+67↓j
                 jmp     short loc_12CEA
 ; ---------------------------------------------------------------------------
 
-loc_12CCF:                              ; CODE XREF: DrawSaveSlotList+1A↑j
+loc_12CCF:                              ; CODE XREF: DrawClueEntryList+1A↑j
                 mov     _font_fgColor, 0Ah
                 test    word_328CA, 1
                 jnz     short loc_12CEA
@@ -4564,14 +4564,14 @@ loc_12CCF:                              ; CODE XREF: DrawSaveSlotList+1A↑j
                 jnz     short loc_12CEA
                 mov     _font_fgColor, 5
 
-loc_12CEA:                              ; CODE XREF: DrawSaveSlotList+28↑j
-                                        ; DrawSaveSlotList+2F↑j ...
-                call    BuildLoadValidationMessage
+loc_12CEA:                              ; CODE XREF: DrawClueEntryList+28↑j
+                                        ; DrawClueEntryList+2F↑j ...
+                call    BuildClueEntryText
                 cmp     bx, 0
                 jz      short loc_12CF7
                 call    writeString
 
-loc_12CF7:                              ; CODE XREF: DrawSaveSlotList+5A↑j
+loc_12CF7:                              ; CODE XREF: DrawClueEntryList+5A↑j
                 add     si, 4
                 add     di, 0Ah
                 loop    loc_12CA1
@@ -4587,23 +4587,23 @@ loc_12CF7:                              ; CODE XREF: DrawSaveSlotList+5A↑j
                 mov     aAMoreB, 61h ; 'a'
                 or      word_328CC, 100h
 
-loc_12D2C:                              ; CODE XREF: DrawSaveSlotList+89↑j
+loc_12D2C:                              ; CODE XREF: DrawClueEntryList+89↑j
                 mov     bx, word_2E3F4
                 cmp     word_2E3F2, bx
                 jz      short loc_12D41
                 mov     byte_36755, 62h ; 'b'
                 or      word_328CC, 80h
 
-loc_12D41:                              ; CODE XREF: DrawSaveSlotList+9E↑j
+loc_12D41:                              ; CODE XREF: DrawClueEntryList+9E↑j
                 mov     _textPos_x, 81h
                 mov     _textPos_y, 0A7h
                 mov     _font_fgColor, 0Dh
                 mov     bx, 8EECh
                 call    writeString
 
-locret_12D5B:                           ; CODE XREF: DrawSaveSlotList+80↑j
+locret_12D5B:                           ; CODE XREF: DrawClueEntryList+80↑j
                 retn
-DrawSaveSlotList endp
+DrawClueEntryList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4750,9 +4750,9 @@ sub_12DD8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowSaveSlotMenu proc near              ; CODE XREF: sub_12B84+14↑p
+ShowClueCategoryEntries proc near       ; CODE XREF: sub_12B84+14↑p
                                         ; sub_12B84+57↑p ...
-                cmp     word_2E3EA, 0   ; Save-slot menu init+draw. On first call, reads a per-category slot count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state, capping the visible list at 14 entries. Every call draws the frame (DrawMessageBox) plus header/footer (sub_14C37/sub_1303C, not traced) and the slot list (DrawSaveSlotList).
+                cmp     word_2E3EA, 0   ; CORRECTED from 'ShowSaveSlotMenu'. Per-category clue-book init+draw: on first call, reads this category's entry count (0xF3F4, indexed by word_2E3F6) and initializes scroll/selection state; every call draws the frame (DrawMessageBox) plus header/footer and the entry list (DrawClueEntryList).
                 jnz     short loc_12EB1
                 mov     bx, word_2E3F6
                 dec     bx
@@ -4770,7 +4770,7 @@ ShowSaveSlotMenu proc near              ; CODE XREF: sub_12B84+14↑p
                 jle     short loc_12E8A
                 mov     ax, 0Eh
 
-loc_12E8A:                              ; CODE XREF: ShowSaveSlotMenu+2C↑j
+loc_12E8A:                              ; CODE XREF: ShowClueCategoryEntries+2C↑j
                 mov     word_2E3EC, ax
                 dec     ax
                 mov     bx, 4
@@ -4786,22 +4786,22 @@ loc_12E8A:                              ; CODE XREF: ShowSaveSlotMenu+2C↑j
                 mul     bx
                 add     word_2E3F4, ax
 
-loc_12EB1:                              ; CODE XREF: ShowSaveSlotMenu+5↑j
+loc_12EB1:                              ; CODE XREF: ShowClueCategoryEntries+5↑j
                 mov     word_2E3FE, 0Eh
                 call    DrawMessageBox
                 call    sub_14C37
                 call    sub_1303C
-                call    DrawSaveSlotList
+                call    DrawClueEntryList
                 call    DrawMouseCursor
                 retn
-ShowSaveSlotMenu endp
+ShowClueCategoryEntries endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-BuildLoadValidationMessage proc near    ; CODE XREF: DrawSaveSlotList:loc_12CEA↑p
-                push    cx              ; Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.
+BuildClueEntryText proc near            ; CODE XREF: DrawClueEntryList:loc_12CEA↑p
+                push    cx              ; CORRECTED from 'BuildLoadValidationMessage'. Dispatches on word_2E3F6 (a clue-book CATEGORY selector, ~16 categories) to compose one clue entry's full display text -- category 1 uses BuildClueLocationSuffix for the level/map tag; other categories use different lookups, not individually traced.
                 push    dx
                 push    si
                 push    di
@@ -4810,25 +4810,25 @@ BuildLoadValidationMessage proc near    ; CODE XREF: DrawSaveSlotList:loc_12CEA�
                 jmp     short loc_12F4D
 ; ---------------------------------------------------------------------------
 
-loc_12EDA:                              ; CODE XREF: BuildLoadValidationMessage+9↑j
+loc_12EDA:                              ; CODE XREF: BuildClueEntryText+9↑j
                 cmp     word_2E3F6, 2
                 jnz     short loc_12EE4
                 jmp     loc_12F65
 ; ---------------------------------------------------------------------------
 
-loc_12EE4:                              ; CODE XREF: BuildLoadValidationMessage+12↑j
+loc_12EE4:                              ; CODE XREF: BuildClueEntryText+12↑j
                 cmp     word_2E3F6, 3
                 jnz     short loc_12EEE
                 jmp     loc_12F6E
 ; ---------------------------------------------------------------------------
 
-loc_12EEE:                              ; CODE XREF: BuildLoadValidationMessage+1C↑j
+loc_12EEE:                              ; CODE XREF: BuildClueEntryText+1C↑j
                 cmp     word_2E3F6, 4
                 jnz     short loc_12EF8
                 jmp     loc_12F7A
 ; ---------------------------------------------------------------------------
 
-loc_12EF8:                              ; CODE XREF: BuildLoadValidationMessage+26↑j
+loc_12EF8:                              ; CODE XREF: BuildClueEntryText+26↑j
                 cmp     word_2E3F6, 5
                 jl      short loc_12F08
                 cmp     word_2E3F6, 0Ah
@@ -4836,58 +4836,58 @@ loc_12EF8:                              ; CODE XREF: BuildLoadValidationMessage+
                 jmp     short loc_12F6E
 ; ---------------------------------------------------------------------------
 
-loc_12F08:                              ; CODE XREF: BuildLoadValidationMessage+30↑j
-                                        ; BuildLoadValidationMessage+37↑j
+loc_12F08:                              ; CODE XREF: BuildClueEntryText+30↑j
+                                        ; BuildClueEntryText+37↑j
                 cmp     word_2E3F6, 0Bh
                 jnz     short loc_12F11
                 jmp     short loc_12F8E
 ; ---------------------------------------------------------------------------
 
-loc_12F11:                              ; CODE XREF: BuildLoadValidationMessage+40↑j
+loc_12F11:                              ; CODE XREF: BuildClueEntryText+40↑j
                 cmp     word_2E3F6, 0Ch
                 jnz     short loc_12F1B
                 jmp     loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F1B:                              ; CODE XREF: BuildLoadValidationMessage+49↑j
+loc_12F1B:                              ; CODE XREF: BuildClueEntryText+49↑j
                 cmp     word_2E3F6, 0Dh
                 jnz     short loc_12F24
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F24:                              ; CODE XREF: BuildLoadValidationMessage+53↑j
+loc_12F24:                              ; CODE XREF: BuildClueEntryText+53↑j
                 cmp     word_2E3F6, 0Eh
                 jnz     short loc_12F2D
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F2D:                              ; CODE XREF: BuildLoadValidationMessage+5C↑j
+loc_12F2D:                              ; CODE XREF: BuildClueEntryText+5C↑j
                 cmp     word_2E3F6, 0Fh
                 jnz     short loc_12F36
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F36:                              ; CODE XREF: BuildLoadValidationMessage+65↑j
+loc_12F36:                              ; CODE XREF: BuildClueEntryText+65↑j
                 cmp     word_2E3F6, 10h
                 jnz     short loc_12F3F
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F3F:                              ; CODE XREF: BuildLoadValidationMessage+6E↑j
+loc_12F3F:                              ; CODE XREF: BuildClueEntryText+6E↑j
                 cmp     word_2E3F6, 11h
                 jnz     short loc_12F48
                 jmp     short loc_12FA2
 ; ---------------------------------------------------------------------------
 
-loc_12F48:                              ; CODE XREF: BuildLoadValidationMessage+77↑j
+loc_12F48:                              ; CODE XREF: BuildClueEntryText+77↑j
                 mov     bx, 0
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F4D:                              ; CODE XREF: BuildLoadValidationMessage+B↑j
+loc_12F4D:                              ; CODE XREF: BuildClueEntryText+B↑j
                 mov     ax, [si]
                 dec     ax
-                call    CheckWorldDatCompatibility
+                call    BuildClueLocationSuffix
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -4895,71 +4895,71 @@ loc_12F4D:                              ; CODE XREF: BuildLoadValidationMessage+
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F65:                              ; CODE XREF: BuildLoadValidationMessage+14↑j
+loc_12F65:                              ; CODE XREF: BuildClueEntryText+14↑j
                 mov     bx, [si]
                 call    sub_14B85
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F6E:                              ; CODE XREF: BuildLoadValidationMessage+1E↑j
-                                        ; BuildLoadValidationMessage+39↑j
+loc_12F6E:                              ; CODE XREF: BuildClueEntryText+1E↑j
+                                        ; BuildClueEntryText+39↑j
                 mov     ax, [si]
                 call    sub_1D198
                 mov     bx, 5A5Ah
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F7A:                              ; CODE XREF: BuildLoadValidationMessage+28↑j
+loc_12F7A:                              ; CODE XREF: BuildClueEntryText+28↑j
                 mov     cx, [si]
                 dec     cx
                 mov     bx, 8F04h
                 cmp     cx, 0
                 jz      short loc_12F8C
 
-loc_12F85:                              ; CODE XREF: BuildLoadValidationMessage+BD↓j
+loc_12F85:                              ; CODE XREF: BuildClueEntryText+BD↓j
                 call    sub_23BA4
                 loop    loc_12F85
 
-loc_12F8C:                              ; CODE XREF: BuildLoadValidationMessage+B6↑j
+loc_12F8C:                              ; CODE XREF: BuildClueEntryText+B6↑j
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12F8E:                              ; CODE XREF: BuildLoadValidationMessage+42↑j
+loc_12F8E:                              ; CODE XREF: BuildClueEntryText+42↑j
                 mov     cx, [si]
                 dec     cx
                 mov     bx, 8A01h
                 cmp     cx, 0
                 jz      short loc_12FA0
 
-loc_12F99:                              ; CODE XREF: BuildLoadValidationMessage+D1↓j
+loc_12F99:                              ; CODE XREF: BuildClueEntryText+D1↓j
                 call    sub_23BA4
                 loop    loc_12F99
 
-loc_12FA0:                              ; CODE XREF: BuildLoadValidationMessage+CA↑j
+loc_12FA0:                              ; CODE XREF: BuildClueEntryText+CA↑j
                 jmp     short loc_12FAB
 ; ---------------------------------------------------------------------------
 
-loc_12FA2:                              ; CODE XREF: BuildLoadValidationMessage+4B↑j
-                                        ; BuildLoadValidationMessage+55↑j ...
+loc_12FA2:                              ; CODE XREF: BuildClueEntryText+4B↑j
+                                        ; BuildClueEntryText+55↑j ...
                 mov     ax, [si]
                 call    sub_14B24
                 jmp     short $+2
 ; ---------------------------------------------------------------------------
 
-loc_12FAB:                              ; CODE XREF: BuildLoadValidationMessage+7E↑j
-                                        ; BuildLoadValidationMessage+96↑j ...
+loc_12FAB:                              ; CODE XREF: BuildClueEntryText+7E↑j
+                                        ; BuildClueEntryText+96↑j ...
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 retn
-BuildLoadValidationMessage endp
+BuildClueEntryText endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12FB0       proc near               ; CODE XREF: ShowSaveSlotMenu+20↑p
+sub_12FB0       proc near               ; CODE XREF: ShowClueCategoryEntries+20↑p
                                         ; sub_1303C+2↓p
                 mov     bx, 68D2h
                 mov     cx, 0Eh
@@ -5045,7 +5045,7 @@ sub_13014       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1303C       proc near               ; CODE XREF: ShowSaveSlotMenu+68↑p
+sub_1303C       proc near               ; CODE XREF: ShowClueCategoryEntries+68↑p
                 push    si
                 push    cx
                 call    sub_12FB0
@@ -6560,7 +6560,7 @@ sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
                 mov     _textPos_x, 0
                 mov     ax, word_2E664
                 dec     ax
-                call    CheckWorldDatCompatibility
+                call    BuildClueLocationSuffix
                 mov     ax, 0AFC6h
                 mov     bx, 0AFA8h
                 call    StrCat
@@ -7619,7 +7619,7 @@ FillVideoBuffer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B24       proc far                ; CODE XREF: BuildLoadValidationMessage+D7↑P
+sub_14B24       proc far                ; CODE XREF: BuildClueEntryText+D7↑P
                                         ; sub_13678+3↑P
                 call    LoadItemCatalogRecord
                 mov     ax, word_2E546
@@ -7654,7 +7654,7 @@ sub_14B24       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B85       proc far                ; CODE XREF: BuildLoadValidationMessage+9A↑P
+sub_14B85       proc far                ; CODE XREF: BuildClueEntryText+9A↑P
                                         ; sub_141D9+D↑P
                 mov     ax, 0AFDAh
                 call    WorldDat_setBlock5
@@ -8251,7 +8251,7 @@ sub_150B8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawMessageBox  proc far                ; CODE XREF: ShowSaveSlotMenu+5E↑P
+DrawMessageBox  proc far                ; CODE XREF: ShowClueCategoryEntries+5E↑P
                                         ; sub_13216+2B↑P ...
                 mov     ax, 0           ; Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.
                 push    cs
@@ -11832,7 +11832,7 @@ seg022          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-StrCat          proc far                ; CODE XREF: BuildLoadValidationMessage+8E↑P
+StrCat          proc far                ; CODE XREF: BuildClueEntryText+8E↑P
                                         ; sub_13FCF+78↑P ...
                 push    es              ; strcat(dest=bx, src=ax): finds dest's existing null terminator (scans up to 1024 bytes), then appends src including its terminator; returns bx = pointer to the new terminator.
                 push    si
@@ -23330,7 +23330,7 @@ seg052          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D198       proc far                ; CODE XREF: BuildLoadValidationMessage+A3↑P
+sub_1D198       proc far                ; CODE XREF: BuildClueEntryText+A3↑P
                                         ; sub_13216+E↑P ...
                 push    bx
                 push    cx
@@ -31586,9 +31586,9 @@ seg069          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-CheckWorldDatCompatibility proc far     ; CODE XREF: BuildLoadValidationMessage+83↑P
+BuildClueLocationSuffix proc far        ; CODE XREF: BuildClueEntryText+83↑P
                                         ; sub_13FCF+6D↑P ...
-                mov     word_368AB, ax  ; Reads a small WORLD.DAT record (block 3) plus a second field (sub_28000), trims trailing spaces. Checks two character positions against sentinels: if set, builds ' LEVEL X' (ax=2) or ' MAP X' (ax=1) with the mismatched value; else ax=0 (ok). Reads as a save/WORLD.DAT version-compatibility check.
+                mov     word_368AB, ax  ; CORRECTED from 'CheckWorldDatCompatibility' -- this is the clue-book's entry system (all callers trace to ShowClueBook, the F8 on-line clue book), not a save/load check. Reads a clue record from WORLD.DAT (block 3) plus a secondary field. Two character positions hold an encoded level/map number: if set, appends ' LEVEL X' (returns 2) or ' MAP X' (returns 1) to the clue text; else returns 0 (generic clue, no location suffix).
                 mov     bx, 9043h
                 mov     ax, 0AFDAh
                 call    WorldDat_setBlock3
@@ -31619,7 +31619,7 @@ CheckWorldDatCompatibility proc far     ; CODE XREF: BuildLoadValidationMessage+
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21E51:                              ; CODE XREF: CheckWorldDatCompatibility+58↑j
+loc_21E51:                              ; CODE XREF: BuildClueLocationSuffix+58↑j
                 cmp     byte ptr word_3883A+1, 20h ; ' '
                 jz      short loc_21E6D
                 mov     ax, 791Fh
@@ -31631,10 +31631,10 @@ loc_21E51:                              ; CODE XREF: CheckWorldDatCompatibility+
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21E6D:                              ; CODE XREF: CheckWorldDatCompatibility+74↑j
+loc_21E6D:                              ; CODE XREF: BuildClueLocationSuffix+74↑j
                 mov     ax, 0
                 retf
-CheckWorldDatCompatibility endp
+BuildClueLocationSuffix endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -31728,7 +31728,7 @@ loc_21EFB:                              ; CODE XREF: ShowLocalAreaMap+C3↓j
                 div     bx
                 add     ax, cx
                 push    cs
-                call    near ptr CheckWorldDatCompatibility
+                call    near ptr BuildClueLocationSuffix
                 push    ax
                 mov     _textPos_x, 0
                 mov     _textPos_y, 0
@@ -35157,8 +35157,8 @@ seg076          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23BA4       proc far                ; CODE XREF: BuildLoadValidationMessage:loc_12F85↑P
-                                        ; BuildLoadValidationMessage:loc_12F99↑P ...
+sub_23BA4       proc far                ; CODE XREF: BuildClueEntryText:loc_12F85↑P
+                                        ; BuildClueEntryText:loc_12F99↑P ...
                 cmp     byte ptr [bx], 0
                 jz      short loc_23BAC
                 inc     bx
@@ -43061,7 +43061,7 @@ WorldDat_setBlock2 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WorldDat_setBlock3 proc far             ; CODE XREF: CheckWorldDatCompatibility+9↑P
+WorldDat_setBlock3 proc far             ; CODE XREF: BuildClueLocationSuffix+9↑P
                                         ; sub_28CB1+1E↓P
                 push    si
                 mov     si, 0CDF3h
@@ -43157,7 +43157,7 @@ sub_27FE0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28000       proc far                ; CODE XREF: CheckWorldDatCompatibility+24↑P
+sub_28000       proc far                ; CODE XREF: BuildClueLocationSuffix+24↑P
                 push    si
                 mov     si, 0CDF7h
                 mov     [bx+4], ax
@@ -56576,16 +56576,16 @@ word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
                 db    0
 word_2E3EA      dw 0                    ; DATA XREF: ShowClueBook+96↑w
                                         ; ShowClueBook+A5↑w ...
-word_2E3EC      dw 0                    ; DATA XREF: DrawSaveSlotList+7↑r
-                                        ; ShowSaveSlotMenu:loc_12E8A↑w ...
+word_2E3EC      dw 0                    ; DATA XREF: DrawClueEntryList+7↑r
+                                        ; ShowClueCategoryEntries:loc_12E8A↑w ...
 word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
                                         ; ShowClueBook:loc_10EAF↑r ...
 word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
                                         ; sub_12B84+D7↑r ...
-word_2E3F2      dw 0                    ; DATA XREF: DrawSaveSlotList+9A↑r
+word_2E3F2      dw 0                    ; DATA XREF: DrawClueEntryList+9A↑r
                                         ; sub_12D5C+3F↑r ...
-word_2E3F4      dw 0                    ; DATA XREF: DrawSaveSlotList:loc_12D2C↑r
-                                        ; ShowSaveSlotMenu+4B↑w ...
+word_2E3F4      dw 0                    ; DATA XREF: DrawClueEntryList:loc_12D2C↑r
+                                        ; ShowClueCategoryEntries+4B↑w ...
 word_2E3F6      dw 0                    ; DATA XREF: ShowClueBook+7A↑w
                                         ; ShowClueBook+112↑w ...
 word_2E3F8      dw 0                    ; DATA XREF: ShowClueBook+109↑w
@@ -56594,7 +56594,7 @@ word_2E3FA      dw 0                    ; DATA XREF: ShowClueBook+10F↑w
                                         ; ShowClueBook+142↑w ...
 word_2E3FC      dw 0                    ; DATA XREF: ShowClueBook+100↑w
                                         ; ShowClueBook+133↑w ...
-word_2E3FE      dw 0                    ; DATA XREF: ShowSaveSlotMenu:loc_12EB1↑w
+word_2E3FE      dw 0                    ; DATA XREF: ShowClueCategoryEntries:loc_12EB1↑w
                                         ; sub_13216+25↑w ...
 byte_2E400      db 0                    ; DATA XREF: start+34↑r
                                         ; start+50↑r ...
@@ -84793,8 +84793,8 @@ aThankYouForPla db 'Thank You for playing Yendorian Tales Book I Chapter 2',0Ah
                 db 0Dh,'$',0
 aPleaseRegister db 'Please register your copy today.',0Ah
                 db 0Dh,'$',0
-aAMoreB         db 61h                  ; DATA XREF: DrawSaveSlotList+6F↑w
-                                        ; DrawSaveSlotList+8B↑w ...
+aAMoreB         db 61h                  ; DATA XREF: DrawClueEntryList+6F↑w
+                                        ; DrawClueEntryList+8B↑w ...
                 db  20h
                 db  20h
                 db  4Dh ; M
@@ -84803,8 +84803,8 @@ aAMoreB         db 61h                  ; DATA XREF: DrawSaveSlotList+6F↑w
                 db  45h ; E
                 db  20h
                 db  20h
-byte_36755      db 62h                  ; DATA XREF: DrawSaveSlotList+74↑w
-                                        ; DrawSaveSlotList+A0↑w ...
+byte_36755      db 62h                  ; DATA XREF: DrawClueEntryList+74↑w
+                                        ; DrawClueEntryList+A0↑w ...
                 db    0
 aDList          db 'd LIST',0
 aMapC           db 'MAP c',0
@@ -92937,14 +92937,14 @@ word_3881E      dw 0                    ; DATA XREF: sub_1AF49+48↑w
                 db    0
                 db    0
                 db    0
-byte_38826      db 0                    ; DATA XREF: CheckWorldDatCompatibility+4E↑w
+byte_38826      db 0                    ; DATA XREF: BuildClueLocationSuffix+4E↑w
                 db    0
                 db    0
                 db    0
                 db    0
-byte_3882B      db 0                    ; DATA XREF: CheckWorldDatCompatibility+84↑w
+byte_3882B      db 0                    ; DATA XREF: BuildClueLocationSuffix+84↑w
                 db    0
-byte_3882D      db 0                    ; DATA XREF: CheckWorldDatCompatibility+68↑w
+byte_3882D      db 0                    ; DATA XREF: BuildClueLocationSuffix+68↑w
                 db    0
                 db    0
                 db    0
@@ -92958,10 +92958,10 @@ byte_3882D      db 0                    ; DATA XREF: CheckWorldDatCompatibility+
                 db    0
                 db    0
 word_3883A      dw 0                    ; DATA XREF: sub_1E2E5+32↑w
-                                        ; CheckWorldDatCompatibility+53↑r ...
+                                        ; BuildClueLocationSuffix+53↑r ...
                 db    0
                 db    0
-byte_3883E      db 0                    ; DATA XREF: CheckWorldDatCompatibility+2B↑r
+byte_3883E      db 0                    ; DATA XREF: BuildClueLocationSuffix+2B↑r
                 db    0
                 db    0
                 db    0
