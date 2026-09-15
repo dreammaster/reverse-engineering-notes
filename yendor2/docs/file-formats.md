@@ -300,7 +300,10 @@ clue-book detail row itself, `DrawTransportDetailRow`, shows "VALUE:",
 `ShowItemUsagePreview` and `FinishItemUse` both call
 `BuildItemUseMessage`, which builds the confirmation/preview text for
 using an item — either a generic message by tier, or item-specific
-message entries copied from an EMS-backed segment;
+message entries copied from an EMS-backed segment. For special items
+it first calls `CheckAndPaySpecialItemCost`: pays gold, NUORE, or
+MAGIC ORE (selected by a tag on the item), or checks/consumes a
+specific inventory item otherwise;
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →

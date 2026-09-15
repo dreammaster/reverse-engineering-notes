@@ -2882,6 +2882,14 @@ entries copied from an EMS-backed segment.
 
 367 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: CheckAndPaySpecialItemCost
+
+Named `sub_1C809`, called from `BuildItemUseMessage`: checks and pays
+a special item's usage cost, selected by a tag on the item — gold,
+NUORE, MAGIC ORE, or a specific consumed inventory item.
+
+368 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -20803,7 +20803,7 @@ BuildItemUseMessage proc far            ; CODE XREF: FinishItemUse+5↑p
                 test    word ptr es:[si+0Eh], 2000h
                 jz      short loc_1BAF2
                 push    cs
-                call    near ptr sub_1C809
+                call    near ptr CheckAndPaySpecialItemCost
                 test    word_328C6, 40h
                 jz      short loc_1BABC
                 push    cs
@@ -22127,8 +22127,8 @@ UseAbilityScroll endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C809       proc far                ; CODE XREF: BuildItemUseMessage+15↑p
-                and     word_328C6, 0FFBFh
+CheckAndPaySpecialItemCost proc far     ; CODE XREF: BuildItemUseMessage+15↑p
+                and     word_328C6, 0FFBFh ; Checks and pays a special item's usage cost by [+0x10] tag: 1=gold, 2=NUORE, 3=MAGIC ORE (all CompareBCD4/SubBCD4 against price table 0xBEA), else a specific inventory item (IsItemRangeAvailable). Sets word_328C6 bit 0x40 on success -- the flag BuildItemUseMessage checks. Called from BuildItemUseMessage.
                 mov     ax, es:[si+10h]
                 cmp     ax, 1
                 jz      short loc_1C83E
@@ -22144,11 +22144,11 @@ sub_1C809       proc far                ; CODE XREF: BuildItemUseMessage+15↑p
                 call    sub_274B4
                 or      word_328C6, 40h
 
-locret_1C83D:                           ; CODE XREF: sub_1C809+28↑j
+locret_1C83D:                           ; CODE XREF: CheckAndPaySpecialItemCost+28↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C83E:                              ; CODE XREF: sub_1C809+C↑j
+loc_1C83E:                              ; CODE XREF: CheckAndPaySpecialItemCost+C↑j
                 push    si
                 push    di
                 mov     si, 94B3h
@@ -22160,7 +22160,7 @@ loc_1C83E:                              ; CODE XREF: sub_1C809+C↑j
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
 
-loc_1C859:                              ; CODE XREF: sub_1C809+11↑j
+loc_1C859:                              ; CODE XREF: CheckAndPaySpecialItemCost+11↑j
                 push    si
                 push    di
                 mov     si, 94B7h
@@ -22172,7 +22172,7 @@ loc_1C859:                              ; CODE XREF: sub_1C809+11↑j
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
 
-loc_1C874:                              ; CODE XREF: sub_1C809+16↑j
+loc_1C874:                              ; CODE XREF: CheckAndPaySpecialItemCost+16↑j
                 push    si
                 push    di
                 mov     si, 94BBh
@@ -22182,12 +22182,12 @@ loc_1C874:                              ; CODE XREF: sub_1C809+16↑j
                 call    SubBCD4
                 or      word_328C6, 40h
 
-loc_1C88D:                              ; CODE XREF: sub_1C809+42↑j
-                                        ; sub_1C809+4E↑j ...
+loc_1C88D:                              ; CODE XREF: CheckAndPaySpecialItemCost+42↑j
+                                        ; CheckAndPaySpecialItemCost+4E↑j ...
                 pop     di
                 pop     si
                 retf
-sub_1C809       endp
+CheckAndPaySpecialItemCost endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41512,7 +41512,7 @@ seg092          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_274B4       proc far                ; CODE XREF: sub_1C809+2A↑P
+sub_274B4       proc far                ; CODE XREF: CheckAndPaySpecialItemCost+2A↑P
                                         ; sub_1E64A+22D↑P ...
                 push    si
                 push    cx              ; this

@@ -4260,8 +4260,10 @@ static Bytes_1(void) {
 	set_cmt	(0X1C799,	"msg",	0);
 	set_cmt	(0X1C7C7,	"msg",	0);
 	create_insn	(0X1C7D9);
+	set_cmt	(0X1C809,	"Checks and pays a special item's usage cost by [+0x10] tag: 1=gold, 2=NUORE, 3=MAGIC ORE (all CompareBCD4/SubBCD4 against price table 0xBEA), else a specific inventory item (IsItemRangeAvailable). Sets word_328C6 bit 0x40 on success -- the flag BuildItemUseMessage checks. Called from BuildItemUseMessage.",	0);
 	create_insn	(x=0X1C809);
 	op_hex		(x,	1);
+	set_name	(0X1C809,	"CheckAndPaySpecialItemCost");
 	create_insn	(x=0X1C838);
 	op_hex		(x,	1);
 	create_insn	(0X1C83E);
@@ -6001,12 +6003,6 @@ static Bytes_1(void) {
 	set_cmt	(0X23116,	"Removes a monster from the map and wipes its record: clears the 'present here' flag (bit 0x400) on the map cell its [+6] field points at and zeroes that cell's [+4] occupant reference, then zeroes the entire g_levelMonsters/g_monsterSlots-layout record (0x9C bytes).",	0);
 	create_insn	(0X23116);
 	set_name	(0X23116,	"RemoveMonsterFromMap");
-	create_insn	(x=0X23120);
-	op_hex		(x,	1);
-	create_insn	(0X2313D);
-	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
-	create_insn	(0X23151);
-	set_name	(0X23151,	"ShowLootAndAwardExperience");
 }
 
 //------------------------------------------------------------------------
@@ -6016,6 +6012,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X23120);
+	op_hex		(x,	1);
+	create_insn	(0X2313D);
+	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
+	create_insn	(0X23151);
+	set_name	(0X23151,	"ShowLootAndAwardExperience");
 	create_insn	(x=0X23169);
 	op_hex		(x,	1);
 	set_cmt	(0X23199,	"msg",	0);
@@ -8965,6 +8967,15 @@ static Bytes_2(void) {
 	create_insn	(x=0X2B9D4);
 	op_hex		(x,	1);
 	set_name	(0X2B9D4,	"ClassifyConversationSkillTier");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B9EB);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA04);
@@ -8990,15 +9001,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, plays a sound (sub_2BC16, not traced), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
 	create_insn	(0X2BAA0);
 	set_name	(0X2BAA0,	"AnimateProjectileStep");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2BAC6,	"ticks",	0);
 	create_insn	(0X2BAD5);
 	create_insn	(0X2BADB);
