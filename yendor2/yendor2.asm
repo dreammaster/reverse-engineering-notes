@@ -13201,7 +13201,7 @@ loc_17BFF:                              ; CODE XREF: UseItem+63↑j
                 mov     es, word_2E54C
                 test    word ptr es:[si+0Eh], 800h
                 jz      short loc_17C1C
-                call    sub_1CA64
+                call    ShowItemUsagePreview
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -20791,7 +20791,7 @@ sub_1BA35       endp
 
 
 sub_1BA96       proc far                ; CODE XREF: FinishItemUse+5↑p
-                                        ; sub_1CA64+2E↓p
+                                        ; ShowItemUsagePreview+2E↓p
                 push    es
                 push    si
                 push    di
@@ -22366,8 +22366,8 @@ LoadItemData    endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CA64       proc far                ; CODE XREF: UseItem+82↑P
-                mov     ax, es:[si+10h]
+ShowItemUsagePreview proc far           ; CODE XREF: UseItem+82↑P
+                mov     ax, es:[si+10h] ; UseItem's fallback branch (item record es:[si+0xE] bit 0x800). Re-loads the item's own type flags (es:[si+0x10]) into word_2E410 and re-dispatches on the same bits the main type handlers use, but only to call a target-status classifier (ClassifyPartyMemberCondition / sub_1B7DD / CheckPartyMemberItemFlagAndClearPanel / CheckPartyMemberItemFlag) -- no cost or stat change applied. Reads as a preview of the item's target-status effect. A separate path (bits 0x3000, matching UseAbilityScroll's selector) instead finishes the use and shows a different result via an untraced pair (sub_25CFA/sub_2909C).
                 mov     word_2E410, ax
                 mov     ax, word_2E550
                 mov     word_32902, ax
@@ -22393,7 +22393,7 @@ sub_1CA64       proc far                ; CODE XREF: UseItem+82↑P
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
-loc_1CAB2:                              ; CODE XREF: sub_1CA64+46↑j
+loc_1CAB2:                              ; CODE XREF: ShowItemUsagePreview+46↑j
                 test    word_2E410, 4000h
                 jz      short loc_1CAC0
                 push    cs
@@ -22401,7 +22401,7 @@ loc_1CAB2:                              ; CODE XREF: sub_1CA64+46↑j
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
-loc_1CAC0:                              ; CODE XREF: sub_1CA64+54↑j
+loc_1CAC0:                              ; CODE XREF: ShowItemUsagePreview+54↑j
                 test    word_2E410, 400h
                 jz      short loc_1CACE
                 push    cs
@@ -22409,14 +22409,14 @@ loc_1CAC0:                              ; CODE XREF: sub_1CA64+54↑j
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
-loc_1CACE:                              ; CODE XREF: sub_1CA64+62↑j
+loc_1CACE:                              ; CODE XREF: ShowItemUsagePreview+62↑j
                 test    word_2E410, 800h
                 jz      short loc_1CADA
                 push    cs
                 call    near ptr CheckPartyMemberItemFlag
 
-loc_1CADA:                              ; CODE XREF: sub_1CA64+4C↑j
-                                        ; sub_1CA64+5A↑j ...
+loc_1CADA:                              ; CODE XREF: ShowItemUsagePreview+4C↑j
+                                        ; ShowItemUsagePreview+5A↑j ...
                 push    cs
                 call    near ptr sub_1B8EE
                 call    RestoreCursorBackgroundIfDirty
@@ -22426,7 +22426,7 @@ loc_1CADA:                              ; CODE XREF: sub_1CA64+4C↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1CAF3:                              ; CODE XREF: sub_1CA64+27↑j
+loc_1CAF3:                              ; CODE XREF: ShowItemUsagePreview+27↑j
                 push    cs
                 call    near ptr FinishItemUse
                 call    RestoreCursorBackgroundIfDirty
@@ -22438,7 +22438,7 @@ loc_1CAF3:                              ; CODE XREF: sub_1CA64+27↑j
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
-loc_1CB15:                              ; CODE XREF: sub_1CA64+A8↑j
+loc_1CB15:                              ; CODE XREF: ShowItemUsagePreview+A8↑j
                 mov     bx, word_32924
                 mov     ax, [bx]
                 call    sub_25B14
@@ -22448,7 +22448,7 @@ loc_1CB15:                              ; CODE XREF: sub_1CA64+A8↑j
                 call    sub_238CD
                 call    DrawMouseCursor
                 retf
-sub_1CA64       endp
+ShowItemUsagePreview endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45112,7 +45112,7 @@ sub_29040       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2909C       proc far                ; CODE XREF: sub_1CA64+C3↑P
+sub_2909C       proc far                ; CODE XREF: ShowItemUsagePreview+C3↑P
                 mov     _font_bgColor, 44h ; 'D'
                 mov     si, word_2E54E
                 mov     es, word_2E54C

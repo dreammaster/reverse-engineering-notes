@@ -4165,7 +4165,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA5B);
 	op_hex		(x,	1);
+	set_cmt	(0X1CA64,	"UseItem's fallback branch (item record es:[si+0xE] bit 0x800). Re-loads the item's own type flags (es:[si+0x10]) into word_2E410 and re-dispatches on the same bits the main type handlers use, but only to call a target-status classifier (ClassifyPartyMemberCondition / sub_1B7DD / CheckPartyMemberItemFlagAndClearPanel / CheckPartyMemberItemFlag) -- no cost or stat change applied. Reads as a preview of the item's target-status effect. A separate path (bits 0x3000, matching UseAbilityScroll's selector) instead finishes the use and shows a different result via an untraced pair (sub_25CFA/sub_2909C).",	0);
 	create_insn	(0X1CA64);
+	set_name	(0X1CA64,	"ShowItemUsagePreview");
 	create_insn	(x=0X1CA74);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA7A);
@@ -4769,13 +4771,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1F197,	"Blanks the 25-byte scratch label buffer (0xAFA8) via StrFillN, then writeString's it at the stored position -- erases whatever label text was previously drawn there.",	0);
 	create_insn	(0X1F197);
 	set_name	(0X1F197,	"EraseLabelText");
-	set_cmt	(0X1F1AF,	"msg",	0);
-	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
-	create_insn	(0X1F1B8);
-	set_name	(0X1F1B8,	"GetListItemPosition");
-	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
-	create_insn	(0X1F1F4);
-	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
 }
 
 //------------------------------------------------------------------------
@@ -4785,6 +4780,13 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X1F1AF,	"msg",	0);
+	set_cmt	(0X1F1B8,	"Looks up list row word_3291E (1-based) in a 10-byte-per-entry table at 0x5CD0 and sets _textPos_x/_textPos_y from it (+0xC / +1). Used to position a label for the currently-selected list row.",	0);
+	create_insn	(0X1F1B8);
+	set_name	(0X1F1B8,	"GetListItemPosition");
+	set_cmt	(0X1F1F4,	"Draws g_pictureDir entry 9 (8x8, the small icon UpdateScrollArrows also uses) at (ax, bx) with cache tag cx. Called by ToggleMusicSetting/ToggleSoundFxSetting as their checkbox indicator.",	0);
+	create_insn	(0X1F1F4);
+	set_name	(0X1F1F4,	"DrawCheckboxIndicator");
 	create_insn	(x=0X1F217);
 	op_hex		(x,	1);
 	create_insn	(x=0X1F222);
@@ -8429,13 +8431,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A9E4);
 	op_hex		(x,	1);
-	create_insn	(0X2A9EB);
-	create_insn	(0X2AA0C);
-	create_insn	(x=0X2AA2B);
-	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
-	create_insn	(0X2AA58);
-	set_name	(0X2AA58,	"CastSpell");
 }
 
 //------------------------------------------------------------------------
@@ -8445,6 +8440,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2A9EB);
+	create_insn	(0X2AA0C);
+	create_insn	(x=0X2AA2B);
+	op_hex		(x,	1);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
+	create_insn	(0X2AA58);
+	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);

@@ -1510,6 +1510,17 @@ across this session.
 
 204 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowItemUsagePreview
+
+Named one more `UseItem` fallback branch: `ShowItemUsagePreview` (was
+`sub_1CA64`) re-dispatches on the item's own type flags but only to
+call one of the target-status classifiers (`ClassifyPartyMemberCondition`
+and friends) with no cost or stat change applied — reads as a preview
+shown before actually using an item, not a real application of its
+effect.
+
+205 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
