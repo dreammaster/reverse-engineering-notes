@@ -8,7 +8,7 @@ import idautils
 import idc
 import ida_funcs
 
-TARGET = 0x1EA6E
+TARGET = 0x10C40
 
 f = ida_funcs.get_func(TARGET)
 print(f"{idc.get_func_name(TARGET)} @ {TARGET:#x}, size={f.end_ea-f.start_ea}")

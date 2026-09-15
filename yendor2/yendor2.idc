@@ -1060,7 +1060,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_byte	(0X10B07);
 	make_array	(0X10B07,	0X139);
+	set_cmt	(0X10C40,	"Triggered by PollKeyboardInput on scan code 0x42 (F8) -- docs/manual.txt: 'F8 On-line clue book'. Calls ShowPagedEntryScreen to display the (paginated) clue book entries.",	0);
 	create_insn	(0X10C40);
+	set_name	(0X10C40,	"ShowClueBook");
 	set_cmt	(0X10C51,	"this",	0);
 	create_insn	(x=0X10C6F);
 	op_hex		(x,	1);
@@ -1619,8 +1621,10 @@ static Bytes_0(void) {
 	create_insn	(0X12FED);
 	create_insn	(0X13014);
 	create_insn	(0X1303C);
+	set_cmt	(0X1305E,	"Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.",	0);
 	create_insn	(x=0X1305E);
 	op_hex		(x,	1);
+	set_name	(0X1305E,	"WaitForKeypress");
 	create_insn	(x=0X1308A);
 	op_hex		(x,	1);
 	create_insn	(0X13090);
@@ -4162,7 +4166,9 @@ static Bytes_0(void) {
 	set_name	(0X1D01E,	"StrFillN");
 	create_insn	(x=0X1D021);
 	op_seg		(x,	1);
+	set_cmt	(0X1D038,	"Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.",	0);
 	create_insn	(0X1D038);
+	set_name	(0X1D038,	"PollKeyboardInput");
 	set_cmt	(0X1D050,	"DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT\nDL = character <> FFh\n Return: ZF set = no character\n  ZF clear = character recieved, AL = character",	0);
 	create_insn	(x=0X1D050);
 	op_hex		(x,	0);
@@ -6465,6 +6471,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X27056);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X270FE);
 	create_insn	(0X2711F);
 	create_insn	(0X27141);
@@ -6541,15 +6556,6 @@ static Bytes_0(void) {
 	set_cmt	(0X275ED,	"this",	0);
 	create_insn	(x=0X27616);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X27632);
 	op_hex		(x,	1);
 	create_insn	(0X2763D);

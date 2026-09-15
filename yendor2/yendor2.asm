@@ -97,7 +97,7 @@ loc_1007D:                              ; CODE XREF: start+60↑j
                 call    Fade?
 
 loc_1008F:                              ; CODE XREF: start+83↑j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_10043
                 cmp     errorCode, 1
@@ -1185,7 +1185,7 @@ loc_10A90:                              ; CODE XREF: start+A8B↑j
                 call    sub_1D4B8
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                call    sub_10C40
+                call    ShowClueBook
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
 ; START OF FUNCTION CHUNK FOR start
@@ -1254,9 +1254,9 @@ seg001          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_10C40       proc far                ; CODE XREF: seg000:0AA3↑P
-                                        ; sub_1D038+51↓P
-                push    ax
+ShowClueBook    proc far                ; CODE XREF: seg000:0AA3↑P
+                                        ; PollKeyboardInput+51↓P
+                push    ax              ; Triggered by PollKeyboardInput on scan code 0x42 (F8) -- docs/manual.txt: 'F8 On-line clue book'. Calls ShowPagedEntryScreen to display the (paginated) clue book entries.
                 push    bx
                 push    cx
                 push    dx
@@ -1275,7 +1275,7 @@ sub_10C40       proc far                ; CODE XREF: seg000:0AA3↑P
                 mov     word_36CE7, ax
                 mov     word_3294C, ax
 
-loc_10C6F:                              ; CODE XREF: sub_10C40+20↑j
+loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 or      word_328CA, 8
                 call    sub_2849C
                 call    sub_237B0
@@ -1292,70 +1292,70 @@ loc_10C6F:                              ; CODE XREF: sub_10C40+20↑j
                 call    sub_14BD5
                 call    sub_2587E
 
-loc_10CB5:                              ; CODE XREF: sub_10C40+F3↓j
-                                        ; sub_10C40+157↓j ...
+loc_10CB5:                              ; CODE XREF: ShowClueBook+F3↓j
+                                        ; ShowClueBook+157↓j ...
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3F6, 0
                 call    sub_12B84
 
-loc_10CC5:                              ; CODE XREF: sub_10C40:loc_10D6B↓j
-                                        ; sub_10C40+161↓j ...
+loc_10CC5:                              ; CODE XREF: ShowClueBook:loc_10D6B↓j
+                                        ; ShowClueBook+161↓j ...
                 cmp     word_2E40A, 8
                 jnz     short loc_10CCF
                 jmp     loc_110E6
 ; ---------------------------------------------------------------------------
 
-loc_10CCF:                              ; CODE XREF: sub_10C40+8A↑j
+loc_10CCF:                              ; CODE XREF: ShowClueBook+8A↑j
                 cmp     word_2E40A, 2
                 jnz     short loc_10CDE
                 mov     word_2E3EA, 0
                 jmp     short loc_10D35
 ; ---------------------------------------------------------------------------
 
-loc_10CDE:                              ; CODE XREF: sub_10C40+94↑j
+loc_10CDE:                              ; CODE XREF: ShowClueBook+94↑j
                 cmp     word_2E40A, 3
                 jnz     short loc_10CEE
                 mov     word_2E3EA, 0
                 jmp     loc_10D6E
 ; ---------------------------------------------------------------------------
 
-loc_10CEE:                              ; CODE XREF: sub_10C40+A3↑j
+loc_10CEE:                              ; CODE XREF: ShowClueBook+A3↑j
                 cmp     word_2E40A, 4
                 jnz     short loc_10CFE
                 mov     word_2E3EA, 0
                 jmp     loc_10DBD
 ; ---------------------------------------------------------------------------
 
-loc_10CFE:                              ; CODE XREF: sub_10C40+B3↑j
+loc_10CFE:                              ; CODE XREF: ShowClueBook+B3↑j
                 cmp     word_2E40A, 5
                 jnz     short loc_10D0E
                 mov     word_2E3EA, 0
                 jmp     loc_10DFB
 ; ---------------------------------------------------------------------------
 
-loc_10D0E:                              ; CODE XREF: sub_10C40+C3↑j
+loc_10D0E:                              ; CODE XREF: ShowClueBook+C3↑j
                 cmp     word_2E40A, 6
                 jnz     short loc_10D1E
                 mov     word_2E3EA, 0
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_10D1E:                              ; CODE XREF: sub_10C40+D3↑j
+loc_10D1E:                              ; CODE XREF: ShowClueBook+D3↑j
                 cmp     word_2E40A, 7
                 jnz     short loc_10D2E
                 mov     word_2E3EA, 0
                 jmp     loc_110D9
 ; ---------------------------------------------------------------------------
 
-loc_10D2E:                              ; CODE XREF: sub_10C40+E3↑j
+loc_10D2E:                              ; CODE XREF: ShowClueBook+E3↑j
                 call    sub_14BD5
                 jmp     short loc_10CB5
 ; ---------------------------------------------------------------------------
 
-loc_10D35:                              ; CODE XREF: sub_10C40+9C↑j
+loc_10D35:                              ; CODE XREF: ShowClueBook+9C↑j
                 mov     word_2E3EA, 0
 
-loc_10D3B:                              ; CODE XREF: sub_10C40+129↓j
+loc_10D3B:                              ; CODE XREF: ShowClueBook+129↓j
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3FC, 123h
                 mov     ax, 883Dh
@@ -1370,12 +1370,12 @@ loc_10D3B:                              ; CODE XREF: sub_10C40+129↓j
                 jmp     short loc_10D3B
 ; ---------------------------------------------------------------------------
 
-loc_10D6B:                              ; CODE XREF: sub_10C40+122↑j
+loc_10D6B:                              ; CODE XREF: ShowClueBook+122↑j
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10D6E:                              ; CODE XREF: sub_10C40+AB↑j
-                                        ; sub_10C40+178↓j
+loc_10D6E:                              ; CODE XREF: ShowClueBook+AB↑j
+                                        ; ShowClueBook+178↓j
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3FC, 0D0h
                 mov     ax, 883Dh
@@ -1389,29 +1389,29 @@ loc_10D6E:                              ; CODE XREF: sub_10C40+AB↑j
                 jmp     loc_10CB5
 ; ---------------------------------------------------------------------------
 
-loc_10D9A:                              ; CODE XREF: sub_10C40+155↑j
+loc_10D9A:                              ; CODE XREF: ShowClueBook+155↑j
                 cmp     word_2E40A, 0
                 jz      short loc_10DA4
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10DA4:                              ; CODE XREF: sub_10C40+15F↑j
+loc_10DA4:                              ; CODE XREF: ShowClueBook+15F↑j
                 call    sub_132B5
                 cmp     word_2E40A, 0FFFFh
                 jnz     short loc_10DB3
                 jmp     loc_10CB5
 ; ---------------------------------------------------------------------------
 
-loc_10DB3:                              ; CODE XREF: sub_10C40+16E↑j
+loc_10DB3:                              ; CODE XREF: ShowClueBook+16E↑j
                 cmp     word_2E40A, 1
                 jz      short loc_10D6E
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10DBD:                              ; CODE XREF: sub_10C40+BB↑j
+loc_10DBD:                              ; CODE XREF: ShowClueBook+BB↑j
                 mov     word_2E3EA, 0
 
-loc_10DC3:                              ; CODE XREF: sub_10C40+1B6↓j
+loc_10DC3:                              ; CODE XREF: ShowClueBook+1B6↓j
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3FC, 0D5h
                 mov     ax, 883Dh
@@ -1426,12 +1426,12 @@ loc_10DC3:                              ; CODE XREF: sub_10C40+1B6↓j
                 cmp     word_2E40A, 1
                 jz      short loc_10DC3
 
-loc_10DF8:                              ; CODE XREF: sub_10C40+1AA↑j
+loc_10DF8:                              ; CODE XREF: ShowClueBook+1AA↑j
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10DFB:                              ; CODE XREF: sub_10C40+CB↑j
-                                        ; sub_10C40+222↓j
+loc_10DFB:                              ; CODE XREF: ShowClueBook+CB↑j
+                                        ; ShowClueBook+222↓j
                 mov     word_2E3EA, 0
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3FC, 0B7h
@@ -1446,14 +1446,14 @@ loc_10DFB:                              ; CODE XREF: sub_10C40+CB↑j
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10E2D:                              ; CODE XREF: sub_10C40+1E8↑j
+loc_10E2D:                              ; CODE XREF: ShowClueBook+1E8↑j
                 mov     word_2E3EA, 0
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 add     ax, 4
                 mov     word_2E3F6, ax
 
-loc_10E3F:                              ; CODE XREF: sub_10C40+238↓j
+loc_10E3F:                              ; CODE XREF: ShowClueBook+238↓j
                 or      word_328CC, 40h
                 mov     word_2E3FC, 0D5h
                 mov     ax, 883Dh
@@ -1466,21 +1466,21 @@ loc_10E3F:                              ; CODE XREF: sub_10C40+238↓j
                 jmp     short loc_10DFB
 ; ---------------------------------------------------------------------------
 
-loc_10E64:                              ; CODE XREF: sub_10C40+220↑j
+loc_10E64:                              ; CODE XREF: ShowClueBook+220↑j
                 cmp     word_2E40A, 0
                 jz      short loc_10E6E
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10E6E:                              ; CODE XREF: sub_10C40+229↑j
+loc_10E6E:                              ; CODE XREF: ShowClueBook+229↑j
                 call    sub_13216
                 cmp     word_2E40A, 1
                 jz      short loc_10E3F
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10E7D:                              ; CODE XREF: sub_10C40+DB↑j
-                                        ; sub_10C40+2AE↓j ...
+loc_10E7D:                              ; CODE XREF: ShowClueBook+DB↑j
+                                        ; ShowClueBook+2AE↓j ...
                 and     word_328CC, 0FF9Fh
                 mov     word_2E3FC, 0E1h
                 mov     ax, 883Dh
@@ -1495,7 +1495,7 @@ loc_10E7D:                              ; CODE XREF: sub_10C40+DB↑j
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10EAF:                              ; CODE XREF: sub_10C40+26A↑j
+loc_10EAF:                              ; CODE XREF: ShowClueBook+26A↑j
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 cmp     ax, 1
@@ -1503,52 +1503,52 @@ loc_10EAF:                              ; CODE XREF: sub_10C40+26A↑j
                 jmp     short loc_10EF3
 ; ---------------------------------------------------------------------------
 
-loc_10EBC:                              ; CODE XREF: sub_10C40+278↑j
+loc_10EBC:                              ; CODE XREF: ShowClueBook+278↑j
                 cmp     ax, 2
                 jnz     short loc_10EC3
                 jmp     short loc_10F3E
 ; ---------------------------------------------------------------------------
 
-loc_10EC3:                              ; CODE XREF: sub_10C40+27F↑j
+loc_10EC3:                              ; CODE XREF: ShowClueBook+27F↑j
                 cmp     ax, 3
                 jnz     short loc_10ECB
                 jmp     loc_10F50
 ; ---------------------------------------------------------------------------
 
-loc_10ECB:                              ; CODE XREF: sub_10C40+286↑j
+loc_10ECB:                              ; CODE XREF: ShowClueBook+286↑j
                 cmp     ax, 4
                 jnz     short loc_10ED3
                 jmp     loc_10F9B
 ; ---------------------------------------------------------------------------
 
-loc_10ED3:                              ; CODE XREF: sub_10C40+28E↑j
+loc_10ED3:                              ; CODE XREF: ShowClueBook+28E↑j
                 cmp     ax, 5
                 jnz     short loc_10EDB
                 jmp     loc_10FE6
 ; ---------------------------------------------------------------------------
 
-loc_10EDB:                              ; CODE XREF: sub_10C40+296↑j
+loc_10EDB:                              ; CODE XREF: ShowClueBook+296↑j
                 cmp     ax, 6
                 jnz     short loc_10EE3
                 jmp     loc_11031
 ; ---------------------------------------------------------------------------
 
-loc_10EE3:                              ; CODE XREF: sub_10C40+29E↑j
+loc_10EE3:                              ; CODE XREF: ShowClueBook+29E↑j
                 cmp     ax, 7
                 jnz     short loc_10EEB
                 jmp     loc_1107C
 ; ---------------------------------------------------------------------------
 
-loc_10EEB:                              ; CODE XREF: sub_10C40+2A6↑j
+loc_10EEB:                              ; CODE XREF: ShowClueBook+2A6↑j
                 cmp     ax, 8
                 jnz     short loc_10E7D
                 jmp     loc_1108E
 ; ---------------------------------------------------------------------------
 
-loc_10EF3:                              ; CODE XREF: sub_10C40+27A↑j
+loc_10EF3:                              ; CODE XREF: ShowClueBook+27A↑j
                 mov     word_2E3EA, 0
 
-loc_10EF9:                              ; CODE XREF: sub_10C40+2F9↓j
+loc_10EF9:                              ; CODE XREF: ShowClueBook+2F9↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1562,34 +1562,34 @@ loc_10EF9:                              ; CODE XREF: sub_10C40+2F9↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_10F25:                              ; CODE XREF: sub_10C40+2E0↑j
+loc_10F25:                              ; CODE XREF: ShowClueBook+2E0↑j
                 cmp     word_2E40A, 0
                 jz      short loc_10F2F
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10F2F:                              ; CODE XREF: sub_10C40+2EA↑j
+loc_10F2F:                              ; CODE XREF: ShowClueBook+2EA↑j
                 call    sub_13090
                 cmp     word_2E40A, 1
                 jz      short loc_10EF9
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10F3E:                              ; CODE XREF: sub_10C40+281↑j
-                call    sub_1305E
+loc_10F3E:                              ; CODE XREF: ShowClueBook+281↑j
+                call    WaitForKeypress
                 cmp     word_2E40A, 1
                 jz      short loc_10F4D
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10F4D:                              ; CODE XREF: sub_10C40+308↑j
+loc_10F4D:                              ; CODE XREF: ShowClueBook+308↑j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_10F50:                              ; CODE XREF: sub_10C40+288↑j
+loc_10F50:                              ; CODE XREF: ShowClueBook+288↑j
                 mov     word_2E3EA, 0
 
-loc_10F56:                              ; CODE XREF: sub_10C40+356↓j
+loc_10F56:                              ; CODE XREF: ShowClueBook+356↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1603,23 +1603,23 @@ loc_10F56:                              ; CODE XREF: sub_10C40+356↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_10F82:                              ; CODE XREF: sub_10C40+33D↑j
+loc_10F82:                              ; CODE XREF: ShowClueBook+33D↑j
                 cmp     word_2E40A, 0
                 jz      short loc_10F8C
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10F8C:                              ; CODE XREF: sub_10C40+347↑j
+loc_10F8C:                              ; CODE XREF: ShowClueBook+347↑j
                 call    sub_13119
                 cmp     word_2E40A, 1
                 jz      short loc_10F56
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10F9B:                              ; CODE XREF: sub_10C40+290↑j
+loc_10F9B:                              ; CODE XREF: ShowClueBook+290↑j
                 mov     word_2E3EA, 0
 
-loc_10FA1:                              ; CODE XREF: sub_10C40+3A1↓j
+loc_10FA1:                              ; CODE XREF: ShowClueBook+3A1↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1633,23 +1633,23 @@ loc_10FA1:                              ; CODE XREF: sub_10C40+3A1↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_10FCD:                              ; CODE XREF: sub_10C40+388↑j
+loc_10FCD:                              ; CODE XREF: ShowClueBook+388↑j
                 cmp     word_2E40A, 0
                 jz      short loc_10FD7
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10FD7:                              ; CODE XREF: sub_10C40+392↑j
+loc_10FD7:                              ; CODE XREF: ShowClueBook+392↑j
                 call    sub_13119
                 cmp     word_2E40A, 1
                 jz      short loc_10FA1
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_10FE6:                              ; CODE XREF: sub_10C40+298↑j
+loc_10FE6:                              ; CODE XREF: ShowClueBook+298↑j
                 mov     word_2E3EA, 0
 
-loc_10FEC:                              ; CODE XREF: sub_10C40+3EC↓j
+loc_10FEC:                              ; CODE XREF: ShowClueBook+3EC↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1663,23 +1663,23 @@ loc_10FEC:                              ; CODE XREF: sub_10C40+3EC↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_11018:                              ; CODE XREF: sub_10C40+3D3↑j
+loc_11018:                              ; CODE XREF: ShowClueBook+3D3↑j
                 cmp     word_2E40A, 0
                 jz      short loc_11022
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_11022:                              ; CODE XREF: sub_10C40+3DD↑j
+loc_11022:                              ; CODE XREF: ShowClueBook+3DD↑j
                 call    sub_13119
                 cmp     word_2E40A, 1
                 jz      short loc_10FEC
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_11031:                              ; CODE XREF: sub_10C40+2A0↑j
+loc_11031:                              ; CODE XREF: ShowClueBook+2A0↑j
                 mov     word_2E3EA, 0
 
-loc_11037:                              ; CODE XREF: sub_10C40+437↓j
+loc_11037:                              ; CODE XREF: ShowClueBook+437↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1693,34 +1693,34 @@ loc_11037:                              ; CODE XREF: sub_10C40+437↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_11063:                              ; CODE XREF: sub_10C40+41E↑j
+loc_11063:                              ; CODE XREF: ShowClueBook+41E↑j
                 cmp     word_2E40A, 0
                 jz      short loc_1106D
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_1106D:                              ; CODE XREF: sub_10C40+428↑j
+loc_1106D:                              ; CODE XREF: ShowClueBook+428↑j
                 call    sub_13119
                 cmp     word_2E40A, 1
                 jz      short loc_11037
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_1107C:                              ; CODE XREF: sub_10C40+2A8↑j
+loc_1107C:                              ; CODE XREF: ShowClueBook+2A8↑j
                 call    sub_1334E
                 cmp     word_2E40A, 1
                 jz      short loc_1108B
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_1108B:                              ; CODE XREF: sub_10C40+446↑j
+loc_1108B:                              ; CODE XREF: ShowClueBook+446↑j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_1108E:                              ; CODE XREF: sub_10C40+2B0↑j
+loc_1108E:                              ; CODE XREF: ShowClueBook+2B0↑j
                 mov     word_2E3EA, 0
 
-loc_11094:                              ; CODE XREF: sub_10C40+494↓j
+loc_11094:                              ; CODE XREF: ShowClueBook+494↓j
                 or      word_328CC, 40h
                 mov     ax, 88C0h
                 mov     word_2E3F8, ax
@@ -1734,26 +1734,26 @@ loc_11094:                              ; CODE XREF: sub_10C40+494↓j
                 jmp     loc_10E7D
 ; ---------------------------------------------------------------------------
 
-loc_110C0:                              ; CODE XREF: sub_10C40+47B↑j
+loc_110C0:                              ; CODE XREF: ShowClueBook+47B↑j
                 cmp     word_2E40A, 0
                 jz      short loc_110CA
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_110CA:                              ; CODE XREF: sub_10C40+485↑j
+loc_110CA:                              ; CODE XREF: ShowClueBook+485↑j
                 call    sub_1318D
                 cmp     word_2E40A, 1
                 jz      short loc_11094
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_110D9:                              ; CODE XREF: sub_10C40+EB↑j
+loc_110D9:                              ; CODE XREF: ShowClueBook+EB↑j
                 and     word_328CC, 0FF9Fh
                 call    ShowPagedEntryScreen
                 jmp     loc_10CC5
 ; ---------------------------------------------------------------------------
 
-loc_110E6:                              ; CODE XREF: sub_10C40+8C↑j
+loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
                 call    sub_2849C
                 call    sub_25862
                 call    sub_237B0
@@ -1777,7 +1777,7 @@ loc_110E6:                              ; CODE XREF: sub_10C40+8C↑j
                                         ; ES = segment address of area to be freed
                 mov     fe, 0
 
-loc_11144:                              ; CODE XREF: sub_10C40+4F4↑j
+loc_11144:                              ; CODE XREF: ShowClueBook+4F4↑j
                 pop     fe
                 call    sub_14E28
                 pop     fe
@@ -1791,7 +1791,7 @@ loc_11144:                              ; CODE XREF: sub_10C40+4F4↑j
                 pop     bx
                 pop     ax
                 retf
-sub_10C40       endp
+ShowClueBook    endp
 
 ; ---------------------------------------------------------------------------
                 align 2
@@ -2666,7 +2666,7 @@ sub_1177C       endp
 
 sub_11900       proc near               ; CODE XREF: sub_1177C+90↑p
                                         ; sub_1177C+C2↑p ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_11918
                 cmp     byte_2E400, 1Bh
@@ -4398,8 +4398,8 @@ seg008          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12B84       proc far                ; CODE XREF: sub_10C40+80↑P
-                                        ; sub_10C40+118↑P ...
+sub_12B84       proc far                ; CODE XREF: ShowClueBook+80↑P
+                                        ; ShowClueBook+118↑P ...
                 push    ax
                 push    bx
                 push    cx
@@ -4414,7 +4414,7 @@ sub_12B84       proc far                ; CODE XREF: sub_10C40+80↑P
 
 loc_12B9B:                              ; CODE XREF: sub_12B84+12↑j
                                         ; sub_12B84+21↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_12B9B
                 cmp     errorCode, 3
@@ -5078,14 +5078,14 @@ seg009          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1305E       proc far                ; CODE XREF: sub_10C40:loc_10F3E↑P
-                or      word_328CC, 40h
+WaitForKeypress proc far                ; CODE XREF: ShowClueBook:loc_10F3E↑P
+                or      word_328CC, 40h ; Loops calling PollKeyboardInput (with a Fade? each iteration) until a key event is seen (errorCode != 0 as an input-event flag, see PollKeyboardInput), then for event types 1-3 calls sub_14D26.
                 call    sub_13463
                 call    Fade?
 
-loc_1306B:                              ; CODE XREF: sub_1305E+17↓j
-                                        ; sub_1305E+1E↓j ...
-                call    sub_1D038
+loc_1306B:                              ; CODE XREF: WaitForKeypress+17↓j
+                                        ; WaitForKeypress+1E↓j ...
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1306B
                 cmp     errorCode, 3
@@ -5095,13 +5095,13 @@ loc_1306B:                              ; CODE XREF: sub_1305E+17↓j
                 jz      short loc_1306B
                 and     word_328CC, 0FFBFh
                 retf
-sub_1305E       endp
+WaitForKeypress endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13090       proc far                ; CODE XREF: sub_10C40:loc_10F2F↑P
+sub_13090       proc far                ; CODE XREF: ShowClueBook:loc_10F2F↑P
                 call    sub_1472A
                 or      word_328CC, 40h
                 mov     word_2E3FC, 0F9h
@@ -5118,7 +5118,7 @@ loc_130AD:                              ; CODE XREF: sub_13090+75↓j
 
 loc_130B8:                              ; CODE XREF: sub_13090+32↓j
                                         ; sub_13090+39↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_130B8
                 cmp     errorCode, 3
@@ -5155,8 +5155,8 @@ sub_13090       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13119       proc far                ; CODE XREF: sub_10C40:loc_10F8C↑P
-                                        ; sub_10C40:loc_10FD7↑P ...
+sub_13119       proc far                ; CODE XREF: ShowClueBook:loc_10F8C↑P
+                                        ; ShowClueBook:loc_10FD7↑P ...
                 or      word_328CC, 40h
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
@@ -5196,7 +5196,7 @@ loc_13163:                              ; CODE XREF: sub_13119+2E↑j
 
 loc_13168:                              ; CODE XREF: sub_13119+59↓j
                                         ; sub_13119+60↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13168
                 cmp     errorCode, 3
@@ -5212,7 +5212,7 @@ sub_13119       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1318D       proc far                ; CODE XREF: sub_10C40:loc_110CA↑P
+sub_1318D       proc far                ; CODE XREF: ShowClueBook:loc_110CA↑P
                 call    sub_1472A
                 or      word_328CC, 40h
                 mov     word_2E3FC, 111h
@@ -5229,7 +5229,7 @@ loc_131AA:                              ; CODE XREF: sub_1318D+75↓j
 
 loc_131B5:                              ; CODE XREF: sub_1318D+32↓j
                                         ; sub_1318D+39↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_131B5
                 cmp     errorCode, 3
@@ -5266,8 +5266,8 @@ sub_1318D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13216       proc far                ; CODE XREF: sub_10C40+1AC↑P
-                                        ; sub_10C40:loc_10E6E↑P
+sub_13216       proc far                ; CODE XREF: ShowClueBook+1AC↑P
+                                        ; ShowClueBook:loc_10E6E↑P
                 or      word_328CC, 40h
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
@@ -5285,7 +5285,7 @@ sub_13216       proc far                ; CODE XREF: sub_10C40+1AC↑P
 
 loc_13253:                              ; CODE XREF: sub_13216+47↓j
                                         ; sub_13216+4E↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13253
                 cmp     errorCode, 3
@@ -5301,14 +5301,14 @@ sub_13216       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13278       proc far                ; CODE XREF: sub_10C40+124↑P
+sub_13278       proc far                ; CODE XREF: ShowClueBook+124↑P
                 call    sub_1419B
                 call    sub_13FCF
                 call    Fade?
 
 loc_13283:                              ; CODE XREF: sub_13278+15↓j
                                         ; sub_13278+1C↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13283
                 cmp     errorCode, 3
@@ -5331,7 +5331,7 @@ sub_13278       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_132B5       proc far                ; CODE XREF: sub_10C40:loc_10DA4↑P
+sub_132B5       proc far                ; CODE XREF: ShowClueBook:loc_10DA4↑P
                 call    sub_1466E
 
 loc_132B8:                              ; CODE XREF: sub_132B5+22↓j
@@ -5343,7 +5343,7 @@ loc_132B8:                              ; CODE XREF: sub_132B5+22↓j
                 call    Fade?
 
 loc_132CD:                              ; CODE XREF: sub_132B5+9↑j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_132B8
                 cmp     errorCode, 3
@@ -5359,7 +5359,7 @@ sub_132B5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowPagedEntryScreen proc far           ; CODE XREF: sub_10C40+49E↑P
+ShowPagedEntryScreen proc far           ; CODE XREF: ShowClueBook+49E↑P
                 mov     word_3293A, 1   ; Top-level paginated-entry display screen: shows one entry (via DrawMessageBox), the scroll-arrow state for the current page (via UpdateScrollArrows), and a Fade? transition. Current page index is word_3293A (bounded 1..0x1F). Content type (book/sign text vs. a catalog like spells) not confirmed.
 
 loc_132F8:                              ; CODE XREF: ShowPagedEntryScreen+57↓j
@@ -5376,7 +5376,7 @@ loc_132F8:                              ; CODE XREF: ShowPagedEntryScreen+57↓j
 
 loc_13322:                              ; CODE XREF: ShowPagedEntryScreen+3A↓j
                                         ; ShowPagedEntryScreen+41↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13322
                 cmp     errorCode, 3
@@ -5398,14 +5398,14 @@ ShowPagedEntryScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1334E       proc far                ; CODE XREF: sub_10C40:loc_1107C↑P
+sub_1334E       proc far                ; CODE XREF: ShowClueBook:loc_1107C↑P
                 or      word_328CC, 40h
                 call    sub_13E98
                 call    Fade?
 
 loc_1335B:                              ; CODE XREF: sub_1334E+17↓j
                                         ; sub_1334E+1E↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1335B
                 cmp     errorCode, 3
@@ -5526,7 +5526,7 @@ sub_133EB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13463       proc near               ; CODE XREF: sub_1305E+5↑p
+sub_13463       proc near               ; CODE XREF: WaitForKeypress+5↑p
                 mov     word_2E3FC, 0E1h
                 mov     ax, 8A0Dh
                 mov     word_2E3F8, ax
@@ -7683,8 +7683,8 @@ sub_14B85       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14BD5       proc far                ; CODE XREF: sub_10C40+6B↑P
-                                        ; sub_10C40:loc_10D2E↑P ...
+sub_14BD5       proc far                ; CODE XREF: ShowClueBook+6B↑P
+                                        ; ShowClueBook:loc_10D2E↑P ...
                 and     word_328CC, 7Fh
                 mov     word_2E3FC, 0F9h
                 mov     ax, 86F6h
@@ -7904,7 +7904,7 @@ sub_14D26       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14DFC       proc far                ; CODE XREF: sub_10C40+4B5↑P
+sub_14DFC       proc far                ; CODE XREF: ShowClueBook+4B5↑P
                 push    cx
                 push    es
                 push    si
@@ -7932,7 +7932,7 @@ sub_14DFC       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14E28       proc far                ; CODE XREF: sub_10C40+508↑P
+sub_14E28       proc far                ; CODE XREF: ShowClueBook+508↑P
                 mov     ax, ds
                 mov     es, ax
                 assume es:seg129
@@ -8079,7 +8079,7 @@ sub_14E28       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14F92       proc far                ; CODE XREF: sub_10C40+C↑P
+sub_14F92       proc far                ; CODE XREF: ShowClueBook+C↑P
                 mov     bx, 50h ; 'P'
                 add     bx, 0Eh
                 add     bx, 0C80h
@@ -8220,7 +8220,7 @@ sub_14F92       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_150B8       proc far                ; CODE XREF: sub_10C40+43↑P
+sub_150B8       proc far                ; CODE XREF: ShowClueBook+43↑P
                 push    cx
                 push    es
                 push    si
@@ -8280,7 +8280,7 @@ DrawMessageBox  endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_15142       proc far                ; CODE XREF: sub_10C40+66↑P
+sub_15142       proc far                ; CODE XREF: ShowClueBook+66↑P
                 push    cx
                 push    es
                 push    si
@@ -8389,7 +8389,7 @@ sub_1522E       endp
 
 sub_15249       proc near               ; CODE XREF: sub_15429+5A↓p
                                         ; sub_15429+D6↓p ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_15261
                 cmp     byte_2E400, 1Bh
@@ -10274,7 +10274,7 @@ loc_16459:                              ; CODE XREF: sub_16407+6E↓j
                 call    Fade?
 
 loc_1646B:                              ; CODE XREF: sub_16407+58↑j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_16459
                 cmp     errorCode, 1
@@ -12222,7 +12222,7 @@ sub_1732B       proc far                ; CODE XREF: sub_178A6+104↓p
 
 loc_17350:                              ; CODE XREF: sub_1732B+2F↓j
                                         ; sub_1732B+66↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_17350
                 cmp     errorCode, 1
@@ -13335,7 +13335,7 @@ loc_17D69:                              ; CODE XREF: sub_17B92+1CE↑j
 
 loc_17D7D:                              ; CODE XREF: sub_17B92+BE↑j
                                         ; sub_17B92+D5↑j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_17D7D
                 cmp     errorCode, 1
@@ -14391,7 +14391,7 @@ FileEntry_OpenFile endp
 
 
 ; int __usercall FileEntry_Read@<ax>(FileEntry *this)
-FileEntry_Read  proc far                ; CODE XREF: sub_10C40+4D5↑P
+FileEntry_Read  proc far                ; CODE XREF: ShowClueBook+4D5↑P
                                         ; sub_111C1+20↑P ...
 
 this            = dword ptr  4
@@ -14661,7 +14661,7 @@ sub_185A2       endp
 
 sub_1869D       proc far                ; CODE XREF: start+558↑P
                                         ; start+822↑P ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short near ptr sub_1869D
                 cmp     errorCode, 1
@@ -16146,7 +16146,7 @@ loc_19429:                              ; CODE XREF: sub_193BE+5D↑j
 
 loc_19442:                              ; CODE XREF: sub_193BE+8E↓j
                                         ; sub_193BE+A5↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_19442
                 cmp     errorCode, 1
@@ -16359,7 +16359,7 @@ loc_195D9:                              ; CODE XREF: sub_19553+16E↓j
 
 loc_195FA:                              ; CODE XREF: sub_19553+B1↓j
                                         ; sub_19553+D3↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_195FA
                 cmp     errorCode, 1
@@ -18618,7 +18618,7 @@ loc_1A802:                              ; CODE XREF: sub_1A76E+8F↑j
 
 loc_1A808:                              ; CODE XREF: sub_1A76E+71↑j
                                         ; sub_1A76E+A4↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A808
                 cmp     errorCode, 1
@@ -18668,7 +18668,7 @@ loc_1A871:                              ; CODE XREF: sub_1A76E+FE↑j
 
 loc_1A87B:                              ; CODE XREF: sub_1A76E+7B↑j
                                         ; sub_1A76E+117↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A87B
                 cmp     errorCode, 1
@@ -18783,7 +18783,7 @@ loc_1A9A3:                              ; CODE XREF: sub_1A76E+22E↑j
 
 loc_1A9A8:                              ; CODE XREF: sub_1A76E+91↑j
                                         ; sub_1A76E+244↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1A9A8
                 cmp     errorCode, 1
@@ -23104,9 +23104,9 @@ seg049          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D038       proc far                ; CODE XREF: start:loc_1008F↑P
+PollKeyboardInput proc far              ; CODE XREF: start:loc_1008F↑P
                                         ; sub_11900↑P ...
-                push    ax
+                push    ax              ; Non-blocking keyboard poll via INT 21h/AH=6/DL=0xFF. Sets errorCode (reused here as an input-event-type flag, NOT an actual error code: 0=no input, 1=regular char in byte_2E400 (uppercased a-z), 2=extended/function-key scan code in byte_2E400). Scan code 'B' triggers sub_10C40 unless word_328CA bit3 is set.
                 push    bx
                 push    cx
                 push    dx
@@ -23128,14 +23128,14 @@ sub_1D038       proc far                ; CODE XREF: start:loc_1008F↑P
                 jg      short loc_1D062
                 and     al, 0DFh
 
-loc_1D062:                              ; CODE XREF: sub_1D038+22↑j
-                                        ; sub_1D038+26↑j
+loc_1D062:                              ; CODE XREF: PollKeyboardInput+22↑j
+                                        ; PollKeyboardInput+26↑j
                 mov     byte_2E400, al
                 mov     errorCode, 1
                 jmp     loc_1D10D
 ; ---------------------------------------------------------------------------
 
-loc_1D06E:                              ; CODE XREF: sub_1D038+1E↑j
+loc_1D06E:                              ; CODE XREF: PollKeyboardInput+1E↑j
                 mov     ah, 6
                 mov     dl, 0FFh
                 int     21h             ; DOS - DIRECT CONSOLE I/O CHARACTER OUTPUT
@@ -23148,14 +23148,14 @@ loc_1D06E:                              ; CODE XREF: sub_1D038+1E↑j
                 jnz     short loc_1D08E
                 test    word_328CA, 8
                 jnz     short loc_1D08E
-                call    sub_10C40
+                call    ShowClueBook
 
-loc_1D08E:                              ; CODE XREF: sub_1D038+47↑j
-                                        ; sub_1D038+4F↑j
+loc_1D08E:                              ; CODE XREF: PollKeyboardInput+47↑j
+                                        ; PollKeyboardInput+4F↑j
                 jmp     short loc_1D10D
 ; ---------------------------------------------------------------------------
 
-loc_1D090:                              ; CODE XREF: sub_1D038+1A↑j
+loc_1D090:                              ; CODE XREF: PollKeyboardInput+1A↑j
                 cmp     word_3195C, 2
                 jz      short loc_1D10D
                 test    word_3195C, 2000h
@@ -23170,7 +23170,7 @@ loc_1D090:                              ; CODE XREF: sub_1D038+1A↑j
                 jmp     short loc_1D10D
 ; ---------------------------------------------------------------------------
 
-loc_1D0C3:                              ; CODE XREF: sub_1D038+65↑j
+loc_1D0C3:                              ; CODE XREF: PollKeyboardInput+65↑j
                 test    word_3195C, 400h
                 jz      short loc_1D0EF
                 mov     errorCode, 7
@@ -23183,27 +23183,27 @@ loc_1D0C3:                              ; CODE XREF: sub_1D038+65↑j
                 jmp     short loc_1D10D
 ; ---------------------------------------------------------------------------
 
-loc_1D0EF:                              ; CODE XREF: sub_1D038+91↑j
+loc_1D0EF:                              ; CODE XREF: PollKeyboardInput+91↑j
                 test    word_3195C, 800h
                 jz      short loc_1D0FF
                 mov     errorCode, 5
                 jmp     short loc_1D10D
 ; ---------------------------------------------------------------------------
 
-loc_1D0FF:                              ; CODE XREF: sub_1D038+BD↑j
+loc_1D0FF:                              ; CODE XREF: PollKeyboardInput+BD↑j
                 test    word_3195C, 100h
                 jz      short loc_1D10D
                 mov     errorCode, 9
 
-loc_1D10D:                              ; CODE XREF: sub_1D038+33↑j
-                                        ; sub_1D038:loc_1D08E↑j ...
+loc_1D10D:                              ; CODE XREF: PollKeyboardInput+33↑j
+                                        ; PollKeyboardInput:loc_1D08E↑j ...
                 and     word_3195C, 92FFh
                 pop     dx
                 pop     cx
                 pop     bx
                 pop     ax
                 retf
-sub_1D038       endp
+PollKeyboardInput endp
 
 seg049          ends
 
@@ -23395,7 +23395,7 @@ loc_1D1E9:                              ; CODE XREF: sub_1D1D4+A↑j
 
 loc_1D1F0:                              ; CODE XREF: sub_1D1D4+26↓j
                                         ; sub_1D1D4+2D↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1D1F0
                 cmp     errorCode, 1
@@ -23534,7 +23534,7 @@ loc_1D2D0:                              ; CODE XREF: sub_1D2A6+1B↑j
 
 loc_1D323:                              ; CODE XREF: sub_1D2A6+75↑j
                                         ; sub_1D2A6+87↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1D323
                 cmp     errorCode, 1
@@ -24634,7 +24634,7 @@ loc_1DD35:                              ; CODE XREF: sub_1DCE0+178↓j
 
 loc_1DD4B:                              ; CODE XREF: sub_1DCE0+75↓j
                                         ; sub_1DCE0+A1↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1DD4B
                 cmp     errorCode, 1
@@ -25796,7 +25796,7 @@ loc_1E808:                              ; CODE XREF: sub_1E64A+1DA↓j
                 call    Fade?
 
 loc_1E81A:                              ; CODE XREF: sub_1E64A+1C4↑j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1E808
                 call    sub_162F6
@@ -26108,7 +26108,7 @@ loc_1EB27:                              ; CODE XREF: sub_1EA6E+99↑j
 
 loc_1EB2C:                              ; CODE XREF: sub_1EA6E+C8↓j
                                         ; sub_1EA6E+DD↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1EB2C
                 cmp     errorCode, 1
@@ -26329,7 +26329,7 @@ loc_1ECDC:                              ; CODE XREF: sub_1EA6E+265↑j
                 call    writeChar
 
 loc_1ECF3:                              ; CODE XREF: sub_1EA6E+296↓j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 1
                 jz      short loc_1ED06
                 cmp     errorCode, 2
@@ -26836,7 +26836,7 @@ sub_1F217       endp
 sub_1F29D       proc near               ; CODE XREF: sub_1EA6E+227↑p
                                         ; sub_1EA6E+355↑p ...
                 mov     byte_2E400, 0
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short sub_1F29D
                 cmp     errorCode, 1
@@ -27667,7 +27667,7 @@ sub_1FC3F       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FC53       proc far                ; CODE XREF: sub_10C40+4DF↑P
+sub_1FC53       proc far                ; CODE XREF: ShowClueBook+4DF↑P
                                         ; sub_11A10+EB↑P ...
                 push    es
                 push    di
@@ -28252,7 +28252,7 @@ sub_20070       proc far                ; CODE XREF: seg000:09E1↑P
 
 loc_20126:                              ; CODE XREF: sub_20070+C0↓j
                                         ; sub_20070+E2↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_20126
                 cmp     errorCode, 1
@@ -31004,7 +31004,7 @@ seg066          segment byte public 'CODE' use16
 
 
 sub_218DC       proc far                ; CODE XREF: InitGame+A5↑P
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_218F7
                 cmp     byte_2E400, 1Bh
@@ -31027,7 +31027,7 @@ loc_218F7:                              ; CODE XREF: sub_218DC+A↑j
                 call    FileEntry_Read
                 call    ErrorCheck
                 call    sub_25862
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_21937
                 cmp     byte_2E400, 1Bh
@@ -31051,7 +31051,7 @@ loc_21937:                              ; CODE XREF: sub_218DC+4A↑j
                 mov     word_2E530, 0
                 call    sub_29878
                 call    Fade?
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_21980
                 cmp     byte_2E400, 1Bh
@@ -31097,7 +31097,7 @@ loc_219A7:                              ; CODE XREF: sub_218DC+C8↑j
 
 loc_219BD:                              ; CODE XREF: sub_218DC+D3↑j
                                         ; sub_218DC+DA↑j
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_219DA
                 cmp     byte_2E400, 1Bh
@@ -37617,7 +37617,7 @@ sub_25595       endp
 sub_255C7       proc near               ; CODE XREF: sub_23C18+178↑p
                                         ; sub_23C18+28A↑p ...
                 call    sub_28320
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short sub_255C7
                 cmp     errorCode, 7
@@ -38093,8 +38093,8 @@ seg083          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25862       proc far                ; CODE XREF: sub_10C40+3E↑P
-                                        ; sub_10C40+4AB↑P ...
+sub_25862       proc far                ; CODE XREF: ShowClueBook+3E↑P
+                                        ; ShowClueBook+4AB↑P ...
                 push    cx
                 push    dx
                 and     word_3295A, 0EFFFh
@@ -38112,8 +38112,8 @@ sub_25862       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2587E       proc far                ; CODE XREF: sub_10C40+70↑P
-                                        ; sub_10C40+4E4↑P ...
+sub_2587E       proc far                ; CODE XREF: ShowClueBook+70↑P
+                                        ; ShowClueBook+4E4↑P ...
                 push    cx
                 push    dx
                 mov     ax, 1
@@ -42625,7 +42625,7 @@ sub_27C96       endp
 
 
 ; void __usercall sub_27CB0(FileEntry *this@<eds:ebx.2>)
-sub_27CB0       proc far                ; CODE XREF: sub_10C40+4C5↑P
+sub_27CB0       proc far                ; CODE XREF: ShowClueBook+4C5↑P
                                         ; sub_1177C+4A↑P ...
                 push    si              ; First of a ~27-function cluster (0x27B42-0x2801A, seg096) of tiny 'resource block setup' stubs: each hardcodes one FileEntry's _blockOffset/_blockOffsetHi (from a small pointer table) and _blockSize for one specific game resource, then returns -- the caller does the actual FileEntry_Read. Each is called directly from many different, scattered call sites (not through a dispatch table), so which resource each one represents isn't recoverable from static analysis alone; left unnamed deliberately rather than guessed -- see ida_scripts/document_resource_stubs.py.
                 mov     si, 0CE1Fh
@@ -43539,7 +43539,7 @@ sub_28296       endp
 
 
 sub_28320       proc far                ; CODE XREF: sub_162B6↑P
-                                        ; sub_1D038+4↑P ...
+                                        ; PollKeyboardInput+4↑P ...
                 test    g_driverStateFlags, 2
                 jz      short locret_28358
                 cmp     byte ptr word_2E492, 0
@@ -44943,7 +44943,7 @@ loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
 
 loc_28F26:                              ; CODE XREF: sub_28CFF+231↓j
                                         ; sub_28CFF+23F↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_28F26
                 cmp     errorCode, 1
@@ -45487,7 +45487,7 @@ sub_2940E       proc far                ; CODE XREF: sub_294A3+1↓p
 
 loc_29423:                              ; CODE XREF: sub_2940E+1F↓j
                                         ; sub_2940E+2D↓j ...
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_29423
                 cmp     errorCode, 1
@@ -50646,7 +50646,7 @@ loc_2BD93:                              ; CODE XREF: sub_2BD1A+47↑j
 loc_2BDAA:                              ; CODE XREF: sub_2BD1A+9F↓j
                                         ; sub_2BD1A+B6↓j ...
                 call    sub_28320
-                call    sub_1D038
+                call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_2BDAA
                 cmp     errorCode, 1
@@ -56572,26 +56572,26 @@ word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
                 db    0
                 db    0
                 db    0
-word_2E3EA      dw 0                    ; DATA XREF: sub_10C40+96↑w
-                                        ; sub_10C40+A5↑w ...
+word_2E3EA      dw 0                    ; DATA XREF: ShowClueBook+96↑w
+                                        ; ShowClueBook+A5↑w ...
 word_2E3EC      dw 0                    ; DATA XREF: sub_12C96+7↑r
                                         ; sub_12E59:loc_12E8A↑w ...
-word_2E3EE      dw 0                    ; DATA XREF: sub_10C40+1F3↑r
-                                        ; sub_10C40:loc_10EAF↑r ...
+word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
+                                        ; ShowClueBook:loc_10EAF↑r ...
 word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
                                         ; sub_12B84+D7↑r ...
 word_2E3F2      dw 0                    ; DATA XREF: sub_12C96+9A↑r
                                         ; sub_12D5C+3F↑r ...
 word_2E3F4      dw 0                    ; DATA XREF: sub_12C96:loc_12D2C↑r
                                         ; sub_12E59+4B↑w ...
-word_2E3F6      dw 0                    ; DATA XREF: sub_10C40+7A↑w
-                                        ; sub_10C40+112↑w ...
-word_2E3F8      dw 0                    ; DATA XREF: sub_10C40+109↑w
-                                        ; sub_10C40+13C↑w ...
-word_2E3FA      dw 0                    ; DATA XREF: sub_10C40+10F↑w
-                                        ; sub_10C40+142↑w ...
-word_2E3FC      dw 0                    ; DATA XREF: sub_10C40+100↑w
-                                        ; sub_10C40+133↑w ...
+word_2E3F6      dw 0                    ; DATA XREF: ShowClueBook+7A↑w
+                                        ; ShowClueBook+112↑w ...
+word_2E3F8      dw 0                    ; DATA XREF: ShowClueBook+109↑w
+                                        ; ShowClueBook+13C↑w ...
+word_2E3FA      dw 0                    ; DATA XREF: ShowClueBook+10F↑w
+                                        ; ShowClueBook+142↑w ...
+word_2E3FC      dw 0                    ; DATA XREF: ShowClueBook+100↑w
+                                        ; ShowClueBook+133↑w ...
 word_2E3FE      dw 0                    ; DATA XREF: sub_12E59:loc_12EB1↑w
                                         ; sub_13216+25↑w ...
 byte_2E400      db 0                    ; DATA XREF: start+34↑r
@@ -56607,8 +56607,8 @@ word_2E406      dw 0                    ; DATA XREF: sub_111C1+6↑r
                                         ; sub_112AE+21B↑w ...
 _val27          dw 0                    ; DATA XREF: InitGlobals+C6↑w
                                         ; sub_21187+75↑r
-word_2E40A      dw 0                    ; DATA XREF: sub_10C40:loc_10CC5↑r
-                                        ; sub_10C40:loc_10CCF↑r ...
+word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
+                                        ; ShowClueBook:loc_10CCF↑r ...
 word_2E40C      dw 0                    ; DATA XREF: sub_1B717+3↑w
                                         ; sub_1B717+9↑w ...
 word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
@@ -74183,8 +74183,8 @@ word_328C8      dw 0                    ; DATA XREF: start:loc_1005A↑r
                                         ; start:loc_10696↑r ...
 word_328CA      dw 0                    ; DATA XREF: start+25↑w
                                         ; start+2A↑w ...
-word_328CC      dw 0                    ; DATA XREF: sub_10C40+5A↑w
-                                        ; sub_10C40:loc_10CB5↑w ...
+word_328CC      dw 0                    ; DATA XREF: ShowClueBook+5A↑w
+                                        ; ShowClueBook:loc_10CB5↑w ...
 word_328CE      dw 0                    ; DATA XREF: sub_1FECF+12↑r
                                         ; sub_1FECF+EF↑w ...
                 db    0
@@ -74263,7 +74263,7 @@ word_32918      dw 0                    ; DATA XREF: sub_1D4B8+3EA↑w
 word_3291A      dw 0                    ; DATA XREF: sub_124EC+E↑w
                                         ; sub_124EC+1B↑r ...
 _videoBufferSeg dw 0                    ; DATA XREF: sub_1075E+49↑r
-                                        ; sub_10C40+48↑r ...
+                                        ; ShowClueBook+48↑r ...
 word_3291E      dw 0                    ; DATA XREF: sub_1EA6E+5↑w
                                         ; sub_1EA6E:loc_1EAD0↑w ...
 word_32920      dw 0                    ; DATA XREF: sub_19264+66↑r
@@ -74289,7 +74289,7 @@ word_32932      dw 0                    ; DATA XREF: sub_21217+27↑w
 word_32934      dw 0                    ; DATA XREF: sub_2814C↑w
                                         ; sub_2814C+11↑w ...
 _videoSegment   dw 0                    ; DATA XREF: sub_1075E+4C↑w
-                                        ; sub_10C40+4B↑w ...
+                                        ; ShowClueBook+4B↑w ...
 word_32938      dw 0                    ; DATA XREF: sub_141D9+41C↑w
                                         ; sub_141D9+420↑r ...
 word_3293A      dw 0                    ; DATA XREF: InitGraphics↑w
@@ -74306,14 +74306,14 @@ word_32942      dw 0                    ; DATA XREF: sub_19CA1+69↑w
 word_32944      dw 0                    ; DATA XREF: sub_2C0FE+FC1↑w
                                         ; sub_2C0FE+1015↑r ...
 ; FileEntry *fe
-fe              dw 0                    ; DATA XREF: sub_10C40+8↑r
-                                        ; sub_10C40+11↑r ...
+fe              dw 0                    ; DATA XREF: ShowClueBook+8↑r
+                                        ; ShowClueBook+11↑r ...
 word_32948      dw 0                    ; DATA XREF: sub_2814C+1C↑w
                                         ; sub_2814C+36↑w ...
 ; int textPos_x
 _textPos_x      dw 0                    ; DATA XREF: sub_1075E+31↑w
                                         ; sub_1177C+E9↑w ...
-word_3294C      dw 0                    ; DATA XREF: sub_10C40+2C↑w
+word_3294C      dw 0                    ; DATA XREF: ShowClueBook+2C↑w
                                         ; sub_14E28+D9↑w ...
 word_3294E      dw 0                    ; DATA XREF: seg059:0202↑w
                                         ; sub_1FBE1+C↑w ...
@@ -74364,7 +74364,7 @@ word_3297A      dw 0                    ; DATA XREF: sub_1CDBC+17↑w
                                         ; sub_1CDBC+63↑w ...
 word_3297C      dw 0                    ; DATA XREF: sub_1CDBC+1D↑w
                                         ; sub_1CDBC:loc_1CE52↑w ...
-word_3297E      dw 0                    ; DATA XREF: sub_10C40+63↑w
+word_3297E      dw 0                    ; DATA XREF: ShowClueBook+63↑w
                                         ; sub_1177C+8↑w ...
 word_32980      dw 0                    ; DATA XREF: sub_11D66+18↑w
                                         ; sub_152EF+71↑w ...
@@ -85950,8 +85950,8 @@ word_36CE3      dw 3                    ; DATA XREF: sub_28619+8B↑w
 g_driverStateFlags dw offset loc_2D869+1 - offset locret_2D860
                                         ; DATA XREF: sub_11A10+332↑r
                                         ; sub_11E4A↑r ...
-word_36CE7      dw 0                    ; DATA XREF: sub_10C40+1B↑r
-                                        ; sub_10C40+25↑r ...
+word_36CE7      dw 0                    ; DATA XREF: ShowClueBook+1B↑r
+                                        ; ShowClueBook+25↑r ...
                 db 0FFh
                 db 0FFh
                 db 0FFh

@@ -7,8 +7,8 @@ range, for manual reading. Edit START/END below and rerun.
 import idc
 import ida_funcs
 
-START = 0x1D01E
-END = 0x1D01E + 40
+START = 0x1D038
+END = 0x1D038 + 90
 
 ea = START
 while ea < END:

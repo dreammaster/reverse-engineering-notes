@@ -344,6 +344,34 @@ as a single unit without much more work; flagged rather than guessed.
 
 73 named of 769 functions as of this update.
 
+### 2026-09-15 session update: keyboard polling + clue book (resolves a prior ambiguity)
+
+Traced `sub_1305E`'s wait loop down to the core, non-blocking keyboard
+poll (`ida_scripts/name_poll_keyboard.py`): `PollKeyboardInput`
+(`0x1D038`) does `INT 21h/AH=6/DL=0xFF` twice in sequence — a regular
+character (uppercased if a-z) or, failing that, an extended/function-key
+scan code — storing the result in `byte_2E400` and using `errorCode` as
+an *input-event-type* flag (0/1/2). **Important**: this is the same
+`errorCode` global named earlier from its role in `ErrorCheck`/
+`ErrorExit` — it's legitimately reused for an unrelated purpose here,
+noted via comment rather than given a second name. `sub_1305E` itself,
+which loops calling this until a key event arrives, is now
+`WaitForKeypress`.
+
+Following one specific case in `PollKeyboardInput` — scan code `0x42`
+(`'B'`) triggers a call to `sub_10C40` — paid off nicely: `0x42` is the
+standard BIOS scan code for **F8**, and `docs/manual.txt` line 220 says
+"F8 On-line clue book". `sub_10C40` calls `ShowPagedEntryScreen` (named
+two updates ago), so it's now `ShowClueBook`
+(`ida_scripts/name_clue_book.py`) — and this resolves
+`ShowPagedEntryScreen`'s earlier "book text vs. catalog" ambiguity in
+favor of "clue book entries", since that's what triggers it.
+
+76 named of 769 functions as of this update. `sub_10C40` was previously
+flagged as "too large to name" (1311 bytes) — worth remembering that a
+function's size doesn't block naming it once an external anchor (a
+manual hotkey, in this case) pins down its role with confidence.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
