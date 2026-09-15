@@ -13177,7 +13177,7 @@ loc_17BBF:                              ; CODE XREF: UseItem+23↑j
 loc_17BCF:                              ; CODE XREF: UseItem+33↑j
                 test    word_2E410, 3000h
                 jz      short loc_17BDF
-                call    sub_1C589
+                call    UseAbilityScroll
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -21892,15 +21892,15 @@ UseTrainingItem endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C589       proc far                ; CODE XREF: UseItem+45↑P
-                push    cs
+UseAbilityScroll proc far               ; CODE XREF: UseItem+45↑P
+                push    cs              ; UseItem's handler for word_2E410 bits 0x1000|0x2000 (0x3000). Bit-2 branch: if the current party member already has this item's ability bit (es:[si+0x12]) set in their own [+0xB4] ('abilities learned' bitmask -- see RevealMapRegion), shows an 'already known' message. Otherwise pays a BCD material cost (0x94B3 vs threshold 0x512A) then learns it: sets the bit in [+0xB4] and zeroes the matching charge field ([+0xB6]/[+0xB8]/[+0xBA] for bits 0x8000/0x4000/0x2000). A scroll/tome that teaches a new special ability.
                 call    near ptr SelectItemUseRecord
                 test    word_2E410, 1000h
                 jnz     short loc_1C598
                 jmp     loc_1C6BA
 ; ---------------------------------------------------------------------------
 
-loc_1C598:                              ; CODE XREF: sub_1C589+A↑j
+loc_1C598:                              ; CODE XREF: UseAbilityScroll+A↑j
                 test    word ptr es:[si+10h], 4
                 jnz     short loc_1C5A9
                 test    word ptr es:[si+10h], 2
@@ -21908,7 +21908,7 @@ loc_1C598:                              ; CODE XREF: sub_1C589+A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
+loc_1C5A9:                              ; CODE XREF: UseAbilityScroll+15↑j
                 and     word_2E410, 0EFFEh
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
@@ -21922,7 +21922,7 @@ loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C5D2:                              ; CODE XREF: sub_1C589+1D↑j
+loc_1C5D2:                              ; CODE XREF: UseAbilityScroll+1D↑j
                 mov     bx, word_328D4
                 mov     ax, es:[si+12h]
                 test    [bx+0B4h], ax
@@ -21938,7 +21938,7 @@ loc_1C5D2:                              ; CODE XREF: sub_1C589+1D↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C60B:                              ; CODE XREF: sub_1C589+55↑j
+loc_1C60B:                              ; CODE XREF: UseAbilityScroll+55↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
                 call    CompareBCD4
@@ -21954,7 +21954,7 @@ loc_1C60B:                              ; CODE XREF: sub_1C589+55↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C643:                              ; CODE XREF: sub_1C589+8D↑j
+loc_1C643:                              ; CODE XREF: UseAbilityScroll+8D↑j
                 call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
@@ -21970,27 +21970,27 @@ loc_1C643:                              ; CODE XREF: sub_1C589+8D↑j
                 jmp     short loc_1C693
 ; ---------------------------------------------------------------------------
 
-loc_1C66E:                              ; CODE XREF: sub_1C589+DB↑j
+loc_1C66E:                              ; CODE XREF: UseAbilityScroll+DB↑j
                 test    ax, 4000h
                 jz      short loc_1C67B
                 mov     word ptr [bx+0B8h], 0
                 jmp     short loc_1C693
 ; ---------------------------------------------------------------------------
 
-loc_1C67B:                              ; CODE XREF: sub_1C589+E8↑j
+loc_1C67B:                              ; CODE XREF: UseAbilityScroll+E8↑j
                 test    ax, 2000h
                 jz      short loc_1C688
                 mov     word ptr [bx+0BAh], 0
                 jmp     short loc_1C693
 ; ---------------------------------------------------------------------------
 
-loc_1C688:                              ; CODE XREF: sub_1C589+F5↑j
+loc_1C688:                              ; CODE XREF: UseAbilityScroll+F5↑j
                 test    ax, 1000h
                 jz      short loc_1C693
                 mov     word ptr [bx+0BCh], 0
 
-loc_1C693:                              ; CODE XREF: sub_1C589+E3↑j
-                                        ; sub_1C589+F0↑j ...
+loc_1C693:                              ; CODE XREF: UseAbilityScroll+E3↑j
+                                        ; UseAbilityScroll+F0↑j ...
                 mov     bx, word_32924
                 call    sub_22445
                 call    ClearStatusPanelIfDirty
@@ -22002,7 +22002,7 @@ loc_1C693:                              ; CODE XREF: sub_1C589+E3↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C6BA:                              ; CODE XREF: sub_1C589+C↑j
+loc_1C6BA:                              ; CODE XREF: UseAbilityScroll+C↑j
                 test    word ptr es:[si+0Eh], 8
                 jnz     short loc_1C72F
                 test    word ptr es:[si+10h], 1
@@ -22014,11 +22014,11 @@ loc_1C6BA:                              ; CODE XREF: sub_1C589+C↑j
                 jmp     loc_1C7D9
 ; ---------------------------------------------------------------------------
 
-locret_1C6DD:                           ; CODE XREF: sub_1C589+14F↑j
+locret_1C6DD:                           ; CODE XREF: UseAbilityScroll+14F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
+loc_1C6DE:                              ; CODE XREF: UseAbilityScroll+13F↑j
                 and     word_2E410, 0DFFEh
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, 0
@@ -22032,8 +22032,8 @@ loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C707:                              ; CODE XREF: sub_1C589+147↑j
-                                        ; sub_1C589+27D↓j
+loc_1C707:                              ; CODE XREF: UseAbilityScroll+147↑j
+                                        ; UseAbilityScroll+27D↓j
                 or      word_2E410, 1
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_29040
@@ -22048,7 +22048,7 @@ loc_1C707:                              ; CODE XREF: sub_1C589+147↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C72F:                              ; CODE XREF: sub_1C589+137↑j
+loc_1C72F:                              ; CODE XREF: UseAbilityScroll+137↑j
                 push    si
                 push    es
                 and     word_2E410, 0FFFEh
@@ -22068,13 +22068,13 @@ loc_1C72F:                              ; CODE XREF: sub_1C589+137↑j
                 mov     cx, 4
                 mov     di, 77C6h
 
-loc_1C764:                              ; CODE XREF: sub_1C589+1E2↓j
+loc_1C764:                              ; CODE XREF: UseAbilityScroll+1E2↓j
                 shl     dx, 1
                 jb      short loc_1C76D
                 add     di, 1Ah
                 loop    loc_1C764
 
-loc_1C76D:                              ; CODE XREF: sub_1C589+1DD↑j
+loc_1C76D:                              ; CODE XREF: UseAbilityScroll+1DD↑j
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 43h ; 'C'
                 mov     bx, 81FCh       ; msg
@@ -22104,7 +22104,7 @@ loc_1C76D:                              ; CODE XREF: sub_1C589+1DD↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C7D9:                              ; CODE XREF: sub_1C589+151↑j
+loc_1C7D9:                              ; CODE XREF: UseAbilityScroll+151↑j
                 mov     bx, word_328D4
                 mov     ax, word_3298E
                 not     ax
@@ -22119,7 +22119,7 @@ loc_1C7D9:                              ; CODE XREF: sub_1C589+151↑j
                 push    cs
                 call    near ptr sub_1CC2E
                 jmp     loc_1C707
-sub_1C589       endp
+UseAbilityScroll endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -38784,7 +38784,7 @@ sub_25C61       endp
 
 
 sub_25CFA       proc far                ; CODE XREF: UseItem+338↑P
-                                        ; sub_1C589+11C↑P ...
+                                        ; UseAbilityScroll+11C↑P ...
                 cmp     word ptr [si+0B4h], 0
                 jnz     short loc_25D02
                 retf
@@ -45067,7 +45067,7 @@ sub_28FF9       endp
 
 
 sub_29040       proc far                ; CODE XREF: UseItem:loc_17F25↑P
-                                        ; sub_1C589+188↑P ...
+                                        ; UseAbilityScroll+188↑P ...
                 push    es
                 push    di
                 push    si
@@ -74381,9 +74381,9 @@ word_32986      dw 0                    ; DATA XREF: sub_11D66+24↑w
 word_32988      dw 0                    ; DATA XREF: sub_11D66+2A↑w
                                         ; sub_11D66+6F↑w ...
 word_3298A      dw 0                    ; DATA XREF: sub_1BBED+1FE↑w
-                                        ; sub_1C589+224↑w ...
+                                        ; UseAbilityScroll+224↑w ...
 word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
-                                        ; sub_1C589+22A↑w ...
+                                        ; UseAbilityScroll+22A↑w ...
 word_3298E      dw 0                    ; DATA XREF: sub_1B96F+6↑w
                                         ; sub_1BBED+1E0↑w ...
 word_32990      dw 0                    ; DATA XREF: sub_178A6:loc_17906↑w

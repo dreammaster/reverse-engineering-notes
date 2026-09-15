@@ -4064,7 +4064,9 @@ static Bytes_0(void) {
 	create_insn	(0X1C456);
 	create_insn	(0X1C4E1);
 	create_insn	(0X1C54C);
+	set_cmt	(0X1C589,	"UseItem's handler for word_2E410 bits 0x1000|0x2000 (0x3000). Bit-2 branch: if the current party member already has this item's ability bit (es:[si+0x12]) set in their own [+0xB4] ('abilities learned' bitmask -- see RevealMapRegion), shows an 'already known' message. Otherwise pays a BCD material cost (0x94B3 vs threshold 0x512A) then learns it: sets the bit in [+0xB4] and zeroes the matching charge field ([+0xB6]/[+0xB8]/[+0xBA] for bits 0x8000/0x4000/0x2000). A scroll/tome that teaches a new special ability.",	0);
 	create_insn	(0X1C589);
+	set_name	(0X1C589,	"UseAbilityScroll");
 	create_insn	(x=0X1C58D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C598);
@@ -4862,6 +4864,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1F78C,	"this",	0);
 	set_cmt	(0X1F7E9,	"this",	0);
 	set_cmt	(0X1F7F7,	"this",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1F834,	"this",	0);
 	set_cmt	(0X1F83F,	"this",	0);
 	create_insn	(0X1F884);
@@ -4915,15 +4926,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FBFF);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X1FC02,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X1FC02);
 	op_hex		(x,	0);
@@ -8590,6 +8592,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2B65C);
 	op_hex		(x,	1);
 	create_insn	(0X2B685);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2B692);
 	op_hex		(x,	1);
 	create_insn	(0X2B6A6);
@@ -8654,15 +8665,6 @@ static Bytes_1(void) {
 	create_insn	(0X2BB58);
 	create_insn	(x=0X2BB8C);
 	op_seg		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2BB97);
 	create_insn	(x=0X2BBCC);
 	op_seg		(x,	1);

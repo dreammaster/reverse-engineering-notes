@@ -121,7 +121,11 @@ which of (at least) 4 special abilities this character has learned;
 `+0xB6`/`+0xB8`/`+0xBA`/`+0xBC`: per-ability charge or level values,
 each checked against a threshold in a small table at `0x77C6` before
 `RevealMapRegion` (and presumably its 3 sibling abilities, `ax`=2..5)
-will fire.
+will fire. **Confirmed by `UseAbilityScroll`**: a scroll/tome item type
+that teaches a new ability sets the matching bit in `+0xB4` and zeroes
+the matching charge field (`+0xB6`/`+0xB8`/`+0xBA` for bits `0x8000`/
+`0x4000`/`0x2000`) — resetting that ability's charge to 0 the moment
+it's learned, cross-confirming both fields' roles.
 `0x18` dispels/cures — clears bits 13-15 of `+0x1C`, a *different* 3-bit group
 than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 10/11/13 — bit 13 appears in both groups). Not yet mapped: the 6

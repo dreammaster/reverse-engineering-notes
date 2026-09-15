@@ -1382,6 +1382,23 @@ nothing yet distinguishes between the two.
 
 195 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: UseAbilityScroll closes the loop on special abilities
+
+The last of `UseItem`'s four type handlers turned out to directly
+confirm the special-ability system found many rounds ago via
+`RevealMapRegion`: pays a BCD material cost, then teaches the current
+party member a new special ability by setting the matching bit in
+their own `+0xB4` bitmask and zeroing the matching per-ability charge
+field (`+0xB6`/`+0xB8`/`+0xBA`) — a scroll/tome item. Named
+`UseAbilityScroll`. This cross-confirms both fields' roles cleanly:
+the charge resets to 0 the instant the ability is learned. With this,
+all four of `UseItem`'s top-level type branches now have concrete
+names (`UseHealingItem`, `UseTrainingItem`, `UseAbilityScroll`, and
+the earlier `UseItemType_400`/`sub_1BBED` pair, which remain hedged
+since their evidence was less conclusive).
+
+196 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
