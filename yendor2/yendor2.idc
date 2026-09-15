@@ -5199,8 +5199,9 @@ static Bytes_1(void) {
 	set_name	(0X20570,	"EditFloorLegendTypeNumber");
 	set_cmt	(0X20587,	"msg",	0);
 	create_insn	(0X205AE);
-	set_cmt	(0X205C0,	"this",	0);
+	set_cmt	(0X205C0,	"Loads a per-level tile-palette record from WORLD.DAT: PrepareWorldDatRead then overrides the block offset with _blockSize3*word_329FE (selects one record among several) before FileEntry_Read. Called from PaintCellAndPersist and sub_205FB -- feeds RunMapEditorScreen's B/F palette-browsing keys.",	0);
 	create_insn	(0X205C0);
+	set_name	(0X205C0,	"LoadWorldDatTilePalette");
 	create_insn	(x=0X205F1);
 	op_hex		(x,	1);
 	create_insn	(x=0X205F3);
@@ -6382,6 +6383,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X25550);
 	op_hex		(x,	1);
 	create_insn	(0X25561);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25587,	"msg",	0);
 	create_insn	(0X25595);
 	create_insn	(x=0X255B3);
@@ -6394,15 +6404,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25656);
 	op_hex		(x,	1);
 	set_name	(0X25656,	"AdvanceMonsterAnimationFrame");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X25662);
 	create_insn	(x=0X25666);
 	op_hex		(x,	1);
@@ -7150,7 +7151,9 @@ static Bytes_2(void) {
 	set_name	(0X27FA4,	"WorldDat_setBlock5");
 	create_insn	(0X27FC2);
 	set_name	(0X27FC2,	"WorldDat_setBlock6");
+	set_cmt	(0X27FE0,	"Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.",	0);
 	create_insn	(0X27FE0);
+	set_name	(0X27FE0,	"PrepareWorldDatRead");
 	create_insn	(0X28000);
 	create_insn	(0X2801A);
 	create_insn	(x=0X28034);
@@ -9778,6 +9781,15 @@ static Bytes_2(void) {
 	create_word	(0X32920);
 	create_word	(0X32922);
 	create_word	(0X32924);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32926);
 	create_word	(0X32928);
 	create_word	(0X3292A);
@@ -9849,15 +9861,6 @@ static Bytes_2(void) {
 	set_name	(0X3299A,	"_val19");
 	create_word	(0X3299C);
 	set_name	(0X3299C,	"_val20");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X3299E);
 	set_name	(0X3299E,	"_val25");
 	create_word	(0X329A0);
@@ -12609,7 +12612,7 @@ static Functions_0(void) {
 	set_frame_size(0X20570, 0, 0, 0);
 	add_func    (0X205C0,0X205FB);
 	set_func_flags(0X205C0,0x5400);
-	SetType(0X205C0, "int __fastcall sub_205C0(int, FileEntry *this);");
+	SetType(0X205C0, "int __fastcall LoadWorldDatTilePalette(int, FileEntry *this);");
 	set_frame_size(0X205C0, 0, 0, 0);
 	add_func    (0X205FB,0X20626);
 	set_func_flags(0X205FB,0x5400);

@@ -1882,7 +1882,7 @@ sub_111C1       proc far                ; CODE XREF: ProcessLevelMonsters+D3↓P
                 mov     word_368AB, ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     errorCode, 9
                 mov     bx, 9043h
                 call    FileEntry_Read
@@ -6583,7 +6583,7 @@ loc_14081:                              ; CODE XREF: DrawClueBookMapGrid+110↓j
                 push    cx              ; this
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     ax, word_3290E
                 mov     word_368AB, ax
                 mov     errorCode, 9
@@ -28539,7 +28539,7 @@ PaintCellAndPersist proc near           ; CODE XREF: FillVisibleAreaWithSelected
                 mov     ax, _textPos_x  ; Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.
                 mov     bx, _textPos_y
                 call    PersistExploredCell
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, word_2E496
                 mov     [si], ax
                 mov     errorCode, 9
@@ -28783,15 +28783,15 @@ EditFloorLegendTypeNumber endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_205C0(int, FileEntry *this)
-sub_205C0       proc near               ; CODE XREF: PaintCellAndPersist+C↑p
+; int __fastcall LoadWorldDatTilePalette(int, FileEntry *this)
+LoadWorldDatTilePalette proc near       ; CODE XREF: PaintCellAndPersist+C↑p
                                         ; sub_205FB+14↓p ...
-                push    dx              ; this
+                push    dx              ; Loads a per-level tile-palette record from WORLD.DAT: PrepareWorldDatRead then overrides the block offset with _blockSize3*word_329FE (selects one record among several) before FileEntry_Read. Called from PaintCellAndPersist and sub_205FB -- feeds RunMapEditorScreen's B/F palette-browsing keys.
                 mov     word_3293E, ax
                 mov     word_368AB, bx
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     ax, _blockSize3
                 mul     word_329FE
                 mov     [bx+6], ax
@@ -28804,7 +28804,7 @@ sub_205C0       proc near               ; CODE XREF: PaintCellAndPersist+C↑p
                 add     si, word_368A7
                 pop     dx
                 retn
-sub_205C0       endp
+LoadWorldDatTilePalette endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -28817,7 +28817,7 @@ sub_205FB       proc near               ; CODE XREF: RunMapEditorScreen+144↑p
                 mov     ax, word_31956
                 mov     word_32940, ax
                 call    sub_204F0
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, [si]
                 mov     word_2E384, ax
                 mov     word_2E496, ax
@@ -28838,7 +28838,7 @@ sub_20626       proc near               ; CODE XREF: RunMapEditorScreen+151↑p
                 mov     ax, word_31956
                 mov     word_32940, ax
                 call    sub_204F0
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, [si+2]
                 mov     word_2E386, ax
                 mov     word_2E4A2, ax
@@ -28859,7 +28859,7 @@ sub_20652       proc near               ; CODE XREF: RunMapEditorScreen+2A4↑p
                 mov     word_32940, ax
                 call    sub_204F0
                 call    PersistExploredCell
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, word_2E496
                 mov     [si], ax
                 mov     errorCode, 9
@@ -28913,7 +28913,7 @@ loc_206D5:                              ; CODE XREF: sub_206A0+59↓j
                 mov     ax, _textPos_x
                 mov     bx, _textPos_y
                 call    PersistExploredCell
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, seg seg129
                 mov     es, ax
                 mov     bx, si
@@ -28941,7 +28941,7 @@ sub_2070C       proc near               ; CODE XREF: RunMapEditorScreen+2D0↑p
                 mov     word_32940, ax
                 call    sub_204F0
                 call    PersistExploredCell
-                call    sub_205C0
+                call    LoadWorldDatTilePalette
                 mov     ax, word_2E4A2
                 mov     [si+2], ax
                 mov     errorCode, 9
@@ -29310,7 +29310,7 @@ loc_20A30:                              ; CODE XREF: sub_209D2+4F↑j
                 mov     word_36863, ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
                 call    sub_27E20
@@ -31686,7 +31686,7 @@ loc_21E8F:                              ; CODE XREF: ShowLocalAreaMap+6↑j
                 mov     word_368AB, ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
                 call    sub_27E20
@@ -40815,7 +40815,7 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
                 mov     es:[bx], ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     ax, word_36CF9
                 mov     [bx+8], ax
                 mov     ax, 4
@@ -40882,7 +40882,7 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
                 mov     es:[bx+2], ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     ax, word_36CF9
                 mov     [bx+8], ax
                 mov     ax, 4
@@ -43137,9 +43137,9 @@ WorldDat_setBlock6 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27FE0       proc far                ; CODE XREF: sub_111C1+12↑P
+PrepareWorldDatRead proc far            ; CODE XREF: sub_111C1+12↑P
                                         ; DrawClueBookMapGrid+B9↑P ...
-                push    si
+                push    si              ; Generic WORLD.DAT FileEntry setup, sibling of WorldDat_setBlock1-6: sets [+4]=ax (caller-supplied id, not a fixed block number), [+0xA]/[+0xC] from table 0xCDEF, [+6]=4*_blockSize3 (default, often overridden by the caller). Called from DrawClueBookMapGrid, LoadWorldDatTilePalette, and sub_111C1.
                 push    dx
                 mov     si, 0CDEFh
                 mov     [bx+4], ax
@@ -43153,7 +43153,7 @@ sub_27FE0       proc far                ; CODE XREF: sub_111C1+12↑P
                 pop     dx
                 pop     si
                 retf
-sub_27FE0       endp
+PrepareWorldDatRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -44893,7 +44893,7 @@ loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 mov     word_368AB, ax
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
                 call    sub_27E20
@@ -44988,7 +44988,7 @@ loc_28F8C:                              ; CODE XREF: RevealMapRegion+262↑j
 loc_28F91:                              ; CODE XREF: RevealMapRegion+25B↑j
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
-                call    sub_27FE0
+                call    PrepareWorldDatRead
                 mov     bx, 8FFBh       ; this
                 mov     ax, 0BC28h
                 call    sub_27E20
@@ -74498,7 +74498,7 @@ word_329FA      dw 0                    ; DATA XREF: InitGlobals+19E↑w
 _blockSize5     dw 0                    ; DATA XREF: InitGlobals+1A4↑w
                                         ; sub_2801A+12↑r
 word_329FE      dw 0                    ; DATA XREF: InitGlobals+1C8↑w
-                                        ; sub_205C0+16↑r ...
+                                        ; LoadWorldDatTilePalette+16↑r ...
 word_32A00      dw 0                    ; DATA XREF: InitGlobals+1AA↑w
                                         ; sub_209D2:loc_209FF↑r ...
 word_32A02      dw 0                    ; DATA XREF: InitGlobals+1B0↑w
@@ -74515,7 +74515,7 @@ word_32A0C      dw 0                    ; DATA XREF: InitGlobals+1DA↑w
 word_32A0E      dw 0                    ; DATA XREF: InitGlobals+1E0↑w
                                         ; DrawClueBookMapGrid+9B↑r ...
 _blockSize3     dw 0                    ; DATA XREF: InitGlobals+1C2↑w
-                                        ; sub_205C0+13↑r ...
+                                        ; LoadWorldDatTilePalette+13↑r ...
 word_32A12      dw 0                    ; DATA XREF: InitGlobals+1E6↑w
                                         ; RunGameDialog+460↑r ...
 _blockSize2     dw 0                    ; DATA XREF: InitGlobals+1EC↑w
@@ -84886,7 +84886,7 @@ worldDat        db 0FFh
 word_368A5      dw 0                    ; DATA XREF: InitGame+18↑w
                                         ; loadWorldDat2+2C↑w ...
 word_368A7      dw 0                    ; DATA XREF: sub_111C1+32↑r
-                                        ; sub_205C0+35↑r ...
+                                        ; LoadWorldDatTilePalette+35↑r ...
 ; FileEntry *word_368A9
 word_368A9      dw 0                    ; DATA XREF: UpdateScrollArrows+3F↑w
                                         ; ShowClueBookSpellDetail+327↑w ...

@@ -2641,6 +2641,17 @@ video-memory clear (2560 bytes at `0xA000:0000`, not the full frame).
 
 330 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PrepareWorldDatRead and LoadWorldDatTilePalette
+
+Named a generic `WORLD.DAT` FileEntry setup helper (a sibling of
+`WorldDat_setBlock1`-`6`) and its tile-palette-loading caller, feeding
+`RunMapEditorScreen`'s B/F palette-browsing keys and
+`DrawClueBookMapGrid`.
+
+332 named of 769 functions as of this update.
+
+## Current state (2026-09-14, before any work this session)
+
 Via `identify.py`:
 
 - **Root file**: `SW.EXE`, MD5 `d464f6847b9ea4296e9ce1b251f92788`.
