@@ -12216,7 +12216,7 @@ sub_1732B       proc far                ; CODE XREF: sub_178A6+104↓p
                 push    cs
                 call    near ptr sub_1728A
                 push    cs
-                call    near ptr sub_175F4
+                call    near ptr ShowMaterialCounterHud
                 call    sub_238CD
                 call    DrawMouseCursor
 
@@ -12404,7 +12404,7 @@ loc_174B1:                              ; CODE XREF: sub_1732B+17C↑j
                 cmp     errorCode, 0
                 jnz     short loc_1746B
                 push    cs
-                call    near ptr sub_175F4
+                call    near ptr ShowMaterialCounterHud
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 jmp     loc_17350
@@ -12539,14 +12539,14 @@ sub_1732B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_175F4       proc far                ; CODE XREF: sub_1732B+18↑p
+ShowMaterialCounterHud proc far         ; CODE XREF: sub_1732B+18↑p
                                         ; sub_1732B+193↑p ...
-                test    word_328C6, 80h
+                test    word_328C6, 80h ; Gated on word_328C6 bit 0x80: draws a fixed label (0x7FC4) plus the current value of material counter 0x94B3 via FormatAndDrawBCD4 -- a small HUD element. Only traced caller is sub_1732B.
                 jnz     short loc_175FD
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_175FD:                              ; CODE XREF: sub_175F4+6↑j
+loc_175FD:                              ; CODE XREF: ShowMaterialCounterHud+6↑j
                 push    _textPos_x
                 push    _textPos_y
                 push    _font_fgColor
@@ -12574,7 +12574,7 @@ loc_175FD:                              ; CODE XREF: sub_175F4+6↑j
                 pop     _textPos_y
                 pop     _textPos_x
                 retf
-sub_175F4       endp
+ShowMaterialCounterHud endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13072,7 +13072,7 @@ loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
                 mov     word_3194C, ax
                 call    sub_23874
                 push    cs
-                call    near ptr sub_175F4
+                call    near ptr ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
 sub_17A8D       endp
@@ -13103,7 +13103,7 @@ loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
                 call    sub_23874
                 call    ClearStatusPanelIfDirty
                 push    cs
-                call    near ptr sub_175F4
+                call    near ptr ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
 sub_17B09       endp
@@ -15175,7 +15175,7 @@ loc_18B1C:                              ; CODE XREF: sub_1869D+51B↓j
                 mov     ax, 1
                 call    sub_28412
                 call    sub_18F6C
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 call    sub_238CD
                 mov     errorCode, 0
@@ -15215,7 +15215,7 @@ loc_18B6F:                              ; CODE XREF: sub_1869D+4BB↑j
 
 loc_18B82:                              ; CODE XREF: sub_1869D+4D6↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
 
 loc_18B91:                              ; CODE XREF: sub_1869D+4AC↑j
@@ -15305,7 +15305,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 call    ClearStatusPanelIfDirty
                 call    sub_23874
                 call    sub_238CD
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     word_32968, 0
@@ -15759,7 +15759,7 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     word_2E530, ax
                 call    sub_23874
                 call    sub_238CD
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
 sub_18FDA       endp
@@ -15906,7 +15906,7 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     word_2E530, ax
                 call    sub_23874
                 call    sub_238CD
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
 sub_19140       endp
@@ -16018,7 +16018,7 @@ loc_192B9:                              ; CODE XREF: sub_19264+19↑j
                 mov     si, 94B3h
                 mov     di, 50C0h
                 call    AddBCD4
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
 sub_19264       endp
@@ -16506,7 +16506,7 @@ loc_19712:                              ; CODE XREF: sub_19553+D5↑j
                 call    sub_28412
                 mov     word_32924, 0
                 call    sub_26C9E
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 pop     word_3295A
                 retf
@@ -18129,7 +18129,7 @@ loc_1A3E4:                              ; CODE XREF: sub_1A37E+4B↑j
                 call    sub_16EFA
 
 loc_1A3E9:                              ; CODE XREF: sub_1A37E+1E↑j
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 retf
 sub_1A37E       endp
 
@@ -19665,7 +19665,7 @@ sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
                 call    sub_185A2
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
@@ -19745,7 +19745,7 @@ sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
                 call    sub_185A2
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
@@ -19812,7 +19812,7 @@ sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
                 call    sub_185A2
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
                 mov     byte ptr word_32968, 0
@@ -20563,7 +20563,7 @@ loc_1B872:                              ; CODE XREF: sub_1B818+44↑j
                 push    di
                 test    word ptr es:[si+18h], 2
                 jz      short loc_1B88D
-                call    sub_175F4
+                call    ShowMaterialCounterHud
 
 loc_1B88D:                              ; CODE XREF: sub_1B818+6E↑j
                 mov     di, 0AFA8h
@@ -31340,7 +31340,7 @@ loc_21BFC:                              ; CODE XREF: sub_219FA+1D8↑j
 
 loc_21C11:                              ; CODE XREF: sub_219FA+91↑j
                                         ; sub_219FA+102↑j ...
-                call    sub_175F4
+                call    ShowMaterialCounterHud
 
 loc_21C16:                              ; CODE XREF: sub_219FA+196↑j
                                         ; sub_219FA+19F↑j
@@ -31418,7 +31418,7 @@ sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
                 add     bx, 13h
                 mov     cx, 3
                 call    sub_23B76
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retf
 sub_21C79       endp
@@ -41251,7 +41251,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
                 call    ClearStatusPanelIfDirty
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    sub_238CD
                 call    DrawMouseCursor
                 jmp     short loc_2728F
@@ -41312,7 +41312,7 @@ loc_27369:                              ; CODE XREF: sub_271DC+183↑j
                 mov     ax, word_31948
                 mov     bx, 0
                 call    sub_219FA
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 jmp     loc_2728F
 sub_271DC       endp
 
@@ -48558,7 +48558,7 @@ loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
                 call    sub_274B4
                 call    sub_2ADD0
                 call    ClearStatusPanelIfDirty
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
 
 loc_2AA47:                              ; CODE XREF: RestCharacter+D↑j
@@ -48940,7 +48940,7 @@ sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
                 cmp     ax, 0
                 jnz     short loc_2ADC4
                 call    ClearStatusPanelIfDirty
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 mov     ax, 0
                 retn
@@ -53607,7 +53607,7 @@ sub_2D809       endp
                 cmp     ax, 0
                 jnz     short loc_2D861
                 call    ClearStatusPanelIfDirty
-                call    sub_175F4
+                call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 mov     ax, 0
 

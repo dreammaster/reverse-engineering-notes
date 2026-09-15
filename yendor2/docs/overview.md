@@ -1546,6 +1546,15 @@ inventory groups while open.
 
 209 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a small material-counter HUD element
+
+Named `ShowMaterialCounterHud` (was `sub_175F4`): a small, gated HUD
+element showing material counter `0x94B3`'s current value — the same
+counter consumed by several already-traced item types. Its calling
+context (which screen(s) actually show it) isn't nailed down yet.
+
+210 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

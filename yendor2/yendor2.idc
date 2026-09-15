@@ -2673,8 +2673,10 @@ static Bytes_0(void) {
 	create_insn	(0X175CA);
 	create_insn	(0X175F0);
 	create_insn	(0X175F3);
+	set_cmt	(0X175F4,	"Gated on word_328C6 bit 0x80: draws a fixed label (0x7FC4) plus the current value of material counter 0x94B3 via FormatAndDrawBCD4 -- a small HUD element. Only traced caller is sub_1732B.",	0);
 	create_insn	(x=0X175F4);
 	op_hex		(x,	1);
+	set_name	(0X175F4,	"ShowMaterialCounterHud");
 	create_insn	(0X175FD);
 	create_insn	(x=0X17616);
 	op_hex		(x,	1);
@@ -4717,6 +4719,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1ECCF);
 	op_hex		(x,	1);
 	create_insn	(0X1ECDC);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X1ED31);
 	create_insn	(0X1ED75);
 	create_insn	(x=0X1ED8F);
@@ -4742,15 +4753,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE82);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1EE87);
 	op_hex		(x,	1);
 	create_insn	(x=0X1EE8A);
@@ -8383,12 +8385,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2A677);
 	op_hex		(x,	1);
-	create_insn	(0X2A67E);
-	create_insn	(0X2A681);
-	set_name	(0X2A681,	"getTextPos");
-	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
-	create_insn	(0X2A68D);
-	set_name	(0X2A68D,	"LoadPictureIntoEms");
 }
 
 //------------------------------------------------------------------------
@@ -8398,6 +8394,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2A67E);
+	create_insn	(0X2A681);
+	set_name	(0X2A681,	"getTextPos");
+	set_cmt	(0X2A68D,	"LRU cache: maps picture ids into a small pool of LIM EMS 4.0 pages (INT 67h/AX=0x5000). Cache hit: just re-maps the already-loaded pages. Cache miss: evicts the oldest slot and reads the picture's bytes from PICTURES.VGA (FileEntry at bx=0x9011) into the newly-mapped pages.",	0);
+	create_insn	(0X2A68D);
+	set_name	(0X2A68D,	"LoadPictureIntoEms");
 	create_insn	(0X2A6A3);
 	set_cmt	(0X2A6CB,	" - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES\nAL = 00h / 01h, DX = handle, CX = number of entries in array\nDS:SI -> mapping array\nReturn: AH = status",	0);
 	create_insn	(x=0X2A6CB);
