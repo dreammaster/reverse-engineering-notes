@@ -25745,7 +25745,7 @@ loc_1E746:                              ; CODE XREF: sub_1E64A+DE↑j
                 mov     word_36D01, 1
 
 loc_1E761:                              ; CODE XREF: sub_1E64A+10F↑j
-                call    sub_28FF9
+                call    ResetDailyAbilityCharges
                 inc     word_36CFB
                 cmp     word_36CFB, 1Fh
                 jnz     short loc_1E786
@@ -27953,7 +27953,7 @@ AdvanceGameClock proc near              ; CODE XREF: seg059:0208↑p
 ; ---------------------------------------------------------------------------
 
 loc_1FE6D:                              ; CODE XREF: AdvanceGameClock+A↑j
-                call    sub_28FF9
+                call    ResetDailyAbilityCharges
                 mov     word_36D01, 1
                 inc     word_36CFB
                 cmp     word_36CFB, 1Fh
@@ -45019,9 +45019,9 @@ RevealMapRegion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28FF9       proc far                ; CODE XREF: sub_1E64A:loc_1E761↑P
+ResetDailyAbilityCharges proc far       ; CODE XREF: sub_1E64A:loc_1E761↑P
                                         ; AdvanceGameClock:loc_1FE6D↑P
-                push    ax
+                push    ax              ; AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.
                 push    bx
                 push    cx
                 push    dx
@@ -45032,7 +45032,7 @@ sub_28FF9       proc far                ; CODE XREF: sub_1E64A:loc_1E761↑P
                 mov     cx, 4
                 mov     bx, 95EBh
 
-loc_2900D:                              ; CODE XREF: sub_28FF9+36↓j
+loc_2900D:                              ; CODE XREF: ResetDailyAbilityCharges+36↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_29031
@@ -45042,7 +45042,7 @@ loc_2900D:                              ; CODE XREF: sub_28FF9+36↓j
                 add     si, 0B6h
                 mov     cx, 4
 
-loc_29022:                              ; CODE XREF: sub_28FF9+30↓j
+loc_29022:                              ; CODE XREF: ResetDailyAbilityCharges+30↓j
                 mov     word ptr [si], 0
                 add     si, 2
                 loop    loc_29022
@@ -45050,7 +45050,7 @@ loc_29022:                              ; CODE XREF: sub_28FF9+30↓j
                 add     bx, 2
                 loop    loc_2900D
 
-loc_29031:                              ; CODE XREF: sub_28FF9+18↑j
+loc_29031:                              ; CODE XREF: ResetDailyAbilityCharges+18↑j
                 pop     word_328D4
                 pop     word_328D6
                 pop     di
@@ -45060,7 +45060,7 @@ loc_29031:                              ; CODE XREF: sub_28FF9+18↑j
                 pop     bx
                 pop     ax
                 retf
-sub_28FF9       endp
+ResetDailyAbilityCharges endp
 
 
 ; =============== S U B R O U T I N E =======================================

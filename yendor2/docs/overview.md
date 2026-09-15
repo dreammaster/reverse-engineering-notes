@@ -1802,6 +1802,18 @@ traced end to end.
 
 240 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ResetDailyAbilityCharges closes the clock chain
+
+Named the last piece of `AdvanceGameClock`'s tick chain: on the daily
+rollover, `ResetDailyAbilityCharges` zeroes every party member's 4
+special-ability charge fields — special abilities recharge once per
+in-game day. Ties the clock system directly to the special-ability
+system from many rounds ago. `AdvanceGameClock`'s full chain (calendar,
+dawn/dusk lighting, ailment sweep, daily ability recharge) is now
+traced end to end.
+
+241 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

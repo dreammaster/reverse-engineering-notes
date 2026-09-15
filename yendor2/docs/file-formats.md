@@ -468,6 +468,10 @@ display (`word_32934`="AM"/"PM", `word_32948`=hour 1–12,
 day (`word_36CFB`) wraps at 31 into month (`word_36CFD`), which wraps
 at 13 into year (`word_36CFF`) — a **30-day-month, 12-month-year**
 in-game calendar (new-game start: day 4, month 11, year `0x222`=546).
+On the day rollover, `ResetDailyAbilityCharges` also zeroes every
+party member's 4 special-ability charge fields (`+0xB6`-`+0xBC`,
+see `RevealMapRegion`/`UseAbilityScroll`) — special abilities recharge
+once per in-game day.
 It also fires a dawn event at exactly 6:00 AM and a dusk event at
 6:00 PM (`word_36D01`==`0x168`/`0x438`, via `AdvanceDayNightPaletteFade`
 — a genuine ambient-lighting system: a gradual 113-step palette fade

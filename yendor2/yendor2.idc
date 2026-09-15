@@ -7423,7 +7423,9 @@ static Bytes_1(void) {
 	create_insn	(0X28F4B);
 	set_cmt	(0X28F9C,	"this",	0);
 	create_insn	(0X28FAA);
+	set_cmt	(0X28FF9,	"AdvanceGameClock's 'new day' handler: for each of the 4 party members, zeroes [+0xB6]/[+0xB8]/[+0xBA]/[+0xBC] -- the 4 special-ability charge fields (see RevealMapRegion/UseAbilityScroll). Special abilities recharge once per in-game day.",	0);
 	create_insn	(0X28FF9);
+	set_name	(0X28FF9,	"ResetDailyAbilityCharges");
 	create_insn	(0X29040);
 	create_insn	(x=0X2906C);
 	op_hex		(x,	1);
@@ -7684,6 +7686,15 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(0X29AA2);
 	set_name	(0X29AA2,	"writeChar");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X29ABE,	"x",	0);
 	set_cmt	(0X29AC1,	"y",	0);
 	create_insn	(x=0X29ADE);
@@ -7697,15 +7708,6 @@ static Bytes_1(void) {
 	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X29B0C);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X29B0F);
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
