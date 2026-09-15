@@ -2368,6 +2368,15 @@ now named.
 
 296 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RefreshPartyPortraits
+
+Named `sub_185A2`, called from `start`, `HandleDungeonInput`, and all
+three shop screens: refreshes the 4 party portrait slots, and when a
+shop action bit is active also draws a context hint ("SPACEBAR TO
+ENHANCE/REPAIR ITEM", or the default sell hint).
+
+297 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

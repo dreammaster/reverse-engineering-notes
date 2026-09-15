@@ -560,6 +560,12 @@ two siblings, `RunEnhanceItemScreen` (`UseItem+0x1C1`, sets bit 8) and
 identical — completing the shop cluster's three `UseItem`-reachable
 entry points (sell/enhance/repair), each just setting a different
 `word_328C6` action bit before running the same main input loop.
+All three, plus `start` and `HandleDungeonInput` generally, call
+`RefreshPartyPortraits`: its core role is refreshing the 4 party
+portrait slots, but when a shop action bit is active
+(`word_328C6 & 0x1C`) it also draws a context hint — "SPACEBAR TO
+ENHANCE ITEM" / "SPACEBAR TO REPAIR ITEM" / default "SPACEBAR TO SELL
+ITEM OR ESC TO UNDO".
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

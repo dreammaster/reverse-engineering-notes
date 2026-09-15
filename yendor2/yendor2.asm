@@ -932,7 +932,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 and     ax, 7000h
                 push    ax
                 call    ShowResourceDepletedOverlay
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    sub_1869D
                 call    sub_1FD03
                 pop     ax
@@ -10725,7 +10725,7 @@ loc_16837:                              ; CODE XREF: HandleDungeonInput+E4↑j
                 call    sub_26C9E
                 call    ClearStatusPanelIfDirty
                 and     word_3295A, 9FFFh
-                call    sub_185A2
+                call    RefreshPartyPortraits
 
 loc_16852:                              ; CODE XREF: HandleDungeonInput+19F↑j
                 call    sub_1869D
@@ -12280,7 +12280,7 @@ loc_173A0:                              ; CODE XREF: RunShopScreen+70↑j
 loc_173BD:                              ; CODE XREF: RunShopScreen+7A↑j
                 cmp     byte_2E400, 50h ; 'P'
                 jnz     short loc_173D1
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    sub_1869D
                 jmp     loc_1754D
 ; ---------------------------------------------------------------------------
@@ -12521,7 +12521,7 @@ loc_175CA:                              ; CODE XREF: RunShopScreen+68↑j
                 jz      short loc_175F0
                 cmp     ax, 6
                 jnz     short loc_175F0
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    sub_1869D
                 jmp     loc_1754D
 ; ---------------------------------------------------------------------------
@@ -14574,9 +14574,9 @@ sub_18504       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_185A2       proc far                ; CODE XREF: start+81D↑P
+RefreshPartyPortraits proc far          ; CODE XREF: start+81D↑P
                                         ; HandleDungeonInput+446↑P ...
-                call    RestoreCursorBackgroundIfDirty
+                call    RestoreCursorBackgroundIfDirty ; Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.
                 call    sub_1922C
                 mov     si, 95EBh
                 cmp     word ptr [si], 0
@@ -14586,7 +14586,7 @@ sub_185A2       proc far                ; CODE XREF: start+81D↑P
                 mov     word_328C0, 8
                 call    sub_19133
 
-loc_185C7:                              ; CODE XREF: sub_185A2+E↑j
+loc_185C7:                              ; CODE XREF: RefreshPartyPortraits+E↑j
                 mov     si, 95EDh
                 cmp     word ptr [si], 0
                 jz      short loc_185E4
@@ -14595,7 +14595,7 @@ loc_185C7:                              ; CODE XREF: sub_185A2+E↑j
                 mov     word_328C0, 8
                 call    sub_19133
 
-loc_185E4:                              ; CODE XREF: sub_185A2+2B↑j
+loc_185E4:                              ; CODE XREF: RefreshPartyPortraits+2B↑j
                 mov     si, 95EFh
                 cmp     word ptr [si], 0
                 jz      short loc_18601
@@ -14604,7 +14604,7 @@ loc_185E4:                              ; CODE XREF: sub_185A2+2B↑j
                 mov     word_328C0, 8
                 call    sub_19133
 
-loc_18601:                              ; CODE XREF: sub_185A2+48↑j
+loc_18601:                              ; CODE XREF: RefreshPartyPortraits+48↑j
                 mov     si, 95F1h
                 cmp     word ptr [si], 0
                 jz      short loc_1861E
@@ -14613,7 +14613,7 @@ loc_18601:                              ; CODE XREF: sub_185A2+48↑j
                 mov     word_328C0, 8
                 call    sub_19133
 
-loc_1861E:                              ; CODE XREF: sub_185A2+65↑j
+loc_1861E:                              ; CODE XREF: RefreshPartyPortraits+65↑j
                 mov     ax, 1
                 call    sub_28412
                 test    word_328C6, 1Ch
@@ -14634,7 +14634,7 @@ loc_1861E:                              ; CODE XREF: sub_185A2+65↑j
                 jmp     short loc_18692
 ; ---------------------------------------------------------------------------
 
-loc_1866E:                              ; CODE XREF: sub_185A2+B5↑j
+loc_1866E:                              ; CODE XREF: RefreshPartyPortraits+B5↑j
                 mov     _textPos_y, 0A7h
                 mov     cx, 2
                 mov     bx, 813Bh
@@ -14642,18 +14642,18 @@ loc_1866E:                              ; CODE XREF: sub_185A2+B5↑j
                 jmp     short loc_18692
 ; ---------------------------------------------------------------------------
 
-loc_18681:                              ; CODE XREF: sub_185A2+BD↑j
+loc_18681:                              ; CODE XREF: RefreshPartyPortraits+BD↑j
                 mov     _textPos_y, 0A7h
                 mov     cx, 2
                 mov     bx, 81CEh
                 call    sub_23B76
 
-loc_18692:                              ; CODE XREF: sub_185A2+8A↑j
-                                        ; sub_185A2+CA↑j ...
+loc_18692:                              ; CODE XREF: RefreshPartyPortraits+8A↑j
+                                        ; RefreshPartyPortraits+CA↑j ...
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_185A2       endp
+RefreshPartyPortraits endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15844,7 +15844,7 @@ sub_190E9       endp
 
 
 sub_19133       proc near               ; CODE XREF: sub_18504+88↑p
-                                        ; sub_185A2+22↑p ...
+                                        ; RefreshPartyPortraits+22↑p ...
                 mov     ax, [si]
                 call    sub_25B14
                 call    sub_2607F
@@ -15944,7 +15944,7 @@ sub_191FC       endp
 
 
 sub_1922C       proc near               ; CODE XREF: sub_18504↑p
-                                        ; sub_185A2+5↑p
+                                        ; RefreshPartyPortraits+5↑p
                 test    word_328C6, 7800h
                 jnz     short locret_19263
                 push    ds
@@ -19664,7 +19664,7 @@ RunEnhanceItemScreen proc far           ; CODE XREF: UseItem+1C1↑P
                 and     ax, 7000h
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
@@ -19744,7 +19744,7 @@ RunRepairItemScreen proc far            ; CODE XREF: UseItem+1D0↑P
                 and     ax, 7000h
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
@@ -19811,7 +19811,7 @@ RunSellItemScreen proc far              ; CODE XREF: UseItem+E0↑P
                 and     ax, 7000h
                 mov     word_3290C, ax
                 call    ShowResourceDepletedOverlay
-                call    sub_185A2
+                call    RefreshPartyPortraits
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 and     word_328CA, 0FFDFh
@@ -20067,7 +20067,7 @@ seg044          segment byte public 'CODE' use16
 
 
 sub_1B47A       proc far                ; CODE XREF: RunShopScreen+5↑P
-                                        ; sub_185A2+8C↑P ...
+                                        ; RefreshPartyPortraits+8C↑P ...
                 push    di
                 push    es
                 push    cx

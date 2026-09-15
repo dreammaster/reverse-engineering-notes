@@ -3129,7 +3129,9 @@ static Bytes_0(void) {
 	create_insn	(0X18535);
 	create_insn	(0X1854E);
 	create_insn	(0X18567);
+	set_cmt	(0X185A2,	"Refreshes the 4 party-member portrait slots (g_partySlotAssignment) via sub_19133, then -- only when a shop action bit is active (word_328C6 & 0x1C) -- draws a context hint: 'SPACEBAR TO ENHANCE ITEM' / 'SPACEBAR TO REPAIR ITEM' / default 'SPACEBAR TO SELL ITEM OR ESC TO UNDO'. Called from `start`, HandleDungeonInput, and all three shop screens.",	0);
 	create_insn	(0X185A2);
+	set_name	(0X185A2,	"RefreshPartyPortraits");
 	create_insn	(x=0X185B2);
 	op_hex		(x,	1);
 	create_insn	(x=0X185CF);
@@ -3925,6 +3927,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1B74A,	"Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.",	0);
 	create_insn	(0X1B74A);
 	set_name	(0X1B74A,	"ClassifyPartyMemberCondition");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B74C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B761);
@@ -3951,15 +3962,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B7D3);
 	op_hex		(x,	1);
 	create_insn	(0X1B7DD);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B7E4);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B7EA);
@@ -6985,13 +6987,6 @@ static Bytes_1(void) {
 	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
 	create_insn	(0X27A46);
 	set_name	(0X27A46,	"SetGlobalFlag");
-	create_insn	(0X27A4E);
-	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
-	create_insn	(0X27A56);
-	set_name	(0X27A56,	"TestRecordFlag_10C");
-	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
-	create_insn	(0X27A5E);
-	set_name	(0X27A5E,	"TestGlobalFlag");
 }
 
 //------------------------------------------------------------------------
@@ -7001,6 +6996,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X27A4E);
+	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
+	create_insn	(0X27A56);
+	set_name	(0X27A56,	"TestRecordFlag_10C");
+	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
+	create_insn	(0X27A5E);
+	set_name	(0X27A5E,	"TestGlobalFlag");
 	create_insn	(0X27A66);
 	set_cmt	(0X27A6E,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.",	0);
 	create_insn	(0X27A6E);
@@ -10365,6 +10367,15 @@ static Bytes_2(void) {
 	set_name	(0X359A7,	"aEnhanceItem");
 	create_strlit	(0X359B4,	0X6);
 	set_name	(0X359B4,	"aCost");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X359BA,	0XA);
 	set_name	(0X359BA,	"aICanNot");
 	create_strlit	(0X359C4,	0XD);
@@ -10383,15 +10394,6 @@ static Bytes_2(void) {
 	set_name	(0X35A3A,	"aRepairItem");
 	create_strlit	(0X35A46,	0XA);
 	set_name	(0X35A46,	"aICanNot_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35A50,	0XC);
 	set_name	(0X35A50,	"aRepairThat");
 	create_strlit	(0X35A5C,	0X10);
