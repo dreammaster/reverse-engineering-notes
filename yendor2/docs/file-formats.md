@@ -167,12 +167,26 @@ rows **78 cells wide** (row stride `0x270` = `78*8`), segment
 `word_2E562`, with the grid's own origin held in `word_2E564`
 (row/y)/`word_2E55C` (column/x) — i.e. addressing is relative to
 whatever sub-region of the full map is currently loaded, not the map's
-absolute origin. One confirmed field: **`+6`, a flags word, bit
-`0x8000` = "already explored"** — the automap's "cells become known as
-you walk near them" mechanic (matches the manual's "M uses the party
-map"). Nothing else about the cell layout (wall data, room boundaries,
-special markers) is decoded yet — `MarkCellExplored`'s own reveal
-action, `sub_21CC2`, is the next function to trace for that.
+absolute origin. Confirmed fields: **`+0`/`+2`: two tile-type indices**
+(used by `BuildMinimapTileData` — `ida_scripts/name_minimap.py` — as
+lookups into two small tables, 12 bytes/entry at `0xE551` and 10
+bytes/entry at `0xE175`, giving the two picture ids `DrawMinimap`
+draws per cell — plausibly floor/base tile and a wall or object
+overlay); **`+6`, a flags word, bit `0x8000` = "already explored"** —
+the automap's "cells become known as you walk near them" mechanic
+(matches the manual's "M uses the party map"). The reveal action itself
+(`PersistExploredCell`) writes the explored bit into `CURGAME` — the
+automap survives save/load because it's part of the savegame, not just
+in-memory state.
+
+**The dungeon "view" is a small tile-grid minimap, not a full-screen
+first-person render**: `DrawMinimap` (`0x21588`) draws a 7×9 grid of
+8×8-pixel tiles at a fixed on-screen position (base tile + optional
+overlay per cell, from `BuildMinimapTileData`'s buffer) — this pair is
+what `start`'s main loop calls after every movement/state change to
+refresh the view. No separate "3D corridor" renderer has turned up;
+this minimap widget appears to be the game's primary way of showing the
+dungeon layout.
 
 ## `PICTURES.VGA`
 

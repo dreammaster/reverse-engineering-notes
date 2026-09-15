@@ -890,6 +890,23 @@ main view. A good next lead for whoever continues.
 
 129 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the "renderer" — it's a minimap
+
+Resolved the flagged lead by following the `sub_209D2`/`sub_20C1E`/
+`sub_21612`/`sub_21588` sequence that recurs after every state-changing
+action in `start`'s main loop. `BuildMinimapTileData` (was `sub_21612`)
+gathers a 7×9 grid of tile-picture-ids centered on the player from the
+map cells (two new confirmed fields, `+0`/`+2`, index into small lookup
+tables). `DrawMinimap` (was `sub_21588`) then draws that grid as 63
+small `DrawPicture` calls (base tile + optional overlay each) at a
+fixed on-screen position. **This is the dungeon "view"** — a small
+tile-grid minimap widget, not a full-screen first-person 3D render;
+nothing resembling that has turned up anywhere this session. Full
+write-up, including the two new map-cell fields, in
+[file-formats.md](file-formats.md#in-memory-dungeon-map-grid-source-file-not-yet-identified--plausibly-loaded-from-worlddat).
+
+131 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

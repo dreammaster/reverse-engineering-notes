@@ -5204,12 +5204,16 @@ static Bytes_0(void) {
 	create_insn	(x=0X21559);
 	op_hex		(x,	1);
 	set_cmt	(0X21561,	"msg",	0);
+	set_cmt	(0X21588,	"Draws the 7x9 minimap grid BuildMinimapTileData just built (same 0xD06 buffer): base tile + optional overlay per cell, 8x8 pixels each, at a fixed on-screen position. The dungeon view is this small tile-grid minimap widget, not a full-screen first-person render.",	0);
 	create_insn	(x=0X21588);
 	op_hex		(x,	1);
+	set_name	(0X21588,	"DrawMinimap");
 	create_insn	(x=0X21596);
 	op_hex		(x,	1);
 	create_insn	(0X215A4);
+	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
 	create_insn	(0X21612);
+	set_name	(0X21612,	"BuildMinimapTileData");
 	create_insn	(x=0X21616);
 	op_hex		(x,	1);
 	create_insn	(0X2161F);
@@ -5763,6 +5767,15 @@ static Bytes_0(void) {
 	op_hex		(x,	0);
 	create_insn	(x=0X23729);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2372F);
 	op_hex		(x,	1);
 	create_insn	(x=0X23734);
@@ -5802,15 +5815,6 @@ static Bytes_0(void) {
 	set_cmt	(0X237E1,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X237E1);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X237F0);
 	create_insn	(0X237F7);
 	set_cmt	(0X237FA,	"- MS MOUSE - RESET DRIVER AND READ STATUS\nReturn: AX = status\nBX = number of buttons",	0);
@@ -10120,6 +10124,15 @@ static Bytes_1(void) {
 	set_name	(0X35CCB,	"aCavalier");
 	create_strlit	(0X35CD6,	0XB);
 	set_name	(0X35CD6,	"aWizard");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35CE1,	0XB);
 	set_name	(0X35CE1,	"aEnchanter");
 	create_strlit	(0X35CEC,	0XB);
@@ -10154,15 +10167,6 @@ static Bytes_1(void) {
 	set_name	(0X35D96,	"aClose");
 	create_strlit	(0X35D9C,	0X9);
 	set_name	(0X35D9C,	"aPortrait");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35DA5,	0X11);
 	set_name	(0X35DA5,	"aNonMagicUsers");
 	create_strlit	(0X35DB6,	0XE);

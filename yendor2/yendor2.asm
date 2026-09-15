@@ -186,8 +186,8 @@ loc_10125:                              ; CODE XREF: start+120↑j
                 jz      short loc_10152
                 call    sub_22D4C
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    sub_2278C
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10152
@@ -250,8 +250,8 @@ loc_101B8:                              ; CODE XREF: start+1AD↑j
                 call    ErrorCheck
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
 
 loc_101F3:                              ; CODE XREF: start+15D↑j
@@ -301,8 +301,8 @@ loc_10248:                              ; CODE XREF: start+23D↑j
                 call    ErrorCheck
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
 
 loc_10283:                              ; CODE XREF: start+1FE↑j
@@ -494,8 +494,8 @@ loc_103FD:                              ; CODE XREF: start+3EE↑j
 
 loc_10403:                              ; CODE XREF: start+3FB↑j
                                         ; start+44C↓j ...
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
 
 loc_1040D:                              ; CODE XREF: start+3E0↑j
                 mov     ax, 2
@@ -719,8 +719,8 @@ loc_105F6:                              ; CODE XREF: start+5E8↑j
 loc_10600:                              ; CODE XREF: start+568↑j
                                         ; start+5F4↑j ...
                 push    errorCode
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 pop     errorCode
                 cmp     errorCode, 2
@@ -2394,8 +2394,8 @@ loc_11613:                              ; CODE XREF: HandleMovementInput+30F↑j
                                         ; HandleMovementInput+325↑j
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 test    word_328CA, 1000h
                 jnz     short loc_11652
@@ -2442,8 +2442,8 @@ loc_116A2:                              ; CODE XREF: HandleMovementInput+3CC↑j
                 jz      short loc_116C8
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
 
 loc_116C8:                              ; CODE XREF: HandleMovementInput+3A2↑j
@@ -10214,8 +10214,8 @@ loc_163B1:                              ; CODE XREF: sub_162F6+89↑j
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 mov     word_3293E, 0
                 mov     si, 51B6h
@@ -13277,8 +13277,8 @@ loc_17CBE:                              ; CODE XREF: sub_17B92+125↑j
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    sub_238CD
                 call    DrawMouseCursor
 
@@ -13572,8 +13572,8 @@ loc_17F8D:                              ; CODE XREF: sub_17B92+3F1↑j
                 call    sub_22387
                 call    sub_222F8
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 and     word_328C6, 0FF7Fh
                 retf
@@ -17473,8 +17473,8 @@ loc_19E74:                              ; CODE XREF: sub_19E56+10↑j
                 call    sub_209D2
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 mov     word_2E530, 0
                 call    sub_23874
@@ -18227,8 +18227,8 @@ loc_1A493:                              ; CODE XREF: sub_1A3F0+77↑j
                 mov     word_36CB3, ax
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 retf
 sub_1A3F0       endp
@@ -19677,8 +19677,8 @@ sub_1B0CF       proc far                ; CODE XREF: sub_17B92+1C1↑P
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    sub_1B47A
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 or      word_328C4, 100h
                 call    sub_16E18
                 call    DrawMouseCursor
@@ -19757,8 +19757,8 @@ sub_1B194       proc far                ; CODE XREF: sub_17B92+1D0↑P
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    sub_1B47A
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 or      word_328C4, 100h
                 call    sub_16E18
                 call    DrawMouseCursor
@@ -19824,8 +19824,8 @@ sub_1B245       proc far                ; CODE XREF: sub_17B92+E0↑P
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
                 call    sub_1B47A
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 or      word_328C4, 100h
                 call    sub_16E18
                 call    DrawMouseCursor
@@ -23835,7 +23835,7 @@ loc_1D540:                              ; CODE XREF: sub_1D4B8+85↑j
                 call    sub_2BB1A
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21588
+                call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val19
                 call    sub_28412
@@ -23979,7 +23979,7 @@ loc_1D75C:                              ; CODE XREF: sub_1D4B8+29D↑j
                 call    DrawMouseCursor
                 call    sub_22D4C
                 call    sub_20C1E
-                call    sub_21588
+                call    DrawMinimap
                 call    sub_2278C
                 call    sub_238CD
                 retf
@@ -24184,7 +24184,7 @@ loc_1D9A6:                              ; CODE XREF: sub_1D937+3E↑j
                 call    sub_2BB1A
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21588
+                call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val43
                 call    sub_28412
@@ -25864,8 +25864,8 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 call    sub_1AB26
                 and     word_328C4, 0FBFFh
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -26642,8 +26642,8 @@ sub_1F0CD       proc far                ; CODE XREF: start+7F6↑P
                 call    sub_22387
                 call    sub_222F8
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 call    sub_2587E
                 call    sub_1FD03
@@ -28282,8 +28282,8 @@ loc_20157:                              ; CODE XREF: sub_20070+C7↑j
                 call    sub_209D2
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 call    sub_2587E
                 pop     word_3195A
@@ -29573,7 +29573,7 @@ sub_20C46       proc far                ; CODE XREF: start+85↑P
 loc_20C68:                              ; CODE XREF: sub_20C46+14↑j
                 test    word_36C7F, 4000h
                 jz      short loc_20C75
-                call    sub_21588
+                call    DrawMinimap
 
 loc_20C75:                              ; CODE XREF: sub_20C46+28↑j
                 and     word_328C4, 0FBFFh
@@ -30607,22 +30607,22 @@ sub_21530       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21588       proc far                ; CODE XREF: start+13E↑P
+DrawMinimap     proc far                ; CODE XREF: start+13E↑P
                                         ; start+1E9↑P ...
-                test    word_36C7F, 2000h
+                test    word_36C7F, 2000h ; Draws the 7x9 minimap grid BuildMinimapTileData just built (same 0xD06 buffer): base tile + optional overlay per cell, 8x8 pixels each, at a fixed on-screen position. The dungeon view is this small tile-grid minimap widget, not a full-screen first-person render.
                 jz      short loc_21596
                 call    sub_22402
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_21596:                              ; CODE XREF: sub_21588+6↑j
+loc_21596:                              ; CODE XREF: DrawMinimap+6↑j
                 test    word_36C7F, 1000h
                 jz      short loc_215A4
                 call    sub_2704C
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_215A4:                              ; CODE XREF: sub_21588+14↑j
+loc_215A4:                              ; CODE XREF: DrawMinimap+14↑j
                 push    di
                 push    si
                 push    cx
@@ -30634,12 +30634,12 @@ loc_215A4:                              ; CODE XREF: sub_21588+14↑j
                 mov     _videoSegment, ax
                 mov     cx, 7
 
-loc_215C2:                              ; CODE XREF: sub_21588+81↓j
+loc_215C2:                              ; CODE XREF: DrawMinimap+81↓j
                 push    cx
                 mov     cx, 9
                 mov     x, 0F0h
 
-loc_215CC:                              ; CODE XREF: sub_21588+79↓j
+loc_215CC:                              ; CODE XREF: DrawMinimap+79↓j
                 mov     ax, [di]
                 mov     word_32926, ax
                 mov     ax, [si]
@@ -30653,7 +30653,7 @@ loc_215CC:                              ; CODE XREF: sub_21588+79↓j
                 mov     _font_bgTransparent, 2
                 call    DrawPicture
 
-loc_215F6:                              ; CODE XREF: sub_21588+5E↑j
+loc_215F6:                              ; CODE XREF: DrawMinimap+5E↑j
                 add     x, 8
                 add     si, 4
                 add     di, 2
@@ -30666,22 +30666,22 @@ loc_215F6:                              ; CODE XREF: sub_21588+5E↑j
                 pop     si
                 pop     di
                 retf
-sub_21588       endp
+DrawMinimap     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21612       proc far                ; CODE XREF: start+139↑P
+BuildMinimapTileData proc far           ; CODE XREF: start+139↑P
                                         ; start+1E4↑P ...
-                push    cs
+                push    cs              ; Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.
                 call    near ptr sub_21530
                 test    word_36C7F, 4000h
                 jnz     short loc_2161F
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2161F:                              ; CODE XREF: sub_21612+A↑j
+loc_2161F:                              ; CODE XREF: BuildMinimapTileData+A↑j
                 push    dx
                 mov     es, word_2E562
                 mov     bx, word_36CF9
@@ -30699,12 +30699,12 @@ loc_2161F:                              ; CODE XREF: sub_21612+A↑j
                 mov     si, 0D06h
                 mov     cx, 7
 
-loc_2164E:                              ; CODE XREF: sub_21612+86↓j
+loc_2164E:                              ; CODE XREF: BuildMinimapTileData+86↓j
                 push    di
                 push    cx
                 mov     cx, 9
 
-loc_21653:                              ; CODE XREF: sub_21612+7E↓j
+loc_21653:                              ; CODE XREF: BuildMinimapTileData+7E↓j
                 mov     word ptr [si], 13h
                 mov     word ptr [si+2], 0
                 test    word ptr es:[di+6], 8000h
@@ -30724,7 +30724,7 @@ loc_21653:                              ; CODE XREF: sub_21612+7E↓j
                 mov     ax, [bx+8]
                 mov     [si+2], ax
 
-loc_2168A:                              ; CODE XREF: sub_21612+50↑j
+loc_2168A:                              ; CODE XREF: BuildMinimapTileData+50↑j
                 add     si, 4
                 add     di, 8
                 loop    loc_21653
@@ -30734,13 +30734,13 @@ loc_2168A:                              ; CODE XREF: sub_21612+50↑j
                 loop    loc_2164E
                 pop     dx
                 retf
-sub_21612       endp
+BuildMinimapTileData endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2169C       proc near               ; CODE XREF: sub_21588+83↑p
+sub_2169C       proc near               ; CODE XREF: DrawMinimap+83↑p
                 mov     x, 110h
                 mov     y, 20h ; ' '
                 mov     word_2E532, 90h
@@ -32754,7 +32754,7 @@ loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 call    sub_2BB1A
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21588
+                call    DrawMinimap
                 call    sub_2BB97
                 mov     di, 0BC28h
                 mov     cx, 4
@@ -40771,8 +40771,8 @@ loc_26DF2:                              ; CODE XREF: sub_26D54+37↑j
                 call    sub_209D2
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 retf
 sub_26D54       endp
@@ -40838,8 +40838,8 @@ loc_26E4D:                              ; CODE XREF: sub_26E11+37↑j
 loc_26ECE:                              ; CODE XREF: sub_26E11+39↑j
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 retf
 sub_26E11       endp
@@ -40906,8 +40906,8 @@ loc_26F24:                              ; CODE XREF: sub_26EE8+37↑j
 loc_26FA9:                              ; CODE XREF: sub_26EE8+39↑j
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 retf
 sub_26EE8       endp
@@ -40955,8 +40955,8 @@ loc_27020:                              ; CODE XREF: sub_26FC3+57↑j
 loc_27031:                              ; CODE XREF: sub_26FC3+37↑j
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 retf
 sub_26FC3       endp
@@ -45004,8 +45004,8 @@ loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
                 call    sub_209D2
                 call    RevealCellsAroundPlayer
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    sub_19E56
                 call    sub_222F8
                 call    DrawMouseCursor
@@ -49439,8 +49439,8 @@ sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
                 call    sub_223D4
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 mov     word_2E530, 0
                 call    sub_23874
@@ -49454,8 +49454,8 @@ sub_2B2CF       proc near               ; CODE XREF: sub_2AE3C+8↑p
                 call    sub_223D4
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_2E530, 0
@@ -51569,8 +51569,8 @@ loc_2C543:                              ; CODE XREF: sub_2C0FE+3F5↑j
                                         ; sub_2C0FE+402↑j
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -51680,8 +51680,8 @@ loc_2C621:                              ; CODE XREF: sub_2C0FE+51E↑j
                 call    sub_209D2
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -51727,8 +51727,8 @@ loc_2C6BD:                              ; CODE XREF: sub_2C0FE+5B3↑j
                 call    ErrorCheck
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -51791,8 +51791,8 @@ loc_2C777:                              ; CODE XREF: sub_2C0FE+66D↑j
                 call    ErrorCheck
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -51861,8 +51861,8 @@ loc_2C83C:                              ; CODE XREF: sub_2C0FE+736↑j
                 call    ErrorCheck
                 call    sub_209D2
                 call    sub_20C1E
-                call    sub_21612
-                call    sub_21588
+                call    BuildMinimapTileData
+                call    DrawMinimap
                 call    DrawMouseCursor
                 jmp     loc_2C1C9
 ; ---------------------------------------------------------------------------
@@ -51987,7 +51987,7 @@ loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
                 call    sub_2BB1A
                 call    sub_223D4
                 call    sub_20C1E
-                call    sub_21588
+                call    DrawMinimap
                 and     word_328C4, 0FFBFh
                 call    sub_2BB97
                 mov     word_3292C, 31h ; '1'
