@@ -1396,7 +1396,7 @@ loc_10D9A:                              ; CODE XREF: ShowClueBook+155↑j
 ; ---------------------------------------------------------------------------
 
 loc_10DA4:                              ; CODE XREF: ShowClueBook+15F↑j
-                call    sub_132B5
+                call    RunClueBookMonsterCategory
                 cmp     word_2E40A, 0FFFFh
                 jnz     short loc_10DB3
                 jmp     loc_10CB5
@@ -5331,18 +5331,18 @@ sub_13278       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_132B5       proc far                ; CODE XREF: ShowClueBook:loc_10DA4↑P
-                call    sub_1466E
+RunClueBookMonsterCategory proc far     ; CODE XREF: ShowClueBook:loc_10DA4↑P
+                call    LoadClueBookMonsterEntry ; F2 'MONSTER STATISTICS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory minus the region-table hit-testing: LoadClueBookMonsterEntry once, then redraw (sub_141D9 -- the detail panel, not yet named) + DrawClueBookNavBar when dirty, until ESC.
 
-loc_132B8:                              ; CODE XREF: sub_132B5+22↓j
-                                        ; sub_132B5+29↓j ...
+loc_132B8:                              ; CODE XREF: RunClueBookMonsterCategory+22↓j
+                                        ; RunClueBookMonsterCategory+29↓j ...
                 test    word_328C4, 400h
                 jz      short loc_132CD
                 call    sub_141D9
                 call    DrawClueBookNavBar
                 call    DrawMouseCursor
 
-loc_132CD:                              ; CODE XREF: sub_132B5+9↑j
+loc_132CD:                              ; CODE XREF: RunClueBookMonsterCategory+9↑j
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_132B8
@@ -5353,7 +5353,7 @@ loc_132CD:                              ; CODE XREF: sub_132B5+9↑j
                 jz      short loc_132B8
                 and     word_328CC, 0FFBFh
                 retf
-sub_132B5       endp
+RunClueBookMonsterCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6702,7 +6702,7 @@ sub_1419B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_141D9       proc near               ; CODE XREF: sub_132B5+B↑p
+sub_141D9       proc near               ; CODE XREF: RunClueBookMonsterCategory+B↑p
                                         ; sub_141D9+48B↓j ...
                 mov     es, fe
                 mov     si, 0
@@ -7070,15 +7070,15 @@ sub_141D9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1466E       proc near               ; CODE XREF: sub_132B5↑p
-                mov     es, fe
+LoadClueBookMonsterEntry proc near      ; CODE XREF: RunClueBookMonsterCategory↑p
+                mov     es, fe          ; F2 'MONSTER STATISTICS' clue-book entry loader: reads WORLD.DAT block 0x32 for the current entry (word_2E3EE[0]) into a fresh buffer, sets a couple of display-variant fields from a flag at [+0x92], draws the nav bar. Called once by RunClueBookMonsterCategory.
                 cmp     fe, 0
                 jz      short loc_1467D
                 mov     ah, 49h
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_1467D:                              ; CODE XREF: sub_1466E+9↑j
+loc_1467D:                              ; CODE XREF: LoadClueBookMonsterEntry+9↑j
                 mov     bx, word_2E3EE
                 mov     bx, [bx]
                 mov     ax, 32h ; '2'
@@ -7112,7 +7112,7 @@ loc_1467D:                              ; CODE XREF: sub_1466E+9↑j
                 mov     word ptr es:[si+2], 6
                 mov     word ptr es:[si+4], 21h ; '!'
 
-loc_14700:                              ; CODE XREF: sub_1466E+7E↑j
+loc_14700:                              ; CODE XREF: LoadClueBookMonsterEntry+7E↑j
                 mov     word_32938, 1
                 or      word_328CC, 40h
                 call    sub_141D9
@@ -7122,7 +7122,7 @@ loc_14700:                              ; CODE XREF: sub_1466E+7E↑j
                 or      word_3295A, 8000h
                 and     word_328C4, 0FBFFh
                 retn
-sub_1466E       endp
+LoadClueBookMonsterEntry endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43098,7 +43098,7 @@ WorldDat_setBlock4 endp
 ; =============== S U B R O U T I N E =======================================
 
 
-WorldDat_setBlock5 proc far             ; CODE XREF: sub_1466E+18↑P
+WorldDat_setBlock5 proc far             ; CODE XREF: LoadClueBookMonsterEntry+18↑P
                                         ; sub_14B85+3↑P ...
                 push    si
                 mov     si, 0CE63h

@@ -2276,6 +2276,17 @@ gold HUD, gated on an unidentified "compass active" mode.
 
 283 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookMonsterCategory and LoadClueBookMonsterEntry
+
+Named the F2 "MONSTER STATISTICS" category's loop and entry loader,
+mirroring the F5 Items cluster. `LoadClueBookMonsterEntry` reads
+`WORLD.DAT` block `0x32` for the current entry into a fresh buffer;
+`RunClueBookMonsterCategory` (from `ShowClueBook`) calls it once then
+loops redrawing a detail panel (`sub_141D9`, 362 lines with dozens of
+labeled stat fields, left unnamed) until ESC.
+
+285 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

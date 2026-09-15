@@ -1674,7 +1674,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X13272);
 	op_hex		(x,	1);
 	create_insn	(0X13278);
+	set_cmt	(0X132B5,	"F2 'MONSTER STATISTICS' clue-book category loop (called from ShowClueBook), structurally identical to RunClueBookItemCategory minus the region-table hit-testing: LoadClueBookMonsterEntry once, then redraw (sub_141D9 -- the detail panel, not yet named) + DrawClueBookNavBar when dirty, until ESC.",	0);
 	create_insn	(0X132B5);
+	set_name	(0X132B5,	"RunClueBookMonsterCategory");
 	create_insn	(x=0X132B8);
 	op_hex		(x,	1);
 	create_insn	(x=0X132EC);
@@ -1925,7 +1927,9 @@ static Bytes_0(void) {
 	set_cmt	(0X1465C,	"ticks",	0);
 	create_insn	(x=0X14667);
 	op_hex		(x,	1);
+	set_cmt	(0X1466E,	"F2 'MONSTER STATISTICS' clue-book entry loader: reads WORLD.DAT block 0x32 for the current entry (word_2E3EE[0]) into a fresh buffer, sets a couple of display-variant fields from a flag at [+0x92], draws the nav bar. Called once by RunClueBookMonsterCategory.",	0);
 	create_insn	(0X1466E);
+	set_name	(0X1466E,	"LoadClueBookMonsterEntry");
 	create_insn	(x=0X14679);
 	op_hex		(x,	1);
 	set_cmt	(0X1467B,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -4039,6 +4043,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1BF94,	"UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.",	0);
 	create_insn	(0X1BF94);
 	set_name	(0X1BF94,	"UseHealingItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1BF98);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BFA0);
@@ -4076,15 +4089,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1C09D);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1C0D7);
 	op_hex		(x,	1);
 	create_insn	(x=0X1C0E3);
@@ -7095,13 +7099,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X28296);
 	op_hex		(x,	1);
 	set_name	(0X28296,	"PlayMusicTrack");
-	create_insn	(0X2829F);
-	set_cmt	(0X282B3,	"this",	0);
-	create_insn	(0X282B3);
-	set_cmt	(0X28320,	"Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.",	0);
-	create_insn	(x=0X28320);
-	op_hex		(x,	1);
-	set_name	(0X28320,	"UpdateAmbientMusic");
 }
 
 //------------------------------------------------------------------------
@@ -7111,6 +7108,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2829F);
+	set_cmt	(0X282B3,	"this",	0);
+	create_insn	(0X282B3);
+	set_cmt	(0X28320,	"Timer-ISR-gated (~1 second, word_32958/word_3295A bit 0x200) day/night ambient music switch. If no track is forced (word_3297E==0), picks word_36CB1 (day) or word_36CB3 (night) based on whether word_36D01 (clock minutes-since-midnight) falls in [0x1A4,0x474] (7:00 AM-7:00 PM), then plays it via PlayMusicTrack if word_328C4 bit 0x2000 allows.",	0);
+	create_insn	(x=0X28320);
+	op_hex		(x,	1);
+	set_name	(0X28320,	"UpdateAmbientMusic");
 	create_insn	(x=0X2832F);
 	op_hex		(x,	1);
 	create_insn	(x=0X28337);
@@ -10531,6 +10535,15 @@ static Bytes_2(void) {
 	set_name	(0X35F24,	"aUnfortunatelyI");
 	create_strlit	(0X35F44,	0X12);
 	set_name	(0X35F44,	"aYouThroughLeve");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35F56,	0X23);
 	set_name	(0X35F56,	"aDarkUnionTheOn");
 	create_strlit	(0X35F79,	0X2F);
@@ -10551,15 +10564,6 @@ static Bytes_2(void) {
 	set_name	(0X3608A,	"aEscReturnToGam");
 	create_strlit	(0X3609D,	0XB);
 	set_name	(0X3609D,	"aDarkUnion");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X360A8,	0X12);
 	set_name	(0X360A8,	"aSpellInformati");
 	create_strlit	(0X360BA,	0X17);

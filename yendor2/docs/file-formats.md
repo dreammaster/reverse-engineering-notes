@@ -251,6 +251,15 @@ ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 `ShowClueBookItemDetail` is confirmed as the F5 category's per-entry
 screen: an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
+The F2 "MONSTER STATISTICS" category follows the same pattern:
+`RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
+`LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for
+the current entry into a fresh buffer) then loops redrawing a detail
+panel (`sub_141D9`, a 362-line function with dozens of individually
+labeled stat fields, not yet named) plus `DrawClueBookNavBar` whenever
+dirty, until ESC — no region-table hit-testing, unlike the item
+category's loop.
+
 `RunClueBookItemCategory` is the F5 category's own interactive loop
 (draw entry, poll input, hit-test a region table so the player can
 click a sub-icon to jump entries, until ESC) — a second, more complex
