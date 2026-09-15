@@ -1925,6 +1925,15 @@ the last two rounds; the exact narrative still isn't identified.
 
 251 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: StopMusicAndResetTimer
+
+Named `sub_2849C` (called from `start` and before forced music-track
+changes): stops the current music and re-arms `UpdateAmbientMusic`'s
+timer/latch so the ambient system or a following forced track can take
+over cleanly.
+
+252 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

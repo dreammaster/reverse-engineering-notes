@@ -326,7 +326,7 @@ loc_10286:                              ; CODE XREF: start+3B↑j
 
 loc_102B5:                              ; CODE XREF: start+2AB↑j
                 call    RestoreInt1cVector
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, 0
                 mov     bx, 3Fh ; '?'
                 mov     cx, 100h
@@ -849,7 +849,7 @@ loc_10720:                              ; CODE XREF: start+70A↑j
 
 loc_1072E:                              ; CODE XREF: start+71E↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, _val30
                 call    sub_28412
                 mov     bx, word_32DC4
@@ -1118,7 +1118,7 @@ loc_109D6:                              ; CODE XREF: seg000:09D1↑j
 
 loc_109F9:                              ; CODE XREF: start+67A↑j
                                         ; start+690↑j ...
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 call    ClearStatusPanelIfDirty
                 and     word_328C4, 0DFFFh
                 and     word_3295A, 9FFFh
@@ -1277,7 +1277,7 @@ ShowClueBook    proc far                ; CODE XREF: seg000:0AA3↑P
 
 loc_10C6F:                              ; CODE XREF: ShowClueBook+20↑j
                 or      word_328CA, 8
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_25862
                 call    sub_150B8
@@ -1754,7 +1754,7 @@ loc_110D9:                              ; CODE XREF: ShowClueBook+EB↑j
 ; ---------------------------------------------------------------------------
 
 loc_110E6:                              ; CODE XREF: ShowClueBook+8C↑j
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 call    sub_25862
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_14DFC
@@ -3319,7 +3319,7 @@ loc_11FA3:                              ; CODE XREF: InitGame+B4↑j
                 jz      short loc_11FBD
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_11FBD
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     word_3297E, 0
 
 loc_11FBD:                              ; CODE XREF: InitGame+CD↑j
@@ -8433,7 +8433,7 @@ loc_152B2:                              ; CODE XREF: sub_15267+41↑j
                 jz      short loc_152D6
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_152D6
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, 14h         ; ticks
                 call    wait
 
@@ -9536,7 +9536,7 @@ ComposeCharacterPortrait proc near      ; CODE XREF: RunCharacterCreation↑p
                 or      word_328CA, 8
                 cmp     byte ptr word_2E492, 0
                 jz      short loc_15E5D
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, 14h         ; ticks
                 call    wait
 
@@ -23597,7 +23597,7 @@ loc_1D38B:                              ; CODE XREF: RunTitleScreen+D3↑j
 loc_1D393:                              ; CODE XREF: RunTitleScreen+DA↑j
                 test    g_driverStateFlags, 2
                 jz      short loc_1D3A8
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 and     g_driverStateFlags, 0FFFDh
                 jmp     loc_1D323
 ; ---------------------------------------------------------------------------
@@ -23697,7 +23697,7 @@ loc_1D452:                              ; CODE XREF: RunTitleScreen+1C2↓j
 loc_1D46A:                              ; CODE XREF: RunTitleScreen+EA↑j
                                         ; RunTitleScreen+196↑j ...
                 mov     word_3297E, 0
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 call    sub_25862
                 call    UpdatePartyAverageStatTiers
                 pop     word_36CE7
@@ -26454,7 +26454,7 @@ loc_1EE23:                              ; CODE XREF: RunGameDialog+392↑j
                 mov     al, 2
                 call    FileEntry_OpenFile
                 call    ErrorCheck
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, g_driverStateFlags
                 and     ax, 5
                 push    ax              ; this
@@ -27199,7 +27199,7 @@ ConfirmNewGame  proc near               ; CODE XREF: RunGameDialog+1BF↑p
 
 loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 and     word_328C6, 0FBFFh
                 and     word_328C4, 9FFFh
                 call    ClearStatusPanelIfDirty
@@ -27448,7 +27448,7 @@ ToggleMusicSetting proc near            ; CODE XREF: RunGameDialog:loc_1EC1F↑p
                 call    sub_28412
                 test    g_driverStateFlags, 2
                 jz      short loc_1F921
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 and     g_driverStateFlags, 0FFFDh
                 mov     cx, 11h
                 jmp     short loc_1F92E
@@ -29264,7 +29264,7 @@ sub_209D2       proc far                ; CODE XREF: start+1DA↑P
                 jnz     short loc_209EB
 
 loc_209E6:                              ; CODE XREF: sub_209D2+C↑j
-                call    sub_2849C
+                call    StopMusicAndResetTimer
 
 loc_209EB:                              ; CODE XREF: sub_209D2+6↑j
                                         ; sub_209D2+12↑j
@@ -31104,7 +31104,7 @@ loc_219BD:                              ; CODE XREF: sub_218DC+D3↑j
                 jz      short loc_219DA
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_219DA
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 add     sp, 4
                 jmp     short loc_219ED
 ; ---------------------------------------------------------------------------
@@ -31123,7 +31123,7 @@ loc_219DA:                              ; CODE XREF: sub_218DC+EB↑j
                 jb      short loc_219ED
                 cmp     bx, dx
                 ja      short loc_219A7
-                call    sub_2849C
+                call    StopMusicAndResetTimer
 
 loc_219ED:                              ; CODE XREF: sub_218DC+DF↑j
                                         ; sub_218DC+FC↑j ...
@@ -43724,14 +43724,14 @@ sub_28412       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2849C       proc far                ; CODE XREF: start+2BA↑P
+StopMusicAndResetTimer proc far         ; CODE XREF: start+2BA↑P
                                         ; start+733↑P ...
-                test    g_driverStateFlags, 2
+                test    g_driverStateFlags, 2 ; Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.
                 jnz     short loc_284A5
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_284A5:                              ; CODE XREF: sub_2849C+6↑j
+loc_284A5:                              ; CODE XREF: StopMusicAndResetTimer+6↑j
                 mov     bx, 7
                 call    near ptr byte_28616
                 mov     word_2E4A6, 0
@@ -43740,10 +43740,10 @@ loc_284A5:                              ; CODE XREF: sub_2849C+6↑j
                 mov     word_32958, 14h
                 or      word_3295A, 200h
 
-loc_284C5:                              ; CODE XREF: sub_2849C+1B↑j
+loc_284C5:                              ; CODE XREF: StopMusicAndResetTimer+1B↑j
                 and     word_328CA, 0FFEFh
                 retf
-sub_2849C       endp
+StopMusicAndResetTimer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -48989,7 +48989,7 @@ seg115          segment byte public 'CODE' use16
 
 
 sub_2ADE8       proc far                ; CODE XREF: sub_25AAC:loc_25ADB↑P
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 call    sub_2827E
                 jnz     short loc_2ADFC
                 mov     ax, 13h
@@ -49077,7 +49077,7 @@ loc_2AE82:                              ; CODE XREF: sub_2AE3C+2A↑j
 loc_2AE88:                              ; CODE XREF: sub_2AE3C+44↑j
                 cmp     word_32974, 26Dh
                 jnz     short loc_2AE9E
-                call    sub_2849C
+                call    StopMusicAndResetTimer
                 mov     ax, 8
                 call    PlayMusicTrack
                 retf

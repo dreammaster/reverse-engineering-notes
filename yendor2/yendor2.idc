@@ -7093,8 +7093,10 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X28425);
 	set_cmt	(0X28443,	"this",	0);
+	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
 	create_insn	(x=0X2849C);
 	op_hex		(x,	1);
+	set_name	(0X2849C,	"StopMusicAndResetTimer");
 	create_insn	(0X284A5);
 	create_insn	(x=0X284B1);
 	op_hex		(x,	1);
@@ -7528,15 +7530,6 @@ static Bytes_1(void) {
 	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
 	set_name	(0X295A8,	"HandleGameCommand");
-	create_insn	(0X295BD);
-	create_insn	(0X295CA);
-	create_insn	(0X295E5);
-	create_insn	(x=0X29611);
-	op_hex		(x,	1);
-	create_insn	(0X29624);
-	create_insn	(x=0X2962A);
-	op_hex		(x,	1);
-	create_insn	(0X29635);
 }
 
 //------------------------------------------------------------------------
@@ -7546,6 +7539,15 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X295BD);
+	create_insn	(0X295CA);
+	create_insn	(0X295E5);
+	create_insn	(x=0X29611);
+	op_hex		(x,	1);
+	create_insn	(0X29624);
+	create_insn	(x=0X2962A);
+	op_hex		(x,	1);
+	create_insn	(0X29635);
 	create_insn	(0X29652);
 	create_insn	(0X29666);
 	create_insn	(0X29673);
@@ -11123,11 +11125,6 @@ static Bytes_2(void) {
 	create_strlit	(0X3A066,	0X2);
 	create_strlit	(0X3A068,	0X24);
 	set_name	(0X3A068,	"aDerekElpersDan");
-	create_strlit	(0X3A08C,	0X2);
-	create_strlit	(0X3A08E,	0X23);
-	set_name	(0X3A08E,	"aChuckMabreySta");
-	create_strlit	(0X3A0B1,	0X2);
-	create_strlit	(0X3A0B3,	0X2);
 }
 
 //------------------------------------------------------------------------
@@ -11137,6 +11134,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_strlit	(0X3A08C,	0X2);
+	create_strlit	(0X3A08E,	0X23);
+	set_name	(0X3A08E,	"aChuckMabreySta");
+	create_strlit	(0X3A0B1,	0X2);
+	create_strlit	(0X3A0B3,	0X2);
 	create_strlit	(0X3A0B5,	0X2);
 	create_strlit	(0X3A0B7,	0X2);
 	create_strlit	(0X3A0B9,	0X2);
