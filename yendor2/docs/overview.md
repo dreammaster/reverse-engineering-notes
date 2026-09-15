@@ -2089,6 +2089,20 @@ material-counter section is corrected in place.
 
 266 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: TryRepairItemForGold
+
+Named `sub_19140`, the third Space-bar sibling in `sub_1869D`'s main
+loop (`word_328C6` bit 4, alongside `TrySellItemForGold`'s bit `0x10`
+and `TryEnhanceItemForGold`'s bit 8). Structurally identical to
+`TryEnhanceItemForGold`: rejects with "I CAN NOT REPAIR THAT" if
+ineligible, else spends `g_partyGold` against a cost table at `0x5082`
+and restores the held item from `word_3194C` (fixing the same item,
+unlike `TryEnhanceItemForGold`'s advance to the next catalog entry).
+Distinct from the skill-based `RepairItemCommand` minigame, which can
+critically fail and destroy the item.
+
+267 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

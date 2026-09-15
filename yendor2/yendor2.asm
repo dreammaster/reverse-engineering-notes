@@ -15270,7 +15270,7 @@ loc_18BED:                              ; CODE XREF: sub_1869D+548↑j
 loc_18BFB:                              ; CODE XREF: sub_1869D+556↑j
                 test    word_328C6, 4
                 jz      short loc_18C06
-                call    sub_19140
+                call    TryRepairItemForGold
 
 loc_18C06:                              ; CODE XREF: sub_1869D+540↑j
                                         ; sub_1869D+564↑j ...
@@ -15784,7 +15784,7 @@ sub_19091       endp
 
 
 sub_190AF       proc near               ; CODE XREF: TryEnhanceItemForGold+54↑p
-                                        ; sub_19140+54↓p
+                                        ; TryRepairItemForGold+54↓p
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
@@ -15855,8 +15855,8 @@ sub_19133       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19140       proc near               ; CODE XREF: sub_1869D+566↑p
-                mov     ax, word_31948
+TryRepairItemForGold proc near          ; CODE XREF: sub_1869D+566↑p
+                mov     ax, word_31948  ; Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.
                 mov     word_32974, ax
                 call    sub_1B20C
                 jz      short loc_19187
@@ -15874,7 +15874,7 @@ sub_19140       proc near               ; CODE XREF: sub_1869D+566↑p
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19187:                              ; CODE XREF: sub_19140+B↑j
+loc_19187:                              ; CODE XREF: TryRepairItemForGold+B↑j
                 mov     si, 94B3h
                 mov     di, 5082h
                 call    CompareBCD4
@@ -15883,7 +15883,7 @@ loc_19187:                              ; CODE XREF: sub_19140+B↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_19198:                              ; CODE XREF: sub_19140+52↑j
+loc_19198:                              ; CODE XREF: TryRepairItemForGold+52↑j
                 mov     si, 94B3h
                 mov     di, 5082h
                 call    SubBCD4
@@ -15909,7 +15909,7 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 call    ShowMaterialCounterHud
                 call    DrawMouseCursor
                 retn
-sub_19140       endp
+TryRepairItemForGold endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19769,7 +19769,7 @@ sub_1B194       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B20C       proc far                ; CODE XREF: sub_19140+6↑P
+sub_1B20C       proc far                ; CODE XREF: TryRepairItemForGold+6↑P
                                         ; sub_1CCBC:loc_1CD7A↓P ...
                 push    bx
                 mov     ax, 1

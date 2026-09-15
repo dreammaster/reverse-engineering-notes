@@ -402,7 +402,12 @@ against `g_partyGold` and a per-tier cost table at `0xCB2`, showing
 and advances the held item to the next entry in the item catalog —
 the item "enhancement" itself). `ApplyEffectCost`'s trap/status-effect
 cost dispatch also spends from this same 3-counter family, so a trap
-stealing party gold is plausible. All three are manipulated via the packed-BCD
+stealing party gold is plausible. A third Space-bar sibling,
+`TryRepairItemForGold` (`word_328C6` bit 4), pays gold (cost table
+`0x5082`) to repair the held item, rejecting with "I CAN NOT REPAIR
+THAT" if ineligible — distinct from the skill-based `RepairItemCommand`
+minigame below, which can critically fail and destroy the item.
+All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
 `SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,

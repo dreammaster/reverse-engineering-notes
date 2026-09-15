@@ -3300,7 +3300,9 @@ static Bytes_0(void) {
 	create_insn	(0X190E9);
 	create_insn	(0X190EF);
 	create_insn	(0X19133);
+	set_cmt	(0X19140,	"Space-bar 'repair item' action (sub_1869D, word_328C6 bit 4), sibling of TrySellItemForGold/TryEnhanceItemForGold. Eligibility via sub_1B20C; on failure 'I CAN NOT REPAIR THAT' (msg 0x81E6). Else CompareBCD4/SubBCD4(g_partyGold, [table 0x5082]) -- 'YOU DON'T HAVE ENOUGH GOLD!' on failure (msg 0x8376, shared with TryEnhanceItemForGold) -- then restores the item from word_3194C into word_31948 (fixing the same item, not upgrading to a new catalog entry) and reloads it. Distinct from the skill-based RepairItemCommand minigame, which can critically fail and destroy the item.",	0);
 	create_insn	(0X19140);
+	set_name	(0X19140,	"TryRepairItemForGold");
 	create_insn	(x=0X19152);
 	op_hex		(x,	1);
 	create_insn	(0X19187);
@@ -4247,12 +4249,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CC4C,	"msg",	0);
 	create_insn	(x=0X1CC62);
 	op_hex		(x,	1);
-	create_insn	(0X1CC70);
-	create_insn	(0X1CC98);
-	create_insn	(0X1CCBC);
-	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
-	create_insn	(0X1CDBC);
-	set_name	(0X1CDBC,	"IsItemRangeAvailable");
 }
 
 //------------------------------------------------------------------------
@@ -4262,6 +4258,12 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1CC70);
+	create_insn	(0X1CC98);
+	create_insn	(0X1CCBC);
+	set_cmt	(0X1CDBC,	"CORRECTED from 'CheckTransportAvailability' -- too specific a guess. Given an item-id range (word_3293E/word_32940, a single id if equal), first checks a fixed 6-entry table at 0x9519 for a direct range match (setting word_32974 to it); if none, calls SyncAllContainers then FindItemInInventoryRange for each party member until one qualifies. Generic 'does the party have an item in this id range' check -- used both for a boat/horse-style transport gate and, via CheckQuestItemsCompleted, for a quest-item-completion check (4 specific items all absent triggers a completion sequence).",	0);
+	create_insn	(0X1CDBC);
+	set_name	(0X1CDBC,	"IsItemRangeAvailable");
 	create_insn	(0X1CDFA);
 	create_insn	(0X1CE02);
 	create_insn	(0X1CE25);
@@ -7322,6 +7324,15 @@ static Bytes_1(void) {
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
 	set_name	(0X28A0A,	"ShowErr_ProblemRetrievingText");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28A0F);
 	op_plain_offset	(x,	1,	0X286F0);
 	op_plain_offset	(x,	129,	0X286F0);
@@ -7363,15 +7374,6 @@ static Bytes_1(void) {
 	create_word	(x=0X28A41);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(x=0X28A43);
 	op_plain_offset	(x,	0,	0X286F0);
 	op_plain_offset	(x,	128,	0X286F0);
@@ -10815,6 +10817,15 @@ static Bytes_2(void) {
 	set_name	(0X366AE,	"a2XHealth");
 	create_strlit	(0X366B9,	0XA);
 	set_name	(0X366B9,	"a2XMagic");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X366C3,	0X2B);
 	set_name	(0X366C3,	"aRegisterYourCo");
 	create_strlit	(0X366EE,	0X3A);
@@ -10850,15 +10861,6 @@ static Bytes_2(void) {
 	set_name	(0X3681A,	"aGreat");
 	create_strlit	(0X36822,	0X10);
 	set_name	(0X36822,	"aVisibleUndeads");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36832,	0X9);
 	set_name	(0X36832,	"aRegister");
 	create_strlit	(0X3683B,	0X7);
