@@ -3173,6 +3173,14 @@ state flags on success.
 
 410 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: InitSoundSystem
+
+Named `sub_283EA`, called from `InitGame`: the top-level sound/music
+driver initialization, gating `DetectSoundDriver` and a sibling
+function on possible sound/music disable flags.
+
+411 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -3298,7 +3298,7 @@ loc_11F2A:                              ; CODE XREF: InitGame+4A↑j
                 call    loadWorldDat3
                 call    loadWorldDat4
                 call    InitMouse
-                call    sub_283EA
+                call    InitSoundSystem
                 mov     word_36CE7, 5
                 call    loadWorldDat5
                 call    sub_25862
@@ -43644,27 +43644,27 @@ ShutdownAudioDrivers endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_283EA       proc far                ; CODE XREF: InitGame+85↑P
-                and     g_driverStateFlags, 0FFF0h
+InitSoundSystem proc far                ; CODE XREF: InitGame+85↑P
+                and     g_driverStateFlags, 0FFF0h ; Top-level sound/music driver init, called from InitGame: bails early if already initialized (g_driverStateFlags bits 0xC000), else conditionally runs DetectSoundDriver and sub_28564 gated on word_328C8 bits 1/0 (plausibly sound/music disable flags).
                 call    sub_28619
                 test    g_driverStateFlags, 0C000h
                 jz      short loc_283FB
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_283FB:                              ; CODE XREF: sub_283EA+E↑j
+loc_283FB:                              ; CODE XREF: InitSoundSystem+E↑j
                 test    word_328C8, 2
                 jnz     short loc_28406
                 call    DetectSoundDriver
 
-loc_28406:                              ; CODE XREF: sub_283EA+17↑j
+loc_28406:                              ; CODE XREF: InitSoundSystem+17↑j
                 test    word_328C8, 1
                 jnz     short locret_28411
                 call    sub_28564
 
-locret_28411:                           ; CODE XREF: sub_283EA+22↑j
+locret_28411:                           ; CODE XREF: InitSoundSystem+22↑j
                 retf
-sub_283EA       endp
+InitSoundSystem endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43754,7 +43754,7 @@ StopMusicAndResetTimer endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DetectSoundDriver proc near             ; CODE XREF: sub_283EA+19↑p
+DetectSoundDriver proc near             ; CODE XREF: InitSoundSystem+19↑p
                 mov     cx, 3Fh ; '?'   ; Scans DOS interrupt vectors (0x80-0xBE) for an installed sound/music driver's 5-byte signature; on a match, allocates its buffer and sets g_driverStateFlags bits 0/1 (detected/active), else sets bit 0x40 (not found). Called from sub_283EA.
                 mov     word_2E534, 80h
 
@@ -43831,7 +43831,7 @@ DetectSoundDriver endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28564       proc near               ; CODE XREF: sub_283EA+24↑p
+sub_28564       proc near               ; CODE XREF: InitSoundSystem+24↑p
                 xor     ax, ax
                 call    sub_27C5A
                 mov     bx, 9Ch         ; numPara
@@ -43904,7 +43904,7 @@ byte_28617      db 0                    ; DATA XREF: ShutdownAudioDrivers+35↑r
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28619       proc near               ; CODE XREF: sub_283EA+5↑p
+sub_28619       proc near               ; CODE XREF: InitSoundSystem+5↑p
                 and     g_driverStateFlags, 3FF0h
                 mov     ax, 0CC1h
                 mov     bx, 0AFA8h

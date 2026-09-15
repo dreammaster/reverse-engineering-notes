@@ -7358,8 +7358,10 @@ static Bytes_2(void) {
 	set_cmt	(0X283E7,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X283E7);
 	op_hex		(x,	0);
+	set_cmt	(0X283EA,	"Top-level sound/music driver init, called from InitGame: bails early if already initialized (g_driverStateFlags bits 0xC000), else conditionally runs DetectSoundDriver and sub_28564 gated on word_328C8 bits 1/0 (plausibly sound/music disable flags).",	0);
 	create_insn	(x=0X283EA);
 	op_hex		(x,	1);
+	set_name	(0X283EA,	"InitSoundSystem");
 	create_insn	(x=0X283F2);
 	op_hex		(x,	1);
 	create_insn	(x=0X283FB);
