@@ -1016,6 +1016,25 @@ unrelated things elsewhere, same pattern as `errorCode`/`word_32974`.
 
 146 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: clamped resource-deduction helpers
+
+Followed the two alchemy BCD counters (0x94B7/0x94BB) to their other
+~14 call sites and found a third sibling counter (0x94B3) plus a
+shared "pay this cost, whatever form it takes" dispatcher (`sub_18257`,
+called from an icon-bar loop over 4 fixed slots that isn't fully
+understood yet — possibly per-tick upkeep for an active effect rather
+than a one-time item cost, so left unnamed). Three of its callees are
+clean and independently confirmed, so named on their own:
+`SpendMaterialCounterClamped` (BCD counter spend that zeroes rather
+than goes negative when insufficient, notifying a not-yet-traced
+"depleted" hook), `DeductHPClamped`/`DeductMPClamped` (party-member
+HP/MP deduction, same `+0x52`/`+0x54` fields `RestCharacter`/
+`CastSpell` already confirmed, clamped at 0 — `DeductHPClamped` also
+sets a status bit and calls two untraced functions when HP hits 0,
+plausibly death/incapacitation handling).
+
+149 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

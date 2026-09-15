@@ -2916,12 +2916,18 @@ static Bytes_0(void) {
 	create_insn	(x=0X181B3);
 	op_hex		(x,	1);
 	create_insn	(0X181DA);
+	set_cmt	(0X18205,	"SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).",	0);
 	create_insn	(0X18205);
+	set_name	(0X18205,	"SpendMaterialCounterClamped");
 	create_insn	(0X18222);
+	set_cmt	(0X1822A,	"DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).",	0);
 	create_insn	(0X1822A);
+	set_name	(0X1822A,	"DeductHPClamped");
 	create_insn	(x=0X18238);
 	op_hex		(x,	1);
+	set_cmt	(0X18248,	"DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.",	0);
 	create_insn	(0X18248);
+	set_name	(0X18248,	"DeductMPClamped");
 	create_insn	(0X18257);
 	create_insn	(x=0X1825F);
 	op_hex		(x,	1);
@@ -5387,6 +5393,15 @@ static Bytes_0(void) {
 	set_cmt	(0X21CC2,	"Persists one cell's explored bit into CURGAME: reads a record (sub_27E20, params = cell x/y) then sets bit (x%8) of byte (x/8 + word_3685F) and writes the record back. The automap's explored bitmap is saved in the savegame itself, not just kept in memory. Called by MarkCellExplored on newly-discovered cells.",	0);
 	create_insn	(0X21CC2);
 	set_name	(0X21CC2,	"PersistExploredCell");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21CC6,	"this",	0);
 	set_cmt	(0X21CD4,	"this",	0);
 	set_cmt	(0X21D30,	"Reveals the map cells to both sides of the player's facing direction (word_36CF5) around the current position -- called right after the player's position updates. The automap's 'cells become known as you walk near them' mechanic.",	0);
@@ -5403,15 +5418,6 @@ static Bytes_0(void) {
 	set_cmt	(0X21DBB,	"If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.",	0);
 	create_insn	(0X21DBB);
 	set_name	(0X21DBB,	"MarkCellExplored");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X21DC7);
 	op_hex		(x,	1);
 	create_insn	(x=0X21DCF);
@@ -9890,6 +9896,15 @@ static Bytes_1(void) {
 	set_name	(0X35508,	"aTrap");
 	create_strlit	(0X3550E,	0X9);
 	set_name	(0X3550E,	"aDefeated");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35517,	0XD);
 	set_name	(0X35517,	"aBrass");
 	create_strlit	(0X35524,	0XD);
@@ -9927,15 +9942,6 @@ static Bytes_1(void) {
 	set_name	(0X355DE,	"aYourSkill");
 	create_strlit	(0X355EB,	0XD);
 	set_name	(0X355EB,	"aIsNotHigh");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X355F8,	0XD);
 	set_name	(0X355F8,	"aEnough");
 	create_strlit	(0X35605,	0XC);

@@ -13737,7 +13737,7 @@ sub_18068       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18095       proc far                ; CODE XREF: sub_1822A+15↓p
+sub_18095       proc far                ; CODE XREF: DeductHPClamped+15↓p
                                         ; sub_18257+6C↓p
                 push    bx
                 push    cx
@@ -13918,8 +13918,8 @@ sub_1819B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18205       proc near               ; CODE XREF: sub_18257:loc_182A9↓p
-                push    si
+SpendMaterialCounterClamped proc near   ; CODE XREF: sub_18257:loc_182A9↓p
+                push    si              ; SpendMaterialCounterClamped(ax=BCD counter addr, bx=ptr to 4-byte BCD amount): if counter > amount, SubBCD4 normally; otherwise the counter can't cover it -- zeroed outright (never negative), then sub_2704C is called (presumably a 'resource depleted' hook).
                 push    di
                 mov     si, ax
                 mov     di, bx
@@ -13931,22 +13931,22 @@ sub_18205       proc near               ; CODE XREF: sub_18257:loc_182A9↓p
                 jmp     short loc_18227
 ; ---------------------------------------------------------------------------
 
-loc_18222:                              ; CODE XREF: sub_18205+B↑j
+loc_18222:                              ; CODE XREF: SpendMaterialCounterClamped+B↑j
                 call    SubBCD4
 
-loc_18227:                              ; CODE XREF: sub_18205+1B↑j
+loc_18227:                              ; CODE XREF: SpendMaterialCounterClamped+1B↑j
                 pop     di
                 pop     si
                 retn
-sub_18205       endp
+SpendMaterialCounterClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1822A       proc near               ; CODE XREF: sub_18257+F↓p
+DeductHPClamped proc near               ; CODE XREF: sub_18257+F↓p
                                         ; sub_18257+27↓p
-                sub     [bx+52h], ax
+                sub     [bx+52h], ax    ; DeductHPClamped(ax=amount, bx=party-member record): [bx+0x52] -= ax (HP-current), clamped at 0. At 0, sets status bit 0x40 in [bx+0x1C] and calls sub_18095+sub_1AB26 (not traced, plausibly death/incapacitation handling).
                 cmp     word ptr [bx+52h], 0
                 jg      short locret_18247
                 mov     word ptr [bx+52h], 0
@@ -13956,24 +13956,24 @@ sub_1822A       proc near               ; CODE XREF: sub_18257+F↓p
                 call    near ptr sub_18095
                 call    sub_1AB26
 
-locret_18247:                           ; CODE XREF: sub_1822A+7↑j
+locret_18247:                           ; CODE XREF: DeductHPClamped+7↑j
                 retn
-sub_1822A       endp
+DeductHPClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_18248       proc near               ; CODE XREF: sub_18257+1B↓p
+DeductMPClamped proc near               ; CODE XREF: sub_18257+1B↓p
                                         ; sub_18257+2A↓p
-                sub     [bx+54h], ax
+                sub     [bx+54h], ax    ; DeductMPClamped(ax=amount, bx=party-member record): [bx+0x54] -= ax (MP-current), clamped at 0.
                 cmp     word ptr [bx+54h], 0
                 jge     short locret_18256
                 mov     word ptr [bx+54h], 0
 
-locret_18256:                           ; CODE XREF: sub_18248+7↑j
+locret_18256:                           ; CODE XREF: DeductMPClamped+7↑j
                 retn
-sub_18248       endp
+DeductMPClamped endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -13986,22 +13986,22 @@ sub_18257       proc near               ; CODE XREF: sub_180BA+84↑p
                 mov     ax, [si+10h]
                 test    word ptr [di+8], 10h
                 jz      short loc_1826B
-                call    sub_1822A
+                call    DeductHPClamped
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
 loc_1826B:                              ; CODE XREF: sub_18257+D↑j
                 test    word ptr [di+8], 8
                 jz      short loc_18277
-                call    sub_18248
+                call    DeductMPClamped
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
 loc_18277:                              ; CODE XREF: sub_18257+19↑j
                 test    word ptr [di+8], 20h
                 jz      short loc_18286
-                call    sub_1822A
-                call    sub_18248
+                call    DeductHPClamped
+                call    DeductMPClamped
                 jmp     short loc_182AC
 ; ---------------------------------------------------------------------------
 
@@ -14020,7 +14020,7 @@ loc_18286:                              ; CODE XREF: sub_18257+25↑j
 
 loc_182A9:                              ; CODE XREF: sub_18257+3C↑j
                                         ; sub_18257+46↑j
-                call    sub_18205
+                call    SpendMaterialCounterClamped
 
 loc_182AC:                              ; CODE XREF: sub_18257+12↑j
                                         ; sub_18257+1E↑j ...
@@ -16830,7 +16830,7 @@ AddToBCDCounter endp
 
 
 CompareBCD4     proc far                ; CODE XREF: sub_17A8D+22↑P
-                                        ; sub_18205+6↑P ...
+                                        ; SpendMaterialCounterClamped+6↑P ...
                 push    cx              ; Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].
                 push    di
                 push    si
@@ -17145,7 +17145,7 @@ sub_19BE6       endp
 
 
 SubBCD4         proc far                ; CODE XREF: sub_17A8D:loc_17ADA↑P
-                                        ; sub_18205:loc_18222↑P ...
+                                        ; SpendMaterialCounterClamped:loc_18222↑P ...
                 mov     al, [si+3]      ; Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.
                 sub     al, [di+3]
                 das
@@ -19006,7 +19006,7 @@ sub_1AA9B       endp
 
 
 sub_1AB26       proc far                ; CODE XREF: sub_1819B+60↑P
-                                        ; sub_1822A+18↑P ...
+                                        ; DeductHPClamped+18↑P ...
                 push    ax
                 push    bx
                 push    cx
