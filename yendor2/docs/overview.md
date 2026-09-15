@@ -3190,6 +3190,14 @@ its music-data buffer.
 
 412 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: PrepareMusicDataRead
+
+Named `sub_27C5A`, called from `InitMusicDriver`: sets up a WORLD.DAT-
+style read context for the sound driver's music/instrument data
+block.
+
+413 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

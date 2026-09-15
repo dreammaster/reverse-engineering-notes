@@ -7222,7 +7222,9 @@ static Bytes_2(void) {
 	create_insn	(0X27BF7);
 	create_insn	(0X27C18);
 	create_insn	(0X27C39);
+	set_cmt	(0X27C5A,	"Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.",	0);
 	create_insn	(0X27C5A);
+	set_name	(0X27C5A,	"PrepareMusicDataRead");
 	create_insn	(0X27C78);
 	create_insn	(0X27C96);
 	set_cmt	(0X27CB0,	"Configures a FileEntry read of the game's master 256-color VGA palette from WORLD.DAT (offset 0x8270A, 768 bytes = 256 RGB triples, 6-bit DAC values 0-63 -- confirmed by reading it directly and re-rendering PICTURES.VGA's catalog in true color). Called from ShowIntroPicture. One of the resource-block-setup stub family (document_resource_stubs.py) -- the only one confirmed so far.",	0);
@@ -8801,9 +8803,6 @@ static Bytes_2(void) {
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
-	create_insn	(0X2AA58);
-	set_name	(0X2AA58,	"CastSpell");
 }
 
 //------------------------------------------------------------------------
@@ -8813,6 +8812,9 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
+	create_insn	(0X2AA58);
+	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AA62);

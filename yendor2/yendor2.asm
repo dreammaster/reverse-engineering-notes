@@ -42579,8 +42579,8 @@ sub_27BF7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27C5A       proc far                ; CODE XREF: InitMusicDriver+2↓P
-                mov     word_368AB, 0
+PrepareMusicDataRead proc far           ; CODE XREF: InitMusicDriver+2↓P
+                mov     word_368AB, 0   ; Sets up a WORLD.DAT-style read context for a fixed data block (table 0xCE23, size 0x9BD) -- preparing to read the sound driver's music/instrument data. Called from InitMusicDriver.
                 mov     word_368A7, ax
                 mov     bx, 0CE23h
                 mov     ax, [bx]
@@ -42589,7 +42589,7 @@ sub_27C5A       proc far                ; CODE XREF: InitMusicDriver+2↓P
                 mov     word_368AF, ax
                 mov     word_368A9, 9BDh
                 retf
-sub_27C5A       endp
+PrepareMusicDataRead endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43833,7 +43833,7 @@ DetectSoundDriver endp
 
 InitMusicDriver proc near               ; CODE XREF: InitSoundSystem+24↑p
                 xor     ax, ax          ; Initializes the sound driver's hardware config (word_32916/word_32914) and calls into it via g_soundDriverFarPtr (function selectors 1-5: settings, init, further setup), then allocates its music-data buffer (word_3292E). Called from InitSoundSystem.
-                call    sub_27C5A
+                call    PrepareMusicDataRead
                 mov     bx, 9Ch         ; numPara
                 mov     errorCode, 1
                 call    allocMem
