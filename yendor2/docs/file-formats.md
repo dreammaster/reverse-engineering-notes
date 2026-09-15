@@ -204,7 +204,21 @@ picks the first non-defeated monster from that order into
 the combat-adjacent code already documented this session
 (`UseAbilityOnTarget`, `ExamineTarget`, `CastSpell`'s target checks,
 etc. — not yet cross-referenced against this specific variable, a
-good next step).
+good next step). Mouse-clicking a monster panel's icon also sets
+`word_32A1E` directly (a target-selection shortcut alongside
+`SelectActiveMonster`'s automatic pick).
+
+**Attack-roll formula, found via that click handler**: `ResolveAttack`
+(`ax`=target defense, `bx`=attacker accuracy, `cx`=weapon damage power)
+— hit if `(accuracy-defense) >= RandomInRange(55)`, damage =
+`weaponPower*(accuracy-defense)/100` (minimum 1), else a flat miss.
+`UpdateMonsterWoundTier` then classifies a hit into an escalating
+visual wound-severity flag on the monster record (`+0xE`: `0x8000`
+light, `0x4000` moderate, `0x2000` severe, by percentage of `+0x50` —
+plausibly max HP/toughness) plus an unconditional display flag
+(`+0xC` `|= 0xA`) — notably **does not subtract from any HP counter
+directly**, so actual monster death/HP tracking (numeric pool vs. a
+tiered state machine) is still unresolved.
 
 `g_monsterSlots` is fed by a much larger **per-level monster spawn/
 wander pool**, `g_levelMonsters` (base `0xF26`, 80 × `0x9C`-byte

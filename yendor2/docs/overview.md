@@ -1465,6 +1465,21 @@ least a structural answer.
 
 200 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the melee attack-roll formula
+
+Followed `word_32A1E`'s ("active monster") other usages into a mouse-
+click attack handler inside `RunDungeonGameLoop`'s input code, and
+found the actual combat attack-roll math: `ResolveAttack` (was
+`sub_25A73`) — hit if `(accuracy - defense) >= random(0-54)`, damage =
+`weaponPower * (accuracy - defense) / 100`, minimum 1, or a flat miss
+otherwise. `UpdateMonsterWoundTier` (was `sub_286B2`) then classifies
+the hit into an escalating visual wound-severity tier (light/moderate/
+severe, by percentage of the target's apparent max HP) — notably
+without subtracting from any HP counter directly, so actual monster
+death/HP tracking is still an open question for a future round.
+
+202 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -6297,7 +6297,9 @@ static Bytes_1(void) {
 	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
 	create_insn	(0X25A66);
 	set_name	(0X25A66,	"ScaleByPercentRounded");
+	set_cmt	(0X25A73,	"ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.",	0);
 	create_insn	(0X25A73);
+	set_name	(0X25A73,	"ResolveAttack");
 	create_insn	(0X25AAC);
 	create_insn	(x=0X25ACF);
 	op_hex		(x,	1);
@@ -7097,7 +7099,9 @@ static Bytes_1(void) {
 	create_insn	(0X2864B);
 	create_insn	(0X2865D);
 	create_insn	(0X28699);
+	set_cmt	(0X286B2,	"UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.",	0);
 	create_insn	(0X286B2);
+	set_name	(0X286B2,	"UpdateMonsterWoundTier");
 	create_insn	(x=0X286C2);
 	op_hex		(x,	1);
 	create_insn	(x=0X286DB);
@@ -8467,6 +8471,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2ABB9);
 	op_hex		(x,	1);
 	create_insn	(0X2ABC8);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2ABDC);
 	create_insn	(0X2ABFB);
 	create_insn	(0X2AC2B);
@@ -8495,15 +8508,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
 	create_insn	(0X2AE60);

@@ -10636,7 +10636,7 @@ loc_1670D:                              ; CODE XREF: sub_16407+C6↑j
                 mov     ax, [di+58h]
                 mov     bx, [si+4Ch]
                 mov     cx, [si+4Eh]
-                call    sub_25A73
+                call    ResolveAttack
                 cmp     word_2E49C, 0
                 jnz     short loc_16778
                 call    sub_2827E
@@ -10649,7 +10649,7 @@ loc_16776:                              ; CODE XREF: sub_16407+365↑j
 ; ---------------------------------------------------------------------------
 
 loc_16778:                              ; CODE XREF: sub_16407+35E↑j
-                call    sub_286B2
+                call    UpdateMonsterWoundTier
                 call    sub_20C46
                 call    DrawMouseCursor
                 call    sub_2827E
@@ -11180,7 +11180,7 @@ loc_16C24:                              ; CODE XREF: sub_16BF6+E↑j
                 mov     ax, [di+50h]
                 mov     bx, [si+54h]
                 mov     cx, [si+5Ah]
-                call    sub_25A73
+                call    ResolveAttack
                 cmp     word_2E49C, 0
                 jz      short locret_16C5F
                 mov     si, word_32906
@@ -24332,7 +24332,7 @@ loc_1DAC2:                              ; CODE XREF: sub_1DA60+5A↑j
                 mov     ax, [si+58h]
                 mov     bx, [di+48h]
                 mov     cx, [di+4Ah]
-                call    sub_25A73
+                call    ResolveAttack
                 call    sub_1D9E5
                 retn
 ; ---------------------------------------------------------------------------
@@ -38450,9 +38450,9 @@ ScaleByPercentRounded endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25A73       proc far                ; CODE XREF: sub_16407+354↑P
+ResolveAttack   proc far                ; CODE XREF: sub_16407+354↑P
                                         ; sub_16BF6+3B↑P ...
-                push    dx
+                push    dx              ; ResolveAttack(ax=target defense, bx=attacker accuracy, cx=weapon damage power): miss (word_2E49C=0) if cx==0, if bx<ax, or if RandomInRange(55) beats (bx-ax). Otherwise hit: word_2E49C = (cx*(bx-ax)+50)/100, minimum 1.
                 mov     word_2E49C, 0
                 cmp     cx, 0
                 jz      short loc_25AA9
@@ -38472,11 +38472,11 @@ sub_25A73       proc far                ; CODE XREF: sub_16407+354↑P
                 ja      short loc_25AA9
                 mov     word_2E49C, 1
 
-loc_25AA9:                              ; CODE XREF: sub_25A73+A↑j
-                                        ; sub_25A73+E↑j ...
+loc_25AA9:                              ; CODE XREF: ResolveAttack+A↑j
+                                        ; ResolveAttack+E↑j ...
                 pop     dx
                 retf
-sub_25A73       endp
+ResolveAttack   endp
 
 seg084          ends
 
@@ -43994,8 +43994,8 @@ seg101          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_286B2       proc far                ; CODE XREF: sub_16407:loc_16778↑P
-                push    bx
+UpdateMonsterWoundTier proc far         ; CODE XREF: sub_16407:loc_16778↑P
+                push    bx              ; UpdateMonsterWoundTier(di=target monster record): compares word_2E49C (damage just dealt by ResolveAttack) against 10% and 30% of [di+0x50] (plausibly max HP/toughness), setting an escalating wound-severity flag in [di+0xE] (0x8000 light, 0x4000 moderate, 0x2000 severe) plus a display flag in [di+0xC] (|=0xA). Doesn't subtract HP directly -- purely a visual wound-tier indicator as far as traced; actual death/HP tracking not found yet.
                 push    dx
                 mov     ax, 0Ah
                 mul     word ptr [di+50h]
@@ -44017,13 +44017,13 @@ sub_286B2       proc far                ; CODE XREF: sub_16407:loc_16778↑P
                 and     word ptr [di+0Eh], 0BFFFh
                 or      word ptr [di+0Eh], 2000h
 
-loc_286F5:                              ; CODE XREF: sub_286B2+19↑j
-                                        ; sub_286B2+37↑j
+loc_286F5:                              ; CODE XREF: UpdateMonsterWoundTier+19↑j
+                                        ; UpdateMonsterWoundTier+37↑j
                 or      word ptr [di+0Ch], 0Ah
                 pop     dx
                 pop     bx
                 retf
-sub_286B2       endp
+UpdateMonsterWoundTier endp
 
 seg101          ends
 
@@ -52715,7 +52715,7 @@ loc_2D181:                              ; CODE XREF: sub_2D171+6↑j
                 mov     ax, [di+58h]
                 mov     bx, [si+62h]
                 mov     cx, word_332E8
-                call    sub_25A73
+                call    ResolveAttack
 
 locret_2D194:                           ; CODE XREF: sub_2D171+E↑j
                 retn
@@ -52731,7 +52731,7 @@ sub_2D195       proc near               ; CODE XREF: sub_2C0FE+E65↑p
                 mov     bx, [si+62h]
                 mov     cx, word_332E8
                 mov     errorCode, 0
-                call    sub_25A73
+                call    ResolveAttack
                 cmp     word_2E49C, 0
                 jnz     short locret_2D1C1
                 mov     errorCode, 1
