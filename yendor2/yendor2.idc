@@ -4048,7 +4048,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1BA8B);
 	op_hex		(x,	1);
+	set_cmt	(0X1BA96,	"Builds the message text for an item-use confirmation/preview: for special items ([+0xE] bit 0x2000), either applies the effect directly or shows a generic message by [+0x10] tier; otherwise copies item-specific message entries from an EMS-backed segment ([+0x12]/[+0x14]). Called from FinishItemUse and ShowItemUsagePreview.",	0);
 	create_insn	(0X1BA96);
+	set_name	(0X1BA96,	"BuildItemUseMessage");
 	create_insn	(x=0X1BAA2);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BAAE);

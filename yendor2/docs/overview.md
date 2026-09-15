@@ -2873,6 +2873,15 @@ viewport) for obstacles before it moves.
 
 366 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: BuildItemUseMessage
+
+Named `sub_1BA96`, called from `FinishItemUse` and
+`ShowItemUsagePreview`: builds the confirmation/preview message text
+for using an item — either a generic message by tier, or item-specific
+entries copied from an EMS-backed segment.
+
+367 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

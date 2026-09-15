@@ -20335,7 +20335,7 @@ FinishItemUse   proc far                ; CODE XREF: RunShopScreen+F2↑P
                 push    cs              ; FinishItemUse: common post-item-use cleanup/redraw, called at the end of every branch in UseItemType_400 and sub_1BBED (the 0x800-selected sibling handler).
                 call    near ptr sub_1B8AB
                 push    cs
-                call    near ptr sub_1BA96
+                call    near ptr BuildItemUseMessage
                 test    word_328C4, 1
                 jz      short loc_1B6FD
                 call    DrawMouseCursor
@@ -20792,9 +20792,9 @@ sub_1BA35       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BA96       proc far                ; CODE XREF: FinishItemUse+5↑p
+BuildItemUseMessage proc far            ; CODE XREF: FinishItemUse+5↑p
                                         ; ShowItemUsagePreview+2E↓p
-                push    es
+                push    es              ; Builds the message text for an item-use confirmation/preview: for special items ([+0xE] bit 0x2000), either applies the effect directly or shows a generic message by [+0x10] tier; otherwise copies item-specific message entries from an EMS-backed segment ([+0x12]/[+0x14]). Called from FinishItemUse and ShowItemUsagePreview.
                 push    si
                 push    di
                 push    cx
@@ -20811,7 +20811,7 @@ sub_1BA96       proc far                ; CODE XREF: FinishItemUse+5↑p
                 jmp     short loc_1BAF2
 ; ---------------------------------------------------------------------------
 
-loc_1BABC:                              ; CODE XREF: sub_1BA96+1E↑j
+loc_1BABC:                              ; CODE XREF: BuildItemUseMessage+1E↑j
                 cmp     word ptr es:[si+10h], 1
                 jz      short loc_1BADB
                 cmp     word ptr es:[si+10h], 2
@@ -20822,17 +20822,17 @@ loc_1BABC:                              ; CODE XREF: sub_1BA96+1E↑j
                 jmp     short loc_1BADE
 ; ---------------------------------------------------------------------------
 
-loc_1BAD6:                              ; CODE XREF: sub_1BA96+32↑j
-                                        ; sub_1BA96+39↑j
+loc_1BAD6:                              ; CODE XREF: BuildItemUseMessage+32↑j
+                                        ; BuildItemUseMessage+39↑j
                 mov     si, 839Dh
                 jmp     short loc_1BADE
 ; ---------------------------------------------------------------------------
 
-loc_1BADB:                              ; CODE XREF: sub_1BA96+2B↑j
+loc_1BADB:                              ; CODE XREF: BuildItemUseMessage+2B↑j
                 mov     si, 808Ch
 
-loc_1BADE:                              ; CODE XREF: sub_1BA96+3E↑j
-                                        ; sub_1BA96+43↑j
+loc_1BADE:                              ; CODE XREF: BuildItemUseMessage+3E↑j
+                                        ; BuildItemUseMessage+43↑j
                 mov     cx, 11h
                 mov     di, 0AFA8h
                 mov     es, word_2E4AA
@@ -20841,8 +20841,8 @@ loc_1BADE:                              ; CODE XREF: sub_1BA96+3E↑j
                 jmp     short loc_1BB1B
 ; ---------------------------------------------------------------------------
 
-loc_1BAF2:                              ; CODE XREF: sub_1BA96+12↑j
-                                        ; sub_1BA96+24↑j
+loc_1BAF2:                              ; CODE XREF: BuildItemUseMessage+12↑j
+                                        ; BuildItemUseMessage+24↑j
                 mov     ax, es:[si+14h]
                 or      ax, ax
                 jz      short loc_1BB43
@@ -20860,7 +20860,7 @@ loc_1BAF2:                              ; CODE XREF: sub_1BA96+12↑j
                 rep movsb
                 mov     ds, bx
 
-loc_1BB1B:                              ; CODE XREF: sub_1BA96+5A↑j
+loc_1BB1B:                              ; CODE XREF: BuildItemUseMessage+5A↑j
                 push    cs
                 call    near ptr sub_1CB37
                 mov     _textPos_x, 16h
@@ -20871,14 +20871,14 @@ loc_1BB1B:                              ; CODE XREF: sub_1BA96+5A↑j
                 call    sub_28A76
                 mov     fontOffset, 0
 
-loc_1BB43:                              ; CODE XREF: sub_1BA96+62↑j
+loc_1BB43:                              ; CODE XREF: BuildItemUseMessage+62↑j
                 pop     cx
                 pop     di
                 pop     si
                 pop     es
                 assume es:nothing
                 retf
-sub_1BA96       endp
+BuildItemUseMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -22127,7 +22127,7 @@ UseAbilityScroll endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C809       proc far                ; CODE XREF: sub_1BA96+15↑p
+sub_1C809       proc far                ; CODE XREF: BuildItemUseMessage+15↑p
                 and     word_328C6, 0FFBFh
                 mov     ax, es:[si+10h]
                 cmp     ax, 1
@@ -22384,7 +22384,7 @@ ShowItemUsagePreview proc far           ; CODE XREF: UseItem+82↑P
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
-                call    near ptr sub_1BA96
+                call    near ptr BuildItemUseMessage
                 call    DrawMouseCursor
                 call    sub_162B6
                 and     word_328C4, 0FFFEh

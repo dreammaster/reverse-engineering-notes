@@ -297,6 +297,10 @@ actually using one of these mount items: name, cost, and a
 flight-time-restriction line, e.g. "CAN FLY ANYTIME DAY OR NIGHT"; the
 clue-book detail row itself, `DrawTransportDetailRow`, shows "VALUE:",
 "USES:", and "TIME:" — "BETWEEN 7P.M. AND 7A.M." or "ANYTIME");
+`ShowItemUsagePreview` and `FinishItemUse` both call
+`BuildItemUseMessage`, which builds the confirmation/preview text for
+using an item — either a generic message by tier, or item-specific
+message entries copied from an EMS-backed segment;
 **8 "WEAPONS"** (`word_2E3F6=0x11`) → `RunClueEntryMenu` +
 `RunClueBookWeaponCategory`. F6 (Complete Walk Through) →
 `ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
