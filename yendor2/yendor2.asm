@@ -23835,14 +23835,14 @@ loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+
                 mov     ax, 9Dh
                 mov     bx, word_328DE
                 call    DrawWeaponSelectIcon
-                call    sub_2BB1A
+                call    SaveActionIconPanelToEMS
                 call    sub_223D4
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 call    DrawMouseCursor
                 mov     ax, _val19
                 call    sub_28412
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
                 mov     word_3292C, 2Eh ; '.'
@@ -23942,7 +23942,7 @@ loc_1D6EA:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    RedrawDungeonScreen
                 call    DrawMouseCursor
                 pop     word_3292C
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 cmp     word_2E544, 0
                 jz      short loc_1D747
                 cmp     word_3292C, 19h
@@ -24076,7 +24076,7 @@ loc_1D872:                              ; CODE XREF: HandleRangedOrCombatAction+
 
 loc_1D87F:                              ; CODE XREF: HandleRangedOrCombatAction+369↑j
                                         ; HandleRangedOrCombatAction+36F↑j ...
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     ax, _val36
                 call    ShowCombatMessageOrWait
                 mov     g_blitMaskLen, 6
@@ -24153,7 +24153,7 @@ HighlightSelectedAbilityIcon proc near  ; CODE XREF: HandleRangedOrCombatAction+
 ; ---------------------------------------------------------------------------
 
 loc_1D941:                              ; CODE XREF: HighlightSelectedAbilityIcon+5↑j
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 call    sub_2BBD7
                 mov     _font_bgTransparent, 5
                 mov     y, 0
@@ -24184,7 +24184,7 @@ loc_1D9A6:                              ; CODE XREF: HighlightSelectedAbilityIco
                 mov     word_32986, 0
                 mov     word_32988, 69h ; 'i'
                 call    DrawPicture
-                call    sub_2BB1A
+                call    SaveActionIconPanelToEMS
                 call    sub_223D4
                 call    RedrawDungeonScreen
                 call    DrawMinimap
@@ -32758,11 +32758,11 @@ loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 add     di, 18h
                 loop    loc_2286D
                 and     word_328C6, 0FFFEh
-                call    sub_2BB1A
+                call    SaveActionIconPanelToEMS
                 call    sub_223D4
                 call    RedrawDungeonScreen
                 call    DrawMinimap
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     di, 0BC28h
                 mov     cx, 4
                 xor     ax, ax
@@ -50266,9 +50266,9 @@ DrawWeaponSelectIcon endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BB1A       proc far                ; CODE XREF: HandleRangedOrCombatAction+10D↑P
+SaveActionIconPanelToEMS proc far       ; CODE XREF: HandleRangedOrCombatAction+10D↑P
                                         ; HighlightSelectedAbilityIcon+8C↑P ...
-                push    es
+                push    es              ; Caches the action-icon panel area (video buffer -> EMS page frame, offset 0,0). Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.
                 push    di
                 push    si
                 push    dx
@@ -50279,7 +50279,7 @@ sub_2BB1A       proc far                ; CODE XREF: HandleRangedOrCombatAction+
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
 
-loc_2BB31:                              ; CODE XREF: sub_2BB1A+C↑j
+loc_2BB31:                              ; CODE XREF: SaveActionIconPanelToEMS+C↑j
                 xor     si, si
                 xor     di, di
                 mov     es, _emsSegmentPageFrame
@@ -50287,7 +50287,7 @@ loc_2BB31:                              ; CODE XREF: sub_2BB1A+C↑j
                 mov     ds, ax
                 mov     cx, 69h ; 'i'
 
-loc_2BB41:                              ; CODE XREF: sub_2BB1A+31↓j
+loc_2BB41:                              ; CODE XREF: SaveActionIconPanelToEMS+31↓j
                 push    cx
                 mov     cx, 69h ; 'i'
                 rep movsw
@@ -50302,7 +50302,7 @@ loc_2BB41:                              ; CODE XREF: sub_2BB1A+31↓j
                 pop     di
                 pop     es
                 retf
-sub_2BB1A       endp
+SaveActionIconPanelToEMS endp
 
 ; ---------------------------------------------------------------------------
                 push    es
@@ -50343,9 +50343,9 @@ loc_2BB7F:                              ; CODE XREF: seg121:00EA↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BB97       proc far                ; CODE XREF: HandleRangedOrCombatAction+12E↑P
+SaveCorridorBackgroundToEMS proc far    ; CODE XREF: HandleRangedOrCombatAction+12E↑P
                                         ; HandleRangedOrCombatAction+254↑P ...
-                push    es
+                push    es              ; Caches the corridor viewport background (video buffer -> EMS page frame, same region as RestoreCorridorBackgroundFromEMS) before an animated overlay draws over it. Called from HandleRangedOrCombatAction.
                 push    di
                 push    si
                 push    dx
@@ -50356,7 +50356,7 @@ sub_2BB97       proc far                ; CODE XREF: HandleRangedOrCombatAction+
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
 
-loc_2BBAE:                              ; CODE XREF: sub_2BB97+C↑j
+loc_2BBAE:                              ; CODE XREF: SaveCorridorBackgroundToEMS+C↑j
                 mov     si, 0A08h
                 mov     di, 5622h
                 mov     es, _emsSegmentPageFrame
@@ -50364,7 +50364,7 @@ loc_2BBAE:                              ; CODE XREF: sub_2BB97+C↑j
                 mov     ds, ax
                 mov     cx, 88h
 
-loc_2BBC0:                              ; CODE XREF: sub_2BB97+33↓j
+loc_2BBC0:                              ; CODE XREF: SaveCorridorBackgroundToEMS+33↓j
                 push    cx
                 mov     cx, 70h ; 'p'
                 rep movsw
@@ -50379,7 +50379,7 @@ loc_2BBC0:                              ; CODE XREF: sub_2BB97+33↓j
                 pop     di
                 pop     es
                 retf
-sub_2BB97       endp
+SaveCorridorBackgroundToEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51992,12 +51992,12 @@ loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
                 call    DrawWeaponSelectIcon
                 and     word_328C6, 0FFFEh
                 and     word_328C8, 0FFF7h
-                call    sub_2BB1A
+                call    SaveActionIconPanelToEMS
                 call    sub_223D4
                 call    RedrawDungeonScreen
                 call    DrawMinimap
                 and     word_328C4, 0FFBFh
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     word_3292C, 31h ; '1'
                 call    AnimateProjectileStep
                 mov     word_3292C, 2Eh ; '.'
@@ -52165,7 +52165,7 @@ loc_2CB68:                              ; CODE XREF: sub_2C0FE+A63↑j
                 jle     short loc_2CBB6
                 mov     ax, 5           ; ticks
                 call    wait
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 cmp     word_3292C, 2Eh ; '.'
                 jnz     short loc_2CB98
                 jmp     loc_2C9FD
@@ -52266,7 +52266,7 @@ loc_2CC77:                              ; CODE XREF: sub_2C0FE+B67↑j
                 add     si, 9Ch
                 loop    loc_2CC62
                 pop     word_3292C
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     ax, word_332E2
                 call    sub_2D498
                 mov     g_blitMaskLen, 6
@@ -52307,7 +52307,7 @@ loc_2CCEE:                              ; CODE XREF: sub_2C0FE+A7↑j
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     ax, word_332E0
                 mov     word_2E530, ax
                 mov     word_3292C, 31h ; '1'
@@ -52383,7 +52383,7 @@ loc_2CDEC:                              ; CODE XREF: sub_2C0FE+CD1↑j
                 push    di
                 push    word_3292C
                 call    RedrawDungeonScreen
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     ax, 5A90h
                 mov     g_blitMaskPtr, ax
                 mov     word_2E532, 30h ; '0'
@@ -52425,7 +52425,7 @@ loc_2CE5A:                              ; CODE XREF: sub_2C0FE+D48↑j
 loc_2CE62:                              ; CODE XREF: sub_2C0FE+B2↑j
                 mov     ax, word_332DA
                 call    sub_2D498
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     cx, word_332E2
 
 loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
@@ -52622,7 +52622,7 @@ loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
                 mov     g_blitMaskPtr, ax
                 mov     ax, word_332DA
                 call    sub_2D498
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     word_2E532, 60h ; '`'
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -52687,7 +52687,7 @@ loc_2D137:                              ; CODE XREF: sub_2C0FE+C8↑j
                 call    wait
                 mov     ax, word_332DA
                 call    sub_2D498
-                call    sub_2BB97
+                call    SaveCorridorBackgroundToEMS
                 mov     cx, 40h ; '@'
 
 loc_2D14D:                              ; CODE XREF: sub_2C0FE+1063↓j

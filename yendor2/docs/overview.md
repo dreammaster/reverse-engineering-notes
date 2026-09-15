@@ -2925,6 +2925,14 @@ Named `sub_2D3DC`, called from the large unnamed dispatcher
 
 374 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SaveCorridorBackgroundToEMS and SaveActionIconPanelToEMS
+
+Named the EMS-backed background *save* functions (mirror image of
+`RestoreCorridorBackgroundFromEMS`), caching the corridor viewport and
+action-icon panel areas before animated overlays draw over them.
+
+376 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

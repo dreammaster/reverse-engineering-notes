@@ -9012,13 +9012,17 @@ static Bytes_3(void) {
 	create_insn	(0X2BADB);
 	create_insn	(x=0X2BAE5);
 	op_hex		(x,	1);
+	set_cmt	(0X2BB1A,	"Caches the action-icon panel area (video buffer -> EMS page frame, offset 0,0). Called from HandleRangedOrCombatAction and HighlightSelectedAbilityIcon.",	0);
 	create_insn	(0X2BB1A);
+	set_name	(0X2BB1A,	"SaveActionIconPanelToEMS");
 	create_insn	(x=0X2BB4D);
 	op_seg		(x,	1);
 	create_insn	(0X2BB58);
 	create_insn	(x=0X2BB8C);
 	op_seg		(x,	1);
+	set_cmt	(0X2BB97,	"Caches the corridor viewport background (video buffer -> EMS page frame, same region as RestoreCorridorBackgroundFromEMS) before an animated overlay draws over it. Called from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X2BB97);
+	set_name	(0X2BB97,	"SaveCorridorBackgroundToEMS");
 	create_insn	(x=0X2BBCC);
 	op_seg		(x,	1);
 	create_insn	(0X2BBD7);

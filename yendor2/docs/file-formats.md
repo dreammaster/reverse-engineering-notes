@@ -534,7 +534,13 @@ wound/display flags, redraws, then resolves death (`GrantMonsterRewards`
 + `RemoveMonsterFromMap` + `RedrawDungeonScreen`) or survival
 (`RefreshDungeonScreen`) based on its HP — the corridor-encounter
 counterpart to the turn-based `g_monsterSlots` combat flow documented
-below. A large unnamed dispatcher, `sub_2C0FE`, sits behind several
+below. `HandleRangedOrCombatAction` also uses `SaveCorridorBackgroundToEMS`
+(the mirror image of `RestoreCorridorBackgroundFromEMS` — video
+buffer → EMS, caching the corridor before an animated overlay draws
+over it) and `SaveActionIconPanelToEMS` (same idea for the action-icon
+panel area, also used by `HighlightSelectedAbilityIcon`).
+
+A large unnamed dispatcher, `sub_2C0FE`, sits behind several
 combat-adjacent helpers this session named individually
 (`ApplyDamageToMapMonster`, `GetMonsterAtViewportRow`,
 `ScrollCorridorBackgroundFromEMS`, and `AnimateEffectFrame` — one
