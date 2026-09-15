@@ -1970,6 +1970,17 @@ not individually traced).
 
 258 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawSaveSlotList closes out the save/load menu thread
+
+Named `sub_12C96`, `BuildLoadValidationMessage`'s caller: a scrollable
+save-slot list display, highlighting the selected entry and drawing
+each slot's status text via `BuildLoadValidationMessage`, with scroll
+indicators when the list extends beyond the visible window. Completes
+this round's save/load-menu investigation: `DrawSaveSlotList` →
+`BuildLoadValidationMessage` → `CheckWorldDatCompatibility`.
+
+259 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

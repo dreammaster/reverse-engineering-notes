@@ -1566,7 +1566,9 @@ static Bytes_0(void) {
 	create_insn	(0X12C86);
 	create_insn	(x=0X12C88);
 	op_hex		(x,	1);
+	set_cmt	(0X12C96,	"Draws a scrollable save-slot list: word_2E3EC entries at positions from a table (0x68D2, stride 0xA), highlighting the selected one (word_2E3EE). Each entry's status/validation text comes from BuildLoadValidationMessage. Shows scroll indicators when the list extends beyond the visible window.",	0);
 	create_insn	(0X12C96);
+	set_name	(0X12C96,	"DrawSaveSlotList");
 	create_insn	(x=0X12CB8);
 	op_hex		(x,	1);
 	create_insn	(x=0X12CC0);
@@ -4339,14 +4341,6 @@ static Bytes_0(void) {
 	create_insn	(0X1D1D4);
 	create_insn	(0X1D1E9);
 	create_insn	(0X1D213);
-	create_insn	(0X1D23F);
-	create_insn	(0X1D24B);
-	create_insn	(0X1D258);
-	create_insn	(0X1D273);
-	create_insn	(0X1D286);
-	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
-	create_insn	(0X1D2A6);
-	set_name	(0X1D2A6,	"RunTitleScreen");
 }
 
 //------------------------------------------------------------------------
@@ -4356,6 +4350,14 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(0X1D23F);
+	create_insn	(0X1D24B);
+	create_insn	(0X1D258);
+	create_insn	(0X1D273);
+	create_insn	(0X1D286);
+	set_cmt	(0X1D2A6,	"Main title screen: draws g_pictureDir entry 2 (combat scene) full-screen + mouse cursor, then dispatches 5 menu options -- selectable by keyboard (C/A/E/R/I) or mouse click (numeric codes 1-5 from sub_1D118, funneled into the same handler labels). C: ShowPartyMembers (view party characters). A: ShowWorldMap (moderate confidence -- a map with up to 9 flagged/discovered location markers). E: sets a flag on up to 4 party-member records then RETURNS from the function entirely -- this is what actually leaves the title screen and proceeds into the game (plausibly 'Enter'). R: replays whatever picture is already showing (entry 2, since word_2E530/532 aren't reset here) via ShowIntroPicture's fade+wait-for-key -- doesn't show distinct content, so its actual purpose (About/credits/register nag?) isn't confirmed. I: RunCharacterCreation (plausibly 'Import', given this is Chapter 2 of a series). Called from `start` and from ConfirmNewGame after confirming a new game.",	0);
+	create_insn	(0X1D2A6);
+	set_name	(0X1D2A6,	"RunTitleScreen");
 	create_insn	(x=0X1D2BB);
 	op_hex		(x,	1);
 	create_insn	(x=0X1D2C3);
@@ -7514,6 +7516,15 @@ static Bytes_1(void) {
 	set_cmt	(0X294A3,	"Discovery mechanic: ProbeFacingTile finds what the player faces; if interactive, looks it up in the 0xDFBB capability table. Already-known capability -> success message. Not known but the current command matches what's required -> sets the bit (permanently unlocks it for that object type) and shows success. Otherwise shows a fail/hint message. Try commands on objects until you find the right one.",	0);
 	create_insn	(0X294A3);
 	set_name	(0X294A3,	"UseAbilityOnTarget");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X294CE);
 	create_insn	(x=0X294DA);
 	op_hex		(x,	1);
@@ -7530,15 +7541,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2957E,	"Like SaveAndCloseContainer's write-back (if the bag at [di] has contents, write them to CURGAME) but doesn't clear the marker afterward -- saves without closing.",	0);
 	create_insn	(0X2957E);
 	set_name	(0X2957E,	"SyncContainerContents");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29583,	"this",	0);
 	set_cmt	(0X295A8,	"Core gameplay command dispatcher, called from `start`. Dispatches on word_32974 (an already-decoded command code) across ~20 specific handlers. For codes that don't match anything specific, falls back to context-sensitive interaction with the currently-targeted object (word_2E548): conversable flags -> RunConversation, container-like flags -> sub_2D65A, another object-type flag -> sub_2D60A, else falls through to the item-icon dispatcher sub_2AE3C. Matches the manual's 'SPACE uses the space you are standing on'.",	0);
 	create_insn	(0X295A8);
@@ -11013,6 +11015,15 @@ static Bytes_2(void) {
 	set_name	(0X39A29,	"aYouMustVenture");
 	create_strlit	(0X39A55,	0XC);
 	set_name	(0X39A55,	"aOfZamora");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39A61,	0X33);
 	set_name	(0X39A61,	"aBecausePaltiva");
 	create_strlit	(0X39A94,	0X31);
@@ -11045,15 +11056,6 @@ static Bytes_2(void) {
 	create_strlit	(0X39C59,	0X2);
 	create_strlit	(0X39C5B,	0X2);
 	create_strlit	(0X39C5D,	0X2);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X39C5F,	0X1F);
 	set_name	(0X39C5F,	"aSpecialThanksT");
 	create_strlit	(0X39C7E,	0X1E);

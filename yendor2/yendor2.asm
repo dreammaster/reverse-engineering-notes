@@ -4535,12 +4535,12 @@ sub_12B84       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_12C96       proc near               ; CODE XREF: sub_12E59+6B↓p
-                mov     di, 68D2h
+DrawSaveSlotList proc near              ; CODE XREF: sub_12E59+6B↓p
+                mov     di, 68D2h       ; Draws a scrollable save-slot list: word_2E3EC entries at positions from a table (0x68D2, stride 0xA), highlighting the selected one (word_2E3EE). Each entry's status/validation text comes from BuildLoadValidationMessage. Shows scroll indicators when the list extends beyond the visible window.
                 mov     si, word_2E3F0
                 mov     cx, word_2E3EC
 
-loc_12CA1:                              ; CODE XREF: sub_12C96+67↓j
+loc_12CA1:                              ; CODE XREF: DrawSaveSlotList+67↓j
                 mov     ax, [di]
                 mov     _textPos_x, ax
                 mov     ax, [di+4]
@@ -4556,7 +4556,7 @@ loc_12CA1:                              ; CODE XREF: sub_12C96+67↓j
                 jmp     short loc_12CEA
 ; ---------------------------------------------------------------------------
 
-loc_12CCF:                              ; CODE XREF: sub_12C96+1A↑j
+loc_12CCF:                              ; CODE XREF: DrawSaveSlotList+1A↑j
                 mov     _font_fgColor, 0Ah
                 test    word_328CA, 1
                 jnz     short loc_12CEA
@@ -4564,14 +4564,14 @@ loc_12CCF:                              ; CODE XREF: sub_12C96+1A↑j
                 jnz     short loc_12CEA
                 mov     _font_fgColor, 5
 
-loc_12CEA:                              ; CODE XREF: sub_12C96+28↑j
-                                        ; sub_12C96+2F↑j ...
+loc_12CEA:                              ; CODE XREF: DrawSaveSlotList+28↑j
+                                        ; DrawSaveSlotList+2F↑j ...
                 call    BuildLoadValidationMessage
                 cmp     bx, 0
                 jz      short loc_12CF7
                 call    writeString
 
-loc_12CF7:                              ; CODE XREF: sub_12C96+5A↑j
+loc_12CF7:                              ; CODE XREF: DrawSaveSlotList+5A↑j
                 add     si, 4
                 add     di, 0Ah
                 loop    loc_12CA1
@@ -4587,23 +4587,23 @@ loc_12CF7:                              ; CODE XREF: sub_12C96+5A↑j
                 mov     aAMoreB, 61h ; 'a'
                 or      word_328CC, 100h
 
-loc_12D2C:                              ; CODE XREF: sub_12C96+89↑j
+loc_12D2C:                              ; CODE XREF: DrawSaveSlotList+89↑j
                 mov     bx, word_2E3F4
                 cmp     word_2E3F2, bx
                 jz      short loc_12D41
                 mov     byte_36755, 62h ; 'b'
                 or      word_328CC, 80h
 
-loc_12D41:                              ; CODE XREF: sub_12C96+9E↑j
+loc_12D41:                              ; CODE XREF: DrawSaveSlotList+9E↑j
                 mov     _textPos_x, 81h
                 mov     _textPos_y, 0A7h
                 mov     _font_fgColor, 0Dh
                 mov     bx, 8EECh
                 call    writeString
 
-locret_12D5B:                           ; CODE XREF: sub_12C96+80↑j
+locret_12D5B:                           ; CODE XREF: DrawSaveSlotList+80↑j
                 retn
-sub_12C96       endp
+DrawSaveSlotList endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -4791,7 +4791,7 @@ loc_12EB1:                              ; CODE XREF: sub_12E59+5↑j
                 call    DrawMessageBox
                 call    sub_14C37
                 call    sub_1303C
-                call    sub_12C96
+                call    DrawSaveSlotList
                 call    DrawMouseCursor
                 retn
 sub_12E59       endp
@@ -4800,7 +4800,7 @@ sub_12E59       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-BuildLoadValidationMessage proc near    ; CODE XREF: sub_12C96:loc_12CEA↑p
+BuildLoadValidationMessage proc near    ; CODE XREF: DrawSaveSlotList:loc_12CEA↑p
                 push    cx              ; Dispatches on word_2E3F6 (a validation-failure-type selector, ~16 states) to compose a detailed error message for a specific save/load validation failure -- state 1 calls CheckWorldDatCompatibility (level/map mismatch); other states call different checks (sub_14B85, etc.), not individually traced. Each builds its detail text via StrCat before a common tail.
                 push    dx
                 push    si
@@ -56576,15 +56576,15 @@ word_2E392      dw 0                    ; DATA XREF: sub_1BBED+E8↑w
                 db    0
 word_2E3EA      dw 0                    ; DATA XREF: ShowClueBook+96↑w
                                         ; ShowClueBook+A5↑w ...
-word_2E3EC      dw 0                    ; DATA XREF: sub_12C96+7↑r
+word_2E3EC      dw 0                    ; DATA XREF: DrawSaveSlotList+7↑r
                                         ; sub_12E59:loc_12E8A↑w ...
 word_2E3EE      dw 0                    ; DATA XREF: ShowClueBook+1F3↑r
                                         ; ShowClueBook:loc_10EAF↑r ...
 word_2E3F0      dw 0                    ; DATA XREF: sub_12B84+95↑r
                                         ; sub_12B84+D7↑r ...
-word_2E3F2      dw 0                    ; DATA XREF: sub_12C96+9A↑r
+word_2E3F2      dw 0                    ; DATA XREF: DrawSaveSlotList+9A↑r
                                         ; sub_12D5C+3F↑r ...
-word_2E3F4      dw 0                    ; DATA XREF: sub_12C96:loc_12D2C↑r
+word_2E3F4      dw 0                    ; DATA XREF: DrawSaveSlotList:loc_12D2C↑r
                                         ; sub_12E59+4B↑w ...
 word_2E3F6      dw 0                    ; DATA XREF: ShowClueBook+7A↑w
                                         ; ShowClueBook+112↑w ...
@@ -84793,8 +84793,8 @@ aThankYouForPla db 'Thank You for playing Yendorian Tales Book I Chapter 2',0Ah
                 db 0Dh,'$',0
 aPleaseRegister db 'Please register your copy today.',0Ah
                 db 0Dh,'$',0
-aAMoreB         db 61h                  ; DATA XREF: sub_12C96+6F↑w
-                                        ; sub_12C96+8B↑w ...
+aAMoreB         db 61h                  ; DATA XREF: DrawSaveSlotList+6F↑w
+                                        ; DrawSaveSlotList+8B↑w ...
                 db  20h
                 db  20h
                 db  4Dh ; M
@@ -84803,8 +84803,8 @@ aAMoreB         db 61h                  ; DATA XREF: sub_12C96+6F↑w
                 db  45h ; E
                 db  20h
                 db  20h
-byte_36755      db 62h                  ; DATA XREF: sub_12C96+74↑w
-                                        ; sub_12C96+A0↑w ...
+byte_36755      db 62h                  ; DATA XREF: DrawSaveSlotList+74↑w
+                                        ; DrawSaveSlotList+A0↑w ...
                 db    0
 aDList          db 'd LIST',0
 aMapC           db 'MAP c',0
