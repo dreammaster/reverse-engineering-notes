@@ -29541,7 +29541,7 @@ seg063          segment byte public 'CODE' use16
 RedrawDungeonScreen proc far            ; CODE XREF: start:loc_10071↑P
                                         ; start+134↑P ...
                 call    BuildDungeonViewportCells ; Fuller dungeon-screen redraw: sub_21306/sub_213FC/sub_2784A/sub_20D2F/sub_20C8E setup, then RenderDungeonViewport, then conditional ShowResourceDepletedOverlay. Called from `start`. Sibling of the lighter RefreshDungeonScreen.
-                call    sub_213FC
+                call    ComputeDungeonCellVisibility
                 call    sub_2784A
                 call    DrawDungeonFloorAndCeiling
                 call    ExtendDungeonCeilingPass
@@ -30415,8 +30415,8 @@ CopyDungeonRowCells endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_213FC       proc near               ; CODE XREF: RedrawDungeonScreen+3↑p
-                mov     word_3292C, 2Dh ; '-'
+ComputeDungeonCellVisibility proc near  ; CODE XREF: RedrawDungeonScreen+3↑p
+                mov     word_3292C, 2Dh ; '-' ; Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.
                 mov     cx, 3
                 mov     bp, 2Dh ; '-'
                 call    sub_214F4
@@ -30425,7 +30425,7 @@ sub_213FC       proc near               ; CODE XREF: RedrawDungeonScreen+3↑p
                 jmp     short loc_21459
 ; ---------------------------------------------------------------------------
 
-loc_21411:                              ; CODE XREF: sub_213FC+11↑j
+loc_21411:                              ; CODE XREF: ComputeDungeonCellVisibility+11↑j
                 mov     word_3292C, 2Ah ; '*'
                 mov     cx, 3
                 mov     bp, 2Ah ; '*'
@@ -30449,11 +30449,11 @@ loc_21411:                              ; CODE XREF: sub_213FC+11↑j
                 mov     bp, 11h
                 call    sub_214F4
 
-loc_21459:                              ; CODE XREF: sub_213FC+13↑j
-                                        ; sub_213FC+26↑j ...
+loc_21459:                              ; CODE XREF: ComputeDungeonCellVisibility+13↑j
+                                        ; ComputeDungeonCellVisibility+26↑j ...
                 mov     di, 0Eh
 
-loc_2145C:                              ; CODE XREF: sub_213FC+A8↓j
+loc_2145C:                              ; CODE XREF: ComputeDungeonCellVisibility+A8↓j
                 mov     bx, [di]
                 test    word ptr [bx+6], 1
                 jnz     short loc_2149E
@@ -30472,7 +30472,7 @@ loc_2145C:                              ; CODE XREF: sub_213FC+A8↓j
                 ja      short loc_2149E
                 mov     si, [di+2]
 
-loc_2148E:                              ; CODE XREF: sub_213FC+A0↓j
+loc_2148E:                              ; CODE XREF: ComputeDungeonCellVisibility+A0↓j
                 mov     bx, [si]
                 cmp     bx, 0FFFFh
                 jz      short loc_2149E
@@ -30481,8 +30481,8 @@ loc_2148E:                              ; CODE XREF: sub_213FC+A0↓j
                 jmp     short loc_2148E
 ; ---------------------------------------------------------------------------
 
-loc_2149E:                              ; CODE XREF: sub_213FC+67↑j
-                                        ; sub_213FC+6F↑j ...
+loc_2149E:                              ; CODE XREF: ComputeDungeonCellVisibility+67↑j
+                                        ; ComputeDungeonCellVisibility+6F↑j ...
                 add     di, 4
                 cmp     word ptr [di], 0FFFFh
                 jnz     short loc_2145C
@@ -30490,7 +30490,7 @@ loc_2149E:                              ; CODE XREF: sub_213FC+67↑j
                 mov     word_3292C, 32h ; '2'
                 mov     cx, 21h ; '!'
 
-loc_214B2:                              ; CODE XREF: sub_213FC+F5↓j
+loc_214B2:                              ; CODE XREF: ComputeDungeonCellVisibility+F5↓j
                 test    word ptr [di+6], 1
                 jnz     short loc_214EA
                 mov     ax, [di]
@@ -30506,7 +30506,7 @@ loc_214B2:                              ; CODE XREF: sub_213FC+F5↓j
                 or      si, si
                 jz      short loc_214EA
 
-loc_214DA:                              ; CODE XREF: sub_213FC+EC↓j
+loc_214DA:                              ; CODE XREF: ComputeDungeonCellVisibility+EC↓j
                 mov     bx, [si]
                 cmp     bx, 0FFFFh
                 jz      short loc_214EA
@@ -30515,20 +30515,20 @@ loc_214DA:                              ; CODE XREF: sub_213FC+EC↓j
                 jmp     short loc_214DA
 ; ---------------------------------------------------------------------------
 
-loc_214EA:                              ; CODE XREF: sub_213FC+BB↑j
-                                        ; sub_213FC+C3↑j ...
+loc_214EA:                              ; CODE XREF: ComputeDungeonCellVisibility+BB↑j
+                                        ; ComputeDungeonCellVisibility+C3↑j ...
                 dec     word_3292C
                 sub     di, 8
                 loop    loc_214B2
                 retn
-sub_213FC       endp
+ComputeDungeonCellVisibility endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_214F4       proc near               ; CODE XREF: sub_213FC+C↑p
-                                        ; sub_213FC+21↑p ...
+sub_214F4       proc near               ; CODE XREF: ComputeDungeonCellVisibility+C↑p
+                                        ; ComputeDungeonCellVisibility+21↑p ...
                 mov     ax, 8
                 mul     word_3292C
                 add     ax, 6D60h
@@ -74395,9 +74395,9 @@ _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
 _val16          dw 0                    ; DATA XREF: InitGlobals+84↑w
                                         ; ShowLootAndAwardExperience+B↑r
 _val17          dw 0                    ; DATA XREF: InitGlobals+8A↑w
-                                        ; sub_213FC+71↑r ...
+                                        ; ComputeDungeonCellVisibility+71↑r ...
 _val18          dw 0                    ; DATA XREF: InitGlobals+90↑w
-                                        ; sub_213FC+6B↑r ...
+                                        ; ComputeDungeonCellVisibility+6B↑r ...
 _val19          dw 0                    ; DATA XREF: InitGlobals+96↑w
                                         ; sub_1D4B8+126↑r
 _val20          dw 0                    ; DATA XREF: InitGlobals+9C↑w

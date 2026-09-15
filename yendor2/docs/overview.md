@@ -2555,6 +2555,17 @@ position + facing direction" to "cells the render passes see."
 
 322 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ComputeDungeonCellVisibility identifies the occlusion flag's origin
+
+Named `sub_213FC`, called right after `BuildDungeonViewportCells` in
+`RedrawDungeonScreen`: computes dungeon line-of-sight occlusion,
+marking cells behind wall corners with the `[+6]` bit-0 "hidden" flag
+that every render-pass function checks. This is that flag's origin —
+closes the loop on why some cells in the copied buffer don't get
+drawn.
+
+323 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

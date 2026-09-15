@@ -434,7 +434,13 @@ computes a facing-dependent row stride/side-step (the same
 `word_36CF5` tier bits used throughout) from the current position,
 then calls `CopyDungeonRowCells` 7× (matching `RenderDungeonViewport`'s
 row-count pattern) to copy the visible cells out of the level's map
-data.
+data. `RedrawDungeonScreen` then calls `ComputeDungeonCellVisibility`,
+which identifies the origin of the `[+6]` bit-0 "hidden" flag every
+render-pass function checks (`DrawDungeonCellWallTexture`,
+`ExtendDungeonFloorTexture`, `ExtendDungeonCeilingTexture`, etc. all
+skip a cell when it's set): walks progressively closer rows to find
+the nearest wall-blocked boundary, then marks side-passage cells past
+it as hidden — dungeon line-of-sight occlusion.
 
 ### Combat: monster slots and turn order
 

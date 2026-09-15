@@ -5420,7 +5420,9 @@ static Bytes_1(void) {
 	set_cmt	(0X213D4,	"Copies one row of 8-byte cell records from the level's map data (es:si, advancing by bp, the facing-dependent stride) into the scratch viewport buffer (di, advancing by 8), then steps si to the next row's start (+= word_2E560). Called 7x by BuildDungeonViewportCells.",	0);
 	create_insn	(0X213D4);
 	set_name	(0X213D4,	"CopyDungeonRowCells");
+	set_cmt	(0X213FC,	"Computes line-of-sight occlusion for the dungeon viewport: marks cells that should be hidden (e.g. behind a wall corner) with the [+6] bit 0 'hidden' flag every render-pass function this session checks (DrawDungeonCellWallTexture, ExtendDungeonFloorTexture, ExtendDungeonCeilingTexture, etc.) -- this is that flag's origin. Walks progressively closer rows via sub_214F4 to find the nearest wall-blocked boundary, then marks side-passage cells hidden past it. Called from RedrawDungeonScreen after BuildDungeonViewportCells.",	0);
 	create_insn	(0X213FC);
+	set_name	(0X213FC,	"ComputeDungeonCellVisibility");
 	create_insn	(0X21411);
 	create_insn	(x=0X2145E);
 	op_hex		(x,	1);
@@ -6469,6 +6471,15 @@ static Bytes_1(void) {
 	set_cmt	(0X25A63,	"- VIDEO - READ BLOCK OF DAC REGISTERS (EGA, VGA/MCGA)\nBX = starting palette register, CX = number of palette registers to read\nES:DX -> buffer (3 * CX bytes in size)\nReturn: CX number of red, green and blue triples in buffer",	0);
 	create_insn	(x=0X25A63);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X25A66,	"ScaleByPercentRounded(ax=value, bx=percent): ax = (ax*bx+50)/100.",	0);
 	create_insn	(0X25A66);
 	set_name	(0X25A66,	"ScaleByPercentRounded");
@@ -6486,15 +6497,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X25B14);
 	create_insn	(0X25B34);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X25B3E);
 	create_insn	(0X25B65);
 	create_insn	(0X25B78);
@@ -9954,6 +9956,15 @@ static Bytes_2(void) {
 	create_word	(0X32BFC);
 	set_cmt	(0X32BFE,	"14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).",	0);
 	set_name	(0X32BFE,	"g_combatTurnOrder");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X32DBC);
 	create_word	(0X32DBE);
 	create_word	(0X32DC0);
@@ -9986,15 +9997,6 @@ static Bytes_2(void) {
 	create_word	(0X332EA);
 	create_word	(0X332EC);
 	create_word	(0X332EE);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X332F0);
 	create_word	(0X332F2);
 	create_word	(0X332F4);
