@@ -2220,6 +2220,20 @@ field pair now.
 
 278 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunAlchemyScreen
+
+Named `sub_1DCE0`, called directly from `start`: the alchemy screen's
+own 534-line driver loop, built around repeated `DrawAlchemyStatusPanel`
+redraws, input polling, clickable-region hit-testing, the shared
+party-member panel-select routine, and a confirm prompt (plausibly for
+an ore conversion) before exiting back to the dungeon via
+`ApplyMapTriggerEffect`. Confidently the alchemy screen's driver given
+its direct reach from `start` and total reliance on
+`DrawAlchemyStatusPanel`, even though its many internal helpers aren't
+individually traced.
+
+279 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

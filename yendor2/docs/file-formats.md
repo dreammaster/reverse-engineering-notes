@@ -433,6 +433,12 @@ yet.
 panel: name, the "MAGIC:" MP bar, and readouts labeled "MAGIC ORE: "
 (`0x94B7`) and "NUORE: " (`0x94BB`) — pairing with `CastSpell`'s
 `0x1C` ability below, which converts between those same two counters.
+It's drawn repeatedly by `RunAlchemyScreen` (reached directly from
+`start`), the alchemy screen's own driver loop — polls input,
+hit-tests clickable regions, reuses the party-member panel-select
+routine, and shows a confirm prompt (plausibly for an ore conversion)
+before exiting back to the dungeon via `ApplyMapTriggerEffect`. Its
+many internal helper calls aren't individually traced yet.
 
 Three **global** (not per-party-member) counters at `0x94B3`
 (`g_partyGold`), `0x94B7`, `0x94BB` — confirmed **exactly

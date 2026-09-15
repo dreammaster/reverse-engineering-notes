@@ -4556,8 +4556,10 @@ static Bytes_1(void) {
 	create_insn	(0X1DC73);
 	create_insn	(0X1DC7A);
 	create_insn	(0X1DCC6);
+	set_cmt	(0X1DCE0,	"Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.",	0);
 	create_insn	(x=0X1DCE0);
 	op_hex		(x,	1);
+	set_name	(0X1DCE0,	"RunAlchemyScreen");
 	create_insn	(x=0X1DCE6);
 	op_hex		(x,	1);
 	create_insn	(0X1DD00);
@@ -7135,12 +7137,6 @@ static Bytes_1(void) {
 	set_cmt	(0X28412,	"Sound driver dispatch, called with a command in AX. If the driver isn't active (g_driverStateFlags bit3 clear), only handles AX==3 (via sub_16DEA) and otherwise no-ops. When active: reads data via FileEntry_Read using the FileEntry at bx=0x9043 (same fixed instance the 0x27CFE-family resource stubs configure), ErrorChecks it, then calls g_soundDriverFarPtr with bx=6 and es:di pointing past a small header (es:0x14) in the loaded driver segment (word_3292E). Likely 'load+play a sound effect', but command 6's exact meaning per the driver's own protocol isn't confirmed -- see ida_scripts/document_sound_dispatch.py.",	0);
 	create_insn	(x=0X28412);
 	op_hex		(x,	1);
-	create_insn	(0X28425);
-	set_cmt	(0X28443,	"this",	0);
-	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
-	create_insn	(x=0X2849C);
-	op_hex		(x,	1);
-	set_name	(0X2849C,	"StopMusicAndResetTimer");
 }
 
 //------------------------------------------------------------------------
@@ -7150,6 +7146,12 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X28425);
+	set_cmt	(0X28443,	"this",	0);
+	set_cmt	(0X2849C,	"Stops the currently-playing music (byte_28616(bx=7)) and clears word_2E4A6 (forced-track tracker), then re-arms UpdateAmbientMusic's ~1-second timer and clears its 'already triggered' latch if not already running. Resets music state before a following track change.",	0);
+	create_insn	(x=0X2849C);
+	op_hex		(x,	1);
+	set_name	(0X2849C,	"StopMusicAndResetTimer");
 	create_insn	(0X284A5);
 	create_insn	(x=0X284B1);
 	op_hex		(x,	1);
@@ -10615,6 +10617,15 @@ static Bytes_2(void) {
 	set_name	(0X36246,	"aResistant");
 	create_strlit	(0X36250,	0X11);
 	set_name	(0X36250,	"aBreakProjectil");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X36261,	0XC);
 	set_name	(0X36261,	"aArmorRings");
 	create_strlit	(0X3626D,	0X14);
@@ -10631,15 +10642,6 @@ static Bytes_2(void) {
 	set_name	(0X362CA,	"aTransportation");
 	create_strlit	(0X362DA,	0X8);
 	set_name	(0X362DA,	"aWeapons");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X362E2,	0XC);
 	set_name	(0X362E2,	"aBaseValue");
 	create_strlit	(0X362EE,	0X8);

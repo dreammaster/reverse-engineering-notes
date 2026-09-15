@@ -1170,7 +1170,7 @@ loc_10A65:                              ; CODE XREF: start+494↑j
 ; ---------------------------------------------------------------------------
 
 loc_10A81:                              ; CODE XREF: start+49C↑j
-                call    sub_1DCE0
+                call    RunAlchemyScreen
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10A90
                 jmp     loc_10286
@@ -10690,7 +10690,7 @@ loc_167E7:                              ; CODE XREF: HandleDungeonInput+3E5↓j
 
 loc_167F1:                              ; CODE XREF: HandleDungeonInput+D0↑j
                                         ; HandleDungeonInput+265↑j
-                call    sub_1DCE0
+                call    RunAlchemyScreen
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -17438,7 +17438,7 @@ seg032          segment byte public 'CODE' use16
 
 
 ApplyMapTriggerEffect proc far          ; CODE XREF: HandleMovementInput:loc_11652↑P
-                                        ; sub_1DCE0+41A↓P ...
+                                        ; RunAlchemyScreen+41A↓P ...
                 mov     byte_2E400, 0   ; Handles a movement-triggered map object (called from HandleMovementInput). Branches on [di+2] type flags: 0x4000 = teleport ([di+4]/[di+6] -> word_36CF7/word_36CF9, full redraw); 0x2000 = separate effect (sub_1FC3F+sub_20C46, not traced); 0x1000/0x800/0x400/0x300-pair = trap/status effects -- looks up an effect-definition record (PrepareTrapEffectSlots), then for each of the party's 4 slots (g_partySlotAssignment -> g_partyRecords, record = g_partyRecords+(slot-1)*0x1F4), skips members with status bits 0x1C40 set, otherwise fills their g_partyEffectIconSlots entry and calls ApplyEffectAndDrawIconBar.
                 push    cs
                 call    near ptr sub_1A04B
@@ -24589,9 +24589,9 @@ seg056          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1DCE0       proc far                ; CODE XREF: start:loc_10A81↑P
+RunAlchemyScreen proc far               ; CODE XREF: start:loc_10A81↑P
                                         ; HandleDungeonInput:loc_167F1↑P
-                and     word_3295A, 9FFFh
+                and     word_3295A, 9FFFh ; Alchemy screen driver loop, reached directly from `start`. Redraws via DrawAlchemyStatusPanel after various sub-actions, polls input, hit-tests region tables for clickable elements, uses sub_25B34 for party-member selection, shows ShowConfirmPrompt (plausibly for an ore conversion), and calls ApplyMapTriggerEffect on an exit path back to the dungeon. Many internal helper calls not individually traced yet.
                 test    word_328CA, 1000h
                 jnz     short loc_1DD00
                 call    sub_1E473
@@ -24601,7 +24601,7 @@ sub_1DCE0       proc far                ; CODE XREF: start:loc_10A81↑P
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
-loc_1DD00:                              ; CODE XREF: sub_1DCE0+C↑j
+loc_1DD00:                              ; CODE XREF: RunAlchemyScreen+C↑j
                 mov     bx, word_328D4
                 cmp     word ptr [bx+94h], 0
                 jnz     short loc_1DD16
@@ -24610,8 +24610,8 @@ loc_1DD00:                              ; CODE XREF: sub_1DCE0+C↑j
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
-loc_1DD16:                              ; CODE XREF: sub_1DCE0+16↑j
-                                        ; sub_1DCE0+29↑j
+loc_1DD16:                              ; CODE XREF: RunAlchemyScreen+16↑j
+                                        ; RunAlchemyScreen+29↑j
                 call    sub_1E1A7
                 cmp     word_33310, 0
                 jnz     short loc_1DD28
@@ -24619,13 +24619,13 @@ loc_1DD16:                              ; CODE XREF: sub_1DCE0+16↑j
                 jmp     loc_1DF49
 ; ---------------------------------------------------------------------------
 
-loc_1DD28:                              ; CODE XREF: sub_1DCE0+3E↑j
+loc_1DD28:                              ; CODE XREF: RunAlchemyScreen+3E↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_1E4AA
                 call    sub_26C9E
 
-loc_1DD35:                              ; CODE XREF: sub_1DCE0+178↓j
-                                        ; sub_1DCE0+2A4↓j ...
+loc_1DD35:                              ; CODE XREF: RunAlchemyScreen+178↓j
+                                        ; RunAlchemyScreen+2A4↓j ...
                 call    sub_1E522
                 call    sub_1E3AF
                 call    sub_1E356
@@ -24633,8 +24633,8 @@ loc_1DD35:                              ; CODE XREF: sub_1DCE0+178↓j
                 call    DrawMouseCursor
                 call    sub_238CD
 
-loc_1DD4B:                              ; CODE XREF: sub_1DCE0+75↓j
-                                        ; sub_1DCE0+A1↓j ...
+loc_1DD4B:                              ; CODE XREF: RunAlchemyScreen+75↓j
+                                        ; RunAlchemyScreen+A1↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_1DD4B
@@ -24645,25 +24645,25 @@ loc_1DD4B:                              ; CODE XREF: sub_1DCE0+75↓j
                 jmp     loc_1DF15
 ; ---------------------------------------------------------------------------
 
-loc_1DD68:                              ; CODE XREF: sub_1DCE0+83↑j
+loc_1DD68:                              ; CODE XREF: RunAlchemyScreen+83↑j
                 cmp     byte_2E400, 43h ; 'C'
                 jnz     short loc_1DD72
                 jmp     loc_1DF15
 ; ---------------------------------------------------------------------------
 
-loc_1DD72:                              ; CODE XREF: sub_1DCE0+8D↑j
+loc_1DD72:                              ; CODE XREF: RunAlchemyScreen+8D↑j
                 cmp     byte_2E400, 20h ; ' '
                 jnz     short loc_1DD7C
                 jmp     loc_1DFAD
 ; ---------------------------------------------------------------------------
 
-loc_1DD7C:                              ; CODE XREF: sub_1DCE0+97↑j
+loc_1DD7C:                              ; CODE XREF: RunAlchemyScreen+97↑j
                 cmp     byte_2E400, 0Dh
                 jnz     short loc_1DD4B
                 jmp     loc_1DFAD
 ; ---------------------------------------------------------------------------
 
-loc_1DD86:                              ; CODE XREF: sub_1DCE0+7C↑j
+loc_1DD86:                              ; CODE XREF: RunAlchemyScreen+7C↑j
                 cmp     errorCode, 2
                 jnz     short loc_1DDEB
                 cmp     byte_2E400, 49h ; 'I'
@@ -24671,25 +24671,25 @@ loc_1DD86:                              ; CODE XREF: sub_1DCE0+7C↑j
                 jmp     loc_1E10F
 ; ---------------------------------------------------------------------------
 
-loc_1DD97:                              ; CODE XREF: sub_1DCE0+B2↑j
+loc_1DD97:                              ; CODE XREF: RunAlchemyScreen+B2↑j
                 cmp     byte_2E400, 51h ; 'Q'
                 jnz     short loc_1DDA1
                 jmp     loc_1E12A
 ; ---------------------------------------------------------------------------
 
-loc_1DDA1:                              ; CODE XREF: sub_1DCE0+BC↑j
+loc_1DDA1:                              ; CODE XREF: RunAlchemyScreen+BC↑j
                 cmp     byte_2E400, 48h ; 'H'
                 jnz     short loc_1DDAB
                 jmp     loc_1E163
 ; ---------------------------------------------------------------------------
 
-loc_1DDAB:                              ; CODE XREF: sub_1DCE0+C6↑j
+loc_1DDAB:                              ; CODE XREF: RunAlchemyScreen+C6↑j
                 cmp     byte_2E400, 50h ; 'P'
                 jnz     short loc_1DDB5
                 jmp     loc_1E176
 ; ---------------------------------------------------------------------------
 
-loc_1DDB5:                              ; CODE XREF: sub_1DCE0+D0↑j
+loc_1DDB5:                              ; CODE XREF: RunAlchemyScreen+D0↑j
                 test    word_328CA, 1000h
                 jnz     short loc_1DDE8
                 mov     bx, 95EBh
@@ -24705,23 +24705,23 @@ loc_1DDB5:                              ; CODE XREF: sub_1DCE0+D0↑j
                 cmp     byte_2E400, 3Eh ; '>'
                 jnz     short loc_1DDE8
 
-loc_1DDE5:                              ; CODE XREF: sub_1DCE0+E5↑j
-                                        ; sub_1DCE0+EF↑j ...
+loc_1DDE5:                              ; CODE XREF: RunAlchemyScreen+E5↑j
+                                        ; RunAlchemyScreen+EF↑j ...
                 jmp     loc_1DF4F
 ; ---------------------------------------------------------------------------
 
-loc_1DDE8:                              ; CODE XREF: sub_1DCE0+DB↑j
-                                        ; sub_1DCE0+103↑j
+loc_1DDE8:                              ; CODE XREF: RunAlchemyScreen+DB↑j
+                                        ; RunAlchemyScreen+103↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DDEB:                              ; CODE XREF: sub_1DCE0+AB↑j
+loc_1DDEB:                              ; CODE XREF: RunAlchemyScreen+AB↑j
                 cmp     errorCode, 3
                 jz      short loc_1DDF5
                 jmp     loc_1DEA2
 ; ---------------------------------------------------------------------------
 
-loc_1DDF5:                              ; CODE XREF: sub_1DCE0+110↑j
+loc_1DDF5:                              ; CODE XREF: RunAlchemyScreen+110↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 67ACh
@@ -24731,41 +24731,41 @@ loc_1DDF5:                              ; CODE XREF: sub_1DCE0+110↑j
                 jmp     short loc_1DE5B
 ; ---------------------------------------------------------------------------
 
-loc_1DE0B:                              ; CODE XREF: sub_1DCE0+127↑j
+loc_1DE0B:                              ; CODE XREF: RunAlchemyScreen+127↑j
                 cmp     ax, 0Eh
                 jnz     short loc_1DE13
                 jmp     loc_1DF15
 ; ---------------------------------------------------------------------------
 
-loc_1DE13:                              ; CODE XREF: sub_1DCE0+12E↑j
+loc_1DE13:                              ; CODE XREF: RunAlchemyScreen+12E↑j
                 cmp     ax, 0Fh
                 jnz     short loc_1DE1B
                 jmp     loc_1E10F
 ; ---------------------------------------------------------------------------
 
-loc_1DE1B:                              ; CODE XREF: sub_1DCE0+136↑j
+loc_1DE1B:                              ; CODE XREF: RunAlchemyScreen+136↑j
                 cmp     ax, 10h
                 jnz     short loc_1DE23
                 jmp     loc_1E12A
 ; ---------------------------------------------------------------------------
 
-loc_1DE23:                              ; CODE XREF: sub_1DCE0+13E↑j
+loc_1DE23:                              ; CODE XREF: RunAlchemyScreen+13E↑j
                 mov     bx, word_33316
                 cmp     bx, word_33314
                 jnz     short loc_1DE3B
                 cmp     ax, word_33312
                 jle     short loc_1DE40
 
-loc_1DE33:                              ; CODE XREF: sub_1DCE0+15E↓j
+loc_1DE33:                              ; CODE XREF: RunAlchemyScreen+15E↓j
                 call    sub_25B34
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DE3B:                              ; CODE XREF: sub_1DCE0+14B↑j
+loc_1DE3B:                              ; CODE XREF: RunAlchemyScreen+14B↑j
                 cmp     ax, 0Dh
                 jg      short loc_1DE33
 
-loc_1DE40:                              ; CODE XREF: sub_1DCE0+151↑j
+loc_1DE40:                              ; CODE XREF: RunAlchemyScreen+151↑j
                 dec     ax
                 push    ax
                 mov     ax, word_33316
@@ -24781,7 +24781,7 @@ loc_1DE40:                              ; CODE XREF: sub_1DCE0+151↑j
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
 
-loc_1DE5B:                              ; CODE XREF: sub_1DCE0+129↑j
+loc_1DE5B:                              ; CODE XREF: RunAlchemyScreen+129↑j
                 test    word_328CA, 1000h
                 jnz     short loc_1DE9C
                 mov     byte_2E400, 0
@@ -24804,17 +24804,17 @@ loc_1DE5B:                              ; CODE XREF: sub_1DCE0+129↑j
                 cmp     ax, 1Fh
                 jz      short loc_1DE9F
 
-loc_1DE9C:                              ; CODE XREF: sub_1DCE0+181↑j
-                                        ; sub_1DCE0+19A↑j ...
+loc_1DE9C:                              ; CODE XREF: RunAlchemyScreen+181↑j
+                                        ; RunAlchemyScreen+19A↑j ...
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DE9F:                              ; CODE XREF: sub_1DCE0+1A2↑j
-                                        ; sub_1DCE0+1AA↑j ...
+loc_1DE9F:                              ; CODE XREF: RunAlchemyScreen+1A2↑j
+                                        ; RunAlchemyScreen+1AA↑j ...
                 jmp     loc_1DF4F
 ; ---------------------------------------------------------------------------
 
-loc_1DEA2:                              ; CODE XREF: sub_1DCE0+112↑j
+loc_1DEA2:                              ; CODE XREF: RunAlchemyScreen+112↑j
                 cmp     errorCode, 6
                 jnz     short loc_1DF0B
                 mov     ax, word_2E76E
@@ -24831,16 +24831,16 @@ loc_1DEA2:                              ; CODE XREF: sub_1DCE0+112↑j
                 cmp     ax, word_33312
                 jle     short loc_1DEDF
 
-loc_1DED2:                              ; CODE XREF: sub_1DCE0+1FD↓j
+loc_1DED2:                              ; CODE XREF: RunAlchemyScreen+1FD↓j
                 call    sub_25B34
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DEDA:                              ; CODE XREF: sub_1DCE0+1EA↑j
+loc_1DEDA:                              ; CODE XREF: RunAlchemyScreen+1EA↑j
                 cmp     ax, 0Dh
                 jg      short loc_1DED2
 
-loc_1DEDF:                              ; CODE XREF: sub_1DCE0+1F0↑j
+loc_1DEDF:                              ; CODE XREF: RunAlchemyScreen+1F0↑j
                 dec     ax
                 push    ax
                 mov     ax, word_33316
@@ -24861,14 +24861,14 @@ loc_1DEDF:                              ; CODE XREF: sub_1DCE0+1F0↑j
                 jmp     loc_1DFAD
 ; ---------------------------------------------------------------------------
 
-loc_1DF0B:                              ; CODE XREF: sub_1DCE0+1C7↑j
+loc_1DF0B:                              ; CODE XREF: RunAlchemyScreen+1C7↑j
                 cmp     errorCode, 7
                 jz      short loc_1DF15
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DF15:                              ; CODE XREF: sub_1DCE0+85↑j
-                                        ; sub_1DCE0+8F↑j ...
+loc_1DF15:                              ; CODE XREF: RunAlchemyScreen+85↑j
+                                        ; RunAlchemyScreen+8F↑j ...
                 mov     ax, 1
                 call    sub_28412
                 call    RestoreCursorBackgroundIfDirty
@@ -24881,14 +24881,14 @@ loc_1DF15:                              ; CODE XREF: sub_1DCE0+85↑j
                 call    DrawMouseCursor
                 call    sub_238CD
 
-loc_1DF49:                              ; CODE XREF: sub_1DCE0+1D↑j
-                                        ; sub_1DCE0+33↑j ...
+loc_1DF49:                              ; CODE XREF: RunAlchemyScreen+1D↑j
+                                        ; RunAlchemyScreen+33↑j ...
                 call    sub_1FD03
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1DF4F:                              ; CODE XREF: sub_1DCE0:loc_1DDE5↑j
-                                        ; sub_1DCE0:loc_1DE9F↑j
+loc_1DF4F:                              ; CODE XREF: RunAlchemyScreen:loc_1DDE5↑j
+                                        ; RunAlchemyScreen:loc_1DE9F↑j
                 cmp     word ptr [bx], 0
                 jz      short loc_1DFAA
                 push    word_32924
@@ -24907,7 +24907,7 @@ loc_1DF4F:                              ; CODE XREF: sub_1DCE0:loc_1DDE5↑j
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
 
-loc_1DF87:                              ; CODE XREF: sub_1DCE0+292↑j
+loc_1DF87:                              ; CODE XREF: RunAlchemyScreen+292↑j
                 pop     word_328D6
                 pop     word_328D4
                 pop     word_32924
@@ -24918,22 +24918,22 @@ loc_1DF87:                              ; CODE XREF: sub_1DCE0+292↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DFA5:                              ; CODE XREF: sub_1DCE0+2B8↑j
+loc_1DFA5:                              ; CODE XREF: RunAlchemyScreen+2B8↑j
                 call    FlashStatusWarning
 
-loc_1DFAA:                              ; CODE XREF: sub_1DCE0+272↑j
+loc_1DFAA:                              ; CODE XREF: RunAlchemyScreen+272↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DFAD:                              ; CODE XREF: sub_1DCE0+99↑j
-                                        ; sub_1DCE0+A3↑j ...
+loc_1DFAD:                              ; CODE XREF: RunAlchemyScreen+99↑j
+                                        ; RunAlchemyScreen+A3↑j ...
                 mov     di, word_3330E
                 cmp     word ptr [di+2], 0Fh
                 jz      short loc_1DFBA
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1DFBA:                              ; CODE XREF: sub_1DCE0+2D5↑j
+loc_1DFBA:                              ; CODE XREF: RunAlchemyScreen+2D5↑j
                 mov     si, word_328D4
                 mov     ax, [di]
                 mov     word_3331E, ax
@@ -24961,7 +24961,7 @@ loc_1DFBA:                              ; CODE XREF: sub_1DCE0+2D5↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1E01E:                              ; CODE XREF: sub_1DCE0+327↑j
+loc_1E01E:                              ; CODE XREF: RunAlchemyScreen+327↑j
                 push    word_328D4
                 mov     ax, word_3331A
                 call    sub_25B14
@@ -24971,8 +24971,8 @@ loc_1E01E:                              ; CODE XREF: sub_1DCE0+327↑j
                 jmp     short loc_1E08F
 ; ---------------------------------------------------------------------------
 
-loc_1E037:                              ; CODE XREF: sub_1DCE0+319↑j
-                                        ; sub_1DCE0+3A5↓j
+loc_1E037:                              ; CODE XREF: RunAlchemyScreen+319↑j
+                                        ; RunAlchemyScreen+3A5↓j
                 test    word_33302, 20h
                 jz      short loc_1E08F
                 call    ClearStatusPanelIfDirty
@@ -24987,7 +24987,7 @@ loc_1E037:                              ; CODE XREF: sub_1DCE0+319↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1E067:                              ; CODE XREF: sub_1DCE0+374↑j
+loc_1E067:                              ; CODE XREF: RunAlchemyScreen+374↑j
                 and     word_328C4, 0FF7Fh
                 cmp     ax, 5
                 jnz     short loc_1E082
@@ -24997,14 +24997,14 @@ loc_1E067:                              ; CODE XREF: sub_1DCE0+374↑j
                 jmp     short loc_1E08F
 ; ---------------------------------------------------------------------------
 
-loc_1E082:                              ; CODE XREF: sub_1DCE0+390↑j
+loc_1E082:                              ; CODE XREF: RunAlchemyScreen+390↑j
                 cmp     ax, 7
                 jnz     short loc_1E037
                 mov     ax, 0Bh
                 call    sub_28412
 
-loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
-                                        ; sub_1DCE0+35D↑j ...
+loc_1E08F:                              ; CODE XREF: RunAlchemyScreen+355↑j
+                                        ; RunAlchemyScreen+35D↑j ...
                 pop     word_32924
                 mov     bx, word_32924
                 mov     ax, [bx]
@@ -25038,8 +25038,8 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1E10F:                              ; CODE XREF: sub_1DCE0+B4↑j
-                                        ; sub_1DCE0+138↑j
+loc_1E10F:                              ; CODE XREF: RunAlchemyScreen+B4↑j
+                                        ; RunAlchemyScreen+138↑j
                 cmp     word_33316, 1
                 jnz     short loc_1E11E
                 mov     ax, 565Ah
@@ -25047,16 +25047,16 @@ loc_1E10F:                              ; CODE XREF: sub_1DCE0+B4↑j
                 jmp     short loc_1E127
 ; ---------------------------------------------------------------------------
 
-loc_1E11E:                              ; CODE XREF: sub_1DCE0+434↑j
+loc_1E11E:                              ; CODE XREF: RunAlchemyScreen+434↑j
                 dec     word_33316
                 sub     word_3330E, 34h ; '4'
 
-loc_1E127:                              ; CODE XREF: sub_1DCE0+43C↑j
+loc_1E127:                              ; CODE XREF: RunAlchemyScreen+43C↑j
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
 
-loc_1E12A:                              ; CODE XREF: sub_1DCE0+BE↑j
-                                        ; sub_1DCE0+140↑j
+loc_1E12A:                              ; CODE XREF: RunAlchemyScreen+BE↑j
+                                        ; RunAlchemyScreen+140↑j
                 mov     ax, word_33314
                 cmp     word_33316, ax
                 jnz     short loc_1E143
@@ -25069,7 +25069,7 @@ loc_1E12A:                              ; CODE XREF: sub_1DCE0+BE↑j
                 jmp     short loc_1E160
 ; ---------------------------------------------------------------------------
 
-loc_1E143:                              ; CODE XREF: sub_1DCE0+451↑j
+loc_1E143:                              ; CODE XREF: RunAlchemyScreen+451↑j
                 inc     word_33316
                 add     word_3330E, 34h ; '4'
                 mov     ax, word_33310
@@ -25081,24 +25081,24 @@ loc_1E143:                              ; CODE XREF: sub_1DCE0+451↑j
                 jnb     short loc_1E160
                 mov     word_3330E, ax
 
-loc_1E160:                              ; CODE XREF: sub_1DCE0+461↑j
-                                        ; sub_1DCE0+47B↑j
+loc_1E160:                              ; CODE XREF: RunAlchemyScreen+461↑j
+                                        ; RunAlchemyScreen+47B↑j
                 jmp     loc_1DD35
 ; ---------------------------------------------------------------------------
 
-loc_1E163:                              ; CODE XREF: sub_1DCE0+C8↑j
+loc_1E163:                              ; CODE XREF: RunAlchemyScreen+C8↑j
                 mov     ax, 565Ah
                 cmp     ax, word_3330E
                 jb      short loc_1E16F
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1E16F:                              ; CODE XREF: sub_1DCE0+48A↑j
+loc_1E16F:                              ; CODE XREF: RunAlchemyScreen+48A↑j
                 sub     word_3330E, 4
                 jmp     short loc_1E18F
 ; ---------------------------------------------------------------------------
 
-loc_1E176:                              ; CODE XREF: sub_1DCE0+D2↑j
+loc_1E176:                              ; CODE XREF: RunAlchemyScreen+D2↑j
                 mov     ax, word_33310
                 dec     ax
                 shl     ax, 1
@@ -25109,10 +25109,10 @@ loc_1E176:                              ; CODE XREF: sub_1DCE0+D2↑j
                 jmp     loc_1DD4B
 ; ---------------------------------------------------------------------------
 
-loc_1E18A:                              ; CODE XREF: sub_1DCE0+4A5↑j
+loc_1E18A:                              ; CODE XREF: RunAlchemyScreen+4A5↑j
                 add     word_3330E, 4
 
-loc_1E18F:                              ; CODE XREF: sub_1DCE0+494↑j
+loc_1E18F:                              ; CODE XREF: RunAlchemyScreen+494↑j
                 mov     bx, word_3330E
                 sub     bx, 565Ah
                 mov     ax, bx
@@ -25122,14 +25122,14 @@ loc_1E18F:                              ; CODE XREF: sub_1DCE0+494↑j
                 inc     ax
                 mov     word_33316, ax
                 jmp     loc_1DD35
-sub_1DCE0       endp
+RunAlchemyScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E1A7       proc near               ; CODE XREF: sub_1DCE0:loc_1DD16↑p
-                                        ; sub_1DCE0+294↑p ...
+sub_1E1A7       proc near               ; CODE XREF: RunAlchemyScreen:loc_1DD16↑p
+                                        ; RunAlchemyScreen+294↑p ...
                 push    bx
                 push    cx
                 push    dx
@@ -25327,8 +25327,8 @@ sub_1E340       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E356       proc near               ; CODE XREF: sub_1DCE0+5B↑p
-                                        ; sub_1DCE0+21D↑p ...
+sub_1E356       proc near               ; CODE XREF: RunAlchemyScreen+5B↑p
+                                        ; RunAlchemyScreen+21D↑p ...
                 and     word_328CA, 0F3FFh
                 cmp     word_33316, 1
                 jle     short loc_1E369
@@ -25364,8 +25364,8 @@ sub_1E356       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E3AF       proc near               ; CODE XREF: sub_1DCE0+58↑p
-                                        ; sub_1DCE0+21A↑p ...
+sub_1E3AF       proc near               ; CODE XREF: RunAlchemyScreen+58↑p
+                                        ; RunAlchemyScreen+21A↑p ...
                 push    si
                 push    dx
                 push    cx
@@ -25469,7 +25469,7 @@ sub_1E447       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E473       proc near               ; CODE XREF: sub_1DCE0+E↑p
+sub_1E473       proc near               ; CODE XREF: RunAlchemyScreen+E↑p
                 mov     word_32924, 0
                 mov     ax, word_36CCD
                 cmp     ax, 0
@@ -25503,7 +25503,7 @@ sub_1E473       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4AA       proc near               ; CODE XREF: sub_1DCE0+4D↑p
+sub_1E4AA       proc near               ; CODE XREF: RunAlchemyScreen+4D↑p
                 mov     ax, 1
                 call    sub_28412
                 mov     x, 102h
@@ -25520,8 +25520,8 @@ sub_1E4AA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4D6       proc near               ; CODE XREF: sub_1DCE0+24D↑p
-                                        ; sub_1DCE0+3EB↑p
+sub_1E4D6       proc near               ; CODE XREF: RunAlchemyScreen+24D↑p
+                                        ; RunAlchemyScreen+3EB↑p
                 mov     x, 102h
                 mov     y, 43h ; 'C'
                 mov     ax, _videoBufferSeg
@@ -25536,7 +25536,7 @@ sub_1E4D6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E4FA       proc near               ; CODE XREF: sub_1DCE0+31F↑p
+sub_1E4FA       proc near               ; CODE XREF: RunAlchemyScreen+31F↑p
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 mov     ax, 12h
@@ -25553,8 +25553,8 @@ sub_1E4FA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E522       proc near               ; CODE XREF: sub_1DCE0:loc_1DD35↑p
-                                        ; sub_1DCE0+217↑p ...
+sub_1E522       proc near               ; CODE XREF: RunAlchemyScreen:loc_1DD35↑p
+                                        ; RunAlchemyScreen+217↑p ...
                 mov     _font_bgTransparent, 1
                 mov     x, 0Fh
                 mov     y, 17h
@@ -25568,8 +25568,8 @@ sub_1E522       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-DrawAlchemyStatusPanel proc near        ; CODE XREF: sub_1DCE0+5E↑p
-                                        ; sub_1DCE0+220↑p ...
+DrawAlchemyStatusPanel proc near        ; CODE XREF: RunAlchemyScreen+5E↑p
+                                        ; RunAlchemyScreen+220↑p ...
                 call    ClearStatusPanelIfDirty ; Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.
                 or      word_328C4, 100h
                 mov     ax, 0F1h
@@ -25626,7 +25626,7 @@ DrawAlchemyStatusPanel endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E61B       proc near               ; CODE XREF: sub_1DCE0+3BE↑p
+sub_1E61B       proc near               ; CODE XREF: RunAlchemyScreen+3BE↑p
                 push    si
                 mov     ax, word_328D6
                 mov     word_36CCD, ax
@@ -30573,8 +30573,8 @@ seg064          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_21530       proc far                ; CODE XREF: sub_1DCE0+255↑P
-                                        ; sub_1DCE0+3F3↑P ...
+sub_21530       proc far                ; CODE XREF: RunAlchemyScreen+255↑P
+                                        ; RunAlchemyScreen+3F3↑P ...
                 test    word_328CA, 1000h
                 jnz     short locret_21587
                 test    word_36C7F, 400h
@@ -51053,7 +51053,7 @@ seg124          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2C0FE       proc far                ; CODE XREF: sub_1DCE0+415↑P
+sub_2C0FE       proc far                ; CODE XREF: RunAlchemyScreen+415↑P
                                         ; InteractWithContainer+8A↓P
                 or      word_328C8, 20h
                 test    word_33302, 8000h
@@ -76784,7 +76784,7 @@ word_332FC      dw 0                    ; DATA XREF: sub_2C0FE+A06↑r
 word_332FE      dw 0                    ; DATA XREF: sub_13B3F+B1↑r
                                         ; sub_2D7A7+1D↑r
 word_33300      dw 0                    ; DATA XREF: sub_13B3F+2C0↑r
-                                        ; sub_1DCE0+313↑r ...
+                                        ; RunAlchemyScreen+313↑r ...
 word_33302      dw 0                    ; DATA XREF: sub_13B3F:loc_13CCF↑r
                                         ; sub_13B3F+1A6↑r ...
 word_33304      dw 0                    ; DATA XREF: sub_2C0FE+9E1↑r
@@ -76797,24 +76797,24 @@ word_3330A      dw 0                    ; DATA XREF: sub_13216+B↑w
                                         ; sub_13C1D+9↑r ...
 word_3330C      dw 0                    ; DATA XREF: InitGlobals+1F2↑w
                                         ; sub_1E1A7+33↑r
-word_3330E      dw 0                    ; DATA XREF: sub_1DCE0+175↑w
-                                        ; sub_1DCE0+214↑w ...
-word_33310      dw 0                    ; DATA XREF: sub_1DCE0+39↑r
-                                        ; sub_1DCE0+453↑r ...
-word_33312      dw 0                    ; DATA XREF: sub_1DCE0+14D↑r
-                                        ; sub_1DCE0+1EC↑r ...
-word_33314      dw 0                    ; DATA XREF: sub_1DCE0+147↑r
-                                        ; sub_1DCE0+1E6↑r ...
-word_33316      dw 0                    ; DATA XREF: sub_1DCE0:loc_1DE23↑r
-                                        ; sub_1DCE0+162↑r ...
-word_33318      dw 0                    ; DATA XREF: sub_1DCE0+34A↑w
+word_3330E      dw 0                    ; DATA XREF: RunAlchemyScreen+175↑w
+                                        ; RunAlchemyScreen+214↑w ...
+word_33310      dw 0                    ; DATA XREF: RunAlchemyScreen+39↑r
+                                        ; RunAlchemyScreen+453↑r ...
+word_33312      dw 0                    ; DATA XREF: RunAlchemyScreen+14D↑r
+                                        ; RunAlchemyScreen+1EC↑r ...
+word_33314      dw 0                    ; DATA XREF: RunAlchemyScreen+147↑r
+                                        ; RunAlchemyScreen+1E6↑r ...
+word_33316      dw 0                    ; DATA XREF: RunAlchemyScreen:loc_1DE23↑r
+                                        ; RunAlchemyScreen+162↑r ...
+word_33318      dw 0                    ; DATA XREF: RunAlchemyScreen+34A↑w
                                         ; sub_2C0FE+DD↑r ...
-word_3331A      dw 0                    ; DATA XREF: sub_1DCE0+322↑r
-                                        ; sub_1DCE0+342↑r ...
+word_3331A      dw 0                    ; DATA XREF: RunAlchemyScreen+322↑r
+                                        ; RunAlchemyScreen+342↑r ...
 word_3331C      dw 0                    ; DATA XREF: sub_1E4FA+19↑w
                                         ; sub_2C0FE:loc_2C1CF↑r ...
-word_3331E      dw 0                    ; DATA XREF: sub_1DCE0+2E0↑w
-                                        ; sub_1DCE0+407↑r
+word_3331E      dw 0                    ; DATA XREF: RunAlchemyScreen+2E0↑w
+                                        ; RunAlchemyScreen+407↑r
                 db    8
                 db    0
                 db 0E7h
