@@ -365,6 +365,18 @@ elsewhere, and redraws the gold readout afterward via
 adds the unit price to both `g_partyGold` and a second counter
 `0xB30`) not yet disentangled with enough confidence to name safely.
 
+### The map legend editor
+
+`RunMapEditorScreen` (name pre-existing from an earlier session; not
+otherwise documented) hosts a wall/floor legend editor:
+`EditWallLegendTypeNumber` and `EditFloorLegendTypeNumber` are a
+symmetric pair of numeric-entry fields (via an untraced `sub_1D146`)
+storing a wall/floor type number into `word_2E384`/`word_2E386`, then
+redrawing the corresponding legend row (`DrawWallTypeLegendRow`/
+`DrawFloorTypeLegendRow`). One error path in the floor field falls
+through into the wall field, suggesting Tab-style navigation between
+the two.
+
 ### The main pause/options dialog
 
 `RunGameDialog` drives the pause dialog with its 8 `GameDialog_draw*`

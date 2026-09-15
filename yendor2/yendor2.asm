@@ -23261,8 +23261,8 @@ seg051          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1D146       proc far                ; CODE XREF: sub_20523+28↓P
-                                        ; sub_20570+28↓P ...
+sub_1D146       proc far                ; CODE XREF: EditWallLegendTypeNumber+28↓P
+                                        ; EditFloorLegendTypeNumber+28↓P ...
                 push    si
                 push    dx
                 push    ax
@@ -28418,14 +28418,14 @@ loc_202AF:                              ; CODE XREF: RunMapEditorScreen+DA↑j
 loc_202C6:                              ; CODE XREF: RunMapEditorScreen+251↑j
                 cmp     ax, 12h
                 jnz     short loc_202D1
-                call    sub_20523
+                call    EditWallLegendTypeNumber
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
 loc_202D1:                              ; CODE XREF: RunMapEditorScreen+259↑j
                 cmp     ax, 13h
                 jnz     short loc_202DC
-                call    sub_20570
+                call    EditFloorLegendTypeNumber
                 jmp     loc_20126
 ; ---------------------------------------------------------------------------
 
@@ -28720,9 +28720,9 @@ sub_204F0       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20523       proc near               ; CODE XREF: RunMapEditorScreen+25B↑p
-                                        ; sub_20523+39↓j ...
-                call    RestoreCursorBackgroundIfDirty
+EditWallLegendTypeNumber proc near      ; CODE XREF: RunMapEditorScreen+25B↑p
+                                        ; EditWallLegendTypeNumber+39↓j ...
+                call    RestoreCursorBackgroundIfDirty ; Reads a numeric wall-type entry (sub_1D146, not traced) into word_2E384, then redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen; falls through from EditFloorLegendTypeNumber on one error path.
                 mov     _textPos_x, 4
                 mov     _textPos_y, 1
                 mov     _font_bgTransparent, 0
@@ -28735,23 +28735,23 @@ sub_20523       proc near               ; CODE XREF: RunMapEditorScreen+25B↑p
                 cmp     errorCode, 2
                 jz      short loc_20564
                 cmp     errorCode, 0
-                jnz     short sub_20523
+                jnz     short EditWallLegendTypeNumber
                 mov     ax, word_3293E
                 mov     word_2E384, ax
 
-loc_20564:                              ; CODE XREF: sub_20523+32↑j
+loc_20564:                              ; CODE XREF: EditWallLegendTypeNumber+32↑j
                 call    sub_2044C
                 call    DrawWallTypeLegendRow
                 call    sub_238CD
                 retn
-sub_20523       endp
+EditWallLegendTypeNumber endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_20570       proc near               ; CODE XREF: RunMapEditorScreen+266↑p
-                call    RestoreCursorBackgroundIfDirty
+EditFloorLegendTypeNumber proc near     ; CODE XREF: RunMapEditorScreen+266↑p
+                call    RestoreCursorBackgroundIfDirty ; Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.
                 mov     _textPos_x, 0A4h
                 mov     _textPos_y, 1
                 mov     _font_bgTransparent, 0
@@ -28765,19 +28765,19 @@ sub_20570       proc near               ; CODE XREF: RunMapEditorScreen+266↑p
                 jz      short loc_205B4
                 cmp     errorCode, 0
                 jz      short loc_205AE
-                jmp     sub_20523
+                jmp     EditWallLegendTypeNumber
 ; ---------------------------------------------------------------------------
 
-loc_205AE:                              ; CODE XREF: sub_20570+39↑j
+loc_205AE:                              ; CODE XREF: EditFloorLegendTypeNumber+39↑j
                 mov     ax, word_3293E
                 mov     word_2E386, ax
 
-loc_205B4:                              ; CODE XREF: sub_20570+32↑j
+loc_205B4:                              ; CODE XREF: EditFloorLegendTypeNumber+32↑j
                 call    sub_2047B
                 call    DrawFloorTypeLegendRow
                 call    sub_238CD
                 retn
-sub_20570       endp
+EditFloorLegendTypeNumber endp
 
 
 ; =============== S U B R O U T I N E =======================================

@@ -5188,9 +5188,13 @@ static Bytes_1(void) {
 	create_insn	(0X204AA);
 	set_name	(0X204AA,	"DrawFloorTypeLegendRow");
 	create_insn	(0X204F0);
+	set_cmt	(0X20523,	"Reads a numeric wall-type entry (sub_1D146, not traced) into word_2E384, then redraws via DrawWallTypeLegendRow. Called from RunMapEditorScreen; falls through from EditFloorLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20523);
+	set_name	(0X20523,	"EditWallLegendTypeNumber");
 	set_cmt	(0X2053A,	"msg",	0);
+	set_cmt	(0X20570,	"Reads a numeric floor-type entry (sub_1D146, not traced) into word_2E386, then redraws via DrawFloorTypeLegendRow. Called from RunMapEditorScreen; falls through to EditWallLegendTypeNumber on one error path.",	0);
 	create_insn	(0X20570);
+	set_name	(0X20570,	"EditFloorLegendTypeNumber");
 	set_cmt	(0X20587,	"msg",	0);
 	create_insn	(0X205AE);
 	set_cmt	(0X205C0,	"this",	0);
@@ -6393,6 +6397,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2566F);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2567A);
 	op_hex		(x,	1);
 	create_insn	(0X25690);
@@ -6447,15 +6460,6 @@ static Bytes_1(void) {
 	create_insn	(0X2587E);
 	create_insn	(x=0X25891);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2589A);
 	create_insn	(0X258CC);
 	create_insn	(0X258D3);
@@ -9847,6 +9851,15 @@ static Bytes_2(void) {
 	set_name	(0X3299E,	"_val25");
 	create_word	(0X329A0);
 	set_name	(0X329A0,	"_val26");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329A2);
 	set_name	(0X329A2,	"_val28");
 	create_word	(0X329A4);
@@ -9881,15 +9894,6 @@ static Bytes_2(void) {
 	set_name	(0X329C0,	"_val9");
 	create_word	(0X329C2);
 	set_name	(0X329C2,	"_val44");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329C4);
 	set_name	(0X329C4,	"_val45");
 	create_word	(0X329C6);

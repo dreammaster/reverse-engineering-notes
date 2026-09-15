@@ -2605,6 +2605,15 @@ Music/NewGame/Save/SoundFx).
 
 327 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: EditWallLegendTypeNumber and EditFloorLegendTypeNumber
+
+Named a symmetric pair of numeric-entry fields in `RunMapEditorScreen`
+(a pre-existing but previously undocumented name): each reads a
+wall/floor type number and redraws the corresponding legend row. One
+error path suggests Tab-style navigation between the two fields.
+
+329 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
