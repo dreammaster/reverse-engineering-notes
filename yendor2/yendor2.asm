@@ -6459,7 +6459,7 @@ sub_13EDF       proc near               ; CODE XREF: sub_13E98+2B↑p
                 add     si, 0Eh
                 mov     word_2E412, 8Ah
                 mov     _textPos_x, 7Fh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 pop     si
                 add     _textPos_y, 9
                 mov     _font_fgColor, 0Ah
@@ -7238,7 +7238,7 @@ sub_147FF       proc near               ; CODE XREF: sub_13678+5E↑p
                 jz      short loc_14831
                 mov     word_2E412, 8Ah
                 mov     _textPos_x, 9Dh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
 
 loc_14831:                              ; CODE XREF: sub_147FF+1F↑j
                 pop     si
@@ -7267,7 +7267,7 @@ sub_14833       proc near               ; CODE XREF: sub_141D9+3F↑p
                 jz      short loc_14874
                 mov     word_2E412, 8Ah
                 mov     _textPos_x, 0FBh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
 
 loc_14874:                              ; CODE XREF: sub_14833+2E↑j
                 pop     si
@@ -10221,7 +10221,7 @@ loc_163B1:                              ; CODE XREF: RunDungeonGameLoop+89↑j
                 mov     si, 51B6h
                 call    IsBCDCounterAtLeast
                 jz      short loc_163FB
-                call    sub_23151
+                call    ShowLootAndAwardExperience
 
 loc_163FB:                              ; CODE XREF: RunDungeonGameLoop+FE↑j
                 or      word_328C8, 20h
@@ -12565,7 +12565,7 @@ loc_175FD:                              ; CODE XREF: sub_175F4+6↑j
                 add     _textPos_x, 6
                 mov     word_2E412, 8Ah
                 mov     si, 94B3h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 pop     si
                 pop     word_2E412
                 pop     _font_bgTransparent
@@ -16762,7 +16762,7 @@ loc_19988:                              ; CODE XREF: sub_19957+10↑j
                 mov     _textPos_x, 0A0h
                 mov     _textPos_y, 1Bh
                 add     si, 18h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 pop     si
                 pop     ax
                 mov     byte_2E400, al
@@ -17004,9 +17004,9 @@ sub_19B3E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19B80       proc far                ; CODE XREF: sub_13EDF+3C↑P
+FormatAndDrawBCD4 proc far              ; CODE XREF: sub_13EDF+3C↑P
                                         ; sub_147FF+2D↑P ...
-                push    cx
+                push    cx              ; FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.
                 push    dx
                 push    es
                 push    di
@@ -17025,7 +17025,7 @@ sub_19B80       proc far                ; CODE XREF: sub_13EDF+3C↑P
                 mov     di, 0AFA8h
                 mov     cx, 4
 
-loc_19BA6:                              ; CODE XREF: sub_19B80+3C↓j
+loc_19BA6:                              ; CODE XREF: FormatAndDrawBCD4+3C↓j
                 push    cx
                 mov     cl, 4
                 mov     al, [si]
@@ -17042,7 +17042,7 @@ loc_19BA6:                              ; CODE XREF: sub_19B80+3C↓j
                 jnz     short loc_19BC9
                 mov     word_38808, 30h ; '0'
 
-loc_19BC9:                              ; CODE XREF: sub_19B80+41↑j
+loc_19BC9:                              ; CODE XREF: FormatAndDrawBCD4+41↑j
                 mov     bx, 0AFA8h
                 call    sub_256F0
                 mov     ax, word_2E412
@@ -17051,14 +17051,14 @@ loc_19BC9:                              ; CODE XREF: sub_19B80+41↑j
                 mov     _font_fgColor, ax
                 call    writeString
 
-loc_19BE1:                              ; CODE XREF: sub_19B80+57↑j
+loc_19BE1:                              ; CODE XREF: FormatAndDrawBCD4+57↑j
                 pop     di
                 pop     es
                 assume es:nothing
                 pop     dx
                 pop     cx
                 retf
-sub_19B80       endp
+FormatAndDrawBCD4 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17367,8 +17367,8 @@ SubtractFromBCDCounter endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19E15       proc near               ; CODE XREF: sub_19B80+32↑p
-                                        ; sub_19B80+37↑p
+sub_19E15       proc near               ; CODE XREF: FormatAndDrawBCD4+32↑p
+                                        ; FormatAndDrawBCD4+37↑p
                 cmp     ah, 0
                 jz      short loc_19E1C
                 jmp     short loc_19E37
@@ -19566,7 +19566,7 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
                 mov     _textPos_x, 94h
                 mov     _textPos_y, 4Fh ; 'O'
                 mov     word_2E412, 0Dh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     _font_fgColor, 0Fh
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 5Bh ; '['
@@ -19579,7 +19579,7 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
                 mov     _textPos_x, 5Eh ; '^'
                 mov     word_2E412, 8Ah
                 mov     si, 94B3h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 call    DrawMouseCursor
                 call    RestoreCursorBackgroundIfDirty
                 mov     _textPos_x, 16h
@@ -20277,7 +20277,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 mov     word_2E412, 0Fh
                 mov     si, 0BCEh
                 add     si, 14h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 call    DrawMouseCursor
                 mov     ax, 3
                 call    PrepareTrapEffectSlots
@@ -20696,7 +20696,7 @@ loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
                 push    bx
                 mov     si, 512Ah
                 mov     word_2E412, 0FFFFh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     ax, 805Fh
                 mov     bx, 0AFBCh
                 mov     byte ptr [bx], 0
@@ -21109,7 +21109,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 mov     byte ptr word_3881C, 0
                 mov     si, 0B30h
                 mov     word_2E412, 0FFFFh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     ax, 0AFA8h
                 mov     bx, 0AFBCh
                 call    StrCat
@@ -21175,7 +21175,7 @@ loc_1BE26:                              ; CODE XREF: sub_1BBED+227↑j
                 call    sub_28A76
                 mov     si, 512Ah
                 mov     word_2E412, 0FFFFh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     ax, 805Fh
                 mov     bx, 0AFBCh
                 mov     byte ptr [bx], 0
@@ -22092,7 +22092,7 @@ loc_1C76D:                              ; CODE XREF: sub_1C589+1DD↑j
                 mov     word_3298A, ax
                 mov     ax, [si+2]
                 mov     word_3298C, ax
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 55h ; 'U'
                 mov     bx, 82BCh       ; msg
@@ -22530,7 +22530,7 @@ sub_1CBC4       proc far                ; CODE XREF: sub_1B96F+BD↑p
                 mov     _textPos_x, 5Eh ; '^'
                 mov     word_2E412, 8Ah
                 mov     si, 94B3h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 retf
 sub_1CBC4       endp
 
@@ -22573,7 +22573,7 @@ sub_1CC2E       proc far                ; CODE XREF: sub_1BBED+8B↑p
                 call    writeString
                 mov     word_2E412, 8Ah
                 mov     si, 94B3h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 test    word_36C7F, 1000h
                 jz      short locret_1CC6F
                 call    ShowResourceDepletedOverlay
@@ -23973,7 +23973,7 @@ loc_1D747:                              ; CODE XREF: sub_1D4B8+1B1↑j
                 mov     si, 51B6h
                 call    IsBCDCounterAtLeast
                 jz      short loc_1D75C
-                call    sub_23151
+                call    ShowLootAndAwardExperience
 
 loc_1D75C:                              ; CODE XREF: sub_1D4B8+29D↑j
                 call    DrawMouseCursor
@@ -25610,14 +25610,14 @@ loc_1E5AF:                              ; CODE XREF: sub_1E546+62↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 94B7h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 add     _textPos_y, 0Ch
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7C6Dh       ; msg
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 94BBh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 retn
 sub_1E546       endp
 
@@ -31335,7 +31335,7 @@ loc_21BFC:                              ; CODE XREF: sub_219FA+1D8↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     word_2E412, 0Fh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
 
 loc_21C11:                              ; CODE XREF: sub_219FA+91↑j
                                         ; sub_219FA+102↑j ...
@@ -33114,7 +33114,7 @@ sub_22B78       endp
 
 GrantMonsterRewards proc far            ; CODE XREF: sub_16B63:loc_16BA2↑P
                                         ; sub_1D4B8:loc_1D6EA↑P ...
-                push    si              ; Grants a reward on this monster's presence ending: adds 4 fixed BCD values (0x51BA/0x5396/0x539A, plus the global counter at 0x51B6 itself) into the monster's [+0x7E]/[+0x82]/[+0x86] and into the global BCD counter 0x51B6 (checked elsewhere via IsBCDCounterAtLeast to conditionally call sub_23151 -- plausibly an achievement/threshold notification). Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).
+                push    si              ; Stages this monster's own loot fields into 4 global counters (CORRECTED direction from last round's comment): 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A]. ShowLootAndAwardExperience later drains these staging counters into the permanent material counters and party XP. Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).
                 push    di
                 mov     di, si
                 add     di, 7Eh ; '~'
@@ -33357,7 +33357,7 @@ loc_22D63:                              ; CODE XREF: ProcessLevelMonsters+4B↓j
                 call    IsBCDCounterAtLeast
                 jz      short loc_22D8B
                 push    cs
-                call    near ptr sub_23151
+                call    near ptr ShowLootAndAwardExperience
                 call    DrawMouseCursor
 
 loc_22D8B:                              ; CODE XREF: ProcessLevelMonsters+24↑j
@@ -33788,9 +33788,9 @@ sub_2313D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23151       proc far                ; CODE XREF: RunDungeonGameLoop+100↑P
+ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+100↑P
                                         ; sub_1D4B8+29F↑P ...
-                push    cx
+                push    cx              ; Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).
                 push    dx
                 push    si
                 push    di
@@ -33799,7 +33799,7 @@ sub_23151       proc far                ; CODE XREF: RunDungeonGameLoop+100↑P
                 mov     ax, _val16
                 call    sub_28412
 
-loc_23164:                              ; CODE XREF: sub_23151+9↑j
+loc_23164:                              ; CODE XREF: ShowLootAndAwardExperience+9↑j
                 call    sub_16E18
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
@@ -33814,7 +33814,7 @@ loc_23164:                              ; CODE XREF: sub_23151+9↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 51BAh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 add     _textPos_y, 0Ch
                 mov     si, 94B3h
                 mov     di, 51BAh
@@ -33828,13 +33828,13 @@ loc_23164:                              ; CODE XREF: sub_23151+9↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 539Ah
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 add     _textPos_y, 6
                 mov     si, 94B7h
                 mov     di, 539Ah
                 call    AddBCD4
 
-loc_231F9:                              ; CODE XREF: sub_23151+7B↑j
+loc_231F9:                              ; CODE XREF: ShowLootAndAwardExperience+7B↑j
                 mov     word_3293E, 0
                 mov     si, 5396h
                 call    IsBCDCounterAtLeast
@@ -33844,12 +33844,12 @@ loc_231F9:                              ; CODE XREF: sub_23151+7B↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 5396h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     si, 94BBh
                 mov     di, 5396h
                 call    AddBCD4
 
-loc_2322F:                              ; CODE XREF: sub_23151+B6↑j
+loc_2322F:                              ; CODE XREF: ShowLootAndAwardExperience+B6↑j
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 90h
                 mov     _font_fgColor, 7Bh ; '{'
@@ -33857,12 +33857,12 @@ loc_2322F:                              ; CODE XREF: sub_23151+B6↑j
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 51B6h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     di, 51B6h
                 mov     cx, 4
                 mov     si, 95EBh
 
-loc_2325F:                              ; CODE XREF: sub_23151+147↓j
+loc_2325F:                              ; CODE XREF: ShowLootAndAwardExperience+147↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_2329A
@@ -33876,7 +33876,7 @@ loc_2325F:                              ; CODE XREF: sub_23151+147↓j
                 call    AddBCD4
                 pop     si
 
-loc_2327F:                              ; CODE XREF: sub_23151+120↑j
+loc_2327F:                              ; CODE XREF: ShowLootAndAwardExperience+120↑j
                 call    sub_1B428
                 mov     bx, word_328D4
                 cmp     word ptr [bx+1Eh], 0
@@ -33884,11 +33884,11 @@ loc_2327F:                              ; CODE XREF: sub_23151+120↑j
                 mov     bx, si
                 call    sub_22445
 
-loc_23295:                              ; CODE XREF: sub_23151+13B↑j
+loc_23295:                              ; CODE XREF: ShowLootAndAwardExperience+13B↑j
                 add     si, 2
                 loop    loc_2325F
 
-loc_2329A:                              ; CODE XREF: sub_23151+112↑j
+loc_2329A:                              ; CODE XREF: ShowLootAndAwardExperience+112↑j
                 call    DrawMouseCursor
                 push    cs
                 call    near ptr sub_22CBC
@@ -33897,7 +33897,7 @@ loc_2329A:                              ; CODE XREF: sub_23151+112↑j
                 pop     dx
                 pop     cx
                 retf
-sub_23151       endp
+ShowLootAndAwardExperience endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -36877,7 +36877,7 @@ sub_24D30       proc near               ; CODE XREF: sub_23C18+75↑p
                 mov     _textPos_y, 0BEh
                 mov     _textPos_x, 0CBh
                 add     si, 18h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     si, word_328D4
                 mov     _textPos_x, 129h
                 mov     _textPos_y, 3Ch ; '<'
@@ -37810,7 +37810,7 @@ seg079          segment byte public 'CODE' use16
 
 
 sub_256F0       proc far                ; CODE XREF: sub_17032+130↑P
-                                        ; sub_19B80+4C↑P ...
+                                        ; FormatAndDrawBCD4+4C↑P ...
                 push    di
                 push    si
                 mov     si, bx
@@ -41112,21 +41112,21 @@ sub_2714A       proc far                ; CODE XREF: start+3DB↑P
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 94B3h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 add     _textPos_y, 0Ch
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7C61h       ; msg
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 94B7h
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 add     _textPos_y, 0Ch
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7C6Dh       ; msg
                 call    writeString
                 add     _textPos_y, 6
                 mov     si, 94BBh
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 call    DrawMouseCursor
                 pop     si
                 retf
@@ -45148,7 +45148,7 @@ loc_290BD:                              ; CODE XREF: sub_2909C+1A↑j
                 mov     word_3298A, ax
                 mov     ax, [si+2]
                 mov     word_3298C, ax
-                call    sub_19B80
+                call    FormatAndDrawBCD4
                 mov     _font_fgColor, 0Fh
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 55h ; 'U'
@@ -52189,7 +52189,7 @@ loc_2CBB6:                              ; CODE XREF: sub_2C0FE+964↑j
                 mov     si, 51B6h
                 call    IsBCDCounterAtLeast
                 jz      short loc_2CBD0
-                call    sub_23151
+                call    ShowLootAndAwardExperience
 
 loc_2CBD0:                              ; CODE XREF: sub_2C0FE+ACB↑j
                                         ; sub_2C0FE+CBD↓j ...
@@ -74390,7 +74390,7 @@ word_32990      dw 0                    ; DATA XREF: sub_178A6:loc_17906↑w
 _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
                                         ; sub_2BAD5+18↑r
 _val16          dw 0                    ; DATA XREF: InitGlobals+84↑w
-                                        ; sub_23151+B↑r
+                                        ; ShowLootAndAwardExperience+B↑r
 _val17          dw 0                    ; DATA XREF: InitGlobals+8A↑w
                                         ; sub_213FC+71↑r ...
 _val18          dw 0                    ; DATA XREF: InitGlobals+90↑w
@@ -92915,7 +92915,7 @@ word_3880A      dw 0                    ; DATA XREF: sub_14C37+56↑w
                                         ; sub_14C37+D4↑r ...
 word_3880C      dw 0                    ; DATA XREF: sub_19CA1+D↑w
                                         ; sub_28CB1+35↑r
-word_3880E      dw 0                    ; DATA XREF: sub_19B80+19↑w
+word_3880E      dw 0                    ; DATA XREF: FormatAndDrawBCD4+19↑w
                                         ; sub_19CA1+10↑w
 word_38810      dw 0                    ; DATA XREF: sub_19CA1+13↑w
 word_38812      dw 0                    ; DATA XREF: sub_19CA1+16↑w

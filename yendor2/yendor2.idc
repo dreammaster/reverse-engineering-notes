@@ -3377,7 +3377,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X19B74);
 	op_hex		(x,	1);
+	set_cmt	(0X19B80,	"FormatAndDrawBCD4(si=4-byte packed-BCD value): formats it into a comma-grouped ASCII decimal string (leading zero suppressed unless dl forces it) and draws it via writeString. The BCD counterpart to FormatNumber.",	0);
 	create_insn	(0X19B80);
+	set_name	(0X19B80,	"FormatAndDrawBCD4");
 	create_insn	(x=0X19BAF);
 	op_hex		(x,	1);
 	create_insn	(0X19BE6);
@@ -5107,6 +5109,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20B68);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20B70);
 	op_hex		(x,	1);
 	create_insn	(x=0X20B78);
@@ -5138,15 +5149,6 @@ static Bytes_0(void) {
 	set_cmt	(0X20C7C,	"Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.",	0);
 	create_insn	(0X20C7C);
 	set_name	(0X20C7C,	"IsPairedValueMatch");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20C81);
 	op_hex		(x,	1);
 	create_insn	(0X20C8A);
@@ -5606,7 +5608,7 @@ static Bytes_1(void) {
 	create_insn	(0X22B67);
 	create_insn	(0X22B78);
 	create_insn	(0X22B8E);
-	set_cmt	(0X22B96,	"Grants a reward on this monster's presence ending: adds 4 fixed BCD values (0x51BA/0x5396/0x539A, plus the global counter at 0x51B6 itself) into the monster's [+0x7E]/[+0x82]/[+0x86] and into the global BCD counter 0x51B6 (checked elsewhere via IsBCDCounterAtLeast to conditionally call sub_23151 -- plausibly an achievement/threshold notification). Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).",	0);
+	set_cmt	(0X22B96,	"Stages this monster's own loot fields into 4 global counters (CORRECTED direction from last round's comment): 0x51BA += [+0x7E], 0x5396 += [+0x82], 0x539A += [+0x86], 0x51B6 += [+0x8A]. ShowLootAndAwardExperience later drains these staging counters into the permanent material counters and party XP. Also adjusts two signed stat deltas ([+0x14]/[+0x16] -> sub_27A46/sub_27A2A, not traced).",	0);
 	create_insn	(0X22B96);
 	set_name	(0X22B96,	"GrantMonsterRewards");
 	create_insn	(0X22BD9);
@@ -5726,7 +5728,9 @@ static Bytes_1(void) {
 	create_insn	(x=0X23120);
 	op_hex		(x,	1);
 	create_insn	(0X2313D);
+	set_cmt	(0X23151,	"Fires when the global staging counter 0x51B6 crosses a threshold (see RunDungeonGameLoop/ProcessLevelMonsters). Shows a 'treasure found' panel: drains 3 staging BCD counters (0x51BA always, 0x539A and 0x5396 if nonzero) into the permanent material counters (0x94B3/0x94B7/0x94BB respectively), displaying each via FormatAndDrawBCD4. Then displays 0x51B6 itself (an experience/score staging value) and adds it into every valid party member's own [+0x18] field (plausibly XP). Also conditionally redraws party portrait icons via sub_22445 when the active member's [+0x1E] is set (role of that field/call not confirmed).",	0);
 	create_insn	(0X23151);
+	set_name	(0X23151,	"ShowLootAndAwardExperience");
 	create_insn	(x=0X23169);
 	op_hex		(x,	1);
 	set_cmt	(0X23199,	"msg",	0);
@@ -9250,6 +9254,15 @@ static Bytes_1(void) {
 	create_word	(0X2E412);
 	create_word	(0X2E414);
 	create_word	(0X2E416);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X2E42C);
 	create_word	(0X2E432);
 	create_word	(0X2E47E);
@@ -9291,15 +9304,6 @@ static Bytes_1(void) {
 	set_name	(0X2E4AE,	"_val10");
 	set_cmt	(0X2E4B0,	"4 entries x 20 bytes. +0/+2, +4/+6: two (x,y) screen-position pairs (set once at init by sub_1251D). +8: a message/data value. +0xA: pointer to the effect-definition record (g_trapEffectDefs entry) for this slot. +0xC: pointer to the affected party-member record. +0x10/+0x12: extra position/amount fields, meaning varies by which ApplyMapTriggerEffect branch populated it.",	0);
 	set_name	(0X2E4B0,	"g_partyEffectIconSlots");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X2E500);
 	create_word	(0X2E502);
 	set_name	(0X2E502,	"_emsPointer1?");

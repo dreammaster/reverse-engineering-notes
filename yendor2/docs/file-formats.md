@@ -190,6 +190,21 @@ same library is called from many unrelated places throughout the
 executable, so it's very likely also the engine behind gold/currency,
 not just these three material counters — not confirmed.
 
+**Loot/XP staging pipeline** (fills in how monster kills actually
+reach these counters): when a `g_levelMonsters` slot's presence timer
+ends, `GrantMonsterRewards` stages that specific monster's own loot
+fields (`+0x7E`/`+0x82`/`+0x86`/`+0x8A`) into 4 **global staging
+counters** — `0x51BA += [+0x7E]`, `0x5396 += [+0x82]`,
+`0x539A += [+0x86]`, `0x51B6 += [+0x8A]` — before `RemoveMonsterFromMap`
+wipes the monster. Once `0x51B6` (the 4th staging counter) crosses a
+threshold, `ShowLootAndAwardExperience` fires: shows a "found" panel,
+drains `0x51BA`/`0x539A`/`0x5396` into the permanent counters
+(`0x94B3`/`0x94B7`/`0x94BB` respectively — note the `0x539A`↔`0x5396`
+pairing crosses over rather than matching numeric order), then drains
+`0x51B6` itself into every valid party member's own `+0x18` field —
+plausibly an **experience-points** counter, a new party-record field
+find.
+
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
 Not independently verified against `SW.EXE`'s code yet, but internally

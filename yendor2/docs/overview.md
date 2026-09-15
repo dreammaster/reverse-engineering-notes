@@ -1230,6 +1230,26 @@ distinct from this, is still unfound.
 
 173 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the loot/XP award screen — and another self-correction
+
+Traced `sub_23151`, fired when the global staging counter `0x51B6`
+crosses a threshold: it's the "you have found treasure" screen. This
+also revealed that last round's `GrantMonsterRewards` comment had the
+`AddBCD4` direction backwards — corrected it: the function *stages* a
+dead monster's own loot fields into 4 global counters, it doesn't add
+fixed values into the monster. `ShowLootAndAwardExperience` (was
+`sub_23151`) then drains those staging counters into the permanent
+material counters (`0x94B3`/`0x94B7`/`0x94BB`) and into every party
+member's own `+0x18` field — a new find, plausibly experience points.
+Named `FormatAndDrawBCD4` (was `sub_19B80`) along the way, the BCD
+counterpart to `FormatNumber`. A call to `sub_22445` inside this
+function turned out, on inspection, to be a party-portrait icon
+redraw rather than the "level up" handler its calling context
+suggested — left unnamed rather than force a guess that didn't pan
+out.
+
+175 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
