@@ -1631,6 +1631,20 @@ comment to match.
 
 219 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: conversation topics confirmed distinct
+
+Checked the 4 "prep" functions the conversation-text display branches
+call, and they settle last round's open question: each reads from
+`WORLD.DAT` via a different resource-stub helper (part of the
+~27-function cluster documented much earlier this session), so the 4
+`ShowConversationText_*` branches genuinely do read 4 distinct topic
+texts — confirming the original "plausibly different response
+categories" guess, even though which specific category each is
+(Name/Job/Bye/Rumor-style) still isn't identified. Named the 4 loaders
+`LoadConversationText_4000`/`_2000`/`_1000`/`_800` to match.
+
+223 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

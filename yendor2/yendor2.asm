@@ -42402,7 +42402,7 @@ seg096          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B0D       proc far                ; CODE XREF: sub_2B71D+3↓P
+sub_27B0D       proc far                ; CODE XREF: LoadConversationText_4000+3↓P
                 push    dx
                 mov     word_368AB, 0
                 mov     word_368A7, ax
@@ -42645,7 +42645,7 @@ LoadMasterPalette endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27CC9       proc far                ; CODE XREF: sub_2B739+3↓P
+sub_27CC9       proc far                ; CODE XREF: LoadConversationText_1000+3↓P
                 push    dx
                 mov     word_368AB, 0
                 mov     word_368A7, ax
@@ -42694,7 +42694,7 @@ sub_27CFE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27D20       proc far                ; CODE XREF: sub_2B755+3↓P
+sub_27D20       proc far                ; CODE XREF: LoadConversationText_2000+3↓P
                 push    dx
                 mov     word_368AB, 0
                 mov     word_368A7, ax
@@ -42723,7 +42723,7 @@ sub_27D20       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27D55       proc far                ; CODE XREF: sub_2B771+3↓P
+sub_27D55       proc far                ; CODE XREF: LoadConversationText_800+3↓P
                 push    dx
                 mov     word_368AB, 0
                 mov     word_368A7, ax
@@ -49824,57 +49824,57 @@ RunConversation endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B71D       proc near               ; CODE XREF: ShowConversationText_4000+7↓p
-                mov     ax, 0AFA8h
+LoadConversationText_4000 proc near     ; CODE XREF: ShowConversationText_4000+7↓p
+                mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
                 call    sub_27B0D
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2B71D       endp
+LoadConversationText_4000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B739       proc near               ; CODE XREF: ShowConversationText_1000+7↓p
-                mov     ax, 0AFA8h
+LoadConversationText_1000 proc near     ; CODE XREF: ShowConversationText_1000+7↓p
+                mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
                 call    sub_27CC9
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2B739       endp
+LoadConversationText_1000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B755       proc near               ; CODE XREF: ShowConversationText_2000+7↓p
-                mov     ax, 0AFA8h
+LoadConversationText_2000 proc near     ; CODE XREF: ShowConversationText_2000+7↓p
+                mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
                 call    sub_27D20
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2B755       endp
+LoadConversationText_2000 endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B771       proc near               ; CODE XREF: ShowConversationText_800+7↓p
-                mov     ax, 0AFA8h
+LoadConversationText_800 proc near      ; CODE XREF: ShowConversationText_800+7↓p
+                mov     ax, 0AFA8h      ; Reads this topic's text from WORLD.DAT (FileEntry bx=0x9043, errorCode=0xD) into the shared text buffer at 0xAFA8, via a resource-stub helper carrying this topic's fixed catalog offset. Confirms the 4 ShowConversationText_* branches read genuinely distinct data, even though the specific topic category isn't identified.
                 call    sub_27D55
                 mov     bx, 9043h
                 mov     errorCode, 0Dh
                 call    FileEntry_Read
                 call    ErrorCheck
                 retn
-sub_2B771       endp
+LoadConversationText_800 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -49883,7 +49883,7 @@ sub_2B771       endp
 ShowConversationText_4000 proc near     ; CODE XREF: RunConversation+86↑p
                 mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
-                call    sub_2B71D
+                call    LoadConversationText_4000
                 mov     si, 0AFA8h
 
 loc_2B79A:                              ; CODE XREF: ShowConversationText_4000+6C↓j
@@ -49952,7 +49952,7 @@ ShowConversationText_4000 endp
 ShowConversationText_2000 proc near     ; CODE XREF: RunConversation+95↑p
                 mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
-                call    sub_2B755
+                call    LoadConversationText_2000
                 mov     si, 0AFA8h
 
 loc_2B873:                              ; CODE XREF: ShowConversationText_2000+63↓j
@@ -49995,7 +49995,7 @@ ShowConversationText_2000 endp
 ShowConversationText_1000 proc near     ; CODE XREF: RunConversation+A4↑p
                 mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
-                call    sub_2B739
+                call    LoadConversationText_1000
                 mov     si, 0AFA8h
 
 loc_2B8E4:                              ; CODE XREF: ShowConversationText_1000+63↓j
@@ -50038,7 +50038,7 @@ ShowConversationText_1000 endp
 ShowConversationText_800 proc near      ; CODE XREF: RunConversation+B3↑p
                 mov     bx, word_2E548  ; One of RunConversation's 4 topic-display branches (selected by word_2E548's [+2] flag bits). Draws a portrait icon (g_pictureDir entry 7) then paginates the NPC's response text in a 2-column layout, waiting for a keypress between pages. All 4 read the same text field ([+4]) but use different prep functions and screen position/color -- exact distinction between them not confirmed.
                 mov     bx, [bx+4]
-                call    sub_2B771
+                call    LoadConversationText_800
                 mov     si, 0AFA8h
 
 loc_2B955:                              ; CODE XREF: ShowConversationText_800+7E↓j
