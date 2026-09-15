@@ -985,6 +985,37 @@ the "minimap tile tables ... led to a legend screen" section above —
 `RunMapEditorScreen` (was `ShowTileLegend`), `FillVisibleAreaWithSelectedTile`,
 and `PaintCellAndPersist` are the 3 new names from this correction.
 
+### 2026-09-15 session update, continued: CastSpell's 0x1C is alchemy, and a BCD bignum library
+
+Went back to close out the one piece of `CastSpell` flagged as "not
+fully traced": the `0x1C` effect, previously guessed to be "an
+offensive/damage spell". Dumped its message strings directly from the
+data segment (they weren't recognized as string literals by IDA) and
+got `YOUR SKILL IS NOT HIGH ENOUGH!`, `YOU MUST HAVE AT LEAST 10
+UNITS.`, and two creation messages (`NUORE CREATED` / `MAGIC ORE
+CREATED.`) gated on which of two confirm-prompt answers (`5`/`7`) the
+player picks. **This is a materials-transmutation/alchemy ability, not
+a damage spell**: it gates on a target's skill byte, checks a fixed
+resource counter has at least 10 units, then converts 10 units of one
+material into the other. Corrected `CastSpell`'s comment rather than
+leaving the old "damage spell, not traced" guess in place.
+
+That resource check and the following add/subtract led to a genuinely
+new, general-purpose subsystem, not specific to this one ability:
+**4-byte (8-digit) packed-BCD bignum arithmetic**, called from all over
+the executable (combat/inventory code, `HandleMovementInput`, etc.) —
+almost certainly the engine behind gold/currency and other large
+counters. Confirmed by the actual opcodes (`DAA`/`DAS`, which only make
+sense for packed BCD). Named the whole family: `ConvertWordToBCD4`
+(16-bit binary → 4-byte packed BCD), `CompareBCD4`/`IsBCDCounterAtLeast`
+(most-significant-digit-first comparison, `CF=1` if smaller — the
+"at least N" check), `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
+`SubtractFromBCDCounter`. The scratch buffer these share (`word_38808`/
+`word_3880A`, aka `ds:0xAFA8`) is left unnamed — it's reused for
+unrelated things elsewhere, same pattern as `errorCode`/`word_32974`.
+
+146 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

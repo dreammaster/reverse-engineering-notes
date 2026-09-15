@@ -7234,7 +7234,7 @@ sub_147FF       proc near               ; CODE XREF: sub_13678+5E↑p
                 call    writeString
                 mov     word_3293E, 0
                 pop     si
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_14831
                 mov     word_2E412, 8Ah
                 mov     _textPos_x, 9Dh
@@ -7263,7 +7263,7 @@ sub_14833       proc near               ; CODE XREF: sub_141D9+3F↑p
                 mov     ax, es:[bx+2]
                 mov     [si+2], ax
                 mov     word_3293E, 0
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_14874
                 mov     word_2E412, 8Ah
                 mov     _textPos_x, 0FBh
@@ -10219,7 +10219,7 @@ loc_163B1:                              ; CODE XREF: sub_162F6+89↑j
                 call    DrawMouseCursor
                 mov     word_3293E, 0
                 mov     si, 51B6h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_163FB
                 call    sub_23151
 
@@ -11169,7 +11169,7 @@ sub_16BF6       proc near               ; CODE XREF: sub_16881+9B↑p
 loc_16C11:                              ; CODE XREF: sub_16BF6+16↑j
                 mov     word_3293E, 0
                 add     si, 8Eh
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_16C24
                 jmp     short loc_16C60
 ; ---------------------------------------------------------------------------
@@ -11962,7 +11962,7 @@ loc_170C8:                              ; CODE XREF: sub_17032+33↑j
                 mov     word_3293E, ax
                 push    si
                 mov     si, 94B3h
-                call    sub_19A3C
+                call    AddToBCDCounter
                 pop     si
                 mov     bx, 7C55h
 
@@ -12017,7 +12017,7 @@ loc_17172:                              ; CODE XREF: sub_17032+3C↑j
                 mov     word_3293E, ax
                 push    si
                 mov     si, 94B7h
-                call    sub_19A3C
+                call    AddToBCDCounter
                 pop     si
                 mov     bx, 7C61h
                 jmp     loc_170E8
@@ -12032,7 +12032,7 @@ loc_17195:                              ; CODE XREF: sub_17032+46↑j
                 mov     word_3293E, ax
                 push    si
                 mov     si, 94BBh
-                call    sub_19A3C
+                call    AddToBCDCounter
                 pop     si
                 mov     bx, 7C6Dh
                 jmp     loc_170E8
@@ -13043,7 +13043,7 @@ sub_17A8D       proc near               ; CODE XREF: sub_17032+2A↑p
                 push    di
                 mov     di, 0B30h
                 mov     si, 94B3h
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_17AC5
                 mov     word_31948, 0
                 add     sp, 4
@@ -13059,7 +13059,7 @@ loc_17AC5:                              ; CODE XREF: sub_17A8D+27↑j
                 call    sub_12554
 
 loc_17ADA:                              ; CODE XREF: sub_17A8D:loc_17AC5↑j
-                call    sub_19C7B
+                call    SubBCD4
                 pop     di
                 pop     si
                 mov     bx, word_2E546
@@ -13088,7 +13088,7 @@ sub_17B09       proc near               ; CODE XREF: sub_17032:loc_1726C↑p
                 call    sub_1CCBC
                 mov     di, 0B30h
                 mov     si, 94B3h
-                call    sub_19A16
+                call    AddBCD4
                 cmp     word_36D6D, 0
                 jnz     short loc_17B35
                 mov     word_36D6D, 1
@@ -13923,7 +13923,7 @@ sub_18205       proc near               ; CODE XREF: sub_18257:loc_182A9↓p
                 push    di
                 mov     si, ax
                 mov     di, bx
-                call    sub_19A56
+                call    CompareBCD4
                 ja      short loc_18222
                 mov     word ptr [si], 0
                 mov     word ptr [si+2], 0
@@ -13932,7 +13932,7 @@ sub_18205       proc near               ; CODE XREF: sub_18257:loc_182A9↓p
 ; ---------------------------------------------------------------------------
 
 loc_18222:                              ; CODE XREF: sub_18205+B↑j
-                call    sub_19C7B
+                call    SubBCD4
 
 loc_18227:                              ; CODE XREF: sub_18205+1B↑j
                 pop     di
@@ -15301,7 +15301,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 mov     word_3194C, ax
                 mov     si, 94B3h
                 mov     di, 5104h
-                call    sub_19C7B
+                call    SubBCD4
                 call    sub_16E18
                 call    sub_23874
                 call    sub_238CD
@@ -15730,7 +15730,7 @@ sub_18FDA       proc near               ; CODE XREF: sub_1869D+558↑p
 loc_19021:                              ; CODE XREF: sub_18FDA+B↑j
                 mov     si, 94B3h
                 mov     di, 0CB2h
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_19032
                 call    sub_190AF
                 retn
@@ -15739,7 +15739,7 @@ loc_19021:                              ; CODE XREF: sub_18FDA+B↑j
 loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     si, 94B3h
                 mov     di, 0CB2h
-                call    sub_19C7B
+                call    SubBCD4
                 call    sub_16E18
                 call    DrawMouseCursor
                 mov     ax, word_32974
@@ -15877,7 +15877,7 @@ sub_19140       proc near               ; CODE XREF: sub_1869D+566↑p
 loc_19187:                              ; CODE XREF: sub_19140+B↑j
                 mov     si, 94B3h
                 mov     di, 5082h
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_19198
                 call    sub_190AF
                 retn
@@ -15886,7 +15886,7 @@ loc_19187:                              ; CODE XREF: sub_19140+B↑j
 loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     si, 94B3h
                 mov     di, 5082h
-                call    sub_19C7B
+                call    SubBCD4
                 call    sub_16E18
                 call    DrawMouseCursor
                 mov     ax, word_3194C
@@ -16017,7 +16017,7 @@ loc_192B9:                              ; CODE XREF: sub_19264+19↑j
                 mov     word_3194C, 0
                 mov     si, 94B3h
                 mov     di, 50C0h
-                call    sub_19A16
+                call    AddBCD4
                 call    sub_175F4
                 call    DrawMouseCursor
                 retn
@@ -16782,9 +16782,9 @@ seg031          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19A16       proc far                ; CODE XREF: sub_17B09+15↑P
+AddBCD4         proc far                ; CODE XREF: sub_17B09+15↑P
                                         ; sub_19264+9A↑P ...
-                mov     al, [si+3]
+                mov     al, [si+3]      ; Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.
                 add     al, [di+3]
                 daa
                 mov     [si+3], al
@@ -16801,42 +16801,42 @@ sub_19A16       proc far                ; CODE XREF: sub_17B09+15↑P
                 daa
                 mov     [si], al
                 retf
-sub_19A16       endp
+AddBCD4         endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19A3C       proc far                ; CODE XREF: sub_17032+AD↑P
+AddToBCDCounter proc far                ; CODE XREF: sub_17032+AD↑P
                                         ; sub_17032+157↑P ...
-                push    cx
+                push    cx              ; AddToBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then AddBCD4 into the counter at si.
                 push    dx
                 push    di
                 push    word_3293E
                 push    cs
-                call    near ptr sub_19AB3
+                call    near ptr ConvertWordToBCD4
                 mov     di, 0AFA8h
                 push    cs
-                call    near ptr sub_19A16
+                call    near ptr AddBCD4
                 pop     word_3293E
                 pop     di
                 pop     dx
                 pop     cx
                 retf
-sub_19A3C       endp
+AddToBCDCounter endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19A56       proc far                ; CODE XREF: sub_17A8D+22↑P
+CompareBCD4     proc far                ; CODE XREF: sub_17A8D+22↑P
                                         ; sub_18205+6↑P ...
-                push    cx
+                push    cx              ; Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].
                 push    di
                 push    si
                 mov     cx, 4
 
-loc_19A5C:                              ; CODE XREF: sub_19A56+1E↓j
+loc_19A5C:                              ; CODE XREF: CompareBCD4+1E↓j
                 mov     ah, [si]
                 mov     al, [di]
                 and     ax, 0F0F0h
@@ -16852,31 +16852,31 @@ loc_19A5C:                              ; CODE XREF: sub_19A56+1E↓j
                 loop    loc_19A5C
                 cmp     al, al
 
-loc_19A78:                              ; CODE XREF: sub_19A56+F↑j
-                                        ; sub_19A56+1A↑j
+loc_19A78:                              ; CODE XREF: CompareBCD4+F↑j
+                                        ; CompareBCD4+1A↑j
                 pop     si
                 pop     di
                 pop     cx
                 retf
-sub_19A56       endp
+CompareBCD4     endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19A7C       proc far                ; CODE XREF: sub_147FF+1A↑P
+IsBCDCounterAtLeast proc far            ; CODE XREF: sub_147FF+1A↑P
                                         ; sub_14833+29↑P ...
-                push    cx
+                push    cx              ; IsBCDCounterAtLeast(si=BCD counter, word_3293E=threshold): converts word_3293E via ConvertWordToBCD4, then CompareBCD4 against the counter at si. Callers use jnb on the result to mean 'counter >= threshold'.
                 push    dx
                 push    si
                 push    di
                 push    word_3293E
                 push    cs
-                call    near ptr sub_19AB3
+                call    near ptr ConvertWordToBCD4
                 mov     di, 0AFA8h
                 mov     cx, 4
 
-loc_19A8E:                              ; CODE XREF: sub_19A7C+2A↓j
+loc_19A8E:                              ; CODE XREF: IsBCDCounterAtLeast+2A↓j
                 mov     ah, [si]
                 mov     al, [di]
                 and     ax, 0F0F0h
@@ -16892,23 +16892,23 @@ loc_19A8E:                              ; CODE XREF: sub_19A7C+2A↓j
                 loop    loc_19A8E
                 cmp     al, al
 
-loc_19AAA:                              ; CODE XREF: sub_19A7C+1B↑j
-                                        ; sub_19A7C+26↑j
+loc_19AAA:                              ; CODE XREF: IsBCDCounterAtLeast+1B↑j
+                                        ; IsBCDCounterAtLeast+26↑j
                 pop     word_3293E
                 pop     di
                 pop     si
                 pop     dx
                 pop     cx
                 retf
-sub_19A7C       endp
+IsBCDCounterAtLeast endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19AB3       proc far                ; CODE XREF: sub_19A3C+8↑p
-                                        ; sub_19A7C+9↑p ...
-                xor     dx, dx
+ConvertWordToBCD4 proc far              ; CODE XREF: AddToBCDCounter+8↑p
+                                        ; IsBCDCounterAtLeast+9↑p ...
+                xor     dx, dx          ; Converts a 16-bit binary value (word_3293E) into 4-byte packed BCD, written to ds:0xAFA8 (word_38808/word_3880A -- a generic scratch pair reused for unrelated things elsewhere).
                 mov     word_38808, 0
                 mov     word_3880A, 0
                 mov     ax, word_3293E
@@ -16959,7 +16959,7 @@ sub_19AB3       proc far                ; CODE XREF: sub_19A3C+8↑p
                 shl     ax, cl
                 mov     byte ptr word_3880A+1, ah
                 retf
-sub_19AB3       endp
+ConvertWordToBCD4 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17144,9 +17144,9 @@ sub_19BE6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19C7B       proc far                ; CODE XREF: sub_17A8D:loc_17ADA↑P
+SubBCD4         proc far                ; CODE XREF: sub_17A8D:loc_17ADA↑P
                                         ; sub_18205:loc_18222↑P ...
-                mov     al, [si+3]
+                mov     al, [si+3]      ; Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.
                 sub     al, [di+3]
                 das
                 mov     [si+3], al
@@ -17163,7 +17163,7 @@ sub_19C7B       proc far                ; CODE XREF: sub_17A8D:loc_17ADA↑P
                 das
                 mov     [si], al
                 retf
-sub_19C7B       endp
+SubBCD4         endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -17215,7 +17215,7 @@ sub_19CA1       proc far                ; CODE XREF: sub_1CCBC+72↓P
                 add     ax, 32h ; '2'
                 mov     word_3293E, ax
                 push    cs
-                call    near ptr sub_19A3C
+                call    near ptr AddToBCDCounter
                 mov     word_32942, 1
                 mov     cx, 2
 
@@ -17227,7 +17227,7 @@ loc_19D13:                              ; CODE XREF: sub_19CA1+A4↓j
                 mul     word_32940
                 mov     word_3293E, ax
                 push    cs
-                call    near ptr sub_19A3C
+                call    near ptr AddToBCDCounter
                 push    cx
                 mov     cx, word_32942
 
@@ -17240,7 +17240,7 @@ loc_19D30:                              ; CODE XREF: sub_19CA1+93↓j
                 mov     si, 0AFACh
                 mov     di, 0AFB0h
                 push    cs
-                call    near ptr sub_19A16
+                call    near ptr AddBCD4
                 loop    loc_19D13
                 mov     si, 0AFACh
                 push    cs
@@ -17259,7 +17259,7 @@ loc_19D5B:                              ; CODE XREF: sub_19CA1+EA↓j
                 mul     word_32940
                 mov     word_3293E, ax
                 push    cs
-                call    near ptr sub_19A3C
+                call    near ptr AddToBCDCounter
                 push    cx
                 mov     cx, word_32942
 
@@ -17272,7 +17272,7 @@ loc_19D76:                              ; CODE XREF: sub_19CA1+D9↓j
                 mov     si, 0AFACh
                 mov     di, 0AFB0h
                 push    cs
-                call    near ptr sub_19A16
+                call    near ptr AddBCD4
                 loop    loc_19D5B
                 mov     si, word_32904
                 mov     di, 0AFACh
@@ -17345,23 +17345,23 @@ sub_19DCF       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_19DFB       proc far                ; CODE XREF: sub_1E61B+1A↓P
+SubtractFromBCDCounter proc far         ; CODE XREF: sub_1E61B+1A↓P
                                         ; sub_1E61B+28↓P ...
-                push    cx
+                push    cx              ; SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.
                 push    dx
                 push    di
                 push    word_3293E
                 push    cs
-                call    near ptr sub_19AB3
+                call    near ptr ConvertWordToBCD4
                 mov     di, 0AFA8h
                 push    cs
-                call    near ptr sub_19C7B
+                call    near ptr SubBCD4
                 pop     word_3293E
                 pop     di
                 pop     dx
                 pop     cx
                 retf
-sub_19DFB       endp
+SubtractFromBCDCounter endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19597,7 +19597,7 @@ loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
 loc_1B02E:                              ; CODE XREF: sub_1AF49+E0↑j
                 mov     si, 0AFBCh
                 mov     di, 0AFC2h
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1B062
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
@@ -19621,7 +19621,7 @@ loc_1B06F:                              ; CODE XREF: sub_1AF49:loc_1B062↑j
                 cmp     word_32974, 2
                 jnz     short loc_1B098
                 mov     di, 0AFC2h
-                call    sub_19A16
+                call    AddBCD4
                 cmp     word_36D71, 0
                 jnz     short loc_1B0B5
                 mov     word_36D71, 2
@@ -19631,7 +19631,7 @@ loc_1B06F:                              ; CODE XREF: sub_1AF49:loc_1B062↑j
 loc_1B098:                              ; CODE XREF: sub_1AF49+136↑j
                 mov     si, 94BBh
                 mov     di, 0AFC2h
-                call    sub_19A16
+                call    AddBCD4
                 cmp     word_36D75, 0
                 jnz     short loc_1B0B5
                 mov     word_36D75, 3
@@ -19645,7 +19645,7 @@ loc_1B0B5:                              ; CODE XREF: sub_1AF49+145↑j
                 call    sub_19DA3
                 mov     si, 94B3h
                 mov     di, 0AFC2h
-                call    sub_19C7B
+                call    SubBCD4
 
 loc_1B0C8:                              ; CODE XREF: sub_1AF49+E2↑j
                 mov     word_2E550, 1
@@ -20028,7 +20028,7 @@ sub_1B428       proc far                ; CODE XREF: sub_182CE+5F↑P
                 mov     di, 9277h
                 add     di, ax
                 add     si, 18h
-                call    sub_19A56
+                call    CompareBCD4
                 jb      short loc_1B477
 
 loc_1B454:                              ; CODE XREF: sub_1B428+3E↓j
@@ -20036,7 +20036,7 @@ loc_1B454:                              ; CODE XREF: sub_1B428+3E↓j
                 add     di, 4
                 cmp     di, 93DBh
                 jnb     short loc_1B468
-                call    sub_19A56
+                call    CompareBCD4
                 ja      short loc_1B454
 
 loc_1B468:                              ; CODE XREF: sub_1B428+37↑j
@@ -20301,7 +20301,7 @@ loc_1B692:                              ; CODE XREF: sub_1B5FD+CB↓j
                 push    di
                 mov     di, bp
                 add     si, 18h
-                call    sub_19A16
+                call    AddBCD4
                 call    sub_1B428
                 pop     di
                 mov     word ptr [di+8], 3
@@ -20688,7 +20688,7 @@ sub_1B96F       proc far                ; CODE XREF: sub_1BEA1+EF↓p
                 mov     word ptr [si+2], 0
 
 loc_1B9AA:                              ; CODE XREF: sub_1B96F+40↓j
-                call    sub_19A3C
+                call    AddToBCDCounter
                 loop    loc_1B9AA
                 pop     dx
                 pop     si
@@ -21009,7 +21009,7 @@ loc_1BC3F:                              ; CODE XREF: sub_1BBED+12↑j
 loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1BC72
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
@@ -21021,7 +21021,7 @@ loc_1BC45:                              ; CODE XREF: sub_1BBED+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
-                call    sub_19C7B
+                call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
                 mov     si, word_328D4
@@ -21058,9 +21058,9 @@ loc_1BCCC:                              ; CODE XREF: sub_1BBED+9F↑j
 
 loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     si, 94B3h
-                call    sub_19A16
+                call    AddBCD4
                 mov     si, 0B30h
-                call    sub_19A16
+                call    AddBCD4
                 loop    loc_1BCDE
                 push    cs
                 call    near ptr sub_1CC2E
@@ -21246,7 +21246,7 @@ loc_1BEE9:                              ; CODE XREF: sub_1BEA1+12↑j
 loc_1BEEF:                              ; CODE XREF: sub_1BEA1+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1BF1C
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
@@ -21258,7 +21258,7 @@ loc_1BEEF:                              ; CODE XREF: sub_1BEA1+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1BF1C:                              ; CODE XREF: sub_1BEA1+59↑j
-                call    sub_19C7B
+                call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
                 call    sub_1CC98
@@ -21364,7 +21364,7 @@ loc_1BFFD:                              ; CODE XREF: sub_1BF94+12↑j
 loc_1C003:                              ; CODE XREF: sub_1BF94+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1C030
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
@@ -21376,7 +21376,7 @@ loc_1C003:                              ; CODE XREF: sub_1BF94+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1C030:                              ; CODE XREF: sub_1BF94+7A↑j
-                call    sub_19C7B
+                call    SubBCD4
                 push    word_32924
                 mov     word_32924, 0
                 call    sub_26C9E
@@ -21527,7 +21527,7 @@ loc_1C16B:                              ; CODE XREF: sub_1C123+12↑j
 loc_1C171:                              ; CODE XREF: sub_1C123+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1C19E
                 mov     _textPos_x, 16h
                 mov     _textPos_y, 67h ; 'g'
@@ -21539,7 +21539,7 @@ loc_1C171:                              ; CODE XREF: sub_1C123+1A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1C19E:                              ; CODE XREF: sub_1C123+59↑j
-                call    sub_19C7B
+                call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
                 push    word_32924
@@ -21940,7 +21940,7 @@ loc_1C5D2:                              ; CODE XREF: sub_1C589+1D↑j
 loc_1C60B:                              ; CODE XREF: sub_1C589+55↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A56
+                call    CompareBCD4
                 jnb     short loc_1C643
                 or      word_328C6, 2
                 mov     _textPos_x, 16h
@@ -21954,7 +21954,7 @@ loc_1C60B:                              ; CODE XREF: sub_1C589+55↑j
 ; ---------------------------------------------------------------------------
 
 loc_1C643:                              ; CODE XREF: sub_1C589+8D↑j
-                call    sub_19C7B
+                call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
                 call    RestoreCursorBackgroundIfDirty
@@ -22110,7 +22110,7 @@ loc_1C7D9:                              ; CODE XREF: sub_1C589+151↑j
                 and     [bx+0B4h], ax
                 mov     si, 94B3h
                 mov     di, 512Ah
-                call    sub_19A16
+                call    AddBCD4
                 mov     bx, word_32924
                 call    sub_22445
                 mov     ax, 7
@@ -22150,9 +22150,9 @@ loc_1C83E:                              ; CODE XREF: sub_1C809+C↑j
                 push    di
                 mov     si, 94B3h
                 mov     di, 0BEAh
-                call    sub_19A56
+                call    CompareBCD4
                 jb      short loc_1C88D
-                call    sub_19C7B
+                call    SubBCD4
                 or      word_328C6, 40h
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
@@ -22162,9 +22162,9 @@ loc_1C859:                              ; CODE XREF: sub_1C809+11↑j
                 push    di
                 mov     si, 94B7h
                 mov     di, 0BEAh
-                call    sub_19A56
+                call    CompareBCD4
                 jb      short loc_1C88D
-                call    sub_19C7B
+                call    SubBCD4
                 or      word_328C6, 40h
                 jmp     short loc_1C88D
 ; ---------------------------------------------------------------------------
@@ -22174,9 +22174,9 @@ loc_1C874:                              ; CODE XREF: sub_1C809+16↑j
                 push    di
                 mov     si, 94BBh
                 mov     di, 0BEAh
-                call    sub_19A56
+                call    CompareBCD4
                 jb      short loc_1C88D
-                call    sub_19C7B
+                call    SubBCD4
                 or      word_328C6, 40h
 
 loc_1C88D:                              ; CODE XREF: sub_1C809+42↑j
@@ -23971,7 +23971,7 @@ loc_1D747:                              ; CODE XREF: sub_1D4B8+1B1↑j
                                         ; sub_1D4B8+1C0↑j ...
                 mov     word_3293E, 0
                 mov     si, 51B6h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_1D75C
                 call    sub_23151
 
@@ -25253,7 +25253,7 @@ loc_1E2AB:                              ; CODE XREF: sub_1E285+1C↑j
                 jz      short loc_1E2BF
                 mov     word_3293E, ax
                 mov     si, 94BBh
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jb      short locret_1E2E4
 
 loc_1E2BF:                              ; CODE XREF: sub_1E285+2B↑j
@@ -25262,7 +25262,7 @@ loc_1E2BF:                              ; CODE XREF: sub_1E285+2B↑j
                 jz      short loc_1E2D3
                 mov     word_3293E, ax
                 mov     si, 94B7h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jb      short locret_1E2E4
 
 loc_1E2D3:                              ; CODE XREF: sub_1E285+3F↑j
@@ -25635,11 +25635,11 @@ sub_1E61B       proc near               ; CODE XREF: sub_1DCE0+3BE↑p
                 mov     ax, word_332D4
                 mov     word_3293E, ax
                 mov     si, 94BBh
-                call    sub_19DFB
+                call    SubtractFromBCDCounter
                 mov     ax, word_332D6
                 mov     word_3293E, ax
                 mov     si, 94B7h
-                call    sub_19DFB
+                call    SubtractFromBCDCounter
                 pop     si
                 retn
 sub_1E61B       endp
@@ -33119,16 +33119,16 @@ sub_22B96       proc far                ; CODE XREF: sub_16B63:loc_16BA2↑P
                 mov     di, si
                 add     di, 7Eh ; '~'
                 mov     si, 51BAh
-                call    sub_19A16
+                call    AddBCD4
                 add     di, 4
                 mov     si, 5396h
-                call    sub_19A16
+                call    AddBCD4
                 add     di, 4
                 mov     si, 539Ah
-                call    sub_19A16
+                call    AddBCD4
                 add     di, 4
                 mov     si, 51B6h
-                call    sub_19A16
+                call    AddBCD4
                 pop     di
                 pop     si
                 mov     ax, [si+14h]
@@ -33354,7 +33354,7 @@ loc_22D63:                              ; CODE XREF: sub_22D4C+4B↓j
                 jnz     short loc_22D8B
                 mov     word_3293E, 0
                 mov     si, 51B6h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_22D8B
                 push    cs
                 call    near ptr sub_23151
@@ -33818,10 +33818,10 @@ loc_23164:                              ; CODE XREF: sub_23151+9↑j
                 add     _textPos_y, 0Ch
                 mov     si, 94B3h
                 mov     di, 51BAh
-                call    sub_19A16
+                call    AddBCD4
                 mov     word_3293E, 0
                 mov     si, 539Ah
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_231F9
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7C61h       ; msg
@@ -33832,12 +33832,12 @@ loc_23164:                              ; CODE XREF: sub_23151+9↑j
                 add     _textPos_y, 6
                 mov     si, 94B7h
                 mov     di, 539Ah
-                call    sub_19A16
+                call    AddBCD4
 
 loc_231F9:                              ; CODE XREF: sub_23151+7B↑j
                 mov     word_3293E, 0
                 mov     si, 5396h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_2322F
                 mov     _font_fgColor, 8Ah
                 mov     bx, 7C6Dh       ; msg
@@ -33847,7 +33847,7 @@ loc_231F9:                              ; CODE XREF: sub_23151+7B↑j
                 call    sub_19B80
                 mov     si, 94BBh
                 mov     di, 5396h
-                call    sub_19A16
+                call    AddBCD4
 
 loc_2322F:                              ; CODE XREF: sub_23151+B6↑j
                 mov     _textPos_x, 0F0h
@@ -33873,7 +33873,7 @@ loc_2325F:                              ; CODE XREF: sub_23151+147↓j
                 push    si
                 mov     si, bx
                 add     si, 18h
-                call    sub_19A16
+                call    AddBCD4
                 pop     si
 
 loc_2327F:                              ; CODE XREF: sub_23151+120↑j
@@ -41016,7 +41016,7 @@ loc_27076:                              ; CODE XREF: sub_2704C+39↓j
 loc_270A3:                              ; CODE XREF: sub_2704C+6B↓j
                 pop     ax
                 mov     [di], ax
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jnz     short loc_270B1
                 mov     word ptr [di], 0
 
@@ -48572,7 +48572,7 @@ RestCharacter   endp
 
 
 CastSpell       proc far                ; CODE XREF: HandleGameCommand:loc_2964C↑P
-                mov     bx, word_2E548  ; Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex spell: picks a target, checks resource availability (sub_19A7C, two variants selected by the confirmation answer), then on success draws a small icon and a FormatNumber'd amount with a message and sound cue -- reads as an offensive/damage spell rather than a self-heal, not fully traced. Matches the manual's 'C cast spell'.
+                mov     bx, word_2E548  ; Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as
                 test    word ptr [bx], 2
                 jnz     short loc_2AA86
                 test    word ptr [bx], 1
@@ -48797,7 +48797,7 @@ loc_2ABFB:                              ; CODE XREF: CastSpell+199↑j
                 mov     word_32908, 8D8Ch
                 mov     word_3293E, 0Ah
                 mov     si, 94BBh
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jnb     short loc_2AC4F
 
 loc_2AC1D:                              ; CODE XREF: CastSpell+1F5↓j
@@ -48813,7 +48813,7 @@ loc_2AC2B:                              ; CODE XREF: CastSpell+194↑j
                 mov     word_32908, 7D2Ch
                 mov     word_3293E, 0Ah
                 mov     si, 94B7h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jnb     short loc_2AC4F
                 jmp     short loc_2AC1D
 ; ---------------------------------------------------------------------------
@@ -48823,10 +48823,10 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 call    sub_2AD32
                 push    word_32940
                 mov     si, word_32904
-                call    sub_19DFB
+                call    SubtractFromBCDCounter
                 pop     word_3293E
                 mov     si, word_32906
-                call    sub_19A3C
+                call    AddToBCDCounter
                 call    sub_2704C
                 call    sub_16E18
                 or      word_328C4, 100h
@@ -48894,7 +48894,7 @@ CastSpell       endp
 sub_2AD32       proc near               ; CODE XREF: CastSpell:loc_2AC4F↑p
                 mov     word_3293E, 64h ; 'd'
                 mov     si, word_32904
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jnb     short loc_2AD4F
                 mov     si, word_32904
                 call    sub_19B3E
@@ -49213,7 +49213,7 @@ sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 call    sub_274B4
                 mov     word_3293E, 1388h
                 mov     si, 94B7h
-                call    sub_19A3C
+                call    AddToBCDCounter
                 call    sub_2704C
                 call    DrawMouseCursor
                 retn
@@ -49244,7 +49244,7 @@ sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 call    sub_274B4
                 mov     word_3293E, 1388h
                 mov     si, 94BBh
-                call    sub_19A3C
+                call    AddToBCDCounter
                 call    sub_2704C
                 call    DrawMouseCursor
                 retn
@@ -52187,7 +52187,7 @@ loc_2CBB6:                              ; CODE XREF: sub_2C0FE+964↑j
                 and     word_328C4, 0FFBFh
                 mov     word_3293E, 0
                 mov     si, 51B6h
-                call    sub_19A7C
+                call    IsBCDCounterAtLeast
                 jz      short loc_2CBD0
                 call    sub_23151
 

@@ -3321,19 +3321,29 @@ static Bytes_0(void) {
 	create_insn	(0X1978F);
 	create_insn	(0X197B9);
 	create_insn	(0X19957);
+	set_cmt	(0X19A16,	"Raw 4-byte packed-BCD addition: [si] += [di], DAA-adjusted, least-significant byte first with carry propagation.",	0);
 	create_insn	(0X19A16);
+	set_name	(0X19A16,	"AddBCD4");
+	set_cmt	(0X19A3C,	"AddToBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then AddBCD4 into the counter at si.",	0);
 	create_insn	(0X19A3C);
+	set_name	(0X19A3C,	"AddToBCDCounter");
+	set_cmt	(0X19A56,	"Raw 4-byte packed-BCD comparison, [si] vs [di], most-significant digit first (matches CompareBCD4/IsBCDCounterAtLeast usage). Exits at the first mismatching nibble; CF=1 if [si] < [di].",	0);
 	create_insn	(0X19A56);
+	set_name	(0X19A56,	"CompareBCD4");
 	create_insn	(x=0X19A60);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A6B);
 	op_hex		(x,	1);
+	set_cmt	(0X19A7C,	"IsBCDCounterAtLeast(si=BCD counter, word_3293E=threshold): converts word_3293E via ConvertWordToBCD4, then CompareBCD4 against the counter at si. Callers use jnb on the result to mean 'counter >= threshold'.",	0);
 	create_insn	(0X19A7C);
+	set_name	(0X19A7C,	"IsBCDCounterAtLeast");
 	create_insn	(x=0X19A92);
 	op_hex		(x,	1);
 	create_insn	(x=0X19A9D);
 	op_hex		(x,	1);
+	set_cmt	(0X19AB3,	"Converts a 16-bit binary value (word_3293E) into 4-byte packed BCD, written to ds:0xAFA8 (word_38808/word_3880A -- a generic scratch pair reused for unrelated things elsewhere).",	0);
 	create_insn	(0X19AB3);
+	set_name	(0X19AB3,	"ConvertWordToBCD4");
 	create_insn	(0X19B3E);
 	create_insn	(x=0X19B49);
 	op_hex		(x,	1);
@@ -3350,7 +3360,9 @@ static Bytes_0(void) {
 	create_insn	(0X19C2E);
 	create_insn	(0X19C51);
 	create_insn	(0X19C57);
+	set_cmt	(0X19C7B,	"Raw 4-byte packed-BCD subtraction: [si] -= [di], DAS-adjusted, least-significant byte first with borrow propagation.",	0);
 	create_insn	(0X19C7B);
+	set_name	(0X19C7B,	"SubBCD4");
 	create_insn	(0X19CA1);
 	create_insn	(x=0X19CC0);
 	op_hex		(x,	1);
@@ -3370,7 +3382,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X19DA3);
 	create_insn	(0X19DCF);
+	set_cmt	(0X19DFB,	"SubtractFromBCDCounter(si=BCD counter, word_3293E=amount): converts word_3293E via ConvertWordToBCD4, then SubBCD4 from the counter at si.",	0);
 	create_insn	(0X19DFB);
+	set_name	(0X19DFB,	"SubtractFromBCDCounter");
 	create_insn	(0X19E15);
 	create_insn	(0X19E1C);
 	create_insn	(0X19E2C);
@@ -5389,6 +5403,15 @@ static Bytes_0(void) {
 	set_cmt	(0X21DBB,	"If the cell's explored flag (bit 0x8000 at +6) isn't set, sets it and calls sub_21CC2 (reveal/render action, not traced) -- fog-of-war visit-once marking.",	0);
 	create_insn	(0X21DBB);
 	set_name	(0X21DBB,	"MarkCellExplored");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X21DC7);
 	op_hex		(x,	1);
 	create_insn	(x=0X21DCF);
@@ -5540,15 +5563,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X22A68,	"this",	0);
 	create_insn	(0X22A68);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22A8A);
 	create_insn	(x=0X22ACB);
 	op_hex		(x,	1);
@@ -8303,7 +8317,7 @@ static Bytes_1(void) {
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex spell: picks a target, checks resource availability (sub_19A7C, two variants selected by the confirmation answer), then on success draws a small icon and a FormatNumber'd amount with a message and sound cue -- reads as an offensive/damage spell rather than a self-heal, not fully traced. Matches the manual's 'C cast spell'.",	0);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a materials-transmutation ability, not damage (message strings confirm: 'YOUR SKILL IS NOT HIGH ENOUGH!' gates on a target skill byte at [si+0x70]; 'YOU MUST HAVE AT LEAST 10 UNITS.' gates on IsBCDCounterAtLeast against one of two fixed BCD counters, 0x94BB/0x94B7; on success, SubtractFromBCDCounter(source)+AddToBCDCounter(dest) converts 10 units of one into the other, producing either 'NUORE CREATED' or 'MAGIC ORE CREATED.' depending on which of the two confirm-prompt answers (5 vs 7) was picked). Matches the manual's 'C cast spell', though this specific effect may be better described as" " ",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
@@ -9913,6 +9927,15 @@ static Bytes_1(void) {
 	set_name	(0X355DE,	"aYourSkill");
 	create_strlit	(0X355EB,	0XD);
 	set_name	(0X355EB,	"aIsNotHigh");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X355F8,	0XD);
 	set_name	(0X355F8,	"aEnough");
 	create_strlit	(0X35605,	0XC);
@@ -9992,15 +10015,6 @@ static Bytes_1(void) {
 	set_name	(0X3584A,	"aEscToUndo");
 	create_strlit	(0X35857,	0XD);
 	set_name	(0X35857,	"aIHaveNo");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35864,	0XD);
 	set_name	(0X35864,	"aNeedFor");
 	create_strlit	(0X35871,	0XD);
