@@ -1105,6 +1105,26 @@ elsewhere too.
 
 158 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: a party-average-stat tiering system, three open leads
+
+Followed the death-handling callee shared by `DeductHPClamped` and the
+`0x600`-bit branch of `ApplyEffectAndDrawIconBar` to `sub_1AB26`: it
+averages 3 party-record fields (`+0x64`, `+0x66`, `+0x58`) across valid
+members and feeds each into a separate tiered gameplay system. The
+first is the most concrete lead: its tiers write bits into
+`word_36C7F`, which `DrawMinimap`/`BuildMinimapTileData` read directly
+— bit `0x1000` skips drawing the minimap entirely and shows a
+"depleted" indicator instead, strongly suggestive of a light-source/
+torch-fuel mechanic, though not confirmed. The other two feed a
+4-tier overlay effect (plausibly weather) and a progressively-revealed
+per-object detail display (plausibly a bestiary/identify mechanic) —
+both found but not traced. Named the well-understood averaging/tiering
+function itself (`UpdatePartyAverageStatTiers`) and documented all
+three leads in `file-formats.md` without forcing field-identity
+guesses.
+
+159 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -3594,7 +3594,9 @@ static Bytes_0(void) {
 	create_insn	(0X1AA52);
 	create_insn	(0X1AA53);
 	create_insn	(0X1AA9B);
+	set_cmt	(0X1AB26,	"Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.",	0);
 	create_insn	(0X1AB26);
+	set_name	(0X1AB26,	"UpdatePartyAverageStatTiers");
 	create_insn	(x=0X1AB31);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AB62);
@@ -5257,6 +5259,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X21596);
 	op_hex		(x,	1);
 	create_insn	(0X215A4);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X21612,	"Gathers a 7x9 grid of tile render data (2 picture ids per cell) centered on the player into a local buffer (0xD06), from GetMapCellPtr-style map cells: explored cells look up their picture ids via two tables ([+0] -> 0xE551, [+2] -> 0xE175); unexplored cells get a fixed blank default. Feeds DrawMinimap.",	0);
 	create_insn	(0X21612);
 	set_name	(0X21612,	"BuildMinimapTileData");
@@ -5275,15 +5286,6 @@ static Bytes_0(void) {
 	set_cmt	(0X216F0,	"Validates an interaction/move at (ax, bx) via FindObjectAtPosition. Nothing there -> errorCode=0. Something there -> branches on its type flags ([si+2]): weight/capacity check (sub_1766F), LoadCurgameRecord, or specific failure codes. Caller (`start`'s main loop) uses the resulting errorCode to decide whether to autosave to CURGAME.",	0);
 	create_insn	(0X216F0);
 	set_name	(0X216F0,	"TryInteractAtPosition");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X216F4);
 	op_hex		(x,	1);
 	create_insn	(x=0X21702);

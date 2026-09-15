@@ -13909,7 +13909,7 @@ loc_181DA:                              ; CODE XREF: sub_1819B+1D↑j
 
 loc_181F6:                              ; CODE XREF: sub_1819B+3D↑j
                 call    sub_1AA9B
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 pop     word_328D4
                 retn
 sub_1819B       endp
@@ -13954,7 +13954,7 @@ DeductHPClamped proc near               ; CODE XREF: ApplyEffectCost+F↓p
                 mov     ax, bx
                 push    cs
                 call    near ptr sub_18095
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
 
 locret_18247:                           ; CODE XREF: DeductHPClamped+7↑j
                 retn
@@ -14034,7 +14034,7 @@ loc_182AC:                              ; CODE XREF: ApplyEffectCost+12↑j
                 mov     ax, bx
                 push    cs
                 call    near ptr sub_18095
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
 
 loc_182CB:                              ; CODE XREF: ApplyEffectCost+5A↑j
                                         ; ApplyEffectCost+67↑j
@@ -14097,7 +14097,7 @@ loc_18310:                              ; CODE XREF: sub_182CE+27↑j
 
 loc_18323:                              ; CODE XREF: sub_182CE+4A↑j
                 call    sub_1AA9B
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 call    sub_1B428
                 retn
 sub_182CE       endp
@@ -16260,7 +16260,7 @@ loc_19516:                              ; CODE XREF: sub_193BE+136↑j
 
 loc_19527:                              ; CODE XREF: sub_193BE+193↓j
                 call    sub_1AA9B
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 mov     bx, word_32924
                 call    sub_22445
                 jmp     loc_193C8
@@ -18882,7 +18882,7 @@ loc_1AA47:                              ; CODE XREF: sub_1AA06+17↑j
                 push    cs
                 call    near ptr sub_1AA9B
                 push    cs
-                call    near ptr sub_1AB26
+                call    near ptr UpdatePartyAverageStatTiers
 
 loc_1AA4F:                              ; CODE XREF: sub_1AA06+11↑j
                 pop     di
@@ -19005,9 +19005,9 @@ sub_1AA9B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AB26       proc far                ; CODE XREF: sub_1819B+60↑P
+UpdatePartyAverageStatTiers proc far    ; CODE XREF: sub_1819B+60↑P
                                         ; DeductHPClamped+18↑P ...
-                push    ax
+                push    ax              ; Averages 3 party-record fields across valid (non-dead/paralyzed) members: [+0x64] -> word_36CA5 (compared against 5 ascending thresholds to set tiered bits in word_36C7F -- consumed by DrawMinimap/BuildMinimapTileData, plausibly a light/torch-fuel level: bit 0x1000 blanks the dungeon view entirely), [+0x66] -> word_36CA7 (consumed by sub_28CFF, a 4-tier overlay effect, plausibly weather), [+0x58] -> word_36CA9 (consumed by sub_234D3, a per-object progressively-revealed-detail display, plausibly a bestiary/identify mechanic). None of the three field identities are confirmed -- see docs/file-formats.md.
                 push    bx
                 push    cx
                 push    dx
@@ -19023,7 +19023,7 @@ sub_1AB26       proc far                ; CODE XREF: sub_1819B+60↑P
                 mov     word_3293E, 0
                 mov     cx, 4
 
-loc_1AB55:                              ; CODE XREF: sub_1AB26+5F↓j
+loc_1AB55:                              ; CODE XREF: UpdatePartyAverageStatTiers+5F↓j
                 mov     ax, [si]
                 or      ax, ax
                 jz      short loc_1AB87
@@ -19039,11 +19039,11 @@ loc_1AB55:                              ; CODE XREF: sub_1AB26+5F↓j
                 add     word_36CA9, ax
                 inc     word_3293E
 
-loc_1AB82:                              ; CODE XREF: sub_1AB26+41↑j
+loc_1AB82:                              ; CODE XREF: UpdatePartyAverageStatTiers+41↑j
                 add     si, 2
                 loop    loc_1AB55
 
-loc_1AB87:                              ; CODE XREF: sub_1AB26+33↑j
+loc_1AB87:                              ; CODE XREF: UpdatePartyAverageStatTiers+33↑j
                 cmp     word_36CA5, 0
                 jz      short loc_1AB9A
                 xor     dx, dx
@@ -19051,7 +19051,7 @@ loc_1AB87:                              ; CODE XREF: sub_1AB26+33↑j
                 div     word_3293E
                 mov     word_36CA5, ax
 
-loc_1AB9A:                              ; CODE XREF: sub_1AB26+66↑j
+loc_1AB9A:                              ; CODE XREF: UpdatePartyAverageStatTiers+66↑j
                 cmp     word_36CA7, 0
                 jz      short loc_1ABAD
                 xor     dx, dx
@@ -19059,7 +19059,7 @@ loc_1AB9A:                              ; CODE XREF: sub_1AB26+66↑j
                 div     word_3293E
                 mov     word_36CA7, ax
 
-loc_1ABAD:                              ; CODE XREF: sub_1AB26+79↑j
+loc_1ABAD:                              ; CODE XREF: UpdatePartyAverageStatTiers+79↑j
                 cmp     word_36CA9, 0
                 jz      short loc_1ABC0
                 xor     dx, dx
@@ -19067,7 +19067,7 @@ loc_1ABAD:                              ; CODE XREF: sub_1AB26+79↑j
                 div     word_3293E
                 mov     word_36CA9, ax
 
-loc_1ABC0:                              ; CODE XREF: sub_1AB26+8C↑j
+loc_1ABC0:                              ; CODE XREF: UpdatePartyAverageStatTiers+8C↑j
                 cmp     word_36CA5, 2Dh ; '-'
                 jl      short loc_1AC01
                 or      word_36C7F, 400h
@@ -19084,8 +19084,8 @@ loc_1ABC0:                              ; CODE XREF: sub_1AB26+8C↑j
                 jl      short loc_1AC01
                 or      word_36C7F, 100h
 
-loc_1AC01:                              ; CODE XREF: sub_1AB26+9F↑j
-                                        ; sub_1AB26+AC↑j ...
+loc_1AC01:                              ; CODE XREF: UpdatePartyAverageStatTiers+9F↑j
+                                        ; UpdatePartyAverageStatTiers+AC↑j ...
                 test    word_36C7F, 4000h
                 jz      short loc_1AC23
                 test    word_36C7F, 8000h
@@ -19094,8 +19094,8 @@ loc_1AC01:                              ; CODE XREF: sub_1AB26+9F↑j
                 or      word_36C7F, 1000h
                 or      word_328C4, 400h
 
-loc_1AC23:                              ; CODE XREF: sub_1AB26+E1↑j
-                                        ; sub_1AB26+E9↑j
+loc_1AC23:                              ; CODE XREF: UpdatePartyAverageStatTiers+E1↑j
+                                        ; UpdatePartyAverageStatTiers+E9↑j
                 pop     word_328D4
                 pop     es
                 pop     si
@@ -19105,7 +19105,7 @@ loc_1AC23:                              ; CODE XREF: sub_1AB26+E1↑j
                 pop     bx
                 pop     ax
                 retf
-sub_1AB26       endp
+UpdatePartyAverageStatTiers endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19152,7 +19152,7 @@ loc_1AC74:                              ; CODE XREF: sub_1AC2F+17↑j
                 push    cs
                 call    near ptr sub_1AA9B
                 push    cs
-                call    near ptr sub_1AB26
+                call    near ptr UpdatePartyAverageStatTiers
 
 loc_1AC7C:                              ; CODE XREF: sub_1AC2F+11↑j
                 pop     di
@@ -20203,7 +20203,7 @@ loc_1B5BB:                              ; CODE XREF: sub_1B4C2+C5↑j
                 add     bx, 2
                 add     di, 14h
                 loop    loc_1B571
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
 
 loc_1B5D1:                              ; CODE XREF: sub_1B4C2+B3↑j
@@ -20312,7 +20312,7 @@ loc_1B6C2:                              ; CODE XREF: sub_1B5FD+A7↑j
                 add     bx, 2
                 add     di, 14h
                 loop    loc_1B692
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
 
 loc_1B6D4:                              ; CODE XREF: sub_1B5FD+99↑j
@@ -22599,7 +22599,7 @@ sub_1CC70       proc near               ; CODE XREF: sub_1BEA1+91↑p
                 add     di, 4
                 mov     cx, 0Eh
                 rep movsw
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 retn
 sub_1CC70       endp
 
@@ -23698,7 +23698,7 @@ loc_1D46A:                              ; CODE XREF: RunTitleScreen+EA↑j
                 mov     word_3297E, 0
                 call    sub_2849C
                 call    sub_25862
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 pop     word_36CE7
                 retf
 ; ---------------------------------------------------------------------------
@@ -25861,7 +25861,7 @@ loc_1E8AB:                              ; CODE XREF: sub_1E64A+253↑j
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 and     word_328C4, 0FBFFh
                 call    sub_20C1E
                 call    BuildMinimapTileData
@@ -48444,7 +48444,7 @@ loc_2A950:                              ; CODE XREF: sub_2A914+35↑j
 
 loc_2A955:                              ; CODE XREF: sub_2A914+2B↑j
                 call    sub_1AA9B
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 call    sub_274B4
                 call    sub_2ADD0
                 call    sub_16E18
@@ -49301,7 +49301,7 @@ loc_2B0FF:                              ; CODE XREF: sub_2B09A+9E↓j
 
 loc_2B13A:                              ; CODE XREF: sub_2B09A+69↑j
                 call    sub_2704C
-                call    sub_1AB26
+                call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
                 call    DrawMouseCursor
                 retn
@@ -85896,12 +85896,12 @@ word_36C9D      dw 0                    ; DATA XREF: sub_1FD24+76↑r
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36CA5      dw 0                    ; DATA XREF: sub_1AB26+14↑w
-                                        ; sub_1AB26+46↑w ...
-word_36CA7      dw 0                    ; DATA XREF: sub_1AB26+1A↑w
-                                        ; sub_1AB26+4D↑w ...
-word_36CA9      dw 0                    ; DATA XREF: sub_1AB26+20↑w
-                                        ; sub_1AB26+54↑w ...
+word_36CA5      dw 0                    ; DATA XREF: UpdatePartyAverageStatTiers+14↑w
+                                        ; UpdatePartyAverageStatTiers+46↑w ...
+word_36CA7      dw 0                    ; DATA XREF: UpdatePartyAverageStatTiers+1A↑w
+                                        ; UpdatePartyAverageStatTiers+4D↑w ...
+word_36CA9      dw 0                    ; DATA XREF: UpdatePartyAverageStatTiers+20↑w
+                                        ; UpdatePartyAverageStatTiers+54↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
