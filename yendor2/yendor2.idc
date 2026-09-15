@@ -3294,7 +3294,9 @@ static Bytes_0(void) {
 	create_insn	(0X19032);
 	create_insn	(0X19091);
 	set_cmt	(0X19096,	"this",	0);
+	set_cmt	(0X190AF,	"Shared rejection message for TryEnhanceItemForGold/TryRepairItemForGold when g_partyGold is below the action's cost: 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, cx=3).",	0);
 	create_insn	(0X190AF);
+	set_name	(0X190AF,	"ShowInsufficientGoldMessage");
 	create_insn	(x=0X190B4);
 	op_hex		(x,	1);
 	create_insn	(0X190E9);
@@ -3798,8 +3800,10 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B236);
 	op_hex		(x,	1);
+	set_cmt	(0X1B245,	"Entry point for the interactive sell-item screen, reached from UseItem when the used item's [+0xE] flags have bit 0x4000 set. Sets word_328C6 bit 0x10 (gates TrySellItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D so Space sells items, then on exit clears state and rebuilds/redraws the minimap.",	0);
 	create_insn	(x=0X1B245);
 	op_hex		(x,	1);
+	set_name	(0X1B245,	"RunSellItemScreen");
 	create_insn	(x=0X1B24A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B258);
@@ -4206,10 +4210,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1CA64,	"UseItem's fallback branch (item record es:[si+0xE] bit 0x800). Re-loads the item's own type flags (es:[si+0x10]) into word_2E410 and re-dispatches on the same bits the main type handlers use, but only to call a target-status classifier (ClassifyPartyMemberCondition / sub_1B7DD / CheckPartyMemberItemFlagAndClearPanel / CheckPartyMemberItemFlag) -- no cost or stat change applied. Reads as a preview of the item's target-status effect. A separate path (bits 0x3000, matching UseAbilityScroll's selector) instead finishes the use and shows a different result via an untraced pair (sub_25CFA/sub_2909C).",	0);
 	create_insn	(0X1CA64);
 	set_name	(0X1CA64,	"ShowItemUsagePreview");
-	create_insn	(x=0X1CA74);
-	op_hex		(x,	1);
-	create_insn	(x=0X1CA7A);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -4219,6 +4219,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1CA74);
+	op_hex		(x,	1);
+	create_insn	(x=0X1CA7A);
+	op_hex		(x,	1);
 	create_insn	(x=0X1CA85);
 	op_hex		(x,	1);
 	create_insn	(x=0X1CA9F);

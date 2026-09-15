@@ -2115,6 +2115,19 @@ so only their confirmed primary behavior is documented.
 
 269 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowInsufficientGoldMessage and RunSellItemScreen
+
+Named `sub_190AF` (the shared "YOU DON'T HAVE ENOUGH GOLD!" rejection
+used by both `TryEnhanceItemForGold` and `TryRepairItemForGold`) and
+`sub_1B245` (reached from `UseItem` when the used item's `[+0xE]`
+flags have bit `0x4000` set): sets `word_328C6` bit `0x10` — the exact
+bit gating `TrySellItemForGold` — then runs the main input loop
+(`sub_1869D`) itself so the player can interactively sell items,
+cleaning up and redrawing the minimap on exit. This is the entry point
+for the whole sell-item screen/station.
+
+271 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

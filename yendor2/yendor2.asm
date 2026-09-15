@@ -13237,7 +13237,7 @@ loc_17C5B:                              ; CODE XREF: UseItem+9F↑j
 loc_17C6A:                              ; CODE XREF: UseItem+D3↑j
                 test    word ptr es:[si+0Eh], 4000h
                 jz      short loc_17C7A
-                call    sub_1B245
+                call    RunSellItemScreen
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
@@ -15732,7 +15732,7 @@ loc_19021:                              ; CODE XREF: TryEnhanceItemForGold+B↑j
                 mov     di, 0CB2h
                 call    CompareBCD4
                 jnb     short loc_19032
-                call    sub_190AF
+                call    ShowInsufficientGoldMessage
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -15783,9 +15783,9 @@ sub_19091       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_190AF       proc near               ; CODE XREF: TryEnhanceItemForGold+54↑p
+ShowInsufficientGoldMessage proc near   ; CODE XREF: TryEnhanceItemForGold+54↑p
                                         ; TryRepairItemForGold+54↓p
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; Shared rejection message for TryEnhanceItemForGold/TryRepairItemForGold when g_partyGold is below the action's cost: 'YOU DON'T HAVE ENOUGH GOLD!' (msg 0x8376, cx=3).
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -15797,7 +15797,7 @@ sub_190AF       proc near               ; CODE XREF: TryEnhanceItemForGold+54↑
                 call    sub_23B76
                 call    DrawMouseCursor
                 retn
-sub_190AF       endp
+ShowInsufficientGoldMessage endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -15879,7 +15879,7 @@ loc_19187:                              ; CODE XREF: TryRepairItemForGold+B↑j
                 mov     di, 5082h
                 call    CompareBCD4
                 jnb     short loc_19198
-                call    sub_190AF
+                call    ShowInsufficientGoldMessage
                 retn
 ; ---------------------------------------------------------------------------
 
@@ -19803,8 +19803,8 @@ IsItemEligibleForRepair endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
-                or      word_328C6, 10h
+RunSellItemScreen proc far              ; CODE XREF: UseItem+E0↑P
+                or      word_328C6, 10h ; Entry point for the interactive sell-item screen, reached from UseItem when the used item's [+0xE] flags have bit 0x4000 set. Sets word_328C6 bit 0x10 (gates TrySellItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D so Space sells items, then on exit clears state and rebuilds/redraws the minimap.
                 or      word_328C4, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
@@ -19830,7 +19830,7 @@ sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
-sub_1B245       endp
+RunSellItemScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================

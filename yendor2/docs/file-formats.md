@@ -411,7 +411,13 @@ eligibility check is `IsItemEligibleForRepair` (a location/item
 flag-pair match); `TryEnhanceItemForGold`'s is `IsItemEligibleForEnhance`
 (a location-selected item field checked against a range table at
 `0xBCE`). Both have other, untraced callers beyond this Space-bar
-cluster. All three are manipulated via the packed-BCD
+cluster. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
+`ShowInsufficientGoldMessage`. The whole sell-item screen is entered
+via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
+flags have bit `0x4000` set): sets `word_328C6` bit `0x10` and runs
+the main input loop (`sub_1869D`) so Space triggers
+`TrySellItemForGold`, then rebuilds/redraws the minimap on exit.
+All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/
 `SubtractFromBCDCounter`) — 4 bytes (8 decimal digits) per counter,
