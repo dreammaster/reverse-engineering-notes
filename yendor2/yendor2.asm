@@ -49036,7 +49036,7 @@ seg116          segment byte public 'CODE' use16
 
 
 sub_2AE3C       proc far                ; CODE XREF: HandleGameCommand:loc_2972D↑P
-                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.
+                cmp     word_32974, 253h ; Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.
                 jnz     short loc_2AE48
                 call    ShowVisionAtLocation
                 retf
@@ -49097,21 +49097,21 @@ loc_2AEA9:                              ; CODE XREF: sub_2AE3C+68↑j
                 jz      short loc_2AEF3
                 cmp     word_32974, 246h
                 jnz     short loc_2AEC7
-                call    sub_2B029
+                call    CollectNuoreCache
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_2AEC7:                              ; CODE XREF: sub_2AE3C+85↑j
                 cmp     word_32974, 247h
                 jnz     short loc_2AED3
-                call    sub_2AFB8
+                call    CollectMagicOreCache
                 retf
 ; ---------------------------------------------------------------------------
 
 loc_2AED3:                              ; CODE XREF: sub_2AE3C+91↑j
                 cmp     word_32974, 248h
                 jnz     short loc_2AEDF
-                call    sub_2B09A
+                call    PartyMassHealAndOverheal
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49120,7 +49120,7 @@ loc_2AEDF:                              ; CODE XREF: sub_2AE3C+9D↑j
                 jnz     short locret_2AF2D
                 test    word_328CA, 1000h
                 jz      short loc_2AEF3
-                call    sub_2B14F
+                call    InstantKillActiveMonster
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -49193,8 +49193,8 @@ UseLocationBoundPotion endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
-                mov     ax, 7
+CollectMagicOreCache proc near          ; CODE XREF: sub_2AE3C+93↑p
+                mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.
                 call    sub_28412
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -49218,14 +49218,14 @@ sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 call    ShowResourceDepletedOverlay
                 call    DrawMouseCursor
                 retn
-sub_2AFB8       endp
+CollectMagicOreCache endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
-                mov     ax, 7
+CollectNuoreCache proc near             ; CODE XREF: sub_2AE3C+87↑p
+                mov     ax, 7           ; Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.
                 call    sub_28412
                 call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
@@ -49249,14 +49249,14 @@ sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 call    ShowResourceDepletedOverlay
                 call    DrawMouseCursor
                 retn
-sub_2B029       endp
+CollectNuoreCache endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B09A       proc near               ; CODE XREF: sub_2AE3C+9F↑p
-                call    ClearStatusPanelIfDirty
+PartyMassHealAndOverheal proc near      ; CODE XREF: sub_2AE3C+9F↑p
+                call    ClearStatusPanelIfDirty ; Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49279,7 +49279,7 @@ sub_2B09A       proc near               ; CODE XREF: sub_2AE3C+9F↑p
                 mov     di, 0C50h
                 mov     bx, 95EBh
 
-loc_2B0FF:                              ; CODE XREF: sub_2B09A+9E↓j
+loc_2B0FF:                              ; CODE XREF: PartyMassHealAndOverheal+9E↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_2B13A
@@ -49300,20 +49300,20 @@ loc_2B0FF:                              ; CODE XREF: sub_2B09A+9E↓j
                 add     di, 14h
                 loop    loc_2B0FF
 
-loc_2B13A:                              ; CODE XREF: sub_2B09A+69↑j
+loc_2B13A:                              ; CODE XREF: PartyMassHealAndOverheal+69↑j
                 call    ShowResourceDepletedOverlay
                 call    UpdatePartyAverageStatTiers
                 call    ApplyEffectAndDrawIconBar
                 call    DrawMouseCursor
                 retn
-sub_2B09A       endp
+PartyMassHealAndOverheal endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2B14F       proc near               ; CODE XREF: sub_2AE3C+B3↑p
-                and     word_328C8, 1FFFh
+InstantKillActiveMonster proc near      ; CODE XREF: sub_2AE3C+B3↑p
+                and     word_328C8, 1FFFh ; Item-icon-dispatch handler (word_32974==0x249, also gated on word_328CA bit 0x1000). Zeroes the active monster's HP ([word_32A1E+0x10]=0) directly -- an instant-kill effect.
                 mov     word_3293E, 249h
                 mov     word_32940, 249h
                 call    IsItemRangeAvailable
@@ -49323,7 +49323,7 @@ sub_2B14F       proc near               ; CODE XREF: sub_2AE3C+B3↑p
                 or      word_328C8, 20h
                 call    ShowResourceDepletedOverlay
                 retn
-sub_2B14F       endp
+InstantKillActiveMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================

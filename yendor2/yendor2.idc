@@ -8580,7 +8580,7 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AE26);
 	op_hex		(x,	1);
-	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 (4 codes) each flash an icon then a screen transition, or a generic 'unavailable' flash if sub_27A5E(0xB1) capability check fails -- plausibly the manual's 4 single-key inventory item icons (disk/keyring/map/hourglass) but the specific code<->item mapping isn't confirmed. 0x26D and 0x2C8 are single one-off codes. See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
+	set_cmt	(0X2AE3C,	"Command dispatcher on word_32974 (event/command code), covering 0x242-0x2C8. 0x242-0x245 (4 codes) share one handler, UseAbilityOnTarget -- a discovery mechanic (try the current command against whatever object the player is facing; the right one permanently unlocks it). 0x246-0x249 are a themed cluster of powerful, TestGlobalFlag(0xB1)-gated relic effects, all confirmed by their own message strings: CollectNuoreCache (+5,000 NUORE), CollectMagicOreCache (+5,000 MAGIC ORE), PartyMassHealAndOverheal (2x HP/MP for the whole party), InstantKillActiveMonster. 0x253/0x258/0x254-0x257/0x2C8 are a related cluster (ShowVisionAtLocation, UseLocationBoundPotion, CheckQuestItemsCompleted) -- together these look like a set of quest/relic items central to the main story, exact narrative still unidentified. 0x26D is a separate one-off (plays a forced music track). See ida_scripts/document_item_icon_dispatch.py for the original trace.",	0);
 	create_insn	(0X2AE3C);
 	create_insn	(0X2AE48);
 	create_insn	(0X2AE54);
@@ -8606,17 +8606,23 @@ static Bytes_2(void) {
 	create_insn	(x=0X2AF8E);
 	op_hex		(x,	1);
 	create_insn	(0X2AFA7);
+	set_cmt	(0X2AFB8,	"Item-icon-dispatch handler (word_32974==0x247). Shows '+5,000 MAGIC ORE', confirms item 0x247 present, adds 5000 to global material counter 0x94B7.",	0);
 	create_insn	(0X2AFB8);
+	set_name	(0X2AFB8,	"CollectMagicOreCache");
 	create_insn	(x=0X2AFC5);
 	op_hex		(x,	1);
 	create_insn	(x=0X2AFF4);
 	op_hex		(x,	1);
+	set_cmt	(0X2B029,	"Item-icon-dispatch handler (word_32974==0x246). Shows '+5,000 NUORE', confirms item 0x246 present (IsItemRangeAvailable), adds 5000 to global material counter 0x94BB.",	0);
 	create_insn	(0X2B029);
+	set_name	(0X2B029,	"CollectNuoreCache");
 	create_insn	(x=0X2B036);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B065);
 	op_hex		(x,	1);
+	set_cmt	(0X2B09A,	"Item-icon-dispatch handler (word_32974==0x248). Shows '2 X HEALTH'/'2 X MAGIC': cures all ailments and sets every party member's current HP/MP to 2x their max (an overheal effect), drawing a heal icon (PrepareTrapEffectSlots id 3, same as UseHealingItem) on each via ApplyEffectAndDrawIconBar.",	0);
 	create_insn	(0X2B09A);
+	set_name	(0X2B09A,	"PartyMassHealAndOverheal");
 	create_insn	(x=0X2B09F);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B0CE);
@@ -8627,8 +8633,10 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B11D);
 	op_hex		(x,	1);
+	set_cmt	(0X2B14F,	"Item-icon-dispatch handler (word_32974==0x249, also gated on word_328CA bit 0x1000). Zeroes the active monster's HP ([word_32A1E+0x10]=0) directly -- an instant-kill effect.",	0);
 	create_insn	(x=0X2B14F);
 	op_hex		(x,	1);
+	set_name	(0X2B14F,	"InstantKillActiveMonster");
 	create_insn	(x=0X2B174);
 	op_hex		(x,	1);
 	set_cmt	(0X2B17F,	"Item-icon-dispatch handler (word_32974==0x2C8). Checks whether 4 specific items (ids 0x254-0x257) are ALL absent from every party member's inventory (one IsItemRangeAvailable call per item). If so, plays a success sound and runs an animated screen-update sequence re-checking those 4 items plus a 5th (0x2C8) in reverse order -- reads as a quest-item-completion reward sequence. Exact narrative not identified.",	0);
@@ -11063,6 +11071,15 @@ static Bytes_2(void) {
 	create_strlit	(0X39D80,	0X2);
 	create_strlit	(0X39D82,	0X21);
 	set_name	(0X39D82,	"aTimSmithSandra");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X39DA3,	0X2);
 	create_strlit	(0X39DA5,	0X24);
 	set_name	(0X39DA5,	"aKristiQuicksal");
@@ -11125,15 +11142,6 @@ static Bytes_2(void) {
 	create_strlit	(0X3A066,	0X2);
 	create_strlit	(0X3A068,	0X24);
 	set_name	(0X3A068,	"aDerekElpersDan");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X3A08C,	0X2);
 	create_strlit	(0X3A08E,	0X23);
 	set_name	(0X3A08E,	"aChuckMabreySta");

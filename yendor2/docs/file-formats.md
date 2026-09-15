@@ -240,6 +240,25 @@ scrying/vision effect revealing a fixed, presumably story-significant
 location — not followed further this round, but a promising thread
 into the main-quest structure.
 
+**The rest of the cluster confirmed by message strings**: items
+`0x246`-`0x249`, all gated on `TestGlobalFlag(0xB1)` (shows `PATIENCE
+IS A VIRTUE.` if not yet available — some kind of daily/periodic
+recharge), are powerful relic-tier effects:
+- `0x246` `CollectNuoreCache` — `+5,000 NUORE` (adds to counter `0x94BB`)
+- `0x247` `CollectMagicOreCache` — `+5,000 MAGIC ORE` (adds to counter `0x94B7`)
+- `0x248` `PartyMassHealAndOverheal` — `2 X HEALTH` / `2 X MAGIC`:
+  cures every ailment and sets the *whole party's* current HP/MP to
+  **2× their max** (an overheal exceeding the normal cap), with a heal
+  icon shown on each member
+- `0x249` `InstantKillActiveMonster` — zeroes the active monster's HP
+  directly, no roll
+
+Together with `ShowVisionAtLocation`/`UseLocationBoundPotion`/
+`CheckQuestItemsCompleted`, this reads as a themed set of quest/relic
+items central to the main story — exact narrative (what they are,
+where they come from) still unidentified, but now a well-scoped thread
+for a future round.
+
 ### Combat: monster slots and turn order
 
 Up to **3 simultaneous active monsters**, `g_monsterSlots` (base

@@ -1934,6 +1934,22 @@ over cleanly.
 
 252 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the full relic-item cluster confirmed
+
+Dumped message strings for the remaining 4 items in the cluster
+(`0x246`-`0x249`, all gated by a "patience is a virtue" recharge
+flag) — powerful, unambiguous relic effects: `CollectNuoreCache`/
+`CollectMagicOreCache` (+5,000 of a material each), `PartyMassHealAndOverheal`
+(sets the whole party's HP/MP to 2× max), and `InstantKillActiveMonster`
+(zeroes a monster's HP directly, no roll). Together with the vision/
+potion/completion cluster from the last two rounds, this reads as a
+themed set of quest/relic items central to the main story — exact
+narrative still unidentified, but the whole cluster's mechanics are
+now fully mapped, a strong foundation for whoever picks up the
+narrative thread next.
+
+256 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
