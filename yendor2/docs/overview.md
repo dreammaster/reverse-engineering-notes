@@ -1285,6 +1285,22 @@ than guessing record identities beyond what's evidenced.
 
 182 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the top-level UseItem system
+
+Followed up on the item-use dispatcher partly explored a few rounds
+ago (`sub_1BBED`, which turned out to be one branch of a bigger
+system) to its actual top level: `UseItem` (was `sub_17B92`, called
+directly from `start`) first calls the new `LoadItemData` (was
+`sub_1C890`) — which reveals a `WORLD.DAT` item-data catalog at a
+fixed record (`0xBCE`), structurally similar to `g_pictureDir`'s role
+for `PICTURES.VGA` — then dispatches on the loaded item's own type-
+flags word to one of several type-specific effect handlers. None of
+those handlers are named yet (one, `sub_1BBED`'s material-gated
+branch, was already traced two rounds ago) — a good next target now
+that the dispatcher and its data source are understood.
+
+184 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

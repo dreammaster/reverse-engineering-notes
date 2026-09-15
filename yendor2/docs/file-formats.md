@@ -318,6 +318,15 @@ below) — loaded via `LoadMasterPalette` (`0x27CB0`), one of the ~27
 (`ida_scripts/document_resource_stubs.py`, `ida_scripts/extract_resource_stubs.py`
 has every stub's own offset/size if more need identifying the same way).
 
+**Item data catalog**: `UseItem`'s `LoadItemData` (was `sub_1C890`)
+looks up a per-item data block via a fixed catalog record at `0xBCE`
+(same shared lookup helper, `sub_27B42`, as the resource-stub family
+above — cross-confirming it's a generic "look up catalog entry N in
+`WORLD.DAT`" primitive), allocates a buffer sized to fit, and reads the
+item's raw data in. Item contents/size/count not yet examined —
+`sub_27B42`'s own signature (id in, offset+size out) would be the
+fastest way to enumerate the whole catalog if that's wanted later.
+
 ### In-memory dungeon map grid (source file not yet identified — plausibly loaded from `WORLD.DAT`)
 
 Found via `GetMapCellPtr` (`0x16F64`), the address computation the

@@ -755,7 +755,7 @@ loc_10652:                              ; CODE XREF: start+63D↑j
 loc_10660:                              ; CODE XREF: start+5BD↑j
                 and     word_3295A, 9FFFh
                 mov     ax, [si+4]
-                call    sub_17B92
+                call    UseItem
                 call    sub_1FD03
                 cmp     word_2E52A, 1
                 jnz     short loc_1067D
@@ -13149,16 +13149,16 @@ seg024          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_17B92       proc far                ; CODE XREF: start+669↑P
-                mov     word_2E52A, 0
-                call    sub_1C890
+UseItem         proc far                ; CODE XREF: start+669↑P
+                mov     word_2E52A, 0   ; UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.
+                call    LoadItemData
                 or      ax, ax
                 jz      short loc_17BA4
                 jmp     loc_17F6F
 ; ---------------------------------------------------------------------------
 
-loc_17BA4:                              ; CODE XREF: sub_17B92+D↑j
-                                        ; sub_17B92+1A6↓j ...
+loc_17BA4:                              ; CODE XREF: UseItem+D↑j
+                                        ; UseItem+1A6↓j ...
                 or      word_328C4, 100h
                 call    sub_16E18
                 test    word_2E410, 8000h
@@ -13167,35 +13167,35 @@ loc_17BA4:                              ; CODE XREF: sub_17B92+D↑j
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17BBF:                              ; CODE XREF: sub_17B92+23↑j
+loc_17BBF:                              ; CODE XREF: UseItem+23↑j
                 test    word_2E410, 4000h
                 jz      short loc_17BCF
                 call    sub_1C123
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17BCF:                              ; CODE XREF: sub_17B92+33↑j
+loc_17BCF:                              ; CODE XREF: UseItem+33↑j
                 test    word_2E410, 3000h
                 jz      short loc_17BDF
                 call    sub_1C589
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17BDF:                              ; CODE XREF: sub_17B92+43↑j
+loc_17BDF:                              ; CODE XREF: UseItem+43↑j
                 test    word_2E410, 400h
                 jz      short loc_17BEF
                 call    sub_1BEA1
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17BEF:                              ; CODE XREF: sub_17B92+53↑j
+loc_17BEF:                              ; CODE XREF: UseItem+53↑j
                 test    word_2E410, 800h
                 jz      short loc_17BFF
                 call    sub_1BBED
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17BFF:                              ; CODE XREF: sub_17B92+63↑j
+loc_17BFF:                              ; CODE XREF: UseItem+63↑j
                 call    sub_1BB48
                 mov     si, word_2E54E
                 mov     es, word_2E54C
@@ -13205,7 +13205,7 @@ loc_17BFF:                              ; CODE XREF: sub_17B92+63↑j
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
-loc_17C1C:                              ; CODE XREF: sub_17B92+80↑j
+loc_17C1C:                              ; CODE XREF: UseItem+80↑j
                 test    word ptr es:[si+0Eh], 80h
                 jz      short loc_17C53
                 cmp     word ptr es:[si], 5542h
@@ -13213,7 +13213,7 @@ loc_17C1C:                              ; CODE XREF: sub_17B92+80↑j
                 cmp     word ptr es:[si+2], 2059h
                 jz      short loc_17C5B
 
-loc_17C33:                              ; CODE XREF: sub_17B92+97↑j
+loc_17C33:                              ; CODE XREF: UseItem+97↑j
                 mov     ax, es:[si+10h]
                 call    sub_1A5F6
                 call    sub_1BB48
@@ -13223,26 +13223,26 @@ loc_17C33:                              ; CODE XREF: sub_17B92+97↑j
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17C53:                              ; CODE XREF: sub_17B92+90↑j
+loc_17C53:                              ; CODE XREF: UseItem+90↑j
                 test    word ptr es:[si+0Eh], 0C000h
                 jz      short loc_17C7A
 
-loc_17C5B:                              ; CODE XREF: sub_17B92+9F↑j
+loc_17C5B:                              ; CODE XREF: UseItem+9F↑j
                 call    sub_1B2BD
                 cmp     errorCode, 0
                 jz      short loc_17C6A
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17C6A:                              ; CODE XREF: sub_17B92+D3↑j
+loc_17C6A:                              ; CODE XREF: UseItem+D3↑j
                 test    word ptr es:[si+0Eh], 4000h
                 jz      short loc_17C7A
                 call    sub_1B245
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17C7A:                              ; CODE XREF: sub_17B92+C7↑j
-                                        ; sub_17B92+DE↑j
+loc_17C7A:                              ; CODE XREF: UseItem+C7↑j
+                                        ; UseItem+DE↑j
                 test    word ptr es:[si+0Eh], 80h
                 jnz     short loc_17C9C
                 test    word_2E410, 1000h
@@ -13252,20 +13252,20 @@ loc_17C7A:                              ; CODE XREF: sub_17B92+C7↑j
                 call    sub_1B6DE
                 call    DrawMouseCursor
 
-loc_17C9C:                              ; CODE XREF: sub_17B92+2A↑j
-                                        ; sub_17B92+3A↑j ...
+loc_17C9C:                              ; CODE XREF: UseItem+2A↑j
+                                        ; UseItem+3A↑j ...
                 mov     si, word_2E54E
                 mov     es, word_2E54C
                 test    word ptr es:[si+0Eh], 200h
                 jz      short loc_17CB1
                 call    sub_1B4C2
 
-loc_17CB1:                              ; CODE XREF: sub_17B92+118↑j
+loc_17CB1:                              ; CODE XREF: UseItem+118↑j
                 test    word ptr es:[si+0Eh], 400h
                 jz      short loc_17CBE
                 call    sub_1B5FD
 
-loc_17CBE:                              ; CODE XREF: sub_17B92+125↑j
+loc_17CBE:                              ; CODE XREF: UseItem+125↑j
                 test    word ptr es:[si+0Eh], 1
                 jz      short loc_17D2B
                 test    word_2E410, 0FC00h
@@ -13282,7 +13282,7 @@ loc_17CBE:                              ; CODE XREF: sub_17B92+125↑j
                 call    sub_238CD
                 call    DrawMouseCursor
 
-loc_17D04:                              ; CODE XREF: sub_17B92+13A↑j
+loc_17D04:                              ; CODE XREF: UseItem+13A↑j
                 or      word_328C4, 100h
                 call    sub_16E18
                 call    sub_162B6
@@ -13293,39 +13293,39 @@ loc_17D04:                              ; CODE XREF: sub_17B92+13A↑j
                 jg      short loc_17D28
                 mov     word_2E52A, ax
 
-loc_17D28:                              ; CODE XREF: sub_17B92+191↑j
+loc_17D28:                              ; CODE XREF: UseItem+191↑j
                 jmp     loc_17F6F
 ; ---------------------------------------------------------------------------
 
-loc_17D2B:                              ; CODE XREF: sub_17B92+132↑j
+loc_17D2B:                              ; CODE XREF: UseItem+132↑j
                 test    word ptr es:[si+0Eh], 1000h
                 jz      short loc_17D3B
                 call    sub_1CBF3
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
-loc_17D3B:                              ; CODE XREF: sub_17B92+19F↑j
+loc_17D3B:                              ; CODE XREF: UseItem+19F↑j
                 test    word ptr es:[si+0Eh], 8000h
                 jz      short loc_17D4B
                 call    sub_1AEF8
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
-loc_17D4B:                              ; CODE XREF: sub_17B92+1AF↑j
+loc_17D4B:                              ; CODE XREF: UseItem+1AF↑j
                 test    word ptr es:[si+0Eh], 100h
                 jz      short loc_17D5A
                 call    sub_1B0CF
                 jmp     short loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17D5A:                              ; CODE XREF: sub_17B92+1BF↑j
+loc_17D5A:                              ; CODE XREF: UseItem+1BF↑j
                 test    word ptr es:[si+0Eh], 40h
                 jz      short loc_17D69
                 call    sub_1B194
                 jmp     short loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17D69:                              ; CODE XREF: sub_17B92+1CE↑j
+loc_17D69:                              ; CODE XREF: UseItem+1CE↑j
                 test    word ptr es:[si+0Eh], 80h
                 jz      short loc_17D7D
                 mov     ax, es:[si+10h]
@@ -13333,8 +13333,8 @@ loc_17D69:                              ; CODE XREF: sub_17B92+1CE↑j
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
-loc_17D7D:                              ; CODE XREF: sub_17B92+BE↑j
-                                        ; sub_17B92+D5↑j ...
+loc_17D7D:                              ; CODE XREF: UseItem+BE↑j
+                                        ; UseItem+D5↑j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_17D7D
@@ -13345,7 +13345,7 @@ loc_17D7D:                              ; CODE XREF: sub_17B92+BE↑j
                 jmp     loc_17F2D
 ; ---------------------------------------------------------------------------
 
-loc_17D9A:                              ; CODE XREF: sub_17B92+203↑j
+loc_17D9A:                              ; CODE XREF: UseItem+203↑j
                 cmp     errorCode, 3
                 jz      short loc_17DAA
                 cmp     errorCode, 7
@@ -13353,7 +13353,7 @@ loc_17D9A:                              ; CODE XREF: sub_17B92+203↑j
                 jmp     short loc_17DC0
 ; ---------------------------------------------------------------------------
 
-loc_17DAA:                              ; CODE XREF: sub_17B92+20D↑j
+loc_17DAA:                              ; CODE XREF: UseItem+20D↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 6458h
@@ -13363,17 +13363,17 @@ loc_17DAA:                              ; CODE XREF: sub_17B92+20D↑j
                 jmp     short loc_17DF6
 ; ---------------------------------------------------------------------------
 
-loc_17DC0:                              ; CODE XREF: sub_17B92+1FC↑j
-                                        ; sub_17B92+216↑j
+loc_17DC0:                              ; CODE XREF: UseItem+1FC↑j
+                                        ; UseItem+216↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_17DCC
 
-loc_17DC7:                              ; CODE XREF: sub_17B92+214↑j
+loc_17DC7:                              ; CODE XREF: UseItem+214↑j
                 mov     ax, word_2E416
                 jmp     short loc_17DE0
 ; ---------------------------------------------------------------------------
 
-loc_17DCC:                              ; CODE XREF: sub_17B92+233↑j
+loc_17DCC:                              ; CODE XREF: UseItem+233↑j
                 cmp     byte_2E400, 31h ; '1'
                 jl      short loc_17D7D
                 cmp     byte_2E400, 39h ; '9'
@@ -13381,8 +13381,8 @@ loc_17DCC:                              ; CODE XREF: sub_17B92+233↑j
                 mov     al, byte_2E400
                 and     ax, 0Fh
 
-loc_17DE0:                              ; CODE XREF: sub_17B92+22A↑j
-                                        ; sub_17B92+238↑j
+loc_17DE0:                              ; CODE XREF: UseItem+22A↑j
+                                        ; UseItem+238↑j
                 cmp     ax, word_2E416
                 jg      short loc_17D7D
                 dec     ax
@@ -13394,13 +13394,13 @@ loc_17DE0:                              ; CODE XREF: sub_17B92+22A↑j
                 jmp     loc_17BA4
 ; ---------------------------------------------------------------------------
 
-loc_17DF6:                              ; CODE XREF: sub_17B92+22C↑j
+loc_17DF6:                              ; CODE XREF: UseItem+22C↑j
                 test    word_2E410, 1
                 jnz     short loc_17E01
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17E01:                              ; CODE XREF: sub_17B92+26A↑j
+loc_17E01:                              ; CODE XREF: UseItem+26A↑j
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 61C2h
@@ -13410,7 +13410,7 @@ loc_17E01:                              ; CODE XREF: sub_17B92+26A↑j
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17E18:                              ; CODE XREF: sub_17B92+281↑j
+loc_17E18:                              ; CODE XREF: UseItem+281↑j
                 mov     bx, 95EBh
                 cmp     ax, 1
                 jz      short loc_17E3B
@@ -13426,14 +13426,14 @@ loc_17E18:                              ; CODE XREF: sub_17B92+281↑j
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17E3B:                              ; CODE XREF: sub_17B92+28C↑j
-                                        ; sub_17B92+294↑j ...
+loc_17E3B:                              ; CODE XREF: UseItem+28C↑j
+                                        ; UseItem+294↑j ...
                 cmp     word ptr [bx], 0
                 jnz     short loc_17E43
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17E43:                              ; CODE XREF: sub_17B92+2AC↑j
+loc_17E43:                              ; CODE XREF: UseItem+2AC↑j
                 call    RestoreCursorBackgroundIfDirty
                 mov     word_32924, bx
                 call    sub_26C9E
@@ -13443,27 +13443,27 @@ loc_17E43:                              ; CODE XREF: sub_17B92+2AC↑j
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
-loc_17E60:                              ; CODE XREF: sub_17B92+2C5↑j
+loc_17E60:                              ; CODE XREF: UseItem+2C5↑j
                 test    word_2E410, 4000h
                 jz      short loc_17E6F
                 call    sub_1B7DD
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
-loc_17E6F:                              ; CODE XREF: sub_17B92+2D4↑j
+loc_17E6F:                              ; CODE XREF: UseItem+2D4↑j
                 test    word_2E410, 400h
                 jz      short loc_17E7E
                 call    sub_1B7A5
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
-loc_17E7E:                              ; CODE XREF: sub_17B92+2E3↑j
+loc_17E7E:                              ; CODE XREF: UseItem+2E3↑j
                 test    word_2E410, 800h
                 jz      short loc_17EA8
                 call    sub_1B717
 
-loc_17E8B:                              ; CODE XREF: sub_17B92+2CC↑j
-                                        ; sub_17B92+2DB↑j ...
+loc_17E8B:                              ; CODE XREF: UseItem+2CC↑j
+                                        ; UseItem+2DB↑j ...
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 call    sub_1B702
@@ -13473,7 +13473,7 @@ loc_17E8B:                              ; CODE XREF: sub_17B92+2CC↑j
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17EA8:                              ; CODE XREF: sub_17B92+2F2↑j
+loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 test    word_2E410, 3000h
                 jz      short loc_17E8B
                 call    sub_16E18
@@ -13501,57 +13501,57 @@ loc_17EA8:                              ; CODE XREF: sub_17B92+2F2↑j
                 mov     bx, 0AFA8h      ; msg
                 call    writeString
 
-loc_17F18:                              ; CODE XREF: sub_17B92+34E↑j
+loc_17F18:                              ; CODE XREF: UseItem+34E↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17F25:                              ; CODE XREF: sub_17B92+329↑j
+loc_17F25:                              ; CODE XREF: UseItem+329↑j
                 call    sub_29040
                 jmp     loc_17E8B
 ; ---------------------------------------------------------------------------
 
-loc_17F2D:                              ; CODE XREF: sub_17B92+205↑j
+loc_17F2D:                              ; CODE XREF: UseItem+205↑j
                 test    word_2E410, 1
                 jnz     short loc_17F38
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17F38:                              ; CODE XREF: sub_17B92+3A1↑j
+loc_17F38:                              ; CODE XREF: UseItem+3A1↑j
                 mov     bx, 95EBh
                 cmp     byte_2E400, 3Bh ; ';'
                 jnz     short loc_17F45
                 jmp     loc_17E3B
 ; ---------------------------------------------------------------------------
 
-loc_17F45:                              ; CODE XREF: sub_17B92+3AE↑j
+loc_17F45:                              ; CODE XREF: UseItem+3AE↑j
                 add     bx, 2
                 cmp     byte_2E400, 3Ch ; '<'
                 jnz     short loc_17F52
                 jmp     loc_17E3B
 ; ---------------------------------------------------------------------------
 
-loc_17F52:                              ; CODE XREF: sub_17B92+3BB↑j
+loc_17F52:                              ; CODE XREF: UseItem+3BB↑j
                 add     bx, 2
                 cmp     byte_2E400, 3Dh ; '='
                 jnz     short loc_17F5F
                 jmp     loc_17E3B
 ; ---------------------------------------------------------------------------
 
-loc_17F5F:                              ; CODE XREF: sub_17B92+3C8↑j
+loc_17F5F:                              ; CODE XREF: UseItem+3C8↑j
                 add     bx, 2
                 cmp     byte_2E400, 3Eh ; '>'
                 jnz     short loc_17F6C
                 jmp     loc_17E3B
 ; ---------------------------------------------------------------------------
 
-loc_17F6C:                              ; CODE XREF: sub_17B92+3D5↑j
+loc_17F6C:                              ; CODE XREF: UseItem+3D5↑j
                 jmp     loc_17D7D
 ; ---------------------------------------------------------------------------
 
-loc_17F6F:                              ; CODE XREF: sub_17B92+F↑j
-                                        ; sub_17B92:loc_17D28↑j
+loc_17F6F:                              ; CODE XREF: UseItem+F↑j
+                                        ; UseItem:loc_17D28↑j
                 cmp     word_2E54C, 0
                 jz      short loc_17F7E
                 mov     es, word_2E54C
@@ -13559,7 +13559,7 @@ loc_17F6F:                              ; CODE XREF: sub_17B92+F↑j
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_17F7E:                              ; CODE XREF: sub_17B92+3E2↑j
+loc_17F7E:                              ; CODE XREF: UseItem+3E2↑j
                 cmp     word_328F4, 0
                 jz      short loc_17F8D
                 mov     es, word_328F4
@@ -13567,7 +13567,7 @@ loc_17F7E:                              ; CODE XREF: sub_17B92+3E2↑j
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_17F8D:                              ; CODE XREF: sub_17B92+3F1↑j
+loc_17F8D:                              ; CODE XREF: UseItem+3F1↑j
                 mov     word_2E530, 1
                 call    sub_22387
                 call    sub_222F8
@@ -13577,7 +13577,7 @@ loc_17F8D:                              ; CODE XREF: sub_17B92+3F1↑j
                 call    DrawMouseCursor
                 and     word_328C6, 0FF7Fh
                 retf
-sub_17B92       endp
+UseItem         endp
 
 seg024          ends
 
@@ -18413,7 +18413,7 @@ seg037          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1A5F6       proc far                ; CODE XREF: sub_17B92+A5↑P
+sub_1A5F6       proc far                ; CODE XREF: UseItem+A5↑P
                 and     word_328C6, 0FFBFh
                 cmp     ax, _val40
                 jle     short loc_1A604
@@ -19514,7 +19514,7 @@ seg041          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AEF8       proc far                ; CODE XREF: sub_17B92+1B1↑P
+sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
                 or      word_328C6, 20h
                 mov     ax, word_36C7F
                 and     ax, 7000h
@@ -19541,7 +19541,7 @@ sub_1AEF8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1AF49       proc far                ; CODE XREF: sub_17B92+1E3↑P
+sub_1AF49       proc far                ; CODE XREF: UseItem+1E3↑P
                 mov     word_32974, ax
 
 loc_1AF4C:                              ; CODE XREF: sub_1AF49+116↓j
@@ -19656,7 +19656,7 @@ sub_1AF49       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B0CF       proc far                ; CODE XREF: sub_17B92+1C1↑P
+sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
                 or      word_328C6, 8
                 or      word_328C4, 100h
                 call    sub_16E18
@@ -19736,7 +19736,7 @@ sub_1B147       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B194       proc far                ; CODE XREF: sub_17B92+1D0↑P
+sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
                 or      word_328C6, 4
                 or      word_328C4, 100h
                 call    sub_16E18
@@ -19803,7 +19803,7 @@ sub_1B20C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B245       proc far                ; CODE XREF: sub_17B92+E0↑P
+sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
                 or      word_328C6, 10h
                 or      word_328C4, 100h
                 call    sub_16E18
@@ -19836,7 +19836,7 @@ sub_1B245       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B2BD       proc far                ; CODE XREF: sub_17B92:loc_17C5B↑P
+sub_1B2BD       proc far                ; CODE XREF: UseItem:loc_17C5B↑P
                                         ; sub_1B2BD+47↓j
                 mov     ax, word_36D03
                 cmp     ax, 0
@@ -20118,7 +20118,7 @@ seg045          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B4C2       proc far                ; CODE XREF: sub_17B92+11A↑P
+sub_1B4C2       proc far                ; CODE XREF: UseItem+11A↑P
                 push    di
                 mov     di, 0BCEh
                 mov     ax, [di+12h]
@@ -20245,7 +20245,7 @@ sub_1B5DA       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B5FD       proc far                ; CODE XREF: sub_17B92+127↑P
+sub_1B5FD       proc far                ; CODE XREF: UseItem+127↑P
                 push    bp
                 push    di
                 mov     di, 0BCEh
@@ -20329,7 +20329,7 @@ sub_1B5FD       endp
 
 
 sub_1B6DE       proc far                ; CODE XREF: sub_1732B+F2↑P
-                                        ; sub_17B92+100↑P ...
+                                        ; UseItem+100↑P ...
                 push    cs
                 call    near ptr sub_1B8AB
                 push    cs
@@ -20350,8 +20350,8 @@ sub_1B6DE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B702       proc far                ; CODE XREF: sub_17B92+2FF↑P
-                                        ; sub_17B92+343↑P ...
+sub_1B702       proc far                ; CODE XREF: UseItem+2FF↑P
+                                        ; UseItem+343↑P ...
                 push    dx
                 mov     ax, word_2E550
                 dec     ax
@@ -20368,7 +20368,7 @@ sub_1B702       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B717       proc far                ; CODE XREF: sub_17B92+2F4↑P
+sub_1B717       proc far                ; CODE XREF: UseItem+2F4↑P
                                         ; sub_1BBED+53↓p ...
                 push    di
                 push    si
@@ -20396,7 +20396,7 @@ sub_1B717       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B74A       proc far                ; CODE XREF: sub_17B92+2C7↑P
+sub_1B74A       proc far                ; CODE XREF: UseItem+2C7↑P
                                         ; sub_1BF94+6A↓p ...
                 push    bx
                 push    si
@@ -20446,7 +20446,7 @@ sub_1B74A       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B7A5       proc far                ; CODE XREF: sub_17B92+2E5↑P
+sub_1B7A5       proc far                ; CODE XREF: UseItem+2E5↑P
                                         ; sub_1BEA1+49↓p ...
                 push    di
                 push    si
@@ -20475,7 +20475,7 @@ sub_1B7A5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B7DD       proc far                ; CODE XREF: sub_17B92+2D6↑P
+sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
                                         ; sub_1C123+49↓p ...
                 push    si
                 push    bx
@@ -20587,7 +20587,7 @@ sub_1B818       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B8AB       proc far                ; CODE XREF: sub_17B92+AF↑P
+sub_1B8AB       proc far                ; CODE XREF: UseItem+AF↑P
                                         ; sub_1A5F6:loc_1A611↑P ...
                 mov     x, 0Fh
                 mov     y, 17h
@@ -20609,7 +20609,7 @@ sub_1B8AB       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B8EE       proc far                ; CODE XREF: sub_17B92+B4↑P
+sub_1B8EE       proc far                ; CODE XREF: UseItem+B4↑P
                                         ; sub_1B6DE+20↑p ...
                 push    si
                 push    di
@@ -20881,8 +20881,8 @@ sub_1BA96       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BB48       proc far                ; CODE XREF: sub_17B92:loc_17BFF↑P
-                                        ; sub_17B92+AA↑P ...
+sub_1BB48       proc far                ; CODE XREF: UseItem:loc_17BFF↑P
+                                        ; UseItem+AA↑P ...
                 push    cx
                 push    di
                 push    si
@@ -20962,7 +20962,7 @@ sub_1BB48       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BBED       proc far                ; CODE XREF: sub_17B92+65↑P
+sub_1BBED       proc far                ; CODE XREF: UseItem+65↑P
                 push    cs
                 call    near ptr sub_1B702
                 test    word ptr es:[si+10h], 1
@@ -21203,7 +21203,7 @@ sub_1BBED       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BEA1       proc far                ; CODE XREF: sub_17B92+55↑P
+sub_1BEA1       proc far                ; CODE XREF: UseItem+55↑P
                 push    cs
                 call    near ptr sub_1B702
                 test    word ptr es:[si+10h], 1
@@ -21303,7 +21303,7 @@ sub_1BEA1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BF94       proc far                ; CODE XREF: sub_17B92+25↑P
+sub_1BF94       proc far                ; CODE XREF: UseItem+25↑P
                 push    cs
                 call    near ptr sub_1B702
                 test    word ptr es:[si+10h], 1
@@ -21484,7 +21484,7 @@ sub_1BF94       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C123       proc far                ; CODE XREF: sub_17B92+35↑P
+sub_1C123       proc far                ; CODE XREF: UseItem+35↑P
                 push    cs
                 call    near ptr sub_1B702
                 test    word ptr es:[si+10h], 1
@@ -21891,7 +21891,7 @@ sub_1C123       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C589       proc far                ; CODE XREF: sub_17B92+45↑P
+sub_1C589       proc far                ; CODE XREF: UseItem+45↑P
                 push    cs
                 call    near ptr sub_1B702
                 test    word_2E410, 1000h
@@ -22190,8 +22190,8 @@ sub_1C809       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1C890       proc far                ; CODE XREF: sub_17B92+6↑P
-                mov     word_2E42C, ax
+LoadItemData    proc far                ; CODE XREF: UseItem+6↑P
+                mov     word_2E42C, ax  ; LoadItemData(ax=item id): frees any previously-loaded item data buffers, reads WORLD.DAT's item catalog record (fixed address 0xBCE, FileEntry bx=0x9043) to find this item's data block, allocates a buffer sized to fit, and reads the item's data from WORLD.DAT into it. WORLD.DAT's item-data catalog, structurally similar to g_pictureDir's role for PICTURES.VGA.
                 cmp     word_2E54C, 0
                 jz      short loc_1C8A2
                 mov     es, word_2E54C
@@ -22199,7 +22199,7 @@ sub_1C890       proc far                ; CODE XREF: sub_17B92+6↑P
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_1C8A2:                              ; CODE XREF: sub_1C890+8↑j
+loc_1C8A2:                              ; CODE XREF: LoadItemData+8↑j
                 cmp     word_328F4, 0
                 jz      short loc_1C8B1
                 mov     es, word_328F4
@@ -22207,7 +22207,7 @@ loc_1C8A2:                              ; CODE XREF: sub_1C890+8↑j
                 int     21h             ; DOS - 2+ - FREE MEMORY
                                         ; ES = segment address of area to be freed
 
-loc_1C8B1:                              ; CODE XREF: sub_1C890+17↑j
+loc_1C8B1:                              ; CODE XREF: LoadItemData+17↑j
                 or      word_328C6, 80h
                 mov     ax, 0BCEh
                 call    sub_27BD6
@@ -22235,7 +22235,7 @@ loc_1C8B1:                              ; CODE XREF: sub_1C890+17↑j
                 mov     [bx+2], ax
                 mov     cx, [si+4]
 
-loc_1C90F:                              ; CODE XREF: sub_1C890+96↓j
+loc_1C90F:                              ; CODE XREF: LoadItemData+96↓j
                 mov     errorCode, 0Fh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -22260,7 +22260,7 @@ loc_1C90F:                              ; CODE XREF: sub_1C890+96↓j
                 mov     [bx+2], ax
                 mov     cx, [si+6]
 
-loc_1C95F:                              ; CODE XREF: sub_1C890+E6↓j
+loc_1C95F:                              ; CODE XREF: LoadItemData+E6↓j
                 mov     errorCode, 0Fh
                 call    FileEntry_Read
                 call    ErrorCheck
@@ -22275,7 +22275,7 @@ loc_1C95F:                              ; CODE XREF: sub_1C890+E6↓j
                 cmp     ax, 0
                 jz      short loc_1C9D0
 
-loc_1C98C:                              ; CODE XREF: sub_1C890+13E↓j
+loc_1C98C:                              ; CODE XREF: LoadItemData+13E↓j
                 mov     ax, word_36D09
                 cmp     ax, 0
                 jnz     short loc_1C9AF
@@ -22289,8 +22289,8 @@ loc_1C98C:                              ; CODE XREF: sub_1C890+13E↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1C9AF:                              ; CODE XREF: sub_1C890+102↑j
-                                        ; sub_1C890+114↑j
+loc_1C9AF:                              ; CODE XREF: LoadItemData+102↑j
+                                        ; LoadItemData+114↑j
                 mov     word_36D09, ax
                 call    sub_25B14
                 mov     word_3197E, ax
@@ -22302,8 +22302,8 @@ loc_1C9AF:                              ; CODE XREF: sub_1C890+102↑j
                 jmp     short loc_1C98C
 ; ---------------------------------------------------------------------------
 
-loc_1C9D0:                              ; CODE XREF: sub_1C890+FA↑j
-                                        ; sub_1C890+131↑j
+loc_1C9D0:                              ; CODE XREF: LoadItemData+FA↑j
+                                        ; LoadItemData+131↑j
                 call    sub_16EFA
                 or      word_328C4, 1
                 mov     si, 0BCEh
@@ -22314,7 +22314,7 @@ loc_1C9D0:                              ; CODE XREF: sub_1C890+FA↑j
                 call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
-loc_1C9F1:                              ; CODE XREF: sub_1C890+158↑j
+loc_1C9F1:                              ; CODE XREF: LoadItemData+158↑j
                 mov     word_2E550, 3
                 mov     ax, [si+0Eh]
                 or      ax, ax
@@ -22322,7 +22322,7 @@ loc_1C9F1:                              ; CODE XREF: sub_1C890+158↑j
                 call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
-loc_1CA05:                              ; CODE XREF: sub_1C890+16C↑j
+loc_1CA05:                              ; CODE XREF: LoadItemData+16C↑j
                 mov     word_2E550, 4
                 mov     ax, [si+10h]
                 or      ax, ax
@@ -22330,11 +22330,11 @@ loc_1CA05:                              ; CODE XREF: sub_1C890+16C↑j
                 call    TestGlobalFlag
                 jnz     short loc_1CA1F
 
-loc_1CA19:                              ; CODE XREF: sub_1C890+180↑j
+loc_1CA19:                              ; CODE XREF: LoadItemData+180↑j
                 mov     word_2E550, 1
 
-loc_1CA1F:                              ; CODE XREF: sub_1C890+15F↑j
-                                        ; sub_1C890+173↑j ...
+loc_1CA1F:                              ; CODE XREF: LoadItemData+15F↑j
+                                        ; LoadItemData+173↑j ...
                 mov     word_2E40C, 0
                 mov     word_2E40E, 0
                 mov     word_2E410, 0
@@ -22348,24 +22348,24 @@ loc_1CA1F:                              ; CODE XREF: sub_1C890+15F↑j
                 jz      short loc_1CA4F
                 or      word_2E40E, 1
 
-loc_1CA4F:                              ; CODE XREF: sub_1C890+1A6↑j
-                                        ; sub_1C890+1B8↑j
+loc_1CA4F:                              ; CODE XREF: LoadItemData+1A6↑j
+                                        ; LoadItemData+1B8↑j
                 push    cs
                 call    near ptr sub_1B702
                 test    word ptr es:[si+0Eh], 1
                 jz      short loc_1CA60
                 and     word_328C4, 0FFFEh
 
-loc_1CA60:                              ; CODE XREF: sub_1C890+1C9↑j
+loc_1CA60:                              ; CODE XREF: LoadItemData+1C9↑j
                 mov     ax, 0
                 retf
-sub_1C890       endp
+LoadItemData    endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CA64       proc far                ; CODE XREF: sub_17B92+82↑P
+sub_1CA64       proc far                ; CODE XREF: UseItem+82↑P
                 mov     ax, es:[si+10h]
                 mov     word_2E410, ax
                 mov     ax, word_2E550
@@ -22538,7 +22538,7 @@ sub_1CBC4       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CBF3       proc far                ; CODE XREF: sub_17B92+1A1↑P
+sub_1CBF3       proc far                ; CODE XREF: UseItem+1A1↑P
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -23070,7 +23070,7 @@ seg048          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-StrFillN        proc far                ; CODE XREF: sub_17B92+373↑P
+StrFillN        proc far                ; CODE XREF: UseItem+373↑P
                                         ; EraseLabelText+7↓P
                 push    es              ; StrFillN(dest=bx, count=ah, fill=al): writes `count` copies of `fill` into dest then a null terminator; returns bx = pointer to the terminator (same convention as StpCpy/StrCat). Used e.g. to blank a text buffer with spaces before rebuilding a label in it.
                 push    di
@@ -38782,7 +38782,7 @@ sub_25C61       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_25CFA       proc far                ; CODE XREF: sub_17B92+338↑P
+sub_25CFA       proc far                ; CODE XREF: UseItem+338↑P
                                         ; sub_1C589+11C↑P ...
                 cmp     word ptr [si+0B4h], 0
                 jnz     short loc_25D02
@@ -42430,7 +42430,7 @@ sub_27B0D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27B42       proc far                ; CODE XREF: sub_1C890+50↑P
+sub_27B42       proc far                ; CODE XREF: LoadItemData+50↑P
                 push    si
                 mov     bx, 9043h
                 mov     si, 0CE47h
@@ -42509,7 +42509,7 @@ sub_27BAD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BD6       proc far                ; CODE XREF: sub_1C890+2A↑P
+sub_27BD6       proc far                ; CODE XREF: LoadItemData+2A↑P
                 push    si
                 mov     bx, 9043h
                 mov     si, 0CE43h
@@ -42528,7 +42528,7 @@ sub_27BD6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27BF7       proc far                ; CODE XREF: sub_1C890+A0↑P
+sub_27BF7       proc far                ; CODE XREF: LoadItemData+A0↑P
                 push    si
                 mov     bx, 9043h
                 mov     si, 0CE4Fh
@@ -45065,7 +45065,7 @@ sub_28FF9       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29040       proc far                ; CODE XREF: sub_17B92:loc_17F25↑P
+sub_29040       proc far                ; CODE XREF: UseItem:loc_17F25↑P
                                         ; sub_1C589+188↑P ...
                 push    es
                 push    di
@@ -56614,14 +56614,14 @@ word_2E40C      dw 0                    ; DATA XREF: sub_1B717+3↑w
                                         ; sub_1B717+9↑w ...
 word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
                                         ; sub_1BB48+1F↑r ...
-word_2E410      dw 0                    ; DATA XREF: sub_17B92+1D↑r
-                                        ; sub_17B92:loc_17BBF↑r ...
+word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r
+                                        ; UseItem:loc_17BBF↑r ...
 word_2E412      dw 0                    ; DATA XREF: sub_13EDF+30↑w
                                         ; sub_147FF+21↑w ...
 word_2E414      dw 0                    ; DATA XREF: sub_193BE+1C↑w
                                         ; sub_193BE+52↑w ...
-word_2E416      dw 0                    ; DATA XREF: sub_17B92:loc_17DC7↑r
-                                        ; sub_17B92:loc_17DE0↑r ...
+word_2E416      dw 0                    ; DATA XREF: UseItem:loc_17DC7↑r
+                                        ; UseItem:loc_17DE0↑r ...
                 db    0
                 db    0
                 db    0
@@ -56642,8 +56642,8 @@ word_2E416      dw 0                    ; DATA XREF: sub_17B92:loc_17DC7↑r
                 db    0
                 db    0
                 db    0
-word_2E42C      dw 0                    ; DATA XREF: sub_1C890↑w
-                                        ; sub_1C890+2F↑r
+word_2E42C      dw 0                    ; DATA XREF: LoadItemData↑w
+                                        ; LoadItemData+2F↑r
                 db    0
                 db    0
                 db    0
@@ -56912,12 +56912,12 @@ word_2E548      dw 0                    ; DATA XREF: sub_12554:loc_125C7↑w
                                         ; sub_12554+B3↑w ...
 word_2E54A      dw 0                    ; DATA XREF: sub_12554+4D↑w
                                         ; sub_12554+61↑w ...
-word_2E54C      dw 0                    ; DATA XREF: sub_17B92+76↑r
-                                        ; sub_17B92+10E↑r ...
-word_2E54E      dw 0                    ; DATA XREF: sub_17B92+72↑r
-                                        ; sub_17B92:loc_17C9C↑r ...
+word_2E54C      dw 0                    ; DATA XREF: UseItem+76↑r
+                                        ; UseItem+10E↑r ...
+word_2E54E      dw 0                    ; DATA XREF: UseItem+72↑r
+                                        ; UseItem:loc_17C9C↑r ...
 word_2E550      dw 0                    ; DATA XREF: sub_1732B+EF↑w
-                                        ; sub_17B92+25E↑w ...
+                                        ; UseItem+25E↑w ...
 fontOffset      dw 0                    ; DATA XREF: sub_1A5F6+8E↑w
                                         ; sub_1B96F+B6↑w ...
 word_2E554      dw 0                    ; DATA XREF: FindObjectAtPosition:loc_218AC↑w
@@ -70266,9 +70266,9 @@ word_31976      dw 0                    ; DATA XREF: FadePaletteStep+8↑w
                 db    0
                 db    0
                 db    0
-word_3197C      dw 0                    ; DATA XREF: sub_1C890+F4↑w
+word_3197C      dw 0                    ; DATA XREF: LoadItemData+F4↑w
                                         ; sub_1CB37+17↑r ...
-word_3197E      dw 0                    ; DATA XREF: sub_1C890+127↑w
+word_3197E      dw 0                    ; DATA XREF: LoadItemData+127↑w
                                         ; sub_1CB37:loc_1CB93↑r
 word_31980      dw 0                    ; DATA XREF: sub_27B0D+30↑w
                                         ; sub_27CC9+30↑w ...
@@ -74225,8 +74225,8 @@ word_328F0      dw 0                    ; DATA XREF: sub_20C8E+48↑r
                                         ; sub_20D2F+CD↑r ...
 word_328F2      dw 0                    ; DATA XREF: sub_20C8E+54↑r
                                         ; sub_20D2F+D9↑r ...
-word_328F4      dw 0                    ; DATA XREF: sub_17B92:loc_17F7E↑r
-                                        ; sub_17B92+3F3↑r ...
+word_328F4      dw 0                    ; DATA XREF: UseItem:loc_17F7E↑r
+                                        ; UseItem+3F3↑r ...
 word_328F6      dw 0                    ; DATA XREF: sub_1BB48+12↑w
                                         ; sub_1BB48+1B↑w ...
 word_328F8      dw 0                    ; DATA XREF: sub_1BB48+22↑w
@@ -74239,8 +74239,8 @@ word_328FE      dw 0                    ; DATA XREF: sub_13090+5B↑w
                                         ; sub_13090+68↑w ...
 word_32900      dw 0                    ; DATA XREF: sub_15429+71↑w
                                         ; sub_15429+9B↑w ...
-word_32902      dw 0                    ; DATA XREF: sub_17B92:loc_17E8B↑r
-                                        ; sub_17B92+33D↑r ...
+word_32902      dw 0                    ; DATA XREF: UseItem:loc_17E8B↑r
+                                        ; UseItem+33D↑r ...
 word_32904      dw 0                    ; DATA XREF: HandleMovementInput+4A↑w
                                         ; HandleMovementInput+92↑w ...
 word_32906      dw 0                    ; DATA XREF: sub_13FCF+46↑w
@@ -74249,7 +74249,7 @@ word_32908      dw 0                    ; DATA XREF: sub_16881+4D↑w
                                         ; sub_16881:loc_168F6↑r ...
 word_3290A      dw 0                    ; DATA XREF: sub_1AC80+6↑w
                                         ; sub_1AC80+1D↑r ...
-word_3290C      dw 0                    ; DATA XREF: sub_17B92+151↑r
+word_3290C      dw 0                    ; DATA XREF: UseItem+151↑r
                                         ; sub_1AEF8+B↑w ...
 word_3290E      dw 0                    ; DATA XREF: sub_13FCF+A6↑w
                                         ; sub_13FCF+BE↑r ...
@@ -86000,7 +86000,7 @@ word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r
 word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r
                                         ; sub_178A6:loc_178D5↑r ...
 word_36D09      dw 0                    ; DATA XREF: sub_197B9+15B↑r
-                                        ; sub_1C890:loc_1C98C↑r ...
+                                        ; LoadItemData:loc_1C98C↑r ...
 word_36D0B      dw 0                    ; DATA XREF: sub_197B9+188↑r
                                         ; sub_24D30+254↑r ...
                 db 0FFh

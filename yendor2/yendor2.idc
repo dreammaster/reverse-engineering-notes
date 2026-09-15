@@ -2766,7 +2766,9 @@ static Bytes_0(void) {
 	create_insn	(0X17AC5);
 	create_insn	(0X17B09);
 	create_insn	(0X17B67);
+	set_cmt	(0X17B92,	"UseItem, reached from a normal keyboard command slot (called directly from `start`). Calls LoadItemData first; if that signals nothing to do, bails. Otherwise dispatches on word_2E410 (the loaded item's type-flags word) to one of several type-specific effect handlers (sub_1BF94/sub_1C123/sub_1C589/sub_1BEA1/sub_1BBED/sub_1BB48, plus a fallback keyed on a secondary type field) -- none named yet.",	0);
 	create_insn	(0X17B92);
+	set_name	(0X17B92,	"UseItem");
 	create_insn	(x=0X17BA4);
 	op_hex		(x,	1);
 	create_insn	(x=0X17BAF);
@@ -4104,7 +4106,9 @@ static Bytes_0(void) {
 	create_insn	(0X1C874);
 	create_insn	(x=0X1C888);
 	op_hex		(x,	1);
+	set_cmt	(0X1C890,	"LoadItemData(ax=item id): frees any previously-loaded item data buffers, reads WORLD.DAT's item catalog record (fixed address 0xBCE, FileEntry bx=0x9043) to find this item's data block, allocates a buffer sized to fit, and reads the item's data from WORLD.DAT into it. WORLD.DAT's item-data catalog, structurally similar to g_pictureDir's role for PICTURES.VGA.",	0);
 	create_insn	(0X1C890);
+	set_name	(0X1C890,	"LoadItemData");
 	create_insn	(x=0X1C89E);
 	op_hex		(x,	1);
 	set_cmt	(0X1C8A0,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -5067,6 +5071,15 @@ static Bytes_0(void) {
 	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
 	set_name	(0X208CA,	"TickStatusEffects");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X208F9);
 	create_insn	(x=0X20900);
 	op_hex		(x,	1);
@@ -5109,15 +5122,6 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X20B68);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X20B70);
 	op_hex		(x,	1);
 	create_insn	(x=0X20B78);
@@ -9100,6 +9104,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D338);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2D343);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D34E);
@@ -9170,15 +9183,6 @@ static Bytes_1(void) {
 	set_cmt	(0X2D585,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X2D585);
 	op_hex		(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2D5AF);
 	create_insn	(0X2D5CE);
 	create_insn	(0X2D5E0);
