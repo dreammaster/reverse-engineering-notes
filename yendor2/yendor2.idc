@@ -1749,7 +1749,9 @@ static Bytes_0(void) {
 	create_insn	(0X137C3);
 	create_insn	(x=0X137D6);
 	op_hex		(x,	1);
+	set_cmt	(0X1381C,	"Shows 'DURATION- <n> MINUTES' for a scroll/potion's timed effect (value from word_2E548's [+4] field x10). Called from RunClueBookItemDetailWithAbilityInfo.",	0);
 	create_insn	(0X1381C);
+	set_name	(0X1381C,	"ShowItemEffectDuration");
 	create_insn	(0X1385C);
 	set_cmt	(0X1388C,	"msg",	0);
 	create_insn	(x=0X138A1);
@@ -1764,7 +1766,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X138E9);
 	op_hex		(x,	1);
 	set_cmt	(0X1394E,	"msg",	0);
+	set_cmt	(0X13957,	"Shows the clue-book description of an item's granted ability effect: either a percent-chance line, or an effect-amount line whose value (selected by word_32974) uses the exact same damage constants as ResolveAbilityEffect's own dispatch -- i.e. shows the real numbers the ability uses in combat. Called from RunClueBookItemDetailWithAbilityInfo.",	0);
 	create_insn	(0X13957);
+	set_name	(0X13957,	"ShowItemAbilityEffectInfo");
 	create_insn	(0X13993);
 	create_insn	(x=0X13997);
 	op_hex		(x,	1);
@@ -1996,7 +2000,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14833,	"Draws a label (bx=msg) then, copying a 4-byte field from a caller-supplied record (es:[bx]) into scratch word_5104, the BCD4 value only if nonzero. Same role as DrawLabeledBCDIfNonzero but takes a record pointer instead of a direct value pointer.",	0);
 	create_insn	(0X14833);
 	set_name	(0X14833,	"DrawRecordFieldBCDIfNonzero");
+	set_cmt	(0X14876,	"Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.",	0);
 	create_insn	(0X14876);
+	set_name	(0X14876,	"DrawLabeledNumberIfNonzero");
 	create_insn	(0X148B2);
 	create_insn	(0X148EA);
 	set_cmt	(0X148F0,	"msg",	0);
@@ -3788,6 +3794,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1AEF8);
 	op_hex		(x,	1);
 	set_name	(0X1AEF8,	"UseKeyItem");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1AF00);
 	op_hex		(x,	1);
 	create_insn	(x=0X1AF21);
@@ -3825,15 +3840,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1B147,	"Eligibility check for TryEnhanceItemForGold (also called from sub_1CCBC and others, not traced). Selects a held-item field ([+8] or [+6], word_2E548) based on the location's ([+0xC], word_2E546) flag bits, and checks it against a range table at DS:0xBCE ([+0x14]..[+0x16]). Returns eligible (ax=0) if in range.",	0);
 	create_insn	(0X1B147);
 	set_name	(0X1B147,	"IsItemEligibleForEnhance");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B14F);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B156);
@@ -6064,6 +6070,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X235FA);
 	op_hex		(x,	1);
 	set_cmt	(0X2360B,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2360E);
 	op_hex		(x,	1);
 	create_insn	(0X23618);
@@ -6142,15 +6157,6 @@ static Bytes_1(void) {
 	set_name	(0X237D8,	"InitMouse");
 	create_insn	(x=0X237DE);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X237E1,	"DOS - 2+ - GET INTERRUPT VECTOR\nAL = interrupt number\nReturn: ES:BX = value of interrupt vector",	0);
 	create_insn	(x=0X237E1);
 	op_hex		(x,	0);
@@ -9120,6 +9126,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2C17C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2C187);
 	op_hex		(x,	1);
 	create_insn	(x=0X2C192);
@@ -9242,15 +9257,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2C84B,	"this",	0);
 	set_cmt	(0X2C87F,	"ticks",	0);
 	create_insn	(0X2C87F);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2C887);
 	op_hex		(x,	1);
 	create_insn	(0X2C892);

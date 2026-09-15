@@ -5165,7 +5165,7 @@ RunClueBookItemDetailWithAbilityInfo proc far
                 call    ShowClueBookItemDetail
                 test    word ptr [si+0Ch], 1000h
                 jz      short loc_13136
-                call    sub_1381C
+                call    ShowItemEffectDuration
                 jmp     short loc_13149
 ; ---------------------------------------------------------------------------
 
@@ -5189,7 +5189,7 @@ loc_13149:                              ; CODE XREF: RunClueBookItemDetailWithAb
                 jg      short loc_13163
 
 loc_13160:                              ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+37↑j
-                call    sub_13957
+                call    ShowItemAbilityEffectInfo
 
 loc_13163:                              ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+2E↑j
                                         ; RunClueBookItemDetailWithAbilityInfo+3E↑j ...
@@ -5693,7 +5693,7 @@ loc_136BD:                              ; CODE XREF: ShowClueBookItemDetail+3F�
                 add     ax, 0Ah
                 mov     cx, 8Ah
                 mov     word_2E4AC, 1
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 mov     _textPos_y, 45h ; 'E'
                 mov     si, word_2E546
                 call    sub_13707
@@ -5763,7 +5763,7 @@ sub_13780       proc near               ; CODE XREF: RunClueBookItemCategory+20�
                 add     ax, 0
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 mov     _textPos_y, 51h ; 'Q'
                 mov     _textPos_x, 55h ; 'U'
                 call    sub_149DD
@@ -5793,7 +5793,7 @@ loc_137E6:                              ; CODE XREF: sub_137C3+18↑j
                 add     ax, 4
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 mov     _textPos_x, 0AFh
                 mov     si, word_2E548
                 cmp     word ptr [si+4], 0Ah
@@ -5811,8 +5811,8 @@ sub_137C3       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1381C       proc near               ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+18↑p
-                mov     _textPos_y, 39h ; '9'
+ShowItemEffectDuration proc near        ; CODE XREF: RunClueBookItemDetailWithAbilityInfo+18↑p
+                mov     _textPos_y, 39h ; '9' ; Shows 'DURATION- <n> MINUTES' for a scroll/potion's timed effect (value from word_2E548's [+4] field x10). Called from RunClueBookItemDetailWithAbilityInfo.
                 mov     _textPos_x, 67h ; 'g'
                 mov     bx, 8B45h
                 mov     si, word_2E548
@@ -5822,13 +5822,13 @@ sub_1381C       proc near               ; CODE XREF: RunClueBookItemDetailWithAb
                 mov     ax, 0BC28h
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 mov     _font_fgColor, 0Dh
                 mov     _textPos_x, 0B5h
                 mov     bx, 8B4Fh
                 call    writeString
                 retn
-sub_1381C       endp
+ShowItemEffectDuration endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5842,7 +5842,7 @@ sub_1385C       proc near               ; CODE XREF: RunClueBookWeaponCategory+2
                 add     ax, 0
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 call    sub_14A87
                 mov     _textPos_y, 78h ; 'x'
                 mov     _textPos_x, 67h ; 'g'
@@ -5912,8 +5912,8 @@ UpdateScrollArrows endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13957       proc near               ; CODE XREF: RunClueBookItemDetailWithAbilityInfo:loc_13160↑p
-                mov     _textPos_y, 39h ; '9'
+ShowItemAbilityEffectInfo proc near     ; CODE XREF: RunClueBookItemDetailWithAbilityInfo:loc_13160↑p
+                mov     _textPos_y, 39h ; '9' ; Shows the clue-book description of an item's granted ability effect: either a percent-chance line, or an effect-amount line whose value (selected by word_32974) uses the exact same damage constants as ResolveAbilityEffect's own dispatch -- i.e. shows the real numbers the ability uses in combat. Called from RunClueBookItemDetailWithAbilityInfo.
                 cmp     word_2E54A, 0
                 jz      short loc_13993
                 mov     si, word_2E54A
@@ -5924,23 +5924,23 @@ sub_13957       proc near               ; CODE XREF: RunClueBookItemDetailWithAb
                 mov     bx, 88D0h
                 mov     _textPos_x, 67h ; 'g'
 
-loc_1397F:                              ; CODE XREF: sub_13957+1D↑j
+loc_1397F:                              ; CODE XREF: ShowItemAbilityEffectInfo+1D↑j
                 mov     ax, si
                 add     ax, 2
                 mov     cx, 59h ; 'Y'
                 mov     word_2E4AC, 0
-                call    sub_14876
+                call    DrawLabeledNumberIfNonzero
                 jmp     locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13993:                              ; CODE XREF: sub_13957+B↑j
+loc_13993:                              ; CODE XREF: ShowItemAbilityEffectInfo+B↑j
                 mov     si, word_2E548
                 test    word ptr [si], 1
                 jnz     short loc_139A0
                 jmp     loc_13A50
 ; ---------------------------------------------------------------------------
 
-loc_139A0:                              ; CODE XREF: sub_13957+44↑j
+loc_139A0:                              ; CODE XREF: ShowItemAbilityEffectInfo+44↑j
                 mov     _textPos_x, 73h ; 's'
                 mov     _font_fgColor, 0Ah
                 mov     bx, 893Ah       ; msg
@@ -5960,8 +5960,8 @@ loc_139A0:                              ; CODE XREF: sub_13957+44↑j
                 cmp     word_32974, dx
                 jnz     short loc_13A50
 
-loc_139E5:                              ; CODE XREF: sub_13957+6B↑j
-                                        ; sub_13957+75↑j ...
+loc_139E5:                              ; CODE XREF: ShowItemAbilityEffectInfo+6B↑j
+                                        ; ShowItemAbilityEffectInfo+75↑j ...
                 mov     _textPos_x, 9Dh
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -5977,7 +5977,7 @@ loc_139E5:                              ; CODE XREF: sub_13957+6B↑j
                 jmp     locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13A1D:                              ; CODE XREF: sub_13957+B3↑j
+loc_13A1D:                              ; CODE XREF: ShowItemAbilityEffectInfo+B3↑j
                 cmp     word_32974, 1Bh
                 jnz     short loc_13A35
                 mov     _font_fgColor, 0A7h
@@ -5986,7 +5986,7 @@ loc_13A1D:                              ; CODE XREF: sub_13957+B3↑j
                 jmp     locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13A35:                              ; CODE XREF: sub_13957+CB↑j
+loc_13A35:                              ; CODE XREF: ShowItemAbilityEffectInfo+CB↑j
                 mov     dx, _val46
                 cmp     word_32974, dx
                 jnz     short loc_13A50
@@ -5996,8 +5996,8 @@ loc_13A35:                              ; CODE XREF: sub_13957+CB↑j
                 jmp     locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13A50:                              ; CODE XREF: sub_13957+46↑j
-                                        ; sub_13957+8C↑j ...
+loc_13A50:                              ; CODE XREF: ShowItemAbilityEffectInfo+46↑j
+                                        ; ShowItemAbilityEffectInfo+8C↑j ...
                 mov     dx, 88FAh
                 mov     ax, 32h ; '2'
                 cmp     word_32974, 1Dh
@@ -6016,8 +6016,8 @@ loc_13A50:                              ; CODE XREF: sub_13957+46↑j
                 cmp     word_32974, 14h
                 jnz     short loc_13ADE
 
-loc_13A88:                              ; CODE XREF: sub_13957+104↑j
-                                        ; sub_13957+10E↑j ...
+loc_13A88:                              ; CODE XREF: ShowItemAbilityEffectInfo+104↑j
+                                        ; ShowItemAbilityEffectInfo+10E↑j ...
                 push    dx
                 push    ax
                 mov     bx, 8C53h       ; msg
@@ -6032,7 +6032,7 @@ loc_13A88:                              ; CODE XREF: sub_13957+104↑j
                 jl      short loc_13AB6
                 mov     dx, 0B5h
 
-loc_13AB6:                              ; CODE XREF: sub_13957+15A↑j
+loc_13AB6:                              ; CODE XREF: ShowItemAbilityEffectInfo+15A↑j
                 push    dx
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -6046,7 +6046,7 @@ loc_13AB6:                              ; CODE XREF: sub_13957+15A↑j
                 jmp     short locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13ADE:                              ; CODE XREF: sub_13957+12F↑j
+loc_13ADE:                              ; CODE XREF: ShowItemAbilityEffectInfo+12F↑j
                 cmp     word_32974, 18h
                 jnz     short loc_13B0F
                 mov     _textPos_x, 79h ; 'y'
@@ -6060,7 +6060,7 @@ loc_13ADE:                              ; CODE XREF: sub_13957+12F↑j
                 jmp     short locret_13B3E
 ; ---------------------------------------------------------------------------
 
-loc_13B0F:                              ; CODE XREF: sub_13957+18C↑j
+loc_13B0F:                              ; CODE XREF: ShowItemAbilityEffectInfo+18C↑j
                 cmp     word_32974, 1Ch
                 jnz     short locret_13B3E
                 mov     _textPos_x, 67h ; 'g'
@@ -6072,10 +6072,10 @@ loc_13B0F:                              ; CODE XREF: sub_13957+18C↑j
                 mov     _textPos_x, 9Dh
                 call    writeString
 
-locret_13B3E:                           ; CODE XREF: sub_13957+39↑j
-                                        ; sub_13957+C3↑j ...
+locret_13B3E:                           ; CODE XREF: ShowItemAbilityEffectInfo+39↑j
+                                        ; ShowItemAbilityEffectInfo+C3↑j ...
                 retn
-sub_13957       endp
+ShowItemAbilityEffectInfo endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -7279,9 +7279,9 @@ DrawRecordFieldBCDIfNonzero endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14876       proc near               ; CODE XREF: ShowClueBookItemDetail+7E↑p
+DrawLabeledNumberIfNonzero proc near    ; CODE XREF: ShowClueBookItemDetail+7E↑p
                                         ; sub_13780+1E↑p ...
-                push    si
+                push    si              ; Draws a label then a plain integer (not packed-BCD) via FormatNumber, only if [si] is nonzero. Plain-integer sibling of DrawLabeledBCDIfNonzero. Called from ShowClueBookItemDetail, ShowItemEffectDuration, ShowItemAbilityEffectInfo, and sub_13780.
                 push    ax
                 push    cx
                 mov     _font_fgColor, 0Ah
@@ -7299,10 +7299,10 @@ sub_14876       proc near               ; CODE XREF: ShowClueBookItemDetail+7E�
                 call    sub_16262
                 call    writeString
 
-loc_148B0:                              ; CODE XREF: sub_14876+16↑j
+loc_148B0:                              ; CODE XREF: DrawLabeledNumberIfNonzero+16↑j
                 pop     si
                 retn
-sub_14876       endp
+DrawLabeledNumberIfNonzero endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -10006,7 +10006,7 @@ seg012          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16262       proc far                ; CODE XREF: sub_14876+30↑P
+sub_16262       proc far                ; CODE XREF: DrawLabeledNumberIfNonzero+30↑P
                                         ; sub_1E2E5+11↓P ...
                 cmp     byte ptr [bx], 0
                 jz      short locret_16297
@@ -13594,8 +13594,8 @@ seg025          segment byte public 'CODE' use16
 
 ; Attributes: bp-based frame
 
-FormatNumber    proc far                ; CODE XREF: sub_13957+97↑P
-                                        ; sub_13957+163↑P ...
+FormatNumber    proc far                ; CODE XREF: ShowItemAbilityEffectInfo+97↑P
+                                        ; ShowItemAbilityEffectInfo+163↑P ...
 
 var_6           = byte ptr -6
 var_4           = word ptr -4
@@ -37856,8 +37856,8 @@ seg080          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2570C       proc far                ; CODE XREF: sub_13957+9F↑P
-                                        ; sub_13957+16B↑P ...
+sub_2570C       proc far                ; CODE XREF: ShowItemAbilityEffectInfo+9F↑P
+                                        ; ShowItemAbilityEffectInfo+16B↑P ...
                 push    di
                 push    si
                 mov     si, bx
@@ -96111,7 +96111,7 @@ unk_3907E       db    0                 ; DATA XREF: seg111:09AF↑o
                 db    0
                 db    0
                 db    0
-word_39488      dw 0                    ; DATA XREF: sub_1381C+19↑w
+word_39488      dw 0                    ; DATA XREF: ShowItemEffectDuration+19↑w
                 align 8
 word_39490      dw 0                    ; DATA XREF: sub_2278C+27↑w
 byte_39492      db 0                    ; DATA XREF: UseItemType_400+C2↑w

@@ -335,7 +335,13 @@ sites; simpler than `RunClueBookItemCategory` in that it has no click
 navigation) adds an extra ability-info overlay when the item's id
 falls in `CastSpell`'s or `RestCharacter`'s dispatch range — i.e. some
 clue-book items (plausibly the "MAGIC SCROLLS/QUARTZ" subtype) grant a
-spell/ability when used, and the clue book shows what it does.
+spell/ability when used, and the clue book shows what it does via
+`ShowItemEffectDuration` ("DURATION- `<n>` MINUTES") and
+`ShowItemAbilityEffectInfo` (a percent-chance or effect-amount line —
+confirmed to use the *exact same* damage constants as
+`ResolveAbilityEffect`'s own dispatch, i.e. it shows the real combat
+numbers). Both use `DrawLabeledNumberIfNonzero`, the plain-integer
+sibling of `DrawLabeledBCDIfNonzero`.
 
 **Temple/healer paid services**: `UseHealingItem` (4 sites),
 `UseItemType_400`, and `UseTrainingItem` all call

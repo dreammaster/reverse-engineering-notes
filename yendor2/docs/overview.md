@@ -2803,6 +2803,18 @@ book shows what it does. Closes out an old open thread.
 
 355 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ShowItemEffectDuration and ShowItemAbilityEffectInfo
+
+Named the clue-book "ability info" overlay cluster: `ShowItemEffectDuration`
+("DURATION- `<n>` MINUTES") and `ShowItemAbilityEffectInfo`, plus the
+shared `DrawLabeledNumberIfNonzero` helper. Notable cross-reference:
+`ShowItemAbilityEffectInfo`'s effect-amount display uses the *exact
+same* damage constants as `ResolveAbilityEffect`'s combat dispatch —
+direct proof the clue book shows real in-engine numbers, not flavor
+text.
+
+358 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
