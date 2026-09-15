@@ -228,7 +228,10 @@ warns and bails if not; shows a confirm prompt; calls
 handles the "drop" action. `PlaceItemOnGround` recurses into a
 dropped container's 8-slot contents (catalog `[+0xC]` bit `0x2000`,
 the same container flag) so a dropped bag's full contents are placed
-too, not just the container item itself.
+too, not just the container item itself. `IsItemDroppable` itself, for
+a held container, calls `HasDroppableItemInInventory` (base case
+`HasDroppableItemInContainer`) — a container is only droppable if it
+holds at least one directly-droppable item somewhere inside it.
 
 **`SyncAllContainers`** (found via `RepairItemCommand`'s opening call)
 writes every open bag's contents back to `CURGAME` across the *whole

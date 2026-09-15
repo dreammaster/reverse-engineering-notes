@@ -6545,7 +6545,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X257A9);
 	op_hex		(x,	1);
+	set_cmt	(0X257BF,	"Scans an 8-slot CURGAME inventory record for a directly droppable item ([+0xC] bit 1), recursing into any container slot ([+0xC] bit 0x2000) via HasDroppableItemInContainer. Called from IsItemDroppable.",	0);
 	create_insn	(0X257BF);
+	set_name	(0X257BF,	"HasDroppableItemInInventory");
 	set_cmt	(0X257C0,	"this",	0);
 	set_cmt	(0X257C4,	"this",	0);
 	create_insn	(x=0X257F3);
@@ -6553,7 +6555,9 @@ static Bytes_2(void) {
 	create_insn	(x=0X257FA);
 	op_hex		(x,	1);
 	create_insn	(0X25812);
+	set_cmt	(0X25818,	"Base case: scans a container's own 8-slot CURGAME record for a directly droppable item, no further recursion. Called from HasDroppableItemInInventory.",	0);
 	create_insn	(0X25818);
+	set_name	(0X25818,	"HasDroppableItemInContainer");
 	set_cmt	(0X25819,	"this",	0);
 	set_cmt	(0X2581D,	"this",	0);
 	create_insn	(x=0X2584C);
@@ -8796,6 +8800,15 @@ static Bytes_2(void) {
 	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AA62);
 	op_hex		(x,	1);
 	create_insn	(0X2AA6B);
@@ -8848,15 +8861,6 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AD27);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2AD32);
 	set_cmt	(0X2AD94,	"Shows a confirm prompt (msg 0x12); if declined, refreshes the material/gold HUD and returns 0. If confirmed, resolves the selected party record (word_32990 -> sub_25B14) and returns word_328D6. Called from ApplyMultiStatEffect and RestCharacter.",	0);
 	create_insn	(0X2AD94);
@@ -13168,11 +13172,11 @@ static Functions_0(void) {
 	set_frame_size(0X25740, 0X4, 0, 0);
 	add_func    (0X257BF,0X25818);
 	set_func_flags(0X257BF,0x5400);
-	SetType(0X257BF, "int __fastcall sub_257BF(int, int, FileEntry *this);");
+	SetType(0X257BF, "int __fastcall HasDroppableItemInInventory(int, int, FileEntry *this);");
 	set_frame_size(0X257BF, 0X2, 0, 0);
 	add_func    (0X25818,0X25862);
 	set_func_flags(0X25818,0x5400);
-	SetType(0X25818, "int __fastcall sub_25818(int, int, FileEntry *this);");
+	SetType(0X25818, "int __fastcall HasDroppableItemInContainer(int, int, FileEntry *this);");
 	set_frame_size(0X25818, 0X2, 0, 0);
 	add_func    (0X25862,0X2587E);
 	set_func_flags(0X25862,0x5402);

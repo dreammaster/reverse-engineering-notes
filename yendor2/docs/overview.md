@@ -3157,6 +3157,14 @@ Named two small overlay icon drawers called from
 
 407 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: HasDroppableItemInInventory and HasDroppableItemInContainer
+
+Named `IsItemDroppable`'s recursive helpers: a held container is only
+droppable if it holds at least one directly-droppable item somewhere
+inside it.
+
+409 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

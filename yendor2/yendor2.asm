@@ -37983,7 +37983,7 @@ loc_25797:                              ; CODE XREF: IsItemDroppable+7B↓j
                 jnz     short loc_25764
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_257B8
-                call    sub_257BF
+                call    HasDroppableItemInInventory
                 cmp     ax, 0
                 jnz     short loc_25764
 
@@ -37998,9 +37998,9 @@ IsItemDroppable endp
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_257BF(int, int, FileEntry *this)
-sub_257BF       proc near               ; CODE XREF: IsItemDroppable+70↑p
-                push    di
+; int __fastcall HasDroppableItemInInventory(int, int, FileEntry *this)
+HasDroppableItemInInventory proc near   ; CODE XREF: IsItemDroppable+70↑p
+                push    di              ; Scans an 8-slot CURGAME inventory record for a directly droppable item ([+0xC] bit 1), recursing into any container slot ([+0xC] bit 0x2000) via HasDroppableItemInContainer. Called from IsItemDroppable.
                 push    cx              ; this
                 mov     ax, 0BC4Ah
                 mov     bx, 8FFBh       ; this
@@ -38013,7 +38013,7 @@ sub_257BF       proc near               ; CODE XREF: IsItemDroppable+70↑p
                 mov     di, 0BC4Ch
                 mov     cx, 8
 
-loc_257E8:                              ; CODE XREF: sub_257BF+4D↓j
+loc_257E8:                              ; CODE XREF: HasDroppableItemInInventory+4D↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_25809
@@ -38022,35 +38022,35 @@ loc_257E8:                              ; CODE XREF: sub_257BF+4D↓j
                 jnz     short loc_25812
                 test    word ptr [bx+0Ch], 2000h
                 jz      short loc_25809
-                call    sub_25818
+                call    HasDroppableItemInContainer
                 cmp     ax, 0
                 jnz     short loc_25812
 
-loc_25809:                              ; CODE XREF: sub_257BF+2D↑j
-                                        ; sub_257BF+40↑j
+loc_25809:                              ; CODE XREF: HasDroppableItemInInventory+2D↑j
+                                        ; HasDroppableItemInInventory+40↑j
                 add     di, 4
                 loop    loc_257E8
                 xor     ax, ax
                 jmp     short loc_25815
 ; ---------------------------------------------------------------------------
 
-loc_25812:                              ; CODE XREF: sub_257BF+39↑j
-                                        ; sub_257BF+48↑j
+loc_25812:                              ; CODE XREF: HasDroppableItemInInventory+39↑j
+                                        ; HasDroppableItemInInventory+48↑j
                 mov     ax, 0FFFFh
 
-loc_25815:                              ; CODE XREF: sub_257BF+51↑j
+loc_25815:                              ; CODE XREF: HasDroppableItemInInventory+51↑j
                 pop     cx
                 pop     di
                 retn
-sub_257BF       endp
+HasDroppableItemInInventory endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-; int __fastcall sub_25818(int, int, FileEntry *this)
-sub_25818       proc near               ; CODE XREF: sub_257BF+42↑p
-                push    di
+; int __fastcall HasDroppableItemInContainer(int, int, FileEntry *this)
+HasDroppableItemInContainer proc near   ; CODE XREF: HasDroppableItemInInventory+42↑p
+                push    di              ; Base case: scans a container's own 8-slot CURGAME record for a directly droppable item, no further recursion. Called from HasDroppableItemInInventory.
                 push    cx              ; this
                 mov     ax, 0BC6Ch
                 mov     bx, 8FFBh       ; this
@@ -38063,7 +38063,7 @@ sub_25818       proc near               ; CODE XREF: sub_257BF+42↑p
                 mov     di, 0BC6Eh
                 mov     cx, 8
 
-loc_25841:                              ; CODE XREF: sub_25818+3E↓j
+loc_25841:                              ; CODE XREF: HasDroppableItemInContainer+3E↓j
                 mov     ax, [di]
                 or      ax, ax
                 jz      short loc_25853
@@ -38071,21 +38071,21 @@ loc_25841:                              ; CODE XREF: sub_25818+3E↓j
                 test    word ptr [bx+0Ch], 1
                 jnz     short loc_2585C
 
-loc_25853:                              ; CODE XREF: sub_25818+2D↑j
+loc_25853:                              ; CODE XREF: HasDroppableItemInContainer+2D↑j
                 add     di, 4
                 loop    loc_25841
                 xor     ax, ax
                 jmp     short loc_2585F
 ; ---------------------------------------------------------------------------
 
-loc_2585C:                              ; CODE XREF: sub_25818+39↑j
+loc_2585C:                              ; CODE XREF: HasDroppableItemInContainer+39↑j
                 mov     ax, 0FFFFh
 
-loc_2585F:                              ; CODE XREF: sub_25818+42↑j
+loc_2585F:                              ; CODE XREF: HasDroppableItemInContainer+42↑j
                 pop     cx
                 pop     di
                 retn
-sub_25818       endp
+HasDroppableItemInContainer endp
 
 seg082          ends
 
