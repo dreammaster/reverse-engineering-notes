@@ -2357,6 +2357,17 @@ category dispatch.
 
 294 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunEnhanceItemScreen and RunRepairItemScreen
+
+Named the two remaining entry points completing the shop cluster,
+siblings of `RunSellItemScreen`: `RunEnhanceItemScreen`
+(`UseItem+0x1C1`, sets `word_328C6` bit 8) and `RunRepairItemScreen`
+(`UseItem+0x1D0`, sets bit 4) — both otherwise identical to
+`RunSellItemScreen`. All three of `UseItem`'s shop entry points are
+now named.
+
+296 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

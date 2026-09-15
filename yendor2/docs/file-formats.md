@@ -554,7 +554,12 @@ cluster. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
 flags have bit `0x4000` set): sets `word_328C6` bit `0x10` and runs
 the main input loop (`sub_1869D`) so Space triggers
-`TrySellItemForGold`, then rebuilds/redraws the minimap on exit.
+`TrySellItemForGold`, then rebuilds/redraws the minimap on exit. Its
+two siblings, `RunEnhanceItemScreen` (`UseItem+0x1C1`, sets bit 8) and
+`RunRepairItemScreen` (`UseItem+0x1D0`, sets bit 4), are otherwise
+identical — completing the shop cluster's three `UseItem`-reachable
+entry points (sell/enhance/repair), each just setting a different
+`word_328C6` action bit before running the same main input loop.
 All three are manipulated via the packed-BCD
 bignum library (`ConvertWordToBCD4`, `CompareBCD4`/
 `IsBCDCounterAtLeast`, `AddBCD4`/`AddToBCDCounter`, `SubBCD4`/

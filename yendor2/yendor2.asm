@@ -13314,14 +13314,14 @@ loc_17D3B:                              ; CODE XREF: UseItem+19F↑j
 loc_17D4B:                              ; CODE XREF: UseItem+1AF↑j
                 test    word ptr es:[si+0Eh], 100h
                 jz      short loc_17D5A
-                call    sub_1B0CF
+                call    RunEnhanceItemScreen
                 jmp     short loc_17D7D
 ; ---------------------------------------------------------------------------
 
 loc_17D5A:                              ; CODE XREF: UseItem+1BF↑j
                 test    word ptr es:[si+0Eh], 40h
                 jz      short loc_17D69
-                call    sub_1B194
+                call    RunRepairItemScreen
                 jmp     short loc_17D7D
 ; ---------------------------------------------------------------------------
 
@@ -19656,8 +19656,8 @@ sub_1AF49       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
-                or      word_328C6, 8
+RunEnhanceItemScreen proc far           ; CODE XREF: UseItem+1C1↑P
+                or      word_328C6, 8   ; Entry point for the interactive enhance-item screen, reached from UseItem+0x1C1. Sets word_328C6 bit 8 (gates TryEnhanceItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D, then rebuilds/redraws the minimap on exit. Sibling of RunSellItemScreen (bit 0x10) and RunRepairItemScreen (bit 4).
                 or      word_328C4, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
@@ -19683,7 +19683,7 @@ sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
-sub_1B0CF       endp
+RunEnhanceItemScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -19736,8 +19736,8 @@ IsItemEligibleForEnhance endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
-                or      word_328C6, 4
+RunRepairItemScreen proc far            ; CODE XREF: UseItem+1D0↑P
+                or      word_328C6, 4   ; Entry point for the interactive repair-item screen, reached from UseItem+0x1D0. Sets word_328C6 bit 4 (gates TryRepairItemForGold in the main input loop sub_1869D). Otherwise identical to RunSellItemScreen (bit 0x10) and RunEnhanceItemScreen (bit 8).
                 or      word_328C4, 100h
                 call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
@@ -19763,7 +19763,7 @@ sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
-sub_1B194       endp
+RunRepairItemScreen endp
 
 
 ; =============== S U B R O U T I N E =======================================

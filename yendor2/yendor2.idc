@@ -3778,8 +3778,10 @@ static Bytes_0(void) {
 	set_cmt	(0X1B04D,	"msg",	0);
 	create_insn	(0X1B062);
 	create_insn	(0X1B098);
+	set_cmt	(0X1B0CF,	"Entry point for the interactive enhance-item screen, reached from UseItem+0x1C1. Sets word_328C6 bit 8 (gates TryEnhanceItemForGold in the main input loop sub_1869D), shows the resource-depleted overlay and material/gold HUD, runs sub_1869D, then rebuilds/redraws the minimap on exit. Sibling of RunSellItemScreen (bit 0x10) and RunRepairItemScreen (bit 4).",	0);
 	create_insn	(x=0X1B0CF);
 	op_hex		(x,	1);
+	set_name	(0X1B0CF,	"RunEnhanceItemScreen");
 	create_insn	(x=0X1B0D4);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B0E2);
@@ -3807,8 +3809,10 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B171);
 	op_hex		(x,	1);
 	create_insn	(0X1B18C);
+	set_cmt	(0X1B194,	"Entry point for the interactive repair-item screen, reached from UseItem+0x1D0. Sets word_328C6 bit 4 (gates TryRepairItemForGold in the main input loop sub_1869D). Otherwise identical to RunSellItemScreen (bit 0x10) and RunEnhanceItemScreen (bit 8).",	0);
 	create_insn	(x=0X1B194);
 	op_hex		(x,	1);
+	set_name	(0X1B194,	"RunRepairItemScreen");
 	create_insn	(x=0X1B199);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B1A7);
@@ -3947,6 +3951,15 @@ static Bytes_0(void) {
 	create_insn	(x=0X1B7D3);
 	op_hex		(x,	1);
 	create_insn	(0X1B7DD);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1B7E4);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B7EA);
@@ -3968,15 +3981,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1B96F,	"Computes and displays a temple/healer paid-service cost: total = sum over [word_328D4+0x16] iterations of (ax * [0xBCE+0x18]), shown as 'IT WILL COST <total> GOLD <bx-selected reason text>. IS THAT PRICE AGREEABLE?' (msgs 0x805F/0x806D/0x8073). Reason text/bx varies per caller (UseHealingItem x4, UseItemType_400, UseTrainingItem). All 6 traced call sites retf immediately after calling this -- none poll Y/N or deduct gold here. The actual confirm+pay step, if any, isn't found yet.",	0);
 	create_insn	(0X1B96F);
 	set_name	(0X1B96F,	"ShowHealingCostPrompt");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1B978);
 	op_hex		(x,	1);
 	create_insn	(0X1BA35);
@@ -6988,13 +6992,6 @@ static Bytes_1(void) {
 	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27A5E);
 	set_name	(0X27A5E,	"TestGlobalFlag");
-	create_insn	(0X27A66);
-	set_cmt	(0X27A6E,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.",	0);
-	create_insn	(0X27A6E);
-	set_name	(0X27A6E,	"GetRecordFlagBitAndWord_10C");
-	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
-	create_insn	(0X27A98);
-	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
 }
 
 //------------------------------------------------------------------------
@@ -7004,6 +7001,13 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(0X27A66);
+	set_cmt	(0X27A6E,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.",	0);
+	create_insn	(0X27A6E);
+	set_name	(0X27A6E,	"GetRecordFlagBitAndWord_10C");
+	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
+	create_insn	(0X27A98);
+	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
 	set_cmt	(0X27AC1,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27AC1);
 	set_name	(0X27AC1,	"GetRecordFlagBitAndWord_CA");
@@ -10379,6 +10383,15 @@ static Bytes_2(void) {
 	set_name	(0X35A3A,	"aRepairItem");
 	create_strlit	(0X35A46,	0XA);
 	set_name	(0X35A46,	"aICanNot_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X35A50,	0XC);
 	set_name	(0X35A50,	"aRepairThat");
 	create_strlit	(0X35A5C,	0X10);
@@ -10411,15 +10424,6 @@ static Bytes_2(void) {
 	set_name	(0X35B45,	"aToRepair");
 	create_strlit	(0X35B4F,	0XD);
 	set_name	(0X35B4F,	"aTheItemHas");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X35B5C,	0X8);
 	set_name	(0X35B5C,	"aFailed_0");
 	create_strlit	(0X35B64,	0XD);
