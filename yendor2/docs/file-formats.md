@@ -1062,19 +1062,31 @@ persisted bulk edit. `B`/`F` jump the legend strips to a per-level tile
 palette read from `WORLD.DAT` (`sub_205C0`/`sub_27FE0`, FileEntry
 `bx=0x9043`; record layout not fully traced yet). This is a
 debug/level-editor screen left reachable in the shipped binary, not a
-passive legend. A sibling cluster
-(`sub_20C8E`/`sub_20CEC`/`sub_20D2F`/`sub_20E12`/`sub_29FF6`, called
-from the same `sub_20C1E` master-redraw dispatch the minimap uses)
-draws two small "current cell class" preview boxes using `g_pictureDir`
-entries 4 and 5 as fixed panel graphics, and scans candidate lists
-(reading the `0xE551` table's `+0`/`+2` fields, compared via the new
-`IsPairedValueMatch` fuzzy-equality helper) to highlight the matching
-legend icon — structure understood, but the driving inputs
-(`word_328E6`..`word_328F2`, seven consecutive words that are read in
-several places but have no literal write site anywhere in the
-disassembly — almost certainly filled by an indirect/computed pointer
-write rather than a `mov word_328E6, ax`) remain unidentified, so no
-name was forced onto that cluster.
+passive legend. A sibling cluster, then called
+`sub_20C8E`/`sub_20CEC`/`sub_20D2F`/`sub_20E12`/`sub_29FF6` — since
+named `ExtendDungeonCeilingPass`/`ExtendDungeonCeilingTexture`/
+`DrawDungeonFloorAndCeiling`/`ExtendDungeonFloorTexture` and an
+untraced tiling helper — was speculated here to draw "two small
+'current cell class' preview boxes... to highlight the matching
+legend icon". **Correction, from this session's later dungeon-
+rendering trace**: that reading doesn't hold up. These functions
+draw the actual floor/ceiling pictures read directly from the cell
+table (`word_2E498`/`word_2E4A0`, not fixed `g_pictureDir` entries
+4/5) via `DrawPicture`, and are called from `RedrawDungeonScreen`/
+`RefreshDungeonScreen` (`sub_20C1E`/`sub_20C46`, since named) as part
+of the ordinary first-person corridor render — floor/ceiling texture
+continuity across matching cells, not a map-editor legend-highlight
+box. `IsPairedValueMatch` is still correctly identified as the
+fuzzy-equality helper driving it. The driving inputs
+(`word_328E6`..`word_328F2`, seven consecutive per-row source-cell
+pointers into the level's map data) are now understood
+*semantically* — `BuildDungeonViewportCells` (since named) computes
+the facing-dependent stride that ultimately produces them, and every
+render pass this session traced reads them the same way — but their
+literal write site is still not found in the disassembly (no
+`mov word_328E6, ax` anywhere), so they're almost certainly filled by
+an indirect/computed pointer write. Left as an open question, though
+now a much narrower one.
 
 **Open question — how the two tile-type lookup tables actually work**:
 dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like

@@ -2614,7 +2614,25 @@ error path suggests Tab-style navigation between the two fields.
 
 329 named of 769 functions as of this update.
 
-## Current state (2026-09-14, before any work this session)
+### 2026-09-15 session update, continued: correction — the "legend highlight" cluster is actually the ordinary dungeon floor/ceiling render
+
+An earlier round this session, while documenting the hidden map-editor
+screen (`RunMapEditorScreen`), flagged a "sibling cluster"
+(`sub_20C8E`/`sub_20CEC`/`sub_20D2F`/`sub_20E12`/`sub_29FF6`) as
+drawing "two small 'current cell class' preview boxes... to highlight
+the matching legend icon" — structure understood but not confirmed.
+This round's dungeon-rendering trace independently named all of these
+(`ExtendDungeonCeilingPass`/`ExtendDungeonCeilingTexture`/
+`DrawDungeonFloorAndCeiling`/`ExtendDungeonFloorTexture`) and found
+that reading doesn't hold up: they draw the actual floor/ceiling
+pictures for the ordinary first-person corridor view, called from
+`RedrawDungeonScreen`/`RefreshDungeonScreen`, not a map-editor
+legend-highlight box. Also narrows the open question about
+`word_328E6`..`word_328F2`'s write site: now semantically understood
+(per-row source-cell pointers computed via `BuildDungeonViewportCells`)
+even though the literal write instruction still isn't found.
+`file-formats.md` corrected in place; this entry left standing as the
+historical record of the original (wrong) framing.
 
 Via `identify.py`:
 
