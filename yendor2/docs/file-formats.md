@@ -365,6 +365,15 @@ elsewhere, and redraws the gold readout afterward via
 adds the unit price to both `g_partyGold` and a second counter
 `0xB30`) not yet disentangled with enough confidence to name safely.
 
+### The main pause/options dialog
+
+`RunGameDialog` drives the pause dialog with its 8 `GameDialog_draw*`
+icons (Animation, Dos, Return, Load, Music, NewGame, Save, SoundFx).
+`SelectGameDialogOption` is its input handler: polls keyboard
+(`'1'`-`'6'`, or `'L'`/`'S'` shortcuts in one input mode) and mouse
+(region table `0x5CD0`) to pick one of the 8 options, storing the
+1-based selection in `word_3291E`.
+
 ### Quest-item and party-inventory range checks
 
 `IsItemRangeAvailable` (**correction**: named `CheckTransportAvailability`

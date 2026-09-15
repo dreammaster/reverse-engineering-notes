@@ -4912,7 +4912,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1F288);
 	op_hex		(x,	1);
+	set_cmt	(0X1F29D,	"Input handler for RunGameDialog's 8 icon options (Animation/Dos/Return/Load/Music/NewGame/Save/SoundFx): polls keyboard ('1'-'6', or 'L'/'S' shortcuts when word_32910=='.') and mouse (region table 0x5CD0) to pick one, storing the 1-based selection in word_3291E.",	0);
 	create_insn	(0X1F29D);
+	set_name	(0X1F29D,	"SelectGameDialogOption");
 	create_insn	(0X1F2DD);
 	create_insn	(0X1F2EF);
 	create_insn	(0X1F2FA);
@@ -6445,6 +6447,15 @@ static Bytes_1(void) {
 	create_insn	(0X2587E);
 	create_insn	(x=0X25891);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2589A);
 	create_insn	(0X258CC);
 	create_insn	(0X258D3);
@@ -6466,15 +6477,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X25A3B);
 	op_hex		(x,	1);
 	set_name	(0X25A3B,	"SetPaletteRange");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X25A46,	"Video status bits:\n0: retrace.  1=display is in vert or horiz retrace.\n1: 1=light pen is triggered; 0=armed\n2: 1=light pen switch is open; 0=closed\n3: 1=vertical sync pulse is occurring.",	0);
 	create_insn	(x=0X25A47);
 	op_hex		(x,	1);
@@ -9879,6 +9881,15 @@ static Bytes_2(void) {
 	set_name	(0X329C0,	"_val9");
 	create_word	(0X329C2);
 	set_name	(0X329C2,	"_val44");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329C4);
 	set_name	(0X329C4,	"_val45");
 	create_word	(0X329C6);
@@ -9910,15 +9921,6 @@ static Bytes_2(void) {
 	set_name	(0X329E0,	"_ptr5");
 	create_word	(0X329E2);
 	set_name	(0X329E2,	"_ptr6");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329E4);
 	set_name	(0X329E4,	"_ptr7");
 	create_word	(0X329E6);

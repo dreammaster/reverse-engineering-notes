@@ -26296,7 +26296,7 @@ loc_1EC7C:                              ; CODE XREF: RunGameDialog+1F9↑j
 loc_1EC8A:                              ; CODE XREF: RunGameDialog+304↓j
                 mov     word_32910, 2Ch ; ','
                 call    sub_238CD
-                call    sub_1F29D
+                call    SelectGameDialogOption
                 call    RestoreCursorBackgroundIfDirty
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1ECA7
@@ -26406,7 +26406,7 @@ loc_1EDAA:                              ; CODE XREF: RunGameDialog+1AE↑j
 loc_1EDB8:                              ; CODE XREF: RunGameDialog+3B3↓j
                 mov     word_32910, 51h ; 'Q'
                 call    sub_238CD
-                call    sub_1F29D
+                call    SelectGameDialogOption
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1EDD5
                 call    RestoreCursorBackgroundIfDirty
@@ -26834,52 +26834,52 @@ sub_1F217       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1F29D       proc near               ; CODE XREF: RunGameDialog+227↑p
+SelectGameDialogOption proc near        ; CODE XREF: RunGameDialog+227↑p
                                         ; RunGameDialog+355↑p ...
-                mov     byte_2E400, 0
+                mov     byte_2E400, 0   ; Input handler for RunGameDialog's 8 icon options (Animation/Dos/Return/Load/Music/NewGame/Save/SoundFx): polls keyboard ('1'-'6', or 'L'/'S' shortcuts when word_32910=='.') and mouse (region table 0x5CD0) to pick one, storing the 1-based selection in word_3291E.
                 call    PollKeyboardInput
                 cmp     errorCode, 0
-                jz      short sub_1F29D
+                jz      short SelectGameDialogOption
                 cmp     errorCode, 1
                 jz      short loc_1F2FA
                 cmp     errorCode, 3
-                jnz     short sub_1F29D
+                jnz     short SelectGameDialogOption
                 mov     ax, word_2E76E
                 mov     bx, word_2E770
                 mov     si, 5CD0h
                 call    HitTestRegionTable
                 cmp     ax, 0
-                jz      short sub_1F29D
+                jz      short SelectGameDialogOption
                 cmp     ax, 1
-                jl      short sub_1F29D
+                jl      short SelectGameDialogOption
                 cmp     ax, 6
                 jg      short loc_1F2DD
                 jmp     loc_1F362
 ; ---------------------------------------------------------------------------
 
-loc_1F2DD:                              ; CODE XREF: sub_1F29D+3B↑j
+loc_1F2DD:                              ; CODE XREF: SelectGameDialogOption+3B↑j
                 cmp     word_32910, 2Ch ; ','
                 jz      short loc_1F2EF
                 cmp     ax, 8
-                jnz     short sub_1F29D
+                jnz     short SelectGameDialogOption
                 mov     byte_2E400, 1Bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F2EF:                              ; CODE XREF: sub_1F29D+45↑j
+loc_1F2EF:                              ; CODE XREF: SelectGameDialogOption+45↑j
                 cmp     ax, 7
-                jnz     short sub_1F29D
+                jnz     short SelectGameDialogOption
                 mov     byte_2E400, 1Bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F2FA:                              ; CODE XREF: sub_1F29D+16↑j
+loc_1F2FA:                              ; CODE XREF: SelectGameDialogOption+16↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_1F302
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F302:                              ; CODE XREF: sub_1F29D+62↑j
+loc_1F302:                              ; CODE XREF: SelectGameDialogOption+62↑j
                 mov     ax, 1
                 cmp     byte_2E400, 31h ; '1'
                 jz      short loc_1F362
@@ -26906,20 +26906,20 @@ loc_1F302:                              ; CODE XREF: sub_1F29D+62↑j
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F352:                              ; CODE XREF: sub_1F29D+A6↑j
+loc_1F352:                              ; CODE XREF: SelectGameDialogOption+A6↑j
                 cmp     byte_2E400, 53h ; 'S'
                 jnz     short loc_1F35F
                 mov     byte_2E400, 1Bh
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1F35F:                              ; CODE XREF: sub_1F29D+AD↑j
-                                        ; sub_1F29D+BA↑j
-                jmp     sub_1F29D
+loc_1F35F:                              ; CODE XREF: SelectGameDialogOption+AD↑j
+                                        ; SelectGameDialogOption+BA↑j
+                jmp     SelectGameDialogOption
 ; ---------------------------------------------------------------------------
 
-loc_1F362:                              ; CODE XREF: sub_1F29D+3D↑j
-                                        ; sub_1F29D+6D↑j ...
+loc_1F362:                              ; CODE XREF: SelectGameDialogOption+3D↑j
+                                        ; SelectGameDialogOption+6D↑j ...
                 mov     word_3291E, ax
                 call    RestoreCursorBackgroundIfDirty
                 mov     ax, word_3291E
@@ -26934,7 +26934,7 @@ loc_1F362:                              ; CODE XREF: sub_1F29D+3D↑j
                 call    DrawCheckboxIndicator
                 call    sub_238CD
                 retn
-sub_1F29D       endp
+SelectGameDialogOption endp
 
 
 ; =============== S U B R O U T I N E =======================================

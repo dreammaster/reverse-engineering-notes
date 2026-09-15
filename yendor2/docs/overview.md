@@ -2597,6 +2597,14 @@ the player, redraws the screen/minimap, and resets combat state
 
 326 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: SelectGameDialogOption
+
+Named `sub_1F29D`, `RunGameDialog`'s input handler: polls keyboard/
+mouse to pick one of its 8 icon options (Animation/Dos/Return/Load/
+Music/NewGame/Save/SoundFx).
+
+327 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
