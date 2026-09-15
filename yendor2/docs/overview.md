@@ -2209,6 +2209,17 @@ party-member selection handler (`sub_19553`).
 
 277 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawAlchemyStatusPanel
+
+Named `sub_1E546`, the alchemy screen's character/resource panel:
+name, a "MAGIC:" current/max bar, and "MAGIC ORE: " (`0x94B7`) /
+"NUORE: " (`0x94BB`) readouts. The "MAGIC:" label independently
+confirms `+0x54`/`+0x94` as MP current/max (already established via
+`CastSpell`'s heal codes) — two independent confirmations for the same
+field pair now.
+
+278 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

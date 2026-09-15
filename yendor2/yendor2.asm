@@ -24629,7 +24629,7 @@ loc_1DD35:                              ; CODE XREF: sub_1DCE0+178↓j
                 call    sub_1E522
                 call    sub_1E3AF
                 call    sub_1E356
-                call    sub_1E546
+                call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 call    sub_238CD
 
@@ -24856,7 +24856,7 @@ loc_1DEDF:                              ; CODE XREF: sub_1DCE0+1F0↑j
                 call    sub_1E522
                 call    sub_1E3AF
                 call    sub_1E356
-                call    sub_1E546
+                call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 jmp     loc_1DFAD
 ; ---------------------------------------------------------------------------
@@ -25017,7 +25017,7 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 call    sub_1E1A7
                 call    sub_1E3AF
                 call    sub_1E356
-                call    sub_1E546
+                call    DrawAlchemyStatusPanel
                 call    DrawMouseCursor
                 mov     ax, 5           ; ticks
                 call    wait
@@ -25282,7 +25282,7 @@ sub_1E285       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E2E5       proc near               ; CODE XREF: sub_1E546+8A↓p
+sub_1E2E5       proc near               ; CODE XREF: DrawAlchemyStatusPanel+8A↓p
                 push    bx
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -25568,9 +25568,9 @@ sub_1E522       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1E546       proc near               ; CODE XREF: sub_1DCE0+5E↑p
+DrawAlchemyStatusPanel proc near        ; CODE XREF: sub_1DCE0+5E↑p
                                         ; sub_1DCE0+220↑p ...
-                call    ClearStatusPanelIfDirty
+                call    ClearStatusPanelIfDirty ; Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.
                 or      word_328C4, 100h
                 mov     ax, 0F1h
                 mov     _textPos_x, ax
@@ -25595,7 +25595,7 @@ sub_1E546       proc near               ; CODE XREF: sub_1DCE0+5E↑p
                 jle     short loc_1E5AF
                 add     _font_fgColor, 2
 
-loc_1E5AF:                              ; CODE XREF: sub_1E546+62↑j
+loc_1E5AF:                              ; CODE XREF: DrawAlchemyStatusPanel+62↑j
                 mov     bx, 7B15h       ; msg
                 call    writeString
                 mov     _font_fgColor, 0Fh
@@ -25620,7 +25620,7 @@ loc_1E5AF:                              ; CODE XREF: sub_1E546+62↑j
                 mov     si, 94BBh
                 call    FormatAndDrawBCD4
                 retn
-sub_1E546       endp
+DrawAlchemyStatusPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================

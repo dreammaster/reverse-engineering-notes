@@ -4670,7 +4670,9 @@ static Bytes_1(void) {
 	create_insn	(0X1E4D6);
 	create_insn	(0X1E4FA);
 	create_insn	(0X1E522);
+	set_cmt	(0X1E546,	"Alchemy screen status panel (called from sub_1DCE0, unnamed): character name, a 'MAGIC:' current/max bar ([+0x54]/[+0x94] -- confirms these are MP current/max, so +0x52/+0x92 is HP), then 'MAGIC ORE: ' (0x94B7) and 'NUORE: ' (0x94BB) counter readouts. Pairs with CastSpell's 0x1C ability, which converts between these two ore counters.",	0);
 	create_insn	(0X1E546);
+	set_name	(0X1E546,	"DrawAlchemyStatusPanel");
 	create_insn	(x=0X1E54B);
 	op_hex		(x,	1);
 	set_cmt	(0X1E573,	"msg",	0);
@@ -7139,6 +7141,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2849C);
 	op_hex		(x,	1);
 	set_name	(0X2849C,	"StopMusicAndResetTimer");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X284A5);
 	create_insn	(x=0X284B1);
 	op_hex		(x,	1);
@@ -7163,15 +7174,6 @@ static Bytes_1(void) {
 	op_seg		(x,	1);
 	create_insn	(x=0X2853E);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28540);
 	op_hex		(x,	1);
 	create_insn	(x=0X28542);
@@ -10629,6 +10631,15 @@ static Bytes_2(void) {
 	set_name	(0X362CA,	"aTransportation");
 	create_strlit	(0X362DA,	0X8);
 	set_name	(0X362DA,	"aWeapons");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X362E2,	0XC);
 	set_name	(0X362E2,	"aBaseValue");
 	create_strlit	(0X362EE,	0X8);
@@ -10645,15 +10656,6 @@ static Bytes_2(void) {
 	set_name	(0X36321,	"aAnyPanel");
 	create_strlit	(0X3632B,	0XA);
 	set_name	(0X3632B,	"aBackpack");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X36335,	0X5);
 	set_name	(0X36335,	"aBox");
 	create_strlit	(0X3633A,	0X4);
