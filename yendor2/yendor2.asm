@@ -27515,7 +27515,7 @@ dword_1F97C     dd 0                    ; DATA XREF: sub_1FBE1+23↓w
 byte_1F980      db 4 dup(0)             ; DATA XREF: seg059:026A↓w
                                         ; seg059:loc_1FB9D↓r ...
 word_1F984      dw 0                    ; DATA XREF: sub_1FC3F:loc_1FC48↓w
-                                        ; sub_1FD24+E↓r ...
+                                        ; TickWorldAilments+E↓r ...
 byte_1F986      db 4 dup(0), 190h dup(11h), 2Eh, 0FFh, 6, 12h, 0, 2Eh
                                         ; DATA XREF: seg059:01DD↓w
                                         ; seg059:0256↓r ...
@@ -27660,7 +27660,7 @@ sub_1FC3F       proc far                ; CODE XREF: ApplyMapTriggerEffect+7B↑
 
 loc_1FC48:                              ; CODE XREF: sub_1FC3F+6↑j
                 mov     cs:word_1F984, 270Fh
-                call    sub_1FD24
+                call    TickWorldAilments
                 retf
 sub_1FC3F       endp
 
@@ -27770,9 +27770,9 @@ sub_1FD17       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FD24       proc near               ; CODE XREF: sub_1FC3F+10↑p
+TickWorldAilments proc near             ; CODE XREF: sub_1FC3F+10↑p
                                         ; AdvanceGameClock+70↓p
-                push    es
+                push    es              ; 5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.
                 push    di
                 push    si
                 push    bp
@@ -27783,11 +27783,11 @@ sub_1FD24       proc near               ; CODE XREF: sub_1FC3F+10↑p
                 mov     si, 9519h
                 mov     cx, 6
                 mov     dx, cs:word_1F984
-                call    sub_1FDB1
+                call    TickAilmentDuration
                 mov     di, 95EBh
                 mov     cx, 4
 
-loc_1FD40:                              ; CODE XREF: sub_1FD24+41↓j
+loc_1FD40:                              ; CODE XREF: TickWorldAilments+41↓j
                 cmp     word ptr [di], 0
                 jz      short loc_1FD67
                 push    cx
@@ -27800,12 +27800,12 @@ loc_1FD40:                              ; CODE XREF: sub_1FD24+41↓j
                 mov     si, ax
                 mov     cx, 8
                 mov     dx, cs:word_1F984
-                call    sub_1FDB1
+                call    TickAilmentDuration
                 pop     cx
                 add     di, 2
                 loop    loc_1FD40
 
-loc_1FD67:                              ; CODE XREF: sub_1FD24+1F↑j
+loc_1FD67:                              ; CODE XREF: TickWorldAilments+1F↑j
                 mov     dx, cs:word_1F984
                 call    sub_1FE0A
                 mov     ax, word_36C83
@@ -27824,7 +27824,7 @@ loc_1FD67:                              ; CODE XREF: sub_1FD24+1F↑j
                 jnz     short loc_1FDA8
                 and     word_3295A, 0F7FFh
 
-loc_1FDA8:                              ; CODE XREF: sub_1FD24+7C↑j
+loc_1FDA8:                              ; CODE XREF: TickWorldAilments+7C↑j
                 pop     ax
                 pop     bx
                 pop     cx
@@ -27834,46 +27834,46 @@ loc_1FDA8:                              ; CODE XREF: sub_1FD24+7C↑j
                 pop     di
                 pop     es
                 retn
-sub_1FD24       endp
+TickWorldAilments endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FDB1       proc near               ; CODE XREF: sub_1FD24+13↑p
-                                        ; sub_1FD24+3A↑p ...
-                cmp     word ptr [si], 9
+TickAilmentDuration proc near           ; CODE XREF: TickWorldAilments+13↑p
+                                        ; TickWorldAilments+3A↑p ...
+                cmp     word ptr [si], 9 ; TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.
                 jz      short loc_1FDC6
                 cmp     word ptr [si], 0Fh
                 jz      short loc_1FDCE
                 cmp     word ptr [si], 0Ch
                 jz      short loc_1FDD6
 
-loc_1FDC0:                              ; CODE XREF: sub_1FDB1+2E↓j
-                                        ; sub_1FDB1+50↓j ...
+loc_1FDC0:                              ; CODE XREF: TickAilmentDuration+2E↓j
+                                        ; TickAilmentDuration+50↓j ...
                 add     si, 4
-                loop    sub_1FDB1
+                loop    TickAilmentDuration
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_1FDC6:                              ; CODE XREF: sub_1FDB1+3↑j
+loc_1FDC6:                              ; CODE XREF: TickAilmentDuration+3↑j
                 mov     bx, 9425h
                 mov     ax, 0DFFFh
                 jmp     short loc_1FDDC
 ; ---------------------------------------------------------------------------
 
-loc_1FDCE:                              ; CODE XREF: sub_1FDB1+8↑j
+loc_1FDCE:                              ; CODE XREF: TickAilmentDuration+8↑j
                 mov     bx, 9429h
                 mov     ax, 0F7FFh
                 jmp     short loc_1FDDC
 ; ---------------------------------------------------------------------------
 
-loc_1FDD6:                              ; CODE XREF: sub_1FDB1+D↑j
+loc_1FDD6:                              ; CODE XREF: TickAilmentDuration+D↑j
                 mov     bx, 942Bh
                 mov     ax, 0FBFFh
 
-loc_1FDDC:                              ; CODE XREF: sub_1FDB1+1B↑j
-                                        ; sub_1FDB1+23↑j
+loc_1FDDC:                              ; CODE XREF: TickAilmentDuration+1B↑j
+                                        ; TickAilmentDuration+23↑j
                 sub     [si+2], dx
                 jg      short loc_1FDC0
                 mov     word ptr [si+2], 0
@@ -27885,18 +27885,18 @@ loc_1FDDC:                              ; CODE XREF: sub_1FDB1+1B↑j
                 and     word_36C79, ax
                 or      word_328C4, 400h
 
-loc_1FDFE:                              ; CODE XREF: sub_1FDB1+3D↑j
+loc_1FDFE:                              ; CODE XREF: TickAilmentDuration+3D↑j
                 cmp     dx, 1
                 jg      short loc_1FDC0
                 or      word_328CA, 40h
                 jmp     short loc_1FDC0
-sub_1FDB1       endp
+TickAilmentDuration endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1FE0A       proc near               ; CODE XREF: sub_1FD24+48↑p
+sub_1FE0A       proc near               ; CODE XREF: TickWorldAilments+48↑p
                 test    word_36C79, 8000h
                 jnz     short loc_1FE13
                 retn
@@ -27980,7 +27980,7 @@ loc_1FEA3:                              ; CODE XREF: AdvanceGameClock+1C↑j
                 dec     word_32954
                 jnz     short loc_1FEC8
                 mov     cs:word_1F984, 1
-                call    sub_1FD24
+                call    TickWorldAilments
 
 loc_1FEC2:                              ; CODE XREF: AdvanceGameClock+61↑j
                 mov     word_32954, 5
@@ -85864,33 +85864,33 @@ word_36C7F      dw 0                    ; DATA XREF: start+3BF↑r
                                         ; start:loc_103E2↑w ...
 word_36C81      dw 0                    ; DATA XREF: sub_219FA+23D↑r
                                         ; UnlockDoorCommand+9A↑r ...
-word_36C83      dw 0                    ; DATA XREF: sub_1FD24+4B↑r
+word_36C83      dw 0                    ; DATA XREF: TickWorldAilments+4B↑r
                                         ; TickStatusEffects+1B↑w ...
 word_36C85      dw 0                    ; DATA XREF: sub_1A582+5↑r
-                                        ; sub_1FD24+4E↑r ...
-word_36C87      dw 0                    ; DATA XREF: sub_1FD24+52↑r
+                                        ; TickWorldAilments+4E↑r ...
+word_36C87      dw 0                    ; DATA XREF: TickWorldAilments+52↑r
                                         ; TickStatusEffects+21↑w ...
 word_36C89      dw 0                    ; DATA XREF: sub_1A582+F↑r
-                                        ; sub_1FD24+56↑r ...
+                                        ; TickWorldAilments+56↑r ...
 word_36C8B      dw 0                    ; DATA XREF: sub_1A582+19↑r
-                                        ; sub_1FD24+5A↑r ...
-word_36C8D      dw 0                    ; DATA XREF: sub_1FD24+5E↑r
+                                        ; TickWorldAilments+5A↑r ...
+word_36C8D      dw 0                    ; DATA XREF: TickWorldAilments+5E↑r
                                         ; TickStatusEffects+27↑w ...
                 db 0FFh
                 db 0FFh
                 db 0FFh
                 db 0FFh
-word_36C93      dw 0                    ; DATA XREF: sub_1FD24+62↑r
+word_36C93      dw 0                    ; DATA XREF: TickWorldAilments+62↑r
                                         ; sub_2C0FE+1A0↑w
-word_36C95      dw 0                    ; DATA XREF: sub_1FD24+66↑r
+word_36C95      dw 0                    ; DATA XREF: TickWorldAilments+66↑r
                                         ; sub_2C0FE+1AD↑w
-word_36C97      dw 0                    ; DATA XREF: sub_1FD24+6A↑r
+word_36C97      dw 0                    ; DATA XREF: TickWorldAilments+6A↑r
                                         ; sub_2C0FE+1BA↑w
-word_36C99      dw 0                    ; DATA XREF: sub_1FD24+6E↑r
+word_36C99      dw 0                    ; DATA XREF: TickWorldAilments+6E↑r
                                         ; sub_2C0FE+1C7↑w
-word_36C9B      dw 0                    ; DATA XREF: sub_1FD24+72↑r
+word_36C9B      dw 0                    ; DATA XREF: TickWorldAilments+72↑r
                                         ; sub_2C0FE+1D4↑w
-word_36C9D      dw 0                    ; DATA XREF: sub_1FD24+76↑r
+word_36C9D      dw 0                    ; DATA XREF: TickWorldAilments+76↑r
                                         ; sub_2C0FE+1E1↑w
                 db 0FFh
                 db 0FFh

@@ -4994,10 +4994,14 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1FD17);
 	op_hex		(x,	1);
+	set_cmt	(0X1FD24,	"5-minute periodic sweep (AdvanceGameClock). Runs TickAilmentDuration over the 6-entry table at 0x9519 and every party member's 8 main inventory slots ([+0x11A]) -- ailments occupy the same slot storage as items/world-table rows. Calls sub_1FE0A once (a related status sweep, not traced). Sums all 12 known status-duration counters; if all 0, clears word_3295A bit 0x800 so this timer stops firing until something needs it again.",	0);
 	create_insn	(0X1FD24);
+	set_name	(0X1FD24,	"TickWorldAilments");
 	create_insn	(x=0X1FDA2);
 	op_hex		(x,	1);
+	set_cmt	(0X1FDB1,	"TickAilmentDuration(si=slot array, cx=count, dx=elapsed delta): for each 4-byte slot whose [si] is one of the 3 ailment codes (9/0xF/0xC, matching TickStatusEffects), decrements [si+2] by dx; on expiry, zeroes it, bumps [si], and decrements one of 3 global per-ailment counters (0x9425/0x9429/0x942B). At 0, clears the matching word_36C79 bit and flags a redraw.",	0);
 	create_insn	(0X1FDB1);
+	set_name	(0X1FDB1,	"TickAilmentDuration");
 	create_insn	(0X1FDC6);
 	create_insn	(0X1FDCE);
 	create_insn	(0X1FDD6);
@@ -7693,6 +7697,15 @@ static Bytes_1(void) {
 	set_cmt	(0X29B0C,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
 	create_insn	(x=0X29B0C);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X29B0F);
 	create_insn	(x=0X29B19);
 	op_hex		(x,	1);
@@ -7782,15 +7795,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X29C90);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X29C95,	"x",	0);
 	set_cmt	(0X29C99,	"y",	0);
 	create_insn	(x=0X29C9F);

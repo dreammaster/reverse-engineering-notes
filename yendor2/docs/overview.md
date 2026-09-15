@@ -1786,6 +1786,22 @@ DOS-era game has real, gradual day/night lighting.
 
 238 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the 5-minute timer is an ailment sweep
+
+Traced `AdvanceGameClock`'s remaining piece, the 5-minute periodic
+timer: `TickWorldAilments`/`TickAilmentDuration` — not an item/torch
+timer as first guessed, but a status-ailment duration sweep. Ailments
+occupy a shared slot format (`[+0]`=code, `[+2]`=remaining duration)
+across a 6-entry world table (the same one `CheckTransportAvailability`
+reads) and every party member's main inventory slots, decrementing
+global per-ailment counters and clearing `TickStatusEffects`' flags
+once an ailment type has no instances left anywhere — and disables
+itself once nothing needs ticking. With this, `AdvanceGameClock`'s
+whole tick chain (calendar, dawn/dusk lighting, ailment sweep) is now
+traced end to end.
+
+240 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

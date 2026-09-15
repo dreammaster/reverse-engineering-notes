@@ -474,8 +474,16 @@ It also fires a dawn event at exactly 6:00 AM and a dusk event at
 through a snapshot table, written into VGA palette entries `0xE0`-
 `0xFF` (the last 32 slots, plausibly a dedicated sky/ambient-light
 ramp) via `SetPaletteRange`, walked forward from dawn and backward
-from dusk), plus a separate 5-minute periodic timer (`word_32954`, gated on `word_3295A` bit
-`0x800`, calling `sub_1FD24`, not traced). Resting advances the clock
+from dusk), plus a separate 5-minute periodic timer (`word_32954`,
+gated on `word_3295A` bit `0x800`, calling `TickWorldAilments`) — a
+status-ailment duration sweep, not an item timer: it ticks a shared
+"ailment slot" format (`[+0]`=ailment code `9`/`0xF`/`0xC`, matching
+`TickStatusEffects`; `[+2]`=remaining duration) across a 6-entry world
+table (`0x9519`, also read by `CheckTransportAvailability`) and every
+party member's main inventory (`+0x11A`), decrementing one of 3 global
+per-ailment counters (`0x9425`/`0x9429`/`0x942B`) to zero before
+clearing the corresponding `word_36C79` flag — and disables itself
+once nothing is left ticking. Resting advances the clock
 by a fixed 8 hours (`word_36D01 += 0x1E0`, matching the classic
 "resting takes 8 hours" convention); a separate `+0x3C` (1-hour) advance
 exists elsewhere too, context not traced.
