@@ -1714,6 +1714,20 @@ search.
 
 231 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ApplyMultiStatEffect, and RepairItemCommand cross-confirmed
+
+Traced the very first check `HandleGameCommand` makes:
+`ApplyMultiStatEffect` walks up to 4 (offset, amount) pairs from a
+per-target table (populated from the target's own catalog lookup) and
+bumps the matching party-member fields — reads as an equip-bonus or
+multi-effect consumable mechanic. While reading further into
+`HandleGameCommand`'s fallback dispatch, also found a second, direct
+confirmation of `RepairItemCommand`'s role: it fires when the current
+target has a "needs repair" catalog flag, passing the specific broken
+item's catalog data as the roll parameter.
+
+232 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

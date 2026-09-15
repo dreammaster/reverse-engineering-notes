@@ -45722,7 +45722,7 @@ HandleGameCommand proc far              ; CODE XREF: start+57F↑P
                 call    sub_12554
                 cmp     word_2E54A, 0
                 jz      short loc_295BD
-                call    sub_2A914
+                call    ApplyMultiStatEffect
                 retf
 ; ---------------------------------------------------------------------------
 
@@ -48409,27 +48409,27 @@ seg114          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A914       proc far                ; CODE XREF: HandleGameCommand+F↑P
-                                        ; sub_2A914+26↓j
-                call    sub_21C79
+ApplyMultiStatEffect proc far           ; CODE XREF: HandleGameCommand+F↑P
+                                        ; ApplyMultiStatEffect+26↓j
+                call    sub_21C79       ; First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.
                 call    sub_2AD94
                 cmp     ax, 0
                 jnz     short loc_2A923
                 jmp     short loc_2A971
 ; ---------------------------------------------------------------------------
 
-loc_2A923:                              ; CODE XREF: sub_2A914+B↑j
+loc_2A923:                              ; CODE XREF: ApplyMultiStatEffect+B↑j
                 mov     cx, 4
                 mov     si, word_328D4
                 mov     di, word_2E54A
                 test    word ptr [si+1Ch], 1C40h
                 jz      short loc_2A93C
                 call    FlashStatusWarning
-                jmp     short near ptr sub_2A914
+                jmp     short near ptr ApplyMultiStatEffect
 ; ---------------------------------------------------------------------------
 
-loc_2A93C:                              ; CODE XREF: sub_2A914+1F↑j
-                                        ; sub_2A914+3F↓j
+loc_2A93C:                              ; CODE XREF: ApplyMultiStatEffect+1F↑j
+                                        ; ApplyMultiStatEffect+3F↓j
                 cmp     word ptr [di], 0
                 jz      short loc_2A955
                 mov     bx, [di]
@@ -48439,11 +48439,11 @@ loc_2A93C:                              ; CODE XREF: sub_2A914+1F↑j
                 add     ax, [bx+si]
                 call    sub_2A982
 
-loc_2A950:                              ; CODE XREF: sub_2A914+35↑j
+loc_2A950:                              ; CODE XREF: ApplyMultiStatEffect+35↑j
                 add     di, 4
                 loop    loc_2A93C
 
-loc_2A955:                              ; CODE XREF: sub_2A914+2B↑j
+loc_2A955:                              ; CODE XREF: ApplyMultiStatEffect+2B↑j
                 call    sub_1AA9B
                 call    UpdatePartyAverageStatTiers
                 call    sub_274B4
@@ -48451,18 +48451,18 @@ loc_2A955:                              ; CODE XREF: sub_2A914+2B↑j
                 call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
-loc_2A971:                              ; CODE XREF: sub_2A914+D↑j
+loc_2A971:                              ; CODE XREF: ApplyMultiStatEffect+D↑j
                 mov     word_2E530, 0
                 call    sub_23874
                 call    sub_238CD
                 retf
-sub_2A914       endp
+ApplyMultiStatEffect endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2A982       proc near               ; CODE XREF: sub_2A914+39↑p
+sub_2A982       proc near               ; CODE XREF: ApplyMultiStatEffect+39↑p
                 cmp     bx, 52h ; 'R'
                 jz      short loc_2A9A2
                 cmp     bx, 92h
@@ -48930,7 +48930,7 @@ sub_2AD32       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
+sub_2AD94       proc near               ; CODE XREF: ApplyMultiStatEffect+5↑p
                                         ; RestCharacter+5↑p ...
                 mov     word_2E530, 0Fh
                 call    sub_23874
@@ -48957,7 +48957,7 @@ sub_2AD94       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2ADD0       proc near               ; CODE XREF: sub_2A914+50↑p
+sub_2ADD0       proc near               ; CODE XREF: ApplyMultiStatEffect+50↑p
                                         ; RestCharacter+88↑p ...
                 mov     bx, 95EBh
                 mov     cx, 4

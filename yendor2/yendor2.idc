@@ -8457,7 +8457,9 @@ static Bytes_2(void) {
 	create_insn	(0X2A8ED);
 	create_insn	(x=0X2A909);
 	op_hex		(x,	1);
+	set_cmt	(0X2A914,	"First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.",	0);
 	create_insn	(0X2A914);
+	set_name	(0X2A914,	"ApplyMultiStatEffect");
 	create_insn	(0X2A923);
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);
