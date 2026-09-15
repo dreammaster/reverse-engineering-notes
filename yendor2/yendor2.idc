@@ -6418,7 +6418,7 @@ static Bytes_2(void) {
 	create_insn	(0X24C8C);
 	create_insn	(0X24C9A);
 	create_insn	(0X24CA7);
-	set_cmt	(0X24CAD,	"Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90] -- immediately before the confirmed HP/MP field pairs, plausibly 3 primary attributes (not confirmed which). Called from sub_23C18 and ShowCharacterSkills.",	0);
+	set_cmt	(0X24CAD,	"Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90]. CORRECTION: NOT the 6 primary attributes -- those are confirmed at a different offset range (+0x3C/+0x7C..+0x46/+0x86, per RollCharacterAttributes' own comment). These 3 fields' identity is not confirmed; drawn alongside the attributes on the post-attribute-roll display in ShowCharacterSkills. Called from sub_23C18 and ShowCharacterSkills.",	0);
 	create_insn	(0X24CAD);
 	set_name	(0X24CAD,	"DrawThreeThresholdStats");
 	set_cmt	(0X24CD5,	"msg",	0);
@@ -8774,6 +8774,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2A7C4);
 	create_insn	(0X2A7F0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2A7FC);
 	op_hex		(x,	1);
 	create_insn	(x=0X2A805);
@@ -8795,15 +8804,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2A914,	"First thing HandleGameCommand checks: if the current target has a populated word_2E54A table (up to 4 (offset,amount) pairs, from the target's own catalog lookup), applies each nonzero entry to the party member's matching field (only if that field already holds a value) via sub_2A982. Reads as an equip-bonus or multi-effect consumable mechanic. Falls back to a simple redraw sequence if the table is null or the member is invalid.",	0);
 	create_insn	(0X2A914);
 	set_name	(0X2A914,	"ApplyMultiStatEffect");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X2A923);
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);

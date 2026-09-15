@@ -36792,7 +36792,7 @@ ShowCharacterStats endp
 
 DrawThreeThresholdStats proc near       ; CODE XREF: sub_23C18+78↑p
                                         ; ShowCharacterSkills+1D7↑p ...
-                mov     si, word_328D4  ; Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90] -- immediately before the confirmed HP/MP field pairs, plausibly 3 primary attributes (not confirmed which). Called from sub_23C18 and ShowCharacterSkills.
+                mov     si, word_328D4  ; Draws 3 threshold-highlighted stat values from the current party record: [+0x4C]/[+0x8C], [+0x4E]/[+0x8E], [+0x50]/[+0x90]. CORRECTION: NOT the 6 primary attributes -- those are confirmed at a different offset range (+0x3C/+0x7C..+0x46/+0x86, per RollCharacterAttributes' own comment). These 3 fields' identity is not confirmed; drawn alongside the attributes on the post-attribute-roll display in ShowCharacterSkills. Called from sub_23C18 and ShowCharacterSkills.
                 mov     _textPos_x, 0CBh
                 mov     word_2E412, 0Fh
                 mov     word_2E414, 8Ah

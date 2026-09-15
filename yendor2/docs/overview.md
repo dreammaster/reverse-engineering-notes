@@ -3229,6 +3229,16 @@ primary attributes, not confirmed which.
 
 418 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — DrawThreeThresholdStats is not the 6 primary attributes
+
+Checked `RollCharacterAttributes`' own pre-existing comment (called
+right before `DrawThreeThresholdStats` in `ShowCharacterSkills`): the
+6 core attributes are already confirmed at `+0x3C`–`+0x86`, a
+completely different offset range from `DrawThreeThresholdStats`'
+`+0x4C`/`+0x4E`/`+0x50`. Corrected last entry's guess; those 3 fields'
+actual identity is still open, though they're drawn on the same
+post-roll screen so presumably related. Renames only, no new count.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
