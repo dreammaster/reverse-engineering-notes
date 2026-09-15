@@ -2445,7 +2445,9 @@ static Bytes_0(void) {
 	create_insn	(0X16A1E);
 	create_insn	(x=0X16A24);
 	op_hex		(x,	1);
+	set_cmt	(0X16A39,	"Builds a combined party+monster turn-order list at g_combatTurnOrder (8 bytes/entry): party members via g_partySlotAssignment (+0=record, +2=party-slot addr via FindPartySlotForRecord, +4=speed from [+0x3E]); monsters via g_monsterSlots (+0=record, +4=speed from [+0x56], +6 flag 0x8000 set, and unless already flagged 0x2000, picks a random living party target into the monster's [+0x12]). Insertion-sorts by speed. If no monster is active (word_32A1E==0), calls SelectActiveMonster.",	0);
 	create_insn	(0X16A39);
+	set_name	(0X16A39,	"BuildCombatTurnOrder");
 	create_insn	(x=0X16A65);
 	op_hex		(x,	1);
 	create_insn	(x=0X16A91);
@@ -2485,8 +2487,12 @@ static Bytes_0(void) {
 	create_insn	(x=0X16D19);
 	op_hex		(x,	1);
 	create_insn	(0X16D40);
+	set_cmt	(0X16D4D,	"FindPartySlotForRecord(ax=combatant record ptr): scans g_partySlotAssignment for a matching party slot; found -> word_32924/bx = that slot's address. Not found (record is a monster) -> resets word_328D4/word_328D6 to 0, word_32924=0.",	0);
 	create_insn	(0X16D4D);
+	set_name	(0X16D4D,	"FindPartySlotForRecord");
+	set_cmt	(0X16D7F,	"Scans g_combatTurnOrder (cx=7, up to 4 party + 3 monster entries) for the first entry flagged 0x8000 (monster) and not 0x4000 (plausibly defeated); sets word_32A1E to its record pointer, or 0 if none found (no monsters currently active).",	0);
 	create_insn	(0X16D7F);
+	set_name	(0X16D7F,	"SelectActiveMonster");
 	create_insn	(x=0X16D8D);
 	op_hex		(x,	1);
 	create_insn	(x=0X16D94);
@@ -5132,6 +5138,15 @@ static Bytes_0(void) {
 	set_cmt	(0X20C7C,	"Fuzzy/paired equality: returns ax==bx, or (ax's even/odd pair partner)==bx -- i.e. ax+1==bx if ax is even, ax-1==bx if ax is odd. Lets a caller treat two adjacent table indices as a match.",	0);
 	create_insn	(0X20C7C);
 	set_name	(0X20C7C,	"IsPairedValueMatch");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X20C81);
 	op_hex		(x,	1);
 	create_insn	(0X20C8A);
@@ -5240,15 +5255,6 @@ static Bytes_0(void) {
 	create_insn	(0X214F4);
 	create_insn	(x=0X21500);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2151F);
 	op_hex		(x,	1);
 	create_insn	(0X2152C);
@@ -5721,7 +5727,9 @@ static Bytes_1(void) {
 	set_cmt	(0X23241,	"msg",	0);
 	create_insn	(x=0X2326C);
 	op_hex		(x,	1);
+	set_cmt	(0X232A8,	"Draws the 3 g_monsterSlots info panels via DrawMonsterInfoPanel at 3 fixed screen positions (previously misidentified as generic 'status widgets' before BuildCombatTurnOrder confirmed these addresses are monster records).",	0);
 	create_insn	(0X232A8);
+	set_name	(0X232A8,	"DrawMonsterInfoPanels");
 	create_insn	(x=0X232B9);
 	op_hex		(x,	1);
 	create_insn	(0X23305);
@@ -5756,7 +5764,9 @@ static Bytes_1(void) {
 	create_insn	(0X234A7);
 	create_insn	(0X234AF);
 	create_insn	(0X234CA);
+	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
 	create_insn	(0X234D3);
+	set_name	(0X234D3,	"DrawMonsterInfoPanel");
 	create_insn	(x=0X234D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X234E5);
@@ -9429,6 +9439,15 @@ static Bytes_1(void) {
 	create_word	(0X32914);
 	create_word	(0X32916);
 	create_word	(0X32918);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X3291A);
 	create_word	(0X3291C);
 	set_name	(0X3291C,	"_videoBufferSeg");
@@ -9545,15 +9564,6 @@ static Bytes_1(void) {
 	set_name	(0X329C0,	"_val9");
 	create_word	(0X329C2);
 	set_name	(0X329C2,	"_val44");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X329C4);
 	set_name	(0X329C4,	"_val45");
 	create_word	(0X329C6);
@@ -9621,7 +9631,9 @@ static Bytes_2(void) {
 	create_word	(0X32A1A);
 	create_word	(0X32A1C);
 	create_word	(0X32A1E);
+	set_cmt	(0X32A20,	"3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.",	0);
 	create_word	(0X32A20);
+	set_name	(0X32A20,	"g_monsterSlots");
 	create_word	(0X32A2A);
 	create_word	(0X32AB2);
 	create_word	(0X32ABC);
@@ -9633,6 +9645,8 @@ static Bytes_2(void) {
 	create_word	(0X32BF8);
 	create_word	(0X32BFA);
 	create_word	(0X32BFC);
+	set_cmt	(0X32BFE,	"14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).",	0);
+	set_name	(0X32BFE,	"g_combatTurnOrder");
 	create_word	(0X32DBC);
 	create_word	(0X32DBE);
 	create_word	(0X32DC0);

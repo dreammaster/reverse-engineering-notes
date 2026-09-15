@@ -1171,6 +1171,32 @@ loop. Named `RunDungeonGameLoop`.
 
 164 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the combat system (turn order, monster slots)
+
+Followed `RunDungeonGameLoop`'s per-iteration call to `sub_16A39` and
+found the combat turn-order system, which also finally nails down what
+the "3 fixed records" at `0x51C0`/`0x525C`/`0x52F8` are — **monster
+slots**, not generic status widgets (a further correction on top of
+last round's "content unclear" hedge, this time with solid evidence).
+`BuildCombatTurnOrder` (was `sub_16A39`) builds a combined party+
+monster list (`g_combatTurnOrder`, was bare `0x539E`) from
+`g_partySlotAssignment` and the new `g_monsterSlots` (3 × 0x9C-byte
+records, was `0x51C0`), giving monsters a random living party target
+and sorting the whole list by a speed/initiative field — classic
+initiative ordering. `SelectActiveMonster` (was `sub_16D7F`) then picks
+the first non-defeated monster from that order. `FindPartySlotForRecord`
+(was `sub_16D4D`) tells party members from monsters by whether a
+record matches a `g_partySlotAssignment` slot.
+
+With monster slots identified, `DrawMonsterInfoPanels`/
+`DrawMonsterInfoPanel` (was `sub_232A8`/`sub_234D3`) now make sense as
+a monster info display gated by the party's average "identify" stat
+(`word_36CA9`) from two rounds ago — restoring that original hypothesis
+on firmer ground, just wrong before about *why* there were exactly 3
+slots.
+
+169 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

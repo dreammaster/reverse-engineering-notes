@@ -101,14 +101,15 @@ weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
 style special ability that reads `WORLD.DAT`/`CURGAME` directly and
 reveals a `word_36CA7`-sized box of the map around the player, not a
 visual weather effect); `+0x58` → `word_36CA9`, gating progressively-
-revealed detail icons in `sub_234D3` (**correction**: "bestiary/
-identify" was also a guess and doesn't fit well — `sub_234D3` turns out
-to be called exactly 3 times with 3 *fixed* addresses, not a dynamic
-per-monster/per-item list, from inside `RunDungeonGameLoop`'s own
-per-iteration display step; more likely 3 persistent status/info
-widgets drawn every loop iteration — content still unclear). Only the
-light/torch-fuel identity (`+0x64`) remains an unconfirmed guess; the
-`+0x66` → area-reveal-size link is now solid. `+0xB4`: a bitmask of
+revealed detail icons in `DrawMonsterInfoPanel` (**correction, round
+2**: the "3 fixed addresses" turned out to be `g_monsterSlots` — 3
+active-combat monster records, found via `BuildCombatTurnOrder` — so
+the *original* "identify"-style hypothesis was right after all, just
+for the wrong reason at first: `+0x58` is plausibly a perception/
+identify stat that reveals more monster detail as it rises, not a
+bestiary browser). Only the light/torch-fuel identity (`+0x64`) remains
+an unconfirmed guess; `+0x66` (area-reveal-size) and `+0x58`
+(monster-detail-reveal) are now on solid ground. `+0xB4`: a bitmask of
 which of (at least) 4 special abilities this character has learned;
 `+0xB6`/`+0xB8`/`+0xBA`/`+0xBC`: per-ability charge or level values,
 each checked against a threshold in a small table at `0x77C6` before
@@ -119,6 +120,33 @@ than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 10/11/13 — bit 13 appears in both groups). Not yet mapped: the 6
 attribute values (`ShowCharacterStats`), the 8 item slots
 (`ShowCharacterInventory`), or the skill values (`ShowCharacterSkills`).
+
+### Combat: monster slots and turn order
+
+Up to **3 simultaneous active monsters**, `g_monsterSlots` (base
+`0x51C0`, 3 × `0x9C`/156-byte records, `[+0]==0` = empty slot).
+Confirmed fields: `+0xC` type/behavior flags (tested against `0x3010`
+in `BuildCombatTurnOrder`); `+0x12` the monster's current target (a
+party-member record pointer, assigned randomly among living party
+members each round unless a flag is already set); `+0x56`
+speed/initiative value used for turn ordering. `DrawMonsterInfoPanel`
+reads name strings and up to 3 tiers of detail icons per monster,
+gated by the party's average `+0x58` stat (see the party-record section
+above) against its own `[+0xC]` 2-bit quality flags.
+
+Every `RunDungeonGameLoop` iteration, `BuildCombatTurnOrder` rebuilds
+`g_combatTurnOrder` (`0x539E`, 14 × 8-byte scratch entries, room for
+4 party + 3 monster combatants): `+0` record pointer, `+2` party-slot
+address (0 for monsters), `+4` the speed/initiative sort key (used for
+a descending insertion sort — turn order fastest-first), `+6` flags
+(`0x8000` = this entry is a monster; `0x4000` = plausibly "defeated",
+not confirmed; `0x2000` = unconfirmed). `SelectActiveMonster` then
+picks the first non-defeated monster from that order into
+`word_32A1E`, the "currently active monster" global read throughout
+the combat-adjacent code already documented this session
+(`UseAbilityOnTarget`, `ExamineTarget`, `CastSpell`'s target checks,
+etc. — not yet cross-referenced against this specific variable, a
+good next step).
 
 ### Global material counters and BCD arithmetic
 

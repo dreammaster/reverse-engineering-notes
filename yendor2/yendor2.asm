@@ -10155,8 +10155,8 @@ loc_16324:                              ; CODE XREF: RunDungeonGameLoop+2B↑j
                 mov     word_32A1E, 0
 
 loc_1633B:                              ; CODE XREF: RunDungeonGameLoop+A8↓j
-                call    sub_16A39
-                call    sub_232A8
+                call    BuildCombatTurnOrder
+                call    DrawMonsterInfoPanels
                 call    DrawMouseCursor
 
 loc_16348:                              ; CODE XREF: RunDungeonGameLoop+B9↓j
@@ -10199,7 +10199,7 @@ loc_16377:                              ; CODE XREF: RunDungeonGameLoop+65↑j
 ; ---------------------------------------------------------------------------
 
 loc_163A0:                              ; CODE XREF: RunDungeonGameLoop+90↑j
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 call    sub_20C46
                 call    DrawMouseCursor
                 jmp     short loc_16348
@@ -10418,7 +10418,7 @@ loc_16563:                              ; CODE XREF: sub_16407+9C↑j
 
 loc_1658C:                              ; CODE XREF: sub_16407+179↑j
                                         ; sub_16407+19D↓j ...
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -10460,7 +10460,7 @@ loc_165EE:                              ; CODE XREF: sub_16407+1E2↑j
                 cmp     ax, 1
                 jnz     short loc_16605
                 call    sub_1A37E
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 call    DrawMouseCursor
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
@@ -10610,7 +10610,7 @@ loc_166FB:                              ; CODE XREF: sub_16407+2EB↑j
 
 loc_16705:                              ; CODE XREF: sub_16407+2CF↑j
                                         ; sub_16407+2DA↑j ...
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
 
 loc_1670A:                              ; CODE XREF: sub_16407+2F7↑j
                 jmp     loc_16451
@@ -10715,7 +10715,7 @@ loc_16817:                              ; CODE XREF: sub_16407+40D↑j
 loc_16824:                              ; CODE XREF: sub_16407+415↑j
                 or      word_328CA, 1000h
                 call    sub_1FD03
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 jmp     loc_16451
 ; ---------------------------------------------------------------------------
 
@@ -10736,7 +10736,7 @@ loc_16852:                              ; CODE XREF: sub_16407+19F↑j
                 call    sub_238CD
 
 loc_1686D:                              ; CODE XREF: sub_16407+45A↑j
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 jmp     loc_16432
 ; ---------------------------------------------------------------------------
 
@@ -10762,7 +10762,7 @@ sub_16881       proc near               ; CODE XREF: RunDungeonGameLoop+5D↑p
                 jz      short loc_168C3
                 or      word ptr [si+0Ch], 20h
                 push    errorCode
-                call    sub_232A8
+                call    DrawMonsterInfoPanels
                 pop     errorCode
                 mov     ax, 0Ah         ; ticks
                 call    wait
@@ -10796,7 +10796,7 @@ loc_168F6:                              ; CODE XREF: sub_16881+70↑j
                 test    word ptr [di+1Ch], 1C40h
                 jnz     short loc_16966
                 mov     ax, di
-                call    sub_16D4D
+                call    FindPartySlotForRecord
                 mov     ax, word_32924
                 sub     ax, 95EBh
                 shr     ax, 1
@@ -10934,8 +10934,8 @@ sub_16881       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16A39       proc near               ; CODE XREF: RunDungeonGameLoop:loc_1633B↑p
-                push    cx
+BuildCombatTurnOrder proc near          ; CODE XREF: RunDungeonGameLoop:loc_1633B↑p
+                push    cx              ; Builds a combined party+monster turn-order list at g_combatTurnOrder (8 bytes/entry): party members via g_partySlotAssignment (+0=record, +2=party-slot addr via FindPartySlotForRecord, +4=speed from [+0x3E]); monsters via g_monsterSlots (+0=record, +4=speed from [+0x56], +6 flag 0x8000 set, and unless already flagged 0x2000, picks a random living party target into the monster's [+0x12]). Insertion-sorts by speed. If no monster is active (word_32A1E==0), calls SelectActiveMonster.
                 push    si
                 push    di
                 push    es
@@ -10949,7 +10949,7 @@ sub_16A39       proc near               ; CODE XREF: RunDungeonGameLoop:loc_1633
                 mov     bx, 95EBh
                 mov     di, 539Eh
 
-loc_16A58:                              ; CODE XREF: sub_16A39+4A↓j
+loc_16A58:                              ; CODE XREF: BuildCombatTurnOrder+4A↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_16A85
@@ -10958,22 +10958,22 @@ loc_16A58:                              ; CODE XREF: sub_16A39+4A↓j
                 test    word ptr [si+1Ch], 1C40h
                 jnz     short loc_16A80
                 mov     [di], ax
-                call    sub_16D4D
+                call    FindPartySlotForRecord
                 mov     ax, word_32924
                 mov     [di+2], ax
                 mov     ax, [si+3Eh]
                 mov     [di+4], ax
                 add     di, 8
 
-loc_16A80:                              ; CODE XREF: sub_16A39+31↑j
+loc_16A80:                              ; CODE XREF: BuildCombatTurnOrder+31↑j
                 add     bx, 2
                 loop    loc_16A58
 
-loc_16A85:                              ; CODE XREF: sub_16A39+23↑j
+loc_16A85:                              ; CODE XREF: BuildCombatTurnOrder+23↑j
                 mov     bx, 51C0h
                 mov     cx, 3
 
-loc_16A8B:                              ; CODE XREF: sub_16A39+B1↓j
+loc_16A8B:                              ; CODE XREF: BuildCombatTurnOrder+B1↓j
                 mov     ax, [bx]
                 or      ax, ax
                 jz      short loc_16AE6
@@ -10981,7 +10981,7 @@ loc_16A8B:                              ; CODE XREF: sub_16A39+B1↓j
                 jz      short loc_16A9D
                 or      word ptr [di+6], 2000h
 
-loc_16A9D:                              ; CODE XREF: sub_16A39+5D↑j
+loc_16A9D:                              ; CODE XREF: BuildCombatTurnOrder+5D↑j
                 mov     [di], bx
                 mov     ax, [bx]
                 mov     [di+2], ax
@@ -10994,8 +10994,8 @@ loc_16A9D:                              ; CODE XREF: sub_16A39+5D↑j
                 jnz     short loc_16AE6
                 push    bx
 
-loc_16ABF:                              ; CODE XREF: sub_16A39+99↓j
-                                        ; sub_16A39+A7↓j
+loc_16ABF:                              ; CODE XREF: BuildCombatTurnOrder+99↓j
+                                        ; BuildCombatTurnOrder+A7↓j
                 mov     ax, 3
                 call    RandomInRange
                 shl     ax, 1
@@ -11011,16 +11011,16 @@ loc_16ABF:                              ; CODE XREF: sub_16A39+99↓j
                 pop     bx
                 mov     [bx+12h], ax
 
-loc_16AE6:                              ; CODE XREF: sub_16A39+56↑j
-                                        ; sub_16A39+83↑j
+loc_16AE6:                              ; CODE XREF: BuildCombatTurnOrder+56↑j
+                                        ; BuildCombatTurnOrder+83↑j
                 add     bx, 9Ch
                 loop    loc_16A8B
                 mov     si, 539Eh
                 mov     di, 53A6h
                 mov     word_3293E, 0
 
-loc_16AF8:                              ; CODE XREF: sub_16A39+D7↓j
-                                        ; sub_16A39+119↓j
+loc_16AF8:                              ; CODE XREF: BuildCombatTurnOrder+D7↓j
+                                        ; BuildCombatTurnOrder+119↓j
                 cmp     word ptr [di], 0
                 jnz     short loc_16B12
                 cmp     word_3293E, 0
@@ -11031,7 +11031,7 @@ loc_16AF8:                              ; CODE XREF: sub_16A39+D7↓j
                 jmp     short loc_16AF8
 ; ---------------------------------------------------------------------------
 
-loc_16B12:                              ; CODE XREF: sub_16A39+C2↑j
+loc_16B12:                              ; CODE XREF: BuildCombatTurnOrder+C2↑j
                 mov     ax, [di+4]
                 cmp     ax, [si+4]
                 jle     short loc_16B4C
@@ -11053,24 +11053,24 @@ loc_16B12:                              ; CODE XREF: sub_16A39+C2↑j
                 pop     word ptr [si+2]
                 pop     word ptr [si]
 
-loc_16B4C:                              ; CODE XREF: sub_16A39+DF↑j
+loc_16B4C:                              ; CODE XREF: BuildCombatTurnOrder+DF↑j
                 add     si, 8
                 add     di, 8
                 jmp     short loc_16AF8
 ; ---------------------------------------------------------------------------
 
-loc_16B54:                              ; CODE XREF: sub_16A39+C9↑j
+loc_16B54:                              ; CODE XREF: BuildCombatTurnOrder+C9↑j
                 cmp     word_32A1E, 0
                 jnz     short loc_16B5E
-                call    sub_16D7F
+                call    SelectActiveMonster
 
-loc_16B5E:                              ; CODE XREF: sub_16A39+120↑j
+loc_16B5E:                              ; CODE XREF: BuildCombatTurnOrder+120↑j
                 pop     es
                 pop     di
                 pop     si
                 pop     cx
                 retn
-sub_16A39       endp
+BuildCombatTurnOrder endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11128,7 +11128,7 @@ loc_16BB4:                              ; CODE XREF: sub_16B63+11↑j
                 jnz     short loc_16BF3
                 cmp     word_32A1E, 0
                 jnz     short loc_16BCB
-                call    sub_16D7F
+                call    SelectActiveMonster
 
 loc_16BCB:                              ; CODE XREF: sub_16B63+63↑j
                 call    sub_2333B
@@ -11290,16 +11290,16 @@ sub_16BF6       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16D4D       proc near               ; CODE XREF: sub_16881+82↑p
-                                        ; sub_16A39+35↑p
-                push    bx
+FindPartySlotForRecord proc near        ; CODE XREF: sub_16881+82↑p
+                                        ; BuildCombatTurnOrder+35↑p
+                push    bx              ; FindPartySlotForRecord(ax=combatant record ptr): scans g_partySlotAssignment for a matching party slot; found -> word_32924/bx = that slot's address. Not found (record is a monster) -> resets word_328D4/word_328D6 to 0, word_32924=0.
                 push    cx
                 push    dx
                 mov     dx, ax
                 mov     bx, 95EBh
                 mov     cx, 4
 
-loc_16D58:                              ; CODE XREF: sub_16D4D+19↓j
+loc_16D58:                              ; CODE XREF: FindPartySlotForRecord+19↓j
                 mov     ax, [bx]
                 call    sub_25B14
                 cmp     ax, dx
@@ -11310,27 +11310,27 @@ loc_16D58:                              ; CODE XREF: sub_16D4D+19↓j
                 mov     word_328D4, 0
                 mov     word_328D6, 0
 
-loc_16D77:                              ; CODE XREF: sub_16D4D+14↑j
+loc_16D77:                              ; CODE XREF: FindPartySlotForRecord+14↑j
                 mov     word_32924, bx
                 pop     dx
                 pop     cx
                 pop     bx
                 retn
-sub_16D4D       endp
+FindPartySlotForRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16D7F       proc near               ; CODE XREF: sub_16A39+122↑p
+SelectActiveMonster proc near           ; CODE XREF: BuildCombatTurnOrder+122↑p
                                         ; sub_16B63+65↑p
-                push    cx
+                push    cx              ; Scans g_combatTurnOrder (cx=7, up to 4 party + 3 monster entries) for the first entry flagged 0x8000 (monster) and not 0x4000 (plausibly defeated); sets word_32A1E to its record pointer, or 0 if none found (no monsters currently active).
                 push    si
                 mov     word_32A1E, 0
                 mov     si, 539Eh
                 mov     cx, 7
 
-loc_16D8D:                              ; CODE XREF: sub_16D7F+26↓j
+loc_16D8D:                              ; CODE XREF: SelectActiveMonster+26↓j
                 test    word ptr [si+6], 8000h
                 jz      short loc_16DA2
                 test    word ptr [si+6], 4000h
@@ -11340,16 +11340,16 @@ loc_16D8D:                              ; CODE XREF: sub_16D7F+26↓j
                 jmp     short loc_16DA7
 ; ---------------------------------------------------------------------------
 
-loc_16DA2:                              ; CODE XREF: sub_16D7F+13↑j
-                                        ; sub_16D7F+1A↑j
+loc_16DA2:                              ; CODE XREF: SelectActiveMonster+13↑j
+                                        ; SelectActiveMonster+1A↑j
                 add     si, 8
                 loop    loc_16D8D
 
-loc_16DA7:                              ; CODE XREF: sub_16D7F+21↑j
+loc_16DA7:                              ; CODE XREF: SelectActiveMonster+21↑j
                 pop     si
                 pop     cx
                 retn
-sub_16D7F       endp
+SelectActiveMonster endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -33633,7 +33633,7 @@ loc_2301F:                              ; CODE XREF: sub_22D4C+2CE↑j
 ; ---------------------------------------------------------------------------
 
 loc_2302A:                              ; CODE XREF: sub_22D4C+2D9↑j
-                cmp     word_32A20, 0
+                cmp     g_monsterSlots, 0
                 jnz     short loc_2301C
 
 loc_23031:                              ; CODE XREF: sub_22D4C+372↓j
@@ -33694,7 +33694,7 @@ loc_2309D:                              ; CODE XREF: sub_22D4C+2BD↑j
 ; ---------------------------------------------------------------------------
 
 loc_230B7:                              ; CODE XREF: sub_22D4C+2DB↑j
-                cmp     word_32A20, 0
+                cmp     g_monsterSlots, 0
                 jnz     short loc_230C1
                 jmp     loc_23031
 ; ---------------------------------------------------------------------------
@@ -33903,9 +33903,9 @@ sub_23151       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_232A8       proc far                ; CODE XREF: RunDungeonGameLoop+48↑P
+DrawMonsterInfoPanels proc far          ; CODE XREF: RunDungeonGameLoop+48↑P
                                         ; RunDungeonGameLoop:loc_163A0↑P ...
-                push    cx
+                push    cx              ; Draws the 3 g_monsterSlots info panels via DrawMonsterInfoPanel at 3 fixed screen positions (previously misidentified as generic 'status widgets' before BuildCombatTurnOrder confirmed these addresses are monster records).
                 push    dx
                 push    si
                 push    di
@@ -33918,15 +33918,15 @@ sub_232A8       proc far                ; CODE XREF: RunDungeonGameLoop+48↑P
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
                 mov     si, 51C0h
-                call    sub_234D3
+                call    DrawMonsterInfoPanel
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 7Bh ; '{'
                 mov     si, 525Ch
-                call    sub_234D3
+                call    DrawMonsterInfoPanel
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 9Fh
                 mov     si, 52F8h
-                call    sub_234D3
+                call    DrawMonsterInfoPanel
                 call    DrawMouseCursor
                 pop     es
                 pop     di
@@ -33934,7 +33934,7 @@ sub_232A8       proc far                ; CODE XREF: RunDungeonGameLoop+48↑P
                 pop     dx
                 pop     cx
                 retf
-sub_232A8       endp
+DrawMonsterInfoPanels endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -34130,7 +34130,7 @@ sub_233F5       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23442       proc near               ; CODE XREF: sub_234D3+75↓p
+sub_23442       proc near               ; CODE XREF: DrawMonsterInfoPanel+75↓p
                 push    dx
                 push    di
                 push    es
@@ -34223,14 +34223,14 @@ sub_234A7       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_234D3       proc near               ; CODE XREF: sub_232A8+2B↑p
-                                        ; sub_232A8+3D↑p ...
-                cmp     word ptr [si], 0
+DrawMonsterInfoPanel proc near          ; CODE XREF: DrawMonsterInfoPanels+2B↑p
+                                        ; DrawMonsterInfoPanels+3D↑p ...
+                cmp     word ptr [si], 0 ; Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.
                 jnz     short loc_234D9
                 retn
 ; ---------------------------------------------------------------------------
 
-loc_234D9:                              ; CODE XREF: sub_234D3+3↑j
+loc_234D9:                              ; CODE XREF: DrawMonsterInfoPanel+3↑j
                 or      word_328C4, 100h
                 mov     _font_fgColor, 0AAh
                 test    word ptr [si+0Ch], 20h
@@ -34240,8 +34240,8 @@ loc_234D9:                              ; CODE XREF: sub_234D3+3↑j
                 jnz     short loc_234FE
                 mov     _font_fgColor, 8Ah
 
-loc_234FE:                              ; CODE XREF: sub_234D3+17↑j
-                                        ; sub_234D3+23↑j
+loc_234FE:                              ; CODE XREF: DrawMonsterInfoPanel+17↑j
+                                        ; DrawMonsterInfoPanel+23↑j
                 mov     bx, si
                 add     bx, 32h ; '2'   ; msg
                 call    writeString
@@ -34260,7 +34260,7 @@ loc_234FE:                              ; CODE XREF: sub_234D3+17↑j
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23538:                              ; CODE XREF: sub_234D3+60↑j
+loc_23538:                              ; CODE XREF: DrawMonsterInfoPanel+60↑j
                 push    _font_fgColor
                 mov     _font_fgColor, 59h ; 'Y'
                 mov     bx, [si+10h]
@@ -34272,7 +34272,7 @@ loc_23538:                              ; CODE XREF: sub_234D3+60↑j
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23559:                              ; CODE XREF: sub_234D3+81↑j
+loc_23559:                              ; CODE XREF: DrawMonsterInfoPanel+81↑j
                 mov     ax, _textPos_x
                 add     ax, 2Eh ; '.'
                 mov     x, ax
@@ -34285,8 +34285,8 @@ loc_23559:                              ; CODE XREF: sub_234D3+81↑j
                 jnz     short loc_23588
                 mov     word_2E530, 4
 
-loc_23588:                              ; CODE XREF: sub_234D3+A0↑j
-                                        ; sub_234D3+AD↑j
+loc_23588:                              ; CODE XREF: DrawMonsterInfoPanel+A0↑j
+                                        ; DrawMonsterInfoPanel+AD↑j
                 call    DrawPicture
                 add     x, 9
                 mov     word_2E530, 9
@@ -34297,8 +34297,8 @@ loc_23588:                              ; CODE XREF: sub_234D3+A0↑j
                 jnz     short loc_235B2
                 mov     word_2E530, 4
 
-loc_235B2:                              ; CODE XREF: sub_234D3+CA↑j
-                                        ; sub_234D3+D7↑j
+loc_235B2:                              ; CODE XREF: DrawMonsterInfoPanel+CA↑j
+                                        ; DrawMonsterInfoPanel+D7↑j
                 call    DrawPicture
                 add     x, 9
                 mov     word_2E530, 0Dh
@@ -34309,15 +34309,15 @@ loc_235B2:                              ; CODE XREF: sub_234D3+CA↑j
                 jnz     short loc_235DC
                 mov     word_2E530, 4
 
-loc_235DC:                              ; CODE XREF: sub_234D3+F4↑j
-                                        ; sub_234D3+101↑j
+loc_235DC:                              ; CODE XREF: DrawMonsterInfoPanel+F4↑j
+                                        ; DrawMonsterInfoPanel+101↑j
                 call    DrawPicture
                 cmp     word_36CA9, 50h ; 'P'
                 jge     short loc_235EB
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_235EB:                              ; CODE XREF: sub_234D3+113↑j
+loc_235EB:                              ; CODE XREF: DrawMonsterInfoPanel+113↑j
                 add     _textPos_y, 9
                 test    word ptr [si+0Ch], 200h
                 jz      short loc_23620
@@ -34327,19 +34327,19 @@ loc_235EB:                              ; CODE XREF: sub_234D3+113↑j
                 call    writeString
                 add     _textPos_y, 6
 
-loc_2360B:                              ; CODE XREF: sub_234D3+12C↑j
+loc_2360B:                              ; CODE XREF: DrawMonsterInfoPanel+12C↑j
                 mov     bx, 7ACAh       ; msg
                 test    word ptr [si+0Ch], 4000h
                 jnz     short loc_23618
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23618:                              ; CODE XREF: sub_234D3+140↑j
+loc_23618:                              ; CODE XREF: DrawMonsterInfoPanel+140↑j
                 call    writeString
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23620:                              ; CODE XREF: sub_234D3+122↑j
+loc_23620:                              ; CODE XREF: DrawMonsterInfoPanel+122↑j
                 test    word ptr [si+0Ch], 100h
                 jz      short loc_23650
                 mov     bx, 7AEFh       ; msg
@@ -34348,19 +34348,19 @@ loc_23620:                              ; CODE XREF: sub_234D3+122↑j
                 call    writeString
                 add     _textPos_y, 6
 
-loc_2363B:                              ; CODE XREF: sub_234D3+15C↑j
+loc_2363B:                              ; CODE XREF: DrawMonsterInfoPanel+15C↑j
                 mov     bx, 7AE8h       ; msg
                 test    word ptr [si+0Ch], 1000h
                 jnz     short loc_23648
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23648:                              ; CODE XREF: sub_234D3+170↑j
+loc_23648:                              ; CODE XREF: DrawMonsterInfoPanel+170↑j
                 call    writeString
                 jmp     loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_23650:                              ; CODE XREF: sub_234D3+152↑j
+loc_23650:                              ; CODE XREF: DrawMonsterInfoPanel+152↑j
                 test    word ptr [si+0Ch], 80h
                 jz      short loc_2367C
                 mov     bx, 7B00h       ; msg
@@ -34369,7 +34369,7 @@ loc_23650:                              ; CODE XREF: sub_234D3+152↑j
                 call    writeString
                 add     _textPos_y, 6
 
-loc_2366B:                              ; CODE XREF: sub_234D3+18C↑j
+loc_2366B:                              ; CODE XREF: DrawMonsterInfoPanel+18C↑j
                 mov     bx, 7AF9h       ; msg
                 test    word ptr [si+0Ch], 400h
                 jz      short loc_236E5
@@ -34377,7 +34377,7 @@ loc_2366B:                              ; CODE XREF: sub_234D3+18C↑j
                 jmp     short loc_236E5
 ; ---------------------------------------------------------------------------
 
-loc_2367C:                              ; CODE XREF: sub_234D3+182↑j
+loc_2367C:                              ; CODE XREF: DrawMonsterInfoPanel+182↑j
                 test    word ptr [si+0Ch], 40h
                 jz      short loc_236E5
                 mov     bx, 7B0Dh       ; msg
@@ -34405,11 +34405,11 @@ loc_2367C:                              ; CODE XREF: sub_234D3+182↑j
                 mov     bx, 0AFDAh      ; msg
                 call    writeString
 
-loc_236E5:                              ; CODE XREF: sub_234D3+62↑j
-                                        ; sub_234D3+83↑j ...
+loc_236E5:                              ; CODE XREF: DrawMonsterInfoPanel+62↑j
+                                        ; DrawMonsterInfoPanel+83↑j ...
                 and     word ptr [si+0Ch], 0FC1Fh
                 retn
-sub_234D3       endp
+DrawMonsterInfoPanel endp
 
 seg072          ends
 
@@ -38540,7 +38540,7 @@ sub_25AAC       endp
 
 
 sub_25B14       proc far                ; CODE XREF: HandleMovementInput:loc_11535↑P
-                                        ; sub_16A39+25↑P ...
+                                        ; BuildCombatTurnOrder+25↑P ...
                 push    bx
                 push    dx
                 mov     word_328D6, ax
@@ -41436,7 +41436,7 @@ seg091          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-RandomInRange   proc far                ; CODE XREF: sub_16A39+89↑P
+RandomInRange   proc far                ; CODE XREF: BuildCombatTurnOrder+89↑P
                                         ; sub_16DAA+1B↑P ...
                 push    bx              ; RandomInRange(ax=exclusive upper bound): DOS-time-seeded (INT 21h AH=0x2Ch on first call) linear-congruential PRNG (multiplier 0x805). Returns a value in [0, bound). Widely used general-purpose RNG.
                 push    cx
@@ -74196,7 +74196,7 @@ word_328D2      dw 0                    ; DATA XREF: HandleMovementInput+258↑r
                                         ; HandleMovementInput+2F8↑r ...
 word_328D4      dw 0                    ; DATA XREF: sub_16407:loc_16428↑w
                                         ; sub_16407+3D↑w ...
-word_328D6      dw 0                    ; DATA XREF: sub_16D4D+24↑w
+word_328D6      dw 0                    ; DATA XREF: FindPartySlotForRecord+24↑w
                                         ; sub_1CDBC+9D↑r ...
 word_328D8      dw 0                    ; DATA XREF: sub_1D4B8+E0↑r
                                         ; sub_1DC73+D↑r
@@ -74523,8 +74523,9 @@ word_32A1A      dw 0                    ; DATA XREF: sub_22CBC+C↑w
 word_32A1C      dw 0                    ; DATA XREF: sub_22CBC+12↑w
 word_32A1E      dw 0                    ; DATA XREF: RunDungeonGameLoop+3F↑w
                                         ; sub_16407+2CB↑w ...
-word_32A20      dw 0                    ; DATA XREF: sub_22D4C:loc_2302A↑r
+g_monsterSlots  dw 0                    ; DATA XREF: sub_22D4C:loc_2302A↑r
                                         ; sub_22D4C:loc_230B7↑r
+                                        ; 3 x 0x9C-byte monster/combatant records (linear 0x32A20 = 0x51C0 + ds base). Confirmed fields: +0xC type/behavior flags (tested against 0x3010 in BuildCombatTurnOrder), +0x12 current target (a party record pointer), +0x56 speed/initiative value.
                 db    0
                 db    0
                 db    0
@@ -74992,7 +74993,7 @@ word_32BF6      dw 0                    ; DATA XREF: sub_22CBC+18↑w
 word_32BF8      dw 0                    ; DATA XREF: sub_22CBC+1E↑w
 word_32BFA      dw 0                    ; DATA XREF: sub_22CBC+24↑w
 word_32BFC      dw 0                    ; DATA XREF: sub_22CBC+2A↑w
-                db    0
+g_combatTurnOrder db    0               ; 14 x 8-byte combat turn-order scratch list, rebuilt every RunDungeonGameLoop iteration by BuildCombatTurnOrder. +0 record ptr, +2 party-slot address (0 for monsters), +4 speed/initiative (sort key, descending), +6 flags (0x8000=monster, 0x2000=?, 0x4000=plausibly defeated).
                 db    0
                 db    0
                 db    0
