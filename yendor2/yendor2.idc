@@ -7271,7 +7271,9 @@ static Bytes_1(void) {
 	create_insn	(0X28C94);
 	create_insn	(0X28CB1);
 	set_cmt	(0X28CC2,	"this",	0);
+	set_cmt	(0X28CFF,	"CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.",	0);
 	create_insn	(0X28CFF);
+	set_name	(0X28CFF,	"RevealMapRegion");
 	create_insn	(x=0X28D1D);
 	op_hex		(x,	1);
 	create_insn	(0X28D2D);
@@ -7321,7 +7323,9 @@ static Bytes_1(void) {
 	create_insn	(0X29164);
 	set_cmt	(0X29171,	"msg",	0);
 	set_cmt	(0X29190,	"msg",	0);
+	set_cmt	(0X291A3,	"Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.",	0);
 	create_insn	(0X291A3);
+	set_name	(0X291A3,	"RevealMapRegionRow");
 	set_cmt	(0X291A6,	"this",	0);
 	create_insn	(x=0X291C1);
 	op_hex		(x,	1);
@@ -9570,6 +9574,15 @@ static Bytes_1(void) {
 	set_name	(0X329E0,	"_ptr5");
 	create_word	(0X329E2);
 	set_name	(0X329E2,	"_ptr6");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_word	(0X329E4);
 	set_name	(0X329E4,	"_ptr7");
 	create_word	(0X329E6);
@@ -9666,15 +9679,6 @@ static Bytes_1(void) {
 	create_word	(0X3330C);
 	create_word	(0X3330E);
 	create_word	(0X33310);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_word	(0X33312);
 	create_word	(0X33314);
 	create_word	(0X33316);

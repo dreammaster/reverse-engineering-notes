@@ -1139,6 +1139,25 @@ finding), and draws status icons for whichever are empty via the new
 
 161 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: correction — it's not weather, it's a map-reveal ability
+
+Went back to the "plausibly weather" lead flagged two rounds ago and
+read past the part I'd stopped at. It's wrong: `sub_28CFF` is a
+special class ability (one of 4 slots, gated on a newly-found
+per-character "abilities learned" bitmask at `+0xB4` and per-slot
+charge/level values at `+0xB6`–`+0xBC`) that reads `WORLD.DAT` and
+`CURGAME` directly, walks the same bit-packed explored-cell bitmap
+`PersistExploredCell` writes, and reveals a tier-sized box of the map
+centered on the player — classic `Locate`/`Scout`/`Magic-Mapping`
+mechanics, not a visual effect. Corrected the hedge in `file-formats.md`
+rather than leaving the wrong guess in place. Named `RevealMapRegion`
+and its per-row worker `RevealMapRegionRow`; the exact ability/spell
+name and a few internal gates (`sub_28C94`/`sub_28CB1`/`sub_29259`,
+possibly tied to the still-unconfirmed "transport-check" table) remain
+open.
+
+163 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

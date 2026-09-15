@@ -95,11 +95,21 @@ tiered gameplay system — `+0x64` → `word_36CA5`, compared against 5
 ascending thresholds to set bits in `word_36C7F` that
 `DrawMinimap`/`BuildMinimapTileData` read directly (bit `0x1000` blanks
 the dungeon view entirely) — plausibly a light-source/torch-fuel level,
-not confirmed; `+0x66` → `word_36CA7`, gating a 4-tier overlay effect
-in `sub_28CFF` (plausibly weather, not traced); `+0x58` → `word_36CA9`,
-gating progressively-revealed detail icons in `sub_234D3` (plausibly a
-bestiary/identify mechanic, not traced). None of the three identities
-are confirmed — flagged as open leads, not guesses to build on yet.
+not confirmed; `+0x66` → `word_36CA7`, gating a 4-tier area size in
+`RevealMapRegion` (**correction**: previously guessed "plausibly
+weather" — traced further and it's a `Locate`/`Scout`/`Magic-Mapping`-
+style special ability that reads `WORLD.DAT`/`CURGAME` directly and
+reveals a `word_36CA7`-sized box of the map around the player, not a
+visual weather effect); `+0x58` → `word_36CA9`, gating progressively-
+revealed detail icons in `sub_234D3` (plausibly a bestiary/identify
+mechanic, not traced). Only the light/torch-fuel identity (`+0x64`)
+and the bestiary identity (`+0x58`) remain unconfirmed guesses; the
+`+0x66` → area-reveal-size link is now solid. `+0xB4`: a bitmask of
+which of (at least) 4 special abilities this character has learned;
+`+0xB6`/`+0xB8`/`+0xBA`/`+0xBC`: per-ability charge or level values,
+each checked against a threshold in a small table at `0x77C6` before
+`RevealMapRegion` (and presumably its 3 sibling abilities, `ax`=2..5)
+will fire.
 `0x18` dispels/cures — clears bits 13-15 of `+0x1C`, a *different* 3-bit group
 than the one `TickStatusEffects`/`ApplyStatusEffect` manage (bits
 10/11/13 — bit 13 appears in both groups). Not yet mapped: the 6

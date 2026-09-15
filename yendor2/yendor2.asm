@@ -789,7 +789,7 @@ loc_106A1:                              ; CODE XREF: start+69C↑j
                 call    HitTestRegionTable
                 cmp     ax, 0
                 jz      short loc_1069E
-                call    sub_28CFF
+                call    RevealMapRegion
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_106C4
                 jmp     loc_10286
@@ -44707,8 +44707,8 @@ seg106          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28C94       proc far                ; CODE XREF: sub_28CFF+14B↓p
-                                        ; sub_291A3+73↓p
+sub_28C94       proc far                ; CODE XREF: RevealMapRegion+14B↓p
+                                        ; RevealMapRegionRow+73↓p
                 push    dx
                 push    ax
                 xor     dx, dx
@@ -44730,8 +44730,8 @@ sub_28C94       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28CB1       proc far                ; CODE XREF: sub_28CFF+152↓p
-                                        ; sub_291A3+8B↓p
+sub_28CB1       proc far                ; CODE XREF: RevealMapRegion+152↓p
+                                        ; RevealMapRegionRow+8B↓p
                 push    bx
                 push    word_368AB
                 push    word_368A7
@@ -44760,8 +44760,8 @@ sub_28CB1       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28CFF       proc far                ; CODE XREF: start+6B5↑P
-                cmp     ax, 2
+RevealMapRegion proc far                ; CODE XREF: start+6B5↑P
+                cmp     ax, 2           ; CORRECTED from a 'plausibly weather' guess. Special ability (ax=2..5 selects one of 4 slots): gated on the party member's +0xB4 learned-ability bitmask and a per-slot charge/level threshold (0x77C6 table vs. party fields +0xB6/+0xB8/+0xBA/+0xBC). If open, computes a tier-sized box (word_328FA x word_32900, from the word_36CA7 party-average tier) centered on the player, then calls RevealMapRegionRow per row -- reads WORLD.DAT and CURGAME directly and walks the explored-cell bitmap (same one PersistExploredCell writes). Reads as a Locate/Scout/Magic-Mapping-style ability, not weather.
                 jl      short locret_28D2C
                 cmp     ax, 5
                 jg      short locret_28D2C
@@ -44773,48 +44773,48 @@ sub_28CFF       proc far                ; CODE XREF: start+6B5↑P
                 xchg    ax, bx
                 mov     cx, 4
 
-loc_28D1D:                              ; CODE XREF: sub_28CFF+2B↓j
+loc_28D1D:                              ; CODE XREF: RevealMapRegion+2B↓j
                 shl     ax, 1
                 jnb     short loc_28D24
                 dec     bx
                 jz      short loc_28D2D
 
-loc_28D24:                              ; CODE XREF: sub_28CFF+20↑j
+loc_28D24:                              ; CODE XREF: RevealMapRegion+20↑j
                 add     si, 1Ah
                 add     di, 2
                 loop    loc_28D1D
 
-locret_28D2C:                           ; CODE XREF: sub_28CFF+3↑j
-                                        ; sub_28CFF+8↑j
+locret_28D2C:                           ; CODE XREF: RevealMapRegion+3↑j
+                                        ; RevealMapRegion+8↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28D2D:                              ; CODE XREF: sub_28CFF+23↑j
+loc_28D2D:                              ; CODE XREF: RevealMapRegion+23↑j
                 mov     ax, [si+16h]
                 cmp     ax, [di]
                 jg      short loc_28D35
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28D35:                              ; CODE XREF: sub_28CFF+33↑j
+loc_28D35:                              ; CODE XREF: RevealMapRegion+33↑j
                 cmp     word_36D01, 1A4h
                 jl      short loc_28D45
                 cmp     word_36D01, 474h
                 jle     short loc_28D4D
 
-loc_28D45:                              ; CODE XREF: sub_28CFF+3C↑j
+loc_28D45:                              ; CODE XREF: RevealMapRegion+3C↑j
                 test    word ptr [si+18h], 1
                 jnz     short loc_28D54
 
-locret_28D4C:                           ; CODE XREF: sub_28CFF+53↓j
+locret_28D4C:                           ; CODE XREF: RevealMapRegion+53↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_28D4D:                              ; CODE XREF: sub_28CFF+44↑j
+loc_28D4D:                              ; CODE XREF: RevealMapRegion+44↑j
                 test    word ptr [si+18h], 2
                 jz      short locret_28D4C
 
-loc_28D54:                              ; CODE XREF: sub_28CFF+4B↑j
+loc_28D54:                              ; CODE XREF: RevealMapRegion+4B↑j
                 call    RestoreCursorBackgroundIfDirty
                 push    word_36C7F      ; this
                 and     word_36C7F, 0AFFFh
@@ -44843,8 +44843,8 @@ loc_28D54:                              ; CODE XREF: sub_28CFF+4B↑j
                 mov     word_3293E, 0Ch
                 mov     word_32940, 8
 
-loc_28DE3:                              ; CODE XREF: sub_28CFF+8C↑j
-                                        ; sub_28CFF+AB↑j ...
+loc_28DE3:                              ; CODE XREF: RevealMapRegion+8C↑j
+                                        ; RevealMapRegion+AB↑j ...
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 mov     y, 8
@@ -44853,12 +44853,12 @@ loc_28DE3:                              ; CODE XREF: sub_28CFF+8C↑j
                 mov     word_2E530, 13h
                 mov     cx, 11h
 
-loc_28E04:                              ; CODE XREF: sub_28CFF+121↓j
+loc_28E04:                              ; CODE XREF: RevealMapRegion+121↓j
                 push    cx
                 mov     cx, 1Ch
                 mov     x, 8
 
-loc_28E0E:                              ; CODE XREF: sub_28CFF+119↓j
+loc_28E0E:                              ; CODE XREF: RevealMapRegion+119↓j
                 call    DrawPicture
                 add     x, 8
                 loop    loc_28E0E
@@ -44901,10 +44901,10 @@ loc_28E0E:                              ; CODE XREF: sub_28CFF+119↓j
                 mov     ax, word_32940
                 mov     y, ax
 
-loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
+loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 mov     ax, word_3293E
                 mov     x, ax
-                call    sub_291A3
+                call    RevealMapRegionRow
                 inc     word_368AB
                 inc     word_36863
                 add     y, 8
@@ -44942,8 +44942,8 @@ loc_28E86:                              ; CODE XREF: sub_28CFF+1A1↓j
                 call    sub_238CD
                 call    DrawMouseCursor
 
-loc_28F26:                              ; CODE XREF: sub_28CFF+231↓j
-                                        ; sub_28CFF+23F↓j ...
+loc_28F26:                              ; CODE XREF: RevealMapRegion+231↓j
+                                        ; RevealMapRegion+23F↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_28F26
@@ -44954,13 +44954,13 @@ loc_28F26:                              ; CODE XREF: sub_28CFF+231↓j
                 jmp     short loc_28F4B
 ; ---------------------------------------------------------------------------
 
-loc_28F42:                              ; CODE XREF: sub_28CFF+238↑j
+loc_28F42:                              ; CODE XREF: RevealMapRegion+238↑j
                 cmp     byte_2E400, 1Bh
                 jnz     short loc_28F26
                 jmp     short loc_28FAC
 ; ---------------------------------------------------------------------------
 
-loc_28F4B:                              ; CODE XREF: sub_28CFF+241↑j
+loc_28F4B:                              ; CODE XREF: RevealMapRegion+241↑j
                 call    sub_29297
                 cmp     errorCode, 0
                 jz      short loc_28FAA
@@ -44978,11 +44978,11 @@ loc_28F4B:                              ; CODE XREF: sub_28CFF+241↑j
                 call    sub_23B76
                 call    DrawMouseCursor
 
-loc_28F8C:                              ; CODE XREF: sub_28CFF+262↑j
-                                        ; sub_28CFF+269↑j
+loc_28F8C:                              ; CODE XREF: RevealMapRegion+262↑j
+                                        ; RevealMapRegion+269↑j
                 call    FlashStatusWarning
 
-loc_28F91:                              ; CODE XREF: sub_28CFF+25B↑j
+loc_28F91:                              ; CODE XREF: RevealMapRegion+25B↑j
                 mov     bx, 9043h
                 mov     ax, 0AFA8h
                 call    sub_27FE0
@@ -44992,10 +44992,10 @@ loc_28F91:                              ; CODE XREF: sub_28CFF+25B↑j
                 jmp     loc_28F26
 ; ---------------------------------------------------------------------------
 
-loc_28FAA:                              ; CODE XREF: sub_28CFF+254↑j
+loc_28FAA:                              ; CODE XREF: RevealMapRegion+254↑j
                 inc     word ptr [di]
 
-loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
+loc_28FAC:                              ; CODE XREF: RevealMapRegion+24A↑j
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_223D4
                 pop     word_36C7F
@@ -45012,7 +45012,7 @@ loc_28FAC:                              ; CODE XREF: sub_28CFF+24A↑j
                 call    DrawMouseCursor
                 call    sub_238CD
                 retf
-sub_28CFF       endp
+RevealMapRegion endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -45199,8 +45199,8 @@ sub_2909C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_291A3       proc near               ; CODE XREF: sub_28CFF+18D↑p
-                push    cx
+RevealMapRegionRow proc near            ; CODE XREF: RevealMapRegion+18D↑p
+                push    cx              ; Per-row worker for RevealMapRegion: reads a WORLD.DAT block and a CURGAME block (FileEntry 0x9043/0x8FFB), walks the bit-packed explored-cell bitmap byte-by-byte, and for each not-yet-explored cell that passes a further gate (sub_28C94/sub_28CB1, not traced -- possibly related to the unconfirmed 'transport-check' table) calls sub_29259 (not traced) to reveal it.
                 push    si
                 push    di
                 push    word_2E402      ; this
@@ -45229,10 +45229,10 @@ sub_291A3       proc near               ; CODE XREF: sub_28CFF+18D↑p
                 mov     cx, dx
                 shl     byte ptr ds:[bp+0], cl
 
-loc_291FC:                              ; CODE XREF: sub_291A3+4F↑j
+loc_291FC:                              ; CODE XREF: RevealMapRegionRow+4F↑j
                 mov     cx, word_328FA
 
-loc_29200:                              ; CODE XREF: sub_291A3+AC↓j
+loc_29200:                              ; CODE XREF: RevealMapRegionRow+AC↓j
                 push    cx
                 push    bx
                 mov     word_2E530, 13h
@@ -45253,11 +45253,11 @@ loc_29200:                              ; CODE XREF: sub_291A3+AC↓j
                 cmp     ax, 2
                 jz      short loc_29239
 
-loc_29236:                              ; CODE XREF: sub_291A3+7A↑j
+loc_29236:                              ; CODE XREF: RevealMapRegionRow+7A↑j
                 call    sub_29259
 
-loc_29239:                              ; CODE XREF: sub_291A3+69↑j
-                                        ; sub_291A3+81↑j ...
+loc_29239:                              ; CODE XREF: RevealMapRegionRow+69↑j
+                                        ; RevealMapRegionRow+81↑j ...
                 inc     word_2E402
                 add     si, word_329FE
                 add     x, 8
@@ -45267,7 +45267,7 @@ loc_29239:                              ; CODE XREF: sub_291A3+69↑j
                 mov     bx, 8
                 inc     bp
 
-loc_2924E:                              ; CODE XREF: sub_291A3+A5↑j
+loc_2924E:                              ; CODE XREF: RevealMapRegionRow+A5↑j
                 pop     cx
                 loop    loc_29200
                 pop     word_2E402
@@ -45275,13 +45275,13 @@ loc_2924E:                              ; CODE XREF: sub_291A3+A5↑j
                 pop     si
                 pop     cx
                 retn
-sub_291A3       endp
+RevealMapRegionRow endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29259       proc near               ; CODE XREF: sub_291A3:loc_29236↑p
+sub_29259       proc near               ; CODE XREF: RevealMapRegionRow:loc_29236↑p
                 mov     ax, 0Ch
                 mul     word ptr [si]
                 mov     di, ax
@@ -45309,7 +45309,7 @@ sub_29259       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_29297       proc near               ; CODE XREF: sub_28CFF:loc_28F4B↑p
+sub_29297       proc near               ; CODE XREF: RevealMapRegion:loc_28F4B↑p
                 push    cx
                 push    di
                 push    si
@@ -45444,7 +45444,7 @@ sub_29297       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_293C0       proc near               ; CODE XREF: sub_28CFF+1A9↑p
+sub_293C0       proc near               ; CODE XREF: RevealMapRegion+1A9↑p
                 mov     x, 74h ; 't'
                 mov     y, 48h ; 'H'
                 mov     _font_bgTransparent, 1
