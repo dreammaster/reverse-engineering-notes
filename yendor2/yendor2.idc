@@ -6020,7 +6020,7 @@ static Bytes_1(void) {
 	create_insn	(0X23F58);
 	create_insn	(0X2438B);
 	create_insn	(0X243C3);
-	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display.",	0);
+	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.",	0);
 	create_insn	(0X243D3);
 	set_name	(0X243D3,	"ShowCharacterSkills");
 	set_cmt	(0X243ED,	"msg",	0);
@@ -8520,6 +8520,15 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AFF4);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2B029);
 	create_insn	(x=0X2B036);
 	op_hex		(x,	1);
@@ -8532,15 +8541,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2B10C);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2B114);
 	op_hex		(x,	1);
 	create_insn	(x=0X2B11D);

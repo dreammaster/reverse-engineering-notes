@@ -150,9 +150,23 @@ set both current and max HP, `+0x52`/`+0x92` — plausibly
 **Stamina/Constitution**). Exact name-to-offset assignment for all 6
 isn't independently confirmed — the roll order doesn't obviously match
 the manual's STR/DEX/STA/INT/WIS/CHA listing — but the *pairing*
-(base ↔ derived, and which pair feeds HP vs. MP) is solid. Still not
-mapped: the 8 item slots (`ShowCharacterInventory`), or the skill
-values (`ShowCharacterSkills`).
+(base ↔ derived, and which pair feeds HP vs. MP) is solid.
+
+**Skill values found**: `ShowCharacterSkills` clears a **16-word array
+at `+0xCA`–`+0xE9`** (`and es:[si+0xCA]... rep stosw cx=0x10`) before
+drawing 3 category headers with 3/4/8 skill-name lines respectively
+(15 total — matches a pre-existing comment noting "15 total" skill
+lines). Individual skill names/offsets within that array aren't mapped
+yet (the line-drawer, `sub_23AF2`, only draws label strings — the
+numeric skill values themselves must be drawn by an untraced call in
+the same function). **This also sharpens an earlier hedge**: since
+`+0xCA` here holds plain word values (not a bitmask), it's now fairly
+confident that `GetRecordFlagBitAndWord_CA` (the per-object flag bank
+at the same relative offset, from several rounds ago) operates on a
+*different* record type than the party record, not this one — that
+hedge said "unconfirmed record type," which now reads more like
+"confirmed not the party record." Still not mapped: the 8 item slots
+(`ShowCharacterInventory`).
 
 ### Combat: monster slots and turn order
 

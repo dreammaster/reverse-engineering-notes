@@ -1438,6 +1438,19 @@ Named `RollCharacterAttributes`.
 
 199 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: found the skill-value array
+
+Traced `ShowCharacterSkills`' reset step and found the character's
+skill values live in a 16-word array at `+0xCA`–`+0xE9`, matching its
+15 skill-name lines (3+4+8 across 3 categories). Individual skill
+identities within that array aren't mapped yet. This also sharpens an
+earlier hedge: `GetRecordFlagBitAndWord_CA`'s per-object flag bank sits
+at the same relative offset but holds a bitmask, not plain word values
+— since `+0xCA` on the party record is now confirmed to hold skill
+values, that flag bank must belong to a different record type. No new
+function named this round — a documentation-only pass, refining
+`ShowCharacterSkills`' own comment to match.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

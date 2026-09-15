@@ -24450,3 +24450,24 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'document_skill_array.py']
+[*] reading document_skill_array.py
+[*] executing document_skill_array.py
+[*] captured stdout from target script:
+----- begin target script output -----
+ShowCharacterSkills @ 0x243d3
+old comment: "ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display."
+comment updated
+----- end target script output -----
+[*] finished executing document_skill_array.py
+[*] auto_wait (post-script)
+[*] exporting ASM to C:\dev\yendor\yendor2\yendor2.asm
+[*] gen_file(OFILE_ASM) returned 106932
+[*] exporting IDC to C:\dev\yendor\yendor2\yendor2.idc
+[*] gen_file(OFILE_IDC) returned 1
+[*] saving database to C:\dev\yendor\yendor2\yendor2.idb
+[*] done, exiting 0

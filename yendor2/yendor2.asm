@@ -35953,7 +35953,7 @@ sub_243C3       endp
 
 ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8↑p
                                         ; ShowCharacterSummary+14E↓p
-                call    RestoreCursorBackgroundIfDirty ; ShowPartyMembers' first pipeline step: resets some per-member state ([si+0x1C] flag bits, a 16-word scratch area) then draws 3 category headers each followed by a group of skill lines (15 total) -- consistent with the manual's skill list grouped into categories. The character skills display.
+                call    RestoreCursorBackgroundIfDirty ; ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.
                 call    sub_2438B
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
