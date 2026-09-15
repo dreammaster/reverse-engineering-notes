@@ -6273,7 +6273,9 @@ static Bytes_2(void) {
 	set_name	(0X23A64,	"StpCpy");
 	create_insn	(x=0X23A6B);
 	op_seg		(x,	1);
+	set_cmt	(0X23A7C,	"Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.",	0);
 	create_insn	(0X23A7C);
+	set_name	(0X23A7C,	"WriteTwoToneString");
 	create_insn	(0X23AA6);
 	create_insn	(0X23AAC);
 	create_insn	(0X23ADC);
@@ -8793,11 +8795,6 @@ static Bytes_2(void) {
 	create_insn	(x=0X2A92E);
 	op_hex		(x,	1);
 	create_insn	(0X2A93C);
-	create_insn	(0X2A982);
-	create_insn	(0X2A9A2);
-	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
-	create_insn	(0X2A9AD);
-	set_name	(0X2A9AD,	"RestCharacter");
 }
 
 //------------------------------------------------------------------------
@@ -8807,6 +8804,11 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2A982);
+	create_insn	(0X2A9A2);
+	set_cmt	(0X2A9AD,	"Rest/regeneration: the HP-regen branch (target flag [bx+2] bit 0x8000 clear) always regenerates a percentage of max HP, no gate. The MP-regen branch (bit 0x8000 set) reduces [si+0xE] (plausibly a class id -- see UseTrainingItem, which reduces the same field the same way to pick a class-specific MP-growth formula) and, if <4 (presumably a non-caster class with no MP pool), sets a 'resting'-ish flag ([si+1Ch] |= 0x8000) instead of regenerating MP; otherwise regenerates a percentage of max MP. Matches the manual's 'R rest (1 food per person needed)'.",	0);
+	create_insn	(0X2A9AD);
+	set_name	(0X2A9AD,	"RestCharacter");
 	create_insn	(0X2A9BD);
 	create_insn	(x=0X2A9C5);
 	op_hex		(x,	1);

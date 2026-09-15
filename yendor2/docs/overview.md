@@ -3212,6 +3212,14 @@ restores the world map display area from an EMS cache.
 
 415 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: WriteTwoToneString
+
+Named `sub_23A7C`: draws a string with the first character in one
+color and the rest in another -- a highlighted-hotkey-letter label
+style, used in several unrelated screens.
+
+416 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

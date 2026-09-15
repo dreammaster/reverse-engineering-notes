@@ -16143,7 +16143,7 @@ loc_19429:                              ; CODE XREF: sub_193BE+5D↑j
                 mov     _textPos_x, 0A5h
                 mov     _textPos_y, 71h ; 'q'
                 mov     bx, 8536h
-                call    sub_23A7C
+                call    WriteTwoToneString
                 call    DrawMouseCursor
 
 loc_19442:                              ; CODE XREF: sub_193BE+8E↓j
@@ -34973,9 +34973,9 @@ seg075          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_23A7C       proc far                ; CODE XREF: sub_193BE+7A↑P
+WriteTwoToneString proc far             ; CODE XREF: sub_193BE+7A↑P
                                         ; sub_23C18+D5↓P ...
-                push    _textPos_x
+                push    _textPos_x      ; Draws a string (bx) with the first character in word_2E412's color and the rest in word_2E414's -- a highlighted-hotkey-letter label style. Called from sub_193BE and sub_23C18.
                 mov     ax, word_2E412
                 mov     _font_fgColor, ax
                 mov     al, [bx]
@@ -34986,7 +34986,7 @@ sub_23A7C       proc far                ; CODE XREF: sub_193BE+7A↑P
                 mov     ax, word_2E414
                 mov     _font_fgColor, ax
 
-loc_23A98:                              ; CODE XREF: sub_23A7C+28↓j
+loc_23A98:                              ; CODE XREF: WriteTwoToneString+28↓j
                 mov     al, [bx]
                 or      al, al
                 jz      short loc_23AA6
@@ -34995,12 +34995,12 @@ loc_23A98:                              ; CODE XREF: sub_23A7C+28↓j
                 jmp     short loc_23A98
 ; ---------------------------------------------------------------------------
 
-loc_23AA6:                              ; CODE XREF: sub_23A7C+E↑j
-                                        ; sub_23A7C+20↑j
+loc_23AA6:                              ; CODE XREF: WriteTwoToneString+E↑j
+                                        ; WriteTwoToneString+20↑j
                 inc     bx
                 pop     _textPos_x
                 retf
-sub_23A7C       endp
+WriteTwoToneString endp
 
 ; ---------------------------------------------------------------------------
                 push    dx
@@ -35270,11 +35270,11 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
                 mov     word_2E412, 7Bh ; '{'
                 mov     word_2E414, 0Fh
                 mov     bx, 7A7Dh
-                call    sub_23A7C
+                call    WriteTwoToneString
                 mov     _textPos_x, 8
                 mov     _textPos_y, 0B9h
                 mov     bx, 7A84h
-                call    sub_23A7C
+                call    WriteTwoToneString
                 call    sub_238CD
                 call    DrawMouseCursor
                 call    sub_2587E
@@ -35300,11 +35300,11 @@ loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                 mov     word_2E412, 7Bh ; '{'
                 mov     word_2E414, 0Fh
                 mov     bx, 7A7Dh
-                call    sub_23A7C
+                call    WriteTwoToneString
                 mov     _textPos_x, 8
                 mov     _textPos_y, 0B9h
                 mov     bx, 7A84h
-                call    sub_23A7C
+                call    WriteTwoToneString
                 call    sub_238CD
                 call    DrawMouseCursor
 
@@ -35403,11 +35403,11 @@ loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
                 mov     bx, 7A99h
                 mov     word_2E412, 7Bh ; '{'
                 mov     word_2E414, 0Fh
-                call    sub_23A7C
+                call    WriteTwoToneString
                 mov     _textPos_x, 8
                 mov     _textPos_y, 3Ch ; '<'
                 mov     bx, 7AA5h
-                call    sub_23A7C
+                call    WriteTwoToneString
                 call    DrawMouseCursor
                 call    sub_238CD
 
