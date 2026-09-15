@@ -1269,6 +1269,22 @@ than one record type carries its own flag bank).
 
 179 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: per-object flag banks (party-member event flags)
+
+Followed up on last round's flagged lead (the per-object flag-bit
+family distinct from `g_globalFlags`). Traced two of the three
+accessors: `GetRecordFlagBitAndWord_10C`/`SetRecordFlag_10C` (were
+`sub_27A6E`/`sub_27A3E`) operate on a flag bank at a record's `+0x10C`
+— the one traced real caller passes the current party member
+(`word_328D4`) inside an item-use dispatcher branch, suggesting these
+are per-character one-time-event flags (quest steps, items read, NPCs
+met — not confirmed). `GetRecordFlagBitAndWord_CA` (was `sub_27AC1`)
+is the same mechanism at a different offset (`+0xCA`) on an
+unconfirmed record type. Named conservatively on their offsets rather
+than guessing record identities beyond what's evidenced.
+
+182 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

@@ -6809,7 +6809,9 @@ static Bytes_1(void) {
 	create_insn	(0X27A2A);
 	set_name	(0X27A2A,	"ClearGlobalFlag");
 	create_insn	(0X27A34);
+	set_cmt	(0X27A3E,	"SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.",	0);
 	create_insn	(0X27A3E);
+	set_name	(0X27A3E,	"SetRecordFlag_10C");
 	set_cmt	(0X27A46,	"SetGlobalFlag(ax=flag index): [si] |= mask.",	0);
 	create_insn	(0X27A46);
 	set_name	(0X27A46,	"SetGlobalFlag");
@@ -6819,11 +6821,15 @@ static Bytes_1(void) {
 	create_insn	(0X27A5E);
 	set_name	(0X27A5E,	"TestGlobalFlag");
 	create_insn	(0X27A66);
+	set_cmt	(0X27A6E,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.",	0);
 	create_insn	(0X27A6E);
+	set_name	(0X27A6E,	"GetRecordFlagBitAndWord_10C");
 	set_cmt	(0X27A98,	"GetGlobalFlagBitAndWord(ax=flag index): si = g_globalFlags + (index/16)*2, ax = bit mask for index%16 (MSB-first). Shared by SetGlobalFlag/ClearGlobalFlag/TestGlobalFlag.",	0);
 	create_insn	(0X27A98);
 	set_name	(0X27A98,	"GetGlobalFlagBitAndWord");
+	set_cmt	(0X27AC1,	"Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).",	0);
 	create_insn	(0X27AC1);
+	set_name	(0X27AC1,	"GetRecordFlagBitAndWord_CA");
 	create_insn	(0X27AEC);
 	create_insn	(x=0X27AF5);
 	op_hex		(x,	1);
@@ -9164,6 +9170,15 @@ static Bytes_1(void) {
 	set_cmt	(0X2D585,	"DOS - 2+ internal - GET PSP SEGMENT\nReturn: BX = current PSP segment",	0);
 	create_insn	(x=0X2D585);
 	op_hex		(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2D5AF);
 	create_insn	(0X2D5CE);
 	create_insn	(0X2D5E0);
@@ -9212,15 +9227,6 @@ static Bytes_1(void) {
 	create_insn	(0X2D7A7);
 	create_insn	(x=0X2D7C8);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D7D9);
 	op_hex		(x,	1);
 	create_insn	(0X2D7EA);

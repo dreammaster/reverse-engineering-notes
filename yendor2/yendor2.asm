@@ -21067,7 +21067,7 @@ loc_1BCDE:                              ; CODE XREF: sub_1BBED+101↓j
                 mov     si, word_328D4
                 mov     bx, 0BCEh
                 mov     ax, [bx+1Ah]
-                call    sub_27A3E
+                call    SetRecordFlag_10C
                 mov     ax, 7
                 call    sub_28412
                 push    cs
@@ -21268,7 +21268,7 @@ loc_1BF1C:                              ; CODE XREF: sub_1BEA1+59↑j
                 mov     si, word_328D4
                 mov     bx, 0BCEh
                 mov     ax, [bx+1Ah]
-                call    sub_27A3E
+                call    SetRecordFlag_10C
                 push    cs
                 call    near ptr sub_1B7A5
                 jmp     short loc_1BED6
@@ -42175,7 +42175,7 @@ seg095          segment byte public 'CODE' use16
                 assume cs:seg095
                 assume es:nothing, ss:nothing, ds:seg129, fs:nothing, gs:nothing
                 push    si
-                call    sub_27A6E
+                call    GetRecordFlagBitAndWord_10C
                 not     ax
                 and     [si], ax
                 pop     si
@@ -42196,7 +42196,7 @@ ClearGlobalFlag endp
 
 ; ---------------------------------------------------------------------------
                 push    si
-                call    sub_27AC1
+                call    GetRecordFlagBitAndWord_CA
                 not     ax
                 and     [si], ax
                 pop     si
@@ -42205,14 +42205,14 @@ ClearGlobalFlag endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A3E       proc far                ; CODE XREF: sub_1BBED+111↑P
+SetRecordFlag_10C proc far              ; CODE XREF: sub_1BBED+111↑P
                                         ; sub_1BEA1+9E↑P
-                push    si
-                call    sub_27A6E
+                push    si              ; SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.
+                call    GetRecordFlagBitAndWord_10C
                 or      [si], ax
                 pop     si
                 retf
-sub_27A3E       endp
+SetRecordFlag_10C endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42234,7 +42234,7 @@ SetGlobalFlag   endp
 sub_27A4E       proc far                ; CODE XREF: sub_1C123+2FB↑P
                                         ; sub_25456+67↑P ...
                 push    si
-                call    sub_27AC1
+                call    GetRecordFlagBitAndWord_CA
                 or      [si], ax
                 pop     si
                 retf
@@ -42247,7 +42247,7 @@ sub_27A4E       endp
 sub_27A56       proc far                ; CODE XREF: sub_1B717+22↑P
                                         ; sub_1B7A5+27↑P
                 push    si
-                call    sub_27A6E
+                call    GetRecordFlagBitAndWord_10C
                 test    [si], ax
                 pop     si
                 retf
@@ -42273,7 +42273,7 @@ TestGlobalFlag  endp
 sub_27A66       proc far                ; CODE XREF: sub_1E1A7+3A↑P
                                         ; sub_2D7A7+16↓P
                 push    si
-                call    sub_27AC1
+                call    GetRecordFlagBitAndWord_CA
                 test    [si], ax
                 pop     si
                 retf
@@ -42283,9 +42283,9 @@ sub_27A66       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A6E       proc near               ; CODE XREF: seg095:0001↑p
-                                        ; sub_27A3E+1↑p ...
-                push    bx
+GetRecordFlagBitAndWord_10C proc near   ; CODE XREF: seg095:0001↑p
+                                        ; SetRecordFlag_10C+1↑p ...
+                push    bx              ; Like GetGlobalFlagBitAndWord but relative to the caller's own si+0x10C instead of a fixed global base -- a per-record flag bank. Traced one caller (SetRecordFlag_10C, via sub_1BBED) using si=word_328D4 (current party member), suggesting this bank lives on the party-member record, plausibly per-character one-time-event flags. Not fully confirmed.
                 push    cx
                 push    dx
                 mov     bx, 10h
@@ -42302,14 +42302,14 @@ sub_27A6E       proc near               ; CODE XREF: seg095:0001↑p
                 mov     cx, 10h
                 sub     si, 2
 
-loc_27A91:                              ; CODE XREF: sub_27A6E+1B↑j
+loc_27A91:                              ; CODE XREF: GetRecordFlagBitAndWord_10C+1B↑j
                 dec     cx
                 shr     ax, cl
                 pop     dx
                 pop     cx
                 pop     bx
                 retn
-sub_27A6E       endp
+GetRecordFlagBitAndWord_10C endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -42347,9 +42347,9 @@ GetGlobalFlagBitAndWord endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27AC1       proc near               ; CODE XREF: seg095:0015↑p
+GetRecordFlagBitAndWord_CA proc near    ; CODE XREF: seg095:0015↑p
                                         ; sub_27A4E+1↑p ...
-                push    bx
+                push    bx              ; Like GetGlobalFlagBitAndWord but relative to the caller's own si+0xCA -- a different per-record flag bank than GetRecordFlagBitAndWord_10C. Record type not confirmed (caller sub_27A4E, from sub_1C123, not traced).
                 push    cx
                 push    dx
                 mov     bx, 10h
@@ -42366,14 +42366,14 @@ sub_27AC1       proc near               ; CODE XREF: seg095:0015↑p
                 mov     cx, 10h
                 sub     si, 2
 
-loc_27AE4:                              ; CODE XREF: sub_27AC1+1B↑j
+loc_27AE4:                              ; CODE XREF: GetRecordFlagBitAndWord_CA+1B↑j
                 dec     cx
                 shr     ax, cl
                 pop     dx
                 pop     cx
                 pop     bx
                 retn
-sub_27AC1       endp
+GetRecordFlagBitAndWord_CA endp
 
 seg095          ends
 

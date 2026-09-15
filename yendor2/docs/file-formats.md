@@ -218,10 +218,18 @@ monster death via its own record's `+0x14`/`+0x16` fields (negative
 index = clear, positive = set), so specific monster kills can flip
 arbitrary quest/world-state flags (e.g. a boss-defeated flag). No
 individual flag indices are identified yet. A separate, structurally
-similar but distinct family (`sub_27A6E`/`sub_27A3E`, `sub_27AC1`)
-manipulates *per-object* flag banks at fixed offsets (`+0x10C`,
-`+0xCA`) from a caller-supplied record rather than this global array —
-not traced yet.
+similar but distinct family manipulates *per-object* flag banks at
+fixed offsets from a caller-supplied record rather than this global
+array. **Follow-up**: traced two of the three accessors.
+`GetRecordFlagBitAndWord_10C`/`SetRecordFlag_10C` (were `sub_27A6E`/
+`sub_27A3E`) operate on a bank at the caller record's `+0x10C`; the one
+traced real caller passes `si=word_328D4` (the current party member),
+inside an item-use dispatcher (`sub_1BBED`) branch gated on having
+enough of material `0x94B3` — plausibly per-character one-time-event
+flags (quest steps, items read, NPCs met), not confirmed.
+`GetRecordFlagBitAndWord_CA` (was `sub_27AC1`) is the same mechanism at
+a *different* offset, `+0xCA`, on an unconfirmed record type. Matching
+Clear/Test accessors for both banks weren't found this round.
 
 ### Item-slot encoding (from `Hex Hacking Item Guide.txt`, not yet cross-checked against the IDB)
 
