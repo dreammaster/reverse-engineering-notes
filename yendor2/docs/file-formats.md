@@ -228,8 +228,15 @@ inside an item-use dispatcher (`sub_1BBED`) branch gated on having
 enough of material `0x94B3` — plausibly per-character one-time-event
 flags (quest steps, items read, NPCs met), not confirmed.
 `GetRecordFlagBitAndWord_CA` (was `sub_27AC1`) is the same mechanism at
-a *different* offset, `+0xCA`, on an unconfirmed record type. Matching
-Clear/Test accessors for both banks weren't found this round.
+a *different* offset, `+0xCA`, on an unconfirmed record type. **Follow-
+up**: found and named the missing Test accessor for the `+0x10C` bank,
+`TestRecordFlag_10C` (was `sub_27A56`) — used by an item-target status
+display (`CheckPartyMemberItemFlag`) to check whether the targeted
+party member has already triggered the current item's personal flag
+(same index `SetRecordFlag_10C` uses to mark it), strengthening the
+"per-character one-time-event flag" reading. The `+0xCA` bank's
+Set/Clear/Test accessors and the `+0x10C` bank's Clear accessor are
+still unfound.
 
 **Items can flip up to 6 global flags each**: `ApplyItemEffectFlags`
 (was `sub_1BB48`, a shared step called from `UseItem`'s fallback and

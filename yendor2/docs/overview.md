@@ -1333,6 +1333,23 @@ confirmed. Named `ApplyItemEffectFlags`.
 
 188 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: item-target status classification
+
+Followed `word_2E40C`'s other writers (besides `ApplyItemEffectFlags`)
+to a small cluster building an "item target selection" status display:
+`ClassifyPartyMemberCondition` scores the targeted party member on 3
+conditions (a "dead"-looking status bit, a wider status mask, HP below
+max) into a tier; `CheckPartyMemberItemFlag`/
+`CheckPartyMemberItemFlagAndClearPanel` check whether that member has
+already triggered the current item's personal one-time flag (via the
+now-complete `TestRecordFlag_10C`, finishing the Get/Set/Test trio for
+that flag bank). `ClearStatusPanelIfDirty` (was `sub_16E18`, called
+extremely widely including directly from `start`) is the shared
+"erase the panel before redrawing it" step gated on the general
+redraw-dirty flag.
+
+193 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

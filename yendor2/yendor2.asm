@@ -464,7 +464,7 @@ loc_103B7:                              ; CODE XREF: start+3AD↑j
 ; ---------------------------------------------------------------------------
 
 loc_103BA:                              ; CODE XREF: start+32F↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 test    word_36C7F, 1000h
                 jz      short loc_103D6
                 call    sub_271DC
@@ -503,7 +503,7 @@ loc_1040D:                              ; CODE XREF: start+3E0↑j
                 call    DrawMouseCursor
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 test    word_36C7F, 8000h
                 jz      short loc_1044E
                 test    word_36C7F, 4000h
@@ -578,7 +578,7 @@ loc_104B2:                              ; CODE XREF: start+347↑j
                 call    sub_18C79
                 cmp     errorCode, 0
                 jnz     short loc_104CF
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
 loc_104CF:                              ; CODE XREF: start+4C3↑j
@@ -628,7 +628,7 @@ loc_1051A:                              ; CODE XREF: start+515↑j
 ; ---------------------------------------------------------------------------
 
 loc_1052C:                              ; CODE XREF: start+51D↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_18504
                 test    word_328C6, 7800h
                 jnz     short loc_10541
@@ -882,7 +882,7 @@ locret_1077B:                           ; CODE XREF: sub_1075E+C↑j
 loc_1077C:                              ; CODE XREF: sub_1075E+1B↑j
                 test    word_328CA, 2
                 jnz     short locret_1077B
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -926,7 +926,7 @@ loc_107FE:                              ; CODE XREF: start+7F4↑j
 ; ---------------------------------------------------------------------------
 
 loc_10806:                              ; CODE XREF: start+6E0↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 and     word_3295A, 9FFFh
                 mov     ax, word_36C7F
                 and     ax, 7000h
@@ -941,7 +941,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
                 jmp     loc_10600
 ; END OF FUNCTION CHUNK FOR start
 ; ---------------------------------------------------------------------------
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     word_3293E, 1Eh
                 mov     word_32940, 1Eh
                 call    sub_1CDBC
@@ -954,7 +954,7 @@ loc_10806:                              ; CODE XREF: start+6E0↑j
 loc_10867:                              ; CODE XREF: seg000:0855↑j
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     word_3293E, 1Fh
                 mov     word_32940, 1Fh
                 call    sub_1CDBC
@@ -1084,7 +1084,7 @@ loc_10992:                              ; CODE XREF: seg000:0987↑j
 ; ---------------------------------------------------------------------------
 
 loc_109A6:                              ; CODE XREF: seg000:09A1↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_26FC3
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1094,7 +1094,7 @@ loc_109A6:                              ; CODE XREF: seg000:09A1↑j
 ; ---------------------------------------------------------------------------
 
 loc_109BE:                              ; CODE XREF: seg000:09B9↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_26D54
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1105,7 +1105,7 @@ loc_109BE:                              ; CODE XREF: seg000:09B9↑j
 
 loc_109D6:                              ; CODE XREF: seg000:09D1↑j
                 and     word_3295A, 9FFFh
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    RunMapEditorScreen
                 call    sub_1FD03
                 jmp     loc_10043
@@ -1119,7 +1119,7 @@ loc_109D6:                              ; CODE XREF: seg000:09D1↑j
 loc_109F9:                              ; CODE XREF: start+67A↑j
                                         ; start+690↑j ...
                 call    sub_2849C
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 and     word_328C4, 0DFFFh
                 and     word_3295A, 9FFFh
                 call    RunTitleScreen
@@ -1192,7 +1192,7 @@ loc_10A90:                              ; CODE XREF: start+A8B↑j
 
 loc_10AAB:                              ; CODE XREF: start+373↑j
                                         ; start+380↑j ...
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    HandleMovementInput
                 cmp     byte_2E400, 0FFh
                 jnz     short loc_10ABF
@@ -1209,7 +1209,7 @@ loc_10ABF:                              ; CODE XREF: start+ABA↑j
 ; ---------------------------------------------------------------------------
 
 loc_10ACD:                              ; CODE XREF: seg000:0AC8↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_26E11
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -1219,7 +1219,7 @@ loc_10ACD:                              ; CODE XREF: seg000:0AC8↑j
 ; ---------------------------------------------------------------------------
 
 loc_10AE5:                              ; CODE XREF: seg000:0AE0↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_26EE8
                 jmp     loc_10043
 ; ---------------------------------------------------------------------------
@@ -10423,7 +10423,7 @@ loc_1658C:                              ; CODE XREF: sub_16407+179↑j
 ; ---------------------------------------------------------------------------
 
 loc_16594:                              ; CODE XREF: sub_16407+17E↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_18504
                 test    word_328C6, 7800h
                 jz      short loc_1658C
@@ -10723,7 +10723,7 @@ loc_16837:                              ; CODE XREF: sub_16407+E4↑j
                                         ; sub_16407+156↑j
                 mov     word_32924, 0
                 call    sub_26C9E
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 and     word_3295A, 9FFFh
                 call    sub_185A2
 
@@ -11468,14 +11468,14 @@ seg017          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_16E18       proc far                ; CODE XREF: start:loc_103BA↑P
+ClearStatusPanelIfDirty proc far        ; CODE XREF: start:loc_103BA↑P
                                         ; start+41D↑P ...
-                test    word_328C4, 100h
+                test    word_328C4, 100h ; Gated on word_328C4 bit 0x100 (the widespread 'redraw needed' dirty flag): if set, blits a fill pattern over fixed screen regions via the EMS page-frame trick (same technique as ShowResourceDepletedOverlay) -- erases the status panel before it gets redrawn. Called very widely, including directly from `start`.
                 jnz     short loc_16E21
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_16E21:                              ; CODE XREF: sub_16E18+6↑j
+loc_16E21:                              ; CODE XREF: ClearStatusPanelIfDirty+6↑j
                 push    di
                 push    es
                 push    cx
@@ -11488,12 +11488,12 @@ loc_16E21:                              ; CODE XREF: sub_16E18+6↑j
                 jmp     short loc_16EAA
 ; ---------------------------------------------------------------------------
 
-loc_16E3E:                              ; CODE XREF: sub_16E18+22↑j
+loc_16E3E:                              ; CODE XREF: ClearStatusPanelIfDirty+22↑j
                 mov     di, 78F0h
                 mov     cx, 3Ch ; '<'
                 mov     ax, 404h
 
-loc_16E47:                              ; CODE XREF: sub_16E18+3A↓j
+loc_16E47:                              ; CODE XREF: ClearStatusPanelIfDirty+3A↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11504,7 +11504,7 @@ loc_16E47:                              ; CODE XREF: sub_16E18+3A↓j
                 mov     cx, 6
                 mov     ax, 404h
 
-loc_16E5D:                              ; CODE XREF: sub_16E18+50↓j
+loc_16E5D:                              ; CODE XREF: ClearStatusPanelIfDirty+50↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11516,7 +11516,7 @@ loc_16E5D:                              ; CODE XREF: sub_16E18+50↓j
                 mov     cx, 3Ch ; '<'
                 mov     ax, 404h
 
-loc_16E77:                              ; CODE XREF: sub_16E18+6A↓j
+loc_16E77:                              ; CODE XREF: ClearStatusPanelIfDirty+6A↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11527,7 +11527,7 @@ loc_16E77:                              ; CODE XREF: sub_16E18+6A↓j
                 mov     cx, 6
                 mov     ax, 404h
 
-loc_16E8D:                              ; CODE XREF: sub_16E18+80↓j
+loc_16E8D:                              ; CODE XREF: ClearStatusPanelIfDirty+80↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 rep stosw
@@ -11535,7 +11535,7 @@ loc_16E8D:                              ; CODE XREF: sub_16E18+80↓j
                 pop     cx
                 loop    loc_16E8D
 
-loc_16E9A:                              ; CODE XREF: sub_16E18+C4↓j
+loc_16E9A:                              ; CODE XREF: ClearStatusPanelIfDirty+C4↓j
                 and     word_328C4, 0FEFFh
                 and     word_328C8, 0EFFFh
                 pop     cx
@@ -11544,12 +11544,12 @@ loc_16E9A:                              ; CODE XREF: sub_16E18+C4↓j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_16EAA:                              ; CODE XREF: sub_16E18+24↑j
+loc_16EAA:                              ; CODE XREF: ClearStatusPanelIfDirty+24↑j
                 mov     di, 6C70h
                 mov     cx, 6Dh ; 'm'
                 mov     ax, 404h
 
-loc_16EB3:                              ; CODE XREF: sub_16E18+A7↓j
+loc_16EB3:                              ; CODE XREF: ClearStatusPanelIfDirty+A7↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 stosb
@@ -11562,7 +11562,7 @@ loc_16EB3:                              ; CODE XREF: sub_16E18+A7↓j
                 mov     cx, 6Dh ; 'm'
                 mov     ax, 404h
 
-loc_16ECE:                              ; CODE XREF: sub_16E18+C2↓j
+loc_16ECE:                              ; CODE XREF: ClearStatusPanelIfDirty+C2↓j
                 push    cx
                 mov     cx, 24h ; '$'
                 stosb
@@ -11571,7 +11571,7 @@ loc_16ECE:                              ; CODE XREF: sub_16E18+C2↓j
                 pop     cx
                 loop    loc_16ECE
                 jmp     short loc_16E9A
-sub_16E18       endp
+ClearStatusPanelIfDirty endp
 
 seg017          ends
 
@@ -12209,7 +12209,7 @@ sub_1728A       endp
 
 sub_1732B       proc far                ; CODE XREF: sub_178A6+104↓p
                                         ; sub_1AEF8+1C↓P ...
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_1B47A
                 or      word_328C6, 200h
                 call    sub_179AE
@@ -12405,7 +12405,7 @@ loc_174B1:                              ; CODE XREF: sub_1732B+17C↑j
                 jnz     short loc_1746B
                 push    cs
                 call    near ptr sub_175F4
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 jmp     loc_17350
 ; ---------------------------------------------------------------------------
@@ -12703,7 +12703,7 @@ LoadCurgameRecord endp
 
 sub_17795       proc far                ; CODE XREF: HandleMovementInput+2A0↑P
                                         ; sub_178A6+98↓p ...
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -13101,7 +13101,7 @@ loc_17B35:                              ; CODE XREF: sub_17B09+1F↑j
                 mov     word_3194C, 0
                 mov     word_3194A, 0
                 call    sub_23874
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 push    cs
                 call    near ptr sub_175F4
                 call    DrawMouseCursor
@@ -13160,7 +13160,7 @@ UseItem         proc far                ; CODE XREF: start+669↑P
 loc_17BA4:                              ; CODE XREF: UseItem+D↑j
                                         ; UseItem+1A6↓j ...
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 test    word_2E410, 8000h
                 jz      short loc_17BBF
                 call    sub_1BF94
@@ -13284,7 +13284,7 @@ loc_17CBE:                              ; CODE XREF: UseItem+125↑j
 
 loc_17D04:                              ; CODE XREF: UseItem+13A↑j
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_162B6
                 mov     si, word_2E54E
                 mov     es, word_2E54C
@@ -13439,7 +13439,7 @@ loc_17E43:                              ; CODE XREF: UseItem+2AC↑j
                 call    sub_26C9E
                 test    word_2E410, 8000h
                 jz      short loc_17E60
-                call    sub_1B74A
+                call    ClassifyPartyMemberCondition
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
@@ -13453,14 +13453,14 @@ loc_17E60:                              ; CODE XREF: UseItem+2C5↑j
 loc_17E6F:                              ; CODE XREF: UseItem+2D4↑j
                 test    word_2E410, 400h
                 jz      short loc_17E7E
-                call    sub_1B7A5
+                call    CheckPartyMemberItemFlagAndClearPanel
                 jmp     short loc_17E8B
 ; ---------------------------------------------------------------------------
 
 loc_17E7E:                              ; CODE XREF: UseItem+2E3↑j
                 test    word_2E410, 800h
                 jz      short loc_17EA8
-                call    sub_1B717
+                call    CheckPartyMemberItemFlag
 
 loc_17E8B:                              ; CODE XREF: UseItem+2CC↑j
                                         ; UseItem+2DB↑j ...
@@ -13476,7 +13476,7 @@ loc_17E8B:                              ; CODE XREF: UseItem+2CC↑j
 loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 test    word_2E410, 3000h
                 jz      short loc_17E8B
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 test    word_2E410, 2000h
                 jnz     short loc_17F25
                 mov     bx, word_32924
@@ -15151,7 +15151,7 @@ loc_18ACC:                              ; CODE XREF: sub_1869D+40C↑j
                 call    sub_238CD
                 test    word_328C6, 7800h
                 jnz     short loc_18B00
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     errorCode, 0
                 retf
 ; ---------------------------------------------------------------------------
@@ -15214,7 +15214,7 @@ loc_18B6F:                              ; CODE XREF: sub_1869D+4BB↑j
                 call    sub_2607F
 
 loc_18B82:                              ; CODE XREF: sub_1869D+4D6↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_175F4
                 call    DrawMouseCursor
 
@@ -15302,7 +15302,7 @@ loc_18C1F:                              ; CODE XREF: sub_1869D+578↑j
                 mov     si, 94B3h
                 mov     di, 5104h
                 call    SubBCD4
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_23874
                 call    sub_238CD
                 call    sub_175F4
@@ -15679,7 +15679,7 @@ sub_18F6C       proc near               ; CODE XREF: sub_1869D+344↑p
                 mov     si, 95F1h
                 call    sub_190E9
                 and     word_328C6, 87FFh
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 retn
 sub_18F6C       endp
 
@@ -15713,7 +15713,7 @@ sub_18FDA       proc near               ; CODE XREF: sub_1869D+558↑p
                 mov     word_32974, ax
                 call    sub_1B147
                 jz      short loc_19021
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -15740,7 +15740,7 @@ loc_19032:                              ; CODE XREF: sub_18FDA+52↑j
                 mov     si, 94B3h
                 mov     di, 0CB2h
                 call    SubBCD4
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 mov     ax, word_32974
                 inc     ax
@@ -15785,7 +15785,7 @@ sub_19091       endp
 
 sub_190AF       proc near               ; CODE XREF: sub_18FDA+54↑p
                                         ; sub_19140+54↓p
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -15860,7 +15860,7 @@ sub_19140       proc near               ; CODE XREF: sub_1869D+566↑p
                 mov     word_32974, ax
                 call    sub_1B20C
                 jz      short loc_19187
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -15887,7 +15887,7 @@ loc_19198:                              ; CODE XREF: sub_19140+52↑j
                 mov     si, 94B3h
                 mov     di, 5082h
                 call    SubBCD4
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 mov     ax, word_3194C
                 mov     word_3194C, 0
@@ -15985,7 +15985,7 @@ sub_19264       proc near               ; CODE XREF: sub_1869D+54A↑p
                 mov     bx, word_2E546
                 test    [bx+10h], ax
                 jnz     short loc_192B9
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -16011,7 +16011,7 @@ loc_192B9:                              ; CODE XREF: sub_19264+19↑j
                 mov     word_32966, ax
                 mov     word_2E530, 0
                 call    sub_23874
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     word_31948, 0
                 mov     word_3194A, 0
                 mov     word_3194C, 0
@@ -18095,7 +18095,7 @@ sub_1A37E       proc far                ; CODE XREF: start+322↑P
 ; ---------------------------------------------------------------------------
 
 loc_1A386:                              ; CODE XREF: sub_1A37E+5↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_16EFA
                 call    sub_25740
                 jz      short loc_1A39E
@@ -18264,7 +18264,7 @@ loc_1A4DA:                              ; CODE XREF: sub_1A4C5+E↑j
 loc_1A4E9:                              ; CODE XREF: sub_1A4C5+1D↑j
                 cmp     word ptr [si+8], 0
                 jz      short loc_1A533
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -19532,7 +19532,7 @@ sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
                 or      word_36C7F, ax
                 call    FinishItemUse
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
 sub_1AEF8       endp
@@ -19659,7 +19659,7 @@ sub_1AF49       endp
 sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
                 or      word_328C6, 8
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -19680,7 +19680,7 @@ sub_1B0CF       proc far                ; CODE XREF: UseItem+1C1↑P
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
 sub_1B0CF       endp
@@ -19739,7 +19739,7 @@ sub_1B147       endp
 sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
                 or      word_328C6, 4
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -19760,7 +19760,7 @@ sub_1B194       proc far                ; CODE XREF: UseItem+1D0↑P
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
 sub_1B194       endp
@@ -19806,7 +19806,7 @@ sub_1B20C       endp
 sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
                 or      word_328C6, 10h
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     ax, word_36C7F
                 and     ax, 7000h
                 mov     word_3290C, ax
@@ -19827,7 +19827,7 @@ sub_1B245       proc far                ; CODE XREF: UseItem+E0↑P
                 call    BuildMinimapTileData
                 call    DrawMinimap
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 retf
 sub_1B245       endp
@@ -20133,7 +20133,7 @@ loc_1B4D2:                              ; CODE XREF: sub_1B4C2+C↑j
                 push    cx
                 push    si
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 0AAh
@@ -20262,7 +20262,7 @@ loc_1B60F:                              ; CODE XREF: sub_1B5FD+D↑j
                 push    cx
                 push    si
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
                 mov     _font_fgColor, 0AAh
@@ -20368,9 +20368,9 @@ SelectItemUseRecord endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B717       proc far                ; CODE XREF: UseItem+2F4↑P
+CheckPartyMemberItemFlag proc far       ; CODE XREF: UseItem+2F4↑P
                                         ; sub_1BBED+53↓p ...
-                push    di
+                push    di              ; Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.
                 push    si
                 push    bx
                 and     word_2E40C, 1FFFh
@@ -20381,24 +20381,24 @@ sub_1B717       proc far                ; CODE XREF: UseItem+2F4↑P
                 mov     si, ax
                 mov     di, 0BCEh
                 mov     ax, [di+1Ah]
-                call    sub_27A56
+                call    TestRecordFlag_10C
                 jnz     short loc_1B746
                 or      word_2E40C, 8000h
 
-loc_1B746:                              ; CODE XREF: sub_1B717+27↑j
+loc_1B746:                              ; CODE XREF: CheckPartyMemberItemFlag+27↑j
                 pop     bx
                 pop     si
                 pop     di
                 retf
-sub_1B717       endp
+CheckPartyMemberItemFlag endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B74A       proc far                ; CODE XREF: UseItem+2C7↑P
+ClassifyPartyMemberCondition proc far   ; CODE XREF: UseItem+2C7↑P
                                         ; sub_1BF94+6A↓p ...
-                push    bx
+                push    bx              ; Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.
                 push    si
                 and     word_2E40C, 3FFh
                 mov     bx, word_32924
@@ -20411,20 +20411,20 @@ sub_1B74A       proc far                ; CODE XREF: UseItem+2C7↑P
                 or      word_2E40C, 2000h
                 inc     ax
 
-loc_1B76F:                              ; CODE XREF: sub_1B74A+1C↑j
+loc_1B76F:                              ; CODE XREF: ClassifyPartyMemberCondition+1C↑j
                 test    word ptr [si+1Ch], 0FF80h
                 jz      short loc_1B77D
                 or      word_2E40C, 4000h
                 inc     bx
 
-loc_1B77D:                              ; CODE XREF: sub_1B74A+2A↑j
+loc_1B77D:                              ; CODE XREF: ClassifyPartyMemberCondition+2A↑j
                 mov     ax, [si+52h]
                 cmp     ax, [si+92h]
                 jge     short loc_1B78D
                 or      word_2E40C, 8000h
                 inc     bx
 
-loc_1B78D:                              ; CODE XREF: sub_1B74A+3A↑j
+loc_1B78D:                              ; CODE XREF: ClassifyPartyMemberCondition+3A↑j
                 cmp     bx, 1
                 jl      short loc_1B79C
                 jz      short loc_1B7A2
@@ -20432,26 +20432,27 @@ loc_1B78D:                              ; CODE XREF: sub_1B74A+3A↑j
                 jmp     short loc_1B7A2
 ; ---------------------------------------------------------------------------
 
-loc_1B79C:                              ; CODE XREF: sub_1B74A+46↑j
+loc_1B79C:                              ; CODE XREF: ClassifyPartyMemberCondition+46↑j
                 or      word_2E40C, 200h
 
-loc_1B7A2:                              ; CODE XREF: sub_1B74A+48↑j
-                                        ; sub_1B74A+50↑j
+loc_1B7A2:                              ; CODE XREF: ClassifyPartyMemberCondition+48↑j
+                                        ; ClassifyPartyMemberCondition+50↑j
                 pop     si
                 pop     bx
                 retf
-sub_1B74A       endp
+ClassifyPartyMemberCondition endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B7A5       proc far                ; CODE XREF: UseItem+2E5↑P
+CheckPartyMemberItemFlagAndClearPanel proc far
+                                        ; CODE XREF: UseItem+2E5↑P
                                         ; UseItemType_400+49↓p ...
-                push    di
+                push    di              ; Same as CheckPartyMemberItemFlag, plus a leading ClearStatusPanelIfDirty call.
                 push    si
                 push    bx
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 and     word_2E40C, 1FFFh
                 or      word_2E40C, 1000h
                 mov     bx, word_32924
@@ -20460,16 +20461,16 @@ sub_1B7A5       proc far                ; CODE XREF: UseItem+2E5↑P
                 mov     si, ax
                 mov     di, 0BCEh
                 mov     ax, [di+1Ah]
-                call    sub_27A56
+                call    TestRecordFlag_10C
                 jnz     short loc_1B7D9
                 or      word_2E40C, 8000h
 
-loc_1B7D9:                              ; CODE XREF: sub_1B7A5+2C↑j
+loc_1B7D9:                              ; CODE XREF: CheckPartyMemberItemFlagAndClearPanel+2C↑j
                 pop     bx
                 pop     si
                 pop     di
                 retf
-sub_1B7A5       endp
+CheckPartyMemberItemFlagAndClearPanel endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20479,7 +20480,7 @@ sub_1B7DD       proc far                ; CODE XREF: UseItem+2D6↑P
                                         ; sub_1C123+49↓p ...
                 push    si
                 push    bx
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 and     word_2E40C, 1FFFh
                 or      word_2E40C, 1000h
                 mov     bx, word_32924
@@ -21002,7 +21003,7 @@ loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
 
 loc_1BC3F:                              ; CODE XREF: sub_1BBED+12↑j
                 push    cs
-                call    near ptr sub_1B717
+                call    near ptr CheckPartyMemberItemFlag
                 jmp     short loc_1BC22
 ; ---------------------------------------------------------------------------
 
@@ -21046,7 +21047,7 @@ loc_1BC72:                              ; CODE XREF: sub_1BBED+63↑j
                 call    DrawMouseCursor
                 call    sub_162B6
                 push    cs
-                call    near ptr sub_1B717
+                call    near ptr CheckPartyMemberItemFlag
                 jmp     loc_1BC22
 ; ---------------------------------------------------------------------------
 
@@ -21123,7 +21124,7 @@ loc_1BD4E:                              ; CODE XREF: sub_1BBED+15A↑j
                 call    DrawMouseCursor
                 call    sub_162B6
                 push    cs
-                call    near ptr sub_1B717
+                call    near ptr CheckPartyMemberItemFlag
                 jmp     loc_1BC22
 ; ---------------------------------------------------------------------------
 
@@ -21239,7 +21240,7 @@ loc_1BED6:                              ; CODE XREF: UseItemType_400+A↑j
 
 loc_1BEE9:                              ; CODE XREF: UseItemType_400+12↑j
                 push    cs
-                call    near ptr sub_1B7A5
+                call    near ptr CheckPartyMemberItemFlagAndClearPanel
                 jmp     short loc_1BED6
 ; ---------------------------------------------------------------------------
 
@@ -21270,7 +21271,7 @@ loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 mov     ax, [bx+1Ah]
                 call    SetRecordFlag_10C
                 push    cs
-                call    near ptr sub_1B7A5
+                call    near ptr CheckPartyMemberItemFlagAndClearPanel
                 jmp     short loc_1BED6
 ; ---------------------------------------------------------------------------
 
@@ -21357,7 +21358,7 @@ loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
 
 loc_1BFFD:                              ; CODE XREF: sub_1BF94+12↑j
                 push    cs
-                call    near ptr sub_1B74A
+                call    near ptr ClassifyPartyMemberCondition
                 jmp     short loc_1BFEA
 ; ---------------------------------------------------------------------------
 
@@ -21425,7 +21426,7 @@ loc_1C094:                              ; CODE XREF: sub_1BF94+F3↑j
                 call    ApplyEffectAndDrawIconBar
                 call    sub_26C9E
                 push    cs
-                call    near ptr sub_1B74A
+                call    near ptr ClassifyPartyMemberCondition
                 call    sub_1B428
                 mov     bx, word_32924
                 call    sub_22445
@@ -21992,7 +21993,7 @@ loc_1C693:                              ; CODE XREF: sub_1C589+E3↑j
                                         ; sub_1C589+F0↑j ...
                 mov     bx, word_32924
                 call    sub_22445
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     si, word_328D4
                 call    sub_25CFA
                 call    sub_26C9E
@@ -22388,7 +22389,7 @@ sub_1CA64       proc far                ; CODE XREF: UseItem+82↑P
                 test    word_2E410, 8000h
                 jz      short loc_1CAB2
                 push    cs
-                call    near ptr sub_1B74A
+                call    near ptr ClassifyPartyMemberCondition
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
@@ -22404,7 +22405,7 @@ loc_1CAC0:                              ; CODE XREF: sub_1CA64+54↑j
                 test    word_2E410, 400h
                 jz      short loc_1CACE
                 push    cs
-                call    near ptr sub_1B7A5
+                call    near ptr CheckPartyMemberItemFlagAndClearPanel
                 jmp     short loc_1CADA
 ; ---------------------------------------------------------------------------
 
@@ -22412,7 +22413,7 @@ loc_1CACE:                              ; CODE XREF: sub_1CA64+62↑j
                 test    word_2E410, 800h
                 jz      short loc_1CADA
                 push    cs
-                call    near ptr sub_1B717
+                call    near ptr CheckPartyMemberItemFlag
 
 loc_1CADA:                              ; CODE XREF: sub_1CA64+4C↑j
                                         ; sub_1CA64+5A↑j ...
@@ -22430,7 +22431,7 @@ loc_1CAF3:                              ; CODE XREF: sub_1CA64+27↑j
                 call    near ptr FinishItemUse
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_26C9E
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 test    word_2E410, 1000h
                 jnz     short loc_1CB15
                 call    sub_29040
@@ -24874,7 +24875,7 @@ loc_1DF15:                              ; CODE XREF: sub_1DCE0+85↑j
                 mov     word_32924, 0
                 call    sub_26C9E
                 call    sub_1E4D6
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_21530
                 call    sub_20C46
                 call    DrawMouseCursor
@@ -24974,13 +24975,13 @@ loc_1E037:                              ; CODE XREF: sub_1DCE0+319↑j
                                         ; sub_1DCE0+3A5↓j
                 test    word_33302, 20h
                 jz      short loc_1E08F
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 mov     ax, 22h ; '"'
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_1E067
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
                 pop     word_32924
                 jmp     loc_1DD4B
@@ -25021,7 +25022,7 @@ loc_1E08F:                              ; CODE XREF: sub_1DCE0+355↑j
                 mov     ax, 5           ; ticks
                 call    wait
                 call    sub_1E4D6
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_21530
                 call    sub_20C46
                 call    DrawMouseCursor
@@ -25569,7 +25570,7 @@ sub_1E522       endp
 
 sub_1E546       proc near               ; CODE XREF: sub_1DCE0+5E↑p
                                         ; sub_1DCE0+220↑p ...
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     ax, 0F1h
                 mov     _textPos_x, ax
@@ -25672,7 +25673,7 @@ loc_1E657:                              ; CODE XREF: sub_1E64A+A↑j
 ; ---------------------------------------------------------------------------
 
 loc_1E662:                              ; CODE XREF: sub_1E64A+13↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_1EA18
                 cmp     errorCode, 0
                 jz      short loc_1E6AE
@@ -26062,7 +26063,7 @@ RunGameDialog   proc far                ; CODE XREF: start+7E0↑P
 ; ---------------------------------------------------------------------------
 
 loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_28246
                 call    sub_16EFA
                 test    word_328C4, 1
@@ -27201,7 +27202,7 @@ loc_1F5CD:                              ; CODE XREF: ConfirmNewGame+16↑j
                 call    sub_2849C
                 and     word_328C6, 0FBFFh
                 and     word_328C4, 9FFFh
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_238CD
                 call    RunTitleScreen
                 cmp     byte_2E400, 0FFh
@@ -31404,7 +31405,7 @@ sub_219FA       endp
 
 sub_21C79       proc far                ; CODE XREF: sub_17032+8B↑P
                                         ; sub_1869D:loc_18759↑P ...
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -32059,7 +32060,7 @@ sub_22255       endp
 
 sub_222BD       proc near               ; CODE XREF: sub_21E71+10↑p
                                         ; sub_220DF+8↑p
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_fgColor, 8Ah
                 mov     _font_bgTransparent, 1
@@ -33800,7 +33801,7 @@ ShowLootAndAwardExperience proc far     ; CODE XREF: RunDungeonGameLoop+100↑P
                 call    sub_28412
 
 loc_23164:                              ; CODE XREF: ShowLootAndAwardExperience+9↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -33914,7 +33915,7 @@ DrawMonsterInfoPanels proc far          ; CODE XREF: RunDungeonGameLoop+48↑P
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
                 mov     si, 51C0h
@@ -35077,7 +35078,7 @@ sub_23B19       proc far                ; CODE XREF: start+5A0↑P
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 call    RestoreCursorBackgroundIfDirty
                 pop     bx
@@ -38636,7 +38637,7 @@ loc_25B9F:                              ; CODE XREF: sub_25B34+2F↑j
                 cmp     si, 0
                 jz      short locret_25B9E
                 mov     word_2E40A, ax
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 mov     ax, si
@@ -38718,7 +38719,7 @@ loc_25C2D:                              ; CODE XREF: sub_25B34+D2↑j
                 mov     si, 95F3h
                 add     si, ax
                 or      word_328C4, 100h
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    RestoreCursorBackgroundIfDirty
                 or      word_328C4, 100h
                 call    sub_25F10
@@ -41098,7 +41099,7 @@ sub_270FE       endp
 sub_2714A       proc far                ; CODE XREF: start+3DB↑P
                                         ; sub_271DC+21↓p ...
                 push    si
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -41249,7 +41250,7 @@ loc_27297:                              ; CODE XREF: sub_271DC+A4↑j
                 call    sub_23874
                 push    cs
                 call    near ptr ShowResourceDepletedOverlay
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_175F4
                 call    sub_238CD
                 call    DrawMouseCursor
@@ -42244,14 +42245,14 @@ sub_27A4E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_27A56       proc far                ; CODE XREF: sub_1B717+22↑P
-                                        ; sub_1B7A5+27↑P
-                push    si
+TestRecordFlag_10C proc far             ; CODE XREF: CheckPartyMemberItemFlag+22↑P
+                                        ; CheckPartyMemberItemFlagAndClearPanel+27↑P
+                push    si              ; TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.
                 call    GetRecordFlagBitAndWord_10C
                 test    [si], ax
                 pop     si
                 retf
-sub_27A56       endp
+TestRecordFlag_10C endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -43217,7 +43218,7 @@ locret_28054:                           ; CODE XREF: sub_28034+6↑j
 ; ---------------------------------------------------------------------------
 
 loc_28055:                              ; CODE XREF: sub_28034+1E↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_fgColor, 0Fh
                 mov     _font_bgTransparent, 1
@@ -43349,7 +43350,7 @@ sub_2814C       endp
 
 sub_2819F       proc far                ; CODE XREF: seg000:08B2↑P
                                         ; HandleGameCommand+EC↓P
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 push    cs
                 call    near ptr sub_2814C
@@ -44916,7 +44917,7 @@ loc_28E86:                              ; CODE XREF: RevealMapRegion+1A1↓j
                 call    sub_293C0
                 mov     word_2E530, 0Fh
                 call    sub_23874
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     _textPos_x, 0F1h
                 mov     _textPos_y, 57h ; 'W'
                 mov     _font_fgColor, 8Ah
@@ -45524,7 +45525,7 @@ sub_29461       proc far                ; CODE XREF: sub_178A6+EC↑P
                                         ; UseAbilityOnTarget+75↓p ...
                 push    bx
                 push    cx
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -45553,7 +45554,7 @@ UseAbilityOnTarget proc far             ; CODE XREF: sub_2AE3C:loc_2AE82↓P
 
 loc_294AE:                              ; CODE XREF: UseAbilityOnTarget+35↓j
                                         ; UseAbilityOnTarget+3E↓j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
 loc_294B8:                              ; CODE XREF: UseAbilityOnTarget+4C↓j
@@ -45933,7 +45934,7 @@ loc_29747:                              ; CODE XREF: sub_29738+6↑j
                 jnz     short loc_29769
 
 loc_29753:                              ; CODE XREF: sub_29738+5C↓j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
 loc_2975D:                              ; CODE XREF: sub_29738+D↑j
@@ -48261,7 +48262,7 @@ loc_2A7C4:                              ; CODE XREF: sub_2A788+32↑j
                 jnz     short loc_2A7F0
 
 loc_2A7D0:                              ; CODE XREF: sub_2A788+93↓j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
 loc_2A7DA:                              ; CODE XREF: sub_2A788+BB↓j
@@ -48447,7 +48448,7 @@ loc_2A955:                              ; CODE XREF: sub_2A914+2B↑j
                 call    UpdatePartyAverageStatTiers
                 call    sub_274B4
                 call    sub_2ADD0
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    DrawMouseCursor
 
 loc_2A971:                              ; CODE XREF: sub_2A914+D↑j
@@ -48556,7 +48557,7 @@ loc_2AA2B:                              ; CODE XREF: RestCharacter+3C↑j
                 or      word_328C8, 20h
                 call    sub_274B4
                 call    sub_2ADD0
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_175F4
                 call    DrawMouseCursor
 
@@ -48601,7 +48602,7 @@ loc_2AA8B:                              ; CODE XREF: CastSpell+8C↓j
                 call    sub_2AD94
                 cmp     ax, 0
                 jz      short loc_2AA75
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 mov     si, word_328D4
                 cmp     word_32974, 12h
                 jnz     short loc_2AAA5
@@ -48828,7 +48829,7 @@ loc_2AC4F:                              ; CODE XREF: CastSpell+1C3↑j
                 mov     si, word_32906
                 call    AddToBCDCounter
                 call    ShowResourceDepletedOverlay
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 0
                 mov     ax, _videoBufferSeg
@@ -48938,7 +48939,7 @@ sub_2AD94       proc near               ; CODE XREF: sub_2A914+5↑p
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2ADC4
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_175F4
                 call    DrawMouseCursor
                 mov     ax, 0
@@ -49125,7 +49126,7 @@ loc_2AEDF:                              ; CODE XREF: sub_2AE3C+9D↑j
 
 loc_2AEF3:                              ; CODE XREF: sub_2AE3C+7D↑j
                                         ; sub_2AE3C+B1↑j
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49150,7 +49151,7 @@ sub_2AE3C       endp
 
 
 sub_2AF2E       proc near               ; CODE XREF: sub_2AE3C+14↑p
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49195,7 +49196,7 @@ sub_2AF2E       endp
 sub_2AFB8       proc near               ; CODE XREF: sub_2AE3C+93↑p
                 mov     ax, 7
                 call    sub_28412
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49226,7 +49227,7 @@ sub_2AFB8       endp
 sub_2B029       proc near               ; CODE XREF: sub_2AE3C+87↑p
                 mov     ax, 7
                 call    sub_28412
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49255,7 +49256,7 @@ sub_2B029       endp
 
 
 sub_2B09A       proc near               ; CODE XREF: sub_2AE3C+9F↑p
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -49329,7 +49330,7 @@ sub_2B14F       endp
 
 
 sub_2B17F       proc near               ; CODE XREF: sub_2AE3C+20↑p
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
@@ -51438,7 +51439,7 @@ loc_2C400:                              ; CODE XREF: sub_2C0FE+202↑j
                                         ; sub_2C0FE+2FD↑j ...
                 mov     ax, 3
                 call    sub_28412
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 or      word_328C4, 100h
                 mov     _textPos_x, 0F0h
                 mov     _textPos_y, 60h ; '`'
@@ -53470,7 +53471,7 @@ loc_2D6FC:                              ; CODE XREF: InteractWithContainer+30↑
                 mov     word_2E530, 0Fh
                 call    sub_23874
                 call    sub_238CD
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_2D7A7
                 call    DrawMouseCursor
                 mov     ax, 21h ; '!'
@@ -53514,7 +53515,7 @@ loc_2D78A:                              ; CODE XREF: InteractWithContainer+9F↑
                 call    sub_2D7EA
                 call    ApplyMapTriggerEffect
                 call    sub_222F8
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_21530
                 call    DrawMouseCursor
                 retf
@@ -53605,7 +53606,7 @@ sub_2D809       endp
                 call    ShowConfirmPrompt
                 cmp     ax, 0
                 jnz     short loc_2D861
-                call    sub_16E18
+                call    ClearStatusPanelIfDirty
                 call    sub_175F4
                 call    DrawMouseCursor
                 mov     ax, 0
@@ -56610,8 +56611,8 @@ _val27          dw 0                    ; DATA XREF: InitGlobals+C6↑w
                                         ; sub_21187+75↑r
 word_2E40A      dw 0                    ; DATA XREF: ShowClueBook:loc_10CC5↑r
                                         ; ShowClueBook:loc_10CCF↑r ...
-word_2E40C      dw 0                    ; DATA XREF: sub_1B717+3↑w
-                                        ; sub_1B717+9↑w ...
+word_2E40C      dw 0                    ; DATA XREF: CheckPartyMemberItemFlag+3↑w
+                                        ; CheckPartyMemberItemFlag+9↑w ...
 word_2E40E      dw 0                    ; DATA XREF: sub_1B818+16↑r
                                         ; ApplyItemEffectFlags+1F↑r ...
 word_2E410      dw 0                    ; DATA XREF: UseItem+1D↑r

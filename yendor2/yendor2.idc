@@ -2530,8 +2530,10 @@ static Bytes_0(void) {
 	set_cmt	(0X16E11,	"PC/XT PPI port B bits:\n0: Tmr 2 gate â\xC2\x95\xC2\x90â\xC2\x95¦â\xC2\x95\xC2\x90â\xC2\x96º OR 03H=spkr ON\n1: Tmr 2 data â\xC2\x95\xC2\x90â\xC2\x95\xC2\x9D  AND 0fcH=spkr OFF\n3: 1=read high switches\n4: 0=enable RAM parity checking\n5: 0=enable I/O channel check\n6: 0=hold keyboard clock low\n7: 0=enable kbrd",	0);
 	create_insn	(x=0X16E11);
 	op_hex		(x,	0);
+	set_cmt	(0X16E18,	"Gated on word_328C4 bit 0x100 (the widespread 'redraw needed' dirty flag): if set, blits a fill pattern over fixed screen regions via the EMS page-frame trick (same technique as ShowResourceDepletedOverlay) -- erases the status panel before it gets redrawn. Called very widely, including directly from `start`.",	0);
 	create_insn	(x=0X16E18);
 	op_hex		(x,	1);
+	set_name	(0X16E18,	"ClearStatusPanelIfDirty");
 	create_insn	(0X16E21);
 	create_insn	(x=0X16E34);
 	op_hex		(x,	1);
@@ -3825,14 +3827,18 @@ static Bytes_0(void) {
 	set_cmt	(0X1B702,	"SelectItemUseRecord: es:si = word_2E54E = the (word_2E550)th 58-byte sub-record within LoadItemData's buffer (es=word_2E54C). Confirms the loaded item block is a list of use-records, not a single blob.",	0);
 	create_insn	(0X1B702);
 	set_name	(0X1B702,	"SelectItemUseRecord");
+	set_cmt	(0X1B717,	"Looks up the targeted party member (word_32924) and tests whether they've already triggered the current item's personal flag (TestRecordFlag_10C, index from the item catalog's own +0x1A field -- the same index SetRecordFlag_10C uses to mark it used). Sets word_2E40C bit 0x8000 if not yet triggered.",	0);
 	create_insn	(0X1B717);
+	set_name	(0X1B717,	"CheckPartyMemberItemFlag");
 	create_insn	(x=0X1B71A);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B720);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B740);
 	op_hex		(x,	1);
+	set_cmt	(0X1B74A,	"Classifies the targeted party member's (word_32924) condition into word_2E40C: checks status bit 0x40, status mask 0xFF80, and HP<maxHP, setting 0x2000/0x4000/0x8000 for whichever hit, plus an overall tier (0x1000 if 2+, 0x200 if none) -- plausibly selects a status icon/message for a target-selection display.",	0);
 	create_insn	(0X1B74A);
+	set_name	(0X1B74A,	"ClassifyPartyMemberCondition");
 	create_insn	(x=0X1B74C);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B761);
@@ -3849,7 +3855,9 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B79C);
 	op_hex		(x,	1);
+	set_cmt	(0X1B7A5,	"Same as CheckPartyMemberItemFlag, plus a leading ClearStatusPanelIfDirty call.",	0);
 	create_insn	(0X1B7A5);
+	set_name	(0X1B7A5,	"CheckPartyMemberItemFlagAndClearPanel");
 	create_insn	(x=0X1B7AD);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B7B3);
@@ -4986,6 +4994,15 @@ static Bytes_0(void) {
 	set_cmt	(0X20070,	"CORRECTED from 'ShowTileLegend' (was wrongly documented as a read-only legend screen). Reached from a normal keyboard command slot in start's main dispatch. Draws two scrollable 17-icon legend strips (wall table 0xE551, floor table 0xE175) and a live preview of the current cell. Its 'A' key (byte_2E400==0x41) calls FillVisibleAreaWithSelectedTile, which floods the entire visible 40x24 cell area with the selected legend icon and writes it back via FileEntry_Write -- this IS a map-editing tool (a debug/level-editor screen left reachable in the shipped binary), not a passive legend. 'B'/'F' browse a per-level tile palette loaded from WORLD.DAT (sub_205C0/sub_27FE0, not yet fully traced).",	0);
 	create_insn	(0X20070);
 	set_name	(0X20070,	"RunMapEditorScreen");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X200BA);
 	op_hex		(x,	1);
 	create_insn	(x=0X200C0);
@@ -5023,15 +5040,6 @@ static Bytes_0(void) {
 	set_cmt	(0X203AC,	"Per-cell paint: PersistExploredCell(x,y), looks up a WORLD.DAT-backed record via sub_205C0, writes the current legend selection (word_2E496) into it, saves via FileEntry_Write (errorCode=9), then redraws the cell (DrawCellIconPair). Called per-cell by FillVisibleAreaWithSelectedTile.",	0);
 	create_insn	(0X203AC);
 	set_name	(0X203AC,	"PaintCellAndPersist");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X203D0);
 	op_seg		(x,	1);
 	create_insn	(0X203E4);
@@ -6828,7 +6836,9 @@ static Bytes_1(void) {
 	create_insn	(0X27A46);
 	set_name	(0X27A46,	"SetGlobalFlag");
 	create_insn	(0X27A4E);
+	set_cmt	(0X27A56,	"TestRecordFlag_10C(si=record, ax=flag index): ZF = ([si+0x10C-bank] & mask)==0, via GetRecordFlagBitAndWord_10C.",	0);
 	create_insn	(0X27A56);
+	set_name	(0X27A56,	"TestRecordFlag_10C");
 	set_cmt	(0X27A5E,	"TestGlobalFlag(ax=flag index): ZF = ([si] & mask) == 0. Called directly from `start` at several points -- a fundamental quest/world-state flag system.",	0);
 	create_insn	(0X27A5E);
 	set_name	(0X27A5E,	"TestGlobalFlag");
@@ -8812,6 +8822,15 @@ static Bytes_1(void) {
 	create_insn	(0X2C2D7);
 	create_insn	(x=0X2C2E6);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2C2F9);
 	create_insn	(0X2C303);
 	create_insn	(0X2C344);
@@ -8933,15 +8952,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2C9CE);
 	op_hex		(x,	1);
 	create_insn	(0X2C9FD);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2CA03);
 	op_hex		(x,	1);
 	create_insn	(x=0X2CA22);
