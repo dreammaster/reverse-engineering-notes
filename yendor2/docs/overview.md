@@ -1301,6 +1301,23 @@ that the dispatcher and its data source are understood.
 
 184 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: one of UseItem's type handlers
+
+Traced `UseItemType_400` (was `sub_1BEA1`, one of `UseItem`'s several
+type-specific handlers), plus two small shared helpers:
+`SelectItemUseRecord` (was `sub_1B702` — reveals `LoadItemData`'s
+buffer is a list of 58-byte use-records, not a single blob) and
+`FinishItemUse` (was `sub_1B6DE`, common post-use cleanup called by
+every branch of this handler and its `0x800`-selected sibling). Its
+material-cost branch repeats the exact "spend a BCD counter, then mark
+a personal one-time-event flag" pattern already found in that sibling
+two rounds ago; another branch builds message text instead, with no
+cost — plausibly a non-consuming "read/examine" path. Named on the
+dispatch-selector bit rather than a guessed item category, since the
+true game-design identity still isn't confirmed.
+
+187 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

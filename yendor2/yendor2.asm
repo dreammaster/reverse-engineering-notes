@@ -12322,7 +12322,7 @@ loc_17403:                              ; CODE XREF: sub_1732B+41↑j
                 mov     di, 0BB8h
                 mov     ax, [di]
                 mov     word_2E550, ax
-                call    sub_1B6DE
+                call    FinishItemUse
 
 loc_17422:                              ; CODE XREF: sub_1732B+E8↑j
                 call    DrawMouseCursor
@@ -13184,7 +13184,7 @@ loc_17BCF:                              ; CODE XREF: UseItem+33↑j
 loc_17BDF:                              ; CODE XREF: UseItem+43↑j
                 test    word_2E410, 400h
                 jz      short loc_17BEF
-                call    sub_1BEA1
+                call    UseItemType_400
                 jmp     loc_17C9C
 ; ---------------------------------------------------------------------------
 
@@ -13249,7 +13249,7 @@ loc_17C7A:                              ; CODE XREF: UseItem+C7↑j
                 jnz     short loc_17C9C
                 test    word ptr es:[si+0Eh], 140h
                 jnz     short loc_17C9C
-                call    sub_1B6DE
+                call    FinishItemUse
                 call    DrawMouseCursor
 
 loc_17C9C:                              ; CODE XREF: UseItem+2A↑j
@@ -13466,8 +13466,8 @@ loc_17E8B:                              ; CODE XREF: UseItem+2CC↑j
                                         ; UseItem+2DB↑j ...
                 mov     ax, word_32902
                 mov     word_2E550, ax
-                call    sub_1B702
-                call    sub_1B6DE
+                call    SelectItemUseRecord
+                call    FinishItemUse
                 call    DrawMouseCursor
                 call    sub_238CD
                 jmp     loc_17D7D
@@ -13486,7 +13486,7 @@ loc_17EA8:                              ; CODE XREF: UseItem+2F2↑j
                 call    sub_25CFA
                 mov     ax, word_32902
                 mov     word_2E550, ax
-                call    sub_1B702
+                call    SelectItemUseRecord
                 test    word_328C6, 2
                 jz      short loc_17F18
                 and     word_328C6, 0FFFDh
@@ -16110,7 +16110,7 @@ seg030          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_193BE       proc far                ; CODE XREF: sub_1BEA1+87↓P
+sub_193BE       proc far                ; CODE XREF: UseItemType_400+87↓P
                                         ; sub_1C123+3AE↓P
                 push    word_3295A
                 and     word_3295A, 3FFFh
@@ -19530,7 +19530,7 @@ sub_1AEF8       proc far                ; CODE XREF: UseItem+1B1↑P
                 mov     ax, word_3290C
                 and     word_36C7F, 0EFFFh
                 or      word_36C7F, ax
-                call    sub_1B6DE
+                call    FinishItemUse
                 or      word_328C4, 100h
                 call    sub_16E18
                 call    DrawMouseCursor
@@ -20328,9 +20328,9 @@ sub_1B5FD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B6DE       proc far                ; CODE XREF: sub_1732B+F2↑P
+FinishItemUse   proc far                ; CODE XREF: sub_1732B+F2↑P
                                         ; UseItem+100↑P ...
-                push    cs
+                push    cs              ; FinishItemUse: common post-item-use cleanup/redraw, called at the end of every branch in UseItemType_400 and sub_1BBED (the 0x800-selected sibling handler).
                 call    near ptr sub_1B8AB
                 push    cs
                 call    near ptr sub_1BA96
@@ -20340,19 +20340,19 @@ sub_1B6DE       proc far                ; CODE XREF: sub_1732B+F2↑P
                 call    sub_162B6
                 and     word_328C4, 0FFFEh
 
-loc_1B6FD:                              ; CODE XREF: sub_1B6DE+E↑j
+loc_1B6FD:                              ; CODE XREF: FinishItemUse+E↑j
                 push    cs
                 call    near ptr sub_1B8EE
                 retf
-sub_1B6DE       endp
+FinishItemUse   endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B702       proc far                ; CODE XREF: UseItem+2FF↑P
+SelectItemUseRecord proc far            ; CODE XREF: UseItem+2FF↑P
                                         ; UseItem+343↑P ...
-                push    dx
+                push    dx              ; SelectItemUseRecord: es:si = word_2E54E = the (word_2E550)th 58-byte sub-record within LoadItemData's buffer (es=word_2E54C). Confirms the loaded item block is a list of use-records, not a single blob.
                 mov     ax, word_2E550
                 dec     ax
                 mov     bx, 3Ah ; ':'
@@ -20362,7 +20362,7 @@ sub_1B702       proc far                ; CODE XREF: UseItem+2FF↑P
                 mov     es, word_2E54C
                 pop     dx
                 retf
-sub_1B702       endp
+SelectItemUseRecord endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -20447,7 +20447,7 @@ sub_1B74A       endp
 
 
 sub_1B7A5       proc far                ; CODE XREF: UseItem+2E5↑P
-                                        ; sub_1BEA1+49↓p ...
+                                        ; UseItemType_400+49↓p ...
                 push    di
                 push    si
                 push    bx
@@ -20610,7 +20610,7 @@ sub_1B8AB       endp
 
 
 sub_1B8EE       proc far                ; CODE XREF: UseItem+B4↑P
-                                        ; sub_1B6DE+20↑p ...
+                                        ; FinishItemUse+20↑p ...
                 push    si
                 push    di
                 push    cx
@@ -20661,7 +20661,7 @@ sub_1B8EE       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B96F       proc far                ; CODE XREF: sub_1BEA1+EF↓p
+sub_1B96F       proc far                ; CODE XREF: UseItemType_400+EF↓p
                                         ; sub_1BF94+169↓p ...
                 push    bx
                 push    ax
@@ -20789,7 +20789,7 @@ sub_1BA35       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BA96       proc far                ; CODE XREF: sub_1B6DE+5↑p
+sub_1BA96       proc far                ; CODE XREF: FinishItemUse+5↑p
                                         ; sub_1CA64+2E↓p
                 push    es
                 push    si
@@ -20887,7 +20887,7 @@ sub_1BB48       proc far                ; CODE XREF: UseItem:loc_17BFF↑P
                 push    di
                 push    si
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+0Eh], 20h
                 jz      short loc_1BB79
                 mov     ax, word_2E40C
@@ -20964,7 +20964,7 @@ sub_1BB48       endp
 
 sub_1BBED       proc far                ; CODE XREF: UseItem+65↑P
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1BC22
                 test    word ptr es:[si+10h], 4
@@ -20980,7 +20980,7 @@ loc_1BC14:                              ; CODE XREF: sub_1BBED+22↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -20991,11 +20991,11 @@ loc_1BC22:                              ; CODE XREF: sub_1BBED+A↑j
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21203,9 +21203,9 @@ sub_1BBED       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1BEA1       proc far                ; CODE XREF: UseItem+55↑P
-                push    cs
-                call    near ptr sub_1B702
+UseItemType_400 proc far                ; CODE XREF: UseItem+55↑P
+                push    cs              ; One of UseItem's item-type handlers (selected by word_2E410 bit 0x400). Sub-dispatches on the current SelectItemUseRecord's own es:[si+0x10] flags. Bit 2: pays a BCD material cost (0x94B3 vs a threshold at 0x512A, 'not enough' message if short) then sets a per-character flag via SetRecordFlag_10C using the item's own +0x1A field as the index -- same pattern as sub_1BBED's type-2 branch. Bit 0x200: builds a message string instead, no BCD cost -- plausibly a non-consuming 'read/examine' path.
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1BED6
                 test    word ptr es:[si+10h], 4
@@ -21217,33 +21217,33 @@ sub_1BEA1       proc far                ; CODE XREF: UseItem+55↑P
                 jmp     loc_1BF4A
 ; ---------------------------------------------------------------------------
 
-loc_1BEC8:                              ; CODE XREF: sub_1BEA1+22↑j
+loc_1BEC8:                              ; CODE XREF: UseItemType_400+22↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BED6:                              ; CODE XREF: sub_1BEA1+A↑j
-                                        ; sub_1BEA1+4C↓j ...
+loc_1BED6:                              ; CODE XREF: UseItemType_400+A↑j
+                                        ; UseItemType_400+4C↓j ...
                 or      word_2E410, 1
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BEE9:                              ; CODE XREF: sub_1BEA1+12↑j
+loc_1BEE9:                              ; CODE XREF: UseItemType_400+12↑j
                 push    cs
                 call    near ptr sub_1B7A5
                 jmp     short loc_1BED6
 ; ---------------------------------------------------------------------------
 
-loc_1BEEF:                              ; CODE XREF: sub_1BEA1+1A↑j
+loc_1BEEF:                              ; CODE XREF: UseItemType_400+1A↑j
                 mov     si, 94B3h
                 mov     di, 512Ah
                 call    CompareBCD4
@@ -21257,7 +21257,7 @@ loc_1BEEF:                              ; CODE XREF: sub_1BEA1+1A↑j
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_1BF1C:                              ; CODE XREF: sub_1BEA1+59↑j
+loc_1BF1C:                              ; CODE XREF: UseItemType_400+59↑j
                 call    SubBCD4
                 push    cs
                 call    near ptr sub_1CC2E
@@ -21274,7 +21274,7 @@ loc_1BF1C:                              ; CODE XREF: sub_1BEA1+59↑j
                 jmp     short loc_1BED6
 ; ---------------------------------------------------------------------------
 
-loc_1BF4A:                              ; CODE XREF: sub_1BEA1+24↑j
+loc_1BF4A:                              ; CODE XREF: UseItemType_400+24↑j
                 mov     di, 0BCEh
                 mov     ax, [di+18h]
                 mov     word_2E38E, ax
@@ -21297,7 +21297,7 @@ loc_1BF4A:                              ; CODE XREF: sub_1BEA1+24↑j
                 push    cs
                 call    near ptr sub_1B96F
                 retf
-sub_1BEA1       endp
+UseItemType_400 endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -21305,7 +21305,7 @@ sub_1BEA1       endp
 
 sub_1BF94       proc far                ; CODE XREF: UseItem+25↑P
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1BFEA
                 test    word ptr es:[si+10h], 4
@@ -21339,7 +21339,7 @@ loc_1BFDC:                              ; CODE XREF: sub_1BF94+43↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21350,7 +21350,7 @@ loc_1BFEA:                              ; CODE XREF: sub_1BF94+A↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21486,7 +21486,7 @@ sub_1BF94       endp
 
 sub_1C123       proc far                ; CODE XREF: UseItem+35↑P
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+10h], 1
                 jnz     short loc_1C158
                 test    word ptr es:[si+10h], 4
@@ -21502,7 +21502,7 @@ loc_1C14A:                              ; CODE XREF: sub_1C123+22↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21513,7 +21513,7 @@ loc_1C158:                              ; CODE XREF: sub_1C123+A↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21893,7 +21893,7 @@ sub_1C123       endp
 
 sub_1C589       proc far                ; CODE XREF: UseItem+45↑P
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word_2E410, 1000h
                 jnz     short loc_1C598
                 jmp     loc_1C6BA
@@ -21916,7 +21916,7 @@ loc_1C5A9:                              ; CODE XREF: sub_1C589+15↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -21959,7 +21959,7 @@ loc_1C643:                              ; CODE XREF: sub_1C589+8D↑j
                 call    near ptr sub_1CC2E
                 call    RestoreCursorBackgroundIfDirty
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 mov     bx, word_328D4
                 mov     ax, es:[si+12h]
                 or      [bx+0B4h], ax
@@ -22026,7 +22026,7 @@ loc_1C6DE:                              ; CODE XREF: sub_1C589+13F↑j
                 push    cs
                 call    near ptr sub_1BB48
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 ; ---------------------------------------------------------------------------
@@ -22039,9 +22039,9 @@ loc_1C707:                              ; CODE XREF: sub_1C589+147↑j
                 mov     ax, word_32902
                 mov     word_2E550, ax
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    sub_238CD
                 call    DrawMouseCursor
                 retf
@@ -22351,7 +22351,7 @@ loc_1CA1F:                              ; CODE XREF: LoadItemData+15F↑j
 loc_1CA4F:                              ; CODE XREF: LoadItemData+1A6↑j
                                         ; LoadItemData+1B8↑j
                 push    cs
-                call    near ptr sub_1B702
+                call    near ptr SelectItemUseRecord
                 test    word ptr es:[si+0Eh], 1
                 jz      short loc_1CA60
                 and     word_328C4, 0FFFEh
@@ -22427,7 +22427,7 @@ loc_1CADA:                              ; CODE XREF: sub_1CA64+4C↑j
 
 loc_1CAF3:                              ; CODE XREF: sub_1CA64+27↑j
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    RestoreCursorBackgroundIfDirty
                 call    sub_26C9E
                 call    sub_16E18
@@ -22553,7 +22553,7 @@ sub_1CBF3       proc far                ; CODE XREF: UseItem+1A1↑P
                 mov     ax, [di]
                 mov     word_2E550, ax
                 push    cs
-                call    near ptr sub_1B6DE
+                call    near ptr FinishItemUse
                 call    DrawMouseCursor
                 retf
 sub_1CBF3       endp
@@ -22586,7 +22586,7 @@ sub_1CC2E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC70       proc near               ; CODE XREF: sub_1BEA1+91↑p
+sub_1CC70       proc near               ; CODE XREF: UseItemType_400+91↑p
                                         ; sub_1C123+3B8↑p
                 mov     es, word_2E4AA
                 mov     cx, 10h
@@ -22607,7 +22607,7 @@ sub_1CC70       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1CC98       proc near               ; CODE XREF: sub_1BEA1+84↑p
+sub_1CC98       proc near               ; CODE XREF: UseItemType_400+84↑p
                                         ; sub_1C123:loc_1C499↑p
                 mov     es, word_2E4AA
                 mov     cx, 10h
@@ -42206,7 +42206,7 @@ ClearGlobalFlag endp
 
 
 SetRecordFlag_10C proc far              ; CODE XREF: sub_1BBED+111↑P
-                                        ; sub_1BEA1+9E↑P
+                                        ; UseItemType_400+9E↑P
                 push    si              ; SetRecordFlag_10C(si=record, ax=flag index): [si+bank] |= mask via GetRecordFlagBitAndWord_10C. Real caller: sub_1BBED sets a flag on the current party member (si=word_328D4) using an index read from a fixed item/quest record's +0x1A field, inside an item-use branch gated on having >= some amount of material 0x94B3.
                 call    GetRecordFlagBitAndWord_10C
                 or      [si], ax
@@ -96108,7 +96108,7 @@ unk_3907E       db    0                 ; DATA XREF: seg111:09AF↑o
 word_39488      dw 0                    ; DATA XREF: sub_1381C+19↑w
                 align 8
 word_39490      dw 0                    ; DATA XREF: sub_2278C+27↑w
-byte_39492      db 0                    ; DATA XREF: sub_1BEA1+C2↑w
+byte_39492      db 0                    ; DATA XREF: UseItemType_400+C2↑w
                                         ; sub_1C123+439↑w
                 db    0
                 db    0

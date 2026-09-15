@@ -3815,12 +3815,16 @@ static Bytes_0(void) {
 	set_cmt	(0X1B633,	"msg",	0);
 	create_insn	(x=0X1B69F);
 	op_hex		(x,	1);
+	set_cmt	(0X1B6DE,	"FinishItemUse: common post-item-use cleanup/redraw, called at the end of every branch in UseItemType_400 and sub_1BBED (the 0x800-selected sibling handler).",	0);
 	create_insn	(0X1B6DE);
+	set_name	(0X1B6DE,	"FinishItemUse");
 	create_insn	(x=0X1B6E6);
 	op_hex		(x,	1);
 	create_insn	(x=0X1B6F8);
 	op_hex		(x,	1);
+	set_cmt	(0X1B702,	"SelectItemUseRecord: es:si = word_2E54E = the (word_2E550)th 58-byte sub-record within LoadItemData's buffer (es=word_2E54C). Confirms the loaded item block is a list of use-records, not a single blob.",	0);
 	create_insn	(0X1B702);
+	set_name	(0X1B702,	"SelectItemUseRecord");
 	create_insn	(0X1B717);
 	create_insn	(x=0X1B71A);
 	op_hex		(x,	1);
@@ -3941,7 +3945,9 @@ static Bytes_0(void) {
 	create_insn	(x=0X1BDD0);
 	op_hex		(x,	1);
 	create_insn	(0X1BE1B);
+	set_cmt	(0X1BEA1,	"One of UseItem's item-type handlers (selected by word_2E410 bit 0x400). Sub-dispatches on the current SelectItemUseRecord's own es:[si+0x10] flags. Bit 2: pays a BCD material cost (0x94B3 vs a threshold at 0x512A, 'not enough' message if short) then sets a per-character flag via SetRecordFlag_10C using the item's own +0x1A field as the index -- same pattern as sub_1BBED's type-2 branch. Bit 0x200: builds a message string instead, no BCD cost -- plausibly a non-consuming 'read/examine' path.",	0);
 	create_insn	(0X1BEA1);
+	set_name	(0X1BEA1,	"UseItemType_400");
 	create_insn	(x=0X1BEA5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BEAD);
@@ -5030,6 +5036,15 @@ static Bytes_0(void) {
 	set_cmt	(0X204AA,	"Draws a scrollable 17-icon horizontal strip from table 0xE175 (field +8), starting at index word_2E386, at y=0 x=0xB8+.",	0);
 	create_insn	(0X204AA);
 	set_name	(0X204AA,	"DrawFloorTypeLegendRow");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X204F0);
 	create_insn	(0X20523);
 	set_cmt	(0X2053A,	"msg",	0);
@@ -5071,15 +5086,6 @@ static Bytes_0(void) {
 	set_cmt	(0X208CA,	"Manages 3 timed-effect duration counters (word_36C85/36C89/36C8B, selected by word_32974==9/0xF/0xC), decrementing the relevant one and clearing its active flag (word_36C79) when it hits 0. Plausibly a subset of the manual's afflictions (Diseased/Poisoned/Stoned/Frozen/Paralyzed/Cursed/Hexed/Jinxed) that are timed rather than permanent-until-cured.",	0);
 	create_insn	(0X208CA);
 	set_name	(0X208CA,	"TickStatusEffects");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X208F9);
 	create_insn	(x=0X20900);
 	op_hex		(x,	1);
@@ -8976,6 +8982,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X2CCC4);
 	op_hex		(x,	1);
 	set_cmt	(0X2CCD3,	"ticks",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X2CCEE);
 	create_insn	(0X2CDBE);
 	create_insn	(0X2CDC8);
@@ -9104,15 +9119,6 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2D338);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2D343);
 	op_hex		(x,	1);
 	create_insn	(x=0X2D34E);
