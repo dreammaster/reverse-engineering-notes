@@ -2287,6 +2287,21 @@ labeled stat fields, left unnamed) until ESC.
 
 285 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: mapped ShowClueBook's full F-key dispatch; two precision corrections
+
+Traced `ShowClueBook`'s own `word_2E40A` switch directly, mapping all
+6 F-key categories plus ESC: F1 Maps, F2 Monster Statistics (→
+`RunClueBookMonsterCategory`), F3 Spells, F4 Magic Users (class picker
+then that class's spell list), F5 Inventory Items (→ an 8-subtype
+selector, subtype 1 = `RunClueBookItemCategory`, subtypes 3–6 =
+`sub_13119`, others unnamed loops `sub_13278`/`sub_13216`/`sub_1334E`/
+`sub_1318D`), F6 → the already-named `ShowPagedEntryScreen`. Two
+corrections along the way: `RunClueBookItemCategory` is only item
+subtype 1's loop within F5, not "the F5 category's own loop" as
+described when it was named; and `sub_13119` has 4 confirmed call
+sites, not "two other sites" as first counted. Documentation-only,
+renames only, no new count.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

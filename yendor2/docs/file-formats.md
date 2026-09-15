@@ -249,8 +249,34 @@ Maps (world/towns/mines), F2 Monster Statistics, F3 Spells, F4 Magic
 Users (spells by class), F5 Inventory Items, F6 Complete Walk Through,
 ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
-`ShowClueBookItemDetail` is confirmed as the F5 category's per-entry
-screen: an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
+
+**`ShowClueBook`'s full F-key dispatch**, traced directly from its own
+`word_2E40A` (`PollKeyboardInput` result) switch: F1 (`word_2E3F6=1`,
+Maps) → `RunClueEntryMenu` + `sub_13278` loop, not traced further. F2
+(`word_2E3F6=2`, Monster Statistics) → `RunClueEntryMenu` +
+`RunClueBookMonsterCategory`. F3 (`word_2E3F6=3`, Spells) →
+`RunClueEntryMenu` + `sub_13216` loop, not traced. F4
+(`word_2E3F6=4` lists classes, then `word_2E3F6=[selected class]+4`,
+Magic Users) → two chained `RunClueEntryMenu` calls (class picker,
+then that class's spell list) + `sub_13216`. F5 (`word_2E3F6=0xB`,
+Inventory Items) → `RunClueEntryMenu` lists **8 item subtypes**
+(`word_2E3EE[0]` 1–8), each with its own sub-loop: subtype 1 →
+`RunClueBookItemCategory` (**correction**: previously described below
+as "the F5 category's own loop" — it's actually only item subtype 1's
+loop within F5's subtype selector); subtype 2 → just
+`WaitForKeypress` (looks like a placeholder/empty subtype); subtypes
+3–6 (`word_2E3F6=0xD/0xE/0xF/0x10`) → `sub_13119` (**correction**: has
+4 call sites here, not "two other sites" as first counted below);
+subtype 7 → `sub_1334E`; subtype 8 (`word_2E3F6=0x11`) →
+`RunClueEntryMenu` + `sub_1318D`. F6 (Complete Walk Through) →
+`ShowPagedEntryScreen` (already-named, generic paginated text). ESC →
+cleanup and `LoadMasterPalette` back to the normal palette (the
+reverse of `PlayClueBookOpenAnimation`'s swap). `sub_13278`/
+`sub_13216`/`sub_1334E`/`sub_1318D` are confirmed as clue-book category
+loops by this trace but not yet individually named/traced.
+
+`ShowClueBookItemDetail` is confirmed as item subtype 1's per-entry
+screen (F5): an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
 The F2 "MONSTER STATISTICS" category follows the same pattern:
 `RunClueBookMonsterCategory` (called from `ShowClueBook`) calls
 `LoadClueBookMonsterEntry` once (reads `WORLD.DAT` block `0x32` for
@@ -260,12 +286,12 @@ labeled stat fields, not yet named) plus `DrawClueBookNavBar` whenever
 dirty, until ESC — no region-table hit-testing, unlike the item
 category's loop.
 
-`RunClueBookItemCategory` is the F5 category's own interactive loop
+`RunClueBookItemCategory` is item subtype 1's own interactive loop
 (draw entry, poll input, hit-test a region table so the player can
-click a sub-icon to jump entries, until ESC) — a second, more complex
-sibling loop (`sub_13119`, called from two other `ShowClueBook` sites)
-adds extra dispatches for item-id ranges overlapping `CastSpell`'s and
-`RestCharacter`'s selector ranges, not yet traced.
+click a sub-icon to jump entries, until ESC) — the more complex
+`sub_13119` (item subtypes 3–6, 4 call sites) adds extra dispatches
+for item-id ranges overlapping `CastSpell`'s and `RestCharacter`'s
+selector ranges, not yet traced.
 
 **Temple/healer paid services**: `UseHealingItem` (4 sites),
 `UseItemType_400`, and `UseTrainingItem` all call
