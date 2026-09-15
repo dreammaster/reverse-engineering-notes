@@ -2823,6 +2823,14 @@ shown after the generic BASE VALUE/WEIGHT fields.
 
 360 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawSubIconSelectorRow
+
+Named `sub_14994`, shared by `ShowArmorDetailRow`/`ShowWeaponDetailRow`:
+draws the clickable sub-icon selector strip using the same region
+table `RunClueBookItemCategory` hit-tests for its own sub-icon clicks.
+
+361 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

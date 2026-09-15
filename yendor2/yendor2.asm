@@ -5770,7 +5770,7 @@ ShowArmorDetailRow proc near            ; CODE XREF: RunClueBookItemCategory+20�
                 mov     _textPos_y, 6Fh ; 'o'
                 mov     _textPos_x, 7Fh
                 call    sub_148EA
-                call    sub_14994
+                call    DrawSubIconSelectorRow
                 retn
 ShowArmorDetailRow endp
 
@@ -5859,7 +5859,7 @@ loc_138AB:                              ; CODE XREF: ShowWeaponDetailRow+4A↑j
                 mov     _textPos_x, 9Dh
                 mov     _font_fgColor, 0A7h
                 call    writeString
-                call    sub_14994
+                call    DrawSubIconSelectorRow
                 retn
 ShowWeaponDetailRow endp
 
@@ -7417,16 +7417,16 @@ sub_1496B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14994       proc near               ; CODE XREF: ShowArmorDetailRow+3F↑p
+DrawSubIconSelectorRow proc near        ; CODE XREF: ShowArmorDetailRow+3F↑p
                                         ; ShowWeaponDetailRow+60↑p
-                mov     word_2E532, 80h
+                mov     word_2E532, 80h ; Draws the row of clickable sub-icon selector indicators (region table 0x6976, same as RunClueBookItemCategory's click hit-testing), toggling each between two picture variants based on word_328FE bits. Called from ShowArmorDetailRow/ShowWeaponDetailRow.
                 mov     word_2E530, 155h
                 mov     di, 6976h
                 mov     ax, [di+4]
                 mov     y, ax
                 mov     dx, 8000h
 
-loc_149AC:                              ; CODE XREF: sub_14994+46↓j
+loc_149AC:                              ; CODE XREF: DrawSubIconSelectorRow+46↓j
                 cmp     word ptr [di], 0FFFFh
                 jz      short locret_149DC
                 mov     ax, [di]
@@ -7439,19 +7439,19 @@ loc_149AC:                              ; CODE XREF: sub_14994+46↓j
                 jmp     short loc_149D5
 ; ---------------------------------------------------------------------------
 
-loc_149CB:                              ; CODE XREF: sub_14994+26↑j
+loc_149CB:                              ; CODE XREF: DrawSubIconSelectorRow+26↑j
                 call    DrawPicture
                 add     word_2E530, 2
 
-loc_149D5:                              ; CODE XREF: sub_14994+35↑j
+loc_149D5:                              ; CODE XREF: DrawSubIconSelectorRow+35↑j
                 shr     dx, 1
                 add     di, 0Ah
                 jmp     short loc_149AC
 ; ---------------------------------------------------------------------------
 
-locret_149DC:                           ; CODE XREF: sub_14994+1B↑j
+locret_149DC:                           ; CODE XREF: DrawSubIconSelectorRow+1B↑j
                 retn
-sub_14994       endp
+DrawSubIconSelectorRow endp
 
 
 ; =============== S U B R O U T I N E =======================================

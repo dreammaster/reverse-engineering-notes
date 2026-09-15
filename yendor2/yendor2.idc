@@ -2015,7 +2015,9 @@ static Bytes_0(void) {
 	create_insn	(0X14954);
 	create_insn	(0X1496B);
 	set_cmt	(0X1498B,	"msg",	0);
+	set_cmt	(0X14994,	"Draws the row of clickable sub-icon selector indicators (region table 0x6976, same as RunClueBookItemCategory's click hit-testing), toggling each between two picture variants based on word_328FE bits. Called from ShowArmorDetailRow/ShowWeaponDetailRow.",	0);
 	create_insn	(0X14994);
+	set_name	(0X14994,	"DrawSubIconSelectorRow");
 	create_insn	(0X149CB);
 	create_insn	(x=0X149D5);
 	op_hex		(x,	1);
@@ -3727,6 +3729,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1ABD4);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1ABE1);
 	op_hex		(x,	1);
 	create_insn	(x=0X1ABEE);
@@ -3762,15 +3773,6 @@ static Bytes_0(void) {
 	create_insn	(0X1AD7D);
 	create_insn	(0X1AD8E);
 	create_insn	(0X1AD95);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1ADAB);
 	op_hex		(x,	1);
 	create_insn	(0X1ADCE);
@@ -6029,6 +6031,15 @@ static Bytes_1(void) {
 	create_insn	(x=0X233F5);
 	op_hex		(x,	1);
 	set_name	(0X233F5,	"TryActivateMonsterByDistance");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X233FD);
 	create_insn	(x=0X23404);
 	op_hex		(x,	1);
@@ -6047,15 +6058,6 @@ static Bytes_1(void) {
 	set_cmt	(0X234D3,	"Draws one monster's info panel (si = g_monsterSlots entry): name strings, then progressively more detail icons as the party's average word_36CA9 stat (an 'identify'-style tier) crosses 3 thresholds, selected by 2-bit quality flags on the monster's own [+0xC] field.",	0);
 	create_insn	(0X234D3);
 	set_name	(0X234D3,	"DrawMonsterInfoPanel");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X234D9);
 	op_hex		(x,	1);
 	create_insn	(x=0X234E5);
@@ -9091,13 +9093,6 @@ static Bytes_2(void) {
 	set_cmt	(0X2C010,	"Item-repair minigame, called directly from HandleGameCommand. Picks a target character, rolls RandomInRange(100) against a pair of thresholds from a table at 0x6B7E (indexed by the item/category being repaired x0x14, plus a tier offset from the character's own [+0x6A] -- plausibly a repair/crafting skill). Below the low threshold: critical fail, item destroyed (word_328C8 |= 0x4000). Between: soft fail, item survives. Above the high threshold: success, item repaired (word_328C8 |= 0x8000).",	0);
 	create_insn	(0X2C010);
 	set_name	(0X2C010,	"RepairItemCommand");
-	create_insn	(0X2C03D);
-	create_insn	(x=0X2C050);
-	op_hex		(x,	1);
-	create_insn	(0X2C064);
-	create_insn	(0X2C0AC);
-	create_insn	(x=0X2C0BF);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -9107,6 +9102,13 @@ static Bytes_3(void) {
         auto x;
 #define id x
 
+	create_insn	(0X2C03D);
+	create_insn	(x=0X2C050);
+	op_hex		(x,	1);
+	create_insn	(0X2C064);
+	create_insn	(0X2C0AC);
+	create_insn	(x=0X2C0BF);
+	op_hex		(x,	1);
 	create_insn	(0X2C0C7);
 	create_insn	(0X2C0D4);
 	create_insn	(x=0X2C0E7);
