@@ -31875,7 +31875,7 @@ loc_220F0:                              ; CODE XREF: ToggleMapViewMode+6↑j
                 mov     y, 0
                 mov     word_2E530, 6
                 call    DrawPicture
-                call    sub_22255
+                call    DrawPlayerPositionMarker
                 call    sub_2587E
                 call    sub_162B6
                 call    sub_25862
@@ -32020,8 +32020,8 @@ DrawLocalMapCell endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_22255       proc near               ; CODE XREF: ToggleMapViewMode+3F↑p
-                cmp     word_36CF7, 0A0h
+DrawPlayerPositionMarker proc near      ; CODE XREF: ToggleMapViewMode+3F↑p
+                cmp     word_36CF7, 0A0h ; Draws a 'you are here' marker (picture 0x11) at the party's current position on the local area map, if within its visible bounding box. Called from ToggleMapViewMode.
                 jl      short locret_222BB
                 cmp     word_36CF9, 30h ; '0'
                 jl      short locret_222BB
@@ -32052,10 +32052,10 @@ sub_22255       proc near               ; CODE XREF: ToggleMapViewMode+3F↑p
                 mov     word_2E530, 11h
                 call    DrawPicture
 
-locret_222BB:                           ; CODE XREF: sub_22255+6↑j
-                                        ; sub_22255+D↑j ...
+locret_222BB:                           ; CODE XREF: DrawPlayerPositionMarker+6↑j
+                                        ; DrawPlayerPositionMarker+D↑j ...
                 retn
-sub_22255       endp
+DrawPlayerPositionMarker endp
 
 ; ---------------------------------------------------------------------------
                 retn

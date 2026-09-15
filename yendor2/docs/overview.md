@@ -2989,6 +2989,15 @@ item icon with a two-variant toggle, the same pattern
 
 384 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawPlayerPositionMarker — halfway milestone
+
+Named `sub_22255`, called from `ToggleMapViewMode`: draws a "you are
+here" marker on the local area map at the party's current position.
+
+**385 named of 769 functions as of this update — exactly half the
+executable is now named**, up from 45 (5.8%) at the very start of this
+project's work on `SW.EXE`.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

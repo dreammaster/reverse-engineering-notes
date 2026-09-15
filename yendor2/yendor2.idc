@@ -5769,7 +5769,9 @@ static Bytes_1(void) {
 	set_name	(0X221A0,	"DrawLocalMapCell");
 	create_insn	(0X221FB);
 	create_insn	(0X22208);
+	set_cmt	(0X22255,	"Draws a 'you are here' marker (picture 0x11) at the party's current position on the local area map, if within its visible bounding box. Called from ToggleMapViewMode.",	0);
 	create_insn	(0X22255);
+	set_name	(0X22255,	"DrawPlayerPositionMarker");
 	create_insn	(0X222BC);
 	set_cmt	(0X222BD,	"'YOUR SKILL IS NOT HIGH ENOUGH!' (msg 0x7D7E, cx=3) -- a mapping/cartography skill gate rejection, called from ShowLocalAreaMap and ToggleMapViewMode.",	0);
 	create_insn	(0X222BD);
@@ -5923,6 +5925,15 @@ static Bytes_1(void) {
 	set_cmt	(0X22D4C,	"Iterates g_levelMonsters (80 x 0x9C-byte records, same stride as g_monsterSlots) -- for each occupied slot ([si+0xC] & 1), calls TickMonsterTimer and, on errorCode==1 (this monster's presence has ended), calls GrantMonsterRewards then RemoveMonsterFromMap. Also does an unrelated IsBCDCounterAtLeast(0x51B6) check + sub_23151 at the end (see RunDungeonGameLoop, same pairing).",	0);
 	create_insn	(0X22D4C);
 	set_name	(0X22D4C,	"ProcessLevelMonsters");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X22D52);
 	op_hex		(x,	1);
 	create_insn	(x=0X22D6A);
@@ -5933,15 +5944,6 @@ static Bytes_1(void) {
 	create_insn	(0X22DB7);
 	create_insn	(x=0X22DC0);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X22DCA);
 	create_insn	(x=0X22DE8);
 	op_hex		(x,	1);
