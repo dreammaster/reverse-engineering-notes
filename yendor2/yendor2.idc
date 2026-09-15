@@ -1643,7 +1643,9 @@ static Bytes_0(void) {
 	set_name	(0X1305E,	"WaitForKeypress");
 	create_insn	(x=0X1308A);
 	op_hex		(x,	1);
+	set_cmt	(0X13090,	"F5 'INVENTORY ITEMS' clue-book category loop (called once from ShowClueBook). Draws the current entry via ShowClueBookItemDetail, polls input, hit-tests a region table (0x6976) so the player can click a sub-icon to jump to a specific entry (word_328FE tracks the selection), loops until ESC.",	0);
 	create_insn	(0X13090);
+	set_name	(0X13090,	"RunClueBookItemCategory");
 	create_insn	(x=0X13093);
 	op_hex		(x,	1);
 	create_insn	(x=0X130EB);
@@ -4164,6 +4166,15 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X1C779,	"msg",	0);
 	set_cmt	(0X1C786,	"msg",	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X1C799,	"msg",	0);
 	set_cmt	(0X1C7C7,	"msg",	0);
 	create_insn	(0X1C7D9);
@@ -4183,15 +4194,6 @@ static Bytes_0(void) {
 	set_cmt	(0X1C890,	"LoadItemData(ax=item id): frees any previously-loaded item data buffers, reads WORLD.DAT's item catalog record (fixed address 0xBCE, FileEntry bx=0x9043) to find this item's data block, allocates a buffer sized to fit, and reads the item's data from WORLD.DAT into it. WORLD.DAT's item-data catalog, structurally similar to g_pictureDir's role for PICTURES.VGA.",	0);
 	create_insn	(0X1C890);
 	set_name	(0X1C890,	"LoadItemData");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X1C89E);
 	op_hex		(x,	1);
 	set_cmt	(0X1C8A0,	"DOS - 2+ - FREE MEMORY\nES = segment address of area to be freed",	0);
@@ -7231,6 +7233,15 @@ static Bytes_1(void) {
 	create_byte	(0X28804);
 	make_array	(0X28804,	0X25);
 	set_name	(0X28804,	"aAnEmmMappingEr");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_byte	(0X28829);
 	make_array	(0X28829,	0X24);
 	set_name	(0X28829,	"aProblemWithMus");
@@ -7263,15 +7274,6 @@ static Bytes_1(void) {
 	create_insn	(0X28985);
 	create_insn	(x=0X28991);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X2899C,	"Generic error/exit path: runs the RestoreInt1cVector / FreeVideoBuffer / ShutdownAudioDrivers cleanup trio, then (if the mouse/video subsystem flag ds:40FCh bit0 is set) resets the mouse driver and video mode 3, prints the DOS '$'-terminated string at DS:AX (set by the ErrorTable handler that jumped here), and exits via INT 21h/AH=4Ch with errorCode as the exit code.",	0);
 	create_insn	(0X2899C);
 	set_name	(0X2899C,	"ErrorExit");
@@ -10709,6 +10711,15 @@ static Bytes_2(void) {
 	set_name	(0X36454,	"aStealNuore");
 	create_strlit	(0X36462,	0XD);
 	set_name	(0X36462,	"aProjectile_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X3646F,	0X9);
 	set_name	(0X3646F,	"aWeapon");
 	create_strlit	(0X36478,	0X9);
@@ -10737,15 +10748,6 @@ static Bytes_2(void) {
 	set_name	(0X364E0,	"aConverts");
 	create_strlit	(0X364EA,	0X14);
 	set_name	(0X364EA,	"aMagicOreAndNuo");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X364FE,	0X11);
 	set_name	(0X364FE,	"aClassLevel");
 	create_strlit	(0X3650F,	0X7);

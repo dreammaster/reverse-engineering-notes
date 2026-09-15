@@ -242,6 +242,12 @@ ESC Return to Game — very likely (order not yet matched bit-for-bit)
 the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 `ShowClueBookItemDetail` is confirmed as the F5 category's per-entry
 screen: an item's icon plus "BASE VALUE:" and "WEIGHT:" fields.
+`RunClueBookItemCategory` is the F5 category's own interactive loop
+(draw entry, poll input, hit-test a region table so the player can
+click a sub-icon to jump entries, until ESC) — a second, more complex
+sibling loop (`sub_13119`, called from two other `ShowClueBook` sites)
+adds extra dispatches for item-id ranges overlapping `CastSpell`'s and
+`RestCharacter`'s selector ranges, not yet traced.
 
 ### Quest-item and party-inventory range checks
 

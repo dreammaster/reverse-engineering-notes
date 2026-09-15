@@ -1569,7 +1569,7 @@ loc_10F25:                              ; CODE XREF: ShowClueBook+2E0↑j
 ; ---------------------------------------------------------------------------
 
 loc_10F2F:                              ; CODE XREF: ShowClueBook+2EA↑j
-                call    sub_13090
+                call    RunClueBookItemCategory
                 cmp     word_2E40A, 1
                 jz      short loc_10EF9
                 jmp     loc_10CC5
@@ -5101,8 +5101,8 @@ WaitForKeypress endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13090       proc far                ; CODE XREF: ShowClueBook:loc_10F2F↑P
-                call    sub_1472A
+RunClueBookItemCategory proc far        ; CODE XREF: ShowClueBook:loc_10F2F↑P
+                call    sub_1472A       ; F5 'INVENTORY ITEMS' clue-book category loop (called once from ShowClueBook). Draws the current entry via ShowClueBookItemDetail, polls input, hit-tests a region table (0x6976) so the player can click a sub-icon to jump to a specific entry (word_328FE tracks the selection), loops until ESC.
                 or      word_328CC, 40h
                 mov     word_2E3FC, 0F9h
                 mov     ax, 8A01h
@@ -5111,13 +5111,13 @@ sub_13090       proc far                ; CODE XREF: ShowClueBook:loc_10F2F↑P
                 mov     ax, [bx]
                 mov     word_32974, ax
 
-loc_130AD:                              ; CODE XREF: sub_13090+75↓j
+loc_130AD:                              ; CODE XREF: RunClueBookItemCategory+75↓j
                 call    ShowClueBookItemDetail
                 call    sub_13780
                 call    DrawMouseCursor
 
-loc_130B8:                              ; CODE XREF: sub_13090+32↓j
-                                        ; sub_13090+39↓j ...
+loc_130B8:                              ; CODE XREF: RunClueBookItemCategory+32↓j
+                                        ; RunClueBookItemCategory+39↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_130B8
@@ -5143,13 +5143,13 @@ loc_130B8:                              ; CODE XREF: sub_13090+32↓j
                 jmp     short loc_130AD
 ; ---------------------------------------------------------------------------
 
-loc_13107:                              ; CODE XREF: sub_13090+4D↑j
+loc_13107:                              ; CODE XREF: RunClueBookItemCategory+4D↑j
                 call    sub_14D26
                 cmp     word_2E40A, 0
                 jz      short loc_130B8
                 and     word_328CC, 0FFBFh
                 retf
-sub_13090       endp
+RunClueBookItemCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -5658,7 +5658,7 @@ sub_13630       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-ShowClueBookItemDetail proc near        ; CODE XREF: sub_13090:loc_130AD↑p
+ShowClueBookItemDetail proc near        ; CODE XREF: RunClueBookItemCategory:loc_130AD↑p
                                         ; sub_13119+E↑p ...
                 mov     ax, word_32974  ; Clue book 'F5 INVENTORY ITEMS' entry detail screen: message box + DrawClueBookNavBar, then the entry's icon (word_2E546) and two labeled fields, confirmed via message dump to be 'BASE VALUE:' and 'WEIGHT:'.
                 call    sub_14B24
@@ -5754,7 +5754,7 @@ sub_13707       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13780       proc near               ; CODE XREF: sub_13090+20↑p
+sub_13780       proc near               ; CODE XREF: RunClueBookItemCategory+20↑p
                 mov     _textPos_y, 39h ; '9'
                 mov     _textPos_x, 5Bh ; '['
                 mov     bx, 8A96h
@@ -7128,7 +7128,7 @@ sub_1466E       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1472A       proc near               ; CODE XREF: sub_13090↑p
+sub_1472A       proc near               ; CODE XREF: RunClueBookItemCategory↑p
                                         ; sub_1318D↑p
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
@@ -74236,8 +74236,8 @@ word_328FA      dw 0                    ; DATA XREF: sub_15429+6B↑w
                                         ; sub_15429:loc_154BF↑w ...
 word_328FC      dw 0                    ; DATA XREF: sub_2C0FE+376↑w
                                         ; sub_2C0FE+38F↑w ...
-word_328FE      dw 0                    ; DATA XREF: sub_13090+5B↑w
-                                        ; sub_13090+68↑w ...
+word_328FE      dw 0                    ; DATA XREF: RunClueBookItemCategory+5B↑w
+                                        ; RunClueBookItemCategory+68↑w ...
 word_32900      dw 0                    ; DATA XREF: sub_15429+71↑w
                                         ; sub_15429+9B↑w ...
 word_32902      dw 0                    ; DATA XREF: UseItem:loc_17E8B↑r

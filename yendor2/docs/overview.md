@@ -2148,6 +2148,19 @@ Named `sub_13678`: draws an entry's icon plus "BASE VALUE:" and
 
 273 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookItemCategory
+
+Named `sub_13090`, the F5 Inventory Items category's own interactive
+loop (called once from `ShowClueBook`): draws entries via
+`ShowClueBookItemDetail`, polls input, and hit-tests a region table so
+the player can click a sub-icon to jump directly to an entry. A more
+complex sibling, `sub_13119` (two other `ShowClueBook` call sites),
+also calls `ShowClueBookItemDetail` but adds extra dispatches for
+item-id ranges overlapping `CastSpell`/`RestCharacter`'s selector
+ranges — left unnamed, not traced.
+
+274 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
