@@ -23825,16 +23825,16 @@ loc_1D540:                              ; CODE XREF: HandleRangedOrCombatAction+
                 mov     word_2E532, 10h
                 mov     ax, 0
                 mov     bx, word_328D8
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
                 mov     ax, 36h ; '6'
                 mov     bx, word_328DA
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
                 mov     ax, 69h ; 'i'
                 mov     bx, word_328DC
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
                 mov     ax, 9Dh
                 mov     bx, word_328DE
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
                 call    sub_2BB1A
                 call    sub_223D4
                 call    RedrawDungeonScreen
@@ -32752,7 +32752,7 @@ loc_2286D:                              ; CODE XREF: sub_2281F+7F↓j
 loc_22890:                              ; CODE XREF: sub_2281F+6A↑j
                 mov     ax, [di+8]
                 mov     bx, [di+4]
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
 
 loc_2289B:                              ; CODE XREF: sub_2281F+52↑j
                 add     di, 18h
@@ -50230,14 +50230,14 @@ AnimateProjectileStep endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BAD5       proc far                ; CODE XREF: HandleRangedOrCombatAction+E4↑P
+DrawWeaponSelectIcon proc far           ; CODE XREF: HandleRangedOrCombatAction+E4↑P
                                         ; HandleRangedOrCombatAction+F0↑P ...
-                cmp     bx, 0
+                cmp     bx, 0           ; Draws one weapon-select slot icon (bx=item id), bailing if empty. When word_328C8 bit 8 is set, uses a highlighted icon variant for item ids in range word_3292A..word_32928 (the selected weapon). Called 4x from HandleRangedOrCombatAction.
                 jnz     short loc_2BADB
                 retf
 ; ---------------------------------------------------------------------------
 
-loc_2BADB:                              ; CODE XREF: sub_2BAD5+3↑j
+loc_2BADB:                              ; CODE XREF: DrawWeaponSelectIcon+3↑j
                 mov     x, ax
                 mov     word_32980, ax
                 mov     word_2E530, bx
@@ -50250,17 +50250,17 @@ loc_2BADB:                              ; CODE XREF: sub_2BAD5+3↑j
                 jg      short loc_2BAFF
                 mov     ax, word_329CE
 
-loc_2BAFF:                              ; CODE XREF: sub_2BAD5+1F↑j
-                                        ; sub_2BAD5+25↑j
+loc_2BAFF:                              ; CODE XREF: DrawWeaponSelectIcon+1F↑j
+                                        ; DrawWeaponSelectIcon+25↑j
                 mov     word_2E530, ax
 
-loc_2BB02:                              ; CODE XREF: sub_2BAD5+16↑j
+loc_2BB02:                              ; CODE XREF: DrawWeaponSelectIcon+16↑j
                 mov     word_32986, 0
                 mov     word_32982, 35h ; '5'
                 mov     word_32988, 69h ; 'i'
                 call    DrawPicture
                 retf
-sub_2BAD5       endp
+DrawWeaponSelectIcon endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -51989,7 +51989,7 @@ loc_2C989:                              ; CODE XREF: sub_2C0FE+867↑j
 
 loc_2C9A7:                              ; CODE XREF: sub_2C0FE+896↑j
                 mov     bx, word_332E0
-                call    sub_2BAD5
+                call    DrawWeaponSelectIcon
                 and     word_328C6, 0FFFEh
                 and     word_328C8, 0FFF7h
                 call    sub_2BB1A
@@ -74285,9 +74285,9 @@ word_32924      dw 0                    ; DATA XREF: HandleDungeonInput+28↑w
 word_32926      dw 0                    ; DATA XREF: ExtendDungeonCeilingPass+F↑w
                                         ; ExtendDungeonCeilingPass+1B↑w ...
 word_32928      dw 0                    ; DATA XREF: InitGlobals+156↑w
-                                        ; sub_2BAD5+21↑r
+                                        ; DrawWeaponSelectIcon+21↑r
 word_3292A      dw 0                    ; DATA XREF: InitGlobals+15C↑w
-                                        ; sub_2BAD5+1B↑r
+                                        ; DrawWeaponSelectIcon+1B↑r
 word_3292C      dw 0                    ; DATA XREF: ClassifyObstacleAtViewportRow+9↑r
                                         ; HandleRangedOrCombatAction+133↑w ...
 word_3292E      dw 0                    ; DATA XREF: ShutdownAudioDrivers+25↑r
@@ -74395,7 +74395,7 @@ word_3298E      dw 0                    ; DATA XREF: ShowHealingCostPrompt+6↑w
 word_32990      dw 0                    ; DATA XREF: UseAbilityCommand:loc_17906↑w
                                         ; sub_1B2BD+28↑w ...
 _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
-                                        ; sub_2BAD5+18↑r
+                                        ; DrawWeaponSelectIcon+18↑r
 _val16          dw 0                    ; DATA XREF: InitGlobals+84↑w
                                         ; ShowLootAndAwardExperience+B↑r
 _val17          dw 0                    ; DATA XREF: InitGlobals+8A↑w
@@ -74455,7 +74455,7 @@ _val49          dw 0                    ; DATA XREF: InitGlobals+14A↑w
 _val48          dw 0                    ; DATA XREF: InitGlobals+144↑w
                                         ; RunGameDialog+5C5↑r ...
 word_329CE      dw 0                    ; DATA XREF: InitGlobals+150↑w
-                                        ; sub_2BAD5+27↑r
+                                        ; DrawWeaponSelectIcon+27↑r
 _val11          dw 0                    ; DATA XREF: InitGlobals+3C↑w
                                         ; DrawViewportSprite:loc_29C76↑r ...
 _val12          dw 0                    ; DATA XREF: InitGlobals+42↑w

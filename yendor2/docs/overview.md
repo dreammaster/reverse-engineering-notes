@@ -2909,6 +2909,14 @@ represent) not confirmed.
 
 372 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: DrawWeaponSelectIcon
+
+Named `sub_2BAD5`, called 4x from `HandleRangedOrCombatAction`: draws
+one weapon-select slot icon, with a highlighted variant for the
+currently selected weapon.
+
+373 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

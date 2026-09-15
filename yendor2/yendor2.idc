@@ -9006,7 +9006,9 @@ static Bytes_3(void) {
 	create_insn	(0X2BAA0);
 	set_name	(0X2BAA0,	"AnimateProjectileStep");
 	set_cmt	(0X2BAC6,	"ticks",	0);
+	set_cmt	(0X2BAD5,	"Draws one weapon-select slot icon (bx=item id), bailing if empty. When word_328C8 bit 8 is set, uses a highlighted icon variant for item ids in range word_3292A..word_32928 (the selected weapon). Called 4x from HandleRangedOrCombatAction.",	0);
 	create_insn	(0X2BAD5);
+	set_name	(0X2BAD5,	"DrawWeaponSelectIcon");
 	create_insn	(0X2BADB);
 	create_insn	(x=0X2BAE5);
 	op_hex		(x,	1);

@@ -575,7 +575,9 @@ first): a 3-way combat-action dispatcher. If already in formal combat
 caller set bit `0x100` (a ranged-attack request): scans the 4 party
 inventory slots for a character with an eligible ranged weapon (item
 `0x13A`, status-gated), bails if none; else draws a 4-icon weapon-select
-UI and **animates a projectile traveling down the corridor one depth
+UI (`DrawWeaponSelectIcon` per slot, with a highlighted variant for the
+currently selected weapon) and **animates a projectile traveling down
+the corridor one depth
 row at a time** — `AnimateProjectileStep` (draws the projectile sprite,
 restores the background via `RestoreCorridorBackgroundFromEMS`
 — **correction**: earlier described as "plays a sound", but it's an
