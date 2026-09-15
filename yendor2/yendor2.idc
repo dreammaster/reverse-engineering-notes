@@ -7282,7 +7282,9 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	set_cmt	(0X2821E,	"msg",	0);
 	set_cmt	(0X28232,	"msg",	0);
+	set_cmt	(0X28246,	"Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.",	0);
 	create_insn	(0X28246);
+	set_name	(0X28246,	"RestoreDialogAreaFromEMS");
 	create_insn	(0X2827E);
 	create_insn	(x=0X28281);
 	op_hex		(x,	1);

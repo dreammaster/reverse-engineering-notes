@@ -3066,6 +3066,14 @@ Confirmed by the dumped rejection message "YOU CAN NOT REST HERE".
 
 393 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestoreDialogAreaFromEMS
+
+Named `sub_28246`, shared by `RestPartyAndAdvanceClock` and
+`RunGameDialog`: restores a cached status-area screen region from EMS
+without a full redraw.
+
+394 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

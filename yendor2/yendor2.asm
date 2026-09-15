@@ -25697,7 +25697,7 @@ loc_1E662:                              ; CODE XREF: RestPartyAndAdvanceClock+13
 ; ---------------------------------------------------------------------------
 
 loc_1E6AE:                              ; CODE XREF: RestPartyAndAdvanceClock+25↑j
-                call    sub_28246
+                call    RestoreDialogAreaFromEMS
                 call    sub_16EFA
                 mov     byte_2E400, 0
                 test    word_328C4, 1
@@ -26067,7 +26067,7 @@ RunGameDialog   proc far                ; CODE XREF: start+7E0↑P
 
 loc_1EA83:                              ; CODE XREF: RunGameDialog+10↑j
                 call    ClearStatusPanelIfDirty
-                call    sub_28246
+                call    RestoreDialogAreaFromEMS
                 call    sub_16EFA
                 test    word_328C4, 1
                 jnz     short loc_1EAA2
@@ -43414,9 +43414,9 @@ seg099          segment byte public 'CODE' use16
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_28246       proc far                ; CODE XREF: RestPartyAndAdvanceClock:loc_1E6AE↑P
+RestoreDialogAreaFromEMS proc far       ; CODE XREF: RestPartyAndAdvanceClock:loc_1E6AE↑P
                                         ; RunGameDialog+1A↑P
-                push    si
+                push    si              ; Blits a cached 60x37-word screen region (offset 0x78F0) from EMS page 0x55D8 into the video buffer -- restores the game-dialog/status area without a full redraw. Called from RestPartyAndAdvanceClock and RunGameDialog.
                 push    di
                 push    es
                 push    dx
@@ -43430,7 +43430,7 @@ sub_28246       proc far                ; CODE XREF: RestPartyAndAdvanceClock:lo
                 mov     bx, 78F0h
                 mov     cx, 3Ch ; '<'
 
-loc_28266:                              ; CODE XREF: sub_28246+2F↓j
+loc_28266:                              ; CODE XREF: RestoreDialogAreaFromEMS+2F↓j
                 push    cx
                 mov     si, bx
                 mov     di, bx
@@ -43446,7 +43446,7 @@ loc_28266:                              ; CODE XREF: sub_28246+2F↓j
                 pop     di
                 pop     si
                 retf
-sub_28246       endp
+RestoreDialogAreaFromEMS endp
 
 seg099          ends
 
