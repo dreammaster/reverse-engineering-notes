@@ -2315,6 +2315,16 @@ offsets not traced yet.
 
 286 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RunClueBookSpellCategory and ShowClueBookSpellDetail
+
+Named the F3 Spells / F4 Magic Users clue-book category loop and its
+detail panel. `ShowClueBookSpellDetail` draws "CLASS:"/"LEVEL:" plus
+"MP:"/"NUORE:"/"ORE:" cost fields (spells cost MP and the two alchemy
+ore counters) and "AFFECTS:"/"WHEN:"/"EFFECT:" description sections
+with a 6-class eligibility marker row.
+
+288 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

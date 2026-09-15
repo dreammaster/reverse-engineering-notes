@@ -255,10 +255,15 @@ the identities of (at least 6 of) `DrawClueBookNavBar`'s 7 tabs.
 Maps) → `RunClueEntryMenu` + `sub_13278` loop, not traced further. F2
 (`word_2E3F6=2`, Monster Statistics) → `RunClueEntryMenu` +
 `RunClueBookMonsterCategory`. F3 (`word_2E3F6=3`, Spells) →
-`RunClueEntryMenu` + `sub_13216` loop, not traced. F4
+`RunClueEntryMenu` + `RunClueBookSpellCategory`. F4
 (`word_2E3F6=4` lists classes, then `word_2E3F6=[selected class]+4`,
 Magic Users) → two chained `RunClueEntryMenu` calls (class picker,
-then that class's spell list) + `sub_13216`. F5 (`word_2E3F6=0xB`,
+then that class's spell list) + `RunClueBookSpellCategory` again —
+`ShowClueBookSpellDetail` draws "CLASS:"/"LEVEL:" plus "MP:"/
+"NUORE:"/"ORE:" cost fields (spells cost MP and the same two alchemy
+ore counters used elsewhere) and "AFFECTS:"/"WHEN:"/"EFFECT:"
+description sections with a 6-class eligibility marker row. F5
+(`word_2E3F6=0xB`,
 Inventory Items) → `RunClueEntryMenu` lists **8 item subtypes**
 (`word_2E3EE[0]` 1–8), each with its own sub-loop: subtype 1 →
 `RunClueBookItemCategory` (**correction**: previously described below

@@ -1669,8 +1669,10 @@ static Bytes_0(void) {
 	create_insn	(0X13204);
 	create_insn	(x=0X13210);
 	op_hex		(x,	1);
+	set_cmt	(0X13216,	"F3 'SPELLS' / F4 'MAGIC USERS' clue-book category loop (called from ShowClueBook at 2 sites). Loads the spell id via sub_1D198, draws message box + nav bar + ShowClueBookSpellDetail, loops until ESC.",	0);
 	create_insn	(x=0X13216);
 	op_hex		(x,	1);
+	set_name	(0X13216,	"RunClueBookSpellCategory");
 	create_insn	(x=0X13272);
 	op_hex		(x,	1);
 	create_insn	(0X13278);
@@ -1772,7 +1774,9 @@ static Bytes_0(void) {
 	create_insn	(0X13B0F);
 	set_cmt	(0X13B22,	"msg",	0);
 	set_cmt	(0X13B30,	"msg",	0);
+	set_cmt	(0X13B3F,	"Spell detail panel: 'CLASS:'/'LEVEL:' header, 'MP:'/'NUORE:'/'ORE:' cost fields (word_332D2/332D4/332D6), 'AFFECTS:'/'WHEN:'/'EFFECT:' description sections, and a 6-class eligibility marker row (word_332FE bitmask). Called from RunClueBookSpellCategory.",	0);
 	create_insn	(0X13B3F);
+	set_name	(0X13B3F,	"ShowClueBookSpellDetail");
 	set_cmt	(0X13B51,	"msg",	0);
 	set_cmt	(0X13B9D,	"this",	0);
 	create_insn	(x=0X13BD6);
@@ -4026,6 +4030,15 @@ static Bytes_0(void) {
 	set_cmt	(0X1BEA1,	"One of UseItem's item-type handlers (selected by word_2E410 bit 0x400). Sub-dispatches on the current SelectItemUseRecord's own es:[si+0x10] flags. Bit 2: pays a BCD material cost (0x94B3 vs a threshold at 0x512A, 'not enough' message if short) then sets a per-character flag via SetRecordFlag_10C using the item's own +0x1A field as the index -- same pattern as sub_1BBED's type-2 branch. Bit 0x200: builds a message string instead, no BCD cost -- plausibly a non-consuming 'read/examine' path.",	0);
 	create_insn	(0X1BEA1);
 	set_name	(0X1BEA1,	"UseItemType_400");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X1BEA5);
 	op_hex		(x,	1);
 	create_insn	(x=0X1BEAD);
@@ -4041,15 +4054,6 @@ static Bytes_0(void) {
 	create_insn	(0X1BEEF);
 	set_cmt	(0X1BF0E,	"msg",	0);
 	create_insn	(0X1BF1C);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X1BF4A);
 	set_cmt	(0X1BF94,	"UseItem's handler for word_2E410 bit 0x8000. Its bit-2 branch is unambiguous healing/cure: pays a BCD material cost (0x94B3 vs threshold 0x512A), then applies cure effects per word_3298E flags (0x2000: clear status bit 6 + HP=2 -- plausibly wake from unconsciousness; 0x4000: clear status bit 7; 0x8000: HP=max; 0x1000: HP=max + clear status bits 0-5) to word_328D4, draws a 'healed' icon via the trap-effect icon-bar system (PrepareTrapEffectSlots effect id 3 + ApplyEffectAndDrawIconBar), and refreshes the target's status (ClassifyPartyMemberCondition, sub_22445). A separate branch (reached when no low item-record bits match) picks a status message by ClassifyPartyMemberCondition's word_2E40C tier bits -- confirms those tiers drive user-facing text.",	0);
 	create_insn	(0X1BF94);

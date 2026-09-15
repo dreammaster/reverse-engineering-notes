@@ -1422,7 +1422,7 @@ loc_10DC3:                              ; CODE XREF: ShowClueBook+1B6↓j
                 call    RunClueEntryMenu
                 cmp     word_2E40A, 0
                 jnz     short loc_10DF8
-                call    sub_13216
+                call    RunClueBookSpellCategory
                 cmp     word_2E40A, 1
                 jz      short loc_10DC3
 
@@ -1473,7 +1473,7 @@ loc_10E64:                              ; CODE XREF: ShowClueBook+220↑j
 ; ---------------------------------------------------------------------------
 
 loc_10E6E:                              ; CODE XREF: ShowClueBook+229↑j
-                call    sub_13216
+                call    RunClueBookSpellCategory
                 cmp     word_2E40A, 1
                 jz      short loc_10E3F
                 jmp     loc_10CC5
@@ -5266,9 +5266,9 @@ sub_1318D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13216       proc far                ; CODE XREF: ShowClueBook+1AC↑P
+RunClueBookSpellCategory proc far       ; CODE XREF: ShowClueBook+1AC↑P
                                         ; ShowClueBook:loc_10E6E↑P
-                or      word_328CC, 40h
+                or      word_328CC, 40h ; F3 'SPELLS' / F4 'MAGIC USERS' clue-book category loop (called from ShowClueBook at 2 sites). Loads the spell id via sub_1D198, draws message box + nav bar + ShowClueBookSpellDetail, loops until ESC.
                 mov     bx, word_2E3EE
                 mov     ax, [bx]
                 mov     word_3330A, ax
@@ -5280,11 +5280,11 @@ sub_13216       proc far                ; CODE XREF: ShowClueBook+1AC↑P
                 mov     word_2E3FE, 0Dh
                 call    DrawMessageBox
                 call    DrawClueBookNavBar
-                call    sub_13B3F
+                call    ShowClueBookSpellDetail
                 call    DrawMouseCursor
 
-loc_13253:                              ; CODE XREF: sub_13216+47↓j
-                                        ; sub_13216+4E↓j ...
+loc_13253:                              ; CODE XREF: RunClueBookSpellCategory+47↓j
+                                        ; RunClueBookSpellCategory+4E↓j ...
                 call    PollKeyboardInput
                 cmp     errorCode, 0
                 jz      short loc_13253
@@ -5295,7 +5295,7 @@ loc_13253:                              ; CODE XREF: sub_13216+47↓j
                 jz      short loc_13253
                 and     word_328CC, 0FFBFh
                 retf
-sub_13216       endp
+RunClueBookSpellCategory endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6080,11 +6080,11 @@ sub_13957       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13B3F       proc near               ; CODE XREF: sub_13216+35↑p
+ShowClueBookSpellDetail proc near       ; CODE XREF: RunClueBookSpellCategory+35↑p
 
 ; FUNCTION CHUNK AT 0C7F SIZE 000001C9 BYTES
 
-                mov     _font_fgColor, 0Ah
+                mov     _font_fgColor, 0Ah ; Spell detail panel: 'CLASS:'/'LEVEL:' header, 'MP:'/'NUORE:'/'ORE:' cost fields (word_332D2/332D4/332D6), 'AFFECTS:'/'WHEN:'/'EFFECT:' description sections, and a 6-class eligibility marker row (word_332FE bitmask). Called from RunClueBookSpellCategory.
                 mov     _textPos_x, 2Ch ; ','
                 mov     _textPos_y, 1Ch
                 mov     bx, 8C9Eh       ; msg
@@ -6107,7 +6107,7 @@ sub_13B3F       proc near               ; CODE XREF: sub_13216+35↑p
                 push    word_332D2
                 mov     cx, 3
 
-loc_13BA8:                              ; CODE XREF: sub_13B3F+84↓j
+loc_13BA8:                              ; CODE XREF: ShowClueBookSpellDetail+84↓j
                 pop     ax
                 mov     bx, 0AFA8h
                 call    FormatNumber
@@ -6124,7 +6124,7 @@ loc_13BA8:                              ; CODE XREF: sub_13B3F+84↓j
                 or      dx, 20h
                 mov     cx, 6
 
-loc_13BDC:                              ; CODE XREF: sub_13B3F+D9↓j
+loc_13BDC:                              ; CODE XREF: ShowClueBookSpellDetail+D9↓j
                 call    sub_13C1D
                 cmp     errorCode, 0
                 jz      short loc_13C10
@@ -6139,26 +6139,26 @@ loc_13BDC:                              ; CODE XREF: sub_13B3F+D9↓j
                 jmp     short loc_13C10
 ; ---------------------------------------------------------------------------
 
-loc_13C01:                              ; CODE XREF: sub_13B3F+B5↑j
+loc_13C01:                              ; CODE XREF: ShowClueBookSpellDetail+B5↑j
                 mov     _font_fgColor, 0CAh
                 mov     ax, word_332D0
                 mov     bx, 8CE6h
                 call    sub_13C86
 
-loc_13C10:                              ; CODE XREF: sub_13B3F+A5↑j
-                                        ; sub_13B3F+AF↑j ...
+loc_13C10:                              ; CODE XREF: ShowClueBookSpellDetail+A5↑j
+                                        ; ShowClueBookSpellDetail+AF↑j ...
                 add     bp, 4
                 add     di, 50h ; 'P'
                 shr     dx, 1
                 loop    loc_13BDC
                 jmp     loc_13CCF
-sub_13B3F       endp ; sp-analysis failed
+ShowClueBookSpellDetail endp ; sp-analysis failed
 
 
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C1D       proc near               ; CODE XREF: sub_13B3F:loc_13BDC↑p
+sub_13C1D       proc near               ; CODE XREF: ShowClueBookSpellDetail:loc_13BDC↑p
                 push    cx
                 push    bp
                 mov     cx, 2
@@ -6189,7 +6189,7 @@ sub_13C1D       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C4B       proc near               ; CODE XREF: sub_13B3F+A7↑p
+sub_13C4B       proc near               ; CODE XREF: ShowClueBookSpellDetail+A7↑p
                 push    cx
                 push    di
                 push    bp
@@ -6231,7 +6231,7 @@ sub_13C4B       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_13C86       proc near               ; CODE XREF: sub_13B3F+CE↑p
+sub_13C86       proc near               ; CODE XREF: ShowClueBookSpellDetail+CE↑p
                                         ; sub_13C1D+28↑p ...
                 push    ax
                 mov     _textPos_x, 7Ah ; 'z'
@@ -6254,15 +6254,15 @@ sub_13C86       proc near               ; CODE XREF: sub_13B3F+CE↑p
 sub_13C86       endp
 
 ; ---------------------------------------------------------------------------
-; START OF FUNCTION CHUNK FOR sub_13B3F
+; START OF FUNCTION CHUNK FOR ShowClueBookSpellDetail
 
-loc_13CCF:                              ; CODE XREF: sub_13B3F+DB↑j
+loc_13CCF:                              ; CODE XREF: ShowClueBookSpellDetail+DB↑j
                 test    word_33302, 0FFh
                 jz      short loc_13CDA
                 jmp     loc_13DEA
 ; ---------------------------------------------------------------------------
 
-loc_13CDA:                              ; CODE XREF: sub_13B3F+196↑j
+loc_13CDA:                              ; CODE XREF: ShowClueBookSpellDetail+196↑j
                 mov     bx, 8CEDh
                 test    word_33306, 6
                 jnz     short loc_13CF0
@@ -6270,8 +6270,8 @@ loc_13CDA:                              ; CODE XREF: sub_13B3F+196↑j
                 jnz     short loc_13CF0
                 mov     bx, 8CF1h       ; msg
 
-loc_13CF0:                              ; CODE XREF: sub_13B3F+1A4↑j
-                                        ; sub_13B3F+1AC↑j
+loc_13CF0:                              ; CODE XREF: ShowClueBookSpellDetail+1A4↑j
+                                        ; ShowClueBookSpellDetail+1AC↑j
                 mov     _textPos_x, 5Ch ; '\'
                 mov     _textPos_y, 4Ch ; 'L'
                 mov     _font_fgColor, 0CAh
@@ -6285,7 +6285,7 @@ loc_13CF0:                              ; CODE XREF: sub_13B3F+1A4↑j
                 test    word_33302, 200h
                 jz      short loc_13D47
 
-loc_13D2A:                              ; CODE XREF: sub_13B3F+1E1↑j
+loc_13D2A:                              ; CODE XREF: ShowClueBookSpellDetail+1E1↑j
                 mov     bx, 8D64h
                 test    word_33306, 100h
                 jz      short loc_13D3F
@@ -6293,13 +6293,13 @@ loc_13D2A:                              ; CODE XREF: sub_13B3F+1E1↑j
                 jnz     short loc_13D3F
                 mov     bx, 8FC2h       ; msg
 
-loc_13D3F:                              ; CODE XREF: sub_13B3F+1F4↑j
-                                        ; sub_13B3F+1FB↑j
+loc_13D3F:                              ; CODE XREF: ShowClueBookSpellDetail+1F4↑j
+                                        ; ShowClueBookSpellDetail+1FB↑j
                 call    writeString
                 jmp     loc_13DEA
 ; ---------------------------------------------------------------------------
 
-loc_13D47:                              ; CODE XREF: sub_13B3F+1E9↑j
+loc_13D47:                              ; CODE XREF: ShowClueBookSpellDetail+1E9↑j
                 test    word_33306, 100h
                 jz      short loc_13D5D
                 cmp     word_332D8, 9
@@ -6307,41 +6307,41 @@ loc_13D47:                              ; CODE XREF: sub_13B3F+1E9↑j
                 cmp     word_332D8, 0Dh
                 jz      short loc_13D7B
 
-loc_13D5D:                              ; CODE XREF: sub_13B3F+20E↑j
+loc_13D5D:                              ; CODE XREF: ShowClueBookSpellDetail+20E↑j
                 mov     bx, 8CF5h       ; msg
                 call    writeString
                 add     _textPos_x, 2Ah ; '*'
                 jmp     short loc_13D97
 ; ---------------------------------------------------------------------------
 
-loc_13D6C:                              ; CODE XREF: sub_13B3F+215↑j
+loc_13D6C:                              ; CODE XREF: ShowClueBookSpellDetail+215↑j
                 mov     bx, 8D75h       ; msg
                 call    writeString
                 add     _textPos_x, 24h ; '$'
                 jmp     short loc_13D97
 ; ---------------------------------------------------------------------------
 
-loc_13D7B:                              ; CODE XREF: sub_13B3F+21C↑j
+loc_13D7B:                              ; CODE XREF: ShowClueBookSpellDetail+21C↑j
                 mov     bx, 8D7Ch       ; msg
                 call    writeString
                 add     _textPos_x, 24h ; '$'
                 jmp     short loc_13D97
 ; ---------------------------------------------------------------------------
 
-loc_13D8A:                              ; CODE XREF: sub_13B3F+1D9↑j
+loc_13D8A:                              ; CODE XREF: ShowClueBookSpellDetail+1D9↑j
                 mov     bx, 8CFDh       ; msg
                 call    writeString
                 add     _textPos_x, 36h ; '6'
 
-loc_13D97:                              ; CODE XREF: sub_13B3F+22B↑j
-                                        ; sub_13B3F+23A↑j ...
+loc_13D97:                              ; CODE XREF: ShowClueBookSpellDetail+22B↑j
+                                        ; ShowClueBookSpellDetail+23A↑j ...
                 test    word_33302, 5C00h
                 jz      short loc_13DAC
                 mov     bx, 8D07h       ; msg
                 call    writeString
                 add     _textPos_x, 6
 
-loc_13DAC:                              ; CODE XREF: sub_13B3F+25E↑j
+loc_13DAC:                              ; CODE XREF: ShowClueBookSpellDetail+25E↑j
                 add     _textPos_x, 6
                 mov     bx, 8D09h       ; msg
                 test    word_33302, 3000h
@@ -6358,13 +6358,13 @@ loc_13DAC:                              ; CODE XREF: sub_13B3F+25E↑j
                 jmp     short loc_13DEA
 ; ---------------------------------------------------------------------------
 
-loc_13DDF:                              ; CODE XREF: sub_13B3F+27B↑j
-                                        ; sub_13B3F+286↑j ...
+loc_13DDF:                              ; CODE XREF: ShowClueBookSpellDetail+27B↑j
+                                        ; ShowClueBookSpellDetail+286↑j ...
                 mov     _font_fgColor, 0CAh
                 call    writeString
 
-loc_13DEA:                              ; CODE XREF: sub_13B3F+198↑j
-                                        ; sub_13B3F+205↑j ...
+loc_13DEA:                              ; CODE XREF: ShowClueBookSpellDetail+198↑j
+                                        ; ShowClueBookSpellDetail+205↑j ...
                 mov     _font_fgColor, 0A7h
                 mov     _textPos_x, 4Ah ; 'J'
                 mov     _textPos_y, 58h ; 'X'
@@ -6376,8 +6376,8 @@ loc_13DEA:                              ; CODE XREF: sub_13B3F+198↑j
                 jnz     short loc_13E15
                 mov     bx, 8D5Ch       ; msg
 
-loc_13E15:                              ; CODE XREF: sub_13B3F+2C6↑j
-                                        ; sub_13B3F+2D1↑j
+loc_13E15:                              ; CODE XREF: ShowClueBookSpellDetail+2C6↑j
+                                        ; ShowClueBookSpellDetail+2D1↑j
                 call    writeString
                 mov     _textPos_x, 2Ch ; ','
                 mov     _textPos_y, 6Ah ; 'j'
@@ -6401,7 +6401,7 @@ loc_13E15:                              ; CODE XREF: sub_13B3F+2C6↑j
                 mov     word_368A9, 27h ; '''
                 mov     cx, [bx+2]
 
-loc_13E6F:                              ; CODE XREF: sub_13B3F+356↓j
+loc_13E6F:                              ; CODE XREF: ShowClueBookSpellDetail+356↓j
                 push    cx              ; this
                 mov     errorCode, 9
                 mov     bx, 9043h
@@ -6414,7 +6414,7 @@ loc_13E6F:                              ; CODE XREF: sub_13B3F+356↓j
                 pop     cx
                 loop    loc_13E6F
                 retn
-; END OF FUNCTION CHUNK FOR sub_13B3F
+; END OF FUNCTION CHUNK FOR ShowClueBookSpellDetail
 
 ; =============== S U B R O U T I N E =======================================
 
@@ -8252,7 +8252,7 @@ sub_150B8       endp
 
 
 DrawMessageBox  proc far                ; CODE XREF: ShowClueCategoryEntries+5E↑P
-                                        ; sub_13216+2B↑P ...
+                                        ; RunClueBookSpellCategory+2B↑P ...
                 mov     ax, 0           ; Draws a box (via sub_14B24) then two lines of text from word_2E3F8/word_2E3FA (both commented 'msg'), positioned via word_2E3FC. Called by ShowPagedEntryScreen.
                 push    cs
                 call    near ptr FillVideoBuffer
@@ -23331,7 +23331,7 @@ seg052          segment byte public 'CODE' use16
 
 
 sub_1D198       proc far                ; CODE XREF: BuildClueEntryText+A3↑P
-                                        ; sub_13216+E↑P ...
+                                        ; RunClueBookSpellCategory+E↑P ...
                 push    bx
                 push    cx
                 push    dx
@@ -42464,7 +42464,7 @@ sub_27B42       endp
 
 
 sub_27B84       proc far                ; CODE XREF: UpdateScrollArrows+3A↑P
-                                        ; sub_13B3F+2F3↑P ...
+                                        ; ShowClueBookSpellDetail+2F3↑P ...
                 mov     word_368AB, 0
                 mov     word_368A7, ax
                 dec     bx
@@ -56595,7 +56595,7 @@ word_2E3FA      dw 0                    ; DATA XREF: ShowClueBook+10F↑w
 word_2E3FC      dw 0                    ; DATA XREF: ShowClueBook+100↑w
                                         ; ShowClueBook+133↑w ...
 word_2E3FE      dw 0                    ; DATA XREF: ShowClueCategoryEntries:loc_12EB1↑w
-                                        ; sub_13216+25↑w ...
+                                        ; RunClueBookSpellCategory+25↑w ...
 byte_2E400      db 0                    ; DATA XREF: start+34↑r
                                         ; start+50↑r ...
                 align 2
@@ -76739,17 +76739,17 @@ word_32DE8      dw 0                    ; DATA XREF: ProbeFacingTile+D↑w
                 db    0
                 db    0
                 db    0
-word_332D0      dw 0                    ; DATA XREF: sub_13B3F+C8↑r
+word_332D0      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+C8↑r
                                         ; sub_2D7A7+29↑r
-word_332D2      dw 0                    ; DATA XREF: sub_13B3F+62↑r
+word_332D2      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+62↑r
                                         ; sub_1E285+52↑r ...
 ; FileEntry *word_332D4
-word_332D4      dw 0                    ; DATA XREF: sub_13B3F+5E↑r
+word_332D4      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+5E↑r
                                         ; sub_1E285:loc_1E2AB↑r ...
-word_332D6      dw 0                    ; DATA XREF: sub_13B3F+5A↑r
+word_332D6      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+5A↑r
                                         ; sub_1E285:loc_1E2BF↑r ...
-word_332D8      dw 0                    ; DATA XREF: sub_13B3F+1F6↑r
-                                        ; sub_13B3F+210↑r ...
+word_332D8      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+1F6↑r
+                                        ; ShowClueBookSpellDetail+210↑r ...
 word_332DA      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C1FB↑r
                                         ; sub_2C0FE:loc_2C231↑r ...
 word_332DC      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C8A7↑r
@@ -76781,19 +76781,19 @@ word_332F8      dw 0                    ; DATA XREF: sub_2C0FE:loc_2C3F5↑r
 word_332FA      dw 0                    ; DATA XREF: sub_2C0FE+4DF↑r
 word_332FC      dw 0                    ; DATA XREF: sub_2C0FE+A06↑r
                                         ; sub_2D4B6+7E↑r
-word_332FE      dw 0                    ; DATA XREF: sub_13B3F+B1↑r
+word_332FE      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+B1↑r
                                         ; sub_2D7A7+1D↑r
-word_33300      dw 0                    ; DATA XREF: sub_13B3F+2C0↑r
+word_33300      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+2C0↑r
                                         ; RunAlchemyScreen+313↑r ...
-word_33302      dw 0                    ; DATA XREF: sub_13B3F:loc_13CCF↑r
-                                        ; sub_13B3F+1A6↑r ...
+word_33302      dw 0                    ; DATA XREF: ShowClueBookSpellDetail:loc_13CCF↑r
+                                        ; ShowClueBookSpellDetail+1A6↑r ...
 word_33304      dw 0                    ; DATA XREF: sub_2C0FE+9E1↑r
                                         ; sub_2D1C2↑r ...
-word_33306      dw 0                    ; DATA XREF: sub_13B3F+19E↑r
-                                        ; sub_13B3F+1DB↑r ...
+word_33306      dw 0                    ; DATA XREF: ShowClueBookSpellDetail+19E↑r
+                                        ; ShowClueBookSpellDetail+1DB↑r ...
                 db    0
                 db    0
-word_3330A      dw 0                    ; DATA XREF: sub_13216+B↑w
+word_3330A      dw 0                    ; DATA XREF: RunClueBookSpellCategory+B↑w
                                         ; sub_13C1D+9↑r ...
 word_3330C      dw 0                    ; DATA XREF: InitGlobals+1F2↑w
                                         ; sub_1E1A7+33↑r
@@ -84887,7 +84887,7 @@ word_368A7      dw 0                    ; DATA XREF: sub_111C1+32↑r
                                         ; sub_205C0+35↑r ...
 ; FileEntry *word_368A9
 word_368A9      dw 0                    ; DATA XREF: UpdateScrollArrows+3F↑w
-                                        ; sub_13B3F+327↑w ...
+                                        ; ShowClueBookSpellDetail+327↑w ...
 word_368AB      dw 0                    ; DATA XREF: sub_111C1+9↑w
                                         ; UpdateScrollArrows+49↑w ...
 word_368AD      dw 0                    ; DATA XREF: seg096:001D↑w
