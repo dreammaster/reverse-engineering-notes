@@ -6553,7 +6553,7 @@ sub_13FCF       proc near               ; CODE XREF: sub_13278+3↑p
                 add     ax, 0BC28h
                 mov     word_32906, ax
                 mov     ax, 0
-                call    sub_14B10
+                call    FillVideoBuffer
                 mov     _font_bgTransparent, 1
                 mov     _font_fgColor, 0Dh
                 mov     _textPos_y, 1
@@ -7599,9 +7599,9 @@ sub_14AE8       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_14B10       proc far                ; CODE XREF: sub_13FCF+4C↑P
+FillVideoBuffer proc far                ; CODE XREF: sub_13FCF+4C↑P
                                         ; sub_150E5+4↓p
-                push    es
+                push    es              ; Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.
                 push    di
                 push    cx
                 mov     es, _videoBufferSeg
@@ -7613,7 +7613,7 @@ sub_14B10       proc far                ; CODE XREF: sub_13FCF+4C↑P
                 pop     di
                 pop     es
                 retf
-sub_14B10       endp
+FillVideoBuffer endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -8255,7 +8255,7 @@ sub_150E5       proc far                ; CODE XREF: sub_12E59+5E↑P
                                         ; sub_13216+2B↑P ...
                 mov     ax, 0
                 push    cs
-                call    near ptr sub_14B10
+                call    near ptr FillVideoBuffer
                 mov     x, 1
                 mov     y, 1
                 mov     _font_bgTransparent, 0

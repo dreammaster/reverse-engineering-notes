@@ -1970,7 +1970,9 @@ static Bytes_0(void) {
 	set_cmt	(0X14ADF,	"msg",	0);
 	create_insn	(0X14AE8);
 	set_cmt	(0X14B02,	"msg",	0);
+	set_cmt	(0X14B10,	"Fills the entire 320x200 video buffer (_videoBufferSeg) with the byte passed in AL (replicated to AH before the word-store loop). cx=0x7D00 = 32000 words = 64000 bytes = one full VGA Mode 13h-style frame.",	0);
 	create_insn	(0X14B10);
+	set_name	(0X14B10,	"FillVideoBuffer");
 	create_insn	(0X14B24);
 	create_insn	(0X14B85);
 	create_insn	(x=0X14BD5);
@@ -6694,6 +6696,15 @@ static Bytes_0(void) {
 	set_name	(0X27F6C,	"WorldDat_setBlock3");
 	create_insn	(0X27F86);
 	set_name	(0X27F86,	"WorldDat_setBlock4");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X27FA4);
 	set_name	(0X27FA4,	"WorldDat_setBlock5");
 	create_insn	(0X27FC2);
@@ -6715,15 +6726,6 @@ static Bytes_0(void) {
 	set_cmt	(0X2809A,	"msg",	0);
 	set_cmt	(0X280A8,	"msg",	0);
 	set_cmt	(0X280D8,	"msg",	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X280E6,	"msg",	0);
 	set_cmt	(0X28121,	"msg",	0);
 	set_cmt	(0X2812F,	"msg",	0);

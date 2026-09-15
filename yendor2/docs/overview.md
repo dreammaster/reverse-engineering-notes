@@ -232,6 +232,31 @@ too despite having the `FileEntry*` parameter type worked out, and
 inventing distinguishing names now would be guessing. Documented the
 pattern via a comment on the first one instead.
 
+Named one more clean, high-confidence function found this way:
+`FillVideoBuffer` (`0x14B10` — `es=_videoBufferSeg`, `cx=0x7D00` words =
+64000 bytes = one full 320×200 VGA frame, `rep stosw`). 63 named of 769.
+
+`ida_scripts/rank_naming_candidates.py` is the general tool for finding
+more candidates like this: ranks unnamed functions by how many *named*
+data/code references they contain (now that DS resolution works, this
+is a real signal). It surfaced a large (30+), not-yet-investigated
+cluster of small functions all touching `_font_bgColor`/
+`_font_bgTransparent`/`_font_fgColor`/`_textPos_x`/`_textPos_y`/
+`writeString`/`writeChar` — clearly text/label-drawing variants for
+different UI screens, a promising lead for whoever picks this up next.
+One traced this session, `sub_150E5`, draws what looks like a two-line
+message box (calls `sub_14B10`/`FillVideoBuffer`-adjacent box-drawing at
+`sub_14B24`, prints two strings from `word_2E3F8`/`word_2E3FA`, both
+already commented `"msg"`) but wasn't named — confirming the box-drawing
+helper chain (`sub_12554`, `sub_23A64`, `sub_16EDE`, `sub_1700E`) needs
+its own dedicated pass first. Also spot-checked the existing hedged
+`Fade?` name by reading past its entry point: the code actually reached
+there (blitting a 16×8 tile from `word_2E4AA` into the video buffer at a
+text-cell position, guarded by an audio call) looks much more like a
+cursor/icon blit than a screen fade — the original "?" hedge looks
+justified, a full trace of all its branches would be needed before
+renaming it either way, left as-is rather than guess.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
