@@ -3919,7 +3919,9 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X1B2AC);
 	op_hex		(x,	1);
+	set_cmt	(0X1B2BD,	"Selects and validates a party target (caching the pick in word_32990/word_36D03): confirm prompt if none cached yet, then rejects (warns and re-prompts) if the target is incapacitated ([+0x1C] bits 0x1C40). Called from UseItem's 'BUY '-named item branch.",	0);
 	create_insn	(0X1B2BD);
+	set_name	(0X1B2BD,	"ConfirmAndValidatePartyTarget");
 	create_insn	(0X1B2DF);
 	create_insn	(x=0X1B2F2);
 	op_hex		(x,	1);

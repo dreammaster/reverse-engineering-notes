@@ -3082,6 +3082,14 @@ clear, sized by combat state.
 
 395 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: ConfirmAndValidatePartyTarget
+
+Named `sub_1B2BD`, a `UseItem` branch for the "BUY "-named item: a
+confirm prompt to pick a party member, re-prompting with a warning if
+the pick is incapacitated.
+
+396 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

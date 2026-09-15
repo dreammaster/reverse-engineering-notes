@@ -13230,7 +13230,7 @@ loc_17C53:                              ; CODE XREF: UseItem+90↑j
                 jz      short loc_17C7A
 
 loc_17C5B:                              ; CODE XREF: UseItem+9F↑j
-                call    sub_1B2BD
+                call    ConfirmAndValidatePartyTarget
                 cmp     errorCode, 0
                 jz      short loc_17C6A
                 jmp     loc_17D7D
@@ -19838,9 +19838,9 @@ RunSellItemScreen endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_1B2BD       proc far                ; CODE XREF: UseItem:loc_17C5B↑P
-                                        ; sub_1B2BD+47↓j
-                mov     ax, word_36D03
+ConfirmAndValidatePartyTarget proc far  ; CODE XREF: UseItem:loc_17C5B↑P
+                                        ; ConfirmAndValidatePartyTarget+47↓j
+                mov     ax, word_36D03  ; Selects and validates a party target (caching the pick in word_32990/word_36D03): confirm prompt if none cached yet, then rejects (warns and re-prompts) if the target is incapacitated ([+0x1C] bits 0x1C40). Called from UseItem's 'BUY '-named item branch.
                 cmp     ax, 0
                 jnz     short loc_1B2DF
                 call    ClearMessageBoxArea
@@ -19852,8 +19852,8 @@ sub_1B2BD       proc far                ; CODE XREF: UseItem:loc_17C5B↑P
                 jmp     short loc_1B306
 ; ---------------------------------------------------------------------------
 
-loc_1B2DF:                              ; CODE XREF: sub_1B2BD+6↑j
-                                        ; sub_1B2BD+18↑j
+loc_1B2DF:                              ; CODE XREF: ConfirmAndValidatePartyTarget+6↑j
+                                        ; ConfirmAndValidatePartyTarget+18↑j
                 mov     errorCode, 0
                 mov     word_32990, ax
                 mov     word_36D03, ax
@@ -19863,14 +19863,14 @@ loc_1B2DF:                              ; CODE XREF: sub_1B2BD+6↑j
                 jz      short loc_1B306
                 call    FlashStatusWarning
                 mov     word_36D03, 0
-                jmp     short near ptr sub_1B2BD
+                jmp     short near ptr ConfirmAndValidatePartyTarget
 ; ---------------------------------------------------------------------------
 
-loc_1B306:                              ; CODE XREF: sub_1B2BD+20↑j
-                                        ; sub_1B2BD+3A↑j
+loc_1B306:                              ; CODE XREF: ConfirmAndValidatePartyTarget+20↑j
+                                        ; ConfirmAndValidatePartyTarget+3A↑j
                 call    DrawMouseCursor
                 retf
-sub_1B2BD       endp
+ConfirmAndValidatePartyTarget endp
 
 seg041          ends
 
@@ -74393,7 +74393,7 @@ word_3298C      dw 0                    ; DATA XREF: sub_1BBED+204↑w
 word_3298E      dw 0                    ; DATA XREF: ShowHealingCostPrompt+6↑w
                                         ; sub_1BBED+1E0↑w ...
 word_32990      dw 0                    ; DATA XREF: UseAbilityCommand:loc_17906↑w
-                                        ; sub_1B2BD+28↑w ...
+                                        ; ConfirmAndValidatePartyTarget+28↑w ...
 _val15          dw 0                    ; DATA XREF: InitGlobals+7E↑w
                                         ; DrawWeaponSelectIcon+18↑r
 _val16          dw 0                    ; DATA XREF: InitGlobals+84↑w
@@ -86001,7 +86001,7 @@ word_36CFF      dw 222h                 ; DATA XREF: RestPartyAndAdvanceClock+13
 word_36D01      dw 1E0h                 ; DATA XREF: sub_11A10+E5↑w
                                         ; TravelToDestination+87↑r ...
 word_36D03      dw 0                    ; DATA XREF: sub_197B9+D4↑r
-                                        ; sub_1B2BD↑r ...
+                                        ; ConfirmAndValidatePartyTarget↑r ...
 word_36D05      dw 0                    ; DATA XREF: sub_197B9+101↑r
                                         ; sub_219FA:loc_21A17↑r ...
 word_36D07      dw 0                    ; DATA XREF: HandleMovementInput:loc_1152A↑r

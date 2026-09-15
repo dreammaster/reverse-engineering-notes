@@ -886,7 +886,11 @@ flag-pair match); `TryEnhanceItemForGold`'s is `IsItemEligibleForEnhance`
 cluster. The shared "YOU DON'T HAVE ENOUGH GOLD!" rejection is
 `ShowInsufficientGoldMessage`. The whole sell-item screen is entered
 via `RunSellItemScreen` (from `UseItem`, when the used item's `[+0xE]`
-flags have bit `0x4000` set): sets `word_328C6` bit `0x10` and runs
+flags have bit `0x4000` set). A sibling branch, gated on the item's
+name literally matching `"BUY "` or its `[+0xE]` flags having bit
+`0xC000` set, calls `ConfirmAndValidatePartyTarget` — a confirm
+prompt to pick a party member, re-prompting with a warning if the
+pick is incapacitated (caching the valid choice): sets `word_328C6` bit `0x10` and runs
 the main input loop (`sub_1869D`) so Space triggers
 `TrySellItemForGold`, then rebuilds/redraws the minimap on exit. Its
 two siblings, `RunEnhanceItemScreen` (`UseItem+0x1C1`, sets bit 8) and
