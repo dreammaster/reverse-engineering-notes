@@ -24096,7 +24096,7 @@ loc_1D8B1:                              ; CODE XREF: HandleRangedOrCombatAction+
                 call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 1           ; ticks
                 call    wait
                 inc     word_2E530
@@ -50211,7 +50211,7 @@ seg121          segment byte public 'CODE' use16
 
 AnimateProjectileStep proc far          ; CODE XREF: HandleRangedOrCombatAction+139↑P
                                         ; HandleRangedOrCombatAction+144↑P ...
-                mov     ax, _videoBufferSeg ; One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, plays a sound (sub_2BC16, not traced), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.
+                mov     ax, _videoBufferSeg ; One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.
                 mov     _videoSegment, ax
                 mov     word_2E532, 10h
                 mov     _font_bgTransparent, 1
@@ -50219,7 +50219,7 @@ AnimateProjectileStep proc far          ; CODE XREF: HandleRangedOrCombatAction+
                 call    DrawViewportSprite
                 call    DrawMouseCursor
                 push    cs
-                call    near ptr sub_2BC16
+                call    near ptr RestoreCorridorBackgroundFromEMS
                 mov     ax, 2           ; ticks
                 call    wait
                 mov     errorCode, 0
@@ -50432,9 +50432,10 @@ loc_2BC02:                              ; CODE XREF: seg121:0170↓j
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2BC16       proc far                ; CODE XREF: HandleRangedOrCombatAction+413↑P
+RestoreCorridorBackgroundFromEMS proc far
+                                        ; CODE XREF: HandleRangedOrCombatAction+413↑P
                                         ; AnimateProjectileStep+23↑p ...
-                push    es
+                push    es              ; Maps EMS page 0x55FE if not cached, blits a fixed 136x112-word region from the EMS page frame into the video buffer at offset 0xA08 -- restores the corridor viewport background over a drawn sprite. Called from HandleRangedOrCombatAction and AnimateProjectileStep (NOT a sound effect, despite an earlier comment's guess).
                 push    di
                 push    si
                 push    dx
@@ -50445,7 +50446,7 @@ sub_2BC16       proc far                ; CODE XREF: HandleRangedOrCombatAction+
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
 
-loc_2BC2D:                              ; CODE XREF: sub_2BC16+C↑j
+loc_2BC2D:                              ; CODE XREF: RestoreCorridorBackgroundFromEMS+C↑j
                 mov     si, 5622h
                 mov     di, 0A08h
                 mov     es, _videoBufferSeg
@@ -50453,7 +50454,7 @@ loc_2BC2D:                              ; CODE XREF: sub_2BC16+C↑j
                 mov     ds, ax
                 mov     cx, 88h
 
-loc_2BC3F:                              ; CODE XREF: sub_2BC16+33↓j
+loc_2BC3F:                              ; CODE XREF: RestoreCorridorBackgroundFromEMS+33↓j
                 push    cx
                 mov     cx, 70h ; 'p'
                 rep movsw
@@ -50468,7 +50469,7 @@ loc_2BC3F:                              ; CODE XREF: sub_2BC16+33↓j
                 pop     di
                 pop     es
                 retf
-sub_2BC16       endp
+RestoreCorridorBackgroundFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -50498,7 +50499,7 @@ sub_2BC56       endp
 
 ; Attributes: bp-based frame
 
-sub_2BC72       proc far                ; CODE XREF: sub_2C0FE+D7E↓P
+ScrollCorridorBackgroundFromEMS proc far ; CODE XREF: sub_2C0FE+D7E↓P
                                         ; sub_2C0FE+D9A↓P ...
 
 var_C           = word ptr -0Ch
@@ -50508,7 +50509,7 @@ var_6           = word ptr -6
 var_4           = word ptr -4
 var_2           = word ptr -2
 
-                push    es
+                push    es              ; Parameterized sibling of RestoreCorridorBackgroundFromEMS: ax/bx/cx shift the blitted region's offsets/dimensions to scroll it directionally. Called from sub_2C0FE.
                 push    di
                 push    si
                 push    dx
@@ -50531,14 +50532,14 @@ var_2           = word ptr -2
                 jmp     short loc_2BCBB
 ; ---------------------------------------------------------------------------
 
-loc_2BCAF:                              ; CODE XREF: sub_2BC72+2D↑j
+loc_2BCAF:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+2D↑j
                 add     [bp+var_8], cx
                 add     [bp+var_4], cx
                 sub     [bp+var_A], cx
                 add     [bp+var_2], cx
 
-loc_2BCBB:                              ; CODE XREF: sub_2BC72+2B↑j
-                                        ; sub_2BC72+3B↑j
+loc_2BCBB:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+2B↑j
+                                        ; ScrollCorridorBackgroundFromEMS+3B↑j
                 cmp     bx, 0
                 jz      short loc_2BCDA
                 jl      short loc_2BCCF
@@ -50549,21 +50550,21 @@ loc_2BCBB:                              ; CODE XREF: sub_2BC72+2B↑j
                 jmp     short loc_2BCDA
 ; ---------------------------------------------------------------------------
 
-loc_2BCCF:                              ; CODE XREF: sub_2BC72+4E↑j
+loc_2BCCF:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+4E↑j
                 mov     ax, 0E0h
                 mul     cx
                 add     [bp+var_2], ax
                 sub     [bp+var_C], cx
 
-loc_2BCDA:                              ; CODE XREF: sub_2BC72+4C↑j
-                                        ; sub_2BC72+5B↑j
+loc_2BCDA:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+4C↑j
+                                        ; ScrollCorridorBackgroundFromEMS+5B↑j
                 mov     bx, 55FEh
                 cmp     bx, word_2E500
                 jz      short loc_2BCEC
                 mov     dx, _emsPointer1?
                 call    MapUnmapPages
 
-loc_2BCEC:                              ; CODE XREF: sub_2BC72+6F↑j
+loc_2BCEC:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+6F↑j
                 mov     si, [bp+var_2]
                 mov     di, [bp+var_6]
                 mov     es, _videoBufferSeg
@@ -50571,7 +50572,7 @@ loc_2BCEC:                              ; CODE XREF: sub_2BC72+6F↑j
                 mov     ds, ax
                 mov     cx, [bp+var_C]
 
-loc_2BCFE:                              ; CODE XREF: sub_2BC72+99↓j
+loc_2BCFE:                              ; CODE XREF: ScrollCorridorBackgroundFromEMS+99↓j
                 push    cx
                 mov     cx, [bp+var_A]
                 rep movsb
@@ -50588,7 +50589,7 @@ loc_2BCFE:                              ; CODE XREF: sub_2BC72+99↓j
                 pop     di
                 pop     es
                 retf
-sub_2BC72       endp
+ScrollCorridorBackgroundFromEMS endp
 
 seg121          ends
 
@@ -52285,7 +52286,7 @@ loc_2CCB4:                              ; CODE XREF: sub_2C0FE+BE1↓j
                 call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 1           ; ticks
                 call    wait
                 inc     word_2E530
@@ -52433,7 +52434,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     ax, ax
                 xor     bx, bx
                 sub     ax, cx
-                call    sub_2BC72
+                call    ScrollCorridorBackgroundFromEMS
                 call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
@@ -52441,7 +52442,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     ax, ax
                 xor     bx, bx
                 add     ax, cx
-                call    sub_2BC72
+                call    ScrollCorridorBackgroundFromEMS
                 call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
@@ -52449,7 +52450,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     ax, ax
                 xor     bx, bx
                 sub     bx, cx
-                call    sub_2BC72
+                call    ScrollCorridorBackgroundFromEMS
                 call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
@@ -52457,7 +52458,7 @@ loc_2CE71:                              ; CODE XREF: sub_2C0FE+DE5↓j
                 xor     ax, ax
                 xor     bx, bx
                 add     bx, cx
-                call    sub_2BC72
+                call    ScrollCorridorBackgroundFromEMS
                 call    DrawMouseCursor
                 mov     ax, 1           ; ticks
                 call    wait
@@ -52638,7 +52639,7 @@ loc_2D04D:                              ; CODE XREF: sub_2C0FE+BD↑j
                 mov     x, 0B0h
                 call    DrawPicture
                 call    DrawMouseCursor
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 mov     ax, word_332EC
                 mov     word_3293E, ax
                 inc     ax
@@ -52673,7 +52674,7 @@ loc_2D0EE:                              ; CODE XREF: sub_2C0FE+1034↓j
                 call    sub_2D3FE
                 mov     word_32944, ax
                 call    DrawMouseCursor
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 2           ; ticks
                 call    wait
                 pop     cx
@@ -52697,7 +52698,7 @@ loc_2D14D:                              ; CODE XREF: sub_2C0FE+1063↓j
                 call    wait
                 pop     cx
                 loop    loc_2D14D
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 call    DrawMouseCursor
                 jmp     loc_2CEED
 sub_2C0FE       endp
@@ -52987,7 +52988,7 @@ sub_2D3DC       proc near               ; CODE XREF: sub_2C0FE+C2B↑p
                 call    DrawViewportSprite
                 and     word_328C6, 0FFFEh
                 call    DrawMouseCursor
-                call    sub_2BC16
+                call    RestoreCorridorBackgroundFromEMS
                 mov     ax, 5           ; ticks
                 call    wait
                 retn

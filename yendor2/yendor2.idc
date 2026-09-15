@@ -8998,7 +8998,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BA7D);
 	op_hex		(x,	1);
 	create_insn	(0X2BA88);
-	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, plays a sound (sub_2BC16, not traced), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
+	set_cmt	(0X2BAA0,	"One animation step of a projectile/effect traveling down the corridor: draws it via DrawViewportSprite (z-layer 5), redraws the cursor, restores the background via RestoreCorridorBackgroundFromEMS (CORRECTION: not a sound effect as first guessed -- it's an EMS-backed graphics blit), waits 2 ticks. Called repeatedly from sub_1D4B8, each time followed by ClassifyObstacleAtViewportRow to check what's at the next row.",	0);
 	create_insn	(0X2BAA0);
 	set_name	(0X2BAA0,	"AnimateProjectileStep");
 	set_cmt	(0X2BAC6,	"ticks",	0);
@@ -9023,11 +9023,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X2BBF9);
 	op_plain_offset	(x,	1,	0);
 	op_plain_offset	(x,	129,	0);
+	set_cmt	(0X2BC16,	"Maps EMS page 0x55FE if not cached, blits a fixed 136x112-word region from the EMS page frame into the video buffer at offset 0xA08 -- restores the corridor viewport background over a drawn sprite. Called from HandleRangedOrCombatAction and AnimateProjectileStep (NOT a sound effect, despite an earlier comment's guess).",	0);
 	create_insn	(0X2BC16);
+	set_name	(0X2BC16,	"RestoreCorridorBackgroundFromEMS");
 	create_insn	(x=0X2BC4B);
 	op_seg		(x,	1);
 	create_insn	(0X2BC56);
+	set_cmt	(0X2BC72,	"Parameterized sibling of RestoreCorridorBackgroundFromEMS: ax/bx/cx shift the blitted region's offsets/dimensions to scroll it directionally. Called from sub_2C0FE.",	0);
 	create_insn	(0X2BC72);
+	set_name	(0X2BC72,	"ScrollCorridorBackgroundFromEMS");
 	create_insn	(x=0X2BC79);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BC7C);

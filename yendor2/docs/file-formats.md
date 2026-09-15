@@ -577,7 +577,10 @@ inventory slots for a character with an eligible ranged weapon (item
 `0x13A`, status-gated), bails if none; else draws a 4-icon weapon-select
 UI and **animates a projectile traveling down the corridor one depth
 row at a time** — `AnimateProjectileStep` (draws the projectile sprite,
-plays a sound, waits) then `ClassifyObstacleAtViewportRow` (classifies
+restores the background via `RestoreCorridorBackgroundFromEMS`
+— **correction**: earlier described as "plays a sound", but it's an
+EMS-backed graphics blit, not audio — then waits) then
+`ClassifyObstacleAtViewportRow` (classifies
 what's at that row: clear / wall / door / a `[+6]` bit `0x800` feature
 / a monster, reusing `GetMonsterAtViewportRow`'s `0x6D60` scratch-buffer
 lookup) at successive rows (`0x31`→`0x2E`→`0x2B`→`0x28`→`0x24`→`0x19`,

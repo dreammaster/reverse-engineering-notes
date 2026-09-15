@@ -2890,6 +2890,17 @@ NUORE, MAGIC ORE, or a specific consumed inventory item.
 
 368 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestoreCorridorBackgroundFromEMS; correction — not a sound effect
+
+Named `sub_2BC16` and its parameterized sibling `sub_2BC72`: EMS-backed
+background-restore/scroll blitters for the dungeon viewport, used by
+`AnimateProjectileStep` to redraw the corridor behind the projectile
+sprite each step. **Correction**: `AnimateProjectileStep`'s earlier
+description guessed this call "plays a sound" — wrong, it's graphics,
+not audio. Corrected the comment and file-formats.md.
+
+370 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
