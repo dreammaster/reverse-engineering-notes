@@ -3205,6 +3205,13 @@ the already-named `UpdateAmbientMusic` each iteration.
 
 414 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: RestoreWorldMapAreaFromEMS
+
+Named `sub_2438B`, called from `ShowWorldMap`'s interaction handler:
+restores the world map display area from an EMS cache.
+
+415 named of 769 functions as of this update.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:

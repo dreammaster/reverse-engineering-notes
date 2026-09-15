@@ -6313,7 +6313,9 @@ static Bytes_2(void) {
 	create_insn	(0X23ECE);
 	create_insn	(0X23EF2);
 	create_insn	(0X23F58);
+	set_cmt	(0X2438B,	"Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).",	0);
 	create_insn	(0X2438B);
+	set_name	(0X2438B,	"RestoreWorldMapAreaFromEMS");
 	create_insn	(0X243C3);
 	set_cmt	(0X243D3,	"ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.",	0);
 	create_insn	(0X243D3);

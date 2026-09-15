@@ -35284,7 +35284,7 @@ sub_23C18       proc far                ; CODE XREF: ShowWorldMap+144↓P
 loc_23D17:                              ; CODE XREF: sub_23C18+218↓j
                                         ; sub_23C18+2AB↓j ...
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -35389,7 +35389,7 @@ loc_23E1F:                              ; CODE XREF: sub_23C18+1CB↑j
 
 loc_23E33:                              ; CODE XREF: sub_23C18+205↑j
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _font_bgTransparent, 1
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
@@ -35906,9 +35906,9 @@ sub_23F58       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_2438B       proc near               ; CODE XREF: sub_23C18+104↑p
+RestoreWorldMapAreaFromEMS proc near    ; CODE XREF: sub_23C18+104↑p
                                         ; sub_23C18+220↑p ...
-                push    dx
+                push    dx              ; Blits a large cached region (offset 0x1F40, 175x54 words) from EMS page 0x55D8 into the video buffer -- restores the world map display area. Called from sub_23C18 (ShowWorldMap's interaction handler).
                 push    di
                 push    si
                 push    es
@@ -35922,7 +35922,7 @@ sub_2438B       proc near               ; CODE XREF: sub_23C18+104↑p
                 mov     si, di
                 mov     cx, 0AFh
 
-loc_243AC:                              ; CODE XREF: sub_2438B+30↓j
+loc_243AC:                              ; CODE XREF: RestoreWorldMapAreaFromEMS+30↓j
                 push    cx
                 mov     cx, 36h ; '6'
                 rep movsw
@@ -35936,7 +35936,7 @@ loc_243AC:                              ; CODE XREF: sub_2438B+30↓j
                 pop     di
                 pop     dx
                 retn
-sub_2438B       endp
+RestoreWorldMapAreaFromEMS endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -35959,7 +35959,7 @@ sub_243C3       endp
 ShowCharacterSkills proc near           ; CODE XREF: ShowPartyMembers:loc_23BC8↑p
                                         ; ShowCharacterSummary+14E↓p
                 call    RestoreCursorBackgroundIfDirty ; ShowPartyMembers' first pipeline step: clears status bits 0-5 of [+0x1C] and a 16-word skill-value array at [+0xCA]-[+0xE9], then draws 3 category headers each followed by a group of skill-name lines (3+4+8=15 total, via sub_23AF2) -- matches the manual's skill list grouped into categories. Individual skill names/offsets within the array aren't mapped yet. The character skills display.
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
                 mov     _font_fgColor, 8Ah
@@ -36124,7 +36124,7 @@ ShowCharacterInventory proc near        ; CODE XREF: ShowPartyMembers+4D↑p
 loc_245B4:                              ; CODE XREF: ShowCharacterInventory+2AE↓j
                                         ; ShowCharacterInventory+2C5↓j ...
                 call    RestoreCursorBackgroundIfDirty
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _font_bgTransparent, 1
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
@@ -36432,7 +36432,7 @@ loc_248D2:                              ; CODE XREF: ShowCharacterInventory+2D3�
                 mov     ax, [bx+0Ah]
                 mov     word_3194A, ax
                 call    UpdateCursorForHeldItem
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 call    sub_238CD
                 inc     word_3293E
 
@@ -36490,7 +36490,7 @@ EditCharacterName proc near             ; CODE XREF: ShowPartyMembers+57↑p
                 mov     _font_bgTransparent, 1 ; Text-entry field (13-char max) for the character's name -- non-empty result gets copied into word_328D4+0 (the party-member record's first field) and displayed. ShowPartyMembers pipeline step.
                 mov     ax, _videoBufferSeg
                 mov     _videoSegment, ax
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
                 mov     _font_fgColor, 8Ah
@@ -36552,7 +36552,7 @@ EditCharacterName endp
 ShowCharacterEquipment proc near        ; CODE XREF: ShowPartyMembers+2D↑p
                                         ; ShowCharacterEquipment+12D↓j ...
                 call    RestoreCursorBackgroundIfDirty ; ShowPartyMembers' second pipeline step: draws a 3x3 grid of equipment-slot icons (DrawPicture, incrementing picture id by 2 per cell) -- fits the manual's equip-slot diagram. Also shows a gender-dependent message ([si+0x10] compared against 2). The character equipment display.
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 mov     _textPos_x, 8
                 mov     _textPos_y, 19h
                 mov     _font_fgColor, 8Ah
@@ -37260,7 +37260,7 @@ loc_25246:                              ; CODE XREF: ShowCharacterSummary+13E↑
 
 loc_25248:                              ; CODE XREF: ShowCharacterSummary+ED↑j
                                         ; ShowCharacterSummary+125↑j
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 or      word_328CA, 8000h
                 call    ShowCharacterSkills
                 and     word_328CA, 7FFFh
@@ -37269,7 +37269,7 @@ loc_25248:                              ; CODE XREF: ShowCharacterSummary+ED↑j
 
 loc_2525D:                              ; CODE XREF: ShowCharacterSummary+F4↑j
                                         ; ShowCharacterSummary+12A↑j
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 or      word_328CA, 8000h
                 call    ShowCharacterEquipment
                 and     word_328CA, 7FFFh
@@ -37286,7 +37286,7 @@ loc_25272:                              ; CODE XREF: ShowCharacterSummary+FB↑j
 
 loc_25280:                              ; CODE XREF: ShowCharacterSummary+102↑j
                                         ; ShowCharacterSummary+134↑j
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 or      word_328CA, 8000h
                 call    ShowCharacterInventory
                 and     word_328CA, 7FFFh
@@ -37295,7 +37295,7 @@ loc_25280:                              ; CODE XREF: ShowCharacterSummary+102↑
 
 loc_25295:                              ; CODE XREF: ShowCharacterSummary+10B↑j
                                         ; ShowCharacterSummary+139↑j
-                call    sub_2438B
+                call    RestoreWorldMapAreaFromEMS
                 or      word_328CA, 8000h
                 call    EditCharacterName
                 mov     ax, _videoBufferSeg
