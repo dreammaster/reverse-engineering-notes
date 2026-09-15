@@ -8267,7 +8267,7 @@ static Bytes_1(void) {
 	create_insn	(0X2AA0C);
 	create_insn	(x=0X2AA2B);
 	op_hex		(x,	1);
-	set_cmt	(0X2AA58,	"Spell dispatch on word_32974 (0x12-0x1D range). Gates on target validity flags (word_2E548's +0 bits 1/2). 0x12/0x13: heal [si+0x52] (HP-like stat) by 25%/50% of the missing amount, capped at [si+0x92] max -- minor/major heal. Other codes (0x14/0x17/0x18/0x1D) not yet traced. Matches the manual's 'C cast spell'.",	0);
+	set_cmt	(0X2AA58,	"Spell dispatch on word_32974. Gates on target validity flags (word_2E548's +0 bits 1/2), or for 0x1C, a separate target-picking loop with its own confirmation. Self-target effects (si=word_328D4): 0x12/0x13 heal HP ([si+0x52]/[si+0x92]) by 25%/50% of missing; 0x14 fully heals HP; 0x17 fully restores MP ([si+0x54]/[si+0x94]); 0x1D heals MP by 50% of missing; 0x18 dispels/cures (clears status bits 13-15 in [si+0x1C]). 0x1C is a separate, more complex targeted spell (target selection + confirmation), not fully traced. Matches the manual's 'C cast spell'.",	0);
 	create_insn	(0X2AA58);
 	set_name	(0X2AA58,	"CastSpell");
 	create_insn	(x=0X2AA5C);
@@ -10244,6 +10244,15 @@ static Bytes_1(void) {
 	set_name	(0X3618E,	"aAbsorption_0");
 	create_strlit	(0X3619A,	0X8);
 	set_name	(0X3619A,	"aDamage_0");
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_strlit	(0X361A2,	0XD);
 	set_name	(0X361A2,	"aRangedAcc");
 	create_strlit	(0X361AF,	0XD);
@@ -10258,15 +10267,6 @@ static Bytes_1(void) {
 	set_name	(0X361D8,	"aFreezing");
 	create_strlit	(0X361E2,	0X8);
 	set_name	(0X361E2,	"aHexing_0");
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_strlit	(0X361EA,	0X9);
 	set_name	(0X361EA,	"aCursing_0");
 	create_strlit	(0X361F3,	0X6);

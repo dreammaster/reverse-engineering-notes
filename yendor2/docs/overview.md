@@ -799,6 +799,25 @@ decrements — as clean a confirmation pair as this session has found.
 
 120 named of 769 functions as of this update.
 
+### 2026-09-15 session update, continued: the rest of CastSpell's effect table
+
+Traced `CastSpell`'s remaining codes: `0x14` (full HP heal), `0x17`
+(full MP restore), `0x1D` (MP heal, 50% of missing — the MP-side
+counterpart to `0x13`), and `0x18` (dispel/cure — clears a *different*
+3-bit group in `+0x1C` than the one `TickStatusEffects`/
+`ApplyStatusEffect` manage). `0x1C` turned out to be handled specially,
+before the main self-target dispatch: a separate target-picking loop
+with its own confirmation prompt — more complex than the others,
+plausibly an attack or ally-targeted spell; not fully traced. Rather
+than name each internal branch as a separate function (they're all
+inline within `CastSpell`, not callable on their own), consolidated the
+full effect table into `CastSpell`'s comment and
+[file-formats.md](file-formats.md#curgame--savgame1-and-presumably-savgamen)'s
+field map, which now has both HP and MP confirmed.
+
+No new named function this round — a documentation/comment
+consolidation of what's already been found.
+
 ## Current state (2026-09-14, before any work this session)
 
 Via `identify.py`:
