@@ -188,6 +188,22 @@ refresh the view. No separate "3D corridor" renderer has turned up;
 this minimap widget appears to be the game's primary way of showing the
 dungeon layout.
 
+**Open question — how the two tile-type lookup tables actually work**:
+dumped both (`ida_scripts/dump_tile_tables.py`) and the picture-id-like
+values they yield (`0x16`-`0x50` range) are far outside `g_pictureDir`'s
+10 valid entries, while `DrawMinimap` keeps `word_2E532` (the actual
+`g_pictureDir` byte offset `DrawPicture` reads) fixed at `0x90` — entry
+9, the small 8×8 icon — for the whole 7×9 loop. So every cell likely
+draws the *same* base glyph, and the varying table value instead feeds
+`word_32926`, a parameter `DrawPicture` passes (as `[bp+var_21]`) to
+`sub_2A53C` first thing. Checked whether that's a per-cell color/remap
+parameter by reading `sub_2A53C` — **ruled out**: it never reads
+`[bp+var_21]` at all (it's a local stack-buffer init/copy routine keyed
+off different globals, `word_328C6`/`word_2E48E`/`word_2E490`). So
+`word_32926`'s actual role in `DrawPicture` — and by extension what the
+`0x16`-`0x50` table values mean — is still unknown; genuinely open,
+not a working theory.
+
 ## `PICTURES.VGA`
 
 **Decoded 2026-09-15.** 12,550,618 bytes, raw 8bpp indexed pixels (VGA

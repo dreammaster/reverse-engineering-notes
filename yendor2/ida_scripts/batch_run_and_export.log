@@ -14267,3 +14267,45 @@ named functions (non-sub_, first 200):
 [*] auto_wait (post-script)
 [*] noexport requested -- skipping asm/idc export and save
 [*] done, exiting 0
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\yendor\yendor2\yendor2.idb
+[*] ARGV = ['C:\\dev\\yendor\\yendor2\\ida_scripts\\batch_run_and_export.py', 'dump_tile_tables.py', 'noexport']
+[*] reading dump_tile_tables.py
+[*] executing dump_tile_tables.py
+[*] captured stdout from target script:
+----- begin target script output -----
+
+table @ 0xE551 (12 bytes/entry) @ DS:0xe551 (linear 0x3bdb1), stride=0xc, field@+0xa
+  [ 0] ea=0x3bdb1 name=''                   field=0x0016  raw=00 00 00 00 00 00 00 00 00 00 16 00
+  [ 1] ea=0x3bdbd name=''                   field=0x0017  raw=01 00 00 00 00 00 00 00 00 00 17 00
+  [ 2] ea=0x3bdc9 name=''                   field=0x0018  raw=00 00 00 00 34 00 16 00 00 00 18 00
+  [ 3] ea=0x3bdd5 name=''                   field=0x001b  raw=00 00 00 00 13 00 16 00 0e 00 1b 00
+  [ 4] ea=0x3bde1 name=''                   field=0x001e  raw=00 00 00 00 19 00 16 00 1c 00 1e 00
+  [ 5] ea=0x3bded name=''                   field=0x0020  raw=00 00 00 00 41 00 16 00 2a 00 20 00
+  [ 6] ea=0x3bdf9 name=''                   field=0x0022  raw=00 00 00 00 3d 00 16 00 00 00 22 00
+  [ 7] ea=0x3be05 name=''                   field=0x0018  raw=00 00 00 00 2e 00 16 00 00 00 18 00
+  [ 8] ea=0x3be11 name=''                   field=0x0022  raw=00 00 00 00 3b 00 16 00 0e 00 22 00
+  [ 9] ea=0x3be1d name=''                   field=0x001b  raw=00 00 00 00 2c 00 16 00 0e 00 1b 00
+  [10] ea=0x3be29 name=''                   field=0x0050  raw=00 00 00 00 09 00 16 00 1c 00 50 00
+  [11] ea=0x3be35 name=''                   field=0x0022  raw=00 00 00 00 42 00 16 00 2a 00 22 00
+
+table @ 0xE175 (10 bytes/entry) @ DS:0xe175 (linear 0x3b9d5), stride=0xa, field@+0x8
+  [ 0] ea=0x3b9d5 name=''                   field=0x0000  raw=00 00 00 00 00 00 00 00 00 00
+  [ 1] ea=0x3b9df name=''                   field=0x0031  raw=2b 00 2b 00 2b 00 2b 00 31 00
+  [ 2] ea=0x3b9e9 name=''                   field=0x0040  raw=1c 00 1a 00 20 00 20 00 40 00
+  [ 3] ea=0x3b9f3 name=''                   field=0x0040  raw=1d 00 1b 00 1f 00 1e 00 40 00
+  [ 4] ea=0x3b9fd name=''                   field=0x0040  raw=1a 00 1c 00 20 00 20 00 40 00
+  [ 5] ea=0x3ba07 name=''                   field=0x0040  raw=1b 00 1d 00 1e 00 1f 00 40 00
+  [ 6] ea=0x3ba11 name=''                   field=0x0041  raw=20 00 20 00 1c 00 1a 00 41 00
+  [ 7] ea=0x3ba1b name=''                   field=0x0041  raw=1e 00 1f 00 1d 00 1b 00 41 00
+  [ 8] ea=0x3ba25 name=''                   field=0x0041  raw=20 00 20 00 1a 00 1c 00 41 00
+  [ 9] ea=0x3ba2f name=''                   field=0x0041  raw=1f 00 1e 00 1b 00 1d 00 41 00
+  [10] ea=0x3ba39 name=''                   field=0x0042  raw=0b 00 0b 00 0b 00 0b 00 42 00
+  [11] ea=0x3ba43 name=''                   field=0x0042  raw=0c 00 0c 00 0c 00 0c 00 42 00
+----- end target script output -----
+[*] finished executing dump_tile_tables.py
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
